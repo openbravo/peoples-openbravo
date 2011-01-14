@@ -218,15 +218,6 @@ isc.OBViewGrid.addProperties({
       filterEditorType: 'StaticTextItem'
     });
     
-    this.filterEditorProperties = {
-      isCheckboxField: function(){
-        return false;
-      },
-      actionButtonProperties: {
-        visibility: 'hidden'
-      }
-    };
-    
     this.Super('initWidget', arguments);
   },
   
@@ -300,7 +291,10 @@ isc.OBViewGrid.addProperties({
     this.updateRowCountDisplay();
     this.updateSelectedCountDisplay();
     
-    if (this.targetRecordId) {
+    if (this.targetOpenGrid) {
+      // don't need to do anything here
+      delete this.targetOpenGrid;
+    } else if (this.targetRecordId) {
       this.delayedHandleTargetRecord(startRow, endRow);
     } else if (this.view.shouldOpenDefaultEditMode()) {
       this.view.openDefaultEditView(this.getRecord(startRow));
@@ -324,7 +318,9 @@ isc.OBViewGrid.addProperties({
       }
       recordIndex = this.getRecordIndex(gridRecord);
       
-      this.targetRecordId = null;
+      // don't need it anymore
+      delete this.targetRecordId;
+      
       if (data.criteria) {
         data.criteria._targetRecordId = null;
       }
@@ -353,16 +349,16 @@ isc.OBViewGrid.addProperties({
     }
   },
   
-  selectRecordById: function(id) {
-      var recordIndex, gridRecord = this.data.find(OB.Constants.ID, id);
-      
-      // no grid record found, stop here
-      if (!gridRecord) {
-        return;
-      }
-      recordIndex = this.getRecordIndex(gridRecord);
-      this.scrollRecordIntoView(recordIndex, true);
-      this.doSelectSingleRecord(gridRecord);
+  selectRecordById: function(id){
+    var recordIndex, gridRecord = this.data.find(OB.Constants.ID, id);
+    
+    // no grid record found, stop here
+    if (!gridRecord) {
+      return;
+    }
+    recordIndex = this.getRecordIndex(gridRecord);
+    this.scrollRecordIntoView(recordIndex, true);
+    this.doSelectSingleRecord(gridRecord);
   },
   
   filterData: function(criteria, callback, requestProperties){
@@ -567,19 +563,19 @@ isc.OBViewGrid.addProperties({
   
   // selectionChanged is called when the user makes changes
   selectionChanged: function(record, state){
-    
+  
     this.stopHover();
     
     // enable/disable the delete if there are records selected
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, (!this.getSelection() || this.getSelection().length === 0));
-
+    
     // nothing changed, go away then, happens when saving
     if (state && this.view.lastRecordSelected && record && this.view.lastRecordSelected.id === record.id) {
       // instance may have been updated, update the instance in the view
       this.view.lastRecordSelected = record;
       return;
     }
-
+    
     // stop editing if the selection is changing  
     var rowNum = this.getRecordIndex(record);
     
@@ -601,7 +597,7 @@ isc.OBViewGrid.addProperties({
   // selectionUpdated is called when the grid selection is changed
   // programmatically
   selectionUpdated: function(record, recordList){
-    
+  
     isc.Log.logDebug('Selection updated ' + record, 'OB');
     this.updateSelectedCountDisplay();
     this.view.recordSelected();
@@ -929,7 +925,7 @@ isc.OBGridButtonsComponent.addProperties({
     this.OBGridToolStrip.hideMember(3);
   },
   
-  toggleProgressIcon: function(toggle) {
+  toggleProgressIcon: function(toggle){
     if (toggle) {
       this.progressIcon.show();
       this.OBGridToolStrip.hide();

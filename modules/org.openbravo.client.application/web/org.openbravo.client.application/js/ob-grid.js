@@ -74,9 +74,10 @@ isc.OBGrid.addProperties({
   
   initWidget: function(){
     // prevent the value to be displayed in case of a link
-    var i, field, formatCellValueFunction = function(value, record, rowNum, colNum, grid){
+    var i, thisGrid = this, field, formatCellValueFunction = function(value, record, rowNum, colNum, grid){
       return '';
     };
+    
     for (i = 0; i < this.fields.length; i++) {
       field = this.fields[i];
       if (field.isLink) {
@@ -88,6 +89,25 @@ isc.OBGrid.addProperties({
         field.formatCellValue = formatCellValueFunction;
       }
     }
+        
+    this.filterEditorProperties = {
+      // is needed to display information in the checkbox field 
+      // header in the filter editor row
+//      isCheckboxField: function(){
+//        return false;
+//      },
+      
+      actionButtonProperties: {
+        visibility: 'hidden',
+        disabled: true,
+        showDisabled: false,
+        initWidget: function() {
+          thisGrid.filterImage = this;
+          return this.Super('initWidget', arguments);
+        }
+      }
+    };
+
     return this.Super('initWidget', arguments);
   },
   
@@ -117,6 +137,27 @@ isc.OBGrid.addProperties({
       this.summaryRow.setFields(newFields);
     }
     return ret;
+  },
+  
+  // show or hide the filter button
+  filterEditorSubmit: function(criteria){
+    for (var prop in criteria) {
+      if (criteria.hasOwnProperty(prop)) {
+        var field = this.filterEditor.getField(prop);
+        if (this.isValidFilterField(field) && criteria[prop]) {
+          this.filterImage.show(true);
+          return;
+        }
+      }
+    }
+    this.filterImage.hide();
+  },
+  
+  isValidFilterField: function(field) {
+    if (!field) {
+      return false;
+    }
+    return !field.name.startsWith('_');
   },
   
   // = exportData =
@@ -165,7 +206,7 @@ isc.OBGridLinkLayout.addProperties({
   height: 1,
   width: '100%',
   
-  initWidget: function() {
+  initWidget: function(){
     this.btn = isc.OBGridLinkButton.create({});
     this.btn.setTitle(this.title);
     this.btn.owner = this;
@@ -173,7 +214,7 @@ isc.OBGridLinkLayout.addProperties({
     return this.Super('initWidget', arguments);
   },
   
-  setTitle: function(title) {
+  setTitle: function(title){
     this.btn.setTitle(title);
   },
   
@@ -184,7 +225,7 @@ isc.OBGridLinkLayout.addProperties({
       this.grid.cellClick(this.record, this.rowNum, this.colNum);
     }
   }
-
+  
 });
 
 isc.ClassFactory.defineClass('OBGridLinkButton', isc.Button);
