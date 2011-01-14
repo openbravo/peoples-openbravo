@@ -43,6 +43,12 @@ isc.OBStandardWindow.addProperties({
       overflow: 'visible'
     });
     
+    if (this.targetTabId) {
+      // is used as a flag so that we are in direct link mode
+      // prevents extra fetch data actions
+      this.directTabInfo = {};
+    }
+        
     this.addMember(this.toolBarLayout);
     
     this.viewProperties.standardWindow = this;
@@ -107,7 +113,7 @@ isc.OBStandardWindow.addProperties({
   tabDeselected: function(tabNum, tabPane, ID, tab, newTab){
     // note: explicitly checking for grid visibility as the form
     // may already be hidden
-    if (this.activeView && !this.activeView.viewGrid.isVisible()) {
+    if (this.activeView && this.activeView.isShowingForm) {
       this.activeView.viewForm.autoSave(null, true);
     }
     this.wasDeselected = true;
@@ -210,5 +216,5 @@ isc.OBStandardWindow.addProperties({
   // returns the view information for the help view.
   getHelpView: function(){
     return null;
-  }  
+  }
 });

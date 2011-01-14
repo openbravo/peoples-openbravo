@@ -220,12 +220,12 @@ isc.OBStandardView.addProperties({
         }
         
         if (editedRecord && editedRecord.editColumnLayout) {
-          if (this.view.viewGrid.isVisible()) {
+          if (!this.view.isShowingForm) {
             editedRecord.editColumnLayout.toggleProgressIcon(true);
           }
         }
         
-        if (this.view.viewForm.isVisible()) {
+        if (this.view.isShowingForm) {
           var btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
           btn.customState = 'Progress';
           btn.resetBaseStyle();
@@ -301,7 +301,11 @@ isc.OBStandardView.addProperties({
         this.viewGrid.targetRecordId = this.targetRecordId;
       }
       this.viewGrid.setDataSource(this.dataSource, this.viewGrid.completeFields || this.viewGrid.fields);
-      if (this.isRootView) {
+      
+      // directTabInfo is set when we are in direct link mode, i.e. directly opening
+      // a specific tab with a record, the direct link logic will already take care
+      // of fetching data
+      if (this.isRootView && !this.standardWindow.directTabInfo) {
         this.viewGrid.fetchData();
         this.refreshContents = false;
       }
@@ -540,7 +544,7 @@ isc.OBStandardView.addProperties({
     if (this.lastFocusedItem) {
       object = this.lastFocusedItem;
       functionName = 'focusInItem';
-    } else if (this.viewGrid && this.viewGrid.isVisible()) {
+    } else if (this.viewGrid && !this.isShowingForm) {
       object = this.viewGrid;
       functionName = 'focusInFilterEditor';
     } else if (this.viewForm && this.viewForm.getFocusItem()) {
@@ -591,7 +595,7 @@ isc.OBStandardView.addProperties({
       // the grid and form can both be hidden when changing
       // to another tab, this handles the case that the grid
       // is shown but the underlying form has errors
-      if (!this.viewGrid.isVisible()) {
+      if (this.isShowingForm) {
         this.viewForm.autoSave();
       }
     }
@@ -609,11 +613,10 @@ isc.OBStandardView.addProperties({
     var me = this;
     this.viewForm.clearErrors();
     this.viewForm.clearValues();
-    // open default edit view if there is no parent view or if there is at least
-    // one parent record selected
+    
     if (this.shouldOpenDefaultEditMode()) {
       this.openDefaultEditView();
-    } else if (!this.viewGrid.isVisible()) {
+    } else if (this.isShowingForm) {
       this.switchFormGridVisibility();
     }
     this.viewGrid.refreshContents();
@@ -624,7 +627,7 @@ isc.OBStandardView.addProperties({
     // can open default edit mode if defaultEditMode is set
     // and this is the root view or a child view with a selected parent.
     var oneOrMoreSelected = this.viewGrid.data && this.viewGrid.data.lengthIsKnown && this.viewGrid.data.lengthIsKnown() &&
-        this.viewGrid.data.getLength() > 1; 
+    this.viewGrid.data.getLength() >= 1;
     return this.allowDefaultEditMode && oneOrMoreSelected && this.defaultEditMode && (this.isRootView || this.parentView.viewGrid.getSelectedRecords().length === 1);
   },
   
@@ -644,7 +647,7 @@ isc.OBStandardView.addProperties({
     // open form in edit mode
     if (record) {
       this.editRecord(record, preventFocus);
-    } else if (this.viewGrid.data && this.viewGrid.data.getLength() > 0) {
+    } else if (this.viewGrid.data && this.viewGrid.data.getLength() > 0 && this.viewGrid.data.lengthIsKnown && this.viewGrid.data.lengthIsKnown()) {
       // edit the first record
       this.editRecord(this.viewGrid.getRecord(0), preventFocus);
     }
@@ -654,7 +657,7 @@ isc.OBStandardView.addProperties({
   // ** {{{ switchFormGridVisibility }}} **
   // Switch from form to grid view or the other way around
   switchFormGridVisibility: function(){
-    if (this.viewGrid.isVisible()) {
+    if (!this.isShowingForm) {
       this.viewGrid.hide();
       this.statusBarFormLayout.show();
       this.statusBarFormLayout.setHeight('100%');
@@ -713,18 +716,16 @@ isc.OBStandardView.addProperties({
   
     this.messageBar.hide();
     
+    if (!this.isShowingForm) {
+      this.switchFormGridVisibility();
+    }
+    
     if (!record) { //  new case
       this.viewGrid.deselectAllRecords();
       this.viewForm.editNewRecord(preventFocus);
-      if (this.viewGrid.isVisible()) {
-        this.switchFormGridVisibility();
-      }
     } else {
-      this.viewForm.editRecord(record, preventFocus);
-      if (this.viewGrid.isVisible()) {
-        this.switchFormGridVisibility();
-      }
       this.viewGrid.doSelectSingleRecord(record);
+      this.viewForm.editRecord(record, preventFocus);
     }
     
     isc.Page.setEvent(isc.EH.IDLE, this.viewForm, isc.Page.FIRE_ONCE, 'focus');
@@ -740,7 +741,14 @@ isc.OBStandardView.addProperties({
     if (this.parentTabSet) {
       theState = this.parentTabSet.state;
     }
+    
     if (theState === isc.OBStandardView.STATE_TOP_MAX) {
+      this.statusBar.maximizeButton.hide();
+      this.statusBar.restoreButton.show(true);
+    } else if (theState === isc.OBStandardView.STATE_IN_MID) {
+      this.statusBar.maximizeButton.show(true);
+      this.statusBar.restoreButton.hide();
+    } else if (!this.hasChildTabs) {
       this.statusBar.maximizeButton.hide();
       this.statusBar.restoreButton.show(true);
     } else {
@@ -805,12 +813,14 @@ isc.OBStandardView.addProperties({
     } else {
       this.doHandleClick();
     }
-    if (!this.viewForm.newRecordSavedEvent || !this.viewForm.isVisible()) {
+    this.setMaximizeRestoreButtonState();
+    
+    // show the form with the selected record
+    if (!this.isShowingForm) {
       var gridRecord = this.viewGrid.getSelectedRecord();
       if (gridRecord) {
         this.editRecord(gridRecord);
       }
-      this.viewForm.newRecordSavedEvent = false;
     }
     
     // remove this info
@@ -855,18 +865,11 @@ isc.OBStandardView.addProperties({
   // Is called when a record get's selected. Will refresh direct child views
   // which will again refresh their children.
   recordSelected: function(){
-    this.fireOnPause('recordSelected', {
-      target: this,
-      methodName: 'doRecordSelected',
-      args: []
-    }, this.fetchDelay);
-  },
-  
-  doRecordSelected: function(){
     // no change go away
     if (this.viewGrid.getSelectedRecords().length === 1 && this.viewGrid.getSelectedRecord() === this.lastRecordSelected) {
       return;
     }
+    this.lastRecordSelected = this.viewGrid.getSelectedRecord();
     
     var tabViewPane = null;
     
@@ -880,7 +883,6 @@ isc.OBStandardView.addProperties({
     // and recompute the count:
     this.updateChildCount();
     this.updateTabTitle();
-    this.lastRecordSelected = this.viewGrid.getSelectedRecord();
     
     this.toolBar.refreshToolbarButtons();
   },
@@ -909,12 +911,8 @@ isc.OBStandardView.addProperties({
       this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, this.readOnly);
     }
     
-    // switch back to the grid or form
-    if (this.shouldOpenDefaultEditMode()) {
-      if (this.viewGrid.isVisible()) {
-        this.switchFormGridVisibility();
-      }
-    } else if (!this.viewGrid.isVisible()) {
+    // switch back to the grid
+    if (this.isShowingForm) {
       this.switchFormGridVisibility();
     }
     
@@ -1003,7 +1001,7 @@ isc.OBStandardView.addProperties({
     var prefix = '';
     var suffix = '';
     
-    if (this.viewForm.isVisible() && this.viewForm.isNew) {
+    if (this.isShowingForm && this.viewForm.isNew) {
       if (isc.Page.isRTL()) {
         suffix = ' *';
       } else {
@@ -1018,7 +1016,7 @@ isc.OBStandardView.addProperties({
     
     var identifier, tab;
     // showing the form
-    if (!this.viewGrid.isVisible() && this.viewGrid.getSelectedRecord() && this.viewGrid.getSelectedRecord()[OB.Constants.IDENTIFIER]) {
+    if (this.isShowingForm && this.viewGrid.getSelectedRecord() && this.viewGrid.getSelectedRecord()[OB.Constants.IDENTIFIER]) {
       identifier = this.viewGrid.getSelectedRecord()[OB.Constants.IDENTIFIER];
       if (!this.parentTabSet && this.viewTabId) {
         tab = OB.MainView.TabSet.getTab(this.viewTabId);
@@ -1056,7 +1054,7 @@ isc.OBStandardView.addProperties({
   // - recursive to children: refresh the children, put the children in grid mode and refresh
   
   refresh: function(refreshCallback){
-    if (this.viewGrid.isVisible()) {
+    if (!this.isShowingForm) {
       this.messageBar.hide();
       this.viewGrid.filterData(this.viewGrid.getCriteria(), refreshCallback);
     } else {
@@ -1093,7 +1091,7 @@ isc.OBStandardView.addProperties({
     var callback = function(ok){
       var i, data, error, removeCallBack = function(resp, data, req){
         if (resp.status === isc.RPCResponse.STATUS_SUCCESS) {
-          if (!view.viewGrid.isVisible()) {
+          if (view.isShowingForm) {
             view.switchFormGridVisibility();
             if (resp.clientContext && resp.clientContext.refreshGrid) {
               view.viewGrid.filterData();
@@ -1259,7 +1257,7 @@ isc.OBStandardView.addProperties({
     // different modes:
     // 1) showing grid with one record selected
     // 2) showing form with aux inputs
-    if (this.viewGrid.isVisible()) {
+    if (!this.isShowingForm) {
       record = this.viewGrid.getSelectedRecord();
       component = this.viewGrid;
     } else {
@@ -1292,7 +1290,7 @@ isc.OBStandardView.addProperties({
         }
       }
     }
-    if (this.viewForm.isVisible()) {
+    if (this.isShowingForm) {
       isc.addProperties(contextInfo, this.viewForm.auxInputs);
       isc.addProperties(contextInfo, this.viewForm.hiddenInputs);
     }

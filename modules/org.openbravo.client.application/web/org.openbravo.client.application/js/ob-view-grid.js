@@ -300,7 +300,10 @@ isc.OBViewGrid.addProperties({
       this.view.openDefaultEditView(this.getRecord(startRow));
     } else if (this.data && this.data.getLength() === 1) {
       // one record select it directly
-      this.selectRecord(0);
+      record = this.getRecord(0);
+      // this select method prevents state changing if the record
+      // was already selected
+      this.doSelectSingleRecord(record);
     }
     
     return ret;
@@ -308,38 +311,34 @@ isc.OBViewGrid.addProperties({
   
   // handle the target record when the body has been drawn
   delayedHandleTargetRecord: function(startRow, endRow){
-    var rowTop, recordIndex, i, data = this.data;
+    var rowTop, recordIndex, i, data = this.data, tmpTargetRecordId = this.targetRecordId;
     if (!this.targetRecordId) {
       return;
     }
     if (this.body) {
-      var gridRecord = data.find(OB.Constants.ID, this.targetRecordId);
+      // don't need it anymore
+      delete this.targetRecordId;
+      var gridRecord = data.find(OB.Constants.ID, tmpTargetRecordId);
       
       // no grid record found, stop here
       if (!gridRecord) {
         return;
       }
-      recordIndex = this.getRecordIndex(gridRecord);
-      
-      // don't need it anymore
-      delete this.targetRecordId;
+      recordIndex = this.getRecordIndex(gridRecord);      
       
       if (data.criteria) {
         data.criteria._targetRecordId = null;
       }
       
+      // remove the isloading status from rows
       for (i = 0; i < startRow; i++) {
         if (Array.isLoading(data.localData[i])) {
           data.localData[i] = null;
         }
       }
       
+      this.doSelectSingleRecord(gridRecord);
       this.scrollRecordIntoView(recordIndex, true);
-      if (this.view.defaultEditMode && !this.view.viewForm.newRecordSavedEvent) {
-        this.view.editRecord(gridRecord);
-      } else {
-        this.doSelectSingleRecord(gridRecord);
-      }
       
       isc.Page.waitFor(this, 'delayedHandleTargetRecord', {
         method: this.view.openDirectChildTab(),
@@ -362,6 +361,18 @@ isc.OBViewGrid.addProperties({
     recordIndex = this.getRecordIndex(gridRecord);
     this.scrollRecordIntoView(recordIndex, true);
     this.doSelectSingleRecord(gridRecord);
+  },
+  
+  // overridden to prevent extra firing of selection updated event  
+  selectSingleRecord: function(record){
+    this.deselectAllRecords();
+    this.selectRecord(record);
+  },
+  
+  // overridden to prevent extra firing of selection updated event
+  // selectrecords will fire it once  
+  selectRecord: function(record, state, colNum){
+    this.selectRecords(record, state, colNum);
   },
   
   filterData: function(criteria, callback, requestProperties){
