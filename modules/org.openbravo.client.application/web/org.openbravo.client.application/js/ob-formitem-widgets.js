@@ -428,6 +428,10 @@ isc.OBYesNoItem.addProperties({
 // extends standard DateChooser implementation to be used in OBDateItem
 isc.ClassFactory.defineClass('OBDateChooser', DateChooser);
 
+isc.OBDateChooser.addProperties({
+  firstDayOfWeek: 1  
+});
+
 // == OBDateItem ==
 // OBDateItem inherits from SmartClient DateItem
 // adds autocomplete and formatting based on the Openbravo date pattern
