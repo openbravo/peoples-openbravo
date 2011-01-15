@@ -314,7 +314,7 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
   
-  // handle the target record when the body has been drawn
+  // with a delay to handle the target record when the body has been drawn
   delayedHandleTargetRecord: function(startRow, endRow){
     var rowTop, recordIndex, i, data = this.data, tmpTargetRecordId = this.targetRecordId;
     if (!this.targetRecordId) {
@@ -345,11 +345,8 @@ isc.OBViewGrid.addProperties({
       this.doSelectSingleRecord(gridRecord);
       this.scrollRecordIntoView(recordIndex, true);
       
-      isc.Page.waitFor(this, 'delayedHandleTargetRecord', {
-        method: this.view.openDirectChildTab(),
-        args: [],
-        target: this.view
-      });
+      // go to the children
+      this.view.openDirectChildTab();
     } else {
       // wait a bit longer til the body is drawn
       this.delayCall('delayedHandleTargetRecord', [startRow, endRow], 200, this);
