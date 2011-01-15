@@ -94,7 +94,7 @@ function closeSearch(action, value, display, parameters, wait){
 isc.OBSearchItem.addProperties({
   showPickerIcon: true,
   canFocus: true,
-
+  
   setValue: function(value){
     var ret = this.Super('setValue', arguments);
     // in this case the clearIcon needs to be shown or hidden
@@ -302,7 +302,46 @@ isc.OBSectionItem.addProperties({
   // never disable a section item
   isDisabled: function(){
     return false;
+  },
+  
+  collapseSection: function(){
+    // when collapsing set the focus to the header
+    this.form.setFocusItem(this);
+    var ret = this.Super('collapseSection', arguments);
+    return ret;
+  },
+  
+  expandSection: function(){
+    var ret = this.Super('expandSection', arguments);
+    
+    // when expanding set the focus to the first focusable item     
+    // set focus with a short delay to give the section time to draw
+    this.delayCall("setNewFocusItemExpanding", [], 100);
+    
+    // NOTE: if the layout structure changes then this needs to be 
+    // changed probably to see where the scrollbar is to scroll
+    // the parentElement is not set initially when drawing
+    if (this.form.parentElement) {
+      // scroll after things have been expanded
+      this.form.parentElement.delayCall('scrollTo', [null, this.getTop()], 100);    
+    }
+
+    return ret;
+  },
+    
+  setNewFocusItemExpanding: function(){
+    var newFocusItem = this;
+    for (var i = 0; i < this.itemIds.length; i++) {
+      var itemName = this.itemIds[i], item = this.form.getItem(itemName);
+      // isFocusable is a method added in ob-smartclient.js
+      if (item.isFocusable()) {
+        newFocusItem = item;
+        break;
+      }
+    }
+    newFocusItem.focusInItem();
   }
+  
 });
 
 // == OBListItem ==
@@ -429,7 +468,7 @@ isc.OBYesNoItem.addProperties({
 isc.ClassFactory.defineClass('OBDateChooser', DateChooser);
 
 isc.OBDateChooser.addProperties({
-  firstDayOfWeek: 1  
+  firstDayOfWeek: 1
 });
 
 // == OBDateItem ==
@@ -623,7 +662,7 @@ isc.OBDateItem.addProperties({
   // ** {{{ pickerConstructor }}} **
   // Picker constructor class
   pickerConstructor: 'OBDateChooser',
-
+  
   // ** {{{ dateFormat }}} **
   // Dateformat function
   dateFormat: OB.Format.date,
