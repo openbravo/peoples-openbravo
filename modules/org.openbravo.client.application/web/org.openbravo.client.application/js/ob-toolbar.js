@@ -31,14 +31,14 @@ isc.OBToolbar.addClassProperties({
     },
     disabled: true,
     buttonType: 'save',
-    prompt: OB.I18N.getLabel('OBUIAPP_SaveRow')  
+    prompt: OB.I18N.getLabel('OBUIAPP_SaveRow')
   },
   NEW_BUTTON_PROPERTIES: {
     action: function(){
       this.view.newRow();
     },
     buttonType: 'newRow',
-    prompt: OB.I18N.getLabel('OBUIAPP_NewRow')  
+    prompt: OB.I18N.getLabel('OBUIAPP_NewRow')
   },
   DELETE_BUTTON_PROPERTIES: {
     action: function(){
@@ -46,7 +46,7 @@ isc.OBToolbar.addClassProperties({
     },
     disabled: true,
     buttonType: 'eliminate',
-    prompt: OB.I18N.getLabel('OBUIAPP_DeleteRow')  
+    prompt: OB.I18N.getLabel('OBUIAPP_DeleteRow')
   },
   REFRESH_BUTTON_PROPERTIES: {
     action: function(){
@@ -54,7 +54,7 @@ isc.OBToolbar.addClassProperties({
     },
     disabled: false,
     buttonType: 'refresh',
-    prompt: OB.I18N.getLabel('OBUIAPP_RefreshData')  
+    prompt: OB.I18N.getLabel('OBUIAPP_RefreshData')
   },
   UNDO_BUTTON_PROPERTIES: {
     action: function(){
@@ -62,7 +62,7 @@ isc.OBToolbar.addClassProperties({
     },
     disabled: true,
     buttonType: 'undo',
-    prompt: OB.I18N.getLabel('OBUIAPP_UndoRow')  
+    prompt: OB.I18N.getLabel('OBUIAPP_UndoRow')
   }
 });
 
@@ -86,6 +86,8 @@ isc.OBToolbar.addProperties({
     if (this.leftMembers) {
       for (i = 0; i < this.leftMembers.length; i++) {
         newMembers[j] = this.leftMembers[i];
+        OB.TestRegistry.register('org.openbravo.client.application.toolbar.button.' + this.leftMembers[i].buttonType + '.' + this.view.tabId, this.leftMembers[i]);
+        
         newMembers[j].toolBar = this;
         newMembers[j].view = this.view;
         j++;
@@ -111,6 +113,7 @@ isc.OBToolbar.addProperties({
     if (this.rightMembers) {
       for (i = 0; i < this.rightMembers.length; i++) {
         newMembers[j] = this.rightMembers[i];
+        OB.TestRegistry.register('org.openbravo.client.application.toolbar.button.' + this.rightMembers[i].property + '.' + this.view.tabId, this.rightMembers[i]);
         newMembers[j].toolBar = this;
         newMembers[j].view = this.view;
         j++;
@@ -553,17 +556,17 @@ isc.OBToolbar.addProperties({
     }
     return;
   },
-
+  
   // ** {{{ refreshToolbarButtons }}} **
   //
   // Refreshes all buttons in the toolbar based on current record selection
   //
-  refreshToolbarButtons: function() {
+  refreshToolbarButtons: function(){
     var buttons = this.getRightMembers();
     var hideAllButtons = this.view.viewGrid.getSelectedRecords().length !== 1;
     
-    for (var i = 0; i < buttons.length; i++){
-      if (buttons[i].refresh){
+    for (var i = 0; i < buttons.length; i++) {
+      if (buttons[i].refresh) {
         buttons[i].refresh(this.view.getCurrentValues(), hideAllButtons);
       }
     }
@@ -595,13 +598,13 @@ isc.OBToolbarIconButton.addProperties({
   showHover: true,
   customState: '',
   showMenuButtonImage: false,
-
+  
   initWidget: function(){
     this.Super('initWidget', arguments);
     this.resetBaseStyle();
   },
   
-  resetBaseStyle: function() {
+  resetBaseStyle: function(){
     var isMenu = false, extraClass;
     if (this.menu !== null) {
       isMenu = true;
@@ -615,7 +618,7 @@ isc.OBToolbarIconButton.addProperties({
       this.iconWidth = 1;
       this.iconHeight = 1;
     }
-
+    
     this.setBaseStyle('OBToolbarIconButton_icon_' + this.buttonType + this.customState + extraClass + 'OBToolbarIconButton');
   }
 });

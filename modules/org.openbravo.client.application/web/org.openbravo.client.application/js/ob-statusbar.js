@@ -126,6 +126,11 @@ isc.OBStatusBar.addProperties({
     var buttonBar = isc.OBStatusBarIconButtonBar.create({});
     
     buttonBar.addMembers([this.previousButton, this.nextButton, buttonSpacer, this.maximizeButton, this.restoreButton, closeButton]);
+    for (var i = 0; i < buttonBar.members.length; i++) {
+      if (buttonBar.members[i].buttonType) {
+        OB.TestRegistry.register('org.openbravo.client.application.statusbar.button.' + buttonBar.members[i].buttonType + '.' + this.view.tabId, buttonBar.members[i]);        
+      }
+    }
     this.addMembers([this.leftBar, buttonBar]);
   },
   
