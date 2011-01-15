@@ -515,10 +515,6 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return false;
     }
 
-    public String getShowIf() {
-      return "";
-    }
-
     public String getName() {
       return "_linkedItems_";
     }
