@@ -205,7 +205,10 @@ isc.OBStandardView.addProperties({
   },
   
   setDataSource: function(ds){
-    //Wrap DataSource with OBDataSource which overrides methods to set tab info7
+    // Wrap DataSource with OBDataSource:
+    // - to set/reset the progress icons
+    // - to handle error cases in the response
+    // - to add info to the request
     var obDsClassname = 'OBDataSource' + this.tabId;
     isc.defineClass(obDsClassname, ds.getClass());
     

@@ -27,12 +27,6 @@ isc.OBViewGrid.addClassProperties({
   ARROW_DOWN_KEY_NAME: 'Arrow_Down'
 });
 
-/*
- * Todos: - edit button klik selects one record, deselects others, opens edit
- * view and refreshes child windows. - a grid which gets opened always selects
- * the first record - double click on a record does the same as the edit button -
- * single click opens bubble: edit in grid, use as filter, open on tab
- */
 // = OBViewGrid =
 // The OBViewGrid is the Openbravo specific subclass of the Smartclient
 // ListGrid.
