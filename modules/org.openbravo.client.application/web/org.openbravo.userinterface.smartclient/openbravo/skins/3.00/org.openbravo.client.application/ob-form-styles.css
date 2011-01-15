@@ -32,6 +32,7 @@
 
 .OBViewForm {
   margin: 5px 25px 0px 25px;
+  padding: 0px 0px 20px 0px;
 }
 
 /*=======================================================================
@@ -576,6 +577,9 @@
   font-weight: bold;
 }
 
+/*=======================================================================
+ * Used in the label of a foreign key field, for link image 
+=======================================================================*/
 .OBFormFieldLinkButton {
   cursor: pointer;
 }

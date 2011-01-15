@@ -66,7 +66,7 @@ OB.DefaultPickListStyleProperties = {
   
   // note the menu-rollover.png which is the background for selected rows
   // is 20
-  pickListCellHeight: 20,
+  pickListCellHeight: 22,
   
   quickRunPickListWidth: 225,
   // fixes issue https://issues.openbravo.com/view.php?id=15105
