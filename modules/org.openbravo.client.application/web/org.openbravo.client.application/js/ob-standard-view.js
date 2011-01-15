@@ -20,11 +20,14 @@
 //
 // An OBStandardView represents a single Openbravo tab. An OBStandardView consists
 // of three parts:
-// 1) a grid an instance of an OBViewGrid
-// 2) a form an instance of an OBViewForm
-// 3) a tab set with child OBStandardView instances
+// 1) a grid an instance of an OBViewGrid (property: viewGrid)
+// 2) a form an instance of an OBViewForm (property: viewForm)
+// 3) a tab set with child OBStandardView instances (property: childTabSet)
 // 
 // In addition an OBStandardView has components for a message bar and other visualization.
+// 
+// A standard view can be opened as a result of a direct link from another window/tab. See
+// the description in ob-standard-window for the flow in that case.
 //
 isc.ClassFactory.defineClass('OBStandardView', isc.VLayout);
 
@@ -149,6 +152,8 @@ isc.OBStandardView.addProperties({
   // initially set to true, is set to false after the 
   // first time default edit mode is opened or a new parent 
   // is selected.
+  // note that opening the edit view is done in the viewGrid.dataArrived
+  // method
   allowDefaultEditMode: true,
   
   readOnly: false,
@@ -798,38 +803,9 @@ isc.OBStandardView.addProperties({
     this.editRecord(newRecord);
   },
   
-  // check if a child tab should be opened directly
-  openDirectChildTab: function(){
-    if (this.childTabSet) {
-      var i, tabs = this.childTabSet.tabs;
-      for (i = 0; i < tabs.length; i++) {
-        if (tabs[i].pane.openDirectTab()) {
-          return;
-        }
-      }
-    }
-    
-    // no child tabs to open anymore, show ourselves as the default view
-    // open this view
-    if (this.parentTabSet) {
-      this.parentTabSet.setState(isc.OBStandardView.STATE_MID);
-    } else {
-      this.doHandleClick();
-    }
-    this.setMaximizeRestoreButtonState();
-    
-    // show the form with the selected record
-    if (!this.isShowingForm) {
-      var gridRecord = this.viewGrid.getSelectedRecord();
-      if (gridRecord) {
-        this.editRecord(gridRecord);
-      }
-    }
-    
-    // remove this info
-    delete this.standardWindow.directTabInfo;
-  },
-  
+  // is part of the flow to open all correct tabs when a user goes directly
+  // to a specific tab and record, for example by clicking a link in another 
+  // window, see the description in ob-standard-window.js
   openDirectTab: function(){
     if (!this.dataSource) {
       // wait for the datasource to arrive
@@ -862,6 +838,40 @@ isc.OBStandardView.addProperties({
       }
     }
     return false;
+  },
+  
+  // is part of the flow to open all correct tabs when a user goes directly
+  // to a specific tab and record, for example by clicking a link in another 
+  // window, see the description in ob-standard-window.js
+  openDirectChildTab: function(){
+    if (this.childTabSet) {
+      var i, tabs = this.childTabSet.tabs;
+      for (i = 0; i < tabs.length; i++) {
+        if (tabs[i].pane.openDirectTab()) {
+          return;
+        }
+      }
+    }
+    
+    // no child tabs to open anymore, show ourselves as the default view
+    // open this view
+    if (this.parentTabSet) {
+      this.parentTabSet.setState(isc.OBStandardView.STATE_MID);
+    } else {
+      this.doHandleClick();
+    }
+    this.setMaximizeRestoreButtonState();
+    
+    // show the form with the selected record
+    if (!this.isShowingForm) {
+      var gridRecord = this.viewGrid.getSelectedRecord();
+      if (gridRecord) {
+        this.editRecord(gridRecord);
+      }
+    }
+    
+    // remove this info
+    delete this.standardWindow.directTabInfo;
   },
   
   // ** {{{ recordSelected }}} **

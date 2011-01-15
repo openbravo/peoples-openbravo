@@ -280,17 +280,28 @@ isc.OBViewGrid.addProperties({
     this.filterData(this.getCriteria(), callback, context);
   },
   
+  // the dataarrived method is where different actions are done after 
+  // data has arrived in the grid:
+  // - open the edit view if default edit mode is enabled
+  // - if the user goes directly to a tab (from a link in another window) then
+  //   opening the relevant record is done here or if no record is passed grid
+  //   mode is opened
+  // - if there is only one record then select it directly
   dataArrived: function(startRow, endRow){
     var record, ret = this.Super('dataArrived', arguments);
     this.updateRowCountDisplay();
     this.updateSelectedCountDisplay();
     
     if (this.targetOpenGrid) {
+      // direct link from other window but without a record id
+      // so just show grid mode
       // don't need to do anything here
       delete this.targetOpenGrid;
     } else if (this.targetRecordId) {
+      // direct link from other tab to a specific record
       this.delayedHandleTargetRecord(startRow, endRow);
     } else if (this.view.shouldOpenDefaultEditMode()) {
+      // ui-pattern: single record/edit mode
       this.view.openDefaultEditView(this.getRecord(startRow));
     } else if (this.data && this.data.getLength() === 1) {
       // one record select it directly
@@ -340,8 +351,8 @@ isc.OBViewGrid.addProperties({
         target: this.view
       });
     } else {
-      // wait a bit longer
-      this.delayCall('delayedHandleTargetRecord', [startRow, endRow], 500, this);
+      // wait a bit longer til the body is drawn
+      this.delayCall('delayedHandleTargetRecord', [startRow, endRow], 200, this);
     }
   },
   

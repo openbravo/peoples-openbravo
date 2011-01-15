@@ -22,8 +22,25 @@ isc.ClassFactory.defineClass('OBStandardWindow', isc.VLayout);
 //
 // Represents the root container for an Openbravo window consisting of a 
 // hierarchy of tabs. Each tab is represented with an instance of the 
-// OBStandardView. 
+// OBStandardView.
 //
+// The standard window can be opened as a result of a click on a link 
+// in another tab. In this case the window should open all tabs from the 
+// root to the target record, i.e. the target record can be in a grand-child
+// tab. The flow goes through the following steps:
+// 1- compute which tabs should be opened and on each tab which record (the tabInfo list),
+//    this is done in the draw method with a call to the org.openbravo.client.application.window.ComputeSelectedRecordActionHandler 
+//    actionHandler
+// 2- this actionhandler returns a list of tab and record id's which should be opened in sequence.
+// 3- the first tab is opened by calling view.openDirectTab()
+// 4- this loads the data in the grid, in the viewGrid.dataArrived method the 
+//    method delayedHandleTargetRecord is called to open a child tab or the direct requested record.
+// 5- opening a child tab is done by calling openDirectChildTab on the view, which again calls openDirectTab
+//    for the tab in the tabInfo list (computed in step 1)
+//
+// Note that some parts of the flow are done asynchronously to give the system time to
+// draw all the components.
+// 
 isc.OBStandardWindow.addProperties({
   toolBarLayout: null,
   view: null,
