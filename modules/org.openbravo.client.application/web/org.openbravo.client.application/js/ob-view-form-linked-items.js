@@ -26,11 +26,14 @@ isc.ClassFactory.defineClass('OBLinkedItemSectionItem', isc.OBSectionItem);
 isc.OBLinkedItemSectionItem.addProperties({
   // as the name is always the same there should be at most 
   // one linked item section per form
-  name: '_linkedItem_',
+  name: '_linkedItems_',
   
-  width: '100%',
-  height: '100%',
+  // note: setting these apparently completely hides the section
+  //width: '100%',
+  //height: '100%',
+  
   overflow: 'hidden',
+  
   canFocus: true,
   
   // don't expand as a default
@@ -73,18 +76,6 @@ isc.OBLinkedItemSectionItem.addProperties({
   expandSection: function(){
     var ret = this.Super('expandSection', arguments);
     this.getLinkedItemPart().setExpanded(true);
-    
-    // after doing the linked item section check if this 
-    // can replace the scrollto below
-    //    this.canvasItem.focusInItem();
-    
-    // NOTE: if the layout structure changes then this needs to be 
-    // changed probably to see where the scrollbar is to scroll
-    
-    // call with a small delay to let the item be expanded
-    // form.parentElement is the one holding the scrollbar apparently
-    this.form.parentElement.delayCall('scrollToBottom', null, 200);
-    
     return ret;
   },
   
@@ -101,8 +92,10 @@ isc.OBLinkedItemLayout.addProperties({
   // set to true when the content has been created at first expand
   isInitialized: false,
   
-  width: '100%',
-  height: '100%',
+  // setting width/height makes the canvasitem to be hidden after a few
+  // clicks on the section item, so don't do that for now
+//  width: '100%',
+//  height: '100%',
   
   initWidget: function(){
     var ret = this.Super('initWidget', arguments);
@@ -171,8 +164,12 @@ isc.ClassFactory.defineClass('OBLinkedItemCanvasItem', isc.CanvasItem);
 
 isc.OBLinkedItemCanvasItem.addProperties({
 
-  width: '100%',
-  height: '100%',
+  canFocus: true,
+  
+  // setting width/height makes the canvasitem to be hidden after a few
+  // clicks on the section item, so don't do that for now
+  //width: '100%',
+  //height: '100%',
   
   showTitle: false,
   overflow: 'auto',
