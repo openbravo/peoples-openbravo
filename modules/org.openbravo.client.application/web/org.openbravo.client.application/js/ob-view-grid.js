@@ -577,46 +577,22 @@ isc.OBViewGrid.addProperties({
     }
   },
   
-  // selectionChanged is called when the user makes changes
-  selectionChanged: function(record, state){
-  
-    this.stopHover();
-    
-    // enable/disable the delete if there are records selected
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, (!this.getSelection() || this.getSelection().length === 0));
-    
-    // nothing changed, go away then, happens when saving
-    if (state && this.view.lastRecordSelected && record && this.view.lastRecordSelected.id === record.id) {
-      // instance may have been updated, update the instance in the view
-      this.view.lastRecordSelected = record;
-      return;
-    }
-    
-    // stop editing if the selection is changing  
-    var rowNum = this.getRecordIndex(record);
-    
-    if (this.getEditRow()) {
-      if (this.getEditRow() !== rowNum) {
-        this.endEditing();
-      } else {
-        // don't do any updates
-        this.updateSelectedCountDisplay();
-        return;
-      }
-    }
-    
-    isc.Log.logDebug('Selection changed ' + state, 'OB');
-    this.updateSelectedCountDisplay();
-    this.view.recordSelected();
-  },
-  
-  // selectionUpdated is called when the grid selection is changed
-  // programmatically
   selectionUpdated: function(record, recordList){
   
-    isc.Log.logDebug('Selection updated ' + record, 'OB');
+    this.stopHover();
     this.updateSelectedCountDisplay();
+    
+    // nothing changed, go away then, happens when saving
+    if (this.singleRecordSelection && this.view.lastRecordSelected && this.getSelection().length === 1 && this.getSelection()[0].id === this.view.lastRecordSelected.id) {
+      // instance may have been updated, update the instance in the view
+      this.view.lastRecordSelected = this.getSelection()[0];
+      return;
+    }
+  
+    isc.Log.logDebug('Selection updated ' + record, 'OB');
+
     this.view.recordSelected();
+
     // enable/disable the delete if there are records selected
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, (!this.getSelection() || this.getSelection().length === 0));
   },
