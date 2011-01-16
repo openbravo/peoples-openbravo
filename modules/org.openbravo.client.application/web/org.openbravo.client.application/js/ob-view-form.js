@@ -425,6 +425,11 @@ isc.OBViewForm.addProperties({
     isc.ask(OB.I18N.getLabel('OBUIAPP_AutoSaveNotPossibleExecuteAction'), callback);
   },
   
+  // always let the saveRow callback handle the error
+  saveEditorReply : function (response, data, request) {
+    return true;
+  },
+  
   saveRow: function(action, autoSave, forceDialogOnFailure){
     var i, length, flds, form = this;
     
@@ -515,8 +520,17 @@ isc.OBViewForm.addProperties({
     if (errors) {
       this.setErrors(errors, true);
     }
+    var msg = OB.I18N.getLabel('OBUIAPP_ErrorInFields');
+    var errorFld = this.getFirstErrorItem();
+    // special case
+    // if there is only an error on the id and no error on any field
+    // display that message then
+    if (errors && errors.id && !errorFld) {
+      msg = errors.id.errorMessage;
+    }
+       
     // set the error message
-    this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
+    this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, msg);
     
     // and focus to the first error field
     this.setFocusInErrorField(autoSave || this.inAutoSave);
@@ -524,21 +538,29 @@ isc.OBViewForm.addProperties({
   },
   
   setFocusInErrorField: function(autoSave){
+    var errorFld = this.getFirstErrorItem();
+    if (errorFld) {
+      if (autoSave) {
+        // otherwise the focus results in infinite cycles
+        // with views getting activated all the time
+        this.view.lastFocusedItem = errorFld;
+      } else {
+        errorFld.focusInItem();
+      }
+      return;
+    }
+    this.resetFocusItem();
+  },
+  
+  getFirstErrorItem: function() {
     flds = this.getFields();
     length = flds.length;
     for (i = 0; i < length; i++) {
       if (flds[i].getErrors()) {
-        if (autoSave) {
-          // otherwise the focus results in infinite cycles
-          // with views getting activated all the time
-          this.view.lastFocusedItem = flds[i];
-        } else {
-          flds[i].focusInItem();
-        }
-        return;
+        return flds[i];
       }
     }
-    this.resetFocusItem();
+    return null;
   },
   
   // overridden to show the error when hovering over items
