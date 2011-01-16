@@ -67,7 +67,7 @@ import org.openbravo.service.json.JsonUtils;
 public class FormInitializationComponent extends BaseActionHandler {
   private static final Logger log = Logger.getLogger(FormInitializationComponent.class);
 
-  private static final int MAX_CALLOUT_CALLS = 10;
+  private static final int MAX_CALLOUT_CALLS = 50;
 
   // @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -240,14 +240,14 @@ public class FormInitializationComponent extends BaseActionHandler {
               }
             }
             setRequestContextParameter(field, jsonobject);
-          }
-          // We also set the session value for the column in Edit or SetSession mode
-          if (mode.equals("EDIT") || mode.equals("SETSESSION")) {
-            if (field.getColumn().isStoredInSession() || field.getColumn().isKeyColumn()) {
-              setSessionValue(tab.getWindow().getId() + "|"
-                  + field.getColumn().getDBColumnName().toUpperCase(),
-                  jsonobject.has("value") ? uiDef.formatValueToSQL(jsonobject.get("value")
-                      .toString()) : null);
+            // We also set the session value for the column in Edit or SetSession mode
+            if (mode.equals("EDIT") || mode.equals("SETSESSION")) {
+              if (field.getColumn().isStoredInSession() || field.getColumn().isKeyColumn()) {
+                setSessionValue(tab.getWindow().getId() + "|"
+                    + field.getColumn().getDBColumnName().toUpperCase(),
+                    jsonobject.has("value") ? uiDef.formatValueToSQL(jsonobject.get("value")
+                        .toString()) : null);
+              }
             }
 
           }
