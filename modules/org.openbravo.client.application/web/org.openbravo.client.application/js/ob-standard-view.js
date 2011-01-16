@@ -279,11 +279,6 @@ isc.OBStandardView.addProperties({
         this.Super('performDSOperation', arguments);
       },
       
-      fireResponseCallbacks: function() {
-        var ret = this.Super('fireResponseCallbacks', arguments);
-        return ret;
-      },
-      
       transformResponse: function(dsResponse, dsRequest, jsonData){
         if (dsRequest.clientContext && dsRequest.clientContext.progressIndicatorSelectedRecord) {
           this.hideProgress(dsRequest.clientContext.progressIndicatorSelectedRecord);
