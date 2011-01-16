@@ -37,9 +37,12 @@ isc.ClassFactory.defineClass('OBCheckboxItem', CheckboxItem);
 
 isc.OBCheckboxItem.addProperties({
   // no validation on change or exit here
-  
   textBoxStyle: 'OBFormFieldLabel',
-  defaultValue: false
+  showValueIconOver: false,
+  showValueIconFocused: true,
+  defaultValue: false,
+  checkedImage: "[SKIN]/../../org.openbravo.client.application/images/form/checked.png",
+  uncheckedImage: "[SKIN]/../../org.openbravo.client.application/images/form/unchecked.png"
 });
 
 // == OBLinkTitleItem ==

@@ -239,7 +239,8 @@
 .OBFormFieldPickListCellSelected,
 .OBFormFieldPickListCellSelectedFocused,
 .OBFormFieldPickListCellSelectedDark {
-  background: url(./images/navbar/menu-rollover.png) repeat-x scroll;
+  background-color: #ddf0ff;
+  //background: url(./images/form/picklist-rollover.png) repeat-x scroll;
 }
 
 /*=======================================================================
