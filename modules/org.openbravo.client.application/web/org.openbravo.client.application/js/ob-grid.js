@@ -89,25 +89,47 @@ isc.OBGrid.addProperties({
         field.formatCellValue = formatCellValueFunction;
       }
     }
-        
+    
     this.filterEditorProperties = {
       // is needed to display information in the checkbox field 
       // header in the filter editor row
-//      isCheckboxField: function(){
-//        return false;
-//      },
+      //      isCheckboxField: function(){
+      //        return false;
+      //      },
+      
+      filterImg: {
+        src: '[SKINIMG]../../org.openbravo.client.application/images/grid/funnel-icon.png'
+      },
+      
+      makeActionButton: function(){
+        var ret = this.Super('makeActionButton', arguments);
+        var layout = isc.HLayout.create({
+          styleName: 'OBGridFilterFunnelBackground',
+          width: '100%',
+          height: '100%',
+          left: this.getInnerWidth() - this.getScrollbarSize() - 2
+        });
+        this.addChild(layout);
+        return ret;
+      },
       
       actionButtonProperties: {
+        baseStyle: 'OBGridFilterFunnelIcon',
         visibility: 'hidden',
-        disabled: true,
+        showFocused: false,
         showDisabled: false,
-        initWidget: function() {
+        left: this.getInnerWidth() - this.getScrollbarSize() - 2,
+        initWidget: function(){
           thisGrid.filterImage = this;
           return this.Super('initWidget', arguments);
+        },
+        click: function(){
+          this.recordEditor.getEditForm().clearValues();
+          this.recordEditor.performAction();
         }
       }
     };
-
+    
     return this.Super('initWidget', arguments);
   },
   
@@ -153,7 +175,7 @@ isc.OBGrid.addProperties({
     this.filterImage.hide();
   },
   
-  isValidFilterField: function(field) {
+  isValidFilterField: function(field){
     if (!field) {
       return false;
     }

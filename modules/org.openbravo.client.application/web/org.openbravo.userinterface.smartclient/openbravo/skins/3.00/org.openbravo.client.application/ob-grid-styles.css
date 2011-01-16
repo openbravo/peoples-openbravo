@@ -111,6 +111,17 @@
   border-top: 1px solid #b2b5b0;
 }
 
+.OBGridFilterFunnelBackground {
+  background-color: #c9d6ba;
+}
+
+.OBGridFilterFunnelIconDown,
+.OBGridFilterFunnelIconSelected,
+.OBGridFilterFunnelIconFocused,
+.OBGridFilterFunnelIcon {
+  background-color: #c9d6ba;
+  cursor: 'pointer';
+}
 
 .OBGridHeaderCellTitle,
 .OBGridHeaderCellTitleOver,

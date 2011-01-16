@@ -38,3 +38,6 @@ lib/*.war
 *.bak
 *.swp
 Thumbs.db
+
+sources
+scripts
