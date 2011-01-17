@@ -191,8 +191,8 @@ public class DocFINBankStatement extends AcctServer {
   }
 
   public Account getAccount(ConnectionProvider conn, FIN_FinancialAccount finAccount,
-      AcctSchema as, boolean bIsReceipt) throws ServletException {
-    Account account = null;
+      AcctSchema as, boolean isTransitAccount) throws ServletException {
+    String strValidCombinationId = "";
     OBContext.setAdminMode();
     try {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
@@ -207,14 +207,18 @@ public class DocFINBankStatement extends AcctServer {
       List<FIN_FinancialAccountAccounting> accountList = accounts.list();
       if (accountList == null || accountList.size() == 0)
         return null;
-      if (bIsReceipt)
-        account = new Account(conn, accountList.get(0).getClearedPaymentAccount().getId());
+      if (isTransitAccount)
+        strValidCombinationId = accountList.get(0).getFINTransitoryAcct() == null ? ""
+            : accountList.get(0).getFINTransitoryAcct().getId();
       else
-        account = new Account(conn, accountList.get(0).getClearedPaymentAccountOUT().getId());
+        strValidCombinationId = accountList.get(0).getFINAssetAcct() == null ? "" : accountList
+            .get(0).getFINAssetAcct().getId();
+      if (strValidCombinationId.equals(""))
+        return null;
     } finally {
       OBContext.restorePreviousMode();
     }
-    return account;
+    return new Account(conn, strValidCombinationId);
   }
 
   BigDecimal getTotalAmount(FIN_BankStatement bankStatement) {
