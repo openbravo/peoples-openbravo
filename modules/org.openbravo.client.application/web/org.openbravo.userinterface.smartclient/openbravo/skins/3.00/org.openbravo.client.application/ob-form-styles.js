@@ -51,6 +51,7 @@ isc.OBTextItem.addProperties({
 
 isc.OBTextAreaItem.addProperties({
   errorOrientation: 'left',
+  height: 66,
   width: '100%',
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
