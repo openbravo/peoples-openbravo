@@ -107,6 +107,9 @@
       <foreign-key foreignTable="AD_ORG" name="FIN_FINACC_ACCT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_ASSET">
+        <reference local="FIN_ASSET_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_BANKFEE">
         <reference local="FIN_BANKFEE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
@@ -148,6 +151,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_REVALLOSS">
         <reference local="FIN_BANKREVALUATIONLOSS_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_TRANSITORY">
+        <reference local="FIN_TRANSITORY_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_WITHDRAWAL">
         <reference local="FIN_WITHDRAWAL_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
