@@ -36,10 +36,9 @@ import org.openbravo.model.common.enterprise.Organization;
  * @author mtaal
  */
 
+@SuppressWarnings("serial")
 public class DynamicOBObject extends BaseOBObject implements Traceable, ClientEnabled,
     OrganizationEnabled {
-
-  private static final long serialVersionUID = 1L;
 
   private String entityName;
 
