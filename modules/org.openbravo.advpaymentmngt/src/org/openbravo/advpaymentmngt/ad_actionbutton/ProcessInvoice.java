@@ -100,7 +100,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         OBDal.getInstance().save(invoice);
         OBDal.getInstance().flush();
 
-        OBContext.setAdminMode();
+        OBContext.setAdminMode(true);
         Process process = null;
         try {
           process = dao.getObject(Process.class, "111");
@@ -122,12 +122,17 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
         log4j.debug(myMessage.getMessage());
         vars.setMessage(strTabId, myMessage);
-        // on error close popup
-        if (pinstance.getResult() == 0L || !"CO".equals(strdocaction)) {
-          String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-          if (strWindowPath.equals(""))
-            strWindowPath = strDefaultServlet;
-          printPageClosePopUp(response, vars, strWindowPath);
+        OBContext.setAdminMode();
+        try {
+          // on error close popup
+          if (pinstance.getResult() == 0L || !"CO".equals(strdocaction)) {
+            String strWindowPath = Utility.getTabURL(strTabId, "R", true);
+            if (strWindowPath.equals(""))
+              strWindowPath = strDefaultServlet;
+            printPageClosePopUp(response, vars, strWindowPath);
+          }
+        } finally {
+          OBContext.restorePreviousMode();
         }
 
       } catch (ServletException ex) {
