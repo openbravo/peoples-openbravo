@@ -43,6 +43,8 @@ isc.OBLinkedItemSectionItem.addProperties({
   
   canvasItem: null,
   
+  visible: false,
+  
   // note formitems don't have an initWidget but an init method
   init: function(){
   
@@ -78,7 +80,7 @@ isc.OBLinkedItemSectionItem.addProperties({
     this.getLinkedItemPart().setExpanded(true);
     return ret;
   },
-  
+    
   hide: function(){
     this.collapseSection();
     return this.Super('hide', arguments);
