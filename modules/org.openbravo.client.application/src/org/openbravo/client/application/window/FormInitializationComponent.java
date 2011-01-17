@@ -350,7 +350,8 @@ public class FormInitializationComponent extends BaseActionHandler {
                   final String attrValue = Utility.getContext(new DalConnectionProvider(false),
                       RequestContext.get().getVariablesSecureApp(), attrName, tab.getWindow()
                           .getId());
-                  sessionAttributes.put(attrName, attrValue);
+                  sessionAttributes.put(
+                      attrName.startsWith("#") ? attrName.substring(1) : attrName, attrValue);
                 }
                 finalObject.put("sessionAttributes", sessionAttributes);
               }

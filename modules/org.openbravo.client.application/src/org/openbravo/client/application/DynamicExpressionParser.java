@@ -171,7 +171,7 @@ public class DynamicExpressionParser {
       }
     }
     sessionAttributesInExpression.add(token);
-    return TOKEN_PREFIX + token;
+    return TOKEN_PREFIX + (token.startsWith("#") ? token.substring(1) : token);
   }
 
   /*
