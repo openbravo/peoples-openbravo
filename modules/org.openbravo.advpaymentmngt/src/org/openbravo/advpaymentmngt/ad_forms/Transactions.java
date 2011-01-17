@@ -630,7 +630,7 @@ public class Transactions extends HttpSecureAppServlet {
   }
 
   /**
-   * It calls the PAyment Process for the given payment and action.
+   * It calls the Transaction Process for the given transaction and action.
    * 
    * @param vars
    *          VariablesSecureApp with the session data.
@@ -639,7 +639,7 @@ public class Transactions extends HttpSecureAppServlet {
    * @param strAction
    *          String with the action of the process. {P, D, R}
    * @param transaction
-   *          FIN_Payment that needs to be processed.
+   *          FIN_FinaccTransaction that needs to be processed.
    * @return a OBError with the result message of the process.
    * @throws Exception
    */
