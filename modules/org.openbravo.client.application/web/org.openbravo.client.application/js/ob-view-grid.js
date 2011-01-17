@@ -237,12 +237,16 @@ isc.OBViewGrid.addProperties({
   
   deselectAllRecords: function(){
     this.allSelected = false;
-    return this.Super('deselectAllRecords', arguments);
+    var ret = this.Super('deselectAllRecords', arguments);
+    this.selectionUpdated();
+    return ret;
   },
   
   selectAllRecords: function(){
     this.allSelected = true;
-    return this.Super('selectAllRecords', arguments);
+    var ret = this.Super('selectAllRecords', arguments);
+    this.selectionUpdated();
+    return ret;
   },
   
   updateRowCountDisplay: function(){
@@ -491,23 +495,10 @@ isc.OBViewGrid.addProperties({
   },
   
   recordClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
-    var me = this, EH = isc.EventHandler;
-    if (EH.isMouseEvent(EH.getEventType())) {
-      record._dblClickWaiting = true;
-      isc.Timer.setTimeout(function(){
-        // if no double click happened then do the single click
-        if (record._dblClickWaiting) {
-          record._dblClickWaiting = false;
-          me.handleRecordSelection(viewer, record, recordNum, field, fieldNum, value, rawValue, false);
-        }
-      }, OB.Constants.DBL_CLICK_DELAY);
-    } else {
-      me.handleRecordSelection(viewer, record, recordNum, field, fieldNum, value, rawValue, false);
-    }
+    this.handleRecordSelection(viewer, record, recordNum, field, fieldNum, value, rawValue, false);
   },
   
   recordDoubleClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
-    record._dblClickWaiting = false;
     this.view.editRecord(record);
   },
   
@@ -577,28 +568,22 @@ isc.OBViewGrid.addProperties({
     }
   },
   
-  selectionUpdated: function(record, recordList){
+  getCheckboxField: function() {
+    var ret = this.Super('getCheckboxField', arguments);
+    return ret;
+  },
   
+  // note when solving selection issues in the future also 
+  // consider using the selectionChanged method, but that 
+  // one has as disadvantage that it is called multiple times
+  // for one select/deselect action
+  selectionUpdated: function(record, recordList){  
     this.stopHover();
     this.updateSelectedCountDisplay();
-    
-    // nothing changed, go away then, happens when saving
-    if (this.singleRecordSelection && this.view.lastRecordSelected && this.getSelection().length === 1 && this.getSelection()[0].id === this.view.lastRecordSelected.id) {
-      // instance may have been updated, update the instance in the view
-      this.view.lastRecordSelected = this.getSelection()[0];
-      return;
-    }
-  
-    isc.Log.logDebug('Selection updated ' + record, 'OB');
-
     this.view.recordSelected();
-
-    // enable/disable the delete if there are records selected
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, (!this.getSelection() || this.getSelection().length === 0));
   },
   
   selectOnMouseDown: function(record, recordNum, fieldNum){
-  
     // don't change selection on right mouse down
     var EH = isc.EventHandler, eventType;
     if (EH.rightButtonDown()) {
@@ -671,7 +656,9 @@ isc.OBViewGrid.addProperties({
         this.deselectAllRecords();
       }
       // click in checkbox field is done by standard logic
+      // in the selectOnMouseDown
       this.singleRecordSelection = false;
+      this.selectionUpdated();
     } else if (isc.EventHandler.ctrlKeyDown()) {
       // only do something if record clicked and not from selectOnMouseDown
       // this method got called twice from one clicK: through recordClick and
@@ -692,6 +679,8 @@ isc.OBViewGrid.addProperties({
       // click on the record which was already selected
       this.doSelectSingleRecord(record);
     }
+        
+    this.updateSelectedCountDisplay();
     
     // mark some redraws if there are lines which don't 
     // have a checkbox flagged, so if we move from single record selection 
@@ -954,6 +943,7 @@ isc.OBGridButtonsComponent.addProperties({
   },
   
   doOpen: function(){
+    this.grid.endEditing();
     this.grid.view.editRecord(this.record);
   },
   

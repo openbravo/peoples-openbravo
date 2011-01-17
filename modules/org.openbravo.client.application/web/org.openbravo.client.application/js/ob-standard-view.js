@@ -136,6 +136,7 @@ isc.OBStandardView.addProperties({
   
   // set if one record has been selected
   lastRecordSelected: null,
+  lastRecordSelectedCount: 0,
   
   // ** {{{ refreshContents }}} **
   // Should the contents listgrid/forms be refreshed when the tab
@@ -283,18 +284,19 @@ isc.OBStandardView.addProperties({
         if (dsRequest.clientContext && dsRequest.clientContext.progressIndicatorSelectedRecord) {
           this.hideProgress(dsRequest.clientContext.progressIndicatorSelectedRecord);
         }
-        
-        var errorStatus = !jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
-        if (errorStatus) {
-          var handled = this.view.setErrorMessageFromResponse(dsResponse, jsonData, dsRequest);
-          
-          if (!handled && !dsRequest.willHandleError) {
-            OB.KernelUtilities.handleSystemException(error.message);
+        if (jsonData) {
+          var errorStatus = !jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
+          if (errorStatus) {
+            var handled = this.view.setErrorMessageFromResponse(dsResponse, jsonData, dsRequest);
+            
+            if (!handled && !dsRequest.willHandleError) {
+              OB.KernelUtilities.handleSystemException(error.message);
+            }
+          } else {
+            // there are some cases where the jsonData is not passed, in case of errors
+            // make it available through the response object
+            dsResponse.dataObject = jsonData;
           }
-        } else {
-          // there are some cases where the jsonData is not passed, in case of errors
-          // make it available through the response object
-          dsResponse.dataObject = jsonData;
         }
         return this.Super('transformResponse', arguments);
       }
@@ -879,11 +881,13 @@ isc.OBStandardView.addProperties({
   // which will again refresh their children.
   recordSelected: function(){
     // no change go away
-    if (this.viewGrid.getSelectedRecords().length === 1 && this.viewGrid.getSelectedRecord() === this.lastRecordSelected) {
+    if (!this.hasSelectionStateChanged()) {
       return;
     }
-    this.lastRecordSelected = this.viewGrid.getSelectedRecord();
-    
+    this.updateLastSelectedState();
+        
+    this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, (!this.viewGrid.getSelection() || this.viewGrid.getSelection().length === 0));
+
     var tabViewPane = null;
     
     // refresh the tabs
@@ -898,6 +902,17 @@ isc.OBStandardView.addProperties({
     this.updateTabTitle();
     
     this.toolBar.refreshToolbarButtons();
+  },
+  
+  hasSelectionStateChanged: function() {
+    return (this.viewGrid.getSelectedRecords().length !== this.lastRecordSelectedCount || 
+        (this.viewGrid.getSelectedRecord() && this.viewGrid.getSelectedRecord().id !== this.lastRecordSelected.id)) || 
+      (this.lastRecordSelected && !this.viewGrid.getSelectedRecord());
+  },
+  
+  updateLastSelectedState: function() {
+    this.lastRecordSelectedCount = this.viewGrid.getSelectedRecords().length;
+    this.lastRecordSelected = this.viewGrid.getSelectedRecord(); 
   },
   
   // ** {{{ parentRecordSelected }}} **
