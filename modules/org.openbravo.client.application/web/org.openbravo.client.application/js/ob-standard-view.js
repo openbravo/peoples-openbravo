@@ -191,6 +191,8 @@ isc.OBStandardView.addProperties({
     // disable new for the child views
     if (!this.isRootView) { 
       this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, true);
+    } else {
+      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, false);
     }
     
     this.Super('initWidget', arguments);
