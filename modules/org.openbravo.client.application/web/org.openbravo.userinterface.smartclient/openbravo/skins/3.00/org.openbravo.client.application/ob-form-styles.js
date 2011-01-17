@@ -62,7 +62,7 @@ isc.OBPopUpTextAreaItem.addProperties({
   errorOrientation: 'left',
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldInput'
+  textBoxStyle: 'OBFormFieldStatic'
 });
 
 OB.DefaultPickListStyleProperties = {
@@ -95,7 +95,7 @@ OB.DefaultPickListStyleProperties = {
     shadowDepth: 5,
     bodyStyleName: 'OBPickListBody'
   },
-  
+
   errorOrientation: 'left'
 };
 
