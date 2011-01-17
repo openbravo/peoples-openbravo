@@ -294,6 +294,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
+    final String MATCHED_AGAINST_TRANSACTION = FIN_Utility.messageBD("APRM_Transaction");
 
     FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
         reconciliationId);
@@ -303,6 +304,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("orgId", strOrgId);
     xmlDocument.setParameter("financialAccountId", strFinancialAccountId);
     xmlDocument.setParameter("reconciliationId", reconciliationId);
+    xmlDocument.setParameter("matchedAgainstTransaction", MATCHED_AGAINST_TRANSACTION);
 
     String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
         "dateFormat.java");
@@ -415,6 +417,12 @@ public class MatchTransaction extends HttpSecureAppServlet {
         OBDal.getInstance().flush();
       }
 
+      // Execute un-matching logic defined by algorithm
+      MatchingAlgorithm ma = bsline.getBankStatement().getAccount().getMatchingAlgorithm();
+      FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(ma
+          .getJavaClassName());
+      matchingTransaction.unmatch(finTrans);
+
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
       out.println("");
@@ -450,6 +458,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
         final String COLOR_STRONG = "#66CC00";
         final String COLOR_WEAK = "#99CC66";
         final String COLOR_WHITE = "white";
+        boolean alreadyMatched = false;
 
         String matchingType = FIN_BankStatementLines[i].getMatchingtype();
         FIN_FinaccTransaction transaction = FIN_BankStatementLines[i]
@@ -465,18 +474,25 @@ public class MatchTransaction extends HttpSecureAppServlet {
             matched = new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
           }
           transaction = matched.getTransaction();
-          // if (transaction != null) {
-          // FIN_BankStatementLine bsl = FIN_BankStatementLines[i];
-          // bsl.setFinancialAccountTransaction(transaction);
-          // bsl.setMatchingtype(matched.getMatchLevel());
-          // // FIXME payment CLEARING
-          // OBDal.getInstance().save(transaction);
-          // OBDal.getInstance().save(bsl);
-          // OBDal.getInstance().flush();
-          // }
+          if (transaction != null) {
+            FIN_BankStatementLine bsl = FIN_BankStatementLines[i];
+            bsl.setFinancialAccountTransaction(transaction);
+            bsl.setMatchingtype(matched.getMatchLevel());
+            transaction.setStatus("RPPC");
+            transaction.setReconciliation(MatchTransactionDao.getObject(FIN_Reconciliation.class,
+                strReconciliationId));
+            if (transaction.getFinPayment() != null) {
+              transaction.getFinPayment().setStatus("RPPC");
+            }
+            OBDal.getInstance().save(transaction);
+            OBDal.getInstance().save(bsl);
+            OBDal.getInstance().flush();
+          }
           excluded.add(transaction);
           matchingType = matched.getMatchLevel();
 
+        } else {
+          alreadyMatched = true;
         }
 
         FieldProviderFactory.setField(data[i], "rownum", Integer.toString(i + 1));
@@ -491,21 +507,41 @@ public class MatchTransaction extends HttpSecureAppServlet {
         // CREDIT - DEBIT
         FieldProviderFactory.setField(data[i], "bankLineAmount", FIN_BankStatementLines[i]
             .getCramount().subtract(FIN_BankStatementLines[i].getDramount()).toString());
-        FieldProviderFactory.setField(data[i], "matchStyle", FIN_MatchedTransaction.STRONG
-            .equals(matchingType) ? COLOR_STRONG : ((FIN_MatchedTransaction.WEAK
-            .equals(matchingType)) ? COLOR_WEAK : ((FIN_MatchedTransaction.NOMATCH
-            .equals(matchingType)) ? COLOR_WHITE : matchingType)));
+        FieldProviderFactory
+            .setField(
+                data[i],
+                "matchStyle",
+                FIN_MatchedTransaction.STRONG.equals(matchingType) ? COLOR_STRONG
+                    : ((FIN_MatchedTransaction.WEAK.equals(matchingType)) ? COLOR_WEAK
+                        : ((FIN_MatchedTransaction.NOMATCH.equals(matchingType) || FIN_MatchedTransaction.MANUALMATCH
+                            .equals(matchingType)) ? COLOR_WHITE : matchingType)));
         FieldProviderFactory.setField(data[i], "matchingType", matchingType);
 
         if (transaction != null) {
+          final String MATCHED_AGAINST_TRANSACTION = FIN_Utility.messageBD("APRM_Transaction");
+          final String MATCHED_AGAINST_PAYMENT = FIN_Utility.messageBD("APRM_Payment");
+          final String MATCHED_AGAINST_INVOICE = FIN_Utility.messageBD("APRM_Invoice");
+          final String MATCHED_AGAINST_ORDER = FIN_Utility.messageBD("APRM_Order");
+          final String MATCHED_AGAINST_CREDIT = FIN_Utility.messageBD("APRM_Credit");
           FieldProviderFactory.setField(data[i], "disabled", "N");
           // Auto Matching or already matched
-          FieldProviderFactory.setField(data[i], "checked", (FIN_MatchedTransaction.STRONG
-              .equals(matchingType) || transaction.getReconciliation() != null) ? "Y" : "N");
+          FieldProviderFactory.setField(data[i], "checked", FIN_MatchedTransaction.STRONG
+              .equals(matchingType)
+              || alreadyMatched ? "Y" : "N");
           FieldProviderFactory.setField(data[i], "finTransactionId", transaction.getId());
           FieldProviderFactory.setField(data[i], "transactionDate", Utility.formatDate(transaction
               .getTransactionDate().compareTo(reconciliation.getEndingDate()) > 0 ? reconciliation
               .getEndingDate() : transaction.getTransactionDate(), vars.getJavaDateFormat()));
+          FieldProviderFactory.setField(data[i], "matchedDocument", !transaction
+              .isCreatedByAlgorithm() ? MATCHED_AGAINST_TRANSACTION : (!transaction.getFinPayment()
+              .isCreatedByAlgorithm() ? MATCHED_AGAINST_PAYMENT : (transaction.getFinPayment()
+              .getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList().get(0)
+              .getInvoicePaymentSchedule() == null && transaction.getFinPayment()
+              .getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList().get(0)
+              .getOrderPaymentSchedule() == null) ? MATCHED_AGAINST_CREDIT : (transaction
+              .getFinPayment().getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList()
+              .get(0).getInvoicePaymentSchedule() != null ? MATCHED_AGAINST_INVOICE
+              : MATCHED_AGAINST_ORDER)));
           FieldProviderFactory.setField(data[i], "transactionBPartner",
               transaction.getFinPayment() != null ? transaction.getFinPayment()
                   .getBusinessPartner().getName() : "");

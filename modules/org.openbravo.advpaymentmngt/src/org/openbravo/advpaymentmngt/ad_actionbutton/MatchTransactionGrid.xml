@@ -34,7 +34,9 @@
     <FIELD id="inpBSAmount_xx" attribute="value" format="euroEdition">bankLineAmount</FIELD>
     <FIELD id="inpBSAmount_xx" attribute="id" replace="xx">finBankLineId</FIELD>
     <FIELD id="fieldAmount" format="euroEdition">bankLineAmount</FIELD>
-    <FIELD id="fieldMatchStyle" attribute="style" replace="xx">matchStyle</FIELD>
+    <FIELD id="inpMatchStyle_xx" attribute="style" replace="xx">matchStyle</FIELD>
+    <FIELD id="inpMatchStyle_xx" attribute="name" replace="xx">finBankLineId</FIELD>
+    <FIELD id="inpMatchStyle_xx" attribute="id" replace="xx">finBankLineId</FIELD>
     <FIELD id="fieldFindLink" attribute="onClick" replace="xx">finBankLineId</FIELD>
     <FIELD id="inpCheckBox_xx" attribute="value">finBankLineId</FIELD>
     <FIELD id="inpCheckBox_xx" boolean="disabled" withId="fieldYes">disabled</FIELD>
@@ -50,6 +52,8 @@
     <FIELD id="fieldAddLink" attribute="onclick" replace="xx">finBankLineId</FIELD>
     <FIELD id="inpTransactionDate_xx">transactionDate</FIELD>
     <FIELD id="inpTransactionDate_xx" attribute="id" replace="xx">finBankLineId</FIELD>
+    <FIELD id="inpMatchedDocument_xx">matchedDocument</FIELD>
+    <FIELD id="inpMatchedDocument_xx" attribute="id" replace="xx">finBankLineId</FIELD>
     <FIELD id="inpBPartner_xx">transactionBPartner</FIELD>
     <FIELD id="inpBPartner_xx" attribute="id" replace="xx">finBankLineId</FIELD>
     <FIELD id="inpReferenceNo_xx">transactionReferenceNo</FIELD>

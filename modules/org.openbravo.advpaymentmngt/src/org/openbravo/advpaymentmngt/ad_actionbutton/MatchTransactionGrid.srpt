@@ -26,7 +26,7 @@
     <td class="DataGrid_Body_Cell"><span id="fieldBLBusinessPartner">xxBP Name</span></td>
     <td class="DataGrid_Body_Cell"><span id="fieldBLReferenceNo">xx11100011</span></td>
     <td class="DataGrid_Body_Cell_Amount"><span id="fieldAmount">xx12233</span></td>
-    <td class="DataGrid_Body_LineNoCell" style="background-color: xx;" id="fieldMatchStyle">
+    <td class="DataGrid_Body_LineNoCell" style="background-color: xx;" id="inpMatchStyle_xx" name="inpMatchStyle_xx">
       <a href="#" onClick="openSelector('xx');" id="fieldFindLink">find</a>
       <!--span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span-->
       <input id="inpCheckBox_xx" type="checkbox" name="inpBankStatementLineId" value="" onclick="unMatchLine('xx', this.checked);"/>
@@ -35,6 +35,7 @@
       <!--span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span-->
       <a href="#" onclick="openAddTransaction('xx');" id="fieldAddLink">add</a>
     </td>
+    <td class="DataGrid_Body_Cell" id="inpMatchedDocument_xx">xxTransaction</td>
     <td class="DataGrid_Body_Cell" id="inpTransactionDate_xx">xx01-01-2010</td>
     <td class="DataGrid_Body_Cell" id="inpBPartner_xx">xxBP Name</td>
     <td class="DataGrid_Body_Cell" id="inpReferenceNo_xx">xx111999111</td>

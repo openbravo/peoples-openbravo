@@ -39,6 +39,7 @@
     <PARAMETER id="inpShowCleared" name="showCleared" boolean="checked" withId="paramChecked"/>
     <PARAMETER id="fieldhideDate" name="hideDate" boolean="checked" withId="paramChecked"/>
     <PARAMETER id="paramPaymentTypeFilter" name="paramPaymentTypeFilter"/>
+    <PARAMETER id="paraMatchedAgainstTransaction" name="matchedAgainstTransaction" attribute="value"/>
     <SUBREPORT id="inpPaymentTypeFilter" name="reportPaymentTypeFilter" report="org/openbravo/erpCommon/reference/List">
       <ARGUMENT name="parameterListSelected" withId="paramPaymentTypeFilter"/>
     </SUBREPORT>
