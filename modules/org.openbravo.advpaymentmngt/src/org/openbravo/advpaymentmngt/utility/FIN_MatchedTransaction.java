@@ -26,6 +26,7 @@ public class FIN_MatchedTransaction {
   public static final String STRONG = "AU";
   public static final String WEAK = "AP";
   public static final String NOMATCH = "NO";
+  public static final String MANUALMATCH = "MA";
   private String level = "NO";
 
   public FIN_MatchedTransaction(FIN_FinaccTransaction _transaction, String _level) {
