@@ -38,7 +38,7 @@ isc.ClassFactory.defineClass('OBCheckboxItem', CheckboxItem);
 isc.OBCheckboxItem.addProperties({
   // no validation on change or exit here
   textBoxStyle: 'OBFormFieldLabel',
-  showValueIconOver: false,
+  showValueIconOver: true,
   showValueIconFocused: true,
   defaultValue: false,
   checkedImage: "[SKIN]/../../org.openbravo.client.application/images/form/checked.png",
