@@ -62,6 +62,8 @@ isc.OBViewForm.addProperties({
   
   editRecord: function(record, preventFocus){
     this.hasChanged = false;
+
+    this.setNewState(false);
     
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
@@ -75,12 +77,12 @@ isc.OBViewForm.addProperties({
     this.clearErrors();
     this.retrieveInitialValues(false);
     
-    this.setNewState(false);
     this.view.messageBar.hide();
 
     this.resetFocusItem();
-    this.focus();
-        
+    if (!preventFocus) {
+      this.focus();
+    }
     return ret;
   },
   
@@ -90,6 +92,8 @@ isc.OBViewForm.addProperties({
     this.ignoreFirstFocusEvent = preventFocus;
     
     this.hasChanged = false;
+
+    this.setNewState(true);
     
     // disable relevant buttons
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, true);
@@ -101,12 +105,10 @@ isc.OBViewForm.addProperties({
     this.clearErrors();
     this.retrieveInitialValues(true);
     
-    this.setNewState(true);
     this.resetFocusItem();
     this.focus();
     
     this.view.messageBar.hide();
-    
     return ret;
   },
   
@@ -257,6 +259,7 @@ isc.OBViewForm.addProperties({
     } else {
       this.readOnly = false;
     }
+    this.focus();
   },
   
   processColumnValue: function(columnName, columnValue){
