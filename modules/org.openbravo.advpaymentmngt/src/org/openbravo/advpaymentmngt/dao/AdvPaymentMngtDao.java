@@ -433,9 +433,8 @@ public class AdvPaymentMngtDao {
           payment.getAccount(), TransactionsDao.getTransactionMaxLineNo(payment.getAccount()) + 10,
           payment, payment.getDescription(), payment.getPaymentDate(), null, "RPPC", payment
               .isReceipt() ? payment.getAmount() : BigDecimal.ZERO, !payment.isReceipt() ? payment
-              .getAmount().negate() : BigDecimal.ZERO, payment.getProject(), payment
-              .getSalesCampaign(), payment.getActivity(), payment.isReceipt() ? "BPD" : "BPW",
-          payment.getPaymentDate());
+              .getAmount() : BigDecimal.ZERO, payment.getProject(), payment.getSalesCampaign(),
+          payment.getActivity(), payment.isReceipt() ? "BPD" : "BPW", payment.getPaymentDate());
     }
     return transaction;
   }
