@@ -149,14 +149,17 @@ isc.OBStandardWindow.addProperties({
     if (!this.isDrawn()) {
       return;
     }
-    var currentActiveView = this.activeView;
     if (this.activeView === view) {
       return;
     }
-    if (currentActiveView) {
-      currentActiveView.setActiveViewVisualState(false);
-    }
+    
+    var currentView = this.activeView;
+    // note the new activeView must be set before disabling
+    // the other one
     this.activeView = view;
+    if (currentView) {
+      currentView.setActiveViewVisualState(false);
+    }
     view.setActiveViewVisualState(true);
   },
   

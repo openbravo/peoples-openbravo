@@ -140,7 +140,6 @@ isc.OBViewGrid.addProperties({
       if (this.localData && this.localData[dsResponse.totalRows]) {
         this.localData[dsResponse.totalRows] = null;
       }
-      return this.Super('transformData', arguments);
     }
   },
   
@@ -227,6 +226,11 @@ isc.OBViewGrid.addProperties({
   },
   
   headerClick: function(fieldNum, header){
+    this.view.setAsActiveView(this.view);
+    if (this.view.autoSaveForm) {
+      this.setActionAfterAutoSave(this, this.headerClick, arguments);
+      return;
+    }
     var field = this.fields[fieldNum];
     if (this.isCheckboxField(field) && this.singleRecordSelection) {
       this.deselectAllRecords();
@@ -235,14 +239,24 @@ isc.OBViewGrid.addProperties({
     return this.Super('headerClick', arguments);
   },
   
-  deselectAllRecords: function(){
+  deselectAllRecords: function(preventUpdateSelectInfo){
+    if (this.view.autoSaveForm) {
+      this.setActionAfterAutoSave(this, this.deselectAllRecords, arguments);
+      return;
+    }
     this.allSelected = false;
     var ret = this.Super('deselectAllRecords', arguments);
-    this.selectionUpdated();
+    if (!preventUpdateSelectInfo) {
+      this.selectionUpdated();
+    }
     return ret;
   },
   
   selectAllRecords: function(){
+    if (this.view.autoSaveForm) {
+      this.setActionAfterAutoSave(this, this.selectAllRecords, arguments);
+      return;
+    }
     this.allSelected = true;
     var ret = this.Super('selectAllRecords', arguments);
     this.selectionUpdated();
@@ -294,7 +308,9 @@ isc.OBViewGrid.addProperties({
   dataArrived: function(startRow, endRow){
     var record, ret = this.Super('dataArrived', arguments);
     this.updateRowCountDisplay();
-    this.updateSelectedCountDisplay();
+    if (this.getSelectedRecords().length > 0) {
+      this.selectionUpdated();
+    }
     
     if (this.targetOpenGrid) {
       // direct link from other window but without a record id
@@ -371,7 +387,7 @@ isc.OBViewGrid.addProperties({
   
   // overridden to prevent extra firing of selection updated event  
   selectSingleRecord: function(record){
-    this.deselectAllRecords();
+    this.deselectAllRecords(true);
     this.selectRecord(record);
   },
   
@@ -493,13 +509,25 @@ isc.OBViewGrid.addProperties({
     }
     return this.Super('getAutoFitExpandField', arguments);
   },
-  
+   
   recordClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
-    this.handleRecordSelection(viewer, record, recordNum, field, fieldNum, value, rawValue, false);
+    if (this.view.autoSaveForm) {
+      this.setActionAfterAutoSave(this, this.recordClick, arguments);
+    } else {
+      this.handleRecordSelection(viewer, record, recordNum, field, fieldNum, value, rawValue, false);
+    }
   },
   
   recordDoubleClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
-    this.view.editRecord(record);
+    if (this.view.autoSaveForm) {
+      this.setActionAfterAutoSave(this, this.recordDoubleClick, arguments);
+    } else {
+      this.view.editRecord(record);
+    }
+  },
+  
+  setActionAfterAutoSave: function(target, method, parameters) {
+    this.view.autoSaveForm.setActionAfterAutoSave({target: target, method: method, parameters: parameters});
   },
   
   //+++++++++++++++++++++++++++++ Context menu on record click +++++++++++++++++++++++
@@ -577,7 +605,7 @@ isc.OBViewGrid.addProperties({
   // consider using the selectionChanged method, but that 
   // one has as disadvantage that it is called multiple times
   // for one select/deselect action
-  selectionUpdated: function(record, recordList){  
+  selectionUpdated: function(record, recordList){        
     this.stopHover();
     this.updateSelectedCountDisplay();
     this.view.recordSelected();
@@ -589,12 +617,22 @@ isc.OBViewGrid.addProperties({
     if (EH.rightButtonDown()) {
       return;
     }
+        
+    if (this.view.autoSaveForm) {
+      // only call this method in case a checkbox click was done
+      // in all other cases the recordClick will be called later
+      // anyway
+      if (this.getCheckboxFieldPosition() === fieldNum) {
+        this.setActionAfterAutoSave(this, this.selectOnMouseDown, arguments);
+      } 
+      return;
+    }
     
     var previousSingleRecordSelection = this.singleRecordSelection;
     var currentSelectedRecordSelected = (this.getSelectedRecord() === record);
     if (this.getCheckboxFieldPosition() === fieldNum) {
       if (this.singleRecordSelection) {
-        this.deselectAllRecords();
+        this.deselectAllRecords(true);
       }
       this.singleRecordSelection = false;
       this.Super('selectOnMouseDown', arguments);
@@ -606,6 +644,8 @@ isc.OBViewGrid.addProperties({
       if (previousSingleRecordSelection && currentSelectedRecordSelected) {
         this.selectSingleRecord(record);
       }
+      
+      this.selectionUpdated();
       
       this.markForRedraw('Selection checkboxes need to be redrawn');
     } else {
@@ -653,7 +693,7 @@ isc.OBViewGrid.addProperties({
       }
     } else if (this.getCheckboxFieldPosition() === fieldNum) {
       if (this.singleRecordSelection) {
-        this.deselectAllRecords();
+        this.deselectAllRecords(true);
       }
       // click in checkbox field is done by standard logic
       // in the selectOnMouseDown
@@ -866,14 +906,22 @@ isc.OBGridButtonsComponent.addProperties({
     editIcon = isc.OBGridToolStripIcon.create({
       buttonType: 'edit',
       action: function(){
-        me.doEdit();
+        if (me.grid.view.autoSaveForm) {
+          me.grid.setActionAfterAutoSave(me, me.doEdit, []);
+        } else {
+          me.doEdit();
+        }
       }
     });
     
     formIcon = isc.OBGridToolStripIcon.create({
       buttonType: 'form',
       action: function(){
-        me.doOpen();
+        if (me.grid.view.autoSaveForm) {
+          me.grid.setActionAfterAutoSave(me, me.doOpen, []);
+        } else {
+          me.doOpen();
+        }
       }
     });
     

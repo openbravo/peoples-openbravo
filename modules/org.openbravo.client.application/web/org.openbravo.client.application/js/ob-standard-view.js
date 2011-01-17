@@ -277,7 +277,7 @@ isc.OBStandardView.addProperties({
           _noActiveFilter: true
         };
         isc.addProperties(newRequestProperties.params, additionalPara);
-        this.Super('performDSOperation', arguments);
+        this.Super('performDSOperation', [operationType, data, callback, newRequestProperties]);
       },
       
       transformResponse: function(dsResponse, dsRequest, jsonData){
@@ -586,10 +586,6 @@ isc.OBStandardView.addProperties({
     if (this.refreshContents && !ignoreRefreshContents) {
       return;
     }
-    // don't change when saving data 
-    if (this.preventActiveViewChange) {
-      return;
-    }
     this.standardWindow.setActiveView(this);
   },
   
@@ -606,30 +602,67 @@ isc.OBStandardView.addProperties({
       // to another tab, this handles the case that the grid
       // is shown but the underlying form has errors
       if (this.isShowingForm) {
-        this.viewForm.autoSave();
+        this.viewForm.autoSave(null, true);
       }
     }
     this.setTabButtonState(state);
   },
   
-  doRefreshContents: function(){
-    // refresh when shown
-    if (this.parentTabSet && this.parentTabSet.state === isc.OBStandardView.STATE_MIN) {
-      return;
-    }
-    if (!this.refreshContents) {
-      return;
-    }
-    var me = this;
-    this.viewForm.clearErrors();
-    this.viewForm.clearValues();
+  doRefreshContents: function(doRefreshWhenVisible){
+
+    // update this one at least before bailing out
+    this.updateTabTitle();    
     
+    if (!this.isViewVisible()) {
+      this.refreshContents = doRefreshWhenVisible;
+      return;
+    }
+    
+    if (!this.refreshContents && !doRefreshWhenVisible) {
+      return;
+    }
+    // can be used by others to see that we are refreshing content
+    this.refreshContents = true;
+
+    // clear all our selections..
+    this.viewGrid.deselectAllRecords();
+    
+    // hide the messagebar
+    this.messageBar.hide();
+
+    // allow default edit mode again
+    this.allowDefaultEditMode = true;
+    
+    if (this.viewForm) {
+      this.viewForm.resetForm();
+    }
+        
     if (this.shouldOpenDefaultEditMode()) {
       this.openDefaultEditView();
     } else if (this.isShowingForm) {
       this.switchFormGridVisibility();
     }
     this.viewGrid.refreshContents();
+
+    // no parent disable new
+    if (!this.getParentId()) {
+      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, true);
+    } else {
+      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, this.readOnly);
+    }
+    
+    // if not visible or the parent also needs to be refreshed
+    // enable the following code if we don't automatically select the first
+    // record
+    if (this.childTabSet) {
+      for (var i = 0; i < this.childTabSet.tabs.length; i++) {
+        tabViewPane = this.childTabSet.tabs[i].pane;
+        // force a refresh, only the visible ones will really 
+        // be refreshed
+        tabViewPane.doRefreshContents(true);
+      }
+    }
+    // set this at false at the end
     this.refreshContents = false;
   },
   
@@ -723,7 +756,7 @@ isc.OBStandardView.addProperties({
   // Opens the edit form and selects the record in the grid, will refresh
   // child views also
   editRecord: function(record, preventFocus){
-  
+    
     this.messageBar.hide();
     
     if (!this.isShowingForm) {
@@ -738,7 +771,9 @@ isc.OBStandardView.addProperties({
       this.viewForm.editRecord(record, preventFocus);
     }
     
-    isc.Page.setEvent(isc.EH.IDLE, this.viewForm, isc.Page.FIRE_ONCE, 'focus');
+    if (!preventFocus) {
+      isc.Page.setEvent(isc.EH.IDLE, this.viewForm, isc.Page.FIRE_ONCE, 'focus');
+    }
   },
   
   setMaximizeRestoreButtonState: function(){
@@ -832,9 +867,8 @@ isc.OBStandardView.addProperties({
           this.parentTabSet.selectTab(this.tab);
         } else {
           // make sure that the content gets refreshed
-          this.refreshContents = true;
           // refresh and open a child view when all is done
-          this.doRefreshContents();
+          this.doRefreshContents(true);
         }
         return true;
       }
@@ -894,7 +928,7 @@ isc.OBStandardView.addProperties({
     if (this.childTabSet) {
       for (var i = 0; i < this.childTabSet.tabs.length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
-        tabViewPane.parentRecordSelected();
+        tabViewPane.doRefreshContents(true);
       }
     }
     // and recompute the count:
@@ -914,61 +948,7 @@ isc.OBStandardView.addProperties({
     this.lastRecordSelectedCount = this.viewGrid.getSelectedRecords().length;
     this.lastRecordSelected = this.viewGrid.getSelectedRecord(); 
   },
-  
-  // ** {{{ parentRecordSelected }}} **
-  // Is called when a selection change occurs in the parent.
-  parentRecordSelected: function(){
-  
-    // clear all our selections..
-    this.viewGrid.deselectAllRecords();
     
-    // hide the messagebar
-    this.messageBar.hide();
-    
-    // allow default edit mode again
-    this.allowDefaultEditMode = true;
-    
-    if (this.viewForm) {
-      this.viewForm.resetForm();
-    }
-    
-    // no parent disable new
-    if (!this.getParentId()) {
-      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, true);
-    } else {
-      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, this.readOnly);
-    }
-    
-    // switch back to the grid
-    if (this.isShowingForm) {
-      this.switchFormGridVisibility();
-    }
-    
-    // clear the count from the tabtitle, will be recomputed
-    this.updateTabTitle();
-    
-    // if not visible or the parent also needs to be refreshed
-    if (!this.isViewVisible() ||
-    (this.parentView && this.parentView.refreshContents)) {
-      isc.Log.logDebug('ParentRecordSelected: View not visible ' + this.tabTitle, 'OB');
-      // refresh when the view get's shown
-      this.refreshContents = true;
-    } else {
-      isc.Log.logDebug('ParentRecordSelected: View visible ' + this.tabTitle, 'OB');
-      if (this.viewGrid) {
-        this.viewGrid.refreshContents();
-      }
-    }
-    // enable the following code if we don't automatically select the first
-    // record
-    if (this.childTabSet) {
-      for (var i = 0; i < this.childTabSet.tabs.length; i++) {
-        tabViewPane = this.childTabSet.tabs[i].pane;
-        tabViewPane.parentRecordSelected();
-      }
-    }
-  },
-  
   getParentId: function(){
     if (!this.parentView || !this.parentView.viewGrid.getSelectedRecord()) {
       return null;
@@ -977,6 +957,9 @@ isc.OBStandardView.addProperties({
   },
   
   updateChildCount: function(){
+    if (true) {
+      return;
+    }
     if (!this.childTabSet) {
       return;
     }
@@ -1070,8 +1053,10 @@ isc.OBStandardView.addProperties({
   },
   
   isViewVisible: function(){
-    return this.parentTabSet.getSelectedTabNumber() ===
-    this.parentTabSet.getTabNumber(this.tab);
+    // note this.tab.isVisible is done as the tab is visible earlier than
+    // the pane
+    return (!this.tab || this.tab.isVisible()) && this.parentTabSet.getSelectedTabNumber() ===
+              this.parentTabSet.getTabNumber(this.tab);
   },
   
   // ++++++++++++++++++++ Button Actions ++++++++++++++++++++++++++

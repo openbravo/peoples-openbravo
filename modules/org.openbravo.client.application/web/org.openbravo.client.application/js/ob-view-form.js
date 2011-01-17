@@ -2,7 +2,7 @@
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
- * Version 1.1  with a permitted attribution clause; you may not  use this
+ * Version 1.1  with a permitted attribution clause; you may not  use. this
  * file except in compliance with the License. You  may  obtain  a copy of
  * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
@@ -71,14 +71,16 @@ isc.OBViewForm.addProperties({
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, this.view.readOnly || false);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, this.view.readOnly || false);
     
-    this.resetFocusItem();
     var ret = this.Super('editRecord', arguments);
     this.clearErrors();
     this.retrieveInitialValues(false);
     
     this.setNewState(false);
     this.view.messageBar.hide();
-    
+
+    this.resetFocusItem();
+    this.focus();
+        
     return ret;
   },
   
@@ -95,12 +97,13 @@ isc.OBViewForm.addProperties({
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, true);
     
-    this.resetFocusItem();
     var ret = this.Super('editNewRecord', arguments);
     this.clearErrors();
     this.retrieveInitialValues(true);
     
     this.setNewState(true);
+    this.resetFocusItem();
+    this.focus();
     
     this.view.messageBar.hide();
     
@@ -371,7 +374,8 @@ isc.OBViewForm.addProperties({
     if (this.getFocusItem()) {
       this.getFocusItem().focusInItem();
     }
-    return this.Super("focus", arguments);
+    var ret = this.Super("focus", arguments);
+    return ret;
   },
   
   itemChanged: function(item, newValue){
@@ -408,22 +412,39 @@ isc.OBViewForm.addProperties({
   // before actually the form gets hidden
   autoSave: function(action, forceDialogOnFailure){
   
+    this.setAutoSaveFormInActiveView(this);
     if (!this.view.standardWindow.isAutoSave() && this.hasChanged && action) {
       this.autoSaveConfirmAction(action);
     } else if (this.view.standardWindow.isAutoSave() && this.hasChanged && !this.inAutoSave) {
       this.inAutoSave = true;
       this.saveRow(action, true, forceDialogOnFailure);
-    } else if (action) {
-      action.method.call(action.target, action.parameters);
+    } else {
+      this.callAutoSaveAction(action);
     }
     return true;
   },
   
+  setAutoSaveFormInActiveView: function(form) {
+    // the view of the form can be another than
+    // the current active view
+    this.view.standardWindow.activeView.autoSaveForm = form;
+  },
+  
+  setActionAfterAutoSave: function(action) {
+    if (!this.autoSaveAction) {
+      this.autoSaveAction = action;
+    }
+  },
+  
   autoSaveConfirmAction: function(action){
+    action = this.autoSaveAction || action;
+    this.autoSaveAction = null;
+
     var form = this;
     var callback = function(ok){
       if (ok) {
-        action.method.apply(action.target, action.parameters);
+        form.resetForm();
+        form.callAutoSaveAction(action);
       } else {
         // and focus to the first error field
         form.setFocusInErrorField(true);
@@ -440,7 +461,7 @@ isc.OBViewForm.addProperties({
   
   saveRow: function(action, autoSave, forceDialogOnFailure){
     var i, length, flds, form = this;
-    
+
     // disable the save
     this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
     
@@ -469,9 +490,7 @@ isc.OBViewForm.addProperties({
         this.setNewState(false);
         this.hasChanged = false;
         // success invoke the action:
-        if (action) {
-          action.method.apply(action.target, action.parameters);
-        }
+        form.callAutoSaveAction(action);
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
         view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, false);
         form.handleFieldErrors(resp.errors, autoSave);
@@ -483,12 +502,16 @@ isc.OBViewForm.addProperties({
       // an error occured, show a popup
       if (status !== isc.RPCResponse.STATUS_SUCCESS) {
         // if there is an action, ask for confirmation
+        action = form.autoSaveAction || action;
         if (action && autoSave) {
           this.autoSaveConfirmAction(action);
         } else if (!view.isVisible() || forceDialogOnFailure) {
           isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [view.tabTitle]));
-        }
+       }
       }
+      // only show the warning once, allow actions to take place
+      // from now on
+      this.setAutoSaveFormInActiveView(null);
       form.inAutoSave = false;
       return false;
     };
@@ -497,6 +520,9 @@ isc.OBViewForm.addProperties({
     // done by calling showErrors without the third parameter to true
     if (!this.validate()) {
       this.handleFieldErrors(null, autoSave);
+      
+      action = form.autoSaveAction || action;
+
       if (!form.view.isVisible() || forceDialogOnFailure) {
         isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [this.view.tabTitle]));
       } else if (action) {
@@ -551,7 +577,7 @@ isc.OBViewForm.addProperties({
       if (autoSave) {
         // otherwise the focus results in infinite cycles
         // with views getting activated all the time
-        this.view.lastFocusedItem = errorFld;
+        this.setFocusItem(errorFld);
       } else {
         errorFld.focusInItem();
       }
@@ -632,6 +658,23 @@ isc.OBViewForm.addProperties({
     if (visible && this.view.isShowingForm) {
       this.doChangeFICCall();
     }
-  }
+  },
   
+  callAutoSaveAction: function(action) {
+    // get rid of this value
+    this.setAutoSaveFormInActiveView(null);
+    
+    // note pick up the form.autoSaveAction late to give 
+    // time to set it
+    action = this.autoSaveAction || action;
+    this.autoSaveAction = null;
+    if (!action) {
+      return;
+    }
+    if (action.callback) {
+      action.callback();
+    } else {
+      action.method.apply(action.target, action.parameters);
+    }
+  }
 });

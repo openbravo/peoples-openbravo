@@ -77,9 +77,10 @@ isc.FormItem.addProperties({
 isc.Canvas.addProperties({
   // let focuschanged go up to the parent, or handle it here
   focusChanged: function(hasFocus){
-    if (this.view && this.view.setAsActiveView) {
+    if (hasFocus && this.view && this.view.setAsActiveView) {
+      // is done when opening a form
       this.view.setAsActiveView();
-      return this.Super('focusChanged', arguments);
+      return;
     }
     
     if (this.parentElement && this.parentElement.focusChanged) {
