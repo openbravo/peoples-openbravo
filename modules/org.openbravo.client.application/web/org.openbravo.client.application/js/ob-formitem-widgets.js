@@ -471,8 +471,16 @@ isc.OBYesNoItem.addProperties({
 isc.ClassFactory.defineClass('OBDateChooser', DateChooser);
 
 isc.OBDateChooser.addProperties({
-  firstDayOfWeek: 1
+  firstDayOfWeek: 1,
+  autoHide: true,
+  showCancelButton: true
 });
+
+if (isc.OBDateChooser) {  // To force SC to load OBDateChooser instead of DateChooser
+  isc.DateChooser.getSharedDateChooser = function(properties) {
+    return isc.OBDateChooser.create(properties);
+  }
+}
 
 // == OBDateItem ==
 // OBDateItem inherits from SmartClient DateItem
@@ -665,6 +673,7 @@ isc.OBDateItem.addProperties({
   // ** {{{ pickerConstructor }}} **
   // Picker constructor class
   pickerConstructor: 'OBDateChooser',
+  useSharedPicker: true,
   
   // ** {{{ dateFormat }}} **
   // Dateformat function

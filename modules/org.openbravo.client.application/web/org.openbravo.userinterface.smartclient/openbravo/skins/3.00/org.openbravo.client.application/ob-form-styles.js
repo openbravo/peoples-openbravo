@@ -123,7 +123,7 @@ isc.OBSearchItem.addProperties({
 });
 
 
-isc.DateChooser.addProperties({  //TODO : Changed to 'isc.OBDateChooser.addProperties'
+isc.OBDateChooser.addProperties({
   headerStyle: 'OBDateChooserButton',
   weekendHeaderStyle: 'OBDateChooserWeekendButton',
   baseNavButtonStyle: 'OBDateChooserNavButton',
