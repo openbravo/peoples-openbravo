@@ -355,8 +355,9 @@ public class OBViewTab extends BaseTemplateComponent {
       private String labelValue;
 
       public Value(org.openbravo.model.ad.domain.List valueList) {
-        labelValue = OBViewUtil.getLabel(valueList, valueList.getADListTrlList());
-        value = valueList.getSearchKey();
+        labelValue = OBViewUtil.getLabel(valueList, valueList.getADListTrlList()).replace("\\", "");
+        // get rid of the \ as jslint and js can't handle them
+        value = valueList.getSearchKey().replace("\\", "");
       }
 
       public String getValue() {
