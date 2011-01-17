@@ -107,7 +107,7 @@ isc.OBGrid.addProperties({
           styleName: 'OBGridFilterFunnelBackground',
           width: '100%',
           height: '100%',
-          left: this.getInnerWidth() - this.getScrollbarSize() - 2
+          left: this.getInnerWidth() - this.getScrollbarSize() - 3
         });
         this.addChild(layout);
         return ret;
@@ -118,6 +118,7 @@ isc.OBGrid.addProperties({
         visibility: 'hidden',
         showFocused: false,
         showDisabled: false,
+        prompt: OB.I18N.getLabel('OBUIAPP_GridFilterIconToolTip'),
         left: this.getInnerWidth() - this.getScrollbarSize() - 2,
         initWidget: function(){
           thisGrid.filterImage = this;
