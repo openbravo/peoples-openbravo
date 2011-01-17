@@ -223,6 +223,19 @@ isc.OBStandardWindow.addProperties({
     this.view.doHandleDoubleClick();
   },
   
+  //+++++++++++++ Methods for the main tab handling +++++++++++++++++++++
+  
+  getHelpView: function(){
+    // tabTitle is set in the viewManager
+    return {
+        viewId: 'ClassicOBHelp',
+        tabTitle: this.tabTitle + ' - ' + OB.I18N.getLabel('UINAVBA_Help'),
+        windowId: this.windowId,
+        windowType: 'W',
+        windowName: this.tabTitle
+    };
+  },
+  
   getBookMarkParams: function(){
     var result = {};
     result.windowId = this.windowId;
@@ -237,11 +250,6 @@ isc.OBStandardWindow.addProperties({
   },
   
   isSameTab: function(viewName, params){
-    return this.isEqualParams(params);
-  },
-  
-  // returns the view information for the help view.
-  getHelpView: function(){
-    return null;
+    return this.isEqualParams(params) && viewName === this.getClassName();
   }
 });
