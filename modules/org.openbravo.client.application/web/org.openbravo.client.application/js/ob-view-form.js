@@ -31,6 +31,7 @@ isc.OBViewForm.addProperties({
   view: null,
   auxInputs: {},
   hiddenInputs: {},
+  sessionAttributes: {},
   dynamicCols: [],
   width: '100%',
   
@@ -212,8 +213,10 @@ isc.OBViewForm.addProperties({
     if (!data) {
       return;
     }
-    var columnValues = data.columnValues, calloutMessages = data.calloutMessages, auxInputs = data.auxiliaryInputValues, prop, value;
-    var dynamicCols = data.dynamicCols;
+    var columnValues = data.columnValues, calloutMessages = data.calloutMessages,
+                       auxInputs = data.auxiliaryInputValues, prop, value,
+                       dynamicCols = data.dynamicCols,
+                       sessionAttributes = data.sessionAttributes;
     if (columnValues) {
       for (prop in columnValues) {
         if (columnValues.hasOwnProperty(prop)) {
@@ -231,10 +234,15 @@ isc.OBViewForm.addProperties({
       for (prop in auxInputs) {
         if (auxInputs.hasOwnProperty(prop)) {
           this.setValue(prop, auxInputs[prop].value);
-          auxInputs[prop] = auxInputs[prop].value;
+          this.auxInputs[prop] = auxInputs[prop].value;
         }
       }
     }
+
+    if(sessionAttributes) {
+      this.sessionAttributes = sessionAttributes;
+    }
+
     if (dynamicCols) {
       this.dynamicCols = dynamicCols;
     }

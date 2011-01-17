@@ -1321,6 +1321,7 @@ isc.OBStandardView.addProperties({
     if (this.isShowingForm) {
       isc.addProperties(contextInfo, this.viewForm.auxInputs);
       isc.addProperties(contextInfo, this.viewForm.hiddenInputs);
+      isc.addProperties(contextInfo, this.viewForm.sessionAttributes);
     }
     
     if (this.parentView) {

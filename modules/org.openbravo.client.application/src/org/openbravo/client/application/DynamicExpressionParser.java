@@ -26,14 +26,11 @@ import java.util.StringTokenizer;
 
 import org.hibernate.criterion.Expression;
 import org.openbravo.client.kernel.KernelUtils;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * Parses a dynamic expressions and extracts information, e.g. The expression is using a field or an
@@ -53,8 +50,8 @@ public class DynamicExpressionParser {
 
   private static final String[][] UNIONS = { { "|", " || " }, { "&", " && " } };
 
+  private static final String TOKEN_PREFIX = "context.";
   private static Map<String, String> exprToJSMap;
-
   static {
     exprToJSMap = new HashMap<String, String>();
     exprToJSMap.put("'Y'", "true");
@@ -62,6 +59,7 @@ public class DynamicExpressionParser {
 
   private List<Field> fieldsInExpression = new ArrayList<Field>();
   private List<AuxiliaryInput> auxInputsInExpression = new ArrayList<AuxiliaryInput>();
+  private List<String> sessionAttributesInExpression = new ArrayList<String>();
 
   private String code;
   private Tab tab;
@@ -121,6 +119,10 @@ public class DynamicExpressionParser {
     return fieldsInExpression;
   }
 
+  public List<String> getSessionAttributes() {
+    return sessionAttributesInExpression;
+  }
+
   /*
    * This method was partially copied from WadUtility.
    */
@@ -165,12 +167,11 @@ public class DynamicExpressionParser {
         auxInputsInExpression.add(auxIn);
         // prevents jslint warning but will only work if auxIn does
         // not contain illegal js names..
-        return "form.auxInputs." + auxIn.getName() + "";
+        return TOKEN_PREFIX + auxIn.getName();
       }
     }
-    return "'"
-        + Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-            .getVariablesSecureApp(), token, tab.getWindow().getId()) + "'";
+    sessionAttributesInExpression.add(token);
+    return TOKEN_PREFIX + token;
   }
 
   /*

@@ -43,6 +43,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
+import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.window.servlet.CalloutHttpServletResponse;
 import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -317,6 +318,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           jsonAuxiliaryInputValues.put(auxIn.getName(), columnValues.get("inp"
               + Sqlc.TransformaNombreColumna(auxIn.getName())));
         }
+
         finalObject.put("auxiliaryInputValues", jsonAuxiliaryInputValues);
 
         if (mode.equals("NEW") || mode.equals("EDIT")) {
@@ -330,6 +332,25 @@ public class FormInitializationComponent extends BaseActionHandler {
                 changeEventCols.add(columnName);
               }
             }
+
+            // Adding session attributes in a dynamic expression
+            // This session attributes could be a preference
+            if (field.getDisplayLogic() != null && field.isDisplayed() && field.isActive()) {
+              final DynamicExpressionParser parser = new DynamicExpressionParser(field
+                  .getDisplayLogic(), tab);
+
+              if (parser.getSessionAttributes().size() > 0) {
+                final JSONObject sessionAttributes = new JSONObject();
+                for (String attrName : parser.getSessionAttributes()) {
+                  final String attrValue = Utility.getContext(new DalConnectionProvider(false),
+                      RequestContext.get().getVariablesSecureApp(), attrName, tab.getWindow()
+                          .getId());
+                  sessionAttributes.put(attrName, attrValue);
+                }
+                finalObject.put("sessionAttributes", sessionAttributes);
+              }
+            }
+
           }
           finalObject.put("dynamicCols", new JSONArray(changeEventCols));
         }
