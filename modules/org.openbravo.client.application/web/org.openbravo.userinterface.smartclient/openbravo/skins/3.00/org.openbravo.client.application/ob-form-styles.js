@@ -58,6 +58,13 @@ isc.OBTextAreaItem.addProperties({
   textBoxStyle: 'OBFormFieldInput'
 });
 
+isc.OBPopUpTextAreaItem.addProperties({
+  errorOrientation: 'left',
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldInput'
+});
+
 OB.DefaultPickListStyleProperties = {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
