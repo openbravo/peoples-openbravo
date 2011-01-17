@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -140,6 +141,9 @@ public class FormInitializationComponent extends BaseActionHandler {
             log.error("Couldn't read column value from the request for column " + inpColName, e);
           }
         }
+        // We also add special parameters such as the one set by selectors to the request, so the
+        // callouts can use them
+        addSpecialParameters(tab, jsContent);
       }
       HashMap<String, JSONObject> columnValues = new HashMap<String, JSONObject>();
       HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
@@ -397,6 +401,23 @@ public class FormInitializationComponent extends BaseActionHandler {
     return null;
   }
 
+  private void addSpecialParameters(Tab tab, JSONObject jsContent) {
+    Iterator it = jsContent.keys();
+    while (it.hasNext()) {
+      String key = it.next().toString();
+      try {
+        if (RequestContext.get().getRequestParameter(key) == null) {
+          RequestContext.get().setRequestParameter(key, jsContent.getString(key));
+        }
+      } catch (JSONException e) {
+        log.error("Couldn't read parameter from the request: " + key, e);
+      }
+    }
+
+    RequestContext.get().setRequestParameter("inpwindowId", tab.getWindow().getId());
+    RequestContext.get().setRequestParameter("inpTabId", tab.getId());
+  }
+
   private boolean referencedEntityIsParent(BaseOBObject parentRecord, Field field) {
     Entity parentEntity = parentRecord.getEntity();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(
@@ -639,8 +660,6 @@ public class FormInitializationComponent extends BaseActionHandler {
           // We first prepare the data so that it's usable by the callout
           formatColumnValues(columnValues, fields);
           RequestContext.get().setRequestParameter("inpLastFieldChanged", lastFieldChanged);
-          RequestContext.get().setRequestParameter("inpwindowId", tab.getWindow().getId());
-          RequestContext.get().setRequestParameter("inpTabId", tab.getId());
           // We then execute the callout
           CalloutServletConfig config = new CalloutServletConfig(calloutClassName, RequestContext
               .getServletContext());
