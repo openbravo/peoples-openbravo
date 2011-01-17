@@ -1557,6 +1557,8 @@ public abstract class AcctServer {
           && vendorAccounts.get(0).getVendorPrepayment() != null && isPrepayment)
         strValidCombination = vendorAccounts.get(0).getVendorPrepayment().getId();
     }
+    if (strValidCombination.equals(""))
+      return null;
     return new Account(conn, strValidCombination);
   } // getAccount
 
