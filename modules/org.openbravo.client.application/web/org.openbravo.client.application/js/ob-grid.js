@@ -93,9 +93,9 @@ isc.OBGrid.addProperties({
     this.filterEditorProperties = {
       // is needed to display information in the checkbox field 
       // header in the filter editor row
-      //      isCheckboxField: function(){
-      //        return false;
-      //      },
+      isCheckboxField: function(){
+        return false;
+      },
       
       filterImg: {
         src: '[SKINIMG]../../org.openbravo.client.application/images/grid/funnel-icon.png'
