@@ -297,7 +297,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
 
       ArrayList<String> calledCallouts = new ArrayList<String>();
-      runCallouts(columnValues, fields, calledCallouts, calloutsToCall, lastfieldChanged, messages);
+      runCallouts(columnValues, fields, tab, calledCallouts, calloutsToCall, lastfieldChanged,
+          messages);
 
       JSONObject finalObject = new JSONObject();
       try {
@@ -601,7 +602,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   // TODO: This method should probably be transformed into a utility class
-  private void runCallouts(HashMap<String, JSONObject> columnValues, List<Field> fields,
+  private void runCallouts(HashMap<String, JSONObject> columnValues, List<Field> fields, Tab tab,
       ArrayList<String> calledCallouts, ArrayList<String> calloutsToCall,
       ArrayList<String> lastfieldChangedList, ArrayList<String> messages) {
 
@@ -638,7 +639,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           // We first prepare the data so that it's usable by the callout
           formatColumnValues(columnValues, fields);
           RequestContext.get().setRequestParameter("inpLastFieldChanged", lastFieldChanged);
-
+          RequestContext.get().setRequestParameter("inpwindowId", tab.getWindow().getId());
+          RequestContext.get().setRequestParameter("inpTabId", tab.getId());
           // We then execute the callout
           CalloutServletConfig config = new CalloutServletConfig(calloutClassName, RequestContext
               .getServletContext());
