@@ -70,10 +70,13 @@ isc.OBStandardWindow.addProperties({
     
     this.viewProperties.standardWindow = this;
     this.viewProperties.isRootView = true;
+    if (this.command === 'NEW') {
+      this.viewProperties.allowDefaultEditMode = false;
+    }
     this.view = isc.OBStandardView.create(this.viewProperties);
     this.addView(this.view);
     this.addMember(this.view);
-    
+
     this.Super('initWidget', arguments);
     
     // is set later after creation
@@ -120,12 +123,6 @@ isc.OBStandardWindow.addProperties({
     }
   },
   
-  show: function(){
-    var ret = this.Super('show', arguments);
-    this.setFocusInView();
-    return ret;
-  },
-  
   // is called from the main app tabset
   tabDeselected: function(tabNum, tabPane, ID, tab, newTab){
     // note: explicitly checking for grid visibility as the form
@@ -165,8 +162,14 @@ isc.OBStandardWindow.addProperties({
   
   setFocusInView: function(){
     var currentView = this.activeView || this.view;
-    currentView.setViewFocus();
     currentView.setAsActiveView(true);
+    currentView.setViewFocus();
+  },
+
+  show: function() {
+    var ret = this.Super('show', arguments);
+    this.setFocusInView();
+    return ret;
   },
   
   draw: function(){
@@ -185,6 +188,10 @@ isc.OBStandardWindow.addProperties({
       delete this.targetRecordId;
       delete this.targetTabId;
       delete this.targetEntity;
+    } else if (this.command === 'NEW') {
+      var currentView = this.activeView || this.view;
+      currentView.editRecord();
+      this.command = null;
     }
     
     this.setFocusInView();

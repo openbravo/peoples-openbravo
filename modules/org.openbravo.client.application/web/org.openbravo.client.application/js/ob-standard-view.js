@@ -187,6 +187,11 @@ isc.OBStandardView.addProperties({
       leftMembers: [isc.OBToolbarIconButton.create(isc.OBToolbar.NEW_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.SAVE_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.UNDO_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.DELETE_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.REFRESH_BUTTON_PROPERTIES)],
       rightMembers: rightMemberButtons
     });
+
+    // disable new for the child views
+    if (!this.isRootView) { 
+      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, true);
+    }
     
     this.Super('initWidget', arguments);
   },
@@ -321,7 +326,9 @@ isc.OBStandardView.addProperties({
       }
     }
     if (this.viewForm) {
+      // note this call messes up the focus handling also
       this.viewForm.setDataSource(this.dataSource, this.viewForm.fields);
+      this.dataSourceSet = true;
     }
   },
   
@@ -406,6 +413,7 @@ isc.OBStandardView.addProperties({
     var me = this;
     if (this.tabId && this.tabId.length > 0) {
       this.formGridLayout = isc.HLayout.create({
+        canFocus: true,
         width: '100%',
         height: '*',
         overflow: 'visible',
@@ -451,6 +459,7 @@ isc.OBStandardView.addProperties({
       // in ob-view-form-linked-items is still called on the correct
       // object 
       this.statusBarFormLayout = isc.VLayout.create({
+        canFocus: true,
         width: '100%',
         height: '*',
         visibility: 'hidden',
@@ -459,6 +468,7 @@ isc.OBStandardView.addProperties({
       
       // to make sure that the form gets the correct scrollbars
       formContainerLayout = isc.VLayout.create({
+        canFocus: true,
         width: '100%',
         height: '*',
         overflow: 'auto'
@@ -472,6 +482,7 @@ isc.OBStandardView.addProperties({
       
       // wrap the messagebar and the formgridlayout in a VLayout
       var gridFormMessageLayout = isc.VLayout.create({
+        canFocus: true,
         height: '100%',
         width: '100%',
         overflow: 'auto'
@@ -481,6 +492,7 @@ isc.OBStandardView.addProperties({
       
       // and place the active bar to the left of the form/grid/messagebar
       var activeGridFormMessageLayout = isc.HLayout.create({
+        canFocus: true,
         height: '100%',
         width: '100%',
         overflow: 'hidden'
@@ -757,6 +769,14 @@ isc.OBStandardView.addProperties({
   // child views also
   editRecord: function(record, preventFocus){
     
+    // wait till there is a datasource
+    // this also solves focus issues as the datasource
+    // set messes up focus
+    if (!this.dataSourceSet) {
+      this.delayCall('editRecord', arguments, 500);
+      return;
+    }
+
     this.messageBar.hide();
     
     if (!this.isShowingForm) {
@@ -1055,8 +1075,8 @@ isc.OBStandardView.addProperties({
   isViewVisible: function(){
     // note this.tab.isVisible is done as the tab is visible earlier than
     // the pane
-    return (!this.tab || this.tab.isVisible()) && this.parentTabSet.getSelectedTabNumber() ===
-              this.parentTabSet.getTabNumber(this.tab);
+    return (!this.tab || this.tab.isVisible()) && (!this.parentTabSet || this.parentTabSet.getSelectedTabNumber() ===
+              this.parentTabSet.getTabNumber(this.tab));
   },
   
   // ++++++++++++++++++++ Button Actions ++++++++++++++++++++++++++
