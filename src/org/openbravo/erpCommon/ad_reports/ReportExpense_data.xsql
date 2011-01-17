@@ -88,7 +88,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT COUNT(*) FROM C_UOM
+      SELECT COUNT(*) AS COUNT FROM C_UOM
       WHERE C_UOM_ID = ? AND UOMSYMBOL='h'
      ]]></Sql>
     <Parameter name="cUomId"/>
