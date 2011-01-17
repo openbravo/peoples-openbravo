@@ -84,6 +84,16 @@
     <Parameter name="cUomId"/>
   </SqlMethod>
 
+   <SqlMethod name="selectUOM2" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT COUNT(*) FROM C_UOM
+      WHERE C_UOM_ID = ? AND UOMSYMBOL='h'
+     ]]></Sql>
+    <Parameter name="cUomId"/>
+  </SqlMethod>
+
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>

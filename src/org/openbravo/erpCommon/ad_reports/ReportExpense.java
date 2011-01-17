@@ -133,7 +133,8 @@ public class ReportExpense extends HttpSecureAppServlet {
           && !data1[i].horas.trim().equals("0") && data1[i].cuomid != null
           && !data1[i].cuomid.equals("")) {
         String count = ReportExpenseData.selectUOM(this, data1[i].cuomid);
-        if (Integer.parseInt(count) == 0) {
+        String count2 = ReportExpenseData.selectUOM2(this, data1[i].cuomid);
+        if (Integer.parseInt(count) + Integer.parseInt(count2) == 0) {
           advisePopUp(request, response, "ERROR", Utility.messageBD(this, "Error", vars
               .getLanguage()), Utility.messageBD(this, "NoConversionDayUom", vars.getLanguage()));
         }
@@ -196,7 +197,8 @@ public class ReportExpense extends HttpSecureAppServlet {
           && !data1[i].horas.trim().equals("0") && data1[i].cuomid != null
           && !data1[i].cuomid.equals("")) {
         String count = ReportExpenseData.selectUOM(this, data1[i].cuomid);
-        if (Integer.parseInt(count) == 0) {
+        String count2 = ReportExpenseData.selectUOM2(this, data1[i].cuomid);
+        if (Integer.parseInt(count) + Integer.parseInt(count2) == 0) {
           advisePopUp(request, response, "ERROR", Utility.messageBD(this, "Error", vars
               .getLanguage()), Utility.messageBD(this, "NoConversionDayUom", vars.getLanguage()));
         }

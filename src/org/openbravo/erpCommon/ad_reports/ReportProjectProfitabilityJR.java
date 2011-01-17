@@ -150,7 +150,8 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
           && !data[i].realservices.trim().equals("0") && data[i].cuomid != null
           && !data[i].cuomid.equals("")) {
         String count = ReportExpenseData.selectUOM(this, data[i].cuomid);
-        if (Integer.parseInt(count) == 0) {
+        String count2 = ReportExpenseData.selectUOM2(this, data[i].cuomid);
+        if (Integer.parseInt(count) + Integer.parseInt(count2) == 0) {
           advisePopUp(request, response, "ERROR", Utility.messageBD(this, "Error", vars
               .getLanguage()), Utility.messageBD(this, "NoConversionDayUom", vars.getLanguage()));
         }
