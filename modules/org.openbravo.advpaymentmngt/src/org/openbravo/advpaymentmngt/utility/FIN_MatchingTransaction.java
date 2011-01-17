@@ -54,4 +54,13 @@ public class FIN_MatchingTransaction {
       throw new NoAlgorithmFoundException(
           "No algorithm has been defined to match bank statement lines");
   }
+
+  public void unmatch(FIN_FinaccTransaction _transaction) throws ServletException,
+      NoAlgorithmFoundException {
+    if (algorithm != null)
+      algorithm.unmatch(_transaction);
+    else
+      throw new NoAlgorithmFoundException("No algorithm has been defined to unmatch");
+    return;
+  }
 }

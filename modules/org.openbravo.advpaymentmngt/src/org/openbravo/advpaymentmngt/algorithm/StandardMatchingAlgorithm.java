@@ -45,4 +45,8 @@ public class StandardMatchingAlgorithm implements FIN_MatchingAlgorithm {
 
     return new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
   }
+
+  public void unmatch(FIN_FinaccTransaction _transaction) throws ServletException {
+    return;
+  }
 }

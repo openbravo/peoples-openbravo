@@ -29,4 +29,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 public interface FIN_MatchingAlgorithm {
   public FIN_MatchedTransaction match(FIN_BankStatementLine _bankStatementLine,
       List<FIN_FinaccTransaction> excluded) throws ServletException;
+
+  public void unmatch(FIN_FinaccTransaction _transaction) throws ServletException;
 }
