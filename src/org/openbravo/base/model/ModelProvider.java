@@ -643,6 +643,13 @@ public class ModelProvider implements OBSingleton {
                 p.getReferencedProperty().getEntity()))) {
           continue;
         }
+
+        if (p.getReferencedProperty() == null) {
+          // Log message in case referenced property is null, this will cause a NPE, which is not
+          // solved but at least relevant info is shown to fix it in AD
+          log.error("Referenced property is null for " + e.getName() + "." + p.getName());
+        }
+
         final Entity parent = p.getReferencedProperty().getEntity();
         createChildProperty(parent, p);
       }
