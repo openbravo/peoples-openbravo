@@ -240,7 +240,7 @@ public class StaticResourceComponent extends BaseComponent {
     if (!outFile.exists()) {
       try {
         log.debug("Writing file: " + outFile.getAbsolutePath());
-        FileUtils.writeStringToFile(outFile, output);
+        FileUtils.writeStringToFile(outFile, output, "UTF-8");
       } catch (Exception e) {
         log.error("Error writing file: " + e.getMessage(), e);
       }
