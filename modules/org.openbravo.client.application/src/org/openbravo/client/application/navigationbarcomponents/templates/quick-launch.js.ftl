@@ -120,7 +120,7 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
            // sets width to 0 on purpose
            return 'cursor:default;';
          },
-         
+                  
          selectOnFocus: true,
          textMatchStyle: 'substring',
          width: '100%',
@@ -161,8 +161,16 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
      
          isTestEnvironment: OB.Utilities.hasUrlParameter('window', 'new'),
          
-         pickValue: function() {
+         pickValue: function(theValue) {
+            // HACK: set this temporary value to prevent a temporary 
+            // display of the db id
+            if (!this.getValueMap()) {
+              this.setValueMap({});
+            }
+            this.getValueMap()[theValue] = '';
+
             this.Super('pickValue', arguments);
+
             if (this.getSelectedRecord()) {
              var value = this.getValue();
              var record  = this.getSelectedRecord();

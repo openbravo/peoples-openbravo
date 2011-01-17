@@ -285,6 +285,7 @@ isc.ClassFactory.defineClass('OBPopUpTextAreaItem', PopUpTextAreaItem);
 
 isc.OBPopUpTextAreaItem.addProperties({
   validateOnExit: true,
+  canFocus: true,
   popUpOnEnter: true
 });
 
@@ -367,6 +368,16 @@ isc.OBListItem.addProperties({
     }
     return ret;
   },
+
+  // prevent db-ids from showing up, works for SelectItem
+  // not for ComboboxItem
+  mapValueToDisplay : function(value) {  
+    var ret = this.Super('mapValueToDisplay', arguments);
+    if (ret === value) {
+      return '&nbsp;';
+    }
+    return ret;
+  },
   
   getValueMap: function(){
     if (this.itemData) {
@@ -399,6 +410,16 @@ isc.OBFKItem.addProperties({
   
   itemData: null,
   optionDataSource: null,
+
+  // prevent db-ids from showing up, works for SelectItem
+  // not for ComboboxItem
+  mapValueToDisplay : function(value) {  
+    var ret = this.Super('mapValueToDisplay', arguments);
+    if (ret === value) {
+      return '&nbsp;';
+    }
+    return ret;
+  },
   
   getDataSource: function(){
     return this.getOptionDataSource();
@@ -479,7 +500,7 @@ isc.OBDateChooser.addProperties({
 if (isc.OBDateChooser) {  // To force SC to load OBDateChooser instead of DateChooser
   isc.DateChooser.getSharedDateChooser = function(properties) {
     return isc.OBDateChooser.create(properties);
-  }
+  };
 }
 
 // == OBDateItem ==
