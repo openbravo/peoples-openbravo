@@ -44,6 +44,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.invoice.Invoice;
@@ -507,8 +508,9 @@ public class InvoiceMatchingAlgorithm implements FIN_MatchingAlgorithm {
     try {
       if ("Y".equals(transaction.getPosted())) {
         List<AccountingFact> accountingEntries = FIN_Utility.getAllInstances(AccountingFact.class,
-            new Value(AccountingFact.PROPERTY_TABLE, FIN_FINACC_TRANSACTION_TABLE), new Value(
-                AccountingFact.PROPERTY_RECORDID, transaction.getId()));
+            new Value(AccountingFact.PROPERTY_TABLE, OBDal.getInstance().get(Table.class,
+                FIN_FINACC_TRANSACTION_TABLE)), new Value(AccountingFact.PROPERTY_RECORDID,
+                transaction.getId()));
         for (AccountingFact accountingEntry : accountingEntries) {
           OBDal.getInstance().remove(accountingEntry);
           OBDal.getInstance().flush();
@@ -537,8 +539,8 @@ public class InvoiceMatchingAlgorithm implements FIN_MatchingAlgorithm {
     try {
       if ("Y".equals(payment.getPosted())) {
         List<AccountingFact> accountingEntries = FIN_Utility.getAllInstances(AccountingFact.class,
-            new Value(AccountingFact.PROPERTY_TABLE, FIN_PAYMENT_TABLE), new Value(
-                AccountingFact.PROPERTY_RECORDID, payment.getId()));
+            new Value(AccountingFact.PROPERTY_TABLE, OBDal.getInstance().get(Table.class,
+                FIN_PAYMENT_TABLE)), new Value(AccountingFact.PROPERTY_RECORDID, payment.getId()));
         for (AccountingFact accountingEntry : accountingEntries) {
           OBDal.getInstance().remove(accountingEntry);
           OBDal.getInstance().flush();
