@@ -69,13 +69,14 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   setWidgetHeight: function (){
     var currentHeight = this.getHeight(), 
     //currentBodyHeight = this.body.getHeight(),
-    headerHeight = this.headerDefaults.height,
+    edgeTop = this.edgeTop,
+    edgeBottom = this.edgeBottom,
     newGridHeight = this.grid.headerHeight +
                   (this.grid.cellHeight * (this.parameters.RowsNumber ? this.parameters.RowsNumber : 10)) +
                   this.grid.summaryRowHeight + 2;
     this.grid.setHeight(newGridHeight);
 
-    var newHeight = headerHeight + newGridHeight + 13;
+    var newHeight = edgeTop + newGridHeight + edgeBottom;
     if (this.showAllLabel.isVisible()) { newHeight += this.showAllLabel.height; }
     this.setHeight(newHeight);
     if (this.parentElement) {
