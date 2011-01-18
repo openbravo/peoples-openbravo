@@ -226,7 +226,8 @@ public class StaticResourceComponent extends BaseComponent {
     // note compress, note that modules are cached in memory
     // when changing development status, system needs to be restarted.
     final String output;
-    if (!isInDevelopment()) {
+    // in classicmode the isc combined is included, compressing that gives errors
+    if (!isInDevelopment() && !classicMode) {
       output = JSCompressor.getInstance().compress(sb.toString());
     } else {
       output = sb.toString();
