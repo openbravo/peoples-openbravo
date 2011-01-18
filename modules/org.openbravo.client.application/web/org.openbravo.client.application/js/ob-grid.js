@@ -167,7 +167,7 @@ isc.OBGrid.addProperties({
     for (var prop in criteria) {
       if (criteria.hasOwnProperty(prop)) {
         var field = this.filterEditor.getField(prop);
-        if (this.isValidFilterField(field) && criteria[prop]) {
+        if (this.isValidFilterField(field) && (criteria[prop] === false || criteria[prop])) {
           this.filterImage.show(true);
           return;
         }
