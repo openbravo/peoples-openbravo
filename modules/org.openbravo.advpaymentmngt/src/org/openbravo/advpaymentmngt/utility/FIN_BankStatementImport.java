@@ -308,8 +308,6 @@ public abstract class FIN_BankStatementImport {
 
       whereClause.append(" as bp ");
       whereClause.append(" where bp." + BusinessPartner.PROPERTY_NAME + " = '" + partnername + "'");
-      whereClause.append(" and bp." + BusinessPartner.PROPERTY_CLIENT + " = "
-          + OBContext.getOBContext().getCurrentClient());
       final OBQuery<BusinessPartner> bp = OBDal.getInstance().createQuery(BusinessPartner.class,
           whereClause.toString());
       List<BusinessPartner> matchedBP = bp.list();
