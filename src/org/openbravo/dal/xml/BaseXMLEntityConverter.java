@@ -177,16 +177,8 @@ public class BaseXMLEntityConverter implements OBNotSingleton {
           if (p.isClientOrOrganization()) {
             continue;
           }
-          // do not replace the collection, this dereferencing an orphan-delete collection
-          if (p.isOneToMany()) {
-            @SuppressWarnings("unchecked")
-            final List<Object> otherUniqueValues = (List<Object>) otherUniqueObject
-                .get(p.getName());
-            @SuppressWarnings("unchecked")
-            final List<Object> newValues = (List<Object>) bob.get(p.getName());
-            otherUniqueValues.clear();
-            otherUniqueValues.addAll(newValues);
-          } else {
+          // do not replace one to manies
+          if (!p.isOneToMany()) {
             otherUniqueObject.set(p.getName(), bob.get(p.getName()));
           }
         }

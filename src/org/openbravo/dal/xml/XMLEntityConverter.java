@@ -248,23 +248,10 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
               }
             }
           } else if (p.isOneToMany() && p.isChild()) {
-            // resolve the content of the list
-            final List<BaseOBObject> newValues = new ArrayList<BaseOBObject>();
+            // resolve the content of the list, but do not change the list
             for (final Object o : childElement.elements()) {
               final Element listElement = (Element) o;
-              newValues.add(processEntityElement(listElement.getName(), listElement, true));
-            }
-            // get the currentvalue and compare
-            final List<BaseOBObject> currentValues = (List<BaseOBObject>) currentValue;
-
-            if (!newValues.equals(currentValues)) {
-              if (!preventRealUpdate) {
-                // TODO: is this efficient? Or will it even work
-                // with hibernate first removing all?
-                currentValues.clear();
-                currentValues.addAll(newValues);
-                updated = true;
-              }
+              processEntityElement(listElement.getName(), listElement, true);
             }
           } else {
             Check.isTrue(!p.isOneToMany(), "One to many property not allowed here");

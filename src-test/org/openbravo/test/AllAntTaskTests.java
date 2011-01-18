@@ -65,6 +65,7 @@ import org.openbravo.test.xml.EntityXMLImportTestReference;
 import org.openbravo.test.xml.EntityXMLImportTestSingle;
 import org.openbravo.test.xml.EntityXMLImportTestWarning;
 import org.openbravo.test.xml.EntityXMLIssues;
+import org.openbravo.test.xml.ExportImportNoDeleteChildrenTest;
 import org.openbravo.test.xml.UniqueConstraintImportTest;
 
 /**
@@ -136,6 +137,7 @@ public class AllAntTaskTests {
     suite.addTestSuite(EntityXMLIssues.class);
     suite.addTestSuite(UniqueConstraintImportTest.class);
     suite.addTestSuite(DatasetExportTest.class);
+    suite.addTestSuite(ExportImportNoDeleteChildrenTest.class);
 
     // preferences
     suite.addTestSuite(PreferenceTest.class);
