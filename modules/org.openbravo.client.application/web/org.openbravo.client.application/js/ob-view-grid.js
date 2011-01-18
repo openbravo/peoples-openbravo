@@ -558,6 +558,7 @@ isc.OBViewGrid.addProperties({
             filterCriteria[field.name] = value;
           }
           grid.setCriteria(filterCriteria);
+          grid.checkShowFilterFunnelIcon(grid.getCriteria());
           grid.filterData(grid.getCriteria());
         }
       });

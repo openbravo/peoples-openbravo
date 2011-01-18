@@ -164,6 +164,10 @@ isc.OBGrid.addProperties({
   
   // show or hide the filter button
   filterEditorSubmit: function(criteria){
+    this.checkShowFilterFunnelIcon(criteria);
+  },
+  
+  checkShowFilterFunnelIcon: function (criteria) {
     for (var prop in criteria) {
       if (criteria.hasOwnProperty(prop)) {
         var field = this.filterEditor.getField(prop);
