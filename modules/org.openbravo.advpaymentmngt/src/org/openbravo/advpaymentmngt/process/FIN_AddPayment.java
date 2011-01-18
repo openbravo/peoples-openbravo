@@ -417,6 +417,10 @@ public class FIN_AddPayment {
                   .getBusinessPartner().getIdentifier());
           FieldProviderFactory.setField(data[i], "paymentMethodName", FIN_PaymentScheduleDetails[i]
               .getInvoicePaymentSchedule().getFinPaymentmethod().getName());
+          if (FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getAPRMPaymentPriority() != null) {
+            FieldProviderFactory.setField(data[i], "gridLineColor", FIN_PaymentScheduleDetails[i]
+                .getInvoicePaymentSchedule().getAPRMPaymentPriority().getColor());
+          }
         } else {
           FieldProviderFactory.setField(data[i], "dueDate", dateFormater.format(
               FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getDueDate()).toString());
@@ -428,10 +432,14 @@ public class FIN_AddPayment {
                   .getBusinessPartner().getIdentifier());
           FieldProviderFactory.setField(data[i], "paymentMethodName", FIN_PaymentScheduleDetails[i]
               .getOrderPaymentSchedule().getFinPaymentmethod().getName());
+          if (FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getAPRMPaymentPriority() != null) {
+            FieldProviderFactory.setField(data[i], "gridLineColor", FIN_PaymentScheduleDetails[i]
+                .getOrderPaymentSchedule().getAPRMPaymentPriority().getColor());
+          }
         }
-
         FieldProviderFactory.setField(data[i], "outstandingAmount", FIN_PaymentScheduleDetails[i]
             .getAmount().toString());
+
         String strPaymentAmt = "";
         String strDifference = "";
         if (firstLoad && (selectedScheduledPaymentDetails.contains(FIN_PaymentScheduleDetails[i]))

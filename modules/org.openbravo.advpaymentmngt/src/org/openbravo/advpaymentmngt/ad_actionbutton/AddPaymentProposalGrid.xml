@@ -40,6 +40,7 @@
     <FIELD id="inpPaymentAmount" format="euroEdition" attribute="value">paymentAmount</FIELD>
     <FIELD id="fieldDifference" attribute="name" replace="xx">finScheduledPaymentDetailId</FIELD>
     <FIELD id="fieldDifference" format="euroEdition">difference</FIELD>
+    <FIELD id="funcEvenOddRow" attribute="bgcolor" replace="#E1E1E1">gridLineColor</FIELD>
 
     <SECTION id="sectionLinesDetail"/>
   </structure>
