@@ -61,6 +61,14 @@ BEGIN
                :OLD.ISCONFIGSCRIPTAPPLIED  != :NEW.ISCONFIGSCRIPTAPPLIED)  THEN
     :NEW.UPDATED := :OLD.UPDATED;
   END IF;
+  
+  IF (:OLD.ISCONFIGSCRIPTAPPLIED  != :NEW.ISCONFIGSCRIPTAPPLIED
+      AND :NEW.STATUS = 'A'
+      AND :NEW.STATUS = :OLD.STATUS) THEN
+    -- After changing Is Config Script Applied value, set the template as Installed
+    -- to show 'rebuild now' in MMC
+    :NEW.STATUS := 'I';
+  END IF;
 END AD_MODULE_TRG2
 ]]></body>
     </trigger>
