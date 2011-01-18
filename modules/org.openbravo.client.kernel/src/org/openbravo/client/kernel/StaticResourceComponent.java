@@ -187,7 +187,7 @@ public class StaticResourceComponent extends BaseComponent {
                     log.error(file.getAbsolutePath() + " cannot be read");
                     continue;
                   }
-                  String resourceContents = FileUtils.readFileToString(file);
+                  String resourceContents = FileUtils.readFileToString(file, "UTF-8");
                   sb.append(resourceContents).append("\n");
                 } catch (Exception e) {
                   log.error("Error reading file: " + resource, e);
