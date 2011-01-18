@@ -50,14 +50,15 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       final Window window = OBDal.getInstance().get(Window.class, windowId);
       final String roleId = OBContext.getOBContext().getRole().getId();
       final DalConnectionProvider dalConnectionProvider = new DalConnectionProvider();
-      final JSONObject jsonReadOnly = new JSONObject();
+      final JSONObject jsonUIPattern = new JSONObject();
       for (Tab tab : window.getADTabList()) {
         final boolean readOnlyAccess = org.openbravo.erpCommon.utility.WindowAccessData
             .hasReadOnlyAccess(dalConnectionProvider, roleId, tab.getId());
-        jsonReadOnly.put(tab.getId(), readOnlyAccess || tab.getUIPattern().equals("RO"));
+        String uiPattern = readOnlyAccess ? "RO" : tab.getUIPattern();
+        jsonUIPattern.put(tab.getId(), uiPattern);
       }
       final JSONObject json = new JSONObject();
-      json.put("readOnlyDefinition", jsonReadOnly);
+      json.put("uiPattern", jsonUIPattern);
       final String autoSaveStr = Preferences.getPreferenceValue("Autosave", false, OBContext
           .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
           OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), window);

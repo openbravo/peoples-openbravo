@@ -99,11 +99,14 @@ isc.OBStandardWindow.addProperties({
       return;
     }
     this.getClass().windowSettingsRead = true;
-    this.getClass().readOnlyTabDefinition = data.readOnlyDefinition;
+    this.getClass().uiPattern = data.uiPattern;
     this.getClass().autoSave = data.autoSave;
     // set the views to readonly
     for (var i = 0; i < this.views.length; i++) {
-      this.views[i].setReadOnly(data.readOnlyDefinition[this.views[i].tabId]);
+      this.views[i].setReadOnly(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_READONLY);
+      this.views[i].setSingleRecord(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_SINGLERECORD);
+      
+      this.views[i].setToolBarButtonState();
     }
   },
   

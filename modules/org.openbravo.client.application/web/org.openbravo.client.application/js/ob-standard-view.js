@@ -46,7 +46,11 @@ isc.OBStandardView.addClassProperties({
   // isc.OBStandardView.STATE_IN_MID
   
   // the inactive state does not show an orange hat on the tab button
-  MODE_INACTIVE: 'Inactive'
+  MODE_INACTIVE: 'Inactive',
+  
+  UI_PATTERN_READONLY: 'RO',
+  UI_PATTERN_SINGLERECORD: 'SR',
+  UI_PATTERN_STANDARD: 'ST'  
 });
 
 isc.OBStandardView.addProperties({
@@ -158,6 +162,7 @@ isc.OBStandardView.addProperties({
   allowDefaultEditMode: true,
   
   readOnly: false,
+  singleRecord: false,
   
   isShowingForm: false,
   
@@ -188,14 +193,12 @@ isc.OBStandardView.addProperties({
       rightMembers: rightMemberButtons
     });
 
-    // disable new for the child views
-    if (!this.isRootView) { 
-      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, true);
-    } else {
-      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, false);
-    }
     
-    this.Super('initWidget', arguments);
+    var ret = this.Super('initWidget', arguments);
+    
+    this.setToolBarButtonState();
+
+    return ret;
   },
   
   buildStructure: function(){
@@ -548,13 +551,11 @@ isc.OBStandardView.addProperties({
   
   setReadOnly: function(readOnly){
     this.readOnly = readOnly;
-    if (readOnly) {
-      this.viewForm.readOnly = true;
-      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, true);
-      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
-      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
-      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, true);
-    }
+    this.viewForm.readOnly = readOnly;
+  },
+  
+  setSingleRecord: function(singleRecord){
+    this.singleRecord = singleRecord;
   },
   
   setViewFocus: function(){
@@ -658,12 +659,7 @@ isc.OBStandardView.addProperties({
     }
     this.viewGrid.refreshContents();
 
-    // no parent disable new
-    if (!this.getParentId()) {
-      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, true);
-    } else {
-      this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, this.readOnly);
-    }
+    this.setToolBarButtonState();
     
     // if not visible or the parent also needs to be refreshed
     // enable the following code if we don't automatically select the first
@@ -942,7 +938,7 @@ isc.OBStandardView.addProperties({
     }
     this.updateLastSelectedState();
         
-    this.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, (!this.viewGrid.getSelection() || this.viewGrid.getSelection().length === 0));
+    this.setToolBarButtonState();
 
     var tabViewPane = null;
     
@@ -960,6 +956,28 @@ isc.OBStandardView.addProperties({
     this.toolBar.refreshToolbarButtons();
   },
   
+  setToolBarButtonState: function() {
+    // validData: this is the root or there is a parent
+    var validData = this.isRootView || this.getParentId(), toolBar = this.toolBar, form = this.viewForm, grid = this.viewGrid;
+    if (this.isShowingForm) {
+      // note on purpose checking form readonly
+      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, form.isSaving || form.readOnly || this.singleRecord || !validData);
+      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, form.isSaving || form.readOnly || !validData || !form.hasChanged);
+      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO,  form.isSaving || form.readOnly || !validData || !form.hasChanged);
+      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE,  form.isSaving || form.readOnly || this.singleRecord || !validData || form.isNew);
+      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, form.isSaving || form.isNew);
+    } else {
+      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, this.readOnly || this.singleRecord || !validData);
+      // for a grid also the selected number is taken into account
+      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE,  this.readOnly || this.singleRecord || !validData || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0);
+      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, !validData);
+
+      // implement in editable grid
+      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO,  true);
+      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);      
+    }
+  },
+  
   hasSelectionStateChanged: function() {
     return (this.viewGrid.getSelectedRecords().length !== this.lastRecordSelectedCount || 
         (this.viewGrid.getSelectedRecord() && this.viewGrid.getSelectedRecord().id !== this.lastRecordSelected.id)) || 
@@ -972,7 +990,7 @@ isc.OBStandardView.addProperties({
   },
     
   getParentId: function(){
-    if (!this.parentView || !this.parentView.viewGrid.getSelectedRecord()) {
+    if (!this.parentView || !this.parentView.viewGrid.getSelectedRecords() || this.parentView.viewGrid.getSelectedRecords().length !== 1) {
       return null;
     }
     return this.parentView.viewGrid.getSelectedRecord()[OB.Constants.ID];
@@ -1105,7 +1123,7 @@ isc.OBStandardView.addProperties({
         isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmRefresh'), callback);
       } else {
         var criteria = [];
-        criteria[OB.Constants.ID] = view.viewGrid.getSelectedRecord()[OB.Constants.ID];
+        criteria[OB.Constants.ID] = view.viewForm.getValue(OB.Constants.ID);
         view.viewForm.fetchData(criteria, refreshCallback);
       }
     }

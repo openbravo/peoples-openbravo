@@ -68,13 +68,12 @@ isc.OBViewForm.addProperties({
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
     this.ignoreFirstFocusEvent = preventFocus;
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, this.view.readOnly || false);
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, this.view.readOnly || false);
     
     var ret = this.Super('editRecord', arguments);
     this.clearErrors();
+    
+    this.view.setToolBarButtonState();
+    
     this.retrieveInitialValues(false);
     
     this.view.messageBar.hide();
@@ -95,14 +94,11 @@ isc.OBViewForm.addProperties({
 
     this.setNewState(true);
     
-    // disable relevant buttons
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, true);
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, true);
-    
     var ret = this.Super('editNewRecord', arguments);
     this.clearErrors();
+    
+    this.view.setToolBarButtonState();
+    
     this.retrieveInitialValues(true);
     
     this.resetFocusItem();
@@ -253,12 +249,10 @@ isc.OBViewForm.addProperties({
     }
     if (!data.writable || this.view.readOnly) {
       this.readOnly = true;
-      this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
-      this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
-      this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, true);
     } else {
       this.readOnly = false;
     }
+    this.view.setToolBarButtonState();
     this.focus();
   },
   
@@ -391,8 +385,7 @@ isc.OBViewForm.addProperties({
     // remove the message
     this.hasChanged = true;
     this.view.messageBar.hide();
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, false);
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, false);
+    this.view.setToolBarButtonState();
   },
   
   resetForm: function(){
@@ -403,10 +396,9 @@ isc.OBViewForm.addProperties({
   
   undo: function(){
     this.view.messageBar.hide();
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
     this.resetValues();
     this.hasChanged = false;
+    this.view.setToolBarButtonState();
   },
   
   // action defines the action to call when the save succeeds
@@ -464,9 +456,11 @@ isc.OBViewForm.addProperties({
   
   saveRow: function(action, autoSave, forceDialogOnFailure){
     var i, length, flds, form = this;
-
-    // disable the save
-    this.view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);
+    
+    form.isSaving = true;
+    
+    // disable some buttons
+    this.view.setToolBarButtonState();
     
     var callback = function(resp, data, req){
       var index1, index2, errorCode, view = form.view;
@@ -477,10 +471,7 @@ isc.OBViewForm.addProperties({
         form.rememberValues();
         
         view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_SaveSuccess'));
-        // disable undo, enable delete
-        view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO, true);
-        view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE, false);
-        view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, false);
+        
         if (form.isNew) {
           view.viewGrid.updateRowCountDisplay();
           view.viewGrid.targetRecordId = data.id;
@@ -492,15 +483,16 @@ isc.OBViewForm.addProperties({
         
         this.setNewState(false);
         this.hasChanged = false;
+
         // success invoke the action:
         form.callAutoSaveAction(action);
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
-        view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, false);
         form.handleFieldErrors(resp.errors, autoSave);
       } else {
         view.setErrorMessageFromResponse(resp, data, req);
-        view.toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, false);
       }
+
+      form.isSaving = false;
       
       // an error occured, show a popup
       if (status !== isc.RPCResponse.STATUS_SUCCESS) {
@@ -516,6 +508,7 @@ isc.OBViewForm.addProperties({
       // from now on
       this.setAutoSaveFormInActiveView(null);
       form.inAutoSave = false;
+      view.setToolBarButtonState();
       return false;
     };
     
@@ -532,6 +525,8 @@ isc.OBViewForm.addProperties({
         this.autoSaveConfirmAction(action);
       }
       form.inAutoSave = false;
+      form.isSaving = false;
+      view.setToolBarButtonState();
       return;
     } else {
       // remove the error message if any
