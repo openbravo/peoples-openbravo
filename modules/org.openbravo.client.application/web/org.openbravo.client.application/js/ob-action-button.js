@@ -22,11 +22,8 @@ OB.ActionButton.executingProcess = null;
 
 isc.ClassFactory.defineClass('OBToolbarActionButton', isc.OBToolbarTextButton);
 
-isc.OBToolbarTextButton.addProperties( {
-  initWidget: function(properties){
-    //Hide buttons by default, they will be shown if needed by the refresh method
-    this.hide();
-  },
+isc.OBToolbarActionButton.addProperties( {
+  visible: false,
   
   action : function() {
     this.runProcess();
@@ -93,7 +90,7 @@ isc.OBToolbarTextButton.addProperties( {
     var theView = this.view;
     this.view.refresh(function(){
         theView.getTabMessage();
-        theView.toolBar.refreshToolbarButtons();
+        theView.toolBar.refreshCustomButtons();
       });
 
     OB.ActionButton.executingProcess = null;

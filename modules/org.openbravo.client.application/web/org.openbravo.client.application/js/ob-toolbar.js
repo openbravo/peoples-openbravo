@@ -557,11 +557,11 @@ isc.OBToolbar.addProperties({
     return;
   },
   
-  // ** {{{ refreshToolbarButtons }}} **
+  // ** {{{ refreshCustomButtons }}} **
   //
-  // Refreshes all buttons in the toolbar based on current record selection
+  // Refreshes all the custom buttons in the toolbar based on current record selection
   //
-  refreshToolbarButtons: function(){
+  refreshCustomButtons: function(){
     var buttons = this.getRightMembers();
     var hideAllButtons = this.view.viewGrid.getSelectedRecords().length !== 1;
     

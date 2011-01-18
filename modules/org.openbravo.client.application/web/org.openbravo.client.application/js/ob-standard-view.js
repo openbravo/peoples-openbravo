@@ -659,8 +659,8 @@ isc.OBStandardView.addProperties({
     }
     this.viewGrid.refreshContents();
 
-    this.setToolBarButtonState();
-    
+    this.setToolBarButtonState();    
+
     // if not visible or the parent also needs to be refreshed
     // enable the following code if we don't automatically select the first
     // record
@@ -953,7 +953,7 @@ isc.OBStandardView.addProperties({
     this.updateChildCount();
     this.updateTabTitle();
     
-    this.toolBar.refreshToolbarButtons();
+    this.toolBar.refreshCustomButtons();
   },
   
   setToolBarButtonState: function() {
@@ -976,6 +976,9 @@ isc.OBStandardView.addProperties({
       toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO,  true);
       toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);      
     }
+
+    // and refresh the process toolbar buttons
+    this.toolBar.refreshCustomButtons();
   },
   
   hasSelectionStateChanged: function() {
