@@ -59,9 +59,14 @@ isc.OBViewForm.addProperties({
   
   // is set in the OBLinkedItemSectionItem.initWidget
   linkedItemSection: null,
+
+  setHasChanged: function(value) {
+    this.hasChanged = value;
+    this.view.updateTabTitle();
+  },
   
   editRecord: function(record, preventFocus){
-    this.hasChanged = false;
+    this.setHasChanged(false);
 
     this.setNewState(false);
     
@@ -90,7 +95,7 @@ isc.OBViewForm.addProperties({
     // the focus event will set the active view
     this.ignoreFirstFocusEvent = preventFocus;
     
-    this.hasChanged = false;
+    this.setHasChanged(false);
 
     this.setNewState(true);
     
@@ -383,7 +388,7 @@ isc.OBViewForm.addProperties({
   
   itemChangeActions: function(){
     // remove the message
-    this.hasChanged = true;
+    this.setHasChanged(true);
     this.view.messageBar.hide();
     this.view.setToolBarButtonState();
   },
@@ -391,13 +396,13 @@ isc.OBViewForm.addProperties({
   resetForm: function(){
     this.resetValues();
     this.clearErrors();
-    this.hasChanged = false;
+    this.setHasChanged(false);
   },
   
   undo: function(){
     this.view.messageBar.hide();
     this.resetValues();
-    this.hasChanged = false;
+    this.setHasChanged(false);
     this.view.setToolBarButtonState();
   },
   
@@ -482,7 +487,7 @@ isc.OBViewForm.addProperties({
         view.viewGrid.selectRecordById(data.id);
         
         this.setNewState(false);
-        this.hasChanged = false;
+        this.setHasChanged(false);
 
         // success invoke the action:
         form.callAutoSaveAction(action);

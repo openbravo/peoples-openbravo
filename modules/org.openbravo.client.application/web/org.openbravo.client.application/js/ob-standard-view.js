@@ -1055,13 +1055,19 @@ isc.OBStandardView.addProperties({
     var prefix = '';
     var suffix = '';
     
-    if (this.isShowingForm && this.viewForm.isNew) {
+    if (this.isShowingForm && (this.viewForm.isNew || this.viewForm.hasChanged)) {
       if (isc.Page.isRTL()) {
         suffix = ' *';
       } else {
         prefix = '* ';
       }
-    }
+    }/* else {  // To avoid tab width grow each time the * is shown
+      if (isc.Page.isRTL()) {
+        suffix = ' <span style="color: transparent">*</span>';
+      } else {
+        prefix = '<span style="color: transparent">*</span> ';
+      }
+    }*/
     
     // store the original tab title
     if (!this.originalTabTitle) {
