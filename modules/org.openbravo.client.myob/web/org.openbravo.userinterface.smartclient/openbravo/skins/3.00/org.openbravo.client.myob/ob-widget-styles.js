@@ -21,12 +21,12 @@ isc.OBWidget.addProperties({
   showEdges:true,
   edgeImage: "[SKINIMG]../../org.openbravo.client.myob/images/widget/window.png",
   customEdges:null,
-  edgeSize:6,
+  edgeSize:2,
   edgeTop:27,
-  edgeBottom:6,
+  edgeBottom:2,
   edgeOffsetTop:2,
-  edgeOffsetRight:5,
-  edgeOffsetBottom:5,
+  edgeOffsetRight:2,
+  edgeOffsetBottom:2,
   showHeaderBackground:false, // part of edges
   showHeaderIcon:true,
 
