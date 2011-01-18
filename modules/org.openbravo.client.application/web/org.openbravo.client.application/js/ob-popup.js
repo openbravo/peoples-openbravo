@@ -29,6 +29,7 @@ isc.OBPopup.addProperties( {
   autoCenter : true,
   canDragReposition : true,
   canDragResize : true,
+  keepInParentRect : true,
   showFooter : false,
   isModal : true,
   showModalMask : true,
