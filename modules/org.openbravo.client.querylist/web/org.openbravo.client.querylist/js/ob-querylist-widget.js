@@ -152,6 +152,8 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     this.totalRows = totalRows;
     if (this.viewMode === 'maximized') {
       this.setTitle(this.widgetTitle + " (" + this.totalRows + ")");
+      this.showAllLabel.hide();
+      return;
     }
     this.showAllLabel.getMembers()[0].setContents(
         OB.I18N.getLabel('OBCQL_RowsNumber', [this.parameters.RowsNumber, this.totalRows])
@@ -161,9 +163,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     } else {
       this.showAllLabel.show();
     }
-    if (this.viewMode === 'widget') {
-      this.setWidgetHeight();
-    }
+    this.setWidgetHeight();
   }
 });
 
