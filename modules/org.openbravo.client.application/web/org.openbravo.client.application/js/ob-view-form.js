@@ -258,6 +258,7 @@ isc.OBViewForm.addProperties({
       this.readOnly = false;
     }
     this.view.setToolBarButtonState();
+    this.view.toolBar.refreshCustomButtons();
     this.focus();
   },
   

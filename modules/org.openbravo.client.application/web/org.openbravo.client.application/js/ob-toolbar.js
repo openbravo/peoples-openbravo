@@ -563,7 +563,9 @@ isc.OBToolbar.addProperties({
   //
   refreshCustomButtons: function(){
     var buttons = this.getRightMembers();
-    var hideAllButtons = this.view.viewGrid.getSelectedRecords().length !== 1;
+    var numOfSelRecords = this.view.viewGrid.getSelectedRecords().length;
+    var isNew = this.view.viewForm.isNew;
+    var hideAllButtons = numOfSelRecords !== 1 && !isNew;
     
     for (var i = 0; i < buttons.length; i++) {
       if (buttons[i].refresh) {
