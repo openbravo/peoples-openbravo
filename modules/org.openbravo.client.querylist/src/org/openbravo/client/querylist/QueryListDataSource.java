@@ -18,16 +18,21 @@
  */
 package org.openbravo.client.querylist;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
@@ -50,6 +55,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
+import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 
 /**
@@ -59,6 +65,7 @@ import org.openbravo.service.json.JsonUtils;
  */
 public class QueryListDataSource extends ReadOnlyDataSourceService {
   private static final String OPTIONAL_FILTERS = "@optional_filters@";
+  private static final Logger log = Logger.getLogger(QueryListDataSource.class);
 
   /**
    * Returns the count of objects based on the passed parameters.
@@ -154,6 +161,10 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
           }
         }
         result.add(data);
+      }
+      String sortBy = parameters.get("_sortBy");
+      if (StringUtils.isNotEmpty(sortBy)) {
+        sort(sortBy, result);
       }
       return result;
     } finally {
@@ -290,4 +301,65 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
       OBContext.restorePreviousMode();
     }
   }
+
+  protected void sort(String sortBy, List<Map<String, Object>> data) {
+    Collections.sort(data, new DataComparator(sortBy));
+  }
+
+  // can only be used if the comparedBy is a string
+  private static class DataComparator implements Comparator<Map<String, Object>> {
+    private ArrayList<String> compareByArray;
+
+    public DataComparator(String compareBy) {
+      this.compareByArray = new ArrayList<String>();
+      if (compareBy.contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
+        final String[] separatedValues = compareBy.split(JsonConstants.IN_PARAMETER_SEPARATOR);
+        for (String separatedValue : separatedValues) {
+          this.compareByArray.add(separatedValue);
+        }
+      } else {
+        this.compareByArray.add(compareBy);
+      }
+    }
+
+    @Override
+    public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+      for (String compareBy : compareByArray) {
+        int ascending = 1;
+        if (compareBy.startsWith("-")) {
+          ascending = -1;
+          compareBy = compareBy.substring(1);
+        }
+        final Object v1 = o1.get(compareBy);
+        final Object v2 = o2.get(compareBy);
+        if (v1 == null) {
+          return -1 * ascending;
+        } else if (v2 == null) {
+          return 1 * ascending;
+        }
+        int returnValue = 0;
+        if (v1 instanceof Date && v2 instanceof Date) {
+          returnValue = ((Date) v1).compareTo((Date) v2) * ascending;
+        } else if (v1 instanceof Timestamp && v2 instanceof Timestamp) {
+          returnValue = ((Timestamp) v1).compareTo((Timestamp) v2) * ascending;
+        } else if (v1 instanceof Long && v2 instanceof Long) {
+          returnValue = ((Long) v1).compareTo((Long) v2) * ascending;
+        } else if (v1 instanceof BigDecimal && v2 instanceof BigDecimal) {
+          returnValue = ((BigDecimal) v1).compareTo((BigDecimal) v2) * ascending;
+        } else if (v1 instanceof String && v2 instanceof String) {
+          returnValue = ((String) v1).compareTo((String) v2) * ascending;
+        } else {
+          log.warn("Comparing on property " + compareBy + " for objects " + v1 + "/" + v2 + ". "
+              + "But value is are of different classes or an instance of a not supported class. "
+              + "Returning default compare value.");
+          returnValue = 0;
+        }
+        if (returnValue != 0) {
+          return returnValue;
+        }
+      }
+      return 0;
+    }
+  }
+
 }

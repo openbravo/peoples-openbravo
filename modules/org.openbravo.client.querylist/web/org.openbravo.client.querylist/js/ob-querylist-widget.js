@@ -188,8 +188,8 @@ isc.OBQueryListGrid.addProperties({
   showGridSummary: true,
   
   dataProperties: {
-    useClientFiltering: false,
-    useClientSorting: false
+    useClientFiltering: false//,
+    //useClientSorting: false
   },
   
   filterData: function(criteria, callback, requestProperties){
