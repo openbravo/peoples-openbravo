@@ -6,6 +6,6 @@ LEFT JOIN fin_payment_detail pd ON pd.fin_payment_id = p.fin_payment_id
 LEFT JOIN fin_payment_scheduledetail psd ON pd.fin_payment_detail_id = psd.fin_payment_detail_id
 WHERE ps.c_invoice_id IS NOT NULL AND psd.fin_payment_schedule_invoice = ps.fin_payment_schedule_id) AS lastpayment, (SELECT count(*) AS count
 FROM fin_payment_detail pd, fin_payment_scheduledetail psd
-WHERE pd.fin_payment_detail_id = psd.fin_payment_detail_id AND ps.c_invoice_id IS NOT NULL AND psd.fin_payment_schedule_invoice = ps.fin_payment_schedule_id) AS numberofpayments, ps.em_aprm_update_paymentplan, ps.em_aprm_payment_priority
+WHERE pd.fin_payment_detail_id = psd.fin_payment_detail_id AND ps.c_invoice_id IS NOT NULL AND psd.fin_payment_schedule_invoice = ps.fin_payment_schedule_id) AS numberofpayments
 FROM fin_payment_schedule ps]]></view>
   </database>

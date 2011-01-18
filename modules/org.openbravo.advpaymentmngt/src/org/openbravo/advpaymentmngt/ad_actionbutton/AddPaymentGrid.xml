@@ -37,7 +37,6 @@
     <FIELD id="fieldOutstandingAmount" format="euroEdition">outstandingAmount</FIELD>
     <FIELD id="inpPaymentAmount" attribute="name" replace="xx">finScheduledPaymentDetailId</FIELD>
     <FIELD id="inpPaymentAmount" attribute="value" format="euroEdition">paymentAmount</FIELD>
-    <FIELD id="funcEvenOddRow" attribute="bgcolor" replace="#E1E1E1">gridLineColor</FIELD>
 
     <SECTION id="sectionLinesDetail"/>
   </structure>

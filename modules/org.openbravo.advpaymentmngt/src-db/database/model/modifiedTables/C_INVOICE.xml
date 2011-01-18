@@ -9,12 +9,5 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="EM_APRM_PAYMENT_PRIORITY" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <foreign-key foreignTable="APRM_PAYMENT_PRIORITY" name="EM_APRM_INVOICE_PAY_PRIORITY">
-        <reference local="EM_APRM_PAYMENT_PRIORITY" foreign="APRM_PAYMENT_PRIORITY_ID"/>
-      </foreign-key>
     </table>
   </database>
