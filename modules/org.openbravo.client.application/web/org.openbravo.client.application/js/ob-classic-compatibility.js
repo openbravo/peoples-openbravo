@@ -350,11 +350,23 @@
       // * {{{title}}} type: String - the title to be displayed in the popup
       // * {{{theOpener}}} type: Window Object - the window object of the opener
       // of the popup. Used in window.open to allow IE know which is the opener
-      open: function(name, width, height, url, title, theOpener){
+      open: function(name, width, height, url, title, theOpener, showMinimizeControl, showMaximizeControl, showCloseControl){
+        if (showMinimizeControl !== false) {
+          showMinimizeControl = true;
+        }
+        if (showMaximizeControl !== false) {
+          showMaximizeControl = true;
+        }
+        if (showCloseControl !== false) {
+          showCloseControl = true;
+        }
         var cPopup = isc.OBClassicPopup.create({
           ID: name + '_' + cobcomp.Popup.secString,
           width: width,
           height: height,
+          showMinimizeButton: showMinimizeControl,
+          showMaximizeButton : showMaximizeControl,
+          showCloseButton: showCloseControl,
           theOpener: theOpener,
           areParamsSet: false,
           isFramesetDraw: false,
@@ -457,21 +469,21 @@
       //
       // Opens directly the "Instance Purpose" window inside a popup
       openInstancePurpose: function(){
-        cobcomp.Popup.open('InstancePurpose', 600, 500, OB.Application.contextUrl + '/ad_forms/InstancePurpose.html', '', window);
+        cobcomp.Popup.open('InstancePurpose', 600, 500, OB.Application.contextUrl + '/ad_forms/InstancePurpose.html', '', window, false, false, true);
       },
       
       // ** {{{ Popup.openHeartbeat() }}} **
       //
       // Opens directly the "Heartbeat" window inside a popup
       openHeartbeat: function(){
-        cobcomp.Popup.open('Heartbeat', 600, 500, OB.Application.contextUrl + '/ad_forms/Heartbeat.html', '', window);
+        cobcomp.Popup.open('Heartbeat', 600, 500, OB.Application.contextUrl + '/ad_forms/Heartbeat.html', '', window, false, false, true);
       },
       
       // ** {{{ Popup.openRegistration() }}} **
       //
       // Opens directly the "Registration" window inside a popup
       openRegistration: function(){
-        cobcomp.Popup.open('Registration', 600, 500, OB.Application.contextUrl + '/ad_forms/Registration.html', '', window);
+        cobcomp.Popup.open('Registration', 600, 500, OB.Application.contextUrl + '/ad_forms/Registration.html', '', window, false, false, true);
       }
     }
   };
