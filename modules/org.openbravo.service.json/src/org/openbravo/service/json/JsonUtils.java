@@ -57,15 +57,52 @@ public class JsonUtils {
   }
 
   /**
+   * Note the formatted date string must be repaired in the timezone to follow the XSD format, see:
+   * {@link #convertToCorrectXSDFormat(String)}.
+   * 
    * @return a new instance of the {@link SimpleDateFormat} using a format of yyyy-MM-dd'T'HH:mm:ss
    *         (xml schema date time format). The date format has lenient set to true.
-   * 
-   *         TODO: also encode time zone somehow
    */
   public static SimpleDateFormat createDateTimeFormat() {
-    final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    // Note users of this method will also use the convertToCorrectXSDFormat
+    // method
+    final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
     dateFormat.setLenient(true);
     return dateFormat;
+  }
+
+  /**
+   * Adds a colon in the timezone part of the formatted date, see here:
+   * http://weblogs.java.net/blog/felipegaucho/archive/2009/12/06/jaxb-customization-xsddatetime
+   * 
+   * @param dateValue
+   *          the date value without a :, for example 2009-12-06T15:59:34+0100
+   * @return a colon added in the timezone part: 2009-12-06T15:59:34+01:00
+   */
+  public static String convertToCorrectXSDFormat(String dateValue) {
+    if (dateValue == null || dateValue.length() < 3) {
+      return dateValue;
+    }
+    final int length = dateValue.length();
+    return dateValue.substring(0, length - 2) + ":" + dateValue.substring(length - 2);
+  }
+
+  /**
+   * Removes the colon in the timezone definition, see {@link #convertToCorrectXSDFormat(String)}.
+   */
+  public static String convertFromXSDToJavaFormat(String dateValue) {
+    if (dateValue == null || dateValue.length() < 3) {
+      return dateValue;
+    }
+    final int length = dateValue.length();
+    // must end with +??:?? or -??:??
+    if (dateValue.charAt(length - 3) == ':'
+        && (dateValue.charAt(length - 5) == '-' || dateValue.charAt(length - 5) == '+')) {
+      final String result = dateValue.substring(0, length - 3) + dateValue.substring(length - 2);
+      return result;
+    }
+    // make them utc, the timezone must be there
+    return dateValue + "+0000";
   }
 
   /**

@@ -155,6 +155,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
               }
               if (value instanceof Timestamp) {
                 value = xmlDateTimeFormat.format(value);
+                value = JsonUtils.convertToCorrectXSDFormat((String) value);
               }
               data.put(queryAliases[i], value);
             }

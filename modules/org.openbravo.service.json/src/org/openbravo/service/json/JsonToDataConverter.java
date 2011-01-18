@@ -228,7 +228,8 @@ public class JsonToDataConverter {
       final String jsonDateStr = jsonObject.getString(Organization.PROPERTY_UPDATED);
       if (jsonDateStr != null) {
         try {
-          final Date jsonDate = new Timestamp(xmlDateTimeFormat.parse(jsonDateStr).getTime());
+          final String repairedString = JsonUtils.convertFromXSDToJavaFormat(jsonDateStr);
+          final Date jsonDate = new Timestamp(xmlDateTimeFormat.parse(repairedString).getTime());
           final Date objectDate = ((Traceable) obObject).getUpdated();
           if (!areDatesEqual(jsonDate, objectDate, true)) {
             // return this message code to let the client show a translated label
@@ -597,7 +598,8 @@ public class JsonToDataConverter {
     if (clz != null && Date.class.isAssignableFrom(clz)) {
       try {
         if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
-          return new Timestamp(xmlDateTimeFormat.parse((String) value).getTime());
+          final String repairedString = JsonUtils.convertFromXSDToJavaFormat((String) value);
+          return new Timestamp(xmlDateTimeFormat.parse(repairedString).getTime());
         } else {
           return xmlDateFormat.parse((String) value);
         }

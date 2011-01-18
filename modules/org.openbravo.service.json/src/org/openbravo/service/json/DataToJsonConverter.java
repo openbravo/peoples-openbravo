@@ -219,7 +219,9 @@ public class DataToJsonConverter {
     final Class<?> clz = property.getPrimitiveObjectType();
     if (Date.class.isAssignableFrom(clz)) {
       if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
-        return xmlDateTimeFormat.format(value);
+        final String strValue = xmlDateTimeFormat.format(value);
+        final String repairedValue = JsonUtils.convertToCorrectXSDFormat(strValue);
+        return repairedValue;
       } else {
         return xmlDateFormat.format(value);
       }
