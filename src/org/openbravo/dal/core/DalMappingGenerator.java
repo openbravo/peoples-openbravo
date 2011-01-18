@@ -271,7 +271,10 @@ public class DalMappingGenerator implements OBSingleton {
       }
 
       String mutable = "";
-      String cascade = " cascade=\"all,delete-orphan\" ";
+      String cascade = "";
+      if (p.isChild()) {
+        cascade = " cascade=\"all,delete-orphan\" ";
+      }
       if (p.getEntity().isView() || p.getTargetEntity().isView()) {
         mutable = " mutable=\"false\" ";
         cascade = "";
