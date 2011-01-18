@@ -85,7 +85,8 @@ public class InitialOrgSetup {
    * @param strOrgUser
    *          Name of the user that will be created for the organization
    * @param strOrgType
-   *          Organization Type code, according to: 0-Organization, 1-Legal with accounting, 2-Generic, 3-Legal without accounting.
+   *          Organization Type code, according to: 0-Organization, 1-Legal with accounting,
+   *          2-Generic, 3-Legal without accounting.
    * @param strParentOrg
    *          New organization will belong to the provided one, in the organization tree
    * @param strcLocationId
@@ -349,7 +350,7 @@ public class InitialOrgSetup {
 
         ImportResult iResult;
         try {
-          iResult = InitialSetupUtility.insertReferenceData(dataSet, client, null);
+          iResult = InitialSetupUtility.insertReferenceData(dataSet, client, org);
         } catch (Exception e) {
           return logErrorAndRollback("@CreateReferenceDataFailed@",
               "insertReferenceDataModules() - Exception ocurred while obtaining datasets for module "
