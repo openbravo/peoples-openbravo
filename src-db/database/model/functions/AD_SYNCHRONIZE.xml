@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2011 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -37,6 +37,7 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
+  v_sql VARCHAR2(32000):='';
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32);
   v_AD_User_ID VARCHAR2(32);
@@ -161,51 +162,51 @@
       ;
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows added: ' || v_rowcount) ;
+   
     DBMS_OUTPUT.PUT_LINE('Deleting unused Elements') ;
-    DELETE
-    FROM AD_ELEMENT_TRL
-    WHERE AD_Element_ID IN
-      (SELECT AD_Element_ID
-      FROM AD_ELEMENT e, AD_MODULE M
-      WHERE M.AD_MODULE_ID = E.AD_MODULE_ID
-        AND m.isindevelopment = 'Y'
-      AND NOT EXISTS
-        (SELECT 1
-        FROM AD_COLUMN c
-        WHERE UPPER(e.ColumnName)=UPPER(c.ColumnName) OR e.AD_Element_ID=c.AD_Element_ID
-        )
-        AND NOT EXISTS
-        (SELECT 1
-        FROM AD_PROCESS_PARA p
-        WHERE UPPER(e.ColumnName)=UPPER(p.ColumnName) OR e.AD_Element_ID=p.AD_Element_ID
-        )
-      )
-      ;
-    DELETE
-    FROM AD_ELEMENT
-    WHERE NOT EXISTS
-      (SELECT 1
-      FROM AD_COLUMN c
-      WHERE UPPER(AD_ELEMENT.ColumnName)=UPPER(c.ColumnName) OR AD_ELEMENT.AD_Element_ID=c.AD_Element_ID
-      )
-      AND NOT EXISTS
-      (SELECT 1
-      FROM AD_PROCESS_PARA p
-      WHERE UPPER(AD_ELEMENT.ColumnName)=UPPER(p.ColumnName) OR AD_ELEMENT.AD_Element_ID=p.AD_Element_ID
-      )
-      AND EXISTS (SELECT 1 FROM AD_MODULE WHERE AD_MODULE_ID = AD_ELEMENT.AD_MODULE_ID AND ISINDEVELOPMENT ='Y')
-      ;
+    --Obtain all tables using elements
+    FOR Cur_Parameter IN (SELECT tablename
+                          FROM ad_table t
+                          WHERE t.ad_table_id != '276'
+                            AND EXISTS (SELECT 1 
+                                        FROM ad_column c
+                                        WHERE LOWER(columnname)='ad_element_id'
+                                          AND c.ad_table_id = t.ad_table_id)
+                            AND EXISTS (SELECT 1
+                                        FROM ad_column c
+                                        WHERE lower(columnname)='columnname'
+                                          AND c.ad_table_id = t.ad_table_id)) LOOP
+      v_sql := v_sql || 
+        'AND NOT EXISTS (SELECT 1 FROM '||Cur_Parameter.tablename||'
+                         WHERE UPPER(e.ColumnName)=UPPER('||Cur_Parameter.tablename||'.ColumnName) 
+                               OR e.AD_Element_ID='||Cur_Parameter.tablename||'.AD_Element_ID ) ';
+    END LOOP;
+
+    EXECUTE IMMEDIATE 
+        'DELETE FROM AD_ELEMENT_TRL
+         WHERE AD_Element_ID IN
+             (SELECT AD_Element_ID
+              FROM AD_ELEMENT e, AD_MODULE M
+              WHERE M.AD_MODULE_ID = E.AD_MODULE_ID
+                AND m.isindevelopment = ''Y'' '||v_sql||')';
+
+    EXECUTE IMMEDIATE 
+        'DELETE FROM AD_ELEMENT e
+         WHERE EXISTS (SELECT 1 FROM AD_MODULE 
+                       WHERE AD_MODULE_ID = e.AD_MODULE_ID 
+                         AND ISINDEVELOPMENT =''Y'') '||v_sql;
+
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows deleted: ' || v_rowcount) ;
     DBMS_OUTPUT.PUT_LINE('Creating link from Column to Element') ;
-    
+
     SELECT count(*)
       INTO v_rowcount
       FROM AD_MODULE
      WHERE TYPE = 'T'
        AND ISINDEVELOPMENT = 'Y';
        
-    IF v_rowcount = '0' THEN
+    IF (v_rowcount = '0') THEN
       v_TemplateInDev:='N';
     ELSE
       v_TemplateInDev:='Y';
@@ -270,7 +271,7 @@
       SET 
       Description =(SELECT COALESCE(T.Description, E.Description) AS N
                            FROM AD_MODULE M,
-                                AD_ELEMENT E, AD_ELEMENT_TRL T                                                   
+                                AD_ELEMENT E, AD_ELEMENT_TRL T
                            WHERE  C.AD_Element_ID = e.AD_Element_ID
                                AND c.AD_MODULE_ID = M.AD_MODULE_ID
                                AND E.AD_ELEMENT_ID = T.AD_ELEMENT_ID
@@ -287,7 +288,7 @@
       Help =
             (SELECT COALESCE(T.help, E.help) AS N
                            FROM AD_MODULE M,
-                                AD_ELEMENT E, AD_ELEMENT_TRL T                                                   
+                                AD_ELEMENT E, AD_ELEMENT_TRL T
                            WHERE  C.AD_Element_ID = e.AD_Element_ID
                                AND c.AD_MODULE_ID = M.AD_MODULE_ID
                                AND E.AD_ELEMENT_ID = T.AD_ELEMENT_ID
