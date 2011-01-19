@@ -133,7 +133,7 @@ public class RequestContext {
   }
 
   public Object getSessionAttribute(String name) {
-    return getSession().getAttribute(name);
+    return getSession().getAttribute(name.toUpperCase());
   }
 
   public Enumeration<?> getSessionAttributeNames() {
@@ -141,11 +141,11 @@ public class RequestContext {
   }
 
   public void setSessionAttribute(String name, Object value) {
-    getSession().setAttribute(name, value);
+    getSession().setAttribute(name.toUpperCase(), value);
   }
 
   public void removeSessionAttribute(String name) {
-    getSession().removeAttribute(name);
+    getSession().removeAttribute(name.toUpperCase());
   }
 
   public HttpSession getSession() {
