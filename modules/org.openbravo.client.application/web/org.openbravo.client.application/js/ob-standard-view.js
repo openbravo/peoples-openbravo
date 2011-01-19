@@ -179,21 +179,36 @@ isc.OBStandardView.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.ViewForm_' + this.tabId, this.viewForm);
     
     var rightMemberButtons = [];
+    var leftMemberButtons = [];
+    var i;
     
     if (this.actionToolbarButtons) {
-      for (var i = 0; i < this.actionToolbarButtons.length; i++) {
+      for (i = 0; i < this.actionToolbarButtons.length; i++) {
         rightMemberButtons.push(isc.OBToolbarActionButton.create(this.actionToolbarButtons[i]));
+      }
+    }
+    
+    // These are the icon toolbar buttons shown in all the tabs 
+    leftMemberButtons = [isc.OBToolbarIconButton.create(isc.OBToolbar.NEW_BUTTON_PROPERTIES), 
+                   isc.OBToolbarIconButton.create(isc.OBToolbar.SAVE_BUTTON_PROPERTIES), 
+                   isc.OBToolbarIconButton.create(isc.OBToolbar.UNDO_BUTTON_PROPERTIES), 
+                   isc.OBToolbarIconButton.create(isc.OBToolbar.DELETE_BUTTON_PROPERTIES), 
+                   isc.OBToolbarIconButton.create(isc.OBToolbar.REFRESH_BUTTON_PROPERTIES)];
+    
+    // Look for specific toolabr buttons for this tab
+    if (this.iconToolbarButtons) {
+      for (i = 0; i < this.iconToolbarButtons.length; i++) {
+        leftMemberButtons.push(isc.OBToolbarIconButton.create(this.iconToolbarButtons[i]));
       }
     }
     
     this.toolBar = isc.OBToolbar.create({
       view: this,
       visibility: 'hidden',
-      leftMembers: [isc.OBToolbarIconButton.create(isc.OBToolbar.NEW_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.SAVE_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.UNDO_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.DELETE_BUTTON_PROPERTIES), isc.OBToolbarIconButton.create(isc.OBToolbar.REFRESH_BUTTON_PROPERTIES)],
+      leftMembers: leftMemberButtons,
       rightMembers: rightMemberButtons
     });
 
-    
     var ret = this.Super('initWidget', arguments);
     
     this.setToolBarButtonState();

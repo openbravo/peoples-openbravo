@@ -59,6 +59,7 @@ public class OBViewTab extends BaseTemplateComponent {
   private OBViewTab parentTabComponent;
   private String parentProperty = null;
   private List<ButtonField> buttonFields = null;
+  private List<IconButton> iconButtons = null;
 
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
@@ -89,6 +90,20 @@ public class OBViewTab extends BaseTemplateComponent {
       }
     }
     return buttonFields;
+  }
+
+  public List<IconButton> getIconButtons() {
+    if (iconButtons != null) {
+      return iconButtons;
+    }
+
+    iconButtons = new ArrayList<IconButton>();
+
+    // Print button
+    if (tab.getProcess() != null) {
+      iconButtons.add(new PrintButton());
+    }
+    return iconButtons;
   }
 
   public String getParentProperty() {
@@ -376,5 +391,32 @@ public class OBViewTab extends BaseTemplateComponent {
         return labelValue;
       }
     }
+  }
+
+  public class IconButton {
+    protected String action;
+    protected String type;
+    protected String label;
+
+    public String getAction() {
+      return action;
+    }
+
+    public String getType() {
+      return type;
+    }
+
+    public String getLabel() {
+      return label;
+    }
+  }
+
+  public class PrintButton extends IconButton {
+    public PrintButton() {
+      type = "print";
+      action = "alert('test');";
+      label = "testing...";
+    }
+
   }
 }

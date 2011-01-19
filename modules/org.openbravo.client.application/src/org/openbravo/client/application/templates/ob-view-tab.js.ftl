@@ -59,6 +59,15 @@
       }<#if field_has_next>,</#if>
     </#list>],
     
+    iconToolbarButtons: [
+    <#list tabComponent.iconButtons as button>
+      {
+        action: function(){ ${button.action} },
+        buttonType: '${button.type?js_string}',
+        prompt: '${button.label?js_string}'
+      }<#if button_has_next>,</#if>
+    </#list>],
+    
     <#if tabComponent.childTabs?size &gt; 0>
         hasChildTabs: true,
     </#if>
