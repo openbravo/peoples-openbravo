@@ -18,6 +18,7 @@
  */
 package org.openbravo.userinterface.selector.model.domaintype;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -26,7 +27,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.openbravo.base.model.Column;
-import org.openbravo.base.model.ModelSessionFactoryController;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Table;
 import org.openbravo.base.model.domaintype.BaseForeignKeyDomainType;
 
@@ -41,69 +42,53 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
   private Column column;
   private String tableName;
 
+  public static List<Class<?>> getClasses() {
+    List<Class<?>> listOfClasses = new ArrayList<Class<?>>();
+    listOfClasses.add(SelectorDefinition.class);
+    listOfClasses.add(DatasourceDefinition.class);
+    return listOfClasses;
+  }
+
   // Note: implementation should clean-up and close database connections or hibernate sessions. If
   // this is not done then the update.database task may hang when disabling foreign keys.
   public void initialize() {
 
-    final ModelSessionFactoryController sessionFactoryController = new ModelSessionFactoryController();
-    sessionFactoryController.addAdditionalClasses(SelectorDefinition.class);
-    sessionFactoryController.addAdditionalClasses(DatasourceDefinition.class);
+    Session session = ModelProvider.getInstance().getSession();
 
-    Session session = null;
-    try {
-      session = sessionFactoryController.getSessionFactory().openSession();
-      session.beginTransaction();
-
-      final Criteria criteria = session.createCriteria(SelectorDefinition.class);
-      criteria.add(Expression.eq("referenceId", getReference().getId()));
-      final List<?> list = criteria.list();
-      if (list.isEmpty()) {
-        // a base reference
-        if (getReference().getParentReference() == null) {
-          return;
-        }
-        log.error("No selector definition found for reference " + getReference());
+    final Criteria criteria = session.createCriteria(SelectorDefinition.class);
+    criteria.add(Expression.eq("referenceId", getReference().getId()));
+    final List<?> list = criteria.list();
+    if (list.isEmpty()) {
+      // a base reference
+      if (getReference().getParentReference() == null) {
         return;
-      } else if (list.size() > 1) {
-        log.warn("Reference " + getReference()
-            + " has more than one selector definition, only one is really used");
       }
-      final SelectorDefinition selectorDefinition = (SelectorDefinition) list.get(0);
-      Table table = selectorDefinition.getTable();
-      if (table == null && selectorDefinition.getDatasourceDefinition() != null) {
-        table = selectorDefinition.getDatasourceDefinition().getTable();
-      }
-      if (table == null) {
-        throw new IllegalStateException("The selector " + selectorDefinition.getIdentifier()
-            + " is used in a foreign key reference but no table has been set");
-      }
-      tableName = table.getTableName();
-      if (selectorDefinition.getColumn() == null) {
-        final List<Column> columns = readColumns(session, table);
-        for (Column col : columns) {
-          if (col.isKey()) {
-            column = col;
-            break;
-          }
+      log.error("No selector definition found for reference " + getReference());
+      return;
+    } else if (list.size() > 1) {
+      log.warn("Reference " + getReference()
+          + " has more than one selector definition, only one is really used");
+    }
+    final SelectorDefinition selectorDefinition = (SelectorDefinition) list.get(0);
+    Table table = selectorDefinition.getTable();
+    if (table == null && selectorDefinition.getDatasourceDefinition() != null) {
+      table = selectorDefinition.getDatasourceDefinition().getTable();
+    }
+    if (table == null) {
+      throw new IllegalStateException("The selector " + selectorDefinition.getIdentifier()
+          + " is used in a foreign key reference but no table has been set");
+    }
+    tableName = table.getTableName();
+    if (selectorDefinition.getColumn() == null) {
+      final List<Column> columns = readColumns(session, table);
+      for (Column col : columns) {
+        if (col.isKey()) {
+          column = col;
+          break;
         }
-      } else {
-        column = selectorDefinition.getColumn();
       }
-    } finally {
-      try {
-        session.getTransaction().commit();
-      } catch (Throwable t) {
-        // ignored on purpose
-        log.error(t.getMessage(), t);
-      }
-      try {
-        session.close();
-      } catch (Throwable t) {
-        // ignored on purpose
-        log.error(t.getMessage(), t);
-      }
-      // always force a close of the session factory
-      sessionFactoryController.getSessionFactory().close();
+    } else {
+      column = selectorDefinition.getColumn();
     }
   }
 

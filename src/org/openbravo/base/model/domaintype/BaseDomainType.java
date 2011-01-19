@@ -19,6 +19,9 @@
 
 package org.openbravo.base.model.domaintype;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openbravo.base.model.BaseOBObjectDef;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -65,6 +68,10 @@ public abstract class BaseDomainType implements DomainType {
   public void checkObjectIsValid(BaseOBObjectDef obObject, Property property)
       throws ValidationException {
     checkIsValidValue(property, obObject.get(property.getName()));
+  }
+
+  public static List<Class<?>> getClasses() {
+    return new ArrayList<Class<?>>();
   }
 
 }

@@ -19,6 +19,9 @@
 
 package org.openbravo.base.model;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,6 +46,7 @@ import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.session.UniqueConstraintColumn;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.CheckException;
+import org.openbravo.database.ConnectionProviderImpl;
 
 /**
  * Builds the Runtime model base on the data model (application dictionary: table, column,
@@ -75,6 +79,7 @@ public class ModelProvider implements OBSingleton {
   // a list because for small numbers a list is faster than a hashmap
   private List<Entity> entitiesWithTreeType = null;
   private List<Module> modules;
+  private Session session;
 
   /**
    * Returns the singleton instance providing the ModelProvider functionality.
@@ -134,14 +139,14 @@ public class ModelProvider implements OBSingleton {
 
   private void initialize() {
     log.info("Building runtime model");
-
     // Caching model (tables, table-references, search-references,
     // list-references)
     // Changed to use the SessionHandler directly because the dal
     // layer uses the ModelProvider, so otherwise there will be a
     // cyclic relation.
-    final SessionFactoryController sessionFactoryController = new ModelSessionFactoryController();
-    final Session session = sessionFactoryController.getSessionFactory().openSession();
+    final ModelSessionFactoryController sessionFactoryController = new ModelSessionFactoryController();
+    initializeReferenceClasses(sessionFactoryController);
+    session = sessionFactoryController.getSessionFactory().openSession();
     final Transaction tx = session.beginTransaction();
     try {
       log.debug("Read model from db");
@@ -155,7 +160,6 @@ public class ModelProvider implements OBSingleton {
         reference.getDomainType().initialize();
         referencesById.put(reference.getId(), reference);
       }
-
       // read the columns in one query and assign them to the table
       final List<Column> cols = readColumns(session);
       assignColumnsToTable(cols);
@@ -276,6 +280,48 @@ public class ModelProvider implements OBSingleton {
       sessionFactoryController.getSessionFactory().close();
     }
     clearLists();
+  }
+
+  /**
+   * This method uses a normal JDBC connection to retrieve the classes of the references. These
+   * classes will be instantiated and if they implement the correct interface, they will be added to
+   * the SessionFactoryController
+   */
+  private void initializeReferenceClasses(ModelSessionFactoryController sessionFactoryController) {
+    ConnectionProviderImpl con = null;
+    Connection connection = null;
+    try {
+      con = new ConnectionProviderImpl(OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("source.path")
+          + "/config/Openbravo.properties");
+      connection = con.getConnection();
+      PreparedStatement ps = connection
+          .prepareStatement("select distinct model_impl from ad_reference where model_impl is not null");
+      ResultSet rs = ps.executeQuery();
+      Class<?> baseDomainType = Class.forName("org.openbravo.base.model.domaintype.BaseDomainType");
+      while (rs.next()) {
+        String classname = rs.getString(1);
+        Class<?> myClass = Class.forName(classname);
+        if (baseDomainType.isAssignableFrom(myClass)) {
+          Object classInstance = myClass.newInstance();
+          List<Class<?>> listOfClasses = (List<Class<?>>) myClass.getMethod("getClasses",
+              new Class[0]).invoke(classInstance, new Object[0]);
+          for (Class<?> aClass : listOfClasses) {
+            sessionFactoryController.addAdditionalClasses(aClass);
+          }
+        }
+      }
+    } catch (Exception e) {
+      throw new OBException("Failed to load reference classes", e);
+    } finally {
+      try {
+        connection.close();
+        con.destroy();
+      } catch (Exception e) {
+        // do nothing
+      }
+    }
+
   }
 
   /**
@@ -920,5 +966,13 @@ public class ModelProvider implements OBSingleton {
       log.warn("No entity for tree type " + treeType);
     }
     return null;
+  }
+
+  /**
+   * This method can be used to get the session of the ModelProvider. This method is intended to be
+   * used by DomainType classes during initialization phase, to do queries in the database
+   */
+  public Session getSession() {
+    return session;
   }
 }
