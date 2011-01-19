@@ -1605,18 +1605,26 @@ public class InitialSetupUtility {
   /**
    * 
    * @param client
+   * @param org
+   *          optional parameter. If not provided, "*" organization used
    * @param module
    * @return ADClientModule object with the created element
    * @throws Exception
    */
-  public static ADOrgModule insertOrgModule(Client client, Organization org, Module module)
+  public static ADOrgModule insertOrgModule(Client client, Organization orgProvided, Module module)
       throws Exception {
+    Organization org;
+    if (orgProvided == null) {
+      if ((org = getZeroOrg()) == null)
+        return null;
+    } else
+      org = orgProvided;
+
     try {
       OBContext.setAdminMode();
       final ADOrgModule newADOrgModule = OBProvider.getInstance().get(ADOrgModule.class);
       newADOrgModule.setClient(client);
       newADOrgModule.setOrganization(org);
-      newADOrgModule.setOrganization(getZeroOrg());
       newADOrgModule.setModule(module);
       newADOrgModule.setVersion(module.getVersion());
 
