@@ -566,10 +566,11 @@ isc.OBToolbar.addProperties({
     var numOfSelRecords = this.view.viewGrid.getSelectedRecords().length;
     var isNew = this.view.viewForm.isNew;
     var hideAllButtons = numOfSelRecords !== 1 && !isNew;
+    var currentValues = this.view.getCurrentValues();
     
     for (var i = 0; i < buttons.length; i++) {
       if (buttons[i].refresh) {
-        buttons[i].refresh(this.view.getCurrentValues(), hideAllButtons);
+        buttons[i].refresh(currentValues, hideAllButtons);
       }
     }
   },
