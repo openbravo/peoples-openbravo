@@ -47,8 +47,6 @@ import org.openbravo.test.base.BaseTest;
 
 public class ExportImportNoDeleteChildrenTest extends BaseTest {
 
-  private static final String TAX_ID = "FF8081812D9B28B8012D9B29266B0010";
-
   // this test goes through the following tests:
   // 1) read a taxrate and its children
   // 2) remove some children and one new child and export to xml
@@ -61,7 +59,15 @@ public class ExportImportNoDeleteChildrenTest extends BaseTest {
   public void testExportDeleteImport() throws Exception {
     setUserContext(QA_TEST_ADMIN_USER_ID);
 
-    final TaxRate tax1 = OBDal.getInstance().get(TaxRate.class, TAX_ID);
+    TaxRate tax1 = null;
+    for (TaxRate tx : OBDal.getInstance().createQuery(TaxRate.class, "").list()) {
+      // pick one with a big enough list
+      if (tx.getFinancialMgmtTaxZoneList().size() > 100) {
+        tax1 = tx;
+        break;
+      }
+    }
+    final String taxId = tax1.getId();
     // make a copy
     final List<TaxZone> taxZones1 = new ArrayList<TaxZone>(tax1.getFinancialMgmtTaxZoneList());
     // remove at various places
@@ -93,7 +99,7 @@ public class ExportImportNoDeleteChildrenTest extends BaseTest {
     OBDal.getInstance().rollbackAndClose();
 
     // import the xml
-    final TaxRate tax2 = OBDal.getInstance().get(TaxRate.class, TAX_ID);
+    final TaxRate tax2 = OBDal.getInstance().get(TaxRate.class, taxId);
     assertTrue(tax1 != tax2);
     assertEquals(taxZones1.size(), tax2.getFinancialMgmtTaxZoneList().size());
     addReadWriteAccess(TaxRate.class);
@@ -105,7 +111,7 @@ public class ExportImportNoDeleteChildrenTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
 
     // now start again
-    final TaxRate tax3 = OBDal.getInstance().get(TaxRate.class, TAX_ID);
+    final TaxRate tax3 = OBDal.getInstance().get(TaxRate.class, taxId);
     // different objects
     assertTrue(tax2 != tax3);
     assertEquals(tax2.getId(), tax3.getId());

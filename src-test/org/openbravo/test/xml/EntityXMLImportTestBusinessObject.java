@@ -21,10 +21,12 @@ package org.openbravo.test.xml;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
@@ -56,8 +58,10 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
 
   private static int NO_OF_PT = 1;
   private static int NO_OF_PT_LINE = 1 + NO_OF_PT * NO_OF_PT;
-  // add NO_OF_PT twice because it was translated to one language
-  private static int TOTAL_PT_PTL = NO_OF_PT + NO_OF_PT + NO_OF_PT_LINE;
+  // will be counted
+  private static int TOTAL_PT_PTL = 0;
+
+  // private static int TOTAL_PT_PTL = NO_OF_PT + NO_OF_PT + NO_OF_PT_LINE;
 
   /** Sets up the test data, creates a first of Payment Terms. */
   public void testAPaymentTerm() {
@@ -222,16 +226,14 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   /**
-   * Tests that the previous test {@link #testEPaymentTerm()} was successfull.
+   * Tests that the previous test {@link #testEPaymentTerm()} did not really remove a line. See this
+   * issue: https://issues.openbravo.com/view.php?id=15690
    */
   public void testFPaymentTerm() {
     setUserContext(QA_TEST_ADMIN_USER_ID);
     final List<PaymentTerm> pts = getPaymentTerms();
     for (final PaymentTerm pt : pts) {
-      assertEquals(NO_OF_PT_LINE - 1, pt.getFinancialMgmtPaymentTermLineList().size());
-      for (final PaymentTermLine ptl : pt.getFinancialMgmtPaymentTermLineList()) {
-        assertTrue(!ptl.getLineNo().equals(new Integer(1)));
-      }
+      assertEquals(NO_OF_PT_LINE, pt.getFinancialMgmtPaymentTermLineList().size());
     }
   }
 
@@ -298,7 +300,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
       // one pt has 2 lines, one has 1 line
       final int size = pt.getFinancialMgmtPaymentTermLineList().size();
       System.err.println(size);
-      assertTrue(size == 1 || size == 2);
+      assertTrue(size == 2 || size == 3);
     }
   }
 
@@ -365,6 +367,20 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     for (final PaymentTerm pt : result) {
       OBDal.getInstance().save(pt);
     }
+    OBDal.getInstance().commitAndClose();
+
+    // count the children
+    int cnt = 0;
+    for (PaymentTerm pt : result) {
+      PaymentTerm insertedPaymentTerm = OBDal.getInstance().get(PaymentTerm.class, pt.getId());
+      cnt++;
+      for (Property p : pt.getEntity().getProperties()) {
+        if (p.isChild()) {
+          cnt += ((Collection<?>) insertedPaymentTerm.get(p.getName())).size();
+        }
+      }
+    }
+    TOTAL_PT_PTL = cnt;
   }
 
   private List<PaymentTerm> getPaymentTerms() {
