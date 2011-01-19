@@ -623,6 +623,21 @@ isc.OBStandardView.addProperties({
     this.setTabButtonState(state);
   },
   
+  // do refresh contents with a small delay to not refresh child views
+  // to quick when walking through a grid with arrow keys
+  // only do this if this view is not in a dirty state
+  doPausedRefreshContents: function(doRefreshWhenVisible) {
+    if (this.isShowingForm && this.viewForm.hasChanged) {
+      this.doRefreshContents(doRefreshWhenVisible);
+    } else {
+      var me = this, callback = function () {
+        me.doRefreshContents(doRefreshWhenVisible);
+      };
+      // wait 2 times longer than the fire on pause delay default
+      this.fireOnPause('doRefreshContents_' + this.ID, callback, this.fireOnPauseDelay * 2);
+    }
+  },
+  
   doRefreshContents: function(doRefreshWhenVisible){
 
     // update this one at least before bailing out
@@ -946,7 +961,7 @@ isc.OBStandardView.addProperties({
     if (this.childTabSet) {
       for (var i = 0; i < this.childTabSet.tabs.length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
-        tabViewPane.doRefreshContents(true);
+        tabViewPane.doPausedRefreshContents(true);
       }
     }
     // and recompute the count:

@@ -472,7 +472,9 @@ isc.OBViewForm.addProperties({
       var index1, index2, errorCode, view = form.view;
       var status = resp.status;
       if (status === isc.RPCResponse.STATUS_SUCCESS) {
-      
+        // needs to be done before the selectRecordById
+        this.setAutoSaveFormInActiveView(null);
+
         // do remember values here to prevent infinite autosave loop
         form.rememberValues();
         
@@ -480,12 +482,14 @@ isc.OBViewForm.addProperties({
         
         if (form.isNew) {
           view.viewGrid.updateRowCountDisplay();
+          // tell the grid to select this record and not open 
           view.viewGrid.targetRecordId = data.id;
+          view.showGridForTargetRecord = true;
           view.viewGrid.filterData(view.viewGrid.getCriteria());
+        } else {
+          // after save the grid selection seems to have gone, repair it
+          view.viewGrid.selectRecordById(data.id);
         }
-        
-        // after save the grid selection seems to have gone, repair it
-        view.viewGrid.selectRecordById(data.id);
         
         this.setNewState(false);
         this.setHasChanged(false);
@@ -532,7 +536,8 @@ isc.OBViewForm.addProperties({
       }
       form.inAutoSave = false;
       form.isSaving = false;
-      view.setToolBarButtonState();
+      form.view.setToolBarButtonState();
+      this.setAutoSaveFormInActiveView(null);
       return;
     } else {
       // remove the error message if any
