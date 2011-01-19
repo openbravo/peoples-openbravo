@@ -25,10 +25,12 @@
 .OBQueryListShowAllLabelFocusedOver,
 .OBQueryListShowAllLabelFocusedDown {
   font-family: 'lucida sans', sans-serif;
+  font-size: 11px;
   vertical-align: middle;
   background: transparent;
   text-align: right;
   cursor: pointer;
+  padding-right: 5px;
 }
 
 .OBQueryListShowAllLabel,
@@ -50,8 +52,9 @@
 
 .OBQueryListRowsNumberLabel {
   font-family: 'lucida sans', sans-serif;
+  font-size: 11px;
   vertical-align: middle;
   background: transparent;
   text-align: left;
-  color: #00A651;
+  padding-left: 5px;
 }
