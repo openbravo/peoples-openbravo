@@ -61,6 +61,9 @@ class QueryListUtils {
               reference);
           field.put("name", column.getDisplayExpression());
           field.put("type", uiDefinition.getName());
+          if (uiDefinition.getName().equals("_id_10")) {
+            field.put("filterOnKeypress", true);
+          }
           field.put("filterEditorType", uiDefinition.getFilterEditorType());
           field.put("canFilter", column.isCanBeFiltered());
           if (column.isHasLink()) {
