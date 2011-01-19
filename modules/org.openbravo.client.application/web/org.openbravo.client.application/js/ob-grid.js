@@ -103,14 +103,32 @@ isc.OBGrid.addProperties({
       
       makeActionButton: function(){
         var ret = this.Super('makeActionButton', arguments);
+        this.filterImage.setLeft(this.computeFunnelLeft(2));
         var layout = isc.HLayout.create({
           styleName: 'OBGridFilterFunnelBackground',
           width: '100%',
           height: '100%',
-          left: this.getInnerWidth() - this.getScrollbarSize() - 3
+          left: this.computeFunnelLeft()
         });
+        this.funnelLayout = layout;
         this.addChild(layout);
         return ret;
+      },
+      
+      computeFunnelLeft: function(correction) {
+        correction = correction || 0;
+        return this.getInnerWidth() - this.getScrollbarSize() - 3 + correction;
+      },
+      
+      // keep the funnel stuff placed correctly
+      layoutChildren : function () {
+        this.Super("layoutChildren", arguments);
+        if (this.funnelLayout) { 
+            this.funnelLayout.setLeft(this.computeFunnelLeft());
+        }
+        if (this.filterImage) { 
+          this.filterImage.setLeft(this.computeFunnelLeft(2));
+        }
       },
       
       actionButtonProperties: {
@@ -119,9 +137,9 @@ isc.OBGrid.addProperties({
         showFocused: false,
         showDisabled: false,
         prompt: OB.I18N.getLabel('OBUIAPP_GridFilterIconToolTip'),
-        left: this.getInnerWidth() - this.getScrollbarSize() - 2,
         initWidget: function(){
           thisGrid.filterImage = this;
+          this.recordEditor.filterImage = this;
           return this.Super('initWidget', arguments);
         },
         click: function(){
