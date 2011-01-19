@@ -70,7 +70,7 @@ public abstract class BaseDomainType implements DomainType {
     checkIsValidValue(property, obObject.get(property.getName()));
   }
 
-  public static List<Class<?>> getClasses() {
+  public List<Class<?>> getClasses() {
     return new ArrayList<Class<?>>();
   }
 

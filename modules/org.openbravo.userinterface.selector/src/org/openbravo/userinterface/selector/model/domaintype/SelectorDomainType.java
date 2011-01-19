@@ -42,7 +42,8 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
   private Column column;
   private String tableName;
 
-  public static List<Class<?>> getClasses() {
+  @Override
+  public List<Class<?>> getClasses() {
     List<Class<?>> listOfClasses = new ArrayList<Class<?>>();
     listOfClasses.add(SelectorDefinition.class);
     listOfClasses.add(DatasourceDefinition.class);

@@ -36,6 +36,7 @@ import org.hibernate.classic.Session;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.domaintype.BaseDomainType;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.model.domaintype.OneToManyDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
@@ -79,7 +80,7 @@ public class ModelProvider implements OBSingleton {
   // a list because for small numbers a list is faster than a hashmap
   private List<Entity> entitiesWithTreeType = null;
   private List<Module> modules;
-  private Session session;
+  private Session initsession;
 
   /**
    * Returns the singleton instance providing the ModelProvider functionality.
@@ -146,30 +147,30 @@ public class ModelProvider implements OBSingleton {
     // cyclic relation.
     final ModelSessionFactoryController sessionFactoryController = new ModelSessionFactoryController();
     initializeReferenceClasses(sessionFactoryController);
-    session = sessionFactoryController.getSessionFactory().openSession();
-    final Transaction tx = session.beginTransaction();
+    initsession = sessionFactoryController.getSessionFactory().openSession();
+    final Transaction tx = initsession.beginTransaction();
     try {
       log.debug("Read model from db");
 
-      tables = list(session, Table.class);
+      tables = list(initsession, Table.class);
 
       referencesById = new HashMap<String, Reference>();
-      final List<Reference> references = list(session, Reference.class);
+      final List<Reference> references = list(initsession, Reference.class);
       for (Reference reference : references) {
         reference.getDomainType().setModelProvider(this);
         reference.getDomainType().initialize();
         referencesById.put(reference.getId(), reference);
       }
       // read the columns in one query and assign them to the table
-      final List<Column> cols = readColumns(session);
+      final List<Column> cols = readColumns(initsession);
       assignColumnsToTable(cols);
 
       // reading will automatically link the reftable, refsearch and reflist
       // to the reference
-      final List<RefTable> refTables = list(session, RefTable.class);
-      final List<RefSearch> refSearches = list(session, RefSearch.class);
-      list(session, RefList.class);
-      modules = retrieveModules(session);
+      final List<RefTable> refTables = list(initsession, RefTable.class);
+      final List<RefSearch> refSearches = list(initsession, RefSearch.class);
+      list(initsession, RefList.class);
+      modules = retrieveModules(initsession);
       tables = removeInvalidTables(tables);
 
       // maintained for api support of the
@@ -234,9 +235,9 @@ public class ModelProvider implements OBSingleton {
       log.debug("Setting virtual property for many-to-one id's");
       setVirtualPropertiesForReferenceId();
 
-      buildUniqueConstraints(session, sessionFactoryController);
+      buildUniqueConstraints(initsession, sessionFactoryController);
 
-      final Map<String, Boolean> colMandatories = getColumnMandatories(session,
+      final Map<String, Boolean> colMandatories = getColumnMandatories(initsession,
           sessionFactoryController);
 
       // initialize the name and also set the mandatory value on the basis
@@ -276,7 +277,7 @@ public class ModelProvider implements OBSingleton {
     } finally {
       log.debug("Closing session and sessionfactory used during model read");
       tx.commit();
-      session.close();
+      initsession.close();
       sessionFactoryController.getSessionFactory().close();
     }
     clearLists();
@@ -298,15 +299,12 @@ public class ModelProvider implements OBSingleton {
       PreparedStatement ps = connection
           .prepareStatement("select distinct model_impl from ad_reference where model_impl is not null");
       ResultSet rs = ps.executeQuery();
-      Class<?> baseDomainType = Class.forName("org.openbravo.base.model.domaintype.BaseDomainType");
       while (rs.next()) {
         String classname = rs.getString(1);
         Class<?> myClass = Class.forName(classname);
-        if (baseDomainType.isAssignableFrom(myClass)) {
-          Object classInstance = myClass.newInstance();
-          List<Class<?>> listOfClasses = (List<Class<?>>) myClass.getMethod("getClasses",
-              new Class[0]).invoke(classInstance, new Object[0]);
-          for (Class<?> aClass : listOfClasses) {
+        if (org.openbravo.base.model.domaintype.BaseDomainType.class.isAssignableFrom(myClass)) {
+          BaseDomainType classInstance = (BaseDomainType) myClass.newInstance();
+          for (Class<?> aClass : classInstance.getClasses()) {
             sessionFactoryController.addAdditionalClasses(aClass);
           }
         }
@@ -315,8 +313,16 @@ public class ModelProvider implements OBSingleton {
       throw new OBException("Failed to load reference classes", e);
     } finally {
       try {
-        connection.close();
-        con.destroy();
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (Exception e) {
+        // do nothing
+      }
+      try {
+        if (con != null) {
+          con.destroy();
+        }
       } catch (Exception e) {
         // do nothing
       }
@@ -973,6 +979,6 @@ public class ModelProvider implements OBSingleton {
    * used by DomainType classes during initialization phase, to do queries in the database
    */
   public Session getSession() {
-    return session;
+    return initsession;
   }
 }
