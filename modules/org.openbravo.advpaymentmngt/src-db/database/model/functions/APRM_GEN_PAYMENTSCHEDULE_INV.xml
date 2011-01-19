@@ -57,6 +57,7 @@ v_FIN_PAYMENT_ID FIN_PAYMENT.FIN_PAYMENT_ID%TYPE;
 v_FIN_PAYMENT_DETAIL_ID FIN_PAYMENT_DETAIL.FIN_PAYMENT_DETAIL_ID%TYPE;
 v_FIN_FINACC_TRANSACTION_ID FIN_FINACC_TRANSACTION.FIN_FINACC_TRANSACTION_ID%TYPE;
 v_Line FIN_FINACC_TRANSACTION.LINE%TYPE;
+v_PaymentPriority VARCHAR(32);
 
 
 TYPE RECORD IS REF CURSOR;
@@ -89,10 +90,12 @@ BEGIN
   v_ResultStr:='ReadingInvoice';
   SELECT ad_client_id, ad_org_id, c_doctypetarget_id, IsSOTrx,
       grandtotal, C_PaymentTerm_ID, PaymentRule, C_Currency_ID,
-      C_BPartner_ID, DateInvoiced, totallines, fin_paymentmethod_id
+      C_BPartner_ID, DateInvoiced, totallines, fin_paymentmethod_id,
+      fin_payment_priority_id
   INTO v_Client_ID, v_Org_ID, v_DocTypeTarget_ID, v_IsSOTrx,
       v_GrandTotal, v_PaymentTerm, v_PaymentRule, v_Currency_ID,
-      v_BPartner_ID, v_DateInvoiced, v_totallines, v_PaymentMethod
+      v_BPartner_ID, v_DateInvoiced, v_totallines, v_PaymentMethod,
+      v_PaymentPriority
   FROM c_invoice
   WHERE c_invoice_id=p_record_id;
 
@@ -211,14 +214,14 @@ BEGIN
           created, createdby, updated, updatedby,
           c_invoice_id, c_currency_id, c_order_id,
           fin_paymentmethod_id, amount, duedate,
-          outstandingamt
+          outstandingamt, fin_payment_priority_id
          ) VALUES (
           v_payment_schedule_invoice, v_client_id, v_org_id, 'Y',
           now(), p_user, now(), p_user,
           p_record_id, v_currency_id, null,
           v_PaymentMethod,
           v_scheduledamount, v_planneddate,
-          v_scheduledamount
+          v_scheduledamount, v_PaymentPriority
         );
 
         -- loop for payment schedule details

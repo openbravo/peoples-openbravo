@@ -63,6 +63,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcessParameter;
+import org.openbravo.model.financialmgmt.payment.PaymentPriority;
 import org.openbravo.model.financialmgmt.payment.PaymentRun;
 import org.openbravo.model.financialmgmt.payment.PaymentRunParameter;
 import org.openbravo.model.financialmgmt.payment.PaymentRunPayment;
@@ -130,8 +131,10 @@ public class AdvPaymentMngtDao {
       whereClause.append(" as psd "); // pending scheduled payments //
       whereClause.append(" left outer join psd.orderPaymentSchedule ");
       whereClause.append(" left outer join psd.orderPaymentSchedule.order ");
+      whereClause.append(" left outer join psd.orderPaymentSchedule.fINPaymentPriority ");
       whereClause.append(" left outer join psd.invoicePaymentSchedule ");
       whereClause.append(" left outer join psd.invoicePaymentSchedule.invoice ");
+      whereClause.append(" left outer join psd.invoicePaymentSchedule.fINPaymentPriority ");
       whereClause.append(" where psd.");
       whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
       whereClause.append(" is null");
@@ -289,6 +292,20 @@ public class AdvPaymentMngtDao {
       // TODO: Add order to show first scheduled payments from invoices and later scheduled payments
       // from not invoiced orders.
       whereClause.append(" order by");
+      whereClause.append(" COALESCE(psd.");
+      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
+      whereClause.append(".");
+      whereClause.append(FIN_PaymentSchedule.PROPERTY_FINPAYMENTPRIORITY);
+      whereClause.append(".");
+      whereClause.append(PaymentPriority.PROPERTY_PRIORITY);
+      whereClause.append(", psd.");
+      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
+      whereClause.append(".");
+      whereClause.append(FIN_PaymentSchedule.PROPERTY_FINPAYMENTPRIORITY);
+      whereClause.append(".");
+      whereClause.append(PaymentPriority.PROPERTY_PRIORITY);
+      whereClause.append(")");
+      whereClause.append(", ");
       whereClause.append(" COALESCE(psd.");
       whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
       whereClause.append(".");

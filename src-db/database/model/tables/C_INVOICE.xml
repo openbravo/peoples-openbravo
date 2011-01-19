@@ -241,6 +241,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="FIN_PAYMENT_PRIORITY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_BPARTNER_LOCATION" name="C_BPLOCATION_CINVOICE">
         <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
       </foreign-key>
@@ -297,6 +301,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="C_INVOICE_SALESREP">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="FIN_PAYMENT_PRIORITY" name="FIN_INVOICE_PAYMENT_PRIORITY">
+        <reference local="FIN_PAYMENT_PRIORITY_ID" foreign="FIN_PAYMENT_PRIORITY_ID"/>
       </foreign-key>
       <index name="C_INVOICE_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
