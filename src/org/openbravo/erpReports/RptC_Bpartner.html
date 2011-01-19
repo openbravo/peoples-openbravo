@@ -97,6 +97,18 @@ function resizeAreaBpartner() {
   mnu.style.display = "";
 }
 
+function openPaymentPlanTab(tabid, recordid, windowid, tabtitle, mappingname, keyparameter) {
+	getFrame('LayoutMDI').OB.Layout.ViewManager.openView('OBClassicWindow',  {
+	   tabId: tabid,
+	   recordId: recordid,
+	   windowId: windowid,
+	   command: 'DIRECT',
+	   tabTitle: tabtitle,
+	   mappingName: mappingname,
+	   keyParameter: keyparameter
+	});
+}
+
 </script>
 
 </head>
@@ -107,6 +119,12 @@ function resizeAreaBpartner() {
 <input type="hidden" name="inpcBpartnerId" value="" id="paramBpartner"></input>
 <input type="hidden" name="inpProductTemplate"></input>
 <input type="hidden" name="inpTypeDocument"></input>
+<input type="hidden" name="inpIsInvoice"></input>
+<input type="hidden" name="inpTableReferenceId"></input>
+<input type="hidden" name="inpAdTableId"></input>
+<input type="hidden" name="inpIsSOtrx"></input>
+<input type="hidden" name="inpRecordId"></input>
+<input type="hidden" value="FF80818129E9987E0129EA1F0BE30010" id="Fin_Payment_Detail_V_ID" name="inpfinPaymentDetailVId"></input>
     <div class="Popup_ContentPane_CircleLogo">
       <div class="Popup_WindowLogo">
         <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_businessPartner" src="../../../../../web/images/blank.gif" border="0"></img>
@@ -231,8 +249,8 @@ function resizeAreaBpartner() {
           <td id="fieldInvoiceschedule" class="LabelText">&nbsp;</td></tr>
         <tr>
           <td >
-          <span class="LabelText">Payment rule</span></td>
-          <td id="fieldPaymentrule" class="LabelText">&nbsp;</td></tr>
+          <span class="LabelText">Payment method</span></td>
+          <td id="fieldPaymentmethod" class="LabelText">&nbsp;</td></tr>
         <tr>
           <td >
           <span class="LabelText">Terms</span></td>
@@ -245,12 +263,28 @@ function resizeAreaBpartner() {
           <td >
           <span class="LabelText">Price list</span></td>
           <td id="fieldPricelist" class="LabelText">&nbsp;</td></tr>        
- 	  	<div id="sectionDetailCustomerAcct">
- 	  	<tr>
+        <div id="sectionDetailCustomerAcct">
+        <tr>
           <td >
           <span class="LabelText">A. Account <span id="funcCountParts">xx1</span></span></td>
           <td id="fieldAccount" class="LabelText">&nbsp;</td></tr>
- 	  	</div>     
+        </div>
+        <tr>
+          <td >
+          <span class="LabelText">Financial account</span></td>
+          <td id="fieldFinaccount" class="LabelText">&nbsp;</td></tr>  
+        <tr>
+          <td >
+          <span class="LabelText">Credit line limit</span></td>
+          <td id="fieldCreditlinelim" class="LabelText">&nbsp;</td></tr>  
+        <tr>
+          <td >
+          <span class="LabelText">Customer balance</span></td>
+          <td id="fieldCustomerbal" class="LabelText">&nbsp;</td></tr>
+        <tr>
+          <td >
+          <span class="LabelText">Available credit</span></td>
+          <td id="fieldAvailablecredit" class="LabelText">&nbsp;</td></tr>       
       </table>
       </div>
     </td>
@@ -263,8 +297,8 @@ function resizeAreaBpartner() {
           <span class="Label_ReadOnly_Text">As provider/creditor</span></td></tr>
         <tr>
           <td width="33%" >
-          <span class="LabelText">Payment rule</span></td>
-          <td width="67%" id="fieldPaymentrulepo" class="LabelText">&nbsp;</td></tr>
+          <span class="LabelText">Payment method</span></td>
+          <td width="67%" id="fieldPaymentmethodpo" class="LabelText">&nbsp;</td></tr>
         <tr>
           <td >
           <span class="LabelText">Terms</span></td>
@@ -279,6 +313,11 @@ function resizeAreaBpartner() {
           <span class="LabelText">A. Account <span id="funcCountParts2">xx2</span></span></td>
           <td id="fieldAccountvendor" class="LabelText">&nbsp;</td></tr>
           </div>
+        <tr>
+          <td >
+          <span class="LabelText">Financial account</span></td>
+          <td id="fieldFinaccountpo" class="LabelText">&nbsp;</td></tr>  
+        <tr>
       </table>
       </div>
     </td>
@@ -422,6 +461,94 @@ function resizeAreaBpartner() {
 <td width="46%">
 <span id="returnTextabcr" class="LabelText"></span></td>
 <td width="4%">&nbsp;</td></tr></table></div>
+
+
+
+
+        <div id="selDeleteOpenItems" class="LabelText">
+        <table width="100%" border="0">
+            <tr>
+                <td colspan="6">
+                <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                    <tbody>
+                        <tr class="FieldGroup_TopMargin" />
+                            <tr>
+                                <td class="FieldGroupTitle_Left"><img
+                                    class="FieldGroupTitle_Left_bg" border="0"
+                                    src="../../../../../web/images/blank.gif" /></td>
+                                <td class="FieldGroupTitle">Open Items</td>
+                                <td class="FieldGroupTitle_Right"><img
+                                    class="FieldGroupTitle_Right_bg" border="0"
+                                    src="../../../../../web/images/blank.gif" /></td>
+                                <td class="FieldGroupContent" />
+                            </tr>
+                            <tr class="FieldGroup_BottomMargin" />
+                    </tbody>
+                </table>
+                </td>
+            </tr>
+        </table>
+        <div id="selDeletePaymentin" class="LabelText">
+        <table width="100%">
+            <div id="sectionPaymentin">
+            <tr>
+                <td width="4%">&nbsp;</td>
+                <td width="70%">
+                <table width="100%" border="0">
+                    <tr>
+                        <td width="52%"><a href="#"
+                            onclick="updateData('OPENDOCUMENT', 'ww');return false;"
+                            onmouseover="window.status='Open';return true;"
+                            onmouseout="window.status='';return true;" id="fieldPaymentin">
+                        <span id="buttonTreeww" class="datawarehouseclose"></span></a> <span
+                            class="LabelText">Payments in until</span> <span
+                            id="paramSysdate" class="LabelText">21/03/2005</span></td>
+                        <td width="12%" style="text-align:right"><span id="fieldPlannedin" class="LabelText">xx2006</span></td>
+                        <td width="12%" style="text-align:right"><span id="fieldPaidin" class="LabelText">xx56789</span></td>
+                        <td width="12%" style="text-align:right"><span id="fieldOutstandingin"
+                            class="LabelText">xx2005</span></td>
+                    </tr>
+                </table>
+                </td>
+                <td width="26%">&nbsp;</td>
+            </tr>
+            </div>
+        </table>
+        <span id="returnTextww" class="LabelText"></span>
+        </div>
+        <div id="selDeletePaymentout" class="LabelText">
+        <table width="100%">
+            <div id="sectionPaymentout">
+            <tr>
+                <td width="4%">&nbsp;</td>
+                <td width="70%">
+                <table width="100%" border="0">
+                    <tr>
+                        <td width="52%"><a href="#"
+                            onclick="updateData('OPENDOCUMENT', 'yy');return false;"
+                            onmouseover="window.status='Open';return true;"
+                            onmouseout="window.status='';return true;" id="fieldPaymentout">
+                        <span id="buttonTreeyy" class="datawarehouseclose"></span></a> <span
+                            class="LabelText">Payments out until</span> <span
+                            id="paramSysdate" class="LabelText">21/03/2005</span></td>
+                        <td width="12%" style="text-align:right"><span id="fieldPlannedout" class="LabelText">xx2006</span></td>
+                        <td width="12%" style="text-align:right"><span id="fieldPaidout" class="LabelText">xx56789</span></td>
+                        <td width="12%" style="text-align:right"><span id="fieldOutstandingout"
+                            class="LabelText">xx2005</span></td>
+                    </tr>
+                </table>
+                </td>
+                <td width="26%">&nbsp;</td>
+            </tr>
+            </div>
+        </table>
+        </div>
+        <span id="returnTextyy" class="LabelText"></span>
+        </div>
+
+
+
+
 
 <table width="100%" border="0">
 <tr>

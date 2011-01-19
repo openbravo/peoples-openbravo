@@ -30,14 +30,14 @@
 			  <tr >
 				<th width="4%" class="DataGrid_Header_Cell"></th>
 				<div id="sectionPeriod">
-					<th width="8%" class="DataGrid_Header_Cell"><span id="fieldPeriod">xx1</span></th>
+					<th width="8%" class="DataGrid_Header_Cell_Amount"><span id="fieldPeriod">xx1</span></th>
 				</div>
 			  </tr>
 			  <div id="sectionPeriodOrder">
 			  <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRowxx">
 				<td width="4%" id="fieldYearPeriodOrder" class="xx DataGrid_Body_LineNoCell">xx2001</td>
 				<div id="sectionPeriodOrderDetail">
-					<td width="8%" id="fieldAmountPeriodOrder" class="xx DataGrid_Body_Cell">xx34566</td>
+					<td width="8%" id="fieldAmountPeriodOrder" class="xx DataGrid_Body_Cell_Amount">xx34566</td>
 				</div>
 			  </tr>
 			  </div>

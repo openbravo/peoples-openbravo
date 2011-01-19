@@ -27,8 +27,8 @@
         <th width="54%" class="DataGrid_Header_Cell">Product</th>
         <th width="9%" class="DataGrid_Header_Cell">Quantity</th>
         <th width="8%" class="DataGrid_Header_Cell">Unit</th>
-        <th width="11%" class="DataGrid_Header_Cell">Amount</th>
-        <th width="9%" class="DataGrid_Header_Cell">P.M</th>
+        <th width="11%" class="DataGrid_Header_Cell_Amount">Amount</th>
+        <th width="9%" class="DataGrid_Header_Cell_Amount">P.M</th>
         <th width="9%" class="DataGrid_Header_Cell">%</th>
     </tr>
     <div id="sectionABCproductref">
@@ -36,8 +36,8 @@
         <td width="54%" id="fieldProductnameABCref" class="DataGrid_Body_Cell">xxBuzo permeable ancho tres cuartos</td>
         <td width="9%" id="fieldABCqtyref" class="DataGrid_Body_Cell">xx12321</td>
         <td width="8%" id="fieldABCuomref" class="DataGrid_Body_Cell">xxKg</td>
-        <td width="11%" id="fieldABCamountref" class="DataGrid_Body_Cell">xx123212</td>
-        <td width="9%" id="fieldAvgpriceABCref" class="DataGrid_Body_Cell">xx44.023</td>
+        <td width="11%" id="fieldABCamountref" class="DataGrid_Body_Cell_Amount">xx123212</td>
+        <td width="9%" id="fieldAvgpriceABCref" class="DataGrid_Body_Cell_Amount">xx44.023</td>
         <td width="9%" id="fieldTotalAvgABCref" class="DataGrid_Body_Cell">xx100.00<span>%</span></td>
     </tr>
     </div>

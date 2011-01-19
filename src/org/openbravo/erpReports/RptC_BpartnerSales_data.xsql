@@ -28,7 +28,9 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-        SELECT VALUE, SUM(ACTUALYEAR) AS ACTUALYEAR, SUM(AMOUNT) AS AMOUNT, SUM(REFYEAR) AS REFYEAR, SUM(AMOUNTREF) AS AMOUNTREF, '' AS PERIOD, '' AS YEAR, '' AS CLASSDESIGN, 'datawarehouseclose' AS CLASS_TREE, '' AS TOTALACTUAL, '' AS TOTALREF, '' AS VALUEREF, '' AS NAME_UOM FROM (
+        SELECT VALUE, SUM(ACTUALYEAR) AS ACTUALYEAR, SUM(AMOUNT) AS AMOUNT, SUM(REFYEAR) AS REFYEAR, SUM(AMOUNTREF) AS AMOUNTREF, '' AS PERIOD, '' AS YEAR, '' AS CLASSDESIGN, 'datawarehouseclose' AS CLASS_TREE, '' AS TOTALACTUAL, '' AS TOTALREF, '' AS VALUEREF, '' AS NAME_UOM,
+        '' AS ORDERNO, '' AS INVOICENO, '' AS DUEDATE, '' AS PAYMENTMETHOD, '' AS EXPECTED, '' AS PAID, '' AS OUTSTANDING, '' AS EXPECTEDHEAD, '' AS PAIDHEAD, '' AS OUTSTANDINGHEAD, '' AS INV_PAYMPLAN_ID,
+        '' AS ISSOTRX, '' AS FIN_PAYMENT_SCHED_INV_V_ID FROM (
         SELECT 'INVOICE' AS VALUE, TO_NUMBER(TO_CHAR(now(),'YYYY'))AS ACTUALYEAR, 0 AS REFYEAR, SUM(IL.LINENETAMT) AS AMOUNT, 0 AS AMOUNTREF
         FROM C_INVOICE I, C_INVOICELINE IL
         WHERE I.C_INVOICE_ID = IL.C_INVOICE_ID
@@ -342,5 +344,55 @@
         <Field name="position" value="count"/>
         <Parameter name="refYear"/>
         <Parameter name="cBpartnerId"/>
+  </SqlMethod>
+  <SqlMethod name="selectPaymentsdetail" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[ 
+        SELECT I.DOCUMENTNO AS INVOICENO, AD_COLUMN_IDENTIFIER('FIN_PAYMENTMETHOD',PS.FIN_PAYMENTMETHOD_ID, ?) AS PAYMENTMETHOD, 
+        C_CURRENCY_CONVERT(PS.EXPECTED, I.C_CURRENCY_ID, ?, I.DATEINVOICED, NULL) AS EXPECTED,
+        C_CURRENCY_CONVERT(PS.RECEIVED, I.C_CURRENCY_ID, ?, I.DATEINVOICED, NULL) AS PAID,
+        C_CURRENCY_CONVERT(PS.OUTSTANDING, I.C_CURRENCY_ID, ?, I.DATEINVOICED, NULL) AS OUTSTANDING,
+        PS.FIN_PAYMENT_SCHED_INV_V_ID AS INV_PAYMPLAN_ID, ? AS ISSOTRX,
+        PS.DUEDATE AS DUEDATE
+        FROM FIN_PAYMENT_SCHED_INV_V PS, C_INVOICE I
+        WHERE PS.C_INVOICE_ID = I.C_INVOICE_ID
+        AND I.ISSOTRX = ?
+        AND I.C_BPARTNER_ID = ?
+        AND PS.OUTSTANDING <> 0   
+     ]]></Sql>
+    <Field name="position" value="count"/>
+    <Parameter name="lang"/>
+    <Parameter name="curTo"/>
+    <Parameter name="curTo"/>
+    <Parameter name="curTo"/>
+    <Parameter name="issotrx"/>
+    <Parameter name="issotrx"/>
+    <Parameter name="bPartner"/>
+  </SqlMethod>
+  <SqlMethod name="selectPayments" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+        SELECT TO_CHAR(?) AS VALUE, 
+        SUM(C_CURRENCY_CONVERT(PS.EXPECTED, I.C_CURRENCY_ID, ?, I.DATEINVOICED, NULL)) AS EXPECTEDHEAD,
+        SUM(C_CURRENCY_CONVERT(PS.RECEIVED, I.C_CURRENCY_ID, ?, I.DATEINVOICED, NULL)) AS PAIDHEAD,
+        SUM(C_CURRENCY_CONVERT(PS.OUTSTANDING, I.C_CURRENCY_ID, ?, I.DATEINVOICED, NULL)) AS OUTSTANDINGHEAD,
+        TO_CHAR('datawarehouseclose') AS CLASS_TREE
+        FROM FIN_PAYMENT_SCHED_INV_V PS, C_INVOICE I
+        WHERE PS.C_INVOICE_ID = I.C_INVOICE_ID
+        AND I.ISSOTRX = ?
+        AND I.C_BPARTNER_ID IN ('x')
+        AND PS.OUTSTANDING <> 0
+        GROUP BY TO_CHAR(?), TO_CHAR('datawarehouseclose')
+     ]]></Sql>
+    <Field name="position" value="count"/>
+    <Parameter name="typeDoc"/>
+    <Parameter name="curTo"/>
+    <Parameter name="curTo"/>
+    <Parameter name="curTo"/>
+    <Parameter name="issotrx"/>
+    <Parameter name="bPartner" optional="true" type="replace" after="I.C_BPARTNER_ID IN " text="('x')"/>
+    <Parameter name="typeDoc"/>
   </SqlMethod>
 </SqlClass>

@@ -27,7 +27,7 @@
         <th width="56%" class="DataGrid_Header_Cell">Product</th>
         <th width="9%" class="DataGrid_Header_Cell">Quantity</th>
         <th width="7%" class="DataGrid_Header_Cell">Unit</th>
-        <th width="11%" class="DataGrid_Header_Cell">Amount</th>
+        <th width="11%" class="DataGrid_Header_Cell_Amount">Amount</th>
         <th width="9%" class="DataGrid_Header_Cell">P.M</th>
         <th width="8%" class="DataGrid_Header_Cell">%</th>
     </tr>
@@ -36,7 +36,7 @@
 	<td width="56%" id="fieldProductnameABCactual" class="DataGrid_Body_Cell">xxProducto</td>
         <td width="9%" id="fieldABCqtyactual" class="DataGrid_Body_Cell">xx12321</td>
         <td width="7%" id="fieldABCuomactual" class="DataGrid_Body_Cell">xxKg</td>
-        <td width="11%" id="fieldABCamountactual" class="DataGrid_Body_Cell">xx123212</td>
+        <td width="11%" id="fieldABCamountactual" class="DataGrid_Body_Cell_Amount">xx123212</td>
         <td width="9%" id="fieldAvgpriceABCactual" class="DataGrid_Body_Cell">xx44.023</td>
         <td width="8%" id="fieldTotalAvgABCactual" class="DataGrid_Body_Cell">100.00<span>%</span></td>
     </tr>
