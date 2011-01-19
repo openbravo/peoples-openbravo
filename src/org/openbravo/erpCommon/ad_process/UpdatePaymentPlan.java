@@ -68,7 +68,7 @@ public class UpdatePaymentPlan implements org.openbravo.scheduling.Process {
       bundle.setResult(msg);
 
     } catch (final Exception e) {
-      log.error(e.getMessage(), e);
+      log.error("Error when updating the payment plan", e);
       final OBError msg = new OBError();
       msg.setType("Error");
       msg.setMessage(e.getMessage());

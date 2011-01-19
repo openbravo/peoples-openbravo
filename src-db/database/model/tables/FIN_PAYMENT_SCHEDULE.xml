@@ -94,5 +94,6 @@
       <foreign-key foreignTable="FIN_PAYMENT_PRIORITY" name="FIN_PAYSCHED_PAYPRIORITY">
         <reference local="FIN_PAYMENT_PRIORITY_ID" foreign="FIN_PAYMENT_PRIORITY_ID"/>
       </foreign-key>
+      <check name="FIN_PAYSCHED_UPP_CHK"><![CDATA[UPDATE_PAYMENT_PLAN IN ('Y', 'N')]]></check>
     </table>
   </database>
