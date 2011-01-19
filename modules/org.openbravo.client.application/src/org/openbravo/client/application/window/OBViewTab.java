@@ -60,6 +60,7 @@ public class OBViewTab extends BaseTemplateComponent {
   private String parentProperty = null;
   private List<ButtonField> buttonFields = null;
   private List<IconButton> iconButtons = null;
+  private Field keyField;
 
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
@@ -214,7 +215,6 @@ public class OBViewTab extends BaseTemplateComponent {
 
   public List<FieldProperty> getAllFields() {
     List<FieldProperty> fields = new ArrayList<FieldProperty>();
-    Field keyField = null;
     for (Field field : tab.getADFieldList()) {
       if (field.getColumn().isKeyColumn()) {
         keyField = field;
@@ -232,7 +232,41 @@ public class OBViewTab extends BaseTemplateComponent {
       fields.add(fp);
     }
 
+    // Standard hidden fields shown in all 2.50 windows
+    FieldProperty fp = new FieldProperty(keyField);
+    fp.columnName = keyField.getColumn().getDBColumnName();
+    fields.add(fp);
+
     return fields;
+  }
+
+  private Field getKeyField() {
+    if (keyField != null) {
+      return keyField;
+    }
+
+    for (Field field : tab.getADFieldList()) {
+      if (field.getColumn().isKeyColumn()) {
+        keyField = field;
+      }
+    }
+    return keyField;
+  }
+
+  public String getTableId() {
+    return tab.getTable().getId();
+  }
+
+  public String getKeyColumnId() {
+    return getKeyField().getColumn().getDBColumnName();
+  }
+
+  public String getKeyName() {
+    return "inp" + Sqlc.TransformaNombreColumna(getKeyField().getColumn().getDBColumnName());
+  }
+
+  public String getWindowId() {
+    return tab.getWindow().getId();
   }
 
   public class FieldProperty {
@@ -240,6 +274,13 @@ public class OBViewTab extends BaseTemplateComponent {
     private String dbColumnName;
     private String propertyName;
     private boolean session;
+
+    public FieldProperty() {
+      session = false;
+      propertyName = "";
+      columnName = "";
+      dbColumnName = "";
+    }
 
     public FieldProperty(Field field) {
       Column col = field.getColumn();
@@ -414,7 +455,7 @@ public class OBViewTab extends BaseTemplateComponent {
   public class PrintButton extends IconButton {
     public PrintButton() {
       type = "print";
-      action = "alert('test');";
+      action = "OB.ToolbarUtils.print(this.view);";
       label = "testing...";
     }
 

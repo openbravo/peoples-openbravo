@@ -1393,6 +1393,20 @@ isc.OBStandardView.addProperties({
           }
         }
       }
+      
+      if (!onlySessionProperties){
+        for (var p in this.standardProperties){
+          if (this.standardProperties.hasOwnProperty(p)){
+            if (classicMode) {
+              contextInfo[p] = this.standardProperties[p];
+            } else {
+              // surround the property name with @ symbols to make them different
+              // from filter criteria and such          
+              contextInfo['@' + this.entity + '.' + p + '@'] = this.standardProperties[p];
+            }
+          }
+        }
+      }
     }
     if (this.isShowingForm) {
       isc.addProperties(contextInfo, this.viewForm.auxInputs);

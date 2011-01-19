@@ -33,6 +33,14 @@
     
     defaultEditMode: ${tabComponent.defaultEditMode},
     
+    standardProperties:{
+      inpTabId: '${tabComponent.tabId}',
+      inpwindowId: '${tabComponent.windowId}',
+      inpTableId: '${tabComponent.tableId?js_string}',
+      inpkeyColumnId: '${tabComponent.keyColumnId?js_string}',
+      inpKeyName: '${tabComponent.keyName?js_string}'
+    },
+    
     propertyToColumns:[
       <#list tabComponent.allFields as field>
         {
