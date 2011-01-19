@@ -922,9 +922,11 @@ public class FormInitializationComponent extends BaseActionHandler {
         if (rs.next()) {
           fvalue = rs.getString(1);
         }
-      } else {
+      } else if (code.contains("@")) {
         fvalue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
             .getVariablesSecureApp(), code, windowId);
+      } else {
+        fvalue = code;
       }
       return fvalue;
     } catch (Exception e) {
@@ -933,5 +935,4 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
     return null;
   }
-
 }
