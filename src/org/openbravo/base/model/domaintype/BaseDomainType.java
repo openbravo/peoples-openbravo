@@ -70,6 +70,12 @@ public abstract class BaseDomainType implements DomainType {
     checkIsValidValue(property, obObject.get(property.getName()));
   }
 
+  /**
+   * This method should be implemented by DomainTypes which require the usage of certain
+   * non-standard entities in the initialize() method.
+   * 
+   * @return The returned list should contain the classes of the entities which need to be accessed
+   */
   public List<Class<?>> getClasses() {
     return new ArrayList<Class<?>>();
   }
