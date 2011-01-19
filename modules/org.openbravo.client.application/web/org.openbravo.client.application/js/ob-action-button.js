@@ -31,11 +31,6 @@ isc.OBToolbarActionButton.addProperties( {
 
   runProcess : function() {
     var theView = this.view;
-    var selectedRecord = theView.viewGrid.getSelectedRecord();
-    if (!selectedRecord) {
-      isc.warn('No record selected');
-      return;
-    }
     
     //TODO: Currently autosave is only supported in form view, once it is supported
     //in grid, make use of it here.
