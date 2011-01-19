@@ -259,6 +259,7 @@ isc.OBViewForm.addProperties({
     }
     this.view.setToolBarButtonState();
     this.view.toolBar.refreshCustomButtons();
+    this.onFieldChanged();
     this.focus();
   },
   
@@ -685,5 +686,9 @@ isc.OBViewForm.addProperties({
     } else {
       action.method.apply(action.target, action.parameters);
     }
+  },
+
+  onFieldChanged: function(form, item, value) {
+    isc.Log.logWarn('To be implemented dynamically');
   }
 });

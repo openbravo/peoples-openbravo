@@ -350,8 +350,8 @@ public class FormInitializationComponent extends BaseActionHandler {
                   final String attrValue = Utility.getContext(new DalConnectionProvider(false),
                       RequestContext.get().getVariablesSecureApp(), attrName, tab.getWindow()
                           .getId());
-                  sessionAttributes.put(
-                      attrName.startsWith("#") ? attrName.substring(1) : attrName, attrValue);
+                  sessionAttributes.put(attrName.startsWith("#") ? attrName.replace("#", "_")
+                      : attrName, attrValue);
                 }
                 finalObject.put("sessionAttributes", sessionAttributes);
               }
@@ -402,6 +402,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     return null;
   }
 
+  @SuppressWarnings("unchecked")
   private void addSpecialParameters(Tab tab, JSONObject jsContent) {
     Iterator it = jsContent.keys();
     while (it.hasNext()) {

@@ -36,7 +36,10 @@
         targetEntity: '${fieldDefinition.targetEntity?string}',
         required: ${fieldDefinition.required?string},
           <#if fieldDefinition.redrawOnChange?string = "true" >
-          redrawOnChange: ${fieldDefinition.redrawOnChange?string},
+          redrawOnChange: true,
+          changed: function(form, item, value) {
+            form.onFieldChanged(form, item, value);
+          },
           </#if>
           <#if fieldDefinition.showIf != "">
           showIf: function(item, value, form, values) {

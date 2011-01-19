@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,5 +23,18 @@ isc.OBViewForm.create({
     <#list data.fields as field>
       <@createField field/><#if field_has_next>,</#if>
     </#list>
-    ]
+    ],
+    onFieldChanged: function(form, item, value) {
+      var context = this.view.getContextInfo(false, true);
+      form = form || this;
+      <#list data.fields as field>
+      <#if field.readOnlyIf != "">
+        if(${field.readOnlyIf}) {
+          form.getItem('${field.name}').disable();
+        } else {
+          form.getItem('${field.name}').enable();
+        }
+      </#if>
+      </#list>
+    }
 })

@@ -55,6 +55,7 @@ public class DynamicExpressionParser {
   static {
     exprToJSMap = new HashMap<String, String>();
     exprToJSMap.put("'Y'", "true");
+    exprToJSMap.put("'N'", "false");
   }
 
   private List<Field> fieldsInExpression = new ArrayList<Field>();
@@ -97,30 +98,63 @@ public class DynamicExpressionParser {
             + strAux.substring(pos[0] + COMPARATIONS[pos[1]][0].length(), strAux.length());
       }
 
-      jsCode.append(getDisplayLogicText(token));
+      String leftPart = getDisplayLogicText(token);
+      jsCode.append(leftPart);
 
       if (pos[0] >= 0) {
         jsCode.append(COMPARATIONS[pos[1]][1]);
       }
 
-      jsCode.append(getDisplayLogicText(token2));
+      String rightPart = getDisplayLogicText(token2);
+      jsCode.append(leftPart.contains("form.getValue") ? transformValue(rightPart) : rightPart);
     }
   }
 
+  /**
+   * Gets a JavaScript expression based on the dynamic expression, e.g @SomeColumn@!'Y' results in
+   * form.getValue('someColumn') !== true.<br/>
+   * Note: Field comparison with <b>'Y'</b> or <b>'N'</b> are transformed in <b>true</b> or
+   * <b>false</b>
+   * 
+   * @return A JavaScript expression
+   */
   public String getJSExpression() {
     return jsCode.toString();
   }
 
+  /**
+   * @see DynamicExpressionParser#getJSExpression()
+   */
   public String toString() {
     return getJSExpression();
   }
 
+  /**
+   * Returns the list of Fields used in the dynamic expression
+   * 
+   */
   public List<Field> getFields() {
     return fieldsInExpression;
   }
 
+  /**
+   * Returns the list of session attribute names used in the dynamic expression
+   * 
+   */
   public List<String> getSessionAttributes() {
     return sessionAttributesInExpression;
+  }
+
+  /**
+   * Transform values into JavaScript equivalent, e.g. <b>'Y'</b> into <b>true</b>, based in a
+   * defined map. Often used in dynamic expression comparisons
+   * 
+   * @param value
+   *          A string expression like <b>'Y'</b>
+   * @return A equivalent value in JavaScript or the same string if has no mapping value
+   */
+  private String transformValue(String value) {
+    return exprToJSMap.get(value) != null ? exprToJSMap.get(value) : value;
   }
 
   /*
@@ -142,7 +176,7 @@ public class DynamicExpressionParser {
       }
       i = localToken.indexOf("@");
     }
-    strOut.append(exprToJSMap.get(localToken) != null ? exprToJSMap.get(localToken) : localToken);
+    strOut.append(localToken);
     return strOut.toString();
   }
 
@@ -155,8 +189,9 @@ public class DynamicExpressionParser {
     for (Field field : tab.getADFieldList()) {
       if (token.equalsIgnoreCase(field.getColumn().getDBColumnName())) {
         fieldsInExpression.add(field);
-        return "form.getValue('"
-            + KernelUtils.getInstance().getPropertyFromColumn(field.getColumn()).getName() + "')";
+        final String fieldName = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn())
+            .getName();
+        return "form.getValue('" + fieldName + "')";
       }
     }
     OBCriteria<AuxiliaryInput> auxInC = OBDal.getInstance().createCriteria(AuxiliaryInput.class);
@@ -165,13 +200,11 @@ public class DynamicExpressionParser {
     for (AuxiliaryInput auxIn : auxInputs) {
       if (token.equalsIgnoreCase(auxIn.getName())) {
         auxInputsInExpression.add(auxIn);
-        // prevents jslint warning but will only work if auxIn does
-        // not contain illegal js names..
         return TOKEN_PREFIX + auxIn.getName();
       }
     }
     sessionAttributesInExpression.add(token);
-    return TOKEN_PREFIX + (token.startsWith("#") ? token.substring(1) : token);
+    return TOKEN_PREFIX + (token.startsWith("#") ? token.replace("#", "_") : token);
   }
 
   /*

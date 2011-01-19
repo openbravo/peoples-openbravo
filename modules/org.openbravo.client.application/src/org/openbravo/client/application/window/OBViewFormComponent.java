@@ -46,6 +46,7 @@ import org.openbravo.model.ad.ui.Tab;
  * The backing bean for generating the OBViewForm client-side representation.
  * 
  * @author mtaal
+ * @author iperdomo
  */
 public class OBViewFormComponent extends BaseTemplateComponent {
   private static Long ZERO = new Long(0);
@@ -79,7 +80,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     Collections.sort(adFields, new FormFieldComparator());
 
     final List<Field> fieldsInDynamicExpression = new ArrayList<Field>();
-    final Map<Field, String> fieldsExpressionMap = new HashMap<Field, String>();
+    final Map<Field, String> displayLogicMap = new HashMap<Field, String>();
+    final Map<Field, String> readOnlyLogicMap = new HashMap<Field, String>();
 
     // Processing dynamic expressions (display logic)
     for (Field f : adFields) {
@@ -89,9 +91,9 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       }
 
       final DynamicExpressionParser parser = new DynamicExpressionParser(f.getDisplayLogic(), tab);
-      fieldsExpressionMap.put(f, parser.getJSExpression());
+      displayLogicMap.put(f, parser.getJSExpression());
 
-      // log.debug(f.getTab().getId() + " - " + f.getName() + " >>> " + parser.getJSExpression());
+      log.debug(f.getTab().getId() + " - " + f.getName() + " >>> " + parser.getJSExpression());
 
       for (Field fieldExpression : parser.getFields()) {
         if (!fieldsInDynamicExpression.contains(fieldExpression)) {
@@ -100,6 +102,25 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       }
     }
 
+    // Processing dynamic expression (read-only logic)
+    for (Field f : adFields) {
+      if (f.getColumn().getReadOnlyLogic() == null || f.getColumn().getReadOnlyLogic().equals("")
+          || !f.isActive() || !f.getColumn().isActive()) {
+        continue;
+      }
+
+      final DynamicExpressionParser parser = new DynamicExpressionParser(f.getColumn()
+          .getReadOnlyLogic(), tab);
+      readOnlyLogicMap.put(f, parser.getJSExpression());
+
+      log.debug(f.getTab().getId() + " - " + f.getName() + " >>> " + parser.getJSExpression());
+
+      for (Field fieldExpression : parser.getFields()) {
+        if (!fieldsInDynamicExpression.contains(fieldExpression)) {
+          fieldsInDynamicExpression.add(fieldExpression);
+        }
+      }
+    }
     // log.debug(tab.getId() + " - " + fieldsInDynamicExpression);
 
     OBViewFieldGroup currentFieldGroup = null;
@@ -122,7 +143,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       viewField.setField(field);
       viewField.setProperty(property);
       viewField.setReadrawOnChange(fieldsInDynamicExpression.contains(field));
-      viewField.setShowIf(fieldsExpressionMap.get(field) != null ? fieldsExpressionMap.get(field)
+      viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
+      viewField.setReadOnlyIf(readOnlyLogicMap.get(field) != null ? readOnlyLogicMap.get(field)
           : "");
 
       // Positioning some fields in odd-columns
@@ -201,6 +223,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public boolean getRedrawOnChange();
 
     public String getShowIf();
+
+    public String getReadOnlyIf();
   }
 
   public class OBViewField implements OBViewFieldDefinition {
@@ -211,6 +235,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     private Boolean isParentProperty = null;
     private boolean redrawOnChange = false;
     private String showIf = "";
+    private String readOnlyIf = "";
 
     public boolean isReadOnly() {
       return isParentProperty() || !property.isUpdatable();
@@ -372,6 +397,13 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return showIf;
     }
 
+    public void setReadOnlyIf(String readOnlyExpression) {
+      this.readOnlyIf = readOnlyExpression;
+    }
+
+    public String getReadOnlyIf() {
+      return readOnlyIf;
+    }
   }
 
   public class DefaultVirtualField implements OBViewFieldDefinition {
@@ -437,6 +469,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public String getShowIf() {
+      return "";
+    }
+
+    public String getReadOnlyIf() {
       return "";
     }
 
@@ -613,6 +649,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public String getShowIf() {
+      return "";
+    }
+
+    public String getReadOnlyIf() {
       return "";
     }
 
