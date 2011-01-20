@@ -132,7 +132,6 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 
 .OBMainTabBarButtonSelectedDisabled,
 .OBMainTabBarButtonDisabled,
-
 .OBMainTabBarButtonSelectedDisabledInactive,
 .OBMainTabBarButtonDisabledInactive {
   font-weight: normal; 
@@ -243,5 +242,5 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 }
 
 .OBLoadingPromptModalMask {
-  background-color: #808080;
+  background-color: #7f7f7f;
 }
