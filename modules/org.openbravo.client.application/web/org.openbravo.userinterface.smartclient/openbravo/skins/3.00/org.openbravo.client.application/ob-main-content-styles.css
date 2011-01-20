@@ -236,6 +236,8 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 /*============================================================
  Loading prompt
  ============================================================*/
-.OBLoadingPromptBody {
-  background-color: #000000;
+.OBLoadingPromptLabel {
+  font-family: 'lucida sans', sans-serif;
+  font-size: 11px;
+  color: #E2E2E2;
 }

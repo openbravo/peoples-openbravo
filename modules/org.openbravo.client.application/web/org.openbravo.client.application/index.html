@@ -26,7 +26,7 @@ function OBStartApplication() {
   OB.Layout.draw();
   $LAB.script(document.location.protocol + OB.Application.butlerUtilsUrl).wait();
   OB.Layout.ViewManager.createAddStartTab();
-  isc.clearPrompt();
+  OB_LoadingWindow.destroy();
   OB.GlobalHiddenForm = document.forms.OBGlobalHiddenForm;
 }
 
@@ -36,11 +36,33 @@ function OBStartApplication() {
 <body>
 
 <script type="text/javascript">
-// set some defaults used directly
-isc.Canvas.loadingImageSrc = '../../org.openbravo.userinterface.smartclient/openbravo/skins/3.00/org.openbravo.client.application/images/system/windowLoading.gif';
-isc.Canvas.loadingImageSize = 70;
+// create the loading message
+var OB_LoadingWindow = isc.Window.create({
+  width: 1,
+  height: 1,
+  overflow: 'visible',
+  showEdges:false, 
+  showHeader: false,
+  showFooter: false,
+  showModalMask: true,
+  canDragReposition: false,
+  autoCenter: true, 
+  isModal: true, 
+  backgroundColor: null,
+  membersMargin: 10,
+  members: [isc.HLayout.create({
+    width: 1,
+    height: 1,
+    overflow: 'visible',
+    defaultLayoutAlign: 'center',
+    members: [
+      isc.Label.create({contents: 'LOADING... ', width: 1, height: 1, overflow: 'visible', styleName: 'OBLoadingPromptLabel'}),
+      isc.Img.create({width: 220, height: 16, src: '../../org.openbravo.userinterface.smartclient/openbravo/skins/3.00/org.openbravo.client.application/images/system/windowLoading.gif'})
+    ]
+  })]
+});
 
-isc.showPrompt("${loadingImage}", {showEdges:false, showModalMask: true, isModal: true, hiliteBodyColor: null, bodyColor: null, bodyStyle: 'OBLoadingPromptBody'});
+OB_LoadingWindow.show();
 </script>
 
 <script type="text/javascript" src="../org.openbravo.userinterface.smartclient/isomorphic/ISC_History.js"></script>
