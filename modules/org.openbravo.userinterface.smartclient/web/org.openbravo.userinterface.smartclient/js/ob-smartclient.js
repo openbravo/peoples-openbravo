@@ -31,9 +31,7 @@ isc.FormItem.addProperties({
   },
   
   changed: function(){
-    var ret = this.Super('changed', arguments);
     this._hasChanged = true;
-    return ret;
   },
   
   focus: function(form, item){
