@@ -259,7 +259,7 @@ isc.OBViewForm.addProperties({
     }
     this.view.setToolBarButtonState();
     this.view.toolBar.refreshCustomButtons();
-    this.onFieldChanged();
+    this.onFieldChanged(this);
     this.focus();
   },
   
@@ -429,7 +429,9 @@ isc.OBViewForm.addProperties({
   setAutoSaveFormInActiveView: function(form) {
     // the view of the form can be another than
     // the current active view
-    this.view.standardWindow.activeView.autoSaveForm = form;
+    if (this.view.standardWindow.activeView) {
+      this.view.standardWindow.activeView.autoSaveForm = form;
+    }
   },
   
   setActionAfterAutoSave: function(action) {
