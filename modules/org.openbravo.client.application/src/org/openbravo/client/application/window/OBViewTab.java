@@ -63,6 +63,8 @@ public class OBViewTab extends BaseTemplateComponent {
   private List<IconButton> iconButtons = null;
   private Field keyField;
 
+  private Column keyColumn;
+
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
   }
@@ -226,32 +228,35 @@ public class OBViewTab extends BaseTemplateComponent {
     }
 
     // Additional key column, set in session with db column name
-    if (keyField != null) {
-      FieldProperty fp = new FieldProperty(keyField);
-      fp.columnName = keyField.getColumn().getDBColumnName();
+    if (getKeyColumn() != null) {
+      FieldProperty fp = new FieldProperty(keyColumn);
+      fp.columnName = keyColumn.getDBColumnName();
       fp.session = true;
       fields.add(fp);
     }
 
-    // Standard hidden fields shown in all 2.50 windows
-    FieldProperty fp = new FieldProperty(keyField);
-    fp.columnName = keyField.getColumn().getDBColumnName();
-    fields.add(fp);
-
     return fields;
   }
 
-  private Field getKeyField() {
-    if (keyField != null) {
-      return keyField;
+  private Column getKeyColumn() {
+    if (keyColumn != null) {
+      return keyColumn;
     }
 
-    for (Field field : tab.getADFieldList()) {
-      if (field.getColumn().isKeyColumn()) {
-        keyField = field;
+    if (keyField != null) {
+      keyColumn = keyField.getColumn();
+    }
+
+    if (keyColumn == null) {
+      for (Column col : tab.getTable().getADColumnList()) {
+        if (col.isKeyColumn()) {
+          keyColumn = col;
+          break;
+        }
       }
     }
-    return keyField;
+
+    return keyColumn;
   }
 
   public String getTableId() {
@@ -259,11 +264,11 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getKeyColumnId() {
-    return getKeyField().getColumn().getDBColumnName();
+    return getKeyColumn().getDBColumnName();
   }
 
   public String getKeyName() {
-    return "inp" + Sqlc.TransformaNombreColumna(getKeyField().getColumn().getDBColumnName());
+    return "inp" + Sqlc.TransformaNombreColumna(getKeyColumn().getDBColumnName());
   }
 
   public String getWindowId() {
@@ -283,12 +288,15 @@ public class OBViewTab extends BaseTemplateComponent {
       dbColumnName = "";
     }
 
-    public FieldProperty(Field field) {
-      Column col = field.getColumn();
+    public FieldProperty(Column col) {
       columnName = "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName());
       dbColumnName = col.getDBColumnName();
       propertyName = KernelUtils.getInstance().getPropertyFromColumn(col).getName();
       session = col.isStoredInSession();
+    }
+
+    public FieldProperty(Field field) {
+      this(field.getColumn());
     }
 
     public String getColumnName() {
@@ -320,6 +328,7 @@ public class OBViewTab extends BaseTemplateComponent {
     private List<Value> labelValues;
     private boolean autosave;
     private String showIf = "";
+    private String readOnlyIf = "";
 
     public ButtonField(Field fld) {
       id = fld.getId();
@@ -376,6 +385,13 @@ public class OBViewTab extends BaseTemplateComponent {
             tab);
         showIf = parser.getJSExpression();
       }
+
+      // Read only logic
+      if (fld.getColumn().getReadOnlyLogic() != null) {
+        final DynamicExpressionParser parser = new DynamicExpressionParser(fld.getColumn()
+            .getReadOnlyLogic(), tab);
+        readOnlyIf = parser.getJSExpression();
+      }
     }
 
     public boolean isAutosave() {
@@ -426,6 +442,10 @@ public class OBViewTab extends BaseTemplateComponent {
 
     public String getShowIf() {
       return showIf;
+    }
+
+    public String getReadOnlyIf() {
+      return readOnlyIf;
     }
 
     public class Value {
