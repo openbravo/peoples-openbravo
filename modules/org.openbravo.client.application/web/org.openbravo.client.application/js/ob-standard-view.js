@@ -201,6 +201,15 @@ isc.OBStandardView.addProperties({
     return ret;
   },
   
+  destroy: function() {
+    // destroy the datasource
+    if (this.dataSource) {
+      this.dataSource.destroy();
+      this.dataSource = null;      
+    }
+    return this.Super('destroy', arguments);
+  },
+  
   buildStructure: function(){
     this.createMainParts();
     this.createViewStructure();
@@ -232,6 +241,7 @@ isc.OBStandardView.addProperties({
     
     var modifiedDs = isc.addProperties({}, ds, {
       view: this,
+      ID: ds.ID + this.tabId,
       
       showProgress: function(editedRecord){
       
