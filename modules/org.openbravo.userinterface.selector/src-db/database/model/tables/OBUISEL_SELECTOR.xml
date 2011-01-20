@@ -93,6 +93,14 @@
         <default><![CDATA[startsWith]]></default>
         <onCreateDefault><![CDATA['startsWith']]></onCreateDefault>
       </column>
+      <column name="HQL" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ENTITY_ALIAS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBUISEL_S_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
