@@ -127,6 +127,13 @@ isc.OBToolbarActionButton.addProperties( {
       this.hide();
     }
     
+    var readonly = this.readOnlyIf && this.readOnlyIf(null, null, this.view.viewForm);
+    if (readonly) {
+      this.disable();
+    } else {
+      this.enable();
+    }
+    
     var label = this.labelValue[record[this.property]];
     if (!label){
       label = this.title;

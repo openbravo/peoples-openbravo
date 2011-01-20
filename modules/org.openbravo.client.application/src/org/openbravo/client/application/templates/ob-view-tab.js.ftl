@@ -70,6 +70,12 @@
           return context && (${field.showIf});
        },
        </#if>
+       <#if field.readOnlyIf != "">
+       readOnlyIf: function(item, value, form, values) {
+          var context = form.view.getContextInfo(false, true);
+          return context && (${field.readOnlyIf});
+       },
+       </#if>
       }<#if field_has_next>,</#if>
     </#list>],
     
