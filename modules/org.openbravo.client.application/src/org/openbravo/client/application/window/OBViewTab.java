@@ -57,6 +57,7 @@ public class OBViewTab extends BaseTemplateComponent {
   private String tabTitle;
   private List<OBViewTab> childTabs = new ArrayList<OBViewTab>();
   private OBViewTab parentTabComponent;
+  private String parentProperty = null;
   private List<ButtonField> buttonFields = null;
 
   protected Template getComponentTemplate() {
@@ -94,18 +95,31 @@ public class OBViewTab extends BaseTemplateComponent {
     if (parentTabComponent == null) {
       return "";
     }
+    if (parentProperty != null) {
+      return parentProperty;
+    }
+    parentProperty = "";
     final Entity thisEntity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
     final Entity parentEntity = ModelProvider.getInstance().getEntity(
         parentTabComponent.getTab().getTable().getName());
-    for (Property property : thisEntity.getProperties()) {
-      if (property.isPrimitive() || property.isOneToMany()) {
-        continue;
+    if (tab.getColumn() != null) {
+      final String columnId = (String) DalUtil.getId(tab.getColumn());
+      for (Property property : thisEntity.getProperties()) {
+        if (property.getColumnId() != null && property.getColumnId().equals(columnId)) {
+          parentProperty = property.getName();
+        }
       }
-      if (property.getTargetEntity() == parentEntity) {
-        return property.getName();
+    } else {
+      for (Property property : thisEntity.getProperties()) {
+        if (property.isPrimitive() || property.isOneToMany()) {
+          continue;
+        }
+        if (property.getTargetEntity() == parentEntity) {
+          parentProperty = property.getName();
+        }
       }
     }
-    return "";
+    return parentProperty;
   }
 
   public String getViewForm() {
