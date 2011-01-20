@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -397,5 +397,29 @@ public class DocFINPayment extends AcctServer {
       OBContext.restorePreviousMode();
     }
     return account;
+  }
+
+  public String getSeqNo() {
+    return SeqNo;
+  }
+
+  public void setSeqNo(String seqNo) {
+    SeqNo = seqNo;
+  }
+
+  public String getGeneratedAmount() {
+    return generatedAmount;
+  }
+
+  public void setGeneratedAmount(String generatedAmount) {
+    this.generatedAmount = generatedAmount;
+  }
+
+  public String getUsedAmount() {
+    return usedAmount;
+  }
+
+  public void setUsedAmount(String usedAmount) {
+    this.usedAmount = usedAmount;
   }
 }
