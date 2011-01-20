@@ -225,6 +225,8 @@ isc.OBStandardView.addProperties({
     // - to set/reset the progress icons
     // - to handle error cases in the response
     // - to add info to the request
+    // wrapping is done by creating a new datasource class
+    // which is instantiated
     var obDsClassname = 'OBDataSource' + this.tabId;
     isc.defineClass(obDsClassname, ds.getClass());
     
