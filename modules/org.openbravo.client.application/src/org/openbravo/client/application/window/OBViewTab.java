@@ -135,6 +135,7 @@ public class OBViewTab extends BaseTemplateComponent {
         }
         if (property.getTargetEntity() == parentEntity) {
           parentProperty = property.getName();
+          break;
         }
       }
     }
