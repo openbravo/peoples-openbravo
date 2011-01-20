@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,329 +66,95 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonUtils;
 
+/**
+ * This class computes all the required information in Openbravo 3 forms. Basically, this can be
+ * summarized in the following actions:
+ * 
+ * Computation of all required column information (including combo values)
+ * 
+ * Computation of auxiliary input values
+ * 
+ * Execution of callouts
+ * 
+ * Insertion of all relevant data in the session
+ */
 public class FormInitializationComponent extends BaseActionHandler {
   private static final Logger log = Logger.getLogger(FormInitializationComponent.class);
 
   private static final int MAX_CALLOUT_CALLS = 50;
 
-  // @Override
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     OBContext.setAdminMode(true);
     long iniTime = System.currentTimeMillis();
     try {
-      JSONObject jsContent = null;
+      // Execution mode. It can be:
+      // - NEW: used when the user clicks on the "New record" button
+      // - EDIT: used when the user opens a record in form view
+      // - CHANGE: used when the user changes a field which should fire callouts or comboreloads
+      // - SETSESSION: used when the user calls a process
+      String mode = (String) parameters.get("MODE");
+      // ID of the parent record
+      String parentId = (String) parameters.get("PARENT_ID");
+      // The ID of the tab
+      String tabId = (String) parameters.get("TAB_ID");
+      // The ID of the record. Only relevant on EDIT, CHANGE and SETSESSION modes
+      String rowId = (String) parameters.get("ROW_ID");
+      // The column changed by the user. Only relevant on CHANGE mode
+      String changedColumn = (String) parameters.get("CHANGED_COLUMN");
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      BaseOBObject row = null;
+      BaseOBObject parentRecord = null;
+      Map<String, JSONObject> columnValues = new HashMap<String, JSONObject>();
+      List<String> allColumns = new ArrayList<String>();
+      List<String> calloutsToCall = new ArrayList<String>();
+      List<String> lastfieldChanged = new ArrayList<String>();
+      List<String> changeEventCols = new ArrayList<String>();
+      Map<String, List<String>> columnsInValidation = new HashMap<String, List<String>>();
+      List<String> calloutMessages = new ArrayList<String>();
+
+      log.debug("Form Initialization Component Execution. Tab Name: " + tab.getWindow().getName()
+          + "." + tab.getName() + " Tab Id:" + tab.getId());
+      if (rowId != null) {
+        row = OBDal.getInstance().get(tab.getTable().getName(), rowId);
+      }
+      JSONObject jsContent = new JSONObject();
       try {
-        if (content == null) {
-          jsContent = new JSONObject();
-        } else {
+        if (content != null) {
           jsContent = new JSONObject(content);
         }
       } catch (JSONException e) {
         throw new OBException("Error while parsing content", e);
       }
-      String mode = (String) parameters.get("MODE");
-      String parentId = (String) parameters.get("PARENT_ID");
-      String tabId = (String) parameters.get("TAB_ID");
-      String rowId = (String) parameters.get("ROW_ID");
-      String changedColumn = (String) parameters.get("CHANGED_COLUMN");
-      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      List<Field> fields = tab.getADFieldList();
-      BaseOBObject row = null;
-      if (rowId != null) {
-        row = OBDal.getInstance().get(tab.getTable().getName(), rowId);
-      }
-      Tab parentTab = null;
-      BaseOBObject parentRecord = null;
-      log.debug("TAB NAME: " + tab.getWindow().getName() + "." + tab.getName() + " Tab Id:"
-          + tab.getId());
 
-      // First the session variables for the parent records are set
-      if (mode.equals("EDIT")) {
-        parentRecord = KernelUtils.getInstance().getParentRecord(row, tab);
-      }
-      parentTab = KernelUtils.getInstance().getParentTab(tab);
-      if (parentId != null && parentTab != null) {
-        parentRecord = OBDal.getInstance().get(
-            ModelProvider.getInstance().getEntityByTableName(parentTab.getTable().getDBTableName())
-                .getName(), parentId);
-      }
-      if (parentTab != null && parentRecord != null) {
-        setSessionValues(parentRecord, parentTab);
-      }
+      // First the parent record is retrieved and the session variables for the parent records are
+      // set
+      parentRecord = setSessionVariablesInParent(mode, tab, row, parentId);
+
       // We also need to set the current record values in the request
-      if (mode.equals("EDIT")) {
-        // In EDIT mode we get them from the database
-        for (Field field : fields) {
-          setValueOfColumnInRequest(row, field.getColumn().getDBColumnName());
-        }
-      } else if (mode.equals("CHANGE") || mode.equals("SETSESSION")) {
-        // In CHANGE and SETSESSION we get them from the request
-        for (Field field : fields) {
-          String inpColName = "inp"
-              + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
-          try {
-            if (jsContent.has(inpColName)) {
-              String value;
-              if (jsContent.get(inpColName) == null
-                  || jsContent.get(inpColName).toString().equals("null")) {
-                value = null;
-              } else {
-                value = jsContent.get(inpColName).toString();
-              }
-              RequestContext.get().setRequestParameter(inpColName, value);
-            }
-          } catch (Exception e) {
-            log.error("Couldn't read column value from the request for column " + inpColName, e);
-          }
-        }
-        // We also add special parameters such as the one set by selectors to the request, so the
-        // callouts can use them
-        addSpecialParameters(tab, jsContent);
-      }
-      HashMap<String, JSONObject> columnValues = new HashMap<String, JSONObject>();
-      HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
-      ArrayList<String> allColumns = new ArrayList<String>();
-      ArrayList<String> calloutsToCall = new ArrayList<String>();
-      ArrayList<String> lastfieldChanged = new ArrayList<String>();
-      List<String> changeEventCols = new ArrayList<String>();
-
-      for (Field field : fields) {
-        columnsOfFields.put(field.getColumn().getDBColumnName(), field);
-      }
+      setValuesInRequest(mode, tab, row, jsContent);
 
       // Calculation of validation dependencies
-      HashMap<String, List<String>> columnsInValidation = new HashMap<String, List<String>>();
       computeListOfColumnsSortedByValidationDependencies(tab, allColumns, columnsInValidation,
           changeEventCols);
-      boolean forceComboReload = (mode.equals("CHANGE") && changedColumn == null);
 
       // Computation of the Auxiliary Input values
-      OBCriteria<AuxiliaryInput> auxInC = OBDal.getInstance().createCriteria(AuxiliaryInput.class);
-      auxInC.add(Expression.eq(AuxiliaryInput.PROPERTY_TAB, tab));
-      List<AuxiliaryInput> auxInputs = auxInC.list();
-      for (AuxiliaryInput auxIn : auxInputs) {
-        Object value = computeAuxiliaryInput(auxIn, tab.getWindow().getId());
-        log.debug("Final Computed Value. Name: " + auxIn.getName() + " Value: " + value);
-        JSONObject jsonObj = new JSONObject();
-        try {
-          jsonObj.put("value", value);
-        } catch (JSONException e) {
-          log.error("Error while computing auxiliary input " + auxIn.getName(), e);
-        }
-        columnValues.put("inp" + Sqlc.TransformaNombreColumna(auxIn.getName()), jsonObj);
-        RequestContext.get().setRequestParameter(
-            "inp" + Sqlc.TransformaNombreColumna(auxIn.getName()),
-            value == null ? null : value.toString());
-        // Now we insert session values for auxiliary inputs
-        if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
-          setSessionValue(tab.getWindow().getId() + "|" + auxIn.getName(), value);
-        }
-      }
+      computeAuxiliaryInputs(mode, tab, columnValues);
 
-      // Column values are set in the RequestContext
-      for (String col : allColumns) {
-        Field field = columnsOfFields.get(col);
-        try {
-          String columnId = field.getColumn().getId();
-          UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(columnId);
-          String value = null;
-          if (mode.equals("NEW")) {
-            // On NEW mode, the values are computed through the UIDefinition (the defaults will be
-            // used)
-            if (field.getColumn().isLinkToParentColumn() && parentRecord != null
-                && referencedEntityIsParent(parentRecord, field)) {
-              // If the column is link to the parent tab, we set its value as the parent id
-              RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col),
-                  parentId);
-              value = uiDef.getFieldProperties(field, true);
-            } else if (field.getColumn().getDBColumnName().equalsIgnoreCase("IsActive")) {
-              // The Active column is always set to 'true' on new records
-              RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col),
-                  "Y");
-              value = uiDef.getFieldProperties(field, true);
-            } else {
-              // Else, the default is used
-              value = uiDef.getFieldProperties(field, false);
-            }
-          } else if (mode.equals("EDIT")
-              || (mode.equals("CHANGE") && (forceComboReload || changeEventCols
-                  .contains(changedColumn)))) {
-            // On EDIT mode, the values are computed through the UIDefinition (the values have been
-            // previously set in the RequestContext)
-            // This is also done this way on CHANGE mode where a combo reload is needed
-            value = uiDef.getFieldProperties(field, true);
-          } else if (mode.equals("CHANGE") || mode.equals("SETSESSION")) {
-            // On CHANGE and SETSESSION mode, the values are read from the request
-            JSONObject jsCol = new JSONObject();
-            String colName = "inp" + Sqlc.TransformaNombreColumna(col);
-            if (jsContent.has(colName)) {
-              jsCol.put("value", jsContent.get(colName));
-              value = jsCol.toString();
-            } else if (jsContent.has(field.getColumn().getDBColumnName())) {
-              // Special case related to the primary key column, which is sent with its dbcolumnname
-              // instead of the "inp" name
-              jsCol.put("value", jsContent.get(field.getColumn().getDBColumnName()));
-              value = jsCol.toString();
-            }
-          }
-          JSONObject jsonobject = null;
-          if (value != null) {
-            jsonobject = new JSONObject(value);
-            columnValues.put("inp"
-                + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
-            // We need to fire callouts if the field value was changed, or if the field is a combo
-            // (due to how ComboReloads worked, callouts were always called)
-            if (mode.equals("NEW")
-                && ((jsonobject.has("value") && !jsonobject.get("value").equals("")) || uiDef instanceof FKComboUIDefinition)) {
-              if (field.getColumn().getCallout() != null) {
-                addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
-              }
-            }
-            setRequestContextParameter(field, jsonobject);
-            // We also set the session value for the column in Edit or SetSession mode
-            if (mode.equals("EDIT") || mode.equals("SETSESSION")) {
-              if (field.getColumn().isStoredInSession() || field.getColumn().isKeyColumn()) {
-                setSessionValue(tab.getWindow().getId() + "|"
-                    + field.getColumn().getDBColumnName().toUpperCase(),
-                    jsonobject.has("value") ? uiDef.formatValueToSQL(jsonobject.get("value")
-                        .toString()) : null);
-              }
-            }
+      // Computation of Column Values (using UIDefinition, so including combo values and all
+      // relevant additional information)
+      computeColumnValues(mode, tab, allColumns, columnValues, parentRecord, parentId,
+          changedColumn, jsContent, changeEventCols, calloutsToCall, lastfieldChanged);
 
-          }
-        } catch (Exception e) {
-          throw new OBException("Couldn't get data for column "
-              + field.getColumn().getDBColumnName(), e);
-        }
-      }
+      // Execution of callouts
+      executeCallouts(mode, tab, columnValues, changedColumn, calloutsToCall, lastfieldChanged,
+          calloutMessages);
 
-      // List of the callouts that need to be called
-      ArrayList<String> messages = new ArrayList<String>();
-      if (mode.equals("NEW")) {
-        for (Field field : fields) {
-          if (field.getColumn().getCallout() != null) {
-            Object value;
-            try {
-              JSONObject jsonCol = columnValues.get("inp"
-                  + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
-              value = jsonCol.has("value") ? jsonCol.get("value") : null;
-              if (value != null && !value.toString().equals("")) {
-                // There is a callout and the value for this field is set
-
-                addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
-              }
-            } catch (JSONException e) {
-              log.error("Error reading value from parameter. Not executing callouts for column "
-                  + field.getColumn().getDBColumnName(), e);
-            }
-          }
-        }
-      }
-
-      // In CHANGE mode, we will add the initial callout call for the changed column, if there is
-      // one
-      if (mode.equals("CHANGE")) {
-        if (changedColumn != null) {
-          for (Column col : tab.getTable().getADColumnList()) {
-            if (("inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName())).equals(changedColumn)) {
-              if (col.getCallout() != null) {
-                // The column has a callout. We will add the callout to the callout list
-                addCalloutToList(col, calloutsToCall, lastfieldChanged);
-              }
-            }
-          }
-        }
-      }
-
-      ArrayList<String> calledCallouts = new ArrayList<String>();
-      runCallouts(columnValues, fields, tab, calledCallouts, calloutsToCall, lastfieldChanged,
-          messages);
-
-      JSONObject finalObject = new JSONObject();
-      try {
-        if (mode.equals("NEW") || mode.equals("CHANGE")) {
-          JSONArray arrayMessages = new JSONArray(messages);
-          finalObject.put("calloutMessages", arrayMessages);
-        }
-        if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("CHANGE")) {
-          JSONObject jsonColumnValues = new JSONObject();
-          for (Field field : fields) {
-            jsonColumnValues.put(field.getColumn().getDBColumnName(), columnValues.get("inp"
-                + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())));
-          }
-          finalObject.put("columnValues", jsonColumnValues);
-        }
-        JSONObject jsonAuxiliaryInputValues = new JSONObject();
-        for (AuxiliaryInput auxIn : auxInputs) {
-          jsonAuxiliaryInputValues.put(auxIn.getName(), columnValues.get("inp"
-              + Sqlc.TransformaNombreColumna(auxIn.getName())));
-        }
-
-        finalObject.put("auxiliaryInputValues", jsonAuxiliaryInputValues);
-
-        if (mode.equals("NEW") || mode.equals("EDIT")) {
-          // We also include information related to validation dependencies
-          // and we add the columns which have a callout
-          for (Field field : fields) {
-            if (field.getColumn().getCallout() != null) {
-              final String columnName = "inp"
-                  + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
-              if (!changeEventCols.contains(columnName)) {
-                changeEventCols.add(columnName);
-              }
-            }
-
-            // Adding session attributes in a dynamic expression
-            // This session attributes could be a preference
-            if (field.getDisplayLogic() != null && field.isDisplayed() && field.isActive()) {
-              final DynamicExpressionParser parser = new DynamicExpressionParser(field
-                  .getDisplayLogic(), tab);
-
-              if (parser.getSessionAttributes().size() > 0) {
-                final JSONObject sessionAttributes = new JSONObject();
-                for (String attrName : parser.getSessionAttributes()) {
-                  final String attrValue = Utility.getContext(new DalConnectionProvider(false),
-                      RequestContext.get().getVariablesSecureApp(), attrName, tab.getWindow()
-                          .getId());
-                  sessionAttributes.put(attrName.startsWith("#") ? attrName.replace("#", "_")
-                      : attrName, attrValue);
-                }
-                finalObject.put("sessionAttributes", sessionAttributes);
-              }
-            }
-
-          }
-          finalObject.put("dynamicCols", new JSONArray(changeEventCols));
-        }
-
-        if (mode.equals("EDIT") && row != null) {
-          final String rowClientId = ((ClientEnabled) row).getClient().getId();
-          final String currentClientId = OBContext.getOBContext().getCurrentClient().getId();
-          if (!rowClientId.equals(currentClientId)) {
-            finalObject.put("writable", false);
-          } else {
-            boolean writable = false;
-            final String userOrgId = OBContext.getOBContext().getCurrentOrganization().getId();
-            for (String orgId : OBContext.getOBContext().getWritableOrganizations()) {
-              if (orgId.equals(userOrgId)) {
-                writable = true;
-                break;
-              }
-            }
-            finalObject.put("writable", writable);
-          }
-        } else {
-          finalObject.put("writable", true);
-        }
-
-        log.debug(finalObject.toString(1));
-        log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime));
-        return finalObject;
-      } catch (JSONException e) {
-        log.error("Error while generating the final JSON object: ", e);
-      }
-
-      // }
+      // Construction of the final JSONObject
+      JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
+          calloutMessages);
+      log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime));
+      return finalObject;
     } catch (Throwable t) {
       final String jsonString = JsonUtils.convertExceptionToJson(t);
       try {
@@ -400,6 +166,252 @@ public class FormInitializationComponent extends BaseActionHandler {
       OBContext.restorePreviousMode();
     }
     return null;
+  }
+
+  private JSONObject buildJSONObject(String mode, Tab tab, Map<String, JSONObject> columnValues,
+      BaseOBObject row, List<String> changeEventCols, List<String> calloutMessages) {
+    JSONObject finalObject = new JSONObject();
+    try {
+      if (mode.equals("NEW") || mode.equals("CHANGE")) {
+        JSONArray arrayMessages = new JSONArray(calloutMessages);
+        finalObject.put("calloutMessages", arrayMessages);
+      }
+      if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("CHANGE")) {
+        JSONObject jsonColumnValues = new JSONObject();
+        for (Field field : tab.getADFieldList()) {
+          jsonColumnValues.put(field.getColumn().getDBColumnName(), columnValues.get("inp"
+              + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())));
+        }
+        finalObject.put("columnValues", jsonColumnValues);
+      }
+      JSONObject jsonAuxiliaryInputValues = new JSONObject();
+      for (AuxiliaryInput auxIn : tab.getADAuxiliaryInputList()) {
+        jsonAuxiliaryInputValues.put(auxIn.getName(), columnValues.get("inp"
+            + Sqlc.TransformaNombreColumna(auxIn.getName())));
+      }
+
+      finalObject.put("auxiliaryInputValues", jsonAuxiliaryInputValues);
+
+      if (mode.equals("NEW") || mode.equals("EDIT")) {
+        // We also include information related to validation dependencies
+        // and we add the columns which have a callout
+        for (Field field : tab.getADFieldList()) {
+          if (field.getColumn().getCallout() != null) {
+            final String columnName = "inp"
+                + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+            if (!changeEventCols.contains(columnName)) {
+              changeEventCols.add(columnName);
+            }
+          }
+
+          // Adding session attributes in a dynamic expression
+          // This session attributes could be a preference
+          if (field.getDisplayLogic() != null && field.isDisplayed() && field.isActive()) {
+            final DynamicExpressionParser parser = new DynamicExpressionParser(field
+                .getDisplayLogic(), tab);
+
+            if (parser.getSessionAttributes().size() > 0) {
+              final JSONObject sessionAttributes = new JSONObject();
+              for (String attrName : parser.getSessionAttributes()) {
+                final String attrValue = Utility
+                    .getContext(new DalConnectionProvider(false), RequestContext.get()
+                        .getVariablesSecureApp(), attrName, tab.getWindow().getId());
+                sessionAttributes.put(attrName.startsWith("#") ? attrName.replace("#", "_")
+                    : attrName, attrValue);
+              }
+              finalObject.put("sessionAttributes", sessionAttributes);
+            }
+          }
+
+        }
+        finalObject.put("dynamicCols", new JSONArray(changeEventCols));
+      }
+
+      if (mode.equals("EDIT") && row != null) {
+        final String rowClientId = ((ClientEnabled) row).getClient().getId();
+        final String currentClientId = OBContext.getOBContext().getCurrentClient().getId();
+        if (!rowClientId.equals(currentClientId)) {
+          finalObject.put("writable", false);
+        } else {
+          boolean writable = false;
+          final String userOrgId = OBContext.getOBContext().getCurrentOrganization().getId();
+          for (String orgId : OBContext.getOBContext().getWritableOrganizations()) {
+            if (orgId.equals(userOrgId)) {
+              writable = true;
+              break;
+            }
+          }
+          finalObject.put("writable", writable);
+        }
+      } else {
+        finalObject.put("writable", true);
+      }
+
+      log.debug(finalObject.toString(1));
+      return finalObject;
+    } catch (JSONException e) {
+      log.error("Error while generating the final JSON object: ", e);
+      return null;
+    }
+  }
+
+  private void computeColumnValues(String mode, Tab tab, List<String> allColumns,
+      Map<String, JSONObject> columnValues, BaseOBObject parentRecord, String parentId,
+      String changedColumn, JSONObject jsContent, List<String> changeEventCols,
+      List<String> calloutsToCall, List<String> lastfieldChanged) {
+    boolean forceComboReload = (mode.equals("CHANGE") && changedColumn == null);
+    HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
+    for (Field field : tab.getADFieldList()) {
+      columnsOfFields.put(field.getColumn().getDBColumnName(), field);
+    }
+    for (String col : allColumns) {
+      Field field = columnsOfFields.get(col);
+      try {
+        String columnId = field.getColumn().getId();
+        UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(columnId);
+        String value = null;
+        if (mode.equals("NEW")) {
+          // On NEW mode, the values are computed through the UIDefinition (the defaults will be
+          // used)
+          if (field.getColumn().isLinkToParentColumn() && parentRecord != null
+              && referencedEntityIsParent(parentRecord, field)) {
+            // If the column is link to the parent tab, we set its value as the parent id
+            RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col),
+                parentId);
+            value = uiDef.getFieldProperties(field, true);
+          } else if (field.getColumn().getDBColumnName().equalsIgnoreCase("IsActive")) {
+            // The Active column is always set to 'true' on new records
+            RequestContext.get()
+                .setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col), "Y");
+            value = uiDef.getFieldProperties(field, true);
+          } else {
+            // Else, the default is used
+            value = uiDef.getFieldProperties(field, false);
+          }
+        } else if (mode.equals("EDIT")
+            || (mode.equals("CHANGE") && (forceComboReload || changeEventCols
+                .contains(changedColumn)))) {
+          // On EDIT mode, the values are computed through the UIDefinition (the values have been
+          // previously set in the RequestContext)
+          // This is also done this way on CHANGE mode where a combo reload is needed
+          value = uiDef.getFieldProperties(field, true);
+        } else if (mode.equals("CHANGE") || mode.equals("SETSESSION")) {
+          // On CHANGE and SETSESSION mode, the values are read from the request
+          JSONObject jsCol = new JSONObject();
+          String colName = "inp" + Sqlc.TransformaNombreColumna(col);
+          if (jsContent.has(colName)) {
+            jsCol.put("value", jsContent.get(colName));
+            value = jsCol.toString();
+          } else if (jsContent.has(field.getColumn().getDBColumnName())) {
+            // Special case related to the primary key column, which is sent with its dbcolumnname
+            // instead of the "inp" name
+            jsCol.put("value", jsContent.get(field.getColumn().getDBColumnName()));
+            value = jsCol.toString();
+          }
+        }
+        JSONObject jsonobject = null;
+        if (value != null) {
+          jsonobject = new JSONObject(value);
+          columnValues.put("inp"
+              + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
+          // We need to fire callouts if the field value was changed, or if the field is a combo
+          // (due to how ComboReloads worked, callouts were always called)
+          if (mode.equals("NEW")
+              && ((jsonobject.has("value") && !jsonobject.get("value").equals("")) || uiDef instanceof FKComboUIDefinition)) {
+            if (field.getColumn().getCallout() != null) {
+              addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
+            }
+          }
+          setRequestContextParameter(field, jsonobject);
+          // We also set the session value for the column in Edit or SetSession mode
+          if (mode.equals("EDIT") || mode.equals("SETSESSION")) {
+            if (field.getColumn().isStoredInSession() || field.getColumn().isKeyColumn()) {
+              setSessionValue(tab.getWindow().getId() + "|"
+                  + field.getColumn().getDBColumnName().toUpperCase(),
+                  jsonobject.has("value") ? uiDef.formatValueToSQL(jsonobject.get("value")
+                      .toString()) : null);
+            }
+          }
+
+        }
+      } catch (Exception e) {
+        throw new OBException(
+            "Couldn't get data for column " + field.getColumn().getDBColumnName(), e);
+      }
+    }
+  }
+
+  private void computeAuxiliaryInputs(String mode, Tab tab, Map<String, JSONObject> columnValues) {
+    for (AuxiliaryInput auxIn : tab.getADAuxiliaryInputList()) {
+      Object value = computeAuxiliaryInput(auxIn, tab.getWindow().getId());
+      log.debug("Final Computed Value. Name: " + auxIn.getName() + " Value: " + value);
+      JSONObject jsonObj = new JSONObject();
+      try {
+        jsonObj.put("value", value);
+      } catch (JSONException e) {
+        log.error("Error while computing auxiliary input " + auxIn.getName(), e);
+      }
+      columnValues.put("inp" + Sqlc.TransformaNombreColumna(auxIn.getName()), jsonObj);
+      RequestContext.get().setRequestParameter(
+          "inp" + Sqlc.TransformaNombreColumna(auxIn.getName()),
+          value == null ? null : value.toString());
+      // Now we insert session values for auxiliary inputs
+      if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
+        setSessionValue(tab.getWindow().getId() + "|" + auxIn.getName(), value);
+      }
+    }
+  }
+
+  private BaseOBObject setSessionVariablesInParent(String mode, Tab tab, BaseOBObject row,
+      String parentId) {
+    BaseOBObject parentRecord = null;
+    if (mode.equals("EDIT")) {
+      parentRecord = KernelUtils.getInstance().getParentRecord(row, tab);
+    }
+    Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
+    if (parentId != null && parentTab != null) {
+      parentRecord = OBDal.getInstance().get(
+          ModelProvider.getInstance().getEntityByTableName(parentTab.getTable().getDBTableName())
+              .getName(), parentId);
+    }
+    if (parentTab != null && parentRecord != null) {
+      setSessionValues(parentRecord, parentTab);
+    }
+    return parentRecord;
+  }
+
+  private void setValuesInRequest(String mode, Tab tab, BaseOBObject row, JSONObject jsContent) {
+    List<Field> fields = tab.getADFieldList();
+    if (mode.equals("EDIT")) {
+      // In EDIT mode we get them from the database
+      for (Field field : fields) {
+        setValueOfColumnInRequest(row, field.getColumn().getDBColumnName());
+      }
+    } else if (mode.equals("CHANGE") || mode.equals("SETSESSION")) {
+      // In CHANGE and SETSESSION we get them from the request
+      for (Field field : fields) {
+        String inpColName = "inp"
+            + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+        try {
+          if (jsContent.has(inpColName)) {
+            String value;
+            if (jsContent.get(inpColName) == null
+                || jsContent.get(inpColName).toString().equals("null")) {
+              value = null;
+            } else {
+              value = jsContent.get(inpColName).toString();
+            }
+            RequestContext.get().setRequestParameter(inpColName, value);
+          }
+        } catch (Exception e) {
+          log.error("Couldn't read column value from the request for column " + inpColName, e);
+        }
+      }
+      // We also add special parameters such as the one set by selectors to the request, so the
+      // callouts can use them
+      addSpecialParameters(tab, jsContent);
+    }
+
   }
 
   @SuppressWarnings("unchecked")
@@ -430,7 +442,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private void computeListOfColumnsSortedByValidationDependencies(Tab tab,
-      ArrayList<String> sortedColumns, HashMap<String, List<String>> columnsInValidation,
+      List<String> sortedColumns, Map<String, List<String>> columnsInValidation,
       List<String> changeEventCols) {
     List<Field> fields = tab.getADFieldList();
     ArrayList<String> columns = new ArrayList<String>();
@@ -603,8 +615,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
   }
 
-  private void setRequestContextParameters(List<Field> fields,
-      HashMap<String, JSONObject> columnValues) {
+  private void setRequestContextParameters(List<Field> fields, Map<String, JSONObject> columnValues) {
     for (Field field : fields) {
       String fieldId = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
       JSONObject jsonObj = columnValues.get(fieldId);
@@ -624,11 +635,55 @@ public class FormInitializationComponent extends BaseActionHandler {
     return inpFields;
   }
 
-  // TODO: This method should probably be transformed into a utility class
-  private void runCallouts(HashMap<String, JSONObject> columnValues, List<Field> fields, Tab tab,
-      ArrayList<String> calledCallouts, ArrayList<String> calloutsToCall,
-      ArrayList<String> lastfieldChangedList, ArrayList<String> messages) {
+  private void executeCallouts(String mode, Tab tab, Map<String, JSONObject> columnValues,
+      String changedColumn, List<String> calloutsToCall, List<String> lastfieldChanged,
+      List<String> messages) {
+    // List of the callouts that need to be called
+    if (mode.equals("NEW")) {
+      for (Field field : tab.getADFieldList()) {
+        if (field.getColumn().getCallout() != null) {
+          Object value;
+          try {
+            JSONObject jsonCol = columnValues.get("inp"
+                + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
+            value = jsonCol.has("value") ? jsonCol.get("value") : null;
+            if (value != null && !value.toString().equals("")) {
+              // There is a callout and the value for this field is set
 
+              addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
+            }
+          } catch (JSONException e) {
+            log.error("Error reading value from parameter. Not executing callouts for column "
+                + field.getColumn().getDBColumnName(), e);
+          }
+        }
+      }
+    }
+
+    // In CHANGE mode, we will add the initial callout call for the changed column, if there is
+    // one
+    if (mode.equals("CHANGE")) {
+      if (changedColumn != null) {
+        for (Column col : tab.getTable().getADColumnList()) {
+          if (("inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName())).equals(changedColumn)) {
+            if (col.getCallout() != null) {
+              // The column has a callout. We will add the callout to the callout list
+              addCalloutToList(col, calloutsToCall, lastfieldChanged);
+            }
+          }
+        }
+      }
+    }
+
+    ArrayList<String> calledCallouts = new ArrayList<String>();
+    runCallouts(columnValues, tab, calledCallouts, calloutsToCall, lastfieldChanged, messages);
+  }
+
+  private void runCallouts(Map<String, JSONObject> columnValues, Tab tab,
+      List<String> calledCallouts, List<String> calloutsToCall, List<String> lastfieldChangedList,
+      List<String> messages) {
+
+    List<Field> fields = tab.getADFieldList();
     HashMap<String, Field> inpFields = buildInpField(fields);
 
     while (!calloutsToCall.isEmpty() && calledCallouts.size() < MAX_CALLOUT_CALLS) {
@@ -655,8 +710,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           }
         }
 
-        if (method == null) {
-          log.error("Couldn't find method doPost in Callout " + calloutClassName);
+        if (method == null || init == null || service == null) {
+          log.error("Couldn't find method in Callout " + calloutClassName);
         } else {
           RequestContext rq = RequestContext.get();
           // We first prepare the data so that it's usable by the callout
@@ -762,8 +817,8 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   }
 
-  private void addCalloutToList(Column col, ArrayList<String> listOfCallouts,
-      ArrayList<String> lastFieldChangedList) {
+  private void addCalloutToList(Column col, List<String> listOfCallouts,
+      List<String> lastFieldChangedList) {
     if (col.getCallout().getADModelImplementationList() == null
         || col.getCallout().getADModelImplementationList().size() == 0) {
       log.error("The callout of the column " + col.getDBColumnName()
@@ -776,7 +831,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
   }
 
-  private void formatColumnValues(HashMap<String, JSONObject> columnValues, List<Field> fields) {
+  private void formatColumnValues(Map<String, JSONObject> columnValues, List<Field> fields) {
     for (Field field : fields) {
       UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
           field.getColumn().getId());
@@ -797,7 +852,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
   }
 
-  private String parseCalloutResponse(String calloutResponse, ArrayList<NativeArray> returnedArray) {
+  private String parseCalloutResponse(String calloutResponse, List<NativeArray> returnedArray) {
     String initS = "id=\"paramArray\">";
     String resp = calloutResponse.substring(calloutResponse.indexOf(initS) + initS.length());
     resp = resp.substring(0, resp.indexOf("</")).trim();
@@ -808,11 +863,10 @@ public class FormInitializationComponent extends BaseActionHandler {
     Scriptable scope = cx.initStandardObjects();
     cx.evaluateString(scope, resp, "<cmd>", 1, null);
     try {
-      NativeArray oresp = (NativeArray) scope.get("respuesta", scope);
+      NativeArray array = (NativeArray) scope.get("respuesta", scope);
       Object calloutName = scope.get("calloutName", scope);
       String calloutNameS = calloutName == null ? null : calloutName.toString();
       log.debug("Callout Name: " + calloutNameS);
-      NativeArray array = (NativeArray) oresp;
       for (int i = 0; i < array.getLength(); i++) {
         returnedArray.add((NativeArray) array.get(i, null));
       }
@@ -824,7 +878,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private String pickNonDependantColumn(List<String> sortedColumns, List<String> columns,
-      HashMap<String, List<String>> columnsInValidation) {
+      Map<String, List<String>> columnsInValidation) {
     for (String col : columns) {
       if (sortedColumns.contains(col)) {
         continue;
