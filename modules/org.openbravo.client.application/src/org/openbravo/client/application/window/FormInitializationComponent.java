@@ -195,6 +195,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (mode.equals("NEW") || mode.equals("EDIT")) {
         // We also include information related to validation dependencies
         // and we add the columns which have a callout
+
+        final Map<String, String> sessionAttributesMap = new HashMap<String, String>();
         for (Field field : tab.getADFieldList()) {
           if (field.getColumn().getCallout() != null) {
             final String columnName = "inp"
@@ -210,20 +212,26 @@ public class FormInitializationComponent extends BaseActionHandler {
             final DynamicExpressionParser parser = new DynamicExpressionParser(field
                 .getDisplayLogic(), tab);
 
-            if (parser.getSessionAttributes().size() > 0) {
-              final JSONObject sessionAttributes = new JSONObject();
-              for (String attrName : parser.getSessionAttributes()) {
+            for (String attrName : parser.getSessionAttributes()) {
+              if (!sessionAttributesMap.containsKey(attrName)) {
                 final String attrValue = Utility
                     .getContext(new DalConnectionProvider(false), RequestContext.get()
                         .getVariablesSecureApp(), attrName, tab.getWindow().getId());
-                sessionAttributes.put(attrName.startsWith("#") ? attrName.replace("#", "_")
+                sessionAttributesMap.put(attrName.startsWith("#") ? attrName.replace("#", "_")
                     : attrName, attrValue);
               }
-              finalObject.put("sessionAttributes", sessionAttributes);
+
             }
           }
 
         }
+
+        final JSONObject sessionAttributes = new JSONObject();
+        for (String attr : sessionAttributesMap.keySet()) {
+          sessionAttributes.put(attr, sessionAttributesMap.get(attr));
+        }
+
+        finalObject.put("sessionAttributes", sessionAttributes);
         finalObject.put("dynamicCols", new JSONArray(changeEventCols));
       }
 
