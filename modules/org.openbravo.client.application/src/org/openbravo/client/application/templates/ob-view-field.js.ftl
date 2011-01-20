@@ -42,7 +42,8 @@
           },
           </#if>
           <#if fieldDefinition.showIf != "">
-          showIf: function(item, value, form, values) {
+          showIf: function(item, value, form, currentValues) {
+            currentValues = currentValues || form.view.getCurrentValues();
             var context = form.view.getContextInfo(false, true);
             return context && (${fieldDefinition.showIf});
           },

@@ -118,7 +118,7 @@ isc.OBToolbarActionButton.addProperties( {
       return;
     }
     
-    this.visible = !this.displayIf || this.displayIf(null, null, this.view.viewForm);
+    this.visible = !this.displayIf || this.displayIf(null, null, this.view.viewForm, record);
     
     // Even visible is correctly set, it is necessary to execute show() or hide()
     if (this.visible){
@@ -127,7 +127,7 @@ isc.OBToolbarActionButton.addProperties( {
       this.hide();
     }
     
-    var readonly = this.readOnlyIf && this.readOnlyIf(null, null, this.view.viewForm);
+    var readonly = this.readOnlyIf && this.readOnlyIf(null, null, this.view.viewForm, record);
     if (readonly) {
       this.disable();
     } else {

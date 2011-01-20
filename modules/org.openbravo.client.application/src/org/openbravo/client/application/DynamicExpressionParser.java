@@ -106,13 +106,13 @@ public class DynamicExpressionParser {
       }
 
       String rightPart = getDisplayLogicText(token2);
-      jsCode.append(leftPart.contains("form.getValue") ? transformValue(rightPart) : rightPart);
+      jsCode.append(leftPart.contains("currentValues") ? transformValue(rightPart) : rightPart);
     }
   }
 
   /**
    * Gets a JavaScript expression based on the dynamic expression, e.g @SomeColumn@!'Y' results in
-   * form.getValue('someColumn') !== true.<br/>
+   * currentValues['someColumn'] !== true.<br/>
    * Note: Field comparison with <b>'Y'</b> or <b>'N'</b> are transformed in <b>true</b> or
    * <b>false</b>
    * 
@@ -191,7 +191,7 @@ public class DynamicExpressionParser {
         fieldsInExpression.add(field);
         final String fieldName = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn())
             .getName();
-        return "form.getValue('" + fieldName + "')";
+        return "currentValues['" + fieldName + "']";
       }
     }
     OBCriteria<AuxiliaryInput> auxInC = OBDal.getInstance().createCriteria(AuxiliaryInput.class);

@@ -25,6 +25,7 @@ isc.OBViewForm.create({
     </#list>
     ],
     onFieldChanged: function(form, item, value) {
+      var currentValues = form.view.getCurrentValues();
       var context = this.view.getContextInfo(false, true);
       form = form || this;
       <#list data.fields as field>
