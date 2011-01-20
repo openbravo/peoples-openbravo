@@ -48,6 +48,8 @@ var OB_LoadingWindow = isc.Window.create({
   canDragReposition: false,
   autoCenter: true, 
   isModal: true, 
+  modalMaskOpacity: 100,
+  modalMaskStyle: 'OBLoadingPromptModalMask',
   backgroundColor: null,
   membersMargin: 10,
   members: [isc.HLayout.create({
