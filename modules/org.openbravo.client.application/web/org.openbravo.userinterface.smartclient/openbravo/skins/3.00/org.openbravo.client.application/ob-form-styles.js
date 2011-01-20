@@ -114,7 +114,7 @@ isc.OBYesNoItem.addProperties(isc.addProperties({}, OB.DefaultPickListStylePrope
 isc.OBSearchItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldStatic',
+  textBoxStyle: 'OBFormFieldInput',
   pickerIconHeight: 21,
   pickerIconWidth: 21,
   height: 21,

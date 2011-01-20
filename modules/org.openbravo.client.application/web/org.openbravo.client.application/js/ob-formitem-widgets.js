@@ -97,6 +97,7 @@ function closeSearch(action, value, display, parameters, wait){
 isc.OBSearchItem.addProperties({
   showPickerIcon: true,
   canFocus: true,
+  showFocused: true,
   
   setValue: function(value){
     var ret = this.Super('setValue', arguments);
@@ -149,6 +150,19 @@ isc.OBSearchItem.addProperties({
     return ret;
   },
   
+  click: function() {
+    this.showPicker();
+    return false;
+  },
+  
+  keyPress: function(item, form, keyName, characterValue){
+    if (keyName === 'Enter') {
+      this.showPicker();
+      return false;
+    }
+    return true;
+  }, 
+
   showPicker: function(){
     var parameters = [], index = 0, i = 0, length, fld, inpName;
     parameters[index++] = 'inpIDValue';
