@@ -940,6 +940,13 @@ isc.OBStandardView.addProperties({
   // to a specific tab and record, for example by clicking a link in another 
   // window, see the description in ob-standard-window.js
   openDirectChildTab: function(){
+    // only do this if we are walking through the tab structure
+    // this method is also called when a record is opened directly in a grid
+    // from a form
+    if (!this.standardWindow.directTabInfo) {
+      return;
+    }
+    
     if (this.childTabSet) {
       var i, tabs = this.childTabSet.tabs;
       for (i = 0; i < tabs.length; i++) {

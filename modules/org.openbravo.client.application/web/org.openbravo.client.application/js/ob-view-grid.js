@@ -384,8 +384,10 @@ isc.OBViewGrid.addProperties({
       this.doSelectSingleRecord(gridRecord);
       this.scrollRecordIntoView(recordIndex, true);
       
-      // go to the children
-      this.view.openDirectChildTab();
+      // go to the children, if needed
+      if (this.view.standardWindow.directTabInfo) {
+        this.view.openDirectChildTab();
+      }
     } else {
       // wait a bit longer til the body is drawn
       this.delayCall('delayedHandleTargetRecord', [startRow, endRow], 200, this);
@@ -402,11 +404,18 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
   
-  selectRecordById: function(id){
-    var recordIndex, gridRecord = this.data.find(OB.Constants.ID, id);
+  selectRecordById: function(id, forceFetch){
+    if (forceFetch) {
+      this.targetRecordId = id;
+      this.filterData(this.getCriteria());
+      return;
+    }
     
-    // no grid record found, stop here
+    var recordIndex, gridRecord = this.data.find(OB.Constants.ID, id);    
+    // no grid record fetch it
     if (!gridRecord) {
+      this.targetRecordId = id;
+      this.filterData(this.getCriteria());
       return;
     }
     recordIndex = this.getRecordIndex(gridRecord);
