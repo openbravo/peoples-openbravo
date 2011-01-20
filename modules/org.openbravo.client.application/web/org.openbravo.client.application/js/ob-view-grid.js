@@ -204,8 +204,7 @@ isc.OBViewGrid.addProperties({
       frozen: true,
       canFreeze: true,
       showHover: true,
-      prompt: OB.I18N.getLabel('OBUIAPP_GridSelectColumnPrompt'),
-      hoverHTML: OB.I18N.getLabel('OBUIAPP_GridSelectColumnPrompt'),
+      prompt: OB.I18N.getLabel('OBUIAPP_GridSelectAllColumnPrompt'),
       filterEditorProperties: {
         textAlign: 'center'
       },
@@ -213,6 +212,28 @@ isc.OBViewGrid.addProperties({
     });
     
     this.Super('initWidget', arguments);
+  },
+  
+  // overridden to support hover on the header for the checkbox field
+  setFieldProperties: function(field, properties) {
+    var localField = field;
+    if (isc.isA.Number(localField)) {
+      localField = this.fields[localField];
+    }
+    if (this.isCheckboxField(localField) && properties) {
+      properties.showHover = true;
+      properties.prompt = OB.I18N.getLabel('OBUIAPP_GridSelectAllColumnPrompt');
+    }
+    
+    return this.Super('setFieldProperties', arguments);
+  },
+  
+  cellHoverHTML: function (record, rowNum, colNum) {
+    var field = this.getField(colNum);
+    if (this.isCheckboxField(field)) {
+      return OB.I18N.getLabel('OBUIAPP_GridSelectColumnPrompt');
+    }    
+    return this.Super('cellHoverHTML', arguments);
   },
   
   show: function(){
@@ -603,11 +624,6 @@ isc.OBViewGrid.addProperties({
     if (this.filterEditor) {
       this.filterEditor.getEditForm().setValue(this.getCheckboxField().name, newValue);
     }
-  },
-  
-  getCheckboxField: function() {
-    var ret = this.Super('getCheckboxField', arguments);
-    return ret;
   },
   
   // note when solving selection issues in the future also 

@@ -1116,30 +1116,52 @@ isc.OBStandardView.addProperties({
       this.originalTabTitle = this.tabTitle;
     }
     
-    var identifier, tab;
+    var identifier, tab, tabSet, title;
     // showing the form
     if (this.isShowingForm && this.viewGrid.getSelectedRecord() && this.viewGrid.getSelectedRecord()[OB.Constants.IDENTIFIER]) {
       identifier = this.viewGrid.getSelectedRecord()[OB.Constants.IDENTIFIER];
       if (!this.parentTabSet && this.viewTabId) {
         tab = OB.MainView.TabSet.getTab(this.viewTabId);
-        OB.MainView.TabSet.setTabTitle(tab, prefix + this.originalTabTitle + ' - ' + identifier + suffix);
+        tabSet = OB.MainView.TabSet;
+        title = this.originalTabTitle + ' - ' + identifier;
       } else if (this.parentTabSet && this.tab) {
-        this.parentTabSet.setTabTitle(this.tab, prefix + this.originalTabTitle + ' - ' + identifier + suffix);
+        tab = this.tab;
+        tabSet = this.parentTabSet;
+        title = this.originalTabTitle + ' - ' + identifier;
       }
     } else if (!this.parentTabSet && this.viewTabId) {
       // the root view
+      tabSet = OB.MainView.TabSet;
       tab = OB.MainView.TabSet.getTab(this.viewTabId);
-      OB.MainView.TabSet.setTabTitle(tab, prefix + this.originalTabTitle + suffix);
+      title = this.originalTabTitle;
     } else if (this.parentTabSet && this.tab) {
       // the check on this.tab is required for the initialization phase
       // only show a count if there is one parent
+      tab = this.tab;
+      tabSet = this.parentTabSet;
+
       if (this.parentView.viewGrid.getSelectedRecords().length !== 1) {
-        this.parentTabSet.setTabTitle(this.tab, prefix + this.originalTabTitle + suffix);
+        title = this.originalTabTitle;
       } else if (this.recordCount) {
-        this.parentTabSet.setTabTitle(this.tab, prefix + this.originalTabTitle + ' (' + this.recordCount + ')' + suffix);
+        title = this.originalTabTitle + ' (' + this.recordCount + ')';
       } else {
-        this.parentTabSet.setTabTitle(this.tab, prefix + this.originalTabTitle + suffix);
+        title = this.originalTabTitle;
       }
+    }
+    if (title) {
+      
+      // show a prompt with the title info
+      tab.prompt = title;
+      tab.showPrompt = true;
+      tab.hoverWidth = 150;
+
+      if (title.length > 30) {
+        title = title.substring(0, 30) + "...";
+      }
+
+      // add the prefix/suffix here to prevent cutoff on that
+      title = prefix + title + suffix;
+      tabSet.setTabTitle(tab, title);
     }
   },
   
