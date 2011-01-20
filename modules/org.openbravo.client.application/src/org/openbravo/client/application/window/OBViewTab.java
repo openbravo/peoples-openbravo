@@ -330,11 +330,6 @@ public class OBViewTab extends BaseTemplateComponent {
     private String command;
 
     public String getLabel() {
-      // this type of escaping not needed for javascript
-      // gives jslint warnings
-      if (label.contains("\\>")) {
-        return label.replace("\\>", ">");
-      }
       return label;
     }
 
@@ -355,9 +350,8 @@ public class OBViewTab extends BaseTemplateComponent {
       private String labelValue;
 
       public Value(org.openbravo.model.ad.domain.List valueList) {
-        labelValue = OBViewUtil.getLabel(valueList, valueList.getADListTrlList()).replace("\\", "");
-        // get rid of the \ as jslint and js can't handle them
-        value = valueList.getSearchKey().replace("\\", "");
+        labelValue = OBViewUtil.getLabel(valueList, valueList.getADListTrlList());
+        value = valueList.getSearchKey();
       }
 
       public String getValue() {
