@@ -156,9 +156,11 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
       this.showAllLabel.hide();
       return;
     }
-    this.showAllLabel.getMembers()[0].setContents(
-        OB.I18N.getLabel('OBCQL_RowsNumber', [this.parameters.RowsNumber, this.totalRows])
-      );
+    if (this.showAllLabel.getMembers()[0]) {
+      this.showAllLabel.getMembers()[0].setContents(
+          OB.I18N.getLabel('OBCQL_RowsNumber', [this.parameters.RowsNumber, this.totalRows])
+        );
+    }
     if (this.parameters.showAll || this.totalRows <= this.parameters.RowsNumber) {
       this.showAllLabel.hide();
     } else {
