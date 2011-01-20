@@ -582,7 +582,7 @@ isc.OBToolbar.addProperties({
     
     
     var currentValues = this.view.getCurrentValues();
-    if (!this.view.isShowingForm && !hideAllButtons && !isNew) {
+    if (this.buttonsHaveSessionLogic && !this.view.isShowingForm && !hideAllButtons && !isNew) {
       var formView = this.view.viewForm;
       // Call FIC to obtain possible session attributes and set them in form
       requestParams = {

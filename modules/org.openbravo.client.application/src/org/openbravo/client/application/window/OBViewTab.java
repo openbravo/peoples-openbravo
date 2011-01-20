@@ -62,8 +62,8 @@ public class OBViewTab extends BaseTemplateComponent {
   private List<ButtonField> buttonFields = null;
   private List<IconButton> iconButtons = null;
   private Field keyField;
-
   private Column keyColumn;
+  private boolean buttonSessionLogic;
 
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
@@ -90,7 +90,11 @@ public class OBViewTab extends BaseTemplateComponent {
         if (!(ApplicationUtils.isUIButton(fld))) {
           continue;
         }
-        buttonFields.add(new ButtonField(fld));
+        ButtonField btn = new ButtonField(fld);
+        buttonFields.add(btn);
+        if (btn.sessionLogic) {
+          buttonSessionLogic = true;
+        }
       }
     }
     return buttonFields;
@@ -276,6 +280,15 @@ public class OBViewTab extends BaseTemplateComponent {
     return tab.getWindow().getId();
   }
 
+  public boolean isButtonSessionLogic() {
+    if (buttonFields == null) {
+      // Generate buttons fields if they haven't been already generated, to calculate
+      // buttonSessionLogic
+      getButtonFields();
+    }
+    return buttonSessionLogic;
+  }
+
   public class FieldProperty {
     private String columnName;
     private String dbColumnName;
@@ -330,6 +343,7 @@ public class OBViewTab extends BaseTemplateComponent {
     private boolean autosave;
     private String showIf = "";
     private String readOnlyIf = "";
+    private boolean sessionLogic = false;
 
     public ButtonField(Field fld) {
       id = fld.getId();
@@ -385,6 +399,9 @@ public class OBViewTab extends BaseTemplateComponent {
         final DynamicExpressionParser parser = new DynamicExpressionParser(fld.getDisplayLogic(),
             tab);
         showIf = parser.getJSExpression();
+        if (parser.getSessionAttributes().size() > 0) {
+          sessionLogic = true;
+        }
       }
 
       // Read only logic
@@ -392,6 +409,9 @@ public class OBViewTab extends BaseTemplateComponent {
         final DynamicExpressionParser parser = new DynamicExpressionParser(fld.getColumn()
             .getReadOnlyLogic(), tab);
         readOnlyIf = parser.getJSExpression();
+        if (parser.getSessionAttributes().size() > 0) {
+          sessionLogic = true;
+        }
       }
     }
 

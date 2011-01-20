@@ -81,6 +81,8 @@
       }<#if field_has_next>,</#if>
     </#list>],
     
+    buttonsHaveSessionLogic: ${tabComponent.buttonSessionLogic?string},
+    
     iconToolbarButtons: [
     <#list tabComponent.iconButtons as button>
       {
