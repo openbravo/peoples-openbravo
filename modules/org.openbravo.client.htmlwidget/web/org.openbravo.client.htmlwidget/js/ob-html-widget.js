@@ -59,8 +59,9 @@ isc.defineClass('OBHTMLWidget', isc.OBWidget).addProperties({
     }
     var currentHeight = this.getHeight(),
         contentHeight = this.parameters.widgetHeight,
-        headerHeight = this.headerDefaults.height,
-        newHeight = contentHeight + headerHeight + 13;
+        edgeTop = this.edgeTop,
+        edgeBottom = this.edgeBottom,
+        newHeight = contentHeight + edgeTop + edgeBottom;
     this.setHeight(newHeight);
     if (this.parentElement) {
       var heightDiff = newHeight - currentHeight,
