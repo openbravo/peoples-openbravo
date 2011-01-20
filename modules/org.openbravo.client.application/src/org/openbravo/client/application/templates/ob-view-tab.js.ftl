@@ -63,20 +63,20 @@
        labelValue: {<#list field.labelValues as value>
            '${value.value?js_string}': '${value.label?js_string}'<#if value_has_next>,</#if>
        </#list>
-         },
+         }
        <#if field.showIf != "">
-       displayIf: function(item, value, form, currentValues) {
+       , displayIf: function(item, value, form, currentValues) {
          currentValues = currentValues || form.view.getCurrentValues();
          var context = form.view.getContextInfo(false, true);
          return context && (${field.showIf});
-       },
+       }
        </#if>
        <#if field.readOnlyIf != "">
-       readOnlyIf: function(item, value, form, currentValues) {
+       , readOnlyIf: function(item, value, form, currentValues) {
          currentValues = currentValues || form.view.getCurrentValues();
          var context = form.view.getContextInfo(false, true);
          return context && (${field.readOnlyIf});
-       },
+       }
        </#if>
       }<#if field_has_next>,</#if>
     </#list>],
