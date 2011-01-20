@@ -642,3 +642,48 @@ isc.OBToolbarTextButton.addProperties({
     alert(this.title);
   }
 });
+
+OB.ToolbarUtils = {};
+
+OB.ToolbarUtils.print = function(view){
+  var popupParams = {
+      viewId : 'print',
+      obManualURL : '/businessUtility/PrinterReports.html', 
+      processId : '1',
+      id : '1',
+      tabTitle : 'a',
+      command: 'DEFAULT'
+    };
+  
+  var allProperties = view.getContextInfo(false, true);
+  var sessionProperties = view.getContextInfo(true, true);
+
+  for ( var param in allProperties) {
+    if (allProperties.hasOwnProperty(param)) {
+      var value = allProperties[param];
+      
+      if (typeof value === 'boolean') {
+        value = value?'Y':'N';
+      }
+      
+      popupParams.command += '&' + param + '=' + value;
+    }
+  }
+  
+  popupParams.command += '&inppdfpath=../invoices/print.html';
+  popupParams.command += '&inphiddenkey=inpcInvoiceId';
+  
+  var selectedIds = '';
+  for (var i=0; i<view.viewGrid.getSelectedRecords().length; i++){
+    selectedIds += (i>0?',':'')+view.viewGrid.getSelectedRecords()[i].id;
+  }
+  
+  popupParams.command += '&inphiddenvalue='+selectedIds;
+  
+  view.setContextInfo(sessionProperties, function() {
+   // OB.Layout.ViewManager.openView('OBPopupClassicWindow', popupParams);
+    
+    OB.Layout.ClassicOBCompatibility.Popup.open('print', 0, 0, OB.Application.contextUrl + '/businessUtility/PrinterReports.html?Command='+popupParams.command, '', window, false, false, true);
+  });
+  
+};
