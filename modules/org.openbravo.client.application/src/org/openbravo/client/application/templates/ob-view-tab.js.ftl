@@ -63,7 +63,13 @@
        labelValue: {<#list field.labelValues as value>
            '${value.value?js_string}': '${value.label?js_string}'<#if value_has_next>,</#if>
        </#list>
-         }
+         },
+       <#if field.showIf != "">
+       displayIf: function(item, value, form, values) {
+          var context = form.view.getContextInfo(false, true);
+          return context && (${field.showIf});
+       },
+       </#if>
       }<#if field_has_next>,</#if>
     </#list>],
     

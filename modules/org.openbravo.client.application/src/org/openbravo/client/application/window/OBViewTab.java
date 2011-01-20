@@ -26,6 +26,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.application.ApplicationUtils;
+import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.window.OBViewFormComponent.FormFieldComparator;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelUtils;
@@ -318,6 +319,7 @@ public class OBViewTab extends BaseTemplateComponent {
     private String propertyName;
     private List<Value> labelValues;
     private boolean autosave;
+    private String showIf = "";
 
     public ButtonField(Field fld) {
       id = fld.getId();
@@ -367,6 +369,13 @@ public class OBViewTab extends BaseTemplateComponent {
           labelValues.add(new Value(valueList));
         }
       }
+
+      // Display Logic
+      if (fld.getDisplayLogic() != null) {
+        final DynamicExpressionParser parser = new DynamicExpressionParser(fld.getDisplayLogic(),
+            tab);
+        showIf = parser.getJSExpression();
+      }
     }
 
     public boolean isAutosave() {
@@ -413,6 +422,10 @@ public class OBViewTab extends BaseTemplateComponent {
 
     public void setId(String id) {
       this.id = id;
+    }
+
+    public String getShowIf() {
+      return showIf;
     }
 
     public class Value {

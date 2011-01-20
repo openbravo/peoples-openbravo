@@ -118,8 +118,14 @@ isc.OBToolbarActionButton.addProperties( {
       return;
     }
     
-    //TODO: implement display/read only logic
-    this.show();
+    this.visible = !this.displayIf || this.displayIf(null, null, this.view.viewForm);
+    
+    // Even visible is correctly set, it is necessary to execute show() or hide()
+    if (this.visible){
+      this.show();
+    } else {
+      this.hide();
+    }
     
     var label = this.labelValue[record[this.property]];
     if (!label){
