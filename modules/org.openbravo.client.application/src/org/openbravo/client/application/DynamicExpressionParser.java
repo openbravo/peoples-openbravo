@@ -191,7 +191,7 @@ public class DynamicExpressionParser {
         fieldsInExpression.add(field);
         final String fieldName = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn())
             .getName();
-        return "currentValues['" + fieldName + "']";
+        return "currentValues." + fieldName;
       }
     }
     OBCriteria<AuxiliaryInput> auxInC = OBDal.getInstance().createCriteria(AuxiliaryInput.class);
