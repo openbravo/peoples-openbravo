@@ -84,6 +84,7 @@ ol.orderedQuantity as totalqty,
 from OrderLine as ol left join ol.attributeSetValue
 where ol.client.id =:client
 and ol.salesOrder.documentStatus='CO'
+and ol.salesOrder.salesTransaction=false
 and ol.orderedQuantity <> (select coalesce(sum(po3.quantity),0) 
                             from ProcurementPOInvoiceMatch po3
                             where po3.goodsShipmentLine is not null
