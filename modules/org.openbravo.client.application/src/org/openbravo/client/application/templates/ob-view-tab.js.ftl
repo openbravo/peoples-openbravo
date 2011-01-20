@@ -67,14 +67,14 @@
        <#if field.showIf != "">
        , displayIf: function(item, value, form, currentValues) {
          currentValues = currentValues || form.view.getCurrentValues();
-         var context = form.view.getContextInfo(false, true);
+         var context = form.view.getContextInfo(false, true, true);
          return context && (${field.showIf});
        }
        </#if>
        <#if field.readOnlyIf != "">
        , readOnlyIf: function(item, value, form, currentValues) {
          currentValues = currentValues || form.view.getCurrentValues();
-         var context = form.view.getContextInfo(false, true);
+         var context = form.view.getContextInfo(false, true, true);
          return context && (${field.readOnlyIf});
        }
        </#if>

@@ -1379,7 +1379,7 @@ isc.OBStandardView.addProperties({
   
   //++++++++++++++++++ Reading context ++++++++++++++++++++++++++++++
   
-  getContextInfo: function(onlySessionProperties, classicMode){
+  getContextInfo: function(onlySessionProperties, classicMode, forceSettingContextVars){
     var contextInfo = {}, addProperty;
     // if classicmode is undefined then both classic and new props are used
     var classicModeUndefined = (typeof classicMode === 'undefined');
@@ -1437,7 +1437,7 @@ isc.OBStandardView.addProperties({
         }
       }
     }
-    if (this.isShowingForm) {
+    if (this.isShowingForm || forceSettingContextVars) {
       isc.addProperties(contextInfo, this.viewForm.auxInputs);
       isc.addProperties(contextInfo, this.viewForm.hiddenInputs);
       isc.addProperties(contextInfo, this.viewForm.sessionAttributes);

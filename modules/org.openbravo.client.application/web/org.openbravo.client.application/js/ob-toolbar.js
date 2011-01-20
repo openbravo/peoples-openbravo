@@ -562,20 +562,58 @@ isc.OBToolbar.addProperties({
   // Refreshes all the custom buttons in the toolbar based on current record selection
   //
   refreshCustomButtons: function(){
+    function doRefresh(buttons, currentValues, hideAllButtons){
+      for (var i = 0; i < buttons.length; i++) {
+        if (buttons[i].refresh) {
+          buttons[i].refresh(currentValues, hideAllButtons);
+        }
+      }
+    }
+    
     var buttons = this.getRightMembers();
     var numOfSelRecords = 0; 
+    
+    
     if (this.view.viewGrid.getSelectedRecords()) {
       numOfSelRecords = this.view.viewGrid.getSelectedRecords().length;
     }
     var isNew = this.view.viewForm.isNew;
     var hideAllButtons = !isNew && (!this.view.viewGrid.getSelectedRecords() || this.view.viewGrid.getSelectedRecords().length !== 1);
-    var currentValues = this.view.getCurrentValues();
     
-    for (var i = 0; i < buttons.length; i++) {
-      if (buttons[i].refresh) {
-        buttons[i].refresh(currentValues, hideAllButtons);
-      }
-    }
+    
+    var currentValues = this.view.getCurrentValues();
+    if (!this.view.isShowingForm && !hideAllButtons && !isNew) {
+      var formView = this.view.viewForm;
+      // Call FIC to obtain possible session attributes and set them in form
+      requestParams = {
+          MODE: 'EDIT',
+          PARENT_ID: this.view.getParentId(),
+          TAB_ID: this.view.tabId,
+          ROW_ID: currentValues.id
+        };
+        
+        OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', {}, requestParams, function(response, data, request){
+         var sessionAttributes = data.sessionAttributes, auxInputs = data.auxiliaryInputValues;
+         if (sessionAttributes) {
+           formView.sessionAttributes = sessionAttributes;
+         }
+         
+         if (auxInputs) {
+           this.auxInputs = {};
+           for (var prop in auxInputs) {
+             if (auxInputs.hasOwnProperty(prop)) {
+               formView.setValue(prop, auxInputs[prop].value);
+               formView.auxInputs[prop] = auxInputs[prop].value;
+             }
+           }
+         }
+         
+         doRefresh(buttons, currentValues, false);
+        });
+    } else {
+      currentValues = this.view.getCurrentValues();
+      doRefresh(buttons, currentValues, hideAllButtons);
+    } 
   },
   
   addMembers: 'null',
