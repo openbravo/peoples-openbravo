@@ -64,7 +64,31 @@ isc.OBStandardViewTabSet.addClassProperties({
     dragStop: function(){
       // change the height to percentage based to handle resizing of browser:
       this.tabSet.parentContainer.convertToPercentageHeights();
+      this.setCursor(isc.Canvas.ROW_RESIZE);
       return true;
+    },
+    
+    mouseDown: function() {
+      this.setCursor(isc.Canvas.MOVE);
+    },
+    
+    mouseUp: function() {
+      this.setCursor(isc.Canvas.ROW_RESIZE);
+    },
+    
+    mouseOut: function() {
+      this.setCursor(isc.Canvas.ROW_RESIZE);
+    },
+    
+    mouseOver: function() {
+      this.setCursor(isc.Canvas.ROW_RESIZE);
+    },
+
+    getCurrentCursor: function() {
+      if (isc.EventHandler.leftButtonDown()) {
+        return isc.Canvas.MOVE;
+      }
+      return isc.Canvas.ROW_RESIZE;
     },
     
     dragStart: function(){
@@ -84,7 +108,7 @@ isc.OBStandardViewTabSet.addClassProperties({
       // this.tabSet.draggedHeight = null;
       // }
       return true;
-    }
+    }    
   }
 });
 
@@ -109,7 +133,7 @@ isc.OBStandardViewTabSet.addProperties({
   setDraggable: function(draggable){
     if (draggable) {
       this.tabBar.canDrag = true;
-      this.tabBar.cursor = isc.Canvas.HAND;
+      this.tabBar.cursor = isc.Canvas.ROW_RESIZE;
     } else {
       this.tabBar.canDrag = false;
       this.tabBar.cursor = isc.Canvas.DEFAULT;
