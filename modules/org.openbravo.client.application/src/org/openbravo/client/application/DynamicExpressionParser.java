@@ -112,7 +112,7 @@ public class DynamicExpressionParser {
 
   /**
    * Gets a JavaScript expression based on the dynamic expression, e.g @SomeColumn@!'Y' results in
-   * currentValues['someColumn'] !== true.<br/>
+   * currentValues.someColumn !== true.<br/>
    * Note: Field comparison with <b>'Y'</b> or <b>'N'</b> are transformed in <b>true</b> or
    * <b>false</b>
    * 
