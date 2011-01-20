@@ -408,6 +408,13 @@ export.database: exports database structure and data to xml files.
     <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8" />
   </target>
 
+  <!-- Only needed in special cases. See issue 15709 for details.
+       This task (if deploy.mode=class) does sync jar-files from WebContent -> deployed webapp (& delete orphan jars)
+  -->
+  <target name="copy.files.jarsync" depends="init" if="mode.class">
+    <ant dir="${base.src}" target="copy.files.jarsync.do" inheritAll="true" inheritRefs="true" />
+  </target>
+
   <target name="build.deploy.war" if="mode.war">
     <antcall target="war" />
   </target>
@@ -828,7 +835,11 @@ export.database: exports database structure and data to xml files.
       <arg line="stop" />
     </java>
     <sleep description="Wait to give tomcat time to stop" seconds="20" />
-    <java classname="org.apache.catalina.startup.Bootstrap" failonerror="true" fork="true">
+
+    <!-- if deploy.mode=class this will sync (& delete orphan) jarfiles from WebContent -> tomcat-->
+    <antcall target="copy.files.jarsync"/>
+
+    <java classname="org.apache.catalina.startup.Bootstrap" fork="true" spawn="true">
       <classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar" />
       <!-- note because CATALINA_OPTS can be multi argument the line attribute has to be used! -->
       <jvmarg line="${env.CATALINA_OPTS}" />

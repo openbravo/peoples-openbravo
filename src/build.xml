@@ -847,7 +847,12 @@ build.war: build a war file in the lib directory.
     </java>
   </target>
 
-  <target name="copy.files" if="mode.class">
+  <!-- Note (see issue 15709 for details):
+       orphan jarfiles are not deleted from the webapp as deployed in tomcat when
+       this rebuild is running inside the rebuild UI (started from MMC). See also the related
+       copy.files.jarsync(.do) task which does this deletion between tomcat stop & start
+   -->
+  <target name="copy.files" depends="copy.files.jarsync.notinrebuildui" if="mode.class">
     <mkdir dir="${jakarta.base}/webapps/${context.name}" />
     <sync todir="${jakarta.base}/webapps/${context.name}">
       <preserveintarget>
@@ -863,6 +868,19 @@ build.war: build a war file in the lib directory.
     <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" />
       <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8">
     </copy>
+  </target>
+
+  <target name="copy.files.jarsync.notinrebuildui" unless="runningInRebuildUI">
+    <antcall target="copy.files.jarsync.do"/>
+  </target>
+
+  <!-- sync jar files from WebContent -> deployed webapp & delete orphan jars from webapp
+       as delete orphan is excluded from normal copy.files task -->
+  <target name="copy.files.jarsync.do" if="mode.class">
+    <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib"/>
+    <sync todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib">
+      <fileset dir="${base.context}/WEB-INF/lib" />
+    </sync>
   </target>
 
   <target name="compile.development" depends="generate.entities, compile, copy.files">

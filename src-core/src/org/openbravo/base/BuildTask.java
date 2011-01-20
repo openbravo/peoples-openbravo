@@ -69,6 +69,9 @@ public class BuildTask {
     // We will show special, friendly warnings when they are available
     ant.setProperty("friendlyWarnings", "true");
 
+    // Set a property so build tasks know they have been called via the Rebuild UI from the MMC
+    ant.setProperty("runningInRebuildUI", "true");
+
     final Vector<String> tasks = new Vector<String>();
     final String unnappliedModules = getUnnapliedModules();
     tasks.add("update.database");
