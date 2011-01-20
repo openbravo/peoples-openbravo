@@ -332,7 +332,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           }
           setRequestContextParameter(field, jsonobject);
           // We also set the session value for the column in Edit or SetSession mode
-          if (mode.equals("EDIT") || mode.equals("SETSESSION")) {
+          if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
             if (field.getColumn().isStoredInSession() || field.getColumn().isKeyColumn()) {
               setSessionValue(tab.getWindow().getId() + "|"
                   + field.getColumn().getDBColumnName().toUpperCase(),
