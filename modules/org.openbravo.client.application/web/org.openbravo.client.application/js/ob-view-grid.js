@@ -53,9 +53,7 @@ isc.OBViewGrid.addProperties({
   editLinkFieldProperties: {
     type: 'text',
     canSort: false,
-    // frozen is much nicer, but check out this forum discussion:
-    // http://forums.smartclient.com/showthread.php?p=57581 
-    //frozen: true,
+    frozen: true,
     canFreeze: true,
     canEdit: false,
     canGroupBy: false,
@@ -203,8 +201,11 @@ isc.OBViewGrid.addProperties({
       canFilter: true,
       // frozen is much nicer, but check out this forum discussion:
       // http://forums.smartclient.com/showthread.php?p=57581 
-      //frozen: true,
+      frozen: true,
       canFreeze: true,
+      showHover: true,
+      prompt: OB.I18N.getLabel('OBUIAPP_GridSelectColumnPrompt'),
+      hoverHTML: OB.I18N.getLabel('OBUIAPP_GridSelectColumnPrompt'),
       filterEditorProperties: {
         textAlign: 'center'
       },
@@ -368,6 +369,16 @@ isc.OBViewGrid.addProperties({
       // wait a bit longer til the body is drawn
       this.delayCall('delayedHandleTargetRecord', [startRow, endRow], 200, this);
     }
+  },
+    
+  // Prevents empty message to be shown in frozen part
+  // http://forums.smartclient.com/showthread.php?p=57581 
+  createBodies: function() {
+    var ret = this.Super('createBodies', arguments);
+    if (this.frozenBody) {
+      this.frozenBody.showEmptyMessage = false;
+    }
+    return ret;
   },
   
   selectRecordById: function(id){
@@ -903,6 +914,7 @@ isc.OBGridButtonsComponent.addProperties({
     
     editIcon = isc.OBGridToolStripIcon.create({
       buttonType: 'edit',
+      prompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
       action: function(){
         if (me.grid.view.autoSaveForm) {
           me.grid.setActionAfterAutoSave(me, me.doEdit, []);
@@ -914,6 +926,7 @@ isc.OBGridButtonsComponent.addProperties({
     
     formIcon = isc.OBGridToolStripIcon.create({
       buttonType: 'form',
+      prompt: OB.I18N.getLabel('OBUIAPP_GridFormButtonPrompt'),
       action: function(){
         if (me.grid.view.autoSaveForm) {
           me.grid.setActionAfterAutoSave(me, me.doOpen, []);
@@ -925,6 +938,7 @@ isc.OBGridButtonsComponent.addProperties({
     
     cancelIcon = isc.OBGridToolStripIcon.create({
       buttonType: 'cancel',
+      prompt: OB.I18N.getLabel('OBUIAPP_GridCancelButtonPrompt'),
       action: function(){
         me.doCancel();
       }
@@ -932,6 +946,7 @@ isc.OBGridButtonsComponent.addProperties({
     
     saveIcon = isc.OBGridToolStripIcon.create({
       buttonType: 'save',
+      prompt: OB.I18N.getLabel('OBUIAPP_GridSaveButtonPrompt'),
       action: function(){
         me.doSave();
       }
