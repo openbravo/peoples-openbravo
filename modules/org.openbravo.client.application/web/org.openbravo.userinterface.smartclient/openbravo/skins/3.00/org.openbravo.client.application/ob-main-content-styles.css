@@ -230,17 +230,3 @@ if the tab headers are on the right, left or bottom the same styles can be used 
     background-position: 'center';
     background-repeat: no-repeat;
 }
-
-
-/*============================================================
- Loading prompt
- ============================================================*/
-.OBLoadingPromptLabel {
-  font-family: 'Arial';
-  font-size: 12px;
-  color: #ccd0d4;
-}
-
-.OBLoadingPromptModalMask {
-  background-color: #7f7f7f;
-}

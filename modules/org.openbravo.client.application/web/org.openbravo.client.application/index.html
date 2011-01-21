@@ -15,6 +15,58 @@
 
 <script type="text/javascript" src="../org.openbravo.client.kernel/js/LAB.min.js"></script>
 
+<!-- styles used during loading -->
+<style type="text/css">
+  html, body {
+      height: 100%;
+      width: 100%;
+  }
+  
+  .OBCenteredBox {
+      position: fixed;
+      z-index: 1000000;
+      top: 50%;
+      left: 50%;
+      margin: -25px 0 0 -150px;
+      width: 300px;
+      height: 50px;
+  }
+  
+  .OBLoadingPromptLabel {
+      font-family: 'Arial';
+      font-size: 12px;
+      color: #ccd0d4;
+  }
+  
+  .OBLoadingPromptModalMask {
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #7f7f7f;
+  }
+</style>
+
+</head>
+<body>
+
+<!-- shows the loading div -->
+<div class="OBLoadingPromptModalMask" id="OBLoadingDiv">
+    <div class="OBCenteredBox">
+        <table>
+            <tr>
+                <td>
+                    <span class="OBLoadingPromptLabel">LOADING...</span>
+                </td>
+                <td>
+                    <img width="220" height="16" src="../org.openbravo.userinterface.smartclient/openbravo/skins/3.00/org.openbravo.client.application/images/system/windowLoading.gif"/>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- load the rest -->
 <script type="text/javascript">
 
 $LAB.setGlobalDefaults({AppendTo: 'body'})
@@ -24,49 +76,19 @@ var isomorphicDir='../org.openbravo.userinterface.smartclient/isomorphic/';
 // starts the application is called as the last statement in the StaticResources part
 function OBStartApplication() {
   OB.Layout.draw();
+
   $LAB.script(document.location.protocol + OB.Application.butlerUtilsUrl).wait();
+
   OB.Layout.ViewManager.createAddStartTab();
-  OB_LoadingWindow.destroy();
+
+  // get rid of the loading stuff
+  document.body.removeChild(document.getElementById('OBLoadingDiv'));
+  
   OB.GlobalHiddenForm = document.forms.OBGlobalHiddenForm;
 }
 
 </script>
 <script type="text/javascript" src="../org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined.js"></script>
-</head>
-<body>
-
-<script type="text/javascript">
-// create the loading message
-var OB_LoadingWindow = isc.Window.create({
-  width: 1,
-  height: 1,
-  overflow: 'visible',
-  showEdges:false, 
-  showHeader: false,
-  showFooter: false,
-  showModalMask: true,
-  canDragReposition: false,
-  autoCenter: true, 
-  isModal: true, 
-  modalMaskOpacity: 100,
-  modalMaskStyle: 'OBLoadingPromptModalMask',
-  backgroundColor: null,
-  bodyColor: 'transparent',
-  membersMargin: 10,
-  members: [isc.HLayout.create({
-    width: 1,
-    height: 1,
-    overflow: 'visible',
-    defaultLayoutAlign: 'center',
-    members: [
-      isc.Label.create({contents: 'LOADING... ', width: 1, height: 1, overflow: 'visible', styleName: 'OBLoadingPromptLabel'}),
-      isc.Img.create({width: 220, height: 16, src: '../../org.openbravo.userinterface.smartclient/openbravo/skins/3.00/org.openbravo.client.application/images/system/windowLoading.gif'})
-    ]
-  })]
-});
-
-OB_LoadingWindow.show();
-</script>
 
 <script type="text/javascript" src="../org.openbravo.userinterface.smartclient/isomorphic/ISC_History.js"></script>
 
