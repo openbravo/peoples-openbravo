@@ -587,7 +587,7 @@ public class FormInitializationComponent extends BaseActionHandler {
             value = UIDefinitionController.getInstance().getUIDefinition(col.getId())
                 .formatValueToSQL(value.toString());
           }
-          setSessionValue(tab.getWindow().getId() + "|" + col.getName(), value);
+          setSessionValue(tab.getWindow().getId() + "|" + col.getDBColumnName(), value);
         }
         // We also set the value of every column in the RequestContext so that it is available for
         // the Auxiliary Input computation
