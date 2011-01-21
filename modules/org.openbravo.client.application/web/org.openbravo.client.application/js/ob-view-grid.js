@@ -211,7 +211,11 @@ isc.OBViewGrid.addProperties({
       filterEditorType: 'StaticTextItem'
     });
     
-    this.Super('initWidget', arguments);
+    var ret = this.Super('initWidget', arguments);
+    
+    this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridNoRecords') + ' <span onclick="window[\'' + this.ID + '\'].createNew();" class="OBLabelLink">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne')+ '</span>';
+    this.filterNoRecordsEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + ' <span onclick="window[\'' + this.ID + '\'].clearFilter();" class="OBLabelLink">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter')+ '</span>';    
+    return ret;
   },
   
   // overridden to support hover on the header for the checkbox field
@@ -240,6 +244,8 @@ isc.OBViewGrid.addProperties({
     var ret = this.Super('show', arguments);
     
     this.view.setToolBarButtonState();
+
+    this.resetEmptyMessage();
 
     return ret;
   },
@@ -297,12 +303,12 @@ isc.OBViewGrid.addProperties({
   },
   
   refreshContents: function(callback){
+    this.resetEmptyMessage();
   
     // do not refresh if the parent is not selected and we have no data anyway
-    if (this.view.parentProperty && this.data && this.data.getLength && this.data.getLength() === 0) {
+    if (this.view.parentProperty && (!this.data || !this.data.getLength || this.data.getLength() === 0)) {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
       if (selectedValues.length === 0) {
-        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_NoParentSelected');
         if (callback) {
           callback();
         }
@@ -496,16 +502,16 @@ isc.OBViewGrid.addProperties({
       criteria._targetRecordId = this.targetRecordId;
     }
     
+    // note pass in criteria otherwise infinite looping!
+    this.resetEmptyMessage(criteria);
+    
     if (this.view.parentProperty) {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
       if (selectedValues.length === 0) {
         criteria[this.view.parentProperty] = '-1';
-        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_NoParentSelected');
       } else if (selectedValues.length > 1) {
         criteria[this.view.parentProperty] = '-1';
-        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_MultipleParentsSelected');
       } else {
-        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_NoDataInGrid');
         criteria[this.view.parentProperty] = selectedValues[0][OB.Constants.ID];
       }
     }
@@ -537,6 +543,15 @@ isc.OBViewGrid.addProperties({
     return criteria;
   },
   
+  createNew: function() {
+    this.view.editRecord();
+  },
+  
+  clearFilter: function() {
+    this.filterEditor.getEditForm().clearValues();
+    this.filterEditor.performAction();
+  },
+  
   // determine which field can be autoexpanded to use extra space  
   getAutoFitExpandField: function(){
     for (var i = 0; i < this.fields.length; i++) {
@@ -566,6 +581,26 @@ isc.OBViewGrid.addProperties({
   
   setActionAfterAutoSave: function(target, method, parameters) {
     this.view.autoSaveForm.setActionAfterAutoSave({target: target, method: method, parameters: parameters});
+  },
+  
+  resetEmptyMessage: function(criteria) {
+    criteria = criteria || this.getCriteria();
+    if (!this.view) {
+      this.emptyMessage = this.noDataEmptyMessage;
+    } else if (this.isGridFiltered(criteria)) {
+      this.emptyMessage = this.filterNoRecordsEmptyMessage;      
+    } else if (this.view.isRootView) {
+      this.emptyMessage = this.noDataEmptyMessage;
+    } else {
+      selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+      if (selectedValues.length === 0) {
+        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_NoParentSelected');
+      } else if (selectedValues.length > 1) {
+        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_MultipleParentsSelected');
+      } else {
+        this.emptyMessage = this.noDataEmptyMessage;
+      }
+    }
   },
   
   //+++++++++++++++++++++++++++++ Context menu on record click +++++++++++++++++++++++

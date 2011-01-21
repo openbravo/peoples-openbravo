@@ -186,16 +186,26 @@ isc.OBGrid.addProperties({
   },
   
   checkShowFilterFunnelIcon: function (criteria) {
+    if (this.isGridFiltered(criteria)) {
+      this.filterImage.show(true);
+    } else {
+      this.filterImage.hide();
+    }
+  },
+  
+  isGridFiltered: function(criteria) {
+    if (!this.filterEditor) {
+      return false;
+    }
     for (var prop in criteria) {
       if (criteria.hasOwnProperty(prop)) {
         var field = this.filterEditor.getField(prop);
         if (this.isValidFilterField(field) && (criteria[prop] === false || criteria[prop])) {
-          this.filterImage.show(true);
-          return;
+          return true;
         }
       }
     }
-    this.filterImage.hide();
+    return false;
   },
   
   isValidFilterField: function(field){
