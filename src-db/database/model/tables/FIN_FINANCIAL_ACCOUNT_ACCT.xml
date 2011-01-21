@@ -101,6 +101,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ENABLEBANKSTATEMENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_FINACC_ACCT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -162,6 +166,8 @@
         <unique-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
         <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>
+      <check name="FIN_FINACC_ACCT_BSCONFIG_CHECK"><![CDATA[(((ENABLEBANKSTATEMENT = 'Y') AND (FIN_TRANSITORY_ACCT IS NOT NULL)) AND (FIN_ASSET_ACCT IS NOT NULL)) OR (ENABLEBANKSTATEMENT <> 'Y')]]></check>
+      <check name="FIN_FINACC_ACCT_ENABLEBS_CHECK"><![CDATA[ENABLEBANKSTATEMENT IN ('Y', 'N')]]></check>
       <check name="FIN_FINACC_ACCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

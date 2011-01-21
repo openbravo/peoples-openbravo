@@ -84,7 +84,7 @@ public class Posted extends HttpSecureAppServlet {
 
       if (!"Y".equals(strPosted)) {
         OBError messageResult = processButton(vars, strKey, strTableId);
-        if (!messageResult.getType().equals("Success")) {
+        if (!"Success".equals(messageResult.getType())) {
           vars.setMessage(strTabId, messageResult);
           printPageClosePopUp(response, vars);
         } else {
