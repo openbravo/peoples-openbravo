@@ -123,7 +123,12 @@ public class OBViewTab extends BaseTemplateComponent {
     btns.add(printBtn);
 
     if (printBtn.hasEmail) {
-      btns.add(new EmailButton(printBtn));
+      IconButton emailBtn = new IconButton();
+      emailBtn.type = "email";
+      emailBtn.label = Utility.messageBD(new DalConnectionProvider(), "Email", OBContext
+          .getOBContext().getLanguage().getLanguage());
+      emailBtn.action = printBtn.action.replace("print.html", "send.html");
+      btns.add(emailBtn);
     }
 
     return btns;
@@ -553,15 +558,6 @@ public class OBViewTab extends BaseTemplateComponent {
           + ");";
       label = Utility.messageBD(new DalConnectionProvider(), "Print", OBContext.getOBContext()
           .getLanguage().getLanguage());
-    }
-  }
-
-  public class EmailButton extends IconButton {
-    public EmailButton(PrintButton print) {
-      type = "email";
-      label = Utility.messageBD(new DalConnectionProvider(), "Email", OBContext.getOBContext()
-          .getLanguage().getLanguage());
-      action = print.action.replace("print.html", "send.html");
     }
   }
 
