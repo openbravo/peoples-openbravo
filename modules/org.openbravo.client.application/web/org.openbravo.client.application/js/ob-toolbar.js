@@ -724,17 +724,25 @@ OB.ToolbarUtils.print = function(view, url, directPrint){
 };
 
 OB.ToolbarUtils.showAuditTrail = function(view){
- var selectedRecords = view.viewGrid.getSelectedRecords();
-  
-  if (selectedRecords.length === 0) {
-    view.messageBar.setMessage(OBMessageBar.TYPE_WARNING, '', OB.I18N.getLabel('OBUIAPP_PrintNoRecordSelected'));
+  var selectedRecords = view.viewGrid.getSelectedRecords();
+
+  if (selectedRecords.length > 1) {
+    var setWarning = {
+      set: function(label){
+      view.messageBar.setMessage(OBMessageBar.TYPE_WARNING, '', label);
+      }
+    };
+    OB.I18N.getLabel('JS28', null, setWarning, 'set');
     return;
   }
   
   var popupParams = "Command=POPUP_HISTORY";
   popupParams += "&inpTabId=" + view.tabId;
-  popupParams += "&inpTableId=" + view.standardProperties.inpwindowId;
-  popupParams += "&inpRecordId=" + view.viewGrid.getSelectedRecord().id;
+  popupParams += "&inpTableId=" + view.standardProperties.inpTableId;
+  
+  if (view.viewGrid.getSelectedRecord()) {
+    popupParams += "&inpRecordId=" + view.viewGrid.getSelectedRecord().id;
+  }
   
   OB.Layout.ClassicOBCompatibility.Popup.open('print', 900, 600, OB.Application.contextUrl + '/businessUtility/AuditTrail.html?'+popupParams, '', window, false, false, true);
 };
