@@ -298,8 +298,7 @@ public abstract class UIDefinition {
   // but then the value should be converted to the translated
   // value of the enum
   protected String getShowHoverGridFieldSettings(Field field) {
-    return ", showHover: true, width: 150, hoverHTML:\"return record['" + getGridFieldName(field)
-        + "']\"";
+    return ", showHover: true, hoverHTML:\"return record['" + getGridFieldName(field) + "']\"";
   }
 
   protected String getGridFieldName(Field fld) {
