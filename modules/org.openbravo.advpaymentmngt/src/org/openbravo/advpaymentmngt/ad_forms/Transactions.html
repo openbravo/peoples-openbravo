@@ -191,34 +191,6 @@ function onLoadDo(){
     //calculateMsgBoxWidth();
   }
 </script>
-<!-- SCRIPT language="JavaScript" type="text/javascript">
-  function loadPosted() {
-    try {
-      var paramXMLReq = null;
-      var url = "../org.openbravo.advpaymentmngt.ad_forms/Transactions.html";
-      return submitXmlHttpRequest(callBackPosted34, document.frmMain, "POSTED", url, false, null, paramXMLReq);
-    } catch (e) {
-      alert(e);
-    }
-  }
-
-  function callBackPosted34(paramXMLParticular, XMLHttpRequestObj) {
-   var strText = "";
-    if (getReadyStateHandler(XMLHttpRequestObj)) {
-      try {
-        if (XMLHttpRequestObj.responseText) {
-          strText = XMLHttpRequestObj.responseText;
-          document.getElementById('inpPosted').value = strText;
-        } else {
-          document.getElementById('inpPosted').value = '';
-        }
-      } catch (e) {
-          alert(e);
-      }
-    }
-    return true;
-  }
-</SCRIPT-->
 
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();" id="paramBody">

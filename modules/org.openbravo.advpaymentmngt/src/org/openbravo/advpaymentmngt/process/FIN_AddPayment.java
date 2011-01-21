@@ -412,11 +412,27 @@ public class FIN_AddPayment {
               .getInvoicePaymentSchedule().getInvoice().getGrandTotalAmount().toString());
           FieldProviderFactory.setField(data[i], "expectedAmount", FIN_PaymentScheduleDetails[i]
               .getInvoicePaymentSchedule().getAmount().toString());
+
+          // Truncate Business Partner
+          String businessPartner = FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule()
+              .getInvoice().getBusinessPartner().getIdentifier();
+          String truncateBusinessPartner = (businessPartner.length() > 18) ? businessPartner
+              .substring(0, 15).concat("...").toString() : businessPartner;
           FieldProviderFactory.setField(data[i], "businessPartnerName",
-              FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getInvoice()
-                  .getBusinessPartner().getIdentifier());
-          FieldProviderFactory.setField(data[i], "paymentMethodName", FIN_PaymentScheduleDetails[i]
-              .getInvoicePaymentSchedule().getFinPaymentmethod().getName());
+              (businessPartner.length() > 18) ? businessPartner : "");
+          FieldProviderFactory.setField(data[i], "businessPartnerNameTrunc",
+              truncateBusinessPartner);
+
+          // Truncate Payment Method
+          String paymentMethodName = FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule()
+              .getFinPaymentmethod().getName();
+          String truncatePaymentMethodName = (paymentMethodName.length() > 18) ? paymentMethodName
+              .substring(0, 15).concat("...").toString() : paymentMethodName;
+          FieldProviderFactory.setField(data[i], "paymentMethodName",
+              (paymentMethodName.length() > 18) ? paymentMethodName : "");
+          FieldProviderFactory.setField(data[i], "paymentMethodNameTrunc",
+              truncatePaymentMethodName);
+
           if (FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getFINPaymentPriority() != null) {
             FieldProviderFactory.setField(data[i], "gridLineColor", FIN_PaymentScheduleDetails[i]
                 .getInvoicePaymentSchedule().getFINPaymentPriority().getColor());
@@ -427,11 +443,27 @@ public class FIN_AddPayment {
           FieldProviderFactory.setField(data[i], "invoicedAmount", "");
           FieldProviderFactory.setField(data[i], "expectedAmount", FIN_PaymentScheduleDetails[i]
               .getOrderPaymentSchedule().getAmount().toString());
+
+          // Truncate Business Partner
+          String businessPartner = FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule()
+              .getInvoice().getBusinessPartner().getIdentifier();
+          String truncateBusinessPartner = (businessPartner.length() > 18) ? businessPartner
+              .substring(0, 15).concat("...").toString() : businessPartner;
           FieldProviderFactory.setField(data[i], "businessPartnerName",
-              FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getOrder()
-                  .getBusinessPartner().getIdentifier());
-          FieldProviderFactory.setField(data[i], "paymentMethodName", FIN_PaymentScheduleDetails[i]
-              .getOrderPaymentSchedule().getFinPaymentmethod().getName());
+              (businessPartner.length() > 18) ? businessPartner : "");
+          FieldProviderFactory.setField(data[i], "businessPartnerNameTrunc",
+              truncateBusinessPartner);
+
+          // Truncate Payment Method
+          String paymentMethodName = FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule()
+              .getFinPaymentmethod().getName();
+          String truncatePaymentMethodName = (paymentMethodName.length() > 18) ? paymentMethodName
+              .substring(0, 15).concat("...").toString() : paymentMethodName;
+          FieldProviderFactory.setField(data[i], "paymentMethodName",
+              (paymentMethodName.length() > 18) ? paymentMethodName : "");
+          FieldProviderFactory.setField(data[i], "paymentMethodNameTrunc",
+              truncatePaymentMethodName);
+
           if (FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getFINPaymentPriority() != null) {
             FieldProviderFactory.setField(data[i], "gridLineColor", FIN_PaymentScheduleDetails[i]
                 .getOrderPaymentSchedule().getFINPaymentPriority().getColor());

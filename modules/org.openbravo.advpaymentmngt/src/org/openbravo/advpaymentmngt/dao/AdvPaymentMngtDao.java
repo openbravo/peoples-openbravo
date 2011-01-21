@@ -839,8 +839,15 @@ public class AdvPaymentMngtDao {
         FieldProviderFactory.setField(data[i], "paymentInfo", FIN_Payments[i].getDocumentNo()
             + " - " + FIN_Payments[i].getBusinessPartner().getName() + " - "
             + FIN_Payments[i].getCurrency().getISOCode());
-        FieldProviderFactory.setField(data[i], "paymentDescription", FIN_Payments[i]
-            .getDescription());
+
+        // Truncate description
+        String description = FIN_Payments[i].getDescription();
+        String truncateDescription = (description.length() > 57) ? description.substring(0, 54)
+            .concat("...").toString() : description;
+        FieldProviderFactory.setField(data[i], "paymentDescription",
+            (description.length() > 57) ? description : "");
+        FieldProviderFactory.setField(data[i], "paymentDescriptionTrunc", truncateDescription);
+
         FieldProviderFactory.setField(data[i], "paymentDate", dateFormater.format(
             FIN_Payments[i].getPaymentDate()).toString());
         FieldProviderFactory.setField(data[i], "debitAmount", debitAmt.toString());

@@ -328,9 +328,24 @@ public class TransactionsDao {
           strBusinessPartner = FIN_Transactions[i].getFinPayment().getBusinessPartner().getName();
           strPaymentDocNo = FIN_Transactions[i].getFinPayment().getDocumentNo();
         }
-        FieldProviderFactory.setField(data[i], "businessPartner", strBusinessPartner);
+
+        // Truncate business partner name
+        String truncateBPname = (strBusinessPartner.length() > 30) ? strBusinessPartner.substring(
+            0, 27).concat("...").toString() : strBusinessPartner;
+        FieldProviderFactory.setField(data[i], "businessPartner",
+            (strBusinessPartner.length() > 30) ? strBusinessPartner : "");
+        FieldProviderFactory.setField(data[i], "businessPartnerTrunc", truncateBPname);
+
         FieldProviderFactory.setField(data[i], "paymentDocument", strPaymentDocNo);
-        FieldProviderFactory.setField(data[i], "description", FIN_Transactions[i].getDescription());
+
+        // Truncate description
+        String description = FIN_Transactions[i].getDescription();
+        String truncateDescription = (description.length() > 42) ? description.substring(0, 39)
+            .concat("...").toString() : description;
+        FieldProviderFactory.setField(data[i], "description",
+            (description.length() > 42) ? description : "");
+        FieldProviderFactory.setField(data[i], "descriptionTrunc", truncateDescription);
+
         FieldProviderFactory.setField(data[i], "paymentAmount", FIN_Transactions[i]
             .getPaymentAmount().toString());
         FieldProviderFactory.setField(data[i], "depositAmount", FIN_Transactions[i]

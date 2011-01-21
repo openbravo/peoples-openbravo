@@ -29,9 +29,11 @@
     <FIELD id="fieldTransactionId" boolean="checked" withId="fieldSelectedTransactionId">transactionId</FIELD>
     <FIELD id="fieldTransactionId" attribute="value">transactionId</FIELD>
     <FIELD id="fieldTransactionDate">transactionDate</FIELD>
-    <FIELD id="fieldBusinessPartner">businessPartner</FIELD>
+    <FIELD id="fieldBusinessPartner">businessPartnerTrunc</FIELD>
+    <FIELD id="fieldBusinessPartner" attribute="title" replace="zz">businessPartner</FIELD>
     <FIELD id="fieldPaymentDocument">paymentDocument</FIELD>
-    <FIELD id="fieldDescription">description</FIELD>
+    <FIELD id="fieldDescription">descriptionTrunc</FIELD>
+    <FIELD id="fieldDescription" attribute="title" replace="zz">description</FIELD>
     <FIELD id="fieldPaymentAmount" format="euroEdition">paymentAmount</FIELD>
     <FIELD id="fieldDepositAmount" format="euroEdition">depositAmount</FIELD>
     <FIELD id="funcEvenOddRowxx" attribute="id" replace="xx">transactionId</FIELD>

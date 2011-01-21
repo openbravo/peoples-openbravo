@@ -21,7 +21,7 @@
   <tr id="funcEvenOddRow" class="DataGrid_Body_Row DataGrid_Body_Row_yy">
     <td class="DataGrid_Body_LineNoCell"><input type="checkbox" name="inpPaymentId" value="" id="fieldPaymentId" onchange="updateSelectAll(this.checked);return true;"/></td>
     <td class="DataGrid_Body_Cell" id="fieldPayment">xx</td>
-    <td class="DataGrid_Body_Cell" id="fieldDescription">xxDescription</td>
+    <td class="DataGrid_Body_Cell" title="zz" id="fieldDescription">xxDescription</td>
     <td class="DataGrid_Body_Cell" id="fieldDate">xx12/12/2009</td>
     <td class="DataGrid_Body_Cell_Amount" id="fieldDebitAmount">xx150.00</td>
     <td class="DataGrid_Body_Cell_Amount" id="fieldCreditAmount">xx60.00</td>

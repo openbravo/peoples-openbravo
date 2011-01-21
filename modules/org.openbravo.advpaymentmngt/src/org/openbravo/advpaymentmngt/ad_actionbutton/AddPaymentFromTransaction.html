@@ -303,11 +303,11 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
     displayLogicElement('sectionDifferenceBox', false);
     displayLogicForCredit();
 
-    resizeAreaInfo();
+    resizeAreaCreateFrom();
   }
 
   function onResizeDo(){
-    resizeAreaInfo(true);
+	  resizeAreaCreateFrom(true);
   }
 </script>
 </head>
@@ -898,7 +898,7 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
     
     <tr>
       <td>
-        <div class="Popup_ContentPane_Client" style="overflow: auto; height:50px;" id="client_bottom">
+        <div class="Popup_ContentPane_Client" style="overflow: auto; padding-bottom: 5px;" id="client_bottom">
           <table cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector">
 
             <tr>

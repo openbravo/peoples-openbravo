@@ -30,7 +30,8 @@
     <FIELD id="fieldRecordAmt" attribute="name" replace="xx">finScheduledPaymentDetailId</FIELD>
     <FIELD id="fieldOrderNr">orderNr</FIELD>
     <FIELD id="fieldInvoiceNr">invoiceNr</FIELD>
-    <FIELD id="fieldPaymentMethod">paymentMethodName</FIELD>
+    <FIELD id="fieldPaymentMethod">paymentMethodNameTrunc</FIELD>
+    <FIELD id="fieldPaymentMethod" attribute="title" replace="zz">paymentMethodName</FIELD>
     <FIELD id="fieldDueDate">dueDate</FIELD>
     <FIELD id="fieldInvoicedAmount" format="euroEdition">invoicedAmount</FIELD>
     <FIELD id="fieldExpectedAmount" format="euroEdition">expectedAmount</FIELD>

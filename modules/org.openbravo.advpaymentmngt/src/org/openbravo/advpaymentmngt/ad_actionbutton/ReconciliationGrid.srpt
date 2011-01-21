@@ -23,9 +23,9 @@
   <tr id="funcEvenOddRowxx" class="DataGrid_Body_Row DataGrid_Body_Row_yy">
     <td class="DataGrid_Body_LineNoCell" id="fieldRownum1">xx1</td>
     <td class="DataGrid_Body_Cell" id="fieldTransactionDate">xx12/12/2009</td>
-    <td class="DataGrid_Body_Cell" id="fieldBusinessPartner">xxMcGiver</td>
+    <td class="DataGrid_Body_Cell" title="zz" id="fieldBusinessPartner">xxMcGiver</td>
     <td class="DataGrid_Body_Cell" id="fieldPaymentDocument">xxPaymentRef</td>
-    <td class="DataGrid_Body_Cell" id="fieldDescription">xxDescription</td>
+    <td class="DataGrid_Body_Cell" title="zz" id="fieldDescription">xxDescription</td>
     <td class="DataGrid_Body_Cell_Amount" id="fieldPaymentAmount">xx150.00</td>
     <td class="DataGrid_Body_Cell_Amount" id="fieldDepositAmount">xx60.00</td>
     <td class="DataGrid_Body_LineNoCell"><input type="checkbox" name="inpTransactionId" value="" id="fieldTransactionId" onchange="saveTransactionLineStatus(this.checked, this.value); updateAmounts(this.value, this.checked); unselectClearAll(this.checked); return true;"/></td>

@@ -134,7 +134,7 @@ function setGLItemMode(toGLItem){
   displayLogicElement('inpAlternativeLabel', !toGLItem);
   displayLogicElement('inpAlternativeChkBox', !toGLItem);
 
-  resizeAreaInfo();
+  resizeAreaCreateFrom();
 
   if (toGLItem)
     loadGLItemList();
@@ -420,11 +420,11 @@ function actualPaymentOnChange(){
 
     //numberInputEvent('onchange', document.frmMain.inpGLItemAmount);
     loadGridList();
-    resizeAreaInfo();
+    resizeAreaCreateFrom();
   }
 
   function onResizeDo(){
-    resizeAreaInfo(true);
+    resizeAreaCreateFrom(true);
   }
 </script>
 </head>
@@ -1058,7 +1058,7 @@ function actualPaymentOnChange(){
     
     <tr>
       <td>
-        <div class="Popup_ContentPane_Client" style="overflow: auto; height:50px;" id="client_bottom">
+        <div class="Popup_ContentPane_Client" style="overflow: auto; padding-bottom: 5px;" id="client_bottom">
           <table cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector">
 
             <tr>
