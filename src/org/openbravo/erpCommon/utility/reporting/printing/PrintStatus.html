@@ -13,7 +13,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,18 +39,18 @@
   <script type="text/javascript">
     dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
   </script>
-  	<script language="JavaScript" type="text/javascript">
+    <script language="JavaScript" type="text/javascript">
 
 function checkStatus()
 {
-	if( document.getElementById("nrOfEmailsSend").value > 0 )
-	{
-	}
-	else
-	{
-		document.getElementById("paramTitulo").innerHTML = "Process not completed successfully";
-		document.getElementById("messageBoxIDTitle").innerHTML = "No emails were send. Please check if the documents are 'completed'.";
-	}
+    if( document.getElementById("nrOfEmailsSend").value > 0 )
+    {
+    }
+    else
+    {
+        document.getElementById("paramTitulo").innerHTML = "Process not completed successfully";
+        document.getElementById("messageBoxIDTitle").innerHTML = "No emails were send. Please check if the documents are 'completed'.";
+    }
 }
 </script>
 
@@ -58,8 +58,8 @@ function checkStatus()
 
 
 <body onload="checkStatus();">
-	<input id="nrOfEmailsSend" type="hidden" name="nrOfEmailsSend" value="">
-	
+    <input id="nrOfEmailsSend" type="hidden" name="nrOfEmailsSend" value="">
+    
 <div class="Popup_ContentPane_CircleLogo">
   <div class="Popup_WindowLogo">
     <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_info" src="../../../../../web/images/blank.gif" border="0/"></img>
@@ -211,7 +211,7 @@ function checkStatus()
                       <button type="button" 
                         id="buttonCancel" 
                         class="ButtonLink" 
-                        onclick="window.close();return false;" 
+                        onclick="closePage();return false;" 
                         onfocus="buttonEvent('onfocus', this); window.status='Close'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 
