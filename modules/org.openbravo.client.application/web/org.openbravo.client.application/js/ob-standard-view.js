@@ -1011,7 +1011,7 @@ isc.OBStandardView.addProperties({
     if (this.isShowingForm) {
       // note on purpose checking form readonly
       toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, form.isSaving || form.readOnly || this.singleRecord || !validData);
-      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, form.isSaving || form.readOnly || !validData || !form.hasChanged);
+      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, !form.isNew && (form.isSaving || form.readOnly || !validData || !form.hasChanged));
       toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO,  form.isSaving || form.readOnly || !validData || !form.hasChanged);
       toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE,  form.isSaving || form.readOnly || this.singleRecord || !validData || form.isNew);
       toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, form.isSaving || form.isNew);
