@@ -357,6 +357,15 @@ public class DocFINPayment extends AcctServer {
     FieldProviderFactory.setField(data[0], "Posted", payment.getPosted());
     FieldProviderFactory.setField(data[0], "Processed", payment.isProcessed() ? "Y" : "N");
     FieldProviderFactory.setField(data[0], "Processing", payment.isProcessNow() ? "Y" : "N");
+    FieldProviderFactory.setField(data[0], "C_Project_ID", payment.getProject() != null ? payment
+        .getProject().getId() : "");
+    FieldProviderFactory.setField(data[0], "C_Campaign_ID",
+        payment.getSalesCampaign() != null ? payment.getSalesCampaign().getId() : "");
+    FieldProviderFactory.setField(data[0], "C_Activity_ID", payment.getActivity() != null ? payment
+        .getActivity().getId() : "");
+    // This lines can be uncommented when User1 and User2 are implemented
+    // FieldProviderFactory.setField(data[0], "User1_ID", payment.getStDimension().getId());
+    // FieldProviderFactory.setField(data[0], "User2_ID", payment.getNdDimension().getId());
     setObjectFieldProvider(data);
   }
 
