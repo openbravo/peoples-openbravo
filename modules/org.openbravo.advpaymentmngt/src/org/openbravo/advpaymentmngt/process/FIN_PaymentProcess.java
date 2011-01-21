@@ -70,6 +70,16 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       OBDal.getInstance().save(payment);
       OBDal.getInstance().flush();
       if (strAction.equals("P") || strAction.equals("D")) {
+        Set<String> documentOrganizations = OBContext.getOBContext()
+            .getOrganizationStructureProvider().getNaturalTree(payment.getOrganization().getId());
+        if (!documentOrganizations.contains(payment.getAccount().getOrganization().getId())) {
+          msg.setType("Error");
+          msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+              "@APRM_FinancialAccountNotInNaturalTree@"));
+          bundle.setResult(msg);
+          return;
+        }
         Set<String> invoiceDocNos = new TreeSet<String>();
         Set<String> orderDocNos = new TreeSet<String>();
         Set<String> glitems = new TreeSet<String>();

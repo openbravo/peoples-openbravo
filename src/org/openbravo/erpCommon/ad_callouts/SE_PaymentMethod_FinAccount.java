@@ -69,6 +69,8 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
       OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
       obc.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
+      obc.add(Expression.in("organization.id", OBContext.getOBContext()
+          .getOrganizationStructureProvider().getNaturalTree(srtOrgId)));
 
       for (FinAccPaymentMethod accPm : obc.list()) {
         if (srtSelectedFinancialAccount.equals(accPm.getAccount().getId())) {
