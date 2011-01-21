@@ -92,3 +92,8 @@ isc.Canvas.addProperties({
 isc.RPCManager.showPrompt = false;
 isc.RPCManager.neverShowPrompt = true;
 
+// Overrides hasFireBug function to always return false,
+// the SmartClient code has too many trace() calls that result in worse
+// performance when using Firefox/Firebug
+isc.Log.hasFireBug = function() { return false; };
+
