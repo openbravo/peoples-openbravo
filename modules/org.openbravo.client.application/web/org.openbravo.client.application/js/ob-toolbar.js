@@ -721,5 +721,20 @@ OB.ToolbarUtils.print = function(view, url, directPrint){
   view.setContextInfo(sessionProperties, function() {
     OB.Layout.ClassicOBCompatibility.Popup.open('print', 0, 0, OB.Application.contextUrl + '/businessUtility/PrinterReports.html?'+popupParams, '', window, false, false, true);
   });
+};
+
+OB.ToolbarUtils.showAuditTrail = function(view){
+ var selectedRecords = view.viewGrid.getSelectedRecords();
   
+  if (selectedRecords.length === 0) {
+    view.messageBar.setMessage(OBMessageBar.TYPE_WARNING, '', OB.I18N.getLabel('OBUIAPP_PrintNoRecordSelected'));
+    return;
+  }
+  
+  var popupParams = "Command=POPUP_HISTORY";
+  popupParams += "&inpTabId=" + view.tabId;
+  popupParams += "&inpTableId=" + view.standardProperties.inpwindowId;
+  popupParams += "&inpRecordId=" + view.viewGrid.getSelectedRecord().id;
+  
+  OB.Layout.ClassicOBCompatibility.Popup.open('print', 900, 600, OB.Application.contextUrl + '/businessUtility/AuditTrail.html?'+popupParams, '', window, false, false, true);
 };

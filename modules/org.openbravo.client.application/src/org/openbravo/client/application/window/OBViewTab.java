@@ -113,6 +113,15 @@ public class OBViewTab extends BaseTemplateComponent {
     if (tab.getProcess() != null) {
       iconButtons.addAll(getPrintEmailButtons());
     }
+
+    // Audit trail button
+    IconButton auditBtn = new IconButton();
+    auditBtn.type = "audit";
+    auditBtn.label = Utility.messageBD(new DalConnectionProvider(), "AuditTrail", OBContext
+        .getOBContext().getLanguage().getLanguage());
+    auditBtn.action = "OB.ToolbarUtils.showAuditTrail(this.view);";
+
+    iconButtons.add(auditBtn);
     return iconButtons;
   }
 
