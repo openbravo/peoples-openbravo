@@ -684,14 +684,7 @@ isc.OBToolbarTextButton.addProperties({
 OB.ToolbarUtils = {};
 
 OB.ToolbarUtils.print = function(view, url, directPrint){
-  var popupParams = {
-      viewId : 'print',
-      obManualURL : '/businessUtility/PrinterReports.html', 
-      processId : '1',
-      id : '1',
-      tabTitle : 'a',
-      command: 'DEFAULT'
-    };
+  var popupParams = "Command=DEFAULT";
   
   var allProperties = view.getContextInfo(false, true);
   var sessionProperties = view.getContextInfo(true, true);
@@ -704,24 +697,22 @@ OB.ToolbarUtils.print = function(view, url, directPrint){
         value = value?'Y':'N';
       }
       
-      popupParams.command += '&' + param + '=' + value;
+      popupParams += '&' + param + '=' + value;
     }
   }
   
-  popupParams.command += '&inppdfpath='+url;
-  popupParams.command += '&inphiddenkey='+view.standardProperties.inpKeyName;
+  popupParams += '&inppdfpath='+url;
+  popupParams += '&inphiddenkey='+view.standardProperties.inpKeyName;
   
   var selectedIds = '';
   for (var i=0; i<view.viewGrid.getSelectedRecords().length; i++){
     selectedIds += (i>0?',':'')+view.viewGrid.getSelectedRecords()[i].id;
   }
   
-  popupParams.command += '&inphiddenvalue='+selectedIds;
+  popupParams += '&inphiddenvalue='+selectedIds;
   
   view.setContextInfo(sessionProperties, function() {
-   // OB.Layout.ViewManager.openView('OBPopupClassicWindow', popupParams);
-    
-    OB.Layout.ClassicOBCompatibility.Popup.open('print', 0, 0, OB.Application.contextUrl + '/businessUtility/PrinterReports.html?Command='+popupParams.command, '', window, false, false, true);
+    OB.Layout.ClassicOBCompatibility.Popup.open('print', 0, 0, OB.Application.contextUrl + '/businessUtility/PrinterReports.html?'+popupParams, '', window, false, false, true);
   });
   
 };
