@@ -436,6 +436,19 @@
         window[name].closeClick();
       },
       
+      // ** {{{ Popup.close(name, width, height) }}} **
+      //
+      // Resizes a poup
+      //
+      // Parameters:
+      // * {{{name}}} type: String - the name of the window
+      // * {{{width}}} type: Number - width to resize to
+      // * {{{height}}} type: Number - height to resize to
+      resize: function(name, width, height){
+        name = name + '_' + cobcomp.Popup.secString;
+        window[name].resizeTo(width, height);
+      },
+      
       // ** {{{ Popup.setTitle(name, title) }}} **
       //
       // Sets the window title
