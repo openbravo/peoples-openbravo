@@ -43,6 +43,7 @@ import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TabTrl;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
 
 /**
@@ -531,7 +532,8 @@ public class OBViewTab extends BaseTemplateComponent {
       type = "print";
       action = "OB.ToolbarUtils.print(this.view, '" + processUrl + "', " + process.isDirectPrint()
           + ");";
-      label = "testing...";
+      label = Utility.messageBD(new DalConnectionProvider(), "Print", OBContext.getOBContext()
+          .getLanguage().getLanguage());
     }
 
   }
