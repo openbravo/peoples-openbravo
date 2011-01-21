@@ -19,6 +19,7 @@
 package org.openbravo.client.application.window;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -108,11 +109,24 @@ public class OBViewTab extends BaseTemplateComponent {
 
     iconButtons = new ArrayList<IconButton>();
 
-    // Print button
+    // Print/email button
     if (tab.getProcess() != null) {
-      iconButtons.add(new PrintButton());
+      iconButtons.addAll(getPrintEmailButtons());
     }
     return iconButtons;
+  }
+
+  private Collection<? extends IconButton> getPrintEmailButtons() {
+    List<IconButton> btns = new ArrayList<IconButton>();
+
+    PrintButton printBtn = new PrintButton();
+    btns.add(printBtn);
+
+    if (printBtn.hasEmail) {
+      btns.add(new EmailButton(printBtn));
+    }
+
+    return btns;
   }
 
   public String getParentProperty() {
@@ -508,6 +522,8 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public class PrintButton extends IconButton {
+    public boolean hasEmail;
+
     public PrintButton() {
       Process process = tab.getProcess();
       String processUrl = "";
@@ -529,12 +545,24 @@ public class OBViewTab extends BaseTemplateComponent {
         processUrl = "/" + FormatUtilities.replace(processUrl);
       }
 
+      hasEmail = processUrl.contains("orders") || processUrl.contains("invoices")
+          || processUrl.contains("payments");
+
       type = "print";
       action = "OB.ToolbarUtils.print(this.view, '" + processUrl + "', " + process.isDirectPrint()
           + ");";
       label = Utility.messageBD(new DalConnectionProvider(), "Print", OBContext.getOBContext()
           .getLanguage().getLanguage());
     }
-
   }
+
+  public class EmailButton extends IconButton {
+    public EmailButton(PrintButton print) {
+      type = "email";
+      label = Utility.messageBD(new DalConnectionProvider(), "Email", OBContext.getOBContext()
+          .getLanguage().getLanguage());
+      action = print.action.replace("print.html", "send.html");
+    }
+  }
+
 }
