@@ -97,6 +97,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="DISPLAY_EXPRESSION" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="CLAUSE_LEFT_PART" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBSERDS_DATASOURCE_FIELD" name="OBUISEL_S_OBSERDS_DSF">
         <reference local="OBSERDS_DATASOURCE_FIELD_ID" foreign="OBSERDS_DATASOURCE_FIELD_ID"/>
       </foreign-key>
