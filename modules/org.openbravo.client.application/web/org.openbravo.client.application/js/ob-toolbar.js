@@ -709,6 +709,7 @@ OB.ToolbarUtils.print = function(view, url, directPrint){
   
   popupParams += '&inppdfpath='+url;
   popupParams += '&inphiddenkey='+view.standardProperties.inpKeyName;
+  popupParams += '&inpdirectprint='+directPrint?'Y':'N';
   
   var selectedIds = '';
   for (var i = 0; i < selectedRecords.length; i++){
