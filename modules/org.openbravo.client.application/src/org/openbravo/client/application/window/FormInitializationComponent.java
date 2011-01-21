@@ -50,7 +50,6 @@ import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.client.kernel.reference.FKComboUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
@@ -322,10 +321,10 @@ public class FormInitializationComponent extends BaseActionHandler {
           jsonobject = new JSONObject(value);
           columnValues.put("inp"
               + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
-          // We need to fire callouts if the field value was changed, or if the field is a combo
+          // We need to fire callouts if the field is a combo
           // (due to how ComboReloads worked, callouts were always called)
-          if (mode.equals("NEW")
-              && ((jsonobject.has("value") && !jsonobject.get("value").equals("")) || uiDef instanceof FKComboUIDefinition)) {
+          if (mode.equals("NEW") && (field.getColumn().getReference().getId().equals("17"))) {
+            System.out.println("hola " + field.getName());
             if (field.getColumn().getCallout() != null) {
               addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
             }
@@ -646,27 +645,6 @@ public class FormInitializationComponent extends BaseActionHandler {
   private void executeCallouts(String mode, Tab tab, Map<String, JSONObject> columnValues,
       String changedColumn, List<String> calloutsToCall, List<String> lastfieldChanged,
       List<String> messages) {
-    // List of the callouts that need to be called
-    if (mode.equals("NEW")) {
-      for (Field field : tab.getADFieldList()) {
-        if (field.getColumn().getCallout() != null) {
-          Object value;
-          try {
-            JSONObject jsonCol = columnValues.get("inp"
-                + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
-            value = jsonCol.has("value") ? jsonCol.get("value") : null;
-            if (value != null && !value.toString().equals("")) {
-              // There is a callout and the value for this field is set
-
-              addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
-            }
-          } catch (JSONException e) {
-            log.error("Error reading value from parameter. Not executing callouts for column "
-                + field.getColumn().getDBColumnName(), e);
-          }
-        }
-      }
-    }
 
     // In CHANGE mode, we will add the initial callout call for the changed column, if there is
     // one
