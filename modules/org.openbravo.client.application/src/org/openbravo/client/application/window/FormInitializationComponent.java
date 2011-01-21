@@ -751,13 +751,23 @@ public class FormInitializationComponent extends BaseActionHandler {
                         if (subelement.get(2, null).toString().equalsIgnoreCase("True")) {
                           String value = subelement.get(0, null).toString();
                           log.debug("Column: " + col.getDBColumnName() + "  Value: " + value);
+                          String oldValue = rq.getRequestParameter(colId);
                           rq.setRequestParameter(colId, value);
                           UIDefinition uiDef = UIDefinitionController.getInstance()
                               .getUIDefinition(col.getId());
                           JSONObject jsonobject = new JSONObject(uiDef.getFieldProperties(inpFields
                               .get(name), true));
-                          columnValues.put(colId, jsonobject);
-                          changed = true;
+                          String newValue = jsonobject.getString("value");
+                          if ((oldValue == null && newValue != null)
+                              || (oldValue != null && newValue == null)
+                              || (oldValue != null && newValue != null && !oldValue
+                                  .equals(newValue))) {
+                            columnValues.put(colId, jsonobject);
+                            changed = true;
+                          } else {
+                            log
+                                .debug("Column value didn't change. We do not attempt to execute any additional callout");
+                          }
                         }
                       }
                     } else {
@@ -769,7 +779,7 @@ public class FormInitializationComponent extends BaseActionHandler {
                       } else {
                         value = (String) el;
                       }
-                      log.debug("Modified column: " + col.getDBColumnName() + "  Value: " + value);
+                      String oldValue = rq.getRequestParameter(colId);
                       // We set the new value in the request, so that the JSONObject is computed
                       // with the new value
                       rq.setRequestParameter(colId, value);
@@ -777,15 +787,25 @@ public class FormInitializationComponent extends BaseActionHandler {
                           col.getId());
                       JSONObject jsonobj = new JSONObject(uiDef.getFieldProperties(inpFields
                           .get(name), true));
-                      columnValues.put("inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()),
-                          jsonobj);
-                      changed = true;
+                      String newValue = jsonobj.getString("value");
+                      log.debug("Modified column: " + col.getDBColumnName() + "  Value: " + value);
+                      if ((oldValue == null && newValue != null)
+                          || (oldValue != null && newValue == null)
+                          || (oldValue != null && newValue != null && !oldValue.equals(newValue))) {
+                        columnValues.put("inp"
+                            + Sqlc.TransformaNombreColumna(col.getDBColumnName()), jsonobj);
+                        changed = true;
 
-                      // We set the value as formatted in the JSONObject in the request, so that the
-                      // request now is format safe and additional getFieldProperties calls do not
-                      // fail
-                      if (jsonobj.has("value")) {
-                        rq.setRequestParameter(colId, jsonobj.getString("value"));
+                        // We set the value as formatted in the JSONObject in the request, so that
+                        // the
+                        // request now is format safe and additional getFieldProperties calls do not
+                        // fail
+                        if (jsonobj.has("value")) {
+                          rq.setRequestParameter(colId, jsonobj.getString("value"));
+                        }
+                      } else {
+                        log
+                            .debug("Column value didn't change. We do not attempt to execute any additional callout");
                       }
                     }
                     if (changed && col.getCallout() != null) {
