@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -149,8 +149,8 @@
           field.type.toUpperCase().indexOf('CHECK') !== -1) {
             if (!field.length) {
               if (field.checked) {
-            	result.name = name;
-            	result.value = field.value;
+              result.name = name;
+              result.value = field.value;
                 return result;
               } else {
                 return result;
@@ -166,8 +166,8 @@
               return result;
             }
           } else {
-        	result.name = name;
-        	result.value = field.value;
+            result.name = name;
+            result.value = field.value;
             return result;
           }
         }
@@ -180,17 +180,17 @@
       // parameters to communicate with the classic OB class
       //
       function getXHRParamsObj(/* String */action, /* Object */ formObject){
-    	var paramsObj = {};
-    	paramsObj.Command = action;
-    	paramsObj.IsAjaxCall = '1';
+        var paramsObj = {};
+        paramsObj.Command = action;
+        paramsObj.IsAjaxCall = '1';
 
         for (var i = 0; i < formObject.elements.length; i++) {
           if (formObject.elements[i].type) {
-        	var param =  inputValueForms(formObject.elements[i].name, formObject.elements[i]);
-        	
-        	if (param && param.name !== 'Command'){
-        	  paramsObj[param.name] = param.value;
-        	}
+          var param =  inputValueForms(formObject.elements[i].name, formObject.elements[i]);
+
+          if (param && param.name !== 'Command'){
+            paramsObj[param.name] = param.value;
+          }
           }
         }
         return paramsObj;
