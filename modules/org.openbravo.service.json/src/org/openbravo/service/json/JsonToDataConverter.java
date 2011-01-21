@@ -627,12 +627,13 @@ public class JsonToDataConverter {
   public boolean hasErrors() {
     // create an exception for each new object
     if (!newObjects.isEmpty()) {
-      for (BaseOBObject bob : newObjects.values()) {
+      for (String key : newObjects.keySet()) {
+        final BaseOBObject bob = newObjects.get(key);
         final JsonConversionError conversionError = new JsonConversionError();
         conversionError.setBaseOBObject(bob);
         conversionError.setProperty(bob.getEntity().getIdProperties().get(0));
-        conversionError.setExceptionWithMessage("New object " + bob
-            + " refered to but not present in the import set");
+        conversionError.setExceptionWithMessage("New object " + bob + " (key: " + key
+            + ") refered to but not present in the import set");
         errors.add(conversionError);
       }
     }
