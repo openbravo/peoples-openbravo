@@ -114,6 +114,13 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       log.debug("Form Initialization Component Execution. Tab Name: " + tab.getWindow().getName()
           + "." + tab.getName() + " Tab Id:" + tab.getId());
+      log.debug("Execution mode: " + mode);
+      if (rowId != null) {
+        log.debug("Row id: " + rowId);
+      }
+      if (changedColumn != null) {
+        log.debug("Changed field: " + changedColumn);
+      }
       if (rowId != null) {
         row = OBDal.getInstance().get(tab.getTable().getName(), rowId);
       }
