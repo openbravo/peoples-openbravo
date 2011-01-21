@@ -95,7 +95,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '9057';
+  var number = '10029';
   return number;
 }
 
@@ -5365,6 +5365,16 @@ function closePage() {
   } else if (isWindowInMDITab) {
   } else {
     top.window.close();
+  }
+  return true;
+}
+
+function popupResizeTo(width, height) {
+  if (isWindowInMDIPopup) {
+    getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.resize(MDIPopupId, width, height);
+  } else if (isWindowInMDITab) {
+  } else {
+    window.resizeTo(width, height);
   }
   return true;
 }
