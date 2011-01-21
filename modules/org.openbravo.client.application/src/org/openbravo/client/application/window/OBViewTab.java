@@ -36,6 +36,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.domain.ModelImplementation;
@@ -115,13 +116,15 @@ public class OBViewTab extends BaseTemplateComponent {
     }
 
     // Audit trail button
-    IconButton auditBtn = new IconButton();
-    auditBtn.type = "audit";
-    auditBtn.label = Utility.messageBD(new DalConnectionProvider(), "AuditTrail", OBContext
-        .getOBContext().getLanguage().getLanguage());
-    auditBtn.action = "OB.ToolbarUtils.showAuditTrail(this.view);";
+    if (!ActivationKey.getInstance().isActive() || tab.getTable().isFullyAudited()) {
+      IconButton auditBtn = new IconButton();
+      auditBtn.type = "audit";
+      auditBtn.label = Utility.messageBD(new DalConnectionProvider(), "AuditTrail", OBContext
+          .getOBContext().getLanguage().getLanguage());
+      auditBtn.action = "OB.ToolbarUtils.showAuditTrail(this.view);";
+      iconButtons.add(auditBtn);
+    }
 
-    iconButtons.add(auditBtn);
     return iconButtons;
   }
 
