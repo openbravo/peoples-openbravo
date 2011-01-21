@@ -163,7 +163,7 @@ public abstract class UIDefinition {
       if (!defaultS.startsWith("@SQL=")) {
         columnValue = Utility.getDefault(new DalConnectionProvider(false), rq
             .getVariablesSecureApp(), field.getColumn().getDBColumnName(), defaultS, field.getTab()
-            .getWindow().getId(), defaultS);
+            .getWindow().getId(), "");
       } else {
         ArrayList<String> params = new ArrayList<String>();
         String sql = parseSQL(defaultS, params);
