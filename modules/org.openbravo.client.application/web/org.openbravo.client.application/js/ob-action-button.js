@@ -134,7 +134,12 @@ isc.OBToolbarActionButton.addProperties( {
       this.enable();
     }
     
-    var label = this.labelValue[record[this.property]];
+    var buttonValue = record[this.property];
+    if (buttonValue === '--') {
+      buttonValue = 'CL';
+    }
+    
+    var label = this.labelValue[buttonValue];
     if (!label){
       label = this.title;
     }
