@@ -508,8 +508,29 @@ public class OBViewTab extends BaseTemplateComponent {
 
   public class PrintButton extends IconButton {
     public PrintButton() {
+      Process process = tab.getProcess();
+      String processUrl = "";
+      for (ModelImplementation mo : process.getADModelImplementationList()) {
+        if (mo.isDefault() && ("P".equals(mo.getAction()) || "R".equals(mo.getAction()))) {
+          for (ModelImplementationMapping mom : mo.getADModelImplementationMappingList()) {
+            if (mom.isDefault()) {
+              processUrl = ".." + mom.getMappingName();
+              break;
+            }
+          }
+          break;
+        }
+      }
+      if (processUrl.isEmpty()) {
+        processUrl = process.getSearchKey() + ".pdf";
+      }
+      if (processUrl.indexOf("/") == -1) {
+        processUrl = "/" + FormatUtilities.replace(processUrl);
+      }
+
       type = "print";
-      action = "OB.ToolbarUtils.print(this.view);";
+      action = "OB.ToolbarUtils.print(this.view, '" + processUrl + "', " + process.isDirectPrint()
+          + ");";
       label = "testing...";
     }
 

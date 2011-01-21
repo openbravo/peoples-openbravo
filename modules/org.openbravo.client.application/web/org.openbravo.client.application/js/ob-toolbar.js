@@ -683,7 +683,7 @@ isc.OBToolbarTextButton.addProperties({
 
 OB.ToolbarUtils = {};
 
-OB.ToolbarUtils.print = function(view){
+OB.ToolbarUtils.print = function(view, url, directPrint){
   var popupParams = {
       viewId : 'print',
       obManualURL : '/businessUtility/PrinterReports.html', 
@@ -708,8 +708,8 @@ OB.ToolbarUtils.print = function(view){
     }
   }
   
-  popupParams.command += '&inppdfpath=../invoices/print.html';
-  popupParams.command += '&inphiddenkey=inpcInvoiceId';
+  popupParams.command += '&inppdfpath='+url;
+  popupParams.command += '&inphiddenkey='+view.standardProperties.inpKeyName;
   
   var selectedIds = '';
   for (var i=0; i<view.viewGrid.getSelectedRecords().length; i++){
