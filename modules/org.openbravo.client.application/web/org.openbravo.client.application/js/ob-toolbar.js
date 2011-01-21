@@ -684,12 +684,18 @@ isc.OBToolbarTextButton.addProperties({
 OB.ToolbarUtils = {};
 
 OB.ToolbarUtils.print = function(view, url, directPrint){
-  var popupParams = "Command=DEFAULT";
+  var selectedRecords = view.viewGrid.getSelectedRecords();
   
-  var allProperties = view.getContextInfo(false, true);
-  var sessionProperties = view.getContextInfo(true, true);
+  if (selectedRecords.length === 0) {
+    view.messageBar.setMessage(OBMessageBar.TYPE_WARNING, '', OB.I18N.getLabel('OBUIAPP_PrintNoRecordSelected'));
+    return;
+  }
+  
+  var popupParams = "Command=DEFAULT", 
+      allProperties = view.getContextInfo(false, true),
+      sessionProperties = view.getContextInfo(true, true);
 
-  for ( var param in allProperties) {
+  for (var param in allProperties) {
     if (allProperties.hasOwnProperty(param)) {
       var value = allProperties[param];
       
@@ -705,8 +711,8 @@ OB.ToolbarUtils.print = function(view, url, directPrint){
   popupParams += '&inphiddenkey='+view.standardProperties.inpKeyName;
   
   var selectedIds = '';
-  for (var i=0; i<view.viewGrid.getSelectedRecords().length; i++){
-    selectedIds += (i>0?',':'')+view.viewGrid.getSelectedRecords()[i].id;
+  for (var i = 0; i < selectedRecords.length; i++){
+    selectedIds += (i > 0?',':'') + selectedRecords[i].id;
   }
   
   popupParams += '&inphiddenvalue='+selectedIds;
