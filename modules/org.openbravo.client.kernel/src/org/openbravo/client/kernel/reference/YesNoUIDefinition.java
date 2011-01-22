@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.model.ad.ui.Field;
 
 /**
@@ -49,6 +51,23 @@ public class YesNoUIDefinition extends UIDefinition {
         + "return OB.Utilities.getYesNoDisplayValue(value);" + "},  "
         + "normalDisplayFormatter: function(value, field, component, record) {"
         + "return OB.Utilities.getYesNoDisplayValue(value);" + "},  ";
+  }
+
+  @Override
+  public String getGridEditorFieldProperties(Field field) {
+    final String superGridEditorProps = super.getGridEditorFieldProperties(field);
+    if (superGridEditorProps.length() > 0) {
+      try {
+        final JSONObject json = new JSONObject(superGridEditorProps);
+        json.put("showTitle", false);
+        json.put("showLabel", false);
+        return json.toString();
+      } catch (Exception e) {
+        throw new OBException(e);
+      }
+    } else {
+      return "{showTitle: false, showLabel: false}";
+    }
   }
 
   @Override

@@ -23,7 +23,7 @@ isc.OBViewGrid.create({
         { 
         autoExpand: ${field.autoExpand}, type: '${field.type}',
         editorProperties: {
-          ${field.fieldProperties}
+          ${field.gridEditorFieldProperties}
         }
         ${field.gridFieldProperties}
         ${field.filterEditorProperties}

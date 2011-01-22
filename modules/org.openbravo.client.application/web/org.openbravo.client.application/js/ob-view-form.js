@@ -66,6 +66,7 @@ isc.OBViewForm.addProperties({
   },
   
   editRecord: function(record, preventFocus){
+    this.setFocusItem(null);
     this.setHasChanged(false);
 
     this.setNewState(false);
@@ -91,6 +92,7 @@ isc.OBViewForm.addProperties({
   },
   
   editNewRecord: function(preventFocus){
+    this.setFocusItem(null);
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
     this.ignoreFirstFocusEvent = preventFocus;
@@ -136,12 +138,30 @@ isc.OBViewForm.addProperties({
     if (items) {
       for (var i = 0; i < items.length; i++) {
         var item = items[i];
-        if (!item.isDisabled() && (item.getCanFocus() || item.canFocus)) {
+        if (item.getCanFocus() && !item.isDisabled()) {
           this.setFocusItem(item);
           return;
         }
       }
     }
+  },
+  
+  setFindNewFocusItem: function() {
+    var focusItem = this.getFocusItem();
+    // no need to find a new item
+    if (focusItem && !focusItem.isDisabled() && focusItem.getCanFocus()) {
+      return;
+    }
+    var items = this.getItems();
+    if (items) {
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        if (item.getCanFocus() && !item.isDisabled()) {
+          item.focusInItem();
+          return;
+        }
+      }
+    }    
   },
   
   getFieldFromInpColumnName: function(inpColumnName){

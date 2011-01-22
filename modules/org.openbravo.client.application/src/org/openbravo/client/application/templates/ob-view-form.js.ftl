@@ -37,5 +37,6 @@ isc.OBViewForm.create({
         }
       </#if>
       </#list>
+      form.setFindNewFocusItem();
     }
 })

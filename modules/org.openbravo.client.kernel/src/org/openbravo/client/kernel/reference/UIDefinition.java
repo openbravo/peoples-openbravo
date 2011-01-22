@@ -273,7 +273,7 @@ public abstract class UIDefinition {
    * @return a JSONObject string which is used to initialize the formitem.
    */
   public String getGridEditorFieldProperties(Field field) {
-    return "";
+    return getFieldProperties(field);
   }
 
   public Reference getReference() {
