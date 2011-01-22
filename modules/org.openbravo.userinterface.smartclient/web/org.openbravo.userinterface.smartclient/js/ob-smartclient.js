@@ -28,6 +28,9 @@ isc.setAutoDraw(false);
 // NOTE BEWARE: methods/props added here will overwrite and NOT extend FormItem
 // properties! 
 isc.FormItem.addProperties({
+  // always take up space when an item is hidden in a form
+  alwaysTakeSpace: true,
+  
   titleClick: function(form, item){
     item.focusInItem();
   },
