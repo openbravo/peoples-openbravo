@@ -131,8 +131,13 @@ isc.Canvas.addProperties({
     if (this.view && this.view.setAsActiveView) {
       return this.view;
     }
-    if (this.grid && this.grid.view && this.grid.view.setAsActiveView) {
-      return this.grid.view;
+    if (this.grid) {
+      if (this.grid.sourceWidget && this.grid.sourceWidget.view && this.grid.sourceWidget.view.setAsActiveView) {
+        return this.grid.sourceWidget.view;
+      }
+      if (this.grid.view && this.grid.view.setAsActiveView) {
+        return this.grid.view;
+      }
     }
     return null;
   }

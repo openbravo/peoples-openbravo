@@ -443,7 +443,14 @@ isc.ClassFactory.mixInInterface('OBSelectorLinkItem', 'OBLinkTitleItem');
 isc.OBSelectorLinkItem.addProperties({
   canFocus: true,
   showFocused: true,
-  
+  wrap: false,
+  clipValue: true,
+
+  // show the complete displayed value, handy when the display value got clipped
+  itemHoverHTML: function (item, form) {
+    return this.getDisplayValue(this.getValue());
+  },
+
   setValue: function(value){
     var ret = this.Super('setValue', arguments);
     // in this case the clearIcon needs to be shown or hidden

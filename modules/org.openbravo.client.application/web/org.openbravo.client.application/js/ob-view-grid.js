@@ -564,6 +564,7 @@ isc.OBViewGrid.addProperties({
   },
    
   recordClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
+    this.view.setAsActiveView();
     if (this.view.autoSaveForm) {
       this.setActionAfterAutoSave(this, this.recordClick, arguments);
     } else {

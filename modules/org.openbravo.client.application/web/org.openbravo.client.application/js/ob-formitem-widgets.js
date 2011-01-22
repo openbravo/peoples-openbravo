@@ -99,6 +99,8 @@ isc.OBSearchItem.addProperties({
   showPickerIcon: true,
   canFocus: true,
   showFocused: true,
+  wrap: false,
+  clipValue: true,
   
   setValue: function(value){
     var ret = this.Super('setValue', arguments);
@@ -113,6 +115,7 @@ isc.OBSearchItem.addProperties({
     return ret;
   },
   
+  // NOTE: FormItem don't have initWidget but use init
   init: function(){
     this.instanceClearIcon = isc.shallowClone(this.clearIcon);
     this.instanceClearIcon.formItem = this;
@@ -141,6 +144,11 @@ isc.OBSearchItem.addProperties({
     this.icons = [this.instanceClearIcon];
     
     return this.Super('init', arguments);
+  },
+
+  // show the complete displayed value, handy when the display value got clipped
+  itemHoverHTML: function (item, form) {
+    return this.getDisplayValue(this.getValue());
   },
   
   changed: function(){
