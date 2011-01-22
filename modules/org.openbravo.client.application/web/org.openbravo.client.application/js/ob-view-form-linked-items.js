@@ -107,6 +107,7 @@ isc.OBLinkedItemLayout.addProperties({
     // items should be created, note that the linked items should not 
     // be read until the expand actually takes place (see below)
     this.label = isc.Label.create({
+      canFocus: true,
       width: '100%',
       height: '100%',
       contents: 'Implement me'

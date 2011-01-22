@@ -471,6 +471,9 @@ isc.OBSelectorLinkItem.addProperties({
   }, 
  
   showPicker: function(){
+    if (this.isFocusable()) {      
+      this.focusInItem();
+    }
     this.selectorWindow.open();
   },
   

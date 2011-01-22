@@ -25,6 +25,8 @@
 // core
 isc.setAutoDraw(false);
 
+// NOTE BEWARE: methods/props added here will overwrite and NOT extend FormItem
+// properties! 
 isc.FormItem.addProperties({
   titleClick: function(form, item){
     item.focusInItem();
@@ -35,27 +37,58 @@ isc.FormItem.addProperties({
   },
   
   focus: function(form, item){
+    var view = this.getView();
+    if (!view) {
+      return;
+    }
+    view.lastFocusedItem = this;
+    view.setAsActiveView();
+  },
+
+  getView: function() {
+    var form = this.form;
     if (form.view) {
-      form.view.lastFocusedItem = this;
-      form.view.setAsActiveView();
+      return form.view;
     } else if (form.grid) {
       if (form.grid.view) {
-        form.grid.view.lastFocusedItem = this;
-        form.grid.view.setAsActiveView();
+        return form.grid.view;
       } else if (isc.isA.RecordEditor(form.grid) && form.grid.sourceWidget && form.grid.sourceWidget.view) {
-        form.grid.sourceWidget.view.lastFocusedItem = this;
-        form.grid.sourceWidget.view.setAsActiveView();
+        return form.grid.sourceWidget.view;
       }
+    }
+    return null;
+  },
+  
+  click: function() {
+    var view = this.getView();
+    if (view) {
+      view.lastFocusedItem = this;
+      this.focusInItem();
+    }
+  },
+  
+  // get the original focusInItem
+  _originalFocusInItem: isc.FormItem.getInstanceProperty('focusInItem'),
+  focusInItem: function() {
+    if (this._inFocusInItem) {
+      return;
+    }
+    this._inFocusInItem = true;
+    var view = this.getView();
+    if (view) {
+      view._inFocusInItem = this;
+    }
+    // forward to the original one
+    this._originalFocusInItem();
+    this._inFocusInItem = false;
+    if (view) {
+      this._inFocusInItem = null;
     }
   },
   
   blur: function(form, item){
-    if (form && form.handleItemChange) {
+    if (item._hasChanged && form && form.handleItemChange) {
       form.handleItemChange(this);
-    }
-    this._hasChanged = false;
-    if (this._originalBlur) {
-      return this._originalBlur(form, item);
     }
     return;
   },
@@ -65,25 +98,34 @@ isc.FormItem.addProperties({
   },
   
   // return all relevant focus condition
-  isFocusable: function(){
-    return this.canFocus && this.isDrawn() &&
-    this.isVisible() &&
-    !this.isDisabled();
+  isFocusable: function(){    
+    return this.getCanFocus() && this.isDrawn() &&
+        this.isVisible() && !this.isDisabled();
   }
 });
 
 isc.Canvas.addProperties({
   // let focuschanged go up to the parent, or handle it here
   focusChanged: function(hasFocus){
-    if (hasFocus && this.view && this.view.setAsActiveView) {
-      // is done when opening a form
-      this.view.setAsActiveView();
+    var view = this.getView();
+    if (hasFocus && view) {
+      view.setAsActiveView();
       return;
     }
     
     if (this.parentElement && this.parentElement.focusChanged) {
       this.parentElement.focusChanged(hasFocus);
     }
+  },
+  
+  getView: function() {
+    if (this.view && this.view.setAsActiveView) {
+      return this.view;
+    }
+    if (this.grid && this.grid.view && this.grid.view.setAsActiveView) {
+      return this.grid.view;
+    }
+    return null;
   }
 });
 

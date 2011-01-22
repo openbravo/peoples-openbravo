@@ -586,6 +586,12 @@ isc.OBStandardView.addProperties({
   },
   
   setViewFocus: function(){
+    
+    if (this._inFocusInItem) {
+      this._inFocusInItem = null;
+      return;
+    }
+    
     var object, functionName;
     
     // clear for a non-focusable item
@@ -593,15 +599,15 @@ isc.OBStandardView.addProperties({
       this.lastFocusedItem = null;
     }
     
-    if (this.lastFocusedItem) {
+    if (this.viewForm && this.viewForm.getFocusItem()) {
+      object = this.viewForm;
+      functionName = 'focus';
+    } else if (this.lastFocusedItem) {
       object = this.lastFocusedItem;
       functionName = 'focusInItem';
     } else if (this.viewGrid && !this.isShowingForm) {
       object = this.viewGrid;
       functionName = 'focusInFilterEditor';
-    } else if (this.viewForm && this.viewForm.getFocusItem()) {
-      object = this.viewForm;
-      functionName = 'focus';
     }
     
     isc.Page.setEvent(isc.EH.IDLE, object, isc.Page.FIRE_ONCE, functionName);
@@ -637,6 +643,8 @@ isc.OBStandardView.addProperties({
       this.activeBar.setActive(true);
       this.setViewFocus();
     } else {
+      this.lastFocusedItem = this.viewForm.getFocusItem();
+      this.viewForm.setFocusItem(null);
       this.activeBar.setActive(false);
       this.toolBar.hide();
       // note we can not check on viewForm visibility as 
