@@ -39,7 +39,8 @@ public class StringUIDefinition extends UIDefinition {
 
   @Override
   public String getGridFieldProperties(Field field) {
-    return getShowHoverGridFieldSettings(field) + super.getGridFieldProperties(field);
+    return getShowHoverGridFieldSettings(field) + ", width: 200 "
+        + super.getGridFieldProperties(field);
   }
 
   @Override

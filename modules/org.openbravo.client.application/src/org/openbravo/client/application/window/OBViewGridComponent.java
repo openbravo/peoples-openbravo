@@ -210,8 +210,8 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
     // can the column be auto expanded to fill any remaining space
     public String getAutoExpand() {
-      return Boolean.toString(uiDefinition instanceof StringUIDefinition || property.isIdentifier()
-          || !property.isPrimitive());
+      return Boolean
+          .toString(uiDefinition instanceof StringUIDefinition || !property.isPrimitive());
     }
 
     public String getName() {

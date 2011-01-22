@@ -29,6 +29,7 @@ isc.OBViewGrid.create({
         ${field.filterEditorProperties}
         , targetEntity: '${field.targetEntity?js_string}'
         , title: '${field.title?js_string}'
+        , prompt: '${field.title?js_string}'
         , showIf: '${field.initialShow?string}'
         , inpColumnName: '${field.inpColumnName?string}'
         , referencedKeyColumnName: '${field.referencedKeyColumnName?string}'        

@@ -54,9 +54,10 @@ public class ForeignKeyUIDefinition extends UIDefinition {
   public String getGridFieldProperties(Field field) {
 
     final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
-    return ", displayField: '" + prop.getName() + "." + JsonConstants.IDENTIFIER + "',"
+    return ", width: 200, displayField: '" + prop.getName() + "." + JsonConstants.IDENTIFIER + "',"
         + "valueField: '" + prop.getName() + "." + JsonConstants.ID + "'"
-        + ", foreignKeyField: true" + super.getGridFieldProperties(field);
+        + ", foreignKeyField: true" + super.getGridFieldProperties(field)
+        + getShowHoverGridFieldSettings(field);
   }
 
   protected String getSuperGridFieldProperties(Field field) {
