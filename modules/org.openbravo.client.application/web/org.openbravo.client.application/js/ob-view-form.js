@@ -299,8 +299,9 @@ isc.OBViewForm.addProperties({
     if (field.name === OB.Constants.ID) {
       return;
     }
+    
     // note field can be a datasource field, see above, in that case
-    // don't set the entries
+    // don't set the entries    
     if (field.form && entries) {
       if (field.getDataSource()) {
         field.getDataSource().setCacheData(entries, true);
@@ -330,12 +331,22 @@ isc.OBViewForm.addProperties({
       if (isDate) {
         this.setValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
       } else {
+        
+        // set the display field if the identifier is passed also
+        if (field.displayField && field.form && columnValue.identifier) {
+          if (!field.valueMap) {
+            field.valueMap = {};
+          }
+          field.valueMap[columnValue.value] = columnValue.identifier;
+          field.form.setValue(field.displayField, columnValue.identifier);
+        }
+        
         this.setValue(field.name, columnValue.value);
       }
     } else {
       this.clearValue(field.name);
     }
-    
+
     if (field.redraw) {
       field.redraw();
     }

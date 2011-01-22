@@ -18,7 +18,10 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
@@ -39,6 +42,25 @@ public class FKSearchUIDefinition extends ForeignKeyUIDefinition {
   @Override
   public String getFormEditorType() {
     return "OBSearchItem";
+  }
+
+  @Override
+  // get the current value for a search item from the database
+  public String getFieldProperties(Field field, boolean getValueFromSession) {
+    try {
+      final JSONObject json = new JSONObject(super.getFieldProperties(field, getValueFromSession));
+      if (json.has("value")) {
+        final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
+        final BaseOBObject target = OBDal.getInstance().get(prop.getTargetEntity().getName(),
+            json.getString("value"));
+        if (target != null) {
+          json.put("identifier", target.getIdentifier());
+        }
+      }
+      return json.toString();
+    } catch (Exception e) {
+      throw new OBException("Exception when processing field " + field, e);
+    }
   }
 
   @Override
