@@ -91,6 +91,7 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
         this.Super('initWidget', arguments);
         // register the field in the registry
         var suggestionField = this.members[1].getField('value');
+        OB.TestRegistry.register(this.recentPropertyName + '_RECENTFORM', this.members[0]);
         OB.TestRegistry.register(this.recentPropertyName + '_FORM', this.members[1]);
         OB.TestRegistry.register(this.recentPropertyName + '_BUTTON', this);
         OB.TestRegistry.register(this.recentPropertyName + '_FIELD', suggestionField);
