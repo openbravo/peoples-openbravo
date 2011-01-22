@@ -67,8 +67,9 @@ isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
 
 // a global function as it is called from classic windows
 function closeSearch(action, value, display, parameters, wait){
-  var length, i, hiddenInputName, targetFld = isc.OBSearchItem.openSearchItem;
-  if (action === 'SAVE') {
+  var length, i, hiddenInputName, targetFld = isc.OBSearchItem.openSearchItem,
+    currentValue = targetFld.getValue();
+  if (action === 'SAVE' && currentValue !== value) {    
     if (!targetFld.valueMap) {
       targetFld.valueMap = {};
     }
@@ -164,6 +165,9 @@ isc.OBSearchItem.addProperties({
   }, 
 
   showPicker: function(){
+    if (this.isFocusable()) {
+      this.focusInItem(); 
+    }
     var parameters = [], index = 0, i = 0, length, fld, inpName;
     parameters[index++] = 'inpIDValue';
     if (this.getValue()) {
@@ -326,6 +330,9 @@ isc.OBSectionItem.addProperties({
     // when collapsing set the focus to the header
     this.form.setFocusItem(this);
     var ret = this.Super('collapseSection', arguments);
+    if (this.form.view) {
+      this.form.view.setAsActiveView();
+    }
     return ret;
   },
   
@@ -342,6 +349,10 @@ isc.OBSectionItem.addProperties({
     if (this.form.parentElement) {
       // scroll after things have been expanded
       this.form.parentElement.delayCall('scrollTo', [null, this.getTop()], 100);    
+    }
+
+    if (this.form.view) {
+      this.form.view.setAsActiveView();
     }
 
     return ret;
@@ -729,20 +740,45 @@ isc.OBDateItem.addProperties({
   // Called when changing a value.
   change: function(form, item, value, oldValue){ /* transformInput */
     var isADate = value !== null &&
-    Object.prototype.toString.call(value) === '[object Date]';
+              Object.prototype.toString.call(value) === '[object Date]';
     if (isADate) {
       return;
     }
-    item.setValue(OBDateItem.autoCompleteDate(item.dateFormat, value, this));
+    // prevent change events from happening
+    var completedDate = OBDateItem.autoCompleteDate(item.dateFormat, value, this);
+    if (completedDate !== oldValue) {
+      item.setValue(completedDate);
+    }
   },
   
   // to prevent infinite looping as setFormErrors will also blur
   inBlur: false,
+
+  // compare while ignoring milli difference
+  compareValues : function (value1, value2) {
+    // not a date let the super class do it
+    if (!isc.isA.Date(value1) || !isc.isA.Date(value2)) {
+      return this.Super('compareValues', arguments);
+    }
+    var difference = value1.getTime() - value2.getTime();
+    if (difference < -1000) {
+      return 1;
+    } else if (difference > 1000) {
+      return -1;
+    } else {
+      return 0;
+    }
+  },
   
   // ** {{{ blur }}} **
   // Called when the focus leaves the field (sets value and validates)
   blur: function(){
-    this.setValue(OBDateItem.expandDateYear(this.dateFormat, this.getValue()));
+    var newValue = OBDateItem.expandDateYear(this.dateFormat, this.getValue()),
+    oldValue = this.getValue();
+    
+    if (oldValue !== newValue) {      
+      this.setValue(newValue);
+    }
     if (!this.inBlur) {
       this.inBlur = true;
       this.checkOBDateItemValue();
