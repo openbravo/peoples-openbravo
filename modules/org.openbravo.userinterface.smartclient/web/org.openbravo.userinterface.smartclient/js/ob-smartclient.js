@@ -34,6 +34,7 @@ isc.FormItem.addProperties({
   
   changed: function(){
     this._hasChanged = true;
+    this.clearErrors();
   },
   
   focus: function(form, item){
@@ -63,7 +64,12 @@ isc.FormItem.addProperties({
     var view = this.getView();
     if (view) {
       view.lastFocusedItem = this;
-      this.focusInItem();
+      // this handles the case that there was a direct click on picker icon
+      // don't set the focus when a picker is shown as it will remove the 
+      // picker directly
+      if (!this.picker || !this.picker.isVisible || !this.picker.isVisible()) {
+        this.focusInItem();
+      }
     }
   },
   
