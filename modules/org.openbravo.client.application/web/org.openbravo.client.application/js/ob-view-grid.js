@@ -336,8 +336,11 @@ isc.OBViewGrid.addProperties({
     if (this.getSelectedRecords().length > 0) {
       this.selectionUpdated();
     }
-    
-    if (this.targetOpenGrid) {
+    if (this.targetOpenNewEdit) {
+      delete this.targetOpenNewEdit;
+      // not passing record opens new
+      this.view.editRecord();
+    } else if (this.targetOpenGrid) {
       // direct link from other window but without a record id
       // so just show grid mode
       // don't need to do anything here

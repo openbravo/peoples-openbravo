@@ -180,6 +180,15 @@ isc.OBStandardWindow.addProperties({
     var ret = this.Super('draw', arguments);
     
     if (this.targetTabId) {
+      // no entity, try to find it
+      if (!this.targetEntity) {
+        for (var i = 0; i < this.views.length; i++) {
+          if (this.views[i].tabId === this.targetTabId) {
+            this.targetEntity = this.view.entity;
+            break;
+          }
+        }
+      }
       OB.RemoteCallManager.call('org.openbravo.client.application.window.ComputeSelectedRecordActionHandler', null, {
         targetEntity: this.targetEntity,
         targetRecordId: this.targetRecordId,

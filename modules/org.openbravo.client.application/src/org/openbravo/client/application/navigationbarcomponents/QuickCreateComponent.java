@@ -69,4 +69,8 @@ public class QuickCreateComponent extends BaseTemplateComponent {
     return "NavBar_OBQuickCreate";
   }
 
+  public boolean isQuickLaunch() {
+    return false;
+  }
+
 }

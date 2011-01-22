@@ -131,12 +131,9 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
          pickListHeaderHeight: 0,
 
          getPickListFilterCriteria: function() {
-            var criteria = this.Super('getPickListFilterCriteria', arguments) || {};
+            // only filter on identifier
+            var criteria =  {};
             criteria[OB.Constants.IDENTIFIER] = this.getDisplayValue();
-            // prevent local filtering on the id
-            if (criteria[OB.Constants.ID]) {
-              delete criteria.id;
-            }
             return criteria;
          },
          pickListFields: [
@@ -184,6 +181,10 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
              if (record.optionType && record.optionType === 'tab') {
                 if (this.isTestEnvironment) {
                   openObject = {viewId: '_' + record.windowId, windowId: record.windowId, id: value, tabId: value, tabTitle: record[OB.Constants.IDENTIFIER]};
+                  <#if !data.quickLaunch>
+                  openObject.targetTabId = value;
+                  openObject.targetCommand = 'new';
+                  </#if>
                 } else {
                   openObject = {viewId: 'OBClassicWindow', windowId: record.windowId, id: value, tabId: value, command: '${data.command}', tabTitle: record[OB.Constants.IDENTIFIER]};
                 }
