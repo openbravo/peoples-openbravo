@@ -134,6 +134,38 @@ isc.OBToolbar.addProperties({
     this.Super('addMembers', [newMembers]);
   },
   
+  // ** {{{ updateButtonState }}} **
+  //
+  // Updates the visible and disabled state of buttons using the view's form and
+  // grid information.
+  // 
+  // NOTE: when adding new buttons to the toolbar they should also be added here.
+  //
+  updateButtonState: function() {
+    // validData: this is the root or there is a parent
+    var view = this.view, validData = view.isRootView || view.getParentId(), form = view.viewForm, grid = view.viewGrid;
+    if (view.isShowingForm) {
+      // note on purpose checking form readonly
+      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, form.isSaving || form.readOnly || view.singleRecord || !validData);
+      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, !form.isNew && (form.isSaving || form.readOnly || !validData || !form.hasChanged));
+      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO,  form.isSaving || form.readOnly || !validData || !form.hasChanged);
+      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE,  form.isSaving || form.readOnly || view.singleRecord || !validData || form.isNew);
+      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, form.isSaving || form.isNew);
+    } else {
+      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, view.readOnly || view.singleRecord || !validData);
+      // for a grid also the selected number is taken into account
+      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE,  view.readOnly || view.singleRecord || !validData || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0);
+      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, !validData);
+
+      // implement in editable grid
+      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO,  true);
+      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);      
+    }
+
+    // and refresh the process toolbar buttons
+    this.refreshCustomButtons();
+  },
+
   // ** {{{ getLeftMember(member) }}} **
   //
   // It works just for left side members.

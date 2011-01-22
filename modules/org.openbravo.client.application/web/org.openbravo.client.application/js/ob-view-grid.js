@@ -243,7 +243,7 @@ isc.OBViewGrid.addProperties({
   show: function(){
     var ret = this.Super('show', arguments);
     
-    this.view.setToolBarButtonState();
+    this.view.toolBar.updateButtonState();
 
     this.resetEmptyMessage();
 

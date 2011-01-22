@@ -211,7 +211,7 @@ isc.OBStandardView.addProperties({
 
     var ret = this.Super('initWidget', arguments);
     
-    this.setToolBarButtonState();
+    this.toolBar.updateButtonState();
 
     return ret;
   },
@@ -709,7 +709,7 @@ isc.OBStandardView.addProperties({
     }
     this.viewGrid.refreshContents();
 
-    this.setToolBarButtonState();    
+    this.toolBar.updateButtonState();    
 
     // if not visible or the parent also needs to be refreshed
     // enable the following code if we don't automatically select the first
@@ -995,7 +995,7 @@ isc.OBStandardView.addProperties({
     }
     this.updateLastSelectedState();
         
-    this.setToolBarButtonState();
+    this.toolBar.updateButtonState();
 
     var tabViewPane = null;
     
@@ -1010,31 +1010,6 @@ isc.OBStandardView.addProperties({
     this.updateChildCount();
     this.updateTabTitle();
     
-    this.toolBar.refreshCustomButtons();
-  },
-  
-  setToolBarButtonState: function() {
-    // validData: this is the root or there is a parent
-    var validData = this.isRootView || this.getParentId(), toolBar = this.toolBar, form = this.viewForm, grid = this.viewGrid;
-    if (this.isShowingForm) {
-      // note on purpose checking form readonly
-      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, form.isSaving || form.readOnly || this.singleRecord || !validData);
-      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, !form.isNew && (form.isSaving || form.readOnly || !validData || !form.hasChanged));
-      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO,  form.isSaving || form.readOnly || !validData || !form.hasChanged);
-      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE,  form.isSaving || form.readOnly || this.singleRecord || !validData || form.isNew);
-      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, form.isSaving || form.isNew);
-    } else {
-      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, this.readOnly || this.singleRecord || !validData);
-      // for a grid also the selected number is taken into account
-      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE,  this.readOnly || this.singleRecord || !validData || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0);
-      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, !validData);
-
-      // implement in editable grid
-      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO,  true);
-      toolBar.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);      
-    }
-
-    // and refresh the process toolbar buttons
     this.toolBar.refreshCustomButtons();
   },
   

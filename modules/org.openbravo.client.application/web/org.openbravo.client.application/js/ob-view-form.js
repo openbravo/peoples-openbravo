@@ -78,7 +78,7 @@ isc.OBViewForm.addProperties({
     var ret = this.Super('editRecord', arguments);
     this.clearErrors();
     
-    this.view.setToolBarButtonState();
+    this.view.toolBar.updateButtonState();
     
     this.retrieveInitialValues(false);
     
@@ -104,7 +104,7 @@ isc.OBViewForm.addProperties({
     var ret = this.Super('editNewRecord', arguments);
     this.clearErrors();
     
-    this.view.setToolBarButtonState();
+    this.view.toolBar.updateButtonState();
     
     this.retrieveInitialValues(true);
     
@@ -277,8 +277,7 @@ isc.OBViewForm.addProperties({
     } else {
       this.readOnly = false;
     }
-    this.view.setToolBarButtonState();
-    this.view.toolBar.refreshCustomButtons();
+    this.view.toolBar.updateButtonState();
     this.onFieldChanged(this);
     this.focus();
   },
@@ -412,7 +411,7 @@ isc.OBViewForm.addProperties({
     // remove the message
     this.setHasChanged(true);
     this.view.messageBar.hide();
-    this.view.setToolBarButtonState();
+    this.view.toolBar.updateButtonState();
   },
   
   resetForm: function(){
@@ -425,7 +424,7 @@ isc.OBViewForm.addProperties({
     this.view.messageBar.hide();
     this.resetValues();
     this.setHasChanged(false);
-    this.view.setToolBarButtonState();
+    this.view.toolBar.updateButtonState();
   },
   
   // action defines the action to call when the save succeeds
@@ -489,7 +488,7 @@ isc.OBViewForm.addProperties({
     form.isSaving = true;
     
     // disable some buttons
-    this.view.setToolBarButtonState();
+    this.view.toolBar.updateButtonState();
     
     var callback = function(resp, data, req){
       var index1, index2, errorCode, view = form.view;
@@ -538,7 +537,7 @@ isc.OBViewForm.addProperties({
       // from now on
       this.setAutoSaveFormInActiveView(null);
       form.inAutoSave = false;
-      view.setToolBarButtonState();
+      view.toolBar.updateButtonState();
       return false;
     };
     
@@ -556,7 +555,7 @@ isc.OBViewForm.addProperties({
       }
       form.inAutoSave = false;
       form.isSaving = false;
-      form.view.setToolBarButtonState();
+      form.view.toolBar.updateButtonState();
       this.setAutoSaveFormInActiveView(null);
       return;
     } else {
@@ -616,11 +615,13 @@ isc.OBViewForm.addProperties({
   },
   
   getFirstErrorItem: function() {
-    flds = this.getFields();
-    length = flds.length;
-    for (i = 0; i < length; i++) {
-      if (flds[i].getErrors()) {
-        return flds[i];
+    var flds = this.getFields();
+    if (flds.length) {
+      var length = flds.length;
+      for (i = 0; i < length; i++) {
+        if (flds[i].getErrors()) {
+          return flds[i];
+        }
       }
     }
     return null;
