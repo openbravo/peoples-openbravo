@@ -90,8 +90,7 @@ target, /* String */dsFieldName, /*Boolean*/ doNew) {
     rpcRequest.params._new = true;
   }
   rpcRequest.httpMethod = 'GET';
-  rpcRequest.actionURL = OB.Application.contextUrl
-      + 'org.openbravo.client.kernel/OBSERDS_Datasource/' + dataSourceId;
+  rpcRequest.actionURL = OB.Application.contextUrl + 'org.openbravo.client.kernel/OBSERDS_Datasource/' + dataSourceId;
   rpcRequest.callback = callback;
   rpcRequest.useSimpleHttp = true;
   rpcRequest.evalResult = true;
@@ -115,5 +114,12 @@ OB.Datasource.create = function(/* Object */dsProperties) {
       return ds;
     }
   }
-  return isc.RestDataSource.create(dsProperties);
+  return isc.OBRestDataSource.create(dsProperties);
 };
+
+// always use a subclass to make it easier to override some default stuff
+isc.ClassFactory.defineClass('OBRestDataSource', isc.RestDataSource);
+
+isc.OBRestDataSource.addProperties({
+});
+

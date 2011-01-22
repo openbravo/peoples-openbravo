@@ -133,6 +133,10 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
          getPickListFilterCriteria: function() {
             var criteria = this.Super('getPickListFilterCriteria', arguments) || {};
             criteria[OB.Constants.IDENTIFIER] = this.getDisplayValue();
+            // prevent local filtering on the id
+            if (criteria[OB.Constants.ID]) {
+              delete criteria.id;
+            }
             return criteria;
          },
          pickListFields: [
@@ -152,9 +156,9 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
          title: OB.I18N.getLabel('${data.label}'),
          editorType: 'comboBox',
          
-         // note local filtering is better but gave strange results
-         // retry this after upgrading to newer smartclient
-         //filterLocally: false,
+         // local filtering enabled, remove the Id filter
+         // explicitly from the criteria list, see getPickListFilter
+         filterLocally: true,
          
          optionDataSource: OB.Datasource.get('${data.dataSourceId}'),      
 
