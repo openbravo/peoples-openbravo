@@ -58,7 +58,7 @@
 <!--102-->  <AD_WINDOW_ID><![CDATA[101]]></AD_WINDOW_ID>
 <!--102-->  <SEQNO><![CDATA[10]]></SEQNO>
 <!--102-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--102-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
+<!--102-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--102-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
 <!--102-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--102-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
@@ -379,7 +379,7 @@
 <!--117-->  <HELP><![CDATA[Edit your window translations for the predefined languages of your choice.]]></HELP>
 <!--117-->  <AD_TABLE_ID><![CDATA[132]]></AD_TABLE_ID>
 <!--117-->  <AD_WINDOW_ID><![CDATA[102]]></AD_WINDOW_ID>
-<!--117-->  <SEQNO><![CDATA[20]]></SEQNO>
+<!--117-->  <SEQNO><![CDATA[120]]></SEQNO>
 <!--117-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--117-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
 <!--117-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
@@ -3643,7 +3643,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--311-->  <HELP><![CDATA[Edit role access to a window.]]></HELP>
 <!--311-->  <AD_TABLE_ID><![CDATA[201]]></AD_TABLE_ID>
 <!--311-->  <AD_WINDOW_ID><![CDATA[102]]></AD_WINDOW_ID>
-<!--311-->  <SEQNO><![CDATA[30]]></SEQNO>
+<!--311-->  <SEQNO><![CDATA[130]]></SEQNO>
 <!--311-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--311-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--311-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
@@ -11591,9 +11591,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800249-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800249-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800249-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800249-->  <NAME><![CDATA[Header]]></NAME>
-<!--800249-->  <DESCRIPTION><![CDATA[Create a requisition for procurement.]]></DESCRIPTION>
-<!--800249-->  <HELP><![CDATA[Any ERP user can enter its requisitions. Requisitions are created in Draft status and have to be Completed to confirm them.]]></HELP>
+<!--800249-->  <NAME><![CDATA[Requisition]]></NAME>
+<!--800249-->  <DESCRIPTION><![CDATA[Create requests for the procurement department to buy necessary items based on your defined plan.]]></DESCRIPTION>
+<!--800249-->  <HELP><![CDATA[Users create Requisitions in this window. Each requisition can have a preferred vendor and/or Price List. The requisitions are owned by an user of the ERP and have different statuses, each of them allowing different actions.]]></HELP>
 <!--800249-->  <AD_TABLE_ID><![CDATA[800212]]></AD_TABLE_ID>
 <!--800249-->  <AD_WINDOW_ID><![CDATA[800092]]></AD_WINDOW_ID>
 <!--800249-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -11610,7 +11610,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800249-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800249-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800249-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--800249-->  <HQLWHERECLAUSE><![CDATA[e.user.id=@user@]]></HQLWHERECLAUSE>
+<!--800249-->  <HQLWHERECLAUSE><![CDATA[e.userContact.id=@user@]]></HQLWHERECLAUSE>
 <!--800249--></AD_TAB>
 
 <!--800251--><AD_TAB>
