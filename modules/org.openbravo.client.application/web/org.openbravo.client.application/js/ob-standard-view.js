@@ -473,7 +473,7 @@ isc.OBStandardView.addProperties({
       
       if (this.viewGrid) {
         this.viewGrid.setWidth('100%');
-        this.viewGrid.view = this;
+        this.viewGrid.setView(this);
         this.formGridLayout.addMember(this.viewGrid);
       }
       
@@ -588,11 +588,6 @@ isc.OBStandardView.addProperties({
   
   setViewFocus: function(){
     
-    if (this._inFocusInItem) {
-      this._inFocusInItem = null;
-      return;
-    }
-    
     var object, functionName;
     
     // clear for a non-focusable item
@@ -600,7 +595,7 @@ isc.OBStandardView.addProperties({
       this.lastFocusedItem = null;
     }
     
-    if (this.viewForm && this.viewForm.getFocusItem()) {
+    if (this.isShowingForm && this.viewForm && this.viewForm.getFocusItem()) {
       object = this.viewForm;
       functionName = 'focus';
     } else if (this.lastFocusedItem) {
@@ -630,11 +625,11 @@ isc.OBStandardView.addProperties({
     }
   },
   
-  setAsActiveView: function(ignoreRefreshContents){
-    // don't change active when refreshing
-    if (this.refreshContents && !ignoreRefreshContents) {
-      return;
-    }
+  hasValidState: function() {
+    return this.isRootView || this.getParentId();
+  },
+  
+  setAsActiveView: function(){
     this.standardWindow.setActiveView(this);
   },
   
@@ -644,8 +639,6 @@ isc.OBStandardView.addProperties({
       this.activeBar.setActive(true);
       this.setViewFocus();
     } else {
-      this.lastFocusedItem = this.viewForm.getFocusItem();
-      this.viewForm.setFocusItem(null);
       this.activeBar.setActive(false);
       this.toolBar.hide();
       // note we can not check on viewForm visibility as 
@@ -653,6 +646,8 @@ isc.OBStandardView.addProperties({
       // to another tab, this handles the case that the grid
       // is shown but the underlying form has errors
       if (this.isShowingForm) {
+        this.lastFocusedItem = this.viewForm.getFocusItem();
+        this.viewForm.setFocusItem(null);
         this.viewForm.autoSave(null, true);
       }
     }
@@ -779,15 +774,15 @@ isc.OBStandardView.addProperties({
       // clear the form    
       this.viewForm.resetForm();
       this.isShowingForm = false;
-      
       this.viewGrid.show();
+      this.viewGrid.focusInFilterEditor();
+      
       this.viewGrid.setHeight('100%');
     }
     this.updateTabTitle();
   },
   
   doHandleClick: function(){
-    this.setAsActiveView();
     if (!this.childTabSet) {
       return;
     }
@@ -799,7 +794,6 @@ isc.OBStandardView.addProperties({
   },
   
   doHandleDoubleClick: function(){
-    this.setAsActiveView();
     var tempState;
     if (!this.childTabSet) {
       return;
@@ -848,10 +842,6 @@ isc.OBStandardView.addProperties({
       this.switchFormGridVisibility();
     }
     
-    if (preventFocus) {
-      this.standardWindow.preventActiveViewSetting = true;
-    }
-    
     if (!record) { //  new case
       this.viewGrid.deselectAllRecords();
       this.viewForm.editNewRecord(preventFocus);
@@ -862,8 +852,6 @@ isc.OBStandardView.addProperties({
     
     if (!preventFocus) {
       isc.Page.setEvent(isc.EH.IDLE, this.viewForm, isc.Page.FIRE_ONCE, 'focus');
-    } else {
-      delete this.standardWindow.preventActiveViewSetting;    
     }
   },
   

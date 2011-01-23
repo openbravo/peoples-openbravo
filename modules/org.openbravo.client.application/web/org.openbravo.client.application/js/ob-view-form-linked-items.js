@@ -151,15 +151,6 @@ isc.OBLinkedItemLayout.addProperties({
       // this part should stay also for linked items      
       this.isInitialized = true;
     }
-  },
-  
-  // ensure that the view gets activated
-  focusChanged: function(){
-    var view = this.getForm().view;
-    if (view && view.setAsActiveView) {
-      view.setAsActiveView();
-    }
-    return this.Super('focusChanged', arguments);
   }
 });
 

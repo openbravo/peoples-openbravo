@@ -150,9 +150,6 @@ isc.OBStandardWindow.addProperties({
   },
   
   setActiveView: function(view){
-    if (!view.isRootView && this.preventActiveViewSetting) {
-      return;
-    }
     if (!this.isDrawn()) {
       return;
     }
@@ -172,8 +169,7 @@ isc.OBStandardWindow.addProperties({
   
   setFocusInView: function(view){
     var currentView = view || this.activeView || this.view;
-    currentView.setAsActiveView(true);
-    currentView.setViewFocus();
+    this.setActiveView(currentView);
   },
 
   show: function() {
@@ -214,12 +210,6 @@ isc.OBStandardWindow.addProperties({
     }
     
     this.setFocusInView(this.view);
-
-    // prevent other views from changing the active view until the 
-    // root tab has retrieved data
-    // the active view is sometimes placed in a child tab when a window
-    // is opened for the first time
-    this.preventActiveViewSetting = true;
     return ret;
   },
   
@@ -235,6 +225,7 @@ isc.OBStandardWindow.addProperties({
       this.wasDeselected = false;
       return;
     }
+    this.setActiveView(this.view);
     this.view.doHandleClick();
   },
   
@@ -245,6 +236,7 @@ isc.OBStandardWindow.addProperties({
       this.wasDeselected = false;
       return;
     }
+    this.setActiveView(this.view);
     this.view.doHandleDoubleClick();
   },
   

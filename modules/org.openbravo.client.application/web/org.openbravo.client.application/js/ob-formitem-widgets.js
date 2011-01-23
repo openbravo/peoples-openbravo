@@ -338,9 +338,6 @@ isc.OBSectionItem.addProperties({
     // when collapsing set the focus to the header
     this.form.setFocusItem(this);
     var ret = this.Super('collapseSection', arguments);
-    if (this.form.view) {
-      this.form.view.setAsActiveView();
-    }
     return ret;
   },
   
@@ -357,10 +354,6 @@ isc.OBSectionItem.addProperties({
     if (this.form.parentElement) {
       // scroll after things have been expanded
       this.form.parentElement.delayCall('scrollTo', [null, this.getTop()], 100);    
-    }
-
-    if (this.form.view) {
-      this.form.view.setAsActiveView();
     }
 
     return ret;

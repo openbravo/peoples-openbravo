@@ -38,13 +38,7 @@ isc.OBStandardViewTabSet.addClassProperties({
       isc.Timer.setTimeout(function(){
         // if no double click happened then do the single click
         if (me.dblClickWaiting) {
-          me.dblClickWaiting = false;
-          
-          // set the active tab
-          if (tab.pane && tab.pane.setAsActiveView) {
-            tab.pane.setAsActiveView();
-          }
-          
+          me.dblClickWaiting = false;          
           me.tabSet.doHandleClick();
         }
       }, OB.Constants.DBL_CLICK_DELAY);
@@ -54,10 +48,6 @@ isc.OBStandardViewTabSet.addClassProperties({
     itemDoubleClick: function(item, itemNum){
       var tab = item;
       this.dblClickWaiting = false;      
-      // set the active tab
-      if (tab.pane && tab.pane.setAsActiveView) {
-        tab.pane.setAsActiveView();
-      }
       this.tabSet.doHandleDoubleClick();
     },
     
@@ -175,9 +165,6 @@ isc.OBStandardViewTabSet.addProperties({
       // first set to IN_MID, to prevent empty tab displays
       this.setState(isc.OBStandardView.STATE_IN_MID);
       this.setState(isc.OBStandardView.STATE_TOP_MAX);
-    }
-    if (this.getSelectedTab()) {
-      this.getSelectedTab().pane.setAsActiveView();
     }
   },
   
