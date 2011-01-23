@@ -520,7 +520,9 @@ isc.ClassFactory.defineClass('OBDateChooser', DateChooser);
 isc.OBDateChooser.addProperties({
   firstDayOfWeek: 1,
   autoHide: true,
-  showCancelButton: true
+  showCancelButton: true,
+  todayButtonTitle: OB.I18N.getLabel('OBUISC_DateChooser.todayButtonTitle'),
+  cancelButtonTitle: OB.I18N.getLabel('OBUISC_DateChooser.cancelButtonTitle')
 });
 
 if (isc.OBDateChooser) {  // To force SC to load OBDateChooser instead of DateChooser
