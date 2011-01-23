@@ -189,7 +189,8 @@ isc.OBStandardView.addProperties({
     }
     
     // These are the icon toolbar buttons shown in all the tabs 
-    leftMemberButtons = [isc.OBToolbarIconButton.create(isc.OBToolbar.NEW_BUTTON_PROPERTIES), 
+    leftMemberButtons = [isc.OBToolbarIconButton.create(isc.OBToolbar.NEW_DOC_BUTTON_PROPERTIES),
+                   isc.OBToolbarIconButton.create(isc.OBToolbar.NEW_ROW_BUTTON_PROPERTIES), 
                    isc.OBToolbarIconButton.create(isc.OBToolbar.SAVE_BUTTON_PROPERTIES), 
                    isc.OBToolbarIconButton.create(isc.OBToolbar.UNDO_BUTTON_PROPERTIES), 
                    isc.OBToolbarIconButton.create(isc.OBToolbar.DELETE_BUTTON_PROPERTIES), 
@@ -812,6 +813,15 @@ isc.OBStandardView.addProperties({
     this.previousState = tempState;
   },
   
+  // ** {{{ editNewRecordGrid }}} **
+  // Opens the inline grid editing for a new record.
+  editNewRecordGrid: function() {
+    if (this.isShowingForm) {
+      this.switchFormGridVisibility();      
+    }
+    this.viewGrid.startEditingNew();
+  },
+  
   // ** {{{ editRecord }}} **
   // Opens the edit form and selects the record in the grid, will refresh
   // child views also
@@ -1252,7 +1262,16 @@ isc.OBStandardView.addProperties({
     isc.ask(msg, callback);
   },
   
-  newRow: function(){
+  newRow: function() {
+    var actionObject = {
+        target: this,
+        method: this.editNewRecordGrid,
+        parameters: null
+      };
+    this.viewForm.autoSave(actionObject);
+  },
+  
+  newDocument: function(){
     var actionObject = {
       target: this,
       method: this.editRecord,

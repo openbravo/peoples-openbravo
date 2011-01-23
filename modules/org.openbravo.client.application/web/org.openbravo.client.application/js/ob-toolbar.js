@@ -20,7 +20,8 @@ isc.ClassFactory.defineClass('OBToolbar', isc.ToolStrip);
 
 isc.OBToolbar.addClassProperties({
   TYPE_SAVE: 'save',
-  TYPE_NEW: 'newRow',
+  TYPE_NEW_ROW: 'newRow',
+  TYPE_NEW_DOC: 'newDoc',
   TYPE_DELETE: 'eliminate',
   TYPE_UNDO: 'undo',
   TYPE_REFRESH: 'refresh',
@@ -33,12 +34,19 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'save',
     prompt: OB.I18N.getLabel('OBUIAPP_SaveRow')
   },
-  NEW_BUTTON_PROPERTIES: {
+  NEW_ROW_BUTTON_PROPERTIES: {
     action: function(){
       this.view.newRow();
     },
     buttonType: 'newRow',
     prompt: OB.I18N.getLabel('OBUIAPP_NewRow')
+  },
+  NEW_DOC_BUTTON_PROPERTIES: {
+    action: function(){
+      this.view.newDocument();
+    },
+    buttonType: 'newDoc',
+    prompt: OB.I18N.getLabel('OBUIAPP_NewDoc')
   },
   DELETE_BUTTON_PROPERTIES: {
     action: function(){
@@ -62,7 +70,7 @@ isc.OBToolbar.addClassProperties({
     },
     disabled: true,
     buttonType: 'undo',
-    prompt: OB.I18N.getLabel('OBUIAPP_UndoRow')
+    prompt: OB.I18N.getLabel('OBUIAPP_Undo')
   }
 });
 
@@ -146,13 +154,15 @@ isc.OBToolbar.addProperties({
     var view = this.view, validData = view.isRootView || view.getParentId(), form = view.viewForm, grid = view.viewGrid;
     if (view.isShowingForm) {
       // note on purpose checking form readonly
-      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, form.isSaving || form.readOnly || view.singleRecord || !validData);
+      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW_DOC, form.isSaving || form.readOnly || view.singleRecord || !validData);
+      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW_ROW, true);
       this.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, !form.isNew && (form.isSaving || form.readOnly || !validData || !form.hasChanged));
       this.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO,  form.isSaving || form.readOnly || !validData || !form.hasChanged);
       this.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE,  form.isSaving || form.readOnly || view.singleRecord || !validData || form.isNew);
       this.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, form.isSaving || form.isNew);
     } else {
-      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW, view.readOnly || view.singleRecord || !validData);
+      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW_DOC, view.readOnly || view.singleRecord || !validData);
+      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW_ROW, view.singleRecord || !validData);
       // for a grid also the selected number is taken into account
       this.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE,  view.readOnly || view.singleRecord || !validData || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0);
       this.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, !validData);

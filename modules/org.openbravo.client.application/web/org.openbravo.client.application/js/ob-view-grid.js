@@ -861,7 +861,8 @@ isc.OBViewGrid.addProperties({
         icon = isSel ? (this.checkboxFieldTrueImage || this.booleanTrueImage) : (this.checkboxFieldFalseImage || this.booleanFalseImage);
       }
       // if the record is disabled, make the checkbox image disabled as well
-      if (record[this.recordEnabledProperty] === false) {
+      // or if the record is new then also show disabled
+      if (!record || record[this.recordEnabledProperty] === false) {
         icon = icon.replace('.', '_Disabled.');
       }
       
@@ -926,7 +927,6 @@ isc.OBViewGrid.addProperties({
     }
     var rowNum = this.getEditRow();
     var record = this.getRecord(rowNum);
-    var editColumnLayout = record.editColumnLayout;
     if (record && record.editColumnLayout) {
       isc.Log.logDebug('hideInlineEditor has record and editColumnLayout', 'OB');
       record.editColumnLayout.showEditOpen();
