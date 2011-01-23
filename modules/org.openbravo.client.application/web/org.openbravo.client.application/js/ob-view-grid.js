@@ -114,6 +114,8 @@ isc.OBViewGrid.addProperties({
   
   quickDrawAheadRatio: 6.0,
   drawAheadRatio: 4.0,
+  // note: don't set drawAllMaxCells too high as it results in extra reads
+  // of data, Smartclient will try to read until drawAllMaxCells has been reached
   drawAllMaxCells: 100,
   
   // keeps track if we are in objectSelectionMode or in toggleSelectionMode
