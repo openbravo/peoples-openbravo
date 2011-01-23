@@ -46,17 +46,19 @@ isc.FormItem.addProperties({
       return;
     }
     view.lastFocusedItem = this;
-    view.setAsActiveView();
   },
 
   getView: function() {
     var form = this.form;
     if (form.view) {
+      // form item in standard form
       return form.view;
     } else if (form.grid) {
+      // row editor form item
       if (form.grid.view) {
         return form.grid.view;
       } else if (isc.isA.RecordEditor(form.grid) && form.grid.sourceWidget && form.grid.sourceWidget.view) {
+        // filter editor form item
         return form.grid.sourceWidget.view;
       }
     }
@@ -75,26 +77,7 @@ isc.FormItem.addProperties({
       }
     }
   },
-  
-  // get the original focusInItem
-  _originalFocusInItem: isc.FormItem.getInstanceProperty('focusInItem'),
-  focusInItem: function() {
-    if (this._inFocusInItem) {
-      return;
-    }
-    this._inFocusInItem = true;
-    var view = this.getView();
-    if (view) {
-      view._inFocusInItem = this;
-    }
-    // forward to the original one
-    this._originalFocusInItem();
-    this._inFocusInItem = false;
-    if (view) {
-      view._inFocusInItem = null;
-    }
-  },
-  
+
   blur: function(form, item){
     if (item._hasChanged && form && form.handleItemChange) {
       form.handleItemChange(this);
@@ -110,36 +93,6 @@ isc.FormItem.addProperties({
   isFocusable: function(){    
     return this.getCanFocus() && this.isDrawn() &&
         this.isVisible() && !this.isDisabled();
-  }
-});
-
-isc.Canvas.addProperties({
-  // let focuschanged go up to the parent, or handle it here
-  focusChanged: function(hasFocus){
-    var view = this.getView();
-    if (hasFocus && view) {
-      view.setAsActiveView();
-      return;
-    }
-    
-    if (this.parentElement && this.parentElement.focusChanged) {
-      this.parentElement.focusChanged(hasFocus);
-    }
-  },
-  
-  getView: function() {
-    if (this.view && this.view.setAsActiveView) {
-      return this.view;
-    }
-    if (this.grid) {
-      if (this.grid.sourceWidget && this.grid.sourceWidget.view && this.grid.sourceWidget.view.setAsActiveView) {
-        return this.grid.sourceWidget.view;
-      }
-      if (this.grid.view && this.grid.view.setAsActiveView) {
-        return this.grid.view;
-      }
-    }
-    return null;
   }
 });
 
