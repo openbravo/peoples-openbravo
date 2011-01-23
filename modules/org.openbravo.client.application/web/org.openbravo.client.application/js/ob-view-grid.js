@@ -114,7 +114,7 @@ isc.OBViewGrid.addProperties({
   
   quickDrawAheadRatio: 6.0,
   drawAheadRatio: 4.0,
-  drawAllMaxCells: 500,
+  drawAllMaxCells: 100,
   
   // keeps track if we are in objectSelectionMode or in toggleSelectionMode
   // objectSelectionMode = singleRecordSelection === true  
@@ -128,12 +128,6 @@ isc.OBViewGrid.addProperties({
   dataProperties: {
     useClientFiltering: false,
     useClientSorting: false,
-    
-    fetchRemoteData: function (serverCriteria, startRow, endRow) {
-      var ret = this.Super('fetchRemoteData', arguments);
-      
-      return ret;
-    },
     
     transformData: function(newData, dsResponse){
       // correct the length if there is already data in the localData array
@@ -224,11 +218,7 @@ isc.OBViewGrid.addProperties({
     
     var ret = this.Super('initWidget', arguments);
     
-    if (this.readOnly) {      
-      this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_NoDataInGrid');
-    } else {
-      this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridNoRecords') + ' <span onclick="window[\'' + this.ID + '\'].createNew();" class="OBLabelLink">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne')+ '</span>';
-    }
+    this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridNoRecords') + ' <span onclick="window[\'' + this.ID + '\'].createNew();" class="OBLabelLink">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne')+ '</span>';
     this.filterNoRecordsEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + ' <span onclick="window[\'' + this.ID + '\'].clearFilter();" class="OBLabelLink">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter')+ '</span>';    
     return ret;
   },
@@ -255,6 +245,16 @@ isc.OBViewGrid.addProperties({
     return this.Super('cellHoverHTML', arguments);
   },
   
+  setView: function(view) {
+    this.view = view;
+    if (view.readOnly) {
+      this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_NoDataInGrid');
+    } else {
+      this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridNoRecords') + ' <span onclick="window[\'' + this.ID + '\'].createNew();" class="OBLabelLink">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne')+ '</span>';
+    }
+    this.resetEmptyMessage();    
+  },
+  
   show: function(){
     var ret = this.Super('show', arguments);
     
@@ -266,7 +266,6 @@ isc.OBViewGrid.addProperties({
   },
   
   headerClick: function(fieldNum, header){
-    this.view.setAsActiveView(this.view);
     if (this.view.autoSaveForm) {
       this.setActionAfterAutoSave(this, this.headerClick, arguments);
       return;
@@ -350,11 +349,6 @@ isc.OBViewGrid.addProperties({
     this.updateRowCountDisplay();
     if (this.getSelectedRecords().length > 0) {
       this.selectionUpdated();
-    }
-    
-    // remove the reset of the active view
-    if (this.view.isRootView && this.view.standardWindow.preventActiveViewSetting) {
-      delete this.view.standardWindow.preventActiveViewSetting;
     }
     
     if (this.targetOpenNewEdit) {
@@ -588,7 +582,6 @@ isc.OBViewGrid.addProperties({
   },
    
   recordClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
-    this.view.setAsActiveView();
     if (this.view.autoSaveForm) {
       this.setActionAfterAutoSave(this, this.recordClick, arguments);
     } else {
