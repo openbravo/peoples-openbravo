@@ -513,13 +513,9 @@ isc.OBViewForm.addProperties({
         
         view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_SaveSuccess'));
         
-        if (form.isNew) {
-          // force a fetch to place the grid on the correct location
-          view.viewGrid.selectRecordById(data.id, true);
-        } else {
-          // after save the grid selection seems to have gone, repair it
-          view.viewGrid.selectRecordById(data.id, false);
-        }
+        // force a fetch to place the grid on the correct location
+        view.viewGrid.targetRecordId = data.id;
+        view.viewGrid.refreshContents();
         
         this.setNewState(false);
         this.setHasChanged(false);

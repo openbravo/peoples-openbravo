@@ -182,8 +182,7 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
                 if (this.isTestEnvironment) {
                   openObject = {viewId: '_' + record.windowId, windowId: record.windowId, id: value, tabId: value, tabTitle: record[OB.Constants.IDENTIFIER]};
                   <#if !data.quickLaunch>
-                  openObject.targetTabId = value;
-                  openObject.targetCommand = 'new';
+                  openObject.command = isc.OBStandardWindow.COMMAND_NEW;
                   </#if>
                 } else {
                   openObject = {viewId: 'OBClassicWindow', windowId: record.windowId, id: value, tabId: value, command: '${data.command}', tabTitle: record[OB.Constants.IDENTIFIER]};

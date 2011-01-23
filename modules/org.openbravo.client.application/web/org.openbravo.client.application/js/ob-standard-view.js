@@ -926,10 +926,6 @@ isc.OBStandardView.addProperties({
         // found it..., check if a record needs to be edited
         if (tabInfos[i].targetRecordId) {
           this.viewGrid.targetRecordId = tabInfos[i].targetRecordId;
-        } else if (this.standardWindow.targetCommand === 'new') {
-          // open new edit 
-          this.viewGrid.targetOpenNewEdit = true;
-          delete this.standardWindow.targetCommand;
         } else {
           // signal open grid
           this.viewGrid.targetOpenGrid = true;

@@ -18,6 +18,10 @@
  */
 isc.ClassFactory.defineClass('OBStandardWindow', isc.VLayout);
 
+isc.OBStandardWindow.addClassProperties({
+  COMMAND_NEW: 'NEW' // tells the window to open the first tab in new mode
+});
+
 // = OBStandardWindow =
 //
 // Represents the root container for an Openbravo window consisting of a 
@@ -70,7 +74,7 @@ isc.OBStandardWindow.addProperties({
     
     this.viewProperties.standardWindow = this;
     this.viewProperties.isRootView = true;
-    if (this.command === 'NEW') {
+    if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       this.viewProperties.allowDefaultEditMode = false;
     }
     this.view = isc.OBStandardView.create(this.viewProperties);
@@ -146,6 +150,9 @@ isc.OBStandardWindow.addProperties({
   },
   
   setActiveView: function(view){
+    if (this.preventActiveViewSetting) {
+      return;
+    }
     if (!this.isDrawn()) {
       return;
     }
@@ -163,8 +170,8 @@ isc.OBStandardWindow.addProperties({
     view.setActiveViewVisualState(true);
   },
   
-  setFocusInView: function(){
-    var currentView = this.activeView || this.view;
+  setFocusInView: function(view){
+    var currentView = view || this.activeView || this.view;
     currentView.setAsActiveView(true);
     currentView.setViewFocus();
   },
@@ -200,13 +207,18 @@ isc.OBStandardWindow.addProperties({
       delete this.targetRecordId;
       delete this.targetTabId;
       delete this.targetEntity;
-    } else if (this.command === 'NEW') {
+    } else if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       var currentView = this.activeView || this.view;
       currentView.editRecord();
       this.command = null;
     }
     
-    this.setFocusInView();
+    this.setFocusInView(this.view);
+    // prevent other views from changing the active view until the 
+    // root tab has retrieved data
+    // the active view is sometimes placed in a child tab when a window
+    // is opened for the first time
+    this.preventActiveViewSetting = true;
     return ret;
   },
   

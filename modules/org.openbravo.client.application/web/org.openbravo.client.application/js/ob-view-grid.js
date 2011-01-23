@@ -120,6 +120,12 @@ isc.OBViewGrid.addProperties({
   // objectSelectionMode = singleRecordSelection === true  
   singleRecordSelection: false,
   
+  // editing props
+  listEndEditAction: 'next',
+  rowEndEditAction: 'next',
+  modalEditing: true,
+  
+  
   dataProperties: {
     useClientFiltering: false,
     useClientSorting: false,
@@ -336,6 +342,12 @@ isc.OBViewGrid.addProperties({
     if (this.getSelectedRecords().length > 0) {
       this.selectionUpdated();
     }
+    
+    // remove the reset of the active view
+    if (this.isRootView && this.standardWindow.preventActiveViewSetting) {
+      delete this.standardWindow.preventActiveViewSetting;
+    }
+    
     if (this.targetOpenNewEdit) {
       delete this.targetOpenNewEdit;
       // not passing record opens new
