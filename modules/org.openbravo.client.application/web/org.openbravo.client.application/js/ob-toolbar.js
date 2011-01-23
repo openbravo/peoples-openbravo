@@ -32,21 +32,43 @@ isc.OBToolbar.addClassProperties({
     },
     disabled: true,
     buttonType: 'save',
-    prompt: OB.I18N.getLabel('OBUIAPP_SaveRow')
+    prompt: OB.I18N.getLabel('OBUIAPP_SaveRow'),
+    updateState: function() {
+      var view = this.view, form = view.viewForm;
+      if (view.isShowingForm) {
+        this.setDisabled(!form.isNew && (form.isSaving || form.readOnly || 
+              !view.hasValidState() || !form.hasChanged));
+      } else {
+        // enable when supporting grid editing
+        this.setDisabled(true);
+      }      
+    }
   },
   NEW_ROW_BUTTON_PROPERTIES: {
     action: function(){
       this.view.newRow();
     },
     buttonType: 'newRow',
-    prompt: OB.I18N.getLabel('OBUIAPP_NewRow')
+    prompt: OB.I18N.getLabel('OBUIAPP_NewRow'),
+    updateState: function() {
+      var view = this.view;
+      this.setDisabled(view.isShowingForm || view.readOnly || view.singleRecord || !view.hasValidState());
+    }
   },
   NEW_DOC_BUTTON_PROPERTIES: {
     action: function(){
       this.view.newDocument();
     },
     buttonType: 'newDoc',
-    prompt: OB.I18N.getLabel('OBUIAPP_NewDoc')
+    prompt: OB.I18N.getLabel('OBUIAPP_NewDoc'),
+    updateState: function() {
+      var view = this.view, form = view.viewForm;
+      if (view.isShowingForm) {
+        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState());
+      } else {
+        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState());
+      }
+    }
   },
   DELETE_BUTTON_PROPERTIES: {
     action: function(){
@@ -54,7 +76,17 @@ isc.OBToolbar.addClassProperties({
     },
     disabled: true,
     buttonType: 'eliminate',
-    prompt: OB.I18N.getLabel('OBUIAPP_DeleteRow')
+    prompt: OB.I18N.getLabel('OBUIAPP_DeleteRow'),
+    updateState: function() {
+      var view = this.view, form = view.viewForm, grid = view.viewGrid;
+      if (view.isShowingForm) {
+        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || 
+            !view.hasValidState() || form.isNew);
+      } else {
+        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || 
+            !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0);
+      }
+    }
   },
   REFRESH_BUTTON_PROPERTIES: {
     action: function(){
@@ -62,7 +94,15 @@ isc.OBToolbar.addClassProperties({
     },
     disabled: false,
     buttonType: 'refresh',
-    prompt: OB.I18N.getLabel('OBUIAPP_RefreshData')
+    prompt: OB.I18N.getLabel('OBUIAPP_RefreshData'),
+    updateState: function() {
+      var view = this.view, form = view.viewForm;
+      if (view.isShowingForm) {
+        this.setDisabled(form.isSaving || form.isNew || !view.hasValidState());
+      } else {
+        this.setDisabled(!view.hasValidState());
+      }
+    }
   },
   UNDO_BUTTON_PROPERTIES: {
     action: function(){
@@ -70,7 +110,17 @@ isc.OBToolbar.addClassProperties({
     },
     disabled: true,
     buttonType: 'undo',
-    prompt: OB.I18N.getLabel('OBUIAPP_Undo')
+    prompt: OB.I18N.getLabel('OBUIAPP_Undo'),
+    updateState: function() {
+      var view = this.view, form = view.viewForm, grid = view.viewGrid;
+      if (view.isShowingForm) {
+        this.setDisabled(form.isSaving || form.readOnly || !view.hasValidState() || 
+            !form.hasChanged);
+      } else {
+        // support for editable grid
+        this.setDisabled(true);
+      }
+    }
   }
 });
 
@@ -147,31 +197,15 @@ isc.OBToolbar.addProperties({
   // Updates the visible and disabled state of buttons using the view's form and
   // grid information.
   // 
-  // NOTE: when adding new buttons to the toolbar they should also be added here.
+  // NOTE: new buttons should implement the updateState method.
   //
   updateButtonState: function() {
-    // validData: this is the root or there is a parent
-    var view = this.view, validData = view.isRootView || view.getParentId(), form = view.viewForm, grid = view.viewGrid;
-    if (view.isShowingForm) {
-      // note on purpose checking form readonly
-      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW_DOC, form.isSaving || form.readOnly || view.singleRecord || !validData);
-      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW_ROW, true);
-      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, !form.isNew && (form.isSaving || form.readOnly || !validData || !form.hasChanged));
-      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO,  form.isSaving || form.readOnly || !validData || !form.hasChanged);
-      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE,  form.isSaving || form.readOnly || view.singleRecord || !validData || form.isNew);
-      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, form.isSaving || form.isNew);
-    } else {
-      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW_DOC, view.readOnly || view.singleRecord || !validData);
-      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_NEW_ROW, view.singleRecord || !validData);
-      // for a grid also the selected number is taken into account
-      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_DELETE,  view.readOnly || view.singleRecord || !validData || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0);
-      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_REFRESH, !validData);
-
-      // implement in editable grid
-      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_UNDO,  true);
-      this.setLeftMemberDisabled(isc.OBToolbar.TYPE_SAVE, true);      
+    for (i = 0; i < this.leftMembers.length; i++) {
+      if (this.leftMembers[i].updateState) {
+        this.leftMembers[i].updateState();
+      }
     }
-
+    
     // and refresh the process toolbar buttons
     this.refreshCustomButtons();
   },
