@@ -91,7 +91,7 @@ isc.FormItem.addProperties({
     this._originalFocusInItem();
     this._inFocusInItem = false;
     if (view) {
-      this._inFocusInItem = null;
+      view._inFocusInItem = null;
     }
   },
   

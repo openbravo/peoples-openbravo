@@ -125,10 +125,15 @@ isc.OBViewGrid.addProperties({
   rowEndEditAction: 'next',
   modalEditing: true,
   
-  
   dataProperties: {
     useClientFiltering: false,
     useClientSorting: false,
+    
+    fetchRemoteData: function (serverCriteria, startRow, endRow) {
+      var ret = this.Super('fetchRemoteData', arguments);
+      
+      return ret;
+    },
     
     transformData: function(newData, dsResponse){
       // correct the length if there is already data in the localData array
@@ -219,7 +224,11 @@ isc.OBViewGrid.addProperties({
     
     var ret = this.Super('initWidget', arguments);
     
-    this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridNoRecords') + ' <span onclick="window[\'' + this.ID + '\'].createNew();" class="OBLabelLink">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne')+ '</span>';
+    if (this.readOnly) {      
+      this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_NoDataInGrid');
+    } else {
+      this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridNoRecords') + ' <span onclick="window[\'' + this.ID + '\'].createNew();" class="OBLabelLink">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne')+ '</span>';
+    }
     this.filterNoRecordsEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + ' <span onclick="window[\'' + this.ID + '\'].clearFilter();" class="OBLabelLink">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter')+ '</span>';    
     return ret;
   },
@@ -344,8 +353,8 @@ isc.OBViewGrid.addProperties({
     }
     
     // remove the reset of the active view
-    if (this.isRootView && this.standardWindow.preventActiveViewSetting) {
-      delete this.standardWindow.preventActiveViewSetting;
+    if (this.view.isRootView && this.view.standardWindow.preventActiveViewSetting) {
+      delete this.view.standardWindow.preventActiveViewSetting;
     }
     
     if (this.targetOpenNewEdit) {

@@ -693,6 +693,13 @@ isc.OBStandardView.addProperties({
     // clear all our selections..
     this.viewGrid.deselectAllRecords();
     
+    if (this.viewGrid.filterEditor) {
+      this.viewGrid.filterEditor.getEditForm().clearValues();
+    }
+    if (this.viewGrid.data && this.viewGrid.data.setCriteria) {
+      this.viewGrid.data.setCriteria(null);
+    }
+    
     // hide the messagebar
     this.messageBar.hide();
 
@@ -841,6 +848,10 @@ isc.OBStandardView.addProperties({
       this.switchFormGridVisibility();
     }
     
+    if (preventFocus) {
+      this.standardWindow.preventActiveViewSetting = true;
+    }
+    
     if (!record) { //  new case
       this.viewGrid.deselectAllRecords();
       this.viewForm.editNewRecord(preventFocus);
@@ -851,6 +862,8 @@ isc.OBStandardView.addProperties({
     
     if (!preventFocus) {
       isc.Page.setEvent(isc.EH.IDLE, this.viewForm, isc.Page.FIRE_ONCE, 'focus');
+    } else {
+      delete this.standardWindow.preventActiveViewSetting;    
     }
   },
   

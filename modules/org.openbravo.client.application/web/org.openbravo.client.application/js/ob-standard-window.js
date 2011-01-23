@@ -150,7 +150,7 @@ isc.OBStandardWindow.addProperties({
   },
   
   setActiveView: function(view){
-    if (this.preventActiveViewSetting) {
+    if (!view.isRootView && this.preventActiveViewSetting) {
       return;
     }
     if (!this.isDrawn()) {
@@ -214,6 +214,7 @@ isc.OBStandardWindow.addProperties({
     }
     
     this.setFocusInView(this.view);
+
     // prevent other views from changing the active view until the 
     // root tab has retrieved data
     // the active view is sometimes placed in a child tab when a window

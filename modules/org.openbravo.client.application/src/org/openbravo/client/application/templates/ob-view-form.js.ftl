@@ -30,7 +30,9 @@ isc.OBViewForm.create({
           currentValues = form.view.getCurrentValues();
       <#list data.fields as field>
       <#if field.readOnlyIf != "">
-        if(${field.readOnlyIf}) {
+        if (form.readOnly) {
+          form.getItem('${field.name}').disable();
+        } else if(${field.readOnlyIf}) {
           form.getItem('${field.name}').disable();
         } else {
           form.getItem('${field.name}').enable();

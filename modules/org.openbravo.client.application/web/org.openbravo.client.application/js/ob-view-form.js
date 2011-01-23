@@ -109,7 +109,9 @@ isc.OBViewForm.addProperties({
     this.retrieveInitialValues(true);
     
     this.resetFocusItem();
-    this.focus();
+    if (!preventFocus) {
+      this.focus();
+    }
     
     this.view.messageBar.hide();
     return ret;
@@ -140,6 +142,7 @@ isc.OBViewForm.addProperties({
         var item = items[i];
         if (item.getCanFocus() && !item.isDisabled()) {
           this.setFocusItem(item);
+          this.view.lastFocusedItem = item;
           return;
         }
       }
@@ -278,6 +281,7 @@ isc.OBViewForm.addProperties({
       this.readOnly = false;
     }
     this.view.toolBar.updateButtonState();
+    // note onFieldChanged uses the form.readOnly set above
     this.onFieldChanged(this);
     this.focus();
   },
