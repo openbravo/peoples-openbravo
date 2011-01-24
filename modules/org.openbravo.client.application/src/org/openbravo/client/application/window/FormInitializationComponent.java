@@ -331,7 +331,6 @@ public class FormInitializationComponent extends BaseActionHandler {
           // We need to fire callouts if the field is a combo
           // (due to how ComboReloads worked, callouts were always called)
           if (mode.equals("NEW") && (field.getColumn().getReference().getId().equals("17"))) {
-            System.out.println("hola " + field.getName());
             if (field.getColumn().getCallout() != null) {
               addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
             }
