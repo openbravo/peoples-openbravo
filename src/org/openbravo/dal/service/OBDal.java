@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -81,9 +81,24 @@ public class OBDal implements OBSingleton {
    * @see #flush()
    */
   public Connection getConnection() {
-    // before returning a connection always flush all other hibernate actions
-    // to the database.
-    flush();
+    return getConnection(true);
+  }
+
+  /**
+   * Returns the connection used by the hibernate session.
+   * 
+   * @param doFlush
+   *          if true then the current actions are first flushed.
+   * 
+   * @return the current database connection
+   * @see #flush()
+   */
+  public Connection getConnection(boolean doFlush) {
+    if (doFlush) {
+      // before returning a connection flush all other hibernate actions
+      // to the database.
+      flush();
+    }
 
     // NOTE: workaround for this issue:
     // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
