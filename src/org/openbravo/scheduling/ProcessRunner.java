@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -91,16 +91,9 @@ public class ProcessRunner {
     } finally {
       final String duration = ProcessMonitor.getDuration(endTime - startTime);
       ProcessRequestData.update(conn, COMPLETE, requestId);
-
-      // Get process log and truncate to 4000 characters if it is bigger
-      String processLog = bundle.getLog();
-      if (processLog.length() > 4000) {
-        processLog = processLog.substring(0, 3997) + "...";
-      }
-      ProcessRunData.update(conn, ctx.getUser(), status, duration, processLog, executionId);
+      ProcessRunData.update(conn, ctx.getUser(), status, duration, bundle.getLog(), executionId);
     }
 
     return executionId;
   }
-
 }
