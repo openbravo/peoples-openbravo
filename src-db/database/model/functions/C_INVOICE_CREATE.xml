@@ -984,6 +984,9 @@
                   v_InOut_ID:='-1';
                 END IF;
               END IF;--FINISH_PROCESS
+
+              v_InOut_ID:=Cur_InvoiceSchedule.M_InOut_ID;
+
               IF(NOT FINISH_PROCESS) THEN
                 -- Normal Line
                 Ad_Sequence_Next('C_InvoiceLine', Cur_InvoiceSchedule.C_Order_ID, v_NextNo) ;
