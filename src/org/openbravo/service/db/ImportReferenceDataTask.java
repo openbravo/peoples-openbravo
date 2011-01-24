@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Connection;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -37,6 +38,7 @@ import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.ddlutils.task.DatabaseUtils;
 import org.openbravo.ddlutils.util.DBSMOBUtil;
+import org.openbravo.modulescript.ModuleScriptHandler;
 
 /**
  * Imports client data for the clients defined in the clients parameter from the
@@ -56,7 +58,18 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
       log.info("Error disabling check constraint");
     }
     super.execute();
+    executeModuleScripts();
     enableConstraints();
+  }
+
+  private void executeModuleScripts() {
+    try {
+      ModuleScriptHandler hd = new ModuleScriptHandler();
+      hd.setBasedir(new File(getProject().getBaseDir() + "/../"));
+      hd.execute();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
@@ -96,6 +109,7 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
   }
 
   private void disableConstraints() throws FileNotFoundException, IOException {
+    log.info("Disabling constraints...");
     String obDir = getProject().getBaseDir().toString() + "/../";
     Properties obProp = new Properties();
     obProp.load(new FileInputStream(new File(obDir, "config/Openbravo.properties")));
@@ -125,12 +139,38 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
       fileArray[i] = dirs.get(i);
     }
     xmlModel = DatabaseUtils.readDatabase(fileArray);
-
-    platform.disableCheckConstraints(xmlModel);
+    Connection con = null;
+    try {
+      con = platform.borrowConnection();
+      log.info("   Disabling foreign keys");
+      platform.disableAllFK(con, xmlModel, false);
+      log.info("   Disabling triggers");
+      platform.disableAllTriggers(con, xmlModel, false);
+      log.info("   Disabling check constraints");
+      platform.disableCheckConstraints(xmlModel);
+    } finally {
+      if (con != null) {
+        platform.returnConnection(con);
+      }
+    }
   }
 
   private void enableConstraints() {
-    platform.enableCheckConstraints(xmlModel);
+    log.info("Enabling constraints...");
+    Connection con = null;
+    try {
+      con = platform.borrowConnection();
+      log.info("   Enabling check constraints");
+      platform.enableCheckConstraints(xmlModel);
+      log.info("   Enabling triggers");
+      platform.enableAllTriggers(con, xmlModel, false);
+      log.info("   Enabling foreign keys");
+      platform.enableAllFK(con, xmlModel, false);
+    } finally {
+      if (con != null) {
+        platform.returnConnection(con);
+      }
+    }
   }
 
   public void setDisableCheckReferencedOrganizations(boolean disableCheckReferencedOrganizations) {

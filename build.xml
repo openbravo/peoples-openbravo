@@ -225,7 +225,7 @@ export.database: exports database structure and data to xml files.
     <dirset dir="${base.modules}">
       <include name="*/build/classes/" />
     </dirset>
-    <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
+    <pathelement path="${basedir}/src-util/modulescript/build/classes/" />
     <pathelement path="${build}" />
     <pathelement path="${base.src}" />
     <fileset dir="${base.lib}">
