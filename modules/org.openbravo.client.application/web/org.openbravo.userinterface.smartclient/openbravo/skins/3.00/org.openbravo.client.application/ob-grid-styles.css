@@ -155,13 +155,15 @@
 
 .OBGridSummaryCell div,
 .OBGridSummaryCell_sum div,
-.OBGridSummaryCell_avg div {
+.OBGridSummaryCell_avg div,
+.OBGridSummaryCell_count div {
   width: auto !important;
 }
 
 .OBGridSummaryCell,
 .OBGridSummaryCell_sum,
-.OBGridSummaryCell_avg {
+.OBGridSummaryCell_avg,
+.OBGridSummaryCell_count {
   font-family: arial, sans-serif;
   vertical-align: middle;
   border-right: 1px solid #cdd7bb;
@@ -183,6 +185,13 @@
 .OBGridSummaryCell_avg {
   padding: 0px 4px 0px 14px;
   background-image: url(./images/grid/gridSummary_bg_avg.png);
+  background-position: 4px center;
+  background-repeat: no-repeat;
+}
+
+.OBGridSummaryCell_count {
+  padding: 0px 4px 0px 14px;
+  background-image: url(./images/grid/gridSummary_bg_count.png);
   background-position: 4px center;
   background-repeat: no-repeat;
 }

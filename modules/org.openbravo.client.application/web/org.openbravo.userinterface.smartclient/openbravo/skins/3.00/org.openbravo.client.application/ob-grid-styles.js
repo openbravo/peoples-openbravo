@@ -43,6 +43,7 @@ isc.OBGrid.addProperties({
   summaryRowStyle: 'OBGridSummaryCell',
   summaryRowStyle_sum: 'OBGridSummaryCell_sum',
   summaryRowStyle_avg: 'OBGridSummaryCell_avg',
+  summaryRowStyle_count: 'OBGridSummaryCell_count',
   
   progressIconDefaults: {
       width: 16,
