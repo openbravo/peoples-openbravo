@@ -24,18 +24,18 @@ function closeThisPage() {
 }
 
 function submitThisPage(ref) {
+    
   if (top && top.opener && top.opener.submitCommandForm) {
     top.opener.submitCommandForm("DEFAULT", false, null, ref, '_self');
   } else {
     
     var process;
-    
     if (getFrame('LayoutMDI')) {
-      process = getFrame('LayoutMDI').OB.ActionButton.executingProcess
+      process = getFrame('LayoutMDI').OB.ActionButton.executingProcess;
     } else if (top && top.opener) {
       process = top.opener.OB.ActionButton.executingProcess;
     }
-
+     
     if (process) {
       process.closeProcessPopup(ref);
     }
