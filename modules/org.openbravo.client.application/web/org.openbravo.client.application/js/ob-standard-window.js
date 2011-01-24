@@ -162,9 +162,9 @@ isc.OBStandardWindow.addProperties({
     // the other one
     this.activeView = view;
     if (currentView) {
-      currentView.setActiveViewVisualState(false);
+      currentView.setActiveViewProps(false);
     }
-    view.setActiveViewVisualState(true);
+    view.setActiveViewProps(true);
   },
   
   setFocusInView: function(view){

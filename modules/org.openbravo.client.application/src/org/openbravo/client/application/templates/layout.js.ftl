@@ -45,6 +45,7 @@ isc.Canvas.loadingImageSize = 70;
 
 OB.KeyboardManager.KS.readRegisteredKSList('OBUIAPP_KeyboardShortcuts');
 OB.KeyboardManager.KS.readRegisteredKSList('UINAVBA_KeyboardShortcuts');
+OB.KeyboardManager.KS.readRegisteredKSList('UITOOLB_KeyboardShortcuts');
 
 // should be moved to client.kernel component
 // placed here to prevent dependencies of client.kernel on Preferences

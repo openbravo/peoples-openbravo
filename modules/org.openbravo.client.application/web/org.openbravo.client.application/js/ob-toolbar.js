@@ -42,6 +42,18 @@ isc.OBToolbar.addClassProperties({
         // enable when supporting grid editing
         this.setDisabled(true);
       }      
+    },
+    enableShortcut: function(){
+      var me = this;
+      var ksAction = function(){
+        if (!me.disabled) {
+          me.action();
+        }
+      }
+      OB.KeyboardManager.KS.add('ToolBar_Save', ksAction);
+    },
+    disableShortcut: function(){
+      OB.KeyboardManager.KS.remove('ToolBar_Save');
     }
   },
   NEW_ROW_BUTTON_PROPERTIES: {
@@ -690,6 +702,32 @@ isc.OBToolbar.addProperties({
       currentValues = this.view.getCurrentValues();
       doRefresh(buttons, currentValues, hideAllButtons);
     } 
+  },
+
+  isActive: false,
+
+  setActive: function(value) {
+    if (value === true && this.isActive === false) {
+      this.isActive = true;
+      this.show();
+      if (this.leftMembers) {
+        for (i = 0; i < this.leftMembers.length; i++) {
+          if (this.leftMembers[i].enableShortcut) {
+            this.leftMembers[i].enableShortcut();
+          }
+        }
+      }
+    } else if (value === false && this.isActive === true) {
+      this.isActive = false;
+      if (this.leftMembers) {
+        for (i = 0; i < this.leftMembers.length; i++) {
+          if (this.leftMembers[i].disableShortcut) {
+            this.leftMembers[i].disableShortcut();
+          }
+        }
+      }
+      this.hide();
+    }
   },
   
   addMembers: 'null',

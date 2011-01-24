@@ -632,15 +632,21 @@ isc.OBStandardView.addProperties({
   setAsActiveView: function(){
     this.standardWindow.setActiveView(this);
   },
-  
-  setActiveViewVisualState: function(state){
+
+  setToolBarState: function(state) {
     if (state) {
-      this.toolBar.show();
+      this.toolBar.setActive(true);
+    } else {
+      this.toolBar.setActive(false);
+    }
+  },
+  
+  setActiveViewProps: function(state){
+    if (state) {
       this.activeBar.setActive(true);
       this.setViewFocus();
     } else {
       this.activeBar.setActive(false);
-      this.toolBar.hide();
       // note we can not check on viewForm visibility as 
       // the grid and form can both be hidden when changing
       // to another tab, this handles the case that the grid
@@ -652,6 +658,7 @@ isc.OBStandardView.addProperties({
       }
     }
     this.setTabButtonState(state);
+    this.setToolBarState(state);
   },
   
   // do refresh contents with a small delay to not refresh child views

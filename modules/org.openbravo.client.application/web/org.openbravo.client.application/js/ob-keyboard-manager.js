@@ -107,6 +107,15 @@
         this.list[position].funcParam = funcParam;
       },
       
+      remove: function(id, action, funcParam){
+        var position = this.getPosition(id, 'id');
+        if (position === null) {
+          return false;
+        }
+        this.list[position].action = null;
+        this.list[position].funcParam = null;
+      },
+      
       getPosition: function(element, searchPattern){
         for (var i = 0; i < this.list.length; i++) {
           if (searchPattern === 'id' && this.list[i].id === element) {
