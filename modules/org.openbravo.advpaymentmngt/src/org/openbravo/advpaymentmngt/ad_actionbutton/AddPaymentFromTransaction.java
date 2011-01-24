@@ -262,7 +262,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       xmlDocument.setParameter("paymentDate", DateTimeData.today(this));
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("isReceipt", (isReceipt) ? "Y" : "N");
     xmlDocument.setParameter("finBankStatementLineId", strFinBankStatementLineId);

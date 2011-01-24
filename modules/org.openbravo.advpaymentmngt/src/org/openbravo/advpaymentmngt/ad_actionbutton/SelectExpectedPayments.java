@@ -112,7 +112,7 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
         .createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     // classInfo.name not loaded for Processes
     // xmlDocument.setParameter("title", classInfo.name);
