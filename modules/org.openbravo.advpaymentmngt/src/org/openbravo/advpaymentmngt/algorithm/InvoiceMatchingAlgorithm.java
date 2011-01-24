@@ -178,6 +178,10 @@ public class InvoiceMatchingAlgorithm implements FIN_MatchingAlgorithm {
       whereClause.append(" psd.");
       whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
       whereClause.append(".");
+      whereClause.append(FIN_PaymentSchedule.PROPERTY_FINPAYMENTPRIORITY);
+      whereClause.append(", psd.");
+      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
+      whereClause.append(".");
       whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
       whereClause.append(", psd.");
       whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
@@ -384,6 +388,10 @@ public class InvoiceMatchingAlgorithm implements FIN_MatchingAlgorithm {
       // from not invoiced orders.
       whereClause.append(" order by");
       whereClause.append(" psd.");
+      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
+      whereClause.append(".");
+      whereClause.append(FIN_PaymentSchedule.PROPERTY_FINPAYMENTPRIORITY);
+      whereClause.append(", psd.");
       whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
       whereClause.append(".");
       whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
