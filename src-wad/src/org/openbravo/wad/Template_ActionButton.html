@@ -79,10 +79,6 @@ function submitThisPageJasper() {
   return true;
 }
 
-function closeThisPage() {
-	parent.parent.window.close();
-	return true;
-}
 </script>
 	<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
@@ -328,7 +324,7 @@ function closeThisPage() {
                 <button type="button" 
                   id="buttonCancel" 
                   class="ButtonLink" 
-                  onclick="closeThisPage();return false;" 
+                  onclick="closePage();return false;" 
                   onfocus="buttonEvent('onfocus', this); window.status='xx'; return true;" 
                   onblur="buttonEvent('onblur', this);" 
                   onkeyup="buttonEvent('onkeyup', this);" 
