@@ -812,12 +812,12 @@ OB.ToolbarUtils.showAuditTrail = function(view){
     return;
   }
   
-  var popupParams = "Command=POPUP_HISTORY";
-  popupParams += "&inpTabId=" + view.tabId;
-  popupParams += "&inpTableId=" + view.standardProperties.inpTableId;
+  var popupParams = 'Command=POPUP_HISTORY';
+  popupParams += '&inpTabId=' + view.tabId;
+  popupParams += '&inpTableId=' + view.standardProperties.inpTableId;
   
   if (view.viewGrid.getSelectedRecord()) {
-    popupParams += "&inpRecordId=" + view.viewGrid.getSelectedRecord().id;
+    popupParams += '&inpRecordId=' + view.viewGrid.getSelectedRecord().id;
   }
   
   OB.Layout.ClassicOBCompatibility.Popup.open('audit', 900, 600, OB.Application.contextUrl + '/businessUtility/AuditTrail.html?'+popupParams, '', window, false, false, true);
