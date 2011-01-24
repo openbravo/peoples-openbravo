@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,8 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.hibernate.EmptyInterceptor;
+import org.hibernate.Interceptor;
+import org.hibernate.Transaction;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.type.Type;
 import org.openbravo.base.exception.OBException;
@@ -82,6 +84,8 @@ public class OBInterceptor extends EmptyInterceptor {
     disableCheckReferencedOrganizations.set(value);
   }
 
+  private Interceptor interceptorListener;
+
   /**
    * Determines if the object is transient (==new and not yet persisted in Hibernate).
    * 
@@ -127,6 +131,9 @@ public class OBInterceptor extends EmptyInterceptor {
   public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames,
       Type[] types) {
     SecurityChecker.getInstance().checkDeleteAllowed(entity);
+    if (getInterceptorListener() != null) {
+      getInterceptorListener().onDelete(entity, id, state, propertyNames, types);
+    }
   }
 
   /**
@@ -175,11 +182,18 @@ public class OBInterceptor extends EmptyInterceptor {
         || !disableCheckReferencedOrganizations.get()) {
       checkReferencedOrganizations(entity, currentState, previousState, propertyNames);
     }
+
+    boolean updated = false;
+    if (getInterceptorListener() != null) {
+      updated = getInterceptorListener().onFlushDirty(entity, id, currentState, previousState,
+          propertyNames, types);
+    }
+
     if (entity instanceof Traceable || entity instanceof ClientEnabled
         || entity instanceof OrganizationEnabled) {
       return true;
     }
-    return false;
+    return updated;
   }
 
   /**
@@ -210,12 +224,18 @@ public class OBInterceptor extends EmptyInterceptor {
 
     doEvent(entity, currentState, propertyNames);
 
+    boolean listenerResult = false;
+    if (getInterceptorListener() != null) {
+      listenerResult = getInterceptorListener().onSave(entity, id, currentState, propertyNames,
+          types);
+    }
+
     // audit info fields
     if (entity instanceof Traceable || entity instanceof ClientEnabled
         || entity instanceof OrganizationEnabled) {
       return true;
     }
-    return false;
+    return listenerResult || false;
   }
 
   private void checkReferencedOrganizations(Object entity, Object[] currentState,
@@ -385,4 +405,46 @@ public class OBInterceptor extends EmptyInterceptor {
     return SessionHandler.getInstance()
         .find(User.class, OBContext.getOBContext().getUser().getId());
   }
+
+  public Interceptor getInterceptorListener() {
+    return interceptorListener;
+  }
+
+  public void setInterceptorListener(Interceptor interceptorListener) {
+    this.interceptorListener = interceptorListener;
+  }
+
+  @Override
+  public void afterTransactionBegin(Transaction tx) {
+    if (getInterceptorListener() != null) {
+      getInterceptorListener().afterTransactionBegin(tx);
+    }
+    super.afterTransactionBegin(tx);
+  }
+
+  @Override
+  public void afterTransactionCompletion(Transaction tx) {
+    if (getInterceptorListener() != null) {
+      getInterceptorListener().afterTransactionCompletion(tx);
+    }
+    super.afterTransactionCompletion(tx);
+  }
+
+  @Override
+  public void beforeTransactionCompletion(Transaction tx) {
+    if (getInterceptorListener() != null) {
+      getInterceptorListener().beforeTransactionCompletion(tx);
+    }
+    super.beforeTransactionCompletion(tx);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public void preFlush(Iterator entities) {
+    if (getInterceptorListener() != null) {
+      getInterceptorListener().preFlush(entities);
+    }
+    super.preFlush(entities);
+  }
+
 }
