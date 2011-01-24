@@ -420,7 +420,7 @@
             // Create a form and POST parameters as input hidden values
             var doc = cPopup.getIframeHtmlObj().contentWindow.frames[0].document,
                 frm = doc.createElement('form');
-            frm.setAttribute('method','get');
+            frm.setAttribute('method','post');
             frm.setAttribute('action', cPopup.popupURL);
             for (var i in postParams) {
               if (postParams.hasOwnProperty(i)){
@@ -431,6 +431,7 @@
                 frm.appendChild(inp);
               }
             }
+            doc.body.appendChild(frm);
             frm.submit();
           }
           cPopup.getIframeHtmlObj().contentWindow.frames[0].name = wName;
