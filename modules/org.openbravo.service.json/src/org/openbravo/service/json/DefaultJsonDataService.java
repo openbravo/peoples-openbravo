@@ -329,6 +329,11 @@ public class DefaultJsonDataService implements JsonDataService {
         }
         OBDal.getInstance().flush();
 
+        // refresh the objects from the db as they can have changed
+        for (BaseOBObject bob : bobs) {
+          OBDal.getInstance().getSession().refresh(bob);
+        }
+
         // almost successfull, now create the response
         // needs to be done before the close of the session
         final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
