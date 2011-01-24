@@ -125,6 +125,17 @@ public class OBViewTab extends BaseTemplateComponent {
       iconButtons.add(auditBtn);
     }
 
+    // Tree button
+    if (tab.isTreeIncluded()) {
+      IconButton treeBtn = new IconButton();
+      // TODO: set correct type once the icon for the tree is available
+      treeBtn.type = "attach";
+      treeBtn.label = Utility.messageBD(new DalConnectionProvider(), "Tree", OBContext
+          .getOBContext().getLanguage().getLanguage());
+      treeBtn.action = "OB.ToolbarUtils.showTree(this.view);";
+      iconButtons.add(treeBtn);
+    }
+
     return iconButtons;
   }
 

@@ -820,5 +820,14 @@ OB.ToolbarUtils.showAuditTrail = function(view){
     popupParams += "&inpRecordId=" + view.viewGrid.getSelectedRecord().id;
   }
   
-  OB.Layout.ClassicOBCompatibility.Popup.open('print', 900, 600, OB.Application.contextUrl + '/businessUtility/AuditTrail.html?'+popupParams, '', window, false, false, true);
+  OB.Layout.ClassicOBCompatibility.Popup.open('audit', 900, 600, OB.Application.contextUrl + '/businessUtility/AuditTrail.html?'+popupParams, '', window, false, false, true);
+};
+
+OB.ToolbarUtils.showTree = function(view){
+  // Open tree through menu to have hidden vertical menu which is needed to show old JS messages
+  var popupParams = 'url=/utility/WindowTree.html';
+  popupParams += 'Command=DEFAULT';
+  pupopParams += '&inpTabId=' + view.tabId;
+  popupParams += '&hideMenu=true&noprefs=true';
+  OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + '/security/Menu.html?'+popupParams, '', window, false, false, true);
 };
