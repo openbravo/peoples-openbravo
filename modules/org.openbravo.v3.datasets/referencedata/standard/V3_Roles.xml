@@ -506,6 +506,17 @@
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <editableField>false</editableField>
   </ADWindowAccess>
+  <ADWindowAccess id="F44898DF16FF4C8193B135F6F37C6812" identifier="Tax Rate - Finance">
+    <id>F44898DF16FF4C8193B135F6F37C6812</id>
+    <window id="137" entity-name="ADWindow" identifier="Tax Rate"/>
+    <role id="FF8081812250326E012250353BDE0005" entity-name="ADRole" identifier="Finance"/>
+    <active>true</active>
+    <creationDate transient="true">2011-01-24T13:50:13.784Z</creationDate>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updated transient="true">2011-01-24T13:50:13.784Z</updated>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <editableField>true</editableField>
+  </ADWindowAccess>
   <ADWindowAccess id="F9778254CA0A41B5A1414D485756EAC4" identifier="Payment Proposal - Finance">
     <id>F9778254CA0A41B5A1414D485756EAC4</id>
     <window id="1B7B3BB7FEAF41ED8D9727AB98779D3C" entity-name="ADWindow" identifier="Payment Proposal"/>
