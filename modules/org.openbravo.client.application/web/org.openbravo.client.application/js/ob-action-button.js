@@ -112,7 +112,7 @@ isc.OBToolbarActionButton.addProperties( {
     }
   },
   
-  refresh: function(record, hide) {
+  updateState: function(record, hide) {
     if (hide || !record) {
       this.hide();
       return;

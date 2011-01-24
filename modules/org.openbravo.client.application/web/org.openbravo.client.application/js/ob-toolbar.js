@@ -641,7 +641,7 @@ isc.OBToolbar.addProperties({
     function doRefresh(buttons, currentValues, hideAllButtons){
       for (var i = 0; i < buttons.length; i++) {
         if (buttons[i].refresh) {
-          buttons[i].refresh(currentValues, hideAllButtons);
+          buttons[i].updateState(currentValues, hideAllButtons);
         }
       }
     }
