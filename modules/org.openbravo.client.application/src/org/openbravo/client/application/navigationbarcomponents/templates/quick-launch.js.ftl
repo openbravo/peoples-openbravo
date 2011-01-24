@@ -127,7 +127,10 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
          width: '100%',
          
          // client filtering does not always work great...         
-         pickListProperties: {dataProperties: {useClientFiltering: false}, textMatchStyle: 'substring', bodyStyleName:'OBPickListBody'},
+         pickListProperties: {dataProperties: {useClientFiltering: false}, 
+            textMatchStyle: 'substring', 
+            fetchDelay: 50, 
+            bodyStyleName:'OBPickListBody'},
          pickListHeaderHeight: 0,
 
          getPickListFilterCriteria: function() {
