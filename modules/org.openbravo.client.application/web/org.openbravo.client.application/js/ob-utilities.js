@@ -825,6 +825,7 @@ OB.Utilities._getTabInfoRequestProperties = function(theView, requestProperties)
   if (theView && theView.tabId) {
     var tabParam = {
       params: {
+        windowId: theView.standardWindow.windowId,
         tabId: theView.tabId,
         moduleId: theView.moduleId
       }
