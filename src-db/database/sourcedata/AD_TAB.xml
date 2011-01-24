@@ -1720,6 +1720,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--192-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--192-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--192-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--192-->  <HQLWHERECLAUSE><![CDATA[e.product in (select p from Product as p where p.active=true)]]></HQLWHERECLAUSE>
 <!--192--></AD_TAB>
 
 <!--193--><AD_TAB>
@@ -3104,6 +3105,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--276-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--276-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--276-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--276-->  <HQLWHERECLAUSE><![CDATA[e.id in (select businessPartner.id from ApprovedVendor)]]></HQLWHERECLAUSE>
 <!--276--></AD_TAB>
 
 <!--278--><AD_TAB>
@@ -5219,6 +5221,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--431-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--431-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--431-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--431-->  <HQLWHERECLAUSE><![CDATA[e in (select t1.businessPartner from TimeAndExpenseSheet as t1, TimeAndExpenseSheetLine as t2 where t1=t2.timeSheet and t1.processed='Y' and t2.reinvoice='Y' and t2.salesOrderLine is null))]]></HQLWHERECLAUSE>
 <!--431--></AD_TAB>
 
 <!--432--><AD_TAB>
@@ -5244,6 +5247,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--432-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--432-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--432-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--432-->  <HQLWHERECLAUSE><![CDATA[e.reinvoice='Y' and e.expenseSheet in (select t from TimeAndExpenseSheet t where t.processed='Y'))]]></HQLWHERECLAUSE>
 <!--432--></AD_TAB>
 
 <!--437--><AD_TAB>
@@ -5610,6 +5614,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--456-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--456-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--456-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--456-->  <HQLWHERECLAUSE><![CDATA[e in (select t1.businessPartner from TimeAndExpenseSheet as t1, TimeAndExpenseSheetLine as t2 where t1=t2.timeSheet and t1.processed='Y' and t2.timeSheet<>'Y' and t2.invoiceLine is null))]]></HQLWHERECLAUSE>
 <!--456--></AD_TAB>
 
 <!--457--><AD_TAB>
