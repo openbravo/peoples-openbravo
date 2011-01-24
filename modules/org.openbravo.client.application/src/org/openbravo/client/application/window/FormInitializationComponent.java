@@ -50,6 +50,8 @@ import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.client.kernel.reference.EnumUIDefinition;
+import org.openbravo.client.kernel.reference.FKComboUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
@@ -330,7 +332,8 @@ public class FormInitializationComponent extends BaseActionHandler {
               + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
           // We need to fire callouts if the field is a combo
           // (due to how ComboReloads worked, callouts were always called)
-          if (mode.equals("NEW")) {
+          if (mode.equals("NEW")
+              && (uiDef instanceof EnumUIDefinition || uiDef instanceof FKComboUIDefinition)) {
             if (field.getColumn().getCallout() != null) {
               addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
             }
@@ -756,16 +759,18 @@ public class FormInitializationComponent extends BaseActionHandler {
                               .getUIDefinition(col.getId());
                           JSONObject jsonobject = new JSONObject(uiDef.getFieldProperties(inpFields
                               .get(name), true));
-                          String newValue = jsonobject.getString("value");
-                          if ((oldValue == null && newValue != null)
-                              || (oldValue != null && newValue == null)
-                              || (oldValue != null && newValue != null && !oldValue
-                                  .equals(newValue))) {
-                            columnValues.put(colId, jsonobject);
-                            changed = true;
-                          } else {
-                            log
-                                .debug("Column value didn't change. We do not attempt to execute any additional callout");
+                          if (jsonobject.has("value")) {
+                            String newValue = jsonobject.getString("value");
+                            if ((oldValue == null && newValue != null)
+                                || (oldValue != null && newValue == null)
+                                || (oldValue != null && newValue != null && !oldValue
+                                    .equals(newValue))) {
+                              columnValues.put(colId, jsonobject);
+                              changed = true;
+                            } else {
+                              log
+                                  .debug("Column value didn't change. We do not attempt to execute any additional callout");
+                            }
                           }
                         }
                       }
@@ -786,20 +791,23 @@ public class FormInitializationComponent extends BaseActionHandler {
                           col.getId());
                       JSONObject jsonobj = new JSONObject(uiDef.getFieldProperties(inpFields
                           .get(name), true));
-                      String newValue = jsonobj.getString("value");
-                      log.debug("Modified column: " + col.getDBColumnName() + "  Value: " + value);
-                      if ((oldValue == null && newValue != null)
-                          || (oldValue != null && newValue == null)
-                          || (oldValue != null && newValue != null && !oldValue.equals(newValue))) {
-                        columnValues.put("inp"
-                            + Sqlc.TransformaNombreColumna(col.getDBColumnName()), jsonobj);
-                        changed = true;
+                      if (jsonobj.has("value")) {
+                        String newValue = jsonobj.getString("value");
+                        log
+                            .debug("Modified column: " + col.getDBColumnName() + "  Value: "
+                                + value);
+                        if ((oldValue == null && newValue != null)
+                            || (oldValue != null && newValue == null)
+                            || (oldValue != null && newValue != null && !oldValue.equals(newValue))) {
+                          columnValues.put("inp"
+                              + Sqlc.TransformaNombreColumna(col.getDBColumnName()), jsonobj);
+                          changed = true;
 
-                        // We set the value as formatted in the JSONObject in the request, so that
-                        // the
-                        // request now is format safe and additional getFieldProperties calls do not
-                        // fail
-                        if (jsonobj.has("value")) {
+                          // We set the value as formatted in the JSONObject in the request, so that
+                          // the
+                          // request now is format safe and additional getFieldProperties calls do
+                          // not
+                          // fail
                           rq.setRequestParameter(colId, jsonobj.getString("value"));
                         }
                       } else {
