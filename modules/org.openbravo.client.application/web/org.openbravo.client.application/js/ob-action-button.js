@@ -49,34 +49,25 @@ isc.OBToolbarActionButton.addProperties( {
   
   doAction: function(){
     var theView = this.view;
-    var popupParams = {
-      viewId : 'OBPopupClassicWindow',
-      obManualURL : this.obManualURL, 
-      processId : this.id,
-      id : this.id,
-      command : this.command,
-      tabTitle : this.title
-    };
 
     var allProperties = theView.getContextInfo(false, true);
     var sessionProperties = theView.getContextInfo(true, true);
+    var me = this;
 
     OB.ActionButton.executingProcess = this;
 
     for ( var param in allProperties) {
-      if (allProperties.hasOwnProperty(param)) {
-        var value = allProperties[param];
-        
-        if (typeof value === 'boolean') {
-          value = value?'Y':'N';
-        }
-        
-        popupParams.command += '&' + param + '=' + value;
+      // TODO: these transformations shoulnd't be needed here as soon as getContextInfo returns 
+      // the transformed values.
+      
+      if (allProperties.hasOwnProperty(param) && typeof allProperties[param] === 'boolean') {
+        allProperties[param] = allProperties[param]?'Y':'N';
       }
     }
+    allProperties.Command = this.command;
 
     theView.setContextInfo(sessionProperties, function() {
-      OB.Layout.ViewManager.openView('OBPopupClassicWindow', popupParams);
+      OB.Layout.ClassicOBCompatibility.Popup.open('process', 625, 450,  OB.Application.contextUrl + me.obManualURL, '', null, false, false, true, allProperties);
     });
   },
   
