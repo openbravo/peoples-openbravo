@@ -364,7 +364,7 @@ public class Transactions extends HttpSecureAppServlet {
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
     // String[] colNames = { "date", "bpartner", "paymentno",
     // "description", "paidamount", "receivedamount", "cleared", "posted", "rowkey" };
-    String[] colWidths = { "70", "150", "80", "240", "60", "60", "40", "40", "0" }; // total 790
+    String[] colWidths = { "80", "250", "100", "350", "100", "100", "60", "60", "0" }; // total 1100
     for (int i = 0; i < colNames.length; i++) {
       SQLReturnObject dataAux = new SQLReturnObject();
       dataAux.setData("columnname", colNames[i]);

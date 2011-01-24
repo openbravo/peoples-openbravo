@@ -48,9 +48,6 @@ function selectFilters(params) {
   updateGridDataAfterFilter();
   return true;
 }
-/*function onRowSelect() {
-  validateSelector();
-}*/
 
  function calculateNumRows() {
    resizeArea();
@@ -120,7 +117,6 @@ function validateSelector() {
     return false;
   }
   document.frmMain.elements["inpKey"].value = rows[0];
-  //loadPosted();
 }
 
 function onGridLoadDo() {
@@ -165,8 +161,7 @@ function validate() {
 
 function onLoadDo(){
     this.windowTables = new Array(
-      new windowTableId('client'),
-      new windowTableId('client_middle')
+      new windowTableId('client')
     );
     setWindowTableParentElement();
     this.tabsTables = new Array(
@@ -188,7 +183,6 @@ function onLoadDo(){
 
   function onResizeDo() {
     resizeArea(true);
-    //calculateMsgBoxWidth();
   }
 </script>
 
@@ -231,12 +225,15 @@ function onLoadDo(){
           <tr id="paramMainTabContainer"></tr>
           <tr id="paramChildTabContainer"></tr>
         </table>
-        <div class="Main_ContentPane_Client" style="overflow: auto; display: none;" id="client">
+        <div class="Main_ContentPane_Client" style="overflow: hidden; display: none;" id="client">
           <table class="dojoTabContainer" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
             <tr>
               <td>
-                <!-- MessageBox -->
-                <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
+                <table class="Main_Client_TableEdition">
+                  <tr>
+                    <td>
+                    <!-- MessageBox Start -->
+                    <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
                   <tbody>
                     <tr class="MessageBox_TopMargin">
                       <td class="MessageBox_LeftMargin"></td>
@@ -334,39 +331,34 @@ function onLoadDo(){
                     </tr>
                   </tbody>
                 </table>
-                <!-- MessageBox End -->
-                <table class="Main_Client_TableEdition">
-                  <tr>
-                    <td width="360px"></td><td width="390px"></td><td width="120px"></td>
+                  <!-- MessageBox End -->
+                    </td>
                   </tr>
+                  <!-- Info & Buttons Start -->
                   <tr id="informationRow">
-                    <td width="360px">
-                      <table>
+                    <td>
+                      <table style="table-layout: auto;">
                         <tr>
-                          <td width="180px"></td>
-                          <td width="80px"></td>
-                          <td width="100px"></td>
-                        <tr>
-                          <td class="ContentCell" colspan="3"><span class="LabelText">Account:</span> <span class="LabelText  Bold" id="paramAccount">xxAccount</span></td>
+                          <td class="ReadOnly_Text_ContentCell"><span class="LabelText">Account</span></td>
+                          <td class="TitleCell"><span class="LabelText Bold" id="paramAccount">xxAccount</span></td>
                         </tr>
                         <tr>
-                          <td class="ContentCell"><span class="LabelText">Last Reconciliation:</span> <span class="LabelText" id="paramLastReconcileDate">xx</span></td>
-                          <td class="TitleCell" colspan="2"><span class="LabelText Bold" id="paramItemNo">xx6</span> <span class="LabelText Bold">items to match</span></td>
-                        </tr>
-                        <tr><td colspan="3">&nbsp;</td></tr>
-                        <tr>
-                          <td class="ContentCell"><span class="LabelText Bold">Last Reconciliation Balance</span></td>
-                          <td class="TitleCell"><span class="LabelText" id="lastRecBalance">xx</span></td>
-                          <td>&nbsp;</td>
+                          <td class="ReadOnly_Text_ContentCell"><span class="LabelText">Last Reconciliation</span></td>
+                          <td class="TitleCell"><span class="LabelText" id="paramLastReconcileDate">xx</span></td>
                         </tr>
                         <tr>
-                          <td class="ContentCell"><span class="LabelText Bold">Current Balance</span></td>
+                          <td class="ReadOnly_Text_ContentCell"><span class="LabelText Bold">Last Reconciliation Balance</span></td>
+                          <td class="TitleCell">
+                             <span class="LabelText" id="lastRecBalance">xx</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="ReadOnly_Text_ContentCell"><span class="LabelText Bold">Current Balance</span></td>
                           <td class="TitleCell"><span class="LabelText" id="currentBalance">xx</span></td>
-                          <td>&nbsp;</td>
                         </tr>
                       </table>
                     </td>
-                    <td colspan="2" align="center">
+                    <td align="center">
                       <table width="100%">
                         <tr>
                           <td>&nbsp;</td>
@@ -437,12 +429,13 @@ function onLoadDo(){
                       </table>
                     </td>
                   </tr>
+                  <!-- Info & Buttons End -->
                   <tr id="paddingRow"><td colspan="3">&nbsp;</td></tr>
                   <tr id="filtersRow">
-                    <td colspan="3">
-                      <table width="100%">
+                    <td>
+                      <table style="table-layout: auto;">
                         <tr>
-                          <td class="TableEdition_OneCell_width TitleCell" id="Hide_Reconciled_Trans_lbl_td">
+                          <td class="TitleCell" id="Hide_Reconciled_Trans_lbl_td">
                             <span class="LabelText" id="Hide_Reconciled_Trans_lbl">
                               <label for="paramHideReconciled">Hide Reconciled Transactions</label>
                             </span>
@@ -452,17 +445,14 @@ function onLoadDo(){
                               <INPUT type="checkbox" name="inpHideReconciled" id="paramHideReconciled" value="Y" onchange="changeHideReconciled();return true;" onclick="changeToEditingMode('force');logChanges(this);return true;" required="false" checked="" />
                             </SPAN>
                           </td>
-                          <td class="TableEdition_OneCell_width"></td>
-                          <td class="TableEdition_OneCell_width"></td>
-                          <td class="TableEdition_OneCell_width"></td>
-                          <td class="TableEdition_OneCell_width"></td>
+                          <td width="200px">&nbsp;<td>
+                          <td><span class="LabelText Bold" id="paramItemNo">xx6</span>&nbsp;<span class="LabelText Bold">items to match</span></td>
                         </tr>
                       </table>
                     </td>
                   </tr>
+                  <!-- GRID Start -->
                   <tr>
-                    <td colspan="3">
-                      <div class="Popup_ContentPane_Client" id="client_middle">
                         <table cellspacing="0" cellpadding="0" width="10px" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="grid_sample">
                           <tr class="DataGrid_Body_Row" id="grid_sample_header">
                             <th width="10px" class="DataGrid_Header_Cell">DataGrid</th>
@@ -474,8 +464,9 @@ function onLoadDo(){
                         <table cellspacing="0" cellpadding="0" width="0px" height="0px" cellspacing="0" cellpadding="0">
                           <tr>
                             <td><input type="text" class="DataGrid_Table_Dummy_Input" id="grid_table_dummy_input"></input></td>
+                          </tr>
                         </table>
-                        <table width="100%" cellspacing="0" cellpadding="0" border="0" id="grid_table">
+                        <table width="100%" cellspacing="0" cellpadding="0" border="0" id="grid_table" class="Main_Client_TableRelation">
                           <tr>
                             <td>
                               <div id="grid" dojoType="openbravo.widget.DataGrid"
@@ -492,26 +483,18 @@ function onLoadDo(){
                                     showLineNumbers="true"
                                     offset="0" sortcols="1" sortdirs="ASC" defaultrow="0"
                                     maxWidth="99%"
-                                    percentageWidthRelativeToId="client_middle"
+                                    percentageWidthRelativeToId="client"
                                     multiplerowselection="false"
                                     preventCache="true" useCache="true" cacheContent="false">
                               </div>
                             </td>
                           </tr>
                         </table>
-                      </div>
-                    </td>
                   </tr>
+                  <!-- GRID End -->
                   <tr id="bottomRow">
-                    <td colspan="3">
-                      <table width="88%">
-                        <tr align="right">
-                          <td class="TableEdition_OneCell_width"></td>
-                          <td class="TableEdition_OneCell_width" colspan="2"></td>
-                          <td class="TableEdition_OneCell_width"></td>
-                          <td style="font-size:8pt;font-weight:bold;">Cleared</td>
-                          <td class="LabelText" align="center">0</td>
-                        </tr>
+                    <td>
+                      <table width="800px">
                         <tr align="left">
                           <td class="TableEdition_OneCell_width"></td>
                           <td>
