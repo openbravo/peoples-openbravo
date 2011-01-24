@@ -349,8 +349,9 @@
       // * {{{url}}} type: String - the url to be opened in the popup
       // * {{{title}}} type: String - the title to be displayed in the popup
       // * {{{theOpener}}} type: Window Object - the window object of the opener
+      // * {{{postParams}}} type: Object - parameters to be sent to the url using POST instead of GET
       // of the popup. Used in window.open to allow IE know which is the opener
-      open: function(name, width, height, url, title, theOpener, showMinimizeControl, showMaximizeControl, showCloseControl){
+      open: function(name, width, height, url, title, theOpener, showMinimizeControl, showMaximizeControl, showCloseControl, postParams){
         if (showMinimizeControl !== false) {
           showMinimizeControl = true;
         }
@@ -375,7 +376,7 @@
           popupURL: url
         });
         cPopup.show();
-        cobcomp.Popup.postOpen(cPopup, theOpener);
+        cobcomp.Popup.postOpen(cPopup, theOpener, postParams);
       },
       
       // ** {{{ Popup.postOpen(cPopup) }}} **
@@ -384,7 +385,9 @@
       //
       // Parameters:
       // * {{{cPopup}}} type: Canvas - the drawn popup
-      postOpen: function(cPopup){
+      // * {{{theOpener}}} type: Window Object - the window object of the opener
+      // * {{{postParams}}} type: Object - parameters to be sent to the url using POST instead of GET
+      postOpen: function(cPopup, theOpener, postParams){
         if (!cPopup.isFramesetDraw) {
           cPopup.getIframeHtmlObj().contentWindow.document.write(cPopup.htmlCode);
           cPopup.isFramesetDraw = true;
@@ -411,7 +414,25 @@
         var wName = cPopup.ID;
         wName = wName.substring(0, wName.lastIndexOf(cobcomp.Popup.secString) - 1);
         if (!cPopup.areParamsSet) {
-          cPopup.getIframeHtmlObj().contentWindow.frames[0].location.href = cPopup.popupURL;
+          if (!postParams) {
+            cPopup.getIframeHtmlObj().contentWindow.frames[0].location.href = cPopup.popupURL;
+          } else {
+            // Create a form and POST parameters as input hidden values
+            var doc = cPopup.getIframeHtmlObj().contentWindow.frames[0].document,
+                frm = doc.createElement('form');
+            frm.setAttribute('method','get');
+            frm.setAttribute('action', cPopup.popupURL);
+            for (var i in postParams) {
+              if (postParams.hasOwnProperty(i)){
+                var inp = doc.createElement('input');
+                inp.setAttribute('type', 'hidden');
+                inp.setAttribute('name', i);
+                inp.setAttribute('value', postParams[i]);
+                frm.appendChild(inp);
+              }
+            }
+            frm.submit();
+          }
           cPopup.getIframeHtmlObj().contentWindow.frames[0].name = wName;
           cPopup.getIframeHtmlObj().contentWindow.document.getElementById('MDIPopupContainer').name = wName;
           cPopup.areParamsSet = true;
