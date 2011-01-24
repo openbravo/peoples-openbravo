@@ -112,6 +112,7 @@ isc.OBAlertIcon
 
         // call it to update the number of alerts directly after login
         OB.AlertManager.addListener(listener);
+        OB.TestRegistry.register('org.openbravo.client.application.AlertButton', this);
       },
       alertIcon : {
         src : '[SKINIMG]../../org.openbravo.client.application/images/navbar/iconAlert.png'

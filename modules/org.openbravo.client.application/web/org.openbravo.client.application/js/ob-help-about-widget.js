@@ -86,7 +86,11 @@ isc.OBHelpAbout
     },
 
     members : [ isc.DynamicForm.create( {
-      numCols : 1
+      numCols : 1,
+      initWidget: function() {
+        OB.TestRegistry.register('org.openbravo.client.application.HelpAboutForm', this);
+        return this.Super('initWidget', arguments);
+      }
     }) ],
 
     keyboardShortcutId : 'NavBar_OBHelpAbout'
