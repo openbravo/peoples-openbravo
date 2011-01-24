@@ -225,7 +225,7 @@ function updateDifference() {
   displayLogicElement('writeoff', compare(expected, '!=', total) );
   displayLogicElement('underpayment', compare(abs(expected), '>', abs(total)) );
   displayLogicElement('credit', compare(abs(amount), '>', abs(total)) );
-  displayLogicElement('refund', compare(abs(amount), '>', abs(total)) );
+  displayLogicElement('refund', isReceipt && compare(abs(amount), '>', abs(total)) );
   if ( compare(abs(amount), '>', abs(total)) ) {
     selectDifferenceAction('credit');
   }
