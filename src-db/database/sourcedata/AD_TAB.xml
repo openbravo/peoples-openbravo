@@ -416,6 +416,7 @@
 OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--118-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--118-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--118-->  <HQLFILTERCLAUSE><![CDATA[e.businessPartner.id in (select id from BusinessPartner bp where bp.employee='Y' or bp.salesRepresentative='Y') or e.businessPartner is null]]></HQLFILTERCLAUSE>
 <!--118--></AD_TAB>
 
 <!--119--><AD_TAB>
@@ -1230,6 +1231,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--167-->  <FILTERCLAUSE><![CDATA[C_DocType.IsActive=Y]]></FILTERCLAUSE>
 <!--167-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--167-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--167-->  <HQLFILTERCLAUSE><![CDATA[e.active='Y']]></HQLFILTERCLAUSE>
 <!--167--></AD_TAB>
 
 <!--169--><AD_TAB>
@@ -7687,6 +7689,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800025-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800025-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800025-->  <HQLWHERECLAUSE><![CDATA[e.settlementType<>'I']]></HQLWHERECLAUSE>
+<!--800025-->  <HQLFILTERCLAUSE><![CDATA[e.settlementType='C']]></HQLFILTERCLAUSE>
 <!--800025--></AD_TAB>
 
 <!--800026--><AD_TAB>
@@ -9236,6 +9239,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800111-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800111-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800111-->  <HQLORDERBYCLAUSE><![CDATA[-startingDate]]></HQLORDERBYCLAUSE>
+<!--800111-->  <HQLFILTERCLAUSE><![CDATA[e.closed='N']]></HQLFILTERCLAUSE>
 <!--800111--></AD_TAB>
 
 <!--800112--><AD_TAB>
@@ -10249,6 +10253,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800188-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800188-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800188-->  <HQLORDERBYCLAUSE><![CDATA[plannedDate]]></HQLORDERBYCLAUSE>
+<!--800188-->  <HQLFILTERCLAUSE><![CDATA[e.maintenanceOrder is null]]></HQLFILTERCLAUSE>
 <!--800188--></AD_TAB>
 
 <!--800189--><AD_TAB>
@@ -13133,6 +13138,7 @@ AD_Model_Object.AD_REFERENCE_ID  is null and
 AD_Model_Object.AD_CALLOUT_ID    is null ]]></FILTERCLAUSE>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <HQLFILTERCLAUSE><![CDATA[e.tab is null and e.workflow is null and e.process is null and e.oSTask is null and e.specialForm is null and e.reference is null and e.callout is null]]></HQLFILTERCLAUSE>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918--></AD_TAB>
 
 <!--5DD4A4D36D71411FB3BE2783C3D55473--><AD_TAB>
@@ -13237,6 +13243,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <FILTERCLAUSE><![CDATA[PeriodStatus='O']]></FILTERCLAUSE>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <HQLFILTERCLAUSE><![CDATA[e.periodStatus='O']]></HQLFILTERCLAUSE>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA--></AD_TAB>
 
 <!--719D6C8507CA4B27886C0D8A7859B543--><AD_TAB>
@@ -13454,6 +13461,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--8E5972CF3664486D9D887BDEDA88627D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8E5972CF3664486D9D887BDEDA88627D-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--8E5972CF3664486D9D887BDEDA88627D-->  <HQLORDERBYCLAUSE><![CDATA[-created]]></HQLORDERBYCLAUSE>
+<!--8E5972CF3664486D9D887BDEDA88627D-->  <HQLFILTERCLAUSE><![CDATA[e.securityBasedOnRole='Y' or e.userContact.id=@User.id@]]></HQLFILTERCLAUSE>
 <!--8E5972CF3664486D9D887BDEDA88627D--></AD_TAB>
 
 <!--99DCADEC674D4ECCB158CA5F3DDBFF83--><AD_TAB>
@@ -13825,6 +13833,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--CD573DF1E351485EA2B2DE487DCACA6F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--CD573DF1E351485EA2B2DE487DCACA6F-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--CD573DF1E351485EA2B2DE487DCACA6F-->  <HQLORDERBYCLAUSE><![CDATA[-created]]></HQLORDERBYCLAUSE>
+<!--CD573DF1E351485EA2B2DE487DCACA6F-->  <HQLFILTERCLAUSE><![CDATA[e.channel='Process Scheduler']]></HQLFILTERCLAUSE>
 <!--CD573DF1E351485EA2B2DE487DCACA6F--></AD_TAB>
 
 <!--D144E28320BF40A5B5E5E3C5B92D10E9--><AD_TAB>
