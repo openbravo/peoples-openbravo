@@ -58,6 +58,8 @@ isc.OBStandardWindow.addProperties({
   initWidget: function(){
     var standardWindow = this;
     
+    this.views = [];
+    
     this.toolBarLayout = isc.HLayout.create({
       width: '100%',
       height: 1, // is set by its content
@@ -179,21 +181,18 @@ isc.OBStandardWindow.addProperties({
   },
   
   draw: function(){
-    var standardWindow = this;
+    var standardWindow = this, targetEntity;
     var ret = this.Super('draw', arguments);
     
     if (this.targetTabId) {
-      // no entity, try to find it
-      if (!this.targetEntity) {
-        for (var i = 0; i < this.views.length; i++) {
-          if (this.views[i].tabId === this.targetTabId) {
-            this.targetEntity = this.view.entity;
-            break;
-          }
+      for (var i = 0; i < this.views.length; i++) {
+        if (this.views[i].tabId === this.targetTabId) {
+          targetEntity = this.views[i].entity;
+          break;
         }
       }
       OB.RemoteCallManager.call('org.openbravo.client.application.window.ComputeSelectedRecordActionHandler', null, {
-        targetEntity: this.targetEntity,
+        targetEntity: targetEntity,
         targetRecordId: this.targetRecordId,
         windowId: this.windowId
       }, function(response, data, request){
@@ -202,7 +201,6 @@ isc.OBStandardWindow.addProperties({
       });
       delete this.targetRecordId;
       delete this.targetTabId;
-      delete this.targetEntity;
     } else if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       var currentView = this.activeView || this.view;
       currentView.editRecord();
