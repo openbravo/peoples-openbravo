@@ -84,9 +84,14 @@
     //
     // Parameters:
     // * {{{propertyName}}}: the name under which the recent value is stored.
-    // * {{{choiceObject}}}: the object defining the last user choice.
+    // * {{{choiceObject}}}: the object defining the last user choice, can be null
+    //                        in this case the call returns without changing things.
     //
     addRecent: function(/* String */propertyName, /* Object */ choiceObject){
+      // in some cases the choiceobject is not set, just ignore those
+      if (!choiceObject) {
+        return;
+      }
       var currentRecentValue = this.getRecentValue(propertyName);
       var currentIndex = -1;
       for (var i = 0; i < currentRecentValue.length; i++) {
