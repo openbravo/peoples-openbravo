@@ -79,6 +79,7 @@ isc.OBViewGrid.addProperties({
   autoFitWidthApproach: 'title',
   canAutoFitFields: false,
   width: '100%',
+  height: '100%',
   
   autoFetchTextMatchStyle: 'substring',
   showFilterEditor: true,
@@ -109,7 +110,7 @@ isc.OBViewGrid.addProperties({
   
   canMultiSort: false,
   
-  emptyMessage: OB.I18N.getLabel('OBUIAPP_NoDataInGrid'),
+  emptyMessage: OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage'),
   discardEditsSaveButtonTitle: OB.I18N.getLabel('UINAVBA_Save'),
   
   quickDrawAheadRatio: 6.0,
@@ -220,7 +221,7 @@ isc.OBViewGrid.addProperties({
     
     var ret = this.Super('initWidget', arguments);
     
-    this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridNoRecords') + ' <span onclick="window[\'' + this.ID + '\'].createNew();" class="OBLabelLink">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne')+ '</span>';
+    this.noDataEmptyMessage = OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage'); //OB.I18N.getLabel('OBUIAPP_GridNoRecords') + ' <span onclick="window[\'' + this.ID + '\'].createNew();" class="OBLabelLink">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne')+ '</span>';
     this.filterNoRecordsEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + ' <span onclick="window[\'' + this.ID + '\'].clearFilter();" class="OBLabelLink">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter')+ '</span>';    
     return ret;
   },
@@ -249,12 +250,6 @@ isc.OBViewGrid.addProperties({
   
   setView: function(view) {
     this.view = view;
-    if (view.readOnly) {
-      this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_NoDataInGrid');
-    } else {
-      this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridNoRecords') + ' <span onclick="window[\'' + this.ID + '\'].createNew();" class="OBLabelLink">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne')+ '</span>';
-    }
-    this.resetEmptyMessage();    
   },
   
   show: function(){
@@ -347,6 +342,14 @@ isc.OBViewGrid.addProperties({
   //   mode is opened
   // - if there is only one record then select it directly
   dataArrived: function(startRow, endRow){
+    // do this now, to replace the loading message
+    if (this.view.readOnly) {
+      this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_NoDataInGrid');
+    } else {
+      this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridNoRecords') + ' <span onclick="window[\'' + this.ID + '\'].createNew();" class="OBLabelLink">' + OB.I18N.getLabel('OBUIAPP_GridCreateOne')+ '</span>';
+    }
+    this.resetEmptyMessage();    
+    
     var record, ret = this.Super('dataArrived', arguments);
     this.updateRowCountDisplay();
     if (this.getSelectedRecords().length > 0) {

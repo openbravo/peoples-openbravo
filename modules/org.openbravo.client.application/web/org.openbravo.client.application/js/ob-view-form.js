@@ -34,6 +34,8 @@ isc.OBViewForm.addProperties({
   sessionAttributes: {},
   dynamicCols: [],
   width: '100%',
+  height: '100%',
+  
   
   showErrorIcons: false,
   showErrorStyle: true,
