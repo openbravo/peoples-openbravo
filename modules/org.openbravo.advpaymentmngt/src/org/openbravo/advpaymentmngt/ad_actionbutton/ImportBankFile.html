@@ -39,32 +39,46 @@
   var baseDirectory="../../../../../web/";
   </script>
   <script language="JavaScript" type="text/javascript" id="fieldWindowIDArray">
+  function validate() {
+    var frm = document.frmMain;
+    if (frm.inpFile.value==null || frm.inpFile.value=="") {
+      setWindowElementFocus(frm.inpFile);
+      showJSMessage(7);
+      return false;
+    } else if (frm.inpfinBankFileFormatId.value==null || frm.inpfinBankFileFormatId.value=="") {
+      setWindowElementFocus(frm.inpfinBankFileFormatId);
+      showJSMessage(7);
+      return false;
+    }
+	return true;
+  }
+  
   function closeThisPage() {
     window.close();
     return true;
   }
 
   function submitThisPage(strCommand) {
-    submitCommandForm(strCommand, false, null, null, '_top');
+	if (validate()) {
+      submitCommandForm(strCommand, false, null, null, '_top');
+	}
     return true;
   }
   </script>
-  	<script language="JavaScript" type="text/javascript">
-	function onLoadDo(){
-		this.windowTables = new Array(
-		  new windowTableId('client', 'buttonOK')
-		);
-		setWindowTableParentElement();
-		enableShortcuts('popup');
-		setBrowserAutoComplete(false);
-
-		setWindowElementFocus('firstElement');
-	}
-
+  <script language="JavaScript" type="text/javascript">
+    function onLoadDo(){
+	  this.windowTables = new Array(
+	    new windowTableId('client', 'buttonOK')
+	   );
+	   setWindowTableParentElement();
+	   enableShortcuts('popup');
+	   setBrowserAutoComplete(false);
+       setWindowElementFocus('firstElement');
+    }
+    
 	function onResizeDo(){
 	}
-	</script>
-
+  </script>
 </head>
 
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">

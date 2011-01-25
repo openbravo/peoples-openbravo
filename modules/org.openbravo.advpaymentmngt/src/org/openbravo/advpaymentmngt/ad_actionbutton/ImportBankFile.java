@@ -78,7 +78,8 @@ public class ImportBankFile extends HttpSecureAppServlet {
         message.setType("Error");
         message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
         message.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
-            "@WrongBankFileFormat@"));
+            "@APRM_WrongBankFileFormat@")
+            + ": " + bff.getJavaClassName());
       }
 
       if (strWindowPath.equals(""))
