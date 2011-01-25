@@ -52,7 +52,7 @@
             canvas.view.setAsActiveView();
             return true;
           }
-          if (canvas.grid) {
+          if (isc.FormItem.isA(canvas) && canvas.grid) {
             canvas = canvas.grid;
           } if (isc.FormItem.isA(canvas) && canvas.form) {
             canvas = canvas.form;
