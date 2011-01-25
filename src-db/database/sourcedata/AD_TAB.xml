@@ -183,6 +183,7 @@
 <!--107-->  <FILTERCLAUSE><![CDATA[AD_Field.isDisplayed = 'Y']]></FILTERCLAUSE>
 <!--107-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--107-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--107-->  <HQLFILTERCLAUSE><![CDATA[e.displayed=true]]></HQLFILTERCLAUSE>
 <!--107--></AD_TAB>
 
 <!--108--><AD_TAB>
@@ -5909,6 +5910,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--475-->  <FILTERCLAUSE><![CDATA[session_active='Y']]></FILTERCLAUSE>
 <!--475-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--475-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
+<!--475-->  <HQLFILTERCLAUSE><![CDATA[e.sessionActive='Y']]></HQLFILTERCLAUSE>
 <!--475--></AD_TAB>
 
 <!--476--><AD_TAB>
@@ -12300,6 +12302,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1004400001-->  <FILTERCLAUSE><![CDATA[M_Requisition.DocStatus = 'CO']]></FILTERCLAUSE>
 <!--1004400001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400001-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1004400001-->  <HQLFILTERCLAUSE><![CDATA[e.documentStatus='CO']]></HQLFILTERCLAUSE>
 <!--1004400001--></AD_TAB>
 
 <!--1004400002--><AD_TAB>
