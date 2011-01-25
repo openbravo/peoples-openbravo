@@ -41,20 +41,9 @@ isc.OBToolbar.addClassProperties({
       } else {
         // enable when supporting grid editing
         this.setDisabled(true);
-      }      
+      }
     },
-    enableShortcut: function(){
-      var me = this;
-      var ksAction = function(){
-        if (!me.disabled) {
-          me.action();
-        }
-      };
-      OB.KeyboardManager.KS.add('ToolBar_Save', ksAction);
-    },
-    disableShortcut: function(){
-      OB.KeyboardManager.KS.remove('ToolBar_Save');
-    }
+    keyboardShortcutId: 'ToolBar_Save'
   },
   NEW_ROW_BUTTON_PROPERTIES: {
     action: function(){
@@ -704,32 +693,39 @@ isc.OBToolbar.addProperties({
     } 
   },
 
-  isActive: false,
-
-  setActive: function(value) {
-    if (value === true && this.isActive === false) {
-      this.isActive = true;
-      this.show();
-      if (this.leftMembers) {
-        for (i = 0; i < this.leftMembers.length; i++) {
-          if (this.leftMembers[i].enableShortcut) {
-            this.leftMembers[i].enableShortcut();
-          }
-        }
-      }
-    } else if (value === false && this.isActive === true) {
-      this.isActive = false;
-      if (this.leftMembers) {
-        for (i = 0; i < this.leftMembers.length; i++) {
-          if (this.leftMembers[i].disableShortcut) {
-            this.leftMembers[i].disableShortcut();
-          }
-        }
-      }
-      this.hide();
+  visibilityChanged: function(state) {
+    if (state) {
+      this.enableShortcuts();
+    } else {
+      this.disableShortcuts();
     }
   },
-  
+
+  draw: function() {
+    this.Super('draw', arguments);
+    this.enableShortcuts();
+  },
+
+  enableShortcuts: function() {
+    if (this.leftMembers) {
+      for (i = 0; i < this.leftMembers.length; i++) {
+        if (this.leftMembers[i].enableShortcut) {
+          this.leftMembers[i].enableShortcut();
+        }
+      }
+    }
+  },
+
+  disableShortcuts: function() {
+    if (this.leftMembers) {
+      for (i = 0; i < this.leftMembers.length; i++) {
+        if (this.leftMembers[i].disableShortcut) {
+          this.leftMembers[i].disableShortcut();
+        }
+      }
+    }
+  },
+
   addMembers: 'null',
   
   leftMembers: [],
@@ -778,6 +774,24 @@ isc.OBToolbarIconButton.addProperties({
     }
     
     this.setBaseStyle('OBToolbarIconButton_icon_' + this.buttonType + this.customState + extraClass + 'OBToolbarIconButton');
+  },
+
+  keyboardShortcutId: null,
+  enableShortcut: function() {
+    if (this.keyboardShortcutId) {
+      var me = this;
+      var ksAction = function(){
+        if (!me.disabled) {
+          me.action();
+        }
+      };
+      OB.KeyboardManager.KS.add(this.keyboardShortcutId, ksAction);
+    }
+  },
+  disableShortcut: function() {
+    if (this.keyboardShortcutId) {
+      OB.KeyboardManager.KS.remove(this.keyboardShortcutId);
+    }
   }
 });
 
