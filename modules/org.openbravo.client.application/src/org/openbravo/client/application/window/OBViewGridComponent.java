@@ -182,6 +182,14 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       return prop.getColumnName();
     }
 
+    /**
+     * @deprecated use {@link #getGridFieldProperties()}
+     */
+    @Deprecated
+    public String getFieldProperties() {
+      return getGridFieldProperties();
+    }
+
     public String getGridFieldProperties() {
       return uiDefinition.getGridFieldProperties(field);
     }
