@@ -128,7 +128,7 @@ isc.OBStandardView.addProperties({
   // The id of the record to initially show.
   targetRecordId: null,
   
-  // ** {{{ targetEntity }}} **
+  // ** {{{ entity }}} **
   // The entity to show.
   entity: null,
   
@@ -233,14 +233,9 @@ isc.OBStandardView.addProperties({
     
     if (this.isRootView) {
       if (this.childTabSet) {
-        this.members[0].setHeight('50%');
-        this.members[1].setHeight('50%');
         this.childTabSet.setState(isc.OBStandardView.STATE_IN_MID);
-        this.childTabSet.selectTab(this.childTabSet.tabs[0]);
-        
+        this.childTabSet.selectTab(this.childTabSet.tabs[0]);        
         OB.TestRegistry.register('org.openbravo.client.application.ChildTabSet_' + this.tabId, this.viewForm);
-      } else {
-        this.members[0].setHeight('100%');
       }
     }
   },
@@ -442,7 +437,6 @@ isc.OBStandardView.addProperties({
   // ** {{{ createMainParts }}} **
   // Creates the main layout components of this view.
   createMainParts: function(){
-    var formContainerLayout;
     var me = this;
     if (this.tabId && this.tabId.length > 0) {
       this.formGridLayout = isc.HLayout.create({
@@ -500,44 +494,45 @@ isc.OBStandardView.addProperties({
       });
       
       // to make sure that the form gets the correct scrollbars
-      formContainerLayout = isc.VLayout.create({
+      this.formContainerLayout = isc.VLayout.create({
         canFocus: true,
         width: '100%',
         height: '*',
         overflow: 'auto'
       });
-      formContainerLayout.addMember(this.viewForm);
+      this.formContainerLayout.addMember(this.viewForm);
       
       this.statusBarFormLayout.addMember(this.statusBar);
-      this.statusBarFormLayout.addMember(formContainerLayout);
+      this.statusBarFormLayout.addMember(this.formContainerLayout);
       
       this.formGridLayout.addMember(this.statusBarFormLayout);
       
       // wrap the messagebar and the formgridlayout in a VLayout
-      var gridFormMessageLayout = isc.VLayout.create({
+      this.gridFormMessageLayout = isc.VLayout.create({
         canFocus: true,
         height: '100%',
         width: '100%',
         overflow: 'auto'
       });
-      gridFormMessageLayout.addMember(this.messageBar);
-      gridFormMessageLayout.addMember(this.formGridLayout);
+      this.gridFormMessageLayout.addMember(this.messageBar);
+      this.gridFormMessageLayout.addMember(this.formGridLayout);
       
       // and place the active bar to the left of the form/grid/messagebar
-      var activeGridFormMessageLayout = isc.HLayout.create({
+      this.activeGridFormMessageLayout = isc.HLayout.create({
         canFocus: true,
-        height: '100%',
+        height: (this.hasChildTabs ? '50%' : '100%'),
         width: '100%',
         overflow: 'hidden'
       });
       
-      activeGridFormMessageLayout.addMember(this.activeBar);
-      activeGridFormMessageLayout.addMember(gridFormMessageLayout);
+      this.activeGridFormMessageLayout.addMember(this.activeBar);
+      this.activeGridFormMessageLayout.addMember(this.gridFormMessageLayout);
       
-      this.addMember(activeGridFormMessageLayout);
+      this.addMember(this.activeGridFormMessageLayout);
     }
     if (this.hasChildTabs) {
       this.childTabSet = isc.OBStandardViewTabSet.create({
+        height: '*',
         parentContainer: this,
         parentTabSet: this.parentTabSet
       });
@@ -682,9 +677,10 @@ isc.OBStandardView.addProperties({
     if (!this.refreshContents && !doRefreshWhenVisible) {
       return;
     }
+    
     // can be used by others to see that we are refreshing content
     this.refreshContents = true;
-
+    
     // clear all our selections..
     this.viewGrid.deselectAllRecords();
     
@@ -1313,29 +1309,20 @@ isc.OBStandardView.addProperties({
   setTopMaximum: function(){
     this.setHeight('100%');
     if (this.members[1]) {
-      this.members[0].setHeight('*');
       this.members[1].setState(isc.OBStandardView.STATE_MIN);
-      this.members[1].show();
-      this.members[0].show();
       this.convertToPercentageHeights();
     } else {
       this.members[0].setHeight('100%');
-      this.members[0].show();
     }
+    this.members[0].show();
     this.state = isc.OBStandardView.STATE_TOP_MAX;
     this.setMaximizeRestoreButtonState();
   },
   
   setBottomMaximum: function(){
-    this.setHeight('100%');
     if (this.members[1]) {
       this.members[0].hide();
-      this.members[0].setHeight(0);
       this.members[1].setHeight('100%');
-      this.members[1].show();
-    } else {
-      this.members[0].setHeight('100%');
-      this.members[0].show();
     }
     this.state = isc.OBStandardView.STATE_BOTTOM_MAX;
     this.setMaximizeRestoreButtonState();
@@ -1347,27 +1334,20 @@ isc.OBStandardView.addProperties({
     if (this.members[1]) {
       // divide the space between the first and second level
       if (this.members[1].draggedHeight) {
-        this.members[0].setHeight('*');
         this.members[1].setHeight(this.members[1].draggedHeight);
-        this.members[0].show();
-        this.members[1].show();
         this.convertToPercentageHeights();
-        this.members[1].setState(isc.OBStandardView.STATE_IN_MID);
       } else {
         // NOTE: noticed that when resizing multiple members in a layout, that it 
         // makes a difference what the order of resizing is, first resize the 
         // one which will be larger, then the one which will be smaller.
-        // also do the STATE_IN_MID before resizing
         this.members[1].setHeight('50%');
         this.members[0].setHeight('50%');
-        this.members[1].show();
-        this.members[0].show();
-        this.members[1].setState(isc.OBStandardView.STATE_IN_MID);
       }
+      this.members[1].setState(isc.OBStandardView.STATE_IN_MID);
     } else {
       this.members[0].setHeight('100%');
-      this.members[0].show();
     }
+    this.members[0].show();
     this.state = isc.OBStandardView.STATE_MID;
     this.setMaximizeRestoreButtonState();
   },

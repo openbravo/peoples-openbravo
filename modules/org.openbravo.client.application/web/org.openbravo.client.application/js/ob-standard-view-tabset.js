@@ -38,7 +38,7 @@ isc.OBStandardViewTabSet.addClassProperties({
       isc.Timer.setTimeout(function(){
         // if no double click happened then do the single click
         if (me.dblClickWaiting) {
-          me.dblClickWaiting = false;          
+          me.dblClickWaiting = false;
           me.tabSet.doHandleClick();
         }
       }, OB.Constants.DBL_CLICK_DELAY);
@@ -59,26 +59,37 @@ isc.OBStandardViewTabSet.addClassProperties({
     },
     
     mouseDown: function() {
-      this.setCursor(isc.Canvas.MOVE);
+      if (this.state === isc.OBStandardView.STATE_IN_MID) {
+        this.setCursor(isc.Canvas.MOVE);
+      }
     },
     
     mouseUp: function() {
-      this.setCursor(isc.Canvas.ROW_RESIZE);
+      if (this.state === isc.OBStandardView.STATE_IN_MID) {
+        this.setCursor(isc.Canvas.ROW_RESIZE);
+      }
     },
     
     mouseOut: function() {
-      this.setCursor(isc.Canvas.ROW_RESIZE);
+      if (this.state === isc.OBStandardView.STATE_IN_MID) {
+        this.setCursor(isc.Canvas.ROW_RESIZE);
+      }
     },
     
     mouseOver: function() {
-      this.setCursor(isc.Canvas.ROW_RESIZE);
+      if (this.state === isc.OBStandardView.STATE_IN_MID) {
+        this.setCursor(isc.Canvas.ROW_RESIZE);
+      }
     },
 
     getCurrentCursor: function() {
-      if (isc.EventHandler.leftButtonDown()) {
-        return isc.Canvas.MOVE;
+      if (this.state === isc.OBStandardView.STATE_IN_MID) {
+        if (isc.EventHandler.leftButtonDown()) {
+          return isc.Canvas.MOVE;
+        }
+        return isc.Canvas.ROW_RESIZE;
       }
-      return isc.Canvas.ROW_RESIZE;
+      return this.Super('getCurrentCursor', arguments);
     },
     
     dragStart: function(){
@@ -208,12 +219,14 @@ isc.OBStandardViewTabSet.addProperties({
       }
       
     } else if (newState === isc.OBStandardView.STATE_MIN) {
-      // the height is set to the height of the tabbar
-      this.setHeight(this.tabBar.getHeight());
       for (i = 0; i < this.tabs.length; i++) {
         tab = this.tabs[i];
         this.getTabPane(tab).hide();
       }
+
+      // the height is set to the height of the tabbar
+      this.setHeight(this.tabBar.getHeight());
+
       this.state = newState;
     } else if (newState === isc.OBStandardView.STATE_BOTTOM_MAX) {
       // the top part in each layout is set to 0%, and the bottom to max
@@ -236,10 +249,12 @@ isc.OBStandardViewTabSet.addProperties({
       for (i = 0; i < this.tabs.length; i++) {
         tab = this.tabs[i];
         pane = this.getTabPane(tab);
+        pane.setHeight('100%');
         this.makeTabVisible(tab);
-        pane.members[0].setHeight('*');
         if (pane.members[1]) {
           pane.members[1].setState(isc.OBStandardView.STATE_MIN);
+        } else {
+          pane.members[0].setHeight('100%');
         }
       }
     } else if (newState === isc.OBStandardView.STATE_MID) {
@@ -253,8 +268,8 @@ isc.OBStandardViewTabSet.addProperties({
       for (i = 0; i < this.tabs.length; i++) {
         tab = this.tabs[i];
         pane = this.getTabPane(tab);
-        pane.setHalfSplit();
         this.makeTabVisible(tab);
+        pane.setHalfSplit();
       }
     }
     
@@ -269,23 +284,23 @@ isc.OBStandardViewTabSet.addProperties({
   makeTabVisible: function(tab){
     if (tab === this.getSelectedTab()) {
       pane = this.getTabPane(tab);
-      pane.show();
-      if (pane.doRefreshContents) {
+      if (pane.refreshContents) {
         pane.doRefreshContents();
       }
+      pane.show();
       if (pane.members[0]) {
         pane.members[0].show();
       }
       if (pane.members[1]) {
         pane.members[1].show();
       }
-      this.selectTab(tab);
+//      this.selectTab(tab);
     }
   },
   
   tabSelected: function(tabNum, tabPane, ID, tab){
     if (tabPane.refreshContents) {
-      tabPane.doRefreshContents();
+      tabPane.doRefreshContents(true);
     }
   },
   
