@@ -54,7 +54,7 @@
           }
           if (canvas.grid) {
             canvas = canvas.grid;
-          } if (canvas.form) {
+          } if (isc.FormItem.isA(canvas) && canvas.form) {
             canvas = canvas.form;
           } else {
             canvas = canvas.parentElement;
