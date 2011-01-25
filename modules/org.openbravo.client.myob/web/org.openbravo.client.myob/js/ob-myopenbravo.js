@@ -599,6 +599,11 @@ isc.OBMyOpenbravo.addProperties({
     if (eventType === 'RELOAD_WIDGETS' && isc.isAn.Array(responseWidgets)) {
       this.widgets = responseWidgets.duplicate();
       this.sortWidgetsCache();
+      if(window.start) {
+        // Qunit is present, we are running the tests
+        // This makes the synchronization of unit tests possible
+        start();
+      }
       return;
     }
 
