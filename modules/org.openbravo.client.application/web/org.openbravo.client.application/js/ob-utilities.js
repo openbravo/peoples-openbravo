@@ -23,21 +23,75 @@ OB.Utilities = {};
 OB.Utilities.Date = {};
 OB.Utilities.Number = {};
 
+// ** {{{OB.Utilities.useClassicMode}}} **
+// Returns true if the user wants to work in classic mode, checks the url parameter
+// as well as a property value.
+OB.Utilities.useClassicMode = function(windowId){
+  if (OB.Utilities.hasUrlParameter('mode', 'classic')) {
+    return true;
+  }
+  var propValue = OB.PropertyStore.get('OBUIAPP_UseClassicMode', windowId);
+  if (propValue === 'Y') {
+    return true;
+  }
+  return false;
+};
+
+// ** {{{OB.Utilities.openView}}} **
+// Open a view taking into account if a specific window should be opened in classic mode or not.
+// Returns the object used to open the window.
+OB.Utilities.openView = function(windowId, tabId, tabTitle, recordId, command, icon){
+    var isClassicEnvironment = OB.Utilities.useClassicMode(windowId);
+
+    var openObject;
+    if (isClassicEnvironment) {
+      if (recordId) {
+        OB.Layout.ClassicOBCompatibility.openLinkedItem(tabId, recordId);
+        return null;
+      } 
+      openObject = {
+          viewId: 'OBClassicWindow',
+          windowId: windowId, 
+          tabId: tabId, 
+          id: tabId, 
+          command: 'DEFAULT', 
+          tabTitle: tabTitle,
+          icon: icon
+       };
+    } else if (recordId) {
+       openObject = {
+        viewId: '_' + windowId,
+        id: tabId,
+        targetRecordId: recordId,
+        targetTabId: tabId,
+        tabTitle: tabTitle,
+        windowId: windowId
+      };      
+    } else {
+       openObject = {
+        viewId: '_' + windowId,
+        id: tabId,
+        tabId: tabId,
+        tabTitle: tabTitle,
+        windowId: windowId,
+        icon: icon
+      };      
+    }
+    if (command) {
+      openObject.command = command;
+    }
+    OB.Layout.ViewManager.openView(openObject.viewId, openObject);
+    return openObject;
+};
+
 // ** {{{OB.Utilities.openDirectView}}} **
 // Open the correct view for a passed in target definition, coming from a certain source Window.
 OB.Utilities.openDirectView = function(sourceWindowId, keyColumn, targetEntity, recordId){
+
   var actionURL = OB.Application.contextUrl + 'utility/ReferencedLink.html';
   
   var callback = function(response, data, request){
-    var openObject = {
-      viewId: '_' + data.windowId,
-      targetEntity: response.clientContext.targetEntity,
-      targetRecordId: data.recordId,
-      targetTabId: data.tabId,
-      tabTitle: data.tabTitle,
-      windowId: data.windowId
-    };
-    OB.Layout.ViewManager.openView(openObject.viewId, openObject);
+    OB.Utilities.openView(data.windowId, data.tabId, data.tabTitle, data.recordId);
   };
   
   var reqObj = {
@@ -47,9 +101,6 @@ OB.Utilities.openDirectView = function(sourceWindowId, keyColumn, targetEntity, 
       inpKeyReferenceId: recordId,
       inpwindowId: sourceWindowId,
       inpKeyReferenceColumnName: keyColumn
-    },
-    clientContext: {
-      targetEntity: targetEntity
     },
     callback: callback,
     evalResult: true,

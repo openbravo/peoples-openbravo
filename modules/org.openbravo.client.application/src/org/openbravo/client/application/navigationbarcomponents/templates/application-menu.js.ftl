@@ -162,24 +162,18 @@ isc.MenuButton.create(OB.ApplicationMenuButtonStylingProperties, {
     },
     
     itemClick: function(item, colNum) {
-        var isTestEnvironment = OB.Utilities.hasUrlParameter('window', 'new');
+        var isClassicEnvironment = OB.Utilities.useClassicMode(item.windowId);
         var selectedView = null;
-        if (item.viewId) {
-            if (isTestEnvironment && item.viewId === 'OBClassicWindow') {
-              selectedView = {viewId: '_' + item.windowId, windowId: item.windowId, tabId: item.tabId, id: item.tabId, command: 'DEFAULT', tabTitle: item.title};
-            } else {
-              selectedView = item;
+        if (item.tabId) {
+            selectedView = OB.Utilities.openView(item.windowId, item.tabId, item.title);
+            if (selectedView) {
+              OB.RecentUtilities.addRecent('UINAVBA_MenuRecentList', selectedView);
             }
+            return;
         } else if (item.recentObject) {
             selectedView = item.recentObject;
             if (!selectedView.viewId) {
                 selectedView.viewId = 'OBClassicWindow';
-            }
-        } else if (item.tabId) {
-            if (isTestEnvironment) {
-              selectedView = {viewId: '_' + item.windowId, windowId: item.windowId, tabId: item.tabId, id: item.tabId, command: 'DEFAULT', tabTitle: item.title};
-            } else {
-              selectedView = {viewId: 'OBClassicWindow', windowId: item.windowId, tabId: item.tabId, id: item.tabId, command: 'DEFAULT', tabTitle: item.title};
             }
         } else if (item.manualUrl) {
             if (item.manualProcessId) {

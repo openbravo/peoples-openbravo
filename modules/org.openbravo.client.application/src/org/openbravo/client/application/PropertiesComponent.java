@@ -27,6 +27,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Template;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -83,6 +84,10 @@ public class PropertiesComponent extends BaseTemplateComponent {
         localProperty.setId(preference.getAttribute());
       }
 
+      if (preference.getWindow() != null) {
+        localProperty.setId(localProperty.getId() + "_" + DalUtil.getId(preference.getWindow()));
+      }
+      
       // prevent duplicates
       if (handledIds.contains(localProperty.getId())) {
         continue;

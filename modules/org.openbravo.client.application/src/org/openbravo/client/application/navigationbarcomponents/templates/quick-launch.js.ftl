@@ -163,8 +163,6 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
          optionDataSource: OB.Datasource.get('${data.dataSourceId}'),      
 
          emptyPickListMessage: OB.I18N.getLabel('OBUISC_ListGrid.emptyMessage'),
-     
-         isTestEnvironment: OB.Utilities.hasUrlParameter('window', 'new'),
          
          pickValue: function(theValue) {
             // HACK: set this temporary value to prevent a temporary 
@@ -177,19 +175,16 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
             this.Super('pickValue', arguments);
 
             if (this.getSelectedRecord()) {
-             var value = this.getValue();
+             var value = this.getValue(), command;
              var record  = this.getSelectedRecord();
              isc.OBQuickRun.currentQuickRun.doHide();
              var openObject = null; 
              if (record.optionType && record.optionType === 'tab') {
-                if (this.isTestEnvironment) {
-                  openObject = {viewId: '_' + record.windowId, windowId: record.windowId, id: value, tabId: value, tabTitle: record[OB.Constants.IDENTIFIER]};
-                  <#if !data.quickLaunch>
-                  openObject.command = isc.OBStandardWindow.COMMAND_NEW;
-                  </#if>
-                } else {
-                  openObject = {viewId: 'OBClassicWindow', windowId: record.windowId, id: value, tabId: value, command: '${data.command}', tabTitle: record[OB.Constants.IDENTIFIER]};
+                openObject = OB.Utilities.openView(record.windowId, value, record[OB.Constants.IDENTIFIER], null, '${data.command}', record.icon);
+                if (openObject) {             
+                  OB.RecentUtilities.addRecent('${data.recentPropertyName}', openObject);
                 }
+                return;
              } else if (record.optionType && record.optionType === 'external') {
                 openObject = {viewId: 'OBExternalPage', id: value, contentsUrl: value, tabTitle: record[OB.Constants.IDENTIFIER]};
              } else if (record.optionType && record.optionType === 'process') {

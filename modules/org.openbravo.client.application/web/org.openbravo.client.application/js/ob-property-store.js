@@ -52,8 +52,12 @@
     //
     // Parameters:
     // * {{{propertyName}}}: the name of the property
+    // * {{{windowId}}}: the system will first search for property on windowId level
     //
-    get: function(/* String */propertyName){
+    get: function(/* String */propertyName, windowId){
+      if (windowId && OB.Properties[propertyName + '_' + windowId]) {
+        return OB.Properties[propertyName + '_' + windowId];
+      }
       if (!OB.Properties[propertyName]) {
         return null;
       }

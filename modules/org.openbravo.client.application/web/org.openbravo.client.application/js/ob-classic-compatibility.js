@@ -91,34 +91,7 @@
     // * {{{form}}} is an Object of the form from where it has been submitted
     //
     sendDirectLink: function(/* String */action, /* Object */ form){
-    
-      //
-      // Opens the MDI tab of the clicked link
-      //
-      function openDirectLink(/* String */address){
-        var addressObj = eval('(' + address + ')');
-        
-        if (!addressObj.recordId || addressObj.recordId.length === 0) {
-          L.ViewManager.openView('OBClassicWindow', {
-            tabTitle: addressObj.tabTitle,
-            windowId: addressObj.windowId,
-            tabId: addressObj.tabId,
-            mappingName: addressObj.mappingName,
-            command: 'DEFAULT'
-          });
-        } else {
-          L.ViewManager.openView('OBClassicWindow', {
-            tabTitle: addressObj.tabTitle,
-            windowId: addressObj.windowId,
-            tabId: addressObj.tabId,
-            mappingName: addressObj.mappingName,
-            keyParameter: addressObj.keyParameter,
-            recordId: addressObj.recordId,
-            command: 'DIRECT'
-          });
-        }
-      }
-      
+
       //
       // Returns a form field and value as a javascript object composed by name and value fields
       //
@@ -201,7 +174,7 @@
       // target address from the back-end
       //
       function fetchSendDirectLinkCallback(/* Object */response, /* String */ data){
-        openDirectLink(data);
+        OB.Utilities.openView(data.windowId, data.tabId, data.tabTitle, data.recordId);
       }
       
       //
@@ -220,7 +193,7 @@
         var reqObj = {
           params: paramsObj,
           callback: fetchSendDirectLinkCallback,
-          evalResult: false,
+          evalResult: true,
           httpMethod: 'GET',
           useSimpleHttp: true,
           actionURL: actionURL
