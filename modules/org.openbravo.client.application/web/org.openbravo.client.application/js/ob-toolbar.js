@@ -49,7 +49,7 @@ isc.OBToolbar.addClassProperties({
         if (!me.disabled) {
           me.action();
         }
-      }
+      };
       OB.KeyboardManager.KS.add('ToolBar_Save', ksAction);
     },
     disableShortcut: function(){
@@ -652,7 +652,7 @@ isc.OBToolbar.addProperties({
   refreshCustomButtons: function(){
     function doRefresh(buttons, currentValues, hideAllButtons){
       for (var i = 0; i < buttons.length; i++) {
-        if (buttons[i].refresh) {
+        if (buttons[i].updateState) {
           buttons[i].updateState(currentValues, hideAllButtons);
         }
       }
