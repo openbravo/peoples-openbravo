@@ -153,7 +153,8 @@ public class StandardWindowComponent extends BaseTemplateComponent {
 
     final List<OBViewTab> tempTabs = new ArrayList<OBViewTab>();
     for (Tab tab : getWindow().getADTabList()) {
-      if (!tab.isActive()) {
+      // NOTE: grid sequence and field sequence tabs do not have any fields defined!
+      if (!tab.isActive() || tab.getADFieldList().isEmpty()) {
         continue;
       }
       final OBViewTab tabComponent = createComponent(OBViewTab.class);
