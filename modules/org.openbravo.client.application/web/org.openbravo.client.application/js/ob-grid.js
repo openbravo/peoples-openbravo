@@ -122,13 +122,14 @@ isc.OBGrid.addProperties({
       
       // keep the funnel stuff placed correctly
       layoutChildren : function () {
-        this.Super("layoutChildren", arguments);
+        var ret = this.Super("layoutChildren", arguments);
         if (this.funnelLayout) { 
             this.funnelLayout.setLeft(this.computeFunnelLeft());
         }
         if (this.filterImage) { 
           this.filterImage.setLeft(this.computeFunnelLeft(2));
         }
+        return ret;
       },
       
       actionButtonProperties: {
