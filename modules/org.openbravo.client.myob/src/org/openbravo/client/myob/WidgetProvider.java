@@ -71,7 +71,7 @@ public abstract class WidgetProvider {
   private static final String HEIGHT = "height";
   private static final String PRIORITY = "priority";
   protected static final String PARAMETERS = "parameters";
-  private static final String FIELDDEFINITIONS = "fieldDefinitions";
+  protected static final String FIELDDEFINITIONS = "fieldDefinitions";
   private static final String ITEMDATA = "itemData";
   private static final String PARAMETERID = "parameterId";
   private static final String PARAMETERNAME = "name";

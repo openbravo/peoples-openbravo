@@ -19,6 +19,7 @@
 package org.openbravo.client.myob;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 
@@ -51,6 +52,10 @@ public class URLWidgetProvider extends WidgetProvider {
       final JSONObject parameters = new JSONObject();
       jsonObject.put(WidgetProvider.PARAMETERS, parameters);
       parameters.put(SRC, getWidgetClass().getOBKMOWidgetURLList().get(0).getURL());
+      if (jsonObject.getJSONArray(WidgetProvider.FIELDDEFINITIONS).length() > 0) {
+        log.warn("URLWidget does not support parameters. Ignoring field definitions.");
+        jsonObject.put(WidgetProvider.FIELDDEFINITIONS, new JSONArray());
+      }
       return jsonObject;
     } catch (Exception e) {
       throw new OBException(e);
