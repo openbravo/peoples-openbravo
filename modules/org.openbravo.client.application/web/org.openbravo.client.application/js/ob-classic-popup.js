@@ -19,7 +19,7 @@
 
 // This file contains declarations for 3 types:
 // - OBPopupClassicWindow: opens a popup to show a url, a classic OB process window.
-// - OBPopupModal: Opens a classic compatibility modal popup
+// - OBClassicPopupModal: Opens a classic compatibility modal popup
 // - OBClassicPopup: shows popups like heartbeat
 
 // = Popup Classic OB Window =
@@ -50,11 +50,11 @@ isc.OBPopupClassicWindow.addMethods({
   }
 });
 
-//= Popup Classic OB Window =
+//= OBClassicPopupModal =
 //
 // Opens a modal classic compatibility popup to show a url. Is used to show a classic OB process window in modal popups.
 //
-isc.defineClass('OBPopupModal', isc.Class).addProperties({
+isc.defineClass('OBClassicPopupModal', isc.Class).addProperties({
   showsItself: true,
   show: function() {
     OB.Layout.ClassicOBCompatibility.Popup.open(this.id, 625, 450,  OB.Application.contextUrl + this.obManualURL+'?Command='+this.command, '', null, false, false, true);
