@@ -84,6 +84,7 @@ public abstract class WidgetProvider {
   private static final String DBINSTANCEID = "dbInstanceId";
   private static final String CAN_MAXIMIZE = "showMaximizeButton";
   private static final String MENU_ITEMS = "menuItems";
+  private static final Long WIDGET_HEADER_HEIGHT = 35L;
 
   private Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -104,7 +105,7 @@ public abstract class WidgetProvider {
       jsonObject.put(MyOpenbravoWidgetComponent.CLASSNAMEPARAMETER, this
           .getClientSideWidgetClassName());
       jsonObject.put(TITLE, MyOBUtils.getWidgetTitle(widgetClass));
-      jsonObject.put(HEIGHT, widgetClass.getHeight());
+      jsonObject.put(HEIGHT, widgetClass.getHeight() + WIDGET_HEADER_HEIGHT);
       jsonObject.put(MENU_ITEMS, MyOBUtils.getWidgetMenuItems(widgetClass));
       if (widgetClass.getWidgetSuperclass() != null) {
         jsonObject.put(CAN_MAXIMIZE, widgetClass.getWidgetSuperclass().isCanMaximize());
@@ -180,7 +181,7 @@ public abstract class WidgetProvider {
     jsonObject.put(TITLE, MyOBUtils.getWidgetTitle(widgetInstance));
     jsonObject.put(COLNUM, widgetInstance.getColumnPosition());
     jsonObject.put(ROWNUM, widgetInstance.getSequenceInColumn());
-    jsonObject.put(HEIGHT, widgetClass.getHeight());
+    jsonObject.put(HEIGHT, widgetClass.getHeight() + WIDGET_HEADER_HEIGHT);
     jsonObject.put(PRIORITY, widgetInstance.getRelativePriority());
 
     final JSONObject widgetParameters = new JSONObject();
