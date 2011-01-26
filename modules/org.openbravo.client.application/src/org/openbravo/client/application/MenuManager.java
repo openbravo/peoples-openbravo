@@ -439,6 +439,7 @@ public class MenuManager implements Serializable {
     private MenuOption parentMenuOption;
     private List<MenuOption> children = new ArrayList<MenuOption>();
     private Boolean visible = null;
+    private boolean showInClassicMode = false;
 
     public boolean isSingleRecord() {
       return getTab() != null && getTab().getUIPattern().equals("SR");
@@ -618,6 +619,7 @@ public class MenuManager implements Serializable {
 
     public void setTab(Tab tab) {
       this.tab = tab;
+      showInClassicMode = ApplicationUtils.showWindowInClassicMode(tab.getWindow());
     }
 
     public List<MenuParameter> getParameters() {
@@ -628,6 +630,10 @@ public class MenuManager implements Serializable {
         }
       }
       return parameters;
+    }
+
+    public boolean isShowInClassicMode() {
+      return showInClassicMode;
     }
   }
 

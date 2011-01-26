@@ -30,6 +30,9 @@ OB.Utilities.useClassicMode = function(windowId){
   if (OB.Utilities.hasUrlParameter('mode', 'classic')) {
     return true;
   }
+  if (OB.WindowDefinitions[windowId] && OB.WindowDefinitions[windowId].showInClassicMode) {
+    return true;
+  }
   var propValue = OB.PropertyStore.get('OBUIAPP_UseClassicMode', windowId);
   if (propValue === 'Y') {
     return true;

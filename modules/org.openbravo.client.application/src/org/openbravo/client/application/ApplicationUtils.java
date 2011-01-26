@@ -31,6 +31,7 @@ import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.ui.Window;
 
 /**
  * Utility class for common operations
@@ -40,6 +41,11 @@ import org.openbravo.model.ad.ui.Field;
 public class ApplicationUtils {
 
   private static Logger log = Logger.getLogger(ApplicationUtils.class);
+
+  static boolean showWindowInClassicMode(Window window) {
+    // TODO: implement me
+    return false;
+  }
 
   public static boolean isClientAdmin() {
     return OBContext.getOBContext().getRole().isClientAdmin();
