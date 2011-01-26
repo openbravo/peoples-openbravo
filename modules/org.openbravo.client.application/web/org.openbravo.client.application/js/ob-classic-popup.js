@@ -11,14 +11,15 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 
-// This file contains declarations for 2 types:
+// This file contains declarations for 3 types:
 // - OBPopupClassicWindow: opens a popup to show a url, a classic OB process window.
+// - OBPopupModal: Opens a classic compatibility modal popup
 // - OBClassicPopup: shows popups like heartbeat
 
 // = Popup Classic OB Window =
@@ -49,6 +50,17 @@ isc.OBPopupClassicWindow.addMethods({
   }
 });
 
+//= Popup Classic OB Window =
+//
+// Opens a modal classic compatibility popup to show a url. Is used to show a classic OB process window in modal popups.
+//
+isc.defineClass('OBPopupModal', isc.Class).addProperties({
+  showsItself: true,
+  show: function() {
+    OB.Layout.ClassicOBCompatibility.Popup.open(this.id, 625, 450,  OB.Application.contextUrl + this.obManualURL+'?Command='+this.command, '', null, false, false, true);
+  }
+  
+});
 
 isc.ClassFactory.defineClass('OBClassicPopup', isc.OBPopup);
 

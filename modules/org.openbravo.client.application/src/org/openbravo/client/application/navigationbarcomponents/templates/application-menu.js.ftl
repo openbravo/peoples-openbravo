@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -179,7 +179,7 @@ isc.MenuButton.create(OB.ApplicationMenuButtonStylingProperties, {
             if (item.manualProcessId) {
                 selectedView = {viewId: 'OBClassicWindow', obManualURL: item.manualUrl, processId: item.manualProcessId, id: item.manualProcessId, command: 'DEFAULT', tabTitle: item.title};
             } else if (item.processId) {
-                selectedView = {viewId: 'OBPopupClassicWindow', obManualURL: item.manualUrl, processId: item.processId, id: item.processId, command: 'BUTTON' + item.processId, tabTitle: item.title};
+                selectedView = {viewId: 'OBPopupModal', obManualURL: item.manualUrl, processId: item.processId, id: item.processId, command: 'BUTTON' + item.processId, tabTitle: item.title};
             } else if (item.formId) { 
                 selectedView = {viewId: 'OBClassicWindow', obManualURL: item.manualUrl, id: item.manualUrl, formId: item.formId, command: 'DEFAULT', tabTitle: item.title};
             } else {
