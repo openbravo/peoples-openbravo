@@ -411,7 +411,13 @@ public class MatchTransaction extends HttpSecureAppServlet {
           finTrans.getFinPayment().setStatus(
               (finTrans.getFinPayment().isReceipt()) ? "RDNC" : "PWNC");
         }
-        finTrans.setStatus((finTrans.getFinPayment().isReceipt()) ? "RDNC" : "PWNC");
+        boolean isReceipt = false;
+        if (finTrans.getFinPayment() != null) {
+          isReceipt = finTrans.getFinPayment().isReceipt();
+        } else {
+          isReceipt = finTrans.getDepositAmount().compareTo(finTrans.getPaymentAmount()) > 0;
+        }
+        finTrans.setStatus(isReceipt ? "RDNC" : "PWNC");
         finTrans.setReconciliation(null);
         OBDal.getInstance().save(finTrans);
         OBDal.getInstance().flush();
