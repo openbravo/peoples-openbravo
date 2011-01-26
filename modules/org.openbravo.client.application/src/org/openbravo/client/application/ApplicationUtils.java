@@ -31,6 +31,7 @@ import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 
 /**
@@ -43,7 +44,20 @@ public class ApplicationUtils {
   private static Logger log = Logger.getLogger(ApplicationUtils.class);
 
   static boolean showWindowInClassicMode(Window window) {
-    // TODO: implement me
+    for (Tab tab : window.getADTabList()) {
+      if (tab.getSQLWhereClause() != null && tab.getHqlwhereclause() == null) {
+        // There is a tab with a SQL whereclause, but without a defined HQL whereclause
+        return true;
+      }
+      if (tab.getSQLOrderByClause() != null && tab.getHqlorderbyclause() == null) {
+        // There is a tab with a SQL order by clause, but without a defined HQL order by clause
+        return true;
+      }
+      if (tab.getFilterClause() != null && tab.getHqlfilterclause() == null) {
+        // There is a tab with a SQL filter clause, but without a defined HQL filter clause
+        return true;
+      }
+    }
     return false;
   }
 
