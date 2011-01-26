@@ -70,5 +70,11 @@ var OB = {
         ERROR : "error"        
     },
     
-    I18N: {}
+    I18N: {},
+    
+    AccessibleEntities: {
+    <#list data.accessibleEntities as entity>
+    '${entity.name?js_string}':  true<#if entity_has_next>,</#if>
+    </#list>
+    }
 };

@@ -21,7 +21,9 @@ package org.openbravo.client.kernel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.UIDefinitionController.FormatDefinition;
@@ -54,6 +56,13 @@ public class ApplicationComponent extends BaseTemplateComponent {
           UIDefinitionController.INPUTFORMAT_QUALIFIER);
     }
     return formatDefinition;
+  }
+
+  public Set<Entity> getAccessibleEntities() {
+    final Set<Entity> entities = OBContext.getOBContext().getEntityAccessChecker()
+        .getReadableEntities();
+    entities.addAll(OBContext.getOBContext().getEntityAccessChecker().getWritableEntities());
+    return entities;
   }
 
   public String getDefaultGroupingSymbol() {

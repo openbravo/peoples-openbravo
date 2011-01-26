@@ -672,7 +672,7 @@ isc.OBViewForm.addProperties({
   getTitleHTML: function(item, error){
     var titleHTML = this.Super('getTitleHTML', arguments);
     
-    if (item.showLinkIcon) {
+    if (item.showLinkIcon && item.targetEntity && OB.AccessibleEntities[item.targetEntity]) {
     
       // the parent property does not need a link, as it is shown in the 
       // parent view
