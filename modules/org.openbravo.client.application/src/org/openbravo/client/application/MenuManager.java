@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,8 +36,10 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.domain.ModelImplementationMapping;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.Menu;
@@ -591,6 +593,21 @@ public class MenuManager implements Serializable {
 
     public boolean isProcess() {
       return getType().equals(MenuEntryType.Process);
+    }
+
+    public boolean isModal() {
+      if (isProcess()) {
+        try {
+          return "Y".equals(Preferences.getPreferenceValue("ModalProcess"
+              + getMenu().getProcess().getId(), false, OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(),
+              OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+        } catch (PropertyException e) {
+          // If not found or conflict, the process is modal
+          return true;
+        }
+      }
+      return true;
     }
 
     public boolean isProcessManual() {

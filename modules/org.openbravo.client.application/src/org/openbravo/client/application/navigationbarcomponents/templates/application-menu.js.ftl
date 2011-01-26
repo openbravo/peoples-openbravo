@@ -179,7 +179,8 @@ isc.MenuButton.create(OB.ApplicationMenuButtonStylingProperties, {
             if (item.manualProcessId) {
                 selectedView = {viewId: 'OBClassicWindow', obManualURL: item.manualUrl, processId: item.manualProcessId, id: item.manualProcessId, command: 'DEFAULT', tabTitle: item.title};
             } else if (item.processId) {
-                selectedView = {viewId: 'OBClassicPopupModal', obManualURL: item.manualUrl, processId: item.processId, id: item.processId, command: 'BUTTON' + item.processId, tabTitle: item.title};
+                var viewName = item.modal?'OBClassicPopupModal':'OBPopupClassicWindow';
+                selectedView = {viewId: viewName, obManualURL: item.manualUrl, processId: item.processId, id: item.processId, command: 'BUTTON' + item.processId, tabTitle: item.title};
             } else if (item.formId) { 
                 selectedView = {viewId: 'OBClassicWindow', obManualURL: item.manualUrl, id: item.manualUrl, formId: item.formId, command: 'DEFAULT', tabTitle: item.title};
             } else {
@@ -253,7 +254,7 @@ isc.MenuButton.create(OB.ApplicationMenuButtonStylingProperties, {
         , tabId: '${menuOption.id?js_string}'
         , windowId: '${menuOption.menu.window.id?js_string}'
     <#elseif menuOption.process>
-        , manualUrl: '${menuOption.id?js_string}', processId: '${menuOption.menu.process.id}'
+        , manualUrl: '${menuOption.id?js_string}', processId: '${menuOption.menu.process.id}', modal: ${menuOption.modal?string}
     <#elseif menuOption.processManual>
         , manualUrl: '${menuOption.id?js_string}', manualProcessId: '${menuOption.menu.process.id}'
     <#elseif menuOption.task>
