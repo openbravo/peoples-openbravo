@@ -557,8 +557,19 @@ isc.OBViewGrid.addProperties({
       criteria[OB.Constants.ORDERBY_PARAMETER] = this.orderByClause;
     }
     
-    if (this.whereClause) {
+    if (this.filterClause) {
+      if (this.whereClause) {
+        criteria[OB.Constants.WHERE_PARAMETER] = ' ((' + this.whereClause + ') and (' + this.filterClause + ")) ";
+      } else {
+        criteria[OB.Constants.WHERE_PARAMETER] =  this.filterClause;
+      }
+      this.setImplicitFilteringIconOn(true, criteria);
+    } else if (this.whereClause) {
       criteria[OB.Constants.WHERE_PARAMETER] = this.whereClause;
+      this.setImplicitFilteringIconOn(false, criteria);
+    } else {
+      criteria[OB.Constants.WHERE_PARAMETER] = null;
+      this.setImplicitFilteringIconOn(false, criteria);
     }
     
     // add all the new session properties context info to the criteria

@@ -67,6 +67,7 @@ public class OBViewTab extends BaseTemplateComponent {
   private Field keyField;
   private Column keyColumn;
   private boolean buttonSessionLogic;
+  private boolean isRootTab;
 
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
@@ -201,6 +202,8 @@ public class OBViewTab extends BaseTemplateComponent {
     final OBViewGridComponent viewGridComponent = createComponent(OBViewGridComponent.class);
     viewGridComponent.setParameters(getParameters());
     viewGridComponent.setTab(tab);
+    viewGridComponent.setApplyTransactionalFilter(isRootTab()
+        && this.tab.getWindow().getWindowType().equals("T"));
     return viewGridComponent.generate();
   }
 
@@ -582,6 +585,14 @@ public class OBViewTab extends BaseTemplateComponent {
       label = Utility.messageBD(new DalConnectionProvider(), "Print", OBContext.getOBContext()
           .getLanguage().getLanguage());
     }
+  }
+
+  public boolean isRootTab() {
+    return isRootTab;
+  }
+
+  public void setRootTab(boolean isRootTab) {
+    this.isRootTab = isRootTab;
   }
 
 }

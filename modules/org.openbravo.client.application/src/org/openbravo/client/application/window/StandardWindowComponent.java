@@ -200,7 +200,9 @@ public class StandardWindowComponent extends BaseTemplateComponent {
         }
       }
     }
-
+    if (rootTabComponent != null) {
+      rootTabComponent.setRootTab(true);
+    }
     return rootTabComponent;
   }
 }

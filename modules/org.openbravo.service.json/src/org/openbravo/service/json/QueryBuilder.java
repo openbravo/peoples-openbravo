@@ -34,8 +34,11 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.base.util.Check;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * Encapsulates the logic to translate filter properties and values received from the client to a
@@ -99,9 +102,11 @@ public class QueryBuilder {
     }
 
     // add some default filter parameters
-    filterParameters.put("@user@", OBContext.getOBContext().getUser().getId());
-    if (!filterParameters.containsKey("@client@")) {
-      filterParameters.put("@client@", OBContext.getOBContext().getUser().getId());
+    filterParameters
+        .put(JsonConstants.QUERY_PARAM_USER, OBContext.getOBContext().getUser().getId());
+    if (!filterParameters.containsKey(JsonConstants.QUERY_PARAM_CLIENT)) {
+      filterParameters.put(JsonConstants.QUERY_PARAM_CLIENT, OBContext.getOBContext().getUser()
+          .getId());
     }
 
     final SimpleDateFormat simpleDateFormat = JsonUtils.createDateFormat();
@@ -317,6 +322,22 @@ public class QueryBuilder {
     }
     if (whereClause.trim().length() > 0) {
       whereClause = " where " + whereClause;
+    }
+
+    // handle special transactional range parameter
+    if (whereClause.contains(JsonConstants.QUERY_PARAM_TRANSACTIONAL_RANGE)) {
+      final String alias = getTypedParameterAlias();
+      String windowId = RequestContext.get().getRequestParameter("windowId");
+      if (windowId == null) {
+        windowId = "";
+      }
+      final String range = Utility.getTransactionalDate(new DalConnectionProvider(false),
+          RequestContext.get().getVariablesSecureApp(), windowId);
+      final int rangeNum = Integer.parseInt(range);
+      final Calendar cal = Calendar.getInstance();
+      cal.add(Calendar.DAY_OF_MONTH, -1 * rangeNum);
+      whereClause = whereClause.replace(JsonConstants.QUERY_PARAM_TRANSACTIONAL_RANGE, alias);
+      typedParameters.add(cal.getTime());
     }
 
     whereClause = setRequestParameters(whereClause);

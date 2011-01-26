@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.kernel.BaseTemplateComponent;
@@ -31,10 +33,12 @@ import org.openbravo.client.kernel.Template;
 import org.openbravo.client.kernel.reference.StringUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.service.json.JsonConstants;
 
 /**
@@ -47,6 +51,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
   private static final String TEMPLATE_ID = "91DD63545B674BE8801E1FA4F48FF4C6";
   private static Long ZERO = new Long(0);
 
+  private boolean applyTransactionalFilter = false;
   private Tab tab;
   private List<LocalField> fields = null;
 
@@ -74,6 +79,31 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       return tab.getHqlorderbyclause();
     }
     return JsonConstants.IDENTIFIER;
+  }
+
+  public String getFilterClause() {
+    if (tab.getHqlfilterclause() != null) {
+      return addTransactionalFilter(tab.getHqlfilterclause());
+    }
+    return addTransactionalFilter("");
+  }
+
+  private String addTransactionalFilter(String filterClause) {
+    if (!this.isApplyTransactionalFilter()) {
+      return filterClause;
+    }
+    String transactionalFilter = " e.updated > " + JsonConstants.QUERY_PARAM_TRANSACTIONAL_RANGE
+        + " ";
+    final Entity entity = ModelProvider.getInstance().getEntityByTableId(
+        (String) DalUtil.getId(tab.getTable()));
+    if (entity.hasProperty(Order.PROPERTY_PROCESSED)) {
+      transactionalFilter += " and e.processed = false ";
+    }
+
+    if (filterClause.length() > 0) {
+      return " ((" + transactionalFilter + ") and (" + filterClause + ")) ";
+    }
+    return transactionalFilter;
   }
 
   public List<String> getForeignKeyFields() {
@@ -300,6 +330,14 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       windowEntities.add(localTab.getTable().getName());
     }
     return windowEntities;
+  }
+
+  public boolean isApplyTransactionalFilter() {
+    return applyTransactionalFilter;
+  }
+
+  public void setApplyTransactionalFilter(boolean applyTransactionalFilter) {
+    this.applyTransactionalFilter = applyTransactionalFilter;
   }
 
 }

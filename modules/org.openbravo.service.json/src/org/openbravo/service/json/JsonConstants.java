@@ -99,4 +99,11 @@ public class JsonConstants {
   public static final String DATA = "data";
 
   public static final String IN_PARAMETER_SEPARATOR = "__;__";
+
+  public static final String SESSION_PARAM_TRANSACTIONALRANGE = "Transactional$Range".toUpperCase();
+
+  public static final String QUERY_PARAM_CLIENT = "@client@";
+  public static final String QUERY_PARAM_USER = "@user@";
+  public static final String QUERY_PARAM_TRANSACTIONAL_RANGE = "@transactionalRange@";
+
 }
