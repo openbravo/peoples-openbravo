@@ -97,11 +97,12 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     final Entity entity = ModelProvider.getInstance().getEntityByTableId(
         (String) DalUtil.getId(tab.getTable()));
     if (entity.hasProperty(Order.PROPERTY_PROCESSED)) {
-      transactionalFilter += " and e.processed = false ";
+      transactionalFilter += " or e.processed = false ";
     }
+    transactionalFilter = " (" + transactionalFilter + ") ";
 
     if (filterClause.length() > 0) {
-      return " ((" + transactionalFilter + ") and (" + filterClause + ")) ";
+      return " (" + transactionalFilter + " and (" + filterClause + ")) ";
     }
     return transactionalFilter;
   }
