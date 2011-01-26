@@ -513,18 +513,19 @@ isc.OBViewGrid.addProperties({
   },
   
   convertCriteria: function(criteria){
+    var selectedValues;
+
     criteria = criteria || {};
-    
-    criteria = OB.Utilities._getTabInfoRequestProperties(this.view, criteria);
-    
-    var isFiltering = criteria.length > 0;
-    var filterValues = [];
-    var index = 0, selectedValues;
-    var fkFieldsLength = this.foreignKeyFieldNames.getLength(), filterValue = null;
-    
+
     if (this.targetRecordId) {
+      // do not filter on anything with a targetrecord
+      criteria = {};
+      // remove the filter clause we don't want to use
+      this.filterClause = null;
       criteria._targetRecordId = this.targetRecordId;
     }
+    
+    criteria = OB.Utilities._getTabInfoRequestProperties(this.view, criteria);
     
     // note pass in criteria otherwise infinite looping!
     this.resetEmptyMessage(criteria);
@@ -539,16 +540,6 @@ isc.OBViewGrid.addProperties({
         criteria[this.view.parentProperty] = selectedValues[0][OB.Constants.ID];
       }
     }
-    
-    // now repair the filtering on foreign keys to use the identifier
-    //    for (index = 0; index < fkFieldsLength; index++) {
-    //      if (criteria[this.foreignKeyFieldNames[index]]) {
-    //        filterValue = criteria[this.foreignKeyFieldNames[index]];
-    //        delete criteria[this.foreignKeyFieldNames[index]];
-    //        criteria[this.foreignKeyFieldNames[index] + '.' +
-    //        OB.Constants.IDENTIFIER] = filterValue;
-    //      }
-    //    }
     
     // prevent the count operation
     criteria[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';

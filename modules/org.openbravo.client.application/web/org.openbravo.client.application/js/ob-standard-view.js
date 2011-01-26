@@ -928,6 +928,7 @@ isc.OBStandardView.addProperties({
     if (!tabInfos) {
       return;
     }
+    
     for (i = 0; i < tabInfos.length; i++) {
       if (tabInfos[i].targetTabId === this.tabId) {
         // found it..., check if a record needs to be edited
