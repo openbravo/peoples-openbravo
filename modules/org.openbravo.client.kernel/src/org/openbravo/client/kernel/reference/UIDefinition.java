@@ -357,8 +357,8 @@ public abstract class UIDefinition {
       // If column is mandatory we add an initial blank value
       if (!field.getColumn().isMandatory()) {
         JSONObject entry = new JSONObject();
-        entry.put(JsonConstants.ID, "");
-        entry.put(JsonConstants.IDENTIFIER, "");
+        entry.put(JsonConstants.ID, (String) null);
+        entry.put(JsonConstants.IDENTIFIER, (String) null);
         comboEntries.add(entry);
       }
       for (FieldProvider fp : values) {
@@ -377,7 +377,11 @@ public abstract class UIDefinition {
         } else {
           // In case the default value doesn't exist in the combo values, we choose the first one
           if (comboEntries.size() > 0) {
-            fieldProps.put("value", comboEntries.get(0).get(JsonConstants.ID));
+            if (comboEntries.get(0).has(JsonConstants.ID)) {
+              fieldProps.put("value", comboEntries.get(0).get(JsonConstants.ID));
+            } else {
+              fieldProps.put("value", (String) null);
+            }
           } else {
             fieldProps.put("value", "");
           }
