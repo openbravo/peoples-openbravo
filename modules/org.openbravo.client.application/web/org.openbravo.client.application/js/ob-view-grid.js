@@ -127,6 +127,7 @@ isc.OBViewGrid.addProperties({
   listEndEditAction: 'next',
   rowEndEditAction: 'next',
   modalEditing: true,
+  enforceVClipping: true,
   
   dataProperties: {
     useClientFiltering: false,
