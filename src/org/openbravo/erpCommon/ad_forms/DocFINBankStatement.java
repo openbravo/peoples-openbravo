@@ -131,7 +131,7 @@ public class DocFINBankStatement extends AcctServer {
           (totalAmount.signum() > 0 ? totalAmount.abs().toString() : ZERO.toString()), (totalAmount
               .signum() < 0 ? totalAmount.abs().toString() : ZERO.toString()), Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, conn);
-      fact.createLine(null, getAccount(conn, bst.getAccount(), as, totalAmount.signum() > 0),
+      fact.createLine(null, getAccount(conn, bst.getAccount(), as, totalAmount.signum() < 0),
           C_Currency_ID,
           (totalAmount.signum() < 0 ? totalAmount.abs().toString() : ZERO.toString()), (totalAmount
               .signum() > 0 ? totalAmount.abs().toString() : ZERO.toString()), Fact_Acct_Group_ID,
