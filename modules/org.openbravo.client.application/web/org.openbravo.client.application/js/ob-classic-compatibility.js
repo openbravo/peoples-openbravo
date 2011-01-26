@@ -345,7 +345,11 @@
           areParamsSet: false,
           isFramesetDraw: false,
           isLoaded: false,
-          htmlCode: '<html><head></head><frameset cols="*, 0%" rows="*" frameborder="no" border="0" framespacing="0"><frame id="MDIPopupContainer"></frame></frameset><body></body></html>',
+          htmlCode: '<html><head></head><frameset cols="*, 0%" rows="*" frameborder="no" border="0" framespacing="0">'+
+            '<frame id="MDIPopupContainer"></frame>'+
+            '<frame name="frameMenu" scrolling="no" src="' + OB.Application.contextUrl +
+            'utility/VerticalMenu.html" id="paramFrameMenuLoading"></frame>'+
+            '</frameset><body></body></html>',
           popupURL: url
         });
         cPopup.show();
