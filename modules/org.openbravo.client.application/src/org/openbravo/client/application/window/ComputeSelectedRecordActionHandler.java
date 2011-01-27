@@ -128,7 +128,6 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
       throw new OBException("No root tab found in window " + window);
     }
 
-    System.err.println("Computing tab info");
     final Tab tab = getTab(window, entityName);
     final TabInfo tabInfo = new TabInfo();
     tabInfo.setRecord(bob);
@@ -148,7 +147,6 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
     }
     final JSONObject result = new JSONObject();
     result.put(RESULT, new JSONArray(resultList));
-    System.err.println("Computing tab info done");
     return result;
   }
 
