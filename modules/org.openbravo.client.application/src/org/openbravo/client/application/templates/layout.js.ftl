@@ -40,8 +40,6 @@ function openRegistration() {
 }
 
 isc.Canvas.addClassProperties({neverUsePNGWorkaround:true});
-isc.Canvas.loadingImageSrc = '[SKINIMG]../../org.openbravo.client.application/images/system/windowLoading.gif';
-isc.Canvas.loadingImageSize = 70;
 
 OB.KeyboardManager.KS.readRegisteredKSList('OBUIAPP_KeyboardShortcuts');
 OB.KeyboardManager.KS.readRegisteredKSList('UINAVBA_KeyboardShortcuts');
@@ -87,7 +85,22 @@ OB.TopLayout = isc.HLayout.create({}, OB.MainLayoutStylingProperties.TopLayout);
 OB.TopLayout.CompanyImageLogo = isc.Img.create({
   imageType: 'normal'
 }, OB.MainLayoutStylingProperties.CompanyImageLogo);
-    
+OB.TestRegistry.register('org.openbravo.client.application.companylogo', OB.TopLayout.CompanyImageLogo);
+
+OB.TopLayout.OpenbravoLogo = isc.Img.create({
+    imageType: 'normal',
+    src: OB.Application.contextUrl + 'utility/GetOpenbravoLogo.png',
+    getInnerHTML: function() {
+        var html = this.Super('getInnerHTML', arguments);
+        <#if data.addProfessionalLink>
+        return '<a href="http://www.openbravo.com/product/erp/professional/" target="_new">' + html + '</a>';
+        <#else>
+        return html;
+        </#if>
+    }
+});
+OB.TestRegistry.register('org.openbravo.client.application.companylogo', OB.TopLayout.OpenbravoLogo);    
+
 OB.TopLayout.addMember(OB.Toolbar);
 OB.TopLayout.addMember(
         isc.HLayout.create({
@@ -96,18 +109,7 @@ OB.TopLayout.addMember(
             layoutRightMargin: 10,
             membersMargin: 10,
             defaultLayoutAlign: 'center',
-            members: [OB.TopLayout.CompanyImageLogo, isc.Img.create({
-                imageType: 'normal',
-                src: OB.Application.contextUrl + 'utility/GetOpenbravoLogo.png',
-                getInnerHTML: function() {
-                    var html = this.Super('getInnerHTML', arguments);
-                    <#if data.addProfessionalLink>
-                    return '<a href="http://www.openbravo.com/product/erp/professional/" target="_new">' + html + '</a>';
-                    <#else>
-                    return html;
-                    </#if>
-                }
-            })]
+            members: [OB.TopLayout.CompanyImageLogo, OB.TopLayout.OpenbravoLogo]
         })      
 );
 
