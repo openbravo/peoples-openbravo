@@ -141,15 +141,15 @@ isc.OBGrid.addProperties({
         initWidget: function(){
           thisGrid.filterImage = this;
           this.recordEditor.filterImage = this;
-          if (thisGrid.implicitFilteringOn) {
-            this.prompt = OB.I18N.getLabel('OBUIAPP_GridImplicitFilterIconToolTip');      
+          if (thisGrid.filterClause) {
+            this.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterImplicitToolTip');      
             this.visibility = 'inherit';
           }
           return this.Super('initWidget', arguments);
         },
         click: function(){
           // get rid of the initial filter clause
-          delete this.filterClause;
+          delete thisGrid.filterClause;
           this.recordEditor.getEditForm().clearValues();
           this.recordEditor.performAction();
         }
@@ -189,32 +189,25 @@ isc.OBGrid.addProperties({
   
   // show or hide the filter button
   filterEditorSubmit: function(criteria){
-    // get rid of the initial filter clause
-    delete this.filterClause;
-
-    this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterIconToolTip');
-    
     this.checkShowFilterFunnelIcon(criteria);
-  },
-
-  setImplicitFilteringIconOn: function(state, criteria) {
-    if (!this.filterImage) {
-      this.implicitFilteringOn = true;
-      return;
-    }
-    if (state) {
-      this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridImplicitFilterIconToolTip');      
-      this.filterImage.show(true);
-    } else {
-      this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterIconToolTip');
-      this.checkShowFilterFunnelIcon(criteria);
-    }
   },
   
   checkShowFilterFunnelIcon: function (criteria) {
-    if (this.isGridFiltered(criteria)) {
+    if (!this.filterImage) {
+      return;
+    }
+    var gridIsFiltered = this.isGridFiltered(criteria);
+    if (this.filterClause && gridIsFiltered) {
+      this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterBothToolTip');      
+      this.filterImage.show(true);
+    } else if (this.filterClause) {
+      this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterImplicitToolTip');      
+      this.filterImage.show(true);
+    } else if (gridIsFiltered) {
+      this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterExplicitToolTip');      
       this.filterImage.show(true);
     } else {
+      this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterIconToolTip');
       this.filterImage.hide();
     }
   },

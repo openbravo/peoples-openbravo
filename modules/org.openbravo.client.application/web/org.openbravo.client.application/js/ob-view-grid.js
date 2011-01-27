@@ -554,13 +554,13 @@ isc.OBViewGrid.addProperties({
       } else {
         criteria[OB.Constants.WHERE_PARAMETER] =  this.filterClause;
       }
-      this.setImplicitFilteringIconOn(true, criteria);
+      this.checkShowFilterFunnelIcon(criteria);
     } else if (this.whereClause) {
       criteria[OB.Constants.WHERE_PARAMETER] = this.whereClause;
-      this.setImplicitFilteringIconOn(false, criteria);
+      this.checkShowFilterFunnelIcon(criteria);
     } else {
       criteria[OB.Constants.WHERE_PARAMETER] = null;
-      this.setImplicitFilteringIconOn(false, criteria);
+      this.checkShowFilterFunnelIcon(criteria);
     }
     
     // add all the new session properties context info to the criteria
