@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2010 Openbravo SLU
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,42 +32,42 @@ var OB = {
     },
 
     User : {
-        id : "${data.user.id}",
-        firstName : "${(data.user.firstName!'')?js_string}",
-        lastName : "${(data.user.lastName!'')?js_string}",
-        userName : "${(data.user.username!'')?js_string}",
-        name : "${(data.user.name!'')?js_string}",
-        email : "${(data.user.email!'')?js_string}",
-        roleId: "${data.role.id}",
-        roleName: "${data.role.name}",
-        clientId: "${data.client.id}",
-        clientName: "${data.client.name}",
-        organizationId: "${data.organization.id}",
-        organizationName: "${data.organization.name}"
+        id : '${data.user.id}',
+        firstName : '${(data.user.firstName!'')?js_string}',
+        lastName : '${(data.user.lastName!'')?js_string}',
+        userName : '${(data.user.username!'')?js_string}',
+        name : '${(data.user.name!'')?js_string}',
+        email : '${(data.user.email!'')?js_string}',
+        roleId: '${data.role.id}',
+        roleName: '${data.role.name}',
+        clientId: '${data.client.id}',
+        clientName: '${data.client.name}',
+        organizationId: '${data.organization.id}',
+        organizationName: '${data.organization.name}'
     },
 
     Format : {
         defaultGroupingSize: 3,
-        defaultGroupingSymbol: "${data.defaultGroupingSymbol}",
-        defaultDecimalSymbol: "${data.defaultDecimalSymbol}",
-        defaultNumericMask: "${data.defaultNumericMask}",
-        date: "${data.dateFormat}",
-        dateTime: "${data.dateTimeFormat}"
+        defaultGroupingSymbol: '${data.defaultGroupingSymbol}',
+        defaultDecimalSymbol: '${data.defaultDecimalSymbol}',
+        defaultNumericMask: '${data.defaultNumericMask}',
+        date: '${data.dateFormat}',
+        dateTime: '${data.dateTimeFormat}'
     },
     
     Constants : {
-        IDENTIFIER : "_identifier",
-        ID : "id",
-        WHERE_PARAMETER : "_where",
-        ORG_PARAMETER : "_org",
-        ORDERBY_PARAMETER : "_orderBy",
-        FILTER_PARAMETER : "_filter",
-        SORTBY_PARAMETER : "_sortBy",
-        OR_EXPRESSION: "_OrExpression",
-        TEXT_MATCH_PARAMETER_OVERRIDE: "_textMatchStyleOverride",
-        SUCCESS : "success",
+        IDENTIFIER : '_identifier',
+        ID : 'id',
+        WHERE_PARAMETER : '_where',
+        ORG_PARAMETER : '_org',
+        ORDERBY_PARAMETER : '_orderBy',
+        FILTER_PARAMETER : '_filter',
+        SORTBY_PARAMETER : '_sortBy',
+        OR_EXPRESSION: '_OrExpression',
+        TEXT_MATCH_PARAMETER_OVERRIDE: '_textMatchStyleOverride',
+        SUCCESS : 'success',
         DBL_CLICK_DELAY: 300,
-        ERROR : "error"        
+        ERROR : 'error'        
     },
     
     I18N: {},
