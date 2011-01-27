@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -193,6 +193,14 @@ function getKeyField() {
 
   function onResizeDo(){
     resizeMenuArea();
+  }
+  
+  function closeThis(){
+    if (isWindowInMDIPopup) {
+      getFrame('mainParent').frames[1].getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.close(MDIPopupId);
+    } else {
+      window.close();    
+    }
   }
 </script>  
 </head>
@@ -503,7 +511,7 @@ function getKeyField() {
                   <div>
                     <button type="button" 
                       class="ButtonLink" 
-                      onclick="window.close();" 
+                      onclick="closeThis();" 
                       onfocus="buttonEvent('onfocus', this); window.status='Close'; return true;" 
                       onblur="buttonEvent('onblur', this);" 
                       onkeyup="buttonEvent('onkeyup', this);" 
