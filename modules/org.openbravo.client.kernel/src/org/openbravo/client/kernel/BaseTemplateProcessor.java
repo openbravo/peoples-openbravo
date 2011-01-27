@@ -155,7 +155,7 @@ public abstract class BaseTemplateProcessor<T extends Object> implements Templat
    */
   protected String readTemplateSourceFromClasspath(String path) {
     try {
-      final URL url = this.getClass().getResource(path.trim());
+      final URL url = this.getClass().getResource(path.trim().replace(" ", "+"));
       final File file = new File(url.toURI());
       return readFileAsString(file);
     } catch (Exception e) {
