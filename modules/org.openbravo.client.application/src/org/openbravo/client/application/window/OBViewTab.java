@@ -36,7 +36,9 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.domain.ModelImplementation;
@@ -390,6 +392,7 @@ public class OBViewTab extends BaseTemplateComponent {
     private String showIf = "";
     private String readOnlyIf = "";
     private boolean sessionLogic = false;
+    private boolean modal = true;
 
     public ButtonField(Field fld) {
       id = fld.getId();
@@ -423,6 +426,17 @@ public class OBViewTab extends BaseTemplateComponent {
         } else {
           url = manualProcessMapping;
           command = "DEFAULT";
+        }
+
+        // Show in modal by default unless preference to prevent it is set
+        try {
+          modal = "Y".equals(Preferences.getPreferenceValue("ModalProcess" + process.getId(),
+              false, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                  .getOBContext().getRole(), null));
+        } catch (PropertyException e) {
+          // If not found or conflict, the process is modal
+          modal = true;
         }
       } else {
         String colName = column.getDBColumnName();
@@ -513,6 +527,10 @@ public class OBViewTab extends BaseTemplateComponent {
 
     public String getReadOnlyIf() {
       return readOnlyIf;
+    }
+
+    public boolean isModal() {
+      return modal;
     }
 
     public class Value {

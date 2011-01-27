@@ -24,6 +24,7 @@ isc.ClassFactory.defineClass('OBToolbarActionButton', isc.OBToolbarTextButton);
 
 isc.OBToolbarActionButton.addProperties( {
   visible: false,
+  modal: true,
   
   action : function() {
     this.runProcess();
@@ -52,7 +53,7 @@ isc.OBToolbarActionButton.addProperties( {
 
     var allProperties = theView.getContextInfo(false, true);
     var sessionProperties = theView.getContextInfo(true, true);
-    var me = this;
+    var me = this, callbackFunction;
 
     OB.ActionButton.executingProcess = this;
 
@@ -64,11 +65,28 @@ isc.OBToolbarActionButton.addProperties( {
         allProperties[param] = allProperties[param]?'Y':'N';
       }
     }
-    allProperties.Command = this.command;
+    
+    if (this.modal){
+      allProperties.Command = this.command;
+      callbackFunction = function(){
+        OB.Layout.ClassicOBCompatibility.Popup.open('process', 625, 450,  OB.Application.contextUrl + me.obManualURL, '', null, false, false, true, allProperties);
+      };
+    } else {
+      var popupParams = {
+            viewId: 'OBPopupClassicWindow',
+            obManualURL: this.obManualURL, 
+            processId: this.id,
+            id: this.id,
+            command: this.command,
+            tabTitle: this.title,
+            postParams: allProperties
+          };
+      callbackFunction = function(){
+        OB.Layout.ViewManager.openView('OBPopupClassicWindow', popupParams);
+      };
+    }
 
-    theView.setContextInfo(sessionProperties, function() {
-      OB.Layout.ClassicOBCompatibility.Popup.open('process', 625, 450,  OB.Application.contextUrl + me.obManualURL, '', null, false, false, true, allProperties);
-    });
+    theView.setContextInfo(sessionProperties, callbackFunction);
   },
   
   closeProcessPopup: function(newWindow) {
