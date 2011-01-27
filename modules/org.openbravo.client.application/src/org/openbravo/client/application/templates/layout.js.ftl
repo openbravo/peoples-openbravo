@@ -99,7 +99,7 @@ OB.TopLayout.OpenbravoLogo = isc.Img.create({
         </#if>
     }
 });
-OB.TestRegistry.register('org.openbravo.client.application.companylogo', OB.TopLayout.OpenbravoLogo);    
+OB.TestRegistry.register('org.openbravo.client.application.openbravologo', OB.TopLayout.OpenbravoLogo);    
 
 OB.TopLayout.addMember(OB.Toolbar);
 OB.TopLayout.addMember(
