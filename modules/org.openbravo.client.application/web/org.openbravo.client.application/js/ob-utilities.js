@@ -30,9 +30,6 @@ OB.Utilities.useClassicMode = function(windowId){
   if (OB.Utilities.hasUrlParameter('mode', 'classic')) {
     return true;
   }
-  if (OB.WindowDefinitions[windowId] && OB.WindowDefinitions[windowId].showInClassicMode) {
-    return true;
-  }
   var propValue = OB.PropertyStore.get('OBUIAPP_UseClassicMode', windowId);
   if (propValue === 'Y') {
     return true;
@@ -137,8 +134,11 @@ OB.Utilities.getLocationUrlWithoutFragment = function(){
 // Parameters:
 // * {{{url}}}: the url of the html page to open
 // * {{{noFrameSet}}}: if true then the page is opened directly without a
+// * {{{postParams}}}: if this object is set and noFrameSet is not true, main Framset send
+//                     properties of this object to url as POST, other case a GET to url is
+//                     performed
 // frameset
-OB.Utilities.openProcessPopup = function(/* String */url, noFrameSet){
+OB.Utilities.openProcessPopup = function(/* String */url, noFrameSet, postParams){
   var height = 450;
   var width = 625;
   var top = (screen.height - height) / 2;
@@ -158,19 +158,35 @@ OB.Utilities.openProcessPopup = function(/* String */url, noFrameSet){
     winPopUp = window.open(url, 'PROCESS', adds);
   } else {
     winPopUp = window.open('', 'PROCESS', adds);
-    var html = '<html>' +
+    var mainFrameSrc = !postParams?('src="' + url + '"'):'',
+       html = '<html>' +
     '<frameset cols="0%,100%" frameborder="no" border="0" framespacing="0" rows="*" id="framesetMenu">' +
     '<frame name="frameMenu" scrolling="no" src="' +
     OB.Application.contextUrl +
     'utility/VerticalMenu.html?Command=LOADING" id="paramFrameMenuLoading"></FRAME>' +
-    '<frame name="mainframe" noresize="" src="' +
-    url +
-    '" id="fieldProcessId"></frame>' +
+    '<frame name="mainframe" noresize="" '+ mainFrameSrc +
+    ' id="fieldProcessId"></frame>' +
     '<frame name="hiddenFrame" scrolling="no" noresize="" src=""></frame>' +
     '</frameset>' +
     '</html>';
     
     winPopUp.document.write(html);
+    if (postParams) {
+      var frm = winPopUp.document.createElement('form');
+      frm.setAttribute('method','post');
+      frm.setAttribute('action', url);
+      for (var i in postParams) {
+        if (postParams.hasOwnProperty(i)){
+          var inp = winPopUp.document.createElement('input');
+          inp.setAttribute('type', 'hidden');
+          inp.setAttribute('name', i);
+          inp.setAttribute('value', postParams[i]);
+          frm.appendChild(inp);
+        }
+      }
+      winPopUp.document.body.appendChild(frm);
+      frm.submit();
+    }
     winPopUp.document.close();
   }
   winPopUp.focus();
