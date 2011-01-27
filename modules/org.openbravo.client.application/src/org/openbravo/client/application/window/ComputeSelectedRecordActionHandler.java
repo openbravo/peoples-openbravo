@@ -30,8 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.MenuManager;
 import org.openbravo.client.application.MenuManager.MenuOption;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -128,6 +128,7 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
       throw new OBException("No root tab found in window " + window);
     }
 
+    System.err.println("Computing tab info");
     final Tab tab = getTab(window, entityName);
     final TabInfo tabInfo = new TabInfo();
     tabInfo.setRecord(bob);
@@ -135,31 +136,33 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
     final List<JSONObject> resultList = new ArrayList<JSONObject>();
     resultList.add(tabInfo.getJSONObject());
     TabInfo currentTabInfo = tabInfo;
-    while (currentTabInfo != null) {
-      currentTabInfo = getParentTabInfo(currentTabInfo.getRecord(), window);
+    TabTreeNode tabTreeNode = computeTabTreeStructure(window, tab);
+    // skip the first node
+    tabTreeNode = tabTreeNode.getParentTabTreeNode();
+    while (tabTreeNode != null) {
+      currentTabInfo = createTabInfo(currentTabInfo.getRecord(), tabTreeNode);
       if (currentTabInfo != null) {
         resultList.add(0, currentTabInfo.getJSONObject());
       }
+      tabTreeNode = tabTreeNode.getParentTabTreeNode();
     }
     final JSONObject result = new JSONObject();
     result.put(RESULT, new JSONArray(resultList));
+    System.err.println("Computing tab info done");
     return result;
   }
 
-  private TabInfo getParentTabInfo(BaseOBObject childEntity, Window window) {
-    for (Property property : childEntity.getEntity().getProperties()) {
-      if (property.isParent()) {
-        final Tab tab = getTab(window, property.getTargetEntity().getName());
-        if (tab != null && childEntity.get(property.getName()) != null) {
-          final BaseOBObject parent = (BaseOBObject) childEntity.get(property.getName());
-          final TabInfo tabInfo = new TabInfo();
-          tabInfo.setRecord(parent);
-          tabInfo.setTab(tab);
-          return tabInfo;
-        }
-      }
+  private TabInfo createTabInfo(BaseOBObject childObject, TabTreeNode tabTreeNode) {
+    if (tabTreeNode.getParentTabTreeNode() == null) {
+      return null;
     }
-    return null;
+    final String parentProperty = ApplicationUtils.getParentProperty(tabTreeNode.getTab(),
+        tabTreeNode.getParentTabTreeNode().getTab());
+    final BaseOBObject parent = (BaseOBObject) childObject.get(parentProperty);
+    final TabInfo tabInfo = new TabInfo();
+    tabInfo.setRecord(parent);
+    tabInfo.setTab(tabTreeNode.getTab());
+    return tabInfo;
   }
 
   private Tab getTab(Window window, String entityName) {
@@ -169,11 +172,53 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
         return tab;
       }
     }
-    throw new OBException("No tab found using entity " + entityName + " window: " + window);
+    return null;
   }
 
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     throw new UnsupportedOperationException();
+  }
+
+  private TabTreeNode computeTabTreeStructure(Window window, Tab targetTab) {
+    final List<Tab> tempTabs = new ArrayList<Tab>(window.getADTabList());
+    for (Tab tab : window.getADTabList()) {
+      if (!tab.isActive() || !tab.getModule().isEnabled()) {
+        tempTabs.remove(tab);
+      }
+    }
+    final List<TabTreeNode> treeNodes = new ArrayList<TabTreeNode>();
+    for (Tab tab : window.getADTabList()) {
+
+      final TabTreeNode treeNode = new TabTreeNode();
+      treeNode.setTab(tab);
+      treeNodes.add(treeNode);
+
+      TabTreeNode parentTabNode = null;
+      for (TabTreeNode tabTreeNode : treeNodes) {
+        if (tabTreeNode.getTab().getTabLevel() == (treeNode.getTab().getTabLevel() - 1)
+            && tabTreeNode.getTab().getSequenceNumber() < treeNode.getTab().getSequenceNumber()) {
+          if (parentTabNode != null) {
+            // if the new potential parent has a higher sequence number then that one is the correct
+            // one
+            if (parentTabNode.getTab().getSequenceNumber() < tabTreeNode.getTab()
+                .getSequenceNumber()) {
+              parentTabNode = tabTreeNode;
+            }
+          } else {
+            parentTabNode = tabTreeNode;
+          }
+        }
+      }
+      if (parentTabNode != null) {
+        parentTabNode.addChildTabTreeNode(treeNode);
+      }
+    }
+    for (TabTreeNode treeNode : treeNodes) {
+      if (treeNode.getTab() == targetTab) {
+        return treeNode;
+      }
+    }
+    throw new OBException("Target tab not present in resulting tab tree " + targetTab);
   }
 
   private class TabInfo {
@@ -204,5 +249,37 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
       result.put(TARGET_TAB_ID, getTab().getId());
       return result;
     }
+  }
+
+  private class TabTreeNode {
+    private Tab tab;
+    final private List<TabTreeNode> children = new ArrayList<TabTreeNode>();
+    private TabTreeNode parentTabTreeNode;
+
+    public void addChildTabTreeNode(TabTreeNode childTreeNode) {
+      getChildren().add(childTreeNode);
+      childTreeNode.setParentTabTreeNode(this);
+    }
+
+    public Tab getTab() {
+      return tab;
+    }
+
+    public void setTab(Tab tab) {
+      this.tab = tab;
+    }
+
+    public List<TabTreeNode> getChildren() {
+      return children;
+    }
+
+    public TabTreeNode getParentTabTreeNode() {
+      return parentTabTreeNode;
+    }
+
+    public void setParentTabTreeNode(TabTreeNode parentTab) {
+      this.parentTabTreeNode = parentTab;
+    }
+
   }
 }

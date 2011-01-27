@@ -23,6 +23,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -59,6 +63,42 @@ public class ApplicationUtils {
       }
     }
     return false;
+  }
+
+  /**
+   * Computes the parent property for a certain tab and its parent tab. The parentProperty is the
+   * property in the entity of the tab pointing to the parent tab.
+   * 
+   * @param tab
+   *          the child tab
+   * @param parentTab
+   *          the parent tab
+   * @return the parentproperty in the source entity pointing to the parent
+   */
+  public static String getParentProperty(Tab tab, Tab parentTab) {
+    String parentProperty = "";
+    final Entity thisEntity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
+    final Entity parentEntity = ModelProvider.getInstance().getEntity(
+        parentTab.getTable().getName());
+    if (tab.getColumn() != null) {
+      final String columnId = (String) DalUtil.getId(tab.getColumn());
+      for (Property property : thisEntity.getProperties()) {
+        if (property.getColumnId() != null && property.getColumnId().equals(columnId)) {
+          parentProperty = property.getName();
+        }
+      }
+    } else {
+      for (Property property : thisEntity.getProperties()) {
+        if (property.isPrimitive() || property.isOneToMany()) {
+          continue;
+        }
+        if (property.getTargetEntity() == parentEntity) {
+          parentProperty = property.getName();
+          break;
+        }
+      }
+    }
+    return parentProperty;
   }
 
   public static boolean isClientAdmin() {
