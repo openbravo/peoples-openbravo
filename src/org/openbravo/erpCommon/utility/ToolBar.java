@@ -240,7 +240,8 @@ public class ToolBar {
               + "').getSelectedRows().length > 1) {showJSMessage(28);resizeArea(true);calculateMsgBoxWidth();return false;} ")
           + " openServletNewWindow('POPUP_HISTORY', false, '../businessUtility/AuditTrail.html?inpRecordId=' + "
           + ((grid_id == null || grid_id.equals("")) ? keyfield + ".value" : "dijit.byId('"
-              + grid_id + "').getSelectedRows()") + ", 'AuditTrail', null, true, 600, 900, true);";
+              + grid_id + "').getSelectedRows()")
+          + ", 'AuditTrail', null, true, 600, 900, true, null, null, null, true);";
     } else if (grid_id != null && !grid_id.equals("") && name.equals("PREVIOUS")) {
       return "dijit.byId('grid').goToPreviousRow();";
     } else if (grid_id != null && !grid_id.equals("") && name.equals("NEXT")) {
