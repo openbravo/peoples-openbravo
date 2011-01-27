@@ -155,7 +155,7 @@ isc.OBStandardViewTabSet.addProperties({
   },
   
   doHandleDoubleClick: function(){
-    if (this.state === isc.OBStandardView.STATE_TOP_MAX || (this.getSelectedTab() && !this.getSelectedTab().pane.hasChildTabs)) {
+    if (this.state === isc.OBStandardView.STATE_TOP_MAX) { 
       // we are maximized go back to the previous state
       if (this.previousState && this.previousState !== this.state) {
         if (this.previousState === isc.OBStandardView.STATE_IN_MID) {
