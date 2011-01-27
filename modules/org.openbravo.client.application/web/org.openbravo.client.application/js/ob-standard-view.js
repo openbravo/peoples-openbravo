@@ -421,14 +421,6 @@ isc.OBStandardView.addProperties({
     return true;
   },
   
-  draw: function(){
-    var result = this.Super('draw', arguments);
-    if (!this.viewGrid || !this.viewGrid.filterEditor) {
-      return result;
-    }
-    return result;
-  },
-  
   // ** {{{ createViewStructure }}} **
   // Is to be overridden, is called in initWidget.
   createViewStructure: function(){
