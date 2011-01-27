@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -92,8 +92,8 @@ public class Login extends HttpBaseServlet {
       // Look for forced login URL property and redirect in case it is set and the login is accessed
       // through a different URL
       try {
-        String forcedLoginUrl = Preferences.getPreferenceValue("ForcedLoginURL", true, null, null,
-            null, null, null);
+        String forcedLoginUrl = Preferences.getPreferenceValue("ForcedLoginURL", true,
+            (Client) null, null, null, null, null);
         log4j.debug("Forced URL: " + forcedLoginUrl);
         if (forcedLoginUrl != null && !forcedLoginUrl.isEmpty()
             && !request.getRequestURL().toString().startsWith(forcedLoginUrl)) {

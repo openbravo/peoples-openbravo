@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,7 +56,8 @@ public class WADButton extends WADControl {
   }
 
   private StringBuffer getAction() {
-    final String logClickCode = "logClick(document.getElementById('" + getData("ColumnName") + "'));";
+    final String logClickCode = "logClick(document.getElementById('" + getData("ColumnName")
+        + "'));";
     final boolean triggersAutosave = getData("IsAutosave").equalsIgnoreCase("Y");
 
     StringBuffer text = new StringBuffer();
@@ -74,11 +75,8 @@ public class WADButton extends WADControl {
             FormatUtilities.replace(getData("ColumnName"))).append(getData("AD_Process_ID"));
         text.append("', true, '").append(getData("TabName")).append(
             "_Edition.html', 'BUTTON', null, ").append(triggersAutosave);
-        if (getData("ColumnName").equalsIgnoreCase("CreateFrom"))
-          text.append(",600, 900");
-        else
-          text.append(", 600, 900");
-        text.append(");");
+
+        text.append(", 600, 900, null, null, null, null, zz);");
       } else {
         if (triggersAutosave) {
           text.append(logClickCode);
@@ -88,7 +86,7 @@ public class WADButton extends WADControl {
           text.append('/');
         text.append(getData("MappingName")).append("', 'BUTTON', '").append(
             getData("AD_Process_ID")).append("', ").append(triggersAutosave);
-        text.append(",600, 900);");
+        text.append(",600, 900, null, null, null, null, zz);");
       }
     }
     return text;
@@ -141,6 +139,11 @@ public class WADButton extends WADControl {
 
   public String toXml() {
     StringBuffer text = new StringBuffer();
+
+    boolean isDisabled = (getData("IsReadOnly").equals("Y")
+        || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N")) || getData(
+        "IsUpdateable").equals("N"));
+
     if (getData("IsParameter").equals("Y")) {
       text.append("<PARAMETER id=\"").append(getData("ColumnName"));
       text.append("\" name=\"").append(getData("ColumnName"));
@@ -165,26 +168,56 @@ public class WADButton extends WADControl {
         text.append(getData("ColumnName")).append("_BTN</FIELD>");
       }
     }
+
+    if (!isDisabled) {
+      text.append("<PARAMETER id=\"").append(getData("ColumnName"));
+      text.append("_linkBTN\" name=\"").append(getData("ColumnName"));
+      text.append("_Modal\" attribute=\"onclick\" replace=\"zz\" default=\"true\"/>");
+    }
     return text.toString();
   }
 
   public String toJava() {
 
-    if (getData("IsDisplayed").equals("Y"))
+    boolean isDisabled = (getData("IsReadOnly").equals("Y")
+        || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N")) || getData(
+        "IsUpdateable").equals("N"));
+
+    String javaCode = "";
+
+    if (getData("IsDisplayed").equals("Y")) {
       if (!getData("AD_Reference_Value_ID").equals("")
-          && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus"))
-        return "xmlDocument.setParameter(\"" + getData("ColumnName")
+          && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus")) {
+        javaCode = "xmlDocument.setParameter(\"" + getData("ColumnName")
             + "_BTNname\", Utility.getButtonName(this, vars, \"" + getData("AD_Reference_Value_ID")
             + "\", (dataField==null?data[0].getField(\"" + getData("ColumnNameInp")
             + "\"):dataField.getField(\"" + getData("ColumnNameInp") + "\")), \""
             + getData("ColumnName") + "_linkBTN\", usedButtonShortCuts, reservedButtonShortCuts));";
-      else
-        return "xmlDocument.setParameter(\"" + getData("ColumnName")
+      } else {
+        javaCode = "xmlDocument.setParameter(\"" + getData("ColumnName")
             + "_BTNname\", Utility.getButtonName(this, vars, \"" + getData("AD_Field_ID")
             + "\", \"" + getData("ColumnName")
             + "_linkBTN\", usedButtonShortCuts, reservedButtonShortCuts));";
-    else
-      return "";
+      }
+      if (!isDisabled) {
+        String varName = "modal" + FormatUtilities.replace(getData("ColumnName"));
+        javaCode += "boolean " + varName + " = true; \n";
+        javaCode += " try { \n";
+        javaCode += "   "
+            + varName
+            + " = \"Y\".equals(org.openbravo.erpCommon.businessUtility.Preferences.getPreferenceValue(\"ModalProcess"
+            + getData("AD_Process_ID") + "\",\n";
+        javaCode += "     false, vars.getClient(), vars.getOrg(), vars.getUser(), vars.getRole(), null));\n";
+        javaCode += "} catch (Exception e) {\n";
+        javaCode += "  " + varName + " = true;\n";
+        javaCode += "}\n";
+        javaCode += "xmlDocument.setParameter(\"" + getData("ColumnName") + "_Modal\", " + varName
+            + "?\"true\":\"false\");";
+      }
+    } else {
+      javaCode = "";
+    }
+    return javaCode;
   }
 
   public int addAdditionDefaulJavaFields(StringBuffer strDefaultValues, FieldsData fieldsDef,

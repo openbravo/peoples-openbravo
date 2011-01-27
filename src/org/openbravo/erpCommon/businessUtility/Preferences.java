@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -220,6 +220,20 @@ public class Preferences {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * @see Preferences#getPreferenceValue(String, boolean, Client, Organization, User, Role, Window)
+   */
+  public static String getPreferenceValue(String property, boolean isListProperty,
+      String strClient, String strOrg, String strUser, String strRole, String strWindow)
+      throws PropertyException {
+    Client client = OBDal.getInstance().get(Client.class, strClient == null ? "" : strClient);
+    Organization org = OBDal.getInstance().get(Organization.class, strOrg == null ? "" : strOrg);
+    User user = OBDal.getInstance().get(User.class, strUser == null ? "" : strUser);
+    Role role = OBDal.getInstance().get(Role.class, strRole == null ? "" : strRole);
+    Window window = OBDal.getInstance().get(Window.class, strWindow == null ? "" : strWindow);
+    return getPreferenceValue(property, isListProperty, client, org, user, role, window);
   }
 
   /**
