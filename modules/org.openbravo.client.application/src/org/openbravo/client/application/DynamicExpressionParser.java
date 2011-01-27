@@ -24,10 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.hibernate.criterion.Expression;
 import org.openbravo.client.kernel.KernelUtils;
-import org.openbravo.dal.service.OBCriteria;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
@@ -194,10 +191,7 @@ public class DynamicExpressionParser {
         return "currentValues." + fieldName;
       }
     }
-    OBCriteria<AuxiliaryInput> auxInC = OBDal.getInstance().createCriteria(AuxiliaryInput.class);
-    auxInC.add(Expression.eq(AuxiliaryInput.PROPERTY_TAB, tab));
-    List<AuxiliaryInput> auxInputs = auxInC.list();
-    for (AuxiliaryInput auxIn : auxInputs) {
+    for (AuxiliaryInput auxIn : tab.getADAuxiliaryInputList()) {
       if (token.equalsIgnoreCase(auxIn.getName())) {
         auxInputsInExpression.add(auxIn);
         return TOKEN_PREFIX + auxIn.getName();
