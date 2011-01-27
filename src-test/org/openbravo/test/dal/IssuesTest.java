@@ -53,6 +53,7 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.system.HeartbeatLog;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.FormTrl;
@@ -575,5 +576,27 @@ public class IssuesTest extends BaseTest {
   public void test15360() throws Exception {
     org.openbravo.base.model.Table corder = ModelProvider.getInstance().getTable("C_Order");
     assertFalse(corder == null);
+  }
+
+  /**
+   * Testing part of code 'used' in the fix of issue 15742. Especially if storing 10000 'ñ'
+   * characters in a column of type clob/text works correctly.
+   */
+  public void test15742() {
+    final int logsize = 10000;
+    setSystemAdministratorContext();
+    HeartbeatLog hbLog = OBProvider.getInstance().get(HeartbeatLog.class);
+    StringBuilder logBuffer = new StringBuilder(logsize);
+    for (int i = 0; i < logBuffer.capacity(); i++) {
+      logBuffer.append('ñ');
+    }
+    hbLog.setInstalledModules(logBuffer.toString());
+    OBDal.getInstance().save(hbLog);
+    String id = hbLog.getId();
+
+    HeartbeatLog hbLogRead = OBDal.getInstance().get(HeartbeatLog.class, id);
+    assertEquals(logBuffer.toString(), hbLogRead.getInstalledModules());
+
+    OBDal.getInstance().remove(hbLogRead);
   }
 }
