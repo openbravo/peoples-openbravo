@@ -148,7 +148,7 @@ public class SelectorUIReference extends UIReference {
   private String getTableName(Selector selector) {
     // TODO: add support for datasource field
     if (selector.getTable() != null) {
-      if (selector.getValuefield() != null) {
+      if (selector.getValuefield() != null && !selector.isCustomQuery()) {
         final Entity startEntity = ModelProvider.getInstance().getEntity(
             selector.getTable().getName());
         final Property referedProperty = DalUtil.getPropertyFromPath(startEntity, selector
