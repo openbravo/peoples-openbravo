@@ -491,7 +491,11 @@ public abstract class UIDefinition {
    */
   @Deprecated
   public Object createJsonValueFromClassicValueString(java.lang.String value) {
-    return null;
+    if (getDomainType() instanceof PrimitiveDomainType) {
+      return ((PrimitiveDomainType) getDomainType()).createFromString(value);
+    } else {
+      return value;
+    }
   }
 
   /**
@@ -499,7 +503,7 @@ public abstract class UIDefinition {
    */
   @Deprecated
   public String formatValueFromSQL(java.lang.String value) {
-    return null;
+    return value;
   }
 
   /**
@@ -507,6 +511,6 @@ public abstract class UIDefinition {
    */
   @Deprecated
   public String formatValueToSQL(java.lang.String value) {
-    return null;
+    return value;
   }
 }
