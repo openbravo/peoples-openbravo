@@ -690,7 +690,7 @@ isc.OBViewForm.addProperties({
       
       var imgHTML = isc.Canvas.imgHTML(searchIconObj);
       
-      return titleHTML + '&nbsp;' + imgHTML;
+      return "<span class='OBFormFieldLinkButton'>" + titleHTML + '</span>&nbsp;' + imgHTML;
     }
     
     return titleHTML;

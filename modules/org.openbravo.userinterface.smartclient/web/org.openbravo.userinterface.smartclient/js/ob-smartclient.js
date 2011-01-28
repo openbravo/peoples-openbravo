@@ -33,6 +33,9 @@ isc.FormItem.addProperties({
   
   titleClick: function(form, item){
     item.focusInItem();
+    if (item.linkButtonClick) {
+      item.linkButtonClick();
+    }
   },
   
   changed: function(){
