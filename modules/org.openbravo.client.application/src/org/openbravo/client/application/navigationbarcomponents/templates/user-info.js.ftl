@@ -29,7 +29,7 @@
         var ksAction = function() {
           OB.Utilities.logout();
         };
-        OB.KeyboardManager.KS.add(this.keyboardShortcutId, ksAction);
+        OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction);
         this.Super("draw", arguments);
         OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.QuitButton', this);
       },

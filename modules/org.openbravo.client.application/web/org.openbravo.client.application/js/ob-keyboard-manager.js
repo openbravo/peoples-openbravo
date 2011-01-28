@@ -74,46 +74,68 @@
     
     KS: {
     
-      readRegisteredKSList: function(RefList){
+      setPredefinedKSList: function(RefList){
         var i;
         var list = [];
         
         list = OB.PropertyStore.get(RefList);
         if (list) {
           for (i = 0; i < list.length; i++) {
-            if (typeof list[i].keyComb.ctrl === 'undefined') {
-              list[i].keyComb.ctrl = false;
-            }
-            if (typeof list[i].keyComb.alt === 'undefined') {
-              list[i].keyComb.alt = false;
-            }
-            if (typeof list[i].keyComb.shift === 'undefined') {
-              list[i].keyComb.shift = false;
-            }
-            if (typeof list[i].keyComb.key === 'undefined') {
-              list[i].keyComb.key = null;
-            }
+            this.set(list[i].id, null, null, list[i].keyComb);
           }
-          this.list = this.list.concat(list);
+        }
+      },
+
+      set: function(id, action, funcParam, keyComb) {
+        if (typeof id === 'undefined' || id === null) {
+          return false;
+        }
+
+        var position = this.getPosition(id, 'id');
+        if (position === null) {
+          position = this.list.length;
+          this.list[position] = {};
+          this.list[position].keyComb = {};
+        }
+        if (typeof id !== 'undefined' && id !== null) {
+          this.list[position].id = id;
+        }
+        if (typeof action !== 'undefined' && action !== null) {
+          this.list[position].action = action;
+        }
+        if (typeof funcParam !== 'undefined' && funcParam !== null) {
+          this.list[position].funcParam = funcParam;
+        }
+        if (typeof keyComb !== 'undefined' && keyComb !== null) {
+          if (typeof keyComb.ctrl === 'undefined') {
+            this.list[position].keyComb.ctrl = false;
+          } else {
+            this.list[position].keyComb.ctrl = keyComb.ctrl;
+          }
+          if (typeof keyComb.alt === 'undefined') {
+            this.list[position].keyComb.alt = false;
+          } else {
+            this.list[position].keyComb.alt = keyComb.alt;
+          }
+          if (typeof keyComb.shift === 'undefined') {
+            this.list[position].keyComb.shift = false;
+          } else {
+            this.list[position].keyComb.shift = keyComb.shift;
+          }
+          if (typeof keyComb.key === 'undefined') {
+            this.list[position].keyComb.key = null;
+          } else {
+            this.list[position].keyComb.key = keyComb.key;
+          }
         }
       },
       
-      add: function(id, action, funcParam){
+      remove: function(id){
         var position = this.getPosition(id, 'id');
         if (position === null) {
           return false;
         }
-        this.list[position].action = action;
-        this.list[position].funcParam = funcParam;
-      },
-      
-      remove: function(id, action, funcParam){
-        var position = this.getPosition(id, 'id');
-        if (position === null) {
-          return false;
-        }
-        this.list[position].action = null;
-        this.list[position].funcParam = null;
+        delete this.list[position];
       },
       
       getPosition: function(element, searchPattern){
@@ -135,7 +157,9 @@
       },
       
       execute: function(position){
-        this.list[position].action(this.list[position].funcParam);
+        if (this.list[position].action !== null) {
+          this.list[position].action(this.list[position].funcParam);
+        }
       },
       
       list: []

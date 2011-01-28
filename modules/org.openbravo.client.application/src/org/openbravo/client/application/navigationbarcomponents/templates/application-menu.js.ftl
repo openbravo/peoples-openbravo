@@ -44,7 +44,7 @@ isc.MenuButton.create(OB.ApplicationMenuButtonStylingProperties, {
           }
         }
       };
-      OB.KeyboardManager.KS.add(this.keyboardShortcutId, ksAction);
+      OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction);
       this.Super('draw', arguments);
     },
 

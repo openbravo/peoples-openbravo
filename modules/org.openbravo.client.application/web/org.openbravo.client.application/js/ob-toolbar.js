@@ -130,8 +130,21 @@ isc.OBToolbar.addClassProperties({
 // The OBToolbar is the toolbar to perform common actions within a form.
 //
 isc.OBToolbar.addProperties({
+  randomId: null,
   initWidget: function(){
     this.Super('initWidget', arguments);
+    function getRandomId() {
+      var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz',
+          stringLength = 8,
+          randomString = '',
+          i, rnum;
+      for (i = 0; i < stringLength; i++) {
+        rnum = Math.floor(Math.random() * chars.length);
+        randomString += chars.substring(rnum,rnum+1);
+      }
+      return randomString;
+    }
+    this.randomId = getRandomId();
     this.members = null;
     
     var newMembers = [], i = 0, j = 0;
@@ -639,26 +652,26 @@ isc.OBToolbar.addProperties({
   // Refreshes all the custom buttons in the toolbar based on current record selection
   //
   refreshCustomButtons: function(){
-    function doRefresh(buttons, currentValues, hideAllButtons){
+    function doRefresh(buttons, currentValues, hideAllButtons, me){
       for (var i = 0; i < buttons.length; i++) {
         if (buttons[i].updateState) {
+          me.defineRightMembersShortcuts();
           buttons[i].updateState(currentValues, hideAllButtons);
+          me.rightMembers[i].enableShortcut();
         }
       }
     }
     
-    var buttons = this.getRightMembers();
-    var numOfSelRecords = 0; 
-    
+    var buttons = this.getRightMembers(),
+        numOfSelRecords = 0,
+        isNew = this.view.viewForm.isNew,
+        hideAllButtons = !isNew && (!this.view.viewGrid.getSelectedRecords() || this.view.viewGrid.getSelectedRecords().length !== 1),
+        currentValues = this.view.getCurrentValues();
     
     if (this.view.viewGrid.getSelectedRecords()) {
       numOfSelRecords = this.view.viewGrid.getSelectedRecords().length;
     }
-    var isNew = this.view.viewForm.isNew;
-    var hideAllButtons = !isNew && (!this.view.viewGrid.getSelectedRecords() || this.view.viewGrid.getSelectedRecords().length !== 1);
-    
-    
-    var currentValues = this.view.getCurrentValues();
+
     if (this.buttonsHaveSessionLogic && !this.view.isShowingForm && !hideAllButtons && !isNew) {
       var formView = this.view.viewForm;
       // Call FIC to obtain possible session attributes and set them in form
@@ -685,11 +698,11 @@ isc.OBToolbar.addProperties({
            }
          }
          
-         doRefresh(buttons, currentValues, false);
+         doRefresh(buttons, currentValues, false, this);
         });
     } else {
       currentValues = this.view.getCurrentValues();
-      doRefresh(buttons, currentValues, hideAllButtons);
+      doRefresh(buttons, currentValues, hideAllButtons, this);
     } 
   },
 
@@ -703,7 +716,58 @@ isc.OBToolbar.addProperties({
 
   draw: function() {
     this.Super('draw', arguments);
+    this.defineRightMembersShortcuts();
     this.enableShortcuts();
+  },
+
+  rightMembersShortcuts: [],
+
+  defineRightMembersShortcuts: function() {
+    var i, j, k, l, id, character, position;
+    function isAssignedCharacter(character, me) {
+      character = character.toString();
+      character = character.toUpperCase();
+      for (k = 0; k < me.rightMembersShortcuts.length; k++) {
+        if (me.rightMembersShortcuts[k][0] === character) {
+          return true;
+        }
+      }
+      return false;
+    }
+    for (i = 0; i < this.rightMembers.length; i++) {
+      var title = this.rightMembers[i].realTitle,
+          haveToContinue = true;
+      this.rightMembersShortcuts[i] = [];
+      if (haveToContinue) { // Check if free character and assign
+       haveToContinue = true;
+       for (j = 0; j < title.length; j++) {
+          if (!isAssignedCharacter(title.substring(j,j+1), this)) {
+            this.rightMembersShortcuts[i][0] = title.substring(j,j+1).toUpperCase();
+            this.rightMembersShortcuts[i][1] = j + 1;
+            haveToContinue = false;
+            break;
+          }
+        }
+      }
+      if (haveToContinue) { // Check if free number and assign
+        haveToContinue = true;
+        for (l = 1; l < 10 ; l++) {
+          if (!isAssignedCharacter(l, this)) {
+             this.rightMembersShortcuts[i][0] = l;
+             this.rightMembersShortcuts[i][1] = 'end';
+             haveToContinue = false;
+             break;
+          }
+        }
+      }
+      if (haveToContinue) {
+        this.rightMembersShortcuts[i][0] = '';
+        this.rightMembersShortcuts[i][1] = 0;
+      }
+      this.rightMembers[i].keyboardShortcutId = this.randomId + '_' + i;
+      this.rightMembers[i].keyboardShortcutCharacter = this.rightMembersShortcuts[i][0];
+      this.rightMembers[i].keyboardShortcutPosition = this.rightMembersShortcuts[i][1];
+    }
   },
 
   enableShortcuts: function() {
@@ -714,6 +778,14 @@ isc.OBToolbar.addProperties({
         }
       }
     }
+    if (this.rightMembers) {
+      this.defineRightMembersShortcuts();
+      for (i = 0; i < this.rightMembers.length; i++) {
+        if (this.rightMembers[i].enableShortcut) {
+          this.rightMembers[i].enableShortcut();
+        }
+      }
+    }
   },
 
   disableShortcuts: function() {
@@ -721,6 +793,13 @@ isc.OBToolbar.addProperties({
       for (i = 0; i < this.leftMembers.length; i++) {
         if (this.leftMembers[i].disableShortcut) {
           this.leftMembers[i].disableShortcut();
+        }
+      }
+    }
+    if (this.rightMembers) {
+      for (i = 0; i < this.rightMembers.length; i++) {
+        if (this.rightMembers[i].disableShortcut) {
+          this.rightMembers[i].disableShortcut();
         }
       }
     }
@@ -785,12 +864,12 @@ isc.OBToolbarIconButton.addProperties({
           me.action();
         }
       };
-      OB.KeyboardManager.KS.add(this.keyboardShortcutId, ksAction);
+      OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction);
     }
   },
   disableShortcut: function() {
     if (this.keyboardShortcutId) {
-      OB.KeyboardManager.KS.remove(this.keyboardShortcutId);
+      OB.KeyboardManager.KS.set(this.keyboardShortcutId, function() { return true; });
     }
   }
 });
@@ -804,8 +883,45 @@ isc.OBToolbarTextButton.addProperties({
   showFocused: true,
   showDown: true,
   showFocusedAsOver: false,
+  title: '',
+  realTitle: '', // difference between title and realTitle is just the <u>xx</u> for keyboard shortcut notation.
   action: function(){
     alert(this.title);
+  },
+  initWidget: function() {
+    this.Super('initWidget', arguments);
+    this.realTitle = this.title;
+  },
+
+  keyboardShortcutId: null,
+  keyboardShortcutCharacter: null,
+  keyboardShortcutPosition: null,
+  enableShortcut: function() {
+    if (this.keyboardShortcutId) {
+      var me = this;
+      var newTitle = this.realTitle;
+      var ksAction = function(){
+        if (!me.disabled && me.visible) {
+          me.action();
+        }
+      };
+      if (this.keyboardShortcutPosition === 'end') {
+        newTitle = newTitle + ' (<u>' + this.keyboardShortcutCharacter + '</u>)';
+      } else {
+        newTitle = newTitle.substring(0, this.keyboardShortcutPosition-1) + '<u>' + newTitle.substring(this.keyboardShortcutPosition-1, this.keyboardShortcutPosition) + '</u>' + newTitle.substring(this.keyboardShortcutPosition, newTitle.length);
+      }
+      this.setTitle(newTitle);
+      if (this.keyboardShortcutPosition) { // If 'this.keyboardShortcutPosition' equals 0 means that there is no shortcut assigned
+        OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction, null, {'ctrl': true, 'alt': true, 'shift': true, 'key': this.keyboardShortcutCharacter});
+      }
+    }
+  },
+  disableShortcut: function() {
+    if (this.keyboardShortcutId) {
+      var newTitle = this.realTitle;
+      this.setTitle(newTitle);
+      OB.KeyboardManager.KS.set(this.keyboardShortcutId, function() { return true; }, '', {'ctrl': true, 'alt': true, 'shift': true, 'key': 'xyz'});
+    }
   }
 });
 
@@ -819,7 +935,7 @@ OB.ToolbarUtils.print = function(view, url, directPrint){
     return;
   }
   
-  var popupParams = "Command=DEFAULT", 
+  var popupParams = 'Command=DEFAULT', 
       allProperties = view.getContextInfo(false, true),
       sessionProperties = view.getContextInfo(true, true);
 

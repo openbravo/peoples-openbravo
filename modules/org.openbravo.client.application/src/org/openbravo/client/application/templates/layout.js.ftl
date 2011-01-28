@@ -41,9 +41,9 @@ function openRegistration() {
 
 isc.Canvas.addClassProperties({neverUsePNGWorkaround:true});
 
-OB.KeyboardManager.KS.readRegisteredKSList('OBUIAPP_KeyboardShortcuts');
-OB.KeyboardManager.KS.readRegisteredKSList('UINAVBA_KeyboardShortcuts');
-OB.KeyboardManager.KS.readRegisteredKSList('UITOOLB_KeyboardShortcuts');
+OB.KeyboardManager.KS.setPredefinedKSList('OBUIAPP_KeyboardShortcuts');
+OB.KeyboardManager.KS.setPredefinedKSList('UINAVBA_KeyboardShortcuts');
+OB.KeyboardManager.KS.setPredefinedKSList('UITOOLB_KeyboardShortcuts');
 
 // should be moved to client.kernel component
 // placed here to prevent dependencies of client.kernel on Preferences
@@ -200,15 +200,15 @@ OB.MainView.TabSet = isc.TabSet.create({
         me.getSelectedTab().pane.focusTab();
       }
     };
-    OB.KeyboardManager.KS.add('TabSet_ActivateTab1', ksAction_ActivateTab, 1);
-    OB.KeyboardManager.KS.add('TabSet_ActivateTab2', ksAction_ActivateTab, 2);
-    OB.KeyboardManager.KS.add('TabSet_ActivateTab3', ksAction_ActivateTab, 3);
-    OB.KeyboardManager.KS.add('TabSet_ActivateTab4', ksAction_ActivateTab, 4);
-    OB.KeyboardManager.KS.add('TabSet_ActivateTab5', ksAction_ActivateTab, 5);
-    OB.KeyboardManager.KS.add('TabSet_ActivateTab6', ksAction_ActivateTab, 6);
-    OB.KeyboardManager.KS.add('TabSet_ActivateTab7', ksAction_ActivateTab, 7);
-    OB.KeyboardManager.KS.add('TabSet_ActivateTab8', ksAction_ActivateTab, 8);
-    OB.KeyboardManager.KS.add('TabSet_ActivateTab9', ksAction_ActivateTab, 9);
+    OB.KeyboardManager.KS.set('TabSet_ActivateTab1', ksAction_ActivateTab, 1);
+    OB.KeyboardManager.KS.set('TabSet_ActivateTab2', ksAction_ActivateTab, 2);
+    OB.KeyboardManager.KS.set('TabSet_ActivateTab3', ksAction_ActivateTab, 3);
+    OB.KeyboardManager.KS.set('TabSet_ActivateTab4', ksAction_ActivateTab, 4);
+    OB.KeyboardManager.KS.set('TabSet_ActivateTab5', ksAction_ActivateTab, 5);
+    OB.KeyboardManager.KS.set('TabSet_ActivateTab6', ksAction_ActivateTab, 6);
+    OB.KeyboardManager.KS.set('TabSet_ActivateTab7', ksAction_ActivateTab, 7);
+    OB.KeyboardManager.KS.set('TabSet_ActivateTab8', ksAction_ActivateTab, 8);
+    OB.KeyboardManager.KS.set('TabSet_ActivateTab9', ksAction_ActivateTab, 9);
     var ksAction_closeAllTabs = function() {
       var tabCount, tabArray = [], i;
       for (i = 1; i > 0; i++) {
@@ -223,21 +223,21 @@ OB.MainView.TabSet = isc.TabSet.create({
       }
       me.removeTabs(tabArray);
     };
-    OB.KeyboardManager.KS.add('TabSet_closeAllTabs', ksAction_closeAllTabs);
+    OB.KeyboardManager.KS.set('TabSet_closeAllTabs', ksAction_closeAllTabs);
     var ksAction_ActivateRightTab = function() {
       me.selectTab((me.getTabNumber(me.getSelectedTab()))+1);
       if(typeof me.getSelectedTab().pane.focusTab === 'function') {
         me.getSelectedTab().pane.focusTab();
       }
     };
-    OB.KeyboardManager.KS.add('TabSet_ActivateRightTab', ksAction_ActivateRightTab);
+    OB.KeyboardManager.KS.set('TabSet_ActivateRightTab', ksAction_ActivateRightTab);
     var ksAction_ActivateLeftTab = function() {
       me.selectTab((me.getTabNumber(me.getSelectedTab()))-1);
       if(typeof me.getSelectedTab().pane.focusTab === 'function') {
         me.getSelectedTab().pane.focusTab();
       }
     };
-    OB.KeyboardManager.KS.add('TabSet_ActivateLeftTab', ksAction_ActivateLeftTab);
+    OB.KeyboardManager.KS.set('TabSet_ActivateLeftTab', ksAction_ActivateLeftTab);
     var ksAction_ReloadActive = function() {
       if(typeof me.getSelectedTab().pane.refreshTab === 'function') {
         me.getSelectedTab().pane.refreshTab();
@@ -248,7 +248,7 @@ OB.MainView.TabSet = isc.TabSet.create({
         me.getSelectedTab().pane.focusTab();
       }
     };
-    OB.KeyboardManager.KS.add('TabSet_ReloadActive', ksAction_ReloadActive);
+    OB.KeyboardManager.KS.set('TabSet_ReloadActive', ksAction_ReloadActive);
     this.Super('draw', arguments);
   },
 

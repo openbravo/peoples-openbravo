@@ -150,8 +150,13 @@ isc.OBToolbarActionButton.addProperties( {
     
     var label = this.labelValue[buttonValue];
     if (!label){
-      label = this.title;
+      if (this.realTitle) {
+        label = this.realTitle;
+      } else {
+        label = this.title;
+      }
     }
+    this.realTitle = label;
     this.setTitle(label);
   }
   
