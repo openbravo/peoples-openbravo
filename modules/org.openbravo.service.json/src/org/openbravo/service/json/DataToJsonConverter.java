@@ -30,6 +30,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
+import org.openbravo.base.model.domaintype.HashedStringDomainType;
 import org.openbravo.base.structure.ActiveEnabled;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
@@ -225,6 +227,10 @@ public class DataToJsonConverter {
       } else {
         return xmlDateFormat.format(value);
       }
+      // for the properties of type password -> do not return raw-value at all
+    } else if (property.getDomainType() instanceof HashedStringDomainType
+        || property.getDomainType() instanceof EncryptedStringDomainType) {
+      return "***";
     }
     return value;
   }

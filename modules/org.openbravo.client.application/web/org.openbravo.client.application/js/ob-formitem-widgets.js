@@ -280,7 +280,11 @@ isc.OBSearchItem.addProperties({
 isc.ClassFactory.defineClass('OBEncryptedItem', isc.PasswordItem);
 
 // add specific properties here
-isc.OBEncryptedItem.addProperties({});
+isc.OBEncryptedItem.addProperties({
+  changed : function(form,item,value) {
+	this.form.setValue(item.name + '.cleartext', value);
+  }
+});
 
 // == OBFormButton ==
 // The default form button.
