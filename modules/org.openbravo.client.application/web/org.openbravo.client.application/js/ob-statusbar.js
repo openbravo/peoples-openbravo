@@ -90,14 +90,16 @@ isc.OBStatusBar.addProperties({
   nextButton: null,
   previousButton: null,
   newIcon: null,
-  leftBar: null,
   
   initWidget: function(){
-    this.leftBar = isc.OBStatusBarLeftBar.create({
+    this.stateLabel = isc.OBStatusBarTextLabel.create({
+      contents: '&nbsp;',
+      width: '100%',
+      height: '100%'
     });
-//    leftBar.addMember(isc.OBStatusBarTextLabel.create({
-//      contents: '' //'Status:'
-//    }));
+      
+    this.leftStatusBar = isc.OBStatusBarLeftBar.create({});
+    this.leftStatusBar.addMember(this.stateLabel);
     
     this.previousButton = isc.OBStatusBarIconButton.create({
       view: this.view,
@@ -131,24 +133,35 @@ isc.OBStatusBar.addProperties({
         OB.TestRegistry.register('org.openbravo.client.application.statusbar.button.' + buttonBar.members[i].buttonType + '.' + this.view.tabId, buttonBar.members[i]);        
       }
     }
-    this.addMembers([this.leftBar, buttonBar]);
+    this.addMembers([this.leftStatusBar, buttonBar]);
+    return this.Super('initWidget', arguments);
   },
   
-  setNewIcon: function(show) {
-    if (show) {      
-      if (!this.newIcon) {
-        this.newIcon = isc.Img.create(this.newIconDefaults);
-      }
-      this.leftBar.addMember(this.newIcon, 0);
-    } else if (this.newIcon) {
-      this.leftBar.removeMember(this.newIcon);
-    }
-  },
+//  setNewIcon: function(show) {
+//    if (show) {      
+//      if (!this.newIcon) {
+//        this.newIcon = isc.Img.create(this.newIconDefaults);
+//      }
+//      this.leftBar.addMember(this.newIcon, 0);
+//    } else if (this.newIcon) {
+//      this.leftBar.removeMember(this.newIcon);
+//    }
+//  },
   
   setNewState: function(isNew) {
     this.previousButton.setDisabled(isNew);
     this.nextButton.setDisabled(isNew);
-    this.setNewIcon(isNew);
+    if (isNew) {
+      this.setStateLabel('OBUIAPP_New');
+    }
+  },
+  
+  setStateLabel: function (labelCode) {
+    var msg = '&nbsp;';
+    if (labelCode) {
+      msg = OB.I18N.getLabel(labelCode);
+    }
+    this.stateLabel.setContents(msg);    
   }
   
 });
