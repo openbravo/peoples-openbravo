@@ -30,6 +30,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
 
@@ -211,6 +212,9 @@ public class DefaultJsonDataService implements JsonDataService {
           DataToJsonConverter.class);
       toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
       final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
+
+      addWritableAttribute(jsonObjects);
+
       jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray(jsonObjects));
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
@@ -223,6 +227,32 @@ public class DefaultJsonDataService implements JsonDataService {
     } catch (Throwable t) {
       log.error(t.getMessage(), t);
       return JsonUtils.convertExceptionToJson(t);
+    }
+  }
+
+  private void addWritableAttribute(List<JSONObject> jsonObjects) throws JSONException {
+    for (JSONObject jsonObject : jsonObjects) {
+      if (!jsonObject.has("client") || !jsonObject.has("organization")) {
+        continue;
+      }
+      final Object rowClient = jsonObject.get("client");
+      final Object rowOrganization = jsonObject.get("organization");
+      if (!(rowClient instanceof String) || !(rowOrganization instanceof String)) {
+        continue;
+      }
+      final String currentClientId = OBContext.getOBContext().getCurrentClient().getId();
+      if (!rowClient.equals(currentClientId)) {
+        jsonObject.put("_writable", false);
+      } else {
+        boolean writable = false;
+        for (String orgId : OBContext.getOBContext().getWritableOrganizations()) {
+          if (orgId.equals(rowOrganization)) {
+            writable = true;
+            break;
+          }
+        }
+        jsonObject.put("_writable", writable);
+      }
     }
   }
 
