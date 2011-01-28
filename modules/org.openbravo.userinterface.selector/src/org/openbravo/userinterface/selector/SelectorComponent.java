@@ -70,6 +70,7 @@ public class SelectorComponent extends BaseTemplateComponent {
   private static final String THREECELLS = "ThreeCells";
   private static final String FOURCELLS = "FourCells";
   private static final String FIVECELLS = "FiveCells";
+  private static final String CUSTOM_QUERY_DS = "F8DD408F2F3A414188668836F84C21AF";
 
   private org.openbravo.userinterface.selector.Selector selector;
   private List<SelectorFieldTrl> selectorFieldTrls;
@@ -111,8 +112,11 @@ public class SelectorComponent extends BaseTemplateComponent {
    */
   public String getDefaultPopupFilterField() {
     if (getSelector().getDisplayfield() != null && getSelector().getDisplayfield().isShowingrid()) {
-      if (getSelector().getDisplayfield().getProperty() != null) {
+      if (!getSelector().isCustomQuery() && getSelector().getDisplayfield().getProperty() != null) {
         return getSelector().getDisplayfield().getProperty();
+      } else if (getSelector().isCustomQuery()
+          && getSelector().getDisplayfield().getDisplayColumnAlias() != null) {
+        return getSelector().getDisplayfield().getDisplayColumnAlias();
       } else {
         return getSelector().getDisplayfield().getObserdsDatasourceField().getName();
       }
@@ -223,6 +227,9 @@ public class SelectorComponent extends BaseTemplateComponent {
     if (selectorField.getProperty() != null) {
       return selectorField.getProperty();
     }
+    if (selectorField.getDisplayColumnAlias() != null) {
+      return selectorField.getDisplayColumnAlias();
+    }
     if (selectorField.getObserdsDatasourceField() != null) {
       return selectorField.getObserdsDatasourceField().getName();
     }
@@ -292,6 +299,8 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     if (getSelector().getObserdsDatasource() != null) {
       dataSourceId = getSelector().getObserdsDatasource().getId();
+    } else if (getSelector().isCustomQuery()) {
+      dataSourceId = CUSTOM_QUERY_DS;
     } else {
       Check.isNotNull(getSelector().getTable(),
           "Both the datasource and table are null for this selector: " + selector);
@@ -684,6 +693,10 @@ public class SelectorComponent extends BaseTemplateComponent {
       Check.isNotNull(property, "Property " + selectorField.getProperty() + " not found in Entity "
           + entity);
       return property.getDomainType();
+    } else if (selectorField.getObuiselSelector().getTable() != null
+        && selectorField.getObuiselSelector().isCustomQuery()
+        && selectorField.getReference() != null) {
+      return getDomainType(selectorField.getReference().getId());
     } else if (selectorField.getObserdsDatasourceField().getReference() != null) {
       return getDomainType(selectorField.getObserdsDatasourceField().getReference().getId());
     }

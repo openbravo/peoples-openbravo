@@ -77,10 +77,14 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
       for (SelectorField f : obc.list()) {
         try {
           exprResult = engine.eval(f.getDefaultExpression());
-          result.put(f.getProperty(), exprResult);
+          if (sel.isCustomQuery()) {
+            result.put(f.getDisplayColumnAlias(), exprResult);
+          } else {
+            result.put(f.getProperty(), exprResult);
+          }
         } catch (Exception e) {
-          log.error("Error evaluating expression for property " + f.getProperty() + ": "
-              + e.getMessage(), e);
+          log.error("Error evaluating expression for property " + f.getProperty()
+              + f.getDisplayColumnAlias() + ": " + e.getMessage(), e);
         }
       }
     } catch (Exception e) {
