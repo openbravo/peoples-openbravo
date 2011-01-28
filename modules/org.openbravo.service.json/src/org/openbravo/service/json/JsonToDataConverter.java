@@ -31,10 +31,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.jfree.util.Log;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
@@ -105,6 +105,7 @@ import org.openbravo.model.common.enterprise.Organization;
  * @author mtaal
  */
 public class JsonToDataConverter {
+  private static final Logger log = Logger.getLogger(JsonToDataConverter.class);
 
   private static final String DOT = ".";
 
@@ -457,7 +458,7 @@ public class JsonToDataConverter {
           qry.setFilterOnReadableOrganization(false);
           final List<BaseOBObject> result = qry.list();
           if (result.size() > 1) {
-            Log.warn("More than one result when querying " + entity + " using property "
+            log.warn("More than one result when querying " + entity + " using property "
                 + property.getReferencedProperty() + " with value " + referencedId
                 + ", choosing the first result");
             value = result.get(0);
