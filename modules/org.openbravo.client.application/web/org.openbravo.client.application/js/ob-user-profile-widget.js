@@ -280,7 +280,7 @@ isc.OBUserProfile.addProperties({
       width: '100%'
     });
     buttonLayout.addMembers(isc.OBFormButton.create({
-      title: OB.I18N.getLabel('UINAVBA_Save'),
+      title: OB.I18N.getLabel('OBUIAPP_Apply'),
       click: function(){
         roleForm.doSave();
       }
@@ -427,7 +427,7 @@ isc.OBUserProfile.addProperties({
     widgetInstance.passwordForm = passwordForm;
     
     var pwdSaveButton = isc.OBFormButton.create({
-      title: OB.I18N.getLabel('UINAVBA_Save'),
+      title: OB.I18N.getLabel('OBUIAPP_Apply'),
       action: passwordForm.doSave,
       disabled: true
     });
