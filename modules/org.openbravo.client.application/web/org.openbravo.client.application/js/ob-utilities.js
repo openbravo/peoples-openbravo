@@ -298,6 +298,18 @@ OB.Utilities.getYesNoDisplayValue = function(/* Boolean */value){
   }
 };
 
+// ** {{{ OB.Utilities.getClassicValue }}} **
+// Returns the Y if the passed value is true, and N if false.
+OB.Utilities.getClassicValue = function(/* Boolean */value){
+  if (value) {
+    return 'Y';
+  } else if (value === false) {
+    return 'N';
+  } else {
+    return '';
+  }
+};
+
 // ** {{{ OB.Utilities.applyDefaultValues }}} **
 //
 // Sets the value for each property in the defaultValues in the Fields object
@@ -348,24 +360,6 @@ OB.Utilities.addFormInputsToCriteria = function(/* Object */criteria, /* Window 
   if (d.frmMain.inpadOrgId) {
     criteria[OB.Constants.ORG_PARAMETER] = inputValue(d.frmMain.inpadOrgId);
   }
-};
-
-// ** {{{ OB.Utilities.updateSmartClientComponentValue }}} **
-//
-// Updates the value of a smartclient component.
-//
-// Parameters:
-// * {{{input}}}: the input field (html dom input element)
-// * {{{component}}}: the Smartclient component (must have a setValue function)
-OB.Utilities.updateSmartClientComponentValue = function(/* Object */input, /* Object */ component){
-  component.setValue(input.value);
-};
-
-// ** {{{ OB.Utilities.getKeyCode }}} **
-//
-// Returns the keycode related to a keydown event.
-OB.Utilities.getKeyCode = function(){
-  return isc.EventHandler.lastEvent.nativeKeyCode;
 };
 
 // ** {{{ OB.Utilities.Date.centuryReference }}} **
@@ -880,33 +874,6 @@ OB.Utilities.Number.IsValidValueString = function(type, numberStr){
     return true;
   }
   return false;
-};
-
-// ** {{{ OB.Utilities._getTabInfoRequestProperties }}} **
-//
-// Adds tab and module information to the requestProperties.
-//
-// Parameters:
-// * {{{theView}}}: view to obtain tab and module info from.
-// * {{{requestProperties}}}: original requestProperties.
-// Return:
-// * Original requestProperties including the new module and tab properties.
-OB.Utilities._getTabInfoRequestProperties = function(theView, requestProperties){
-  if (theView && theView.tabId) {
-    var tabParam = {
-      params: {
-        windowId: theView.standardWindow.windowId,
-        tabId: theView.tabId,
-        moduleId: theView.moduleId
-      }
-    };
-    if (requestProperties) {
-      isc.addProperties(requestProperties, tabParam);
-    } else {
-      requestProperties = tabParam;
-    }
-  }
-  return requestProperties;
 };
 
 //** {{{ OB.Utilities.postThroughHiddenForm }}} **

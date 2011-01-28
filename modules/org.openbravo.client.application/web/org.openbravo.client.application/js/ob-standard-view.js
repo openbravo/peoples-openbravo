@@ -303,7 +303,7 @@ isc.OBStandardView.addProperties({
           this.delayCall('showProgress', [requestProperties.clientContext.progressIndicatorSelectedRecord], 200);
         }
         
-        var newRequestProperties = OB.Utilities._getTabInfoRequestProperties(this.view, requestProperties);
+        var newRequestProperties = this.getTabInfoRequestProperties(this.view, requestProperties);
         //standard update is not sent with operationType
         var additionalPara = {
           _operationType: 'update',
@@ -332,7 +332,35 @@ isc.OBStandardView.addProperties({
           }
         }
         return this.Super('transformResponse', arguments);
-      }
+      },
+
+     // ** {{{ getTabInfoRequestProperties }}} **
+     //
+     // Adds tab and module information to the requestProperties.
+     //
+     // Parameters:
+     // * {{{theView}}}: view to obtain tab and module info from.
+     // * {{{requestProperties}}}: original requestProperties.
+     // Return:
+     // * Original requestProperties including the new module and tab properties.
+     getTabInfoRequestProperties: function(theView, requestProperties){
+       if (theView && theView.tabId) {
+         var tabParam = {
+           params: {
+             windowId: theView.standardWindow.windowId,
+             tabId: theView.tabId,
+             moduleId: theView.moduleId
+           }
+         };
+         if (requestProperties) {
+           isc.addProperties(requestProperties, tabParam);
+         } else {
+           requestProperties = tabParam;
+         }
+       }
+       return requestProperties;
+     }
+
     });
     
     var myDs = isc[obDsClassname].create(modifiedDs);
@@ -1355,14 +1383,14 @@ isc.OBStandardView.addProperties({
   
   //++++++++++++++++++ Reading context ++++++++++++++++++++++++++++++
   
-  getContextInfo: function(onlySessionProperties, classicMode, forceSettingContextVars){
+  getContextInfo: function(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat){
     var contextInfo = {}, addProperty;
     // if classicmode is undefined then both classic and new props are used
     var classicModeUndefined = (typeof classicMode === 'undefined');
     if (classicModeUndefined) {
       classicMode = true;
     }
-    var value, field, record, component;
+    var value, field, record, component, propertyObj, type;
     // different modes:
     // 1) showing grid with one record selected
     // 2) showing form with aux inputs
@@ -1385,12 +1413,22 @@ isc.OBStandardView.addProperties({
       }
       
       for (var i = 0; i < properties.length; i++) {
-        value = record[properties[i].property];
-        field = component.getField(properties[i].property);
-        addProperty = properties[i].sessionProperty || !onlySessionProperties;
+        propertyObj = properties[i];
+        value = record[propertyObj.property];
+        field = component.getField(propertyObj.property);
+        addProperty = propertyObj.sessionProperty || !onlySessionProperties;
         if (typeof value !== 'undefined' && addProperty) {
           if (classicMode) {
+            if (propertyObj.type && convertToClassicFormat) {
+              type = SimpleType.getType(propertyObj.type);
+              if (type.createClassicString) {
+                contextInfo[properties[i].column] = type.createClassicString(value);
+              } else {
+                contextInfo[properties[i].column] = value;
+              }
+            } else {
             contextInfo[properties[i].column] = value;
+            }
           } else {
             // surround the property name with @ symbols to make them different
             // from filter criteria and such          

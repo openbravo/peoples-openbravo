@@ -23,15 +23,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.Property;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.window.OBViewFormComponent.FormFieldComparator;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.Template;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -166,29 +164,7 @@ public class OBViewTab extends BaseTemplateComponent {
     if (parentProperty != null) {
       return parentProperty;
     }
-    parentProperty = "";
-    final Entity thisEntity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
-    final Entity parentEntity = ModelProvider.getInstance().getEntity(
-        parentTabComponent.getTab().getTable().getName());
-    if (tab.getColumn() != null) {
-      final String columnId = (String) DalUtil.getId(tab.getColumn());
-      for (Property property : thisEntity.getProperties()) {
-        if (property.getColumnId() != null && property.getColumnId().equals(columnId)) {
-          parentProperty = property.getName();
-        }
-      }
-    } else {
-      for (Property property : thisEntity.getProperties()) {
-        if (property.isPrimitive() || property.isOneToMany()) {
-          continue;
-        }
-        if (property.getTargetEntity() == parentEntity) {
-          parentProperty = property.getName();
-          break;
-        }
-      }
-    }
-    return parentProperty;
+    return ApplicationUtils.getParentProperty(tab, parentTabComponent.getTab());
   }
 
   public String getViewForm() {
@@ -341,6 +317,7 @@ public class OBViewTab extends BaseTemplateComponent {
     private String dbColumnName;
     private String propertyName;
     private boolean session;
+    private String typeName;
 
     public FieldProperty() {
       session = false;
@@ -354,6 +331,7 @@ public class OBViewTab extends BaseTemplateComponent {
       dbColumnName = col.getDBColumnName();
       propertyName = KernelUtils.getInstance().getPropertyFromColumn(col).getName();
       session = col.isStoredInSession();
+      typeName = UIDefinitionController.getInstance().getUIDefinition(col.getId()).getName();
     }
 
     public FieldProperty(Field field) {
@@ -378,6 +356,14 @@ public class OBViewTab extends BaseTemplateComponent {
 
     public void setDbColumnName(String dbColumnName) {
       this.dbColumnName = dbColumnName;
+    }
+
+    public String getTypeName() {
+      return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+      this.typeName = typeName;
     }
   }
 

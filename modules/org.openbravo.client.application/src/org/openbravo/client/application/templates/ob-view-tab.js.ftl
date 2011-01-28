@@ -47,7 +47,8 @@
           property: '${field.propertyName?js_string}',
           column: '${field.columnName?js_string}', 
           dbColumn: '${field.dbColumnName?js_string}', 
-          sessionProperty: ${field.session}
+          sessionProperty: ${field.session},
+          type: '${field.typeName?js_string}'
         }<#if field_has_next>,</#if>
       </#list>
     ],

@@ -51,8 +51,8 @@ isc.OBToolbarActionButton.addProperties( {
   doAction: function(){
     var theView = this.view;
 
-    var allProperties = theView.getContextInfo(false, true);
-    var sessionProperties = theView.getContextInfo(true, true);
+    var allProperties = theView.getContextInfo(false, true, false, true);
+    var sessionProperties = theView.getContextInfo(true, true, false, true);
     var me = this, callbackFunction;
 
     OB.ActionButton.executingProcess = this;
