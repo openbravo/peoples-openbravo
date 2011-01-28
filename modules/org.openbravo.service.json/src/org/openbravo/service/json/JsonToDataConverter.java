@@ -151,6 +151,9 @@ public class JsonToDataConverter {
         return new Float((Integer) value);
       } else if (value instanceof Long && property.getPrimitiveObjectType() == Float.class) {
         return new Float((Long) value);
+      } else if (value instanceof BigDecimal
+          && property.getPrimitiveObjectType() == BigDecimal.class) {
+        return value;
       } else if (value instanceof Number && property.getPrimitiveObjectType() == BigDecimal.class) {
         return new BigDecimal(((Number) value).doubleValue());
       } else if (value instanceof String && ((String) value).trim().length() == 0) {
