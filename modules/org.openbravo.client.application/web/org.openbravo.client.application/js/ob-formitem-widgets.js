@@ -1008,7 +1008,7 @@ isc.OBNumberItem.addProperties({
   },
   
   keyDown: function(item, form, keyName){
-    var keyCode = OB.Utilities.getKeyCode();
+    var keyCode = isc.EventHandler.lastEvent.nativeKeyCode;
     this.manageDecPoint(keyCode);
   },
   
