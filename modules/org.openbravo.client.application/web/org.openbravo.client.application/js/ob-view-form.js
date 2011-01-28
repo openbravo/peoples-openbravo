@@ -430,6 +430,7 @@ OB.ViewFormProperties = {
   
   itemChanged: function(item, newValue){
     var ret = this.Super('itemChanged', arguments);
+    this.handleItemChange(item);
     this.itemChangeActions();
     return ret;
   },
