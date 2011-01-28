@@ -341,8 +341,36 @@ public class QueryBuilder {
     }
 
     whereClause = setRequestParameters(whereClause);
+    whereClause = substituteContextParameters(whereClause);
 
     return whereClause;
+  }
+
+  private String substituteContextParameters(String currentWhereClause) {
+    // This method will check for any remaining @param@s
+    // If there are still some in the whereclause, they will be resolved by calling the getContext()
+    // method
+    if (!currentWhereClause.contains("@")) {
+      return currentWhereClause;
+    }
+    String localWhereClause = currentWhereClause;
+    while (localWhereClause.contains("@")) {
+      int firstAtIndex = localWhereClause.indexOf("@");
+      String prefix = localWhereClause.substring(0, firstAtIndex);
+      String restOfClause = localWhereClause.substring(firstAtIndex + 1);
+      int secondAtIndex = restOfClause.indexOf("@");
+      if (secondAtIndex == -1) {
+        // No second @. We return the clause as it is
+        return localWhereClause;
+      }
+      String suffix = restOfClause.substring(secondAtIndex + 1);
+      String param = restOfClause.substring(0, secondAtIndex);
+      String paramValue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
+          .getVariablesSecureApp(), param, RequestContext.get().getRequestParameter("windowId"));
+      localWhereClause = prefix + getTypedParameterAlias() + suffix;
+      typedParameters.add(paramValue);
+    }
+    return localWhereClause;
   }
 
   private String setRequestParameters(String currentWhereClause) {
