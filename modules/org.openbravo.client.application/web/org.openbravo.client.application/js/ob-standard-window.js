@@ -265,6 +265,10 @@ isc.OBStandardWindow.addProperties({
   },
   
   isSameTab: function(viewName, params){
+    // always return false to force new tabs
+    if (this.multiDocumentEnabled) {
+      return false;
+    }
     return this.isEqualParams(params) && viewName === this.getClassName();
   }
 });

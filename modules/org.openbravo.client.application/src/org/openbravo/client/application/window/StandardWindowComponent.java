@@ -138,6 +138,14 @@ public class StandardWindowComponent extends BaseTemplateComponent {
     return getWindow().getId();
   }
 
+  public String getThreadSafe() {
+    final Boolean value = getWindow().isThreadsafe();
+    if (value != null) {
+      return value.toString();
+    }
+    return "false";
+  }
+
   public Window getWindow() {
     return window;
   }
