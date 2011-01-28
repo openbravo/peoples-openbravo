@@ -112,10 +112,55 @@ public class JsonToDataConverter {
   // these can be created as references but need to be also really imported.
   private final Map<String, BaseOBObject> newObjects = new HashMap<String, BaseOBObject>();
 
-  private final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
-  private final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
+  private final static SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
+  private final static SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
 
   private final List<JsonConversionError> errors = new ArrayList<JsonConversionError>();
+
+  /**
+   * Gets a value from json and converts it to a valid value for the DAL.
+   */
+  public static synchronized Object convertJsonToPropertyValue(Property property, Object value) {
+    try {
+      if (JSONObject.NULL.equals(value)) { // note JSONObject.NULL.equals(null) == true
+        return null;
+      }
+      if (!property.isPrimitive()) {
+        return value;
+      }
+      // do some common conversions
+      final Class<?> clz = property.getPrimitiveObjectType();
+      if (clz != null && Date.class.isAssignableFrom(clz)) {
+        try {
+          if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
+            final String repairedString = JsonUtils.convertFromXSDToJavaFormat((String) value);
+            return new Timestamp(xmlDateTimeFormat.parse(repairedString).getTime());
+          } else {
+            return xmlDateFormat.parse((String) value);
+          }
+        } catch (ParseException e) {
+          throw new Error(e);
+        }
+      } else if (property.isBoolean() && value instanceof String) {
+        return Boolean.parseBoolean((String) value);
+      } else if (value instanceof Double) {
+        return new BigDecimal((Double) value);
+      } else if (value instanceof Integer && property.getPrimitiveObjectType() == Long.class) {
+        return new Long((Integer) value);
+      } else if (value instanceof Integer && property.getPrimitiveObjectType() == Float.class) {
+        return new Float((Integer) value);
+      } else if (value instanceof Long && property.getPrimitiveObjectType() == Float.class) {
+        return new Float((Long) value);
+      } else if (value instanceof Number && property.getPrimitiveObjectType() == BigDecimal.class) {
+        return new BigDecimal(((Number) value).doubleValue());
+      } else if (value instanceof String && ((String) value).trim().length() == 0) {
+        return null;
+      }
+      return value;
+    } catch (Exception e) {
+      throw new OBException("Error when converting value " + value + " for prop " + property, e);
+    }
+  }
 
   public void clearState() {
     errors.clear();
@@ -467,7 +512,7 @@ public class JsonToDataConverter {
         value = null;
       } else if (property.isPrimitive()) {
         // convert the value
-        value = convertPrimitive(property, jsonValue);
+        value = convertJsonToPropertyValue(property, jsonValue);
       } else if (jsonValue instanceof String) {
         // an id
         final String referenceId = (String) jsonValue;
@@ -587,41 +632,6 @@ public class JsonToDataConverter {
 
   private String getObjectKey(String id, String entityName) {
     return id + "_" + entityName;
-  }
-
-  private Object convertPrimitive(Property property, Object value) throws ParseException {
-    if (JSONObject.NULL.equals(value)) { // note JSONObject.NULL.equals(null) == true
-      return null;
-    }
-    // do some common conversions
-    final Class<?> clz = property.getPrimitiveObjectType();
-    if (clz != null && Date.class.isAssignableFrom(clz)) {
-      try {
-        if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
-          final String repairedString = JsonUtils.convertFromXSDToJavaFormat((String) value);
-          return new Timestamp(xmlDateTimeFormat.parse(repairedString).getTime());
-        } else {
-          return xmlDateFormat.parse((String) value);
-        }
-      } catch (ParseException e) {
-        throw new Error(e);
-      }
-    } else if (property.isBoolean() && value instanceof String) {
-      return Boolean.parseBoolean((String) value);
-    } else if (value instanceof Double) {
-      return new BigDecimal((Double) value);
-    } else if (value instanceof Integer && property.getPrimitiveObjectType() == Long.class) {
-      return new Long((Integer) value);
-    } else if (value instanceof Integer && property.getPrimitiveObjectType() == Float.class) {
-      return new Float((Integer) value);
-    } else if (value instanceof Long && property.getPrimitiveObjectType() == Float.class) {
-      return new Float((Long) value);
-    } else if (value instanceof Number && property.getPrimitiveObjectType() == BigDecimal.class) {
-      return new BigDecimal(((Number) value).doubleValue());
-    } else if (value instanceof String && ((String) value).trim().length() == 0) {
-      return null;
-    }
-    return value;
   }
 
   public boolean hasErrors() {
