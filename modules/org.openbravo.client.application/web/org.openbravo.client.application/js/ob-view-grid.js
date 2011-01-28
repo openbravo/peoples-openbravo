@@ -525,8 +525,6 @@ isc.OBViewGrid.addProperties({
       criteria._targetRecordId = this.targetRecordId;
     }
     
-    criteria = OB.Utilities._getTabInfoRequestProperties(this.view, criteria);
-    
     // note pass in criteria otherwise infinite looping!
     this.resetEmptyMessage(criteria);
     
