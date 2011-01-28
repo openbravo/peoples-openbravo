@@ -486,4 +486,27 @@ public abstract class UIDefinition {
     return strOut.toString();
   }
 
+  /**
+   * @deprecated replaced by {@link #createFromClassicString(String)}
+   */
+  @Deprecated
+  public Object createJsonValueFromClassicValueString(java.lang.String value) {
+    return null;
+  }
+
+  /**
+   * @deprecated replaced by {@link #createFromClassicString(String)}
+   */
+  @Deprecated
+  public String formatValueFromSQL(java.lang.String value) {
+    return null;
+  }
+
+  /**
+   * @deprecated replaced by {@link #convertToClassicString(Object)}
+   */
+  @Deprecated
+  public String formatValueToSQL(java.lang.String value) {
+    return null;
+  }
 }
