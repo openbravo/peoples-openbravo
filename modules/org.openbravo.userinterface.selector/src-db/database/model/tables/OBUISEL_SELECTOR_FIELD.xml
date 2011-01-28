@@ -105,8 +105,15 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AD_REFERENCE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBSERDS_DATASOURCE_FIELD" name="OBUISEL_S_OBSERDS_DSF">
         <reference local="OBSERDS_DATASOURCE_FIELD_ID" foreign="OBSERDS_DATASOURCE_FIELD_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_REFERENCE" name="OBUISEL_SELFIELD_REFERENCE">
+        <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="OBUISEL_SF_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
