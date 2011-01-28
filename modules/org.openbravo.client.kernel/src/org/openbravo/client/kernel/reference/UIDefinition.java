@@ -69,7 +69,7 @@ public abstract class UIDefinition {
   }
 
   /**
-   * @return the Smartcient type from which this type inherits.
+   * @return the Smartclient type from which this type inherits.
    */
   public String getParentType() {
     return "text";
