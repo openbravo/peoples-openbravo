@@ -68,6 +68,11 @@ public abstract class NumberUIDefinition extends UIDefinition {
       if (normalFormat != null) {
         sb.append("normalDisplayFormatter: " + getFormatter(normalFormat) + ",");
       }
+      if (shortFormat != null) {
+        sb.append("createClassicString: " + getFormatter(shortFormat) + ",");
+      } else if (normalFormat != null) {
+        sb.append("createClassicString: " + getFormatter(normalFormat) + ",");
+      }
 
       return sb.toString();
     }
@@ -96,49 +101,61 @@ public abstract class NumberUIDefinition extends UIDefinition {
 
   @Override
   public String getFieldProperties(Field field, boolean getValueFromSession) {
-    final PrimitiveDomainType primitiveDomainType = (PrimitiveDomainType) getDomainType();
-    if (primitiveDomainType.getFormatId() != null) {
-      final String formatId = primitiveDomainType.getFormatId();
-      final FormatDefinition inputFormat = UIDefinitionController.getInstance()
-          .getFormatDefinition(formatId, UIDefinitionController.SHORTFORMAT_QUALIFIER);
-      if (inputFormat != null) {
-        try {
-          final JSONObject jsonObject = new JSONObject();
-          // If a column has a numeric reference, and is required, and doesn't have a default, then
-          // the default '0' is set
-          if (!getValueFromSession && field.getColumn().isMandatory()
-              && field.getColumn().getDefaultValue() == null) {
-            jsonObject.put("value", 0);
-            return jsonObject.toString();
-          }
-          JSONObject val = new JSONObject(super.getFieldProperties(field, getValueFromSession));
-          if (val.has("value")) {
-            jsonObject.put("value", val.get("value"));
-          }
-          return jsonObject.toString();
-        } catch (JSONException e) {
-          throw new OBException(e);
-        }
+    try {
+      // If a column has a numeric reference, and is required, and doesn't have a default, then
+      // the default '0' is set
+      if (!getValueFromSession && field.getColumn().isMandatory()
+          && field.getColumn().getDefaultValue() == null) {
+        final JSONObject jsonObject = new JSONObject();
+        jsonObject.put("value", 0);
+        jsonObject.put("classicValue", 0);
+        return jsonObject.toString();
       }
+      return new JSONObject(super.getFieldProperties(field, getValueFromSession)).toString();
+    } catch (JSONException e) {
+      throw new OBException(e);
     }
-    return "";
   }
 
   public String getFormat() {
     return "generalQtyEdition";
   }
 
-  public String formatValueToSQL(String value) {
+  @Override
+  public String convertToClassicString(Object value) {
+    if (value == null) {
+      return "";
+    }
+    final String valueStr = value.toString();
     VariablesSecureApp variables = RequestContext.get().getVariablesSecureApp();
-    final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-    dfs
-        .setDecimalSeparator(variables.getSessionValue("#DecimalSeparator|" + getFormat())
-            .charAt(0));
-    dfs.setGroupingSeparator(variables.getSessionValue("#DecimalSeparator|" + getFormat())
-        .charAt(0));
-    final DecimalFormat numberFormat = new DecimalFormat(variables.getSessionValue("#FormatOutput|"
-        + getFormat()), dfs);
-    return numberFormat.format(Double.parseDouble(value));
+    // only replace the decimal symbol
+    return valueStr.replace(".", variables.getSessionValue("#DecimalSeparator|" + getFormat())
+        .substring(0, 1));
+  }
+
+  @Override
+  public Object createFromClassicString(String value) {
+    if (value == null || value.trim().length() == 0) {
+      return null;
+    }
+    try {
+      final PrimitiveDomainType primitiveDomainType = (PrimitiveDomainType) getDomainType();
+      if (primitiveDomainType.getFormatId() != null) {
+        final String formatId = primitiveDomainType.getFormatId();
+        final FormatDefinition inputFormat = UIDefinitionController.getInstance()
+            .getFormatDefinition(formatId, UIDefinitionController.SHORTFORMAT_QUALIFIER);
+        final DecimalFormat decimalFormat = new DecimalFormat();
+        decimalFormat.setGroupingSize(3);
+        final DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setDecimalSeparator(inputFormat.getDecimalSymbol().charAt(0));
+        symbols.setGroupingSeparator(inputFormat.getGroupingSymbol().charAt(0));
+        decimalFormat.setDecimalFormatSymbols(symbols);
+        return decimalFormat.parse(value);
+      }
+      return null;
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
   }
 
   public static class DecimalUIDefinition extends NumberUIDefinition {

@@ -19,6 +19,8 @@
 
 package org.openbravo.client.kernel.reference;
 
+import org.openbravo.model.ad.ui.Field;
+
 /**
  * Implements Text (textarea) UI Definition
  * 
@@ -26,6 +28,12 @@ package org.openbravo.client.kernel.reference;
  * 
  */
 public class TextUIDefinition extends StringUIDefinition {
+
+  // don't support sorting on large text fields
+  @Override
+  public String getGridFieldProperties(Field field) {
+    return super.getGridFieldProperties(field) + ", canSort: false";
+  }
 
   @Override
   public String getParentType() {

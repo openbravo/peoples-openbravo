@@ -39,7 +39,7 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
       if (!field.isDisplayed()) {
         return value.toString();
       }
-      return getValueInComboReference(field, getValueFromSession, value.getString("value"));
+      return getValueInComboReference(field, getValueFromSession, value.getString("classicValue"));
     } catch (JSONException e) {
       throw new OBException("Error while computing combo data", e);
     }

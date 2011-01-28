@@ -18,12 +18,21 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import org.openbravo.model.ad.ui.Field;
+
 /**
  * Implementation of the image ui definition.
  * 
  * @author mtaal
  */
 public class BinaryUIDefinition extends UIDefinition {
+
+  // don't support sorting on binary fields and don't allow editing binary fields
+  // in a grid
+  @Override
+  public String getGridFieldProperties(Field field) {
+    return super.getGridFieldProperties(field) + ", canSort: false, canEdit: false";
+  }
 
   @Override
   public String getParentType() {

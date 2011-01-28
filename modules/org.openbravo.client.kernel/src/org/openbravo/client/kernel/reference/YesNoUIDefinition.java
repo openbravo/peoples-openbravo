@@ -49,6 +49,7 @@ public class YesNoUIDefinition extends UIDefinition {
     return "    valueMap: [null, true, false],"
         + "shortDisplayFormatter: function(value, field, component, record) {"
         + "return OB.Utilities.getYesNoDisplayValue(value);" + "},  "
+        + "createClassicString: function(value) {return OB.Utilities.getClassicValue(value);},"
         + "normalDisplayFormatter: function(value, field, component, record) {"
         + "return OB.Utilities.getYesNoDisplayValue(value);" + "},  ";
   }
@@ -82,19 +83,13 @@ public class YesNoUIDefinition extends UIDefinition {
   }
 
   @Override
-  public String formatValueToSQL(String value) {
-    if (value.equalsIgnoreCase("Y") || value.equalsIgnoreCase("true")) {
-      return "Y";
-    } else {
-      return "N";
+  public String convertToClassicString(Object value) {
+    if (value instanceof Boolean) {
+      if ((Boolean) value) {
+        return "Y";
+      }
     }
+    return "N";
   }
 
-  public String formatValueFromSQL(String value) {
-    if (value.equalsIgnoreCase("Y")) {
-      return "true";
-    } else {
-      return "false";
-    }
-  }
 }

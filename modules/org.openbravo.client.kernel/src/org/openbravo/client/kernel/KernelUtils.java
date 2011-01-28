@@ -33,6 +33,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -321,12 +322,25 @@ public class KernelUtils {
     HashMap<Entity, Tab> tabOfEntity = new HashMap<Entity, Tab>();
     Entity theEntity = ModelProvider.getInstance().getEntityByTableName(
         tab.getTable().getDBTableName());
+
     for (Tab aTab : tabsOfWindow) {
       Entity entity = ModelProvider.getInstance().getEntityByTableName(
           aTab.getTable().getDBTableName());
       entities.add(entity);
       tabOfEntity.put(entity, aTab);
     }
+
+    if (tab.getColumn() != null) {
+      final String colId = (String) DalUtil.getId(tab.getColumn());
+      for (Property prop : theEntity.getProperties()) {
+        if (prop.getColumnId() != null && prop.getColumnId().equals(colId)
+            && prop.getTargetEntity() != null && prop.isParent()
+            && tabOfEntity.containsKey(prop.getTargetEntity())) {
+          return tabOfEntity.get(prop.getTargetEntity());
+        }
+      }
+    }
+
     Tab targetTab = null;
     for (Property property : theEntity.getProperties()) {
       if (property.isParent()) {

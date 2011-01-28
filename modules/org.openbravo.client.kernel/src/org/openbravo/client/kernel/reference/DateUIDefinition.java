@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.kernel.reference;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -32,10 +31,11 @@ import org.openbravo.client.kernel.RequestContext;
  * @author mtaal
  */
 public class DateUIDefinition extends UIDefinition {
-
   private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 
   private SimpleDateFormat format = null;
+  private String lastUsedPattern = null;
+  private SimpleDateFormat dateFormat = null;
 
   public SimpleDateFormat getFormat() {
     if (format == null) {
@@ -55,21 +55,34 @@ public class DateUIDefinition extends UIDefinition {
     return "OBDateItem";
   }
 
+  private SimpleDateFormat getClassicFormat() {
+    String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATEFORMAT").toString();
+    if (dateFormat == null || !pattern.equals(lastUsedPattern)) {
+      dateFormat = new SimpleDateFormat(pattern);
+      lastUsedPattern = pattern;
+      dateFormat.setLenient(true);
+    }
+    return dateFormat;
+  }
+
   @Override
-  protected synchronized Object createJsonValueFromClassicValueString(String value) {
+  public String convertToClassicString(Object value) {
+    if (value == null) {
+      return "";
+    }
+    return getClassicFormat().format(value);
+  }
+
+  @Override
+  protected synchronized Object createFromClassicString(String value) {
     try {
       if (value == null || value.length() == 0 || value.equals("null")) {
         return null;
       }
-      SimpleDateFormat lformat;
       if (value.contains("T")) {
-        lformat = new SimpleDateFormat(PATTERN);
-      } else {
-        String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATEFORMAT").toString();
-        lformat = new SimpleDateFormat(pattern);
+        return value;
       }
-      lformat.setLenient(true);
-      final Date date = lformat.parse(value);
+      final Date date = getClassicFormat().parse(value);
       return ((PrimitiveDomainType) getDomainType()).convertToString(date);
     } catch (Exception e) {
       throw new OBException(e);
@@ -86,22 +99,9 @@ public class DateUIDefinition extends UIDefinition {
     sb.append("shortDisplayFormatter: function(value, field, component, record) {"
         + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},"
         + "normalDisplayFormatter: function(value, field, component, record) {"
+        + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},"
+        + "createClassicString: function(value) {"
         + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},");
     return sb.toString();
-  }
-
-  public String formatValueToSQL(String value) {
-    SimpleDateFormat lformat = new SimpleDateFormat(PATTERN);
-    lformat.setLenient(true);
-    Date date;
-    try {
-      date = lformat.parse(value);
-    } catch (ParseException e) {
-      throw new OBException("Couldn't parse date: " + value, e);
-    }
-    String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATEFORMAT").toString();
-    SimpleDateFormat outFormat = new SimpleDateFormat(pattern);
-    outFormat.setLenient(true);
-    return outFormat.format(date);
   }
 }

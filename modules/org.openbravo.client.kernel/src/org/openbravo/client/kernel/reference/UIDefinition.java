@@ -196,7 +196,8 @@ public abstract class UIDefinition {
     }
     JSONObject jsnobject = new JSONObject();
     try {
-      jsnobject.put("value", createJsonValueFromClassicValueString(columnValue));
+      jsnobject.put("value", createFromClassicString(columnValue));
+      jsnobject.put("classicValue", columnValue);
     } catch (JSONException e) {
       log.error("Couldn't get field property value for column "
           + field.getColumn().getDBColumnName());
@@ -209,12 +210,25 @@ public abstract class UIDefinition {
    * 
    * @see PrimitiveDomainType#createFromString(String)
    */
-  protected Object createJsonValueFromClassicValueString(String value) {
+  protected Object createFromClassicString(String value) {
     if (getDomainType() instanceof PrimitiveDomainType) {
       return ((PrimitiveDomainType) getDomainType()).createFromString(value);
     } else {
       return value;
     }
+  }
+
+  /**
+   * Creates a classic string which is used by callouts from an object value.
+   * 
+   * @param value
+   * @return the classic string
+   */
+  public String convertToClassicString(Object value) {
+    if (value == null) {
+      return "";
+    }
+    return ((PrimitiveDomainType) getDomainType()).convertToString(value);
   }
 
   /**
@@ -306,14 +320,6 @@ public abstract class UIDefinition {
     return prop.getName();
   }
 
-  public String formatValueToSQL(String value) {
-    return value;
-  }
-
-  public String formatValueFromSQL(String value) {
-    return value;
-  }
-
   protected String getValueInComboReference(Field field, boolean getValueFromSession,
       String columnValue) {
     try {
@@ -371,19 +377,24 @@ public abstract class UIDefinition {
       JSONObject fieldProps = new JSONObject();
       if (getValueFromSession) {
         fieldProps.put("value", columnValue);
+        fieldProps.put("classicValue", columnValue);
       } else {
         if (possibleIds.contains(columnValue)) {
           fieldProps.put("value", columnValue);
+          fieldProps.put("classicValue", columnValue);
         } else {
           // In case the default value doesn't exist in the combo values, we choose the first one
           if (comboEntries.size() > 0) {
             if (comboEntries.get(0).has(JsonConstants.ID)) {
               fieldProps.put("value", comboEntries.get(0).get(JsonConstants.ID));
+              fieldProps.put("classicValue", comboEntries.get(0).get(JsonConstants.ID));
             } else {
               fieldProps.put("value", (String) null);
+              fieldProps.put("classicValue", (String) null);
             }
           } else {
             fieldProps.put("value", "");
+            fieldProps.put("classicValue", "");
           }
         }
       }
@@ -399,17 +410,15 @@ public abstract class UIDefinition {
   private FieldProvider generateTabData(List<Field> fields, Field currentField, String currentValue) {
     HashMap<String, Object> noinpDataMap = new HashMap<String, Object>();
     for (Field field : fields) {
-      UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
-          field.getColumn().getId());
       String oldKey = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
       Object value;
       if (currentField.getId().equals(field.getId())) {
-        value = uiDef.formatValueToSQL(currentValue);
+        value = currentValue;
       } else {
         value = RequestContext.get().getRequestParameter(oldKey);
       }
       noinpDataMap.put(field.getColumn().getDBColumnName(),
-          value == null || value.equals("") ? null : uiDef.formatValueToSQL(value.toString()));
+          value == null || value.equals("") ? null : value.toString());
     }
     return new FieldProviderFactory(noinpDataMap);
   }
