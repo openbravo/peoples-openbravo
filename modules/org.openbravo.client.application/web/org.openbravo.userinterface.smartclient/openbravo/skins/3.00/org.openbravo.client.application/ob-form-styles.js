@@ -49,6 +49,15 @@ isc.OBTextItem.addProperties({
   textBoxStyle: 'OBFormFieldInput'
 });
 
+isc.OBEncryptedItem.addProperties({
+  errorOrientation: 'left',
+  height: 21,
+  width: '100%',
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldInput'
+});
+
 isc.OBTextAreaItem.addProperties({
   errorOrientation: 'left',
   height: 66,
