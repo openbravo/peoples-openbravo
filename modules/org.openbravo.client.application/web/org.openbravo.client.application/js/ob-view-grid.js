@@ -168,6 +168,21 @@ isc.OBViewGrid.addProperties({
         grid: this,
         rowNum: rowNum
       });
+      if (!record._writable) {
+        layout.editButton.doNotShow = true;
+        layout.editButton.hide();
+        layout.buttonSeparator1.hide();
+      } else {
+        layout.editButton.doNotShow = this.view.readOnly;
+        if (layout.editButton.doNotShow) {
+          layout.editButton.hide();
+          layout.buttonSeparator1.hide();
+        } else {
+          layout.editButton.show();
+          layout.buttonSeparator1.show();
+        }
+      }
+      
       record.editColumnLayout = layout;
     }
     return layout;
@@ -191,19 +206,26 @@ isc.OBViewGrid.addProperties({
       component.record = record;
       record.editColumnLayout = component;
       component.rowNum = this.getRecordIndex(record);
+      if (!record._writable) {
+        component.editButton.setDisabled(true);
+      } else {
+        component.editButton.setDisabled(this.view.readOnly);
+      }
       return component;
     }
     return null;
   },
   
   initWidget: function(){
-    var editFormProps = {}, thisGrid = this, localEditLinkField;
+    var thisGrid = this, localEditLinkField;
     if (this.editGrid) {
       // add the edit pencil in the beginning
       localEditLinkField = isc.addProperties({}, this.editLinkFieldProperties);
       localEditLinkField.width = this.editLinkColumnWidth;
       this.fields.unshift(localEditLinkField);
     }
+    
+    this.editFormDefaults = isc.addProperties({}, OB.ViewFormProperties, this.editFormDefaults);
     
     // added for showing counts in the filtereditor row
     this.checkboxFieldDefaults = isc.addProperties(this.checkboxFieldDefaults, {
@@ -251,6 +273,7 @@ isc.OBViewGrid.addProperties({
   
   setView: function(view) {
     this.view = view;
+    this.editFormDefaults.view = view;
   },
   
   show: function(){
@@ -301,6 +324,10 @@ isc.OBViewGrid.addProperties({
   },
   
   updateRowCountDisplay: function(){
+    // disable for now
+    if (true) {
+      return;
+    }
     var newValue = '';
     if (this.data.getLength() > this.dataPageSize) {
       newValue = '>' + this.dataPageSize;
@@ -309,11 +336,11 @@ isc.OBViewGrid.addProperties({
     } else {
       newValue = '' + this.data.getLength();
     }
-    if (this.filterEditor) {
+    if (this.filterEditor && this.filterEditor.getEditForm()) {
       this.filterEditor.getEditForm().setValue(isc.OBViewGrid.EDIT_LINK_FIELD_NAME, newValue);
     }
   },
-  
+    
   refreshContents: function(callback){
     this.resetEmptyMessage();
   
@@ -353,7 +380,7 @@ isc.OBViewGrid.addProperties({
     
     var record, ret = this.Super('dataArrived', arguments);
     this.updateRowCountDisplay();
-    if (this.getSelectedRecords().length > 0) {
+    if (this.getSelectedRecords() && this.getSelectedRecords().length > 0) {
       this.selectionUpdated();
     }
     
@@ -918,9 +945,13 @@ isc.OBViewGrid.addProperties({
     if (this.baseStyleEdit) {
       this.baseStyle = this.baseStyleEdit;
     }
-    var result = this.Super('showInlineEditor', arguments);
-    
+
     var record = this.getRecord(rowNum);
+
+    var result = this.Super('showInlineEditor', arguments);
+
+    this.getEditForm().editRecord(record);
+    
     if (record && record.editColumnLayout) {
       record.editColumnLayout.showSaveCancel();
     }
@@ -992,11 +1023,11 @@ isc.OBGridButtonsComponent.addProperties({
   record: null,
   
   initWidget: function(){
-    var me = this;
+    var me = this, formButton, cancelButton, saveButton;
     
     this.progressIcon = isc.Img.create(this.grid.progressIconDefaults);
     
-    editIcon = isc.OBGridToolStripIcon.create({
+    this.editButton = isc.OBGridToolStripIcon.create({
       buttonType: 'edit',
       prompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
       action: function(){
@@ -1005,10 +1036,18 @@ isc.OBGridButtonsComponent.addProperties({
         } else {
           me.doEdit();
         }
+      },
+      doNotShow: me.grid.view.readOnly,
+      
+      show: function() {
+        if (this.doNotShow) {
+          return;
+        }
+        return this.Super('show', arguments);
       }
     });
     
-    formIcon = isc.OBGridToolStripIcon.create({
+    formButton = isc.OBGridToolStripIcon.create({
       buttonType: 'form',
       prompt: OB.I18N.getLabel('OBUIAPP_GridFormButtonPrompt'),
       action: function(){
@@ -1020,7 +1059,7 @@ isc.OBGridButtonsComponent.addProperties({
       }
     });
     
-    cancelIcon = isc.OBGridToolStripIcon.create({
+    cancelButton = isc.OBGridToolStripIcon.create({
       buttonType: 'cancel',
       prompt: OB.I18N.getLabel('OBUIAPP_GridCancelButtonPrompt'),
       action: function(){
@@ -1028,7 +1067,7 @@ isc.OBGridButtonsComponent.addProperties({
       }
     });
     
-    saveIcon = isc.OBGridToolStripIcon.create({
+    saveButton = isc.OBGridToolStripIcon.create({
       buttonType: 'save',
       prompt: OB.I18N.getLabel('OBUIAPP_GridSaveButtonPrompt'),
       action: function(){
@@ -1036,12 +1075,16 @@ isc.OBGridButtonsComponent.addProperties({
       }
     });
     
-    buttonSeparator1 = isc.OBGridToolStripSeparator.create({});
+    this.buttonSeparator1 = isc.OBGridToolStripSeparator.create({});
+    
+    if (me.grid.view.readOnly) {
+      this.buttonSeparator1.visibility = 'hidden';
+    }
     
     buttonSeparator2 = isc.OBGridToolStripSeparator.create({});
     
     this.OBGridToolStrip = isc.OBGridToolStrip.create({
-      members: [formIcon, buttonSeparator1, editIcon, cancelIcon, buttonSeparator2, saveIcon]
+      members: [formButton, this.buttonSeparator1, this.editButton, cancelButton, buttonSeparator2, saveButton]
     });
     
     this.addMember(this.progressIcon);

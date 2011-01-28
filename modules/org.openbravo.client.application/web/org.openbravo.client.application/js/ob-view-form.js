@@ -20,9 +20,10 @@ isc.ClassFactory.defineClass('OBViewForm', isc.DynamicForm);
 
 // = OBViewForm =
 // The OBViewForm is the Openbravo specific subclass of the Smartclient
-// DynamicForm.
+// DynamicForm. The properties are added to the viewform at the bottom
+// of this file.
 
-isc.OBViewForm.addProperties({
+OB.ViewFormProperties = {
 
   // ** {{{ view }}} **
   // The view member contains the pointer to the composite canvas which
@@ -65,6 +66,9 @@ isc.OBViewForm.addProperties({
   setHasChanged: function(value) {
     this.hasChanged = value;
     this.view.updateTabTitle();
+    if (value && !this.isNew) {
+      this.view.statusBar.setStateLabel('OBUIAPP_Modified');
+    }
   },
   
   editRecord: function(record, preventFocus){
@@ -81,10 +85,11 @@ isc.OBViewForm.addProperties({
     this.clearErrors();
     
     this.view.toolBar.updateButtonState();
-    
+
     this.retrieveInitialValues(false);
     
     this.view.messageBar.hide();
+    this.view.statusBar.setStateLabel();
 
     this.resetFocusItem();
     if (!preventFocus) {
@@ -107,6 +112,8 @@ isc.OBViewForm.addProperties({
     this.clearErrors();
     
     this.view.toolBar.updateButtonState();
+
+    this.view.statusBar.setStateLabel('OBUIAPP_New');
     
     this.retrieveInitialValues(true);
     
@@ -120,6 +127,9 @@ isc.OBViewForm.addProperties({
   },
   
   enableLinkedItemSection: function(enable){
+    if (!this.linkedItemSection) {
+      return;
+    }
     if (enable) {
       this.linkedItemSection.collapseSection();
       this.linkedItemSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID));
@@ -517,7 +527,8 @@ isc.OBViewForm.addProperties({
         // do remember values here to prevent infinite autosave loop
         form.rememberValues();
         
-        view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_SaveSuccess'));
+        //view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_SaveSuccess'));
+        view.statusBar.setStateLabel('OBUIAPP_Saved');
         
         // force a fetch to place the grid on the correct location
         view.viewGrid.targetRecordId = data.id;
@@ -724,4 +735,6 @@ isc.OBViewForm.addProperties({
   onFieldChanged: function(form, item, value) {
     isc.Log.logWarn('To be implemented dynamically');
   }
-});
+};
+
+isc.OBViewForm.addProperties(OB.ViewFormProperties);
