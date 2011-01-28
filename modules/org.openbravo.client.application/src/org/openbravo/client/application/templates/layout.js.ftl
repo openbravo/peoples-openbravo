@@ -238,17 +238,6 @@ OB.MainView.TabSet = isc.TabSet.create({
       }
     };
     OB.KeyboardManager.KS.set('TabSet_ActivateLeftTab', ksAction_ActivateLeftTab);
-    var ksAction_ReloadActive = function() {
-      if(typeof me.getSelectedTab().pane.refreshTab === 'function') {
-        me.getSelectedTab().pane.refreshTab();
-      } else {
-        me.getSelectedTab().pane.markForRedraw();
-      }
-      if(typeof me.getSelectedTab().pane.focusTab === 'function') {
-        me.getSelectedTab().pane.focusTab();
-      }
-    };
-    OB.KeyboardManager.KS.set('TabSet_ReloadActive', ksAction_ReloadActive);
     this.Super('draw', arguments);
   },
 
