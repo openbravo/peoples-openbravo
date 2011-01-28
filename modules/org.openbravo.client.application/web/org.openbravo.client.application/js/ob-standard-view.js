@@ -310,6 +310,9 @@ isc.OBStandardView.addProperties({
           _noActiveFilter: true
         };
         isc.addProperties(newRequestProperties.params, additionalPara);
+        if (!newRequestProperties.dataSource) {
+          newRequestProperties.dataSource = this; 
+        }
         this.Super('performDSOperation', [operationType, data, callback, newRequestProperties]);
       },
       
