@@ -22,7 +22,8 @@
 OB.Layout.ViewManager.loadedWindowClassName = '${data.windowClientClassName?js_string}';
 
 isc.ClassFactory.defineClass('${data.windowClientClassName?js_string}', isc.OBStandardWindow).addProperties({
-    windowId: '${data.windowId?js_string}', 
+    windowId: '${data.windowId?js_string}',
+    multiDocumentEnabled: ${data.threadSafe},
     viewProperties: {
       windowId: '${data.windowId?js_string}', 
       ${data.tabView}

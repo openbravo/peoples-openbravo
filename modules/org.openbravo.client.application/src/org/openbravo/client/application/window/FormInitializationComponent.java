@@ -41,6 +41,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
+import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.window.servlet.CalloutHttpServletResponse;
 import org.openbravo.client.application.window.servlet.CalloutServletConfig;
@@ -252,9 +253,9 @@ public class FormInitializationComponent extends BaseActionHandler {
           finalObject.put("writable", false);
         } else {
           boolean writable = false;
-          final String userOrgId = OBContext.getOBContext().getCurrentOrganization().getId();
+          final String objectOrgId = ((OrganizationEnabled) row).getOrganization().getId();
           for (String orgId : OBContext.getOBContext().getWritableOrganizations()) {
-            if (orgId.equals(userOrgId)) {
+            if (orgId.equals(objectOrgId)) {
               writable = true;
               break;
             }
