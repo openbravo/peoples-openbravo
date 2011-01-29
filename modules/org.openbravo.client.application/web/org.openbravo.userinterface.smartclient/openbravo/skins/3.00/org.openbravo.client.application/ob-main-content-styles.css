@@ -72,16 +72,11 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBMainTabTopSelectedFocusedOver,
 .OBMainTabTopSelectedFocusedDown,
 .OBMainTabTopSelectedDown,
-.OBMainTabTopSelectedDisabled {
-  background-position:  right top;
-  background-repeat: repeat-x;
-  background-image: url(./images/tab/bg-tab-green-orange.gif);
-}
-
+.OBMainTabTopSelectedDisabled,
 .OBMainTabTopSelectedOver {
   background-position:  right top;
   background-repeat: repeat-x;
-  background-image: url(./images/tab/bg-tab-green-orange_Over.gif);
+  background-image: url(./images/tab/bg-tab-green-orange.gif);
 }
 
 .OBMainTabTopSelectedInactive,
@@ -89,23 +84,20 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBMainTabTopSelectedFocusedOverInactive,
 .OBMainTabTopSelectedFocusedDownInactive,
 .OBMainTabTopSelectedDownInactive,
-.OBMainTabTopSelectedDisabledInactive {
+.OBMainTabTopSelectedDisabledInactive,
+.OBMainTabTopSelectedOverInactive {
   background-position:  right top;
   background-repeat: repeat-x;
   background-image: url(./images/tab/bg-tab-green.gif);
 }
 
-.OBMainTabTopSelectedOverInactive {
-  background-position:  right top;
-  background-repeat: repeat-x;
-  background-image: url(./images/tab/bg-tab-green_Over.gif);
-}
-
 .OBMainTabTop,
+.OBMainTabTopOver,
 .OBMainTabTopDown,
 .OBMainTabTopDisabled,
 
 .OBMainTabTopInactive,
+.OBMainTabTopOverInactive,
 .OBMainTabTopDownInactive,
 .OBMainTabTopDisabledInactive {
   margin: 0;
@@ -113,18 +105,6 @@ if the tab headers are on the right, left or bottom the same styles can be used 
   height: 30px;
   color: #000;
   background-image: url(./images/tab/bg-tab-grey.gif);
-  background-position: right top;
-  background-repeat: repeat-x;
-}
-
-.OBMainTabTopOver,
-
-.OBMainTabTopOverInactive {
-  margin: 0;
-  padding: 0;
-  height: 30px;
-  color: #000;
-  background-image: url(./images/tab/bg-tab-grey_Over.gif);
   background-position: right top;
   background-repeat: repeat-x;
 }

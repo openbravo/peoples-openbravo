@@ -21,12 +21,18 @@ package org.openbravo.client.application.window;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
 
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.window.OBViewFormComponent.FormFieldComparator;
 import org.openbravo.client.kernel.BaseTemplateComponent;
+import org.openbravo.client.kernel.Component;
+import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
@@ -45,6 +51,7 @@ import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TabTrl;
+import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
 
@@ -68,6 +75,19 @@ public class OBViewTab extends BaseTemplateComponent {
   private Column keyColumn;
   private boolean buttonSessionLogic;
   private boolean isRootTab;
+
+  @Inject
+  @ComponentProvider.Qualifier(DataSourceConstants.DS_COMPONENT_TYPE)
+  private ComponentProvider componentProvider;
+
+  public String getDataSourceJavaScript() {
+    final String dsId = getDataSourceId();
+    final Map<String, Object> dsParameters = new HashMap<String, Object>(getParameters());
+    dsParameters.put(DataSourceConstants.DS_ONLY_GENERATE_CREATESTATEMENT, true);
+    dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBViewDataSource");
+    final Component component = componentProvider.getComponent(dsId, dsParameters);
+    return component.generate();
+  }
 
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, TEMPLATE_ID);

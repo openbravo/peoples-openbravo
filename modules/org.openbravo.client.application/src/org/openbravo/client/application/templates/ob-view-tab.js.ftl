@@ -27,7 +27,7 @@
     </#if>
     <#if tabComponent.tabSet>
         tabId: '${tabComponent.tabId}',
-        dataSourceId: '${tabComponent.dataSourceId?js_string}',
+        dataSource: ${tabComponent.dataSourceJavaScript},
         moduleId: '${tabComponent.moduleId}',
     </#if>
     

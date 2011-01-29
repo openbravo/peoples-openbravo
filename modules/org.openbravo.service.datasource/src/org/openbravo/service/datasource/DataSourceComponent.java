@@ -37,6 +37,14 @@ public class DataSourceComponent extends BaseTemplateComponent {
     return dataSourceService.getTemplate();
   }
 
+  public String getDataSourceClassName() {
+    final String clzName = getParameter(DataSourceConstants.DS_CLASS_NAME);
+    if (clzName != null) {
+      return clzName;
+    }
+    return "OBRestDataSource";
+  }
+
   public void setDataSourceService(DataSourceService data) {
     dataSourceService = data;
   }

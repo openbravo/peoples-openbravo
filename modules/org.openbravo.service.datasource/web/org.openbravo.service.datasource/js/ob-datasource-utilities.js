@@ -114,6 +114,9 @@ OB.Datasource.create = function(/* Object */dsProperties) {
       return ds;
     }
   }
+  if (dsProperties.createClassName) {
+    return isc[dsProperties.createClassName].create(dsProperties);
+  }
   return isc.OBRestDataSource.create(dsProperties);
 };
 

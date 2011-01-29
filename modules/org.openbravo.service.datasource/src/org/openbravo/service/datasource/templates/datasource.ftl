@@ -35,6 +35,7 @@ although the same is done by the compressor
 
 <#macro generateDataSource data>
     OB.Datasource.create({
+        createClassName: '${data.dataSourceClassName?js_string}',
 <#if data.getParameter("_onlyGenerateCreateStatement") == "" || data.getParameter("create") != "">
         ID:'${data.id}',
 </#if>

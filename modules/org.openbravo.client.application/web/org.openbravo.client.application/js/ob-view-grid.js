@@ -343,7 +343,8 @@ isc.OBViewGrid.addProperties({
     
   refreshContents: function(callback){
     this.resetEmptyMessage();
-  
+    this.view.updateTabTitle();
+    
     // do not refresh if the parent is not selected and we have no data anyway
     if (this.view.parentProperty && (!this.data || !this.data.getLength || this.data.getLength() === 0)) {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();

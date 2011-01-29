@@ -54,8 +54,7 @@ isc.OBToolbar.addClassProperties({
     updateState: function() {
       var view = this.view;
       this.setDisabled(view.isShowingForm || view.readOnly || view.singleRecord || !view.hasValidState());
-    },
-    keyboardShortcutId: 'ToolBar_NewRow'
+    }
   },
   NEW_DOC_BUTTON_PROPERTIES: {
     action: function(){
@@ -70,8 +69,7 @@ isc.OBToolbar.addClassProperties({
       } else {
         this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState());
       }
-    },
-    keyboardShortcutId: 'ToolBar_NewDoc'
+    }
   },
   DELETE_BUTTON_PROPERTIES: {
     action: function(){
@@ -89,8 +87,7 @@ isc.OBToolbar.addClassProperties({
         this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || 
             !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0);
       }
-    },
-    keyboardShortcutId: 'ToolBar_Eliminate'
+    }
   },
   REFRESH_BUTTON_PROPERTIES: {
     action: function(){
@@ -106,8 +103,7 @@ isc.OBToolbar.addClassProperties({
       } else {
         this.setDisabled(!view.hasValidState());
       }
-    },
-    keyboardShortcutId: 'ToolBar_Refresh'
+    }
   },
   UNDO_BUTTON_PROPERTIES: {
     action: function(){
@@ -125,8 +121,7 @@ isc.OBToolbar.addClassProperties({
         // support for editable grid
         this.setDisabled(true);
       }
-    },
-    keyboardShortcutId: 'ToolBar_Undo'
+    }
   }
 });
 

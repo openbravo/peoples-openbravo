@@ -229,7 +229,20 @@ isc.OBStandardView.addProperties({
   buildStructure: function(){
     this.createMainParts();
     this.createViewStructure();
-    this.dataSource = OB.Datasource.get(this.dataSourceId, this);
+    this.dataSource.view = this;
+    this.viewGrid.setDataSource(this.dataSource, this.viewGrid.completeFields || this.viewGrid.fields);
+    
+    // directTabInfo is set when we are in direct link mode, i.e. directly opening
+    // a specific tab with a record, the direct link logic will already take care
+    // of fetching data
+    if (this.isRootView && !this.standardWindow.directTabInfo) {
+      this.viewGrid.fetchData();
+      this.refreshContents = false;
+    }
+    
+    if (this.viewForm) {
+      this.viewForm.setDataSource(this.dataSource, this.viewForm.fields);
+    }
     
     if (this.isRootView) {
       if (this.childTabSet) {
@@ -251,118 +264,6 @@ isc.OBStandardView.addProperties({
     isc.defineClass(obDsClassname, ds.getClass());
     
     var modifiedDs = isc.addProperties({}, ds, {
-      view: this,
-      ID: ds.ID + this.tabId,
-      
-      showProgress: function(editedRecord){
-      
-        // don't show it, done to quickly
-        if (!editedRecord._showProgressAfterDelay) {
-          return;
-        }
-        
-        if (editedRecord && editedRecord.editColumnLayout) {
-          if (!this.view.isShowingForm) {
-            editedRecord.editColumnLayout.toggleProgressIcon(true);
-          }
-        }
-        
-        if (this.view.isShowingForm) {
-          var btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
-          btn.customState = 'Progress';
-          btn.resetBaseStyle();
-          btn.markForRedraw();
-        }
-      },
-      
-      hideProgress: function(editedRecord){
-        editedRecord._showProgressAfterDelay = false;
-        if (editedRecord && editedRecord.editColumnLayout) {
-          editedRecord.editColumnLayout.toggleProgressIcon(false);
-        }
-        
-        // always remove the progress style here anyway
-        var btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
-        btn.customState = '';
-        btn.resetBaseStyle();
-        btn.markForRedraw();
-      },
-      
-      performDSOperation: function(operationType, data, callback, requestProperties){
-        //        requestProperties.showPrompt = false;
-        // set the current selected record before the delay
-        var currentRecord = this.view.viewGrid.getSelectedRecord();
-        if (currentRecord) {
-          // only show progress after 200ms delay
-          currentRecord._showProgressAfterDelay = true;
-          // keep the edited record in the client context
-          if (!requestProperties.clientContext) {
-            requestProperties.clientContext = {};
-          }
-          requestProperties.clientContext.progressIndicatorSelectedRecord = currentRecord;
-          this.delayCall('showProgress', [requestProperties.clientContext.progressIndicatorSelectedRecord], 200);
-        }
-        
-        var newRequestProperties = this.getTabInfoRequestProperties(this.view, requestProperties);
-        //standard update is not sent with operationType
-        var additionalPara = {
-          _operationType: 'update',
-          _noActiveFilter: true
-        };
-        isc.addProperties(newRequestProperties.params, additionalPara);
-        if (!newRequestProperties.dataSource) {
-          newRequestProperties.dataSource = this; 
-        }
-        this.Super('performDSOperation', [operationType, data, callback, newRequestProperties]);
-      },
-      
-      transformResponse: function(dsResponse, dsRequest, jsonData){
-        if (dsRequest.clientContext && dsRequest.clientContext.progressIndicatorSelectedRecord) {
-          this.hideProgress(dsRequest.clientContext.progressIndicatorSelectedRecord);
-        }
-        if (jsonData) {
-          var errorStatus = !jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
-          if (errorStatus) {
-            var handled = this.view.setErrorMessageFromResponse(dsResponse, jsonData, dsRequest);
-            
-            if (!handled && !dsRequest.willHandleError) {
-              OB.KernelUtilities.handleSystemException(error.message);
-            }
-          } else {
-            // there are some cases where the jsonData is not passed, in case of errors
-            // make it available through the response object
-            dsResponse.dataObject = jsonData;
-          }
-        }
-        return this.Super('transformResponse', arguments);
-      },
-
-     // ** {{{ getTabInfoRequestProperties }}} **
-     //
-     // Adds tab and module information to the requestProperties.
-     //
-     // Parameters:
-     // * {{{theView}}}: view to obtain tab and module info from.
-     // * {{{requestProperties}}}: original requestProperties.
-     // Return:
-     // * Original requestProperties including the new module and tab properties.
-     getTabInfoRequestProperties: function(theView, requestProperties){
-       if (theView && theView.tabId) {
-         var tabParam = {
-           params: {
-             windowId: theView.standardWindow.windowId,
-             tabId: theView.tabId,
-             moduleId: theView.moduleId
-           }
-         };
-         if (requestProperties) {
-           isc.addProperties(requestProperties, tabParam);
-         } else {
-           requestProperties = tabParam;
-         }
-       }
-       return requestProperties;
-     }
 
     });
     
@@ -387,7 +288,6 @@ isc.OBStandardView.addProperties({
     if (this.viewForm) {
       // note this call messes up the focus handling also
       this.viewForm.setDataSource(this.dataSource, this.viewForm.fields);
-      this.dataSourceSet = true;
     }
   },
   
@@ -846,14 +746,6 @@ isc.OBStandardView.addProperties({
   // Opens the edit form and selects the record in the grid, will refresh
   // child views also
   editRecord: function(record, preventFocus){
-    
-    // wait till there is a datasource
-    // this also solves focus issues as the datasource
-    // set messes up focus
-    if (!this.dataSourceSet) {
-      this.delayCall('editRecord', arguments, 500);
-      return;
-    }
 
     this.messageBar.hide();
     
@@ -1025,6 +917,7 @@ isc.OBStandardView.addProperties({
       return;
     }
     this.updateLastSelectedState();
+    this.updateTabTitle();
         
     this.toolBar.updateButtonState();
 
@@ -1115,7 +1008,7 @@ isc.OBStandardView.addProperties({
   },
   
   updateTabTitle: function(){
-    var prefix = '';
+    var prefix = '', postFix;
     var suffix = '';
     
     if (this.isShowingForm && (this.viewForm.isNew || this.viewForm.hasChanged)) {
@@ -1149,6 +1042,21 @@ isc.OBStandardView.addProperties({
         tab = this.tab;
         tabSet = this.parentTabSet;
         title = this.originalTabTitle + ' - ' + identifier;
+      }
+    } else if (this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length > 0) {
+      if (this.viewGrid.getSelectedRecords().length === 1) {
+        postFix = ' - ' + this.viewGrid.getSelectedRecords()[0][OB.Constants.IDENTIFIER];
+      } else {
+        postFix = ' - ' + OB.I18N.getLabel('OBUIAPP_SelectedRecords', [this.viewGrid.getSelectedRecords().length]);
+      }
+      if (!this.parentTabSet && this.viewTabId) {
+        tab = OB.MainView.TabSet.getTab(this.viewTabId);
+        tabSet = OB.MainView.TabSet;
+        title = this.originalTabTitle + postFix;
+      } else if (this.parentTabSet && this.tab) {
+        tab = this.tab;
+        tabSet = this.parentTabSet;
+        title = this.originalTabTitle + postFix;
       }
     } else if (!this.parentTabSet && this.viewTabId) {
       // the root view

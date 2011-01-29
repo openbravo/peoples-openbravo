@@ -37,6 +37,8 @@ public class DataSourceConstants {
 
   public static final String DS_ONLY_GENERATE_CREATESTATEMENT = "_onlyGenerateCreateStatement";
 
+  public static final String DS_CLASS_NAME = "_className";
+
   public static final String DS_FILTERCLASS_PARAM = "filterClass";
 
   /**
