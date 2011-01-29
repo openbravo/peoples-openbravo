@@ -252,45 +252,7 @@ isc.OBStandardView.addProperties({
       }
     }
   },
-  
-  setDataSource: function(ds){
-    // Wrap DataSource with OBDataSource:
-    // - to set/reset the progress icons
-    // - to handle error cases in the response
-    // - to add info to the request
-    // wrapping is done by creating a new datasource class
-    // which is instantiated
-    var obDsClassname = 'OBDataSource' + this.tabId;
-    isc.defineClass(obDsClassname, ds.getClass());
     
-    var modifiedDs = isc.addProperties({}, ds, {
-
-    });
-    
-    var myDs = isc[obDsClassname].create(modifiedDs);
-    
-    this.dataSource = myDs;
-    
-    if (this.viewGrid) {
-      if (this.targetRecordId) {
-        this.viewGrid.targetRecordId = this.targetRecordId;
-      }
-      this.viewGrid.setDataSource(this.dataSource, this.viewGrid.completeFields || this.viewGrid.fields);
-      
-      // directTabInfo is set when we are in direct link mode, i.e. directly opening
-      // a specific tab with a record, the direct link logic will already take care
-      // of fetching data
-      if (this.isRootView && !this.standardWindow.directTabInfo) {
-        this.viewGrid.fetchData();
-        this.refreshContents = false;
-      }
-    }
-    if (this.viewForm) {
-      // note this call messes up the focus handling also
-      this.viewForm.setDataSource(this.dataSource, this.viewForm.fields);
-    }
-  },
-  
   // handles different ways by which an error can be passed from the 
   // system, translates this to an object with a type, title and message
   setErrorMessageFromResponse: function(resp, data, req){
