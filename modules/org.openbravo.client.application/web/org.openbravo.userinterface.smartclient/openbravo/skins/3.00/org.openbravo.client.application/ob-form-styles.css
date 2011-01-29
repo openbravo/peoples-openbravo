@@ -58,13 +58,9 @@
 }
 
 .OBFormFieldLabel,
-.OBFormFieldLabelError,
+.OBFormFieldLabelError
 .OBFormFieldLabelFocused {
   color: #333333;
-}
-
-.OBFormFieldLabelDisabled {
-  color: #acacac;
 }
 
 .OBFormFieldStatic,
@@ -584,3 +580,8 @@
 .OBFormFieldLinkButton {
   cursor: pointer;
 }
+
+.OBFormFieldLinkButton:hover {
+  color: #58A618;
+}
+

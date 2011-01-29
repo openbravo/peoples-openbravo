@@ -90,6 +90,7 @@ isc.OBStatusBar.addProperties({
   nextButton: null,
   previousButton: null,
   newIcon: null,
+  showingIcon: false,
   
   initWidget: function(){
     this.stateLabel = isc.OBStatusBarTextLabel.create({
@@ -133,35 +134,47 @@ isc.OBStatusBar.addProperties({
         OB.TestRegistry.register('org.openbravo.client.application.statusbar.button.' + buttonBar.members[i].buttonType + '.' + this.view.tabId, buttonBar.members[i]);        
       }
     }
+
+    this.checkedIcon = isc.Img.create(this.checkedIconDefaults);
+    this.newIcon = isc.Img.create(this.newIconDefaults);
+    this.spacer = isc.LayoutSpacer.create({width: 14});
+    this.leftStatusBar.addMember(this.spacer, 0);
+
     this.addMembers([this.leftStatusBar, buttonBar]);
     return this.Super('initWidget', arguments);
   },
   
-//  setNewIcon: function(show) {
-//    if (show) {      
-//      if (!this.newIcon) {
-//        this.newIcon = isc.Img.create(this.newIconDefaults);
-//      }
-//      this.leftBar.addMember(this.newIcon, 0);
-//    } else if (this.newIcon) {
-//      this.leftBar.removeMember(this.newIcon);
-//    }
-//  },
+  addIcon: function(icon) {
+    // remove any existing icon or spacer
+    this.leftStatusBar.removeMember(this.leftStatusBar.members[0]);
+    this.leftStatusBar.addMember(icon, 0);    
+  },
+  
+  removeIcon: function() {
+    // remove any existing icon or spacer
+    this.leftStatusBar.removeMember(this.leftStatusBar.members[0]);
+    this.leftStatusBar.addMember(this.spacer, 0);
+  },
   
   setNewState: function(isNew) {
     this.previousButton.setDisabled(isNew);
     this.nextButton.setDisabled(isNew);
     if (isNew) {
-      this.setStateLabel('OBUIAPP_New');
+      this.setStateLabel('OBUIAPP_New', this.newIcon);
     }
   },
   
-  setStateLabel: function (labelCode) {
+  setStateLabel: function (labelCode, icon) {
     var msg = '&nbsp;';
     if (labelCode) {
       msg = OB.I18N.getLabel(labelCode);
     }
-    this.stateLabel.setContents(msg);    
+    this.stateLabel.setContents(msg);
+    if (icon) {
+      this.addIcon(icon);
+    } else {
+      this.removeIcon(icon);
+    }
   }
   
 });

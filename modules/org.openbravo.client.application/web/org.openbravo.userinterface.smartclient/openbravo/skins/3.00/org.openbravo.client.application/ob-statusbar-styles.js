@@ -25,6 +25,12 @@ isc.OBStatusBar.addProperties({
   leaveScrollbarGap: false,
   overflow: 'hidden',
 
+  checkedIconDefaults: {
+    height: 14,
+    width: 14,
+    src:  '[SKINIMG]../../org.openbravo.client.application/images/statusbar/check-saved.png'
+  },
+
   newIconDefaults: {
     showHover: true,
     prompt: OB.I18N.getLabel('OBUIAPP_NewIconPrompt'),
@@ -39,6 +45,7 @@ isc.OBStatusBar.addProperties({
 isc.OBStatusBarLeftBar.addProperties({
   baseStyle: 'OBStatusBarLeftBar',
   width: '*',
+  membersMargin: 5,
   layoutLeftMargin: 5,
   defaultLayoutAlign: 'center',
   align: 'left',
