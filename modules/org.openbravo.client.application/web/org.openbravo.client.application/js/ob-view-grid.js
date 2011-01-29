@@ -324,10 +324,6 @@ isc.OBViewGrid.addProperties({
   },
   
   updateRowCountDisplay: function(){
-    // disable for now
-    if (true) {
-      return;
-    }
     var newValue = '';
     if (this.data.getLength() > this.dataPageSize) {
       newValue = '>' + this.dataPageSize;
