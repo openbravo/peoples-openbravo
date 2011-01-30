@@ -416,7 +416,7 @@ isc.OBStandardView.addProperties({
       this.addMember(this.activeGridFormMessageLayout);
     }
     if (this.hasChildTabs) {
-      this.childTabSet = isc.OBStandardViewTabSet.create({
+      this.childTabSet = isc.OBTabSetChild.create({
         height: '*',
         parentContainer: this,
         parentTabSet: this.parentTabSet

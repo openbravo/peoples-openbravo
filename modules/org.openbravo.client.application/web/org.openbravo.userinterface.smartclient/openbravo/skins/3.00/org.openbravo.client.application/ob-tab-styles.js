@@ -11,27 +11,101 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 
 
-isc.OBTabBarChild.addProperties({
-  buttonConstructor: isc.OBTabBarChildButton,
-  styleName: 'OBTabBarChild',
+isc.OBTabBarButtonMain.addProperties({
+  src: '',
+  showSelectedIcon: true,
+  showRollOverIcon: true,
+  align: 'right',
+  width: 1,
+  overflow: 'visible',
+  capSize: 9,
+  titleStyle: 'OBTabBarButtonMainTitle'
+});
+
+isc.OBTabSetMain.addProperties({
+  tabBarConstructor: isc.OBTabBarMain,
+  tabBarPosition: 'top',
+  width: '100%',
+  height: '*',
+  overflow: 'hidden',
+
+  // get rid of the margin around the content of a pane
+  paneMargin: 0,
+  paneContainerMargin: 0,
+  paneContainerPadding: 0,
+  showPaneContainerEdges: false,
+
+  useSimpleTabs: true,
+  tabBarThickness: 30,
+
+  styleName: 'OBTabSetMain',
+  simpleTabBaseStyle: 'OBTabBarButtonMain',
+  paneContainerClassName: 'OBTabSetMainContainer',
+
+  tabProperties: {
+    margin: 0,
+    padding: 0
+  },
+
+  closeTabIcon: '[SKINIMG]../../org.openbravo.client.application/images/tab/tabBarButtonMain_CloseIcon.png',
+  closeTabIconSize: 18,
+
+  symmetricScroller:true,
+  scrollerSrc: '[SKINIMG]../../org.openbravo.client.application/images/tab/ico-close-tab.png',
+
   initWidgetStyle: function() {
   }
 });
 
+isc.OBTabBarMain.addProperties({
+  styleName: 'OBTabBarMain',
+  initWidgetStyle: function() {
+  }
+});
+
+
+isc.OBTabBarButtonChild.addProperties({
+  src: '',
+  showSelectedIcon: true,
+  showRollOverIcon: true,
+  align: 'right',
+  width: 1,
+  overflow: 'visible',
+  capSize: 14,
+  titleStyle: 'OBTabBarButtonChildTitle'
+});
+
 isc.OBTabSetChild.addProperties({
   tabBarConstructor: isc.OBTabBarChild,
+  tabBarPosition: 'top',
+  width: '100%',
+  height: '*',
+  overflow: 'hidden',
+
+  // get rid of the margin around the content of a pane
+  paneMargin: 0,
+  paneContainerMargin: 0,
+  paneContainerPadding: 0,
+  showPaneContainerEdges: false,
+
   useSimpleTabs: true,
   tabBarThickness: 38,
   styleName: 'OBTabSetChild',
-  simpleTabBaseStyle: 'OBTabBarChildButton',
+  simpleTabBaseStyle: 'OBTabBarButtonChild',
   paneContainerClassName: 'OBTabSetChildContainer',
+  initWidgetStyle: function() {
+  }
+});
+
+isc.OBTabBarChild.addProperties({
+  styleName: 'OBTabBarChild',
   initWidgetStyle: function() {
   }
 });

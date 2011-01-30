@@ -11,114 +11,320 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 
-.OBTabSetChild {
 
-}
+/*============================================================
+ 1) Main Tab Headers
+============================================================*/
 
-.OBTabBarChild {
-  background:  #ffffff url(./images/tab/tabBarChild_bg.gif) repeat-x scroll;
+.OBTabBarMain {
+  background: #ffffff url(./images/tab/tabBarMain_bg.gif) repeat-x scroll;
   background-position: center top;
 }
 
-.OBTabSetChildContainer {
-
+.OBTabSetMainContainer {
+  margin-top: 1px;
+  border-top: 1px solid #72ab10;
 }
 
 /* styles for simple css-styled tabs*/
 /* note only the top styles are present here because in Openbravo tabs in forms are shown in the top
 if the tab headers are on the right, left or bottom the same styles can be used */
 
-.OBTabBarChildButtonTopSelected,
-.OBTabBarChildButtonTopSelectedFocused,
-.OBTabBarChildButtonTopSelectedFocusedOver,
-.OBTabBarChildButtonTopSelectedFocusedDown,
-.OBTabBarChildButtonTopSelectedDown,
-.OBTabBarChildButtonTopSelectedDisabled,
-.OBTabBarChildButtonTopSelectedOver,
+.OBTabBarButtonMainTopSelected,
+.OBTabBarButtonMainTopSelectedFocused,
+.OBTabBarButtonMainTopSelectedFocusedOver,
+.OBTabBarButtonMainTopSelectedFocusedDown,
+.OBTabBarButtonMainTopSelectedDown,
+.OBTabBarButtonMainTopSelectedDisabled,
+.OBTabBarButtonMainTopSelectedOver,
 
-.OBTabBarChildButtonTopSelectedInactive,
-.OBTabBarChildButtonTopSelectedFocusedInactive,
-.OBTabBarChildButtonTopSelectedFocusedOverInactive,
-.OBTabBarChildButtonTopSelectedFocusedDownInactive,
-.OBTabBarChildButtonTopSelectedDownInactive,
-.OBTabBarChildButtonTopSelectedDisabledInactive,
-.OBTabBarChildButtonTopSelectedOverInactive {
-  font-family: 'lucida sans', sans-serif;
-  font-size: 12px;
-  font-weight: normal;
+.OBTabBarButtonMainTopSelectedInactive,
+.OBTabBarButtonMainTopSelectedFocusedInactive,
+.OBTabBarButtonMainTopSelectedFocusedOverInactive,
+.OBTabBarButtonMainTopSelectedFocusedDownInactive,
+.OBTabBarButtonMainTopSelectedDownInactive,
+.OBTabBarButtonMainTopSelectedDisabledInactive,
+.OBTabBarButtonMainTopSelectedOverInactive {
   color: #fff;
-  margin: 0px;
-  padding: 0px 8px 0px 8px;
+  margin-left: 25;
+  padding: 0;
+  height: 30px;
 }
 
-.OBTabBarChildButtonTopSelected,
-.OBTabBarChildButtonTopSelectedFocused,
-.OBTabBarChildButtonTopSelectedFocusedDown,
-.OBTabBarChildButtonTopSelectedDown,
-.OBTabBarChildButtonTopSelectedDisabled {
+.OBTabBarButtonMainTopSelected,
+.OBTabBarButtonMainTopSelectedFocused,
+.OBTabBarButtonMainTopSelectedFocusedOver,
+.OBTabBarButtonMainTopSelectedFocusedDown,
+.OBTabBarButtonMainTopSelectedDown,
+.OBTabBarButtonMainTopSelectedDisabled {
+  background-position: center top;
+  background-repeat: repeat-x;
+  background-image: url(./images/tab/tabBarButtonMain_Selected.gif);
+}
+
+.OBTabBarButtonMainTopSelectedOver {
+  background-position: center top;
+  background-repeat: repeat-x;
+  background-image: url(./images/tab/tabBarButtonMain_Selected_Over.gif);
+}
+
+.OBTabBarButtonMainTopSelectedInactive,
+.OBTabBarButtonMainTopSelectedFocusedInactive,
+.OBTabBarButtonMainTopSelectedFocusedOverInactive,
+.OBTabBarButtonMainTopSelectedFocusedDownInactive,
+.OBTabBarButtonMainTopSelectedDownInactive,
+.OBTabBarButtonMainTopSelectedDisabledInactive {
+  background-position: center top;
+  background-repeat: repeat-x;
+  background-image: url(./images/tab/tabBarButtonMain_Selected_Inactive.gif);
+}
+
+.OBTabBarButtonMainTopSelectedOverInactive {
+  background-position: center top;
+  background-repeat: repeat-x;
+  background-image: url(./images/tab/tabBarButtonMain_Selected_Inactive_Over.gif);
+}
+
+.OBTabBarButtonMainTop,
+.OBTabBarButtonMainTopDown,
+.OBTabBarButtonMainTopDisabled,
+
+.OBTabBarButtonMainTopInactive,
+.OBTabBarButtonMainTopDownInactive,
+.OBTabBarButtonMainTopDisabledInactive {
+  margin: 0;
+  padding: 0;
+  height: 30px;
+  color: #000;
+  background-image: url(./images/tab/tabBarButtonMain_Unselected.gif);
+  background-position: center top;
+  background-repeat: repeat-x;
+}
+
+.OBTabBarButtonMainTopOver,
+
+.OBTabBarButtonMainTopOverInactive {
+  margin: 0;
+  padding: 0;
+  height: 30px;
+  color: #000;
+  background-image: url(./images/tab/tabBarButtonMain_Unselected_Over.gif);
+  background-position: center top;
+  background-repeat: repeat-x;
+}
+
+.OBTabBarButtonMainTitle,
+.OBTabBarButtonMainTitleOver,
+.OBTabBarButtonMainTitleDown,
+.OBTabBarButtonMainTitleSelected,
+.OBTabBarButtonMainTitleFocused,
+.OBTabBarButtonMainTitleSelectedFocused,
+.OBTabBarButtonMainTitleSelectedOver,
+.OBTabBarButtonMainTitleFocusedOver,
+.OBTabBarButtonMainTitleSelectedFocusedOver,
+.OBTabBarButtonMainTitleSelectedDown,
+.OBTabBarButtonMainTitleFocusedDown,
+.OBTabBarButtonMainTitleSelectedFocusedDown,
+.OBTabBarButtonMainTitleDisabled,
+.OBTabBarButtonMainTitleSelectedDisabled,
+
+.OBTabBarButtonMainTitleInactive,
+.OBTabBarButtonMainTitleOverInactive,
+.OBTabBarButtonMainTitleDownInactive,
+.OBTabBarButtonMainTitleSelectedInactive,
+.OBTabBarButtonMainTitleFocusedInactive,
+.OBTabBarButtonMainTitleSelectedFocusedInactive,
+.OBTabBarButtonMainTitleSelectedOverInactive,
+.OBTabBarButtonMainTitleFocusedOverInactive,
+.OBTabBarButtonMainTitleSelectedFocusedOverInactive,
+.OBTabBarButtonMainTitleSelectedDownInactive,
+.OBTabBarButtonMainTitleFocusedDownInactive,
+.OBTabBarButtonMainTitleSelectedFocusedDownInactive,
+.OBTabBarButtonMainTitleDisabledInactive,
+.OBTabBarButtonMainTitleSelectedDisabledInactive {
+  color: #333333;
+  padding-top: 4px;
+  padding-bottom:1px;
+}
+
+.OBTabBarButtonMainTitleSelected,
+.OBTabBarButtonMainTitleSelectedDown,
+.OBTabBarButtonMainTitleSelectedOver,
+.OBTabBarButtonMainTitleFocusedOver,
+.OBTabBarButtonMainTitleSelectedFocusedOver,
+
+.OBTabBarButtonMainTitleSelectedInactive,
+.OBTabBarButtonMainTitleDownInactive,
+.OBTabBarButtonMainTitleSelectedOverInactive,
+.OBTabBarButtonMainTitleFocusedOverInactive,
+.OBTabBarButtonMainTitleSelectedFocusedOverInactive {
+  color: #ffffff;
+}
+
+.OBTabBarButtonMainTitleOver,
+.OBTabBarButtonMainTitleOverInactive {
+}
+
+.OBTabBarButtonMainTitleDisabled,
+.OBTabBarButtonMainTitleSelectedDisabled,
+
+.OBTabBarButtonMainTitleDisabledInactive,
+.OBTabBarButtonMainTitleSelectedDisabledInactive {
+  color: #777;
+  padding-bottom: 1px;
+}
+
+
+/*============================================================
+ 2) Child Tab Headers
+============================================================*/
+
+.OBTabBarChild {
+  background: #ffffff url(./images/tab/tabBarChild_bg.gif) repeat-x scroll;
+  background-position: center top;
+}
+
+.OBTabSetChildContainer {
+  margin-top: 0px;
+  border-top: 0px solid #72ab10;
+}
+
+/* styles for simple css-styled tabs*/
+/* note only the top styles are present here because in Openbravo tabs in forms are shown in the top
+if the tab headers are on the right, left or bottom the same styles can be used */
+
+.OBTabBarButtonChildTopSelected,
+.OBTabBarButtonChildTopSelectedFocused,
+.OBTabBarButtonChildTopSelectedFocusedOver,
+.OBTabBarButtonChildTopSelectedFocusedDown,
+.OBTabBarButtonChildTopSelectedDown,
+.OBTabBarButtonChildTopSelectedDisabled,
+.OBTabBarButtonChildTopSelectedOver,
+
+.OBTabBarButtonChildTopSelectedInactive,
+.OBTabBarButtonChildTopSelectedFocusedInactive,
+.OBTabBarButtonChildTopSelectedFocusedOverInactive,
+.OBTabBarButtonChildTopSelectedFocusedDownInactive,
+.OBTabBarButtonChildTopSelectedDownInactive,
+.OBTabBarButtonChildTopSelectedDisabledInactive,
+.OBTabBarButtonChildTopSelectedOverInactive {
+  color: #fff;
+  margin-left: 25;
+  padding: 0;
+  height: 38px;
+}
+
+.OBTabBarButtonChildTopSelected,
+.OBTabBarButtonChildTopSelectedFocused,
+.OBTabBarButtonChildTopSelectedFocusedOver,
+.OBTabBarButtonChildTopSelectedFocusedDown,
+.OBTabBarButtonChildTopSelectedDown,
+.OBTabBarButtonChildTopSelectedDisabled {
+  background-position: center 2px;
+  background-repeat: repeat-x;
   background-image: url(./images/tab/tabBarButtonChild_Selected.gif);
-  background-position: center 2px;
-  background-repeat: repeat-x;
 }
 
-.OBTabBarChildButtonTopSelectedOver,
-.OBTabBarChildButtonTopSelectedFocusedOver {
+.OBTabBarButtonChildTopSelectedOver {
+  background-position: center 2px;
+  background-repeat: repeat-x;
   background-image: url(./images/tab/tabBarButtonChild_Selected_Over.gif);
-  background-position: center 2px;
-  background-repeat: repeat-x;
 }
 
-.OBTabBarChildButtonTopSelectedInactive,
-.OBTabBarChildButtonTopSelectedFocusedInactive,
-.OBTabBarChildButtonTopSelectedFocusedDownInactive,
-.OBTabBarChildButtonTopSelectedDownInactive,
-.OBTabBarChildButtonTopSelectedDisabledInactive {
+.OBTabBarButtonChildTopSelectedInactive,
+.OBTabBarButtonChildTopSelectedFocusedInactive,
+.OBTabBarButtonChildTopSelectedFocusedOverInactive,
+.OBTabBarButtonChildTopSelectedFocusedDownInactive,
+.OBTabBarButtonChildTopSelectedDownInactive,
+.OBTabBarButtonChildTopSelectedDisabledInactive {
+  background-position: center 2px;
+  background-repeat: repeat-x;
   background-image: url(./images/tab/tabBarButtonChild_Selected_Inactive.gif);
-  background-position: center 2px;
-  background-repeat: repeat-x;
 }
 
-.OBTabBarChildButtonTopSelectedOverInactive,
-.OBTabBarChildButtonTopSelectedFocusedOverInactive {
+.OBTabBarButtonChildTopSelectedOverInactive {
+  background-position: center 2px;
+  background-repeat: repeat-x;
   background-image: url(./images/tab/tabBarButtonChild_Selected_Inactive_Over.gif);
-  background-position: center 2px;
-  background-repeat: repeat-x;
 }
 
-.OBTabBarChildButtonTop,
-.OBTabBarChildButtonTopDown,
-.OBTabBarChildButtonTopDisabled,
+.OBTabBarButtonChildTop,
+.OBTabBarButtonChildTopDown,
+.OBTabBarButtonChildTopDisabled,
 
-.OBTabBarChildButtonTopInactive,
-.OBTabBarChildButtonTopDownInactive,
-.OBTabBarChildButtonTopDisabled {
-  font-family: 'lucida sans', sans-serif;
-  font-size: 12px;
-  font-weight: normal;
-  color: #fff;
-  margin: 0px;
-  padding: 0px 8px 0px 8px;
+.OBTabBarButtonChildTopInactive,
+.OBTabBarButtonChildTopDownInactive,
+.OBTabBarButtonChildTopDisabledInactive {
+  margin: 0;
+  padding: 0;
+  height: 38px;
+  color: #000;
   background-image: url(./images/tab/tabBarButtonChild_Unselected.gif);
   background-position: center 2px;
   background-repeat: repeat-x;
 }
 
-.OBTabBarChildButtonTopOver,
+.OBTabBarButtonChildTopOver,
 
-.OBTabBarChildButtonTopOverInactive {
-  font-family: 'lucida sans', sans-serif;
-  font-size: 12px;
-  font-weight: normal;
-  color: #fff;
-  margin: 0px;
-  padding: 0px 8px 0px 8px;
+.OBTabBarButtonChildTopOverInactive {
+  margin: 0;
+  padding: 0;
+  height: 38px;
+  color: #000;
   background-image: url(./images/tab/tabBarButtonChild_Unselected_Over.gif);
   background-position: center 2px;
   background-repeat: repeat-x;
+}
+
+.OBTabBarButtonChildTitle,
+.OBTabBarButtonChildTitleOver,
+.OBTabBarButtonChildTitleDown,
+.OBTabBarButtonChildTitleSelected,
+.OBTabBarButtonChildTitleFocused,
+.OBTabBarButtonChildTitleSelectedFocused,
+.OBTabBarButtonChildTitleSelectedOver,
+.OBTabBarButtonChildTitleFocusedOver,
+.OBTabBarButtonChildTitleSelectedFocusedOver,
+.OBTabBarButtonChildTitleSelectedDown,
+.OBTabBarButtonChildTitleFocusedDown,
+.OBTabBarButtonChildTitleSelectedFocusedDown,
+.OBTabBarButtonChildTitleDisabled,
+.OBTabBarButtonChildTitleSelectedDisabled,
+
+.OBTabBarButtonChildTitleInactive,
+.OBTabBarButtonChildTitleOverInactive,
+.OBTabBarButtonChildTitleDownInactive,
+.OBTabBarButtonChildTitleSelectedInactive,
+.OBTabBarButtonChildTitleFocusedInactive,
+.OBTabBarButtonChildTitleSelectedFocusedInactive,
+.OBTabBarButtonChildTitleSelectedOverInactive,
+.OBTabBarButtonChildTitleFocusedOverInactive,
+.OBTabBarButtonChildTitleSelectedFocusedOverInactive,
+.OBTabBarButtonChildTitleSelectedDownInactive,
+.OBTabBarButtonChildTitleFocusedDownInactive,
+.OBTabBarButtonChildTitleSelectedFocusedDownInactive,
+.OBTabBarButtonChildTitleDisabledInactive,
+.OBTabBarButtonChildTitleSelectedDisabledInactive {
+  color: #ffffff;
+  padding-top: 2px;
+  padding-bottom: 1px;
+}
+
+.OBTabBarButtonChildTitleOver,
+.OBTabBarButtonChildTitleOverInactive {
+}
+
+.OBTabBarButtonChildTitleDisabled,
+.OBTabBarButtonChildTitleSelectedDisabled,
+
+.OBTabBarButtonChildTitleDisabledInactive,
+.OBTabBarButtonChildTitleSelectedDisabledInactive {
+  color: #777;
+  padding-bottom: 1px;
 }

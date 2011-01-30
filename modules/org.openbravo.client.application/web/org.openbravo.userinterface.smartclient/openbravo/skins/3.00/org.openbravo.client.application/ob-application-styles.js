@@ -32,16 +32,6 @@
 // as this needs to be set when the layout gets created
 OB.MainLayoutStylingProperties = {};
 
-// Styling of the tab headers of the main views in the main tabset
-OB.MainLayoutStylingProperties.OBTabHeaderButton = {
-  align: 'right',
-  width: 1,
-  overflow: 'visible',
-  capSize: 8,
-  baseStyle: 'OBMainTabBarButton',
-  titleStyle: 'OBMainTabBarButtonTitle'
-};
-
 // The toolbar showing the navigation bar components
 OB.MainLayoutStylingProperties.Toolbar = {
   overflow: 'visible',
@@ -66,41 +56,6 @@ OB.MainLayoutStylingProperties.CompanyImageLogo = {
   width: 122,
   height: 34,
   src: OB.Application.contextUrl + 'utility/ShowImageLogo?logo=yourcompanymenu'
-};
-
-// The main tabset showing the tabs with views
-OB.MainLayoutStylingProperties.TabSet = {
-  tabBarPosition: 'top',
-  
-  paneContainerClassName: 'OBMainTabPaneContainer',
-  
-  // get rid of the margin around the content of a pane
-  paneMargin: 0,
-  paneContainerMargin: 0,
-  paneContainerPadding: 0,
-  showPaneContainerEdges: false,
-  
-  closeTabIcon: '[SKINIMG]../../org.openbravo.client.application/images/tab/ico-close-tab.png',
-  closeTabIconSize: 18,
-  
-  useSimpleTabs: true,
-  styleName: 'OBMainTab',
-  simpleTabBaseStyle: 'OBMainTab'
-};
-
-// The tab bar of the main tabset
-OB.MainLayoutStylingProperties.TabSet_tabBarProperties = {
-  height: 30,
-  styleName: 'OBMainTabBar',
-  baseStyle: 'OBMainTab'
-};
-
-// The tab styling properties of the main tabset
-OB.MainLayoutStylingProperties.TabSet_tabProperties = {
-  styleName: 'OBMainTabBar',
-  baseStyle: 'OBMainTab',
-  margin: 0,
-  padding: 0
 };
 
 /* =====================================================================
