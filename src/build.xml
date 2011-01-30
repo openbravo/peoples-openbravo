@@ -558,7 +558,7 @@ build.war: build a war file in the lib directory.
 
   <target name="build.local.context">
     <copy todir="${base.context}" encoding="UTF-8">
-      <fileset file="${basedir}/index.html" />
+      <fileset file="${basedir}/index.jsp" />
     </copy>
     <copy todir="${base.context}/WEB-INF" encoding="UTF-8">
       <fileset file="${build.sqlc}/src/web.xml" />
