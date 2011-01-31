@@ -670,7 +670,8 @@ isc.OBToolbar.addProperties({
     var buttons = this.getRightMembers(),
         numOfSelRecords = 0,
         isNew = this.view.viewForm.isNew,
-        hideAllButtons = !isNew && (!this.view.viewGrid.getSelectedRecords() || this.view.viewGrid.getSelectedRecords().length !== 1),
+        hideAllButtons = typeof(isNew)!=='undefined' && !isNew && 
+                         (!this.view.isShowingForm && (!this.view.viewGrid.getSelectedRecords() || this.view.viewGrid.getSelectedRecords().length !== 1)),
         currentValues = this.view.getCurrentValues();
     
     if (this.view.viewGrid.getSelectedRecords()) {
