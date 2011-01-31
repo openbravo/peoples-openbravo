@@ -35,11 +35,8 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.data.Sqlc;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.ui.WindowTrl;
 
 class QueryListUtils {
   private static final Logger log = Logger.getLogger(QueryListUtils.class);
@@ -74,26 +71,8 @@ class QueryListUtils {
 
             field.put("OB_TabId", tab.getId());
             field.put("OB_WindowId", tab.getWindow().getId());
-
-            final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
-            String tabTitle = null;
-            for (WindowTrl windowTrl : tab.getWindow().getADWindowTrlList()) {
-              final String trlLanguageId = (String) DalUtil.getId(windowTrl.getLanguage());
-              if (trlLanguageId.equals(userLanguageId)) {
-                tabTitle = windowTrl.getName();
-              }
-            }
-            if (tabTitle == null) {
-              tabTitle = tab.getWindow().getName();
-            }
-
-            field.put("OB_WindowTitle", tabTitle);
-            field.put("OB_keyParameter", "inp"
-                + Sqlc.TransformaNombreColumna(entity.getIdProperties().get(0).getColumnName()));
-            // find the model object mapping
-            String mappingName = Utility.getTabURL(tab.getId(), "E", false);
-            field.put("OB_mappingName", mappingName);
-
+            field.put("OB_keyColumnName", entity.getIdProperties().get(0).getColumnName());
+            field.put("OB_entityName", entity.getName());
           }
 
           // Summarize option:

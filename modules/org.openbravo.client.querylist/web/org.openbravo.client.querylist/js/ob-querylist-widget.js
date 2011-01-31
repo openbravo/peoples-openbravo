@@ -245,15 +245,8 @@ isc.OBQueryListGrid.addProperties({
     var field = this.getField(colNum);
     if (field.isLink) {
       if (field.OB_TabId && field.OB_LinkExpression) {
-        OB.Layout.ViewManager.openView('OBClassicWindow',  {
-            tabId: field.OB_TabId,
-            recordId: record[field.OB_LinkExpression],
-            windowId: field.OB_WindowId,
-            command: 'DIRECT',
-            tabTitle: field.OB_WindowTitle,
-            mappingName: field.OB_mappingName,
-            keyParameter: field.OB_keyParameter
-        });
+        OB.Utilities.openDirectView(field.OB_WindowId, field.OB_keyColumnName, 
+            field.OB_entityName, record[field.OB_LinkExpression]);
       }
     }
   },
