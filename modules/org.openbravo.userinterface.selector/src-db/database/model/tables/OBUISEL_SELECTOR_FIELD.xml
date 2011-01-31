@@ -97,6 +97,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="SUFFIX" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="DISPLAY_EXPRESSION" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>

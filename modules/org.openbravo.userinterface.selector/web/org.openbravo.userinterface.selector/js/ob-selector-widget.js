@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2010 Openbravo SLU
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -179,6 +179,17 @@ isc.OBSelectorWidget
       // If the Object is empty, the whole row object is returned
       outFields : {},
 
+      // ** {{{ outHiddenInputs }}} **
+      // An array referencing the hidden inputs generated for 'out' columns
+      // Note: Used for 2.50 backward compatibility
+      outHiddenInputs: {},
+
+      // ** {{{ outHiddenInputPrefix }}} **
+      // Prefix used by all hidden inputs. This prefix concatenated with the out field suffix
+      // gets the name for the hidden input, e.g. inpmProductId_PUOM
+      // Note: Used for 2.50 backward compatibility
+      outHiddenInputPrefix: '',
+
       // ** {{{ popupTextMatchStyle and suggestionTextMatchStyle }}} **
       // text matching
       popupTextMatchStyle : 'startswith',
@@ -278,7 +289,8 @@ isc.OBSelectorWidget
       // to control overall form state. Is called when the value
       // changes. Executes onValueChanged function.
       openbravoChanged : function(/* Object */selected) {
-        var selectedObj = {}, fieldsLength = this.outFields.length, i;
+        var selectedObj = {}, fieldsLength = this.outFields.length, i,
+            hiddenInput;
 
         function changeField(field, value) {
           var inputId;
@@ -295,9 +307,17 @@ isc.OBSelectorWidget
         }
 
         if (!selected) {
+          // Cleaning hidden inputs
+          for(i in this.outHiddenInputs) {
+            if (this.outHiddenInputs.hasOwnProperty(i) &&
+                this.outHiddenInputs[i]) {
+              this.outHiddenInputs[i].value = '';
+            }
+          }
+
           for (i in this.outFields) {
             if (this.outFields.hasOwnProperty(i)) {
-              changeField(this.outFields[i], '');
+              changeField(this.outFields[i].fieldName, '');
             }
           }
           return;
@@ -311,13 +331,22 @@ isc.OBSelectorWidget
               // associated tab field
               continue;
             }
-            changeField(this.outFields[i], selected[i]);
+
+            if (this.outFields[i].suffix) {
+              hiddenInput = this.outHiddenInputs[this.outHiddenInputPrefix + this.outFields[i].suffix];
+              if (hiddenInput) {
+                hiddenInput.value = selected[i] ? selected[i] : '';
+              }
+            }
+
+            changeField(this.outFields[i].fieldName, selected[i]);
           }
         }
 
         if (typeof setWindowEditing === 'function') {
           setWindowEditing(true);
         }
+
         if (this.callOut !== null) {
           this.callOut(this.openbravoField.name);
         }

@@ -51,11 +51,20 @@
     whereClause : '${data.whereClause?js_string}'
 <#else>
 /* jslint */
+<#list data.hiddenInputs?keys as key>
+document.write('<input type="hidden" value="" id="${key}" name="${key}" />');
+</#list>
 sc_${data.columnName} = isc.OBSelectorWidget.create({
     selectorDefinitionId: '${data.id}',
     popupTextMatchStyle: '${data.selector.popuptextmatchstyle}',
     suggestionTextMatchStyle: '${data.selector.suggestiontextmatchstyle}',
     openbravoField : document.getElementById("${data.columnName}"),
+    outHiddenInputPrefix: '${data.outHiddenInputPrefix}',
+    outHiddenInputs : {
+      <#list data.hiddenInputs?keys as key>
+      '${key}': ${data.hiddenInputs[key]}<#if key_has_next>,</#if>
+      </#list>
+    },
     defaultPopupFilterField : '${data.defaultPopupFilterField}',
     disabled: ${data.disabled},
     required: ${data.required},
@@ -81,7 +90,7 @@ sc_${data.columnName} = isc.OBSelectorWidget.create({
     ],
     outFields : {
     <#list data.outFields as selectorOutField>
-    '${selectorOutField.outFieldName}':'${selectorOutField.tabFieldName}'<#if selectorOutField_has_next>,</#if>
+    '${selectorOutField.outFieldName}': {'fieldName':'${selectorOutField.tabFieldName}', 'suffix': '${selectorOutField.outSuffix}'}<#if selectorOutField_has_next>,</#if>
     </#list>
     },
     extraSearchFields: [${data.extraSearchFields}],

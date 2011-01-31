@@ -4,14 +4,14 @@
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -46,6 +47,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.service.datasource.DataSource;
@@ -76,15 +78,20 @@ public class SelectorComponent extends BaseTemplateComponent {
   private List<SelectorFieldTrl> selectorFieldTrls;
   private static OutSelectorField IdOutField;
   private static OutSelectorField IdentifierOutField;
+  private String transformedColumnName = null;
+
+  private static Logger log = Logger.getLogger(SelectorComponent.class);
 
   static {
     IdOutField = new OutSelectorField();
     IdOutField.setOutFieldName(JsonConstants.ID);
     IdOutField.setTabFieldName("");
+    IdOutField.setOutSuffix("");
 
     IdentifierOutField = new OutSelectorField();
     IdentifierOutField.setOutFieldName(JsonConstants.IDENTIFIER);
     IdentifierOutField.setTabFieldName("");
+    IdentifierOutField.setOutSuffix("");
   }
 
   @Override
@@ -407,14 +414,28 @@ public class SelectorComponent extends BaseTemplateComponent {
             outField.setOutFieldName(getPropertyOrDataSourceField(selectorField));
             outField.setTabFieldName("");
             outFields.add(outField);
+            outField.setOutSuffix("");
           } else {
             final OBCriteria<Field> obc = OBDal.getInstance().createCriteria(Field.class);
             obc.add(Expression.eq(Field.PROPERTY_OBUISELOUTFIELD, selectorField));
+
+            if (obc.list().size() == 0 && selectorField.getSuffix() != null
+                && !selectorField.getSuffix().equals("")) {
+              // "out-fields" with a suffix not necessarily are associated with a field in the tab
+              final OutSelectorField outField = new OutSelectorField();
+              outField.setOutFieldName(getPropertyOrDataSourceField(selectorField));
+              outField.setTabFieldName(getPropertyOrDataSourceField(selectorField));
+              outField.setOutSuffix((selectorField.getSuffix() == null ? "" : selectorField
+                  .getSuffix()));
+              outFields.add(outField);
+            }
             for (Field associatedField : obc.list()) {
               if (associatedField.getTab().getId().equals(tabId)) {
                 final OutSelectorField outField = new OutSelectorField();
                 outField.setOutFieldName(getPropertyOrDataSourceField(selectorField));
                 outField.setTabFieldName(associatedField.getColumn().getName());
+                outField.setOutSuffix((selectorField.getSuffix() == null ? "" : selectorField
+                    .getSuffix()));
                 outFields.add(outField);
               }
             }
@@ -422,11 +443,59 @@ public class SelectorComponent extends BaseTemplateComponent {
         }
       }
     } catch (Exception e) {
-      e.printStackTrace(); // FIXME
+      log.error("Error gettting out fields for selector "
+          + getParameter(SelectorConstants.PARAM_TAB_ID) + ": " + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }
     return outFields;
+  }
+
+  public String getOutHiddenInputPrefix() {
+    if (transformedColumnName == null) {
+      if (getSelector().getTable() == null) {
+        transformedColumnName = "";
+      } else {
+        transformedColumnName = ModelProvider.getInstance().getTable(
+            getSelector().getTable().getDBTableName()).getPrimaryKeyColumns().get(0)
+            .getColumnName();
+        transformedColumnName = "inp" + Sqlc.TransformaNombreColumna(transformedColumnName);
+      }
+    }
+    return transformedColumnName;
+  }
+
+  public Map<String, String> getHiddenInputs() {
+    final Map<String, String> hiddenInputs = new HashMap<String, String>();
+
+    if (getSelector().getTable() == null) {
+      return hiddenInputs;
+    }
+
+    final String getElementString = "document.getElementById('@id@')";
+    final String columnName = getOutHiddenInputPrefix();
+
+    OBContext.setAdminMode();
+    try {
+      for (final SelectorField field : getSelector().getOBUISELSelectorFieldList()) {
+        if (!Boolean.TRUE.equals(field.isOutfield())) {
+          continue;
+        }
+
+        if (field.getSuffix() == null || "".equals(field.getSuffix())) {
+          continue;
+        }
+        hiddenInputs.put(columnName + field.getSuffix(), getElementString.replaceAll("@id@",
+            columnName + field.getSuffix()));
+      }
+    } catch (Exception e) {
+      log.error("Error getting hidden input for selector "
+          + getParameter(SelectorConstants.PARAM_TAB_ID) + ": " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    return hiddenInputs;
   }
 
   public List<LocalSelectorField> getPickListFields() {
@@ -536,6 +605,7 @@ public class SelectorComponent extends BaseTemplateComponent {
   public static class OutSelectorField {
     private String tabFieldName;
     private String outFieldName;
+    private String suffix;
 
     public String getTabFieldName() {
       return tabFieldName;
@@ -551,6 +621,14 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     public void setOutFieldName(String outFieldName) {
       this.outFieldName = outFieldName;
+    }
+
+    public void setOutSuffix(String suffix) {
+      this.suffix = suffix;
+    }
+
+    public String getOutSuffix() {
+      return suffix;
     }
 
   }
@@ -719,26 +797,4 @@ public class SelectorComponent extends BaseTemplateComponent {
     Check.isNotNull(reference, "No reference found for referenceid " + referenceId);
     return reference.getDomainType();
   }
-
-  // the code below here has to be moved to a utility in core
-  // private String getFormat(SelectorField selectorField) {
-  // final DomainType domainType = getDomainType(selectorField);
-  // if (domainType == null) {
-  // return null;
-  // }
-  // if (!(domainType instanceof PrimitiveDomainType)) {
-  // return null;
-  // }
-  // final PrimitiveDomainType primitiveDomainType = (PrimitiveDomainType) domainType;
-  //
-  // final String formatId = primitiveDomainType.getFormatId();
-  // if (formatId == null) {
-  // return null;
-  // }
-  //
-  // // now get the FormatXML
-  // final Document formatXML = OBPropertiesProvider.getInstance().getFormatXMLDocument();
-  // // iterate over its nodes to find it
-  //
-  // }
 }
