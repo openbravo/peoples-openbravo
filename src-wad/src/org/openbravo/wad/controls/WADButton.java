@@ -64,6 +64,7 @@ public class WADButton extends WADControl {
     boolean isDisabled = (getData("IsReadOnly").equals("Y")
         || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N")) || getData(
         "IsUpdateable").equals("N"));
+
     if (isDisabled) {
       text.append("return true;");
     } else {
@@ -140,9 +141,7 @@ public class WADButton extends WADControl {
   public String toXml() {
     StringBuffer text = new StringBuffer();
 
-    boolean isDisabled = (getData("IsReadOnly").equals("Y")
-        || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N")) || getData(
-        "IsUpdateable").equals("N"));
+    boolean isDisabled = getData("IsReadOnly").equals("Y") || getData("IsUpdateable").equals("N");
 
     if (getData("IsParameter").equals("Y")) {
       text.append("<PARAMETER id=\"").append(getData("ColumnName"));
@@ -179,9 +178,7 @@ public class WADButton extends WADControl {
 
   public String toJava() {
 
-    boolean isDisabled = (getData("IsReadOnly").equals("Y")
-        || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N")) || getData(
-        "IsUpdateable").equals("N"));
+    boolean isDisabled = getData("IsReadOnly").equals("Y") || getData("IsUpdateable").equals("N");
 
     String javaCode = "";
 
