@@ -446,7 +446,7 @@ public class FIN_AddPayment {
 
           // Truncate Business Partner
           String businessPartner = FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule()
-              .getInvoice().getBusinessPartner().getIdentifier();
+              .getOrder().getBusinessPartner().getIdentifier();
           String truncateBusinessPartner = (businessPartner.length() > 18) ? businessPartner
               .substring(0, 15).concat("...").toString() : businessPartner;
           FieldProviderFactory.setField(data[i], "businessPartnerName",
