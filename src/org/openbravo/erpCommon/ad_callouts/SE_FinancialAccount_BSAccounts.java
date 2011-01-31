@@ -27,10 +27,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.advpaymentmngt.utility.FIN_Utility;
-import org.openbravo.advpaymentmngt.utility.Value;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.accounting.coa.AccountingCombination;
@@ -139,8 +139,11 @@ public class SE_FinancialAccount_BSAccounts extends HttpSecureAppServlet {
       String strAccountingSchemaId) {
     FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
         strfinFinancialAccountId);
-    List<FinAccPaymentMethod> accountPaymentMethods = FIN_Utility.getAllInstances(
-        FinAccPaymentMethod.class, new Value(FinAccPaymentMethod.PROPERTY_ACCOUNT, account));
+    OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
+        FinAccPaymentMethod.class);
+    obc.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, account));
+    List<FinAccPaymentMethod> accountPaymentMethods = obc.list();
+
     // Configure clearing account for all payment methods upon clearing event
     for (FinAccPaymentMethod paymentMethod : accountPaymentMethods) {
       paymentMethod.setOUTUponClearingUse("CLE");
