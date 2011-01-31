@@ -40,7 +40,7 @@ isc.OBPopupClassicWindow.addMethods({
         urlCharacter = '&';
     }
     if(this.obManualURL !== '') {
-      contentsURL = '../../' + this.obManualURL + '?Command=' + this.command;
+      contentsURL = OB.Application.contextUrl + this.obManualURL + '?Command=' + this.command;
 //      contentsURL = this.appURL + urlCharacter + 'url=' + this.obManualURL + '&noprefs=true&Command=' + this.command + '&hideMenu=true';
     } else {
       contentsURL = this.appURL + urlCharacter + 'Command=' + this.command + '&noprefs=true&tabId=' + this.tabId + '&hideMenu=true';
