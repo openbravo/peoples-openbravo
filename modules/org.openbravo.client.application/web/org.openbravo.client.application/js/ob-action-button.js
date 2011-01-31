@@ -69,7 +69,7 @@ isc.OBToolbarActionButton.addProperties( {
     if (this.modal){
       allProperties.Command = this.command;
       callbackFunction = function(){
-        OB.Layout.ClassicOBCompatibility.Popup.open('process', 625, 450,  OB.Application.contextUrl + me.obManualURL, '', null, false, false, true, allProperties);
+        OB.Layout.ClassicOBCompatibility.Popup.open('process', 900, 600, OB.Application.contextUrl + me.obManualURL, '', null, false, false, true, allProperties);
       };
     } else {
       var popupParams = {
