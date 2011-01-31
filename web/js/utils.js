@@ -95,7 +95,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '10029';
+  var number = '10246';
   return number;
 }
 
@@ -196,8 +196,36 @@ function checkBrowserCompatibility() {
     if (browserMajorVersion >= 7) {
       isValid = true;
     }
+  } else if (browserName.toUpperCase().indexOf('GOOGLE CHROME') != -1) {
+    if (browserMajorVersion >= 5) {
+      isValid = true;
+    }
   }
   return isValid;
+}
+
+/**
+* Checks if the browser is a recommended one
+*/
+function checkRecommendedBrowser() {
+  var browserName = getBrowserInfo("name");
+  var browserVersion = getBrowserInfo("version");
+  var browserMajorVersion = getBrowserInfo("majorVersion");
+  var isRecommended = false;
+  if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
+    if (browserMajorVersion >= 4) {
+      isRecommended = true;
+    }
+  } else if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
+    if (browserMajorVersion >= 9) {
+      isRecommended = true;
+    }
+  } else if (browserName.toUpperCase().indexOf('GOOGLE CHROME') != -1) {
+    if (browserMajorVersion >= 9) {
+      isRecommended = true;
+    }
+  }
+  return isRecommended;
 }
 
 

@@ -55,15 +55,19 @@ public class Login extends HttpBaseServlet {
         Client systemClient = OBDal.getInstance().get(Client.class, "0");
         String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", systemClient
             .getLanguage().getLanguage());
-        String browserMsg = Utility.messageBD(this, "BROWSER_NOT_SUPPORTED", systemClient
+        String validBrowserMsg = Utility.messageBD(this, "BROWSER_NOT_SUPPORTED", systemClient
             .getLanguage().getLanguage());
         String orHigherMsg = Utility.messageBD(this, "OR_HIGHER_TEXT", systemClient.getLanguage()
             .getLanguage());
+        String recBrowserMsgTitle = Utility.messageBD(this, "RECOMMENDED_BROWSER_TITLE", systemClient
+            .getLanguage().getLanguage());
+        String recBrowserMsgText = Utility.messageBD(this, "RECOMMENDED_BROWSER_TEXT", systemClient.getLanguage()
+            .getLanguage());
 
         if (OBVersion.getInstance().is30()) {
-          printPageLogin30(response, strTheme, cacheMsg, browserMsg, orHigherMsg);
+          printPageLogin30(response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg, recBrowserMsgTitle, recBrowserMsgText);
         } else {
-          printPageLogin250(response, strTheme, cacheMsg, browserMsg, orHigherMsg);
+          printPageLogin250(response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg);
         }
       } finally {
         OBContext.restorePreviousMode();
@@ -188,7 +192,7 @@ public class Login extends HttpBaseServlet {
    * Shows 2.50 login page
    */
   private void printPageLogin250(HttpServletResponse response, String strTheme, String cacheMsg,
-      String browserMsg, String orHigherMsg) throws IOException, ServletException {
+      String validBrowserMsg, String orHigherMsg) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine
         .readXmlTemplate("org/openbravo/erpCommon/security/Login_F1").createXmlDocument();
 
@@ -204,13 +208,13 @@ public class Login extends HttpBaseServlet {
     String orHigherMsgFinal = (orHigherMsg != null && !orHigherMsg.equals("")) ? orHigherMsg
         : "or higher";
 
-    String browserMsgFinal = (browserMsg != null && !browserMsg.equals("")) ? browserMsg
+    String validBrowserMsgFinal = (validBrowserMsg != null && !validBrowserMsg.equals("")) ? validBrowserMsg
         : "Your browser is not officially supported.\n\nYou can continue at your own risk or access the application with one of the supported browsers:";
 
-    browserMsgFinal = browserMsgFinal + "\\n * Mozilla Firefox 3.0 " + orHigherMsgFinal
+    validBrowserMsgFinal = validBrowserMsgFinal + "\\n * Mozilla Firefox 3.0 " + orHigherMsgFinal
         + "\\n * Microsoft Internet Explorer 7.0 " + orHigherMsgFinal;
-    browserMsgFinal = "var browserMsg = \"" + browserMsgFinal + "\"";
-    xmlDocument.setParameter("browserMsg", browserMsgFinal.replaceAll("\\n", "\n"));
+    validBrowserMsgFinal = "var validBrowserMsg = \"" + validBrowserMsgFinal + "\"";
+    xmlDocument.setParameter("validBrowserMsg", validBrowserMsgFinal.replaceAll("\\n", "\n"));
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -222,7 +226,7 @@ public class Login extends HttpBaseServlet {
    * Shows 3.0 login page
    */
   private void printPageLogin30(HttpServletResponse response, String strTheme, String cacheMsg,
-      String browserMsg, String orHigherMsg) throws IOException, ServletException {
+      String validBrowserMsg, String orHigherMsg, String recBrowserMsgTitle, String recBrowserMsgText) throws IOException, ServletException {
 
     boolean showForgeLogo = true;
     boolean showITLogo = false;
@@ -263,13 +267,27 @@ public class Login extends HttpBaseServlet {
     String orHigherMsgFinal = (orHigherMsg != null && !orHigherMsg.equals("")) ? orHigherMsg
         : "or higher";
 
-    String browserMsgFinal = (browserMsg != null && !browserMsg.equals("")) ? browserMsg
+    String validBrowserMsgFinal = (validBrowserMsg != null && !validBrowserMsg.equals("")) ? validBrowserMsg
         : "Your browser is not officially supported.\n\nYou can continue at your own risk or access the application with one of the supported browsers:";
 
-    browserMsgFinal = browserMsgFinal + "\\n * Mozilla Firefox 3.0 " + orHigherMsgFinal
-        + "\\n * Microsoft Internet Explorer 7.0 " + orHigherMsgFinal;
-    browserMsgFinal = "var browserMsg = \"" + browserMsgFinal + "\"";
-    xmlDocument.setParameter("browserMsg", browserMsgFinal.replaceAll("\\n", "\n"));
+    validBrowserMsgFinal = validBrowserMsgFinal + "\\n * Mozilla Firefox 3.0 " + orHigherMsgFinal
+        + "\\n * Google Chrome 5 " + orHigherMsgFinal
+        + "\\n * Microsoft Internet Explorer 7 " + orHigherMsgFinal;
+    validBrowserMsgFinal = "var validBrowserMsg = \"" + validBrowserMsgFinal + "\"";
+    xmlDocument.setParameter("validBrowserMsg", validBrowserMsgFinal.replaceAll("\\n", "\n"));
+
+    String recBrowserMsgTitleFinal = (recBrowserMsgTitle != null && !recBrowserMsgTitle.equals("")) ? recBrowserMsgTitle
+        : "NOTE";
+
+    String recBrowserMsgTextFinal = (recBrowserMsgText != null && !recBrowserMsgText.equals("")) ? recBrowserMsgText
+        : "For a better experience, it is recommended to use Mozilla Firefox MFVer, Google Chrome GCVer or Internet Explorer IEVer";
+
+    recBrowserMsgTextFinal = recBrowserMsgTextFinal.replace("MFVer", "4").replace("GCVer", "9").replace("IEVer", "9");
+
+    recBrowserMsgTitleFinal = "var recBrowserMsgTitle = \"" + recBrowserMsgTitleFinal + "\"";
+    recBrowserMsgTextFinal = "var recBrowserMsgText = \"" + recBrowserMsgTextFinal + "\"";
+    xmlDocument.setParameter("recBrowserMsgTitle", recBrowserMsgTitleFinal.replaceAll("\\n", "\n"));
+    xmlDocument.setParameter("recBrowserMsgText", recBrowserMsgTextFinal.replaceAll("\\n", "\n"));
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

@@ -23,5 +23,5 @@
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="itService" name="itService" default=""/>
   <PARAMETER id="cacheMsg" name="cacheMsg" default=""/>
-  <PARAMETER id="browserMsg" name="browserMsg" default=""/>
+  <PARAMETER id="validBrowserMsg" name="validBrowserMsg" default=""/>
 </REPORT>

@@ -5670,6 +5670,18 @@ table.Login_ToolBar_bg {
   font-size: 10px;
 }
 
+.Login_RecBrowserMsg_Title {
+  color: #f80101 !important;
+  font-weight: bold;
+  font-size: 10px;
+}
+
+.Login_RecBrowserMsg_Content {
+  color: #000000 !important;
+  font-weight: normal;
+  font-size: 10px;
+}
+
 .Login_LabelText {
 }
 

@@ -33,7 +33,9 @@
 <script language="JavaScript" type="text/javascript" id="visualPrefs">var showCompanyLogo = true, showSupportLogo = true, showForgeLogo = true, urlCompany = 'http://www.openbravo.com/', urlSupport = 'http://support.openbravo.com/';/* Parameters retreived from Login.java */</script>
 <script language="JavaScript" type="text/javascript">var urlForge = 'http://forge.openbravo.com/';</script>
 <script language="JavaScript" type="text/javascript" id="cacheMsg">var cacheMsg = 'xx';</script>
-<script language="JavaScript" type="text/javascript" id="browserMsg">var browserMsg = 'xx';</script>
+<script language="JavaScript" type="text/javascript" id="validBrowserMsg">var validBrowserMsg = 'xx';</script>
+<script language="JavaScript" type="text/javascript" id="recBrowserMsgTitle">var recBrowserMsgTitle = 'xx';</script>
+<script language="JavaScript" type="text/javascript" id="recBrowserMsgText">var recBrowserMsgText = 'xx';</script>
 
 <script type="text/javascript">
   function redirectWhenPopup() {
@@ -97,6 +99,22 @@
       }
       alert(alertText);
     }
+  }
+
+  function setRecommendedBrowserMessage(title, text) {
+    var msgContainer = document.getElementById('errorMsg');
+    var msgContainerTitle = document.getElementById('errorMsgTitle');
+    var msgContainerContent = document.getElementById('errorMsgContent');
+    msgContainerTitle.innerHTML = '';
+    if (typeof title !== 'undefined' && title !== '' && title !== null) {
+      msgContainerContent.innerHTML = '<span class="Login_RecBrowserMsg_Title">' + title.replace(/\n/g, '<br>').replace(/\\n/g, '<br>') + ': ' + '</span>';
+    } else {
+      msgContainerContent.innerHTML = '';
+    }
+    if (typeof text !== 'undefined' && text !== '' && text !== null) {
+      msgContainerContent.innerHTML = msgContainerContent.innerHTML + '<span class="Login_RecBrowserMsg_Content">' + text.replace(/\n/g, '<br>').replace(/\\n/g, '<br>') + '</span>';
+    }
+    msgContainer.style.display = '';
   }
 
   function resetLoginMessage() {
@@ -252,13 +270,16 @@
     }
     catch (e) { }
 
-    if ((!revisionControl('10029')) || (isOpsInstance() != isOpsInstanceCached())) {
+    if ((!revisionControl('10246')) || (isOpsInstance() != isOpsInstanceCached())) {
       maskLoginWindow(cacheMsg);
       setLoginMessage('Warning', '', cacheMsg);
     }
 
     if (!checkBrowserCompatibility()) {
-      setLoginMessage('Warning', '', browserMsg);
+      setLoginMessage('Warning', '', validBrowserMsg);
+    }
+    if (!checkRecommendedBrowser()) {
+      setRecommendedBrowserMessage(recBrowserMsgTitle, recBrowserMsgText);
     }
   }
 </script>
