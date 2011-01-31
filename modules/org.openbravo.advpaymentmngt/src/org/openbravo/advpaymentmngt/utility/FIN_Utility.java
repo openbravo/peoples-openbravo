@@ -500,15 +500,21 @@ public class FIN_Utility {
    * 
    * @param clazz
    *          Class (entity).
+   * @param setFilterClient
+   *          If true then only objects from readable clients are returned, if false then objects
+   *          from all clients are returned
+   * @param setFilterOrg
+   *          If true then when querying (for example call list()) a filter on readable
+   *          organizations is added to the query, if false then this is not done
    * @param values
    *          Value. Property, value and operator.
    * @return All the records that satisfy the conditions.
    */
-  public static <T extends BaseOBObject> List<T> getAllInstances(Class<T> clazz, Value... values) {
+  public static <T extends BaseOBObject> List<T> getAllInstances(Class<T> clazz,
+      boolean setFilterClient, boolean setFilterOrg, Value... values) {
     OBCriteria<T> obc = OBDal.getInstance().createCriteria(clazz);
-    obc.setFilterOnReadableClients(false);
-    obc.setFilterOnReadableOrganization(false);
-    obc.add(Expression.ne(Client.PROPERTY_ID, "0"));
+    obc.setFilterOnReadableClients(setFilterClient);
+    obc.setFilterOnReadableOrganization(setFilterOrg);
     for (Value value : values) {
       if (value.getValue() == null && "==".equals(value.getOperator())) {
         obc.add(Expression.isNull(value.getField()));
@@ -531,6 +537,19 @@ public class FIN_Utility {
       }
     }
     return obc.list();
+  }
+
+  /**
+   * Generic OBCriteria with filter on readable clients and organizations active.
+   * 
+   * @param clazz
+   *          Class (entity).
+   * @param values
+   *          Value. Property, value and operator.
+   * @return All the records that satisfy the conditions.
+   */
+  public static <T extends BaseOBObject> List<T> getAllInstances(Class<T> clazz, Value... values) {
+    return getAllInstances(clazz, true, true, values);
   }
 
   /**
