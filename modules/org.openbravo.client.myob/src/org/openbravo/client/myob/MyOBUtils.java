@@ -177,8 +177,13 @@ public class MyOBUtils {
   }
 
   static List<WidgetInstance> getUserWidgetInstances() {
+    return getUserWidgetInstances(true);
+  }
+
+  static List<WidgetInstance> getUserWidgetInstances(Boolean isActive) {
     OBCriteria<WidgetInstance> obc = OBDal.getInstance().createCriteria(WidgetInstance.class);
     obc.setFilterOnReadableClients(false);
+    obc.setFilterOnActive(isActive);
     obc.add(Expression.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance().get(Client.class,
         OBContext.getOBContext().getCurrentClient().getId())));
     obc.add(Expression.eq(WidgetInstance.PROPERTY_VISIBLEATROLE, OBDal.getInstance().get(

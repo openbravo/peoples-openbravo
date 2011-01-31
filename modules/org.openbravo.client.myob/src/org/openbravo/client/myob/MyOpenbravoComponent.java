@@ -241,7 +241,7 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
 
   private void copyWidgets() {
     final List<WidgetInstance> userWidgets = new ArrayList<WidgetInstance>(MyOBUtils
-        .getUserWidgetInstances());
+        .getUserWidgetInstances(false));
     final User user = OBDal.getInstance().get(User.class,
         OBContext.getOBContext().getUser().getId());
     final Role role = OBDal.getInstance().get(Role.class,

@@ -293,7 +293,12 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
       // Removed widget instance to delete.
       for (WidgetInstance widgetInstance : currentWidgetInstances) {
         log.debug(">> removed widget instance: " + widgetInstance.getId());
-        OBDal.getInstance().remove(widgetInstance);
+        if (widgetInstance.getCopiedFrom() != null) {
+          widgetInstance.setActive(Boolean.FALSE);
+          OBDal.getInstance().save(widgetInstance);
+        } else {
+          OBDal.getInstance().remove(widgetInstance);
+        }
       }
       hasRemovedInstances = true;
     }
