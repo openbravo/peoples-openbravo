@@ -167,7 +167,8 @@ public class ExportGrid extends HttpSecureAppServlet {
         else if (headers[i].getField("adReferenceId").equals("22")
             || headers[i].getField("adReferenceId").equals("12")
             || headers[i].getField("adReferenceId").equals("800008")
-            || headers[i].getField("adReferenceId").equals("800019"))
+            || headers[i].getField("adReferenceId").equals("800019")
+            || headers[i].getField("adReferenceId").equals("29"))
           fieldClass = java.math.BigDecimal.class;
         columns.add(new GridColumnVO(headers[i].getField("name"), columnname, intColumnWidth,
             fieldClass));
