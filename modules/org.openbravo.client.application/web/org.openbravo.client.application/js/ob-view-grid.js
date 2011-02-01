@@ -647,6 +647,12 @@ isc.OBViewGrid
         var menuItems = [];
         var field = this.getField(colNum);
         var grid = this;
+        menuItems.add({
+            title: OB.I18N.getLabel('OBUIAPP_CreateNewRecord'),
+            click: function(){
+      	    isc.say('Not implemented yet');
+          }
+        });
         if (this.canEdit && this.isWritable(record)) {
           menuItems.add( {
             title : OB.I18N.getLabel('OBUIAPP_EditInGrid'),
@@ -656,6 +662,12 @@ isc.OBViewGrid
             }
           });
         }
+        menuItems.add({
+            title: OB.I18N.getLabel('OBUIAPP_DeleteRecord'),
+            click: function(){
+    	    grid.view.deleteRow();
+          }
+        });
         if (field.canFilter) {
           menuItems.add( {
             title : OB.I18N.getLabel('OBUIAPP_UseAsFilter'),
