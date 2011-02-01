@@ -179,6 +179,21 @@ isc.ListGrid.addProperties({
   alternateRecordStyles: true
 });
 
+// this can be removed after this has been solved:
+// http://forums.smartclient.com/showthread.php?p=59150#post59150
+isc._original_confirm = isc.confirm;
+isc.confirm = function (message, callback, properties) {
+  // override to set the styling
+  if (properties && properties.buttons) {
+    for (var i = 0; i < properties.buttons.length; i++) {
+      properties.buttons[i].baseStyle = 'OBFormButton';
+      properties.buttons[i].titleStyle = 'OBFormButtonTitle';
+      properties.buttons[i].buttonConstructor = isc.OBFormButton;
+    }
+  }
+  isc._original_confirm(message, callback, properties);
+};
+
 // override the standard show prompt to show a more custom Openbravo
 // loading prompt
 // note the loading image is set in the index.html
