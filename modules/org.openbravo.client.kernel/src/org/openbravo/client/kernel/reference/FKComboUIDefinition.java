@@ -21,6 +21,8 @@ package org.openbravo.client.kernel.reference;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Property;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.service.json.JsonConstants;
 
@@ -31,6 +33,13 @@ import org.openbravo.service.json.JsonConstants;
  * @author mtaal
  */
 public class FKComboUIDefinition extends ForeignKeyUIDefinition {
+
+  protected String getFilterEditorPropertiesProperty(Field field) {
+    final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
+    return ", filterEditorProperties: {selectOnFocus: true, valueField: '" + prop.getName() + "."
+        + JsonConstants.IDENTIFIER + "', displayField: '" + prop.getName() + "."
+        + JsonConstants.IDENTIFIER + "'}";
+  }
 
   public String getGridEditorFieldProperties(Field field) {
     return "displayField: '" + JsonConstants.IDENTIFIER + "', valueField: '" + JsonConstants.ID
