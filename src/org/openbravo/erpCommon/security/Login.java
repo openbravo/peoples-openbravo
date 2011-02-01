@@ -270,19 +270,16 @@ public class Login extends HttpBaseServlet {
     String validBrowserMsgFinal = (validBrowserMsg != null && !validBrowserMsg.equals("")) ? validBrowserMsg
         : "Your browser is not officially supported.\n\nYou can continue at your own risk or access the application with one of the supported browsers:";
 
-    validBrowserMsgFinal = validBrowserMsgFinal + "\\n * Mozilla Firefox 3.0 " + orHigherMsgFinal
-        + "\\n * Google Chrome 5 " + orHigherMsgFinal
-        + "\\n * Microsoft Internet Explorer 7 " + orHigherMsgFinal;
     validBrowserMsgFinal = "var validBrowserMsg = \"" + validBrowserMsgFinal + "\"";
+    orHigherMsgFinal = "var validBrowserMsgOrHigher = \"" + orHigherMsgFinal + "\"";
     xmlDocument.setParameter("validBrowserMsg", validBrowserMsgFinal.replaceAll("\\n", "\n"));
+    xmlDocument.setParameter("validBrowserMsgOrHigher", orHigherMsgFinal.replaceAll("\\n", "\n"));
 
     String recBrowserMsgTitleFinal = (recBrowserMsgTitle != null && !recBrowserMsgTitle.equals("")) ? recBrowserMsgTitle
         : "NOTE";
 
     String recBrowserMsgTextFinal = (recBrowserMsgText != null && !recBrowserMsgText.equals("")) ? recBrowserMsgText
-        : "For a better experience, it is recommended to use Mozilla Firefox MFVer, Google Chrome GCVer or Internet Explorer IEVer";
-
-    recBrowserMsgTextFinal = recBrowserMsgTextFinal.replace("MFVer", "4").replace("GCVer", "9").replace("IEVer", "9");
+        : "For a better experience, it is recommended to use XX or YY";
 
     recBrowserMsgTitleFinal = "var recBrowserMsgTitle = \"" + recBrowserMsgTitleFinal + "\"";
     recBrowserMsgTextFinal = "var recBrowserMsgText = \"" + recBrowserMsgTextFinal + "\"";

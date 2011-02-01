@@ -34,8 +34,20 @@
 <script language="JavaScript" type="text/javascript">var urlForge = 'http://forge.openbravo.com/';</script>
 <script language="JavaScript" type="text/javascript" id="cacheMsg">var cacheMsg = 'xx';</script>
 <script language="JavaScript" type="text/javascript" id="validBrowserMsg">var validBrowserMsg = 'xx';</script>
+<script language="JavaScript" type="text/javascript" id="validBrowserMsgOrHigher">var validBrowserMsgOrHigher = 'xx';</script>
 <script language="JavaScript" type="text/javascript" id="recBrowserMsgTitle">var recBrowserMsgTitle = 'xx';</script>
 <script language="JavaScript" type="text/javascript" id="recBrowserMsgText">var recBrowserMsgText = 'xx';</script>
+
+<script language="JavaScript" type="text/javascript">
+var validBrowserFirefox = '3.6.0.0';
+var validBrowserChrome = '8.0.0.0';
+var validBrowserExplorer = '7.0.0.0';
+var validBrowserSafari = '5.0.0.0';
+
+var recBrowserFirefox = '4.0.0.0';
+var recBrowserChrome = '8.0.0.0';
+var recBrowserExplorer = '9.0.0.0';
+</script>
 
 <script type="text/javascript">
   function redirectWhenPopup() {
@@ -89,6 +101,7 @@
         msgContainerContent.innerHTML = '';
       }
       msgContainer.style.display = '';
+      isRecBrowserMsgShown = false;
     } else if (type === 'Warning') {
       var alertText = '';
       if (typeof title !== 'undefined' && title !== '' && title !== null) {
@@ -101,6 +114,7 @@
     }
   }
 
+  var isRecBrowserMsgShown = false;
   function setRecommendedBrowserMessage(title, text) {
     var msgContainer = document.getElementById('errorMsg');
     var msgContainerTitle = document.getElementById('errorMsgTitle');
@@ -115,6 +129,7 @@
       msgContainerContent.innerHTML = msgContainerContent.innerHTML + '<span class="Login_RecBrowserMsg_Content">' + text.replace(/\n/g, '<br>').replace(/\\n/g, '<br>') + '</span>';
     }
     msgContainer.style.display = '';
+    isRecBrowserMsgShown = true;
   }
 
   function resetLoginMessage() {
@@ -124,6 +139,7 @@
     msgContainerTitle.innerHTML = '';
     msgContainerContent.innerHTML = '';
     msgContainer.style.display = 'none';
+    isRecBrowserMsgShown = false;
   }
 
   function addInputChangeCheck(input) {
@@ -135,12 +151,12 @@
 
   function checkInputKeyDown(input, valueLength) {
     var msgContainer = document.getElementById('errorMsg');
-    if (msgContainer.style.display !== "none" && typeof input === "object") {
-      if (typeof valueLength === "undefined" || valueLength === null) {
+    if (msgContainer.style.display !== 'none' && typeof input === 'object') {
+      if (typeof valueLength === 'undefined' || valueLength === null) {
         valueLength = input.value.length;
         setTimeout(function() { checkInputKeyDown(input, valueLength); }, 100);
       } else {
-        if (valueLength !== input.value.length) {
+        if (valueLength !== input.value.length && !isRecBrowserMsgShown) {
           resetLoginMessage();
         }
       }
@@ -250,6 +266,91 @@
   }
 </script>
 <script type="text/javascript">
+  function browserVersionToFloat(versionNum) {
+    while (versionNum.indexOf('.') !== versionNum.lastIndexOf('.')) {
+      versionNum = versionNum.substring(0, versionNum.lastIndexOf('.')) + versionNum.substring(versionNum.lastIndexOf('.')+1, versionNum.length);
+    }
+    versionNum = parseFloat(versionNum, 10);
+    return versionNum;
+  }
+
+  function browserVersionTrim(versionNum) {
+    while (versionNum.substring(versionNum.length-1, versionNum.length) === '0' || versionNum.substring(versionNum.length-1, versionNum.length) === '.') {
+      versionNum = versionNum.substring(0, versionNum.length-1);
+    }
+    return versionNum;
+  }
+
+  /**
+  * Checks if the browser is a supported one. Just for 2.50
+  */
+  function checkBrowserCompatibility() {
+    var browserName = getBrowserInfo('name');
+    var browserVersion = getBrowserInfo('version');
+    var browserMajorVersion = getBrowserInfo('majorVersion');
+    var isValid = false;
+    if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
+      if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(validBrowserFirefox)) {
+        isValid = true;
+      }
+    } else if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
+      if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(validBrowserExplorer)) {
+        isValid = true;
+      }
+    } else if (browserName.toUpperCase().indexOf('GOOGLE CHROME') != -1) {
+      if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(validBrowserChrome)) {
+        isValid = true;
+      }
+    } else if (browserName.toUpperCase().indexOf('APPLE SAFARI') != -1) {
+      if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(validBrowserSafari)) {
+        isValid = true;
+      }
+    }
+    return isValid;
+  }
+
+  /**
+  * Checks if the browser is a recommended one
+  */
+  function checkRecommendedBrowser() {
+    var browserName = getBrowserInfo('name');
+    var browserVersion = getBrowserInfo('version');
+    var browserMajorVersion = getBrowserInfo('majorVersion');
+    var isRecommended = false;
+    if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
+      if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserFirefox)) {
+        isRecommended = true;
+      }
+    } else if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
+      if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserExplorer)) {
+        isRecommended = true;
+      }
+    } else if (browserName.toUpperCase().indexOf('GOOGLE CHROME') != -1) {
+      if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserChrome)) {
+        isRecommended = true;
+      }
+    }
+    return isRecommended;
+  }
+
+  function buildValidBrowserMsg() {
+    var displayValidBrowserMsg = validBrowserMsg;
+    displayValidBrowserMsg = displayValidBrowserMsg
+      + '<br>' + ' * Mozilla Firefox ' + browserVersionTrim(validBrowserFirefox) + ' ' + validBrowserMsgOrHigher
+      + '<br>' + ' * Google Chrome ' + browserVersionTrim(validBrowserChrome) + ' ' + validBrowserMsgOrHigher
+      + '<br>' + ' * Microsoft Internet Explorer ' + browserVersionTrim(validBrowserExplorer) + ' ' + validBrowserMsgOrHigher
+      + '<br>' + ' * Apple Safari ' + browserVersionTrim(validBrowserSafari) + ' ' + validBrowserMsgOrHigher;
+    return displayValidBrowserMsg;
+  }
+
+  function buildRecBrowserMsgText() {
+    var displayRecBrowserMsgText = recBrowserMsgText;
+    displayRecBrowserMsgText = displayRecBrowserMsgText.replace('XX', 'Google Chrome ' + browserVersionTrim(recBrowserChrome) + ', Mozilla Firefox ' + browserVersionTrim(recBrowserFirefox));
+    displayRecBrowserMsgText = displayRecBrowserMsgText.replace('YY', 'Internet Explorer ' + browserVersionTrim(recBrowserExplorer) + '');
+    return displayRecBrowserMsgText;
+  }
+</script>
+<script type="text/javascript">
   function beforeLoadDo() {
     redirectWhenPopup();
     redirectWhenInsideMDI();
@@ -270,16 +371,18 @@
     }
     catch (e) { }
 
-    if ((!revisionControl('10246')) || (isOpsInstance() != isOpsInstanceCached())) {
+    if ((!revisionControl('10269')) || (isOpsInstance() != isOpsInstanceCached())) {
       maskLoginWindow(cacheMsg);
       setLoginMessage('Warning', '', cacheMsg);
     }
 
     if (!checkBrowserCompatibility()) {
-      setLoginMessage('Warning', '', validBrowserMsg);
+      var displayValidBrowserMsg = buildValidBrowserMsg();
+      setLoginMessage('Warning', '', displayValidBrowserMsg);
     }
     if (!checkRecommendedBrowser()) {
-      setRecommendedBrowserMessage(recBrowserMsgTitle, recBrowserMsgText);
+      var displayRecBrowserMsgText = buildRecBrowserMsgText();
+      setRecommendedBrowserMessage(recBrowserMsgTitle, displayRecBrowserMsgText);
     }
   }
 </script>

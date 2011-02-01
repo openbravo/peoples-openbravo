@@ -25,6 +25,7 @@
   <PARAMETER id="itServiceUrl" name="itServiceUrl" default=""/>
   <PARAMETER id="cacheMsg" name="cacheMsg" default=""/>
   <PARAMETER id="validBrowserMsg" name="validBrowserMsg" default=""/>
+  <PARAMETER id="validBrowserMsgOrHigher" name="validBrowserMsgOrHigher" default=""/>
   <PARAMETER id="recBrowserMsgTitle" name="recBrowserMsgTitle" default=""/>
   <PARAMETER id="recBrowserMsgText" name="recBrowserMsgText" default=""/>
 </REPORT>

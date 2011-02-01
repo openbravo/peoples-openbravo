@@ -126,11 +126,11 @@ function redirectWhenInsideMDI() {
       clearForm();
     } catch (e) {}
     setWindowElementFocus('firstElement');
-    if ((!revisionControl('10246')) || (isOpsInstance() != isOpsInstanceCached())) {
+    if ((!revisionControl('10269')) || (isOpsInstance() != isOpsInstanceCached())) {
       alert(cacheMsg);
     }
 
-    if (!checkBrowserCompatibility()) {
+    if (!checkBrowserCompatibility250()) {
       alert(validBrowserMsg);
     }
 

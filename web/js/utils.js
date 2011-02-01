@@ -95,7 +95,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '10246';
+  var number = '10269';
   return number;
 }
 
@@ -142,7 +142,7 @@ function getBrowserInfo(param) {
       i=navUserAgent.indexOf("OPERA")+6;
     }
   } else if (navUserAgent.indexOf("SAFARI") >= 0) {
-    browserName = "Safari";
+    browserName = "Apple Safari";
     if (navUserAgent.indexOf("VERSION") != -1) {
       i=navUserAgent.indexOf("VERSION")+8;
     } else {
@@ -181,53 +181,24 @@ function getBrowserInfo(param) {
 }
 
 /**
-* Checks if the browser is a supported one
+* Checks if the browser is a supported one. Just for 2.50
 */
-function checkBrowserCompatibility() {
-  var browserName = getBrowserInfo("name");
-  var browserVersion = getBrowserInfo("version");
-  var browserMajorVersion = getBrowserInfo("majorVersion");
-  var isValid = false;
-  if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
-    if (browserMajorVersion >= 3) {
-      isValid = true;
-    }
-  } else if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
-    if (browserMajorVersion >= 7) {
-      isValid = true;
-    }
-  } else if (browserName.toUpperCase().indexOf('GOOGLE CHROME') != -1) {
-    if (browserMajorVersion >= 5) {
-      isValid = true;
-    }
-  }
-  return isValid;
+function checkBrowserCompatibility250() {
+   var browserName = getBrowserInfo("name");
+   var browserVersion = getBrowserInfo("version");
+   var browserMajorVersion = getBrowserInfo("majorVersion");
+   var isValid = false;
+   if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
+     if (browserMajorVersion >= 3) {
+       isValid = true;
+     }
+   } else if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
+     if (browserMajorVersion >= 7) {
+       isValid = true;
+     }
+   }
+   return isValid;
 }
-
-/**
-* Checks if the browser is a recommended one
-*/
-function checkRecommendedBrowser() {
-  var browserName = getBrowserInfo("name");
-  var browserVersion = getBrowserInfo("version");
-  var browserMajorVersion = getBrowserInfo("majorVersion");
-  var isRecommended = false;
-  if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
-    if (browserMajorVersion >= 4) {
-      isRecommended = true;
-    }
-  } else if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
-    if (browserMajorVersion >= 9) {
-      isRecommended = true;
-    }
-  } else if (browserName.toUpperCase().indexOf('GOOGLE CHROME') != -1) {
-    if (browserMajorVersion >= 9) {
-      isRecommended = true;
-    }
-  }
-  return isRecommended;
-}
-
 
 function getObjAttribute(obj, attribute) {
   attribute = attribute.toLowerCase();
