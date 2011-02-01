@@ -77,6 +77,8 @@ public abstract class WidgetProvider {
   private static final String PARAMETERNAME = "name";
   private static final String PARAMETERTITLE = "title";
   private static final String PARAMETERTYPE = "type";
+  private static final String PARAMETERWIDTH = "width";
+  private static final String PARAMETERCOLSPAN = "colSpan";
   private static final String PARAMETERFIELDPROPERTIES = "fieldProperties";
   private static final String PARAMETERREQUIRED = "required";
   private static final String DBINSTANCEID = "dbInstanceId";
@@ -124,6 +126,7 @@ public abstract class WidgetProvider {
         fieldDefinition.put(PARAMETERID, parameter.getId());
         fieldDefinition.put(PARAMETERNAME, parameter.getDBColumnName());
         fieldDefinition.put(PARAMETERREQUIRED, parameter.isMandatory());
+        fieldDefinition.put(PARAMETERWIDTH, "*");
 
         final Reference reference;
         if (parameter.getReferenceSearchKey() != null) {
@@ -131,6 +134,9 @@ public abstract class WidgetProvider {
         } else {
           reference = parameter.getReference();
         }
+        if (reference.getName().equals("Text") || reference.getName().equals("Memo"))
+          fieldDefinition.put(PARAMETERCOLSPAN, 2);
+
         final UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
             reference);
         fieldDefinition.put(PARAMETERTYPE, uiDefinition.getName());
