@@ -190,9 +190,11 @@ public class SelectorComponent extends BaseTemplateComponent {
   public String getValueField() {
     if (getSelector().getValuefield() != null) {
       String valueField = getPropertyOrDataSourceField(getSelector().getValuefield());
-      final DomainType domainType = getDomainType(getSelector().getValuefield());
-      if (domainType instanceof ForeignKeyDomainType) {
-        return valueField + "." + JsonConstants.ID;
+      if (!getSelector().isCustomQuery()) {
+        final DomainType domainType = getDomainType(getSelector().getValuefield());
+        if (domainType instanceof ForeignKeyDomainType) {
+          return valueField + "." + JsonConstants.ID;
+        }
       }
       return valueField;
     }
