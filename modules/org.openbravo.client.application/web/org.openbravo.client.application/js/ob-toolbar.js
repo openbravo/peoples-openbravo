@@ -38,6 +38,10 @@ isc.OBToolbar.addClassProperties({
       if (view.isShowingForm) {
         this.setDisabled(!form.isNew && (form.isSaving || form.readOnly || 
               !view.hasValidState() || !form.hasChanged));
+      } else if (view.isEditingGrid) {
+          form = view.viewGrid.getEditForm();
+          this.setDisabled(!form.isNew && (form.isSaving || form.readOnly || 
+                !view.hasValidState() || !form.hasChanged));
       } else {
         // enable when supporting grid editing
         this.setDisabled(true);
@@ -121,6 +125,10 @@ isc.OBToolbar.addClassProperties({
       if (view.isShowingForm) {
         this.setDisabled(form.isSaving || form.readOnly || !view.hasValidState() || 
             !form.hasChanged);
+      } else if (view.isEditingGrid) {
+        form = grid.getEditForm();
+        this.setDisabled(!form.isNew && (form.isSaving || form.readOnly || 
+              !view.hasValidState() || !form.hasChanged));
       } else {
         // support for editable grid
         this.setDisabled(true);

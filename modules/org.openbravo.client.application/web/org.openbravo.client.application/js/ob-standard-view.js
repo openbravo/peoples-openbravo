@@ -977,7 +977,7 @@ isc.OBStandardView.addProperties({
     var prefix = '', postFix;
     var suffix = '';
     var hasChanged = this.isShowingForm && (this.viewForm.isNew || this.viewForm.hasChanged);
-    hasChanged = hasChanged || (this.isEditingGrid && (this.viewGrid.getEditForm().isNew || this.viewGrid.getEditForm().hasChanged)); 
+    hasChanged = hasChanged || (this.isEditingGrid && (this.viewGrid.hasErrors() || this.viewGrid.getEditForm().isNew || this.viewGrid.getEditForm().hasChanged)); 
     if (hasChanged) {
       if (isc.Page.isRTL()) {
         suffix = ' *';
@@ -1099,7 +1099,11 @@ isc.OBStandardView.addProperties({
   },
   
   saveRow: function(){
-    this.viewForm.saveRow();
+    if (this.isEditingGrid) {
+      this.viewGrid.endEditing();
+    } else {
+      this.viewForm.saveRow();
+    }
   },
   
   deleteRow: function(){
@@ -1177,11 +1181,16 @@ isc.OBStandardView.addProperties({
   },
   
   undo: function(){
-    var view = this, callback;
-    if (this.viewForm.hasChanged) {
+    var view = this, callback, form;
+    if (this.isEditingGrid) {
+      form = this.viewGrid.getEditForm();
+    } else {
+      form = this.viewForm;
+    }
+    if (form.hasChanged) {
       callback = function(ok){
         if (ok) {
-          view.viewForm.undo();
+          form.undo();
         }
       };
       isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmUndo', callback), callback);
