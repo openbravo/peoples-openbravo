@@ -19,6 +19,8 @@
 
 // Styling properties for a generic grid (ob-grid.js)
 isc.OBGrid.addProperties({
+  editFailedBaseStyle: null, // is done through the additional csstext
+  editFailedCSSText: 'background-color: red, color: red; border:1px solid red;',
   baseStyle: 'OBGridCell',
   baseStyleView: 'OBGridCell', // for use in ob-view-grid.js while no editing a cell
   baseStyleEdit: 'OBGridCellEdit', // for use in ob-view-grid.js while editing a cell
