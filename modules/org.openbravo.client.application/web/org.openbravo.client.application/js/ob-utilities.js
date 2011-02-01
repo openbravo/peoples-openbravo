@@ -108,6 +108,19 @@ OB.Utilities.openDirectView = function(sourceWindowId, keyColumn, targetEntity, 
   };
   var request = isc.RPCManager.sendRequest(reqObj);
 };
+  
+// ** {{{OB.Utilities.getPromptString}}} **
+// Translates a string or array of strings to a string with html returns.
+OB.Utilities.getPromptString = function(msg){
+  var msgString = '';
+  if (!isc.isAn.Array(msg)) {
+    msg = [msg];
+  }
+  for (var i = 0; i < msg.length; i++) {
+    msgString += (i > 0 ? '<br>' : '') + msg[i].asHTML();
+  }
+  return msgString;
+};
 
 // ** {{{OB.Utilities.hasUrlParameter}}} **
 // Returns true if the url has a certain parameter with a certain value.
