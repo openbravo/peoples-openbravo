@@ -104,24 +104,29 @@ isc.OBStatusBar.addProperties({
     
     this.previousButton = isc.OBStatusBarIconButton.create({
       view: this.view,
-      buttonType: 'previous'
+      buttonType: 'previous',
+      prompt: OB.I18N.getLabel('OBUIAPP_PREVIOUSBUTTON')
     });
     this.nextButton = isc.OBStatusBarIconButton.create({
       view: this.view,
-      buttonType: 'next'
+      buttonType: 'next',
+      prompt: OB.I18N.getLabel('OBUIAPP_NEXTBUTTON')
     });
     var closeButton = isc.OBStatusBarIconButton.create({
       view: this.view,
-      buttonType: 'close'
+      buttonType: 'close',
+      prompt: OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON')
     });
     this.maximizeButton = isc.OBStatusBarIconButton.create({
       view: this.view,
-      buttonType: 'maximize'
+      buttonType: 'maximize',
+      prompt: OB.I18N.getLabel('OBUIAPP_MAXIMIZEBUTTON')
     });
     this.restoreButton = isc.OBStatusBarIconButton.create({
       visibility: 'hidden',
       view: this.view,
-      buttonType: 'restore'
+      buttonType: 'restore',
+      prompt: OB.I18N.getLabel('OBUIAPP_RESTOREBUTTON')
     });
     var buttonSpacer = isc.HLayout.create({
       width: this.iconButtonGroupSpacerWidth
