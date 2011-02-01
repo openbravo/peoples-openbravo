@@ -46,7 +46,7 @@ isc.OBStatusBarLeftBar.addProperties({
   baseStyle: 'OBStatusBarLeftBar',
   width: '*',
   membersMargin: 5,
-  layoutLeftMargin: 5,
+  layoutLeftMargin: 7,
   defaultLayoutAlign: 'center',
   align: 'left',
   overflow: 'visible'
