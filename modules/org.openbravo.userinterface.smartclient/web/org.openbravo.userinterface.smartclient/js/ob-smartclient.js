@@ -89,7 +89,7 @@ isc.FormItem.addProperties({
   },
   
   isDisabled: function(){
-    return this.form.readOnly || this.disabled;
+    return this.form.readOnly || this.disabled || this.form.allItemsDisabled;
   },
   
   // return all relevant focus condition
