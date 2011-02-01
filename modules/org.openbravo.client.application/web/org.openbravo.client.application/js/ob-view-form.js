@@ -20,7 +20,8 @@ isc.ClassFactory.defineClass('OBViewForm', isc.DynamicForm);
 
 // = OBViewForm =
 // The OBViewForm is the Openbravo specific subclass of the Smartclient
-// DynamicForm. The properties are added to the viewform at the bottom
+// DynamicForm. The properties of the view form are stored in a separate object
+// as they are re-used to create the editor in the grid. The properties are added to the viewform at the bottom
 // of this file.
 
 OB.ViewFormProperties = {
@@ -36,12 +37,12 @@ OB.ViewFormProperties = {
   dynamicCols: [],
   width: '100%',
   height: '100%',
-  
-  
+    
   showErrorIcons: false,
   showErrorStyle: true,
   selectOnFocus: true,
   autoComplete: true,
+  redrawOnDisable: true,
   
   // ** {{ Layout Settings }} **
   numCols: 4,
@@ -67,62 +68,47 @@ OB.ViewFormProperties = {
     this.hasChanged = value;
     this.view.updateTabTitle();
     if (value && !this.isNew) {
-      this.view.statusBar.setStateLabel('OBUIAPP_Modified');
+      this.view.statusBar.setStateLabel('OBUIAPP_Modified', this.view.statusBar.newIcon);
     }
   },
   
   editRecord: function(record, preventFocus){
-    this.setFocusItem(null);
-    this.setHasChanged(false);
-
-    this.setNewState(false);
-    
-    // focus is done automatically, prevent the focus event if needed
-    // the focus event will set the active view
-    this.ignoreFirstFocusEvent = preventFocus;
-    
     var ret = this.Super('editRecord', arguments);
-    this.clearErrors();
-    
-    this.view.toolBar.updateButtonState();
-
-    this.retrieveInitialValues(false);
-    
-    this.view.messageBar.hide();
-    this.view.statusBar.setStateLabel();
-
-    this.resetFocusItem();
-    if (!preventFocus) {
-      this.focus();
-    }
+    this.doEditRecordActions(preventFocus, false);
     return ret;
   },
   
-  editNewRecord: function(preventFocus){
+  doEditRecordActions: function(preventFocus, isNew){
     this.setFocusItem(null);
+    this.setHasChanged(false);
+
+    this.setNewState(isNew);
+    
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
     this.ignoreFirstFocusEvent = preventFocus;
-    
-    this.setHasChanged(false);
-
-    this.setNewState(true);
-    
-    var ret = this.Super('editNewRecord', arguments);
     this.clearErrors();
     
     this.view.toolBar.updateButtonState();
 
-    this.view.statusBar.setStateLabel('OBUIAPP_New', this.view.statusBar.newIcon);
+    this.retrieveInitialValues(isNew);
     
-    this.retrieveInitialValues(true);
-    
+    this.view.messageBar.hide();
+    if (isNew) {
+      this.view.statusBar.setStateLabel('OBUIAPP_New', this.view.statusBar.newIcon);
+    } else {
+      this.view.statusBar.setStateLabel();
+    }
+
     this.resetFocusItem();
     if (!preventFocus) {
       this.focus();
     }
-    
-    this.view.messageBar.hide();
+  },
+  
+  editNewRecord: function(preventFocus){
+    var ret = this.Super('editNewRecord', arguments);
+    this.doEditRecordActions(preventFocus, true);
     return ret;
   },
   
@@ -224,6 +210,8 @@ OB.ViewFormProperties = {
   
   retrieveInitialValues: function(isNew){
     var parentId = this.view.getParentId(), requestParams, parentColumn, me = this, mode;
+    //this.setDisabled(true);
+    //this.allItemsDisabled = true;
     
     if (isNew) {
       mode = 'NEW';
@@ -252,8 +240,12 @@ OB.ViewFormProperties = {
   processFICReturn: function(response, data, request){
     // TODO: an error occured, handles this much better...
     if (!data) {
+      //this.setDisabled(false);
+      //this.allItemsDisabled = false;
+      //this.redraw();
       return;
     }
+    
     var columnValues = data.columnValues, calloutMessages = data.calloutMessages,
                        auxInputs = data.auxiliaryInputValues, prop, value,
                        dynamicCols = data.dynamicCols,
@@ -292,6 +284,9 @@ OB.ViewFormProperties = {
     } else {
       this.readOnly = false;
     }
+    //this.setDisabled(false);
+    //this.allItemsDisabled = false;
+    //this.redraw();
     this.view.toolBar.updateButtonState();
     // note onFieldChanged uses the form.readOnly set above
     this.onFieldChanged(this);
@@ -328,7 +323,6 @@ OB.ViewFormProperties = {
         field.setValueMap(valueMap);
       }
       
-      // rereads the picklist      
       if (field.pickList) {
         field.pickList.invalidateCache();
         field.pickList.deselectAllRecords();
@@ -510,11 +504,18 @@ OB.ViewFormProperties = {
     return true;
   },
   
+  // Note: saveRow is not called in case of grid editing
+  // there the save call is done through the grid saveEditedValues
+  // function
   saveRow: function(action, autoSave, forceDialogOnFailure){
     var i, length, flds, form = this;
     
     form.isSaving = true;
-    
+
+    // we got here, so we must writable, make sure 
+    // that we stay that way
+    this.setValue("_writable", true);
+
     // disable some buttons
     this.view.toolBar.updateButtonState();
     
@@ -658,7 +659,7 @@ OB.ViewFormProperties = {
     if (!errs) {
       return this.Super('titleHoverHTML', arguments);
     }
-    return this.getErrorPromptString(errs);
+    return OB.Utilities.getPromptString(errs);
   },
   
   itemHoverHTML: function(item){
@@ -666,18 +667,7 @@ OB.ViewFormProperties = {
     if (!errs) {
       return this.Super('itemHoverHTML', arguments);
     }
-    return this.getErrorPromptString(errs);
-  },
-  
-  getErrorPromptString: function(errors){
-    var errorString = '';
-    if (!isc.isAn.Array(errors)) {
-      errors = [errors];
-    }
-    for (var i = 0; i < errors.length; i++) {
-      errorString += (i > 0 ? '<br>' : '') + errors[i].asHTML();
-    }
-    return errorString;
+    return OB.Utilities.getPromptString(errs);
   },
   
   // overridden here to place the link icon after the mandatory sign
@@ -710,7 +700,7 @@ OB.ViewFormProperties = {
   
   // we are being reshown, get new values for the combos
   visibilityChanged: function(visible){
-    if (visible && this.view.isShowingForm) {
+    if (visible && (this.view.isShowingForm || this.view.isEditingGrid)) {
       this.doChangeFICCall();
     }
   },

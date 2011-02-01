@@ -196,6 +196,18 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     private UIDefinition uiDefinition;
     private boolean initialShow;
 
+    public String getColumnName() {
+      return property.getColumnName();
+    }
+
+    public boolean isRequired() {
+      // booleans are never required as their input only allows 2 values
+      if (property.isBoolean()) {
+        return false;
+      }
+      return property.isMandatory();
+    }
+
     public String getInpColumnName() {
       return "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
     }
@@ -239,6 +251,10 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       }
       if (props.trim().endsWith(",")) {
         return props.trim().substring(0, props.trim().length() - 1);
+      }
+      if (props.trim().length() == 0) {
+        // return at least a dummy property
+        return "_d: ''";
       }
       return props.trim();
     }

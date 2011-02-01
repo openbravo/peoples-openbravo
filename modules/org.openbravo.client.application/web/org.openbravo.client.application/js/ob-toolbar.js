@@ -34,7 +34,7 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'save',
     prompt: OB.I18N.getLabel('OBUIAPP_SaveRow'),
     updateState: function() {
-      var view = this.view, form = view.viewForm;
+      var view = this.view, form = view.viewForm;      
       if (view.isShowingForm) {
         this.setDisabled(!form.isNew && (form.isSaving || form.readOnly || 
               !view.hasValidState() || !form.hasChanged));

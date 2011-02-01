@@ -24,15 +24,16 @@ isc.OBViewGrid.create({
         autoExpand: ${field.autoExpand}, type: '${field.type}',
         editorProperties: {
           ${field.gridEditorFieldProperties}
+          , columnName: '${field.columnName?js_string}'
+          , inpColumnName: '${field.inpColumnName?js_string}'
+          , referencedKeyColumnName: '${field.referencedKeyColumnName?js_string}'        
+          , targetEntity: '${field.targetEntity?js_string}'
         }
         ${field.gridFieldProperties}
         ${field.filterEditorProperties}
-        , targetEntity: '${field.targetEntity?js_string}'
         , title: '${field.title?js_string}'
         , prompt: '${field.title?js_string}'
         , showIf: '${field.initialShow?string}'
-        , inpColumnName: '${field.inpColumnName?string}'
-        , referencedKeyColumnName: '${field.referencedKeyColumnName?string}'        
        }
        <#if field_has_next>,</#if>
     </#list>

@@ -22,6 +22,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.model.ad.ui.Field;
+import org.openbravo.service.json.JsonConstants;
 
 /**
  * Implementation of the foreign key ui definition which uses a combo box for its input/filter
@@ -30,6 +31,11 @@ import org.openbravo.model.ad.ui.Field;
  * @author mtaal
  */
 public class FKComboUIDefinition extends ForeignKeyUIDefinition {
+
+  public String getGridEditorFieldProperties(Field field) {
+    return "displayField: '" + JsonConstants.IDENTIFIER + "', valueField: '" + JsonConstants.ID
+        + "'" + super.getGridEditorFieldProperties(field);
+  }
 
   @Override
   public String getFieldProperties(Field field, boolean getValueFromSession) {

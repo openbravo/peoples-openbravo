@@ -165,6 +165,7 @@ isc.OBStandardView.addProperties({
   singleRecord: false,
   
   isShowingForm: false,
+  isEditingGrid: false,
   
   initWidget: function(properties){
     this.messageBar = isc.OBMessageBar.create({
@@ -477,6 +478,9 @@ isc.OBStandardView.addProperties({
     
     if (this.isShowingForm && this.viewForm && this.viewForm.getFocusItem()) {
       object = this.viewForm;
+      functionName = 'focus';
+    } else if (this.isEditingGrid && this.viewGrid.getEditForm() && this.viewGrid.getEditForm().getFocusItem()) {
+      object = this.viewGrid.getEditForm();
       functionName = 'focus';
     } else if (this.lastFocusedItem) {
       object = this.lastFocusedItem;
@@ -972,8 +976,9 @@ isc.OBStandardView.addProperties({
   updateTabTitle: function(){
     var prefix = '', postFix;
     var suffix = '';
-    
-    if (this.isShowingForm && (this.viewForm.isNew || this.viewForm.hasChanged)) {
+    var hasChanged = this.isShowingForm && (this.viewForm.isNew || this.viewForm.hasChanged);
+    hasChanged = hasChanged || (this.isEditingGrid && (this.viewGrid.getEditForm().isNew || this.viewGrid.getEditForm().hasChanged)); 
+    if (hasChanged) {
       if (isc.Page.isRTL()) {
         suffix = ' *';
       } else {
@@ -1249,6 +1254,8 @@ isc.OBStandardView.addProperties({
   getCurrentValues: function(){
     if (this.isShowingForm) {
       return this.viewForm.getValues();
+    } else if (this.isEditingGrid) {
+      return this.viewGrid.getEditForm().getValues();
     } else {
       return this.viewGrid.getSelectedRecord();
     }
@@ -1263,16 +1270,21 @@ isc.OBStandardView.addProperties({
     if (classicModeUndefined) {
       classicMode = true;
     }
-    var value, field, record, component, propertyObj, type;
+    var value, field, record, form, component, propertyObj, type;
     // different modes:
     // 1) showing grid with one record selected
     // 2) showing form with aux inputs
-    if (!this.isShowingForm) {
+    if (this.isEditingGrid) {
+      record = this.viewGrid.getEditForm().getValues();
+      component = this.viewGrid.getEditForm();
+      form = component;
+    } else if (!this.isShowingForm) {
       record = this.viewGrid.getSelectedRecord();
       component = this.viewGrid;
     } else {
       record = this.viewForm.getValues();
       component = this.viewForm;
+      form = component;
     }
     
     var properties = this.propertyToColumns;
@@ -1324,10 +1336,13 @@ isc.OBStandardView.addProperties({
         }
       }
     }
-    if (this.isShowingForm || forceSettingContextVars) {
-      isc.addProperties(contextInfo, this.viewForm.auxInputs);
-      isc.addProperties(contextInfo, this.viewForm.hiddenInputs);
-      isc.addProperties(contextInfo, this.viewForm.sessionAttributes);
+    if (form || forceSettingContextVars) {
+      if (!form) {
+        form = this.viewForm;
+      }
+      isc.addProperties(contextInfo, form.auxInputs);
+      isc.addProperties(contextInfo, form.hiddenInputs);
+      isc.addProperties(contextInfo, form.sessionAttributes);
     }
     
     if (this.parentView) {

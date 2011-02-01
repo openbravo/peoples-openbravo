@@ -96,7 +96,8 @@ isc.OBViewGrid.addProperties({
   showCellContextMenus: true,
   canOpenRecordEditor: true,
   showDetailFields: true,
-  
+  showErrorIcons : false,
+
   // internal sc grid property, see the ListGrid source code
   preserveEditsOnSetData: false,
   
@@ -124,10 +125,10 @@ isc.OBViewGrid.addProperties({
   singleRecordSelection: false,
   
   // editing props
-  listEndEditAction: 'next',
   rowEndEditAction: 'next',
-  modalEditing: true,
   enforceVClipping: true,
+  
+  currentEditColumnLayout: null,
   
   dataProperties: {
     useClientFiltering: false,
@@ -150,72 +151,10 @@ isc.OBViewGrid.addProperties({
     }
   },
   
-  currentEditColumnLayout: null,
-  
   refreshFields: function(){
     this.setFields(this.completeFields.duplicate());
   },
-  
-  createRecordComponent: function(record, colNum){
-    var layout = this.Super('createRecordComponent', arguments), rowNum;
-    if (layout) {
-      return layout;
-    }
-    if (this.isEditLinkColumn(colNum)) {
-      rowNum = this.getRecordIndex(record);
-      layout = isc.OBGridButtonsComponent.create({
-        record: record,
-        grid: this,
-        rowNum: rowNum
-      });
-      if (!record._writable) {
-        layout.editButton.doNotShow = true;
-        layout.editButton.hide();
-        layout.buttonSeparator1.hide();
-      } else {
-        layout.editButton.doNotShow = this.view.readOnly;
-        if (layout.editButton.doNotShow) {
-          layout.editButton.hide();
-          layout.buttonSeparator1.hide();
-        } else {
-          layout.editButton.show();
-          layout.buttonSeparator1.show();
-        }
-      }
-      
-      record.editColumnLayout = layout;
-    }
-    return layout;
-  },
-  
-  isEditLinkColumn: function(colNum){
-    var fieldName = this.getFieldName(colNum);
-    return (fieldName === isc.OBViewGrid.EDIT_LINK_FIELD_NAME);
-  },
-  
-  updateRecordComponent: function(record, colNum, component, recordChanged){
-    var superComponent = this.Super('updateRecordComponent', arguments);
-    if (superComponent) {
-      return superComponent;
-    }
-    if (this.isEditLinkColumn(colNum)) {
-      // clear the previous record pointer
-      if (recordChanged && component.record.editColumnLayout === component) {
-        component.record.editColumnLayout = null;
-      }
-      component.record = record;
-      record.editColumnLayout = component;
-      component.rowNum = this.getRecordIndex(record);
-      if (!record._writable) {
-        component.editButton.setDisabled(true);
-      } else {
-        component.editButton.setDisabled(this.view.readOnly);
-      }
-      return component;
-    }
-    return null;
-  },
-  
+
   initWidget: function(){
     var thisGrid = this, localEditLinkField;
     if (this.editGrid) {
@@ -264,13 +203,21 @@ isc.OBViewGrid.addProperties({
   },
   
   cellHoverHTML: function (record, rowNum, colNum) {
-    var field = this.getField(colNum);
+    var field = this.getField(colNum), cellErrors, msg = '', i;
     if (this.isCheckboxField(field)) {
       return OB.I18N.getLabel('OBUIAPP_GridSelectColumnPrompt');
-    }    
+    }
+    if (this.cellHasErrors(rowNum, colNum)) {
+      cellErrors = this.getCellErrors(rowNum, colNum);
+      // note cellErrors can be a string or array
+      // accidentally both have the length property
+      if (cellErrors && cellErrors.length > 0) {
+        return OB.Utilities.getPromptString(cellErrors);
+      }      
+    }
     return this.Super('cellHoverHTML', arguments);
   },
-  
+    
   setView: function(view) {
     this.view = view;
     this.editFormDefaults.view = view;
@@ -658,7 +605,7 @@ isc.OBViewGrid.addProperties({
     var menuItems = [];
     var field = this.getField(colNum);
     var grid = this;
-    if (this.canEdit) {
+    if (this.canEdit && this.isWritable(record)) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_EditInGrid'),
         click: function(){
@@ -731,9 +678,6 @@ isc.OBViewGrid.addProperties({
   selectOnMouseDown: function(record, recordNum, fieldNum){
     // don't change selection on right mouse down
     var EH = isc.EventHandler, eventType;
-    if (EH.rightButtonDown()) {
-      return;
-    }
         
     if (this.view.autoSaveForm) {
       // only call this method in case a checkbox click was done
@@ -910,17 +854,40 @@ isc.OBViewGrid.addProperties({
     return this.getSelection();
   },
   
-  //+++++++++++++++++ functions for the edit-open column handling +++++++++++++++++
+  //+++++++++++++++++ functions for the editing +++++++++++++++++
+
+  saveEditedValues : function (rowNum, colNum, newValues, oldValues, 
+      editValuesID, editCompletionEvent, saveCallback) {
+    // disable some buttons
+    this.view.toolBar.updateButtonState();
+    return this.Super('saveEditedValues', arguments);
+  },
+  
+  editFailed : function (rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse, dsRequest) {
+    var view = this.view;
+    if (dsResponse) {
+      view.setErrorMessageFromResponse(dsResponse, dsResponse.data, dsRequest);
+    }
+    if (!view.isVisible()) {
+      isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [view.tabTitle]));
+    }
+  },
   
   editComplete: function(rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse){
-    // during save the record looses the link to the editColumnLayout, restore it
     var record = this.getRecord(rowNum);
+    
+    // we got here, so we must writable, make sure 
+    // that we stay that way
+    record._writable = true;
+
+    // during save the record looses the link to the editColumnLayout, restore it
     if (oldValues.editColumnLayout && !record.editColumnLayout) {
       record.editColumnLayout = oldValues.editColumnLayout;
     }
     if (record.editColumnLayout) {
       record.editColumnLayout.showEditOpen();
     }
+    
     return this.Super('editComplete', arguments);
   },
   
@@ -938,31 +905,27 @@ isc.OBViewGrid.addProperties({
     }
   },
   
-  showInlineEditor: function(rowNum, colNum, newCell, newRow, suppressFocus){
+  rowEditorEnter: function(record, editValues, rowNum) {
+    this.view.isEditingGrid = true;
     if (this.baseStyleEdit) {
+      this.baseStyleView = this.baseStyle;
       this.baseStyle = this.baseStyleEdit;
     }
 
-    var record = this.getRecord(rowNum);
-
-    var result = this.Super('showInlineEditor', arguments);
-
-    this.getEditForm().editRecord(record);
+    // also called in case of new
+    var form = this.getEditForm(); 
+    form.doEditRecordActions(false, false);
     
     if (record && record.editColumnLayout) {
       record.editColumnLayout.showSaveCancel();
     }
-    
-    return result;
   },
   
-  hideInlineEditor: function(){
+  rowEditorExit: function (editCompletionEvent, record, newValues, rowNum) {
     isc.Log.logDebug('hideInlineEditor ' + this.getEditRow(), 'OB');
     if (this.baseStyleView) {
       this.baseStyle = this.baseStyleView;
     }
-    var rowNum = this.getEditRow();
-    var record = this.getRecord(rowNum);
     if (record && record.editColumnLayout) {
       isc.Log.logDebug('hideInlineEditor has record and editColumnLayout', 'OB');
       record.editColumnLayout.showEditOpen();
@@ -971,7 +934,80 @@ isc.OBViewGrid.addProperties({
     } else {
       isc.Log.logDebug('hideInlineEditor has NO record and editColumnLayout', 'OB');
     }
-    return this.Super('hideInlineEditor', arguments);
+    this.view.isEditingGrid = false;
+  },
+  
+  // we are being reshown, get new values for the combos
+  visibilityChanged: function(visible){
+    if (visible && this.getEditRow()) {
+      this.getEditForm().doChangeFICCall();
+    }
+  },
+  
+  isWritable: function(record) {
+    return record._writable;
+  },
+  
+  //+++++++++++++++++ functions for the edit-link column +++++++++++++++++
+  
+  createRecordComponent: function(record, colNum){
+    var layout = this.Super('createRecordComponent', arguments), rowNum;
+    if (layout) {
+      return layout;
+    }
+    if (this.isEditLinkColumn(colNum)) {
+      rowNum = this.getRecordIndex(record);
+      layout = isc.OBGridButtonsComponent.create({
+        record: record,
+        grid: this,
+        rowNum: rowNum
+      });
+      if (!this.isWritable(record)) {
+        layout.editButton.doNotShow = true;
+        layout.editButton.hide();
+        layout.buttonSeparator1.hide();
+      } else {
+        layout.editButton.doNotShow = this.view.readOnly;
+        if (layout.editButton.doNotShow) {
+          layout.editButton.hide();
+          layout.buttonSeparator1.hide();
+        } else {
+          layout.editButton.show();
+          layout.buttonSeparator1.show();
+        }
+      }
+      
+      record.editColumnLayout = layout;
+    }
+    return layout;
+  },
+  
+  updateRecordComponent: function(record, colNum, component, recordChanged){
+    var superComponent = this.Super('updateRecordComponent', arguments);
+    if (superComponent) {
+      return superComponent;
+    }
+    if (this.isEditLinkColumn(colNum)) {
+      // clear the previous record pointer
+      if (recordChanged && component.record.editColumnLayout === component) {
+        component.record.editColumnLayout = null;
+      }
+      component.record = record;
+      record.editColumnLayout = component;
+      component.rowNum = this.getRecordIndex(record);
+      if (!this.isWritable(record)) {
+        component.editButton.setDisabled(true);
+      } else {
+        component.editButton.setDisabled(this.view.readOnly);
+      }
+      return component;
+    }
+    return null;
+  },
+    
+  isEditLinkColumn: function(colNum){
+    var fieldName = this.getFieldName(colNum);
+    return (fieldName === isc.OBViewGrid.EDIT_LINK_FIELD_NAME);
   }
   
 });
@@ -1135,7 +1171,7 @@ isc.OBGridButtonsComponent.addProperties({
   doSave: function(){
     // note change back to editOpen is done in the editComplete event of the grid
     // itself
-    this.grid.saveEdits();
+    this.grid.endEditing();
   },
   
   doCancel: function(){
