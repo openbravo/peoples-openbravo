@@ -599,6 +599,11 @@ isc.OBViewGrid.addProperties({
   },
   
   //+++++++++++++++++++++++++++++ Context menu on record click +++++++++++++++++++++++
+  cellContextClick : function (record, rowNum, colNum) {
+    this.handleRecordSelection(null, record, rowNum, null, colNum, null, null, true);
+    var ret = this.Super('cellContextClick', arguments);
+    return ret;
+  },
   
   makeCellContextItems: function(record, rowNum, colNum){
     var sourceWindow = this.view.standardWindow.windowId;
@@ -725,11 +730,6 @@ isc.OBViewGrid.addProperties({
   handleRecordSelection: function(viewer, record, recordNum, field, fieldNum, value, rawValue, fromSelectOnMouseDown){
     var EH = isc.EventHandler;
     var keyName = EH.getKey();
-    
-    // don't change selection on right mouse down
-    if (EH.rightButtonDown()) {
-      return;
-    }
     
     // stop editing if the user clicks out of the row  
     if (this.getEditRow() && this.getEditRow() !== recordNum) {
