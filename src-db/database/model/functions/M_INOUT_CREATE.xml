@@ -115,7 +115,7 @@
       COALESCE(T.M_ATTRIBUTESETINSTANCE_ID, '0')=COALESCE(p_Attribute, COALESCE(T.M_ATTRIBUTESETINSTANCE_ID, '0')) AND
       COALESCE(T.QtyOnHand, 0)>0
     ORDER BY L.PRIORITYNO,
-      T.M_ATTRIBUTESETINSTANCE_ID;
+      T.CREATED;
     v_storage Cur_Storage%ROWTYPE;
     --
     v_NextNo varchar2(32);
