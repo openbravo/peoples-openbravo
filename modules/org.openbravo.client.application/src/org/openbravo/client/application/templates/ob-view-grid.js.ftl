@@ -24,6 +24,7 @@ isc.OBViewGrid.create({
         autoExpand: ${field.autoExpand}, type: '${field.type}',
         editorProperties: {
           ${field.gridEditorFieldProperties}
+          // note need to be repeated for editor fields
           , columnName: '${field.columnName?js_string}'
           , inpColumnName: '${field.inpColumnName?js_string}'
           , referencedKeyColumnName: '${field.referencedKeyColumnName?js_string}'        
@@ -34,6 +35,10 @@ isc.OBViewGrid.create({
         , title: '${field.title?js_string}'
         , prompt: '${field.title?js_string}'
         , showIf: '${field.initialShow?string}'
+        , columnName: '${field.columnName?js_string}'
+        , inpColumnName: '${field.inpColumnName?js_string}'
+        , referencedKeyColumnName: '${field.referencedKeyColumnName?js_string}'        
+        , targetEntity: '${field.targetEntity?js_string}'
        }
        <#if field_has_next>,</#if>
     </#list>
