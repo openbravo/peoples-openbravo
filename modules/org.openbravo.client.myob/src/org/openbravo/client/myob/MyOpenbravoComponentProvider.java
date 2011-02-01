@@ -62,6 +62,10 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
         + MyOpenbravoComponent.COMPONENT_ID, false));
     globalResources
         .add(createStaticResource("web/org.openbravo.client.myob/js/ob-widget.js", false));
+    globalResources.add(createStaticResource("web/org.openbravo.client.myob/js/ob-url-widget.js",
+        false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.myob/js/ob-showparameter-widget.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.myob/js/ob-community-branding-widget.js", false));
     globalResources.add(createStaticResource(
