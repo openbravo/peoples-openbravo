@@ -61,6 +61,10 @@ public class ApplicationUtils {
         // There is a tab with a SQL filter clause, but without a defined HQL filter clause
         return true;
       }
+      if (tab.getMasterDetailForm() != null) {
+        // There is a tab which is a manual form
+        return true;
+      }
     }
     return false;
   }
