@@ -2479,7 +2479,7 @@ You find the current status in the Document Status field. The options are listed
 <!--374-->  <NAME><![CDATA[Display Encription]]></NAME>
 <!--374-->  <PRINTNAME><![CDATA[Display encrypted]]></PRINTNAME>
 <!--374-->  <DESCRIPTION><![CDATA[An indication noting if the input box of a field will present full text or just asterisks.]]></DESCRIPTION>
-<!--374-->  <HELP><![CDATA[Display encryption - all characters are displayed as '*'. Data storage encryption (i.e. you will not be able to report the data via report tools) is set in the Column definition.]]></HELP>
+<!--374-->  <HELP><![CDATA[Thi options is deprecated. One of the new references "Password (decryptable)" or "Password (not-decryptable)" should be used instead.]]></HELP>
 <!--374-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--374--></AD_ELEMENT>
 
@@ -14812,7 +14812,7 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800185-->  <NAME><![CDATA[De-encryptable]]></NAME>
 <!--800185-->  <PRINTNAME><![CDATA[Is desencryptable]]></PRINTNAME>
 <!--800185-->  <DESCRIPTION><![CDATA[Is desencryptable]]></DESCRIPTION>
-<!--800185-->  <HELP><![CDATA[When Is Desencryptable field is 'Y' the content of this column will be saved in a desencryptable way.]]></HELP>
+<!--800185-->  <HELP><![CDATA[This option is deprecated. Instead one of the new references "Password (decryptable)" or "Password (not-decryptable)" should be used instead.]]></HELP>
 <!--800185-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800185--></AD_ELEMENT>
 
