@@ -696,7 +696,7 @@ function depurar_validate_wrapper(action, form, value) {
 * @type Boolean
 */
 function submitCommandForm(action, bolValidation, form, newAction, newTarget, bolOneFormSubmission, bolCheckChanges, isCallOut, controlEvt, evt) {
-  if (form == null) form = document.forms[0];
+  var f = form || document.forms[0];
   if (bolValidation!=null && bolValidation==true){
     try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
     if (!depurar_validate_wrapper(action, form, "")) return false;
@@ -710,13 +710,13 @@ function submitCommandForm(action, bolValidation, form, newAction, newTarget, bo
     dispatchEventChange(target);
   }
   if (gWaitingCallOut || (arrGeneralChange!=null && arrGeneralChange.length>0 && bolCheckChanges)) {
-    var strFunction = "submitCommandForm('" + action + "', " + bolValidation + ", " + form.name + ", " + ((newAction!=null)?("'" + newAction + "'"):"null") + ", " + ((newTarget!=null)?("'" + newTarget + "'"):"null") + ", " + bolOneFormSubmission + ", " + bolCheckChanges + ")";
+    var strFunction = "submitCommandForm('" + action + "', " + bolValidation + ", " + f.name + ", " + ((newAction!=null)?("'" + newAction + "'"):"null") + ", " + ((newTarget!=null)?("'" + newTarget + "'"):"null") + ", " + bolOneFormSubmission + ", " + bolCheckChanges + ")";
     reloadFunction(strFunction);
     return false;
   }
   if (bolCheckChanges && !checkForChanges(form)) return false;
   if (confirmAction(action)) {
-    if (newAction != null) form.action = newAction;
+    if (newAction != null) f.action = newAction;
     // Deprecated in 2.50, This code is only here fore backwards compatibility
     // it allow callers which still use the old names to work
     if ((newTarget != null) && (newTarget == 'frameAplicacion')) {
@@ -725,8 +725,8 @@ function submitCommandForm(action, bolValidation, form, newAction, newTarget, bo
     if ((newTarget != null) && (newTarget == 'frameOculto')) {
         newTarget = 'hiddenFrame';
       }
-    if (newTarget != null) form.target = newTarget;
-    submitForm(form.Command, action, form, bolOneFormSubmission, isCallOut);
+    if (newTarget != null) f.target = newTarget;
+    submitForm(f.Command, action, f, bolOneFormSubmission, isCallOut);
   }
   return true;
 }

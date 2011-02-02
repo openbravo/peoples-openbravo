@@ -175,6 +175,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("menu", "");
     xmlDocument.setParameter("userName", MenuData.getUserName(this, vars.getUser()));
+    xmlDocument.setParameter("popup", "");
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
