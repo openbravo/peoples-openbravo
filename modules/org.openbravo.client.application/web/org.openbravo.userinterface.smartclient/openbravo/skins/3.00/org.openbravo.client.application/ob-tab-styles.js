@@ -57,8 +57,9 @@ isc.OBTabSetMain.addProperties({
   closeTabIcon: '[SKINIMG]../../org.openbravo.client.application/images/tab/tabBarButtonMain_CloseIcon.png',
   closeTabIconSize: 18,
 
-  symmetricScroller:true,
-  scrollerSrc: '[SKINIMG]../../org.openbravo.client.application/images/tab/ico-close-tab.png',
+  //symmetricScroller:true,
+  scrollerSrc: '[SKINIMG]../../org.openbravo.client.application/images/tab/tabBarButtonMain_OverflowIcon.png',
+  pickerButtonSrc: '[SKINIMG]../../org.openbravo.client.application/images/tab/tabBarButtonMain_OverflowIconPicker.png',
 
   initWidgetStyle: function() {
   }
@@ -100,6 +101,10 @@ isc.OBTabSetChild.addProperties({
   styleName: 'OBTabSetChild',
   simpleTabBaseStyle: 'OBTabBarButtonChild',
   paneContainerClassName: 'OBTabSetChildContainer',
+
+  scrollerSrc: '[SKINIMG]../../org.openbravo.client.application/images/tab/tabBarButtonChild_OverflowIcon.png',
+  pickerButtonSrc: '[SKINIMG]../../org.openbravo.client.application/images/tab/tabBarButtonChild_OverflowIconPicker.png',
+
   initWidgetStyle: function() {
   }
 });
