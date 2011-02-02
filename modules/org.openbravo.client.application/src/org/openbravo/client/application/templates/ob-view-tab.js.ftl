@@ -27,7 +27,6 @@
     </#if>
     <#if tabComponent.tabSet>
         tabId: '${tabComponent.tabId}',
-        dataSource: ${tabComponent.dataSourceJavaScript},
         moduleId: '${tabComponent.moduleId}',
     </#if>
     
@@ -46,7 +45,7 @@
       <#list tabComponent.allFields as field>
         {
           property: '${field.propertyName?js_string}',
-          column: '${field.columnName?js_string}', 
+          inpColumn: '${field.columnName?js_string}', 
           dbColumn: '${field.dbColumnName?js_string}', 
           sessionProperty: ${field.session},
           type: '${field.typeName?js_string}'
@@ -99,6 +98,7 @@
         hasChildTabs: true,
     </#if>
     initWidget: function() {
+        this.dataSource = ${tabComponent.dataSourceJavaScript};
         this.viewForm = ${tabComponent.viewForm}; 
         this.viewGrid = ${tabComponent.viewGrid};
         this.Super('initWidget', arguments);
