@@ -139,7 +139,8 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
     // skip the first node
     tabTreeNode = tabTreeNode.getParentTabTreeNode();
     while (tabTreeNode != null) {
-      currentTabInfo = createTabInfo(currentTabInfo.getRecord(), tabTreeNode);
+      currentTabInfo = createTabInfo(currentTabInfo.getRecord(), currentTabInfo.getTab(),
+          tabTreeNode);
       if (currentTabInfo != null) {
         resultList.add(0, currentTabInfo.getJSONObject());
       }
@@ -150,12 +151,9 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
     return result;
   }
 
-  private TabInfo createTabInfo(BaseOBObject childObject, TabTreeNode tabTreeNode) {
-    if (tabTreeNode.getParentTabTreeNode() == null) {
-      return null;
-    }
-    final String parentProperty = ApplicationUtils.getParentProperty(tabTreeNode.getTab(),
-        tabTreeNode.getParentTabTreeNode().getTab());
+  private TabInfo createTabInfo(BaseOBObject childObject, Tab childTab, TabTreeNode tabTreeNode) {
+    final String parentProperty = ApplicationUtils
+        .getParentProperty(childTab, tabTreeNode.getTab());
     final BaseOBObject parent = (BaseOBObject) childObject.get(parentProperty);
     final TabInfo tabInfo = new TabInfo();
     tabInfo.setRecord(parent);
