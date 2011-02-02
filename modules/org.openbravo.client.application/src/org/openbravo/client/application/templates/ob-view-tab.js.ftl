@@ -32,6 +32,7 @@
     </#if>
     
     defaultEditMode: ${tabComponent.defaultEditMode},
+    mapping250: '${tabComponent.mapping250?js_string}',
     
     standardProperties:{
       inpTabId: '${tabComponent.tabId}',

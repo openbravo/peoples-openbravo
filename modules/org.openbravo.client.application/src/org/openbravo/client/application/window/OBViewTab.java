@@ -100,6 +100,10 @@ public class OBViewTab extends BaseTemplateComponent {
     return tab.isDefaultEditMode() == null ? "false" : Boolean.toString(tab.isDefaultEditMode());
   }
 
+  public String getMapping250() {
+    return Utility.getTabURL(tab.getId(), "none", false);
+  }
+
   public List<ButtonField> getButtonFields() {
     if (buttonFields != null) {
       return buttonFields;
