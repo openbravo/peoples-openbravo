@@ -900,6 +900,7 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++ functions for the editing +++++++++++++++++
   
   saveEditedValues: function(rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback){
+    this.setEditValues(this.getEditRow(), this.getEditForm().getValues(), true);
     return this.Super('saveEditedValues', arguments);
   },
   
