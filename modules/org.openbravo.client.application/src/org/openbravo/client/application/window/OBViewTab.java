@@ -40,9 +40,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.domain.ModelImplementation;
@@ -433,16 +431,8 @@ public class OBViewTab extends BaseTemplateComponent {
           command = "DEFAULT";
         }
 
-        // Show in modal by default unless preference to prevent it is set
-        try {
-          modal = "Y".equals(Preferences.getPreferenceValue("ModalProcess" + process.getId(),
-              false, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                  .getOBContext().getRole(), null));
-        } catch (PropertyException e) {
-          // If not found or conflict, the process is modal
-          modal = true;
-        }
+        modal = Utility.isModalProcess(process);
+
       } else {
         String colName = column.getDBColumnName();
         if ("Posted".equalsIgnoreCase(colName) || "CreateFrom".equalsIgnoreCase(colName)) {

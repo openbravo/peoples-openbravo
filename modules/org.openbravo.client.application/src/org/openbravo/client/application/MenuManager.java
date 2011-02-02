@@ -36,10 +36,9 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
-import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.domain.ModelImplementationMapping;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.Menu;
@@ -597,15 +596,7 @@ public class MenuManager implements Serializable {
 
     public boolean isModal() {
       if (isProcess()) {
-        try {
-          return "Y".equals(Preferences.getPreferenceValue("ModalProcess"
-              + getMenu().getProcess().getId(), false, OBContext.getOBContext().getCurrentClient(),
-              OBContext.getOBContext().getCurrentOrganization(),
-              OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
-        } catch (PropertyException e) {
-          // If not found or conflict, the process is modal
-          return true;
-        }
+        return Utility.isModalProcess(getMenu().getProcess());
       }
       return true;
     }
