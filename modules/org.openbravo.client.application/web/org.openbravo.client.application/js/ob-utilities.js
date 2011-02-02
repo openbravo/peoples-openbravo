@@ -32,6 +32,9 @@ OB.Utilities.useClassicMode = function(windowId){
   if (propValue === 'Y') {
     return true;
   }
+  if (OB.WindowDefinitions[windowId] && OB.WindowDefinitions[windowId].showInClassicMode) {
+    return true;
+  }
   return false;
 };
 
