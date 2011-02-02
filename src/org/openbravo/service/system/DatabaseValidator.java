@@ -35,6 +35,8 @@ import org.apache.ddlutils.model.Reference;
 import org.apache.ddlutils.model.Unique;
 import org.apache.ddlutils.model.View;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.LogicalExpression;
+import org.hibernate.criterion.SimpleExpression;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -242,7 +244,46 @@ public class DatabaseValidator implements SystemValidator {
 
     checkDataSetName(result);
 
+    checkPasswordColumns(result);
+
     return result;
+  }
+
+  /**
+   * Checks if old-style password columns exist which should be updated to use the new references.
+   * 
+   */
+  private void checkPasswordColumns(SystemValidationResult result) {
+    org.openbravo.model.ad.domain.Reference hashed = OBDal.getInstance().get(
+        org.openbravo.model.ad.domain.Reference.class, "C5C21C28B39E4683A91779F16C112E40");
+    org.openbravo.model.ad.domain.Reference encrypted = OBDal.getInstance().get(
+        org.openbravo.model.ad.domain.Reference.class, "16EC6DF4A59747749FDF256B7FBBB058");
+
+    // if one of the old-booleans is set, but not using new reference-id's -> report as warning
+    SimpleExpression enc = Expression.eq(Column.PROPERTY_DISPLAYENCRIPTION, Boolean.TRUE);
+    LogicalExpression newRefs = Expression.or(Expression.eq(Column.PROPERTY_REFERENCE, hashed),
+        Expression.eq(Column.PROPERTY_REFERENCE, encrypted));
+    OBCriteria<Column> colQuery = OBDal.getInstance().createCriteria(Column.class);
+    colQuery.add(Expression.and(enc, Expression.not(newRefs)));
+
+    // only validate given module (if given)
+    if (validateModule != null) {
+      colQuery.add(Expression.eq(Column.PROPERTY_MODULE, validateModule));
+    }
+    if (colQuery.count() > 0) {
+      List<Column> columns = colQuery.list();
+      for (Column column : columns) {
+        result
+            .addWarning(
+                SystemValidationType.OLDSTYLE_PASSWORD_COLUMNS,
+                "The column '"
+                    + column.getTable().getName()
+                    + "'.'"
+                    + column.getName()
+                    + "' is using old-style config for password-type columns. It should be changed to use one of the new references '"
+                    + hashed.getName() + "' or '" + encrypted.getName() + "'");
+      }
+    }
   }
 
   /**
