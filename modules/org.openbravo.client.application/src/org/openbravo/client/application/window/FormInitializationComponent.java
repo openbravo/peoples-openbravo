@@ -465,9 +465,6 @@ public class FormInitializationComponent extends BaseActionHandler {
         log.error("Couldn't read parameter from the request: " + key, e);
       }
     }
-
-    RequestContext.get().setRequestParameter("inpwindowId", tab.getWindow().getId());
-    RequestContext.get().setRequestParameter("inpTabId", tab.getId());
   }
 
   private boolean referencedEntityIsParent(BaseOBObject parentRecord, Field field) {
