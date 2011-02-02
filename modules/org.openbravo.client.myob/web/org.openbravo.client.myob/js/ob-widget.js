@@ -290,7 +290,10 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
       height: '100%',
       titleSuffix: '',
       requiredTitleSuffix: '',
-      autoFocus: true
+      autoFocus: true,
+      titleOrientation: 'top',
+      numCols: 2,
+      colWidths: ['*','*']
     });
     
     // set the initial values
@@ -307,20 +310,12 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
       }
       
       var formItem = isc.addProperties({
-        titleOrientation: 'top'
       }, fieldDefinition);
       
       items.push(formItem);
     }
     theForm.setItems(items);
     
-    formLayout.addMember(isc.Label.create({
-      contents: OB.I18N.getLabel('OBKMO_EditParameters'),
-      className: 'OBMyOBEditParametersLabel',
-      height: 1,
-      width: '100%',
-      overflow: 'visible'
-    }));
     formLayout.addMember(theForm);
     formLayout.editForm = theForm;
     
