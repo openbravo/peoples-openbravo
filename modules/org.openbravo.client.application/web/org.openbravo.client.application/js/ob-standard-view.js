@@ -1264,12 +1264,45 @@ isc.OBStandardView.addProperties({
     if (this.isShowingForm) {
       return this.viewForm.getValues();
     } else if (this.isEditingGrid) {
-      return this.viewGrid.getEditForm().getValues();
+      return isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewGrid.getEditForm().getValues());
     } else {
       return this.viewGrid.getSelectedRecord();
     }
   },
   
+  getPropertyFromColumnName: function(columnName){
+    var length = this.view.propertyToColumns.length;
+    for (var i = 0; i < length; i++) {
+      var propDef = this.view.propertyToColumns[i];
+      if (propDef.dbColumn === columnName) {
+        return propDef.property;
+      }
+    }
+    return null;
+  },
+  
+  getPropertyFromDBColumnName: function(columnName){
+    var length = this.propertyToColumns.length;
+    for (var i = 0; i < length; i++) {
+      var propDef = this.propertyToColumns[i];
+      if (propDef.dbColumn === columnName) {
+        return propDef.property;
+      }
+    }
+    return null;
+  },
+  
+  getPropertyDefinitionFromInpColumnName: function(columnName){
+    var length = this.propertyToColumns.length;
+    for (var i = 0; i < length; i++) {
+      var propDef = this.propertyToColumns[i];
+      if (propDef.inpColumn === columnName) {
+        return propDef;
+      }
+    }
+    return null;
+  },
+
   //++++++++++++++++++ Reading context ++++++++++++++++++++++++++++++
   
   getContextInfo: function(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat){
@@ -1284,16 +1317,16 @@ isc.OBStandardView.addProperties({
     // 1) showing grid with one record selected
     // 2) showing form with aux inputs
     if (this.isEditingGrid) {
-      record = this.viewGrid.getEditForm().getValues();
+      record = isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewGrid.getEditForm().getValues());
       component = this.viewGrid.getEditForm();
       form = component;
-    } else if (!this.isShowingForm) {
-      record = this.viewGrid.getSelectedRecord();
-      component = this.viewGrid;
-    } else {
+    } else if (this.isShowingForm) {
       record = this.viewForm.getValues();
       component = this.viewForm;
       form = component;
+    } else {
+      record = this.viewGrid.getSelectedRecord();
+      component = this.viewGrid;
     }
     
     var properties = this.propertyToColumns;
@@ -1316,12 +1349,12 @@ isc.OBStandardView.addProperties({
             if (propertyObj.type && convertToClassicFormat) {
               type = SimpleType.getType(propertyObj.type);
               if (type.createClassicString) {
-                contextInfo[properties[i].column] = type.createClassicString(value);
+                contextInfo[properties[i].inpColumn] = type.createClassicString(value);
               } else {
-                contextInfo[properties[i].column] = value;
+                contextInfo[properties[i].inpColumn] = value;
               }
             } else {
-            contextInfo[properties[i].column] = value;
+            contextInfo[properties[i].inpColumn] = value;
             }
           } else {
             // surround the property name with @ symbols to make them different
@@ -1355,7 +1388,7 @@ isc.OBStandardView.addProperties({
     }
     
     if (this.parentView) {
-      isc.addProperties(contextInfo, this.parentView.getContextInfo(onlySessionProperties, classicMode));
+      isc.addProperties(this.parentView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat), contextInfo);
     }
     
     return contextInfo;
@@ -1382,13 +1415,5 @@ isc.OBStandardView.addProperties({
     OB.RemoteCallManager.call('org.openbravo.client.application.window.GetTabMessageActionHandler', {
       tabId: this.tabId
     }, null, callback, this);
-  },
-  
-  addStandardProperties: function(allProperties){
-    for(var objPropertyName in this.standardProperties){
-	  if(this.standardProperties.hasOwnProperty(objPropertyName)){
-		allProperties[objPropertyName]=this.standardProperties[objPropertyName];
-      }
-    }
   }
 });

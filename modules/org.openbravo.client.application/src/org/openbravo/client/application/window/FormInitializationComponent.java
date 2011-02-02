@@ -413,11 +413,14 @@ public class FormInitializationComponent extends BaseActionHandler {
   private void setValuesInRequest(String mode, Tab tab, BaseOBObject row, JSONObject jsContent) {
     List<Field> fields = tab.getADFieldList();
     if (mode.equals("EDIT")) {
-      // In EDIT mode we get them from the database
+      // In EDIT mode we initialize them from the database
       for (Field field : fields) {
         setValueOfColumnInRequest(row, field.getColumn().getDBColumnName());
       }
-    } else if (mode.equals("CHANGE") || mode.equals("SETSESSION")) {
+    }
+
+    // and then overwrite with what gets passed in
+    if (mode.equals("EDIT") || mode.equals("CHANGE") || mode.equals("SETSESSION")) {
       // In CHANGE and SETSESSION we get them from the request
       for (Field field : fields) {
         final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());

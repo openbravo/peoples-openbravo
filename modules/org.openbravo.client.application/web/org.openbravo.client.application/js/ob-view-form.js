@@ -191,17 +191,6 @@ OB.ViewFormProperties = {
     return this.fieldsByColumnName[columnName.toLowerCase()];
   },
   
-  getPropertyFromColumnName: function(columnName){
-    var length = this.view.propertyToColumns.length;
-    for (var i = 0; i < length; i++) {
-      var propDef = this.view.propertyToColumns[i];
-      if (propDef.dbColumn === columnName) {
-        return propDef.property;
-      }
-    }
-    return null;
-  },
-  
   setFields: function(){
     this.Super('setFields', arguments);
     this.fieldsByInpColumnName = null;
@@ -209,7 +198,10 @@ OB.ViewFormProperties = {
   },
   
   retrieveInitialValues: function(isNew){
-    var parentId = this.view.getParentId(), requestParams, parentColumn, me = this, mode, properties={};
+    var parentId = this.view.getParentId(), requestParams, parentColumn, me = this, mode;
+    // note also in this case initial vvalues are passed in as in case of grid
+    // editing the unsaved/error values from a previous edit session are maintained
+    var allProperties = this.view.getContextInfo(false, true, false, false);
     //this.setDisabled(true);
     //this.allItemsDisabled = true;
     
@@ -229,9 +221,8 @@ OB.ViewFormProperties = {
       parentColumn = this.getField(this.view.parentProperty).inpColumnName;
       requestParams[parentColumn] = parentId;
     }
-
-    this.view.addStandardProperties(properties);
-    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', properties, requestParams, function(response, data, request){
+    
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
       me.processFICReturn(response, data, request);
       // remember the initial values 
       me.rememberValues();
@@ -248,7 +239,7 @@ OB.ViewFormProperties = {
     }
     
     var columnValues = data.columnValues, calloutMessages = data.calloutMessages,
-                       auxInputs = data.auxiliaryInputValues, prop, value,
+                       auxInputs = data.auxiliaryInputValues, prop, value, i,
                        dynamicCols = data.dynamicCols,
                        sessionAttributes = data.sessionAttributes;
     if (columnValues) {
@@ -292,13 +283,26 @@ OB.ViewFormProperties = {
     // note onFieldChanged uses the form.readOnly set above
     this.onFieldChanged(this);
     this.focus();
+    
+    // save out the values to the grid before redrawing
+    if (this.grid && this.grid.setEditValues && (this.grid.getEditRow() || this.grid.getEditRow() === 0)) {
+      this.grid.setEditValues(this.grid.getEditRow(), this.getValues(), true);
+    }
+    if (this.redrawItems) {
+      for (i = 0; i < this.redrawItems.length; i++) {
+        if (this.redrawItems[i].redraw) {
+          this.redrawItems[i].redraw();
+        }
+      }
+      delete this.redrawItems;
+    }
   },
   
   processColumnValue: function(columnName, columnValue){
     var data, record, length, valuePresent, currentValue, isDate, value, i, valueMap = {}, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
     if (!field) {
       // not a field on the form, probably a datasource field
-      var prop = this.getPropertyFromColumnName(columnName);
+      var prop = this.view.getPropertyFromDBColumnName(columnName);
       if (!prop) {
         return;
       }
@@ -306,7 +310,14 @@ OB.ViewFormProperties = {
       if (!field) {
         return;
       }
+    } else {
+      // redraw at the end
+      if (!this.redrawItems) {
+        this.redrawItems = [];
+      }
+      this.redrawItems.push(field);
     }
+    
     // ignore the id
     if (field.name === OB.Constants.ID) {
       return;
@@ -357,10 +368,6 @@ OB.ViewFormProperties = {
     } else {
       this.clearValue(field.name);
     }
-
-    if (field.redraw) {
-      field.redraw();
-    }
   },
   
   // called explicitly onblur and when non-editable fields change
@@ -384,8 +391,7 @@ OB.ViewFormProperties = {
   // note item can be null, is also called when the form is re-shown
   // to recompute combos
   doChangeFICCall: function(item){
-    var parentId = null, me = this, requestParams, allProperties = this.view.getContextInfo(false, true);
-    this.view.addStandardProperties(allProperties);
+    var parentId = null, me = this, requestParams, allProperties = this.view.getContextInfo(false, true, false, false);
     if (this.view.parentProperty) {
       parentId = this.getValue(this.view.parentProperty);
     }
@@ -425,11 +431,13 @@ OB.ViewFormProperties = {
   
   itemChanged: function(item, newValue){
     var ret = this.Super('itemChanged', arguments);
-    this.handleItemChange(item);
-    this.itemChangeActions();
+    this.itemChangeActions(item);
     return ret;
   },
   
+  // these actions are done when the user types in a field
+  // in contrast to other actions which are done at blur
+  // see: handleItemChange
   itemChangeActions: function(){
     // remove the message
     this.setHasChanged(true);
