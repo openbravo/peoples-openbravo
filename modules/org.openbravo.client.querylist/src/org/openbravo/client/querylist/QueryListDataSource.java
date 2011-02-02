@@ -23,6 +23,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -125,7 +126,14 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
           String namedParam = params[i];
           boolean isParamSet = false;
           if (parameterValues.containsKey(namedParam)) {
-            widgetQuery.setParameter(namedParam, parameterValues.get(namedParam));
+            Object value = parameterValues.get(namedParam);
+            if (value instanceof Collection<?>) {
+              widgetQuery.setParameterList(namedParam, (Collection<?>) value);
+            } else if (value instanceof Object[]) {
+              widgetQuery.setParameterList(namedParam, (Object[]) value);
+            } else {
+              widgetQuery.setParameter(namedParam, value);
+            }
             isParamSet = true;
           }
           if (!isParamSet) {
