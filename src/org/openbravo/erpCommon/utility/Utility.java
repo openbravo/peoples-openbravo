@@ -2362,6 +2362,8 @@ public class Utility {
         url += "_Relation.html";
       } else if ("X".equals(type)) {
         url += "_Excel.html";
+      } else if ("none".equals(type)) {
+        // do nothing
       } else {
         url += "_Edition.html";
       }
