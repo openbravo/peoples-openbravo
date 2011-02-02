@@ -209,7 +209,7 @@ OB.ViewFormProperties = {
   },
   
   retrieveInitialValues: function(isNew){
-    var parentId = this.view.getParentId(), requestParams, parentColumn, me = this, mode;
+    var parentId = this.view.getParentId(), requestParams, parentColumn, me = this, mode, properties={};
     //this.setDisabled(true);
     //this.allItemsDisabled = true;
     
@@ -229,8 +229,9 @@ OB.ViewFormProperties = {
       parentColumn = this.getField(this.view.parentProperty).inpColumnName;
       requestParams[parentColumn] = parentId;
     }
-    
-    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', {}, requestParams, function(response, data, request){
+
+    this.view.addStandardProperties(properties);
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', properties, requestParams, function(response, data, request){
       me.processFICReturn(response, data, request);
       // remember the initial values 
       me.rememberValues();
@@ -384,7 +385,7 @@ OB.ViewFormProperties = {
   // to recompute combos
   doChangeFICCall: function(item){
     var parentId = null, me = this, requestParams, allProperties = this.view.getContextInfo(false, true);
-    
+    this.view.addStandardProperties(allProperties);
     if (this.view.parentProperty) {
       parentId = this.getValue(this.view.parentProperty);
     }

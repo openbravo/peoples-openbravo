@@ -445,11 +445,11 @@ public class FormInitializationComponent extends BaseActionHandler {
           log.error("Couldn't read column value from the request for column " + inpColName, e);
         }
       }
-      // We also add special parameters such as the one set by selectors to the request, so the
-      // callouts can use them
-      addSpecialParameters(tab, jsContent);
     }
 
+    // We also add special parameters such as the one set by selectors to the request, so the
+    // callouts can use them
+    addSpecialParameters(tab, jsContent);
   }
 
   @SuppressWarnings("unchecked")

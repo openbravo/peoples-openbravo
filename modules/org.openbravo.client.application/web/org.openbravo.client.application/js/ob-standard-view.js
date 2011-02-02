@@ -1382,5 +1382,13 @@ isc.OBStandardView.addProperties({
     OB.RemoteCallManager.call('org.openbravo.client.application.window.GetTabMessageActionHandler', {
       tabId: this.tabId
     }, null, callback, this);
+  },
+  
+  addStandardProperties: function(allProperties){
+    for(var objPropertyName in this.standardProperties){
+	  if(this.standardProperties.hasOwnProperty(objPropertyName)){
+		allProperties[objPropertyName]=this.standardProperties[objPropertyName];
+      }
+    }
   }
 });
