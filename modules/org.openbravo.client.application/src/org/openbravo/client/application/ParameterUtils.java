@@ -122,10 +122,10 @@ public class ParameterUtils {
    *          the parameter we want to get the Fixed Value from
    * @return the Fixed Value of the parameter
    */
-  public static String getParameterFixedValue(Map<String, String> parameters, Parameter parameter) {
+  public static Object getParameterFixedValue(Map<String, String> parameters, Parameter parameter) {
     if (parameter.isEvaluateFixedValue()) {
       try {
-        return (String) getJSExpressionResult(parameters, null, parameter.getFixedValue());
+        return getJSExpressionResult(parameters, null, parameter.getFixedValue());
       } catch (Exception e) {
         // log.error(e.getMessage(), e);
         return null;
