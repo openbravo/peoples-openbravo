@@ -148,8 +148,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
           : "");
 
       // Positioning some fields in odd-columns
-      if (colNum % 2 == 0
-          && (field.isStartinoddcolumn() || !field.isDisplayOnSameLine() || viewField.getColSpan() == 2)) {
+      if (colNum % 2 == 0 && (field.isStartinoddcolumn() || viewField.getColSpan() == 2)) {
         final OBViewFieldSpacer spacer = new OBViewFieldSpacer();
         fields.add(spacer);
         colNum++;
