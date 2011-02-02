@@ -173,10 +173,11 @@ isc.OBSearchItem.addProperties({
   }, 
 
   showPicker: function(){
+    var parameters = [], index = 0, i = 0, length, propDef, inpName, values;
+    var form = this.form, view = form.view;
     if (this.isFocusable()) {
       this.focusInItem(); 
     }
-    var parameters = [], index = 0, i = 0, length, fld, inpName;
     parameters[index++] = 'inpIDValue';
     if (this.getValue()) {
       parameters[index++] = this.getValue();
@@ -184,14 +185,19 @@ isc.OBSearchItem.addProperties({
       parameters[index++] = '';
     }
     parameters[index++] = 'WindowID';
-    parameters[index++] = this.form.view.standardWindow.windowId;
+    parameters[index++] = view.standardWindow.windowId;
+    values = view.getContextInfo(false, true, true, true);
     length = this.inFields.length;
     for (i = 0; i < length; i++) {
       inpName = this.inFields[i];
-      fld = this.form.getFieldFromInpColumnName(inpName);
-      if (fld && fld.getValue()) {
-        parameters[index++] = 'inp' + fld.columnName;
-        parameters[index++] = fld.getValue();
+      propDef = view.getPropertyDefinitionFromInpColumnName(inpName);
+      if (propDef && values[inpName]) {        
+        // note the name passed is not the same as the inp name, it is inp + dbcolumn
+        parameters[index++] = 'inp' + propDef.dbColumn;
+        parameters[index++] = values[inpName];
+        // and to be save also pass the value as the input name
+        parameters[index++] = inpName;
+        parameters[index++] = values[inpName];
       }
     }
     this.openSearchWindow(this.searchUrl, parameters, this.getValue());
