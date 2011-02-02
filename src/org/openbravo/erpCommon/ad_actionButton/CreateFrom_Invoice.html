@@ -44,13 +44,13 @@
   </script>
   <script language="JavaScript" type="text/javascript">
     function closeThisPage() {
-      top.close();
+      closePage();
       return true;
     }
 
     function submitThisPage(strCommand) {
       if (validate(strCommand)) {
-        submitCommandForm(strCommand, false, null, null, '_top');
+        submitCommandForm(strCommand, false, null, null);
         return true;
       }
       return true;
