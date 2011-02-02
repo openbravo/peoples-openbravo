@@ -46,7 +46,7 @@ isc.OBPopupClassicWindow.addMethods({
       contentsURL = this.appURL + urlCharacter + 'Command=' + this.command + '&noprefs=true&tabId=' + this.tabId + '&hideMenu=true';
     }
     
-    OB.Utilities.openProcessPopup(contentsURL);
+    OB.Utilities.openProcessPopup(contentsURL, false, this.postParams);
   }
 });
 
