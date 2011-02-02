@@ -74,20 +74,22 @@
     // * {{{propertyName}}}: the name of the property
     // * {{{value}}}: the value of the property
     //
-    set: function(/* String */propertyName, /* Object */ value){
-      var currentValue = OB.Properties[propertyName];
+    set: function(/* String */propertyName, /* Object */ value, windowId){
+      var currentValue = OB.Properties[propertyName], data={property: propertyName}, localPropertyName=propertyName;
+      if(windowId){
+    	data.windowId=windowId;
+    	localPropertyName=propertyName + '_' + windowId;
+      }
       // set it locally
-      OB.Properties[propertyName] = value;
+      OB.Properties[localPropertyName] = value;
       
       // and set it in the server also
-      OB.RemoteCallManager.call('org.openbravo.client.application.StorePropertyActionHandler', value, {
-        property: propertyName
-      }, function(){
+      OB.RemoteCallManager.call('org.openbravo.client.application.StorePropertyActionHandler', value, data, function(){
       });
       
       // call the listeners
       for (var i = 0; i < this.listeners.length; i++) {
-        this.listeners[i](propertyName, currentValue, value);
+        this.listeners[i](localPropertyName, currentValue, value);
       }
       
     },

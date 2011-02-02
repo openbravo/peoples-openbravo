@@ -231,7 +231,6 @@ isc.OBStandardView.addProperties({
     this.createMainParts();
     this.createViewStructure();
     this.dataSource.view = this;
-    this.viewGrid.setDataSource(this.dataSource, this.viewGrid.completeFields || this.viewGrid.fields);
     
     // directTabInfo is set when we are in direct link mode, i.e. directly opening
     // a specific tab with a record, the direct link logic will already take care
@@ -350,6 +349,8 @@ isc.OBStandardView.addProperties({
           }
         }
       });
+      
+      this.viewGrid.setDataSource(this.dataSource, this.viewGrid.completeFields || this.viewGrid.fields);
       
       if (this.viewGrid) {
         this.viewGrid.setWidth('100%');

@@ -235,6 +235,9 @@ isc.OBViewGrid.addProperties({
   setView: function(view){
     this.view = view;
     this.editFormDefaults.view = view;
+    if(this.view.standardWindow.viewState && this.view.standardWindow.viewState[this.view.tabId]){
+       this.setViewState(this.view.standardWindow.viewState[this.view.tabId]);	
+    }
   },
   
   show: function(){
@@ -1052,6 +1055,29 @@ isc.OBViewGrid.addProperties({
   isEditLinkColumn: function(colNum){
     var fieldName = this.getFieldName(colNum);
     return (fieldName === isc.OBViewGrid.EDIT_LINK_FIELD_NAME);
+  },
+  
+  reorderField: function(fieldNum, moveToPosition){
+	var res = this.Super('reorderField', arguments);
+	this.view.standardWindow.storeViewState();
+	return res;
+  },
+  
+  hideField: function(field, suppressRelayout){
+	var res =  this.Super('hideField', arguments);
+	this.view.standardWindow.storeViewState();
+	return res;
+  },
+  
+  showField: function(field, suppressRelayout){
+	var res =  this.Super('showField', arguments);
+	this.view.standardWindow.storeViewState();
+	return res;
+  },
+  
+  resizeField: function(fieldNum, newWidth, storeWidth){
+	this.view.standardWindow.storeViewState();
+	return this.Super('resizeField', arguments);
   }
   
 });

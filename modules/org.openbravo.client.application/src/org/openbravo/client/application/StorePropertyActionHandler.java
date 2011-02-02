@@ -29,6 +29,7 @@ import org.openbravo.client.kernel.StaticResourceComponent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.model.ad.ui.Window;
 
 /**
  * Is responsible for storing a preference.
@@ -50,9 +51,14 @@ public class StorePropertyActionHandler extends BaseActionHandler {
             "{msg: 'No property name in request, ignoring property store request'}");
       }
       final String cleanedData = data == null ? null : data.replaceAll("\\n", "");
+      String windowId = (String) parameters.get("windowId");
+      Window window = null;
+      if (windowId != null) {
+        window = OBDal.getInstance().get(Window.class, windowId);
+      }
       Preferences.setPreferenceValue(propertyName, cleanedData, true, OBContext.getOBContext()
           .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-          .getOBContext().getUser(), OBContext.getOBContext().getRole(), null, null);
+          .getOBContext().getUser(), OBContext.getOBContext().getRole(), window, null);
       OBDal.getInstance().flush();
       return new JSONObject("{msg: 'Property Stored'}");
     } catch (Exception e) {

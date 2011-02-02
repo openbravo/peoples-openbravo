@@ -79,6 +79,7 @@ isc.OBStandardWindow.addProperties({
     if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       this.viewProperties.allowDefaultEditMode = false;
     }
+    this.viewState=OB.PropertyStore.get("OBUIAPP_GridConfiguration",this.windowId);
     this.view = isc.OBStandardView.create(this.viewProperties);
     this.addView(this.view);
     this.addMember(this.view);
@@ -270,5 +271,15 @@ isc.OBStandardWindow.addProperties({
       return false;
     }
     return this.isEqualParams(params) && viewName === this.getClassName();
+  },
+  
+  storeViewState: function(){
+	var result={};
+    for (var i = 0; i < this.views.length; i++) {
+      if(this.views[i].viewGrid){
+        result[this.views[i].tabId]=this.views[i].viewGrid.getViewState();
+      }
+    }
+	OB.PropertyStore.set('OBUIAPP_GridConfiguration', result, this.windowId);
   }
 });
