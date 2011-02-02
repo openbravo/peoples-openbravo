@@ -112,6 +112,10 @@ isc.OBToolbarActionButton.addProperties( {
         newWindow = '/'+newWindow;
       }
       
+      if (newWindow.startsWith(theView.mapping250)) {
+        // Refreshing current tab, do not open it again.
+        return;
+      }
       var windowParams = {
           viewId : this.title,
           tabTitle: this.title,
