@@ -652,12 +652,6 @@ isc.OBViewGrid.addProperties({
         }
       });
     }
-    menuItems.add({
-      title: OB.I18N.getLabel('OBUIAPP_DeleteRecord'),
-      click: function(){
-        grid.view.deleteRow();
-      }
-    });
     if (field.canFilter) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_UseAsFilter'),
