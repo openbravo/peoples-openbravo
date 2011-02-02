@@ -346,9 +346,9 @@
           isFramesetDraw: false,
           isLoaded: false,
           htmlCode: '<html><head></head><frameset cols="*, 0%" rows="*" frameborder="no" border="0" framespacing="0">'+
-            '<frame id="MDIPopupContainer"></frame>'+
+            '<frame id="MDIPopupContainer" name="MDIPopupContainer"></frame>'+
             '<frame name="frameMenu" scrolling="no" src="' + OB.Application.contextUrl +
-            'utility/VerticalMenu.html" id="paramFrameMenuLoading"></frame>'+
+            'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading"></frame>'+
             '</frameset><body></body></html>',
           popupURL: url
         });
@@ -481,21 +481,21 @@
       //
       // Opens directly the "Instance Purpose" window inside a popup
       openInstancePurpose: function(){
-        cobcomp.Popup.open('InstancePurpose', 600, 500, OB.Application.contextUrl + '/ad_forms/InstancePurpose.html', '', window, false, false, true);
+        cobcomp.Popup.open('InstancePurpose', 600, 500, OB.Application.contextUrl + 'ad_forms/InstancePurpose.html', '', window, false, false, true);
       },
       
       // ** {{{ Popup.openHeartbeat() }}} **
       //
       // Opens directly the "Heartbeat" window inside a popup
       openHeartbeat: function(){
-        cobcomp.Popup.open('Heartbeat', 600, 500, OB.Application.contextUrl + '/ad_forms/Heartbeat.html', '', window, false, false, true);
+        cobcomp.Popup.open('Heartbeat', 600, 500, OB.Application.contextUrl + 'ad_forms/Heartbeat.html', '', window, false, false, true);
       },
       
       // ** {{{ Popup.openRegistration() }}} **
       //
       // Opens directly the "Registration" window inside a popup
       openRegistration: function(){
-        cobcomp.Popup.open('Registration', 600, 500, OB.Application.contextUrl + '/ad_forms/Registration.html', '', window, false, false, true);
+        cobcomp.Popup.open('Registration', 600, 500, OB.Application.contextUrl + 'ad_forms/Registration.html', '', window, false, false, true);
       }
     }
   };
