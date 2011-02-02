@@ -171,7 +171,7 @@ public class WADButton extends WADControl {
     if (!isDisabled) {
       text.append("<PARAMETER id=\"").append(getData("ColumnName"));
       text.append("_linkBTN\" name=\"").append(getData("ColumnName"));
-      text.append("_Modal\" attribute=\"onclick\" replace=\"zz\" default=\"true\"/>");
+      text.append("_Modal\" attribute=\"onclick\" replace=\"zz\" default=\"false\"/>");
     }
     return text.toString();
   }
@@ -198,16 +198,9 @@ public class WADButton extends WADControl {
       }
       if (!isDisabled) {
         String varName = "modal" + FormatUtilities.replace(getData("ColumnName"));
-        javaCode += "boolean " + varName + " = true; \n";
-        javaCode += " try { \n";
-        javaCode += "   "
-            + varName
-            + " = \"Y\".equals(org.openbravo.erpCommon.businessUtility.Preferences.getPreferenceValue(\"ModalProcess"
-            + getData("AD_Process_ID") + "\",\n";
-        javaCode += "     false, vars.getClient(), vars.getOrg(), vars.getUser(), vars.getRole(), null));\n";
-        javaCode += "} catch (Exception e) {\n";
-        javaCode += "  " + varName + " = true;\n";
-        javaCode += "}\n";
+        javaCode += "boolean " + varName
+            + " = org.openbravo.erpCommon.utility.Utility.isModalProcess(\""
+            + getData("AD_Process_ID") + "\"); \n";
         javaCode += "xmlDocument.setParameter(\"" + getData("ColumnName") + "_Modal\", " + varName
             + "?\"true\":\"false\");";
       }

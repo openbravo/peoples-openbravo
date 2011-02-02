@@ -79,6 +79,7 @@ import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.Image;
@@ -2809,5 +2810,69 @@ public class Utility {
    */
   public static BufferedImage showImageLogo(String logo, String org) throws IOException {
     return ImageIO.read(new ByteArrayInputStream(getImageLogo(logo, org)));
+  }
+
+  /**
+   * Returns whether the <code>Process</code> should be opened in modal or in poup mode.
+   * 
+   * @param process
+   *          Process to check
+   * @return <code>true</code> in case it should be opened in modal, <code>false</code> if not.
+   */
+  public static boolean isModalProcess(org.openbravo.model.ad.ui.Process process) {
+    boolean modal = false;
+
+    // Show in popup by default unless preference to prevent it is set
+    String processModal = null;
+    try {
+      processModal = Preferences.getPreferenceValue("ModalProcess" + process.getId(), false,
+          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), null);
+    } catch (PropertyException e) {
+      // Not found, keep processModal = null
+    }
+
+    if (processModal != null) {
+      modal = "Y".equals(processModal);
+    } else {
+      try {
+        modal = "Y".equals(Preferences.getPreferenceValue("ModalModule"
+            + process.getModule().getJavaPackage(), false, OBContext.getOBContext()
+            .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
+            .getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+      } catch (PropertyException e1) {
+        try {
+          modal = "Y".equals(Preferences.getPreferenceValue("ModalModule"
+              + process.getModule().getId(), false, OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(),
+              OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+        } catch (PropertyException e) {
+          modal = false;
+        }
+      }
+    }
+    return modal;
+  }
+
+  /**
+   * Same as {@link Utility#isModalProcess(Process)} passing as parameter the process id.
+   * 
+   * @param processId
+   *          to check
+   * @return <code>true</code> in case it should be opened in modal, <code>false</code> if not.
+   * @see Utility#isModalProcess(Process)
+   */
+  public static boolean isModalProcess(String processId) {
+    OBContext.setAdminMode();
+    try {
+      Process process = OBDal.getInstance().get(org.openbravo.model.ad.ui.Process.class, processId);
+      if (process == null) {
+        return false;
+      }
+      return isModalProcess(process);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }
