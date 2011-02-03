@@ -63,6 +63,10 @@
   color: #333333;
 }
 
+.OBFormFieldLabelDisabled {
+  color: #555555;
+}
+
 .OBFormFieldStatic,
 .OBFormFieldStaticDisabled,
 .OBFormFieldStaticFocused,
@@ -120,7 +124,7 @@
 }
 
 .OBFormFieldStaticDisabled {
-  color: #acacac;  
+  color: #7d7d7d;
 }
 
 .OBFormFieldInputDisabled,
@@ -128,7 +132,7 @@
 .OBFormFieldDateInputDisabled {
   border: 1px solid #d7d7d7;
   background-color: #ffffff;
-  color: #acacac;
+  color: #7d7d7d;
 }
 
 .OBFormFieldDateInput,
