@@ -376,7 +376,7 @@
 	<variable name="QTY_SUM2" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL2" calculation="Sum">
 		<variableExpression><![CDATA[$F{QTY}]]></variableExpression>
 	</variable>
-	<variable name="QTY_SUM1" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL5" calculation="Sum">
+	<variable name="QTY_SUM1" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL1" calculation="Sum">
 		<variableExpression><![CDATA[$F{QTY}]]></variableExpression>
 	</variable>
 	<variable name="CONVAMOUNT_TOTAL" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
