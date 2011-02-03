@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,6 +56,7 @@ public class Column extends ModelObject {
   private boolean parent;
   private boolean mandatory;
   private boolean encrypted;
+  private boolean decryptable;
   private boolean updatable;
   private boolean identifier;
   private String valueMin;
@@ -426,5 +427,13 @@ public class Column extends ModelObject {
 
   public void setEncrypted(boolean encrypted) {
     this.encrypted = encrypted;
+  }
+
+  public boolean isDecryptable() {
+    return decryptable;
+  }
+
+  public void setDecryptable(boolean decryptable) {
+    this.decryptable = decryptable;
   }
 }

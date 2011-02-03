@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,7 +38,8 @@
 		<property name="updatable" type="org.openbravo.base.session.OBYesNoType" column="isupdateable"/>
 		<property name="identifier" type="org.openbravo.base.session.OBYesNoType" column="isidentifier"/>
 		<property name="mandatory" type="org.openbravo.base.session.OBYesNoType" column="ismandatory"/>
-    <property name="encrypted" type="org.openbravo.base.session.OBYesNoType" column="isencrypted"/>
+		<property name="encrypted" type="org.openbravo.base.session.OBYesNoType" column="isencrypted"/>
+		<property name="decryptable" type="org.openbravo.base.session.OBYesNoType" column="isdesencryptable"/>
 		<property name="valueMin"/>
 		<property name="valueMax"/>
 		<property name="developmentStatus"/>

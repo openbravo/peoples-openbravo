@@ -55,6 +55,9 @@ public class UIDefinitionController extends BaseTemplateComponent {
   public static String INPUTFORMAT_QUALIFIER = "Edition";
   public static String NORMALFORMAT_QUALIFIER = "Inform";
 
+  private static final String EncryptedStringReferenceID = "16EC6DF4A59747749FDF256B7FBBB058";
+  private static final String HashedStringReferenecID = "C5C21C28B39E4683A91779F16C112E40";
+
   public static UIDefinitionController getInstance() {
     return instance;
   }
@@ -141,11 +144,23 @@ public class UIDefinitionController extends BaseTemplateComponent {
       final OBQuery<Column> columnQry = OBDal.getInstance().createQuery(Column.class, "");
       columnQry.setFilterOnActive(false);
       for (Column column : columnQry.list()) {
-        final String referenceId;
+        String referenceId;
         if (column.getReferenceSearchKey() != null) {
           referenceId = (String) DalUtil.getId(column.getReferenceSearchKey());
         } else {
           referenceId = (String) DalUtil.getId(column.getReference());
+        }
+
+        // if one of the old hardcoded pwd-column -> move to new-style reference
+        // Companion-code in org.openbravo.base.mode.Property (for for domaintype)
+        String colReferenceId = (String) DalUtil.getId(column.getReference());
+        if (column.isDisplayEncription() && colReferenceId != EncryptedStringReferenceID
+            && colReferenceId != HashedStringReferenecID) {
+          if (column.isDeencryptable()) {
+            referenceId = EncryptedStringReferenceID;
+          } else {
+            referenceId = HashedStringReferenecID;
+          }
         }
         localUIDefinitionsByColumn.put(column.getId(), localCachedDefinitions.get(referenceId));
       }

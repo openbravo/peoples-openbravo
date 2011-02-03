@@ -31,7 +31,10 @@ import org.openbravo.base.model.domaintype.BasePrimitiveDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DatetimeDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
+import org.openbravo.base.model.domaintype.HashedStringDomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
+import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.validation.PropertyValidator;
 import org.openbravo.base.validation.ValidationException;
@@ -116,7 +119,26 @@ public class Property {
     setColumnName(fromColumn.getColumnName());
     setNameOfColumn(fromColumn.getName());
     setColumnId(fromColumn.getId());
+
     setDomainType(fromColumn.getDomainType());
+
+    // if one of the old hardcoded pwd-column -> move to new-style reference
+    // Companion-code in UIDefinitionController (for for UIDefinition)
+    boolean encryptOptionUsed = fromColumn.isEncrypted() || fromColumn.isDecryptable();
+    if (encryptOptionUsed && domainType instanceof StringDomainType) {
+      if (fromColumn.isDecryptable()) {
+        final EncryptedStringDomainType newDomainType = new EncryptedStringDomainType();
+        newDomainType.setReference(domainType.getReference());
+        newDomainType.setModelProvider(domainType.getModelProvider());
+        this.domainType = newDomainType;
+      } else {
+        final HashedStringDomainType newDomainType = new HashedStringDomainType();
+        newDomainType.setReference(domainType.getReference());
+        newDomainType.setModelProvider(domainType.getModelProvider());
+        this.domainType = newDomainType;
+      }
+    }
+
     setEncrypted(fromColumn.isEncrypted());
 
     setDefaultValue(fromColumn.getDefaultValue());
