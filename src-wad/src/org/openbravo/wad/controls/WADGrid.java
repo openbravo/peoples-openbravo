@@ -31,8 +31,6 @@ public class WADGrid extends WADControl {
   }
 
   public void initialize() {
-    // addCSSImport("DataGrid", "");
-    // addImport("dojo", "../../../../../web/js/dojo/dojo.js");
     generateJSCode();
     setValidation("");
   }
