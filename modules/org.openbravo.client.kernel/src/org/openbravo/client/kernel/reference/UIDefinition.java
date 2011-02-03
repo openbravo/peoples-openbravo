@@ -326,7 +326,8 @@ public abstract class UIDefinition {
     try {
       RequestContext rq = RequestContext.get();
       VariablesSecureApp vars = rq.getVariablesSecureApp();
-
+      boolean comboreload = rq.getRequestParameter("donotaddcurrentelement") != null
+          && rq.getRequestParameter("donotaddcurrentelement").equals("true");
       String ref = field.getColumn().getReference().getId();
       String objectReference = "";
       if (field.getColumn().getReferenceSearchKey() != null) {
@@ -356,7 +357,7 @@ public abstract class UIDefinition {
           clientList, 0);
       FieldProvider tabData = generateTabData(field.getTab().getADFieldList(), field, columnValue);
       comboTableData.fillParameters(tabData, field.getTab().getWindow().getId(), columnValue);
-      FieldProvider[] fps = comboTableData.select(getValueFromSession);
+      FieldProvider[] fps = comboTableData.select(getValueFromSession && !comboreload);
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
       values.addAll(Arrays.asList(fps));
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
@@ -376,7 +377,7 @@ public abstract class UIDefinition {
         comboEntries.add(entry);
       }
       JSONObject fieldProps = new JSONObject();
-      if (getValueFromSession) {
+      if (getValueFromSession && !comboreload) {
         fieldProps.put("value", columnValue);
         fieldProps.put("classicValue", columnValue);
       } else {

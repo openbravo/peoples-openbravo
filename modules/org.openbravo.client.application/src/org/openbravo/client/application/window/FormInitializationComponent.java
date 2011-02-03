@@ -158,8 +158,14 @@ public class FormInitializationComponent extends BaseActionHandler {
           changedColumn, jsContent, changeEventCols, calloutsToCall, lastfieldChanged);
 
       // Execution of callouts
-      executeCallouts(mode, tab, columnValues, changedColumn, calloutsToCall, lastfieldChanged,
-          calloutMessages);
+      boolean comboReloadNeeded = executeCallouts(mode, tab, columnValues, changedColumn,
+          calloutsToCall, lastfieldChanged, calloutMessages, changeEventCols);
+
+      if (comboReloadNeeded) {
+        RequestContext.get().setRequestParameter("donotaddcurrentelement", "true");
+        computeColumnValues("CHANGE", tab, allColumns, columnValues, parentRecord, parentId, null,
+            jsContent, changeEventCols, calloutsToCall, lastfieldChanged);
+      }
 
       // Construction of the final JSONObject
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
@@ -279,6 +285,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       String changedColumn, JSONObject jsContent, List<String> changeEventCols,
       List<String> calloutsToCall, List<String> lastfieldChanged) {
     boolean forceComboReload = (mode.equals("CHANGE") && changedColumn == null);
+    if (mode.equals("CHANGE") && changedColumn != null) {
+      RequestContext.get().setRequestParameter("donotaddcurrentelement", "true");
+    }
     HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
     for (Field field : tab.getADFieldList()) {
       columnsOfFields.put(field.getColumn().getDBColumnName(), field);
@@ -347,7 +356,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           // We need to fire callouts if the field is a combo
           // (due to how ComboReloads worked, callouts were always called)
           if (mode.equals("NEW")
-              && (uiDef instanceof EnumUIDefinition || uiDef instanceof FKComboUIDefinition)) {
+              && (uiDef instanceof EnumUIDefinition || uiDef instanceof FKComboUIDefinition)
+              && field.getColumn().isValidateOnNew()) {
             if (field.getColumn().getCallout() != null) {
               addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
             }
@@ -489,9 +499,10 @@ public class FormInitializationComponent extends BaseActionHandler {
     for (Field field : fields) {
       String columnName = field.getColumn().getDBColumnName();
       columns.add(columnName.toUpperCase());
-      if (field.getColumn().getValidation() != null) {
+      String validation = getValidation(field);
+      if (!validation.equals("")) {
         columnsWithValidation.add(field.getColumn().getDBColumnName());
-        validations.put(field.getColumn().getDBColumnName(), getValidation(field));
+        validations.put(field.getColumn().getDBColumnName(), validation);
       }
     }
     for (String column : columnsWithValidation) {
@@ -522,7 +533,8 @@ public class FormInitializationComponent extends BaseActionHandler {
     // (the ones which don't have validations)
     for (Field field : fields) {
       String colName = field.getColumn().getDBColumnName();
-      if (field.getColumn().getValidation() == null && !sortedColumns.contains(colName)) {
+      if (!columnsWithValidation.contains(field.getColumn().getDBColumnName())
+          && !sortedColumns.contains(colName)) {
         sortedColumns.add(colName);
       }
     }
@@ -649,9 +661,9 @@ public class FormInitializationComponent extends BaseActionHandler {
     return inpFields;
   }
 
-  private void executeCallouts(String mode, Tab tab, Map<String, JSONObject> columnValues,
+  private boolean executeCallouts(String mode, Tab tab, Map<String, JSONObject> columnValues,
       String changedColumn, List<String> calloutsToCall, List<String> lastfieldChanged,
-      List<String> messages) {
+      List<String> messages, List<String> dynamicCols) {
 
     // In CHANGE mode, we will add the initial callout call for the changed column, if there is
     // one
@@ -669,15 +681,17 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
 
     ArrayList<String> calledCallouts = new ArrayList<String>();
-    runCallouts(columnValues, tab, calledCallouts, calloutsToCall, lastfieldChanged, messages);
+    return runCallouts(columnValues, tab, calledCallouts, calloutsToCall, lastfieldChanged,
+        messages, dynamicCols);
   }
 
-  private void runCallouts(Map<String, JSONObject> columnValues, Tab tab,
+  private boolean runCallouts(Map<String, JSONObject> columnValues, Tab tab,
       List<String> calledCallouts, List<String> calloutsToCall, List<String> lastfieldChangedList,
-      List<String> messages) {
+      List<String> messages, List<String> dynamicCols) {
 
     List<Field> fields = tab.getADFieldList();
     HashMap<String, Field> inpFields = buildInpField(fields);
+    boolean comboReloadNeeded = false;
 
     while (!calloutsToCall.isEmpty() && calledCallouts.size() < MAX_CALLOUT_CALLS) {
       String calloutClassName = calloutsToCall.get(0);
@@ -761,6 +775,9 @@ public class FormInitializationComponent extends BaseActionHandler {
                                 || (oldValue != null && newValue != null && !oldValue
                                     .equals(newValue))) {
                               columnValues.put(colId, jsonobject);
+                              if (dynamicCols.contains(colId)) {
+                                comboReloadNeeded = true;
+                              }
                               changed = true;
                             } else {
                               log
@@ -797,7 +814,9 @@ public class FormInitializationComponent extends BaseActionHandler {
                           columnValues.put("inp"
                               + Sqlc.TransformaNombreColumna(col.getDBColumnName()), jsonobj);
                           changed = true;
-
+                          if (dynamicCols.contains(colId)) {
+                            comboReloadNeeded = true;
+                          }
                           rq.setRequestParameter(colId, jsonobj.getString("classicValue"));
                         }
                       } else {
@@ -824,6 +843,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     if (calledCallouts.size() == MAX_CALLOUT_CALLS) {
       log.warn("Warning: maximum number of callout calls reached");
     }
+    return comboReloadNeeded;
 
   }
 
@@ -898,7 +918,10 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private String getValidation(Field field) {
     Column c = field.getColumn();
-    String val = c.getValidation().getValidationCode();
+    String val = "";
+    if (c.getValidation() != null && c.getValidation().getValidationCode() != null) {
+      val += c.getValidation().getValidationCode();
+    }
     if (c.getReference().getId().equals("18")) {
       if (c.getReferenceSearchKey() != null) {
         for (ReferencedTable t : c.getReferenceSearchKey().getADReferencedTableList()) {
