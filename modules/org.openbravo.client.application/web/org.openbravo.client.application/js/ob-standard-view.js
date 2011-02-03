@@ -425,9 +425,9 @@ isc.OBStandardView.addProperties({
       });
       this.addMember(this.childTabSet);
     } else if (this.isRootView) {
-      // hide the maximize button if this is the root without
+      // disable the maximize button if this is the root without
       // children
-      this.statusBar.maximizeButton.hide();
+      this.statusBar.maximizeButton.disable();
     }
   },
   
