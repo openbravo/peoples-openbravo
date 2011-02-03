@@ -65,11 +65,10 @@ IF(v_Sequence_ID IS NULL) THEN -- No Sequence Number
   RETURN;
 END IF;
 -- Get the numbers
-SELECT s.AD_Sequence_ID, s.CurrentNext, s.Prefix, s.Suffix
-INTO v_Sequence_ID, v_NextNo, v_Prefix, v_Suffix
-FROM C_DocType d, AD_Sequence s
-WHERE d.C_DocType_ID=p_DocType_ID -- parameter
-  AND d.DocNoSequence_ID=s.AD_Sequence_ID  AND s.IsActive='Y'  AND s.IsTableID='N'  AND s.IsAutoSequence='Y'  FOR UPDATE OF CurrentNext;
+SELECT s.CurrentNext, s.Prefix, s.Suffix
+INTO v_NextNo, v_Prefix, v_Suffix
+FROM AD_Sequence s
+WHERE s.AD_Sequence_ID = v_Sequence_ID  AND s.IsActive='Y'  AND s.IsTableID='N'  AND s.IsAutoSequence='Y'  FOR UPDATE OF CurrentNext;
 
   IF p_Update_Next='Y' THEN
     UPDATE AD_Sequence
