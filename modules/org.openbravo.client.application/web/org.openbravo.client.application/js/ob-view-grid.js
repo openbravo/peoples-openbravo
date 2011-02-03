@@ -1076,8 +1076,9 @@ isc.OBViewGrid.addProperties({
   },
   
   resizeField: function(fieldNum, newWidth, storeWidth){
+	var res =   this.Super('resizeField', arguments);
 	this.view.standardWindow.storeViewState();
-	return this.Super('resizeField', arguments);
+	return res;
   }
   
 });
