@@ -286,7 +286,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
     }
     
     var widget = this, items = [], i, fieldDefinition, theForm = isc.DynamicForm.create({
-      width: '100%',
+      width: '99%',
       height: '100%',
       titleSuffix: '',
       requiredTitleSuffix: '',
