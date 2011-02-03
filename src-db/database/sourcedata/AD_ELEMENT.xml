@@ -2479,7 +2479,7 @@ You find the current status in the Document Status field. The options are listed
 <!--374-->  <NAME><![CDATA[Display Encription]]></NAME>
 <!--374-->  <PRINTNAME><![CDATA[Display encrypted]]></PRINTNAME>
 <!--374-->  <DESCRIPTION><![CDATA[An indication noting if the input box of a field will present full text or just asterisks.]]></DESCRIPTION>
-<!--374-->  <HELP><![CDATA[Thi options is deprecated. One of the new references "Password (decryptable)" or "Password (not-decryptable)" should be used instead.]]></HELP>
+<!--374-->  <HELP><![CDATA[This option is deprecated. One of the new references "Password (decryptable)" or "Password (not-decryptable)" should be used instead.]]></HELP>
 <!--374-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--374--></AD_ELEMENT>
 
