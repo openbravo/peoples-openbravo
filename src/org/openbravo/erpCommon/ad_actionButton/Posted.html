@@ -40,13 +40,13 @@
   </script>
   <script language="JavaScript" type="text/javascript" id="fieldWindowIDArray">
   function closeThisPage() {
-    window.close();
+    closePage();
     return true;
   }
 
   function submitThisPage(strCommand) {
     setProcessingMode('popup', true);
-    submitCommandForm(strCommand, false, null, null, '_top');
+    submitCommandForm(strCommand, false, null, null);
     return true;
   }
   </script>
