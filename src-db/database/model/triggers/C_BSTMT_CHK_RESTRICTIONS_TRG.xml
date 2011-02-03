@@ -31,13 +31,14 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
-    IF ((:OLD.PROCESSED = 'Y' AND :OLD.PROCESSING = 'N' AND :NEW.PROCESSED = 'N' AND :NEW.PROCESSING='N') OR 
-        (:OLD.PROCESSED = 'N' AND :OLD.PROCESSING = 'N' AND :NEW.PROCESSED = 'Y' AND :NEW.PROCESSING='N')) THEN
-        -- Checking for concurrent process running
-        RAISE_APPLICATION_ERROR(-20501, '@OtherProcessActive@') ;
-    END IF;
-
     IF UPDATING THEN
+
+        IF ((:OLD.PROCESSED = 'Y' AND :OLD.PROCESSING = 'N' AND :NEW.PROCESSED = 'N' AND :NEW.PROCESSING='N') OR
+            (:OLD.PROCESSED = 'N' AND :OLD.PROCESSING = 'N' AND :NEW.PROCESSED = 'Y' AND :NEW.PROCESSING='N')) THEN
+            -- Checking for concurrent process running
+            RAISE_APPLICATION_ERROR(-20501, '@OtherProcessActive@') ;
+        END IF;
+
      IF (:old.Processed='Y'
         AND ((COALESCE(:old.STATEMENTDATE, v_DateNull) <> COALESCE(:new.STATEMENTDATE, v_DateNull))
         OR(COALESCE(:old.C_BANKACCOUNT_ID, '0') <> COALESCE(:new.C_BANKACCOUNT_ID, '0'))
