@@ -41,12 +41,12 @@
 <!--6EE6D055A7FE4C4DA7EB557F6C61D0EB-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6EE6D055A7FE4C4DA7EB557F6C61D0EB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6EE6D055A7FE4C4DA7EB557F6C61D0EB-->  <VALUE><![CDATA[[
-  {"id": "NavBar_OBQuickCreate", "keyComb": {"ctrl": true, "alt": true, "key": "N"}},
+  {"id": "NavBar_OBQuickCreate", "keyComb": {"ctrl": true, "alt": true, "key": "Q"}},
   {"id": "NavBar_OBQuickLaunch", "keyComb": {"ctrl": true, "alt": true, "key": "O"}},
   {"id": "NavBar_MenuButton", "keyComb": {"ctrl": true, "alt": true, "key": "M"}},
   {"id": "NavBar_OBUserProfile", "keyComb": {"ctrl": true, "alt": true, "key": "U"}},
   {"id": "NavBar_OBHelpAbout", "keyComb": {"ctrl": true, "alt": true, "key": "H"}},
-  {"id": "NavBar_OBLogout", "keyComb": {"ctrl": true, "alt": true, "key": "Q"}}
+  {"id": "NavBar_OBLogout", "keyComb": {"ctrl": true, "alt": true, "shift": true, "key": "End"}}
 ]]]></VALUE>
 <!--6EE6D055A7FE4C4DA7EB557F6C61D0EB-->  <PROPERTY><![CDATA[UINAVBA_KeyboardShortcuts]]></PROPERTY>
 <!--6EE6D055A7FE4C4DA7EB557F6C61D0EB-->  <ISPROPERTYLIST><![CDATA[Y]]></ISPROPERTYLIST>
@@ -61,7 +61,7 @@
 <!--7EE6D055A7FE4C4DA7EB557F6C61D0EC-->  <VALUE><![CDATA[[
   {"id": "ToolBar_Save", "keyComb": {"ctrl": true, "alt": true, "key": "S"}},
   {"id": "ToolBar_NewRow", "keyComb": {"ctrl": true, "alt": true, "key": "I"}},
-  {"id": "ToolBar_NewDoc", "keyComb": {"ctrl": true, "alt": true, "key": "*"}},
+  {"id": "ToolBar_NewDoc", "keyComb": {"ctrl": true, "alt": true, "key": "N"}},
   {"id": "ToolBar_Eliminate", "keyComb": {"ctrl": true, "alt": true, "key": "D"}},
   {"id": "ToolBar_Refresh", "keyComb": {"ctrl": true, "alt": true, "key": "R"}},
   {"id": "ToolBar_Undo", "keyComb": {"ctrl": true, "alt": true, "key": "Z"}}
