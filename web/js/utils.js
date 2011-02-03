@@ -699,7 +699,7 @@ function submitCommandForm(action, bolValidation, form, newAction, newTarget, bo
   var f = form || document.forms[0];
   if (bolValidation!=null && bolValidation==true){
     try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
-    if (!depurar_validate_wrapper(action, form, "")) return false;
+    if (!depurar_validate_wrapper(action, f, "")) return false;
   } 
   if (bolCheckChanges==null) bolCheckChanges = false;
   if (isCallOut==null) isCallOut = false;
@@ -714,7 +714,7 @@ function submitCommandForm(action, bolValidation, form, newAction, newTarget, bo
     reloadFunction(strFunction);
     return false;
   }
-  if (bolCheckChanges && !checkForChanges(form)) return false;
+  if (bolCheckChanges && !checkForChanges(f)) return false;
   if (confirmAction(action)) {
     if (newAction != null) f.action = newAction;
     // Deprecated in 2.50, This code is only here fore backwards compatibility
