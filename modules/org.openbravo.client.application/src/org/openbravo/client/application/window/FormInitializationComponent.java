@@ -351,7 +351,7 @@ public class FormInitializationComponent extends BaseActionHandler {
             final Object propValue = JsonToDataConverter
                 .convertJsonToPropertyValue(prop, jsonValue);
             final String classicStr = uiDef.convertToClassicString(propValue);
-            jsCol.put("value", propValue);
+            jsCol.put("value", jsonValue);
             jsCol.put("classicValue", classicStr);
             value = jsCol.toString();
           } else {
