@@ -109,3 +109,6 @@ isc.RPCManager.neverShowPrompt = true;
 // performance when using Firefox/Firebug
 isc.Log.hasFireBug = function() { return false; };
 
+// prevent caching of picklists globally to prevent js error 
+// when a picklist has been detached from a formitem
+isc.PickList.getPrototype().cachePickListResults = false;
