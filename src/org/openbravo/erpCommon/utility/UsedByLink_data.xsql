@@ -40,7 +40,9 @@
                     WHERE W.AD_WINDOW_ID = WA.AD_WINDOW_ID
                       AND WA.AD_ROLE_ID = ?)=0 THEN 'N'
                                                ELSE 'Y' 
-                                               END) AS ACCESSIBLE
+                                               END) AS ACCESSIBLE,
+        W.AD_WINDOW_ID as AD_WINDOW_ID,
+        '' as AD_MENU_NAME
         FROM  (
           SELECT AD_COLUMN_ID, ? as referenced_column_id 
             FROM AD_COLUMN
@@ -189,19 +191,28 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT (AD_WINDOW_ID) AS ID, (AD_COLUMN_IDENTIFIER(TO_CHAR(?),TO_CHAR(AD_WINDOW_ID),TO_CHAR(?))) AS NAME 
-        FROM AD_WINDOW 
-        WHERE TO_CHAR(AD_WINDOW_ID) = TO_CHAR(?) 
+        SELECT (AD_WINDOW.AD_WINDOW_ID) AS ID,
+        (AD_COLUMN_IDENTIFIER(TO_CHAR(?),TO_CHAR(AD_WINDOW.AD_WINDOW_ID),TO_CHAR(?))) AS NAME,
+        AD_TAB.AD_TAB_ID AS AD_TAB_ID,
+        AD_TAB.AD_WINDOW_ID AS AD_WINDOW_ID,
+        AD_TABLE.NAME AS TABLENAME,
+        AD_MENU.NAME AS AD_MENU_NAME
+        FROM AD_WINDOW
+        LEFT OUTER JOIN AD_TAB ON (AD_TAB.AD_TAB_ID = TO_CHAR(?))
+        LEFT OUTER JOIN AD_TABLE ON (AD_TAB.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID)
+        LEFT OUTER JOIN AD_MENU ON (AD_MENU.AD_WINDOW_ID = AD_TAB.AD_WINDOW_ID)
+        WHERE TO_CHAR(AD_WINDOW.AD_WINDOW_ID) = TO_CHAR(?) 
         AND 1=1 
         ORDER BY 2
       ]]>
     </Sql>
-    <Parameter name="fields" optional="true" type="replace" after="SELECT (" text="AD_WINDOW_ID"/>
+    <Parameter name="fields" optional="true" type="replace" after="SELECT (" text="AD_WINDOW.AD_WINDOW_ID"/>
     <Parameter name="tablename"/>
-    <Parameter name="keyColumn" optional="true" type="replace" after="AD_COLUMN_IDENTIFIER(TO_CHAR(?),TO_CHAR(" text="AD_WINDOW_ID"/>
+    <Parameter name="keyColumn" optional="true" type="replace" after="AD_COLUMN_IDENTIFIER(TO_CHAR(?),TO_CHAR(" text="AD_WINDOW.AD_WINDOW_ID"/>
     <Parameter name="adLanguage"/>
     <Parameter name="tablename" optional="true" type="replace" after="FROM " text="AD_WINDOW"/>
-    <Parameter name="columnname" optional="true" type="replace" after="WHERE TO_CHAR(" text="AD_WINDOW_ID"/>
+    <Parameter name="tabid" />     
+    <Parameter name="columnname" optional="true" type="replace" after="WHERE TO_CHAR(" text="AD_WINDOW.AD_WINDOW_ID"/>
     <Parameter name="keyId"/>
     <Parameter name="whereclause" optional="true" type="replace" after="AND 1=1 " text=""/>
   </SqlMethod>

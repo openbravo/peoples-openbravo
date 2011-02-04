@@ -77,16 +77,18 @@ isc.OBGrid.addProperties({
     var i, thisGrid = this, field, formatCellValueFunction = function(value, record, rowNum, colNum, grid){
       return '';
     };
-    
-    for (i = 0; i < this.fields.length; i++) {
-      field = this.fields[i];
-      if (field.isLink) {
-        // store the originalFormatCellValue if not already set
-        if (field.formatCellValue && !field.formatCellValueFunctionReplaced) {
-          field.originalFormatCellValue = field.formatCellValue;
+
+    if (this.fields) {
+      for (i = 0; i < this.fields.length; i++) {
+        field = this.fields[i];
+        if (field.isLink) {
+          // store the originalFormatCellValue if not already set
+          if (field.formatCellValue && !field.formatCellValueFunctionReplaced) {
+            field.originalFormatCellValue = field.formatCellValue;
+          }
+          field.formatCellValueFunctionReplaced = true;
+          field.formatCellValue = formatCellValueFunction;
         }
-        field.formatCellValueFunctionReplaced = true;
-        field.formatCellValue = formatCellValueFunction;
       }
     }
     

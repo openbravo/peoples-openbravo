@@ -29,6 +29,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -60,7 +63,7 @@ public class UsedByLink extends HttpSecureAppServlet {
       final String strKeyColumn = vars.getRequiredStringParameter("inpkeyColumnId");
       final String strTableId = vars.getRequiredStringParameter("inpTableId");
       final String strColumnName = Sqlc.TransformaNombreColumna(strKeyColumn);
-      String strKeyId = vars.getGlobalVariable("inp" + strColumnName, strWindow + "|"
+      final String strKeyId = vars.getGlobalVariable("inp" + strColumnName, strWindow + "|"
           + strKeyColumn);
       printPage(response, vars, strWindow, strTabId, strKeyColumn, strKeyId, strTableId);
     } else if (vars.commandIn("LINKS")) {
@@ -75,8 +78,18 @@ public class UsedByLink extends HttpSecureAppServlet {
       final String strTableId = vars.getRequiredStringParameter("inpTableId");
       printPageDetail(request, response, vars, strWindow, strTabId, strKeyColumn, strKeyId,
           strAD_TAB_ID, strTABLENAME, strCOLUMNNAME, strTableId);
-    } else
+    } else if (vars.commandIn("JSONCategory")) {
+      response.setContentType("application/json;charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+      out.print(getJSONCategories(vars));
+    } else if (vars.commandIn("JSONLinkedItem")) {
+      response.setContentType("application/json;charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+      out.print(getJSONLinkedItems(vars));
+    } else {
       throw new ServletException();
+    }
+
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWindow,
@@ -105,7 +118,201 @@ public class UsedByLink extends HttpSecureAppServlet {
     xmlDocument.setParameter("recordIdentifier", UsedByLinkData.selectIdentifier(this, keyId, vars
         .getLanguage(), tableId));
 
-    String keyColumnId = UsedByLinkData.selectKeyColumnId(this, tableId);
+    final SearchResult searchResult = getLinkedItemCategories(vars, strWindow, keyColumn, keyId,
+        tableId);
+
+    final UsedByLinkData[] usedByLinkData = searchResult.getUsedByLinkData();
+    final OBError message = searchResult.getMessage();
+
+    if (message != null) {
+      xmlDocument.setParameter("messageType", message.getType());
+      xmlDocument.setParameter("messageTitle", message.getTitle());
+      xmlDocument.setParameter("messageMessage", message.getMessage());
+    }
+
+    xmlDocument.setData("structure1", usedByLinkData);
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  /**
+   * Prints the details of the chosen linked item category.
+   */
+  private void printPageDetail(HttpServletRequest request, HttpServletResponse response,
+      VariablesSecureApp vars, String strWindow, String TabId, String keyColumn, String keyId,
+      String strAD_TAB_ID, String strTABLENAME, String strCOLUMNNAME, String adTableId)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: UsedBy links for tab: " + TabId);
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/utility/UsedByLink_Detail").createXmlDocument();
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("tabID", TabId);
+    xmlDocument.setParameter("windowID", strWindow);
+    xmlDocument.setParameter("keyColumn", keyColumn);
+    xmlDocument.setParameter("adTabId", strAD_TAB_ID);
+    xmlDocument.setParameter("tableName", strTABLENAME);
+    xmlDocument.setParameter("tableId", adTableId);
+
+    // We have to check whether we have self reference or not
+    String selfReferenceCount = UsedByLinkData.getCountOfSelfReference(this, adTableId,
+        strTABLENAME);
+    if (selfReferenceCount.equals("0")) {
+      xmlDocument.setParameter("keyName", "inp" + Sqlc.TransformaNombreColumna(keyColumn));
+      xmlDocument.setParameter("keyId", keyId);
+      xmlDocument.setParameter("columnName", strCOLUMNNAME);
+    } else {
+      xmlDocument.setParameter("columnName", keyColumn);
+    }
+
+    xmlDocument.setParameter("recordIdentifier", UsedByLinkData.selectIdentifier(this, keyId, vars
+        .getLanguage(), adTableId));
+    if (vars.getLanguage().equals("en_US")) {
+      xmlDocument.setParameter("paramName", UsedByLinkData.tabName(this, strAD_TAB_ID));
+    } else {
+      xmlDocument.setParameter("paramName", UsedByLinkData.tabNameLanguage(this,
+          vars.getLanguage(), strAD_TAB_ID));
+    }
+
+    final UsedByLinkData[] data = UsedByLinkData.keyColumns(this, strAD_TAB_ID);
+    if (data == null || data.length == 0) {
+      // in order to preserve old behavior we use bdError method to report errors
+      bdError(request, response, "RecordError", vars.getLanguage());
+      return;
+    }
+    appendJScript(xmlDocument, data, strAD_TAB_ID);
+    final SearchResult searchResult = getLinkedItems(vars, data, strWindow, keyColumn, keyId,
+        strAD_TAB_ID, strTABLENAME, strCOLUMNNAME, adTableId);
+
+    final UsedByLinkData[] usedByLinkData = searchResult.getUsedByLinkData();
+    final OBError error = searchResult.getMessage();
+
+    if (error != null) {
+      // in order to preserve old behavior we use bdError method to report errors
+      bdError(request, response, error.getTitle(), vars.getLanguage());
+      return;
+    }
+
+    xmlDocument.setData("structure1", usedByLinkData);
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  /**
+   * Returns a JSON object containing linked item categories.
+   */
+  private String getJSONCategories(VariablesSecureApp vars) throws ServletException, IOException {
+
+    final String windowId = vars.getStringParameter("windowId");
+    final String entityName = vars.getStringParameter("entityName");
+
+    JSONObject jsonObject = new JSONObject();
+
+    try {
+
+      final Entity entity = ModelProvider.getInstance().getEntity(entityName);
+      final String tableId = entity.getTableId();
+
+      final List<Property> properties = entity.getIdProperties();
+
+      // we expect to have only one key property for the entity
+      if (properties == null || properties.size() != 1) {
+        throw new OBException(String.format(
+            "Exactly one key property was expected for entity [%s]. Actual key properties are %s",
+            entityName, properties));
+      }
+
+      final Property property = properties.get(0);
+      final String columnId = property.getColumnId();
+      final String columnName = property.getColumnName();
+      final String keyId = vars.getGlobalVariable("inp" + Sqlc.TransformaNombreColumna(columnName),
+          windowId + "|" + columnName);
+
+      // get categories
+      final SearchResult searchResult = getLinkedItemCategories(vars, windowId, columnId, keyId,
+          tableId);
+
+      jsonObject = buildJsonObject(jsonObject, searchResult);
+
+    } catch (Exception e) {
+      try {
+        jsonObject.put("msg", e.getMessage());
+      } catch (JSONException jex) {
+        log4j.error("Error trying to generate message: " + jex.getMessage(), jex);
+      }
+    }
+
+    return jsonObject.toString();
+  }
+
+  private String getJSONLinkedItems(VariablesSecureApp vars) throws ServletException, IOException {
+
+    // read request parameters
+    final String windowId = vars.getStringParameter("windowId");
+    final String entityName = vars.getStringParameter("entityName");
+    final String adTabId = vars.getStringParameter("adTabId");
+    final String tableName = vars.getStringParameter("tableName");
+    // XXX isn't this the same as columnName declared later?
+    final String inpcolumnName = vars.getStringParameter("columnName");
+
+    JSONObject jsonObject = new JSONObject();
+
+    try {
+
+      final Entity entity = ModelProvider.getInstance().getEntity(entityName);
+      final String tableId = entity.getTableId();
+
+      final List<Property> properties = entity.getIdProperties();
+
+      // we expect to have only one key property for the entity
+      if (properties == null || properties.size() != 1) {
+        throw new OBException(String.format(
+            "Exactly one key property was expected for entity [%s]. Actual key properties are %s",
+            entityName, properties));
+      }
+
+      final Property property = properties.get(0);
+      final String columnName = property.getColumnName();
+      final String keyId = vars.getGlobalVariable("inp" + Sqlc.TransformaNombreColumna(columnName),
+          windowId + "|" + columnName);
+
+      final UsedByLinkData[] data = UsedByLinkData.keyColumns(this, adTabId);
+      if (data == null || data.length == 0) {
+        // // in order to preserve old behavior we use bdError method to report errors
+        // bdError(request, response, "RecordError", vars.getLanguage());
+        // return;
+      }
+
+      final SearchResult searchResult = getLinkedItems(vars, data, windowId, columnName, keyId,
+          adTabId, tableName, inpcolumnName, tableId);
+
+      jsonObject = buildJsonObject(jsonObject, searchResult);
+      // jsonObject
+
+    } catch (Exception e) {
+      try {
+        jsonObject.put("msg", e.getMessage());
+      } catch (JSONException jex) {
+        log4j.error("Error trying to generate message: " + jex.getMessage(), jex);
+      }
+    }
+    return jsonObject.toString();
+  }
+
+  /**
+   * Gets linked items categories. If some of the data can't be accessed (i.g. lack of rights) then
+   * a corresponding message is generated and put into result.
+   */
+  private SearchResult getLinkedItemCategories(VariablesSecureApp vars, String strWindow,
+      String keyColumn, String keyId, String tableId) throws IOException, ServletException {
+
+    final String keyColumnId = UsedByLinkData.selectKeyColumnId(this, tableId);
 
     boolean nonAccessible = false;
 
@@ -158,8 +365,10 @@ public class UsedByLink extends HttpSecureAppServlet {
           final String strNonAccessibleWhere = strWhereClause + " AND AD_ORG_ID NOT IN ("
               + vars.getUserOrg() + ")";
           if (!UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyValue,
-              strNonAccessibleWhere).equals("0"))
+              strNonAccessibleWhere).equals("0")) {
             nonAccessible = true;
+          }
+
         }
         strWhereClause += " AND AD_ORG_ID IN (" + vars.getUserOrg() + ") AND AD_CLIENT_ID IN ("
             + vars.getUserClient() + ")";
@@ -169,6 +378,7 @@ public class UsedByLink extends HttpSecureAppServlet {
 
         if (log4j.isDebugEnabled())
           log4j.debug("***   Count: " + total);
+
         data[i].total = Integer.toString(total);
 
         if (data[i].accessible.equals("N") && total > 0) {
@@ -186,60 +396,57 @@ public class UsedByLink extends HttpSecureAppServlet {
       myMessage.setType("Info");
       myMessage.setMessage(Utility.messageBD(this, "NonAccessibleRecords", vars.getLanguage()));
       myMessage.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
-      xmlDocument.setParameter("messageType", myMessage.getType());
-      xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-      xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      return new SearchResult(data, myMessage);
+    } else {
+      return new SearchResult(data);
     }
-
-    xmlDocument.setData("structure1", data);
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 
-  private void printPageDetail(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars, String strWindow, String TabId, String keyColumn, String keyId,
-      String strAD_TAB_ID, String strTABLENAME, String strCOLUMNNAME, String adTableId)
-      throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: UsedBy links for tab: " + TabId);
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/UsedByLink_Detail").createXmlDocument();
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("tabID", TabId);
-    xmlDocument.setParameter("windowID", strWindow);
-    xmlDocument.setParameter("keyColumn", keyColumn);
-    xmlDocument.setParameter("adTabId", strAD_TAB_ID);
-    xmlDocument.setParameter("tableName", strTABLENAME);
-    xmlDocument.setParameter("tableId", adTableId);
-    // We have to check whether we have self reference or not
-    String selfReferenceCount = UsedByLinkData.getCountOfSelfReference(this, adTableId,
-        strTABLENAME);
-    if (selfReferenceCount.equals("0")) {
-      xmlDocument.setParameter("keyName", "inp" + Sqlc.TransformaNombreColumna(keyColumn));
-      xmlDocument.setParameter("keyId", keyId);
-      xmlDocument.setParameter("columnName", strCOLUMNNAME);
-    } else {
-      xmlDocument.setParameter("columnName", keyColumn);
+  /**
+   * Gets the linked items for the given category.
+   * 
+   * @param tableId
+   */
+  private SearchResult getLinkedItems(VariablesSecureApp vars, UsedByLinkData[] data,
+      String strWindow, String keyColumn, String keyId, String adTabId, String adTableName,
+      String strCOLUMNNAME, String adTableId) throws ServletException, IOException {
+
+    final UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, adTabId);
+    if (dataRef == null || dataRef.length == 0) {
+      final OBError message = new OBError();
+      message.setType("Error");
+      message.setMessage(Utility.messageBD(this, "RecordError", vars.getLanguage()));
+      message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+      return new SearchResult(message);
     }
 
-    xmlDocument.setParameter("recordIdentifier", UsedByLinkData.selectIdentifier(this, keyId, vars
-        .getLanguage(), adTableId));
-    if (vars.getLanguage().equals("en_US")) {
-      xmlDocument.setParameter("paramName", UsedByLinkData.tabName(this, strAD_TAB_ID));
-    } else {
-      xmlDocument.setParameter("paramName", UsedByLinkData.tabNameLanguage(this,
-          vars.getLanguage(), strAD_TAB_ID));
+    String whereClause = getWhereClause(vars, strWindow, dataRef[0].whereclause);
+    whereClause += getAditionalWhereClause(vars, strWindow, adTabId, adTableName, keyColumn,
+        strCOLUMNNAME, UsedByLinkData.getTabTableName(this, adTabId));
+    whereClause += " AND " + adTableName + ".AD_ORG_ID IN (" + vars.getUserOrg() + ") AND "
+        + adTableName + ".AD_CLIENT_ID IN (" + vars.getUserClient() + ")";
+
+    final StringBuffer strSQL = new StringBuffer();
+    for (int i = 0; i < data.length; i++) {
+      if (i > 0) {
+        strSQL.append(" || ', ' || ");
+      }
+      strSQL.append("").append(adTableName).append(".").append(data[i].name).append("");
     }
 
-    final UsedByLinkData[] data = UsedByLinkData.keyColumns(this, strAD_TAB_ID);
-    if (data == null || data.length == 0) {
-      bdError(request, response, "RecordError", vars.getLanguage());
-      return;
-    }
+    UsedByLinkData[] usedByLinkData = UsedByLinkData.selectLinks(this, strSQL.toString(),
+        adTableName, adTableName + "." + data[0].name, vars.getLanguage(), adTabId, adTableName
+            + "." + strCOLUMNNAME, keyId, whereClause);
+
+    return new SearchResult(usedByLinkData);
+  }
+
+  /**
+   * Adds some scripts for the new Layout.
+   */
+  private static void appendJScript(XmlDocument xmlDocument, UsedByLinkData[] data,
+      String strAD_TAB_ID) throws ServletException, IOException {
+
     final StringBuffer strScript = new StringBuffer();
     final StringBuffer strHiddens = new StringBuffer();
     final StringBuffer strSQL = new StringBuffer();
@@ -269,11 +476,6 @@ public class UsedByLink extends HttpSecureAppServlet {
       strHiddens.append("<input type=\"hidden\" name=\"inp").append(
           Sqlc.TransformaNombreColumna(data[i].name)).append("\">\n");
     }
-    final UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, strAD_TAB_ID);
-    if (dataRef == null || dataRef.length == 0) {
-      bdError(request, response, "RecordError", vars.getLanguage());
-      return;
-    }
     final String windowRef = Utility.getTabURL(strAD_TAB_ID, "E", true);
     strScript.append("top.opener.submitFormGetParams('DIRECT', '").append(windowRef).append(
         "', getParamsScript(document.forms[0]));\n");
@@ -282,21 +484,45 @@ public class UsedByLink extends HttpSecureAppServlet {
     strScript.append("}\n");
     strScript.append("}\n");
 
-    xmlDocument.setParameter("hiddens", strHiddens.toString());
-    xmlDocument.setParameter("script", strScript.toString());
+    if (xmlDocument != null) {
+      xmlDocument.setParameter("hiddens", strHiddens.toString());
+      xmlDocument.setParameter("script", strScript.toString());
+    }
 
-    String whereClause = getWhereClause(vars, strWindow, dataRef[0].whereclause);
-    whereClause += getAditionalWhereClause(vars, strWindow, strAD_TAB_ID, strTABLENAME, keyColumn,
-        strCOLUMNNAME, UsedByLinkData.getTabTableName(this, strAD_TAB_ID));
-    whereClause += " AND AD_ORG_ID IN (" + vars.getUserOrg() + ") AND AD_CLIENT_ID IN ("
-        + vars.getUserClient() + ")";
+  }
 
-    xmlDocument.setData("structure1", UsedByLinkData.selectLinks(this, strSQL.toString(),
-        strTABLENAME, data[0].name, vars.getLanguage(), strCOLUMNNAME, keyId, whereClause));
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+  private static JSONObject buildJsonObject(JSONObject jsonObject, SearchResult searchResult)
+      throws JSONException {
+    final UsedByLinkData[] usedByLinkData = searchResult.getUsedByLinkData();
+    final OBError msg = searchResult.getMessage();
+
+    final List<JSONObject> usedByLinkDataJsonObjects = new ArrayList<JSONObject>();
+
+    for (UsedByLinkData data : usedByLinkData) {
+      final JSONObject usedByLinkDataJsonObj = new JSONObject();
+      usedByLinkDataJsonObj.put("accessible", data.accessible);
+      usedByLinkDataJsonObj.put("adMenuName", data.adMenuName);
+      usedByLinkDataJsonObj.put("adTabId", data.adTabId);
+      usedByLinkDataJsonObj.put("adWindowId", data.adWindowId);
+      usedByLinkDataJsonObj.put("columnName", data.columnname);
+      usedByLinkDataJsonObj.put("elementName", data.elementName);
+      usedByLinkDataJsonObj.put("fullElementName", data.elementName + " - " + data.tabname + " ("
+          + data.total + ")");
+      usedByLinkDataJsonObj.put("hasTree", data.hastree);
+      usedByLinkDataJsonObj.put("id", data.id);
+      usedByLinkDataJsonObj.put("name", data.name);
+      usedByLinkDataJsonObj.put("referencedColumnId", data.referencedColumnId);
+      usedByLinkDataJsonObj.put("tableName", data.tablename);
+      usedByLinkDataJsonObj.put("tabName", data.tabname);
+      usedByLinkDataJsonObj.put("total", data.total);
+      usedByLinkDataJsonObj.put("whereClause", data.whereclause);
+      usedByLinkDataJsonObj.put("windowName", data.windowname);
+      usedByLinkDataJsonObjects.add(usedByLinkDataJsonObj);
+    }
+
+    jsonObject.put("usedByLinkData", usedByLinkDataJsonObjects);
+    jsonObject.put("msg", msg);
+    return jsonObject;
   }
 
   public String getWhereClause(VariablesSecureApp vars, String window, String strWhereClause)
@@ -437,4 +663,35 @@ public class UsedByLink extends HttpSecureAppServlet {
   public String getServletInfo() {
     return "Servlet that presents the usedBy links";
   } // end of getServletInfo() method
+
+  /**
+   * Contains found linked items along with a message if some of the items are not accessible.
+   * 
+   * @author Valery Lezhebokov
+   */
+  private static class SearchResult {
+    private final UsedByLinkData[] usedByLinkData;
+    private final OBError message;
+
+    private SearchResult(UsedByLinkData[] usedByLinkData) {
+      this(usedByLinkData, null);
+    }
+
+    private SearchResult(OBError message) {
+      this(null, message);
+    }
+
+    private SearchResult(UsedByLinkData[] usedByLinkData, OBError message) {
+      this.usedByLinkData = usedByLinkData;
+      this.message = message;
+    }
+
+    private UsedByLinkData[] getUsedByLinkData() {
+      return usedByLinkData;
+    }
+
+    private OBError getMessage() {
+      return message;
+    }
+  }
 }
