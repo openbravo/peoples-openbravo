@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,6 +40,7 @@ isc.OBHelpAbout
       var tabPane = null, aboutLink = null, helpLink = null, helpView = null;
 
       aboutLink = {
+        name: 'aboutLink',
         editorType : 'link',
         value : null,
         showTitle : false,
@@ -55,6 +56,7 @@ isc.OBHelpAbout
       };
 
       helpLink = {
+        name: 'helpLink',
         editorType : 'link',
         value : null,
         showTitle : false,
@@ -82,7 +84,9 @@ isc.OBHelpAbout
         } else {
           this.members[0].setFields( [ helpLink, aboutLink ]);
         }
-      }
+      }      
+      OB.TestRegistry.register('org.openbravo.client.application.HelpAboutForm.HelpLink', this.members[0].getField('helpLink'));
+      OB.TestRegistry.register('org.openbravo.client.application.HelpAboutForm.AboutLink', this.members[0].getField('aboutLink'));
     },
 
     members : [ isc.DynamicForm.create( {
