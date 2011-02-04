@@ -5432,16 +5432,18 @@ function checkWindowInMDIPopup(target) {
     MDIPopupId = target.document.getElementById('MDIPopupContainer').name;
   }
 
-  if (result === true && 
-      MDIPopupId !== null && 
-      document.title && 
-      getFrame('LayoutMDI') && 
-      getFrame('LayoutMDI').OB && 
-      getFrame('LayoutMDI').OB.Layout && 
-      getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility && 
-      getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup && 
-      getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.setTitle) {
-    getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.setTitle(MDIPopupId, document.title);
+  if (window.name !== 'frameMenu' && window.location.href.indexOf('utility/VerticalMenu.html') === -1) {
+    if (result === true && 
+        MDIPopupId !== null && 
+        document.title && 
+        getFrame('LayoutMDI') && 
+        getFrame('LayoutMDI').OB && 
+        getFrame('LayoutMDI').OB.Layout && 
+        getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility && 
+        getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup && 
+        getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.setTitle) {
+      getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.setTitle(MDIPopupId, document.title);
+    }
   }
 
   return result;
