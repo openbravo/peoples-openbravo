@@ -16,7 +16,8 @@
 <!--862F54CB1B074513BD791C6789F4AA42-->  <POPUPTEXTMATCHSTYLE><![CDATA[startsWith]]></POPUPTEXTMATCHSTYLE>
 <!--862F54CB1B074513BD791C6789F4AA42-->  <HQL><![CDATA[SELECT distinct bp.name as name,bp.id as bpid, bp.searchKey as value,
    bp.creditLimit - bp.creditUsed as creditAvailable, bp.creditUsed as creditUsed,
-   COALESCE(contact.name, usercontact.name) as contactname,  bploc.name as locationname, bploc.id as locationid,
+   COALESCE(contact.name, usercontact.name) as contactname, COALESCE(contact.id, usercontact.id) as contactid,
+   bploc.name as locationname, bploc.id as locationid,
    bp.customer as customer, bp.vendor as vendor
 FROM BusinessPartner bp left join bp.businessPartnerLocationList bploc
                         left join bploc.locationAddress loc
