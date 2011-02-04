@@ -139,7 +139,7 @@ public class JsonToDataConverter {
       final Class<?> clz = property.getPrimitiveObjectType();
       if (clz != null && Date.class.isAssignableFrom(clz)) {
         try {
-          if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
+          if (property.isDatetime() || property.isDate() || Timestamp.class.isAssignableFrom(clz)) {
             final String repairedString = JsonUtils.convertFromXSDToJavaFormat((String) value);
             return new Timestamp(xmlDateTimeFormat.parse(repairedString).getTime());
           } else {
