@@ -140,24 +140,30 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       // First the parent record is retrieved and the session variables for the parent records are
       // set
+      long t1 = System.currentTimeMillis();
       parentRecord = setSessionVariablesInParent(mode, tab, row, parentId);
 
       // We also need to set the current record values in the request
+      long t2 = System.currentTimeMillis();
       setValuesInRequest(mode, tab, row, jsContent);
 
       // Calculation of validation dependencies
+      long t3 = System.currentTimeMillis();
       computeListOfColumnsSortedByValidationDependencies(tab, allColumns, columnsInValidation,
           changeEventCols);
 
       // Computation of the Auxiliary Input values
+      long t4 = System.currentTimeMillis();
       computeAuxiliaryInputs(mode, tab, columnValues);
 
       // Computation of Column Values (using UIDefinition, so including combo values and all
       // relevant additional information)
+      long t5 = System.currentTimeMillis();
       computeColumnValues(mode, tab, allColumns, columnValues, parentRecord, parentId,
           changedColumn, jsContent, changeEventCols, calloutsToCall, lastfieldChanged);
 
       // Execution of callouts
+      long t6 = System.currentTimeMillis();
       boolean comboReloadNeeded = executeCallouts(mode, tab, columnValues, changedColumn,
           calloutsToCall, lastfieldChanged, calloutMessages, changeEventCols);
 
@@ -168,9 +174,13 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
 
       // Construction of the final JSONObject
+      long t7 = System.currentTimeMillis();
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
           calloutMessages);
-      log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime));
+      long t8 = System.currentTimeMillis();
+      log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
+          + (t3 - t2) + "," + (t4 - t3) + "," + (t5 - t4) + "," + (t6 - t5) + "," + (t7 - t6) + ","
+          + (t8 - t7) + ")");
       return finalObject;
     } catch (Throwable t) {
       final String jsonString = JsonUtils.convertExceptionToJson(t);
