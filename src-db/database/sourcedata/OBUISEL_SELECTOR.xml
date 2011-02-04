@@ -18,7 +18,7 @@
    bp.creditLimit - bp.creditUsed as creditAvailable, bp.creditUsed as creditUsed,
    COALESCE(contact.name, usercontact.name) as contactname, COALESCE(contact.id, usercontact.id) as contactid,
    bploc.name as locationname, bploc.id as locationid,
-   bp.customer as customer, bp.vendor as vendor
+   bp.customer as customer, bp.vendor as vendor, bp.lifetimeRevenueToDate as income
 FROM BusinessPartner bp left join bp.businessPartnerLocationList bploc
                         left join bploc.locationAddress loc
                         left join bploc.aDUserList contact
