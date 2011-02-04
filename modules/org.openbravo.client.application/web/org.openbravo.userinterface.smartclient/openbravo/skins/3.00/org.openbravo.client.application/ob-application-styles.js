@@ -156,24 +156,11 @@ OB.ActiveBarStyling = {
 /* =====================================================================
  * Changed styling of the standard dialogs
  =======================================================================*/
-isc.Dialog.OK.buttonConstructor = isc.OBFormButton;
-isc.Dialog.OK.baseStyle = 'OBFormButton';
-isc.Dialog.OK.titleStyle = 'OBFormButtonTitle';
-isc.Dialog.CANCEL.buttonConstructor = isc.OBFormButton;
-isc.Dialog.CANCEL.baseStyle = 'OBFormButton';
-isc.Dialog.CANCEL.titleStyle = 'OBFormButtonTitle';
-isc.Dialog.YES.buttonConstructor = isc.OBFormButton;
-isc.Dialog.YES.baseStyle = 'OBFormButton';
-isc.Dialog.YES.titleStyle = 'OBFormButtonTitle';
-isc.Dialog.NO.buttonConstructor = isc.OBFormButton;
-isc.Dialog.NO.baseStyle = 'OBFormButton';
-isc.Dialog.NO.titleStyle = 'OBFormButtonTitle';
-isc.Dialog.APPLY.buttonConstructor = isc.OBFormButton;
-isc.Dialog.APPLY.baseStyle = 'OBFormButton';
-isc.Dialog.APPLY.titleStyle = 'OBFormButtonTitle';
-isc.Dialog.DONE.buttonConstructor = isc.OBFormButton;
-isc.Dialog.DONE.baseStyle = 'OBFormButton';
-isc.Dialog.DONE.titleStyle = 'OBFormButtonTitle';
+
+isc.addProperties(isc.Dialog.Warn.toolbarDefaults, 
+    {buttonConstructor: isc.OBFormButton
+    }
+);
 
 isc.ListGrid.addProperties({
   alternateRecordStyles: true

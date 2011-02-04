@@ -297,7 +297,9 @@ isc.OBEncryptedItem.addProperties({
 isc.ClassFactory.defineClass('OBFormButton', Button);
 
 isc.OBFormButton.addProperties({
-  autoFit: true
+  autoFit: true,
+  baseStyle: 'OBFormButton',
+  titleStyle: 'OBFormButtonTitle'
 });
 
 // == OBTextItem ==
