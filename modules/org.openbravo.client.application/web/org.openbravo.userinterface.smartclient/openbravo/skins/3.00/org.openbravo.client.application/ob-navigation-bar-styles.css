@@ -228,6 +228,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBNavBarComponentMenuItemCellTitleFieldDisabled {
   font-size: 11px;
   font-family: 'lucida sans', sans-serif;
+  cursor: pointer;
 }
 
 .OBNavBarComponentMenuItemCell,
