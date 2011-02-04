@@ -18,9 +18,6 @@
  */
 package org.openbravo.client.kernel.reference;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -131,31 +128,6 @@ public abstract class NumberUIDefinition extends UIDefinition {
     // only replace the decimal symbol
     return valueStr.replace(".", variables.getSessionValue("#DecimalSeparator|" + getFormat())
         .substring(0, 1));
-  }
-
-  @Override
-  public Object createFromClassicString(String value) {
-    if (value == null || value.trim().length() == 0) {
-      return null;
-    }
-    try {
-      final PrimitiveDomainType primitiveDomainType = (PrimitiveDomainType) getDomainType();
-      if (primitiveDomainType.getFormatId() != null) {
-        final String formatId = primitiveDomainType.getFormatId();
-        final FormatDefinition inputFormat = UIDefinitionController.getInstance()
-            .getFormatDefinition(formatId, UIDefinitionController.SHORTFORMAT_QUALIFIER);
-        final DecimalFormat decimalFormat = new DecimalFormat();
-        decimalFormat.setGroupingSize(3);
-        final DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        symbols.setDecimalSeparator(inputFormat.getDecimalSymbol().charAt(0));
-        symbols.setGroupingSeparator(inputFormat.getGroupingSymbol().charAt(0));
-        decimalFormat.setDecimalFormatSymbols(symbols);
-        return decimalFormat.parse(value);
-      }
-      return null;
-    } catch (Exception e) {
-      throw new OBException(e);
-    }
   }
 
   public static class DecimalUIDefinition extends NumberUIDefinition {
