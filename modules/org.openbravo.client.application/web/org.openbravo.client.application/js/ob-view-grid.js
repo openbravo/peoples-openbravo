@@ -954,25 +954,26 @@ isc.OBViewGrid.addProperties({
     if (this.getEditForm().valuesHaveChanged() || this.rowHasErrors(rowNum)) {
       isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmCancelEdit'), function(value){
         if (value) {
+          
+          me.Super('discardEdits', localArguments);
+
           // remove the error style/msg    
           me.setRecordErrorMessage(rowNum, null);
     
           // update after removing the error msg
           me.view.updateTabTitle();
           me.view.toolBar.updateButtonState();
-          
-          me.Super('discardEdits', localArguments);
         }
       });
     } else {
+      me.Super('discardEdits', localArguments);
+
       // remove the error style/msg    
       this.setRecordErrorMessage(rowNum, null);
       
       // update after removing the error msg
       this.view.updateTabTitle();
       this.view.toolBar.updateButtonState();
-
-      me.Super('discardEdits', localArguments);
     }
   },
     
@@ -1020,13 +1021,13 @@ isc.OBViewGrid.addProperties({
     this.view.isEditingGrid = false;
   },
 
-  editorExit : function (editCompletionEvents,record,newValue,rowNum,colNum) {
+  editorExit: function (editCompletionEvents,record,newValue,rowNum,colNum) {
     if (this.cellHasErrors(rowNum, colNum)) {
       this.showCellErrors(rowNum, colNum);
     }
   },
 
-  cellHasErrors : function (rowNum, fieldID) {
+  cellHasErrors: function (rowNum, fieldID) {
     var itemName;
     if (this.Super('cellHasErrors', arguments)) {
       return true;      
