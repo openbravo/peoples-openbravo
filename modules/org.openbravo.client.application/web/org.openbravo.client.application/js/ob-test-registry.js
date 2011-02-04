@@ -11,53 +11,49 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-
 // = Test Registry =
 //
 // Global registry to facilitate testing. Components can register themselves in the 
 // TestRegistry using a unique name, selenium tests can then easily retrieve components from the test registry
 // using the unique name.
 //
-(function(OB, isc) {
+(function(OB, isc){
 
   if (!OB || !isc) {
     throw {
-      name : 'ReferenceError',
-      message : 'openbravo and isc objects are required'
+      name: 'ReferenceError',
+      message: 'openbravo and isc objects are required'
     };
   }
-
+  
   var fullUrl = parent.document.URL;
   var queryString = fullUrl.substring(fullUrl.indexOf('?') + 1, fullUrl.length);
   var isTestEnvironment = queryString.indexOf('test=true') !== -1;
   if (isTestEnvironment) {
-    isc.Log.logDebug('Test Environment, registering test components enabled',
-        'OB');
+    isc.Log.logDebug('Test Environment, registering test components enabled', 'OB');
   } else {
-    isc.Log.logDebug(
-        'No Test Environment, registering test components disabled', 'OB');
+    isc.Log.logDebug('No Test Environment, registering test components disabled', 'OB');
   }
-
-  function TestRegistry() {
+  
+  function TestRegistry(){
   }
-
+  
   TestRegistry.prototype = {
-
-    registry : {},
-
-    register : function(key, object) {
+  
+    registry: {},
+    
+    register: function(key, object){
       if (true || isTestEnvironment) {
         isc.Log.logDebug('Registering ' + key + ' in test registry ', 'OB');
-        // add collision detection
-    this.registry[key] = object;
-  }
-}
+        this.registry[key] = object;
+      }
+    }
   };
-
+  
   OB.TestRegistry = new TestRegistry();
 })(OB, isc);
