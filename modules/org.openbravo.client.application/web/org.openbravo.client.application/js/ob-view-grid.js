@@ -24,7 +24,8 @@ isc.OBViewGrid.addClassProperties({
   // note following 2 values should be the same
   // ListGrid._$ArrowUp and ListGrid._$ArrowDown
   ARROW_UP_KEY_NAME: 'Arrow_Up',
-  ARROW_DOWN_KEY_NAME: 'Arrow_Down'
+  ARROW_DOWN_KEY_NAME: 'Arrow_Down',
+  ERROR_MESSAGE_PROP : isc.OBViewGrid.ERROR_MESSAGE_PROP
 });
 
 // = OBViewGrid =
@@ -131,6 +132,8 @@ isc.OBViewGrid.addProperties({
   
   currentEditColumnLayout: null,
   
+  recordBaseStyleProperty: '_recordStyle',
+  
   dataProperties: {
     useClientFiltering: false,
     useClientSorting: false,
@@ -229,6 +232,10 @@ isc.OBViewGrid.addProperties({
         return OB.Utilities.getPromptString(cellErrors);
       }
     }
+    if (record[isc.OBViewGrid.ERROR_MESSAGE_PROP]) {
+      return record[isc.OBViewGrid.ERROR_MESSAGE_PROP];
+    }
+
     return this.Super('cellHoverHTML', arguments);
   },
   
@@ -896,19 +903,20 @@ isc.OBViewGrid.addProperties({
   
   // +++++++++++++++++ functions for the editing +++++++++++++++++
   
-  saveEditedValues: function(rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback){
-    this.setEditValues(this.getEditRow(), this.getEditForm().getValues(), true);
-    return this.Super('saveEditedValues', arguments);
-  },
-  
   editFailed: function(rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse, dsRequest){
+    var record = this.getRecord(rowNum);
     var view = this.view;
-    if (dsResponse) {
-      view.setErrorMessageFromResponse(dsResponse, dsResponse.data, dsRequest);
+    
+    // set the default error message, 
+    // is possibly overridden in the next call
+    if (!record[isc.OBViewGrid.ERROR_MESSAGE_PROP]) {
+      this.setRecordErrorMessage(rowNum, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
     }
+    
     if (!view.isVisible()) {
       isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [view.tabTitle]));
     }
+
     this.view.updateTabTitle();
     this.view.toolBar.updateButtonState();
   },
@@ -926,30 +934,53 @@ isc.OBViewGrid.addProperties({
       record.editColumnLayout = oldValues.editColumnLayout;
     }
     if (record.editColumnLayout) {
+      record.editColumnLayout.editButton.setErrorState(false);
       record.editColumnLayout.showEditOpen();
     }
-    this.view.updateTabTitle();
     this.view.toolBar.updateButtonState();
-    
+
+    // remove the error style/message
+    this.setRecordErrorMessage(rowNum, null);
+
+    // update after the error message has been removed
+    this.view.updateTabTitle();
+
     return this.Super('editComplete', arguments);
   },
   
   discardEdits: function(rowNum, colNum, dontHideEditor, editCompletionEvent){
     var localArguments = arguments;
     var me = this;
-    if (this.getEditForm().valuesHaveChanged()) {
+    if (this.getEditForm().valuesHaveChanged() || this.rowHasErrors(rowNum)) {
       isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmCancelEdit'), function(value){
         if (value) {
+          // remove the error style/msg    
+          me.setRecordErrorMessage(rowNum, null);
+    
+          // update after removing the error msg
           me.view.updateTabTitle();
           me.view.toolBar.updateButtonState();
+          
           me.Super('discardEdits', localArguments);
         }
       });
     } else {
+      // remove the error style/msg    
+      this.setRecordErrorMessage(rowNum, null);
+      
+      // update after removing the error msg
       this.view.updateTabTitle();
       this.view.toolBar.updateButtonState();
+
       me.Super('discardEdits', localArguments);
     }
+  },
+    
+  getEditDisplayValue : function (rowNum, colNum, record) {
+    // somehow this extra call is needed to not restore
+    // the old value when the new value is null
+    this.storeUpdatedEditorValue();
+    return this.Super('getEditDisplayValue', arguments);
   },
   
   rowEditorEnter: function(record, editValues, rowNum){
@@ -966,13 +997,18 @@ isc.OBViewGrid.addProperties({
     if (record && record.editColumnLayout) {
       record.editColumnLayout.showSaveCancel();
     }
+    
+    this.view.toolBar.updateButtonState();
+    
+    return true;
   },
-  
+    
   rowEditorExit: function(editCompletionEvent, record, newValues, rowNum){
     isc.Log.logDebug('hideInlineEditor ' + this.getEditRow(), 'OB');
     if (this.baseStyleView) {
       this.baseStyle = this.baseStyleView;
     }
+
     if (record && record.editColumnLayout) {
       isc.Log.logDebug('hideInlineEditor has record and editColumnLayout', 'OB');
       record.editColumnLayout.showEditOpen();
@@ -982,6 +1018,48 @@ isc.OBViewGrid.addProperties({
       isc.Log.logDebug('hideInlineEditor has NO record and editColumnLayout', 'OB');
     }
     this.view.isEditingGrid = false;
+  },
+
+  editorExit : function (editCompletionEvents,record,newValue,rowNum,colNum) {
+    if (this.cellHasErrors(rowNum, colNum)) {
+      this.showCellErrors(rowNum, colNum);
+    }
+  },
+
+  cellHasErrors : function (rowNum, fieldID) {
+    var itemName;
+    if (this.Super('cellHasErrors', arguments)) {
+      return true;      
+    }
+    if (this.getEditRow() === rowNum) {
+      itemName = this.getEditorName(rowNum, fieldID);
+      return this.getEditForm().hasFieldErrors(itemName);
+    }
+    return false;
+  },
+
+  getCellErrors: function(rowNum, fieldName) {
+    var itemName;
+    var ret = this.Super('getCellErrors', arguments);
+    if (this.getEditRow() === rowNum) {
+      itemName = this.getEditorName(rowNum, fieldName);
+      return this.getEditForm().getFieldErrors(itemName);
+    }    
+    return ret;
+  },
+
+  rowHasErrors : function (rowNum, colNum) {
+    if (this.Super('rowHasErrors', arguments)) {
+      return true;
+    }
+    if (this.getEditRow() === rowNum && this.getEditForm().hasErrors()) {
+      return true;
+    }
+    var record = this.getRecord(rowNum);
+    if  (record) {
+      return record[isc.OBViewGrid.ERROR_MESSAGE_PROP];
+    }
+    return false;
   },
   
   // we are being reshown, get new values for the combos
@@ -993,6 +1071,54 @@ isc.OBViewGrid.addProperties({
   
   isWritable: function(record){
     return record._writable;
+  },
+  
+  setRecordErrorMessage: function(rowNum, msg) {
+    var record = this.getRecord(rowNum);
+    record[isc.OBViewGrid.ERROR_MESSAGE_PROP] = msg;
+    if (msg) {
+      record[this.recordBaseStyleProperty] = this.recordStyleError;
+    } else {
+      record[this.recordBaseStyleProperty] = null;
+    }
+    if (record.editColumnLayout) {
+      record.editColumnLayout.editButton.setErrorState(msg);
+      record.editColumnLayout.editButton.setErrorMessage(msg);
+    }
+    if (this.frozenBody) {
+      this.frozenBody.markForRedraw();
+    }
+    this.body.markForRedraw();
+  },
+  
+  setRecordFieldErrorMessages: function(rowNum, errors) {
+    var record = this.getRecord(rowNum);
+    if (record.editColumnLayout) {
+      record.editColumnLayout.editButton.setErrorState(errors);
+      record.editColumnLayout.editButton.setErrorMessage(OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
+    }
+    this.setRowErrors(rowNum, errors);
+    if (errors) {
+      record[this.recordBaseStyleProperty] = this.recordStyleError;
+    } else {
+      record[this.recordBaseStyleProperty] = null;
+    }
+
+    if (this.frozenBody) {
+      this.frozenBody.markForRedraw();
+    }
+    this.body.markForRedraw();
+  },
+  
+  // overridden to handle the case that the rowNum is in fact 
+  // an edit state id
+  getRecord: function(rowNum) {
+    if (!isc.isA.Number(rowNum)) {
+      // an edit id
+      rowNum = this.getEditSessionRowNum(rowNum);
+      return this.getRecord(rowNum);
+    }
+    return this.Super('getRecord', arguments);
   },
   
   // +++++++++++++++++ functions for the edit-link column +++++++++++++++++
@@ -1009,6 +1135,8 @@ isc.OBViewGrid.addProperties({
         grid: this,
         rowNum: rowNum
       });
+      layout.editButton.setErrorState(this.rowHasErrors(rowNum));
+      layout.editButton.setErrorMessage(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
       if (!this.isWritable(record)) {
         layout.editButton.doNotShow = true;
         layout.editButton.hide();
@@ -1042,6 +1170,8 @@ isc.OBViewGrid.addProperties({
       component.record = record;
       record.editColumnLayout = component;
       component.rowNum = this.getRecordIndex(record);
+      component.editButton.setErrorState(this.rowHasErrors(component.rowNum));
+      component.editButton.setErrorMessage(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
       if (!this.isWritable(record)) {
         component.editButton.setDisabled(true);
       } else {
@@ -1058,27 +1188,27 @@ isc.OBViewGrid.addProperties({
   },
   
   reorderField: function(fieldNum, moveToPosition){
-	var res = this.Super('reorderField', arguments);
-	this.view.standardWindow.storeViewState();
-	return res;
+	 var res = this.Super('reorderField', arguments);
+	 this.view.standardWindow.storeViewState();
+	 return res;
   },
   
   hideField: function(field, suppressRelayout){
-	var res =  this.Super('hideField', arguments);
-	this.view.standardWindow.storeViewState();
-	return res;
+	 var res =  this.Super('hideField', arguments);
+	 this.view.standardWindow.storeViewState();
+	 return res;
   },
   
   showField: function(field, suppressRelayout){
-	var res =  this.Super('showField', arguments);
-	this.view.standardWindow.storeViewState();
-	return res;
+	 var res =  this.Super('showField', arguments);
+	 this.view.standardWindow.storeViewState();
+	 return res;
   },
   
   resizeField: function(fieldNum, newWidth, storeWidth){
-	var res =   this.Super('resizeField', arguments);
-	this.view.standardWindow.storeViewState();
-	return res;
+	 var res =   this.Super('resizeField', arguments);
+	 this.view.standardWindow.storeViewState();
+	 return res;
   }
   
 });
@@ -1133,6 +1263,7 @@ isc.OBGridButtonsComponent.addProperties({
     
     this.editButton = isc.OBGridToolStripIcon.create({
       buttonType: 'edit',
+      originalPrompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
       prompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
       action: function(){
         if (me.grid.view.autoSaveForm) {
@@ -1142,6 +1273,14 @@ isc.OBGridButtonsComponent.addProperties({
         }
       },
       doNotShow: me.grid.view.readOnly,
+      
+      setErrorMessage: function(msg) {
+        if (msg) {
+          this.prompt = msg + '<br><br>' + this.originalPrompt;
+        } else {
+          this.prompt = this.originalPrompt;
+        }
+      },
       
       show: function(){
         if (this.doNotShow) {

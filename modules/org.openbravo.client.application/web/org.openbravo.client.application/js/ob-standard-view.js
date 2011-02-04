@@ -261,12 +261,17 @@ isc.OBStandardView.addProperties({
       return true;
     }
     var msg = '', title = null, type = isc.OBMessageBar.TYPE_ERROR, isLabel = false, params = null;
+    var gridEditing = req.clientContext.editRow || req.clientContext.editRow === 0;  
     if (isc.isA.String(data)) {
       msg = data;
     } else if (data && data.response) {
       if (data.response.errors) {
         // give it to the form
-        this.viewForm.handleFieldErrors(data.response.errors);
+        if (this.isShowingForm) {
+          this.viewForm.handleFieldErrors(data.response.errors);
+        } else {
+          this.viewGrid.setRecordFieldErrorMessages(req.clientContext.editRow, data.response.errors);
+        }
         return true;
       } else if (data.response.error) {
         var error = data.response.error;
@@ -304,14 +309,33 @@ isc.OBStandardView.addProperties({
       index2 = msg.indexOf('@', index1 + 1);
       if (index2 !== -1) {
         errorCode = msg.substring(index1 + 1, index2);
-        this.messageBar.setLabel(type, title, errorCode, params);
+        if (gridEditing) {
+          this.setLabelInRow(req.clientContext.editRow, errorCode, params);
+        } else {
+          this.messageBar.setLabel(type, title, errorCode, params);
+        }
       }
     } else if (isLabel) {
-      this.messageBar.setLabel(type, title, msg, params);
+      if (gridEditing) {
+        this.setLabelInRow(req.clientContext.editRow, errorCode, params);
+      } else {
+        this.messageBar.setLabel(type, title, msg, params);
+      }
+    } else if (gridEditing) {
+      this.viewGrid.setRecordErrorMessage(req.clientContext.editRow, msg);
     } else {
       this.messageBar.setMessage(type, title, msg);
     }
     return true;
+  },
+  
+  setLabelInRow: function(rowNum, label, params) {
+    var me = this;
+    OB.I18N.getLabel(label, params, {
+      setLabel: function(text){
+        me.viewGrid.setRecordErrorMessage(rowNum, text);
+      }
+    }, 'setLabel');
   },
   
   // ** {{{ createViewStructure }}} **
@@ -1184,22 +1208,17 @@ isc.OBStandardView.addProperties({
   undo: function(){
     var view = this, callback, form;
     if (this.isEditingGrid) {
-      form = this.viewGrid.getEditForm();
+      view.viewGrid.cancelEditing();
+      return;
     } else {
       form = this.viewForm;
     }
-    if (form.hasChanged) {
-      callback = function(ok){
-        if (ok) {
-          form.undo();
-        }
-      };
-      isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmUndo', callback), callback);
-      return;
-    }
-    throw {
-      message: 'Undo should only be enabled if the form has changed.'
+    callback = function(ok){
+      if (ok) {
+        form.undo();
+      }
     };
+    isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmUndo', callback), callback);
   },
   
   // ++++++++++++++++++++ Parent-Child Tab Handling ++++++++++++++++++++++++++
@@ -1307,7 +1326,7 @@ isc.OBStandardView.addProperties({
   //++++++++++++++++++ Reading context ++++++++++++++++++++++++++++++
   
   getContextInfo: function(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat){
-    var contextInfo = {}, addProperty;
+    var contextInfo = {}, addProperty, rowNum;
     // if classicmode is undefined then both classic and new props are used
     var classicModeUndefined = (typeof classicMode === 'undefined');
     if (classicModeUndefined) {
@@ -1318,7 +1337,7 @@ isc.OBStandardView.addProperties({
     // 1) showing grid with one record selected
     // 2) showing form with aux inputs
     if (this.isEditingGrid) {
-      record = isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewGrid.getEditForm().getValues());
+      record = isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewGrid.getEditValues(this.viewGrid.getEditRow()));
       component = this.viewGrid.getEditForm();
       form = component;
     } else if (this.isShowingForm) {
@@ -1327,6 +1346,8 @@ isc.OBStandardView.addProperties({
       form = component;
     } else {
       record = this.viewGrid.getSelectedRecord();
+      rowNum = this.viewGrid.getRecordIndex(record);
+      record = isc.addProperties({}, record, this.viewGrid.getEditValues(rowNum));    
       component = this.viewGrid;
     }
     

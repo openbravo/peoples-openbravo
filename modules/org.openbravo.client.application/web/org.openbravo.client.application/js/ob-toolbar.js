@@ -34,13 +34,15 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'save',
     prompt: OB.I18N.getLabel('OBUIAPP_SaveRow'),
     updateState: function() {
-      var view = this.view, form = view.viewForm;      
+      var view = this.view, form = view.viewForm, hasErrors = false, editRow;      
       if (view.isShowingForm) {
         this.setDisabled(!form.isNew && (form.isSaving || form.readOnly || 
               !view.hasValidState() || !form.hasChanged));
       } else if (view.isEditingGrid) {
           form = view.viewGrid.getEditForm();
-          this.setDisabled(!form.isNew && (form.isSaving || form.readOnly || 
+          editRow = view.viewGrid.getEditRow();
+          hasErrors = view.viewGrid.rowHasErrors(editRow);
+          this.setDisabled(!form.isNew && !hasErrors && (form.isSaving || form.readOnly || 
                 !view.hasValidState() || !form.hasChanged));
       } else {
         // enable when supporting grid editing
@@ -121,13 +123,15 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'undo',
     prompt: OB.I18N.getLabel('OBUIAPP_Undo'),
     updateState: function() {
-      var view = this.view, form = view.viewForm, grid = view.viewGrid;
+      var view = this.view, form = view.viewForm, grid = view.viewGrid, hasErrors = false, editRow;
       if (view.isShowingForm) {
         this.setDisabled(form.isSaving || form.readOnly || !view.hasValidState() || 
             !form.hasChanged);
       } else if (view.isEditingGrid) {
+        editRow = view.viewGrid.getEditRow();
+        hasErrors = view.viewGrid.rowHasErrors(editRow);
         form = grid.getEditForm();
-        this.setDisabled(!form.isNew && (form.isSaving || form.readOnly || 
+        this.setDisabled(!form.isNew && !hasErrors && (form.isSaving || form.readOnly || 
               !view.hasValidState() || !form.hasChanged));
       } else {
         // support for editable grid

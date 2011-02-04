@@ -78,6 +78,14 @@ isc.OBViewDataSource.addProperties( {
               [ requestProperties.clientContext.progressIndicatorSelectedRecord ],
               200);
     }
+    
+    // doing row editing
+    if (this.view.viewGrid.getEditRow()) {
+      if (!requestProperties.clientContext) {
+        requestProperties.clientContext = {};
+      }
+      requestProperties.clientContext.editRow = this.view.viewGrid.getEditRow(); 
+    }
 
     var newRequestProperties = this.getTabInfoRequestProperties(this.view,
         requestProperties);

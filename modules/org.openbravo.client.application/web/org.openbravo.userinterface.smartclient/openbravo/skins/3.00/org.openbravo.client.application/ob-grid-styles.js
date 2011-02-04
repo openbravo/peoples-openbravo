@@ -22,8 +22,8 @@ isc.OBGrid.addProperties({
   editFailedBaseStyle: null, // is done through the additional csstext
   editFailedCSSText: 'background-color: red, color: red; border:1px solid red;',
   baseStyle: 'OBGridCell',
-  baseStyleView: 'OBGridCell', // for use in ob-view-grid.js while no editing a cell
   baseStyleEdit: 'OBGridCellEdit', // for use in ob-view-grid.js while editing a cell
+  recordStyleError: 'OBGridCellError',
   headerBaseStyle: 'OBGridHeaderCell',
   headerBarStyle: 'OBGridHeaderBar',
   headerTitleStyle: 'OBGridHeaderCellTitle',
@@ -106,6 +106,14 @@ isc.OBGridToolStripIcon.addProperties({
   baseStyle: 'OBGridToolStripIcon',
   initWidgetStyle: function() {
     this.setSrc('[SKIN]/../../org.openbravo.client.application/images/grid/gridButton-' + this.buttonType + '.png'); /* this.buttonType could be: edit - form - cancel - save */
+  },
+  
+  setErrorState: function(error) {
+    if (error) {
+      this.setSrc('[SKIN]/../../org.openbravo.client.application/images/grid/gridButton-' + this.buttonType + '-error.png'); /* this.buttonType could be: edit - form - cancel - save */
+    } else {
+      this.setSrc('[SKIN]/../../org.openbravo.client.application/images/grid/gridButton-' + this.buttonType + '.png'); /* this.buttonType could be: edit - form - cancel - save */
+    }
   }
 });
 

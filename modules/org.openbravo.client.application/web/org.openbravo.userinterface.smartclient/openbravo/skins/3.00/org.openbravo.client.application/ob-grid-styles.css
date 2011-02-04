@@ -45,7 +45,29 @@
 .OBGridCellEditSelectedOver,
 .OBGridCellEditSelectedOverDark,
 .OBGridCellEditDisabled,
-.OBGridCellEditDisabledDark {
+.OBGridCellEditDisabledDark,
+
+.OBGridCellError,
+.OBGridCellErrorOver,
+.OBGridCellErrorDark,
+.OBGridCellErrorOverDark,
+.OBGridCellErrorSelected,
+.OBGridCellErrorSelectedDark,
+.OBGridCellErrorSelectedOver,
+.OBGridCellErrorSelectedOverDark,
+.OBGridCellErrorDisabled,
+.OBGridCellErrorDisabledDark,
+
+.OBGridCellErrorEdit,
+.OBGridCellErrorEditOver,
+.OBGridCellErrorEditDark,
+.OBGridCellErrorEditOverDark,
+.OBGridCellErrorEditSelected,
+.OBGridCellErrorEditSelectedDark,
+.OBGridCellErrorEditSelectedOver,
+.OBGridCellErrorEditSelectedOverDark,
+.OBGridCellErrorEditDisabled,
+.OBGridCellErrorEditDisabledDark {
   font-family: arial, sans-serif;
   vertical-align: middle;
   border-right: 1px solid #cdd7bb;
@@ -57,12 +79,16 @@
 .OBGridCellEditSelected,
 .OBGridCellEditSelectedDark,
 .OBGridCellEditSelectedOver,
-.OBGridCellEditSelectedOverDark {
+.OBGridCellEditSelectedOverDark,
+
+.OBGridCellErrorEditSelected,
+.OBGridCellErrorEditSelectedDark,
+.OBGridCellErrorEditSelectedOver,
+.OBGridCellErrorEditSelectedOverDark {
   padding: 0px 0px 0px 0px;
 }
 
-.OBGridCell,
-.OBGridCellDark {
+.OBGridCell {
   background-color: #ffffff;
 }
 
@@ -96,6 +122,28 @@
 .OBGridCellEditSelectedOver,
 .OBGridCellEditSelectedOverDark {
   background-color: #ffe1c0;
+}
+
+.OBGridCellError,
+.OBGridCellErrorDark,
+.OBGridCellErrorOver,
+.OBGridCellErrorOverDark,
+
+.OBGridCellErrorSelected,
+.OBGridCellErrorSelectedDark,
+.OBGridCellErrorSelectedOver,
+.OBGridCellErrorSelectedOverDark,
+
+.OBGridCellErrorEdit,
+.OBGridCellErrorEditDark,
+.OBGridCellErrorEditOver,
+.OBGridCellErrorEditOverDark,
+
+.OBGridCellErrorEditSelected,
+.OBGridCellErrorEditSelectedDark,
+.OBGridCellErrorEditSelectedOver,
+.OBGridCellErrorEditSelectedOverDark {
+  background-color: #ffd7d7;
 }
 
 .OBGridFilterCell {
