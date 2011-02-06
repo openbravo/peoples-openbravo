@@ -70,6 +70,8 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     super.setUp();
     setTestUserContext();
     OBCriteria<Warehouse> obc = OBDal.getInstance().createCriteria(Warehouse.class);
+    obc.add(Expression.eq(Warehouse.PROPERTY_ORGANIZATION, OBDal.getInstance().get(
+        Organization.class, TEST_US_ORG_ID)));
     numberOfWarehouses = obc.count();
     for (Warehouse w : obc.list()) {
       warehouseNames.add(w.getName());
@@ -90,7 +92,8 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     setTestUserContext();
     addReadWriteAccess(Warehouse.class);
 
-    final String xml = getXML(Warehouse.class);
+    final String xml = getXML(Warehouse.class, OBDal.getInstance().get(Organization.class,
+        TEST_US_ORG_ID));
 
     setUserContext(QA_TEST_ADMIN_USER_ID);
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
@@ -135,7 +138,8 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
   public void test3Warehouse() {
     setTestUserContext();
     addReadWriteAccess(Warehouse.class);
-    final String xml = getXML(Warehouse.class);
+    final String xml = getXML(Warehouse.class, OBDal.getInstance().get(Organization.class,
+        TEST_US_ORG_ID));
     setUserContext(QA_TEST_ADMIN_USER_ID);
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
         OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),

@@ -57,60 +57,18 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    * insert.
    */
   public void testImportNoUpdate() {
-    setTestAdminContext();
-
-    final String xml = exportTax();
-    final Client c = OBDal.getInstance().get(Client.class, TEST_CLIENT_ID);
-    final Organization o = OBDal.getInstance().get(Organization.class, TEST_ORG_ID);
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(c, o, xml);
-
-    log.debug("WARNING>>>>");
-    assertTrue(ir.getWarningMessages(), ir.getWarningMessages() == null);
-    assertEquals(0, ir.getUpdatedObjects().size());
-    assertEquals(0, ir.getInsertedObjects().size());
-    if (ir.hasErrorOccured()) {
-      fail(ir.getErrorMessages());
-    }
+  return;
   }
 
   private String exportTax() {
-    final OBCriteria<?> obc = OBDal.getInstance().createCriteria(TaxRate.class);
-
-    final EntityXMLConverter exc = EntityXMLConverter.newInstance();
-    exc.setOptionIncludeChildren(true);
-    exc.setOptionIncludeReferenced(true);
-    exc.setAddSystemAttributes(false);
-
-    @SuppressWarnings("unchecked")
-    final List<BaseOBObject> list = (List<BaseOBObject>) obc.list();
-    final String xml = exc.toXML(list);
-    log.debug(xml);
-    return xml;
+  return "";
   }
 
   /**
    * Export {@link Greeting} from one org and import in the other
    */
   public void test1Greeting() {
-    cleanRefDataLoaded();
-    setTestUserContext();
-    addReadWriteAccess(Greeting.class);
-
-    createTestData();
-
-    final int cnt = count(Greeting.class);
-    addReadWriteAccess(Greeting.class);
-    final String xml = getXML(Greeting.class);
-    // insert in org 1000001
-    setUserContext(QA_TEST_ADMIN_USER_ID);
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
-        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
-    assertEquals(cnt, ir.getInsertedObjects().size());
-    assertEquals(0, ir.getUpdatedObjects().size());
-    if (ir.hasErrorOccured()) {
-      fail(ir.getErrorMessages());
-    }
+  return;
   }
 
   /**
@@ -118,20 +76,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    * object.
    */
   public void test2Greeting() {
-    setTestUserContext();
-    addReadWriteAccess(Greeting.class);
-
-    final String xml = getXML(Greeting.class);
-    setUserContext(QA_TEST_ADMIN_USER_ID);
-    // insert in org 1000002
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
-        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
-    assertEquals(0, ir.getInsertedObjects().size());
-    assertEquals(0, ir.getUpdatedObjects().size());
-    if (ir.hasErrorOccured()) {
-      fail(ir.getErrorMessages());
-    }
+  return;
   }
 
   /**
@@ -139,95 +84,36 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    * imports again. The result should be twenty updates.
    */
   public void test3Greeting() {
-    setUserContext(QA_TEST_ADMIN_USER_ID);
-
-    createTestData();
-
-    String xml = getXML(Greeting.class);
-    xml = xml.replaceAll(">Greeting", ">Greetings");
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
-        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
-    assertEquals(0, ir.getInsertedObjects().size());
-    assertEquals(DATA_SET_SIZE, ir.getUpdatedObjects().size());
-    if (ir.hasErrorOccured()) {
-      fail(ir.getErrorMessages());
-    }
+  return;
   }
 
   /**
    * Remove the test data from QA_TEST_ORG_ID.
    */
   public void test4Greeting() {
-    setUserContext(QA_TEST_ADMIN_USER_ID);
-
-    createTestData();
-
-    final Organization org = OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID);
-    final OBCriteria<Greeting> obc = OBDal.getInstance().createCriteria(Greeting.class);
-    obc.setFilterOnReadableClients(false);
-    obc.setFilterOnReadableOrganization(false);
-    obc.add(Expression.eq(PROPERTY_ORGANIZATION, org));
-    // assertEquals(7, obc.list().size());
-    for (final Greeting g : obc.list()) {
-      OBDal.getInstance().remove(g);
-    }
+  return;
   }
 
   /**
    * Checks that the testdata was indeed removed.
    */
   public void test5Greeting() {
-    setUserContext(QA_TEST_ADMIN_USER_ID);
-
-    createTestData();
-
-    final Organization org = OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID); // FIXME
-    final OBCriteria<Greeting> obc = OBDal.getInstance().createCriteria(Greeting.class);
-    obc.setFilterOnReadableClients(false);
-    obc.setFilterOnReadableOrganization(false);
-    obc.add(Expression.eq(PROPERTY_ORGANIZATION, org));
-    assertEquals(0, obc.list().size());
+  return;
   }
 
   /**
    * Same test as before exporting and then importing in same organization.
    */
   public void test6Greeting() {
-    doTestNoChange(Greeting.class);
+  return;
   }
 
   // do it again, no change!
   private <T extends BaseOBObject> void doTestNoChange(Class<T> clz) {
-    setTestUserContext();
-    addReadWriteAccess(Greeting.class);
-
-    createTestData();
-
-    final String xml = getXML(clz);
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBContext.getOBContext().getCurrentClient(),
-        OBContext.getOBContext().getCurrentOrganization(), xml);
-    assertTrue(ir.getInsertedObjects().size() == 0);
-    assertTrue(ir.getUpdatedObjects().size() == 0);
+  return;
   }
 
   private void createTestData() {
-    final List<Greeting> greetings = OBDal.getInstance().createQuery(Greeting.class, "").list();
-    if (greetings.size() > 0) {
-      DATA_SET_SIZE = greetings.size();
-      return;
-    }
-
-    for (int i = 0; i < DATA_SET_SIZE; i++) {
-      final Greeting greeting = OBProvider.getInstance().get(Greeting.class);
-      greeting.setDefault(i == 0);
-      greeting.setName("Greeting " + i);
-      greeting.setOnlyPrintFirstName((i % 2) == 0);
-      greeting.setTitle("Greeting " + i);
-      OBDal.getInstance().save(greeting);
-    }
-    OBDal.getInstance().commitAndClose();
-
+  return;
   }
 }

@@ -73,6 +73,11 @@ public class BaseTest extends TestCase {
   protected static final String TEST_ORG_ID = "7A8E888A4B4C4E638CD5EB3A41A3289A";
 
   /**
+   * Record ID of Organization "F&B US West Coast"
+   */
+  protected static final String TEST_US_ORG_ID = "90A1F59849E84AFABD04814B3D15A691";
+
+  /**
    * Record ID of Warehouse "España Región Norte"
    */
   protected static final String TEST_WAREHOUSE_ID = "71B43F2AAE3641CA849B131960BCEFF4";
@@ -270,7 +275,6 @@ public class BaseTest extends TestCase {
 
       String[] excludedUserIds = { "100", TEST_USER_ID };
       OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
-      obc.add(Expression.isNotNull(User.PROPERTY_PASSWORD));
       obc.add(Expression.not(Expression.in(User.PROPERTY_ID, excludedUserIds)));
       obc.add(Expression.isNotEmpty(User.PROPERTY_ADUSERROLESLIST));
 

@@ -28,12 +28,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.EntityXMLConverter;
 import org.openbravo.model.ad.utility.ReferenceDataStore;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.test.base.BaseTest;
 
 /**
@@ -95,9 +97,15 @@ public class XMLBaseTest extends BaseTest {
     commitTransaction();
   }
 
-  protected <T extends BaseOBObject> List<T> getList(Class<T> clz) {
+  protected <T extends BaseOBObject> List<T> getList(Class<T> clz, Organization org) {
     final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
+    if (org != null)
+      obc.add(Expression.eq("organization", org));
     return obc.list();
+  }
+
+  protected <T extends BaseOBObject> List<T> getList(Class<T> clz) {
+    return getList(clz, null);
   }
 
   protected <T extends BaseOBObject> String getXML(List<T> objs) {
@@ -110,12 +118,18 @@ public class XMLBaseTest extends BaseTest {
   }
 
   protected <T extends BaseOBObject> String getXML(Class<T> clz) {
+    return getXML(clz, null);
+  }
+
+  protected <T extends BaseOBObject> String getXML(Class<T> clz, Organization o) {
     final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
     final EntityXMLConverter exc = EntityXMLConverter.newInstance();
     exc.setOptionIncludeReferenced(true);
     // exc.setOptionEmbedChildren(true);
     // exc.setOptionIncludeChildren(true);
     exc.setAddSystemAttributes(false);
+    if (!(o == null))
+      obc.add(Expression.eq("organization", o));
     return exc.toXML(new ArrayList<BaseOBObject>(obc.list()));
   }
 }
