@@ -80,7 +80,7 @@ isc.OBViewDataSource.addProperties( {
     }
     
     // doing row editing
-    if (this.view.viewGrid.getEditRow()) {
+    if (this.view.viewGrid.getEditRow() || this.view.viewGrid.getEditRow() === 0) {
       if (!requestProperties.clientContext) {
         requestProperties.clientContext = {};
       }

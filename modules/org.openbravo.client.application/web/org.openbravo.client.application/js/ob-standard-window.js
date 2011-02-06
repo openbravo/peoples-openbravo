@@ -24,25 +24,31 @@ isc.OBStandardWindow.addClassProperties({
 
 // = OBStandardWindow =
 //
-// Represents the root container for an Openbravo window consisting of a 
-// hierarchy of tabs. Each tab is represented with an instance of the 
+// Represents the root container for an Openbravo window consisting of a
+// hierarchy of tabs. Each tab is represented with an instance of the
 // OBStandardView.
 //
-// The standard window can be opened as a result of a click on a link 
-// in another tab. In this case the window should open all tabs from the 
+// The standard window can be opened as a result of a click on a link
+// in another tab. In this case the window should open all tabs from the
 // root to the target record, i.e. the target record can be in a grand-child
 // tab. The flow goes through the following steps:
-// 1- compute which tabs should be opened and on each tab which record (the tabInfo list),
-//    this is done in the draw method with a call to the org.openbravo.client.application.window.ComputeSelectedRecordActionHandler 
-//    actionHandler
-// 2- this actionhandler returns a list of tab and record id's which should be opened in sequence.
+// 1- compute which tabs should be opened and on each tab which record (the
+// tabInfo list),
+// this is done in the draw method with a call to the
+// org.openbravo.client.application.window.ComputeSelectedRecordActionHandler
+// actionHandler
+// 2- this actionhandler returns a list of tab and record id's which should be
+// opened in sequence.
 // 3- the first tab is opened by calling view.openDirectTab()
-// 4- this loads the data in the grid, in the viewGrid.dataArrived method the 
-//    method delayedHandleTargetRecord is called to open a child tab or the direct requested record.
-// 5- opening a child tab is done by calling openDirectChildTab on the view, which again calls openDirectTab
-//    for the tab in the tabInfo list (computed in step 1)
+// 4- this loads the data in the grid, in the viewGrid.dataArrived method the
+// method delayedHandleTargetRecord is called to open a child tab or the direct
+// requested record.
+// 5- opening a child tab is done by calling openDirectChildTab on the view,
+// which again calls openDirectTab
+// for the tab in the tabInfo list (computed in step 1)
 //
-// Note that some parts of the flow are done asynchronously to give the system time to
+// Note that some parts of the flow are done asynchronously to give the system
+// time to
 // draw all the components.
 // 
 isc.OBStandardWindow.addProperties({
@@ -54,6 +60,10 @@ isc.OBStandardWindow.addProperties({
   activeView: null,
   
   views: [],
+  
+  // is set when a form or grid editing results in dirty data
+  // in the window
+  dirtyEditObject: null,
   
   initWidget: function(){
     var standardWindow = this;
@@ -117,11 +127,106 @@ isc.OBStandardWindow.addProperties({
     }
   },
   
-  isAutoSave: function(){
-    if (this.getClass().autoSave) {
-      return true;
+  isAutoSaveEnabled: function(){
+    return this.getClass().autoSave;
+  },
+  
+  setDirtyEditObject: function (editObject) {
+    this.dirtyEditObject = editObject;
+    if (!editObject) {
+      this.cleanUpAutoSaveProperties();
     }
-    return false;
+  },
+  
+  isDirty: function() {
+    return this.dirtyEditObject;
+  },
+  
+  getDirtyEditObject: function() {
+    return this.dirtyEditObject;
+  },
+
+  autoSave: function() {
+    this.doActionAfterAutoSave(null, true);
+  },
+  
+  doActionAfterAutoSave: function(action, forceDialogOnFailure) {
+    if (!this.isDirty()) {
+      
+      // nothing to do, execute immediately
+      OB.Utilities.callAction(action);
+      return;
+    }
+
+    if (action) {
+      this.autoSaveAction = action;
+    }
+    
+    // saving stuff already, go away
+    if (this.isAutoSaving) {
+      return;
+    }
+    
+    if (!this.isAutoSaveEnabled()) {
+      this.autoSaveConfirmAction();
+      return;
+    }
+
+    this.isAutoSaving = true;
+    this.forceDialogOnFailure = forceDialogOnFailure;
+    this.getDirtyEditObject().autoSave();
+  },
+  
+  callAutoSaveAction: function() {
+    var action = this.autoSaveAction;
+    this.cleanUpAutoSaveProperties();
+    if (!action) {
+      return;
+    }
+    OB.Utilities.callAction(action);
+  },
+
+  cleanUpAutoSaveProperties: function() {
+    delete this.dirtyEditObject;
+    delete this.isAutoSaving;
+    delete this.autoSaveAction;
+    delete this.forceDialogOnFailure;
+  },
+  
+  autoSaveDone: function(view, success) {
+    if (!this.isAutoSaving) {
+      this.cleanUpAutoSaveProperties();
+      return;
+    }
+    
+    if (success) {
+      this.callAutoSaveAction();
+    } else if (!view.isVisible() || this.forceDialogOnFailure) {
+      isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [view.tabTitle]));
+    } else if (!this.isAutoSaveEnabled()) {
+      this.autoSaveConfirmAction();
+    }
+    this.cleanUpAutoSaveProperties();
+  },
+  
+  autoSaveConfirmAction: function(){
+    var action = this.autoSaveAction;
+    this.autoSaveAction = null;
+    if (!action) {
+      return;
+    }
+
+    var callback = function(ok){
+      if (ok) {
+        this.getDirtyEditObject().resetForm();
+        OB.Utilities.callAction(action);
+      } else {
+        // and focus to the first error field
+        this.getDirtyEditObject().setFocusInErrorField(true);
+        this.getDirtyEditObject().focus();
+      }
+    };
+    isc.ask(OB.I18N.getLabel('OBUIAPP_AutoSaveNotPossibleExecuteAction'), callback);
   },
   
   addView: function(view){
@@ -135,11 +240,7 @@ isc.OBStandardWindow.addProperties({
   
   // is called from the main app tabset
   tabDeselected: function(tabNum, tabPane, ID, tab, newTab){
-    // note: explicitly checking for grid visibility as the form
-    // may already be hidden
-    if (this.activeView && this.activeView.isShowingForm) {
-      this.activeView.viewForm.autoSave(null, true);
-    }
+    this.autoSave();
     this.wasDeselected = true;
   },
   
@@ -149,7 +250,7 @@ isc.OBStandardWindow.addProperties({
       method: tabSet.doCloseClick,
       parameters: [tab]
     };
-    this.view.viewForm.autoSave(actionObject);
+    this.doActionAfterAutoSave(actionObject, true);
   },
   
   setActiveView: function(view){
@@ -239,7 +340,7 @@ isc.OBStandardWindow.addProperties({
     this.view.doHandleDoubleClick();
   },
   
-  //+++++++++++++ Methods for the main tab handling +++++++++++++++++++++
+  // +++++++++++++ Methods for the main tab handling +++++++++++++++++++++
   
   getHelpView: function(){
     // tabTitle is set in the viewManager

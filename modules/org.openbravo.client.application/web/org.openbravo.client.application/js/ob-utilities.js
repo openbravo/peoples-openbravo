@@ -21,6 +21,24 @@
 // are related to opening views, opening popups, displaying yes/no, etc. 
 OB.Utilities = {};
 
+// ** {{{OB.Utilities.callAction}}} **
+// Calls the action defined by the action object, if the action object has a callback
+// property, it is assumed to be a function and it is called. Otherwise the following
+// properties are assumed to be in the action object: method (a function), target (the 
+// object to call the function on) and parameters (an array passed to the function).
+// If action is null/undefined then nothing is done and undefined is returned.
+// When the action is called the result of the action is returned.
+OB.Utilities.callAction = function(action){
+  if (!action) {
+    return;
+  }
+  if (action.callback) {
+    return action.callback();
+  } else {
+    return action.method.apply(action.target, action.parameters);
+  }
+};
+
 // ** {{{OB.Utilities.useClassicMode}}} **
 // Returns true if the user wants to work in classic mode, checks the url parameter
 // as well as a property value.

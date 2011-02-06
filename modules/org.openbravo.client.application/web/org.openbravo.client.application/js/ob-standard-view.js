@@ -242,6 +242,7 @@ isc.OBStandardView.addProperties({
     
     if (this.viewForm) {
       this.viewForm.setDataSource(this.dataSource, this.viewForm.fields);
+      this.viewForm.isViewForm = true;
     }
     
     if (this.isRootView) {
@@ -557,8 +558,8 @@ isc.OBStandardView.addProperties({
       if (this.isShowingForm) {
         this.lastFocusedItem = this.viewForm.getFocusItem();
         this.viewForm.setFocusItem(null);
-        this.viewForm.autoSave(null, true);
       }
+      this.standardWindow.autoSave();
     }
     this.setTabButtonState(state);
   },
@@ -1100,7 +1101,18 @@ isc.OBStandardView.addProperties({
   // - refresh the parent/grand-parent in the same way without changing the selection
   // - recursive to children: refresh the children, put the children in grid mode and refresh
   
-  refresh: function(refreshCallback){
+  refresh: function(refreshCallback, autoSaveDone){
+    // first save what we have edited
+    if (!autoSaveDone) {
+      var actionObject = {
+          target: this,
+          method: this.refresh,
+          parameters: [refreshCallback, true]
+        };
+      this.standardWindow.doActionAfterAutoSave(actionObject, true);
+      return;
+    }
+    
     if (!this.isShowingForm) {
       this.messageBar.hide();
       this.viewGrid.filterData(this.viewGrid.getCriteria(), refreshCallback);
@@ -1131,7 +1143,18 @@ isc.OBStandardView.addProperties({
     }
   },
   
-  deleteRow: function(){
+  deleteRow: function(autoSaveDone){
+    // first save what we have edited
+    if (!autoSaveDone) {
+      var actionObject = {
+          target: this,
+          method: this.deleteRow,
+          parameters: [true]
+        };
+      this.standardWindow.doActionAfterAutoSave(actionObject, true);
+      return;
+    }
+    
     var msg, view = this, deleteCount = this.viewGrid.getSelection().length;
     if (deleteCount === 1) {
       msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationSingle');
@@ -1193,7 +1216,7 @@ isc.OBStandardView.addProperties({
         method: this.editNewRecordGrid,
         parameters: null
       };
-    this.viewForm.autoSave(actionObject);
+    this.standardWindow.doActionAfterAutoSave(actionObject, true);
   },
   
   newDocument: function(){
@@ -1202,12 +1225,13 @@ isc.OBStandardView.addProperties({
       method: this.editRecord,
       parameters: null
     };
-    this.viewForm.autoSave(actionObject);
+    this.standardWindow.doActionAfterAutoSave(actionObject, true);
   },
   
   undo: function(){
     var view = this, callback, form;
     if (this.isEditingGrid) {
+      // the editing grid will take care of the confirmation
       view.viewGrid.cancelEditing();
       return;
     } else {

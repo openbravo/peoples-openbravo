@@ -233,7 +233,7 @@ isc.OBGrid.addProperties({
     if (!field) {
       return false;
     }
-    return !field.name.startsWith('_');
+    return !field.name.startsWith('_') && field.canFilter;
   },
   
   // = exportData =

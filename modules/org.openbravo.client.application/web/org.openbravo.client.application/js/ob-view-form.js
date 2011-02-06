@@ -61,6 +61,10 @@ OB.ViewFormProperties = {
   isNew: false,
   hasChanged: false,
   
+  // is false for forms used in grid editing
+  // true for the main form
+  isViewForm: false,
+  
   // is set in the OBLinkedItemSectionItem.initWidget
   linkedItemSection: null,
 
@@ -69,6 +73,14 @@ OB.ViewFormProperties = {
     this.view.updateTabTitle();
     if (value && !this.isNew) {
       this.view.statusBar.setStateLabel('OBUIAPP_Modified', this.view.statusBar.newIcon);
+    }
+    
+    if (value) {
+      // signal that autosave is needed after this
+      this.view.standardWindow.setDirtyEditObject(this);
+    } else {
+      // signal that no autosave is needed after this
+      this.view.standardWindow.setDirtyEditObject(null);
     }
   },
   
@@ -231,7 +243,7 @@ OB.ViewFormProperties = {
   
   processFICReturn: function(response, data, request){
     // TODO: an error occured, handles this much better...
-    if (!data) {
+    if (!data || !data.columnValues) {
       //this.setDisabled(false);
       //this.allItemsDisabled = false;
       //this.redraw();
@@ -455,57 +467,17 @@ OB.ViewFormProperties = {
     this.view.messageBar.hide();
     this.resetValues();
     this.setHasChanged(false);
+    this.view.statusBar.setStateLabel(null);
     this.view.toolBar.updateButtonState();
   },
   
-  // action defines the action to call when the save succeeds
-  // forceDialogOnFailure: if true then even if the form is visible
-  // still a dialog is shown, this becomes sometimes autosave is done
-  // before actually the form gets hidden
-  autoSave: function(action, forceDialogOnFailure){
-  
-    this.setAutoSaveFormInActiveView(this);
-    if (!this.view.standardWindow.isAutoSave() && this.hasChanged && action) {
-      this.autoSaveConfirmAction(action);
-    } else if (this.view.standardWindow.isAutoSave() && this.hasChanged && !this.inAutoSave) {
-      this.inAutoSave = true;
-      this.saveRow(action, true, forceDialogOnFailure);
+  autoSave: function(){
+    if (this.isViewForm) {
+      this.saveRow();
     } else {
-      this.callAutoSaveAction(action);
+      // grid editing, forward to the grid
+      this.view.viewGrid.autoSave();
     }
-    return true;
-  },
-  
-  setAutoSaveFormInActiveView: function(form) {
-    // the view of the form can be another than
-    // the current active view
-    if (this.view.standardWindow.activeView) {
-      this.view.standardWindow.activeView.autoSaveForm = form;
-    }
-  },
-  
-  setActionAfterAutoSave: function(action) {
-    if (!this.autoSaveAction) {
-      this.autoSaveAction = action;
-    }
-  },
-  
-  autoSaveConfirmAction: function(action){
-    action = this.autoSaveAction || action;
-    this.autoSaveAction = null;
-
-    var form = this;
-    var callback = function(ok){
-      if (ok) {
-        form.resetForm();
-        form.callAutoSaveAction(action);
-      } else {
-        // and focus to the first error field
-        form.setFocusInErrorField(true);
-        form.focus();
-      }
-    };
-    isc.ask(OB.I18N.getLabel('OBUIAPP_AutoSaveNotPossibleExecuteAction'), callback);
   },
   
   // always let the saveRow callback handle the error
@@ -516,7 +488,7 @@ OB.ViewFormProperties = {
   // Note: saveRow is not called in case of grid editing
   // there the save call is done through the grid saveEditedValues
   // function
-  saveRow: function(action, autoSave, forceDialogOnFailure){
+  saveRow: function(){
     var i, length, flds, form = this;
     
     form.isSaving = true;
@@ -525,6 +497,9 @@ OB.ViewFormProperties = {
     // that we stay that way
     this.setValue("_writable", true);
 
+    // remove the error message if any
+    this.view.messageBar.hide();
+
     // disable some buttons
     this.view.toolBar.updateButtonState();
     
@@ -532,9 +507,6 @@ OB.ViewFormProperties = {
       var index1, index2, errorCode, view = form.view;
       var status = resp.status;
       if (status === isc.RPCResponse.STATUS_SUCCESS) {
-        // needs to be done before the selectRecordById
-        this.setAutoSaveFormInActiveView(null);
-
         // do remember values here to prevent infinite autosave loop
         form.rememberValues();
         
@@ -548,30 +520,17 @@ OB.ViewFormProperties = {
         this.setNewState(false);
         this.setHasChanged(false);
 
-        // success invoke the action:
-        form.callAutoSaveAction(action);
+        // success invoke the action, if any there
+        view.standardWindow.autoSaveDone(view, true);
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
-        form.handleFieldErrors(resp.errors, autoSave);
+        form.handleFieldErrors(resp.errors);
+        view.standardWindow.autoSaveDone(view, false);
       } else {
         view.setErrorMessageFromResponse(resp, data, req);
+        view.standardWindow.autoSaveDone(view, false);
       }
 
       form.isSaving = false;
-      
-      // an error occured, show a popup
-      if (status !== isc.RPCResponse.STATUS_SUCCESS) {
-        // if there is an action, ask for confirmation
-        action = form.autoSaveAction || action;
-        if (action && autoSave) {
-          this.autoSaveConfirmAction(action);
-        } else if (!view.isVisible() || forceDialogOnFailure) {
-          isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [view.tabTitle]));
-       }
-      }
-      // only show the warning once, allow actions to take place
-      // from now on
-      this.setAutoSaveFormInActiveView(null);
-      form.inAutoSave = false;
       view.toolBar.updateButtonState();
       return false;
     };
@@ -579,24 +538,13 @@ OB.ViewFormProperties = {
     // note validate will also set the formfocus, this is 
     // done by calling showErrors without the third parameter to true
     if (!this.validate()) {
-      this.handleFieldErrors(null, autoSave);
-      
-      action = form.autoSaveAction || action;
-
-      if (!form.view.isVisible() || forceDialogOnFailure) {
-        isc.warn(OB.I18N.getLabel('OBUIAPP_AutoSaveError', [this.view.tabTitle]));
-      } else if (action) {
-        this.autoSaveConfirmAction(action);
-      }
-      form.inAutoSave = false;
+      this.handleFieldErrors(null);
+      form.view.standardWindow.autoSaveDone(form.view, false);
       form.isSaving = false;
       form.view.toolBar.updateButtonState();
-      this.setAutoSaveFormInActiveView(null);
       return;
-    } else {
-      // remove the error message if any
-      this.view.messageBar.hide();
     }
+    
     // last parameter true prevents additional validation
     this.saveData(callback, {
       willHandleError: true,
@@ -607,13 +555,13 @@ OB.ViewFormProperties = {
   // overridden to prevent focus setting when autoSaving
   
   showErrors: function(errors, hiddenErrors, suppressAutoFocus){
-    if (this.inAutoSave) {
+    if (this.view.standardWindow.isAutoSaving) {
       return this.Super('showErrors', [errors, hiddenErrors, true]);
     }
     return this.Super('showErrors', arguments);
   },
   
-  handleFieldErrors: function(errors, autoSave){
+  handleFieldErrors: function(errors){
     if (errors) {
       this.setErrors(errors, true);
     }
@@ -630,14 +578,13 @@ OB.ViewFormProperties = {
     this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, msg);
     
     // and focus to the first error field
-    this.setFocusInErrorField(autoSave || this.inAutoSave);
-    this.inAutoSave = false;
+    this.setFocusInErrorField();
   },
   
-  setFocusInErrorField: function(autoSave){
+  setFocusInErrorField: function(){
     var errorFld = this.getFirstErrorItem();
     if (errorFld) {
-      if (autoSave) {
+      if (this.view.standardWindow.isAutoSaving) {
         // otherwise the focus results in infinite cycles
         // with views getting activated all the time
         this.setFocusItem(errorFld);
@@ -711,24 +658,6 @@ OB.ViewFormProperties = {
   visibilityChanged: function(visible){
     if (visible && (this.view.isShowingForm || this.view.isEditingGrid)) {
       this.doChangeFICCall();
-    }
-  },
-  
-  callAutoSaveAction: function(action) {
-    // get rid of this value
-    this.setAutoSaveFormInActiveView(null);
-    
-    // note pick up the form.autoSaveAction late to give 
-    // time to set it
-    action = this.autoSaveAction || action;
-    this.autoSaveAction = null;
-    if (!action) {
-      return;
-    }
-    if (action.callback) {
-      action.callback();
-    } else {
-      action.method.apply(action.target, action.parameters);
     }
   },
 

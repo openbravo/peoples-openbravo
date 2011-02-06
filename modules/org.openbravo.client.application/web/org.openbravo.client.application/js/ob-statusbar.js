@@ -45,14 +45,14 @@ isc.OBStatusBarIconButton.addProperties({
   // to allow setting the active view when clicking in the statusbar 
   canFocus: true,
   
-  // always go through the autosave of the form
+  // always go through the autosave of the window
   action: function() {
     var actionObject = {
       target: this,
       method: this.doAction,
       parameters: []
     };
-    this.view.viewForm.autoSave(actionObject);
+    this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
   },
   
   doAction: function(){

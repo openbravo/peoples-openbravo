@@ -33,19 +33,12 @@ isc.OBToolbarActionButton.addProperties( {
   runProcess : function() {
     var theView = this.view;
     
-    //TODO: Currently autosave is only supported in form view, once it is supported
-    //in grid, make use of it here.
-    if (this.autosave && theView.viewForm.hasChanged) {
-      var actionObject = {
+    var actionObject = {
         target: this,
         method: this.doAction,
-        parameters: []
+        parameters: null
       };
-      theView.viewForm.autoSave(actionObject);
-    } else {
-      // If no changes, execute action directly
-      this.doAction();
-    }
+    theView.standardWindow.doActionAfterAutoSave(actionObject);
   },
   
   doAction: function(){
