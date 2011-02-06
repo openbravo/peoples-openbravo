@@ -1361,7 +1361,12 @@ isc.OBStandardView.addProperties({
     // 1) showing grid with one record selected
     // 2) showing form with aux inputs
     if (this.isEditingGrid) {
-      record = isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewGrid.getEditValues(this.viewGrid.getEditRow()));
+      rowNum = this.viewGrid.getEditRow();
+      if (rowNum || rowNum === 0) {
+        record = isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewGrid.getEditValues(rowNum));
+      } else {
+        record = isc.addProperties({}, this.viewGrid.getSelectedRecord());
+      }
       component = this.viewGrid.getEditForm();
       form = component;
     } else if (this.isShowingForm) {
@@ -1371,7 +1376,9 @@ isc.OBStandardView.addProperties({
     } else {
       record = this.viewGrid.getSelectedRecord();
       rowNum = this.viewGrid.getRecordIndex(record);
-      record = isc.addProperties({}, record, this.viewGrid.getEditValues(rowNum));    
+      if (rowNum || rowNum === 0) {
+        record = isc.addProperties({}, record, this.viewGrid.getEditValues(rowNum));    
+      }
       component = this.viewGrid;
     }
     

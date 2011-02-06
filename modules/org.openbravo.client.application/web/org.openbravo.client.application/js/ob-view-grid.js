@@ -1040,6 +1040,17 @@ isc.OBViewGrid.addProperties({
     this.endEditing();
   },
   
+  // is called when clicking a header
+  hideInlineEditor: function() {
+    var rowNum = this.getEditRow(), record = this.getRecord(rowNum);
+    if (record && record.editColumnLayout) {
+      record.editColumnLayout.showEditOpen();
+    } else if (this.getEditForm().getValues().editColumnLayout) {
+      this.getEditForm().getValues().editColumnLayout.showEditOpen();
+    }
+    return this.Super('hideInlineEditor', arguments);
+  },
+  
   getEditDisplayValue: function(rowNum, colNum, record){
     // somehow this extra call is needed to not restore
     // the old value when the new value is null
@@ -1073,7 +1084,7 @@ isc.OBViewGrid.addProperties({
   },
   
   rowEditorExit: function(editCompletionEvent, record, newValues, rowNum){
-    isc.Log.logDebug('hideInlineEditor ' + this.getEditRow(), 'OB');
+    isc.Log.logDebug('rowEditorExit ' + this.getEditRow(), 'OB');
     if (this.baseStyleView) {
       this.baseStyle = this.baseStyleView;
     }
@@ -1188,7 +1199,7 @@ isc.OBViewGrid.addProperties({
     if (!isc.isA.Number(rowNum)) {
       // an edit id
       rowNum = this.getEditSessionRowNum(rowNum);
-      return this.getRecord(rowNum);
+      return this.Super('getRecord', [rowNum]);
     }
     return this.Super('getRecord', arguments);
   },

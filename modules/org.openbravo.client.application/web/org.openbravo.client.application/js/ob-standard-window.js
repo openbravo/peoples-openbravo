@@ -155,6 +155,9 @@ isc.OBStandardWindow.addProperties({
       
       // nothing to do, execute immediately
       OB.Utilities.callAction(action);
+
+      // clean up anyway
+      this.cleanUpAutoSaveProperties();
       return;
     }
 
@@ -210,20 +213,23 @@ isc.OBStandardWindow.addProperties({
   },
   
   autoSaveConfirmAction: function(){
-    var action = this.autoSaveAction;
+    var action = this.autoSaveAction, me = this;
     this.autoSaveAction = null;
     if (!action) {
       return;
     }
 
+    // clean up everything
+    me.cleanUpAutoSaveProperties();
+
     var callback = function(ok){
       if (ok) {
-        this.getDirtyEditObject().resetForm();
+        me.getDirtyEditObject().resetForm();
         OB.Utilities.callAction(action);
       } else {
         // and focus to the first error field
-        this.getDirtyEditObject().setFocusInErrorField(true);
-        this.getDirtyEditObject().focus();
+        me.getDirtyEditObject().setFocusInErrorField(true);
+        me.getDirtyEditObject().focus();
       }
     };
     isc.ask(OB.I18N.getLabel('OBUIAPP_AutoSaveNotPossibleExecuteAction'), callback);

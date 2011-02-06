@@ -33,10 +33,10 @@ OB.Utilities.callAction = function(action){
     return;
   }
   if (action.callback) {
-    return action.callback();
-  } else {
-    return action.method.apply(action.target, action.parameters);
-  }
+    action.callback();
+  } else {    
+    action.method.apply(action.target, action.parameters);
+  }  
 };
 
 // ** {{{OB.Utilities.useClassicMode}}} **
