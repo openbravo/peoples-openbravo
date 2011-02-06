@@ -87,7 +87,8 @@ public class ApplicationUtils {
     if (tab.getColumn() != null) {
       final String columnId = (String) DalUtil.getId(tab.getColumn());
       for (Property property : thisEntity.getProperties()) {
-        if (property.getColumnId() != null && property.getColumnId().equals(columnId)) {
+        if (!property.isId() && property.getColumnId() != null
+            && property.getColumnId().equals(columnId)) {
           parentProperty = property.getName();
         }
       }
@@ -96,7 +97,7 @@ public class ApplicationUtils {
         if (property.isPrimitive() || property.isOneToMany()) {
           continue;
         }
-        if (property.getTargetEntity() == parentEntity) {
+        if (!property.isId() && property.getTargetEntity() == parentEntity) {
           parentProperty = property.getName();
           break;
         }

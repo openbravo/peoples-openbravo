@@ -87,6 +87,11 @@ OB.ViewFormProperties = {
   editRecord: function(record, preventFocus){
     var ret = this.Super('editRecord', arguments);
     this.doEditRecordActions(preventFocus, false);
+    
+    if (this.view.parentProperty) {
+      this.setValue(this.view.parentProperty, record[this.view.parentProperty]);
+    }
+    
     return ret;
   },
   
@@ -230,7 +235,7 @@ OB.ViewFormProperties = {
       ROW_ID: this.getValue(OB.Constants.ID)
     };
     if (parentId && isNew) {
-      parentColumn = this.getField(this.view.parentProperty).inpColumnName;
+      parentColumn = this.view.getPropertyDefinition(this.view.parentProperty).inpColumn;
       requestParams[parentColumn] = parentId;
     }
     
@@ -405,7 +410,7 @@ OB.ViewFormProperties = {
   doChangeFICCall: function(item){
     var parentId = null, me = this, requestParams, allProperties = this.view.getContextInfo(false, true, false, false);
     if (this.view.parentProperty) {
-      parentId = this.getValue(this.view.parentProperty);
+      parentId = this.view.getParentId();
     }
     
     requestParams = {

@@ -1440,6 +1440,16 @@ isc.OBStandardView.addProperties({
     return contextInfo;
   },
   
+  getPropertyDefinition: function(property) {
+    var properties = this.propertyToColumns;
+    for (var i = 0; i < properties.length; i++) {
+      if (property === properties[i].property) {
+        return properties[i];
+      }
+    }
+    return null;
+  },
+  
   setContextInfo: function(sessionProperties, callbackFunction){
     if (!sessionProperties) {
       sessionProperties = this.getContextInfo(true, true);
