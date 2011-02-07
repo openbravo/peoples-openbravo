@@ -76,6 +76,11 @@ isc.OBLinkedItemSectionItem.addProperties({
   },
   
   expandSection: function(){
+    // if this is not there then when clicking inside the 
+    // section item will visualize it
+    if (!this.isVisible()) {
+      return;
+    }
     var ret = this.Super('expandSection', arguments);
     this.getLinkedItemPart().setExpanded(true);
     return ret;
@@ -83,7 +88,16 @@ isc.OBLinkedItemSectionItem.addProperties({
   
   hide: function(){
     this.collapseSection();
+    this.prompt = '';
     return this.Super('hide', arguments);
+  },
+  
+  visibilityChanged: function(state) {
+    if (state) {
+      this.prompt = OB.I18N.getLabel('OBUIAPP_LinkedItemsPrompt');      
+    } else {
+      this.prompt = '';
+    }
   }
 });
 
