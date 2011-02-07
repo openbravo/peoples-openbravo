@@ -20,7 +20,7 @@
 <script language="JavaScript" type="text/javascript">
 function closeThis(){
   var buttonRefresh;
-  if (opener && opener.parent && opener.parent.appFrame.document.getElementById('buttonRefresh')) {
+  if (opener && opener.parent && opener.parent.appFrame && opener.parent.appFrame.document.getElementById('buttonRefresh')) {
     buttonRefresh = opener.parent.appFrame.document.getElementById('buttonRefresh');
   } else if (getFrame('LayoutMDI') && getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.getClassName() === 'OBClassicWindow') {
     buttonRefresh = getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.getAppFrameWindow().document.getElementById('buttonRefresh');
