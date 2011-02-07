@@ -19,11 +19,35 @@
 
 package org.openbravo.base.model;
 
+import org.openbravo.base.exception.OBException;
+
 /**
  * Defines the available accesslevels used for an entity.
  * 
  * @author Martin Taal
  */
 public enum AccessLevel {
-  SYSTEM, CLIENT, ORGANIZATION, CLIENT_ORGANIZATION, SYSTEM_CLIENT, ALL
+  SYSTEM, CLIENT, ORGANIZATION, CLIENT_ORGANIZATION, SYSTEM_CLIENT, ALL;
+
+  /**
+   * Returns raw value for the access level as its stored in the database
+   */
+  public int getDbValue() {
+    switch (this) {
+    case SYSTEM:
+      return 4;
+    case ORGANIZATION:
+      return 1;
+    case CLIENT_ORGANIZATION:
+      return 3;
+    case SYSTEM_CLIENT:
+      return 6;
+    case ALL:
+      return 7;
+      // client is not implemented..
+    case CLIENT:
+    default:
+      throw new OBException("getDbValue called with illegal value: " + name());
+    }
+  }
 }

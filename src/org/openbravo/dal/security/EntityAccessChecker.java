@@ -32,6 +32,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBNotSingleton;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.model.ad.access.TableAccess;
@@ -106,27 +107,25 @@ public class EntityAccessChecker implements OBNotSingleton {
       final String userLevel = obContext.getUserLevel();
 
       // Don't use dal because otherwise we can end up in infinite loops
-      final String qryStr = "select wa from " + WindowAccess.class.getName()
-          + " wa where role.id='" + getRoleId() + "'";
+      String qryStr = "select wa from " + WindowAccess.class.getName() + " wa"
+          + " join fetch wa.window left outer join fetch wa.window.aDTabList tabs"
+          + " where wa.role.id= :roleId";
       final Query qry = SessionHandler.getInstance().createQuery(qryStr);
+      qry.setParameter("roleId", getRoleId());
       @SuppressWarnings("unchecked")
       final List<WindowAccess> was = qry.list();
       for (final WindowAccess wa : was) {
         final Window w = wa.getWindow();
         final boolean writeAccess = wa.isEditableField();
-        // get the ttabs
-        final String tfQryStr = "select t from " + Tab.class.getName() + " t where window.id='"
-            + w.getId() + "'";
-        @SuppressWarnings("unchecked")
-        final List<Tab> ts = SessionHandler.getInstance().createQuery(tfQryStr).list();
+        List<Tab> ts = w.getADTabList();
         for (final Tab t : ts) {
-          final String tableName = t.getTable().getDBTableName();
-          final Entity e = mp.getEntityByTableName(tableName);
+          String tableId = (String) DalUtil.getId(t.getTable());
+          final Entity e = mp.getEntityByTableId(tableId);
           if (e == null) { // happens for AD_Client_Info and views
             continue;
           }
 
-          final String accessLevel = t.getTable().getDataAccessLevel();
+          final int accessLevel = e.getAccessLevel().getDbValue();
           if (!hasCorrectAccessLevel(userLevel, accessLevel)) {
             continue;
           }
@@ -194,16 +193,16 @@ public class EntityAccessChecker implements OBNotSingleton {
    *          the data access level defined in the table
    * @return true if access is allowed, false otherwise
    */
-  private boolean hasCorrectAccessLevel(String userLevel, String accessLevel) {
+  private boolean hasCorrectAccessLevel(String userLevel, int accessLevel) {
     // copied from HttpSecureAppServlet.
-    if (accessLevel.equals("4") && userLevel.indexOf("S") == -1) {
+    if (accessLevel == 4 && userLevel.indexOf("S") == -1) {
       return false;
-    } else if (accessLevel.equals("1") && userLevel.indexOf("O") == -1) {
+    } else if (accessLevel == 1 && userLevel.indexOf("O") == -1) {
       return false;
-    } else if (accessLevel.equals("3")
+    } else if (accessLevel == 3
         && (!(userLevel.indexOf("C") != -1 || userLevel.indexOf("O") != -1))) {
       return false;
-    } else if (accessLevel.equals("6")
+    } else if (accessLevel == 6
         && (!(userLevel.indexOf("S") != -1 || userLevel.indexOf("C") != -1))) {
       return false;
     }
