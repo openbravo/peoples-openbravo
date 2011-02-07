@@ -18,6 +18,11 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.model.ad.ui.Field;
+
 /**
  * Implementation of the boolean ui definition.
  * 
@@ -62,5 +67,22 @@ public class BooleanUIDefinition extends UIDefinition {
       }
     }
     return "N";
+  }
+
+  @Override
+  public String getFieldProperties(Field field, boolean getValueFromSession) {
+    String result = super.getFieldProperties(field, getValueFromSession);
+    if (!getValueFromSession && field.getColumn().getDefaultValue() == null) {
+      JSONObject jsnobject;
+      try {
+        jsnobject = new JSONObject(result);
+        jsnobject.put("value", createFromClassicString("N"));
+        jsnobject.put("classicValue", "N");
+        return jsnobject.toString();
+      } catch (JSONException e) {
+        throw new OBException("Exception when parsing boolean value", e);
+      }
+    }
+    return result;
   }
 }

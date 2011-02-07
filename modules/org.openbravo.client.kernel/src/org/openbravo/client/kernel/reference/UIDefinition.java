@@ -191,7 +191,7 @@ public abstract class UIDefinition {
         }
       }
     }
-    if (columnValue == null) {
+    if (columnValue == null || columnValue.equals("null")) {
       columnValue = "";
     }
     JSONObject jsnobject = new JSONObject();
