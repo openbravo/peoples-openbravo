@@ -87,7 +87,13 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'eliminate',
     prompt: OB.I18N.getLabel('OBUIAPP_DeleteRow'),
     updateState: function() {
-      var view = this.view, form = view.viewForm, grid = view.viewGrid;
+      var view = this.view, form = view.viewForm, grid = view.viewGrid, selectedRecords=grid.getSelectedRecords();
+      for (var i = 0; i < selectedRecords.length; i++){
+        if(!grid.isWritable(selectedRecords[i])){
+          this.setDisabled(true);
+          return;
+        }
+      }
       if (view.isShowingForm) {
         this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || 
             !view.hasValidState() || form.isNew);
