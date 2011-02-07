@@ -673,7 +673,7 @@ OB.ViewFormProperties = {
       
       var imgHTML = isc.Canvas.imgHTML(searchIconObj);
       
-      return "<span class='OBFormFieldLinkButton'>" + titleHTML + '</span>&nbsp;' + imgHTML;
+      return '<span class="OBFormFieldLinkButton" onclick="window[\'' + item.ID + '\'].linkButtonClick();">' + titleHTML + '</span>&nbsp;' + imgHTML;
     }
     
     return titleHTML;
