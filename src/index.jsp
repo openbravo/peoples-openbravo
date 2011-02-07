@@ -111,7 +111,7 @@ if(userId == null){
 </div>
 <!-- load the rest -->
 <script type="text/javascript">
-$LAB.setGlobalDefaults({AppendTo: 'body'})
+$LAB.setGlobalDefaults({AppendTo: 'body'});
 
 var isomorphicDir='./web/org.openbravo.userinterface.smartclient/isomorphic/';
 
