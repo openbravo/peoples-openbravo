@@ -400,7 +400,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           SessionInfo.setModuleId(classInfo.adModuleId);
         }
 
-        UsageAudit.auditAction(vars1, this.getClass().getName());
+        UsageAudit.auditActionNoDal(this, vars1, this.getClass().getName());
 
         // Autosave logic
         final Boolean saveRequest = (Boolean) request.getAttribute("autosave");

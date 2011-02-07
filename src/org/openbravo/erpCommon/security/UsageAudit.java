@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,9 +19,11 @@
 
 package org.openbravo.erpCommon.security;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -30,7 +32,9 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
+import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.ad.access.SessionUsageAudit;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -112,4 +116,46 @@ public class UsageAudit {
       }
     }
   }
+
+  /**
+   * A version of the auditAction not using dal and running in a seperate connection/transaction and
+   * which does not commit the currently active dal transaction.
+   */
+  public static void auditActionNoDal(ConnectionProvider conn, VariablesSecureApp vars,
+      String javaClassName) {
+    auditActionNoDal(conn, vars.getSessionValue(SESSION_ID_ATTR), vars.getCommand(), SessionInfo
+        .getProcessType(), SessionInfo.getModuleId(), SessionInfo.getProcessId(), javaClassName);
+  }
+
+  private static void auditActionNoDal(ConnectionProvider conn, String sessionId, String action,
+      String objectType, String moduleId, String objectId, String javaClassName) {
+
+    final boolean auditAction = sessionId != null && !sessionId.isEmpty() && objectType != null
+        && !objectType.isEmpty() && moduleId != null && !moduleId.isEmpty();
+    if (!auditAction) {
+      return;
+    }
+
+    try {
+      final boolean usageAuditEnabled = SessionLoginData.isUsageAuditEnabled(conn);
+      if (!usageAuditEnabled) {
+        return;
+      }
+
+      log4j.debug("Auditing sessionId: " + sessionId + " -  action:" + action + " - objectType:"
+          + objectType + " - moduleId:" + moduleId + " - objectId:" + objectId
+          + " - javaClassName:" + javaClassName);
+      Connection con = conn.getTransactionConnection();
+      SessionLoginData.insertUsageAudit(con, conn, SessionInfo.getUserId(), sessionId, objectId,
+          moduleId, action, javaClassName, objectType);
+      conn.releaseCommitConnection(con);
+    } catch (ServletException se) {
+      log4j.error("Error inserting usage audit", se);
+    } catch (NoConnectionAvailableException e) {
+      log4j.error("Error getting connection to insert usage audit", e);
+    } catch (SQLException e) {
+      log4j.error("Error inserting usage audit", e);
+    }
+  }
+
 }
