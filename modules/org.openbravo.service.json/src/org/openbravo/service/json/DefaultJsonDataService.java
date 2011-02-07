@@ -242,7 +242,7 @@ public class DefaultJsonDataService implements JsonDataService {
       }
       final String currentClientId = OBContext.getOBContext().getCurrentClient().getId();
       if (!rowClient.equals(currentClientId)) {
-        jsonObject.put("_writable", false);
+        jsonObject.put("_readOnly", true);
       } else {
         boolean writable = false;
         for (String orgId : OBContext.getOBContext().getWritableOrganizations()) {
@@ -251,7 +251,9 @@ public class DefaultJsonDataService implements JsonDataService {
             break;
           }
         }
-        jsonObject.put("_writable", writable);
+        if (!writable) {
+          jsonObject.put("_readOnly", true);
+        }
       }
     }
   }

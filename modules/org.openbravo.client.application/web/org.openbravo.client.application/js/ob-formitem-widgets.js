@@ -151,14 +151,6 @@ isc.OBSearchItem.addProperties({
     return this.getDisplayValue(this.getValue());
   },
   
-  changed: function(){
-    var ret = this.Super('changed', arguments);
-    if (this.form && this.form.handleItemChange) {
-      this.form.handleItemChange(this);
-    }
-    return ret;
-  },
-  
   click: function() {
     this.showPicker();
     return false;
@@ -399,14 +391,6 @@ isc.OBListItem.addProperties({
   // validated on exit
   validateOnChange: true,
 
-  changed: function(){
-    var ret = this.Super('changed', arguments);
-    if (this.form && this.form.handleItemChange) {
-      this.form.handleItemChange(this);
-    }
-    return ret;
-  },
-
   // prevent db-ids from showing up, works for SelectItem
   // not for ComboboxItem
   mapValueToDisplay : function(value) {  
@@ -461,15 +445,6 @@ isc.OBFKItem.addProperties({
   
   getDataSource: function(){
     return this.getOptionDataSource();
-  },
-  
-  changed: function(){
-    var ret = this.Super('changed', arguments);
-    if (this.form && this.form.handleItemChange) {
-      this.form.handleItemChange(this);
-    }
-    //this.setValue(this.getDisplayFieldName(), this.getDisplayValue());    
-    return ret;
   },
   
   getOptionDataSource: function(){

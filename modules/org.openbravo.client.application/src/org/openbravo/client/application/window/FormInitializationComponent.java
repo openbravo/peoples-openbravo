@@ -267,7 +267,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         final String rowClientId = ((ClientEnabled) row).getClient().getId();
         final String currentClientId = OBContext.getOBContext().getCurrentClient().getId();
         if (!rowClientId.equals(currentClientId)) {
-          finalObject.put("writable", false);
+          finalObject.put("_readOnly", true);
         } else {
           boolean writable = false;
           final String objectOrgId = ((OrganizationEnabled) row).getOrganization().getId();
@@ -277,7 +277,9 @@ public class FormInitializationComponent extends BaseActionHandler {
               break;
             }
           }
-          finalObject.put("writable", writable);
+          if (!writable) {
+            finalObject.put("_readOnly", true);
+          }
         }
       } else {
         finalObject.put("writable", true);

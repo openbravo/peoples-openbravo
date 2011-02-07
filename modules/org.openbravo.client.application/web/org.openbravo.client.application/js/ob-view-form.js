@@ -96,7 +96,6 @@ OB.ViewFormProperties = {
   },
   
   doEditRecordActions: function(preventFocus, isNew){
-    this.setFocusItem(null);
     this.setHasChanged(false);
 
     this.setNewState(isNew);
@@ -288,7 +287,7 @@ OB.ViewFormProperties = {
     if (dynamicCols) {
       this.dynamicCols = dynamicCols;
     }
-    if (!data.writable || this.view.readOnly) {
+    if (data._readOnly || this.view.readOnly) {
       this.readOnly = true;
     } else {
       this.readOnly = false;
@@ -313,10 +312,17 @@ OB.ViewFormProperties = {
       }
       delete this.redrawItems;
     }
+    
+    // store the new values in the edit value 
+    if (this.grid) {
+      this.grid.storeUpdatedEditorValue();
+    }
+
   },
   
   processColumnValue: function(columnName, columnValue){
-    var data, record, length, valuePresent, currentValue, isDate, value, i, valueMap = {}, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
+    var undef, data, record, length, valuePresent, currentValue, isDate, value, i, valueMap = {}, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
+    var id, identifier;
     if (!field) {
       // not a field on the form, probably a datasource field
       var prop = this.view.getPropertyFromDBColumnName(columnName);
@@ -347,22 +353,19 @@ OB.ViewFormProperties = {
         field.getDataSource().setCacheData(entries, true);
       } else {
         for (i = 0; i < entries.length; i++) {
-          valueMap[entries[i][OB.Constants.ID]] = entries[i][OB.Constants.IDENTIFIER];
+          id = entries[i][OB.Constants.ID] || null;
+          identifier = entries[i][OB.Constants.IDENTIFIER] || '';
+          valueMap[id] = identifier;
         }
         field.setValueMap(valueMap);
-      }
-      
-      if (field.pickList) {
-        field.pickList.invalidateCache();
-        field.pickList.deselectAllRecords();
-        field.selectItemFromValue(field.getValue());
       }
     }
     
     if (columnValue.value && columnValue.value === 'null') {
       // handle the case that the FIC returns a null value as a string
       // should be repaired in the FIC
-      this.clearValue(field.name);
+      // note: do not use clearvalue as this removes the value from the form
+      this.setValue(field.name, null);
     } else if (columnValue.value || columnValue.value === 0 || columnValue.value === false) {
       isDate = field.type &&
       (isc.SimpleType.getType(field.type).inheritsFrom === 'date' ||
@@ -383,7 +386,14 @@ OB.ViewFormProperties = {
         this.setValue(field.name, columnValue.value);
       }
     } else {
-      this.clearValue(field.name);
+      // note: do not use clearvalue as this removes the value from the form
+      this.setValue(field.name, null);
+    }
+    
+    if (field.pickList) {
+      field.pickList.invalidateCache();
+      field.pickList.deselectAllRecords();
+      field.selectDefaultItem();
     }
   },
   
@@ -447,9 +457,8 @@ OB.ViewFormProperties = {
   },
   
   itemChanged: function(item, newValue){
-    var ret = this.Super('itemChanged', arguments);
     this.itemChangeActions(item);
-    return ret;
+    this.handleItemChange(item);
   },
   
   // these actions are done when the user types in a field
@@ -495,12 +504,9 @@ OB.ViewFormProperties = {
   // function
   saveRow: function(){
     var i, length, flds, form = this;
+    var record = form.view.viewGrid.getSelectedRecord(), recordIndex = form.view.viewGrid.getRecordIndex(record);
     
     form.isSaving = true;
-
-    // we got here, so we must writable, make sure 
-    // that we stay that way
-    this.setValue("_writable", true);
 
     // remove the error message if any
     this.view.messageBar.hide();
@@ -511,6 +517,15 @@ OB.ViewFormProperties = {
     var callback = function(resp, data, req){
       var index1, index2, errorCode, view = form.view;
       var status = resp.status;
+
+      // if this is not done the selection gets lost
+      if (recordIndex || recordIndex === 0) {
+        var localRecord = view.viewGrid.getRecord(recordIndex);
+        if (localRecord) {
+          localRecord[view.viewGrid.selection.selectionProperty] = true;
+        }
+      }
+      
       if (status === isc.RPCResponse.STATUS_SUCCESS) {
         // do remember values here to prevent infinite autosave loop
         form.rememberValues();
@@ -519,14 +534,19 @@ OB.ViewFormProperties = {
         view.statusBar.setStateLabel('OBUIAPP_Saved', view.statusBar.checkedIcon);
         
         // force a fetch to place the grid on the correct location
-        view.viewGrid.targetRecordId = data.id;
-        view.viewGrid.refreshContents();
+        if (form.isNew) {
+          view.viewGrid.targetRecordId = data.id;
+          view.viewGrid.refreshContents();
+        }
         
         this.setNewState(false);
-        this.setHasChanged(false);
 
         // success invoke the action, if any there
         view.standardWindow.autoSaveDone(view, true);
+
+        // do this after doing autoSave as the setHasChanged will clean
+        // the autosave info
+        this.setHasChanged(false);
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
         form.handleFieldErrors(resp.errors);
         view.standardWindow.autoSaveDone(view, false);
@@ -667,7 +687,7 @@ OB.ViewFormProperties = {
   },
 
   onFieldChanged: function(form, item, value) {
-    isc.Log.logWarn('To be implemented dynamically');
+    // To be implemented dynamically
   }
 };
 

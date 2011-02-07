@@ -280,7 +280,7 @@ isc.OBViewGrid.addProperties({
     var field = this.fields[fieldNum];
     if (this.isCheckboxField(field) && this.singleRecordSelection) {
       this.deselectAllRecords();
-      this.singleRecordSelection = false;
+      this.singleRecordSelection = false;      
     }
     return this.Super('headerClick', arguments);
   },
@@ -298,6 +298,7 @@ isc.OBViewGrid.addProperties({
     
     this.allSelected = false;
     var ret = this.Super('deselectAllRecords', arguments);
+    this.lastSelectedRecord = null;
     if (!preventUpdateSelectInfo) {
       this.selectionUpdated();
     }
@@ -406,6 +407,17 @@ isc.OBViewGrid.addProperties({
       // this select method prevents state changing if the record
       // was already selected
       this.doSelectSingleRecord(record);
+    } else if (this.lastSelectedRecord) {
+      // if nothing was select, select the record again
+      if (!this.getSelectedRecord()) {
+        // if it is still in the cache ofcourse
+        var gridRecord = this.data.find(OB.Constants.ID, this.lastSelectedRecord.id);
+        if (gridRecord) {
+          this.doSelectSingleRecord(gridRecord);
+        }
+      } else if (this.getSelectedRecords() && this.getSelectedRecords().length !== 1) {
+        this.lastSelectedRecord = null;
+      }     
     }
     
     return ret;
@@ -439,8 +451,8 @@ isc.OBViewGrid.addProperties({
         }
       }
       
-      this.doSelectSingleRecord(gridRecord);
       this.scrollRecordIntoView(recordIndex, true);
+      this.doSelectSingleRecord(gridRecord);
       
       // go to the children, if needed
       if (this.view.standardWindow.directTabInfo) {
@@ -485,6 +497,10 @@ isc.OBViewGrid.addProperties({
   selectSingleRecord: function(record){
     this.deselectAllRecords(true);
     this.selectRecord(record);
+        
+    // keep it to try to get it back when the selection gets lost when
+    // loading data
+    this.lastSelectedRecord = record;
   },
   
   // overridden to prevent extra firing of selection updated event
@@ -493,17 +509,7 @@ isc.OBViewGrid.addProperties({
     this.selectRecords(record, state, colNum);
   },
   
-  filterData: function(criteria, callback, requestProperties, autoSaveDone){
-    if (!autoSaveDone) {
-      var actionObject = {
-        target: this,
-        method: this.filterData,
-        parameters: [criteria, callback, requestProperties, true]
-      };
-      this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
-      return;
-    }
-    
+  filterData: function(criteria, callback, requestProperties){
     if (!requestProperties) {
       requestProperties = {};
     }
@@ -520,17 +526,7 @@ isc.OBViewGrid.addProperties({
     return this.Super('filterData', [this.convertCriteria(criteria), newCallBack, requestProperties]);
   },
   
-  fetchData: function(criteria, callback, requestProperties, autoSaveDone){
-    if (!autoSaveDone) {
-      var actionObject = {
-        target: this,
-        method: this.fetchData,
-        parameters: [criteria, callback, requestProperties, true]
-      };
-      this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
-      return;
-    }
-    
+  fetchData: function(criteria, callback, requestProperties){
     if (!requestProperties) {
       requestProperties = {};
     }
@@ -546,6 +542,20 @@ isc.OBViewGrid.addProperties({
     };
     
     return this.Super('fetchData', [this.convertCriteria(criteria), newCallBack, requestProperties]);
+  },
+  
+  handleFilterEditorSubmit : function (criteria, context, autoSaveDone) {
+    if (!autoSaveDone) {
+      var actionObject = {
+        target: this,
+        method: this.handleFilterEditorSubmit,
+        parameters: [criteria, context, true]
+      };
+      this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
+      return;
+    }
+    
+    this.Super('handleFilterEditorSubmit', arguments);
   },
   
   getInitialCriteria: function(){
@@ -693,7 +703,7 @@ isc.OBViewGrid.addProperties({
         isc.say('Not implemented yet');
       }
     });
-    if (this.canEdit && this.isWritable(record)) {
+    if (this.canEdit && this.isWritable(record) && !this.view.readOnly) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_EditInGrid'),
         click: function(){
@@ -761,6 +771,11 @@ isc.OBViewGrid.addProperties({
     this.stopHover();
     this.updateSelectedCountDisplay();
     this.view.recordSelected();
+    if (this.getSelectedRecords() && this.getSelectedRecords().length !== 1) {
+      this.lastSelectedRecord = null;
+    } else {
+      this.lastSelectedRecord = this.getSelectedRecord();       
+    }
   },
   
   selectOnMouseDown: function(record, recordNum, fieldNum, autoSaveDone){
@@ -973,14 +988,15 @@ isc.OBViewGrid.addProperties({
   editComplete: function(rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse){
     var record = this.getRecord(rowNum), editRow, editSession, autoSaveAction;
     
-    // we got here, so we must writable, make sure
-    // that we stay that way
-    record._writable = true;
+    // if this is not done the selection gets lost
+    record[this.selection.selectionProperty] = true;
     
     // during save the record looses the link to the editColumnLayout,
     // restore it
     if (oldValues.editColumnLayout && !record.editColumnLayout) {
-      record.editColumnLayout = oldValues.editColumnLayout;
+      var editColumnLayout = oldValues.editColumnLayout;
+      editColumnLayout.record = record;
+      record.editColumnLayout = editColumnLayout;
     }
     if (record.editColumnLayout) {
       record.editColumnLayout.editButton.setErrorState(false);
@@ -994,12 +1010,8 @@ isc.OBViewGrid.addProperties({
     // update after the error message has been removed
     this.view.updateTabTitle();
     
-    var ret = this.Super('editComplete', arguments);
-    
     // success invoke the action, if any there
     this.view.standardWindow.autoSaveDone(this.view, true);
-    
-    return ret;
   },
   
   discardEdits: function(rowNum, colNum, dontHideEditor, editCompletionEvent){
@@ -1069,6 +1081,7 @@ isc.OBViewGrid.addProperties({
     // also called in case of new
     var form = this.getEditForm();
     form.doEditRecordActions(false, false);
+    
     // must be done after doEditRecordActions    
     if (this.rowHasErrors(rowNum)) {
       this.view.standardWindow.setDirtyEditObject(form);
@@ -1153,7 +1166,7 @@ isc.OBViewGrid.addProperties({
   },
   
   isWritable: function(record){
-    return record._writable;
+    return !record._readOnly;
   },
   
   setRecordErrorMessage: function(rowNum, msg){
@@ -1220,21 +1233,7 @@ isc.OBViewGrid.addProperties({
       });
       layout.editButton.setErrorState(this.rowHasErrors(rowNum));
       layout.editButton.setErrorMessage(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
-      if (!this.isWritable(record)) {
-        layout.editButton.doNotShow = true;
-        layout.editButton.hide();
-        layout.buttonSeparator1.hide();
-      } else {
-        layout.editButton.doNotShow = this.view.readOnly;
-        if (layout.editButton.doNotShow) {
-          layout.editButton.hide();
-          layout.buttonSeparator1.hide();
-        } else {
-          layout.editButton.show();
-          layout.buttonSeparator1.show();
-        }
-      }
-      
+      layout.showEditOpen();      
       record.editColumnLayout = layout;
     }
     return layout;
@@ -1255,11 +1254,7 @@ isc.OBViewGrid.addProperties({
       component.rowNum = this.getRecordIndex(record);
       component.editButton.setErrorState(this.rowHasErrors(component.rowNum));
       component.editButton.setErrorMessage(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
-      if (!this.isWritable(record)) {
-        component.editButton.setDisabled(true);
-      } else {
-        component.editButton.setDisabled(this.view.readOnly);
-      }
+      component.showEditOpen();      
       return component;
     }
     return null;
@@ -1356,7 +1351,6 @@ isc.OBGridButtonsComponent.addProperties({
           };
           me.grid.view.standardWindow.doActionAfterAutoSave(actionObject, true);
       },
-      doNotShow: me.grid.view.readOnly,
       
       setErrorMessage: function(msg){
         if (msg) {
@@ -1365,9 +1359,13 @@ isc.OBGridButtonsComponent.addProperties({
           this.prompt = this.originalPrompt;
         }
       },
+    
+      showable: function() {
+        return !me.grid.view.readOnly && !me.record._readOnly;
+      },
       
       show: function(){
-        if (this.doNotShow) {
+        if (!this.showable()) {
           return;
         }
         return this.Super('show', arguments);
@@ -1436,9 +1434,14 @@ isc.OBGridButtonsComponent.addProperties({
     this.OBGridToolStrip.hideMember(5);
     this.OBGridToolStrip.hideMember(4);
     this.OBGridToolStrip.hideMember(3);
-    this.OBGridToolStrip.showMember(2);
-    this.OBGridToolStrip.showMember(1);
     this.OBGridToolStrip.showMember(0);
+    if (this.editButton.showable()) {
+      this.OBGridToolStrip.showMember(1);
+      this.OBGridToolStrip.showMember(2);
+    } else {
+      this.OBGridToolStrip.hideMember(1);
+      this.OBGridToolStrip.hideMember(2);
+    }
     this.grid.currentEditColumnLayout = null;
   },
   

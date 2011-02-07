@@ -38,6 +38,7 @@
           <#if fieldDefinition.redrawOnChange?string = "true" >
           redrawOnChange: true,
           changed: function(form, item, value) {
+            this.Super('changed', arguments);
             form.onFieldChanged(form, item, value);
           },
           </#if>

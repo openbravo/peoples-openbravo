@@ -262,7 +262,7 @@ isc.OBStandardView.addProperties({
       return true;
     }
     var msg = '', title = null, type = isc.OBMessageBar.TYPE_ERROR, isLabel = false, params = null;
-    var gridEditing = req.clientContext.editRow || req.clientContext.editRow === 0;  
+    var gridEditing = req.clientContext && (req.clientContext.editRow || req.clientContext.editRow === 0);  
     if (isc.isA.String(data)) {
       msg = data;
     } else if (data && data.response) {
@@ -1470,7 +1470,7 @@ isc.OBStandardView.addProperties({
   
   getTabMessage: function(){
     var callback = function(resp, data, req){
-      if (data.type && (data.text || data.title)) {
+      if (req.clientContext && data.type && (data.text || data.title)) {
         req.clientContext.messageBar.setMessage(OBMessageBar[data.type], data.title, data.text);
       }
     };

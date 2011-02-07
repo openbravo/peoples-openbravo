@@ -368,15 +368,9 @@ isc.OBSelectorItem.addProperties({
       this.setValue(record[this.valueField]);
     }
     this._doFICCall = true;
-    this.form.handleItemChange(this);
-  },
-  
-  changed: function(){
-    var ret = this.Super('changed', arguments);
     if (this.form && this.form.handleItemChange) {
       this.form.handleItemChange(this);
     }
-    return ret;
   },
   
   openSelectorWindow: function(){
@@ -552,6 +546,8 @@ isc.OBSelectorLinkItem.addProperties({
   
   changed: function(){
     var ret = this.Super('changed', arguments);
+    this._hasChanged = true;
+    this._doFICCall = true;
     if (this.form && this.form.handleItemChange) {
       this.form.handleItemChange(this);
     }
