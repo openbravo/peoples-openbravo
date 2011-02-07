@@ -81,7 +81,7 @@ isc.OBToolbar.addClassProperties({
   },
   DELETE_BUTTON_PROPERTIES: {
     action: function(){
-      this.view.deleteRow();
+      this.view.deleteSelectedRows();
     },
     disabled: true,
     buttonType: 'eliminate',

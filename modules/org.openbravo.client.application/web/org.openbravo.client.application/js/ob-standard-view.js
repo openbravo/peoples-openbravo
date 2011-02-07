@@ -1143,12 +1143,12 @@ isc.OBStandardView.addProperties({
     }
   },
   
-  deleteRow: function(autoSaveDone){
+  deleteSelectedRows: function(autoSaveDone){
     // first save what we have edited
     if (!autoSaveDone) {
       var actionObject = {
           target: this,
-          method: this.deleteRow,
+          method: this.deleteSelectedRows,
           parameters: [true]
         };
       this.standardWindow.doActionAfterAutoSave(actionObject, true);
@@ -1163,16 +1163,19 @@ isc.OBStandardView.addProperties({
     }
     
     var callback = function(ok){
-      var i, data, error, removeCallBack = function(resp, data, req){
+      var i, data, deleteData, error, recordInfos = [], removeCallBack = function(resp, data, req){
         if (resp.status === isc.RPCResponse.STATUS_SUCCESS) {
           if (view.isShowingForm) {
             view.switchFormGridVisibility();
-            if (resp.clientContext && resp.clientContext.refreshGrid) {
-              view.viewGrid.filterData();
-            }
           }
           view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [deleteCount]));
-          view.viewGrid.filterData(view.viewGrid.getCriteria());
+          if (deleteData) {
+            // deleteData is computed below
+            for (var i = 0 ; i < deleteData.ids.length; i++) {
+              recordInfos.push({id: deleteData.ids[i]});
+            }
+            view.viewGrid.data.handleUpdate('remove', recordInfos);
+          }
           view.viewGrid.updateRowCountDisplay();
         } else {
           // get the error message from the dataObject 
@@ -1193,7 +1196,7 @@ isc.OBStandardView.addProperties({
         view.viewGrid.deselectAllRecords();
         
         if (selection.length > 1) {
-          var deleteData = {};
+          deleteData = {};
           deleteData.entity = view.entity;
           deleteData.ids = [];
           for (i = 0; i < selection.length; i++) {
