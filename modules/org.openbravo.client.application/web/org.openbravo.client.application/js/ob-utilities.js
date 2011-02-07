@@ -221,6 +221,7 @@ OB.Utilities.openProcessPopup = function(/* String */url, noFrameSet, postParams
     }
     winPopUp.document.close();
   }
+  OB.TestRegistry.register('org.openbravo.classicpopup.' + url, winPopUp);
   winPopUp.focus();
   return winPopUp;
 };
