@@ -22,10 +22,11 @@ isc.OBApplicationMenuTree.addProperties({
   styleName: 'OBApplicationMenuTree',
   baseStyle: 'OBApplicationMenuTreeItemCell',
   bodyStyleName: 'OBApplicationMenuTreeBody',
+  iconBodyStyleName: "OBApplicationMenuTreeIconBody",
   hideButtonLineStyle: 'OBNavBarComponentHideLine',
   submenuOffset: -6,
   drawStyle: function() {
-    this.setStyleName(this.styleName);
+    //this.setStyleName(this.styleName);
   },
   showStyle: function() {
     this.menuButton.parentElement.setStyleName('OBNavBarComponentSelected');

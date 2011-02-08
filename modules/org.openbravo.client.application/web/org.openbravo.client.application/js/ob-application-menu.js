@@ -166,6 +166,7 @@ isc.OBApplicationMenuButton.addProperties({
   },
 
   initWidget: function() {
+    this.menu = isc.OBApplicationMenuTree.create({});
     // tell the menu who we are
     this.menu.menuButton = this;
     this.Super('initWidget', arguments);
@@ -200,8 +201,6 @@ isc.OBApplicationMenuButton.addProperties({
     }
     this.menu.setData(recentEntries.concat(this.baseData));
   },
-
-  menu: isc.OBApplicationMenuTree.create({}),
 
   // is used by selenium, creates a scLocator on the basis of a path passed in
   // as arguments, note that the function does not expect an array as this
