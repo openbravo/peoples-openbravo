@@ -122,12 +122,11 @@ public abstract class NumberUIDefinition extends UIDefinition {
 
   @Override
   protected Object createFromClassicString(String value) {
-    if (value == null) {
+    if (value == null || value.length() == 0) {
       return "";
     }
     String valueStr = value.toString();
     VariablesSecureApp variables = RequestContext.get().getVariablesSecureApp();
-    // only replace the decimal symbol
     valueStr = valueStr.replace(
         variables.getSessionValue("#GroupSeparator|" + getFormat()).substring(0, 1), "").replace(
         variables.getSessionValue("#DecimalSeparator|" + getFormat()).substring(0, 1), ".");

@@ -40,6 +40,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
@@ -794,9 +795,13 @@ public class FormInitializationComponent extends BaseActionHandler {
                           String value = subelement.get(0, null).toString();
                           log.debug("Column: " + col.getDBColumnName() + "  Value: " + value);
                           String oldValue = rq.getRequestParameter(colId);
-                          rq.setRequestParameter(colId, value);
                           UIDefinition uiDef = UIDefinitionController.getInstance()
                               .getUIDefinition(col.getId());
+                          if (uiDef.getDomainType() instanceof PrimitiveDomainType) {
+                            rq.setRequestParameter(colId, uiDef.convertToClassicString(value));
+                          } else {
+                            rq.setRequestParameter(colId, value == null ? null : value.toString());
+                          }
                           JSONObject jsonobject = new JSONObject(uiDef.getFieldProperties(inpFields
                               .get(name), true));
                           if (jsonobject.has("classicValue")) {
@@ -820,25 +825,21 @@ public class FormInitializationComponent extends BaseActionHandler {
                     } else {
                       // Normal data
                       Object el = element.get(1, null);
-                      String value;
-                      if (el instanceof Number) {
-                        value = ((Number) el).toString();
-                      } else {
-                        value = (String) el;
-                      }
                       String oldValue = rq.getRequestParameter(colId);
                       // We set the new value in the request, so that the JSONObject is computed
                       // with the new value
-                      rq.setRequestParameter(colId, value);
                       UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
                           col.getId());
+                      if (uiDef.getDomainType() instanceof PrimitiveDomainType) {
+                        rq.setRequestParameter(colId, uiDef.convertToClassicString(el));
+                      } else {
+                        rq.setRequestParameter(colId, el == null ? null : el.toString());
+                      }
                       JSONObject jsonobj = new JSONObject(uiDef.getFieldProperties(inpFields
                           .get(name), true));
                       if (jsonobj.has("classicValue")) {
                         String newValue = jsonobj.getString("classicValue");
-                        log
-                            .debug("Modified column: " + col.getDBColumnName() + "  Value: "
-                                + value);
+                        log.debug("Modified column: " + col.getDBColumnName() + "  Value: " + el);
                         if ((oldValue == null && newValue != null)
                             || (oldValue != null && newValue == null)
                             || (oldValue != null && newValue != null && !oldValue.equals(newValue))) {
