@@ -80,30 +80,6 @@ isc.OBStandardWindow.addProperties({
   toolBarHeight: 40
 });
 
-// Styling properties for the application menu button present in the navbar
-OB.ApplicationMenuButtonStylingProperties = {
-  baseStyle: 'OBNavBarButton',
-  showMenuButtonImage: false,
-  align: 'center',
-  height: 26,
-  iconHeight: 6,
-  iconWidth: 10,
-  iconSpacing: 10,
-  iconAlign: 'left',
-  iconOrientation: 'right',
-  icon: {
-    src: '[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-green-arrow-down.gif'
-  }
-};
-
-// Styling properties for the application menu
-OB.ApplicationMenuStylingProperties = {
-  baseStyle: 'OBNavBarComponentMenuItemCell',
-  styleName: 'OBNavBarComponentMenu',
-  bodyStyleName: 'OBNavBarComponentMenuBody',
-  submenuOffset: -6
-};
-
 // Styling properties for the help/about navigation bar component
 isc.OBHelpAbout.addProperties({
   baseStyle: 'OBNavBarButton',
