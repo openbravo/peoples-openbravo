@@ -571,9 +571,9 @@ isc.OBViewGrid.addProperties({
   },
   
   convertCriteria: function(criteria){
-    var selectedValues;
+    var selectedValues, prop, fld, value;
     
-    criteria = criteria || {};
+    criteria = isc.addProperties({}, criteria || {});
     
     if (this.targetRecordId) {
       // do not filter on anything with a targetrecord
@@ -581,6 +581,23 @@ isc.OBViewGrid.addProperties({
       // remove the filter clause we don't want to use
       this.filterClause = null;
       criteria._targetRecordId = this.targetRecordId;
+    }
+    
+    // filter criteria for foreign key fields should be on the identifier
+    // note is again repaired in the filtereditor setValuesAsCriteria
+    // see the ob-grid.js 
+    for (prop in criteria) {
+      if (criteria.hasOwnProperty(prop)) {
+        if (prop === this.view.parentProperty) {
+          continue;
+        }
+        fld = this.getField(prop);
+        if (fld && fld.foreignKeyField) {
+          value = criteria[prop];
+          delete criteria[prop];
+          criteria[prop + '.' + OB.Constants.IDENTIFIER] = value;
+        }
+      }
     }
     
     // note pass in criteria otherwise infinite looping!

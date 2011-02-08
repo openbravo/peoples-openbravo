@@ -79,7 +79,7 @@ public abstract class UIDefinition {
    * @return the form item type used for editing this reference in a form.
    */
   public String getFormEditorType() {
-    return "OBText";
+    return "OBTextItem";
   }
 
   /**

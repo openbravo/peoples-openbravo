@@ -29,6 +29,7 @@
 // * OBYesNoItem: combo box for yes/no values
 // * OBLinkTitleItem: an interface supporting a link button in the title.
 // * OBFKItem: combo box for foreign key references
+// * OBFKFilterTextItem: text item for filtering on FK fields
 // * OBListItem: combo box for list references
 
 // == OBCheckboxItem ==
@@ -300,6 +301,14 @@ isc.ClassFactory.defineClass('OBTextItem', TextItem);
 
 isc.OBTextItem.addProperties({
   validateOnExit: true
+});
+
+//== OBFKFilterTextItem ==
+//Input used for filtering on FK fields.
+isc.ClassFactory.defineClass('OBFKFilterTextItem', TextItem);
+
+isc.OBFKFilterTextItem.addProperties({
+  validateOnExit: true  
 });
 
 // == OBTextAreaItem ==

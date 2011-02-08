@@ -47,7 +47,7 @@ public class TextUIDefinition extends StringUIDefinition {
 
   @Override
   public String getFilterEditorType() {
-    return "OBText";
+    return "OBTextItem";
   }
 
   @Override

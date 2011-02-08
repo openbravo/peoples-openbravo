@@ -134,6 +134,29 @@ isc.OBGrid.addProperties({
         return ret;
       },
       
+      // repair that filter criteria on fk fields can be 
+      // on the identifier instead of the field itself.
+      // after applying the filter the grid will set the criteria
+      // back in the filtereditor effectively clearing
+      // the filter field. The code here repairs/prevents this.
+      setValuesAsCriteria : function (criteria, refresh) {
+        // make a copy so that we don't change the object
+        // which is maybe used somewhere else
+        criteria = isc.addProperties({}, criteria);
+        var index, prop;
+
+        for (prop in criteria) {
+          if (criteria.hasOwnProperty(prop) && prop.endsWith('.' + OB.Constants.IDENTIFIER)) {
+            value = criteria[prop];
+            index = prop.indexOf('.');
+            prop = prop.substring(0, index);
+            criteria[prop] = value;
+          }
+        }
+
+        return this.Super('setValuesAsCriteria', [criteria, refresh]);
+      },
+
       actionButtonProperties: {
         baseStyle: 'OBGridFilterFunnelIcon',
         visibility: 'hidden',
@@ -220,8 +243,15 @@ isc.OBGrid.addProperties({
     }
     for (var prop in criteria) {
       if (criteria.hasOwnProperty(prop)) {
+        var value = criteria[prop];
+        // see the description in setValuesAsCriteria above
+        if (prop.endsWith('.' + OB.Constants.IDENTIFIER)) {
+          var index = prop.indexOf('.');
+          prop = prop.substring(0, index);
+        }
+        
         var field = this.filterEditor.getField(prop);
-        if (this.isValidFilterField(field) && (criteria[prop] === false || criteria[prop])) {
+        if (this.isValidFilterField(field) && (value === false || value || value === 0)) {
           return true;
         }
       }

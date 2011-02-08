@@ -42,7 +42,7 @@ public class ForeignKeyUIDefinition extends UIDefinition {
 
   @Override
   public String getFilterEditorType() {
-    return "OBText";
+    return "OBFKFilterTextItem";
   }
 
   @Override
