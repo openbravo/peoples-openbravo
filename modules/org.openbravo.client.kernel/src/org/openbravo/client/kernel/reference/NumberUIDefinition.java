@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import java.math.BigDecimal;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -116,6 +118,20 @@ public abstract class NumberUIDefinition extends UIDefinition {
 
   public String getFormat() {
     return "generalQtyEdition";
+  }
+
+  @Override
+  protected Object createFromClassicString(String value) {
+    if (value == null) {
+      return "";
+    }
+    String valueStr = value.toString();
+    VariablesSecureApp variables = RequestContext.get().getVariablesSecureApp();
+    // only replace the decimal symbol
+    valueStr = valueStr.replace(
+        variables.getSessionValue("#GroupSeparator|" + getFormat()).substring(0, 1), "").replace(
+        variables.getSessionValue("#DecimalSeparator|" + getFormat()).substring(0, 1), ".");
+    return new BigDecimal(valueStr);
   }
 
   @Override
