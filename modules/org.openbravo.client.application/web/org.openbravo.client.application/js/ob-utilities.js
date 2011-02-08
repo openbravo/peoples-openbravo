@@ -195,7 +195,7 @@ OB.Utilities.openProcessPopup = function(/* String */url, noFrameSet, postParams
     '<frameset cols="0%,100%" frameborder="no" border="0" framespacing="0" rows="*" id="framesetMenu">' +
     '<frame name="frameMenu" scrolling="no" src="' +
     OB.Application.contextUrl +
-    'utility/VerticalMenu.html?Command=LOADING" id="paramFrameMenuLoading"></FRAME>' +
+    'utility/VerticalMenu.html?Command=LOADING" id="paramFrameMenuLoading"></frame>' +
     '<frame name="mainframe" noresize="" '+ mainFrameSrc +
     ' id="fieldProcessId"></frame>' +
     '<frame name="hiddenFrame" scrolling="no" noresize="" src=""></frame>' +
@@ -204,7 +204,8 @@ OB.Utilities.openProcessPopup = function(/* String */url, noFrameSet, postParams
     
     winPopUp.document.write(html);
     if (postParams) {
-      var frm = winPopUp.document.createElement('form');
+      var doc = winPopUp.frames[1].document,
+          frm = doc.createElement('form');
       frm.setAttribute('method','post');
       frm.setAttribute('action', url);
       for (var i in postParams) {
@@ -216,7 +217,7 @@ OB.Utilities.openProcessPopup = function(/* String */url, noFrameSet, postParams
           frm.appendChild(inp);
         }
       }
-      winPopUp.document.body.appendChild(frm);
+      doc.body.appendChild(frm);
       frm.submit();
     }
     winPopUp.document.close();
