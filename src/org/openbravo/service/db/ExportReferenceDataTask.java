@@ -20,8 +20,9 @@
 package org.openbravo.service.db;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,7 @@ public class ExportReferenceDataTask extends ReferenceDataTask {
 
   @Override
   protected void doExecute() {
+    System.setProperty("line.separator", "\n");
     final File exportDir = getReferenceDataDir();
     for (final Client client : getClientObjects()) {
       final Map<String, Object> parameters = new HashMap<String, Object>();
@@ -53,7 +55,8 @@ public class ExportReferenceDataTask extends ReferenceDataTask {
         exportFile.delete();
       }
       try {
-        final FileWriter fw = new FileWriter(exportFile);
+        final OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(exportFile),
+            "UTF-8");
         log.info("Exporting client " + client.getName());
         DataExportService.getInstance().exportClientToXML(parameters, false, fw);
         fw.close();
