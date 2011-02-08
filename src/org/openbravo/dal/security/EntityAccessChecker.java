@@ -107,35 +107,34 @@ public class EntityAccessChecker implements OBNotSingleton {
       final String userLevel = obContext.getUserLevel();
 
       // Don't use dal because otherwise we can end up in infinite loops
-      String qryStr = "select wa from " + WindowAccess.class.getName() + " wa"
-          + " join fetch wa.window left outer join fetch wa.window.aDTabList tabs"
+      String qryStr = "select t from " + Tab.class.getName() + " t"
+          + " join fetch t.window w join fetch t.window.aDWindowAccessList wa"
           + " where wa.role.id= :roleId";
       final Query qry = SessionHandler.getInstance().createQuery(qryStr);
       qry.setParameter("roleId", getRoleId());
       @SuppressWarnings("unchecked")
-      final List<WindowAccess> was = qry.list();
-      for (final WindowAccess wa : was) {
-        final Window w = wa.getWindow();
+      final List<Tab> tabs = qry.list();
+      for (final Tab t : tabs) {
+        final Window w = t.getWindow();
+        // Guaranteed that there's only one record because of unique constraint
+        final WindowAccess wa = w.getADWindowAccessList().get(0);
         final boolean writeAccess = wa.isEditableField();
-        List<Tab> ts = w.getADTabList();
-        for (final Tab t : ts) {
-          String tableId = (String) DalUtil.getId(t.getTable());
-          final Entity e = mp.getEntityByTableId(tableId);
-          if (e == null) { // happens for AD_Client_Info and views
-            continue;
-          }
+        String tableId = (String) DalUtil.getId(t.getTable());
+        final Entity e = mp.getEntityByTableId(tableId);
+        if (e == null) { // happens for AD_Client_Info and views
+          continue;
+        }
 
-          final int accessLevel = e.getAccessLevel().getDbValue();
-          if (!hasCorrectAccessLevel(userLevel, accessLevel)) {
-            continue;
-          }
+        final int accessLevel = e.getAccessLevel().getDbValue();
+        if (!hasCorrectAccessLevel(userLevel, accessLevel)) {
+          continue;
+        }
 
-          if (writeAccess) {
-            writableEntities.add(e);
-            readableEntities.add(e);
-          } else {
-            readableEntities.add(e);
-          }
+        if (writeAccess) {
+          writableEntities.add(e);
+          readableEntities.add(e);
+        } else {
+          readableEntities.add(e);
         }
       }
 
