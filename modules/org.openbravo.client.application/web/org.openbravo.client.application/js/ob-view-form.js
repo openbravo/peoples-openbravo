@@ -40,7 +40,7 @@ OB.ViewFormProperties = {
     
   showErrorIcons: false,
   showErrorStyle: true,
-  selectOnFocus: true,
+  selectOnFocus: false,
   autoComplete: true,
   redrawOnDisable: true,
   
@@ -315,7 +315,7 @@ OB.ViewFormProperties = {
     
     // store the new values in the edit value 
     if (this.grid) {
-      this.grid.storeUpdatedEditorValue();
+      this.grid.storeUpdatedEditorValue(true);
     }
 
   },
@@ -387,6 +387,7 @@ OB.ViewFormProperties = {
       }
     } else {
       // note: do not use clearvalue as this removes the value from the form
+      // which results it to not be sent to the server anymore
       this.setValue(field.name, null);
     }
     

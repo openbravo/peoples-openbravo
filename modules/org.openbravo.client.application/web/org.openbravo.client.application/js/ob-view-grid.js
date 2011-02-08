@@ -143,6 +143,11 @@ isc.OBViewGrid.addProperties({
     useClientSorting: false,
     
     transformData: function(newData, dsResponse){
+      // only do this stuff for fetch operations, in other cases strange things
+      // happen as update/delete operations do not return the totalRows parameter
+      if (dsResponse && dsResponse.context && dsResponse.context.operationType !== 'fetch') {
+        return;
+      }
       // correct the length if there is already data in the localData array
       if (this.localData) {
         for (var i = dsResponse.endRow + 1; i < this.localData.length; i++) {

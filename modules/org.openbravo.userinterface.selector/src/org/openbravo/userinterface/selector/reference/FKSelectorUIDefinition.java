@@ -21,11 +21,16 @@ package org.openbravo.userinterface.selector.reference;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.userinterface.selector.Selector;
@@ -42,6 +47,25 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
   @Override
   public String getFormEditorType() {
     return "OBSelectorItem";
+  }
+
+  @Override
+  // get the current value for a selector item from the database
+  public String getFieldProperties(Field field, boolean getValueFromSession) {
+    try {
+      final JSONObject json = new JSONObject(super.getFieldProperties(field, getValueFromSession));
+      if (json.has("value")) {
+        final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
+        final BaseOBObject target = OBDal.getInstance().get(prop.getTargetEntity().getName(),
+            json.getString("value"));
+        if (target != null) {
+          json.put("identifier", target.getIdentifier());
+        }
+      }
+      return json.toString();
+    } catch (Exception e) {
+      throw new OBException("Exception when processing field " + field, e);
+    }
   }
 
   public String getFieldProperties(Field field) {

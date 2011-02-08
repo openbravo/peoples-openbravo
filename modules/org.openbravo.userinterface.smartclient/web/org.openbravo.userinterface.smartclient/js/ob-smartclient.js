@@ -96,7 +96,20 @@ isc.FormItem.addProperties({
   isFocusable: function(){    
     return this.getCanFocus() && this.isDrawn() &&
         this.isVisible() && !this.isDisabled();
+  },
+  
+  // overridden to never use the forms datasource for fields
+  getOptionDataSource : function () {
+    var ods = this.optionDataSource;
+
+    if (isc.isA.String(ods)) {
+      ods = isc.DataSource.getDataSource(ods);
+    }
+    
+    return ods;
   }
+
+  
 });
 
 // overridden to never show a prompt. A prompt can be created manually 
@@ -112,3 +125,10 @@ isc.Log.hasFireBug = function() { return false; };
 // prevent caching of picklists globally to prevent js error 
 // when a picklist has been detached from a formitem
 isc.PickList.getPrototype().cachePickListResults = false;
+
+// uncomment this code and put a breakpoint to get a better control
+// on from where async operations are started
+//isc.Class._fireOnPause = isc.Class.fireOnPause;
+//isc.Class.fireOnPause = function(id, callback, delay, target, instanceID) {
+//  isc.Class._fireOnPause(id, callback, delay, target, instanceID);
+//};
