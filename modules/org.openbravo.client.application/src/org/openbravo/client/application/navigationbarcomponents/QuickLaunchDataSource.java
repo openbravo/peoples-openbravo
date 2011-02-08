@@ -122,7 +122,7 @@ public class QuickLaunchDataSource extends ReadOnlyDataSourceService {
 
         final String icon;
         if (menuOption.isForm()) {
-          icon = "Process";
+          icon = "Form";
         } else if (menuOption.isReport()) {
           icon = "Report";
         } else if (menuOption.isProcess() || menuOption.isProcessManual()) {

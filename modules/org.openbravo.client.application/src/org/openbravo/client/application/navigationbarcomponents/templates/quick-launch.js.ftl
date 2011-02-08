@@ -62,8 +62,10 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
                         return '[SKINIMG]../../org.openbravo.client.application/images/icons/iconProcess.png';
                     } else if (this.recentObject.icon === 'Report') {
                         return '[SKINIMG]../../org.openbravo.client.application/images/icons/iconReport.png';
+                    } else if (this.recentObject.icon === 'Form') {
+                        return '[SKINIMG]../../org.openbravo.client.application/images/icons/iconForm.png';
                     } else {
-                        return '[SKINIMG]../../org.openbravo.client.application/images/icons/iconAutoForm.png';
+                        return '[SKINIMG]../../org.openbravo.client.application/images/icons/iconWindow.png';
                     }
                 }
                 return null;
@@ -145,7 +147,8 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
            name: 'icon',
            valueIcons: {Process: '[SKINIMG]../../org.openbravo.client.application/images/icons/iconProcess.png',
               Report: '[SKINIMG]../../org.openbravo.client.application/images/icons/iconReport.png',
-              Window: '[SKINIMG]../../org.openbravo.client.application/images/icons/iconAutoForm.png'}          
+              Form: '[SKINIMG]../../org.openbravo.client.application/images/icons/iconForm.png',
+              Window: '[SKINIMG]../../org.openbravo.client.application/images/icons/iconWindow.png'}
          },
          { name: OB.Constants.IDENTIFIER,
            displayField : OB.Constants.IDENTIFIER,
