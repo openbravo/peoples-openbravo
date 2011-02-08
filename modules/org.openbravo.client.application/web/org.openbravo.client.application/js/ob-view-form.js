@@ -218,8 +218,6 @@ OB.ViewFormProperties = {
     // note also in this case initial vvalues are passed in as in case of grid
     // editing the unsaved/error values from a previous edit session are maintained
     var allProperties = this.view.getContextInfo(false, true, false, false);
-    //this.setDisabled(true);
-    //this.allItemsDisabled = true;
     
     if (isNew) {
       mode = 'NEW';
@@ -238,6 +236,8 @@ OB.ViewFormProperties = {
       requestParams[parentColumn] = parentId;
     }
     
+    this.setDisabled(true);
+
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
       me.processFICReturn(response, data, request);
       // remember the initial values 
@@ -248,9 +248,7 @@ OB.ViewFormProperties = {
   processFICReturn: function(response, data, request){
     // TODO: an error occured, handles this much better...
     if (!data || !data.columnValues) {
-      //this.setDisabled(false);
-      //this.allItemsDisabled = false;
-      //this.redraw();
+      this.setDisabled(false);
       return;
     }
     
@@ -292,9 +290,6 @@ OB.ViewFormProperties = {
     } else {
       this.readOnly = false;
     }
-    //this.setDisabled(false);
-    //this.allItemsDisabled = false;
-    //this.redraw();
     this.view.toolBar.updateButtonState();
     // note onFieldChanged uses the form.readOnly set above
     this.onFieldChanged(this);
@@ -304,9 +299,16 @@ OB.ViewFormProperties = {
     if (this.grid && this.grid.setEditValues && (this.grid.getEditRow() || this.grid.getEditRow() === 0)) {
       this.grid.setEditValues(this.grid.getEditRow(), this.getValues(), true);
     }
+    
+    this.setDisabled(false);
+    
     if (this.redrawItems) {
       for (i = 0; i < this.redrawItems.length; i++) {
         if (this.redrawItems[i].redraw) {
+          // check if the field should be revalidated
+          if (this.redrawItems[i].validate && this.redrawItems[i].hasErrors && this.redrawItems[i].hasErrors()) {
+            this.redrawItems[i].validate();
+          }
           this.redrawItems[i].redraw();
         }
       }
@@ -318,6 +320,11 @@ OB.ViewFormProperties = {
       this.grid.storeUpdatedEditorValue(true);
     }
 
+  },
+  
+  setDisabled: function(state) {
+    this.Super('setDisabled', state);
+    this.allItemsDisabled = state;
   },
   
   processColumnValue: function(columnName, columnValue){
@@ -349,16 +356,12 @@ OB.ViewFormProperties = {
     // note field can be a datasource field, see above, in that case
     // don't set the entries    
     if (field.form && entries) {
-      if (field.getDataSource()) {
-        field.getDataSource().setCacheData(entries, true);
-      } else {
-        for (i = 0; i < entries.length; i++) {
-          id = entries[i][OB.Constants.ID] || null;
-          identifier = entries[i][OB.Constants.IDENTIFIER] || '';
-          valueMap[id] = identifier;
-        }
-        field.setValueMap(valueMap);
+      for (i = 0; i < entries.length; i++) {
+        id = entries[i][OB.Constants.ID] || null;
+        identifier = entries[i][OB.Constants.IDENTIFIER] || '';
+        valueMap[id] = identifier;
       }
+      field.setValueMap(valueMap);
     }
     
     if (columnValue.value && columnValue.value === 'null') {
@@ -434,6 +437,8 @@ OB.ViewFormProperties = {
       requestParams.CHANGED_COLUMN = item.inpColumnName;
     }
     
+    this.setDisabled(true);
+
     // collect the context information    
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
       me.processFICReturn(response, data, request);

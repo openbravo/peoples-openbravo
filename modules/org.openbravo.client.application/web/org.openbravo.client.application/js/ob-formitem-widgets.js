@@ -389,110 +389,41 @@ isc.OBSectionItem.addProperties({
 
 // == OBListItem ==
 // Combo box for list references
-isc.ClassFactory.defineClass('OBListItem', SelectItem);
+isc.ClassFactory.defineClass('OBListItem', ComboBoxItem);
 
 isc.OBListItem.addProperties({
 
-  itemData: null,
-  
+  showPickListOnKeypress: true,  
   cachePickListResults: false,
-  // combos are validated on change, other items are 
-  // validated on exit
-  validateOnChange: true,
-
-  // prevent db-ids from showing up, works for SelectItem
-  // not for ComboboxItem
-  mapValueToDisplay : function(value) {  
-    var ret = this.Super('mapValueToDisplay', arguments);
-    if (ret === value) {
-      return '&nbsp;';
-    }
-    return ret;
-  },
+  validateOnExit: true,  
+  completeOnTab: true,
+  // setting this to false means that the change handler is called when picking
+  // a value and not earlier
+  addUnknownValues: false,
   
-  getValueMap: function(){
-    if (this.itemData) {
-      return this.itemData;
-    }
-    return this.Super('getValueMap', arguments);
+  pickListProperties: {
+    showHeaderContextMenu: false
   }
-  
 });
 
 // == OBFKItem ==
 // Extends SelectItem with suggestion box behavior for foreign key references.
-isc.ClassFactory.defineClass('OBFKItem', SelectItem);
+isc.ClassFactory.defineClass('OBFKItem', ComboBoxItem);
 
 isc.ClassFactory.mixInInterface('OBFKItem', 'OBLinkTitleItem');
 
 isc.OBFKItem.addProperties({
-  selectOnFocus: true,
-  autoFetchData: false,
-  completeOnTab: true,
-  displayField: OB.Constants.IDENTIFIER,
-  valueField: OB.Constants.ID,
-  textMatchStyle: 'substring',
-  // combos are validated on change, other items are 
-  // validated on exit
-  validateOnChange: true,
-  useClientFiltering: false,
-  
+  textMatchStyle: 'substring',  
+  showPickListOnKeypress: true,  
   cachePickListResults: false,
+  validateOnExit: true, 
+  completeOnTab: true,
+  // setting this to false means that the change handler is called when picking
+  // a value and not earlier
+  addUnknownValues: false,
   
-  itemData: null,
-  optionDataSource: null,
-  
-  // prevent db-ids from showing up, works for SelectItem
-  // not for ComboboxItem
-  mapValueToDisplay : function(value) {  
-    var ret = this.Super('mapValueToDisplay', arguments);
-    if (ret === value) {
-      return '&nbsp;';
-    }
-    return ret;
-  },
-  
-  getDataSource: function(){
-    return this.getOptionDataSource();
-  },
-  
-  getOptionDataSource: function(){
-    if (this.optionDataSource) {
-      return this.optionDataSource;
-    }
-    // set a client only datasource
-    this.showOptionsFromDataSource = true;
-    this.optionDataSource = isc.DataSource.create({
-      fields: [{
-        name: OB.Constants.ID,
-        type: 'text'
-      }, {
-        name: OB.Constants.IDENTIFIER,
-        type: 'text'
-      }],
-      clientOnly: true,
-      testData: this.itemData
-    });
-    return this.optionDataSource;
-  },
-  
-  getPickListFilterCriteria: function(){
-    var criteria = this.Super('getPickListFilterCriteria'), defValue, prop;
-    
-    // stop here if a client only datasource
-    if (this.optionDataSource && this.optionDataSource.clientOnly) {
-      return criteria;
-    }
-    
-    if (!criteria) {
-      criteria = {};
-    }
-    
-    // and sort according to the display field
-    // initially
-    criteria[OB.Constants.SORTBY_PARAMETER] = this.displayField;
-    
-    return criteria;
+  pickListProperties: {
+    showHeaderContextMenu: false
   }
 });
 

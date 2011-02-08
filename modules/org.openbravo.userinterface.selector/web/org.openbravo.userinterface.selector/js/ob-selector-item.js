@@ -307,7 +307,6 @@ isc.OBSelectorItem.addProperties({
     name: OB.Constants.IDENTIFIER
   }],
   
-  selectOnFocus: true,
   autoFetchData: false,
   showPickerIcon: true,
   validateOnChange: true,

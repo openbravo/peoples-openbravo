@@ -32,6 +32,12 @@ import org.openbravo.service.json.JsonConstants;
  */
 public class FKComboUIDefinition extends ForeignKeyUIDefinition {
 
+  @Override
+  public String getParentType() {
+    // ensures that the field will have a oneOf validator
+    return "enum";
+  }
+
   public String getGridEditorFieldProperties(Field field) {
     return "displayField: '" + JsonConstants.IDENTIFIER + "', valueField: '" + JsonConstants.ID
         + "'" + super.getGridEditorFieldProperties(field);
