@@ -34,10 +34,14 @@
 		where ad_org.isperiodcontrolallowed = 'Y'
 		and ad_client_id = ?
 		and ad_org_id in ('1')
+        and not exists (SELECT AD_ORG_CLOSING.AD_ORG_ID
+                        FROM AD_ORG_CLOSING
+                        WHERE C_YEAR_ID = ?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="and ad_org_id in (" text="'1'"/>
+    <Parameter name="c_year_id"/>
   </SqlMethod>
   <SqlMethod name="getAmounts" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>

@@ -405,7 +405,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
     xmlDocument.setParameter("help", strHelp);
 
     xmlDocument.setData("reportadOrgId", "liststructure", CreateRegFactAcctData.select(this, vars
-        .getClient(), Utility.getContext(this, vars, "#User_Org", "CreateRegFactAcct")));
+        .getClient(), Utility.getContext(this, vars, "#User_Org", "CreateRegFactAcct"), strKey));
 
     xmlDocument.setParameter("adOrgId", strOrgId);
 
