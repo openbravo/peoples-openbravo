@@ -19,6 +19,9 @@
 
 package org.openbravo.client.application.event;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.event.Observes;
 
 import org.openbravo.base.model.Entity;
@@ -43,22 +46,31 @@ import org.openbravo.service.db.DalConnectionProvider;
  * @author mtaal
  */
 public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
-
-  private static Entity[] entities = new Entity[] { ModelProvider.getInstance().getEntity(
-      Order.ENTITY_NAME) };
-  private static Property documentNoProperty = entities[0].getProperty(Order.PROPERTY_DOCUMENTNO);
-  private static Property docTypeTargetProperty = entities[0]
-      .getProperty(Order.PROPERTY_TRANSACTIONDOCUMENT);
-  private static Property docTypeProperty = entities[0].getProperty(Order.PROPERTY_DOCUMENTTYPE);
+  private static Entity[] entities = null;
+  private static Property[] documentNoProperties = null;
+  private static Property[] documentTypeProperties = null;
+  private static Property[] documentTypeTargetProperties = null;
 
   public void onSave(@Observes EntityNewEvent event) {
 
     if (isValidEvent(event)) {
+      int index = 0;
+      for (int i = 0; i < entities.length; i++) {
+        if (entities[i] == event.getTargetInstance().getEntity()) {
+          index = i;
+          break;
+        }
+      }
+      Entity entity = entities[index];
+      Property documentNoProperty = documentNoProperties[index];
+      Property documentTypeProperty = documentTypeProperties[index];
+      Property docTypeTargetProperty = documentTypeTargetProperties[index];
+
       String documentNo = (String) event.getCurrentState(documentNoProperty);
       if (documentNo == null || documentNo.startsWith("<")) {
         final DocumentType docTypeTarget = (DocumentType) event
             .getCurrentState(docTypeTargetProperty);
-        final DocumentType docType = (DocumentType) event.getCurrentState(docTypeProperty);
+        final DocumentType docType = (DocumentType) event.getCurrentState(documentTypeProperty);
         // use empty strings instead of null
         final String docTypeTargetId = docTypeTarget != null ? docTypeTarget.getId() : "";
         final String docTypeId = docType != null ? docType.getId() : "";
@@ -77,7 +89,41 @@ public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
   }
 
   @Override
-  protected Entity[] getObservedEntities() {
+  protected synchronized Entity[] getObservedEntities() {
+    if (entities == null) {
+      List<Entity> entityList = new ArrayList<Entity>();
+      List<Property> documentNoPropertyList = new ArrayList<Property>();
+      List<Property> documentTypePropertyList = new ArrayList<Property>();
+      List<Property> documentTypeTargetPropertyList = new ArrayList<Property>();
+      for (Entity entity : ModelProvider.getInstance().getModel()) {
+        for (Property prop : entity.getProperties()) {
+          if ("documentno".equals(prop.getColumnName() != null ? prop.getColumnName().toLowerCase()
+              : "")) {
+            entityList.add(entity);
+            documentNoPropertyList.add(prop);
+            if (entity.hasProperty(Order.PROPERTY_DOCUMENTTYPE)) {
+              documentTypePropertyList.add(entity.getProperty(Order.PROPERTY_DOCUMENTTYPE));
+            } else {
+              documentTypePropertyList.add(null);
+            }
+            if (entity.hasProperty(Order.PROPERTY_TRANSACTIONDOCUMENT)) {
+              documentTypeTargetPropertyList.add(entity
+                  .getProperty(Order.PROPERTY_TRANSACTIONDOCUMENT));
+            } else {
+              documentTypeTargetPropertyList.add(null);
+            }
+            break;
+          }
+        }
+      }
+      entities = entityList.toArray(new Entity[entityList.size()]);
+      documentNoProperties = documentNoPropertyList.toArray(new Property[documentNoPropertyList
+          .size()]);
+      documentTypeProperties = documentTypePropertyList
+          .toArray(new Property[documentTypePropertyList.size()]);
+      documentTypeTargetProperties = documentTypeTargetPropertyList
+          .toArray(new Property[documentTypeTargetPropertyList.size()]);
+    }
     return entities;
   }
 }
