@@ -43,7 +43,7 @@
     ],
     outFields : {
     <#list data.outFields as selectorOutField>
-    '${selectorOutField.outFieldName}': {'fieldName':'${selectorOutField.tabFieldName}', 'suffix': '${selectorOutField.outSuffix}'}<#if selectorOutField_has_next>,</#if>
+    '${selectorOutField.outFieldName}':'${selectorOutField.tabFieldName}'<#if selectorOutField_has_next>,</#if>
     </#list>
     },
     extraSearchFields: [${data.extraSearchFields}],
