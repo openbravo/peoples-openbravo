@@ -212,7 +212,7 @@ isc.OBSelectorPopupWindow.addProperties({
   
   open: function(){
     var selectorWindow = this, data = {
-      '_selectorDefinitionId': this.selectorDefinitionId
+      '_selectorDefinitionId': this.selectorDefinitionId || this.selector.selectorDefinitionId
     };
     
     // purposely not passing the third boolean param

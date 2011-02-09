@@ -29,12 +29,21 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
+import org.openbravo.base.model.Reference;
+import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
+import org.openbravo.base.util.Check;
 import org.openbravo.client.application.OBBindings;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.service.json.JsonConstants;
 
 /**
  * 
@@ -77,10 +86,17 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
       for (SelectorField f : obc.list()) {
         try {
           exprResult = engine.eval(f.getDefaultExpression());
+
           if (sel.isCustomQuery()) {
             result.put(f.getDisplayColumnAlias(), exprResult);
           } else {
-            result.put(f.getProperty(), exprResult);
+            final DomainType domainType = getDomainType(f);
+            String fieldName = f.getProperty();
+            if (domainType instanceof ForeignKeyDomainType) {
+              fieldName = fieldName + "." + JsonConstants.IDENTIFIER;
+            }
+
+            result.put(fieldName, exprResult);
           }
         } catch (Exception e) {
           log.error("Error evaluating expression for property " + f.getProperty()
@@ -107,4 +123,28 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
     return params;
   }
 
+  private DomainType getDomainType(SelectorField selectorField) {
+    if (selectorField.getObuiselSelector().getTable() != null
+        && selectorField.getProperty() != null) {
+      final String entityName = selectorField.getObuiselSelector().getTable().getName();
+      final Entity entity = ModelProvider.getInstance().getEntity(entityName);
+      final Property property = DalUtil.getPropertyFromPath(entity, selectorField.getProperty());
+      Check.isNotNull(property, "Property " + selectorField.getProperty() + " not found in Entity "
+          + entity);
+      return property.getDomainType();
+    } else if (selectorField.getObuiselSelector().getTable() != null
+        && selectorField.getObuiselSelector().isCustomQuery()
+        && selectorField.getReference() != null) {
+      return getDomainType(selectorField.getReference().getId());
+    } else if (selectorField.getObserdsDatasourceField().getReference() != null) {
+      return getDomainType(selectorField.getObserdsDatasourceField().getReference().getId());
+    }
+    return null;
+  }
+
+  private DomainType getDomainType(String referenceId) {
+    final Reference reference = ModelProvider.getInstance().getReference(referenceId);
+    Check.isNotNull(reference, "No reference found for referenceid " + referenceId);
+    return reference.getDomainType();
+  }
 }
