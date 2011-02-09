@@ -93,12 +93,10 @@ isc.OBToolbarActionButton.addProperties( {
     OB.ActionButton.executingProcess = null;
     
     if (newWindow) {
-      if (newWindow.indexOf(location.origin) !== -1){
-        newWindow = newWindow.substr(location.origin.length);
-      }
+      var contextURL = location.href.substr(0, location.href.indexOf(OB.Application.contextUrl) + OB.Application.contextUrl.length);
       
-      if (newWindow.startsWith(OB.Application.contextUrl)){
-        newWindow = newWindow.substr(OB.Application.contextUrl.length);
+      if (newWindow.indexOf(contextURL) !== -1){
+        newWindow = newWindow.substr(contextURL.length);
       }
       
       if (!newWindow.startsWith('/')){
