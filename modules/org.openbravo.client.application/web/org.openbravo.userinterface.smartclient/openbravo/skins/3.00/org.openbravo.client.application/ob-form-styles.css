@@ -125,6 +125,7 @@
 
 .OBFormFieldStaticDisabled {
   color: #7d7d7d;
+ -webkit-text-fill-color: #7d7d7d;
 }
 
 .OBFormFieldInputDisabled,
@@ -133,6 +134,7 @@
   border: 1px solid #d7d7d7;
   background-color: #ffffff;
   color: #7d7d7d;
+  -webkit-text-fill-color: #7d7d7d;
 }
 
 .OBFormFieldDateInput,
