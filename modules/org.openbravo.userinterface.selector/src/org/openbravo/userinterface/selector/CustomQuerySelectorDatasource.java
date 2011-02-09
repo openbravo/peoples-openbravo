@@ -52,6 +52,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
   private static Logger log = Logger.getLogger(SelectorDataSourceFilter.class);
   private static final String ADDITIONAL_FILTERS = "@additional_filters@";
   private static final String NEW_FILTER_CLAUSE = "\n AND ";
+  private static final String NEW_OR_FILTER_CLAUSE = "\n OR ";
 
   @Override
   protected int getCount(Map<String, String> parameters) {
@@ -133,6 +134,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     if (!_HQL.contains(ADDITIONAL_FILTERS)) {
       return _HQL;
     }
+    final String requestType = parameters.get(SelectorConstants.DS_REQUEST_TYPE_PARAMETER);
     String HQL = _HQL;
     StringBuffer additionalFilter = new StringBuffer();
     final String entityAlias = sel.getEntityAlias();
@@ -148,15 +150,28 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     }
     additionalFilter.append(getDefaultFilterExpression(sel, parameters));
 
+    boolean hasFilter = false;
     for (SelectorField field : sel.getOBUISELSelectorFieldList()) {
-      if (field.isFilterable() && field.getClauseLeftPart() != null) {
-        String value = parameters.get(field.getDisplayColumnAlias());
-        if (StringUtils.isNotEmpty(value)) {
-          String whereClause = getWhereClause(value, field, xmlDateFormat);
+      String value = parameters.get(field.getDisplayColumnAlias());
+      if (field.isFilterable() && field.getClauseLeftPart() != null
+          && StringUtils.isNotEmpty(value)) {
+        String whereClause = getWhereClause(value, field, xmlDateFormat);
+        if (!hasFilter) {
           additionalFilter.append(NEW_FILTER_CLAUSE);
-          additionalFilter.append(whereClause);
+          additionalFilter.append(" (");
+          hasFilter = true;
+        } else {
+          if ("Window".equals(requestType)) {
+            additionalFilter.append(NEW_FILTER_CLAUSE);
+          } else {
+            additionalFilter.append(NEW_OR_FILTER_CLAUSE);
+          }
         }
+        additionalFilter.append(whereClause);
       }
+    }
+    if (hasFilter) {
+      additionalFilter.append(")");
     }
     HQL = HQL.replace(ADDITIONAL_FILTERS, additionalFilter.toString());
     return HQL;
