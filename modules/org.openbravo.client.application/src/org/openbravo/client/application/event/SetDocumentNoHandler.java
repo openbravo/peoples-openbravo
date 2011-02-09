@@ -68,9 +68,10 @@ public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
 
       String documentNo = (String) event.getCurrentState(documentNoProperty);
       if (documentNo == null || documentNo.startsWith("<")) {
-        final DocumentType docTypeTarget = (DocumentType) event
-            .getCurrentState(docTypeTargetProperty);
-        final DocumentType docType = (DocumentType) event.getCurrentState(documentTypeProperty);
+        final DocumentType docTypeTarget = (docTypeTargetProperty == null ? null
+            : (DocumentType) event.getCurrentState(docTypeTargetProperty));
+        final DocumentType docType = (documentTypeProperty == null ? null : (DocumentType) event
+            .getCurrentState(documentTypeProperty));
         // use empty strings instead of null
         final String docTypeTargetId = docTypeTarget != null ? docTypeTarget.getId() : "";
         final String docTypeId = docType != null ? docType.getId() : "";
