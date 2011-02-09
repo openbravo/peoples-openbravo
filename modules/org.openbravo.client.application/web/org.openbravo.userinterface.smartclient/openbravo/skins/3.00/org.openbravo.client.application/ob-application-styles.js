@@ -133,10 +133,10 @@ OB.ActiveBarStyling = {
  * Changed styling of the standard dialogs
  =======================================================================*/
 
-isc.addProperties(isc.Dialog.Warn.toolbarDefaults, 
-    {buttonConstructor: isc.OBFormButton
-    }
-);
+isc.addProperties(isc.Dialog.Warn.toolbarDefaults, {
+  buttonConstructor: isc.OBFormButton,
+  styleName: 'OBDialogButtonToolBar'
+});
 
 isc.ListGrid.addProperties({
   alternateRecordStyles: true
