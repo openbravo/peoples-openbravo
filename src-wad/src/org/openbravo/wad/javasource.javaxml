@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,12 +74,25 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String command = vars.getCommand();
+    
+    boolean securedProcess = false;
     if (command.contains("BUTTON")) {
+      try {
+        securedProcess = "Y".equals(org.openbravo.erpCommon.businessUtility.Preferences
+            .getPreferenceValue("SecuredProcess", true, vars.getClient(), vars.getOrg(), vars
+                .getUser(), vars.getRole(), windowId));
+      } catch (PropertyException e) {
+      }
+    
      <FIELDS_TMP id="sectionActionButtonsService">
       if (command.contains("<FIELD_TMP id="ProcessIDsrv">processId</FIELD_TMP>")) {
         SessionInfo.setProcessType("P");
         SessionInfo.setProcessId("<FIELD_TMP id="ProcessIDsrv">processId</FIELD_TMP>");
         SessionInfo.setModuleId("<FIELD_TMP id="ProcessModulesrv">moduleId</FIELD_TMP>");
+        if (securedProcess) {
+          classInfo.type = "P";
+          classInfo.id = "<FIELD_TMP id="ProcessIDsrv">processId</FIELD_TMP>";
+        }
       }
      </FIELDS_TMP>
      <FIELDS_TMP id="sectionActionButtonsServiceJava">
@@ -87,8 +100,16 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         SessionInfo.setProcessType("P");
         SessionInfo.setProcessId("<FIELD_TMP id="ProcessIDsrvJ">processId</FIELD_TMP>");
         SessionInfo.setModuleId("<FIELD_TMP id="ProcessModulesrvJ">moduleId</FIELD_TMP>");
+        if (securedProcess) {
+          classInfo.type = "P";
+          classInfo.id = "<FIELD_TMP id="ProcessIDsrvJ">processId</FIELD_TMP>";
+        }
       }
      </FIELDS_TMP>
+    }
+    if (!securedProcess) {
+      classInfo.type = "W";
+      classInfo.id = windowId;
     }
     super.service(request, response);
   }
