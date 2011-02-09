@@ -49,6 +49,16 @@ public class ApplicationUtils {
 
   static boolean showWindowInClassicMode(Window window) {
     for (Tab tab : window.getADTabList()) {
+
+      // FIXME Remove this once ImageBLOB is implemented
+      // Currently, windows with ImageBLOB reference columns will be shown in classic mode
+      String tableName = tab.getTable().getDBTableName();
+      org.openbravo.base.model.Table table = ModelProvider.getInstance().getTable(tableName);
+      for (org.openbravo.base.model.Column col : table.getColumns()) {
+        if (col.getReference().getId().equals("4AA6C3BE9D3B4D84A3B80489505A23E5")) {
+          return true;
+        }
+      }
       if (tab.getSQLWhereClause() != null && tab.getHqlwhereclause() == null) {
         // There is a tab with a SQL whereclause, but without a defined HQL whereclause
         return true;
