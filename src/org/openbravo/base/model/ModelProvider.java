@@ -331,26 +331,14 @@ public class ModelProvider implements OBSingleton {
   }
 
   /**
-   * Returns the tables in the database, is usefull for debugging purposes.
+   * Returns list of tables known in the dal in memory model.
    * 
-   * @return list of tables in the database
+   * This excludes i.e. tables which do not have any column defined with iskey='Y'
+   * 
+   * @return list of tables known by dal in no particular stable order
    */
   public List<Table> getTables() {
-    final SessionFactoryController sessionFactoryController = new ModelSessionFactoryController();
-    final Session session = sessionFactoryController.getSessionFactory().openSession();
-    final Transaction tx = session.beginTransaction();
-    try {
-      tables = list(session, Table.class);
-      // read the columns in one query and assign them to the table
-      final List<Column> cols = readColumns(session);
-      assignColumnsToTable(cols);
-      return tables;
-    } finally {
-      log.debug("Closing session and sessionfactory used during model read");
-      tx.commit();
-      session.close();
-      sessionFactoryController.getSessionFactory().close();
-    }
+    return new ArrayList<Table>(tablesByTableName.values());
   }
 
   /**
