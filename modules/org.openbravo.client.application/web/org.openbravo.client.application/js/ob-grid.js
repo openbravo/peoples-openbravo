@@ -148,7 +148,7 @@ isc.OBGrid.addProperties({
         for (prop in criteria) {
           if (criteria.hasOwnProperty(prop) && prop.endsWith('.' + OB.Constants.IDENTIFIER)) {
             value = criteria[prop];
-            index = prop.indexOf('.');
+            index = prop.lastIndexOf('.');
             prop = prop.substring(0, index);
             criteria[prop] = value;
           }
@@ -246,7 +246,7 @@ isc.OBGrid.addProperties({
         var value = criteria[prop];
         // see the description in setValuesAsCriteria above
         if (prop.endsWith('.' + OB.Constants.IDENTIFIER)) {
-          var index = prop.indexOf('.');
+          var index = prop.lastIndexOf('.');
           prop = prop.substring(0, index);
         }
         
