@@ -783,5 +783,5 @@ isc.Page.checkBrowserAndRedirect("[SKIN]/unsupported_browser.html");
 }   // end with()
 }   // end loadSkin()
 
-isc.loadSkin()
+isc.loadSkin();
 
