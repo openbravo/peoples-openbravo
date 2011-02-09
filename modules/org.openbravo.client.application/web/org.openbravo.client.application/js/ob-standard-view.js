@@ -1114,7 +1114,6 @@ isc.OBStandardView.addProperties({
     }
     
     if (!this.isShowingForm) {
-      this.messageBar.hide();
       this.viewGrid.refreshGrid();
     } else {
       var view = this;
