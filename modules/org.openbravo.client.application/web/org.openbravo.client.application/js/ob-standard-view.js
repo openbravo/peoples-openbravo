@@ -1115,23 +1115,21 @@ isc.OBStandardView.addProperties({
     
     if (!this.isShowingForm) {
       this.messageBar.hide();
-      this.viewGrid.targetRecordId = this.viewGrid.getSelectedRecord()[OB.Constants.ID];
-      this.viewGrid.invalidateCache();
+      this.viewGrid.refreshGrid();
     } else {
       var view = this;
       if (this.viewForm.hasChanged) {
         var callback = function(ok){
           if (ok) {
-            this.viewGrid.targetRecordId = this.viewGrid.getSelectedRecord()[OB.Constants.ID];
-            this.viewGrid.invalidateCache();
+            this.viewGrid.refreshGrid();
           }
         };
         isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmRefresh'), callback);
       } else {
-        this.viewGrid.targetRecordId = this.viewGrid.getSelectedRecord()[OB.Constants.ID];
-        this.viewGrid.invalidateCache();
+        this.viewGrid.refreshGrid();
       }
     }
+    refreshCallback();
   },
   
   saveRow: function(){

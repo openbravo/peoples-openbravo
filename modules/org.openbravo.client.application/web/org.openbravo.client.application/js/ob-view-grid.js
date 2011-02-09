@@ -425,7 +425,20 @@ isc.OBViewGrid.addProperties({
       }     
     }
     
+    if(this.actionAfterDataArrived){
+      this.actionAfterDataArrived();
+      this.actionAfterDataArrived = null;
+    }
+    
     return ret;
+  },
+  
+  refreshGrid: function(callback){
+	if(this.getSelectedRecord()){
+      this.targetRecordId = this.getSelectedRecord()[OB.Constants.ID];
+	}
+    this.actionAfterDataArrived = callback;
+    this.invalidateCache();
   },
   
   // with a delay to handle the target record when the body has been drawn
