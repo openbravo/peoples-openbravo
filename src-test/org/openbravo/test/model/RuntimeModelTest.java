@@ -23,14 +23,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Transaction;
+import org.hibernate.classic.Session;
+import org.hibernate.criterion.Order;
 import org.openbravo.base.model.Column;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.ModelSessionFactoryController;
 import org.openbravo.base.model.NamingUtil;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.Reference;
 import org.openbravo.base.model.Table;
 import org.openbravo.base.model.domaintype.BasePrimitiveDomainType;
+import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.test.base.BaseTest;
 
 /**
@@ -45,10 +51,13 @@ public class RuntimeModelTest extends BaseTest {
 
   private static final Logger log = Logger.getLogger(RuntimeModelTest.class);
 
-  // don't initialize dal layer for model tests
+  // cached list of all tables & columns as used by several tests
+  private List<Table> allTables;
+
   @Override
   protected void setUp() throws Exception {
     super.setUp();
+    allTables = getTables();
   }
 
   /**
@@ -68,7 +77,7 @@ public class RuntimeModelTest extends BaseTest {
    */
   public void testPK() {
     final ArrayList<Table> tablesWithoutPK = new ArrayList<Table>();
-    for (final Table t : ModelProvider.getInstance().getTables()) {
+    for (final Table t : allTables) {
       if (!t.isView() && t.getPrimaryKeyColumns().size() == 0) {
         tablesWithoutPK.add(t);
       }
@@ -89,7 +98,7 @@ public class RuntimeModelTest extends BaseTest {
    * handled better, currently the entity name contains a space resulting in errors in HQL
    */
   public void testTableName() {
-    for (final Table t : ModelProvider.getInstance().getTables()) {
+    for (final Table t : allTables) {
       final char[] chars = t.getName().toCharArray();
       for (char c : chars) {
         for (char illegalChar : NamingUtil.ILLEGAL_ENTITY_NAME_CHARS) {
@@ -162,7 +171,7 @@ public class RuntimeModelTest extends BaseTest {
    */
   public void testOnePK() {
     int total = 0;
-    for (final Table t : ModelProvider.getInstance().getTables()) {
+    for (final Table t : allTables) {
       if (!t.isView() && t.getPrimaryKeyColumns().size() > 1) {
         log.debug("Table: " + t.getId() + " - " + t.getTableName());
         log.debug("  Columns : ");
@@ -187,7 +196,7 @@ public class RuntimeModelTest extends BaseTest {
 
   public void testIdentifiers() {
     final ArrayList<String> tables = new ArrayList<String>();
-    for (final Table t : ModelProvider.getInstance().getTables()) {
+    for (final Table t : allTables) {
       if (!t.isView() && t.isActive() && t.getIdentifierColumns().size() == 0)
         tables.add(t.getTableName());
     }
@@ -222,7 +231,7 @@ public class RuntimeModelTest extends BaseTest {
   public void testIsParent() {
     final ArrayList<String> columns = new ArrayList<String>();
 
-    for (final Table t : ModelProvider.getInstance().getTables()) {
+    for (final Table t : allTables) {
       for (final Column c : t.getColumns()) {
         if (c.isParent() && !c.getReference().getId().equals(Reference.TABLE)
             && !c.getReference().getId().equals(Reference.TABLEDIR)
@@ -246,7 +255,7 @@ public class RuntimeModelTest extends BaseTest {
   public void testIsParent2() {
     final ArrayList<String> columns = new ArrayList<String>();
 
-    for (final Table t : ModelProvider.getInstance().getTables()) {
+    for (final Table t : allTables) {
       for (final Column c : t.getColumns()) {
         if (c.isParent() && c.isPrimitiveType()) {
           columns.add(t.getTableName() + " - " + c.getColumnName());
@@ -265,7 +274,7 @@ public class RuntimeModelTest extends BaseTest {
    */
   public void testIsParent3() {
     final ArrayList<String> columns = new ArrayList<String>();
-    for (final Table t : ModelProvider.getInstance().getTables()) {
+    for (final Table t : allTables) {
       for (final Column c : t.getColumns()) {
         if (c.isParent() && c.getReference().getId().equals(Reference.TABLE)
             && c.getReferenceValue() == null) {
@@ -286,7 +295,7 @@ public class RuntimeModelTest extends BaseTest {
    */
   public void testIsParent4() {
     final ArrayList<String> columns = new ArrayList<String>();
-    for (final Table t : ModelProvider.getInstance().getTables()) {
+    for (final Table t : allTables) {
       for (final Column c : t.getColumns()) {
         if (c.isParent() && c.getReference().getId().equals(Reference.TABLEDIR)) {
           final String obNamingConvention = c.getColumnName().substring(
@@ -325,4 +334,35 @@ public class RuntimeModelTest extends BaseTest {
       return "ob:long";
     }
   }
+
+  /**
+   * Returns the tables in the database. Difference to ModelProvider.getTables() is that the latter
+   * does not return tables which cannot be handled by DAL, i.e. tables which do not have any
+   * primary columns.
+   * 
+   */
+  private List<Table> getTables() {
+    final SessionFactoryController sessionFactoryController = new ModelSessionFactoryController();
+    final Session session = sessionFactoryController.getSessionFactory().openSession();
+    final Transaction tx = session.beginTransaction();
+    try {
+      final List<Table> tables = ModelProvider.getInstance().list(session, Table.class);
+      // read the columns in one query and assign them to the table
+      final Criteria c = session.createCriteria(Column.class);
+      c.addOrder(Order.asc("position"));
+      @SuppressWarnings("unchecked")
+      final List<Column> cols = c.list();
+      for (final Column column : cols) {
+        final Table table = column.getTable();
+        table.getColumns().add(column);
+      }
+      return tables;
+    } finally {
+      log.debug("Closing session and sessionfactory used during model read");
+      tx.commit();
+      session.close();
+      sessionFactoryController.getSessionFactory().close();
+    }
+  }
+
 }
