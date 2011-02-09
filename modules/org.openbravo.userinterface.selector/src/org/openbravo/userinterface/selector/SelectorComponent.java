@@ -539,7 +539,8 @@ public class SelectorComponent extends BaseTemplateComponent {
       // in that case always show the identifier
       final DomainType domainType = getDomainType(selectorField);
       if (domainType instanceof ForeignKeyDomainType) {
-        fieldName = fieldName + "." + JsonConstants.IDENTIFIER;
+        String displayField = fieldName + "." + JsonConstants.IDENTIFIER;
+        localSelectorField.setDisplayField(displayField);
       }
 
       localSelectorField.setName(fieldName);
@@ -639,6 +640,7 @@ public class SelectorComponent extends BaseTemplateComponent {
   public static class LocalSelectorField {
     private String title;
     private String name;
+    private String displayField;
     private boolean filter;
     private boolean sort;
     private DomainType domainType;
@@ -667,6 +669,14 @@ public class SelectorComponent extends BaseTemplateComponent {
       this.name = name;
     }
 
+    public String getDisplayField() {
+      return displayField;
+    }
+
+    public void setDisplayField(String displayField) {
+      this.displayField = displayField;
+    }
+
     public List<LocalSelectorFieldProperty> getProperties() {
       final List<LocalSelectorFieldProperty> result = new ArrayList<LocalSelectorFieldProperty>();
       result.add(createLocalSelectorFieldProperty("title", title));
@@ -684,6 +694,10 @@ public class SelectorComponent extends BaseTemplateComponent {
           result.add(createNonStringLocalSelectorFieldProperty("formatCellValue",
               " function(value) { return OB.Utilities.getYesNoDisplayValue(value);}"));
         }
+      }
+      if (domainType instanceof ForeignKeyDomainType) {
+        result.add(createLocalSelectorFieldProperty("displayField", displayField));
+        result.add(createNonStringLocalSelectorFieldProperty("filterEditorType", "OBTextItem"));
       }
       return result;
     }
