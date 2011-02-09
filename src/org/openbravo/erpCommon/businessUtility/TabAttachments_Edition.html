@@ -32,6 +32,7 @@
 
   	<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
+    modifyInputFile('editDiscard');
 		this.windowTables = new Array(
 		  new windowTableId('client', 'linkButtonSaveRelation')
 		);
@@ -40,7 +41,19 @@
 		setBrowserAutoComplete(false);
 
 		setWindowElementFocus('reportAD_Datatype_ID_D','id');
-	}
+  }
+
+  function modifyInputFile(id) {
+    var object = document.getElementById(id);
+    if (getBrowserInfo('name').toUpperCase().indexOf('CHROME') !== -1) {
+      object.style.padding = '0px';
+      object.style.margin = '0px';
+      object.style.height = '23px';
+      object.style.background = 'none !important';
+      object.style.border = 'none';
+    }
+    object.style.display = '';
+  }
 
 	function onResizeDo(){
 	}
@@ -113,7 +126,7 @@
             <td class="TitleCell"><span class="LabelText">File</span></td>
             <td class="TextBox_ContentCell" colspan="2">
               <input type="text" style="font-size: 0pt; margin: 0; padding: 0; border:0; width:0px; height:0px;" onfocus="isInputFile=true;" onblur="isInputFile=false;"></input> 
-              <input type="file" size="50" name="inpname" value="" class="dojoValidateValid TextBox_TwoCells_width" id="editDiscard"></input>
+              <input type="file" size="50" name="inpname" value="" class="dojoValidateValid TextBox_TwoCells_width" id="editDiscard" style="display: none;"></input>
               <input type="text" style="font-size: 0pt; margin: 0; padding: 0; border:0; width:0px; height:0px;" onfocus="isInputFile=true;" onblur="isInputFile=false;"></input> 
               <span id="newDiscard"> 
                 <input type="text" class="dojoValidateValid TextBox_TwoCells_width" name="inpname" value="" disabled="" id="Name"></input>
