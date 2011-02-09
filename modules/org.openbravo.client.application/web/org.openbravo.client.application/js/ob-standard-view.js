@@ -1115,22 +1115,21 @@ isc.OBStandardView.addProperties({
     
     if (!this.isShowingForm) {
       this.messageBar.hide();
-      this.viewGrid.filterData(this.viewGrid.getCriteria(), refreshCallback);
+      this.viewGrid.targetRecordId = this.viewGrid.getSelectedRecord()[OB.Constants.ID];
+      this.viewGrid.invalidateCache();
     } else {
       var view = this;
       if (this.viewForm.hasChanged) {
         var callback = function(ok){
           if (ok) {
-            var criteria = [];
-            criteria[OB.Constants.ID] = view.viewGrid.getSelectedRecord()[OB.Constants.ID];
-            view.viewForm.fetchData(criteria, refreshCallback);
+            this.viewGrid.targetRecordId = this.viewGrid.getSelectedRecord()[OB.Constants.ID];
+            this.viewGrid.invalidateCache();
           }
         };
         isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmRefresh'), callback);
       } else {
-        var criteria = [];
-        criteria[OB.Constants.ID] = view.viewForm.getValue(OB.Constants.ID);
-        view.viewForm.fetchData(criteria, refreshCallback);
+        this.viewGrid.targetRecordId = this.viewGrid.getSelectedRecord()[OB.Constants.ID];
+        this.viewGrid.invalidateCache();
       }
     }
   },

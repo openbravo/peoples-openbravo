@@ -463,6 +463,10 @@ isc.OBViewGrid.addProperties({
       if (this.view.standardWindow.directTabInfo) {
         this.view.openDirectChildTab();
       }
+      
+      if (this.view.isShowingForm) {
+    	this.view.viewForm.editRecord(gridRecord);
+      }
     } else {
       // wait a bit longer til the body is drawn
       this.delayCall('delayedHandleTargetRecord', [startRow, endRow], 200, this);
