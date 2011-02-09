@@ -249,35 +249,47 @@ isc.OBSelectorPopupWindow.addProperties({
       if (!selected) {
         for (i in outFields) {
           if (outFields.hasOwnProperty(i)) {
-            if (!outFields[i]) {
+            if (!outFields[i].fieldName) {
               // skip id and _identifier and other columns without
               // associated tab field
               continue;
             }
-            fld = form.getFieldFromInpColumnName(outFields[i]);
+
+            if(outFields[i].suffix) {
+                form.hiddenInputs[this.selector.outHiddenInputPrefix +
+                                  outFields[i].suffix] = null;
+            }
+
+            fld = form.getFieldFromInpColumnName(outFields[i].fieldName);
             if (fld) {
               fld.clearValue();
             } else {
-              form.hiddenInputs[outFields[i]] = null;
+              form.hiddenInputs[outFields[i].fieldName] = null;
             }
           }
         }
         return;
       }
     } else {
-    
+
       for (i in outFields) {
         if (outFields.hasOwnProperty(i)) {
-          if (!outFields[i]) {
+          if (!outFields[i].fieldName) {
             // skip id and _identifier and other columns without
             // associated tab field
             continue;
           }
-          fld = form.getFieldFromInpColumnName(outFields[i]);
+
+          if(outFields[i].suffix) {
+            form.hiddenInputs[this.selector.outHiddenInputPrefix +
+                              outFields[i].suffix] = record[i];
+          }
+
+          fld = form.getFieldFromInpColumnName(outFields[i].fieldName);
           if (fld) {
             fld.setValue(record[i]);
           } else {
-            form.hiddenInputs[outFields[i]] = record[i];
+            form.hiddenInputs[outFields[i].fieldName] = record[i];
           }
         }
       }

@@ -43,12 +43,13 @@
     ],
     outFields : {
     <#list data.outFields as selectorOutField>
-    '${selectorOutField.outFieldName}':'${selectorOutField.tabFieldName}'<#if selectorOutField_has_next>,</#if>
+    '${selectorOutField.outFieldName}': {'fieldName':'${selectorOutField.tabFieldName}', 'suffix': '${selectorOutField.outSuffix}'}<#if selectorOutField_has_next>,</#if>
     </#list>
     },
     extraSearchFields: [${data.extraSearchFields}],
     optionDataSource: ${data.dataSourceJavascript},
-    whereClause : '${data.whereClause?js_string}'
+    whereClause : '${data.whereClause?js_string}',
+    outHiddenInputPrefix: '${data.outHiddenInputPrefix}'
 <#else>
 /* jslint */
 <#list data.hiddenInputs?keys as key>
