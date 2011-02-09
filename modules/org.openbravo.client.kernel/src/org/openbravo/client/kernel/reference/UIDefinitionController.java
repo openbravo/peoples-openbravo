@@ -20,21 +20,23 @@ package org.openbravo.client.kernel.reference;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.hibernate.Hibernate;
+import org.openbravo.base.model.Column;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Table;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.UserInterfaceDefinition;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
 
@@ -141,30 +143,30 @@ public class UIDefinitionController extends BaseTemplateComponent {
         }
       }
 
-      final OBQuery<Column> columnQry = OBDal.getInstance().createQuery(Column.class, "");
-      columnQry.setFilterOnActive(false);
-      for (Column column : columnQry.list()) {
-        String referenceId;
-        if (column.getReferenceSearchKey() != null) {
-          referenceId = (String) DalUtil.getId(column.getReferenceSearchKey());
-        } else {
-          referenceId = (String) DalUtil.getId(column.getReference());
-        }
-
-        // if one of the old hardcoded pwd-column -> move to new-style reference
-        // Companion-code in org.openbravo.base.mode.Property (for for domaintype)
-        String colReferenceId = (String) DalUtil.getId(column.getReference());
-        if (column.isDisplayEncription() && colReferenceId != EncryptedStringReferenceID
-            && colReferenceId != HashedStringReferenecID) {
-          if (column.isDeencryptable()) {
-            referenceId = EncryptedStringReferenceID;
+      for (Table table : ModelProvider.getInstance().getTables()) {
+        List<Column> cols = table.getColumns();
+        for (Column column : cols) {
+          String referenceId;
+          if (column.getReferenceValue() != null) {
+            referenceId = column.getReferenceValue().getId();
           } else {
-            referenceId = HashedStringReferenecID;
+            referenceId = column.getReference().getId();
           }
-        }
-        localUIDefinitionsByColumn.put(column.getId(), localCachedDefinitions.get(referenceId));
-      }
 
+          // if one of the old hardcoded pwd-column -> move to new-style reference
+          // Companion-code in org.openbravo.base.mode.Property (for for domaintype)
+          String colReferenceId = column.getReference().getId();
+          if (column.isEncrypted() && colReferenceId != EncryptedStringReferenceID
+              && colReferenceId != HashedStringReferenecID) {
+            if (column.isDecryptable()) {
+              referenceId = EncryptedStringReferenceID;
+            } else {
+              referenceId = HashedStringReferenecID;
+            }
+          }
+          localUIDefinitionsByColumn.put(column.getId(), localCachedDefinitions.get(referenceId));
+        }
+      }
     } finally {
       OBContext.restorePreviousMode();
     }
