@@ -9072,8 +9072,8 @@ a.Menu_ToolBar_Button:active {
 .Popup_Client_TablePopup {
   border: 0px none;
   margin-top: 20px;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: 20px;
   background-color : #E8E8E8;
   width: 580px;
@@ -9082,8 +9082,9 @@ a.Menu_ToolBar_Button:active {
 
 .Popup_Client_TableWorkflow {
   border: 0px none;
-  margin: 0 auto;
   margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: 20px;
   background-color : #E8E8E8;
   width: 290px;
@@ -9093,8 +9094,8 @@ a.Menu_ToolBar_Button:active {
 .Popup_Client_TableSelector {
   border: 0px none;
   margin-top: 5px;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: 5px;
   background-color : #E8E8E8;
   width: 870px;
