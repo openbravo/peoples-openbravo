@@ -361,15 +361,27 @@ var baseDirectory = "../../../../../web/";
                     <td class="TitleCell"></td>
                     <td class="Button_LeftAlign_ContentCell" colspan="2">
                       <div>
-                        <a class="ButtonLink_default" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('HISTORY_SEARCH', false, null, 'ModuleManagement.html', '_self', null, false);return false;" id="buttonHTML">
-                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Search';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                          <tbody><tr>
-                            <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="Search" title="Search" src="../../../../../web/images/blank.gif" border="0"></td>
-                            <td class="Button_text">Search</td>
-                            <td class="Button_right"></td>
-                          </tr>
-                        </tbody></table>
-                        </a>
+                        <button type="button" 
+                          id="buttonHTML" 
+                          class="ButtonLink" 
+                          onclick="submitCommandForm('HISTORY_SEARCH', false, null, 'ModuleManagement.html', '_self', null, false);return false;" 
+                          onfocus="buttonEvent('onfocus', this); window.status='Search'; return true;" 
+                          onblur="buttonEvent('onblur', this);" 
+                          onkeyup="buttonEvent('onkeyup', this);" 
+                          onkeydown="buttonEvent('onkeydown', this);" 
+                          onkeypress="buttonEvent('onkeypress', this);" 
+                          onmouseup="buttonEvent('onmouseup', this);" 
+                          onmousedown="buttonEvent('onmousedown', this);" 
+                          onmouseover="buttonEvent('onmouseover', this); window.status='Search'; return true;" 
+                          onmouseout="buttonEvent('onmouseout', this);">
+                          <table class="Button" id="fieldTable">
+                            <tr>
+                              <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="Search" title="Search" src="../../../../../web/images/blank.gif" border="0" /></td>
+                              <td class="Button_text Button_width">Search</td>
+                              <td class="Button_right"></td>
+                            </tr>
+                          </table>
+                        </button>
                       </div>
                     </td>
                     <td class="ContentCell"></td>
