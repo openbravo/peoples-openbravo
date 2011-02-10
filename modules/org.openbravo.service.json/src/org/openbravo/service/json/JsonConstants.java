@@ -65,6 +65,13 @@ public class JsonConstants {
   public static final String TEXTMATCH_STARTSWITH = "startsWith";
   public static final String TEXTMATCH_SUBSTRING = "substring";
 
+  // if this parameter is passed then if a new object already has an id then
+  // that id is set back in the json which is returned together with the
+  // the new id value. The client/user can then determine himself how to handle
+  // changes in id values
+  public static final String SEND_ORIGINAL_ID_BACK = "sendOriginalIDBack";
+  public static final String ORIGINAL_ID = "_originalId";
+
   // these constants are used in response
   public static final String RESPONSE_STATUS = "status";
 

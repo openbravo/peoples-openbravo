@@ -169,6 +169,9 @@ isc.OBSearchItem.addProperties({
   }, 
 
   showPicker: function(){
+    if (this.isDisabled()) {
+      return;
+    }
     var parameters = [], index = 0, i = 0, length, propDef, inpName, values;
     var form = this.form, view = form.view;
     if (this.isFocusable()) {

@@ -295,6 +295,13 @@ public class JsonToDataConverter {
 
     setData(jsonObject, obObject);
 
+    // see the DefaultJSonDataService for a description on specific handling of
+    // new computed id's
+    if (isNew) {
+      // remove the id before it gets saved
+      obObject.setValue(JsonConstants.ID, null);
+    }
+
     return obObject;
   }
 

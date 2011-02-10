@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
@@ -316,15 +317,24 @@ public class DefaultJsonDataService implements JsonDataService {
    */
   public String update(Map<String, String> parameters, String content) {
     try {
+      final boolean sendOriginalIdBack = "true".equals(parameters
+          .get(JsonConstants.SEND_ORIGINAL_ID_BACK));
+
       final JsonToDataConverter fromJsonConverter = OBProvider.getInstance().get(
           JsonToDataConverter.class);
 
       final Object jsonContent = getContentAsJSON(content);
       final List<BaseOBObject> bobs;
+      final List<JSONObject> originalData = new ArrayList<JSONObject>();
       if (jsonContent instanceof JSONArray) {
         bobs = fromJsonConverter.toBaseOBObjects((JSONArray) jsonContent);
+        final JSONArray jsonArray = (JSONArray) jsonContent;
+        for (int i = 0; i < jsonArray.length(); i++) {
+          originalData.add(jsonArray.getJSONObject(i));
+        }
       } else {
         final JSONObject jsonObject = (JSONObject) jsonContent;
+        originalData.add(jsonObject);
         // now set the id and entityname from the parameters if it was set
         if (!jsonObject.has(JsonConstants.ID) && parameters.containsKey(JsonConstants.ID)) {
           jsonObject.put(JsonConstants.ID, parameters.containsKey(JsonConstants.ID));
@@ -372,6 +382,23 @@ public class DefaultJsonDataService implements JsonDataService {
             DataToJsonConverter.class);
         final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
 
+        if (sendOriginalIdBack) {
+          // now it is assumed that the jsonObjects are the same size and the same location
+          // in the array
+          if (jsonObjects.size() != originalData.size()) {
+            throw new OBException("Unequal sizes in json data processed " + jsonObjects.size()
+                + " " + originalData.size());
+          }
+
+          // now add the old id back
+          for (int i = 0; i < originalData.size(); i++) {
+            final JSONObject original = originalData.get(i);
+            final JSONObject ret = jsonObjects.get(i);
+            if (original.has(JsonConstants.ID) && original.has(JsonConstants.NEW_INDICATOR)) {
+              ret.put(JsonConstants.ORIGINAL_ID, original.get(JsonConstants.ID));
+            }
+          }
+        }
         OBDal.getInstance().commitAndClose();
 
         final JSONObject jsonResult = new JSONObject();

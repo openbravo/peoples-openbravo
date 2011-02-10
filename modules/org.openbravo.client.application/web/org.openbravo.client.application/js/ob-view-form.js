@@ -86,12 +86,7 @@ OB.ViewFormProperties = {
   
   editRecord: function(record, preventFocus){
     var ret = this.Super('editRecord', arguments);
-    this.doEditRecordActions(preventFocus, false);
-    
-    if (this.view.parentProperty) {
-      this.setValue(this.view.parentProperty, record[this.view.parentProperty]);
-    }
-    
+    this.doEditRecordActions(preventFocus, false);    
     return ret;
   },
   
@@ -119,7 +114,8 @@ OB.ViewFormProperties = {
     this.retrieveInitialValues(isNew);
     
     this.view.messageBar.hide();
-    if (isNew) {
+    // note on purpose using this.isNew, also takes into account the _new flag
+    if (this.isNew) {
       this.view.statusBar.setStateLabel('OBUIAPP_New', this.view.statusBar.newIcon);
     } else {
       this.view.statusBar.setStateLabel();
@@ -135,6 +131,22 @@ OB.ViewFormProperties = {
     var ret = this.Super('editNewRecord', arguments);
     this.doEditRecordActions(preventFocus, true);
     return ret;
+  },
+  
+  // set parent display info in the record
+  setParentDisplayInfo: function() {    
+    if (this.view.parentProperty) {
+      var parentRecord = this.view.getParentRecord();
+      if (parentRecord) {
+        this.setValue(this.view.parentProperty, parentRecord.id);
+        this.setValue(this.view.parentProperty + '.' + OB.Constants.IDENTIFIER, parentRecord[OB.Constants.IDENTIFIER]);
+        if (this.getField(this.view.parentProperty) && !this.getField(this.view.parentProperty).valueMap) {
+          var valueMap = {};
+          this.getField(this.view.parentProperty).valueMap = valueMap;
+          valueMap[parentRecord.id] = parentRecord[OB.Constants.IDENTIFIER];
+        }
+      }
+    }
   },
   
   enableLinkedItemSection: function(enable){
@@ -223,6 +235,8 @@ OB.ViewFormProperties = {
   },
   
   retrieveInitialValues: function(isNew){
+    this.setParentDisplayInfo();
+    
     var parentId = this.view.getParentId(), requestParams, parentColumn, me = this, mode;
     // note also in this case initial vvalues are passed in as in case of grid
     // editing the unsaved/error values from a previous edit session are maintained
@@ -368,11 +382,12 @@ OB.ViewFormProperties = {
         valueMap[id] = (identifier === 'null' ? null : identifier);
       }
       field.setValueMap(valueMap);
-      if (editValues) {
-        // store the valuemap in the edit values so it can be retrieved later
-        // when the form is rebuild
-        editValues[prop + '._valueMap'] = valueMap;
-      }
+    }
+    
+    if (editValues && field.valueMap) {
+      // store the valuemap in the edit values so it can be retrieved later
+      // when the form is rebuild
+      editValues[prop + '._valueMap'] = field.valueMap;
     }
     
     if (columnValue.value && columnValue.value === 'null') {
@@ -451,7 +466,8 @@ OB.ViewFormProperties = {
     if (this.view.parentProperty) {
       parentId = this.view.getParentId();
     }
-    
+    this.setParentDisplayInfo();
+
     requestParams = {
       MODE: 'CHANGE',
       PARENT_ID: parentId,
@@ -560,6 +576,12 @@ OB.ViewFormProperties = {
         if (localRecord) {
           localRecord[view.viewGrid.selection.selectionProperty] = true;
         }
+
+        // a new id has been computed use that now    
+        if (localRecord._newId) {
+          localRecord.id = localRecord._newId;
+          delete localRecord._newId;
+        }
       }
       
       if (status === isc.RPCResponse.STATUS_SUCCESS) {
@@ -583,6 +605,7 @@ OB.ViewFormProperties = {
         // do this after doing autoSave as the setHasChanged will clean
         // the autosave info
         this.setHasChanged(false);
+
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
         form.handleFieldErrors(resp.errors);
         view.standardWindow.autoSaveDone(view, false);

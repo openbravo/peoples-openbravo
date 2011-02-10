@@ -92,7 +92,8 @@ isc.OBViewDataSource.addProperties( {
     // standard update is not sent with operationType
     var additionalPara = {
       _operationType : 'update',
-      _noActiveFilter : true
+      _noActiveFilter : true,
+      sendOriginalIDBack: true      
     };
     isc.addProperties(newRequestProperties.params, additionalPara);
     if (!newRequestProperties.dataSource) {
@@ -102,7 +103,20 @@ isc.OBViewDataSource.addProperties( {
         newRequestProperties ]);
   },
 
+  // do special id-handling so that we can replace the old if with the new id
+  // in the correct way, see the ob-view-grid.js editComplete method
+  validateJSONRecord: function(record) {
+    record = this.Super('validateJSONRecord', arguments);
+    var newId = record.id;
+    if (record._originalId) {
+      record.id = record._originalId;
+      record._newId = newId;
+    }
+    return record;
+  },
+  
   transformResponse : function(dsResponse, dsRequest, jsonData) {
+    
     if (dsRequest.clientContext && dsRequest.clientContext.progressIndicatorSelectedRecord) {
       this.hideProgress(dsRequest.clientContext.progressIndicatorSelectedRecord);
     }

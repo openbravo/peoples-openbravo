@@ -129,6 +129,7 @@ isc.OBViewGrid.addProperties({
   rowEndEditAction: 'next',
   listEndEditAction: 'next',
   enforceVClipping: true,
+  validateByCell: true,
   
   currentEditColumnLayout: null,
   
@@ -820,7 +821,7 @@ isc.OBViewGrid.addProperties({
       
     // close any editors we may have
     this.closeAnyOpenEditor();
-
+    this.view.messageBar.hide();
     this.stopHover();
     this.updateSelectedCountDisplay();
     this.view.recordSelected();
@@ -1041,6 +1042,7 @@ isc.OBViewGrid.addProperties({
       _new: true,
       id: '_' + new Date().getTime()
     };
+
     this.data.insertCacheData(record, rowNum);
     this.updateRowCountDisplay();
     this.redraw();
@@ -1067,10 +1069,22 @@ isc.OBViewGrid.addProperties({
     view.standardWindow.cleanUpAutoSaveProperties();
     view.updateTabTitle();
     view.toolBar.updateButtonState();
+    
+    // if nothing else got selected, select ourselves then
+    if (!this.getSelectedRecord()) {
+      this.selectRecord(record);
+    }
+    this.view.messageBar.hide();
   },
   
   editComplete: function(rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse){
     var record = this.getRecord(rowNum), editRow, editSession, autoSaveAction;
+
+    // a new id has been computed use that now    
+    if (record._newId) {
+      record.id = record._newId;
+      delete record._newId;
+    }
     
     // during save the record looses the link to the editColumnLayout,
     // restore it
@@ -1084,6 +1098,9 @@ isc.OBViewGrid.addProperties({
       record.editColumnLayout.showEditOpen();
     }
     
+    // remove any new pointer
+    delete record._new;
+    
     this.view.toolBar.updateButtonState();
     
     // remove the error style/message
@@ -1094,9 +1111,15 @@ isc.OBViewGrid.addProperties({
     
     // success invoke the action, if any there
     this.view.standardWindow.autoSaveDone(this.view, true);
-    
-    // remove any new pointer
-    delete record._new;
+
+    // if nothing else got selected, select ourselves then
+    if (!this.getSelectedRecord()) {
+      this.selectRecord(record);
+      this.view.refreshChildViews();
+    } else if (this.getSelectedRecord() === record) {
+      this.view.refreshChildViews();
+    }
+    this.view.messageBar.hide();
   },
   
   undoEditSelectedRows: function(){
@@ -1166,7 +1189,7 @@ isc.OBViewGrid.addProperties({
         me.updateRowCountDisplay();
       } else {
         // remove the error style/msg    
-        this.setRecordErrorMessage(rowNum, null);
+        me.setRecordErrorMessage(rowNum, null);
       }
       
       this.view.standardWindow.cleanUpAutoSaveProperties();
@@ -1293,7 +1316,6 @@ isc.OBViewGrid.addProperties({
         return liveField.valueMap;
       }
     }
-    
     
     return this.Super('getEditorValueMap', arguments);
   },

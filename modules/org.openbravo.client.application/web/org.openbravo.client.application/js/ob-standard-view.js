@@ -959,6 +959,13 @@ isc.OBStandardView.addProperties({
   },
     
   getParentId: function(){
+    var parentRecord = this.getParentRecord();
+    if (parentRecord) {
+      return parentRecord.id;
+    }
+  },
+  
+  getParentRecord: function(){
     if (!this.parentView || !this.parentView.viewGrid.getSelectedRecords() || this.parentView.viewGrid.getSelectedRecords().length !== 1) {
       return null;
     }
@@ -968,7 +975,7 @@ isc.OBStandardView.addProperties({
       return null;
     }
     
-    return this.parentView.viewGrid.getSelectedRecord()[OB.Constants.ID];
+    return this.parentView.viewGrid.getSelectedRecord();
   },
   
   updateChildCount: function(){
