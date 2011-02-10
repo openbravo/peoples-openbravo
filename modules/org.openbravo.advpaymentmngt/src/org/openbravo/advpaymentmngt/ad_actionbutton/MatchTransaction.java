@@ -480,7 +480,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
             matched = new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
           }
           transaction = matched.getTransaction();
-          if (transaction != null) {
+          if (transaction != null && FIN_MatchedTransaction.STRONG.equals(matched.getMatchLevel())) {
             FIN_BankStatementLine bsl = FIN_BankStatementLines[i];
             bsl.setFinancialAccountTransaction(transaction);
             bsl.setMatchingtype(matched.getMatchLevel());
