@@ -23,7 +23,7 @@ OB.Utilities = {};
 
 // ** {{{OB.Utilities.determineViewOfFormItem}}} **
 // Handles the different ways to find the view of a form item.
-OB.Utilities.determineViewOfFormItem = function(item) {
+OB.Utilities.determineViewOfFormItem = function(item){
   var form = item.form;
   if (form.view) {
     // form item in standard form
@@ -53,14 +53,14 @@ OB.Utilities.callAction = function(action){
   }
   if (action.callback) {
     action.callback();
-  } else {    
+  } else {
     action.method.apply(action.target, action.parameters);
-  }  
+  }
 };
 
 // ** {{{OB.Utilities.replaceNullStringValue}}} **
 // Replaces values which are 'null' with null
-OB.Utilities.replaceNullStringValue = function(form, values) {
+OB.Utilities.replaceNullStringValue = function(form, values){
   for (var prop in values) {
     if (values.hasOwnProperty(prop)) {
       var value = values[prop];
@@ -92,47 +92,47 @@ OB.Utilities.useClassicMode = function(windowId){
 // Open a view taking into account if a specific window should be opened in classic mode or not.
 // Returns the object used to open the window.
 OB.Utilities.openView = function(windowId, tabId, tabTitle, recordId, command, icon){
-    var isClassicEnvironment = OB.Utilities.useClassicMode(windowId);
-
-    var openObject;
-    if (isClassicEnvironment) {
-      if (recordId) {
-        OB.Layout.ClassicOBCompatibility.openLinkedItem(tabId, recordId);
-        return null;
-      } 
-      openObject = {
-          viewId: 'OBClassicWindow',
-          windowId: windowId, 
-          tabId: tabId, 
-          id: tabId, 
-          command: 'DEFAULT', 
-          tabTitle: tabTitle,
-          icon: icon
-       };
-    } else if (recordId) {
-       openObject = {
-        viewId: '_' + windowId,
-        id: tabId,
-        targetRecordId: recordId,
-        targetTabId: tabId,
-        tabTitle: tabTitle,
-        windowId: windowId
-      };      
-    } else {
-       openObject = {
-        viewId: '_' + windowId,
-        id: tabId,
-        tabId: tabId,
-        tabTitle: tabTitle,
-        windowId: windowId,
-        icon: icon
-      };      
+  var isClassicEnvironment = OB.Utilities.useClassicMode(windowId);
+  
+  var openObject;
+  if (isClassicEnvironment) {
+    if (recordId) {
+      OB.Layout.ClassicOBCompatibility.openLinkedItem(tabId, recordId);
+      return null;
     }
-    if (command) {
-      openObject.command = command;
-    }
-    OB.Layout.ViewManager.openView(openObject.viewId, openObject);
-    return openObject;
+    openObject = {
+      viewId: 'OBClassicWindow',
+      windowId: windowId,
+      tabId: tabId,
+      id: tabId,
+      command: 'DEFAULT',
+      tabTitle: tabTitle,
+      icon: icon
+    };
+  } else if (recordId) {
+    openObject = {
+      viewId: '_' + windowId,
+      id: tabId,
+      targetRecordId: recordId,
+      targetTabId: tabId,
+      tabTitle: tabTitle,
+      windowId: windowId
+    };
+  } else {
+    openObject = {
+      viewId: '_' + windowId,
+      id: tabId,
+      tabId: tabId,
+      tabTitle: tabTitle,
+      windowId: windowId,
+      icon: icon
+    };
+  }
+  if (command) {
+    openObject.command = command;
+  }
+  OB.Layout.ViewManager.openView(openObject.viewId, openObject);
+  return openObject;
 };
 
 // ** {{{OB.Utilities.openDirectView}}} **
@@ -161,7 +161,7 @@ OB.Utilities.openDirectView = function(sourceWindowId, keyColumn, targetEntity, 
   };
   var request = isc.RPCManager.sendRequest(reqObj);
 };
-  
+
 // ** {{{OB.Utilities.getPromptString}}} **
 // Translates a string or array of strings to a string with html returns.
 OB.Utilities.getPromptString = function(msg){
@@ -222,13 +222,13 @@ OB.Utilities.openProcessPopup = function(/* String */url, noFrameSet, postParams
     winPopUp = window.open(url, 'PROCESS', adds);
   } else {
     winPopUp = window.open('', 'PROCESS', adds);
-    var mainFrameSrc = !postParams?('src="' + url + '"'):'',
-       html = '<html>' +
+    var mainFrameSrc = !postParams ? ('src="' + url + '"') : '', html = '<html>' +
     '<frameset cols="0%,100%" frameborder="no" border="0" framespacing="0" rows="*" id="framesetMenu">' +
     '<frame name="frameMenu" scrolling="no" src="' +
     OB.Application.contextUrl +
     'utility/VerticalMenu.html?Command=LOADING" id="paramFrameMenuLoading"></frame>' +
-    '<frame name="mainframe" noresize="" '+ mainFrameSrc +
+    '<frame name="mainframe" noresize="" ' +
+    mainFrameSrc +
     ' id="fieldProcessId"></frame>' +
     '<frame name="hiddenFrame" scrolling="no" noresize="" src=""></frame>' +
     '</frameset>' +
@@ -236,12 +236,11 @@ OB.Utilities.openProcessPopup = function(/* String */url, noFrameSet, postParams
     
     winPopUp.document.write(html);
     if (postParams) {
-      var doc = winPopUp.frames[1].document,
-          frm = doc.createElement('form');
-      frm.setAttribute('method','post');
+      var doc = winPopUp.frames[1].document, frm = doc.createElement('form');
+      frm.setAttribute('method', 'post');
       frm.setAttribute('action', url);
       for (var i in postParams) {
-        if (postParams.hasOwnProperty(i)){
+        if (postParams.hasOwnProperty(i)) {
           var inp = winPopUp.document.createElement('input');
           inp.setAttribute('type', 'hidden');
           inp.setAttribute('name', i);
@@ -318,7 +317,15 @@ OB.Utilities.processLogoutQueue = function(){
 // ** {{{ OB.Utilities.logout }}} **
 // Logout from the application, removes server side session info and redirects
 // the client to the Login page.
-OB.Utilities.logout = function(){
+OB.Utilities.logout = function(confirmed){
+  if (!confirmed) {
+    isc.confirm(OB.I18N.getLabel('OBUIAPP_LogoutConfirmation'), function(ok){
+      if (ok) {
+        OB.Utilities.logout(true);
+      }
+    });
+    return;
+  }
   OB.Utilities.logoutWorkQueue = [];
   var q = OB.Utilities.logoutWorkQueue, i, tabs = OB.MainView.TabSet.tabs, tabsLength = tabs.length, appFrame;
   
