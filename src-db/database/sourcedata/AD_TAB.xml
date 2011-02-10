@@ -7217,7 +7217,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800002-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800002-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--800002-->  <HQLWHERECLAUSE><![CDATA[(e.projectCategory<>'S' e.projectCategory IS NULL)]]></HQLWHERECLAUSE>
+<!--800002-->  <HQLWHERECLAUSE><![CDATA[(e.projectCategory<>'S' or e.projectCategory IS NULL)]]></HQLWHERECLAUSE>
 <!--800002--></AD_TAB>
 
 <!--800003--><AD_TAB>
