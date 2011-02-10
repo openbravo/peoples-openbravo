@@ -21,6 +21,25 @@
 // are related to opening views, opening popups, displaying yes/no, etc. 
 OB.Utilities = {};
 
+// ** {{{OB.Utilities.determineViewOfFormItem}}} **
+// Handles the different ways to find the view of a form item.
+OB.Utilities.determineViewOfFormItem = function(item) {
+  var form = item.form;
+  if (form.view) {
+    // form item in standard form
+    return form.view;
+  } else if (form.grid) {
+    // row editor form item
+    if (form.grid.view) {
+      return form.grid.view;
+    } else if (isc.isA.RecordEditor(form.grid) && form.grid.sourceWidget && form.grid.sourceWidget.view) {
+      // filter editor form item
+      return form.grid.sourceWidget.view;
+    }
+  }
+  return null;
+};
+
 // ** {{{OB.Utilities.callAction}}} **
 // Calls the action defined by the action object, if the action object has a callback
 // property, it is assumed to be a function and it is called. Otherwise the following

@@ -52,10 +52,15 @@
             canvas.view.setAsActiveView();
             return true;
           }
-          if (isc.FormItem.isA(canvas) && canvas.grid) {
+          if (isc.FormItem.isA(canvas)) {
+            var view = OB.Utilities.determineViewOfFormItem(item);
+            if (view && view.setAsActiveView) {
+              view.setAsActiveView();
+              return true;
+            }
+          }
+          if (!canvas.parentElement && canvas.grid) {
             canvas = canvas.grid;
-          } if (isc.FormItem.isA(canvas) && canvas.form) {
-            canvas = canvas.form;
           } else {
             canvas = canvas.parentElement;
           }

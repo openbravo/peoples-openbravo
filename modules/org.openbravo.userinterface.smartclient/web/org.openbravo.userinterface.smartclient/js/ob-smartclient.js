@@ -44,32 +44,14 @@ isc.FormItem.addProperties({
   },
   
   focus: function(form, item){
-    var view = this.getView();
-    if (!view) {
-      return;
+    var view = OB.Utilities.determineViewOfFormItem(item);
+    if (view) {
+      view.lastFocusedItem = this;
     }
-    view.lastFocusedItem = this;
-  },
-
-  getView: function() {
-    var form = this.form;
-    if (form.view) {
-      // form item in standard form
-      return form.view;
-    } else if (form.grid) {
-      // row editor form item
-      if (form.grid.view) {
-        return form.grid.view;
-      } else if (isc.isA.RecordEditor(form.grid) && form.grid.sourceWidget && form.grid.sourceWidget.view) {
-        // filter editor form item
-        return form.grid.sourceWidget.view;
-      }
-    }
-    return null;
   },
   
   click: function() {
-    var view = this.getView();
+    var view = OB.Utilities.determineViewOfFormItem(this);
     if (view) {
       view.lastFocusedItem = this;
       // this handles the case that there was a direct click on picker icon
