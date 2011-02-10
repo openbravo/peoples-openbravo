@@ -356,7 +356,8 @@ public abstract class UIDefinition {
           ref, field.getColumn().getDBColumnName(), objectReference, validation, orgList,
           clientList, 0);
       FieldProvider tabData = generateTabData(field.getTab().getADFieldList(), field, columnValue);
-      comboTableData.fillParameters(tabData, field.getTab().getWindow().getId(), columnValue);
+      comboTableData.fillParameters(tabData, field.getTab().getWindow().getId(),
+          (getValueFromSession && !comboreload) ? columnValue : "");
       FieldProvider[] fps = comboTableData.select(getValueFromSession && !comboreload);
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
       values.addAll(Arrays.asList(fps));
