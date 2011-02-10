@@ -265,6 +265,7 @@ isc.OBViewGrid.addProperties({
     
     if (this.getField(this.view.parentProperty)) {
       this.getField(this.view.parentProperty).canFilter = false;
+      this.getField(this.view.parentProperty).canEdit = false;
     }
     
   },

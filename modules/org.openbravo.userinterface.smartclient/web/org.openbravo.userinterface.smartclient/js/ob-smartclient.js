@@ -78,6 +78,11 @@ isc.FormItem.addProperties({
   },
   
   isDisabled: function(){
+    // disabled if the property can not be updated and the form or record is new
+    // explicitly comparing with false as it is only set for edit form fields
+    if (this.updatable === false && !(this.form.isNew || this.form.getValue('_new'))) {
+      return true;
+    }
     return this.form.readOnly || this.disabled || this.form.allItemsDisabled;
   },
   

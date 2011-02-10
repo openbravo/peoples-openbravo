@@ -102,7 +102,9 @@ OB.ViewFormProperties = {
     
     this.setHasChanged(false);
 
-    this.setNewState(isNew);
+    // the new state can also be signaled through the record
+    // this is to edit new records which have been edited before
+    this.setNewState(isNew || this.getValue('_new'));
     
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view

@@ -23,6 +23,7 @@
         title: '${fieldDefinition.label?js_string}',
         type: '${fieldDefinition.type}',
         disabled: ${fieldDefinition.readOnly?string},
+        updatable: ${fieldDefinition.updatable?string},
         parentProperty: ${fieldDefinition.parentProperty?string},
         colSpan: ${fieldDefinition.colSpan},
         rowSpan: ${fieldDefinition.rowSpan},

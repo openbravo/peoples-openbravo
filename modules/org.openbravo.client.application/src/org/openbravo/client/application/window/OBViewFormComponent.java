@@ -142,7 +142,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       final OBViewField viewField = new OBViewField();
       viewField.setField(field);
       viewField.setProperty(property);
-      viewField.setReadrawOnChange(fieldsInDynamicExpression.contains(field));
+      viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field));
       viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
       viewField.setReadOnlyIf(readOnlyLogicMap.get(field) != null ? readOnlyLogicMap.get(field)
           : "");
@@ -217,6 +217,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public boolean isReadOnly();
 
+    public boolean isUpdatable();
+
     public boolean isParentProperty();
 
     public boolean getRedrawOnChange();
@@ -237,7 +239,11 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     private String readOnlyIf = "";
 
     public boolean isReadOnly() {
-      return isParentProperty() || !property.isUpdatable();
+      return isParentProperty() || field.isReadOnly();
+    }
+
+    public boolean isUpdatable() {
+      return property.isUpdatable();
     }
 
     public boolean isParentProperty() {
@@ -380,7 +386,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return field.isStartnewline();
     }
 
-    public void setReadrawOnChange(boolean redrawOnChange) {
+    public void setRedrawOnChange(boolean redrawOnChange) {
       this.redrawOnChange = redrawOnChange;
     }
 
@@ -413,6 +419,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public boolean isReadOnly() {
       return false;
+    }
+
+    public boolean isUpdatable() {
+      return true;
     }
 
     public boolean isParentProperty() {
@@ -597,6 +607,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public boolean isReadOnly() {
       return false;
+    }
+
+    public boolean isUpdatable() {
+      return true;
     }
 
     public boolean isParentProperty() {

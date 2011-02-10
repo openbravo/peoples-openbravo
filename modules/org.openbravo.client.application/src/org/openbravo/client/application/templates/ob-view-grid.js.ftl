@@ -29,6 +29,23 @@ isc.OBViewGrid.create({
           , inpColumnName: '${field.inpColumnName?js_string}'
           , referencedKeyColumnName: '${field.referencedKeyColumnName?js_string}'        
           , targetEntity: '${field.targetEntity?js_string}'
+          , disabled: ${field.readOnly?string}
+          , updatable: ${field.updatable?string}
+          <#if field.redrawOnChange?string = "true" >
+          , redrawOnChange: true
+          , changed: function(form, item, value) {
+              this.Super('changed', arguments);
+              form.onFieldChanged(form, item, value);
+            }
+          </#if>
+          <#if field.showIf != "">
+          , showIf: function(item, value, form, currentValues) {
+              currentValues = currentValues || form.view.getCurrentValues();
+              var context = form.view.getContextInfo(false, true);
+              return context && (${field.showIf});
+            }
+          </#if>
+          
         }
         ${field.gridFieldProperties}
         ${field.filterEditorProperties}

@@ -21,12 +21,15 @@ package org.openbravo.client.application.window;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.application.ApplicationUtils;
+import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.Template;
@@ -54,6 +57,10 @@ public class OBViewGridComponent extends BaseTemplateComponent {
   private boolean applyTransactionalFilter = false;
   private Tab tab;
   private List<LocalField> fields = null;
+
+  private final List<Field> fieldsInDynamicExpression = new ArrayList<Field>();
+  private final Map<Field, String> displayLogicMap = new HashMap<Field, String>();
+  private final Map<Field, String> readOnlyLogicMap = new HashMap<Field, String>();
 
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
@@ -150,6 +157,42 @@ public class OBViewGridComponent extends BaseTemplateComponent {
         fields.add(createLocalField(fld, prop, true));
       }
     }
+
+    // Processing dynamic expressions (display logic)
+    for (Field f : sortedFields) {
+      if (f.getDisplayLogic() == null || f.getDisplayLogic().equals("") || !f.isActive()
+          || !f.isDisplayed()) {
+        continue;
+      }
+
+      final DynamicExpressionParser parser = new DynamicExpressionParser(f.getDisplayLogic(), tab);
+      displayLogicMap.put(f, parser.getJSExpression());
+
+      for (Field fieldExpression : parser.getFields()) {
+        if (!fieldsInDynamicExpression.contains(fieldExpression)) {
+          fieldsInDynamicExpression.add(fieldExpression);
+        }
+      }
+    }
+
+    // Processing dynamic expression (read-only logic)
+    for (Field f : sortedFields) {
+      if (f.getColumn().getReadOnlyLogic() == null || f.getColumn().getReadOnlyLogic().equals("")
+          || !f.isActive() || !f.getColumn().isActive()) {
+        continue;
+      }
+
+      final DynamicExpressionParser parser = new DynamicExpressionParser(f.getColumn()
+          .getReadOnlyLogic(), tab);
+      readOnlyLogicMap.put(f, parser.getJSExpression());
+
+      for (Field fieldExpression : parser.getFields()) {
+        if (!fieldsInDynamicExpression.contains(fieldExpression)) {
+          fieldsInDynamicExpression.add(fieldExpression);
+        }
+      }
+    }
+
     // and add the non grid fields
     for (Field fld : sortedFields) {
       if (fld.isActive() && !fld.isShowInGridView()) {
@@ -185,6 +228,9 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     }
     localField.setTitle(OBViewUtil.getLabel(fld));
     localField.setInitialShow(showInitially);
+    localField.setRedrawOnChange(fieldsInDynamicExpression.contains(fld));
+    localField.setShowIf(displayLogicMap.get(fld) != null ? displayLogicMap.get(fld) : "");
+
     return localField;
   }
 
@@ -195,6 +241,8 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     private Property property;
     private UIDefinition uiDefinition;
     private boolean initialShow;
+    private String showIf;
+    private boolean redrawOnChange;
 
     public String getColumnName() {
       return property.getColumnName();
@@ -206,6 +254,14 @@ public class OBViewGridComponent extends BaseTemplateComponent {
         return false;
       }
       return property.isMandatory();
+    }
+
+    public boolean isReadOnly() {
+      return field.isReadOnly();
+    }
+
+    public boolean isUpdatable() {
+      return property.isUpdatable();
     }
 
     public String getInpColumnName() {
@@ -319,6 +375,22 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
     public void setInitialShow(boolean initialShow) {
       this.initialShow = initialShow;
+    }
+
+    public String getShowIf() {
+      return showIf;
+    }
+
+    public void setShowIf(String showIf) {
+      this.showIf = showIf;
+    }
+
+    public boolean isRedrawOnChange() {
+      return redrawOnChange;
+    }
+
+    public void setRedrawOnChange(boolean redrawOnChange) {
+      this.redrawOnChange = redrawOnChange;
     }
   }
 

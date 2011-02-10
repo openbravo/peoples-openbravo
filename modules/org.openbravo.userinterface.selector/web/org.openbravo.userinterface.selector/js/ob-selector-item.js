@@ -312,7 +312,10 @@ isc.OBSelectorItem.addProperties({
   popupTextMatchStyle: 'startswith',
   suggestionTextMatchStyle: 'startswith',
   selectOnFocus: true,
-  
+  // setting this to false means that the change handler is called when picking
+  // a value and not earlier
+  addUnknownValues: false,
+
   // ** {{{ selectorGridFields }}} **
   // the definition of the columns in the popup window
   selectorGridFields: [{
