@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
   <database name="TABLE OBCQL_QUERY_COLUMN_TRL">
     <table name="OBCQL_QUERY_COLUMN_TRL" primaryKey="OBCQL_QUERY_COLUMN_TRL_KEY">
-      <column name="OBCQL_QUERY_COLUMN_TRL_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="OBCQL_QUERY_COLUMN_TRL_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="OBCQL_QUERY_COLUMN_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="OBCQL_QUERY_COLUMN_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
