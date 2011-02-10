@@ -42,8 +42,8 @@
     //
     // Calls the remote action on the server. The response is processed by
     // calling the callBack function.
-    // The callback function gets three parameters: rpcResponse (the
-    // original request), data (the resulting content), rpcRequest.
+    // The callback function gets three parameters: rpcResponse,
+    // data (the resulting content), rpcRequest.
     // See the Smartclient RPCCallback type for more information.
     //
     // Parameters:
@@ -53,8 +53,8 @@
     // * {{{requestParams}}}: request parameters send to the action.
     // * {{{callback}}}: is the function which is called after receiving the
     // result.
-    // * {{{callerContext}}}: a context object which is available when the
-    // callback gets called.
+    // * {{{callerContext}}}: a context object which is available
+    // (as rpcRequest.clientContext) when the callback gets called
     //
     call : function(/* String */actionName, /* Object */data, /* Object */
     requestParams, /* Function */callback, /* Object */callerContext) {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,41 +26,85 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
   headerLabel: null,
 
   createWindowContents: function(){
-    var layout = isc.VStack.create({height:'100%', width:'100%', styleName:''}),
-        url, params = {};
+    var layout = isc.VStack.create({height:'100%', width:'100%', styleName:''});
 
     if(!OB.Application.brandingWidget) {
       // set a global pointer to ourselves
       OB.Application.brandingWidget = this;
     }
-    
-    this.versionLabel = isc.Label.create({contents: this.versionText,
-                                         height: '36px',
-                                         width:'100%',
-                                         styleName: this.getPurposeStyleClass(),
-                                         align: 'center'});
 
-    layout.addMember(this.versionLabel);
+    layout.addMember(OB.Utilities.createLoadingLayout());
 
-    // note internetConnection is a global var set by a call to
-    // the butler service
-    if (typeof internetConnection !== 'undefined') {
-      url = document.location.protocol + OB.Application.communityBrandingUrl;
+    var post = {
+      'eventType': 'GET_COMMUNITY_BRANDING_URL',
+      'context' : {
+        'adminMode' : 'false'
+      },
+      'widgets' : []
+    }
+
+    var me = this;
+    var haveInternet = false;
+    /*
+     * The following LAB.wait(callback) call does not reliably call the callout in case no
+     * internet connection is present (so schedule timeout to use local fallback content after 10s)
+     */
+    var timerNoInternet = setTimeout(function() {
+      me.setOBContent(false);
+    }, 10000);
+    $LAB.script(document.location.protocol + OB.Application.butlerUtilsUrl).wait(function() {
+    	haveInternet = (typeof internetConnection !== 'undefined');
+    	// callback did fire so clear timer as its no longer needed
+    	clearTimeout(timerNoInternet);
+
+    	if (haveInternet) {
+        OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function(response, data, request) {
+        	var communityBrandingUrl = data.url;
+        	me.setOBContent(haveInternet, communityBrandingUrl);
+        });
+    	} else {
+          me.setOBContent(false);
+        }
+    });
+
+    return layout;
+  },
+
+  setOBContent: function(haveInternet, communityBrandingUrl) {
+    var url, params = {};
+
+    if (haveInternet) {
+      url = document.location.protocol + communityBrandingUrl;
     } else {
       url = OB.Application.contextUrl + OB.Application.communityBrandingStaticUrl;
       params = {'uimode': 'MyOB'};
     }
 
-    layout.addMember(isc.HTMLFlow.create({
-      contentsType: 'page',
-      contentsURL: url,
-      contentsURLParams: params,
-      height: '324px',
-      width: '100%'
-    }));
-    return layout;
+    var layout = this.windowContents;
+
+    // remove Loading...
+    var loadingBar = layout.members[this.windowContents.members.length-1];
+
+    this.versionLabel = isc.Label.create({contents: this.versionText,
+      height: '36px',
+      width:'100%',
+      styleName: this.getPurposeStyleClass(),
+      align: 'center'
+    });
+
+    var content = isc.HTMLFlow.create({
+        contentsType: 'page',
+        contentsURL: url,
+        contentsURLParams: params,
+        height: '324px',
+        width: '100%'
+      });
+
+    layout.removeMember(loadingBar);
+    layout.addMember(this.versionLabel);
+    layout.addMember(content);
   },
-  
+
   update: function() {
     //FIXME: too expensive
     OB.MyOB.reloadWidgets();
@@ -69,22 +113,6 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
 //    this.versionLabel.styleName = this.getPurposeStyleClass();
 //    this.versionLabel.draw();
   },
-  
-  getBrandingHtml: function() {
-    var html = this.brandingHtml;
-    
-    html = html.replace('{versionText}', this.versionText);
-    html = html.replace('{brandingUrl}', url);
-    html = html.replace('{purposeClass}', this.getPurposeStyleClass());
-    return html;
-  },
-  
-  brandingHtml: '<DIV id="communityBranding" class="OBWidgetCommunityBranding" border="0">' +
-  '<DIV class="OBWidgetCommunityBrandingTitle">' +
-  '<DIV class="{purposeClass}" alt="" title=""></DIV>' +
-  '<DIV class="OBWidgetCommunityBrandingVersion">{versionText}</DIV>' +
-  '</DIV>' +
-  '</DIV>',
   
   getPurposeStyleClass: function(){
     var purposeCode = OB.Application.purpose;

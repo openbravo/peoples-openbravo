@@ -23,7 +23,6 @@ var OB = {
         language : '${data.languageId?js_string}',
         systemVersion : '${data.systemVersion?js_string}', // global version used in all hyperlinks
         contextUrl: '${data.contextUrl}',
-        communityBrandingUrl: '${data.communityBrandingUrl?js_string}',
         communityBrandingStaticUrl: '${data.communityBrandingStaticUrl?js_string}',
         butlerUtilsUrl: '${data.butlerUtilsUrl?js_string}',
         purpose: '${data.instancePurpose?js_string}',

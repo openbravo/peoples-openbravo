@@ -118,7 +118,6 @@ var isomorphicDir='./web/org.openbravo.userinterface.smartclient/isomorphic/';
 // starts the application is called as the last statement in the StaticResources part
 function OBStartApplication() {
   OB.Layout.draw();
-  $LAB.script(document.location.protocol + OB.Application.butlerUtilsUrl).wait();
   OB.Layout.ViewManager.createAddStartTab();
   // get rid of the loading stuff
   document.body.removeChild(document.getElementById('OBLoadingDiv'));
