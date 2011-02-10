@@ -1112,6 +1112,8 @@ isc.OBViewGrid.addProperties({
         this.setRecordErrorMessage(rowNum, null);
       }
     }
+    this.deselectAllRecords();
+    this.view.refreshChildViews();
     if (toRemove.length > 0) {
       this.data.handleUpdate('remove', toRemove);
       this.updateRowCountDisplay();
@@ -1119,7 +1121,6 @@ isc.OBViewGrid.addProperties({
     this.view.standardWindow.cleanUpAutoSaveProperties();
     this.view.updateTabTitle();
     this.view.toolBar.updateButtonState();
-    this.deselectAllRecords();
   },
   
   discardEdits: function(rowNum, colNum, dontHideEditor, editCompletionEvent){
@@ -1138,6 +1139,7 @@ isc.OBViewGrid.addProperties({
               id: record.id
             }]);
             me.updateRowCountDisplay();
+            me.view.refreshChildViews();
           } else {
             // remove the error style/msg    
             me.setRecordErrorMessage(rowNum, null);

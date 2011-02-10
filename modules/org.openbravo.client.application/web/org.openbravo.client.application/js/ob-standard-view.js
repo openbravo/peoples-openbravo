@@ -633,6 +633,13 @@ isc.OBStandardView.addProperties({
     // if not visible or the parent also needs to be refreshed
     // enable the following code if we don't automatically select the first
     // record
+    this.refreshChildViews();
+
+    // set this at false at the end
+    this.refreshContents = false;
+  },
+  
+  refreshChildViews: function() {
     if (this.childTabSet) {
       for (var i = 0; i < this.childTabSet.tabs.length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
@@ -641,8 +648,6 @@ isc.OBStandardView.addProperties({
         tabViewPane.doRefreshContents(true);
       }
     }
-    // set this at false at the end
-    this.refreshContents = false;
   },
   
   shouldOpenDefaultEditMode: function(){
@@ -1203,6 +1208,7 @@ isc.OBStandardView.addProperties({
             view.viewGrid.data.handleUpdate('remove', recordInfos);
           }
           view.viewGrid.updateRowCountDisplay();
+          view.refreshChildViews();
         } else {
           // get the error message from the dataObject 
           if (resp.dataObject && resp.dataObject.response && resp.dataObject.response.error && resp.dataObject.response.error.message) {
