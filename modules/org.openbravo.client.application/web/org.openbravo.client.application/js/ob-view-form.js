@@ -362,7 +362,7 @@ OB.ViewFormProperties = {
     // don't set the entries    
     if (field.form && entries) {
       for (i = 0; i < entries.length; i++) {
-        id = entries[i][OB.Constants.ID] || 'null';
+        id = entries[i][OB.Constants.ID] || null;
         identifier = entries[i][OB.Constants.IDENTIFIER] || '';
         valueMap[id] = (identifier === 'null' ? null : identifier);
       }
