@@ -80,11 +80,29 @@
 .OBFormFieldInputError,
 .OBFormFieldInputHint,
 
+.OBFormFieldInputRequired,
+.OBFormFieldInputRequiredDisabled,
+.OBFormFieldInputRequiredFocused,
+.OBFormFieldInputRequiredError,
+.OBFormFieldInputRequiredHint,
+
 .OBFormFieldSelectInput,
 .OBFormFieldSelectInputDisabled,
 .OBFormFieldSelectInputFocused,
 .OBFormFieldSelectInputError,
 .OBFormFieldSelectInputHint,
+
+.OBFormFieldSelectInputRequired,
+.OBFormFieldSelectInputRequiredDisabled,
+.OBFormFieldSelectInputRequiredFocused,
+.OBFormFieldSelectInputRequiredError,
+.OBFormFieldSelectInputRequiredHint,
+
+.OBFormFieldDateInputRequired,
+.OBFormFieldDateInputRequiredFocused,
+.OBFormFieldDateInputRequiredDisabled,
+.OBFormFieldDateInputRequiredError,
+.OBFormFieldDateInputRequiredHint,
 
 .OBFormFieldDateInput,
 .OBFormFieldDateInputDisabled,
@@ -110,10 +128,25 @@
 .OBFormFieldInputError,
 .OBFormFieldInputHint,
 
+.OBFormFieldInputRequired,
+.OBFormFieldInputRequiredFocused,
+.OBFormFieldInputRequiredError,
+.OBFormFieldInputRequiredHint,
+
 .OBFormFieldSelectInput,
 .OBFormFieldSelectInputError,
 .OBFormFieldSelectInputFocused,
 .OBFormFieldSelectInputHint,
+
+.OBFormFieldSelectInputRequired,
+.OBFormFieldSelectInputRequiredFocused,
+.OBFormFieldSelectInputRequiredError,
+.OBFormFieldSelectInputRequiredHint,
+
+.OBFormFieldDateInputRequired,
+.OBFormFieldDateInputRequiredFocused,
+.OBFormFieldDateInputRequiredError,
+.OBFormFieldDateInputRequiredHint,
 
 .OBFormFieldDateInput,
 .OBFormFieldDateInputFocused,
@@ -129,6 +162,9 @@
  -webkit-text-fill-color: #7d7d7d;
 }
 
+.OBFormFieldInputRequiredDisabled,
+.OBFormFieldSelectInputRequiredDisabled,
+.OBFormFieldDateInputRequiredDisabled,
 .OBFormFieldInputDisabled,
 .OBFormFieldSelectInputDisabled,
 .OBFormFieldDateInputDisabled {
@@ -137,6 +173,12 @@
   color: #7d7d7d;
   -webkit-text-fill-color: #7d7d7d;
 }
+
+.OBFormFieldDateInputRequired,
+.OBFormFieldDateInputRequiredDisabled,
+.OBFormFieldDateInputRequiredFocused,
+.OBFormFieldDateInputRequiredError,
+.OBFormFieldDateInputRequiredHint,
 
 .OBFormFieldDateInput,
 .OBFormFieldDateInputDisabled,
@@ -159,6 +201,9 @@
   border: 0px 0px 0px 0px;
 }
 
+.OBFormFieldSelectInputRequiredFocused,
+.OBFormFieldInputRequiredError,
+.OBFormFieldDateInputRequiredError,
 .OBFormFieldInputError,
 .OBFormFieldSelectInputError,
 .OBFormFieldDateInputError,
@@ -185,6 +230,17 @@
   width: 21px;
 }
 
+
+.OBFormFieldSelectInputRequired:focus,
+.OBFormFieldSelectInputRequiredFocused,
+.OBFormFieldSelectInputRequiredSelectedFocused,
+.OBFormFieldInputRequired:focus,
+.OBFormFieldInputRequiredFocused,
+.OBFormFieldInputRequiredSelectedFocused,
+.OBFormFieldDateInputRequired:focus,
+.OBFormFieldDateInputRequiredFocused,
+.OBFormFieldDateInputRequiredSelectedFocused,
+
 .OBFormFieldInput:focus,
 .OBFormFieldInputFocused,
 .OBFormFieldInputSelectedFocused,
@@ -199,6 +255,12 @@
   border: 1px solid #fa962f;
 }
 
+.OBFormFieldSelectInputRequired,
+.OBFormFieldSelectInputRequiredDisabled,
+.OBFormFieldSelectInputRequiredFocused,
+.OBFormFieldSelectInputRequiredError,
+.OBFormFieldSelectInputRequiredHint,
+
 .OBFormFieldSelectInput,
 .OBFormFieldSelectInputError,
 .OBFormFieldSelectInputSelectedFocused,
@@ -208,6 +270,9 @@
   border-right:0px none;
 }
 
+.OBFormFieldInputRequiredHint,
+.OBFormFieldSelectInputRequiredHint,
+.OBFormFieldDateInputRequiredHint,
 .OBFormFieldInputHint,
 .OBFormFieldSelectInputHint,
 .OBFormFieldDateInputHint {
@@ -244,6 +309,23 @@
 .OBFormFieldPickListCellSelectedDark {
   background-color: #ddf0ff;
   //background: url(./images/form/picklist-rollover.png) repeat-x scroll;
+}
+
+.OBFormFieldInputRequired,
+.OBFormFieldInputRequiredFocused,
+.OBFormFieldInputRequiredError,
+.OBFormFieldInputRequiredHint,
+
+.OBFormFieldSelectInputRequired,
+.OBFormFieldSelectInputRequiredFocused,
+.OBFormFieldSelectInputRequiredError,
+.OBFormFieldSelectInputRequiredHint,
+
+.OBFormFieldDateInputRequired,
+.OBFormFieldDateInputRequiredFocused,
+.OBFormFieldDateInputRequiredError,
+.OBFormFieldDateInputRequiredHint {
+  background-color: #ffffcc;  
 }
 
 /*=======================================================================

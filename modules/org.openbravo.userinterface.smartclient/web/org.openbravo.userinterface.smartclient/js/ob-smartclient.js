@@ -31,6 +31,13 @@ isc.FormItem.addProperties({
   // always take up space when an item is hidden in a form
   alwaysTakeSpace: true,
   
+  _original_init: isc.FormItem.getPrototype().init,
+  init: function() {
+    OB.Utilities.addRequiredSuffixToBaseStyle(this);
+    // and continue with the original init
+    this._original_init();
+  },
+  
   titleClick: function(form, item){
     item.focusInItem();
     if (item.linkButtonClick) {

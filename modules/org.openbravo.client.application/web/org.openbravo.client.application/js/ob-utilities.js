@@ -21,6 +21,23 @@
 // are related to opening views, opening popups, displaying yes/no, etc. 
 OB.Utilities = {};
 
+// ** {{{OB.Utilities.addRequiredSuffixToBaseStyle}}} **
+// Adds the Required suffix to a base style for a required formitem, to show it yellow in 
+// the forms.
+OB.Utilities.addRequiredSuffixToBaseStyle = function(item){
+  if (item.required) {
+    // apparently this is called many times therefore do not append
+    // if we already did append it
+    if (item.textFieldProperties && item.textFieldProperties.textBoxStyle) {
+      if (!item.textFieldProperties.textBoxStyle.endsWith('Required')) {
+        item.textFieldProperties.textBoxStyle = item.textFieldProperties.textBoxStyle + 'Required';
+      }
+    } else if (item.textBoxStyle && !item.textBoxStyle.endsWith('Required')) {
+      item.textBoxStyle = item.textBoxStyle + 'Required';
+    }
+  }
+};
+
 // ** {{{OB.Utilities.determineViewOfFormItem}}} **
 // Handles the different ways to find the view of a form item.
 OB.Utilities.determineViewOfFormItem = function(item){
