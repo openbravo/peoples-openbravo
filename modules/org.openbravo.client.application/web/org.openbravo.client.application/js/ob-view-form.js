@@ -113,7 +113,6 @@ OB.ViewFormProperties = {
 
     this.retrieveInitialValues(isNew);
     
-    this.view.messageBar.hide();
     // note on purpose using this.isNew, also takes into account the _new flag
     if (this.isNew) {
       this.view.statusBar.setStateLabel('OBUIAPP_New', this.view.statusBar.newIcon);

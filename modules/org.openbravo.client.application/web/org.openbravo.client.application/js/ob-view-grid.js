@@ -821,7 +821,6 @@ isc.OBViewGrid.addProperties({
       
     // close any editors we may have
     this.closeAnyOpenEditor();
-    this.view.messageBar.hide();
     this.stopHover();
     this.updateSelectedCountDisplay();
     this.view.recordSelected();
@@ -1213,7 +1212,8 @@ isc.OBViewGrid.addProperties({
     if (this.getEditForm()) {
       this.getEditForm().clearErrors();
     }
-    
+
+    this.view.messageBar.hide();
     if (record && record.editColumnLayout) {
       record.editColumnLayout.showEditOpen();
     } else if (this.getEditForm().getValues().editColumnLayout) {
@@ -1263,7 +1263,8 @@ isc.OBViewGrid.addProperties({
     if (record && record.editColumnLayout) {
       record.editColumnLayout.showSaveCancel();
     }
-    
+
+    this.view.messageBar.hide();
     this.view.toolBar.updateButtonState();
 
     return ret;
