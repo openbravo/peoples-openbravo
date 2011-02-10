@@ -76,6 +76,11 @@
   padding: 0px 4px 0px 4px;
 }
 
+.OBGridCellEdit,
+.OBGridCellEditOver,
+.OBGridCellEditDark,
+.OBGridCellEditOverDark,
+
 .OBGridCellEditSelected,
 .OBGridCellEditSelectedDark,
 .OBGridCellEditSelectedOver,
@@ -104,6 +109,11 @@
   background-color: #e1e1e1;  /* Orange for active grid, for non active grid: #dbe6c7 */
 }
 
+.OBGridCellErrorSelected,
+.OBGridCellErrorSelectedDark,
+.OBGridCellErrorSelectedOver,
+.OBGridCellErrorSelectedOverDark,
+
 .OBGridCellSelected,
 .OBGridCellSelectedDark {
   background-color: #ffe1c0; /* Orange for active grid, for non active grid: #b8d587 */
@@ -128,11 +138,6 @@
 .OBGridCellErrorDark,
 .OBGridCellErrorOver,
 .OBGridCellErrorOverDark,
-
-.OBGridCellErrorSelected,
-.OBGridCellErrorSelectedDark,
-.OBGridCellErrorSelectedOver,
-.OBGridCellErrorSelectedOverDark,
 
 .OBGridCellErrorEdit,
 .OBGridCellErrorEditDark,

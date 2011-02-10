@@ -97,6 +97,7 @@ public class JsonConstants {
   public static final String REF = "$ref";
   public static final String ACTIVE = "active";
   public static final String DATA = "data";
+  public static final String NEW_INDICATOR = "_new";
 
   public static final String IN_PARAMETER_SEPARATOR = "__;__";
 

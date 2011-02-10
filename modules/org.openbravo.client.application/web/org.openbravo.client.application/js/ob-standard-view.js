@@ -480,8 +480,7 @@ isc.OBStandardView.addProperties({
     // start inactive
     childView.tab.setCustomState(isc.OBStandardView.MODE_INACTIVE);
     
-    OB.TestRegistry.register('org.openbravo.client.application.ChildTab_' + this.tabId + '_' + childView.tabId, childView.tab);
-    
+    OB.TestRegistry.register('org.openbravo.client.application.ChildTab_' + this.tabId + '_' + childView.tabId, childView.tab);    
   },
   
   setReadOnly: function(readOnly){
@@ -537,6 +536,10 @@ isc.OBStandardView.addProperties({
   
   hasValidState: function() {
     return this.isRootView || this.getParentId();
+  },
+  
+  isActiveView: function() {
+    return this.standardWindow.activeView === this;
   },
   
   setAsActiveView: function(){
@@ -597,7 +600,9 @@ isc.OBStandardView.addProperties({
     this.refreshContents = true;
     
     // clear all our selections..
-    this.viewGrid.deselectAllRecords();
+    // note the true parameter prevents autosave actions from happening
+    // this should have been done before anyway
+    this.viewGrid.deselectAllRecords(false, true);
     
     if (this.viewGrid.filterEditor) {
       this.viewGrid.filterEditor.getEditForm().clearValues();
@@ -750,7 +755,11 @@ isc.OBStandardView.addProperties({
       this.viewForm.editNewRecord(preventFocus);
     } else {
       this.viewGrid.doSelectSingleRecord(record);
-      this.viewForm.editRecord(record, preventFocus);
+      
+      // also handle the case that there are unsaved values in the grid
+      // show them in the form
+      var rowNum = this.viewGrid.getRecordIndex(record);
+      this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus);
     }
     
     if (!preventFocus) {
@@ -944,6 +953,12 @@ isc.OBStandardView.addProperties({
     if (!this.parentView || !this.parentView.viewGrid.getSelectedRecords() || this.parentView.viewGrid.getSelectedRecords().length !== 1) {
       return null;
     }
+    
+    // a new parent is not a real parent
+    if (this.parentView.viewGrid.getSelectedRecord()._new) {
+      return null;
+    }
+    
     return this.parentView.viewGrid.getSelectedRecord()[OB.Constants.ID];
   },
   
@@ -960,7 +975,7 @@ isc.OBStandardView.addProperties({
     
     var infoByTab = [], tabInfo, childView, data = {}, me = this, callback;
     
-    data.parentId = this.viewGrid.getSelectedRecords()[0][OB.Constants.ID];
+    data.parentId = this.getParentId();
     
     for (var i = 0; i < this.childTabSet.tabs.length; i++) {
       tabInfo = {};
@@ -1024,21 +1039,34 @@ isc.OBStandardView.addProperties({
     }
     
     var identifier, tab, tabSet, title;
+    
+    if (this.viewGrid.getSelectedRecord()) {
+      identifier = this.viewGrid.getSelectedRecord()[OB.Constants.IDENTIFIER];
+      if (this.viewGrid.getSelectedRecord()._new) {
+        identifier = OB.I18N.getLabel('OBUIAPP_New');
+      }
+      if (!identifier) {
+        identifier = '';
+      } else {
+        identifier = ' - ' + identifier;
+      }
+    }
+    
     // showing the form
     if (this.isShowingForm && this.viewGrid.getSelectedRecord() && this.viewGrid.getSelectedRecord()[OB.Constants.IDENTIFIER]) {
-      identifier = this.viewGrid.getSelectedRecord()[OB.Constants.IDENTIFIER];
+      
       if (!this.parentTabSet && this.viewTabId) {
         tab = OB.MainView.TabSet.getTab(this.viewTabId);
         tabSet = OB.MainView.TabSet;
-        title = this.originalTabTitle + ' - ' + identifier;
+        title = this.originalTabTitle + identifier;
       } else if (this.parentTabSet && this.tab) {
         tab = this.tab;
         tabSet = this.parentTabSet;
-        title = this.originalTabTitle + ' - ' + identifier;
+        title = this.originalTabTitle + identifier;
       }
     } else if (this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length > 0) {
       if (this.viewGrid.getSelectedRecords().length === 1) {
-        postFix = ' - ' + this.viewGrid.getSelectedRecords()[0][OB.Constants.IDENTIFIER];
+        postFix = identifier;
       } else {
         postFix = ' - ' + OB.I18N.getLabel('OBUIAPP_SelectedRecords', [this.viewGrid.getSelectedRecords().length]);
       }
@@ -1228,17 +1256,24 @@ isc.OBStandardView.addProperties({
   },
   
   undo: function(){
-    var view = this, callback, form;
+    var view = this, callback, form, grid;
     if (this.isEditingGrid) {
       // the editing grid will take care of the confirmation
       view.viewGrid.cancelEditing();
       return;
-    } else {
+    } else if (this.isShowingForm) {
       form = this.viewForm;
+    } else {
+      // selected records
+      grid = view.viewGrid;
     }
     callback = function(ok){
       if (ok) {
-        form.undo();
+        if (form) {
+          form.undo();
+        } else {
+          grid.undoEditSelectedRows();
+        }
       }
     };
     isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmUndo', callback), callback);

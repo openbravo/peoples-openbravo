@@ -77,10 +77,10 @@ OB.ViewFormProperties = {
     
     if (value) {
       // signal that autosave is needed after this
-      this.view.standardWindow.setDirtyEditObject(this);
+      this.view.standardWindow.setDirtyEditForm(this);
     } else {
       // signal that no autosave is needed after this
-      this.view.standardWindow.setDirtyEditObject(null);
+      this.view.standardWindow.setDirtyEditForm(null);
     }
   },
   
@@ -96,6 +96,10 @@ OB.ViewFormProperties = {
   },
   
   doEditRecordActions: function(preventFocus, isNew){
+    // sometimes if an error occured we stay disabled
+    // prevent this
+    this.setDisabled(false);
+    
     this.setHasChanged(false);
 
     this.setNewState(isNew);
@@ -103,7 +107,11 @@ OB.ViewFormProperties = {
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
     this.ignoreFirstFocusEvent = preventFocus;
-    this.clearErrors();
+    if (isNew) {
+      this.clearErrors();
+    } else {
+      this.validateAfterFicReturn = true;
+    }
     
     this.view.toolBar.updateButtonState();
 
@@ -235,17 +243,28 @@ OB.ViewFormProperties = {
       parentColumn = this.view.getPropertyDefinition(this.view.parentProperty).inpColumn;
       requestParams[parentColumn] = parentId;
     }
+    allProperties._entityName = this.view.entity;
     
     this.setDisabled(true);
 
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
-      me.processFICReturn(response, data, request);
+      var editValues, editRow = me.view.viewGrid.getEditRow();
+      if (editRow || editRow === 0) {
+        editValues = me.view.viewGrid.getEditValues(me.view.viewGrid.getEditRow());
+      }
+      me.processFICReturn(response, data, request, editValues);
       // remember the initial values 
       me.rememberValues();
     });
   },
   
-  processFICReturn: function(response, data, request){
+  processFICReturn: function(response, data, request, editValues){
+    var modeIsNew = request.params.MODE === 'NEW';
+
+    // needs to be recomputed as for grid editing the fields
+    // are reset for every edit session
+    this.fieldsByColumnName = null;
+    
     // TODO: an error occured, handles this much better...
     if (!data || !data.columnValues) {
       this.setDisabled(false);
@@ -259,7 +278,7 @@ OB.ViewFormProperties = {
     if (columnValues) {
       for (prop in columnValues) {
         if (columnValues.hasOwnProperty(prop)) {
-          this.processColumnValue(prop, columnValues[prop]);
+          this.processColumnValue(prop, columnValues[prop], editValues);
         }
       }
     }
@@ -302,37 +321,29 @@ OB.ViewFormProperties = {
     
     this.setDisabled(false);
     
-    if (this.redrawItems) {
-      for (i = 0; i < this.redrawItems.length; i++) {
-        if (this.redrawItems[i].redraw) {
-          // check if the field should be revalidated
-          if (this.redrawItems[i].validate && this.redrawItems[i].hasErrors && this.redrawItems[i].hasErrors()) {
-            this.redrawItems[i].validate();
-          }
-          this.redrawItems[i].redraw();
-        }
-      }
-      delete this.redrawItems;
-    }
-    
     // store the new values in the edit value 
     if (this.grid) {
       this.grid.storeUpdatedEditorValue(true);
     }
 
+    if (this.validateAfterFicReturn) {
+      delete this.validateAfterFicReturn;
+      this.validate();
+    }
+
+    this.markForRedraw();
   },
   
   setDisabled: function(state) {
-    this.Super('setDisabled', state);
     this.allItemsDisabled = state;
   },
   
-  processColumnValue: function(columnName, columnValue){
+  processColumnValue: function(columnName, columnValue, editValues){
     var undef, data, record, length, valuePresent, currentValue, isDate, value, i, valueMap = {}, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
+    // not a field on the form, probably a datasource field
+    var prop = this.view.getPropertyFromDBColumnName(columnName);
     var id, identifier;
     if (!field) {
-      // not a field on the form, probably a datasource field
-      var prop = this.view.getPropertyFromDBColumnName(columnName);
       if (!prop) {
         return;
       }
@@ -340,12 +351,6 @@ OB.ViewFormProperties = {
       if (!field) {
         return;
       }
-    } else {
-      // redraw at the end
-      if (!this.redrawItems) {
-        this.redrawItems = [];
-      }
-      this.redrawItems.push(field);
     }
     
     // ignore the id
@@ -357,11 +362,16 @@ OB.ViewFormProperties = {
     // don't set the entries    
     if (field.form && entries) {
       for (i = 0; i < entries.length; i++) {
-        id = entries[i][OB.Constants.ID] || null;
+        id = entries[i][OB.Constants.ID] || 'null';
         identifier = entries[i][OB.Constants.IDENTIFIER] || '';
-        valueMap[id] = identifier;
+        valueMap[id] = (identifier === 'null' ? null : identifier);
       }
       field.setValueMap(valueMap);
+      if (editValues) {
+        // store the valuemap in the edit values so it can be retrieved later
+        // when the form is rebuild
+        editValues[prop + '._valueMap'] = valueMap;
+      }
     }
     
     if (columnValue.value && columnValue.value === 'null') {
@@ -377,13 +387,27 @@ OB.ViewFormProperties = {
         this.setValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
       } else {
         
-        // set the display field if the identifier is passed also
-        if (field.displayField && field.form && columnValue.identifier) {
-          if (!field.valueMap) {
-            field.valueMap = {};
+        // set the identifier/display field if the identifier is passed also
+        // note that when the field value is changed by the user the setting 
+        // of the identifier field is done in the form item
+        identifier = columnValue.identifier;
+        if (!identifier && field.valueMap) {
+          identifier = field.valueMap[columnValue.value];
+        }
+        if (identifier) {
+          if (entries) {
+            if (!field.valueMap) {
+              field.valueMap = {};
+            }
+            field.valueMap[columnValue.value] = identifier;
           }
-          field.valueMap[columnValue.value] = columnValue.identifier;
-          field.form.setValue(field.displayField, columnValue.identifier);
+          if (field.form) {
+            if (field.displayField) {
+              field.form.setValue(field.displayField, identifier);
+            } else {
+              field.form.setValue(field.name + '.' + OB.Constants.IDENTIFIER, identifier);                
+            }
+          }
         }
         
         this.setValue(field.name, columnValue.value);
@@ -436,12 +460,17 @@ OB.ViewFormProperties = {
     if (item) {
       requestParams.CHANGED_COLUMN = item.inpColumnName;
     }
+    allProperties._entityName = this.view.entity;
     
     this.setDisabled(true);
 
     // collect the context information    
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
-      me.processFICReturn(response, data, request);
+      var editValues, editRow = me.view.viewGrid.getEditRow();
+      if (editRow || editRow === 0) {
+        editValues = me.view.viewGrid.getEditValues(me.view.viewGrid.getEditRow());
+      }
+      me.processFICReturn(response, data, request, editValues);
     });
   },
   

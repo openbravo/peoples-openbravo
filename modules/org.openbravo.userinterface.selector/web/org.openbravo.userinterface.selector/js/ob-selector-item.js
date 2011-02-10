@@ -311,6 +311,7 @@ isc.ClassFactory.mixInInterface('OBSelectorItem', 'OBLinkTitleItem');
 isc.OBSelectorItem.addProperties({
   popupTextMatchStyle: 'startswith',
   suggestionTextMatchStyle: 'startswith',
+  selectOnFocus: true,
   
   // ** {{{ selectorGridFields }}} **
   // the definition of the columns in the popup window

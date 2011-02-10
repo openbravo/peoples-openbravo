@@ -76,6 +76,9 @@ function closeSearch(action, value, display, parameters, wait){
     }
     
     targetFld.setValue(value);
+    if (!targetFld.valueMap) {
+      targetFld.valueMap = {};
+    }
     targetFld.valueMap[targetFld.getValue()] = display;
     targetFld.form.setValue(targetFld.displayField, display);
     targetFld.updateValueMap(true);
@@ -388,7 +391,7 @@ isc.OBSectionItem.addProperties({
 });
 
 // == OBListItem ==
-// Combo box for list references
+// Combo box for list references, note is extended by OBFKItem again
 isc.ClassFactory.defineClass('OBListItem', ComboBoxItem);
 
 isc.OBListItem.addProperties({
@@ -400,30 +403,39 @@ isc.OBListItem.addProperties({
   // setting this to false means that the change handler is called when picking
   // a value and not earlier
   addUnknownValues: false,
-  
+  selectOnFocus: true,
+
   pickListProperties: {
     showHeaderContextMenu: false
+  },
+
+  // prevent ids from showing up
+  mapValueToDisplay : function (value) {
+    var ret = this.Super('mapValueToDisplay', arguments);
+    if (ret === value && this.isDisabled()) {
+      return '';
+    }
+    if (ret === value && !this.valueMap) {
+      this.valueMap = {};
+      this.valueMap[value] = '';
+      return '';
+    }
+    return ret;
   }
 });
 
 // == OBFKItem ==
-// Extends SelectItem with suggestion box behavior for foreign key references.
-isc.ClassFactory.defineClass('OBFKItem', ComboBoxItem);
-
-isc.ClassFactory.mixInInterface('OBFKItem', 'OBLinkTitleItem');
+// Extends OBListItem
+isc.ClassFactory.defineClass('OBFKItem', isc.OBListItem);
 
 isc.OBFKItem.addProperties({
-  textMatchStyle: 'substring',  
-  showPickListOnKeypress: true,  
-  cachePickListResults: false,
-  validateOnExit: true, 
-  completeOnTab: true,
-  // setting this to false means that the change handler is called when picking
-  // a value and not earlier
-  addUnknownValues: false,
-  
-  pickListProperties: {
-    showHeaderContextMenu: false
+  textMatchStyle: 'substring',
+    
+  // set the identifier field also, that's what gets displayed in the grid
+  changed: function (form, item, value) {
+    var display = this.mapValueToDisplay(value);
+    form.setValue(this.name + '.' + OB.Constants.IDENTIFIER, display);
+    return this.Super('changed', [arguments]);
   }
 });
 
@@ -966,11 +978,6 @@ isc.OBNumberItem.addProperties({
       this.focusNumberInput();
     }
     return this.Super('focus', arguments);
-  },
-  
-  handleEditorExit: function(){
-    var ret = this.Super('handleEditorExit', arguments);
-    return ret;
   },
   
   blur: function(){

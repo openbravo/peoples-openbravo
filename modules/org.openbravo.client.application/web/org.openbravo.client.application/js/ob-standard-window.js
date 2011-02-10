@@ -63,7 +63,7 @@ isc.OBStandardWindow.addProperties({
   
   // is set when a form or grid editing results in dirty data
   // in the window
-  dirtyEditObject: null,
+  dirtyEditForm: null,
   
   initWidget: function(){
     var standardWindow = this;
@@ -131,19 +131,19 @@ isc.OBStandardWindow.addProperties({
     return this.getClass().autoSave;
   },
   
-  setDirtyEditObject: function (editObject) {
-    this.dirtyEditObject = editObject;
+  isDirty: function() {
+    return this.dirtyEditForm;
+  },
+  
+  getDirtyEditForm: function() {
+    return this.dirtyEditForm;
+  },
+  
+  setDirtyEditForm: function (editObject) {
+    this.dirtyEditForm = editObject;
     if (!editObject) {
       this.cleanUpAutoSaveProperties();
     }
-  },
-  
-  isDirty: function() {
-    return this.dirtyEditObject;
-  },
-  
-  getDirtyEditObject: function() {
-    return this.dirtyEditObject;
   },
 
   autoSave: function() {
@@ -151,13 +151,15 @@ isc.OBStandardWindow.addProperties({
   },
   
   doActionAfterAutoSave: function(action, forceDialogOnFailure) {
-    if (!this.isDirty()) {
+    // if not dirty or we know that the object has errors
+    if (!this.isDirty() || (this.getDirtyEditForm() && this.getDirtyEditForm().hasErrors())) {
+
+      // clean up before calling the action, as the action
+      // can set dirty form again
+      this.cleanUpAutoSaveProperties();
       
       // nothing to do, execute immediately
       OB.Utilities.callAction(action);
-
-      // clean up anyway
-      this.cleanUpAutoSaveProperties();
       return;
     }
 
@@ -177,7 +179,7 @@ isc.OBStandardWindow.addProperties({
 
     this.isAutoSaving = true;
     this.forceDialogOnFailure = forceDialogOnFailure;
-    this.getDirtyEditObject().autoSave();
+    this.getDirtyEditForm().autoSave();
   },
   
   callAutoSaveAction: function() {
@@ -190,7 +192,7 @@ isc.OBStandardWindow.addProperties({
   },
 
   cleanUpAutoSaveProperties: function() {
-    delete this.dirtyEditObject;
+    delete this.dirtyEditForm;
     delete this.isAutoSaving;
     delete this.autoSaveAction;
     delete this.forceDialogOnFailure;
@@ -224,12 +226,12 @@ isc.OBStandardWindow.addProperties({
 
     var callback = function(ok){
       if (ok) {
-        me.getDirtyEditObject().resetForm();
+        me.getDirtyEditForm().resetForm();
         OB.Utilities.callAction(action);
       } else {
         // and focus to the first error field
-        me.getDirtyEditObject().setFocusInErrorField(true);
-        me.getDirtyEditObject().focus();
+        me.getDirtyEditForm().setFocusInErrorField(true);
+        me.getDirtyEditForm().focus();
       }
     };
     isc.ask(OB.I18N.getLabel('OBUIAPP_AutoSaveNotPossibleExecuteAction'), callback);

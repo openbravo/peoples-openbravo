@@ -256,7 +256,7 @@ public abstract class UIDefinition {
    * @return
    */
   protected String getFilterEditorPropertiesProperty(Field field) {
-    return ", filterEditorProperties: {selectOnFocus: true}";
+    return "";
   }
 
   /**

@@ -89,7 +89,11 @@ isc.OBToolbar.addClassProperties({
     updateState: function() {
       var view = this.view, form = view.viewForm, grid = view.viewGrid, selectedRecords=grid.getSelectedRecords();
       for (var i = 0; i < selectedRecords.length; i++){
-        if(!grid.isWritable(selectedRecords[i])){
+        if(!grid.isWritable(selectedRecords[i])) {
+          this.setDisabled(true);
+          return;
+        }
+        if(selectedRecords[i]._new) {
           this.setDisabled(true);
           return;
         }
@@ -140,8 +144,12 @@ isc.OBToolbar.addClassProperties({
         this.setDisabled(!form.isNew && !hasErrors && (form.isSaving || form.readOnly || 
               !view.hasValidState() || !form.hasChanged));
       } else {
-        // support for editable grid
-        this.setDisabled(true);
+        var selectedRecords = grid.getSelectedRecords(), allRowsHaveErrors = true;
+        for (var i = 0; i < selectedRecords.length; i++){
+          var rowNum = grid.getRecordIndex(selectedRecords[i]);
+          allRowsHaveErrors = allRowsHaveErrors && grid.rowHasErrors(rowNum);
+        }
+        this.setDisabled(selectedRecords.length === 0 || !allRowsHaveErrors); 
       }
     },
     keyboardShortcutId: 'ToolBar_Undo'

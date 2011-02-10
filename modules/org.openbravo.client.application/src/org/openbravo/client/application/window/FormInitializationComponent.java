@@ -41,6 +41,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
@@ -138,6 +139,13 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
       } catch (JSONException e) {
         throw new OBException("Error while parsing content", e);
+      }
+      // create the row from the json content then
+      if (row == null) {
+        final JsonToDataConverter fromJsonConverter = OBProvider.getInstance().get(
+            JsonToDataConverter.class);
+        row = fromJsonConverter.toBaseOBObject(jsContent);
+        row.setNewOBObject(true);
       }
 
       // First the parent record is retrieved and the session variables for the parent records are

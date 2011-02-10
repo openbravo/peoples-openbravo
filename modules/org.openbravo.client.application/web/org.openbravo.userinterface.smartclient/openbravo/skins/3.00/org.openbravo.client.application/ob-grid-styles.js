@@ -20,7 +20,7 @@
 // Styling properties for a generic grid (ob-grid.js)
 isc.OBGrid.addProperties({
   editFailedBaseStyle: null, // is done through the additional csstext
-  editFailedCSSText: 'background-color: red, color: red; border:1px solid red;',
+  editFailedCSSText: 'background-color: red; color: red; border-right-color: red; border-bottom-color: red;',
   baseStyle: 'OBGridCell',
   baseStyleEdit: 'OBGridCellEdit', // for use in ob-view-grid.js while editing a cell
   recordStyleError: 'OBGridCellError',
@@ -29,6 +29,7 @@ isc.OBGrid.addProperties({
   headerTitleStyle: 'OBGridHeaderCellTitle',
   cellPadding: 0, /* Set in the CSS */
   cellHeight: 22,
+  cellAlign: 'center',
   sortAscendingImage:{src:'[SKIN]/../../../org.openbravo.client.application/images/grid/gridHeader_sortAscending.gif', width:7, height:11},
   sortDescendingImage:{src:'[SKIN]/../../../org.openbravo.client.application/images/grid/gridHeader_sortDescending.gif', width:7, height:11},
   headerMenuButtonConstructor: 'OBGridHeaderImgButton',

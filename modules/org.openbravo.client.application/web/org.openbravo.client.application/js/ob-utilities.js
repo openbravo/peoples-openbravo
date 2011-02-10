@@ -39,6 +39,19 @@ OB.Utilities.callAction = function(action){
   }  
 };
 
+// ** {{{OB.Utilities.replaceNullStringValue}}} **
+// Replaces values which are 'null' with null
+OB.Utilities.replaceNullStringValue = function(form, values) {
+  for (var prop in values) {
+    if (values.hasOwnProperty(prop)) {
+      var value = values[prop];
+      if (value === 'null') {
+        values[prop] = null;
+      }
+    }
+  }
+};
+
 // ** {{{OB.Utilities.useClassicMode}}} **
 // Returns true if the user wants to work in classic mode, checks the url parameter
 // as well as a property value.

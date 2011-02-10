@@ -256,6 +256,13 @@ public class JsonToDataConverter {
     if (jsonObject.has(JsonConstants.ID)) {
       id = jsonObject.getString(JsonConstants.ID);
     }
+    // if there is a new indicator then nullify the id again to treat the object has new
+    final boolean isNew = jsonObject.has(JsonConstants.NEW_INDICATOR)
+        && jsonObject.getBoolean(JsonConstants.NEW_INDICATOR);
+    if (isNew) {
+      id = null;
+    }
+
     String entityName = null;
     if (jsonObject.has(JsonConstants.ENTITYNAME)) {
       entityName = jsonObject.getString(JsonConstants.ENTITYNAME);
@@ -280,6 +287,10 @@ public class JsonToDataConverter {
       newObjects.remove(key);
     } else {
       obObject = (BaseOBObject) OBProvider.getInstance().get(entityName);
+    }
+
+    if (isNew) {
+      obObject.setNewOBObject(true);
     }
 
     setData(jsonObject, obObject);
