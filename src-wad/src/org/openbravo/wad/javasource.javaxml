@@ -108,8 +108,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
      </FIELDS_TMP>
     }
     if (!securedProcess) {
-      classInfo.type = "W";
-      classInfo.id = windowId;
+      setClassInfo("W", tabId, moduleId);
     }
     super.service(request, response);
   }
