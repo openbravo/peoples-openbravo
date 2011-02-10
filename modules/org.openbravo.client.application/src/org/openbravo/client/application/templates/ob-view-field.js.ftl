@@ -44,9 +44,18 @@
           },
           </#if>
           <#if fieldDefinition.showIf != "">
-          showIf: function(item, value, form, currentValues) {
-            currentValues = currentValues || form.view.getCurrentValues();
-            var context = form.view.getContextInfo(false, true);
+          showIf: function(item, value, form, values) {            
+            var context = form.view.getContextInfo(false, true),
+                currentValues = values || form.view.getCurrentValues(), i;
+
+            // Fixing null values to match 2.50 behaviour '' == null
+            for(i in currentValues) { 
+              if(currentValues.hasOwnProperty(i) && 
+                 currentValues[i] === null) {
+                currentValues[i] = '';
+              }
+            }
+
             return context && (${fieldDefinition.showIf});
           },
           </#if>

@@ -305,8 +305,9 @@ OB.ViewFormProperties = {
       this.auxInputs = {};
       for (prop in auxInputs) {
         if (auxInputs.hasOwnProperty(prop)) {
-          this.setValue(prop, auxInputs[prop].value);
-          this.auxInputs[prop] = auxInputs[prop].value;
+          value = typeof auxInputs[prop].value !== 'undefined' ? auxInputs[prop].value : '';
+          this.setValue(prop, value);
+          this.auxInputs[prop] = value;
         }
       }
     }
@@ -323,10 +324,6 @@ OB.ViewFormProperties = {
     } else {
       this.readOnly = false;
     }
-    this.view.toolBar.updateButtonState();
-    // note onFieldChanged uses the form.readOnly set above
-    this.onFieldChanged(this);
-    this.focus();
     
     // save out the values to the grid before redrawing
     if (this.grid && this.grid.setEditValues && (this.grid.getEditRow() || this.grid.getEditRow() === 0)) {
@@ -346,6 +343,17 @@ OB.ViewFormProperties = {
     }
 
     this.markForRedraw();
+    if (this.showFormOnFICReturn) {
+      if (!this.isVisible()) {
+        this.view.switchFormGridVisibility();
+      }
+      delete this.showFormOnFICReturn;
+    }
+
+    this.view.toolBar.updateButtonState();
+    // note onFieldChanged uses the form.readOnly set above
+    this.onFieldChanged(this);
+    this.focus();
   },
   
   setDisabled: function(state) {

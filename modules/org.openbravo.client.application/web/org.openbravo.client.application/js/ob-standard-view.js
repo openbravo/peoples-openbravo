@@ -756,7 +756,7 @@ isc.OBStandardView.addProperties({
     this.messageBar.hide();
     
     if (!this.isShowingForm) {
-      this.switchFormGridVisibility();
+      this.viewForm.showFormOnFICReturn = true;
     }
     
     if (!record) { //  new case
@@ -1423,7 +1423,7 @@ isc.OBStandardView.addProperties({
       component = this.viewGrid.getEditForm();
       form = component;
     } else if (this.isShowingForm) {
-      record = this.viewForm.getValues();
+      record = isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewForm.getValues());
       component = this.viewForm;
       form = component;
     } else {

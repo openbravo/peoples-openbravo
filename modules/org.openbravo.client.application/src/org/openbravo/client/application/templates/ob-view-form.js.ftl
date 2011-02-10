@@ -25,20 +25,20 @@ isc.OBViewForm.create({
     </#list>
     ],
     onFieldChanged: function(form, item, value) {
-      form = form || this;
-      var context = this.view.getContextInfo(false, true),
-          currentValues = form.view.getCurrentValues();
+      var f = form || this,
+          context = this.view.getContextInfo(false, true),
+          currentValues = f.view.getCurrentValues();
       <#list data.fields as field>
       <#if field.readOnlyIf != "">
-        if (form.readOnly) {
-          form.getItem('${field.name}').disable();
+        if (f.readOnly) {
+          f.getItem('${field.name}').disable();
         } else if(${field.readOnlyIf}) {
-          form.getItem('${field.name}').disable();
+          f.getItem('${field.name}').disable();
         } else {
-          form.getItem('${field.name}').enable();
+          f.getItem('${field.name}').enable();
         }
       </#if>
       </#list>
-      form.setFindNewFocusItem();
+      f.setFindNewFocusItem();
     }
 })
