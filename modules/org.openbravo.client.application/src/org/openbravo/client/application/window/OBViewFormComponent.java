@@ -238,6 +238,14 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     private String showIf = "";
     private String readOnlyIf = "";
 
+    /**
+     * @deprecated use {@link #setRedrawOnChange(boolean)}
+     */
+    @Deprecated
+    public void setReadrawOnChange(boolean value) {
+      this.setRedrawOnChange(value);
+    }
+
     public boolean isReadOnly() {
       return isParentProperty() || field.isReadOnly();
     }
