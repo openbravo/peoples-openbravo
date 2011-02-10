@@ -1156,7 +1156,9 @@ isc.OBStandardView.addProperties({
         this.viewGrid.refreshGrid();
       }
     }
-    refreshCallback();
+    if (refreshCallback) {
+      refreshCallback();
+    }
   },
   
   saveRow: function(){
