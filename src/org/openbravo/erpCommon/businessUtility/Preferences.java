@@ -228,12 +228,17 @@ public class Preferences {
   public static String getPreferenceValue(String property, boolean isListProperty,
       String strClient, String strOrg, String strUser, String strRole, String strWindow)
       throws PropertyException {
-    Client client = OBDal.getInstance().get(Client.class, strClient == null ? "" : strClient);
-    Organization org = OBDal.getInstance().get(Organization.class, strOrg == null ? "" : strOrg);
-    User user = OBDal.getInstance().get(User.class, strUser == null ? "" : strUser);
-    Role role = OBDal.getInstance().get(Role.class, strRole == null ? "" : strRole);
-    Window window = OBDal.getInstance().get(Window.class, strWindow == null ? "" : strWindow);
-    return getPreferenceValue(property, isListProperty, client, org, user, role, window);
+    try {
+      OBContext.setAdminMode();
+      Client client = OBDal.getInstance().get(Client.class, strClient == null ? "" : strClient);
+      Organization org = OBDal.getInstance().get(Organization.class, strOrg == null ? "" : strOrg);
+      User user = OBDal.getInstance().get(User.class, strUser == null ? "" : strUser);
+      Role role = OBDal.getInstance().get(Role.class, strRole == null ? "" : strRole);
+      Window window = OBDal.getInstance().get(Window.class, strWindow == null ? "" : strWindow);
+      return getPreferenceValue(property, isListProperty, client, org, user, role, window);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
