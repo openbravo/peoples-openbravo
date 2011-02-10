@@ -311,7 +311,17 @@ isc.OBTextItem.addProperties({
 isc.ClassFactory.defineClass('OBFKFilterTextItem', TextItem);
 
 isc.OBFKFilterTextItem.addProperties({
-  validateOnExit: true  
+  validateOnExit: false,
+  validateOnChange: false
+});
+
+//== OBListFilterTextItem ==
+//Input used for filtering on list fields.
+isc.ClassFactory.defineClass('OBListFilterTextItem', TextItem);
+
+isc.OBListFilterTextItem.addProperties({
+  validateOnExit: false,
+  validateOnChange: false
 });
 
 // == OBTextAreaItem ==

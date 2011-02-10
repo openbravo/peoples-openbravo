@@ -41,6 +41,11 @@ public class EnumUIDefinition extends UIDefinition {
   }
 
   @Override
+  public String getFilterEditorType() {
+    return "OBListFilterTextItem";
+  }
+
+  @Override
   public String getFieldProperties(Field field, boolean getValueFromSession) {
     JSONObject value;
     try {
