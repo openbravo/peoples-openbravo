@@ -66,6 +66,7 @@ import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 import org.openbravo.service.json.JsonUtils;
 
@@ -144,7 +145,23 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (row == null) {
         final JsonToDataConverter fromJsonConverter = OBProvider.getInstance().get(
             JsonToDataConverter.class);
-        row = fromJsonConverter.toBaseOBObject(jsContent);
+
+        // create a new json object using property names:
+        final JSONObject convertedJson = new JSONObject();
+        final Entity entity = ModelProvider.getInstance().getEntityByTableName(
+            tab.getTable().getDBTableName());
+        for (Property property : entity.getProperties()) {
+          if (property.getColumnName() != null) {
+            final String inpName = "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
+            if (jsContent.has(inpName)) {
+              convertedJson.put(property.getName(), jsContent.get(inpName));
+            }
+          }
+        }
+        // remove the id as it must be a new record
+        convertedJson.remove("id");
+        convertedJson.put(JsonConstants.ENTITYNAME, entity.getName());
+        row = fromJsonConverter.toBaseOBObject(convertedJson);
         row.setNewOBObject(true);
       }
 
@@ -193,6 +210,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           + (t8 - t7) + ")");
       return finalObject;
     } catch (Throwable t) {
+      t.printStackTrace(System.err);
       final String jsonString = JsonUtils.convertExceptionToJson(t);
       try {
         return new JSONObject(jsonString);

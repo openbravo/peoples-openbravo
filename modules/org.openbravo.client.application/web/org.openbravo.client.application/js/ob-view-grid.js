@@ -817,6 +817,10 @@ isc.OBViewGrid.addProperties({
   // one has as disadvantage that it is called multiple times
   // for one select/deselect action
   selectionUpdated: function(record, recordList){
+      
+    // close any editors we may have
+    this.closeAnyOpenEditor();
+
     this.stopHover();
     this.updateSelectedCountDisplay();
     this.view.recordSelected();
@@ -1080,8 +1084,6 @@ isc.OBViewGrid.addProperties({
       record.editColumnLayout.showEditOpen();
     }
     
-    this.doSelectSingleRecord(record);
-    
     this.view.toolBar.updateButtonState();
     
     // remove the error style/message
@@ -1183,6 +1185,12 @@ isc.OBViewGrid.addProperties({
   // is called when clicking a header
   hideInlineEditor: function(){
     var rowNum = this.getEditRow(), record = this.getRecord(rowNum);
+    
+    // clear the errors so that they don't show up at the next row
+    if (this.getEditForm()) {
+      this.getEditForm().clearErrors();
+    }
+    
     if (record && record.editColumnLayout) {
       record.editColumnLayout.showEditOpen();
     } else if (this.getEditForm().getValues().editColumnLayout) {
@@ -1198,7 +1206,16 @@ isc.OBViewGrid.addProperties({
     return this.Super('getEditDisplayValue', arguments);
   },
   
-  rowEditorEnter: function(record, editValues, rowNum){
+  showInlineEditor : function (rowNum, colNum, newCell, newRow, suppressFocus) {
+    if (this.getEditForm()) {
+      this.getEditForm().clearErrors();
+    }
+    var ret = this.Super('showInlineEditor', arguments);
+    if (!newRow) {
+      return ret;
+    }
+    var record = this.getRecord(rowNum);
+     
     this.view.isEditingGrid = true;
     
     record[this.recordBaseStyleProperty] = this.baseStyleEdit;
@@ -1225,8 +1242,8 @@ isc.OBViewGrid.addProperties({
     }
     
     this.view.toolBar.updateButtonState();
-    
-    return true;
+
+    return ret;
   },
   
   rowEditorExit: function(editCompletionEvent, record, newValues, rowNum){
@@ -1245,6 +1262,13 @@ isc.OBViewGrid.addProperties({
     }
     this.view.isEditingGrid = false;
     this.refreshRow(rowNum);
+  },
+  
+  closeAnyOpenEditor: function() {
+    // close any editors we may have
+    if (this.getEditRow() || this.getEditRow() === 0) {
+      this.endEditing();
+    }
   },
   
   validateField: function(field, validators, value, record, options){

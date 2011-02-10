@@ -109,9 +109,8 @@ OB.ViewFormProperties = {
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
     this.ignoreFirstFocusEvent = preventFocus;
-    if (isNew) {
-      this.clearErrors();
-    } else {
+    this.clearErrors();
+    if (!isNew) {
       this.validateAfterFicReturn = true;
     }
     

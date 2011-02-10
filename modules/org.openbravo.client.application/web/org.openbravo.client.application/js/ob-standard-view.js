@@ -552,6 +552,10 @@ isc.OBStandardView.addProperties({
       this.activeBar.setActive(true);
       this.setViewFocus();
     } else {
+      
+      // close any editors we may have
+      this.viewGrid.closeAnyOpenEditor();
+      
       this.toolBar.hide();
       this.activeBar.setActive(false);
       // note we can not check on viewForm visibility as 
