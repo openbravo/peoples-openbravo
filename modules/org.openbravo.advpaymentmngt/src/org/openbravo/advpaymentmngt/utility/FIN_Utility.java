@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 
@@ -236,6 +237,24 @@ public class FIN_Utility {
         strInList.append("'" + obObject.getId() + "'");
       else
         strInList.append(", '" + obObject.getId() + "'");
+    }
+    return strInList.toString();
+  }
+
+  /**
+   * Creates a comma separated string with the Id's of the Set of Strings.
+   * 
+   * @param set
+   *          Set of Strings
+   * @return Comma separated string of Id's
+   */
+  public static String getInStrSet(Set<String> set) {
+    StringBuilder strInList = new StringBuilder();
+    for (String string : set) {
+      if (strInList.length() == 0)
+        strInList.append("'" + string + "'");
+      else
+        strInList.append(", '" + string + "'");
     }
     return strInList.toString();
   }

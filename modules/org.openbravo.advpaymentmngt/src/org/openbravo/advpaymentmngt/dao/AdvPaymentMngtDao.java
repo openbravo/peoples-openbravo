@@ -140,9 +140,10 @@ public class AdvPaymentMngtDao {
       whereClause.append(" is null");
       whereClause.append(" and psd.");
       whereClause.append(FIN_PaymentSchedule.PROPERTY_ORGANIZATION);
-      whereClause.append(".id = '");
-      whereClause.append(organization.getId());
-      whereClause.append("'");
+      whereClause.append(".id in (");
+      whereClause.append(FIN_Utility.getInStrSet(OBContext.getOBContext()
+          .getOrganizationStructureProvider().getNaturalTree(organization.getId())));
+      whereClause.append(")");
 
       // remove selected payments
       if (selectedScheduledPaymentDetails != null && selectedScheduledPaymentDetails.size() > 0) {
@@ -1192,4 +1193,5 @@ public class AdvPaymentMngtDao {
     obcPayment.addOrderBy(FIN_Payment.PROPERTY_DOCUMENTNO, false);
     return obcPayment.list();
   }
+
 }
