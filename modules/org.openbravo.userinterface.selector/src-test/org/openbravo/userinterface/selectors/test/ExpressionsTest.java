@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,6 +72,10 @@ public class ExpressionsTest extends BaseTest {
     expr.put("Filter by vendor/customer", "if(OB.isSalesTransaction()===null){'';}"
         + "else if(OB.isSalesTransaction()==true){'e.customer = true';}"
         + "else{'e.vendor = true';}");
+
+    expr
+        .put("Complex expression from Java",
+            "OB.getFilterExpression('org.openbravo.userinterface.selectors.test.SampleFilterExpression');");
 
   }
 
@@ -145,5 +149,15 @@ public class ExpressionsTest extends BaseTest {
       log.error("Error evaluating expression: " + s, e);
     }
     assertEquals("", result);
+  }
+
+  public void testGetFilterExpression() {
+    final String s = expr.get("Complex expression from Java");
+    try {
+      result = engine.eval(s);
+    } catch (Exception e) {
+      log.error("Error evaluating expression: " + s, e);
+    }
+    assertEquals("This is a complex expression", result);
   }
 }
