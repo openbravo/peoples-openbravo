@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,6 +38,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
@@ -172,7 +173,19 @@ public class ReferencedLink extends HttpSecureAppServlet {
         isSOTrx = ref.isSOTrx();
       ref = null;
     }
-    {
+
+    // Fixes issue #15723 while the complete implementation defined in #15379 is not ready
+    boolean forcedLink;
+    try {
+      strWindowId = Preferences.getPreferenceValue("ForcedLinkWindow" + strTableName, false, vars
+          .getClient(), vars.getOrg(), vars.getUser(), vars.getRole(), strWindowId);
+      forcedLink = true;
+    } catch (PropertyException e) {
+      // Property is not set, follow standard flow
+      forcedLink = false;
+    }
+
+    if (!forcedLink) {
       String strTableRealReference = strTableReferenceId;
       if (strTableReferenceId.equals("800018")) { // DP
         if (ReferencedTablesData.selectKeyId(this, "C_INVOICE_ID", strTableName,
@@ -213,7 +226,6 @@ public class ReferencedLink extends HttpSecureAppServlet {
         if (!isSOTrx && !data[0].poWindowId.equals(""))
           strWindowId = data[0].poWindowId;
       }
-
     }
     ReferencedLinkData[] data = ReferencedLinkData.select(this, strWindowId, strTableReferenceId);
     if (data == null || data.length == 0)
