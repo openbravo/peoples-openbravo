@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.util.Check;
+import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.dal.core.OBContext;
 
 /**
@@ -186,6 +187,18 @@ public class OBBindings {
       log.error("Error parsing string " + date + " with format: " + format, e);
     }
     return null;
+  }
+
+  public String getFilterExpression(String className) {
+    Check.isNotNull(className, "The class name must not be null");
+    FilterExpression expr;
+    try {
+      expr = (FilterExpression) OBClassLoader.getInstance().loadClass(className).newInstance();
+      return expr.getExpression();
+    } catch (Exception e) {
+      log.error("Error trying to get filter expression from class: " + className, e);
+    }
+    return "";
   }
 
 }
