@@ -30,6 +30,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
@@ -48,15 +49,17 @@ public class ApplicationUtils {
   private static Logger log = Logger.getLogger(ApplicationUtils.class);
 
   static boolean showWindowInClassicMode(Window window) {
-    for (Tab tab : window.getADTabList()) {
+    // FIXME Remove this once ImageBLOB is implemented
+    // Currently, windows with ImageBLOB reference columns will be shown in classic mode
+    String qryStr = "as f where f.column.reference.id = '4AA6C3BE9D3B4D84A3B80489505A23E5' "
+        + "and f.tab.window.id = :windowId ";
+    OBQuery<Field> qry = OBDal.getInstance().createQuery(Field.class, qryStr);
+    qry.setNamedParameter("windowId", window.getId());
+    if (qry.count() > 0) {
+      return true;
+    }
 
-      // FIXME Remove this once ImageBLOB is implemented
-      // Currently, windows with ImageBLOB reference columns will be shown in classic mode
-      for (Field field : tab.getADFieldList()) {
-        if (field.getColumn().getReference().getId().equals("4AA6C3BE9D3B4D84A3B80489505A23E5")) {
-          return true;
-        }
-      }
+    for (Tab tab : window.getADTabList()) {
       if (tab.getSQLWhereClause() != null && tab.getHqlwhereclause() == null) {
         // There is a tab with a SQL whereclause, but without a defined HQL whereclause
         return true;
