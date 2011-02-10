@@ -30,7 +30,9 @@ isc.defineClass('OBPopupClassicWindow', isc.Class).addProperties({
   showsItself: true,
   command : 'DEFAULT',
   appURL : OB.Application.contextUrl + 'security/Menu.html',
-  obManualURL: ''});
+  obManualURL: '',
+  height: 450, 
+  width: 625});
 
 isc.OBPopupClassicWindow.addMethods({
   show: function() {
@@ -46,7 +48,7 @@ isc.OBPopupClassicWindow.addMethods({
       contentsURL = this.appURL + urlCharacter + 'Command=' + this.command + '&noprefs=true&tabId=' + this.tabId + '&hideMenu=true';
     }
     
-    OB.Utilities.openProcessPopup(contentsURL, false, this.postParams);
+    OB.Utilities.openProcessPopup(contentsURL, false, this.postParams, this.height, this.width);
   }
 });
 

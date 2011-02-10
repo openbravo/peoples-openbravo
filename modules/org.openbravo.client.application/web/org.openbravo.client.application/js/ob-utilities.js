@@ -230,9 +230,9 @@ OB.Utilities.getLocationUrlWithoutFragment = function(){
 //                     properties of this object to url as POST, other case a GET to url is
 //                     performed
 // frameset
-OB.Utilities.openProcessPopup = function(/* String */url, noFrameSet, postParams){
-  var height = 450;
-  var width = 625;
+OB.Utilities.openProcessPopup = function(/* String */url, noFrameSet, postParams, height, width){
+  height = height || 450;
+  width = width || 625;
   var top = (screen.height - height) / 2;
   var left = (screen.width - width) / 2;
   var adds = 'height=' + height + ', width=' + width + ', left=' + left +

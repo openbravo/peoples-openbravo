@@ -72,7 +72,9 @@ isc.OBToolbarActionButton.addProperties( {
             id: this.id,
             command: this.command,
             tabTitle: this.title,
-            postParams: allProperties
+            postParams: allProperties,
+            height: 600, 
+            width: 900
           };
       callbackFunction = function(){
         OB.Layout.ViewManager.openView('OBPopupClassicWindow', popupParams);
