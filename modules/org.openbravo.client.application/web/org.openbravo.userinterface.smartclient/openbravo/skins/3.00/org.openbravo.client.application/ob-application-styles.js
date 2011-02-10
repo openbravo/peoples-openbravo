@@ -121,6 +121,15 @@ OB.QuickLaunchNavbarComponentStylingProperties = {
 };
 
 /* =====================================================================
+ * Loading prompt
+ =======================================================================*/
+OB.LoadingPrompt = {
+  mainLayoutStyleName: 'OBLoadingPromptModalMask',
+  loadingLayoutStyleName: 'OBLoadingPromptLabel',
+  loadingImage: {src:'[SKIN]/../../org.openbravo.client.application/images/system/windowLoading.gif', width: 220, height:16}
+};
+
+/* =====================================================================
  * Width of the active bar on the left in the main view
  =======================================================================*/
 OB.ActiveBarStyling = {

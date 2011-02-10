@@ -21,6 +21,17 @@
 // are related to opening views, opening popups, displaying yes/no, etc. 
 OB.Utilities = {};
 
+// ** {{{OB.Utilities.createLoadingLayout}}} **
+// Creates a layout with the loading image.
+OB.Utilities.createLoadingLayout = function(){
+  var mainLayout = isc.HLayout.create({styleName: OB.LoadingPrompt.mainLayoutStyleName, width: '100%', height: '100%', align: 'center', defaultLayoutAlign: 'center'});
+  var loadingLayout = isc.HLayout.create({styleName: OB.LoadingPrompt.loadingLayoutStyleName, width: 1, height: 1, overflow: 'visible'});
+  mainLayout.addMember(loadingLayout);
+  loadingLayout.addMember(isc.Label.create({contents: OB.I18N.getLabel('OBUIAPP_LOADING'), styleName: 'OBLoadingPromptLabel', width: 1, height: 1, overflow: 'visible'}));
+  loadingLayout.addMember(isc.Img.create(OB.LoadingPrompt.loadingImage));
+  return mainLayout;
+};
+
 // ** {{{OB.Utilities.addRequiredSuffixToBaseStyle}}} **
 // Adds the Required suffix to a base style for a required formitem, to show it yellow in 
 // the forms.
