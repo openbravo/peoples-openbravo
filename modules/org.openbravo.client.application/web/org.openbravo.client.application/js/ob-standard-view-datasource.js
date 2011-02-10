@@ -107,8 +107,8 @@ isc.OBViewDataSource.addProperties( {
   // in the correct way, see the ob-view-grid.js editComplete method
   validateJSONRecord: function(record) {
     record = this.Super('validateJSONRecord', arguments);
-    var newId = record.id;
-    if (record._originalId) {
+    if (record && record._originalId) {
+      var newId = record.id;
       record.id = record._originalId;
       record._newId = newId;
     }

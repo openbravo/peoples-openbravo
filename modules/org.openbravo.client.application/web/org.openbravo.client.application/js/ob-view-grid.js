@@ -1081,7 +1081,7 @@ isc.OBViewGrid.addProperties({
     var record = this.getRecord(rowNum), editRow, editSession, autoSaveAction;
 
     // a new id has been computed use that now    
-    if (record._newId) {
+    if (record && record._newId) {
       record.id = record._newId;
       delete record._newId;
     }

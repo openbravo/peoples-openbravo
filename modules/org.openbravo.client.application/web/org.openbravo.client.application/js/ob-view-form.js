@@ -578,7 +578,7 @@ OB.ViewFormProperties = {
         }
 
         // a new id has been computed use that now    
-        if (localRecord._newId) {
+        if (localRecord && localRecord._newId) {
           localRecord.id = localRecord._newId;
           delete localRecord._newId;
         }
