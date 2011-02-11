@@ -248,7 +248,6 @@ isc.OBStandardWindow.addProperties({
   
   // is called from the main app tabset
   tabDeselected: function(tabNum, tabPane, ID, tab, newTab){
-    this.autoSave();
     this.wasDeselected = true;
   },
   
