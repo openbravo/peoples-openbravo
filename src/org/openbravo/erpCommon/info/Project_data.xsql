@@ -28,8 +28,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
       SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (  
-        SELECT P.C_PROJECT_ID, P.VALUE, REPLACE(P.VALUE, '''', CHR(92) || '''') AS VALUE_HIDDEN, P.NAME, P.C_BPARTNER_ID, 
-        REPLACE(P.NAME, '''', CHR(92) || CHR(92) || '''') AS NAME_HIDDEN, 
+        SELECT P.C_PROJECT_ID, P.VALUE, P.NAME, P.C_BPARTNER_ID, 
         B.NAME AS BPARTNER, L.NAME AS PROJECTSTATUS,
         p.c_Project_Id || '@_##_@' || p.value || ' - ' || p.name as rowkey
         FROM C_PROJECT P, C_BPARTNER B, AD_REF_LIST_V L 

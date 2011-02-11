@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -213,9 +213,6 @@ public class Project extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    // String[] gridNames = {"Key", "Name","Disp. Credit","Credit used",
-    // "Contact", "Phone no.", "Zip", "City", "Income", "c_bpartner_id",
-    // "c_bpartner_contact_id", "c_bpartner_location_id", "rowkey"};
     String[] colWidths = { "98", "300", "250", "120", "0" };
     for (int i = 0; i < colNames.length; i++) {
       SQLReturnObject dataAux = new SQLReturnObject();
@@ -266,11 +263,8 @@ public class Project extends HttpSecureAppServlet {
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-          // filter
-          // or
-          // first
-          // load
+        if (strNewFilter.equals("1") || strNewFilter.equals("")) {
+          // New filter or first load
           String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
           if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
             oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
@@ -282,7 +276,6 @@ public class Project extends HttpSecureAppServlet {
           strNumRows = ProjectData.countRows(this, rownum, vars.getLanguage(), Utility.getContext(
               this, vars, "#User_Client", "Project"), Utility.getSelectorOrgs(this, vars, strOrg),
               strKey, strName, strBpartners, pgLimit, oraLimit1, oraLimit2);
-          // strNumRows = String.valueOf(data.length);
           vars.setSessionValue("ProjectData.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("ProjectData.numrows");
@@ -301,8 +294,7 @@ public class Project extends HttpSecureAppServlet {
               strName, strBpartners, strOrderBy, "", pgLimit);
         }
       } catch (ServletException e) {
-        log4j.error("Error in print page data: " + e);
-        e.printStackTrace();
+        log4j.error("Error in print page data: ", e);
         OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
         if (!myError.isConnectionAvailable()) {
           bdErrorAjax(response, "Error", "Connection Error", "No database connection");
@@ -316,15 +308,13 @@ public class Project extends HttpSecureAppServlet {
             description = myError.getMessage();
         }
       } catch (Exception e) {
-        if (log4j.isDebugEnabled())
-          log4j.debug("Error obtaining rows data");
+        log4j.error("Error obtaining rows data", e);
         type = "Error";
         title = "Error";
         if (e.getMessage().startsWith("<![CDATA["))
           description = "<![CDATA[" + e.getMessage() + "]]>";
         else
           description = e.getMessage();
-        e.printStackTrace();
       }
     }
 

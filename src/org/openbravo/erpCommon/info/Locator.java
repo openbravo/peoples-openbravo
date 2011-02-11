@@ -203,11 +203,6 @@ public class Locator extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    String[] colNames = { "name", "value", "aisle", "bin", "nivel", "priorityno", "isdefault",
-        "rowkey" };
-    // String[] gridNames = {"Key", "Name","Disp. Credit","Credit used",
-    // "Contact", "Phone no.", "Zip", "City", "Income", "c_bpartner_id",
-    // "c_bpartner_contact_id", "c_bpartner_location_id", "rowkey"};
     String[] colWidths = { "270", "150", "68", "68", "68", "90", "70", "0" };
     for (int i = 0; i < colNames.length; i++) {
       SQLReturnObject dataAux = new SQLReturnObject();
@@ -258,11 +253,8 @@ public class Locator extends HttpSecureAppServlet {
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-          // filter
-          // or
-          // first
-          // load
+        if (strNewFilter.equals("1") || strNewFilter.equals("")) {
+          // New filter or first load
           String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
           if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
             oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
@@ -274,7 +266,6 @@ public class Locator extends HttpSecureAppServlet {
           strNumRows = LocatorData.countRows(this, rownum, Utility.getContext(this, vars,
               "#User_Client", "Locator"), Utility.getSelectorOrgs(this, vars, strOrg), strName,
               strWarehousename, strAisle, strBin, strLevel, pgLimit, oraLimit1, oraLimit2);
-          // strNumRows = String.valueOf(data.length);
           vars.setSessionValue("Locator.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("Locator.numrows");
@@ -293,8 +284,7 @@ public class Locator extends HttpSecureAppServlet {
               strAisle, strBin, strLevel, strOrderBy, "", pgLimit);
         }
       } catch (ServletException e) {
-        log4j.error("Error in print page data: " + e);
-        e.printStackTrace();
+        log4j.error("Error in print page data: ", e);
         OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
         if (!myError.isConnectionAvailable()) {
           bdErrorAjax(response, "Error", "Connection Error", "No database connection");
@@ -308,15 +298,13 @@ public class Locator extends HttpSecureAppServlet {
             description = myError.getMessage();
         }
       } catch (Exception e) {
-        if (log4j.isDebugEnabled())
-          log4j.debug("Error obtaining rows data");
+        log4j.error("Error obtaining rows data", e);
         type = "Error";
         title = "Error";
         if (e.getMessage().startsWith("<![CDATA["))
           description = "<![CDATA[" + e.getMessage() + "]]>";
         else
           description = e.getMessage();
-        e.printStackTrace();
       }
     }
 
