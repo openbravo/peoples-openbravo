@@ -353,13 +353,13 @@ isc.OBMyOpenbravo.addProperties({
           icon = null;
           if (recent.icon) {
             if (recent.icon === 'Process') {
-              icon = '[SKINIMG]../../org.openbravo.client.application/images/icons/iconProcess.png';
+              icon = '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconProcess.png';
             } else if (recent.icon === 'Report') {
-              icon = '[SKINIMG]../../org.openbravo.client.application/images/icons/iconReport.png';
+              icon = '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png';
             } else if (recent.icon === 'Form') {
-              icon = '[SKINIMG]../../org.openbravo.client.application/images/icons/iconForm.png';
+              icon = '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconForm.png';
             } else {
-              icon = '[SKINIMG]../../org.openbravo.client.application/images/icons/iconWindow.png';
+              icon = '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png';
             }
           }
 

@@ -18,9 +18,18 @@
  */
 
 
+isc.ClassFactory.defineClass('OBApplicationMenuTreeChild', isc.Menu);
+
+isc.OBApplicationMenuTreeChild.addProperties({
+  menuConstructor: isc.OBApplicationMenuTreeChild
+});
+
+
 isc.ClassFactory.defineClass('OBApplicationMenuTree', isc.Menu);
 
 isc.OBApplicationMenuTree.addProperties({
+  menuConstructor: isc.OBApplicationMenuTreeChild,
+
   // move the menu a few pixels down and a bit to the left
   placeNear: function(left, top) {
     var parentLeft = this.menuButton.parentElement.getPageLeft();
@@ -63,7 +72,7 @@ isc.OBApplicationMenuTree.addProperties({
   autoDraw: false,
   autoFitData: 'both',
   canHover: false,
-  showIcons: false,
+  showIcons: true,
   selectedHideLayout: null,
 
   showing: false,
@@ -187,19 +196,56 @@ isc.OBApplicationMenuButton.addProperties({
     this.Super('showMenu', arguments);
   },
 
+  getNodeIcon: function(type) {
+    var iconPath;
+    if (type === 'window') {
+      iconPath = this.nodeIcons.Window;
+    } else if (type === 'process' || type === 'processManual') {
+      iconPath = this.nodeIcons.Process;
+    } else if (type === 'task') {
+      iconPath = this.nodeIcons.Task;
+    } else if (type === 'form') {
+      iconPath = this.nodeIcons.Form;
+    } else if (type === 'external') {
+      iconPath = this.nodeIcons.ExternalLink;
+    } else if (type === 'view') {
+      iconPath = this.nodeIcons.View;
+    } else if (type === 'folder') {
+      iconPath = this.nodeIcons.Folder;
+    }
+    return iconPath;
+  },
+
+  setNodeIcons: function (node) {
+    if (node) {
+      var i;
+      for (i = 0; i < node.length; i++) {
+        if (node[i].type) {
+          node[i].icon = this.getNodeIcon(node[i].type);
+          if (node[i].submenu) {
+            this.setNodeIcons(node[i].submenu);
+          }
+        }
+      }
+    }
+  },
+
   setMenuItems: function () {
     var recent = OB.RecentUtilities.getRecentValue('UINAVBA_MenuRecentList');
     var recentEntries = [];
+    var completeMenuTree;
     if (recent && recent.length > 0) {
       for (var recentIndex = 0; recentIndex < recent.length; recentIndex++) {
         var recentEntry = recent[recentIndex];
         if (recentEntry) {
-            recentEntries[recentIndex] = {title: recentEntry.tabTitle, recentObject: recentEntry/*, _baseStyle: 'OBNavBarComponentMenuItemCell'*/};
+          recentEntries[recentIndex] = {title: recentEntry.tabTitle, recentObject: recentEntry, type: recentEntry.type/*, _baseStyle: 'OBNavBarComponentMenuItemCell'*/};
         }
       }
       recentEntries[recent.length] = {isSeparator: true};
     }
-    this.menu.setData(recentEntries.concat(this.baseData));
+    completeMenuTree = recentEntries.concat(this.baseData);
+    this.setNodeIcons(completeMenuTree);
+    this.menu.setData(completeMenuTree);
   },
 
   // is used by selenium, creates a scLocator on the basis of a path passed in

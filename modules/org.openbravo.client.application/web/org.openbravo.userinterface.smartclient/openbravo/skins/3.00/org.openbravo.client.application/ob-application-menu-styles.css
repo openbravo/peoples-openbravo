@@ -70,18 +70,52 @@
 .OBApplicationMenuTreeItemCellTitleFieldOver,
 .OBApplicationMenuTreeItemCellTitleFieldSelectedOver,
 .OBApplicationMenuTreeItemCellTitleFieldDisabled {
-  padding-left: 10px;
-  padding-right: 20px;
+  padding: 0px 20px 0px 6px;
+}
+
+.OBApplicationMenuTreeItemCellIcon,
+.OBApplicationMenuTreeItemCellIconField,
+.OBApplicationMenuTreeItemCellIconFieldSelected,
+.OBApplicationMenuTreeItemCellIconFieldOver,
+.OBApplicationMenuTreeItemCellIconFieldSelectedOver,
+.OBApplicationMenuTreeItemCellIconFieldDisabled {
+  padding: 0px 4px 0px 5px;
+  border-right: 1px #cfe6b2 solid;
+}
+
+.OBApplicationMenuTreeItemCellIconFieldOver,
+.OBApplicationMenuTreeItemCellIconFieldSelectedOver,
+.OBApplicationMenuTreeItemCellIconFieldSubmenuFieldOver,
+.OBApplicationMenuTreeItemCellIconFieldSubmenuFieldSelectedOver,
+.OBApplicationMenuTreeItemCellIconFieldKeysFieldOver,
+.OBApplicationMenuTreeItemCellIconFieldKeysFieldSelectedOver,
+.OBApplicationMenuTreeItemCellIconFieldTitleFieldOver,
+.OBApplicationMenuTreeItemCellIconFieldTitleFieldSelectedOver {
+  background-color: #f5f7f1;
 }
 
 .OBApplicationMenuTreeItemCellDisabled ,
 .OBApplicationMenuTreeItemCellTitleFieldDisabled,
 .OBApplicationMenuTreeItemCellIconFieldDisabled {
-  color: #AAAAAA;
+  color: #aaaaaa;
 }
 
-.OBApplicationMenuTreeBody .menuTable {
-  background: #fff; border-color: #fff;
+.OBApplicationMenuTreeItemCellIconFieldDisabled {
+  padding: 0px 0px 0px 25px;
+  background-position: left center;
+  background-repeat: repeat-x;
+  background-image: url(./images/application-menu/menuSeparator.gif);
+}
+
+.OBApplicationMenuTreeItemCellIconFieldDisabled nobr hr {
+  color: transparent;
+  border-color: transparent;
+  background-color: transparent;
+}
+
+.OBApplicationMenuTreeTable {
+  background: #fff;
+  border-color: #fff;
 }
 
 .OBApplicationMenuTreeBody .menuTable img,

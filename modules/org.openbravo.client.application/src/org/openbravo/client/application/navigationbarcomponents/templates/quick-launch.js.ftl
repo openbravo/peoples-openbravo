@@ -59,13 +59,13 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
             getValueIcon: function(value) {            
                 if (this.recentObject.icon) {
                     if (this.recentObject.icon === 'Process') {
-                        return '[SKINIMG]../../org.openbravo.client.application/images/icons/iconProcess.png';
+                        return '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconProcess.png';
                     } else if (this.recentObject.icon === 'Report') {
-                        return '[SKINIMG]../../org.openbravo.client.application/images/icons/iconReport.png';
+                        return '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png';
                     } else if (this.recentObject.icon === 'Form') {
-                        return '[SKINIMG]../../org.openbravo.client.application/images/icons/iconForm.png';
+                        return '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconForm.png';
                     } else {
-                        return '[SKINIMG]../../org.openbravo.client.application/images/icons/iconWindow.png';
+                        return '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png';
                     }
                 }
                 return null;
@@ -145,10 +145,10 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
          {
            showValueIconOnly: true,
            name: 'icon',
-           valueIcons: {Process: '[SKINIMG]../../org.openbravo.client.application/images/icons/iconProcess.png',
-              Report: '[SKINIMG]../../org.openbravo.client.application/images/icons/iconReport.png',
-              Form: '[SKINIMG]../../org.openbravo.client.application/images/icons/iconForm.png',
-              Window: '[SKINIMG]../../org.openbravo.client.application/images/icons/iconWindow.png'}
+           valueIcons: {Process: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconProcess.png',
+              Report: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png',
+              Form: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconForm.png',
+              Window: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png'}
          },
          { name: OB.Constants.IDENTIFIER,
            displayField : OB.Constants.IDENTIFIER,

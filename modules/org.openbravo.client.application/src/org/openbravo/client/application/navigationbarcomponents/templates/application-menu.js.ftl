@@ -33,20 +33,30 @@ isc.OBApplicationMenuButton.create({
 <#macro createMenuItem menuOption>
     {title: '${menuOption.label?js_string}'
     <#if menuOption.window>
+        , type: 'window'
         , tabId: '${menuOption.id?js_string}'
         , windowId: '${menuOption.menu.window.id?js_string}'
     <#elseif menuOption.process>
-        , manualUrl: '${menuOption.id?js_string}', processId: '${menuOption.menu.process.id}', modal: ${menuOption.modal?string}
+        , type: 'process'
+        , manualUrl: '${menuOption.id?js_string}'
+        , processId: '${menuOption.menu.process.id}'
+        , modal: ${menuOption.modal?string}
     <#elseif menuOption.processManual>
-        , manualUrl: '${menuOption.id?js_string}', manualProcessId: '${menuOption.menu.process.id}'
+        , type: 'processManual'
+        , manualUrl: '${menuOption.id?js_string}'
+        , manualProcessId: '${menuOption.menu.process.id}'
     <#elseif menuOption.task>
+        , type: 'task'
         , manualUrl: '${menuOption.id?js_string}'
     <#elseif menuOption.form>
+        , type: 'form'
         , manualUrl: '${menuOption.id?js_string}'
         , formId: '${menuOption.formId?js_string}'
     <#elseif menuOption.external>
+        , type: 'external'
         , externalUrl: '${menuOption.id?js_string}'
     <#elseif menuOption.view>
+        , type: 'view'
         , viewId: '${menuOption.id?js_string}'
         , tabTitle: '${menuOption.label?js_string}'
     </#if>
@@ -58,6 +68,7 @@ isc.OBApplicationMenuButton.create({
     </#list>
     , '_baseStyle': 'OBNavBarComponentMenuItemCell'
     <#if menuOption.children?size &gt; 0>
+    , type: 'folder'
     , submenu: [
     <#list menuOption.children as childMenuOption>
         <@createMenuItem menuOption=childMenuOption /><#if childMenuOption_has_next>,</#if>        
