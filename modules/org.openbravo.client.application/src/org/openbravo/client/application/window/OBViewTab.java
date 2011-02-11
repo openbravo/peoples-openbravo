@@ -27,6 +27,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.window.OBViewFormComponent.FormFieldComparator;
@@ -186,7 +188,13 @@ public class OBViewTab extends BaseTemplateComponent {
     if (parentProperty != null) {
       return parentProperty;
     }
-    return ApplicationUtils.getParentProperty(tab, parentTabComponent.getTab());
+    if (tab.getTable().getId().equals(parentTabComponent.getTab().getTable().getId())) {
+      final Entity entity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
+      parentProperty = entity.getIdProperties().get(0).getName();
+    } else {
+      parentProperty = ApplicationUtils.getParentProperty(tab, parentTabComponent.getTab());
+    }
+    return parentProperty;
   }
 
   public String getViewForm() {
