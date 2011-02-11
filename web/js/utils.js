@@ -2615,6 +2615,8 @@ function getAppUrl() {
   var appUrl = null;
   if (typeof menuFrame.getAppUrlFromMenu === "function" || typeof menuFrame.getAppUrlFromMenu === "object") {  //"object" clause related to issue https://issues.openbravo.com/view.php?id=14756
     appUrl = menuFrame.getAppUrlFromMenu();
+  } else if (top.opener && top.opener.OB && top.opener.OB.Application) {
+    appUrl = top.opener.OB.Application.contextUrl;
   }
   return appUrl;
 }
