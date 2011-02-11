@@ -58,7 +58,7 @@ isc.OBGrid.addProperties({
 
 isc.OBGrid.addClassProperties({
   
-  defaultColumnWidths: [50, 50, 100],
+  defaultColumnWidths: [50, 50, 200],
 
   getDefaultColumnWidth: function(length) {
     if (length <= 1) {
