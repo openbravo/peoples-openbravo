@@ -145,17 +145,15 @@ public class DalTest extends BaseTest {
   // test querying for a specific currency and then updating it
   // should fail for a user
   public void testUpdateCurrencyByUser() {
-    setUserContext(getRandomUser().getId());
+    setUserContext("30BB6B32AE984CF08705C57A6C7FAFB9");
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
     obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
     final List<Currency> cs = obc.list();
     assertEquals(1, cs.size());
     final Currency c = cs.get(0);
-    // Call getValue and setValue directly to work around security checks on     the description
+    // Call getValue and setValue directly to work around security checks on the description
     // that are not the objective of this test.
-    c
-        .setValue(Currency.PROPERTY_DESCRIPTION, c.getValue(Currency.PROPERTY_DESCRIPTION)
-            + " a test");
+    c.setValue(Currency.PROPERTY_DESCRIPTION, c.getValue(Currency.PROPERTY_DESCRIPTION) + " a test");
     try {
       OBDal.getInstance().save(c);
       fail("No security check");
