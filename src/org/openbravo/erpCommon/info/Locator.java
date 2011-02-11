@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -283,14 +283,14 @@ public class Locator extends HttpSecureAppServlet {
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
           String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          data = LocatorData.select(this, "ROWNUM", vars.getLanguage(), Utility.getContext(this,
-              vars, "#User_Client", "Locator"), Utility.getSelectorOrgs(this, vars, strOrg),
-              strName, strWarehousename, strAisle, strBin, strLevel, strOrderBy, oraLimit, "");
+          data = LocatorData.select(this, "ROWNUM", Utility.getContext(this, vars, "#User_Client",
+              "Locator"), Utility.getSelectorOrgs(this, vars, strOrg), strName, strWarehousename,
+              strAisle, strBin, strLevel, strOrderBy, oraLimit, "");
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
-          data = LocatorData.select(this, "1", vars.getLanguage(), Utility.getContext(this, vars,
-              "#User_Client", "Locator"), Utility.getSelectorOrgs(this, vars, strOrg), strName,
-              strWarehousename, strAisle, strBin, strLevel, strOrderBy, "", pgLimit);
+          data = LocatorData.select(this, "1", Utility.getContext(this, vars, "#User_Client",
+              "Locator"), Utility.getSelectorOrgs(this, vars, strOrg), strName, strWarehousename,
+              strAisle, strBin, strLevel, strOrderBy, "", pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
