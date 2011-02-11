@@ -41,6 +41,9 @@ OB.Utilities.addRequiredSuffixToBaseStyle = function(item){
     // if we already did append it
     if (item.textFieldProperties && item.textFieldProperties.textBoxStyle) {
       if (!item.textFieldProperties.textBoxStyle.endsWith('Required')) {
+        // make a copy as the textFieldProperties object is shared by many instances
+        // so you can't change it directly
+        item.textFieldProperties = isc.addProperties({}, item.textFieldProperties);
         item.textFieldProperties.textBoxStyle = item.textFieldProperties.textBoxStyle + 'Required';
       }
     } else if (item.textBoxStyle && !item.textBoxStyle.endsWith('Required')) {
