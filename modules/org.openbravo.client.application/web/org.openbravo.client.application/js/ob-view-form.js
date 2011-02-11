@@ -753,6 +753,12 @@ OB.ViewFormProperties = {
       
       var imgHTML = isc.Canvas.imgHTML(searchIconObj);
       
+      // handle a small issue in chrome/firefox that the user agents stylesheet
+      // sets a default cursor on labels
+      if (titleHTML.contains('LABEL')) {
+        titleHTML = titleHTML.replace('<LABEL', '<LABEL style="cursor: pointer"');
+      }
+      
       return '<span class="OBFormFieldLinkButton" onclick="window[\'' + item.ID + '\'].linkButtonClick();">' + titleHTML + '</span>&nbsp;' + imgHTML;
     }
     

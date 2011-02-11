@@ -666,12 +666,10 @@
 /*=======================================================================
  * Used in the label of a foreign key field, for link image 
 =======================================================================*/
-.OBFormFieldLinkButton {
-  cursor: pointer;
-}
 
 .OBFormFieldLinkButton:hover {
   color: #58A618;
+  cursor: pointer;
 }
 
 /*=======================================================================
