@@ -172,6 +172,11 @@ isc.OBViewGrid.addProperties({
   },
   
   initWidget: function(){
+    // make a copy of the dataProperties otherwise we get 
+    // change results that values of one grid are copied/coming back
+    // in other grids
+    this.dataProperties = isc.addProperties({}, this.dataProperties);
+    
     var thisGrid = this, localEditLinkField;
     if (this.editGrid) {
       // add the edit pencil in the beginning
