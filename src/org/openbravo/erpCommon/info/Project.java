@@ -260,8 +260,8 @@ public class Project extends HttpSecureAppServlet {
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
         page = TableSQLData.calcAndGetBackendPage(vars, "Project.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
-        // on movePage action force executing countRows again
-        	strNewFilter = "";
+          // on movePage action force executing countRows again
+          strNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
@@ -271,18 +271,18 @@ public class Project extends HttpSecureAppServlet {
           // or
           // first
           // load
-        String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-	        oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-	        oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-	        rownum = "ROWNUM";
-        } else {
-        	pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-        }
-        strNumRows = ProjectData.countRows(this, rownum, vars.getLanguage(), Utility.getContext(this, vars,
-              "#User_Client", "Project"), Utility.getSelectorOrgs(this, vars, strOrg), strKey,
-              strName, strBpartners, pgLimit, oraLimit1, oraLimit2); 
-          //strNumRows = String.valueOf(data.length);
+          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+            rownum = "ROWNUM";
+          } else {
+            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          }
+          strNumRows = ProjectData.countRows(this, rownum, vars.getLanguage(), Utility.getContext(
+              this, vars, "#User_Client", "Project"), Utility.getSelectorOrgs(this, vars, strOrg),
+              strKey, strName, strBpartners, pgLimit, oraLimit1, oraLimit2);
+          // strNumRows = String.valueOf(data.length);
           vars.setSessionValue("ProjectData.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("ProjectData.numrows");
@@ -341,7 +341,8 @@ public class Project extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
+        "\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
