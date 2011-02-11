@@ -32,17 +32,18 @@ $LAB.setGlobalDefaults({AppendTo: 'body'});
 var isomorphicDir='../../org.openbravo.userinterface.smartclient/isomorphic/';
 
 function OBStartApplication() {
+  var s = document.getElementById('summary');
+
+  if(OB.User.roleName.indexOf('System Administrator') == -1) {
+    s.innerHTML = 'Test must be executed with System Administrator role';
+    return;
+  }
+
   $LAB.script('../../../org.openbravo.client.kernel/OBUIAPP_MainLayout/View?viewId=_D586192D06C14EC182B44CAD34CA4295')
       .wait(function() {
 
         var viewName = OB.Layout.ViewManager.loadedWindowClassName,
-            suite = new Benchmark.Suite, summary = '', a = [],
-            s = document.getElementById('summary'), i = 0;
-
-        if(OB.User.roleName.indexOf('System Administrator') == -1) {
-          s.innerHTML = 'Test must be executed with System Administrator role';
-          return;
-        }
+            suite = new Benchmark.Suite, summary = '', a = [], i = 0;
 
         s.innerHTML = 'Executing...';
 
