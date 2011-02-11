@@ -340,6 +340,12 @@ public class QueryBuilder {
       typedParameters.add(cal.getTime());
     }
 
+    if (whereClause.contains(JsonConstants.QUERY_PARAM_CLIENT)) {
+      final String alias = getTypedParameterAlias();
+      String clientId = (String) DalUtil.getId(OBContext.getOBContext().getCurrentClient());
+      whereClause = whereClause.replace(JsonConstants.QUERY_PARAM_CLIENT, alias);
+      typedParameters.add(clientId);
+    }
     whereClause = setRequestParameters(whereClause);
     whereClause = substituteContextParameters(whereClause);
 

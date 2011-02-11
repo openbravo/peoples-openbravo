@@ -883,6 +883,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--145-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--145-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--145-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
+<!--145-->  <HQLWHERECLAUSE><![CDATA[e.id=@client@ or e.id='0']]></HQLWHERECLAUSE>
 <!--145--></AD_TAB>
 
 <!--146--><AD_TAB>
