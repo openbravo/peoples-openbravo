@@ -39,8 +39,16 @@ public class StringUIDefinition extends UIDefinition {
 
   @Override
   public String getGridFieldProperties(Field field) {
-    return getShowHoverGridFieldSettings(field) + ", width: 200 "
-        + super.getGridFieldProperties(field);
+    Long length = field.getDisplayedLength();
+    if (length == null || length == 0) {
+      length = field.getColumn().getLength();
+    }
+    // custom override
+    if (field.getColumn().getDBColumnName().compareToIgnoreCase("documentno") == 0) {
+      length = new Long(20);
+    }
+    return getShowHoverGridFieldSettings(field) + ", width: isc.OBGrid.getDefaultColumnWidth("
+        + length + ")" + super.getGridFieldProperties(field);
   }
 
   @Override

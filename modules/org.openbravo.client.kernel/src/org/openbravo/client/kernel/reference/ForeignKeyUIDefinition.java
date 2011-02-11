@@ -52,10 +52,15 @@ public class ForeignKeyUIDefinition extends UIDefinition {
 
   @Override
   public String getGridFieldProperties(Field field) {
+    Long length = field.getDisplayedLength();
+    if (length == null || length == 0) {
+      length = field.getColumn().getLength();
+    }
     final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
-    return ", width: 200, displayField: '" + prop.getName() + "." + JsonConstants.IDENTIFIER + "',"
-        + "valueField: '" + prop.getName() + "'" + ", foreignKeyField: true"
-        + super.getGridFieldProperties(field) + getShowHoverGridFieldSettings(field);
+    return ", width: isc.OBGrid.getDefaultColumnWidth(" + length + "), displayField: '"
+        + prop.getName() + "." + JsonConstants.IDENTIFIER + "'," + "valueField: '" + prop.getName()
+        + "'" + ", foreignKeyField: true" + super.getGridFieldProperties(field)
+        + getShowHoverGridFieldSettings(field);
   }
 
   protected String getSuperGridFieldProperties(Field field) {

@@ -56,6 +56,22 @@ isc.OBGrid.addProperties({
   }
 });
 
+isc.OBGrid.addClassProperties({
+  
+  defaultColumnWidths: [50, 50, 100],
+
+  getDefaultColumnWidth: function(length) {
+    if (length <= 1) {
+      return isc.OBViewGrid.defaultColumnWidths[0];
+    } else if (length <= 30) {
+      return isc.OBViewGrid.defaultColumnWidths[1];
+    } else if (length <= 60) {
+      return isc.OBViewGrid.defaultColumnWidths[2];
+    }
+    return 200;
+  }
+});
+
 isc.OBGrid.changeDefaults('filterEditorDefaults', {
   height: 22,
   styleName: 'OBGridFilterBase',
