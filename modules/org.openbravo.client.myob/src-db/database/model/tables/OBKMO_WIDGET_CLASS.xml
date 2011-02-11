@@ -73,6 +73,14 @@
         <default><![CDATA[3]]></default>
         <onCreateDefault><![CDATA['3']]></onCreateDefault>
       </column>
+      <column name="AUTHOR_MSG" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AUTHOR_URL" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBKMO_WIDGET_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

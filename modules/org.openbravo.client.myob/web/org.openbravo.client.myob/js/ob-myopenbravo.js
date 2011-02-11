@@ -447,6 +447,7 @@ isc.OBMyOpenbravo.addProperties({
           localWidgetProperties.showMaximizeButton = this.availableWidgetClasses[i].showMaximizeButton;
           localWidgetProperties.menuItems = this.availableWidgetClasses[i].menuItems;
           localWidgetProperties.fieldDefinitions = this.availableWidgetClasses[i].fieldDefinitions;
+          localWidgetProperties.aboutFieldDefinitions = this.availableWidgetClasses[i].aboutFieldDefinitions;
           localWidgetProperties.parameters = isc.addProperties({}, widgetProperties.parameters);
           break;
         }

@@ -53,6 +53,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
+import org.openbravo.model.ad.module.ModuleDBPrefix;
 import org.openbravo.service.json.JsonConstants;
 
 /**
@@ -70,6 +71,23 @@ public abstract class WidgetProvider {
   private static final String ROWNUM = "rowNum";
   private static final String HEIGHT = "height";
   private static final String PRIORITY = "priority";
+  private static final String DESCRIPTION = "description";
+  private static final String SUPERCLASSTITLE = "superclassTitle";
+  private static final String DATAACCESSLEVEL = "dataAccessLevel";
+  private static final String ENABLEDALLUSERS = "enabledAllUsers";
+  private static final String AUTHORMSG = "authorMsg";
+  private static final String AUTHORURL = "authorUrl";
+  private static final String MODULENAME = "moduleName";
+  private static final String MODULEVERSION = "moduleVersion";
+  private static final String MODULESTATUS = "moduleStatus";
+  private static final String MODULEJPACKAGE = "moduleJavaPackage";
+  private static final String MODULETYPE = "moduleType";
+  private static final String MODULEDBPREFIX = "moduleDBPrefix";
+  private static final String MODULELICENSETYPE = "moduleLicenseType";
+  private static final String MODULEUPDATEINFO = "moduleUpdateInfo";
+  private static final String MODULELICENSETEXT = "moduleLicenseText";
+  private static final String MODULEAUTHOR = "moduleAuthor";
+  private static final String ABOUTFIELDDEFINITIONS = "aboutFieldDefinitions";
   protected static final String PARAMETERS = "parameters";
   protected static final String FIELDDEFINITIONS = "fieldDefinitions";
   private static final String ITEMDATA = "itemData";
@@ -112,6 +130,40 @@ public abstract class WidgetProvider {
       } else {
         jsonObject.put(CAN_MAXIMIZE, widgetClass.isCanMaximize());
       }
+
+      final JSONObject aboutFieldDefinitions = new JSONObject();
+      aboutFieldDefinitions.put(MODULENAME, widgetClass.getModule().getName());
+      aboutFieldDefinitions.put(MODULEVERSION, widgetClass.getModule().getVersion());
+      aboutFieldDefinitions.put(MODULESTATUS, widgetClass.getModule().getStatus());
+      aboutFieldDefinitions.put(MODULEJPACKAGE, widgetClass.getModule().getJavaPackage());
+      aboutFieldDefinitions.put(MODULETYPE, widgetClass.getModule().getType());
+
+      String moduleDBPrefixList = "";
+      for (ModuleDBPrefix moduleDBPrefix : widgetClass.getModule().getModuleDBPrefixList()) {
+        moduleDBPrefixList += moduleDBPrefix.getName() + " ";
+      }
+      aboutFieldDefinitions.put(MODULEDBPREFIX, moduleDBPrefixList);
+      aboutFieldDefinitions.put(MODULELICENSETYPE, widgetClass.getModule().getLicenseType());
+      aboutFieldDefinitions.put(MODULEUPDATEINFO,
+          widgetClass.getModule().getUpdateInformation() == null ? "" : widgetClass.getModule()
+              .getUpdateInformation());
+      aboutFieldDefinitions.put(MODULELICENSETEXT,
+          widgetClass.getModule().getLicenseText() == null ? "" : widgetClass.getModule()
+              .getLicenseText());
+      aboutFieldDefinitions.put(MODULEAUTHOR, widgetClass.getModule().getAuthor() == null ? ""
+          : widgetClass.getModule().getAuthor());
+      aboutFieldDefinitions.put(TITLE, MyOBUtils.getWidgetTitle(widgetClass));
+      aboutFieldDefinitions.put(DESCRIPTION, widgetClass.getDescription() == null ? ""
+          : widgetClass.getDescription());
+      aboutFieldDefinitions.put(SUPERCLASSTITLE, widgetClass.getWidgetSuperclass() == null ? ""
+          : MyOBUtils.getWidgetTitle(widgetClass.getWidgetSuperclass()));
+      aboutFieldDefinitions.put(DATAACCESSLEVEL, widgetClass.getDataAccessLevel());
+      aboutFieldDefinitions.put(ENABLEDALLUSERS, widgetClass.isAllowAnonymousAccess());
+      aboutFieldDefinitions.put(AUTHORMSG, widgetClass.getAuthorMsg() == null ? "" : widgetClass
+          .getAuthorMsg());
+      aboutFieldDefinitions.put(AUTHORURL, widgetClass.getAuthorUrl() == null ? "" : widgetClass
+          .getAuthorUrl());
+
       final JSONObject defaultParameters = new JSONObject();
       final List<JSONObject> fieldDefinitions = new ArrayList<JSONObject>();
       for (Parameter parameter : widgetClass.getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
@@ -167,6 +219,7 @@ public abstract class WidgetProvider {
       }
       jsonObject.put(PARAMETERS, defaultParameters);
       jsonObject.put(FIELDDEFINITIONS, fieldDefinitions);
+      jsonObject.put(ABOUTFIELDDEFINITIONS, aboutFieldDefinitions);
       return jsonObject;
     } catch (Exception e) {
       throw new OBException(e);

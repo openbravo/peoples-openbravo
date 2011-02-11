@@ -151,9 +151,24 @@ isc.defineClass('OBWidgetMenuItem', IMenuButton).addProperties({
                            }));
           }
         }
+        menuItems.push({
+          isSeparator: true
+        });
+        menuItems.push({
+          title: OB.I18N.getLabel('OBKMO_WMO_About'),
+          iconHeight: 0,
+          iconWidth: 0,
+          widget: this.widget,
+          click: function (target, item, menu){
+            this.widget.showAbout();
+          }     
+        });
+
         this.menu.setData(menuItems);
         return this.Super('showMenu', arguments);
       }
+  
+  
 });
 
 //
@@ -182,6 +197,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   
   fieldDefinitions: [],
   parameters: {},
+  
   
   headerProperties: {
     defaultLayoutAlign: 'center'
@@ -405,6 +421,18 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   //
   refresh: function(){
     isc.Log.logInfo('The subclass needs to implement this method');
+  },
+  
+  //
+  // ** {{{ OBWidget.showAbout }}} **
+  //
+  // The showAbout is called from the widget menu. 
+  //
+  showAbout: function(){
+     isc.OBAboutPopupWindow.create({
+    	 title: OB.I18N.getLabel('OBKMO_WMO_About') + ' ' + this.title, 
+    	 aboutFieldDefinitions: this.aboutFieldDefinitions
+     }).show();
   },
   
   //
