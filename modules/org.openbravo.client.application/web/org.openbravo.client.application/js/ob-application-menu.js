@@ -200,8 +200,12 @@ isc.OBApplicationMenuButton.addProperties({
     var iconPath;
     if (type === 'window') {
       iconPath = this.nodeIcons.Window;
-    } else if (type === 'process' || type === 'processManual') {
+    } else if (type === 'process') {
       iconPath = this.nodeIcons.Process;
+    } else if (type === 'processManual') {
+      iconPath = this.nodeIcons.ProcessManual;
+    } else if (type === 'report') {
+      iconPath = this.nodeIcons.Report;
     } else if (type === 'task') {
       iconPath = this.nodeIcons.Task;
     } else if (type === 'form') {
