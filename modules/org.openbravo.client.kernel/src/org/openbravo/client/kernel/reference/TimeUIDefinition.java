@@ -18,12 +18,20 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import java.text.SimpleDateFormat;
+
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.service.json.JsonUtils;
+
 /**
  * Implementation of the date ui definition.
  * 
  * @author mtaal
  */
 public class TimeUIDefinition extends UIDefinition {
+  private SimpleDateFormat classicFormat = null;
+  private SimpleDateFormat xmlTimeFormat = JsonUtils.createTimeFormat();
 
   @Override
   public String getParentType() {
@@ -32,6 +40,50 @@ public class TimeUIDefinition extends UIDefinition {
 
   @Override
   public String getFormEditorType() {
-    return "TimeItem";
+    return "OBTimeItem";
+  }
+
+  @Override
+  public synchronized String convertToClassicString(Object value) {
+    if (value == null) {
+      return "";
+    }
+    return value.toString();
+  }
+
+  private SimpleDateFormat getClassicFormat() {
+    if (classicFormat == null) {
+      classicFormat = new SimpleDateFormat((String) OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties().get("dateTimeFormat.java"));
+      classicFormat.setLenient(true);
+    }
+    return classicFormat;
+  }
+
+  @Override
+  protected synchronized Object createFromClassicString(String value) {
+    try {
+      if (value == null || value.length() == 0 || value.equals("null")) {
+        return null;
+      }
+      if (value.contains("T")) {
+        return value;
+      }
+      // sometimes the default value gets passed which is already in the correct
+      // format, in that case just use that.
+      if (value.indexOf(":") == 2 && value.indexOf(":", 3) == 5) {
+        if (!value.contains("+") && !value.contains("-")) {
+          return value + "+00:00";
+        } else {
+          return value;
+        }
+
+      }
+      final java.util.Date date = getClassicFormat().parse(value);
+      final String timeStr = xmlTimeFormat.format(date);
+      return JsonUtils.convertToCorrectXSDFormat(timeStr);
+    } catch (Exception e) {
+      throw new OBException("Exception when handling value " + value, e);
+    }
   }
 }

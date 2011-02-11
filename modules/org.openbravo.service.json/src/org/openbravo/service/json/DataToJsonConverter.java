@@ -32,6 +32,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
 import org.openbravo.base.model.domaintype.HashedStringDomainType;
+import org.openbravo.base.model.domaintype.TimestampDomainType;
 import org.openbravo.base.structure.ActiveEnabled;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
@@ -58,6 +59,7 @@ public class DataToJsonConverter {
   // TODO: need to be revisited when client side data formatting is solved
   private final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
   private final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
+  private final static SimpleDateFormat xmlTimeFormat = JsonUtils.createTimeFormat();
 
   // additional properties to return as a flat list
   private List<String> additionalProperties = new ArrayList<String>();
@@ -220,7 +222,11 @@ public class DataToJsonConverter {
   protected Object convertPrimitiveValue(Property property, Object value) {
     final Class<?> clz = property.getPrimitiveObjectType();
     if (Date.class.isAssignableFrom(clz)) {
-      if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
+      if (property.getDomainType() instanceof TimestampDomainType) {
+        final String strValue = xmlTimeFormat.format(value);
+        final String repairedValue = JsonUtils.convertToCorrectXSDFormat(strValue);
+        return repairedValue;
+      } else if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
         final String strValue = xmlDateTimeFormat.format(value);
         final String repairedValue = JsonUtils.convertToCorrectXSDFormat(strValue);
         return repairedValue;

@@ -357,10 +357,7 @@ public class DefaultJsonDataService implements JsonDataService {
             JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR);
         final JSONObject errorsObject = new JSONObject();
         for (JsonConversionError error : fromJsonConverter.getErrors()) {
-          final JSONObject errorMessageObject = new JSONObject();
-          errorMessageObject.put(JsonConstants.RESPONSE_ERRORMESSAGE, error.getThrowable()
-              .getMessage());
-          errorsObject.put(error.getProperty().getName(), errorMessageObject);
+          errorsObject.put(error.getProperty().getName(), error.getThrowable().getMessage());
         }
         jsonResponse.put(JsonConstants.RESPONSE_ERRORS, errorsObject);
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);

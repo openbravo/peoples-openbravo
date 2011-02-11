@@ -451,6 +451,8 @@ isc.OBListItem.addProperties({
 // Extends OBListItem
 isc.ClassFactory.defineClass('OBFKItem', isc.OBListItem);
 
+isc.ClassFactory.mixInInterface('OBFKItem', 'OBLinkTitleItem');
+
 isc.OBFKItem.addProperties({
   textMatchStyle: 'substring',
     
@@ -493,6 +495,21 @@ if (isc.OBDateChooser) {  // To force SC to load OBDateChooser instead of DateCh
     return isc.OBDateChooser.create(properties);
   };
 }
+
+
+//== OBTimeItem ==
+//OBTimeItem handles time values.
+isc.ClassFactory.defineClass('OBTimeItem', TimeItem);
+
+isc.OBTimeItem.addProperties({
+  validateOnExit: true,
+  showHint: false,
+  displayFormat: 'to24HourTime',
+  short24TimeFormat: 'HH:MM:SS',
+  shortTimeFormat: 'HH:MM:SS',
+  long24TimeFormat: 'HH:MM:SS',
+  longTimeFormat: 'HH:MM:SS'
+});
 
 // == OBDateItem ==
 // OBDateItem inherits from SmartClient DateItem

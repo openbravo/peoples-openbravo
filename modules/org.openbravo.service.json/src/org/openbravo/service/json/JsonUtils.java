@@ -57,6 +57,16 @@ public class JsonUtils {
   }
 
   /**
+   * @return a new instance of the {@link SimpleDateFormat} using a format of HH:MM:SS+0000. The
+   *         date format has lenient set to true.
+   */
+  public static SimpleDateFormat createTimeFormat() {
+    final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ssZ");
+    dateFormat.setLenient(true);
+    return dateFormat;
+  }
+
+  /**
    * Note the formatted date string must be repaired in the timezone to follow the XSD format, see:
    * {@link #convertToCorrectXSDFormat(String)}.
    * 
@@ -97,7 +107,7 @@ public class JsonUtils {
     final int length = dateValue.length();
     // must end with +??:?? or -??:??
     if (dateValue.charAt(length - 3) == ':'
-        && (dateValue.charAt(length - 5) == '-' || dateValue.charAt(length - 5) == '+')) {
+        && (dateValue.charAt(length - 6) == '-' || dateValue.charAt(length - 6) == '+')) {
       final String result = dateValue.substring(0, length - 3) + dateValue.substring(length - 2);
       return result;
     }

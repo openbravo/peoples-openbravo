@@ -139,6 +139,8 @@ isc.OBViewGrid.addProperties({
   // undo, which means clicks outside of the current form.
   modalEditing: false,
   
+  timeFormatter: 'to24HourTime',
+  
   dataProperties: {
     useClientFiltering: false,
     useClientSorting: false,

@@ -42,6 +42,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
 import org.openbravo.base.model.domaintype.HashedStringDomainType;
+import org.openbravo.base.model.domaintype.TimestampDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.Traceable;
@@ -121,6 +122,7 @@ public class JsonToDataConverter {
 
   private final static SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
   private final static SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
+  private final static SimpleDateFormat xmlTimeFormat = JsonUtils.createTimeFormat();
 
   private final List<JsonConversionError> errors = new ArrayList<JsonConversionError>();
 
@@ -129,7 +131,7 @@ public class JsonToDataConverter {
    */
   public static synchronized Object convertJsonToPropertyValue(Property property, Object value) {
     try {
-      if (JSONObject.NULL.equals(value)) { // note JSONObject.NULL.equals(null) == true
+      if (isEmptyOrNull(value)) {
         return null;
       }
       if (!property.isPrimitive()) {
@@ -139,7 +141,22 @@ public class JsonToDataConverter {
       final Class<?> clz = property.getPrimitiveObjectType();
       if (clz != null && Date.class.isAssignableFrom(clz)) {
         try {
-          if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
+          if (property.getDomainType() instanceof TimestampDomainType) {
+            String strValue = (String) value;
+            // there are cases that also the date part is sent in, get rid of it
+            if (strValue.indexOf("T") != -1) {
+              final int index = strValue.indexOf("T");
+              strValue = strValue.substring(index + 1);
+            }
+
+            if (strValue.indexOf("+") == -1 && strValue.indexOf("-") == -1) {
+              strValue = strValue + "+0000";
+            } else {
+              strValue = JsonUtils.convertFromXSDToJavaFormat(strValue);
+            }
+
+            return new Timestamp(xmlTimeFormat.parse(strValue).getTime());
+          } else if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
             final String repairedString = JsonUtils.convertFromXSDToJavaFormat((String) value);
             return new Timestamp(xmlDateTimeFormat.parse(repairedString).getTime());
           } else {
@@ -163,8 +180,6 @@ public class JsonToDataConverter {
         return value;
       } else if (value instanceof Number && property.getPrimitiveObjectType() == BigDecimal.class) {
         return new BigDecimal(((Number) value).doubleValue());
-      } else if (value instanceof String && ((String) value).trim().length() == 0) {
-        return null;
       } else if (value instanceof String
           && property.getDomainType() instanceof HashedStringDomainType) {
         String str = (String) value;
@@ -190,6 +205,19 @@ public class JsonToDataConverter {
     } catch (Exception e) {
       throw new OBException("Error when converting value " + value + " for prop " + property, e);
     }
+  }
+
+  private static boolean isEmptyOrNull(Object value) {
+    if (JSONObject.NULL.equals(value)) { // note JSONObject.NULL.equals(null) == true
+      return true;
+    }
+    if (value == null) {
+      return true;
+    }
+    if (value instanceof String && ((String) value).trim().length() == 0) {
+      return true;
+    }
+    return false;
   }
 
   public void clearState() {
@@ -324,7 +352,7 @@ public class JsonToDataConverter {
           final String repairedString = JsonUtils.convertFromXSDToJavaFormat(jsonDateStr);
           final Date jsonDate = new Timestamp(xmlDateTimeFormat.parse(repairedString).getTime());
           final Date objectDate = ((Traceable) obObject).getUpdated();
-          if (!areDatesEqual(jsonDate, objectDate, true)) {
+          if (!areDatesEqual(jsonDate, objectDate, true, false)) {
             // return this message code to let the client show a translated label
             throw new OBStaleObjectException("@OBJSON_StaleDate@");
           }
@@ -566,8 +594,7 @@ public class JsonToDataConverter {
     try {
       // convert/read the value
       final Object value;
-      if (JSONObject.NULL.equals(jsonValue)) {
-        // note: JSONObject.NULL.equals(null) is true
+      if (isEmptyOrNull(jsonValue)) {
         value = null;
       } else if (property.isPrimitive()) {
         // convert the value
@@ -605,7 +632,8 @@ public class JsonToDataConverter {
           // there are mismatches between json and the database in
           // precision of times/dates, these are repaired here by
           // not updating if the relevant part is the same
-          if (areDatesEqual((Date) value, (Date) currentValue, property.isDatetime())) {
+          if (areDatesEqual((Date) value, (Date) currentValue, property.isDatetime(), property
+              .getDomainType() instanceof TimestampDomainType)) {
             return;
           }
         }
@@ -637,12 +665,15 @@ public class JsonToDataConverter {
    * @return true if d1 and d2 have equal values for year, month and day and for date time also same
    *         values for hour, minutes and seconds.
    */
-  protected boolean areDatesEqual(Date d1, Date d2, boolean isDatetime) {
+  protected boolean areDatesEqual(Date d1, Date d2, boolean isDatetime, boolean isTime) {
     final Calendar c1 = Calendar.getInstance();
     c1.setTime(d1);
     final Calendar c2 = Calendar.getInstance();
     c2.setTime(d2);
-    if (isDatetime) {
+    if (isTime) {
+      c2.set(Calendar.MILLISECOND, 0);
+      c1.set(Calendar.MILLISECOND, 0);
+    } else if (isDatetime) {
       c2.set(Calendar.MILLISECOND, 0);
       c1.set(Calendar.MILLISECOND, 0);
     } else {
