@@ -38,4 +38,5 @@ public class CommunityBrandingWidgetProvider extends WidgetProvider {
   public String getClientSideWidgetClassName() {
     return WIDGETCLIENTCLASS;
   }
+
 }

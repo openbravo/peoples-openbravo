@@ -11,35 +11,37 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
+package org.openbravo.client.myob;
 
-// = OBUrlWidget =
-//
-// A widget which gets its contents directly from an url.
-//
-isc.defineClass('OBUrlWidget', isc.OBWidget).addProperties({
-  contentSource: null,
-  createWindowContents: function() {
-    if (!this.contentSource) {
-      this.contentSource = this.evaluateContents(this.parameters.src);
-    }
+import java.util.Collections;
+import java.util.Map;
 
-    if(this.contentSource.indexOf('butler.openbravo.com') != -1) {
-      this.contentSource = document.location.protocol + this.contentSource.substring(this.contentSource.indexOf('//'));
-    }
+/**
+ * Provides the Getting Started widget
+ * 
+ * @author iperdomo
+ */
+public class GettingStartedWidgetProvider extends WidgetProvider {
+  private static final String WIDGETCLIENTCLASS = "OBGettingStartedWidget";
 
-    return isc.HTMLFlow.create({
-      contentsType: 'page',
-      contentsURL: this.contentSource,
-      height: '100%',
-      width: '100%'
-    });
-  },
-  refresh: function(){
-    this.windowContents.setContentsURL(this.contentSource);
+  @Override
+  public String generate() {
+    throw new UnsupportedOperationException(WIDGETCLIENTCLASS
+        + " definition should be pre-loaded on the client");
   }
-});
+
+  @Override
+  public String getClientSideWidgetClassName() {
+    return WIDGETCLIENTCLASS;
+  }
+
+  @Override
+  public Map<String, Object> getParameters() {
+    return Collections.emptyMap();
+  }
+}

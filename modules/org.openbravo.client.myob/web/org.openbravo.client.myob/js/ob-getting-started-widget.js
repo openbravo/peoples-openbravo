@@ -11,26 +11,26 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
-// = OBUrlWidget =
+// = OBGettingStartedWidget =
 //
-// A widget which gets its contents directly from an url.
+// Getting Started widget
 //
-isc.defineClass('OBUrlWidget', isc.OBWidget).addProperties({
+isc.defineClass('OBGettingStartedWidget', isc.OBWidget).addProperties({
   contentSource: null,
+  widgetContentUrl: document.location.protocol + '//butler.openbravo.com/web/static-content/en_US/gettingstarted/widget.html',
   createWindowContents: function() {
-    if (!this.contentSource) {
-      this.contentSource = this.evaluateContents(this.parameters.src);
-    }
+    var loc = document.location;
 
-    if(this.contentSource.indexOf('butler.openbravo.com') != -1) {
-      this.contentSource = document.location.protocol + this.contentSource.substring(this.contentSource.indexOf('//'));
-    }
+    this.contentSource = this.widgetContentUrl + '?appurl=' +
+                          encodeURIComponent(loc.protocol + '//' + loc.hostname +
+                                            (loc.port ? ':' + loc.port : '') +
+                                            OB.Application.contextUrl);
 
     return isc.HTMLFlow.create({
       contentsType: 'page',

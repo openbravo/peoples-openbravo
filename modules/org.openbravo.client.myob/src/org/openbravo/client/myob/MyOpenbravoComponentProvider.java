@@ -58,8 +58,8 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
     globalResources.add(createStaticResource("web/org.openbravo.client.myob/js/ob-myopenbravo.js",
         false));
-    globalResources.add(createStaticResource("web/org.openbravo.client.myob/js/ob-getting-started-view.js",
-        false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.myob/js/ob-getting-started-view.js", false));
     globalResources.add(createStaticResource("org.openbravo.client.kernel/" + COMPONENT_TYPE + "/"
         + MyOpenbravoComponent.COMPONENT_ID, false));
     globalResources
@@ -72,6 +72,8 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.myob/js/ob-community-branding-widget.js", false));
     globalResources.add(createStaticResource("web/org.openbravo.client.myob/js/ob-about-popup.js",
         false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.myob/js/ob-getting-started-widget.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_VERSION_PARAMETER
