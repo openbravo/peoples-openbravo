@@ -89,7 +89,7 @@ isc.OBStandardWindow.addProperties({
     if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       this.viewProperties.allowDefaultEditMode = false;
     }
-    this.viewState=OB.PropertyStore.get("OBUIAPP_GridConfiguration",this.windowId);
+    this.viewState = OB.PropertyStore.get("OBUIAPP_GridConfiguration", this.windowId);
     this.view = isc.OBStandardView.create(this.viewProperties);
     this.addView(this.view);
     this.addMember(this.view);
