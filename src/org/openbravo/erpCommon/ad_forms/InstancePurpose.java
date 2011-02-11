@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,6 +60,15 @@ public class InstancePurpose extends HttpSecureAppServlet {
       printPageDataSheet(response, vars);
     } else if (vars.commandIn("PROCEED")) {
       savePurpose(vars.getRequiredStringParameter("instancePurpose", availablePurposeFilter));
+      if (HeartbeatProcess.isShowHeartbeatRequired(vars, myPool)) {
+        response.sendRedirect("Heartbeat.html");
+        return;
+      }
+      if (HeartbeatProcess.isShowRegistrationRequired(vars, myPool)) {
+        response.sendRedirect("Registration.html");
+        return;
+      }
+      printPageClosePopUp(response, vars);
     } else {
       pageError(response);
     }
@@ -113,14 +122,6 @@ public class InstancePurpose extends HttpSecureAppServlet {
       log4j.error(ex.getMessage(), ex);
       throw new ServletException(ex);
     }
-
-    String strNextPopup = "var nextPopup='";
-    if (HeartbeatProcess.isShowHeartbeatRequired(vars, myPool))
-      strNextPopup += "HB";
-    else if (HeartbeatProcess.isShowRegistrationRequired(vars, myPool))
-      strNextPopup += "R";
-    strNextPopup += "';";
-    xmlDocument.setParameter("nextPopup", strNextPopup);
 
     String jsCommand = "''";
     if (vars.commandIn("DEFAULT")) {

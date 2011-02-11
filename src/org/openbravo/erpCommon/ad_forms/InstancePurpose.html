@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,34 +29,9 @@
   <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
-  <script language="JavaScript" type="text/javascript">
-  function openRegistration() {
-    if (!isWindowInMDIContext) {
-      var w = window.opener;
-      if(w) {
-        w.setTimeout("openRegistration();",100);
-      }
-    } else {
-      getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.openRegistration();
-    }
-    return true;
-  }
-  </script>
-  <script language="JavaScript" type="text/javascript">
-  function openHeartbeat() {
-    if (!isWindowInMDIContext) {
-      var w = window.opener;
-      if(w) {
-        w.setTimeout("openHeartbeat();",100);
-      }
-    } else {
-      getFrame('LayoutMDI').OB.Layout.ClassicOBCompatibility.Popup.openHeartbeat();
-    }
-    return true;
-  }
-  </script>
+ 
   <script language="JavaScript" type="text/javascript" id="paramCMD">var cmd = 'PROCEED';</script>
-  <script language="JavaScript" type="text/javascript" id="paramNextPopup">var nextPopup = 'HB';</script>
+ 
   <script language="JavaScript" type="text/javascript">
   function continueButton() {
     if (!isWindowInMDIContext) {
@@ -77,23 +52,15 @@
     var command = typeof cmd === 'undefined' ? 'PROCEED' : cmd;
     setProcessingMode('popup', true);
     submitCommandForm(command, false, null);
-    if (nextPopup == 'HB')
-      openHeartbeat();
-    if (nextPopup == 'R')
-      openRegistration();
+
     if (!isWindowInMDIContext) {
       var appFrame = getFrame('appFrame');
       if (appFrame && !appFrame.updatePurposeImage) {
         if (appFrame.document.getElementById('buttonRefresh')) {
           appFrame.document.getElementById('buttonRefresh').onclick();
-        } else {
-          closePage();
         }
       } else if (appFrame) {
         appFrame.updatePurposeImage(purpose.value);
-        closePage();
-      } else {
-        closePage();
       }
     } else {
       var mdiFrame = getFrame('LayoutMDI'); 
@@ -101,7 +68,6 @@
       if (mdiFrame.OB.Application.brandingWidget) {
         mdiFrame.OB.Application.brandingWidget.update();
       }
-      closePage();
     }
   }
   </script>
