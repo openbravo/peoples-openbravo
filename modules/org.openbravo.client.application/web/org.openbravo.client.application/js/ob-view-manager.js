@@ -35,6 +35,7 @@
   // cache object references locally
   var L = OB.Layout, M = OB.MainView, ISC = isc, vmgr; // Local reference to
   // ViewManager instance
+  var tabSet = M.TabSet;
   
   function ViewManager(){
   }
@@ -54,14 +55,14 @@
         for (i = len; i > 0; i--) {
           item = this.cache[i - 1];
           if (item.instance.isSameTab && item.instance.isSameTab(vName, params)) {
-            return item.viewTabID;
+            return item.viewTabId;
           }
         }
         return null;
       },
       
       getTabNumberFromViewParam: function(/* String */param, value){
-        var tabSet = M.TabSet, numberOfTabs = tabSet.tabs.length, viewParam = '', result = null;
+        var numberOfTabs = tabSet.tabs.length, viewParam = '', result = null;
         for (var i = 0; i < numberOfTabs; i++) {
           viewParam = tabSet.getTabPane(i)[param];
           if (viewParam === value) {
@@ -75,11 +76,11 @@
         this.cache.push(instanceDetails);
       },
       
-      removeTab: function(/* String */viewTabID){
+      removeTab: function(/* String */viewTabId){
         var len = this.cache.length, i, item, removed;
         for (i = len; i > 0; i--) {
           item = this.cache[i - 1];
-          if (item.viewTabID === viewTabID) {
+          if (item.viewTabId === viewTabId) {
             removed = this.cache.splice(i - 1, 1);
             return;
           }
@@ -87,7 +88,31 @@
       }
     },
 
-    fetchView: function(/* String */viewId, /*function*/ callback, /*Object*/ clientContext){
+    findLoadingTab: function(params) {
+      if (!params.loadingTabId) {
+        return null;
+      }
+      for (var i = 0; i < tabSet.tabs.length; i++) {
+        var pane = tabSet.tabs[i].pane;
+        if (pane.viewTabId && pane.viewTabId === params.loadingTabId) {
+          return tabSet.tabs[i];
+        }
+      }
+      return null;
+    },
+    
+    fetchView: function(/* String */viewId, /*function*/ callback, /*Object*/ clientContext, /*Object*/params, useLoadingTab){
+      if (useLoadingTab) {
+        // open a loading tab
+        params = params || {};
+        var layout = OB.Utilities.createLoadingLayout();
+        // is used to prevent history updating
+        layout.isLoadingTab = true;
+        var viewTabId = '_' + new Date().getTime();
+        params.loadingTabId = viewTabId;
+        this.createTab(viewId, viewTabId, layout, params);
+      }
+      
       var rpcMgr = ISC.RPCManager;
       var reqObj = {
         params: {
@@ -103,6 +128,64 @@
       var request = rpcMgr.sendRequest(reqObj);
     },
     
+    createTab: function(viewName, viewTabId, viewInstance, params) {
+      if (params.i18nTabTitle) {
+        // note call to I18N is done below after the tab
+        // has been created
+        tabTitle = '';
+      } else {
+        tabTitle = params.tabTitle || viewInstance.tabTitle || params.tabId ||
+        viewName;
+      }
+      
+      var tabDef = {
+        ID: viewTabId,
+        title: tabTitle,
+        canClose: true,
+        viewName: viewName,
+        params: params,
+        pane: viewInstance
+      };
+      
+      // let the params override tab properties like canClose
+      tabDef = isc.addProperties(tabDef, params);
+      
+      // Adding to the MainView tabSet
+      tabSet.addTab(tabDef);
+      
+      if (params.i18nTabTitle) {
+        tabTitle = '';
+        // note the callback calls the tabSet
+        // with the tabid to set the label
+        OB.I18N.getLabel(params.i18nTabTitle, null, {
+          setTitle: function(label){
+            tabSet.setTabTitle(viewTabId, label);
+          }
+        }, 'setTitle');
+      }
+      
+      // tell the viewinstance what tab it is on
+      // note do not use tabId on the viewInstance
+      // as tabId is used by the classic ob window
+      // local variable is: viewTabId
+      if (viewInstance.setViewTabId) {
+        viewInstance.setViewTabId(viewTabId);
+      } else {
+        viewInstance.viewTabId = viewTabId;
+      }
+      
+      // Adding a reference to opened views collection
+      vmgr.views.push({
+        viewName: viewName,
+        params: params,
+        instance: viewInstance,
+        viewTabId: viewTabId
+      });
+      
+      // the select tab event will update the history
+      tabSet.selectTab(viewTabId);
+    },
+  
     // ** {{{ ViewManager.openView(viewName, params) }}} **
     //
     // Shows a new tab in the {{{ Main Layout }}}
@@ -137,7 +220,13 @@
         //
         function showTab(/* String */viewName, /* Object */ params, /* Object */ state){
         
-          var viewTabID = vmgr.views.getViewTabID(viewName, params), tabset = M.TabSet, tabTitle;
+          var viewTabId, tabTitle, loadingTab = vmgr.findLoadingTab(params);
+          
+          if (loadingTab) {
+            viewTabId = loadingTab.pane.viewTabId;
+          } else {
+            viewTabId = vmgr.views.getViewTabID(viewName, params);
+          }
           
           // always create a new instance anyway as parameters
           // may have changed
@@ -147,108 +236,64 @@
             viewInstance.setViewState(state);
           }
           
+          // is not shown in a tab, let it show itself in a different way
+          // but first get rid of the loading tab
+          if (viewInstance && viewInstance.show && viewInstance.showsItself) {
+            if (loadingTab) {
+              delete params.loadingTabId;
+              tabSet.removeTab(loadingTab.viewTabId);
+            }
+            viewInstance.show();
+            return;
+          }
+
           // eventhough there is already an open tab
           // still refresh it
-          if (viewTabID !== null) {
+          if (viewTabId !== null) {
             // refresh the view
-            tabset.updateTab(viewTabID, viewInstance);
+            tabSet.updateTab(viewTabId, viewInstance);
             // and show it
-            tabset.selectTab(viewTabID);
+            tabSet.selectTab(viewTabId);
             
             // tell the viewinstance what tab it is on
             // note do not use tabId on the viewInstance
             // as tabId is used by the classic ob window
-            // local variable is: viewTabID (with uppercase ID)
+            // local variable is: viewTabId (with uppercase ID)
             // function call and other variable uses camelcase Id
             if (viewInstance.setViewTabId) {
-              viewInstance.setViewTabId(viewTabID);
+              viewInstance.setViewTabId(viewTabId);
             } else {
-              viewInstance.viewTabId = viewTabID;
+              viewInstance.viewTabId = viewTabId;
             }
 
             // update the cache
-            vmgr.views.removeTab(viewTabID, false);
+            vmgr.views.removeTab(viewTabId, false);
             vmgr.views.push({
               viewName: viewName,
               params: params,
               instance: viewInstance,
-              viewTabID: viewTabID
+              viewTabId: viewTabId
             });
-            // note after this the viewTabID is not anymore viewInstance.ID +
+            // note after this the viewTabId is not anymore viewInstance.ID +
             // '_tab'
             // but this is not a problem, it should be unique that's the most
             // important part
-            return;
-          }
-          
-          // is not shown in a tab, let it show itself in a different way
-          if (viewInstance && viewInstance.show && viewInstance.showsItself) {
-            viewInstance.show();
+            
+            // the select tab event will update the history
+            if (tabSet.getSelectedTab() && tabSet.getSelectedTab().pane.viewTabId === viewTabId) {
+              OB.Layout.HistoryManager.updateHistory();
+            } else {              
+              tabSet.selectTab(viewTabId);
+            }
+
             return;
           }
           
           // Creating an instance of the view implementation
-          viewTabID = viewInstance.ID + '_tab';
+          viewTabId = viewInstance.ID + '_tab';
           
           if (viewInstance) {
-            // a label which needs to be translated
-            // call the I18N with callback
-            if (params.i18nTabTitle) {
-              // note call to I18N is done below after the tab
-              // has been created
-              tabTitle = '';
-            } else {
-              tabTitle = params.tabTitle || viewInstance.tabTitle || params.tabId ||
-              viewName;
-            }
-            
-            var tabDef = {
-              ID: viewTabID,
-              title: tabTitle,
-              canClose: true,
-              viewName: viewName,
-              params: params,
-              pane: viewInstance
-            };
-            
-            // let the params override tab properties like canClose
-            tabDef = isc.addProperties(tabDef, params);
-            
-            // Adding to the MainView tabSet
-            tabset.addTab(tabDef);
-            
-            if (params.i18nTabTitle) {
-              tabTitle = '';
-              // note the callback calls the tabset
-              // with the tabid to set the label
-              OB.I18N.getLabel(params.i18nTabTitle, null, {
-                setTitle: function(label){
-                  tabset.setTabTitle(viewTabID, label);
-                }
-              }, 'setTitle');
-            }
-            
-            // tell the viewinstance what tab it is on
-            // note do not use tabId on the viewInstance
-            // as tabId is used by the classic ob window
-            // local variable is: viewTabID (with uppercase ID)
-            // function call and other variable uses camelcase Id
-            if (viewInstance.setViewTabId) {
-              viewInstance.setViewTabId(viewTabID);
-            } else {
-              viewInstance.viewTabId = viewTabID;
-            }
-            
-            // Adding a reference to opened views collection
-            vmgr.views.push({
-              viewName: viewName,
-              params: params,
-              instance: viewInstance,
-              viewTabID: viewTabID
-            });
-            
-            // the select tab event will update the history
-            tabset.selectTab(viewTabID);
+            vmgr.createTab(viewName, viewTabId, viewInstance, params);
           }
         }
         
@@ -273,8 +318,8 @@
                 
         if (isc[viewName]) {
           showTab(viewName, params);
-        } else {
-          vmgr.fetchView(viewName, fetchViewCallback);
+        } else {         
+           vmgr.fetchView(viewName, fetchViewCallback, null, params, true);
         }
       }
       getView(viewName, params, state);
@@ -290,7 +335,7 @@
     
     restoreState: function(/* Object */newState, /* Object */ data){
     
-      var tabSet = M.TabSet, tabsLength, i, tabObject, tabParams, hasChanged = false, stateData;
+      var tabSet = M.TabSet, tabsLength, i, tabObject, hasChanged = false, stateData;
       
       if (vmgr.inStateHandling) {
         return;
@@ -328,7 +373,7 @@
       
       // changes occured, start from scratch again, recreating each view
       if (hasChanged) {
-        // stop if tabset removed failed because a tab has incorrect data
+        // stop if tabSet removed failed because a tab has incorrect data
         if (!tabSet.removeTabs(tabSet.tabs)) {
           vmgr.inStateHandling = false;
           return;
@@ -362,7 +407,7 @@
               if (!isc[newState.bm[i].viewId]) {
                 viewId = newState.bm[i].viewId;
                 clientContext.currentIndex = i + 1;
-                vmgr.fetchView(viewId, requestViewsRestoreState, clientContext);
+                vmgr.fetchView(viewId, requestViewsRestoreState, clientContext, newState.bm[i].params);
                 return;
               }
             }
@@ -404,7 +449,7 @@
             clientContext.data = data;
             clientContext.newState = newState;
             clientContext.tabsLength = tabsLength;
-            vmgr.fetchView(viewId, requestViewsRestoreState, clientContext);
+            vmgr.fetchView(viewId, requestViewsRestoreState, clientContext, newState.bm[i].params);
             return;
           }
           
@@ -423,7 +468,7 @@
         try {
           OB.Layout.HistoryManager.restoreHistory(historyId, isc.History.getHistoryData(historyId));
           return;
-        } catch (error) {
+        } catch (exception) {
           // ignore all errors
         }
       }

@@ -63,7 +63,9 @@ isc.OBTabSetMain.addProperties({
   }),
 
   tabSelected: function(tabNum, tabPane, ID, tab) {
-    OB.Layout.HistoryManager.updateHistory();
+    if (!tabPane.isLoadingTab) {
+      OB.Layout.HistoryManager.updateHistory();
+    }
     if (tabPane.tabSelected) {
       tabPane.tabSelected(tabNum, tabPane, ID, tab);
     }
