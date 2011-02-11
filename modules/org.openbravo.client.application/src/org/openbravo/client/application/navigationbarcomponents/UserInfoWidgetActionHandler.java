@@ -139,6 +139,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
       return result;
     }
     user.setPassword(FormatUtilities.sha1Base64(newPwd));
+    OBDal.getInstance().flush();
     return ApplicationConstants.ACTION_RESULT_SUCCESS;
   }
 
