@@ -691,6 +691,10 @@ public class JsonToDataConverter {
     return c2.getTimeInMillis() == c1.getTimeInMillis();
   }
 
+  protected boolean areDatesEqual(Date d1, Date d2, boolean isDatetime) {
+    return this.areDatesEqual(d1, d2, isDatetime, false);
+  }
+
   /**
    * Determines if a property can be converted from json to a value stored in the database.
    * Properties which are not updatable (and the object is not new) are not converted, the same for
