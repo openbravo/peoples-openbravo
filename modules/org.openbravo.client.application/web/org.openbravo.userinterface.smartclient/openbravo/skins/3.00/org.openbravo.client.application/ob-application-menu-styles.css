@@ -102,6 +102,7 @@
 
 .OBApplicationMenuTreeItemCellIconFieldDisabled {
   padding: 0px 0px 0px 25px;
+  border-right: none;
   background-position: left center;
   background-repeat: repeat-x;
   background-image: url(./images/application-menu/menuSeparator.gif);
