@@ -191,7 +191,8 @@ isc.OBQuickRun.create(OB.QuickLaunchNavbarComponentStylingProperties, {
              } else if (record.optionType && record.optionType === 'external') {
                 openObject = {viewId: 'OBExternalPage', id: value, contentsUrl: value, tabTitle: record[OB.Constants.IDENTIFIER]};
              } else if (record.optionType && record.optionType === 'process') {
-                openObject = {viewId: 'OBPopupClassicWindow', processId:  record.processId, id: record.processId, obManualURL: value, command: 'BUTTON' + record.processId, tabTitle: record[OB.Constants.IDENTIFIER]};
+                var viewName = record.modal?'OBClassicPopupModal':'OBPopupClassicWindow';
+                openObject = {viewId: viewName, processId:  record.processId, id: record.processId, obManualURL: value, command: 'BUTTON' + record.processId, tabTitle: record[OB.Constants.IDENTIFIER]};
              } else if (record.optionType && record.optionType === 'processManual') {
                 openObject = {viewId: 'OBClassicWindow', processId:  record.processId, id: record.processId, obManualURL: value, command: 'DEFAULT', tabTitle: record[OB.Constants.IDENTIFIER]};
              } else if (record.viewId) {

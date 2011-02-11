@@ -133,6 +133,7 @@ public class QuickLaunchDataSource extends ReadOnlyDataSourceService {
         data.put("icon", icon);
 
         data.put(JsonConstants.ID, menuOption.getId());
+        data.put("modal", menuOption.isModal());
         for (MenuParameter parameter : menuOption.getMenu().getOBUIAPPMenuParametersList()) {
           if (parameter.isActive()) {
             data.put(parameter.getName(), parameter.getParameterValue());

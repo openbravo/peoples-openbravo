@@ -106,6 +106,7 @@ public class QuickCreateDataSource extends ReadOnlyDataSourceService {
           icon = "Window";
         }
         data.put("icon", icon);
+        data.put("modal", menuOption.isModal());
 
         data.put(JsonConstants.IDENTIFIER, menuOption.getLabel());
         data.put(JsonConstants.ID, menuOption.getId());
