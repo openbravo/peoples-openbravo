@@ -27,16 +27,22 @@
 <script type="text/javascript" src="js/benchmark.js"></script>
 <script type="text/javascript" src="../js/LAB.min.js"></script>
 <script type="text/javascript">
+
 $LAB.setGlobalDefaults({AppendTo: 'body'});
 var isomorphicDir='../../org.openbravo.userinterface.smartclient/isomorphic/';
-// starts the application is called as the last statement in the StaticResources part
+
 function OBStartApplication() {
-  // OB.Layout.draw();
   $LAB.script('../../../org.openbravo.client.kernel/OBUIAPP_MainLayout/View?viewId=_D586192D06C14EC182B44CAD34CA4295')
       .wait(function() {
+
         var viewName = OB.Layout.ViewManager.loadedWindowClassName,
             suite = new Benchmark.Suite, summary = '', a = [],
             s = document.getElementById('summary'), i = 0;
+
+        if(OB.User.roleName.indexOf('System Administrator') == -1) {
+          s.innerHTML = 'Test must be executed with System Administrator role';
+          return;
+        }
 
         s.innerHTML = 'Executing...';
 
@@ -48,6 +54,7 @@ function OBStartApplication() {
           summary += 'Elapsed time: ' + bench.times.elapsed + '<br />';
         })
         .on('complete', function() {
+          summary += 'Client platform: ' + String(Benchmark.platform) + '<br />';
           summary += 'Total tabs created: ' + OB.MainView.TabSet.tabs.length;
           s.innerHTML = summary;
         })
