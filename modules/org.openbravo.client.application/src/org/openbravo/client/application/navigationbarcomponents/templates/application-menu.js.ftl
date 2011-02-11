@@ -45,6 +45,10 @@ isc.OBApplicationMenuButton.create({
         , type: 'processManual'
         , manualUrl: '${menuOption.id?js_string}'
         , manualProcessId: '${menuOption.menu.process.id}'
+    <#elseif menuOption.report>
+        , type: 'report'
+        , manualUrl: '${menuOption.id?js_string}'
+        , manualProcessId: '${menuOption.menu.process.id}'
     <#elseif menuOption.task>
         , type: 'task'
         , manualUrl: '${menuOption.id?js_string}'

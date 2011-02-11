@@ -60,7 +60,7 @@ public class MenuManager implements Serializable {
   private static final long serialVersionUID = 1L;
 
   public static enum MenuEntryType {
-    Window, Process, ProcessManual, Task, Form, External, Summary, View
+    Window, Process, ProcessManual, Report, Task, Form, External, Summary, View
   };
 
   private MenuOption cachedMenu;
@@ -272,11 +272,11 @@ public class MenuManager implements Serializable {
       if (menuOption != null) {
         if (process.getUIPattern().equals("Standard")) {
           menuOption.setType(MenuEntryType.Process);
+        } else if (process.isReport() || process.isJasperReport()) {
+          menuOption.setType(MenuEntryType.Report);
+          menuOption.setReport(true);
         } else {
           menuOption.setType(MenuEntryType.ProcessManual);
-        }
-        if (process.isReport() || process.isJasperReport()) {
-          menuOption.setReport(true);
         }
         menuOption.setId(mim.getMappingName());
       }
