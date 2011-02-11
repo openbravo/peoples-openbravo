@@ -397,7 +397,7 @@ OB.ViewFormProperties = {
       editValues[prop + '._valueMap'] = field.valueMap;
     }
     
-    if (columnValue.value && columnValue.value === 'null') {
+    if (columnValue.value && (columnValue.value === 'null' || columnValue.value === '')) {
       // handle the case that the FIC returns a null value as a string
       // should be repaired in the FIC
       // note: do not use clearvalue as this removes the value from the form
@@ -516,7 +516,6 @@ OB.ViewFormProperties = {
   },
   
   itemChanged: function(item, newValue){
-    this.itemChangeActions(item);
     this.handleItemChange(item);
   },
   
@@ -653,15 +652,30 @@ OB.ViewFormProperties = {
   },
   
   handleFieldErrors: function(errors){
+    var msg = OB.I18N.getLabel('OBUIAPP_ErrorInFields');
+    var additionalMsg = '';
     if (errors) {
       this.setErrors(errors, true);
+      for (var err in errors) {
+        if (errors.hasOwnProperty(err)) {
+          var fld = this.getField(err); 
+          if (!fld || !fld.visible) {
+            if (additionalMsg !== '') {
+              additionalMsg = additionalMsg + '<br/>';
+            }
+            additionalMsg = additionalMsg + errors[err]; 
+          }
+        }
+      }
+      if (additionalMsg) {
+        msg = additionalMsg;
+      }
     }
-    var msg = OB.I18N.getLabel('OBUIAPP_ErrorInFields');
     var errorFld = this.getFirstErrorItem();
     // special case
     // if there is only an error on the id and no error on any field
     // display that message then
-    if (errors && errors.id && !errorFld) {
+    if (!additionalMsg && errors && errors.id && !errorFld && errors.id.errorMessage) {
       msg = errors.id.errorMessage;
     }
        
@@ -754,7 +768,19 @@ OB.ViewFormProperties = {
 
   onFieldChanged: function(form, item, value) {
     // To be implemented dynamically
-  }
+  },
+    
+  // overridden to prevent updating of a time value which 
+  // has only been edited half, only do this if we are in change
+  // handling (to enable buttons etc.)
+  updateFocusItemValue: function() {
+    var focusItem = this.getFocusSubItem();
+    if (this.inChangeHandling && focusItem && !focusItem.changeOnKeypress) {
+      return;
+    }
+    return this.Super('updateFocusItemValue', arguments);
+  } 
+
 };
 
 isc.OBViewForm.addProperties(OB.ViewFormProperties);
