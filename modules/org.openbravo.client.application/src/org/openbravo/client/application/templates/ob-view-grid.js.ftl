@@ -60,6 +60,11 @@ isc.OBViewGrid.create({
        <#if field_has_next>,</#if>
     </#list>
     ],
+    autoExpandFieldNames:[
+    <#list data.autoExpandFields as field>
+        '${field}'<#if field_has_next>,</#if>
+    </#list>
+    ],
     whereClause: '${data.whereClause?js_string}',
     orderByClause: '${data.orderByClause?js_string}',
     filterClause: '${data.filterClause?js_string}',

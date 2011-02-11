@@ -124,6 +124,28 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     return fkFields;
   }
 
+  public List<String> getAutoExpandFields() {
+    List<LocalField> autoExpandFields = new ArrayList<LocalField>();
+    for (LocalField field : getFields()) {
+      if (new Boolean(field.getAutoExpand())) {
+        autoExpandFields.add(field);
+      }
+    }
+    Collections.sort(autoExpandFields, new LengthComparator());
+    List<String> autoExpandFieldsStr = new ArrayList<String>();
+    for (LocalField field : autoExpandFields) {
+      autoExpandFieldsStr.add(field.getProperty().getName());
+    }
+    return autoExpandFieldsStr;
+  }
+
+  private class LengthComparator implements Comparator<LocalField> {
+    @Override
+    public int compare(LocalField o1, LocalField o2) {
+      return o2.getLength().compareTo(o1.getLength());
+    }
+  }
+
   public List<LocalField> getFields() {
     if (fields != null) {
       return fields;
@@ -321,8 +343,8 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
     // can the column be auto expanded to fill any remaining space
     public String getAutoExpand() {
-      return Boolean
-          .toString(uiDefinition instanceof StringUIDefinition || !property.isPrimitive());
+      return (Boolean.toString(!name.equalsIgnoreCase("documentno")
+          && (uiDefinition instanceof StringUIDefinition || !property.isPrimitive())));
     }
 
     public String getName() {
@@ -392,6 +414,11 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     public void setRedrawOnChange(boolean redrawOnChange) {
       this.redrawOnChange = redrawOnChange;
     }
+
+    public Long getLength() {
+      return field.getDisplayedLength();
+    }
+
   }
 
   private class GridFieldComparator implements Comparator<Field> {

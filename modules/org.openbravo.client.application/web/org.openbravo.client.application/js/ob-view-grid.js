@@ -686,10 +686,10 @@ isc.OBViewGrid.addProperties({
   
   // determine which field can be autoexpanded to use extra space
   getAutoFitExpandField: function(){
-    for (var i = 0; i < this.fields.length; i++) {
-      var field = this.fields[i];
-      if (field.autoExpand) {
-        return field;
+    for (var i = 0; i < this.autoExpandFieldNames.length; i++) {
+      var field = this.getField(this.autoExpandFieldNames[i]);
+      if(field && field.name){
+        return field.name;
       }
     }
     return this.Super('getAutoFitExpandField', arguments);
