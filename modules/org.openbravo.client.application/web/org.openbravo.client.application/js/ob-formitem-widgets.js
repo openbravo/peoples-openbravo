@@ -29,8 +29,8 @@
 // * OBYesNoItem: combo box for yes/no values
 // * OBLinkTitleItem: an interface supporting a link button in the title.
 // * OBFKItem: combo box for foreign key references
-// * OBFKFilterTextItem: text item for filtering on FK fields
 // * OBListItem: combo box for list references
+// * OBListFilterItem: used in the filter editor
 
 // == OBCheckboxItem ==
 // Item used for Openbravo yes/no fields.
@@ -318,15 +318,6 @@ isc.OBFKFilterTextItem.addProperties({
   validateOnChange: false
 });
 
-//== OBListFilterTextItem ==
-//Input used for filtering on list fields.
-isc.ClassFactory.defineClass('OBListFilterTextItem', TextItem);
-
-isc.OBListFilterTextItem.addProperties({
-  validateOnExit: false,
-  validateOnChange: false
-});
-
 // == OBTextAreaItem ==
 // Input for large strings
 isc.ClassFactory.defineClass('OBTextAreaItem', TextAreaItem);
@@ -445,6 +436,13 @@ isc.OBListItem.addProperties({
     return ret;
   }
   
+});
+
+//== OBListFilterItem ==
+// Combo box for list references in filter editors
+isc.ClassFactory.defineClass('OBListFilterItem', OBListItem);
+
+isc.OBListFilterItem.addProperties({
 });
 
 // == OBFKItem ==

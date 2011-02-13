@@ -42,7 +42,7 @@ public class EnumUIDefinition extends UIDefinition {
 
   @Override
   public String getFilterEditorType() {
-    return "OBListFilterTextItem";
+    return "OBListFilterItem";
   }
 
   @Override
