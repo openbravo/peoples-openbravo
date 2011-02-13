@@ -114,6 +114,7 @@ isc.OBApplicationMenuTree.addProperties({
     var selectedView = null;
     if (item.tabId) {
       selectedView = OB.Utilities.openView(item.windowId, item.tabId, item.title);
+      selectedView.type = item.type;
       if (selectedView) {
         OB.RecentUtilities.addRecent('UINAVBA_MenuRecentList', selectedView);
       }
@@ -137,6 +138,7 @@ isc.OBApplicationMenuTree.addProperties({
     } else if (item.externalUrl) {
       selectedView = {viewId: 'OBExternalPage', contentsURL: item.externalUrl, id: item.externalUrl, command: 'DEFAULT', tabTitle: item.title};
     }
+    selectedView.type = item.type;
     OB.RecentUtilities.addRecent('UINAVBA_MenuRecentList', selectedView);
     OB.Layout.ViewManager.openView(selectedView.viewId, selectedView);
   }
