@@ -241,6 +241,9 @@ isc.OBGrid.addProperties({
     if (!this.filterEditor) {
       return false;
     }
+    if (this.filterClause) {
+      return true;
+    }
     for (var prop in criteria) {
       if (criteria.hasOwnProperty(prop)) {
         var value = criteria[prop];
