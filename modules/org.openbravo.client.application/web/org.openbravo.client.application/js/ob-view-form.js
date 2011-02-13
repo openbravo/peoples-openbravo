@@ -358,6 +358,17 @@ OB.ViewFormProperties = {
   
   setDisabled: function(state) {
     this.allItemsDisabled = state;
+    var editRow = this.view.viewGrid.getEditRow();
+    if (editRow || editRow === 0) {
+      this.view.viewGrid.refreshRow(editRow);
+    }
+  },
+  
+  refresh: function() {
+    var criteria = {
+        id: this.getValue(OB.Constants.ID)
+    };
+    this.fetchData(criteria);
   },
   
   processColumnValue: function(columnName, columnValue, editValues){
@@ -516,7 +527,7 @@ OB.ViewFormProperties = {
   },
   
   itemChanged: function(item, newValue){
-    this.handleItemChange(item);
+    this.itemChangeActions(item);
   },
   
   // these actions are done when the user types in a field
@@ -602,8 +613,6 @@ OB.ViewFormProperties = {
           view.viewGrid.targetRecordId = data.id;
           view.viewGrid.refreshContents();
         }
-        
-        this.setNewState(false);
 
         // success invoke the action, if any there
         view.standardWindow.autoSaveDone(view, true);
@@ -611,7 +620,11 @@ OB.ViewFormProperties = {
         // do this after doing autoSave as the setHasChanged will clean
         // the autosave info
         this.setHasChanged(false);
-
+        
+        // change some labels
+        this.setNewState(false);
+        
+        view.refreshParentRecord();
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
         form.handleFieldErrors(resp.errors);
         view.standardWindow.autoSaveDone(view, false);

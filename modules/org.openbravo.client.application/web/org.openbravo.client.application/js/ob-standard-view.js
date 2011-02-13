@@ -1157,6 +1157,11 @@ isc.OBStandardView.addProperties({
       return;
     }
     
+    var me = this;
+    var formRefresh = function() {
+      me.viewForm.refresh();
+    };
+    
     if (!this.isShowingForm) {
       this.viewGrid.refreshGrid();
     } else {
@@ -1164,17 +1169,53 @@ isc.OBStandardView.addProperties({
       if (this.viewForm.hasChanged) {
         var callback = function(ok){
           if (ok) {
-            this.viewGrid.refreshGrid();
+            this.viewGrid.refreshGrid(formRefresh);            
           }
         };
         isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmRefresh'), callback);
       } else {
-        this.viewGrid.refreshGrid();
+        this.viewGrid.refreshGrid(formRefresh);
       }
     }
     if (refreshCallback) {
       refreshCallback();
     }
+  },
+  
+  refreshParentRecord: function() {
+    if (this.parentView) {
+      this.parentView.refreshCurrentRecord();
+    }
+  },
+  
+  refreshCurrentRecord: function() {
+    if (!this.viewGrid.getSelectedRecord()) {
+      return;
+    }
+    var record = this.viewGrid.getSelectedRecord();
+    var criteria = {};
+    criteria[OB.Constants.ID] = record.id;
+    // force a fetch from the server
+    criteria._dummy = new Date().getTime();
+    
+    var me = this;
+    var callback = function(resp, data, req) {
+      // this line does not work, but it should:
+//      me.getDataSource().updateCaches(resp, req);
+      // therefore doe an explicit update of the visual components
+      if (me.isShowingForm) {
+        me.viewForm.refresh();
+      }
+      if (me.viewGrid.data) {
+        var recordIndex = me.viewGrid.getRecordIndex(me.viewGrid.getSelectedRecord());
+        me.viewGrid.data.updateCacheData(data, req);
+        me.viewGrid.selectRecord(me.viewGrid.getRecord(recordIndex));
+        me.viewGrid.markForRedraw();
+      }
+    };
+    
+    this.getDataSource().fetchData(criteria, callback);
+    this.refreshParentRecord();
   },
   
   saveRow: function(){

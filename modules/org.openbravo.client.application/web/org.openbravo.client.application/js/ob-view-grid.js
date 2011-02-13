@@ -493,9 +493,9 @@ isc.OBViewGrid.addProperties({
         this.view.openDirectChildTab();
       }
       
-      if (this.view.isShowingForm) {
-        this.view.viewForm.editRecord(gridRecord);
-      }
+//      if (this.view.isShowingForm) {
+//        this.view.viewForm.editRecord(gridRecord);
+//      }
     } else {
       // wait a bit longer til the body is drawn
       this.delayCall('delayedHandleTargetRecord', [startRow, endRow], 200, this);
@@ -685,6 +685,7 @@ isc.OBViewGrid.addProperties({
   },
   
   clearFilter: function(){
+    delete this.filterClause;
     this.filterEditor.getEditForm().clearValues();
     this.filterEditor.performAction();
   },
@@ -1126,6 +1127,7 @@ isc.OBViewGrid.addProperties({
       this.view.refreshChildViews();
     }
     this.view.messageBar.hide();
+    this.view.refreshParentRecord();
   },
   
   undoEditSelectedRows: function(){

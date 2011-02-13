@@ -23,21 +23,21 @@
 //
 isc.ClassFactory.defineClass('OBViewDataSource', isc.OBRestDataSource);
 
-isc.OBViewDataSource.addProperties( {
+isc.OBViewDataSource.addProperties({
 
-  showProgress : function(editedRecord) {
-
+  showProgress: function(editedRecord){
+  
     // don't show it, done to quickly
     if (!editedRecord._showProgressAfterDelay) {
       return;
     }
-
+    
     if (editedRecord && editedRecord.editColumnLayout) {
       if (!this.view.isShowingForm) {
         editedRecord.editColumnLayout.toggleProgressIcon(true);
       }
     }
-
+    
     if (this.view.isShowingForm) {
       var btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
       btn.customState = 'Progress';
@@ -45,22 +45,21 @@ isc.OBViewDataSource.addProperties( {
       btn.markForRedraw();
     }
   },
-
-  hideProgress : function(editedRecord) {
+  
+  hideProgress: function(editedRecord){
     editedRecord._showProgressAfterDelay = false;
     if (editedRecord && editedRecord.editColumnLayout) {
       editedRecord.editColumnLayout.toggleProgressIcon(false);
     }
-
+    
     // always remove the progress style here anyway
     var btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
     btn.customState = '';
     btn.resetBaseStyle();
     btn.markForRedraw();
   },
-
-  performDSOperation : function(operationType, data, callback,
-      requestProperties) {
+  
+  performDSOperation: function(operationType, data, callback, requestProperties){
     // requestProperties.showPrompt = false;
     // set the current selected record before the delay
     var currentRecord = this.view.viewGrid.getSelectedRecord();
@@ -68,44 +67,39 @@ isc.OBViewDataSource.addProperties( {
       // only show progress after 200ms delay
       currentRecord._showProgressAfterDelay = true;
       // keep the edited record in the client context
-      if (!requestProperties.clientContext) {
-        requestProperties.clientContext = {};
-      }
+      requestProperties = requestProperties || {};
+      requestProperties.clientContext = requestProperties.clientContext || {};
       requestProperties.clientContext.progressIndicatorSelectedRecord = currentRecord;
-      this
-          .delayCall(
-              'showProgress',
-              [ requestProperties.clientContext.progressIndicatorSelectedRecord ],
-              200);
+      this.delayCall('showProgress', [requestProperties.clientContext.progressIndicatorSelectedRecord], 200);
     }
     
     // doing row editing
-    if (this.view.viewGrid.getEditRow() || this.view.viewGrid.getEditRow() === 0) {
+    if (this.view.viewGrid.getEditRow() ||
+    this.view.viewGrid.getEditRow() === 0) {
       if (!requestProperties.clientContext) {
         requestProperties.clientContext = {};
       }
-      requestProperties.clientContext.editRow = this.view.viewGrid.getEditRow(); 
+      requestProperties.clientContext.editRow = this.view.viewGrid.getEditRow();
     }
-
-    var newRequestProperties = this.getTabInfoRequestProperties(this.view,
-        requestProperties);
+    
+    var newRequestProperties = this.getTabInfoRequestProperties(this.view, requestProperties);
     // standard update is not sent with operationType
     var additionalPara = {
-      _operationType : 'update',
-      _noActiveFilter : true,
-      sendOriginalIDBack: true      
+      _operationType: 'update',
+      _noActiveFilter: true,
+      sendOriginalIDBack: true
     };
     isc.addProperties(newRequestProperties.params, additionalPara);
     if (!newRequestProperties.dataSource) {
       newRequestProperties.dataSource = this;
     }
-    this.Super('performDSOperation', [ operationType, data, callback,
-        newRequestProperties ]);
+    this.Super('performDSOperation', [operationType, data, callback, newRequestProperties]);
   },
-
-  // do special id-handling so that we can replace the old if with the new id
+  
+  // do special id-handling so that we can replace the old if with the new
+  // id
   // in the correct way, see the ob-view-grid.js editComplete method
-  validateJSONRecord: function(record) {
+  validateJSONRecord: function(record){
     record = this.Super('validateJSONRecord', arguments);
     if (record && record._originalId) {
       var newId = record.id;
@@ -115,17 +109,19 @@ isc.OBViewDataSource.addProperties( {
     return record;
   },
   
-  transformResponse : function(dsResponse, dsRequest, jsonData) {
-    
-    if (dsRequest.clientContext && dsRequest.clientContext.progressIndicatorSelectedRecord) {
+  transformResponse: function(dsResponse, dsRequest, jsonData){
+  
+    if (dsRequest.clientContext &&
+    dsRequest.clientContext.progressIndicatorSelectedRecord) {
       this.hideProgress(dsRequest.clientContext.progressIndicatorSelectedRecord);
     }
     if (jsonData) {
-      var errorStatus = !jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
+      var errorStatus = !jsonData.response ||
+      jsonData.response.status === 'undefined' ||
+      jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
       if (errorStatus) {
-        var handled = this.view.setErrorMessageFromResponse(dsResponse,
-            jsonData, dsRequest);
-
+        var handled = this.view.setErrorMessageFromResponse(dsResponse, jsonData, dsRequest);
+        
         if (!handled && !dsRequest.willHandleError) {
           OB.KernelUtilities.handleSystemException(error.message);
         }
@@ -138,7 +134,7 @@ isc.OBViewDataSource.addProperties( {
     }
     return this.Super('transformResponse', arguments);
   },
-
+  
   // ** {{{ getTabInfoRequestProperties }}} **
   //
   // Adds tab and module information to the requestProperties.
@@ -149,13 +145,13 @@ isc.OBViewDataSource.addProperties( {
   // Return:
   // * Original requestProperties including the new module and tab
   // properties.
-  getTabInfoRequestProperties : function(theView, requestProperties) {
+  getTabInfoRequestProperties: function(theView, requestProperties){
     if (theView && theView.tabId) {
       var tabParam = {
-        params : {
-          windowId : theView.standardWindow.windowId,
-          tabId : theView.tabId,
-          moduleId : theView.moduleId
+        params: {
+          windowId: theView.standardWindow.windowId,
+          tabId: theView.tabId,
+          moduleId: theView.moduleId
         }
       };
       if (requestProperties) {
