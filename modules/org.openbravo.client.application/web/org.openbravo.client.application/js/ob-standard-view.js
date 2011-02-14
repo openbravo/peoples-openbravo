@@ -1498,15 +1498,15 @@ isc.OBStandardView.addProperties({
               if (type.createClassicString) {
                 contextInfo[properties[i].inpColumn] = type.createClassicString(value);
               } else {
-                contextInfo[properties[i].inpColumn] = value;
+                contextInfo[properties[i].inpColumn] = this.convertContextValue(value);
               }
             } else {
-            contextInfo[properties[i].inpColumn] = value;
+              contextInfo[properties[i].inpColumn] = this.convertContextValue(value);
             }
           } else {
             // surround the property name with @ symbols to make them different
             // from filter criteria and such          
-            contextInfo['@' + this.entity + '.' + properties[i].property + '@'] = value;
+            contextInfo['@' + this.entity + '.' + properties[i].property + '@'] = this.convertContextValue(value);
           }
         }
       }
@@ -1515,11 +1515,11 @@ isc.OBStandardView.addProperties({
         for (var p in this.standardProperties){
           if (this.standardProperties.hasOwnProperty(p)){
             if (classicMode) {
-              contextInfo[p] = this.standardProperties[p];
+              contextInfo[p] = this.convertContextValue(this.standardProperties[p]);
             } else {
               // surround the property name with @ symbols to make them different
               // from filter criteria and such          
-              contextInfo['@' + this.entity + '.' + p + '@'] = this.standardProperties[p];
+              contextInfo['@' + this.entity + '.' + p + '@'] = this.convertContextValue(this.standardProperties[p]);
             }
           }
         }
@@ -1539,6 +1539,19 @@ isc.OBStandardView.addProperties({
     }
     
     return contextInfo;
+  },
+  
+  convertContextValue: function(value) {
+    if (isc.isA.Date(value)) {
+      // this prevents strange timezone issues, the result is a timezoneless
+      // string
+      var oldXMLSchemaMode = isc.Comm.xmlSchemaMode;
+      isc.Comm.xmlSchemaMode = true;
+      var ret = value.toSerializeableDate();
+      isc.Comm.xmlSchemaMode = oldXMLSchemaMode;
+      return ret;
+    }
+    return value;
   },
   
   getPropertyDefinition: function(property) {
