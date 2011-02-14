@@ -282,7 +282,9 @@ isc.OBViewGrid.addProperties({
     var ret = this.Super('show', arguments);
     
     this.view.toolBar.updateButtonState();
-    
+      
+    this.updateRowCountDisplay();
+
     this.resetEmptyMessage();
     
     return ret;
