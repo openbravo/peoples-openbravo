@@ -216,7 +216,7 @@ isc.OBSelectorPopupWindow.addProperties({
     };
     
     // purposely not passing the third boolean param
-    this.selector.form.view.getContextInfo(data, {});
+    isc.addProperties(data, this.selector.form.view.getContextInfo(false, true));
     
     var callback = function(resp, data, req){
       selectorWindow.fetchDefaultsCallback(resp, data, req);
