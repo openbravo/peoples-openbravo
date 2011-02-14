@@ -61,6 +61,7 @@
        command: '${field.command?js_string}',
        property: '${field.propertyName?js_string}',
        autosave: ${field.autosave?string},
+       processId: '${field.processId?js_string}',
        <#if !field.modal>modal: ${field.modal?string},</#if>
        labelValue: {<#list field.labelValues as value>
            '${value.value?js_string}': '${value.label?js_string}'<#if value_has_next>,</#if>

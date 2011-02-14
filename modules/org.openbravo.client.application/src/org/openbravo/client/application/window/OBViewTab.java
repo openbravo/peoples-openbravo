@@ -408,6 +408,7 @@ public class OBViewTab extends BaseTemplateComponent {
     private String readOnlyIf = "";
     private boolean sessionLogic = false;
     private boolean modal = true;
+    private String processId;
 
     public ButtonField(Field fld) {
       id = fld.getId();
@@ -444,6 +445,7 @@ public class OBViewTab extends BaseTemplateComponent {
         }
 
         modal = Utility.isModalProcess(process);
+        processId = process.getId();
 
       } else {
         String colName = column.getDBColumnName();
@@ -538,6 +540,10 @@ public class OBViewTab extends BaseTemplateComponent {
 
     public boolean isModal() {
       return modal;
+    }
+
+    public String getProcessId() {
+      return processId;
     }
 
     public class Value {

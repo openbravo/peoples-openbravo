@@ -59,6 +59,8 @@ isc.OBToolbarActionButton.addProperties( {
       }
     }
     
+    allProperties.inpProcessId = this.processId;
+    
     if (this.modal){
       allProperties.Command = this.command;
       callbackFunction = function(){
