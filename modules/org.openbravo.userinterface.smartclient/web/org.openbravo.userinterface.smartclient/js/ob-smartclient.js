@@ -25,6 +25,10 @@
 // core
 isc.setAutoDraw(false);
 
+// We have dates/times in the database without timezone, we assume GMT therefore 
+// for all our date/times we use GMT on both the server and the client
+Time.setDefaultDisplayTimezone(0);
+
 // NOTE BEWARE: methods/props added here will overwrite and NOT extend FormItem
 // properties! 
 isc.FormItem.addProperties({
