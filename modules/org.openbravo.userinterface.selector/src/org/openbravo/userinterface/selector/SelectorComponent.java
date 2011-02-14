@@ -455,14 +455,7 @@ public class SelectorComponent extends BaseTemplateComponent {
 
   public String getOutHiddenInputPrefix() {
     if (transformedColumnName == null) {
-      if (getSelector().getTable() == null) {
-        transformedColumnName = "";
-      } else {
-        transformedColumnName = ModelProvider.getInstance().getTable(
-            getSelector().getTable().getDBTableName()).getPrimaryKeyColumns().get(0)
-            .getColumnName();
-        transformedColumnName = "inp" + Sqlc.TransformaNombreColumna(transformedColumnName);
-      }
+      transformedColumnName = "inp" + Sqlc.TransformaNombreColumna(getColumnName());
     }
     return transformedColumnName;
   }
