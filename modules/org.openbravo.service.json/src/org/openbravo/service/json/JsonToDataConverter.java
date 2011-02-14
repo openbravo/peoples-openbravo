@@ -166,6 +166,9 @@ public class JsonToDataConverter {
           throw new Error(e);
         }
       } else if (property.isBoolean() && value instanceof String) {
+        if (value.equals("Y")) {
+          return true;
+        }
         return Boolean.parseBoolean((String) value);
       } else if (value instanceof Double) {
         return new BigDecimal((Double) value);
