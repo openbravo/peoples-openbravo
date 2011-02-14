@@ -155,39 +155,40 @@ public abstract class UIDefinition {
             + Utility.getDocumentNo(new DalConnectionProvider(false), rq.getVariablesSecureApp(),
                 field.getTab().getWindow().getId(), field.getColumn().getTable().getDBTableName(),
                 docTypeTarget, docType, false, false) + ">";
-      }
-      String defaultS = field.getColumn().getDefaultValue();
-      if (defaultS == null) {
-        defaultS = "";
-      }
-      if (!defaultS.startsWith("@SQL=")) {
-        columnValue = Utility.getDefault(new DalConnectionProvider(false), rq
-            .getVariablesSecureApp(), field.getColumn().getDBColumnName(), defaultS, field.getTab()
-            .getWindow().getId(), "");
       } else {
-        ArrayList<String> params = new ArrayList<String>();
-        String sql = parseSQL(defaultS, params);
-        int indP = 1;
-        try {
-          PreparedStatement ps = OBDal.getInstance().getConnection().prepareStatement(sql);
-          for (String parameter : params) {
-            String value = "";
-            if (parameter.substring(0, 1).equals("#")) {
-              value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-                  .getVariablesSecureApp(), parameter, field.getTab().getWindow().getId());
-            } else {
-              String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
-              value = RequestContext.get().getRequestParameter(fieldId);
+        String defaultS = field.getColumn().getDefaultValue();
+        if (defaultS == null) {
+          defaultS = "";
+        }
+        if (!defaultS.startsWith("@SQL=")) {
+          columnValue = Utility.getDefault(new DalConnectionProvider(false), rq
+              .getVariablesSecureApp(), field.getColumn().getDBColumnName(), defaultS, field
+              .getTab().getWindow().getId(), "");
+        } else {
+          ArrayList<String> params = new ArrayList<String>();
+          String sql = parseSQL(defaultS, params);
+          int indP = 1;
+          try {
+            PreparedStatement ps = OBDal.getInstance().getConnection().prepareStatement(sql);
+            for (String parameter : params) {
+              String value = "";
+              if (parameter.substring(0, 1).equals("#")) {
+                value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
+                    .getVariablesSecureApp(), parameter, field.getTab().getWindow().getId());
+              } else {
+                String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
+                value = RequestContext.get().getRequestParameter(fieldId);
+              }
+              ps.setObject(indP++, value);
             }
-            ps.setObject(indP++, value);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+              columnValue = rs.getString(1);
+            }
+          } catch (Exception e) {
+            log.error("Error computing default value for field " + field.getName() + " of tab "
+                + field.getTab().getName(), e);
           }
-          ResultSet rs = ps.executeQuery();
-          if (rs.next()) {
-            columnValue = rs.getString(1);
-          }
-        } catch (Exception e) {
-          log.error("Error computing default value for field " + field.getName() + " of tab "
-              + field.getTab().getName(), e);
         }
       }
     }
