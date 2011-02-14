@@ -98,7 +98,7 @@ public class SelectorFieldPropertyCallout extends HttpSecureAppServlet {
           writeEmptyResult(response);
           return;
         }
-        if (part.equals(JsonConstants.IDENTIFIER)) {
+        if (part.equals(JsonConstants.IDENTIFIER) || part.equals(JsonConstants.ID)) {
           if (foundProperty == null) {
             writeEmptyResult(response);
             return;
@@ -106,15 +106,10 @@ public class SelectorFieldPropertyCallout extends HttpSecureAppServlet {
           break;
         }
         currentProperty = currentEntity.getProperty(part);
+        foundProperty = currentProperty;
         if (currentProperty.isPrimitive()) {
-          // the last leg
-          if (parts.length == 1) {
-            // if there is only one step then just the current property directly
-            foundProperty = currentProperty;
-          }
           break;
         }
-        foundProperty = currentProperty;
         currentEntity = foundProperty.getTargetEntity();
       }
     }
