@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,7 +55,6 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.module.ModuleLog;
 import org.openbravo.scheduling.OBScheduler;
-import org.openbravo.service.system.ReloadContext;
 import org.openbravo.service.system.RestartTomcat;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.xml.sax.InputSource;
@@ -85,8 +84,6 @@ public class ApplyModules extends HttpSecureAppServlet {
       printPageTomcat(request, response, vars);
     } else if (vars.commandIn("RESTART")) {
       restartApplicationServer(response, vars);
-    } else if (vars.commandIn("RELOAD")) {
-      reloadContext(response, vars);
     } else {
       pageError(response);
     }
@@ -109,34 +106,6 @@ public class ApplyModules extends HttpSecureAppServlet {
 
     out.println(xmlDocument.print());
     out.close();
-  }
-
-  /**
-   * Reloads the application context to after building the application to apply modules.
-   * 
-   * @param response
-   *          the HttpServletResponse to write to
-   * @param vars
-   *          the application variables
-   * @throws IOException
-   * @throws ServletException
-   */
-  private void reloadContext(HttpServletResponse response, VariablesSecureApp vars)
-      throws IOException, ServletException {
-
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/RestartingContext").createXmlDocument();
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    final String message = Utility.messageBD(this, "CONTEXT_RELOAD", vars.getLanguage());
-    xmlDocument.setParameter("message", Utility.formatMessageBDToHtml(message));
-
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    response.flushBuffer();
-
-    ReloadContext.reload();
   }
 
   /**

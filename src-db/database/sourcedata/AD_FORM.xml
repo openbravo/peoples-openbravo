@@ -396,7 +396,6 @@ Use Module Management to browse the currently installed modules, to check for up
 <span>After installing or uninstalling a module, you must restart the application context for any changes to take effect.</span>
 <ul>
 <li><b><a name="restart">Restart server:</a></b> Restarts the application server and launches the login screen.</li>
-<li><b><a name="reload">Reload context:</a></b> Reloads the Openbravo context and launches the login screen. <i>Note:</i> There is a know issue with the application server leaking 30MB of memory each time the context is reloaded.</li>
 <li><b><a name="nothing">Take no action:</a></b> Select if you intend to restart the server or reload the application manually, later.</li>
 </ul></div>]]></HELP>
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>

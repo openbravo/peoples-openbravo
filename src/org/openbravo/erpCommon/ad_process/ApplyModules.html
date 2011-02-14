@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -211,11 +211,6 @@
         closePage();
         return false;
       } else if (document.frmMain.option[1].checked) {
-        window.opener.submitCommandForm('RELOAD', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
-        restarting=true;
-        closePage();
-        return false;
-      } else if (document.frmMain.option[2].checked) {
         closePage();
         return;
       }
@@ -734,15 +729,12 @@
               
               <tr><td colspan="2">
                 <div style="overflow: auto; width: 600px;">
-                  <span class="PlainText_normal">In order for the changes to take effect, you need to restart the servlet container or reload the Openbravo application.</span>
+                  <span class="PlainText_normal">In order for the changes to take effect, you need to restart the servlet container.</span>
                 </div>
               </td></tr>
               <tr><td height="10"></td></tr>
               <tr>
                 <td colspan="4"><span class="Radio_container_NOT_focused"><input name="option" required="true" value="restart" type="radio" checked></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Restart servlet container now &nbsp;<a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1', true);return false;" target="_blank" href="#restart">learn more</a></span></td>
-              </tr>
-              <tr>
-                <td colspan="4"><span class="Radio_container_NOT_Focused"><input name="option" required="true" value="reload" type="radio"></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Reload the Openbravo application now &nbsp;<a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1', true);return false;" target="_blank" href="#reload">learn more</a></span></td>
               </tr>
               <tr>
                 <td colspan="4"><span class="Radio_container_NOT_Focused"><input name="option" required="true" value="doNothing" type="radio"></span><span class="PlainText_normal" style="padding: 0 0 0 10;">Don't do anything now. I will reload the Openbravo application manually later &nbsp;<a onclick="openHelp(null, '../ad_help/DisplayHelp.html', 'HELP', false, null, null, 'X', '25C886DA08E947F29AAC1D30D8B753A1', true);return false;" target="_blank" href="#nothing">learn more</a></span></td>
