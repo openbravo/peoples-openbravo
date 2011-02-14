@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+  <database name="VIEW M_PRODUCT_PRICE_WAREHOUSE_V">
+    <view name="M_PRODUCT_PRICE_WAREHOUSE_V"><![CDATA[SELECT w.m_warehouse_id || pp.m_productprice_id AS m_product_price_warehouse_v_id, p.ad_client_id, p.ad_org_id, p.isactive, p.updated, p.updatedby, p.created, p.createdby, p.m_product_id, w.m_warehouse_id, pp.m_productprice_id, m_bom_qty_available(p.m_product_id, w.m_warehouse_id, NULL) AS qty_available, m_bom_qty_onhand(p.m_product_id, w.m_warehouse_id, NULL) AS qty_onhand, m_bom_qty_reserved(p.m_product_id, w.m_warehouse_id, NULL) AS qty_reserved, m_bom_qty_ordered(p.m_product_id, w.m_warehouse_id, NULL) AS qty_ordered, m_bom_pricelist(p.m_product_id, pp.m_pricelist_version_id) AS pricelist, m_bom_pricestd(p.m_product_id, pp.m_pricelist_version_id) AS pricestd, m_bom_pricelimit(p.m_product_id, pp.m_pricelist_version_id) AS pricelimit
+FROM m_product p, m_warehouse w, m_productprice pp
+WHERE p.m_product_id = pp.m_product_id AND p.ad_client_id = w.ad_client_id AND (ad_isorgincluded(p.ad_org_id, w.ad_org_id, p.ad_client_id) > 0 OR ad_isorgincluded(w.ad_org_id, p.ad_org_id, p.ad_client_id) > 0)]]></view>
+  </database>
