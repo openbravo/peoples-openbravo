@@ -194,7 +194,7 @@ public class OBBindings {
     FilterExpression expr;
     try {
       expr = (FilterExpression) OBClassLoader.getInstance().loadClass(className).newInstance();
-      return expr.getExpression();
+      return expr.getExpression(requestMap);
     } catch (Exception e) {
       log.error("Error trying to get filter expression from class: " + className, e);
     }

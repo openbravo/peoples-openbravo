@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.application;
 
+import java.util.Map;
+
 /**
  * Filter expression is the way to expose any Java to get complex filter expressions. Used in the
  * filter/default expression like: OB.getFilterExpression('org.openbravo.somepackage.someClassName')
@@ -26,5 +28,5 @@ package org.openbravo.client.application;
  */
 public interface FilterExpression {
 
-  public String getExpression();
+  public String getExpression(Map<String, String> requestMap);
 }
