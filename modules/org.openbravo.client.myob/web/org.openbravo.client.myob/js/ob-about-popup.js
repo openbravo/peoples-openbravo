@@ -165,7 +165,7 @@ isc.defineClass('OBAboutPopupWindow', isc.OBPopup).addProperties({
             
     theSections = isc.SectionStack.create({
       visibilityMode: 'multiple',
-      height: '100%',
+      height: '100%'
     });
       
     isc.SectionStack.addProperties({
@@ -188,7 +188,7 @@ isc.defineClass('OBAboutPopupWindow', isc.OBPopup).addProperties({
     verticalLayout.addMember(theSections);
       
     return verticalLayout;
-  },
+  }
   
 });
 
