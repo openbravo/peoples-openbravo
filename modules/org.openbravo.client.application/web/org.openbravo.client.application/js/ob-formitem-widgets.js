@@ -280,6 +280,34 @@ isc.OBSearchItem.addProperties({
   }
 });
 
+isc.ClassFactory.defineClass('OBPAttributeSearchItem', OBSearchItem);
+
+isc.OBPAttributeSearchItem.addProperties({
+  showPicker: function(){
+    if (this.isDisabled()) {
+      return;
+    }
+    var parameters = [], index = 0, i = 0, length, propDef, inpName, values;
+    var form = this.form, view = form.view;
+    if (this.isFocusable()) {
+      this.focusInItem();
+    }
+    parameters[index++] = 'inpKeyValue';
+    if (this.getValue()) {
+      parameters[index++] = this.getValue();
+    } else {
+      parameters[index++] = '';
+    }
+    values = view.getContextInfo(false, true, true, true);
+    parameters[index++] = 'WindowID';
+    parameters[index++] = view.standardWindow.windowId;
+    parameters[index++] = 'inpwindowId';
+    parameters[index++] = view.standardWindow.windowId;
+    parameters[index++] = 'inpProduct';
+    parameters[index++] = values["inpmProductId"];
+    this.openSearchWindow('/info/AttributeSetInstance.html', parameters, this.getValue());
+  }
+});
 // == OBEncryptedItem ==
 // The type used for encrypted items.
 isc.ClassFactory.defineClass('OBEncryptedItem', isc.PasswordItem);
