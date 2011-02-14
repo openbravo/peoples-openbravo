@@ -1535,7 +1535,7 @@ isc.OBStandardView.addProperties({
     }
     
     if (this.parentView) {
-      isc.addProperties(this.parentView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat), contextInfo);
+      isc.addProperties(contextInfo, this.parentView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat));
     }
     
     return contextInfo;
