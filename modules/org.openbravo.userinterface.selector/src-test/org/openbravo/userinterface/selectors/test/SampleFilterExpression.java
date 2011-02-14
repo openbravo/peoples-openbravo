@@ -18,6 +18,8 @@
  */
 package org.openbravo.userinterface.selectors.test;
 
+import java.util.Map;
+
 import org.openbravo.client.application.FilterExpression;
 
 /**
@@ -28,7 +30,7 @@ import org.openbravo.client.application.FilterExpression;
 public class SampleFilterExpression implements FilterExpression {
 
   @Override
-  public String getExpression() {
+  public String getExpression(Map<String, String> requestMap) {
     return "This is a complex expression";
   }
 
