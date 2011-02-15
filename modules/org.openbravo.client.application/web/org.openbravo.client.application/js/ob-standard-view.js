@@ -176,6 +176,7 @@ isc.OBStandardView.addProperties({
       this.buildStructure();
     }
     
+    OB.TestRegistry.register('org.openbravo.client.application.View_' + this.tabId, this);
     OB.TestRegistry.register('org.openbravo.client.application.ViewGrid_' + this.tabId, this.viewGrid);
     OB.TestRegistry.register('org.openbravo.client.application.ViewForm_' + this.tabId, this.viewForm);
     
@@ -387,6 +388,8 @@ isc.OBStandardView.addProperties({
         this.viewForm.setWidth('100%');
         this.formGridLayout.addMember(this.viewForm);
         this.viewForm.view = this;
+        
+        this.viewGrid.addFormProperties(this.viewForm.obFormProperties);
       }
       
       this.statusBar = isc.OBStatusBar.create({

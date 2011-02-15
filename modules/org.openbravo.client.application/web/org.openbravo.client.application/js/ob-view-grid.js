@@ -223,6 +223,11 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
   
+  // add the properties from the form
+  addFormProperties: function (props) {
+    isc.addProperties(this.editFormDefaults, props);
+  },
+  
   getCellAlign: function(record, rowNum, colNum){
     if (rowNum === this.getEditRow()) {
       return 'center';
@@ -1245,13 +1250,29 @@ isc.OBViewGrid.addProperties({
   },
   
   showInlineEditor : function (rowNum, colNum, newCell, newRow, suppressFocus) {
-    if (this.getEditForm()) {
+
+    if (this.getEditForm() && newRow) {
       this.getEditForm().clearErrors();
     }
-    var ret = this.Super('showInlineEditor', arguments);
+    // if the focus does not get supressed then the clicked field will receive focus
+    // and won't be disabled so the user can already start typing
+    if (newRow) {
+      suppressFocus = true;      
+    }
+    
+    var ret = this.Super('showInlineEditor', [rowNum, colNum, newCell, newRow, suppressFocus]);    
     if (!newRow) {
       return ret;
     }
+
+    if (this.getEditForm() && newRow) {
+      // set the field to focus on after returning from the fic
+      this.getEditForm().setFocusItem(this.getField(colNum).name);
+    }
+    
+    // will be set back on ficreturn
+    this.getEditForm().setDisabled(true);
+
     var record = this.getRecord(rowNum);
      
     this.view.isEditingGrid = true;

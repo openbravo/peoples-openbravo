@@ -48,6 +48,7 @@ OB.ViewFormProperties = {
   numCols: 4,
   colWidths: ['24%', '24%', '24%', '24%'],
   
+  titleOrientation: 'top',
   titleSuffix: '</b>',
   titlePrefix: '<b>',
   requiredTitleSuffix: ' *</b>',
@@ -68,6 +69,13 @@ OB.ViewFormProperties = {
   // is set in the OBLinkedItemSectionItem.initWidget
   linkedItemSection: null,
 
+  initWidget: function() {
+    // add the obFormProperties to ourselves, the obFormProperties
+    // are re-used for inline grid editing
+    isc.addProperties(this, this.obFormProperties);
+    return this.Super('initWidget', arguments);
+  },
+  
   setHasChanged: function(value) {
     this.hasChanged = value;
     this.view.updateTabTitle();
@@ -357,10 +365,13 @@ OB.ViewFormProperties = {
   },
   
   setDisabled: function(state) {
+    var previousAllItemsDisabled = this.allItemsDisabled;
     this.allItemsDisabled = state;
-    var editRow = this.view.viewGrid.getEditRow();
-    if (editRow || editRow === 0) {
-      this.view.viewGrid.refreshRow(editRow);
+    if (previousAllItemsDisabled !== this.allItemsDisabled) {
+      var editRow = this.view.viewGrid.getEditRow();
+      if (editRow || editRow === 0) {
+        this.view.viewGrid.refreshRow(editRow);
+      }
     }
   },
   

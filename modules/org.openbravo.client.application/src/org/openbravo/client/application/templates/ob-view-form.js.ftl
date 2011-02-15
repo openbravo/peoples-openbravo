@@ -18,27 +18,34 @@
 */
 
 isc.OBViewForm.create({
-    titleOrientation: 'top',
     fields: [
     <#list data.fields as field>
       <@createField field/><#if field_has_next>,</#if>
-    </#list>
+    </#list>    
     ],
-    onFieldChanged: function(form, item, value) {
-      var f = form || this,
-          context = this.view.getContextInfo(false, true),
-          currentValues = f.view.getCurrentValues();
-      <#list data.fields as field>
-      <#if field.readOnlyIf != "">
-        if (f.readOnly) {
-          f.getItem('${field.name}').disable();
-        } else if(${field.readOnlyIf}) {
-          f.getItem('${field.name}').disable();
-        } else {
-          f.getItem('${field.name}').enable();
-        }
-      </#if>
-      </#list>
-      f.setFindNewFocusItem();
+        
+    // except for the fields all other form properties should be added to the formProperties
+    // the formProperties are re-used for inline grid editing
+    obFormProperties: {
+      onFieldChanged: function(form, item, value) {
+        var f = form || this,
+            context = this.view.getContextInfo(false, true),
+            currentValues = f.view.getCurrentValues(), otherItem;
+        <#list data.fields as field>
+        <#if field.readOnlyIf != "">
+          otherItem = f.getItem('${field.name}');
+          if (otherItem && otherItem.disable && otherItem.enable) {
+            if (f.readOnly) {
+              otherItem.disable();
+            } else if(${field.readOnlyIf}) {
+              otherItem.disable();
+            } else {
+              otherItem.enable();
+            }
+          }
+        </#if>
+        </#list>
+        f.setFindNewFocusItem();
+      }
     }
 })
