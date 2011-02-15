@@ -245,9 +245,9 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
             + KernelConstants.SKIN_VERSION_PARAMETER
             + "/org.openbravo.client.application/ob-application-styles.js", false));
 
-    // Application
-    globalResources.add(createStaticResource("org.openbravo.client.kernel/"
-        + ApplicationConstants.COMPONENT_TYPE + "/" + ApplicationConstants.MAIN_LAYOUT_ID, false));
+    // Application - dynamic as it contains the generated menu also (which is user/role dependant)
+    globalResources.add(createDynamicResource("org.openbravo.client.kernel/"
+        + ApplicationConstants.COMPONENT_TYPE + "/" + ApplicationConstants.MAIN_LAYOUT_ID));
 
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-view-manager.js", false));

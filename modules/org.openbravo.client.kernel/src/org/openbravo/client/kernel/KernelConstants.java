@@ -67,6 +67,8 @@ public class KernelConstants {
 
   public static final String APPLICATION_COMPONENT_ID = "Application";
 
+  public static final String APPLICATION_DYNAMIC_COMPONENT_ID = "ApplicationDynamic";
+
   public static final String LABELS_COMPONENT_ID = "Labels";
 
   /**
@@ -78,6 +80,11 @@ public class KernelConstants {
    * The primary key of the application template
    */
   public static final String APPLICATION_TEMPLATE_ID = "0627967E56584D3B8B13A3C77ABC48E2";
+
+  /**
+   * The primary key of the application dynamic template
+   */
+  public static final String APPLICATION_DYNAMIC_TEMPLATE_ID = "FF8081812E297131012E2A061112001C";
 
   /**
    * The primary key of the documentation template

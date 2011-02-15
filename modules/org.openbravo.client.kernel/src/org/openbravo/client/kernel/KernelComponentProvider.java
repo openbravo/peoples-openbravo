@@ -56,6 +56,8 @@ public class KernelComponentProvider extends BaseComponentProvider {
       return getComponent(StaticResourceComponent.class);
     } else if (componentId.equals(KernelConstants.APPLICATION_COMPONENT_ID)) {
       return getComponent(ApplicationComponent.class);
+    } else if (componentId.equals(KernelConstants.APPLICATION_DYNAMIC_COMPONENT_ID)) {
+      return getComponent(ApplicationDynamicComponent.class);
     } else if (componentId.equals(KernelConstants.TEST_COMPONENT_ID)) {
       return getComponent(TestComponent.class);
     } else if (componentId.equals(KernelConstants.DOCUMENT_COMPONENT_ID)) {
@@ -70,29 +72,26 @@ public class KernelComponentProvider extends BaseComponentProvider {
   // also covers client dependency
   public String getVersionParameters(String resource) {
     final String versionParam = super.getVersionParameters(resource);
-    if (resource.contains(KernelConstants.APPLICATION_COMPONENT_ID)) {
+    if (resource.contains(KernelConstants.APPLICATION_COMPONENT_ID)
+        || resource.contains(KernelConstants.APPLICATION_DYNAMIC_COMPONENT_ID)) {
       return versionParam + "&_role=" + OBContext.getOBContext().getRole().getId() + "&_org="
           + OBContext.getOBContext().getCurrentOrganization().getId();
     }
     return versionParam;
   }
 
-  /**
-   * @return an empty String (no global resources)
-   * @see org.openbravo.client.kernel.ComponentProvider#getGlobalComponentResources()
-   */
   public List<ComponentResource> getGlobalComponentResources() {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
     globalResources.add(createStaticResource("org.openbravo.client.kernel/"
         + KernelConstants.KERNEL_COMPONENT_TYPE + "/" + KernelConstants.APPLICATION_COMPONENT_ID,
         true));
+    globalResources.add(createDynamicResource("org.openbravo.client.kernel/"
+        + KernelConstants.KERNEL_COMPONENT_TYPE + "/"
+        + KernelConstants.APPLICATION_DYNAMIC_COMPONENT_ID));
     globalResources.add(createStaticResource("org.openbravo.client.kernel/"
         + KernelConstants.KERNEL_COMPONENT_TYPE + "/" + KernelConstants.LABELS_COMPONENT_ID, true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.kernel/js/ob-kernel-utilities.js", true));
-    // globalResources.add(KernelConstants.RESOURCE_STRING_TAG
-    // + "document.write(\"<\" + \"script src='\" + document.location.protocol + \""
-    // + Utility.BUTLER_UTILS_URL + "'><\" + \"/script>\");");
 
     return globalResources;
   }

@@ -31,21 +31,6 @@ var OB = {
         versionDescription: '${data.versionDescription?js_string}'
     },
 
-    User : {
-        id : '${data.user.id}',
-        firstName : '${(data.user.firstName!'')?js_string}',
-        lastName : '${(data.user.lastName!'')?js_string}',
-        userName : '${(data.user.username!'')?js_string}',
-        name : '${(data.user.name!'')?js_string}',
-        email : '${(data.user.email!'')?js_string}',
-        roleId: '${data.role.id}',
-        roleName: '${data.role.name}',
-        clientId: '${data.client.id}',
-        clientName: '${data.client.name}',
-        organizationId: '${data.organization.id}',
-        organizationName: '${data.organization.name}'
-    },
-
     Format : {
         defaultGroupingSize: 3,
         defaultGroupingSymbol: '${data.defaultGroupingSymbol}',
@@ -70,11 +55,5 @@ var OB = {
         ERROR : 'error'        
     },
     
-    I18N: {},
-    
-    AccessibleEntities: {
-    <#list data.accessibleEntities as entity>
-    '${entity.name?js_string}':  true<#if entity_has_next>,</#if>
-    </#list>
-    }
+    I18N: {}
 };

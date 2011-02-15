@@ -599,7 +599,10 @@ public class MenuManager implements Serializable {
 
     public boolean isModal() {
       if (isProcess()) {
-        return Utility.isModalProcess(getMenu().getProcess());
+        // done via isModelProcess(String) as is called from different request and getProcess() is
+        // not initialized
+        String processId = (String) DalUtil.getId(getMenu().getProcess());
+        return Utility.isModalProcess(processId);
       }
       return true;
     }

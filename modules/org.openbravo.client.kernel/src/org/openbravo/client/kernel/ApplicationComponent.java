@@ -21,9 +21,7 @@ package org.openbravo.client.kernel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
-import org.openbravo.base.model.Entity;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.UIDefinitionController.FormatDefinition;
@@ -40,7 +38,7 @@ import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
- * The component responsible for generating the application js file.
+ * The component responsible for generating the static part of the application js file.
  * 
  * @author mtaal
  */
@@ -56,13 +54,6 @@ public class ApplicationComponent extends BaseTemplateComponent {
           UIDefinitionController.INPUTFORMAT_QUALIFIER);
     }
     return formatDefinition;
-  }
-
-  public Set<Entity> getAccessibleEntities() {
-    final Set<Entity> entities = OBContext.getOBContext().getEntityAccessChecker()
-        .getReadableEntities();
-    entities.addAll(OBContext.getOBContext().getEntityAccessChecker().getWritableEntities());
-    return entities;
   }
 
   public String getDefaultGroupingSymbol() {
@@ -104,18 +95,22 @@ public class ApplicationComponent extends BaseTemplateComponent {
     return props.getProperty(KernelConstants.DATETIME_FORMAT_PROPERTY, "dd-MM-yyyy HH:mm:ss");
   }
 
+  @Deprecated
   public User getUser() {
     return OBContext.getOBContext().getUser();
   }
 
+  @Deprecated
   public Client getClient() {
     return OBContext.getOBContext().getCurrentClient();
   }
 
+  @Deprecated
   public Organization getOrganization() {
     return OBContext.getOBContext().getCurrentOrganization();
   }
 
+  @Deprecated
   public Role getRole() {
     return OBContext.getOBContext().getRole();
   }

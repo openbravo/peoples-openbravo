@@ -60,8 +60,8 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
         false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.myob/js/ob-getting-started-view.js", false));
-    globalResources.add(createStaticResource("org.openbravo.client.kernel/" + COMPONENT_TYPE + "/"
-        + MyOpenbravoComponent.COMPONENT_ID, false));
+    globalResources.add(createDynamicResource("org.openbravo.client.kernel/" + COMPONENT_TYPE + "/"
+        + MyOpenbravoComponent.COMPONENT_ID));
     globalResources
         .add(createStaticResource("web/org.openbravo.client.myob/js/ob-widget.js", false));
     globalResources.add(createStaticResource("web/org.openbravo.client.myob/js/ob-url-widget.js",
