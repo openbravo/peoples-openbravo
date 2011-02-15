@@ -171,7 +171,7 @@ isc.defineClass('OBAboutPopupWindow', isc.OBPopup).addProperties({
     isc.SectionStack.addProperties({
       sectionHeaderClass: 'OBSectionItemButton',
       headerHeight:22
-    })
+    });
       
     theSections.addSection({
       title: OB.I18N.getLabel('OBKMO_WidgetSection'), 
