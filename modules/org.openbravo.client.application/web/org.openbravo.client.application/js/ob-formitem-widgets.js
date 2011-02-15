@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,8 +42,8 @@ isc.OBCheckboxItem.addProperties({
   showValueIconOver: true,
   showValueIconFocused: true,
   defaultValue: false,
-  checkedImage: "[SKIN]/../../org.openbravo.client.application/images/form/checked.png",
-  uncheckedImage: "[SKIN]/../../org.openbravo.client.application/images/form/unchecked.png"
+  checkedImage: '[SKIN]/../../org.openbravo.client.application/images/form/checked.png',
+  uncheckedImage: '[SKIN]/../../org.openbravo.client.application/images/form/unchecked.png'
 });
 
 // == OBLinkTitleItem ==
@@ -394,7 +394,7 @@ isc.OBSectionItem.addProperties({
     
     // when expanding set the focus to the first focusable item     
     // set focus with a short delay to give the section time to draw
-    this.delayCall("setNewFocusItemExpanding", [], 100);
+    this.delayCall('setNewFocusItemExpanding', [], 100);
     
     // NOTE: if the layout structure changes then this needs to be 
     // changed probably to see where the scrollbar is to scroll
@@ -891,12 +891,15 @@ isc.ClassFactory.defineClass('OBNumberItem', TextItem);
 isc.OBNumberItem.addProperties({
   typeInstance: null,
   
-  keyPressFilter: '[0-9.,-]',
+  keyPressFilterNumeric: '[0-9.,-=]',
+
+  allowMath: true,
   
   validateOnExit: true,
   valueValidator: null,
   
   init: function(){
+    this.setKeyPressFilter(this.keyPressFilterNumeric);
     this.typeInstance = SimpleType.getType(this.type);
     var newValidators = [];
     // get rid of the isFloat validators, as we have 
@@ -973,7 +976,7 @@ isc.OBNumberItem.addProperties({
   
   // handles the decimal point of the numeric keyboard
   manageDecPoint: function(keyCode){
-    var decSeparator = this.typeInstance.decSeparator;
+    var decSeparator = this.getDecSeparator();
     
     if (decSeparator === '.') {
       return true;
@@ -1012,9 +1015,59 @@ isc.OBNumberItem.addProperties({
     }
     return true;
   },
+
+  manageEvalExpression: function() {
+    var obj = this;
+    var caretPosition = 0;
+    if (this.getSelectionRange()) {
+      caretPosition = obj.getSelectionRange()[0];
+    }
+    setTimeout(function(){
+      var inputValue = obj.getElementValue().toString();
+      var checkA = false; // Checks if there is a = in the beginning
+      var checkB = false; // Checks if any undesired = is/has to be removed from the inputValue
+
+      if (inputValue.indexOf('=') === 0) {
+        checkA = true;
+      }
+      if (obj.allowMath) {
+        while (inputValue.indexOf('=',1) !== -1) {
+          checkB = true;
+          if (checkA) {
+            inputValue = inputValue.substring(1, inputValue.length);
+          }
+          inputValue = inputValue.replace('=', '');
+          if (checkA) {
+            inputValue = '=' + inputValue;
+          }
+        }
+      } else {
+        while (inputValue.indexOf('=') !== -1) {
+          checkB = true;
+          inputValue = inputValue.replace('=', '');
+        }
+      }
+
+      if (checkA && obj.allowMath) {
+        obj.setKeyPressFilter('');
+      } else {
+        obj.setKeyPressFilter(obj.keyPressFilterNumeric);
+      }
+
+      if (checkB) {
+        obj.setElementValue(inputValue);
+        obj.setSelectionRange(caretPosition, caretPosition);
+      }
+    }, 5);
+  },
   
   keyDown: function(item, form, keyName){
+    this.keyDownAction(item, form, keyName);
+  },
+
+  keyDownAction: function(item, form, keyName){
     var keyCode = isc.EventHandler.lastEvent.nativeKeyCode;
+    this.manageEvalExpression();
     this.manageDecPoint(keyCode);
   },
   
@@ -1045,12 +1098,215 @@ isc.OBNumberItem.addProperties({
     }
     return this.Super('focus', arguments);
   },
+
+  checkMathExpression: function(expression) {
+    var jsExpression = expression;
+    var dummy = 'xyxdummyxyx';
+
+    function replaceAll(text, what, byWhat) {
+      while (text.toString().indexOf(what) !== -1) {
+        text = text.toString().replace(what, dummy);
+      }
+      while (text.toString().indexOf(dummy) !== -1) {
+        text = text.toString().replace(dummy, byWhat);
+      }
+      return text;
+    }
+    jsExpression = jsExpression.substring(1, jsExpression.length);
+
+    jsExpression = replaceAll(jsExpression, '.', '');
+    jsExpression = replaceAll(jsExpression, ',', '');
+    jsExpression = replaceAll(jsExpression, ';', '');
+    jsExpression = replaceAll(jsExpression, '(', '');
+    jsExpression = replaceAll(jsExpression, ')', '');
+    jsExpression = replaceAll(jsExpression, ' ', '');
+
+    jsExpression = replaceAll(jsExpression, '0', '');
+    jsExpression = replaceAll(jsExpression, '1', '');
+    jsExpression = replaceAll(jsExpression, '2', '');
+    jsExpression = replaceAll(jsExpression, '3', '');
+    jsExpression = replaceAll(jsExpression, '4', '');
+    jsExpression = replaceAll(jsExpression, '5', '');
+    jsExpression = replaceAll(jsExpression, '6', '');
+    jsExpression = replaceAll(jsExpression, '7', '');
+    jsExpression = replaceAll(jsExpression, '8', '');
+    jsExpression = replaceAll(jsExpression, '9', '');
+
+    jsExpression = replaceAll(jsExpression, '+', '');
+    jsExpression = replaceAll(jsExpression, '-', '');
+    jsExpression = replaceAll(jsExpression, '*', '');
+    jsExpression = replaceAll(jsExpression, '/', '');
+    jsExpression = replaceAll(jsExpression, '%', '');
+
+    jsExpression = replaceAll(jsExpression, 'E', '');
+    jsExpression = replaceAll(jsExpression, 'LN2', '');
+    jsExpression = replaceAll(jsExpression, 'LN10', '');
+    jsExpression = replaceAll(jsExpression, 'LOG2E', '');
+    jsExpression = replaceAll(jsExpression, 'LOG10E', '');
+    jsExpression = replaceAll(jsExpression, 'PI', '');
+    jsExpression = replaceAll(jsExpression, 'SQRT1_2', '');
+    jsExpression = replaceAll(jsExpression, 'SQRT2', '');
+
+    jsExpression = replaceAll(jsExpression, 'abs', '');
+    jsExpression = replaceAll(jsExpression, 'acos', '');
+    jsExpression = replaceAll(jsExpression, 'asin', '');
+    jsExpression = replaceAll(jsExpression, 'atan', '');
+    jsExpression = replaceAll(jsExpression, 'atan2', '');
+    jsExpression = replaceAll(jsExpression, 'ceil', '');
+    jsExpression = replaceAll(jsExpression, 'cos', '');
+    jsExpression = replaceAll(jsExpression, 'exp', '');
+    jsExpression = replaceAll(jsExpression, 'floor', '');
+    jsExpression = replaceAll(jsExpression, 'log', '');
+    jsExpression = replaceAll(jsExpression, 'max', '');
+    jsExpression = replaceAll(jsExpression, 'min', '');
+    jsExpression = replaceAll(jsExpression, 'pow', '');
+    jsExpression = replaceAll(jsExpression, 'random', '');
+    jsExpression = replaceAll(jsExpression, 'round', '');
+    jsExpression = replaceAll(jsExpression, 'sin', '');
+    jsExpression = replaceAll(jsExpression, 'sqrt', '');
+    jsExpression = replaceAll(jsExpression, 'tan', '');
+
+    if (jsExpression === '') {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+  // ** {{{ evalMathExpression }}} **
+  // evalMathExpression allows you to perform mathematical tasks.
+  //
+  // All operations can be done by using the symbol = at the beginning of the numeric input
+  //
+  // Syntax examples:
+  // =PI // Returns 3.14159
+  // =1+2+3 // Returns 6
+  // =sqrt(16) // Returns 4
+  //
+  // Binary operations:
+  // a + b             Add a and b
+  // a - b             Subtract b from a
+  // a * b             Multiply a by b
+  // a / b             Divide a by b
+  // a % b             Find the remainder of division of a by b
+  //
+  // Constants:
+  // E                 Returns Euler's number (approx. 2.718)
+  // LN2               Returns the natural logarithm of 2 (approx. 0.693)
+  // LN10              Returns the natural logarithm of 10 (approx. 2.302)
+  // LOG2E             Returns the base-2 logarithm of E (approx. 1.442)
+  // LOG10E            Returns the base-10 logarithm of E (approx. 0.434)
+  // PI                Returns PI (approx. 3.14159)
+  // SQRT1_2           Returns the square root of 1/2 (approx. 0.707)
+  // SQRT2             Returns the square root of 2 (approx. 1.414)
+  //
+  // Operator functions
+  // abs(x)            Returns the absolute value of x
+  // acos(x)           Returns the arccosine of x, in radians
+  // asin(x)           Returns the arcsine of x, in radians
+  // atan(x)           Returns the arctangent of x as a numeric value between -PI/2 and PI/2 radians
+  // atan2(y;x)        Returns the arctangent of the quotient of its arguments
+  // ceil(x)           Returns x, rounded upwards to the nearest integer
+  // cos(x)            Returns the cosine of x (x is in radians)
+  // exp(x)            Returns the value of Ex
+  // floor(x)          Returns x, rounded downwards to the nearest integer
+  // log(x)            Returns the natural logarithm (base E) of x
+  // max(x;y;z;...;n)  Returns the number with the highest value
+  // min(x;y;z;...;n)  Returns the number with the lowest value
+  // pow(x;y)          Returns the value of x to the power of y
+  // random()          Returns a random number between 0 and 1
+  // round(x)          Rounds x to the nearest integer
+  // sin(x)            Returns the sine of x (x is in radians)
+  // sqrt(x)           Returns the square root of x
+  // tan(x)            Returns the tangent of an angle
+  evalMathExpression: function(expression) {
+    if (!this.checkMathExpression(expression)) {
+      return 'error';
+    }
+    var jsExpression = expression;
+    var dummy = 'xyxdummyxyx';
+    var result;
+    var decSeparator = this.getDecSeparator();
+    var groupSeparator = this.getGroupSeparator();
+    function replaceAll(text, what, byWhat) {
+      while (text.toString().indexOf(what) !== -1) {
+        text = text.toString().replace(what, dummy);
+      }
+      while (text.toString().indexOf(dummy) !== -1) {
+        text = text.toString().replace(dummy, byWhat);
+      }
+      return text;
+    }
+    jsExpression = jsExpression.substring(1, jsExpression.length);
+
+    jsExpression = replaceAll(jsExpression, groupSeparator, '');
+    jsExpression = replaceAll(jsExpression, decSeparator, '.');
+    jsExpression = replaceAll(jsExpression, ';', ',');
+
+    jsExpression = replaceAll(jsExpression, 'E', 'Math.E');
+    jsExpression = replaceAll(jsExpression, 'LN2', 'Math.LN2');
+    jsExpression = replaceAll(jsExpression, 'LN10', 'Math.LN10');
+    jsExpression = replaceAll(jsExpression, 'LOG2E', 'Math.LOG2E');
+    jsExpression = replaceAll(jsExpression, 'LOG10E', 'Math.LOG10E');
+    jsExpression = replaceAll(jsExpression, 'PI', 'Math.PI');
+    jsExpression = replaceAll(jsExpression, 'SQRT1_2', 'Math.SQRT1_2');
+    jsExpression = replaceAll(jsExpression, 'SQRT2', 'Math.SQRT2');
+
+    jsExpression = replaceAll(jsExpression, 'abs', 'Math.abs');
+    jsExpression = replaceAll(jsExpression, 'acos', 'Math.acos');
+    jsExpression = replaceAll(jsExpression, 'asin', 'Math.asin');
+    jsExpression = replaceAll(jsExpression, 'atan', 'Math.atan');
+    jsExpression = replaceAll(jsExpression, 'atan2', 'Math.atan2');
+    jsExpression = replaceAll(jsExpression, 'ceil', 'Math.ceil');
+    jsExpression = replaceAll(jsExpression, 'cos', 'Math.cos');
+    jsExpression = replaceAll(jsExpression, 'exp', 'Math.exp');
+    jsExpression = replaceAll(jsExpression, 'floor', 'Math.floor');
+    jsExpression = replaceAll(jsExpression, 'log', 'Math.log');
+    jsExpression = replaceAll(jsExpression, 'max', 'Math.max');
+    jsExpression = replaceAll(jsExpression, 'min', 'Math.min');
+    jsExpression = replaceAll(jsExpression, 'pow', 'Math.pow');
+    jsExpression = replaceAll(jsExpression, 'random', 'Math.random');
+    jsExpression = replaceAll(jsExpression, 'round', 'Math.round');
+    jsExpression = replaceAll(jsExpression, 'sin', 'Math.sin');
+    jsExpression = replaceAll(jsExpression, 'sqrt', 'Math.sqrt');
+    jsExpression = replaceAll(jsExpression, 'tan', 'Math.tan');
+
+    try {
+      result = eval(jsExpression);
+      if (isNaN(result)) {
+        result = 'error';
+      }
+    } catch (e) {
+      result = 'error';
+    }
+
+    //result = replaceAll(result, '.', decSeparator);
+    return result;
+  },
   
   blur: function(){
+    var value = this.getElementValue().toString();
+    var expressionValue;
+    var obj = this;
+    if (this.allowMath && value.indexOf('=') === 0) {
+      expressionValue = this.evalMathExpression(value);
+      if (expressionValue !== 'error') {
+        expressionValue = parseFloat(expressionValue, 10);
+      } else {
+        setTimeout(function() {
+          obj.setElementValue(value);
+        }, 50);
+        return this.Super('blur', arguments);
+      }
+      this.setValue(expressionValue);
+      this.validate();
+    }
+
+    value = this.getValue();
     // first check if the number is valid
-    if (!isc.isA.String(this.getValue())) {
+    if (!isc.isA.String(value)) {
       // format the value displayed
-      this.setElementValue(this.mapValueToDisplay(this.getValue()));
+      this.setElementValue(this.mapValueToDisplay(value));
     }
     return this.Super('blur', arguments);
   },
@@ -1080,4 +1336,3 @@ isc.OBNumberItem.addProperties({
     }
   }]
 });
-
