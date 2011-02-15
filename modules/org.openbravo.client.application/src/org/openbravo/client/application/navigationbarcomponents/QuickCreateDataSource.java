@@ -109,7 +109,9 @@ public class QuickCreateDataSource extends ReadOnlyDataSourceService {
         data.put("modal", menuOption.isModal());
 
         data.put(JsonConstants.IDENTIFIER, menuOption.getLabel());
-        data.put(JsonConstants.ID, menuOption.getId());
+        // use dbid to be sure that it is unique
+        data.put(JsonConstants.ID, menuOption.getDbId());
+        data.put("viewValue", menuOption.getId());
         data.put(QuickLaunchDataSource.OPTION_TYPE, QuickLaunchDataSource.OPTION_TYPE_TAB);
         if (menuOption.getMenu() != null && menuOption.getMenu().getWindow() != null) {
           data.put(QuickLaunchDataSource.WINDOW_ID, menuOption.getMenu().getWindow().getId());
