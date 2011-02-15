@@ -1261,6 +1261,7 @@ isc.OBStandardView.addProperties({
           }
           view.viewGrid.updateRowCountDisplay();
           view.refreshChildViews();
+          view.refreshParentRecord();
         } else {
           // get the error message from the dataObject 
           if (resp.dataObject && resp.dataObject.response && resp.dataObject.response.error && resp.dataObject.response.error.message) {
@@ -1535,7 +1536,8 @@ isc.OBStandardView.addProperties({
     }
     
     if (this.parentView) {
-      isc.addProperties(contextInfo, this.parentView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat));
+      // note parent properties do not overwrite child properties
+      contextInfo = isc.addProperties(this.parentView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat), contextInfo);
     }
     
     return contextInfo;
