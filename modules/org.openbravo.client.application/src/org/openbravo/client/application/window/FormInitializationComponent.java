@@ -515,7 +515,11 @@ public class FormInitializationComponent extends BaseActionHandler {
       String key = it.next().toString();
       try {
         if (RequestContext.get().getRequestParameter(key) == null) {
-          RequestContext.get().setRequestParameter(key, jsContent.getString(key));
+          String value = jsContent.getString(key);
+          if (value.equals("null")) {
+            value = null;
+          }
+          RequestContext.get().setRequestParameter(key, value);
         }
       } catch (JSONException e) {
         log.error("Couldn't read parameter from the request: " + key, e);
