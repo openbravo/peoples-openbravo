@@ -23,11 +23,12 @@
 //
 isc.defineClass('OBGettingStartedWidget', isc.OBWidget).addProperties({
   contentSource: null,
-  widgetContentUrl: 'https://butler.openbravo.com/web/static-content/en_US/gettingstarted/widget.html',
+  widgetContentUrl: 'https://butler.openbravo.com/heartbeat-server/org.openbravo.butler.communitybranding/CommunityBranding.html' +
+                    '?uimode=gettingStarted&language=' + OB.Application.language_string,
   createWindowContents: function() {
     var loc = document.location;
 
-    this.contentSource = this.widgetContentUrl + '?appurl=' +
+    this.contentSource = this.widgetContentUrl + '&appurl=' +
                           encodeURIComponent(loc.protocol + '//' + loc.hostname +
                                             (loc.port ? ':' + loc.port : '') +
                                             OB.Application.contextUrl) +
