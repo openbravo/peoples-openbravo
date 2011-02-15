@@ -48,6 +48,7 @@ isc.OBViewGrid.addProperties({
   // Controls if an edit link column is created in the grid, set to false to
   // prevent this.
   editGrid: true,
+  updateEditorItemsInPlace: false,
   
   // ** {{{ editLinkFieldProperties }}} **
   // The properties of the ListGridField created for the edit links.
@@ -1716,6 +1717,25 @@ isc.OBGridButtonsComponent.addProperties({
   
   doCancel: function(){
     this.grid.cancelEditing();
+  },
+  
+  saveEdits : function (editCompletionEvent, callback, rowNum, colNum, validateOnly, ficCallDone) {
+	isc.say('hola');
+	if(!ficCallDone){
+      if(this.getEditForm().getFocusItem() && this.getEditForm().handleItemChange(this.getEditForm().getFocusItem())){
+        arguments.push(true);
+	    this.getEditForm().actionAfterFicReturn = {
+            target: this,
+            method: this.saveEdits,
+            parameters: arguments        
+        }
+      }else{
+          this.Super('saveEdits', arguments);
+      }
+	  return;
+    }else{
+      this.Super('saveEdits', arguments);
+    }
   }
   
 });

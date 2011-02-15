@@ -367,6 +367,10 @@ OB.ViewFormProperties = {
       delete this.callSaveAfterFICReturn;
       this.saveRow(true);
     }
+    if (this.actionAfterFicReturn) {
+      OB.Utilities.callAction(this.actionAfterFicReturn);
+      delete this.actionAfterFicReturn;
+    }
   },
   
   setDisabled: function(state) {
@@ -487,7 +491,7 @@ OB.ViewFormProperties = {
           item._hasChanged = false;
           this.inFicCall= true;
           this.doChangeFICCall(item);
-          return;
+          return true;
         }
       }
     }
