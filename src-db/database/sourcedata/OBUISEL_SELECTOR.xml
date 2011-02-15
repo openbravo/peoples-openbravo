@@ -24,7 +24,7 @@
 <!--4C8BC3E8E56441F4B8C98C684A0C9212-->  <NAME><![CDATA[Product Complete]]></NAME>
 <!--4C8BC3E8E56441F4B8C98C684A0C9212-->  <AD_REFERENCE_ID><![CDATA[800011]]></AD_REFERENCE_ID>
 <!--4C8BC3E8E56441F4B8C98C684A0C9212-->  <AD_TABLE_ID><![CDATA[208]]></AD_TABLE_ID>
-<!--4C8BC3E8E56441F4B8C98C684A0C9212-->  <FILTER_EXPRESSION><![CDATA["(prodtrl is null or prodtrllan.language =\'" + OB.getContext().getLanguage().getLanguage() +"\')  and (uomtrl is null or uomtrllan.language = \'" + OB.getContext().getLanguage().getLanguage() +"\')  and (orderuomuomtrl is null or orderuomuomtrl.language = \'" + OB.getContext().getLanguage().getLanguage() +"\')"]]></FILTER_EXPRESSION>
+<!--4C8BC3E8E56441F4B8C98C684A0C9212-->  <FILTER_EXPRESSION><![CDATA["(prodtrl is null or prodtrllan.language =\'" + OB.getContext().getLanguage().getLanguage() +"\')  and (uomtrl is null or uomtrllan.language = \'" + OB.getContext().getLanguage().getLanguage() +"\')  and (orderuomuomtrl is null or orderuomuomtrl.language = \'" + OB.getContext().getLanguage().getLanguage() +"\')" + " and ( (\'"+OB.getWindowId()+"\' in (\'800051\', \'800052\') and prod.production = true) or \'"+OB.getWindowId()+"\' not in (\'800051\', \'800052\'))"]]></FILTER_EXPRESSION>
 <!--4C8BC3E8E56441F4B8C98C684A0C9212-->  <OBCLKER_TEMPLATE_ID><![CDATA[9314DE8599AD44E7BFC4CC50699042AB]]></OBCLKER_TEMPLATE_ID>
 <!--4C8BC3E8E56441F4B8C98C684A0C9212-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--4C8BC3E8E56441F4B8C98C684A0C9212-->  <VALUEFIELD_ID><![CDATA[D5CD42F686A14DFA949052B99900D679]]></VALUEFIELD_ID>
