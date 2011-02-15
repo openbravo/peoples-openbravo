@@ -408,7 +408,7 @@ public class OBViewTab extends BaseTemplateComponent {
     private String readOnlyIf = "";
     private boolean sessionLogic = false;
     private boolean modal = true;
-    private String processId;
+    private String processId = "";
 
     public ButtonField(Field fld) {
       id = fld.getId();
