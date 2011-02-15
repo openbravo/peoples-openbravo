@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_ORDERDISCOUNT_TRG">
-    <trigger name="C_ORDERDISCOUNT_TRG" table="C_ORDER_DISCOUNT" fires="after" insert="false" update="true" delete="true" foreach="row">
+    <trigger name="C_ORDERDISCOUNT_TRG" table="C_ORDER_DISCOUNT" fires="after" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
