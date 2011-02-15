@@ -152,8 +152,16 @@ public class DocFINBankStatement extends AcctServer {
     return retValue;
   } // getBalance
 
-  public boolean getDocumentConfirmation(ConnectionProvider conn, String recordID) {
-    return true;
+  public boolean getDocumentConfirmation(ConnectionProvider conn, String Id) {
+    FIN_BankStatement bankStatement = OBDal.getInstance().get(FIN_BankStatement.class, Id);
+    for (FIN_FinancialAccountAccounting faa : bankStatement.getAccount()
+        .getFINFinancialAccountAcctList()) {
+      if (faa.isEnablebankstatement() && faa.getFINAssetAcct() != null
+          && faa.getFINTransitoryAcct() != null) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
