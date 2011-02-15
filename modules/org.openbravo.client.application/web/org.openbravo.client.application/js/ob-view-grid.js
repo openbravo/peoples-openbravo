@@ -225,7 +225,7 @@ isc.OBViewGrid.addProperties({
   },
   
   // add the properties from the form
-  addFormProperties: function (props) {
+  addFormProperties: function(props){
     isc.addProperties(this.editFormDefaults, props);
   },
   
@@ -288,9 +288,9 @@ isc.OBViewGrid.addProperties({
     var ret = this.Super('show', arguments);
     
     this.view.toolBar.updateButtonState();
-      
+    
     this.updateRowCountDisplay();
-
+    
     this.resetEmptyMessage();
     
     return ret;
@@ -427,7 +427,7 @@ isc.OBViewGrid.addProperties({
     } else if (this.targetRecordId) {
       // direct link from other tab to a specific record
       this.delayedHandleTargetRecord(startRow, endRow);
-    } else if (this.view.shouldOpenDefaultEditMode()) {
+    } else if (this.view.shouldOpenDefaultEditMode() && !this.view.isShowingForm) {
       // ui-pattern: single record/edit mode
       this.view.openDefaultEditView(this.getRecord(startRow));
     } else if (this.data && this.data.getLength() === 1) {
@@ -501,9 +501,9 @@ isc.OBViewGrid.addProperties({
         this.view.openDirectChildTab();
       }
       
-//      if (this.view.isShowingForm) {
-//        this.view.viewForm.editRecord(gridRecord);
-//      }
+      //      if (this.view.isShowingForm) {
+      //        this.view.viewForm.editRecord(gridRecord);
+      //      }
     } else {
       // wait a bit longer til the body is drawn
       this.delayCall('delayedHandleTargetRecord', [startRow, endRow], 200, this);
@@ -702,7 +702,7 @@ isc.OBViewGrid.addProperties({
   getAutoFitExpandField: function(){
     for (var i = 0; i < this.autoExpandFieldNames.length; i++) {
       var field = this.getField(this.autoExpandFieldNames[i]);
-      if(field && field.name){
+      if (field && field.name) {
         return field.name;
       }
     }
@@ -834,7 +834,7 @@ isc.OBViewGrid.addProperties({
   // one has as disadvantage that it is called multiple times
   // for one select/deselect action
   selectionUpdated: function(record, recordList){
-      
+  
     // close any editors we may have
     this.closeAnyOpenEditor();
     this.stopHover();
@@ -1061,7 +1061,7 @@ isc.OBViewGrid.addProperties({
       _new: true,
       id: '_' + new Date().getTime()
     };
-
+    
     this.data.insertCacheData(record, rowNum);
     this.updateRowCountDisplay();
     this.redraw();
@@ -1098,7 +1098,7 @@ isc.OBViewGrid.addProperties({
   
   editComplete: function(rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse){
     var record = this.getRecord(rowNum), editRow, editSession, autoSaveAction;
-
+    
     // a new id has been computed use that now    
     if (record && record._newId) {
       record.id = record._newId;
@@ -1130,7 +1130,7 @@ isc.OBViewGrid.addProperties({
     
     // success invoke the action, if any there
     this.view.standardWindow.autoSaveDone(this.view, true);
-
+    
     // if nothing else got selected, select ourselves then
     if (!this.getSelectedRecord()) {
       this.selectRecord(record);
@@ -1219,7 +1219,25 @@ isc.OBViewGrid.addProperties({
       this.view.toolBar.updateButtonState();
     }
   },
-  
+    
+  saveEdits: function(editCompletionEvent, callback, rowNum, colNum, validateOnly, ficCallDone){
+    if (!validateOnly && !ficCallDone) {
+      if (this.getEditForm().getFocusItem() && this.getEditForm().handleItemChange(this.getEditForm().getFocusItem())) {
+        arguments.push(true);
+        this.getEditForm().actionAfterFicReturn = {
+          target: this,
+          method: this.saveEdits,
+          parameters: arguments
+        };
+      } else {
+        this.Super('saveEdits', arguments);
+      }
+      return;
+    } else {
+      this.Super('saveEdits', arguments);
+    }
+  },
+
   autoSave: function(){
     this.storeUpdatedEditorValue();
     this.endEditing();
@@ -1233,7 +1251,7 @@ isc.OBViewGrid.addProperties({
     if (this.getEditForm()) {
       this.getEditForm().clearErrors();
     }
-
+    
     this.view.messageBar.hide();
     if (record && record.editColumnLayout) {
       record.editColumnLayout.showEditOpen();
@@ -1250,22 +1268,22 @@ isc.OBViewGrid.addProperties({
     return this.Super('getEditDisplayValue', arguments);
   },
   
-  showInlineEditor : function (rowNum, colNum, newCell, newRow, suppressFocus) {
-
+  showInlineEditor: function(rowNum, colNum, newCell, newRow, suppressFocus){
+  
     if (this.getEditForm() && newRow) {
       this.getEditForm().clearErrors();
     }
     // if the focus does not get supressed then the clicked field will receive focus
     // and won't be disabled so the user can already start typing
     if (newRow) {
-      suppressFocus = true;      
+      suppressFocus = true;
     }
     
-    var ret = this.Super('showInlineEditor', [rowNum, colNum, newCell, newRow, suppressFocus]);    
+    var ret = this.Super('showInlineEditor', [rowNum, colNum, newCell, newRow, suppressFocus]);
     if (!newRow) {
       return ret;
     }
-
+    
     if (this.getEditForm() && newRow) {
       // set the field to focus on after returning from the fic
       this.getEditForm().setFocusItem(this.getField(colNum).name);
@@ -1273,9 +1291,9 @@ isc.OBViewGrid.addProperties({
     
     // will be set back on ficreturn
     this.getEditForm().setDisabled(true);
-
+    
     var record = this.getRecord(rowNum);
-     
+    
     this.view.isEditingGrid = true;
     
     record[this.recordBaseStyleProperty] = this.baseStyleEdit;
@@ -1300,10 +1318,10 @@ isc.OBViewGrid.addProperties({
     if (record && record.editColumnLayout) {
       record.editColumnLayout.showSaveCancel();
     }
-
+    
     this.view.messageBar.hide();
     this.view.toolBar.updateButtonState();
-
+    
     return ret;
   },
   
@@ -1325,7 +1343,7 @@ isc.OBViewGrid.addProperties({
     this.refreshRow(rowNum);
   },
   
-  closeAnyOpenEditor: function() {
+  closeAnyOpenEditor: function(){
     // close any editors we may have
     if (this.getEditRow() || this.getEditRow() === 0) {
       this.endEditing();
@@ -1717,24 +1735,5 @@ isc.OBGridButtonsComponent.addProperties({
   
   doCancel: function(){
     this.grid.cancelEditing();
-  },
-  
-  saveEdits : function (editCompletionEvent, callback, rowNum, colNum, validateOnly, ficCallDone) {
-	if(!ficCallDone){
-      if(this.getEditForm().getFocusItem() && this.getEditForm().handleItemChange(this.getEditForm().getFocusItem())){
-        arguments.push(true);
-	    this.getEditForm().actionAfterFicReturn = {
-            target: this,
-            method: this.saveEdits,
-            parameters: arguments        
-        }
-      }else{
-          this.Super('saveEdits', arguments);
-      }
-	  return;
-    }else{
-      this.Super('saveEdits', arguments);
-    }
-  }
-  
+  }  
 });
