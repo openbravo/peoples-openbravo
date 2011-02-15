@@ -96,8 +96,8 @@ public class PriceListVersionFilterExpression implements FilterExpression {
         PriceListVersion.class);
     plVersionCrit.add(Expression.eq(PriceListVersion.PROPERTY_PRICELIST, priceList));
     plVersionCrit.add(Expression.le(PriceListVersion.PROPERTY_VALIDFROMDATE, date));
-    plVersionCrit.addOrderBy(PriceListVersion.PROPERTY_VALIDFROMDATE, false);
     if (plVersionCrit.count() > 0) {
+      plVersionCrit.addOrderBy(PriceListVersion.PROPERTY_VALIDFROMDATE, false);
       return plVersionCrit.list().get(0);
     }
     return null;
