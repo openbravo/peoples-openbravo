@@ -576,7 +576,7 @@ function openAddTransaction(bankStatementLineId){
                   <button type="button"
                     id="buttonCancel"
                     class="ButtonLink"
-                    onclick="closeThisPage();return false;"
+                    onclick="submitThisPage('CANCEL');return false;"
                     onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;"
                     onblur="buttonEvent('onblur', this);"
                     onkeyup="buttonEvent('onkeyup', this);"
