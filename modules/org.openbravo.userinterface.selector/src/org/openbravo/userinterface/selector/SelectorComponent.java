@@ -120,12 +120,16 @@ public class SelectorComponent extends BaseTemplateComponent {
    * @return the field in the popup to set.
    */
   public String getDefaultPopupFilterField() {
-    if (getSelector().getDisplayfield() != null && getSelector().getDisplayfield().isShowingrid()) {
-      if (!getSelector().isCustomQuery() && getSelector().getDisplayfield().getProperty() != null) {
-        return getSelector().getDisplayfield().getProperty();
-      } else if (getSelector().isCustomQuery()
+    if (getSelector().isCustomQuery()) {
+      if (getSelector().getDisplayfield() != null
           && getSelector().getDisplayfield().getDisplayColumnAlias() != null) {
         return getSelector().getDisplayfield().getDisplayColumnAlias();
+      }
+      return JsonConstants.IDENTIFIER;
+    }
+    if (getSelector().getDisplayfield() != null && getSelector().getDisplayfield().isShowingrid()) {
+      if (getSelector().getDisplayfield().getProperty() != null) {
+        return getSelector().getDisplayfield().getProperty();
       } else {
         return getSelector().getDisplayfield().getObserdsDatasourceField().getName();
       }
