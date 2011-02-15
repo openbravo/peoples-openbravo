@@ -52,7 +52,7 @@
       <foreign-key foreignTable="AD_ORG" name="FIN_PAYMENT_RUN_PAYMENT_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="FIN_PAYMENT" name="FIN_PAYMENTRUNPAY_PAYMENT">
+      <foreign-key foreignTable="FIN_PAYMENT" name="FIN_PAYMENTRUNPAY_PAYMENT" onDelete="cascade">
         <reference local="FIN_PAYMENT_ID" foreign="FIN_PAYMENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="FIN_PAYMENT_RUN" name="FIN_PAYMENTRUNPAY_PAYMENTRUN">
