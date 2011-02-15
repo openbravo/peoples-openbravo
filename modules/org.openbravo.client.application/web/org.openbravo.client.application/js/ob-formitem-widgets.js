@@ -304,7 +304,7 @@ isc.OBPAttributeSearchItem.addProperties({
     parameters[index++] = 'inpwindowId';
     parameters[index++] = view.standardWindow.windowId;
     parameters[index++] = 'inpProduct';
-    parameters[index++] = values["inpmProductId"];
+    parameters[index++] = values.inpmProductId;
     this.openSearchWindow('/info/AttributeSetInstance.html', parameters, this.getValue());
   }
 });
