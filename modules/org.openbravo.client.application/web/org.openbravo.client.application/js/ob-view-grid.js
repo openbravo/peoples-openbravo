@@ -1720,7 +1720,6 @@ isc.OBGridButtonsComponent.addProperties({
   },
   
   saveEdits : function (editCompletionEvent, callback, rowNum, colNum, validateOnly, ficCallDone) {
-	isc.say('hola');
 	if(!ficCallDone){
       if(this.getEditForm().getFocusItem() && this.getEditForm().handleItemChange(this.getEditForm().getFocusItem())){
         arguments.push(true);
