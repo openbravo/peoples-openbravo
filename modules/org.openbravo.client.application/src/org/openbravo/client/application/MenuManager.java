@@ -89,6 +89,7 @@ public class MenuManager implements Serializable {
 
         // set the globals
         final MenuOption localCachedRoot = new MenuOption();
+        localCachedRoot.setDbId("-1"); // just use any value
         selectableMenuOptions = new ArrayList<MenuOption>();
         for (MenuOption menuOption : menuOptions) {
           if (menuOption.getParentMenuOption() == null) {
@@ -404,6 +405,7 @@ public class MenuManager implements Serializable {
       if (addOption) {
         final MenuOption menuOption = new MenuOption();
         menuOption.setTreeNode(treeNode);
+        menuOption.setDbId(treeNode.getId());
         if (inactiveSummary) {
           menuOption.setVisible(false);
         }
@@ -433,6 +435,7 @@ public class MenuManager implements Serializable {
     private String label;
     private MenuEntryType type = MenuEntryType.Summary;
     private String id;
+    private String dbId;
     private Menu menu;
     private Tab tab;
     private Form form;
@@ -642,6 +645,14 @@ public class MenuManager implements Serializable {
 
     public boolean isShowInClassicMode() {
       return showInClassicMode;
+    }
+
+    public String getDbId() {
+      return dbId;
+    }
+
+    public void setDbId(String dbId) {
+      this.dbId = dbId;
     }
   }
 
