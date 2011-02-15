@@ -90,6 +90,10 @@ public class ApplicationComponent extends BaseTemplateComponent {
     return OBContext.getOBContext().getLanguage().getId();
   }
 
+  public String getLanguage() {
+    return OBContext.getOBContext().getLanguage().getLanguage();
+  }
+
   public String getDateFormat() {
     final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
     return props.getProperty(KernelConstants.DATE_FORMAT_PROPERTY, "dd-MM-yyyy");

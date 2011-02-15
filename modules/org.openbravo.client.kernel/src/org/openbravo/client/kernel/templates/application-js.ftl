@@ -20,7 +20,8 @@
 
 var OB = {
     Application : {
-        language : '${data.languageId?js_string}',
+        language: '${data.languageId?js_string}',
+        language_string: '${data.language?js_string}',
         systemVersion : '${data.systemVersion?js_string}', // global version used in all hyperlinks
         contextUrl: '${data.contextUrl}',
         communityBrandingStaticUrl: '${data.communityBrandingStaticUrl?js_string}',
