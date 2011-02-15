@@ -288,6 +288,15 @@ isc.OBGrid.addProperties({
     }, this.getCriteria());
     
     OB.Utilities.postThroughHiddenForm(dsURL, d);
+  },
+  
+  editorKeyDown : function (item, keyName) {
+    if (item) {
+      if (typeof item.keyDownAction === 'function') {
+        item.keyDownAction();
+      }
+    }
+    return this.Super('editorKeyDown', arguments);
   }
 });
 
