@@ -362,6 +362,11 @@ OB.ViewFormProperties = {
     // note onFieldChanged uses the form.readOnly set above
     this.onFieldChanged(this);
     this.focus();
+    delete this.inFicCall;
+    if (this.callSaveAfterFICReturn) {
+      delete this.callSaveAfterFICReturn;
+      this.saveRow(true);
+    }
   },
   
   setDisabled: function(state) {
@@ -480,6 +485,7 @@ OB.ViewFormProperties = {
       for (i = 0; i < this.dynamicCols.length; i++) {
         if (this.dynamicCols[i] === item.inpColumnName) {
           item._hasChanged = false;
+          this.inFicCall= true;
           this.doChangeFICCall(item);
           return;
         }
@@ -583,7 +589,7 @@ OB.ViewFormProperties = {
   // there the save call is done through the grid saveEditedValues
   // function
   saveRow: function(){
-    var i, length, flds, form = this;
+    var i, length, flds, form = this, ficCallDone;
     var record = form.view.viewGrid.getSelectedRecord(), recordIndex = form.view.viewGrid.getRecordIndex(record);
     
     form.isSaving = true;
@@ -659,11 +665,15 @@ OB.ViewFormProperties = {
       return;
     }
     
-    // last parameter true prevents additional validation
-    this.saveData(callback, {
-      willHandleError: true,
-      formSave: true
-    }, true);
+    if(this.inFicCall){
+      this.callSaveAfterFICReturn = true;
+    }else{
+      // last parameter true prevents additional validation
+      this.saveData(callback, {
+        willHandleError: true,
+        formSave: true
+      }, true);
+    }
   },
   
   // overridden to prevent focus setting when autoSaving
