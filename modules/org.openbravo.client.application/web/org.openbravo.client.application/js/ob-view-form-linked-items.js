@@ -254,6 +254,7 @@ isc.OBLinkedItemLayout.addProperties({
     this.linkedItemListGrid = isc.OBGrid.create({
       width: '50%',
       height: 300,
+      baseStyle: 'OBLinksGrid',
       dataSource: this.linkedItemDS,
       autoFetchData: true,
       showFilterEditor: true,
