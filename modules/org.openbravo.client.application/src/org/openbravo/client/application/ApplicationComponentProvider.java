@@ -236,6 +236,9 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
             + KernelConstants.SKIN_VERSION_PARAMETER
             + "/org.openbravo.client.application/ob-dialog-styles.js", false));
 
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/ob-quick-launch.js", false));
+
     // before the main layout
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
