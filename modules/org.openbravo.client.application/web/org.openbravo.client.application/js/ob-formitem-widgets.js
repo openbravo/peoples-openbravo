@@ -1016,7 +1016,7 @@ isc.OBNumberItem.addProperties({
     return true;
   },
 
-  manageEvalExpression: function() {
+  manageEqualSymbol: function() {
     var obj = this;
     var caretPosition = 0;
     if (this.getSelectionRange()) {
@@ -1067,7 +1067,7 @@ isc.OBNumberItem.addProperties({
 
   keyDownAction: function(item, form, keyName){
     var keyCode = isc.EventHandler.lastEvent.nativeKeyCode;
-    this.manageEvalExpression();
+    this.manageEqualSymbol();
     this.manageDecPoint(keyCode);
   },
   
