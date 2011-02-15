@@ -42,6 +42,8 @@ import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.Template;
+import org.openbravo.client.kernel.reference.UIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -542,6 +544,7 @@ public class SelectorComponent extends BaseTemplateComponent {
 
       localSelectorField.setFilter(selectorField.isFilterable());
       localSelectorField.setDomainType(domainType);
+      localSelectorField.setUIDefinition(getUIDefinition(selectorField));
 
       // determine format
       // if (selectorField.getProperty() != null) {
@@ -637,6 +640,7 @@ public class SelectorComponent extends BaseTemplateComponent {
     private boolean filter;
     private boolean sort;
     private DomainType domainType;
+    private UIDefinition uiDefinition;
 
     public DomainType getDomainType() {
       return domainType;
@@ -676,6 +680,7 @@ public class SelectorComponent extends BaseTemplateComponent {
       result.add(createLocalSelectorFieldProperty("name", name));
       result.add(createLocalSelectorFieldProperty("canFilter", filter));
       result.add(createLocalSelectorFieldProperty("canSort", sort));
+      result.add(createLocalSelectorFieldProperty("type", getType()));
       if ((domainType instanceof PrimitiveDomainType)) {
         final PrimitiveDomainType primitiveDomainType = (PrimitiveDomainType) domainType;
         if (Date.class.isAssignableFrom(primitiveDomainType.getPrimitiveType())) {
@@ -755,6 +760,21 @@ public class SelectorComponent extends BaseTemplateComponent {
         this.value = value;
       }
     }
+
+    public String getType() {
+      if (getUIDefinition() == null) {
+        return "text";
+      }
+      return getUIDefinition().getName();
+    }
+
+    public UIDefinition getUIDefinition() {
+      return uiDefinition;
+    }
+
+    public void setUIDefinition(UIDefinition uiDefinition) {
+      this.uiDefinition = uiDefinition;
+    }
   }
 
   /**
@@ -769,6 +789,24 @@ public class SelectorComponent extends BaseTemplateComponent {
       return (int) (field0.getSortno() - field1.getSortno());
     }
 
+  }
+
+  private UIDefinition getUIDefinition(SelectorField selectorField) {
+    if (selectorField.getObuiselSelector().getTable() != null
+        && selectorField.getProperty() != null) {
+      final String entityName = selectorField.getObuiselSelector().getTable().getName();
+      final Entity entity = ModelProvider.getInstance().getEntity(entityName);
+      final Property property = DalUtil.getPropertyFromPath(entity, selectorField.getProperty());
+      return UIDefinitionController.getInstance().getUIDefinition(property.getColumnId());
+    } else if (selectorField.getObuiselSelector().getTable() != null
+        && selectorField.getObuiselSelector().isCustomQuery()
+        && selectorField.getReference() != null) {
+      return UIDefinitionController.getInstance().getUIDefinition(selectorField.getReference());
+    } else if (selectorField.getObserdsDatasourceField().getReference() != null) {
+      return UIDefinitionController.getInstance().getUIDefinition(
+          selectorField.getObserdsDatasourceField().getReference());
+    }
+    return null;
   }
 
   private DomainType getDomainType(SelectorField selectorField) {

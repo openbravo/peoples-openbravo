@@ -81,7 +81,7 @@ isc.OBSelectorPopupWindow.addProperties({
         }
         
         // on purpose not sending the third boolean param
-        this.selector.form.view.getContextInfo(criteria, {});
+        isc.addProperties(criteria, this.selector.form.view.getContextInfo(false, true));
         
         // also adds the special ORG parameter
         if (this.selector.form.getField('organization')) {
@@ -312,6 +312,7 @@ isc.OBSelectorItem.addProperties({
   popupTextMatchStyle: 'startswith',
   suggestionTextMatchStyle: 'startswith',
   selectOnFocus: true,
+  showOptionsFromDataSource: true,
   // setting this to false means that the change handler is called when picking
   // a value and not earlier
   addUnknownValues: false,
@@ -332,8 +333,6 @@ isc.OBSelectorItem.addProperties({
     fetchDelay: 400,
     showHeaderContextMenu: false
   },
-  
-  valueMap: {},
   
   init: function(){
     this.icons = [{
@@ -372,18 +371,22 @@ isc.OBSelectorItem.addProperties({
       });
     }
     
+    this.optionCriteria = {
+      _selectorDefinitionId: this.selectorDefinitionId
+    };
+    
     return this.Super('init', arguments);
   },
   
   setValueFromGrid: function(record){
     this._hasChanged = true;
     if (!record) {
-      this.clearValue();
+      this.setValue(null);
     } else {
       this.setValue(record[this.valueField]);
     }
-    this._doFICCall = true;
     if (this.form && this.form.handleItemChange) {
+      this._hasChanged = true;
       this.form.handleItemChange(this);
     }
   },
@@ -400,6 +403,13 @@ isc.OBSelectorItem.addProperties({
     return true;
   },
   
+  pickValue: function(value) {
+    var ret = this.Super('pickValue', arguments);
+    this._hasChanged = true;
+    this.form.handleItemChange(this);
+    return ret;
+  },
+  
   getPickListFilterCriteria: function(){
     var criteria = this.Super('getPickListFilterCriteria'), defValue, prop;
     
@@ -413,7 +423,7 @@ isc.OBSelectorItem.addProperties({
     }
     
     // on purpose not passing the third boolean param
-    this.form.view.getContextInfo(criteria, {});
+    isc.addProperties(criteria, this.form.view.getContextInfo(false, true));
     
     // adds the selector id to filter used to get filter information
     criteria._selectorDefinitionId = this.selectorDefinitionId;
@@ -508,7 +518,7 @@ isc.OBSelectorLinkItem.addProperties({
       this.form.setValue(this.displayField, record[this.gridDisplayField]);
       this.updateValueMap(true);
     }
-    this._doFICCall = true;
+    this._hasChanged = true;
     this.form.handleItemChange(this);
   },
   

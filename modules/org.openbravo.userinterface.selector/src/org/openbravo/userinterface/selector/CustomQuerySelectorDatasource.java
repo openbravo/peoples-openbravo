@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
+import org.openbravo.base.model.domaintype.BooleanDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.LongDomainType;
@@ -228,6 +229,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         // add a dummy whereclause to make the query format correct
         whereClause = "1 = 1";
       }
+    } else if (domainType instanceof BooleanDomainType) {
+      whereClause = field.getClauseLeftPart() + " = " + value;
     } else {
       whereClause = "C_IGNORE_ACCENT(" + field.getClauseLeftPart() + ")";
       whereClause += " LIKE C_IGNORE_ACCENT(";
