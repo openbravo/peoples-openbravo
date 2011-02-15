@@ -469,8 +469,11 @@ public class AdvPaymentMngtDao {
     finTrans.setAccount(account);
     finTrans.setLineNo(line);
     finTrans.setFinPayment(payment);
-    String truncateDescription = (description.length() > 255) ? description.substring(0, 252)
-        .concat("...").toString() : description.toString();
+    String truncateDescription = null;
+    if (description != null) {
+      truncateDescription = (description.length() > 255) ? description.substring(0, 252).concat(
+          "...").toString() : description.toString();
+    }
     finTrans.setDescription(truncateDescription);
     finTrans.setDateAcct(accountingDate);
     finTrans.setGLItem(glItem);
@@ -843,10 +846,13 @@ public class AdvPaymentMngtDao {
 
         // Truncate description
         String description = FIN_Payments[i].getDescription();
-        String truncateDescription = (description.length() > 57) ? description.substring(0, 54)
-            .concat("...").toString() : description;
+        String truncateDescription = "";
+        if (description != null) {
+          truncateDescription = (description.length() > 57) ? description.substring(0, 54).concat(
+              "...").toString() : description;
+        }
         FieldProviderFactory.setField(data[i], "paymentDescription",
-            (description.length() > 57) ? description : "");
+            (description != null && description.length() > 57) ? description : "");
         FieldProviderFactory.setField(data[i], "paymentDescriptionTrunc", truncateDescription);
 
         FieldProviderFactory.setField(data[i], "paymentDate", dateFormater.format(

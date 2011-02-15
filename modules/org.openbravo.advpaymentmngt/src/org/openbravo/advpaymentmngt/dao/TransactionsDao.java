@@ -340,10 +340,13 @@ public class TransactionsDao {
 
         // Truncate description
         String description = FIN_Transactions[i].getDescription();
-        String truncateDescription = (description.length() > 42) ? description.substring(0, 39)
-            .concat("...").toString() : description;
-        FieldProviderFactory.setField(data[i], "description",
-            (description.length() > 42) ? description : "");
+        String truncateDescription = "";
+        if (description != null) {
+          truncateDescription = (description.length() > 42) ? description.substring(0, 39).concat(
+              "...").toString() : description;
+        }
+        FieldProviderFactory.setField(data[i], "description", (description != null && description
+            .length() > 42) ? description : "");
         FieldProviderFactory.setField(data[i], "descriptionTrunc", truncateDescription);
 
         FieldProviderFactory.setField(data[i], "paymentAmount", FIN_Transactions[i]
