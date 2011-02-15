@@ -453,15 +453,6 @@ isc.OBListItem.addProperties({
       return '';
     }
     return ret;
-  },
-  
-  // the empty value is a string null instead of a 'null'
-  mapDisplayToValue: function(displayValue) {
-    var ret = this.Super('mapDisplayToValue', arguments);
-    if (ret === 'null') {
-      return null;
-    }
-    return ret;
   }
   
 });

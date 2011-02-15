@@ -414,10 +414,11 @@ OB.ViewFormProperties = {
     // note field can be a datasource field, see above, in that case
     // don't set the entries    
     if (field.form && entries) {
+      var required = field.required;
       for (i = 0; i < entries.length; i++) {
-        id = entries[i][OB.Constants.ID] || null;
+        id = entries[i][OB.Constants.ID] || '';
         identifier = entries[i][OB.Constants.IDENTIFIER] || '';
-        valueMap[id] = (identifier === 'null' ? null : identifier);
+        valueMap[id] = identifier;
       }
       field.setValueMap(valueMap);
     }
