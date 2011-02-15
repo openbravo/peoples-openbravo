@@ -311,7 +311,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     try {
       Object result = engine.eval(sel.getFilterExpression());
       if (result != null && !result.toString().equals("")) {
-        return NEW_FILTER_CLAUSE + result.toString();
+        return NEW_FILTER_CLAUSE + "(" + result.toString() + ")";
       }
     } catch (Exception e) {
       log.error("Error evaluating filter expression: " + e.getMessage(), e);
