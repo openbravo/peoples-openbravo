@@ -30,8 +30,7 @@ isc.OBSelectorPopupWindow.addProperties({
   
   defaultSelectorGridField: {
     canFreeze: true,
-    canGroupBy: false,
-    filterOnKeypress: true
+    canGroupBy: false
   },
   
   initWidget: function(){
