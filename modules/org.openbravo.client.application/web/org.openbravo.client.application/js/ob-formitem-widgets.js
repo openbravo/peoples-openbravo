@@ -67,7 +67,9 @@ isc.ClassFactory.defineClass('OBSearchItem', StaticTextItem);
 isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
 
 // a global function as it is called from classic windows
-function closeSearch(action, value, display, parameters, wait){
+(function(w) {
+
+w.closeSearch = function (action, value, display, parameters, wait){
   var length, i, hiddenInputName, targetFld = isc.OBSearchItem.openSearchItem,
     currentValue = targetFld.getValue();
   if (action === 'SAVE' && currentValue !== value) {    
@@ -98,6 +100,7 @@ function closeSearch(action, value, display, parameters, wait){
   isc.OBSearchItem.openedWindow.close();
   isc.OBSearchItem.openSearchItem = null;
 }
+}(this));
 
 isc.OBSearchItem.addProperties({
   showPickerIcon: true,
