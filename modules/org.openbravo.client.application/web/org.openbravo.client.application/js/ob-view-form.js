@@ -269,8 +269,10 @@ OB.ViewFormProperties = {
     
     this.setDisabled(true);
 
+    // get the editRow before doing the call
+    var editRow = me.view.viewGrid.getEditRow();
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
-      var editValues, editRow = me.view.viewGrid.getEditRow();
+      var editValues;
       if (editRow || editRow === 0) {
         editValues = me.view.viewGrid.getEditValues(editRow);
       }
@@ -382,7 +384,7 @@ OB.ViewFormProperties = {
       delete this.callSaveAfterFICReturn;
       this.saveRow(true);
     }
-    if (editValues.actionAfterFicReturn) {
+    if (editValues && editValues.actionAfterFicReturn) {
       OB.Utilities.callAction(editValues.actionAfterFicReturn);
       delete editValues.actionAfterFicReturn;
     }
@@ -496,6 +498,10 @@ OB.ViewFormProperties = {
   },
   
   setColumnValuesInEditValues: function(columnName, columnValue, editValues){
+    // no editvalues even anymore, go away
+    if (!editValues) {
+      return;
+    }
     var id, identifier, field = this.getFieldFromColumnName(columnName), i, valueMap = {}, 
       entries = columnValue.entries;
     var prop = this.view.getPropertyFromDBColumnName(columnName);

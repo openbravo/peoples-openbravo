@@ -48,7 +48,6 @@ isc.OBViewGrid.addProperties({
   // Controls if an edit link column is created in the grid, set to false to
   // prevent this.
   editGrid: true,
-  updateEditorItemsInPlace: false,
   
   // ** {{{ editLinkFieldProperties }}} **
   // The properties of the ListGridField created for the edit links.
@@ -1219,13 +1218,18 @@ isc.OBViewGrid.addProperties({
       this.view.toolBar.updateButtonState();
     }
   },
-  
-  
+    
   // saveEdits: when saving, first check if a FIC call needs to be done to update to the 
   // latest values. This can happen when the focus is in a field and the save action is
   // done, at that point first try to force a fic call (handleItemChange) and if that
   // indeed happens stop the saveEdit until the fic returns
   saveEdits: function(editCompletionEvent, callback, rowNum, colNum, validateOnly, ficCallDone){
+    if (!rowNum && rowNum !== 0) {
+      rowNum = this.getEditRow();
+    }
+    if (!colNum && colNum !== 0) {
+      colNum = this.getEditCol();
+    }
     if (!validateOnly && !ficCallDone) {
       var editForm = this.getEditForm(), focusItem = editForm.getFocusItem();
       if (focusItem) {
@@ -1233,11 +1237,11 @@ isc.OBViewGrid.addProperties({
         editForm.handleItemChange(focusItem);        
         if (editForm.inFicCall) {
           // use editValues object as the edit form will be re-used for a next row
-          var editValues = this.getEditValues(rowNum || this.getEditRow());
+          var editValues = this.getEditValues(rowNum);
           editValues.actionAfterFicReturn = {
             target: this,
             method: this.saveEdits,
-            parameters: [editCompletionEvent, callback, this.getEditRow(), this.getEditCol(), validateOnly, true]
+            parameters: [editCompletionEvent, callback, rowNum, colNum, validateOnly, true]
           };
           return;
         }
