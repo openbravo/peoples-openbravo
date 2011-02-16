@@ -26,6 +26,7 @@ import java.util.Map;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.service.json.DefaultJsonDataService;
 import org.openbravo.service.json.JsonConstants;
 
@@ -47,26 +48,31 @@ public class DefaultDataSourceService extends BaseDataSourceService {
    * @see org.openbravo.service.datasource.DataSource#fetch(java.util.Map)
    */
   public String fetch(Map<String, String> parameters) {
-    parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
+    OBContext.setAdminMode(true);
+    try {
+      parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
 
-    if (getWhereClause() != null) {
-      if (parameters.get(JsonConstants.WHERE_PARAMETER) != null) {
-        final String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
-        parameters.put(JsonConstants.WHERE_PARAMETER, "(" + currentWhere + ") and ("
-            + getWhereClause() + ")");
-      } else {
-        parameters.put(JsonConstants.WHERE_PARAMETER, getWhereClause());
+      if (getWhereClause() != null) {
+        if (parameters.get(JsonConstants.WHERE_PARAMETER) != null) {
+          final String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
+          parameters.put(JsonConstants.WHERE_PARAMETER, "(" + currentWhere + ") and ("
+              + getWhereClause() + ")");
+        } else {
+          parameters.put(JsonConstants.WHERE_PARAMETER, getWhereClause());
+        }
       }
+
+      parameters.put(JsonConstants.USE_ALIAS, "true");
+
+      // System.err.println(">>>>>>>>>>>>>>>>>>>>>>>>>>" + new Date());
+      // for (String key : parameters.keySet()) {
+      // System.err.println(key + ": " + parameters.get(key));
+      // }
+
+      return DefaultJsonDataService.getInstance().fetch(parameters);
+    } finally {
+      OBContext.restorePreviousMode();
     }
-
-    parameters.put(JsonConstants.USE_ALIAS, "true");
-
-    // System.err.println(">>>>>>>>>>>>>>>>>>>>>>>>>>" + new Date());
-    // for (String key : parameters.keySet()) {
-    // System.err.println(key + ": " + parameters.get(key));
-    // }
-
-    return DefaultJsonDataService.getInstance().fetch(parameters);
   }
 
   /*
@@ -76,8 +82,13 @@ public class DefaultDataSourceService extends BaseDataSourceService {
    */
   @Override
   public String remove(Map<String, String> parameters) {
-    parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
-    return DefaultJsonDataService.getInstance().remove(parameters);
+    OBContext.setAdminMode(true);
+    try {
+      parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
+      return DefaultJsonDataService.getInstance().remove(parameters);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /*
@@ -87,8 +98,13 @@ public class DefaultDataSourceService extends BaseDataSourceService {
    */
   @Override
   public String add(Map<String, String> parameters, String content) {
-    parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
-    return DefaultJsonDataService.getInstance().add(parameters, content);
+    OBContext.setAdminMode(true);
+    try {
+      parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
+      return DefaultJsonDataService.getInstance().add(parameters, content);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /*
@@ -98,8 +114,13 @@ public class DefaultDataSourceService extends BaseDataSourceService {
    */
   @Override
   public String update(Map<String, String> parameters, String content) {
-    parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
-    return DefaultJsonDataService.getInstance().update(parameters, content);
+    OBContext.setAdminMode(true);
+    try {
+      parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
+      return DefaultJsonDataService.getInstance().update(parameters, content);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters) {
