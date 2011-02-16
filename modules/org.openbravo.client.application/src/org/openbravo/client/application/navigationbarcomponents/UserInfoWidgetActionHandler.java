@@ -309,7 +309,12 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
     final Role role = OBDal.getInstance().get(Role.class, roleId);
     final String clientId = role.getClient().getId();
     final String warehouseId = getStringValue(json, "warehouse");
-    final String languageId = getStringValue(json, "language");
+    String languageId = getStringValue(json, "language");
+    if (languageId == null) {
+      // If the default language the user has is not a system language, then another language will
+      // be automatically selected
+      languageId = pickLanguage();
+    }
     final boolean isDefault;
     if (json.has("default")) {
       isDefault = json.getBoolean("default");
@@ -321,6 +326,24 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
         .getId(), roleId, clientId, orgId, languageId, warehouseId);
 
     return ApplicationConstants.ACTION_RESULT_SUCCESS;
+  }
+
+  private String pickLanguage() {
+    final OBQuery<Language> languages = OBDal.getInstance().createQuery(
+        Language.class,
+        "(" + Language.PROPERTY_SYSTEMLANGUAGE + "=true or " + Language.PROPERTY_BASELANGUAGE
+            + "=true)");
+    languages.setFilterOnReadableClients(false);
+    languages.setFilterOnReadableOrganization(false);
+    List<Language> languagesList = languages.list();
+
+    Client client = OBContext.getOBContext().getCurrentClient();
+    Language clientLanguage = client.getLanguage();
+    if (clientLanguage != null && languagesList.contains(clientLanguage)) {
+      return clientLanguage.getId();
+    } else {
+      return languagesList.get(0).getId();
+    }
   }
 
   private String getStringValue(JSONObject json, String name) throws JSONException {
