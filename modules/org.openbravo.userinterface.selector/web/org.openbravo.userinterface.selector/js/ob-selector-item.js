@@ -244,57 +244,7 @@ isc.OBSelectorPopupWindow.addProperties({
   },
   
   setValueInField: function(){
-    var i, fld, record = this.selectorGrid.getSelectedRecord(), form = this.selector.form, outFields = this.selector.outFields;
-    if (!record) {
-      if (!selected) {
-        for (i in outFields) {
-          if (outFields.hasOwnProperty(i)) {
-            if (!outFields[i].fieldName) {
-              // skip id and _identifier and other columns without
-              // associated tab field
-              continue;
-            }
-
-            if(outFields[i].suffix) {
-                form.hiddenInputs[this.selector.outHiddenInputPrefix +
-                                  outFields[i].suffix] = null;
-            }
-
-            fld = form.getFieldFromInpColumnName(outFields[i].fieldName);
-            if (fld) {
-              fld.clearValue();
-            } else {
-              form.hiddenInputs[outFields[i].fieldName] = null;
-            }
-          }
-        }
-        return;
-      }
-    } else {
-
-      for (i in outFields) {
-        if (outFields.hasOwnProperty(i)) {
-          if (!outFields[i].fieldName) {
-            // skip id and _identifier and other columns without
-            // associated tab field
-            continue;
-          }
-
-          if(outFields[i].suffix) {
-            form.hiddenInputs[this.selector.outHiddenInputPrefix +
-                              outFields[i].suffix] = record[i];
-          }
-
-          fld = form.getFieldFromInpColumnName(outFields[i].fieldName);
-          if (fld) {
-            fld.setValue(record[i]);
-          } else {
-            form.hiddenInputs[outFields[i].fieldName] = record[i];
-          }
-        }
-      }
-    }
-    this.selector.setValueFromGrid(record);
+    this.selector.setValueFromRecord(this.selectorGrid.getSelectedRecord());
     this.hide();
   }
 });
@@ -316,7 +266,7 @@ isc.OBSelectorItem.addProperties({
   // setting this to false means that the change handler is called when picking
   // a value and not earlier
   addUnknownValues: false,
-
+  
   // ** {{{ selectorGridFields }}} **
   // the definition of the columns in the popup window
   selectorGridFields: [{
@@ -378,16 +328,30 @@ isc.OBSelectorItem.addProperties({
     return this.Super('init', arguments);
   },
   
-  setValueFromGrid: function(record){
+  setValueFromRecord: function(record){
     this._hasChanged = true;
     if (!record) {
       this.setValue(null);
     } else {
+      this.handleOutFields(record);
       this.setValue(record[this.valueField]);
     }
     if (this.form && this.form.handleItemChange) {
       this._hasChanged = true;
       this.form.handleItemChange(this);
+    }
+  },
+  
+  handleOutFields: function(record){
+    var i, outFields = this.outFields, form = this.form;
+    for (i in outFields) {
+      if (outFields.hasOwnProperty(i) && outFields[i].suffix) {
+        if (record) {
+          form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = record[i];
+        } else {
+          form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = null;
+        }
+      }
     }
   },
   
@@ -403,10 +367,9 @@ isc.OBSelectorItem.addProperties({
     return true;
   },
   
-  pickValue: function(value) {
+  pickValue: function(value){
     var ret = this.Super('pickValue', arguments);
-    this._hasChanged = true;
-    this.form.handleItemChange(this);
+    this.setValueFromRecord(this.getSelectedRecord());
     return ret;
   },
   
@@ -464,12 +427,12 @@ isc.OBSelectorLinkItem.addProperties({
   showFocused: true,
   wrap: false,
   clipValue: true,
-
+  
   // show the complete displayed value, handy when the display value got clipped
-  itemHoverHTML: function (item, form) {
+  itemHoverHTML: function(item, form){
     return this.getDisplayValue(this.getValue());
   },
-
+  
   setValue: function(value){
     var ret = this.Super('setValue', arguments);
     // in this case the clearIcon needs to be shown or hidden
@@ -483,7 +446,7 @@ isc.OBSelectorLinkItem.addProperties({
     return ret;
   },
   
-  click: function () {
+  click: function(){
     this.showPicker();
     return false;
   },
@@ -494,10 +457,10 @@ isc.OBSelectorLinkItem.addProperties({
       return false;
     }
     return true;
-  }, 
- 
+  },
+  
   showPicker: function(){
-    if (this.isFocusable()) {      
+    if (this.isFocusable()) {
       this.focusInItem();
     }
     this.selectorWindow.open();
@@ -518,10 +481,24 @@ isc.OBSelectorLinkItem.addProperties({
       this.form.setValue(this.displayField, record[this.gridDisplayField]);
       this.updateValueMap(true);
     }
+    this.handleOutFields(record);
     this._hasChanged = true;
     this.form.handleItemChange(this);
   },
   
+  handleOutFields: function(record){
+    var i, outFields = this.outFields, form = this.form;
+    for (i in outFields) {
+      if (outFields.hasOwnProperty(i) && outFields[i].suffix) {
+        if (record) {
+          form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = record[i];
+        } else {
+          form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = null;
+        }
+      }
+    }
+  },
+
   init: function(){
     if (this.disabled) {
       this.showPickerIcon = false;
