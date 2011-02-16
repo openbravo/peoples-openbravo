@@ -690,7 +690,7 @@ public class SelectorComponent extends BaseTemplateComponent {
       result.add(createLocalSelectorFieldProperty("title", title));
       result.add(createLocalSelectorFieldProperty("name", name));
       // is used at runtime to set canFilter on false for a field
-      result.add(createLocalSelectorFieldProperty("disableFilter", filter));
+      result.add(createLocalSelectorFieldProperty("disableFilter", !filter));
       result.add(createLocalSelectorFieldProperty("canSort", sort));
       result.add(createLocalSelectorFieldProperty("type", getType()));
       if ((domainType instanceof PrimitiveDomainType)) {
