@@ -678,6 +678,13 @@ public class SelectorComponent extends BaseTemplateComponent {
       this.displayField = displayField;
     }
 
+    public String getFilterEditorProperties() {
+      if (getUIDefinition() != null) {
+        return getUIDefinition().getFilterEditorProperties(null);
+      }
+      return ", filterEditorType: 'OBTextItem'";
+    }
+
     public List<LocalSelectorFieldProperty> getProperties() {
       final List<LocalSelectorFieldProperty> result = new ArrayList<LocalSelectorFieldProperty>();
       result.add(createLocalSelectorFieldProperty("title", title));
@@ -688,18 +695,12 @@ public class SelectorComponent extends BaseTemplateComponent {
       if ((domainType instanceof PrimitiveDomainType)) {
         final PrimitiveDomainType primitiveDomainType = (PrimitiveDomainType) domainType;
         if (Date.class.isAssignableFrom(primitiveDomainType.getPrimitiveType())) {
-          result.add(createNonStringLocalSelectorFieldProperty("filterEditorType", "OBDateItem"));
           // TODO: hardcoded width for date
           result.add(createLocalSelectorFieldProperty("width", 100));
-        } else if (Boolean.class.isAssignableFrom(primitiveDomainType.getPrimitiveType())) {
-          result.add(createNonStringLocalSelectorFieldProperty("filterEditorType", "OBYesNoItem"));
-          result.add(createNonStringLocalSelectorFieldProperty("formatCellValue",
-              " function(value) { return OB.Utilities.getYesNoDisplayValue(value);}"));
         }
       }
       if (domainType instanceof ForeignKeyDomainType) {
         result.add(createLocalSelectorFieldProperty("displayField", displayField));
-        result.add(createNonStringLocalSelectorFieldProperty("filterEditorType", "OBTextItem"));
       }
       return result;
     }
