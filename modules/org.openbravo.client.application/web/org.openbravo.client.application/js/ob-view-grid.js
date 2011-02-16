@@ -1223,31 +1223,35 @@ isc.OBViewGrid.addProperties({
   // latest values. This can happen when the focus is in a field and the save action is
   // done, at that point first try to force a fic call (handleItemChange) and if that
   // indeed happens stop the saveEdit until the fic returns
-  saveEdits: function(editCompletionEvent, callback, rowNum, colNum, validateOnly, ficCallDone){
+  saveEditedValues: function (rowNum, colNum, newValues, oldValues, 
+                             editValuesID, editCompletionEvent, saveCallback, ficCallDone) {
     if (!rowNum && rowNum !== 0) {
       rowNum = this.getEditRow();
     }
     if (!colNum && colNum !== 0) {
       colNum = this.getEditCol();
     }
-    if (!validateOnly && !ficCallDone) {
+    if (ficCallDone) {
+      // reset the new values as this can have changed because of a fic call
+      newValues = this.getEditValues(editValuesID);
+    } else {
       var editForm = this.getEditForm(), focusItem = editForm.getFocusItem();
       if (focusItem) {
         focusItem.updateValue();
-        editForm.handleItemChange(focusItem);        
+        editForm.handleItemChange(focusItem);
         if (editForm.inFicCall) {
           // use editValues object as the edit form will be re-used for a next row
-          var editValues = this.getEditValues(rowNum);
+          var editValues = this.getEditValues(editValuesID);
           editValues.actionAfterFicReturn = {
             target: this,
-            method: this.saveEdits,
-            parameters: [editCompletionEvent, callback, rowNum, colNum, validateOnly, true]
+            method: this.saveEditedValues,
+            parameters: [rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback, true]
           };
           return;
         }
       }
     }
-    this.Super('saveEdits', arguments);
+    this.Super('saveEditedValues', [rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback]);
   },
 
   autoSave: function(){
