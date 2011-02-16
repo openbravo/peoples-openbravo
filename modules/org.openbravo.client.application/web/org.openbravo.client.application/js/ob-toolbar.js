@@ -704,8 +704,8 @@ isc.OBToolbar.addProperties({
       numOfSelRecords = this.view.viewGrid.getSelectedRecords().length;
     }
 
-    if (this.buttonsHaveSessionLogic && !this.view.isShowingForm && !hideAllButtons && !isNew) {
-      var formView = this.view.viewForm;
+    if (this.view.buttonsHaveSessionLogic && !this.view.isShowingForm && !hideAllButtons && !isNew) {
+      var formView = this.view.viewForm, me = this;
       // Call FIC to obtain possible session attributes and set them in form
       requestParams = {
           MODE: 'EDIT',
@@ -730,7 +730,7 @@ isc.OBToolbar.addProperties({
            }
          }
          
-         doRefresh(buttons, currentValues, false, this);
+         doRefresh(buttons, currentValues, false, me);
         });
     } else {
       currentValues = this.view.getCurrentValues();
