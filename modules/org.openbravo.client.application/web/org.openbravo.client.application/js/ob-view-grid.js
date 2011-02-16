@@ -1219,23 +1219,31 @@ isc.OBViewGrid.addProperties({
       this.view.toolBar.updateButtonState();
     }
   },
-    
+  
+  
+  // saveEdits: when saving, first check if a FIC call needs to be done to update to the 
+  // latest values. This can happen when the focus is in a field and the save action is
+  // done, at that point first try to force a fic call (handleItemChange) and if that
+  // indeed happens stop the saveEdit until the fic returns
   saveEdits: function(editCompletionEvent, callback, rowNum, colNum, validateOnly, ficCallDone){
     if (!validateOnly && !ficCallDone) {
-      if (this.getEditForm().getFocusItem() && this.getEditForm().handleItemChange(this.getEditForm().getFocusItem())) {
-        arguments.push(true);
-        this.getEditForm().actionAfterFicReturn = {
-          target: this,
-          method: this.saveEdits,
-          parameters: arguments
-        };
-      } else {
-        this.Super('saveEdits', arguments);
+      var editForm = this.getEditForm(), focusItem = editForm.getFocusItem();
+      if (focusItem) {
+        focusItem.updateValue();
+        editForm.handleItemChange(focusItem);        
+        if (editForm.inFicCall) {
+          // use editValues object as the edit form will be re-used for a next row
+          var editValues = this.getEditValues(rowNum || this.getEditRow());
+          editValues.actionAfterFicReturn = {
+            target: this,
+            method: this.saveEdits,
+            parameters: [editCompletionEvent, callback, this.getEditRow(), this.getEditCol(), validateOnly, true]
+          };
+          return;
+        }
       }
-      return;
-    } else {
-      this.Super('saveEdits', arguments);
     }
+    this.Super('saveEdits', arguments);
   },
 
   autoSave: function(){

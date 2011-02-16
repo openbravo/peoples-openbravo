@@ -1014,6 +1014,10 @@ isc.OBNumberItem.addProperties({
       caretPosition = obj.getSelectionRange()[0];
     }
     setTimeout(function(){
+      // can happen when a dynamic form has already been removed
+      if (!obj.getElementValue()) {
+        return;
+      }
       var inputValue = obj.getElementValue().toString();
       var checkA = false; // Checks if there is a = in the beginning
       var checkB = false; // Checks if any undesired = is/has to be removed from the inputValue

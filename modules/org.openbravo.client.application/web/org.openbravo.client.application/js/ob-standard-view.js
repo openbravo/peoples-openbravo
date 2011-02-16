@@ -1213,7 +1213,8 @@ isc.OBStandardView.addProperties({
         var recordIndex = me.viewGrid.getRecordIndex(me.viewGrid.getSelectedRecord());
         me.viewGrid.data.updateCacheData(data, req);
         me.viewGrid.selectRecord(me.viewGrid.getRecord(recordIndex));
-        me.viewGrid.markForRedraw();
+        me.viewGrid.refreshRow(recordIndex);
+        me.viewGrid.redraw();
       }
     };
     
