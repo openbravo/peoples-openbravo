@@ -44,6 +44,8 @@ OB.ViewFormProperties = {
   autoComplete: true,
   redrawOnDisable: true,
   
+  autoFocus: true,
+  
   // ** {{ Layout Settings }} **
   numCols: 4,
   colWidths: ['24%', '24%', '24%', '24%'],
@@ -109,7 +111,7 @@ OB.ViewFormProperties = {
   
   editRecord: function(record, preventFocus){
     var ret = this.Super('editRecord', arguments);
-    this.doEditRecordActions(preventFocus, false);    
+    this.doEditRecordActions(preventFocus, false);
     return ret;
   },
   
@@ -142,7 +144,9 @@ OB.ViewFormProperties = {
     } else {
       this.view.statusBar.setStateLabel();
     }
-    
+    if (!preventFocus) {
+      this.resetFocusItem();
+    }
   },
   
   editNewRecord: function(preventFocus){
@@ -191,11 +195,13 @@ OB.ViewFormProperties = {
   resetFocusItem: function() {
     var items = this.getItems(), length = items.length, item;
 
-    if(!this.isDrawn()) {
-      isc.Page.setEvent(isc.EH.IDLE, this, isc.Page.FIRE_ONCE, 'resetFocusItem');
+    // is set for inline grid editing for example
+    if (this.getFocusItem() && this.getFocusItem().getCanFocus()) {
+      this.getFocusItem().focusInItem();
+      this.view.lastFocusedField = this.getFocusItem();
       return;
     }
-
+    
     if(this.firstFocusedField) {
       item = this.getItem(this.firstFocusedField);
       if(item && item.getCanFocus()) {
@@ -220,11 +226,6 @@ OB.ViewFormProperties = {
   setFindNewFocusItem: function() {
     var focusItem = this.getFocusItem(), item, items = this.getItems(),
         length = items.length;
-
-    if(!this.isDrawn()) {
-      isc.Page.setEvent(isc.EH.IDLE, this, isc.Page.FIRE_ONCE, 'resetFocusItem');
-      return;
-    }
 
     if(this.firstFocusedField) {
       item = this.getItem(this.firstFocusedField);
@@ -319,8 +320,10 @@ OB.ViewFormProperties = {
         editValues = me.view.viewGrid.getEditValues(editRow);
       }
       me.processFICReturn(response, data, request, editValues, editRow);
-      // remember the initial values 
-      me.rememberValues();
+      if (!this.grid || this.grid.getEditRow() !== editRow) {
+        // remember the initial values, if we are still editing the same row
+        me.rememberValues();
+      }
     });
   },
   
@@ -412,6 +415,8 @@ OB.ViewFormProperties = {
     this.markForRedraw();
     if (this.showFormOnFICReturn) {
       if (!this.isVisible()) {
+        this.setFocusItem(null);
+        this.resetFocusItem();
         this.view.switchFormGridVisibility();
       }
       delete this.showFormOnFICReturn;
