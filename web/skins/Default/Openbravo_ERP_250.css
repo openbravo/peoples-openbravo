@@ -5520,6 +5520,7 @@ table.Login_ToolBar_bg {
   height: 360px;
   margin: 0 auto;
   width: 440px;
+  z-index: 99;
 }
 
 .Login_LogForm dl {
@@ -5557,92 +5558,116 @@ table.Login_ToolBar_bg {
   margin-top: 28px;
 }
 
-.Login_TopLogos_Container {
-  width: 100%;
-  padding-top: 20px;
-  height: 360;
-}
-
-.Login_TopLogos_VersionNumber {
-  margin-left: 520px;
-  font-size: 70px;
-  font-style: italic;
-  font-weight: bold;
-  color: #7F7F7F;
-  font-family:'lucida sans',sans-serif;
-}
-
-.Login_TopLogos_CopyrightText {
-  display: block;
-  margin-top: 215px;
-  color: #afafaf;
-  font-size: .9em;
-  line-height: 0.9em;
-  width: 14em;
-  text-align: center;
-  padding-bottom: 34px;
-}
-
-.Login_BottomLogos_Container_Support_Forge {
+.Login_TopLogos_Container_Support_Forge,
+.Login_TopLogos_Container_Support,
+.Login_TopLogos_Container_Forge {
   position: relative;
-  left: 110px;
+  padding-top: 290px;
   text-align: center;
   width: 100%;
 }
 
-.Login_BottomLogos_Container_Support {
+.Login_TopLogos_Container_None {
   position: relative;
-  left: 263px;
+  padding-top: 366px;
   text-align: center;
   width: 100%;
 }
 
-.Login_BottomLogos_Container_Forge {
-  position: relative;
-  left: 218px;
-  text-align: center;
-  width: 100%;
+
+.Login_TopLogos_Container_Support_Forge .Login_TopLogos_ForgeLogo_Container {
+  left: -90px;
 }
 
-.Login_BottomLogos_Container_Support .Login_BottomLogos_ForgeLogo_Container {
+.Login_TopLogos_Container_Support_Forge .Login_TopLogos_SupportLogo_Container {
+  left: 356px;
+}
+
+
+.Login_TopLogos_Container_Support .Login_TopLogos_ForgeLogo_Container {
   display: none;
 }
 
-.Login_BottomLogos_Container_Forge .Login_BottomLogos_SupportLogo_Container {
+.Login_TopLogos_Container_Support .Login_TopLogos_SupportLogo_Container {
+  left: 616px;
+}
+
+
+.Login_TopLogos_Container_Forge .Login_TopLogos_ForgeLogo_Container {
+  left: -90px;
+}
+
+.Login_TopLogos_Container_Forge .Login_TopLogos_SupportLogo_Container {
   display: none;
 }
 
-.Login_BottomLogos_Container_None {
+
+.Login_TopLogos_Container_None .Login_TopLogos_ForgeLogo_Container {
   display: none;
 }
 
-.Login_BottomLogos_SupportLogo_Container {
+.Login_TopLogos_Container_None .Login_TopLogos_SupportLogo_Container {
+  display: none;
+}
+
+
+.Login_TopLogos_SupportLogo_Container {
   width: 260px;
   position: relative;
   float: left;
 }
 
-.Login_BottomLogos_SupportLogo_Text {
+.Login_TopLogos_SupportLogo_Text {
   text-align: center;
   margin-bottom: 5px;
 }
 
-.Login_BottomLogos_SupportLogo_Logo_Container {
+.Login_TopLogos_SupportLogo_Logo_Container {
   text-align: center;
 }
 
-.Login_BottomLogos_ForgeLogo_Container {
-  width: 350px;
+.Login_TopLogos_ForgeLogo_Container {
+  width: 260px;
   position: relative;
   float: left;
 }
 
-.Login_BottomLogos_ForgeLogo_Text {
+.Login_TopLogos_ForgeLogo_Text {
   text-align: center;
   margin-bottom: 5px;
 }
 
-.Login_BottomLogos_ForgeLogo_Logo_Container {
+.Login_TopLogos_ForgeLogo_Logo_Container {
+  text-align: center;
+}
+
+
+.Login_BottomLogos_Container {
+  position: relative;
+  clear: left;
+  padding-top: 10px;
+  left: 260px;
+}
+
+.Login_BottomLogos_Openbravo_Logo_Container {
+  position: relative;
+  height: 70px;
+}
+
+.Login_BottomLogos_CopyrightText_Container {
+  position: relative;
+  clear: left;
+  padding-top: 5px;
+  padding-left: 50px;
+  background-color: white;
+}
+
+.Login_BottomLogos_CopyrightText {
+  display: block;
+  color: #afafaf;
+  font-size: .9em;
+  line-height: 0.9em;
+  width: 14em;
   text-align: center;
 }
 

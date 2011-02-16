@@ -225,15 +225,16 @@ var recBrowserExplorer = '9.0.0.0';
 </script>
 <script type="text/javascript">
   function manageVisualPreferences() {
+    var topLogos = document.getElementById('TopLogos_Container');
     var bottomLogos = document.getElementById('BottomLogos_Container');
     if (showSupportLogo && showForgeLogo) {
-      bottomLogos.className = 'Login_BottomLogos_Container_Support_Forge';
+      topLogos.className = 'Login_TopLogos_Container_Support_Forge';
     } else if (showSupportLogo) {
-      bottomLogos.className = 'Login_BottomLogos_Container_Support';
+      topLogos.className = 'Login_TopLogos_Container_Support';
     } else if (showForgeLogo) {
-      bottomLogos.className = 'Login_BottomLogos_Container_Forge';
+      topLogos.className = 'Login_TopLogos_Container_Forge';
     } else {
-      bottomLogos.className = 'Login_BottomLogos_Container_None';
+      topLogos.className = 'Login_TopLogos_Container_None';
     }
 
     if (showCompanyLogo && urlCompany !== '') {
@@ -251,6 +252,7 @@ var recBrowserExplorer = '9.0.0.0';
     if (showCompanyLogo) {
       document.getElementById('CompanyLogo_Container').style.display = ''
     }
+    topLogos.style.display = '';
     bottomLogos.style.display = '';
 
     var msgContainer = document.getElementById('errorMsg');
@@ -371,7 +373,7 @@ var recBrowserExplorer = '9.0.0.0';
     }
     catch (e) { }
 
-    if ((!revisionControl('10551')) || (isOpsInstance() != isOpsInstanceCached())) {
+    if ((!revisionControl('10720')) || (isOpsInstance() != isOpsInstanceCached())) {
       maskLoginWindow(cacheMsg);
       setLoginMessage('Warning', '', cacheMsg);
     }
@@ -449,25 +451,23 @@ var recBrowserExplorer = '9.0.0.0';
 
         </form>
       </div>
-          
-      <div class="Login_TopLogos_Container">
-        <div>
-          <img class="Main_NavBar_logo" src="../../../../../web/images/blank.gif" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;" />
-          <span class="Login_TopLogos_VersionNumber">3.0</span>
+
+      <div class="Login_TopLogos_Container_Support_Forge" id="TopLogos_Container" style="display: none;">
+        <div style="height: 1px; width: 1px; font-size: 1"></div>
+        <div class="Login_TopLogos_ForgeLogo_Container">
+          <div class="LabelText Login_LabelText Login_TopLogos_ForgeLogo_Text">Project hosted at:</div>
+          <div class="Login_TopLogos_ForgeLogo_Logo_Container" id="ForgeLogo_Container"><img class="Login_Logo_Forge" src="../../../../../web/images/blank.gif" /></div>
         </div>
-        <span class="Login_TopLogos_CopyrightText">&copy; Copyright Openbravo <br />
-        2001-2011</span>
+        <div class="Login_TopLogos_SupportLogo_Container">
+          <div class="LabelText Login_LabelText Login_TopLogos_SupportLogo_Text">For support, contact:</div>
+          <div class="Login_TopLogos_SupportLogo_Logo_Container" id="SupportLogo_Container"><img class="Login_Logo_Support" src="../../../../../web/images/blank.gif" /></div>
+        </div>
       </div>
 
-      <div class="Login_BottomLogos_Container_Support_Forge" id="BottomLogos_Container" style="display: none;">
-        <div class="Login_BottomLogos_SupportLogo_Container">
-          <div class="LabelText Login_LabelText Login_BottomLogos_SupportLogo_Text">For support, contact:</div>
-          <div class="Login_BottomLogos_SupportLogo_Logo_Container" id="SupportLogo_Container"><img class="Login_Logo_Support" src="../../../../../web/images/blank.gif" /></div>
-        </div>
-        <div class="Login_BottomLogos_ForgeLogo_Container">
-          <div class="LabelText Login_LabelText Login_BottomLogos_ForgeLogo_Text">Project hosted at:</div>
-          <div class="Login_BottomLogos_ForgeLogo_Logo_Container" id="ForgeLogo_Container"><img class="Login_Logo_Forge" src="../../../../../web/images/blank.gif" /></div>
-        </div>
+      <div class="Login_BottomLogos_Container" id="BottomLogos_Container" style="display: none;">
+        <div class="Login_BottomLogos_Openbravo_Logo_Container" id="OpenbravoLogo_Container"><img class="Login_Logo_Openbravo" src="../../../../../web/images/blank.gif" /></div>
+        <div class="Login_BottomLogos_CopyrightText_Container"><span class="Login_BottomLogos_CopyrightText">&copy; Copyright Openbravo <br />
+        2001-2011</span></div>
       </div>
     </div>
 

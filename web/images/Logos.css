@@ -18,6 +18,12 @@
 */
 
 
+.Login_Logo_Openbravo {
+  width: 260px;
+  height: 70px;
+  background: url(OpenbravoWithVesion_Logo.png) no-repeat center center;
+}
+
 tr.Login_Logo_SourceForge_Field {
   /*display: none;*/
 }
@@ -108,9 +114,9 @@ td.Login_Logo_Support_Container_Cell {
 }
 
 .Login_Logo_Forge {
-  width: 325px;
+  width: 225px;
   height: 55px;
-  background: url(OBForge.gif) no-repeat center center;
+  background: url(OBForge.png) no-repeat center center;
 }
 
 .Menu_NavBar_logo {
