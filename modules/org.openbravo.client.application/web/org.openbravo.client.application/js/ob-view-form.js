@@ -489,12 +489,6 @@ OB.ViewFormProperties = {
       // which results it to not be sent to the server anymore
       this.setValue(field.name, null);
     }
-    
-    if (field.pickList) {
-      field.pickList.invalidateCache();
-      field.pickList.deselectAllRecords();
-      field.selectDefaultItem();
-    }
   },
   
   setColumnValuesInEditValues: function(columnName, columnValue, editValues){
