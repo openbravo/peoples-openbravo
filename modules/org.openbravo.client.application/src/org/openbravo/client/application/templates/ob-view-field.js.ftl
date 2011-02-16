@@ -57,12 +57,15 @@
             }
 
             return context && (${fieldDefinition.showIf});
-          },
+          },          
           </#if>
           <#if fieldDefinition.searchField>
           displayField: '${fieldDefinition.name?js_string}._identifier',
           valueField: '${fieldDefinition.name?js_string}',
           showPickerIcon: ${(!fieldDefinition.parentProperty)?string},
+          </#if>
+          <#if fieldDefinition.firstFocusedField>
+          firstFocusedField: true,
           </#if>
         </#if>
         <#if fieldDefinition.type = "OBSectionItem" || fieldDefinition.type = "OBLinkedItemSectionItem" >

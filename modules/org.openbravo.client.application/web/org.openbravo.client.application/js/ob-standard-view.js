@@ -496,7 +496,7 @@ isc.OBStandardView.addProperties({
   },
   
   setViewFocus: function(){
-    
+
     var object, functionName;
     
     // clear for a non-focusable item
@@ -772,10 +772,6 @@ isc.OBStandardView.addProperties({
       // show them in the form
       var rowNum = this.viewGrid.getRecordIndex(record);
       this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus);
-    }
-    
-    if (!preventFocus) {
-      isc.Page.setEvent(isc.EH.IDLE, this.viewForm, isc.Page.FIRE_ONCE, 'focus');
     }
   },
   

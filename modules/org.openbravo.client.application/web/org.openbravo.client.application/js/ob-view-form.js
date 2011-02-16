@@ -65,15 +65,30 @@ OB.ViewFormProperties = {
   // is false for forms used in grid editing
   // true for the main form
   isViewForm: false,
-  
+
+  // Name to the first focused field defined in AD
+  firstFocusedField: null,
+
   // is set in the OBLinkedItemSectionItem.initWidget
   linkedItemSection: null,
 
   initWidget: function() {
+    var length, i, item;
     // add the obFormProperties to ourselves, the obFormProperties
     // are re-used for inline grid editing
     isc.addProperties(this, this.obFormProperties);
+
     this.Super('initWidget', arguments);
+
+    length = this.getItems().length;
+
+    for(i = 0; i < length; i++) {
+      item = this.getItem(i);
+      if(item && item.firstFocusedField) {
+        this.firstFocusedField = item.name;
+        break;
+      }
+    }
   },
   
   setHasChanged: function(value) {
@@ -127,11 +142,7 @@ OB.ViewFormProperties = {
     } else {
       this.view.statusBar.setStateLabel();
     }
-
-    this.resetFocusItem();
-    if (!preventFocus) {
-      this.focus();
-    }
+    
   },
   
   editNewRecord: function(preventFocus){
@@ -177,13 +188,28 @@ OB.ViewFormProperties = {
   },
   
   // reset the focus item to the first item which can get focus
-  resetFocusItem: function(){
-    var items = this.getItems();
+  resetFocusItem: function() {
+    var items = this.getItems(), length = items.length, item;
+
+    if(!this.isDrawn()) {
+      isc.Page.setEvent(isc.EH.IDLE, this, isc.Page.FIRE_ONCE, 'resetFocusItem');
+      return;
+    }
+
+    if(this.firstFocusedField) {
+      item = this.getItem(this.firstFocusedField);
+      if(item && item.getCanFocus()) {
+        item.focusInItem();
+        this.view.lastFocusedField = item;
+        return;
+      }
+    }
+
     if (items) {
-      for (var i = 0; i < items.length; i++) {
-        var item = items[i];
+      for (var i = 0; i < length; i++) {
+        item = items[i];
         if (item.getCanFocus() && !item.isDisabled()) {
-          this.setFocusItem(item);
+          this.focusInItem(item);
           this.view.lastFocusedItem = item;
           return;
         }
@@ -192,15 +218,31 @@ OB.ViewFormProperties = {
   },
   
   setFindNewFocusItem: function() {
-    var focusItem = this.getFocusItem();
+    var focusItem = this.getFocusItem(), item, items = this.getItems(),
+        length = items.length;
+
+    if(!this.isDrawn()) {
+      isc.Page.setEvent(isc.EH.IDLE, this, isc.Page.FIRE_ONCE, 'resetFocusItem');
+      return;
+    }
+
+    if(this.firstFocusedField) {
+      item = this.getItem(this.firstFocusedField);
+      if(item && item.getCanFocus()) {
+        item.focusInItem();
+        this.view.lastFocusedField = item;
+        return;
+      }
+    }
+
     // no need to find a new item
     if (focusItem && !focusItem.isDisabled() && focusItem.getCanFocus()) {
       return;
     }
-    var items = this.getItems();
+
     if (items) {
-      for (var i = 0; i < items.length; i++) {
-        var item = items[i];
+      for (var i = 0; i < length; i++) {
+        item = items[i];
         if (item.getCanFocus() && !item.isDisabled()) {
           item.focusInItem();
           return;
@@ -378,7 +420,7 @@ OB.ViewFormProperties = {
     this.view.toolBar.updateButtonState();
     // note onFieldChanged uses the form.readOnly set above
     this.onFieldChanged(this);
-    this.focus();
+
     delete this.inFicCall;
     if (this.callSaveAfterFICReturn) {
       delete this.callSaveAfterFICReturn;
@@ -388,6 +430,8 @@ OB.ViewFormProperties = {
       OB.Utilities.callAction(editValues.actionAfterFicReturn);
       delete editValues.actionAfterFicReturn;
     }
+
+    this.resetFocusItem();
   },
   
   setDisabled: function(state) {

@@ -265,6 +265,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return uiDefinition instanceof FKSearchUIDefinition;
     }
 
+    public boolean isFirstFocusedField() {
+      return field.isFirstFocusedField() && field.isDisplayed();
+    }
+
     public String getType() {
       return getUIDefinition().getName();
     }
