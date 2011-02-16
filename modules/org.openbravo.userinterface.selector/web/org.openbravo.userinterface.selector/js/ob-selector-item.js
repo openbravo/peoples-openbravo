@@ -52,6 +52,12 @@ isc.OBSelectorPopupWindow.addProperties({
     
     OB.Utilities.applyDefaultValues(this.selectorGridFields, this.defaultSelectorGridField);
     
+    for (var i = 0; i < this.selectorGridFields.length; i++) {
+      if (this.selectorGridFields[i].disableFilter) {
+        this.selectorGridFields[i].canFilter = false;
+      }
+    }
+    
     this.selectorGrid = isc.OBGrid.create({
     
       selector: this.selector,
