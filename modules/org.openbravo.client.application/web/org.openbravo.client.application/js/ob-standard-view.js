@@ -1458,7 +1458,7 @@ isc.OBStandardView.addProperties({
     if (this.isEditingGrid) {
       rowNum = this.viewGrid.getEditRow();
       if (rowNum || rowNum === 0) {
-        record = isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewGrid.getEditValues(rowNum));
+        record = isc.addProperties({}, this.viewGrid.getRecord(rowNum), this.viewGrid.getEditValues(rowNum));
       } else {
         record = isc.addProperties({}, this.viewGrid.getSelectedRecord());
       }
