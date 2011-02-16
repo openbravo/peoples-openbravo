@@ -351,7 +351,13 @@ isc.OBSelectorItem.addProperties({
     for (i in outFields) {
       if (outFields.hasOwnProperty(i) && outFields[i].suffix) {
         if (record) {
-          form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = record[i];
+          var value = record[i];
+          if (isc.isA.Number(value)) {
+            value = OB.Utilities.Number.JSToOBMasked(value, OB.Format.defaultNumericMask,
+                OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol,
+                OB.Format.defaultGroupingSize);
+          }
+          form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = value;
         } else {
           form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = null;
         }
@@ -495,7 +501,13 @@ isc.OBSelectorLinkItem.addProperties({
     for (i in outFields) {
       if (outFields.hasOwnProperty(i) && outFields[i].suffix) {
         if (record) {
-          form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = record[i];
+          var value = record[i];
+          if (isc.isA.Number(value)) {
+            value = OB.Utilities.Number.JSToOBMasked(value, OB.Format.defaultNumericMask,
+                OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol,
+                OB.Format.defaultGroupingSize);
+          }
+          form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = value;
         } else {
           form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = null;
         }
