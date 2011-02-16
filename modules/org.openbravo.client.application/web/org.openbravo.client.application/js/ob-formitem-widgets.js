@@ -72,7 +72,7 @@ isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
 w.closeSearch = function (action, value, display, parameters, wait){
   var length, i, hiddenInputName, targetFld = isc.OBSearchItem.openSearchItem,
     currentValue = targetFld.getValue();
-  if (action === 'SAVE' && currentValue !== value) {    
+  if (action === 'SAVE') {    
     if (!targetFld.valueMap) {
       targetFld.valueMap = {};
     }

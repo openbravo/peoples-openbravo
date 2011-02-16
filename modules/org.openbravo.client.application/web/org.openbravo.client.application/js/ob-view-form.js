@@ -516,12 +516,10 @@ OB.ViewFormProperties = {
           identifier = field.valueMap[columnValue.value];
         }
         if (identifier) {
-          if (entries) {
-            if (!field.valueMap) {
-              field.valueMap = {};
-            }
-            field.valueMap[columnValue.value] = identifier;
+          if (!field.valueMap) {
+            field.valueMap = {};
           }
+          field.valueMap[columnValue.value] = identifier;
           if (field.form) {
             if (field.displayField) {
               field.form.setValue(field.displayField, identifier);
