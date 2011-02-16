@@ -161,6 +161,8 @@ isc.OBQuickLaunch.addProperties({
         
         emptyPickListMessage: OB.I18N.getLabel('OBUISC_ListGrid.emptyMessage'),
         
+        command: this.command,
+
         pickValue: function(theValue){
           // HACK: set this temporary value to prevent a temporary 
           // display of the db id
@@ -173,7 +175,7 @@ isc.OBQuickLaunch.addProperties({
           
           if (this.getSelectedRecord()) {
             var record = this.getSelectedRecord();
-            var viewValue = record.viewValue, command;
+            var viewValue = record.viewValue;
             isc.OBQuickRun.currentQuickRun.doHide();
             var openObject = null;
             if (record.optionType && record.optionType === 'tab') {

@@ -198,8 +198,13 @@ isc.OBSelectorPopupWindow.addProperties({
     var ret = this.Super('show', arguments);
     this.selectorGrid.setFilterEditorCriteria(this.defaultFilter);
     this.selectorGrid.filterByEditor();
-    this.selectorGrid.focusInFilterEditor();
-    
+
+    if(this.selectorGrid.isDrawn()) {
+      this.selectorGrid.focusInFilterEditor();
+    } else {
+      isc.Page.setEvent(isc.EH.IDLE, this.selectorGrid, isc.Page.FIRE_ONCE, 'focusInFilterEditor');
+    }
+
     if (this.selector.getValue()) {
       this.selectorGrid.selectSingleRecord(this.selectorGrid.data.find(this.valueField, this.selector.getValue()));
     } else {

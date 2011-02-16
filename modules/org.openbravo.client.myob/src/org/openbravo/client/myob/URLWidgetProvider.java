@@ -51,7 +51,12 @@ public class URLWidgetProvider extends WidgetProvider {
       final JSONObject jsonObject = super.getWidgetClassDefinition();
       final JSONObject parameters = new JSONObject();
       jsonObject.put(WidgetProvider.PARAMETERS, parameters);
-      parameters.put(SRC, getWidgetClass().getOBKMOWidgetURLList().get(0).getURL());
+      if (!getWidgetClass().getOBKMOWidgetURLList().isEmpty()) {
+        parameters.put(SRC, getWidgetClass().getOBKMOWidgetURLList().get(0).getURL());
+      } else {
+        log.warn("URLWidget does not have a URL defined.");
+        parameters.put(SRC, "");
+      }
       if (jsonObject.getJSONArray(WidgetProvider.FIELDDEFINITIONS).length() > 0) {
         log.warn("URLWidget does not support parameters. Ignoring field definitions.");
         jsonObject.put(WidgetProvider.FIELDDEFINITIONS, new JSONArray());

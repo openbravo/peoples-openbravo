@@ -266,7 +266,9 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public boolean isFirstFocusedField() {
-      return field.isFirstFocusedField() && field.isDisplayed();
+      Boolean focused = field.isFirstFocusedField();
+      Boolean displayed = field.isDisplayed();
+      return focused != null && focused && displayed != null && displayed;
     }
 
     public String getType() {
