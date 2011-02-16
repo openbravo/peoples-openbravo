@@ -169,7 +169,9 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
     if (!isAllowRead() && obContext != null && obContext.isInitialized()
         && !obContext.isInAdministratorMode()) {
       if (isDerivedReadable == null) {
-        isDerivedReadable = obContext.getEntityAccessChecker().isDerivedReadable(getEntity());
+        // don't check derived readable for views
+        isDerivedReadable = !this.getEntity().isView()
+            && obContext.getEntityAccessChecker().isDerivedReadable(getEntity());
       }
 
       if (isDerivedReadable && !p.allowDerivedRead()) {

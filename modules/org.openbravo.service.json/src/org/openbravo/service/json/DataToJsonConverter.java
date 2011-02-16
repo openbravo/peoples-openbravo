@@ -131,8 +131,8 @@ public class DataToJsonConverter {
         }
         return jsonObject;
       }
-      final boolean isDerivedReadable = OBContext.getOBContext().getEntityAccessChecker()
-          .isDerivedReadable(bob.getEntity());
+      final boolean isDerivedReadable = !bob.getEntity().isView()
+          && OBContext.getOBContext().getEntityAccessChecker().isDerivedReadable(bob.getEntity());
 
       for (Property property : bob.getEntity().getProperties()) {
         if (property.isOneToMany()) {
