@@ -847,10 +847,6 @@ isc.OBViewGrid.addProperties({
       this.lastSelectedRecord = null;
     } else {
       this.lastSelectedRecord = this.getSelectedRecord();
-      if (this.getSelectedRecords().length === 1) {
-        // set the record in the session
-        this.view.setContextInfo();
-      }
     }
   },
   
