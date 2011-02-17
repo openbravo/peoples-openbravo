@@ -1465,7 +1465,9 @@ isc.OBStandardView.addProperties({
       component = this.viewGrid.getEditForm();
       form = component;
     } else if (this.isShowingForm) {
-      record = isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewForm.getValues());
+      // note on purpose not calling form.getValues() as this will cause extra requests 
+      // in case of a picklist
+      record = isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewForm.values);
       component = this.viewForm;
       form = component;
     } else {
