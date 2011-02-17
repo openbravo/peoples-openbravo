@@ -390,12 +390,17 @@ isc.OBSelectorItem.addProperties({
   },
   
   getPickListFilterCriteria: function(){
-    var criteria = this.Super('getPickListFilterCriteria'), defValue, prop;
+    var criteria = isc.addProperties({}, this.Super('getPickListFilterCriteria', arguments) || {}), defValue, prop;
     
-    if (!criteria) {
-      criteria = {};
+    // sometimes the value is passed as a filter criteria
+    // remove it
+    if (this.getValueFieldName() && criteria[this.getValueFieldName()]) {
+      criteria[this.getValueFieldName()] = null;
     }
-    
+            
+    // do not prevent the count operation
+    criteria[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'false';
+
     // also add the special ORG parameter
     if (this.form.getField('organization')) {
       criteria[OB.Constants.ORG_PARAMETER] = this.form.getValue('organization');

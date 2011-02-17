@@ -203,7 +203,9 @@ public class QueryBuilder {
             + " not part of identifier of " + property.getEntity());
         final String prefix;
         final int index = leftWherePart.lastIndexOf(".");
-        if (index == -1) {
+        if (key.equals(JsonConstants.IDENTIFIER)) {
+          prefix = getMainAlias() + ".";
+        } else if (index == -1) {
           prefix = "";
         } else {
           // the + 1 makes sure that the dot is included
@@ -224,7 +226,18 @@ public class QueryBuilder {
 
       // NOTE the typedParameters.add call must be done after the call to
       // getTypedParameterAlias, this to get the correct alias codes
-      if (!property.isPrimitive()) {
+      if (key.equals(JsonConstants.IDENTIFIER)) {
+        if (textMatching == TextMatching.exact) {
+          sb.append(leftWherePart + " = " + getTypedParameterAlias());
+          typedParameters.add(value);
+        } else if (textMatching == TextMatching.startsWith) {
+          sb.append("upper(" + leftWherePart + ") like " + getTypedParameterAlias());
+          typedParameters.add(value.toUpperCase() + "%");
+        } else {
+          sb.append("upper(" + leftWherePart + ") like " + getTypedParameterAlias());
+          typedParameters.add("%" + value.toUpperCase().replaceAll(" ", "%") + "%");
+        }
+      } else if (!property.isPrimitive()) {
         // an in parameter use it...
         if (value.contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
           final List<String> values = new ArrayList<String>();
@@ -528,15 +541,18 @@ public class QueryBuilder {
   // note prefix includes the dot at the end
   private String createIdentifierLeftClause(List<Property> identifierProperties, String prefix) {
     final StringBuilder sb = new StringBuilder();
-    if (identifierProperties.size() == 1) {
-      return prefix + identifierProperties.get(0).getName();
-    }
     for (Property prop : identifierProperties) {
       if (sb.length() > 0) {
         sb.append(" || '" + IdentifierProvider.SEPARATOR + "' || ");
       }
       // note to_char is added to handle null values correctly
-      sb.append("COALESCE(" + prefix + prop.getName() + ",'')");
+      if (prop.getReferencedProperty() == null) {
+        sb.append("COALESCE(to_char(" + prefix + prop.getName() + "),'')");
+      } else {
+        final List<Property> newIdentifierProperties = prop.getReferencedProperty().getEntity()
+            .getIdentifierProperties();
+        sb.append(createIdentifierLeftClause(newIdentifierProperties, prefix + prop.getName() + "."));
+      }
     }
 
     return "(" + sb.toString() + ")";
