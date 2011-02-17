@@ -247,7 +247,7 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       finalObject.put("auxiliaryInputValues", jsonAuxiliaryInputValues);
 
-      if (mode.equals("NEW") || mode.equals("EDIT")) {
+      if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
         // We also include information related to validation dependencies
         // and we add the columns which have a callout
 

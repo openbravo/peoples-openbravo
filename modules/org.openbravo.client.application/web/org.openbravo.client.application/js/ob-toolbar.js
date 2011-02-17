@@ -708,7 +708,7 @@ isc.OBToolbar.addProperties({
       var formView = this.view.viewForm, me = this;
       // Call FIC to obtain possible session attributes and set them in form
       requestParams = {
-          MODE: 'EDIT',
+          MODE: 'SETSESSION',
           PARENT_ID: this.view.getParentId(),
           TAB_ID: this.view.tabId,
           ROW_ID: currentValues.id
