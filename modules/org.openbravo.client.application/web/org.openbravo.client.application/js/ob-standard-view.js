@@ -942,8 +942,6 @@ isc.OBStandardView.addProperties({
     // and recompute the count:
     this.updateChildCount();
     this.updateTabTitle();
-    
-    this.toolBar.refreshCustomButtons();
   },
   
   hasSelectionStateChanged: function() {
