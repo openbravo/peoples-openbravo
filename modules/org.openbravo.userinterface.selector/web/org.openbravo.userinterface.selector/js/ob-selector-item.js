@@ -425,6 +425,9 @@ isc.OBSelectorItem.addProperties({
       criteria[OB.Constants.OR_EXPRESSION] = 'true';
     }
     
+    // add field's default filter expressions
+    criteria.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
+    
     // the additional where clause
     criteria[OB.Constants.WHERE_PARAMETER] = this.whereClause;
     
