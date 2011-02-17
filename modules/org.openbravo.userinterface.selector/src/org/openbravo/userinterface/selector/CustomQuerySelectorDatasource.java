@@ -154,8 +154,16 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     boolean hasFilter = false;
     for (SelectorField field : sel.getOBUISELSelectorFieldList()) {
       String value = parameters.get(field.getDisplayColumnAlias());
-      if (field.isFilterable() && field.getClauseLeftPart() != null
-          && StringUtils.isNotEmpty(value)) {
+      if (!parameters.containsKey(field.getDisplayColumnAlias())
+          && field.getDefaultExpression() != null && !"Window".equals(requestType)) {
+        try {
+          value = (String) evaluateExpression(field.getDefaultExpression(), parameters);
+        } catch (Exception e) {
+          log.error("Error evaluating filter expression: " + e.getMessage(), e);
+        }
+      }
+      if ((field.isFilterable() || field.getDefaultExpression() != null)
+          && field.getClauseLeftPart() != null && StringUtils.isNotEmpty(value)) {
         String whereClause = getWhereClause(value, field, xmlDateFormat);
         if (!hasFilter) {
           additionalFilter.append(NEW_FILTER_CLAUSE);
@@ -301,6 +309,15 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       return "";
     }
 
+    Object result = evaluateExpression(sel.getFilterExpression(), parameters);
+    if (result != null && !result.toString().equals("")) {
+      return NEW_FILTER_CLAUSE + "(" + result.toString() + ")";
+    }
+
+    return "";
+  }
+
+  private Object evaluateExpression(String expression, Map<String, String> parameters) {
     final ScriptEngineManager manager = new ScriptEngineManager();
     final ScriptEngine engine = manager.getEngineByName("js");
     // Initializing the OB JavaScript object
@@ -309,15 +326,11 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
     // Applying filter expression
     try {
-      Object result = engine.eval(sel.getFilterExpression());
-      if (result != null && !result.toString().equals("")) {
-        return NEW_FILTER_CLAUSE + "(" + result.toString() + ")";
-      }
+      return engine.eval(expression);
     } catch (Exception e) {
       log.error("Error evaluating filter expression: " + e.getMessage(), e);
     }
-
-    return "";
+    return null;
   }
 
   /**
