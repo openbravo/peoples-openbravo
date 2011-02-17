@@ -728,8 +728,12 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
 
     ArrayList<String> calledCallouts = new ArrayList<String>();
+    if (calloutsToCall.isEmpty()) {
+      return false;
+    }
     return runCallouts(columnValues, tab, calledCallouts, calloutsToCall, lastfieldChanged,
         messages, dynamicCols);
+
   }
 
   private boolean runCallouts(Map<String, JSONObject> columnValues, Tab tab,
