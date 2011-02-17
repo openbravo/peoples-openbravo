@@ -193,6 +193,10 @@ isc.OBSelectorPopupWindow.addProperties({
     }
   },
   
+  closeClick: function() {
+    this.hide(arguments);
+	},
+
   hide: function(){
     this.Super('hide', arguments);
     this.selector.focusInItem();
