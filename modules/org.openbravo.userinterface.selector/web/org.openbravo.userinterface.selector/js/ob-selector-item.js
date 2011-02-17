@@ -412,15 +412,12 @@ isc.OBSelectorItem.addProperties({
     // adds the selector id to filter used to get filter information
     criteria._selectorDefinitionId = this.selectorDefinitionId;
     
-    // only filter if the display field is also
-    // passed
-    // the displayField filter is not passed when
-    // the user clicks the
-    // drop-down button
+    // only filter if the display field is also passed
+    // the displayField filter is not passed when the user clicks the drop-down button
     if (criteria[this.displayField]) {
       for (var i = 0; i < this.extraSearchFields.length; i++) {
         if (!criteria[this.extraSearchFields[i]]) {
-          criteria[this.extraSearchFields[i]] = this.getDisplayValue();
+          criteria[this.extraSearchFields[i]] = criteria[this.displayField];
         }
       }
       
