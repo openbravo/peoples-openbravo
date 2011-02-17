@@ -402,7 +402,7 @@ isc.OBViewGrid.addProperties({
       this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridNoRecords') +
       ' <span onclick="window[\'' +
       this.ID +
-      '\'].createNew();" class="OBLabelLink">' +
+      '\'].view.newRow();" class="OBLabelLink">' +
       OB.I18N.getLabel('OBUIAPP_GridCreateOne') +
       '</span>';
     }
@@ -737,7 +737,11 @@ isc.OBViewGrid.addProperties({
     } else {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
       if (selectedValues.length === 0) {
-        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_NoParentSelected');
+        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_GridNoRecords') +
+                            ' <span onclick="window[\'' +
+                            this.ID + '\'].view.newRow();" class="OBLabelLink">' +
+                            OB.I18N.getLabel('OBUIAPP_GridCreateOne') +
+                            '</span>';
       } else if (selectedValues.length === 1 && selectedValues[0]._new) {
         this.emptyMessage = OB.I18N.getLabel('OBUIAPP_ParentIsNew');
       } else if (selectedValues.length > 1) {
