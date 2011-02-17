@@ -38,7 +38,7 @@ public class PriceListVersionFilterExpression implements FilterExpression {
     Date date = getDate();
     PriceListVersion priceListVersion = getPriceListVersion(priceList, date);
     if (priceListVersion != null) {
-      return priceListVersion.getIdentifier();
+      return priceListVersion.getId();
     }
     return "";
   }

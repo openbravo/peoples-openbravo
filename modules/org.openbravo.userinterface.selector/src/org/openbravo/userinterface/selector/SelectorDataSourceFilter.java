@@ -205,7 +205,9 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         // If the this code change, make sure you check the getWhereClause method of the
         // QueryBuilder. Check issue https://issues.openbravo.com/view.php?id=14239
 
-        if (String.class == property.getPrimitiveObjectType()) {
+        if (!property.isPrimitive()) {
+          sb.append("e." + sf.getProperty() + ".id = '" + result.toString() + "'");
+        } else if (String.class == property.getPrimitiveObjectType()) {
           if (textMatching == TextMatching.exact) {
             sb.append(sf.getProperty() + " = '" + result.toString() + "'");
           } else if (textMatching == TextMatching.startsWith) {
