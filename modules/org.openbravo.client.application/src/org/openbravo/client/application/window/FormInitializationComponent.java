@@ -1036,7 +1036,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         // }
         log.debug("Transformed SQL code: " + sql);
         int indP = 1;
-        PreparedStatement ps = OBDal.getInstance().getConnection().prepareStatement(sql);
+        PreparedStatement ps = OBDal.getInstance().getConnection(false).prepareStatement(sql);
         for (String parameter : params) {
           String value = "";
           if (parameter.substring(0, 1).equals("#")) {
