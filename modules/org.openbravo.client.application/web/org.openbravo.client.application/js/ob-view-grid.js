@@ -1285,16 +1285,15 @@ isc.OBViewGrid.addProperties({
   },
   
   showInlineEditor: function(rowNum, colNum, newCell, newRow, suppressFocus){
-  
-    if (this.getEditForm() && newRow) {
-      this.getEditForm().clearErrors();
-    }
-    // if the focus does not get supressed then the clicked field will receive focus
-    // and won't be disabled so the user can already start typing
     if (newRow) {
-      suppressFocus = true;
+      if (this.getEditForm()) {
+        this.getEditForm().clearErrors();
+      }
+      // if the focus does not get suppressed then the clicked field will receive focus
+      // and won't be disabled so the user can already start typing      
+      suppressFocus = true; 
     }
-    
+
     var ret = this.Super('showInlineEditor', [rowNum, colNum, newCell, newRow, suppressFocus]);
     if (!newRow) {
       return ret;
