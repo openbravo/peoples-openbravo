@@ -169,7 +169,7 @@ public abstract class UIDefinition {
           String sql = parseSQL(defaultS, params);
           int indP = 1;
           try {
-            PreparedStatement ps = OBDal.getInstance().getConnection().prepareStatement(sql);
+            PreparedStatement ps = OBDal.getInstance().getConnection(false).prepareStatement(sql);
             for (String parameter : params) {
               String value = "";
               if (parameter.substring(0, 1).equals("#")) {
