@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER OBKMO_WIDGETCLASS_TRG">
+    <trigger name="OBKMO_WIDGETCLASS_TRG" table="OBKMO_WIDGET_CLASS" fires="after" insert="true" update="true" delete="false" foreach="row">
+      <body><![CDATA[
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2010 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+        
+BEGIN
+    
+    IF AD_isTriggerEnabled()='N' THEN RETURN;
+    END IF;
+   IF INSERTING THEN 
+     INSERT INTO OBKMO_Widget_Class_Trl
+             (OBKMO_WIDGET_CLASS_TRL_ID , OBKMO_WIDGET_CLASS_ID, AD_LANGUAGE,
+              AD_CLIENT_ID              , AD_ORG_ID            , ISACTIVE   ,
+              CREATED                   , CREATEDBY            , UPDATED    ,
+              UPDATEDBY                 , TITLE                , DESCRIPTION,
+              ISTRANSLATED)
+       SELECT get_uuid()                , :new.OBKMO_WIDGET_CLASS_ID, l.AD_LANGUAGE,
+              :new.AD_CLIENT_ID         , :new.AD_ORG_ID       , :new.ISACTIVE,                                                                                                                                                                        
+              now()                     , :new.CreatedBy       , now()        ,
+              :new.UpdatedBy            , :new.TITLE           , :new.DESCRIPTION,
+              'N'
+        FROM AD_Language l, AD_Module m
+       WHERE l.isActive = 'Y'
+         AND l.IsSystemLanguage='Y'
+         AND m.AD_Module_ID = :new.AD_Module_ID
+         AND M.AD_Language != l.AD_Language;
+    END IF;
+    IF UPDATING THEN
+      IF coalesce(:new.title,'.') != coalesce(:old.title,'.')
+         or coalesce(:new.description, '.') != coalesce(:old.description, '.') THEN
+         UPDATE OBKMO_Widget_Class_Trl
+            SET IsTranslated='N',
+                Updated=now()
+          WHERE OBKMO_Widget_Class_ID=:new.OBKMO_Widget_Class_ID;
+      END IF;
+    END IF;
+
+END OBKMO_WIDGETCLASS_TRG
+]]></body>
+    </trigger>
+  </database>
