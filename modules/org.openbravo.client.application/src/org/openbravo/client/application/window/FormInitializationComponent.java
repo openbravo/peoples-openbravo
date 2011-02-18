@@ -826,7 +826,8 @@ public class FormInitializationComponent extends BaseActionHandler {
                       NativeArray subelements = (NativeArray) element.get(1, null);
                       for (int j = 0; j < subelements.getLength(); j++) {
                         NativeArray subelement = (NativeArray) subelements.get(j, null);
-                        if (subelement.get(2, null).toString().equalsIgnoreCase("True")) {
+                        if (subelement.get(2, null) != null
+                            && subelement.get(2, null).toString().equalsIgnoreCase("True")) {
                           String value = subelement.get(0, null).toString();
                           log.debug("Column: " + col.getDBColumnName() + "  Value: " + value);
                           String oldValue = rq.getRequestParameter(colId);
