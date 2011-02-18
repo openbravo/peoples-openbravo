@@ -56,10 +56,14 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
       final JSONObject json = new JSONObject(super.getFieldProperties(field, getValueFromSession));
       if (json.has("value")) {
         final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
-        final BaseOBObject target = OBDal.getInstance().get(prop.getTargetEntity().getName(),
-            json.getString("value"));
-        if (target != null) {
-          json.put("identifier", target.getIdentifier());
+        if (prop.isPrimitive()) {
+          json.put("identifier", json.getString("value"));
+        } else {
+          final BaseOBObject target = OBDal.getInstance().get(prop.getTargetEntity().getName(),
+              json.getString("value"));
+          if (target != null) {
+            json.put("identifier", target.getIdentifier());
+          }
         }
       }
       return json.toString();
