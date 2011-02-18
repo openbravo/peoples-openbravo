@@ -209,16 +209,16 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
           sb.append("e." + sf.getProperty() + ".id = '" + result.toString() + "'");
         } else if (String.class == property.getPrimitiveObjectType()) {
           if (textMatching == TextMatching.exact) {
-            sb.append(sf.getProperty() + " = '" + result.toString() + "'");
+            sb.append("e." + sf.getProperty() + " = '" + result.toString() + "'");
           } else if (textMatching == TextMatching.startsWith) {
-            sb.append("upper(" + sf.getProperty() + ") like '" + result.toString().toUpperCase()
-                + "%'");
+            sb.append("upper(" + "e." + sf.getProperty() + ") like '"
+                + result.toString().toUpperCase() + "%'");
           } else {
-            sb.append("upper(" + sf.getProperty() + ") like '%"
+            sb.append("upper(" + "e." + sf.getProperty() + ") like '%"
                 + result.toString().toUpperCase().replaceAll(" ", "%") + "%'");
           }
         } else if (Boolean.class == property.getPrimitiveObjectType() || property.isNumericType()) {
-          sb.append(sf.getProperty() + " = " + result.toString());
+          sb.append("e." + sf.getProperty() + " = " + result.toString());
         } else if (Date.class.isAssignableFrom(property.getPrimitiveObjectType())) {
 
           if (dateFormat == null || systemDateFormat == null) {
@@ -229,9 +229,9 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
           try {
             final Calendar cal = Calendar.getInstance();
             cal.setTime(systemDateFormat.parse(result.toString()));
-            sb.append("(day(" + sf.getProperty() + ") = " + cal.get(Calendar.DATE) + " and month("
-                + sf.getProperty() + ") = " + (cal.get(Calendar.MONTH) + 1) + " and year("
-                + sf.getProperty() + ") = " + cal.get(Calendar.YEAR) + ")");
+            sb.append("(day(" + "e." + sf.getProperty() + ") = " + cal.get(Calendar.DATE)
+                + " and month(" + "e." + sf.getProperty() + ") = " + (cal.get(Calendar.MONTH) + 1)
+                + " and year(" + "e." + sf.getProperty() + ") = " + cal.get(Calendar.YEAR) + ")");
           } catch (Exception e) {
             log.error("Error trying to parse date for property " + sf.getProperty(), e);
           }
