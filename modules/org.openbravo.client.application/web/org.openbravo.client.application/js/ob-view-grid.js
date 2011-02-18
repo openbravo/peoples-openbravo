@@ -1119,8 +1119,6 @@ isc.OBViewGrid.addProperties({
     // remove any new pointer
     delete record._new;
     
-    this.view.toolBar.updateButtonState();
-    
     // remove the error style/message
     this.setRecordErrorMessage(rowNum, null);
     
@@ -1137,6 +1135,8 @@ isc.OBViewGrid.addProperties({
     } else if (this.getSelectedRecord() === record) {
       this.view.refreshChildViews();
     }
+    
+    this.view.toolBar.updateButtonState();
     this.view.messageBar.hide();
     this.view.refreshParentRecord();
   },
