@@ -83,6 +83,8 @@ OB.TestRegistry.register('org.openbravo.client.application.companylogo', OB.TopL
 
 OB.TopLayout.OpenbravoLogo = isc.Img.create({
     imageType: 'normal',
+    imageWidth: '122',
+    imageHeight: '34',
     src: OB.Application.contextUrl + 'utility/GetOpenbravoLogo.png',
     getInnerHTML: function() {
         var html = this.Super('getInnerHTML', arguments);
