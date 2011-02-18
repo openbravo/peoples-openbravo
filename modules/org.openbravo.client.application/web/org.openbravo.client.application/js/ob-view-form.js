@@ -44,8 +44,6 @@ OB.ViewFormProperties = {
   autoComplete: true,
   redrawOnDisable: true,
   
-  autoFocus: true,
-  
   // ** {{ Layout Settings }} **
   numCols: 4,
   colWidths: ['24%', '24%', '24%', '24%'],
@@ -128,14 +126,14 @@ OB.ViewFormProperties = {
     
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
-    this.ignoreFirstFocusEvent = preventFocus;
     this.clearErrors();
     if (!isNew) {
       this.validateAfterFicReturn = true;
     }
     
-    this.view.toolBar.updateButtonState();
-
+    // note buttons are updated after fic return
+//    this.view.toolBar.updateButtonState(true);
+    this.ignoreFirstFocusEvent = preventFocus;
     this.retrieveInitialValues(isNew);
     
     // note on purpose using this.isNew, also takes into account the _new flag
@@ -143,9 +141,6 @@ OB.ViewFormProperties = {
       this.view.statusBar.setStateLabel('OBUIAPP_New', this.view.statusBar.newIcon);
     } else {
       this.view.statusBar.setStateLabel();
-    }
-    if (!preventFocus) {
-      this.resetFocusItem();
     }
   },
   
@@ -194,6 +189,14 @@ OB.ViewFormProperties = {
   // reset the focus item to the first item which can get focus
   resetFocusItem: function() {
     var items = this.getItems(), length = items.length, item;
+    
+    if(this.firstFocusedField) {
+      item = this.getItem(this.firstFocusedField);
+      if(item && item.getCanFocus()) {
+        this.setFocusInItem(item);
+        return;
+      }
+    }
 
     // is set for inline grid editing for example
     if (this.getFocusItem() && this.getFocusItem().getCanFocus()) {
@@ -201,26 +204,21 @@ OB.ViewFormProperties = {
       this.view.lastFocusedField = this.getFocusItem();
       return;
     }
-    
-    if(this.firstFocusedField) {
-      item = this.getItem(this.firstFocusedField);
-      if(item && item.getCanFocus()) {
-        item.focusInItem();
-        this.view.lastFocusedField = item;
-        return;
-      }
-    }
 
     if (items) {
       for (var i = 0; i < length; i++) {
         item = items[i];
         if (item.getCanFocus() && !item.isDisabled()) {
-          this.focusInItem(item);
-          this.view.lastFocusedItem = item;
+          this.setFocusInItem(item);
           return;
         }
       }
     }
+  },
+  
+  setFocusInItem: function(item) {
+    this.setFocusItem(item);
+    this.view.lastFocusedField = item;
   },
   
   setFindNewFocusItem: function() {
@@ -324,6 +322,15 @@ OB.ViewFormProperties = {
         // remember the initial values, if we are still editing the same row
         me.rememberValues();
       }
+      // do some focus stuff
+      me.resetFocusItem();
+      if (me.ignoreFirstFocusEvent) {
+        delete this.ignoreFirstFocusEvent;
+        return;
+      }
+      if (me.getFocusItem()) {
+        me.getFocusItem().focusInItem();
+      }
     });
   },
   
@@ -415,14 +422,13 @@ OB.ViewFormProperties = {
     this.markForRedraw();
     if (this.showFormOnFICReturn) {
       if (!this.isVisible()) {
-        this.setFocusItem(null);
-        this.resetFocusItem();
         this.view.switchFormGridVisibility();
       }
       delete this.showFormOnFICReturn;
     }
 
-    this.view.toolBar.updateButtonState();
+    this.view.toolBar.updateButtonState(true);
+    
     // note onFieldChanged uses the form.readOnly set above
     this.onFieldChanged(this);
 
@@ -435,8 +441,6 @@ OB.ViewFormProperties = {
       OB.Utilities.callAction(editValues.actionAfterFicReturn);
       delete editValues.actionAfterFicReturn;
     }
-
-    this.resetFocusItem();
   },
   
   setDisabled: function(state) {
@@ -645,23 +649,6 @@ OB.ViewFormProperties = {
     });
   },
   
-  focus: function(){
-    if (this.ignoreFirstFocusEvent) {
-      this.ignoreFirstFocusEvent = false;
-      return;
-    }
-    // handle the case that there is a focusitem but the focus is not yet visible
-    // this happens in defaultedit mode where the parent change forces
-    // a default edit mode opening in a child, in that case the focus is not
-    // set in the child but it should be set when the somewhere in the child a click 
-    // is done
-    if (this.getFocusItem()) {
-      this.getFocusItem().focusInItem();
-    }
-    var ret = this.Super("focus", arguments);
-    return ret;
-  },
-  
   itemChanged: function(item, newValue){
     this.itemChangeActions(item);
   },
@@ -673,7 +660,7 @@ OB.ViewFormProperties = {
     // remove the message
     this.setHasChanged(true);
     this.view.messageBar.hide();
-    this.view.toolBar.updateButtonState();
+    this.view.toolBar.updateButtonState(true);
   },
   
   resetForm: function(){
@@ -687,7 +674,7 @@ OB.ViewFormProperties = {
     this.resetValues();
     this.setHasChanged(false);
     this.view.statusBar.setStateLabel(null);
-    this.view.toolBar.updateButtonState();
+    this.view.toolBar.updateButtonState(true);
   },
   
   autoSave: function(){
@@ -721,9 +708,6 @@ OB.ViewFormProperties = {
 
     // remove the error message if any
     this.view.messageBar.hide();
-
-    // disable some buttons
-    this.view.toolBar.updateButtonState();
     
     var callback = function(resp, data, req){
       var index1, index2, errorCode, view = form.view;
@@ -776,7 +760,7 @@ OB.ViewFormProperties = {
       }
 
       form.isSaving = false;
-      view.toolBar.updateButtonState();
+      view.toolBar.updateButtonState(true);
       return false;
     };
     
@@ -786,7 +770,7 @@ OB.ViewFormProperties = {
       this.handleFieldErrors(null);
       form.view.standardWindow.autoSaveDone(form.view, false);
       form.isSaving = false;
-      form.view.toolBar.updateButtonState();
+      form.view.toolBar.updateButtonState(true);
       return;
     }
     

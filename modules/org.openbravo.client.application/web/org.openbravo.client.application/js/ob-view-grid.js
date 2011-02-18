@@ -286,7 +286,7 @@ isc.OBViewGrid.addProperties({
   show: function(){
     var ret = this.Super('show', arguments);
     
-    this.view.toolBar.updateButtonState();
+    this.view.toolBar.updateButtonState(true);
     
     this.updateRowCountDisplay();
     
@@ -737,11 +737,7 @@ isc.OBViewGrid.addProperties({
     } else {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
       if (selectedValues.length === 0) {
-        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_GridNoRecords') +
-                            ' <span onclick="window[\'' +
-                            this.ID + '\'].view.newRow();" class="OBLabelLink">' +
-                            OB.I18N.getLabel('OBUIAPP_GridCreateOne') +
-                            '</span>';
+        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_NoParentSelected');
       } else if (selectedValues.length === 1 && selectedValues[0]._new) {
         this.emptyMessage = OB.I18N.getLabel('OBUIAPP_ParentIsNew');
       } else if (selectedValues.length > 1) {
@@ -1086,7 +1082,7 @@ isc.OBViewGrid.addProperties({
     
     view.standardWindow.cleanUpAutoSaveProperties();
     view.updateTabTitle();
-    view.toolBar.updateButtonState();
+    view.toolBar.updateButtonState(true);
     
     // if nothing else got selected, select ourselves then
     if (!this.getSelectedRecord()) {
@@ -1136,7 +1132,7 @@ isc.OBViewGrid.addProperties({
       this.view.refreshChildViews();
     }
     
-    this.view.toolBar.updateButtonState();
+    this.view.toolBar.updateButtonState(true);
     this.view.messageBar.hide();
     this.view.refreshParentRecord();
   },
@@ -1165,7 +1161,7 @@ isc.OBViewGrid.addProperties({
     }
     this.view.standardWindow.cleanUpAutoSaveProperties();
     this.view.updateTabTitle();
-    this.view.toolBar.updateButtonState();
+    this.view.toolBar.updateButtonState(true);
   },
   
   discardEdits: function(rowNum, colNum, dontHideEditor, editCompletionEvent){
@@ -1194,7 +1190,7 @@ isc.OBViewGrid.addProperties({
           
           // update after removing the error msg
           me.view.updateTabTitle();
-          me.view.toolBar.updateButtonState();
+          me.view.toolBar.updateButtonState(true);
         }
       });
     } else {
@@ -1215,7 +1211,7 @@ isc.OBViewGrid.addProperties({
       
       // update after removing the error msg
       this.view.updateTabTitle();
-      this.view.toolBar.updateButtonState();
+      this.view.toolBar.updateButtonState(true);
     }
   },
     
@@ -1231,6 +1227,18 @@ isc.OBViewGrid.addProperties({
     if (!colNum && colNum !== 0) {
       colNum = this.getEditCol();
     }
+    
+    // nothing changed just fire the calback and bail
+    if (!ficCallDone && this.getEditForm() && !this.getEditForm().hasChanged) {
+      if (saveCallback) {
+          this.fireCallback(saveCallback, 
+                            "rowNum,colNum,editCompletionEvent,success", 
+                            [rowNum,colNum,editCompletionEvent,success]
+          );
+      }
+      return true;
+    }
+    
     if (ficCallDone) {
       // reset the new values as this can have changed because of a fic call
       newValues = this.getEditValues(editValuesID);
@@ -1335,7 +1343,6 @@ isc.OBViewGrid.addProperties({
     }
     
     this.view.messageBar.hide();
-    this.view.toolBar.updateButtonState();
     
     return ret;
   },

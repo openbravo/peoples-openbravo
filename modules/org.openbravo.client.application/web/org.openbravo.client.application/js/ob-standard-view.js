@@ -141,6 +141,7 @@ isc.OBStandardView.addProperties({
   // set if one record has been selected
   lastRecordSelected: null,
   lastRecordSelectedCount: 0,
+  fireOnPauseDelay: 200,
   
   // ** {{{ refreshContents }}} **
   // Should the contents listgrid/forms be refreshed when the tab
@@ -214,7 +215,7 @@ isc.OBStandardView.addProperties({
 
     var ret = this.Super('initWidget', arguments);
     
-    this.toolBar.updateButtonState();
+    this.toolBar.updateButtonState(true);
 
     return ret;
   },
@@ -505,8 +506,8 @@ isc.OBStandardView.addProperties({
     }
     
     if (this.isShowingForm && this.viewForm && this.viewForm.getFocusItem()) {
-      object = this.viewForm;
-      functionName = 'focus';
+      object = this.viewForm.getFocusItem();
+      functionName = 'focusInItem';
     } else if (this.isEditingGrid && this.viewGrid.getEditForm() && this.viewGrid.getEditForm().getFocusItem()) {
       object = this.viewGrid.getEditForm();
       functionName = 'focus';
@@ -572,21 +573,6 @@ isc.OBStandardView.addProperties({
       this.standardWindow.autoSave();
     }
     this.setTabButtonState(state);
-  },
-  
-  // do refresh contents with a small delay to not refresh child views
-  // to quick when walking through a grid with arrow keys
-  // only do this if this view is not in a dirty state
-  doPausedRefreshContents: function(doRefreshWhenVisible) {
-    if (this.isShowingForm && this.viewForm.hasChanged) {
-      this.doRefreshContents(doRefreshWhenVisible);
-    } else {
-      var me = this, callback = function () {
-        me.doRefreshContents(doRefreshWhenVisible);
-      };
-      // wait 2 times longer than the fire on pause delay default
-      this.fireOnPause('doRefreshContents_' + this.ID, callback, this.fireOnPauseDelay * 2);
-    }
   },
   
   doRefreshContents: function(doRefreshWhenVisible){
@@ -925,10 +911,19 @@ isc.OBStandardView.addProperties({
     if (!this.hasSelectionStateChanged()) {
       return;
     }
+    var me = this, callback = function () {
+      me.delayedRecordSelected();
+    };
+    // wait 2 times longer than the fire on pause delay default
+    this.fireOnPause('delayedRecordSelected_' + this.ID, callback, this.fireOnPauseDelay * 2);
+  },
+  
+  // function is called with a small delay to handle the case that a user
+  // navigates quickly over a grid
+  delayedRecordSelected: function() {
     this.updateLastSelectedState();
-    this.updateTabTitle();
-        
-    this.toolBar.updateButtonState();
+    this.updateTabTitle();    
+    this.toolBar.updateButtonState(this.isEditingGrid || this.isShowingForm);
 
     var tabViewPane = null;
     
@@ -936,12 +931,11 @@ isc.OBStandardView.addProperties({
     if (this.childTabSet) {
       for (var i = 0; i < this.childTabSet.tabs.length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
-        tabViewPane.doPausedRefreshContents(true);
+        tabViewPane.doRefreshContents(true);
       }
     }
     // and recompute the count:
     this.updateChildCount();
-    this.updateTabTitle();
   },
   
   hasSelectionStateChanged: function() {
@@ -976,6 +970,7 @@ isc.OBStandardView.addProperties({
   },
   
   updateChildCount: function(){
+    // note disabled for now
     if (true) {
       return;
     }
@@ -1129,10 +1124,12 @@ isc.OBStandardView.addProperties({
   },
   
   isViewVisible: function(){
+    // this prevents data requests for minimized tabs
+    return this.isVisible();
     // note this.tab.isVisible is done as the tab is visible earlier than
     // the pane
-    return (!this.tab || this.tab.isVisible()) && (!this.parentTabSet || this.parentTabSet.getSelectedTabNumber() ===
-              this.parentTabSet.getTabNumber(this.tab));
+//    return (!this.tab || this.tab.isVisible()) && (!this.parentTabSet || this.parentTabSet.getSelectedTabNumber() ===
+//              this.parentTabSet.getTabNumber(this.tab));
   },
   
   // ++++++++++++++++++++ Button Actions ++++++++++++++++++++++++++
@@ -1567,6 +1564,10 @@ isc.OBStandardView.addProperties({
   },
   
   setContextInfo: function(sessionProperties, callbackFunction){
+    // no need to set the context in this case
+    if (this.isEditingGrid || this.isShowingForm) {
+      return;
+    }
     if (!sessionProperties) {
       sessionProperties = this.getContextInfo(true, true);
     }

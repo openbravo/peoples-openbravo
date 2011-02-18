@@ -244,7 +244,7 @@ isc.OBToolbar.addProperties({
   // 
   // NOTE: new buttons should implement the updateState method.
   //
-  updateButtonState: function() {
+  updateButtonState: function(noSetSession) {
     for (i = 0; i < this.leftMembers.length; i++) {
       if (this.leftMembers[i].updateState) {
         this.leftMembers[i].updateState();
@@ -252,7 +252,7 @@ isc.OBToolbar.addProperties({
     }
     
     // and refresh the process toolbar buttons
-    this.refreshCustomButtons();
+    this.refreshCustomButtons(noSetSession);
   },
 
   // ** {{{ getLeftMember(member) }}} **
@@ -682,7 +682,7 @@ isc.OBToolbar.addProperties({
   //
   // Refreshes all the custom buttons in the toolbar based on current record selection
   //
-  refreshCustomButtons: function(){
+  refreshCustomButtons: function(noSetSession){
     function doRefresh(buttons, currentValues, hideAllButtons, me){
       for (var i = 0; i < buttons.length; i++) {
         if (buttons[i].updateState) {
@@ -703,8 +703,8 @@ isc.OBToolbar.addProperties({
     if (this.view.viewGrid.getSelectedRecords()) {
       numOfSelRecords = this.view.viewGrid.getSelectedRecords().length;
     }
-
-    if (this.view.buttonsHaveSessionLogic && !this.view.isShowingForm && !hideAllButtons && !isNew) {
+    
+    if (!noSetSession && this.view.buttonsHaveSessionLogic && !this.view.isShowingForm && !hideAllButtons && !isNew) {
       var formView = this.view.viewForm, me = this;
       // Call FIC to obtain possible session attributes and set them in form
       requestParams = {

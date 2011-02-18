@@ -123,7 +123,7 @@ isc.OBStandardWindow.addProperties({
       this.views[i].setReadOnly(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_READONLY);
       this.views[i].setSingleRecord(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_SINGLERECORD);
       
-      this.views[i].toolBar.updateButtonState();
+      this.views[i].toolBar.updateButtonState(true);
     }
   },
   

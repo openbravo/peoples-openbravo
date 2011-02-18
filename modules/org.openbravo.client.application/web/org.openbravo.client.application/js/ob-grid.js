@@ -28,6 +28,7 @@ isc.OBGrid.addProperties({
   recordComponentPosition: 'within',
   poolComponentsPerColumn: true,
   showRecordComponents: true,
+  canSelectText: true,
   
   createRecordComponent: function(record, colNum){
     var field = this.getField(colNum), rowNum = this.getRecordIndex(record);
