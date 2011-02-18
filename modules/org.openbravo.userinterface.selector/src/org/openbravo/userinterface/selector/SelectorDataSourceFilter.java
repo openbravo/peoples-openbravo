@@ -174,6 +174,12 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(sel.getTable().getId());
 
     for (SelectorField sf : sfc.list()) {
+      // skip selector fields which do not have a property defined (needed for selector definitions
+      // using a custom query
+      if (sf.getProperty() == null) {
+        continue;
+      }
+
       // Skip values from the request
       if (parameters.get(sf.getProperty()) != null) {
         log.debug("Skipping the default value evaluation for property: " + sf.getProperty()

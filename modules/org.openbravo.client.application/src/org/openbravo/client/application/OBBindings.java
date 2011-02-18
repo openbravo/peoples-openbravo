@@ -102,11 +102,13 @@ public class OBBindings {
       return null;
     }
 
-    if (requestMap.get(OBBindingsConstants.SO_TRX_PARAM) == null) {
+    String value = requestMap.get(OBBindingsConstants.SO_TRX_PARAM);
+
+    if (value == null) {
       return null;
     }
 
-    return "Y".equalsIgnoreCase(requestMap.get(OBBindingsConstants.SO_TRX_PARAM));
+    return "Y".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value);
   }
 
   public String getWindowId() {
