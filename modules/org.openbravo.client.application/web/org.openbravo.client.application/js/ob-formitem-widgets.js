@@ -99,7 +99,7 @@ w.closeSearch = function (action, value, display, parameters, wait){
   }
   isc.OBSearchItem.openedWindow.close();
   isc.OBSearchItem.openSearchItem = null;
-}
+};
 }(this));
 
 isc.OBSearchItem.addProperties({
@@ -437,7 +437,11 @@ isc.OBListItem.addProperties({
   completeOnTab: true,
   // setting this to false means that the change handler is called when picking
   // a value and not earlier
-  addUnknownValues: false,
+
+  // NOTE: Setting this property to false fixes the issue when using the mouse to pick a value
+  // FIXME: Sometimes the field label gets a red color (a blink)
+  // addUnknownValues: false,
+
   selectOnFocus: true,
 
   pickListProperties: {
