@@ -154,10 +154,14 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     boolean hasFilter = false;
     for (SelectorField field : sel.getOBUISELSelectorFieldList()) {
       String value = parameters.get(field.getDisplayColumnAlias());
-      if (!parameters.containsKey(field.getDisplayColumnAlias())
-          && field.getDefaultExpression() != null && !"Window".equals(requestType)) {
+      if (field.getDefaultExpression() != null && !"Window".equals(requestType)) {
         try {
-          value = (String) evaluateExpression(field.getDefaultExpression(), parameters);
+          String defaultValue = evaluateExpression(field.getDefaultExpression(), parameters)
+              .toString();
+          if (StringUtils.isNotEmpty(defaultValue)) {
+            additionalFilter.append(NEW_FILTER_CLAUSE);
+            additionalFilter.append(getWhereClause(defaultValue, field, xmlDateFormat));
+          }
         } catch (Exception e) {
           log.error("Error evaluating filter expression: " + e.getMessage(), e);
         }

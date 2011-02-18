@@ -83,7 +83,7 @@ public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
         // recompute it
         documentNo = Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
             new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(),
-            windowId, Order.TABLE_NAME, docTypeTargetId, docTypeId, false, true);
+            windowId, entity.getTableName(), docTypeTargetId, docTypeId, false, true);
         event.setCurrentState(documentNoProperty, documentNo);
       }
     }
