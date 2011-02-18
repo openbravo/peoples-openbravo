@@ -318,7 +318,7 @@ isc.ClassFactory.defineClass('OBEncryptedItem', isc.PasswordItem);
 // add specific properties here
 isc.OBEncryptedItem.addProperties({
   changed : function(form,item,value) {
-	this.form.setValue(item.name + '.cleartext', value);
+    this.form.setValue(item.name + '.cleartext', value);
   }
 });
 
@@ -507,7 +507,12 @@ isc.OBDateChooser.addProperties({
   autoHide: true,
   showCancelButton: true,
   todayButtonTitle: OB.I18N.getLabel('OBUISC_DateChooser.todayButtonTitle'),
-  cancelButtonTitle: OB.I18N.getLabel('OBUISC_DateChooser.cancelButtonTitle')
+  cancelButtonTitle: OB.I18N.getLabel('OBUISC_DateChooser.cancelButtonTitle'),
+  dataChanged: function(){
+    // When data has changed, force the OBDateItem to get it. Other case OBDateItem.blur 
+    // gets incorrect value on getValue()
+    this.callingFormItem.setValue(this.getData());
+  }
 });
 
 if (isc.OBDateChooser) {  // To force SC to load OBDateChooser instead of DateChooser
