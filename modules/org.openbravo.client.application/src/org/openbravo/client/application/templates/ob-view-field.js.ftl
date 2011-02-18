@@ -45,7 +45,7 @@
           </#if>
           <#if fieldDefinition.showIf != "">
           showIf: function(item, value, form, values) {            
-            var context = form.view.getContextInfo(false, true),
+            var context = form.view.getContextInfo(false, true, true),
                 currentValues = values || form.view.getCurrentValues(), i;
 
             // Fixing null values to match 2.50 behaviour '' == null
