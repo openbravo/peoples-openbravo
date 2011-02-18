@@ -251,6 +251,13 @@ BEGIN
             WHERE c_invoiceline.c_orderline_id = c_orderline.c_orderline_id
               AND c_invoiceline.c_invoice_id = p_record_id
               AND c_orderline.c_order_id = order_schdet.order_id;
+            
+            -- invoiced amount for the order plan cannot be higher than total order plan amount.
+            -- sometimes there is a difference due to taxes. that amount will be compensated at the end.
+            IF (v_invoicedamount > order_schdet.amount) THEN
+              v_invoicedamount := order_schdet.amount;
+            END IF;
+            
             -- substract previously assigned amount
             SELECT SUM(psd.amount) INTO v_assignedamount
             FROM fin_payment_schedule ps_inv, fin_payment_scheduledetail psd,
