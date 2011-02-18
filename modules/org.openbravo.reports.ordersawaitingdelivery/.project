@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>org.openbravo.reports.ordersawaitingdelivery</name>
+	<comment>Cloned from https://code.openbravo.com/erp/mods/org.openbravo.reports.ordersawaitingdelivery/</comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+</projectDescription>

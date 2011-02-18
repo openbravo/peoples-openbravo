@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+<meta http-equiv="Expires" content="Tue, 24 Apr 1979 00:00:01 GMT"/>
+<meta http-equiv="Content-type" content="text/html;charset=utf-8"/>
+<link rel="shortcut icon" href="../images/favicon.ico" />
+<script type="text/javascript">
+var OB_smartClientSkinLocation = 'web/org.openbravo.userinterface.smartclient/openbravo/skins/3.00/smartclient/';
+</script>
+<script type="text/javascript" src="../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources"></script>
+<title>Openbravo ERP</title>
+</head>
+<body>
+<script type="text/javascript" src="../../web/org.openbravo.userinterface.smartclient/isomorphic/system/modules/ISC_History.js"></script>
+<script type="text/javascript" src="../../org.openbravo.client.kernel/OBUIAPP_MainLayout/Application"></script>
+<script type="text/javascript" src="js/view-manager.js"></script>
+<script type="text/javascript" src="js/classic-ob-compatibility.js"></script>
+<script type="text/javascript" src="js/history-manager.js"></script>
+<script type="text/javascript">
+OB.Layout.draw();
+
+// Create MyOB page when the DOM is loaded, prevent freezing of the menu
+isc.Page.setEvent("load","OB.Layout.ViewManager.createAddStartTab()");
+</script>
+</body>
+</html>

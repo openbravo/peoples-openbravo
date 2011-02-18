@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<data>
+<!--6EE6D055A7FE4C4DA7EB557F6C61D0EB--><AD_PREFERENCE>
+<!--6EE6D055A7FE4C4DA7EB557F6C61D0EB-->  <AD_PREFERENCE_ID><![CDATA[6EE6D055A7FE4C4DA7EB557F6C61D0EB]]></AD_PREFERENCE_ID>
+<!--6EE6D055A7FE4C4DA7EB557F6C61D0EB-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--6EE6D055A7FE4C4DA7EB557F6C61D0EB-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--6EE6D055A7FE4C4DA7EB557F6C61D0EB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--6EE6D055A7FE4C4DA7EB557F6C61D0EB-->  <VALUE><![CDATA[[
+  {"id": "NavBar_OBQuickCreate", "keyComb": {"ctrl": true, "alt": true, "key": "N"}},
+  {"id": "NavBar_OBQuickLaunch", "keyComb": {"ctrl": true, "alt": true, "key": "O"}},
+  {"id": "NavBar_MenuButton", "keyComb": {"ctrl": true, "alt": true, "key": "M"}},
+  {"id": "NavBar_OBUserProfile", "keyComb": {"ctrl": true, "alt": true, "key": "U"}},
+  {"id": "NavBar_OBHelpAbout", "keyComb": {"ctrl": true, "alt": true, "key": "H"}},
+  {"id": "NavBar_OBLogout", "keyComb": {"ctrl": true, "alt": true, "key": "Q"}}
+]]]></VALUE>
+<!--6EE6D055A7FE4C4DA7EB557F6C61D0EB-->  <PROPERTY><![CDATA[UINAVBA_KeyboardShortcuts]]></PROPERTY>
+<!--6EE6D055A7FE4C4DA7EB557F6C61D0EB-->  <ISPROPERTYLIST><![CDATA[Y]]></ISPROPERTYLIST>
+<!--6EE6D055A7FE4C4DA7EB557F6C61D0EB-->  <AD_MODULE_ID><![CDATA[0BFC35F28CFF48E2B9A1923A8C2924AA]]></AD_MODULE_ID>
+<!--6EE6D055A7FE4C4DA7EB557F6C61D0EB--></AD_PREFERENCE>
+
+</data>

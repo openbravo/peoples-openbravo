@@ -1,0 +1,442 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+/** sprite: xxspritexx_V; sprite-image: url('xxspritexx_V.png'); sprite-layout: vertical */
+/** sprite: xxspritexx_H; sprite-image: url('xxspritexx_H.png'); sprite-layout: horizontal */
+
+@import url(../../../../images/Logos.css);
+@import url(../../Default/Openbravo_ERP_250.css);
+
+/*
+ *************************************************************************
+ * Common elements specific CSS
+ *************************************************************************
+*/
+
+/*
+ *************************
+ * Button
+ *************************
+*/
+
+/*
+ *************************
+ * Button  //Used in old r2.40 button definition
+ *************************
+*/
+
+/*
+ *************************
+ * Button_TwoLines
+ *************************
+*/
+
+/*
+ *************************
+ * Calendar
+ *************************
+*/
+
+/*
+ *************************
+ * Checkbox
+ *************************
+*/
+
+/*
+ *************************
+ * CheckList
+ *************************
+*/
+
+/*
+ *************************
+ * Combo
+ *************************
+*/
+
+/*
+ *************************
+ * DataGrid
+ *************************
+*/
+
+/*
+ *************************
+ * Dimension
+ *************************
+*/
+
+/*
+ *************************
+ * FieldButton
+ *************************
+*/
+
+/*
+ *************************
+ * FieldGroup
+ *************************
+*/
+
+/*
+ *************************
+ * Image
+ *************************
+*/
+
+/*
+ *************************
+ * Label
+ *************************
+*/
+
+/*
+ *************************
+ * MessageBox
+ *************************
+*/
+
+/*
+ *************************
+ * RelationInfo
+ *************************
+*/
+
+/*
+ *************************
+ * Selector
+ *************************
+*/
+
+/*
+ *************************
+ * TableEdition
+ *************************
+*/
+
+/*
+ *************************
+ * TextArea
+ *************************
+*/
+
+/*
+ *************************
+ * TextBox
+ *************************
+*/
+
+/*
+ *************************
+ * Tree
+ *************************
+*/
+
+/*
+ *************************************************************************
+ * Login window specific CSS
+ *************************************************************************
+*/
+
+/*
+ *************************************************************************
+ * Main window specific CSS
+ *************************************************************************
+*/
+
+/*
+ *************************
+ * _ParticularItems
+ *************************
+*/
+
+/*
+ ****************
+ * AddModule
+ ****************
+*/
+
+/*
+ ****************
+ * InstallationHistory
+ ****************
+*/
+
+/*
+ *************************
+ * Bottom
+ *************************
+*/
+
+/*
+ *************************
+ * ContentPane
+ *************************
+*/
+
+/*
+ *************************
+ * LeftTabsBar
+ *************************
+*/
+
+/* Left Icons definition for Main_LeftTabsBar */
+
+/*
+ *************************
+ * NavBar
+ *************************
+*/
+
+.Main_NavBar_bg_left {
+  /*background-color: #3A6B01;
+  background-repeat: repeat-x;
+  background-position: center center;
+  background-image: url(Main/NavBar/backgroundLeft.png);*/  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+}
+
+.Main_NavBar_bg_right {
+  /*background-color: #3A6B01;
+  background-repeat: repeat-x;
+  background-position: center center;
+  background-image: url(Main/NavBar/backgroundRight.png);*/  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+}
+
+/* Left Buttons definition for Main_NavBar */
+
+/* Right Buttons definition for Main_NavBar */
+
+/* Right Icons definition for Main_NavBar */
+
+/*
+ *************************
+ * Status
+ *************************
+*/
+
+/*
+ *************************
+ * Tabs
+ *************************
+*/
+
+.tabBackGroundInit {
+  background-image: url(Main/Tabs/TabPane_top_bg.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 16px */
+  background-color: #3A6B01;
+}
+
+/*
+ *************************
+ * ToolBar
+ *************************
+*/
+
+.Main_ToolBar_bg {
+  background-image: url(Main/ToolBar/backgroundCenter.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  background-color: #3A6B01;
+}
+
+.Main_ToolBar_bg_left {
+  background-repeat: repeat-x;
+  background-image: url(Main/ToolBar/backgroundLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+.Main_ToolBar_bg_right {
+  background-repeat: repeat-x;
+  background-image: url(Main/ToolBar/backgroundRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+}
+
+/*
+ ****************
+ * ExpansibleMenu
+ ****************
+*/
+
+/*
+ *************************************************************************
+ * Menu window specific CSS
+ *************************************************************************
+*/
+
+/*
+ *************************
+ * Bottom
+ *************************
+*/
+
+.Main_Bottom_bg {
+  background-color: #3A6B01;
+}
+
+.Main_Bottom_bg_left {
+  background-color: #3A6B01;
+}
+
+.Main_Bottom_bg_right {
+  background-color: #3A6B01;
+}
+
+/*
+ *************************
+ * ContentPane
+ *************************
+*/
+
+.Main_ContentPane_Right {
+  background-color: #3A6B01;
+}
+
+.Main_ContentPane_Left {
+  background-color: #3A6B01;
+}
+
+/*
+ *************************
+ * NavBar
+ *************************
+*/
+
+/*
+ *************************
+ * Status
+ *************************
+*/
+
+/*
+ *************************
+ * ToolBar
+ *************************
+*/
+
+/*
+ *************************
+ * Tree
+ *************************
+*/
+
+/*
+ *************************************************************************
+ * Popup window specific CSS
+ *************************************************************************
+*/
+
+/*
+ *************************
+ * _ParticularItems
+ *************************
+*/
+
+/*
+ ****************
+ * Help
+ ****************
+*/
+
+/*
+ ****************
+ * RelatedInfo
+ ****************
+*/
+
+/*
+ ****************
+ * Selector
+ ****************
+*/
+
+/*
+ ****************
+ * UserOps
+ ****************
+*/
+
+/*
+ ****************
+ * Workflow
+ ****************
+*/
+
+/*
+ *************************
+ * ContentPane
+ *************************
+*/
+
+/*
+ *************************
+ * DragDropTree
+ *************************
+*/
+
+/*
+ *************************
+ * InfoBar
+ *************************
+*/
+
+/*
+ *************************
+ * NavBar
+ *************************
+*/
+
+.Popup_NavBar_bg {
+  background-image: url(Popup/NavBar/backgroundCenter.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+}
+
+.Popup_NavBar_bg_left {
+  background-image: url(Popup/NavBar/backgroundLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+.Popup_NavBar_bg_right {
+  background-image: url(Popup/NavBar/backgroundRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+}
+
+.Popup_NavBar_bg_logo_left {
+  background-image: url(Popup/NavBar/logoLeft.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+}
+
+.Popup_NavBar_bg_logo_right {
+  background-image: url(Popup/NavBar/logoRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+/*
+ *************************
+ * SeparatorBar
+ *************************
+*/
+
+/*
+ *************************
+ * Status
+ *************************
+*/
+
+/*
+ *************************
+ * Wallpaper
+ *************************
+*/
+
+/*
+ *************************
+ * WindowLogo
+ *************************
+*/

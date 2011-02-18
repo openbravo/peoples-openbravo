@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="APRMJUnit" default="all" basedir="../../.">
+
+  <property name="build" location="build/classes" />
+  <property name="base.modules" location="modules" />
+  <property name="base.lib" location="lib" />
+
+  <path id="project.class.path">
+    <pathelement path="${build}" />
+    <fileset dir="${base.lib}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${base.modules}">
+      <include name="*/lib/**" />
+    </fileset>
+    <dirset dir="${base.modules}">
+      <include name="*/build/classes/" />
+    </dirset>
+  </path>
+  
+  <target name="all" depends="PaymentMethodTest, FinancialAccountTest, PaymentTest_01, PaymentTest_02"></target>
+
+  <target name="PaymentMethodTest">
+    <junit printsummary="yes" haltonfailure="no" >
+      <classpath refid="project.class.path" />
+      <formatter type="xml" />
+      <test name="org.openbravo.advpaymentmngt.test.draft.PaymentMethodTest" haltonfailure="true" outfile="PaymentMethodTest" />
+    </junit>
+  </target>
+    
+  <target name="FinancialAccountTest">
+    <junit printsummary="yes" haltonfailure="no" >
+      <classpath refid="project.class.path" />
+      <formatter type="xml" />
+      <test name="org.openbravo.advpaymentmngt.test.draft.FinancialAccountTest" haltonfailure="true" outfile="FinancialAccountTest" />
+    </junit>
+  </target>
+    
+  <target name="PaymentTest_01">
+    <junit printsummary="yes" haltonfailure="no" >
+      <classpath refid="project.class.path" />
+      <formatter type="xml" />
+      <test name="org.openbravo.advpaymentmngt.test.draft.PaymentTest_01" haltonfailure="true" outfile="PaymentTest_01" />
+    </junit>
+  </target>
+  
+  <target name="PaymentTest_02">
+    <junit printsummary="yes" haltonfailure="no" >
+      <classpath refid="project.class.path" />
+      <formatter type="xml" />
+      <test name="org.openbravo.advpaymentmngt.test.draft.PaymentTest_02" haltonfailure="true" outfile="PaymentTest_02" />
+    </junit>
+  </target>
+
+</project>

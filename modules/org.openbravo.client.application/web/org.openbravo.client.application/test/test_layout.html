@@ -1,0 +1,323 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+<meta http-equiv="Expires" content="Tue, 24 Apr 1979 00:00:01 GMT">
+<meta http-equiv="Content-type" content="text/html;charset=utf-8">
+<script type="text/javascript"
+	src="../../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources"></script>
+<title>Openbravo ERP</title>
+</head>
+<body>
+<script type="text/javascript"
+    src="../../org.openbravo.userinterface.smartclient/js/ob_quickrun_widget.js"></script>
+<script>
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2010 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+/* jslint */
+OB.Layout = isc.VLayout.create({
+  width: "100%",
+  height: "100%",
+  border:"1px solid blue", // TODO: Remove border used for testing
+  layoutMargin:5
+});
+openbravo.toolbar = isc.ToolStrip.create({
+  width: "100%",
+  height: "24px"
+});
+OB.Layout.addMember(openbravo.toolbar);
+
+openbravo.mainview = isc.VLayout.create({
+  width: "100%",
+  height: "100%",
+  border:"1px solid green", // TODO: Remove border used for testing
+  layoutMargin:5
+});
+OB.Layout.addMember(openbravo.mainview);
+
+openbravo.mainview.tabset = isc.TabSet.create({
+  tabBarPosition: "top",
+  width: "100%",
+  height: "100%",
+  tabSelected: function(tab) {
+    return;
+  },
+  closeClick: function(tab) {
+    //Removing from opening views cache
+    OB.Layout.ViewManager.views.removeTab(tab.ID);
+    this.removeTab(tab);
+  }});
+openbravo.mainview.addMember(openbravo.mainview.tabset);
+
+openbravo.toolbar.addMember(/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2010 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+/* jslint */
+isc.OBQuickRun.create({
+     title: "",
+     width: 49,     
+     height: 26,
+     prompt: openbravo.I18N.getLabel('UINAVBA_QUICK_CREATE'), 
+     iconWidth: 49, 
+     iconHeight: 26,
+     iconOrientation: "left",
+     icon: {height: 26, width: 49, src: "[SKINIMG]../../org.openbravo.client.navigationbarcomponents/images/icon_quickcreate.png"},
+     layoutProperties: {width: 250},
+     members: [isc.DynamicForm.create({
+       width: 300,
+       autoFocus: true,
+       fields: [{name: "value",
+         selectOnFocus: true,
+         autoFetchData : false,
+         fetchDelay: 400,
+         width: 200,
+         title: openbravo.I18N.getLabel('UINAVBA_QUICK_LAUNCH'),
+         prompt: openbravo.I18N.getLabel('UINAVBA_QUICK_LAUNCH'),
+         editorType: "comboBox",
+         displayField : openbravo.Constants.IDENTIFIER,
+         valueField : openbravo.Constants.ID,
+         optionDataSource: /* jslint */
+ isc.RestDataSource.create({
+     dataURL:'/openbravo/org.openbravo.service.datasource/99B9CC42FDEA4CA7A4EE35BC49D61E0E'
+     , recordXPath: '/response/data', dataFormat: 'json'
+     , operationBindings:  [{operationType: 'fetch', dataProtocol: 'postParams', requestProperties:{httpMethod: 'POST'}} 
+     , {operationType: 'add', dataProtocol: 'postMessage'}
+     , {operationType: 'remove', dataProtocol: 'postParams', requestProperties:{httpMethod: 'DELETE'}}
+     , {operationType: 'update', dataProtocol: 'postMessage', requestProperties:{httpMethod: 'PUT'}}
+     ], requestProperties : { params : {
+                 _contextUrl : 'http://localhost:8080/openbravo'     
+             }
+     }, fields:[
+   {name: '_identifier',
+ type: 'org.openbravo.base.model.domaintype.StringDomainType'
+ , canSave: false
+ , title: '_identifier'
+ }
+ 
+,
+   {name: 'id',
+ type: 'org.openbravo.base.model.domaintype.StringDomainType'
+ , canSave: false
+ , title: 'id'
+ }
+ 
+
+ ]})
+
+, 
+         pickListWidth: 200,
+         changed: function(form, item, value) {
+           if(!value) {
+             return;
+           }
+           if (this.getSelectedRecord()) {
+             isc.OBQuickRun.currentQuickRun.doHide();
+             OB.Layout.ViewManager.openView("ClassicOBWindow", {tabId: value, command: "DEFAULT", tabTitle: item.getDisplayValue()});
+             this.setValue(null);
+           }
+         },
+         
+         keyPress : function() {
+           var key = EventHandler.getKey();
+           if (key === "Escape" || key === "Enter") {
+             if (isc.OBQuickRun.currentQuickRun) {
+               isc.OBQuickRun.currentQuickRun.doHide();
+             }
+           }
+           return true;    
+         } 
+         
+         }]
+                })]
+})
+);
+openbravo.toolbar.addMember(/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2010 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+/* jslint */
+isc.MenuButton.create({
+  
+    initWidget: function () { 
+        var menuButton = this;
+        var thisMenu =   
+            isc.Menu.create({
+                autoDismiss:false,
+                width: 300,
+                canEdit: true,
+                editByCell: true,
+                editEvent: "none",
+                editOnFocus: true,
+                selectOnEdit: true,
+                fields:[
+                        {name: "title", type: "text", canEdit:false},                         
+                        {name: "value",
+            selectOnFocus: true,
+            autoFetchData : false,
+            fetchDelay: 400,
+            width: 200,
+            showTitle: false,
+            prompt: openbravo.I18N.getLabel('UINAVBA_QUICK_LAUNCH'),
+            editorType: "comboBox",
+            displayField : openbravo.Constants.IDENTIFIER,
+            valueField : openbravo.Constants.ID,
+            optionDataSource: /* jslint */
+    isc.RestDataSource.create({
+        dataURL:'/openbravo/org.openbravo.service.datasource/99B9CC42FDEA4CA7A4EE35BC49D61E0E'
+        , recordXPath: '/response/data', dataFormat: 'json'
+        , operationBindings:  [{operationType: 'fetch', dataProtocol: 'postParams', requestProperties:{httpMethod: 'POST'}} 
+        , {operationType: 'add', dataProtocol: 'postMessage'}
+        , {operationType: 'remove', dataProtocol: 'postParams', requestProperties:{httpMethod: 'DELETE'}}
+        , {operationType: 'update', dataProtocol: 'postMessage', requestProperties:{httpMethod: 'PUT'}}
+        ], requestProperties : { params : {
+                    _contextUrl : 'http://localhost:8080/openbravo'     
+                }
+        }, fields:[
+      {name: '_identifier',
+    type: 'org.openbravo.base.model.domaintype.StringDomainType'
+    , canSave: false
+    , title: '_identifier'
+    }
+    
+,
+      {name: 'id',
+    type: 'org.openbravo.base.model.domaintype.StringDomainType'
+    , canSave: false
+    , title: 'id'
+    }
+    
+
+    ]})
+
+, 
+            pickListWidth: 250,
+            changed: function(form, item, value) {
+              if(!value) {
+                return;
+              }
+              if (this.getSelectedRecord()) {
+                  thisMenu.hide();
+                  OB.Layout.ViewManager.openView("ClassicOBWindow", {tabId: value, command: "DEFAULT", tabTitle: item.getDisplayValue()});
+                  this.setValue(null);
+              }
+            }
+            }],
+            data:[{title: openbravo.I18N.getLabel('UINAVBA_QUICK_LAUNCH'), value: ""}]});    
+        this.menu = thisMenu;
+        this.Super("initWidget", arguments);
+     },            
+     title: "",
+     width: 49,
+     height: 26,
+     prompt: openbravo.I18N.getLabel('UINAVBA_QUICK_LAUNCH'), 
+     showMenuButtonImage: false,
+     iconWidth: 49, iconHeight: 26,
+     iconSpacing: 0,
+     iconAlign: "left",
+     showFocusedAsOver: false,
+     iconOrientation: "left",
+     icon: {width: 49, height: 26, src: "[SKINIMG]../../org.openbravo.client.navigationbarcomponents/images/icon_quicklaunch.png"}
+})
+);
+openbravo.toolbar.addMembers(/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2010 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+/* jslint */
+isc.IButton.create({
+    ID: "C632EA09BFC345FC8A98B907301F2D6F",
+    title: "Sample button",
+    width: 150,
+    click: "isc.say('Hello world!')"
+})
+);
+OB.toolbar.addMembers([
+    isc.LayoutSpacer.create({width: "100%"}),
+"separator",
+    isc.Label.create({
+      align: "center",
+      valign: "center",
+      wrap: false,
+      contents: "Martin Taal",
+      prompt: "test"
+    }),
+    "separator",
+    isc.IButton.create({
+      width: 25,
+      prompt: "End session",
+      icon: {src: "[SKINIMG]../../org.openbravo.client.navigationbarcomponents/images/logout.png"},
+      click: "isc.say('Log out will be implemented!')"
+  })
+
+    ]
+);
+OB.Layout.draw();
+
+</script>
+<script type="text/javascript" src="../js/view-manager.js"></script>
+</body>
+</html>

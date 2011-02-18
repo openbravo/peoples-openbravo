@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<data>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61--><AD_MODULE>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <AD_MODULE_ID><![CDATA[883B5872CA0548F9AF2BBBE7D2DDFA61]]></AD_MODULE_ID>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <NAME><![CDATA[Openbravo V3 Datasets]]></NAME>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <VERSION><![CDATA[3.0.1]]></VERSION>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <DESCRIPTION><![CDATA[Various reference data for the Openbravo 3.0 template]]></DESCRIPTION>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <HELP><![CDATA[This module contains the dataset for 3.0 version of Openbravo ERP.
+The main goal of this release is to educate partners about this module and to receive as much feedback as possible from evaluators.
+All partners are encouraged to download and evaluate this module.
+Partners interested in deploying this module for new customers are recommended to thoroughly test their customer's business processes before deploying it into production environment.
+If you would like to help shape this module you are welcome to take part in the forum discussions or register feature requests or issues in the corresponding (Forum and Bug Tracking) sections in the Openbravo 3.0 Datasets project in the OB Forge.]]></HELP>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <URL><![CDATA[http://forge.openbravo.com/projects/vthreedataset]]></URL>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <TYPE><![CDATA[M]]></TYPE>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <LICENSE><![CDATA[Licensed under the Openbravo Public License version 1.1. You may obtain a copy of the License at http://www.openbravo.com/legal/license.html or in the legal folder of the Openbravo ERP core distribution.]]></LICENSE>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <JAVAPACKAGE><![CDATA[org.openbravo.v3.datasets]]></JAVAPACKAGE>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <LICENSETYPE><![CDATA[OBPL]]></LICENSETYPE>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <AUTHOR><![CDATA[Openbravo S.L.U.]]></AUTHOR>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <ISTRANSLATIONREQUIRED><![CDATA[N]]></ISTRANSLATIONREQUIRED>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <HASCHARTOFACCOUNTS><![CDATA[N]]></HASCHARTOFACCOUNTS>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <ISTRANSLATIONMODULE><![CDATA[N]]></ISTRANSLATIONMODULE>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <HASREFERENCEDATA><![CDATA[Y]]></HASREFERENCEDATA>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61-->  <ISCOMMERCIAL><![CDATA[N]]></ISCOMMERCIAL>
+<!--883B5872CA0548F9AF2BBBE7D2DDFA61--></AD_MODULE>
+
+</data>
