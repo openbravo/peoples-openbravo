@@ -576,7 +576,6 @@ isc.OBStandardView.addProperties({
   },
   
   doRefreshContents: function(doRefreshWhenVisible){
-
     // update this one at least before bailing out
     this.updateTabTitle();    
     
@@ -1125,11 +1124,10 @@ isc.OBStandardView.addProperties({
   
   isViewVisible: function(){
     // this prevents data requests for minimized tabs
-    return this.isVisible();
     // note this.tab.isVisible is done as the tab is visible earlier than
     // the pane
-//    return (!this.tab || this.tab.isVisible()) && (!this.parentTabSet || this.parentTabSet.getSelectedTabNumber() ===
-//              this.parentTabSet.getTabNumber(this.tab));
+    return (!this.tab || this.tab.isVisible()) && (!this.parentTabSet || this.parentTabSet.getSelectedTabNumber() ===
+            this.parentTabSet.getTabNumber(this.tab));
   },
   
   // ++++++++++++++++++++ Button Actions ++++++++++++++++++++++++++
