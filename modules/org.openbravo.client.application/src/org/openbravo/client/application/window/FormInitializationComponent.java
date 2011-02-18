@@ -200,6 +200,11 @@ public class FormInitializationComponent extends BaseActionHandler {
             jsContent, changeEventCols, calloutsToCall, lastfieldChanged);
       }
 
+      if (mode.equals("NEW")) {
+        // In the case of NEW mode, we compute auxiliary inputs again to take into account that
+        // auxiliary inputs could depend on a default value
+        computeAuxiliaryInputs(mode, tab, columnValues);
+      }
       // Construction of the final JSONObject
       long t7 = System.currentTimeMillis();
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
