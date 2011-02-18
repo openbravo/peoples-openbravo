@@ -21,6 +21,7 @@ package org.openbravo.client.kernel.reference;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.model.ad.ui.Field;
 
 /**
@@ -52,6 +53,13 @@ public class EnumUIDefinition extends UIDefinition {
       value = new JSONObject(super.getFieldProperties(field, getValueFromSession));
       if (!field.isDisplayed()) {
         return value.toString();
+      }
+      if (!getValueFromSession
+          && ((String) DalUtil.getId(field.getColumn().getReference())).equals("28")
+          && !value.has("value")) {
+        // When reference is button, set 'N' as default if there is default
+        value.put("value", "N");
+        value.put("classicValue", "N");
       }
       return getValueInComboReference(field, getValueFromSession, value.has("classicValue") ? value
           .getString("classicValue") : "");
