@@ -1566,6 +1566,9 @@ isc.OBStandardView.addProperties({
   setContextInfo: function(sessionProperties, callbackFunction){
     // no need to set the context in this case
     if (this.isEditingGrid || this.isShowingForm) {
+      if (callbackFunction) {
+        callbackFunction();
+      }
       return;
     }
     if (!sessionProperties) {
