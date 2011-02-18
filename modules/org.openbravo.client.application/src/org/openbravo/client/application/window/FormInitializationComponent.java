@@ -785,7 +785,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
 
         if (method == null || init == null || service == null) {
-          log.error("Couldn't find method in Callout " + calloutClassName);
+          log.info("Couldn't find method in Callout " + calloutClassName);
         } else {
           RequestContext rq = RequestContext.get();
 
@@ -919,7 +919,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<String> lastFieldChangedList) {
     if (col.getCallout().getADModelImplementationList() == null
         || col.getCallout().getADModelImplementationList().size() == 0) {
-      log.error("The callout of the column " + col.getDBColumnName()
+      log.info("The callout of the column " + col.getDBColumnName()
           + " doesn't have a corresponding model object, and therefore cannot be executed.");
     } else {
       String calloutClassNameToCall = col.getCallout().getADModelImplementationList().get(0)
