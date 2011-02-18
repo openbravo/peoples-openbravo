@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<data>
+<!--0138E7A89B5E4DC3932462252801FFBC--><AD_MODULE>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <AD_MODULE_ID><![CDATA[0138E7A89B5E4DC3932462252801FFBC]]></AD_MODULE_ID>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <NAME><![CDATA[Openbravo V3 (Controlled Release)]]></NAME>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <VERSION><![CDATA[3.0.0]]></VERSION>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <DESCRIPTION><![CDATA[Openbravo ERP V3 Template]]></DESCRIPTION>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <HELP><![CDATA[This template is currently in Controlled Release status.
+This means that Openbravo considers it functionally complete but does not yet recommend its use in production systems.
+The main goal of this release is to educate partners about this module and to receive as much feedback as possible from evaluators.
+All partners are encouraged to download and evaluate this module.
+Partners interested in deploying this module for new customers are recommended to thoroughly test their customer's business processes before deploying it into into a production environment.
+If you would like to help shape this module you are welcome to take part in the forum discussions or register feature requests or issues in the corresponding (Forum and Bug Tracking) sections in the Openbravo QuickStart 2 project in the OB Forge.]]></HELP>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <URL><![CDATA[http://www.openbravo.com/product/erp/quickstart/]]></URL>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <TYPE><![CDATA[T]]></TYPE>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <LICENSE><![CDATA[Licensed under the Openbravo Commercial License version 1.0. You may obtain a copy of the License at http://www.openbravo.com/legal/OBCL10/BasicLicense.html or in the legal folder of this module's distribution.]]></LICENSE>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <JAVAPACKAGE><![CDATA[org.openbravo.v3]]></JAVAPACKAGE>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <LICENSETYPE><![CDATA[OBCL]]></LICENSETYPE>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <AUTHOR><![CDATA[Openbravo S.L.U.]]></AUTHOR>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <ISTRANSLATIONREQUIRED><![CDATA[Y]]></ISTRANSLATIONREQUIRED>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <HASCHARTOFACCOUNTS><![CDATA[N]]></HASCHARTOFACCOUNTS>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <ISTRANSLATIONMODULE><![CDATA[N]]></ISTRANSLATIONMODULE>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <HASREFERENCEDATA><![CDATA[Y]]></HASREFERENCEDATA>
+<!--0138E7A89B5E4DC3932462252801FFBC-->  <ISCOMMERCIAL><![CDATA[Y]]></ISCOMMERCIAL>
+<!--0138E7A89B5E4DC3932462252801FFBC--></AD_MODULE>
+
+</data>

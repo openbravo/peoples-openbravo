@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ ************************************************************************************
+ * Copyright (C) 2010 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+-->
+<SqlClass name="CreateAccountingConfigurationData" package="org.openbravo.modulescript">
+   <SqlClassComment></SqlClassComment>
+   <SqlMethod name="selectAcctSchema" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+    SELECT C_AcctSchema_ID, ad_client_id, '' as ad_org_id, '' as ad_table_id, '' as name, '' as c_period_id, '' as value, '' as status,
+    '' as isdefaultacct
+    FROM C_AcctSchema
+      ]]>
+    </Sql>
+  </SqlMethod>
+   <SqlMethod name="selectTables" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select count(*) as name
+        from c_acctschema_table where c_acctschema_id = ?
+        and ad_table_id = ?
+      ]]>
+    </Sql>
+    <Parameter name="acctSchemaId"/>
+    <Parameter name="tableId"/>
+  </SqlMethod>
+  <SqlMethod name="insertAcctSchemaTable" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      INSERT INTO c_acctschema_table(
+            c_acctschema_table_id, c_acctschema_id, ad_table_id, ad_client_id,
+            ad_org_id, isactive, created, createdby, updated, updatedby,
+            ad_createfact_template_id, acctdescription)
+    VALUES (get_uuid(), ?, ?, ?,
+            '0', 'Y', now(), '100', now(), '100',
+            null, null)
+      ]]>
+    </Sql>
+    <Parameter name="acctSchemaId"/>
+    <Parameter name="tableId"/>
+    <Parameter name="clientId"/>
+  </SqlMethod>
+   <SqlMethod name="selectPeriods" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      select c_period.ad_client_id as ad_client_id, c_period.c_period_id as c_period_id,
+      c_periodcontrol.ad_org_id, max(periodstatus) as status
+      from c_period, c_periodcontrol
+      where c_period.c_period_id = c_periodcontrol.c_period_id
+      group by c_period.ad_client_id, c_period.c_period_id, c_periodcontrol.ad_org_id
+      ]]>
+    </Sql>
+  </SqlMethod>
+   <SqlMethod name="selectDocBaseTypes" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      select value from ad_ref_list
+      where ad_reference_id = '183'
+      order by created desc
+      ]]>
+    </Sql>
+  </SqlMethod>
+   <SqlMethod name="selectPeriodControl" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      select count(*) as name
+      from c_periodcontrol
+      where c_period_id = ?
+      and docbasetype = ?
+      and ad_org_id = ?
+      ]]>
+    </Sql>
+    <Parameter name="periodId"/>
+    <Parameter name="docbasetype"/>
+    <Parameter name="orgId"/>
+  </SqlMethod>
+  <SqlMethod name="insertPeriodControl" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      INSERT INTO c_periodcontrol(
+                  c_periodcontrol_id, ad_client_id, ad_org_id, isactive, created,
+                  createdby, updated, updatedby, c_period_id, docbasetype, periodstatus,
+                  periodaction, processing)
+      VALUES (get_uuid(), ?, ?, 'Y', now(),
+              '100', now(), '100', ?, ?, ?,
+              'N', 'N')
+      ]]>
+    </Sql>
+    <Parameter name="clientId"/>
+    <Parameter name="orgId"/>
+    <Parameter name="periodId"/>
+    <Parameter name="docBaseType"/>
+    <Parameter name="status"/>
+  </SqlMethod>
+   <SqlMethod name="selectTableAccess" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      select count(*) as name from ad_table_access
+      where ad_table_id = '4D8C3B3C31D1410DA046140C9F024D17'
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="insertTableAccess" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      INSERT INTO ad_table_access(
+                  ad_table_access_id, ad_role_id, ad_table_id, ad_client_id, ad_org_id,
+                  isactive, created, createdby, updatedby, updated, isreadonly,
+                  isexclude)
+      select get_uuid(), ad_role_id, '4D8C3B3C31D1410DA046140C9F024D17', ad_client_id, ad_org_id,
+              'Y', now(), '100', '100', now(), 'Y',
+              'N'
+      from ad_role
+      where not exists (select 1 from ad_table_access a
+         where a.ad_role_id = ad_role.ad_role_id
+         and a.ad_table_id = '4D8C3B3C31D1410DA046140C9F024D17')
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="updateTableDocType" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      update c_doctype set ad_table_id = 'D1A97202E832470285C9B1EB026D54E2'
+      where docbasetype in ('ARR', 'APP')
+      ]]>
+    </Sql>
+  </SqlMethod>
+</SqlClass>

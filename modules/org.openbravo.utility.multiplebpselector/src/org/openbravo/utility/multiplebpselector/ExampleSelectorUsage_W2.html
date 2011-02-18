@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD Xhtml 1.0 Transitional//EN" "http://www.w3.org/tr/xhtml1/Dtd/xhtml1-transitional.dtd">
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2009 Openbravo SL
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>Multiple Business Partner Selector</title>
+  <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" />
+  <script language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";</script>
+  <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+  <script language="JavaScript" type="text/javascript" id="paramLanguage">var defaultLang = "en_US";</script>
+  <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
+
+  <script language="JavaScript" type="text/javascript">
+    function validate() {
+    //  alert('validation');
+      return true;
+    }
+  </script>
+
+  <script language="JavaScript" type="text/javascript">
+    function onLoadDo(){
+      this.windowTables = new Array(
+        new windowTableId('client')
+      );
+      setWindowTableParentElement();
+      this.tabsTables = new Array(
+        new tabTableId('tdtopTabs')
+      );
+      setTabTableParentElement();
+      enableShortcuts('edition');
+      setBrowserAutoComplete(false);
+      resizeArea();
+
+     // loadGridList();
+
+      updateMenuIcon('buttonMenu');
+
+      setWindowElementFocus('firstElement');
+      onModuleLoadDo();
+    }
+
+    function onResizeDo(){
+      resizeArea();
+      onModuleResizeDo();
+    }
+  </script>
+
+</head>
+
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
+<form method="post" action="ExampleSelectorUsage.html" name="frmMain" >
+<input type="hidden" name="Command"></input>
+<input type="hidden" name="inpcOrderId"></input>
+<input type="hidden" name="inpParamValue" value="" id="paramValue"></input> 
+<input type="hidden" name="inpissotrx" value="Y"></input>
+
+<span id="hiddenFields"/>
+
+<table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
+    <tr>
+      <td valign="top" id="tdleftTabs"></td>
+      <td valign="top">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
+          <tr><td class="Main_NavBar_bg_left" id="tdleftSeparator"></td></tr>
+          <tr><td class="Main_ToolBar_bg_left" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_left"></td></tr>
+          <tr><td class="Main_Bottom_bg_left"></td></tr>
+        </table>
+      </td>
+      <td valign="top">
+        <div class="Main_ContentPane_NavBar" id="tdtopButtons"></div>
+        <div class="Main_ContentPane_ToolBar" id="paramToolBar"></div>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
+          <tr id="paramParentTabContainer"></tr>
+          <tr id="paramMainTabContainer"></tr>
+          <tr id="paramChildTabContainer"></tr>
+        </table>
+        <div class="Main_ContentPane_Client" style="overflow: auto; display: none; border-bottom: 0px none;" id="client">
+                <table class="dojoTabContainer" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
+                  <tr>
+                    <td>
+                      <table class="dojoTabPaneWrapper" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
+                        <tr>
+                          <td>
+                            <!-- USER CONTROLS -->
+
+                        <div id="sectionBusinessPartners"/>
+
+                      <!-- USER CONTROLS -->
+                    </td>
+      
+        </tr>
+              </table>
+              </td>
+            </tr>
+          </table>
+        </div>                
+
+    
+                <div>
+             <div class="Main_ContentPane_Client" style="overflow: auto; border-top: 0px none;"  id="tdbottomButtons">
+              <table class="Main_Client_TableEdition" cellspacing="0" cellpadding="0" style="width: 435px">
+                <tr>
+                  <td class="TableEdition_OneCell_width"></td>
+                  <td class="TableEdition_OneCell_width"></td>
+                 
+                </tr>
+
+                <tr>
+                  <td class="Button_RightAlign_ContentCell" colspan="2">
+                    <div>
+                      <button type="button" 
+                        id="buttonProcess" 
+                        class="ButtonLink" 
+                        onclick="submitCommandForm('DEFAULT', true, null, null, null, true);return false;" 
+                        onfocus="buttonEvent('onfocus', this); window.status='Previous'; return true;" 
+                        onblur="buttonEvent('onblur', this);" 
+                        onkeyup="buttonEvent('onkeyup', this);" 
+                        onkeydown="buttonEvent('onkeydown', this);" 
+                        onkeypress="buttonEvent('onkeypress', this);" 
+                        onmouseup="buttonEvent('onmouseup', this);" 
+                        onmousedown="buttonEvent('onmousedown', this);" 
+                        onmouseover="buttonEvent('onmouseover', this); window.status='Previous'; return true;" 
+                        onmouseout="buttonEvent('onmouseout', this);">
+                        <table class="Button">
+                          <tr>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon_back" alt="Previous" title="Previous" src="../../../../../web/images/blank.gif" border="0" /></td>
+                            <td class="Button_text Button_width">Previous</td>
+                            <td class="Button_right"></td>
+                          </tr>
+                        </table>
+                      </button>
+                    </div>
+                  </td>
+                  <td class="TitleCell"></td>
+                  <td class="ContentCell"></td>
+                </tr>
+              </table>
+          
+            </div>
+
+      
+
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
+          <tr>
+            <td class="Main_Bottom_bg"><img src="../../../../../web/images/blank.gif" border="0"></td>
+          </tr>
+        </table></td>
+      <td valign="top">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
+          <tr><td class="Main_NavBar_bg_right"></td></tr>
+          <tr><td class="Main_ToolBar_bg_right" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_right"></td></tr>
+          <tr><td class="Main_Bottom_bg_right"></td></tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</form>
+</body>
+</html>

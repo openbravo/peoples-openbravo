@@ -1,0 +1,267 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+/*============================================================
+    1) form tab set
+============================================================*/
+
+.navBarComponentFormTabSetContainer {
+    font-size:12px;
+    font-family:"Lucida sans";
+    background-color:#FFFFFF;
+    border-top: 2px solid #72ab10;
+    margin-top: -1px;
+}
+
+/*============================================================
+    Form TabSet CSS tabs
+		tabSet.simpleTabBaseStyle
+============================================================*/
+/* styles for simple css-styled tabs*/
+/* note only the top styles are present here because in Openbravo tabs in forms are shown in the top
+if the tab headers are on the right, left or bottom the same styles can be used */
+/* top */                        
+
+.navBarComponentFormTabButtonTopSelected,
+.navBarComponentFormTabButtonTopSelectedFocused,
+.navBarComponentFormTabButtonTopSelectedFocusedOver,
+.navBarComponentFormTabButtonTopSelectedFocusedDown,
+.navBarComponentFormTabButtonTopSelectedDown,
+.navBarComponentFormTabButtonTopSelectedDisabled,
+.navBarComponentFormTabButtonTopSelectedOver {
+    border-top:1px solid #72ab10;
+    border-right:1px solid #72ab10;
+    border-bottom:4px solid #fff;
+    border-left:1px solid #72ab10;
+    margin-bottom:-2px;
+    font-weight:bold;
+    font-size:12px;
+    font-family:"Lucida sans";
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.navBarComponentFormTabButtonTop,
+.navBarComponentFormTabButtonTopOver,
+.navBarComponentFormTabButtonTopDown,
+.navBarComponentFormTabButtonTopDisabled {
+    border-top:1px solid #fff;
+    border-right:0;
+    border-bottom:0;
+    border-left:0;
+    font-size:12px;
+    font-family:"Lucida sans";
+    padding-left: 10px;
+    padding-right: 10px;
+}
+				        
+/*============================================================
+    Menu
+============================================================*/
+
+.navBarComponentMenu {
+    background-color:#fff;
+    border:1px solid #72ab10;
+    font-size:11px;
+    font-family:"Lucida sans";    
+}
+
+.navBarComponentMenuBody {
+    font-size:11px;
+    font-family:"Lucida sans";    
+}
+
+.navBarComponentMenuItemCell,
+.navBarComponentMenuItemCellSelected,
+.navBarComponentMenuItemCellOver,
+.navBarComponentMenuItemCellSelectedOver,
+.navBarComponentMenuItemCellDisabled,
+.navBarComponentMenuItemCellTitleField,
+.navBarComponentMenuItemCellTitleFieldSelected,
+.navBarComponentMenuItemCellTitleFieldOver,
+.navBarComponentMenuItemCellTitleFieldSelectedOver,
+.navBarComponentMenuItemCellTitleFieldDisabled,
+.navBarComponentMenuItemCellIconField,
+.navBarComponentMenuItemCellIconFieldOver,
+.navBarComponentMenuItemCellIconFieldSelected,
+.navBarComponentMenuItemCellIconFieldSelectedOver,
+.navBarComponentMenuItemCellIconFieldDisabled {
+    font-size:11px;
+    font-family:"Lucida sans";
+}
+
+.navBarComponentMenuItemCell,
+.navBarComponentMenuItemCellSelected {
+}
+
+.navBarComponentMenuItemCellOver,
+.navBarComponentMenuItemCellSelectedOver,
+.navBarComponentMenuItemCellTitleFieldOver,
+.navBarComponentMenuItemCellTitleFieldSelectedOver,
+.navBarComponentMenuItemCellIconFieldOver,
+.navBarComponentMenuItemCellIconFieldSelectedOver {
+    font-size:11px;
+    font-family:"Lucida sans";
+    color:#5b890d;
+    background-color: #f5f7f1;
+}
+
+.navBarComponentMenuItemCellTitleField,
+.navBarComponentMenuItemCellTitleFieldSelected,
+.navBarComponentMenuItemCellTitleFieldOver,
+.navBarComponentMenuItemCellTitleFieldSelectedOver,
+.navBarComponentMenuItemCellTitleFieldDisabled {
+    padding-left:4px;
+}
+
+.navBarComponentMenuItemCellIconField,
+.navBarComponentMenuItemCellIconFieldOver,
+.navBarComponentMenuItemCellIconFieldSelected,
+.navBarComponentMenuItemCellIconFieldSelectedOver,
+.navBarComponentMenuItemCellIconFieldDisabled {
+    padding-left:4px; padding-right:4px;
+}
+
+.navBarComponentMenuItemCellDisabled ,
+.navBarComponentMenuItemCellTitleFieldDisabled,
+.navBarComponentMenuItemCellIconFieldDisabled {
+    color:#AAAAAA;
+}
+
+.navBarComponentTest {
+	background: red;
+}
+
+/*============================================================
+    Form Fields
+============================================================*/
+
+.navBarComponentFormField,
+.navBarComponentFormFieldFocused {
+	padding-top: 10px;
+	font-size:10px;
+	font-family:"Lucida sans";
+}
+
+.navBarComponentFormFieldLabel,
+.navBarComponentFormFieldLabelFocused {
+    font-weight:bold;
+}
+
+.navBarComponentFormFieldInput {
+	border:1px solid #cdd7bb;
+    padding-top: 3px;
+    padding-left: 2px;
+    background-color:#f5f7f1;
+    font-size:12px;
+    font-family:"Arial";
+}
+
+.navBarComponentFormFieldInputFocused {	
+    border: 1px solid #fff200;
+    padding-top: 3px;
+    padding-left: 2px;
+    background-color:#f5f7f1;
+    font-size:12px;
+    font-family:"Arial";
+}
+
+.navBarComponentPickListBody,
+.navBarComponentPickListBodyFocused {
+	border:1px solid #cdd7bb;
+    background-color:#f5f7f1;
+    font-size:12px;
+    font-family:"Arial";
+}
+
+.navBarComponentFormFieldPickListCell,
+.navBarComponentFormFieldPickListCellSelected,
+.navBarComponentFormFieldPickListCellFocused,
+.navBarComponentFormFieldPickListCellSelectedFocused,
+.navBarComponentFormFieldPickListCellDisabled {
+    padding-left: 2px;
+	font-size:12px;
+    font-family:"Arial";
+    background-color:#f5f7f1;
+}
+
+.navBarComponentFormFieldPickListCellSelected,
+.navBarComponentFormFieldPickListCellSelectedFocused {
+    background: url(./images/menu_rollover.png) repeat-x scroll;
+}
+
+.navBarFormButton,
+.navBarFormButtonOver,
+.navBarFormButtonFocused,
+.navBarFormButtonFocusedOver,
+.navBarFormButtonDown,
+.navBarFormButtonFocusedDown,
+.navBarFormButtonSelected,
+.navBarFormButtonSelectedFocused,
+.navBarFormButtonSelectedDown,
+.navBarFormButtonSelectedFocusedDown,
+.navBarFormButtonSelectedOver,
+.navBarFormButtonSelectedFocusedOver,
+.navBarFormButtonDisabled,
+.navBarFormButtonSelectedDisabled {
+    padding:2px;
+    background-image:url(../org.openbravo.client.application/images/bg-button-orange-500.png);
+    background-position:right top;
+    background-repeat:no-repeat;
+    color:#000000;
+    font-size:11px;
+    font-family:"Lucida sans";
+    cursor: pointer;
+}
+
+.navBarFormButtonDisabled,
+.navBarFormButtonSelectedDisabled {
+    color: #5e5e5e;
+    background-image:url(../org.openbravo.client.application/images/bg-button-disabled-500.png);
+    background-position:right top;
+    background-repeat:no-repeat;
+}
+
+.navBarFormButtonFocused,
+.navBarFormButtonFocusedOver,
+.navBarFormButtonSelectedFocused,
+.navBarFormButtonSelectedFocusedOver,
+.navBarFormButtonSelectedFocusedDown {
+    border: 2px solid #ed7500;
+}
+
+.navBarFormButtonOver,
+.navBarFormButtonFocusedOver,
+.navBarFormButtonSelectedFocused,
+.navBarFormButtonSelectedFocusedOver {
+}
+
+.navBarFormButtonDown,
+.navBarFormButtonFocusedDown,
+.navBarFormButtonSelectedDown,
+.navBarFormButtonSelectedFocusedDown {
+}
+
+.navBarFormButtonSelected,
+.navBarFormButtonSelectedFocused,
+.navBarFormButtonSelectedOver,
+.navBarFormButtonSelectedFocusedOver,
+.navBarFormButtonSelectedDisabled {
+    background:#B2D7FF url(./images/cssButton/button_Over_stretch.png) repeat-x;
+}
