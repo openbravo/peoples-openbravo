@@ -98,12 +98,12 @@ public class MatchTransaction extends HttpSecureAppServlet {
       if (reconciliation != null) {
         OBContext.setAdminMode();
         try {
+          getSnapShot(reconciliation);
           reconciledItems = reconciliation.getFINReconciliationLineVList().size();
         } finally {
           OBContext.restorePreviousMode();
         }
       }
-      getSnapShot(reconciliation);
       if (MatchTransactionDao.getUnMatchedBankStatementLines(account).size() == 0
           && reconciledItems == 0) {
         OBError message = Utility.translateError(this, vars, vars.getLanguage(), Utility
@@ -114,6 +114,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
         if (reconciliation == null) {
           reconciliation = MatchTransactionDao.addNewReconciliation(this, vars,
               strFinancialAccountId);
+          getSnapShot(reconciliation);
         } else {
           updateReconciliation(vars, reconciliation.getId(), strFinancialAccountId, strTabId, false);
         }
