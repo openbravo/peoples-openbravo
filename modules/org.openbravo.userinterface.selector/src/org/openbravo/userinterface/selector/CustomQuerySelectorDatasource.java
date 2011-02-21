@@ -28,9 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -40,7 +37,7 @@ import org.openbravo.base.model.domaintype.BooleanDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.LongDomainType;
-import org.openbravo.client.application.OBBindings;
+import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -80,9 +77,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
       List<SelectorField> fields = sel.getOBUISELSelectorFieldList();
 
-      String HQL = sel.getHQL();
       // Parse the HQL in case that optional filters are required
-      HQL = parseOptionalFilters(HQL, parameters, sel, xmlDateFormat);
+      String HQL = parseOptionalFilters(parameters, sel, xmlDateFormat);
 
       String sortBy = parameters.get("_sortBy");
       HQL += getSortClause(sortBy, sel);
@@ -130,20 +126,42 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     return result;
   }
 
-  private String parseOptionalFilters(String _HQL, Map<String, String> parameters, Selector sel,
+  /**
+   * Returns the selectors HQL query. In case that it contains the '@additional_filters@' String it
+   * is replaced by a set of filter clauses.
+   * 
+   * These include a filter clause:
+   * <ul>
+   * <li>for the main entity's client by the context's client.</li>
+   * <li>for the main entity's organization by an organization list see {@link #getOrgs(String)}</li>
+   * <li>with Selector's default filter expression.</li>
+   * <li>for each default expression defined on the selector fields.</li>
+   * <li>for each selector field in case exists a value for it on the parameters param.</li>
+   * </ul>
+   * 
+   * @param parameters
+   *          Map of String values with the request parameters.
+   * @param sel
+   *          the selector that it is being retrieved the data.
+   * @param xmlDateFormat
+   *          SimpleDataFormat to be used to parse date Strings.
+   * @return a String with the HQL to be executed.
+   */
+
+  private String parseOptionalFilters(Map<String, String> parameters, Selector sel,
       SimpleDateFormat xmlDateFormat) {
-    if (!_HQL.contains(ADDITIONAL_FILTERS)) {
-      return _HQL;
+    String HQL = sel.getHQL();
+    if (!HQL.contains(ADDITIONAL_FILTERS)) {
+      return HQL;
     }
     final String requestType = parameters.get(SelectorConstants.DS_REQUEST_TYPE_PARAMETER);
-    String HQL = _HQL;
     StringBuffer additionalFilter = new StringBuffer();
     final String entityAlias = sel.getEntityAlias();
     // Client filter
     additionalFilter.append(entityAlias + ".client.id ='").append(
         OBContext.getOBContext().getCurrentClient().getId()).append("'");
 
-    // Organization filter: parameters _org=90A1F59849E84AFABD04814B3D15A691
+    // Organization filter
     final String orgs = getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
     if (StringUtils.isNotEmpty(orgs)) {
       additionalFilter.append(NEW_FILTER_CLAUSE);
@@ -156,8 +174,12 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       String value = parameters.get(field.getDisplayColumnAlias());
       if (field.getDefaultExpression() != null && !"Window".equals(requestType)) {
         try {
-          String defaultValue = evaluateExpression(field.getDefaultExpression(), parameters)
-              .toString();
+          String defaultValue = "";
+          Object defaultValueObject = ParameterUtils.getJSExpressionResult(parameters,
+              RequestContext.get().getSession(), field.getDefaultExpression());
+          if (defaultValueObject != null) {
+            defaultValue = defaultValueObject.toString();
+          }
           if (StringUtils.isNotEmpty(defaultValue)) {
             additionalFilter.append(NEW_FILTER_CLAUSE);
             additionalFilter.append(getWhereClause(defaultValue, field, xmlDateFormat));
@@ -190,6 +212,11 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     return HQL;
   }
 
+  /**
+   * Returns a comma separated list of organization ids to filter the HQL. If an organization id is
+   * provided its natural tree is returned. If no organization is provided or the given value is
+   * invalid the readable organizations are returned.
+   */
   private String getOrgs(String orgId) {
     StringBuffer orgPart = new StringBuffer();
     if (StringUtils.isNotEmpty(orgId)) {
@@ -220,6 +247,28 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     return orgPart.toString();
   }
 
+  /**
+   * Returns the where clause of a selector's field based on the given value.
+   * 
+   * This method based on the DomainType of the selector field returns the filter clause using the
+   * clause left part defined on the selector field.
+   * <ul>
+   * <li>Numeric Domain Type: Returns an equals clause <i>field.clauseLeftPart = value</i></li>
+   * <li>Date Domain Type: Returns a multiple clause comparing separately value's day, month and
+   * year.</li>
+   * <li>Boolean Domain Type: Returns an equals clause <i>field.clauseLeftPart = value</i></li>
+   * <li>String Domain Type: Compares the clause left part with the value using the C_IGNORE_ACCENT
+   * database function which ignores accents and is case insensitive.
+   * </ul>
+   * 
+   * @param value
+   *          String with the value that the selector field's column is filtered by.
+   * @param field
+   *          The SelectorField that is filtered.
+   * @param xmlDateFormat
+   *          SimpleDateFormat to parse the value in case the field is a Date field.
+   * @return a String with the HQL where clause to filter the field by the given value.
+   */
   private String getWhereClause(String value, SelectorField field, SimpleDateFormat xmlDateFormat) {
     String whereClause = "";
     DomainType domainType = ModelProvider.getInstance().getReference(field.getReference().getId())
@@ -251,6 +300,16 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     return whereClause;
   }
 
+  /**
+   * Generates the HQL Sort By Clause to append to the query being executed. If no sort options is
+   * set on the sortBy parameter the result is ordered by the first shown grid's column.
+   * 
+   * @param sortBy
+   *          String of grid's field names concatenated by JsonConstants.IN_PARAMETER_SEPARATOR.
+   * @param sel
+   *          the selector that it is being displayed.
+   * @return a String with the HQL Sort By clause.
+   */
   private String getSortClause(String sortBy, Selector sel) {
     StringBuffer sortByClause = new StringBuffer();
     // If grid is manually filtered sortBy is not empty
@@ -291,7 +350,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     }
     String result = "";
     if (sortByClause.length() > 0) {
-      result = " ORDER BY " + sortByClause.toString();
+      result = "\n ORDER BY " + sortByClause.toString();
     }
 
     return result;
@@ -313,28 +372,18 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       return "";
     }
 
-    Object result = evaluateExpression(sel.getFilterExpression(), parameters);
+    Object result = null;
+    try {
+      result = ParameterUtils.getJSExpressionResult(parameters, RequestContext.get().getSession(),
+          sel.getFilterExpression());
+    } catch (Exception e) {
+      log.error("Error evaluating filter expression: " + e.getMessage(), e);
+    }
     if (result != null && !result.toString().equals("")) {
       return NEW_FILTER_CLAUSE + "(" + result.toString() + ")";
     }
 
     return "";
-  }
-
-  private Object evaluateExpression(String expression, Map<String, String> parameters) {
-    final ScriptEngineManager manager = new ScriptEngineManager();
-    final ScriptEngine engine = manager.getEngineByName("js");
-    // Initializing the OB JavaScript object
-    engine.put("OB", new OBBindings(OBContext.getOBContext(), parameters, RequestContext.get()
-        .getSession()));
-
-    // Applying filter expression
-    try {
-      return engine.eval(expression);
-    } catch (Exception e) {
-      log.error("Error evaluating filter expression: " + e.getMessage(), e);
-    }
-    return null;
   }
 
   /**
