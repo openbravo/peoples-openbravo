@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.hibernate.criterion.Criterion;
 
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
@@ -934,18 +935,55 @@ public class AdvPaymentMngtDao {
           Currency.class, strCurrencyId)));
     }
 
-    List<String> finAccs = new ArrayList<String>();
     if (strPaymentMethodId != null && !strPaymentMethodId.isEmpty()) {
-      for (FinAccPaymentMethod finAccPayMethod : getObject(FIN_PaymentMethod.class,
-          strPaymentMethodId).getFinancialMgmtFinAccPaymentMethodList()) {
-        finAccs.add(finAccPayMethod.getAccount().getId());
-      }
-      if (finAccs.isEmpty()) {
+      List<FinAccPaymentMethod> finAccsMethods = getObject(FIN_PaymentMethod.class,
+          strPaymentMethodId).getFinancialMgmtFinAccPaymentMethodList();
+
+      if (finAccsMethods.isEmpty()) {
         return (new ArrayList<FIN_FinancialAccount>());
       }
-      obc.add(Expression.in("id", finAccs));
+      ExpressionForFinAccPayMethod exp = new ExpressionForFinAccPayMethod();
+
+      for (FinAccPaymentMethod finAccPayMethod : finAccsMethods) {
+        exp.addFinAccPaymentMethod(finAccPayMethod);
+      }
+
+      obc.add(exp.getCriterion()); // compoundexp will be always != null because
+                                   // finAccsMethods.isEmpty() == false
     }
     return obc.list();
+  }
+
+  private static class ExpressionForFinAccPayMethod {
+
+    private int MAX = 999;
+
+    private Criterion compoundexp = null;
+    List<String> finAccs = new ArrayList<String>();
+
+    public void addFinAccPaymentMethod(FinAccPaymentMethod finAccPayMethod) {
+      finAccs.add(finAccPayMethod.getAccount().getId());
+      if (finAccs.size() >= MAX) {
+        refresh();
+      }
+    }
+
+    public Criterion getCriterion() {
+      if (finAccs.size() > 0) {
+        refresh();
+      }
+      return compoundexp;
+    }
+
+    private void refresh() {
+      // finAccs.size() must be > 0
+      if (compoundexp == null) {
+        compoundexp = Expression.in("id", finAccs);
+      } else {
+        compoundexp = Expression.or(compoundexp, Expression.in("id", finAccs));
+      }
+      finAccs = new ArrayList<String>();
+    }
   }
 
   public FinAccPaymentMethod getFinancialAccountPaymentMethod(FIN_FinancialAccount account,
