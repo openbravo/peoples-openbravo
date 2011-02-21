@@ -135,6 +135,18 @@ public class ParameterUtils {
     }
   }
 
+  /**
+   * Returns the result of evaluating the given JavaScript expression.
+   * 
+   * @param parameters
+   *          Map of Strings with the request map parameters.
+   * @param session
+   *          optional HttpSession object.
+   * @param expression
+   *          String with the JavaScript expression to be evaluated.
+   * @return an Object with the result of the expression evaluation.
+   * @throws ScriptException
+   */
   public static Object getJSExpressionResult(Map<String, String> parameters, HttpSession session,
       String expression) throws ScriptException {
     final ScriptEngineManager manager = new ScriptEngineManager();
