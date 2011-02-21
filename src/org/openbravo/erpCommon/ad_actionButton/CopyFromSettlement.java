@@ -233,8 +233,14 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
       log4j.debug("Output: Button process Copy from Settlement");
 
     String[] discard = { "", "" };
-    CopyFromSettlementData[] data = CopyFromSettlementData.selectRelation(this, "%"
-        + strSetDescription + "%", "%" + strDocumentNo + "%", Utility.getContext(this, vars,
+
+    String myStrDocumentNo = (strDocumentNo == null || strDocumentNo
+        .equals("")) ? "%" : strDocumentNo;
+    String myStrSetDescription = (strSetDescription == null || strSetDescription
+        .equals("")) ? "%" : strSetDescription;
+
+    CopyFromSettlementData[] data = CopyFromSettlementData.selectRelation(this,
+        myStrSetDescription, myStrDocumentNo, Utility.getContext(this, vars,
         "#User_Org", strWindow), Utility.getContext(this, vars, "#User_Client", strWindow),
         strDateFrom, strDateTo);
 
@@ -277,8 +283,13 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
 
     String[] discard = { "", "" };
 
-    CopyFromSettlementData[] data = CopyFromSettlementData.selectRelation(this, "%"
-        + strDescription + "%", "%" + strDocumentNo + "%", Utility.getContext(this, vars,
+    String myStrDocumentNo = (strDocumentNo == null || strDocumentNo
+        .equals("")) ? "%" : strDocumentNo;
+    String myStrDescription = (strDescription == null || strDescription
+        .equals("")) ? "%" : strDescription;
+
+    CopyFromSettlementData[] data = CopyFromSettlementData.selectRelation(this,
+         myStrDescription, myStrDocumentNo, Utility.getContext(this, vars,
         "#User_Org", strWindow), Utility.getContext(this, vars, "#User_Client", strWindow),
         strDateFrom, strDateTo);
 
@@ -308,6 +319,7 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramSettlementId", strSettlement);
     xmlDocument.setParameter("paramSettlementFromId", strSettlementFrom);
     xmlDocument.setParameter("documentNo", strDocumentNo);
+    xmlDocument.setParameter("description", strDescription);
     xmlDocument.setData("structure", data);
     xmlDocument.setData("structure2", data2);
     response.setContentType("text/html; charset=UTF-8");
