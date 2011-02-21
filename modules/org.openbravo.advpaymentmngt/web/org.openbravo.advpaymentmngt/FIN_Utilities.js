@@ -531,6 +531,8 @@ function reloadParentGrid() {
 	var dad = top.opener;
 	if (typeof dad.loadGrid === "function" || typeof dad.loadGrid === "object") {
 	  top.opener.loadGrid();
+	} else if (typeof dad.updateGridDataAfterFilter === "function" || typeof dad.updateGridDataAfterFilter === "object") {
+	  top.opener.updateGridDataAfterFilter();
 	}
   }
 }
