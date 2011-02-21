@@ -40,7 +40,8 @@
   <PARAMETER id="paramSettlement" name="paramSettlement" attribute="value" default=""/>
   <PARAMETER id="paramSettlementFromId" name="paramSettlementFromId" attribute="value" default=""/>
   <PARAMETER id="paramSettlementId" name="paramSettlementId" attribute="value" default=""/>
-  <PARAMETER id="paramDocumentNo" name="documentNo" attribute="value" default=""/> 
+  <PARAMETER id="paramDocumentNo" name="documentNo" attribute="value" default=""/>
+  <PARAMETER id="paramDescription" name="description" default="" />
 
   <PARAMETER id="param2" name="param2" default="2"/>
 
