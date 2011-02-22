@@ -25,8 +25,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -34,7 +32,7 @@ import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.client.application.OBBindings;
+import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -85,18 +83,12 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         return;
       }
 
-      final ScriptEngineManager manager = new ScriptEngineManager();
-      final ScriptEngine engine = manager.getEngineByName("js");
-
-      // Initializing the OB JavaScript object
-      engine.put("OB", new OBBindings(OBContext.getOBContext(), parameters, request.getSession()));
-
       // Applying filter expression
-      applyFilterExpression(sel, engine, parameters);
+      applyFilterExpression(sel, parameters, request);
 
       // Applying default expression for selector fields when is not a selector window request
       if (!"Window".equals(requestType)) {
-        applyDefaultExpressions(sel, engine, parameters, sfc, request);
+        applyDefaultExpressions(sel, parameters, sfc, request);
       }
 
     } catch (Exception e) {
@@ -110,8 +102,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
   /**
    * Evaluates the Selector filter expression and modifies the parameters map for data filtering
    */
-  private void applyFilterExpression(Selector sel, ScriptEngine engine,
-      Map<String, String> parameters) {
+  private void applyFilterExpression(Selector sel, Map<String, String> parameters,
+      HttpServletRequest request) {
 
     if (sel.getFilterExpression() == null) {
       return;
@@ -121,7 +113,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
     String dynamicWhere = "";
 
     try {
-      result = engine.eval(sel.getFilterExpression());
+      result = ParameterUtils.getJSExpressionResult(parameters, request.getSession(), sel
+          .getFilterExpression());
       if (result != null && !result.toString().equals("")) {
         dynamicWhere = result.toString();
       }
@@ -145,8 +138,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
   /**
    * Evaluates the default expressions and modifies the parameters map for data filtering
    */
-  private void applyDefaultExpressions(Selector sel, ScriptEngine engine,
-      Map<String, String> parameters, OBCriteria<SelectorField> sfc, HttpServletRequest request) {
+  private void applyDefaultExpressions(Selector sel, Map<String, String> parameters,
+      OBCriteria<SelectorField> sfc, HttpServletRequest request) {
 
     if (sfc.count() == 0) {
       return;
@@ -196,7 +189,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       final Property property = properties.get(properties.size() - 1);
 
       try {
-        result = engine.eval(sf.getDefaultExpression());
+        result = ParameterUtils.getJSExpressionResult(parameters, request.getSession(), sf
+            .getDefaultExpression());
 
         if (result == null || result.toString().equals("")) {
           continue;
