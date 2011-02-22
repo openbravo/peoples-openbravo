@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,9 +20,11 @@
 package org.openbravo.erpCommon.ad_process;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.Process;
@@ -39,10 +41,21 @@ public class UpdateAuditTrail implements Process {
 
     // Check whether it is a OBPS instance
     if (!ActivationKey.isActiveInstance()) {
+      String msgTxt = "@FEATURE_OBPS_ONLY@<br/><a class=\"MessageBox_TextLink\" href=\"http://www.openbravo.com/product/erp/get-basic\" target=\"_blank\">@LEARN_HOW@</a>&nbsp;@ACTIVATE_INSTANCE@";
+
+      msgTxt = Utility.parseTranslation(
+          bundle.getConnection(),
+          new VariablesSecureApp(bundle.getContext().getUser(), bundle.getContext().getClient(),
+              bundle.getContext().getOrganization()), bundle.getContext().getLanguage(), msgTxt)
+          .replace(
+              "@ProfessionalEditionType@",
+              Utility.messageBD(bundle.getConnection(), "OBPSAnyEdition", bundle.getContext()
+                  .getLanguage()));
+
       msg.setType("Info");
       msg.setTitle("");
-      msg
-          .setMessage("@FEATURE_OBPS_ONLY@<br/><a class=\"MessageBox_TextLink\" href=\"http://www.openbravo.com/product/erp/module/acquire\" target=\"_blank\">@LEARN_HOW@</a>&nbsp;@ACTIVATE_INSTANCE@");
+
+      msg.setMessage(msgTxt);
       bundle.setResult(msg);
       return;
     }
