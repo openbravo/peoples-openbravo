@@ -81,7 +81,7 @@ public class I18NComponent extends BaseTemplateComponent {
         labels.put(message.getSearchKey(), label);
       }
       final OBQuery<MessageTrl> messagesTrl = OBDal.getInstance().createQuery(MessageTrl.class,
-          "message.module.id in (:modules) and language.id=:languageId and translation=true");
+          "message.module.id in (:modules) and language.id=:languageId");
       messagesTrl.setNamedParameter("modules", modules);
       messagesTrl.setNamedParameter("languageId", OBContext.getOBContext().getLanguage().getId());
       for (MessageTrl message : messagesTrl.list()) {
