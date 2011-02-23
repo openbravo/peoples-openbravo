@@ -343,12 +343,13 @@ isc.OBSelectorItem.addProperties({
   },
   
   setValueFromRecord: function(record){
-    this._hasChanged = true;
     if (!record) {
       this.setValue(null);
+      this.form.setValue(this.name + '.' + this.displayField, null);
     } else {
       this.handleOutFields(record);
       this.setValue(record[this.valueField]);
+      this.form.setValue(this.name + '.' + this.displayField, record[OB.Constants.IDENTIFIER]);
     }
     if (this.form && this.form.handleItemChange) {
       this._hasChanged = true;
@@ -491,24 +492,19 @@ isc.OBSelectorLinkItem.addProperties({
     this.selectorWindow.open();
   },
   
-  setValueFromGrid: function(record){
-    this._hasChanged = true;
+  setValueFromRecord: function(record){
     if (!record) {
-      this.clearValue();
-      this.form.clearValue(this.displayField);
+      this.setValue(null);
+      this.form.setValue(this.name + '.' + this.displayField, null);
     } else {
-      // use a special valuemap to store the value
-      if (!this.valueMap) {
-        this.valueMap = {};
-      }
       this.setValue(record[this.gridValueField]);
-      this.valueMap[this.getValue()] = record[this.gridDisplayField];
-      this.form.setValue(this.displayField, record[this.gridDisplayField]);
-      this.updateValueMap(true);
+      this.form.setValue(this.name + '.' + this.displayField, record[this.gridDisplayField]);
     }
     this.handleOutFields(record);
-    this._hasChanged = true;
-    this.form.handleItemChange(this);
+    if (this.form && this.form.handleItemChange) {
+      this._hasChanged = true;
+      this.form.handleItemChange(this);
+    }
   },
   
   handleOutFields: function(record){

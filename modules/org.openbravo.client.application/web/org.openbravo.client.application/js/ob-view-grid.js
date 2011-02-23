@@ -1214,7 +1214,11 @@ isc.OBViewGrid.addProperties({
       this.view.toolBar.updateButtonState(true);
     }
   },
-    
+  
+  saveEdits : function (editCompletionEvent, callback, rowNum, colNum, validateOnly) {
+    return this.Super('saveEdits', arguments);
+  },
+  
   // saveEdits: when saving, first check if a FIC call needs to be done to update to the 
   // latest values. This can happen when the focus is in a field and the save action is
   // done, at that point first try to force a fic call (handleItemChange) and if that
@@ -1229,7 +1233,7 @@ isc.OBViewGrid.addProperties({
     }
     
     // nothing changed just fire the calback and bail
-    if (!ficCallDone && this.getEditForm() && !this.getEditForm().hasChanged) {
+    if (!ficCallDone && this.getEditForm() && !this.getEditForm().hasChanged && !this.getEditForm().isNew) {
       if (saveCallback) {
           this.fireCallback(saveCallback, 
                             "rowNum,colNum,editCompletionEvent,success", 

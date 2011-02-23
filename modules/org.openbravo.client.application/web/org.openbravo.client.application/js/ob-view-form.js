@@ -120,9 +120,7 @@ OB.ViewFormProperties = {
     
     this.setHasChanged(false);
 
-    // the new state can also be signaled through the record
-    // this is to edit new records which have been edited before
-    this.setNewState(isNew || this.getValue('_new'));
+    this.setNewState(isNew);
     
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
@@ -136,8 +134,7 @@ OB.ViewFormProperties = {
     this.ignoreFirstFocusEvent = preventFocus;
     this.retrieveInitialValues(isNew);
     
-    // note on purpose using this.isNew, also takes into account the _new flag
-    if (this.isNew) {
+    if (isNew) {
       this.view.statusBar.setStateLabel('OBUIAPP_New', this.view.statusBar.newIcon);
     } else {
       this.view.statusBar.setStateLabel();
@@ -184,6 +181,11 @@ OB.ViewFormProperties = {
     this.view.statusBar.setNewState(isNew);
     this.view.updateTabTitle();
     this.enableLinkedItemSection(!isNew);
+    
+    if (isNew) {
+      // signal that autosave is needed after this
+      this.view.standardWindow.setDirtyEditForm(this);
+    }
   },
   
   // reset the focus item to the first item which can get focus
