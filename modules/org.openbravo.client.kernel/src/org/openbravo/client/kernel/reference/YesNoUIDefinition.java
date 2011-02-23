@@ -46,6 +46,23 @@ public class YesNoUIDefinition extends UIDefinition {
   }
 
   @Override
+  public String getFieldProperties(Field field) {
+    try {
+      // prevent wide click area on a yes/no item, if the below is not done
+      // then there is a large white area which is clickable and sets the yes/no
+      // field
+      final String superJsonStr = super.getFieldProperties(field);
+      final JSONObject json = new JSONObject(
+          superJsonStr != null && superJsonStr.startsWith("{") ? superJsonStr : "{}");
+      json.put("width", 1);
+      json.put("overflow", "visible");
+      return json.toString();
+    } catch (JSONException e) {
+      throw new OBException(e);
+    }
+  }
+
+  @Override
   public String getTypeProperties() {
     return "    valueMap: [null, true, false],"
         + "shortDisplayFormatter: function(value, field, component, record) {"
