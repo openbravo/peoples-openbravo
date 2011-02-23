@@ -169,10 +169,17 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     }
     additionalFilter.append(getDefaultFilterExpression(sel, parameters));
 
+    StringBuffer defaultExpressionsFilter = new StringBuffer();
     boolean hasFilter = false;
     for (SelectorField field : sel.getOBUISELSelectorFieldList()) {
+      if (StringUtils.isEmpty(field.getClauseLeftPart())) {
+        continue;
+      }
       String value = parameters.get(field.getDisplayColumnAlias());
-      if (field.getDefaultExpression() != null && !"Window".equals(requestType)) {
+      // Add field default expression on picklist if it is not already filtered. Default expressions
+      // on selector popup are already evaluated and their values came in the parameters object.
+      if (field.getDefaultExpression() != null && !"Window".equals(requestType)
+          && StringUtils.isEmpty(value)) {
         try {
           String defaultValue = "";
           Object defaultValueObject = ParameterUtils.getJSExpressionResult(parameters,
@@ -181,15 +188,14 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
             defaultValue = defaultValueObject.toString();
           }
           if (StringUtils.isNotEmpty(defaultValue)) {
-            additionalFilter.append(NEW_FILTER_CLAUSE);
-            additionalFilter.append(getWhereClause(defaultValue, field, xmlDateFormat));
+            defaultExpressionsFilter.append(NEW_FILTER_CLAUSE);
+            defaultExpressionsFilter.append(getWhereClause(defaultValue, field, xmlDateFormat));
           }
         } catch (Exception e) {
           log.error("Error evaluating filter expression: " + e.getMessage(), e);
         }
       }
-      if ((field.isFilterable() || field.getDefaultExpression() != null)
-          && field.getClauseLeftPart() != null && StringUtils.isNotEmpty(value)) {
+      if (field.isFilterable() && StringUtils.isNotEmpty(value)) {
         String whereClause = getWhereClause(value, field, xmlDateFormat);
         if (!hasFilter) {
           additionalFilter.append(NEW_FILTER_CLAUSE);
@@ -207,6 +213,9 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     }
     if (hasFilter) {
       additionalFilter.append(")");
+    }
+    if (defaultExpressionsFilter.length() > 0) {
+      additionalFilter.append(defaultExpressionsFilter);
     }
     HQL = HQL.replace(ADDITIONAL_FILTERS, additionalFilter.toString());
     return HQL;
