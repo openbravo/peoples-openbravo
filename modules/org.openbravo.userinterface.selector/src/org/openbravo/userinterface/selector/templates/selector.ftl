@@ -35,10 +35,11 @@
     showSelectorGrid: ${data.showSelectorGrid},
     selectorGridFields : [
     <#list data.selectorGridFields as selectorGridField>
-        {<#list selectorGridField.properties as property>
+        {
+        <#list selectorGridField.properties as property>
         ${property.name}: ${property.value}<#if property_has_next>,</#if>
-         </#list>
-         ${selectorGridField.filterEditorProperties}
+         </#list>         
+         ${selectorGridField.filterEditorProperties}         
         }<#if selectorGridField_has_next>,</#if>
     </#list>
     ],
@@ -87,6 +88,7 @@ sc_${data.columnName} = isc.OBSelectorWidget.create({
         {<#list selectorGridField.properties as property>
         ${property.name}: ${property.value}<#if property_has_next>,</#if>
          </#list>
+         ${selectorGridField.filterEditorProperties}         
         }<#if selectorGridField_has_next>,</#if>
     </#list>
     ],

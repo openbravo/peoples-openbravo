@@ -394,8 +394,10 @@ isc.OBSelectorWidget
 
     // draw now already otherwise the filter does not work the
     // first time
-
     this.selectorWindow.show();
+    if (this.selectorGrid.filterEditor) {
+      this.selectorGrid.filterEditor.getEditForm().clearValues();
+    }
     this.selectorGrid.setFilterEditorCriteria(this.defaultFilter);
     this.selectorGrid.filterByEditor();
     this.selectorGrid.focusInFilterEditor();
@@ -850,13 +852,21 @@ isc.OBSelectorWidget
                   }
                 }
               },
+              
+              
+              filterEditorProperties: {
+                actionButtonProperties: {
+                  visibility: 'hidden'
+                }
+              },
+              
               fields : this.selectorGridFields,
               recordDoubleClick : this.setSelectorValueFromGrid
               });
 
           OB.TestRegistry.register(baseTestRegistryName + 'selectorGrid',
               this.selectorGrid);
-
+          
           var okButton = isc.IButton.create( {
             selector : this,
             title : OB.I18N.getLabel('OBUISC_Dialog.OK_BUTTON_TITLE'),
