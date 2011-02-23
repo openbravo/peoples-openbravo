@@ -245,12 +245,6 @@ isc.OBSelectorPopupWindow.addProperties({
       isc.addProperties(defaultFilter, data);
     }
     
-    if (this.selector.defaultPopupFilterField && this.selector.getDisplayValue() && this.selector.getDisplayValue() !== '&nbsp;') {
-      // Prevents overriding a default
-      // value with empty
-      defaultFilter[this.selector.defaultPopupFilterField] = this.selector.getDisplayValue();
-    }
-    
     // adds the selector id to filter used to get filter information
     defaultFilter._selectorDefinitionId = this.selector.selectorDefinitionId;
     this.defaultFilter = defaultFilter;
