@@ -37,6 +37,7 @@ isc.OBGrid.addProperties({
   headerMenuButtonSrc: '[SKIN]/../../org.openbravo.client.application/images/grid/gridHeaderMenuButton.png',
   hoverWidth: 200,
   editLinkColumnWidth: 58,
+  recordComponentHeight: 19,
 
   summaryRowConstructor: 'OBGridSummary',
   summaryRowDefaults:{

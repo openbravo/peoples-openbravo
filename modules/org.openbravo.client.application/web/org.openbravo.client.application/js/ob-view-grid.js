@@ -1316,9 +1316,6 @@ isc.OBViewGrid.addProperties({
       this.getEditForm().setFocusItem(this.getField(colNum).name);
     }
     
-    // will be set back on ficreturn
-    this.getEditForm().setDisabled(true);
-    
     var record = this.getRecord(rowNum);
     
     this.view.isEditingGrid = true;
@@ -1382,6 +1379,19 @@ isc.OBViewGrid.addProperties({
     var editField = this.getEditForm().getField(field.name) || field;
     var ret = this.Super('validateField', [editField, validators, value, record, options]);
     return ret;
+  },
+  
+  refreshEditRow: function() {
+    var editRow = this.view.viewGrid.getEditRow();
+    if (editRow || editRow === 0) {
+      // don't refresh the frozen fields, this give strange
+      // styling issues in chrome
+      for (var i = 0; i < this.view.viewGrid.fields.length; i++) {
+        if (!this.fieldIsFrozen(i)) {
+          this.view.viewGrid.refreshCell(editRow, i, true);
+        }
+      }
+    }
   },
   
   // the form gets recreated many times, maintain the already read valuemap

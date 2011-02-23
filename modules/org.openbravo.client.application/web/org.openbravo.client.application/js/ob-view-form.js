@@ -449,10 +449,7 @@ OB.ViewFormProperties = {
     var previousAllItemsDisabled = this.allItemsDisabled;
     this.allItemsDisabled = state;
     if (previousAllItemsDisabled !== this.allItemsDisabled) {
-      var editRow = this.view.viewGrid.getEditRow();
-      if (editRow || editRow === 0) {
-        this.view.viewGrid.refreshRow(editRow);
-      }
+      this.view.viewGrid.refreshEditRow();
     }
   },
   
