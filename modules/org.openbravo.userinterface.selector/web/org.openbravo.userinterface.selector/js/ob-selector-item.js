@@ -91,6 +91,8 @@ isc.OBSelectorPopupWindow.addProperties({
         // also adds the special ORG parameter
         if (this.selector.form.getField('organization')) {
           criteria[OB.Constants.ORG_PARAMETER] = this.selector.form.getValue('organization');
+        } else if (criteria.inpadOrgId) {
+          criteria[OB.Constants.ORG_PARAMETER] = criteria.inpadOrgId;
         }
         criteria[OB.Constants.WHERE_PARAMETER] = this.selector.whereClause;
         
@@ -400,13 +402,15 @@ isc.OBSelectorItem.addProperties({
     // do not prevent the count operation
     criteria[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'false';
 
+    // on purpose not passing the third boolean param
+    isc.addProperties(criteria, this.form.view.getContextInfo(false, true));
+    
     // also add the special ORG parameter
     if (this.form.getField('organization')) {
       criteria[OB.Constants.ORG_PARAMETER] = this.form.getValue('organization');
+    } else if (criteria.inpadOrgId) {
+      criteria[OB.Constants.ORG_PARAMETER] = criteria.inpadOrgId;
     }
-    
-    // on purpose not passing the third boolean param
-    isc.addProperties(criteria, this.form.view.getContextInfo(false, true));
     
     // adds the selector id to filter used to get filter information
     criteria._selectorDefinitionId = this.selectorDefinitionId;
