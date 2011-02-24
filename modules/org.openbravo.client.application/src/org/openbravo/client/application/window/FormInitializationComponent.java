@@ -871,7 +871,8 @@ public class FormInitializationComponent extends BaseActionHandler {
                       // with the new value
                       UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
                           col.getId());
-                      if (el instanceof String) {
+                      if (el instanceof String
+                          || !(uiDef.getDomainType() instanceof PrimitiveDomainType)) {
                         rq.setRequestParameter(colId, el == null ? null : (String) el);
                       } else {
                         rq.setRequestParameter(colId, uiDef.convertToClassicString(el));
