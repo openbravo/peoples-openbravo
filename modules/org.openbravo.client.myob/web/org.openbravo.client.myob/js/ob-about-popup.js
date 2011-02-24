@@ -118,7 +118,7 @@ isc.defineClass('OBAboutPopupWindow', isc.OBPopup).addProperties({
         '<td class="OBWidgetAboutLabels" colspan="1">' + OB.I18N.getLabel("OBKMO_License_Text") + '</td>  ' +
       '</tr> ' +
       '<tr>  ' +
-        '<td class="OBWidgetAboutFields" colspan="1">' + this.aboutFieldDefinitions.moduleStatus + '</td> ' +
+        '<td class="OBWidgetAboutFields" colspan="1" style="vertical-align:top">' + this.aboutFieldDefinitions.moduleStatus + '</td> ' +
         '<td class="OBWidgetAboutFields" colspan="1">' + this.aboutFieldDefinitions.moduleLicenseText + '</td> ' +
       '</tr> ';
     htmlContentsModule +=  
@@ -142,7 +142,6 @@ isc.defineClass('OBAboutPopupWindow', isc.OBPopup).addProperties({
       
       
     htmlFlowWidget = isc.HTMLFlow.create({
-      overflow: 'auto',
       contents:'<html> ' +
         ' <table width="100%" style="table-layout:fixed"> ' +
         ' <col width="50%"> ' +
@@ -164,8 +163,7 @@ isc.defineClass('OBAboutPopupWindow', isc.OBPopup).addProperties({
     });
             
     theSections = isc.SectionStack.create({
-      visibilityMode: 'multiple',
-      height: '100%'
+      visibilityMode: 'multiple'
     });
       
     isc.SectionStack.addProperties({
@@ -175,13 +173,13 @@ isc.defineClass('OBAboutPopupWindow', isc.OBPopup).addProperties({
       
     theSections.addSection({
       title: OB.I18N.getLabel('OBKMO_WidgetSection'), 
-      sectionExpanded:true, 
+      expanded: true,
       items: [ htmlFlowWidget ]
     });
       
     theSections.addSection({
       title: OB.I18N.getLabel('OBKMO_ParentModuleSection'), 
-      sectionExpanded:true, 
+      expanded: false, 
       items: [ htmlFlowModule ]
     });
       
