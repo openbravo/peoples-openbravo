@@ -60,6 +60,18 @@ isc.OBViewDataSource.addProperties({
   },
   
   performDSOperation: function(operationType, data, callback, requestProperties){
+    // only update the values of the record itself but not of any referenced 
+    // entity
+    if (operationType === 'update' || operationType === 'add') {
+      var correctedData = {};
+      for (var prop in data) {
+        if (data.hasOwnProperty(prop) && !prop.contains('.')) {
+          correctedData[prop] = data[prop];
+        }
+      }
+      data = correctedData;
+    }
+    
     // requestProperties.showPrompt = false;
     // set the current selected record before the delay
     var currentRecord = this.view.viewGrid.getSelectedRecord();
