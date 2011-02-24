@@ -1195,7 +1195,7 @@ isc.OBViewGrid.addProperties({
       me.Super('discardEdits', localArguments);
       
       // remove the record if new
-      if (record._new) {
+      if (record && record._new) {
         me.data.handleUpdate('remove', [{
           id: record.id
         }]);
@@ -1206,7 +1206,7 @@ isc.OBViewGrid.addProperties({
       }
       
       this.view.standardWindow.cleanUpAutoSaveProperties();
-      
+       
       // update after removing the error msg
       this.view.updateTabTitle();
       this.view.toolBar.updateButtonState(true);
