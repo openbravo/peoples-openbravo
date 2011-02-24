@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,20 +30,20 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.utils.FileUtility;
 
 /**
- * Servlet which returns the openbravo logo image with version number. Depending on instance activation status either
+ * Servlet which returns the openbravo logo image without version number (generic logo). Depending on instance activation status either
  * the ops image or the normal powered by openbravo image is returned.
  * 
  * @author huehner
  * 
  */
-public class GetOpenbravoLogo extends HttpBaseServlet {
+public class GetOpenbravoLogoGen extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
 
-    String communityLogo = "PoweredByOpenbravo.png";
-    String opsLogo = "PoweredByOpenbravoOPS.png";
+    String communityLogo = "PoweredByOpenbravoGen.png";
+    String opsLogo = "PoweredByOpenbravoGenOPS.png";
 
     // get instance active status from db
     boolean active = false;
