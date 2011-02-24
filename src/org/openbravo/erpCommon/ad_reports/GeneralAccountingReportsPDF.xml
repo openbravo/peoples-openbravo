@@ -21,6 +21,7 @@
   <template file="GeneralAccountingReportsPDF.fo"/>
 
   <PARAMETER id="fieldPrincipalTitle" name="principalTitle" replaceCharacters="fo"/>
+  <PARAMETER id="fieldPageNo" name="pageNo" attribute="initial-page-number" replaceCharacters="fo" default="1"/>
 
 
   <PARAMETER id="fieldAgno" name="agno" replaceCharacters="fo"/>

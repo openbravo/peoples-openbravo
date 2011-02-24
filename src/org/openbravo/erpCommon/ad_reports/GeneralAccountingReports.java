@@ -99,9 +99,10 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String strOrg = vars.getRequestGlobalVariable("inpOrganizacion",
           "GeneralAccountingReports|organizacion");
       String strLevel = vars.getRequestGlobalVariable("inpLevel", "GeneralAccountingReports|level");
+      String strPageNo = vars.getStringParameter("inpPageNo", "1");
       printPagePDF(request, response, vars, strAgno, strAgnoRef, strDateFrom, strDateTo,
           strDateFromRef, strDateToRef, strAsDateTo, strAsDateToRef, strElementValue,
-          strConImporte, strOrg, strLevel, strConCodigo, strcAcctSchemaId);
+          strConImporte, strOrg, strLevel, strConCodigo, strcAcctSchemaId, strPageNo);
     } else
       pageError(response);
   }
@@ -110,7 +111,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strAgno, String strAgnoRef, String strDateFrom,
       String strDateTo, String strDateFromRef, String strDateToRef, String strAsDateTo,
       String strAsDateToRef, String strElementValue, String strConImporte, String strOrg,
-      String strLevel, String strConCodigo, String strcAcctSchemaId) throws IOException,
+      String strLevel, String strConCodigo, String strcAcctSchemaId, String strPageNo) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pdf");
@@ -264,6 +265,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           strCalculateOpening.equals("Y") ? GeneralAccountingReportsData.rptTitle(this,
               strElementValue)
               + " (Provisional)" : GeneralAccountingReportsData.rptTitle(this, strElementValue));
+
+      xmlDocument.setParameter("pageNo", strPageNo);
 
       AccountTreeData[][] trees = new AccountTreeData[strGroups.length][];
 
