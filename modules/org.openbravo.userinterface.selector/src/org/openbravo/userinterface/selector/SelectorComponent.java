@@ -29,7 +29,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -46,12 +45,12 @@ import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.datasource.DataSource;
 import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.datasource.DatasourceField;
@@ -401,6 +400,26 @@ public class SelectorComponent extends BaseTemplateComponent {
     return sb.toString();
   }
 
+  /*
+   * Utility function to get list of fields in a tab which are targets of some selector out field.
+   * Done this way as main user (called from View generation) did already retrieve tab+list of
+   * fields
+   */
+  private List<Field> getOutFieldListForSelectorField(String tabId, String selectorFieldId) {
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    List<Field> tabFields = tab.getADFieldList();
+    List<Field> result = new ArrayList<Field>();
+    for (Field f : tabFields) {
+      if (f.getObuiselOutfield() != null) {
+        String outFieldId = (String) DalUtil.getId(f.getObuiselOutfield());
+        if (outFieldId.equals(selectorFieldId)) {
+          result.add(f);
+        }
+      }
+    }
+    return result;
+  }
+
   public List<OutSelectorField> getOutFields() {
     List<OutSelectorField> outFields = new ArrayList<OutSelectorField>();
     final List<SelectorField> sortedFields = new ArrayList<SelectorField>(getSelector()
@@ -424,10 +443,10 @@ public class SelectorComponent extends BaseTemplateComponent {
             outFields.add(outField);
             outField.setOutSuffix("");
           } else {
-            final OBCriteria<Field> obc = OBDal.getInstance().createCriteria(Field.class);
-            obc.add(Expression.eq(Field.PROPERTY_OBUISELOUTFIELD, selectorField));
+            List<Field> outFieldTargetFields = getOutFieldListForSelectorField(tabId, selectorField
+                .getId());
 
-            if (obc.list().size() == 0 && selectorField.getSuffix() != null
+            if (outFieldTargetFields.size() == 0 && selectorField.getSuffix() != null
                 && !selectorField.getSuffix().equals("")) {
               // "out-fields" with a suffix not necessarily are associated with a field in the tab
               final OutSelectorField outField = new OutSelectorField();
@@ -437,7 +456,7 @@ public class SelectorComponent extends BaseTemplateComponent {
                   .getSuffix()));
               outFields.add(outField);
             }
-            for (Field associatedField : obc.list()) {
+            for (Field associatedField : outFieldTargetFields) {
               if (associatedField.getTab().getId().equals(tabId)) {
                 final OutSelectorField outField = new OutSelectorField();
                 outField.setOutFieldName(getPropertyOrDataSourceField(selectorField));
