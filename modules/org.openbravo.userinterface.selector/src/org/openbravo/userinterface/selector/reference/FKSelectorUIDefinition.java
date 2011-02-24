@@ -73,6 +73,9 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
   }
 
   public String getFieldProperties(Field field) {
+    if (field == null) {
+      return super.getFieldProperties(field);
+    }
     final Selector selector = getSelector(field);
     final String tableName = field.getColumn().getTable().getDBTableName();
     final String columnName = field.getColumn().getDBColumnName();
@@ -88,7 +91,15 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
     parameters.put(SelectorConstants.PARAM_TARGET_PROPERTY_NAME, property.getName());
     selectorComponent.setId(selector.getId());
     selectorComponent.setParameters(parameters);
-    return selectorComponent.generate();
+
+    // append the super fields
+    final String selectorFields = selectorComponent.generate();
+    final String superJsonStr = super.getFieldProperties(field);
+    if (superJsonStr.trim().startsWith("{")) {
+      return selectorFields + ","
+          + superJsonStr.trim().substring(1, superJsonStr.trim().length() - 1);
+    }
+    return selectorFields;
   }
 
   private Selector getSelector(Field field) {

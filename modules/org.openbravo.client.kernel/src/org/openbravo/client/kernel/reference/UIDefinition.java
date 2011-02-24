@@ -123,7 +123,7 @@ public abstract class UIDefinition {
    * @return a JSONObject string which is used to initialize the formitem.
    */
   public String getFieldProperties(Field field) {
-    return "";
+    return "{width: '*'}";
   }
 
   /**

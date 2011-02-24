@@ -18,6 +18,11 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Property;
@@ -65,80 +70,76 @@ public class FKSearchUIDefinition extends ForeignKeyUIDefinition {
 
   @Override
   public String getFieldProperties(Field field) {
+    final String superJsonStr = super.getFieldProperties(field);
     if (field == null) {
-      return "";
+      return superJsonStr;
     }
-    final StringBuilder props = new StringBuilder();
-    final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
-    final Reference reference = OBDal.getInstance().get(Reference.class,
-        prop.getDomainType().getReference().getId());
-    ModelImplementation modelImplementation = null;
-    for (ModelImplementation localModelImplementation : reference.getADModelImplementationList()) {
-      if (localModelImplementation.isActive()) {
-        modelImplementation = localModelImplementation;
-        break;
-      }
-    }
-    if (modelImplementation == null) {
-      // TODO: warn
-      return props.toString();
-    }
-    ModelImplementationMapping modelImplementationMapping = null;
-    for (ModelImplementationMapping localModelImplementationMapping : modelImplementation
-        .getADModelImplementationMappingList()) {
-      if (localModelImplementationMapping.isActive()) {
-        if (modelImplementationMapping == null) {
-          modelImplementationMapping = localModelImplementationMapping;
-        } else if (localModelImplementationMapping.isDefault()) {
-          modelImplementationMapping = localModelImplementationMapping;
+    try {
+      final JSONObject json = new JSONObject(
+          superJsonStr != null && superJsonStr.startsWith("{") ? superJsonStr : "{}");
+      final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
+      final Reference reference = OBDal.getInstance().get(Reference.class,
+          prop.getDomainType().getReference().getId());
+      ModelImplementation modelImplementation = null;
+      for (ModelImplementation localModelImplementation : reference.getADModelImplementationList()) {
+        if (localModelImplementation.isActive()) {
+          modelImplementation = localModelImplementation;
           break;
         }
       }
-    }
-    if (modelImplementationMapping == null) {
-      // TODO: warn
-      return getJsonObjectString(props.toString());
-    }
-    props.append("searchUrl: '" + modelImplementationMapping.getMappingName() + "'");
-
-    Selector selector = null;
-    for (Selector localSelector : reference.getADSelectorList()) {
-      if (localSelector.isActive()) {
-        selector = localSelector;
-        break;
+      if (modelImplementation == null) {
+        return superJsonStr;
       }
-    }
-    if (selector == null) {
-      // TODO: warn
-      return getJsonObjectString(props.toString());
-    }
-    final StringBuilder inFields = new StringBuilder();
-    final StringBuilder outFields = new StringBuilder();
-    for (SelectorColumn selectorColumn : selector.getADSelectorColumnList()) {
-      if (selectorColumn.isActive()) {
-        String columnName = selectorColumn.getDBColumnName()
-            + (selectorColumn.getSuffix() != null ? selectorColumn.getSuffix() : "");
-        columnName = "inp" + Sqlc.TransformaNombreColumna(columnName);
-        if (selectorColumn.getColumnType().equals("I")) {
-          if (inFields.length() > 0) {
-            inFields.append(",");
+      ModelImplementationMapping modelImplementationMapping = null;
+      for (ModelImplementationMapping localModelImplementationMapping : modelImplementation
+          .getADModelImplementationMappingList()) {
+        if (localModelImplementationMapping.isActive()) {
+          if (modelImplementationMapping == null) {
+            modelImplementationMapping = localModelImplementationMapping;
+          } else if (localModelImplementationMapping.isDefault()) {
+            modelImplementationMapping = localModelImplementationMapping;
+            break;
           }
-          inFields.append("'" + columnName + "'");
-        } else {
-          if (outFields.length() > 0) {
-            outFields.append(",");
-          }
-          outFields.append("'" + columnName + "'");
         }
       }
+      if (modelImplementationMapping == null) {
+        // TODO: warn
+        return superJsonStr;
+      }
+
+      json.put("searchUrl", modelImplementationMapping.getMappingName());
+
+      Selector selector = null;
+      for (Selector localSelector : reference.getADSelectorList()) {
+        if (localSelector.isActive()) {
+          selector = localSelector;
+          break;
+        }
+      }
+      if (selector == null) {
+        // TODO: warn
+        return superJsonStr;
+      }
+      final List<String> inFields = new ArrayList<String>();
+      final List<String> outFields = new ArrayList<String>();
+      for (SelectorColumn selectorColumn : selector.getADSelectorColumnList()) {
+        if (selectorColumn.isActive()) {
+          String columnName = selectorColumn.getDBColumnName()
+              + (selectorColumn.getSuffix() != null ? selectorColumn.getSuffix() : "");
+          columnName = "inp" + Sqlc.TransformaNombreColumna(columnName);
+          if (selectorColumn.getColumnType().equals("I")) {
+            inFields.add(columnName);
+          } else {
+            outFields.add(columnName);
+          }
+        }
+      }
+      json.put("inFields", new JSONArray(inFields));
+      json.put("outFields", new JSONArray(outFields));
+
+      return json.toString();
+    } catch (JSONException e) {
+      throw new OBException("Exception when generating field properties for " + field, e);
     }
-    props.append(", inFields: [" + inFields.toString() + "]");
-    props.append(", outFields: [" + outFields.toString() + "]");
-
-    return getJsonObjectString(props.toString());
-  }
-
-  private String getJsonObjectString(String value) {
-    return "{" + value.trim() + "}";
   }
 }
