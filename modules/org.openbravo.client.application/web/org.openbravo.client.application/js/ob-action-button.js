@@ -50,7 +50,7 @@ isc.OBToolbarActionButton.addProperties( {
 
     OB.ActionButton.executingProcess = this;
 
-    for ( var param in allProperties) {
+    for (var param in allProperties) {
       // TODO: these transformations shoulnd't be needed here as soon as getContextInfo returns 
       // the transformed values.
       
@@ -83,7 +83,8 @@ isc.OBToolbarActionButton.addProperties( {
       };
     }
 
-    theView.setContextInfo(sessionProperties, callbackFunction);
+    //Force setting context info, it needs to be forced in case the current record has just been saved.
+    theView.setContextInfo(sessionProperties, callbackFunction, true);
   },
   
   closeProcessPopup: function(newWindow) {
