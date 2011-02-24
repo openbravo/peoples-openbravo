@@ -519,14 +519,18 @@ public class SelectorComponent extends BaseTemplateComponent {
   }
 
   public List<LocalSelectorField> getPickListFields() {
-    // return the displayfield as the picklist
+    // return the displayfield as the first column of the picklist and add all the extra fields with
+    // the showInPicklist flag.
+    List<LocalSelectorField> pickListFields = new ArrayList<LocalSelectorField>();
     final String displayField = getDisplayField();
     final LocalSelectorField localSelectorField = new LocalSelectorField();
     localSelectorField.setName(displayField);
-    localSelectorField.setTitle(displayField);
+    localSelectorField.setTitle(" ");
     localSelectorField.setSort(false);
     localSelectorField.setFilter(false);
-    return Collections.singletonList(localSelectorField);
+    pickListFields.add(localSelectorField);
+    pickListFields.addAll(getSelectorFields(true, false));
+    return pickListFields;
   }
 
   public List<LocalSelectorField> getSelectorGridFields() {
@@ -544,10 +548,11 @@ public class SelectorComponent extends BaseTemplateComponent {
       if (!selectorField.isActive()) {
         continue;
       }
-      // if (pickList && !selectorField.isShowinsuggestionbox()) {
-      // continue;
-      // }
       if (popupGrid && !selectorField.isShowingrid()) {
+        continue;
+      }
+      if (pickList && (!selectorField.isShowInPicklist())
+          || selectorField.equals(getSelector().getDisplayfield())) {
         continue;
       }
       final LocalSelectorField localSelectorField = new LocalSelectorField();
@@ -563,9 +568,9 @@ public class SelectorComponent extends BaseTemplateComponent {
 
       localSelectorField.setName(fieldName);
       localSelectorField.setTitle(getTranslatedName(selectorField));
-      localSelectorField.setSort(selectorField.isSortable());
+      localSelectorField.setSort(!pickList && selectorField.isSortable());
 
-      localSelectorField.setFilter(selectorField.isFilterable());
+      localSelectorField.setFilter(!pickList && selectorField.isFilterable());
       localSelectorField.setDomainType(domainType);
       localSelectorField.setUIDefinition(getUIDefinition(selectorField));
 
