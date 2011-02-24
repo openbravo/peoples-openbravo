@@ -491,12 +491,18 @@ isc.OBSelectorLinkItem.addProperties({
   },
   
   setValueFromRecord: function(record){
+    // note this.displayfield already contains the prefix of the property name
     if (!record) {
       this.setValue(null);
-      this.form.setValue(this.name + '.' + this.displayField, null);
+      this.form.setValue(this.displayField, null);
     } else {
       this.setValue(record[this.gridValueField]);
-      this.form.setValue(this.name + '.' + this.displayField, record[this.gridDisplayField]);
+      this.form.setValue(this.displayField, record[this.gridDisplayField]);
+      if (!this.valueMap) {
+        this.valueMap = {};
+      }
+      this.valueMap[record[this.gridValueField]] = record[this.gridDisplayField];
+      this.updateValueMap();    
     }
     this.handleOutFields(record);
     if (this.form && this.form.handleItemChange) {
