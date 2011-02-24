@@ -108,8 +108,6 @@ public class DynamicExpressionParser {
       DisplayLogicElement rightPart = getDisplayLogicText(token2, leftPart.text
           .contains("currentValues"), leftPart.isBoolean);
       jsCode.append(rightPart.text);
-
-      System.out.println(jsCode.toString());
     }
   }
 
