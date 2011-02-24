@@ -25,6 +25,9 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.openbravo.client.kernel.KernelUtils;
+import org.openbravo.client.kernel.reference.UIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.client.kernel.reference.YesNoUIDefinition;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
@@ -95,15 +98,18 @@ public class DynamicExpressionParser {
             + strAux.substring(pos[0] + COMPARATIONS[pos[1]][0].length(), strAux.length());
       }
 
-      String leftPart = getDisplayLogicText(token);
-      jsCode.append(leftPart);
+      DisplayLogicElement leftPart = getDisplayLogicText(token, false, false);
+      jsCode.append(leftPart.text);
 
       if (pos[0] >= 0) {
         jsCode.append(COMPARATIONS[pos[1]][1]);
       }
 
-      String rightPart = getDisplayLogicText(token2);
-      jsCode.append(leftPart.contains("currentValues") ? transformValue(rightPart) : rightPart);
+      DisplayLogicElement rightPart = getDisplayLogicText(token2, leftPart.text
+          .contains("currentValues"), leftPart.isBoolean);
+      jsCode.append(rightPart.text);
+
+      System.out.println(jsCode.toString());
     }
   }
 
@@ -157,9 +163,11 @@ public class DynamicExpressionParser {
   /*
    * This method was partially copied from WadUtility.
    */
-  private String getDisplayLogicText(String token) {
+  private DisplayLogicElement getDisplayLogicText(String token, boolean transformValue,
+      boolean boolLeftToken) {
     StringBuffer strOut = new StringBuffer();
     String localToken = token;
+    boolean boolToken = false;
     int i = localToken.indexOf("@");
     while (i != -1) {
       strOut.append(localToken.substring(0, i));
@@ -168,37 +176,46 @@ public class DynamicExpressionParser {
       if (i != -1) {
         String strAux = localToken.substring(0, i);
         localToken = localToken.substring(i + 1);
-        String st = getDisplayLogicTextTranslate(strAux);
-        strOut.append(st);
+        DisplayLogicElement displayLogicElement = getDisplayLogicTextTranslate(strAux);
+        // It needn't boolean transformation as it is a token like @column@
+        strOut.append(displayLogicElement.text);
+        boolToken = boolToken || displayLogicElement.isBoolean;
       }
       i = localToken.indexOf("@");
     }
-    strOut.append(localToken);
-    return strOut.toString();
+    // Do boolean transformation in case comparison left member is a boolean column
+    strOut.append(transformValue && boolLeftToken ? transformValue(localToken) : localToken);
+    return new DisplayLogicElement(strOut.toString(), boolToken);
   }
 
   /*
    * This method is a different reimplementation of an equivalent method in WadUtility
    */
-  private String getDisplayLogicTextTranslate(String token) {
+  private DisplayLogicElement getDisplayLogicTextTranslate(String token) {
     if (token == null || token.trim().equals(""))
-      return "";
+      return new DisplayLogicElement("", false);
     for (Field field : tab.getADFieldList()) {
       if (token.equalsIgnoreCase(field.getColumn().getDBColumnName())) {
         fieldsInExpression.add(field);
         final String fieldName = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn())
             .getName();
-        return "currentValues." + fieldName;
+
+        UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
+            field.getColumn().getId());
+
+        return new DisplayLogicElement("currentValues." + fieldName,
+            uiDef instanceof YesNoUIDefinition);
       }
     }
     for (AuxiliaryInput auxIn : tab.getADAuxiliaryInputList()) {
       if (token.equalsIgnoreCase(auxIn.getName())) {
         auxInputsInExpression.add(auxIn);
-        return TOKEN_PREFIX + auxIn.getName();
+        return new DisplayLogicElement(TOKEN_PREFIX + auxIn.getName(), false);
       }
     }
     sessionAttributesInExpression.add(token);
-    return TOKEN_PREFIX + (token.startsWith("#") ? token.replace("#", "_") : token);
+    return new DisplayLogicElement(TOKEN_PREFIX
+        + (token.startsWith("#") ? token.replace("#", "_") : token), false);
   }
 
   /*
@@ -216,4 +233,13 @@ public class DynamicExpressionParser {
     return min;
   }
 
+  private class DisplayLogicElement {
+    boolean isBoolean;
+    String text;
+
+    public DisplayLogicElement(String text, boolean isBoolean) {
+      this.text = text;
+      this.isBoolean = isBoolean;
+    }
+  }
 }
