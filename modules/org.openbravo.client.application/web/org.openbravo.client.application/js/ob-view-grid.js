@@ -1161,11 +1161,12 @@ isc.OBViewGrid.addProperties({
     this.view.toolBar.updateButtonState(true);
   },
   
-  discardEdits: function(rowNum, colNum, dontHideEditor, editCompletionEvent){
+  discardEdits: function(rowNum, colNum, dontHideEditor, editCompletionEvent, preventConfirm){
     var localArguments = arguments;
     var me = this, record = this.getRecord(rowNum);
     
-    if (record._new || this.getEditForm().valuesHaveChanged() || this.rowHasErrors(rowNum)) {
+    if (!preventConfirm && 
+    (record._new || this.getEditForm().valuesHaveChanged() || this.rowHasErrors(rowNum))) {
       isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmCancelEdit'), function(value){
         if (value) {
         

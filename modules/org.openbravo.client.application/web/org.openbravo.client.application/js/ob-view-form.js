@@ -749,10 +749,13 @@ OB.ViewFormProperties = {
 
         // do this after doing autoSave as the setHasChanged will clean
         // the autosave info
-        this.setHasChanged(false);
+        form.setHasChanged(false);
+        
+        // remove any edit info in the grid
+        view.viewGrid.discardEdits(recordIndex, null, false, isc.ListGrid.PROGRAMMATIC, true);
         
         // change some labels
-        this.setNewState(false);
+        form.setNewState(false);
         
         view.refreshParentRecord();
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
