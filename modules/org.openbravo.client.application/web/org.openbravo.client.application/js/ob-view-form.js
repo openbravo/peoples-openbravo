@@ -656,6 +656,11 @@ OB.ViewFormProperties = {
   // in contrast to other actions which are done at blur
   // see: handleItemChange
   itemChangeActions: function(){
+    // special case, item change is called when the inline form is being hidden
+    if (!this.view.isShowingForm && !this.view.isEditingGrid) {
+      return;
+    }
+    
     // remove the message
     this.setHasChanged(true);
     this.view.messageBar.hide();

@@ -1088,7 +1088,6 @@ isc.OBViewGrid.addProperties({
     if (!this.getSelectedRecord()) {
       this.selectRecord(record);
     }
-    this.view.messageBar.hide();
   },
   
   editComplete: function(rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse){
@@ -1115,12 +1114,6 @@ isc.OBViewGrid.addProperties({
     // remove any new pointer
     delete record._new;
     
-    // remove the error style/message
-    this.setRecordErrorMessage(rowNum, null);
-    
-    // update after the error message has been removed
-    this.view.updateTabTitle();
-    
     // success invoke the action, if any there
     this.view.standardWindow.autoSaveDone(this.view, true);
     
@@ -1131,7 +1124,11 @@ isc.OBViewGrid.addProperties({
     } else if (this.getSelectedRecord() === record) {
       this.view.refreshChildViews();
     }
-    
+        
+    // remove the error style/message
+    this.setRecordErrorMessage(rowNum, null);
+    // update after the error message has been removed
+    this.view.updateTabTitle();
     this.view.toolBar.updateButtonState(true);
     this.view.messageBar.hide();
     this.view.refreshParentRecord();
@@ -1215,11 +1212,18 @@ isc.OBViewGrid.addProperties({
     }
   },
   
-  saveEdits : function (editCompletionEvent, callback, rowNum, colNum, validateOnly) {
-    return this.Super('saveEdits', arguments);
+  saveEdits: function (editCompletionEvent, callback, rowNum, colNum, validateOnly) {
+    var ret = this.Super('saveEdits', arguments);
+    // save was not done, because there were no changes probably
+    if (!ret) {
+      this.view.standardWindow.cleanUpAutoSaveProperties();
+      this.view.updateTabTitle();
+      this.view.toolBar.updateButtonState(true);
+    }
+    return ret;
   },
   
-  // saveEdits: when saving, first check if a FIC call needs to be done to update to the 
+  // saveEditedValues: when saving, first check if a FIC call needs to be done to update to the 
   // latest values. This can happen when the focus is in a field and the save action is
   // done, at that point first try to force a fic call (handleItemChange) and if that
   // indeed happens stop the saveEdit until the fic returns
