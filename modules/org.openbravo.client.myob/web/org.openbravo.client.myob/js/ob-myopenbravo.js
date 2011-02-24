@@ -443,7 +443,8 @@ isc.OBMyOpenbravo.addProperties({
       var localWidgetProperties = isc.addProperties({}, widgetProperties);
       for (i = 0; i < this.availableWidgetClasses.length; i++) {
         if (this.availableWidgetClasses[i].widgetClassName &&
-            this.availableWidgetClasses[i].widgetClassName === widgetProperties.widgetClassName) {
+            this.availableWidgetClasses[i].widgetClassName === widgetProperties.widgetClassName &&
+            this.availableWidgetClasses[i].title === widgetProperties.title) {
           localWidgetProperties.showMaximizeButton = this.availableWidgetClasses[i].showMaximizeButton;
           localWidgetProperties.menuItems = this.availableWidgetClasses[i].menuItems;
           localWidgetProperties.fieldDefinitions = this.availableWidgetClasses[i].fieldDefinitions;
