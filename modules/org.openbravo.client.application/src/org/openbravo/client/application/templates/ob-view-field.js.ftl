@@ -29,7 +29,6 @@
         rowSpan: ${fieldDefinition.rowSpan},
         startRow: ${fieldDefinition.startRow?string},
         endRow: ${fieldDefinition.endRow?string},
-        width: '*',
         <#if fieldDefinition.standardField>
         columnName: '${fieldDefinition.columnName?string}',
         inpColumnName: '${fieldDefinition.inpColumnName?string}',
