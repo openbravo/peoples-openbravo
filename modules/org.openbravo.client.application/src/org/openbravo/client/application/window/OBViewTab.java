@@ -144,7 +144,7 @@ public class OBViewTab extends BaseTemplateComponent {
     if (!ActivationKey.getInstance().isActive() || tab.getTable().isFullyAudited()) {
       IconButton auditBtn = new IconButton();
       auditBtn.type = "audit";
-      auditBtn.label = Utility.messageBD(new DalConnectionProvider(), "AuditTrail", OBContext
+      auditBtn.label = Utility.messageBD(new DalConnectionProvider(false), "AuditTrail", OBContext
           .getOBContext().getLanguage().getLanguage());
       auditBtn.action = "OB.ToolbarUtils.showAuditTrail(this.view);";
       iconButtons.add(auditBtn);
@@ -154,7 +154,7 @@ public class OBViewTab extends BaseTemplateComponent {
     if (tab.isTreeIncluded()) {
       IconButton treeBtn = new IconButton();
       treeBtn.type = "tree";
-      treeBtn.label = Utility.messageBD(new DalConnectionProvider(), "Tree", OBContext
+      treeBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Tree", OBContext
           .getOBContext().getLanguage().getLanguage());
       treeBtn.action = "OB.ToolbarUtils.showTree(this.view);";
       iconButtons.add(treeBtn);
@@ -172,7 +172,7 @@ public class OBViewTab extends BaseTemplateComponent {
     if (printBtn.hasEmail) {
       IconButton emailBtn = new IconButton();
       emailBtn.type = "email";
-      emailBtn.label = Utility.messageBD(new DalConnectionProvider(), "Email", OBContext
+      emailBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Email", OBContext
           .getOBContext().getLanguage().getLanguage());
       emailBtn.action = printBtn.action.replace("print.html", "send.html");
       btns.add(emailBtn);
@@ -613,7 +613,7 @@ public class OBViewTab extends BaseTemplateComponent {
       type = "print";
       action = "OB.ToolbarUtils.print(this.view, '" + processUrl + "', " + process.isDirectPrint()
           + ");";
-      label = Utility.messageBD(new DalConnectionProvider(), "Print", OBContext.getOBContext()
+      label = Utility.messageBD(new DalConnectionProvider(false), "Print", OBContext.getOBContext()
           .getLanguage().getLanguage());
     }
   }
