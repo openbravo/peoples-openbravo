@@ -31,6 +31,7 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.openbravo.base.VariablesBase;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.OBError;
@@ -733,7 +734,7 @@ public class COAUtility {
         .debug("insertElementValuesInDB() - All accounts processed correctly. Updating tree node.");
     List<TreeNode> lTreeNodes = null;
     try {
-      lTreeNodes = InitialSetupUtility.getTreeNode(treeAccount, client);
+      lTreeNodes = InitialSetupUtility.getTreeNode(treeAccount, client, organization);
       if (lTreeNodes == null)
         logEvent("@AccountTreeNotSorted@");
       else {
@@ -742,7 +743,12 @@ public class COAUtility {
         InitialSetupUtility.updateAccountTree(lTreeNodes, mapSequence, mapElementValueValue,
             mapElementValueId, mapParent, false);
         log4j.debug("insertElementValuesInDB() - Account tree updated.");
-        OBDal.getInstance().flush();
+        try {
+          OBContext.setAdminMode();
+          OBDal.getInstance().flush();
+        } finally {
+          OBContext.restorePreviousMode();
+        }
       }
     } catch (Exception e) {
       logEvent("@AccountTreeNotSorted@");
