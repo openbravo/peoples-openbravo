@@ -113,6 +113,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="SHOWINPICKLIST" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBSERDS_DATASOURCE_FIELD" name="OBUISEL_S_OBSERDS_DSF">
         <reference local="OBSERDS_DATASOURCE_FIELD_ID" foreign="OBSERDS_DATASOURCE_FIELD_ID"/>
       </foreign-key>
@@ -139,6 +143,7 @@
       <check name="OBUISEL_SF_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBUISEL_SF_SBOX_CHECK"><![CDATA[SEARCHINSUGGESTIONBOX IN ('Y', 'N')]]></check>
       <check name="OBUISEL_SF_SHOWINGRID_CHECK"><![CDATA[SHOWINGRID IN ('Y', 'N')]]></check>
+      <check name="OBUISEL_SF_SHOWINPICKLIST_CHK"><![CDATA[SHOWINPICKLIST IN ('Y', 'N')]]></check>
       <check name="OBUISEL_SF_SORT_CHECK"><![CDATA[SORT IN ('Y', 'N')]]></check>
     </table>
   </database>
