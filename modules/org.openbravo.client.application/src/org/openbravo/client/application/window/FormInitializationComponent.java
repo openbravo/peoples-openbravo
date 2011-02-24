@@ -871,10 +871,10 @@ public class FormInitializationComponent extends BaseActionHandler {
                       // with the new value
                       UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
                           col.getId());
-                      if (uiDef.getDomainType() instanceof PrimitiveDomainType) {
-                        rq.setRequestParameter(colId, uiDef.convertToClassicString(el));
+                      if (el instanceof String) {
+                        rq.setRequestParameter(colId, el == null ? null : (String) el);
                       } else {
-                        rq.setRequestParameter(colId, el == null ? null : el.toString());
+                        rq.setRequestParameter(colId, uiDef.convertToClassicString(el));
                       }
                       JSONObject jsonobj = new JSONObject(uiDef.getFieldProperties(inpFields
                           .get(name), true));
