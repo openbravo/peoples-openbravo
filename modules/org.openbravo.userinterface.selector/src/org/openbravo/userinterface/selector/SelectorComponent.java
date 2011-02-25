@@ -551,8 +551,9 @@ public class SelectorComponent extends BaseTemplateComponent {
       if (popupGrid && !selectorField.isShowingrid()) {
         continue;
       }
-      if (pickList && (!selectorField.isShowInPicklist())
-          || selectorField.equals(getSelector().getDisplayfield())) {
+      if (pickList
+          && (!selectorField.isShowInPicklist() || selectorField.equals(getSelector()
+              .getDisplayfield()))) {
         continue;
       }
       final LocalSelectorField localSelectorField = new LocalSelectorField();
