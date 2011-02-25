@@ -873,7 +873,7 @@ public class FormInitializationComponent extends BaseActionHandler {
                           col.getId());
                       if (el instanceof String
                           || !(uiDef.getDomainType() instanceof PrimitiveDomainType)) {
-                        rq.setRequestParameter(colId, el == null ? null : (String) el);
+                        rq.setRequestParameter(colId, el == null ? null : el.toString());
                       } else {
                         rq.setRequestParameter(colId, uiDef.convertToClassicString(el));
                       }
