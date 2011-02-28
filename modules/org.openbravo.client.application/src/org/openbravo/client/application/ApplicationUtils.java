@@ -98,9 +98,16 @@ public class ApplicationUtils {
     if (tab.getColumn() != null) {
       final String columnId = (String) DalUtil.getId(tab.getColumn());
       for (Property property : thisEntity.getProperties()) {
-        if (!property.isId() && property.getColumnId() != null
-            && property.getColumnId().equals(columnId)) {
-          parentProperty = property.getName();
+        if (property.isPrimitive() || property.isOneToMany()) {
+          continue;
+        }
+        if (property.getColumnId() != null && property.getColumnId().equals(columnId)) {
+          if (property.isOneToOne()) {
+            parentProperty = "id";
+          } else {
+            parentProperty = property.getName();
+          }
+          break;
         }
       }
     } else {
@@ -108,8 +115,12 @@ public class ApplicationUtils {
         if (property.isPrimitive() || property.isOneToMany()) {
           continue;
         }
-        if (!property.isId() && property.getTargetEntity() == parentEntity) {
-          parentProperty = property.getName();
+        if (property.getTargetEntity() == parentEntity) {
+          if (property.isOneToOne()) {
+            parentProperty = "id";
+          } else {
+            parentProperty = property.getName();
+          }
           break;
         }
       }
