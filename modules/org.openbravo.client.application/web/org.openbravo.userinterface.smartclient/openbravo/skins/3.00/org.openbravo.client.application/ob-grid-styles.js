@@ -28,7 +28,6 @@ isc.OBGrid.addProperties({
   headerBarStyle: 'OBGridHeaderBar',
   headerTitleStyle: 'OBGridHeaderCellTitle',
   cellPadding: 0, /* Set in the CSS */
-  cellHeight: 22,
   cellAlign: 'center',
   sortAscendingImage:{src:'[SKIN]/../../../org.openbravo.client.application/images/grid/gridHeader_sortAscending.gif', width:7, height:11},
   sortDescendingImage:{src:'[SKIN]/../../../org.openbravo.client.application/images/grid/gridHeader_sortDescending.gif', width:7, height:11},
@@ -37,7 +36,6 @@ isc.OBGrid.addProperties({
   headerMenuButtonSrc: '[SKIN]/../../org.openbravo.client.application/images/grid/gridHeaderMenuButton.png',
   hoverWidth: 200,
   editLinkColumnWidth: 58,
-  recordComponentHeight: 19,
 
   summaryRowConstructor: 'OBGridSummary',
   summaryRowDefaults:{
