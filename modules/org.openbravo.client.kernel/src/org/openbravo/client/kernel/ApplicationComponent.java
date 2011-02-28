@@ -48,14 +48,6 @@ public class ApplicationComponent extends BaseTemplateComponent {
 
   private FormatDefinition formatDefinition = null;
 
-  public String getCompleteContextUrl() {
-    if (hasParameter(KernelConstants.CONTEXT_URL)) {
-      final String url = getParameter(KernelConstants.CONTEXT_URL);
-      return url;
-    }
-    return "";
-  }
-
   private FormatDefinition getFormatDefinition() {
     if (formatDefinition == null) {
       formatDefinition = UIDefinitionController.getInstance().getFormatDefinition("qty",
