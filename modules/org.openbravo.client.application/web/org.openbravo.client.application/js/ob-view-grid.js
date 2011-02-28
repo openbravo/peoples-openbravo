@@ -458,7 +458,7 @@ isc.OBViewGrid.addProperties({
   
   // overridden to prevent the filter editor fields from using the 
   // grids datasource
-  getFilterEditorProperties: function(field) {
+  getFilterEditorProperties: function(field){
     return isc.addProperties({
       optionDataSource: null
     }, this.Super('getFilterEditorProperties', arguments));
@@ -720,7 +720,7 @@ isc.OBViewGrid.addProperties({
     var actionObject = {
       target: this,
       method: this.handleRecordSelection,
-      parameters: [viewer, record, recordNum, field, fieldNum, value, rawValue, false]
+      parameters: [viewer, record, recordNum, field, fieldNum, value, rawValue, false, this.view.isEditingGrid]
     };
     this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
   },
@@ -857,6 +857,7 @@ isc.OBViewGrid.addProperties({
   selectOnMouseDown: function(record, recordNum, fieldNum, autoSaveDone){
     // don't change selection on right mouse down
     var EH = isc.EventHandler, eventType;
+    this.wasEditing = this.view.isEditingGrid;
     
     if (!autoSaveDone) {
       var actionObject = {
@@ -909,15 +910,18 @@ isc.OBViewGrid.addProperties({
   },
   
   handleRecordSelection: function(viewer, record, recordNum, field, fieldNum, value, rawValue, fromSelectOnMouseDown){
+    var wasEditing = this.wasEditing;
+    delete this.wasEditing;
     var EH = isc.EventHandler;
     var keyName = EH.getKey();
     
     // stop editing if the user clicks out of the row
-    if (this.getEditRow() && this.getEditRow() !== recordNum) {
+    if ((this.getEditRow() || this.getEditRow() === 0) && this.getEditRow() !== recordNum) {
       this.endEditing();
+      wasEditing = true;
     }
     // do nothing, click in the editrow itself
-    if (this.getEditRow() && this.getEditRow() === recordNum) {
+    if ((this.getEditRow() || this.getEditRow() === 0) && this.getEditRow() === recordNum) {
       return;
     }
     
@@ -961,6 +965,11 @@ isc.OBViewGrid.addProperties({
     } else {
       // click on the record which was already selected
       this.doSelectSingleRecord(record);
+      
+      // if we were editing then a single click continue edit mode
+      if (wasEditing) {
+        this.startEditing(recordNum, fieldNum);
+      }
     }
     
     this.updateSelectedCountDisplay();
@@ -1132,7 +1141,7 @@ isc.OBViewGrid.addProperties({
     } else if (this.getSelectedRecord() === record) {
       this.view.refreshChildViews();
     }
-        
+    
     // remove the error style/message
     this.setRecordErrorMessage(rowNum, null);
     // update after the error message has been removed
@@ -1173,7 +1182,7 @@ isc.OBViewGrid.addProperties({
     var localArguments = arguments;
     var me = this, record = this.getRecord(rowNum);
     
-    if (!preventConfirm && 
+    if (!preventConfirm &&
     (this.getEditForm().hasChanged || this.rowHasErrors(rowNum))) {
       isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmCancelEdit'), function(value){
         if (value) {
@@ -1214,14 +1223,14 @@ isc.OBViewGrid.addProperties({
       }
       
       this.view.standardWindow.cleanUpAutoSaveProperties();
-       
+      
       // update after removing the error msg
       this.view.updateTabTitle();
       this.view.toolBar.updateButtonState(true);
     }
   },
   
-  saveEdits: function (editCompletionEvent, callback, rowNum, colNum, validateOnly) {
+  saveEdits: function(editCompletionEvent, callback, rowNum, colNum, validateOnly){
     var ret = this.Super('saveEdits', arguments);
     // save was not done, because there were no changes probably
     if (!ret) {
@@ -1236,8 +1245,7 @@ isc.OBViewGrid.addProperties({
   // latest values. This can happen when the focus is in a field and the save action is
   // done, at that point first try to force a fic call (handleItemChange) and if that
   // indeed happens stop the saveEdit until the fic returns
-  saveEditedValues: function (rowNum, colNum, newValues, oldValues, 
-                             editValuesID, editCompletionEvent, saveCallback, ficCallDone) {
+  saveEditedValues: function(rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback, ficCallDone){
     if (!rowNum && rowNum !== 0) {
       rowNum = this.getEditRow();
     }
@@ -1248,10 +1256,7 @@ isc.OBViewGrid.addProperties({
     // nothing changed just fire the calback and bail
     if (!ficCallDone && this.getEditForm() && !this.getEditForm().hasChanged && !this.getEditForm().isNew) {
       if (saveCallback) {
-          this.fireCallback(saveCallback, 
-                            "rowNum,colNum,editCompletionEvent,success", 
-                            [rowNum,colNum,editCompletionEvent,success]
-          );
+        this.fireCallback(saveCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent, success]);
       }
       return true;
     }
@@ -1278,7 +1283,7 @@ isc.OBViewGrid.addProperties({
     }
     this.Super('saveEditedValues', [rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback]);
   },
-
+  
   autoSave: function(){
     this.storeUpdatedEditorValue();
     this.endEditing();
@@ -1316,9 +1321,9 @@ isc.OBViewGrid.addProperties({
       }
       // if the focus does not get suppressed then the clicked field will receive focus
       // and won't be disabled so the user can already start typing      
-      suppressFocus = true; 
+      suppressFocus = true;
     }
-
+    
     var ret = this.Super('showInlineEditor', [rowNum, colNum, newCell, newRow, suppressFocus]);
     if (!newRow) {
       return ret;
@@ -1394,7 +1399,7 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
   
-  refreshEditRow: function() {
+  refreshEditRow: function(){
     var editRow = this.view.viewGrid.getEditRow();
     if (editRow || editRow === 0) {
       // don't refresh the frozen fields, this give strange
@@ -1787,5 +1792,5 @@ isc.OBGridButtonsComponent.addProperties({
   
   doCancel: function(){
     this.grid.cancelEditing();
-  }  
+  }
 });
