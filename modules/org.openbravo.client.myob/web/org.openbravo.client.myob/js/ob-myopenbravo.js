@@ -24,7 +24,11 @@
 isc.defineClass('OBMyOpenbravo', isc.HLayout);
 
 isc.OBMyOpenbravo.addProperties({
-
+  
+  // added to prevent the close button from being displayed
+  // see https://issues.openbravo.com/view.php?id=15953
+  notClosable: true,
+  
   // ** {{{ OBMyOpenbravo.getBookMarkParams() }}} **
   //
   // Parameters:

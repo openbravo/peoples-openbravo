@@ -149,6 +149,12 @@
       
       // let the params override tab properties like canClose
       tabDef = isc.addProperties(tabDef, params);
+
+      // let the viewinstance decide if it can be closed
+      // see https://issues.openbravo.com/view.php?id=15953
+      if (viewInstance.notClosable) {
+        tabDef.canClose = false;
+      }
       
       // Adding to the MainView tabSet
       tabSet.addTab(tabDef);
