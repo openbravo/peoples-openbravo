@@ -50,6 +50,7 @@ public class QueryBuilder {
 
   private static final String PARAM_DELIMITER = "@";
   private static final String ALIAS_PREFIX = "alias_";
+  private static final char ESCAPE_CHAR = '!';
 
   public static enum TextMatching {
     startsWith, exact, substring
@@ -231,11 +232,13 @@ public class QueryBuilder {
           sb.append(leftWherePart + " = " + getTypedParameterAlias());
           typedParameters.add(value);
         } else if (textMatching == TextMatching.startsWith) {
-          sb.append("upper(" + leftWherePart + ") like " + getTypedParameterAlias());
-          typedParameters.add(value.toUpperCase() + "%");
+          sb.append("upper(" + leftWherePart + ") like " + getTypedParameterAlias() + " escape '"
+              + ESCAPE_CHAR + "' ");
+          typedParameters.add(escapeLike(value.toUpperCase()) + "%");
         } else {
-          sb.append("upper(" + leftWherePart + ") like " + getTypedParameterAlias());
-          typedParameters.add("%" + value.toUpperCase().replaceAll(" ", "%") + "%");
+          sb.append("upper(" + leftWherePart + ") like " + getTypedParameterAlias() + " escape '"
+              + ESCAPE_CHAR + "' ");
+          typedParameters.add("%" + escapeLike(value.toUpperCase()).replaceAll(" ", "%") + "%");
         }
       } else if (!property.isPrimitive()) {
         // an in parameter use it...
@@ -256,11 +259,13 @@ public class QueryBuilder {
           sb.append(leftWherePart + " = " + getTypedParameterAlias());
           typedParameters.add(value);
         } else if (textMatching == TextMatching.startsWith) {
-          sb.append("upper(" + leftWherePart + ") like " + getTypedParameterAlias());
-          typedParameters.add(value.toUpperCase() + "%");
+          sb.append("upper(" + leftWherePart + ") like " + getTypedParameterAlias() + " escape '"
+              + ESCAPE_CHAR + "' ");
+          typedParameters.add(escapeLike(value.toUpperCase()) + "%");
         } else {
-          sb.append("upper(" + leftWherePart + ") like " + getTypedParameterAlias());
-          typedParameters.add("%" + value.toUpperCase().replaceAll(" ", "%") + "%");
+          sb.append("upper(" + leftWherePart + ") like " + getTypedParameterAlias() + " escape '"
+              + ESCAPE_CHAR + "' ");
+          typedParameters.add("%" + escapeLike(value.toUpperCase()).replaceAll(" ", "%") + "%");
         }
       } else if (Boolean.class == property.getPrimitiveObjectType()) {
         final String alias = getTypedParameterAlias();
@@ -551,7 +556,9 @@ public class QueryBuilder {
       } else {
         final List<Property> newIdentifierProperties = prop.getReferencedProperty().getEntity()
             .getIdentifierProperties();
-        sb.append(createIdentifierLeftClause(newIdentifierProperties, prefix + prop.getName() + "."));
+        sb
+            .append(createIdentifierLeftClause(newIdentifierProperties, prefix + prop.getName()
+                + "."));
       }
     }
 
@@ -722,4 +729,14 @@ public class QueryBuilder {
     }
   }
 
+  private String escapeLike(String value) {
+    if (value == null || value.trim().length() == 0) {
+      return value;
+    }
+    String localValue = value.replace(ESCAPE_CHAR + "", ESCAPE_CHAR + ESCAPE_CHAR + "");
+    localValue = localValue.replace("\\", ESCAPE_CHAR + "\\");
+    localValue = localValue.replace("_", ESCAPE_CHAR + "_");
+    localValue = localValue.replace("%", ESCAPE_CHAR + "%");
+    return localValue;
+  }
 }
