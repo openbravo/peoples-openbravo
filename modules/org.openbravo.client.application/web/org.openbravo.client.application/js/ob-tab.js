@@ -69,6 +69,8 @@ isc.OBTabSetMain.addProperties({
     if (tabPane.tabSelected) {
       tabPane.tabSelected(tabNum, tabPane, ID, tab);
     }
+    // update the document title
+    document.title = 'Openbravo - ' + tab.title;
   },
 
   tabDeselected: function (tabNum, tabPane, ID, tab, newTab) {

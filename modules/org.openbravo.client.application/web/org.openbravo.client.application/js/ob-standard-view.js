@@ -1120,6 +1120,11 @@ isc.OBStandardView.addProperties({
       title = prefix + title + suffix;
       tabSet.setTabTitle(tab, title);
     }
+    
+    if (this.isRootView) {
+      // update the document title
+      document.title = 'Openbravo - ' + tab.title;
+    }
   },
   
   isViewVisible: function(){
