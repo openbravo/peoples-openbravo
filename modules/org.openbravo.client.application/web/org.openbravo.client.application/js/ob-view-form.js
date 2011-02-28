@@ -181,11 +181,15 @@ OB.ViewFormProperties = {
     this.view.statusBar.setNewState(isNew);
     this.view.updateTabTitle();
     this.enableLinkedItemSection(!isNew);
-    
-    if (isNew) {
-      // signal that autosave is needed after this
-      this.view.standardWindow.setDirtyEditForm(this);
-    }
+
+    // see issue:
+    // 16064: Autosave error is triggered when closing a tab, even if the form wasn't touched
+    // https://issues.openbravo.com/view.php?id=16064
+    // this is inline with current behavior
+//    if (isNew) {
+//      // signal that autosave is needed after this
+//      this.view.standardWindow.setDirtyEditForm(this);
+//    }
   },
   
   // reset the focus item to the first item which can get focus
