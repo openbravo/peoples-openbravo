@@ -294,6 +294,23 @@ isc.OBSelectorItem.addProperties({
     showHeaderContextMenu: false
   },
   
+  setPickListWidth: function(){
+    var extraWidth = 0,
+        fieldWidth = this.getVisibleWidth();
+    if (this.pickListFields.length > 1) {
+      extraWidth = 150 * (this.pickListFields.length - 1);
+    }
+    
+    this.pickListWidth = (fieldWidth < 150 ? 150 : fieldWidth) + extraWidth;
+  },
+  
+  
+  // Set the pickListWidth just before being shown.
+  showPickList: function() {
+    this.setPickListWidth();
+    this.Super('showPickList', arguments);
+  },
+  
   init: function(){
     this.icons = [{
       src: this.popupIconSrc,
