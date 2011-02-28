@@ -95,7 +95,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '10876';
+  var number = '10926';
   return number;
 }
 
@@ -2612,11 +2612,12 @@ function executeMenuButton(id) {
 
 function getAppUrl() {
   var menuFrame = getFrame('frameMenu');
+  var LayoutMDI = getFrame('LayoutMDI');
   var appUrl = null;
   if (typeof menuFrame.getAppUrlFromMenu === "function" || typeof menuFrame.getAppUrlFromMenu === "object") {  //"object" clause related to issue https://issues.openbravo.com/view.php?id=14756
     appUrl = menuFrame.getAppUrlFromMenu();
-  } else if (top.opener && top.opener.OB && top.opener.OB.Application) {
-    appUrl = top.opener.OB.Application.contextUrl;
+  } else if (LayoutMDI) {
+    appUrl = LayoutMDI.OB.Application.contextUrl;
   }
   return appUrl;
 }
