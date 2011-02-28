@@ -456,6 +456,14 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
   
+  // overridden to prevent the filter editor fields from using the 
+  // grids datasource
+  getFilterEditorProperties: function(field) {
+    return isc.addProperties({
+      optionDataSource: null
+    }, this.Super('getFilterEditorProperties', arguments));
+  },
+  
   refreshGrid: function(callback){
     if (this.getSelectedRecord()) {
       this.targetRecordId = this.getSelectedRecord()[OB.Constants.ID];
