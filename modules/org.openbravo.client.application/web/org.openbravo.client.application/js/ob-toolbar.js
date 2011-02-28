@@ -153,6 +153,27 @@ isc.OBToolbar.addClassProperties({
       }
     },
     keyboardShortcutId: 'ToolBar_Undo'
+  },
+  // This offers a mechanism to add properties at runtime to buttons created through
+  // templates and java
+  BUTTON_PROPERTIES: {
+    'audit' : {
+      updateState: function(){
+        var view = this.view, form = view.viewForm, grid = view.viewGrid;
+        var selectedRecords = grid.getSelectedRecords();
+        var disabled = false;
+        if (selectedRecords && selectedRecords.length > 1) {
+            disabled = true;
+        } else if (view.isShowingForm && form.isNew) {
+          disabled = true;
+        } else if (view.isEditingGrid && grid.getEditForm().isNew) {
+          disabled = true;
+        } else if (selectedRecords && selectedRecords.length > 0 && selectedRecords[0].updated && selectedRecords[0].creationDate && selectedRecords[0].updated.getTime() === selectedRecords[0].creationDate.getTime()){
+          disabled = true;          
+        }
+        this.setDisabled(disabled);
+      }
+    }
   }
 });
 
@@ -189,6 +210,11 @@ isc.OBToolbar.addProperties({
     if (this.leftMembers) {
       for (i = 0; i < this.leftMembers.length; i++) {
         newMembers[j] = this.leftMembers[i];
+        
+        if (newMembers[j].buttonType && isc.OBToolbar.BUTTON_PROPERTIES[newMembers[j].buttonType]) {
+          isc.addProperties(newMembers[j], isc.OBToolbar.BUTTON_PROPERTIES[newMembers[j].buttonType]);
+        }
+        
         OB.TestRegistry.register('org.openbravo.client.application.toolbar.button.' + this.leftMembers[i].buttonType + '.' + this.view.tabId, this.leftMembers[i]);
         
         newMembers[j].toolBar = this;
