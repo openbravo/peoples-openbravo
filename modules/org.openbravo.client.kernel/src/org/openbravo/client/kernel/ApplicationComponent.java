@@ -51,7 +51,6 @@ public class ApplicationComponent extends BaseTemplateComponent {
   public String getCompleteContextUrl() {
     if (hasParameter(KernelConstants.CONTEXT_URL)) {
       final String url = getParameter(KernelConstants.CONTEXT_URL);
-      System.err.println(url);
       return url;
     }
     return "";
