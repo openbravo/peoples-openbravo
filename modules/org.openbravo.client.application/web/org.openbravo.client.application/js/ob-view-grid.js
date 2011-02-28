@@ -1484,6 +1484,9 @@ isc.OBViewGrid.addProperties({
   
   setRecordErrorMessage: function(rowNum, msg){
     var record = this.getRecord(rowNum);
+    if (!record) {
+      return;
+    }
     record[isc.OBViewGrid.ERROR_MESSAGE_PROP] = msg;
     if (msg) {
       record[this.recordBaseStyleProperty] = this.recordStyleError;
