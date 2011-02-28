@@ -46,6 +46,11 @@
     listeners : [],
 
     delay : 50000,
+    
+    // last info
+    lastResponse: null,
+    lastData: null,
+    lastRequest: null,
 
     // ** {{{ AlertManager.addListener(listener) }}} **
     //
@@ -58,9 +63,17 @@
     // received.
     addListener : function(/* function */listener) {
       this.listeners[this.listeners.length] = listener;
+      if (this.lastResponse) {
+        // call the listener once with the last data
+        listener(this.lastResponse, this.lastData, this.lastRequest, true);
+      }
     },
 
     _notify : function(rpcResponse, data, rpcRequest) {
+      // store info for new listeners
+      OB.AlertManager.lastResponse = rpcResponse;
+      OB.AlertManager.lastData = data;
+      OB.AlertManager.lastRequest = rpcRequest;
       for ( var i = 0; i < OB.AlertManager.listeners.length; i++) {
         OB.AlertManager.listeners[i](rpcResponse, data, rpcRequest);
       }
@@ -109,6 +122,9 @@ isc.OBAlertIcon
         };
 
         this.Super('initWidget', arguments);
+
+        OB.I18N.getLabel(instance.alertLabel,
+            [ '-' ], instance, 'setTitle');
 
         // call it to update the number of alerts directly after login
         OB.AlertManager.addListener(listener);
