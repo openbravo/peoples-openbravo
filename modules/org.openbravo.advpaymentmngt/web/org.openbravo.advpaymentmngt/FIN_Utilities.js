@@ -509,20 +509,6 @@ function createCombo(object, innerHTML){
 }
 
 /**
- * Get application url.
- * @return {String} Application url.
- * @deprecated TO BE REMOVED ON MP23
- */
-function getAppUrl() {
-  var menuFrame = getFrame('frameMenu');
-  var appUrl = null;
-  if (typeof menuFrame.getAppUrlFromMenu === "function" || typeof menuFrame.getAppUrlFromMenu === "object") {  //"object" clause related to issue https://issues.openbravo.com/view.php?id=14756
-    appUrl = menuFrame.getAppUrlFromMenu();
-  }
-  return appUrl;
-}
-
-/**
  * Helper function to reload the opener window dynamic grid.
  * @return
  */
