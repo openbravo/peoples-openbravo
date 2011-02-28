@@ -43,8 +43,8 @@ public class UnpostRefundPayments extends BuildValidation {
         String alertRuleId = UnpostRefundPaymentsData.getUUID(cp);
         if (!UnpostRefundPaymentsData.existsAlertRule(cp)){
           UnpostRefundPaymentsData.insertAlertRule(cp, alertRuleId);
-          alertRuleId = UnpostRefundPaymentsData.getAlertRuleId(cp);
         }
+        alertRuleId = UnpostRefundPaymentsData.getAlertRuleId(cp);
         processAlert(alertRuleId, cp);
       }
     } catch (Exception e) {
