@@ -1174,7 +1174,7 @@ isc.OBViewGrid.addProperties({
     var me = this, record = this.getRecord(rowNum);
     
     if (!preventConfirm && 
-    (record._new || this.getEditForm().hasChanged || this.rowHasErrors(rowNum))) {
+    (this.getEditForm().hasChanged || this.rowHasErrors(rowNum))) {
       isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmCancelEdit'), function(value){
         if (value) {
         
