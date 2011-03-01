@@ -412,4 +412,14 @@ public abstract class WidgetProvider {
   public void setWidgetClass(WidgetClass widgetClass) {
     this.widgetClass = widgetClass;
   }
+
+  /**
+   * Override this method to make validations on widget classes. If this method returns false the
+   * widget class won't be available for users to add new instances.
+   * 
+   * @return true if the widget class definition is valid.
+   */
+  public boolean validate() {
+    return true;
+  }
 }

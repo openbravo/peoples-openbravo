@@ -83,4 +83,13 @@ public class URLWidgetProvider extends WidgetProvider {
       throw new OBException(e);
     }
   }
+
+  @Override
+  public boolean validate() {
+    if (getWidgetClass() != null && getWidgetClass().getOBKMOWidgetURLList().isEmpty()) {
+      log.error("No url widget defined for widget class " + getWidgetClass().getIdentifier());
+      return false;
+    }
+    return true;
+  }
 }

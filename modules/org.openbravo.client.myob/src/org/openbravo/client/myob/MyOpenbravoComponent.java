@@ -99,6 +99,9 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
       for (WidgetClass widgetClass : widgetClassesQry.list()) {
         if (isAccessible(widgetClass)) {
           final WidgetProvider widgetProvider = myOBUtils.getWidgetProvider(widgetClass);
+          if (!widgetProvider.validate()) {
+            continue;
+          }
           definitions.add(widgetProvider.getWidgetClassDefinition());
           try {
             classDef = widgetProvider.generate();
