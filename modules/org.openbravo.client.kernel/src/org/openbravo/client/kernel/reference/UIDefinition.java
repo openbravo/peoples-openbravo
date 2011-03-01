@@ -229,6 +229,9 @@ public abstract class UIDefinition {
     if (value == null) {
       return "";
     }
+    if (!(getDomainType() instanceof PrimitiveDomainType)) {
+      return value.toString();
+    }
     return ((PrimitiveDomainType) getDomainType()).convertToString(value);
   }
 

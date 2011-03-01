@@ -73,9 +73,32 @@ public class KernelUtils {
   private List<Module> sortedModules = null;
 
   public Property getPropertyFromColumn(Column column) {
+    return getPropertyFromColumn(column, true);
+  }
+
+  public Property getPropertyFromColumn(Column column, boolean includeIdColumn) {
     final Entity entity = ModelProvider.getInstance().getEntity(column.getTable().getName());
+    final String colId = column.getId();
+    // first ignore id columns
     for (Property property : entity.getProperties()) {
-      if (property.getColumnId().equals(column.getId())) {
+      final String propColId = property.getColumnId();
+      if (propColId == null) {
+        continue;
+      }
+      if (property.isId() && !includeIdColumn) {
+        continue;
+      }
+      if (propColId.equals(colId)) {
+        return property;
+      }
+    }
+    // now try without ignoring id columns
+    for (Property property : entity.getProperties()) {
+      final String propColId = property.getColumnId();
+      if (propColId == null) {
+        continue;
+      }
+      if (propColId.equals(colId)) {
         return property;
       }
     }

@@ -359,7 +359,7 @@ public class OBViewTab extends BaseTemplateComponent {
     public FieldProperty(Column col) {
       columnName = "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName());
       dbColumnName = col.getDBColumnName();
-      propertyName = KernelUtils.getInstance().getPropertyFromColumn(col).getName();
+      propertyName = KernelUtils.getInstance().getPropertyFromColumn(col, false).getName();
       session = col.isStoredInSession();
       typeName = UIDefinitionController.getInstance().getUIDefinition(col.getId()).getName();
     }

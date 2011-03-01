@@ -500,6 +500,11 @@ OB.ViewFormProperties = {
       }
     }
     
+    // ignore the id
+    if (field.name === OB.Constants.ID) {
+      return;
+    }
+    
     // note field can be a datasource field, see above, in that case
     // don't set the entries    
     if (field.form && entries) {
