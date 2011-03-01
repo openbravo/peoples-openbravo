@@ -133,16 +133,36 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     }
 
     // now see if there are additional properties, these are often property paths
-    final Object additionalPropParameter = parameters
+    final String additionalPropParameter = (String) parameters
         .get(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER);
-    if (additionalPropParameter != null && getEntity() != null) {
-      final String[] additionalProps = ((String) additionalPropParameter).split(",");
+    final StringBuilder additionalProperties = new StringBuilder();
+    if (additionalPropParameter != null) {
+      additionalProperties.append(additionalPropParameter);
+    }
+    // get the additionalproperties from the properties
+    for (DataSourceProperty dsProp : dsProperties) {
+      final Map<String, Object> params = dsProp.getUIDefinition().getDataSourceParameters();
+      String additionalProps = (String) params.get(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER);
+      if (additionalProps != null) {
+        final String[] additionalPropValues = additionalProps.toString().split(",");
+        for (String addProp : additionalPropValues) {
+          if (additionalProperties.length() > 0) {
+            additionalProperties.append(",");
+          }
+          additionalProperties.append(dsProp.getName() + "." + addProp);
+        }
+      }
+    }
+
+    if (additionalProperties.length() > 0 && getEntity() != null) {
+      final String[] additionalProps = additionalProperties.toString().split(",");
 
       // the additional properties are passed back using a different name
       // than the original property
       for (String additionalProp : additionalProps) {
         final Property property = DalUtil.getPropertyFromPath(entity, additionalProp);
         final DataSourceProperty dsProperty = DataSourceProperty.createFromProperty(property);
+        dsProperty.setAdditional(true);
         dsProperty.setName(additionalProp);
         dsProperties.add(dsProperty);
       }

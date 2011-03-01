@@ -24,7 +24,8 @@
 isc.ClassFactory.defineClass('OBViewDataSource', isc.OBRestDataSource);
 
 isc.OBViewDataSource.addProperties({
-
+  additionalProps: null,
+  
   showProgress: function(editedRecord){
   
     // don't show it, done to quickly
@@ -99,13 +100,33 @@ isc.OBViewDataSource.addProperties({
     var additionalPara = {
       _operationType: 'update',
       _noActiveFilter: true,
-      sendOriginalIDBack: true
+      sendOriginalIDBack: true,
+      _extraProperties: this.getAdditionalProps()
     };
     isc.addProperties(newRequestProperties.params, additionalPara);
     if (!newRequestProperties.dataSource) {
       newRequestProperties.dataSource = this;
     }
     this.Super('performDSOperation', [operationType, data, callback, newRequestProperties]);
+  },
+  
+  getAdditionalProps: function() {
+    if (this.additionalProps !== null) {
+      return this.additionalProps;
+    }
+    this.additionalProps = "";
+    for (var prop in this.getFields()) {
+      if (this.getFields().hasOwnProperty(prop)) {
+        var fld = this.getFields()[prop];
+        if (fld.additional) {
+          if (this.additionalProps.length > 0) {
+            this.additionalProps += ",";
+          }
+          this.additionalProps += fld.name;
+        }        
+      }
+    }
+    return this.additionalProps;
   },
   
   // do special id-handling so that we can replace the old if with the new

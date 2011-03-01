@@ -362,7 +362,7 @@ isc.OBSelectorItem.addProperties({
     } else {
       this.handleOutFields(record);
       this.setValue(record[this.valueField]);
-      this.form.setValue(this.name + '.' + this.displayField, record[OB.Constants.IDENTIFIER]);
+      this.form.setValue(this.name + '.' + this.displayField, record[this.name + '.' + this.displayField]);
     }
     if (this.form && this.form.handleItemChange) {
       this._hasChanged = true;

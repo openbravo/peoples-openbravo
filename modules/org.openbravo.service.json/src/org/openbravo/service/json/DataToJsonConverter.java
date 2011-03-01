@@ -157,6 +157,10 @@ public class DataToJsonConverter {
         }
       }
       for (String additionalProperty : additionalProperties) {
+        // sometimes empty strings are passed in
+        if (additionalProperty.length() == 0) {
+          continue;
+        }
         final Object value = DalUtil.getValueFromPath(bob, additionalProperty);
         if (value instanceof BaseOBObject) {
           addBaseOBObject(jsonObject, additionalProperty, getPropertyFromPath(bob,

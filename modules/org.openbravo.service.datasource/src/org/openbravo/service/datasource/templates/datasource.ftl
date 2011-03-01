@@ -59,7 +59,8 @@ although the same is done by the compressor
 
 <#macro generateField property>
   {name: '${property.name?js_string}',
-    type: '${property.type}'
+    type: '${property.type}',
+    additional: ${property.additional?string}
 <#if property.id>
     , hidden: true, primaryKey: true
 </#if>

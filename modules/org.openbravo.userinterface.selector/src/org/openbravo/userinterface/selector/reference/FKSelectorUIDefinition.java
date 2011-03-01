@@ -33,9 +33,11 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Field;
+import org.openbravo.service.json.JsonConstants;
 import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorComponent;
 import org.openbravo.userinterface.selector.SelectorConstants;
+import org.openbravo.userinterface.selector.SelectorField;
 
 /**
  * Implementation of the foreign key ui definition which uses a selector for its input/filter types.
@@ -62,7 +64,15 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
           final BaseOBObject target = OBDal.getInstance().get(prop.getTargetEntity().getName(),
               json.getString("value"));
           if (target != null) {
-            json.put("identifier", target.getIdentifier());
+            final Selector selector = getSelector(field);
+            final SelectorField displayField = selector.getDisplayfield();
+            if (displayField == null) {
+              json.put("identifier", target.getIdentifier());
+            } else if (displayField.getProperty() != null) {
+              json.put("identifier", DalUtil.getValueFromPath(target, displayField.getProperty()));
+            } else {
+              json.put("identifier", target.getIdentifier());
+            }
           }
         }
       }
@@ -70,6 +80,35 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
     } catch (Exception e) {
       throw new OBException("Exception when processing field " + field, e);
     }
+  }
+
+  public Map<String, Object> getDataSourceParameters() {
+    final Map<String, Object> params = new HashMap<String, Object>();
+    final Reference reference = OBDal.getInstance().get(Reference.class, getReference().getId());
+    for (Selector selector : reference.getOBUISELSelectorList()) {
+      if (selector.isActive()) {
+        final String extraProperties = SelectorComponent.getAdditionalProperties(selector);
+        if (extraProperties.length() > 0) {
+          params.put(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER, extraProperties);
+        }
+      }
+    }
+    return params;
+  }
+
+  @Override
+  protected String getDisplayFieldName(Field field, Property prop) {
+    Long length = field.getDisplayedLength();
+    if (length == null || length == 0) {
+      length = field.getColumn().getLength();
+    }
+    final Selector selector = getSelector(field);
+    final SelectorField displayField = selector.getDisplayfield();
+    String displayFieldName = JsonConstants.IDENTIFIER;
+    if (displayField != null && displayField.getProperty() != null) {
+      displayFieldName = displayField.getProperty();
+    }
+    return prop.getName() + "." + displayFieldName;
   }
 
   public String getFieldProperties(Field field) {

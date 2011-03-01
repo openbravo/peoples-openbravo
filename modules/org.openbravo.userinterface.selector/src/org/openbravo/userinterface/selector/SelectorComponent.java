@@ -95,6 +95,63 @@ public class SelectorComponent extends BaseTemplateComponent {
     IdentifierOutField.setOutSuffix("");
   }
 
+  private static DomainType getDomainType(SelectorField selectorField) {
+    if (selectorField.getObuiselSelector().getTable() != null
+        && selectorField.getProperty() != null) {
+      final String entityName = selectorField.getObuiselSelector().getTable().getName();
+      final Entity entity = ModelProvider.getInstance().getEntity(entityName);
+      final Property property = DalUtil.getPropertyFromPath(entity, selectorField.getProperty());
+      Check.isNotNull(property, "Property " + selectorField.getProperty() + " not found in Entity "
+          + entity);
+      return property.getDomainType();
+    } else if (selectorField.getObuiselSelector().getTable() != null
+        && selectorField.getObuiselSelector().isCustomQuery()
+        && selectorField.getReference() != null) {
+      return getDomainType(selectorField.getReference().getId());
+    } else if (selectorField.getObserdsDatasourceField().getReference() != null) {
+      return getDomainType(selectorField.getObserdsDatasourceField().getReference().getId());
+    }
+    return null;
+  }
+
+  private static DomainType getDomainType(String referenceId) {
+    final Reference reference = ModelProvider.getInstance().getReference(referenceId);
+    Check.isNotNull(reference, "No reference found for referenceid " + referenceId);
+    return reference.getDomainType();
+  }
+
+  private static String getPropertyOrDataSourceField(SelectorField selectorField) {
+    if (selectorField.getProperty() != null) {
+      return selectorField.getProperty();
+    }
+    if (selectorField.getDisplayColumnAlias() != null) {
+      return selectorField.getDisplayColumnAlias();
+    }
+    if (selectorField.getObserdsDatasourceField() != null) {
+      return selectorField.getObserdsDatasourceField().getName();
+    }
+    throw new IllegalStateException("Selectorfield " + selectorField
+        + " has a null datasource and a null property");
+  }
+
+  public static String getAdditionalProperties(Selector selector) {
+    final StringBuilder extraProperties = new StringBuilder();
+    if (selector.getDisplayfield() == null || !selector.getDisplayfield().isActive()) {
+      return extraProperties.toString();
+    }
+    SelectorField selectorField = selector.getDisplayfield();
+    String fieldName = getPropertyOrDataSourceField(selectorField);
+
+    // handle the case that the field is a foreign key
+    // in that case always show the identifier
+    final DomainType domainType = getDomainType(selectorField);
+    if (domainType instanceof ForeignKeyDomainType) {
+      fieldName = fieldName + "." + JsonConstants.IDENTIFIER;
+    }
+    extraProperties.append(fieldName);
+    return extraProperties.toString();
+  }
+
   @Override
   protected Template getComponentTemplate() {
     return getSelector().getObclkerTemplate();
@@ -237,20 +294,6 @@ public class SelectorComponent extends BaseTemplateComponent {
     return JsonConstants.IDENTIFIER;
   }
 
-  private String getPropertyOrDataSourceField(SelectorField selectorField) {
-    if (selectorField.getProperty() != null) {
-      return selectorField.getProperty();
-    }
-    if (selectorField.getDisplayColumnAlias() != null) {
-      return selectorField.getDisplayColumnAlias();
-    }
-    if (selectorField.getObserdsDatasourceField() != null) {
-      return selectorField.getObserdsDatasourceField().getName();
-    }
-    throw new IllegalStateException("Selectorfield " + selectorField
-        + " has a null datasource and a null property");
-  }
-
   private boolean isBoolean(SelectorField selectorField) {
     final DomainType domainType = getDomainType(selectorField);
     if (domainType instanceof PrimitiveDomainType) {
@@ -323,25 +366,7 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     final Map<String, Object> dsParameters = new HashMap<String, Object>(getParameters());
     dsParameters.put(DataSourceConstants.DS_ONLY_GENERATE_CREATESTATEMENT, true);
-
-    final StringBuilder extraProperties = new StringBuilder();
-    for (SelectorField selectorField : getSelector().getOBUISELSelectorFieldList()) {
-      String fieldName = getPropertyOrDataSourceField(selectorField);
-
-      // handle the case that the field is a foreign key
-      // in that case always show the identifier
-      final DomainType domainType = getDomainType(selectorField);
-      if (domainType instanceof ForeignKeyDomainType) {
-        fieldName = fieldName + "." + JsonConstants.IDENTIFIER;
-      }
-
-      if (fieldName.contains(".")) {
-        if (extraProperties.length() > 0) {
-          extraProperties.append(",");
-        }
-        extraProperties.append(fieldName);
-      }
-    }
+    final String extraProperties = getAdditionalProperties(getSelector());
     if (extraProperties.length() > 0) {
       dsParameters.put(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER, extraProperties.toString());
     }
@@ -743,14 +768,6 @@ public class SelectorComponent extends BaseTemplateComponent {
       return localSelectorFieldProperty;
     }
 
-    private LocalSelectorFieldProperty createNonStringLocalSelectorFieldProperty(String propName,
-        Object propValue) {
-      LocalSelectorFieldProperty localSelectorFieldProperty = new LocalSelectorFieldProperty();
-      localSelectorFieldProperty.setName(propName);
-      localSelectorFieldProperty.setValue("" + propValue);
-      return localSelectorFieldProperty;
-    }
-
     public boolean isFilter() {
       return filter;
     }
@@ -840,25 +857,6 @@ public class SelectorComponent extends BaseTemplateComponent {
     return null;
   }
 
-  private DomainType getDomainType(SelectorField selectorField) {
-    if (selectorField.getObuiselSelector().getTable() != null
-        && selectorField.getProperty() != null) {
-      final String entityName = selectorField.getObuiselSelector().getTable().getName();
-      final Entity entity = ModelProvider.getInstance().getEntity(entityName);
-      final Property property = DalUtil.getPropertyFromPath(entity, selectorField.getProperty());
-      Check.isNotNull(property, "Property " + selectorField.getProperty() + " not found in Entity "
-          + entity);
-      return property.getDomainType();
-    } else if (selectorField.getObuiselSelector().getTable() != null
-        && selectorField.getObuiselSelector().isCustomQuery()
-        && selectorField.getReference() != null) {
-      return getDomainType(selectorField.getReference().getId());
-    } else if (selectorField.getObserdsDatasourceField().getReference() != null) {
-      return getDomainType(selectorField.getObserdsDatasourceField().getReference().getId());
-    }
-    return null;
-  }
-
   private Entity getEntity() {
     if (getSelector().getTable() != null) {
       final String entityName = getSelector().getTable().getName();
@@ -868,11 +866,5 @@ public class SelectorComponent extends BaseTemplateComponent {
       return ModelProvider.getInstance().getEntity(entityName);
     }
     return null;
-  }
-
-  private DomainType getDomainType(String referenceId) {
-    final Reference reference = ModelProvider.getInstance().getReference(referenceId);
-    Check.isNotNull(reference, "No reference found for referenceid " + referenceId);
-    return reference.getDomainType();
   }
 }

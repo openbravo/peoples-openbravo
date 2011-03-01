@@ -22,8 +22,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -233,6 +235,17 @@ public abstract class UIDefinition {
       return value.toString();
     }
     return ((PrimitiveDomainType) getDomainType()).convertToString(value);
+  }
+
+  /**
+   * Parameters passed in to the datasource, for example the
+   * {@link JsonConstants#ADDITIONAL_PROPERTIES_PARAMETER} can be passed in like this.
+   * 
+   * @return a list of parameters used to drive the datasource generation incorporating this
+   *         UIDefinition.
+   */
+  public Map<String, Object> getDataSourceParameters() {
+    return Collections.emptyMap();
   }
 
   /**

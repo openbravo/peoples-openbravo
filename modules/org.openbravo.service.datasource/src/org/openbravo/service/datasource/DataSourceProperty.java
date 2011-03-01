@@ -207,6 +207,7 @@ public class DataSourceProperty {
   private boolean numericType;
   private List<RefListEntry> valueMap;
   private UIDefinition uiDefinition;
+  private boolean additional = false;
 
   public String getType() {
     return uiDefinition.getName();
@@ -367,5 +368,13 @@ public class DataSourceProperty {
 
       return (v1 < v2 ? -1 : 1);
     }
+  }
+
+  public boolean isAdditional() {
+    return additional;
+  }
+
+  public void setAdditional(boolean additional) {
+    this.additional = additional;
   }
 }

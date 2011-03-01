@@ -377,6 +377,7 @@ public class DefaultJsonDataService implements JsonDataService {
         // needs to be done before the close of the session
         final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
             DataToJsonConverter.class);
+        toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
         final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
 
         if (sendOriginalIdBack) {
