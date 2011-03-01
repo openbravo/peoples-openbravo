@@ -108,8 +108,6 @@
     <startingNo>1000000</startingNo>
     <currentNextSystem>100</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="B981A3D749C44B0883D8224C9A99097C" identifier="Payment Proposal">
@@ -123,8 +121,6 @@
     <startingNo>1000000</startingNo>
     <currentNextSystem>100</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
   <ADSequence id="CA3363DD85FF4909B11FB682F808AB8A" identifier="Bank Statement File">
@@ -138,8 +134,6 @@
     <startingNo>1000000</startingNo>
     <currentNextSystem>100</currentNextSystem>
     <usedForRecordID>false</usedForRecordID>
-    <prefix xsi:nil="true"/>
-    <suffix xsi:nil="true"/>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
 </ob:Openbravo>
