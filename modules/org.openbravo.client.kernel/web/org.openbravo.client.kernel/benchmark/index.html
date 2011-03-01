@@ -38,8 +38,8 @@ function OBStartApplication() {
     s.innerHTML = 'Test must be executed with System Administrator role';
     return;
   }
-
-  $LAB.script('../../../org.openbravo.client.kernel/OBUIAPP_MainLayout/View?viewId=_D586192D06C14EC182B44CAD34CA4295')
+  // _101 = Reference view definition
+  $LAB.script('../../../org.openbravo.client.kernel/OBUIAPP_MainLayout/View?viewId=_101')
       .wait(function() {
 
         var viewName = OB.Layout.ViewManager.loadedWindowClassName,
