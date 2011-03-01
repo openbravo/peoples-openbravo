@@ -1515,7 +1515,7 @@ isc.OBStandardView.addProperties({
         value = record[propertyObj.property];
         field = component.getField(propertyObj.property);
         addProperty = propertyObj.sessionProperty || !onlySessionProperties;
-        if (typeof value !== 'undefined' && addProperty) {
+        if (addProperty) {
           if (classicMode) {
             if (propertyObj.type && convertToClassicFormat) {
               type = SimpleType.getType(propertyObj.type);
@@ -1559,8 +1559,9 @@ isc.OBStandardView.addProperties({
     }
     
     if (this.parentView) {
-      // note parent properties do not overwrite child properties
-      contextInfo = isc.addProperties(this.parentView.getContextInfo(true, classicMode, forceSettingContextVars, convertToClassicFormat), contextInfo);
+      // parent properties do not override contextInfo
+      var parentContextInfo = this.parentView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat);
+      contextInfo = isc.addProperties(parentContextInfo, contextInfo);
     }
     
     return contextInfo;
