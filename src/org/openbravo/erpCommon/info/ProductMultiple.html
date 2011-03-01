@@ -81,7 +81,7 @@ function onloadFunctions() {
   		data = new Array();
   		rows = dijit.byId('grid').getSelectedRows();
         if(rows.length == 0){
-            confirm(ALERT_MSG);
+            alert(ALERT_MSG);
             return false;
         }
   		for(var i=0; i < rows.length; i++) {

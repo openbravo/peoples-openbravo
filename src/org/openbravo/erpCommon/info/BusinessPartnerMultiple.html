@@ -34,6 +34,7 @@
 <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "http://yourSite/web/";</script>
 <script language="JavaScript" type="text/javascript" id="paramLanguage">defaultLang = "en_US";</script>
+<script language="JavaScript" type="text/javascript" id="paramAlertMsg">ALERT_MSG = "No business partner is selected";</script>
 <script language="JavaScript" type="text/javascript">
 function validate() {	
 	var frm = document.forms[0];
@@ -73,6 +74,10 @@ function validate() {
   	if(action == "SAVE") {
   		data = new Array();
   		rows = dijit.byId('grid').getSelectedRows();
+                if(rows.length == 0){
+                    alert(ALERT_MSG);
+                    return false;
+                }
   		for(var i=0; i < rows.length; i++) {
   			var rowkey = rows[i].split("@_##_@");
   			var rval = new Array(rowkey[0], rowkey[1]);

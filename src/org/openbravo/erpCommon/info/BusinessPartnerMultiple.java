@@ -130,6 +130,8 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("alertMsg", "ALERT_MSG=\""
+      +  Utility.messageBD(this, "NoBusinessPartnerSelected", vars.getLanguage()) + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("name", strNameValue);
     xmlDocument.setParameter("clients", strBpartners);
