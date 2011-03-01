@@ -1560,7 +1560,7 @@ isc.OBStandardView.addProperties({
     
     if (this.parentView) {
       // note parent properties do not overwrite child properties
-      contextInfo = isc.addProperties(this.parentView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat), contextInfo);
+      contextInfo = isc.addProperties(this.parentView.getContextInfo(true, classicMode, forceSettingContextVars, convertToClassicFormat), contextInfo);
     }
     
     return contextInfo;
