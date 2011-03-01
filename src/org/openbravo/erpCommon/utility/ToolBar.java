@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,6 +50,7 @@ public class ToolBar {
   private boolean email = false;
   private String tabId;
   private boolean deleteable = true;
+  private boolean hasNewButton = true;
 
   public void setEmail(boolean email) {
     this.email = email;
@@ -103,7 +104,7 @@ public class ToolBar {
       String _windowName, String _baseDirection, boolean _debug, boolean _isSrcWindow,
       boolean _isFrame, boolean _hasAttachements) {
     this(_conn, true, _language, _action, _isNew, _keyINP, _gridID, _PDFName, _isDirectPrinting,
-        _windowName, _baseDirection, _debug, _isSrcWindow, _isFrame, _hasAttachements);
+        _windowName, _baseDirection, _debug, _isSrcWindow, _isFrame, _hasAttachements, true);
   }
 
   public ToolBar(ConnectionProvider _conn, boolean _isEditable, String _language, String _action,
@@ -125,7 +126,16 @@ public class ToolBar {
       String _windowName, String _baseDirection, boolean _debug, boolean _isSrcWindow,
       boolean _isFrame) {
     this(_conn, _isEditable, _language, _action, _isNew, _keyINP, _gridID, _PDFName,
-        _isDirectPrinting, _windowName, _baseDirection, _debug, _isSrcWindow, false, false);
+        _isDirectPrinting, _windowName, _baseDirection, _debug, _isSrcWindow, false, false, true);
+  }
+
+  public ToolBar(ConnectionProvider _conn, boolean _isEditable, String _language, String _action,
+      boolean _isNew, String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting,
+      String _windowName, String _baseDirection, boolean _debug, boolean _isSrcWindow,
+      boolean _isFrame, boolean _hasAttachments) {
+    this(_conn, _isEditable, _language, _action, _isNew, _keyINP, _gridID, _PDFName,
+        _isDirectPrinting, _windowName, _baseDirection, _debug, _isSrcWindow, _isFrame,
+        _hasAttachments, true);
   }
 
   /**
@@ -134,7 +144,7 @@ public class ToolBar {
   public ToolBar(ConnectionProvider _conn, boolean _isEditable, String _language, String _action,
       boolean _isNew, String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting,
       String _windowName, String _baseDirection, boolean _debug, boolean _isSrcWindow,
-      boolean _isFrame, boolean _hasAttachments) {
+      boolean _isFrame, boolean _hasAttachments, boolean _hasNewButton) {
     this.conn = _conn;
     this.language = _language;
     this.servlet_action = _action;
@@ -155,6 +165,7 @@ public class ToolBar {
       this.form = this.keyfield.substring(0, i);
     this.isSrcWindow = _isSrcWindow;
     this.hasAttachments = _hasAttachments;
+    this.hasNewButton = _hasNewButton;
     createAllButtons();
   }
 
@@ -267,8 +278,11 @@ public class ToolBar {
   }
 
   private void createAllButtons() {
-    buttons.put("NEW", new ToolBar_Button(base_direction, "New", Utility.messageBD(conn, "New",
-        language), getButtonScript("NEW")));
+    if (hasNewButton) {
+      buttons.put("NEW", new ToolBar_Button(base_direction, "New", Utility.messageBD(conn, "New",
+          language), getButtonScript("NEW")));
+    }
+
     buttons.put("EDIT", new ToolBar_Button(base_direction, "Edit", Utility.messageBD(conn, "Edit",
         language), getButtonScript("EDIT")));
     buttons.put("RELATION", new ToolBar_Button(base_direction, "Relation", Utility.messageBD(conn,

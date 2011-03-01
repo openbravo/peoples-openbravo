@@ -863,10 +863,11 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     if (vars.getSessionValue("#ShowTest", "N").equals("Y")) discard[1] = new String("isTest");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpWindows/<PARAMETER_TMP id="path">Window</PARAMETER_TMP>/<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation", discard).createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>", false, "document.frmMain.inp<FIELD_TMP id="keyData">Clave</FIELD_TMP>", "grid", "..<PARAMETER_TMP id="paramReportPDF">xx</PARAMETER_TMP>", "<PARAMETER_TMP id="paramReportDirectPrint">xx</PARAMETER_TMP>".equals("Y"), "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", strReplaceWith, false);
+    boolean hasReadOnlyAccess = org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId);
+    ToolBar toolbar = new ToolBar(this, true, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>", false, "document.frmMain.inp<FIELD_TMP id="keyData">Clave</FIELD_TMP>", "grid", "..<PARAMETER_TMP id="paramReportPDF">xx</PARAMETER_TMP>", "<PARAMETER_TMP id="paramReportDirectPrint">xx</PARAMETER_TMP>".equals("Y"), "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", strReplaceWith, false, false, false, false, !hasReadOnlyAccess);
     toolbar.setTabId(tabId);
     
-    toolbar.setDeleteable(<PARAMETER_TMP id="deleteable"/> &amp;&amp; !org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId));
+    toolbar.setDeleteable(<PARAMETER_TMP id="deleteable"/> &amp;&amp; !hasReadOnlyAccess);
     toolbar.prepareRelationTemplate<PARAMETER_TMP id="sameParent">NoSearch</PARAMETER_TMP>("<PARAMETER_TMP id="paramHasTree">hasTree</PARAMETER_TMP>".equals("Y"), hasSearchCondition, !vars.getSessionValue("#ShowTest", "N").equals("Y"), <PARAMETER_TMP id="paramIsReadOnly">readonly</PARAMETER_TMP>, Utility.getContext(this, vars, "ShowAudit", windowId).equals("Y"));
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -1045,14 +1046,15 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     String currentClient = (boolNew?"":(dataField!=null?dataField.getField("adClientId"):data[0].getField("adClientId")));
     if (!currentClient.equals("") &amp;&amp; !currentClient.startsWith("'")) currentClient = "'"+currentClient+"'";
     
-    boolean editableTab = (!org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId) &amp;&amp; (currentOrg.equals("") || Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),currentOrg)) &amp;&amp; (currentClient.equals("") || Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel), currentClient)));
+    boolean hasReadOnlyAccess = org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId);
+    boolean editableTab = (!hasReadOnlyAccess &amp;&amp; (currentOrg.equals("") || Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),currentOrg)) &amp;&amp; (currentClient.equals("") || Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel), currentClient)));
     if (editableTab)
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpWindows/<PARAMETER_TMP id="path">Window</PARAMETER_TMP>/<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Edition",discard).createXmlDocument();
     else
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpWindows/<PARAMETER_TMP id="path">Window</PARAMETER_TMP>/<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_NonEditable",discard).createXmlDocument();
 
     xmlDocument.setParameter("tabId", tabId);
-    ToolBar toolbar = new ToolBar(this, editableTab, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>", (strCommand.equals("NEW") || boolNew || (dataField==null &amp;&amp; (data==null || data.length==0))), "document.frmMain.inp<FIELD_TMP id="keyData">Clave</FIELD_TMP>", "", "..<PARAMETER_TMP id="paramReportPDF">xx</PARAMETER_TMP>", "<PARAMETER_TMP id="paramReportDirectPrint">xx</PARAMETER_TMP>".equals("Y"), "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", strReplaceWith, true, false, false, Utility.hasTabAttachments(this, vars, tabId, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>));
+    ToolBar toolbar = new ToolBar(this, editableTab, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>", (strCommand.equals("NEW") || boolNew || (dataField==null &amp;&amp; (data==null || data.length==0))), "document.frmMain.inp<FIELD_TMP id="keyData">Clave</FIELD_TMP>", "", "..<PARAMETER_TMP id="paramReportPDF">xx</PARAMETER_TMP>", "<PARAMETER_TMP id="paramReportDirectPrint">xx</PARAMETER_TMP>".equals("Y"), "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", strReplaceWith, true, false, false, Utility.hasTabAttachments(this, vars, tabId, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>), !hasReadOnlyAccess);
     toolbar.setTabId(tabId);
     toolbar.setDeleteable(<PARAMETER_TMP id="deleteable"/>);
     toolbar.prepareEditionTemplate<PARAMETER_TMP id="sameParent">NoSearch</PARAMETER_TMP>("<PARAMETER_TMP id="paramHasTree">hasTree</PARAMETER_TMP>".equals("Y"), hasSearchCondition, vars.getSessionValue("#ShowTest", "N").equals("Y"), "<PARAMETER_TMP id="paramUIPattern">readonly</PARAMETER_TMP>", Utility.getContext(this, vars, "ShowAudit", windowId).equals("Y"));
