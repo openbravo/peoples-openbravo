@@ -875,7 +875,7 @@ isc.OBStandardView.addProperties({
         } else {
           // make sure that the content gets refreshed
           // refresh and open a child view when all is done
-          this.doRefreshContents(true);
+          this.doRefreshContents(true, true);
         }
         return true;
       }

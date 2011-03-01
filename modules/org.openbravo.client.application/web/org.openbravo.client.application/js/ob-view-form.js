@@ -938,7 +938,7 @@ OB.ViewFormProperties = {
         height: item.newTabIconSize,
         width: item.newTabIconSize,
         align: 'absmiddle',
-        extraStuff: ' id="' + item.ID + this.LINKBUTTONSUFFIX + '" class="OBFormFieldLinkButton" onclick="window[\'' + item.ID + '\'].linkButtonClick();"'
+        extraStuff: ' id="' + item.ID + this.LINKBUTTONSUFFIX + '" class="OBFormFieldLinkButton" '
       };
       
       var imgHTML = isc.Canvas.imgHTML(searchIconObj);
@@ -949,7 +949,7 @@ OB.ViewFormProperties = {
         titleHTML = titleHTML.replace('<LABEL', '<LABEL style="cursor: pointer"');
       }
       
-      return '<span class="OBFormFieldLinkButton" onclick="window[\'' + item.ID + '\'].linkButtonClick();">' + titleHTML + '</span>&nbsp;' + imgHTML;
+      return '<span class="OBFormFieldLinkButton">' + titleHTML + '</span>&nbsp;' + imgHTML;
     }
     
     return titleHTML;
