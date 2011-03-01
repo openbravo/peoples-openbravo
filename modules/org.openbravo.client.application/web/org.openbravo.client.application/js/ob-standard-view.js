@@ -575,16 +575,32 @@ isc.OBStandardView.addProperties({
     this.setTabButtonState(state);
   },
   
-  doRefreshContents: function(doRefreshWhenVisible){
+  visibilityChanged: function(visible){
+    if (visible && this.refreshContents) {
+      this.doRefreshContents(true);
+    }
+  },
+    
+  doRefreshContents: function(doRefreshWhenVisible, forceRefresh){
+    
+    // if not visible anymore, reset the view back
+    if (!this.isViewVisible()) {
+      if (this.isShowingForm) {
+        this.switchFormGridVisibility();
+      }
+      // deselect any records
+      this.viewGrid.deselectAllRecords(false, true);
+    }
+
     // update this one at least before bailing out
     this.updateTabTitle();    
     
-    if (!this.isViewVisible()) {
+    if (!this.isViewVisible() && !forceRefresh) {
       this.refreshContents = doRefreshWhenVisible;
       return;
     }
     
-    if (!this.refreshContents && !doRefreshWhenVisible) {
+    if (!this.refreshContents && !doRefreshWhenVisible && !forceRefresh) {
       return;
     }
     
@@ -1131,7 +1147,8 @@ isc.OBStandardView.addProperties({
     // this prevents data requests for minimized tabs
     // note this.tab.isVisible is done as the tab is visible earlier than
     // the pane
-    return (!this.tab || this.tab.isVisible()) && (!this.parentTabSet || this.parentTabSet.getSelectedTabNumber() ===
+    var visible = this.tab && this.tab.isDrawn() && this.tab.pane.isDrawn() && this.tab.pane.isVisible();
+    return visible  && (!this.parentTabSet || this.parentTabSet.getSelectedTabNumber() ===
             this.parentTabSet.getTabNumber(this.tab));
   },
   

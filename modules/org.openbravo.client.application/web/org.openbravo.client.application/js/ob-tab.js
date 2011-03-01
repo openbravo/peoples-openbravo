@@ -475,10 +475,10 @@ isc.OBTabSetChild.addProperties({
   makeTabVisible: function(tab){
     if (tab === this.getSelectedTab()) {
       pane = this.getTabPane(tab);
-      if (pane.refreshContents) {
-        pane.doRefreshContents();
-      }
       pane.show();
+      if (pane.refreshContents) {
+        pane.doRefreshContents(true, true);
+      }
       if (pane.members[0]) {
         pane.members[0].show();
       }
@@ -491,7 +491,7 @@ isc.OBTabSetChild.addProperties({
 
   tabSelected: function(tabNum, tabPane, ID, tab){
     if (tabPane.refreshContents) {
-      tabPane.doRefreshContents(true);
+      tabPane.doRefreshContents(true, true);
     }
   },
 
