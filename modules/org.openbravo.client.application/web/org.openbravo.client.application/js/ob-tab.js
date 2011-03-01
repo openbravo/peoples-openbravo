@@ -219,6 +219,16 @@ isc.OBTabBarMain.addProperties({
 
 isc.ClassFactory.defineClass('OBTabBarButtonChild', isc.OBTabBarButton);
 
+isc.OBTabBarButtonChild.addProperties({
+  // when a tab is drawn the first time it steals the focus 
+  // from the active view, prevent this
+  focus: function() {
+     if (this.pane.isActiveView && this.pane.isActiveView()) {
+       this.Super('focus', arguments);
+     }
+  }
+});
+
 isc.ClassFactory.defineClass('OBTabSetChild', isc.OBTabSet);
 
 isc.OBTabSetChild.addProperties({

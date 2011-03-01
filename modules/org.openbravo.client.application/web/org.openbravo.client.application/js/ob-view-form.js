@@ -206,8 +206,10 @@ OB.ViewFormProperties = {
 
     // is set for inline grid editing for example
     if (this.getFocusItem() && this.getFocusItem().getCanFocus()) {
-      this.getFocusItem().focusInItem();
-      this.view.lastFocusedField = this.getFocusItem();
+      if (this.view.isActiveView()) {
+        this.getFocusItem().focusInItem();
+      }
+      this.view.lastFocusedItem = this.getFocusItem();
       return;
     }
 
@@ -222,9 +224,12 @@ OB.ViewFormProperties = {
     }
   },
   
-  setFocusInItem: function(item) {
+  setFocusInItem: function(item, doFocus) {
     this.setFocusItem(item);
-    this.view.lastFocusedField = item;
+    this.view.lastFocusedItem = item;
+    if (doFocus && this.view.isActiveView()) {
+      item.focusInItem();
+    }
   },
   
   setFindNewFocusItem: function() {
@@ -234,8 +239,7 @@ OB.ViewFormProperties = {
     if(this.firstFocusedField) {
       item = this.getItem(this.firstFocusedField);
       if(item && item.getCanFocus()) {
-        item.focusInItem();
-        this.view.lastFocusedField = item;
+        this.setFocusInItem(item, true);
         return;
       }
     }
@@ -249,7 +253,7 @@ OB.ViewFormProperties = {
       for (var i = 0; i < length; i++) {
         item = items[i];
         if (item.getCanFocus() && !item.isDisabled()) {
-          item.focusInItem();
+          this.setFocusInItem(item, true);
           return;
         }
       }
@@ -334,7 +338,7 @@ OB.ViewFormProperties = {
         delete this.ignoreFirstFocusEvent;
         return;
       }
-      if (me.getFocusItem()) {
+      if (me.getFocusItem() && me.view.isActiveView()) {
         me.getFocusItem().focusInItem();
       }
     });
@@ -470,8 +474,9 @@ OB.ViewFormProperties = {
           for (var i = 0; i < this.getFields().length; i++) {
             delete this.getFields()[i].canFocus;
           }
-          
-          this.getFocusItem().focusInItem();
+          if (this.view.isActiveView()) {
+            this.getFocusItem().focusInItem();
+          }
         }
       }
       this.view.viewGrid.refreshEditRow();
@@ -662,7 +667,7 @@ OB.ViewFormProperties = {
 
     // disable with a delay to allow the focus to be moved to a new field
     // before disabling
-    this.delayCall('setDisabled', [true], 100);
+    this.delayCall('setDisabled', [true], 10);
 
     var editRow = this.view.viewGrid.getEditRow();
     // collect the context information    
@@ -878,7 +883,7 @@ OB.ViewFormProperties = {
         // otherwise the focus results in infinite cycles
         // with views getting activated all the time
         this.setFocusItem(errorFld);
-      } else {
+      } else if (this.view.isActiveView()){
         errorFld.focusInItem();
       }
       return;

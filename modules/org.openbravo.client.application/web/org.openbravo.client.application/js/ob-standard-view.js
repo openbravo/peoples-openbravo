@@ -497,7 +497,7 @@ isc.OBStandardView.addProperties({
   },
   
   setViewFocus: function(){
-
+    
     var object, functionName;
     
     // clear for a non-focusable item
@@ -697,6 +697,10 @@ isc.OBStandardView.addProperties({
       this.statusBarFormLayout.show();
       this.statusBarFormLayout.setHeight('100%');
       // this member should be set after the form is shown
+      if (this.isActiveView()) {
+        this.viewForm.resetFocusItem();
+        this.setViewFocus();
+      }
       this.isShowingForm = true;
     } else {
       this.statusBarFormLayout.hide();
@@ -704,7 +708,9 @@ isc.OBStandardView.addProperties({
       this.viewForm.resetForm();
       this.isShowingForm = false;
       this.viewGrid.show();
-      this.viewGrid.focusInFilterEditor();
+      if (this.isActiveView()) {
+        this.viewGrid.focusInFilterEditor();
+      }
       
       this.viewGrid.setHeight('100%');
     }
