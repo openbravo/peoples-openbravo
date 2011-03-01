@@ -83,8 +83,8 @@ public abstract class NumberUIDefinition extends UIDefinition {
     sb.append("parseInput: function(value, field, component, record) {"
         + " if (OB.Utilities.Number.IsValidValueString(this, value)) {\n"
         + "return OB.Utilities.Number.OBMaskedToJS(value,'" + inputFormat.getDecimalSymbol()
-        + "','" + inputFormat.getGroupingSymbol() + "');" + "\n} else {"
-        + "\nreturn field.getValue();" + "\n}},");
+        + "','" + inputFormat.getGroupingSymbol() + "');" + "\n} else {" + "\nreturn value;"
+        + "\n}},");
     sb.append("'maskNumeric': '" + inputFormat.getFormat() + "', " + "'decSeparator': '"
         + inputFormat.getDecimalSymbol() + "'," + "'groupSeparator': '"
         + inputFormat.getGroupingSymbol() + "',");

@@ -296,6 +296,7 @@ isc.OBViewGrid.addProperties({
   },
   
   headerClick: function(fieldNum, header, autoSaveDone){
+    delete this.wasEditing;
     if (!autoSaveDone) {
       var actionObject = {
         target: this,
@@ -1385,6 +1386,7 @@ isc.OBViewGrid.addProperties({
   },
   
   closeAnyOpenEditor: function(){
+    delete this.wasEditing;
     // close any editors we may have
     if (this.getEditRow() || this.getEditRow() === 0) {
       this.endEditing();
@@ -1429,6 +1431,16 @@ isc.OBViewGrid.addProperties({
     
     return this.Super('getEditorValueMap', arguments);
   },
+  
+  setFieldError: function (rowNum, fieldID, errorMessage, dontDisplay) {
+    // if there are no errors then no need to clear
+    // prevents an undefined exception because also keep errors in other 
+    // places then the editvalues._validationErrors
+    if (!errorMessage && !this.Super('cellHasErrors', [rowNum, fieldID])) {
+      return;
+    }
+    return this.Super('setFieldError', arguments);
+   },
   
   cellHasErrors: function(rowNum, fieldID){
     var record = this.getRecord(rowNum);

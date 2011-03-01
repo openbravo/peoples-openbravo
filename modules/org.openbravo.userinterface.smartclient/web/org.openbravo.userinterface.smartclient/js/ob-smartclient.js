@@ -83,7 +83,6 @@ isc.FormItem.addProperties({
   
   setDisabled : function (disabled) {
     var ret = this.Super('setDisabled', arguments);
-    this.canFocus = !disabled;
     return ret;
   },
   
@@ -94,9 +93,10 @@ isc.FormItem.addProperties({
       this.canFocus = false;
       return true;
     }
-    var disabled = this.form.readOnly || this.disabled || this.form.allItemsDisabled;
-    this.canFocus = !disabled;
-    return disabled;
+    var disabled = this.form.readOnly || this.disabled;
+    // allow focus if all items are disabled
+    this.canFocus = this.form.allItemsDisabled || !disabled;
+    return disabled || this.form.allItemsDisabled;
   },
   
   // return all relevant focus condition

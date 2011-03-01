@@ -350,6 +350,14 @@ OB.ViewFormProperties = {
     // TODO: an error occured, handles this much better...
     if (!data || !data.columnValues) {
       this.setDisabled(false);
+      // still open the form, as the user can then correct errors
+      if (this.showFormOnFICReturn) {
+        if (!this.isVisible()) {
+          this.view.switchFormGridVisibility();
+        }
+        this.validate();
+        delete this.showFormOnFICReturn;
+      }
       return;
     }
     
@@ -452,7 +460,20 @@ OB.ViewFormProperties = {
   setDisabled: function(state) {
     var previousAllItemsDisabled = this.allItemsDisabled;
     this.allItemsDisabled = state;
+
     if (previousAllItemsDisabled !== this.allItemsDisabled) {
+      if (this.getFocusItem()) {
+        if (this.allItemsDisabled) {
+          this.getFocusItem().blurItem();
+        } else {
+          // reset the canfocus
+          for (var i = 0; i < this.getFields().length; i++) {
+            delete this.getFields()[i].canFocus;
+          }
+          
+          this.getFocusItem().focusInItem();
+        }
+      }
       this.view.viewGrid.refreshEditRow();
     }
   },
@@ -633,8 +654,10 @@ OB.ViewFormProperties = {
       requestParams.CHANGED_COLUMN = item.inpColumnName;
     }
     allProperties._entityName = this.view.entity;
-    
-    this.setDisabled(true);
+
+    // disable with a delay to allow the focus to be moved to a new field
+    // before disabling
+    this.delayCall('setDisabled', [true], 100);
 
     var editRow = this.view.viewGrid.getEditRow();
     // collect the context information    
@@ -664,6 +687,14 @@ OB.ViewFormProperties = {
     this.setHasChanged(true);
     this.view.messageBar.hide();
     this.view.toolBar.updateButtonState(true);
+  },
+  
+  // make sure that any field errors also appear in the grid
+  setFieldErrors: function(itemName, msg, display) {
+    this.Super('setFieldErrors', arguments);
+    if (this.grid && this.view.isEditingGrid) {
+      this.grid.setFieldError(this.grid.getEditRow(), itemName, msg, !display);
+    }
   },
   
   resetForm: function(){
