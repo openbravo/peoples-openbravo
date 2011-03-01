@@ -50,7 +50,7 @@ public class QueryBuilder {
 
   private static final String PARAM_DELIMITER = "@";
   private static final String ALIAS_PREFIX = "alias_";
-  private static final char ESCAPE_CHAR = '!';
+  private static final char ESCAPE_CHAR = '|';
 
   public static enum TextMatching {
     startsWith, exact, substring
@@ -734,7 +734,6 @@ public class QueryBuilder {
       return value;
     }
     String localValue = value.replace(ESCAPE_CHAR + "", ESCAPE_CHAR + ESCAPE_CHAR + "");
-    localValue = localValue.replace("\\", ESCAPE_CHAR + "\\");
     localValue = localValue.replace("_", ESCAPE_CHAR + "_");
     localValue = localValue.replace("%", ESCAPE_CHAR + "%");
     return localValue;
