@@ -506,7 +506,7 @@ OB.ViewFormProperties = {
     }
     
     // ignore the id
-    if (field.name === OB.Constants.ID) {
+    if (prop === OB.Constants.ID) {
       return;
     }
     
