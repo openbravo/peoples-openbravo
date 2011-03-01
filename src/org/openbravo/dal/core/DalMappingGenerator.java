@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -160,8 +160,16 @@ public class DalMappingGenerator implements OBSingleton {
       }
     }
 
+    if (entity.isActiveEnabled()) {
+      content.append(getActiveFilter());
+    }
+
     hbm = hbm.replace("content", content.toString());
     return hbm;
+  }
+
+  private String getActiveFilter() {
+    return "<filter name=\"activeFilter\" condition=\":activeParam = isActive\"/>\n";
   }
 
   private String generatePrimitiveMapping(Property p) {
@@ -285,6 +293,10 @@ public class DalMappingGenerator implements OBSingleton {
       sb.append(TAB3 + "<key column=\"" + p.getReferencedProperty().getColumnName() + "\""
           + (p.getReferencedProperty().isMandatory() ? " not-null=\"true\"" : "") + "/>" + NL);
       sb.append(TAB3 + "<one-to-many entity-name=\"" + p.getTargetEntity().getName() + "\"/>" + NL);
+
+      if (p.getTargetEntity().isActiveEnabled()) {
+        sb.append(getActiveFilter());
+      }
       sb.append(TAB2 + "</bag>" + NL);
 
     }

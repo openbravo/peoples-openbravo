@@ -73,6 +73,29 @@ public class OBDal implements OBSingleton {
   }
 
   /**
+   * After calling this method all collections and queries will only return objects which are
+   * active. Note that this overrides the active filtering setting on
+   * {@link OBQuery#setFilterOnActive(boolean)} and {@link OBCriteria#setFilterOnActive(boolean)}.
+   * 
+   * @see #disableActiveFilter()
+   */
+  public void enableActiveFilter() {
+    SessionHandler.getInstance().getSession().enableFilter("activeFilter").setParameter(
+        "activeParam", "Y");
+  }
+
+  /**
+   * After calling this method the active filter is disabled. Note that then the settings in
+   * {@link OBQuery#setFilterOnActive(boolean)} and {@link OBCriteria#setFilterOnActive(boolean)}
+   * will apply.
+   * 
+   * @see #enableActiveFilter()
+   */
+  public void disableActiveFilter() {
+    SessionHandler.getInstance().getSession().disableFilter("activeFilter");
+  }
+
+  /**
    * Returns the connection used by the hibernate session.
    * 
    * Note: flushes the hibernate session before returning the connection.

@@ -25,6 +25,7 @@ import junit.framework.TestSuite;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.dal.DalConnectionProviderTest;
 import org.openbravo.test.dal.DalCopyTest;
+import org.openbravo.test.dal.DalFilterTest;
 import org.openbravo.test.dal.DalQueryTest;
 import org.openbravo.test.dal.DalStoredProcedureTest;
 import org.openbravo.test.dal.DalTest;
@@ -70,6 +71,7 @@ public class AllTests {
     suite.addTestSuite(ValidationTest.class);
     suite.addTestSuite(DynamicEntityTest.class);
     suite.addTestSuite(DalTest.class);
+    suite.addTestSuite(DalFilterTest.class);
     suite.addTestSuite(DalUtilTest.class);
     suite.addTestSuite(IssuesTest.class);
     suite.addTestSuite(DalQueryTest.class);

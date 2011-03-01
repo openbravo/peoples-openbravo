@@ -27,6 +27,7 @@ import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
 import org.openbravo.test.dal.DalComplexQueryTestOrderLine;
 import org.openbravo.test.dal.DalConnectionProviderTest;
+import org.openbravo.test.dal.DalFilterTest;
 import org.openbravo.test.dal.DalPerformanceInventoryLineTest;
 import org.openbravo.test.dal.DalPerformanceProductTest;
 import org.openbravo.test.dal.DalQueryTest;
@@ -86,6 +87,7 @@ public class AllAntTaskTests {
     suite.addTestSuite(DalPerformanceInventoryLineTest.class);
     suite.addTestSuite(DalPerformanceProductTest.class);
     suite.addTestSuite(DalQueryTest.class);
+    suite.addTestSuite(DalFilterTest.class);
     suite.addTestSuite(DalTest.class);
     suite.addTestSuite(DalUtilTest.class);
     suite.addTestSuite(IssuesTest.class);
