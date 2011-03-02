@@ -96,6 +96,14 @@ public class MatchTransaction extends HttpSecureAppServlet {
           .get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
       int reconciledItems = 0;
       if (reconciliation != null) {
+        if (isManualReconciliation(reconciliation)) {
+          OBDal.getInstance().rollbackAndClose();
+          OBError message = Utility.translateError(this, vars, vars.getLanguage(), Utility
+              .parseTranslation(this, vars, vars.getLanguage(), "@APRM_ReconciliationMixed@"));
+          vars.setMessage(strTabId, message);
+          printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
+          return;
+        }
         OBContext.setAdminMode();
         try {
           getSnapShot(reconciliation);
@@ -353,14 +361,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
       OBDal.getInstance().rollbackAndClose();
       OBError message = Utility.translateError(this, vars, vars.getLanguage(), Utility
           .parseTranslation(this, vars, vars.getLanguage(), "@APRM_MissingMatchingAlgorithm@"));
-      vars.setMessage(strTabId, message);
-      printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
-      return;
-    }
-    if (isManualReconciliation(reconciliation)) {
-      OBDal.getInstance().rollbackAndClose();
-      OBError message = Utility.translateError(this, vars, vars.getLanguage(), Utility
-          .parseTranslation(this, vars, vars.getLanguage(), "@APRM_ReconciliationMixed@"));
       vars.setMessage(strTabId, message);
       printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
       return;
