@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -56,64 +56,64 @@ function validate() {
   var frm = document.frmMain;
   var opt = frm.inpTransactionType.value;
   if (frm.inpMainDate.value==null || frm.inpMainDate.value=="") {
-	setWindowElementFocus(frm.inpMainDate);
+    setWindowElementFocus(frm.inpMainDate);
     showJSMessage(7);
     return false;
   }
   if (opt == 'P') {
     var chk = frm.inpPaymentId;
-	if (chk === undefined) {
-	  showJSMessage('NoDataSelected');
+    if (chk === undefined) {
+      showJSMessage('NoDataSelected');
       return false;
-	} else if (chk.length === undefined) {
-	  if (!chk.checked) {
-	    showJSMessage('NoDataSelected');
-        return false;	  
-	  }
-	} else {
-	  var isAnyChecked = false;
-	  var total = chk.length;
-	  for (var i=0;i<total;i++) {
-	    if (chk[i].checked) {
-	      isAnyChecked = true;
-	    }
-	  }
-	  if (!isAnyChecked) {
+    } else if (chk.length === undefined) {
+      if (!chk.checked) {
+        showJSMessage('NoDataSelected');
+        return false;     
+      }
+    } else {
+      var isAnyChecked = false;
+      var total = chk.length;
+      for (var i=0;i<total;i++) {
+        if (chk[i].checked) {
+          isAnyChecked = true;
+        }
+      }
+      if (!isAnyChecked) {
         showJSMessage('NoDataSelected');
         return false;
       }
-	}
+    }
   } else if (opt == 'GL') {
     if (frm.inpGLItemId.value==null || frm.inpGLItemId.value=="") {
       setWindowElementFocus(frm.inpGLItemId);
       showJSMessage(7);
       return false;
-    } else if (frm.paramDebitAmountGLItem.value == "") {
-      setWindowElementFocus(frm.paramDebitAmountGLItem);
+    } else if (frm.paramDepositAmountGLItem.value == "") {
+      setWindowElementFocus(frm.paramDepositAmountGLItem);
       showJSMessage(7);
       return false;
-    } else if (frm.paramCreditAmountGLItem.value == "") {
-      setWindowElementFocus(frm.paramCreditAmountGLItem);
+    } else if (frm.paramPaymentAmountGLItem.value == "") {
+      setWindowElementFocus(frm.paramPaymentAmountGLItem);
       showJSMessage(7);
       return false;
-    } else if ( (compare(frm.paramDebitAmountGLItem.value, '==', 0) && compare(frm.paramCreditAmountGLItem.value, '==', 0)) ||
-                (compare(frm.paramDebitAmountGLItem.value, '!=', 0) && compare(frm.paramCreditAmountGLItem.value, '!=', 0)) ) {
-      setWindowElementFocus(frm.paramCreditAmountGLItem);
+    } else if ( (compare(frm.paramDepositAmountGLItem.value, '==', 0) && compare(frm.paramPaymentAmountGLItem.value, '==', 0)) ||
+                (compare(frm.paramDepositAmountGLItem.value, '!=', 0) && compare(frm.paramPaymentAmountGLItem.value, '!=', 0)) ) {
+      setWindowElementFocus(frm.paramPaymentAmountGLItem);
       showJSMessage('APRM_JSAMOUNTDIFFTOZERO');
       return false;
     }
   } else if (opt == 'F') {
-    if (frm.paramDebitAmount.value == "") {
-      setWindowElementFocus(frm.paramDebitAmount);
+    if (frm.paramDepositAmount.value == "") {
+      setWindowElementFocus(frm.paramDepositAmount);
       showJSMessage(7);
       return false;
-    } else if (frm.paramCreditAmount.value == "") {
-      setWindowElementFocus(frm.paramCreditAmount);
+    } else if (frm.paramPaymentAmount.value == "") {
+      setWindowElementFocus(frm.paramPaymentAmount);
       showJSMessage(7);
       return false;
-    } else if ( (compare(frm.paramDebitAmount.value, '==', 0) && compare(frm.paramCreditAmount.value, '==', 0)) ||
-                (compare(frm.paramDebitAmount.value, '!=', 0) && compare(frm.paramCreditAmount.value, '!=', 0)) ) {
-      setWindowElementFocus(frm.paramCreditAmount);
+    } else if ( (compare(frm.paramDepositAmount.value, '==', 0) && compare(frm.paramPaymentAmount.value, '==', 0)) ||
+                (compare(frm.paramDepositAmount.value, '!=', 0) && compare(frm.paramPaymentAmount.value, '!=', 0)) ) {
+      setWindowElementFocus(frm.paramPaymentAmount);
       showJSMessage('APRM_JSAMOUNTDIFFTOZERO');
       return false;
     }
@@ -514,32 +514,32 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
                     <td class="Textbox_ContentCell">
                       <table style="border: 0px none; border-collapse: collapse;">
                         <tr><td style="padding-top: 0px;">
-                          <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="numberInputEvent('onchange', this); return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpDebitAmount" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramDebitAmount"/>
+                          <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="numberInputEvent('onchange', this); return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpDepositAmount" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramDepositAmount"/>
                         </td></tr>
                       </table>
-                      <span id="paramDebitAmountinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                      <span id="paramDepositAmountinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
                         <table class="TextBox_MsgContainer_table">
                           <tbody><tr class="TextBox_MsgContainer_tr">
                             <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
                           </tr>
                           <tr>
-                            <td class="invalid" colspan="2"><div name="invalidText" id="paramDebitAmountinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
+                            <td class="invalid" colspan="2"><div name="invalidText" id="paramDepositAmountinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
                           </tr>
                         </tbody></table>
                       </span>
-                      <span id="paramDebitAmountmissingSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                      <span id="paramDepositAmountmissingSpan" style="display: none;" class="TextBox_MsgContainer_span">
                         <table class="TextBox_MsgContainer_table">
                           <tbody><tr class="TextBox_MsgContainer_tr">
                             <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
                           </tr>
                           <tr>
-                            <td class="missing" colspan="2"><div name="missingText" id="paramDebitAmountmissingSpanText" class="TextBox_MsgContainer_div2">* This value is required.</div></td>
+                            <td class="missing" colspan="2"><div name="missingText" id="paramDepositAmountmissingSpanText" class="TextBox_MsgContainer_div2">* This value is required.</div></td>
                           </tr>
                           </tbody></table>
                       </span>
                     </td>
                     <td class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpDebitAmount', document.frmMain.inpDebitAmount.value, false);return false;">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpDepositAmount', document.frmMain.inpDepositAmount.value, false);return false;">
                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
                         <tr>
                           <td class="FieldButton_bg">
@@ -560,32 +560,32 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
                     <td class="Textbox_ContentCell">
                       <table style="border: 0px none; border-collapse: collapse;">
                         <tr><td style="padding-top: 0px;">
-                          <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="numberInputEvent('onchange', this); return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpCreditAmount" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramCreditAmount"/>
+                          <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="numberInputEvent('onchange', this); return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpPaymentAmount" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramPaymentAmount"/>
                         </td></tr>
                       </table>
-                      <span id="paramCreditAmountinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                      <span id="paramPaymentAmountinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
                         <table class="TextBox_MsgContainer_table">
                           <tbody><tr class="TextBox_MsgContainer_tr">
                             <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
                           </tr>
                           <tr>
-                            <td class="invalid" colspan="2"><div name="invalidText" id="paramCreditAmountinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
+                            <td class="invalid" colspan="2"><div name="invalidText" id="paramPaymentAmountinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
                           </tr>
                         </tbody></table>
                       </span>
-                      <span id="paramCreditAmountmissingSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                      <span id="paramPaymentAmountmissingSpan" style="display: none;" class="TextBox_MsgContainer_span">
                         <table class="TextBox_MsgContainer_table">
                           <tbody><tr class="TextBox_MsgContainer_tr">
                             <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
                           </tr>
                           <tr>
-                            <td class="missing" colspan="2"><div name="missingText" id="paramCreditAmountmissingSpanText" class="TextBox_MsgContainer_div2">* This value is required.</div></td>
+                            <td class="missing" colspan="2"><div name="missingText" id="paramPaymentAmountmissingSpanText" class="TextBox_MsgContainer_div2">* This value is required.</div></td>
                           </tr>
                           </tbody></table>
                       </span>
                     </td>
                     <td class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpCreditAmount', document.frmMain.inpCreditAmount.value, false);return false;">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpPaymentAmount', document.frmMain.inpPaymentAmount.value, false);return false;">
                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
                         <tr>
                           <td class="FieldButton_bg">
@@ -646,32 +646,32 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
                     <td class="Textbox_ContentCell">
                     <table style="border: 0px none; border-collapse: collapse;">
                         <tr><td style="padding-top: 0px;">
-                          <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="numberInputEvent('onchange', this); return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpDebitAmountGLItem" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramDebitAmountGLItem"/>
+                          <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="numberInputEvent('onchange', this); return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpDepositAmountGLItem" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramDepositAmountGLItem"/>
                       </td></tr>
                     </table>
-                      <span id="paramDebitAmountGLIteminvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                      <span id="paramDepositAmountGLIteminvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
                         <table class="TextBox_MsgContainer_table">
                           <tbody><tr class="TextBox_MsgContainer_tr">
                             <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
                           </tr>
                           <tr>
-                            <td class="invalid" colspan="2"><div name="invalidText" id="paramDebitAmountGLIteminvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
+                            <td class="invalid" colspan="2"><div name="invalidText" id="paramDepositAmountGLIteminvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
                           </tr>
                         </tbody></table>
                       </span>
-                      <span id="paramDebitAmountGLItemmissingSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                      <span id="paramDepositAmountGLItemmissingSpan" style="display: none;" class="TextBox_MsgContainer_span">
                         <table class="TextBox_MsgContainer_table">
                           <tbody><tr class="TextBox_MsgContainer_tr">
                             <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
                           </tr>
                           <tr>
-                            <td class="missing" colspan="2"><div name="missingText" id="paramDebitAmountGLItemmissingSpanText" class="TextBox_MsgContainer_div2">* This value is required.</div></td>
+                            <td class="missing" colspan="2"><div name="missingText" id="paramDepositAmountGLItemmissingSpanText" class="TextBox_MsgContainer_div2">* This value is required.</div></td>
                           </tr>
                           </tbody></table>
                       </span>
                     </td>
                     <td class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpDebitAmountGLItem', document.frmMain.inpDebitAmountGLItem.value, false);return false;">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpDepositAmountGLItem', document.frmMain.inpDepositAmountGLItem.value, false);return false;">
                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
                         <tr>
                           <td class="FieldButton_bg">
@@ -692,32 +692,32 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
                     <td class="Textbox_ContentCell">
                     <table style="border: 0px none; border-collapse: collapse;">
                       <tr><td style="padding-top: 0px;">
-                        <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="numberInputEvent('onchange', this); return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpCreditAmountGLItem" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramCreditAmountGLItem"/>
+                        <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="numberInputEvent('onchange', this); return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpPaymentAmountGLItem" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramPaymentAmountGLItem"/>
                       </td></tr>
                     </table>
-                      <span id="paramCreditAmountGLIteminvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                      <span id="paramPaymentAmountGLIteminvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
                         <table class="TextBox_MsgContainer_table">
                           <tbody><tr class="TextBox_MsgContainer_tr">
                             <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
                           </tr>
                           <tr>
-                            <td class="invalid" colspan="2"><div name="invalidText" id="paramCreditAmountGLIteminvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
+                            <td class="invalid" colspan="2"><div name="invalidText" id="paramPaymentAmountGLIteminvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
                           </tr>
                         </tbody></table>
                       </span>
-                      <span id="paramCreditAmountGLItemmissingSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                      <span id="paramPaymentAmountGLItemmissingSpan" style="display: none;" class="TextBox_MsgContainer_span">
                         <table class="TextBox_MsgContainer_table">
                           <tbody><tr class="TextBox_MsgContainer_tr">
                             <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
                           </tr>
                           <tr>
-                            <td class="missing" colspan="2"><div name="missingText" id="paramCreditAmountGLItemmissingSpanText" class="TextBox_MsgContainer_div2">* This value is required.</div></td>
+                            <td class="missing" colspan="2"><div name="missingText" id="paramPaymentAmountGLItemmissingSpanText" class="TextBox_MsgContainer_div2">* This value is required.</div></td>
                           </tr>
                           </tbody></table>
                       </span>
                     </td>
                     <td class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpCreditAmountGLItem', document.frmMain.inpCreditAmountGLItem.value, false);return false;">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpPaymentAmountGLItem', document.frmMain.inpPaymentAmountGLItem.value, false);return false;">
                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
                         <tr>
                           <td class="FieldButton_bg">

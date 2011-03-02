@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,8 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.hibernate.criterion.Criterion;
 
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRMPendingPaymentFromInvoice;
@@ -825,19 +825,19 @@ public class AdvPaymentMngtDao {
       FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(paymentOBList);
 
       for (int i = 0; i < data.length; i++) {
-        BigDecimal debitAmt = BigDecimal.ZERO;
-        BigDecimal creditAmt = BigDecimal.ZERO;
+        BigDecimal depositAmt = BigDecimal.ZERO;
+        BigDecimal paymentAmt = BigDecimal.ZERO;
 
         if (FIN_Payments[i].isReceipt()) {
           if (FIN_Payments[i].getAmount().compareTo(BigDecimal.ZERO) == -1)
-            creditAmt = FIN_Payments[i].getAmount().abs();
+            paymentAmt = FIN_Payments[i].getAmount().abs();
           else
-            debitAmt = FIN_Payments[i].getAmount();
+            depositAmt = FIN_Payments[i].getAmount();
         } else {
           if (FIN_Payments[i].getAmount().compareTo(BigDecimal.ZERO) == -1)
-            debitAmt = FIN_Payments[i].getAmount().abs();
+            depositAmt = FIN_Payments[i].getAmount().abs();
           else
-            creditAmt = FIN_Payments[i].getAmount();
+            paymentAmt = FIN_Payments[i].getAmount();
         }
 
         FieldProviderFactory.setField(data[i], "paymentId", FIN_Payments[i].getId());
@@ -858,8 +858,8 @@ public class AdvPaymentMngtDao {
 
         FieldProviderFactory.setField(data[i], "paymentDate", dateFormater.format(
             FIN_Payments[i].getPaymentDate()).toString());
-        FieldProviderFactory.setField(data[i], "debitAmount", debitAmt.toString());
-        FieldProviderFactory.setField(data[i], "creditAmount", creditAmt.toString());
+        FieldProviderFactory.setField(data[i], "depositAmount", depositAmt.toString());
+        FieldProviderFactory.setField(data[i], "paymentAmount", paymentAmt.toString());
         FieldProviderFactory.setField(data[i], "rownum", "" + i);
       }
 
@@ -949,7 +949,7 @@ public class AdvPaymentMngtDao {
       }
 
       obc.add(exp.getCriterion()); // compoundexp will be always != null because
-                                   // finAccsMethods.isEmpty() == false
+      // finAccsMethods.isEmpty() == false
     }
     return obc.list();
   }

@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -30,10 +30,10 @@
     <PARAMETER id="paramMainDate" name="mainDate" attribute="value"/>
     <PARAMETER id="paramMainDate" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
     <PARAMETER id="paramMainDate" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
-    <PARAMETER id="paramDebitAmount" name="debitAmount" attribute="value" format="euroEdition"/>
-    <PARAMETER id="paramCreditAmount" name="creditAmount" attribute="value" format="euroEdition"/>
-    <PARAMETER id="paramDebitAmountGLItem" name="debitAmountGLItem" attribute="value" format="euroEdition"/>
-    <PARAMETER id="paramCreditAmountGLItem" name="creditAmountGLItem" attribute="value" format="euroEdition"/>
+    <PARAMETER id="paramDepositAmount" name="depositAmount" attribute="value" format="euroEdition"/>
+    <PARAMETER id="paramPaymentAmount" name="paymentAmount" attribute="value" format="euroEdition"/>
+    <PARAMETER id="paramDepositAmountGLItem" name="depositAmountGLItem" attribute="value" format="euroEdition"/>
+    <PARAMETER id="paramPaymentAmountGLItem" name="paymentAmountGLItem" attribute="value" format="euroEdition"/>
     <PARAMETER id="paramDateFrom" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
     <PARAMETER id="paramDateFrom" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
     <PARAMETER id="paramDateTo" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>

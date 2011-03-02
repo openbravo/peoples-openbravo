@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -101,20 +101,20 @@ public class AddTransaction extends HttpSecureAppServlet {
       String strTransactionDate = vars.getStringParameter("inpMainDate", "");
 
       String strGLItemId = vars.getStringParameter("inpGLItemId", "");
-      String strGLItemDebitAmount = vars.getNumericParameter("inpDebitAmountGLItem", "");
-      String strGLItemCreditAmount = vars.getNumericParameter("inpCreditAmountGLItem", "");
+      String strGLItemDepositAmount = vars.getNumericParameter("inpDepositAmountGLItem", "");
+      String strGLItemPaymentAmount = vars.getNumericParameter("inpPaymentAmountGLItem", "");
       String strGLItemDescription = vars.getStringParameter("inpGLItemDescription", "");
 
-      String strFeeDebitAmount = vars.getNumericParameter("inpDebitAmount", "");
-      String strFeeCreditAmount = vars.getNumericParameter("inpCreditAmount", "");
+      String strFeeDepositAmount = vars.getNumericParameter("inpDepositAmount", "");
+      String strFeePaymentAmount = vars.getNumericParameter("inpPaymentAmount", "");
       String strFeeDescription = vars.getStringParameter("inpFeeDescription", "");
 
       String strFinBankStatementLineId = vars.getStringParameter("inpFinBankStatementLineId", "",
           IsIDFilter.instance);
 
       saveAndCloseWindow(response, vars, strTabId, strFinancialAccountId, selectedPaymentsIds,
-          strTransactionType, strGLItemId, strGLItemDebitAmount, strGLItemCreditAmount,
-          strFeeDebitAmount, strFeeCreditAmount, strTransactionDate, strFinBankStatementLineId,
+          strTransactionType, strGLItemId, strGLItemDepositAmount, strGLItemPaymentAmount,
+          strFeeDepositAmount, strFeePaymentAmount, strTransactionDate, strFinBankStatementLineId,
           strGLItemDescription, strFeeDescription);
     }
 
@@ -122,8 +122,8 @@ public class AddTransaction extends HttpSecureAppServlet {
 
   private void saveAndCloseWindow(HttpServletResponse response, VariablesSecureApp vars,
       String strTabId, String strFinancialAccountId, String selectedPaymentIds,
-      String strTransactionType, String strGLItemId, String strGLItemDebitAmount,
-      String strGLItemCreditAmount, String strFeeDebitAmount, String strFeeCreditAmount,
+      String strTransactionType, String strGLItemId, String strGLItemDepositAmount,
+      String strGLItemPaymentAmount, String strFeeDepositAmount, String strFeePaymentAmount,
       String strTransactionDate, String strFinBankStatementLineId, String strGLItemDescription,
       String strFeeDescription) throws IOException, ServletException {
 
@@ -132,27 +132,27 @@ public class AddTransaction extends HttpSecureAppServlet {
     OBError msg = new OBError();
     OBContext.setAdminMode();
     try {
-      // SALES = DEPOSIT = DEBIT
-      // PURCHASE = PAYMENT = CREDIT
+      // SALES = DEPOSIT
+      // PURCHASE = PAYMENT
       if (strTransactionType.equals("P")) { // Payment
 
         List<FIN_Payment> selectedPayments = FIN_Utility.getOBObjectList(FIN_Payment.class,
             selectedPaymentIds);
 
         for (FIN_Payment p : selectedPayments) {
-          BigDecimal debitAmt = BigDecimal.ZERO;
-          BigDecimal creditAmt = BigDecimal.ZERO;
+          BigDecimal depositAmt = BigDecimal.ZERO;
+          BigDecimal paymentAmt = BigDecimal.ZERO;
 
           if (p.isReceipt()) {
             if (p.getAmount().compareTo(BigDecimal.ZERO) == -1)
-              creditAmt = p.getAmount().abs();
+              paymentAmt = p.getAmount().abs();
             else
-              debitAmt = p.getAmount();
+              depositAmt = p.getAmount();
           } else {
             if (p.getAmount().compareTo(BigDecimal.ZERO) == -1)
-              debitAmt = p.getAmount().abs();
+              depositAmt = p.getAmount().abs();
             else
-              creditAmt = p.getAmount();
+              paymentAmt = p.getAmount();
           }
           String description = null;
           if (p.getDescription() != null) {
@@ -162,8 +162,8 @@ public class AddTransaction extends HttpSecureAppServlet {
           FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(p.getOrganization(), p
               .getCurrency(), p.getAccount(), TransactionsDao.getTransactionMaxLineNo(p
               .getAccount()) + 10, p, description, FIN_Utility.getDate(strTransactionDate), null, p
-              .isReceipt() ? "RDNC" : "PWNC", debitAmt, creditAmt, null, null, null,
-              p.isReceipt() ? "BPD" : "BPW", FIN_Utility.getDate(strTransactionDate));
+              .isReceipt() ? "RDNC" : "PWNC", depositAmt, paymentAmt, null, null, null, p
+              .isReceipt() ? "BPD" : "BPW", FIN_Utility.getDate(strTransactionDate));
 
           TransactionsDao.process(finTrans);
           if (!"".equals(strFinBankStatementLineId)) {
@@ -176,8 +176,8 @@ public class AddTransaction extends HttpSecureAppServlet {
         }
 
       } else if (strTransactionType.equals("GL")) { // GL Item
-        BigDecimal glItemDebitAmt = new BigDecimal(strGLItemDebitAmount);
-        BigDecimal glItemCreditAmt = new BigDecimal(strGLItemCreditAmount);
+        BigDecimal glItemDepositAmt = new BigDecimal(strGLItemDepositAmount);
+        BigDecimal glItemPaymentAmt = new BigDecimal(strGLItemPaymentAmount);
 
         FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
             strFinancialAccountId);
@@ -185,13 +185,13 @@ public class AddTransaction extends HttpSecureAppServlet {
         String description = strGLItemDescription.isEmpty() ? Utility.messageBD(this,
             "APRM_GLItem", vars.getLanguage())
             + ": " + glItem.getName() : strGLItemDescription;
-        boolean isReceipt = (glItemDebitAmt.compareTo(glItemCreditAmt) >= 0);
+        boolean isReceipt = (glItemDepositAmt.compareTo(glItemPaymentAmt) >= 0);
 
         // Currency, Organization, paymentDate,
         FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(account.getOrganization(),
             account.getCurrency(), account, TransactionsDao.getTransactionMaxLineNo(account) + 10,
             null, description, FIN_Utility.getDate(strTransactionDate), glItem, isReceipt ? "RDNC"
-                : "PWNC", glItemDebitAmt, glItemCreditAmt, null, null, null, isReceipt ? "BPD"
+                : "PWNC", glItemDepositAmt, glItemPaymentAmt, null, null, null, isReceipt ? "BPD"
                 : "BPW", FIN_Utility.getDate(strTransactionDate));
 
         TransactionsDao.process(finTrans);
@@ -201,18 +201,18 @@ public class AddTransaction extends HttpSecureAppServlet {
         }
 
       } else if (strTransactionType.equals("F")) { // Fee
-        BigDecimal feeDebitAmt = new BigDecimal(strFeeDebitAmount);
-        BigDecimal feeCreditAmt = new BigDecimal(strFeeCreditAmount);
+        BigDecimal feeDepositAmt = new BigDecimal(strFeeDepositAmount);
+        BigDecimal feePaymentAmt = new BigDecimal(strFeePaymentAmount);
         FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
             strFinancialAccountId);
-        boolean isReceipt = (feeDebitAmt.compareTo(feeCreditAmt) >= 0);
+        boolean isReceipt = (feeDepositAmt.compareTo(feePaymentAmt) >= 0);
         String description = strFeeDescription.isEmpty() ? Utility.messageBD(this, "APRM_BankFee",
             vars.getLanguage()) : strFeeDescription;
 
         FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(account.getOrganization(),
             account.getCurrency(), account, TransactionsDao.getTransactionMaxLineNo(account) + 10,
             null, description, FIN_Utility.getDate(strTransactionDate), null, isReceipt ? "RDNC"
-                : "PWNC", feeDebitAmt, feeCreditAmt, null, null, null, "BF", FIN_Utility
+                : "PWNC", feeDepositAmt, feePaymentAmt, null, null, null, "BF", FIN_Utility
                 .getDate(strTransactionDate));
 
         TransactionsDao.process(finTrans);
@@ -279,17 +279,17 @@ public class AddTransaction extends HttpSecureAppServlet {
           "dateFormat.java");
       SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
 
-      xmlDocument.setParameter("debitAmount", bsl.getDramount().toString());
-      xmlDocument.setParameter("creditAmount", bsl.getCramount().toString());
-      xmlDocument.setParameter("debitAmountGLItem", bsl.getDramount().toString());
-      xmlDocument.setParameter("creditAmountGLItem", bsl.getCramount().toString());
+      xmlDocument.setParameter("depositAmount", bsl.getCramount().toString());
+      xmlDocument.setParameter("paymentAmount", bsl.getDramount().toString());
+      xmlDocument.setParameter("depositAmountGLItem", bsl.getCramount().toString());
+      xmlDocument.setParameter("paymentAmountGLItem", bsl.getDramount().toString());
       xmlDocument.setParameter("mainDate", dateFormater.format(bsl.getTransactionDate()));
 
     } else {
-      xmlDocument.setParameter("debitAmount", BigDecimal.ZERO.toString());
-      xmlDocument.setParameter("creditAmount", BigDecimal.ZERO.toString());
-      xmlDocument.setParameter("debitAmountGLItem", BigDecimal.ZERO.toString());
-      xmlDocument.setParameter("creditAmountGLItem", BigDecimal.ZERO.toString());
+      xmlDocument.setParameter("depositAmount", BigDecimal.ZERO.toString());
+      xmlDocument.setParameter("paymentAmount", BigDecimal.ZERO.toString());
+      xmlDocument.setParameter("depositAmountGLItem", BigDecimal.ZERO.toString());
+      xmlDocument.setParameter("paymentAmountGLItem", BigDecimal.ZERO.toString());
     }
 
     response.setContentType("text/html; charset=UTF-8");
@@ -356,8 +356,8 @@ public class AddTransaction extends HttpSecureAppServlet {
     empty.put("paymentInfo", "");
     empty.put("paymentDescription", "");
     empty.put("paymentDate", "");
-    empty.put("debitAmount", "");
-    empty.put("creditAmount", "");
+    empty.put("depositAmount", "");
+    empty.put("paymentAmount", "");
     ArrayList<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>();
     result.add(empty);
     return FieldProviderFactory.getFieldProviderArray(result);

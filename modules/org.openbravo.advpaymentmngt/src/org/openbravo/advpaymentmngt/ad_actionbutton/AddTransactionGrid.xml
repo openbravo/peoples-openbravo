@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -30,8 +30,8 @@
     <FIELD id="fieldDescription">paymentDescriptionTrunc</FIELD>
     <FIELD id="fieldDescription" attribute="title" replace="zz">paymentDescription</FIELD>
     <FIELD id="fieldDate">paymentDate</FIELD>
-    <FIELD id="fieldDebitAmount" format="euroEdition">debitAmount</FIELD>
-    <FIELD id="fieldCreditAmount" format="euroEdition">creditAmount</FIELD>
+    <FIELD id="fieldDepositAmount" format="euroEdition">depositAmount</FIELD>
+    <FIELD id="fieldPaymentAmount" format="euroEdition">paymentAmount</FIELD>
 
     <SECTION id="sectionLinesDetail"/>
   </structure>
