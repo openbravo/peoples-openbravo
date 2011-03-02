@@ -58,6 +58,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strDateFrom = vars
           .getGlobalVariable("inpDateFrom", "ReportGeneralLedger|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportGeneralLedger|DateTo", "");
+      String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportGeneralLedger|PageNo", "1");
       String strAmtFrom = vars.getNumericGlobalVariable("inpAmtFrom",
           "ReportGeneralLedger|AmtFrom", "");
       String strAmtTo = vars.getNumericGlobalVariable("inpAmtTo", "ReportGeneralLedger|AmtTo", "");
@@ -88,7 +89,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strHide = vars.getGlobalVariable("inpHideMatched", "ReportGeneralLedger|HideMatched",
           "");
 
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strPageNo, strAmtFrom, strAmtTo,
           strcelementvaluefrom, strcelementvalueto, strOrg, strcBpartnerId, strmProductId,
           strcProjectId, strGroupBy, strHide, strcAcctSchemaId, strcelementvaluefromdes,
           strcelementvaluetodes);
@@ -98,6 +99,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportGeneralLedger|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportGeneralLedger|DateTo");
+      String strPageNo = vars.getRequestGlobalVariable("inpPageNo", "ReportGeneralLedger|PageNo");
       String strAmtFrom = vars.getNumericParameter("inpAmtFrom");
       vars.setSessionValue("ReportGeneralLedger|AmtFrom", strAmtFrom);
       String strAmtTo = vars.getNumericParameter("inpAmtTo");
@@ -138,7 +140,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         log4j.debug("##################### DoPost - XLS - strcelementvalueto= "
             + strcelementvalueto);
       vars.setSessionValue("ReportGeneralLedger.initRecordNumber", "0");
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strPageNo, strAmtFrom, strAmtTo,
           strcelementvaluefrom, strcelementvalueto, strOrg, strcBpartnerId, strmProductId,
           strcProjectId, strGroupBy, strHide, strcAcctSchemaId, strcelementvaluefromdes,
           strcelementvaluetodes);
@@ -204,7 +206,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strAmtFrom, String strAmtTo,
+      String strDateFrom, String strDateTo, String strPageNo, String strAmtFrom, String strAmtTo,
       String strcelementvaluefrom, String strcelementvalueto, String strOrg, String strcBpartnerId,
       String strmProductId, String strcProjectId, String strGroupBy, String strHide,
       String strcAcctSchemaId, String strcelementvaluefromdes, String strcelementvaluetodes)
@@ -427,6 +429,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTo", strDateTo);
+    xmlDocument.setParameter("PageNo", strPageNo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("amtFrom", strAmtFrom);

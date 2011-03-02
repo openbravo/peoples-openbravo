@@ -62,7 +62,7 @@
   <PARAMETER id="paramArrayAccountingReports" name="accountingReports"/>
   <PARAMETER id="paramArrayOrg" name="orgs"/>
   <PARAMETER id="paramArrayYears" name="years"/>
-  <PARAMETER id="paramPageNo" name="inpPageNo" attribute="value" default="1"/>
+  <PARAMETER id="paramPageNo" name="PageNo" attribute="value"/>
 
   <SUBREPORT id="reportLevel" name="reportLevel" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramLevel"/>

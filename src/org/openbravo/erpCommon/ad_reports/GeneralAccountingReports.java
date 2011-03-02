@@ -63,6 +63,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           "GeneralAccountingReports|asDateTo", "");
       String strAsDateToRef = vars.getGlobalVariable("inpAsDateToRef",
           "GeneralAccountingReports|asDateToRef", "");
+      String strPageNo = vars.getGlobalVariable("inpPageNo",
+          "GeneralAccountingReports|PageNo", "1");
       String strElementValue = vars.getGlobalVariable("inpcElementvalueId",
           "GeneralAccountingReports|C_ElementValue_ID", "");
       String strConImporte = vars.getGlobalVariable("inpConImporte",
@@ -70,7 +72,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String strConCodigo = vars.getGlobalVariable("inpConCodigo",
           "GeneralAccountingReports|conCodigo", "N");
       String strLevel = vars.getGlobalVariable("inpLevel", "GeneralAccountingReports|level", "");
-      printPageDataSheet(response, vars, "", "", strDateFrom, strDateTo, strDateFromRef,
+      printPageDataSheet(response, vars, "", "", strDateFrom, strDateTo, strPageNo, strDateFromRef,
           strDateToRef, strAsDateTo, strAsDateToRef, strElementValue, strConImporte, "", strLevel,
           strConCodigo, "");
     } else if (vars.commandIn("FIND")) {
@@ -86,6 +88,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           "GeneralAccountingReports|dateFromRef");
       String strDateToRef = vars.getRequestGlobalVariable("inpDateToRef",
           "GeneralAccountingReports|dateToRef");
+      String strPageNo = vars.getRequestGlobalVariable("inpPageNo",
+          "GeneralAccountingReports|PageNo");
       String strAsDateTo = vars.getRequestGlobalVariable("inpAsDateTo",
           "GeneralAccountingReports|asDateTo");
       String strAsDateToRef = vars.getRequestGlobalVariable("inpAsDateToRef",
@@ -99,7 +103,6 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String strOrg = vars.getRequestGlobalVariable("inpOrganizacion",
           "GeneralAccountingReports|organizacion");
       String strLevel = vars.getRequestGlobalVariable("inpLevel", "GeneralAccountingReports|level");
-      String strPageNo = vars.getStringParameter("inpPageNo", "1");
       printPagePDF(request, response, vars, strAgno, strAgnoRef, strDateFrom, strDateTo,
           strDateFromRef, strDateToRef, strAsDateTo, strAsDateToRef, strElementValue,
           strConImporte, strOrg, strLevel, strConCodigo, strcAcctSchemaId, strPageNo);
@@ -360,7 +363,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strAgno, String strAgnoRef, String strDateFrom, String strDateTo,
+      String strAgno, String strAgnoRef, String strDateFrom, String strDateTo, String strPageNo,
       String strDateFromRef, String strDateToRef, String strAsDateTo, String strAsDateToRef,
       String strElementValue, String strConImporte, String strOrg, String strLevel,
       String strConCodigo, String strcAcctSchemaId) throws IOException, ServletException {
@@ -415,6 +418,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateFromRefdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromRefsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateToRef", strDateToRef);
+    xmlDocument.setParameter("PageNo", strPageNo);
     xmlDocument.setParameter("dateToRefdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateToRefsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("asDateTo", strAsDateTo);

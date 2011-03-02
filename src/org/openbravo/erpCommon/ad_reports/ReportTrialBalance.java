@@ -64,6 +64,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           "ReportTrialBalance|cAcctSchemaId", "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportTrialBalance|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportTrialBalance|DateTo", "");
+      String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportTrialBalance|PageNo", "1");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportTrialBalance|Org", "");
       String strLevel = vars.getGlobalVariable("inpLevel", "ReportTrialBalance|Level", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
@@ -91,7 +92,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       vars.setSessionValue("inpElementValueIdFrom_DES", strcElementValueFromDes);
       vars.setSessionValue("inpElementValueIdTo_DES", strcElementValueToDes);
 
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel,
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strPageNo, strOrg, strLevel,
           strcElementValueFrom, strcElementValueTo, strcElementValueFromDes, strcElementValueToDes,
           strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId, strGroupBy);
 
@@ -101,6 +102,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportTrialBalance|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTrialBalance|DateTo");
+      String strPageNo = vars.getRequestGlobalVariable("inpPageNo", "ReportTrialBalance|PageNo");
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTrialBalance|Org");
       String strLevel = vars.getRequestGlobalVariable("inpLevel", "ReportTrialBalance|Level");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
@@ -124,7 +126,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       vars.setSessionValue("inpElementValueIdFrom_DES", strcElementValueFromDes);
       vars.setSessionValue("inpElementValueIdTo_DES", strcElementValueToDes);
 
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel,
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strPageNo, strOrg, strLevel,
           strcElementValueFrom, strcElementValueTo, strcElementValueFromDes, strcElementValueToDes,
           strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId, strGroupBy);
 
@@ -156,7 +158,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strcProjectId = vars.getInGlobalVariable("inpcProjectId_IN",
           "ReportTrialBalance|cProjectId", "", IsIDFilter.instance);
       String strGroupBy = vars.getRequestGlobalVariable("inpGroupBy", "ReportTrialBalance|GroupBy");
-      String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportTrialBalance|PageNo", "1");
+      String strPageNo = vars.getRequestGlobalVariable("inpPageNo", "ReportTrialBalance|PageNo");
       if (vars.commandIn("PDF"))
         printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strOrg, strLevel,
             strcElementValueFrom, strcElementValueFromDes, strcElementValueTo,
@@ -257,7 +259,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strOrg, String strLevel,
+      String strDateFrom, String strDateTo, String strPageNo, String strOrg, String strLevel,
       String strcElementValueFrom, String strcElementValueTo, String strcElementValueFromDes,
       String strcElementValueToDes, String strcBpartnerId, String strmProductId,
       String strcProjectId, String strcAcctSchemaId, String strGroupBy) throws IOException,
@@ -395,6 +397,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTo", strDateTo);
+    xmlDocument.setParameter("PageNo", strPageNo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("adOrgId", strOrg);

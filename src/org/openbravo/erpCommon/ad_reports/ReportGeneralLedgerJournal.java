@@ -74,6 +74,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           "ReportGeneralLedgerJournal|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportGeneralLedgerJournal|DateTo",
           "");
+      String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportGeneralLedgerJournal|PageNo", "1");
       String strDocument = vars.getGlobalVariable("inpDocument",
           "ReportGeneralLedgerJournal|Document", "");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
@@ -100,20 +101,20 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         vars.setSessionValue(PREVIOUS_ACCTENTRIES, vars.getSessionValue(PREVIOUS_ACCTENTRIES_OLD));
         vars.setSessionValue(PREVIOUS_RANGE, vars.getSessionValue(PREVIOUS_RANGE_OLD));
       }
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, strTable,
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strPageNo, strDocument, strOrg, strTable,
           strRecord, "", strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening);
     } else if (vars.commandIn("DIRECT")) {
       String strTable = vars.getGlobalVariable("inpTable", "ReportGeneralLedgerJournal|Table");
       String strRecord = vars.getGlobalVariable("inpRecord", "ReportGeneralLedgerJournal|Record");
       setHistoryCommand(request, "DIRECT");
       vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
-      printPageDataSheet(response, vars, "", "", "", "", strTable, strRecord, "", "", "", "", "");
+      printPageDataSheet(response, vars, "", "", "1", "", "", strTable, strRecord, "", "", "", "", "");
     } else if (vars.commandIn("DIRECT2")) {
       String strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId",
           "ReportGeneralLedgerJournal|FactAcctGroupId");
       setHistoryCommand(request, "DIRECT2");
       vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
-      printPageDataSheet(response, vars, "", "", "", "", "", "", strFactAcctGroupId, "", "", "", "");
+      printPageDataSheet(response, vars, "", "", "1", "", "", "", "", strFactAcctGroupId, "", "", "", "");
     } else if (vars.commandIn("FIND")) {
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
           "ReportGeneralLedger|cAcctSchemaId");
@@ -121,6 +122,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           "ReportGeneralLedgerJournal|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
           "ReportGeneralLedgerJournal|DateTo");
+      String strPageNo = vars.getRequestGlobalVariable("inpPageNo", "ReportGeneralLedgerJournal|PageNo");
       String strDocument = vars.getRequestGlobalVariable("inpDocument",
           "ReportGeneralLedgerJournal|Document");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
@@ -143,7 +145,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       vars.setSessionValue(PREVIOUS_ACCTENTRIES, "0");
       vars.setSessionValue(PREVIOUS_RANGE, "");
       setHistoryCommand(request, "DEFAULT");
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, "", "", "",
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strPageNo, strDocument, strOrg, "", "", "",
           strcAcctSchemaId, strShowClosing, strShowReg, strShowOpening);
     } else if (vars.commandIn("PDF", "XLS")) {
       if (log4j.isDebugEnabled())
@@ -245,7 +247,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strDocument, String strOrg, String strTable,
+      String strDateFrom, String strDateTo, String strPageNo, String strDocument, String strOrg, String strTable,
       String strRecord, String strFactAcctGroupId, String strcAcctSchemaId, String strShowClosing,
       String strShowReg, String strShowOpening) throws IOException, ServletException {
     String strRecordRange = Utility.getContext(this, vars, "#RecordRange",
@@ -464,6 +466,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTo", strDateTo);
+    xmlDocument.setParameter("PageNo", strPageNo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("adOrgId", strOrg);
