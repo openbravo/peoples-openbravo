@@ -312,9 +312,21 @@ OB.Utilities.openProcessPopup = function(/* String */url, noFrameSet, postParams
     }
     winPopUp.document.close();
   }
-  OB.TestRegistry.register('org.openbravo.classicpopup.' + url, winPopUp);
+  OB.Utilities.registerClassicPopupInTestRegistry(url, winPopUp);
   winPopUp.focus();
   return winPopUp;
+};
+
+// ** {{{ OB.Utilities.registerClassicPopupInTestRegistry(/*String*/ url, /*Object*/ obj }}} **
+// Registers the obj as a classic popup
+OB.Utilities.registerClassicPopupInTestRegistry = function(url, obj){
+  console.log('Before --> ' + url);
+  if (url.startsWith('/')) {
+    var index = url.indexOf('/', 1);
+    url = url.substring(index + 1);
+  }
+  console.log('After --> ' + url);
+  OB.TestRegistry.register('org.openbravo.classicpopup.' + url, obj);
 };
 
 // ** {{{ OB.Utilities.isNonEmptyString(/*String*/ strValue }}} **

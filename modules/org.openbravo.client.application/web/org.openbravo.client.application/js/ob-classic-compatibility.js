@@ -354,7 +354,7 @@
         });
         cPopup.show();
         cobcomp.Popup.postOpen(cPopup, theOpener, postParams);
-        OB.TestRegistry.register('org.openbravo.classicpopup.' + url, cPopup);
+        OB.Utilities.registerClassicPopupInTestRegistry(url, cPopup);
       },
       
       // ** {{{ Popup.postOpen(cPopup) }}} **
