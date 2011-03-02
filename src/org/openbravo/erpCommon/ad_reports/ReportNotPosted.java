@@ -60,7 +60,7 @@ public class ReportNotPosted extends HttpSecureAppServlet {
       String strDateFrom, String strDateTo) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
-    response.setContentType("text/html");
+    response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     String discard[] = { "sectionDocType" };
     XmlDocument xmlDocument = null;
