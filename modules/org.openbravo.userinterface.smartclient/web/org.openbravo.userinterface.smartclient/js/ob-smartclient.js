@@ -29,6 +29,23 @@ isc.setAutoDraw(false);
 // for all our date/times we use GMT on both the server and the client
 Time.setDefaultDisplayTimezone(0);
 
+//Let the click on an ImgButton and Button fall through to its action method 
+isc.ImgButton.addProperties({
+  click: function() {
+    if (this.action) {
+      this.action();
+    }
+  }
+});
+
+isc.Button.addProperties({
+  click: function() {
+    if (this.action) {
+      this.action();
+    }
+  }
+});
+
 // NOTE BEWARE: methods/props added here will overwrite and NOT extend FormItem
 // properties! 
 isc.FormItem.addProperties({
