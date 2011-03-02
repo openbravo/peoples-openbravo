@@ -292,9 +292,7 @@ public class ModelProvider implements OBSingleton {
     ConnectionProviderImpl con = null;
     Connection connection = null;
     try {
-      con = new ConnectionProviderImpl(OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("source.path")
-          + "/config/Openbravo.properties");
+      con = new ConnectionProviderImpl(OBPropertiesProvider.getInstance().getOpenbravoProperties());
       connection = con.getConnection();
       PreparedStatement ps = connection
           .prepareStatement("select distinct model_impl from ad_reference where model_impl is not null");

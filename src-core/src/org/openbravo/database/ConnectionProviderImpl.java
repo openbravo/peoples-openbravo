@@ -40,6 +40,10 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   String rdbms = "";
   String contextName = "openbravo";
 
+  public ConnectionProviderImpl(Properties properties) throws PoolNotFoundException {
+    create(properties, false, "openbravo");
+  }
+
   public ConnectionProviderImpl(String file) throws PoolNotFoundException {
     this(file, false, "openbravo");
   }
@@ -55,6 +59,18 @@ public class ConnectionProviderImpl implements ConnectionProvider {
 
   private void create(String file, boolean isRelative, String _context)
       throws PoolNotFoundException {
+    Properties properties = new Properties();
+    try {
+      properties.load(new FileInputStream(file));
+      create(properties, isRelative, _context);
+    } catch (IOException e) {
+      log4j.error("Error loading properties", e);
+    }
+  }
+
+  private void create(Properties properties, boolean isRelative, String _context)
+      throws PoolNotFoundException {
+
     log4j.debug("Creating ConnectionProviderImpl");
     if (_context != null && !_context.equals(""))
       contextName = _context;
@@ -70,24 +86,18 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     String dbSessionConfig = null;
     String rdbms = null;
 
-    Properties properties = new Properties();
-    try {
-      properties.load(new FileInputStream(file));
-      poolName = properties.getProperty("bbdd.poolName", "myPool");
-      dbDriver = properties.getProperty("bbdd.driver");
-      dbServer = properties.getProperty("bbdd.url");
-      dbLogin = properties.getProperty("bbdd.user");
-      dbPassword = properties.getProperty("bbdd.password");
-      minConns = new Integer(properties.getProperty("bbdd.minConns", "1"));
-      maxConns = new Integer(properties.getProperty("bbdd.maxConns", "10"));
-      maxConnTime = new Double(properties.getProperty("maxConnTime", "0.5"));
-      dbSessionConfig = properties.getProperty("bbdd.sessionConfig");
-      rdbms = properties.getProperty("bbdd.rdbms");
-      if (rdbms.equalsIgnoreCase("POSTGRE"))
-        dbServer += "/" + properties.getProperty("bbdd.sid");
-    } catch (IOException e) {
-      log4j.error("Error loading properties", e);
-    }
+    poolName = properties.getProperty("bbdd.poolName", "myPool");
+    dbDriver = properties.getProperty("bbdd.driver");
+    dbServer = properties.getProperty("bbdd.url");
+    dbLogin = properties.getProperty("bbdd.user");
+    dbPassword = properties.getProperty("bbdd.password");
+    minConns = new Integer(properties.getProperty("bbdd.minConns", "1"));
+    maxConns = new Integer(properties.getProperty("bbdd.maxConns", "10"));
+    maxConnTime = new Double(properties.getProperty("maxConnTime", "0.5"));
+    dbSessionConfig = properties.getProperty("bbdd.sessionConfig");
+    rdbms = properties.getProperty("bbdd.rdbms");
+    if (rdbms.equalsIgnoreCase("POSTGRE"))
+      dbServer += "/" + properties.getProperty("bbdd.sid");
 
     if (log4j.isDebugEnabled()) {
       log4j.debug("poolName: " + poolName);
