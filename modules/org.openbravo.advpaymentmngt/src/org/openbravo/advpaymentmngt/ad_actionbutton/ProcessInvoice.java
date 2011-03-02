@@ -143,7 +143,15 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         } else
           vars.setMessage(strTabId, myMessage);
       }
-      List<FIN_Payment> payments = dao.getPendingExecutionPayments(strC_Invoice_ID);
+
+      List<FIN_Payment> payments = null;
+      try {
+        OBContext.setAdminMode(true);
+        payments = dao.getPendingExecutionPayments(strC_Invoice_ID);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+
       if (payments != null && payments.size() > 0) {
         vars.setSessionValue("ExecutePayments|Window_ID", strWindowId);
         vars.setSessionValue("ExecutePayments|Tab_ID", strTabId);

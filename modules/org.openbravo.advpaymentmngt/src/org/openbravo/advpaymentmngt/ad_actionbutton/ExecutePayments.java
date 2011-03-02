@@ -67,7 +67,15 @@ public class ExecutePayments extends HttpSecureAppServlet {
           IsIDFilter.instance);
       String strTabId = vars.getGlobalVariable("inpTabId", "ExecutePayments|Tab_ID", "",
           IsIDFilter.instance);
-      PaymentExecutionProcess executionProcess = getExecutionProcess(vars, strWindowId);
+
+      PaymentExecutionProcess executionProcess = null;
+      try {
+        OBContext.setAdminMode(true);
+        executionProcess = getExecutionProcess(vars, strWindowId);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+
       if (executionProcess == null) {
         OBError message = Utility
             .translateError(this, vars, vars.getLanguage(), Utility.parseTranslation(this, vars,
@@ -86,8 +94,8 @@ public class ExecutePayments extends HttpSecureAppServlet {
           IsIDFilter.instance);
       final String executionProcess = vars.getRequiredStringParameter("inpExecutionProcess",
           IsIDFilter.instance);
-      processAndClose(response, vars, strWindowId, dao.getObject(PaymentExecutionProcess.class,
-          executionProcess), payments, dao.getObject(Organization.class, strOrganizationId));
+      processAndClose(response, vars, strWindowId, executionProcess, payments, dao.getObject(
+          Organization.class, strOrganizationId));
     }
   }
 
@@ -136,13 +144,15 @@ public class ExecutePayments extends HttpSecureAppServlet {
   }
 
   private void processAndClose(HttpServletResponse response, VariablesSecureApp vars,
-      String strWindowId, PaymentExecutionProcess executionProcess, String strPayments,
-      Organization organization) throws ServletException, IOException {
+      String strWindowId, String execProcess, String strPayments, Organization organization)
+      throws ServletException, IOException {
     log4j.debug("Output: Execute Payments process and close");
     dao = new AdvPaymentMngtDao();
     OBError result = new OBError();
     OBContext.setAdminMode();
     try {
+      PaymentExecutionProcess executionProcess = dao.getObject(PaymentExecutionProcess.class,
+          execProcess);
       List<PaymentExecutionProcessParameter> executionProcessInParameters = dao
           .getInPaymentExecutionParameters(executionProcess);
       HashMap<String, String> parameters = null;
