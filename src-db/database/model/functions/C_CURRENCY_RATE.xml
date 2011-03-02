@@ -88,7 +88,7 @@ BEGIN
       WHERE C_Currency_ID = v_CurrencyFrom
         AND C_Currency_ID_To = v_CurrencyTo
         AND ConversionRateType = v_RateType
-        AND v_ConvDate BETWEEN ValidFrom AND ValidTo
+        AND TRUNC(v_ConvDate) BETWEEN ValidFrom AND ValidTo
         AND AD_Client_ID IN ('0', p_Client_ID)
         AND AD_Org_ID IN ('0', p_Org_ID)
         AND IsActive = 'Y'
