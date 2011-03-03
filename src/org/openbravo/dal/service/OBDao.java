@@ -207,4 +207,31 @@ public class OBDao {
   public static enum Operator {
     EQUAL_OPERATOR, NOT_EQUAL_OPERATOR, LESS_EQUAL_OPERATOR, GREATER_EQUAL_OPERATOR, LESS_OPERATOR, GREATER_OPERATOR, IN_OPERATOR
   }
+
+  /**
+   * Returns a List of BaseOBOBjects of the Property identified by the property from the
+   * BaseOBObject obj. This method enables the activeFilter so inactive BaseOBObjects are not
+   * included on the returned List.
+   * 
+   * @param obj
+   *          BaseOBObject from which the values are requested
+   * @param property
+   *          the name of the Property for which the value is requested
+   * @return
+   */
+  @SuppressWarnings("unchecked")
+  public static <T extends BaseOBObject> List<T> getActiveOBObjectList(BaseOBObject obj,
+      String property) {
+    boolean isActiveFilterEnabled = OBDal.getInstance().isActiveFilterEnabled();
+    if (!isActiveFilterEnabled) {
+      OBDal.getInstance().enableActiveFilter();
+    }
+    try {
+      return (List<T>) obj.get(property);
+    } finally {
+      if (!isActiveFilterEnabled) {
+        OBDal.getInstance().disableActiveFilter();
+      }
+    }
+  }
 }
