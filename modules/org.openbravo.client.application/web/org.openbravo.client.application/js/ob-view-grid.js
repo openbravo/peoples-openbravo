@@ -760,7 +760,7 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++++++++++++++ Context menu on record click +++++++++++++++++++++++
   
   cellContextClick: function(record, rowNum, colNum){
-    //this.handleRecordSelection(null, record, rowNum, null, colNum, null, null, true);
+    this.handleRecordSelection(null, record, rowNum, null, colNum, null, null, true);
     this.view.setAsActiveView();
     var ret = this.Super('cellContextClick', arguments);
     return ret;
