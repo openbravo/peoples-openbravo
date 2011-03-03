@@ -556,12 +556,14 @@ isc.OBStandardView.addProperties({
       this.toolBar.show();
       this.activeBar.setActive(true);
       this.setViewFocus();
+      this.viewGrid.setActive(true);
     } else {
       
       // close any editors we may have
       this.viewGrid.closeAnyOpenEditor();
       
       this.toolBar.hide();
+      this.viewGrid.setActive(false);
       this.activeBar.setActive(false);
       // note we can not check on viewForm visibility as 
       // the grid and form can both be hidden when changing
@@ -779,7 +781,7 @@ isc.OBStandardView.addProperties({
       // also handle the case that there are unsaved values in the grid
       // show them in the form
       var rowNum = this.viewGrid.getRecordIndex(record);
-      this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus);
+      this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus, this.viewGrid.recordHasChanges(rowNum));
     }
   },
   

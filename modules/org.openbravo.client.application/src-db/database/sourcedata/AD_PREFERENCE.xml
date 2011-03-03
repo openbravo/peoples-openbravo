@@ -28,7 +28,9 @@
   {"id": "TabSet_ActivateTab9", "keyComb": {"ctrl": true, "alt": true, "key": "9"}},
   {"id": "TabSet_closeAllTabs", "keyComb": {"ctrl": true, "alt": true, "key": "0"}},
   {"id": "TabSet_ActivateRightTab", "keyComb": {"ctrl": true, "alt": true, "key": "+"}},
-  {"id": "TabSet_ActivateLeftTab", "keyComb": {"ctrl": true, "alt": true, "key": "-"}}
+  {"id": "TabSet_ActivateLeftTab", "keyComb": {"ctrl": true, "alt": true, "key": "-"}},
+  {"id": "Grid_EditInForm", "keyComb": {"ctrl": true, "alt": false, "key": "f2"}},
+  {"id": "Grid_EditInGrid", "keyComb": {"ctrl": false, "alt": false, "key": "f2"}}
 ]]]></VALUE>
 <!--5EE6D055A7FE4C4DA7EB557F6C61D0EA-->  <PROPERTY><![CDATA[OBUIAPP_KeyboardShortcuts]]></PROPERTY>
 <!--5EE6D055A7FE4C4DA7EB557F6C61D0EA-->  <ISPROPERTYLIST><![CDATA[Y]]></ISPROPERTYLIST>
@@ -60,6 +62,7 @@
 <!--7EE6D055A7FE4C4DA7EB557F6C61D0EC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7EE6D055A7FE4C4DA7EB557F6C61D0EC-->  <VALUE><![CDATA[[
   {"id": "ToolBar_Save", "keyComb": {"ctrl": true, "alt": true, "key": "S"}},
+  {"id": "ToolBar_SaveClose", "keyComb": {"ctrl": true, "alt": true, "key": "X"}},
   {"id": "ToolBar_NewRow", "keyComb": {"ctrl": true, "alt": true, "key": "I"}},
   {"id": "ToolBar_NewDoc", "keyComb": {"ctrl": true, "alt": true, "key": "N"}},
   {"id": "ToolBar_Eliminate", "keyComb": {"ctrl": true, "alt": true, "key": "D"}},

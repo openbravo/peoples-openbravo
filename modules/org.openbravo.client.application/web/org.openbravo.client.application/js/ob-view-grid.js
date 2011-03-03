@@ -341,6 +341,38 @@ isc.OBViewGrid.addProperties({
     return this.Super('bodyKeyPress', arguments);
   },
 
+  // called when the view gets activated
+  setActive: function(active) {
+    if (active) {
+      this.enableKeyBoardShortCuts();
+    } else {
+      this.disableKeyBoardShortCuts();
+    }    
+  },
+
+  disableKeyBoardShortCuts: function() {
+    OB.KeyboardManager.KS.set('Grid_EditInGrid', function() { return true; });
+    OB.KeyboardManager.KS.set('Grid_EditInForm', function() { return true; });
+  },
+  
+  enableKeyBoardShortCuts: function() {
+    var grid = this;
+    var editInGridAction = function(){
+      if (grid.getSelectedRecords().length === 1) {    
+        grid.endEditing();
+        grid.startEditing(grid.getRecordIndex(grid.getSelectedRecords()[0]));
+      }
+    };
+    OB.KeyboardManager.KS.set('Grid_EditInGrid', editInGridAction);
+    var editInFormAction = function(){
+      if (grid.getSelectedRecords().length === 1) {          
+        grid.endEditing();
+        grid.view.editRecord(grid.getSelectedRecords()[0]);
+      }
+    };
+    OB.KeyboardManager.KS.set('Grid_EditInForm', editInFormAction);
+  },
+
   // overridden to set the enterkeyaction to nextrowstart in cases the current row
   // is the last being edited  
   getNextEditCell : function (rowNum, colNum, editCompletionEvent) {
@@ -1548,6 +1580,9 @@ isc.OBViewGrid.addProperties({
   
   // we are being reshown, get new values for the combos
   visibilityChanged: function(visible){
+    if (visible && this.view.isActiveView()) {      
+      this.enableKeyBoardShortCuts();
+    }
     if (visible && this.getEditRow()) {
       this.getEditForm().doChangeFICCall();
     }

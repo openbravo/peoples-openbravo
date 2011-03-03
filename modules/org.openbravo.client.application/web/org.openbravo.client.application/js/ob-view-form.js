@@ -107,9 +107,12 @@ OB.ViewFormProperties = {
     }
   },
   
-  editRecord: function(record, preventFocus){
+  editRecord: function(record, preventFocus, hasChanges){
     var ret = this.Super('editRecord', arguments);
     this.doEditRecordActions(preventFocus, false);
+    if (hasChanges) {
+      this.setHasChanged(true);
+    }
     return ret;
   },
   
