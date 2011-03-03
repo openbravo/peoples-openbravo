@@ -431,7 +431,7 @@ OB.Utilities.logout = function(confirmed){
 // ** {{{ OB.Utilities.getYesNoDisplayValue }}} **
 // Returns the Yes label if the passed value is true, the No label if false.
 OB.Utilities.getYesNoDisplayValue = function(/* Boolean */value){
-  if (value) {
+  if (value === true || value === 'true') {
     return OB.I18N.getLabel('OBUISC_Yes');
   } else if (value === false) {
     return OB.I18N.getLabel('OBUISC_No');
