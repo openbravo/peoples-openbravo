@@ -18,9 +18,12 @@
  */
 package org.openbravo.dal.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.structure.BaseOBObject;
 
@@ -233,5 +236,32 @@ public class OBDao {
         OBDal.getInstance().disableActiveFilter();
       }
     }
+  }
+
+  /**
+   * Parses the string of comma separated id's to return a List with the BaseOBObjects of the given
+   * class. If there is an invalid id a null value is added to the List.
+   * 
+   * @param t
+   *          class of the BaseOBObject the id's belong to
+   * @param _IDs
+   *          String containing the comma separated list of id's
+   * @return a List object containing the parsed OBObjects
+   */
+  public static <T extends BaseOBObject> List<T> getOBObjectListFromString(Class<T> t, String _IDs) {
+    String strBaseOBOBjectIDs = _IDs;
+    final List<T> baseOBObjectList = new ArrayList<T>();
+    if (strBaseOBOBjectIDs.startsWith("(")) {
+      strBaseOBOBjectIDs = strBaseOBOBjectIDs.substring(1, strBaseOBOBjectIDs.length() - 1);
+    }
+    if (!strBaseOBOBjectIDs.equals("")) {
+      strBaseOBOBjectIDs = StringUtils.remove(strBaseOBOBjectIDs, "'");
+      StringTokenizer st = new StringTokenizer(strBaseOBOBjectIDs, ",", false);
+      while (st.hasMoreTokens()) {
+        String strBaseOBObjectID = st.nextToken().trim();
+        baseOBObjectList.add((T) OBDal.getInstance().get(t, strBaseOBObjectID));
+      }
+    }
+    return baseOBObjectList;
   }
 }
