@@ -95,6 +95,10 @@ public class OBDal implements OBSingleton {
     SessionHandler.getInstance().getSession().disableFilter("activeFilter");
   }
 
+  public boolean isActiveFilterEnabled() {
+    return SessionHandler.getInstance().getSession().getEnabledFilter("activeFilter") != null;
+  }
+
   /**
    * Returns the connection used by the hibernate session.
    * 
