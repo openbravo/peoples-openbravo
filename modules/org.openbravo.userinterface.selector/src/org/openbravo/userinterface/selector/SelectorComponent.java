@@ -46,6 +46,8 @@ import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
+import org.openbravo.dal.service.OBDao.Constraint;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.module.Module;
@@ -76,6 +78,7 @@ public class SelectorComponent extends BaseTemplateComponent {
   private static final String CUSTOM_QUERY_DS = "F8DD408F2F3A414188668836F84C21AF";
 
   private org.openbravo.userinterface.selector.Selector selector;
+  private List<SelectorField> selectorFields;
   private List<SelectorFieldTrl> selectorFieldTrls;
   private static OutSelectorField IdOutField;
   private static OutSelectorField IdentifierOutField;
@@ -205,7 +208,7 @@ public class SelectorComponent extends BaseTemplateComponent {
       final Entity entity = getEntity();
       if (entity != null) {
         for (Property prop : entity.getIdentifierProperties()) {
-          for (SelectorField selectorField : getSelector().getOBUISELSelectorFieldList()) {
+          for (SelectorField selectorField : getActiveSelectorFields()) {
             if (selectorField.getProperty() != null
                 && selectorField.getProperty().equals(prop.getName())) {
               return selectorField.getProperty();
@@ -225,6 +228,18 @@ public class SelectorComponent extends BaseTemplateComponent {
       Check.isTrue(selector.isActive(), "Selector " + selector + " is not active anymore");
     }
     return selector;
+  }
+
+  private List<SelectorField> getActiveSelectorFields() {
+    if (selectorFields == null) {
+      OBDal.getInstance().enableActiveFilter();
+      try {
+        selectorFields = getSelector().getOBUISELSelectorFieldList();
+      } finally {
+        OBDal.getInstance().disableActiveFilter();
+      }
+    }
+    return selectorFields;
   }
 
   public String getColumnName() {
@@ -326,11 +341,14 @@ public class SelectorComponent extends BaseTemplateComponent {
     return "null";
   }
 
+  /**
+   * @return true if there is at least one active field shown in grid
+   */
   public String getShowSelectorGrid() {
-    for (SelectorField selectorField : getSelector().getOBUISELSelectorFieldList()) {
-      if (selectorField.isShowingrid()) {
-        return Boolean.TRUE.toString();
-      }
+    if (OBDao.getFilteredCriteria(SelectorField.class,
+        new Constraint(SelectorField.PROPERTY_OBUISELSELECTOR, getSelector()),
+        new Constraint(SelectorField.PROPERTY_SHOWINGRID, true)).count() > 0) {
+      return Boolean.TRUE.toString();
     }
     return Boolean.FALSE.toString();
   }
@@ -406,10 +424,7 @@ public class SelectorComponent extends BaseTemplateComponent {
   public String getExtraSearchFields() {
     final String displayField = getDisplayField();
     final StringBuilder sb = new StringBuilder();
-    for (SelectorField selectorField : getSelector().getOBUISELSelectorFieldList()) {
-      if (!selectorField.isActive()) {
-        continue;
-      }
+    for (SelectorField selectorField : getActiveSelectorFields()) {
       String fieldName = getPropertyOrDataSourceField(selectorField);
       if (fieldName.equals(displayField)) {
         continue;
@@ -455,8 +470,7 @@ public class SelectorComponent extends BaseTemplateComponent {
 
   public List<OutSelectorField> getOutFields() {
     List<OutSelectorField> outFields = new ArrayList<OutSelectorField>();
-    final List<SelectorField> sortedFields = new ArrayList<SelectorField>(getSelector()
-        .getOBUISELSelectorFieldList());
+    final List<SelectorField> sortedFields = new ArrayList<SelectorField>(getActiveSelectorFields());
 
     final String tabId = getParameter(SelectorConstants.PARAM_TAB_ID);
 
@@ -530,7 +544,7 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     OBContext.setAdminMode();
     try {
-      for (final SelectorField field : getSelector().getOBUISELSelectorFieldList()) {
+      for (final SelectorField field : getActiveSelectorFields()) {
         if (!Boolean.TRUE.equals(field.isOutfield())) {
           continue;
         }
@@ -573,14 +587,10 @@ public class SelectorComponent extends BaseTemplateComponent {
   private List<LocalSelectorField> getSelectorFields(boolean pickList, boolean popupGrid) {
     final List<LocalSelectorField> result = new ArrayList<LocalSelectorField>();
 
-    final List<SelectorField> sortedFields = new ArrayList<SelectorField>(getSelector()
-        .getOBUISELSelectorFieldList());
+    final List<SelectorField> sortedFields = new ArrayList<SelectorField>(getActiveSelectorFields());
     Collections.sort(sortedFields, new SelectorFieldComparator());
 
     for (SelectorField selectorField : sortedFields) {
-      if (!selectorField.isActive()) {
-        continue;
-      }
       if (popupGrid && !selectorField.isShowingrid()) {
         continue;
       }

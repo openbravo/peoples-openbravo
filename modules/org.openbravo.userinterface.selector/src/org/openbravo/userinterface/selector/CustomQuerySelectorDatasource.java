@@ -75,7 +75,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     try {
 
       Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
-      List<SelectorField> fields = sel.getOBUISELSelectorFieldList();
+      List<SelectorField> fields = getActiveSelectorFields(sel);
 
       // Parse the HQL in case that optional filters are required
       String HQL = parseOptionalFilters(parameters, sel, xmlDateFormat);
@@ -171,7 +171,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
     StringBuffer defaultExpressionsFilter = new StringBuffer();
     boolean hasFilter = false;
-    for (SelectorField field : sel.getOBUISELSelectorFieldList()) {
+    for (SelectorField field : getActiveSelectorFields(sel)) {
       if (StringUtils.isEmpty(field.getClauseLeftPart())) {
         continue;
       }
@@ -346,7 +346,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     if (sortByClause.length() == 0) {
       String fieldName = "";
       Long sortNumber = Long.MAX_VALUE;
-      for (SelectorField selField : sel.getOBUISELSelectorFieldList()) {
+      for (SelectorField selField : getActiveSelectorFields(sel)) {
         if (selField.isShowingrid() && selField.getSortno() < sortNumber) {
           sortNumber = selField.getSortno();
           fieldName = selField.getDisplayColumnAlias();
@@ -415,4 +415,14 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     }
     return 0;
   }
+
+  private List<SelectorField> getActiveSelectorFields(Selector sel) {
+    OBDal.getInstance().enableActiveFilter();
+    try {
+      return sel.getOBUISELSelectorFieldList();
+    } finally {
+      OBDal.getInstance().disableActiveFilter();
+    }
+  }
+
 }
