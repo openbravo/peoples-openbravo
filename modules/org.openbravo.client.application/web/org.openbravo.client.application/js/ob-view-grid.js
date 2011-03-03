@@ -202,6 +202,24 @@ isc.OBViewGrid.addProperties({
       filterEditorType: 'StaticTextItem'
     });
     
+    var grid = this;
+    var menuItems = [{
+        title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
+        click: function(){
+          grid.deselectAllRecords();
+          grid.startEditingNew();
+        }
+      }, {
+        title: OB.I18N.getLabel('OBUIAPP_CreateRecordInForm'),
+        click: function(){
+          grid.deselectAllRecords();
+          grid.view.newDocument();
+        }
+      }
+    ];
+    
+    this.contextMenu = this.getMenuConstructor().create({items: menuItems});
+    
     var ret = this.Super('initWidget', arguments);
     
     this.noDataEmptyMessage = OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage'); // OB.I18N.getLabel('OBUIAPP_GridNoRecords')
@@ -312,6 +330,17 @@ isc.OBViewGrid.addProperties({
       this.singleRecordSelection = false;
     }
     return this.Super('headerClick', arguments);
+  },
+
+  // overridden to set the enterkeyaction to nextrowstart in cases the current row
+  // is the last being edited  
+  getNextEditCell : function (rowNum, colNum, editCompletionEvent) {
+    // past the last row
+    if (editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS && rowNum === (this.getTotalRows() - 1)) {
+      // move to the next row
+      return this.findNextEditCell(rowNum +1, 0, 1, true, true);
+    }
+    return this.Super('getNextEditCell', arguments);
   },
   
   deselectAllRecords: function(preventUpdateSelectInfo, autoSaveDone){
@@ -769,15 +798,23 @@ isc.OBViewGrid.addProperties({
   makeCellContextItems: function(record, rowNum, colNum){
     var sourceWindow = this.view.standardWindow.windowId;
     var menuItems = [];
+    var recordsSelected = this.getSelectedRecords().length > 0;
+    var singleSelected = this.getSelectedRecords().length === 1;
     var field = this.getField(colNum);
     var grid = this;
     menuItems.add({
-      title: OB.I18N.getLabel('OBUIAPP_CreateNewRecord'),
+      title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
       click: function(){
         grid.startEditingNew(rowNum);
       }
     });
-    if (this.canEdit && this.isWritable(record) && !this.view.readOnly) {
+    menuItems.add({
+      title: OB.I18N.getLabel('OBUIAPP_CreateRecordInForm'),
+      click: function(){
+        grid.view.newDocument();
+      }
+    });
+    if (singleSelected && this.canEdit && this.isWritable(record) && !this.view.readOnly) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_EditInGrid'),
         click: function(){
@@ -785,8 +822,15 @@ isc.OBViewGrid.addProperties({
           grid.startEditing(rowNum, colNum);
         }
       });
+      menuItems.add({
+        title: OB.I18N.getLabel('OBUIAPP_EditInForm'),
+        click: function(){
+          grid.endEditing();
+          grid.view.editRecord(record);
+        }
+      });
     }
-    if (field.canFilter) {
+    if (singleSelected && field.canFilter) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_UseAsFilter'),
         click: function(){
@@ -806,7 +850,7 @@ isc.OBViewGrid.addProperties({
         }
       });
     }
-    if (field.foreignKeyField) {
+    if (singleSelected && field.foreignKeyField) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_OpenOnTab'),
         click: function(){
@@ -816,6 +860,14 @@ isc.OBViewGrid.addProperties({
             fldName = fldName.substring(0, dotIndex);
           }
           OB.Utilities.openDirectView(sourceWindow, field.referencedKeyColumnName, field.targetEntity, record[fldName]);
+        }
+      });
+    }
+    if (recordsSelected && !this.view.readOnly && this.allSelectedRecordsWritable()) {
+      menuItems.add({
+        title: OB.I18N.getLabel('OBUIAPP_Delete'),
+        click: function(){
+          grid.view.deleteSelectedRows();
         }
       });
     }
@@ -1497,6 +1549,16 @@ isc.OBViewGrid.addProperties({
   
   isWritable: function(record){
     return !record._readOnly;
+  },
+  
+  allSelectedRecordsWritable: function() {
+    for (var i = 0; i < this.getSelectedRecords().length; i++) {
+      var record = this.getSelectedRecords()[i];
+      if (!this.isWritable(record)) {
+        return false;
+      }
+    }
+    return true;    
   },
   
   setRecordErrorMessage: function(rowNum, msg){
