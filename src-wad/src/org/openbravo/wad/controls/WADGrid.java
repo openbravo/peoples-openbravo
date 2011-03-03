@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2008 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -98,11 +98,15 @@ public class WADGrid extends WADControl {
     addJSCode("onGridLoadDo", text.toString());
 
     text = new StringBuffer();
-    text.append("function setGridFilters(newparams) {\n" + "  var params = [];\n"
-        + "  params[\"newFilter\"] = \"1\";\n" + "  if (newparams!=null && newparams.length>0) {\n"
+    text.append("function setGridFilters(newparams) {\n"
+        + "  var params = [], hasFilter = false;\n" + "  params[\"newFilter\"] = \"1\";\n"
+        + "  if (newparams!=null && newparams.length>0) {\n"
         + "    var total = newparams.length;\n" + "    for (var i=0;i<total;i++) {\n"
-        + "      params[newparams[i][0]] = newparams[i][1];\n" + "    }\n" + "  }\n");
+        + "      params[newparams[i][0]] = newparams[i][1];\n"
+        + "      hasFilter = hasFilter || (newparams[i][1] !== '' && newparams[i][1] !== '%');\n"
+        + "    }\n" + "  }\n");
     text.append("  dijit.byId('").append(getData("id")).append("').setRequestParams(params);\n");
+    text.append("  changeSearchIcon(hasFilter);\n");
     text.append("  return true;\n");
     text.append('}');
     addJSCode("setGridFilters", text.toString());
