@@ -53,7 +53,7 @@ public class URLWidgetProvider extends WidgetProvider {
       final JSONObject jsonObject = super.getWidgetClassDefinition();
       final JSONObject parameters = new JSONObject();
       jsonObject.put(WidgetProvider.PARAMETERS, parameters);
-      WidgetURL widgetURL = OBDao.getOneInstance(WidgetURL.class, new Constraint(
+      final WidgetURL widgetURL = OBDao.getOneInstance(WidgetURL.class, new Constraint(
           WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass()));
       if (widgetURL != null) {
         parameters.put(SRC, widgetURL.getURL());
@@ -76,11 +76,12 @@ public class URLWidgetProvider extends WidgetProvider {
       final JSONObject jsonObject = new JSONObject();
       addDefaultWidgetProperties(jsonObject, widgetInstance);
       final JSONObject parameters = jsonObject.getJSONObject(WidgetProvider.PARAMETERS);
-      if (widgetInstance.getWidgetClass().getOBKMOWidgetURLList().isEmpty()) {
-        log.error("No url widget defined for widget class " + widgetInstance.getWidgetClass());
+      final WidgetURL widgetURL = OBDao.getOneInstance(WidgetURL.class, new Constraint(
+          WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass()));
+      if (widgetURL != null) {
+        parameters.put(SRC, widgetURL.getURL());
       } else {
-        parameters
-            .put(SRC, widgetInstance.getWidgetClass().getOBKMOWidgetURLList().get(0).getURL());
+        log.error("No url widget defined for widget class " + widgetInstance.getWidgetClass());
       }
       return jsonObject;
     } catch (Exception e) {
