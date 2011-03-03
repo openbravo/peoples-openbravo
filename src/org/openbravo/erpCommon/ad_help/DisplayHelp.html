@@ -36,10 +36,16 @@
 </head>
   <script language="JavaScript" type="text/javascript">
     function onLoadDo() {
-      this.windowTables = new Array(
-        new windowTableId('clientIndex'),
-        new windowTableId('client')
-      );
+      if (document.getElementById('clientIndex').getElementsByTagName('a').length === 0) {
+        this.windowTables = new Array(
+          new windowTableId('client')
+        );
+      } else {
+        this.windowTables = new Array(
+          new windowTableId('clientIndex'),
+          new windowTableId('client')
+        );
+      }
       setWindowTableParentElement();
       enableShortcuts('popup');
       setBrowserAutoComplete(false);
