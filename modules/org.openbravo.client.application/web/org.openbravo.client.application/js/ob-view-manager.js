@@ -38,12 +38,16 @@
   var tabSet = M.TabSet;
   
   function ViewManager(){
+    // keep the last 5 opened views
+    this.recentManager.recentNum = 5;
   }
   
   ViewManager.prototype = {
   
-    // if true then certain functions are disab
+    // if true then certain functions are disabled
     inStateHandling: false,
+    
+    recentManager: new OB.RecentUtilitiesClass(),
     
     // ** {{ ViewManager.views }} **
     // Collection of opened views
@@ -208,6 +212,16 @@
     openView: function(/* String */viewName, /* Object */ params, /* Object */ state){
     
       params = params || {};
+      
+      // only add closable views to the recent items, this prevents the workspace
+      // view from being displayed, explicitly doing !== false to catch 
+      // views which don't have this set at all
+      if (params.canClose !== false) {
+        // add and set a default icon
+        vmgr.recentManager.addRecent('OBUIAPP_RecentViewList', 
+            isc.addProperties({icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png'}, 
+                params));
+      }
       
       //
       // Returns the function implementation of a View

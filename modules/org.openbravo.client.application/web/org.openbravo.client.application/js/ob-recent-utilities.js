@@ -128,4 +128,5 @@
   
   // Initialize RemoteCallManager object
   rcutils = OB.RecentUtilities = new RecentUtilities();
+  OB.RecentUtilitiesClass = RecentUtilities;
 })(OB, isc);

@@ -115,7 +115,7 @@ isc.OBMyOpenbravo.addProperties({
     this.setRecentList(recentViewsLinksLayout);
 
     OB.PropertyStore.addListener(function(propertyName, currentValue, newValue){
-      if (propertyName === 'UINAVBA_RecentLaunchList') {
+      if (propertyName === 'OBUIAPP_RecentViewList') {
         me.setRecentList(recentViewsLinksLayout);
       }
     });
@@ -337,12 +337,12 @@ isc.OBMyOpenbravo.addProperties({
     layout.removeMembers(layout.members);
     
     // reads the list of recents and displays them
-    recentList = OB.RecentUtilities.getRecentValue('UINAVBA_RecentLaunchList');
+    recentList = OB.Layout.ViewManager.recentManager.getRecentValue('OBUIAPP_RecentViewList');
     if (recentList && recentList.length > 0) {
     
       handleClickFunction = function(){
         if (this.updateRecent) {
-          OB.RecentUtilities.addRecent('UINAVBA_RecentLaunchList', this.recent);
+          OB.RecentUtilities.addRecent('OBUIAPP_RecentViewList', this.recent);
         }
         if (this.recent.viewId) {
           OB.Layout.ViewManager.openView(this.recent.viewId, this.recent);
@@ -384,7 +384,7 @@ isc.OBMyOpenbravo.addProperties({
           });
           entryLayout.addMember(lbl);
           // if a standard window then show the new icon
-          if (recent.tabId && !recent.singleRecord && !recent.readOnly) {
+          if (recent.windowId && !recent.singleRecord && !recent.readOnly) {
             // make a copy
             newRecent = isc.addProperties({}, recent);
             newRecent.command = 'NEW';
