@@ -115,11 +115,13 @@ public class OBDao {
    */
   public static <T extends BaseOBObject> T getOneInstance(Class<T> clazz, boolean setClientFilter,
       boolean setOrganizationFilter, Constraint... constraints) {
-    List<T> criteria = getAllInstances(clazz, setClientFilter, setOrganizationFilter, constraints);
-    if (criteria.isEmpty()) {
+    OBCriteria<T> criteria = getFilteredCriteria(clazz, setClientFilter, setOrganizationFilter,
+        constraints);
+    criteria.setMaxResults(1);
+    if (criteria.list().isEmpty()) {
       return null;
     }
-    return criteria.get(0);
+    return criteria.list().get(0);
   }
 
   /**
