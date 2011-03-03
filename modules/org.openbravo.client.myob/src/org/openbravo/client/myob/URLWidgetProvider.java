@@ -22,6 +22,8 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.service.OBDao;
+import org.openbravo.dal.service.OBDao.Constraint;
 
 /**
  * Responsible for creating the URL Widgets.
@@ -51,8 +53,10 @@ public class URLWidgetProvider extends WidgetProvider {
       final JSONObject jsonObject = super.getWidgetClassDefinition();
       final JSONObject parameters = new JSONObject();
       jsonObject.put(WidgetProvider.PARAMETERS, parameters);
-      if (!getWidgetClass().getOBKMOWidgetURLList().isEmpty()) {
-        parameters.put(SRC, getWidgetClass().getOBKMOWidgetURLList().get(0).getURL());
+      WidgetURL widgetURL = OBDao.getOneInstance(WidgetURL.class, new Constraint(
+          WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass()));
+      if (widgetURL != null) {
+        parameters.put(SRC, widgetURL.getURL());
       } else {
         log.warn("URLWidget does not have a URL defined.");
         parameters.put(SRC, "");
