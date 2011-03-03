@@ -182,12 +182,42 @@ public class OBDao {
     // '==', '!=', '<=', '>=', '<', '>'
     private Operator operator;
 
+    /**
+     * Initializes a Constraint to be added to an OBCriteria. The Operator is defaulted to
+     * {@link OBDao.Operator EQUAL_OPERATOR}.
+     * 
+     * <br>
+     * A <i>null</i> value creates a "isNull" Expression for the given property
+     * 
+     * @param property
+     *          String with the property to filter by the OBCriteria.
+     * @param value
+     *          Object with the filter the property is filtered by.
+     */
     public Constraint(String property, Object value) {
       this.property = property;
       this.value = value;
       this.operator = Operator.EQUAL_OPERATOR;
     }
 
+    /**
+     * Initializes a Constraint to be added to an OBCriteria.
+     * 
+     * <br>
+     * A <i>null</i> value and {@link OBDao.Operator EQUAL_OPERATOR} operator creates a "isNull"
+     * expression for the given property.
+     * 
+     * <br>
+     * A <i>null</i> value and {@link OBDao.Operator NOT_EQUAL_OPERATOR} operator creates a
+     * "isNotNull" expression for the given property.
+     * 
+     * @param property
+     *          String with the property to filter by the OBCriteria.
+     * @param value
+     *          Object with the filter the property is filtered by.
+     * @param operator
+     *          Operator that defines the expression type to be applied for this Constraint.
+     */
     public Constraint(String property, Object value, Operator operator) {
       this.property = property;
       this.value = value;
@@ -207,6 +237,12 @@ public class OBDao {
     }
   }
 
+  /**
+   * Valid operators to apply on a Constraint to filter an OBCriteria.
+   * 
+   * @author gorkaion
+   * 
+   */
   public static enum Operator {
     EQUAL_OPERATOR, NOT_EQUAL_OPERATOR, LESS_EQUAL_OPERATOR, GREATER_EQUAL_OPERATOR, LESS_OPERATOR, GREATER_OPERATOR, IN_OPERATOR
   }
