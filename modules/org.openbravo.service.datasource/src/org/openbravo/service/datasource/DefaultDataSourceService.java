@@ -64,11 +64,6 @@ public class DefaultDataSourceService extends BaseDataSourceService {
 
       parameters.put(JsonConstants.USE_ALIAS, "true");
 
-      // System.err.println(">>>>>>>>>>>>>>>>>>>>>>>>>>" + new Date());
-      // for (String key : parameters.keySet()) {
-      // System.err.println(key + ": " + parameters.get(key));
-      // }
-
       return DefaultJsonDataService.getInstance().fetch(parameters);
     } finally {
       OBContext.restorePreviousMode();
@@ -139,6 +134,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     if (additionalPropParameter != null) {
       additionalProperties.append(additionalPropParameter);
     }
+
     // get the additionalproperties from the properties
     for (DataSourceProperty dsProp : dsProperties) {
       final Map<String, Object> params = dsProp.getUIDefinition().getDataSourceParameters();
