@@ -332,6 +332,15 @@ isc.OBViewGrid.addProperties({
     return this.Super('headerClick', arguments);
   },
 
+  // handle the del key when rows have been selected
+  bodyKeyPress : function (event, eventInfo) {
+    if (event.keyName === 'Delete' && this.getSelectedRecords().length > 0) {
+      this.view.deleteSelectedRows();
+      return;      
+    }
+    return this.Super('bodyKeyPress', arguments);
+  },
+
   // overridden to set the enterkeyaction to nextrowstart in cases the current row
   // is the last being edited  
   getNextEditCell : function (rowNum, colNum, editCompletionEvent) {

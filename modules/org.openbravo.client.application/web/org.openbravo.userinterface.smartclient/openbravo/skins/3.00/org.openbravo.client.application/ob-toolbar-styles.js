@@ -21,7 +21,7 @@
 isc.OBToolbar.addProperties({
   width: '100%',
   height: 45,
-  leftMargin: 30,
+  leftMargin: 6,
   rightMargin: 4,
   leftMembersMargin: 4,
   rightMembersMargin: 12

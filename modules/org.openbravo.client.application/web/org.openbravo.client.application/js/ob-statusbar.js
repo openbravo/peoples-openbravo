@@ -112,7 +112,7 @@ isc.OBStatusBar.addProperties({
       buttonType: 'next',
       prompt: OB.I18N.getLabel('OBUIAPP_NEXTBUTTON')
     });
-    var closeButton = isc.OBStatusBarIconButton.create({
+    this.closeButton = isc.OBStatusBarIconButton.create({
       view: this.view,
       buttonType: 'close',
       prompt: OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON')
@@ -133,7 +133,7 @@ isc.OBStatusBar.addProperties({
     });
     var buttonBar = isc.OBStatusBarIconButtonBar.create({});
     
-    buttonBar.addMembers([this.previousButton, this.nextButton, buttonSpacer, this.maximizeButton, this.restoreButton, closeButton]);
+    buttonBar.addMembers([this.previousButton, this.nextButton, buttonSpacer, this.maximizeButton, this.restoreButton, this.closeButton]);
     for (var i = 0; i < buttonBar.members.length; i++) {
       if (buttonBar.members[i].buttonType) {
         OB.TestRegistry.register('org.openbravo.client.application.statusbar.button.' + buttonBar.members[i].buttonType + '.' + this.view.tabId, buttonBar.members[i]);        

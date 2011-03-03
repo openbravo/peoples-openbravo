@@ -118,6 +118,18 @@
   background-image: url(./images/toolbar/iconButton-save.png);
 }
 
+.OBToolbarIconButton_icon_saveclose {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/toolbar/iconButton-saveclose.png);
+}
+
+.OBToolbarIconButton_icon_savecloseX {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/toolbar/iconButton-savecloseX.png);
+}
+
 .OBToolbarIconButton_icon_createCopy {
   background-repeat: no-repeat;
   background-position: center center;

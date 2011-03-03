@@ -45,11 +45,36 @@ isc.OBToolbar.addClassProperties({
           this.setDisabled(!form.isNew && !hasErrors && (form.isSaving || form.readOnly || 
                 !view.hasValidState() || !form.hasChanged));
       } else {
-        // enable when supporting grid editing
         this.setDisabled(true);
       }
     },
     keyboardShortcutId: 'ToolBar_Save'
+  },
+  SAVECLOSE_BUTTON_PROPERTIES: {
+    action: function(){
+      this.view.statusBar.closeButton.action();
+    },
+    buttonType: 'savecloseX',
+    prompt: OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON'),
+    updateState: function() {
+      var view = this.view, form = view.viewForm;      
+      if (view.isShowingForm) {
+        this.setDisabled(false);
+        var saveDisabled = (!form.isNew && (form.isSaving || form.readOnly || 
+              !view.hasValidState() || !form.hasChanged));
+        if (saveDisabled) {
+          this.buttonType = 'savecloseX';
+          this.prompt = OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON');
+        } else {
+          this.buttonType = 'saveclose';          
+          this.prompt = OB.I18N.getLabel('OBUIAPP_SaveClose');
+        }
+      } else {
+        this.setDisabled(true);
+      }
+      this.resetBaseStyle();
+    },
+    keyboardShortcutId: 'ToolBar_SaveClose'
   },
   NEW_ROW_BUTTON_PROPERTIES: {
     action: function(){

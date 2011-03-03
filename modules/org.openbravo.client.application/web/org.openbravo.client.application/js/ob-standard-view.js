@@ -195,6 +195,7 @@ isc.OBStandardView.addProperties({
     leftMemberButtons = [isc.OBToolbarIconButton.create(isc.OBToolbar.NEW_DOC_BUTTON_PROPERTIES),
                    isc.OBToolbarIconButton.create(isc.OBToolbar.NEW_ROW_BUTTON_PROPERTIES), 
                    isc.OBToolbarIconButton.create(isc.OBToolbar.SAVE_BUTTON_PROPERTIES), 
+                   isc.OBToolbarIconButton.create(isc.OBToolbar.SAVECLOSE_BUTTON_PROPERTIES), 
                    isc.OBToolbarIconButton.create(isc.OBToolbar.UNDO_BUTTON_PROPERTIES), 
                    isc.OBToolbarIconButton.create(isc.OBToolbar.DELETE_BUTTON_PROPERTIES), 
                    isc.OBToolbarIconButton.create(isc.OBToolbar.REFRESH_BUTTON_PROPERTIES)];
