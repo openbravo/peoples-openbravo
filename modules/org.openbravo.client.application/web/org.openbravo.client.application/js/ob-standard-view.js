@@ -1268,7 +1268,16 @@ isc.OBStandardView.addProperties({
     
     var callback = function(ok){
       var i, data, deleteData, error, recordInfos = [], removeCallBack = function(resp, data, req){
-        if (resp.status === isc.RPCResponse.STATUS_SUCCESS) {
+        var localData = resp.dataObject || resp.data || data;
+        if (!localData) {
+          // bail out, an error occured which should be displayed to the user now
+          return;
+        }
+        var status = resp.status;
+        if (localData.hasOwnProperty('status')) {
+          status = localData.status;
+        }
+        if (status === isc.RPCResponse.STATUS_SUCCESS) {
           if (view.isShowingForm) {
             view.switchFormGridVisibility();
           }
@@ -1285,10 +1294,14 @@ isc.OBStandardView.addProperties({
           view.refreshParentRecord();
         } else {
           // get the error message from the dataObject 
-          if (resp.dataObject && resp.dataObject.response && resp.dataObject.response.error && resp.dataObject.response.error.message) {
-            error = resp.dataObject.response.error;
+          if (localData.response && localData.response.error && localData.response.error.message) {
+            error = localData.response.error;
             if (error.type && error.type === 'user') {
               view.messageBar.setLabel(isc.OBMessageBar.TYPE_ERROR, null, error.message, error.params);
+            } else if (error.message && error.params) {
+                view.messageBar.setLabel(isc.OBMessageBar.TYPE_ERROR, null, error.message, error.params);
+            } else if (error.message) {
+              view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, error.message);
             } else {
               view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [0]));
             }
