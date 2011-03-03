@@ -86,11 +86,12 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
     final Map<String, Object> params = new HashMap<String, Object>();
     final Reference reference = OBDal.getInstance().get(Reference.class, getReference().getId());
     for (Selector selector : reference.getOBUISELSelectorList()) {
-      if (selector.isActive()) {
-        final String extraProperties = SelectorComponent.getAdditionalProperties(selector);
+      if (selector.isActive() && selector.getTable() != null) {
+        final String extraProperties = SelectorComponent.getAdditionalProperties(selector, true);
         if (extraProperties.length() > 0) {
           params.put(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER, extraProperties);
         }
+        return params;
       }
     }
     return params;

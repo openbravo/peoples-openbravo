@@ -134,21 +134,29 @@ public class SelectorComponent extends BaseTemplateComponent {
         + " has a null datasource and a null property");
   }
 
-  public static String getAdditionalProperties(Selector selector) {
+  public static String getAdditionalProperties(Selector selector, boolean onlyDisplayField) {
+    if (onlyDisplayField
+        && (selector.getDisplayfield() == null || !selector.getDisplayfield().isActive())) {
+      return "";
+    }
     final StringBuilder extraProperties = new StringBuilder();
-    if (selector.getDisplayfield() == null || !selector.getDisplayfield().isActive()) {
-      return extraProperties.toString();
+    for (SelectorField selectorField : selector.getOBUISELSelectorFieldList()) {
+      if (onlyDisplayField && selectorField != selector.getDisplayfield()) {
+        continue;
+      }
+      if (!selectorField.isActive()) {
+        continue;
+      }
+      String fieldName = getPropertyOrDataSourceField(selectorField);
+      final DomainType domainType = getDomainType(selectorField);
+      if (domainType instanceof ForeignKeyDomainType) {
+        fieldName = fieldName + "." + JsonConstants.IDENTIFIER;
+      }
+      if (extraProperties.length() > 0) {
+        extraProperties.append(",");
+      }
+      extraProperties.append(fieldName);
     }
-    SelectorField selectorField = selector.getDisplayfield();
-    String fieldName = getPropertyOrDataSourceField(selectorField);
-
-    // handle the case that the field is a foreign key
-    // in that case always show the identifier
-    final DomainType domainType = getDomainType(selectorField);
-    if (domainType instanceof ForeignKeyDomainType) {
-      fieldName = fieldName + "." + JsonConstants.IDENTIFIER;
-    }
-    extraProperties.append(fieldName);
     return extraProperties.toString();
   }
 
@@ -366,7 +374,7 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     final Map<String, Object> dsParameters = new HashMap<String, Object>(getParameters());
     dsParameters.put(DataSourceConstants.DS_ONLY_GENERATE_CREATESTATEMENT, true);
-    final String extraProperties = getAdditionalProperties(getSelector());
+    final String extraProperties = getAdditionalProperties(getSelector(), false);
     if (extraProperties.length() > 0) {
       dsParameters.put(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER, extraProperties.toString());
     }
