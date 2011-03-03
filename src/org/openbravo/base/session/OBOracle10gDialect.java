@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ import java.sql.Types;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.dialect.Oracle10gDialect;
+import org.hibernate.dialect.function.StandardSQLFunction;
 
 /**
  * Extends the Oracle10Dialect to replace some java-oracle type mappings to support the current rdb
@@ -43,6 +44,7 @@ public class OBOracle10gDialect extends Oracle10gDialect {
     registerColumnType(Types.VARCHAR, 4000, "nvarchar2($l)");
     registerColumnType(Types.VARCHAR, 100, "varchar2($l)");
     registerColumnType(Types.VARCHAR, 5, "char($l)");
+    registerFunction("to_number", new StandardSQLFunction("to_number", Hibernate.BIG_DECIMAL));
 
     log.debug("Created Openbravo specific Oracle DIalect");
   }
