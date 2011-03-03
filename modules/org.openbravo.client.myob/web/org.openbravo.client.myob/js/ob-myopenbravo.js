@@ -341,9 +341,6 @@ isc.OBMyOpenbravo.addProperties({
     if (recentList && recentList.length > 0) {
     
       handleClickFunction = function(){
-        if (this.updateRecent) {
-          OB.RecentUtilities.addRecent('OBUIAPP_RecentViewList', this.recent);
-        }
         if (this.recent.viewId) {
           OB.Layout.ViewManager.openView(this.recent.viewId, this.recent);
         } else {
