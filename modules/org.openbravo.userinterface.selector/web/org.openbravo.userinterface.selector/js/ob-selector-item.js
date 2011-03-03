@@ -461,6 +461,19 @@ isc.OBSelectorItem.addProperties({
     criteria[OB.Constants.SORTBY_PARAMETER] = this.displayField;
     
     return criteria;
+  },
+  
+  mapValueToDisplay : function (value) {
+    var ret = this.Super('mapValueToDisplay', arguments);
+    if (ret === value && this.isDisabled()) {
+      return '';
+    }
+    if (ret === value && !this.valueMap) {
+      this.valueMap = {};
+      this.valueMap[value] = '';
+      return '';
+    }
+    return ret;
   }
 });
 
