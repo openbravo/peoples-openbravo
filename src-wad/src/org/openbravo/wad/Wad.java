@@ -1764,19 +1764,27 @@ public class Wad extends DefaultHandler {
     // UI Patter for edition toolbar
     xmlDocument.setParameter("uiPattern", uiPattern);
 
-    String strHighVolume = "", strParamHighVolume = "", strHighVolumeComp = "";
+    String strParamHighVolume = "", strHighVolumeComp = "";
+
+    String filter1 = "(tableSQL.hasInternalFilter()";
+    String filter2 = "";
 
     if (selCol != null) {
       for (int i = 0; i < selCol.length; i++) {
-        strHighVolume += selCol[i].htmltext;
+        filter1 += " && (\"\").equals(strParam" + selCol[i].columnname + ")";
+        filter2 += " || !((\"\").equals(strParam" + selCol[i].columnname
+            + ") || (\"%\").equals(strParam" + selCol[i].columnname + ")) ";
+
         strParamHighVolume += "String strParam" + selCol[i].columnname
-            + " = vars.getSessionValue(tabId + \"|param" + selCol[i].columnname + "\");\n";
+
+        + " = vars.getSessionValue(tabId + \"|param" + selCol[i].columnname + "\");\n";
         strHighVolumeComp += selCol[i].xmltext;
-        if (i < selCol.length - 1)
-          strHighVolume += " && ";
       }
     }
-    xmlDocument.setParameter("searchName", strHighVolume);
+
+    filter1 += ")";
+
+    xmlDocument.setParameter("searchName", filter1 + filter2);
     xmlDocument.setParameter("searchVariables", strParamHighVolume);
     xmlDocument.setParameter("searchComparations", strHighVolumeComp);
 

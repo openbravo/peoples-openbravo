@@ -851,7 +851,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     <PARAMETER_TMP id="paramSearchVariables">xx</PARAMETER_TMP>
     boolean hasSearchCondition=false;
     vars.removeEditionData(tabId);
-    <FIELDS_TMP id="sectionIsHighVolume4">if (!(<PARAMETER_TMP id="paramSearchName">xx</PARAMETER_TMP>)) hasSearchCondition=true;</FIELDS_TMP>
+    <FIELDS_TMP id="sectionIsHighVolume4">hasSearchCondition = <PARAMETER_TMP id="paramSearchName">xx</PARAMETER_TMP>;</FIELDS_TMP>
     String strOffset = vars.getSessionValue(tabId + "|offset");
     String selectedRow = "0";
     if (!str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) {
@@ -973,7 +973,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     vars.removeEditionData(tabId);
     <PARAMETER_TMP id="paramSearchVariables">xx</PARAMETER_TMP>
     boolean hasSearchCondition=false;
-    <FIELDS_TMP id="sectionIsHighVolume4">if (!(<PARAMETER_TMP id="paramSearchName">xx</PARAMETER_TMP>)) hasSearchCondition=true;</FIELDS_TMP>
+    <FIELDS_TMP id="sectionIsHighVolume4">hasSearchCondition = <PARAMETER_TMP id="paramSearchName">xx</PARAMETER_TMP>;</FIELDS_TMP>
 
 <PARAMETER_TMP id="sectionIsHighVolume4">       String strParamSessionDate = vars.getGlobalVariable("inpParamSessionDate", Utility.getTransactionalDate(this, vars, windowId), "");</PARAMETER_TMP>
       String buscador = "";
