@@ -534,3 +534,14 @@ OB.Utilities.postThroughHiddenForm = function(url, data){
   
   OB.GlobalHiddenForm.submit();
 };
+
+// ** {{{ OB.Utilities.updateSmartClientComponentValue }}} **
+//
+// Updates the value of a smartclient component.
+//
+// Parameters:
+// * {{{input}}}: the input field (html dom input element)
+// * {{{component}}}: the Smartclient component (must have a setValue function)
+OB.Utilities.updateSmartClientComponentValue = function(/* Object */input, /* Object */ component){
+  component.setValue(input.value);
+};

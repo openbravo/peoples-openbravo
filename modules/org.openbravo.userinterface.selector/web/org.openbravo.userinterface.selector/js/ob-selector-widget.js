@@ -232,6 +232,14 @@ isc.OBSelectorWidget
           changed = oldValue !== newValue;
           this.selector.openbravoField.value = newValue;
           this.selector.selectorField.setValue(newValue);
+          
+          // set the value in the valuemap so it shows up correctly without loading
+          // all the info again
+          if (!this.selector.selectorField.valueMap) {
+            this.selector.selectorField.valueMap = {};
+          }
+          this.selector.selectorField.valueMap[newValue] = selected[this.selector.displayField];
+          this.selector.selectorField.updateValueMap();
         } else {
           changed = oldValue !== '';
           this.selector.openbravoField.value = '';
