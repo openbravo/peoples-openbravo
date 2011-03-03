@@ -41,6 +41,7 @@ import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -75,7 +76,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     try {
 
       Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
-      List<SelectorField> fields = getActiveSelectorFields(sel);
+      List<SelectorField> fields = OBDao.getActiveOBObjectList(sel,
+          Selector.PROPERTY_OBUISELSELECTORFIELDLIST);
 
       // Parse the HQL in case that optional filters are required
       String HQL = parseOptionalFilters(parameters, sel, xmlDateFormat);
@@ -171,7 +173,9 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
     StringBuffer defaultExpressionsFilter = new StringBuffer();
     boolean hasFilter = false;
-    for (SelectorField field : getActiveSelectorFields(sel)) {
+    List<SelectorField> fields = OBDao.getActiveOBObjectList(sel,
+        Selector.PROPERTY_OBUISELSELECTORFIELDLIST);
+    for (SelectorField field : fields) {
       if (StringUtils.isEmpty(field.getClauseLeftPart())) {
         continue;
       }
@@ -346,7 +350,9 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     if (sortByClause.length() == 0) {
       String fieldName = "";
       Long sortNumber = Long.MAX_VALUE;
-      for (SelectorField selField : getActiveSelectorFields(sel)) {
+      List<SelectorField> selFields = OBDao.getActiveOBObjectList(sel,
+          Selector.PROPERTY_OBUISELSELECTORFIELDLIST);
+      for (SelectorField selField : selFields) {
         if (selField.isShowingrid() && selField.getSortno() < sortNumber) {
           sortNumber = selField.getSortno();
           fieldName = selField.getDisplayColumnAlias();
@@ -414,15 +420,6 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       }
     }
     return 0;
-  }
-
-  private List<SelectorField> getActiveSelectorFields(Selector sel) {
-    OBDal.getInstance().enableActiveFilter();
-    try {
-      return sel.getOBUISELSelectorFieldList();
-    } finally {
-      OBDal.getInstance().disableActiveFilter();
-    }
   }
 
 }

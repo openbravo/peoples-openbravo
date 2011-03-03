@@ -232,12 +232,8 @@ public class SelectorComponent extends BaseTemplateComponent {
 
   private List<SelectorField> getActiveSelectorFields() {
     if (selectorFields == null) {
-      OBDal.getInstance().enableActiveFilter();
-      try {
-        selectorFields = getSelector().getOBUISELSelectorFieldList();
-      } finally {
-        OBDal.getInstance().disableActiveFilter();
-      }
+      selectorFields = OBDao.getActiveOBObjectList(getSelector(),
+          Selector.PROPERTY_OBUISELSELECTORFIELDLIST);
     }
     return selectorFields;
   }
