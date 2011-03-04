@@ -5,15 +5,15 @@
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
 * file except in compliance with the License. You  may  obtain  a copy of
-* the License at http://www.openbravo.com/legal/license.html 
+* the License at http://www.openbravo.com/legal/license.html
 * Software distributed under the License  is  distributed  on  an "AS IS"
 * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 * License for the specific  language  governing  rights  and  limitations
-* under the License. 
-* The Original Code is Openbravo ERP. 
-* The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2006 Openbravo SLU 
-* All Rights Reserved. 
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2011 Openbravo SLU
+* All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************
 -->
@@ -44,14 +44,16 @@
   <PARAMETER id="inpRecord" name="paramRecord" attribute="value" default=""/>
   <PARAMETER id="inpTable" name="paramTable" attribute="value" default=""/>
   <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>
-  <PARAMETER id="paramPageNo" name="PageNo" attribute="value"/>
+  <PARAMETER id="paramPageNo" name="inpPageNo" attribute="value" default="1"/>
+  <PARAMETER id="paramEntryNo" name="inpEntryNo" attribute="value" default="1"/>
+  <PARAMETER id="paramInitialBalance" name="inpInitialBalance" attribute="value" default="0"/>
 
-  <PARAMETER id="parameterShowClosing" name="constantShowClosing" default="1"/>
-  <PARAMETER id="paramShowClosing" name="showClosing" boolean="checked" withId="parameterShowClosing" default="0"/>
-  <PARAMETER id="parameterShowReg" name="constantShowReg" default="1"/>
-  <PARAMETER id="paramShowReg" name="showReg" boolean="checked" withId="parameterShowReg" default="0"/>
-  <PARAMETER id="parameterShowOpening" name="constantShowOpening" default="1"/>
-  <PARAMETER id="paramShowOpening" name="showOpening" boolean="checked" withId="parameterShowOpening" default="0"/>
+  <PARAMETER id="fieldCheck" name="check" default="Y"/>
+  <PARAMETER id="paramShowRegular" name="showRegular" boolean="checked" withId="fieldCheck"/>
+  <PARAMETER id="paramShowClosing" name="showClosing" boolean="checked" withId="fieldCheck"/>
+  <PARAMETER id="paramShowReg" name="showReg" boolean="checked" withId="fieldCheck"/>
+  <PARAMETER id="paramShowOpening" name="showOpening" boolean="checked" withId="fieldCheck"/>
+  <PARAMETER id="paramShowDescription" name="showDescription" boolean="checked" withId="fieldCheck"/>
 
   <PARAMETER id="jsDisablePreviousNext" name="jsDisablePreviousNext" default=""/>
 
@@ -85,6 +87,7 @@
     <FIELD id="fieldId" attribute="onclick" replace="zz">docbasetype</FIELD>
     <FUNCTION id="functionOrderJournal" name="ORDER" attribute="value">identifier</FUNCTION>
     <FUNCTION id="functionCalculateOrderJournal" name="ADD" arg1="functionOrderJournal" arg2="paramGroupId" format="integerInform"/>
+    <FUNCTION id="functionCalculateOrderJournalWithInitial" name="ADD" arg1="functionCalculateOrderJournal" arg2="paramEntryNo" format="integerInform"/>
     <SECTION id="sectionSchema" field="schemaName"/>    	
     <SECTION id="sectionDateAcct" field="dateacct"/>
     <SECTION id="sectionJournal" field="identifier"/>

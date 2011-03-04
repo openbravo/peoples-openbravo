@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -302,28 +302,80 @@ function onloadFunctions() {
                 </select></td>
             </tr>
             <tr>
-              <td class="TitleCell"> <span class="LabelText">Accounting schema</span></td>
+              <td class="TitleCell"> <span class="LabelText">Accounting Schema</span></td>
               <td class="Combo_ContentCell" colspan="2"> <select  name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="Combo Combo_TwoCells_width">
                   <option value=""> <div id="reportC_ACCTSCHEMA_ID"></div></option>
                 </select></td>
             </tr>
             <tr>
-              <td class="TitleCell"><span class="LabelText">Initial page number</span></td>
-              <td class="TextBox_ContentCell"> <input dojoType="openbravo:Textbox"  class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpPageNo" id="paramPageNo" size="10" maxlength="10" value=""></input><script>djConfig.searchIds.push("paramPageNo");</script>
-              </td>              
+              <td colspan="6">
+                <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                  <tr class="FieldGroup_TopMargin"/>
+                  <tr>
+                    <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupTitle">Type</td>
+                    <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupContent"/>
+                  </tr>
+                  <tr class="FieldGroup_BottomMargin"/>
+                </tbody>
+                </table>
+              </td>
             </tr>
-	    <tr>
-	      <td class="TitleCell"><span class="LabelText">Show closing</span></td>
-              <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowClosing" name="inpShowClosing" value="0"/></td>
+        <tr>
+          <td class="TitleCell"><span class="LabelText">Show Regular Entries</span></td>
+          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowRegular" name="inpShowRegular" value="Y"/></td>
+          <td class="ContentCell"></td>
+          <td class="TitleCell"><span class="LabelText">Show Regularization</span></td>
+          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowReg" name="inpShowReg" value="Y"/></td>
+        </tr>
+        <tr>
+          <td class="TitleCell"><span class="LabelText">Show Opening</span></td>
+          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowOpening" name="inpShowOpening" value="Y"/></td>
+          <td class="ContentCell"></td>
+          <td class="TitleCell"><span class="LabelText">Show Closing</span></td>
+          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowClosing" name="inpShowClosing" value="Y"/></td>
 	    </tr>
-	    <tr>
-	      <td class="TitleCell"><span class="LabelText">Show regularization</span></td>
-              <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowReg" name="inpShowReg" value="0"/></td>
-	    </tr>
-	    <tr>
-	      <td class="TitleCell"><span class="LabelText">Show opening</span></td>
-              <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowOpening" name="inpShowOpening" value="0"/></td>
-	    </tr>
+            <tr>
+              <td colspan="6">
+                <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                  <tr class="FieldGroup_TopMargin"/>
+                  <tr>
+                    <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupTitle">Printing</td>
+                    <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupContent"/>
+                  </tr>
+                  <tr class="FieldGroup_BottomMargin"/>
+                </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td class="TitleCell"><span class="LabelText">Initial Page Number</span></td>
+              <td class="TextBox_ContentCell"> <input dojoType="openbravo:Textbox"  class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpPageNo" id="paramPageNo" size="10" maxlength="10" value=""></input><script>djConfig.searchIds.push("paramPageNo");</script>
+              </td>
+              <td class="ContentCell"></td>
+              <td class="TitleCell"><span class="LabelText">Initial Entry Number</span></td>
+              <td class="TextBox_ContentCell">
+                <input dojoType="openbravo:Textbox" class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpEntryNo"
+                       id="paramEntryNo" size="10" maxlength="10" value=""></input>
+                <script>djConfig.searchIds.push("paramEntryNo");</script>
+              </td>
+            </tr>
+            <tr>
+              <td class="TitleCell"><span class="LabelText">Initial Balance</span></td>
+              <td class="TextBox_ContentCell">
+                <input dojoType="openbravo:RealNumberTextbox" class="TextBox_OneCell_width" type="text" name="inpInitialBalance"
+                       id="paramInitialBalance" size="10" maxlength="10" value="" outputformat="euroEdition"></input>
+                <script>djConfig.searchIds.push("paramInitialBalance");</script>
+              </td>
+              <td class="ContentCell"></td>
+              <td class="TitleCell"><span class="LabelText">Show Entry Description</span></td>
+              <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowDescription" name="inpShowDescription" value="Y"/></td>
+            </tr>
             <tr>
               <td colspan="6">
                 <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
@@ -385,10 +437,10 @@ function onloadFunctions() {
                     <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                       <tr class="DataGrid_Body_Row">
                         <th class="DataGrid_Header_Cell"> <a href="#" onclick="submitPage('DEFAULT', document.frmSecondary, 'xx', 'yy', 'zz');return false;" onmouseover="window.status='General Ledger Journal';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"> 
-                          Journal entry&nbsp;<span id="functionCalculateOrderJournal">xx123</span></a> 
+                          Journal Entry&nbsp;<span id="functionCalculateOrderJournal">xx123</span><!--span id="functionCalculateOrderJournalWithInitial">xx123</span--></a>
                           <input type="hidden" name="inpordenJournal" id="functionOrderJournal" value=""></input>
                         </th>
-						<th width="57%" class="DataGrid_Header_Cell">Accounting schema&nbsp;<span id="fieldSchemaName">xxSchema Name</span></th>
+						<th width="57%" class="DataGrid_Header_Cell">Accounting Schema&nbsp;<span id="fieldSchemaName">xxSchema Name</span></th>
                         <th width="14%" class="DataGrid_Header_Cell">Date&nbsp;<span id="fieldDateacct">xx12/12/2003</span></th>
                         <th width="8%" class="DataGrid_Header_Cell"> <a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpFactAcctGroupId, 'yy/xx', false, document.frmMain, 'ReportGeneralLedgerJournalDetail.html', null, false, true);return false;" onmouseover="window.status='General Ledger Journal';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldIdentifier"> 
                           Detail</a></th>

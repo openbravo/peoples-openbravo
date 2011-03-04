@@ -5,15 +5,15 @@
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
@@ -31,7 +31,7 @@
       SELECT SCHEMA_ID, SCHEMA_NAME, IDENTIFIER, DATEACCT, VALUE, NAME, ID, AD_TABLE_ID, DOCBASETYPE, SEQNO, '' AS TOTAL, '' AS DESCRIPTION,
       (CASE FACTACCTTYPE WHEN 'O' THEN 1 WHEN 'N' THEN 2 WHEN 'R' THEN 3 ELSE 4 END) AS FACTACCTTYPE2,
       (CASE AMTACCTDR WHEN 0 THEN NULL ELSE AMTACCTDR END) AS AMTACCTDR, (CASE AMTACCTCR WHEN 0 THEN NULL ELSE AMTACCTCR END) AS AMTACCTCR, 
-      '' AS GROUPEDLINES
+      '' AS GROUPEDLINES, '' AS TAXID
       FROM 
       (SELECT F.C_ACCTSCHEMA_ID AS SCHEMA_ID, SC.NAME AS SCHEMA_NAME, F.FACT_ACCT_GROUP_ID AS IDENTIFIER, F.DATEACCT,
       F.ACCTVALUE AS VALUE, F.ACCTDESCRIPTION AS NAME,F.RECORD_ID AS ID, F.AD_TABLE_ID, F.DOCBASETYPE,
@@ -49,6 +49,7 @@
       ORDER BY SCHEMA_NAME, DATEACCT, FACTACCTTYPE2, IDENTIFIER, SEQNO
       ]]></Sql>
     <Field name="rownum" value="count"/>
+    <Parameter name="descriptionType" type="replace" optional="true" after="F.ACCTVALUE AS VALUE, F." text="ACCTDESCRIPTION"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND F.AD_ORG_ID IN(" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND f.dateacct >= TO_DATE(?)]]></Parameter>
@@ -57,6 +58,7 @@
     <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="orgFamily" type="replace" optional="true" after="AND f.AD_ORG_ID IN(" text="'2'"/>
     <Parameter name="checks" type="replace" optional="true" after="AND F.FactAcctType IN (" text="'C','N','O','R'"/>
+    <Parameter name="descriptionType" type="replace" optional="true" after="GROUP BY f.C_ACCTSCHEMA_ID, SC.NAME, F.AD_TABLE_ID, F.DATEACCT, F." text="ACCTDESCRIPTION"/>
     <!--Parameter name="closing" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'C'"/>
     <Parameter name="regularization" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'R'"/>
     <Parameter name="opening" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'O'"/-->
@@ -166,12 +168,14 @@
       ORDER BY SCHEMA_NAME, DATEACCT, FACTACCTTYPE2, IDENTIFIER, SEQNO
       ]]></Sql>
     <Field name="rownum" value="count"/>
+    <Parameter name="descriptionType" type="replace" optional="true" after="F.ACCTVALUE AS VALUE, F." text="ACCTDESCRIPTION"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND F.AD_ORG_ID IN(" text="'1'"/>
     <Parameter name="table" optional="true" after="AND 1=1"><![CDATA[ AND f.ad_table_Id = ?]]></Parameter>
     <Parameter name="record" optional="true" after="AND 1=1"><![CDATA[ AND f.record_Id = ?]]></Parameter>   
     <Parameter name="table" optional="true" after="AND 1=1"><![CDATA[ AND f.ad_table_ID = ?]]></Parameter>
     <Parameter name="record" optional="true" after="AND 1=1"><![CDATA[ AND f.record_ID = ?]]></Parameter>
+    <Parameter name="descriptionType" type="replace" optional="true" after="GROUP BY f.C_ACCTSCHEMA_ID, SC.NAME, F.AD_TABLE_ID, F.DATEACCT, F." text="ACCTDESCRIPTION"/>
   </SqlMethod>
   <SqlMethod name="selectCountDirect" type="preparedStatement" return="string" default="0">
     <SqlMethodComment></SqlMethodComment>
@@ -223,9 +227,11 @@
       ORDER BY SCHEMA_NAME, DATEACCT, FACTACCTTYPE2, IDENTIFIER, SEQNO
       ]]></Sql>
     <Field name="rownum" value="count"/>
+    <Parameter name="descriptionType" type="replace" optional="true" after="F.ACCTVALUE AS VALUE, F." text="ACCTDESCRIPTION"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND F.AD_ORG_ID IN(" text="'1'"/>
     <Parameter name="factAcctGroupId"/>
+    <Parameter name="descriptionType" type="replace" optional="true" after="GROUP BY f.C_ACCTSCHEMA_ID, SC.NAME, F.AD_TABLE_ID, F.DATEACCT, F." text="ACCTDESCRIPTION"/>
   </SqlMethod>
   <SqlMethod name="selectCountDirect2" type="preparedStatement" return="string" default="0">
     <SqlMethodComment></SqlMethodComment>
@@ -264,5 +270,15 @@
         WHERE AD_CLIENT_ID = ?
       ]]></Sql>
     <Parameter name="client"/>
+  </SqlMethod>
+  <SqlMethod name="selectOrgTaxID" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+        SELECT MIN(I.TAXID)
+        FROM AD_ORGINFO I
+        WHERE I.AD_ORG_ID = ?
+      ]]></Sql>
+    <Parameter name="org"/>
   </SqlMethod>
 </SqlClass>
