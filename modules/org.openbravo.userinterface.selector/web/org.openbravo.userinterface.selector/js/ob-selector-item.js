@@ -136,7 +136,7 @@ isc.OBSelectorPopupWindow.addProperties({
         width: this.buttonBarSpace
       }), cancelButton, isc.LayoutSpacer.create({})]
     })];
-    return this.Super('initWidget', arguments);
+    this.Super('initWidget', arguments);
   },
   
   setFilterEditorProperties: function(gridFields){
@@ -173,7 +173,7 @@ isc.OBSelectorPopupWindow.addProperties({
       
       gridField.filterEditorProperties.showLabel = false;
       gridField.filterEditorProperties.showTitle = false;
-      
+      gridField.filterEditorProperties.selectorWindow = selectorWindow;
       gridField.filterEditorProperties.textMatchStyle = selectorWindow.selector.popupTextMatchStyle;
       
       // add the icon on the right to the other icons

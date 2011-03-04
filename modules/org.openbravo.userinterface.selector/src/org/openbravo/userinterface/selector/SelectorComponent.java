@@ -41,14 +41,15 @@ import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.Template;
+import org.openbravo.client.kernel.reference.FKComboUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
-import org.openbravo.dal.service.OBDao.Constraint;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.dal.service.OBDao.Constraint;
 import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Field;
@@ -614,6 +615,7 @@ public class SelectorComponent extends BaseTemplateComponent {
       localSelectorField.setFilter(!pickList && selectorField.isFilterable());
       localSelectorField.setDomainType(domainType);
       localSelectorField.setUIDefinition(getUIDefinition(selectorField));
+      localSelectorField.setSelectorField(selectorField);
 
       // determine format
       // if (selectorField.getProperty() != null) {
@@ -710,6 +712,7 @@ public class SelectorComponent extends BaseTemplateComponent {
     private boolean sort;
     private DomainType domainType;
     private UIDefinition uiDefinition;
+    private SelectorField selectorField;
 
     public DomainType getDomainType() {
       return domainType;
@@ -745,6 +748,10 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     public String getFilterEditorProperties() {
       if (getUIDefinition() != null) {
+        if (getUIDefinition() instanceof FKComboUIDefinition) {
+          return ", canFilter:true, required: false, filterEditorType: 'OBSelectorFilterSelectItem', filterEditorProperties: {entity: '"
+              + getEntityName() + "'}";
+        }
         return getUIDefinition().getFilterEditorProperties(null);
       }
       return ", filterEditorType: 'OBTextItem'";
@@ -838,6 +845,29 @@ public class SelectorComponent extends BaseTemplateComponent {
     public void setUIDefinition(UIDefinition uiDefinition) {
       this.uiDefinition = uiDefinition;
     }
+
+    public void setSelectorField(SelectorField selectorField) {
+      this.selectorField = selectorField;
+    }
+
+    public SelectorField getSelectorField() {
+      return selectorField;
+    }
+
+    public String getEntityName() {
+      if (selectorField == null) {
+        return null;
+      }
+      if (selectorField.getObuiselSelector().getTable() != null
+          && selectorField.getProperty() != null) {
+        final String entityName = selectorField.getObuiselSelector().getTable().getName();
+        final Entity entity = ModelProvider.getInstance().getEntity(entityName);
+        final Property property = DalUtil.getPropertyFromPath(entity, selectorField.getProperty());
+        return property.getTargetEntity().getName();
+      }
+      return null;
+    }
+
   }
 
   /**
