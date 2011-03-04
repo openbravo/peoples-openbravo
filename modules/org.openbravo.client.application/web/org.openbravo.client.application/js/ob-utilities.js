@@ -545,3 +545,20 @@ OB.Utilities.postThroughHiddenForm = function(url, data){
 OB.Utilities.updateSmartClientComponentValue = function(/* Object */input, /* Object */ component){
   component.setValue(input.value);
 };
+
+//** {{{ OB.Utilities.fixNull250 }}} **
+//
+// Transforms null values into '' to adapt display logic to 2.50 behavior.
+//
+// Parameters:
+// * {{{currentValues}}}: array of values
+OB.Utilities.fixNull250 = function (currentValues){
+  var i;
+  for(i in currentValues) { 
+    if(currentValues.hasOwnProperty(i) && 
+       currentValues[i] === null) {
+      currentValues[i] = '';
+    }
+  }
+};
+
