@@ -49,14 +49,6 @@ isc.OBTextItem.addProperties({
   textBoxStyle: 'OBFormFieldInput'
 });
 
-isc.OBLinkItem.addProperties({
-  errorOrientation: 'left',
-  height: 21,
-  width: '100%',
-  cellStyle: 'OBFormField',
-  titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldInput'
-});
 
 isc.OBTimeItem.addProperties({
   errorOrientation: 'left',
