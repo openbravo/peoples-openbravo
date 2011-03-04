@@ -540,14 +540,15 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     OBContext.setAdminMode();
     try {
-      for (final SelectorField field : getActiveSelectorFields()) {
-        if (!Boolean.TRUE.equals(field.isOutfield())) {
-          continue;
-        }
-
-        if (field.getSuffix() == null || "".equals(field.getSuffix())) {
-          continue;
-        }
+      final Constraint selectorConstraint = new Constraint(SelectorField.PROPERTY_OBUISELSELECTOR,
+          getSelector());
+      final Constraint isOutFieldConstraint = new Constraint(SelectorField.PROPERTY_ISOUTFIELD,
+          true);
+      final Constraint hasSuffixConstraint = new Constraint(SelectorField.PROPERTY_SUFFIX, null,
+          OBDao.Operator.NOT_EQUAL_OPERATOR);
+      List<SelectorField> fields = OBDao.getAllInstances(SelectorField.class, selectorConstraint,
+          isOutFieldConstraint, hasSuffixConstraint);
+      for (final SelectorField field : fields) {
         hiddenInputs.put(columnName + field.getSuffix(), getElementString.replaceAll("@id@",
             columnName + field.getSuffix()));
       }

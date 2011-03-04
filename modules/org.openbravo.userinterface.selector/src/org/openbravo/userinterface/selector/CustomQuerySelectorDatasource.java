@@ -40,8 +40,10 @@ import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.dal.service.OBDao.Constraint;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -346,21 +348,21 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       }
     }
 
-    // If sortByClause is empty set default sort options. Order by first shown column.
+    // If sortByClause is empty set default sort options.
     if (sortByClause.length() == 0) {
-      String fieldName = "";
-      Long sortNumber = Long.MAX_VALUE;
-      List<SelectorField> selFields = OBDao.getActiveOBObjectList(sel,
-          Selector.PROPERTY_OBUISELSELECTORFIELDLIST);
-      for (SelectorField selField : selFields) {
-        if (selField.isShowingrid() && selField.getSortno() < sortNumber) {
-          sortNumber = selField.getSortno();
-          fieldName = selField.getDisplayColumnAlias();
+      OBCriteria<SelectorField> selFieldsCrit = OBDao.getFilteredCriteria(SelectorField.class,
+          new Constraint(SelectorField.PROPERTY_OBUISELSELECTOR, sel), new Constraint(
+              SelectorField.PROPERTY_SHOWINGRID, true));
+      selFieldsCrit.addOrderBy(SelectorField.PROPERTY_SORTNO, true);
+      for (SelectorField selField : selFieldsCrit.list()) {
+        int fieldSortIndex = getFieldSortIndex(selField.getDisplayColumnAlias(), sel);
+        if (fieldSortIndex > 0) {
+          sortByClause.append(fieldSortIndex + ", ");
         }
       }
-      int fieldSortIndex = getFieldSortIndex(fieldName, sel);
-      if (fieldSortIndex > 0) {
-        sortByClause.append(fieldSortIndex);
+      // Delete last 2 characters: ", "
+      if (sortByClause.length() > 0) {
+        sortByClause.delete(sortByClause.length() - 3, sortByClause.length() - 1);
       }
     }
     String result = "";
