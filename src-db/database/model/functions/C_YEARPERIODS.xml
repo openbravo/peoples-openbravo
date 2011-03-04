@@ -46,7 +46,6 @@
     v_Year_Str VARCHAR(20) ;
     v_User_ID VARCHAR2(32);
     v_year_num NUMBER;
-    v_language VARCHAR2(6);
   BEGIN
     --  Update AD_PInstance
     --  DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing');
@@ -68,13 +67,8 @@
       ORDER BY p.SeqNo
       )
     LOOP
-      IF Cur_Parameter.ParameterName = 'AD_LANGUAGE_ID' THEN
-        SELECT AD_LANGUAGE INTO v_language FROM AD_LANGUAGE WHERE AD_LANGUAGE_ID = Cur_Parameter.P_String;
-	v_language = COALESCE(v_language, 'en_US');
-      END IF;
       v_Year_ID:=Cur_Parameter.Record_ID;
     END LOOP; -- Get Parameter
-    
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Year_ID) ;
     --  Get C_Year Record
     DBMS_OUTPUT.PUT_LINE('Get Year info') ;
@@ -93,7 +87,7 @@
     WHERE C_Year_ID=v_Year_ID;
     -- Check the format
     DBMS_OUTPUT.PUT_LINE('Checking format') ;
-    v_ResultStr:='Year not numeric: '||v_Year_Str;    
+    v_ResultStr:='Year not numeric: '||v_Year_Str;
     BEGIN
     SELECT TO_NUMBER(v_Year_Str) INTO v_year_num FROM DUAL;
      -- Postgres hack
@@ -137,10 +131,7 @@
             v_NextNo, v_Client_ID, v_Org_ID, 'Y',
             now(), v_User_ID, now(), v_User_ID,
             v_Year_ID, v_MonthNo, TO_DATE(ADD_MONTHS(v_StartDate, v_MonthNo-1)), 'S',
-	        (SELECT SUBSTR(COALESCE(AD_MONTH_TRL.NAME, AD_MONTH.NAME), 1,3) || '-' || SUBSTR(C_YEAR.YEAR,3,2) 
-                 FROM AD_MONTH LEFT OUTER JOIN AD_MONTH_TRL ON AD_MONTH.AD_MONTH_ID = AD_MONTH_TRL.AD_MONTH_ID AND AD_MONTH_TRL.AD_LANGUAGE = v_language, C_YEAR 
-                 WHERE  TO_NUMBER(AD_MONTH.VALUE) = v_MonthNo
-                 AND C_YEAR.C_YEAR_ID = v_Year_ID)
+	        (SELECT SUBSTR(name, 1,3) || '-' || SUBSTR(year,3,2) FROM AD_MONTH, C_YEAR WHERE TO_NUMBER(value)=v_MonthNo AND c_year_id=v_Year_ID)
            );
         DBMS_OUTPUT.PUT_LINE('Month Added') ;
       END IF;
