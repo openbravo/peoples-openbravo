@@ -49,6 +49,15 @@ isc.OBTextItem.addProperties({
   textBoxStyle: 'OBFormFieldInput'
 });
 
+isc.OBLinkItem.addProperties({
+  errorOrientation: 'left',
+  height: 21,
+  width: '100%',
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldInput'
+});
+
 isc.OBTimeItem.addProperties({
   errorOrientation: 'left',
   height: 21,
@@ -130,6 +139,25 @@ isc.OBYesNoItem.addProperties(isc.addProperties({}, OB.DefaultPickListStylePrope
 
 
 isc.OBSearchItem.addProperties({
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldInput',
+  pickerIconHeight: 21,
+  pickerIconWidth: 21,
+  height: 21,
+  pickerIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
+  clearIcon: {
+    showHover: true,
+    height: 15,
+    width: 15,
+    src: '[SKINIMG]../../org.openbravo.client.application/images/form/clear-field.png',    
+    prompt: OB.I18N.getLabel('OBUIAPP_ClearIconPrompt')
+  },
+  newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
+  newTabIconSize: 8
+});
+
+isc.OBLinkItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldInput',
