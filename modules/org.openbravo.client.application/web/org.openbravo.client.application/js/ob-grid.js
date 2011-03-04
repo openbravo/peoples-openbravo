@@ -285,7 +285,9 @@ isc.OBGrid.addProperties({
       _operationType: 'fetch',
       _noCount: true, // never do count for export
       exportAs: expProp.exportAs || 'csv',
-      exportToFile: true
+      viewState: expProp.viewState,
+      exportToFile: true,
+      _textMatchStyle: 'substring'
     }, this.getCriteria());
     
     OB.Utilities.postThroughHiddenForm(dsURL, d);

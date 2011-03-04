@@ -25,7 +25,8 @@ isc.OBToolbar.addClassProperties({
   TYPE_DELETE: 'eliminate',
   TYPE_UNDO: 'undo',
   TYPE_REFRESH: 'refresh',
-  
+  TYPE_EXPORT: 'export',
+
   SAVE_BUTTON_PROPERTIES: {
     action: function(){
       this.view.saveRow();
@@ -178,6 +179,26 @@ isc.OBToolbar.addClassProperties({
       }
     },
     keyboardShortcutId: 'ToolBar_Undo'
+  },
+  EXPORT_BUTTON_PROPERTIES: {
+    action: function(){
+      var requestProperties = {
+              exportAs: 'csv',
+              exportDisplay: 'download',
+              params: {
+                exportToFile: true
+              }
+            };
+      requestProperties.viewState = this.view.viewGrid.getViewState();
+      this.view.viewGrid.exportData(requestProperties);
+    },
+    disabled: false,
+    buttonType: 'export',
+    prompt: OB.I18N.getLabel('OBUIAPP_ExportGrid'),
+    updateState: function() {
+      this.setDisabled(this.view.isShowingForm);
+    },
+  keyboardShortcutId: 'ToolBar_Export'
   },
   // This offers a mechanism to add properties at runtime to buttons created through
   // templates and java
