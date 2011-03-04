@@ -2877,4 +2877,36 @@ public class Utility {
       OBContext.restorePreviousMode();
     }
   }
+
+  /**
+   * Returns a field name in the specified language. If there is not translation for that language,
+   * it returns the base name of the field.
+   * 
+   * @param fieldId
+   *          ID of the field to look for.
+   * @param language
+   *          Langage to get the name in.
+   * @return field name in the correct language.
+   */
+  public static String getFieldName(String fieldId, String language) {
+    StringBuilder hql = new StringBuilder();
+    hql.append("select (select t.name\n");
+    hql.append("          from ADFieldTrl t\n");
+    hql.append("         where t.field = f\n");
+    hql.append("           and t.language.language=:lang),\n");
+    hql.append("       f.name\n");
+    hql.append("  from ADField f\n");
+    hql.append(" where f.id =:fieldId\n");
+    Query qName = OBDal.getInstance().getSession().createQuery(hql.toString());
+    qName.setParameter("lang", language);
+    qName.setParameter("fieldId", fieldId);
+
+    if (qName.list().isEmpty()) {
+      log4j.warn("Not found name for fieldId " + fieldId);
+      return "";
+    }
+
+    Object[] names = (Object[]) qName.list().get(0);
+    return names[0] != null ? (String) names[0] : (String) names[1];
+  }
 }

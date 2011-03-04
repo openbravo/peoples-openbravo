@@ -837,27 +837,18 @@ public class Wad extends DefaultHandler {
       if (allTabs != null && allTabs.length > 0)
         parentTabIndex = parentTabId(allTabs, tabsData.tabid);
       FieldsData[] parentsFieldsData = null;
-      FieldsData[] parentsFieldsNameData = null;
+
       if (tabsData.issorttab.equals("Y")) {
         parentsFieldsData = FieldsData.parentsColumnNameSortTab(pool,
             (parentTabIndex != -1 ? allTabs[parentTabIndex].tabid : ""), tabsData.tableId);
-        parentsFieldsNameData = FieldsData.parentsColumnDisplayNameSortTab(pool, "",
-            tabsData.tableId);
       } else {
         parentsFieldsData = FieldsData.parentsColumnName(pool,
             (parentTabIndex != -1 ? allTabs[parentTabIndex].tabid : ""), tabsData.tabid);
-        parentsFieldsNameData = FieldsData.parentsColumnDisplayName(pool, "", tabsData.tabid,
-            (parentTabIndex != -1 ? allTabs[parentTabIndex].tabid : ""));
       }
-      String strParentNameDescription = (parentsFieldsNameData == null || parentsFieldsNameData.length == 0) ? ""
-          : parentsFieldsNameData[0].name;
+
       if (parentTabIndex != -1 && (parentsFieldsData == null || parentsFieldsData.length == 0)) {
         parentsFieldsData = FieldsData.parentsColumnReal(pool, allTabs[parentTabIndex].tabid,
             tabsData.tabid);
-        parentsFieldsNameData = FieldsData.parentsColumnDisplayNameReal(pool, "", tabsData.tabid,
-            allTabs[parentTabIndex].tabid);
-        strParentNameDescription = (parentsFieldsNameData == null || parentsFieldsNameData.length == 0) ? ""
-            : parentsFieldsNameData[0].name;
         sinParent = true;
         if (parentsFieldsData == null || parentsFieldsData.length == 0) {
           log4j.warn("No key found in parent tab: " + allTabs[parentTabIndex].tabname);
@@ -1043,7 +1034,7 @@ public class Wad extends DefaultHandler {
          *************************************************/
         processTabHtmlSortTab(parentsFieldsData, fileDir, tabsData.tabid, tabName,
             tabsData.realwindowname, keyColumnName, tabNamePresentation, allTabs, strProcess,
-            strDirectPrint, strParentNameDescription, windowName, "");
+            strDirectPrint, windowName, "");
       } else {
         /************************************************
          * JAVA
@@ -1082,8 +1073,8 @@ public class Wad extends DefaultHandler {
          * HTML in Relation view
          *************************************************/
         processTabHtmlRelation(parentsFieldsData, fileDir, tabsData.tabid, tabName, keyColumnName,
-            tabsData.uipattern.equals("RO"), strParentNameDescription, gridControl, false, "",
-            tabNamePresentation, tabsData.tableId, tabsData.accesslevel);
+            tabsData.uipattern.equals("RO"), gridControl, false, "", tabNamePresentation,
+            tabsData.tableId, tabsData.accesslevel);
 
         /************************************************
          * XML in Edition view
@@ -1744,6 +1735,7 @@ public class Wad extends DefaultHandler {
 
       xmlDocument.setParameter("parentTab", parentsFieldsData[0].adTabId);
       xmlDocument.setParameter("parentTabName", parentsFieldsData[0].parentTabName);
+      xmlDocument.setParameter("parentFieldID", parentsFieldsData[0].adFieldId);
     }
     xmlDocument.setParameter("keyData", Sqlc.TransformaNombreColumna(keyColumnName));
     xmlDocument.setParameter("table", tableName);
@@ -3352,9 +3344,8 @@ public class Wad extends DefaultHandler {
    */
   private void processTabHtmlSortTab(FieldsData[] parentsFieldsData, File fileDir, String strTab,
       String tabName, String windowName, String keyColumnName, String tabNamePresentation,
-      TabsData[] allTabs, String strProcess, String strDirectPrint,
-      String strParentNameDescription, String WindowPathName, String strLanguage)
-      throws ServletException, IOException {
+      TabsData[] allTabs, String strProcess, String strDirectPrint, String WindowPathName,
+      String strLanguage) throws ServletException, IOException {
     log4j.debug("Procesig relation sort tab html: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentRHtml;
     final String[] discard = new String[3];
@@ -3440,8 +3431,6 @@ public class Wad extends DefaultHandler {
    *          Name of the tab's key column.
    * @param isreadonly
    *          Boolean that means if is a read only tab or not.
-   * @param strParentNameDescription
-   *          The human description of the parent tab.
    * @param control
    *          Object of type WADGrid control.
    * @param isTranslated
@@ -3456,9 +3445,9 @@ public class Wad extends DefaultHandler {
    * @throws IOException
    */
   private void processTabHtmlRelation(FieldsData[] parentsFieldsData, File fileDir, String strTab,
-      String tabName, String keyColumnName, boolean isreadonly, String strParentNameDescription,
-      WADControl control, boolean isTranslated, String adLanguage, String tabNamePresentation,
-      String strTable, String accessLevel) throws ServletException, IOException {
+      String tabName, String keyColumnName, boolean isreadonly, WADControl control,
+      boolean isTranslated, String adLanguage, String tabNamePresentation, String strTable,
+      String accessLevel) throws ServletException, IOException {
     log4j.debug("Procesig relation html" + (isTranslated ? " translated" : "") + ": " + strTab
         + ", " + tabName);
     final String[] discard = new String[1];
@@ -3481,7 +3470,6 @@ public class Wad extends DefaultHandler {
     if (parentsFieldsData.length > 0) {
       xmlDocument.setParameter("keyParent", "inp"
           + Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
-      xmlDocument.setParameter("parentKeyNameDescription", strParentNameDescription);
       xmlDocument.setParameter("parentKeyName", parentsFieldsData[0].name);
     }
     xmlDocument.setParameter("importCSS", getVectorElementsNotRepeated(control.getCSSImport(),

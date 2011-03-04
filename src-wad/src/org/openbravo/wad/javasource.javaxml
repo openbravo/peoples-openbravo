@@ -871,7 +871,9 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     toolbar.prepareRelationTemplate<PARAMETER_TMP id="sameParent">NoSearch</PARAMETER_TMP>("<PARAMETER_TMP id="paramHasTree">hasTree</PARAMETER_TMP>".equals("Y"), hasSearchCondition, !vars.getSessionValue("#ShowTest", "N").equals("Y"), <PARAMETER_TMP id="paramIsReadOnly">readonly</PARAMETER_TMP>, Utility.getContext(this, vars, "ShowAudit", windowId).equals("Y"));
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
-<PARAMETER_TMP id="parent">    xmlDocument.setParameter("keyParent", strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);</PARAMETER_TMP>
+<PARAMETER_TMP id="parent">    xmlDocument.setParameter("keyParent", strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);
+    xmlDocument.setParameter("parentFieldName", Utility.getFieldName("<PARENT_TMP id="parentFieldID">xx</PARENT_TMP>", vars.getLanguage()));
+</PARAMETER_TMP>
 
     StringBuffer orderByArray = new StringBuffer();
       vars.setSessionValue(tabId + "|newOrder", "1");

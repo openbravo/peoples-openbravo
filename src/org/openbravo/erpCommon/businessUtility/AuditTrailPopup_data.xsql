@@ -64,13 +64,14 @@
       <Field name="nametab" value="void"/>
       <Field name="editreference" value="void"/>
       <Field name="tabmodule" value="void"/>
+      <Field name="adFieldId" value="void"/>
   </SqlMethod>
 
 <!-- method from src-wad/src/org/openbravo/wad/Fields_data.xsql, both copies need to stay in sync -->
   <SqlMethod name="parentsColumnName" type="preparedStatement" return="multiple">
       <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
       <Sql><![CDATA[
-        SELECT ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
+        SELECT AD_FIELD.AD_FIELD_ID, ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
         (SELECT tableNAME FROM AD_TABLE, AD_TAB WHERE AD_TABLE.ad_table_id = AD_TAB.ad_table_id
         AND AD_TAB.ad_tab_id=?) AS tablename, ? as AD_Tab_ID, (select name from ad_tab where ad_tab_id = ?) as parent_tab_name,
         (SELECT P.ad_module_id FROM AD_TABLE T, AD_PACKAGE P WHERE T.ad_table_id = AD_COLUMN.ad_table_id AND T.AD_PACKAGE_ID = P.AD_PACKAGE_ID) as tableModule,
@@ -91,7 +92,7 @@
   <SqlMethod name="parentsColumnReal" type="preparedStatement" return="multiple">
       <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
       <Sql>
-        SELECT ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
+        SELECT AD_FIELD.AD_FIELD_ID, ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
         (SELECT tableNAME FROM AD_TABLE, AD_TAB WHERE AD_TABLE.ad_table_id = AD_TAB.ad_table_id
         AND AD_TAB.ad_tab_id=?) AS tablename,
         (SELECT P.ad_module_id FROM AD_TABLE T, AD_PACKAGE P WHERE T.ad_table_id = AD_COLUMN.ad_table_id AND T.AD_PACKAGE_ID = P.AD_PACKAGE_ID) as tableModule,

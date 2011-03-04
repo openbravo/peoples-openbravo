@@ -51,6 +51,7 @@
 <PARAMETER_TMP id="sectionParent">
 <PARAMETER id="paramParentxx" name="parent" default=""/></PARAMETER_TMP>
 <PARAMETER_TMP id="relationControl"></PARAMETER_TMP>
+<PARAMETER id="related_info_cont" name="parentFieldName"/> 
 
 <DISCARD id="discard"/>
 </REPORT>

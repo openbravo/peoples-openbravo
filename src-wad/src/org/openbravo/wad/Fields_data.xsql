@@ -36,7 +36,7 @@
         isParent, '' as ACCESSLEVEL, ad_field.isreadonly, '' as issecondarykey, ad_field.showInRelation, ad_column.isEncrypted,
         ad_field.SORTNO, ad_column.istranslated, '' as id, '' as htmltext, '' as htmltexttrl, '' as xmltexttrl, '' as tablenametrl, 
         0 AS NOWRAP, ad_column.isEncrypted AS isColumnEncrypted, ad_column.isDesencryptable, ad_reference_value_id, ad_column.ad_val_rule_id, '' AS isjasper, ad_field.isactive, '' as AD_Tab_ID, '' as parent_tab_name, '' as orgcode,
-        '' as tableModule, '' as columnModule, '' as clientcode, '' as isautosave
+        '' as tableModule, '' as columnModule, '' as clientcode, '' as isautosave, '' as ad_field_id
       FROM ad_column left join ad_element on ad_column.ad_element_id = ad_element.ad_element_id,
            ad_field,  ad_table
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
@@ -102,7 +102,7 @@
   <SqlMethod name="parentsColumnNameSortTab" type="preparedStatement" return="multiple">
       <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
       <Sql><![CDATA[
-        SELECT ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
+        SELECT AD_FIELD.AD_FIELD_ID, ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
         (SELECT tableNAME FROM AD_TABLE, AD_TAB WHERE AD_TABLE.ad_table_id = AD_TAB.ad_table_id
         AND AD_TAB.ad_tab_id=?) AS tablename,
         (SELECT P.ad_module_id FROM AD_TABLE T, AD_PACKAGE P WHERE T.ad_table_id = AD_COLUMN.ad_table_id AND T.AD_PACKAGE_ID = P.AD_PACKAGE_ID) as tableModule,
@@ -118,7 +118,7 @@
   <SqlMethod name="parentsColumnName" type="preparedStatement" return="multiple">
       <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
       <Sql><![CDATA[
-        SELECT ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
+        SELECT AD_FIELD.AD_FIELD_ID, ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
         (SELECT tableNAME FROM AD_TABLE, AD_TAB WHERE AD_TABLE.ad_table_id = AD_TAB.ad_table_id
         AND AD_TAB.ad_tab_id=?) AS tablename, ? as AD_Tab_ID, (select name from ad_tab where ad_tab_id = ?) as parent_tab_name,
         (SELECT P.ad_module_id FROM AD_TABLE T, AD_PACKAGE P WHERE T.ad_table_id = AD_COLUMN.ad_table_id AND T.AD_PACKAGE_ID = P.AD_PACKAGE_ID) as tableModule,
@@ -139,7 +139,7 @@
   <SqlMethod name="parentsColumnReal" type="preparedStatement" return="multiple">
       <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
       <Sql>
-        SELECT ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
+        SELECT AD_FIELD.AD_FIELD_ID, ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
         (SELECT tableNAME FROM AD_TABLE, AD_TAB WHERE AD_TABLE.ad_table_id = AD_TAB.ad_table_id
         AND AD_TAB.ad_tab_id=?) AS tablename,
         (SELECT P.ad_module_id FROM AD_TABLE T, AD_PACKAGE P WHERE T.ad_table_id = AD_COLUMN.ad_table_id AND T.AD_PACKAGE_ID = P.AD_PACKAGE_ID) as tableModule,
@@ -161,54 +161,6 @@
       <Parameter name="parentTab"/>
       <Parameter name="tab"/>
       <Parameter name="parentTab"/>
-      <Parameter name="parentTab"/>
-  </SqlMethod>
-
-  <SqlMethod name="parentsColumnDisplayNameSortTab" type="preparedStatement" return="multiple">
-      <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT ad_field.name As Name, ad_field_trl.name as columnname 
-          FROM ad_field left join ad_field_trl on ad_field.ad_field_id = ad_field_trl.ad_field_id 
-                                              and ad_field_trl.ad_language = ?, 
-               ad_column 
-        WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-        and ad_table_id = ? and isParent='Y' 
-      ]]></Sql>
-      <Parameter name="adLanguage"/>
-      <Parameter name="table"/>
-  </SqlMethod>
-  <SqlMethod name="parentsColumnDisplayName" type="preparedStatement" return="multiple">
-      <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT ad_field.name As Name, ad_field_trl.name as columnname 
-          FROM ad_field left join ad_field_trl on ad_field.ad_field_id = ad_field_trl.ad_field_id 
-                                              and ad_field_trl.ad_language = ?, 
-               ad_column 
-        WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-        and ad_tab_id = ? and isParent='Y' 
-        and exists(select 1 from ad_column c, ad_field f where c.ad_column_id = f.ad_column_id and c.iskey='Y'
-        and ad_tab_id=? and UPPER(c.columnname) = UPPER(ad_column.columnname))
-      ]]></Sql>
-      <Parameter name="adLanguage"/>
-      <Parameter name="tab"/>
-      <Parameter name="parentTab"/>
-  </SqlMethod>
-  <SqlMethod name="parentsColumnDisplayNameReal" type="preparedStatement" return="multiple">
-      <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
-      <Sql>
-        SELECT ad_field.Name AS NAME, AD_FIELD_TRL.NAME AS COLUMNNAME
-        FROM AD_FIELD left join AD_FIELD_TRL on AD_FIELD.AD_FIELD_ID = AD_FIELD_TRL.AD_FIELD_ID
-                                            AND AD_FIELD_TRL.AD_LANGUAGE = ? , 
-             AD_COLUMN 
-        WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id 
-        AND ad_tab_id = ?
-        AND UPPER(columnname) IN (SELECT UPPER(columnname) FROM AD_FIELD, AD_COLUMN 
-        WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id 
-        AND AD_COLUMN.iskey='Y' 
-        AND AD_FIELD.ad_tab_id=?)
-      </Sql>
-      <Parameter name="adLanguage"/>
-      <Parameter name="tab"/>
       <Parameter name="parentTab"/>
   </SqlMethod>
  
