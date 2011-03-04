@@ -26,11 +26,11 @@ OB.User = {
         name : '${(data.user.name!'')?js_string}',
         email : '${(data.user.email!'')?js_string}',
         roleId: '${data.role.id}',
-        roleName: '${data.role.name}',
+        roleName: '${data.role.name?js_string}',
         clientId: '${data.client.id}',
-        clientName: '${data.client.name}',
+        clientName: '${data.client.name?js_string}',
         organizationId: '${data.organization.id}',
-        organizationName: '${data.organization.name}'
+        organizationName: '${data.organization.name?js_string}'
 };
 
 OB.AccessibleEntities = {
