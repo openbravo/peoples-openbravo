@@ -22,6 +22,7 @@
 // * OBSearchItem: item used for search fields.
 // * OBFormButton: button used in forms.
 // * OBTextItem: string/text item
+// * OBLinkItem: string/text/link item
 // * OBTextAreaItem: string/text-area item
 // * OBDateItem: FormItem for dates
 // * OBDateTimeItem: FormItem for DateTime
@@ -338,6 +339,18 @@ isc.ClassFactory.defineClass('OBTextItem', TextItem);
 
 isc.OBTextItem.addProperties({
   validateOnExit: true
+});
+
+//== OBLinkItem ==
+//Input for normal strings (links) with an added icon to navigate to the link  
+isc.ClassFactory.defineClass('OBLinkItem', TextItem);
+
+isc.OBLinkItem.addProperties({
+  validateOnExit: true,
+  icons: [{
+    src : '[SKIN]/../../org.openbravo.client.application/images/form/search_picker.png',
+    click: 'window.open(item.getValue());'
+  }]
 });
 
 //== OBFKFilterTextItem ==
