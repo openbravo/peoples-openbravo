@@ -682,18 +682,24 @@ isc.OBViewGrid.addProperties({
     this.Super('handleFilterEditorSubmit', arguments);
   },
   
-  getInitialCriteria: function(){
+  xgetInitialCriteria: function(){
     var criteria = this.Super('getInitialCriteria', arguments);
     
     return this.convertCriteria(criteria);
   },
   
-  getCriteria: function(){
+  xgetCriteria: function(){
     var criteria = this.Super('getCriteria', arguments) || {};
     criteria = this.convertCriteria(criteria);
     return criteria;
   },
   
+  // overridden to clean up the criteria before they are set
+  setFilterValues : function (criteria) {
+    delete criteria.criteria;
+    return this.Super('setFilterValues', arguments);
+  },
+    
   convertCriteria: function(criteria){
     var selectedValues, prop, fld, value;
     

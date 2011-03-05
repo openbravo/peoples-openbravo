@@ -95,7 +95,11 @@
       var currentRecentValue = this.getRecentValue(propertyName);
       var currentIndex = -1;
       for (var i = 0; i < currentRecentValue.length; i++) {
-        if (currentRecentValue[i] &&
+        // if the title is the same then assume they are the same
+        if (currentRecentValue[i].tabTitle && 
+            choiceObject.tabTitle && choiceObject.tabTitle === currentRecentValue[i].tabTitle) {
+          currentIndex = i;
+        } else if (currentRecentValue[i] &&
         currentRecentValue[i].id === choiceObject.id) {
           // found it
           currentIndex = i;

@@ -113,8 +113,9 @@ isc.OBApplicationMenuTree.addProperties({
     var isClassicEnvironment = OB.Utilities.useClassicMode(item.windowId);
     var selectedView = null;
     if (item.tabId) {
-      selectedView = OB.Utilities.openView(item.windowId, item.tabId, item.title);
+      selectedView = OB.Utilities.openView(item.windowId, item.tabId, item.title, null, null, item.icon);
       selectedView.type = item.type;
+      selectedView.icon = item.icon;
       if (selectedView) {
         OB.RecentUtilities.addRecent('UINAVBA_MenuRecentList', selectedView);
       }

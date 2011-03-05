@@ -364,6 +364,12 @@ isc.OBMyOpenbravo.addProperties({
             }
           }
 
+          // if the recent was added through quick create then repair this
+          // https://issues.openbravo.com/view.php?id=16132
+          if (recent.command === 'NEW') {
+            recent.command = 'DEFAULT';
+          }
+          
           lbl = isc.Label.create({
             contents: recent.tabTitle,
             recent: recent,
