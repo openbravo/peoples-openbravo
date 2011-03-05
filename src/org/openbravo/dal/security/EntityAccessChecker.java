@@ -258,7 +258,8 @@ public class EntityAccessChecker implements OBNotSingleton {
   private void addDerivedReadableIdentifierProperties(Entity entity) {
     for (final Property p : entity.getProperties()) {
       if (p.isIdentifier() && p.getTargetEntity() != null
-          && !readableEntities.contains(p.getTargetEntity())) {
+          && !readableEntities.contains(p.getTargetEntity())
+          && !derivedReadableEntities.contains(p.getTargetEntity())) {
         derivedReadableEntities.add(p.getTargetEntity());
         addDerivedReadableIdentifierProperties(p.getTargetEntity());
       }
