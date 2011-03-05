@@ -849,6 +849,24 @@ isc.OBViewGrid.addProperties({
     var singleSelected = this.getSelectedRecords().length === 1;
     var field = this.getField(colNum);
     var grid = this;
+    if (recordsSelected) {
+      var allSelectedHaveErrors = true;
+      for (var i = 0; i < this.getSelectedRecords().length; i++) {
+        var localRowNum = this.getRecordIndex(this.getSelectedRecords()[i]);
+        if (!this.rowHasErrors(localRowNum)) {
+          allSelectedHaveErrors = false;
+          break;
+        }
+      }
+      if (allSelectedHaveErrors) {
+        menuItems.add({
+          title: OB.I18N.getLabel('OBUIAPP_UndoChanges'),
+          click: function(){
+            grid.view.undo();
+          }
+        });
+      }
+    }
     menuItems.add({
       title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
       click: function(){
@@ -1153,6 +1171,8 @@ isc.OBViewGrid.addProperties({
     var insertRow = this.getDrawArea()[0];
     if (rowNum || rowNum === 0) {
       insertRow = rowNum + 1;
+    } else {
+      insertRow = this.getTotalRows();
     }
     this.createNewRecordForEditing(insertRow);
     this.startEditing(insertRow);
