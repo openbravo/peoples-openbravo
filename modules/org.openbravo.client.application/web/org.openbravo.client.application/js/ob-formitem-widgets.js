@@ -349,8 +349,21 @@ isc.OBLinkItem.addProperties({
   validateOnExit: true,
   icons: [{
     src : '[SKIN]/../../org.openbravo.client.application/images/form/search_picker.png',
-    click: 'window.open(item.getValue());'
-  }]
+    click: function(form, item) {
+      var url = item.getValue();
+      if(!url || url.indexOf('://') == -1) {
+        return;
+      }
+      window.open(url);
+    }
+  }],
+  validate: function() {
+    var url = this.getValue();
+    if(!url) {
+      return true;
+    }
+    return OB.Utilities.isValidURL(url);
+  }
 });
 
 //== OBFKFilterTextItem ==
