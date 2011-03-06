@@ -181,12 +181,19 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       }
     }
 
+    // add the notes part
+    final OBViewFieldDefinition notesCanvasFieldDefinition = new NotesCanvasField();
+    final NotesField notesField = new NotesField();
+    notesField.setChildField(notesCanvasFieldDefinition);
+    fields.add(notesField);
+    fields.add(notesCanvasFieldDefinition);
+
     // add the linked items part
-    final OBViewFieldDefinition canvasFieldDefinition = new LinkedItemsCanvasField();
+    final OBViewFieldDefinition linkedItemsCanvasFieldDefinition = new LinkedItemsCanvasField();
     final LinkedItemsField linkedItemsField = new LinkedItemsField();
-    linkedItemsField.setChildField(canvasFieldDefinition);
+    linkedItemsField.setChildField(linkedItemsCanvasFieldDefinition);
     fields.add(linkedItemsField);
-    fields.add(canvasFieldDefinition);
+    fields.add(linkedItemsCanvasFieldDefinition);
 
     return fields;
   }
@@ -606,6 +613,70 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public String getName() {
       return "_linkedItems_Canvas";
+    }
+  }
+
+  public class NotesField extends DefaultVirtualField {
+
+    private OBViewFieldDefinition childField;
+
+    public String getLabel() {
+      // is set at runtime
+      return "dummy";
+    }
+
+    public boolean getEndRow() {
+      return true;
+    }
+
+    public List<OBViewFieldDefinition> getChildren() {
+      return Collections.singletonList(childField);
+
+    }
+
+    public String getType() {
+      return "OBNoteSectionItem";
+    }
+
+    public boolean getStartRow() {
+      return true;
+    }
+
+    public boolean getRedrawOnChange() {
+      return false;
+    }
+
+    public String getName() {
+      return "_notes_";
+    }
+
+    public OBViewFieldDefinition getChildField() {
+      return childField;
+    }
+
+    public void setChildField(OBViewFieldDefinition childField) {
+      this.childField = childField;
+    }
+  }
+
+  private class NotesCanvasField extends DefaultVirtualField {
+
+    public String getLabel() {
+      // is set at runtime
+      return "dummy";
+    }
+
+    @SuppressWarnings("unused")
+    public List<OBViewFieldDefinition> getChildren() {
+      return Collections.emptyList();
+    }
+
+    public String getType() {
+      return "OBNoteCanvasItem";
+    }
+
+    public String getName() {
+      return "_notes_Canvas";
     }
 
   }
