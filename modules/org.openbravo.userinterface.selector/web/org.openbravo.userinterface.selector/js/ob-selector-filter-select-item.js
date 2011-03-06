@@ -19,6 +19,11 @@
 isc.ClassFactory.defineClass('OBSelectorFilterSelectItem', SelectItem);
 
 isc.OBSelectorFilterSelectItem.addProperties({
+  pickListFields: [{
+    name: OB.Constants.IDENTIFIER,
+    displayField: OB.Constants.IDENTIFIER,
+    valueField: OB.Constants.ID
+  }],
 
   init: function() {
     OB.Datasource.get(this.entity, this);
