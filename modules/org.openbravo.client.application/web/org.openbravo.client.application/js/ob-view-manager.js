@@ -216,7 +216,7 @@
       // only add closable views to the recent items, this prevents the workspace
       // view from being displayed, explicitly doing !== false to catch 
       // views which don't have this set at all
-      if (params.canClose !== false) {
+      if (params.canClose !== false && !vmgr.inStateHandling) {
         // add and set a default icon
         vmgr.recentManager.addRecent('OBUIAPP_RecentViewList', 
             isc.addProperties({icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png'}, 
