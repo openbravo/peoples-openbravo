@@ -19,10 +19,13 @@
 isc.ClassFactory.defineClass('OBSelectorFilterSelectItem', SelectItem);
 
 isc.OBSelectorFilterSelectItem.addProperties({
+  filterOnKeypress: true,
+
+  valueField: OB.Constants.ID,
+  displayField: OB.Constants.IDENTIFIER,
+
   pickListFields: [{
-    name: OB.Constants.IDENTIFIER,
-    displayField: OB.Constants.IDENTIFIER,
-    valueField: OB.Constants.ID
+    name: OB.Constants.IDENTIFIER
   }],
 
   init: function() {
@@ -32,11 +35,5 @@ isc.OBSelectorFilterSelectItem.addProperties({
 
   setDataSource: function(ds) {
     this.optionDataSource = ds;
-  },
-
-  change: function(form, item, value, oldValue) {
-    var criteria = {};
-    criteria[this.displayField] = value;
-    this.selectorWindow.selectorGrid.filterData(criteria);
   }
 });

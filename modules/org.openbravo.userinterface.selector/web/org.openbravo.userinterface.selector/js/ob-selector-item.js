@@ -197,13 +197,13 @@ isc.OBSelectorPopupWindow.addProperties({
   
   closeClick: function() {
     this.hide(arguments);
-	},
+  },
 
   hide: function(){
     this.Super('hide', arguments);
     this.selector.focusInItem();
   },
-  
+
   show: function(){
     // draw now already otherwise the filter does not work the
     // first time    

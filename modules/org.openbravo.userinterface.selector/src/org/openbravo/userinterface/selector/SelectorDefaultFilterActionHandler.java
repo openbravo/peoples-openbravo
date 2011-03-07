@@ -19,7 +19,6 @@
 package org.openbravo.userinterface.selector;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -35,8 +34,6 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.Reference;
 import org.openbravo.base.model.domaintype.DomainType;
-import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.client.application.OBBindings;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -45,8 +42,6 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.service.json.JsonConstants;
-import org.openbravo.service.json.JsonUtils;
 
 /**
  * 
@@ -93,28 +88,7 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
           if (sel.isCustomQuery()) {
             result.put(f.getDisplayColumnAlias(), exprResult);
           } else {
-            final DomainType domainType = getDomainType(f);
             String fieldName = f.getProperty();
-            if (domainType instanceof ForeignKeyDomainType) {
-              final String entityName = f.getObuiselSelector().getTable().getName();
-              final Entity entity = ModelProvider.getInstance().getEntity(entityName);
-              final List<Property> properties = JsonUtils.getPropertiesOnPath(entity, f
-                  .getProperty());
-              if (!properties.isEmpty()) {
-                final Property property = properties.get(properties.size() - 1);
-
-                @SuppressWarnings("unchecked")
-                Class<? extends BaseOBObject> o = (Class<? extends BaseOBObject>) Class
-                    .forName(property.getReferencedProperty().getEntity().getClassName());
-                String identifier = OBDal.getInstance().get(o, exprResult).getIdentifier();
-                if (identifier != null) {
-                  exprResult = identifier;
-                }
-              }
-
-              fieldName = fieldName + "." + JsonConstants.IDENTIFIER;
-            }
-
             result.put(fieldName, exprResult);
           }
         } catch (Exception e) {
