@@ -62,6 +62,11 @@
       <foreign-key foreignTable="AD_ORG" name="C_PERIODCONTROL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="C_PERIODCONTROL_DOCBASE" unique="false">
+        <index-column name="C_PERIOD_ID"/>
+        <index-column name="DOCBASETYPE"/>
+        <index-column name="AD_ORG_ID"/>
+      </index>
       <index name="C_PERIODCONTROL_PERIOD" unique="false">
         <index-column name="C_PERIOD_ID"/>
       </index>

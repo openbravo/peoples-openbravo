@@ -213,8 +213,7 @@ static Logger log4j = Logger.getLogger(CreateAccountingConfigurationData.class);
       "            where c_periodcontrol.c_period_id = c_period.c_period_id" +
       "            and c_periodcontrol.docbasetype = ad_ref_list.value" +
       "            and c_periodcontrol.ad_org_id = a.ad_org_id)" +
-      "      group by c_period.ad_client_id, c_period.c_period_id, ad_ref_list.value, a.ad_org_id" +
-      "      order by c_period.c_period_id, ad_ref_list.value, a.ad_org_id";
+      "      group by c_period.ad_client_id, c_period.c_period_id, ad_ref_list.value, a.ad_org_id";
 
     int updateCount = 0;
     PreparedStatement st = null;
