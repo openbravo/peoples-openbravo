@@ -84,7 +84,7 @@ target, /* String */dsFieldName, /*Boolean*/ doNew) {
 
   var rpcRequest = {};
   rpcRequest.params = {
-    'create' : true
+    '_create' : true
   };
   if (doNew) {
     rpcRequest.params._new = true;
