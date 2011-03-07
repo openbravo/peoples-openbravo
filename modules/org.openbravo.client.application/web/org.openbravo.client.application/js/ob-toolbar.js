@@ -53,6 +53,8 @@ isc.OBToolbar.addClassProperties({
   },
   SAVECLOSE_BUTTON_PROPERTIES: {
     action: function(){
+      // force autosave
+      this.view.standardWindow.setDirtyEditForm(this.view.viewForm);
       this.view.statusBar.closeButton.action();
     },
     buttonType: 'savecloseX',
