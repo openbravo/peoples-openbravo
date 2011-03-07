@@ -57,7 +57,7 @@ if(userId == null){
 <meta name="keywords" content="openbravo">
 <meta name="description" content="Openbravo S.L.U.">
 <link rel="shortcut icon" href="./web/images/favicon.ico" />
-<link rel="stylesheet" type="text/css" href="./org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_mode=3.00&&_skinVersion=3.00"/>
+<link rel="stylesheet" type="text/css" href="./org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_mode=3.00&_skinVersion=3.00"/>
 <title>Openbravo</title>
 <script type="text/javascript" src="./web/org.openbravo.client.kernel/js/LAB.min.js"></script>
 <!-- styles used during loading -->
