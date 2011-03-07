@@ -1758,12 +1758,18 @@ public class Wad extends DefaultHandler {
 
     String strParamHighVolume = "", strHighVolumeComp = "";
 
-    String filter1 = "(tableSQL.hasInternalFilter()";
+    String internalFilter = "(tableSQL.hasInternalFilter()";
+    String filter1 = "";
     String filter2 = "";
 
     if (selCol != null) {
       for (int i = 0; i < selCol.length; i++) {
-        filter1 += " && (\"\").equals(strParam" + selCol[i].columnname + ")";
+        if (filter1.isEmpty()) {
+          internalFilter += " && ";
+        } else {
+          filter1 += " && ";
+        }
+        filter1 += "(\"\").equals(strParam" + selCol[i].columnname + ")";
         filter2 += " || !((\"\").equals(strParam" + selCol[i].columnname
             + ") || (\"%\").equals(strParam" + selCol[i].columnname + ")) ";
 
@@ -1774,9 +1780,8 @@ public class Wad extends DefaultHandler {
       }
     }
 
-    filter1 += ")";
-
-    xmlDocument.setParameter("searchName", filter1 + filter2);
+    xmlDocument.setParameter("searchName", internalFilter + filter1 + ")" + filter2);
+    xmlDocument.setParameter("searchNameHighVolume", filter1);
     xmlDocument.setParameter("searchVariables", strParamHighVolume);
     xmlDocument.setParameter("searchComparations", strHighVolumeComp);
 
