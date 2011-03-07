@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -102,7 +102,7 @@ public class SystemValidationTask extends DalInitializingTask {
         log.warn("Validation successfull no warnings or errors");
       } else {
         final String errors = SystemService.getInstance().logValidationResult(log, result);
-        if (failOnError) {
+        if (!result.getErrors().isEmpty() && failOnError) {
           throw new OBException(errors);
         }
       }

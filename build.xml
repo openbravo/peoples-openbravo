@@ -926,7 +926,7 @@ export.database: exports database structure and data to xml files.
                    modules="${module}"
                    stoponerror="true"/>
 
-    <validateModules moduleJavaPackage="${module}" failOnError="false" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" />
+    <validateModules moduleJavaPackage="${module}" failOnError="true" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" />
 
     <antcall target="obx.export.database" />
     <antcall target="obx.export.config.script" />
