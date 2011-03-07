@@ -70,7 +70,7 @@
     LOOP
       IF Cur_Parameter.ParameterName = 'AD_LANGUAGE_ID' THEN
         SELECT AD_LANGUAGE INTO v_language FROM AD_LANGUAGE WHERE AD_LANGUAGE_ID = Cur_Parameter.P_String;
-        v_language = COALESCE(v_language, 'en_US');
+        v_language := COALESCE(v_language, 'en_US');
       END IF;
       v_Year_ID:=Cur_Parameter.Record_ID;
     END LOOP; -- Get Parameter
