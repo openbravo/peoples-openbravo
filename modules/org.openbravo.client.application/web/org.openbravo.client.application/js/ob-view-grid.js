@@ -682,52 +682,41 @@ isc.OBViewGrid.addProperties({
     this.Super('handleFilterEditorSubmit', arguments);
   },
   
-  xgetInitialCriteria: function(){
-    var criteria = this.Super('getInitialCriteria', arguments);
-    
+  getInitialCriteria: function(){
+    var criteria = this.Super('getInitialCriteria', arguments);   
     return this.convertCriteria(criteria);
   },
   
-  xgetCriteria: function(){
+  getCriteria: function(){
     var criteria = this.Super('getCriteria', arguments) || {};
     criteria = this.convertCriteria(criteria);
     return criteria;
   },
-  
-  // overridden to clean up the criteria before they are set
-  setFilterValues : function (criteria) {
-    delete criteria.criteria;
-    return this.Super('setFilterValues', arguments);
-  },
     
   convertCriteria: function(criteria){
-    var selectedValues, prop, fld, value;
+    var selectedValues, prop, fld, value, i, criterion, fldName;
     
-    criteria = isc.addProperties({}, criteria || {});
+    if (!criteria) {
+      criteria = {
+        operator: 'and', 
+        _constructor: "AdvancedCriteria", 
+        criteria:[]};
+    } else {
+      criteria = isc.clone(criteria);
+    }
+    
+    if (!criteria.criteria) {
+      criteria.criteria = [];
+    }
     
     if (this.targetRecordId) {
       // do not filter on anything with a targetrecord
-      criteria = {};
+      criteria = {
+        operator: 'and', 
+        _constructor: "AdvancedCriteria", 
+        criteria:[]};
       // remove the filter clause we don't want to use
       this.filterClause = null;
-      criteria._targetRecordId = this.targetRecordId;
-    }
-    
-    // filter criteria for foreign key fields should be on the identifier
-    // note is again repaired in the filtereditor setValuesAsCriteria
-    // see the ob-grid.js 
-    for (prop in criteria) {
-      if (criteria.hasOwnProperty(prop)) {
-        if (prop === this.view.parentProperty) {
-          continue;
-        }
-        fld = this.getField(prop);
-        if (fld && fld.foreignKeyField) {
-          value = criteria[prop];
-          delete criteria[prop];
-          criteria[prop + '.' + OB.Constants.IDENTIFIER] = value;
-        }
-      }
     }
     
     // note pass in criteria otherwise infinite looping!
@@ -735,41 +724,84 @@ isc.OBViewGrid.addProperties({
     
     if (this.view.parentProperty) {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+      var parentPropertyFilterValue = -1;
       if (selectedValues.length === 0) {
-        criteria[this.view.parentProperty] = '-1';
+        parentPropertyFilterValue = '-1';
       } else if (selectedValues.length > 1) {
-        criteria[this.view.parentProperty] = '-1';
+        parentPropertyFilterValue = '-1';
       } else {
-        criteria[this.view.parentProperty] = selectedValues[0][OB.Constants.ID];
+        parentPropertyFilterValue = selectedValues[0][OB.Constants.ID];
+      }
+      var fnd = false;
+      var innerCriteria = criteria.criteria;
+      for (i = 0; i < innerCriteria.length; i++) {
+        criterion = innerCriteria[i];
+        fldName = criterion.fieldName;
+        if (fldName === this.view.parentProperty) {
+          fnd = true;
+          criterion.operator = 'equals';
+          criterion.value = parentPropertyFilterValue;
+          break;
+        }
+      }
+      if (!fnd) {
+        innerCriteria.add({
+          fieldName: this.view.parentProperty,
+          operator: 'equals',
+          value: parentPropertyFilterValue
+        });
       }
     }
-    
+        // get rid of some unneeded stuff in the criteria
+    if (criteria && criteria.criteria) {
+      var internalCriteria = criteria.criteria;
+      for (i = (internalCriteria.length - 1); i >= 0; i--) {
+        var shouldRemove = false;
+        criterion = internalCriteria[i];
+        if (criterion.fieldName && criterion.fieldName.startsWith('_')) {
+          shouldRemove = true;
+        } else if (isc.isA.emptyString(criterion.value)) {
+          shouldRemove = true;
+        }
+        if (shouldRemove) {
+          internalCriteria.removeAt(i);
+        }
+      }
+    }
+
+    this.checkShowFilterFunnelIcon(criteria);
+
+    return criteria;
+  },
+  
+  onFetchData: function(criteria, requestProperties) {    
+    requestProperties = requestProperties || {};
+            
+    if (this.targetRecordId) {
+      requestProperties._targetRecordId = this.targetRecordId;
+    }
+
     // prevent the count operation
-    criteria[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
+    requestProperties[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
     
     if (this.orderByClause) {
-      criteria[OB.Constants.ORDERBY_PARAMETER] = this.orderByClause;
+      requestProperties[OB.Constants.ORDERBY_PARAMETER] = this.orderByClause;
     }
-    
+
+    // add all the new session properties context info to the requestProperties
+    isc.addProperties(requestProperties, this.view.getContextInfo(true, false));
+          
     if (this.filterClause) {
       if (this.whereClause) {
-        criteria[OB.Constants.WHERE_PARAMETER] = ' ((' + this.whereClause + ') and (' + this.filterClause + ")) ";
+        requestProperties[OB.Constants.WHERE_PARAMETER] = ' ((' + this.whereClause + ') and (' + this.filterClause + ")) ";
       } else {
-        criteria[OB.Constants.WHERE_PARAMETER] = this.filterClause;
+        requestProperties[OB.Constants.WHERE_PARAMETER] = this.filterClause;
       }
-      this.checkShowFilterFunnelIcon(criteria);
     } else if (this.whereClause) {
-      criteria[OB.Constants.WHERE_PARAMETER] = this.whereClause;
-      this.checkShowFilterFunnelIcon(criteria);
+      requestProperties[OB.Constants.WHERE_PARAMETER] = this.whereClause;
     } else {
-      criteria[OB.Constants.WHERE_PARAMETER] = null;
-      this.checkShowFilterFunnelIcon(criteria);
+      requestProperties[OB.Constants.WHERE_PARAMETER] = null;
     }
-    
-    // add all the new session properties context info to the criteria
-    isc.addProperties(criteria, this.view.getContextInfo(true, false));
-    
-    return criteria;
   },
   
   createNew: function(){

@@ -216,7 +216,6 @@ isc.OBDateChooser.addProperties({
   nextMonthIconHeight: 16
 });
 
-
 OB.OBDateItemStyleProperties = {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
@@ -249,6 +248,178 @@ isc.OBNumberItem.addProperties({
   errorOrientation: 'left'
 });
 
+/* =====================================================================
+ * Date range filter item and dialog
+ =======================================================================*/
+
+isc.OBDateRangeDialog.addProperties({
+  // rounded frame edges
+  showEdges: true,
+  edgeImage: '[SKIN]/../../../org.openbravo.client.application/images/popup/border.png',
+  customEdges: null,
+  edgeSize: 2,
+  edgeTop: 27,
+  edgeBottom: 2,
+  edgeOffsetTop: 2,
+  edgeOffsetRight: 2,
+  edgeOffsetBottom: 2,
+  showHeaderBackground: false, // part of edges
+  showHeaderIcon: true,
+  isModal : true,
+  showModalMask : true,
+  dragAppearance : 'target',
+
+  // clear backgroundColor and style since corners are rounded
+  backgroundColor: null,
+  border: null,
+  styleName: 'OBPopup',
+  edgeCenterBackgroundColor: '#FFFFFF',
+  bodyColor: 'transparent',
+  bodyStyle: 'OBPopupBody',
+  headerStyle: 'OBPopupHeader',
+
+  layoutMargin: 0,
+  membersMargin: 0,
+
+  showShadow: false,
+  shadowDepth: 5,
+  width: 400,
+  height: 160
+});
+
+isc.OBDateRangeDialog.changeDefaults('headerDefaults', {
+  layoutMargin: 0,
+  height: 25
+});
+
+isc.OBDateRangeDialog.changeDefaults('headerLabelDefaults', {
+  wrap : false,
+  width : '100%',
+  inherentWidth : true,
+  styleName: 'OBPopupHeaderText',
+  align: isc.Canvas.CENTER
+});
+
+isc.OBDateRangeDialog.changeDefaults('buttonLayoutDefaults', {
+  align: 'center'
+});
+
+isc.OBDateRangeDialog.changeDefaults('closeButtonDefaults', {
+  baseStyle: 'OBPopupIconClose',
+  src: '[SKIN]/../../org.openbravo.client.application/images/popup/close.png',
+  width: 24,
+  height: 20
+});
+
+isc.OBDateRangeDialog.changeDefaults('headerIconProperties', {
+  styleName: 'OBPopupHeaderIcon',
+  src: '[SKIN]/../../org.openbravo.client.application/images/popup/iconHeader.png',
+  width: 20,
+  height: 16
+});
+
+isc.OBDateRangeDialog.addProperties({
+  clearButtonConstructor: isc.OBFormButton,
+  cancelButtonConstructor: isc.OBFormButton,
+  okButtonConstructor: isc.OBFormButton,
+  okButtonTitle: OB.I18N.getLabel('OBUISC_Dialog.OK_BUTTON_TITLE'),
+  clearButtonTitle: OB.I18N.getLabel('OBUIAPP_Clear'),
+  cancelButtonTitle: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
+  headerTitle: OB.I18N.getLabel('OBUIAPP_SelectDateRange')
+});
+
+isc.OBMiniDateRangeItem.changeDefaults('pickerIconDefaults', {
+  width: 21,
+  height: 21,
+  src: '[SKIN]/../../org.openbravo.client.application/images/form/date_control.png'
+});
+
+isc.OBMiniDateRangeItem.addProperties({
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldInput',
+  fromDateOnlyPrefix: OB.I18N.getLabel('OBUIAPP_fromDateOnlyPrefix'),
+  toDateOnlyPrefix: OB.I18N.getLabel('OBUIAPP_toDateOnlyPrefix'),
+  pickerIconPrompt: OB.I18N.getLabel('OBUIAPP_pickerIconPrompt')
+});
+
+isc.DateRangeItem.changeDefaults('dateRangeFormDefaults', {
+  titleSuffix: '</b>',
+  titlePrefix: '<b>',
+  requiredTitleSuffix: ' *</b>',
+  requiredRightTitlePrefix: '<b>* ',
+  rightTitlePrefix: '<b>',
+  rightTitleSuffix: '</b>'
+});
+
+isc.DateRangeItem.addProperties({
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldInput',
+  fromTitle: OB.I18N.getLabel('OBUIAPP_From'),
+  toTitle: OB.I18N.getLabel('OBUIAPP_To')
+});
+
+isc.RelativeDateItem.addProperties({
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldSelectInput',
+  controlStyle: 'OBFormFieldSelectControl',
+  timeUnitOptions: ['day', 'week', 'month', 'quarter', 'year'],
+  todayTitle: OB.I18N.getLabel('OBUISC_DateChooser.todayButtonTitle'),
+  
+  millisecondsAgoTitle: OB.I18N.getLabel('OBUIAPP_milliseconds_ago'),
+  secondsAgoTitle: OB.I18N.getLabel('OBUIAPP_seconds_ago'),
+  minutesAgoTitle: OB.I18N.getLabel('OBUIAPP_minutes_ago'),  
+  hoursAgoTitle: OB.I18N.getLabel('OBUIAPP_hours_ago'),
+  daysAgoTitle: OB.I18N.getLabel('OBUIAPP_days_ago'),
+  weeksAgoTitle: OB.I18N.getLabel('OBUIAPP_weeks_ago'),
+  monthsAgoTitle: OB.I18N.getLabel('OBUIAPP_months_ago'),
+  quartersAgoTitle: OB.I18N.getLabel('OBUIAPP_quarters_ago'),
+  yearsAgoTitle: OB.I18N.getLabel('OBUIAPP_years_ago'),
+  
+  millisecondsFromNowTitle: OB.I18N.getLabel('OBUIAPP_milliseconds_from_now'),
+  secondsFromNowTitle: OB.I18N.getLabel('OBUIAPP_seconds_from_now'),
+  minutesFromNowTitle: OB.I18N.getLabel('OBUIAPP_minutes_from_now'),
+  hoursFromNowTitle: OB.I18N.getLabel('OBUIAPP_hours_from_now'),
+  daysFromNowTitle: OB.I18N.getLabel('OBUIAPP_days_from_now'),
+  weeksFromNowTitle: OB.I18N.getLabel('OBUIAPP_weeks_from_now'),
+  monthsFromNowTitle: OB.I18N.getLabel('OBUIAPP_months_from_now'),
+  quartersFromNowTitle: OB.I18N.getLabel('OBUIAPP_quarters_from_now'),
+  yearsFromNowTitle: OB.I18N.getLabel('OBUIAPP_years_from_now'),
+  
+  presetOptions: {
+    "$today" : OB.I18N.getLabel('OBUISC_DateChooser.todayButtonTitle'),
+    "$yesterday" : OB.I18N.getLabel('OBUIAPP_Yesterday'),
+    "$tomorrow" : OB.I18N.getLabel('OBUIAPP_Tomorrow'),
+    "-1w" : OB.I18N.getLabel('OBUIAPP_Current_day_of_last_week'),
+    "+1w" : OB.I18N.getLabel('OBUIAPP_Current_day_of_next_week'),
+    "-1m" : OB.I18N.getLabel('OBUIAPP_Current_day_of_last_month'),
+    "+1m" : OB.I18N.getLabel('OBUIAPP_Current_day_of_next_month')
+  }
+});
+
+isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldSelectInput',
+  controlStyle: 'OBFormFieldSelectControl',
+  pickerIconSrc: '[SKIN]/../../org.openbravo.client.application/images/form/comboBoxPicker.png',
+  pickerIconWidth: 21,
+  pickerIconHeight: 21
+});
+
+isc.RelativeDateItem.changeDefaults('pickerIconDefaults', {
+  width: 21,
+  height: 21,
+  src: '[SKIN]/../../org.openbravo.client.application/images/form/date_control.png'
+});
+
+isc.RelativeDateItem.addProperties({
+  displayFormat: OB.Format.date,
+  inputFormat: OB.Format.date,
+  pickerConstructor: 'OBDateChooser'
+});
 
 /* =====================================================================
  * SectionItem Button Styles

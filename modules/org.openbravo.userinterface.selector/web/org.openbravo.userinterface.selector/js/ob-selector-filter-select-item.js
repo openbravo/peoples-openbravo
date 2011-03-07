@@ -19,21 +19,21 @@
 isc.ClassFactory.defineClass('OBSelectorFilterSelectItem', SelectItem);
 
 isc.OBSelectorFilterSelectItem.addProperties({
-  filterOnKeypress: true,
-
+  operator: 'equals',
   valueField: OB.Constants.ID,
-  displayField: OB.Constants.IDENTIFIER,
-
-  pickListFields: [{
-    name: OB.Constants.IDENTIFIER
-  }],
 
   init: function() {
     OB.Datasource.get(this.entity, this);
     this.Super('init', arguments);
   },
 
-  setDataSource: function(ds) {
-    this.optionDataSource = ds;
+  // prevent ids from showing up
+  mapValueToDisplay : function (value) {
+    var ret = this.Super('mapValueToDisplay', arguments);
+    if (ret === value) {
+      return '';
+    }
+    return ret;
   }
+
 });

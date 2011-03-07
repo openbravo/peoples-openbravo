@@ -964,7 +964,7 @@ isc.OBStandardView.addProperties({
   },
   
   hasSelectionStateChanged: function() {
-    return (this.viewGrid.getSelectedRecords().length !== this.lastRecordSelectedCount || 
+    return ((this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length !== this.lastRecordSelectedCount) || 
         (this.viewGrid.getSelectedRecord() && this.viewGrid.getSelectedRecord().id !== this.lastRecordSelected.id)) || 
       (this.lastRecordSelected && !this.viewGrid.getSelectedRecord());
   },

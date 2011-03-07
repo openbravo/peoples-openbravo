@@ -26,6 +26,7 @@
 // * OBTextAreaItem: string/text-area item
 // * OBDateItem: FormItem for dates
 // * OBDateTimeItem: FormItem for DateTime
+// * OBMiniDateRangeItem: FormItem for dates
 // * OBNumber: FormItem for numbers
 // * OBYesNoItem: combo box for yes/no values
 // * OBLinkTitleItem: an interface supporting a link button in the title.
@@ -38,6 +39,7 @@
 isc.ClassFactory.defineClass('OBCheckboxItem', CheckboxItem);
 
 isc.OBCheckboxItem.addProperties({
+  operator: 'equals',
   // no validation on change or exit here
   textBoxStyle: 'OBFormFieldLabel',
   showValueIconOver: true,
@@ -53,6 +55,7 @@ isc.OBCheckboxItem.addProperties({
 isc.ClassFactory.defineInterface('OBLinkTitleItem');
 
 isc.OBLinkTitleItem.addProperties({
+  operator: 'iContains',
   showLinkIcon: true,
   
   linkButtonClick: function(){
@@ -104,6 +107,7 @@ w.closeSearch = function (action, value, display, parameters, wait){
 }(this));
 
 isc.OBSearchItem.addProperties({
+  operator: 'iContains',
   showPickerIcon: true,
   canFocus: true,
   showFocused: true,
@@ -287,6 +291,8 @@ isc.OBSearchItem.addProperties({
 isc.ClassFactory.defineClass('OBPAttributeSearchItem', OBSearchItem);
 
 isc.OBPAttributeSearchItem.addProperties({
+  operator: 'iContains',
+
   showPicker: function(){
     if (this.isDisabled()) {
       return;
@@ -318,6 +324,7 @@ isc.ClassFactory.defineClass('OBEncryptedItem', isc.PasswordItem);
 
 // add specific properties here
 isc.OBEncryptedItem.addProperties({
+  operator: 'iContains',
   changed : function(form,item,value) {
     this.form.setValue(item.name + '.cleartext', value);
   }
@@ -338,6 +345,7 @@ isc.OBFormButton.addProperties({
 isc.ClassFactory.defineClass('OBTextItem', TextItem);
 
 isc.OBTextItem.addProperties({
+  operator: 'iContains',
   validateOnExit: true
 });
 
@@ -371,6 +379,7 @@ isc.OBLinkItem.addProperties({
 isc.ClassFactory.defineClass('OBFKFilterTextItem', TextItem);
 
 isc.OBFKFilterTextItem.addProperties({
+  operator: 'iContains',
   validateOnExit: false,
   validateOnChange: false
 });
@@ -380,6 +389,7 @@ isc.OBFKFilterTextItem.addProperties({
 isc.ClassFactory.defineClass('OBTextAreaItem', TextAreaItem);
 
 isc.OBTextAreaItem.addProperties({
+  operator: 'iContains',
   validateOnExit: true
 });
 
@@ -456,20 +466,37 @@ isc.OBSectionItem.addProperties({
 isc.ClassFactory.defineClass('OBListItem', ComboBoxItem);
 
 isc.OBListItem.addProperties({
-
+  operator: 'equals',
   showPickListOnKeypress: true,  
   cachePickListResults: false,
   validateOnExit: true,  
   completeOnTab: true,
-  // setting this to false means that the change handler is called when picking
-  // a value and not earlier
 
   // NOTE: Setting this property to false fixes the issue when using the mouse to pick a value
   // FIXME: Sometimes the field label gets a red color (a blink)
   // addUnknownValues: false,
 
   selectOnFocus: true,
+  
+  // is overridden to keep track that a value has been explicitly picked
+  pickValue : function (value) {
+    this._pickedValue = true;
+    this.Super('pickValue', arguments);
+    delete this._pickedValue;
+  },
 
+  changed: function() {
+    this.Super('changed', arguments);
+    // if not picking a value then don't do a fic call
+    // otherwise every keypress would result in a fic call
+    if (!this._pickedValue) {
+      return;
+    }
+    if (this._hasChanged && this.form && this.form.handleItemChange) {
+      this.form.handleItemChange(this);
+    }
+  },
+  
   pickListProperties: {
     showHeaderContextMenu: false
   },
@@ -495,6 +522,7 @@ isc.OBListItem.addProperties({
 isc.ClassFactory.defineClass('OBListFilterItem', OBListItem);
 
 isc.OBListFilterItem.addProperties({
+  operator: 'equals'
 });
 
 // == OBFKItem ==
@@ -504,7 +532,7 @@ isc.ClassFactory.defineClass('OBFKItem', isc.OBListItem);
 isc.ClassFactory.mixInInterface('OBFKItem', 'OBLinkTitleItem');
 
 isc.OBFKItem.addProperties({
-  textMatchStyle: 'substring',
+  operator: 'iContains',
     
   // set the identifier field also, that's what gets displayed in the grid
   changed: function (form, item, value) {
@@ -519,6 +547,7 @@ isc.OBFKItem.addProperties({
 isc.ClassFactory.defineClass('OBYesNoItem', SelectItem);
 
 isc.OBYesNoItem.addProperties({
+  operator: 'equals',
   mapValueToDisplay: function(value, a, b, c){
     return OB.Utilities.getYesNoDisplayValue(value);
   },
@@ -557,6 +586,7 @@ if (isc.OBDateChooser) {  // To force SC to load OBDateChooser instead of DateCh
 isc.ClassFactory.defineClass('OBTimeItem', TimeItem);
 
 isc.OBTimeItem.addProperties({
+  operator: 'equals',
   validateOnExit: true,
   showHint: false,
   displayFormat: 'to24HourTime',
@@ -564,6 +594,31 @@ isc.OBTimeItem.addProperties({
   shortTimeFormat: 'HH:MM:SS',
   long24TimeFormat: 'HH:MM:SS',
   longTimeFormat: 'HH:MM:SS'
+});
+
+//== OBMiniDateRangeItem ==
+//OBMiniDateRangeItem inherits from SmartClient MiniDateRangeItem
+//Is used for filtering date and time fields.
+
+isc.ClassFactory.defineClass('OBDateRangeDialog', isc.DateRangeDialog);
+
+isc.OBDateRangeDialog.addProperties({
+  // trick: overridden to let the ok and clear button change places
+  addAutoChild: function(name, props) {
+    if (name === 'okButton') {
+      return this.Super('addAutoChild', ['clearButton', { title: this.clearButtonTitle}]);
+    } else if (name === 'clearButton') {
+      return this.Super('addAutoChild', ['okButton', { title: this.okButtonTitle}]);
+    } else {
+      return this.Super('addAutoChild', arguments);
+    }
+  }
+});
+
+isc.ClassFactory.defineClass('OBMiniDateRangeItem', isc.MiniDateRangeItem);
+
+isc.OBMiniDateRangeItem.addProperties({
+  rangeDialogConstructor: isc.OBDateRangeDialog
 });
 
 // == OBDateItem ==
@@ -754,6 +809,7 @@ isc.OBDateItem.addClassProperties({
 
 // == OBDateItem properties ==
 isc.OBDateItem.addProperties({
+  operator: 'equals',
   // ** {{{ pickerConstructor }}} **
   // Picker constructor class
   pickerConstructor: 'OBDateChooser',
@@ -918,6 +974,7 @@ isc.ClassFactory.defineClass('OBNumberItem', TextItem);
 // = OBNumberItem =
 // The Openbravo numeric form item.
 isc.OBNumberItem.addProperties({
+  operator: 'equals',
   typeInstance: null,
   
   keyPressFilterNumeric: '[0-9.,-=]',

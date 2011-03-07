@@ -17,7 +17,6 @@
  ************************************************************************
  */
 
-
 /* Changes the skin of isc.Dialog */
 
 isc.Dialog.addProperties({

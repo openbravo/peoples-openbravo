@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -88,54 +89,23 @@ public class DefaultJsonDataService implements JsonDataService {
         final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
         final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
 
-        final DataEntityQueryService queryService = OBProvider.getInstance().get(
-            DataEntityQueryService.class);
-        queryService.setEntityName(entityName);
-
-        if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
-          queryService.setUseAlias();
-        }
-        // set the filter parameters
-        for (String key : parameters.keySet()) {
-          if (!key.startsWith("_")) {
-            queryService.addFilterParameter(key, parameters.get(key));
-          } else if (key.equals(JsonConstants.WHERE_PARAMETER)
-              || key.equals(JsonConstants.IDENTIFIER) || key.equals(JsonConstants.ORG_PARAMETER)) {
-            // the _where is used in a special way
-            queryService.addFilterParameter(key, parameters.get(key));
-          }
-        }
-
-        if (parameters.get(JsonConstants.OR_EXPRESSION_PARAMETER) != null) {
-          queryService.setDoOrExpression();
-        }
-        if (parameters.get(JsonConstants.NO_ACTIVE_FILTER) != null
-            && parameters.get(JsonConstants.NO_ACTIVE_FILTER).equals("true")) {
-          queryService.setFilterOnActive(false);
-        }
-
-        if (parameters.containsKey(JsonConstants.TEXTMATCH_PARAMETER_OVERRIDE)) {
-          queryService.setTextMatching(parameters.get(JsonConstants.TEXTMATCH_PARAMETER_OVERRIDE));
-        } else {
-          queryService.setTextMatching(parameters.get(JsonConstants.TEXTMATCH_PARAMETER));
-        }
-
         boolean preventCountOperation = !parameters.containsKey(JsonConstants.NOCOUNT_PARAMETER)
             || "true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
 
-        // only do the count if a paging request is done
-        // note preventCountOperation variable is considered further below
+        final DataEntityQueryService queryService = createSetQueryService(parameters);
+
+        queryService.setEntityName(entityName);
+
+        // only do the count if a paging request is done and it has not been prevented
+        // explicitly
         boolean doCount = false;
         int count = -1;
         int startRow = 0;
         int computedMaxResults = Integer.MAX_VALUE;
         if (startRowStr != null) {
-          startRow = Integer.parseInt(startRowStr);
-          queryService.setFirstResult(startRow);
           doCount = true;
         }
-
-        if (endRowStr != null && endRowStr != null) {
+        if (endRowStr != null) {
           int endRow = Integer.parseInt(endRowStr);
           computedMaxResults = endRow - startRow + 1;
           // note computedmaxresults must be set before
@@ -146,34 +116,9 @@ public class DefaultJsonDataService implements JsonDataService {
             // set count here, is corrected in specific cases later
             count = endRow;
           }
-          queryService.setMaxResults(computedMaxResults);
-          doCount = true;
         } else {
-          // can't do this if there is no endrow...
+          // can't do count if there is no endrow...
           preventCountOperation = false;
-        }
-
-        final String sortBy = parameters.get(JsonConstants.SORTBY_PARAMETER);
-        if (sortBy != null) {
-          queryService.setOrderBy(sortBy);
-        } else if (parameters.get(JsonConstants.ORDERBY_PARAMETER) != null) {
-          queryService.setOrderBy(parameters.get(JsonConstants.ORDERBY_PARAMETER));
-        }
-
-        // compute a new startrow if the targetrecordid was passed in
-        int targetRowNumber = -1;
-        if (parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
-          final String targetRecordId = parameters.get(JsonConstants.TARGETRECORDID_PARAMETER);
-          targetRowNumber = queryService.getRowNumber(targetRecordId);
-          if (targetRowNumber != -1) {
-            startRow = targetRowNumber;
-            // if the startrow is really low, then just read from 0
-            // to make sure that we have a full page of data to display
-            if (startRow < (computedMaxResults / 2)) {
-              startRow = 0;
-            }
-            queryService.setFirstResult(startRow);
-          }
         }
 
         if (doCount && !preventCountOperation) {
@@ -220,14 +165,137 @@ public class DefaultJsonDataService implements JsonDataService {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
 
-      // if (jsonObjects.size() > 0) {
-      // System.err.println(jsonObjects.get(0));
-      // }
       return jsonResult.toString();
 
     } catch (Throwable t) {
       log.error(t.getMessage(), t);
       return JsonUtils.convertExceptionToJson(t);
+    }
+  }
+
+  public void fetch(Map<String, String> parameters, QueryResultWriter writer) {
+    final String entityName = parameters.get(JsonConstants.ENTITYNAME);
+    final DataEntityQueryService queryService = createSetQueryService(parameters);
+    queryService.setEntityName(entityName);
+
+    final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
+        DataToJsonConverter.class);
+    toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
+
+    final ScrollableResults scrollableResults = queryService.scroll();
+    while (scrollableResults.next()) {
+      final Object result = scrollableResults.get()[0];
+      final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) result,
+          DataResolvingMode.FULL);
+      writer.write(json);
+      OBDal.getInstance().getSession().evict(result);
+    }
+  }
+
+  private DataEntityQueryService createSetQueryService(Map<String, String> parameters) {
+    final String entityName = parameters.get(JsonConstants.ENTITYNAME);
+    final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
+    final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
+
+    final DataEntityQueryService queryService = OBProvider.getInstance().get(
+        DataEntityQueryService.class);
+    queryService.setEntityName(entityName);
+
+    if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
+      queryService.setUseAlias();
+    }
+    // set the where/org filter parameters
+    for (String key : parameters.keySet()) {
+      if (key.equals(JsonConstants.WHERE_PARAMETER) || key.equals(JsonConstants.IDENTIFIER)
+          || key.equals(JsonConstants.ORG_PARAMETER)) {
+        queryService.addFilterParameter(key, parameters.get(key));
+      }
+    }
+    queryService.setCriteria(buildCriteria(parameters, queryService));
+
+    if (parameters.get(JsonConstants.NO_ACTIVE_FILTER) != null
+        && parameters.get(JsonConstants.NO_ACTIVE_FILTER).equals("true")) {
+      queryService.setFilterOnActive(false);
+    }
+
+    if (parameters.containsKey(JsonConstants.TEXTMATCH_PARAMETER_OVERRIDE)) {
+      queryService.setTextMatching(parameters.get(JsonConstants.TEXTMATCH_PARAMETER_OVERRIDE));
+    } else {
+      queryService.setTextMatching(parameters.get(JsonConstants.TEXTMATCH_PARAMETER));
+    }
+
+    // only do the count if a paging request is done
+    // note preventCountOperation variable is considered further below
+    int startRow = 0;
+    int computedMaxResults = Integer.MAX_VALUE;
+    if (startRowStr != null) {
+      startRow = Integer.parseInt(startRowStr);
+      queryService.setFirstResult(startRow);
+    }
+
+    if (endRowStr != null) {
+      int endRow = Integer.parseInt(endRowStr);
+      computedMaxResults = endRow - startRow + 1;
+      queryService.setMaxResults(computedMaxResults);
+    }
+
+    final String sortBy = parameters.get(JsonConstants.SORTBY_PARAMETER);
+    if (sortBy != null) {
+      queryService.setOrderBy(sortBy);
+    } else if (parameters.get(JsonConstants.ORDERBY_PARAMETER) != null) {
+      queryService.setOrderBy(parameters.get(JsonConstants.ORDERBY_PARAMETER));
+    }
+
+    // compute a new startrow if the targetrecordid was passed in
+    int targetRowNumber = -1;
+    if (parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
+      final String targetRecordId = parameters.get(JsonConstants.TARGETRECORDID_PARAMETER);
+      targetRowNumber = queryService.getRowNumber(targetRecordId);
+      if (targetRowNumber != -1) {
+        startRow = targetRowNumber;
+        // if the startrow is really low, then just read from 0
+        // to make sure that we have a full page of data to display
+        if (startRow < (computedMaxResults / 2)) {
+          startRow = 0;
+        }
+        queryService.setFirstResult(startRow);
+      }
+    }
+    return queryService;
+  }
+
+  private JSONObject buildCriteria(Map<String, String> parameters,
+      DataEntityQueryService queryService) {
+    try {
+      final JSONObject criteria = new JSONObject();
+
+      if (parameters.get(JsonConstants.OR_EXPRESSION_PARAMETER) != null) {
+        criteria.put("operator", "or");
+      } else {
+        criteria.put("operator", "and");
+      }
+      criteria.put("_constructor", "AdvancedCriteria");
+
+      final List<JSONObject> criteriaObjects = new ArrayList<JSONObject>();
+      if (parameters.containsKey("criteria")) {
+        final String[] criteriaStrs = parameters.get("criteria").split(
+            JsonConstants.IN_PARAMETER_SEPARATOR);
+        for (String criteriaStr : criteriaStrs) {
+          final JSONObject criteriaJSONObject = new JSONObject(criteriaStr);
+          if (criteriaJSONObject.has("fieldName")) {
+            final String fieldName = criteriaJSONObject.getString("fieldName");
+            if (!fieldName.startsWith("_")) {
+              criteriaObjects.add(criteriaJSONObject);
+            }
+          } else {
+            criteriaObjects.add(criteriaJSONObject);
+          }
+        }
+      }
+      criteria.put("criteria", new JSONArray(criteriaObjects));
+      return criteria;
+    } catch (JSONException e) {
+      throw new OBException(e);
     }
   }
 
@@ -423,5 +491,9 @@ public class DefaultJsonDataService implements JsonDataService {
       jsonRepresentation = jsonObject.get(JsonConstants.DATA);
     }
     return jsonRepresentation;
+  }
+
+  public static abstract class QueryResultWriter {
+    public abstract void write(JSONObject json);
   }
 }

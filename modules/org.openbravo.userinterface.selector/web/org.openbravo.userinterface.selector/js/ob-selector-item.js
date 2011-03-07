@@ -51,10 +51,21 @@ isc.OBSelectorPopupWindow.addProperties({
     });
     
     OB.Utilities.applyDefaultValues(this.selectorGridFields, this.defaultSelectorGridField);
-    
+
+    var operator;
+    if (this.selector.popupTextMatchStyle === 'substring') {
+      operator = 'iContains';
+    } else {
+      operator = 'iStartsWith';      
+    }
+
     for (var i = 0; i < this.selectorGridFields.length; i++) {
       if (this.selectorGridFields[i].disableFilter) {
         this.selectorGridFields[i].canFilter = false;
+      }
+      // override the operator on the grid field level
+      if (this.selectorGridFields[i].operator === 'iContains' || !this.selectorGridFields[i].operator) {
+        this.selectorGridFields[i].operator = operator; 
       }
     }
     
@@ -73,37 +84,29 @@ isc.OBSelectorPopupWindow.addProperties({
       dataSource: this.dataSource,
       showFilterEditor: true,
       sortField: this.displayField,
-      filterData: function(criteria, callback, requestProperties){
-        return this.Super('filterData', [this.convertCriteria(criteria), callback, requestProperties]);
-      },
-      fetchData: function(criteria, callback, requestProperties){
-        return this.Super('fetchData', [this.convertCriteria(criteria), callback, requestProperties]);
-      },
-      convertCriteria: function(criteria){
       
-        if (!criteria) {
-          criteria = {};
-        }
+      onFetchData: function(criteria, requestProperties) {    
+        requestProperties = requestProperties || {};
         
         // on purpose not sending the third boolean param
-        isc.addProperties(criteria, this.selector.form.view.getContextInfo(false, true));
+        isc.addProperties(requestProperties, this.selector.form.view.getContextInfo(false, true));
         
         // also adds the special ORG parameter
         if (this.selector.form.getField('organization')) {
-          criteria[OB.Constants.ORG_PARAMETER] = this.selector.form.getValue('organization');
+          requestProperties[OB.Constants.ORG_PARAMETER] = this.selector.form.getValue('organization');
         } else if (criteria.inpadOrgId) {
-          criteria[OB.Constants.ORG_PARAMETER] = criteria.inpadOrgId;
+          requestProperties[OB.Constants.ORG_PARAMETER] = criteria.inpadOrgId;
         }
-        criteria[OB.Constants.WHERE_PARAMETER] = this.selector.whereClause;
+        requestProperties[OB.Constants.WHERE_PARAMETER] = this.selector.whereClause;
         
         // set the default sort option
-        criteria[OB.Constants.SORTBY_PARAMETER] = this.displayField;
-        criteria[OB.Constants.TEXT_MATCH_PARAMETER_OVERRIDE] = this.selector.popupTextMatchStyle;
+        requestProperties[OB.Constants.SORTBY_PARAMETER] = this.displayField;
         
-        criteria._selectorDefinitionId = this.selector.selectorDefinitionId;
-        criteria._requestType = 'Window';
+        requestProperties._selectorDefinitionId = this.selector.selectorDefinitionId;
+        requestProperties._requestType = 'Window';
         return criteria;
       },
+
       dataArrived: function(){
       
         this.Super('dataArrived', arguments);
@@ -412,55 +415,55 @@ isc.OBSelectorItem.addProperties({
     return ret;
   },
   
-  getPickListFilterCriteria: function(){
-    var criteria = isc.addProperties({}, this.Super('getPickListFilterCriteria', arguments) || {}), defValue, prop;
+  filterDataBoundPickList : function (requestProperties, dropCache){
+    requestProperties = requestProperties || {};
     
     // sometimes the value is passed as a filter criteria
     // remove it
-    if (this.getValueFieldName() && criteria[this.getValueFieldName()]) {
-      criteria[this.getValueFieldName()] = null;
+    if (this.getValueFieldName() && requestProperties[this.getValueFieldName()]) {
+      requestProperties[this.getValueFieldName()] = null;
     }
             
     // do not prevent the count operation
-    criteria[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'false';
+    requestProperties[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'false';
 
     // on purpose not passing the third boolean param
-    isc.addProperties(criteria, this.form.view.getContextInfo(false, true));
+    isc.addProperties(requestProperties, this.form.view.getContextInfo(false, true));
     
     // also add the special ORG parameter
     if (this.form.getField('organization')) {
-      criteria[OB.Constants.ORG_PARAMETER] = this.form.getValue('organization');
-    } else if (criteria.inpadOrgId) {
-      criteria[OB.Constants.ORG_PARAMETER] = criteria.inpadOrgId;
+      requestProperties[OB.Constants.ORG_PARAMETER] = this.form.getValue('organization');
+    } else if (requestProperties.inpadOrgId) {
+      requestProperties[OB.Constants.ORG_PARAMETER] = requestProperties.inpadOrgId;
     }
     
     // adds the selector id to filter used to get filter information
-    criteria._selectorDefinitionId = this.selectorDefinitionId;
+    requestProperties._selectorDefinitionId = this.selectorDefinitionId;
     
     // only filter if the display field is also passed
     // the displayField filter is not passed when the user clicks the drop-down button
-    if (criteria[this.displayField]) {
+    if (requestProperties[this.displayField]) {
       for (var i = 0; i < this.extraSearchFields.length; i++) {
-        if (!criteria[this.extraSearchFields[i]]) {
-          criteria[this.extraSearchFields[i]] = criteria[this.displayField];
+        if (!requestProperties[this.extraSearchFields[i]]) {
+          requestProperties[this.extraSearchFields[i]] = requestProperties[this.displayField];
         }
       }
       
       // for the suggestion box it is one big or
-      criteria[OB.Constants.OR_EXPRESSION] = 'true';
+      requestProperties[OB.Constants.OR_EXPRESSION] = 'true';
     }
     
     // add field's default filter expressions
-    criteria.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
+    requestProperties.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
     
     // the additional where clause
-    criteria[OB.Constants.WHERE_PARAMETER] = this.whereClause;
+    requestProperties[OB.Constants.WHERE_PARAMETER] = this.whereClause;
     
     // and sort according to the display field
     // initially
-    criteria[OB.Constants.SORTBY_PARAMETER] = this.displayField;
+    requestProperties[OB.Constants.SORTBY_PARAMETER] = this.displayField;
     
-    return criteria;
+    return this.Super('filterDataBoundPickList', [requestProperties, dropCache]);
   },
   
   mapValueToDisplay : function (value) {
