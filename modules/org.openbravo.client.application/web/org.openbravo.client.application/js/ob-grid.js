@@ -94,6 +94,17 @@ isc.OBGrid.addProperties({
     }
     
     this.filterEditorProperties = {
+
+      setEditValue : function (rowNum, colNum, newValue, suppressDisplay, suppressChange) {
+        // prevent any setting of non fields in the filter editor
+        // this prevents a specific issue that smartclient will set a value
+        // in the {field.name}._identifier (for example warehouse._identifier)
+        // because it thinks that the field does not have its own datasource
+        if (isc.isA.String(colNum) && !this.getField(colNum)) {
+          return;
+        }
+        return this.Super('setEditValue', arguments);
+      },
         
       getValuesAsCriteria : function (advanced, textMatchStyle, returnNulls) {
         return this.Super('getValuesAsCriteria', [true, textMatchStyle, returnNulls]);
