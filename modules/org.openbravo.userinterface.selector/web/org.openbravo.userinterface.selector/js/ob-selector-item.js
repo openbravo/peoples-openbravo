@@ -418,7 +418,7 @@ isc.OBSelectorItem.addProperties({
   
   pickValue: function(value){
     var ret = this.Super('pickValue', arguments);
-    this.setValueFromRecord(this.getSelectedRecord());
+    this.setValueFromRecord(this.pickList.getSelectedRecord());
     return ret;
   },
   
