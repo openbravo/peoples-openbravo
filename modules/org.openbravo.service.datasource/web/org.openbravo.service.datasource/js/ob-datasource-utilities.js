@@ -124,5 +124,12 @@ OB.Datasource.create = function(/* Object */dsProperties) {
 isc.ClassFactory.defineClass('OBRestDataSource', isc.RestDataSource);
 
 isc.OBRestDataSource.addProperties({
+  sendDSRequest: function(dsRequest) {
+	//TODO: Report an issue to SmartClient - This part is a work around
+    if (dsRequest.params && this.requestProperties && this.requestProperties.params) {
+      isc.addProperties(dsRequest.params, this.requestProperties.params);
+    }
+    this.Super('sendDSRequest', arguments);
+  }
 });
 
