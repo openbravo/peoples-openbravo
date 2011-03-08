@@ -21,9 +21,9 @@ package org.openbravo.client.myob;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDao;
-import org.openbravo.dal.service.OBDao.Constraint;
 
 /**
  * Responsible for creating the URL Widgets.
@@ -53,8 +53,8 @@ public class URLWidgetProvider extends WidgetProvider {
       final JSONObject jsonObject = super.getWidgetClassDefinition();
       final JSONObject parameters = new JSONObject();
       jsonObject.put(WidgetProvider.PARAMETERS, parameters);
-      final WidgetURL widgetURL = OBDao.getOneInstance(WidgetURL.class, new Constraint(
-          WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass()));
+      final WidgetURL widgetURL = (WidgetURL) OBDao.getFilteredCriteria(WidgetURL.class,
+          Expression.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass())).uniqueResult();
       if (widgetURL != null) {
         parameters.put(SRC, widgetURL.getURL());
       } else {
@@ -76,8 +76,8 @@ public class URLWidgetProvider extends WidgetProvider {
       final JSONObject jsonObject = new JSONObject();
       addDefaultWidgetProperties(jsonObject, widgetInstance);
       final JSONObject parameters = jsonObject.getJSONObject(WidgetProvider.PARAMETERS);
-      final WidgetURL widgetURL = OBDao.getOneInstance(WidgetURL.class, new Constraint(
-          WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass()));
+      final WidgetURL widgetURL = (WidgetURL) OBDao.getFilteredCriteria(WidgetURL.class,
+          Expression.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass())).uniqueResult();
       if (widgetURL != null) {
         parameters.put(SRC, widgetURL.getURL());
       } else {
