@@ -207,13 +207,14 @@ isc.OBSelectorPopupWindow.addProperties({
     this.selector.focusInItem();
   },
 
-  show: function(){
+  show: function(applyDefaultFilter){
     // draw now already otherwise the filter does not work the
     // first time    
     var ret = this.Super('show', arguments);
-    this.selectorGrid.setFilterEditorCriteria(this.defaultFilter);
-    this.selectorGrid.filterByEditor();
-
+    if (applyDefaultFilter) {
+      this.selectorGrid.setFilterEditorCriteria(this.defaultFilter);
+      this.selectorGrid.filterByEditor();
+    }
     if(this.selectorGrid.isDrawn()) {
       this.selectorGrid.focusInFilterEditor();
     } else {
@@ -253,7 +254,7 @@ isc.OBSelectorPopupWindow.addProperties({
     // adds the selector id to filter used to get filter information
     defaultFilter._selectorDefinitionId = this.selector.selectorDefinitionId;
     this.defaultFilter = defaultFilter;
-    this.show();
+    this.show(true);
   },
   
   setValueInField: function(){
