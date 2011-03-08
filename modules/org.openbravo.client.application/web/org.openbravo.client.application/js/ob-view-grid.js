@@ -776,31 +776,33 @@ isc.OBViewGrid.addProperties({
   
   onFetchData: function(criteria, requestProperties) {    
     requestProperties = requestProperties || {};
+    requestProperties.params = requestProperties.params || {};
+    var params = requestProperties.params;
             
     if (this.targetRecordId) {
-      requestProperties._targetRecordId = this.targetRecordId;
+      params._targetRecordId = this.targetRecordId;
     }
 
     // prevent the count operation
-    requestProperties[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
+    params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
     
     if (this.orderByClause) {
-      requestProperties[OB.Constants.ORDERBY_PARAMETER] = this.orderByClause;
+      params[OB.Constants.ORDERBY_PARAMETER] = this.orderByClause;
     }
 
     // add all the new session properties context info to the requestProperties
-    isc.addProperties(requestProperties, this.view.getContextInfo(true, false));
+    isc.addProperties(params, this.view.getContextInfo(true, false));
           
     if (this.filterClause) {
       if (this.whereClause) {
-        requestProperties[OB.Constants.WHERE_PARAMETER] = ' ((' + this.whereClause + ') and (' + this.filterClause + ")) ";
+        params[OB.Constants.WHERE_PARAMETER] = ' ((' + this.whereClause + ') and (' + this.filterClause + ")) ";
       } else {
-        requestProperties[OB.Constants.WHERE_PARAMETER] = this.filterClause;
+        params[OB.Constants.WHERE_PARAMETER] = this.filterClause;
       }
     } else if (this.whereClause) {
-      requestProperties[OB.Constants.WHERE_PARAMETER] = this.whereClause;
+      params[OB.Constants.WHERE_PARAMETER] = this.whereClause;
     } else {
-      requestProperties[OB.Constants.WHERE_PARAMETER] = null;
+      params[OB.Constants.WHERE_PARAMETER] = null;
     }
   },
   
