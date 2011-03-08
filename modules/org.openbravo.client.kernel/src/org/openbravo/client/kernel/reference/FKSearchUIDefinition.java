@@ -29,6 +29,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.domain.ModelImplementation;
 import org.openbravo.model.ad.domain.ModelImplementationMapping;
 import org.openbravo.model.ad.domain.Reference;
@@ -119,21 +120,24 @@ public class FKSearchUIDefinition extends ForeignKeyUIDefinition {
         // TODO: warn
         return superJsonStr;
       }
-      final List<String> inFields = new ArrayList<String>();
+      final JSONArray inFields = new JSONArray();
       final List<String> outFields = new ArrayList<String>();
       for (SelectorColumn selectorColumn : selector.getADSelectorColumnList()) {
         if (selectorColumn.isActive()) {
-          String columnName = selectorColumn.getName()
+          String columnName = selectorColumn.getDBColumnName()
               + (selectorColumn.getSuffix() != null ? selectorColumn.getSuffix() : "");
-          columnName = "inp" + columnName;
+          columnName = "inp" + Sqlc.TransformaNombreColumna(columnName);
           if (selectorColumn.getColumnType().equals("I")) {
-            inFields.add(columnName);
+            JSONObject inField = new JSONObject();
+            inField.put("columnName", columnName);
+            inField.put("parameterName", "inp" + selectorColumn.getName());
+            inFields.put(inField);
           } else {
             outFields.add(columnName);
           }
         }
       }
-      json.put("inFields", new JSONArray(inFields));
+      json.put("inFields", inFields);
       json.put("outFields", new JSONArray(outFields));
 
       return json.toString();
