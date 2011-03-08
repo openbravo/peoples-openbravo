@@ -223,6 +223,12 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
 
+    if (payment.isReceipt())
+      xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentIn", vars
+          .getLanguage()));
+    else
+      xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentOut", vars
+          .getLanguage()));
     xmlDocument.setParameter("dateDisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("businessPartner", payment.getBusinessPartner().getIdentifier());
     xmlDocument.setParameter("businessPartnerId", payment.getBusinessPartner().getId());

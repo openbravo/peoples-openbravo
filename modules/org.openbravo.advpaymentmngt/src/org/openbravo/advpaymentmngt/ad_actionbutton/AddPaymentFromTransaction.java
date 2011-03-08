@@ -261,6 +261,12 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     } else
       xmlDocument.setParameter("paymentDate", DateTimeData.today(this));
 
+    if (isReceipt)
+      xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentIn", vars
+          .getLanguage()));
+    else
+      xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentOut", vars
+          .getLanguage()));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());

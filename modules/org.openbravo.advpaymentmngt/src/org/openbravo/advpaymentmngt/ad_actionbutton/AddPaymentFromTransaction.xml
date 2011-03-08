@@ -27,6 +27,7 @@
     <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
     <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
     
+    <PARAMETER id="paramTitle" name="title" replace="xxTitle"/>
     <PARAMETER id="paramDocNumber" name="documentNumber" attribute="value"/>
     <PARAMETER id="paramDocType" name="documentType" attribute="value"/>
     <PARAMETER id="paramFinancialAccountId" name="financialAccountId" attribute="value"/>
