@@ -1395,7 +1395,7 @@ begin
   v_md5 = ''; 
   --Checksum for PL functions
   for i in (
-	select upper(proname) as proname, p.proname as realname, pronargs, oidvectortypes(p.proargtypes)
+	select upper(proname) as proname, p.proname as realname, pronargs, oidvectortypes(p.proargtypes) as proargtypes
 	from pg_proc p, pg_namespace n 
          where  pronamespace = n.oid   and n.nspname=current_schema() 
          and p.oid not in (select tgfoid   from pg_trigger) 
@@ -1413,7 +1413,7 @@ begin
        from pg_proc p
       where p.proname = i.realname
         and p.pronargs = i.pronargs
-        and p.proargtypes = i.proargtypes;
+        and oidvectortypes(p.proargtypes) = i.proargtypes;
         
       v_md5 := md5(v_md5||aux);
 
@@ -1431,7 +1431,7 @@ begin
 	     AND pg_catalog.pg_function_is_visible(pg_proc.oid)
 	     AND pg_proc.proname = i.realname
              and pg_proc.pronargs = i.pronargs
-             and pg_proc.proargtypes = i.proargtypes
+             and oidvectortypes(pg_proc.proargtypes) = i.proargtypes
 	     and (pg_proc.proargmodes is not null
 	     or pg_proc.proargnames is not null)
 		 ORDER BY 1,2;
