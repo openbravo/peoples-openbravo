@@ -765,11 +765,11 @@ isc.OBStandardView.addProperties({
   
   // ** {{{ editNewRecordGrid }}} **
   // Opens the inline grid editing for a new record.
-  editNewRecordGrid: function() {
+  editNewRecordGrid: function(rowNum) {
     if (this.isShowingForm) {
       this.switchFormGridVisibility();      
     }
-    this.viewGrid.startEditingNew();
+    this.viewGrid.startEditingNew(rowNum);
   },
   
   // ** {{{ editRecord }}} **
@@ -1346,11 +1346,11 @@ isc.OBStandardView.addProperties({
     isc.ask(msg, callback);
   },
   
-  newRow: function() {
+  newRow: function(rowNum) {
     var actionObject = {
         target: this,
         method: this.editNewRecordGrid,
-        parameters: null
+        parameters: [rowNum]
       };
     this.standardWindow.doActionAfterAutoSave(actionObject, true);
   },

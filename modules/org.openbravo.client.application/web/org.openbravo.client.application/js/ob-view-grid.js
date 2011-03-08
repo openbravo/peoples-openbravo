@@ -1202,7 +1202,7 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++ functions for the editing +++++++++++++++++
   
   startEditingNew: function(rowNum){
-    var insertRow = this.getDrawArea()[0];
+    var insertRow;
     if (rowNum || rowNum === 0) {
       insertRow = rowNum + 1;
     } else {
@@ -1229,6 +1229,7 @@ isc.OBViewGrid.addProperties({
     };
     
     this.data.insertCacheData(record, rowNum);
+    this.scrollToRow(rowNum);
     this.updateRowCountDisplay();
     this.redraw();
   },

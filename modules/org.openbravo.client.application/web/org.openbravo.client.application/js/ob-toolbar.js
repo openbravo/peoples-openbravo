@@ -96,7 +96,8 @@ isc.OBToolbar.addClassProperties({
   },
   NEW_ROW_BUTTON_PROPERTIES: {
     action: function(){
-      this.view.newRow();
+      // do -1 because the newrow logic adds one
+      this.view.newRow(this.view.viewGrid.getDrawArea()[0] - 1);
     },
     buttonType: 'newRow',
     prompt: OB.I18N.getLabel('OBUIAPP_NewRow'),
