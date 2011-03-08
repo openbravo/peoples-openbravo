@@ -799,6 +799,9 @@ public class FormInitializationComponent extends BaseActionHandler {
           init.invoke(calloutInstance, initArgs);
           CalloutHttpServletResponse fakeResponse = new CalloutHttpServletResponse(rq.getResponse());
           Object[] arguments = { rq.getRequest(), fakeResponse };
+
+          // We invoke the service method. This method will automatically call the doPost() method
+          // of the callout servlet
           service.invoke(calloutInstance, arguments);
           String calloutResponse = fakeResponse.getOutputFromWriter();
 
