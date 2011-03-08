@@ -29,7 +29,6 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.domain.ModelImplementation;
 import org.openbravo.model.ad.domain.ModelImplementationMapping;
 import org.openbravo.model.ad.domain.Reference;
@@ -124,9 +123,9 @@ public class FKSearchUIDefinition extends ForeignKeyUIDefinition {
       final List<String> outFields = new ArrayList<String>();
       for (SelectorColumn selectorColumn : selector.getADSelectorColumnList()) {
         if (selectorColumn.isActive()) {
-          String columnName = selectorColumn.getDBColumnName()
+          String columnName = selectorColumn.getName()
               + (selectorColumn.getSuffix() != null ? selectorColumn.getSuffix() : "");
-          columnName = "inp" + Sqlc.TransformaNombreColumna(columnName);
+          columnName = "inp" + columnName;
           if (selectorColumn.getColumnType().equals("I")) {
             inFields.add(columnName);
           } else {
