@@ -105,6 +105,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="ISREVERSAL" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_SEQUENCE" name="AD_SEQUENCE_DOCTYPEDOC">
         <reference local="DOCNOSEQUENCE_ID" foreign="AD_SEQUENCE_ID"/>
       </foreign-key>
@@ -136,6 +140,7 @@
       </unique>
       <check name="C_DOCTYPE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_DOCTYPE_ISDOCNOCONTROLLE_CHK"><![CDATA[ISDOCNOCONTROLLED IN ('Y', 'N')]]></check>
+      <check name="C_DOCTYPE_ISREVERSAL_CHECK"><![CDATA[ISREVERSAL IN ('Y', 'N')]]></check>
       <check name="C_DOCTYPE_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
       <check name="C_DOCTYPE_ORGFILTERED_CHECK"><![CDATA[ORGFILTERED IN ('Y', 'N')]]></check>
     </table>
