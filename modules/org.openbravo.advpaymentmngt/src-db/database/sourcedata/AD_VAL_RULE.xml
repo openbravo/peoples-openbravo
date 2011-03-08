@@ -40,7 +40,7 @@
 <!--FF8080812E448A62012E44943A160017-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF8080812E448A62012E44943A160017-->  <NAME><![CDATA[APRM_Process Reconciliation valid actions]]></NAME>
 <!--FF8080812E448A62012E44943A160017-->  <TYPE><![CDATA[S]]></TYPE>
-<!--FF8080812E448A62012E44943A160017-->  <CODE><![CDATA[((@EM_APRM_Process_Reconciliation@ = 'P' AND AD_Ref_List.value='P') OR (@EM_APRM_Process_Reconciliation@ = 'R' AND AD_Ref_List.value='R') OR (@EM_APRM_Process_Reconciliation@ is null))]]></CODE>
+<!--FF8080812E448A62012E44943A160017-->  <CODE><![CDATA[((@Process_Reconciliation@ = 'P' AND AD_Ref_List.value='P') OR (@Process_Reconciliation@ = 'R' AND AD_Ref_List.value='R') OR (@Process_Reconciliation@ is null))]]></CODE>
 <!--FF8080812E448A62012E44943A160017-->  <AD_MODULE_ID><![CDATA[A918E3331C404B889D69AA9BFAFB23AC]]></AD_MODULE_ID>
 <!--FF8080812E448A62012E44943A160017--></AD_VAL_RULE>
 
