@@ -294,6 +294,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
           .getBankStatementLineMaxDate(financialAccount));
       reconciliation.setProcessed(process);
       reconciliation.setDocumentStatus(process ? "CO" : "DR");
+      reconciliation.setAPRMProcessReconciliation(process ? "R" : "P");
       OBDal.getInstance().save(reconciliation);
       OBDal.getInstance().flush();
     } catch (Exception ex) {
@@ -595,9 +596,11 @@ public class MatchTransaction extends HttpSecureAppServlet {
   }
 
   private void getSnapShot(FIN_Reconciliation reconciliation) {
-    // First remove old temp info if exists
+    if (reconciliation == null)
+      return;
     OBContext.setAdminMode();
     try {
+      // First remove old temp info if exists
       List<FIN_ReconciliationLineTemp> oldTempLines = reconciliation
           .getFINReconciliationLineTempList();
       for (FIN_ReconciliationLineTemp oldtempLine : oldTempLines) {

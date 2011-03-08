@@ -211,6 +211,7 @@ public class Reconciliation extends HttpSecureAppServlet {
       reconciliation.setEndingDate(FIN_Utility.getDateTime(strStatementDate));
       reconciliation.setDocumentStatus(process ? "CO" : "DR");
       reconciliation.setProcessed(process);
+      reconciliation.setAPRMProcessReconciliation(process ? "R" : "P");
       OBDal.getInstance().save(reconciliation);
       OBDal.getInstance().flush();
 
