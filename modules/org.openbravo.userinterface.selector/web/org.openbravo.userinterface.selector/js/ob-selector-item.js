@@ -104,7 +104,7 @@ isc.OBSelectorPopupWindow.addProperties({
         
         requestProperties._selectorDefinitionId = this.selector.selectorDefinitionId;
         requestProperties._requestType = 'Window';
-        return criteria;
+        return requestProperties;
       },
 
       dataArrived: function(){
