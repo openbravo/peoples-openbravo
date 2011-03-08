@@ -113,6 +113,9 @@ OB.ViewFormProperties = {
     if (hasChanges) {
       this.setHasChanged(true);
     }
+    
+    this.view.setTargetRecordInWindow(record.id);
+    
     return ret;
   },
   
@@ -189,10 +192,12 @@ OB.ViewFormProperties = {
     // 16064: Autosave error is triggered when closing a tab, even if the form wasn't touched
     // https://issues.openbravo.com/view.php?id=16064
     // this is inline with current behavior
-//    if (isNew) {
-//      // signal that autosave is needed after this
-//      this.view.standardWindow.setDirtyEditForm(this);
-//    }
+    // NOTE: changed to reset the edit form when closing the form, so only there
+    // so autosave always works except when closing if nothing has changed
+    if (isNew) {
+      // signal that autosave is needed after this
+      this.view.standardWindow.setDirtyEditForm(this);
+    }
   },
   
   // reset the focus item to the first item which can get focus
