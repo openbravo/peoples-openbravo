@@ -105,24 +105,29 @@ isc.OBSelectorPopupWindow.addProperties({
 
         requestProperties.params._selectorDefinitionId = this.selector.selectorDefinitionId;
         requestProperties.params._requestType = 'Window';
+
+        if(this.getSelectedRecord()) {
+          requestProperties.params._targetRecordId = this.targetRecordId;
+        }
       },
 
-      dataArrived: function(){
-      
+      dataArrived: function() {
+        var record, rowNum;
         this.Super('dataArrived', arguments);
-        
         // check if a record has been selected, if
         // not take the one
         // from the selectorField
         // by doing this when data arrives the selection
         // will show up
         // when the record shows in view
-        if (!this.getSelectedRecord()) {
-          if (this.selector.getValue()) {
-            this.selectSingleRecord(this.data.find(this.valueField, this.selector.getValue()));
-          } else {
-            this.selectSingleRecord(null);
-          }
+        if (this.targetRecordId) {
+          record = this.data.find(this.selector.valueField, this.targetRecordId);
+          rowNum = this.getRecordIndex(record);
+          this.scrollToRow(rowNum);
+          this.selectSingleRecord(record);
+          delete this.targetRecordId;
+        } else {
+          this.selectSingleRecord(null);
         }
       },
       fields: this.selectorGridFields,
@@ -254,6 +259,7 @@ isc.OBSelectorPopupWindow.addProperties({
     // adds the selector id to filter used to get filter information
     defaultFilter._selectorDefinitionId = this.selector.selectorDefinitionId;
     this.defaultFilter = defaultFilter;
+    this.selectorGrid.targetRecordId = this.selector.getValue();
     this.show(true);
   },
   
