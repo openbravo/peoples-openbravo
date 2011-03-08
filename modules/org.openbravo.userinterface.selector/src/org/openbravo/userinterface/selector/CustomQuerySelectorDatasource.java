@@ -31,6 +31,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
@@ -43,7 +44,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
-import org.openbravo.dal.service.OBDao.Constraint;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -351,7 +351,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     // If sortByClause is empty set default sort options.
     if (sortByClause.length() == 0) {
       OBCriteria<SelectorField> selFieldsCrit = OBDao.getFilteredCriteria(SelectorField.class,
-          new Constraint(SelectorField.PROPERTY_OBUISELSELECTOR, sel), new Constraint(
+          Expression.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel), Expression.eq(
               SelectorField.PROPERTY_SHOWINGRID, true));
       selFieldsCrit.addOrderBy(SelectorField.PROPERTY_SORTNO, true);
       for (SelectorField selField : selFieldsCrit.list()) {

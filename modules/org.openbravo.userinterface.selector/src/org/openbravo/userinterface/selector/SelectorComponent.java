@@ -29,6 +29,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -49,7 +51,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.dal.service.OBDao.Constraint;
 import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Field;
@@ -343,8 +344,8 @@ public class SelectorComponent extends BaseTemplateComponent {
    */
   public String getShowSelectorGrid() {
     if (OBDao.getFilteredCriteria(SelectorField.class,
-        new Constraint(SelectorField.PROPERTY_OBUISELSELECTOR, getSelector()),
-        new Constraint(SelectorField.PROPERTY_SHOWINGRID, true)).count() > 0) {
+        Expression.eq(SelectorField.PROPERTY_OBUISELSELECTOR, getSelector()),
+        Expression.eq(SelectorField.PROPERTY_SHOWINGRID, true)).count() > 0) {
       return Boolean.TRUE.toString();
     }
     return Boolean.FALSE.toString();
@@ -541,14 +542,12 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     OBContext.setAdminMode();
     try {
-      final Constraint selectorConstraint = new Constraint(SelectorField.PROPERTY_OBUISELSELECTOR,
+      final Criterion selectorConstraint = Expression.eq(SelectorField.PROPERTY_OBUISELSELECTOR,
           getSelector());
-      final Constraint isOutFieldConstraint = new Constraint(SelectorField.PROPERTY_ISOUTFIELD,
-          true);
-      final Constraint hasSuffixConstraint = new Constraint(SelectorField.PROPERTY_SUFFIX, null,
-          OBDao.Operator.NOT_EQUAL_OPERATOR);
-      List<SelectorField> fields = OBDao.getAllInstances(SelectorField.class, selectorConstraint,
-          isOutFieldConstraint, hasSuffixConstraint);
+      final Criterion isOutFieldConstraint = Expression.eq(SelectorField.PROPERTY_ISOUTFIELD, true);
+      final Criterion hasSuffixConstraint = Expression.isNotNull(SelectorField.PROPERTY_SUFFIX);
+      List<SelectorField> fields = OBDao.getFilteredCriteria(SelectorField.class,
+          selectorConstraint, isOutFieldConstraint, hasSuffixConstraint).list();
       for (final SelectorField field : fields) {
         hiddenInputs.put(columnName + field.getSuffix(), getElementString.replaceAll("@id@",
             columnName + field.getSuffix()));
