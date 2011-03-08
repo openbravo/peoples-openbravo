@@ -85,26 +85,26 @@ isc.OBSelectorPopupWindow.addProperties({
       showFilterEditor: true,
       sortField: this.displayField,
       
-      onFetchData: function(criteria, requestProperties) {    
+      onFetchData: function(criteria, requestProperties) {
         requestProperties = requestProperties || {};
-        
+        requestProperties.params = requestProperties.params || {};
+
         // on purpose not sending the third boolean param
-        isc.addProperties(requestProperties, this.selector.form.view.getContextInfo(false, true));
-        
+        isc.addProperties(requestProperties.params, this.selector.form.view.getContextInfo(false, true));
+
         // also adds the special ORG parameter
         if (this.selector.form.getField('organization')) {
-          requestProperties[OB.Constants.ORG_PARAMETER] = this.selector.form.getValue('organization');
+          requestProperties.params[OB.Constants.ORG_PARAMETER] = this.selector.form.getValue('organization');
         } else if (criteria.inpadOrgId) {
-          requestProperties[OB.Constants.ORG_PARAMETER] = criteria.inpadOrgId;
+          requestProperties.params[OB.Constants.ORG_PARAMETER] = criteria.inpadOrgId;
         }
-        requestProperties[OB.Constants.WHERE_PARAMETER] = this.selector.whereClause;
-        
+        requestProperties.params[OB.Constants.WHERE_PARAMETER] = this.selector.whereClause;
+
         // set the default sort option
-        requestProperties[OB.Constants.SORTBY_PARAMETER] = this.displayField;
-        
-        requestProperties._selectorDefinitionId = this.selector.selectorDefinitionId;
-        requestProperties._requestType = 'Window';
-        return requestProperties;
+        requestProperties.params[OB.Constants.SORTBY_PARAMETER] = this.displayField;
+
+        requestProperties.params._selectorDefinitionId = this.selector.selectorDefinitionId;
+        requestProperties.params._requestType = 'Window';
       },
 
       dataArrived: function(){
