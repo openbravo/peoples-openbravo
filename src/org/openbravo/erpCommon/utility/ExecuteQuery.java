@@ -312,7 +312,7 @@ public class ExecuteQuery {
     } catch (SQLException e) {
       log4j.error("SQL error in query: " + strSQL.toString() + "Exception:" + e);
       throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
+          + e.getMessage(), e);
     } catch (Exception ex) {
       log4j.error("Exception in query: " + strSQL.toString() + "Exception:" + ex);
       throw new ServletException("@CODE=@" + ex.getMessage());
