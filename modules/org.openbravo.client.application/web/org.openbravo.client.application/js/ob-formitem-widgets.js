@@ -104,7 +104,7 @@ w.closeSearch = function (action, value, display, parameters, wait){
   isc.OBSearchItem.openedWindow.close();
   isc.OBSearchItem.openSearchItem = null;
 };
-}(this));
+}(this)); // window
 
 isc.OBSearchItem.addProperties({
   operator: 'iContains',
@@ -196,11 +196,10 @@ isc.OBSearchItem.addProperties({
     values = view.getContextInfo(false, true, true, true);
     length = this.inFields.length;
     for (i = 0; i < length; i++) {
-      inpName = this.inFields[i];
+      inpName = this.inFields[i].columnName;
       propDef = view.getPropertyDefinitionFromInpColumnName(inpName);
-      if (propDef && values[inpName]) {        
-        // note the name passed is not the same as the inp name, it is inp + dbcolumn
-        parameters[index++] = 'inp' + propDef.dbColumn;
+      if (propDef && values[inpName]) {
+        parameters[index++] = this.inFields[i].parameterName;
         parameters[index++] = values[inpName];
         // and to be save also pass the value as the input name
         parameters[index++] = inpName;
@@ -209,7 +208,7 @@ isc.OBSearchItem.addProperties({
     }
     this.openSearchWindow(this.searchUrl, parameters, this.getValue());
   },
-  
+
   openSearchWindow: function(url, parameters, strValueID){
     var height, width, top, left;
     var complementsNS4 = '';
