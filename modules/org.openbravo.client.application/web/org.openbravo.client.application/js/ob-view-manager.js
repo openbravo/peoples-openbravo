@@ -216,7 +216,10 @@
       // only add closable views to the recent items, this prevents the workspace
       // view from being displayed, explicitly doing !== false to catch 
       // views which don't have this set at all
-      if (params.canClose !== false && !vmgr.inStateHandling) {
+      // don't store OBPopupClassicWindow in the viewmanager 
+      // don't store direct links to a target tab, this should be set in a different
+      // property
+      if (!params.targetTabId && params.canClose !== false && !vmgr.inStateHandling && params.viewId !== 'OBPopupClassicWindow') {
         // add and set a default icon
         vmgr.recentManager.addRecent('OBUIAPP_RecentViewList', 
             isc.addProperties({icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png'}, 
@@ -508,6 +511,15 @@
       var viewTabId = this.views.getViewTabID(viewId, viewParams);
       if (!viewTabId) {
         this.openView(viewId, viewParams, null);
+      }
+      
+      // check if a tabId was passed as a url param
+      // only do this if there is no other history
+      if (!historyId) {
+        var urlParams = OB.Utilities.getUrlParameters();
+        if (urlParams.tabId) {
+          OB.Utilities.openDirectTab(urlParams.tabId, urlParams.recordId, urlParams.command);
+        }
       }
     }
   };
