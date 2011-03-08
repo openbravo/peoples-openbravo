@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.application;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,35 +50,51 @@ public class ApplicationUtils {
   private static Logger log = Logger.getLogger(ApplicationUtils.class);
 
   static boolean showWindowInClassicMode(Window window) {
+    List<String> reasonsToBeShownInClassic = new ArrayList<String>();
+    showWindowInClassicMode(window, reasonsToBeShownInClassic);
+    return reasonsToBeShownInClassic.size() > 0;
+  }
+
+  static void showWindowInClassicMode(Window window, List<String> reasonsToBeShownInClassic) {
     // FIXME Remove this once ImageBLOB is implemented
     // Currently, windows with ImageBLOB reference columns will be shown in classic mode
     String qryStr = "as f where f.column.reference.id = '4AA6C3BE9D3B4D84A3B80489505A23E5' "
         + "and f.tab.window.id = :windowId ";
+    List<String> reasonsOfWindow = new ArrayList<String>();
     OBQuery<Field> qry = OBDal.getInstance().createQuery(Field.class, qryStr);
     qry.setNamedParameter("windowId", window.getId());
     if (qry.count() > 0) {
-      return true;
+      String reason = "   One or more columns in the window " + window.getName()
+          + " have an ImageBLOB reference ";
+      reasonsOfWindow.add(reason);
     }
 
     for (Tab tab : window.getADTabList()) {
       if (tab.getSQLWhereClause() != null && tab.getHqlwhereclause() == null) {
         // There is a tab with a SQL whereclause, but without a defined HQL whereclause
-        return true;
+        reasonsOfWindow.add("   The tab " + tab.getName() + " of the window " + window.getName()
+            + " has a SQLWhereClause, but not an HQLWhereClause");
       }
       if (tab.getSQLOrderByClause() != null && tab.getHqlorderbyclause() == null) {
         // There is a tab with a SQL order by clause, but without a defined HQL order by clause
-        return true;
+        reasonsOfWindow.add("   The tab " + tab.getName() + " of the window " + window.getName()
+            + " has a SQLOrderByClause, but not an HQLOrderByClause");
       }
       if (tab.getFilterClause() != null && tab.getHqlfilterclause() == null) {
         // There is a tab with a SQL filter clause, but without a defined HQL filter clause
-        return true;
+        reasonsOfWindow.add("   The tab " + tab.getName() + " of the window " + window.getName()
+            + " has a FilterClause, but not an HQLFilterClause");
       }
       if (tab.getMasterDetailForm() != null) {
         // There is a tab which is a manual form
-        return true;
+        reasonsOfWindow.add("   The tab " + tab.getName() + " of the window " + window.getName()
+            + " is a manual form");
       }
     }
-    return false;
+    if (reasonsOfWindow.size() > 0) {
+      reasonsToBeShownInClassic.add("Window: " + window.getName());
+      reasonsToBeShownInClassic.addAll(reasonsOfWindow);
+    }
   }
 
   /**

@@ -1114,4 +1114,11 @@ export.database: exports database structure and data to xml files.
     </taskdef>
     <checkConsistency userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties"/>
   </target>
+  
+  <target name="check.window.compatibility">
+    <taskdef name="showclassicwindows" classname="org.openbravo.client.application.WindowsInClassicModeTask">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    <showclassicwindows userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties"/>
+  </target>
 </project>
