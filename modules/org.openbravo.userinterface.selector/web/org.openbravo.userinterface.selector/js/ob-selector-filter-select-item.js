@@ -26,7 +26,7 @@ isc.OBSelectorFilterSelectItem.addProperties({
     OB.Datasource.get(this.entity, this);
     this.Super('init', arguments);
   },
-
+  
   // prevent ids from showing up
   mapValueToDisplay : function (value) {
     var ret = this.Super('mapValueToDisplay', arguments);
