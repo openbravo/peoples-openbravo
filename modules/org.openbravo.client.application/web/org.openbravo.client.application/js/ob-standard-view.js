@@ -547,9 +547,15 @@ isc.OBStandardView.addProperties({
   isActiveView: function() {
     return this.standardWindow.activeView === this;
   },
-  
+    
   setAsActiveView: function(){
     this.standardWindow.setActiveView(this);
+  },
+  
+  setTargetRecordInWindow: function(recordId) {
+    if (this.isActiveView()) {
+      this.standardWindow.setTargetInformation(this.tabId, recordId);
+    }
   },
   
   setActiveViewProps: function(state){
@@ -558,6 +564,10 @@ isc.OBStandardView.addProperties({
       this.activeBar.setActive(true);
       this.setViewFocus();
       this.viewGrid.setActive(true);
+      // if we are in form view
+      if (this.isShowingForm && !this.viewForm.isNew) {        
+        this.setTargetRecordInWindow(this.viewGrid.getSelectedRecord().id);
+      }
     } else {
       
       // close any editors we may have

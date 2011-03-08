@@ -292,7 +292,6 @@ isc.OBStandardWindow.addProperties({
   draw: function(){
     var standardWindow = this, targetEntity;
     var ret = this.Super('draw', arguments);
-    
     if (this.targetTabId) {
       for (var i = 0; i < this.views.length; i++) {
         if (this.views[i].tabId === this.targetTabId) {
@@ -365,6 +364,10 @@ isc.OBStandardWindow.addProperties({
     result.windowId = this.windowId;
     result.viewId = this.getClassName();
     result.tabTitle = this.tabTitle;
+    if (this.targetTabId) {
+      result.targetTabId = this.targetTabId;
+      result.targetRecordId = this.targetRecordId;
+    }
     return result;
   },
   
@@ -379,6 +382,12 @@ isc.OBStandardWindow.addProperties({
       return false;
     }
     return this.isEqualParams(params) && viewName === this.getClassName();
+  },
+  
+  setTargetInformation: function(tabId, recordId) {
+    this.targetTabId = tabId;
+    this.targetRecordId = recordId;
+    OB.Layout.HistoryManager.updateHistory();
   },
   
   storeViewState: function(){
