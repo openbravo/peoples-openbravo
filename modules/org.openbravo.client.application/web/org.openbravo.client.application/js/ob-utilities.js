@@ -24,10 +24,27 @@ OB.Utilities = {};
 // ** {{{OB.Utilities.createLoadingLayout}}} **
 // Creates a layout with the loading image.
 OB.Utilities.createLoadingLayout = function(){
-  var mainLayout = isc.HLayout.create({styleName: OB.LoadingPrompt.mainLayoutStyleName, width: '100%', height: '100%', align: 'center', defaultLayoutAlign: 'center'});
-  var loadingLayout = isc.HLayout.create({styleName: OB.LoadingPrompt.loadingLayoutStyleName, width: 1, height: 1, overflow: 'visible'});
+  var mainLayout = isc.HLayout.create({
+    styleName: OB.LoadingPrompt.mainLayoutStyleName,
+    width: '100%',
+    height: '100%',
+    align: 'center',
+    defaultLayoutAlign: 'center'
+  });
+  var loadingLayout = isc.HLayout.create({
+    styleName: OB.LoadingPrompt.loadingLayoutStyleName,
+    width: 1,
+    height: 1,
+    overflow: 'visible'
+  });
   mainLayout.addMember(loadingLayout);
-  loadingLayout.addMember(isc.Label.create({contents: OB.I18N.getLabel('OBUIAPP_LOADING'), styleName: 'OBLoadingPromptLabel', width: 1, height: 1, overflow: 'visible'}));
+  loadingLayout.addMember(isc.Label.create({
+    contents: OB.I18N.getLabel('OBUIAPP_LOADING'),
+    styleName: 'OBLoadingPromptLabel',
+    width: 1,
+    height: 1,
+    overflow: 'visible'
+  }));
   loadingLayout.addMember(isc.Img.create(OB.LoadingPrompt.loadingImage));
   return mainLayout;
 };
@@ -79,30 +96,30 @@ OB.Utilities.determineViewOfFormItem = function(item){
 // If action is null/undefined then nothing is done and undefined is returned.
 // When the action is called the result of the action is returned.
 OB.Utilities.callAction = function(action){
-  function IEApplyHack(method, object, parameters) {
+  function IEApplyHack(method, object, parameters){
     if (!object) {
       object = window;
     }
     if (!parameters) {
       parameters = [];
     }
-
+    
     object.customApplyMethod = method;
-
+    
     var argsString = [];
-    for(var i = 0; i < parameters.length; i++) {
+    for (var i = 0; i < parameters.length; i++) {
       argsString[i] = 'parameters[' + i + ']';
     }
-
+    
     var argsList = argsString.join(",");
-
+    
     var result = eval('object.customApplyMethod(' + argsList + ');');
-
+    
     delete object.customApplyMethod;
-
+    
     return result;
   }
-
+  
   if (!action) {
     return;
   }
@@ -145,6 +162,37 @@ OB.Utilities.useClassicMode = function(windowId){
     return true;
   }
   return false;
+};
+
+// ** {{{OB.Utilities.openDirectTab}}} **
+// Open a view using a tab id and record id. The tab can be a child tab. If the record id
+// is not set then the tab is opened in grid mode. If command is not set then default is
+// used.
+OB.Utilities.openDirectTab = function(tabId, recordId, command){
+  var callback = function(response, data, request){
+    command = command || 'DEFAULT';
+    var view = {
+      viewId: '_' + data.windowId,
+      tabTitle: data.tabTitle,
+      windowId: data.windowId,
+      tabId: data.tabId,
+      command: command
+    };
+    // new is only supported for the top tab
+    if (command !== 'NEW') {
+      view.targetTabId = tabId;
+    }
+      
+    if (recordId) {
+      view.targetRecordId = recordId;
+    }
+    OB.Layout.ViewManager.openView(view.viewId, view);
+  };
+  
+  OB.RemoteCallManager.call('org.openbravo.client.application.ComputeWindowActionHandler', {}, {
+    'tabId': tabId,
+    'recordId': recordId
+  }, callback);
 };
 
 // ** {{{OB.Utilities.openView}}} **
@@ -232,6 +280,21 @@ OB.Utilities.getPromptString = function(msg){
     msgString += (i > 0 ? '<br>' : '') + msg[i].asHTML();
   }
   return msgString;
+};
+// ** {{{OB.Utilities.getUrlParameters}}} **
+// Returns the url parameters as a javascript object. Note works for simple cases
+// where no & is used for character encoding, this is fine for most cases.
+OB.Utilities.getUrlParameters = function(){
+  var vars = {}, hash, href = window.location.href, hashes = href.slice(href.indexOf('?') + 1).split('&');
+  
+  for (var i = 0; i < hashes.length; i++) {
+    hash = hashes[i].split('=');
+    if (hash[i] && hash[i].contains('#')) {
+      hash[i] = hash[i].substring(0, hash[i].indexOf('#'));
+    }
+    vars[hash[0]] = hash[1];
+  }
+  return vars;
 };
 
 // ** {{{OB.Utilities.hasUrlParameter}}} **
@@ -552,11 +615,11 @@ OB.Utilities.updateSmartClientComponentValue = function(/* Object */input, /* Ob
 //
 // Parameters:
 // * {{{currentValues}}}: array of values
-OB.Utilities.fixNull250 = function (currentValues){
+OB.Utilities.fixNull250 = function(currentValues){
   var i;
-  for(i in currentValues) { 
-    if(currentValues.hasOwnProperty(i) && 
-       currentValues[i] === null) {
+  for (i in currentValues) {
+    if (currentValues.hasOwnProperty(i) &&
+    currentValues[i] === null) {
       currentValues[i] = '';
     }
   }
@@ -567,10 +630,10 @@ OB.Utilities.fixNull250 = function (currentValues){
 //
 // Parameters:
 // * {{{url}}}: String url
-OB.Utilities.isValidURL = function(url) {
+OB.Utilities.isValidURL = function(url){
   // Validation based on: http://view.jquery.com/trunk/plugins/validate/jquery.validate.js
   // Note: http://localhost is not a valid URL, http://localhost.localdomain is a valid one
-  if(!url) {
+  if (!url) {
     return false;
   }
   return (/^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i).test(url);
