@@ -290,15 +290,17 @@ public class DefaultJsonDataService implements JsonDataService {
           }
         }
         final String[] criteriaStrs = fullCriteriaStr.split(JsonConstants.IN_PARAMETER_SEPARATOR);
-        for (String criteriaStr : criteriaStrs) {
-          final JSONObject criteriaJSONObject = new JSONObject(criteriaStr);
-          if (criteriaJSONObject.has("fieldName")) {
-            final String fieldName = criteriaJSONObject.getString("fieldName");
-            if (!fieldName.startsWith("_")) {
+        if (!fullCriteriaStr.equals("")) {
+          for (String criteriaStr : criteriaStrs) {
+            final JSONObject criteriaJSONObject = new JSONObject(criteriaStr);
+            if (criteriaJSONObject.has("fieldName")) {
+              final String fieldName = criteriaJSONObject.getString("fieldName");
+              if (!fieldName.startsWith("_")) {
+                criteriaObjects.add(criteriaJSONObject);
+              }
+            } else {
               criteriaObjects.add(criteriaJSONObject);
             }
-          } else {
-            criteriaObjects.add(criteriaJSONObject);
           }
         }
       }

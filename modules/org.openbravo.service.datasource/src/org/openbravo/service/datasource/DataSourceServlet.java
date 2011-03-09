@@ -20,7 +20,6 @@ package org.openbravo.service.datasource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,6 +57,7 @@ import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.security.UsageAudit;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.service.json.DefaultJsonDataService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.service.web.InvalidContentException;
@@ -173,7 +173,7 @@ public class DataSourceServlet extends BaseKernelServlet {
         }
       }
       // now do the action
-      String result = getDataSource(request).fetch(parameters);
+
       boolean isExport = "true".equals(parameters.get("exportToFile"));
       if (isExport) {
         String exportAs = parameters.get("exportAs");
@@ -181,15 +181,178 @@ public class DataSourceServlet extends BaseKernelServlet {
           exportAs = "csv";
         }
         if ("csv".equals(exportAs)) {
-          writeResultCSV(request, response, parameters, result);
+          response.setContentType("text/csv; charset=UTF-8");
+          response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
+          if (getDataSource(request) instanceof DefaultDataSourceService) {
+            QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters);
+            ((DefaultDataSourceService) getDataSource(request)).fetch(parameters, writer);
+          } else {
+            String result = getDataSource(request).fetch(parameters);
+            JSONObject jsonResult = new JSONObject(result);
+            JSONArray data = jsonResult.getJSONObject("response").getJSONArray("data");
+            QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters);
+            for (int i = 0; i < data.length(); i++) {
+              writer.write(data.getJSONObject(i));
+            }
+          }
         } else {
           log.error("Unsupported export format: " + exportAs);
         }
       } else {
+        String result = getDataSource(request).fetch(parameters);
         writeResult(response, result);
       }
     } catch (Exception e) {
       handleException(e, response);
+    }
+  }
+
+  private class QueryJSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
+
+    Writer writer;
+    String fieldSeparator;
+    String decimalSeparator;
+    List<String> fieldProperties;
+    boolean propertiesWritten = false;
+
+    public QueryJSONWriterToCSV(HttpServletRequest request, HttpServletResponse response,
+        Map<String, String> parameters) {
+      response.setContentType("text/csv; charset=UTF-8");
+      response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
+      try {
+        writer = response.getWriter();
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        decimalSeparator = vars.getSessionValue("#DecimalSeparator|generalQtyEdition").substring(0,
+            1);
+        // JSONObject jsonResult = new JSONObject(result);
+        // JSONArray data = jsonResult.getJSONObject("response").getJSONArray("data");
+        try {
+          fieldSeparator = Preferences.getPreferenceValue("CSVFieldSeparator", false, null, null,
+              OBContext.getOBContext().getUser(), null, null);
+        } catch (PropertyException e) {
+          log.warn("CSV Field Separator couldn't be found. Using default separator: ,");
+          fieldSeparator = ",";
+        }
+        fieldProperties = new ArrayList<String>();
+        if (parameters.get("viewState") != null
+            && !parameters.get("viewState").toString().equals("undefined")) {
+          String viewStateO = parameters.get("viewState");
+          String viewStateWithoutParenthesis = viewStateO.substring(1, viewStateO.length() - 1);
+          JSONObject viewState = new JSONObject(viewStateWithoutParenthesis);
+          String fieldA = viewState.getString("field");
+          JSONArray fields = new JSONArray(fieldA);
+          for (int i = 0; i < fields.length(); i++) {
+            JSONObject field = fields.getJSONObject(i);
+            if (field.has("visible") && !field.getBoolean("visible")) {
+              // The field is not visible. We should not export it
+              continue;
+            }
+            if (field.getString("name").equals("_checkboxField")
+                || field.getString("name").equals("_editLink")) {
+              continue;
+            }
+            fieldProperties.add(field.getString("name"));
+          }
+        }
+
+        if (fieldProperties.size() > 0) {
+          // If the request came with the view state information, we get the properties from there
+          for (int i = 0; i < fieldProperties.size(); i++) {
+            if (i > 0) {
+              writer.append(fieldSeparator);
+            }
+            writer.append("\"").append(fieldProperties.get(i)).append("\"");
+          }
+          propertiesWritten = true;
+        }
+      } catch (Exception e) {
+        throw new OBException("Error while exporting a CSV file", e);
+      }
+    }
+
+    private void writeJSONProperties(JSONObject row) {
+      final Iterator<?> itKeysF = row.keys();
+      Vector<String> keys = new Vector<String>();
+      boolean isFirst = true;
+      try {
+        while (itKeysF.hasNext()) {
+          String key = (String) itKeysF.next();
+          if (key.endsWith("_identifier")) {
+            continue;
+          }
+          if (fieldProperties.size() > 0 && !fieldProperties.contains(key)) {
+            // Field is not visible. We don't show it
+            continue;
+          }
+          if (isFirst) {
+            isFirst = false;
+          } else {
+            writer.append(fieldSeparator);
+          }
+          keys.add(key);
+          writer.append("'").append(key).append("'");
+        }
+      } catch (Exception e) {
+        throw new OBException("Error while writing column names when exporting a CSV file", e);
+      }
+    }
+
+    public void write(JSONObject json) {
+      try {
+        if (!propertiesWritten) {
+          writeJSONProperties(json);
+        }
+        writer.append("\n");
+        final Iterator<?> itKeys;
+        if (fieldProperties.size() > 0) {
+          itKeys = fieldProperties.iterator();
+        } else {
+          itKeys = json.keys();
+        }
+        boolean isFirst = true;
+        while (itKeys.hasNext()) {
+          String key = (String) itKeys.next();
+          if (key.endsWith("_identifier")) {
+            continue;
+          }
+          if (fieldProperties.size() > 0 && !fieldProperties.contains(key)) {
+            // Field is not visible. We don't show it
+            continue;
+          }
+          if (isFirst) {
+            isFirst = false;
+          } else {
+            writer.append(fieldSeparator);
+          }
+          if (!json.has(key)) {
+            continue;
+          }
+          Object keyValue = json.has(key + "._identifier") ? json.get(key + "._identifier") : json
+              .get(key);
+          if (keyValue instanceof Number && keyValue != null) {
+            keyValue = keyValue.toString().replace(".", decimalSeparator);
+          }
+          if ((keyValue instanceof Date) && keyValue != null) {
+            // TODO This currently will never happen. Dates in JSONObjects are represented as
+            // Strings, and therefore keyValue will never be Date or DateTime. Once a BaseOBObject
+            // is exported instead of a JSONObject, this will be done properly
+            String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATEFORMAT")
+                .toString();
+            SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+            dateFormat.setLenient(true);
+            keyValue = dateFormat.format((Date) keyValue);
+          }
+          if (keyValue != null && !keyValue.toString().equals("null")) {
+            keyValue = Replace.replace(keyValue.toString(), "\"", "\"\"");
+          } else {
+            keyValue = "";
+          }
+          keyValue = "\"" + keyValue + "\"";
+          writer.append(keyValue.toString());
+        }
+      } catch (Exception e) {
+        throw new OBException("Error while exporting CSV information", e);
+      }
     }
   }
 
@@ -430,134 +593,9 @@ public class DataSourceServlet extends BaseKernelServlet {
 
   private void writeResultCSV(HttpServletRequest request, HttpServletResponse response,
       Map<String, String> parameters, String result) throws IOException, JSONException {
-    response.setContentType("text/csv; charset=UTF-8");
-    response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
-    VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    JSONObject jsonResult = new JSONObject(result);
-    JSONArray data = jsonResult.getJSONObject("response").getJSONArray("data");
-    String fieldSeparator;
-    try {
-      fieldSeparator = Preferences.getPreferenceValue("CSVFieldSeparator", false, null, null,
-          OBContext.getOBContext().getUser(), null, null);
-    } catch (PropertyException e) {
-      log.warn("CSV Field Separator couldn't be found. Using default separator: ,");
-      fieldSeparator = ",";
-    }
-
-    List<String> fieldProperties = new ArrayList<String>();
-    if (parameters.get("viewState") != null
-        && !parameters.get("viewState").toString().equals("undefined")) {
-      String viewStateO = parameters.get("viewState");
-      String viewStateWithoutParenthesis = viewStateO.substring(1, viewStateO.length() - 1);
-      JSONObject viewState = new JSONObject(viewStateWithoutParenthesis);
-      String fieldA = viewState.getString("field");
-      JSONArray fields = new JSONArray(fieldA);
-      for (int i = 0; i < fields.length(); i++) {
-        JSONObject field = fields.getJSONObject(i);
-        if (field.has("visible") && !field.getBoolean("visible")) {
-          // The field is not visible. We should not export it
-          continue;
-        }
-        if (field.getString("name").equals("_checkboxField")
-            || field.getString("name").equals("_editLink")) {
-          continue;
-        }
-        fieldProperties.add(field.getString("name"));
-      }
-    }
     StringBuffer csv = new StringBuffer();
-    if (data.length() > 0) {
-      if (fieldProperties.size() > 0) {
-        // If the request came with the view state information, we get the properties from there
-        for (int i = 0; i < fieldProperties.size(); i++) {
-          if (i > 0) {
-            csv.append(fieldSeparator);
-          }
-          csv.append("\"").append(fieldProperties.get(i)).append("\"");
-        }
-      } else {
-        // If not, we get them from the JSONObject itself
-        final JSONObject headerRow = data.getJSONObject(0);
-        final Iterator<?> itKeysF = headerRow.keys();
-        Vector<String> keys = new Vector<String>();
-        boolean isFirst = true;
-        while (itKeysF.hasNext()) {
-          String key = (String) itKeysF.next();
-          if (key.endsWith("_identifier")) {
-            continue;
-          }
-          if (fieldProperties.size() > 0 && !fieldProperties.contains(key)) {
-            // Field is not visible. We don't show it
-            continue;
-          }
-          if (isFirst) {
-            isFirst = false;
-          } else {
-            csv.append(fieldSeparator);
-          }
-          keys.add(key);
-          csv.append("'").append(key).append("'");
-        }
-      }
 
-      for (int i = 0; i < data.length(); i++) {
-        JSONObject row = data.getJSONObject(i);
-        csv.append("\n");
-        final Iterator<?> itKeys;
-        if (fieldProperties.size() > 0) {
-          itKeys = fieldProperties.iterator();
-        } else {
-          itKeys = row.keys();
-        }
-        boolean isFirst = true;
-        while (itKeys.hasNext()) {
-          String key = (String) itKeys.next();
-          if (key.endsWith("_identifier")) {
-            continue;
-          }
-          if (fieldProperties.size() > 0 && !fieldProperties.contains(key)) {
-            // Field is not visible. We don't show it
-            continue;
-          }
-          if (isFirst) {
-            isFirst = false;
-          } else {
-            csv.append(fieldSeparator);
-          }
-          if (!row.has(key)) {
-            continue;
-          }
-          Object keyValue = row.has(key + "._identifier") ? row.get(key + "._identifier") : row
-              .get(key);
-          if (keyValue instanceof Number && keyValue != null) {
-            keyValue = keyValue.toString().replace(".",
-                vars.getSessionValue("#DecimalSeparator|generalQtyEdition").substring(0, 1));
-          }
-          if ((keyValue instanceof Date) && keyValue != null) {
-            // TODO This currently will never happen. Dates in JSONObjects are represented as
-            // Strings, and therefore keyValue will never be Date or DateTime. Once a BaseOBObject
-            // is exported instead of a JSONObject, this will be done properly
-            String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATEFORMAT")
-                .toString();
-            SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-            dateFormat.setLenient(true);
-            keyValue = dateFormat.format((Date) keyValue);
-          }
-          if (keyValue != null && !keyValue.toString().equals("null")) {
-            keyValue = Replace.replace(keyValue.toString(), "\"", "\"\"");
-          } else {
-            keyValue = "";
-          }
-          keyValue = "\"" + keyValue + "\"";
-          csv.append(keyValue);
-        }
-      }
-    }
-
-    final PrintWriter pw = response.getWriter();
-    pw.write(csv.toString());
-    pw.close();
   }
 
   private String getRequestContent(HttpServletRequest request) throws IOException {

@@ -29,6 +29,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.service.json.DefaultJsonDataService;
 import org.openbravo.service.json.JsonConstants;
+import org.openbravo.service.json.DefaultJsonDataService.QueryResultWriter;
 
 /**
  * The default implementation of the {@link DataSourceService}. Supports data retrieval, update
@@ -50,24 +51,38 @@ public class DefaultDataSourceService extends BaseDataSourceService {
   public String fetch(Map<String, String> parameters) {
     OBContext.setAdminMode(true);
     try {
-      parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
-
-      if (getWhereClause() != null) {
-        if (parameters.get(JsonConstants.WHERE_PARAMETER) != null) {
-          final String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
-          parameters.put(JsonConstants.WHERE_PARAMETER, "(" + currentWhere + ") and ("
-              + getWhereClause() + ")");
-        } else {
-          parameters.put(JsonConstants.WHERE_PARAMETER, getWhereClause());
-        }
-      }
-
-      parameters.put(JsonConstants.USE_ALIAS, "true");
-
+      addFetchParameters(parameters);
       return DefaultJsonDataService.getInstance().fetch(parameters);
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  public void fetch(Map<String, String> parameters, QueryResultWriter writer) {
+    OBContext.setAdminMode(true);
+    try {
+      addFetchParameters(parameters);
+      DefaultJsonDataService.getInstance().fetch(parameters, writer);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private void addFetchParameters(Map<String, String> parameters) {
+
+    parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
+
+    if (getWhereClause() != null) {
+      if (parameters.get(JsonConstants.WHERE_PARAMETER) != null) {
+        final String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
+        parameters.put(JsonConstants.WHERE_PARAMETER, "(" + currentWhere + ") and ("
+            + getWhereClause() + ")");
+      } else {
+        parameters.put(JsonConstants.WHERE_PARAMETER, getWhereClause());
+      }
+    }
+
+    parameters.put(JsonConstants.USE_ALIAS, "true");
   }
 
   /*
