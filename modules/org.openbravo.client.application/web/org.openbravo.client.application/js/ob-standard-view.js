@@ -967,6 +967,7 @@ isc.OBStandardView.addProperties({
         this.editRecord(gridRecord);
       }
     }
+    this.setAsActiveView();
     
     // remove this info
     delete this.standardWindow.directTabInfo;
