@@ -768,9 +768,16 @@ OB.ViewFormProperties = {
       var index1, index2, errorCode, view = form.view;
       var status = resp.status;
 
-      // if this is not done the selection gets lost
+      // if no recordIndex then select explicitly
+      if (recordIndex === -1) {
+        var id = form.getValue('id');
+        record = view.viewGrid.data.find('id', id);
+        recordIndex = view.viewGrid.data.indexOf(record);
+      }
+      
       if (recordIndex || recordIndex === 0) {
-        var localRecord = view.viewGrid.getRecord(recordIndex);
+        // if this is not done the selection gets lost
+        var localRecord = view.viewGrid.data.get(recordIndex);
         if (localRecord) {
           localRecord[view.viewGrid.selection.selectionProperty] = true;
         }

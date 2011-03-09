@@ -451,8 +451,7 @@ isc.OBViewGrid.addProperties({
     }
     
     var context = {
-      showPrompt: false,
-      textMatchStyle: this.autoFetchTextMatchStyle
+      showPrompt: false
     };
     this.filterData(this.getCriteria(), callback, context);
   },
@@ -715,8 +714,24 @@ isc.OBViewGrid.addProperties({
         operator: 'and', 
         _constructor: "AdvancedCriteria", 
         criteria:[]};
+        
+      // add a dummy criteria to force a fetch
+      criteria.criteria.push({
+        fieldName: '_dummy',
+        operator: 'equals',
+        value: this.targetRecordId
+      });
+      
       // remove the filter clause we don't want to use
       this.filterClause = null;
+    } else {
+      // remove the _dummy
+      for (i = 0; i < criteria.criteria.length; i++) {
+        if (criteria.criteria[i].fieldName === '_dummy') {
+          criteria.criteria.removeAt(i);
+          break;
+        }
+      }
     }
     
     // note pass in criteria otherwise infinite looping!
@@ -758,7 +773,7 @@ isc.OBViewGrid.addProperties({
       for (i = (internalCriteria.length - 1); i >= 0; i--) {
         var shouldRemove = false;
         criterion = internalCriteria[i];
-        if (criterion.fieldName && criterion.fieldName.startsWith('_')) {
+        if (criterion.fieldName && criterion.fieldName.startsWith('_') && criterion.fieldName !== '_dummy') {
           shouldRemove = true;
         } else if (isc.isA.emptyString(criterion.value)) {
           shouldRemove = true;
