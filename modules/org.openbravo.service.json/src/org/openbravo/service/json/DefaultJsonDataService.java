@@ -277,9 +277,19 @@ public class DefaultJsonDataService implements JsonDataService {
       criteria.put("_constructor", "AdvancedCriteria");
 
       final List<JSONObject> criteriaObjects = new ArrayList<JSONObject>();
-      if (parameters.containsKey("criteria")) {
-        final String[] criteriaStrs = parameters.get("criteria").split(
-            JsonConstants.IN_PARAMETER_SEPARATOR);
+      if (parameters.containsKey("criteria") && !parameters.get("criteria").equals("")) {
+        String fullCriteriaStr = parameters.get("criteria");
+        if (fullCriteriaStr.startsWith("[")) {
+          JSONArray criteriaArray = new JSONArray(fullCriteriaStr);
+          fullCriteriaStr = "";
+          for (int i = 0; i < criteriaArray.length(); i++) {
+            if (i > 0) {
+              fullCriteriaStr += JsonConstants.IN_PARAMETER_SEPARATOR;
+            }
+            fullCriteriaStr += criteriaArray.getJSONObject(i).toString();
+          }
+        }
+        final String[] criteriaStrs = fullCriteriaStr.split(JsonConstants.IN_PARAMETER_SEPARATOR);
         for (String criteriaStr : criteriaStrs) {
           final JSONObject criteriaJSONObject = new JSONObject(criteriaStr);
           if (criteriaJSONObject.has("fieldName")) {

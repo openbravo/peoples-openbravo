@@ -667,7 +667,11 @@ OB.Utilities.postThroughHiddenForm = function(url, data){
       var field = document.createElement('input');
       field.setAttribute('type', 'hidden');
       field.setAttribute('name', key);
-      field.setAttribute('value', data[key]);
+      if(isc.isA.Object(data[key])){
+        field.setAttribute('value', isc.JSON.encode(data[key]));
+      }else{
+        field.setAttribute('value', data[key]);
+      }
       OB.GlobalHiddenForm.appendChild(field);
     }
   }
