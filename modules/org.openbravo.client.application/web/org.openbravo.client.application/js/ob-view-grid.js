@@ -137,7 +137,8 @@ isc.OBViewGrid.addProperties({
   
   // modal editing is not possible as we need to be able to do 
   // undo, which means clicks outside of the current form.
-  modalEditing: false,
+  modalEditing: true,
+  //showGridSummary: true,
   
   timeFormatter: 'to24HourTime',
   
@@ -167,6 +168,16 @@ isc.OBViewGrid.addProperties({
     }
   },
   
+  cellEditEnd: function(ece) {
+    if (ece === isc.ListGrid.CLICK_OUTSIDE) {
+      // finished editing on a click outside of the 
+      // current edit row
+      this.endEditing();
+    } else {
+      this.Super('cellEditEnd', arguments);
+    }    
+  },
+
   refreshFields: function(){
     this.setFields(this.completeFields.duplicate());
   },
@@ -1852,7 +1863,7 @@ isc.OBGridButtonsComponent.addProperties({
   record: null,
   
   initWidget: function(){
-    var me = this, formButton, cancelButton, saveButton;
+    var me = this, formButton, saveButton;
     
     this.progressIcon = isc.Img.create(this.grid.progressIconDefaults);
     
@@ -1902,7 +1913,8 @@ isc.OBGridButtonsComponent.addProperties({
       }
     });
     
-    cancelButton = isc.OBGridToolStripIcon.create({
+    // is referred to in OBViewForm.showClickMask
+    this.cancelButton = isc.OBGridToolStripIcon.create({
       buttonType: 'cancel',
       prompt: OB.I18N.getLabel('OBUIAPP_GridCancelButtonPrompt'),
       action: function(){
@@ -1927,7 +1939,7 @@ isc.OBGridButtonsComponent.addProperties({
     buttonSeparator2 = isc.OBGridToolStripSeparator.create({});
     
     this.OBGridToolStrip = isc.OBGridToolStrip.create({
-      members: [formButton, this.buttonSeparator1, this.editButton, cancelButton, buttonSeparator2, saveButton]
+      members: [formButton, this.buttonSeparator1, this.editButton, this.cancelButton, buttonSeparator2, saveButton]
     });
     
     this.addMember(this.progressIcon);

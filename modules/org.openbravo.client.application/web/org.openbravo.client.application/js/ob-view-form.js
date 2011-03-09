@@ -182,6 +182,26 @@ OB.ViewFormProperties = {
     }
   },
   
+  // add the undo buttons to the clickmask so that no save happens when 
+  // clicking undo
+  showClickMask : function(clickAction, mode, unmaskedTargets) {
+    if (!isc.isA.Array(unmaskedTargets)) {
+      if (!unmaskedTargets) {
+        unmaskedTargets = [];
+      } else {
+        unmaskedTargets = [unmaskedTargets];
+      }
+    } 
+    // the main undo button
+    unmaskedTargets.push(this.view.toolBar.getLeftMember('undo'));
+    
+    // the row cancel button
+    if (this.view.viewGrid.getSelectedRecord() && this.view.viewGrid.getSelectedRecord().editColumnLayout) {
+      unmaskedTargets.push(this.view.viewGrid.getSelectedRecord().editColumnLayout.cancelButton);
+    }
+    this.Super('showClickMask', [clickAction, mode, unmaskedTargets]);
+  },  
+  
   setNewState: function(isNew){
     this.isNew = isNew;
     this.view.statusBar.setNewState(isNew);
