@@ -447,8 +447,6 @@ public abstract class UIDefinition {
     return new FieldProviderFactory(noinpDataMap);
   }
 
-  // Old method which parses SQL such as the one in Default values of columns, or auxiliary inputs
-  // TODO: This method probably shouldn't be here, need to find a better place to put it
   public static String parseSQL(String code, ArrayList<String> colNames) {
     if (code == null || code.trim().equals(""))
       return "";
