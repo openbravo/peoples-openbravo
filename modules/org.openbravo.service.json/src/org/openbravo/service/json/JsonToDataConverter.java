@@ -723,7 +723,8 @@ public class JsonToDataConverter {
     // do not change not changeable properties
     doNotHandleThisProperty |= property.isInactive();
     // do not change not updatable properties
-    doNotHandleThisProperty |= !obObject.isNewOBObject() && !property.isUpdatable();
+    // Updatable is a UI concept
+    // doNotHandleThisProperty |= !obObject.isNewOBObject() && !property.isUpdatable();
     return doNotHandleThisProperty;
   }
 
