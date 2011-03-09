@@ -934,18 +934,23 @@ isc.OBViewGrid.addProperties({
         title: OB.I18N.getLabel('OBUIAPP_UseAsFilter'),
         click: function(){
           var value;
-          var filterCriteria = grid.getCriteria();
           // a foreign key field, use the displayfield/identifier
           if (field.foreignKeyField && field.displayField) {
             value = record[field.displayField];
-            filterCriteria[field.displayField] = value;
           } else {
             value = grid.getEditDisplayValue(rowNum, colNum, record);
-            filterCriteria[field.name] = value;
           }
-          grid.setCriteria(filterCriteria);
-          grid.checkShowFilterFunnelIcon(grid.getCriteria());
-          grid.filterData(grid.getCriteria());
+          // assume a date range filter item
+          if (isc.isA.Date(value) && field.filterEditorType === 'OBMiniDateRangeItem') {
+            value = {
+              start: value,
+              end: value
+            };
+          }
+          grid.filterEditor.getEditForm().setValue(field.name, value);
+          var criteria = grid.filterEditor.getEditForm().getValuesAsCriteria();
+          grid.checkShowFilterFunnelIcon(criteria);
+          grid.filterData(criteria);
         }
       });
     }
