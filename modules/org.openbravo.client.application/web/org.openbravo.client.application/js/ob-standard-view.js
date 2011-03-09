@@ -1584,15 +1584,15 @@ isc.OBStandardView.addProperties({
               if (type.createClassicString) {
                 contextInfo[properties[i].inpColumn] = type.createClassicString(value);
               } else {
-                contextInfo[properties[i].inpColumn] = this.convertContextValue(value);
+                contextInfo[properties[i].inpColumn] = this.convertContextValue(value, propertyObj.type);
               }
             } else {
-              contextInfo[properties[i].inpColumn] = this.convertContextValue(value);
+              contextInfo[properties[i].inpColumn] = this.convertContextValue(value, propertyObj.type);
             }
           } else {
             // surround the property name with @ symbols to make them different
             // from filter criteria and such          
-            contextInfo['@' + this.entity + '.' + properties[i].property + '@'] = this.convertContextValue(value);
+            contextInfo['@' + this.entity + '.' + properties[i].property + '@'] = this.convertContextValue(value, propertyObj.type);
           }
         }
       }
@@ -1629,15 +1629,20 @@ isc.OBStandardView.addProperties({
     return contextInfo;
   },
   
-  convertContextValue: function(value) {
+  convertContextValue: function(value, type) {
     if (isc.isA.Date(value)) {
-      // this prevents strange timezone issues, the result is a timezoneless
-      // string
-      var oldXMLSchemaMode = isc.Comm.xmlSchemaMode;
-      isc.Comm.xmlSchemaMode = true;
-      var ret = value.toSerializeableDate();
-      isc.Comm.xmlSchemaMode = oldXMLSchemaMode;
-      return ret;
+      var ret, isTime = type && isc.SimpleType.getType(type).inheritsFrom === 'time';
+      if (isTime) {
+        return value.getUTCHours() + ':' + value.getUTCMinutes() + ':' + value.getUTCSeconds();
+      } else {
+        // this prevents strange timezone issues, the result is a timezoneless
+        // string
+        var oldXMLSchemaMode = isc.Comm.xmlSchemaMode;
+        isc.Comm.xmlSchemaMode = true;
+        ret = value.toSerializeableDate();
+        isc.Comm.xmlSchemaMode = oldXMLSchemaMode;
+        return ret;
+      }
     }
     return value;
   },

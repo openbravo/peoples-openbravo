@@ -626,7 +626,7 @@ isc.OBMiniDateRangeItem.addProperties({
 isc.ClassFactory.defineClass('OBDateItem', DateItem);
 
 isc.OBDateItem.addClassProperties({
-
+  
   // ** {{{ autoCompleteData }}} **
   //
   // Autocomplets the date entered.

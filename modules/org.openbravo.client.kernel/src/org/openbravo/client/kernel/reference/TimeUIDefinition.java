@@ -74,14 +74,12 @@ public class TimeUIDefinition extends UIDefinition {
       if (value.indexOf(":") == 2 && value.indexOf(":", 3) == 5) {
         if (!value.contains("+") && !value.contains("-")) {
           return value + "+00:00";
-        } else {
-          return value;
         }
-
+        return value;
       }
       final java.util.Date date = getClassicFormat().parse(value);
-      final String timeStr = xmlTimeFormat.format(date);
-      return JsonUtils.convertToCorrectXSDFormat(timeStr);
+      // always return in gmt
+      return xmlTimeFormat.format(date) + "+00:00";
     } catch (Exception e) {
       throw new OBException("Exception when handling value " + value, e);
     }

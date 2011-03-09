@@ -27,7 +27,8 @@ isc.setAutoDraw(false);
 
 // We have dates/times in the database without timezone, we assume GMT therefore 
 // for all our date/times we use GMT on both the server and the client
-Time.setDefaultDisplayTimezone(0);
+// NOTE: causes issue https://issues.openbravo.com/view.php?id=16014
+//Time.setDefaultDisplayTimezone(0);
 
 //Let the click on an ImgButton and Button fall through to its action method 
 isc.ImgButton.addProperties({

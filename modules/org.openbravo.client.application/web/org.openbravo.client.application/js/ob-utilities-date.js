@@ -139,13 +139,21 @@ OB.Utilities.Date.OBToJS = function(/* String */OBDate, /* String */ dateFormat)
     }
     JSDate.setFullYear(year);
   }
-  JSDate.setMonth(month - 1);
-  JSDate.setDate(day);
-  JSDate.setHours(hours);
-  JSDate.setMinutes(minutes);
-  JSDate.setSeconds(seconds);
-  JSDate.setMilliseconds(0);
-
+  if (dateFormat.indexOf('%H') !== -1) {
+    JSDate.setUTCMonth(month - 1);
+    JSDate.setUTCDate(day);
+    JSDate.setUTCHours(hours);
+    JSDate.setUTCMinutes(minutes);
+    JSDate.setUTCSeconds(seconds);
+    JSDate.setUTCMilliseconds(0);
+  } else {
+    JSDate.setMonth(month - 1);
+    JSDate.setDate(day);
+    JSDate.setHours(hours);
+    JSDate.setMinutes(minutes);
+    JSDate.setSeconds(seconds);
+    JSDate.setMilliseconds(0);
+  }
   if (JSDate.toString() === 'Invalid Date' || JSDate.toString() === 'NaN') {
     return null;
   } else {
@@ -172,11 +180,11 @@ OB.Utilities.Date.JSToOB = function(/* Date */JSDate, /* String */ dateFormat){
   
   var year = JSDate.getYear().toString();
   var fullYear = JSDate.getFullYear().toString();
-  var month = (JSDate.getMonth() + 1).toString();
-  var day = JSDate.getDate().toString();
-  var hours = JSDate.getHours().toString();
-  var minutes = JSDate.getMinutes().toString();
-  var seconds = JSDate.getSeconds().toString();
+  var month = (JSDate.getUTCMonth() + 1).toString();
+  var day = JSDate.getUTCDate().toString();
+  var hours = JSDate.getUTCHours().toString();
+  var minutes = JSDate.getUTCMinutes().toString();
+  var seconds = JSDate.getUTCSeconds().toString();
   
   var centuryReference = OB.Utilities.Date.centuryReference;
   if (dateFormat.indexOf('%y') !== -1) {
