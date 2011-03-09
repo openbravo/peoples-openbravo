@@ -211,7 +211,7 @@ public class DefaultJsonDataService implements JsonDataService {
         queryService.addFilterParameter(key, parameters.get(key));
       }
     }
-    queryService.setCriteria(buildCriteria(parameters, queryService));
+    queryService.setCriteria(JsonUtils.buildCriteria(parameters));
 
     if (parameters.get(JsonConstants.NO_ACTIVE_FILTER) != null
         && parameters.get(JsonConstants.NO_ACTIVE_FILTER).equals("true")) {
@@ -262,53 +262,6 @@ public class DefaultJsonDataService implements JsonDataService {
       }
     }
     return queryService;
-  }
-
-  private JSONObject buildCriteria(Map<String, String> parameters,
-      DataEntityQueryService queryService) {
-    try {
-      final JSONObject criteria = new JSONObject();
-
-      if (parameters.get(JsonConstants.OR_EXPRESSION_PARAMETER) != null) {
-        criteria.put("operator", "or");
-      } else {
-        criteria.put("operator", "and");
-      }
-      criteria.put("_constructor", "AdvancedCriteria");
-
-      final List<JSONObject> criteriaObjects = new ArrayList<JSONObject>();
-      if (parameters.containsKey("criteria") && !parameters.get("criteria").equals("")) {
-        String fullCriteriaStr = parameters.get("criteria");
-        if (fullCriteriaStr.startsWith("[")) {
-          JSONArray criteriaArray = new JSONArray(fullCriteriaStr);
-          fullCriteriaStr = "";
-          for (int i = 0; i < criteriaArray.length(); i++) {
-            if (i > 0) {
-              fullCriteriaStr += JsonConstants.IN_PARAMETER_SEPARATOR;
-            }
-            fullCriteriaStr += criteriaArray.getJSONObject(i).toString();
-          }
-        }
-        final String[] criteriaStrs = fullCriteriaStr.split(JsonConstants.IN_PARAMETER_SEPARATOR);
-        if (!fullCriteriaStr.equals("")) {
-          for (String criteriaStr : criteriaStrs) {
-            final JSONObject criteriaJSONObject = new JSONObject(criteriaStr);
-            if (criteriaJSONObject.has("fieldName")) {
-              final String fieldName = criteriaJSONObject.getString("fieldName");
-              if (!fieldName.startsWith("_")) {
-                criteriaObjects.add(criteriaJSONObject);
-              }
-            } else {
-              criteriaObjects.add(criteriaJSONObject);
-            }
-          }
-        }
-      }
-      criteria.put("criteria", new JSONArray(criteriaObjects));
-      return criteria;
-    } catch (JSONException e) {
-      throw new OBException(e);
-    }
   }
 
   private void addWritableAttribute(List<JSONObject> jsonObjects) throws JSONException {

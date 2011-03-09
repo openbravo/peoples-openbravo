@@ -27,7 +27,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -257,6 +259,52 @@ public class JsonUtils {
       }
     }
     return properties;
+  }
+
+  public static JSONObject buildCriteria(Map<String, String> parameters) {
+    try {
+      final JSONObject criteria = new JSONObject();
+
+      if (parameters.get(JsonConstants.OR_EXPRESSION_PARAMETER) != null) {
+        criteria.put("operator", "or");
+      } else {
+        criteria.put("operator", "and");
+      }
+      criteria.put("_constructor", "AdvancedCriteria");
+
+      final List<JSONObject> criteriaObjects = new ArrayList<JSONObject>();
+      if (parameters.containsKey("criteria") && !parameters.get("criteria").equals("")) {
+        String fullCriteriaStr = parameters.get("criteria");
+        if (fullCriteriaStr.startsWith("[")) {
+          JSONArray criteriaArray = new JSONArray(fullCriteriaStr);
+          fullCriteriaStr = "";
+          for (int i = 0; i < criteriaArray.length(); i++) {
+            if (i > 0) {
+              fullCriteriaStr += JsonConstants.IN_PARAMETER_SEPARATOR;
+            }
+            fullCriteriaStr += criteriaArray.getJSONObject(i).toString();
+          }
+        }
+        final String[] criteriaStrs = fullCriteriaStr.split(JsonConstants.IN_PARAMETER_SEPARATOR);
+        if (!fullCriteriaStr.equals("")) {
+          for (String criteriaStr : criteriaStrs) {
+            final JSONObject criteriaJSONObject = new JSONObject(criteriaStr);
+            if (criteriaJSONObject.has("fieldName")) {
+              final String fieldName = criteriaJSONObject.getString("fieldName");
+              if (!fieldName.startsWith("_")) {
+                criteriaObjects.add(criteriaJSONObject);
+              }
+            } else {
+              criteriaObjects.add(criteriaJSONObject);
+            }
+          }
+        }
+      }
+      criteria.put("criteria", new JSONArray(criteriaObjects));
+      return criteria;
+    } catch (JSONException e) {
+      throw new OBException(e);
+    }
   }
 
 }
