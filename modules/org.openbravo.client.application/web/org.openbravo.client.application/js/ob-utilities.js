@@ -361,8 +361,9 @@ OB.Utilities.getPromptString = function(msg){
 // ** {{{OB.Utilities.getUrlParameters}}} **
 // Returns the url parameters as a javascript object. Note works for simple cases
 // where no & is used for character encoding, this is fine for most cases.
-OB.Utilities.getUrlParameters = function(){
-  var vars = {}, hash, href = window.location.href, hashes = href.slice(href.indexOf('?') + 1).split('&');
+OB.Utilities.getUrlParameters = function(href){
+  href = href || window.location.href;
+  var vars = {}, hash, hashes = href.slice(href.indexOf('?') + 1).split('&');
   
   for (var i = 0; i < hashes.length; i++) {
     hash = hashes[i].split('=');
