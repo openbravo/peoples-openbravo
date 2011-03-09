@@ -356,7 +356,7 @@ isc.OBGrid.addProperties({
       _noCount: true, // never do count for export
       exportAs: expProp.exportAs || 'csv',
       viewState: expProp.viewState,
-      tabId: expProp.tabId,
+      tab: expProp.tab,
       exportToFile: true,
       _textMatchStyle: 'substring'
     }, this.getCriteria());
