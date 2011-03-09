@@ -71,8 +71,7 @@ function validate(action) {
 </script>
 <script language="JavaScript" type="text/javascript">
 function closeThisPage() {
-  removeAllGLItem();
-  parent.window.close();
+  removeAllGLItem(true);
   return true;
 }
 function submitThisPage(strCommand) {
@@ -80,8 +79,7 @@ function submitThisPage(strCommand) {
     if (isTrue('isGLItem')) {
       var temp = document.getElementById('sectionGrid');
       temp.parentNode.removeChild(temp);
-    } else
-      removeAllGLItem();
+    }
     submitCommandForm(strCommand, false, null, null, '_top');
     return true;
   }
@@ -255,11 +253,11 @@ function actualPaymentOnChange(){
         alert(e);
       }
     }
-    function removeAllGLItem() {
+    function removeAllGLItem(closePopup) {
       try {
         document.frmMain.inpDeleteGLItem.value = "";
         var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html";
-        var paramXMLReq = null;
+        var paramXMLReq = closePopup ? closePopup : null;
         return submitXmlHttpRequest(callBackGLItem, document.frmMain, "REMOVEALLGLITEM", url, false, null, paramXMLReq);
       } catch (e) {
         alert(e);
@@ -276,6 +274,12 @@ function actualPaymentOnChange(){
               setValues_MessageBox('messageBoxID', 'WARNING', '', strText);
             else
               initialize_MessageBox('messageBoxID');
+
+            if (paramXMLParticular != null) {
+              parent.window.close();
+              return true;
+            }
+
             loadGLItemList();
           } else {
             initialize_MessageBox('messageBoxID');
