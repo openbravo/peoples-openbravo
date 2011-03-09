@@ -34,7 +34,6 @@ isc.OBViewForm.addProperties({
   cellPadding: 0
 });
 
-
 isc.OBFormButton.addProperties({
   baseStyle: 'OBFormButton',
   titleStyle: 'OBFormButtonTitle'

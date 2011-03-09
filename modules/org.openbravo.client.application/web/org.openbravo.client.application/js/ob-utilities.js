@@ -21,6 +21,83 @@
 // are related to opening views, opening popups, displaying yes/no, etc. 
 OB.Utilities = {};
 
+// ** {{{OB.Utilities.createDialog}}} **
+// Creates a dialog with a title, an ok button and a layout in the middle.
+// The dialog is not shown but returned. The caller needs to call setContent to 
+// set the content in the dialog and show it.
+OB.Utilities.createDialog = function(title, focusOnOKButton, properties){
+  var dialog = isc.Dialog.create({
+    title: title,
+    toolbarButtons: [isc.Dialog.OK],
+    isModal: true,
+    canDragReposition: true,
+    keepInParentRect: true,
+    autoSize: true,
+    autoCenter: true,
+    
+    contentLayout: 'horizontal',
+    autoChildParentMap: isc.addProperties({}, isc.Window.getInstanceProperty("autoChildParentMap"), {
+      stack: 'body',
+      layout: 'stack',
+      toolbar: 'stack'
+    }),
+    
+    stackDefaults: {
+      height: 1
+    },
+
+    toolbarDefaults: isc.addProperties({}, isc.Dialog.getInstanceProperty("toolbarDefaults"), {
+      layoutAlign: 'center',
+      buttonConstructor: isc.OBFormButton
+    }),
+    
+    createChildren: function(){
+      this.showToolbar = false;
+      this.Super('createChildren');
+      this.addAutoChild('stack', null, isc.VStack);
+      this.addAutoChild('layout', {
+        height: 1,
+        width: '100%',
+        overflow: 'visible'
+      }, isc.VLayout);
+      this.showToolbar = true;
+      this.makeToolbar();
+      
+      // can't be done via defaults because policy and direction are dynamically determined
+      this.body.hPolicy = 'fill';
+    },
+    
+    // will set the content and show it
+    setContent: function(content){
+      
+      // Note: we lazily create children on draw, so verify that the items have been
+      // initialized before manipulating the label
+      if (!this._isInitialized) {
+        this.createChildren();
+      }
+      
+      // Update the content in the body        
+      this.layout.addMember(content);
+      this.toolbar.layoutChildren();
+      if (this.isDrawn()) {
+        this.stack.layoutChildren();
+        this.body.layoutChildren();
+        this.layoutChildren();
+      }
+      
+      this.show();
+      
+      // focus in the first button so you can hit Enter to do the default thing
+      if (this.toolbar && focusOnOKButton) {
+        var firstButton = this.toolbar.getMember(0);
+        firstButton.focus();
+      }
+    }
+    
+  }, properties);
+  return dialog;
+};
+
 // ** {{{OB.Utilities.createLoadingLayout}}} **
 // Creates a layout with the loading image.
 OB.Utilities.createLoadingLayout = function(){
@@ -182,7 +259,7 @@ OB.Utilities.openDirectTab = function(tabId, recordId, command){
     if (command !== 'NEW') {
       view.targetTabId = tabId;
     }
-      
+    
     if (recordId) {
       view.targetRecordId = recordId;
     }

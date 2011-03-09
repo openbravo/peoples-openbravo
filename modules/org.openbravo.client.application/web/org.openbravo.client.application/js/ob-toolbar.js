@@ -222,6 +222,38 @@ isc.OBToolbar.addClassProperties({
     },
     keyboardShortcutId: 'ToolBar_Export'
   },
+  LINK_BUTTON_PROPERTIES: {
+    action: function(){
+      var url = this.view.getDirectLinkUrl();
+      var form = isc.OBViewForm.create({
+        width: 390,
+        height: 1,
+        overflow: 'visible',
+        fields: [{
+          type: 'OBTextAreaItem', selectOnFocus: true, 
+          width: 390, height: 50, canFocus: true, 
+          name:'url', 
+          title: OB.I18N.getLabel('OBUIAPP_URL'), value: url}
+        ],
+        show: function() {
+          var fld = this.getFields()[0];
+          this.setFocusItem(fld);
+          this.Super('show', arguments);
+          // do the focus with a delay to give the popup time to draw
+          this.fireOnPause('link_button_show', this.focus, 50, this);
+        }
+      });
+      var dialog = OB.Utilities.createDialog(OB.I18N.getLabel('OBUIAPP_Document_Link'));
+      dialog.setContent(form);
+      dialog.show();
+    },
+    disabled: false,
+    buttonType: 'link',
+    prompt: OB.I18N.getLabel('OBUIAPP_GetDirectLink'),
+    updateState: function(){
+    },
+    keyboardShortcutId: 'ToolBar_Link'    
+  },
   // This offers a mechanism to add properties at runtime to buttons created through
   // templates and java
   BUTTON_PROPERTIES: {

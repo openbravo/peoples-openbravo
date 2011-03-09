@@ -207,6 +207,8 @@ isc.OBStandardView.addProperties({
         leftMemberButtons.push(isc.OBToolbarIconButton.create(this.iconToolbarButtons[i]));
       }
     }
+    // and add the direct link at the end
+    leftMemberButtons.push(isc.OBToolbarIconButton.create(isc.OBToolbar.LINK_BUTTON_PROPERTIES));
     
     this.toolBar = isc.OBToolbar.create({
       view: this,
@@ -460,6 +462,38 @@ isc.OBStandardView.addProperties({
       // children
       this.statusBar.maximizeButton.disable();
     }
+  },
+  
+  getDirectLinkUrl: function() {
+    var url = window.location.href;
+    var qIndex = url.indexOf('?');
+    var dIndex = url.indexOf('#');
+    var index = -1;
+    if (dIndex != -1 && qIndex != -1) {
+      if (dIndex < qIndex) {
+        index = dIndex;
+      } else {
+        index = qIndex;
+      }
+    } else if (qIndex != -1) {
+      index = qIndex;
+    } else if (dIndex != -1) {
+      index = dIndex;
+    }
+    if (index != -1) {
+      url = url.substring(0, index);
+    }
+    
+    url = url + '?tabId=' + this.tabId;
+    if (this.isShowingForm) {
+      if (this.viewForm.isNew && this.isRootView) {
+        url = url + '&command=NEW';
+      } else if (!this.viewForm.isNew) {
+        url = url + '&recordId=' + this.viewGrid.getSelectedRecord().id;
+      }
+    }
+
+    return url;
   },
   
   // ** {{{ addChildView }}} **
