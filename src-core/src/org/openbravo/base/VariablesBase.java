@@ -1410,6 +1410,7 @@ public class VariablesBase {
     if (log4j.isDebugEnabled())
       log4j.debug("...: removing session");
     String target = "";
+    String targetQueryString = null;
     try {
       String sessionName;
       Enumeration<?> e = session.getAttributeNames();
@@ -1417,16 +1418,24 @@ public class VariablesBase {
         sessionName = (String) e.nextElement();
         if (log4j.isDebugEnabled())
           log4j.debug("  session name: " + sessionName);
-        if (!all && sessionName.equalsIgnoreCase("target"))
+        if (!all && sessionName.equalsIgnoreCase("target")) {
           target = (String) session.getAttribute(sessionName);
+        }
+        if (!all && sessionName.equalsIgnoreCase("targetQueryString")) {
+          targetQueryString = (String) session.getAttribute(sessionName);
+        }
         session.removeAttribute(sessionName);
         e = session.getAttributeNames();
       }
     } catch (Exception e) {
       log4j.error("clearSession error " + e);
     }
-    if (!target.equals(""))
+    if (!target.equals("")) {
       session.setAttribute("TARGET", target);
+    }
+    if (targetQueryString != null) {
+      session.setAttribute("TARGETQUERYSTRING", targetQueryString);
+    }
   }
 
   /**

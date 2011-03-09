@@ -71,7 +71,14 @@ public class Menu extends HttpSecureAppServlet {
             OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
         // redirect if the startpage is there and if it is not the same as the standard
         if (startPage != null && !startPage.endsWith("/security/Menu.html")) {
-          response.sendRedirect(".." + startPage);
+          final String storedQueryString = vars.getSessionValue("targetQueryString");
+          if (storedQueryString != null && storedQueryString.length() > 0) {
+            final String separator = startPage.contains("?") ? "&" : "?";
+            response.sendRedirect(".." + startPage + separator + storedQueryString);
+          } else {
+            response.sendRedirect(".." + startPage);
+          }
+          vars.removeSessionValue("target");
           return;
         }
       } catch (PropertyConflictException e) {
