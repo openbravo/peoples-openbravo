@@ -139,21 +139,12 @@ OB.Utilities.Date.OBToJS = function(/* String */OBDate, /* String */ dateFormat)
     }
     JSDate.setFullYear(year);
   }
-  if (dateFormat.indexOf('%H') !== -1) {
-    JSDate.setUTCMonth(month - 1);
-    JSDate.setUTCDate(day);
-    JSDate.setUTCHours(hours);
-    JSDate.setUTCMinutes(minutes);
-    JSDate.setUTCSeconds(seconds);
-    JSDate.setUTCMilliseconds(0);
-  } else {
-    JSDate.setMonth(month - 1);
-    JSDate.setDate(day);
-    JSDate.setHours(hours);
-    JSDate.setMinutes(minutes);
-    JSDate.setSeconds(seconds);
-    JSDate.setMilliseconds(0);
-  }
+  JSDate.setMonth(month - 1);
+  JSDate.setDate(day);
+  JSDate.setHours(hours);
+  JSDate.setMinutes(minutes);
+  JSDate.setSeconds(seconds);
+  JSDate.setMilliseconds(0);
   if (JSDate.toString() === 'Invalid Date' || JSDate.toString() === 'NaN') {
     return null;
   } else {
