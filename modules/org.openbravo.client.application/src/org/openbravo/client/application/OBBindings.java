@@ -103,12 +103,24 @@ public class OBBindings {
     }
 
     String value = requestMap.get(OBBindingsConstants.SO_TRX_PARAM);
-
-    if (value == null) {
+    if (value != null) {
+      return "Y".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value);
+    }
+    if (httpSession == null) {
+      log.warn("Requesting isSOTrx check without request parameters and session");
       return null;
     }
 
-    return "Y".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value);
+    value = (String) httpSession.getAttribute("inpisSOTrxTab");
+    if (value != null) {
+      return "Y".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value);
+    }
+
+    value = (String) httpSession.getAttribute(getWindowId() + "|ISSOTRX");
+    if (value != null) {
+      return "Y".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value);
+    }
+    return null;
   }
 
   public String getWindowId() {
