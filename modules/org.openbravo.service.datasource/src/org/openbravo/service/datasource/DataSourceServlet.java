@@ -42,8 +42,12 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.BaseKernelServlet;
@@ -57,6 +61,10 @@ import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.security.UsageAudit;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.ui.FieldTrl;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.json.DefaultJsonDataService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -173,7 +181,6 @@ public class DataSourceServlet extends BaseKernelServlet {
         }
       }
       // now do the action
-
       boolean isExport = "true".equals(parameters.get("exportToFile"));
       if (isExport) {
         String exportAs = parameters.get("exportAs");
@@ -184,13 +191,15 @@ public class DataSourceServlet extends BaseKernelServlet {
           response.setContentType("text/csv; charset=UTF-8");
           response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
           if (getDataSource(request) instanceof DefaultDataSourceService) {
-            QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters);
+            QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters,
+                getDataSource(request).getEntity());
             ((DefaultDataSourceService) getDataSource(request)).fetch(parameters, writer);
           } else {
             String result = getDataSource(request).fetch(parameters);
             JSONObject jsonResult = new JSONObject(result);
             JSONArray data = jsonResult.getJSONObject("response").getJSONArray("data");
-            QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters);
+            QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters,
+                getDataSource(request).getEntity());
             for (int i = 0; i < data.length(); i++) {
               writer.write(data.getJSONObject(i));
             }
@@ -213,13 +222,19 @@ public class DataSourceServlet extends BaseKernelServlet {
     String fieldSeparator;
     String decimalSeparator;
     List<String> fieldProperties;
+    Map<String, String> niceFieldProperties = new HashMap<String, String>();
     boolean propertiesWritten = false;
+    Map<String, Map<String, String>> refLists = new HashMap<String, Map<String, String>>();
+    List<String> refListCols = new ArrayList<String>();
+    List<String> dateCols = new ArrayList<String>();
+    List<String> dateTimeCols = new ArrayList<String>();
 
     public QueryJSONWriterToCSV(HttpServletRequest request, HttpServletResponse response,
-        Map<String, String> parameters) {
-      response.setContentType("text/csv; charset=UTF-8");
-      response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
+        Map<String, String> parameters, Entity entity) {
       try {
+        OBContext.setAdminMode();
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
         writer = response.getWriter();
         VariablesSecureApp vars = new VariablesSecureApp(request);
         decimalSeparator = vars.getSessionValue("#DecimalSeparator|generalQtyEdition").substring(0,
@@ -255,18 +270,80 @@ public class DataSourceServlet extends BaseKernelServlet {
           }
         }
 
+        // Now we calculate ref lists and nice property names
+        final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
+        for (Property prop : entity.getProperties()) {
+          if (!fieldProperties.contains(prop.getName())) {
+            continue;
+          }
+          Column col = OBDal.getInstance().get(Column.class, prop.getColumnId());
+          if (parameters.get("tab") != null && !parameters.get("tab").equals("")) {
+            Tab tab = OBDal.getInstance().get(Tab.class, parameters.get("tab"));
+            for (Field field : tab.getADFieldList()) {
+              if (!field.getColumn().getId().equals(col.getId())) {
+                continue;
+              }
+              niceFieldProperties.put(prop.getName(), field.getName());
+              for (FieldTrl fieldTrl : field.getADFieldTrlList()) {
+                if (fieldTrl.getLanguage().getId().equals(userLanguageId)) {
+                  niceFieldProperties.put(prop.getName(), fieldTrl.getName());
+                }
+              }
+            }
+          } else {
+            niceFieldProperties.put(prop.getName(), col.getName());
+          }
+          if (!(prop.getDomainType() instanceof EnumerateDomainType)) {
+            continue;
+          }
+          String referenceId = col.getReferenceSearchKey().getId();
+          Map<String, String> reflists = new HashMap<String, String>();
+          final String hql = "select al.searchKey, al.name from ADList al where "
+              + " al.reference.id=? and al.active=true";
+          final Query qry = OBDal.getInstance().getSession().createQuery(hql);
+          qry.setString(0, referenceId);
+          for (Object o : qry.list()) {
+            final Object[] row = (Object[]) o;
+            reflists.put(row[0].toString(), row[1].toString());
+          }
+          final String hqltrl = "select al.searchKey, trl.name from ADList al, ADListTrl trl where "
+              + " al.reference.id=? and trl.listReference=al and trl.language.id=?"
+              + " and al.active=true and trl.active=true and trl.translation=true";
+          final Query qrytrl = OBDal.getInstance().getSession().createQuery(hqltrl);
+          qrytrl.setString(0, referenceId);
+          qrytrl.setString(1, userLanguageId);
+          for (Object o : qrytrl.list()) {
+            final Object[] row = (Object[]) o;
+            reflists.put(row[0].toString(), row[1].toString());
+          }
+          refListCols.add(prop.getName());
+          refLists.put(prop.getName(), reflists);
+        }
+
+        // We also store the date properties
+        for (Property prop : entity.getProperties()) {
+          if (prop.isDate()) {
+            dateCols.add(prop.getName());
+          } else if (prop.isDatetime()) {
+            dateTimeCols.add(prop.getName());
+          }
+        }
+
         if (fieldProperties.size() > 0) {
           // If the request came with the view state information, we get the properties from there
           for (int i = 0; i < fieldProperties.size(); i++) {
             if (i > 0) {
               writer.append(fieldSeparator);
             }
-            writer.append("\"").append(fieldProperties.get(i)).append("\"");
+            writer.append("\"").append(niceFieldProperties.get(fieldProperties.get(i)))
+                .append("\"");
           }
           propertiesWritten = true;
         }
       } catch (Exception e) {
         throw new OBException("Error while exporting a CSV file", e);
+      } finally {
+        OBContext.restorePreviousMode();
       }
     }
 
@@ -329,19 +406,26 @@ public class DataSourceServlet extends BaseKernelServlet {
           }
           Object keyValue = json.has(key + "._identifier") ? json.get(key + "._identifier") : json
               .get(key);
-          if (keyValue instanceof Number && keyValue != null) {
+          if (refListCols.contains(key)) {
+            keyValue = refLists.get(key).get(keyValue);
+          } else if (keyValue instanceof Number && keyValue != null) {
             keyValue = keyValue.toString().replace(".", decimalSeparator);
-          }
-          if ((keyValue instanceof Date) && keyValue != null) {
-            // TODO This currently will never happen. Dates in JSONObjects are represented as
-            // Strings, and therefore keyValue will never be Date or DateTime. Once a BaseOBObject
-            // is exported instead of a JSONObject, this will be done properly
+          } else if (dateCols.contains(key) && keyValue != null) {
+            Date date = JsonUtils.createDateFormat().parse(keyValue.toString());
             String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATEFORMAT")
                 .toString();
             SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
             dateFormat.setLenient(true);
-            keyValue = dateFormat.format((Date) keyValue);
+            keyValue = dateFormat.format(date);
+          } else if (dateTimeCols.contains(key) && keyValue != null) {
+            Date date = JsonUtils.createDateTimeFormat().parse(keyValue.toString());
+            String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATETIMEFORMAT")
+                .toString();
+            SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+            dateFormat.setLenient(true);
+            keyValue = dateFormat.format(date);
           }
+
           if (keyValue != null && !keyValue.toString().equals("null")) {
             keyValue = Replace.replace(keyValue.toString(), "\"", "\"\"");
           } else {

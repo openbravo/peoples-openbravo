@@ -209,9 +209,10 @@ isc.OBToolbar.addClassProperties({
         exportDisplay: 'download',
         params: {
           exportToFile: true
-        }
+        },
+        viewState: this.view.viewGrid.getViewState(),
+        tab: this.view.tabId
       };
-      requestProperties.viewState = this.view.viewGrid.getViewState();
       this.view.viewGrid.exportData(requestProperties);
     },
     disabled: false,
