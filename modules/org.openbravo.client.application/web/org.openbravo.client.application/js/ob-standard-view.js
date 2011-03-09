@@ -1411,16 +1411,11 @@ isc.OBStandardView.addProperties({
       // selected records
       grid = view.viewGrid;
     }
-    callback = function(ok){
-      if (ok) {
-        if (form) {
-          form.undo();
-        } else {
-          grid.undoEditSelectedRows();
-        }
-      }
-    };
-    isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmUndo', callback), callback);
+    if (form) {
+      form.undo();
+    } else {
+      grid.undoEditSelectedRows();
+    }
   },
   
   // ++++++++++++++++++++ Parent-Child Tab Handling ++++++++++++++++++++++++++

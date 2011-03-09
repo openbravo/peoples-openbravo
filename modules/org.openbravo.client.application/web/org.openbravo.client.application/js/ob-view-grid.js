@@ -1370,30 +1370,25 @@ isc.OBViewGrid.addProperties({
     
     if (!preventConfirm &&
     (this.getEditForm().hasChanged || this.rowHasErrors(rowNum))) {
-      isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmCancelEdit'), function(value){
-        if (value) {
-        
-          me.Super('discardEdits', localArguments);
-          
-          // remove the record if new
-          if (record._new) {
-            me.data.handleUpdate('remove', [{
-              id: record.id
-            }]);
-            me.updateRowCountDisplay();
-            me.view.refreshChildViews();
-          } else {
-            // remove the error style/msg    
-            me.setRecordErrorMessage(rowNum, null);
-          }
-          
-          me.view.standardWindow.cleanUpAutoSaveProperties();
-          
-          // update after removing the error msg
-          me.view.updateTabTitle();
-          me.view.toolBar.updateButtonState(true);
-        }
-      });
+      me.Super('discardEdits', localArguments);
+      
+      // remove the record if new
+      if (record._new) {
+        me.data.handleUpdate('remove', [{
+          id: record.id
+        }]);
+        me.updateRowCountDisplay();
+        me.view.refreshChildViews();
+      } else {
+        // remove the error style/msg    
+        me.setRecordErrorMessage(rowNum, null);
+      }
+      
+      me.view.standardWindow.cleanUpAutoSaveProperties();
+      
+      // update after removing the error msg
+      me.view.updateTabTitle();
+      me.view.toolBar.updateButtonState(true);
     } else {
       me.Super('discardEdits', localArguments);
       
