@@ -325,7 +325,7 @@ isc.ClassFactory.defineClass('OBEncryptedItem', isc.PasswordItem);
 isc.OBEncryptedItem.addProperties({
   operator: 'iContains',
   changed : function(form,item,value) {
-    this.form.setValue(item.name + '.cleartext', value);
+    this.form.setValue(item.name + '_cleartext', value);
   }
 });
 
