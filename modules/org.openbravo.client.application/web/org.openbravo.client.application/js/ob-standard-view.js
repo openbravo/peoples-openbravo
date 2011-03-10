@@ -1329,8 +1329,11 @@ isc.OBStandardView.addProperties({
           return;
         }
         var status = resp.status;
-        if (localData.hasOwnProperty('status')) {
+        if (localData && localData.hasOwnProperty('status')) {
           status = localData.status;
+        }
+        if (localData && localData.response && localData.response.hasOwnProperty('status')) {
+          status = localData.response.status;
         }
         if (status === isc.RPCResponse.STATUS_SUCCESS) {
           if (view.isShowingForm) {
