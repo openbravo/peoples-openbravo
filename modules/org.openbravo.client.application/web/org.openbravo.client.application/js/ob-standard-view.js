@@ -1268,16 +1268,26 @@ isc.OBStandardView.addProperties({
       return;
     }
     var record = this.viewGrid.getSelectedRecord();
-    var criteria = {};
-    criteria[OB.Constants.ID] = record.id;
-    // force a fetch from the server
-    criteria._dummy = new Date().getTime();
+    criteria = {
+        operator: 'and', 
+        _constructor: "AdvancedCriteria", 
+        criteria:[]};
+        
+    // add a dummy criteria to force a fetch
+    criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+
+    // and add a criteria for the record itself
+    criteria.criteria.push({
+      fieldName: OB.Constants.ID,
+      operator: 'equals',
+      value: record.id
+    });
     
     var me = this;
     var callback = function(resp, data, req) {
       // this line does not work, but it should:
 //      me.getDataSource().updateCaches(resp, req);
-      // therefore doe an explicit update of the visual components
+      // therefore do an explicit update of the visual components
       if (me.isShowingForm) {
         me.viewForm.refresh();
       }

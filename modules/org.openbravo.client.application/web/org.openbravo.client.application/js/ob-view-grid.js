@@ -143,6 +143,12 @@ isc.OBViewGrid.addProperties({
   timeFormatter: 'to24HourTime',
   
   dataProperties: {
+    // this means that after an update/add the new/updated row does not fit 
+    // in the current filter criteria then they are still shown
+    // note that if this is set to false that when using the _dummy criteria
+    // that the _dummy criteria can mean that new/updated records are not 
+    // shown in the grid
+    //neverDropUpdatedRows: true,
     useClientFiltering: false,
     useClientSorting: false,
     
@@ -291,7 +297,7 @@ isc.OBViewGrid.addProperties({
         return OB.Utilities.getPromptString(cellErrors);
       }
     }
-    if (record[isc.OBViewGrid.ERROR_MESSAGE_PROP]) {
+    if (record && record[isc.OBViewGrid.ERROR_MESSAGE_PROP]) {
       return record[isc.OBViewGrid.ERROR_MESSAGE_PROP];
     }
     
@@ -343,11 +349,17 @@ isc.OBViewGrid.addProperties({
     return this.Super('headerClick', arguments);
   },
 
-  // handle the del key when rows have been selected
+  // handle the del key when rows have been selected or space key
   bodyKeyPress : function (event, eventInfo) {
     if (event.keyName === 'Delete' && this.getSelectedRecords().length > 0) {
       this.view.deleteSelectedRows();
       return;      
+    }
+    // don't let the default space action do something if others keys are also 
+    // pressed
+    if (event.keyName === 'Space' && 
+      (isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown())) {
+      return true;
     }
     return this.Super('bodyKeyPress', arguments);
   },
@@ -727,18 +739,14 @@ isc.OBViewGrid.addProperties({
         criteria:[]};
         
       // add a dummy criteria to force a fetch
-      criteria.criteria.push({
-        fieldName: '_dummy',
-        operator: 'equals',
-        value: this.targetRecordId
-      });
+      criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
       
       // remove the filter clause we don't want to use
       this.filterClause = null;
     } else {
       // remove the _dummy
       for (i = 0; i < criteria.criteria.length; i++) {
-        if (criteria.criteria[i].fieldName === '_dummy') {
+        if (criteria.criteria[i].fieldName === isc.OBRestDataSource.DUMMY_CRITERION_NAME) {
           criteria.criteria.removeAt(i);
           break;
         }
@@ -778,13 +786,15 @@ isc.OBViewGrid.addProperties({
         });
       }
     }
-        // get rid of some unneeded stuff in the criteria
+    
+    // get rid of some unneeded stuff in the criteria
     if (criteria && criteria.criteria) {
       var internalCriteria = criteria.criteria;
       for (i = (internalCriteria.length - 1); i >= 0; i--) {
         var shouldRemove = false;
         criterion = internalCriteria[i];
-        if (criterion.fieldName && criterion.fieldName.startsWith('_') && criterion.fieldName !== '_dummy') {
+        // but do not remove dummy criterion
+        if (criterion.fieldName && criterion.fieldName.startsWith('_') && criterion.fieldName !== isc.OBRestDataSource.DUMMY_CRITERION_NAME) {
           shouldRemove = true;
         } else if (isc.isA.emptyString(criterion.value)) {
           shouldRemove = true;
@@ -1473,7 +1483,7 @@ isc.OBViewGrid.addProperties({
   },
   
   // is called when clicking a header
-  hideInlineEditor: function(){
+  hideInlineEditor: function(focusInBody, suppressCMHide) {
     var rowNum = this.getEditRow(), record = this.getRecord(rowNum);
     
     // clear the errors so that they don't show up at the next row
@@ -1487,7 +1497,8 @@ isc.OBViewGrid.addProperties({
     } else if (this.getEditForm().getValues().editColumnLayout) {
       this.getEditForm().getValues().editColumnLayout.showEditOpen();
     }
-    return this.Super('hideInlineEditor', arguments);
+    // always hide the clickmask, as it needs to be re-applied
+    return this.Super('hideInlineEditor', [focusInBody, false]);
   },
   
   getEditDisplayValue: function(rowNum, colNum, record){

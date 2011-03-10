@@ -201,8 +201,12 @@ OB.ViewFormProperties = {
     unmaskedTargets.push(this.view.toolBar.getLeftMember('undo'));
     
     // the row cancel button
-    if (this.view.viewGrid.getSelectedRecord() && this.view.viewGrid.getSelectedRecord().editColumnLayout) {
-      unmaskedTargets.push(this.view.viewGrid.getSelectedRecord().editColumnLayout.cancelButton);
+    var editRow = this.view.viewGrid.getEditRow();
+    if (editRow || editRow === 0) {
+      var record = this.view.viewGrid.getRecord(editRow);
+      if (record && record.editColumnLayout) {
+        unmaskedTargets.push(record.editColumnLayout.cancelButton);
+      }
     }
     this.Super('showClickMask', [clickAction, mode, unmaskedTargets]);
   },  

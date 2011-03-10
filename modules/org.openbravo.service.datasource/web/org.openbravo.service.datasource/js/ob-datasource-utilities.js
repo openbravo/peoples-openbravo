@@ -123,6 +123,19 @@ OB.Datasource.create = function(/* Object */dsProperties) {
 // always use a subclass to make it easier to override some default stuff
 isc.ClassFactory.defineClass('OBRestDataSource', isc.RestDataSource);
 
+isc.OBRestDataSource.addClassProperties({
+  // is used to force a unique criterion with a unique value
+  DUMMY_CRITERION_NAME: '_dummy',
+  
+  getDummyCriterion: function() {
+    return {
+      fieldName: isc.OBRestDataSource.DUMMY_CRITERION_NAME,
+      operator: 'equals',
+      value: new Date().getTime()
+    };
+  }
+});
+
 isc.OBRestDataSource.addProperties({
   sendDSRequest: function(dsRequest) {
 	//TODO: Report an issue to SmartClient - This part is a work around
@@ -130,6 +143,14 @@ isc.OBRestDataSource.addProperties({
       isc.addProperties(dsRequest.params, this.requestProperties.params);
     }
     this.Super('sendDSRequest', arguments);
+  },
+  
+  // always let the dummy criterion be true
+  evaluateCriterion : function (record, criterion) {
+    if (criterion && criterion.fieldName && criterion.fieldName === isc.OBRestDataSource.DUMMY_CRITERION_NAME) {
+      return true;
+    }
+    return this.Super('evaluateCriterion', arguments);
   }
 });
 
