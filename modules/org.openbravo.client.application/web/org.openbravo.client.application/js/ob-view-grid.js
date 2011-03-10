@@ -866,7 +866,7 @@ isc.OBViewGrid.addProperties({
     var actionObject = {
       target: this.view,
       method: this.view.editRecord,
-      parameters: [record]
+      parameters: [record, false, (field ? field.name : null)]
     };
     this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
   },

@@ -107,7 +107,7 @@ OB.ViewFormProperties = {
     }
   },
   
-  editRecord: function(record, preventFocus, hasChanges){
+  editRecord: function(record, preventFocus, hasChanges, focusFieldName){
     var ret = this.Super('editRecord', arguments);
     this.doEditRecordActions(preventFocus, false);
     if (hasChanges) {
@@ -115,6 +115,11 @@ OB.ViewFormProperties = {
     }
     
     this.view.setTargetRecordInWindow(record.id);
+    
+    // used when clicking on a cell in a grid
+    if (!preventFocus && focusFieldName) {
+      this.forceFocusedField = focusFieldName;
+    }
     
     return ret;
   },
@@ -224,6 +229,17 @@ OB.ViewFormProperties = {
   resetFocusItem: function() {
     var items = this.getItems(), length = items.length, item;
     
+    // used when double clicking a specific cell in a record
+    if (this.forceFocusedField) {
+      item = this.getItem(this.forceFocusedField);
+      if(item && item.getCanFocus()) {
+        this.setFocusInItem(item, true);
+        delete this.forceFocusedField;
+        return;
+      }
+      delete this.forceFocusedField;
+    }
+
     if(this.firstFocusedField) {
       item = this.getItem(this.firstFocusedField);
       if(item && item.getCanFocus()) {
@@ -263,7 +279,18 @@ OB.ViewFormProperties = {
   setFindNewFocusItem: function() {
     var focusItem = this.getFocusItem(), item, items = this.getItems(),
         length = items.length;
-
+    
+    // used when double clicking a specific cell in a record
+    if (this.forceFocusedField) {
+      item = this.getItem(this.forceFocusedField);
+      if(item && item.getCanFocus()) {
+        this.setFocusInItem(item, true);
+        delete this.forceFocusedField;
+        return;
+      }
+      delete this.forceFocusedField;
+    }
+    
     if(this.firstFocusedField) {
       item = this.getItem(this.firstFocusedField);
       if(item && item.getCanFocus()) {

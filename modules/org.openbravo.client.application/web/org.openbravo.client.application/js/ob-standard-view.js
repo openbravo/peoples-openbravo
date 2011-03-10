@@ -816,7 +816,7 @@ isc.OBStandardView.addProperties({
   // ** {{{ editRecord }}} **
   // Opens the edit form and selects the record in the grid, will refresh
   // child views also
-  editRecord: function(record, preventFocus){
+  editRecord: function(record, preventFocus, focusFieldName){
 
     this.messageBar.hide();
     
@@ -833,7 +833,7 @@ isc.OBStandardView.addProperties({
       // also handle the case that there are unsaved values in the grid
       // show them in the form
       var rowNum = this.viewGrid.getRecordIndex(record);
-      this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus, this.viewGrid.recordHasChanges(rowNum));
+      this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus, this.viewGrid.recordHasChanges(rowNum), focusFieldName);
     }
   },
   
