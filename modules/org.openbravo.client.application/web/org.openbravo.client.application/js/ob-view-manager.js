@@ -54,7 +54,7 @@
     views: {
       cache: [],
       
-      getViewTabID: function(/* String */vName, /* Object */ params){
+      getViewTabID: function(vName, params){
         var len = this.cache.length, i, item;
         for (i = len; i > 0; i--) {
           item = this.cache[i - 1];
@@ -65,7 +65,7 @@
         return null;
       },
       
-      getTabNumberFromViewParam: function(/* String */param, value){
+      getTabNumberFromViewParam: function(param, value) {
         var numberOfTabs = tabSet.tabs.length, viewParam = '', result = null;
         for (var i = 0; i < numberOfTabs; i++) {
           viewParam = tabSet.getTabPane(i)[param];
@@ -76,11 +76,11 @@
         return result;
       },
       
-      push: function(/* Object */instanceDetails){
+      push: function(instanceDetails) {
         this.cache.push(instanceDetails);
       },
       
-      removeTab: function(/* String */viewTabId){
+      removeTab: function(viewTabId) {
         var len = this.cache.length, i, item, removed;
         for (i = len; i > 0; i--) {
           item = this.cache[i - 1];
@@ -105,7 +105,7 @@
       return null;
     },
     
-    fetchView: function(/* String */viewId, /*function*/ callback, /*Object*/ clientContext, /*Object*/params, useLoadingTab){
+    fetchView: function(viewId, callback, clientContext, params, useLoadingTab) {
       if (useLoadingTab) {
         // open a loading tab
         params = params || {};
@@ -215,7 +215,7 @@
     // information
     // to initialize an instance.
     //
-    openView: function(/* String */viewName, /* Object */ params, /* Object */ state){
+    openView: function(viewName, params, state) {
     
       params = params || {};
       
@@ -235,7 +235,7 @@
       //
       // Returns the function implementation of a View
       //
-      function getView(/* String */viewName, /* Object */ params, /* Object */ state){
+      function getView(viewName, params, state) {
       
         if (!viewName) {
           throw {
@@ -247,7 +247,7 @@
         //
         // Shows a view in a tab in the {{{ TabSet }}} or external
         //
-        function showTab(/* String */viewName, /* Object */ params, /* Object */ state){
+        function showTab(viewName, params, state) {
         
           var viewTabId, tabTitle, loadingTab = vmgr.findLoadingTab(params);
           
@@ -330,7 +330,7 @@
         // Function used by the {{ ISC.RPCManager }} after receiving the view
         // implementation from the back-end
         //          
-        function fetchViewCallback(/* Object */response){
+        function fetchViewCallback(response, data, request) {
           // if the window is in development it's name is always unique
           // and has changed
           if (vmgr.loadedWindowClassName) {
@@ -348,7 +348,7 @@
         if (isc[viewName]) {
           showTab(viewName, params);
         } else {         
-           vmgr.fetchView(viewName, fetchViewCallback, null, params, true);
+          vmgr.fetchView(viewName, fetchViewCallback, null, params, true);
         }
       }
       getView(viewName, params, state);
@@ -362,7 +362,7 @@
     // can not be bookmarked.
     //
     
-    restoreState: function(/* Object */newState, /* Object */ data){
+    restoreState: function(newState, data) {
     
       var tabSet = M.TabSet, tabsLength, i, tabObject, hasChanged = false, stateData;
       
