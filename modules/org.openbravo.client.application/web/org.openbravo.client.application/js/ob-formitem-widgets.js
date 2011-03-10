@@ -470,6 +470,8 @@ isc.OBListItem.addProperties({
   cachePickListResults: false,
   validateOnExit: true,  
   completeOnTab: true,
+  // textMatchStyle is used for the client-side picklist
+  textMatchStyle: 'substring',
 
   // NOTE: Setting this property to false fixes the issue when using the mouse to pick a value
   // FIXME: Sometimes the field label gets a red color (a blink)
