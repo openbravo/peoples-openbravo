@@ -171,11 +171,11 @@ OB.Utilities.Date.JSToOB = function(/* Date */JSDate, /* String */ dateFormat){
   
   var year = JSDate.getYear().toString();
   var fullYear = JSDate.getFullYear().toString();
-  var month = (JSDate.getUTCMonth() + 1).toString();
-  var day = JSDate.getUTCDate().toString();
-  var hours = JSDate.getUTCHours().toString();
-  var minutes = JSDate.getUTCMinutes().toString();
-  var seconds = JSDate.getUTCSeconds().toString();
+  var month = (JSDate.getMonth() + 1).toString();
+  var day = JSDate.getDate().toString();
+  var hours = JSDate.getHours().toString();
+  var minutes = JSDate.getMinutes().toString();
+  var seconds = JSDate.getSeconds().toString();
   
   var centuryReference = OB.Utilities.Date.centuryReference;
   if (dateFormat.indexOf('%y') !== -1) {
