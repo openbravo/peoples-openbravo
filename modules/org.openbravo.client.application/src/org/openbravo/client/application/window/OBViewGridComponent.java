@@ -42,6 +42,7 @@ import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.service.json.JsonConstants;
 
 /**
@@ -56,6 +57,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
   private boolean applyTransactionalFilter = false;
   private Tab tab;
+  private Entity entity;
   private List<LocalField> fields = null;
 
   private final List<Field> fieldsInDynamicExpression = new ArrayList<Field>();
@@ -72,6 +74,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
   public void setTab(Tab tab) {
     this.tab = tab;
+    entity = ModelProvider.getInstance().getEntityByTableId((String) DalUtil.getId(tab.getTable()));
   }
 
   public String getWhereClause() {
@@ -85,6 +88,14 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     if (tab.getHqlorderbyclause() != null) {
       return tab.getHqlorderbyclause();
     }
+    // use 2 examples of sequence number of line no
+    if (entity.hasProperty(Tab.PROPERTY_SEQUENCENUMBER)) {
+      return Tab.PROPERTY_SEQUENCENUMBER;
+    }
+    if (entity.hasProperty(OrderLine.PROPERTY_LINENO)) {
+      return OrderLine.PROPERTY_LINENO;
+    }
+
     return JsonConstants.IDENTIFIER;
   }
 
@@ -101,8 +112,6 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     }
     String transactionalFilter = " e.updated > " + JsonConstants.QUERY_PARAM_TRANSACTIONAL_RANGE
         + " ";
-    final Entity entity = ModelProvider.getInstance().getEntityByTableId(
-        (String) DalUtil.getId(tab.getTable()));
     if (entity.hasProperty(Order.PROPERTY_PROCESSED)) {
       transactionalFilter += " or e.processed = 'N' ";
     }
