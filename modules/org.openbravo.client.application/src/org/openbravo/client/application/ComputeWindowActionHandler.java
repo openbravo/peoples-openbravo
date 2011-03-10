@@ -49,8 +49,8 @@ import org.openbravo.model.ad.ui.WindowTrl;
 public class ComputeWindowActionHandler extends BaseActionHandler {
 
   protected JSONObject execute(Map<String, Object> parameters, String data) {
-    final String tabId = (String) parameters.get("tabId");
-    final String recordId = (String) parameters.get("recordId");
+    final String tabId = removeFragment((String) parameters.get("tabId"));
+    final String recordId = removeFragment((String) parameters.get("recordId"));
 
     try {
       OBContext.setAdminMode();
@@ -101,5 +101,16 @@ public class ComputeWindowActionHandler extends BaseActionHandler {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  // solve the case that sometimes the fragment is added to the tabId or the record id
+  private String removeFragment(String value) {
+    if (value == null) {
+      return value;
+    }
+    if (value.contains("#")) {
+      return value.substring(0, value.indexOf("#"));
+    }
+    return value;
   }
 }
