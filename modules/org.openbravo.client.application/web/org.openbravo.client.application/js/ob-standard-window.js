@@ -252,6 +252,10 @@ isc.OBStandardWindow.addProperties({
   },
   
   closeClick: function(tab, tabSet){
+    if (!this.activeView.viewForm.hasChanged && this.activeView.viewForm.isNew) {
+      this.view.standardWindow.setDirtyEditForm(null);
+    }
+
     var actionObject = {
       target: tabSet,
       method: tabSet.doCloseClick,
@@ -299,16 +303,18 @@ isc.OBStandardWindow.addProperties({
           break;
         }
       }
-      OB.RemoteCallManager.call('org.openbravo.client.application.window.ComputeSelectedRecordActionHandler', null, {
-        targetEntity: targetEntity,
-        targetRecordId: this.targetRecordId,
-        windowId: this.windowId
-      }, function(response, data, request){
-        standardWindow.directTabInfo = data.result;
-        standardWindow.view.openDirectTab();
-      });
-      delete this.targetRecordId;
-      delete this.targetTabId;
+      if (targetEntity) {
+        OB.RemoteCallManager.call('org.openbravo.client.application.window.ComputeSelectedRecordActionHandler', null, {
+          targetEntity: targetEntity,
+          targetRecordId: (this.targetRecordId ? this.targetRecordId : null),
+          windowId: this.windowId
+        }, function(response, data, request){
+          standardWindow.directTabInfo = data.result;
+          standardWindow.view.openDirectTab();
+        });
+        delete this.targetRecordId;
+        delete this.targetTabId;
+      }
     } else if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       var currentView = this.activeView || this.view;
       currentView.editRecord();
