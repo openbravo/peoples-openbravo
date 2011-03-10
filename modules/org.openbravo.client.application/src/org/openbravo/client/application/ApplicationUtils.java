@@ -27,7 +27,6 @@ import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -108,33 +107,43 @@ public class ApplicationUtils {
    * @return the parentproperty in the source entity pointing to the parent
    */
   public static String getParentProperty(Tab tab, Tab parentTab) {
-    String parentProperty = "";
     final Entity thisEntity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
     final Entity parentEntity = ModelProvider.getInstance().getEntity(
         parentTab.getTable().getName());
-    if (tab.getColumn() != null) {
-      final String columnId = (String) DalUtil.getId(tab.getColumn());
-      for (Property property : thisEntity.getProperties()) {
-        if (property.isPrimitive() || property.isOneToMany() || property.isId()) {
-          continue;
-        }
-        if (property.getColumnId() != null && property.getColumnId().equals(columnId)) {
-          parentProperty = property.getName();
-          break;
-        }
+    Property returnProperty = null;
+    // first try the real parent properties
+    for (Property property : thisEntity.getProperties()) {
+      if (property.isPrimitive() || property.isOneToMany()) {
+        continue;
       }
-    } else {
+      if (property.isParent() && property.getTargetEntity() == parentEntity) {
+        returnProperty = property;
+        break;
+      }
+    }
+    // not found try any property
+    if (returnProperty == null) {
       for (Property property : thisEntity.getProperties()) {
-        if (property.isPrimitive() || property.isOneToMany() || property.isId()) {
+        if (property.isPrimitive() || property.isOneToMany()) {
           continue;
         }
         if (property.getTargetEntity() == parentEntity) {
-          parentProperty = property.getName();
+          returnProperty = property;
           break;
         }
       }
     }
-    return parentProperty;
+    // handle a special case, the property is an id, in that case
+    // use the related foreign key column to the parent
+    if (returnProperty.isId()) {
+      for (Property property : thisEntity.getProperties()) {
+        if (property.isOneToOne() && property.getTargetEntity() == parentEntity) {
+          returnProperty = property;
+          break;
+        }
+      }
+    }
+    return (returnProperty != null ? returnProperty.getName() : "");
   }
 
   public static boolean isClientAdmin() {
