@@ -135,7 +135,7 @@ public class ApplicationUtils {
     }
     // handle a special case, the property is an id, in that case
     // use the related foreign key column to the parent
-    if (returnProperty.isId()) {
+    if (returnProperty != null && returnProperty.isId()) {
       for (Property property : thisEntity.getProperties()) {
         if (property.isOneToOne() && property.getTargetEntity() == parentEntity) {
           returnProperty = property;
