@@ -410,14 +410,16 @@ public class DataSourceServlet extends BaseKernelServlet {
             keyValue = refLists.get(key).get(keyValue);
           } else if (keyValue instanceof Number && keyValue != null) {
             keyValue = keyValue.toString().replace(".", decimalSeparator);
-          } else if (dateCols.contains(key) && keyValue != null) {
+          } else if (dateCols.contains(key) && keyValue != null
+              && !keyValue.toString().equals("null")) {
             Date date = JsonUtils.createDateFormat().parse(keyValue.toString());
             String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATEFORMAT")
                 .toString();
             SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
             dateFormat.setLenient(true);
             keyValue = dateFormat.format(date);
-          } else if (dateTimeCols.contains(key) && keyValue != null) {
+          } else if (dateTimeCols.contains(key) && keyValue != null
+              && !keyValue.toString().equals("null")) {
             Date date = JsonUtils.createDateTimeFormat().parse(keyValue.toString());
             String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATETIMEFORMAT")
                 .toString();
