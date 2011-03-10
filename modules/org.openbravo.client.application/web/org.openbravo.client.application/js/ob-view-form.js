@@ -816,6 +816,8 @@ OB.ViewFormProperties = {
         //view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_SaveSuccess'));
         view.statusBar.setStateLabel('OBUIAPP_Saved', view.statusBar.checkedIcon);
         
+        view.setRecentDocument(this.getValues());
+        
         // force a fetch to place the grid on the correct location
         if (form.isNew) {
           view.viewGrid.targetRecordId = data.id;

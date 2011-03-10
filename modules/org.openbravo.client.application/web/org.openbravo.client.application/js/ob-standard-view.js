@@ -485,12 +485,10 @@ isc.OBStandardView.addProperties({
     }
     
     url = url + '?tabId=' + this.tabId;
-    if (this.isShowingForm) {
-      if (this.viewForm.isNew && this.isRootView) {
-        url = url + '&command=NEW';
-      } else if (!this.viewForm.isNew) {
-        url = url + '&recordId=' + this.viewGrid.getSelectedRecord().id;
-      }
+    if (this.isShowingForm && this.viewForm.isNew && this.isRootView) {      
+        url = url + '&command=NEW';      
+    } else if (this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length === 1) {
+      url = url + '&recordId=' + this.viewGrid.getSelectedRecord().id;
     }
 
     return url;
@@ -590,6 +588,15 @@ isc.OBStandardView.addProperties({
     if (this.isActiveView()) {
       this.standardWindow.setTargetInformation(this.tabId, recordId);
     }
+  },
+  
+  setRecentDocument: function(record) {
+    var params = this.standardWindow.getBookMarkParams();
+    params.targetTabId = this.tabId;
+    params.targetRecordId = record.id;
+    params.recentId = this.tabId + '_' + record.id;
+    params.recentTitle = record[OB.Constants.IDENTIFIER];
+    OB.Layout.ViewManager.addRecentDocument(params);
   },
   
   setActiveViewProps: function(state){
@@ -1182,11 +1189,10 @@ isc.OBStandardView.addProperties({
       tab.prompt = title;
       tab.showPrompt = true;
       tab.hoverWidth = 150;
-
-      if (title.length > 30) {
-        title = title.substring(0, 30) + "...";
-      }
-
+      
+      // trunc the title if it too large 
+      title = OB.Utilities.truncTitle(title);
+      
       // add the prefix/suffix here to prevent cutoff on that
       title = prefix + title + suffix;
       tabSet.setTabTitle(tab, title);

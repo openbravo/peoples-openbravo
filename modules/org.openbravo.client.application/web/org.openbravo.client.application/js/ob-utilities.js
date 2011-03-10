@@ -21,6 +21,21 @@
 // are related to opening views, opening popups, displaying yes/no, etc. 
 OB.Utilities = {};
 
+// ** {{{OB.Utilities.truncTitle}}} **
+// Truncs a string after a specific length. Initial implementation is 
+// simple (just cuts of at the specified length). Returns the trunced title
+// if no cutLength is set then the default length of 30 is chosen. If no
+// suffix is set then ... is appended
+// TODO: more advanced implementations can cut of at a space or dash for 
+// example
+OB.Utilities.truncTitle = function(title, cutLength, suffix){
+  cutLength = cutLength || 30;
+  if (!title || title.length < cutLength) {
+    return title;
+  }
+  return title.substring(0, cutLength) + (suffix || '...');
+};
+
 // ** {{{OB.Utilities.createDialog}}} **
 // Creates a dialog with a title, an ok button and a layout in the middle.
 // The dialog is not shown but returned. The caller needs to call setContent to 
@@ -246,6 +261,11 @@ OB.Utilities.useClassicMode = function(windowId){
 // is not set then the tab is opened in grid mode. If command is not set then default is
 // used.
 OB.Utilities.openDirectTab = function(tabId, recordId, command){
+  
+  tabId = OB.Utilities.removeFragment(tabId);
+  recordId = OB.Utilities.removeFragment(recordId);
+  command = OB.Utilities.removeFragment(command);
+  
   var callback = function(response, data, request){
     command = command || 'DEFAULT';
     var view = {
@@ -270,6 +290,19 @@ OB.Utilities.openDirectTab = function(tabId, recordId, command){
     'tabId': tabId,
     'recordId': recordId
   }, callback);
+};
+
+// ** {{{OB.Utilities.removeFragment}}} **
+// remove a # and the rest from a string
+OB.Utilities.removeFragment = function(str) {
+  if (!str) {
+    return str;
+  }
+  var index = str.indexOf('#');
+  if (index !== -1) {
+    return str.substring(0, index);
+  }
+  return str;
 };
 
 // ** {{{OB.Utilities.openView}}} **

@@ -132,6 +132,12 @@
       var request = rpcMgr.sendRequest(reqObj);
     },
     
+    addRecentDocument: function(params) {
+      vmgr.recentManager.addRecent('OBUIAPP_RecentDocumentsList', 
+          isc.addProperties({icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png'}, 
+              params));
+    },
+    
     createTab: function(viewName, viewTabId, viewInstance, params) {
       if (params.i18nTabTitle) {
         // note call to I18N is done below after the tab
