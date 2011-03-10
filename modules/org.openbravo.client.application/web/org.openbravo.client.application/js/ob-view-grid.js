@@ -927,18 +927,7 @@ isc.OBViewGrid.addProperties({
         });
       }
     }
-    menuItems.add({
-      title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
-      click: function(){
-        grid.startEditingNew(rowNum);
-      }
-    });
-    menuItems.add({
-      title: OB.I18N.getLabel('OBUIAPP_CreateRecordInForm'),
-      click: function(){
-        grid.view.newDocument();
-      }
-    });
+
     if (singleSelected && this.canEdit && this.isWritable(record) && !this.view.readOnly) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_EditInGrid'),
@@ -947,14 +936,27 @@ isc.OBViewGrid.addProperties({
           grid.startEditing(rowNum, colNum);
         }
       });
-      menuItems.add({
-        title: OB.I18N.getLabel('OBUIAPP_EditInForm'),
-        click: function(){
-          grid.endEditing();
-          grid.view.editRecord(record);
-        }
-      });
+//      menuItems.add({
+//        title: OB.I18N.getLabel('OBUIAPP_EditInForm'),
+//        click: function(){
+//          grid.endEditing();
+//          grid.view.editRecord(record);
+//        }
+//      });
     }
+
+    menuItems.add({
+      title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
+      click: function(){
+        grid.startEditingNew(rowNum);
+      }
+    });
+//    menuItems.add({
+//      title: OB.I18N.getLabel('OBUIAPP_CreateRecordInForm'),
+//      click: function(){
+//        grid.view.newDocument();
+//      }
+//    });
     if (singleSelected && field.canFilter) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_UseAsFilter'),
