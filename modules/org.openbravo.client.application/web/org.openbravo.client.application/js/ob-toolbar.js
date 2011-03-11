@@ -1155,10 +1155,15 @@ OB.ToolbarUtils.showAuditTrail = function(view){
 };
 
 OB.ToolbarUtils.showTree = function(view){
-  // Open tree through menu to have hidden vertical menu which is needed to show old JS messages
-  var popupParams = 'url=/utility/WindowTree.html';
-  popupParams += '&Command=DEFAULT';
-  popupParams += '&inpTabId=' + view.tabId;
-  popupParams += '&hideMenu=true&noprefs=true';
-  OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + '/security/Menu.html?' + popupParams, '', window, false, false, true);
+  function openPopupTree() {
+    // Open tree through menu to have hidden vertical menu which is needed to show old JS messages
+    var popupParams = 'url=/utility/WindowTree.html';
+    popupParams += '&Command=DEFAULT';
+    popupParams += '&inpTabId=' + tabId;
+    popupParams += '&hideMenu=true&noprefs=true';
+    OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + '/security/Menu.html?' + popupParams, '', window, false, false, true);
+  }
+  var tabId = view.tabId;
+  
+  view.setContextInfo(view.getContextInfo(true, true, true, true), openPopupTree, true);
 };

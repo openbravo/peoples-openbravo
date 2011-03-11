@@ -654,7 +654,7 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private void setSessionValues(BaseOBObject object, Tab tab) {
     for (Column col : tab.getTable().getADColumnList()) {
-      if (col.isStoredInSession()) {
+      if (col.isStoredInSession() || col.isKeyColumn()) {
         Property prop = object.getEntity().getPropertyByColumnName(col.getDBColumnName());
         Object value = object.get(prop.getName());
         if (value != null) {
