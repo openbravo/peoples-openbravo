@@ -52,6 +52,9 @@ isc.Button.addProperties({
 isc.FormItem.addProperties({
   // always take up space when an item is hidden in a form
   alwaysTakeSpace: true,
+
+  // disable tab to icons
+  canTabToIcons: false,
   
   _original_init: isc.FormItem.getPrototype().init,
   init: function() {
