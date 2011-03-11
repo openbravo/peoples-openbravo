@@ -356,6 +356,7 @@ isc.OBGrid.addProperties({
       _noCount: true, // never do count for export
       exportAs: expProp.exportAs || 'csv',
       viewState: expProp.viewState,
+      _where: expProp.whereclause,
       tab: expProp.tab,
       exportToFile: true,
       _textMatchStyle: 'substring'
