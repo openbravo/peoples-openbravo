@@ -565,6 +565,9 @@ isc.OBStandardView.addProperties({
       tabButton = window[this.standardWindow.viewTabId];
     }
     // enable this code to set the styleclass changes
+    if (!tabButton) {
+      return;
+    }
     if (active) {
       tabButton.setCustomState('');
     } else {

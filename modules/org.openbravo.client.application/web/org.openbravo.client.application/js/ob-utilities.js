@@ -696,13 +696,24 @@ OB.Utilities.postThroughHiddenForm = function(url, data){
     OB.GlobalHiddenForm.removeChild(OB.GlobalHiddenForm.children[0]);
   }
   
+  var encodeProperties = {
+    // prevents timezone issues
+    encodeDate: function(dt) {
+      var oldXMLSchemaMode = isc.Comm.xmlSchemaMode;
+      isc.Comm.xmlSchemaMode = true;
+      ret = dt.toSerializeableDate();
+      isc.Comm.xmlSchemaMode = oldXMLSchemaMode;
+      return '"' + ret + '"';      
+    }
+  };
+  
   for (var key in data) {
     if (data.hasOwnProperty(key)) {
       var field = document.createElement('input');
       field.setAttribute('type', 'hidden');
       field.setAttribute('name', key);
       if(isc.isA.Object(data[key])){
-        field.setAttribute('value', isc.JSON.encode(data[key]));
+        field.setAttribute('value', isc.JSON.encode(data[key], encodeProperties));
       }else{
         field.setAttribute('value', data[key]);
       }
