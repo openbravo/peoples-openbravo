@@ -219,7 +219,7 @@ isc.OBGrid.addProperties({
             this.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterImplicitToolTip');      
             this.visibility = 'inherit';
           }
-          return this.Super('initWidget', arguments);
+          this.Super('initWidget', arguments);
         },
         click: function(){
           // get rid of the initial filter clause
@@ -230,7 +230,7 @@ isc.OBGrid.addProperties({
       }
     };
     
-    return this.Super('initWidget', arguments);
+    this.Super('initWidget', arguments);
   },
   
   showSummaryRow: function(){
@@ -407,7 +407,7 @@ isc.OBGridLinkLayout.addProperties({
     this.btn.setTitle(this.title);
     this.btn.owner = this;
     this.addMember(this.btn);
-    return this.Super('initWidget', arguments);
+    this.Super('initWidget', arguments);
   },
   
   setTitle: function(title){

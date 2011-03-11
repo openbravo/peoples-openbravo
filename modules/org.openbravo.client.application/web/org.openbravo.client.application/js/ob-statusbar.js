@@ -154,7 +154,7 @@ isc.OBStatusBar.addProperties( {
     this.leftStatusBar.addMember(this.spacer, 0);
 
     this.addMembers( [ this.leftStatusBar, buttonBar ]);
-    return this.Super('initWidget', arguments);
+    this.Super('initWidget', arguments);
   },
 
   addIcon : function(icon) {

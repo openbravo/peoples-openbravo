@@ -56,7 +56,7 @@ isc.ClassicOBHelp.addMethods( {
     if (this.windowName) {
       this.contentsURL = this.contentsURL + '&inpwindowName=' + this.windowName;
     }
-    return this.Super('initWidget', args);
+    this.Super('initWidget', args);
   },
 
   // The following methods are involved in making sure that a help tab for a 
