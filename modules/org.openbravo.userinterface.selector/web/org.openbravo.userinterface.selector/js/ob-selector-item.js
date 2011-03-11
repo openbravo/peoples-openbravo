@@ -87,28 +87,32 @@ isc.OBSelectorPopupWindow.addProperties({
       
       onFetchData: function(criteria, requestProperties) {
         requestProperties = requestProperties || {};
-        requestProperties.params = requestProperties.params || {};
-
+        requestProperties.params = this.getFetchRequestParams(requestProperties.params);        
+      },
+      
+      getFetchRequestParams: function(params) {
+        params = params || {};  
         // on purpose not sending the third boolean param
-        isc.addProperties(requestProperties.params, this.selector.form.view.getContextInfo(false, true));
+        isc.addProperties(params, this.selector.form.view.getContextInfo(false, true));
 
         // also adds the special ORG parameter
         if (this.selector.form.getField('organization')) {
-          requestProperties.params[OB.Constants.ORG_PARAMETER] = this.selector.form.getValue('organization');
-        } else if (requestProperties.params.inpadOrgId) {
-          requestProperties.params[OB.Constants.ORG_PARAMETER] = requestProperties.params.inpadOrgId;
+          params[OB.Constants.ORG_PARAMETER] = this.selector.form.getValue('organization');
+        } else if (params.inpadOrgId) {
+          params[OB.Constants.ORG_PARAMETER] = params.inpadOrgId;
         }
-        requestProperties.params[OB.Constants.WHERE_PARAMETER] = this.selector.whereClause;
+        params[OB.Constants.WHERE_PARAMETER] = this.selector.whereClause;
 
         // set the default sort option
-        requestProperties.params[OB.Constants.SORTBY_PARAMETER] = this.displayField;
+        params[OB.Constants.SORTBY_PARAMETER] = this.displayField;
 
-        requestProperties.params._selectorDefinitionId = this.selector.selectorDefinitionId;
-        requestProperties.params._requestType = 'Window';
+        params._selectorDefinitionId = this.selector.selectorDefinitionId;
+        params._requestType = 'Window';
 
         if(this.getSelectedRecord()) {
-          requestProperties.params._targetRecordId = this.targetRecordId;
+          params._targetRecordId = this.targetRecordId;
         }
+        return params;
       },
 
       dataArrived: function() {

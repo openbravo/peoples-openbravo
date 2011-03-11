@@ -802,8 +802,11 @@ isc.OBViewGrid.addProperties({
   
   onFetchData: function(criteria, requestProperties) {    
     requestProperties = requestProperties || {};
-    requestProperties.params = requestProperties.params || {};
-    var params = requestProperties.params;
+    requestProperties.params = this.getFetchRequestParams(requestProperties.params);
+  },
+  
+  getFetchRequestParams: function(params) {
+    params = params || {};
             
     if (this.targetRecordId) {
       params._targetRecordId = this.targetRecordId;
@@ -830,6 +833,7 @@ isc.OBViewGrid.addProperties({
     } else {
       params[OB.Constants.WHERE_PARAMETER] = null;
     }
+    return params;    
   },
   
   createNew: function(){

@@ -211,8 +211,7 @@ isc.OBToolbar.addClassProperties({
           exportToFile: true
         },
         viewState: this.view.viewGrid.getViewState(),
-        tab: this.view.tabId,
-        whereclause: this.view.viewGrid.whereClause
+        tab: this.view.tabId
       };
       this.view.viewGrid.exportData(requestProperties);
     },

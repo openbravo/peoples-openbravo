@@ -356,13 +356,16 @@ isc.OBGrid.addProperties({
       _noCount: true, // never do count for export
       exportAs: expProp.exportAs || 'csv',
       viewState: expProp.viewState,
-      _where: expProp.whereclause,
       tab: expProp.tab,
       exportToFile: true,
       _textMatchStyle: 'substring'
-    }, this.getCriteria());
+    }, this.getCriteria(), this.getFetchRequestParams());
     
     OB.Utilities.postThroughHiddenForm(dsURL, d);
+  },
+  
+  getFetchRequestParams: function(params) {
+    return params;
   },
   
   editorKeyDown : function (item, keyName) {
