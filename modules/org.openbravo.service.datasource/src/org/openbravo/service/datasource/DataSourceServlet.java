@@ -272,63 +272,64 @@ public class DataSourceServlet extends BaseKernelServlet {
 
         // Now we calculate ref lists and nice property names
         final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
-        for (Property prop : entity.getProperties()) {
-          if (!fieldProperties.contains(prop.getName())) {
-            continue;
-          }
-          Column col = OBDal.getInstance().get(Column.class, prop.getColumnId());
-          if (parameters.get("tab") != null && !parameters.get("tab").equals("")) {
-            Tab tab = OBDal.getInstance().get(Tab.class, parameters.get("tab"));
-            for (Field field : tab.getADFieldList()) {
-              if (!field.getColumn().getId().equals(col.getId())) {
-                continue;
-              }
-              niceFieldProperties.put(prop.getName(), field.getName());
-              for (FieldTrl fieldTrl : field.getADFieldTrlList()) {
-                if (fieldTrl.getLanguage().getId().equals(userLanguageId)) {
-                  niceFieldProperties.put(prop.getName(), fieldTrl.getName());
+        if (entity != null) {
+          for (Property prop : entity.getProperties()) {
+            if (!fieldProperties.contains(prop.getName())) {
+              continue;
+            }
+            Column col = OBDal.getInstance().get(Column.class, prop.getColumnId());
+            if (parameters.get("tab") != null && !parameters.get("tab").equals("")) {
+              Tab tab = OBDal.getInstance().get(Tab.class, parameters.get("tab"));
+              for (Field field : tab.getADFieldList()) {
+                if (!field.getColumn().getId().equals(col.getId())) {
+                  continue;
+                }
+                niceFieldProperties.put(prop.getName(), field.getName());
+                for (FieldTrl fieldTrl : field.getADFieldTrlList()) {
+                  if (fieldTrl.getLanguage().getId().equals(userLanguageId)) {
+                    niceFieldProperties.put(prop.getName(), fieldTrl.getName());
+                  }
                 }
               }
+            } else {
+              niceFieldProperties.put(prop.getName(), col.getName());
             }
-          } else {
-            niceFieldProperties.put(prop.getName(), col.getName());
+            if (!(prop.getDomainType() instanceof EnumerateDomainType)) {
+              continue;
+            }
+            String referenceId = col.getReferenceSearchKey().getId();
+            Map<String, String> reflists = new HashMap<String, String>();
+            final String hql = "select al.searchKey, al.name from ADList al where "
+                + " al.reference.id=? and al.active=true";
+            final Query qry = OBDal.getInstance().getSession().createQuery(hql);
+            qry.setString(0, referenceId);
+            for (Object o : qry.list()) {
+              final Object[] row = (Object[]) o;
+              reflists.put(row[0].toString(), row[1].toString());
+            }
+            final String hqltrl = "select al.searchKey, trl.name from ADList al, ADListTrl trl where "
+                + " al.reference.id=? and trl.listReference=al and trl.language.id=?"
+                + " and al.active=true and trl.active=true and trl.translation=true";
+            final Query qrytrl = OBDal.getInstance().getSession().createQuery(hqltrl);
+            qrytrl.setString(0, referenceId);
+            qrytrl.setString(1, userLanguageId);
+            for (Object o : qrytrl.list()) {
+              final Object[] row = (Object[]) o;
+              reflists.put(row[0].toString(), row[1].toString());
+            }
+            refListCols.add(prop.getName());
+            refLists.put(prop.getName(), reflists);
           }
-          if (!(prop.getDomainType() instanceof EnumerateDomainType)) {
-            continue;
-          }
-          String referenceId = col.getReferenceSearchKey().getId();
-          Map<String, String> reflists = new HashMap<String, String>();
-          final String hql = "select al.searchKey, al.name from ADList al where "
-              + " al.reference.id=? and al.active=true";
-          final Query qry = OBDal.getInstance().getSession().createQuery(hql);
-          qry.setString(0, referenceId);
-          for (Object o : qry.list()) {
-            final Object[] row = (Object[]) o;
-            reflists.put(row[0].toString(), row[1].toString());
-          }
-          final String hqltrl = "select al.searchKey, trl.name from ADList al, ADListTrl trl where "
-              + " al.reference.id=? and trl.listReference=al and trl.language.id=?"
-              + " and al.active=true and trl.active=true and trl.translation=true";
-          final Query qrytrl = OBDal.getInstance().getSession().createQuery(hqltrl);
-          qrytrl.setString(0, referenceId);
-          qrytrl.setString(1, userLanguageId);
-          for (Object o : qrytrl.list()) {
-            final Object[] row = (Object[]) o;
-            reflists.put(row[0].toString(), row[1].toString());
-          }
-          refListCols.add(prop.getName());
-          refLists.put(prop.getName(), reflists);
-        }
 
-        // We also store the date properties
-        for (Property prop : entity.getProperties()) {
-          if (prop.isDate()) {
-            dateCols.add(prop.getName());
-          } else if (prop.isDatetime()) {
-            dateTimeCols.add(prop.getName());
+          // We also store the date properties
+          for (Property prop : entity.getProperties()) {
+            if (prop.isDate()) {
+              dateCols.add(prop.getName());
+            } else if (prop.isDatetime()) {
+              dateTimeCols.add(prop.getName());
+            }
           }
         }
-
         if (fieldProperties.size() > 0) {
           // If the request came with the view state information, we get the properties from there
           for (int i = 0; i < fieldProperties.size(); i++) {
