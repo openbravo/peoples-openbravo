@@ -122,6 +122,7 @@ public class Fact {
     // Data Check
     if (account == null) {
       log4jFact.debug("end of create line");
+      m_doc.setStatus(AcctServer.STATUS_InvalidAccount);
       return null;
     }
     //
