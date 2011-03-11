@@ -148,7 +148,7 @@ isc.OBViewGrid.addProperties({
     // note that if this is set to false that when using the _dummy criteria
     // that the _dummy criteria can mean that new/updated records are not 
     // shown in the grid
-    //neverDropUpdatedRows: true,
+    neverDropUpdatedRows: true,
     useClientFiltering: false,
     useClientSorting: false,
     
@@ -172,16 +172,6 @@ isc.OBViewGrid.addProperties({
         this.localData[dsResponse.totalRows] = null;
       }
     }
-  },
-  
-  cellEditEnd: function(ece) {
-    if (ece === isc.ListGrid.CLICK_OUTSIDE) {
-      // finished editing on a click outside of the 
-      // current edit row
-      this.endEditing();
-    } else {
-      this.Super('cellEditEnd', arguments);
-    }    
   },
 
   refreshFields: function(){
@@ -1432,6 +1422,35 @@ isc.OBViewGrid.addProperties({
       this.view.toolBar.updateButtonState(true);
     }
     return ret;
+  },
+
+  // check if a fic call needs to be done when leaving a cell and moving to the next
+  // row
+  // see description in saveEditvalues
+  cellEditEnd : function (editCompletionEvent, newValue, ficCallDone) {
+    var rowNum = this.getEditRow(), colNum = this.getEditCol();
+    if (ficCallDone) {
+      // get new value as the row can have changed
+      this.Super('cellEditEnd', [editCompletionEvent, this.getEditValue(rowNum, colNum), ficCallDone]);
+      return;
+    } else {
+      var editForm = this.getEditForm(), focusItem = editForm.getFocusItem();
+      if (focusItem) {
+        focusItem.updateValue();
+        editForm.handleItemChange(focusItem);
+        if (editForm.inFicCall) {
+          // use editValues object as the edit form will be re-used for a next row
+          var editValues = this.getEditValues(rowNum);
+          editValues.actionAfterFicReturn = {
+            target: this,
+            method: this.cellEditEnd,
+            parameters: [editCompletionEvent, newValue, true]
+          };
+          return;
+        }
+      }      
+    }    
+    this.Super('cellEditEnd', arguments);
   },
   
   // saveEditedValues: when saving, first check if a FIC call needs to be done to update to the 

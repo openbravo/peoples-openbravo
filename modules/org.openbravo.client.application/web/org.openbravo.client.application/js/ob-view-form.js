@@ -16,6 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
+
 isc.ClassFactory.defineClass('OBViewForm', isc.DynamicForm);
 
 // = OBViewForm =
@@ -444,7 +445,7 @@ OB.ViewFormProperties = {
       }
       return;
     }
-    
+
     if (columnValues) {
       for (prop in columnValues) {
         if (columnValues.hasOwnProperty(prop)) {
@@ -452,6 +453,7 @@ OB.ViewFormProperties = {
         }
       }
     }
+
     // apparently sometimes an empty string is returned
     if (calloutMessages && calloutMessages.length > 0 && calloutMessages[0] !== '') {
       // TODO: check as what type should call out messages be displayed
@@ -480,15 +482,19 @@ OB.ViewFormProperties = {
     } else {
       this.readOnly = false;
     }
-    
+
     // grid editing    
-    if (this.grid) {
-      if (this.grid.setEditValues && this.grid.getEditRow() === editRow) {
-        this.grid.setEditValues(this.grid.getEditRow(), this.getValues(), true);
-        this.grid.storeUpdatedEditorValue(true);
-      }      
+    if (this.grid && this.grid.setEditValues && this.grid.getEditRow() === editRow) {
+      // keep it as it is overwritten by the setEditValues
+      var tmpActionAfterFic = null;
+      if (editValues && editValues.actionAfterFicReturn) {
+        tmpActionAfterFic = editValues.actionAfterFicReturn;
+      }
+      this.grid.setEditValues(this.grid.getEditRow(), this.getValues(), true);
+      this.grid.storeUpdatedEditorValue(true);
+      editValues.actionAfterFicReturn = tmpActionAfterFic;
     }
-    
+
     this.setDisabled(false);
 
     if (this.validateAfterFicReturn) {
@@ -732,7 +738,7 @@ OB.ViewFormProperties = {
     this.delayCall('setDisabled', [true], 10);
 
     var editRow = this.view.viewGrid.getEditRow();
-    // collect the context information    
+    
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
       var editValues;
       if (editRow || editRow === 0) {
