@@ -131,4 +131,26 @@ public class Convert {
     }
   }
 
+  /**
+   * Convert a BigDecimal to a BigDecimal with a specified number of decimal places
+   * @param in
+   *          BigDecimal to set the precision
+   * @param precision
+   *          (Max) Number of decimal places to output
+   *          Note: precision generally refers to the total number of digits in a number, but within
+   *                Openbravo it refers to the number of significant digits after the decimal point.
+   * @return BigDecimal with specified number of significant decimal places
+   */
+  public static BigDecimal toNumberWithPrecision(BigDecimal in, long precision) {
+    if( in == null ) {
+      return null;
+    }
+    try {
+      return in.setScale((int)precision, RoundingMode.HALF_UP);
+    } catch (ArithmeticException e) {
+      log4j.error(e.getMessage(), e);
+      return null;
+    }
+  }
+
 }

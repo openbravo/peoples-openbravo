@@ -35,6 +35,7 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.util.Convert;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -238,6 +239,18 @@ public class FIN_AddPayment {
     dao = new AdvPaymentMngtDao();
     paymentProposal.setAmount(paymentAmount);
     paymentProposal.setWriteoffAmount((writeOffAmt != null) ? writeOffAmt : BigDecimal.ZERO);
+    BigDecimal convertRate = paymentProposal.getFinancialTransactionConvertRate();
+    if( BigDecimal.ONE.equals(convertRate)) {
+      paymentProposal.setFinancialTransactionAmount(paymentAmount);
+    } else {
+      Currency finAccountCurrency = paymentProposal.getAccount().getCurrency();
+      BigDecimal finAccountTxnAmount = paymentAmount.multiply(convertRate);
+      finAccountTxnAmount = Convert.toNumberWithPrecision(finAccountTxnAmount,
+                                          finAccountCurrency.getStandardPrecision());
+      paymentProposal.setFinancialTransactionAmount(finAccountTxnAmount);
+    }
+
+
     for (FIN_PaymentScheduleDetail paymentScheduleDetail : selectedPaymentScheduleDetails) {
       BigDecimal detailWriteOffAmt = null;
       if (writeOffAmt != null)

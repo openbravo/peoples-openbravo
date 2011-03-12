@@ -97,6 +97,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="FINACC_TXN_CONVERT_RATE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[1]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="FINACC_TXN_AMOUNT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_YMENT_PROPOSAL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
