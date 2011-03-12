@@ -350,7 +350,8 @@ public class AdvPaymentMngtDao {
   public FIN_Payment getNewPayment(boolean isReceipt, Organization organization,
       DocumentType docType, String strPaymentDocumentNo, BusinessPartner businessPartner,
       FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,
-      Date paymentDate, String referenceNo, BigDecimal finTxnConvertRate, BigDecimal finTxnAmount) {
+      Date paymentDate, String referenceNo, Currency paymentCurrency, BigDecimal finTxnConvertRate,
+      BigDecimal finTxnAmount) {
     final FIN_Payment newPayment = OBProvider.getInstance().get(FIN_Payment.class);
     newPayment.setReceipt(isReceipt);
     newPayment.setDocumentType(docType);
@@ -361,11 +362,23 @@ public class AdvPaymentMngtDao {
     newPayment.setBusinessPartner(businessPartner);
     newPayment.setPaymentMethod(paymentMethod);
     newPayment.setAccount(finAccount);
-    newPayment.setAmount(new BigDecimal(strPaymentAmount));
+    final BigDecimal paymentAmount = new BigDecimal(strPaymentAmount);
+    newPayment.setAmount(paymentAmount);
     newPayment.setPaymentDate(paymentDate);
-    newPayment.setCurrency(finAccount.getCurrency());
+    if( paymentCurrency != null ) {
+       newPayment.setCurrency(paymentCurrency);
+    } else {
+      newPayment.setCurrency(finAccount.getCurrency());
+    }
     newPayment.setReferenceNo(referenceNo);
+    if( finTxnConvertRate == null || finTxnConvertRate.compareTo(BigDecimal.ZERO) <= 0 ) {
+      finTxnConvertRate = BigDecimal.ONE;
+    }
     newPayment.setFinancialTransactionConvertRate(finTxnConvertRate);
+
+    if( finTxnAmount == null || finTxnAmount.equals(BigDecimal.ZERO)  ) {
+      finTxnAmount = paymentAmount.multiply(finTxnConvertRate);
+    }
     newPayment.setFinancialTransactionAmount( finTxnAmount);
 
     OBDal.getInstance().save(newPayment);

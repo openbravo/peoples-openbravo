@@ -152,6 +152,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       String strReferenceNo = vars.getStringParameter("inpReferenceNo", "");
+      String paymentCurrencyId = vars.getRequiredStringParameter("inpCurrencyId");
       BigDecimal exchangeRate = new BigDecimal(vars.getRequiredNumericParameter("inpExchangeRate","1.0"));
       BigDecimal convertedAmount = new BigDecimal(vars.getRequiredNumericParameter("inpActualConverted",strPaymentAmount));
       OBError message = null;
@@ -186,7 +187,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
             strPaymentAmount, FIN_Utility.getDate(strPaymentDate), dao.getObject(
                 Organization.class, strOrgId), strReferenceNo, selectedPaymentDetails,
             selectedPaymentDetailAmounts, strDifferenceAction.equals("writeoff"),
-            strDifferenceAction.equals("refund"), exchangeRate, convertedAmount);
+            strDifferenceAction.equals("refund"), dao.getObject(Currency.class, paymentCurrencyId),
+            exchangeRate, convertedAmount);
 
         if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
             || strAction.equals("PPW")) {

@@ -45,6 +45,7 @@ import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
@@ -102,6 +103,15 @@ public class FIN_AddPayment {
    *          Scheduled PAyment Detail amount.
    * @param isRefund
    *          Not used.
+   * @param paymentCurrency
+   *          The currency that the payment is being made in.  Will default to financial account
+   *          currency if not specified
+   * @param finTxnConvertRate
+   *          Exchange rate to convert between payment currency and financial account currency
+   *          for this payment.
+   *          Defaults to 1.0 if not supplied
+   * @param finTxnAmount
+   *          Amount of payment in currency of financial account
    * @return The FIN_Payment OBObject containing all the Payment Details.
    */
   public static FIN_Payment savePayment(FIN_Payment _payment, boolean isReceipt,
@@ -110,7 +120,8 @@ public class FIN_AddPayment {
       Date paymentDate, Organization organization, String referenceNo,
       List<FIN_PaymentScheduleDetail> selectedPaymentScheduleDetails,
       HashMap<String, BigDecimal> selectedPaymentScheduleDetailsAmounts, boolean isWriteoff,
-      boolean isRefund, BigDecimal finTxnConvertRate, BigDecimal finTxnAmount) {
+      boolean isRefund, Currency paymentCurrency, BigDecimal finTxnConvertRate,
+      BigDecimal finTxnAmount) {
     dao = new AdvPaymentMngtDao();
 
     BigDecimal assignedAmount = BigDecimal.ZERO;
@@ -120,7 +131,7 @@ public class FIN_AddPayment {
     else
       payment = dao.getNewPayment(isReceipt, organization, docType, strPaymentDocumentNo,
           businessPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate, referenceNo,
-          finTxnConvertRate, finTxnAmount);
+          paymentCurrency, finTxnConvertRate, finTxnAmount);
 
     for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList())
       assignedAmount = assignedAmount.add(paymentDetail.getAmount());
@@ -172,7 +183,7 @@ public class FIN_AddPayment {
     return savePayment(_payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
         paymentMethod, finAccount, strPaymentAmount, paymentDate,organization, referenceNo,
         selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff,
-        isRefund, BigDecimal.ONE, new BigDecimal(strPaymentAmount));
+        isRefund, null, null, null);
   }
 
   public static FIN_Payment createRefundPayment(ConnectionProvider conProvider,
