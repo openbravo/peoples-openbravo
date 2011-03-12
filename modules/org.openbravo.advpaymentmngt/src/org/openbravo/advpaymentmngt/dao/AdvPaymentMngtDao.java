@@ -13,7 +13,7 @@
  * The Initial Developer of the Original Code is Openbravo SLU
  * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
- * Contributor(s):  ______________________________________.
+ * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
  */
 
@@ -48,7 +48,6 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
-import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
@@ -379,7 +378,7 @@ public class AdvPaymentMngtDao {
     if( finTxnAmount == null || finTxnAmount.equals(BigDecimal.ZERO)  ) {
       finTxnAmount = paymentAmount.multiply(finTxnConvertRate);
     }
-    newPayment.setFinancialTransactionAmount( finTxnAmount);
+    newPayment.setFinancialTransactionAmount(finTxnAmount);
 
     OBDal.getInstance().save(newPayment);
     OBDal.getInstance().flush();
@@ -1299,34 +1298,4 @@ public class AdvPaymentMngtDao {
     return null;
   }
 
-  public ConversionRate getConversionRate(Currency fromCurrency, Currency toCurrency,
-      String conversionDate) {
-    java.util.List<ConversionRate> convRateList;
-    ConversionRate convRate;
-    Date conversionDateObj = FIN_Utility.getDate(conversionDate);
-
-    OBContext.setAdminMode();
-    try {
-
-      final OBCriteria<ConversionRate> obcConvRate = OBDal.getInstance().createCriteria(
-          ConversionRate.class);
-      obcConvRate.add(Expression.eq(ConversionRate.PROPERTY_CURRENCY, fromCurrency));
-      obcConvRate.add(Expression.eq(ConversionRate.PROPERTY_TOCURRENCY, toCurrency));
-      obcConvRate.add(Expression.le(ConversionRate.PROPERTY_VALIDFROMDATE, conversionDateObj));
-      obcConvRate.add(Expression.ge(ConversionRate.PROPERTY_VALIDTODATE, conversionDateObj));
-
-      convRateList = obcConvRate.list();
-
-      if ((convRateList != null) && (convRateList.size() != 0))
-        convRate = convRateList.get(0);
-      else
-        convRate = null;
-
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
-    return convRate;
-
-  }
 }

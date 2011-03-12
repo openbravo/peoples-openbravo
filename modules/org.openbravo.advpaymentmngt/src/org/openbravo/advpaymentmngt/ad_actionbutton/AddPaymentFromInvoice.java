@@ -13,7 +13,7 @@
  * The Initial Developer of the Original Code is Openbravo SLU
  * All portions are Copyright (C) 2010 Openbravo SLU
  * All Rights Reserved.
- * Contributor(s):  ______________________________________.
+ * Contributor(s): Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
  */
 package org.openbravo.advpaymentmngt.ad_actionbutton;
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,6 +45,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.dao.CurrencyDao;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
@@ -432,7 +434,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
     String exchangeRate = "1.0";
     if( !financialAccountCurrency.equals(paymentCurrency)) {
-      final ConversionRate conversionRate = dao.getConversionRate(paymentCurrency, financialAccountCurrency, paymentDate);
+      final CurrencyDao currencyDao = new CurrencyDao();
+      final ConversionRate conversionRate = currencyDao.getConversionRate(paymentCurrency, financialAccountCurrency, FIN_Utility.getDate(paymentDate));
       if( conversionRate != null ) {
         exchangeRate = conversionRate.getMultipleRateBy().toPlainString();
       } else {
