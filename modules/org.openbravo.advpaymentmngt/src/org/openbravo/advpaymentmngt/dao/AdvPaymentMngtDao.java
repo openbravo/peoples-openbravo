@@ -26,8 +26,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.openbravo.advpaymentmngt.APRMPendingPaymentFromInvoice;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.advpaymentmngt.utility.Value;
@@ -935,14 +938,24 @@ public class AdvPaymentMngtDao {
   public List<FIN_FinancialAccount> getFilteredFinancialAccounts(String strPaymentMethodId,
       String strOrgId, String strCurrencyId, boolean isInPayment) {
     final OBCriteria<FIN_FinancialAccount> obc = OBDal.getInstance().createCriteria(
-        FIN_FinancialAccount.class);
+        FIN_FinancialAccount.class,"acc");
     obc.add(Expression.in("organization.id", OBContext.getOBContext()
         .getOrganizationStructureProvider().getNaturalTree(strOrgId)));
     obc.setFilterOnReadableOrganization(false);
 
+    Currency requiredCurrency = null;
     if (strCurrencyId != null && !strCurrencyId.isEmpty()) {
-      obc.add(Expression.eq(FIN_FinancialAccount.PROPERTY_CURRENCY, OBDal.getInstance().get(
-          Currency.class, strCurrencyId)));
+      String multiCurrProperty = isInPayment ? FinAccPaymentMethod.PROPERTY_PAYINISMULTICURRENCY
+          : FinAccPaymentMethod.PROPERTY_PAYOUTISMULTICURRENCY;
+      DetachedCriteria multiCurrAllowed =
+          DetachedCriteria.forEntityName(FinAccPaymentMethod.ENTITY_NAME,"fapm")
+          .add(Expression.eqProperty(FinAccPaymentMethod.PROPERTY_ACCOUNT+".id", "acc.id"))
+          .add(Expression.eq(multiCurrProperty, true));
+      requiredCurrency = OBDal.getInstance().get(Currency.class, strCurrencyId);
+      obc.add(Expression.or(
+          Expression.eq(FIN_FinancialAccount.PROPERTY_CURRENCY, requiredCurrency),
+          Subqueries.exists(multiCurrAllowed.setProjection(Projections.id()))
+      ));
     }
 
     if (strPaymentMethodId != null && !strPaymentMethodId.isEmpty()) {
@@ -955,11 +968,21 @@ public class AdvPaymentMngtDao {
       ExpressionForFinAccPayMethod exp = new ExpressionForFinAccPayMethod();
 
       for (FinAccPaymentMethod finAccPayMethod : finAccsMethods) {
-        if( isInPayment && finAccPayMethod.isPayinAllow() ) {
-          exp.addFinAccPaymentMethod(finAccPayMethod);
-        } else if (!isInPayment && finAccPayMethod.isPayoutAllow() ) {
+        boolean validPaymentDirection =
+              isInPayment ? finAccPayMethod.isPayinAllow(): finAccPayMethod.isPayoutAllow();
+
+        boolean validCurrency = true;
+        if( requiredCurrency  != null ) {
+          boolean multiCurrencyAllowed = isInPayment ?
+              finAccPayMethod.isPayinIsMulticurrency(): finAccPayMethod.isPayoutIsMulticurrency();
+          validCurrency = multiCurrencyAllowed ||
+              requiredCurrency.equals(finAccPayMethod.getAccount().getCurrency());
+        }
+
+        if( validPaymentDirection && validCurrency) {
           exp.addFinAccPaymentMethod(finAccPayMethod);
         }
+
       }
 
       obc.add(exp.getCriterion()); // compoundexp will be always != null because
