@@ -41,6 +41,7 @@ import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.util.Convert;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -437,7 +438,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       final CurrencyDao currencyDao = new CurrencyDao();
       final ConversionRate conversionRate = currencyDao.getConversionRate(paymentCurrency, financialAccountCurrency, FIN_Utility.getDate(paymentDate));
       if( conversionRate != null ) {
-        exchangeRate = conversionRate.getMultipleRateBy().toPlainString();
+        exchangeRate = Convert.toStringWithPrecision(conversionRate.getMultipleRateBy(),
+            CurrencyDao.CONVERSION_RATE_PRECISION);
       } else {
         exchangeRate = "";
       }

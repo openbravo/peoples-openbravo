@@ -65,7 +65,8 @@ public class SE_Payment_Currency extends SimpleCallout {
         final ConversionRate conversionRate = currencyDao.getConversionRate(currency,
             financialAccountCurrency, Convert.toDate(paymentDate));
         if( conversionRate != null ) {
-          finAccConvertRate = Convert.toString(conversionRate.getMultipleRateBy());
+          finAccConvertRate = Convert.toStringWithPrecision(conversionRate.getMultipleRateBy(),
+              CurrencyDao.CONVERSION_RATE_PRECISION);
         }
 
         BigDecimal amount = Convert.toAmount(strAmount);

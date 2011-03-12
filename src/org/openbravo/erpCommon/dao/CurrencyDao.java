@@ -34,6 +34,7 @@ import java.util.Date;
  */
 public class CurrencyDao {
 
+  public static long CONVERSION_RATE_PRECISION = 6;
 
   /**
    * Determine the conversion rate from one currency to another on a given date.

@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_callouts;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.util.Convert;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.dao.CurrencyDao;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 
 import javax.servlet.ServletException;
@@ -47,7 +48,8 @@ public class SE_Payment_FinAccTransactionAmount extends SimpleCallout {
 
     if( finaccTxnAmount != null && amount != null && !BigDecimal.ZERO.equals(amount)) {
       BigDecimal convertRate = finaccTxnAmount.divide(amount, 12, RoundingMode.HALF_UP);
-      String strConvertRate = Convert.toString(convertRate);
+      String strConvertRate = Convert.toStringWithPrecision(convertRate,
+          CurrencyDao.CONVERSION_RATE_PRECISION);
       info.addResult("inpfinaccTxnConvertRate",strConvertRate);
     }
 
