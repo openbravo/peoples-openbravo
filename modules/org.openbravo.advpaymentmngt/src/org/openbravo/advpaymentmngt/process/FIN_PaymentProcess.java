@@ -280,6 +280,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         OBDal.getInstance().flush();
         payment.setWriteoffAmount(BigDecimal.ZERO);
         payment.setAmount(BigDecimal.ZERO);
+        payment.setFinancialTransactionAmount(BigDecimal.ZERO);
 
         if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
             && payment.getUsedCredit().compareTo(BigDecimal.ZERO) == 1)
