@@ -29,6 +29,8 @@ public class DocLine_FINPayment extends DocLine {
   String isReceipt = "";
   String C_GLItem_ID = "";
   String isPrepayment = "";
+  String invoiceAccountingDate = "";
+
 
   /**
    * @param isReceipt
@@ -119,6 +121,24 @@ public class DocLine_FINPayment extends DocLine {
   public void setAmount(String amount) {
     Amount = amount;
   }
+
+  /**
+   *
+   * @return the accounting date of the associated invoice (if any)
+   */
+  public String getInvoiceAccountingDate() {
+    return invoiceAccountingDate;
+  }
+
+  /**
+   *
+   * @param invoiceAccountingDate
+   *          the accounting date of the associated invoice to set
+   */
+  public void setInvoiceAccountingDate(String invoiceAccountingDate) {
+    this.invoiceAccountingDate = invoiceAccountingDate;
+  }
+
 
   public DocLine_FINPayment(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);
