@@ -166,6 +166,8 @@ function displayMulticurrencyControls() {
   displayLogicElement('paramActualConverted', display );
   displayLogicElement('lblActualConverted', display );
 }
+
+
 </script>
 <script language="JavaScript" type="text/javascript">
 function loadGridList() {
@@ -256,11 +258,14 @@ function callBackFinancialAccount(paramXMLParticular, XMLHttpRequestObj) {
         var resp = decodeJSON(XMLHttpRequestObj.responseText);
         createCombo(document.getElementById('inpFinancialAccount'), resp.combo);
         document.getElementById('paramFinancialAccountCurrencyId').value = resp.financialAccountCurrencyId;
+        document.getElementById('paramExchangeRate').value = resp.exchangeRate;
       } else {
         document.getElementById('inpFinancialAccount').innerHTML = '';
         document.getElementById('paramFinancialAccountCurrencyId').value = '';
+        document.getElementById('paramExchangeRate').value = '';
       }
       displayMulticurrencyControls();
+      updateConvertedAmounts();
     } catch (e) {
     }
   }
@@ -650,7 +655,7 @@ var strText = "";
               </td>
               <td class="TitleCell"></td>
               <td class="TitleCell"><span class="LabelText" id="lblExchangeRate">Exchange Rate</span></td>
-              <td class="TextBox_ContentCell"> <input class="dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExchangeRate" name="inpExchangeRate" value="" onchange="updateDifference();" ></input>
+              <td class="TextBox_ContentCell"> <input class="dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExchangeRate" name="inpExchangeRate" value="" onchange="updateConvertedAmounts();" ></input>
               </td>
               <td class="TitleCell"></td>
             </tr>
@@ -658,11 +663,11 @@ var strText = "";
             <!-- Line 6 -->
             <tr>
               <td class="TitleCell"><span name="lblP" id="lblPExpectedPaym" class="LabelText">Expected Payment Out</span><span name="lblR" id="lblRExpectedPaym" class="LabelText">Expected Payment In</span></td>
-              <td class="TextBox_ContentCell"> <input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExpectedPayment" name="inpExpectedPayment" value="" onchange="updateDifference();" disabled="true"></input>
+              <td class="TextBox_ContentCell"> <input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExpectedPayment" name="inpExpectedPayment" value="" onchange="updateDifference();updateConvertedAmounts();" disabled="true"></input>
               </td>
               <td class="TitleCell"></td>
               <td class="TitleCell"><span class="LabelText" id="lblExpectedConverted">Expected Converted</span></td>
-              <td class="TextBox_ContentCell"> <input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExpectedConverted" name="inpExpectedConverted" value="" onchange="updateDifference();" disabled="true"></input>
+              <td class="TextBox_ContentCell"> <input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExpectedConverted" name="inpExpectedConverted" value="" onchange="" disabled="true"></input>
               </td>
               <td class="TitleCell"></td>
             </tr>
@@ -676,7 +681,7 @@ var strText = "";
                       <td class="Textbox_ContentCell">
                       <table style="border: 0px none; border-collapse: collapse;">
                         <tr><td style="padding-top: 0px;">
-                          <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="actualPaymentOnChange();return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpActualPayment" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramActualPayment"/>
+                          <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="actualPaymentOnChange();updateConvertedAmounts();return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpActualPayment" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramActualPayment"/>
                         </td></tr>
                       </table>
                       <span id="paramActualPaymentinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
@@ -716,7 +721,7 @@ var strText = "";
               </td>
               <td class="TitleCell"></td>
               <td class="TitleCell"><span class="LabelText" id="lblActualConverted">Actual Converted</span></td>
-              <td class="TextBox_ContentCell"> <input class="dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramActualConverted" name="inpActualConverted" value="" onchange="updateDifference();" ></input>
+              <td class="TextBox_ContentCell"> <input class="dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramActualConverted" name="inpActualConverted" value="" onchange="updateConvertedAmounts(true);" ></input>
               </td>
               <td class="TitleCell"></td>
             </tr>

@@ -50,6 +50,7 @@ import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
@@ -114,16 +115,18 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strPaymentMethodId = vars.getRequiredStringParameter("inpPaymentMethod");
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
       String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
+      String strPaymentDate = vars.getRequestGlobalVariable("inpPaymentDate", "");
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       refreshFinancialAccountCombo(response, strPaymentMethodId, strFinancialAccountId, strOrgId,
-          strCurrencyId, isReceipt);
+          strCurrencyId, isReceipt, strPaymentDate);
     } else if (vars.commandIn("FILLFINANCIALACCOUNT")) {
       String strFinancialAccountId = vars.getRequestGlobalVariable("inpFinancialAccount", "");
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
       String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
+      String strPaymentDate = vars.getRequestGlobalVariable("inpPaymentDate", "");
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       refreshFinancialAccountCombo(response, "", strFinancialAccountId, strOrgId, strCurrencyId,
-          isReceipt);
+          isReceipt, strPaymentDate);
 
     } else if (vars.commandIn("FILLPAYMENTMETHOD")) {
       String strPaymentMethodId = vars.getRequiredStringParameter("inpPaymentMethod");
@@ -408,7 +411,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
   private void refreshFinancialAccountCombo(HttpServletResponse response,
       String strPaymentMethodId, String strFinancialAccountId, String strOrgId,
-      String strCurrencyId, boolean isReceipt)
+      String strCurrencyId, boolean isReceipt, String paymentDate)
       throws IOException, ServletException {
     log4j.debug("Callout: Payment Method has changed to " + strPaymentMethodId);
 
@@ -417,10 +420,23 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     String finAccountComboHtml = FIN_Utility.getFinancialAccountList(strPaymentMethodId,
         strFinancialAccountId, strOrgId, true, strCurrencyId, isReceipt);
 
+    final String financialAccountCurrencyId = dao.getFinancialAccountCurrencyId(strFinancialAccountId);
+
+    String exchangeRate = "1.0";
+    if( !financialAccountCurrencyId.equals(strCurrencyId)) {
+      final ConversionRate conversionRate = dao.getConversionRate(strCurrencyId, financialAccountCurrencyId, paymentDate);
+      if( conversionRate != null ) {
+        exchangeRate = conversionRate.getMultipleRateBy().toPlainString();
+      } else {
+        exchangeRate = "";
+      }
+    }
+
     JSONObject msg = new JSONObject();
     try {
       msg.put("combo", finAccountComboHtml);
-      msg.put("financialAccountCurrencyId",dao.getFinancialAccountCurrencyId(strFinancialAccountId) );
+      msg.put("financialAccountCurrencyId", financialAccountCurrencyId);
+      msg.put("exchangeRate",exchangeRate );
     } catch (JSONException e) {
       log4j.debug("JSON object error" + msg.toString());
     }

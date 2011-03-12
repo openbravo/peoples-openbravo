@@ -48,6 +48,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
@@ -1281,5 +1282,36 @@ public class AdvPaymentMngtDao {
       return account.getCurrency().getId();
     }
     return "";
+  }
+
+  public ConversionRate getConversionRate(String fromCurrencyId, String toCurrencyId,
+      String conversionDate) {
+    java.util.List<ConversionRate> convRateList;
+    ConversionRate convRate;
+    Date conversionDateObj = FIN_Utility.getDate(conversionDate);
+
+    OBContext.setAdminMode();
+    try {
+
+      final OBCriteria<ConversionRate> obcConvRate = OBDal.getInstance().createCriteria(
+          ConversionRate.class);
+      obcConvRate.add(Expression.eq(ConversionRate.PROPERTY_CURRENCY + "." + Currency.PROPERTY_ID, fromCurrencyId));
+      obcConvRate.add(Expression.eq(ConversionRate.PROPERTY_TOCURRENCY + "." + Currency.PROPERTY_ID, toCurrencyId));
+      obcConvRate.add(Expression.le(ConversionRate.PROPERTY_VALIDFROMDATE, conversionDateObj));
+      obcConvRate.add(Expression.ge(ConversionRate.PROPERTY_VALIDTODATE, conversionDateObj));
+
+      convRateList = obcConvRate.list();
+
+      if ((convRateList != null) && (convRateList.size() != 0))
+        convRate = convRateList.get(0);
+      else
+        convRate = null;
+
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    return convRate;
+
   }
 }

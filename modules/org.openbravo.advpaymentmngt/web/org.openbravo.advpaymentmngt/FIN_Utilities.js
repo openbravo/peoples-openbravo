@@ -291,7 +291,38 @@ function updateTotal() {
     }
   }
   updateDifference();
+  updateConvertedAmounts();
 }
+
+function updateConvertedAmounts( recalcExchangeRate ) {
+  var exchangeRate = frm.inpExchangeRate;
+  var expectedConverted = frm.inpExpectedConverted;
+  var actualConverted = frm.inpActualConverted;
+  var expectedPayment= frm.inpExpectedPayment;
+  var actualPayment= frm.inpActualPayment;
+
+  if( recalcExchangeRate ) {
+    if( actualConverted.value && actualPayment.value) {
+      exchangeRate.value = actualConverted.value / actualPayment.value
+    } else {
+      exchangeRate.value = '';
+    }
+   } else {
+    if( exchangeRate && actualPayment.value) {
+      actualConverted.value = actualPayment.value * exchangeRate.value;
+    } else {
+      actualConverted.value = '';
+    }
+  }
+
+  if( exchangeRate.value && expectedPayment.value) {
+    expectedConverted.value = expectedPayment.value * exchangeRate.value;
+  } else {
+    expectedConverted.value = '';
+  }
+
+}
+
 
 function distributeAmount(_amount) {
   var amount = applyFormat(_amount);
