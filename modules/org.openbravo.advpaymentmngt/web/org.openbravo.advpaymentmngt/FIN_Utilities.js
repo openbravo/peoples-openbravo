@@ -294,8 +294,18 @@ function updateTotal() {
   updateConvertedAmounts();
 }
 
+function multiplyAndRound(lhs, rhs, precision) {
+    if( lhs && rhs ) {
+        var res = lhs * rhs;
+        return res.toFixed(precision);
+    } else {
+        return '';
+    }
+}
+
 function updateConvertedAmounts( recalcExchangeRate ) {
   var exchangeRate = frm.inpExchangeRate;
+  var precision = frm.inpFinancialAccountCurrencyPrecision.value;
   var expectedConverted = frm.inpExpectedConverted;
   var actualConverted = frm.inpActualConverted;
   var expectedPayment= frm.inpExpectedPayment;
@@ -307,20 +317,11 @@ function updateConvertedAmounts( recalcExchangeRate ) {
     } else {
       exchangeRate.value = '';
     }
-   } else {
-    if( exchangeRate && actualPayment.value) {
-      actualConverted.value = actualPayment.value * exchangeRate.value;
-    } else {
-      actualConverted.value = '';
-    }
-  }
-
-  if( exchangeRate.value && expectedPayment.value) {
-    expectedConverted.value = expectedPayment.value * exchangeRate.value;
   } else {
-    expectedConverted.value = '';
+    actualConverted.value = multiplyAndRound(actualPayment.value, exchangeRate.value, precision);
   }
 
+  expectedConverted.value = multiplyAndRound(expectedPayment.value,exchangeRate.value, precision);
 }
 
 

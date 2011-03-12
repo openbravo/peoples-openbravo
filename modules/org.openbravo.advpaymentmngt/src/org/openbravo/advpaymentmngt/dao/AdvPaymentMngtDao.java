@@ -1291,15 +1291,15 @@ public class AdvPaymentMngtDao {
     return obcPayment.list();
   }
 
-  public String getFinancialAccountCurrencyId(String strFinancialAccountId) {
+  public Currency getFinancialAccountCurrency(String strFinancialAccountId) {
     if(strFinancialAccountId != null && !strFinancialAccountId.isEmpty() ) {
       final FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId);
-      return account.getCurrency().getId();
+      return account.getCurrency();
     }
-    return "";
+    return null;
   }
 
-  public ConversionRate getConversionRate(String fromCurrencyId, String toCurrencyId,
+  public ConversionRate getConversionRate(Currency fromCurrency, Currency toCurrency,
       String conversionDate) {
     java.util.List<ConversionRate> convRateList;
     ConversionRate convRate;
@@ -1310,8 +1310,8 @@ public class AdvPaymentMngtDao {
 
       final OBCriteria<ConversionRate> obcConvRate = OBDal.getInstance().createCriteria(
           ConversionRate.class);
-      obcConvRate.add(Expression.eq(ConversionRate.PROPERTY_CURRENCY + "." + Currency.PROPERTY_ID, fromCurrencyId));
-      obcConvRate.add(Expression.eq(ConversionRate.PROPERTY_TOCURRENCY + "." + Currency.PROPERTY_ID, toCurrencyId));
+      obcConvRate.add(Expression.eq(ConversionRate.PROPERTY_CURRENCY, fromCurrency));
+      obcConvRate.add(Expression.eq(ConversionRate.PROPERTY_TOCURRENCY, toCurrency));
       obcConvRate.add(Expression.le(ConversionRate.PROPERTY_VALIDFROMDATE, conversionDateObj));
       obcConvRate.add(Expression.ge(ConversionRate.PROPERTY_VALIDTODATE, conversionDateObj));
 

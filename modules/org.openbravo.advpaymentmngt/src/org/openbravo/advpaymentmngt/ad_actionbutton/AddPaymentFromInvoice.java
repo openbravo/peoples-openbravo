@@ -331,8 +331,11 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    xmlDocument.setParameter("financialAccountCurrencyId",dao.getFinancialAccountCurrencyId(strFinancialAccountId));
-
+    final Currency financialAccountCurrency = dao.getFinancialAccountCurrency(strFinancialAccountId);
+    if( financialAccountCurrency != null ) {
+      xmlDocument.setParameter("financialAccountCurrencyId", financialAccountCurrency.getId());
+      xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency.getStandardPrecision().toString());
+    }
 
     boolean forcedFinancialAccountTransaction = false;
     forcedFinancialAccountTransaction = isForcedFinancialAccountTransaction(isReceipt,
@@ -424,11 +427,12 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     String finAccountComboHtml = FIN_Utility.getFinancialAccountList(strPaymentMethodId,
         strFinancialAccountId, strOrgId, true, strCurrencyId, isReceipt);
 
-    final String financialAccountCurrencyId = dao.getFinancialAccountCurrencyId(strFinancialAccountId);
+    final Currency financialAccountCurrency = dao.getFinancialAccountCurrency(strFinancialAccountId);
+    final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
 
     String exchangeRate = "1.0";
-    if( !financialAccountCurrencyId.equals(strCurrencyId)) {
-      final ConversionRate conversionRate = dao.getConversionRate(strCurrencyId, financialAccountCurrencyId, paymentDate);
+    if( !financialAccountCurrency.equals(paymentCurrency)) {
+      final ConversionRate conversionRate = dao.getConversionRate(paymentCurrency, financialAccountCurrency, paymentDate);
       if( conversionRate != null ) {
         exchangeRate = conversionRate.getMultipleRateBy().toPlainString();
       } else {
@@ -439,8 +443,9 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     JSONObject msg = new JSONObject();
     try {
       msg.put("combo", finAccountComboHtml);
-      msg.put("financialAccountCurrencyId", financialAccountCurrencyId);
+      msg.put("financialAccountCurrencyId", financialAccountCurrency.getId());
       msg.put("exchangeRate",exchangeRate );
+      msg.put("financialAccountCurrencyPrecision", financialAccountCurrency.getStandardPrecision());
     } catch (JSONException e) {
       log4j.debug("JSON object error" + msg.toString());
     }

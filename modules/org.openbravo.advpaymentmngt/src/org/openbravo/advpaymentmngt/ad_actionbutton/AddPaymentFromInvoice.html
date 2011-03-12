@@ -635,6 +635,8 @@ var strText = "";
               <td class="TitleCell"><span class="LabelText" name="lblP" id="lblPTakeFrom">Take From</span><span class="LabelText" name="lblR" id="lblRDepositTo">Deposit To</span></td>
               <td class="Combo_ContentCell" colspan="2">
                 <input type="hidden" id="paramFinancialAccountCurrencyId" name="financialAccountCurrencyId" value=""/>
+                <input type="hidden" id="paramFinancialAccountCurrencyPrecision" name="inpFinancialAccountCurrencyPrecision" value="2"/>
+
                 <select name="inpFinancialAccount"
                         onkeypress="changeToEditingMode('onkeypress');"
                         onchange="changeToEditingMode('onchange', this);logChanges(this);loadPaymentMethodCombo(); reFillFinancialAccountCombo(); return true;"
