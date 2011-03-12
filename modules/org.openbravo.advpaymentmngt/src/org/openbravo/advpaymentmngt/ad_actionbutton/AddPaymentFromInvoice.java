@@ -29,6 +29,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Expression;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
@@ -322,6 +324,9 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
+    xmlDocument.setParameter("financialAccountCurrencyId",dao.getFinancialAccountCurrencyId(strFinancialAccountId));
+
+
     boolean forcedFinancialAccountTransaction = false;
     forcedFinancialAccountTransaction = isForcedFinancialAccountTransaction(isReceipt,
         strFinancialAccountId, strPaymentMethodId);
@@ -407,12 +412,23 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       throws IOException, ServletException {
     log4j.debug("Callout: Payment Method has changed to " + strPaymentMethodId);
 
+    AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
+
     String finAccountComboHtml = FIN_Utility.getFinancialAccountList(strPaymentMethodId,
         strFinancialAccountId, strOrgId, true, strCurrencyId, isReceipt);
 
-    response.setContentType("text/html; charset=UTF-8");
+    JSONObject msg = new JSONObject();
+    try {
+      msg.put("combo", finAccountComboHtml);
+      msg.put("financialAccountCurrencyId",dao.getFinancialAccountCurrencyId(strFinancialAccountId) );
+    } catch (JSONException e) {
+      log4j.debug("JSON object error" + msg.toString());
+    }
+
+
+    response.setContentType("application/json; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    out.println(finAccountComboHtml.replaceAll("\"", "\\'"));
+    out.println(msg.toString());
     out.close();
 
   }

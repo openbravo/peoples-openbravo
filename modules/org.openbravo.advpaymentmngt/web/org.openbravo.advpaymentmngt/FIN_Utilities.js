@@ -522,3 +522,15 @@ function reloadParentGrid() {
 	}
   }
 }
+
+/**
+ * Helper function to turn a JSON string representation into an object.
+ * @param jsonString
+ */
+function decodeJSON(jsonString) {
+    try{
+        return eval('(' + jsonString + ')'); // do the eval
+    }catch(e){
+        throw new SyntaxError("Invalid JSON string: " + e.message + " parsing: "+ str);
+    }
+}

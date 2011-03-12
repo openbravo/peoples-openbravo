@@ -1275,4 +1275,11 @@ public class AdvPaymentMngtDao {
     return obcPayment.list();
   }
 
+  public String getFinancialAccountCurrencyId(String strFinancialAccountId) {
+    if(strFinancialAccountId != null && !strFinancialAccountId.isEmpty() ) {
+      final FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId);
+      return account.getCurrency().getId();
+    }
+    return "";
+  }
 }
