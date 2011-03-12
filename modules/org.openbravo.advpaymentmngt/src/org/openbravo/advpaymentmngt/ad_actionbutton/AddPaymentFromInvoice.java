@@ -152,6 +152,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       String strReferenceNo = vars.getStringParameter("inpReferenceNo", "");
+      BigDecimal exchangeRate = new BigDecimal(vars.getRequiredNumericParameter("inpExchangeRate","1.0"));
+      BigDecimal convertedAmount = new BigDecimal(vars.getRequiredNumericParameter("inpActualConverted",strPaymentAmount));
       OBError message = null;
       // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
       // removed when new security implementation is done
@@ -184,7 +186,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
             strPaymentAmount, FIN_Utility.getDate(strPaymentDate), dao.getObject(
                 Organization.class, strOrgId), strReferenceNo, selectedPaymentDetails,
             selectedPaymentDetailAmounts, strDifferenceAction.equals("writeoff"),
-            strDifferenceAction.equals("refund"));
+            strDifferenceAction.equals("refund"), exchangeRate, convertedAmount);
 
         if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
             || strAction.equals("PPW")) {

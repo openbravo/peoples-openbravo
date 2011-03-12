@@ -350,7 +350,7 @@ public class AdvPaymentMngtDao {
   public FIN_Payment getNewPayment(boolean isReceipt, Organization organization,
       DocumentType docType, String strPaymentDocumentNo, BusinessPartner businessPartner,
       FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,
-      Date paymentDate, String referenceNo) {
+      Date paymentDate, String referenceNo, BigDecimal finTxnConvertRate, BigDecimal finTxnAmount) {
     final FIN_Payment newPayment = OBProvider.getInstance().get(FIN_Payment.class);
     newPayment.setReceipt(isReceipt);
     newPayment.setDocumentType(docType);
@@ -365,6 +365,8 @@ public class AdvPaymentMngtDao {
     newPayment.setPaymentDate(paymentDate);
     newPayment.setCurrency(finAccount.getCurrency());
     newPayment.setReferenceNo(referenceNo);
+    newPayment.setFinancialTransactionConvertRate(finTxnConvertRate);
+    newPayment.setFinancialTransactionAmount( finTxnAmount);
 
     OBDal.getInstance().save(newPayment);
     OBDal.getInstance().flush();

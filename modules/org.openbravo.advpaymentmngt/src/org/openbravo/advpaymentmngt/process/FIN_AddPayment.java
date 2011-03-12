@@ -110,7 +110,7 @@ public class FIN_AddPayment {
       Date paymentDate, Organization organization, String referenceNo,
       List<FIN_PaymentScheduleDetail> selectedPaymentScheduleDetails,
       HashMap<String, BigDecimal> selectedPaymentScheduleDetailsAmounts, boolean isWriteoff,
-      boolean isRefund) {
+      boolean isRefund, BigDecimal finTxnConvertRate, BigDecimal finTxnAmount) {
     dao = new AdvPaymentMngtDao();
 
     BigDecimal assignedAmount = BigDecimal.ZERO;
@@ -119,7 +119,8 @@ public class FIN_AddPayment {
       payment = _payment;
     else
       payment = dao.getNewPayment(isReceipt, organization, docType, strPaymentDocumentNo,
-          businessPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate, referenceNo);
+          businessPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate, referenceNo,
+          finTxnConvertRate, finTxnAmount);
 
     for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList())
       assignedAmount = assignedAmount.add(paymentDetail.getAmount());
@@ -155,6 +156,23 @@ public class FIN_AddPayment {
     }
 
     return payment;
+  }
+
+  /*
+  * Temporary method to supply defaults for exchange Rate and converted amount
+  * TODO BPS Remove this
+  */
+  public static FIN_Payment savePayment(FIN_Payment _payment, boolean isReceipt,
+      DocumentType docType, String strPaymentDocumentNo, BusinessPartner businessPartner,
+      FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,
+      Date paymentDate, Organization organization, String referenceNo,
+      List<FIN_PaymentScheduleDetail> selectedPaymentScheduleDetails,
+      HashMap<String, BigDecimal> selectedPaymentScheduleDetailsAmounts, boolean isWriteoff,
+      boolean isRefund) {
+    return savePayment(_payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
+        paymentMethod, finAccount, strPaymentAmount, paymentDate,organization, referenceNo,
+        selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff,
+        isRefund, BigDecimal.ONE, new BigDecimal(strPaymentAmount));
   }
 
   public static FIN_Payment createRefundPayment(ConnectionProvider conProvider,
