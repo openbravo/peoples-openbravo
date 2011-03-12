@@ -104,25 +104,30 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strFinancialAccountId = vars.getRequestGlobalVariable("inpFinancialAccount", "");
       String strPaymentMethodId = vars.getRequestGlobalVariable("inpPaymentMethod", "");
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
-      refreshPaymentMethodCombo(response, strPaymentMethodId, strFinancialAccountId, strOrgId);
+      boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
+      refreshPaymentMethodCombo(response, strPaymentMethodId, strFinancialAccountId, strOrgId, isReceipt);
 
     } else if (vars.commandIn("FINANCIALACCOUNT")) {
       String strFinancialAccountId = vars.getRequestGlobalVariable("inpFinancialAccount", "");
       String strPaymentMethodId = vars.getRequiredStringParameter("inpPaymentMethod");
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
       String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
+      boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       refreshFinancialAccountCombo(response, strPaymentMethodId, strFinancialAccountId, strOrgId,
-          strCurrencyId);
+          strCurrencyId, isReceipt);
     } else if (vars.commandIn("FILLFINANCIALACCOUNT")) {
       String strFinancialAccountId = vars.getRequestGlobalVariable("inpFinancialAccount", "");
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
       String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
-      refreshFinancialAccountCombo(response, "", strFinancialAccountId, strOrgId, strCurrencyId);
+      boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
+      refreshFinancialAccountCombo(response, "", strFinancialAccountId, strOrgId, strCurrencyId,
+          isReceipt);
 
     } else if (vars.commandIn("FILLPAYMENTMETHOD")) {
       String strPaymentMethodId = vars.getRequiredStringParameter("inpPaymentMethod");
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
-      refreshPaymentMethodCombo(response, strPaymentMethodId, "", strOrgId);
+      boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
+      refreshPaymentMethodCombo(response, strPaymentMethodId, "", strOrgId, isReceipt);
 
     } else if (vars.commandIn("SAVE")) {
       String strAction = vars.getRequiredStringParameter("inpActionDocument");
@@ -288,12 +293,12 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
     // Payment Method combobox
     String paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(strPaymentMethodId, "",
-        strOrgId, true, true);
+        strOrgId, true, true, isReceipt);
     xmlDocument.setParameter("sectionDetailPaymentMethod", paymentMethodComboHtml);
 
     // Financial Account combobox
     String finAccountComboHtml = FIN_Utility.getFinancialAccountList(strPaymentMethodId,
-        strFinancialAccountId, strOrgId, true, strCurrencyId);
+        strFinancialAccountId, strOrgId, true, strCurrencyId, isReceipt);
     xmlDocument.setParameter("sectionDetailFinancialAccount", finAccountComboHtml);
 
     // Currency
@@ -382,11 +387,12 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
   }
 
   private void refreshPaymentMethodCombo(HttpServletResponse response, String srtPaymentMethod,
-      String strFinancialAccountId, String strOrgId) throws IOException, ServletException {
+      String strFinancialAccountId, String strOrgId, boolean isReceipt)
+      throws IOException, ServletException {
     log4j.debug("Callout: Financial Account has changed to" + strFinancialAccountId);
 
     String paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(srtPaymentMethod,
-        strFinancialAccountId, strOrgId, true, true);
+        strFinancialAccountId, strOrgId, true, true, isReceipt);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -396,12 +402,13 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
   }
 
   private void refreshFinancialAccountCombo(HttpServletResponse response,
-      String strPaymentMethodId, String strFinancialAccountId, String strOrgId, String strCurrencyId)
+      String strPaymentMethodId, String strFinancialAccountId, String strOrgId,
+      String strCurrencyId, boolean isReceipt)
       throws IOException, ServletException {
     log4j.debug("Callout: Payment Method has changed to " + strPaymentMethodId);
 
     String finAccountComboHtml = FIN_Utility.getFinancialAccountList(strPaymentMethodId,
-        strFinancialAccountId, strOrgId, true, strCurrencyId);
+        strFinancialAccountId, strOrgId, true, strCurrencyId, isReceipt);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

@@ -883,7 +883,7 @@ public class AdvPaymentMngtDao {
   }
 
   public List<FIN_PaymentMethod> getFilteredPaymentMethods(String strFinancialAccountId,
-      String strOrgId, boolean excludePaymentMethodWithoutAccount) {
+      String strOrgId, boolean excludePaymentMethodWithoutAccount, boolean isInPayment) {
     final OBCriteria<FIN_PaymentMethod> obc = OBDal.getInstance().createCriteria(
         FIN_PaymentMethod.class);
     obc.add(Expression.in("organization.id", OBContext.getOBContext()
@@ -894,7 +894,12 @@ public class AdvPaymentMngtDao {
     if (strFinancialAccountId != null && !strFinancialAccountId.isEmpty()) {
       for (FinAccPaymentMethod finAccPayMethod : getObject(FIN_FinancialAccount.class,
           strFinancialAccountId).getFinancialMgmtFinAccPaymentMethodList()) {
-        payMethods.add(finAccPayMethod.getPaymentMethod().getId());
+        if( isInPayment && finAccPayMethod.isPayinAllow() ) {
+          payMethods.add(finAccPayMethod.getPaymentMethod().getId());
+        } else if (!isInPayment && finAccPayMethod.isPayoutAllow() ) {
+          payMethods.add(finAccPayMethod.getPaymentMethod().getId());
+        }
+        // else not valid for this type of payment
       }
       if (payMethods.isEmpty()) {
         return (new ArrayList<FIN_PaymentMethod>());
@@ -917,13 +922,18 @@ public class AdvPaymentMngtDao {
         }
         obc.add(Expression.in("id", payMethods));
       }
+      if(isInPayment) {
+        obc.add(Expression.eq(FIN_PaymentMethod.PROPERTY_PAYINALLOW, true));
+      } else {
+        obc.add(Expression.eq(FIN_PaymentMethod.PROPERTY_PAYINALLOW, true));
+      }
     }
 
     return obc.list();
   }
 
   public List<FIN_FinancialAccount> getFilteredFinancialAccounts(String strPaymentMethodId,
-      String strOrgId, String strCurrencyId) {
+      String strOrgId, String strCurrencyId, boolean isInPayment) {
     final OBCriteria<FIN_FinancialAccount> obc = OBDal.getInstance().createCriteria(
         FIN_FinancialAccount.class);
     obc.add(Expression.in("organization.id", OBContext.getOBContext()
@@ -945,7 +955,11 @@ public class AdvPaymentMngtDao {
       ExpressionForFinAccPayMethod exp = new ExpressionForFinAccPayMethod();
 
       for (FinAccPaymentMethod finAccPayMethod : finAccsMethods) {
-        exp.addFinAccPaymentMethod(finAccPayMethod);
+        if( isInPayment && finAccPayMethod.isPayinAllow() ) {
+          exp.addFinAccPaymentMethod(finAccPayMethod);
+        } else if (!isInPayment && finAccPayMethod.isPayoutAllow() ) {
+          exp.addFinAccPaymentMethod(finAccPayMethod);
+        }
       }
 
       obc.add(exp.getCriterion()); // compoundexp will be always != null because

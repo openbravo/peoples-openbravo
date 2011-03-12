@@ -380,14 +380,18 @@ public class FIN_Utility {
    *          if the strPaymentMethodId is empty or null then depending on this parameter the list
    *          will include payment methods with no Financial Accounts associated or only show the
    *          Payment Methods that belongs to at least on Financial Account
+   * @param isInPayment
+   *          specifies the type of payment to get payment methods for.  If true, will return
+   *          payment methods with Payment In enabled, if false will return payment methods with
+   *          Payment Out enabled.
    * @return a String with the html code with the options to fill the drop-down of Payment Methods.
    */
   public static String getPaymentMethodList(String strPaymentMethodId,
       String strFinancialAccountId, String strOrgId, boolean isMandatory,
-      boolean excludePaymentMethodWithoutAccount) {
+      boolean excludePaymentMethodWithoutAccount, boolean isInPayment) {
     dao = new AdvPaymentMngtDao();
     List<FIN_PaymentMethod> paymentMethods = dao.getFilteredPaymentMethods(strFinancialAccountId,
-        strOrgId, excludePaymentMethodWithoutAccount);
+        strOrgId, excludePaymentMethodWithoutAccount, isInPayment);
     String options = getOptionsList(paymentMethods, strPaymentMethodId, isMandatory);
     return options;
   }
@@ -406,13 +410,18 @@ public class FIN_Utility {
    *          the Organization id the record belongs to.
    * @param strCurrencyId
    *          optional Currency id to filter the Financial Accounts.
+   * @param isInPayment
+   *          specifies the type of payment to that is being made.  If true, will return
+   *          accounts with payment methods that have Payment In enabled, if false will return accounts
+   *          with payment methods that have Payment Out enabled.
    * @return a String with the html code with the options to fill the drop-down of Financial
    *         Accounts.
    */
   public static String getFinancialAccountList(String strPaymentMethodId,
-      String strFinancialAccountId, String strOrgId, boolean isMandatory, String strCurrencyId) {
+      String strFinancialAccountId, String strOrgId, boolean isMandatory, String strCurrencyId,
+      boolean isInPayment) {
     List<FIN_FinancialAccount> financialAccounts = dao.getFilteredFinancialAccounts(
-        strPaymentMethodId, strOrgId, strCurrencyId);
+        strPaymentMethodId, strOrgId, strCurrencyId, isInPayment);
     String options = getOptionsList(financialAccounts, strFinancialAccountId, isMandatory);
     return options;
   }

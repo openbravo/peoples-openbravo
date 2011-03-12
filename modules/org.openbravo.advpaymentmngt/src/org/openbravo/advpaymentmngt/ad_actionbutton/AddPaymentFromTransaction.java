@@ -96,7 +96,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       final String strBusinessPartnerId = vars.getRequestGlobalVariable("inpcBpartnerId", "");
       final String strFinancialAccountId = vars.getRequiredStringParameter("inpFinancialAccountId",
           IsIDFilter.instance);
-      refreshPaymentMethod(response, strBusinessPartnerId, strFinancialAccountId);
+      boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
+      refreshPaymentMethod(response, strBusinessPartnerId, strFinancialAccountId, isReceipt);
 
     } else if (vars.commandIn("LOADCREDIT")) {
       final String strBusinessPartnerId = vars.getRequiredStringParameter("inpcBpartnerId");
@@ -300,7 +301,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
 
     // Payment Method combobox
     String paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(defaultPaymentMethod,
-        strFinancialAccountId, financialAccount.getOrganization().getId(), true, true);
+        strFinancialAccountId, financialAccount.getOrganization().getId(), true, true, isReceipt);
     xmlDocument.setParameter("sectionDetailPaymentMethod", paymentMethodComboHtml);
 
     xmlDocument.setParameter("dateDisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -366,7 +367,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
   }
 
   private void refreshPaymentMethod(HttpServletResponse response, String strBusinessPartnerId,
-      String strFinancialAccountId) throws IOException, ServletException {
+      String strFinancialAccountId, boolean isReceipt) throws IOException, ServletException {
     log4j.debug("Callout: Business Partner has changed to" + strBusinessPartnerId);
 
     String paymentMethodComboHtml = "";
@@ -376,7 +377,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, strBusinessPartnerId);
       paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(
           (bp.getPaymentMethod() != null) ? bp.getPaymentMethod().getId() : null,
-          strFinancialAccountId, account.getOrganization().getId(), true, true);
+          strFinancialAccountId, account.getOrganization().getId(), true, true, isReceipt);
     }
 
     response.setContentType("text/html; charset=UTF-8");
