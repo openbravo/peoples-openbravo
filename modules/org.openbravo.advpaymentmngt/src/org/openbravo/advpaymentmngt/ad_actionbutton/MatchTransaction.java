@@ -477,7 +477,9 @@ public class MatchTransaction extends HttpSecureAppServlet {
             OBDal.getInstance().save(bsl);
             OBDal.getInstance().flush();
           }
-          excluded.add(transaction);
+          if (transaction != null) {
+            excluded.add(transaction);
+          }
           matchingType = matched.getMatchLevel();
 
         } else {

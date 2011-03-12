@@ -150,6 +150,8 @@ public class FIN_AddPayment {
         dao.getNewPaymentDetail(payment, refundScheduleDetail, payment.getAmount().subtract(
             assignedAmount), BigDecimal.ZERO, false, null);
       }
+    } catch (final Exception e) {
+      e.printStackTrace(System.err);
     } finally {
       OBContext.restorePreviousMode();
     }
