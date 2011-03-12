@@ -466,25 +466,28 @@ public class AdvPaymentMngtDao {
     FIN_FinaccTransaction transaction = FIN_Utility.getOneInstance(FIN_FinaccTransaction.class,
         new Value(FIN_FinaccTransaction.PROPERTY_FINPAYMENT, payment));
     if (transaction == null) {
-      transaction = getNewFinancialTransaction(payment.getOrganization(), payment.getCurrency(),
+      transaction = getNewFinancialTransaction(payment.getOrganization(),
           payment.getAccount(), TransactionsDao.getTransactionMaxLineNo(payment.getAccount()) + 10,
-          payment, payment.getDescription(), payment.getPaymentDate(), null, "RPPC", payment
-              .isReceipt() ? payment.getAmount() : BigDecimal.ZERO, !payment.isReceipt() ? payment
-              .getAmount() : BigDecimal.ZERO, payment.getProject(), payment.getSalesCampaign(),
-          payment.getActivity(), payment.isReceipt() ? "BPD" : "BPW", payment.getPaymentDate());
+          payment, payment.getDescription(), payment.getPaymentDate(), null, "RPPC",
+          FIN_Utility.getDepositAmount(payment.isReceipt(), payment.getFinancialTransactionAmount()),
+          FIN_Utility.getPaymentAmount(payment.isReceipt(), payment.getFinancialTransactionAmount()),
+          payment.getProject(), payment.getSalesCampaign(),
+          payment.getActivity(), payment.isReceipt() ? "BPD" : "BPW", payment.getPaymentDate(),
+          payment.getCurrency(), payment.getFinancialTransactionConvertRate(), payment.getAmount());
     }
     return transaction;
   }
 
   public FIN_FinaccTransaction getNewFinancialTransaction(Organization organization,
-      Currency currency, FIN_FinancialAccount account, Long line, FIN_Payment payment,
+      FIN_FinancialAccount account, Long line, FIN_Payment payment,
       String description, Date accountingDate, GLItem glItem, String status,
       BigDecimal depositAmount, BigDecimal paymentAmount, Project project, Campaign campaing,
-      ABCActivity activity, String transactionType, Date statementDate) {
+      ABCActivity activity, String transactionType, Date statementDate,
+      Currency paymentCurrency, BigDecimal convertRate, BigDecimal sourceAmount) {
     FIN_FinaccTransaction finTrans = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
     finTrans.setActive(true);
     finTrans.setOrganization(organization);
-    finTrans.setCurrency(currency);
+    finTrans.setCurrency(account.getCurrency());
     finTrans.setAccount(account);
     finTrans.setLineNo(line);
     finTrans.setFinPayment(payment);
@@ -504,6 +507,11 @@ public class AdvPaymentMngtDao {
     finTrans.setActivity(activity);
     finTrans.setTransactionType(transactionType);
     finTrans.setTransactionDate(statementDate);
+    if(paymentCurrency != null && !paymentCurrency.equals(finTrans.getCurrency())) {
+      finTrans.setForeignCurrency(paymentCurrency);
+      finTrans.setForeignConversionRate(convertRate);
+      finTrans.setForeignAmount(sourceAmount);
+    }
 
     OBDal.getInstance().save(finTrans);
     OBDal.getInstance().flush();
@@ -843,20 +851,18 @@ public class AdvPaymentMngtDao {
       FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(paymentOBList);
 
       for (int i = 0; i < data.length; i++) {
-        BigDecimal depositAmt = BigDecimal.ZERO;
-        BigDecimal paymentAmt = BigDecimal.ZERO;
+        Boolean paymentIsReceipt = FIN_Payments[i].isReceipt();
 
-        if (FIN_Payments[i].isReceipt()) {
-          if (FIN_Payments[i].getAmount().compareTo(BigDecimal.ZERO) == -1)
-            paymentAmt = FIN_Payments[i].getAmount().abs();
-          else
-            depositAmt = FIN_Payments[i].getAmount();
-        } else {
-          if (FIN_Payments[i].getAmount().compareTo(BigDecimal.ZERO) == -1)
-            depositAmt = FIN_Payments[i].getAmount().abs();
-          else
-            paymentAmt = FIN_Payments[i].getAmount();
-        }
+        BigDecimal depositAmt = FIN_Utility.getDepositAmount(paymentIsReceipt,
+            FIN_Payments[i].getFinancialTransactionAmount());
+        BigDecimal paymentAmt = FIN_Utility.getPaymentAmount(paymentIsReceipt,
+            FIN_Payments[i].getFinancialTransactionAmount());
+        BigDecimal foreignDepositAmt = FIN_Utility.getDepositAmount(paymentIsReceipt,
+            FIN_Payments[i].getAmount());
+        BigDecimal foreignPaymentAmt = FIN_Utility.getPaymentAmount(paymentIsReceipt,
+            FIN_Payments[i].getAmount());
+
+        final Currency foreignCurrency = FIN_Payments[i].getCurrency();
 
         FieldProviderFactory.setField(data[i], "paymentId", FIN_Payments[i].getId());
         FieldProviderFactory.setField(data[i], "paymentInfo", FIN_Payments[i].getDocumentNo()
@@ -876,8 +882,13 @@ public class AdvPaymentMngtDao {
 
         FieldProviderFactory.setField(data[i], "paymentDate", dateFormater.format(
             FIN_Payments[i].getPaymentDate()).toString());
-        FieldProviderFactory.setField(data[i], "depositAmount", depositAmt.toString());
-        FieldProviderFactory.setField(data[i], "paymentAmount", paymentAmt.toString());
+        FieldProviderFactory.setField(data[i], "depositAmount",
+            FIN_Utility.multiCurrencyAmountToDisplay(depositAmt, account.getCurrency(),
+                foreignDepositAmt, foreignCurrency));
+        FieldProviderFactory.setField(data[i], "paymentAmount",
+            FIN_Utility.multiCurrencyAmountToDisplay(paymentAmt, account.getCurrency(),
+                foreignPaymentAmt, foreignCurrency));
+
         FieldProviderFactory.setField(data[i], "rownum", "" + i);
       }
 
