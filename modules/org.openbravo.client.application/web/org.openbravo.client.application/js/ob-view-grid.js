@@ -1181,7 +1181,7 @@ isc.OBViewGrid.addProperties({
     // note that when navigating with the arrow key that at a certain 2 are
     // selected
     // when going into this method therefore the extra check on length === 1
-    if (this.singleRecordSelection && this.isSelected(record) && this.getSelection().length === 1) {
+    if (this.singleRecordSelection && this.getSelectedRecord() === record && this.getSelection().length === 1) {
       return;
     }
     this.singleRecordSelection = true;

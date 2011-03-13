@@ -102,6 +102,7 @@ OB.ViewFormProperties = {
     if (value) {
       // signal that autosave is needed after this
       this.view.standardWindow.setDirtyEditForm(this);
+      this.validateAfterFicReturn = true;
     } else {
       // signal that no autosave is needed after this
       this.view.standardWindow.setDirtyEditForm(null);
@@ -822,7 +823,7 @@ OB.ViewFormProperties = {
     this.view.messageBar.hide();
     
     var callback = function(resp, data, req){
-      var index1, index2, errorCode, view = form.view;
+      var index1, index2, errorCode, view = form.view, localRecord;
       var status = resp.status;
 
       // if no recordIndex then select explicitly
@@ -834,7 +835,7 @@ OB.ViewFormProperties = {
       
       if (recordIndex || recordIndex === 0) {
         // if this is not done the selection gets lost
-        var localRecord = view.viewGrid.data.get(recordIndex);
+        localRecord = view.viewGrid.data.get(recordIndex);
         if (localRecord) {
           localRecord[view.viewGrid.selection.selectionProperty] = true;
         }
@@ -855,10 +856,9 @@ OB.ViewFormProperties = {
         
         view.setRecentDocument(this.getValues());
         
-        // force a fetch to place the grid on the correct location
         if (form.isNew) {
-          view.viewGrid.targetRecordId = data.id;
-          view.viewGrid.refreshContents();
+          view.viewGrid.doSelectSingleRecord(localRecord);
+          view.refreshChildViews();
         }
 
         // success invoke the action, if any there

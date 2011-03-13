@@ -683,7 +683,7 @@ isc.OBStandardView.addProperties({
     // allow default edit mode again
     this.allowDefaultEditMode = true;
     
-    if (this.viewForm) {
+    if (this.viewForm && this.isShowingForm) {
       this.viewForm.resetForm();
     }
         
