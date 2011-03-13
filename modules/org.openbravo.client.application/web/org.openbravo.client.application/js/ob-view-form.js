@@ -16,6 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
+
 isc.ClassFactory.defineClass('OBViewForm', isc.DynamicForm);
 
 // = OBViewForm =
@@ -110,12 +111,20 @@ OB.ViewFormProperties = {
     }
   },
   
-  editRecord: function(record, preventFocus, hasChanges){
+  editRecord: function(record, preventFocus, hasChanges, focusFieldName){
     var ret = this.Super('editRecord', arguments);
     this.doEditRecordActions(preventFocus, false);
     if (hasChanges) {
       this.setHasChanged(true);
     }
+    
+    this.view.setTargetRecordInWindow(record.id);
+    
+    // used when clicking on a cell in a grid
+    if (!preventFocus && focusFieldName) {
+      this.forceFocusedField = focusFieldName;
+    }
+    
     return ret;
   },
   
@@ -195,6 +204,30 @@ OB.ViewFormProperties = {
     }
   },
   
+  // add the undo buttons to the clickmask so that no save happens when 
+  // clicking undo
+  showClickMask : function(clickAction, mode, unmaskedTargets) {
+    if (!isc.isA.Array(unmaskedTargets)) {
+      if (!unmaskedTargets) {
+        unmaskedTargets = [];
+      } else {
+        unmaskedTargets = [unmaskedTargets];
+      }
+    } 
+    // the main undo button
+    unmaskedTargets.push(this.view.toolBar.getLeftMember('undo'));
+    
+    // the row cancel button
+    var editRow = this.view.viewGrid.getEditRow();
+    if (editRow || editRow === 0) {
+      var record = this.view.viewGrid.getRecord(editRow);
+      if (record && record.editColumnLayout) {
+        unmaskedTargets.push(record.editColumnLayout.cancelButton);
+      }
+    }
+    this.Super('showClickMask', [clickAction, mode, unmaskedTargets]);
+  },  
+  
   setNewState: function(isNew){
     this.isNew = isNew;
     this.view.statusBar.setNewState(isNew);
@@ -206,16 +239,29 @@ OB.ViewFormProperties = {
     // 16064: Autosave error is triggered when closing a tab, even if the form wasn't touched
     // https://issues.openbravo.com/view.php?id=16064
     // this is inline with current behavior
-//    if (isNew) {
-//      // signal that autosave is needed after this
-//      this.view.standardWindow.setDirtyEditForm(this);
-//    }
+    // NOTE: changed to reset the edit form when closing the form, so only there
+    // so autosave always works except when closing if nothing has changed
+    if (isNew) {
+      // signal that autosave is needed after this
+      this.view.standardWindow.setDirtyEditForm(this);
+    }
   },
   
   // reset the focus item to the first item which can get focus
   resetFocusItem: function() {
     var items = this.getItems(), length = items.length, item;
     
+    // used when double clicking a specific cell in a record
+    if (this.forceFocusedField) {
+      item = this.getItem(this.forceFocusedField);
+      if(item && item.getCanFocus()) {
+        this.setFocusInItem(item, true);
+        delete this.forceFocusedField;
+        return;
+      }
+      delete this.forceFocusedField;
+    }
+
     if(this.firstFocusedField) {
       item = this.getItem(this.firstFocusedField);
       if(item && item.getCanFocus()) {
@@ -255,7 +301,18 @@ OB.ViewFormProperties = {
   setFindNewFocusItem: function() {
     var focusItem = this.getFocusItem(), item, items = this.getItems(),
         length = items.length;
-
+    
+    // used when double clicking a specific cell in a record
+    if (this.forceFocusedField) {
+      item = this.getItem(this.forceFocusedField);
+      if(item && item.getCanFocus()) {
+        this.setFocusInItem(item, true);
+        delete this.forceFocusedField;
+        return;
+      }
+      delete this.forceFocusedField;
+    }
+    
     if(this.firstFocusedField) {
       item = this.getItem(this.firstFocusedField);
       if(item && item.getCanFocus()) {
@@ -405,7 +462,7 @@ OB.ViewFormProperties = {
       }
       return;
     }
-    
+
     if (columnValues) {
       for (prop in columnValues) {
         if (columnValues.hasOwnProperty(prop)) {
@@ -413,6 +470,7 @@ OB.ViewFormProperties = {
         }
       }
     }
+
     // apparently sometimes an empty string is returned
     if (calloutMessages && calloutMessages.length > 0 && calloutMessages[0] !== '') {
       // TODO: check as what type should call out messages be displayed
@@ -441,15 +499,19 @@ OB.ViewFormProperties = {
     } else {
       this.readOnly = false;
     }
-    
+
     // grid editing    
-    if (this.grid) {
-      if (this.grid.setEditValues && this.grid.getEditRow() === editRow) {
-        this.grid.setEditValues(this.grid.getEditRow(), this.getValues(), true);
-        this.grid.storeUpdatedEditorValue(true);
-      }      
+    if (this.grid && this.grid.setEditValues && this.grid.getEditRow() === editRow) {
+      // keep it as it is overwritten by the setEditValues
+      var tmpActionAfterFic = null;
+      if (editValues && editValues.actionAfterFicReturn) {
+        tmpActionAfterFic = editValues.actionAfterFicReturn;
+      }
+      this.grid.setEditValues(this.grid.getEditRow(), this.getValues(), true);
+      this.grid.storeUpdatedEditorValue(true);
+      editValues.actionAfterFicReturn = tmpActionAfterFic;
     }
-    
+
     this.setDisabled(false);
 
     if (this.validateAfterFicReturn) {
@@ -489,7 +551,11 @@ OB.ViewFormProperties = {
       if (this.getFocusItem()) {
         if (this.allItemsDisabled) {
           this.getFocusItem().blurItem();
+          this.redraw();
+          this.view.viewGrid.refreshEditRow();
         } else {
+          this.redraw();
+          this.view.viewGrid.refreshEditRow();
           // reset the canfocus
           for (var i = 0; i < this.getFields().length; i++) {
             delete this.getFields()[i].canFocus;
@@ -499,7 +565,6 @@ OB.ViewFormProperties = {
           }
         }
       }
-      this.view.viewGrid.refreshEditRow();
     }
   },
   
@@ -690,7 +755,7 @@ OB.ViewFormProperties = {
     this.delayCall('setDisabled', [true], 10);
 
     var editRow = this.view.viewGrid.getEditRow();
-    // collect the context information    
+    
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
       var editValues;
       if (editRow || editRow === 0) {
@@ -777,9 +842,16 @@ OB.ViewFormProperties = {
       var index1, index2, errorCode, view = form.view;
       var status = resp.status;
 
-      // if this is not done the selection gets lost
+      // if no recordIndex then select explicitly
+      if (recordIndex === -1) {
+        var id = form.getValue('id');
+        record = view.viewGrid.data.find('id', id);
+        recordIndex = view.viewGrid.data.indexOf(record);
+      }
+      
       if (recordIndex || recordIndex === 0) {
-        var localRecord = view.viewGrid.getRecord(recordIndex);
+        // if this is not done the selection gets lost
+        var localRecord = view.viewGrid.data.get(recordIndex);
         if (localRecord) {
           localRecord[view.viewGrid.selection.selectionProperty] = true;
         }
@@ -797,6 +869,8 @@ OB.ViewFormProperties = {
         
         //view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_SaveSuccess'));
         view.statusBar.setStateLabel('OBUIAPP_Saved', view.statusBar.checkedIcon);
+        
+        view.setRecentDocument(this.getValues());
         
         // force a fetch to place the grid on the correct location
         if (form.isNew) {

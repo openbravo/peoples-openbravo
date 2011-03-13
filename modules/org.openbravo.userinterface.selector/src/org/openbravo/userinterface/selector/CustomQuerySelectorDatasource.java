@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,11 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
@@ -43,7 +48,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
-import org.openbravo.dal.service.OBDao.Constraint;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -177,11 +181,18 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     boolean hasFilter = false;
     List<SelectorField> fields = OBDao.getActiveOBObjectList(sel,
         Selector.PROPERTY_OBUISELSELECTORFIELDLIST);
+    HashMap<String, String> criteria = getCriteria(parameters);
     for (SelectorField field : fields) {
       if (StringUtils.isEmpty(field.getClauseLeftPart())) {
         continue;
       }
-      String value = parameters.get(field.getDisplayColumnAlias());
+      String value = null;
+      if (criteria != null) {
+        value = criteria.get(field.getDisplayColumnAlias());
+      }
+      if (StringUtils.isEmpty(value)) {
+        value = parameters.get(field.getDisplayColumnAlias());
+      }
       // Add field default expression on picklist if it is not already filtered. Default expressions
       // on selector popup are already evaluated and their values came in the parameters object.
       if (field.getDefaultExpression() != null && !"Window".equals(requestType)
@@ -351,7 +362,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     // If sortByClause is empty set default sort options.
     if (sortByClause.length() == 0) {
       OBCriteria<SelectorField> selFieldsCrit = OBDao.getFilteredCriteria(SelectorField.class,
-          new Constraint(SelectorField.PROPERTY_OBUISELSELECTOR, sel), new Constraint(
+          Expression.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel), Expression.eq(
               SelectorField.PROPERTY_SHOWINGRID, true));
       selFieldsCrit.addOrderBy(SelectorField.PROPERTY_SORTNO, true);
       for (SelectorField selField : selFieldsCrit.list()) {
@@ -424,4 +435,23 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     return 0;
   }
 
+  private HashMap<String, String> getCriteria(Map<String, String> parameters) {
+    if (!"AdvancedCriteria".equals(parameters.get("_constructor"))) {
+      return null;
+    }
+    HashMap<String, String> criteriaValues = new HashMap<String, String>();
+    try {
+      JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
+      for (int i = 0; i < criterias.length(); i++) {
+        final JSONObject criteria = criterias.getJSONObject(i);
+        criteriaValues.put(criteria.getString("fieldName"), criteria.getString("value"));
+      }
+    } catch (JSONException e) {
+      // Ignore exception.
+    }
+    if (criteriaValues.isEmpty()) {
+      return null;
+    }
+    return criteriaValues;
+  }
 }

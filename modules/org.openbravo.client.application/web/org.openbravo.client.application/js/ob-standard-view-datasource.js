@@ -180,18 +180,12 @@ isc.OBViewDataSource.addProperties({
   // properties.
   getTabInfoRequestProperties: function(theView, requestProperties){
     if (theView && theView.tabId) {
-      var tabParam = {
-        params: {
+      requestProperties.params = requestProperties.params || {};
+      isc.addProperties(requestProperties.params, {
           windowId: theView.standardWindow.windowId,
           tabId: theView.tabId,
           moduleId: theView.moduleId
-        }
-      };
-      if (requestProperties) {
-        isc.addProperties(requestProperties, tabParam);
-      } else {
-        requestProperties = tabParam;
-      }
+      });
     }
     return requestProperties;
   }

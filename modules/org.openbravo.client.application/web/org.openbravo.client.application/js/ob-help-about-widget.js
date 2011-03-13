@@ -35,7 +35,7 @@ isc.OBHelpAbout.addProperties({
   
   initWidget: function(){
     OB.TestRegistry.register('org.openbravo.client.application.HelpAboutWidget', this);
-    return this.Super('initWidget', arguments);
+    this.Super('initWidget', arguments);
   },
   
   beforeShow: function(){
@@ -95,7 +95,7 @@ isc.OBHelpAbout.addProperties({
     numCols: 1,
     initWidget: function(){
       OB.TestRegistry.register('org.openbravo.client.application.HelpAboutForm', this);
-      return this.Super('initWidget', arguments);
+      this.Super('initWidget', arguments);
     }
   })],
   

@@ -22,9 +22,11 @@
 // * OBSearchItem: item used for search fields.
 // * OBFormButton: button used in forms.
 // * OBTextItem: string/text item
+// * OBLinkItem: string/text/link item
 // * OBTextAreaItem: string/text-area item
 // * OBDateItem: FormItem for dates
 // * OBDateTimeItem: FormItem for DateTime
+// * OBMiniDateRangeItem: FormItem for dates
 // * OBNumber: FormItem for numbers
 // * OBYesNoItem: combo box for yes/no values
 // * OBLinkTitleItem: an interface supporting a link button in the title.
@@ -37,6 +39,7 @@
 isc.ClassFactory.defineClass('OBCheckboxItem', CheckboxItem);
 
 isc.OBCheckboxItem.addProperties({
+  operator: 'equals',
   // no validation on change or exit here
   textBoxStyle: 'OBFormFieldLabel',
   showValueIconOver: true,
@@ -52,6 +55,7 @@ isc.OBCheckboxItem.addProperties({
 isc.ClassFactory.defineInterface('OBLinkTitleItem');
 
 isc.OBLinkTitleItem.addProperties({
+  operator: 'iContains',
   showLinkIcon: true,
   
   linkButtonClick: function(){
@@ -100,9 +104,10 @@ w.closeSearch = function (action, value, display, parameters, wait){
   isc.OBSearchItem.openedWindow.close();
   isc.OBSearchItem.openSearchItem = null;
 };
-}(this));
+}(this)); // window
 
 isc.OBSearchItem.addProperties({
+  operator: 'iContains',
   showPickerIcon: true,
   canFocus: true,
   showFocused: true,
@@ -191,11 +196,10 @@ isc.OBSearchItem.addProperties({
     values = view.getContextInfo(false, true, true, true);
     length = this.inFields.length;
     for (i = 0; i < length; i++) {
-      inpName = this.inFields[i];
+      inpName = this.inFields[i].columnName;
       propDef = view.getPropertyDefinitionFromInpColumnName(inpName);
-      if (propDef && values[inpName]) {        
-        // note the name passed is not the same as the inp name, it is inp + dbcolumn
-        parameters[index++] = 'inp' + propDef.dbColumn;
+      if (propDef && values[inpName]) {
+        parameters[index++] = this.inFields[i].parameterName;
         parameters[index++] = values[inpName];
         // and to be save also pass the value as the input name
         parameters[index++] = inpName;
@@ -204,7 +208,7 @@ isc.OBSearchItem.addProperties({
     }
     this.openSearchWindow(this.searchUrl, parameters, this.getValue());
   },
-  
+
   openSearchWindow: function(url, parameters, strValueID){
     var height, width, top, left;
     var complementsNS4 = '';
@@ -286,6 +290,8 @@ isc.OBSearchItem.addProperties({
 isc.ClassFactory.defineClass('OBPAttributeSearchItem', OBSearchItem);
 
 isc.OBPAttributeSearchItem.addProperties({
+  operator: 'iContains',
+
   showPicker: function(){
     if (this.isDisabled()) {
       return;
@@ -317,8 +323,9 @@ isc.ClassFactory.defineClass('OBEncryptedItem', isc.PasswordItem);
 
 // add specific properties here
 isc.OBEncryptedItem.addProperties({
+  operator: 'iContains',
   changed : function(form,item,value) {
-    this.form.setValue(item.name + '.cleartext', value);
+    this.form.setValue(item.name + '_cleartext', value);
   }
 });
 
@@ -337,7 +344,33 @@ isc.OBFormButton.addProperties({
 isc.ClassFactory.defineClass('OBTextItem', TextItem);
 
 isc.OBTextItem.addProperties({
+  operator: 'iContains',
   validateOnExit: true
+});
+
+//== OBLinkItem ==
+//Input for normal strings (links) with an added icon to navigate to the link  
+isc.ClassFactory.defineClass('OBLinkItem', TextItem);
+
+isc.OBLinkItem.addProperties({
+  validateOnExit: true,
+  icons: [{
+    src : '[SKIN]/../../org.openbravo.client.application/images/form/search_picker.png',
+    click: function(form, item) {
+      var url = item.getValue();
+      if(!url || url.indexOf('://') == -1) {
+        return;
+      }
+      window.open(url);
+    }
+  }],
+  validate: function() {
+    var url = this.getValue();
+    if(!url) {
+      return true;
+    }
+    return OB.Utilities.isValidURL(url);
+  }
 });
 
 //== OBFKFilterTextItem ==
@@ -345,6 +378,7 @@ isc.OBTextItem.addProperties({
 isc.ClassFactory.defineClass('OBFKFilterTextItem', TextItem);
 
 isc.OBFKFilterTextItem.addProperties({
+  operator: 'iContains',
   validateOnExit: false,
   validateOnChange: false
 });
@@ -354,6 +388,7 @@ isc.OBFKFilterTextItem.addProperties({
 isc.ClassFactory.defineClass('OBTextAreaItem', TextAreaItem);
 
 isc.OBTextAreaItem.addProperties({
+  operator: 'iContains',
   validateOnExit: true
 });
 
@@ -430,20 +465,39 @@ isc.OBSectionItem.addProperties({
 isc.ClassFactory.defineClass('OBListItem', ComboBoxItem);
 
 isc.OBListItem.addProperties({
-
+  operator: 'equals',
   showPickListOnKeypress: true,  
   cachePickListResults: false,
   validateOnExit: true,  
   completeOnTab: true,
-  // setting this to false means that the change handler is called when picking
-  // a value and not earlier
+  // textMatchStyle is used for the client-side picklist
+  textMatchStyle: 'substring',
 
   // NOTE: Setting this property to false fixes the issue when using the mouse to pick a value
   // FIXME: Sometimes the field label gets a red color (a blink)
   // addUnknownValues: false,
 
   selectOnFocus: true,
+  
+  // is overridden to keep track that a value has been explicitly picked
+  pickValue : function (value) {
+    this._pickedValue = true;
+    this.Super('pickValue', arguments);
+    delete this._pickedValue;
+  },
 
+  changed: function() {
+    this.Super('changed', arguments);
+    // if not picking a value then don't do a fic call
+    // otherwise every keypress would result in a fic call
+    if (!this._pickedValue) {
+      return;
+    }
+    if (this._hasChanged && this.form && this.form.handleItemChange) {
+      this.form.handleItemChange(this);
+    }
+  },
+  
   pickListProperties: {
     showHeaderContextMenu: false
   },
@@ -469,6 +523,7 @@ isc.OBListItem.addProperties({
 isc.ClassFactory.defineClass('OBListFilterItem', OBListItem);
 
 isc.OBListFilterItem.addProperties({
+  operator: 'equals'
 });
 
 // == OBFKItem ==
@@ -478,7 +533,7 @@ isc.ClassFactory.defineClass('OBFKItem', isc.OBListItem);
 isc.ClassFactory.mixInInterface('OBFKItem', 'OBLinkTitleItem');
 
 isc.OBFKItem.addProperties({
-  textMatchStyle: 'substring',
+  operator: 'iContains',
     
   // set the identifier field also, that's what gets displayed in the grid
   changed: function (form, item, value) {
@@ -493,6 +548,7 @@ isc.OBFKItem.addProperties({
 isc.ClassFactory.defineClass('OBYesNoItem', SelectItem);
 
 isc.OBYesNoItem.addProperties({
+  operator: 'equals',
   mapValueToDisplay: function(value, a, b, c){
     return OB.Utilities.getYesNoDisplayValue(value);
   },
@@ -531,6 +587,7 @@ if (isc.OBDateChooser) {  // To force SC to load OBDateChooser instead of DateCh
 isc.ClassFactory.defineClass('OBTimeItem', TimeItem);
 
 isc.OBTimeItem.addProperties({
+  operator: 'equals',
   validateOnExit: true,
   showHint: false,
   displayFormat: 'to24HourTime',
@@ -540,13 +597,38 @@ isc.OBTimeItem.addProperties({
   longTimeFormat: 'HH:MM:SS'
 });
 
+//== OBMiniDateRangeItem ==
+//OBMiniDateRangeItem inherits from SmartClient MiniDateRangeItem
+//Is used for filtering date and time fields.
+
+isc.ClassFactory.defineClass('OBDateRangeDialog', isc.DateRangeDialog);
+
+isc.OBDateRangeDialog.addProperties({
+  // trick: overridden to let the ok and clear button change places
+  addAutoChild: function(name, props) {
+    if (name === 'okButton') {
+      return this.Super('addAutoChild', ['clearButton', { title: this.clearButtonTitle}]);
+    } else if (name === 'clearButton') {
+      return this.Super('addAutoChild', ['okButton', { title: this.okButtonTitle}]);
+    } else {
+      return this.Super('addAutoChild', arguments);
+    }
+  }
+});
+
+isc.ClassFactory.defineClass('OBMiniDateRangeItem', isc.MiniDateRangeItem);
+
+isc.OBMiniDateRangeItem.addProperties({
+  rangeDialogConstructor: isc.OBDateRangeDialog
+});
+
 // == OBDateItem ==
 // OBDateItem inherits from SmartClient DateItem
 // adds autocomplete and formatting based on the Openbravo date pattern
 isc.ClassFactory.defineClass('OBDateItem', DateItem);
 
 isc.OBDateItem.addClassProperties({
-
+  
   // ** {{{ autoCompleteData }}} **
   //
   // Autocomplets the date entered.
@@ -728,6 +810,7 @@ isc.OBDateItem.addClassProperties({
 
 // == OBDateItem properties ==
 isc.OBDateItem.addProperties({
+  operator: 'equals',
   // ** {{{ pickerConstructor }}} **
   // Picker constructor class
   pickerConstructor: 'OBDateChooser',
@@ -892,6 +975,7 @@ isc.ClassFactory.defineClass('OBNumberItem', TextItem);
 // = OBNumberItem =
 // The Openbravo numeric form item.
 isc.OBNumberItem.addProperties({
+  operator: 'equals',
   typeInstance: null,
   
   keyPressFilterNumeric: '[0-9.,-=]',

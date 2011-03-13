@@ -654,7 +654,7 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private void setSessionValues(BaseOBObject object, Tab tab) {
     for (Column col : tab.getTable().getADColumnList()) {
-      if (col.isStoredInSession()) {
+      if (col.isStoredInSession() || col.isKeyColumn()) {
         Property prop = object.getEntity().getPropertyByColumnName(col.getDBColumnName());
         Object value = object.get(prop.getName());
         if (value != null) {
@@ -774,13 +774,9 @@ public class FormInitializationComponent extends BaseActionHandler {
         calloutsToCall.remove(calloutClassName);
         lastfieldChangedList.remove(lastFieldChanged);
         Object calloutInstance = calloutClass.newInstance();
-        Method method = null;
         Method init = null;
         Method service = null;
         for (Method m : calloutClass.getMethods()) {
-          if (m.getName().equals("doPost")) {
-            method = m;
-          }
           if (m.getName().equals("init") && m.getParameterTypes().length == 1) {
             init = m;
           }
@@ -789,7 +785,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           }
         }
 
-        if (method == null || init == null || service == null) {
+        if (init == null || service == null) {
           log.info("Couldn't find method in Callout " + calloutClassName);
         } else {
           RequestContext rq = RequestContext.get();
@@ -803,8 +799,10 @@ public class FormInitializationComponent extends BaseActionHandler {
           init.invoke(calloutInstance, initArgs);
           CalloutHttpServletResponse fakeResponse = new CalloutHttpServletResponse(rq.getResponse());
           Object[] arguments = { rq.getRequest(), fakeResponse };
+
+          // We invoke the service method. This method will automatically call the doPost() method
+          // of the callout servlet
           service.invoke(calloutInstance, arguments);
-          method.invoke(calloutInstance, arguments);
           String calloutResponse = fakeResponse.getOutputFromWriter();
 
           // Now we parse the callout response and modify the stored values of the columns modified

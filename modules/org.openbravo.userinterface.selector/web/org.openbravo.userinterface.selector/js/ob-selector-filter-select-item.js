@@ -19,19 +19,39 @@
 isc.ClassFactory.defineClass('OBSelectorFilterSelectItem', SelectItem);
 
 isc.OBSelectorFilterSelectItem.addProperties({
+  operator: 'equals',
+  valueField: OB.Constants.ID,
 
   init: function() {
     OB.Datasource.get(this.entity, this);
     this.Super('init', arguments);
   },
-
-  setDataSource: function(ds) {
-    this.optionDataSource = ds;
+  
+  // prevent ids from showing up
+  mapValueToDisplay : function (value) {
+    var ret = this.Super('mapValueToDisplay', arguments);
+    if (ret === value) {
+      return '';
+    }
+    return ret;
   },
 
-  change: function(form, item, value, oldValue) {
-    var criteria = {};
-    criteria[this.displayField] = value;
-    this.selectorWindow.selectorGrid.filterData(criteria);
+  filterDataBoundPickList : function (requestProperties, dropCache){
+    requestProperties = requestProperties || {};
+    requestProperties.params = requestProperties.params || {};
+    // on purpose not passing the third boolean param
+    var contextInfo = this.selectorWindow.selector.form.view.getContextInfo(false, true);
+    
+    // also add the special ORG parameter
+    if (this.selectorWindow.selector.form.getField('organization')) {
+      requestProperties.params[OB.Constants.ORG_PARAMETER] =
+        this.selectorWindow.selector.form.getValue('organization');
+    } else if (contextInfo.inpadOrgId) {
+      requestProperties.params[OB.Constants.ORG_PARAMETER] = contextInfo.inpadOrgId;
+    }
+    
+    return this.Super('filterDataBoundPickList', [requestProperties, dropCache]);
   }
+
+
 });

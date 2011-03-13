@@ -109,7 +109,10 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
   private JSONObject processWindow(Window window, String recordId, String entityName)
       throws Exception {
     // create the initial TabInfo
-    final BaseOBObject bob = OBDal.getInstance().get(entityName, recordId);
+    BaseOBObject bob = null;
+    if (entityName != null && recordId != null) {
+      bob = OBDal.getInstance().get(entityName, recordId);
+    }
 
     // special case, no bob
     // find the root tab and return only that

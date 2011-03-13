@@ -120,7 +120,7 @@ public class FKSearchUIDefinition extends ForeignKeyUIDefinition {
         // TODO: warn
         return superJsonStr;
       }
-      final List<String> inFields = new ArrayList<String>();
+      final JSONArray inFields = new JSONArray();
       final List<String> outFields = new ArrayList<String>();
       for (SelectorColumn selectorColumn : selector.getADSelectorColumnList()) {
         if (selectorColumn.isActive()) {
@@ -128,13 +128,16 @@ public class FKSearchUIDefinition extends ForeignKeyUIDefinition {
               + (selectorColumn.getSuffix() != null ? selectorColumn.getSuffix() : "");
           columnName = "inp" + Sqlc.TransformaNombreColumna(columnName);
           if (selectorColumn.getColumnType().equals("I")) {
-            inFields.add(columnName);
+            JSONObject inField = new JSONObject();
+            inField.put("columnName", columnName);
+            inField.put("parameterName", "inp" + selectorColumn.getName());
+            inFields.put(inField);
           } else {
             outFields.add(columnName);
           }
         }
       }
-      json.put("inFields", new JSONArray(inFields));
+      json.put("inFields", inFields);
       json.put("outFields", new JSONArray(outFields));
 
       return json.toString();

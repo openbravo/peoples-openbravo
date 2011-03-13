@@ -227,13 +227,11 @@ public class DataToJsonConverter {
     final Class<?> clz = property.getPrimitiveObjectType();
     if (Date.class.isAssignableFrom(clz)) {
       if (property.getDomainType() instanceof TimestampDomainType) {
-        final String strValue = xmlTimeFormat.format(value);
-        final String repairedValue = JsonUtils.convertToCorrectXSDFormat(strValue);
-        return repairedValue;
+        // always assume gmt for times
+        return xmlTimeFormat.format(value) + "+00:00";
       } else if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
-        final String strValue = xmlDateTimeFormat.format(value);
-        final String repairedValue = JsonUtils.convertToCorrectXSDFormat(strValue);
-        return repairedValue;
+        // always assume gmt for times
+        return xmlDateTimeFormat.format(value) + "+00:00";
       } else {
         return xmlDateFormat.format(value);
       }

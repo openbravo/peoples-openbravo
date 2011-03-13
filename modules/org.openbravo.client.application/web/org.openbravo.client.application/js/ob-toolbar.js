@@ -26,7 +26,7 @@ isc.OBToolbar.addClassProperties({
   TYPE_UNDO: 'undo',
   TYPE_REFRESH: 'refresh',
   TYPE_EXPORT: 'export',
-
+  
   SAVE_BUTTON_PROPERTIES: {
     action: function(){
       this.view.saveRow();
@@ -34,17 +34,21 @@ isc.OBToolbar.addClassProperties({
     disabled: true,
     buttonType: 'save',
     prompt: OB.I18N.getLabel('OBUIAPP_SaveRow'),
-    updateState: function() {
-      var view = this.view, form = view.viewForm, hasErrors = false, editRow;      
+    updateState: function(){
+      var view = this.view, form = view.viewForm, hasErrors = false, editRow;
       if (view.isShowingForm) {
-        this.setDisabled(!form.isNew && (form.isSaving || form.readOnly || 
-              !view.hasValidState() || !form.hasChanged));
+        this.setDisabled(!form.isNew &&
+        (form.isSaving || form.readOnly ||
+        !view.hasValidState() ||
+        !form.hasChanged));
       } else if (view.isEditingGrid) {
-          form = view.viewGrid.getEditForm();
-          editRow = view.viewGrid.getEditRow();
-          hasErrors = view.viewGrid.rowHasErrors(editRow);
-          this.setDisabled(!form.isNew && !hasErrors && (form.isSaving || form.readOnly || 
-                !view.hasValidState() || !form.hasChanged));
+        form = view.viewGrid.getEditForm();
+        editRow = view.viewGrid.getEditRow();
+        hasErrors = view.viewGrid.rowHasErrors(editRow);
+        this.setDisabled(!form.isNew && !hasErrors &&
+        (form.isSaving || form.readOnly ||
+        !view.hasValidState() ||
+        !form.hasChanged));
       } else {
         this.setDisabled(true);
       }
@@ -53,21 +57,34 @@ isc.OBToolbar.addClassProperties({
   },
   SAVECLOSE_BUTTON_PROPERTIES: {
     action: function(){
-      this.view.statusBar.closeButton.action();
+      var actionObject = {
+        target: this,
+        method: this.saveAndClose,
+        parameters: []
+      };
+      this.view.standardWindow.doActionAfterAutoSave(actionObject, true);      
     },
+    
+    saveAndClose: function(){
+      this.view.switchFormGridVisibility();
+      this.view.messageBar.hide();
+    },
+    
     buttonType: 'savecloseX',
     prompt: OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON'),
-    updateState: function() {
-      var view = this.view, form = view.viewForm;      
+    updateState: function(){
+      var view = this.view, form = view.viewForm;
       if (view.isShowingForm) {
         this.setDisabled(false);
-        var saveDisabled = (!form.isNew && (form.isSaving || form.readOnly || 
-              !view.hasValidState() || !form.hasChanged));
+        var saveDisabled = (!form.isNew &&
+        (form.isSaving || form.readOnly ||
+        !view.hasValidState() ||
+        !form.hasChanged));
         if (saveDisabled) {
           this.buttonType = 'savecloseX';
           this.prompt = OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON');
         } else {
-          this.buttonType = 'saveclose';          
+          this.buttonType = 'saveclose';
           this.prompt = OB.I18N.getLabel('OBUIAPP_SaveClose');
         }
       } else {
@@ -79,11 +96,12 @@ isc.OBToolbar.addClassProperties({
   },
   NEW_ROW_BUTTON_PROPERTIES: {
     action: function(){
-      this.view.newRow();
+      // do -1 because the newrow logic adds one
+      this.view.newRow(this.view.viewGrid.getDrawArea()[0] - 1);
     },
     buttonType: 'newRow',
     prompt: OB.I18N.getLabel('OBUIAPP_NewRow'),
-    updateState: function() {
+    updateState: function(){
       var view = this.view;
       this.setDisabled(view.isShowingForm || view.readOnly || view.singleRecord || !view.hasValidState());
     },
@@ -95,7 +113,7 @@ isc.OBToolbar.addClassProperties({
     },
     buttonType: 'newDoc',
     prompt: OB.I18N.getLabel('OBUIAPP_NewDoc'),
-    updateState: function() {
+    updateState: function(){
       var view = this.view, form = view.viewForm;
       if (view.isShowingForm) {
         this.setDisabled(form.isSaving || view.readOnly || view.singleRecord || !view.hasValidState());
@@ -112,24 +130,26 @@ isc.OBToolbar.addClassProperties({
     disabled: true,
     buttonType: 'eliminate',
     prompt: OB.I18N.getLabel('OBUIAPP_DeleteRow'),
-    updateState: function() {
-      var view = this.view, form = view.viewForm, grid = view.viewGrid, selectedRecords=grid.getSelectedRecords();
-      for (var i = 0; i < selectedRecords.length; i++){
-        if(!grid.isWritable(selectedRecords[i])) {
+    updateState: function(){
+      var view = this.view, form = view.viewForm, grid = view.viewGrid, selectedRecords = grid.getSelectedRecords();
+      for (var i = 0; i < selectedRecords.length; i++) {
+        if (!grid.isWritable(selectedRecords[i])) {
           this.setDisabled(true);
           return;
         }
-        if(selectedRecords[i]._new) {
+        if (selectedRecords[i]._new) {
           this.setDisabled(true);
           return;
         }
       }
       if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || 
-            !view.hasValidState() || form.isNew);
+        this.setDisabled(form.isSaving || form.readOnly || view.singleRecord ||
+        !view.hasValidState() ||
+        form.isNew);
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || 
-            !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0);
+        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() ||
+        !grid.getSelectedRecords() ||
+        grid.getSelectedRecords().length === 0);
       }
     },
     keyboardShortcutId: 'ToolBar_Eliminate'
@@ -141,7 +161,7 @@ isc.OBToolbar.addClassProperties({
     disabled: false,
     buttonType: 'refresh',
     prompt: OB.I18N.getLabel('OBUIAPP_RefreshData'),
-    updateState: function() {
+    updateState: function(){
       var view = this.view, form = view.viewForm;
       if (view.isShowingForm) {
         this.setDisabled(form.isSaving || form.isNew || !view.hasValidState());
@@ -158,24 +178,26 @@ isc.OBToolbar.addClassProperties({
     disabled: true,
     buttonType: 'undo',
     prompt: OB.I18N.getLabel('OBUIAPP_Undo'),
-    updateState: function() {
+    updateState: function(){
       var view = this.view, form = view.viewForm, grid = view.viewGrid, hasErrors = false, editRow;
       if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || form.readOnly || !view.hasValidState() || 
-            !form.hasChanged);
+        this.setDisabled(form.isSaving || form.readOnly || !view.hasValidState() ||
+        !form.hasChanged);
       } else if (view.isEditingGrid) {
         editRow = view.viewGrid.getEditRow();
         hasErrors = view.viewGrid.rowHasErrors(editRow);
         form = grid.getEditForm();
-        this.setDisabled(!form.isNew && !hasErrors && (form.isSaving || form.readOnly || 
-              !view.hasValidState() || !form.hasChanged));
+        this.setDisabled(!form.isNew && !hasErrors &&
+        (form.isSaving || form.readOnly ||
+        !view.hasValidState() ||
+        !form.hasChanged));
       } else {
         var selectedRecords = grid.getSelectedRecords(), allRowsHaveErrors = true;
-        for (var i = 0; i < selectedRecords.length; i++){
+        for (var i = 0; i < selectedRecords.length; i++) {
           var rowNum = grid.getRecordIndex(selectedRecords[i]);
           allRowsHaveErrors = allRowsHaveErrors && grid.rowHasErrors(rowNum);
         }
-        this.setDisabled(selectedRecords.length === 0 || !allRowsHaveErrors); 
+        this.setDisabled(selectedRecords.length === 0 || !allRowsHaveErrors);
       }
     },
     keyboardShortcutId: 'ToolBar_Undo'
@@ -183,39 +205,72 @@ isc.OBToolbar.addClassProperties({
   EXPORT_BUTTON_PROPERTIES: {
     action: function(){
       var requestProperties = {
-              exportAs: 'csv',
-              exportDisplay: 'download',
-              params: {
-                exportToFile: true
-              }
-            };
-      requestProperties.viewState = this.view.viewGrid.getViewState();
+        exportAs: 'csv',
+        exportDisplay: 'download',
+        params: {
+          exportToFile: true
+        },
+        viewState: this.view.viewGrid.getViewState(),
+        tab: this.view.tabId
+      };
       this.view.viewGrid.exportData(requestProperties);
     },
     disabled: false,
     buttonType: 'export',
     prompt: OB.I18N.getLabel('OBUIAPP_ExportGrid'),
-    updateState: function() {
+    updateState: function(){
       this.setDisabled(this.view.isShowingForm);
     },
-  keyboardShortcutId: 'ToolBar_Export'
+    keyboardShortcutId: 'ToolBar_Export'
+  },
+  LINK_BUTTON_PROPERTIES: {
+    action: function(){
+      var url = this.view.getDirectLinkUrl();
+      var form = isc.OBViewForm.create({
+        width: 390,
+        height: 1,
+        overflow: 'visible',
+        fields: [{
+          type: 'OBTextAreaItem', selectOnFocus: true, 
+          width: 390, height: 50, canFocus: true, 
+          name:'url', 
+          title: OB.I18N.getLabel('OBUIAPP_URL'), value: url}
+        ],
+        show: function() {
+          var fld = this.getFields()[0];
+          this.setFocusItem(fld);
+          this.Super('show', arguments);
+          // do the focus with a delay to give the popup time to draw
+          this.fireOnPause('link_button_show', this.focus, 50, this);
+        }
+      });
+      var dialog = OB.Utilities.createDialog(OB.I18N.getLabel('OBUIAPP_Document_Link'));
+      dialog.setContent(form);
+      dialog.show();
+    },
+    disabled: false,
+    buttonType: 'link',
+    prompt: OB.I18N.getLabel('OBUIAPP_GetDirectLink'),
+    updateState: function(){
+    },
+    keyboardShortcutId: 'ToolBar_Link'    
   },
   // This offers a mechanism to add properties at runtime to buttons created through
   // templates and java
   BUTTON_PROPERTIES: {
-    'audit' : {
+    'audit': {
       updateState: function(){
         var view = this.view, form = view.viewForm, grid = view.viewGrid;
         var selectedRecords = grid.getSelectedRecords();
         var disabled = false;
         if (selectedRecords && selectedRecords.length > 1) {
-            disabled = true;
+          disabled = true;
         } else if (view.isShowingForm && form.isNew) {
           disabled = true;
         } else if (view.isEditingGrid && grid.getEditForm().isNew) {
           disabled = true;
-        } else if (selectedRecords && selectedRecords.length > 0 && selectedRecords[0].updated && selectedRecords[0].creationDate && selectedRecords[0].updated.getTime() === selectedRecords[0].creationDate.getTime()){
-          disabled = true;          
+        } else if (selectedRecords && selectedRecords.length > 0 && selectedRecords[0].updated && selectedRecords[0].creationDate && selectedRecords[0].updated.getTime() === selectedRecords[0].creationDate.getTime()) {
+          disabled = true;
         }
         this.setDisabled(disabled);
       }
@@ -231,14 +286,11 @@ isc.OBToolbar.addProperties({
   randomId: null,
   initWidget: function(){
     this.Super('initWidget', arguments);
-    function getRandomId() {
-      var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz',
-          stringLength = 8,
-          randomString = '',
-          i, rnum;
+    function getRandomId(){
+      var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz', stringLength = 8, randomString = '', i, rnum;
       for (i = 0; i < stringLength; i++) {
         rnum = Math.floor(Math.random() * chars.length);
-        randomString += chars.substring(rnum,rnum+1);
+        randomString += chars.substring(rnum, rnum + 1);
       }
       return randomString;
     }
@@ -316,7 +368,7 @@ isc.OBToolbar.addProperties({
   // 
   // NOTE: new buttons should implement the updateState method.
   //
-  updateButtonState: function(noSetSession) {
+  updateButtonState: function(noSetSession){
     for (i = 0; i < this.leftMembers.length; i++) {
       if (this.leftMembers[i].updateState) {
         this.leftMembers[i].updateState();
@@ -326,7 +378,7 @@ isc.OBToolbar.addProperties({
     // and refresh the process toolbar buttons
     this.refreshCustomButtons(noSetSession);
   },
-
+  
   // ** {{{ getLeftMember(member) }}} **
   //
   // It works just for left side members.
@@ -765,12 +817,8 @@ isc.OBToolbar.addProperties({
       }
     }
     
-    var buttons = this.getRightMembers(),
-        numOfSelRecords = 0,
-        isNew = this.view.viewForm.isNew,
-        hideAllButtons = typeof(isNew)!=='undefined' && !isNew && 
-                         (!this.view.isShowingForm && (!this.view.viewGrid.getSelectedRecords() || this.view.viewGrid.getSelectedRecords().length !== 1)),
-        currentValues = this.view.getCurrentValues();
+    var buttons = this.getRightMembers(), numOfSelRecords = 0, isNew = this.view.viewForm.isNew, hideAllButtons = typeof(isNew) !== 'undefined' && !isNew &&
+    (!this.view.isShowingForm && (!this.view.viewGrid.getSelectedRecords() || this.view.viewGrid.getSelectedRecords().length !== 1)), currentValues = this.view.getCurrentValues();
     
     if (this.view.viewGrid.getSelectedRecords()) {
       numOfSelRecords = this.view.viewGrid.getSelectedRecords().length;
@@ -780,55 +828,55 @@ isc.OBToolbar.addProperties({
       var formView = this.view.viewForm, me = this;
       // Call FIC to obtain possible session attributes and set them in form
       requestParams = {
-          MODE: 'SETSESSION',
-          PARENT_ID: this.view.getParentId(),
-          TAB_ID: this.view.tabId,
-          ROW_ID: currentValues.id
-        };
+        MODE: 'SETSESSION',
+        PARENT_ID: this.view.getParentId(),
+        TAB_ID: this.view.tabId,
+        ROW_ID: currentValues.id
+      };
+      
+      OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', {}, requestParams, function(response, data, request){
+        var sessionAttributes = data.sessionAttributes, auxInputs = data.auxiliaryInputValues;
+        if (sessionAttributes) {
+          formView.sessionAttributes = sessionAttributes;
+        }
         
-        OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', {}, requestParams, function(response, data, request){
-         var sessionAttributes = data.sessionAttributes, auxInputs = data.auxiliaryInputValues;
-         if (sessionAttributes) {
-           formView.sessionAttributes = sessionAttributes;
-         }
-         
-         if (auxInputs) {
-           this.auxInputs = {};
-           for (var prop in auxInputs) {
-             if (auxInputs.hasOwnProperty(prop)) {
-               formView.setValue(prop, auxInputs[prop].value);
-               formView.auxInputs[prop] = auxInputs[prop].value;
-             }
-           }
-         }
-         
-         doRefresh(buttons, currentValues, false, me);
-        });
+        if (auxInputs) {
+          this.auxInputs = {};
+          for (var prop in auxInputs) {
+            if (auxInputs.hasOwnProperty(prop)) {
+              formView.setValue(prop, auxInputs[prop].value);
+              formView.auxInputs[prop] = auxInputs[prop].value;
+            }
+          }
+        }
+        
+        doRefresh(buttons, currentValues, false, me);
+      });
     } else {
       currentValues = this.view.getCurrentValues();
       doRefresh(buttons, currentValues, hideAllButtons, this);
-    } 
+    }
   },
-
-  visibilityChanged: function(state) {
+  
+  visibilityChanged: function(state){
     if (state) {
       this.enableShortcuts();
     } else {
       this.disableShortcuts();
     }
   },
-
-  draw: function() {
+  
+  draw: function(){
     this.Super('draw', arguments);
     this.defineRightMembersShortcuts();
     this.enableShortcuts();
   },
-
+  
   rightMembersShortcuts: [],
-
-  defineRightMembersShortcuts: function() {
+  
+  defineRightMembersShortcuts: function(){
     var i, j, k, l, id, character, position;
-    function isAssignedCharacter(character, me) {
+    function isAssignedCharacter(character, me){
       character = character.toString();
       character = character.toUpperCase();
       for (k = 0; k < me.rightMembersShortcuts.length; k++) {
@@ -839,14 +887,13 @@ isc.OBToolbar.addProperties({
       return false;
     }
     for (i = 0; i < this.rightMembers.length; i++) {
-      var title = this.rightMembers[i].realTitle,
-          haveToContinue = true;
+      var title = this.rightMembers[i].realTitle, haveToContinue = true;
       this.rightMembersShortcuts[i] = [];
       if (haveToContinue) { // Check if free character and assign
-       haveToContinue = true;
-       for (j = 0; j < title.length; j++) {
-          if (!isAssignedCharacter(title.substring(j,j+1), this)) {
-            this.rightMembersShortcuts[i][0] = title.substring(j,j+1).toUpperCase();
+        haveToContinue = true;
+        for (j = 0; j < title.length; j++) {
+          if (!isAssignedCharacter(title.substring(j, j + 1), this)) {
+            this.rightMembersShortcuts[i][0] = title.substring(j, j + 1).toUpperCase();
             this.rightMembersShortcuts[i][1] = j + 1;
             haveToContinue = false;
             break;
@@ -855,12 +902,12 @@ isc.OBToolbar.addProperties({
       }
       if (haveToContinue) { // Check if free number and assign
         haveToContinue = true;
-        for (l = 1; l < 10 ; l++) {
+        for (l = 1; l < 10; l++) {
           if (!isAssignedCharacter(l, this)) {
-             this.rightMembersShortcuts[i][0] = l;
-             this.rightMembersShortcuts[i][1] = 'end';
-             haveToContinue = false;
-             break;
+            this.rightMembersShortcuts[i][0] = l;
+            this.rightMembersShortcuts[i][1] = 'end';
+            haveToContinue = false;
+            break;
           }
         }
       }
@@ -873,8 +920,8 @@ isc.OBToolbar.addProperties({
       this.rightMembers[i].keyboardShortcutPosition = this.rightMembersShortcuts[i][1];
     }
   },
-
-  enableShortcuts: function() {
+  
+  enableShortcuts: function(){
     if (this.leftMembers) {
       for (i = 0; i < this.leftMembers.length; i++) {
         if (this.leftMembers[i].enableShortcut) {
@@ -891,8 +938,8 @@ isc.OBToolbar.addProperties({
       }
     }
   },
-
-  disableShortcuts: function() {
+  
+  disableShortcuts: function(){
     if (this.leftMembers) {
       for (i = 0; i < this.leftMembers.length; i++) {
         if (this.leftMembers[i].disableShortcut) {
@@ -908,7 +955,7 @@ isc.OBToolbar.addProperties({
       }
     }
   },
-
+  
   addMembers: 'null',
   
   leftMembers: [],
@@ -958,9 +1005,9 @@ isc.OBToolbarIconButton.addProperties({
     
     this.setBaseStyle('OBToolbarIconButton_icon_' + this.buttonType + this.customState + extraClass + 'OBToolbarIconButton');
   },
-
+  
   keyboardShortcutId: null,
-  enableShortcut: function() {
+  enableShortcut: function(){
     if (this.keyboardShortcutId) {
       var me = this;
       var ksAction = function(){
@@ -971,9 +1018,11 @@ isc.OBToolbarIconButton.addProperties({
       OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction);
     }
   },
-  disableShortcut: function() {
+  disableShortcut: function(){
     if (this.keyboardShortcutId) {
-      OB.KeyboardManager.KS.set(this.keyboardShortcutId, function() { return true; });
+      OB.KeyboardManager.KS.set(this.keyboardShortcutId, function(){
+        return true;
+      });
     }
   }
 });
@@ -992,15 +1041,15 @@ isc.OBToolbarTextButton.addProperties({
   action: function(){
     alert(this.title);
   },
-  initWidget: function() {
+  initWidget: function(){
     this.Super('initWidget', arguments);
     this.realTitle = this.title;
   },
-
+  
   keyboardShortcutId: null,
   keyboardShortcutCharacter: null,
   keyboardShortcutPosition: null,
-  enableShortcut: function() {
+  enableShortcut: function(){
     if (this.keyboardShortcutId) {
       var me = this;
       var newTitle = this.realTitle;
@@ -1012,19 +1061,31 @@ isc.OBToolbarTextButton.addProperties({
       if (this.keyboardShortcutPosition === 'end') {
         newTitle = newTitle + ' (<u>' + this.keyboardShortcutCharacter + '</u>)';
       } else {
-        newTitle = newTitle.substring(0, this.keyboardShortcutPosition-1) + '<u>' + newTitle.substring(this.keyboardShortcutPosition-1, this.keyboardShortcutPosition) + '</u>' + newTitle.substring(this.keyboardShortcutPosition, newTitle.length);
+        newTitle = newTitle.substring(0, this.keyboardShortcutPosition - 1) + '<u>' + newTitle.substring(this.keyboardShortcutPosition - 1, this.keyboardShortcutPosition) + '</u>' + newTitle.substring(this.keyboardShortcutPosition, newTitle.length);
       }
       this.setTitle(newTitle);
       if (this.keyboardShortcutPosition) { // If 'this.keyboardShortcutPosition' equals 0 means that there is no shortcut assigned
-        OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction, null, {'ctrl': true, 'alt': true, 'shift': true, 'key': this.keyboardShortcutCharacter});
+        OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction, null, {
+          'ctrl': true,
+          'alt': true,
+          'shift': true,
+          'key': this.keyboardShortcutCharacter
+        });
       }
     }
   },
-  disableShortcut: function() {
+  disableShortcut: function(){
     if (this.keyboardShortcutId) {
       var newTitle = this.realTitle;
       this.setTitle(newTitle);
-      OB.KeyboardManager.KS.set(this.keyboardShortcutId, function() { return true; }, '', {'ctrl': true, 'alt': true, 'shift': true, 'key': 'xyz'});
+      OB.KeyboardManager.KS.set(this.keyboardShortcutId, function(){
+        return true;
+      }, '', {
+        'ctrl': true,
+        'alt': true,
+        'shift': true,
+        'key': 'xyz'
+      });
     }
   }
 });
@@ -1039,45 +1100,43 @@ OB.ToolbarUtils.print = function(view, url, directPrint){
     return;
   }
   
-  var popupParams = 'Command=DEFAULT', 
-      allProperties = view.getContextInfo(false, true),
-      sessionProperties = view.getContextInfo(true, true);
-
+  var popupParams = 'Command=DEFAULT', allProperties = view.getContextInfo(false, true), sessionProperties = view.getContextInfo(true, true);
+  
   for (var param in allProperties) {
     if (allProperties.hasOwnProperty(param)) {
       var value = allProperties[param];
       
       if (typeof value === 'boolean') {
-        value = value?'Y':'N';
+        value = value ? 'Y' : 'N';
       }
       
       popupParams += '&' + param + '=' + value;
     }
   }
   
-  popupParams += '&inppdfpath='+url;
-  popupParams += '&inphiddenkey='+view.standardProperties.inpKeyName;
-  popupParams += '&inpdirectprint='+(directPrint?'Y':'N');
+  popupParams += '&inppdfpath=' + url;
+  popupParams += '&inphiddenkey=' + view.standardProperties.inpKeyName;
+  popupParams += '&inpdirectprint=' + (directPrint ? 'Y' : 'N');
   
   var selectedIds = '';
-  for (var i = 0; i < selectedRecords.length; i++){
-    selectedIds += (i > 0?',':'') + selectedRecords[i].id;
+  for (var i = 0; i < selectedRecords.length; i++) {
+    selectedIds += (i > 0 ? ',' : '') + selectedRecords[i].id;
   }
   
-  popupParams += '&inphiddenvalue='+selectedIds;
+  popupParams += '&inphiddenvalue=' + selectedIds;
   
-  view.setContextInfo(sessionProperties, function() {
-    OB.Layout.ClassicOBCompatibility.Popup.open('print', 0, 0, OB.Application.contextUrl + '/businessUtility/PrinterReports.html?'+popupParams, '', window, false, false, true);
+  view.setContextInfo(sessionProperties, function(){
+    OB.Layout.ClassicOBCompatibility.Popup.open('print', 0, 0, OB.Application.contextUrl + '/businessUtility/PrinterReports.html?' + popupParams, '', window, false, false, true);
   });
 };
 
 OB.ToolbarUtils.showAuditTrail = function(view){
   var selectedRecords = view.viewGrid.getSelectedRecords();
-
+  
   if (selectedRecords.length > 1) {
     var setWarning = {
       set: function(label){
-      view.messageBar.setMessage(OBMessageBar.TYPE_WARNING, '', label);
+        view.messageBar.setMessage(OBMessageBar.TYPE_WARNING, '', label);
       }
     };
     OB.I18N.getLabel('JS28', null, setWarning, 'set');
@@ -1092,14 +1151,19 @@ OB.ToolbarUtils.showAuditTrail = function(view){
     popupParams += '&inpRecordId=' + view.viewGrid.getSelectedRecord().id;
   }
   
-  OB.Layout.ClassicOBCompatibility.Popup.open('audit', 900, 600, OB.Application.contextUrl + '/businessUtility/AuditTrail.html?'+popupParams, '', window, false, false, true);
+  OB.Layout.ClassicOBCompatibility.Popup.open('audit', 900, 600, OB.Application.contextUrl + '/businessUtility/AuditTrail.html?' + popupParams, '', window, false, false, true);
 };
 
 OB.ToolbarUtils.showTree = function(view){
-  // Open tree through menu to have hidden vertical menu which is needed to show old JS messages
-  var popupParams = 'url=/utility/WindowTree.html';
-  popupParams += '&Command=DEFAULT';
-  popupParams += '&inpTabId=' + view.tabId;
-  popupParams += '&hideMenu=true&noprefs=true';
-  OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + '/security/Menu.html?'+popupParams, '', window, false, false, true);
+  function openPopupTree() {
+    // Open tree through menu to have hidden vertical menu which is needed to show old JS messages
+    var popupParams = 'url=/utility/WindowTree.html';
+    popupParams += '&Command=DEFAULT';
+    popupParams += '&inpTabId=' + tabId;
+    popupParams += '&hideMenu=true&noprefs=true';
+    OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + '/security/Menu.html?' + popupParams, '', window, false, false, true);
+  }
+  var tabId = view.tabId;
+  
+  view.setContextInfo(view.getContextInfo(true, true, true, true), openPopupTree, true);
 };

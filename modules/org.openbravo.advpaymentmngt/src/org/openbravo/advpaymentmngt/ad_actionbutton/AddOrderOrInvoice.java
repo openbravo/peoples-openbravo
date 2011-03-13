@@ -145,11 +145,16 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       String strPaymentAmount = vars.getRequiredNumericParameter("inpActualPayment");
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
+      String strDocumentType = vars.getStringParameter("inpDocumentType", "");
       OBError message = null;
       // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
       // removed when new security implementation is done
       OBContext.setAdminMode();
       try {
+        // Remove GL Items
+        if (!"G".equals(strDocumentType)) {
+          FIN_AddPayment.removeGLItem(dao.getObject(FIN_Payment.class, strPaymentId), null);
+        }
 
         List<FIN_PaymentScheduleDetail> selectedPaymentDetails = FIN_Utility.getOBObjectList(
             FIN_PaymentScheduleDetail.class, strSelectedScheduledPaymentDetailIds);
@@ -223,6 +228,12 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
 
+    if (payment.isReceipt())
+      xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentIn", vars
+          .getLanguage()));
+    else
+      xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentOut", vars
+          .getLanguage()));
     xmlDocument.setParameter("dateDisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("businessPartner", payment.getBusinessPartner().getIdentifier());
     xmlDocument.setParameter("businessPartnerId", payment.getBusinessPartner().getId());

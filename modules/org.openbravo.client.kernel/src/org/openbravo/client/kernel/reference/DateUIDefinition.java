@@ -24,6 +24,7 @@ import java.util.Date;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.model.ad.ui.Field;
 
 /**
  * Implementation of the date ui definition.
@@ -53,6 +54,16 @@ public class DateUIDefinition extends UIDefinition {
   @Override
   public String getFormEditorType() {
     return "OBDateItem";
+  }
+
+  @Override
+  public String getFilterEditorType() {
+    return "OBMiniDateRangeItem";
+  }
+
+  @Override
+  public String getFilterEditorProperties(Field field) {
+    return ", filterOnKeypress: true" + super.getFilterEditorProperties(field);
   }
 
   private SimpleDateFormat getClassicFormat() {

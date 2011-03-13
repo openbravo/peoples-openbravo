@@ -171,7 +171,8 @@ public class KernelUtils {
    */
   public Module getModule(String javaPackage) {
     for (Module module : getModulesOrderedByDependency()) {
-      if (module.getJavaPackage().equals(javaPackage)) {
+      // do trim to handle small typing errors, consider to do lowercase also
+      if (module.getJavaPackage().trim().equalsIgnoreCase(javaPackage.trim())) {
         return module;
       }
     }

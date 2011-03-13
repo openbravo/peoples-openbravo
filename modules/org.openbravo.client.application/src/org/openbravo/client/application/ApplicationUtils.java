@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.application;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,7 +27,6 @@ import org.hibernate.criterion.Expression;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -49,35 +49,51 @@ public class ApplicationUtils {
   private static Logger log = Logger.getLogger(ApplicationUtils.class);
 
   static boolean showWindowInClassicMode(Window window) {
+    List<String> reasonsToBeShownInClassic = new ArrayList<String>();
+    showWindowInClassicMode(window, reasonsToBeShownInClassic);
+    return reasonsToBeShownInClassic.size() > 0;
+  }
+
+  static void showWindowInClassicMode(Window window, List<String> reasonsToBeShownInClassic) {
     // FIXME Remove this once ImageBLOB is implemented
     // Currently, windows with ImageBLOB reference columns will be shown in classic mode
     String qryStr = "as f where f.column.reference.id = '4AA6C3BE9D3B4D84A3B80489505A23E5' "
         + "and f.tab.window.id = :windowId ";
+    List<String> reasonsOfWindow = new ArrayList<String>();
     OBQuery<Field> qry = OBDal.getInstance().createQuery(Field.class, qryStr);
     qry.setNamedParameter("windowId", window.getId());
     if (qry.count() > 0) {
-      return true;
+      String reason = "   One or more columns in the window " + window.getName()
+          + " have an ImageBLOB reference ";
+      reasonsOfWindow.add(reason);
     }
 
     for (Tab tab : window.getADTabList()) {
       if (tab.getSQLWhereClause() != null && tab.getHqlwhereclause() == null) {
         // There is a tab with a SQL whereclause, but without a defined HQL whereclause
-        return true;
+        reasonsOfWindow.add("   The tab " + tab.getName() + " of the window " + window.getName()
+            + " has a SQLWhereClause, but not an HQLWhereClause");
       }
       if (tab.getSQLOrderByClause() != null && tab.getHqlorderbyclause() == null) {
         // There is a tab with a SQL order by clause, but without a defined HQL order by clause
-        return true;
+        reasonsOfWindow.add("   The tab " + tab.getName() + " of the window " + window.getName()
+            + " has a SQLOrderByClause, but not an HQLOrderByClause");
       }
       if (tab.getFilterClause() != null && tab.getHqlfilterclause() == null) {
         // There is a tab with a SQL filter clause, but without a defined HQL filter clause
-        return true;
+        reasonsOfWindow.add("   The tab " + tab.getName() + " of the window " + window.getName()
+            + " has a FilterClause, but not an HQLFilterClause");
       }
       if (tab.getMasterDetailForm() != null) {
         // There is a tab which is a manual form
-        return true;
+        reasonsOfWindow.add("   The tab " + tab.getName() + " of the window " + window.getName()
+            + " is a manual form");
       }
     }
-    return false;
+    if (reasonsOfWindow.size() > 0) {
+      reasonsToBeShownInClassic.add("Window: " + window.getName());
+      reasonsToBeShownInClassic.addAll(reasonsOfWindow);
+    }
   }
 
   /**
@@ -91,33 +107,43 @@ public class ApplicationUtils {
    * @return the parentproperty in the source entity pointing to the parent
    */
   public static String getParentProperty(Tab tab, Tab parentTab) {
-    String parentProperty = "";
     final Entity thisEntity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
     final Entity parentEntity = ModelProvider.getInstance().getEntity(
         parentTab.getTable().getName());
-    if (tab.getColumn() != null) {
-      final String columnId = (String) DalUtil.getId(tab.getColumn());
-      for (Property property : thisEntity.getProperties()) {
-        if (property.isPrimitive() || property.isOneToMany() || property.isId()) {
-          continue;
-        }
-        if (property.getColumnId() != null && property.getColumnId().equals(columnId)) {
-          parentProperty = property.getName();
-          break;
-        }
+    Property returnProperty = null;
+    // first try the real parent properties
+    for (Property property : thisEntity.getProperties()) {
+      if (property.isPrimitive() || property.isOneToMany()) {
+        continue;
       }
-    } else {
+      if (property.isParent() && property.getTargetEntity() == parentEntity) {
+        returnProperty = property;
+        break;
+      }
+    }
+    // not found try any property
+    if (returnProperty == null) {
       for (Property property : thisEntity.getProperties()) {
-        if (property.isPrimitive() || property.isOneToMany() || property.isId()) {
+        if (property.isPrimitive() || property.isOneToMany()) {
           continue;
         }
         if (property.getTargetEntity() == parentEntity) {
-          parentProperty = property.getName();
+          returnProperty = property;
           break;
         }
       }
     }
-    return parentProperty;
+    // handle a special case, the property is an id, in that case
+    // use the related foreign key column to the parent
+    if (returnProperty != null && returnProperty.isId()) {
+      for (Property property : thisEntity.getProperties()) {
+        if (property.isOneToOne() && property.getTargetEntity() == parentEntity) {
+          returnProperty = property;
+          break;
+        }
+      }
+    }
+    return (returnProperty != null ? returnProperty.getName() : "");
   }
 
   public static boolean isClientAdmin() {

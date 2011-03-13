@@ -86,6 +86,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
       // Storing target string to redirect after a successful login
       variables.setSessionValue("target", strDireccionLocal + "/security/Menu.html"
           + (qString != null && !qString.equals("") ? "?" + qString : ""));
+      if (qString != null && !qString.equals("")) {
+        variables.setSessionValue("targetQueryString", qString);
+      }
 
       if (strAjax != null && !strAjax.equals(""))
         bdErrorAjax(response, "Error", "", Utility.messageBD(this.conn, "NotLogged", variables

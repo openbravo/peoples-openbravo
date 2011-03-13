@@ -34,6 +34,9 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
@@ -97,6 +100,17 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
       WidgetClass widgetClass = widgetInstance.getWidgetClass();
       List<OBCQL_QueryColumn> columns = QueryListUtils.getColumns(widgetClass
           .getOBCQLWidgetQueryList().get(0));
+
+      // handle complex criteria
+      try {
+        JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
+        for (int i = 0; i < criterias.length(); i++) {
+          final JSONObject criteria = criterias.getJSONObject(i);
+          parameters.put(criteria.getString("fieldName"), criteria.getString("value"));
+        }
+      } catch (JSONException e) {
+        // Ignore exception.
+      }
 
       String HQL = widgetClass.getOBCQLWidgetQueryList().get(0).getHQL();
       // Parse the HQL in case that optional filters are required

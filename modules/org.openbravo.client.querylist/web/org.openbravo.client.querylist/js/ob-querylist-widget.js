@@ -195,15 +195,24 @@ isc.OBQueryListGrid.addProperties({
     //useClientSorting: false
   },
   
+  initWidget: function() {
+    // overridden as query list widgets can't handle date ranges (yet)
+    for (var i = 0; i < this.getFields().length; i++) {
+      var fld = this.getFields()[i];
+      if (fld.filterEditorType === 'OBMiniDateRangeItem') {
+        fld.filterEditorType = 'OBDateItem';
+      }
+    }
+    this.Super('initWidget', arguments);
+  },
+  
   filterData: function(criteria, callback, requestProperties){
     var crit = criteria || {},
     reqProperties = requestProperties || {};
+    reqProperties.params = reqProperties.params || {};
+    reqProperties.params = this.getFetchRequestParams(reqProperties.params);
 
     reqProperties.showPrompt = false;
-    crit.widgetInstanceId = this.widget.dbInstanceId;
-    crit.rowsNumber = this.widget.parameters.RowsNumber;
-    crit.viewMode = this.widget.viewMode;
-    crit.showAll = this.widget.parameters.showAll;
 
     reqProperties.clientContext = {grid: this,
         criteria: crit}; 
@@ -218,15 +227,22 @@ isc.OBQueryListGrid.addProperties({
     return this.Super('filterData', [crit, newCallBack, reqProperties]);
   },
   
+  getFetchRequestParams: function(params) {
+    params = params || {};
+    params.widgetInstanceId = this.widget.dbInstanceId;
+    params.rowsNumber = this.widget.parameters.RowsNumber;
+    params.viewMode = this.widget.viewMode;
+    params.showAll = this.widget.parameters.showAll;
+    return params;
+  },
+  
   fetchData: function(criteria, callback, requestProperties){
     var crit = criteria || {},
-        reqProperties = requestProperties || {};
+    reqProperties = requestProperties || {};
+    reqProperties.params = reqProperties.params || {};
+    reqProperties.params = this.getFetchRequestParams(reqProperties.params);
 
     reqProperties.showPrompt = false;
-    crit.widgetInstanceId = this.widget.dbInstanceId;
-    crit.rowsNumber = this.widget.parameters.RowsNumber;
-    crit.viewMode = this.widget.viewMode;
-    crit.showAll = this.widget.parameters.showAll;
 
     reqProperties.clientContext = {grid: this,
                                    criteria: crit}; 
@@ -257,8 +273,10 @@ isc.OBQueryListGrid.addProperties({
           requestProperties = {};
       requestProperties.showPrompt = false;
       requestProperties.clientContext = {grid: this};
+      requestProperties.params = requestProperties.params || {};
+      requestProperties.params = this.getFetchRequestParams(requestProperties.params);
 
-      criteria.showAll = true;
+      requestProperties.params.showAll = true;
       this.dataSource.fetchData(criteria, function(dsResponse, data, dsRequest){
           dsResponse.clientContext.grid.widget.setTotalRows(dsResponse.totalRows);
         }, requestProperties );

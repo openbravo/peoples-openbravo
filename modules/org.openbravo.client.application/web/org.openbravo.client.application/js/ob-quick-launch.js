@@ -83,6 +83,17 @@ isc.OBQuickLaunch.addProperties({
     }
   },
   
+  // handle the case that someone entered a url in the quick launch
+  doHide: function(){
+    if (this.members[1].getField('value').getValue() && this.members[1].getField('value').getValue().contains('?')) {
+      var params = OB.Utilities.getUrlParameters(this.members[1].getField('value').getValue());
+      if (params && params.tabId) {
+        OB.Utilities.openDirectTab(params.tabId, params.recordId, params.command);
+      }      
+    }
+    this.Super('doHide', arguments);
+  },
+  
   initWidget: function(){
     this.members = [isc.DynamicForm.create({
       visibility: 'hidden',

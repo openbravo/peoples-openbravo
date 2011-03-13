@@ -94,6 +94,22 @@ isc.OBGrid.addProperties({
     }
     
     this.filterEditorProperties = {
+
+      setEditValue : function (rowNum, colNum, newValue, suppressDisplay, suppressChange) {
+        // prevent any setting of non fields in the filter editor
+        // this prevents a specific issue that smartclient will set a value
+        // in the {field.name}._identifier (for example warehouse._identifier)
+        // because it thinks that the field does not have its own datasource
+        if (isc.isA.String(colNum) && !this.getField(colNum)) {
+          return;
+        }
+        return this.Super('setEditValue', arguments);
+      },
+        
+      getValuesAsCriteria : function (advanced, textMatchStyle, returnNulls) {
+        return this.Super('getValuesAsCriteria', [true, textMatchStyle, returnNulls]);
+      },
+      
       // is needed to display information in the checkbox field 
       // header in the filter editor row
       isCheckboxField: function(){
@@ -140,18 +156,50 @@ isc.OBGrid.addProperties({
       // after applying the filter the grid will set the criteria
       // back in the filtereditor effectively clearing
       // the filter field. The code here repairs/prevents this.
-      setValuesAsCriteria : function (criteria, refresh) {
+      setValuesAsCriteria: function (criteria, refresh) {
+        // create an edit form right away
+        if (!this.getEditForm()) {
+          this.makeEditForm();
+        }
+        var prop, fullPropName;
         // make a copy so that we don't change the object
         // which is maybe used somewhere else
-        criteria = isc.addProperties({}, criteria);
-        var index, prop;
-
-        for (prop in criteria) {
-          if (criteria.hasOwnProperty(prop) && prop.endsWith('.' + OB.Constants.IDENTIFIER)) {
-            value = criteria[prop];
-            index = prop.lastIndexOf('.');
-            prop = prop.substring(0, index);
-            criteria[prop] = value;
+        criteria = isc.clone(criteria);
+        var internCriteria = criteria.criteria;
+        if (internCriteria) {
+          // now remove anything which is not a field
+          // otherwise smartclient will keep track of them and send them again
+          var fields = this.getEditForm().getFields();
+          for (i = internCriteria.length - 1; i >=0; i--) {
+            prop = internCriteria[i].fieldName;
+            // happens when the internCriteria[i], is again an advanced criteria
+            if (!prop) {
+              continue;
+            }
+            fullPropName = prop;
+            if (prop.endsWith('.' + OB.Constants.IDENTIFIER)) {
+              var index = prop.lastIndexOf('.');
+              prop = prop.substring(0, index);
+            }
+            var fnd = false;
+            for (var j = 0; j < fields.length; j++) {
+              if (fields[j].displayField === fullPropName) {
+                fnd = true;
+                break;
+              }
+              if (fields[j].name === prop) {
+                internCriteria[i].fieldName = prop;
+                fnd = true;
+                break;
+              }
+              if (fields[j].name === fullPropName) {
+                fnd = true;
+                break;
+              }
+            }
+            if (!fnd) {
+              internCriteria.removeAt(i);
+            }
           }
         }
 
@@ -171,7 +219,7 @@ isc.OBGrid.addProperties({
             this.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterImplicitToolTip');      
             this.visibility = 'inherit';
           }
-          return this.Super('initWidget', arguments);
+          this.Super('initWidget', arguments);
         },
         click: function(){
           // get rid of the initial filter clause
@@ -182,7 +230,7 @@ isc.OBGrid.addProperties({
       }
     };
     
-    return this.Super('initWidget', arguments);
+    this.Super('initWidget', arguments);
   },
   
   showSummaryRow: function(){
@@ -245,19 +293,41 @@ isc.OBGrid.addProperties({
     if (this.filterClause) {
       return true;
     }
-    for (var prop in criteria) {
-      if (criteria.hasOwnProperty(prop)) {
-        var value = criteria[prop];
-        // see the description in setValuesAsCriteria above
-        if (prop.endsWith('.' + OB.Constants.IDENTIFIER)) {
-          var index = prop.lastIndexOf('.');
-          prop = prop.substring(0, index);
-        }
-        
-        var field = this.filterEditor.getField(prop);
-        if (this.isValidFilterField(field) && (value === false || value || value === 0)) {
+    if (!criteria) {
+      return false;
+    }
+    return this.isGridFilteredWithCriteria(criteria.criteria);
+  },
+  
+  isGridFilteredWithCriteria: function(criteria) {
+    if (!criteria) {
+      return false;
+    }
+    for (var i = 0; i < criteria.length; i++) {
+      var criterion = criteria[i];
+      var prop = criterion.fieldName;
+      var fullPropName = prop;
+      if (!prop) {
+        if (this.isGridFilteredWithCriteria(criterion.criteria)) {
           return true;
         }
+        continue;
+      }
+      var value = criterion.value;
+      // see the description in setValuesAsCriteria above
+      if (prop.endsWith('.' + OB.Constants.IDENTIFIER)) {
+        var index = prop.lastIndexOf('.');
+        prop = prop.substring(0, index);
+      }
+      
+      var field = this.filterEditor.getField(prop);
+      if (this.isValidFilterField(field) && (value === false || value || value === 0)) {
+        return true;
+      }
+      
+      field = this.filterEditor.getField(fullPropName);
+      if (this.isValidFilterField(field) && (value === false || value || value === 0)) {
+        return true;
       }
     }
     return false;
@@ -286,11 +356,16 @@ isc.OBGrid.addProperties({
       _noCount: true, // never do count for export
       exportAs: expProp.exportAs || 'csv',
       viewState: expProp.viewState,
+      tab: expProp.tab,
       exportToFile: true,
       _textMatchStyle: 'substring'
-    }, this.getCriteria());
+    }, this.getCriteria(), this.getFetchRequestParams());
     
     OB.Utilities.postThroughHiddenForm(dsURL, d);
+  },
+  
+  getFetchRequestParams: function(params) {
+    return params;
   },
   
   editorKeyDown : function (item, keyName) {
@@ -332,7 +407,7 @@ isc.OBGridLinkLayout.addProperties({
     this.btn.setTitle(this.title);
     this.btn.owner = this;
     this.addMember(this.btn);
-    return this.Super('initWidget', arguments);
+    this.Super('initWidget', arguments);
   },
   
   setTitle: function(title){

@@ -20,7 +20,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Add Payment</title>
+<title id="paramTitle">xxTitle</title>
 <link rel="shortcut icon" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS"></link>
 
@@ -71,8 +71,7 @@ function validate(action) {
 </script>
 <script language="JavaScript" type="text/javascript">
 function closeThisPage() {
-  removeAllGLItem();
-  parent.window.close();
+  removeAllGLItem(true);
   return true;
 }
 function submitThisPage(strCommand) {
@@ -80,8 +79,7 @@ function submitThisPage(strCommand) {
     if (isTrue('isGLItem')) {
       var temp = document.getElementById('sectionGrid');
       temp.parentNode.removeChild(temp);
-    } else
-      removeAllGLItem();
+    }
     submitCommandForm(strCommand, false, null, null, '_top');
     return true;
   }
@@ -255,11 +253,11 @@ function actualPaymentOnChange(){
         alert(e);
       }
     }
-    function removeAllGLItem() {
+    function removeAllGLItem(closePopup) {
       try {
         document.frmMain.inpDeleteGLItem.value = "";
         var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html";
-        var paramXMLReq = null;
+        var paramXMLReq = closePopup ? closePopup : null;
         return submitXmlHttpRequest(callBackGLItem, document.frmMain, "REMOVEALLGLITEM", url, false, null, paramXMLReq);
       } catch (e) {
         alert(e);
@@ -276,6 +274,12 @@ function actualPaymentOnChange(){
               setValues_MessageBox('messageBoxID', 'WARNING', '', strText);
             else
               initialize_MessageBox('messageBoxID');
+
+            if (paramXMLParticular != null) {
+              parent.window.close();
+              return true;
+            }
+
             loadGLItemList();
           } else {
             initialize_MessageBox('messageBoxID');
@@ -456,7 +460,7 @@ function actualPaymentOnChange(){
             <td class="Popup_NavBar_bg_logo_left"></td>
             <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
             <td class="Popup_NavBar_bg_logo_right"></td>
-            <td class="Popup_NavBar_Popup_title_cell"><span>Add Payment</span></td>
+            <td class="Popup_NavBar_Popup_title_cell"><span name="lblR" id="lblRPopupTitle">Add Payment In</span><span name="lblP" id="lblPPopupTitle">Add Payment Out</span></td>
             <td class="Popup_NavBar_separator_cell"></td>
           </tr>
         </table>
@@ -695,8 +699,8 @@ function actualPaymentOnChange(){
             <!-- Text -->
             <tr>
                 <td colspan="6" class="LabelText" style="font-weight: bold;">
-                    <span name="lblR" id="lblRText">Select sales orders, invoices or GL Items that you want to match to this payment</span>
-                    <span name="lblP" id="lblPText">Select purchase orders, invoices or GL Items that you want to match to this payment</span>
+                    <span name="lblR" id="lblRText">Select sales orders, invoices or GL Items that you want to match to this payment in</span>
+                    <span name="lblP" id="lblPText">Select purchase orders, invoices or GL Items that you want to match to this payment out</span>
                 </td>
             </tr>
             
@@ -711,7 +715,7 @@ function actualPaymentOnChange(){
 
             <!-- Line hidden -->
             <tr style="display:none;">
-              <td class="TitleCell"><span class="LabelText">Expected Payment</span></td>
+              <td class="TitleCell"><span name="lblP" id="lblPExpectedPaym" class="LabelText">Expected Payment Out</span><span name="lblR" id="lblRExpectedPaym" class="LabelText">Expected Payment In</span></td>
               <td class="TextBox_ContentCell"> <input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExpectedPayment" name="inpExpectedPayment" value="" onchange="updateDifference();"></input>
               </td>
               <td class="TitleCell"></td>
@@ -812,7 +816,7 @@ function actualPaymentOnChange(){
               </td>
              </tr>
             <tr>
-              <td class="TitleCell" id="inpAlternativeLabel"><span class="TitleCell LabelText"><label for="paramAlternativePaymentMethod">Show payments for alternative payment methods</label></span></td>
+              <td class="TitleCell" id="inpAlternativeLabel"><span class="TitleCell LabelText"><label name="lblP" id="lblPShowPaym" for="paramAlternativePaymentMethod">Show payments out for alternative payment methods</label></span><span class="TitleCell LabelText"><label name="lblR" id="lblRShowPaym" for="paramAlternativePaymentMethod">Show payments in for alternative payment methods</label></span></td>
               <td class="Radio_Check_ContentCell" id="inpAlternativeChkBox">
               <span class="Radio_Check_ContentCell Checkbox_container_NOT_Focused"><input type="checkbox" name="inpAlternativePaymentMethod" value="Y" id="paramAlternativePaymentMethod" onclick="loadGridList()"></input></span>
              </td>
@@ -961,7 +965,7 @@ function actualPaymentOnChange(){
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Invoiced Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Expected Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Outstanding Amount</th>
-                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="110">Payment</th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="110"><span name="lblP" id="lblPPayment">Payment Out</span><span name="lblR" id="lblRPayment">Payment In</span></th>
                       </tr>
                     </thead>
                     <tbody id="sectionGrid">

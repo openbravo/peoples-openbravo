@@ -19,7 +19,6 @@
 package org.openbravo.userinterface.selector;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -30,23 +29,12 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Expression;
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.Property;
-import org.openbravo.base.model.Reference;
-import org.openbravo.base.model.domaintype.DomainType;
-import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
-import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.base.util.Check;
 import org.openbravo.client.application.OBBindings;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.service.json.JsonConstants;
-import org.openbravo.service.json.JsonUtils;
 
 /**
  * 
@@ -93,28 +81,7 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
           if (sel.isCustomQuery()) {
             result.put(f.getDisplayColumnAlias(), exprResult);
           } else {
-            final DomainType domainType = getDomainType(f);
             String fieldName = f.getProperty();
-            if (domainType instanceof ForeignKeyDomainType) {
-              final String entityName = f.getObuiselSelector().getTable().getName();
-              final Entity entity = ModelProvider.getInstance().getEntity(entityName);
-              final List<Property> properties = JsonUtils.getPropertiesOnPath(entity, f
-                  .getProperty());
-              if (!properties.isEmpty()) {
-                final Property property = properties.get(properties.size() - 1);
-
-                @SuppressWarnings("unchecked")
-                Class<? extends BaseOBObject> o = (Class<? extends BaseOBObject>) Class
-                    .forName(property.getReferencedProperty().getEntity().getClassName());
-                String identifier = OBDal.getInstance().get(o, exprResult).getIdentifier();
-                if (identifier != null) {
-                  exprResult = identifier;
-                }
-              }
-
-              fieldName = fieldName + "." + JsonConstants.IDENTIFIER;
-            }
-
             result.put(fieldName, exprResult);
           }
         } catch (Exception e) {
@@ -140,30 +107,5 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
       params.put(key, (String) parameters.get(key));
     }
     return params;
-  }
-
-  private DomainType getDomainType(SelectorField selectorField) {
-    if (selectorField.getObuiselSelector().getTable() != null
-        && selectorField.getProperty() != null) {
-      final String entityName = selectorField.getObuiselSelector().getTable().getName();
-      final Entity entity = ModelProvider.getInstance().getEntity(entityName);
-      final Property property = DalUtil.getPropertyFromPath(entity, selectorField.getProperty());
-      Check.isNotNull(property, "Property " + selectorField.getProperty() + " not found in Entity "
-          + entity);
-      return property.getDomainType();
-    } else if (selectorField.getObuiselSelector().getTable() != null
-        && selectorField.getObuiselSelector().isCustomQuery()
-        && selectorField.getReference() != null) {
-      return getDomainType(selectorField.getReference().getId());
-    } else if (selectorField.getObserdsDatasourceField().getReference() != null) {
-      return getDomainType(selectorField.getObserdsDatasourceField().getReference().getId());
-    }
-    return null;
-  }
-
-  private DomainType getDomainType(String referenceId) {
-    final Reference reference = ModelProvider.getInstance().getReference(referenceId);
-    Check.isNotNull(reference, "No reference found for referenceid " + referenceId);
-    return reference.getDomainType();
   }
 }

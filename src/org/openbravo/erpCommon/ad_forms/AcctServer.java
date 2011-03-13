@@ -644,6 +644,7 @@ public abstract class AcctServer {
     if (log4j.isDebugEnabled())
       log4j.debug("AcctServer - Post -Beforde the loop - C_CURRENCY_ID = " + C_Currency_ID);
     for (int i = 0; OK && i < m_as.length; i++) {
+      setStatus(STATUS_NotPosted);
       if (isBackground && !isBackGroundEnabled(conn, m_as[i], AD_Table_ID)) {
         setStatus(STATUS_BackgroundDisabled);
         break;
@@ -785,7 +786,7 @@ public abstract class AcctServer {
     if (log4j.isDebugEnabled())
       log4j.debug("loadDocument " + data.length);
 
-    setStatus(STATUS_Error);
+    setStatus(STATUS_NotPosted);
     Name = "";
     AD_Client_ID = data[0].getField("AD_Client_ID");
     AD_Org_ID = data[0].getField("AD_Org_ID");
@@ -993,7 +994,7 @@ public abstract class AcctServer {
     }
     if (m_fact[index] == null)
       return STATUS_Error;
-    if (!Status.equals(STATUS_Error))
+    if (!Status.equals(STATUS_NotPosted))
       return Status;
     Status = STATUS_PostPrepared;
 

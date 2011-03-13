@@ -21,12 +21,17 @@ package org.openbravo.service.json;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.service.json.QueryBuilder.TextMatching;
 
 /**
  * Implements a service which can handle different types of query and paging options. This class
@@ -51,7 +56,7 @@ public class DataEntityQueryService {
   private Integer maxResults = null;
 
   private boolean filterOnActive = true;
-  private QueryBuilder queryBuilder = new QueryBuilder();
+  private AdvancedQueryBuilder queryBuilder = new AdvancedQueryBuilder();
 
   /**
    * Count the records which fit in the filter criteria.
@@ -81,6 +86,20 @@ public class DataEntityQueryService {
    * @return the list of retrieved objects from the db.
    */
   public List<BaseOBObject> list() {
+    return buildOBQuery().list();
+  }
+
+  /**
+   * @return a result which can be scrolled forward only and the results are not cached
+   */
+  public ScrollableResults scroll() {
+    final Query qry = buildOBQuery().createQuery();
+    qry.setFetchSize(1000);
+    qry.setCacheable(false);
+    return qry.scroll(ScrollMode.FORWARD_ONLY);
+  }
+
+  private OBQuery<BaseOBObject> buildOBQuery() {
     final String whereOrderBy = queryBuilder.getJoinClause() + queryBuilder.getWhereClause()
         + queryBuilder.getOrderByClause();
 
@@ -105,7 +124,7 @@ public class DataEntityQueryService {
 
     obq.setNamedParameters(queryBuilder.getNamedParameters());
 
-    return obq.list();
+    return obq;
   }
 
   public int getRowNumber(String targetRecordId) {
@@ -165,16 +184,18 @@ public class DataEntityQueryService {
    *          the following values are allowed: startsWith, substring, exact
    */
   public void setTextMatching(String textMatchingName) {
-    if (textMatchingName == null) {
-      return;
-    }
-    for (TextMatching textMatching : TextMatching.values()) {
-      if (textMatching.name().equalsIgnoreCase(textMatchingName)) {
-        queryBuilder.setTextMatching(textMatching);
-        return;
+  }
+
+  public void setCriteria(JSONObject criteria) {
+    try {
+      queryBuilder.setCriteria(criteria);
+      if (criteria.has("operator")
+          && AdvancedQueryBuilder.OPERATOR_OR.equals(criteria.getString("operator"))) {
+        setDoOrExpression();
       }
+    } catch (JSONException e) {
+      throw new OBException(e);
     }
-    throw new UnsupportedOperationException("Text matching " + textMatchingName + " not supported ");
   }
 
   public void addFilterParameter(String key, String value) {

@@ -389,11 +389,11 @@ public class JsonToDataConverter {
         final Property property = entity.getProperty(keyName);
         if (property.getDomainType() instanceof EncryptedStringDomainType
             || property.getDomainType() instanceof HashedStringDomainType) {
-          if (jsonObject.has(keyName + ".cleartext")) {
-            Object valCleartext = jsonObject.get(keyName + ".cleartext");
+          if (jsonObject.has(keyName + "_cleartext")) {
+            Object valCleartext = jsonObject.get(keyName + "_cleartext");
             setValue(obObject, property, valCleartext);
           } else {
-            // no .cleartext value found -> skipping field
+            // no _cleartext value found -> skipping field
           }
         } else {
           setValue(obObject, property, jsonObject.get(keyName));
@@ -723,7 +723,8 @@ public class JsonToDataConverter {
     // do not change not changeable properties
     doNotHandleThisProperty |= property.isInactive();
     // do not change not updatable properties
-    doNotHandleThisProperty |= !obObject.isNewOBObject() && !property.isUpdatable();
+    // Updatable is a UI concept
+    // doNotHandleThisProperty |= !obObject.isNewOBObject() && !property.isUpdatable();
     return doNotHandleThisProperty;
   }
 

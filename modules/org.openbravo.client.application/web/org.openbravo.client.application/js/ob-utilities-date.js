@@ -145,7 +145,6 @@ OB.Utilities.Date.OBToJS = function(/* String */OBDate, /* String */ dateFormat)
   JSDate.setMinutes(minutes);
   JSDate.setSeconds(seconds);
   JSDate.setMilliseconds(0);
-
   if (JSDate.toString() === 'Invalid Date' || JSDate.toString() === 'NaN') {
     return null;
   } else {

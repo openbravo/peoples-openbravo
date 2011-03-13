@@ -93,15 +93,18 @@
         return;
       }
       var currentRecentValue = this.getRecentValue(propertyName);
+      // check if there is already an entry for the new recent
       var currentIndex = -1;
       for (var i = 0; i < currentRecentValue.length; i++) {
-        // if the title is the same then assume they are the same
-        if (currentRecentValue[i].tabTitle && 
+        // if the title is the same then assume they are the same, only 
+        // check this if there is no recentId being used
+        if (!currentRecentValue[i].recentId && currentRecentValue[i].tabTitle && 
             choiceObject.tabTitle && choiceObject.tabTitle === currentRecentValue[i].tabTitle) {
           currentIndex = i;
-        } else if (currentRecentValue[i] &&
-        currentRecentValue[i].id === choiceObject.id) {
-          // found it
+        } else  if (currentRecentValue[i].recentId && 
+              choiceObject.recentId && choiceObject.recentId === currentRecentValue[i].recentId) {
+            currentIndex = i;
+        } else if (currentRecentValue[i].id && currentRecentValue[i].id === choiceObject.id) {
           currentIndex = i;
         }
       }

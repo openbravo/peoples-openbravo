@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,7 @@
 package org.openbravo.service.system;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.criterion.Expression;
@@ -94,6 +95,8 @@ public class ModuleValidator implements SystemValidator {
 
     // check dependency on core
     checkDepencyOnCore(module, result);
+
+    checkDuplicatedInclusions(module, result, new ArrayList<String>());
 
     checkDependencyVersion(module, result);
 
@@ -293,7 +296,24 @@ public class ModuleValidator implements SystemValidator {
       result.addWarning(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
           + " or any of its ancestors " + "does not depend on the Core module.");
     }
+  }
 
+  /**
+   * Checks module inclusions are not defined more than once.
+   */
+  private void checkDuplicatedInclusions(Module module, SystemValidationResult result,
+      List<String> verifiedInclusions) {
+    for (ModuleDependency md : module.getModuleDependencyList()) {
+      if (md.isIncluded()) {
+        if (verifiedInclusions.contains(md.getDependentModule().getId())) {
+          result.addError(SystemValidationType.DUPLICATED_INCLUSION, "Module "
+              + md.getDependentModule().getName()
+              + " is included several times in the dependency tree.");
+        }
+        verifiedInclusions.add(md.getDependentModule().getId());
+        checkDuplicatedInclusions(md.getDependentModule(), result, verifiedInclusions);
+      }
+    }
   }
 
   private void checkTableName(Module module, SystemValidationResult result) {

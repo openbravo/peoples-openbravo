@@ -32,6 +32,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
+import org.openbravo.service.json.DefaultJsonDataService.QueryResultWriter;
 
 /**
  * The SimpleDataSourceService provides a simple way of returning data in the correct format for a
@@ -54,21 +55,15 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
     final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
     int startRow = -1;
-    int endRow = -1;
     boolean doCount = false;
     if (startRowStr != null) {
       startRow = Integer.parseInt(startRowStr);
       doCount = true;
     }
     if (endRowStr != null) {
-      endRow = Integer.parseInt(endRowStr);
       doCount = true;
     }
-    final List<Map<String, Object>> data = getData(parameters, startRow, endRow);
-    final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
-        DataToJsonConverter.class);
-    toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
-    final List<JSONObject> jsonObjects = toJsonConverter.convertToJsonObjects(data);
+    final List<JSONObject> jsonObjects = fetchJSONObject(parameters);
 
     // now jsonfy the data
     try {
@@ -76,7 +71,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
       final JSONObject jsonResponse = new JSONObject();
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
-      jsonResponse.put(JsonConstants.RESPONSE_ENDROW, data.size() + startRow - 1);
+      jsonResponse.put(JsonConstants.RESPONSE_ENDROW, jsonObjects.size() + startRow - 1);
       if (doCount) {
         jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, getCount(parameters));
       }
@@ -90,6 +85,30 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     } catch (JSONException e) {
       throw new OBException(e);
     }
+  }
+
+  public void fetch(Map<String, String> parameters, QueryResultWriter writer) {
+    for (JSONObject jsonObject : fetchJSONObject(parameters)) {
+      writer.write(jsonObject);
+    }
+  }
+
+  private List<JSONObject> fetchJSONObject(Map<String, String> parameters) {
+    final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
+    final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
+    int startRow = -1;
+    int endRow = -1;
+    if (startRowStr != null) {
+      startRow = Integer.parseInt(startRowStr);
+    }
+    if (endRowStr != null) {
+      endRow = Integer.parseInt(endRowStr);
+    }
+    final List<Map<String, Object>> data = getData(parameters, startRow, endRow);
+    final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
+        DataToJsonConverter.class);
+    toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
+    return toJsonConverter.convertToJsonObjects(data);
   }
 
   /**

@@ -27,6 +27,7 @@
     <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
     <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
     
+    <PARAMETER id="paramTitle" name="title" replace="xxTitle"/>
     <PARAMETER id="paramDocNumber" name="documentNumber" attribute="value"/>
     <PARAMETER id="paramCustBalance" name="customerBalance" attribute="value" format="euroEdition"/>
     <PARAMETER id="paramBusinessPartner" name="businessPartner" attribute="value"/>

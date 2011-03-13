@@ -232,6 +232,18 @@ public class OBDal implements OBSingleton {
   }
 
   /**
+   * Refresh the given object from the database. Also initialized lists inside the object will be
+   * refreshed.
+   * 
+   * @param obj
+   *          the object to refresh
+   * @see Session#refresh(Object)
+   */
+  public void refresh(Object obj) {
+    SessionHandler.getInstance().getSession().refresh(obj);
+  }
+
+  /**
    * Retrieves an object from the database using the class and id.
    * 
    * @param clazz

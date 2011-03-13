@@ -130,6 +130,7 @@
   FINISH_PROCESS BOOLEAN:=FALSE;
   END_PROCESSING BOOLEAN:=FALSE;
   v_TargetDocBaseType C_DOCTYPE.DocBaseType%TYPE;
+  v_isReversal C_DOCTYPE.IsReversal%TYPE;
   v_MultiplierARC NUMBER:=1;
   v_is_included NUMBER:=0;
   v_available_period NUMBER:=0;
@@ -634,12 +635,13 @@ BEGIN --BODY
      *************************************************************************/
     DECLARE
       v_DocBaseType C_DOCTYPE.DocBaseType%TYPE;
+      v_DocTypeIsSOtrx C_DOCTYPE.IsSOtrx%TYPE;
     BEGIN
       -- Is it a Credit Memo?
-      SELECT DocBaseType INTO v_DocBaseType
+      SELECT DocBaseType, IsReversal, issotrx INTO v_DocBaseType, v_isReversal, v_DocTypeIsSOtrx
       FROM C_DOCTYPE
       WHERE C_DocType_ID=v_DocType_ID;
-      IF (v_DocBaseType IN('ARC', 'API')) THEN
+      IF (v_DocBaseType IN('ARC', 'API') or (v_isReversal='Y' and v_DocTypeIsSOtrx='Y') or (v_isReversal='N' and v_DocTypeIsSOtrx='N')) THEN
         v_Multiplier:=-1;
       END IF;
     END;
@@ -1437,10 +1439,10 @@ BEGIN --BODY
           AND IsValid!='Y';
 
         -- Is it a Credit Memo:4
-        SELECT DocBaseType INTO v_TargetDocBaseType
+        SELECT DocBaseType, isreversal INTO v_TargetDocBaseType, v_isReversal
         FROM C_DOCTYPE
         WHERE C_DocType_ID=v_DocTypeTarget_ID;
-        IF (v_TargetDocBaseType in ('ARC','APC')) THEN
+        IF (v_TargetDocBaseType in ('ARC','APC') or v_isReversal='Y') THEN
           v_MultiplierARC:=-1;
         END IF;
 

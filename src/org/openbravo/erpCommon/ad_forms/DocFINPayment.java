@@ -310,11 +310,8 @@ public class DocFINPayment extends AcctServer {
                 && account.getClearedPaymentAccountOUT() != null)
               confirmation = true;
           }
-          // For payments with Amount ZERO which consumes credit always create an entry for the
-          // consumption as no transaction will be created
-          if (payment.getGeneratedCredit().compareTo(ZERO) == 0
-              && payment.getUsedCredit().compareTo(ZERO) != 0
-              && payment.getAmount().compareTo(ZERO) == 0) {
+          // For payments with Amount ZERO always create an entry as no transaction will be created
+          if (payment.getAmount().compareTo(ZERO) == 0) {
             confirmation = true;
           }
         }

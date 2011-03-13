@@ -137,11 +137,18 @@ isc.OBViewGrid.addProperties({
   
   // modal editing is not possible as we need to be able to do 
   // undo, which means clicks outside of the current form.
-  modalEditing: false,
+  modalEditing: true,
+  //showGridSummary: true,
   
   timeFormatter: 'to24HourTime',
   
   dataProperties: {
+    // this means that after an update/add the new/updated row does not fit 
+    // in the current filter criteria then they are still shown
+    // note that if this is set to false that when using the _dummy criteria
+    // that the _dummy criteria can mean that new/updated records are not 
+    // shown in the grid
+    neverDropUpdatedRows: true,
     useClientFiltering: false,
     useClientSorting: false,
     
@@ -166,7 +173,7 @@ isc.OBViewGrid.addProperties({
       }
     }
   },
-  
+
   refreshFields: function(){
     this.setFields(this.completeFields.duplicate());
   },
@@ -280,7 +287,7 @@ isc.OBViewGrid.addProperties({
         return OB.Utilities.getPromptString(cellErrors);
       }
     }
-    if (record[isc.OBViewGrid.ERROR_MESSAGE_PROP]) {
+    if (record && record[isc.OBViewGrid.ERROR_MESSAGE_PROP]) {
       return record[isc.OBViewGrid.ERROR_MESSAGE_PROP];
     }
     
@@ -332,11 +339,17 @@ isc.OBViewGrid.addProperties({
     return this.Super('headerClick', arguments);
   },
 
-  // handle the del key when rows have been selected
+  // handle the del key when rows have been selected or space key
   bodyKeyPress : function (event, eventInfo) {
     if (event.keyName === 'Delete' && this.getSelectedRecords().length > 0) {
       this.view.deleteSelectedRows();
       return;      
+    }
+    // don't let the default space action do something if others keys are also 
+    // pressed
+    if (event.keyName === 'Space' && 
+      (isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown())) {
+      return true;
     }
     return this.Super('bodyKeyPress', arguments);
   },
@@ -451,8 +464,7 @@ isc.OBViewGrid.addProperties({
     }
     
     var context = {
-      showPrompt: false,
-      textMatchStyle: this.autoFetchTextMatchStyle
+      showPrompt: false
     };
     this.filterData(this.getCriteria(), callback, context);
   },
@@ -682,50 +694,51 @@ isc.OBViewGrid.addProperties({
     this.Super('handleFilterEditorSubmit', arguments);
   },
   
-  xgetInitialCriteria: function(){
-    var criteria = this.Super('getInitialCriteria', arguments);
-    
+  getInitialCriteria: function(){
+    var criteria = this.Super('getInitialCriteria', arguments);   
     return this.convertCriteria(criteria);
   },
   
-  xgetCriteria: function(){
+  getCriteria: function(){
     var criteria = this.Super('getCriteria', arguments) || {};
     criteria = this.convertCriteria(criteria);
     return criteria;
   },
-  
-  // overridden to clean up the criteria before they are set
-  setFilterValues : function (criteria) {
-    delete criteria.criteria;
-    return this.Super('setFilterValues', arguments);
-  },
     
   convertCriteria: function(criteria){
-    var selectedValues, prop, fld, value;
+    var selectedValues, prop, fld, value, i, criterion, fldName;
     
-    criteria = isc.addProperties({}, criteria || {});
+    if (!criteria) {
+      criteria = {
+        operator: 'and', 
+        _constructor: "AdvancedCriteria", 
+        criteria:[]};
+    } else {
+      criteria = isc.clone(criteria);
+    }
+    
+    if (!criteria.criteria) {
+      criteria.criteria = [];
+    }
     
     if (this.targetRecordId) {
       // do not filter on anything with a targetrecord
-      criteria = {};
+      criteria = {
+        operator: 'and', 
+        _constructor: "AdvancedCriteria", 
+        criteria:[]};
+        
+      // add a dummy criteria to force a fetch
+      criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+      
       // remove the filter clause we don't want to use
       this.filterClause = null;
-      criteria._targetRecordId = this.targetRecordId;
-    }
-    
-    // filter criteria for foreign key fields should be on the identifier
-    // note is again repaired in the filtereditor setValuesAsCriteria
-    // see the ob-grid.js 
-    for (prop in criteria) {
-      if (criteria.hasOwnProperty(prop)) {
-        if (prop === this.view.parentProperty) {
-          continue;
-        }
-        fld = this.getField(prop);
-        if (fld && fld.foreignKeyField) {
-          value = criteria[prop];
-          delete criteria[prop];
-          criteria[prop + '.' + OB.Constants.IDENTIFIER] = value;
+    } else {
+      // remove the _dummy
+      for (i = 0; i < criteria.criteria.length; i++) {
+        if (criteria.criteria[i].fieldName === isc.OBRestDataSource.DUMMY_CRITERION_NAME) {
+          criteria.criteria.removeAt(i);
+          break;
         }
       }
     }
@@ -735,41 +748,92 @@ isc.OBViewGrid.addProperties({
     
     if (this.view.parentProperty) {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+      var parentPropertyFilterValue = -1;
       if (selectedValues.length === 0) {
-        criteria[this.view.parentProperty] = '-1';
+        parentPropertyFilterValue = '-1';
       } else if (selectedValues.length > 1) {
-        criteria[this.view.parentProperty] = '-1';
+        parentPropertyFilterValue = '-1';
       } else {
-        criteria[this.view.parentProperty] = selectedValues[0][OB.Constants.ID];
+        parentPropertyFilterValue = selectedValues[0][OB.Constants.ID];
+      }
+      var fnd = false;
+      var innerCriteria = criteria.criteria;
+      for (i = 0; i < innerCriteria.length; i++) {
+        criterion = innerCriteria[i];
+        fldName = criterion.fieldName;
+        if (fldName === this.view.parentProperty) {
+          fnd = true;
+          criterion.operator = 'equals';
+          criterion.value = parentPropertyFilterValue;
+          break;
+        }
+      }
+      if (!fnd) {
+        innerCriteria.add({
+          fieldName: this.view.parentProperty,
+          operator: 'equals',
+          value: parentPropertyFilterValue
+        });
       }
     }
     
+    // get rid of some unneeded stuff in the criteria
+    if (criteria && criteria.criteria) {
+      var internalCriteria = criteria.criteria;
+      for (i = (internalCriteria.length - 1); i >= 0; i--) {
+        var shouldRemove = false;
+        criterion = internalCriteria[i];
+        // but do not remove dummy criterion
+        if (criterion.fieldName && criterion.fieldName.startsWith('_') && criterion.fieldName !== isc.OBRestDataSource.DUMMY_CRITERION_NAME) {
+          shouldRemove = true;
+        } else if (isc.isA.emptyString(criterion.value)) {
+          shouldRemove = true;
+        }
+        if (shouldRemove) {
+          internalCriteria.removeAt(i);
+        }
+      }
+    }
+
+    this.checkShowFilterFunnelIcon(criteria);
+
+    return criteria;
+  },
+  
+  onFetchData: function(criteria, requestProperties) {    
+    requestProperties = requestProperties || {};
+    requestProperties.params = this.getFetchRequestParams(requestProperties.params);
+  },
+  
+  getFetchRequestParams: function(params) {
+    params = params || {};
+            
+    if (this.targetRecordId) {
+      params._targetRecordId = this.targetRecordId;
+    }
+
     // prevent the count operation
-    criteria[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
+    params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
     
     if (this.orderByClause) {
-      criteria[OB.Constants.ORDERBY_PARAMETER] = this.orderByClause;
+      params[OB.Constants.ORDERBY_PARAMETER] = this.orderByClause;
     }
-    
+
+    // add all the new session properties context info to the requestProperties
+    isc.addProperties(params, this.view.getContextInfo(true, false));
+          
     if (this.filterClause) {
       if (this.whereClause) {
-        criteria[OB.Constants.WHERE_PARAMETER] = ' ((' + this.whereClause + ') and (' + this.filterClause + ")) ";
+        params[OB.Constants.WHERE_PARAMETER] = ' ((' + this.whereClause + ') and (' + this.filterClause + ")) ";
       } else {
-        criteria[OB.Constants.WHERE_PARAMETER] = this.filterClause;
+        params[OB.Constants.WHERE_PARAMETER] = this.filterClause;
       }
-      this.checkShowFilterFunnelIcon(criteria);
     } else if (this.whereClause) {
-      criteria[OB.Constants.WHERE_PARAMETER] = this.whereClause;
-      this.checkShowFilterFunnelIcon(criteria);
+      params[OB.Constants.WHERE_PARAMETER] = this.whereClause;
     } else {
-      criteria[OB.Constants.WHERE_PARAMETER] = null;
-      this.checkShowFilterFunnelIcon(criteria);
+      params[OB.Constants.WHERE_PARAMETER] = null;
     }
-    
-    // add all the new session properties context info to the criteria
-    isc.addProperties(criteria, this.view.getContextInfo(true, false));
-    
-    return criteria;
+    return params;    
   },
   
   createNew: function(){
@@ -806,7 +870,7 @@ isc.OBViewGrid.addProperties({
     var actionObject = {
       target: this.view,
       method: this.view.editRecord,
-      parameters: [record]
+      parameters: [record, false, (field ? field.name : null)]
     };
     this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
   },
@@ -867,18 +931,7 @@ isc.OBViewGrid.addProperties({
         });
       }
     }
-    menuItems.add({
-      title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
-      click: function(){
-        grid.startEditingNew(rowNum);
-      }
-    });
-    menuItems.add({
-      title: OB.I18N.getLabel('OBUIAPP_CreateRecordInForm'),
-      click: function(){
-        grid.view.newDocument();
-      }
-    });
+
     if (singleSelected && this.canEdit && this.isWritable(record) && !this.view.readOnly) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_EditInGrid'),
@@ -887,31 +940,49 @@ isc.OBViewGrid.addProperties({
           grid.startEditing(rowNum, colNum);
         }
       });
-      menuItems.add({
-        title: OB.I18N.getLabel('OBUIAPP_EditInForm'),
-        click: function(){
-          grid.endEditing();
-          grid.view.editRecord(record);
-        }
-      });
+//      menuItems.add({
+//        title: OB.I18N.getLabel('OBUIAPP_EditInForm'),
+//        click: function(){
+//          grid.endEditing();
+//          grid.view.editRecord(record);
+//        }
+//      });
     }
+
+    menuItems.add({
+      title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
+      click: function(){
+        grid.startEditingNew(rowNum);
+      }
+    });
+//    menuItems.add({
+//      title: OB.I18N.getLabel('OBUIAPP_CreateRecordInForm'),
+//      click: function(){
+//        grid.view.newDocument();
+//      }
+//    });
     if (singleSelected && field.canFilter) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_UseAsFilter'),
         click: function(){
           var value;
-          var filterCriteria = grid.getCriteria();
           // a foreign key field, use the displayfield/identifier
           if (field.foreignKeyField && field.displayField) {
             value = record[field.displayField];
-            filterCriteria[field.displayField] = value;
           } else {
             value = grid.getEditDisplayValue(rowNum, colNum, record);
-            filterCriteria[field.name] = value;
           }
-          grid.setCriteria(filterCriteria);
-          grid.checkShowFilterFunnelIcon(grid.getCriteria());
-          grid.filterData(grid.getCriteria());
+          // assume a date range filter item
+          if (isc.isA.Date(value) && field.filterEditorType === 'OBMiniDateRangeItem') {
+            value = {
+              start: value,
+              end: value
+            };
+          }
+          grid.filterEditor.getEditForm().setValue(field.name, value);
+          var criteria = grid.filterEditor.getEditForm().getValuesAsCriteria();
+          grid.checkShowFilterFunnelIcon(criteria);
+          grid.filterData(criteria);
         }
       });
     }
@@ -1168,7 +1239,7 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++ functions for the editing +++++++++++++++++
   
   startEditingNew: function(rowNum){
-    var insertRow = this.getDrawArea()[0];
+    var insertRow;
     if (rowNum || rowNum === 0) {
       insertRow = rowNum + 1;
     } else {
@@ -1195,6 +1266,7 @@ isc.OBViewGrid.addProperties({
     };
     
     this.data.insertCacheData(record, rowNum);
+    this.scrollToRow(rowNum);
     this.updateRowCountDisplay();
     this.redraw();
   },
@@ -1304,30 +1376,25 @@ isc.OBViewGrid.addProperties({
     
     if (!preventConfirm &&
     (this.getEditForm().hasChanged || this.rowHasErrors(rowNum))) {
-      isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmCancelEdit'), function(value){
-        if (value) {
-        
-          me.Super('discardEdits', localArguments);
-          
-          // remove the record if new
-          if (record._new) {
-            me.data.handleUpdate('remove', [{
-              id: record.id
-            }]);
-            me.updateRowCountDisplay();
-            me.view.refreshChildViews();
-          } else {
-            // remove the error style/msg    
-            me.setRecordErrorMessage(rowNum, null);
-          }
-          
-          me.view.standardWindow.cleanUpAutoSaveProperties();
-          
-          // update after removing the error msg
-          me.view.updateTabTitle();
-          me.view.toolBar.updateButtonState(true);
-        }
-      });
+      me.Super('discardEdits', localArguments);
+      
+      // remove the record if new
+      if (record._new) {
+        me.data.handleUpdate('remove', [{
+          id: record.id
+        }]);
+        me.updateRowCountDisplay();
+        me.view.refreshChildViews();
+      } else {
+        // remove the error style/msg    
+        me.setRecordErrorMessage(rowNum, null);
+      }
+      
+      me.view.standardWindow.cleanUpAutoSaveProperties();
+      
+      // update after removing the error msg
+      me.view.updateTabTitle();
+      me.view.toolBar.updateButtonState(true);
     } else {
       me.Super('discardEdits', localArguments);
       
@@ -1359,6 +1426,35 @@ isc.OBViewGrid.addProperties({
       this.view.toolBar.updateButtonState(true);
     }
     return ret;
+  },
+
+  // check if a fic call needs to be done when leaving a cell and moving to the next
+  // row
+  // see description in saveEditvalues
+  cellEditEnd : function (editCompletionEvent, newValue, ficCallDone) {
+    var rowNum = this.getEditRow(), colNum = this.getEditCol();
+    if (ficCallDone) {
+      // get new value as the row can have changed
+      this.Super('cellEditEnd', [editCompletionEvent, this.getEditValue(rowNum, colNum), ficCallDone]);
+      return;
+    } else {
+      var editForm = this.getEditForm(), focusItem = editForm.getFocusItem();
+      if (focusItem) {
+        focusItem.updateValue();
+        editForm.handleItemChange(focusItem);
+        if (editForm.inFicCall) {
+          // use editValues object as the edit form will be re-used for a next row
+          var editValues = this.getEditValues(rowNum);
+          editValues.actionAfterFicReturn = {
+            target: this,
+            method: this.cellEditEnd,
+            parameters: [editCompletionEvent, newValue, true]
+          };
+          return;
+        }
+      }      
+    }    
+    this.Super('cellEditEnd', arguments);
   },
   
   // saveEditedValues: when saving, first check if a FIC call needs to be done to update to the 
@@ -1410,7 +1506,7 @@ isc.OBViewGrid.addProperties({
   },
   
   // is called when clicking a header
-  hideInlineEditor: function(){
+  hideInlineEditor: function(focusInBody, suppressCMHide) {
     var rowNum = this.getEditRow(), record = this.getRecord(rowNum);
     
     // clear the errors so that they don't show up at the next row
@@ -1424,7 +1520,8 @@ isc.OBViewGrid.addProperties({
     } else if (this.getEditForm().getValues().editColumnLayout) {
       this.getEditForm().getValues().editColumnLayout.showEditOpen();
     }
-    return this.Super('hideInlineEditor', arguments);
+    // always hide the clickmask, as it needs to be re-applied
+    return this.Super('hideInlineEditor', [focusInBody, false]);
   },
   
   getEditDisplayValue: function(rowNum, colNum, record){
@@ -1797,7 +1894,7 @@ isc.OBGridButtonsComponent.addProperties({
   record: null,
   
   initWidget: function(){
-    var me = this, formButton, cancelButton, saveButton;
+    var me = this, formButton, saveButton;
     
     this.progressIcon = isc.Img.create(this.grid.progressIconDefaults);
     
@@ -1847,7 +1944,8 @@ isc.OBGridButtonsComponent.addProperties({
       }
     });
     
-    cancelButton = isc.OBGridToolStripIcon.create({
+    // is referred to in OBViewForm.showClickMask
+    this.cancelButton = isc.OBGridToolStripIcon.create({
       buttonType: 'cancel',
       prompt: OB.I18N.getLabel('OBUIAPP_GridCancelButtonPrompt'),
       action: function(){
@@ -1872,7 +1970,7 @@ isc.OBGridButtonsComponent.addProperties({
     buttonSeparator2 = isc.OBGridToolStripSeparator.create({});
     
     this.OBGridToolStrip = isc.OBGridToolStrip.create({
-      members: [formButton, this.buttonSeparator1, this.editButton, cancelButton, buttonSeparator2, saveButton]
+      members: [formButton, this.buttonSeparator1, this.editButton, this.cancelButton, buttonSeparator2, saveButton]
     });
     
     this.addMember(this.progressIcon);

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -156,8 +156,7 @@ public class UIReferenceUtility {
     } else if (reference.equals("20")) {
       // YESNO
       result = "COALESCE(" + field + ", 'N')";
-    } else if (reference.equals("23")) {
-      // Binary
+    } else if (reference.equals("23") /* Binary */|| reference.equals("14")/* Text */) {
       result = field;
     } else {
       result = "COALESCE(TO_CHAR(" + field + "),'')";

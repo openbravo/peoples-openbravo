@@ -84,7 +84,7 @@ public class DalMappingGenerator implements OBSingleton {
       sb.append(entityMapping);
     }
     final String mainTemplate = readFile(MAIN_TEMPLATE_FILE);
-    final String result = mainTemplate.replace("content", sb.toString());
+    final String result = mainTemplate.replace("contentPlaceholder", sb.toString());
 
     if (log.isDebugEnabled()) {
       log.debug(result);

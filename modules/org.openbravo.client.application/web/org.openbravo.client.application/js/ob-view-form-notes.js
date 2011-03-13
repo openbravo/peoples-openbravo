@@ -81,6 +81,8 @@ isc.OBNoteLayout.addProperties({
 
     // XXX this needs to be generated via a component template? 
     noteDSId: '090A37D22E61FE94012E621729090048',
+    
+    noteListGrid: null,
 
     /**
      * Saves the note to the DB.
@@ -206,7 +208,7 @@ isc.OBNoteLayout.addProperties({
                 var view = this.layout.getForm().view;
                 criteria['table'] = view.standardProperties.inpTableId;
                 criteria['record'] = view.viewGrid.getSelectedRecord().id;
-                criteria[OB.Constants.ORDERBY_PARAMETER] = 'updated desc';
+                //criteria[OB.Constants.ORDERBY_PARAMETER] = 'updated desc';
                 return criteria;
             },
 

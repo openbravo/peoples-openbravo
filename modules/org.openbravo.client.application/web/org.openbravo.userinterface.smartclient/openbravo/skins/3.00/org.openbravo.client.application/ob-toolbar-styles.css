@@ -130,6 +130,12 @@
   background-image: url(./images/toolbar/iconButton-savecloseX.png);
 }
 
+.OBToolbarIconButton_icon_link {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/toolbar/iconButton-link.png);
+}
+
 .OBToolbarIconButton_icon_createCopy {
   background-repeat: no-repeat;
   background-position: center center;

@@ -90,15 +90,10 @@ isc.OBMyOpenbravo.addProperties({
   adminMode: false,
   adminLevel: '',
   adminLevelValue: '',
-
-  initWidget: function(args){
-    var me = this, i, widgetInstance, recentViewsLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
     
-    // TODO: styling
-    // the recent view links copied from the quick launch/quick create
-    // and menu
-    // TODO: should this be updated every time the user makes a selection
-    // in the quick launch/create and menu?
+  initWidget: function(args){
+    var me = this, i, widgetInstance, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
+    
     recentViewsLayout = isc.VLayout.create({});
     recentViewsLayout.addMember(isc.Label.create({
       height: 1,
@@ -120,6 +115,27 @@ isc.OBMyOpenbravo.addProperties({
       }
     });
 
+    recentDocumentsLayout = isc.VLayout.create({});
+    recentDocumentsLayout.addMember(isc.Label.create({
+      height: 1,
+      overflow: 'visible',
+      baseStyle: 'OBMyOBRecentViews',
+      contents: OB.I18N.getLabel('OBKMO_RecentDocuments')
+    }));
+
+    recentDocumentsLinksLayout = isc.VLayout.create({
+      height: 1,
+      overflow: 'visible'
+    });
+    recentDocumentsLayout.addMember(recentDocumentsLinksLayout);
+    this.setRecentDocumentsList(recentDocumentsLinksLayout);
+
+    OB.PropertyStore.addListener(function(propertyName, currentValue, newValue){
+      if (propertyName === 'OBUIAPP_RecentDocumentsList') {
+        me.setRecentDocumentsList(recentDocumentsLinksLayout);
+      }
+    });
+    
     var actionTitle = isc.VLayout.create({
       height: 1,
       overflow: 'visible'
@@ -198,7 +214,7 @@ isc.OBMyOpenbravo.addProperties({
       width: '15%',
       height: 1,
       overflow: 'visible',
-      members: [recentViewsLayout, isc.LayoutSpacer.create({
+      members: [recentViewsLayout, recentDocumentsLayout, isc.LayoutSpacer.create({
         height: 5
       }), actionTitle, refreshLayout, addWidgetLayout]
     });
@@ -412,6 +428,52 @@ isc.OBMyOpenbravo.addProperties({
             });
             entryLayout.addMember(newIcon);
           }
+          layout.addMember(entryLayout);
+        }
+      }
+      layout.markForRedraw();
+    }
+  },
+  
+  setRecentDocumentsList: function(layout){
+    var recentList, newRecent, recentIndex = 0, recent, lbl, newIcon, entryLayout, icon;
+    // start with a fresh content
+    layout.removeMembers(layout.members);
+    
+    // reads the list of recents and displays them
+    recentList = OB.Layout.ViewManager.recentManager.getRecentValue('OBUIAPP_RecentDocumentsList');
+    if (recentList && recentList.length > 0) {
+    
+      handleClickFunction = function(){
+        OB.Layout.ViewManager.openView(this.recent.viewId, this.recent);
+      };
+
+      for (; recentIndex < recentList.length; recentIndex++) {
+        if (recentList[recentIndex]) {
+          recent = recentList[recentIndex];
+          recent.command = 'DEFAULT';
+          
+          lbl = isc.Label.create({
+            contents: OB.Utilities.truncTitle(recent.recentTitle, 20),
+            recent: recent,
+            wrap: false,
+            width: '100%',
+            showHover: true,
+            showPrompt: true,
+            prompt: recent.tabTitle + ' - ' + recent.recentTitle,            
+            baseStyle: 'OBMyOBRecentViewsEntry',
+            handleClick: handleClickFunction,
+            iconOrientation: 'left',
+            icon: '[SKINIMG]../../org.openbravo.client.myob/images/management/IconRecentDocs.png',
+            iconWidth: 13,
+            iconHeight: 15
+          });
+
+          entryLayout = isc.HLayout.create({
+            defaultLayoutAlign: 'center',
+            width: '100%'
+          });
+          entryLayout.addMember(lbl);
           layout.addMember(entryLayout);
         }
       }

@@ -439,7 +439,7 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
               </td> -->
               <td class="Combo_ContentCell" colspan="2">
                 <select id="paramTransactionType" name="inpTransactionType" class="ComboKey Combo_TwoCells_width required" onchange="showHideLayers();">
-                  <option value="P" selected="selected">Payment</option>
+                  <option value="P" selected="selected">Payment In/Out</option>
                   <option value="GL">GL Item</option>
                   <option value="F">Fee</option>
                 </select>
@@ -852,7 +852,7 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
                         <th class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox" width="25"> 
                           <input type="checkbox" name="inpAllLines" onclick="markAll(document.frmMain.inpPaymentId, this.checked); return true;"/>
                         </th>
-                        <th class="DataGrid_Header_Cell" width="250">Payment</th>
+                        <th class="DataGrid_Header_Cell" width="250">Payment In/Out</th>
                         <th class="DataGrid_Header_Cell" width="300">Description</th>
                         <th class="DataGrid_Header_Cell" width="70">Date</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Received In</th>
@@ -890,7 +890,7 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
                   <TABLE class="Button" align="center">
                     <TR>
                       <TD class="Button_left"><IMG class="Button_Icon Button_Icon_process" alt="AddPayment" title="AddPayment" src="../../../../../web/images/blank.gif" border="0"></IMG></TD>
-                      <TD class="Button_text">Add Payment</TD>
+                      <TD class="Button_text">Add Payment In/Out</TD>
                       <TD class="Button_right"></TD>
                     </TR>
                   </TABLE>

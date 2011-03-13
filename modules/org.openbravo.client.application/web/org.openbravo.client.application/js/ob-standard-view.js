@@ -207,6 +207,8 @@ isc.OBStandardView.addProperties({
         leftMemberButtons.push(isc.OBToolbarIconButton.create(this.iconToolbarButtons[i]));
       }
     }
+    // and add the direct link at the end
+    leftMemberButtons.push(isc.OBToolbarIconButton.create(isc.OBToolbar.LINK_BUTTON_PROPERTIES));
     
     this.toolBar = isc.OBToolbar.create({
       view: this,
@@ -462,6 +464,36 @@ isc.OBStandardView.addProperties({
     }
   },
   
+  getDirectLinkUrl: function() {
+    var url = window.location.href;
+    var qIndex = url.indexOf('?');
+    var dIndex = url.indexOf('#');
+    var index = -1;
+    if (dIndex != -1 && qIndex != -1) {
+      if (dIndex < qIndex) {
+        index = dIndex;
+      } else {
+        index = qIndex;
+      }
+    } else if (qIndex != -1) {
+      index = qIndex;
+    } else if (dIndex != -1) {
+      index = dIndex;
+    }
+    if (index != -1) {
+      url = url.substring(0, index);
+    }
+    
+    url = url + '?tabId=' + this.tabId;
+    if (this.isShowingForm && this.viewForm.isNew && this.isRootView) {      
+        url = url + '&command=NEW';      
+    } else if (this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length === 1) {
+      url = url + '&recordId=' + this.viewGrid.getSelectedRecord().id;
+    }
+
+    return url;
+  },
+  
   // ** {{{ addChildView }}} **
   // The addChildView creates the child tab and sets the pointer back to
   // this
@@ -533,6 +565,9 @@ isc.OBStandardView.addProperties({
       tabButton = window[this.standardWindow.viewTabId];
     }
     // enable this code to set the styleclass changes
+    if (!tabButton) {
+      return;
+    }
     if (active) {
       tabButton.setCustomState('');
     } else {
@@ -547,9 +582,24 @@ isc.OBStandardView.addProperties({
   isActiveView: function() {
     return this.standardWindow.activeView === this;
   },
-  
+    
   setAsActiveView: function(){
     this.standardWindow.setActiveView(this);
+  },
+  
+  setTargetRecordInWindow: function(recordId) {
+    if (this.isActiveView()) {
+      this.standardWindow.setTargetInformation(this.tabId, recordId);
+    }
+  },
+  
+  setRecentDocument: function(record) {
+    var params = this.standardWindow.getBookMarkParams();
+    params.targetTabId = this.tabId;
+    params.targetRecordId = record.id;
+    params.recentId = this.tabId + '_' + record.id;
+    params.recentTitle = record[OB.Constants.IDENTIFIER];
+    OB.Layout.ViewManager.addRecentDocument(params);
   },
   
   setActiveViewProps: function(state){
@@ -558,6 +608,10 @@ isc.OBStandardView.addProperties({
       this.activeBar.setActive(true);
       this.setViewFocus();
       this.viewGrid.setActive(true);
+      // if we are in form view
+      if (this.isShowingForm && !this.viewForm.isNew) {        
+        this.setTargetRecordInWindow(this.viewGrid.getSelectedRecord().id);
+      }
     } else {
       
       // close any editors we may have
@@ -755,17 +809,17 @@ isc.OBStandardView.addProperties({
   
   // ** {{{ editNewRecordGrid }}} **
   // Opens the inline grid editing for a new record.
-  editNewRecordGrid: function() {
+  editNewRecordGrid: function(rowNum) {
     if (this.isShowingForm) {
       this.switchFormGridVisibility();      
     }
-    this.viewGrid.startEditingNew();
+    this.viewGrid.startEditingNew(rowNum);
   },
   
   // ** {{{ editRecord }}} **
   // Opens the edit form and selects the record in the grid, will refresh
   // child views also
-  editRecord: function(record, preventFocus){
+  editRecord: function(record, preventFocus, focusFieldName){
 
     this.messageBar.hide();
     
@@ -782,7 +836,7 @@ isc.OBStandardView.addProperties({
       // also handle the case that there are unsaved values in the grid
       // show them in the form
       var rowNum = this.viewGrid.getRecordIndex(record);
-      this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus, this.viewGrid.recordHasChanges(rowNum));
+      this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus, this.viewGrid.recordHasChanges(rowNum), focusFieldName);
     }
   },
   
@@ -923,6 +977,7 @@ isc.OBStandardView.addProperties({
         this.editRecord(gridRecord);
       }
     }
+    this.setAsActiveView();
     
     // remove this info
     delete this.standardWindow.directTabInfo;
@@ -964,7 +1019,7 @@ isc.OBStandardView.addProperties({
   },
   
   hasSelectionStateChanged: function() {
-    return (this.viewGrid.getSelectedRecords().length !== this.lastRecordSelectedCount || 
+    return ((this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length !== this.lastRecordSelectedCount) || 
         (this.viewGrid.getSelectedRecord() && this.viewGrid.getSelectedRecord().id !== this.lastRecordSelected.id)) || 
       (this.lastRecordSelected && !this.viewGrid.getSelectedRecord());
   },
@@ -1137,11 +1192,10 @@ isc.OBStandardView.addProperties({
       tab.prompt = title;
       tab.showPrompt = true;
       tab.hoverWidth = 150;
-
-      if (title.length > 30) {
-        title = title.substring(0, 30) + "...";
-      }
-
+      
+      // trunc the title if it too large 
+      title = OB.Utilities.truncTitle(title);
+      
       // add the prefix/suffix here to prevent cutoff on that
       title = prefix + title + suffix;
       tabSet.setTabTitle(tab, title);
@@ -1217,16 +1271,26 @@ isc.OBStandardView.addProperties({
       return;
     }
     var record = this.viewGrid.getSelectedRecord();
-    var criteria = {};
-    criteria[OB.Constants.ID] = record.id;
-    // force a fetch from the server
-    criteria._dummy = new Date().getTime();
+    criteria = {
+        operator: 'and', 
+        _constructor: "AdvancedCriteria", 
+        criteria:[]};
+        
+    // add a dummy criteria to force a fetch
+    criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+
+    // and add a criteria for the record itself
+    criteria.criteria.push({
+      fieldName: OB.Constants.ID,
+      operator: 'equals',
+      value: record.id
+    });
     
     var me = this;
     var callback = function(resp, data, req) {
       // this line does not work, but it should:
 //      me.getDataSource().updateCaches(resp, req);
-      // therefore doe an explicit update of the visual components
+      // therefore do an explicit update of the visual components
       if (me.isShowingForm) {
         me.viewForm.refresh();
       }
@@ -1278,8 +1342,11 @@ isc.OBStandardView.addProperties({
           return;
         }
         var status = resp.status;
-        if (localData.hasOwnProperty('status')) {
+        if (localData && localData.hasOwnProperty('status')) {
           status = localData.status;
+        }
+        if (localData && localData.response && localData.response.hasOwnProperty('status')) {
+          status = localData.response.status;
         }
         if (status === isc.RPCResponse.STATUS_SUCCESS) {
           if (view.isShowingForm) {
@@ -1336,11 +1403,11 @@ isc.OBStandardView.addProperties({
     isc.ask(msg, callback);
   },
   
-  newRow: function() {
+  newRow: function(rowNum) {
     var actionObject = {
         target: this,
         method: this.editNewRecordGrid,
-        parameters: null
+        parameters: [rowNum]
       };
     this.standardWindow.doActionAfterAutoSave(actionObject, true);
   },
@@ -1366,16 +1433,11 @@ isc.OBStandardView.addProperties({
       // selected records
       grid = view.viewGrid;
     }
-    callback = function(ok){
-      if (ok) {
-        if (form) {
-          form.undo();
-        } else {
-          grid.undoEditSelectedRows();
-        }
-      }
-    };
-    isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmUndo', callback), callback);
+    if (form) {
+      form.undo();
+    } else {
+      grid.undoEditSelectedRows();
+    }
   },
   
   // ++++++++++++++++++++ Parent-Child Tab Handling ++++++++++++++++++++++++++
@@ -1539,15 +1601,15 @@ isc.OBStandardView.addProperties({
               if (type.createClassicString) {
                 contextInfo[properties[i].inpColumn] = type.createClassicString(value);
               } else {
-                contextInfo[properties[i].inpColumn] = this.convertContextValue(value);
+                contextInfo[properties[i].inpColumn] = this.convertContextValue(value, propertyObj.type);
               }
             } else {
-              contextInfo[properties[i].inpColumn] = this.convertContextValue(value);
+              contextInfo[properties[i].inpColumn] = this.convertContextValue(value, propertyObj.type);
             }
           } else {
             // surround the property name with @ symbols to make them different
             // from filter criteria and such          
-            contextInfo['@' + this.entity + '.' + properties[i].property + '@'] = this.convertContextValue(value);
+            contextInfo['@' + this.entity + '.' + properties[i].property + '@'] = this.convertContextValue(value, propertyObj.type);
           }
         }
       }
@@ -1584,15 +1646,20 @@ isc.OBStandardView.addProperties({
     return contextInfo;
   },
   
-  convertContextValue: function(value) {
+  convertContextValue: function(value, type) {
     if (isc.isA.Date(value)) {
-      // this prevents strange timezone issues, the result is a timezoneless
-      // string
-      var oldXMLSchemaMode = isc.Comm.xmlSchemaMode;
-      isc.Comm.xmlSchemaMode = true;
-      var ret = value.toSerializeableDate();
-      isc.Comm.xmlSchemaMode = oldXMLSchemaMode;
-      return ret;
+      var ret, isTime = type && isc.SimpleType.getType(type).inheritsFrom === 'time';
+      if (isTime) {
+        return value.getUTCHours() + ':' + value.getUTCMinutes() + ':' + value.getUTCSeconds();
+      } else {
+        // this prevents strange timezone issues, the result is a timezoneless
+        // string
+        var oldXMLSchemaMode = isc.Comm.xmlSchemaMode;
+        isc.Comm.xmlSchemaMode = true;
+        ret = value.toSerializeableDate();
+        isc.Comm.xmlSchemaMode = oldXMLSchemaMode;
+        return ret;
+      }
     }
     return value;
   },
@@ -1621,6 +1688,7 @@ isc.OBStandardView.addProperties({
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
       MODE: 'SETSESSION',
       TAB_ID: this.viewGrid.view.tabId,
+      PARENT_ID: this.viewGrid.view.getParentId(),
       ROW_ID: this.viewGrid.getSelectedRecord()?this.viewGrid.getSelectedRecord().id:this.viewGrid.view.getCurrentValues().id
     }, callbackFunction);
   },

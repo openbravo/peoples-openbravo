@@ -21,9 +21,10 @@ package org.openbravo.client.myob;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.NonUniqueResultException;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDao;
-import org.openbravo.dal.service.OBDao.Constraint;
 
 /**
  * Responsible for creating the URL Widgets.
@@ -53,12 +54,17 @@ public class URLWidgetProvider extends WidgetProvider {
       final JSONObject jsonObject = super.getWidgetClassDefinition();
       final JSONObject parameters = new JSONObject();
       jsonObject.put(WidgetProvider.PARAMETERS, parameters);
-      final WidgetURL widgetURL = OBDao.getOneInstance(WidgetURL.class, new Constraint(
-          WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass()));
-      if (widgetURL != null) {
-        parameters.put(SRC, widgetURL.getURL());
-      } else {
-        log.warn("URLWidget does not have a URL defined.");
+      try {
+        final WidgetURL widgetURL = (WidgetURL) OBDao.getFilteredCriteria(WidgetURL.class,
+            Expression.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass())).uniqueResult();
+        if (widgetURL != null) {
+          parameters.put(SRC, widgetURL.getURL());
+        } else {
+          log.warn("URLWidget does not have a URL defined.");
+          parameters.put(SRC, "");
+        }
+      } catch (NonUniqueResultException e) {
+        log.warn("URLWidget has more than one active URL defined.", e);
         parameters.put(SRC, "");
       }
       if (jsonObject.getJSONArray(WidgetProvider.FIELDDEFINITIONS).length() > 0) {
@@ -72,21 +78,23 @@ public class URLWidgetProvider extends WidgetProvider {
   }
 
   public JSONObject getWidgetInstanceDefinition(WidgetInstance widgetInstance) {
+    final JSONObject jsonObject = new JSONObject();
     try {
-      final JSONObject jsonObject = new JSONObject();
       addDefaultWidgetProperties(jsonObject, widgetInstance);
       final JSONObject parameters = jsonObject.getJSONObject(WidgetProvider.PARAMETERS);
-      final WidgetURL widgetURL = OBDao.getOneInstance(WidgetURL.class, new Constraint(
-          WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass()));
+      final WidgetURL widgetURL = (WidgetURL) OBDao.getFilteredCriteria(WidgetURL.class,
+          Expression.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass())).uniqueResult();
       if (widgetURL != null) {
         parameters.put(SRC, widgetURL.getURL());
       } else {
         log.error("No url widget defined for widget class " + widgetInstance.getWidgetClass());
       }
-      return jsonObject;
+    } catch (NonUniqueResultException e) {
+      log.error("More than one active url defined for widget " + widgetInstance.getWidgetClass(), e);
     } catch (Exception e) {
       throw new OBException(e);
     }
+    return jsonObject;
   }
 
   @Override

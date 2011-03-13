@@ -651,7 +651,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 						style="Detail_Header"
 						x="18"
 						y="47"
-						width="307"
+						width="276"
 						height="16"
 						key="element-90"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -668,9 +668,9 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="395"
+						x="374"
 						y="47"
-						width="70"
+						width="80"
 						height="16"
 						key="element-90"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -687,9 +687,9 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="325"
+						x="294"
 						y="47"
-						width="70"
+						width="80"
 						height="16"
 						key="element-90"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -706,9 +706,9 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="465"
+						x="454"
 						y="47"
-						width="70"
+						width="80"
 						height="16"
 						key="element-90"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -897,7 +897,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 						style="Detail_Red"
 						x="0"
 						y="0"
-						width="307"
+						width="276"
 						height="14"
 						key="textField-4"/>
 					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -913,9 +913,9 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Detail_Red"
-						x="307"
+						x="275"
 						y="0"
-						width="70"
+						width="80"
 						height="14"
 						key="textField-5"/>
 					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -931,9 +931,9 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Detail_Red"
-						x="377"
+						x="355"
 						y="0"
-						width="70"
+						width="80"
 						height="14"
 						key="textField-6"/>
 					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -949,9 +949,9 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Detail_Red"
-						x="447"
+						x="436"
 						y="0"
-						width="70"
+						width="80"
 						height="14"
 						key="textField-7"/>
 					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

@@ -247,6 +247,12 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
 
+    if (isReceipt)
+      xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentIn", vars
+          .getLanguage()));
+    else
+      xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentOut", vars
+          .getLanguage()));
     xmlDocument.setParameter("dateDisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paymentDate", DateTimeData.today(this));
     xmlDocument.setParameter("businessPartner", strBPfromInvoice);

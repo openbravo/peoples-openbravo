@@ -111,6 +111,7 @@ BEGIN
       cur_order_schdet_ISOPEN BOOLEAN:=false;
       fetch_next_order_item BOOLEAN:=true;
       v_TargetDocBaseType C_DOCTYPE.DocBaseType%TYPE;
+      v_isReversal C_DOCTYPE.IsReversal%TYPE;
       v_MultiplierARC NUMBER:=1;
       v_pendingAmount NUMBER;
       v_plannedDate DATE;
@@ -161,11 +162,11 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20000, '@APRM_INVOICE_MAN_PAYMENTS@');
       END IF;
       -- Is it a Credit Memo
-      SELECT docbasetype
-        INTO v_TargetDocBaseType
+      SELECT docbasetype, isreversal
+        INTO v_TargetDocBaseType, v_isReversal
       FROM c_doctype
       WHERE c_doctype_id=v_DocTypeTarget_ID;
-      IF v_TargetDocBaseType in ('ARC','APC') THEN
+      IF (v_TargetDocBaseType in ('ARC','APC') or v_isReversal='Y') THEN
         v_MultiplierARC:=-1;
       END IF;
 
