@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2011 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -51,6 +51,11 @@
     v_src_ad_module_lang VARCHAR(6);
     Row_Src_Field AD_Field%ROWTYPE;
     Row_Dest_Field_Trl AD_Field_Trl%ROWTYPE;
+
+    v_field_name NVARCHAR2(60);
+    v_field_desc NVARCHAR2(255);
+    v_field_help NVARCHAR2(2000);
+    assigned BOOLEAN;
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -153,6 +158,7 @@
       LOOP
         -- ------------------------------------------------------------------
         -- ------------------  AD_Tab_Copy has copied code ------------------
+	assigned := false;
         AD_Sequence_Next('AD_Field', Cur_Fields.AD_Client_ID, v_NextNo_F) ;
       
        --- if the source and dest language are different then retrieve translatable values (name, description, etc) from an appropriate field translation (if there is such) 
@@ -160,7 +166,18 @@
           SELECT COUNT(*) INTO v_trl_count FROM AD_Field_Trl WHERE AD_Field_Id=Cur_Fields.AD_Field_Id AND AD_Language=v_dest_ad_module_lang;
           IF(v_trl_count =1) THEN
             SELECT * INTO Row_Dest_Field_Trl FROM AD_Field_Trl WHERE AD_Field_Id=Cur_Fields.AD_Field_Id AND AD_Language=v_dest_ad_module_lang;    
+               
+            v_field_name := Row_Dest_Field_Trl.Name;
+            v_field_desc := Row_Dest_Field_Trl.Description;
+            v_field_help := Row_Dest_Field_Trl.Help;
+            assigned := true;
           END IF;
+        END IF;
+
+        IF (NOT assigned) THEN
+          v_field_name := Cur_Fields.Name;
+          v_field_desc := Cur_Fields.Description;
+          v_field_help := Cur_Fields.Help;
         END IF;
 
         -- copy the field taking the translatable colums fields (name, description, etc) 
@@ -180,7 +197,7 @@
           (
             v_NextNo_F, v_NextNo_T, Cur_Fields.AD_Client_ID, Cur_Fields.AD_Org_ID,
             Cur_Fields.IsActive, now(), '0', now(), '0',
-            COALESCE (Row_Dest_Field_Trl.Name, Cur_Fields.Name), COALESCE (Row_Dest_Field_Trl.Description, Cur_Fields.Description), COALESCE (Row_Dest_Field_Trl.Help, Cur_Fields.Help), 
+            v_field_name, v_field_desc, v_field_help,
             Cur_Fields.IsCentrallyMaintained, Cur_Fields.AD_Column_ID, Cur_Fields.AD_FieldGroup_ID, Cur_Fields.ISDISPLAYED,
             Cur_Fields.DISPLAYLOGIC, Cur_Fields.DISPLAYLENGTH, Cur_Fields.ISREADONLY,
             Cur_Fields.SEQNO, Cur_Fields.SORTNO, Cur_Fields.ISSAMELINE, 
