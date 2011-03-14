@@ -504,7 +504,12 @@ OB.ViewFormProperties = {
 
     if (this.validateAfterFicReturn) {
       delete this.validateAfterFicReturn;
-      this.validate();
+      // only validate the fields which have errors
+      for (i = 0; i < this.getFields().length; i++) {
+        if (this.hasFieldErrors(this.getFields()[i].name)) {
+          this.getFields()[i].validate();
+        }
+      }
     }
 
     this.markForRedraw();
