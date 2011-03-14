@@ -13,7 +13,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo S.L.U. 
+ * All portions are Copyright (C) 2001-2011 Openbravo S.L.U. 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,6 +71,17 @@ var baseDirectory = "../../../../../web/";
 	function onResizeDo(){
 		resizeArea();
 	}
+	
+	function savePreferences(){
+      if (getFrame('LayoutMDI') && getFrame('LayoutMDI').OB) {
+        // If using 3.0 layout, set in PropertyStore the preferences used in 3.0 style windows
+        var OB = getFrame('LayoutMDI').OB;
+        
+        OB.PropertyStore.set('ShowTrl', document.frmMain.inpTranslate.checked?'Y':'N', null, true);
+        OB.PropertyStore.set('ShowAcct', document.frmMain.inpAccounting.checked?'Y':'N', null, true);
+      }
+      submitCommandForm('SAVE_PREFERENCES', false, null, 'ShowSessionPreferences.html', '_self');
+    }
 	</script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();" id="paramMessage">
@@ -425,7 +436,7 @@ var baseDirectory = "../../../../../web/";
                       <button type="button" 
                         id="buttonSave" 
                         class="ButtonLink" 
-                        onclick="submitCommandForm('SAVE_PREFERENCES', false, null, 'ShowSessionPreferences.html', '_self');return false;" 
+                        onclick="savePreferences(); return false;" 
                         onfocus="buttonEvent('onfocus', this); window.status='Save'; return true;" 
                         onblur="buttonEvent('onblur', this);" 
                         onkeyup="buttonEvent('onkeyup', this);" 
