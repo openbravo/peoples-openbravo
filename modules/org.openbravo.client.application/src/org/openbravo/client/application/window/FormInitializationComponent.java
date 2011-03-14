@@ -401,15 +401,6 @@ public class FormInitializationComponent extends BaseActionHandler {
           jsonobject = new JSONObject(value);
           columnValues.put("inp"
               + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
-          // We need to fire callouts if the field is a combo
-          // (due to how ComboReloads worked, callouts were always called)
-          if (mode.equals("NEW")
-              && (uiDef instanceof EnumUIDefinition || uiDef instanceof FKComboUIDefinition)
-              && field.getColumn().isValidateOnNew()) {
-            if (field.getColumn().getCallout() != null) {
-              addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
-            }
-          }
           setRequestContextParameter(field, jsonobject);
           // We also set the session value for the column in Edit or SetSession mode
           if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
@@ -419,11 +410,27 @@ public class FormInitializationComponent extends BaseActionHandler {
                   .has("classicValue") ? jsonobject.get("classicValue") : null);
             }
           }
-
         }
       } catch (Exception e) {
         throw new OBException(
             "Couldn't get data for column " + field.getColumn().getDBColumnName(), e);
+      }
+    }
+
+    for (Field field : tab.getADFieldList()) {
+      String columnId = field.getColumn().getId();
+      UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(columnId);
+      // We need to fire callouts if the field is a combo
+      // (due to how ComboReloads worked, callouts were always called)
+      if (columnValues.get("inp"
+          + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())) != null) {
+        if (mode.equals("NEW")
+            && (uiDef instanceof EnumUIDefinition || uiDef instanceof FKComboUIDefinition)
+            && field.getColumn().isValidateOnNew()) {
+          if (field.getColumn().getCallout() != null) {
+            addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
+          }
+        }
       }
     }
   }
@@ -941,10 +948,10 @@ public class FormInitializationComponent extends BaseActionHandler {
     if (!resp.contains("new Array(")) {
       return null;
     }
-    Context cx = Context.enter();
-    Scriptable scope = cx.initStandardObjects();
-    cx.evaluateString(scope, resp, "<cmd>", 1, null);
     try {
+      Context cx = Context.enter();
+      Scriptable scope = cx.initStandardObjects();
+      cx.evaluateString(scope, resp, "<cmd>", 1, null);
       NativeArray array = (NativeArray) scope.get("respuesta", scope);
       Object calloutName = scope.get("calloutName", scope);
       String calloutNameS = calloutName == null ? null : calloutName.toString();
