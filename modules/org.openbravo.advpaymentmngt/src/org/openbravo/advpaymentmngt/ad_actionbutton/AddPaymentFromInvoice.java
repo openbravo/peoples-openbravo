@@ -315,10 +315,10 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
     // Currency
     xmlDocument.setParameter("CurrencyId", strCurrencyId);
+    final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
     OBContext.setAdminMode();
     try {
-      xmlDocument.setParameter("precision", dao.getObject(Currency.class, strCurrencyId)
-          .getStandardPrecision().toString());
+      xmlDocument.setParameter("precision", paymentCurrency.getStandardPrecision().toString());
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -340,6 +340,19 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency.getStandardPrecision().toString());
     }
 
+    String exchangeRate = "1.0";
+    if( !financialAccountCurrency.equals(paymentCurrency)) {
+      final CurrencyDao currencyDao = new CurrencyDao();
+      final ConversionRate conversionRate = currencyDao.getConversionRate(paymentCurrency, financialAccountCurrency, new Date());
+      if( conversionRate != null ) {
+        exchangeRate = Convert.toStringWithPrecision(conversionRate.getMultipleRateBy(),
+            CurrencyDao.CONVERSION_RATE_PRECISION);
+      } else {
+        exchangeRate = "";
+      }
+    }
+    xmlDocument.setParameter("exchangeRate", exchangeRate);
+    
     boolean forcedFinancialAccountTransaction = false;
     forcedFinancialAccountTransaction = isForcedFinancialAccountTransaction(isReceipt,
         strFinancialAccountId, strPaymentMethodId);
