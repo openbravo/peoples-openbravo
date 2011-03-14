@@ -448,21 +448,17 @@ isc.OBSelectorItem.addProperties({
       requestProperties.params[OB.Constants.ORG_PARAMETER] = requestProperties.params.inpadOrgId;
     }
     
+    var criteria = this.getPickListFilterCriteria();
+    for (var i = 0; i < criteria.criteria.length; i++) {
+      if (criteria.criteria[i].fieldName === this.displayField) {
+        // for the suggestion box it is one big or
+        requestProperties.params[OB.Constants.OR_EXPRESSION] = 'true';
+      }
+    }
+
+    
     // adds the selector id to filter used to get filter information
     requestProperties.params._selectorDefinitionId = this.selectorDefinitionId;
-    
-    // only filter if the display field is also passed
-    // the displayField filter is not passed when the user clicks the drop-down button
-    if (requestProperties.params[this.displayField]) {
-      for (var i = 0; i < this.extraSearchFields.length; i++) {
-        if (!requestProperties.params[this.extraSearchFields[i]]) {
-          requestProperties.params[this.extraSearchFields[i]] = requestProperties.params[this.displayField];
-        }
-      }
-      
-      // for the suggestion box it is one big or
-      requestProperties.params[OB.Constants.OR_EXPRESSION] = 'true';
-    }
     
     // add field's default filter expressions
     requestProperties.params.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
@@ -475,6 +471,32 @@ isc.OBSelectorItem.addProperties({
     requestProperties.params[OB.Constants.SORTBY_PARAMETER] = this.displayField;
     
     return this.Super('filterDataBoundPickList', [requestProperties, dropCache]);
+  },
+  
+  getPickListFilterCriteria: function() {
+    var crit = this.Super('getPickListFilterCriteria', arguments);
+    this.pickList.data.useClientFiltering = false;
+    var criteria = { operator: 'or',
+                     _constructor: 'AdvancedCriteria',
+                     criteria:[]};
+    // only filter if the display field is also passed
+    // the displayField filter is not passed when the user clicks the drop-down button
+    // display field is passed on the criteria.
+    if (crit[this.displayField]) {
+      for (var i = 0; i < this.extraSearchFields.length; i++) {
+        criteria.criteria.push({
+          fieldName: this.extraSearchFields[i],
+          operator: 'iContains',
+          value: crit[this.displayField]
+        });
+      }
+      criteria.criteria.push({
+        fieldName: this.displayField,
+        operator: 'iContains',
+        value: crit[this.displayField]
+      });
+    }
+    return criteria;
   },
   
   mapValueToDisplay : function (value) {
