@@ -29,7 +29,9 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.event.EntityNewEvent;
+import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
+import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -51,41 +53,49 @@ public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
   private static Property[] documentTypeProperties = null;
   private static Property[] documentTypeTargetProperties = null;
 
+  public void onUpdate(@Observes EntityUpdateEvent event) {
+    handleEvent(event);
+  }
+
   public void onSave(@Observes EntityNewEvent event) {
+    handleEvent(event);
+  }
 
-    if (isValidEvent(event)) {
-      int index = 0;
-      for (int i = 0; i < entities.length; i++) {
-        if (entities[i] == event.getTargetInstance().getEntity()) {
-          index = i;
-          break;
-        }
+  private void handleEvent(EntityPersistenceEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    int index = 0;
+    for (int i = 0; i < entities.length; i++) {
+      if (entities[i] == event.getTargetInstance().getEntity()) {
+        index = i;
+        break;
       }
-      Entity entity = entities[index];
-      Property documentNoProperty = documentNoProperties[index];
-      Property documentTypeProperty = documentTypeProperties[index];
-      Property docTypeTargetProperty = documentTypeTargetProperties[index];
+    }
+    Entity entity = entities[index];
+    Property documentNoProperty = documentNoProperties[index];
+    Property documentTypeProperty = documentTypeProperties[index];
+    Property docTypeTargetProperty = documentTypeTargetProperties[index];
 
-      String documentNo = (String) event.getCurrentState(documentNoProperty);
-      if (documentNo == null || documentNo.startsWith("<")) {
-        final DocumentType docTypeTarget = (docTypeTargetProperty == null ? null
-            : (DocumentType) event.getCurrentState(docTypeTargetProperty));
-        final DocumentType docType = (documentTypeProperty == null ? null : (DocumentType) event
-            .getCurrentState(documentTypeProperty));
-        // use empty strings instead of null
-        final String docTypeTargetId = docTypeTarget != null ? docTypeTarget.getId() : "";
-        final String docTypeId = docType != null ? docType.getId() : "";
-        String windowId = RequestContext.get().getRequestParameter("windowId");
-        if (windowId == null) {
-          windowId = "";
-        }
-
-        // recompute it
-        documentNo = Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
-            new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(),
-            windowId, entity.getTableName(), docTypeTargetId, docTypeId, false, true);
-        event.setCurrentState(documentNoProperty, documentNo);
+    String documentNo = (String) event.getCurrentState(documentNoProperty);
+    if (documentNo == null || documentNo.startsWith("<")) {
+      final DocumentType docTypeTarget = (docTypeTargetProperty == null ? null
+          : (DocumentType) event.getCurrentState(docTypeTargetProperty));
+      final DocumentType docType = (documentTypeProperty == null ? null : (DocumentType) event
+          .getCurrentState(documentTypeProperty));
+      // use empty strings instead of null
+      final String docTypeTargetId = docTypeTarget != null ? docTypeTarget.getId() : "";
+      final String docTypeId = docType != null ? docType.getId() : "";
+      String windowId = RequestContext.get().getRequestParameter("windowId");
+      if (windowId == null) {
+        windowId = "";
       }
+
+      // recompute it
+      documentNo = Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
+          new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), windowId,
+          entity.getTableName(), docTypeTargetId, docTypeId, false, true);
+      event.setCurrentState(documentNoProperty, documentNo);
     }
   }
 
