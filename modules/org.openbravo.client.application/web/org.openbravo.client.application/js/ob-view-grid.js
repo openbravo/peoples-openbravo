@@ -150,6 +150,14 @@ isc.OBViewGrid.addProperties({
     useClientFiltering: false,
     useClientSorting: false,
     
+    // overridden to update the context/request properties for the fetch
+    fetchRemoteData : function (serverCriteria, startRow, endRow) {
+      var requestProperties = this.context;
+      this.grid.getFetchRequestParams(requestProperties.params);
+
+      return this.Super('fetchRemoteData', arguments);
+    },
+    
     transformData: function(newData, dsResponse){
       // only do this stuff for fetch operations, in other cases strange things
       // happen as update/delete operations do not return the totalRows parameter
@@ -170,10 +178,6 @@ isc.OBViewGrid.addProperties({
         this.localData[dsResponse.totalRows] = null;
       }
     }
-  },
-
-  refreshFields: function(){
-    this.setFields(this.completeFields.duplicate());
   },
   
   initWidget: function(){
@@ -244,6 +248,15 @@ isc.OBViewGrid.addProperties({
     '</span>';
     
     return ret;
+  },
+
+  setData: function(data) {
+    data.grid = this;
+    this.Super('setData', arguments);
+  },
+
+  refreshFields: function(){
+    this.setFields(this.completeFields.duplicate());
   },
   
   // add the properties from the form
@@ -705,7 +718,7 @@ isc.OBViewGrid.addProperties({
     
   convertCriteria: function(criteria){
     var selectedValues, prop, fld, value, i, criterion, fldName;
-    
+
     if (!criteria) {
       criteria = {
         operator: 'and', 
@@ -805,9 +818,11 @@ isc.OBViewGrid.addProperties({
   
   getFetchRequestParams: function(params) {
     params = params || {};
-            
+    
     if (this.targetRecordId) {
       params._targetRecordId = this.targetRecordId;
+      // remove the filter clause we don't want to use it anymore
+      this.filterClause = null;
     }
 
     // prevent the count operation
