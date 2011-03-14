@@ -199,6 +199,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       else
         resp.setStatusofstate(defaultState);
     } catch (Exception e) {
+      // We need to use printStackTrace here because if not, the log will not be shown
+      e.printStackTrace();
     } finally {
       try {
         releasePreparedStatement(ps3);
@@ -235,6 +237,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       out.print(strResult);
       out.close();
     } catch (Exception e) {
+      // We need to use printStackTrace here because if not, the log will not be shown
+      e.printStackTrace();
     } finally {
       if (ps != null)
         try {
@@ -271,7 +275,9 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       strResult = xs.toXML(resp);
       out.print(strResult);
       out.close();
-    } catch (IOException e) {
+    } catch (Exception e) {
+      // We need to use printStackTrace here because if not, the log will not be shown
+      e.printStackTrace();
     }
   }
 
@@ -328,7 +334,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
       } else {
         finalStep = build.getMainSteps().get(build.getMainSteps().size() - 1);
       }
-      if (vars.getLanguage().equals("en_US")) {
+      if (vars.getLanguage().equals("en_US")
+          || ApplyModules.getBuildTranslationFromFile(vars.getLanguage()) == null) {
         if (finalMessageType.equals("Error")) {
           error.setMessage(finalStep.getErrorMessage());
         } else if (finalMessageType.equals("Warning")) {
@@ -394,6 +401,8 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
         ps3.executeUpdate();
       }
     } catch (Exception e) {
+      // We need to use printStackTrace here because if not, the log will not be shown
+      e.printStackTrace();
     }
   }
 
