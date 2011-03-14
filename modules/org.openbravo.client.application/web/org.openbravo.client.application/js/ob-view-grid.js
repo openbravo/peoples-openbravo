@@ -1185,7 +1185,8 @@ isc.OBViewGrid.addProperties({
     }
     
     this.updateSelectedCountDisplay();
-    
+    this.view.toolBar.updateButtonState(true);
+
     // mark some redraws if there are lines which don't
     // have a checkbox flagged, so if we move from single record selection
     // to multi record selection
