@@ -856,6 +856,8 @@ OB.ViewFormProperties = {
         
         view.setRecentDocument(this.getValues());
         
+        view.updateLastSelectedState();
+        
         if (form.isNew) {
           view.refreshChildViews();
         }

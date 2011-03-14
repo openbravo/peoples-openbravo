@@ -503,6 +503,7 @@ isc.OBStandardView.addProperties({
         (childView.isAcctTab && OB.PropertyStore.get('ShowAcct', this.windowId) !== 'Y')){
       return;
     }
+    
     this.standardWindow.addView(childView);
     
     childView.parentView = this;
@@ -1014,6 +1015,10 @@ isc.OBStandardView.addProperties({
   // function is called with a small delay to handle the case that a user
   // navigates quickly over a grid
   delayedRecordSelected: function() {
+    // is actually a different parent selected, only then refresh children
+    var differentRecordId = !this.lastRecordSelected || !this.viewGrid.getSelectedRecord() ||
+      this.viewGrid.getSelectedRecord().id !== this.lastRecordSelected.id;
+      
     this.updateLastSelectedState();
     this.updateTabTitle();    
     this.toolBar.updateButtonState(this.isEditingGrid || this.isShowingForm);
@@ -1021,7 +1026,7 @@ isc.OBStandardView.addProperties({
     var tabViewPane = null;
     
     // refresh the tabs
-    if (this.childTabSet) {
+    if (this.childTabSet && differentRecordId) {
       for (var i = 0; i < this.childTabSet.tabs.length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
         tabViewPane.doRefreshContents(true);
