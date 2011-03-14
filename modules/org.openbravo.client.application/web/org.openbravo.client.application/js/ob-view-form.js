@@ -627,10 +627,13 @@ OB.ViewFormProperties = {
           }
           field.valueMap[columnValue.value] = identifier;
           if (field.form) {
-            if (field.displayField) {
+            // only set the display field name if the field does not have its own
+            // datasource and the field displayfield contains a dot, otherwise 
+            // it is a direct field
+            if (field.displayField && field.displayField.contains('.') && !this.getField(field.displayField) && !field.optionDataSource && !field.getDataSource()) {
               field.form.setValue(field.displayField, identifier);
-            } else {
-              field.form.setValue(field.name + '.' + OB.Constants.IDENTIFIER, identifier);                
+            } else if (!field.displayField) {
+              field.form.setValue(field.name + '.' + OB.Constants.IDENTIFIER, identifier);
             }
           }
         }
