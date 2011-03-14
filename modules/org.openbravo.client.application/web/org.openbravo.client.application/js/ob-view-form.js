@@ -127,6 +127,8 @@ OB.ViewFormProperties = {
   },
   
   doEditRecordActions: function(preventFocus, isNew){
+    delete this.validateAfterFicReturn;
+    
     // sometimes if an error occured we stay disabled
     // prevent this
     this.setDisabled(false);

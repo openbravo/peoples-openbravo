@@ -100,6 +100,8 @@ w.closeSearch = function (action, value, display, parameters, wait){
     }
     targetFld._hasChanged = true;
     targetFld.form.handleItemChange(targetFld);
+    // fire with a delay otherwise results in strange errors
+    targetFld.fireOnPause('validate', targetFld.validate, null, targetFld);
   }
   isc.OBSearchItem.openedWindow.close();
   isc.OBSearchItem.openSearchItem = null;
@@ -113,6 +115,7 @@ isc.OBSearchItem.addProperties({
   showFocused: true,
   wrap: false,
   clipValue: true,
+  validateOnChange: true,
   
   setValue: function(value){
     var ret = this.Super('setValue', arguments);
