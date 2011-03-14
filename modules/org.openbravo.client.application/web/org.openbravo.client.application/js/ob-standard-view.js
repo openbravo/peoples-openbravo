@@ -503,7 +503,6 @@ isc.OBStandardView.addProperties({
         (childView.isAcctTab && OB.PropertyStore.get('ShowAcct', this.windowId) !== 'Y')){
       return;
     }
-    
     this.standardWindow.addView(childView);
     
     childView.parentView = this;
@@ -588,7 +587,16 @@ isc.OBStandardView.addProperties({
     return this.standardWindow.activeView === this;
   },
     
-  setAsActiveView: function(){
+  setAsActiveView: function(autoSaveDone){
+    if (!autoSaveDone && this.standardWindow.activeView && this.standardWindow.activeView !== this) {
+      var actionObject = {
+          target: this,
+          method: this.setAsActiveView,
+          parameters: [true]
+        };
+      this.standardWindow.doActionAfterAutoSave(actionObject, true);
+      return;
+    }
     this.standardWindow.setActiveView(this);
   },
   

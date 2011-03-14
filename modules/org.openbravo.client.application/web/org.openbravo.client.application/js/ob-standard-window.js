@@ -217,21 +217,26 @@ isc.OBStandardWindow.addProperties({
   autoSaveConfirmAction: function(){
     var action = this.autoSaveAction, me = this;
     this.autoSaveAction = null;
-    if (!action) {
-      return;
-    }
 
     // clean up everything
     me.cleanUpAutoSaveProperties();
 
     var callback = function(ok){
       if (ok) {
-        me.getDirtyEditForm().resetForm();
-        OB.Utilities.callAction(action);
+        if (me.getDirtyEditForm()) {
+          me.getDirtyEditForm().resetForm();
+        }
+        if (action) {
+          OB.Utilities.callAction(action);
+        }
       } else {
         // and focus to the first error field
-        me.getDirtyEditForm().setFocusInErrorField(true);
-        me.getDirtyEditForm().focus();
+        if (!me.getDirtyEditForm()) {
+          me.view.setAsActiveView();
+        } else {
+          me.getDirtyEditForm().setFocusInErrorField(true);
+          me.getDirtyEditForm().focus();
+        }
       }
     };
     isc.ask(OB.I18N.getLabel('OBUIAPP_AutoSaveNotPossibleExecuteAction'), callback);
@@ -249,6 +254,7 @@ isc.OBStandardWindow.addProperties({
   // is called from the main app tabset
   tabDeselected: function(tabNum, tabPane, ID, tab, newTab){
     this.wasDeselected = true;
+    this.disableKeyBoardShortCuts();
   },
   
   closeClick: function(tab, tabSet){
@@ -331,6 +337,7 @@ isc.OBStandardWindow.addProperties({
   },
   
   doHandleClick: function(){
+    this.enableKeyBoardShortCuts();
     // happens when we are getting selected
     // then don't change state
     if (this.wasDeselected) {
@@ -338,10 +345,24 @@ isc.OBStandardWindow.addProperties({
       return;
     }
     this.setActiveView(this.view);
-    this.view.doHandleClick();
+    this.view.doHandleClick();    
+  },
+  
+  disableKeyBoardShortCuts: function() {
+    OB.KeyboardManager.KS.set('StandardWindow_MoveFocus', function() { return true; });
+  },
+  
+  enableKeyBoardShortCuts: function() {
+    var standardWindow = this;
+    var moveFocusAction = function(){
+      // standardWindow
+//      console.log('-->' + standardWindow.tabTitle);
+    };
+    OB.KeyboardManager.KS.set('StandardWindow_MoveFocus', moveFocusAction);
   },
   
   doHandleDoubleClick: function(){
+    this.enableKeyBoardShortCuts();
     // happens when we are getting selected
     // then don't change state
     if (this.wasDeselected) {
