@@ -159,7 +159,7 @@ public abstract class UIDefinition {
                 docTypeTarget, docType, false, false) + ">";
       } else {
         String defaultS = field.getColumn().getDefaultValue();
-        if (defaultS == null) {
+        if (defaultS == null || defaultS.equals("\"\"")) {
           defaultS = "";
         }
         if (!defaultS.startsWith("@SQL=")) {
