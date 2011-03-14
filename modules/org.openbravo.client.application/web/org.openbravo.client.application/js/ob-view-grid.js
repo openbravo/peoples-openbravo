@@ -135,8 +135,6 @@ isc.OBViewGrid.addProperties({
   
   recordBaseStyleProperty: '_recordStyle',
   
-  // modal editing is not possible as we need to be able to do 
-  // undo, which means clicks outside of the current form.
   modalEditing: true,
   //showGridSummary: true,
   
@@ -900,7 +898,12 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++++++++++++++ Context menu on record click +++++++++++++++++++++++
   
   cellContextClick: function(record, rowNum, colNum){
-    this.handleRecordSelection(null, record, rowNum, null, colNum, null, null, true);
+    
+    // don't do anything if right-clicking on a selected record
+    if (!this.isSelected(record)) {
+      this.handleRecordSelection(null, record, rowNum, null, colNum, null, null, true);
+    }
+
     this.view.setAsActiveView();
     var ret = this.Super('cellContextClick', arguments);
     return ret;
@@ -1047,6 +1050,11 @@ isc.OBViewGrid.addProperties({
     // don't change selection on right mouse down
     var EH = isc.EventHandler, eventType;
     this.wasEditing = this.view.isEditingGrid;
+    
+    // don't do anything if right-clicking on a selected record
+    if (EH.rightButtonDown() && this.isSelected(record)) {
+      return;
+    }
     
     if (!autoSaveDone) {
       var actionObject = {
