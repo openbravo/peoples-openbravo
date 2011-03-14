@@ -338,6 +338,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     for (Field field : tab.getADFieldList()) {
       columnsOfFields.put(field.getColumn().getDBColumnName(), field);
     }
+    List<String> changedCols = new ArrayList<String>();
     for (String col : allColumns) {
       Field field = columnsOfFields.get(col);
       try {
@@ -399,6 +400,17 @@ public class FormInitializationComponent extends BaseActionHandler {
         JSONObject jsonobject = null;
         if (value != null) {
           jsonobject = new JSONObject(value);
+          if (mode.equals("CHANGE")) {
+            String oldValue = RequestContext.get().getRequestParameter(
+                "inp" + Sqlc.TransformaNombreColumna(col));
+            String newValue = jsonobject.has("classicValue") ? jsonobject.getString("classicValue")
+                : (jsonobject.has("value") ? jsonobject.getString("value") : null);
+            if (!(oldValue == null && newValue == null)
+                && ((oldValue == null && newValue != null)
+                    || (oldValue != null && newValue == null) || !oldValue.equals(newValue))) {
+              changedCols.add(field.getColumn().getDBColumnName());
+            }
+          }
           columnValues.put("inp"
               + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
           setRequestContextParameter(field, jsonobject);
@@ -424,7 +436,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       // (due to how ComboReloads worked, callouts were always called)
       if (columnValues.get("inp"
           + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())) != null) {
-        if ((mode.equals("NEW") || mode.equals("CHANGE"))
+        if ((mode.equals("NEW") || (mode.equals("CHANGE")
+            && changedCols.contains(field.getColumn().getDBColumnName()) && changedColumn != null))
             && (uiDef instanceof EnumUIDefinition || uiDef instanceof FKComboUIDefinition)
             && field.getColumn().isValidateOnNew()) {
           if (field.getColumn().getCallout() != null) {
