@@ -607,6 +607,16 @@ isc.OBTimeItem.addProperties({
 isc.ClassFactory.defineClass('OBDateRangeDialog', isc.DateRangeDialog);
 
 isc.OBDateRangeDialog.addProperties({
+  initWidget: function() {
+    this.Super('initWidget', arguments);
+    this.rangeForm.setFocusItem(this.rangeItem);
+  },
+  
+  show: function() {
+    this.Super('show', arguments);
+    this.rangeForm.focus();
+  },
+  
   // trick: overridden to let the ok and clear button change places
   addAutoChild: function(name, props) {
     if (name === 'okButton') {
@@ -622,7 +632,16 @@ isc.OBDateRangeDialog.addProperties({
 isc.ClassFactory.defineClass('OBMiniDateRangeItem', isc.MiniDateRangeItem);
 
 isc.OBMiniDateRangeItem.addProperties({
-  rangeDialogConstructor: isc.OBDateRangeDialog
+  rangeDialogConstructor: isc.OBDateRangeDialog,
+  
+  keyPress: function(item, form, keyName, characterValue){
+    if (keyName === 'Enter') {
+      this.showRangeDialog();
+      return false;
+    }
+    return true;
+  }
+
 });
 
 // == OBDateItem ==
