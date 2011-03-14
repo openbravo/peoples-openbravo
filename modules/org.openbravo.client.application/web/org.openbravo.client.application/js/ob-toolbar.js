@@ -229,13 +229,25 @@ isc.OBToolbar.addClassProperties({
       var form = isc.OBViewForm.create({
         width: 390,
         height: 1,
+        numCols: 1,
         overflow: 'visible',
         fields: [{
           type: 'OBTextAreaItem', selectOnFocus: true, 
           width: 390, height: 50, canFocus: true, 
           name:'url', 
-          title: OB.I18N.getLabel('OBUIAPP_URL'), value: url}
-        ],
+          title: OB.I18N.getLabel('OBUIAPP_PasteLink'), value: url},
+          {
+            type: 'CanvasItem', showTitle: false, 
+            width: '100%', height: 1, overFlow: 'visible',  
+            cellStyle: 'OBFormField',
+            titleStyle: 'OBFormFieldLabel',
+            textBoxStyle: 'OBFormFieldInput',
+            name:'url', canvas: isc.Label.create({
+              width: 360,
+              contents: OB.I18N.getLabel('OBUIAPP_DeepLinkNote'), height: 1, overflow: 'visible'
+            })
+          }
+        ],        
         show: function() {
           var fld = this.getFields()[0];
           this.setFocusItem(fld);
