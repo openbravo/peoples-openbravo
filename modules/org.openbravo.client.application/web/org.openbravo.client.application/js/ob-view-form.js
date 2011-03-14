@@ -96,7 +96,7 @@ OB.ViewFormProperties = {
     this.hasChanged = value;
     this.view.updateTabTitle();
     if (value && !this.isNew) {
-      this.view.statusBar.setStateLabel('OBUIAPP_Modified', this.view.statusBar.newIcon);
+      this.view.statusBar.setStateLabel('OBUIAPP_Editing', this.view.statusBar.newIcon);
     }
     
     if (value) {
