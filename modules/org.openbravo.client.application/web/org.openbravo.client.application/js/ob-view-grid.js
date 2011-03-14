@@ -1260,8 +1260,22 @@ isc.OBViewGrid.addProperties({
     return this.getSelection();
   },
   
-  // +++++++++++++++++ functions for the editing +++++++++++++++++
+  // +++++++++++++++++ functions for grid editing +++++++++++++++++
   
+  startEditing: function (rowNum, colNum, suppressFocus, eCe, suppressWarning) {
+    // if a row is set and not a col then check if we should focus in the
+    // first error field
+    if ((rowNum || rowNum === 0) && (!colNum && colNum !== 0) && this.rowHasErrors(rowNum))  {
+      for (var i = 0; i < this.getFields().length; i++) {
+        if (this.cellHasErrors(rowNum, i)) {
+         colNum = i;
+         break; 
+        }        
+      }
+    }
+    return this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
+  },
+
   startEditingNew: function(rowNum){
     var insertRow;
     if (rowNum || rowNum === 0) {
