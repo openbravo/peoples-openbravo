@@ -219,8 +219,8 @@ public class AdvancedQueryBuilder {
     filterParameters
         .put(JsonConstants.QUERY_PARAM_USER, OBContext.getOBContext().getUser().getId());
     if (!filterParameters.containsKey(JsonConstants.QUERY_PARAM_CLIENT)) {
-      filterParameters.put(JsonConstants.QUERY_PARAM_CLIENT, OBContext.getOBContext().getUser()
-          .getId());
+      filterParameters.put(JsonConstants.QUERY_PARAM_CLIENT, OBContext.getOBContext()
+          .getCurrentClient().getId());
     }
 
     String localWhereClause = where;
