@@ -495,7 +495,9 @@ OB.ViewFormProperties = {
       }
       this.grid.setEditValues(this.grid.getEditRow(), this.getValues(), true);
       this.grid.storeUpdatedEditorValue(true);
-      editValues.actionAfterFicReturn = tmpActionAfterFic;
+      if (editValues) {
+        editValues.actionAfterFicReturn = tmpActionAfterFic;
+      }
     }
 
     this.setDisabled(false);
