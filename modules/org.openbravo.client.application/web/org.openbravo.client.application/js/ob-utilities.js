@@ -745,7 +745,7 @@ OB.Utilities.fixNull250 = function(currentValues){
   var i;
   for (i in currentValues) {
     if (currentValues.hasOwnProperty(i) &&
-    currentValues[i] === null) {
+         (currentValues[i] === null || currentValues[i] === undefined)) {
       currentValues[i] = '';
     }
   }
