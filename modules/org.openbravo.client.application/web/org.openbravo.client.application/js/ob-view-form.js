@@ -857,7 +857,6 @@ OB.ViewFormProperties = {
         view.setRecentDocument(this.getValues());
         
         if (form.isNew) {
-          view.viewGrid.doSelectSingleRecord(localRecord);
           view.refreshChildViews();
         }
 
