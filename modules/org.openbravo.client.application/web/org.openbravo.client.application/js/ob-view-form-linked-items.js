@@ -206,23 +206,7 @@ isc.OBLinkedItemLayout.addProperties({
    * Opens linked item in a new window
    */
   openLinkedItemInNewWindow: function(record){
-  
-    var windowId = record.adWindowId;
-    var entityName = record.tableName;
-    var recordId = record.id;
-    var tabId = record.adTabId;
-    var tabTitle = record.adMenuName;
-    
-    var openObject = {
-      viewId: '_' + windowId,
-      targetEntity: entityName,
-      targetRecordId: recordId,
-      targetTabId: tabId,
-      tabTitle: tabTitle,
-      windowId: windowId
-    };
-    
-    OB.Layout.ViewManager.openView(openObject.viewId, openObject);
+    OB.Utilities.openView(record.adWindowId, record.adTabId, record.adMenuName, record.id, 'DIRECT');
   },
   
   /**
