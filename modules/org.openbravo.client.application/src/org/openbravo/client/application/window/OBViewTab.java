@@ -274,6 +274,14 @@ public class OBViewTab extends BaseTemplateComponent {
     this.tabTitle = tabTitle;
   }
 
+  public boolean isAcctTab() {
+    return tab.isAccountingTab();
+  }
+
+  public boolean isTrlTab() {
+    return tab.isTranslationTab();
+  }
+
   public List<FieldProperty> getAllFields() {
     List<FieldProperty> fields = new ArrayList<FieldProperty>();
     for (Field field : tab.getADFieldList()) {
