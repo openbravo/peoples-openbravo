@@ -424,7 +424,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       // (due to how ComboReloads worked, callouts were always called)
       if (columnValues.get("inp"
           + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())) != null) {
-        if (mode.equals("NEW")
+        if ((mode.equals("NEW") || mode.equals("CHANGE"))
             && (uiDef instanceof EnumUIDefinition || uiDef instanceof FKComboUIDefinition)
             && field.getColumn().isValidateOnNew()) {
           if (field.getColumn().getCallout() != null) {
