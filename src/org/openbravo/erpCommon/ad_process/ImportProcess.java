@@ -198,7 +198,8 @@ public abstract class ImportProcess {
   private void unlock() throws ServletException {
     try {
       ImportProcessData.unlockInstance(getConnection(), (m_error.getType().equals("Error") ? "0"
-          : "1"), m_msg.toString(), getAD_PInstance_ID());
+          : "1"), m_msg.length() > 2000 ? m_msg.toString().substring(0, 2000) : m_msg.toString(),
+          getAD_PInstance_ID());
     } catch (ServletException ex) {
       log4j.error("Unable to unlock instance - " + ex);
       throw new ServletException("Unable to unlock instance - " + ex.getMessage());
