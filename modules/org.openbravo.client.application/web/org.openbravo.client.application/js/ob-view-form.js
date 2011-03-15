@@ -832,7 +832,10 @@ OB.ViewFormProperties = {
     }
     
     var i, length, flds, form = this, ficCallDone;
-    var record = form.view.viewGrid.getSelectedRecord(), recordIndex = form.view.viewGrid.getRecordIndex(record);
+    var record = form.view.viewGrid.getSelectedRecord(),
+      // note record does not have to be set in case new and no
+      // previously selected record
+      recordIndex = (record ? form.view.viewGrid.getRecordIndex(record) : -1);
     
     form.isSaving = true;
 
