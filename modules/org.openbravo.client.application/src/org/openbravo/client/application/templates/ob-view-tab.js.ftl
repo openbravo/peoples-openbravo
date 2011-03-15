@@ -32,6 +32,8 @@
     
     defaultEditMode: ${tabComponent.defaultEditMode},
     mapping250: '${tabComponent.mapping250?js_string}',
+    isAcctTab: ${tabComponent.acctTab?string}, 
+    isTrlTab: ${tabComponent.trlTab?string},
     
     standardProperties:{
       inpTabId: '${tabComponent.tabId}',

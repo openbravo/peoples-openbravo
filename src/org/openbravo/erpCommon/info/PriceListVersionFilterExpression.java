@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -14,8 +15,11 @@ import org.hibernate.criterion.Expression;
 import org.openbravo.client.application.FilterExpression;
 import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 
@@ -52,10 +56,12 @@ public class PriceListVersionFilterExpression implements FilterExpression {
       return priceList;
     }
     String mPriceListId = (String) httpSession.getAttribute(windowId + "|" + "M_PRICELIST_ID");
-    priceList = OBDal.getInstance().get(PriceList.class, mPriceListId);
-    if (priceList != null) {
-      log.debug("Return priceList obtained from window's session: " + priceList.getIdentifier());
-      return priceList;
+    if (StringUtils.isNotEmpty(mPriceListId)) {
+      priceList = OBDal.getInstance().get(PriceList.class, mPriceListId);
+      if (priceList != null) {
+        log.debug("Return priceList obtained from window's session: " + priceList.getIdentifier());
+        return priceList;
+      }
     }
     priceList = getDefaultPriceList(isSalesTransaction());
     return priceList;
@@ -65,6 +71,12 @@ public class PriceListVersionFilterExpression implements FilterExpression {
     final OBCriteria<PriceList> priceListCrit = OBDal.getInstance().createCriteria(PriceList.class);
     priceListCrit.add(Expression.eq(PriceList.PROPERTY_SALESPRICELIST, salesTransaction));
     priceListCrit.add(Expression.eq(PriceList.PROPERTY_DEFAULT, true));
+    String orgs = getOrgs();
+    if (StringUtils.isNotEmpty(orgs)) {
+      priceListCrit.add(Expression.in(PriceList.PROPERTY_ORGANIZATION, OBDao
+          .getOBObjectListFromString(Organization.class, orgs)));
+      priceListCrit.setFilterOnReadableOrganization(false);
+    }
     if (priceListCrit.count() > 0) {
       log.debug("Return client's default PriceList: " + priceListCrit.list().get(0).getIdentifier());
       return priceListCrit.list().get(0);
@@ -123,6 +135,29 @@ public class PriceListVersionFilterExpression implements FilterExpression {
       log.error("Error parsing string date " + date + " with format: " + dateFormat, e);
     }
     return null;
+  }
+
+  private String getOrgs() {
+    StringBuffer orgPart = new StringBuffer();
+    if (requestMap.containsKey("inpadOrgId")) {
+      String orgId = requestMap.get("inpadOrgId");
+
+      if (StringUtils.isNotEmpty(orgId)) {
+        final Set<String> orgSet = OBContext.getOBContext().getOrganizationStructureProvider()
+            .getNaturalTree(orgId);
+        if (orgSet.size() > 0) {
+          boolean addComma = false;
+          for (String org : orgSet) {
+            if (addComma) {
+              orgPart.append(",");
+            }
+            orgPart.append("'" + org + "'");
+            addComma = true;
+          }
+        }
+      }
+    }
+    return orgPart.toString();
   }
 
 }

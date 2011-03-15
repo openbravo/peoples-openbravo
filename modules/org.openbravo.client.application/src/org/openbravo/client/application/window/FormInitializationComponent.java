@@ -338,6 +338,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     for (Field field : tab.getADFieldList()) {
       columnsOfFields.put(field.getColumn().getDBColumnName(), field);
     }
+    List<String> changedCols = new ArrayList<String>();
     for (String col : allColumns) {
       Field field = columnsOfFields.get(col);
       try {
@@ -399,17 +400,19 @@ public class FormInitializationComponent extends BaseActionHandler {
         JSONObject jsonobject = null;
         if (value != null) {
           jsonobject = new JSONObject(value);
-          columnValues.put("inp"
-              + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
-          // We need to fire callouts if the field is a combo
-          // (due to how ComboReloads worked, callouts were always called)
-          if (mode.equals("NEW")
-              && (uiDef instanceof EnumUIDefinition || uiDef instanceof FKComboUIDefinition)
-              && field.getColumn().isValidateOnNew()) {
-            if (field.getColumn().getCallout() != null) {
-              addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
+          if (mode.equals("CHANGE")) {
+            String oldValue = RequestContext.get().getRequestParameter(
+                "inp" + Sqlc.TransformaNombreColumna(col));
+            String newValue = jsonobject.has("classicValue") ? jsonobject.getString("classicValue")
+                : (jsonobject.has("value") ? jsonobject.getString("value") : null);
+            if (!(oldValue == null && newValue == null)
+                && ((oldValue == null && newValue != null)
+                    || (oldValue != null && newValue == null) || !oldValue.equals(newValue))) {
+              changedCols.add(field.getColumn().getDBColumnName());
             }
           }
+          columnValues.put("inp"
+              + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
           setRequestContextParameter(field, jsonobject);
           // We also set the session value for the column in Edit or SetSession mode
           if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
@@ -419,11 +422,28 @@ public class FormInitializationComponent extends BaseActionHandler {
                   .has("classicValue") ? jsonobject.get("classicValue") : null);
             }
           }
-
         }
       } catch (Exception e) {
         throw new OBException(
             "Couldn't get data for column " + field.getColumn().getDBColumnName(), e);
+      }
+    }
+
+    for (Field field : tab.getADFieldList()) {
+      String columnId = field.getColumn().getId();
+      UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(columnId);
+      // We need to fire callouts if the field is a combo
+      // (due to how ComboReloads worked, callouts were always called)
+      if (columnValues.get("inp"
+          + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())) != null) {
+        if ((mode.equals("NEW") || (mode.equals("CHANGE")
+            && changedCols.contains(field.getColumn().getDBColumnName()) && changedColumn != null))
+            && (uiDef instanceof EnumUIDefinition || uiDef instanceof FKComboUIDefinition)
+            && field.getColumn().isValidateOnNew()) {
+          if (field.getColumn().getCallout() != null) {
+            addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
+          }
+        }
       }
     }
   }
@@ -442,7 +462,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       columnValues.put("inp" + Sqlc.TransformaNombreColumna(auxIn.getName()), jsonObj);
       RequestContext.get().setRequestParameter(
           "inp" + Sqlc.TransformaNombreColumna(auxIn.getName()),
-          value == null ? null : value.toString());
+          value == null || value.equals("null") ? null : value.toString());
       // Now we insert session values for auxiliary inputs
       if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
         setSessionValue(tab.getWindow().getId() + "|" + auxIn.getName(), value);
@@ -500,6 +520,10 @@ public class FormInitializationComponent extends BaseActionHandler {
             } else {
               value = (String) jsContent.get(inpColName);
             }
+
+            if (value != null && value.equals("null")) {
+              value = null;
+            }
             RequestContext.get().setRequestParameter(inpColName, value);
           }
         } catch (Exception e) {
@@ -521,7 +545,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       try {
         if (RequestContext.get().getRequestParameter(key) == null) {
           String value = jsContent.getString(key);
-          if (value.equals("null")) {
+          if (value != null && value.equals("null")) {
             value = null;
           }
           RequestContext.get().setRequestParameter(key, value);
@@ -636,7 +660,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     Property prop = entity.getPropertyByColumnName(columnName);
     Object currentValue = obj.get(prop.getName());
 
-    if (currentValue != null) {
+    if (currentValue != null && !currentValue.toString().equals("null")) {
       if (currentValue instanceof BaseOBObject) {
         if (prop.getReferencedProperty() != null) {
           currentValue = ((BaseOBObject) currentValue).get(prop.getReferencedProperty().getName());
@@ -646,6 +670,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       } else {
         currentValue = UIDefinitionController.getInstance().getUIDefinition(prop.getColumnId())
             .convertToClassicString(currentValue);
+      }
+      if (currentValue != null && currentValue.equals("null")) {
+        currentValue = null;
       }
       RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(columnName),
           currentValue.toString());
@@ -697,8 +724,11 @@ public class FormInitializationComponent extends BaseActionHandler {
   private void setRequestContextParameter(Field field, JSONObject jsonObj) {
     try {
       String fieldId = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
-      RequestContext.get().setRequestParameter(fieldId,
-          jsonObj.has("classicValue") ? jsonObj.getString("classicValue") : null);
+      RequestContext.get().setRequestParameter(
+          fieldId,
+          jsonObj.has("classicValue") && jsonObj.get("classicValue") != null
+              && !jsonObj.getString("classicValue").equals("null") ? jsonObj
+              .getString("classicValue") : null);
     } catch (JSONException e) {
       log.error("Couldn't read JSON parameter for column " + field.getColumn().getDBColumnName());
     }
@@ -837,9 +867,14 @@ public class FormInitializationComponent extends BaseActionHandler {
                           UIDefinition uiDef = UIDefinitionController.getInstance()
                               .getUIDefinition(col.getId());
                           if (uiDef.getDomainType() instanceof PrimitiveDomainType) {
-                            rq.setRequestParameter(colId, uiDef.convertToClassicString(value));
+                            String newValue = uiDef.convertToClassicString(value);
+                            if (newValue != null && newValue.equals("null")) {
+                              newValue = null;
+                            }
+                            rq.setRequestParameter(colId, newValue);
                           } else {
-                            rq.setRequestParameter(colId, value == null ? null : value.toString());
+                            rq.setRequestParameter(colId,
+                                value == null || value.equals("null") ? null : value.toString());
                           }
                           JSONObject jsonobject = new JSONObject(uiDef.getFieldProperties(inpFields
                               .get(name), true));
@@ -941,10 +976,10 @@ public class FormInitializationComponent extends BaseActionHandler {
     if (!resp.contains("new Array(")) {
       return null;
     }
-    Context cx = Context.enter();
-    Scriptable scope = cx.initStandardObjects();
-    cx.evaluateString(scope, resp, "<cmd>", 1, null);
     try {
+      Context cx = Context.enter();
+      Scriptable scope = cx.initStandardObjects();
+      cx.evaluateString(scope, resp, "<cmd>", 1, null);
       NativeArray array = (NativeArray) scope.get("respuesta", scope);
       Object calloutName = scope.get("calloutName", scope);
       String calloutNameS = calloutName == null ? null : calloutName.toString();

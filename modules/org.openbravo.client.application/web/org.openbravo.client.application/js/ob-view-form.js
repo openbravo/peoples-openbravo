@@ -77,6 +77,7 @@ OB.ViewFormProperties = {
   linkedItemSection: null,
 
   initWidget: function() {
+    this._preventFocusChanges = true;
     var length, i, item;
     // add the obFormProperties to ourselves, the obFormProperties
     // are re-used for inline grid editing
@@ -93,18 +94,20 @@ OB.ViewFormProperties = {
         break;
       }
     }
+    delete this._preventFocusChanges;
   },
   
   setHasChanged: function(value) {
     this.hasChanged = value;
     this.view.updateTabTitle();
     if (value && !this.isNew) {
-      this.view.statusBar.setStateLabel('OBUIAPP_Modified', this.view.statusBar.newIcon);
+      this.view.statusBar.setStateLabel('OBUIAPP_Editing', this.view.statusBar.newIcon);
     }
     
     if (value) {
       // signal that autosave is needed after this
       this.view.standardWindow.setDirtyEditForm(this);
+      this.validateAfterFicReturn = true;
     } else {
       // signal that no autosave is needed after this
       this.view.standardWindow.setDirtyEditForm(null);
@@ -129,6 +132,8 @@ OB.ViewFormProperties = {
   },
   
   doEditRecordActions: function(preventFocus, isNew){
+    delete this.validateAfterFicReturn;
+    
     // sometimes if an error occured we stay disabled
     // prevent this
     this.setDisabled(false);
@@ -364,7 +369,10 @@ OB.ViewFormProperties = {
   },
   
   setFields: function(){
+    // is used in various places, prevent focus and scroll events
+    this._preventFocusChanges = true;
     this.Super('setFields', arguments);
+    delete this._preventFocusChanges;
     this.fieldsByInpColumnName = null;
     this.fieldsByColumnName = null;
   },
@@ -389,7 +397,7 @@ OB.ViewFormProperties = {
       TAB_ID: this.view.tabId,
       ROW_ID: this.getValue(OB.Constants.ID)
     };
-    if (parentId && isNew) {
+    if (parentId && isNew && this.view.parentProperty) {
       parentColumn = this.view.getPropertyDefinition(this.view.parentProperty).inpColumn;
       requestParams[parentColumn] = parentId;
     }
@@ -509,14 +517,21 @@ OB.ViewFormProperties = {
       }
       this.grid.setEditValues(this.grid.getEditRow(), this.getValues(), true);
       this.grid.storeUpdatedEditorValue(true);
-      editValues.actionAfterFicReturn = tmpActionAfterFic;
+      if (editValues) {
+        editValues.actionAfterFicReturn = tmpActionAfterFic;
+      }
     }
 
     this.setDisabled(false);
 
     if (this.validateAfterFicReturn) {
       delete this.validateAfterFicReturn;
-      this.validate();
+      // only validate the fields which have errors
+      for (i = 0; i < this.getFields().length; i++) {
+        if (this.hasFieldErrors(this.getFields()[i].name)) {
+          this.getFields()[i].validate();
+        }
+      }
     }
 
     this.markForRedraw();
@@ -639,10 +654,13 @@ OB.ViewFormProperties = {
           }
           field.valueMap[columnValue.value] = identifier;
           if (field.form) {
-            if (field.displayField) {
+            // only set the display field name if the field does not have its own
+            // datasource and the field displayfield contains a dot, otherwise 
+            // it is a direct field
+            if (field.displayField && field.displayField.contains('.') && !this.getField(field.displayField) && !field.optionDataSource && !field.getDataSource()) {
               field.form.setValue(field.displayField, identifier);
-            } else {
-              field.form.setValue(field.name + '.' + OB.Constants.IDENTIFIER, identifier);                
+            } else if (!field.displayField) {
+              field.form.setValue(field.name + '.' + OB.Constants.IDENTIFIER, identifier);
             }
           }
         }
@@ -831,7 +849,10 @@ OB.ViewFormProperties = {
     }
     
     var i, length, flds, form = this, ficCallDone;
-    var record = form.view.viewGrid.getSelectedRecord(), recordIndex = form.view.viewGrid.getRecordIndex(record);
+    var record = form.view.viewGrid.getSelectedRecord(),
+      // note record does not have to be set in case new and no
+      // previously selected record
+      recordIndex = (record ? form.view.viewGrid.getRecordIndex(record) : -1);
     
     form.isSaving = true;
 
@@ -839,7 +860,7 @@ OB.ViewFormProperties = {
     this.view.messageBar.hide();
     
     var callback = function(resp, data, req){
-      var index1, index2, errorCode, view = form.view;
+      var index1, index2, errorCode, view = form.view, localRecord;
       var status = resp.status;
 
       // if no recordIndex then select explicitly
@@ -851,7 +872,7 @@ OB.ViewFormProperties = {
       
       if (recordIndex || recordIndex === 0) {
         // if this is not done the selection gets lost
-        var localRecord = view.viewGrid.data.get(recordIndex);
+        localRecord = view.viewGrid.data.get(recordIndex);
         if (localRecord) {
           localRecord[view.viewGrid.selection.selectionProperty] = true;
         }
@@ -872,10 +893,10 @@ OB.ViewFormProperties = {
         
         view.setRecentDocument(this.getValues());
         
-        // force a fetch to place the grid on the correct location
+        view.updateLastSelectedState();
+        
         if (form.isNew) {
-          view.viewGrid.targetRecordId = data.id;
-          view.viewGrid.refreshContents();
+          view.refreshChildViews();
         }
 
         // success invoke the action, if any there

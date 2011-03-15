@@ -143,7 +143,13 @@ isc.OBQuickRun.addProperties({
       this.doShow();
     }
   },
-  
+
+  // 16012: Double click and single click on nav bar flyouts are treated the same
+  // https://issues.openbravo.com/view.php?id=16012
+  doubleClick: function(){
+    this.click();
+  },
+
   // ** {{{ keyPress }}} **
   // handle the escape and enter keys, these should hide the layout.
   keyPress: function(){

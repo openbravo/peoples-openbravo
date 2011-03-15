@@ -220,7 +220,8 @@
                                                     WHERE L.M_WAREHOUSE_ID = W.M_WAREHOUSE_ID
                                                     AND W.AD_ORG_ID = v_PlanOrg_ID)),
               v_Line, (CASE WHEN Cur_WRPProduct.AttrSetValueType='D' THEN Cur_WRPProduct.M_AttributeSetInstance_ID ELSE NULL END)
-              ,Cur_WRPProduct.M_Product_UOM_ID, Cur_WRPProduct.QuantityOrder
+              ,Cur_WRPProduct.M_Product_UOM_ID, 
+              CASE WHEN Cur_WRPProduct.M_Product_UOM_ID IS NULL THEN NULL WHEN v_NoQty = 'Y' THEN 0 ELSE Cur_WRPProduct.QuantityOrder * v_DoneQuantity END
             )
             ;
           --v_Line:=v_Line + 10;

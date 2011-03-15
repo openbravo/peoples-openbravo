@@ -219,8 +219,8 @@ public class AdvancedQueryBuilder {
     filterParameters
         .put(JsonConstants.QUERY_PARAM_USER, OBContext.getOBContext().getUser().getId());
     if (!filterParameters.containsKey(JsonConstants.QUERY_PARAM_CLIENT)) {
-      filterParameters.put(JsonConstants.QUERY_PARAM_CLIENT, OBContext.getOBContext().getUser()
-          .getId());
+      filterParameters.put(JsonConstants.QUERY_PARAM_CLIENT, OBContext.getOBContext()
+          .getCurrentClient().getId());
     }
 
     String localWhereClause = where;
@@ -650,7 +650,9 @@ public class AdvancedQueryBuilder {
       String suffix = restOfClause.substring(secondAtIndex + 1);
       String param = restOfClause.substring(0, secondAtIndex);
       String paramValue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-          .getVariablesSecureApp(), param, RequestContext.get().getRequestParameter("windowId"));
+          .getVariablesSecureApp(), param,
+          RequestContext.get().getRequestParameter("windowId") != null ? RequestContext.get()
+              .getRequestParameter("windowId") : "");
       localWhereClause = prefix + getTypedParameterAlias() + suffix;
       typedParameters.add(paramValue);
     }

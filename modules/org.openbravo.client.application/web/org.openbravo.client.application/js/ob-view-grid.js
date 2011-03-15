@@ -135,8 +135,6 @@ isc.OBViewGrid.addProperties({
   
   recordBaseStyleProperty: '_recordStyle',
   
-  // modal editing is not possible as we need to be able to do 
-  // undo, which means clicks outside of the current form.
   modalEditing: true,
   //showGridSummary: true,
   
@@ -151,6 +149,14 @@ isc.OBViewGrid.addProperties({
     neverDropUpdatedRows: true,
     useClientFiltering: false,
     useClientSorting: false,
+    
+    // overridden to update the context/request properties for the fetch
+    fetchRemoteData : function (serverCriteria, startRow, endRow) {
+      var requestProperties = this.context;
+      this.grid.getFetchRequestParams(requestProperties.params);
+
+      return this.Super('fetchRemoteData', arguments);
+    },
     
     transformData: function(newData, dsResponse){
       // only do this stuff for fetch operations, in other cases strange things
@@ -172,10 +178,6 @@ isc.OBViewGrid.addProperties({
         this.localData[dsResponse.totalRows] = null;
       }
     }
-  },
-
-  refreshFields: function(){
-    this.setFields(this.completeFields.duplicate());
   },
   
   initWidget: function(){
@@ -246,6 +248,15 @@ isc.OBViewGrid.addProperties({
     '</span>';
     
     return ret;
+  },
+
+  setData: function(data) {
+    data.grid = this;
+    this.Super('setData', arguments);
+  },
+
+  refreshFields: function(){
+    this.setFields(this.completeFields.duplicate());
   },
   
   // add the properties from the form
@@ -385,17 +396,6 @@ isc.OBViewGrid.addProperties({
     };
     OB.KeyboardManager.KS.set('Grid_EditInForm', editInFormAction);
   },
-
-  // overridden to set the enterkeyaction to nextrowstart in cases the current row
-  // is the last being edited  
-  getNextEditCell : function (rowNum, colNum, editCompletionEvent) {
-    // past the last row
-    if (editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS && rowNum === (this.getTotalRows() - 1)) {
-      // move to the next row
-      return this.findNextEditCell(rowNum +1, 0, 1, true, true);
-    }
-    return this.Super('getNextEditCell', arguments);
-  },
   
   deselectAllRecords: function(preventUpdateSelectInfo, autoSaveDone){
     if (!autoSaveDone) {
@@ -493,6 +493,7 @@ isc.OBViewGrid.addProperties({
     
     var record, ret = this.Super('dataArrived', arguments);
     this.updateRowCountDisplay();
+    this.view.toolBar.updateButtonState(true);
     if (this.getSelectedRecords() && this.getSelectedRecords().length > 0) {
       this.selectionUpdated();
     }
@@ -707,7 +708,7 @@ isc.OBViewGrid.addProperties({
     
   convertCriteria: function(criteria){
     var selectedValues, prop, fld, value, i, criterion, fldName;
-    
+
     if (!criteria) {
       criteria = {
         operator: 'and', 
@@ -807,9 +808,11 @@ isc.OBViewGrid.addProperties({
   
   getFetchRequestParams: function(params) {
     params = params || {};
-            
+    
     if (this.targetRecordId) {
       params._targetRecordId = this.targetRecordId;
+      // remove the filter clause we don't want to use it anymore
+      this.filterClause = null;
     }
 
     // prevent the count operation
@@ -900,7 +903,12 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++++++++++++++ Context menu on record click +++++++++++++++++++++++
   
   cellContextClick: function(record, rowNum, colNum){
-    this.handleRecordSelection(null, record, rowNum, null, colNum, null, null, true);
+    
+    // don't do anything if right-clicking on a selected record
+    if (!this.isSelected(record)) {
+      this.handleRecordSelection(null, record, rowNum, null, colNum, null, null, true);
+    }
+
     this.view.setAsActiveView();
     var ret = this.Super('cellContextClick', arguments);
     return ret;
@@ -1048,6 +1056,11 @@ isc.OBViewGrid.addProperties({
     var EH = isc.EventHandler, eventType;
     this.wasEditing = this.view.isEditingGrid;
     
+    // don't do anything if right-clicking on a selected record
+    if (EH.rightButtonDown() && this.isSelected(record)) {
+      return;
+    }
+    
     if (!autoSaveDone) {
       var actionObject = {
         target: this,
@@ -1162,7 +1175,8 @@ isc.OBViewGrid.addProperties({
     }
     
     this.updateSelectedCountDisplay();
-    
+    this.view.toolBar.updateButtonState(true);
+
     // mark some redraws if there are lines which don't
     // have a checkbox flagged, so if we move from single record selection
     // to multi record selection
@@ -1181,7 +1195,7 @@ isc.OBViewGrid.addProperties({
     // note that when navigating with the arrow key that at a certain 2 are
     // selected
     // when going into this method therefore the extra check on length === 1
-    if (this.singleRecordSelection && this.isSelected(record) && this.getSelection().length === 1) {
+    if (this.singleRecordSelection && this.getSelectedRecord() === record && this.getSelection().length === 1) {
       return;
     }
     this.singleRecordSelection = true;
@@ -1236,8 +1250,22 @@ isc.OBViewGrid.addProperties({
     return this.getSelection();
   },
   
-  // +++++++++++++++++ functions for the editing +++++++++++++++++
+  // +++++++++++++++++ functions for grid editing +++++++++++++++++
   
+  startEditing: function (rowNum, colNum, suppressFocus, eCe, suppressWarning) {
+    // if a row is set and not a col then check if we should focus in the
+    // first error field
+    if ((rowNum || rowNum === 0) && (!colNum && colNum !== 0) && this.rowHasErrors(rowNum))  {
+      for (var i = 0; i < this.getFields().length; i++) {
+        if (this.cellHasErrors(rowNum, i)) {
+         colNum = i;
+         break; 
+        }        
+      }
+    }
+    return this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
+  },
+
   startEditingNew: function(rowNum){
     var insertRow;
     if (rowNum || rowNum === 0) {
@@ -1268,6 +1296,7 @@ isc.OBViewGrid.addProperties({
     this.data.insertCacheData(record, rowNum);
     this.scrollToRow(rowNum);
     this.updateRowCountDisplay();
+    this.view.toolBar.updateButtonState(true);
     this.redraw();
   },
   
@@ -1364,6 +1393,7 @@ isc.OBViewGrid.addProperties({
     if (toRemove.length > 0) {
       this.data.handleUpdate('remove', toRemove);
       this.updateRowCountDisplay();
+      this.view.toolBar.updateButtonState(true);
     }
     this.view.standardWindow.cleanUpAutoSaveProperties();
     this.view.updateTabTitle();
@@ -1384,6 +1414,7 @@ isc.OBViewGrid.addProperties({
           id: record.id
         }]);
         me.updateRowCountDisplay();
+        me.view.toolBar.updateButtonState(true);
         me.view.refreshChildViews();
       } else {
         // remove the error style/msg    
@@ -1404,6 +1435,7 @@ isc.OBViewGrid.addProperties({
           id: record.id
         }]);
         me.updateRowCountDisplay();
+        me.view.toolBar.updateButtonState(true);
       } else {
         // remove the error style/msg    
         me.setRecordErrorMessage(rowNum, null);
@@ -1457,6 +1489,42 @@ isc.OBViewGrid.addProperties({
     this.Super('cellEditEnd', arguments);
   },
   
+  // overridden to set the enterkeyaction to nextrowstart in cases the current row
+  // is the last being edited
+  // also sets a flag which is used in canEditCell   
+  getNextEditCell: function (rowNum, colNum, editCompletionEvent) {
+    var ret;
+    this._inGetNextEditCell = true;
+    // past the last row
+    if (editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS && rowNum === (this.getTotalRows() - 1)) {
+      // move to the next row
+      ret = this.findNextEditCell(rowNum + 1, 0, 1, true, true);
+    } else {
+      ret = this.Super('getNextEditCell', arguments);
+    }
+    delete this._inGetNextEditCell;
+    return ret;
+  },
+
+  // overridden to take into account disabled at item level
+  // only used when computing the next edit cell
+  // if caneditcell returns false in other cases then smartclient
+  // won't even show an input but shows the display value directly
+  // this interferes sometimes with the very dynamic enabling 
+  // disabling of fields by the readonlylogic
+  canEditCell: function (rowNum, colNum) {
+    if (this._inGetNextEditCell) {
+      var field = this.getField(colNum);
+      if (field && this.getEditForm()) {
+        var item = this.getEditForm().getItem(field.name);
+        if (item && item.isDisabled()) {
+          return false;
+        }
+      }
+    }
+    return this.Super('canEditCell', arguments);    
+  },
+      
   // saveEditedValues: when saving, first check if a FIC call needs to be done to update to the 
   // latest values. This can happen when the focus is in a field and the save action is
   // done, at that point first try to force a fic call (handleItemChange) and if that

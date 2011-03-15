@@ -337,6 +337,7 @@ isc.OBMiniDateRangeItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldInput',
+  showFocused: true,
   fromDateOnlyPrefix: OB.I18N.getLabel('OBUIAPP_fromDateOnlyPrefix'),
   toDateOnlyPrefix: OB.I18N.getLabel('OBUIAPP_toDateOnlyPrefix'),
   pickerIconPrompt: OB.I18N.getLabel('OBUIAPP_pickerIconPrompt')

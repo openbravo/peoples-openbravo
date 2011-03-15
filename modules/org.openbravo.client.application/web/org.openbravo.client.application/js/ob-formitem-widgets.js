@@ -100,6 +100,8 @@ w.closeSearch = function (action, value, display, parameters, wait){
     }
     targetFld._hasChanged = true;
     targetFld.form.handleItemChange(targetFld);
+    // fire with a delay otherwise results in strange errors
+    targetFld.fireOnPause('validate', targetFld.validate, null, targetFld);
   }
   isc.OBSearchItem.openedWindow.close();
   isc.OBSearchItem.openSearchItem = null;
@@ -113,6 +115,7 @@ isc.OBSearchItem.addProperties({
   showFocused: true,
   wrap: false,
   clipValue: true,
+  validateOnChange: true,
   
   setValue: function(value){
     var ret = this.Super('setValue', arguments);
@@ -345,7 +348,12 @@ isc.ClassFactory.defineClass('OBTextItem', TextItem);
 
 isc.OBTextItem.addProperties({
   operator: 'iContains',
-  validateOnExit: true
+  validateOnExit: true,
+  itemHoverHTML: function(item, form) {
+    if (this.isDisabled()) {
+      return this.getValue();
+    }
+  }
 });
 
 //== OBLinkItem ==
@@ -389,7 +397,12 @@ isc.ClassFactory.defineClass('OBTextAreaItem', TextAreaItem);
 
 isc.OBTextAreaItem.addProperties({
   operator: 'iContains',
-  validateOnExit: true
+  validateOnExit: true,
+  itemHoverHTML: function(item, form) {
+    if (this.isDisabled()) {
+      return this.getValue();
+    }
+  }
 });
 
 // used in the grid
@@ -428,25 +441,31 @@ isc.OBSectionItem.addProperties({
   },
   
   expandSection: function(){
+    if (this.form.getFocusItem()) {
+      this.form.getFocusItem().blurItem();
+    }
     var ret = this.Super('expandSection', arguments);
     
-    // when expanding set the focus to the first focusable item     
-    // set focus with a short delay to give the section time to draw
-    this.delayCall('setNewFocusItemExpanding', [], 100);
-    
-    // NOTE: if the layout structure changes then this needs to be 
-    // changed probably to see where the scrollbar is to scroll
-    // the parentElement is not set initially when drawing
-    if (this.form.parentElement) {
-      // scroll after things have been expanded
-      this.form.parentElement.delayCall('scrollTo', [null, this.getTop()], 100);    
+    if (!this.form._preventFocusChanges) {
+      // when expanding set the focus to the first focusable item     
+      // set focus late to give the section time to draw and let
+      // other items to loose focus/redraw
+      this.delayCall('setNewFocusItemExpanding', [], 100);
+      
+      // NOTE: if the layout structure changes then this needs to be 
+      // changed probably to see where the scrollbar is to scroll
+      // the parentElement is not set initially when drawing
+      if (this.form.parentElement) {
+        // scroll after things have been expanded
+        this.form.parentElement.delayCall('scrollTo', [null, this.getTop()], 100);    
+      }
     }
 
     return ret;
   },
     
   setNewFocusItemExpanding: function(){
-    var newFocusItem = this;
+    var newFocusItem = null;
     for (var i = 0; i < this.itemIds.length; i++) {
       var itemName = this.itemIds[i], item = this.form.getItem(itemName);
       // isFocusable is a method added in ob-smartclient.js
@@ -455,7 +474,13 @@ isc.OBSectionItem.addProperties({
         break;
       }
     }
-    newFocusItem.focusInItem();
+    if (!newFocusItem && this.handleFocus && this.handleFocus()) {
+      return;
+    } else if (!newFocusItem) {
+      this.focusInItem();
+    } else {
+      newFocusItem.focusInItem();
+    }
   }
   
 });
@@ -604,6 +629,16 @@ isc.OBTimeItem.addProperties({
 isc.ClassFactory.defineClass('OBDateRangeDialog', isc.DateRangeDialog);
 
 isc.OBDateRangeDialog.addProperties({
+  initWidget: function() {
+    this.Super('initWidget', arguments);
+    this.rangeForm.setFocusItem(this.rangeItem);
+  },
+  
+  show: function() {
+    this.Super('show', arguments);
+    this.rangeForm.focus();
+  },
+  
   // trick: overridden to let the ok and clear button change places
   addAutoChild: function(name, props) {
     if (name === 'okButton') {
@@ -619,7 +654,17 @@ isc.OBDateRangeDialog.addProperties({
 isc.ClassFactory.defineClass('OBMiniDateRangeItem', isc.MiniDateRangeItem);
 
 isc.OBMiniDateRangeItem.addProperties({
-  rangeDialogConstructor: isc.OBDateRangeDialog
+  dateDisplayFormat: OB.Format.date,
+  rangeDialogConstructor: isc.OBDateRangeDialog,
+  
+  keyPress: function(item, form, keyName, characterValue){
+    if (keyName === 'Enter') {
+      this.showRangeDialog();
+      return false;
+    }
+    return true;
+  }
+
 });
 
 // == OBDateItem ==

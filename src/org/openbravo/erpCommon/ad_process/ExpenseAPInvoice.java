@@ -31,7 +31,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -39,6 +41,8 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
@@ -83,8 +87,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  private OBError processExpense(VariablesSecureApp vars, String strcBpartnerId, String strDatereportFrom,
-      String strDatereportTo, String strDateInvoiced) {
+  private OBError processExpense(VariablesSecureApp vars, String strcBpartnerId,
+      String strDatereportFrom, String strDatereportTo, String strDateInvoiced) {
     if (log4j.isDebugEnabled())
       log4j.debug("Save: Expense AP Invoice");
     int line = 0;
@@ -102,6 +106,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
     String strPricelist = "";
     String strSalesrepId = "";
     String strPaymentRule = "";
+    String strPaymentMethodId = "";
     String strPaymentterm = "";
     BigDecimal qty = BigDecimal.ZERO;
     BigDecimal amount = BigDecimal.ZERO;
@@ -125,7 +130,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
       for (int i = 0; i < data.length; i++) {
         String docTargetType = ExpenseAPInvoiceData.cDoctypeTarget(this, data[i].adClientId,
             data[i].adOrgId);
-        
+
         // Checks some employee data
         strEmpl = data[i].bpname;
         strProd = data[i].prodname;
@@ -144,12 +149,28 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           throw new Exception("ShiptoNotdefined");
 
         strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
+        if (isNewFlow() && (strPaymentRule == null || "".equals(strPaymentRule))) {
+          strPaymentRule = "P";
+        }
         if (strPaymentRule.equals(""))
           throw new Exception("FormofPaymentNotdefined");
-
+        if (isNewFlow()) {
+          strPaymentMethodId = ExpenseAPInvoiceData.paymentmethodId(this, data[i].cBpartnerId);
+          if (strPaymentMethodId.equals("")) {
+            throw new Exception("PayementMethodNotdefined");
+          }
+          strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
+          if (strPaymentRule.equals("")) {
+            strPaymentRule = "P";
+          }
+        } else {
+          strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
+          if (strPaymentRule.equals(""))
+            throw new Exception("FormofPaymentNotdefined");
+        }
         strPaymentterm = ExpenseAPInvoiceData.paymentterm(this, data[i].cBpartnerId);
         if (strPaymentterm.equals(""))
-          throw new Exception("PaymenttermNotdefined");        
+          throw new Exception("PaymenttermNotdefined");
 
         // Checks if there are invoices not processed that full filled
         // the requirements
@@ -159,18 +180,17 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         if (data[i].cProjectId.equals("")) {
           strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeaderNoProject(conn, this,
               data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId,
-              strBPCCurrencyId, data[i].cActivityId, data[i].cCampaignId,
-              strcBpartnerLocationId, strPaymentRule, strPaymentterm);
-          
+              strBPCCurrencyId, data[i].cActivityId, data[i].cCampaignId, strcBpartnerLocationId,
+              strPaymentRule, strPaymentMethodId, strPaymentterm);
+
         } else {
           strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeader(conn, this,
               data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId,
               strBPCCurrencyId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId,
-              strcBpartnerLocationId, strPaymentRule, strPaymentterm);
+              strcBpartnerLocationId, strPaymentRule, strPaymentMethodId, strPaymentterm);
         }
 
         if (strcInvoiceIdOld.equals("")) {
-
 
           // Creates a new purchase invoice header
           strcInvoiceId = SequenceIdData.getUUID();
@@ -185,9 +205,9 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
                 "N", data[i].adClientId, data[i].adOrgId, "", "", strDocumentno, "", "", "Y",
                 docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId,
                 strcBpartnerLocationId, "", strPricelistId, strBPCCurrencyId, strSalesrepId, "N",
-                "", "", strPaymentRule, strPaymentterm, "N", "N", data[i].cProjectId,
-                data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "", "", "0", "0", "DR",
-                strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());
+                "", "", strPaymentRule, strPaymentMethodId, strPaymentterm, "N", "N",
+                data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "",
+                "", "0", "0", "DR", strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
@@ -433,9 +453,9 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
 
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strcBpartnerId,
-      String strDatereportFrom, String strDatereportTo, String strDateInvoiced) throws IOException,
-      ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+      String strcBpartnerId, String strDatereportFrom, String strDatereportTo,
+      String strDateInvoiced) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: process ExpenseAPInvoice");
 
@@ -523,6 +543,27 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  @SuppressWarnings("deprecation")
+  private boolean isNewFlow() {
+    // Extra check for Payment Flow-disabling switch
+    try {
+      // Use Utility.getPropertyValue for backward compatibility
+      try {
+        Preferences.getPreferenceValue("FinancialManagement", true, null, null, OBContext
+            .getOBContext().getUser(), null, null);
+        return true;
+      } catch (PropertyNotFoundException e) {
+        if (Utility.getPropertyValue("FinancialManagement", OBContext.getOBContext()
+            .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId()) != null) {
+          return true;
+        } else
+          return false;
+      }
+    } catch (PropertyException e) {
+      return false;
+    }
   }
 
   public String getServletInfo() {

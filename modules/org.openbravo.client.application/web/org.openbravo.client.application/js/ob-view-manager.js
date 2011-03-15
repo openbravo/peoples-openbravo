@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,27 +33,26 @@
   }
   
   // cache object references locally
-  var L = OB.Layout, M = OB.MainView, ISC = isc, vmgr; // Local reference to
-  // ViewManager instance
-  var tabSet = M.TabSet;
-  
+  var L = OB.Layout, M = OB.MainView, ISC = isc, vmgr, // Local reference to ViewManager instance
+      tabSet = M.TabSet;
+
   function ViewManager(){
     // keep the last 5 opened views
     this.recentManager.recentNum = 5;
   }
-  
+
   ViewManager.prototype = {
-  
+
     // if true then certain functions are disabled
     inStateHandling: false,
-    
+
     recentManager: new OB.RecentUtilitiesClass(),
-    
+
     // ** {{ ViewManager.views }} **
     // Collection of opened views
     views: {
       cache: [],
-      
+
       getViewTabID: function(vName, params){
         var len = this.cache.length, i, item;
         for (i = len; i > 0; i--) {
@@ -64,7 +63,7 @@
         }
         return null;
       },
-      
+
       getTabNumberFromViewParam: function(param, value) {
         var numberOfTabs = tabSet.tabs.length, viewParam = '', result = null;
         for (var i = 0; i < numberOfTabs; i++) {
@@ -75,11 +74,11 @@
         }
         return result;
       },
-      
+
       push: function(instanceDetails) {
         this.cache.push(instanceDetails);
       },
-      
+
       removeTab: function(viewTabId) {
         var len = this.cache.length, i, item, removed;
         for (i = len; i > 0; i--) {
@@ -104,7 +103,7 @@
       }
       return null;
     },
-    
+
     fetchView: function(viewId, callback, clientContext, params, useLoadingTab) {
       if (useLoadingTab) {
         // open a loading tab
@@ -116,7 +115,7 @@
         params.loadingTabId = viewTabId;
         this.createTab(viewId, viewTabId, layout, params);
       }
-      
+
       var rpcMgr = ISC.RPCManager;
       var reqObj = {
         params: {
@@ -131,13 +130,13 @@
       };
       var request = rpcMgr.sendRequest(reqObj);
     },
-    
+
     addRecentDocument: function(params) {
       vmgr.recentManager.addRecent('OBUIAPP_RecentDocumentsList', 
           isc.addProperties({icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png'}, 
               params));
     },
-    
+
     createTab: function(viewName, viewTabId, viewInstance, params) {
       if (params.i18nTabTitle) {
         // note call to I18N is done below after the tab
@@ -147,7 +146,7 @@
         tabTitle = params.tabTitle || viewInstance.tabTitle || params.tabId ||
         viewName;
       }
-      
+
       var tabDef = {
         ID: viewTabId,
         title: tabTitle,
@@ -165,10 +164,10 @@
       if (viewInstance.notClosable) {
         tabDef.canClose = false;
       }
-      
+
       // Adding to the MainView tabSet
       tabSet.addTab(tabDef);
-      
+
       if (params.i18nTabTitle) {
         tabTitle = '';
         // note the callback calls the tabSet
@@ -179,7 +178,7 @@
           }
         }, 'setTitle');
       }
-      
+
       // tell the viewinstance what tab it is on
       // note do not use tabId on the viewInstance
       // as tabId is used by the classic ob window
@@ -189,7 +188,7 @@
       } else {
         viewInstance.viewTabId = viewTabId;
       }
-      
+
       // Adding a reference to opened views collection
       vmgr.views.push({
         viewName: viewName,
@@ -197,11 +196,11 @@
         instance: viewInstance,
         viewTabId: viewTabId
       });
-      
+
       // the select tab event will update the history
       tabSet.selectTab(viewTabId);
     },
-  
+
     // ** {{{ ViewManager.openView(viewName, params) }}} **
     //
     // Shows a new tab in the {{{ Main Layout }}}
@@ -216,9 +215,9 @@
     // to initialize an instance.
     //
     openView: function(viewName, params, state) {
-    
+
       params = params || {};
-      
+
       // only add closable views to the recent items, this prevents the workspace
       // view from being displayed, explicitly doing !== false to catch 
       // views which don't have this set at all
@@ -231,40 +230,40 @@
             isc.addProperties({icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png'}, 
                 params));
       }
-      
+
       //
       // Returns the function implementation of a View
       //
       function getView(viewName, params, state) {
-      
+
         if (!viewName) {
           throw {
             name: 'ParameterRequired',
             message: 'View implementation name is required'
           };
         }
-        
+
         //
         // Shows a view in a tab in the {{{ TabSet }}} or external
         //
         function showTab(viewName, params, state) {
-        
+
           var viewTabId, tabTitle, loadingTab = vmgr.findLoadingTab(params);
-          
+
           if (loadingTab) {
             viewTabId = loadingTab.pane.viewTabId;
           } else {
             viewTabId = vmgr.views.getViewTabID(viewName, params);
           }
-          
+
           // always create a new instance anyway as parameters
           // may have changed
           var viewInstance = ISC[viewName].create(params);
-          
+
           if (state && viewInstance.setViewState) {
             viewInstance.setViewState(state);
           }
-          
+
           // is not shown in a tab, let it show itself in a different way
           // but first get rid of the loading tab
           if (viewInstance && viewInstance.show && viewInstance.showsItself) {
@@ -283,7 +282,7 @@
             tabSet.updateTab(viewTabId, viewInstance);
             // and show it
             tabSet.selectTab(viewTabId);
-            
+
             // tell the viewinstance what tab it is on
             // note do not use tabId on the viewInstance
             // as tabId is used by the classic ob window
@@ -325,7 +324,7 @@
             vmgr.createTab(viewName, viewTabId, viewInstance, params);
           }
         }
-        
+
         //
         // Function used by the {{ ISC.RPCManager }} after receiving the view
         // implementation from the back-end
@@ -344,7 +343,7 @@
           }
           showTab(viewName, params);
         }
-                
+
         if (isc[viewName]) {
           showTab(viewName, params);
         } else {         
@@ -353,7 +352,7 @@
       }
       getView(viewName, params, state);
     },
-    
+
     // ** {{{ ViewManager.restoreState(state, data) }}} **
     //
     // Restores the state of the main layout using the passed in state object.
@@ -361,17 +360,17 @@
     // The data object contains extra (more complex) state information which 
     // can not be bookmarked.
     //
-    
+
     restoreState: function(newState, data) {
-    
+
       var tabSet = M.TabSet, tabsLength, i, tabObject, hasChanged = false, stateData;
-      
+
       if (vmgr.inStateHandling) {
         return;
       }
-      
+
       vmgr.inStateHandling = true;
-      
+
       // create an empty layout
       if (!newState) {
         tabSet.removeTabs(tabSet.tabs);
@@ -379,7 +378,7 @@
         vmgr.inStateHandling = false;
         return;
       }
-      
+
       // do some comparison
       tabsLength = newState.bm.length;
       hasChanged = tabSet.tabs.length !== tabsLength;
@@ -397,9 +396,9 @@
           }
         }
       }
-      
+
       isc.Log.logDebug('Changed ' + hasChanged, 'OB');
-      
+
       // changes occured, start from scratch again, recreating each view
       if (hasChanged) {
         // stop if tabSet removed failed because a tab has incorrect data
@@ -407,9 +406,9 @@
           vmgr.inStateHandling = false;
           return;
         }
-        
+
         vmgr.views.cache = [];
-        
+
         // handles the case that not all views are there
         // view implementations are requested async resulting
         // in a wrong tab order, therefore only get the views
@@ -424,10 +423,10 @@
           var newState = clientContext.newState;
           var tabsLength = clientContext.tabsLength;
           var i, viewId;
-          
+
           if (currentIndex < tabsLength) {
             for (i = currentIndex; i < tabsLength; i++) {
-            
+
               // ignore the first tab, or the tabs opened without view id
               if (!newState.bm[i].viewId) {
                 continue;
@@ -443,28 +442,28 @@
           }
           // everything is here, open the views
           for (i = 0; i < tabsLength; i++) {
-          
+
             if (data && data[i]) {
               stateData = data[i];
             }
-            
+
             // ignore the first tab, or the tabs opened without view id
             if (!newState.bm[i].viewId) {
               continue;
             }
-            
+
             vmgr.openView(newState.bm[i].viewId, newState.bm[i].params, stateData);
           }
           tabSet.selectTab(newState.st);
           vmgr.inStateHandling = false;
         };
-                
+
         for (i = 0; i < tabsLength; i++) {
-        
+
           if (data && data[i]) {
             stateData = data[i];
           }
-          
+
           // ignore the first tab, or the tabs opened without view id
           if (!newState.bm[i].viewId) {
             continue;
@@ -481,16 +480,16 @@
             vmgr.fetchView(viewId, requestViewsRestoreState, clientContext, newState.bm[i].params);
             return;
           }
-          
+
           vmgr.openView(newState.bm[i].viewId, newState.bm[i].params, stateData);
         }
       }
       
       tabSet.selectTab(newState.st);
-      
+
       vmgr.inStateHandling = false;
     },
-    
+
     createAddStartTab: function(){
       var error, historyId =  isc.History.getCurrentHistoryId();
       if (historyId) {
@@ -518,7 +517,7 @@
       if (!viewTabId) {
         this.openView(viewId, viewParams, null);
       }
-      
+
       // check if a tabId was passed as a url param
       // only do this if there is no other history
       if (!historyId) {
@@ -529,7 +528,7 @@
       }
     }
   };
-  
+
   // Initialize ViewManager object
-  vmgr = L.ViewManager = new ViewManager();
+  vmgr = L.ViewManager = OB.ViewManager = new ViewManager();
 })(OB, isc);

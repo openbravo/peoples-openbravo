@@ -47,7 +47,6 @@ isc.OBLinkedItemSectionItem.addProperties({
   
   // note formitems don't have an initWidget but an init method
   init: function(){
-  
     // override the one passed in
     this.defaultValue = OB.I18N.getLabel('OBUIAPP_LinkedItemsTitle');
     this.sectionExpanded = false;
@@ -98,6 +97,14 @@ isc.OBLinkedItemSectionItem.addProperties({
     } else {
       this.prompt = '';
     }
+  },
+  
+  handleFocus: function() {
+    if (this.getLinkedItemPart().linkedItemCategoryListGrid && this.getLinkedItemPart().linkedItemCategoryListGrid.filterEditor && this.getLinkedItemPart().linkedItemCategoryListGrid.filterEditor.getEditForm()) {
+      this.getLinkedItemPart().linkedItemCategoryListGrid.filterEditor.getEditForm().focus();
+      return true;
+    }
+    return false;
   }
 });
 
@@ -114,8 +121,7 @@ isc.OBLinkedItemLayout.addProperties({
   // clicks on the section item, so don't do that for now
   // width: '100%',
   // height: '100%',
-  
-  
+
   /** 
    * Loads categories to the categories grid
    **/
@@ -206,23 +212,7 @@ isc.OBLinkedItemLayout.addProperties({
    * Opens linked item in a new window
    */
   openLinkedItemInNewWindow: function(record){
-  
-    var windowId = record.adWindowId;
-    var entityName = record.tableName;
-    var recordId = record.id;
-    var tabId = record.adTabId;
-    var tabTitle = record.adMenuName;
-    
-    var openObject = {
-      viewId: '_' + windowId,
-      targetEntity: entityName,
-      targetRecordId: recordId,
-      targetTabId: tabId,
-      tabTitle: tabTitle,
-      windowId: windowId
-    };
-    
-    OB.Layout.ViewManager.openView(openObject.viewId, openObject);
+    OB.Utilities.openView(record.adWindowId, record.adTabId, record.adMenuName, record.id, 'DIRECT');
   },
   
   /**

@@ -219,7 +219,7 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'export',
     prompt: OB.I18N.getLabel('OBUIAPP_ExportGrid'),
     updateState: function(){
-      this.setDisabled(this.view.isShowingForm);
+      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows()===0);
     },
     keyboardShortcutId: 'ToolBar_Export'
   },
@@ -229,13 +229,25 @@ isc.OBToolbar.addClassProperties({
       var form = isc.OBViewForm.create({
         width: 390,
         height: 1,
+        numCols: 1,
         overflow: 'visible',
         fields: [{
           type: 'OBTextAreaItem', selectOnFocus: true, 
           width: 390, height: 50, canFocus: true, 
           name:'url', 
-          title: OB.I18N.getLabel('OBUIAPP_URL'), value: url}
-        ],
+          title: OB.I18N.getLabel('OBUIAPP_PasteLink'), value: url},
+          {
+            type: 'CanvasItem', showTitle: false, 
+            width: '100%', height: 1, overFlow: 'visible',  
+            cellStyle: 'OBFormField',
+            titleStyle: 'OBFormFieldLabel',
+            textBoxStyle: 'OBFormFieldInput',
+            name:'url', canvas: isc.Label.create({
+              width: 360,
+              contents: OB.I18N.getLabel('OBUIAPP_DeepLinkNote'), height: 1, overflow: 'visible'
+            })
+          }
+        ],        
         show: function() {
           var fld = this.getFields()[0];
           this.setFocusItem(fld);
@@ -269,7 +281,8 @@ isc.OBToolbar.addClassProperties({
           disabled = true;
         } else if (view.isEditingGrid && grid.getEditForm().isNew) {
           disabled = true;
-        } else if (selectedRecords && selectedRecords.length > 0 && selectedRecords[0].updated && selectedRecords[0].creationDate && selectedRecords[0].updated.getTime() === selectedRecords[0].creationDate.getTime()) {
+        } else if ((selectedRecords && selectedRecords.length > 1) || 
+                  (selectedRecords && selectedRecords.lenght === 1 && selectedRecords[0].updated && selectedRecords[0].creationDate && selectedRecords[0].updated.getTime() === selectedRecords[0].creationDate.getTime())) {
           disabled = true;
         }
         this.setDisabled(disabled);

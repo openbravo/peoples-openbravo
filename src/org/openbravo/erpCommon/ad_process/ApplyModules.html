@@ -206,10 +206,16 @@
     //Restarts tomcat/Reloads tomcat/Just closes the window
     function restart() {
       if (document.frmMain.option[0].checked) {
-        window.opener.submitCommandForm('RESTART', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
         restarting=true;
-        closePage();
-        return false;
+        if(window.opener){
+          window.opener.submitCommandForm('RESTART', false, null, '../ad_process/ApplyModules.html', '_self', null, false);
+          closePage();
+          return false;
+        }else{
+          top.opener.location="./ApplyModules.html?Command=RESTART";
+          closePage();
+          return false;
+        }
       } else if (document.frmMain.option[1].checked) {
         closePage();
         return;
@@ -448,7 +454,9 @@
             var frm = document.frmMain;
             startLocalTimer('localTimer');
             processing = true;
-            window.opener.setProcessingMode('window', true, false);
+            if(window.opener && window.opener.setProcessingMode){
+              window.opener.setProcessingMode('window', true, false);
+            }
             displayLogicElement('confirmation',false);
             displayLogicElement('rebuildTable',true);
             return submitXmlHttpRequest(endProcess, frm, "STARTAPPLY", "ApplyModules.html", false, null, null);
@@ -482,7 +490,9 @@
     }
     
     function onUnloadDo() {
-      window.opener.setProcessingMode('window', false);
+      if(window.opener && window.opener.setProcessingMode){
+          window.opener.setProcessingMode('window', false);
+      }
       if(!restarting){
         reloadOpener();
       }
