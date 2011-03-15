@@ -396,17 +396,6 @@ isc.OBViewGrid.addProperties({
     };
     OB.KeyboardManager.KS.set('Grid_EditInForm', editInFormAction);
   },
-
-  // overridden to set the enterkeyaction to nextrowstart in cases the current row
-  // is the last being edited  
-  getNextEditCell : function (rowNum, colNum, editCompletionEvent) {
-    // past the last row
-    if (editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS && rowNum === (this.getTotalRows() - 1)) {
-      // move to the next row
-      return this.findNextEditCell(rowNum +1, 0, 1, true, true);
-    }
-    return this.Super('getNextEditCell', arguments);
-  },
   
   deselectAllRecords: function(preventUpdateSelectInfo, autoSaveDone){
     if (!autoSaveDone) {
@@ -1495,6 +1484,42 @@ isc.OBViewGrid.addProperties({
     this.Super('cellEditEnd', arguments);
   },
   
+  // overridden to set the enterkeyaction to nextrowstart in cases the current row
+  // is the last being edited
+  // also sets a flag which is used in canEditCell   
+  getNextEditCell: function (rowNum, colNum, editCompletionEvent) {
+    var ret;
+    this._inGetNextEditCell = true;
+    // past the last row
+    if (editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS && rowNum === (this.getTotalRows() - 1)) {
+      // move to the next row
+      ret = this.findNextEditCell(rowNum + 1, 0, 1, true, true);
+    } else {
+      ret = this.Super('getNextEditCell', arguments);
+    }
+    delete this._inGetNextEditCell;
+    return ret;
+  },
+
+  // overridden to take into account disabled at item level
+  // only used when computing the next edit cell
+  // if caneditcell returns false in other cases then smartclient
+  // won't even show an input but shows the display value directly
+  // this interferes sometimes with the very dynamic enabling 
+  // disabling of fields by the readonlylogic
+  canEditCell: function (rowNum, colNum) {
+    if (this._inGetNextEditCell) {
+      var field = this.getField(colNum);
+      if (field && this.getEditForm()) {
+        var item = this.getEditForm().getItem(field.name);
+        if (item && item.isDisabled()) {
+          return false;
+        }
+      }
+    }
+    return this.Super('canEditCell', arguments);    
+  },
+      
   // saveEditedValues: when saving, first check if a FIC call needs to be done to update to the 
   // latest values. This can happen when the focus is in a field and the save action is
   // done, at that point first try to force a fic call (handleItemChange) and if that
