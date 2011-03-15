@@ -47,7 +47,6 @@ isc.OBLinkedItemSectionItem.addProperties({
   
   // note formitems don't have an initWidget but an init method
   init: function(){
-  
     // override the one passed in
     this.defaultValue = OB.I18N.getLabel('OBUIAPP_LinkedItemsTitle');
     this.sectionExpanded = false;
@@ -98,6 +97,14 @@ isc.OBLinkedItemSectionItem.addProperties({
     } else {
       this.prompt = '';
     }
+  },
+  
+  handleFocus: function() {
+    if (this.getLinkedItemPart().linkedItemCategoryListGrid && this.getLinkedItemPart().linkedItemCategoryListGrid.filterEditor && this.getLinkedItemPart().linkedItemCategoryListGrid.filterEditor.getEditForm()) {
+      this.getLinkedItemPart().linkedItemCategoryListGrid.filterEditor.getEditForm().focus();
+      return true;
+    }
+    return false;
   }
 });
 
@@ -114,8 +121,7 @@ isc.OBLinkedItemLayout.addProperties({
   // clicks on the section item, so don't do that for now
   // width: '100%',
   // height: '100%',
-  
-  
+
   /** 
    * Loads categories to the categories grid
    **/

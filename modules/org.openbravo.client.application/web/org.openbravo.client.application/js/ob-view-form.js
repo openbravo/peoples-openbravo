@@ -74,6 +74,7 @@ OB.ViewFormProperties = {
   linkedItemSection: null,
 
   initWidget: function() {
+    this._preventFocusChanges = true;
     var length, i, item;
     // add the obFormProperties to ourselves, the obFormProperties
     // are re-used for inline grid editing
@@ -90,6 +91,7 @@ OB.ViewFormProperties = {
         break;
       }
     }
+    delete this._preventFocusChanges;
   },
   
   setHasChanged: function(value) {
@@ -350,7 +352,10 @@ OB.ViewFormProperties = {
   },
   
   setFields: function(){
+    // is used in various places, prevent focus and scroll events
+    this._preventFocusChanges = true;
     this.Super('setFields', arguments);
+    delete this._preventFocusChanges;
     this.fieldsByInpColumnName = null;
     this.fieldsByColumnName = null;
   },
