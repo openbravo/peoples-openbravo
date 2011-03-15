@@ -348,7 +348,12 @@ isc.ClassFactory.defineClass('OBTextItem', TextItem);
 
 isc.OBTextItem.addProperties({
   operator: 'iContains',
-  validateOnExit: true
+  validateOnExit: true,
+  itemHoverHTML: function(item, form) {
+    if (this.isDisabled()) {
+      return this.getValue();
+    }
+  }
 });
 
 //== OBLinkItem ==
@@ -392,7 +397,12 @@ isc.ClassFactory.defineClass('OBTextAreaItem', TextAreaItem);
 
 isc.OBTextAreaItem.addProperties({
   operator: 'iContains',
-  validateOnExit: true
+  validateOnExit: true,
+  itemHoverHTML: function(item, form) {
+    if (this.isDisabled()) {
+      return this.getValue();
+    }
+  }
 });
 
 // used in the grid
