@@ -654,6 +654,7 @@ isc.OBDateRangeDialog.addProperties({
 isc.ClassFactory.defineClass('OBMiniDateRangeItem', isc.MiniDateRangeItem);
 
 isc.OBMiniDateRangeItem.addProperties({
+  dateDisplayFormat: OB.Format.date,
   rangeDialogConstructor: isc.OBDateRangeDialog,
   
   keyPress: function(item, form, keyName, characterValue){
