@@ -462,7 +462,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       columnValues.put("inp" + Sqlc.TransformaNombreColumna(auxIn.getName()), jsonObj);
       RequestContext.get().setRequestParameter(
           "inp" + Sqlc.TransformaNombreColumna(auxIn.getName()),
-          value == null ? null : value.toString());
+          value == null || value.equals("null") ? null : value.toString());
       // Now we insert session values for auxiliary inputs
       if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
         setSessionValue(tab.getWindow().getId() + "|" + auxIn.getName(), value);
@@ -520,6 +520,10 @@ public class FormInitializationComponent extends BaseActionHandler {
             } else {
               value = (String) jsContent.get(inpColName);
             }
+
+            if (value != null && value.equals("null")) {
+              value = null;
+            }
             RequestContext.get().setRequestParameter(inpColName, value);
           }
         } catch (Exception e) {
@@ -541,7 +545,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       try {
         if (RequestContext.get().getRequestParameter(key) == null) {
           String value = jsContent.getString(key);
-          if (value.equals("null")) {
+          if (value != null && value.equals("null")) {
             value = null;
           }
           RequestContext.get().setRequestParameter(key, value);
@@ -656,7 +660,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     Property prop = entity.getPropertyByColumnName(columnName);
     Object currentValue = obj.get(prop.getName());
 
-    if (currentValue != null) {
+    if (currentValue != null && !currentValue.toString().equals("null")) {
       if (currentValue instanceof BaseOBObject) {
         if (prop.getReferencedProperty() != null) {
           currentValue = ((BaseOBObject) currentValue).get(prop.getReferencedProperty().getName());
@@ -666,6 +670,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       } else {
         currentValue = UIDefinitionController.getInstance().getUIDefinition(prop.getColumnId())
             .convertToClassicString(currentValue);
+      }
+      if (currentValue != null && currentValue.equals("null")) {
+        currentValue = null;
       }
       RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(columnName),
           currentValue.toString());
@@ -717,8 +724,11 @@ public class FormInitializationComponent extends BaseActionHandler {
   private void setRequestContextParameter(Field field, JSONObject jsonObj) {
     try {
       String fieldId = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
-      RequestContext.get().setRequestParameter(fieldId,
-          jsonObj.has("classicValue") ? jsonObj.getString("classicValue") : null);
+      RequestContext.get().setRequestParameter(
+          fieldId,
+          jsonObj.has("classicValue") && jsonObj.get("classicValue") != null
+              && !jsonObj.getString("classicValue").equals("null") ? jsonObj
+              .getString("classicValue") : null);
     } catch (JSONException e) {
       log.error("Couldn't read JSON parameter for column " + field.getColumn().getDBColumnName());
     }
@@ -857,9 +867,14 @@ public class FormInitializationComponent extends BaseActionHandler {
                           UIDefinition uiDef = UIDefinitionController.getInstance()
                               .getUIDefinition(col.getId());
                           if (uiDef.getDomainType() instanceof PrimitiveDomainType) {
-                            rq.setRequestParameter(colId, uiDef.convertToClassicString(value));
+                            String newValue = uiDef.convertToClassicString(value);
+                            if (newValue != null && newValue.equals("null")) {
+                              newValue = null;
+                            }
+                            rq.setRequestParameter(colId, newValue);
                           } else {
-                            rq.setRequestParameter(colId, value == null ? null : value.toString());
+                            rq.setRequestParameter(colId,
+                                value == null || value.equals("null") ? null : value.toString());
                           }
                           JSONObject jsonobject = new JSONObject(uiDef.getFieldProperties(inpFields
                               .get(name), true));
