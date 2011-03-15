@@ -236,6 +236,10 @@ isc.OBStandardView.addProperties({
   buildStructure: function(){
     this.createMainParts();
     this.createViewStructure();
+    if (this.childTabSet && this.childTabSet.tabs.length === 0) {
+      this.hasChildTabs = false;
+      this.activeGridFormMessageLayout.setHeight('100%');
+    }
     this.dataSource.view = this;
     
     // directTabInfo is set when we are in direct link mode, i.e. directly opening
