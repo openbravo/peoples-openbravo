@@ -493,6 +493,7 @@ isc.OBViewGrid.addProperties({
     
     var record, ret = this.Super('dataArrived', arguments);
     this.updateRowCountDisplay();
+    this.view.toolBar.updateButtonState(true);
     if (this.getSelectedRecords() && this.getSelectedRecords().length > 0) {
       this.selectionUpdated();
     }
@@ -1295,6 +1296,7 @@ isc.OBViewGrid.addProperties({
     this.data.insertCacheData(record, rowNum);
     this.scrollToRow(rowNum);
     this.updateRowCountDisplay();
+    this.view.toolBar.updateButtonState(true);
     this.redraw();
   },
   
@@ -1391,6 +1393,7 @@ isc.OBViewGrid.addProperties({
     if (toRemove.length > 0) {
       this.data.handleUpdate('remove', toRemove);
       this.updateRowCountDisplay();
+      this.view.toolBar.updateButtonState(true);
     }
     this.view.standardWindow.cleanUpAutoSaveProperties();
     this.view.updateTabTitle();
@@ -1411,6 +1414,7 @@ isc.OBViewGrid.addProperties({
           id: record.id
         }]);
         me.updateRowCountDisplay();
+        me.view.toolBar.updateButtonState(true);
         me.view.refreshChildViews();
       } else {
         // remove the error style/msg    
@@ -1431,6 +1435,7 @@ isc.OBViewGrid.addProperties({
           id: record.id
         }]);
         me.updateRowCountDisplay();
+        me.view.toolBar.updateButtonState(true);
       } else {
         // remove the error style/msg    
         me.setRecordErrorMessage(rowNum, null);
