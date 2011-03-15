@@ -635,7 +635,7 @@ public class UsedByLink extends HttpSecureAppServlet {
               && property.getTargetEntity() != null
               && property.getTargetEntity().getTableName().equalsIgnoreCase(tableName)) {
             final LinkedTable linkedTable = new LinkedTable();
-            System.out.println("p:" + property.getColumnName());
+            log4j.debug("p:" + property.getColumnName());
             linkedTable.setColumnId(property.getColumnId());
             linkedTables.add(linkedTable);
           }
