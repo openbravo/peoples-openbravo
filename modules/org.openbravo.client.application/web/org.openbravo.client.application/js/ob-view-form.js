@@ -375,7 +375,7 @@ OB.ViewFormProperties = {
       TAB_ID: this.view.tabId,
       ROW_ID: this.getValue(OB.Constants.ID)
     };
-    if (parentId && isNew) {
+    if (parentId && isNew && this.view.parentProperty) {
       parentColumn = this.view.getPropertyDefinition(this.view.parentProperty).inpColumn;
       requestParams[parentColumn] = parentId;
     }
