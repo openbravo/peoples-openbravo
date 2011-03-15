@@ -321,6 +321,23 @@ isc.OBSelectorItem.addProperties({
   
   // Set the pickListWidth just before being shown.
   showPickList: function() {
+
+    // if organization changes invalidate cache to force a fetch.
+    var organization = null;
+    if (this.form.getField('organization')) {
+      organization = this.form.getValue('organization');
+    } else {
+      var contextInfo = this.form.view.getContextInfo(false, true);
+      if (contextInfo.inpadOrgId) {
+        organization = contextInfo.inpadOrgId;
+      }
+    }
+    
+    if (this.pickList && this.pickList.data.criteria &&
+        organization !== this.pickList.data.criteria.organization) {
+      this.pickList.data.invalidateRows();
+    }
+
     this.setPickListWidth();
     this.Super('showPickList', arguments);
   },
@@ -479,6 +496,17 @@ isc.OBSelectorItem.addProperties({
     var criteria = { operator: 'or',
                      _constructor: 'AdvancedCriteria',
                      criteria:[]};
+
+    // add organization to the criteria
+    if (this.form.getField('organization')) {
+      criteria.organization = this.form.getValue('organization');
+    } else {
+      var contextInfo = this.form.view.getContextInfo(false, true);
+      if (contextInfo.inpadOrgId) {
+        criteria.organization = contextInfo.inpadOrgId;
+      }
+    }
+
     // only filter if the display field is also passed
     // the displayField filter is not passed when the user clicks the drop-down button
     // display field is passed on the criteria.
