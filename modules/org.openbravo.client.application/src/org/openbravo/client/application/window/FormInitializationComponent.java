@@ -788,11 +788,13 @@ public class FormInitializationComponent extends BaseActionHandler {
     HashMap<String, Field> inpFields = buildInpField(fields);
     boolean comboReloadNeeded = false;
     String lastCalledCallout = "";
+    String lastFieldOfLastCalloutCalled = "";
 
     while (!calloutsToCall.isEmpty() && calledCallouts.size() < MAX_CALLOUT_CALLS) {
       String calloutClassName = calloutsToCall.get(0);
       String lastFieldChanged = lastfieldChangedList.get(0);
-      if (calloutClassName.equals(lastCalledCallout)) {
+      if (calloutClassName.equals(lastCalledCallout)
+          && lastFieldChanged.equals(lastFieldOfLastCalloutCalled)) {
         log.debug("Callout filtered: " + calloutClassName);
         calloutsToCall.remove(calloutClassName);
         lastfieldChangedList.remove(lastFieldChanged);
@@ -942,6 +944,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           }
         }
         lastCalledCallout = calloutClassName;
+        lastFieldOfLastCalloutCalled = lastFieldChanged;
       } catch (ClassNotFoundException e) {
         throw new OBException("Couldn't find class " + calloutClassName, e);
       } catch (Exception e) {
