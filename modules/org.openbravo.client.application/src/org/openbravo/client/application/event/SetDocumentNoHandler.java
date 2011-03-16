@@ -83,7 +83,7 @@ public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
     boolean processed = false;
     Object oProcessed = event.getCurrentState(processedProperty);
     if (oProcessed instanceof String) {
-      processed = !"Y".equals(oProcessed.toString());
+      processed = "Y".equals(oProcessed.toString());
     } else if (oProcessed instanceof Boolean) {
       processed = (Boolean) oProcessed;
     }
