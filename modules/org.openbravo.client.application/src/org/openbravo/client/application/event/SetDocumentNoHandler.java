@@ -52,6 +52,7 @@ public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
   private static Property[] documentNoProperties = null;
   private static Property[] documentTypeProperties = null;
   private static Property[] documentTypeTargetProperties = null;
+  private static Property[] processedProperties = null;
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     handleEvent(event);
@@ -76,9 +77,17 @@ public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
     Property documentNoProperty = documentNoProperties[index];
     Property documentTypeProperty = documentTypeProperties[index];
     Property docTypeTargetProperty = documentTypeTargetProperties[index];
+    Property processedProperty = processedProperties[index];
 
     String documentNo = (String) event.getCurrentState(documentNoProperty);
-    if (documentNo == null || documentNo.startsWith("<")) {
+    boolean processed = false;
+    Object oProcessed = event.getCurrentState(processedProperty);
+    if (oProcessed instanceof String) {
+      processed = !"Y".equals(oProcessed.toString());
+    } else if (oProcessed instanceof Boolean) {
+      processed = (Boolean) oProcessed;
+    }
+    if (documentNo == null || documentNo.startsWith("<") && !processed) {
       final DocumentType docTypeTarget = (docTypeTargetProperty == null ? null
           : (DocumentType) event.getCurrentState(docTypeTargetProperty));
       final DocumentType docType = (documentTypeProperty == null ? null : (DocumentType) event
@@ -106,6 +115,7 @@ public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
       List<Property> documentNoPropertyList = new ArrayList<Property>();
       List<Property> documentTypePropertyList = new ArrayList<Property>();
       List<Property> documentTypeTargetPropertyList = new ArrayList<Property>();
+      List<Property> processedPropertyList = new ArrayList<Property>();
       for (Entity entity : ModelProvider.getInstance().getModel()) {
         for (Property prop : entity.getProperties()) {
           if ("documentno".equals(prop.getColumnName() != null ? prop.getColumnName().toLowerCase()
@@ -123,6 +133,11 @@ public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
             } else {
               documentTypeTargetPropertyList.add(null);
             }
+            if (entity.hasProperty(Order.PROPERTY_PROCESSED)) {
+              processedPropertyList.add(entity.getProperty(Order.PROPERTY_PROCESSED));
+            } else {
+              processedPropertyList.add(null);
+            }
             break;
           }
         }
@@ -134,6 +149,8 @@ public class SetDocumentNoHandler extends EntityPersistenceEventObserver {
           .toArray(new Property[documentTypePropertyList.size()]);
       documentTypeTargetProperties = documentTypeTargetPropertyList
           .toArray(new Property[documentTypeTargetPropertyList.size()]);
+      processedProperties = processedPropertyList
+          .toArray(new Property[processedPropertyList.size()]);
     }
     return entities;
   }
