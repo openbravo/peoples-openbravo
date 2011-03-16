@@ -112,6 +112,9 @@ public class Fact {
       strNegate = "Y";
     BigDecimal DebitAmt = new BigDecimal(debitAmt.equals("") ? "0.00" : debitAmt);
     BigDecimal CreditAmt = new BigDecimal(creditAmt.equals("") ? "0.00" : creditAmt);
+    if (DebitAmt.compareTo(BigDecimal.ZERO) == 0 && CreditAmt.compareTo(BigDecimal.ZERO) == 0) {
+      return null;
+    }
     if (strNegate.equals("N") && (DebitAmt.compareTo(ZERO) < 0 || CreditAmt.compareTo(ZERO) < 0)) {
       return createLine(docLine, account, C_Currency_ID, CreditAmt.abs().toString(), DebitAmt.abs()
           .toString(), Fact_Acct_Group_ID, SeqNo, DocBaseType, conn);
