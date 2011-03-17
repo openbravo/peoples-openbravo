@@ -442,12 +442,12 @@ public class Transactions extends HttpSecureAppServlet {
 
           vars.setSessionValue("Transactions.numrows", strNumRows);
         } else {
-          strNumRows = vars.getSessionValue("ProjectData.numrows");
+          strNumRows = vars.getSessionValue("Transactions.numrows");
         }
 
         finaccTransactions = dao.getTrxGridRows(dao.getObject(FIN_FinancialAccount.class,
             strFinancialAccountId), hideReconciledTrx, pageSize, offset, strOrderBy);
-        strNumRows = Integer.toString(finaccTransactions.size());
+        // strNumRows = Integer.toString(finaccTransactions.size());
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
         e.printStackTrace();
