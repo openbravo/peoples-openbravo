@@ -405,12 +405,13 @@ public class FormInitializationComponent extends BaseActionHandler {
                 "inp" + Sqlc.TransformaNombreColumna(col));
             String newValue = jsonobject.has("classicValue") ? jsonobject.getString("classicValue")
                 : (jsonobject.has("value") ? jsonobject.getString("value") : null);
-            if (newValue != null && newValue.equals("null")) {
-              newValue = null;
+            if (newValue == null || newValue.equals("null")) {
+              newValue = "";
             }
-            if (!(oldValue == null && newValue == null)
-                && ((oldValue == null && newValue != null)
-                    || (oldValue != null && newValue == null) || !oldValue.equals(newValue))) {
+            if (oldValue == null || oldValue.equals("null")) {
+              oldValue = "";
+            }
+            if (!oldValue.equals(newValue)) {
               changedCols.add(field.getColumn().getDBColumnName());
             }
           }
