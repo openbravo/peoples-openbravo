@@ -356,7 +356,8 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     CreateAccountingReportData[] data;
     if (initialBalance.equals("Y")) {
       data = CreateAccountingReportData.selectInitial(this, strParent, String.valueOf(level),
-          Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), strOrg,
+          Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), Utility
+          .stringList(strOrg),
           dateInitialYear, DateTimeData.nDaysAfter(this, dateInitialYear, "1"), strAccountId,
           strcAcctSchemaId, strAccountingReportId);
     } else {
