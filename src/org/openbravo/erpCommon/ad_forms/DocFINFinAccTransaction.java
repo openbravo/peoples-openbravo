@@ -213,6 +213,7 @@ public class DocFINFinAccTransaction extends AcctServer {
       docLine.setCGlItemId(data[i].getField("cGlItemId"));
       docLine.setPaymentAmount(data[i].getField("PaymentAmount"));
       docLine.setDepositAmount(data[i].getField("DepositAmount"));
+      docLine.setAmount(data[i].getField("Amount"));
       docLine.setWriteOffAmt(data[i].getField("WriteOffAmt"));
       docLine.setAmount(data[i].getField("Amount"));
       docLine.loadAttributes(data[i], this);
@@ -429,14 +430,25 @@ public class DocFINFinAccTransaction extends AcctServer {
     if (usedCredit.compareTo(ZERO) != 0 && generatedCredit.compareTo(ZERO) == 0)
       retValue.add(usedCredit);
     sb.append(retValue);
+    FIN_Payment payment = OBDal.getInstance().get(FIN_FinaccTransaction.class, Record_ID)
+        .getFinPayment();
     // - Lines
     for (int i = 0; i < p_lines.length; i++) {
-      BigDecimal lineBalance = new BigDecimal(
-          ((DocLine_FINFinAccTransaction) p_lines[i]).DepositAmount);
-      lineBalance = lineBalance.subtract(new BigDecimal(
-          ((DocLine_FINFinAccTransaction) p_lines[i]).PaymentAmount));
-      retValue = retValue.subtract(lineBalance);
-      sb.append("-").append(lineBalance);
+      if (payment == null) {
+        BigDecimal lineBalance = new BigDecimal(
+            ((DocLine_FINFinAccTransaction) p_lines[i]).DepositAmount);
+        lineBalance = lineBalance.subtract(new BigDecimal(
+            ((DocLine_FINFinAccTransaction) p_lines[i]).PaymentAmount));
+        retValue = retValue.subtract(lineBalance);
+      } else {
+        BigDecimal lineBalance = payment.isReceipt() ? new BigDecimal(
+            ((DocLine_FINFinAccTransaction) p_lines[i]).getAmount()) : new BigDecimal(
+            ((DocLine_FINFinAccTransaction) p_lines[i]).getAmount()).negate();
+        BigDecimal lineWriteoff = payment.isReceipt() ? new BigDecimal(
+            ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()) : new BigDecimal(
+            ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()).negate();
+        retValue = retValue.subtract(lineBalance).subtract(lineWriteoff);
+      }
     }
     sb.append("]");
     //
