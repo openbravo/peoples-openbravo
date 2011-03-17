@@ -144,4 +144,13 @@
     <Parameter name="adAlertRuleId" />
     <Parameter name="role" />
   </SqlMethod>
+  <SqlMethod name="existAPRMbasetables" type="preparedStatement" return="boolean">
+    <SqlMethodComment>Check if the FIN_Finacc_Transaction table exist</SqlMethodComment>
+    <Sql><![CDATA[
+       SELECT count(*) AS EXISTING
+       FROM ad_table
+       WHERE ad_table_id = '4D8C3B3C31D1410DA046140C9F024D17'
+      ]]>
+    </Sql>
+  </SqlMethod>
 </SqlClass>

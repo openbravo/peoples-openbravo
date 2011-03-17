@@ -31,18 +31,23 @@ public class UniquePaymentForTransaction extends BuildValidation {
     ConnectionProvider cp = getConnectionProvider();
     ArrayList<String> errors = new ArrayList<String>();
     try {
-      UniquePaymentForTransactionData[] listofPayments = UniquePaymentForTransactionData.selectDuplicatePaymentsForTransaction(cp);
-      if (listofPayments != null && listofPayments.length > 0 ) {
-        String message = "You cannot apply this Advanced Payables and Receivables Management module version because your instance fails in a pre-validation. " +
-        "It is not allowed to upgrade to this version having the same payment linked to several transactions. " +
-        "To fix this problem in your instance, have a look to generated alerts (Payment In/Out linked with more than one transaction) and identify the affected transactions. " +
-        "If you have for example two transactions for the same payment, delete both transactions and create a new transaction associated to the payment. " +
-        "Once it is fixed you should be able to apply this module version";
-        errors.add(message);
-      }
+      // Prevent error when upgrading from a pure 2.50
+      if (UniquePaymentForTransactionData.existAPRMbasetables(cp)) {
+
+        UniquePaymentForTransactionData[] listofPayments = UniquePaymentForTransactionData.selectDuplicatePaymentsForTransaction(cp);
+        if (listofPayments != null && listofPayments.length > 0 ) {
+          String message = "You cannot apply this Advanced Payables and Receivables Management module version because your instance fails in a pre-validation. " +
+          "It is not allowed to upgrade to this version having the same payment linked to several transactions. " +
+          "To fix this problem in your instance, have a look to generated alerts (Payment In/Out linked with more than one transaction) and identify the affected transactions. " +
+          "If you have for example two transactions for the same payment, delete both transactions and create a new transaction associated to the payment. " +
+          "Once it is fixed you should be able to apply this module version";
+          errors.add(message);
+        }
       
-      for (UniquePaymentForTransactionData payment : listofPayments) {
-        processAlert(cp, payment);
+        for (UniquePaymentForTransactionData payment : listofPayments) {
+          processAlert(cp, payment);
+        }
+ 
       }
     } catch (Exception e) {
       return handleError(e);
