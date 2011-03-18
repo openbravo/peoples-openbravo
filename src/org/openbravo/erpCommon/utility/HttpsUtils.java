@@ -44,7 +44,6 @@ import org.openbravo.utils.FormatUtilities;
 public class HttpsUtils {
 
   private static Logger log4j = Logger.getLogger(HttpsUtils.class);
-  private static Boolean isInternetAvailable = null;
 
   static String sendSecure(HttpsURLConnection conn, String data) throws IOException {
     String result = null;
@@ -156,9 +155,6 @@ public class HttpsUtils {
    * @return true in case Internet (https://butler.openbravo.com) is reachable.
    */
   public static boolean isInternetAvailable() {
-    if (isInternetAvailable != null) {
-      return isInternetAvailable;
-    }
     return isInternetAvailable(null, 0);
   }
 
@@ -238,14 +234,13 @@ public class HttpsUtils {
       conn.setConnectTimeout(3000);
       conn.connect();
       if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-        isInternetAvailable = Boolean.FALSE;
+        return false;
       }
     } catch (Exception e) {
       log4j.info("Unable to reach butler.openbravo.com");
-      isInternetAvailable = Boolean.FALSE;
+      return false;
     }
-    isInternetAvailable = Boolean.TRUE;
-    return isInternetAvailable;
+    return true;
   }
 
 }
