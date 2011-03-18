@@ -804,7 +804,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         lastfieldChangedList.remove(lastFieldChanged);
         continue;
       }
-      log.debug("Calling callout " + calloutClassName);
+      log.debug("Calling callout " + calloutClassName + " with field changed " + lastFieldChanged);
       try {
         Class<?> calloutClass = Class.forName(calloutClassName);
         calloutsToCall.remove(calloutClassName);
