@@ -169,7 +169,9 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
           priceActual
               .setScale(priceEditionFmt.getMaximumFractionDigits(), BigDecimal.ROUND_HALF_UP))
           .setScale(euroEditionFmt.getMaximumFractionDigits(), BigDecimal.ROUND_HALF_UP);
-      if (!LineNetAmt.equals(CalculatedLineNetAmt)) {
+      if (!LineNetAmt
+          .setScale(priceEditionFmt.getMaximumFractionDigits(), BigDecimal.ROUND_HALF_UP).equals(
+              CalculatedLineNetAmt)) {
         StringBuffer strMessage = new StringBuffer(Utility.messageBD(this,
             "NotCorrectAmountProvided", vars.getLanguage()));
         strMessage.append(": ");
