@@ -121,7 +121,7 @@
           SELECT ol.C_ORDERLINE_ID, b.NAME AS BPARTNER_NAME, p.NAME AS PRODUCT_NAME, ol.DATEORDERED, o.DOCUMENTNO, 
           o.ISSOTRX, ol.QTYORDERED AS QTY, ol.PRICEACTUAL, ol.LINENETAMT, 
           (o.DOCUMENTNO || ' - ' || ol.DATEORDERED || ' - ' || o.GRANDTOTAL || ' - ' || ol.LINE || ' - ' || ol.LINENETAMT) AS LINE_TEXT,
-			  ol.C_ORDERLINE_ID || '#' || o.DOCUMENTNO || ' - ' || ol.DATEORDERED || ' - ' || o.GRANDTOTAL || ' - ' || ol.LINE || ' - ' || ol.LINENETAMT as rowkey
+			  ol.C_ORDERLINE_ID || '@_##_@' || o.DOCUMENTNO || ' - ' || ol.DATEORDERED || ' - ' || o.GRANDTOTAL || ' - ' || ol.LINE || ' - ' || ol.LINENETAMT as rowkey
           FROM C_ORDERLINE ol left join M_MATCHPO mp on ol.C_ORDERLINE_ID = mp.C_ORDERLINE_ID 
                                                     AND mp.C_INVOICELINE_ID IS NOT NULL
                               left join M_MATCHPO mp2 on ol.C_ORDERLINE_ID = mp2.C_ORDERLINE_ID
