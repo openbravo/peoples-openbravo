@@ -51,7 +51,6 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 public class AdvancedQueryBuilder {
 
-  private static final String PARAM_DELIMITER = "@";
   private static final String ALIAS_PREFIX = "alias_";
   private static final char ESCAPE_CHAR = '|';
 
@@ -661,12 +660,13 @@ public class AdvancedQueryBuilder {
 
   private String setRequestParameters(String currentWhereClause) {
     // no parameters
-    if (!currentWhereClause.contains(PARAM_DELIMITER)) {
+    if (!currentWhereClause.contains(DataEntityQueryService.PARAM_DELIMITER)) {
       return currentWhereClause;
     }
     String localWhereClause = currentWhereClause;
     for (String key : filterParameters.keySet()) {
-      if (!key.startsWith(PARAM_DELIMITER) || !key.endsWith(PARAM_DELIMITER)) {
+      if (!key.startsWith(DataEntityQueryService.PARAM_DELIMITER)
+          || !key.endsWith(DataEntityQueryService.PARAM_DELIMITER)) {
         continue;
       }
       final int index = localWhereClause.toLowerCase().indexOf(key.toLowerCase());

@@ -204,10 +204,13 @@ public class DefaultJsonDataService implements JsonDataService {
     if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
       queryService.setUseAlias();
     }
-    // set the where/org filter parameters
+    // set the where/org filter parameters and the @ parameters
     for (String key : parameters.keySet()) {
-      if (key.equals(JsonConstants.WHERE_PARAMETER) || key.equals(JsonConstants.IDENTIFIER)
-          || key.equals(JsonConstants.ORG_PARAMETER)) {
+      if (key.equals(JsonConstants.WHERE_PARAMETER)
+          || key.equals(JsonConstants.IDENTIFIER)
+          || key.equals(JsonConstants.ORG_PARAMETER)
+          || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
+              .endsWith(DataEntityQueryService.PARAM_DELIMITER))) {
         queryService.addFilterParameter(key, parameters.get(key));
       }
     }
