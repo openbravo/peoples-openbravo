@@ -110,8 +110,6 @@ public class DateUIDefinition extends UIDefinition {
     sb.append("shortDisplayFormatter: function(value, field, component, record) {"
         + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},"
         + "normalDisplayFormatter: function(value, field, component, record) {"
-        + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},"
-        + "createClassicString: function(value) {"
         + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},");
     return sb.toString();
   }
