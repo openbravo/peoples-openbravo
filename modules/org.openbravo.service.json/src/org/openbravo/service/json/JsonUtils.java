@@ -30,6 +30,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -173,7 +174,12 @@ public class JsonUtils {
       final OBError obError = Utility.translateError(new DalConnectionProvider(), vars, OBContext
           .getOBContext().getLanguage().getLanguage(), localThrowable.getMessage());
 
-      if (obError != null) {
+      if (localThrowable instanceof OBSecurityException) {
+        final JSONObject error = new JSONObject();
+        error.put("message", "OBUIAPP_ActionNotAllowed");
+        error.put("type", "user");
+        jsonResponse.put(JsonConstants.RESPONSE_ERROR, error);
+      } else if (obError != null) {
         final JSONObject error = new JSONObject();
         error.put("message", obError.getMessage());
         error.put("messageType", obError.getType());
