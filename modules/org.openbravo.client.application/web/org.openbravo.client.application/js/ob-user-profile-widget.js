@@ -109,6 +109,7 @@ isc.OBUserProfile.addProperties({
       pickerIconSrc: '[SKIN]/../../org.openbravo.client.application/images/form/comboBoxPicker.png',
       height: 21,
       pickerIconWidth: 21,
+      pickListCellHeight: 22,
       pickListProperties: {
         bodyStyleName: 'OBPickListBody'
       },
