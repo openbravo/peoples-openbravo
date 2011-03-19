@@ -406,7 +406,21 @@ isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
   controlStyle: 'OBFormFieldSelectControl',
   pickerIconSrc: '[SKIN]/../../org.openbravo.client.application/images/form/comboBoxPicker.png',
   pickerIconWidth: 21,
-  pickerIconHeight: 21
+  pickerIconHeight: 21,
+  
+  keyPress: function(item, form, keyName, characterValue){
+    if (keyName === 'Enter') {
+      // canvasItem is the rangeItem
+      form.canvasItem.showPicker();
+      return false;
+    }
+    return true;
+  }
+
+});
+
+isc.RelativeDateItem.changeDefaults('calculatedDateFieldDefaults', {
+  canFocus: false
 });
 
 isc.RelativeDateItem.changeDefaults('pickerIconDefaults', {
