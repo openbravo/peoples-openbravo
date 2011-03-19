@@ -1566,6 +1566,7 @@ isc.OBViewGrid.addProperties({
       }
     }
     this.Super('saveEditedValues', [rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback]);
+    this.view.standardWindow.setDirtyEditForm(null);
   },
   
   autoSave: function(){
