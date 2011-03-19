@@ -432,7 +432,48 @@ isc.RelativeDateItem.changeDefaults('pickerIconDefaults', {
 isc.RelativeDateItem.addProperties({
   displayFormat: OB.Format.date,
   inputFormat: OB.Format.date,
-  pickerConstructor: 'OBDateChooser'
+  pickerConstructor: 'OBDateChooser',
+
+  fieldChanged: function () {
+    if (!this.valueField || !this.quantityField) {
+      return;
+    }
+    
+    var value = this.valueField.getValue(),
+      quantity = this.quantityField.getValue();
+
+    var showQuantity = (value && isc.isA.String(value) && this.relativePresets[value]);
+
+    if (!showQuantity) {
+      this.editor.colWidths[1] = 0;
+      this.quantityField.setWidth(0);
+      this.quantityField.hide();
+    } else {
+      this.editor.colWidths[1] = '*';
+      this.quantityField.setWidth('*');
+      this.quantityField.show();
+    }
+    
+    if (this.calculatedDateField) {
+      value = this.getValue();
+      var displayValue = this.editor.getValue('valueField');
+      // only show if the value is not a direct date
+      // https://issues.openbravo.com/view.php?id=16295
+      if (displayValue && displayValue.length > 0) {
+        displayValue = OB.Utilities.trim(displayValue);
+        // if it starts with a number then it must be a real date
+        if (displayValue.charAt(0) < '0' || displayValue.charAt(0) > '9' ) {
+          this.calculatedDateField.setValue(!value ? '' : 
+            '(' + this.formatDate(value) + ')');          
+        } else {
+          this.calculatedDateField.setValue('');                  
+        }
+      } else {
+        this.calculatedDateField.setValue('');                  
+      }
+    }
+  }
+
 });
 
 /* =====================================================================

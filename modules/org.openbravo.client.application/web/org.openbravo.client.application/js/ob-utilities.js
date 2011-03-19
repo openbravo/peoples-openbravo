@@ -527,6 +527,15 @@ OB.Utilities.areEqualWithTrim = function(/* String */str1, /* String */ str2){
   return str1 === str2;
 };
 
+//** {{{ OB.Utilities.trim(/*String*/ str)}}} **
+//Trims a string
+OB.Utilities.trim = function(/* String */str){
+  if (!str) {
+   return str;
+  }
+  return str.replace(/^\s*/, '').replace(/\s*$/, '');
+};
+
 OB.Utilities.processLogoutQueue = function(){
   var q = OB.Utilities.logoutWorkQueue, qElement, result, tab, tabID;
   
