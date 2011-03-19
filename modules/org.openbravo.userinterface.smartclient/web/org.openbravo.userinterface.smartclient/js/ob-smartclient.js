@@ -63,14 +63,17 @@ isc.FormItem.addProperties({
     this._original_init();
   },
   
+  _handleTitleClick: isc.FormItem.getPrototype().handleTitleClick,
+  
   handleTitleClick: function() {
-    // if disabled then call titleclick directly as sc won't call titleclick
+    // always titleclick directly as sc won't call titleclick
     // in that case
     if (this.isDisabled()) {
       this.titleClick(this.form, this);
-      return;
+      return false;
     }
-    this.Super('handleTitleClick', arguments);
+    // forward to the original method
+    return this._handleTitleClick();
   },
   
   titleClick: function(form, item){
