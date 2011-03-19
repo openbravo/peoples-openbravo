@@ -63,6 +63,16 @@ isc.FormItem.addProperties({
     this._original_init();
   },
   
+  handleTitleClick: function() {
+    // if disabled then call titleclick directly as sc won't call titleclick
+    // in that case
+    if (this.isDisabled()) {
+      this.titleClick(this.form, this);
+      return;
+    }
+    this.Super('handleTitleClick', arguments);
+  },
+  
   titleClick: function(form, item){
     item.focusInItem();
     if (item.linkButtonClick) {
