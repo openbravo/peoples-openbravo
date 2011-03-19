@@ -104,6 +104,7 @@ public class DefaultJsonDataService implements JsonDataService {
         int computedMaxResults = Integer.MAX_VALUE;
         if (startRowStr != null) {
           doCount = true;
+          startRow = Integer.parseInt(startRowStr);
         }
         if (endRowStr != null) {
           int endRow = Integer.parseInt(endRowStr);
