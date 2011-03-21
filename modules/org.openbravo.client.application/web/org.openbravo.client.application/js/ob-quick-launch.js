@@ -79,9 +79,9 @@ isc.OBQuickLaunch.addProperties({
       }
       this.members[0].setFields(newFields);
       this.layout.showMember(this.members[0]);
-      this.members[1].getField('value').setValue(null);
-      this.members[1].getField('value').setElementValue('', null);      
     }
+    this.members[1].getField('value').setValue(null);
+    this.members[1].getField('value').setElementValue('', null);      
   },
   
   // handle the case that someone entered a url in the quick launch

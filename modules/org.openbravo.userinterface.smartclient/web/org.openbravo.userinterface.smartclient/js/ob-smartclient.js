@@ -63,6 +63,19 @@ isc.FormItem.addProperties({
     this._original_init();
   },
   
+  _handleTitleClick: isc.FormItem.getPrototype().handleTitleClick,
+  
+  handleTitleClick: function() {
+    // always titleclick directly as sc won't call titleclick
+    // in that case
+    if (this.isDisabled()) {
+      this.titleClick(this.form, this);
+      return false;
+    }
+    // forward to the original method
+    return this._handleTitleClick();
+  },
+  
   titleClick: function(form, item){
     item.focusInItem();
     if (item.linkButtonClick) {
