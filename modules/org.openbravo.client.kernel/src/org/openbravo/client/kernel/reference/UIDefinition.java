@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,7 +163,9 @@ public abstract class UIDefinition {
         if (defaultS == null || defaultS.equals("\"\"")) {
           defaultS = "";
         }
-        if (!defaultS.startsWith("@SQL=")) {
+        if (defaultS.equalsIgnoreCase("@#Date@")) {
+          columnValue = this.convertToClassicString(new Date());
+        } else if (!defaultS.startsWith("@SQL=")) {
           columnValue = Utility.getDefault(new DalConnectionProvider(false), rq
               .getVariablesSecureApp(), field.getColumn().getDBColumnName(), defaultS, field
               .getTab().getWindow().getId(), "");
