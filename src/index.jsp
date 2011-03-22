@@ -43,6 +43,26 @@ String userId = authManager.authenticate(request, response);
 if(userId == null){
   return;
 }
+
+String ua = request.getHeader( "User-Agent" );
+boolean isMSIE = ( ua != null && ua.indexOf( "MSIE" ) != -1 );
+int verMSIE = 0;
+String verMSIEtmp = "";
+if (isMSIE) {
+  verMSIEtmp = ua.substring(ua.indexOf("MSIE") + 5);
+  verMSIEtmp = verMSIEtmp.substring(0, verMSIEtmp.indexOf("."));
+  if (ua.indexOf("MSIE 7.0") != -1 && ua.indexOf("Trident/4") != -1) {
+    //In case IE8 runs in "IE8 Compatibility mode, look for Trident/4.0 to know that is IE8 although MSIE string is MSIE 7.0
+    verMSIEtmp = "8";
+  } else if (ua.indexOf("MSIE 7.0") != -1 && ua.indexOf("Trident/5") != -1) {
+    // In case IE9 runs in "IE8 Compatibility mode, look for Trident/5.0 to know that is IE9 although MSIE string is MSIE 7.0
+    verMSIEtmp = "9";
+  } else if (ua.indexOf("MSIE 7.0") != -1 && ua.indexOf("Trident/") != -1) {
+    // For hypothetic future IE versions in case IEX runs in "IEX Compatibility mode, look for Trident/ to know that is IEX although MSIE string is MSIE 7.0
+    verMSIEtmp = "10"; //If this 'if' statement is not updated, could be 10 or 11 or anything... but set 10 just to ensure it is not in IE7
+  }
+  verMSIE = Integer.parseInt(verMSIEtmp);
+}
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
@@ -57,9 +77,11 @@ if(userId == null){
 <meta name="keywords" content="openbravo">
 <meta name="description" content="Openbravo S.L.U.">
 <link rel="shortcut icon" href="./web/images/favicon.ico" />
-<link rel="stylesheet" type="text/css" href="./org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_mode=3.00&_skinVersion=3.00"/>
+<link rel="stylesheet" type="text/css" href="./org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_mode=3.00&_skinVersion=3.00&_cssDataUri=<%=(!isMSIE || (isMSIE && verMSIE >=8))%>"/>
+
 <title>Openbravo</title>
 <script type="text/javascript" src="./web/org.openbravo.client.kernel/js/LAB.min.js"></script>
+
 <!-- styles used during loading -->
 <style type="text/css">
   html, body {
