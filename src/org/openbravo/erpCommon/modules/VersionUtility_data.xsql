@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,7 @@
       <Sql>
         select '' as ad_module_id, '' as name, '' as version, '' as type,
           '' as ad_module_dependency_id, '' as ad_dependent_module_id, '' as dependant_module_name, '' as startVersion, '' as endVersion,
-          '' as dependency_enforcement, '' as user_editable_enforcement, '' as instance_enforcement
+          '' as dependency_enforcement, '' as user_editable_enforcement, '' as instance_enforcement, '' as installed
         from dual
       </Sql>
    </SqlMethod>
@@ -34,11 +34,12 @@
    <SqlMethod name="readModules" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        select m.ad_module_id, m.name, m.version, m.type
+        select m.ad_module_id, m.name, m.version, m.type, 'Y' as installed
         from ad_module m
         union
-        select m.ad_module_id, m.name, m.version, m.type
+        select m.ad_module_id, m.name, m.version, m.type, 'N'
         from ad_module_install m
+        order by installed desc, ad_module_id
        </Sql>
    </SqlMethod>
    
@@ -52,23 +53,30 @@
           dependency_enforcement, user_editable_enforcement, instance_enforcement
         from ad_module_dependency
         where ad_module_id = ?
-        and isIncluded = 'N'
+        and isIncluded = ?
      </Sql>
      <Parameter name="ad_module_id"/>
+     <Parameter name="included"/>
    </SqlMethod>
    
-   <SqlMethod name="readIncludes" type="preparedStatement" return="multiple">
+   <SqlMethod name="readDependenciesToInstall" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         select ad_module_dependency_id,
           ad_dependent_module_id,
           dependant_module_name,
-          startVersion, endVersion,
-          dependency_enforcement, user_editable_enforcement, instance_enforcement
-        from ad_module_dependency
-        where ad_module_id = ?
-        and isIncluded = 'Y'
+          startVersion, endVersion, 
+          dependency_enforcement, user_editable_enforcement, 
+          (select max(instance_enforcement) 
+             from ad_module_dependency d 
+            where d.ad_dependent_module_id = i.ad_dependent_module_id 
+              and d.ad_module_id=i.ad_module_id) as instance_enforcement
+        from ad_module_dependency_inst i 
+       where ad_module_id = ?
+         and isIncluded = ?
      </Sql>
      <Parameter name="ad_module_id"/>
-   </SqlMethod>   
+     <Parameter name="included"/>
+   </SqlMethod>  
+   
 </SqlClass>

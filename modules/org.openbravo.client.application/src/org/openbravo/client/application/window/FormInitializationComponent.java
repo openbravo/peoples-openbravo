@@ -405,9 +405,13 @@ public class FormInitializationComponent extends BaseActionHandler {
                 "inp" + Sqlc.TransformaNombreColumna(col));
             String newValue = jsonobject.has("classicValue") ? jsonobject.getString("classicValue")
                 : (jsonobject.has("value") ? jsonobject.getString("value") : null);
-            if (!(oldValue == null && newValue == null)
-                && ((oldValue == null && newValue != null)
-                    || (oldValue != null && newValue == null) || !oldValue.equals(newValue))) {
+            if (newValue == null || newValue.equals("null")) {
+              newValue = "";
+            }
+            if (oldValue == null || oldValue.equals("null")) {
+              oldValue = "";
+            }
+            if (!oldValue.equals(newValue)) {
               changedCols.add(field.getColumn().getDBColumnName());
             }
           }
@@ -788,17 +792,19 @@ public class FormInitializationComponent extends BaseActionHandler {
     HashMap<String, Field> inpFields = buildInpField(fields);
     boolean comboReloadNeeded = false;
     String lastCalledCallout = "";
+    String lastFieldOfLastCalloutCalled = "";
 
     while (!calloutsToCall.isEmpty() && calledCallouts.size() < MAX_CALLOUT_CALLS) {
       String calloutClassName = calloutsToCall.get(0);
       String lastFieldChanged = lastfieldChangedList.get(0);
-      if (calloutClassName.equals(lastCalledCallout)) {
+      if (calloutClassName.equals(lastCalledCallout)
+          && lastFieldChanged.equals(lastFieldOfLastCalloutCalled)) {
         log.debug("Callout filtered: " + calloutClassName);
         calloutsToCall.remove(calloutClassName);
         lastfieldChangedList.remove(lastFieldChanged);
         continue;
       }
-      log.debug("Calling callout " + calloutClassName);
+      log.debug("Calling callout " + calloutClassName + " with field changed " + lastFieldChanged);
       try {
         Class<?> calloutClass = Class.forName(calloutClassName);
         calloutsToCall.remove(calloutClassName);
@@ -942,6 +948,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           }
         }
         lastCalledCallout = calloutClassName;
+        lastFieldOfLastCalloutCalled = lastFieldChanged;
       } catch (ClassNotFoundException e) {
         throw new OBException("Couldn't find class " + calloutClassName, e);
       } catch (Exception e) {

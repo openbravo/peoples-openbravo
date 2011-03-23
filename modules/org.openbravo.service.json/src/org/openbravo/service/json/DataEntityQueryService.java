@@ -49,6 +49,8 @@ import org.openbravo.dal.service.OBQuery;
 public class DataEntityQueryService {
   private static final Logger log = Logger.getLogger(DataEntityQueryService.class);
 
+  public static final String PARAM_DELIMITER = "@";
+
   private static final long serialVersionUID = 1L;
 
   private String entityName;

@@ -28,6 +28,7 @@
   v_rate              NUMBER;
   v_CurrencyRate      NUMBER;
   v_CurrencyRateType  VARCHAR(60) ;
+  v_DateAcct          DATE;
     
 BEGIN
     
@@ -42,10 +43,12 @@ BEGIN
   END IF;
   SELECT C_AcctSchema_ID,
     CurrencyRate,
-    COALESCE(CurrencyRateType, 'S')
+    COALESCE(CurrencyRateType, 'S'),
+    dateacct
   INTO v_AcctSchema_ID,
     v_CurrencyRate,
-    v_CurrencyRateType
+    v_CurrencyRateType,
+    v_DateAcct
   FROM GL_Journal
   WHERE GL_Journal_ID=:NEW.GL_Journal_ID;
   SELECT COALESCE(MAX(c.C_Currency_ID), '0'),
@@ -56,7 +59,7 @@ BEGIN
     C_Currency c
   WHERE a.C_Currency_ID=c.C_Currency_ID
     AND a.C_AcctSchema_ID=v_AcctSchema_ID;
-  v_rate:=C_CURRENCY_RATE(:NEW.C_Currency_ID, v_TargetCurrency_ID, :NEW.DateAcct, v_CurrencyRateType, :NEW.AD_CLIENT_ID, :NEW.AD_ORG_ID) ;
+  v_rate:=C_CURRENCY_RATE(:NEW.C_Currency_ID, v_TargetCurrency_ID, v_DateAcct, v_CurrencyRateType, :NEW.AD_CLIENT_ID, :NEW.AD_ORG_ID) ;
   IF(v_rate IS NULL) THEN
     v_rate:=v_CurrencyRate;
   END IF;

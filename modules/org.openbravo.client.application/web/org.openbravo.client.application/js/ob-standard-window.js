@@ -3,7 +3,7 @@
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
- * file except in compliance with the License. You  may  obtain  a copy of
+ * file except in compliance with the License. You  may obtain  a copy of
  * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distribfuted  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
@@ -150,7 +150,7 @@ isc.OBStandardWindow.addProperties({
     this.doActionAfterAutoSave(null, true);
   },
   
-  doActionAfterAutoSave: function(action, forceDialogOnFailure) {
+  doActionAfterAutoSave: function(action, forceDialogOnFailure, ignoreAutoSaveEnabled) {
     // if not dirty or we know that the object has errors
     if (!this.isDirty() || (this.getDirtyEditForm() && this.getDirtyEditForm().hasErrors())) {
       
@@ -172,7 +172,7 @@ isc.OBStandardWindow.addProperties({
       return;
     }
     
-    if (!this.isAutoSaveEnabled()) {
+    if (!this.isAutoSaveEnabled() && !ignoreAutoSaveEnabled) {
       this.autoSaveConfirmAction();
       return;
     }

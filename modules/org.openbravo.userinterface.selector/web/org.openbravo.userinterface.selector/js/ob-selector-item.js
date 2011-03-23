@@ -96,9 +96,7 @@ isc.OBSelectorPopupWindow.addProperties({
         isc.addProperties(params, this.selector.form.view.getContextInfo(false, true));
 
         // also adds the special ORG parameter
-        if (this.selector.form.getField('organization')) {
-          params[OB.Constants.ORG_PARAMETER] = this.selector.form.getValue('organization');
-        } else if (params.inpadOrgId) {
+        if (params.inpadOrgId) {
           params[OB.Constants.ORG_PARAMETER] = params.inpadOrgId;
         }
         params[OB.Constants.WHERE_PARAMETER] = this.selector.whereClause;
@@ -318,26 +316,8 @@ isc.OBSelectorItem.addProperties({
     this.pickListWidth = (fieldWidth < 150 ? 150 : fieldWidth) + extraWidth;
   },
   
-  
-  // Set the pickListWidth just before being shown.
   showPickList: function() {
-
-    // if organization changes invalidate cache to force a fetch.
-    var organization = null;
-    if (this.form.getField('organization')) {
-      organization = this.form.getValue('organization');
-    } else {
-      var contextInfo = this.form.view.getContextInfo(false, true);
-      if (contextInfo.inpadOrgId) {
-        organization = contextInfo.inpadOrgId;
-      }
-    }
-    
-    if (this.pickList && this.pickList.data.criteria &&
-        organization !== this.pickList.data.criteria.organization) {
-      this.pickList.data.invalidateRows();
-    }
-
+    // Set the pickListWidth just before being shown.
     this.setPickListWidth();
     this.Super('showPickList', arguments);
   },
@@ -426,6 +406,11 @@ isc.OBSelectorItem.addProperties({
   },
   
   openSelectorWindow: function(){
+    // always refresh the content of the grid to force a reload
+    // if the organization has changed
+    if (this.selectorWindow.selectorGrid) {
+      this.selectorWindow.selectorGrid.invalidateCache();
+    }
     this.selectorWindow.open();
   },
   
@@ -459,9 +444,7 @@ isc.OBSelectorItem.addProperties({
     isc.addProperties(requestProperties.params, this.form.view.getContextInfo(false, true));
     
     // also add the special ORG parameter
-    if (this.form.getField('organization')) {
-      requestProperties.params[OB.Constants.ORG_PARAMETER] = this.form.getValue('organization');
-    } else if (requestProperties.params.inpadOrgId) {
+    if (requestProperties.params.inpadOrgId) {
       requestProperties.params[OB.Constants.ORG_PARAMETER] = requestProperties.params.inpadOrgId;
     }
     
@@ -472,7 +455,6 @@ isc.OBSelectorItem.addProperties({
         requestProperties.params[OB.Constants.OR_EXPRESSION] = 'true';
       }
     }
-
     
     // adds the selector id to filter used to get filter information
     requestProperties.params._selectorDefinitionId = this.selectorDefinitionId;
@@ -497,14 +479,14 @@ isc.OBSelectorItem.addProperties({
                      _constructor: 'AdvancedCriteria',
                      criteria:[]};
 
-    // add organization to the criteria
-    if (this.form.getField('organization')) {
-      criteria.organization = this.form.getValue('organization');
-    } else {
-      var contextInfo = this.form.view.getContextInfo(false, true);
-      if (contextInfo.inpadOrgId) {
-        criteria.organization = contextInfo.inpadOrgId;
-      }
+    // add organization to the criteria as a dummy
+    var contextInfo = this.form.view.getContextInfo(false, true);
+    if (contextInfo.inpadOrgId) {
+        criteria.criteria.push({
+          fieldName: '_dummy',
+          operator: 'equals',
+          value: contextInfo.inpadOrgId
+        });
     }
 
     // only filter if the display field is also passed

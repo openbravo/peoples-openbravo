@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import org.hibernate.criterion.Expression;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.StandardWindowComponent;
 import org.openbravo.client.kernel.BaseComponent;
 import org.openbravo.client.kernel.BaseTemplateComponent;
@@ -45,6 +46,9 @@ public class ViewComponent extends BaseComponent {
 
   @Inject
   private StandardWindowComponent standardWindowComponent;
+
+  @Inject
+  private WeldUtils weldUtils;
 
   @Override
   public String generate() {
@@ -87,13 +91,15 @@ public class ViewComponent extends BaseComponent {
     final BaseTemplateComponent component;
     if (viewImpDef.getJavaClassName() != null) {
       try {
-        component = (BaseTemplateComponent) OBClassLoader.getInstance().loadClass(
-            viewImpDef.getJavaClassName()).newInstance();
+        @SuppressWarnings("unchecked")
+        final Class<BaseTemplateComponent> clz = (Class<BaseTemplateComponent>) OBClassLoader
+            .getInstance().loadClass(viewImpDef.getJavaClassName());
+        component = weldUtils.getInstance(clz);
       } catch (Exception e) {
         throw new OBException(e);
       }
     } else {
-      component = new BaseTemplateComponent();
+      component = weldUtils.getInstance(BaseTemplateComponent.class);
       if (viewImpDef.getTemplate() == null) {
         throw new IllegalStateException("No class and no template defined for view " + viewName);
       }
@@ -109,7 +115,8 @@ public class ViewComponent extends BaseComponent {
   private OBUIAPPViewImplementation getView(String viewName) {
     OBCriteria<OBUIAPPViewImplementation> obc = OBDal.getInstance().createCriteria(
         OBUIAPPViewImplementation.class);
-    obc.add(Expression.eq(OBUIAPPViewImplementation.PROPERTY_NAME, viewName));
+    obc.add(Expression.or(Expression.eq(OBUIAPPViewImplementation.PROPERTY_NAME, viewName),
+        Expression.eq(OBUIAPPViewImplementation.PROPERTY_ID, viewName)));
 
     if (obc.list().size() > 0) {
       return obc.list().get(0);

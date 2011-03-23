@@ -414,6 +414,11 @@ isc.OBPopUpTextAreaItem.addProperties({
   popUpOnEnter: true
 });
 
+// hack until this gets answered:
+// http://forums.smartclient.com/showthread.php?p=61621#post61621
+// to solve this: https://issues.openbravo.com/view.php?id=16327
+isc.ListGrid.getPrototype().$309.OBPopUpTextAreaItem = true;
+
 // == OBSectionItem ==
 // Form sections
 isc.ClassFactory.defineClass('OBSectionItem', SectionItem);
@@ -495,6 +500,11 @@ isc.OBListItem.addProperties({
   cachePickListResults: false,
   validateOnExit: true,  
   completeOnTab: true,
+  
+  // without this in chrome the content is sorted according to the id/value
+  // not the displayfield
+  sortField: 0,
+  
   // textMatchStyle is used for the client-side picklist
   textMatchStyle: 'substring',
 

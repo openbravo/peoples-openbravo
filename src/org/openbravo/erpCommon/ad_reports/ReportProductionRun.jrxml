@@ -178,7 +178,7 @@
 						style="GroupHeader_DarkGray"
 						x="1"
 						y="0"
-						width="146"
+						width="186"
 						height="23"
 						key="staticText"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -195,9 +195,9 @@
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="GroupHeader_DarkGray"
-						x="147"
+						x="187"
 						y="0"
-						width="388"
+						width="348"
 						height="23"
 						key="textField"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -240,7 +240,7 @@
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="346"
+						x="353"
 						y="23"
 						width="36"
 						height="16"
@@ -258,7 +258,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="97"
+						x="142"
 						y="23"
 						width="79"
 						height="16"
@@ -276,7 +276,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="97"
+						x="142"
 						y="41"
 						width="79"
 						height="16"
@@ -294,7 +294,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="346"
+						x="353"
 						y="41"
 						width="79"
 						height="16"
@@ -314,7 +314,7 @@
 						style="default"
 						x="305"
 						y="23"
-						width="41"
+						width="48"
 						height="16"
 						key="staticText-2"/>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -330,9 +330,9 @@
 				<staticText>
 					<reportElement
 						style="default"
-						x="18"
+						x="11"
 						y="23"
-						width="79"
+						width="131"
 						height="16"
 						key="staticText-3"/>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -348,9 +348,9 @@
 				<staticText>
 					<reportElement
 						style="default"
-						x="18"
+						x="11"
 						y="41"
-						width="79"
+						width="131"
 						height="16"
 						key="staticText-16"/>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -368,7 +368,7 @@
 						style="default"
 						x="282"
 						y="41"
-						width="64"
+						width="71"
 						height="16"
 						key="staticText-17"/>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -546,7 +546,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="359"
+						x="400"
 						y="23"
 						width="62"
 						height="16"
@@ -582,7 +582,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="330"
+						x="338"
 						y="39"
 						width="35"
 						height="16"
@@ -600,7 +600,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="420"
+						x="427"
 						y="39"
 						width="26"
 						height="16"
@@ -618,7 +618,7 @@
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="505"
+						x="506"
 						y="39"
 						width="27"
 						height="16"
@@ -672,9 +672,9 @@
 				<staticText>
 					<reportElement
 						style="default"
-						x="300"
+						x="306"
 						y="23"
-						width="59"
+						width="94"
 						height="16"
 						key="staticText-6"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -710,7 +710,7 @@
 						style="default"
 						x="266"
 						y="39"
-						width="64"
+						width="72"
 						height="16"
 						key="staticText-8"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -726,7 +726,7 @@
 				<staticText>
 					<reportElement
 						style="default"
-						x="367"
+						x="374"
 						y="39"
 						width="53"
 						height="16"
@@ -744,7 +744,7 @@
 				<staticText>
 					<reportElement
 						style="default"
-						x="453"
+						x="454"
 						y="39"
 						width="52"
 						height="16"
@@ -764,7 +764,7 @@
 						style="Detail_Header"
 						x="21"
 						y="59"
-						width="141"
+						width="121"
 						height="18"
 						key="staticText-11"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -774,16 +774,16 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement>
-						<font/>
+						<font size="9"/>
 					</textElement>
 				<text><![CDATA[Work effort]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="162"
+						x="142"
 						y="59"
-						width="92"
+						width="102"
 						height="18"
 						key="staticText-12"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -793,16 +793,16 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement>
-						<font/>
+						<font size="9"/>
 					</textElement>
 				<text><![CDATA[Production Run]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="254"
+						x="244"
 						y="59"
-						width="92"
+						width="102"
 						height="18"
 						key="staticText-13"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -812,7 +812,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement>
-						<font/>
+						<font size="9"/>
 					</textElement>
 				<text><![CDATA[Required Qty.]]></text>
 				</staticText>
@@ -831,7 +831,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement>
-						<font/>
+						<font size="9"/>
 					</textElement>
 				<text><![CDATA[Qty. Fulfill]]></text>
 				</staticText>
@@ -850,7 +850,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
 					<textElement>
-						<font/>
+						<font size="9"/>
 					</textElement>
 				<text><![CDATA[Refund Qty.]]></text>
 				</staticText>
@@ -1047,9 +1047,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="141"
+						x="121"
 						y="0"
-						width="92"
+						width="102"
 						height="16"
 						key="textField-1"
 						stretchType="RelativeToBandHeight"/>
@@ -1068,7 +1068,7 @@
 						style="default"
 						x="0"
 						y="0"
-						width="141"
+						width="121"
 						height="16"
 						key="textField-2"
 						stretchType="RelativeToBandHeight"/>
@@ -1085,9 +1085,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="233"
+						x="223"
 						y="0"
-						width="92"
+						width="102"
 						height="16"
 						key="textField-3"
 						stretchType="RelativeToBandHeight"/>

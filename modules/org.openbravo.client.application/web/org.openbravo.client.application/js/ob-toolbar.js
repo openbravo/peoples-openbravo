@@ -62,7 +62,7 @@ isc.OBToolbar.addClassProperties({
         method: this.saveAndClose,
         parameters: []
       };
-      this.view.standardWindow.doActionAfterAutoSave(actionObject, true);      
+      this.view.standardWindow.doActionAfterAutoSave(actionObject, true, true);      
     },
     
     saveAndClose: function(){
@@ -846,8 +846,8 @@ isc.OBToolbar.addProperties({
         TAB_ID: this.view.tabId,
         ROW_ID: currentValues.id
       };
-      
-      OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', {}, requestParams, function(response, data, request){
+      var allProperties = this.view.getContextInfo(false, true, false, false);
+      OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
         var sessionAttributes = data.sessionAttributes, auxInputs = data.auxiliaryInputValues;
         if (sessionAttributes) {
           formView.sessionAttributes = sessionAttributes;

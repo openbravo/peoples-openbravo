@@ -107,8 +107,14 @@ isc.OBUserProfile.addProperties({
       width: '*',
       pickListBaseStyle: 'OBFormFieldPickListCell',
       pickerIconSrc: '[SKIN]/../../org.openbravo.client.application/images/form/comboBoxPicker.png',
+      
+      // without this in chrome the content is sorted according to the id/value
+      // not the displayfield
+      sortField: 0,
+
       height: 21,
       pickerIconWidth: 21,
+      pickListCellHeight: 22,
       pickListProperties: {
         bodyStyleName: 'OBPickListBody'
       },

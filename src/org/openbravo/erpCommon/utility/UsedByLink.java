@@ -336,7 +336,7 @@ public class UsedByLink extends HttpSecureAppServlet {
         keyColumnId, keyColumn, tableId, linkedTablesQuery.toString());
 
     if (data != null && data.length > 0) {
-      final Vector<Object> vecTotal = new Vector<Object>();
+      final Vector<UsedByLinkData> vecTotal = new Vector<UsedByLinkData>();
       for (int i = 0; i < data.length; i++) {
         String keyValue = keyId;
         if (!data[i].referencedColumnId.equals(keyColumnId)) {
@@ -383,7 +383,7 @@ public class UsedByLink extends HttpSecureAppServlet {
 
         if (data[i].accessible.equals("N") && total > 0) {
           nonAccessible = true;
-        } else if (total > 0) {
+        } else if (total > 0 && !existsInVector(data[i], vecTotal)) {
           vecTotal.addElement(data[i]);
         }
       }
@@ -400,6 +400,16 @@ public class UsedByLink extends HttpSecureAppServlet {
     } else {
       return new SearchResult(data);
     }
+  }
+
+  private boolean existsInVector(UsedByLinkData elem, Vector<UsedByLinkData> vec) {
+
+    for (UsedByLinkData i : vec) {
+      if (elem.adTabId.equals(i.adTabId)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

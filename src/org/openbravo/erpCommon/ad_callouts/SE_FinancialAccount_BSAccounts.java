@@ -91,7 +91,8 @@ public class SE_FinancialAccount_BSAccounts extends HttpSecureAppServlet {
       resultado.append("var calloutName='SE_FinancialAccount_BSAccounts';\n\n");
       resultado.append("var respuesta = new Array(");
       String strScript = "(function(){var confirmation = confirm(\'"
-          + Utility.messageBD(this, "BankStatementAccountWarning", vars.getLanguage())
+          + Utility.messageBD(this, "BankStatementAccountWarning", vars.getLanguage()).replaceAll(
+              "\\\\n", "\\\\\\\\n")
           + "\'); if(confirmation){submitCommandFormParameter(\'EXECUTE\', frmMain.inpLastFieldChanged, \'"
           + strChanged
           + "\', false, null, \'../ad_callouts/SE_FinancialAccount_BSAccounts.html\', \'hiddenFrame\', null, null, true);}})();";

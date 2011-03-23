@@ -396,6 +396,7 @@ public class ImportOrder extends ImportProcess {
       String corder_cbpartnerid = "";
       String corder_cbpartnerlocationid = "";
       String strPostMessage = "";
+      boolean bPostMessageFinished = false;
       int lineNo = 0;
       for (int i = 0; i < data.length; i++) {
         con = conn.getTransactionConnection();
@@ -410,9 +411,9 @@ public class ImportOrder extends ImportProcess {
           if (data[i].documentno != null && !data[i].documentno.equals("")) {
             corder.documentno = data[i].documentno;
           } else {
-            String docTargetType = ImportOrderData.cDoctypeTarget(con, conn, Utility.getContext(
-                conn, vars, "#User_Client", "ImportOrder"), Utility.getContext(conn, vars,
-                "#User_Org", "ImportOrder"));
+            String docTargetType = ImportOrderData.cDoctypeTarget(con, conn,
+                Utility.getContext(conn, vars, "#User_Client", "ImportOrder"),
+                Utility.getContext(conn, vars, "#User_Org", "ImportOrder"));
             corder.documentno = Utility.getDocumentNo(conn, vars, "", "C_Order", docTargetType,
                 docTargetType, false, true);
           }
@@ -813,8 +814,7 @@ public class ImportOrder extends ImportProcess {
         line.dateordered = data[i].dateordered.equals("") ? DateTimeData.today(conn)
             : data[i].dateordered;
         line.mWarehouseId = (data[i].mWarehouseId == null || data[i].mWarehouseId.equals("")) ? vars
-            .getWarehouse()
-            : data[i].mWarehouseId;
+            .getWarehouse() : data[i].mWarehouseId;
         if (line.cUomId == null || line.cUomId.equals(""))
           line.cUomId = ProductPriceData.selectCUomIdByProduct(conn, line.mProductId);
         if (line.cUomId == null || line.cUomId.equals(""))
@@ -893,16 +893,27 @@ public class ImportOrder extends ImportProcess {
         }
 
         try {
+          String result = null;
+
           if (data[i].performPost.equals("Y") || m_processOrders) {
             if (i != data.length - 1) {
-              if (!order_documentno.equals(data[i + 1].documentno))
-                strPostMessage += cOrderPost(con, conn, vars, data[i].cOrderId, order_documentno)
-                    + "<br>";
+              if (!order_documentno.equals(data[i + 1].documentno)) {
+                result = cOrderPost(con, conn, vars, data[i].cOrderId, order_documentno) + "<br>";
+              }
             } else {
-              strPostMessage += cOrderPost(con, conn, vars, data[i].cOrderId, order_documentno)
-                  + "<br>";
+              result = cOrderPost(con, conn, vars, data[i].cOrderId, order_documentno) + "<br>";
             }
           }
+
+          if (result != null && !bPostMessageFinished) {
+            if (strPostMessage.length() + result.length() > 1500) {
+              strPostMessage += Utility.messageBD(conn, "More results...", vars.getLanguage());
+              bPostMessageFinished = true;
+            } else {
+              strPostMessage += result;
+            }
+          }
+
         } catch (IOException e) {
           e.printStackTrace();
           log4j.debug("Post error");
@@ -939,8 +950,8 @@ public class ImportOrder extends ImportProcess {
             vars.getLanguage()));
       } else {
         myError.setType("Error");
-        myError.setTitle(Utility
-            .messageBD(conn, " No orders could be imported", vars.getLanguage()));
+        myError
+            .setTitle(Utility.messageBD(conn, " No orders could be imported", vars.getLanguage()));
       }
       myError.setMessage(Utility.messageBD(conn, getLog(), vars.getLanguage()));
 
@@ -967,8 +978,8 @@ public class ImportOrder extends ImportProcess {
   String cOrderPost(Connection con, ConnectionProvider conn, VariablesSecureApp vars,
       String strcOrderId, String order_documentno) throws IOException, ServletException {
     String pinstance = SequenceIdData.getUUID();
-    PInstanceProcessData.insertPInstance(con, conn, pinstance, "104", strcOrderId, "N", vars
-        .getUser(), vars.getClient(), vars.getOrg());
+    PInstanceProcessData.insertPInstance(con, conn, pinstance, "104", strcOrderId, "N",
+        vars.getUser(), vars.getClient(), vars.getOrg());
     ImportOrderData.cOrderPost0(con, conn, pinstance);
 
     PInstanceProcessData[] pinstanceData = PInstanceProcessData.selectConnection(con, conn,

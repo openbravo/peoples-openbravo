@@ -102,17 +102,17 @@
     <Parameter name="adLanguage"/>
     <Parameter name="role"/>
     <Parameter name="columnnId"/>
-    <Parameter name="columnnId"/>
-    <Parameter name="columnnId"/>
     <Parameter name="columnname"/>
+    <Parameter name="columnnId"/>
     <Parameter name="columnname"/>
     <Parameter name="adTableId"/>
     <Parameter name="adTableId"/>
+    <Parameter name="columnnId"/>
     <Parameter name="columnname"/>
-    <Parameter name="adLanguage"/>
-    <Parameter name="adLanguage"/>
-    <Parameter name="adLanguage"/>
     <Parameter name="colList" type="replace" optional="true" after="WHERE AD_COLUMN_ID IN (" text="'1'"/>
+    <Parameter name="adLanguage"/>
+    <Parameter name="adLanguage"/>
+    <Parameter name="adLanguage"/>
   </SqlMethod>
   
   

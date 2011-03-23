@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -70,8 +70,10 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strBPfromInvoice = vars.getRequestGlobalVariable("inpcBpartnerId_R", "");
       String strBPfromInvoiceId = vars.getRequestGlobalVariable("inpcBpartnerId", "");
+      BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, strBPfromInvoiceId);
+      String strBPfromInvoice = bp == null ? "" : bp.getIdentifier();
+
       String strCurrencyId = vars.getRequestGlobalVariable("inpcCurrencyId", "");
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
       String strWindowId = vars.getGlobalVariable("inpwindowId", "");

@@ -180,10 +180,10 @@
 			<groupExpression><![CDATA[$F{MA_PROCESSPLAN_ID}]]></groupExpression>
 			<groupHeader>
 			<band height="86"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="PRODUCTION PLAN"  hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="PRODUCTION PLAN"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="110"
+						x="120"
 						y="63"
 						width="78"
 						height="18"
@@ -198,10 +198,10 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{SECUD}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="PRODUCTION PLAN"  hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="PRODUCTION PLAN"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="299"
+						x="335"
 						y="63"
 						width="78"
 						height="18"
@@ -221,7 +221,7 @@
 						style="default"
 						x="11"
 						y="63"
-						width="99"
+						width="109"
 						height="18"
 						key="element-93"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -237,9 +237,9 @@
 				<staticText>
 					<reportElement
 						style="default"
-						x="199"
+						x="205"
 						y="63"
-						width="100"
+						width="130"
 						height="18"
 						key="element-94"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -255,9 +255,9 @@
 				<staticText>
 					<reportElement
 						style="default"
-						x="402"
+						x="358"
 						y="40"
-						width="51"
+						width="99"
 						height="18"
 						key="element-95"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -270,10 +270,10 @@
 					</textElement>
 				<text><![CDATA[Explode: phases:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="453"
+						x="457"
 						y="40"
 						width="69"
 						height="18"
@@ -293,7 +293,7 @@
 						style="default"
 						x="11"
 						y="40"
-						width="34"
+						width="44"
 						height="18"
 						key="element-96"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -309,9 +309,9 @@
 				<staticText>
 					<reportElement
 						style="default"
-						x="199"
+						x="205"
 						y="40"
-						width="25"
+						width="44"
 						height="18"
 						key="element-97"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -324,10 +324,10 @@
 					</textElement>
 				<text><![CDATA[To:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="PRODUCTION PLAN"  hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="PRODUCTION PLAN"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="45"
+						x="55"
 						y="40"
 						width="100"
 						height="18"
@@ -342,10 +342,10 @@
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$F{DESDE}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="PRODUCTION PLAN"  hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="PRODUCTION PLAN"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="224"
+						x="249"
 						y="40"
 						width="100"
 						height="18"
@@ -360,7 +360,7 @@
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$F{HASTA}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Title"
 						x="1"
@@ -441,11 +441,11 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PROCESO}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
 						mode="Opaque"
-						x="358"
+						x="334"
 						y="28"
 						width="24"
 						height="18"
@@ -460,7 +460,7 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{GROUPUSE}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
 						mode="Opaque"
@@ -483,7 +483,7 @@
 					<reportElement
 						style="default"
 						mode="Opaque"
-						x="258"
+						x="234"
 						y="28"
 						width="98"
 						height="18"
@@ -502,9 +502,9 @@
 					<reportElement
 						style="default"
 						mode="Opaque"
-						x="393"
+						x="370"
 						y="28"
-						width="70"
+						width="99"
 						height="18"
 						key="element-92"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

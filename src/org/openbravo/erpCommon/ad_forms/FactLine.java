@@ -885,7 +885,7 @@ public class FactLine {
         }
       }
       if (description.length() == 0) {
-        description.append(m_docVO.DocumentNo);
+        description.append((m_docVO.DocumentNo == null) ? "" : m_docVO.DocumentNo);
         if (!strC_Bpartner_ID.equals(""))
           description.append(" # ").append(
               AcctServerData.selectBpartnerName(connectionProvider, strC_Bpartner_ID));

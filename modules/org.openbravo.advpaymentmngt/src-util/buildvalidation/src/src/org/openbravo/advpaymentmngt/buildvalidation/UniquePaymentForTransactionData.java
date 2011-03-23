@@ -475,4 +475,42 @@ This query returns payments that are wrongly linked to more than one transaction
     }
     return(updateCount);
   }
+
+/**
+Check if the FIN_Finacc_Transaction table exist
+ */
+  public static boolean existAPRMbasetables(ConnectionProvider connectionProvider)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "       SELECT count(*) AS EXISTING" +
+      "       FROM ad_table" +
+      "       WHERE ad_table_id = '4D8C3B3C31D1410DA046140C9F024D17'";
+
+    ResultSet result;
+    boolean boolReturn = false;
+    PreparedStatement st = null;
+
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
+
+      result = st.executeQuery();
+      if(result.next()) {
+        boolReturn = !UtilSql.getValue(result, "existing").equals("0");
+      }
+      result.close();
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception ignore){
+        ignore.printStackTrace();
+      }
+    }
+    return(boolReturn);
+  }
 }

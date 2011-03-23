@@ -1470,14 +1470,6 @@ begin
     v_md5 := md5(v_md5||i.trg_md5);
   end loop;
 
-  --views
-  for i in (SELECT md5(upper(viewname)||pg_get_viewdef(viewname, true)) as v
-           FROM pg_views 
-          WHERE SCHEMANAME = CURRENT_SCHEMA() AND viewname !~ '^pg_' 
-          order by upper(viewname)) loop
-    v_md5 := md5(v_md5||i.v);
-  end loop;
-
   --tables
   for i in (SELECT UPPER(TABLENAME) as tablename, t.tablename as realname
               FROM PG_TABLES t
@@ -1532,14 +1524,6 @@ begin
               AND pg_class.relname = i.realname
               ORDER BY pg_attribute.attnum) loop
       v_md5 := md5(v_md5||j.cl);
-    end loop;
-    
-    --checks
-    for j in (SELECT md5(upper(pg_constraint.conname::text)|| pg_constraint.consrc) as ck
-              FROM pg_constraint JOIN pg_class ON pg_class.oid = pg_constraint.conrelid
-              WHERE pg_constraint.contype::text = 'c' and pg_class.relname = i.realname
-              ORDER BY upper(pg_constraint.conname::text)) loop
-      v_md5 := md5(v_md5||j.ck);
     end loop;
 
     --fk

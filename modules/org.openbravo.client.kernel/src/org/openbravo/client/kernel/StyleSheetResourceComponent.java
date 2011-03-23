@@ -18,7 +18,9 @@
  */
 package org.openbravo.client.kernel;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.StringReader;
 import java.util.List;
 
 import javax.enterprise.inject.Any;
@@ -26,6 +28,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -41,6 +44,7 @@ import org.openbravo.model.ad.module.Module;
  */
 public class StyleSheetResourceComponent extends BaseComponent {
   private static final Logger log = Logger.getLogger(StyleSheetResourceComponent.class);
+  private static final String IMGURLHOLDER = "__URLHOLDER__";
 
   @Inject
   @Any
@@ -103,7 +107,11 @@ public class StyleSheetResourceComponent extends BaseComponent {
         || !getParameters().get(KernelConstants.MODE_PARAMETER).equals(
             KernelConstants.MODE_PARAMETER_300);
 
+    final boolean makeCssDataUri = getParameters().get("_cssDataUri") != null
+        && getParameters().get("_cssDataUri").equals("true");
+
     final String skinParam;
+
     if (classicMode) {
       skinParam = KernelConstants.SKIN_VERSION_CLASSIC;
     } else {
@@ -136,27 +144,76 @@ public class StyleSheetResourceComponent extends BaseComponent {
               }
 
               try {
-                final File file = new File(context.getRealPath(resourcePath));
+                final String realResourcePath = context.getRealPath(resourcePath);
+                final File file = new File(realResourcePath);
                 if (!file.exists() || !file.canRead()) {
                   log.error(file.getAbsolutePath() + " cannot be read");
                   continue;
                 }
-                String resourceContents = FileUtils.readFileToString(file);
+                String resourceContents = FileUtils.readFileToString(file, "UTF-8");
 
-                final int lastIndex = resourcePath.lastIndexOf("/");
-                final String path = getContextUrl() + resourcePath.substring(0, lastIndex);
+                final String contextPath = getContextUrl()
+                    + resourcePath.substring(0, resourcePath.lastIndexOf("/"));
+                final String realPath = realResourcePath.substring(0,
+                    realResourcePath.lastIndexOf("/"));
 
                 // repair urls
-                resourceContents = resourceContents.replace("url(./", "url(" + path + "/");
+                resourceContents = resourceContents.replace("url(./", "url(" + IMGURLHOLDER + "/");
+                resourceContents = resourceContents.replace("url(images", "url(" + IMGURLHOLDER
+                    + "/images");
+                resourceContents = resourceContents.replace("url(\"images", "url(\"" + IMGURLHOLDER
+                    + "/images");
+                resourceContents = resourceContents.replace("url('images", "url('" + IMGURLHOLDER
+                    + "/images");
                 resourceContents = resourceContents
-                    .replace("url(images", "url(" + path + "/images");
-                resourceContents = resourceContents.replace("url(\"images", "url(\"" + path
-                    + "/images");
-                resourceContents = resourceContents.replace("url('images", "url('" + path
-                    + "/images");
-                resourceContents = resourceContents.replace("url('./", "url('" + path + "/");
-                resourceContents = resourceContents.replace("url(\"./", "url(\"" + path + "/");
+                    .replace("url('./", "url('" + IMGURLHOLDER + "/");
+                resourceContents = resourceContents.replace("url(\"./", "url(\"" + IMGURLHOLDER
+                    + "/");
 
+                if (!module.isInDevelopment()) {
+                  resourceContents = CSSMinimizer.formatString(resourceContents);
+                  if (makeCssDataUri) {
+                    String resourceContentsLine;
+                    BufferedReader resourceContentsReader = new BufferedReader(new StringReader(
+                        resourceContents));
+                    StringBuffer resourceContentsBuffer = new StringBuffer();
+
+                    int indexOfUrl;
+                    String imgUrl, imgExt, imgDataUri, newUrlParam;
+                    while ((resourceContentsLine = resourceContentsReader.readLine()) != null) {
+                      indexOfUrl = 0;
+                      while ((indexOfUrl = resourceContentsLine.indexOf("url(", indexOfUrl)) != -1) {
+                        imgUrl = resourceContentsLine.substring(indexOfUrl + 4,
+                            resourceContentsLine.indexOf(")", indexOfUrl));
+                        if (imgUrl.indexOf("\"") == 0 || imgUrl.indexOf("'") == 0) {
+                          imgUrl = imgUrl.substring(1, imgUrl.length());
+                        }
+                        if (imgUrl.indexOf("\"") == imgUrl.length() - 1
+                            || imgUrl.indexOf("'") == imgUrl.length() - 1) {
+                          imgUrl = imgUrl.substring(0, imgUrl.length() - 1);
+                        }
+                        imgExt = imgUrl.substring(imgUrl.lastIndexOf(".") + 1, imgUrl.length());
+                        imgExt = imgExt.toLowerCase();
+                        if (imgExt.equals("jpg")) {
+                          imgExt = "jpeg";
+                        }
+                        if (imgExt.equals("jpeg") || imgExt.equals("png") || imgExt.equals("gif")) {
+                          imgDataUri = filePathToBase64(imgUrl.replace(IMGURLHOLDER, realPath));
+                        } else {
+                          imgDataUri = "";
+                        }
+                        if (imgDataUri != "") {
+                          newUrlParam = "data:image/" + imgExt + ";base64," + imgDataUri;
+                          resourceContentsLine = resourceContentsLine.replace(imgUrl, newUrlParam);
+                        }
+                        indexOfUrl = indexOfUrl + 1;
+                      }
+                      resourceContentsBuffer.append(resourceContentsLine).append("\n");
+                    }
+                    resourceContents = resourceContentsBuffer.toString();
+                  }
+                }
+                resourceContents = resourceContents.replace(IMGURLHOLDER, contextPath);
                 sb.append(resourceContents);
               } catch (Exception e) {
                 log.error("Error reading file: " + resource, e);
@@ -172,5 +229,19 @@ public class StyleSheetResourceComponent extends BaseComponent {
 
   public String getId() {
     return KernelConstants.STYLE_SHEET_COMPONENT_ID;
+  }
+
+  private String filePathToBase64(String path) {
+    try {
+      final File f = new File(path);
+      if (!f.exists() || !f.canRead()) {
+        return "";
+      }
+      byte[] fileBase64Bytes = Base64.encodeBase64(FileUtils.readFileToByteArray(f));
+      return new String(fileBase64Bytes);
+    } catch (final Exception e) {
+      log.error("Error processing file: " + path + " - " + e.getMessage(), e);
+    }
+    return "";
   }
 }

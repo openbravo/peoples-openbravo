@@ -113,9 +113,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           "ReportTrialBalance|cProjectId", IsIDFilter.instance);
       String strGroupBy = vars.getRequestGlobalVariable("inpGroupBy", "ReportTrialBalance|GroupBy");
       String strcElementValueFrom = vars.getRequestGlobalVariable("inpcElementValueIdFrom",
-          "ReportTrialBalanceData|C_ElementValue_IDFROM");
+          "ReportTrialBalance|C_ElementValue_IDFROM");
       String strcElementValueTo = vars.getRequestGlobalVariable("inpcElementValueIdTo",
-          "ReportTrialBalanceData|C_ElementValue_IDTO");
+          "ReportTrialBalance|C_ElementValue_IDTO");
       String strcElementValueFromDes = "", strcElementValueToDes = "";
       if (!strcElementValueFrom.equals(""))
         strcElementValueFromDes = ReportTrialBalanceData.selectSubaccountDescription(this,

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -326,12 +326,12 @@ public class VersionUtility {
     VersionUtilityData[] data = VersionUtilityData.readModules(pool);
     HashMap<String, Mod> modules = new HashMap<String, Mod>();
     for (int i = 0; i < data.length; i++) {
-      if (!isInList(data[i].adModuleId, modulesToMerge)) {
+      if (!isInList(data[i].adModuleId, modulesToMerge) && !modules.containsKey(data[i].adModuleId)) {
         Mod mod = new Mod();
         mod.modId = data[i].adModuleId;
         mod.name = data[i].name;
         mod.type = data[i].type;
-        mod.versions = fillVersions(data[i], mod);
+        mod.versions = fillVersions(data[i], mod, "Y".equals(data[i].installed));
         modules.put(data[i].adModuleId, mod);
       }
     }
@@ -353,8 +353,8 @@ public class VersionUtility {
     return false;
   }
 
-  static private HashMap<String, Ver> fillVersions(VersionUtilityData data, Mod mod)
-      throws ServletException {
+  static private HashMap<String, Ver> fillVersions(VersionUtilityData data, Mod mod,
+      boolean installed) throws ServletException {
     /** fill Ver objects from database */
     /**
      * all information needed for modules are stored in ad_module, ad_module_dependency
@@ -364,8 +364,8 @@ public class VersionUtility {
     if (data != null) {
       Ver ver = new Ver();
       ver.version = data.version;
-      ver.dependencies = fillDependencies(mod.modId);
-      ver.includes = fillIncludes(mod.modId);
+      ver.dependencies = fillDependencies(mod.modId, false, installed);
+      ver.includes = fillDependencies(mod.modId, true, installed);
       hashVer.put(ver.version, ver);
 
       /** in the local database there is only one version by module */
@@ -376,37 +376,16 @@ public class VersionUtility {
     return hashVer;
   }
 
-  static private HashMap<String, Dep> fillDependencies(String modID) throws ServletException {
+  static private HashMap<String, Dep> fillDependencies(String modID, boolean include,
+      boolean installed) throws ServletException {
     /** fill Dep objects from database */
-    VersionUtilityData[] data = VersionUtilityData.readDependencies(pool, modID);
-    HashMap<String, Dep> hashDep = new HashMap<String, Dep>();
-    for (int i = 0; i < data.length; i++) {
-      Dep dep = new Dep();
-      dep.depId = data[i].adModuleDependencyId;
-      dep.minVer = data[i].startversion;
-      dep.maxVer = data[i].endversion;
-      dep.modId = data[i].adDependentModuleId;
-      dep.modName = data[i].dependantModuleName;
 
-      // set enforcement
-      if ("Y".equals(data[i].userEditableEnforcement) && data[i].instanceEnforcement != null
-          && !data[i].instanceEnforcement.isEmpty()) {
-        dep.enforcement = data[i].instanceEnforcement;
-      } else {
-        dep.enforcement = data[i].dependencyEnforcement;
-        if (dep.enforcement == null || dep.enforcement.isEmpty()) {
-          dep.enforcement = "MAJOR";
-        }
-      }
-
-      hashDep.put(data[i].adModuleDependencyId, dep);
+    VersionUtilityData[] data;
+    if (installed) {
+      data = VersionUtilityData.readDependencies(pool, modID, include ? "Y" : "N");
+    } else {
+      data = VersionUtilityData.readDependenciesToInstall(pool, modID, include ? "Y" : "N");
     }
-    return hashDep;
-  }
-
-  static private HashMap<String, Dep> fillIncludes(String modID) throws ServletException {
-    /** fill Dep objects from database */
-    VersionUtilityData[] data = VersionUtilityData.readIncludes(pool, modID);
     HashMap<String, Dep> hashDep = new HashMap<String, Dep>();
     for (int i = 0; i < data.length; i++) {
       Dep dep = new Dep();

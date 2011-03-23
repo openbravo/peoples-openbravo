@@ -53,8 +53,8 @@ public class OBQuery<E extends BaseOBObject> {
   private static final Logger log = Logger.getLogger(OBQuery.class);
 
   private static final String FROM_SPACED = " from ";
-  private static final String FROM = "from";
-  private static final String AS = "as";
+  private static final String FROM_BRACKET = "(from ";
+  private static final String AS = "as ";
   private static final String WHERE = "where";
   private static final String ORDERBY = "order by";
 
@@ -301,7 +301,11 @@ public class OBQuery<E extends BaseOBObject> {
         whereClause = " where (" + whereClause + ")";
       } else {
         // check if the where is before
-        final int fromIndex = whereClause.toLowerCase().indexOf(FROM);
+        int fromIndex = whereClause.toLowerCase().indexOf(FROM_SPACED);
+        // check another case
+        if (fromIndex == -1) {
+          fromIndex = whereClause.toLowerCase().indexOf(FROM_BRACKET);
+        }
         int whereIndex = -1;
         if (fromIndex == -1) {
           // already there and no from
