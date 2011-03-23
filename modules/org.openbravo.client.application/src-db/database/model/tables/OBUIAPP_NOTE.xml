@@ -51,5 +51,8 @@
       <index name="FKI_OBUISEL_S_AD_TABLE" unique="false">
         <index-column name="AD_TABLE_ID"/>
       </index>
+      <index name="FKI_OBUISEL_S_RECORD" unique="false">
+        <index-column name="RECORD_ID"/>
+      </index>
     </table>
   </database>
