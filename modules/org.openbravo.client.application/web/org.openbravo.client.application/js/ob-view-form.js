@@ -190,8 +190,11 @@ OB.ViewFormProperties = {
 	    }
 	    if (enable) {
 	      this.noteSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID));
+	      this.noteSection.expandSection();
+	      this.noteSection.refresh();
 	      this.noteSection.show();
 	    } else {
+	      this.noteSection.collapseSection();
 	      this.noteSection.hide();
 	    }
   },
