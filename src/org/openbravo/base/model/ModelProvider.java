@@ -24,6 +24,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -153,6 +155,11 @@ public class ModelProvider implements OBSingleton {
       log.debug("Read model from db");
 
       tables = list(initsession, Table.class);
+      Collections.sort(tables, new Comparator<Table>() {
+        public int compare(Table t1, Table t2) {
+          return t1.getName().compareTo(t2.getName());
+        }
+      });
 
       referencesById = new HashMap<String, Reference>();
       final List<Reference> references = list(initsession, Reference.class);
@@ -207,7 +214,7 @@ public class ModelProvider implements OBSingleton {
       entitiesByTableName = new HashMap<String, Entity>();
       entitiesByTableId = new HashMap<String, Entity>();
       entitiesWithTreeType = new ArrayList<Entity>();
-      for (final Table t : tablesByTableName.values()) {
+      for (final Table t : tables) {
         log.debug("Building model for table " + t.getTableName());
         final Entity e = new Entity();
         e.initialize(t);

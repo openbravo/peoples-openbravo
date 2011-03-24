@@ -23,6 +23,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,6 +59,7 @@ import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.ad.utility.DataSetTable;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.service.dataset.DataSetService;
+import org.openbravo.service.dataset.DataSetService.BaseOBIDHexComparator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -417,8 +419,10 @@ public class EntityXMLConverter implements OBNotSingleton {
         xmlHandler.startElement("", "", p.getName(), propertyAttrs);
 
         // get all the children and export each child
-        final Collection<?> c = (Collection<?>) value;
-        for (final Object o : c) {
+        final Collection<BaseOBObject> c = (Collection<BaseOBObject>) value;
+        List<BaseOBObject> childObjects = new ArrayList<BaseOBObject>(c);
+        Collections.sort(childObjects, new BaseOBIDHexComparator());
+        for (final Object o : childObjects) {
           // embed in the parent
           if (isOptionEmbedChildren()) {
             export((BaseOBObject) o, false);
