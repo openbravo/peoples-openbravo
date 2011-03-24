@@ -92,8 +92,9 @@ isc.OBMyOpenbravo.addProperties({
   adminLevelValue: '',
     
   initWidget: function(args){
-    var me = this, i, widgetInstance, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
-    
+    var me = this, i, widgetInstance, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout,
+        recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
+
     recentViewsLayout = isc.VLayout.create({});
     recentViewsLayout.addMember(isc.Label.create({
       height: 1,
@@ -224,6 +225,7 @@ isc.OBMyOpenbravo.addProperties({
     }
     
     this.leftColumnLayout.recentViewsLayout = recentViewsLayout;
+    this.leftColumnLayout.recentDocumentsLayout = recentDocumentsLayout;
     this.leftColumnLayout.addWidgetLayout = addWidgetLayout;
     this.leftColumnLayout.adminOtherMyOBLayout = adminOtherMyOBLayout;
     this.leftColumnLayout.refreshLayout = refreshLayout;
@@ -778,6 +780,7 @@ isc.OBMyOpenbravo.addProperties({
 
     leftColumn.recentViewsLayout.hide();
     leftColumn.refreshLayout.hide();
+    leftColumn.recentDocumentsLayout.hide();
     leftColumn.adminOtherMyOBLayout.getMembers()[1].destroy(); // remove DynamicForm
     leftColumn.adminOtherMyOBLayout.hide();
     leftColumn.addMember(isc.OBMyOBPublishChangesDialog.create({
@@ -795,6 +798,7 @@ isc.OBMyOpenbravo.addProperties({
     this.adminLevelValue = '';
 
     leftColumn.recentViewsLayout.show();
+    leftColumn.recentDocumentsLayout.show();
     leftColumn.refreshLayout.show();
     leftColumn.adminOtherMyOBLayout.show();
 
