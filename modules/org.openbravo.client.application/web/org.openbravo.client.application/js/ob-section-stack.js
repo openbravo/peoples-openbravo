@@ -22,5 +22,6 @@ isc.OBSectionStack.addProperties({
   visibilityMode: 'multiple',
   layoutMargin: 24,
   membersMargin: 12,
+  canResizeSections: false,
   sectionHeaderClass: 'OBSectionItemButton'
 });
