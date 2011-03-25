@@ -662,6 +662,41 @@
 }
 
 /*=======================================================================
+ * SectionItem Control Link
+=======================================================================*/
+.OBSectionItemControlLink,
+.OBSectionItemControlLinkOver,
+.OBSectionItemControlLinkDown,
+.OBSectionItemControlLinkFocused,
+.OBSectionItemControlLinkFocusedOver,
+.OBSectionItemControlLinkFocusedDown {
+  font-family: 'lucida sans', sans-serif;
+  font-size: 12px;
+  vertical-align: middle;
+  background: transparent;
+  text-align: right;
+  cursor: pointer;
+  padding-right: 5px;
+}
+
+.OBSectionItemControlLink,
+.OBSectionItemControlLinkFocused {
+  color: #58A618;
+}
+
+.OBSectionItemControlLinkOver {
+  color: #58A618;
+  text-decoration: underline;
+}
+
+.OBSectionItemControlLinkDown,
+.OBSectionItemControlLinkFocusedOver,
+.OBSectionItemControlLinkFocusedDown {
+  color: #004E27;
+  text-decoration: underline;
+}
+
+/*=======================================================================
  * Used in the label of a foreign key field, for link image 
 =======================================================================*/
 
