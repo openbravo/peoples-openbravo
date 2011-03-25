@@ -225,6 +225,12 @@
       // don't store direct links to a target tab, this should be set in a different
       // property
       if (!params.targetTabId && params.canClose !== false && !vmgr.inStateHandling && params.viewId !== 'OBPopupClassicWindow') {
+        if (params.i18nTabTitle && !params.tabTitle) {
+          params.tabTitle = OB.I18N.getLabel(params.i18nTabTitle);
+        }
+        if (!params.viewId) {
+          params.viewId = viewName;
+        }
         // add and set a default icon
         vmgr.recentManager.addRecent('OBUIAPP_RecentViewList', 
             isc.addProperties({icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png'}, 

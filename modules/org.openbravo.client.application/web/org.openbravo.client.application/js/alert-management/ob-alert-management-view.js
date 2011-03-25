@@ -23,6 +23,11 @@ isc.OBUIAPP_AlertManagement.addProperties({
   isSameTab: function(viewId, params){
     return viewId === 'OBUIAPP_AlertManagement';
   },
+  getBookMarkParams: function() {
+    var result = {};
+    result.viewId = 'OBUIAPP_AlertManagement';
+    return result;
+  },
   
   sectionStack: null,
   grids: {},
