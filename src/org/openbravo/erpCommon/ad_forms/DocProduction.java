@@ -154,7 +154,7 @@ public class DocProduction extends AcctServer {
         setStatus(STATUS_InvalidCost);
         continue;
       } else
-        setStatus(STATUS_Error);// Default status. LoadDocument
+        setStatus(STATUS_NotPosted);// Default status. LoadDocument
       log4jDocProduction.debug("DocProduction - createFact - line.m_Productiontype - "
           + line.m_Productiontype);
       if (line.m_Productiontype.equals("+")) {
