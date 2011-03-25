@@ -95,8 +95,9 @@ public class CSSMinimizer {
 
       log.debug("Removing comments...");
 
+      n = 0;
       // Find the start of the comment
-      while ((n = sb.indexOf("/*")) != -1) {
+      while ((n = sb.indexOf("/*", n)) != -1) {
         if (sb.charAt(n + 2) == '*') { // Retain special comments
           n += 2;
           continue;
