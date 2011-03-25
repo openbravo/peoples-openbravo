@@ -118,9 +118,9 @@ public class AlertManagementActionHandler extends BaseActionHandler {
             } catch (ServletException e) {
               throw new IllegalStateException(e);
             }
-            final String sql = "select * from AD_ALERT where ISACTIVE='Y'" + " AND ISFIXED ='N'"
-                + " AND AD_CLIENT_ID " + OBDal.getInstance().getReadableClientsInClause()
-                + " AND AD_ORG_ID " + OBDal.getInstance().getReadableOrganizationsInClause()
+            final String sql = "select * from AD_ALERT where ISACTIVE='Y'" + " AND AD_CLIENT_ID "
+                + OBDal.getInstance().getReadableClientsInClause() + " AND AD_ORG_ID "
+                + OBDal.getInstance().getReadableOrganizationsInClause()
                 + " AND AD_ALERTRULE_ID = ? " + (filterClause == null ? "" : filterClause);
             final SQLQuery sqlQuery = OBDal.getInstance().getSession().createSQLQuery(sql)
                 .addEntity(Alert.ENTITY_NAME);
