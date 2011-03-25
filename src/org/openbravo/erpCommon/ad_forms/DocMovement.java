@@ -153,7 +153,7 @@ public class DocMovement extends AcctServer {
         setStatus(STATUS_InvalidCost);
         continue;
       } else
-        setStatus(STATUS_Error);// Default status. LoadDocument
+        setStatus(STATUS_NotPosted);// Default status. LoadDocument
       // Inventory DR CR
       dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
           .getC_Currency_ID(), (b_Costs.negate()).toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
