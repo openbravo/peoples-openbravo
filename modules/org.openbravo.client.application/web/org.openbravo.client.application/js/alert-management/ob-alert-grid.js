@@ -132,17 +132,17 @@ isc.OBAlertGrid.addProperties({
   getGridTotalRows: function(){
     var criteria = this.getCriteria() || {}, requestProperties = {};
 
-    if (this.isGridFiltered(criteria) || !OB.AlertManagement.sections[this.alertStatus].expanded) {
+    if (!OB.AlertManagement.sections[this.alertStatus].expanded) {
       // fetch to the datasource with an empty criteria to get all the rows
       requestProperties.params = requestProperties.params || {};
       requestProperties.params[OB.Constants.WHERE_PARAMETER] = this.getFilterClause();
       requestProperties.clientContext = {alertStatus: this.alertStatus};
-      this.dataSource.fetchData({}, function(dsResponse, data, dsRequest){
+      this.dataSource.fetchData(criteria, function(dsResponse, data, dsRequest){
           OB.AlertManagement.setTotalRows(dsResponse.totalRows, dsResponse.clientContext.alertStatus);
         }, requestProperties );
 
     } else {
-      OB.AlertManagement.setTotalRows(this.data.totalRows, this.alertStatus);
+      OB.AlertManagement.setTotalRows(this.getTotalRows(), this.alertStatus);
     }
   },
   
@@ -240,7 +240,7 @@ isc.OBAlertGrid.addProperties({
     var grid = this;
     if (grid.alertStatus === 'Acknowledged' || grid.alertStatus === 'Suppressed') {
       menuItems.add({
-        title: OB.I18N.getLabel('OBUIAPP_MoveToStatus', ['New']),
+        title: OB.I18N.getLabel('OBUIAPP_MoveToStatus', [OB.AlertManagement.translatedStatus.New]),
         click: function(){
           OB.AlertManagement.moveToStatus(record.id, grid.alertStatus, 'New');
         }
@@ -248,7 +248,7 @@ isc.OBAlertGrid.addProperties({
     }
     if (grid.alertStatus === 'New' || grid.alertStatus === 'Suppressed') {
       menuItems.add({
-        title: OB.I18N.getLabel('OBUIAPP_MoveToStatus', ['Acknowledged']),
+        title: OB.I18N.getLabel('OBUIAPP_MoveToStatus', [OB.AlertManagement.translatedStatus.Acknowledged]),
         click: function(){
           OB.AlertManagement.moveToStatus(record.id, grid.alertStatus, 'Acknowledged');
         }
@@ -256,7 +256,7 @@ isc.OBAlertGrid.addProperties({
     }
     if (grid.alertStatus === 'New' || grid.alertStatus === 'Acknowledged') {
       menuItems.add({
-        title: OB.I18N.getLabel('OBUIAPP_MoveToStatus', ['Suppressed']),
+        title: OB.I18N.getLabel('OBUIAPP_MoveToStatus', [OB.AlertManagement.translatedStatus.Suppressed]),
         click: function(){
           OB.AlertManagement.moveToStatus(record.id, grid.alertStatus, 'Suppressed');
         }

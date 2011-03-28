@@ -29,6 +29,7 @@ isc.OBUIAPP_AlertManagement.addProperties({
     return result;
   },
   
+  translatedStatus: { New: '', Acknowledged: '', Suppressed: '', Solved: ''},
   sectionStack: null,
   grids: {},
   sections: {},
@@ -43,6 +44,10 @@ isc.OBUIAPP_AlertManagement.addProperties({
   
   initWidget: function(){
     OB.AlertManagement = this;
+    OB.I18N.getLabel('AlertStatus_New', null, this.translatedStatus, 'New');
+    OB.I18N.getLabel('AlertStatus_Acknowledged', null, this.translatedStatus, 'Acknowledged');
+    OB.I18N.getLabel('AlertStatus_Suppressed', null, this.translatedStatus, 'Suppressed');
+    OB.I18N.getLabel('AlertStatus_Solved', null, this.translatedStatus, 'Solved');
     
     this.addMember(isc.OBToolbar.create({
         view: this,
@@ -75,7 +80,7 @@ isc.OBUIAPP_AlertManagement.addProperties({
     this.NewAcknowledged = isc.OBAlertSectionStackControl.create({currentStatus: 'New', newStatus: 'Acknowledged', ID:'NewAcknowledged'});
     this.NewSuppressed = isc.OBAlertSectionStackControl.create({currentStatus: 'New', newStatus: 'Suppressed', ID:'NewSuppressed'});
     this.sections.New = {
-        title: OB.I18N.getLabel('AlertStatus_New'),
+        title: this.translatedStatus.New,
         alertStatus: 'New',
         expanded: true,
         items: [this.grids.New],
@@ -86,7 +91,7 @@ isc.OBUIAPP_AlertManagement.addProperties({
     this.AcknowledgedNew = isc.OBAlertSectionStackControl.create({currentStatus: 'Acknowledged', newStatus: 'New', ID:'AcknowledgedNew'});
     this.AcknowledgedSuppressed = isc.OBAlertSectionStackControl.create({currentStatus: 'Acknowledged', newStatus: 'Suppressed', ID:'AcknowledgedSuppressed'});
     this.sections.Acknowledged = {
-        title: OB.I18N.getLabel('AlertStatus_Acknowledged'),
+        title: this.translatedStatus.Acknowledged,
         alertStatus: 'Acknowledged',
         expanded: false,
         items: [this.grids.Acknowledged],
@@ -97,7 +102,7 @@ isc.OBUIAPP_AlertManagement.addProperties({
     this.SuppressedNew = isc.OBAlertSectionStackControl.create({currentStatus: 'Suppressed', newStatus: 'New', ID:'SuppressedNew'});
     this.SuppressedAcknowledged = isc.OBAlertSectionStackControl.create({currentStatus: 'Suppressed', newStatus: 'Acknowledged', ID:'SuppressedAcknowledged'});
     this.sections.Suppressed = {
-        title: OB.I18N.getLabel('AlertStatus_Suppressed'),
+        title: this.translatedStatus.Suppressed,
         alertStatus: 'Suppressed',
         expanded: false,
         items: [this.grids.Suppressed],
@@ -106,7 +111,7 @@ isc.OBUIAPP_AlertManagement.addProperties({
 
     this.grids.Solved = isc.OBAlertGrid.create({alertStatus: 'Solved'});
     this.sections.Solved = {
-        title: OB.I18N.getLabel('AlertStatus_Solved'), alertStatus: 'Solved', expanded: false, items: [this.grids.Solved] };
+        title: this.translatedStatus.Solved, alertStatus: 'Solved', expanded: false, items: [this.grids.Solved] };
     this.sectionStack.addSection(this.sections.Solved);
   },
   
@@ -131,16 +136,16 @@ isc.OBUIAPP_AlertManagement.addProperties({
   setTotalRows: function(totalRows, status) {
     if (OB.AlertManagement.sections[status]) {
       OB.AlertManagement.sections[status].getSectionHeader()
-          .setTitle(OB.I18N.getLabel('OBUIAPP_AlertSectionHeader', [status, totalRows]));
+          .setTitle(OB.I18N.getLabel('OBUIAPP_AlertSectionHeader', [OB.AlertManagement.translatedStatus[status], totalRows]));
     }
   },
   
   refresh: function() {
     var i, alertStatus = ['New', 'Acknowledged', 'Suppressed', 'Solved'];
     for (i = 0; i < 4; i++) {
-      OB.AlertManagement.grids.alertStatus[i].invalidateCache();
-      if (!OB.AlertManagement.sections.alertStatus[i].expanded) {
-        OB.AlertManagement.grids.alertStatus[i].getGridTotalRows();
+      OB.AlertManagement.grids[alertStatus[i]].invalidateCache();
+      if (!OB.AlertManagement.sections[alertStatus[i]].expanded) {
+        OB.AlertManagement.grids[alertStatus[i]].getGridTotalRows();
       }
     }
   }
@@ -152,7 +157,7 @@ isc.OBAlertSectionStackControl.addProperties({
   currentStatus: null,
   
   initWidget: function () {
-    this.setContents(OB.I18N.getLabel('OBUIAPP_MoveSelectedToStatus', [this.newStatus]));
+    this.setContents(OB.I18N.getLabel('OBUIAPP_MoveSelectedToStatus', [OB.AlertManagement.translatedStatus[this.newStatus]]));
     this.Super('initWidget', arguments);
   },
   
