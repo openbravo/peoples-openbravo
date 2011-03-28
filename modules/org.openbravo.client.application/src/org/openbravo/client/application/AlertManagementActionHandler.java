@@ -109,7 +109,11 @@ public class AlertManagementActionHandler extends BaseActionHandler {
           JSONObject alertRuleJson = new JSONObject();
           alertRuleJson.put("name", alertRule.getIdentifier());
           alertRuleJson.put("alertRuleId", alertRule.getId());
-          alertRuleJson.put("tabId", alertRule.getTab().getId());
+          if (alertRule.getTab() != null) {
+            alertRuleJson.put("tabId", alertRule.getTab().getId());
+          } else {
+            alertRuleJson.put("tabId", "");
+          }
           String filterClause = null;
           if (alertRule.getFilterClause() != null) {
             try {
