@@ -192,19 +192,9 @@ isc.OBAlertGrid.addProperties({
         tabId = OB.AlertManagement.alertRules[i].tabId;
       }
     }
-    if (field.isLink && tabId) {
+    if (field.isLink && tabId && tabId !== '') {
       OB.Utilities.openDirectTab(tabId, record.referenceSearchKey);
     }
-  },
-  
-  // Prevents empty message to be shown in frozen part
-  // http://forums.smartclient.com/showthread.php?p=57581
-  createBodies: function(){
-    var ret = this.Super('createBodies', arguments);
-    if (this.frozenBody) {
-      this.frozenBody.showEmptyMessage = false;
-    }
-    return ret;
   },
   
   selectionChanged: function(record, state){

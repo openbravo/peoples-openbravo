@@ -601,16 +601,6 @@ isc.OBViewGrid.addProperties({
     }
   },
   
-  // Prevents empty message to be shown in frozen part
-  // http://forums.smartclient.com/showthread.php?p=57581
-  createBodies: function(){
-    var ret = this.Super('createBodies', arguments);
-    if (this.frozenBody) {
-      this.frozenBody.showEmptyMessage = false;
-    }
-    return ret;
-  },
-  
   selectRecordById: function(id, forceFetch){
     if (forceFetch) {
       this.targetRecordId = id;
