@@ -138,7 +138,10 @@ isc.OBApplicationMenuTree.addProperties({
       }
     } else if (item.externalUrl) {
       selectedView = {viewId: 'OBExternalPage', contentsURL: item.externalUrl, id: item.externalUrl, command: 'DEFAULT', tabTitle: item.title};
+    } else {
+      selectedView = {viewId: item.viewId, tabTitle: item.title};
     }
+    
     selectedView.icon = item.icon;
     selectedView.type = item.type;
     OB.RecentUtilities.addRecent('UINAVBA_MenuRecentList', selectedView);
