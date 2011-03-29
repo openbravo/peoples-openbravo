@@ -87,7 +87,8 @@ public class AlertActionHandler extends BaseActionHandler {
 
       // select the alert rules
       final String hql = "select e.alertRule from  " + AlertRecipient.ENTITY_NAME
-          + " e where e.userContact.id=? " + " or (e.userContact.id = null and e.role.id = ?)";
+          + " e where e.alertRule.active = true and (e.userContact.id=? "
+          + " or (e.userContact.id = null and e.role.id = ?))";
       final Query qry = OBDal.getInstance().getSession().createQuery(hql);
       qry.setParameter(0, OBContext.getOBContext().getUser().getId());
       qry.setParameter(1, OBContext.getOBContext().getRole().getId());
