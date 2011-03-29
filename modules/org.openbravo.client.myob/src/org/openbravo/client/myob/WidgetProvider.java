@@ -66,6 +66,7 @@ import org.openbravo.service.json.JsonConstants;
 public abstract class WidgetProvider {
   private static final Logger log = Logger.getLogger(WidgetProvider.class);
 
+  public static final String WIDGETCLASSID = "widgetClassId";
   public static final String TITLE = "title";
   private static final String COLNUM = "colNum";
   private static final String ROWNUM = "rowNum";
@@ -122,6 +123,7 @@ public abstract class WidgetProvider {
       final JSONObject jsonObject = new JSONObject();
       jsonObject.put(MyOpenbravoWidgetComponent.CLASSNAMEPARAMETER, this
           .getClientSideWidgetClassName());
+      jsonObject.put(WIDGETCLASSID, widgetClass.getId());
       jsonObject.put(TITLE, MyOBUtils.getWidgetTitle(widgetClass));
       jsonObject.put(HEIGHT, widgetClass.getHeight() + WIDGET_HEADER_HEIGHT);
       jsonObject.put(MENU_ITEMS, MyOBUtils.getWidgetMenuItems(widgetClass));

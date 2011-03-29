@@ -513,14 +513,13 @@ isc.OBMyOpenbravo.addProperties({
     } else {
       var localWidgetProperties = isc.addProperties({}, widgetProperties);
       for (i = 0; i < this.availableWidgetClasses.length; i++) {
-        if (this.availableWidgetClasses[i].widgetClassName &&
-            this.availableWidgetClasses[i].widgetClassName === widgetProperties.widgetClassName &&
-            this.availableWidgetClasses[i].title === widgetProperties.title) {
+        if (this.availableWidgetClasses[i].widgetClassId === widgetProperties.widgetClassId) {
           localWidgetProperties.showMaximizeButton = this.availableWidgetClasses[i].showMaximizeButton;
           localWidgetProperties.menuItems = this.availableWidgetClasses[i].menuItems;
           localWidgetProperties.fieldDefinitions = this.availableWidgetClasses[i].fieldDefinitions;
           localWidgetProperties.aboutFieldDefinitions = this.availableWidgetClasses[i].aboutFieldDefinitions;
           localWidgetProperties.parameters = isc.addProperties({}, widgetProperties.parameters);
+          localWidgetProperties.widgetClassId = this.availableWidgetClasses[i].widgetClassId;
           break;
         }
       }
@@ -711,6 +710,7 @@ isc.OBMyOpenbravo.addProperties({
         newWidget.parameters = widget.parameters;
         newWidget.title = widget.title;
         newWidget.widgetClassName = widget.widgetClassName;
+        newWidget.widgetClassId = widget.widgetClassId;
         this.widgets.push(newWidget);
       }
     }
