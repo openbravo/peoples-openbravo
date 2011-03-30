@@ -44,10 +44,30 @@ isc.OBUIAPP_AlertManagement.addProperties({
   
   initWidget: function(){
     OB.AlertManagement = this;
-    OB.I18N.getLabel('AlertStatus_New', null, this.translatedStatus, 'New');
-    OB.I18N.getLabel('AlertStatus_Acknowledged', null, this.translatedStatus, 'Acknowledged');
-    OB.I18N.getLabel('AlertStatus_Suppressed', null, this.translatedStatus, 'Suppressed');
-    OB.I18N.getLabel('AlertStatus_Solved', null, this.translatedStatus, 'Solved');
+    OB.I18N.getLabel('AlertStatus_New', null, {
+      setTranslatedStatus: function(label) {
+        OB.AlertManagement.translatedStatus.New = label;
+        OB.AlertManagement.checkInitializeStatus();
+      }
+    }, 'setTranslatedStatus');
+    OB.I18N.getLabel('AlertStatus_Acknowledged', null, {
+      setTranslatedStatus: function(label) {
+        OB.AlertManagement.translatedStatus.Acknowledged = label;
+        OB.AlertManagement.checkInitializeStatus();
+      }
+    }, 'setTranslatedStatus');
+    OB.I18N.getLabel('AlertStatus_Suppressed', null, {
+      setTranslatedStatus: function(label) {
+        OB.AlertManagement.translatedStatus.Suppressed = label;
+        OB.AlertManagement.checkInitializeStatus();
+      }
+    }, 'setTranslatedStatus');
+    OB.I18N.getLabel('AlertStatus_Solved', null, {
+      setTranslatedStatus: function(label) {
+        OB.AlertManagement.translatedStatus.Solved = label;
+        OB.AlertManagement.checkInitializeStatus();
+      }
+    }, 'setTranslatedStatus');
     
     this.addMember(isc.OBToolbar.create({
         view: this,
@@ -68,11 +88,20 @@ isc.OBUIAPP_AlertManagement.addProperties({
     OB.RemoteCallManager.call('org.openbravo.client.application.AlertManagementActionHandler',
         post, {}, function(rpcResponse, data, rpcRequest){
       OB.AlertManagement.alertRules = data.alertRules;
-      // Sections are created after alertRules are created. This is needed to be able to filter
-      // properly the grids of the sections.
-      OB.AlertManagement.createSections();
+      OB.AlertManagement.checkInitializeStatus();
     });
-
+  },
+  
+  checkInitializeStatus: function() {
+    if (OB.AlertManagement.translatedStatus.New !== '' &&
+      OB.AlertManagement.translatedStatus.Acknowledged !== '' &&
+      OB.AlertManagement.translatedStatus.Suppressed !== '' &&
+      OB.AlertManagement.translatedStatus.Solved !== '' &&
+      OB.AlertManagement.alertRules !== null) {
+      // Sections are created after alertRules are created and status translations are set.
+      // This is needed to be able to filter properly the grids of the sections.
+      OB.AlertManagement.createSections();
+    }
   },
   
   createSections: function() {
