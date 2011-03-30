@@ -98,10 +98,10 @@ public class AlertActionHandler extends BaseActionHandler {
         final AlertRule alertRule = (AlertRule) o;
         final String whereClause = new UsedByLink().getWhereClause(vars, "", alertRule
             .getFilterClause() == null ? "" : alertRule.getFilterClause());
-        final String sql = "select * from AD_ALERT where STATUS='NEW'" + " AND AD_CLIENT_ID "
-            + OBDal.getInstance().getReadableClientsInClause() + " AND AD_ORG_ID "
-            + OBDal.getInstance().getReadableOrganizationsInClause() + " AND AD_ALERTRULE_ID = ? "
-            + (whereClause == null ? "" : whereClause);
+        final String sql = "select * from AD_ALERT where COALESCE(to_char(STATUS), 'NEW')='NEW'"
+            + " AND AD_CLIENT_ID " + OBDal.getInstance().getReadableClientsInClause()
+            + " AND AD_ORG_ID " + OBDal.getInstance().getReadableOrganizationsInClause()
+            + " AND AD_ALERTRULE_ID = ? " + (whereClause == null ? "" : whereClause);
         final SQLQuery sqlQuery = OBDal.getInstance().getSession().createSQLQuery(sql).addEntity(
             Alert.ENTITY_NAME);
         sqlQuery.setParameter(0, alertRule.getId());

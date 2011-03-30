@@ -163,7 +163,7 @@ isc.OBAlertGrid.addProperties({
     var i, filterClause = '',
         alertRuleIds = '',
         arlength = OB.AlertManagement.alertRules.length,
-        whereClause = 'status = upper(\'' + this.alertStatus + '\')';
+        whereClause = 'coalesce(to_char(status), \'NEW\') = upper(\'' + this.alertStatus + '\')';
 
     for (i = 0; i < arlength; i++) {
       if (alertRuleIds !== '') {
