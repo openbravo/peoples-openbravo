@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,14 +21,11 @@ package org.openbravo.client.application.window;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelConstants;
-import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
@@ -47,7 +44,6 @@ public class StandardWindowComponent extends BaseTemplateComponent {
   private OBViewTab rootTabComponent = null;
   private Boolean inDevelopment = null;
   private String uniqueString = "" + System.currentTimeMillis();
-  private String windowETag = null;
 
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
@@ -60,38 +56,6 @@ public class StandardWindowComponent extends BaseTemplateComponent {
       return KernelConstants.ID_PREFIX + window.getId() + KernelConstants.ID_PREFIX + uniqueString;
     }
     return KernelConstants.ID_PREFIX + getWindowId();
-  }
-
-  @Override
-  public String getETag() {
-    if (windowETag != null) {
-      return windowETag;
-    }
-
-    final List<Module> modules = new ArrayList<Module>();
-    modules.add(window.getModule());
-    for (Tab tab : window.getADTabList()) {
-      if (!tab.isActive() || !tab.getModule().isEnabled()) {
-        continue;
-      }
-      if (!modules.contains(tab.getModule())) {
-        modules.add(tab.getModule());
-      }
-      for (Field field : tab.getADFieldList()) {
-        if (!field.isActive() || !field.getModule().isEnabled()) {
-          continue;
-        }
-        if (!modules.contains(field.getModule())) {
-          modules.add(field.getModule());
-        }
-      }
-    }
-    final StringBuilder sb = new StringBuilder();
-    for (Module module : modules) {
-      sb.append(KernelUtils.getInstance().getVersionParameters(module));
-    }
-    windowETag = DigestUtils.md5Hex(sb.toString());
-    return windowETag;
   }
 
   public boolean isIndevelopment() {

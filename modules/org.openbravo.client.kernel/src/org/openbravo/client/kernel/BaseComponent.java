@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,13 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.module.Module;
 
 /**
@@ -56,6 +62,11 @@ public abstract class BaseComponent implements Component {
 
   // the url of the server and the servlet context
   private static String contextUrl = null;
+
+  private static String moduleVersionHash = null;
+  private static Boolean hasModulesInDevelopment = null;
+
+  private static final Logger log4j = Logger.getLogger(BaseComponent.class);
 
   @Inject
   @Any
@@ -170,12 +181,59 @@ public abstract class BaseComponent implements Component {
    * @see org.openbravo.client.kernel.Component#getETag()
    */
   public String getETag() {
-    if (getModule().isInDevelopment() != null && getModule().isInDevelopment()) {
+    if (hasModulesInDevelopment()) {
+      // if (getModule().isInDevelopment() != null && getModule().isInDevelopment()) {
+
       return OBContext.getOBContext().getLanguage().getId() + "_" + getLastModified().getTime();
     } else {
-      return OBContext.getOBContext().getLanguage().getId() + "_" + getModule().getVersion() + "_"
-          + getModule().isEnabled();
+      return OBContext.getOBContext().getLanguage().getId() + "_" + getModuleVersionHash();
+      // return OBContext.getOBContext().getLanguage().getId() + "_" + getModule().getVersion() +
+      // "_"
+      // + getModule().isEnabled();
     }
+  }
+
+  synchronized private boolean hasModulesInDevelopment() {
+    if (hasModulesInDevelopment == null) {
+      OBContext.setAdminMode();
+      try {
+        OBCriteria<Module> qMod = OBDal.getInstance().createCriteria(Module.class);
+        qMod.add(Restrictions.eq(Module.PROPERTY_INDEVELOPMENT, true));
+        hasModulesInDevelopment = qMod.count() > 0;
+        log4j.debug("Calculating whether there are modules in development: "
+            + hasModulesInDevelopment);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    }
+    return hasModulesInDevelopment;
+  }
+
+  synchronized private String getModuleVersionHash() {
+    if (moduleVersionHash == null) {
+      String moduleVersions = "";
+      OBContext.setAdminMode();
+      try {
+        OBCriteria<Module> qMod = OBDal.getInstance().createCriteria(Module.class);
+        qMod.addOrder(Order.asc(Module.PROPERTY_ID));
+        for (Module mod : qMod.list()) {
+          moduleVersions += mod.getId() + "-" + mod.getVersion() + "-" + mod.isEnabled() + "\n";
+        }
+        moduleVersionHash = DigestUtils.md5Hex(moduleVersions);
+        log4j.debug("New moduleVersionHash. Original: " + moduleVersions + " hash:"
+            + moduleVersionHash);
+
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    }
+    return moduleVersionHash;
+  }
+
+  synchronized public static void nullifyModuleCache() {
+    hasModulesInDevelopment = null;
+    moduleVersionHash = null;
+    log4j.debug("Module cache for etag is now null");
   }
 
   /*
