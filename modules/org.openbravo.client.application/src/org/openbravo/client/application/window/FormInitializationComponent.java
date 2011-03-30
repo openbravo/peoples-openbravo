@@ -438,14 +438,22 @@ public class FormInitializationComponent extends BaseActionHandler {
       UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(columnId);
       // We need to fire callouts if the field is a combo
       // (due to how ComboReloads worked, callouts were always called)
-      if (columnValues.get("inp"
-          + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())) != null) {
-        if ((mode.equals("NEW") || (mode.equals("CHANGE")
-            && changedCols.contains(field.getColumn().getDBColumnName()) && changedColumn != null))
-            && field.getColumn().isValidateOnNew()) {
-          if (field.getColumn().getCallout() != null) {
-            addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
-          }
+      JSONObject value = columnValues.get("inp"
+          + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
+      String classicValue;
+      try {
+        classicValue = (value == null || !value.has("classicValue")) ? "" : value
+            .getString("classicValue");
+      } catch (JSONException e) {
+        throw new OBException(
+            "Couldn't get data for column " + field.getColumn().getDBColumnName(), e);
+      }
+      if (((mode.equals("NEW") && !classicValue.equals("") && (uiDef instanceof EnumUIDefinition || uiDef instanceof ForeignKeyUIDefinition)) || (mode
+          .equals("CHANGE")
+          && changedCols.contains(field.getColumn().getDBColumnName()) && changedColumn != null))
+          && field.getColumn().isValidateOnNew()) {
+        if (field.getColumn().getCallout() != null) {
+          addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
         }
       }
     }
