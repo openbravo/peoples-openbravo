@@ -2106,19 +2106,6 @@
 <!--340-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--340--></AD_MENU>
 
-<!--341--><AD_MENU>
-<!--341-->  <AD_MENU_ID><![CDATA[341]]></AD_MENU_ID>
-<!--341-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--341-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--341-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--341-->  <NAME><![CDATA[Application Translation Check]]></NAME>
-<!--341-->  <DESCRIPTION><![CDATA[Create and edit translations for a selected application language.]]></DESCRIPTION>
-<!--341-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--341-->  <ACTION><![CDATA[W]]></ACTION>
-<!--341-->  <AD_WINDOW_ID><![CDATA[250]]></AD_WINDOW_ID>
-<!--341-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--341--></AD_MENU>
-
 <!--342--><AD_MENU>
 <!--342-->  <AD_MENU_ID><![CDATA[342]]></AD_MENU_ID>
 <!--342-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
