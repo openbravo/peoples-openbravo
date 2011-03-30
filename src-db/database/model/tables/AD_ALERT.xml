@@ -70,7 +70,7 @@
         <onCreateDefault/>
       </column>
       <column name="STATUS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default></default>
+        <default/>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_ALERTRULE" name="AD_ALERT_AD_ALERTRULE">
