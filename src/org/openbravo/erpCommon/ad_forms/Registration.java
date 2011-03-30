@@ -50,20 +50,32 @@ public class Registration extends HttpSecureAppServlet {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // removeFromPageHistory(request);
-
+    String checkString = "";
     if (vars.commandIn("DEFAULT")) {
       printPageDataSheet(response, vars);
     } else if (vars.commandIn("REGISTER")) {
+      checkString = "REGISTER";
       RegisterData.updateIsRegistrationActive(myPool, "Y");
     } else if (vars.commandIn("DISABLE")) {
+      checkString = "DISABLE";
       RegisterData.updateIsRegistrationActive(myPool, "N");
     } else if (vars.commandIn("POSTPONE")) {
+      checkString = "POSTPONE";
       final Calendar cal = Calendar.getInstance();
       cal.add(Calendar.DATE, 3);
       final String date = new SimpleDateFormat(vars.getJavaDateFormat()).format(cal.getTime());
       RegisterData.postpone(myPool, date);
-    } else
+    } else {
       pageError(response);
+    }
+
+    if (vars.commandIn("REGISTER") || vars.commandIn("DISABLE") || vars.commandIn("POSTPONE")) {
+      response.setContentType("text/plain; charset=UTF-8");
+      response.setHeader("Cache-Control", "no-cache");
+      PrintWriter out = response.getWriter();
+      out.print(checkString);
+      out.close();
+    }
   }
 
   /**
