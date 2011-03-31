@@ -621,7 +621,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     for (Field field : fields) {
       String colName = field.getColumn().getDBColumnName();
       if (!columnsWithValidation.contains(field.getColumn().getDBColumnName())
-          && !sortedColumns.contains(colName)) {
+          && !sortedColumns.contains(colName) && !colName.equalsIgnoreCase("documentno")) {
         sortedColumns.add(colName);
       }
     }
@@ -633,6 +633,12 @@ public class FormInitializationComponent extends BaseActionHandler {
           columnsInValidation);
     }
 
+    for (Field field : fields) {
+      String colName = field.getColumn().getDBColumnName();
+      if (colName.equalsIgnoreCase("documentno")) {
+        sortedColumns.add(colName);
+      }
+    }
     String cycleCols = "";
     for (String col : columnsWithValidation) {
       if (!sortedColumns.contains(col)) {
