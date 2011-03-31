@@ -184,7 +184,11 @@ public class SystemInfo {
         systemInfo.put(i, SystemInfoData.selectProxyPort(conn));
         break;
       case OPERATING_SYSTEM:
-        systemInfo.put(i, System.getProperty("os.name"));
+        String os = System.getProperty("os.name");
+        if (os.length() > 60) {
+          os = os.substring(0, 57) + "...";
+        }
+        systemInfo.put(i, os);
         break;
       case OPERATING_SYSTEM_VERSION:
         systemInfo.put(i, System.getProperty("os.version"));
