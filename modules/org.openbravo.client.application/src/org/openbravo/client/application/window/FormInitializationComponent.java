@@ -208,8 +208,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           }
         }
         RequestContext.get().setRequestParameter("donotaddcurrentelement", "true");
-        subsequentComboReload("CHANGE", tab, columnsToComputeAgain, columnValues, parentRecord,
-            parentId, null, jsContent, changeEventCols, calloutsToCall, lastfieldChanged);
+        subsequentComboReload(tab, columnsToComputeAgain, columnValues);
       }
 
       if (mode.equals("NEW")) {
@@ -471,10 +470,8 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
   }
 
-  private void subsequentComboReload(String mode, Tab tab, List<String> allColumns,
-      Map<String, JSONObject> columnValues, BaseOBObject parentRecord, String parentId,
-      String changedColumn, JSONObject jsContent, List<String> changeEventCols,
-      List<String> calloutsToCall, List<String> lastfieldChanged) {
+  private void subsequentComboReload(Tab tab, List<String> allColumns,
+      Map<String, JSONObject> columnValues) {
     HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
     for (Field field : tab.getADFieldList()) {
       for (String col : allColumns) {
