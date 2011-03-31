@@ -1154,6 +1154,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     }
 
     if (strCommand.equalsIgnoreCase("NEW")) {
+      vars.removeSessionValue(tabId + "|failedAutosave");
       vars.removeSessionValue(strMappingName + "|hash");
     }
 

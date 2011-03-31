@@ -69,6 +69,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="STATUS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ALERTRULE" name="AD_ALERT_AD_ALERTRULE">
         <reference local="AD_ALERTRULE_ID" foreign="AD_ALERTRULE_ID"/>
       </foreign-key>

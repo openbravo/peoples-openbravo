@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2011 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -49,7 +49,7 @@
     --
     Cur_Column RECORD;
     Cur_CommonCols RECORD;
-    --
+    -- 
     v_NextNo VARCHAR2(32) ;
     v_count NUMBER(10):=0;
     -- Added by Ismael Ciordia
@@ -230,24 +230,6 @@
         v_columnName:=SUBSTR(v_columnName, 1, LENGTH(v_columnName) -3) ||'_ID';
       END IF;
       
-      --Check if it is necessary to recalculate positions
-      SELECT count(*)
-        INTO v_Aux
-        FROM AD_COLUMN
-       WHERE POSITION = Cur_Column.COLUMN_ID;
-       
-      IF v_Aux!=0 THEN
-        UPDATE AD_COLUMN C
-           SET POSITION = (SELECT COLUMN_ID
-                             FROM USER_TAB_COLUMNS U,
-                                  AD_TABLE T
-                            WHERE C.AD_TABLE_ID = T.AD_TABLE_ID
-                              AND U.TABLE_NAME = UPPER(T.TABLENAME)
-                              AND U.COLUMN_NAME = UPPER(C.COLUMNNAME))
-         WHERE AD_TABLE_ID = Cur_Column.AD_Table_ID;
-      END IF;
-
-      
       IF substr(upper(v_columnName),1,3)='EM_' then
         db_prefix := substr(v_columnName,4,instr(v_columnName,'_',1,2)-4);
         DBMS_OUTPUT.PUT_LINE('Prefix:'||db_prefix);
@@ -262,6 +244,28 @@
       else
         v_module_id := v_module_table_id;
       end if;
+      
+       --Check if it is necessary to recalculate positions
+      SELECT count(*)
+        INTO v_Aux
+        FROM AD_COLUMN
+       WHERE POSITION = Cur_Column.COLUMN_ID;
+       
+      IF v_Aux!=0 THEN
+        UPDATE AD_COLUMN C
+           SET POSITION = (SELECT COLUMN_ID
+                             FROM USER_TAB_COLUMNS U,
+                                  AD_TABLE T
+                            WHERE C.AD_TABLE_ID = T.AD_TABLE_ID
+                              AND U.TABLE_NAME = UPPER(T.TABLENAME)
+                              AND U.COLUMN_NAME = UPPER(C.COLUMNNAME))
+         WHERE AD_TABLE_ID = Cur_Column.AD_Table_ID
+          AND exists (select 1 
+                        from ad_module m 
+                       where m.ad_module_id = c.ad_module_id
+                         and isindevelopment ='Y');
+      END IF;
+      
       IF (v_CorrectType='Y') THEN
         DBMS_OUTPUT.PUT_LINE('Inserting Column:'||v_columnName||' to module:'||v_module_id);
       

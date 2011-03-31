@@ -22,7 +22,7 @@
 		<fo:simple-page-master master-name="first" page-height="29.7cm" page-width="21cm" margin-top="0.5cm" margin-bottom="0.5cm" margin-left="2cm" margin-right="1cm">
 			<fo:region-before extent="2.5cm"/>
 			<fo:region-after extent="1cm"/>
-			<fo:region-body margin-top="2.5cm" margin-bottom="1cm"/>
+			<fo:region-body margin-top="2.5cm" margin-bottom="2cm"/>
 		</fo:simple-page-master>
 	</fo:layout-master-set>
 	<fo:page-sequence master-reference="first" initial-page-number="xx" id="fieldPageNo">

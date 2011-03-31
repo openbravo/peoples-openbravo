@@ -35,33 +35,33 @@ static Logger log4j = Logger.getLogger(UnpostRefundPaymentsData.class);
   }
 
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("AD_CLIENT_ID") || fieldName.equals("adClientId"))
+    if (fieldName.equalsIgnoreCase("ad_client_id") || fieldName.equals("adClientId"))
       return adClientId;
-    else if (fieldName.equalsIgnoreCase("AD_ORG_ID") || fieldName.equals("adOrgId"))
+    else if (fieldName.equalsIgnoreCase("ad_org_id") || fieldName.equals("adOrgId"))
       return adOrgId;
-    else if (fieldName.equalsIgnoreCase("CREATED"))
+    else if (fieldName.equalsIgnoreCase("created"))
       return created;
-    else if (fieldName.equalsIgnoreCase("CREATEDBY"))
+    else if (fieldName.equalsIgnoreCase("createdby"))
       return createdby;
-    else if (fieldName.equalsIgnoreCase("UPDATED"))
+    else if (fieldName.equalsIgnoreCase("updated"))
       return updated;
-    else if (fieldName.equalsIgnoreCase("UPDATEDBY"))
+    else if (fieldName.equalsIgnoreCase("updatedby"))
       return updatedby;
-    else if (fieldName.equalsIgnoreCase("ISACTIVE"))
+    else if (fieldName.equalsIgnoreCase("isactive"))
       return isactive;
-    else if (fieldName.equalsIgnoreCase("RECORD_ID") || fieldName.equals("recordId"))
+    else if (fieldName.equalsIgnoreCase("record_id") || fieldName.equals("recordId"))
       return recordId;
-    else if (fieldName.equalsIgnoreCase("DESCRIPTION"))
+    else if (fieldName.equalsIgnoreCase("description"))
       return description;
-    else if (fieldName.equalsIgnoreCase("REFERENCEKEY_ID") || fieldName.equals("referencekeyId"))
+    else if (fieldName.equalsIgnoreCase("referencekey_id") || fieldName.equals("referencekeyId"))
       return referencekeyId;
-    else if (fieldName.equalsIgnoreCase("AD_ROLE_ID") || fieldName.equals("adRoleId"))
+    else if (fieldName.equalsIgnoreCase("ad_role_id") || fieldName.equals("adRoleId"))
       return adRoleId;
-    else if (fieldName.equalsIgnoreCase("AD_ALERTRULE_ID") || fieldName.equals("adAlertruleId"))
+    else if (fieldName.equalsIgnoreCase("ad_alertrule_id") || fieldName.equals("adAlertruleId"))
       return adAlertruleId;
-    else if (fieldName.equalsIgnoreCase("SQL"))
+    else if (fieldName.equalsIgnoreCase("sql"))
       return sql;
-    else if (fieldName.equalsIgnoreCase("NAME"))
+    else if (fieldName.equalsIgnoreCase("name"))
       return name;
    else {
      log4j.debug("Field does not exist: " + fieldName);
@@ -103,20 +103,20 @@ static Logger log4j = Logger.getLogger(UnpostRefundPaymentsData.class);
       while(continueResult && result.next()) {
         countRecord++;
         UnpostRefundPaymentsData objectUnpostRefundPaymentsData = new UnpostRefundPaymentsData();
-        objectUnpostRefundPaymentsData.adClientId = UtilSql.getValue(result, "AD_CLIENT_ID");
-        objectUnpostRefundPaymentsData.adOrgId = UtilSql.getValue(result, "AD_ORG_ID");
-        objectUnpostRefundPaymentsData.created = UtilSql.getDateValue(result, "CREATED", "dd-MM-yyyy");
-        objectUnpostRefundPaymentsData.createdby = UtilSql.getValue(result, "CREATEDBY");
-        objectUnpostRefundPaymentsData.updated = UtilSql.getDateValue(result, "UPDATED", "dd-MM-yyyy");
-        objectUnpostRefundPaymentsData.updatedby = UtilSql.getValue(result, "UPDATEDBY");
-        objectUnpostRefundPaymentsData.isactive = UtilSql.getValue(result, "ISACTIVE");
-        objectUnpostRefundPaymentsData.recordId = UtilSql.getValue(result, "RECORD_ID");
-        objectUnpostRefundPaymentsData.description = UtilSql.getValue(result, "DESCRIPTION");
-        objectUnpostRefundPaymentsData.referencekeyId = UtilSql.getValue(result, "REFERENCEKEY_ID");
-        objectUnpostRefundPaymentsData.adRoleId = UtilSql.getValue(result, "AD_ROLE_ID");
-        objectUnpostRefundPaymentsData.adAlertruleId = UtilSql.getValue(result, "AD_ALERTRULE_ID");
-        objectUnpostRefundPaymentsData.sql = UtilSql.getValue(result, "SQL");
-        objectUnpostRefundPaymentsData.name = UtilSql.getValue(result, "NAME");
+        objectUnpostRefundPaymentsData.adClientId = UtilSql.getValue(result, "ad_client_id");
+        objectUnpostRefundPaymentsData.adOrgId = UtilSql.getValue(result, "ad_org_id");
+        objectUnpostRefundPaymentsData.created = UtilSql.getDateValue(result, "created", "dd-MM-yyyy");
+        objectUnpostRefundPaymentsData.createdby = UtilSql.getValue(result, "createdby");
+        objectUnpostRefundPaymentsData.updated = UtilSql.getDateValue(result, "updated", "dd-MM-yyyy");
+        objectUnpostRefundPaymentsData.updatedby = UtilSql.getValue(result, "updatedby");
+        objectUnpostRefundPaymentsData.isactive = UtilSql.getValue(result, "isactive");
+        objectUnpostRefundPaymentsData.recordId = UtilSql.getValue(result, "record_id");
+        objectUnpostRefundPaymentsData.description = UtilSql.getValue(result, "description");
+        objectUnpostRefundPaymentsData.referencekeyId = UtilSql.getValue(result, "referencekey_id");
+        objectUnpostRefundPaymentsData.adRoleId = UtilSql.getValue(result, "ad_role_id");
+        objectUnpostRefundPaymentsData.adAlertruleId = UtilSql.getValue(result, "ad_alertrule_id");
+        objectUnpostRefundPaymentsData.sql = UtilSql.getValue(result, "sql");
+        objectUnpostRefundPaymentsData.name = UtilSql.getValue(result, "name");
         objectUnpostRefundPaymentsData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectUnpostRefundPaymentsData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -159,7 +159,7 @@ static Logger log4j = Logger.getLogger(UnpostRefundPaymentsData.class);
 
       result = st.executeQuery();
       if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "EXISTING").equals("0");
+        boolReturn = !UtilSql.getValue(result, "existing").equals("0");
       }
       result.close();
     } catch(SQLException e){
@@ -195,7 +195,7 @@ static Logger log4j = Logger.getLogger(UnpostRefundPaymentsData.class);
 
       result = st.executeQuery();
       if(result.next()) {
-        strReturn = UtilSql.getValue(result, "NAME");
+        strReturn = UtilSql.getValue(result, "name");
       }
       result.close();
     } catch(SQLException e){
@@ -235,7 +235,7 @@ static Logger log4j = Logger.getLogger(UnpostRefundPaymentsData.class);
 
       result = st.executeQuery();
       if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "EXISTING").equals("0");
+        boolReturn = !UtilSql.getValue(result, "existing").equals("0");
       }
       result.close();
     } catch(SQLException e){
@@ -269,7 +269,7 @@ static Logger log4j = Logger.getLogger(UnpostRefundPaymentsData.class);
 
       result = st.executeQuery();
       if(result.next()) {
-        strReturn = UtilSql.getValue(result, "NAME");
+        strReturn = UtilSql.getValue(result, "name");
       }
       result.close();
     } catch(SQLException e){
@@ -326,7 +326,7 @@ This query counts the number of rows in c_bp_vendor_acct
       while(continueResult && result.next()) {
         countRecord++;
         UnpostRefundPaymentsData objectUnpostRefundPaymentsData = new UnpostRefundPaymentsData();
-        objectUnpostRefundPaymentsData.name = UtilSql.getValue(result, "NAME");
+        objectUnpostRefundPaymentsData.name = UtilSql.getValue(result, "name");
         objectUnpostRefundPaymentsData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectUnpostRefundPaymentsData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -374,7 +374,7 @@ This query counts the number of rows in c_bp_vendor_acct
 
       result = st.executeQuery();
       if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "EXISTING").equals("0");
+        boolReturn = !UtilSql.getValue(result, "existing").equals("0");
       }
       result.close();
     } catch(SQLException e){
@@ -516,10 +516,10 @@ This query counts the number of rows in c_bp_vendor_acct
       while(continueResult && result.next()) {
         countRecord++;
         UnpostRefundPaymentsData objectUnpostRefundPaymentsData = new UnpostRefundPaymentsData();
-        objectUnpostRefundPaymentsData.description = UtilSql.getValue(result, "DESCRIPTION");
-        objectUnpostRefundPaymentsData.recordId = UtilSql.getValue(result, "RECORD_ID");
-        objectUnpostRefundPaymentsData.referencekeyId = UtilSql.getValue(result, "REFERENCEKEY_ID");
-        objectUnpostRefundPaymentsData.adClientId = UtilSql.getValue(result, "AD_CLIENT_ID");
+        objectUnpostRefundPaymentsData.description = UtilSql.getValue(result, "description");
+        objectUnpostRefundPaymentsData.recordId = UtilSql.getValue(result, "record_id");
+        objectUnpostRefundPaymentsData.referencekeyId = UtilSql.getValue(result, "referencekey_id");
+        objectUnpostRefundPaymentsData.adClientId = UtilSql.getValue(result, "ad_client_id");
         objectUnpostRefundPaymentsData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectUnpostRefundPaymentsData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -543,5 +543,43 @@ This query counts the number of rows in c_bp_vendor_acct
     UnpostRefundPaymentsData objectUnpostRefundPaymentsData[] = new UnpostRefundPaymentsData[vector.size()];
     vector.copyInto(objectUnpostRefundPaymentsData);
     return(objectUnpostRefundPaymentsData);
+  }
+
+/**
+Check if the FIN_Payment table exist
+ */
+  public static boolean existAPRMbasetables(ConnectionProvider connectionProvider)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "       SELECT count(*) AS EXISTING" +
+      "       FROM ad_table" +
+      "       WHERE ad_table_id = 'D1A97202E832470285C9B1EB026D54E2'";
+
+    ResultSet result;
+    boolean boolReturn = false;
+    PreparedStatement st = null;
+
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
+
+      result = st.executeQuery();
+      if(result.next()) {
+        boolReturn = !UtilSql.getValue(result, "existing").equals("0");
+      }
+      result.close();
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception ignore){
+        ignore.printStackTrace();
+      }
+    }
+    return(boolReturn);
   }
 }

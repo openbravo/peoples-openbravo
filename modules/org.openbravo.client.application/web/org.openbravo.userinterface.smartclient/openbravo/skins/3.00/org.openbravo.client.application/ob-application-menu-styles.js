@@ -65,7 +65,8 @@ isc.OBApplicationMenuButton.addProperties({
     Task: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconTask.png',
     Form: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconForm.png',
     ExternalLink: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconExternalLink.png',
-    Folder: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconFolderOpened.png'
+    Folder: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconFolderOpened.png',
+    View: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconForm.png'
   },
   icon: {
     src: '[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-green-arrow-down.gif'

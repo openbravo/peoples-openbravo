@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,6 +39,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.zip.CRC32;
 
@@ -50,6 +51,7 @@ import org.apache.log4j.PatternLayout;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.OBContext;
@@ -58,11 +60,13 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
 import org.openbravo.erpCommon.obps.DisabledModules.Artifacts;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class ActivationKey {
@@ -85,6 +89,7 @@ public class ActivationKey {
   private LicenseClass licenseClass;
   private List<String> tier1Artifacts;
   private List<String> tier2Artifacts;
+  private Date lastRefreshTime;
 
   private boolean notActiveYet = false;
 
@@ -92,6 +97,11 @@ public class ActivationKey {
 
   private static final String TIER_1_PREMIUM_FEATURE = "T1P";
   private static final String TIER_2_PREMIUM_FEATURE = "T2P";
+
+  /**
+   * Number of minutes since last license refresh to wait before doing it again
+   */
+  private static final int REFRESH_MIN_TIME = 60;
 
   public enum LicenseRestriction {
     NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED
@@ -163,6 +173,11 @@ public class ActivationKey {
 
   public static synchronized void setInstance(ActivationKey ak) {
     instance = ak;
+    ak.setRefreshTime(new Date());
+  }
+
+  private void setRefreshTime(Date time) {
+    lastRefreshTime = time;
   }
 
   /**
@@ -861,7 +876,56 @@ public class ActivationKey {
     HashMap<String, CommercialModuleStatus> moduleList = getSubscribedModules();
 
     if (!moduleList.containsKey(moduleId)) {
-      return CommercialModuleStatus.NO_SUBSCRIBED;
+      log4j.debug("Module " + moduleId + " is not in the list of subscribed modules");
+
+      Date timeToRefresh = null;
+      if (lastRefreshTime != null) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(lastRefreshTime);
+        calendar.add(Calendar.MINUTE, REFRESH_MIN_TIME);
+        timeToRefresh = calendar.getTime();
+      }
+
+      if (timeToRefresh == null || new Date().after(timeToRefresh)) {
+        log4j.debug("Trying to refresh license, last refresh "
+            + (lastRefreshTime == null ? "never" : lastRefreshTime.toString()));
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("publicKey", strPublicKey);
+        params.put("purpose", getProperty("purpose"));
+        params.put("instanceNo", getProperty("instanceno"));
+        params.put("activate", true);
+        ProcessBundle pb = new ProcessBundle(null, new VariablesSecureApp("0", "0", "0"));
+        pb.setParams(params);
+
+        boolean refreshed = false;
+        try {
+          new ActiveInstanceProcess().execute(pb);
+          OBError msg = (OBError) pb.getResult();
+          refreshed = msg.getType().equals("Success");
+          if (refreshed) {
+            log4j.debug("Instance refreshed");
+          } else {
+            log4j.info("Problem refreshing instance " + msg.getMessage());
+          }
+        } catch (Exception e) {
+          log4j.error("Error refreshing instance", e);
+          refreshed = false;
+        }
+
+        if (refreshed) {
+          return ActivationKey.instance.isModuleSubscribed(moduleId);
+        } else {
+          // Even license couldn't be refreshed, set lastRefreshTime not to try to refresh in the
+          // following period of time
+          lastRefreshTime = new Date();
+          return CommercialModuleStatus.NO_SUBSCRIBED;
+        }
+      } else {
+        log4j.debug("Not refreshing, last refresh was " + lastRefreshTime.toString()
+            + ". Next time to refresh " + timeToRefresh.toString());
+        return CommercialModuleStatus.NO_SUBSCRIBED;
+      }
     }
 
     return moduleList.get(moduleId);

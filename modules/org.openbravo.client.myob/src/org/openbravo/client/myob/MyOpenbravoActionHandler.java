@@ -238,8 +238,8 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
         WidgetInstance newWidgetInstance = OBProvider.getInstance().get(WidgetInstance.class);
         newWidgetInstance.setColumnPosition(newColNum);
         newWidgetInstance.setSequenceInColumn(newRowNum);
-        newWidgetInstance.setWidgetClass(MyOBUtils.getWidgetClassFromTitle(widget
-            .getString("title")));
+        newWidgetInstance.setWidgetClass(OBDal.getInstance().get(WidgetClass.class,
+            widget.getString("widgetClassId")));
         if (!isAdminMode) {
           newWidgetInstance.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
           newWidgetInstance.setVisibleAtRole(role);

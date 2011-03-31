@@ -1851,4 +1851,12 @@ public class ImportModule {
     return remoteModule;
   }
 
+  public boolean isChecked() {
+    return checked;
+  }
+
+  public void setForce(boolean force) {
+    this.force = force;
+  }
+
 }

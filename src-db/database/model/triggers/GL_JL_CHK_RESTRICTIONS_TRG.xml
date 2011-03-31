@@ -61,8 +61,7 @@ BEGIN
       END IF;
 
       IF(v_Posted='Y'
-        AND ((COALESCE(:old.DATEACCT, v_DateNull) <> COALESCE(:new.DATEACCT, v_DateNull))
-        OR(COALESCE(:old.C_VALIDCOMBINATION_ID, '0') <> COALESCE(:new.C_VALIDCOMBINATION_ID, '0'))
+        AND ((COALESCE(:old.C_VALIDCOMBINATION_ID, '0') <> COALESCE(:new.C_VALIDCOMBINATION_ID, '0'))
         OR(COALESCE(:old.AMTACCTDR, 0) <> COALESCE(:new.AMTACCTDR, 0))
         OR(COALESCE(:old.AMTACCTCR, 0) <> COALESCE(:new.AMTACCTCR, 0)))) THEN
         RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;

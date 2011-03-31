@@ -17,15 +17,6 @@
 <!--5EE6D055A7FE4C4DA7EB557F6C61D0EA-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--5EE6D055A7FE4C4DA7EB557F6C61D0EA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--5EE6D055A7FE4C4DA7EB557F6C61D0EA-->  <VALUE><![CDATA[[
-  {"id": "TabSet_ActivateTab1", "keyComb": {"ctrl": true, "alt": true, "key": "1"}},
-  {"id": "TabSet_ActivateTab2", "keyComb": {"ctrl": true, "alt": true, "key": "2"}},
-  {"id": "TabSet_ActivateTab3", "keyComb": {"ctrl": true, "alt": true, "key": "3"}},
-  {"id": "TabSet_ActivateTab4", "keyComb": {"ctrl": true, "alt": true, "key": "4"}},
-  {"id": "TabSet_ActivateTab5", "keyComb": {"ctrl": true, "alt": true, "key": "5"}},
-  {"id": "TabSet_ActivateTab6", "keyComb": {"ctrl": true, "alt": true, "key": "6"}},
-  {"id": "TabSet_ActivateTab7", "keyComb": {"ctrl": true, "alt": true, "key": "7"}},
-  {"id": "TabSet_ActivateTab8", "keyComb": {"ctrl": true, "alt": true, "key": "8"}},
-  {"id": "TabSet_ActivateTab9", "keyComb": {"ctrl": true, "alt": true, "key": "9"}},
   {"id": "TabSet_closeAllTabs", "keyComb": {"ctrl": true, "alt": true, "key": "0"}},
   {"id": "TabSet_ActivateRightTab", "keyComb": {"ctrl": true, "alt": true, "key": "+"}},
   {"id": "TabSet_ActivateLeftTab", "keyComb": {"ctrl": true, "alt": true, "key": "-"}},

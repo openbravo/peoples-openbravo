@@ -442,7 +442,6 @@ public class FormInitializationComponent extends BaseActionHandler {
           + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())) != null) {
         if ((mode.equals("NEW") || (mode.equals("CHANGE")
             && changedCols.contains(field.getColumn().getDBColumnName()) && changedColumn != null))
-            && (uiDef instanceof EnumUIDefinition || uiDef instanceof FKComboUIDefinition)
             && field.getColumn().isValidateOnNew()) {
           if (field.getColumn().getCallout() != null) {
             addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);

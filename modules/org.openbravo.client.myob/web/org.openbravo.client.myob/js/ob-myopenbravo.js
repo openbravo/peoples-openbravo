@@ -92,8 +92,9 @@ isc.OBMyOpenbravo.addProperties({
   adminLevelValue: '',
     
   initWidget: function(args){
-    var me = this, i, widgetInstance, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
-    
+    var me = this, i, widgetInstance, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout,
+        recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
+
     recentViewsLayout = isc.VLayout.create({});
     recentViewsLayout.addMember(isc.Label.create({
       height: 1,
@@ -224,6 +225,7 @@ isc.OBMyOpenbravo.addProperties({
     }
     
     this.leftColumnLayout.recentViewsLayout = recentViewsLayout;
+    this.leftColumnLayout.recentDocumentsLayout = recentDocumentsLayout;
     this.leftColumnLayout.addWidgetLayout = addWidgetLayout;
     this.leftColumnLayout.adminOtherMyOBLayout = adminOtherMyOBLayout;
     this.leftColumnLayout.refreshLayout = refreshLayout;
@@ -511,14 +513,13 @@ isc.OBMyOpenbravo.addProperties({
     } else {
       var localWidgetProperties = isc.addProperties({}, widgetProperties);
       for (i = 0; i < this.availableWidgetClasses.length; i++) {
-        if (this.availableWidgetClasses[i].widgetClassName &&
-            this.availableWidgetClasses[i].widgetClassName === widgetProperties.widgetClassName &&
-            this.availableWidgetClasses[i].title === widgetProperties.title) {
+        if (this.availableWidgetClasses[i].widgetClassId === widgetProperties.widgetClassId) {
           localWidgetProperties.showMaximizeButton = this.availableWidgetClasses[i].showMaximizeButton;
           localWidgetProperties.menuItems = this.availableWidgetClasses[i].menuItems;
           localWidgetProperties.fieldDefinitions = this.availableWidgetClasses[i].fieldDefinitions;
           localWidgetProperties.aboutFieldDefinitions = this.availableWidgetClasses[i].aboutFieldDefinitions;
           localWidgetProperties.parameters = isc.addProperties({}, widgetProperties.parameters);
+          localWidgetProperties.widgetClassId = this.availableWidgetClasses[i].widgetClassId;
           break;
         }
       }
@@ -709,6 +710,7 @@ isc.OBMyOpenbravo.addProperties({
         newWidget.parameters = widget.parameters;
         newWidget.title = widget.title;
         newWidget.widgetClassName = widget.widgetClassName;
+        newWidget.widgetClassId = widget.widgetClassId;
         this.widgets.push(newWidget);
       }
     }
@@ -778,6 +780,7 @@ isc.OBMyOpenbravo.addProperties({
 
     leftColumn.recentViewsLayout.hide();
     leftColumn.refreshLayout.hide();
+    leftColumn.recentDocumentsLayout.hide();
     leftColumn.adminOtherMyOBLayout.getMembers()[1].destroy(); // remove DynamicForm
     leftColumn.adminOtherMyOBLayout.hide();
     leftColumn.addMember(isc.OBMyOBPublishChangesDialog.create({
@@ -795,6 +798,7 @@ isc.OBMyOpenbravo.addProperties({
     this.adminLevelValue = '';
 
     leftColumn.recentViewsLayout.show();
+    leftColumn.recentDocumentsLayout.show();
     leftColumn.refreshLayout.show();
     leftColumn.adminOtherMyOBLayout.show();
 

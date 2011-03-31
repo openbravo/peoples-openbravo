@@ -223,6 +223,12 @@ OB.ViewFormProperties = {
     this.view.updateTabTitle();
     this.enableLinkedItemSection(!isNew);
 
+    if (isNew) {
+      this.view.statusBar.newIcon.prompt = OB.I18N.getLabel('OBUIAPP_NewIconPrompt');
+    } else {
+      this.view.statusBar.newIcon.prompt = OB.I18N.getLabel('OBUIAPP_EditIconPrompt');
+    }
+    
     // see issue:
     // 16064: Autosave error is triggered when closing a tab, even if the form wasn't touched
     // https://issues.openbravo.com/view.php?id=16064

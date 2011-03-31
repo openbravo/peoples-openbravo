@@ -664,9 +664,13 @@ public class AccountTree {
         r[i].qty = (applySign(new BigDecimal(r[i].qty), r[i].showvaluecond, true)).toPlainString();
         r[i].qtyRef = (applySign(new BigDecimal(r[i].qtyRef), r[i].showvaluecond, true))
             .toPlainString();
-        if (!notEmptyLines
-            || (new BigDecimal(r[i].qty).compareTo(BigDecimal.ZERO) != 0 || new BigDecimal(
-                r[i].qtyRef).compareTo(BigDecimal.ZERO) != 0)) {
+        if ((!notEmptyLines || (new BigDecimal(r[i].qty).compareTo(BigDecimal.ZERO) != 0 || new BigDecimal(
+            r[i].qtyRef).compareTo(BigDecimal.ZERO) != 0))
+            || "Y".equals(r[i].isalwaysshown)) {
+          if ("Y".equals(r[i].isalwaysshown)) {
+            r[i].qty = null;
+            r[i].qtyRef = null;
+          }
           vec.addElement(r[i]);
         }
       }

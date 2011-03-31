@@ -639,7 +639,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       VariablesSecureApp vars, String recordId, boolean islocal, InputStream obx,
       String[] updateModules, HashMap<String, String> maturityLevels) throws IOException,
       ServletException {
-    final String discard[] = { "", "", "", "", "", "", "warnMaturity", "" };
+    final String discard[] = { "", "", "", "", "", "", "warnMaturity", "", "missingDeps" };
     Module module = null;
 
     // Remote installation is only allowed for heartbeat enabled instances
@@ -702,7 +702,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
         check = im.checkDependenciesFile(obx);
       }
 
-      if (check) { // dependencies are statisfied, show modules to install
+      if (islocal || check) {
+        // dependencies are satisfied or local installation, show modules to install. If local
+        // installation and dependencies are not ok show warning.
+
         // installOrig includes also the module to install
         final Module[] installOrig = im.getModulesToInstall();
 
@@ -797,7 +800,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
           } else {
             message.setMessage(message.getMessage() + "\n");
           }
+
           message.setMessage(message.getMessage() + additionalMsg.getMessage());
+          if (!check) {
+            discard[8] = ""; // show missing dependencies message
+            message.setType("Warning");
+            message.setTitle(Utility
+                .messageBD(this, "DependenciesNotSatisfied", vars.getLanguage()));
+          }
         }
 
       } else { // Dependencies not satisfied, do not show continue button
@@ -1190,6 +1200,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       }
     } else {
+      if (!im.isChecked()) {
+        im.setForce(true);
+      }
       selected = installOrig;
     }
 
