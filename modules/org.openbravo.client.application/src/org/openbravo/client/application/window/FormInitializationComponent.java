@@ -191,13 +191,25 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       // Execution of callouts
       long t6 = System.currentTimeMillis();
-      boolean comboReloadNeeded = executeCallouts(mode, tab, columnValues, changedColumn,
+      List<String> changedCols = executeCallouts(mode, tab, columnValues, changedColumn,
           calloutsToCall, lastfieldChanged, calloutMessages, changeEventCols);
 
-      if (comboReloadNeeded) {
+      if (changedCols.size() > 0) {
+        List<String> columnsToComputeAgain = new ArrayList<String>();
+        for (String changedCol : changedCols) {
+          for (String colWithVal : columnsInValidation.keySet()) {
+            for (String colInVal : columnsInValidation.get(colWithVal)) {
+              if (colInVal.equalsIgnoreCase(changedCol)) {
+                if (!columnsToComputeAgain.contains(colInVal)) {
+                  columnsToComputeAgain.add(colWithVal);
+                }
+              }
+            }
+          }
+        }
         RequestContext.get().setRequestParameter("donotaddcurrentelement", "true");
-        computeColumnValues("CHANGE", tab, allColumns, columnValues, parentRecord, parentId, null,
-            jsContent, changeEventCols, calloutsToCall, lastfieldChanged);
+        subsequentComboReload("CHANGE", tab, columnsToComputeAgain, columnValues, parentRecord,
+            parentId, null, jsContent, changeEventCols, calloutsToCall, lastfieldChanged);
       }
 
       if (mode.equals("NEW")) {
@@ -457,6 +469,39 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
       }
     }
+  }
+
+  private void subsequentComboReload(String mode, Tab tab, List<String> allColumns,
+      Map<String, JSONObject> columnValues, BaseOBObject parentRecord, String parentId,
+      String changedColumn, JSONObject jsContent, List<String> changeEventCols,
+      List<String> calloutsToCall, List<String> lastfieldChanged) {
+    HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
+    for (Field field : tab.getADFieldList()) {
+      for (String col : allColumns) {
+        if (col.equalsIgnoreCase(field.getColumn().getDBColumnName())) {
+          columnsOfFields.put(col, field);
+        }
+      }
+    }
+    for (String col : allColumns) {
+      Field field = columnsOfFields.get(col);
+      try {
+        String columnId = field.getColumn().getId();
+        UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(columnId);
+        String value = uiDef.getFieldProperties(field, true);
+        JSONObject jsonobject = null;
+        if (value != null) {
+          jsonobject = new JSONObject(value);
+          columnValues.put("inp"
+              + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
+          setRequestContextParameter(field, jsonobject);
+        }
+      } catch (Exception e) {
+        throw new OBException(
+            "Couldn't get data for column " + field.getColumn().getDBColumnName(), e);
+      }
+    }
+
   }
 
   private void computeAuxiliaryInputs(String mode, Tab tab, Map<String, JSONObject> columnValues) {
@@ -760,7 +805,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     return inpFields;
   }
 
-  private boolean executeCallouts(String mode, Tab tab, Map<String, JSONObject> columnValues,
+  private List<String> executeCallouts(String mode, Tab tab, Map<String, JSONObject> columnValues,
       String changedColumn, List<String> calloutsToCall, List<String> lastfieldChanged,
       List<String> messages, List<String> dynamicCols) {
 
@@ -781,20 +826,21 @@ public class FormInitializationComponent extends BaseActionHandler {
 
     ArrayList<String> calledCallouts = new ArrayList<String>();
     if (calloutsToCall.isEmpty()) {
-      return false;
+      return new ArrayList<String>();
     }
     return runCallouts(columnValues, tab, calledCallouts, calloutsToCall, lastfieldChanged,
         messages, dynamicCols);
 
   }
 
-  private boolean runCallouts(Map<String, JSONObject> columnValues, Tab tab,
+  private List<String> runCallouts(Map<String, JSONObject> columnValues, Tab tab,
       List<String> calledCallouts, List<String> calloutsToCall, List<String> lastfieldChangedList,
       List<String> messages, List<String> dynamicCols) {
 
     // flush&commit to release lock in db which otherwise interfere with callouts which run in their
     // own jdbc connection (i.e. lock on AD_Sequence when using with Sales Invoice window)
     OBDal.getInstance().flush();
+    List<String> changedCols = new ArrayList<String>();
     try {
       OBDal.getInstance().getConnection().commit();
     } catch (SQLException e1) {
@@ -803,7 +849,6 @@ public class FormInitializationComponent extends BaseActionHandler {
 
     List<Field> fields = tab.getADFieldList();
     HashMap<String, Field> inpFields = buildInpField(fields);
-    boolean comboReloadNeeded = false;
     String lastCalledCallout = "";
     String lastFieldOfLastCalloutCalled = "";
 
@@ -909,6 +954,9 @@ public class FormInitializationComponent extends BaseActionHandler {
                                     .equals(newValue))) {
                               columnValues.put(colId, jsonobject);
                               changed = true;
+                              if (dynamicCols.contains(colId)) {
+                                changedCols.add(col.getDBColumnName());
+                              }
                             } else {
                               log
                                   .debug("Column value didn't change. We do not attempt to execute any additional callout");
@@ -943,7 +991,7 @@ public class FormInitializationComponent extends BaseActionHandler {
                               + Sqlc.TransformaNombreColumna(col.getDBColumnName()), jsonobj);
                           changed = true;
                           if (dynamicCols.contains(colId)) {
-                            comboReloadNeeded = true;
+                            changedCols.add(col.getDBColumnName());
                           }
                           rq.setRequestParameter(colId, jsonobj.getString("classicValue"));
                         }
@@ -973,7 +1021,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     if (calledCallouts.size() == MAX_CALLOUT_CALLS) {
       log.warn("Warning: maximum number of callout calls reached");
     }
-    return comboReloadNeeded;
+    return changedCols;
 
   }
 
