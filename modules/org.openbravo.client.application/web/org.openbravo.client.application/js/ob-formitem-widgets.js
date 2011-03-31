@@ -116,20 +116,7 @@ isc.OBSearchItem.addProperties({
   wrap: false,
   clipValue: true,
   validateOnChange: true,
-  
-  setValue: function(value){
-    var ret = this.Super('setValue', arguments);
-    // in this case the clearIcon needs to be shown or hidden
-    if (!this.disabled && !this.required) {
-      if (value) {
-        this.showIcon(this.instanceClearIcon);
-      } else {
-        this.hideIcon(this.instanceClearIcon);
-      }
-    }
-    return ret;
-  },
-  
+
   // NOTE: FormItem don't have initWidget but use init
   init: function(){
     this.instanceClearIcon = isc.shallowClone(this.clearIcon);
