@@ -942,39 +942,24 @@ public class FormInitializationComponent extends BaseActionHandler {
                           entry.put(JsonConstants.ID, subelement.get(0, null));
                           entry.put(JsonConstants.IDENTIFIER, subelement.get(1, null));
                           comboEntries.add(entry);
-                          if (subelement.get(2, null).toString().equalsIgnoreCase("True")) {
+                          if (j == 0 || subelement.get(2, null).toString().equalsIgnoreCase("True")) {
+                            // We always initially select the first element returned by the callout,
+                            // and after that, we select the one which is marke as selected "true"
                             UIDefinition uiDef = UIDefinitionController.getInstance()
                                 .getUIDefinition(col.getId());
                             String newValue = subelement.get(0, null).toString();
                             jsonobject.put("value", newValue);
                             jsonobject.put("classicValue", uiDef.convertToClassicString(newValue));
                             log.debug("Column: " + col.getDBColumnName() + "  Value: " + newValue);
-                            String oldValue = rq.getRequestParameter(colId);
-                            if (uiDef.getDomainType() instanceof PrimitiveDomainType) {
-                              String classicValue = uiDef.convertToClassicString(newValue);
-                              if (classicValue != null && classicValue.equals("null")) {
-                                classicValue = null;
-                              }
-                              rq.setRequestParameter(colId, classicValue);
-                            } else {
-                              rq.setRequestParameter(colId, newValue == null
-                                  || newValue.equals("null") ? null : newValue.toString());
-                            }
-                            if ((oldValue == null && newValue != null)
-                                || (oldValue != null && newValue == null)
-                                || (oldValue != null && newValue != null && !oldValue
-                                    .equals(newValue))) {
-                              columnValues.put(colId, jsonobject);
-                              changed = true;
-                              if (dynamicCols.contains(colId)) {
-                                changedCols.add(col.getDBColumnName());
-                              }
-                            } else {
-                              log
-                                  .debug("Column value didn't change. We do not attempt to execute any additional callout");
-                            }
                           }
                         }
+                      }
+                      // If the callout returns a combo, we in any case set the new value with what
+                      // the callout returned
+                      columnValues.put(colId, jsonobject);
+                      changed = true;
+                      if (dynamicCols.contains(colId)) {
+                        changedCols.add(col.getDBColumnName());
                       }
                       jsonobject.put("entries", new JSONArray(comboEntries));
                     } else {
