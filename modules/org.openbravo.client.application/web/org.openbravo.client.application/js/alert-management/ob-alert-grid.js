@@ -92,7 +92,11 @@ isc.OBAlertGrid.addProperties({
       isLink: true,
       filterOnKeypress: true,
       filterEditorType: 'OBTextItem',
-      type: '_id_10'
+      type: '_id_10',
+      formatCellValueFunctionReplaced: true,
+      formatCellValue: function(value, record, rowNum, colNum, grid){
+          return '';
+        }
     }
     ],
   
