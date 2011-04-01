@@ -35,11 +35,12 @@ isc.OBAlertGrid.addProperties({
   //editEvent: 'click',
   editOnFocus: true,
   showCellContextMenus: true,
+  selectOnEdit: false,
 
   // keeps track if we are in objectSelectionMode or in toggleSelectionMode
   // objectSelectionMode = singleRecordSelection === true
   singleRecordSelection: false,
- 
+
   dataProperties: {
     useClientFiltering: false//,
     //useClientSorting: false
