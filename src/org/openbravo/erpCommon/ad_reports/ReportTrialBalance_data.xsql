@@ -41,8 +41,8 @@
       AND (select max(c_element_id) from c_acctschema_element where c_acctschema_id = ? and ELEMENTTYPE = 'AC') = C_ELEMENTVALUE.C_ELEMENT_ID
       UNION		
       SELECT '0' AS PARENT_ID, F.ACCOUNT_ID AS ID, EV.ELEMENTLEVEL, EV.NAME AS NAME, EV.VALUE AS ACCOUNT_ID, 
-      SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN 0 ELSE F.AMTACCTDR END)) AS AMTACCTDR, 
-      SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN 0 ELSE f.AMTACCTCR END)) AS AMTACCTCR 
+      SUM((CASE f.FACTACCTTYPE WHEN ? THEN 0 ELSE F.AMTACCTDR END)) AS AMTACCTDR, 
+      SUM((CASE f.FACTACCTTYPE WHEN ? THEN 0 ELSE f.AMTACCTCR END)) AS AMTACCTCR 
       FROM FACT_ACCT F, C_ELEMENTVALUE EV
       WHERE F.ACCOUNT_ID = EV.C_ELEMENTVALUE_ID
       AND f.AD_ORG_ID IN('2')
@@ -61,7 +61,9 @@
     <Parameter name="dateTo"/>
     <Parameter name="org"/>
     <Parameter name="treeAcct"/>
-    <Parameter name="acctSchema"/>    
+    <Parameter name="acctSchema"/>
+    <Parameter name="factaccttype"/>
+    <Parameter name="factaccttype"/>
     <Parameter name="orgFamily" type="replace" optional="true" after="f.AD_ORG_ID IN(" text="'2'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="F.AD_ORG_ID IN(" text="'1'"/>
@@ -158,7 +160,7 @@
                     AND    F.AD_ORG_ID IN('1')
                     AND 3=3
                     AND F.ISACTIVE = 'Y'
-                    AND F.FACTACCTTYPE = 'O')) A
+                    )) A
            GROUP BY ACCOUNT_ID, ID, groupbyname, groupbyid, NAME
            HAVING SUM(AMTACCTDR) - SUM(AMTACCTCR) <> 0 )
            UNION
@@ -190,7 +192,6 @@
                         AND 2=2
                         AND F.FACTACCTTYPE <> 'R'
                         AND F.FACTACCTTYPE <> 'C'
-                        AND F.FACTACCTTYPE <> 'O'
                         AND F.ISACTIVE = 'Y') B
             GROUP BY ACCOUNT_ID, ID, groupbyname, groupbyid, NAME
             HAVING SUM(AMTACCTDR) <> 0 OR SUM(AMTACCTCR) <> 0 )) C
@@ -234,6 +235,7 @@
     <Parameter name="mProductId" optional="true" type="argument" after="AND 3=3"><![CDATA[ AND F.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="cProjectId" optional="true" type="argument" after="AND 3=3"><![CDATA[ AND F.C_PROJECT_ID IN]]></Parameter>
     <Parameter name="acctSchema" optional="true" after="AND 3=3"><![CDATA[ AND F.C_ACCTSCHEMA_ID = ?]]></Parameter>
+    <Parameter name="factaccttype" optional="true" after="AND 3=3"><![CDATA[ AND F.FACTACCTTYPE = ?]]></Parameter>
     <!--  -->
     <Parameter name="groupby"/>
     <Parameter name="groupby"/>
@@ -250,6 +252,7 @@
     <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND F.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="cProjectId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND F.C_PROJECT_ID IN]]></Parameter>
     <Parameter name="acctSchema" optional="true" after="AND 2=2"><![CDATA[ AND F.C_ACCTSCHEMA_ID = ?]]></Parameter>
+    <Parameter name="factaccttype" optional="true" after="AND 2=2"><![CDATA[ AND F.FACTACCTTYPE <> ?]]></Parameter>
   </SqlMethod>
   
   <SqlMethod name="selectXLS" type="preparedStatement" return="multiple">
@@ -311,7 +314,7 @@
                      AND    F.AD_ORG_ID IN('1')
                      AND 3=3
                      AND F.ISACTIVE = 'Y'
-                     AND F.FACTACCTTYPE = 'O')) A
+                     )) A
           GROUP BY ACCOUNT_ID, ID, bpid, pdid, pjid, bpname, pdname, NAME
           HAVING SUM(AMTACCTDR) - SUM(AMTACCTCR) <> 0 )
           UNION
@@ -336,7 +339,6 @@
                       AND 2=2
                       AND F.FACTACCTTYPE <> 'R'
                       AND F.FACTACCTTYPE <> 'C'
-                      AND F.FACTACCTTYPE <> 'O'
                       AND F.ISACTIVE = 'Y') B
            GROUP BY ACCOUNT_ID, ID, NAME, bpname, bpid, pdname, pdid, pjid )) C
       GROUP BY ACCOUNT_ID, ID, NAME, bpname, bpid, pdname, pdid, pjid
@@ -372,6 +374,7 @@
     <Parameter name="mProductId" optional="true" type="argument" after="AND 3=3"><![CDATA[ AND F.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="cProjectId" optional="true" type="argument" after="AND 3=3"><![CDATA[ AND F.C_PROJECT_ID IN]]></Parameter>
     <Parameter name="acctSchema" optional="true" after="AND 3=3"><![CDATA[ AND F.C_ACCTSCHEMA_ID = ?]]></Parameter>
+    <Parameter name="factaccttype" optional="true" after="AND 3=3"><![CDATA[ AND F.FACTACCTTYPE = ?]]></Parameter>
     <!--  -->
     <Parameter name="accountLevel"/>
     <Parameter name="orgFamily" type="replace" optional="true" after="AND  f.AD_ORG_ID IN(" text="'2'"/>
@@ -385,6 +388,7 @@
     <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND F.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="cProjectId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND F.C_PROJECT_ID IN]]></Parameter>
     <Parameter name="acctSchema" optional="true" after="AND 2=2"><![CDATA[ AND F.C_ACCTSCHEMA_ID = ?]]></Parameter>
+    <Parameter name="factaccttype" optional="true" after="AND 2=2"><![CDATA[ AND F.FACTACCTTYPE <> ?]]></Parameter>
   </SqlMethod>
   
   <SqlMethod name="selectInitialBalance" type="preparedStatement" return="multiple">
@@ -412,7 +416,7 @@
                    AND  F.AD_ORG_ID IN ('1')
                    AND  F.AD_CLIENT_ID IN ('1')
                    AND F.ISACTIVE = 'Y'
-                   AND F.FACTACCTTYPE = 'O')) A
+                   AND F.FACTACCTTYPE <> 'O')) A
       GROUP BY ACCOUNT_ID
       HAVING SUM(AMTACCTDR) - SUM(AMTACCTCR) <> 0
       ORDER BY ACCOUNT_ID
