@@ -159,6 +159,7 @@ isc.OBUIAPP_AlertManagement.addProperties({
           }
           // Old status is always expanded to be able to select the rows
           OB.AlertManagement.grids[data.oldStatus].invalidateCache();
+          OB.AlertManager.call();
     });
   },
   
