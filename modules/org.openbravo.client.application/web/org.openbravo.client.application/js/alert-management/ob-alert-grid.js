@@ -60,8 +60,8 @@ isc.OBAlertGrid.addProperties({
       canFilter: true,
       canEdit: false,
       filterOnKeypress: true,
-      filterEditorType: 'OBTextItem'
-        //, type: '_id_10'
+      filterEditorType: 'OBTextItem',
+      type: '_id_10'
     },
     { name: 'creationDate',
       title: OB.I18N.getLabel('OBUIAPP_AlertGrid_Time'),
@@ -82,8 +82,8 @@ isc.OBAlertGrid.addProperties({
         columnName: 'comments',
         disabled: false,
         updatable: true
-      }
-      //, type: '_id_10'
+      },
+      type: '_id_10'
     },
     { name: 'recordID',
       title: OB.I18N.getLabel('OBUIAPP_AlertGrid_Record'),
@@ -91,8 +91,8 @@ isc.OBAlertGrid.addProperties({
       canEdit: false,
       isLink: true,
       filterOnKeypress: true,
-      filterEditorType: 'OBTextItem'
-      //, type: '_id_10'
+      filterEditorType: 'OBTextItem',
+      type: '_id_10'
     }
     ],
   
