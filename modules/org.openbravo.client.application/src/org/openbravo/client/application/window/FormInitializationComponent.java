@@ -58,13 +58,16 @@ import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
@@ -909,6 +912,18 @@ public class FormInitializationComponent extends BaseActionHandler {
               if (name.equals("MESSAGE")) {
                 log.debug("Callout message: " + element.get(1, null));
                 messages.add(element.get(1, null).toString());
+              } else if (name.equals("EXECUTE")) {
+                String js = element.get(1, null) == null ? null : element.get(1, null).toString();
+                if (js != null && !js.equals("")) {
+                  if (js.equals("displayLogic();")) {
+                    // We don't do anything, this is a harmless js response
+                  } else {
+                    messages.add(Utility.messageBD(new DalConnectionProvider(false),
+                        "OBUIAPP_ExecuteInCallout", RequestContext.get().getVariablesSecureApp()
+                            .getLanguage()));
+                    createNewPreferenceForWindow(tab.getWindow());
+                  }
+                }
               } else {
                 if (name.startsWith("inp")) {
                   boolean changed = false;
@@ -1019,6 +1034,31 @@ public class FormInitializationComponent extends BaseActionHandler {
       log.warn("Warning: maximum number of callout calls reached");
     }
     return changedCols;
+
+  }
+
+  /**
+   * This method will create a new preference to show the given window in classic mode, if there is
+   * a preference doesn't already exist
+   * 
+   * @param window
+   */
+  private void createNewPreferenceForWindow(Window window) {
+
+    OBCriteria<Preference> prefCriteria = OBDao.getFilteredCriteria(Preference.class, Expression
+        .eq(Preference.PROPERTY_PROPERTY, "OBUIAPP_UseClassicMode"), Expression.eq(
+        Preference.PROPERTY_WINDOW, window));
+    if (prefCriteria.count() > 0) {
+      // Preference already exists. We don't create a new one.
+      return;
+    }
+    Preference newPref = OBProvider.getInstance().get(Preference.class);
+    newPref.setWindow(window);
+    newPref.setProperty("OBUIAPP_UseClassicMode");
+    newPref.setSearchKey("Y");
+    newPref.setPropertyList(true);
+    OBDal.getInstance().save(newPref);
+    OBDal.getInstance().flush();
 
   }
 
