@@ -59,8 +59,9 @@
 		<FIELD id="fieldDocumentno">documentno</FIELD>
 		<FIELD id="fieldCbpartnername">cbpartnername</FIELD>
 		<FIELD id="fieldDateordered">dateordered</FIELD>
-		<FIELD id="fieldTotallines" format="euroRelation">notinvoicedlines</FIELD>
-		<FIELD id="fieldGrandtotal" format="euroRelation">amountlines</FIELD>
+		<FIELD id="fieldTotalGross" format="euroRelation">totalgross</FIELD>
+		<FIELD id="fieldTotalLines" format="euroRelation">amountlines</FIELD>
+		<FIELD id="fieldInvoiced" format="euroRelation">linesinvoiced</FIELD>
         <FIELD id="fieldPendingtoInvoice" format="euroRelation">pendinglines</FIELD>
         <FIELD id="fieldInvoiceTerm">termname</FIELD>
 		<SECTION id="sectionDetail"/>
