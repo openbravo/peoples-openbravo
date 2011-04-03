@@ -1309,4 +1309,20 @@ public class AdvPaymentMngtDao {
     return null;
   }
 
+  public FIN_FinancialAccount getDefaultFinancialAccountFor(String strOrgId) {
+    final OBCriteria<FIN_FinancialAccount> obc = OBDal.getInstance().createCriteria(
+        FIN_FinancialAccount.class,"acc");
+    obc.add(Expression.in("organization.id", OBContext.getOBContext()
+        .getOrganizationStructureProvider().getNaturalTree(strOrgId)));
+    obc.setFilterOnReadableOrganization(false);
+
+    obc.add(Expression.eq(FIN_FinancialAccount.PROPERTY_DEFAULT, true));
+
+    final List<FIN_FinancialAccount> defaultAccounts = obc.list();
+    if( defaultAccounts.size() > 0 ) {
+      return defaultAccounts.get(0);
+    } else {
+      return null;
+    }
+  }
 }

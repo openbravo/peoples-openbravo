@@ -294,13 +294,14 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("documentNumber", "<" + strDocNo + ">");
     Invoice inv = OBDal.getInstance().get(Invoice.class, strInvoiceId);
     String strPaymentMethodId = inv.getPaymentMethod().getId();
-    String strFinancialAccountId = "";
-    try {
-      strFinancialAccountId = isReceipt ? bp.getAccount().getId() : bp.getPOFinancialAccount()
-          .getId();
-    } catch (Exception e) {
+
+    FIN_FinancialAccount account = isReceipt ? bp.getAccount() : bp.getPOFinancialAccount();
+    if( account == null ) {
       log4j.info("No default info for the selected business partner");
+      account = dao.getDefaultFinancialAccountFor(strOrgId);
     }
+
+    String strFinancialAccountId = account != null ? account.getId() : "";
     xmlDocument.setParameter("customerBalance", bp.getCreditUsed().toString());
 
     // Payment Method combobox
@@ -341,7 +342,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     }
 
     String exchangeRate = "1.0";
-    if( !financialAccountCurrency.equals(paymentCurrency)) {
+    if( financialAccountCurrency != null && !financialAccountCurrency.equals(paymentCurrency)) {
       final CurrencyDao currencyDao = new CurrencyDao();
       final ConversionRate conversionRate = currencyDao.getConversionRate(paymentCurrency, financialAccountCurrency, new Date());
       if( conversionRate != null ) {
