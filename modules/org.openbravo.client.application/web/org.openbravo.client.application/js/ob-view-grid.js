@@ -318,7 +318,6 @@ isc.OBViewGrid.addProperties({
       this.getField(this.view.parentProperty).canFilter = false;
       this.getField(this.view.parentProperty).canEdit = false;
     }
-    
   },
   
   show: function(){
@@ -937,6 +936,9 @@ isc.OBViewGrid.addProperties({
         title: OB.I18N.getLabel('OBUIAPP_EditInGrid'),
         click: function(){
           grid.endEditing();
+          if (colNum || colNum === 0) {
+            grid.forceFocusColumn = grid.getField(colNum).name;
+          }
           grid.startEditing(rowNum, colNum);
         }
       });
@@ -1607,9 +1609,10 @@ isc.OBViewGrid.addProperties({
       return ret;
     }
     
-    if (this.getEditForm() && newRow) {
+    if (this.forceFocusColumn) {
       // set the field to focus on after returning from the fic
-      this.getEditForm().setFocusItem(this.getField(colNum).name);
+      this.getEditForm().forceFocusedField = this.forceFocusColumn;
+      delete this.forceFocusColumn;
     }
     
     var record = this.getRecord(rowNum);
