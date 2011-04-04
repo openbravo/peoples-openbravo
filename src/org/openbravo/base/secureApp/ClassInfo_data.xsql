@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2011 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -21,7 +21,6 @@
         SELECT mo.action AS TYPE, (CASE mo.action WHEN 'X' THEN mo.ad_form_id
                                                   WHEN 'P' THEN mo.ad_process_id
                                                   WHEN 'R' THEN mo.ad_process_id
-                                                  WHEN 'T' THEN mo.ad_task_id
                                                   WHEN 'S' THEN mo.ad_reference_id
                                                   WHEN 'F' THEN mo.ad_workflow_id
                                                   WHEN 'C' THEN mo.ad_callout_id

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2062,28 +2062,6 @@ public class Utility {
         if (!WindowAccessData.hasProcessAccessName(conn, vars.getRole(), processName))
           return false;
       }
-    } catch (final ServletException e) {
-      return false;
-    }
-    return true;
-  }
-
-  @Deprecated
-  public static boolean hasTaskAccess(ConnectionProvider conn, VariablesSecureApp vars, String task) {
-    return hasTaskAccess(conn, vars, task, "");
-  }
-
-  @Deprecated
-  public static boolean hasTaskAccess(ConnectionProvider conn, VariablesSecureApp vars,
-      String task, String taskName) {
-    try {
-      if (task.equals("") && taskName.equals(""))
-        return true;
-      else if (!task.equals("")) {
-        if (!WindowAccessData.hasTaskAccess(conn, vars.getRole(), task))
-          return false;
-      } else if (!WindowAccessData.hasTaskAccessName(conn, vars.getRole(), taskName))
-        return false;
     } catch (final ServletException e) {
       return false;
     }

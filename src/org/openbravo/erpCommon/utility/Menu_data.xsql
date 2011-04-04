@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,18 +29,15 @@
       <Sql>
         SELECT DISTINCT tn.Node_ID,tn.Parent_ID,tn.SeqNo,menuData.NAME,menuData.Description,menuData.IsSummary,
         menuData.Action, (case menuData.Action when  'X' then MOX.CLASSNAME
-                                              when  'T' then null
                                               when 'F' then MOF.CLASSNAME
                                               else MOP.CLASSNAME
                                               end) AS CLASSNAME, 
         (case menuData.Action when 'X' then MOMX.MAPPINGNAME
-                              when 'T' then null
                               when 'F' then MOMF.MAPPINGNAME
                               else MOMP.MAPPINGNAME
                               end) AS MAPPINGNAME, 
         menuData.AD_Window_ID,
-        menuData.AD_Process_ID, 
-        menuData.AD_Task_ID, 
+        menuData.AD_Process_ID,  
         menuData.AD_Workflow_ID, 
         menuData.AD_Form_ID,
         menuData.url,
@@ -54,7 +51,7 @@
         FROM AD_TREENODE tn,
         (SELECT m.AD_Menu_ID, COALESCE(m_t.NAME, m.NAME) AS NAME, COALESCE(m_t.DESCRIPTION, m.Description) AS DESCRIPTION, 
         m.IsSummary,m.Action, m.AD_Window_ID, m.AD_Process_ID, 
-        m.AD_FORM_ID, m.AD_Task_ID, m.AD_Workflow_ID, m.url
+        m.AD_FORM_ID, m.AD_Workflow_ID, m.url
         FROM AD_MENU m left join AD_MENU_TRL m_t on m.AD_MENU_ID = m_t.AD_MENU_ID 
                                                 AND m_t.AD_LANGUAGE = ?,
              AD_MODULE mod
@@ -76,11 +73,6 @@
                     WHERE wa.AD_Form_ID=m.AD_Form_ID
                       AND f.AD_Form_ID = wa.AD_Form_ID
                       AND f.isActive='Y' 
-                      AND wa.AD_Role_ID=?)
-        OR EXISTS (SELECT 1 FROM AD_TASK_ACCESS wa, AD_Task t 
-                    WHERE wa.AD_Task_ID=m.AD_Task_ID
-                      AND t.AD_Task_ID=wa.AD_Task_ID
-                      AND t.isActive='Y' 
                       AND wa.AD_Role_ID=?)
         OR EXISTS (SELECT 1 FROM AD_WORKFLOW w, AD_WORKFLOW_ACCESS wa WHERE w.AD_Workflow_ID=wa.AD_Workflow_ID 
                     AND wa.AD_Workflow_ID=m.AD_Workflow_ID 
@@ -127,7 +119,6 @@
         <Parameter name="roleId"/>
         <Parameter name="roleId"/>
         <Parameter name="roleId"/>
-        <Parameter name="roleId"/>
         <Parameter name="treeId"/>
    </SqlMethod>
 
@@ -136,22 +127,19 @@
       <Sql>
         SELECT DISTINCT tn.Node_ID,tn.Parent_ID,tn.SeqNo,menuData.NAME,menuData.Description,menuData.IsSummary,
         menuData.Action, (case menuData.Action when 'X' then MOX.CLASSNAME
-                                        when 'T' then MOT.CLASSNAME
                                         when 'F' then MOF.CLASSNAME
                                         else MOP.CLASSNAME
                                         end) AS CLASSNAME, 
         (case menuData.Action when 'X' then MOMX.MAPPINGNAME
-                            when 'T' then MOMT.MAPPINGNAME
                             when 'F' then MOMF.MAPPINGNAME
                             else MOMP.MAPPINGNAME
                             end) AS MAPPINGNAME, 
         menuData.AD_Process_ID, 
-        menuData.AD_Task_ID, 
         menuData.AD_Workflow_ID, menuData.url 
         FROM AD_TREENODE tn,
         (SELECT m.AD_Menu_ID, COALESCE(m_t.NAME, m.NAME) AS NAME, COALESCE(m_t.DESCRIPTION, m.Description) AS DESCRIPTION, 
                 m.IsSummary,m.Action, m.AD_Window_ID, m.AD_Process_ID, 
-                m.AD_FORM_ID, m.AD_Task_ID, m.AD_Workflow_ID, m.url 
+                m.AD_FORM_ID, m.AD_Workflow_ID, m.url 
            FROM AD_MENU m left join AD_MENU_TRL m_t on m.AD_MENU_ID = m_t.AD_MENU_ID  
                                                    AND m_t.AD_LANGUAGE = ?
           WHERE m.IsActive='Y' 
@@ -164,13 +152,6 @@
                    left join AD_MODEL_OBJECT_MAPPING MOMX on MOX.AD_MODEL_OBJECT_ID = MOMX.AD_MODEL_OBJECT_ID 
                                                 AND MOMX.ISACTIVE = 'Y'
                                                 AND MOMX.ISDEFAULT= 'Y'
-                   left join AD_MODEL_OBJECT MOT on menuData.AD_TASK_ID = MOT.AD_TASK_ID 
-                                                AND MOT.ACTION   = 'T' 
-                                                AND MOT.ISACTIVE = 'Y'
-                                                AND MOT.ISDEFAULT= 'Y'
-                   left join AD_MODEL_OBJECT_MAPPING MOMT on MOT.AD_MODEL_OBJECT_ID = MOMT.AD_MODEL_OBJECT_ID 
-                                                AND MOMT.ISACTIVE  = 'Y'
-                                                AND MOMT.ISDEFAULT = 'Y'
                    left join AD_MODEL_OBJECT MOF on menuData.AD_WORKFLOW_ID = MOF.AD_WORKFLOW_ID 
                                                 AND MOF.ACTION   = 'X' 
                                                 AND MOF.ISACTIVE = 'Y'
@@ -198,7 +179,6 @@
       <Parameter name="adWindowId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Window_ID = ? "/>
       <Parameter name="adProcessId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Process_ID = ? "/>
       <Parameter name="adFormId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_FORM_ID = ? "/>
-      <Parameter name="adTaskId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Task_ID = ? "/>
       <Parameter name="adWorkflowId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Workflow_ID = ? "/>
    </SqlMethod>
 

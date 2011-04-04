@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -187,33 +187,6 @@
 		</Sql>
 		<Parameter name="adRoleId"/>
 		<Parameter name="name"/>
-	</SqlMethod>
-	
-	<SqlMethod name="hasTaskAccess" type="preparedStatement" return="boolean">
-		<SqlMethodComment></SqlMethodComment>
-		<Sql>
-			select Count(*) AS TOTAL
-			FROM AD_Task_Access
-			WHERE AD_Role_ID = ?
-			AND AD_Task_ID = ?
-			AND IsActive = to_char('Y')
-		</Sql>
-		<Parameter name="adRoleId"/>
-		<Parameter name="adTaskId"/>
-	</SqlMethod>
-	
-	<SqlMethod name="hasTaskAccessName" type="preparedStatement" return="boolean">
-		<SqlMethodComment></SqlMethodComment>
-		<Sql>
-			select Count(*) AS TOTAL
-			FROM AD_Task t, AD_Task_Access ta
-			WHERE ta.AD_Role_ID = ?
-			AND t.AD_Task_ID = ta.AD_Task_ID
-			AND ta.IsActive = 'Y'
-			AND UPPER(t.ClassName) = UPPER(?)
-		</Sql>
-		<Parameter name="adRoleId"/>
-		<Parameter name="taskName"/>
 	</SqlMethod>
 
 	<SqlMethod name="hasWriteAccess" type="preparedStatement" return="boolean">

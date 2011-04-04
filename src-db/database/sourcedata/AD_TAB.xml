@@ -580,29 +580,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--125-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--125--></AD_TAB>
 
-<!--126--><AD_TAB>
-<!--126-->  <AD_TAB_ID><![CDATA[126]]></AD_TAB_ID>
-<!--126-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--126-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--126-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--126-->  <NAME><![CDATA[Translation]]></NAME>
-<!--126-->  <DESCRIPTION><![CDATA[Edit your task translations for the predefined languages of your choice.]]></DESCRIPTION>
-<!--126-->  <HELP><![CDATA[Edit your task translations for the predefined languages of your choice.]]></HELP>
-<!--126-->  <AD_TABLE_ID><![CDATA[124]]></AD_TABLE_ID>
-<!--126-->  <AD_WINDOW_ID><![CDATA[114]]></AD_WINDOW_ID>
-<!--126-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--126-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--126-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--126-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--126-->  <ISTRANSLATIONTAB><![CDATA[Y]]></ISTRANSLATIONTAB>
-<!--126-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--126-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--126-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--126-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--126-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--126-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--126--></AD_TAB>
-
 <!--127--><AD_TAB>
 <!--127-->  <AD_TAB_ID><![CDATA[127]]></AD_TAB_ID>
 <!--127-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -954,29 +931,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--149-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--149-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--149--></AD_TAB>
-
-<!--150--><AD_TAB>
-<!--150-->  <AD_TAB_ID><![CDATA[150]]></AD_TAB_ID>
-<!--150-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--150-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--150-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--150-->  <NAME><![CDATA[Task]]></NAME>
-<!--150-->  <DESCRIPTION><![CDATA[Create tasks that will be performed in the application.]]></DESCRIPTION>
-<!--150-->  <HELP><![CDATA[Create tasks that will be performed in the application.]]></HELP>
-<!--150-->  <AD_TABLE_ID><![CDATA[118]]></AD_TABLE_ID>
-<!--150-->  <AD_WINDOW_ID><![CDATA[114]]></AD_WINDOW_ID>
-<!--150-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--150-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--150-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--150-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--150-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--150-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--150-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--150-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--150-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--150-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--150-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--150--></AD_TAB>
 
 <!--151--><AD_TAB>
 <!--151-->  <AD_TAB_ID><![CDATA[151]]></AD_TAB_ID>
@@ -3615,30 +3569,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--309-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--309--></AD_TAB>
 
-<!--310--><AD_TAB>
-<!--310-->  <AD_TAB_ID><![CDATA[310]]></AD_TAB_ID>
-<!--310-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--310-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--310-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--310-->  <NAME><![CDATA[Access]]></NAME>
-<!--310-->  <DESCRIPTION><![CDATA[Add roles that will have access to a specified task.]]></DESCRIPTION>
-<!--310-->  <HELP><![CDATA[Add roles that will have access to a specified task.]]></HELP>
-<!--310-->  <AD_TABLE_ID><![CDATA[199]]></AD_TABLE_ID>
-<!--310-->  <AD_WINDOW_ID><![CDATA[114]]></AD_WINDOW_ID>
-<!--310-->  <SEQNO><![CDATA[30]]></SEQNO>
-<!--310-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--310-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--310-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--310-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--310-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--310-->  <AD_COLUMN_ID><![CDATA[1306]]></AD_COLUMN_ID>
-<!--310-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--310-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--310-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--310-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--310-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--310--></AD_TAB>
-
 <!--311--><AD_TAB>
 <!--311-->  <AD_TAB_ID><![CDATA[311]]></AD_TAB_ID>
 <!--311-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -3686,30 +3616,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--312-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--312-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--312--></AD_TAB>
-
-<!--313--><AD_TAB>
-<!--313-->  <AD_TAB_ID><![CDATA[313]]></AD_TAB_ID>
-<!--313-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--313-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--313-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--313-->  <NAME><![CDATA[Task Access]]></NAME>
-<!--313-->  <DESCRIPTION><![CDATA[Edit the selected role's access to specified application tasks.]]></DESCRIPTION>
-<!--313-->  <HELP><![CDATA[Edit the selected role's access to specified application tasks.]]></HELP>
-<!--313-->  <AD_TABLE_ID><![CDATA[199]]></AD_TABLE_ID>
-<!--313-->  <AD_WINDOW_ID><![CDATA[111]]></AD_WINDOW_ID>
-<!--313-->  <SEQNO><![CDATA[90]]></SEQNO>
-<!--313-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--313-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--313-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--313-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--313-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--313-->  <AD_COLUMN_ID><![CDATA[4638]]></AD_COLUMN_ID>
-<!--313-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--313-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--313-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--313-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--313-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--313--></AD_TAB>
 
 <!--315--><AD_TAB>
 <!--315-->  <AD_TAB_ID><![CDATA[315]]></AD_TAB_ID>
@@ -12780,7 +12686,6 @@ The corresponding tables have then the following setting:
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <FILTERCLAUSE><![CDATA[AD_Model_Object.AD_TAB_ID        is null and
-AD_Model_Object.AD_TASK_ID       is null and
 AD_Model_Object.AD_WORKFLOW_ID   is null and
 AD_Model_Object.AD_PROCESS_ID    is null and
 AD_Model_Object.AD_FORM_ID       is null and

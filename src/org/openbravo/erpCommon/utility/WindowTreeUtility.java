@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -187,7 +187,6 @@ class WindowTreeUtility {
     aux.adProcessId = data.getField("adProcessId");
     aux.adFormId = data.getField("adFormId");
     aux.adWorkflowId = data.getField("adWorkflowId");
-    aux.adTaskId = data.getField("adTaskId");
     return aux;
   }
 
@@ -308,8 +307,6 @@ class WindowTreeUtility {
       return "form";
     else if (tipo.equals("P"))
       return "process";
-    else if (tipo.equals("T"))
-      return "task";
     else if (tipo.equals("R"))
       return "report";
     else if (tipo.equals("F"))

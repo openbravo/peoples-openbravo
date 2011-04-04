@@ -49,10 +49,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="AD_TASK_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="AD_WORKFLOW_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -116,9 +112,6 @@
       </foreign-key>
       <foreign-key foreignTable="AD_TAB" name="AD_MODEL_OBJECT_AD_TAB" onDelete="cascade">
         <reference local="AD_TAB_ID" foreign="AD_TAB_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TASK" name="AD_MODEL_OBJECT_AD_TASK">
-        <reference local="AD_TASK_ID" foreign="AD_TASK_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_WORKFLOW" name="AD_MODEL_OBJECT_AD_WORKFLOW">
         <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>

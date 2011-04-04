@@ -1,18 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--101--><AD_MENU>
-<!--101-->  <AD_MENU_ID><![CDATA[101]]></AD_MENU_ID>
-<!--101-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--101-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--101-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--101-->  <NAME><![CDATA[Task]]></NAME>
-<!--101-->  <DESCRIPTION><![CDATA[Define tasks to be used in the application for selected roles.]]></DESCRIPTION>
-<!--101-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--101-->  <ACTION><![CDATA[W]]></ACTION>
-<!--101-->  <AD_WINDOW_ID><![CDATA[114]]></AD_WINDOW_ID>
-<!--101-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--101--></AD_MENU>
-
 <!--102--><AD_MENU>
 <!--102-->  <AD_MENU_ID><![CDATA[102]]></AD_MENU_ID>
 <!--102-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1245,8 +1232,8 @@
 <!--220-->  <DESCRIPTION><![CDATA[Displays the version of the default Java VM]]></DESCRIPTION>
 <!--220-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--220-->  <ACTION><![CDATA[T]]></ACTION>
-<!--220-->  <AD_TASK_ID><![CDATA[102]]></AD_TASK_ID>
 <!--220-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--220-->  <AD_TASK_ID><![CDATA[102]]></AD_TASK_ID>
 <!--220--></AD_MENU>
 
 <!--222--><AD_MENU>
@@ -1753,8 +1740,8 @@
 <!--289-->  <DESCRIPTION><![CDATA[Export (save) the database]]></DESCRIPTION>
 <!--289-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--289-->  <ACTION><![CDATA[T]]></ACTION>
-<!--289-->  <AD_TASK_ID><![CDATA[103]]></AD_TASK_ID>
 <!--289-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--289-->  <AD_TASK_ID><![CDATA[103]]></AD_TASK_ID>
 <!--289--></AD_MENU>
 
 <!--292--><AD_MENU>
@@ -1792,8 +1779,8 @@
 <!--302-->  <DESCRIPTION><![CDATA[Transfer the database]]></DESCRIPTION>
 <!--302-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--302-->  <ACTION><![CDATA[T]]></ACTION>
-<!--302-->  <AD_TASK_ID><![CDATA[104]]></AD_TASK_ID>
 <!--302-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--302-->  <AD_TASK_ID><![CDATA[104]]></AD_TASK_ID>
 <!--302--></AD_MENU>
 
 <!--303--><AD_MENU>
@@ -3076,8 +3063,8 @@
 <!--800046-->  <NAME><![CDATA[Merge Script]]></NAME>
 <!--800046-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800046-->  <ACTION><![CDATA[T]]></ACTION>
-<!--800046-->  <AD_TASK_ID><![CDATA[800000]]></AD_TASK_ID>
 <!--800046-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800046-->  <AD_TASK_ID><![CDATA[800000]]></AD_TASK_ID>
 <!--800046--></AD_MENU>
 
 <!--800047--><AD_MENU>
@@ -3088,8 +3075,8 @@
 <!--800047-->  <NAME><![CDATA[Preinstall]]></NAME>
 <!--800047-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800047-->  <ACTION><![CDATA[T]]></ACTION>
-<!--800047-->  <AD_TASK_ID><![CDATA[800001]]></AD_TASK_ID>
 <!--800047-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800047-->  <AD_TASK_ID><![CDATA[800001]]></AD_TASK_ID>
 <!--800047--></AD_MENU>
 
 <!--800048--><AD_MENU>
@@ -3100,8 +3087,8 @@
 <!--800048-->  <NAME><![CDATA[Version]]></NAME>
 <!--800048-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800048-->  <ACTION><![CDATA[T]]></ACTION>
-<!--800048-->  <AD_TASK_ID><![CDATA[800002]]></AD_TASK_ID>
 <!--800048-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800048-->  <AD_TASK_ID><![CDATA[800002]]></AD_TASK_ID>
 <!--800048--></AD_MENU>
 
 <!--800052--><AD_MENU>
