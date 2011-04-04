@@ -3107,26 +3107,6 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800070-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800070--></AD_PROCESS>
 
-<!--800071--><AD_PROCESS>
-<!--800071-->  <AD_PROCESS_ID><![CDATA[800071]]></AD_PROCESS_ID>
-<!--800071-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800071-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800071-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800071-->  <VALUE><![CDATA[GenerateHelp]]></VALUE>
-<!--800071-->  <NAME><![CDATA[Generate Help]]></NAME>
-<!--800071-->  <DESCRIPTION><![CDATA[Generate help windows in html format]]></DESCRIPTION>
-<!--800071-->  <HELP><![CDATA[Generate help windows in html format]]></HELP>
-<!--800071-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800071-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800071-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800071-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800071-->  <CLASSNAME><![CDATA[ad_process/GenerateHelp.html]]></CLASSNAME>
-<!--800071-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800071-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800071-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800071-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800071--></AD_PROCESS>
-
 <!--800072--><AD_PROCESS>
 <!--800072-->  <AD_PROCESS_ID><![CDATA[800072]]></AD_PROCESS_ID>
 <!--800072-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
