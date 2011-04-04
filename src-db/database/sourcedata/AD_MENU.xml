@@ -2015,6 +2015,19 @@
 <!--332-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--332--></AD_MENU>
 
+<!--333--><AD_MENU>
+<!--333-->  <AD_MENU_ID><![CDATA[333]]></AD_MENU_ID>
+<!--333-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--333-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--333-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--333-->  <NAME><![CDATA[Areas of Interest]]></NAME>
+<!--333-->  <DESCRIPTION><![CDATA[Create and edit areas of interest to track the potential needs and wants of your business partners.]]></DESCRIPTION>
+<!--333-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--333-->  <ACTION><![CDATA[W]]></ACTION>
+<!--333-->  <AD_WINDOW_ID><![CDATA[245]]></AD_WINDOW_ID>
+<!--333-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--333--></AD_MENU>
+
 <!--334--><AD_MENU>
 <!--334-->  <AD_MENU_ID><![CDATA[334]]></AD_MENU_ID>
 <!--334-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
