@@ -101,21 +101,6 @@ isc.OBTabSetMain.addProperties({
 
   draw : function() {
     var me = this;
-    var ksAction_ActivateTab = function(tab) {
-      me.selectTab(tab-1);
-      if(typeof me.getSelectedTab().pane.focusTab === 'function') {
-        me.getSelectedTab().pane.focusTab();
-      }
-    };
-    OB.KeyboardManager.KS.set('TabSet_ActivateTab1', ksAction_ActivateTab, 1);
-    OB.KeyboardManager.KS.set('TabSet_ActivateTab2', ksAction_ActivateTab, 2);
-    OB.KeyboardManager.KS.set('TabSet_ActivateTab3', ksAction_ActivateTab, 3);
-    OB.KeyboardManager.KS.set('TabSet_ActivateTab4', ksAction_ActivateTab, 4);
-    OB.KeyboardManager.KS.set('TabSet_ActivateTab5', ksAction_ActivateTab, 5);
-    OB.KeyboardManager.KS.set('TabSet_ActivateTab6', ksAction_ActivateTab, 6);
-    OB.KeyboardManager.KS.set('TabSet_ActivateTab7', ksAction_ActivateTab, 7);
-    OB.KeyboardManager.KS.set('TabSet_ActivateTab8', ksAction_ActivateTab, 8);
-    OB.KeyboardManager.KS.set('TabSet_ActivateTab9', ksAction_ActivateTab, 9);
     var ksAction_closeAllTabs = function() {
       var tabCount, tabArray = [], i;
       for (i = 1; i > 0; i++) {

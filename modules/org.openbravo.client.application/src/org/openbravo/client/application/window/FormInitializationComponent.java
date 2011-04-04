@@ -52,19 +52,22 @@ import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.reference.EnumUIDefinition;
-import org.openbravo.client.kernel.reference.FKComboUIDefinition;
+import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
@@ -191,13 +194,24 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       // Execution of callouts
       long t6 = System.currentTimeMillis();
-      boolean comboReloadNeeded = executeCallouts(mode, tab, columnValues, changedColumn,
+      List<String> changedCols = executeCallouts(mode, tab, columnValues, changedColumn,
           calloutsToCall, lastfieldChanged, calloutMessages, changeEventCols);
 
-      if (comboReloadNeeded) {
+      if (changedCols.size() > 0) {
+        List<String> columnsToComputeAgain = new ArrayList<String>();
+        for (String changedCol : changedCols) {
+          for (String colWithVal : columnsInValidation.keySet()) {
+            for (String colInVal : columnsInValidation.get(colWithVal)) {
+              if (colInVal.equalsIgnoreCase(changedCol)) {
+                if (!columnsToComputeAgain.contains(colInVal)) {
+                  columnsToComputeAgain.add(colWithVal);
+                }
+              }
+            }
+          }
+        }
         RequestContext.get().setRequestParameter("donotaddcurrentelement", "true");
-        computeColumnValues("CHANGE", tab, allColumns, columnValues, parentRecord, parentId, null,
-            jsContent, changeEventCols, calloutsToCall, lastfieldChanged);
+        subsequentComboReload(tab, columnsToComputeAgain, columnValues);
       }
 
       if (mode.equals("NEW")) {
@@ -438,18 +452,56 @@ public class FormInitializationComponent extends BaseActionHandler {
       UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(columnId);
       // We need to fire callouts if the field is a combo
       // (due to how ComboReloads worked, callouts were always called)
-      if (columnValues.get("inp"
-          + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())) != null) {
-        if ((mode.equals("NEW") || (mode.equals("CHANGE")
-            && changedCols.contains(field.getColumn().getDBColumnName()) && changedColumn != null))
-            && (uiDef instanceof EnumUIDefinition || uiDef instanceof FKComboUIDefinition)
-            && field.getColumn().isValidateOnNew()) {
-          if (field.getColumn().getCallout() != null) {
-            addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
-          }
+      JSONObject value = columnValues.get("inp"
+          + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
+      String classicValue;
+      try {
+        classicValue = (value == null || !value.has("classicValue")) ? "" : value
+            .getString("classicValue");
+      } catch (JSONException e) {
+        throw new OBException(
+            "Couldn't get data for column " + field.getColumn().getDBColumnName(), e);
+      }
+      if (((mode.equals("NEW") && !classicValue.equals("") && (uiDef instanceof EnumUIDefinition || uiDef instanceof ForeignKeyUIDefinition)) || (mode
+          .equals("CHANGE")
+          && changedCols.contains(field.getColumn().getDBColumnName()) && changedColumn != null))
+          && field.getColumn().isValidateOnNew()) {
+        if (field.getColumn().getCallout() != null) {
+          addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
         }
       }
     }
+  }
+
+  private void subsequentComboReload(Tab tab, List<String> allColumns,
+      Map<String, JSONObject> columnValues) {
+    HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
+    for (Field field : tab.getADFieldList()) {
+      for (String col : allColumns) {
+        if (col.equalsIgnoreCase(field.getColumn().getDBColumnName())) {
+          columnsOfFields.put(col, field);
+        }
+      }
+    }
+    for (String col : allColumns) {
+      Field field = columnsOfFields.get(col);
+      try {
+        String columnId = field.getColumn().getId();
+        UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(columnId);
+        String value = uiDef.getFieldProperties(field, true);
+        JSONObject jsonobject = null;
+        if (value != null) {
+          jsonobject = new JSONObject(value);
+          columnValues.put("inp"
+              + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
+          setRequestContextParameter(field, jsonobject);
+        }
+      } catch (Exception e) {
+        throw new OBException(
+            "Couldn't get data for column " + field.getColumn().getDBColumnName(), e);
+      }
+    }
+
   }
 
   private void computeAuxiliaryInputs(String mode, Tab tab, Map<String, JSONObject> columnValues) {
@@ -614,7 +666,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     for (Field field : fields) {
       String colName = field.getColumn().getDBColumnName();
       if (!columnsWithValidation.contains(field.getColumn().getDBColumnName())
-          && !sortedColumns.contains(colName)) {
+          && !sortedColumns.contains(colName) && !colName.equalsIgnoreCase("documentno")) {
         sortedColumns.add(colName);
       }
     }
@@ -626,6 +678,12 @@ public class FormInitializationComponent extends BaseActionHandler {
           columnsInValidation);
     }
 
+    for (Field field : fields) {
+      String colName = field.getColumn().getDBColumnName();
+      if (colName.equalsIgnoreCase("documentno")) {
+        sortedColumns.add(colName);
+      }
+    }
     String cycleCols = "";
     for (String col : columnsWithValidation) {
       if (!sortedColumns.contains(col)) {
@@ -747,7 +805,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     return inpFields;
   }
 
-  private boolean executeCallouts(String mode, Tab tab, Map<String, JSONObject> columnValues,
+  private List<String> executeCallouts(String mode, Tab tab, Map<String, JSONObject> columnValues,
       String changedColumn, List<String> calloutsToCall, List<String> lastfieldChanged,
       List<String> messages, List<String> dynamicCols) {
 
@@ -768,20 +826,21 @@ public class FormInitializationComponent extends BaseActionHandler {
 
     ArrayList<String> calledCallouts = new ArrayList<String>();
     if (calloutsToCall.isEmpty()) {
-      return false;
+      return new ArrayList<String>();
     }
     return runCallouts(columnValues, tab, calledCallouts, calloutsToCall, lastfieldChanged,
         messages, dynamicCols);
 
   }
 
-  private boolean runCallouts(Map<String, JSONObject> columnValues, Tab tab,
+  private List<String> runCallouts(Map<String, JSONObject> columnValues, Tab tab,
       List<String> calledCallouts, List<String> calloutsToCall, List<String> lastfieldChangedList,
       List<String> messages, List<String> dynamicCols) {
 
     // flush&commit to release lock in db which otherwise interfere with callouts which run in their
     // own jdbc connection (i.e. lock on AD_Sequence when using with Sales Invoice window)
     OBDal.getInstance().flush();
+    List<String> changedCols = new ArrayList<String>();
     try {
       OBDal.getInstance().getConnection().commit();
     } catch (SQLException e1) {
@@ -790,7 +849,6 @@ public class FormInitializationComponent extends BaseActionHandler {
 
     List<Field> fields = tab.getADFieldList();
     HashMap<String, Field> inpFields = buildInpField(fields);
-    boolean comboReloadNeeded = false;
     String lastCalledCallout = "";
     String lastFieldOfLastCalloutCalled = "";
 
@@ -854,6 +912,18 @@ public class FormInitializationComponent extends BaseActionHandler {
               if (name.equals("MESSAGE")) {
                 log.debug("Callout message: " + element.get(1, null));
                 messages.add(element.get(1, null).toString());
+              } else if (name.equals("EXECUTE")) {
+                String js = element.get(1, null) == null ? null : element.get(1, null).toString();
+                if (js != null && !js.equals("")) {
+                  if (js.equals("displayLogic();")) {
+                    // We don't do anything, this is a harmless js response
+                  } else {
+                    messages.add(Utility.messageBD(new DalConnectionProvider(false),
+                        "OBUIAPP_ExecuteInCallout", RequestContext.get().getVariablesSecureApp()
+                            .getLanguage()));
+                    createNewPreferenceForWindow(tab.getWindow());
+                  }
+                }
               } else {
                 if (name.startsWith("inp")) {
                   boolean changed = false;
@@ -863,45 +933,35 @@ public class FormInitializationComponent extends BaseActionHandler {
                     if (element.get(1, null) instanceof NativeArray) {
                       // Combo data
                       NativeArray subelements = (NativeArray) element.get(1, null);
+                      JSONObject jsonobject = new JSONObject();
+                      ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
                       for (int j = 0; j < subelements.getLength(); j++) {
                         NativeArray subelement = (NativeArray) subelements.get(j, null);
-                        if (subelement.get(2, null) != null
-                            && subelement.get(2, null).toString().equalsIgnoreCase("True")) {
-                          String value = subelement.get(0, null).toString();
-                          log.debug("Column: " + col.getDBColumnName() + "  Value: " + value);
-                          String oldValue = rq.getRequestParameter(colId);
-                          UIDefinition uiDef = UIDefinitionController.getInstance()
-                              .getUIDefinition(col.getId());
-                          if (uiDef.getDomainType() instanceof PrimitiveDomainType) {
-                            String newValue = uiDef.convertToClassicString(value);
-                            if (newValue != null && newValue.equals("null")) {
-                              newValue = null;
-                            }
-                            rq.setRequestParameter(colId, newValue);
-                          } else {
-                            rq.setRequestParameter(colId,
-                                value == null || value.equals("null") ? null : value.toString());
-                          }
-                          JSONObject jsonobject = new JSONObject(uiDef.getFieldProperties(inpFields
-                              .get(name), true));
-                          if (jsonobject.has("classicValue")) {
-                            String newValue = jsonobject.getString("classicValue");
-                            if ((oldValue == null && newValue != null)
-                                || (oldValue != null && newValue == null)
-                                || (oldValue != null && newValue != null && !oldValue
-                                    .equals(newValue))) {
-                              columnValues.put(colId, jsonobject);
-                              if (dynamicCols.contains(colId)) {
-                                comboReloadNeeded = true;
-                              }
-                              changed = true;
-                            } else {
-                              log
-                                  .debug("Column value didn't change. We do not attempt to execute any additional callout");
-                            }
+                        if (subelement.get(2, null) != null) {
+                          JSONObject entry = new JSONObject();
+                          entry.put(JsonConstants.ID, subelement.get(0, null));
+                          entry.put(JsonConstants.IDENTIFIER, subelement.get(1, null));
+                          comboEntries.add(entry);
+                          if (j == 0 || subelement.get(2, null).toString().equalsIgnoreCase("True")) {
+                            // We always initially select the first element returned by the callout,
+                            // and after that, we select the one which is marke as selected "true"
+                            UIDefinition uiDef = UIDefinitionController.getInstance()
+                                .getUIDefinition(col.getId());
+                            String newValue = subelement.get(0, null).toString();
+                            jsonobject.put("value", newValue);
+                            jsonobject.put("classicValue", uiDef.convertToClassicString(newValue));
+                            log.debug("Column: " + col.getDBColumnName() + "  Value: " + newValue);
                           }
                         }
                       }
+                      // If the callout returns a combo, we in any case set the new value with what
+                      // the callout returned
+                      columnValues.put(colId, jsonobject);
+                      changed = true;
+                      if (dynamicCols.contains(colId)) {
+                        changedCols.add(col.getDBColumnName());
+                      }
+                      jsonobject.put("entries", new JSONArray(comboEntries));
                     } else {
                       // Normal data
                       Object el = element.get(1, null);
@@ -928,7 +988,7 @@ public class FormInitializationComponent extends BaseActionHandler {
                               + Sqlc.TransformaNombreColumna(col.getDBColumnName()), jsonobj);
                           changed = true;
                           if (dynamicCols.contains(colId)) {
-                            comboReloadNeeded = true;
+                            changedCols.add(col.getDBColumnName());
                           }
                           rq.setRequestParameter(colId, jsonobj.getString("classicValue"));
                         }
@@ -958,7 +1018,32 @@ public class FormInitializationComponent extends BaseActionHandler {
     if (calledCallouts.size() == MAX_CALLOUT_CALLS) {
       log.warn("Warning: maximum number of callout calls reached");
     }
-    return comboReloadNeeded;
+    return changedCols;
+
+  }
+
+  /**
+   * This method will create a new preference to show the given window in classic mode, if there is
+   * a preference doesn't already exist
+   * 
+   * @param window
+   */
+  private void createNewPreferenceForWindow(Window window) {
+
+    OBCriteria<Preference> prefCriteria = OBDao.getFilteredCriteria(Preference.class, Expression
+        .eq(Preference.PROPERTY_PROPERTY, "OBUIAPP_UseClassicMode"), Expression.eq(
+        Preference.PROPERTY_WINDOW, window));
+    if (prefCriteria.count() > 0) {
+      // Preference already exists. We don't create a new one.
+      return;
+    }
+    Preference newPref = OBProvider.getInstance().get(Preference.class);
+    newPref.setWindow(window);
+    newPref.setProperty("OBUIAPP_UseClassicMode");
+    newPref.setSearchKey("Y");
+    newPref.setPropertyList(true);
+    OBDal.getInstance().save(newPref);
+    OBDal.getInstance().flush();
 
   }
 

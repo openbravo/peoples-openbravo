@@ -154,6 +154,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/ob-action-button.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-eventhandler.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/ob-section-stack.js", false));
 
     // Styling
     globalResources.add(createStyleSheetResource(
@@ -257,6 +259,13 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/ob-classic-compatibility.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-history-manager.js", false));
+
+    // Alert Management
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/alert-management/ob-alert-grid.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/alert-management/ob-alert-management-view.js",
+        false));
 
     return globalResources;
   }

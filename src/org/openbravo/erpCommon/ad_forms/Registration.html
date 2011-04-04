@@ -28,37 +28,53 @@
   <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script> 
   <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script> 
   <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
   <script language="JavaScript" type="text/javascript" id="paramURL">var url = "http://www.openbravo.com/embedreg/form";</script>
   <script language="JavaScript" type="text/javascript">
   function closeRegistrationPage() {
     if (!isWindowInMDIContext) {
       closePage();
     } else {
-      if (getBrowserInfo('name').toUpperCase().indexOf('CHROME') !== -1 || getBrowserInfo('name').toUpperCase().indexOf('SAFARI') !== -1) {
-        parent.frameMenu.setTimeout(function() { closePage(); }, 500);
-      } else {
-        parent.frameMenu.closePage();
-      }
+      parent.frameMenu.closePage();
     }
   }
 
-  function configure() {
-    var regURL = typeof url === 'undefined' ? 'http://www.openbravo.com/embedreg/form' : url;
-    submitCommandForm('REGISTER', false, null);
-    if (!isWindowInMDIContext) {
-      window.opener.submitCommandForm('DEFAULT', false, null, regURL, '_blank', null, false);
-    } else {
-      submitCommandForm('DEFAULT', false, null, regURL, '_blank', null, false);
+  function callback(paramXMLParticular, XMLHttpRequestObj) {
+    if (getReadyStateHandler(XMLHttpRequestObj)) {
+      try {
+        if (XMLHttpRequestObj.responseText) {
+          var strText = XMLHttpRequestObj.responseText;
+          if (strText === 'REGISTER') {
+            var regURL = typeof url === 'undefined' ? 'http://www.openbravo.com/embedreg/form' : url;
+            //submitCommandForm('DEFAULT', false, null, regURL, '_blank', null, false);
+            window.open(regURL);
+            if (!isWindowInMDIContext) { // To force Chrome close the popup. Just needed in classic mode
+              setTimeout(function() { closeRegistrationPage(); }, 500);
+            }
+          }
+          if (strText === 'REGISTER' || strText === 'DISABLE' || strText === 'POSTPONE') {
+            closeRegistrationPage();
+          }
+        }
+      } catch (e) {
+      }
     }
-    closeRegistrationPage();
+    return true;
   }
+
+  function register() {
+    var paramXMLReq = null;
+    return submitXmlHttpRequest(callback, null, 'REGISTER', 'Registration.html', false, null, paramXMLReq);
+  }
+
   function disable() {
-    submitCommandForm('DISABLE', false, null);
-    closeRegistrationPage();
+    var paramXMLReq = null;
+    return submitXmlHttpRequest(callback, null, 'DISABLE', 'Registration.html', false, null, paramXMLReq);
   }
+
   function postpone() {
-    submitCommandForm('POSTPONE', false, null);
-    closeRegistrationPage();
+    var paramXMLReq = null;
+    return submitXmlHttpRequest(callback, null, 'POSTPONE', 'Registration.html', false, null, paramXMLReq);
   }
   </script>
 
@@ -151,7 +167,7 @@
                 <button type="button" 
                   id="buttonRegister" 
                   class="ButtonLink" 
-                  onclick="configure();return false;" 
+                  onclick="register();return false;" 
                   onfocus="buttonEvent('onfocus', this); window.status='Register'; return true;" 
                   onblur="buttonEvent('onblur', this);" 
                   onkeyup="buttonEvent('onkeyup', this);" 

@@ -182,7 +182,13 @@ public abstract class UIDefinition {
                     .getVariablesSecureApp(), parameter, field.getTab().getWindow().getId());
               } else {
                 String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
-                value = RequestContext.get().getRequestParameter(fieldId);
+                if (RequestContext.get().getParameterMap().containsKey(fieldId)) {
+                  value = RequestContext.get().getRequestParameter(fieldId);
+                }
+                if (value == null || value.equals("")) {
+                  value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
+                      .getVariablesSecureApp(), parameter, field.getTab().getWindow().getId());
+                }
               }
               ps.setObject(indP++, value);
             }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -65,7 +65,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           "MaterialReceiptPending|C_BPartner_ID", "");
       String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId",
           "MaterialReceiptPending|AD_Org_ID", vars.getOrg());
-      vars.setSessionValue("MaterialReceiptPending|isSOTrx", "Y");
+      vars.setSessionValue("MaterialReceiptPending|isSOTrx", "N");
       if (strDocumentNo.equals(""))
         strDocumentNo += "%";
       printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo,

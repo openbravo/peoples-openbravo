@@ -353,26 +353,25 @@
           popupURL: url
         });
         cPopup.show();
-        cobcomp.Popup.postOpen(cPopup, theOpener, postParams);
+        cobcomp.Popup.postOpen(cPopup, postParams);
         OB.Utilities.registerClassicPopupInTestRegistry(url, cPopup);
       },
       
-      // ** {{{ Popup.postOpen(cPopup) }}} **
+      // ** {{{ Popup.postOpen(cPopup, postParams) }}} **
       //
       // Actions to be performed once the popup is draw.
       //
       // Parameters:
       // * {{{cPopup}}} type: Canvas - the drawn popup
-      // * {{{theOpener}}} type: Window Object - the window object of the opener
       // * {{{postParams}}} type: Object - parameters to be sent to the url using POST instead of GET
-      postOpen: function(cPopup, theOpener, postParams){
+      postOpen: function(cPopup, postParams){
         if (!cPopup.isFramesetDraw) {
           cPopup.getIframeHtmlObj().contentWindow.document.write(cPopup.htmlCode);
           cPopup.isFramesetDraw = true;
         }
-        if (!cPopup.getIframeHtmlObj().contentWindow.frames[0]) {
+        if (!cPopup.getIframeHtmlObj().contentWindow.frames[0].document.body) {
           setTimeout(function(){
-            cobcomp.Popup.postOpen(cPopup);
+            cobcomp.Popup.postOpen(cPopup, postParams);
           }, 50);
           return true;
         }
@@ -383,7 +382,7 @@
             cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
             if (typeof cPopup.getIframeHtmlObj().contentWindow.frames[0].opener === 'undefined') {
               setTimeout(function(){
-                cobcomp.Popup.postOpen(cPopup);
+                cobcomp.Popup.postOpen(cPopup, postParams);
               }, 50);
               return true;
             }
@@ -419,7 +418,7 @@
         if (cPopup.areParamsSet &&
         cPopup.getIframeHtmlObj().contentWindow.frames[0].name !== wName) {
           setTimeout(function(){
-            cobcomp.Popup.postOpen(cPopup);
+            cobcomp.Popup.postOpen(cPopup, postParams);
           }, 50);
         }
         cPopup.isLoaded = true;

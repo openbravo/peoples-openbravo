@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -144,12 +144,12 @@ isc.OBAlertIcon
       overflow : 'visible',
       click : function() {
         var viewDefinition = {
-          obManualURL : '/ad_forms/AlertManagement.html',
-          command : 'DEFAULT',
-          formId : '800016',
+          //obManualURL : '/ad_forms/AlertManagement.html',
+          //command : 'DEFAULT',
+          //formId : '800016',
           i18nTabTitle : 'UINAVBA_AlertManagement'
         };
-        OB.Layout.ViewManager.openView('OBClassicWindow', viewDefinition);
+        OB.Layout.ViewManager.openView('OBUIAPP_AlertManagement', viewDefinition);
       }
 
     });

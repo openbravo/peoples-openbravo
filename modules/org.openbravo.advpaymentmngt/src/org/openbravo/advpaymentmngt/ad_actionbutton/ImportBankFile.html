@@ -66,6 +66,7 @@
   </script>
   <script language="JavaScript" type="text/javascript">
     function onLoadDo(){
+      modifyInputFile('inpFile');
 	  this.windowTables = new Array(
 	    new windowTableId('client', 'buttonOK')
 	   );
@@ -74,7 +75,19 @@
 	   setBrowserAutoComplete(false);
        setWindowElementFocus('firstElement');
     }
-    
+
+  function modifyInputFile(id) {
+    var object = document.getElementById(id);
+    if (getBrowserInfo('name').toUpperCase().indexOf('CHROME') !== -1) {
+      object.style.padding = '0px';
+      object.style.margin = '0px';
+      object.style.height = '23px';
+      object.style.background = 'none !important';
+      object.style.border = 'none';
+    }
+    object.style.display = '';
+  }
+
 	function onResizeDo(){
 	}
   </script>
@@ -249,7 +262,7 @@
              <td class="TitleCell"><span class="LabelText">Bank File</span></td>
              <td class="TextBox_ContentCell" colspan="2">
                <input type="text" style="font-size: 0pt; margin: 0; padding: 0; border:0; width:0px; height:0px;" onfocus="isInputFile=true;" onblur="isInputFile=false;"></input>
-               <input type="file" class="dojoValidateValid TextBox_TwoCells_width" name="inpFile" size="35"></input>
+               <input type="file" class="dojoValidateValid TextBox_TwoCells_width" name="inpFile" id="inpFile" size="35" style="display: none;"></input>
                <input type="text" style="font-size: 0pt; margin: 0; padding: 0; border:0; width:0px; height:0px;" onfocus="isInputFile=true;" onblur="isInputFile=false;"></input>
              </td>
            </tr>

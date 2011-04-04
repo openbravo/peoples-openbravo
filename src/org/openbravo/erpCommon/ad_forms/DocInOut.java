@@ -172,7 +172,7 @@ public class DocInOut extends AcctServer {
           setStatus(STATUS_InvalidCost);
           continue;
         } else
-          setStatus(STATUS_Error);// Default status. LoadDocument
+          setStatus(STATUS_NotPosted);// Default status. LoadDocument
         // CoGS DR
         dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn), as
             .getC_Currency_ID(), strCosts, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
@@ -208,7 +208,7 @@ public class DocInOut extends AcctServer {
           setStatus(STATUS_InvalidCost);
           continue;
         } else
-          setStatus(STATUS_Error);// Default status. LoadDocument
+          setStatus(STATUS_NotPosted);// Default status. LoadDocument
 
         // If there exists cost for the product, but it is equals to zero, then no line is added,
         // but no error is thrown. If this is the only line in the document, yes an error will be

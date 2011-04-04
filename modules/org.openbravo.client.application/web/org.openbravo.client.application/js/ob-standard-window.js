@@ -218,8 +218,11 @@ isc.OBStandardWindow.addProperties({
     var action = this.autoSaveAction, me = this;
     this.autoSaveAction = null;
 
-    // clean up everything
-    me.cleanUpAutoSaveProperties();
+    
+    if (this.isAutoSaveEnabled()) {
+      // clean up everything
+      me.cleanUpAutoSaveProperties();
+    }
 
     var callback = function(ok){
       if (ok) {

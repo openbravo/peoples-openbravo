@@ -1935,7 +1935,6 @@ function fillCombo(combo, dataArray, bolSelected, withoutBlankOption) {
       value = dataArray[j][0];
       combo.options[i].selected = true;
     }
-    else combo.options[i].selected = false;
     i++;
   }
   return value;

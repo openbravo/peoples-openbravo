@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -87,7 +87,8 @@ public class AlertActionHandler extends BaseActionHandler {
 
       // select the alert rules
       final String hql = "select e.alertRule from  " + AlertRecipient.ENTITY_NAME
-          + " e where e.userContact.id=? " + " or (e.userContact.id = null and e.role.id = ?)";
+          + " e where e.alertRule.active = true and (e.userContact.id=? "
+          + " or (e.userContact.id = null and e.role.id = ?))";
       final Query qry = OBDal.getInstance().getSession().createQuery(hql);
       qry.setParameter(0, OBContext.getOBContext().getUser().getId());
       qry.setParameter(1, OBContext.getOBContext().getRole().getId());
@@ -97,7 +98,7 @@ public class AlertActionHandler extends BaseActionHandler {
         final AlertRule alertRule = (AlertRule) o;
         final String whereClause = new UsedByLink().getWhereClause(vars, "", alertRule
             .getFilterClause() == null ? "" : alertRule.getFilterClause());
-        final String sql = "select * from AD_ALERT where ISACTIVE='Y'" + " AND ISFIXED ='N'"
+        final String sql = "select * from AD_ALERT where COALESCE(to_char(STATUS), 'NEW')='NEW'"
             + " AND AD_CLIENT_ID " + OBDal.getInstance().getReadableClientsInClause()
             + " AND AD_ORG_ID " + OBDal.getInstance().getReadableOrganizationsInClause()
             + " AND AD_ALERTRULE_ID = ? " + (whereClause == null ? "" : whereClause);

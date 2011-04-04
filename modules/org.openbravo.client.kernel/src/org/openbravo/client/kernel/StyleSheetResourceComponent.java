@@ -154,8 +154,12 @@ public class StyleSheetResourceComponent extends BaseComponent {
 
                 final String contextPath = getContextUrl()
                     + resourcePath.substring(0, resourcePath.lastIndexOf("/"));
-                final String realPath = realResourcePath.substring(0,
-                    realResourcePath.lastIndexOf("/"));
+                String realPath = "";
+                if (realResourcePath.lastIndexOf("/") != -1) {
+                  realPath = realResourcePath.substring(0, realResourcePath.lastIndexOf("/"));
+                } else if (realResourcePath.lastIndexOf("\\") != -1) {
+                  realPath = realResourcePath.substring(0, realResourcePath.lastIndexOf("\\"));
+                }
 
                 // repair urls
                 resourceContents = resourceContents.replace("url(./", "url(" + IMGURLHOLDER + "/");

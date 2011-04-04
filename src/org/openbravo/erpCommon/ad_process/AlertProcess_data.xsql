@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2007 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,7 +67,7 @@
             FROM AD_ALERT
            WHERE AD_ALERTRULE_ID = ?
              AND REFERENCEKEY_ID = ?
-             AND ISACTIVE = 'Y'
+             AND STATUS != 'SOLVED'
       ]]></Sql>
       <Parameter name="alertRule"/>
       <Parameter name="ref"/>      
@@ -97,17 +97,19 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
         INSERT INTO AD_ALERT
-        (AD_ALERT_ID, AD_CLIENT_ID, AD_ORG_ID,                                                                                                                                                                                    
+        (AD_ALERT_ID, AD_CLIENT_ID, AD_ORG_ID,
          ISACTIVE, CREATED, CREATEDBY, 
          UPDATED, UPDATEDBY, 
          AD_ALERTRULE_ID, RECORD_ID, REFERENCEKEY_ID, 
-         DESCRIPTION, AD_USER_ID, AD_ROLE_ID)
+         DESCRIPTION, AD_USER_ID, AD_ROLE_ID,
+         STATUS)
         VALUES
          (?,?,?,
           'Y',TO_DATE(?),?,
           now(),0,
           ?,?,?,
-          ?,?,?)
+          ?,?,?,
+          'NEW')
     ]]></Sql>
     <Parameter name="alertId"/>
     <Parameter name="clientId"/>
@@ -129,11 +131,11 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
         UPDATE AD_ALERT
-           SET ISACTIVE  = 'N',
+           SET STATUS    = 'SOLVED',
                UPDATED   = NOW(),
-               UPDATEDBY = 0 
+               UPDATEDBY = 0
          WHERE AD_ALERTRULE_ID = ?
-           AND ISACTIVE = 'Y'
+           AND STATUS != 'SOLVED'
            AND NOT EXISTS 
                    (SELECT 1 FROM (SELECT '' AS AD_REFERENCEKEY_ID FROM DUAL) A WHERE 1=1
                               AND A.REFERENCEKEY_ID = AD_ALERT.REFERENCEKEY_ID)

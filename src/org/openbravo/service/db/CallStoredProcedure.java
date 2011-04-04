@@ -140,6 +140,8 @@ public class CallStoredProcedure {
       return Types.TIMESTAMP;
     } else if (Date.class.isAssignableFrom(clz)) {
       return Types.DATE;
+    } else if (BaseOBObject.class.isAssignableFrom(clz)) {
+      return Types.VARCHAR;
     } else {
       throw new IllegalStateException("Type not supported, please add it here " + clz.getName());
     }
