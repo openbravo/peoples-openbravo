@@ -56,9 +56,8 @@ FROM BusinessPartner bp left join bp.businessPartnerLocationList bploc
                         left join bploc.locationAddress loc
                         left join bploc.aDUserList contact
                         left join loc.region region
-                        left join bp.aDUserList usercontact
+                        left join bp.aDUserList usercontact with usercontact.partnerAddress.id is null
 where @additional_filters@
-  and usercontact.partnerAddress is null
   and bp.summaryLevel = false]]></HQL>
 <!--862F54CB1B074513BD791C6789F4AA42-->  <ENTITY_ALIAS><![CDATA[bp]]></ENTITY_ALIAS>
 <!--862F54CB1B074513BD791C6789F4AA42-->  <CUSTOM_QUERY><![CDATA[Y]]></CUSTOM_QUERY>
