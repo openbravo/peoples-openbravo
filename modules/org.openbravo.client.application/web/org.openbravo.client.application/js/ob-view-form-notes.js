@@ -46,7 +46,7 @@ isc.OBNoteSectionItem.addProperties( {
 	/* tell the form who we are */
 	this.form.noteSection = this;
 
-	return this.Super('init', arguments);
+	this.Super('init', arguments);
 },
 
 getNotePart : function() {
@@ -153,13 +153,13 @@ isc.OBNoteLayout.addProperties( {
 			 * Initializes the widget.
 			 */
 			initWidget : function() {
-				var ret = this.Super('initWidget', arguments);
+				this.Super('initWidget', arguments);
 
 				// register note DS
 				OB.Datasource.get(this.noteDSId);
 
 				var hLayout = isc.HLayout.create( {
-					width : '100%',
+					width : '50%',
 					height : '100%',
 					layoutMargin : 0,
 					layoutTopMargin : 10,
@@ -169,10 +169,7 @@ isc.OBNoteLayout.addProperties( {
 
 				this.noteDynamicForm = isc.DynamicForm.create( {
 					numCols : 1,
-					width : '600', // XXX how to set the width to occupy
-					// half of the layout? Setting '50%'
-					// seems not working.
-					cellBorder : 1, // FIXME for debug purposes
+					width : '100%', 
 					fields : [ {
 						name : 'noteOBTextAreaItem',
 						type : 'OBTextAreaItem',
@@ -202,9 +199,7 @@ isc.OBNoteLayout.addProperties( {
 				this.noteListGrid = isc.OBGrid
 						.create( {
 							width : '50%',
-							height : '100', // XXX how to stretch the height
-							// according to number
-							// of comments? Setting '100%' seems not working.
+							autoFitData: 'vertical',
 							fields : [ {
 								name : 'colorBar',
 								width : '5'
@@ -378,7 +373,6 @@ isc.OBNoteLayout.addProperties( {
 
 				this.addMember(this.noteListGrid);
 
-				return ret;
 			},
 
 			/**
