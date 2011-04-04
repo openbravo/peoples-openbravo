@@ -51,6 +51,13 @@ isc.OBStatusBarIconButton.addProperties( {
     if (this.buttonType === 'close' && !this.view.viewForm.hasChanged && this.view.viewForm.isNew) {
       this.view.standardWindow.setDirtyEditForm(null);
     }
+    
+    // or when maximizing/minimizing
+    if (this.buttonType === 'maximize' || this.buttonType === 'restore') {
+      this.doAction();
+      return;
+    }
+
     var actionObject = {
       target : this,
       method : this.doAction,
