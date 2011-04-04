@@ -428,14 +428,7 @@ OB.ViewFormProperties = {
     // TODO: an error occured, handles this much better...
     if (!data || !data.columnValues) {
       this.setDisabled(false);
-      // still open the form, as the user can then correct errors
-      if (this.showFormOnFICReturn) {
-        if (!this.isVisible()) {
-          this.view.switchFormGridVisibility();
-        }
-        this.validate();
-        delete this.showFormOnFICReturn;
-      }
+      this.validate();
       return;
     }
     
@@ -524,12 +517,6 @@ OB.ViewFormProperties = {
     }
 
     this.markForRedraw();
-    if (this.showFormOnFICReturn) {
-      if (!this.isVisible()) {
-        this.view.switchFormGridVisibility();
-      }
-      delete this.showFormOnFICReturn;
-    }
 
     this.view.toolBar.updateButtonState(true);
     

@@ -842,7 +842,7 @@ isc.OBStandardView.addProperties({
     this.messageBar.hide();
     
     if (!this.isShowingForm) {
-      this.viewForm.showFormOnFICReturn = true;
+      this.switchFormGridVisibility();
     }
     
     if (!record) { //  new case
