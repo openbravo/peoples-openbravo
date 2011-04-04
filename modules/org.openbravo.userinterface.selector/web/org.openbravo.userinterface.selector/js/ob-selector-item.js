@@ -211,7 +211,10 @@ isc.OBSelectorPopupWindow.addProperties({
 
   hide: function(){
     this.Super('hide', arguments);
-    this.selector.focusInItem();
+    //focus is now moved to the next item in the form automatically
+    if (!this.selector.form.getFocusItem()) {
+      this.selector.focusInItem();
+    }
   },
 
   show: function(applyDefaultFilter){
@@ -378,7 +381,11 @@ isc.OBSelectorItem.addProperties({
         this.valueMap = {};
       }
       this.valueMap[record[this.valueField]] = record[this.displayField];
-      this.updateValueMap();    
+      this.updateValueMap();
+      
+      if (this.form.focusInNextItem) {
+        this.form.focusInNextItem(this.name);
+      }
     }
     if (this.form && this.form.handleItemChange) {
       this._hasChanged = true;

@@ -919,9 +919,9 @@ OB.ViewFormProperties = {
       return;
     }
     
-    if(this.inFicCall){
+    if (this.inFicCall) {
       this.callSaveAfterFICReturn = true;
-    }else{
+    } else {
       // last parameter true prevents additional validation
       this.saveData(callback, {
         willHandleError: true,
@@ -930,8 +930,24 @@ OB.ViewFormProperties = {
     }
   },
   
-  // overridden to prevent focus setting when autoSaving
+  focusInNextItem: function(currentItem) {
+    var chooseNextItem, i, nextItem, length = this.getItems().length;
+    for (i = 0; i < length; i++) {
+      // some items don't have a name, ignore those
+      if (chooseNextItem && this.getItems()[i].name && this.getItems()[i].isFocusable && this.getItems()[i].isFocusable()) {
+        nextItem = this.getItems()[i];
+        break;
+      }
+      if (this.getItems()[i].name === currentItem) {
+        chooseNextItem = true;
+      }
+    }
+    if (nextItem) {
+      this.focusInItem(nextItem);
+    }
+  },
   
+  // overridden to prevent focus setting when autoSaving  
   showErrors: function(errors, hiddenErrors, suppressAutoFocus){
     if (this.view.standardWindow.isAutoSaving) {
       return this.Super('showErrors', [errors, hiddenErrors, true]);

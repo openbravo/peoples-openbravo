@@ -500,12 +500,16 @@ isc.OBListItem.addProperties({
   // addUnknownValues: false,
 
   selectOnFocus: true,
+  moveFocusOnPickValue: true,
   
   // is overridden to keep track that a value has been explicitly picked
   pickValue : function (value) {
     this._pickedValue = true;
     this.Super('pickValue', arguments);
     delete this._pickedValue;
+    if (this.moveFocusOnPickValue && this.form.focusInNextItem) {
+      this.form.focusInNextItem(this.name);
+    }
   },
 
   changed: function() {
@@ -545,6 +549,7 @@ isc.OBListItem.addProperties({
 isc.ClassFactory.defineClass('OBListFilterItem', OBListItem);
 
 isc.OBListFilterItem.addProperties({
+  moveFocusOnPickValue: false,
   operator: 'equals'
 });
 
@@ -594,6 +599,13 @@ isc.OBDateChooser.addProperties({
     // When data has changed, force the OBDateItem to get it. Other case OBDateItem.blur 
     // gets incorrect value on getValue()
     this.callingFormItem.setValue(this.getData());
+  },
+  dateClick: function() {
+    var ret = this.Super('dateClick', arguments);
+    if (this.callingForm.focusInNextItem) {
+      this.callingForm.focusInNextItem(this.callingFormItem.name);
+    }
+    return ret;
   }
 });
 
