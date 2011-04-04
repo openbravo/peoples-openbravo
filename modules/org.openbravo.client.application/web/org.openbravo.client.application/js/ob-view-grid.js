@@ -113,9 +113,11 @@ isc.OBViewGrid.addProperties({
   
   emptyMessage: OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage'),
   discardEditsSaveButtonTitle: OB.I18N.getLabel('UINAVBA_Save'),
-  
-  quickDrawAheadRatio: 6.0,
-  drawAheadRatio: 4.0,
+
+  // commented out because of: https://issues.openbravo.com/view.php?id=16515
+  // default is much smaller which give smoother scrolling
+  //quickDrawAheadRatio: 4.0,
+  //drawAheadRatio: 6.0,
   // note: don't set drawAllMaxCells too high as it results in extra reads
   // of data, Smartclient will try to read until drawAllMaxCells has been
   // reached
