@@ -117,7 +117,7 @@ isc.OBAlertGrid.addProperties({
 
     this.contextMenu = this.getMenuConstructor().create({items: []});
     
-    OB.Datasource.get('ADAlert', this);
+    OB.Datasource.get('ADAlert', this, null, true);
     
     this.Super('initWidget', arguments);
   },
