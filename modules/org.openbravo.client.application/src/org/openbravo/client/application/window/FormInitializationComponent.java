@@ -950,6 +950,7 @@ public class FormInitializationComponent extends BaseActionHandler {
                             String newValue = subelement.get(0, null).toString();
                             jsonobject.put("value", newValue);
                             jsonobject.put("classicValue", uiDef.convertToClassicString(newValue));
+                            rq.setRequestParameter(colId, uiDef.convertToClassicString(newValue));
                             log.debug("Column: " + col.getDBColumnName() + "  Value: " + newValue);
                           }
                         }
