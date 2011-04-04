@@ -62,7 +62,7 @@
         <onCreateDefault/>
       </column>
       <column name="ISINDEVELOPMENT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
+        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <column name="ISDEFAULT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
