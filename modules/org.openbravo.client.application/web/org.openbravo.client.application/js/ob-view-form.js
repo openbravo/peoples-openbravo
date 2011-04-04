@@ -113,7 +113,7 @@ OB.ViewFormProperties = {
   
   editRecord: function(record, preventFocus, hasChanges, focusFieldName){
     var ret = this.Super('editRecord', arguments);
-    this.doEditRecordActions(preventFocus, false);
+    this.doEditRecordActions(preventFocus, record._new);
     if (hasChanges) {
       this.setHasChanged(true);
     }
@@ -870,7 +870,12 @@ OB.ViewFormProperties = {
         view.setRecentDocument(this.getValues());
         
         view.updateLastSelectedState();
-        
+                
+        // remove any new pointer
+        if (this.getValue('_new')) {
+          this.clearValue('_new');
+        }
+
         if (form.isNew) {
           view.refreshChildViews();
         }
