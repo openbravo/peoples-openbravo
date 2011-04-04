@@ -937,13 +937,14 @@ public class FormInitializationComponent extends BaseActionHandler {
                       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
                       for (int j = 0; j < subelements.getLength(); j++) {
                         NativeArray subelement = (NativeArray) subelements.get(j, null);
-                        if (subelement.get(2, null) != null) {
+                        if (subelement != null && subelement.get(2, null) != null) {
                           JSONObject entry = new JSONObject();
                           entry.put(JsonConstants.ID, subelement.get(0, null));
                           entry.put(JsonConstants.IDENTIFIER, subelement.get(1, null));
                           comboEntries.add(entry);
                           if (j == 0 || subelement.get(2, null).toString().equalsIgnoreCase("True")) {
-                            // We always initially select the first element returned by the callout,
+                            // We always initially select the first element returned by the
+                            // callout,
                             // and after that, we select the one which is marke as selected "true"
                             UIDefinition uiDef = UIDefinitionController.getInstance()
                                 .getUIDefinition(col.getId());
