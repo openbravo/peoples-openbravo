@@ -42,8 +42,7 @@ isc.OBPopupClassicWindow.addMethods({
         urlCharacter = '&';
     }
     if(this.obManualURL !== '') {
-      contentsURL = OB.Application.contextUrl + this.obManualURL + '?Command=' + this.command;
-//      contentsURL = this.appURL + urlCharacter + 'url=' + this.obManualURL + '&noprefs=true&Command=' + this.command + '&hideMenu=true';
+      contentsURL = OB.Utilities.applicationUrl(this.obManualURL) + '?Command=' + this.command;
     } else {
       contentsURL = this.appURL + urlCharacter + 'Command=' + this.command + '&noprefs=true&tabId=' + this.tabId + '&hideMenu=true';
     }
@@ -59,7 +58,7 @@ isc.OBPopupClassicWindow.addMethods({
 isc.defineClass('OBClassicPopupModal', isc.Class).addProperties({
   showsItself: true,
   show: function() {
-    OB.Layout.ClassicOBCompatibility.Popup.open(this.id, 625, 450,  OB.Application.contextUrl + this.obManualURL+'?Command='+this.command, '', null, false, false, true);
+    OB.Layout.ClassicOBCompatibility.Popup.open(this.id, 625, 450,  OB.Utilities.applicationUrl(this.obManualURL) + '?Command='+this.command, '', null, false, false, true);
   }
   
 });

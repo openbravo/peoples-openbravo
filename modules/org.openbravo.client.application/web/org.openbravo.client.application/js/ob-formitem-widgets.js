@@ -246,7 +246,7 @@ isc.OBSearchItem.addProperties({
       complementsNS4 = 'alwaysRaised=1, dependent=1, directories=0, hotkeys=0, menubar=0, ';
     }
     var complements = complementsNS4 + 'height=' + height + ', width=' + width + ', left=' + left + ', top=' + top + ', screenX=' + left + ', screenY=' + top + ', location=0, resizable=1, scrollbars=1, status=0, toolbar=0, titlebar=0, modal=\'yes\'';
-    isc.OBSearchItem.openedWindow = window.open(OB.Application.contextUrl + url + ((auxField === '') ? '' : '?' + auxField), 'SELECTOR', complements);
+    isc.OBSearchItem.openedWindow = window.open(OB.Utilities.applicationUrl(url) + ((auxField === '') ? '' : '?' + auxField), 'SELECTOR', complements);
     if (isc.OBSearchItem.openedWindow) {
       isc.OBSearchItem.openedWindow.focus();
       this.setUnloadEventHandling();
