@@ -116,8 +116,9 @@ isc.OBViewGrid.addProperties({
 
   // commented out because of: https://issues.openbravo.com/view.php?id=16515
   // default is much smaller which give smoother scrolling
-  //quickDrawAheadRatio: 4.0,
-  //drawAheadRatio: 6.0,
+//  quickDrawAheadRatio: 2.0,
+//  drawAheadRatio: 1.0,
+  scrollRedrawDelay: 0,
   // note: don't set drawAllMaxCells too high as it results in extra reads
   // of data, Smartclient will try to read until drawAllMaxCells has been
   // reached
