@@ -5257,7 +5257,7 @@
 <!--805937-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--805937-->  <TEXT><![CDATA[Not invoiced]]></TEXT>
 <!--805937-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/GenerateInvoicesmanual.html]]></FILENAME>
-<!--805937-->  <ISUSED><![CDATA[N]]></ISUSED>
+<!--805937-->  <ISUSED><![CDATA[Y]]></ISUSED>
 <!--805937-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--805937--></AD_TEXTINTERFACES>
 

@@ -160,7 +160,7 @@ C_LOCATION_DESCRIPTION(AD_ORGINFO.C_LOCATION_ID) AS LOCATION,  AD_ORG.ad_org_id 
 COALESCE(TO_CHAR(ADDRESS1), '') || CASE WHEN ADDRESS1 IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(POSTAL), '') || CASE WHEN POSTAL IS null THEN '' ELSE CHR(13) END ||
 COALESCE(TO_CHAR(C_BPARTNER_LOCATION.PHONE), '') || CASE WHEN C_BPARTNER_LOCATION.PHONE IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(C_BPARTNER_LOCATION.FAX), '') ||
 CASE WHEN C_BPARTNER_LOCATION.FAX IS null THEN '' ELSE CHR(13) END) AS BP_DATA, AD_ORGINFO.TAXID AS ORG_TAXID, SHOWLOGO, SHOWCOMPANYDATA, HEADERMARGIN,
-AD_ORG.NAME AS ORG_NAME, DELIVERYRULE.NAME AS DELIVERYTERM, PAYMENTTERM.TERM AS PAYMENTTERM
+AD_ORG.NAME AS ORG_NAME, DELIVERYRULE.NAME AS DELIVERYTERM, PAYMENTTERM.TERM AS PAYMENTTERM, C_POC_DOCTYPE_TEMPLATE.NAME AS DOC_TYPE
 FROM C_BPARTNER_LOCATION left join C_LOCATION L on C_BPARTNER_LOCATION.C_LOCATION_ID = L.C_LOCATION_ID
 			 left join  C_REGION R on L.C_REGION_ID = R.C_REGION_ID,
      AD_USER right join C_ORDER on AD_USER.AD_USER_ID = C_ORDER.AD_USER_ID
@@ -206,6 +206,7 @@ AND C_ORDER.C_PAYMENTTERM_ID = PAYMENTTERM.C_PAYMENTTERM_ID]]></queryString>
 	<field name="ORG_NAME" class="java.lang.String"/>
 	<field name="DELIVERYTERM" class="java.lang.String"/>
 	<field name="PAYMENTTERM" class="java.lang.String"/>
+	<field name="DOC_TYPE" class="java.lang.String"/>
 
 
 		<group  name="PrintLarge" isReprintHeaderOnEachPage="true" >
@@ -248,23 +249,6 @@ AND C_ORDER.C_PAYMENTTERM_ID = PAYMENTTERM.C_PAYMENTTERM_ID]]></queryString>
 			<groupExpression><![CDATA[$F{C_ORDER_ID}]]></groupExpression>
 			<groupHeader>
 			<band height="255"  isSplitAllowed="true" >
-				<staticText>
-					<reportElement
-						x="0"
-						y="6"
-						width="206"
-						height="37"
-						key="staticText-2"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font size="26"/>
-					</textElement>
-				<text><![CDATA[SALES ORDER]]></text>
-				</staticText>
 				<staticText>
 					<reportElement
 						style="Group_Data_Label"
@@ -404,6 +388,19 @@ AND C_ORDER.C_PAYMENTTERM_ID = PAYMENTTERM.C_PAYMENTTERM_ID]]></queryString>
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{LOCATION}==null ? $F{ORG_NAME} + "\n" + $F{ORG_TAXID} + "\n" : $F{ORG_NAME} + "\n" + $F{ORG_TAXID} + "\n" + $F{LOCATION})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="6"
+						width="250"
+						height="37"
+						key="textField-23"/>
+					<box></box>
+					<textElement>
+						<font size="26"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{DOC_TYPE}.equalsIgnoreCase("Purchase Order Report template")) == true ? "PURCHASE ORDER" : "SALES ORDER"]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupHeader>

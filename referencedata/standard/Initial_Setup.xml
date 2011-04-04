@@ -1462,7 +1462,7 @@
     <name>Purchase Order Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Purchase Order-@our_ref@</reportFilename>
-    <templateFilename>RptC_OrderPO.jrxml</templateFilename>
+    <templateFilename>C_OrderJR.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
