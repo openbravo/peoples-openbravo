@@ -615,6 +615,8 @@ OB.ViewFormProperties = {
       isc.SimpleType.getType(field.type).inheritsFrom === 'datetime');
       if (isDate) {
         this.setValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
+      } else if(columnValue.hasDateDefault){
+        this.setValue(field.name, columnValue.classicValue);
       } else {
         
         // set the identifier/display field if the identifier is passed also
