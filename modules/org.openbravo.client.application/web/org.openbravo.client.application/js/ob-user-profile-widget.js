@@ -26,7 +26,7 @@ isc.OBUserProfile.addProperties({
 
   layoutProperties: {},
   
-  baseStyle: 'OBNavBarButton',
+  baseStyle: 'OBNavBarTextButton',
   
   // ** {{{ title }}} **
   //

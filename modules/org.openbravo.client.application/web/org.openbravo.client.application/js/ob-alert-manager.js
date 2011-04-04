@@ -137,7 +137,7 @@ isc.OBAlertIcon
       iconWidth : 11,
       iconHeight : 13,
       autoFit : true,
-      baseStyle : 'OBNavBarButton',
+      baseStyle : 'OBNavBarTextButton',
       showTitle : true,
       iconOrientation : 'left',
       src : '',

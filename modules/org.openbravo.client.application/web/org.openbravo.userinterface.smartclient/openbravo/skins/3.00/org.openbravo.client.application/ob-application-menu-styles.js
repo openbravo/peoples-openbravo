@@ -48,7 +48,7 @@ isc.OBApplicationMenuTree.addProperties({
 
 
 isc.OBApplicationMenuButton.addProperties({
-  baseStyle: 'OBNavBarButton',
+  baseStyle: 'OBNavBarTextButton',
   showMenuButtonImage: false,
   align: 'center',
   height: 26,
