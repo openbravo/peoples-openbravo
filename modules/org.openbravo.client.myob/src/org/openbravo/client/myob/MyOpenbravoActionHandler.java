@@ -101,14 +101,22 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
 
         } else if (strEventType.equals(RELOAD_WIDGETS)) {
           // Add available classes
-          addAvailableWidgetClasses(o);
+          String roleId = null;
+          if (isAdminMode && availableAtLevel.equals("ROLE")) {
+            roleId = availableAtLevelValue[0];
+          }
+          addAvailableWidgetClasses(o, roleId);
 
           // Add widget instances
           widgets = new JSONArray();
           reloadWidgets(isAdminMode, message, widgets, availableAtLevel, availableAtLevelValue);
           o.put("widgets", widgets);
         } else if (strEventType.equals(GET_AVAILABLE_WIDGET_CLASSES)) {
-          addAvailableWidgetClasses(o);
+          String roleId = null;
+          if (isAdminMode && availableAtLevel.equals("ROLE")) {
+            roleId = availableAtLevelValue[0];
+          }
+          addAvailableWidgetClasses(o, roleId);
         } else if (strEventType.equals(GET_COMMUNITY_BRANDING_URL)) {
           o.put("url", Utility.getCommunityBrandingUrl("MyOB"));
         } else {
@@ -170,10 +178,10 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
 
   }
 
-  private void addAvailableWidgetClasses(JSONObject o) {
+  private void addAvailableWidgetClasses(JSONObject o, String roleId) {
     MyOpenbravoComponent component = weldUtils.getInstance(MyOpenbravoComponent.class);
     try {
-      List<String> availableClasses = component.getAvailableWidgetClasses();
+      List<String> availableClasses = component.getAvailableWidgetClasses(roleId);
       o.put("availableWidgetClasses", availableClasses);
     } catch (Exception e) {
       log.error("Error retreiving widget classes", e);

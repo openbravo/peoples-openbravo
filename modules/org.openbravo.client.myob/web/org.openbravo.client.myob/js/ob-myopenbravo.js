@@ -869,9 +869,14 @@ isc.defineClass('OBMyOBAddWidgetDialog', isc.OBMyOBDialog).addProperties({
       'eventType': 'GET_AVAILABLE_WIDGET_CLASSES',
       'widgets': [],
       'context': {
-        'adminMode': false
+        'adminMode': OB.MyOB.adminMode
       }
     };
+
+    if (OB.MyOB.adminMode) {
+      post.context.availableAtLevel = OB.MyOB.adminLevel.toUpperCase();
+      post.context.availableAtLevelValue = OB.MyOB.adminLevelValue;
+    }
 
     this.Super('initWidget', arguments);
 
