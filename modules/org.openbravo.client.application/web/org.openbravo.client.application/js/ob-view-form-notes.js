@@ -84,7 +84,6 @@ isc.OBNoteLayout.addProperties( {
 
 			saveNoteButton : null,
 
-			// XXX this needs to be generated via a component template?
 			noteDSId : '090A37D22E61FE94012E621729090048',
 
 			noteListGrid : null,
@@ -131,7 +130,7 @@ isc.OBNoteLayout.addProperties( {
 			},
 			
 			evaluateButtonStatus : function(value){
-				if(value == null){
+				if(value === null){
 					if(this.saveNoteButton.getState()!=='Disabled'){
 						this.saveNoteButton.setDisabled(true);
 					}
@@ -177,7 +176,7 @@ isc.OBNoteLayout.addProperties( {
 						layout : this,
 						width : '*',
 						validators : [ {
-							type : 'required',
+							type : 'required'
 						} ],
 						changed : function (form, item, value){
 							this.layout.evaluateButtonStatus(value);	
@@ -236,15 +235,13 @@ isc.OBNoteLayout.addProperties( {
 
 							getCriteria : function() {
 								var criteria = this.Super('getCriteria',
-										arguments)
-										|| {};
+										arguments) || {};
 								criteria = this.convertCriteria(criteria);
 								return criteria;
 							},
 
 							convertCriteria : function(criteria) {
-								criteria = isc.addProperties( {}, criteria
-										|| {});
+								criteria = isc.addProperties( {}, criteria || {});
 
 								if (!criteria.criteria) {
 									criteria.criteria = [];
@@ -279,24 +276,22 @@ isc.OBNoteLayout.addProperties( {
 									return value;
 								}
 
-								value = value + ' <i>'
-										+ this.getTimePassed(record.created)
-										+ ' by '
-										+ record['createdBy._identifier']
-										+ '</i>';
+								value =  value + ' <span class="OBNoteListGridAuthor">' +
+										this.getTimePassed(record.created) +
+										' ' + OB.I18N.getLabel('OBUIAPP_by') + ' ' +
+										record['createdBy._identifier'];
 
 								// show delete link if the note was created by
 								// the current user
 								if (record.createdBy === OB.User.id) {
-									// TODO change link color if needed
-									return value
-											+ ' <font color="Green">[ <a style="color:Green" href="javascript:'
-											+ this.layout.ID + '.deleteNote(\''
-											+ record.id
-											+ '\')">Delete</a> ]</font>';
-								} else {
-									return value;
-								}
+									value = value +
+											' <span class="OBNoteListGridDelete" >[ <a class="OBNoteListGridDelete" href="#" onclick="' +
+											this.layout.ID + '.deleteNote(\'' +
+											record.id +
+											'\')">' + OB.I18N.getLabel('OBUIAPP_delete') + '</a> ]</span>';
+								} 
+								value = value + '</span>';
+								return value;
 							},
 
 							getTimePassed : function(
@@ -307,40 +302,37 @@ isc.OBNoteLayout.addProperties( {
 							// >7 days: weeks
 							// >30 days: months
 
-							var now = new Date();
-
-							var msCreated = created.getTime();
-							var msNow = now.getTime();
+							var now = new Date(), 
+							    msCreated = created.getTime(),
+							    msNow = now.getTime(),
+							    n;
 
 							// time difference in days
-							var diffDays = Math.floor((msNow - msCreated)
-									/ (1000 * 60 * 60 * 24));
+							var diffDays = Math.floor((msNow - msCreated) / (1000 * 60 * 60 * 24));
 							if (diffDays >= 30) {
-								var n = Math.floor(diffDays / 30);
+								n = Math.floor(diffDays / 30);
 								return this.formatTimePassedMessage(n,
 										'OBUIAPP_months_ago');
 							} else if (diffDays >= 7) {
-								var n = Math.floor(diffDays / 7);
+								n = Math.floor(diffDays / 7);
 								return this.formatTimePassedMessage(n,
 										'OBUIAPP_weeks_ago');
 							} else if (diffDays >= 1) {
-								var n = diffDays;
+								n = diffDays;
 								return this.formatTimePassedMessage(n,
 										'OBUIAPP_days_ago');
 							}
 
 							// time difference in hours
-							var diffHours = Math.floor((msNow - msCreated)
-									/ (1000 * 60 * 60));
+							var diffHours = Math.floor((msNow - msCreated) / (1000 * 60 * 60));
 							if (diffHours >= 1) {
-								var n = diffHours;
+								n = diffHours;
 								return this.formatTimePassedMessage(n,
 										'OBUIAPP_hours_ago');
 							}
 
 							// time difference in minutes
-							var n = Math.floor((msNow - msCreated)
-									/ (1000 * 60));
+							n = Math.floor((msNow - msCreated) / (1000 * 60));
 							return this.formatTimePassedMessage(n,
 									'OBUIAPP_minutes_ago');
 						},

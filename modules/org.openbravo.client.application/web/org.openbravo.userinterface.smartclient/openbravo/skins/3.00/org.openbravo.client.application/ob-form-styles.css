@@ -723,6 +723,8 @@
 .OBNoteListGridCurrentUserNoteCell,
 .OBNoteListGridCurrentUserNoteCellOver,
 .OBNoteListGridOtherUserNoteCell,
+.OBNoteListGridAuthor,
+.OBNoteListGridDelete,
 .OBNoteListGridOtherUserNoteCellOver {
    border: 0px;
    background-color: transparent;
@@ -735,6 +737,23 @@
 }
 
 .OBNoteListGridOtherUserNoteCell,
-.OBNoteListGridOtherUserNoteCellOver{
+.OBNoteListGridOtherUserNoteCellOver {
     background-color: #58A618;
 }
+
+.OBNoteListGridAuthor {
+  font-style: italic;
+  font-size: 10px;
+  margin-left: 3px;
+}
+
+.OBNoteListGridDelete {
+  font-style: normal;
+  color: green;
+  margin-left: 0px;
+}
+
+a.OBNoteListGridDelete:link {
+  padding: 0px;
+}
+	
