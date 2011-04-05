@@ -789,3 +789,54 @@ OB.Utilities.applicationUrl = function(path) {
   }
   return appUrl;
 };
+
+OB.Utilities.formatTimePassedMessage = function(
+/* number of time units */n, /*
+                 * message id
+                 */messageId) {
+  var message = OB.I18N.getLabel(messageId);
+  return message.replace(/^N/, n);
+};
+OB.Utilities.getTimePassed = function(
+  /* date the note was created */created) {
+    // 0-59 minutes: minutes
+  // 1-24 hours: hours
+  // >24 hours: days
+  // >7 days: weeks
+  // >30 days: months
+
+  var now = new Date(), 
+      msCreated = created.getTime(),
+      msNow = now.getTime(),
+      n;
+
+  // time difference in days
+  var diffDays = Math.floor((msNow - msCreated) / (1000 * 60 * 60 * 24));
+  if (diffDays >= 30) {
+    n = Math.floor(diffDays / 30);
+    return OB.Utilities.formatTimePassedMessage(n,
+        'OBUIAPP_months_ago');
+  } else if (diffDays >= 7) {
+    n = Math.floor(diffDays / 7);
+    return OB.Utilities.formatTimePassedMessage(n,
+        'OBUIAPP_weeks_ago');
+  } else if (diffDays >= 1) {
+    n = diffDays;
+    return OB.Utilities.formatTimePassedMessage(n,
+        'OBUIAPP_days_ago');
+  }
+
+  // time difference in hours
+  var diffHours = Math.floor((msNow - msCreated) / (1000 * 60 * 60));
+  if (diffHours >= 1) {
+    n = diffHours;
+    return OB.Utilities.formatTimePassedMessage(n,
+        'OBUIAPP_hours_ago');
+  }
+
+  // time difference in minutes
+  n = Math.floor((msNow - msCreated) / (1000 * 60));
+  return OB.Utilities.formatTimePassedMessage(n,
+      'OBUIAPP_minutes_ago');
+  };
+    
