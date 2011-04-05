@@ -122,7 +122,7 @@ isc.OBUIAPP_AlertManagement.addProperties({
     this.sections.Acknowledged = {
         title: this.translatedStatus.Acknowledged,
         alertStatus: 'Acknowledged',
-        expanded: false,
+        expanded: true,
         items: [this.grids.Acknowledged],
         controls: [this.AcknowledgedNew, this.AcknowledgedSuppressed]};
     this.sectionStack.addSection(this.sections.Acknowledged);
