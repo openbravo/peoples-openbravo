@@ -1169,6 +1169,8 @@ isc.OBViewGrid.addProperties({
       
       // if we were editing then a single click continue edit mode
       if (wasEditing) {
+        // set the focus in the clicked cell
+        this.forceFocusColumn = this.getField(fieldNum).name;        
         this.startEditing(recordNum, fieldNum);
       }
     }
