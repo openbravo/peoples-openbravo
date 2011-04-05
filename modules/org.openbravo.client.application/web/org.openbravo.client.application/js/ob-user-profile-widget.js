@@ -208,6 +208,10 @@ isc.OBUserProfile.addProperties({
         // note, need to make a copy of the initial values
         // otherwise they are updated when the form values change!
         roleForm.setValues(isc.addProperties({}, roleForm.localFormData.initialValues));
+        if(roleForm.getItem('warehouse').getClientPickListData().length > 0 &&
+                !roleForm.getItem('warehouse').getValue()){
+            roleForm.getItem('warehouse').moveToFirstValue();
+        }
       },
       setInitialData: function(rpcResponse, data, rpcRequest){
         // order of these statements is important see comments in reset
@@ -234,7 +238,7 @@ isc.OBUserProfile.addProperties({
           }
         }
         this.setWarehouseValueMap();
-        if (item.name === 'role' || item.name === 'organization') {
+        if (item.name !== 'warehouse') {
           if (roleForm.getItem('warehouse').getClientPickListData().length > 0) {
             roleForm.getItem('warehouse').moveToFirstValue();
           }
@@ -267,6 +271,7 @@ isc.OBUserProfile.addProperties({
             }
           }
         }
+        roleForm.getItem('warehouse').moveToFirstValue();
       },
       
       // call the server to save the information
