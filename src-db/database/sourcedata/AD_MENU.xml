@@ -916,19 +916,6 @@
 <!--187-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--187--></AD_MENU>
 
-<!--188--><AD_MENU>
-<!--188-->  <AD_MENU_ID><![CDATA[188]]></AD_MENU_ID>
-<!--188-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--188-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--188-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--188-->  <NAME><![CDATA[Vendor Details]]></NAME>
-<!--188-->  <DESCRIPTION><![CDATA[Edit available product information grouped by the vendors who sell them.]]></DESCRIPTION>
-<!--188-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--188-->  <ACTION><![CDATA[W]]></ACTION>
-<!--188-->  <AD_WINDOW_ID><![CDATA[176]]></AD_WINDOW_ID>
-<!--188-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--188--></AD_MENU>
-
 <!--190--><AD_MENU>
 <!--190-->  <AD_MENU_ID><![CDATA[190]]></AD_MENU_ID>
 <!--190-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

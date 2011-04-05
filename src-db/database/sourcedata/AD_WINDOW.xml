@@ -944,22 +944,6 @@
 <!--175-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--175--></AD_WINDOW>
 
-<!--176--><AD_WINDOW>
-<!--176-->  <AD_WINDOW_ID><![CDATA[176]]></AD_WINDOW_ID>
-<!--176-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--176-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--176-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--176-->  <NAME><![CDATA[Vendor Details]]></NAME>
-<!--176-->  <DESCRIPTION><![CDATA[Edit available product information grouped by the vendors who sell them.]]></DESCRIPTION>
-<!--176-->  <HELP><![CDATA[Edit available product information grouped by the vendors who sell them.]]></HELP>
-<!--176-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--176-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--176-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--176-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--176-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--176-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--176--></AD_WINDOW>
-
 <!--178--><AD_WINDOW>
 <!--178-->  <AD_WINDOW_ID><![CDATA[178]]></AD_WINDOW_ID>
 <!--178-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

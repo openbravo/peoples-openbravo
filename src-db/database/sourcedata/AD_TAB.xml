@@ -3041,55 +3041,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--275-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--275--></AD_TAB>
 
-<!--276--><AD_TAB>
-<!--276-->  <AD_TAB_ID><![CDATA[276]]></AD_TAB_ID>
-<!--276-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--276-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--276-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--276-->  <NAME><![CDATA[Vendor]]></NAME>
-<!--276-->  <DESCRIPTION><![CDATA[View available products for a specific vendor.]]></DESCRIPTION>
-<!--276-->  <HELP><![CDATA[View available products for a specific vendor.]]></HELP>
-<!--276-->  <AD_TABLE_ID><![CDATA[291]]></AD_TABLE_ID>
-<!--276-->  <AD_WINDOW_ID><![CDATA[176]]></AD_WINDOW_ID>
-<!--276-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--276-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--276-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--276-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--276-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--276-->  <ISREADONLY><![CDATA[Y]]></ISREADONLY>
-<!--276-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--276-->  <WHERECLAUSE><![CDATA[EXISTS (SELECT * FROM M_Product_PO po WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
-<!--276-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--276-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--276-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--276-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
-<!--276-->  <HQLWHERECLAUSE><![CDATA[e.id in (select businessPartner.id from ApprovedVendor)]]></HQLWHERECLAUSE>
-<!--276--></AD_TAB>
-
-<!--278--><AD_TAB>
-<!--278-->  <AD_TAB_ID><![CDATA[278]]></AD_TAB_ID>
-<!--278-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--278-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--278-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--278-->  <NAME><![CDATA[Product Details]]></NAME>
-<!--278-->  <DESCRIPTION><![CDATA[Edit details related to specific vendor products.]]></DESCRIPTION>
-<!--278-->  <HELP><![CDATA[Edit details related to specific vendor products.]]></HELP>
-<!--278-->  <AD_TABLE_ID><![CDATA[210]]></AD_TABLE_ID>
-<!--278-->  <AD_WINDOW_ID><![CDATA[176]]></AD_WINDOW_ID>
-<!--278-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--278-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--278-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--278-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--278-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--278-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--278-->  <AD_COLUMN_ID><![CDATA[2705]]></AD_COLUMN_ID>
-<!--278-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--278-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--278-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--278-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--278-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--278--></AD_TAB>
-
 <!--282--><AD_TAB>
 <!--282-->  <AD_TAB_ID><![CDATA[282]]></AD_TAB_ID>
 <!--282-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
