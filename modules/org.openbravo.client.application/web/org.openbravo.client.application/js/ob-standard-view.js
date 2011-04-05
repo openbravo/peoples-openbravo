@@ -170,7 +170,8 @@ isc.OBStandardView.addProperties({
   
   initWidget: function(properties){
     this.messageBar = isc.OBMessageBar.create({
-      visibility: 'hidden'
+      visibility: 'hidden',
+      view: this
     });
     
     if (this.isRootView) {
