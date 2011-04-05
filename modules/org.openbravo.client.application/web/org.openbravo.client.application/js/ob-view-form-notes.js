@@ -92,6 +92,12 @@ isc.OBNoteLayout.addProperties( {
 			 * Saves the note to the DB.
 			 */
 			saveNote : function() {
+				var note = this.noteDynamicForm.getField('noteOBTextAreaItem').getValue();
+				
+				if (!note) {
+				  return;
+				} 
+				
 				this.noteDynamicForm.validate();
 
 				var noteDS = this.getNoteDataSource();
@@ -104,8 +110,7 @@ isc.OBNoteLayout.addProperties( {
 							'table' : this.getForm().view.standardProperties.inpTableId,
 							'record' : this.getForm().view.viewGrid
 									.getSelectedRecord().id,
-							'note' : this.noteDynamicForm.getField(
-									'noteOBTextAreaItem').getValue(),
+							'note' : note,
 							'isactive' : 'Y',
 							'created' : currentTime,
 							'createdBy' : OB.User.id,
@@ -115,8 +120,6 @@ isc.OBNoteLayout.addProperties( {
 
 				// clean text area
 				this.noteDynamicForm.getItem('noteOBTextAreaItem').clearValue();
-				this.evaluateButtonStatus(this.noteDynamicForm.getItem('noteOBTextAreaItem').getValue());
-				
 			},
 
 			/**
@@ -129,17 +132,6 @@ isc.OBNoteLayout.addProperties( {
 				});
 			},
 			
-			evaluateButtonStatus : function(value){
-				if(value === null){
-					if(this.saveNoteButton.getState()!=='Disabled'){
-						this.saveNoteButton.setDisabled(true);
-					}
-				}else {
-					if(this.saveNoteButton.getState()==='Disabled'){
-						this.saveNoteButton.setDisabled(false);
-					}
-				}
-			},
 
 			/**
 			 * Returns Notes data source.
@@ -177,10 +169,7 @@ isc.OBNoteLayout.addProperties( {
 						width : '*',
 						validators : [ {
 							type : 'required'
-						} ],
-						changed : function (form, item, value){
-							this.layout.evaluateButtonStatus(value);	
-						}
+						} ]
 					}]
 				});
 
@@ -373,7 +362,6 @@ isc.OBNoteLayout.addProperties( {
 
 			refresh : function() {
 				this.noteDynamicForm.getItem('noteOBTextAreaItem').clearValue();
-				this.evaluateButtonStatus(this.noteDynamicForm.getItem('noteOBTextAreaItem').getValue());
 				this.noteListGrid.fetchData();
 			},
 
