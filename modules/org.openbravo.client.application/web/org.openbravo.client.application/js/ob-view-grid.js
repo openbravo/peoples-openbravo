@@ -138,7 +138,11 @@ isc.OBViewGrid.addProperties({
   
   recordBaseStyleProperty: '_recordStyle',
   
-  modalEditing: true,
+  // set to false because of this: https://issues.openbravo.com/view.php?id=16509
+  modalEditing: false,
+  // set to true because if not all cols are drawn then when doing inline editing
+  // errors were reported for undrawn columns
+  showAllColumns: true,
   //showGridSummary: true,
   
   timeFormatter: 'to24HourTime',
