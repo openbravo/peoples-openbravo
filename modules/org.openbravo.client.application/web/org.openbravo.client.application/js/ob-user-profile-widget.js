@@ -274,9 +274,6 @@ isc.OBUserProfile.addProperties({
             }
           }
         }
-        if(roleForm.getItem('warehouse').getClientPickListData().length > 0){
-          roleForm.getItem('warehouse').moveToFirstValue();
-        }
       },
       
       // call the server to save the information
