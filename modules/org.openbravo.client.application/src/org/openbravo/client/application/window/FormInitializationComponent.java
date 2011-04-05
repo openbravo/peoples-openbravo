@@ -923,6 +923,10 @@ public class FormInitializationComponent extends BaseActionHandler {
                         "OBUIAPP_ExecuteInCallout", RequestContext.get().getVariablesSecureApp()
                             .getLanguage()));
                     createNewPreferenceForWindow(tab.getWindow());
+                    log.warn("An EXECUTE element has been found in the response of the callout "
+                        + calloutClassName + ". A preference has been created for the window "
+                        + tab.getWindow().getName()
+                        + "so that it's shown in classic mode until this problem is fixed.");
                   }
                 }
               } else {

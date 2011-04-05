@@ -855,7 +855,7 @@
 <!--FF8080812F10C577012F1138306C0027-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FF8080812F10C577012F1138306C0027-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF8080812F10C577012F1138306C0027-->  <VALUE><![CDATA[OBUIAPP_ExecuteInCallout]]></VALUE>
-<!--FF8080812F10C577012F1138306C0027-->  <MSGTEXT><![CDATA[This window is using some functionality (an EXECUTE command in a callout response) which needs to be updated to work in Openbravo 3. Therefore, it's likely that this window will not work correctly in Openbravo 3 mode. A preference has been added so that this window is opened in classic mode until this problem is fixed. Contact with your System Administrator, or with the developer of the module to fix this. You now need to log out of the application, and login again, so that this window is shown in classic mode.]]></MSGTEXT>
+<!--FF8080812F10C577012F1138306C0027-->  <MSGTEXT><![CDATA[This window is using some functionality which needs to be updated to work in Openbravo 3. Therefore, it's likely that this window will not work correctly in Openbravo 3 mode. A preference has been added so that this window is opened in classic mode until this problem is fixed. Contact with your System Administrator, or with the developer of the module to fix this. You now need to log out of the application, and login again, so that this window is shown in classic mode.]]></MSGTEXT>
 <!--FF8080812F10C577012F1138306C0027-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--FF8080812F10C577012F1138306C0027-->  <AD_MODULE_ID><![CDATA[9BA0836A3CD74EE4AB48753A47211BCC]]></AD_MODULE_ID>
 <!--FF8080812F10C577012F1138306C0027--></AD_MESSAGE>
