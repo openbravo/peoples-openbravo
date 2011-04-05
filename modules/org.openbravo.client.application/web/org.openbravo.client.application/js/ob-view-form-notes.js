@@ -351,12 +351,8 @@ isc.OBNoteLayout.addProperties( {
 							}
 
 							if (record.createdBy === OB.User.id) {
-								// XXX what CSS may I use here? or I need to
-							// create one?
-							return 'OBNoteListGridCurrentUserNoteCell';
+							  return 'OBNoteListGridCurrentUserNoteCell';
 						} else {
-							// XXX what CSS may I use here? or I need to create
-							// one?
 							return 'OBNoteListGridOtherUserNoteCell';
 						}
 					}
@@ -395,8 +391,6 @@ isc.OBNoteCanvasItem.addProperties( {
 
 	// setting width/height makes the canvasitem to be hidden after a few
 	// clicks on the section item, so don't do that for now
-	// width: '100%',
-	// height: '100%',
 	showTitle : false,
 	overflow : 'auto',
 	// note that explicitly setting the canvas gives an error as not
