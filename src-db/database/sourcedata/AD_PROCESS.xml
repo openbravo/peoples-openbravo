@@ -1791,8 +1791,8 @@
 <!--209-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--209-->  <VALUE><![CDATA[R_MailText Send]]></VALUE>
 <!--209-->  <NAME><![CDATA[Send Mail Text]]></NAME>
-<!--209-->  <DESCRIPTION><![CDATA[Send EMails to active subscribers of the Areas of Interest or Business Partner Group]]></DESCRIPTION>
-<!--209-->  <HELP><![CDATA[Select the Areas of Interest to which subscribers you send the Mail Text from the User selected. Alternatively, you can send mails to the Contacts of a Business Partner Group. ||The User to send emails from needs to have valid EMail information.]]></HELP>
+<!--209-->  <DESCRIPTION><![CDATA[Send EMails to Business Partner Group]]></DESCRIPTION>
+<!--209-->  <HELP><![CDATA[You can send mails to the Contacts of a Business Partner Group. The User to send emails from needs to have valid EMail information.]]></HELP>
 <!--209-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
 <!--209-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--209-->  <ISREPORT><![CDATA[N]]></ISREPORT>

@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2009 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2011 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_process;
@@ -61,17 +61,15 @@ public class SendMailText extends HttpSecureAppServlet {
           "SendMailText|interestArea", "");
       String strBPGroup = vars.getGlobalVariable("inpBPGroup", "SendMailText|bpGroup", "");
       String strUser = vars.getGlobalVariable("inpUser", "SendMailText|user", "");
-      printPage(response, vars, strMailTemplate, strInterestArea, strBPGroup, strUser);
+      printPage(response, vars, strMailTemplate, strBPGroup, strUser);
     } else if (vars.commandIn("SEND")) {
       String strMailTemplate = vars.getRequiredGlobalVariable("inpMailTemplate",
           "SendMailText|mailTemplate");
-      String strInterestArea = vars.getRequestGlobalVariable("inpInterestArea",
-          "SendMailText|interestArea");
       String strBPGroup = vars.getRequestGlobalVariable("inpBPGroup", "SendMailText|bpGroup");
       String strUser = vars.getRequestGlobalVariable("inpUser", "SendMailText|user");
 
       vars.removeMessage("SendMailText");
-      String strMessage = processSend(vars, strMailTemplate, strInterestArea, strBPGroup, strUser);
+      String strMessage = processSend(vars, strMailTemplate, strBPGroup, strUser);
       // New message system
       myMessage = new OBError();
       String result = getResult();
@@ -80,14 +78,14 @@ public class SendMailText extends HttpSecureAppServlet {
       myMessage.setMessage(strMessage);
       vars.setMessage("SendMailText", myMessage);
 
-      printPage(response, vars, strMailTemplate, strInterestArea, strBPGroup, strUser);
+      printPage(response, vars, strMailTemplate, strBPGroup, strUser);
     } else
       pageErrorPopUp(response);
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strMailTemplate, String strInterestArea, String strBPGroup, String strUser)
-      throws IOException, ServletException {
+      String strMailTemplate, String strBPGroup, String strUser) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: SendMailText select page");
 
@@ -120,7 +118,6 @@ public class SendMailText extends HttpSecureAppServlet {
     xmlDocument.setParameter("description", strDescription);
     xmlDocument.setParameter("help", strHelp);
     xmlDocument.setParameter("mailTemplate", strMailTemplate);
-    xmlDocument.setParameter("interestArea", strInterestArea);
     xmlDocument.setParameter("bpGroup", strBPGroup);
     xmlDocument.setParameter("user", strUser);
     try {
@@ -161,17 +158,6 @@ public class SendMailText extends HttpSecureAppServlet {
     }
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "R_InterestArea_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "SendMailText"), Utility.getContext(this, vars, "#User_Client", "SendMailText"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "SendMailText", strInterestArea);
-      xmlDocument.setData("reportInterestArea", "liststructure", comboTableData.select(false));
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-
-    try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
           "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SendMailText"), Utility
               .getContext(this, vars, "#User_Client", "SendMailText"), 0);
@@ -199,9 +185,8 @@ public class SendMailText extends HttpSecureAppServlet {
     out.close();
   }
 
-  private String processSend(VariablesSecureApp vars, String strMailTemplate,
-      String strInterestArea, String strBPGroup, String strUser) throws IOException,
-      ServletException {
+  private String processSend(VariablesSecureApp vars, String strMailTemplate, String strBPGroup,
+      String strUser) throws IOException, ServletException {
     String client = vars.getClient();
     long start = 0;
     int counter = 0;
@@ -268,25 +253,6 @@ public class SendMailText extends HttpSecureAppServlet {
 
       SendMailTextData[] mailData;
       start = System.currentTimeMillis();
-      if (strInterestArea != null && !strInterestArea.equals("")) {
-        log4j.info("processSend - Send to R_InterestArea_ID=" + strInterestArea);
-        mailData = SendMailTextData.select(conn, this, strInterestArea);
-        if (mailData != null && mailData.length > 0) {
-          if (log4j.isDebugEnabled())
-            log4j.debug("number of emails to send: " + mailData.length);
-          for (int i = 0; i < mailData.length; i++) {
-            if (log4j.isDebugEnabled())
-              log4j.debug("attempt to send email to: " + mailData[i].email);
-            if (sendIndividualMail(conn, vars, smtpHost, from, subject, message, mailData[i].name,
-                mailData[i].email, mailData[i].adUserId, fromID, fromPW, g_log))
-              counter++;
-            else {
-              errors++;
-              mailResult = resultEnum.ERRORS;
-            }
-          }
-        }
-      }
       if (strBPGroup != null && !strBPGroup.equals("")) {
         log4j.info("processSend - Send to M_BP_Group_ID=" + strBPGroup);
         mailData = SendMailTextData.selectBPGroup(conn, this, strBPGroup);

@@ -1438,22 +1438,6 @@
 <!--244-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--244--></AD_WINDOW>
 
-<!--245--><AD_WINDOW>
-<!--245-->  <AD_WINDOW_ID><![CDATA[245]]></AD_WINDOW_ID>
-<!--245-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--245-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--245-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--245-->  <NAME><![CDATA[Areas of Interest]]></NAME>
-<!--245-->  <DESCRIPTION><![CDATA[Create and edit areas of interest to track the potential needs and wants of your business partners.]]></DESCRIPTION>
-<!--245-->  <HELP><![CDATA[Create and edit areas of interest to track the potential needs and wants of your business partners.]]></HELP>
-<!--245-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--245-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--245-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--245-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--245-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--245-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--245--></AD_WINDOW>
-
 <!--246--><AD_WINDOW>
 <!--246-->  <AD_WINDOW_ID><![CDATA[246]]></AD_WINDOW_ID>
 <!--246-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

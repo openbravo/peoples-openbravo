@@ -5184,54 +5184,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--437-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--437--></AD_TAB>
 
-<!--438--><AD_TAB>
-<!--438-->  <AD_TAB_ID><![CDATA[438]]></AD_TAB_ID>
-<!--438-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--438-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--438-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--438-->  <NAME><![CDATA[Areas of Interest]]></NAME>
-<!--438-->  <DESCRIPTION><![CDATA[Create areas of interest.]]></DESCRIPTION>
-<!--438-->  <HELP><![CDATA[Create areas of interest.]]></HELP>
-<!--438-->  <AD_TABLE_ID><![CDATA[530]]></AD_TABLE_ID>
-<!--438-->  <AD_WINDOW_ID><![CDATA[245]]></AD_WINDOW_ID>
-<!--438-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--438-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--438-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--438-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--438-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--438-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--438-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--438-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--438-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--438-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--438-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--438-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--438--></AD_TAB>
-
-<!--439--><AD_TAB>
-<!--439-->  <AD_TAB_ID><![CDATA[439]]></AD_TAB_ID>
-<!--439-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--439-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--439-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--439-->  <NAME><![CDATA[Areas of Interest]]></NAME>
-<!--439-->  <DESCRIPTION><![CDATA[Create areas of interest for the business partner to note special needs or requests.]]></DESCRIPTION>
-<!--439-->  <HELP><![CDATA[Create areas of interest for the business partner to note special needs or requests.]]></HELP>
-<!--439-->  <AD_TABLE_ID><![CDATA[528]]></AD_TABLE_ID>
-<!--439-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
-<!--439-->  <SEQNO><![CDATA[110]]></SEQNO>
-<!--439-->  <TABLEVEL><![CDATA[2]]></TABLEVEL>
-<!--439-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--439-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--439-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--439-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--439-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--439-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--439-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--439-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--439-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--439-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--439--></AD_TAB>
-
 <!--440--><AD_TAB>
 <!--440-->  <AD_TAB_ID><![CDATA[440]]></AD_TAB_ID>
 <!--440-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -6397,32 +6349,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--526-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--526-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--526--></AD_TAB>
-
-<!--536--><AD_TAB>
-<!--536-->  <AD_TAB_ID><![CDATA[536]]></AD_TAB_ID>
-<!--536-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--536-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--536-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--536-->  <NAME><![CDATA[Areas of Interest Subscription]]></NAME>
-<!--536-->  <DESCRIPTION><![CDATA[Define a subscription period for the selected areas of interest.]]></DESCRIPTION>
-<!--536-->  <HELP><![CDATA[Define a subscription period for the selected areas of interest.]]></HELP>
-<!--536-->  <AD_TABLE_ID><![CDATA[528]]></AD_TABLE_ID>
-<!--536-->  <AD_WINDOW_ID><![CDATA[245]]></AD_WINDOW_ID>
-<!--536-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--536-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--536-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--536-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--536-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--536-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--536-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--536-->  <WHERECLAUSE><![CDATA[R_ContactInterest.R_InterestArea_ID = @R_InterestArea_ID@]]></WHERECLAUSE>
-<!--536-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--536-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--536-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--536-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--536-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--536-->  <HQLWHERECLAUSE><![CDATA[e.areasOfInterest.id=@AreasOfInterest.id@]]></HQLWHERECLAUSE>
-<!--536--></AD_TAB>
 
 <!--537--><AD_TAB>
 <!--537-->  <AD_TAB_ID><![CDATA[537]]></AD_TAB_ID>
