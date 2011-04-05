@@ -118,7 +118,7 @@ isc.OBViewGrid.addProperties({
   // default is much smaller which give smoother scrolling
 //  quickDrawAheadRatio: 2.0,
 //  drawAheadRatio: 1.0,
-  scrollRedrawDelay: 0,
+  scrollRedrawDelay: 20,
   // note: don't set drawAllMaxCells too high as it results in extra reads
   // of data, Smartclient will try to read until drawAllMaxCells has been
   // reached
