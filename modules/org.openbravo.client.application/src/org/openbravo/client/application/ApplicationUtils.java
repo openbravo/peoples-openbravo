@@ -69,6 +69,9 @@ public class ApplicationUtils {
     }
 
     for (Tab tab : window.getADTabList()) {
+      if (!tab.isActive()) {
+        continue;
+      }
       if (tab.getSQLWhereClause() != null && tab.getHqlwhereclause() == null) {
         // There is a tab with a SQL whereclause, but without a defined HQL whereclause
         reasonsOfWindow.add("   The tab " + tab.getName() + " of the window " + window.getName()
