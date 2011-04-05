@@ -208,6 +208,9 @@ isc.OBUserProfile.addProperties({
         // note, need to make a copy of the initial values
         // otherwise they are updated when the form values change!
         roleForm.setValues(isc.addProperties({}, roleForm.localFormData.initialValues));
+        roleForm.setWarehouseValueMap();
+        //We set initial values again to set warehouse correctly
+        roleForm.setValues(isc.addProperties({}, roleForm.localFormData.initialValues));
         if(roleForm.getItem('warehouse').getClientPickListData().length > 0 &&
                 !roleForm.getItem('warehouse').getValue()){
             roleForm.getItem('warehouse').moveToFirstValue();
