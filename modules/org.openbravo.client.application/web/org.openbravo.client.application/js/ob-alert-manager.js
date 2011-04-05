@@ -82,7 +82,7 @@
 
     call : function() {
       OB.RemoteCallManager.call(
-          'org.openbravo.client.application.AlertActionHandler', {}, {},
+          'org.openbravo.client.application.AlertActionHandler', {}, {IsAjaxCall: '1', ignoreForSessionTimeout: '1'},
           OB.AlertManager._notify);
     }
   };
