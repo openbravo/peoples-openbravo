@@ -255,10 +255,16 @@ isc.OBUserProfile.addProperties({
         if (!orgId) {
           return;
         }
-        for (var j = 0; j < roleForm.localFormData.warehouseOrgMap.length; j++) {
-          var warehouseOrg = roleForm.localFormData.warehouseOrgMap[j];
-          if (warehouseOrg.orgId === orgId) {
-            roleForm.setValueMap('warehouse', warehouseOrg.warehouseMap);
+        var roleId = roleForm.getValue('role');
+        for (var i = 0; i < roleForm.localFormData.role.roles.length; i++) {
+          var role = roleForm.localFormData.role.roles[i];
+          if (role.id === roleId) {
+            for (var j = 0; j < role.warehouseOrgMap.length; j++) {
+              var warehouseOrg = role.warehouseOrgMap[j];
+              if (warehouseOrg.orgId === orgId) {
+                roleForm.setValueMap('warehouse', warehouseOrg.warehouseMap);
+              }
+            }
           }
         }
       },
