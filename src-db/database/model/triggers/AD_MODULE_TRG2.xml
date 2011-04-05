@@ -25,8 +25,8 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
-  --Check the only updated column is isConfigScriptApplied. In this case maitin updated
-  --column as it was to prevent changes detection when trying to update database
+  --Check the only updated column is 'isConfigScriptApplied' or 'IsInDevelopment'. In this case maintain updated(timestamp)
+  --column as it was to prevent changes detection when trying to update database.
   IF (COALESCE(:OLD.ISACTIVE             ,'.') = COALESCE(:NEW.ISACTIVE             ,'.') AND
       COALESCE(:OLD.NAME                 ,'.') = COALESCE(:NEW.NAME                 ,'.') AND
       COALESCE(:OLD.VERSION              ,'.') = COALESCE(:NEW.VERSION              ,'.') AND
@@ -34,8 +34,7 @@ BEGIN
       COALESCE(:OLD.HELP                 ,'.') = COALESCE(:NEW.HELP                 ,'.') AND
       COALESCE(:OLD.URL                  ,'.') = COALESCE(:NEW.URL                  ,'.') AND
       COALESCE(:OLD.TYPE                 ,'.') = COALESCE(:NEW.TYPE                 ,'.') AND
-      COALESCE(:OLD.LICENSE              ,'.') = COALESCE(:NEW.LICENSE              ,'.') AND
-      COALESCE(:OLD.ISINDEVELOPMENT      ,'.') = COALESCE(:NEW.ISINDEVELOPMENT      ,'.') AND
+      COALESCE(:OLD.LICENSE              ,'.') = COALESCE(:NEW.LICENSE              ,'.') AND      
       COALESCE(:OLD.ISDEFAULT            ,'.') = COALESCE(:NEW.ISDEFAULT            ,'.') AND
       COALESCE(:OLD.SEQNO                , -1) = COALESCE(:NEW.SEQNO                , -1) AND
       COALESCE(:OLD.JAVAPACKAGE          ,'.') = COALESCE(:NEW.JAVAPACKAGE          ,'.') AND
@@ -58,7 +57,8 @@ BEGIN
       COALESCE(:OLD.MATURITY_UPDATE      ,'.') = COALESCE(:NEW.MATURITY_UPDATE      ,'.') AND
       COALESCE(:OLD.COMMERCIAL_TIER      ,'.') = COALESCE(:NEW.COMMERCIAL_TIER      ,'.') AND
       COALESCE(:OLD.ENABLED              ,'.') = COALESCE(:NEW.ENABLED              ,'.') AND
-               :OLD.ISCONFIGSCRIPTAPPLIED  != :NEW.ISCONFIGSCRIPTAPPLIED)  THEN
+               (:OLD.ISCONFIGSCRIPTAPPLIED  != :NEW.ISCONFIGSCRIPTAPPLIED OR
+               COALESCE(:OLD.ISINDEVELOPMENT      ,'.') != COALESCE(:NEW.ISINDEVELOPMENT      ,'.')))  THEN
     :NEW.UPDATED := :OLD.UPDATED;
   END IF;
   
