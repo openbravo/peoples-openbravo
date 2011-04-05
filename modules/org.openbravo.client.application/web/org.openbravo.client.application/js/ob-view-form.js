@@ -70,6 +70,9 @@ OB.ViewFormProperties = {
   // Name to the first focused field defined in AD
   firstFocusedField: null,
 
+  // is set in the OBNoteSectionItem.initWidget
+  noteSection: null,
+  
   // is set in the OBLinkedItemSectionItem.initWidget
   linkedItemSection: null,
 
@@ -180,6 +183,21 @@ OB.ViewFormProperties = {
     }
   },
   
+
+  enableNoteSection: function(enable){
+	    if (!this.noteSection) {
+	      return;
+	    }
+	    if (enable) {
+	      this.noteSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID));
+	      this.noteSection.collapseSection();
+	      this.noteSection.refresh();
+	      this.noteSection.show();
+	    } else {
+	      this.noteSection.hide();
+	    }
+  },
+  
   enableLinkedItemSection: function(enable){
     if (!this.linkedItemSection) {
       return;
@@ -221,6 +239,7 @@ OB.ViewFormProperties = {
     this.isNew = isNew;
     this.view.statusBar.setNewState(isNew);
     this.view.updateTabTitle();
+    this.enableNoteSection(!isNew);
     this.enableLinkedItemSection(!isNew);
 
     if (isNew) {
