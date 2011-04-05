@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2011 Openbravo S.L.U.
  ******************************************************************************
 -->
 
@@ -21,27 +21,11 @@
 
 
 <SqlClass name="SendMailTextData" package="org.openbravo.erpCommon.ad_process">
-  <SqlMethod name="select" type="preparedStatement" connection="true" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT u.Name, u.EMail, u.AD_User_ID, '' as mailheader, '' as mailtext 
-        FROM R_ContactInterest ci, AD_User u 
-        WHERE ci.AD_User_ID=u.AD_User_ID 
-        AND ci.IsActive='Y' 
-        AND u.IsActive='Y' 
-        AND ci.OptOutDate IS NULL 
-        AND u.EMail IS NOT NULL 
-        AND ci.R_InterestArea_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="rInterestareaId"/>
-  </SqlMethod>
   <SqlMethod name="selectBPGroup" type="preparedStatement" connection="true" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT u.Name, u.EMail, u.AD_User_ID 
+        SELECT u.Name, u.EMail, u.AD_User_ID, '' as mailheader, '' as mailtext
         FROM AD_User u, C_BPartner bp
         WHERE u.C_BPartner_ID=bp.C_BPartner_ID 
         AND u.IsActive='Y' 

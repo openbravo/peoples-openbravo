@@ -78,7 +78,6 @@ import org.openbravo.model.ad.ui.MessageTrl;
 import org.openbravo.model.ad.ui.ProcessTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TabTrl;
-import org.openbravo.model.ad.ui.Task;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.ui.WindowTrl;
 import org.openbravo.model.ad.ui.Workflow;
@@ -1147,11 +1146,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     if ("P".equals(processType) || "R".equals(processType)) {
       String processLabel = getTranslatedMessage(adMessageIdForProcess);
       return processLabel + ": " + getTranslatedProcessName(process);
-    }
-    // no translation for the next four, as either no _trl table exists, or the application elements
-    // are not used/don't trigger db-changes
-    if ("T".equals(processType)) {
-      return "Task: " + OBDal.getInstance().get(Task.class, process).getName();
     }
     if ("S".equals(processType)) {
       return "Reference: " + OBDal.getInstance().get(Reference.class, process).getName();

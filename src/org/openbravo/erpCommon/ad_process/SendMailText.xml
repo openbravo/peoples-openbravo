@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2006 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,6 @@
 	<PARAMETER id="question" name="question" default=""/>
 	<PARAMETER id="processDescription" name="description" replaceCharacters="htmlHelp" default=""/>
 	<PARAMETER id="processHelp" name="help" replaceCharacters="htmlHelp" default=""/>
-	<PARAMETER id="paramInterestArea" name="interestArea" default=""/>
 	<PARAMETER id="paramMailTemplate" name="mailTemplate" default=""/>
 	<PARAMETER id="paramBPGroup" name="bpGroup" default=""/>
 	<PARAMETER id="paramUser" name="user" default=""/>
@@ -40,9 +39,6 @@
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
 	<SUBREPORT id="reportMailTemplate" name="reportMailTemplate" report="org/openbravo/erpCommon/reference/List">
 		<ARGUMENT name="parameterListSelected" withId="paramMailTemplate"/>
-	</SUBREPORT>
-	<SUBREPORT id="reportInterestArea" name="reportInterestArea" report="org/openbravo/erpCommon/reference/List">
-		<ARGUMENT name="parameterListSelected" withId="paramInterestArea"/>
 	</SUBREPORT>
 	<SUBREPORT id="reportBPGroup" name="reportBPGroup" report="org/openbravo/erpCommon/reference/List">
 		<ARGUMENT name="parameterListSelected" withId="paramBPGroup"/>

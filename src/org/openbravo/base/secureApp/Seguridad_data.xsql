@@ -129,11 +129,6 @@
            AND TO_CHAR('W') = ?
            AND TB.AD_TAB_ID = ?
          UNION
-         SELECT ACCESSLEVEL
-          FROM AD_TASK
-         WHERE TO_CHAR('T') = ? 
-           AND AD_TASK_ID = ?
-         UNION
         SELECT ACCESSLEVEL
           FROM AD_WORKFLOW
          WHERE TO_CHAR('F') = ? 
@@ -143,9 +138,6 @@
       <Parameter name="id"/>
       
       <Parameter name="type"/>
-      <Parameter name="type"/>
-      <Parameter name="id"/>
-      
       <Parameter name="type"/>
       <Parameter name="id"/>
       
@@ -199,13 +191,6 @@
                  AND t.IsExclude = 'Y'
                UNION
               SELECT COUNT(*) AS TOTAL 
-                FROM AD_Task_Access 
-               WHERE AD_Role_ID = ? 
-                 AND TO_CHAR('T') = ?
-                 AND AD_Task_ID = ? 
-                 AND IsActive = 'Y' 
-               UNION
-              SELECT COUNT(*) AS TOTAL 
                 FROM AD_Workflow_Access 
                WHERE AD_Role_ID = ?
                  AND TO_CHAR('F') = ? 
@@ -242,10 +227,6 @@
       <Parameter name="id"/>
       <Parameter name="id"/>
       <Parameter name="type"/>
-      
-      <Parameter name="role"/>
-      <Parameter name="type"/>
-      <Parameter name="id"/>
       
       <Parameter name="role"/>
       <Parameter name="type"/>

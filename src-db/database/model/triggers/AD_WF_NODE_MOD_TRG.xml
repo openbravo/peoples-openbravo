@@ -63,7 +63,6 @@ BEGIN
         COALESCE(:NEW.Action , '.') != COALESCE(:OLD.Action , '.') OR
         COALESCE(:NEW.AD_Window_ID , '.') != COALESCE(:OLD.AD_Window_ID , '.') OR
         COALESCE(:NEW.Workflow_ID , '.') != COALESCE(:OLD.Workflow_ID , '.') OR
-        COALESCE(:NEW.AD_Task_ID , '.') != COALESCE(:OLD.AD_Task_ID , '.') OR
         COALESCE(:NEW.AD_Process_ID , '.') != COALESCE(:OLD.AD_Process_ID , '.') OR
         COALESCE(:NEW.AD_Form_ID , '.') != COALESCE(:OLD.AD_Form_ID , '.') OR
         COALESCE(:NEW.Xposition , 0) != COALESCE(:OLD.Xposition , 0) OR

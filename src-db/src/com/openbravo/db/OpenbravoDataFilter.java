@@ -100,8 +100,6 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
     removeTable("AD_TAB");
     removeTable("AD_TAB_TRL");
     removeTable("AD_TABLE");
-    removeTable("AD_TASK");
-    removeTable("AD_TASK_TRL");
     removeTable("AD_TEXTINTERFACES");
     removeTable("AD_TEXTINTERFACES_TRL");
     addTable("AD_TREE", "AD_CLIENT_ID <> '0'");

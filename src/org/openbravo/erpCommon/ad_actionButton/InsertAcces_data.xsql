@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2006 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,7 +30,7 @@
     <![CDATA[
         SELECT DISTINCT tn.Node_ID,tn.Parent_ID, m.ISSUMMARY, m.action, m.AD_WINDOW_ID as adwindowid,
         m.AD_PROCESS_ID as adprocessid, m.AD_FORM_ID as adformid, m.AD_WORKFLOW_ID as adworkflowid,
-        m.AD_TASK_ID as adtaskid, tb.ad_process_id as printreport
+        tb.ad_process_id as printreport
         FROM AD_TREENODE tn, AD_MENU m left join ad_tab tb 
                                        on m.ad_window_id = tb.ad_window_id
                                           and tb.ad_process_id is not null
@@ -168,35 +168,6 @@
     ]]>
     </Sql>
         <Parameter name="workflowId"/>
-        <Parameter name="roleId"/>
-        <Parameter name="adClientId"/>
-        <Parameter name="adOrgId"/>
-        <Parameter name="user"/>
-        <Parameter name="user"/>
-  </SqlMethod>
-  <SqlMethod name="selectTask" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-        select 1 from ad_task_Access
-        where ad_role_id=?
-        and ad_task_id=?
-    ]]>
-    </Sql>
-        <Parameter name="roleId"/>
-        <Parameter name="taskId"/>
-  </SqlMethod>
-  <SqlMethod name="insertTask" type="preparedStatement" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-        INSERT INTO AD_TASK_ACCESS (AD_TASK_ACCESS_ID, AD_TASK_ID, AD_ROLE_ID, AD_CLIENT_ID,
-        AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ISREADWRITE)
-        VALUES (get_uuid(), ?, ?, ?, ?, 'Y', now(), ?, now(), ?, 'Y')
-
-    ]]>
-    </Sql>
-        <Parameter name="taskId"/>
         <Parameter name="roleId"/>
         <Parameter name="adClientId"/>
         <Parameter name="adOrgId"/>

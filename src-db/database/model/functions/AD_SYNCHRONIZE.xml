@@ -32,7 +32,7 @@
   *  Update Column and Field with Names from Element and Process
   *  Update Process Parameters from Elements
   *  Update Workflow Notes from Windows
-  *  Update Menu from Window/Form/Process/Task
+  *  Update Menu from Window/Form/Process
   ************************************************************************/
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
@@ -1563,44 +1563,6 @@
       FROM AD_WORKFLOW_TRL pt, AD_MENU m
       WHERE AD_MENU_TRL.AD_Menu_ID=m.AD_Menu_ID AND m.AD_Workflow_ID=pt.AD_Workflow_ID
       AND AD_MENU_TRL.AD_LANGUAGE=pt.AD_LANGUAGE  AND m.AD_Workflow_ID IS NOT NULL  AND Action='F'
-      )
-      ;
-    v_rowcount:=SQL%ROWCOUNT;
-    DBMS_OUTPUT.PUT_LINE('  trl rows updated: ' || v_rowcount) ;
-    -- Sync Names = Task
-    DBMS_OUTPUT.PUT_LINE('Synchronizing Menu with Tasks') ;
-    UPDATE AD_MENU
-      SET NAME=
-      (SELECT NAME FROM AD_TASK f WHERE AD_MENU.AD_Task_ID=f.AD_Task_ID)
-      , Description=
-      (SELECT Description FROM AD_TASK f WHERE AD_MENU.AD_Task_ID=f.AD_Task_ID)
-    WHERE AD_Task_ID IS NOT NULL  AND Action='T';
-    v_rowcount:=SQL%ROWCOUNT;
-    DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
-    UPDATE AD_MENU_TRL
-      SET NAME=
-      (SELECT ft.NAME
-      FROM AD_TASK_TRL ft, AD_MENU m
-      WHERE AD_MENU_TRL.AD_Menu_ID=m.AD_Menu_ID AND m.AD_Task_ID=ft.AD_Task_ID
-      AND AD_MENU_TRL.AD_LANGUAGE=ft.AD_LANGUAGE
-      )
-      , Description=
-      (SELECT ft.Description
-      FROM AD_TASK_TRL ft, AD_MENU m
-      WHERE AD_MENU_TRL.AD_Menu_ID=m.AD_Menu_ID AND m.AD_Task_ID=ft.AD_Task_ID
-      AND AD_MENU_TRL.AD_LANGUAGE=ft.AD_LANGUAGE
-      )
-      , IsTranslated=
-      (SELECT ft.IsTranslated
-      FROM AD_TASK_TRL ft, AD_MENU m
-      WHERE AD_MENU_TRL.AD_Menu_ID=m.AD_Menu_ID AND m.AD_Task_ID=ft.AD_Task_ID
-      AND AD_MENU_TRL.AD_LANGUAGE=ft.AD_LANGUAGE
-      )
-    WHERE EXISTS
-      (SELECT *
-      FROM AD_TASK_TRL ft, AD_MENU m
-      WHERE AD_MENU_TRL.AD_Menu_ID=m.AD_Menu_ID AND m.AD_Task_ID=ft.AD_Task_ID
-      AND AD_MENU_TRL.AD_LANGUAGE=ft.AD_LANGUAGE  AND m.AD_Task_ID IS NOT NULL  AND Action='T'
       )
       ;
     v_rowcount:=SQL%ROWCOUNT;

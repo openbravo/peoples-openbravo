@@ -65,10 +65,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_TASK_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="AD_PROCESS_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -96,9 +92,6 @@
       </foreign-key>
       <foreign-key foreignTable="AD_PROCESS" name="AD_WF_NODE_AD_PROCESS">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TASK" name="AD_WF_NODE_AD_TASK">
-        <reference local="AD_TASK_ID" foreign="AD_TASK_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_WINDOW" name="AD_WF_NODE_AD_WINDOW">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -103,8 +103,6 @@ public class WorkflowControl extends HttpSecureAppServlet {
       strIcon = "Popup_Workflow_Button_Icon Popup_Workflow_Button_Icon_childForms";// Form
     else if (action.equals("P"))
       strIcon = "Popup_Workflow_Button_Icon Popup_Workflow_Button_Icon_childProcesses";// Process
-    else if (action.equals("T"))
-      strIcon = "Popup_Workflow_Button_Icon Popup_Workflow_Button_Icon_childTasks";// Task
     else if (action.equals("R"))
       strIcon = "Popup_Workflow_Button_Icon Popup_Workflow_Button_Icon_childProcesses";// Process
     else if (action.equals("F"))
@@ -115,15 +113,13 @@ public class WorkflowControl extends HttpSecureAppServlet {
   }
 
   private String getUrlPath(String language, String action, String clave) throws ServletException {
-    String strWindow = "", strForm = "", strProcess = "", strTask = "", strWorkflow = "";
+    String strWindow = "", strForm = "", strProcess = "", strWorkflow = "";
     if (action.equals("W"))
       strWindow = clave;
     else if (action.equals("X"))
       strForm = clave;
     else if (action.equals("P"))
       strProcess = clave;
-    else if (action.equals("T"))
-      strTask = clave;
     else if (action.equals("R"))
       strProcess = clave;
     else if (action.equals("F"))
@@ -132,13 +128,13 @@ public class WorkflowControl extends HttpSecureAppServlet {
       return "";
 
     final MenuData[] menuData = MenuData.selectData(this, language, strWindow, strProcess, strForm,
-        strTask, strWorkflow);
+        strWorkflow);
     if (menuData == null || menuData.length == 0)
       throw new ServletException("WorkflowControl.getUrlPath() - Error while getting data");
 
     return VerticalMenu.getUrlStringStatic(strDireccion, menuData[0].name, menuData[0].action,
         menuData[0].classname, menuData[0].mappingname, menuData[0].adWorkflowId,
-        menuData[0].adTaskId, menuData[0].adProcessId, "N", "");
+        menuData[0].adProcessId, "N", "");
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
@@ -257,8 +253,6 @@ public class WorkflowControl extends HttpSecureAppServlet {
       return data.adFormId;
     else if (data.action.equals("P"))
       return data.adProcessId;
-    else if (data.action.equals("T"))
-      return data.adTaskId;
     else if (data.action.equals("R"))
       return data.adProcessId;
     else if (data.action.equals("F"))

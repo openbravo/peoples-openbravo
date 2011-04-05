@@ -9904,17 +9904,6 @@ Openbravo Administrator]]></MSGTEXT>
 <!--802877-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--802877--></AD_MESSAGE>
 
-<!--802878--><AD_MESSAGE>
-<!--802878-->  <AD_MESSAGE_ID><![CDATA[802878]]></AD_MESSAGE_ID>
-<!--802878-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--802878-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--802878-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--802878-->  <VALUE><![CDATA["AD_TASK_ID" IS NOT NULL]]></VALUE>
-<!--802878-->  <MSGTEXT><![CDATA[The field  OS Task  is mandatory and cannot be left empty]]></MSGTEXT>
-<!--802878-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--802878-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--802878--></AD_MESSAGE>
-
 <!--802879--><AD_MESSAGE>
 <!--802879-->  <AD_MESSAGE_ID><![CDATA[802879]]></AD_MESSAGE_ID>
 <!--802879-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

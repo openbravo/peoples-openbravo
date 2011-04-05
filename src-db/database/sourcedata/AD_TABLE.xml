@@ -379,28 +379,6 @@ The User identifies a unique user in the system. This could be an internal user 
 <!--117-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--117--></AD_TABLE>
 
-<!--118--><AD_TABLE>
-<!--118-->  <AD_TABLE_ID><![CDATA[118]]></AD_TABLE_ID>
-<!--118-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--118-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--118-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--118-->  <NAME><![CDATA[ADTask]]></NAME>
-<!--118-->  <DESCRIPTION><![CDATA[Task]]></DESCRIPTION>
-<!--118-->  <HELP><![CDATA[The Task Tab defines the unique tasks that will be used.]]></HELP>
-<!--118-->  <TABLENAME><![CDATA[AD_Task]]></TABLENAME>
-<!--118-->  <CLASSNAME><![CDATA[Task]]></CLASSNAME>
-<!--118-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--118-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--118-->  <AD_WINDOW_ID><![CDATA[114]]></AD_WINDOW_ID>
-<!--118-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--118-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--118-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--118-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--118-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--118-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--118-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--118--></AD_TABLE>
-
 <!--119--><AD_TABLE>
 <!--119-->  <AD_TABLE_ID><![CDATA[119]]></AD_TABLE_ID>
 <!--119-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -468,28 +446,6 @@ Run Synchronize Terminology to update menu translation.]]></HELP>
 <!--123-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--123-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--123--></AD_TABLE>
-
-<!--124--><AD_TABLE>
-<!--124-->  <AD_TABLE_ID><![CDATA[124]]></AD_TABLE_ID>
-<!--124-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--124-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--124-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--124-->  <NAME><![CDATA[ADTaskTrl]]></NAME>
-<!--124-->  <DESCRIPTION><![CDATA[Allows the translation of any task of the application.]]></DESCRIPTION>
-<!--124-->  <HELP><![CDATA[Allows the translation of any task of the application. After performing any edits, the window must be regenerated.]]></HELP>
-<!--124-->  <TABLENAME><![CDATA[AD_Task_Trl]]></TABLENAME>
-<!--124-->  <CLASSNAME><![CDATA[TaskTrl]]></CLASSNAME>
-<!--124-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--124-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--124-->  <AD_WINDOW_ID><![CDATA[114]]></AD_WINDOW_ID>
-<!--124-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--124-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--124-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--124-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--124-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--124-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--124-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--124--></AD_TABLE>
 
 <!--126--><AD_TABLE>
 <!--126-->  <AD_TABLE_ID><![CDATA[126]]></AD_TABLE_ID>
@@ -1246,30 +1202,6 @@ The Report Access Tab determines who can access a report or process]]></HELP>
 <!--197-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--197-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--197--></AD_TABLE>
-
-<!--199--><AD_TABLE>
-<!--199-->  <AD_TABLE_ID><![CDATA[199]]></AD_TABLE_ID>
-<!--199-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--199-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--199-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--199-->  <NAME><![CDATA[ADTaskAccess]]></NAME>
-<!--199-->  <DESCRIPTION><![CDATA[Task Access
-Task Access]]></DESCRIPTION>
-<!--199-->  <HELP><![CDATA[The Task Access Tab defines the Task and type of access that this Role is granted.
-The Task Access Tab defines the Roles that will have access to this task and the type of access each Role is granted.]]></HELP>
-<!--199-->  <TABLENAME><![CDATA[AD_Task_Access]]></TABLENAME>
-<!--199-->  <CLASSNAME><![CDATA[TaskAccess]]></CLASSNAME>
-<!--199-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--199-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--199-->  <AD_WINDOW_ID><![CDATA[114]]></AD_WINDOW_ID>
-<!--199-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--199-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--199-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--199-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--199-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--199-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--199-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--199--></AD_TABLE>
 
 <!--201--><AD_TABLE>
 <!--201-->  <AD_TABLE_ID><![CDATA[201]]></AD_TABLE_ID>
@@ -4684,29 +4616,6 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--520-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D34B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--520--></AD_TABLE>
 
-<!--528--><AD_TABLE>
-<!--528-->  <AD_TABLE_ID><![CDATA[528]]></AD_TABLE_ID>
-<!--528-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--528-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--528-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--528-->  <NAME><![CDATA[ContactInterest]]></NAME>
-<!--528-->  <DESCRIPTION><![CDATA[Business Partner Contact Areas of Interest<BR>Areas of Interest subscription]]></DESCRIPTION>
-<!--528-->  <HELP><![CDATA[Areas of Interest can be used for Marketing Campaigns
-The subscription is used to follow up with the contacts which are subscribed to specific areas of interest and also to add new subscribers.]]></HELP>
-<!--528-->  <TABLENAME><![CDATA[R_ContactInterest]]></TABLENAME>
-<!--528-->  <CLASSNAME><![CDATA[ContactInterest]]></CLASSNAME>
-<!--528-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--528-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--528-->  <AD_WINDOW_ID><![CDATA[245]]></AD_WINDOW_ID>
-<!--528-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--528-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--528-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--528-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--528-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--528-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--528-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D34B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--528--></AD_TABLE>
-
 <!--529--><AD_TABLE>
 <!--529-->  <AD_TABLE_ID><![CDATA[529]]></AD_TABLE_ID>
 <!--529-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -4728,28 +4637,6 @@ The subscription is used to follow up with the contacts which are subscribed to 
 <!--529-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
 <!--529-->  <AD_PACKAGE_ID><![CDATA[65C56C372A314EDDAB62B592084662AE]]></AD_PACKAGE_ID>
 <!--529--></AD_TABLE>
-
-<!--530--><AD_TABLE>
-<!--530-->  <AD_TABLE_ID><![CDATA[530]]></AD_TABLE_ID>
-<!--530-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--530-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--530-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--530-->  <NAME><![CDATA[InterestArea]]></NAME>
-<!--530-->  <DESCRIPTION><![CDATA[Areas of Interest or Topic]]></DESCRIPTION>
-<!--530-->  <HELP><![CDATA[Areas of Interest reflect interest in a topic by a contact. Areas of Interest can be used for marketing campaigns.]]></HELP>
-<!--530-->  <TABLENAME><![CDATA[R_InterestArea]]></TABLENAME>
-<!--530-->  <CLASSNAME><![CDATA[InterestArea]]></CLASSNAME>
-<!--530-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--530-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--530-->  <AD_WINDOW_ID><![CDATA[245]]></AD_WINDOW_ID>
-<!--530-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--530-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--530-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--530-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--530-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--530-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--530-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D34B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--530--></AD_TABLE>
 
 <!--531--><AD_TABLE>
 <!--531-->  <AD_TABLE_ID><![CDATA[531]]></AD_TABLE_ID>

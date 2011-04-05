@@ -1,18 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--101--><AD_MENU>
-<!--101-->  <AD_MENU_ID><![CDATA[101]]></AD_MENU_ID>
-<!--101-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--101-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--101-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--101-->  <NAME><![CDATA[Task]]></NAME>
-<!--101-->  <DESCRIPTION><![CDATA[Define tasks to be used in the application for selected roles.]]></DESCRIPTION>
-<!--101-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--101-->  <ACTION><![CDATA[W]]></ACTION>
-<!--101-->  <AD_WINDOW_ID><![CDATA[114]]></AD_WINDOW_ID>
-<!--101-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--101--></AD_MENU>
-
 <!--102--><AD_MENU>
 <!--102-->  <AD_MENU_ID><![CDATA[102]]></AD_MENU_ID>
 <!--102-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1245,8 +1232,8 @@
 <!--220-->  <DESCRIPTION><![CDATA[Displays the version of the default Java VM]]></DESCRIPTION>
 <!--220-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--220-->  <ACTION><![CDATA[T]]></ACTION>
-<!--220-->  <AD_TASK_ID><![CDATA[102]]></AD_TASK_ID>
 <!--220-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--220-->  <AD_TASK_ID><![CDATA[102]]></AD_TASK_ID>
 <!--220--></AD_MENU>
 
 <!--222--><AD_MENU>
@@ -1753,8 +1740,8 @@
 <!--289-->  <DESCRIPTION><![CDATA[Export (save) the database]]></DESCRIPTION>
 <!--289-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--289-->  <ACTION><![CDATA[T]]></ACTION>
-<!--289-->  <AD_TASK_ID><![CDATA[103]]></AD_TASK_ID>
 <!--289-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--289-->  <AD_TASK_ID><![CDATA[103]]></AD_TASK_ID>
 <!--289--></AD_MENU>
 
 <!--292--><AD_MENU>
@@ -1792,8 +1779,8 @@
 <!--302-->  <DESCRIPTION><![CDATA[Transfer the database]]></DESCRIPTION>
 <!--302-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--302-->  <ACTION><![CDATA[T]]></ACTION>
-<!--302-->  <AD_TASK_ID><![CDATA[104]]></AD_TASK_ID>
 <!--302-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--302-->  <AD_TASK_ID><![CDATA[104]]></AD_TASK_ID>
 <!--302--></AD_MENU>
 
 <!--303--><AD_MENU>
@@ -2028,19 +2015,6 @@
 <!--332-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--332--></AD_MENU>
 
-<!--333--><AD_MENU>
-<!--333-->  <AD_MENU_ID><![CDATA[333]]></AD_MENU_ID>
-<!--333-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--333-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--333-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--333-->  <NAME><![CDATA[Areas of Interest]]></NAME>
-<!--333-->  <DESCRIPTION><![CDATA[Create and edit areas of interest to track the potential needs and wants of your business partners.]]></DESCRIPTION>
-<!--333-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--333-->  <ACTION><![CDATA[W]]></ACTION>
-<!--333-->  <AD_WINDOW_ID><![CDATA[245]]></AD_WINDOW_ID>
-<!--333-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--333--></AD_MENU>
-
 <!--334--><AD_MENU>
 <!--334-->  <AD_MENU_ID><![CDATA[334]]></AD_MENU_ID>
 <!--334-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -2105,19 +2079,6 @@
 <!--340-->  <AD_WINDOW_ID><![CDATA[247]]></AD_WINDOW_ID>
 <!--340-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--340--></AD_MENU>
-
-<!--341--><AD_MENU>
-<!--341-->  <AD_MENU_ID><![CDATA[341]]></AD_MENU_ID>
-<!--341-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--341-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--341-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--341-->  <NAME><![CDATA[Application Translation Check]]></NAME>
-<!--341-->  <DESCRIPTION><![CDATA[Create and edit translations for a selected application language.]]></DESCRIPTION>
-<!--341-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--341-->  <ACTION><![CDATA[W]]></ACTION>
-<!--341-->  <AD_WINDOW_ID><![CDATA[250]]></AD_WINDOW_ID>
-<!--341-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--341--></AD_MENU>
 
 <!--342--><AD_MENU>
 <!--342-->  <AD_MENU_ID><![CDATA[342]]></AD_MENU_ID>
@@ -3089,8 +3050,8 @@
 <!--800046-->  <NAME><![CDATA[Merge Script]]></NAME>
 <!--800046-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800046-->  <ACTION><![CDATA[T]]></ACTION>
-<!--800046-->  <AD_TASK_ID><![CDATA[800000]]></AD_TASK_ID>
 <!--800046-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800046-->  <AD_TASK_ID><![CDATA[800000]]></AD_TASK_ID>
 <!--800046--></AD_MENU>
 
 <!--800047--><AD_MENU>
@@ -3101,8 +3062,8 @@
 <!--800047-->  <NAME><![CDATA[Preinstall]]></NAME>
 <!--800047-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800047-->  <ACTION><![CDATA[T]]></ACTION>
-<!--800047-->  <AD_TASK_ID><![CDATA[800001]]></AD_TASK_ID>
 <!--800047-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800047-->  <AD_TASK_ID><![CDATA[800001]]></AD_TASK_ID>
 <!--800047--></AD_MENU>
 
 <!--800048--><AD_MENU>
@@ -3113,8 +3074,8 @@
 <!--800048-->  <NAME><![CDATA[Version]]></NAME>
 <!--800048-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800048-->  <ACTION><![CDATA[T]]></ACTION>
-<!--800048-->  <AD_TASK_ID><![CDATA[800002]]></AD_TASK_ID>
 <!--800048-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800048-->  <AD_TASK_ID><![CDATA[800002]]></AD_TASK_ID>
 <!--800048--></AD_MENU>
 
 <!--800052--><AD_MENU>
@@ -3334,19 +3295,6 @@
 <!--800081-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800081-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800081--></AD_MENU>
-
-<!--800082--><AD_MENU>
-<!--800082-->  <AD_MENU_ID><![CDATA[800082]]></AD_MENU_ID>
-<!--800082-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800082-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800082-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800082-->  <NAME><![CDATA[Generate Help]]></NAME>
-<!--800082-->  <DESCRIPTION><![CDATA[Generate help windows in html format]]></DESCRIPTION>
-<!--800082-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800082-->  <ACTION><![CDATA[P]]></ACTION>
-<!--800082-->  <AD_PROCESS_ID><![CDATA[800071]]></AD_PROCESS_ID>
-<!--800082-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800082--></AD_MENU>
 
 <!--800083--><AD_MENU>
 <!--800083-->  <AD_MENU_ID><![CDATA[800083]]></AD_MENU_ID>
