@@ -241,11 +241,15 @@ OB.ViewFormProperties = {
     }
   },
   
-  // reset the focus item to the first item which can get focus
   resetFocusItem: function() {
     var items = this.getItems(), length = items.length, item;
     
-    // used when double clicking a specific cell in a record
+    var errorFld = this.getFirstErrorItem();
+    if (errorFld) {
+      this.setFocusInItem(errorFld, true);
+      return;
+    }
+    
     if (this.forceFocusedField) {
       item = this.getItem(this.forceFocusedField);
       if(item && item.getCanFocus()) {
@@ -1006,11 +1010,11 @@ OB.ViewFormProperties = {
   },
   
   getFirstErrorItem: function() {
-    var flds = this.getFields();
+    var flds = this.getFields(), errs = this.getErrors();
     if (flds.length) {
       var length = flds.length;
       for (i = 0; i < length; i++) {
-        if (flds[i].getErrors()) {
+        if (flds[i].getErrors() || errs[flds[i].name]) {
           return flds[i];
         }
       }
