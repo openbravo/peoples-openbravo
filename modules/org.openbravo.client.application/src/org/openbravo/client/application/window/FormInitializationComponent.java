@@ -198,20 +198,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           calloutsToCall, lastfieldChanged, calloutMessages, changeEventCols);
 
       if (changedCols.size() > 0) {
-        List<String> columnsToComputeAgain = new ArrayList<String>();
-        for (String changedCol : changedCols) {
-          for (String colWithVal : columnsInValidation.keySet()) {
-            for (String colInVal : columnsInValidation.get(colWithVal)) {
-              if (colInVal.equalsIgnoreCase(changedCol)) {
-                if (!columnsToComputeAgain.contains(colInVal)) {
-                  columnsToComputeAgain.add(colWithVal);
-                }
-              }
-            }
-          }
-        }
         RequestContext.get().setRequestParameter("donotaddcurrentelement", "true");
-        subsequentComboReload(tab, columnsToComputeAgain, columnValues);
+        subsequentComboReload(tab, columnValues, changedCols, columnsInValidation);
       }
 
       if (mode.equals("NEW")) {
@@ -473,17 +461,30 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
   }
 
-  private void subsequentComboReload(Tab tab, List<String> allColumns,
-      Map<String, JSONObject> columnValues) {
+  private void subsequentComboReload(Tab tab, Map<String, JSONObject> columnValues,
+      List<String> changedCols, Map<String, List<String>> columnsInValidation) {
+
+    List<String> columnsToComputeAgain = new ArrayList<String>();
+    for (String changedCol : changedCols) {
+      for (String colWithVal : columnsInValidation.keySet()) {
+        for (String colInVal : columnsInValidation.get(colWithVal)) {
+          if (colInVal.equalsIgnoreCase(changedCol)) {
+            if (!columnsToComputeAgain.contains(colInVal)) {
+              columnsToComputeAgain.add(colWithVal);
+            }
+          }
+        }
+      }
+    }
     HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
     for (Field field : tab.getADFieldList()) {
-      for (String col : allColumns) {
+      for (String col : columnsToComputeAgain) {
         if (col.equalsIgnoreCase(field.getColumn().getDBColumnName())) {
           columnsOfFields.put(col, field);
         }
       }
     }
-    for (String col : allColumns) {
+    for (String col : columnsToComputeAgain) {
       Field field = columnsOfFields.get(col);
       try {
         String columnId = field.getColumn().getId();
