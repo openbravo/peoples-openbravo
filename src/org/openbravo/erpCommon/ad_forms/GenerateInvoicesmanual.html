@@ -102,6 +102,13 @@ function validate(action) {
 	function onResizeDo(){
 		resizeArea();
 	}
+	
+	function openSalesOrders(recordid) {
+		var myframe = getFrame('LayoutMDI') || top.opener;
+		if (myframe) {
+			myframe.OB.Utilities.openDirectTab('186', recordid);
+		}
+	}
 	</script>
 </head>
 <body onload="onLoadDo();" onresize="onResizeDo();" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
@@ -394,7 +401,7 @@ function validate(action) {
               </td>
               <td class="DataGrid_Body_Cell" id="fieldAdorgname">xxFrilac</td>
               <td class="DataGrid_Body_Cell" id="fieldCdoctypename">Standard order</td>
-              <td class="DataGrid_Body_Cell"> <a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpcOrderId, 'xx', false, document.frmMain, '../SalesOrder/Header_Relation.html', null, false, true);return false;" onmouseover="window.status='Sales Order';return true;" onmouseout="window.status='';return true;" class="Link" id="fieldId"> 
+              <td class="DataGrid_Body_Cell"> <a href="#" onclick="openSalesOrders('xx');return false;" onmouseover="window.status='Sales Order';return true;" onmouseout="window.status='';return true;" class="Link" id="fieldId"> 
                 <span id="fieldDocumentno">xx24/10/2004</span></a></td>
               <td class="DataGrid_Body_Cell" id="fieldCbpartnername">xxHuesker</td>
               <td class="DataGrid_Body_Cell" id="fieldDateordered">xx12/03/2004</td>
