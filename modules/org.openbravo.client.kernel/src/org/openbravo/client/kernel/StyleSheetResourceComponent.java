@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.StringReader;
 import java.util.List;
+import java.util.Random;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -69,6 +70,8 @@ public class StyleSheetResourceComponent extends BaseComponent {
 
   @Override
   public String getETag() {
+    if (1 == 1)
+      return new Random().toString();
     final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
     final StringBuilder version = new StringBuilder();
     for (Module module : modules) {

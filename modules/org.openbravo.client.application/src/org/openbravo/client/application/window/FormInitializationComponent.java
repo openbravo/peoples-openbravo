@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,6 +56,7 @@ import org.openbravo.client.kernel.reference.EnumUIDefinition;
 import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -68,6 +70,7 @@ import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
@@ -111,6 +114,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       String tabId = (String) parameters.get("TAB_ID");
       // The ID of the record. Only relevant on EDIT, CHANGE and SETSESSION modes
       String rowId = (String) parameters.get("ROW_ID");
+      // The IDs of the selected records in case more than one
+      String multipleRowIds[] = (String[]) parameters.get("MULTIPLE_ROW_IDS");
       // The column changed by the user. Only relevant on CHANGE mode
       String changedColumn = (String) parameters.get("CHANGED_COLUMN");
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
@@ -202,19 +207,24 @@ public class FormInitializationComponent extends BaseActionHandler {
         subsequentComboReload(tab, columnValues, changedCols, columnsInValidation);
       }
 
+      // Attachment information
+      long t7 = System.currentTimeMillis();
+      List<JSONObject> attachments = attachmentForRows(tab, rowId, multipleRowIds);
+
       if (mode.equals("NEW")) {
         // In the case of NEW mode, we compute auxiliary inputs again to take into account that
         // auxiliary inputs could depend on a default value
         computeAuxiliaryInputs(mode, tab, columnValues);
       }
       // Construction of the final JSONObject
-      long t7 = System.currentTimeMillis();
-      JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
-          calloutMessages);
       long t8 = System.currentTimeMillis();
+      JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
+          calloutMessages, attachments);
+      long t9 = System.currentTimeMillis();
       log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
           + (t3 - t2) + "," + (t4 - t3) + "," + (t5 - t4) + "," + (t6 - t5) + "," + (t7 - t6) + ","
-          + (t8 - t7) + ")");
+          + (t8 - t7) + "," + (t9 - t8) + ")");
+      log.info("Attachment exists: " + finalObject.getBoolean("attachmentExists"));
       return finalObject;
     } catch (Throwable t) {
       t.printStackTrace(System.err);
@@ -230,8 +240,36 @@ public class FormInitializationComponent extends BaseActionHandler {
     return null;
   }
 
+  private List<JSONObject> attachmentForRows(Tab tab, String rowId, String[] multipleRowIds) {
+    String tableId = (String) DalUtil.getId(tab.getTable());
+    List<JSONObject> attachmentList = new ArrayList<JSONObject>();
+    OBCriteria<Attachment> attachments;
+    if (multipleRowIds == null) {
+      attachments = OBDao.getFilteredCriteria(Attachment.class, Expression.eq("table.id", tableId),
+          Expression.eq("record", rowId));
+    } else {
+      attachments = OBDao.getFilteredCriteria(Attachment.class, Expression.eq("table.id", tableId),
+          Expression.in("record", multipleRowIds));
+    }
+    for (Attachment attachment : attachments.list()) {
+      JSONObject obj = new JSONObject();
+      try {
+        obj.put("name", attachment.getName());
+        obj.put("id", attachment.getId());
+        SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
+        obj.put("creationDate", xmlDateTimeFormat.format(attachment.getCreationDate()));
+        obj.put("createdby", attachment.getCreatedBy().getName());
+      } catch (JSONException e) {
+        log.error("Error while reading attachments", e);
+      }
+      attachmentList.add(obj);
+    }
+    return attachmentList;
+  }
+
   private JSONObject buildJSONObject(String mode, Tab tab, Map<String, JSONObject> columnValues,
-      BaseOBObject row, List<String> changeEventCols, List<String> calloutMessages) {
+      BaseOBObject row, List<String> changeEventCols, List<String> calloutMessages,
+      List<JSONObject> attachments) {
     JSONObject finalObject = new JSONObject();
     try {
       if (mode.equals("NEW") || mode.equals("CHANGE")) {
@@ -319,6 +357,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           }
         }
       }
+      finalObject.put("attachments", new JSONArray(attachments));
+      finalObject.put("attachmentExists", attachments.size() > 0);
 
       log.debug(finalObject.toString(1));
       return finalObject;

@@ -200,7 +200,8 @@ isc.OBStandardView.addProperties({
                    isc.OBToolbarIconButton.create(isc.OBToolbar.UNDO_BUTTON_PROPERTIES), 
                    isc.OBToolbarIconButton.create(isc.OBToolbar.DELETE_BUTTON_PROPERTIES), 
                    isc.OBToolbarIconButton.create(isc.OBToolbar.REFRESH_BUTTON_PROPERTIES),
-                   isc.OBToolbarIconButton.create(isc.OBToolbar.EXPORT_BUTTON_PROPERTIES)];
+                   isc.OBToolbarIconButton.create(isc.OBToolbar.EXPORT_BUTTON_PROPERTIES),
+                   isc.OBToolbarIconButton.create(isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES)];
     
     // Look for specific toolabr buttons for this tab
     if (this.iconToolbarButtons) {

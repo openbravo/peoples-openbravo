@@ -59,7 +59,11 @@ public abstract class BaseActionHandler implements ActionHandler {
       final Map<String, Object> parameterMap = new HashMap<String, Object>();
       for (Enumeration keys = request.getParameterNames(); keys.hasMoreElements();) {
         final String key = (String) keys.nextElement();
-        parameterMap.put(key, request.getParameter(key));
+        if (request.getParameterValues(key) != null && request.getParameterValues(key).length > 1) {
+          parameterMap.put(key, request.getParameterValues(key));
+        } else {
+          parameterMap.put(key, request.getParameter(key));
+        }
       }
       // also add the Http Stuff
       parameterMap.put(KernelConstants.HTTP_SESSION, request.getSession(false));

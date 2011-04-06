@@ -150,8 +150,8 @@ function OBStartApplication() {
 <script type="text/javascript" src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined.js"></script>
 <script type="text/javascript" src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_History.js"></script>
 <script type="text/javascript" src="./org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_mode=3.00&_skinVersion=3.00"></script>
-<form name="OBGlobalHiddenForm" method="post" action="blank.html">
 <iframe id="background_target" height="0" width="0" style="display:none;"></iframe>
+<form name="OBGlobalHiddenForm" method="post" action="blank.html" target="background_target">
 </form>
 </body>
 </html>

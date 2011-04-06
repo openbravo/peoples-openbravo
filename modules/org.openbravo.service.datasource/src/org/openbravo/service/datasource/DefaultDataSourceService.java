@@ -70,8 +70,9 @@ public class DefaultDataSourceService extends BaseDataSourceService {
 
   private void addFetchParameters(Map<String, String> parameters) {
 
-    parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
-
+    if (getEntity() != null) {
+      parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
+    }
     if (getWhereClause() != null) {
       if (parameters.get(JsonConstants.WHERE_PARAMETER) != null) {
         final String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);

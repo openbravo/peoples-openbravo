@@ -75,6 +75,9 @@ OB.ViewFormProperties = {
   
   // is set in the OBLinkedItemSectionItem.initWidget
   linkedItemSection: null,
+  
+  // is set in the OBAttachmentsSectionItem.initWidget
+  attachmentsSection: null,
 
   initWidget: function() {
     this._preventFocusChanges = true;
@@ -211,6 +214,15 @@ OB.ViewFormProperties = {
     }
   },
   
+  enableAttachmentsSection: function(){
+    if (!this.attachmentsSection) {
+      return;
+    }
+    this.attachmentsSection.collapseSection();
+    this.attachmentsSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID), this.view.tabId);
+    this.attachmentsSection.show();
+  },
+  
   // add the undo buttons to the clickmask so that no save happens when 
   // clicking undo
   showClickMask : function(clickAction, mode, unmaskedTargets) {
@@ -241,6 +253,7 @@ OB.ViewFormProperties = {
     this.view.updateTabTitle();
     this.enableNoteSection(!isNew);
     this.enableLinkedItemSection(!isNew);
+    this.enableAttachmentsSection();
 
     if (isNew) {
       this.view.statusBar.newIcon.prompt = OB.I18N.getLabel('OBUIAPP_NewIconPrompt');
@@ -483,6 +496,8 @@ OB.ViewFormProperties = {
         }
       }
     }
+    
+    this.attachmentsSection.fillAttachments(data.attachments);
 
     // apparently sometimes an empty string is returned
     if (calloutMessages && calloutMessages.length > 0 && calloutMessages[0] !== '') {

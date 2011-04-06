@@ -195,6 +195,13 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     fields.add(linkedItemsField);
     fields.add(linkedItemsCanvasFieldDefinition);
 
+    // add the attachments part
+    final AttachmentsCanvasField attachmentsCanvas = new AttachmentsCanvasField();
+    final AttachmentsField attachmentDefinition = new AttachmentsField();
+    attachmentDefinition.setChildField(attachmentsCanvas);
+    fields.add(attachmentDefinition);
+    fields.add(attachmentsCanvas);
+
     return fields;
   }
 
@@ -550,6 +557,60 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return fieldGroup.getId();
     }
 
+  }
+
+  public class AttachmentsCanvasField extends DefaultVirtualField {
+
+    public String getName() {
+      return "_attachments_Canvas";
+    }
+
+    public String getType() {
+      return "OBAttachmentCanvasItem";
+    }
+  }
+
+  public class AttachmentsField extends DefaultVirtualField {
+
+    private OBViewFieldDefinition childField;
+
+    public String getLabel() {
+      // is set at runtime
+      return "dummy";
+    }
+
+    public boolean getEndRow() {
+      return true;
+    }
+
+    public List<OBViewFieldDefinition> getChildren() {
+      return Collections.singletonList(childField);
+
+    }
+
+    public String getType() {
+      return "OBAttachmentsSectionItem";
+    }
+
+    public boolean getStartRow() {
+      return true;
+    }
+
+    public boolean getRedrawOnChange() {
+      return false;
+    }
+
+    public String getName() {
+      return "_attachments_";
+    }
+
+    public OBViewFieldDefinition getChildField() {
+      return childField;
+    }
+
+    public void setChildField(OBViewFieldDefinition childField) {
+      this.childField = childField;
+    }
   }
 
   public class LinkedItemsField extends DefaultVirtualField {

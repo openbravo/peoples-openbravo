@@ -26,6 +26,7 @@ isc.OBToolbar.addClassProperties({
   TYPE_UNDO: 'undo',
   TYPE_REFRESH: 'refresh',
   TYPE_EXPORT: 'export',
+  TYPE_ATTACHMENTS: 'attach',
   
   SAVE_BUTTON_PROPERTIES: {
     action: function(){
@@ -219,9 +220,106 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'export',
     prompt: OB.I18N.getLabel('OBUIAPP_ExportGrid'),
     updateState: function(){
-      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows()===0);
+      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0);
     },
     keyboardShortcutId: 'ToolBar_Export'
+  },
+  ATTACHMENTS_BUTTON_PROPERTIES: {
+    action: function(){
+      var selectedRows = this.view.viewGrid.getSelectedRecords();
+      var attachmentExists = this.view.attachmentExists;
+      if(this.view.isShowingForm){
+          this.view.viewForm.getItem('_attachments_').expandSection();
+        this.view.viewForm.scrollToBottom();
+        return;
+      }
+      if(attachmentExists){
+        if(selectedRows.size() === 1){
+            this.view.editRecord(selectedRows[0]);
+            this.view.viewForm.getItem('_attachments_').expandSection();
+            this.view.viewForm.ignoreFirstFocusEvent = true;
+            this.view.viewForm.scrollToBottom();
+        } else {
+          var recordIds = "";
+          for(var i=0; i<selectedRows.size(); i++){
+            if(i>0){
+              recordIds = recordIds + ",";  
+            }
+            recordIds=recordIds + selectedRows[i].id;
+          }
+          var vTabId = this.view.tabId;
+          var vbuttonId = this.ID;
+             isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmDownloadMultiple'), function(clickedOK){
+            if(clickedOK){
+              var d = {
+                Command: 'GET_MULTIPLE_RECORDS_OB3',
+                tabId: vTabId,
+                buttonId: vbuttonId,
+                recordIds: recordIds
+              };
+              OB.Utilities.postThroughHiddenForm('./businessUtility/TabAttachments_FS.html', d);
+            }
+          });
+        }
+      }else{
+        var form = isc.DynamicForm.create({
+          fields: [
+            {name: 'inpname', type: 'upload', change: function(form, item, value, oldvalue){
+                form.button.customState = 'Progress';
+                form.button.resetBaseStyle();
+            	form.submitForm();
+            	}},
+            {name: 'Command', type: 'hidden', value: 'SAVE_NEW_OB3'},
+            {name: 'buttonId', type: 'hidden', value: this.ID},
+            {name: 'inpKey', type: 'hidden', value: this.view.viewGrid.getSelectedRecord().id},
+            {name: 'inpTabId', type: 'hidden', value: this.view.tabId},
+            {name: 'inpwindowId', type: 'hidden', value: this.view.windowId}
+          ],
+          encoding: 'multipart',
+          action: './businessUtility/TabAttachments_FS.html',
+          target: "background_target",
+          position: 'absolute',
+          left: '-9000px',
+          button: this
+        });
+        this.oldForm = form;
+        form.show();
+        form.getItem('inpname').getElement().click();
+      }
+    },
+    callback: function(){
+    	if(this.oldForm){
+    	  this.oldForm.destroy();
+    	}
+        this.view.attachmentExists = true;
+        this.customState = '';
+        this.updateState();
+    },
+    disabled: false,
+    buttonType: 'attach',
+    updateState: function(){
+      var selectedRows = this.view.viewGrid.getSelectedRecords();
+      var attachmentExists = this.view.attachmentExists;
+      if(attachmentExists){
+        this.prompt = OB.I18N.getLabel('OBUIAPP_DownloadAttachments');
+        this.buttonType = 'attachExists';
+      }else{
+        this.prompt = OB.I18N.getLabel('OBUIAPP_CreateAttachments');  
+        this.buttonType = 'attach';
+      }
+      if(!selectedRows || selectedRows.size()===0){
+        // If there are now selected rows then attachments button will be disabled
+        this.setDisabled(true);  
+      }else if(selectedRows.size() > 1 && !this.view.attachmentExists){
+        // If there are more than one rows selected, and no one has attachments,
+        // then attachments button will be disabled
+        this.setDisabled(true);
+      }else{
+        this.setDisabled(false);  
+      }
+      this.resetBaseStyle();
+    },
+    keyboardShortcutId: 'ToolBar_Attachments'
   },
   LINK_BUTTON_PROPERTIES: {
     action: function(){
@@ -382,6 +480,7 @@ isc.OBToolbar.addProperties({
   // NOTE: new buttons should implement the updateState method.
   //
   updateButtonState: function(noSetSession){
+
     for (i = 0; i < this.leftMembers.length; i++) {
       if (this.leftMembers[i].updateState) {
         this.leftMembers[i].updateState();
@@ -828,16 +927,21 @@ isc.OBToolbar.addProperties({
           me.rightMembers[i].enableShortcut();
         }
       }
+      for (i = 0; i < me.leftMembers.length; i++) {
+        if (me.leftMembers[i].updateState) {
+            me.leftMembers[i].updateState();
+        }
+      }
     }
     
     var buttons = this.getRightMembers(), numOfSelRecords = 0, isNew = this.view.viewForm.isNew, hideAllButtons = typeof(isNew) !== 'undefined' && !isNew &&
-    (!this.view.isShowingForm && (!this.view.viewGrid.getSelectedRecords() || this.view.viewGrid.getSelectedRecords().length !== 1)), currentValues = this.view.getCurrentValues();
-    
+    (!this.view.isShowingForm && (this.view.viewGrid.getSelectedRecords().size()===0)), currentValues = this.view.getCurrentValues();
+    var noneOrMultipleRecordsSelected = this.view.viewGrid.getSelectedRecords().length !== 1;
     if (this.view.viewGrid.getSelectedRecords()) {
       numOfSelRecords = this.view.viewGrid.getSelectedRecords().length;
     }
     
-    if (!noSetSession && this.view.buttonsHaveSessionLogic && !this.view.isShowingForm && !hideAllButtons && !isNew) {
+    if (!noSetSession && !this.view.isShowingForm && !isNew && !hideAllButtons) {
       var formView = this.view.viewForm, me = this;
       // Call FIC to obtain possible session attributes and set them in form
       requestParams = {
@@ -846,9 +950,17 @@ isc.OBToolbar.addProperties({
         TAB_ID: this.view.tabId,
         ROW_ID: currentValues.id
       };
+      var multipleSelectedRowIds = [];
+      var selectedRecords = this.view.viewGrid.getSelectedRecords();
+      if(selectedRecords.size() > 1){
+        for (i = 0; i < selectedRecords.size(); i++) {
+          multipleSelectedRowIds[i] = selectedRecords[i].id;
+        }
+        requestParams.MULTIPLE_ROW_IDS = multipleSelectedRowIds;
+      }
       var allProperties = this.view.getContextInfo(false, true, false, false);
       OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
-        var sessionAttributes = data.sessionAttributes, auxInputs = data.auxiliaryInputValues;
+        var sessionAttributes = data.sessionAttributes, auxInputs = data.auxiliaryInputValues, attachmentExists = data.attachmentExists;
         if (sessionAttributes) {
           formView.sessionAttributes = sessionAttributes;
         }
@@ -862,12 +974,12 @@ isc.OBToolbar.addProperties({
             }
           }
         }
-        
-        doRefresh(buttons, currentValues, false, me);
+        formView.view.attachmentExists = attachmentExists;
+        doRefresh(buttons, currentValues, noneOrMultipleRecordsSelected, me);
       });
     } else {
       currentValues = this.view.getCurrentValues();
-      doRefresh(buttons, currentValues, hideAllButtons, this);
+      doRefresh(buttons, currentValues, hideAllButtons || noneOrMultipleRecordsSelected, this);
     }
   },
   

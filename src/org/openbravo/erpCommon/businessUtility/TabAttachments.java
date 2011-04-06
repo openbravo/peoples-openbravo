@@ -19,9 +19,14 @@
 package org.openbravo.erpCommon.businessUtility;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.sql.Connection;
+import java.util.HashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -29,11 +34,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Expression;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.window.AttachmentsAH;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -83,6 +98,19 @@ public class TabAttachments extends HttpSecureAppServlet {
               + "?Command=EDIT&inpcFileId=" + strFileReference);
         } else if (vars.commandIn("SAVE_NEW_NEW")) {
           response.sendRedirect(strDireccion + request.getServletPath() + "?Command=NEW");
+        } else if (vars.commandIn("SAVE_NEW_OB3")) {
+          OBContext.setAdminMode();
+          try {
+            Tab tab = OBDal.getInstance().get(Tab.class, strTab);
+            JSONObject obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
+            String buttonId = vars.getStringParameter("buttonId");
+            Writer writer = response.getWriter();
+            writer.write("<HTML><BODY><script type=\"text/javascript\">");
+            writer.write("top." + buttonId + ".callback(" + obj.toString() + ");");
+            writer.write("</SCRIPT></BODY></HTML>");
+          } finally {
+            OBContext.restorePreviousMode();
+          }
         }
       }
     } else if (vars.getCommand().startsWith("SAVE_EDIT")) {
@@ -155,6 +183,8 @@ public class TabAttachments extends HttpSecureAppServlet {
     } else if (vars.commandIn("DISPLAY_DATA")) {
       final String strFileReference = vars.getStringParameter("inpcFileId");
       printPageFile(response, vars, strFileReference);
+    } else if (vars.getCommand().contains("GET_MULTIPLE_RECORDS_OB3")) {
+      printPageFileMultiple(response, vars);
     } else if (vars.commandIn("DEFAULT")) {
       vars.getGlobalVariable("inpTabId", "TabAttachments.tabId");
       vars.getGlobalVariable("inpwindowId", "TabAttachments.windowId");
@@ -192,6 +222,53 @@ public class TabAttachments extends HttpSecureAppServlet {
       pageError(response);
   }
 
+  private void printPageFileMultiple(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException {
+    OBContext.setAdminMode(true);
+    try {
+      String tabId = vars.getStringParameter("tabId");
+      String recordIds = vars.getStringParameter("recordIds");
+      String buttonId = vars.getStringParameter("buttonId");
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      String tableId = (String) DalUtil.getId(tab.getTable());
+      OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
+          Expression.eq("table.id", tableId), Expression.in("record", recordIds.split(",")));
+
+      response.setContentType("application/zip");
+      response.setHeader("Content-Disposition", "attachment; filename=attachments.zip");
+      final ZipOutputStream dest = new ZipOutputStream(response.getOutputStream());
+      attachmentFiles.list().toArray();
+      HashMap<String, Integer> writtenFiles = new HashMap<String, Integer>();
+      for (Attachment attachmentFile : attachmentFiles.list()) {
+        final File file = new File(globalParameters.strFTPDirectory + "/" + tableId + "-"
+            + attachmentFile.getRecord(), attachmentFile.getName());
+        String zipName = "";
+        if (!writtenFiles.containsKey(file.getName())) {
+          zipName = file.getName();
+          writtenFiles.put(file.getName(), new Integer(0));
+        } else {
+          int num = writtenFiles.get(file.getName()) + 1;
+          zipName = file.getName() + "." + num;
+          writtenFiles.put(file.getName(), new Integer(num));
+        }
+        byte[] buf = new byte[1024];
+        dest.putNextEntry(new ZipEntry(zipName));
+        FileInputStream in = new FileInputStream(file.toString());
+        int len;
+        while ((len = in.read(buf)) > 0) {
+          dest.write(buf, 0, len);
+        }
+        dest.closeEntry();
+        in.close();
+      }
+      dest.close();
+    } catch (Exception e) {
+      log4j.error("Error while downloading attachments", e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   private OBError insert(VariablesSecureApp vars, String strFileReference, String tableId,
       String key, String strDataType, String strText) throws IOException, ServletException {
 
@@ -218,8 +295,19 @@ public class TabAttachments extends HttpSecureAppServlet {
       } else if ((i = strName.lastIndexOf("/")) != -1) {
         strName = strName.substring(i + 1);
       }
-      TabAttachmentsData.insert(conn, this, strFileReference, vars.getClient(), vars.getOrg(), vars
-          .getUser(), tableId, key, strDataType, strText, strName);
+      boolean fileExists = false;
+      final TabAttachmentsData[] files = TabAttachmentsData.select(this, "'" + vars.getClient()
+          + "'", "'" + vars.getOrg() + "'", tableId, key);
+      for (TabAttachmentsData data : files) {
+        if (data.name.equals(strName)) {
+          fileExists = true;
+        }
+      }
+      if (!fileExists) {
+        // We only insert a new record if there is no record for this file
+        TabAttachmentsData.insert(conn, this, strFileReference, vars.getClient(), vars.getOrg(),
+            vars.getUser(), tableId, key, strDataType, strText, strName);
+      }
       try {
         // FIXME: Get the directory separator from Java runtime
         final File uploadedDir = new File(globalParameters.strFTPDirectory + "/" + tableId + "-"

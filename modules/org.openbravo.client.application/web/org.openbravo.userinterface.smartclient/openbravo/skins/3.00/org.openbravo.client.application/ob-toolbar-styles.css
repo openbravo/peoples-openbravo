@@ -214,6 +214,24 @@
   background-image: url(./images/toolbar/iconButton-attach.png);
 }
 
+.OBToolbarIconButton_icon_attachExists {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/toolbar/iconButton-attach-box.png);
+}
+
+.OBToolbarIconButton_icon_attachProgress {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/system/progress-indicator-toolbar.gif);
+}
+
+.OBToolbarIconButton_icon_attachExistsProgress {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/system/progress-indicator-toolbar.gif);
+}
+
 .OBToolbarIconButton_icon_innerJoin {
   background-repeat: no-repeat;
   background-position: center center;
