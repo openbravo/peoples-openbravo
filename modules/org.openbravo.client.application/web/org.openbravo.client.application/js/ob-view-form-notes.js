@@ -219,9 +219,10 @@ isc.OBNoteLayout.addProperties( {
 
 							fetchData : function(criteria, callback,
 									requestProperties) {
-								return this.Super('fetchData', [
-										this.convertCriteria(criteria),
+							  if (this.layout.isDrawn()) {
+								  return this.Super('fetchData', [ this.convertCriteria(criteria),
 										callback, requestProperties ]);
+							  }
 							},
 
 							filterData : function(criteria, callback,
