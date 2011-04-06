@@ -237,24 +237,22 @@ isc.OBNoteLayout.addProperties( {
 								}
 
 								var view = this.layout.getForm().view;
+                if (view && view.viewGrid.getSelectedRecord()) {
+                  criteria.criteria.push( {
+                    fieldName : 'table',
+                    operator : 'equals',
+                    value : view.standardProperties.inpTableId
+                   });
 
-								criteria.criteria.push( {
-									fieldName : 'table',
-									operator : 'equals',
-									value : view.standardProperties.inpTableId
-								});
+                  criteria.criteria.push( {
+                    fieldName : 'record',
+                    operator : 'equals',
+                    value : view.viewGrid.getSelectedRecord().id
+                  });
 
-								criteria.criteria
-										.push( {
-											fieldName : 'record',
-											operator : 'equals',
-											value : view.viewGrid
-													.getSelectedRecord().id
-										});
-
-								criteria[OB.Constants.ORDERBY_PARAMETER] = 'updated desc';
-
-								return criteria;
+                  criteria[OB.Constants.ORDERBY_PARAMETER] = 'updated desc';
+                }
+                return criteria;
 
 							},
 
