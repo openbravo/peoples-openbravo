@@ -62,6 +62,15 @@ setRecordInfo : function(entity, id) {
 
 refresh : function() {
 	this.getNotePart().refresh();
+},
+
+hide: function(){
+ this.Super('hide',arguments);
+ if (this.canvasItem) {
+   // Solves issue #16663: Forcing call to canvas hide. 
+   // Shouldn't this be invoked by SmartClient 
+   this.canvasItem.hide();
+ }
 }
 
 });
