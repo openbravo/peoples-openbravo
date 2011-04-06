@@ -109,15 +109,18 @@ public class SL_Order_DocType extends HttpSecureAppServlet {
         if (!DocSubTypeSO.equals("OB") && strOldDocTypeTarget.equals("OB")) {
           String strOldDocNo = SLOrderDocTypeData.selectOldDocNo(this, strOrder);
           resultado.append("new Array(\"inpdescription\", \""
-              + FormatUtilities.replaceJS("Presupuesto Nº: " + strOldDocNo + ". " + strDescription)
-              + "\"),\n");
+              + FormatUtilities.replaceJS(Utility.messageBD(this, "Quotation", vars.getLanguage())
+                  + " " + strOldDocNo + ". " + strDescription) + "\"),\n");
         }
         resultado.append("new Array(\"inpordertype\", \"" + DocSubTypeSO + "\")\n");
         PaymentRule = "P";
         InvoiceRule = (DocSubTypeSO.equals("PR") ? "I" : "D");
         DeliveryRule = "A";
         if (dataNew[0].isdocnocontrolled.equals("Y")) {
-          if (!newDocNo && !AD_Sequence_ID.equals(dataNew[0].adSequenceId)&&!SLOrderDocTypeData.selectOldDocTypeTargetId(this,strOrder).equalsIgnoreCase(strDocTypeTarget))
+          if (!newDocNo
+              && !AD_Sequence_ID.equals(dataNew[0].adSequenceId)
+              && !SLOrderDocTypeData.selectOldDocTypeTargetId(this, strOrder).equalsIgnoreCase(
+                  strDocTypeTarget))
             newDocNo = true;
           if (newDocNo) {
             if (vars.getRole().equalsIgnoreCase("System")

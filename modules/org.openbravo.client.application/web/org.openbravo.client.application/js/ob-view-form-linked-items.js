@@ -13,7 +13,7 @@
  * The Initial Developer of the Original Code is Openbravo SLU
  * All portions are Copyright (C) 2011 Openbravo SLU
  * All Rights Reserved.
- * Contributor(s):  ______________________________________.
+ * Contributor(s):  Valery Lezhebokov.
  ************************************************************************
  */
 // = OBLinkedItems =

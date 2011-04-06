@@ -415,27 +415,35 @@ isc.OBSectionItem.addProperties({
   // visual state of disabled or non-disabled stays the same now
   showDisabled: false,
   
-  initWidget: function(){
-    var ret = this.Super('initWidget', arguments);
-    return ret;
-  },
-  
   // never disable a section item
   isDisabled: function(){
     return false;
   },
+
+  // Update the property alwaysTakeSpace when collapsing/expanding a section 
+  updateAlwaysTakeSpace: function(flag) {
+    var i, f = this.form;
+
+    for(i = 0; i < this.itemIds.length; i++) {
+      f.getItem(this.itemIds[i]).alwaysTakeSpace = flag;
+    }
+  },
   
-  collapseSection: function(){
+  collapseSection: function() {
     // when collapsing set the focus to the header
+    this.updateAlwaysTakeSpace(false);
     this.form.setFocusItem(this);
     var ret = this.Super('collapseSection', arguments);
     return ret;
   },
   
-  expandSection: function(){
+  expandSection: function() {
+    this.updateAlwaysTakeSpace(true);
+
     if (this.form.getFocusItem()) {
       this.form.getFocusItem().blurItem();
     }
+
     var ret = this.Super('expandSection', arguments);
     
     if (!this.form._preventFocusChanges) {

@@ -187,7 +187,11 @@ isc.OBAlertGrid.addProperties({
         filterClause += ' or e.id in (' +OB.AlertManagement.alertRules[i].alerts + '))';
       }
     }
-    whereClause += ' and alertRule.id in (' + alertRuleIds + ')';
+    if (alertRuleIds !== '') {
+      whereClause += ' and alertRule.id in (' + alertRuleIds + ')';
+    } else {
+      whereClause += ' and 1=2';
+    }
     if (filterClause !== '') {
       whereClause += filterClause;
     }

@@ -150,8 +150,6 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
     result.put("language", createLanguageFormItemInfo());
     result.put("initialValues", createInitialValues());
     result.put("role", createRoleInfo(parameters));
-    result.put("warehouseOrgMap",
-        getWarehouses(OBContext.getOBContext().getCurrentClient().getId()));
     return result;
   }
 
@@ -183,6 +181,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
         orgValueMap.put(org.getId(), org.getIdentifier());
       }
       jsonRole.put("organizationValueMap", orgValueMap);
+      jsonRole.put("warehouseOrgMap", getWarehouses(role.getClient().getId()));
       jsonRoles.put(jsonRole);
     }
     formItemInfo.put("roles", jsonRoles);

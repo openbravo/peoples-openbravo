@@ -126,8 +126,15 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
       refreshPaymentMethodCombo(response, strPaymentMethodId, "", strOrgId);
 
-    } else if (vars.commandIn("SAVE")) {
-      String strAction = vars.getRequiredStringParameter("inpActionDocument");
+    } else if (vars.commandIn("SAVE") || vars.commandIn("SAVEANDPROCESS")) {
+      boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
+      String strAction = null;
+      if (vars.commandIn("SAVEANDPROCESS")) {
+        // The default option is process
+        strAction = (isReceipt ? "PRP" : "PPP");
+      } else {
+        strAction = vars.getRequiredStringParameter("inpActionDocument");
+      }
       String strPaymentDocumentNo = vars.getRequiredStringParameter("inpDocNumber");
       String strReceivedFromId = vars.getRequiredStringParameter("inpBusinessPartnerId");
       String strPaymentMethodId = vars.getRequiredStringParameter("inpPaymentMethod");
@@ -142,7 +149,6 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       if (strDifferenceAction.equals("refund"))
         refundAmount = new BigDecimal(vars.getRequiredNumericParameter("inpDifference"));
       String strTabId = vars.getRequiredStringParameter("inpTabId");
-      boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       String strReferenceNo = vars.getStringParameter("inpReferenceNo", "");
       OBError message = null;
       // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be

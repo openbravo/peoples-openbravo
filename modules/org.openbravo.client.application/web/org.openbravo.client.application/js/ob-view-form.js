@@ -70,6 +70,9 @@ OB.ViewFormProperties = {
   // Name to the first focused field defined in AD
   firstFocusedField: null,
 
+  // is set in the OBNoteSectionItem.initWidget
+  noteSection: null,
+  
   // is set in the OBLinkedItemSectionItem.initWidget
   linkedItemSection: null,
 
@@ -180,6 +183,21 @@ OB.ViewFormProperties = {
     }
   },
   
+
+  enableNoteSection: function(enable){
+	    if (!this.noteSection) {
+	      return;
+	    }
+	    if (enable) {
+	      this.noteSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID));
+	      this.noteSection.collapseSection();
+	      this.noteSection.refresh();
+	      this.noteSection.show();
+	    } else {
+	      this.noteSection.hide();
+	    }
+  },
+  
   enableLinkedItemSection: function(enable){
     if (!this.linkedItemSection) {
       return;
@@ -221,6 +239,7 @@ OB.ViewFormProperties = {
     this.isNew = isNew;
     this.view.statusBar.setNewState(isNew);
     this.view.updateTabTitle();
+    this.enableNoteSection(!isNew);
     this.enableLinkedItemSection(!isNew);
 
     if (isNew) {
@@ -241,11 +260,15 @@ OB.ViewFormProperties = {
     }
   },
   
-  // reset the focus item to the first item which can get focus
   resetFocusItem: function() {
     var items = this.getItems(), length = items.length, item;
     
-    // used when double clicking a specific cell in a record
+    var errorFld = this.getFirstErrorItem();
+    if (errorFld) {
+      this.setFocusInItem(errorFld, true);
+      return;
+    }
+    
     if (this.forceFocusedField) {
       item = this.getItem(this.forceFocusedField);
       if(item && item.getCanFocus()) {
@@ -1006,11 +1029,11 @@ OB.ViewFormProperties = {
   },
   
   getFirstErrorItem: function() {
-    var flds = this.getFields();
+    var flds = this.getFields(), errs = this.getErrors();
     if (flds.length) {
       var length = flds.length;
       for (i = 0; i < length; i++) {
-        if (flds[i].getErrors()) {
+        if (flds[i].getErrors() || errs[flds[i].name]) {
           return flds[i];
         }
       }

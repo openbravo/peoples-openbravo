@@ -87,6 +87,13 @@ function submitThisPage(strCommand) {
 }
 function openProcessPayment() {
   if (validate('openprocess')) {
+    var amount = document.frmMain.inpActualPayment.value;
+    // if amount is 0 deposit or withdrawn is not allowed
+    // skip action regarding document window
+    if ( compare(amount, '==', 0) ) {
+      submitThisPage('SAVEANDPROCESS');
+      return true;
+    }
     document.getElementById('client_top_popup').style.display = 'block';
     document.getElementById('client_top').style.display = 'none';
     document.getElementById('client_middle').style.display = 'none';

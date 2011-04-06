@@ -133,8 +133,15 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       }
       printGLItem(response, errorMessage);
 
-    } else if (vars.commandIn("SAVE")) {
-      String strAction = vars.getRequiredStringParameter("inpActionDocument");
+    } else if (vars.commandIn("SAVE") || vars.commandIn("SAVEANDPROCESS")) {
+      boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
+      String strAction = null;
+      if (vars.commandIn("SAVEANDPROCESS")) {
+        // The default option is process
+        strAction = (isReceipt ? "PRP" : "PPP");
+      } else {
+        strAction = vars.getRequiredStringParameter("inpActionDocument");
+      }
       String strPaymentId = vars.getRequiredStringParameter("inpfinPaymentId");
       String strSelectedScheduledPaymentDetailIds = vars.getInParameter(
           "inpScheduledPaymentDetailId", "", IsIDFilter.instance);
@@ -144,7 +151,6 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         refundAmount = new BigDecimal(vars.getRequiredNumericParameter("inpDifference"));
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       String strPaymentAmount = vars.getRequiredNumericParameter("inpActualPayment");
-      boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       String strDocumentType = vars.getStringParameter("inpDocumentType", "");
       OBError message = null;
       // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be

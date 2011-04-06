@@ -297,7 +297,7 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 						style="Detail_Header"
 						x="350"
 						y="45"
-						width="50"
+						width="80"
 						height="15"
 						key="element-90"/>
 					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -313,9 +313,9 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="400"
+						x="430"
 						y="45"
-						width="50"
+						width="80"
 						height="15"
 						key="element-90"/>
 					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -331,9 +331,9 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 				<staticText>
 					<reportElement
 						style="Detail_Header"
-						x="450"
+						x="510"
 						y="45"
-						width="450"
+						width="390"
 						height="15"
 						key="element-90"/>
 					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -568,9 +568,9 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="450"
+						x="510"
 						y="0"
-						width="450"
+						width="390"
 						height="13"
 						key="textField-18"
 						stretchType="RelativeToBandHeight"/>
@@ -586,9 +586,9 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="400"
+						x="430"
 						y="0"
-						width="50"
+						width="80"
 						height="13"
 						key="textField-20"
 						stretchType="RelativeToBandHeight"/>
@@ -600,13 +600,13 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{AMTACCTCR}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{AMTACCTCR}!=BigDecimal.ZERO && $F{AMTACCTCR}!=null)?$P{NUMBERFORMAT}.format($F{AMTACCTCR}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="350"
 						y="0"
-						width="50"
+						width="80"
 						height="13"
 						key="textField-21"
 						stretchType="RelativeToBandHeight"/>
@@ -618,7 +618,7 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{AMTACCTDR}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{AMTACCTDR}!=BigDecimal.ZERO && $F{AMTACCTDR}!=null)?$P{NUMBERFORMAT}.format($F{AMTACCTDR}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
