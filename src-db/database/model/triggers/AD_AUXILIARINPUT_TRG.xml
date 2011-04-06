@@ -19,14 +19,19 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
  v_aux NUMBER;
+ v_MODULE_ID AD_MODULE.AD_MODULE_ID%TYPE;
     
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
+    SELECT AD_MODULE_ID
+    INTO v_MODULE_ID	
+    FROM AD_TAB WHERE AD_TAB_ID = :new.AD_TAB_ID;
 
-  IF :new.AD_Module_ID != '0' THEN
+  IF (:new.AD_Module_ID != '0' AND :new.AD_MODULE_ID <> v_MODULE_ID) THEN
+
     SELECT COUNT(*)
       INTO v_Aux
       FROM AD_MODULE_DBPREFIX
