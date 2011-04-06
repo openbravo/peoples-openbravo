@@ -39,6 +39,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
 import org.openbravo.model.financialmgmt.gl.GLItem;
@@ -49,7 +50,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 
 public class DocFINPayment extends AcctServer {
-
   private static final long serialVersionUID = 1L;
   static Logger log4j = Logger.getLogger(DocFINPayment.class);
 
@@ -125,13 +125,24 @@ public class DocFINPayment extends AcctServer {
       if (data[i] == null)
         continue;
       String Line_ID = data[i].getField("FIN_Payment_Detail_ID");
-      DocLine_FINPayment docLine = new DocLine_FINPayment(DocumentType, Record_ID, Line_ID);
-      docLine.loadAttributes(data[i], this);
-      docLine.setAmount(data[i].getField("Amount"));
-      docLine.setIsPrepayment(data[i].getField("isprepayment"));
-      docLine.setWriteOffAmt(data[i].getField("WriteOffAmt"));
-      docLine.setC_GLItem_ID(data[i].getField("C_GLItem_ID"));
-      list.add(docLine);
+      OBContext.setAdminMode();
+      try {
+        FIN_PaymentDetail detail = OBDal.getInstance().get(FIN_PaymentDetail.class, Line_ID);
+        DocLine_FINPayment docLine = new DocLine_FINPayment(DocumentType, Record_ID, Line_ID);
+        docLine.loadAttributes(data[i], this);
+        docLine.setAmount(data[i].getField("Amount"));
+        docLine.setIsPrepayment(data[i].getField("isprepayment"));
+        docLine.setWriteOffAmt(data[i].getField("WriteOffAmt"));
+        docLine.setC_GLItem_ID(data[i].getField("C_GLItem_ID"));
+        docLine
+            .setInvoice(detail.getFINPaymentScheduleDetailList() != null
+                && detail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null ? detail
+                .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
+                : null);
+        list.add(docLine);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
     }
     // Return Array
     DocLine_FINPayment[] dl = new DocLine_FINPayment[list.size()];
@@ -201,13 +212,25 @@ public class DocFINPayment extends AcctServer {
           bpAmount = new BigDecimal(bpAmount).add(new BigDecimal(line.WriteOffAmt)).toString();
         }
         if ("".equals(line.getC_GLItem_ID())) {
+          String bpAmountConverted = bpAmount;
+          Invoice invoice = line.getInvoice();
+          String strcCurrencyId = C_Currency_ID;
+          if (invoice != null && !C_Currency_ID.equals(as.m_C_Currency_ID)) {
+            String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+                .getProperty("dateFormat.java");
+            SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
+            bpAmountConverted = convertAmount(bpAmount, isReceipt, DateAcct, outputFormat
+                .format(invoice.getAccountingDate()), C_Currency_ID, as.m_C_Currency_ID, line, as,
+                fact, Fact_Acct_Group_ID, conn);
+            strcCurrencyId = as.m_C_Currency_ID;
+          }
           fact
               .createLine(line,
                   getAccountBPartner((line.m_C_BPartner_ID == null || line.m_C_BPartner_ID
                       .equals("")) ? this.C_BPartner_ID : line.m_C_BPartner_ID, as, isReceipt,
-                      isPrepayment, conn), C_Currency_ID, (isReceipt ? "" : bpAmount),
-                  (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-                  conn);
+                      isPrepayment, conn), strcCurrencyId, (isReceipt ? "" : bpAmountConverted),
+                  (isReceipt ? bpAmountConverted : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                  DocumentType, conn);
         } else {
           fact.createLine(line, getAccountGLItem(OBDal.getInstance().get(GLItem.class,
               line.getC_GLItem_ID()), as, isReceipt, conn), C_Currency_ID, (isReceipt ? ""
@@ -271,11 +294,19 @@ public class DocFINPayment extends AcctServer {
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     // Checks if this step is configured to generate accounting for the selected financial account
     boolean confirmation = false;
-    final String AWAITING_EXECUTION = "RPAE";
+    final String PAYMENT_RECEIVED = "RPR";
+    final String PAYMENT_MADE = "PPM";
+    final String DEPOSITED_NOT_CLEARED = "RDNC";
+    final String WITHDRAWN_NOT_CLEARED = "PWNC";
+    final String PAYMENT_CLEARED = "RPPC";
     OBContext.setAdminMode();
     try {
       FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strRecordId);
-      if (!payment.getStatus().equals(AWAITING_EXECUTION)) {
+      // Posting can just happen if payment is in the right status
+      if (payment.getStatus().equals(PAYMENT_RECEIVED) || payment.getStatus().equals(PAYMENT_MADE)
+          || payment.getStatus().equals(DEPOSITED_NOT_CLEARED)
+          || payment.getStatus().equals(WITHDRAWN_NOT_CLEARED)
+          || payment.getStatus().equals(PAYMENT_CLEARED)) {
         OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
             FinAccPaymentMethod.class);
         obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
@@ -403,6 +434,50 @@ public class DocFINPayment extends AcctServer {
       OBContext.restorePreviousMode();
     }
     return account;
+  }
+
+  public String convertAmount(String Amount, boolean isReceipt, String mDateAcct,
+      String conversionDate, String C_Currency_ID_From, String C_Currency_ID_To, DocLine line,
+      AcctSchema as, Fact fact, String Fact_Acct_Group_ID, ConnectionProvider conn)
+      throws ServletException {
+    if (Amount == null || Amount.equals(""))
+      return "0";
+    if (C_Currency_ID_From.equals(C_Currency_ID_To))
+      return Amount;
+    else
+      MultiCurrency = true;
+    String Amt = getConvertedAmt(Amount, C_Currency_ID_From, C_Currency_ID_To, conversionDate, "",
+        AD_Client_ID, AD_Org_ID, conn);
+    if (log4j.isDebugEnabled())
+      log4j.debug("Amt:" + Amt);
+
+    String AmtTo = getConvertedAmt(Amount, C_Currency_ID_From, C_Currency_ID_To, mDateAcct, "",
+        AD_Client_ID, AD_Org_ID, conn);
+    if (log4j.isDebugEnabled())
+      log4j.debug("AmtTo:" + AmtTo);
+
+    BigDecimal AmtDiff = (new BigDecimal(AmtTo)).subtract(new BigDecimal(Amt));
+    if (log4j.isDebugEnabled())
+      log4j.debug("AmtDiff:" + AmtDiff);
+
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("curr from:" + C_Currency_ID_From + " Curr to:" + C_Currency_ID_To + " convDate:"
+          + conversionDate + " DateAcct:" + mDateAcct);
+      log4j.debug("Amt:" + Amt + " AmtTo:" + AmtTo + " Diff:" + AmtDiff.toString());
+    }
+
+    if ((isReceipt && AmtDiff.compareTo(new BigDecimal("0.00")) == 1)
+        || (!isReceipt && AmtDiff.compareTo(new BigDecimal("0.00")) == -1)) {
+      fact.createLine(line, getAccount(AcctServer.ACCTTYPE_ConvertGainDefaultAmt, as, conn),
+          C_Currency_ID_To, "", AmtDiff.abs().toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
+    } else {
+      fact.createLine(line, getAccount(AcctServer.ACCTTYPE_ConvertChargeDefaultAmt, as, conn),
+          C_Currency_ID_To, AmtDiff.abs().toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
+    }
+
+    return Amt;
   }
 
   public String getSeqNo() {

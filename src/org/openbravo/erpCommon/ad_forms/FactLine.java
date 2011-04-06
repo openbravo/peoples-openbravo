@@ -659,7 +659,7 @@ public class FactLine {
       log4jFactLine.debug("FactLine - m_AmtAcctDr " + m_AmtAcctDr + " - m_AmtSourceDr "
           + m_AmtAcctCr);
       if (zero.compareTo(new BigDecimal(m_AmtSourceDr)) == 0
-          && zero.compareTo(new BigDecimal(m_AmtSourceDr)) == 0
+          && zero.compareTo(new BigDecimal(m_AmtSourceCr)) == 0
           && zero.compareTo(new BigDecimal(m_AmtAcctDr)) == 0
           && zero.compareTo(new BigDecimal(m_AmtAcctCr)) == 0) {
         log4jFactLine.debug("FactLine - zero.compareTo");

@@ -19,6 +19,8 @@
 package org.openbravo.erpCommon.ad_forms;
 
 import org.apache.log4j.Logger;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.order.Order;
 
 public class DocLine_FINPayment extends DocLine {
   private static final Logger log4j = Logger.getLogger(DocLine_FINPayment.class);
@@ -29,6 +31,24 @@ public class DocLine_FINPayment extends DocLine {
   String isReceipt = "";
   String C_GLItem_ID = "";
   String isPrepayment = "";
+  Invoice invoice = null;
+  Order order = null;
+
+  public Invoice getInvoice() {
+    return invoice;
+  }
+
+  public void setInvoice(Invoice invoice) {
+    this.invoice = invoice;
+  }
+
+  public Order getOrder() {
+    return order;
+  }
+
+  public void setOrder(Order order) {
+    this.order = order;
+  }
 
   /**
    * @param isReceipt
