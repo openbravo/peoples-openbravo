@@ -62,7 +62,7 @@ import org.apache.log4j.Logger;
  * 
  * @author Barry van Oudtshoorn
  */
-public class CSSMinimizer {
+class CSSMinimizer {
 
   private static Logger log = Logger.getLogger(CSSMinimizer.class);
 
