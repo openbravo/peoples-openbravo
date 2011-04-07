@@ -103,14 +103,14 @@ isc.OBStatusBar.addProperties( {
   showingIcon : false,
 
   initWidget : function() {
-    this.stateLabel = isc.OBStatusBarTextLabel.create( {
+    this.contentLabel = isc.OBStatusBarTextLabel.create( {
       contents : '&nbsp;',
       width : '100%',
       height : '100%'
     });
 
     this.leftStatusBar = isc.OBStatusBarLeftBar.create( {});
-    this.leftStatusBar.addMember(this.stateLabel);
+    this.leftStatusBar.addMember(this.contentLabel);
 
     this.previousButton = isc.OBStatusBarIconButton.create( {
       view : this.view,
@@ -164,7 +164,7 @@ isc.OBStatusBar.addProperties( {
     this.Super('initWidget', arguments);
   },
 
-  addIcon : function(icon) {
+addIcon : function(icon) {
     // remove any existing icon or spacer
   this.leftStatusBar.removeMember(this.leftStatusBar.members[0]);
   this.leftStatusBar.addMember(icon, 0);
@@ -180,16 +180,28 @@ setNewState : function(isNew) {
   this.previousButton.setDisabled(isNew);
   this.nextButton.setDisabled(isNew);
   if (isNew) {
-    this.setStateLabel('OBUIAPP_New', this.newIcon);
+    this.setContentLabel(this.newIcon, 'OBUIAPP_New');
   }
 },
 
-setStateLabel : function(labelCode, icon) {
-  var msg = '&nbsp;';
-  if (labelCode) {
-    msg = OB.I18N.getLabel(labelCode);
+setContentLabel : function(icon, statusCode, arrayTitleField) {
+  var msg = '', i;
+  if (statusCode) {
+    msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(statusCode) + '</span>';
   }
-  this.stateLabel.setContents(msg);
+  if (arrayTitleField) {
+    for (i = 0; i < arrayTitleField[0].length; i++) {
+      if (i !== 0 || statusCode) {
+        msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
+      }
+      msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + arrayTitleField[0][i] + ': ' + '</span>';
+      msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + arrayTitleField[1][i] + '</span>';
+    }
+  }
+  if (this.labelOverflowHidden) {
+    msg = '<nobr>' + msg + '</nobr>';
+  }
+  this.contentLabel.setContents(msg);
   if (icon) {
     this.addIcon(icon);
   } else {

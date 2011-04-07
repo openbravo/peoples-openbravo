@@ -25,6 +25,12 @@ isc.OBStatusBar.addProperties({
   leaveScrollbarGap: false,
   overflow: 'hidden',
 
+  statusLabelStyle: 'OBStatusBarTextLabel_Status',
+  titleLabelStyle: 'OBStatusBarTextLabel_Title',
+  fieldLabelStyle: 'OBStatusBarTextLabel_Field',
+  separatorLabelStyle: 'OBStatusBarTextLabel_Separator',
+  labelOverflowHidden: true,
+
   checkedIconDefaults: {
     height: 14,
     width: 14,
@@ -53,7 +59,8 @@ isc.OBStatusBarLeftBar.addProperties({
 });
 
 isc.OBStatusBarTextLabel.addProperties({
-  baseStyle: "OBStatusBarTextLabel"
+  baseStyle: "OBStatusBarTextLabel",
+  overflow: 'hidden'
 });
 
 isc.OBStatusBarIconButtonBar.addProperties({
