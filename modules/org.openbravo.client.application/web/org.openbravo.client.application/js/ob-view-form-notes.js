@@ -64,6 +64,11 @@ refresh : function() {
 	this.getNotePart().refresh();
 },
 
+expandSection: function() {
+  this.Super('expandSection',arguments);
+  this.form.noteSection.refresh();
+},
+
 hide: function(){
  this.Super('hide',arguments);
  if (this.canvasItem) {
@@ -219,7 +224,8 @@ isc.OBNoteLayout.addProperties( {
 
 							fetchData : function(criteria, callback,
 									requestProperties) {
-							  if (this.layout.isDrawn()) {
+							  if (this.layout.getForm() && this.layout.getForm().noteSection && 
+							      this.layout.getForm().noteSection.visible && this.layout.getForm().noteSection.isExpanded()) {
 								  return this.Super('fetchData', [ this.convertCriteria(criteria),
 										callback, requestProperties ]);
 							  }
