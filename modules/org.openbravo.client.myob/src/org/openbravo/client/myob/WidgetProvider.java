@@ -230,6 +230,7 @@ public abstract class WidgetProvider {
 
   protected void addDefaultWidgetProperties(JSONObject jsonObject, WidgetInstance widgetInstance)
       throws JSONException {
+    jsonObject.put(WIDGETCLASSID, widgetInstance.getWidgetClass().getId());
     jsonObject.put(MyOpenbravoWidgetComponent.CLASSNAMEPARAMETER, myOBUtils.getWidgetProvider(
         widgetClass).getClientSideWidgetClassName());
     jsonObject.put(DBINSTANCEID, widgetInstance.getId());

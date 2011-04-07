@@ -517,7 +517,12 @@ isc.OBMyOpenbravo.addProperties({
           localWidgetProperties.showMaximizeButton = this.availableWidgetClasses[i].showMaximizeButton;
           localWidgetProperties.menuItems = this.availableWidgetClasses[i].menuItems;
           localWidgetProperties.fieldDefinitions = this.availableWidgetClasses[i].fieldDefinitions;
-          localWidgetProperties.widgetClassId = this.availableWidgetClasses[i].widgetClassId;
+          if(!localWidgetProperties.aboutFieldDefinitions) {
+            localWidgetProperties.aboutFieldDefinitions = this.availableWidgetClasses[i].aboutFieldDefinitions;
+          }
+          if(!localWidgetProperties.parameters) {
+            localWidgetProperties.parameters = isc.addProperties({}, widgetProperties.parameters);
+          }
           break;
         }
       }
