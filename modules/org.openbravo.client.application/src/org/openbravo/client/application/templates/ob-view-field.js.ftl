@@ -35,6 +35,7 @@
         referencedKeyColumnName: '${fieldDefinition.referencedKeyColumnName?string}',
         targetEntity: '${fieldDefinition.targetEntity?string}',
         required: ${fieldDefinition.required?string},
+        shownInStatusBar: ${fieldDefinition.shownInStatusBar?string},
           <#if fieldDefinition.redrawOnChange?string = "true" >
           redrawOnChange: true,
           changed: function(form, item, value) {

@@ -431,6 +431,14 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public String getReadOnlyIf() {
       return readOnlyIf;
     }
+
+    public boolean isShownInStatusBar() {
+      if (field.isShownInStatusBar() == null) {
+        return false;
+      } else {
+        return field.isShownInStatusBar();
+      }
+    }
   }
 
   public class DefaultVirtualField implements OBViewFieldDefinition {
