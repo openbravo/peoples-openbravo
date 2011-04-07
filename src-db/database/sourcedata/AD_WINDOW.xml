@@ -1932,22 +1932,6 @@
 <!--800010-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--800010--></AD_WINDOW>
 
-<!--800012--><AD_WINDOW>
-<!--800012-->  <AD_WINDOW_ID><![CDATA[800012]]></AD_WINDOW_ID>
-<!--800012-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800012-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800012-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800012-->  <NAME><![CDATA[Storage Bin Type]]></NAME>
-<!--800012-->  <DESCRIPTION><![CDATA[Define storage bin types to better organize your warehouse and inventory.]]></DESCRIPTION>
-<!--800012-->  <HELP><![CDATA[Define storage bin types to better organize your warehouse and inventory.]]></HELP>
-<!--800012-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800012-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800012-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800012-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800012-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800012-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800012--></AD_WINDOW>
-
 <!--800013--><AD_WINDOW>
 <!--800013-->  <AD_WINDOW_ID><![CDATA[800013]]></AD_WINDOW_ID>
 <!--800013-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
