@@ -29,16 +29,13 @@
       <Sql>
         SELECT DISTINCT tn.Node_ID,tn.Parent_ID,tn.SeqNo,menuData.NAME,menuData.Description,menuData.IsSummary,
         menuData.Action, (case menuData.Action when  'X' then MOX.CLASSNAME
-                                              when 'F' then MOF.CLASSNAME
                                               else MOP.CLASSNAME
                                               end) AS CLASSNAME, 
         (case menuData.Action when 'X' then MOMX.MAPPINGNAME
-                              when 'F' then MOMF.MAPPINGNAME
                               else MOMP.MAPPINGNAME
                               end) AS MAPPINGNAME, 
         menuData.AD_Window_ID,
-        menuData.AD_Process_ID,  
-        menuData.AD_Workflow_ID, 
+        menuData.AD_Process_ID,
         menuData.AD_Form_ID,
         menuData.url,
         P.IsExternalService,
@@ -51,7 +48,7 @@
         FROM AD_TREENODE tn,
         (SELECT m.AD_Menu_ID, COALESCE(m_t.NAME, m.NAME) AS NAME, COALESCE(m_t.DESCRIPTION, m.Description) AS DESCRIPTION, 
         m.IsSummary,m.Action, m.AD_Window_ID, m.AD_Process_ID, 
-        m.AD_FORM_ID, m.AD_Workflow_ID, m.url
+        m.AD_FORM_ID, m.url
         FROM AD_MENU m left join AD_MENU_TRL m_t on m.AD_MENU_ID = m_t.AD_MENU_ID 
                                                 AND m_t.AD_LANGUAGE = ?,
              AD_MODULE mod
@@ -74,10 +71,6 @@
                       AND f.AD_Form_ID = wa.AD_Form_ID
                       AND f.isActive='Y' 
                       AND wa.AD_Role_ID=?)
-        OR EXISTS (SELECT 1 FROM AD_WORKFLOW w, AD_WORKFLOW_ACCESS wa WHERE w.AD_Workflow_ID=wa.AD_Workflow_ID 
-                    AND wa.AD_Workflow_ID=m.AD_Workflow_ID 
-                    AND w.isActive = 'Y'
-                    AND wa.AD_Role_ID=?)
         )) menuData left join AD_TAB T on menuData.AD_Window_ID = T.AD_WINDOW_ID
                     left join AD_WINDOW W on menuData.AD_Window_ID = W.AD_WINDOW_ID
                     left join AD_MODULE MW on W.AD_MODULE_ID = MW.AD_MODULE_ID
@@ -90,13 +83,6 @@
                     left join AD_MODEL_OBJECT_MAPPING MOMX on MOX.AD_MODEL_OBJECT_ID = MOMX.AD_MODEL_OBJECT_ID 
                                                   AND MOMX.ISACTIVE  = 'Y'
                                                   AND MOMX.ISDEFAULT = 'Y'
-                    left join AD_MODEL_OBJECT MOF on menuData.AD_WORKFLOW_ID = MOF.AD_WORKFLOW_ID 
-                                                  AND MOF.ACTION   = 'X' 
-                                                  AND MOF.ISACTIVE = 'Y'
-                                                  AND MOF.ISDEFAULT= 'Y'
-                    left join AD_MODEL_OBJECT_MAPPING MOMF on MOF.AD_MODEL_OBJECT_ID = MOMF.AD_MODEL_OBJECT_ID
-                                                  AND MOMF.ISACTIVE  = 'Y'
-                                                  AND MOMF.ISDEFAULT = 'Y'
                     left join AD_MODEL_OBJECT MOP on menuData.AD_PROCESS_ID = MOP.AD_PROCESS_ID 
                                                   AND MOP.ACTION IN ('P', 'R') 
                                                   AND MOP.ISACTIVE = 'Y'
@@ -118,7 +104,6 @@
         <Parameter name="roleId"/>
         <Parameter name="roleId"/>
         <Parameter name="roleId"/>
-        <Parameter name="roleId"/>
         <Parameter name="treeId"/>
    </SqlMethod>
 
@@ -127,19 +112,17 @@
       <Sql>
         SELECT DISTINCT tn.Node_ID,tn.Parent_ID,tn.SeqNo,menuData.NAME,menuData.Description,menuData.IsSummary,
         menuData.Action, (case menuData.Action when 'X' then MOX.CLASSNAME
-                                        when 'F' then MOF.CLASSNAME
                                         else MOP.CLASSNAME
                                         end) AS CLASSNAME, 
         (case menuData.Action when 'X' then MOMX.MAPPINGNAME
-                            when 'F' then MOMF.MAPPINGNAME
                             else MOMP.MAPPINGNAME
                             end) AS MAPPINGNAME, 
         menuData.AD_Process_ID, 
-        menuData.AD_Workflow_ID, menuData.url 
+        menuData.url 
         FROM AD_TREENODE tn,
         (SELECT m.AD_Menu_ID, COALESCE(m_t.NAME, m.NAME) AS NAME, COALESCE(m_t.DESCRIPTION, m.Description) AS DESCRIPTION, 
                 m.IsSummary,m.Action, m.AD_Window_ID, m.AD_Process_ID, 
-                m.AD_FORM_ID, m.AD_Workflow_ID, m.url 
+                m.AD_FORM_ID, m.url 
            FROM AD_MENU m left join AD_MENU_TRL m_t on m.AD_MENU_ID = m_t.AD_MENU_ID  
                                                    AND m_t.AD_LANGUAGE = ?
           WHERE m.IsActive='Y' 
@@ -152,13 +135,6 @@
                    left join AD_MODEL_OBJECT_MAPPING MOMX on MOX.AD_MODEL_OBJECT_ID = MOMX.AD_MODEL_OBJECT_ID 
                                                 AND MOMX.ISACTIVE = 'Y'
                                                 AND MOMX.ISDEFAULT= 'Y'
-                   left join AD_MODEL_OBJECT MOF on menuData.AD_WORKFLOW_ID = MOF.AD_WORKFLOW_ID 
-                                                AND MOF.ACTION   = 'X' 
-                                                AND MOF.ISACTIVE = 'Y'
-                                                AND MOF.ISDEFAULT= 'Y'
-                   left join AD_MODEL_OBJECT_MAPPING MOMF on MOF.AD_MODEL_OBJECT_ID = MOMF.AD_MODEL_OBJECT_ID 
-                                                AND MOMF.ISACTIVE  = 'Y'
-                                                AND MOMF.ISDEFAULT = 'Y'
                    left join AD_MODEL_OBJECT MOP on menuData.AD_PROCESS_ID = MOP.AD_PROCESS_ID 
                                                 AND MOP.ACTION IN ('P', 'R') 
                                                 AND MOP.ISACTIVE = 'Y'
@@ -179,7 +155,6 @@
       <Parameter name="adWindowId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Window_ID = ? "/>
       <Parameter name="adProcessId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Process_ID = ? "/>
       <Parameter name="adFormId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_FORM_ID = ? "/>
-      <Parameter name="adWorkflowId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Workflow_ID = ? "/>
    </SqlMethod>
 
    <SqlMethod name="selectIdentificacion" type="preparedStatement" return="multiple">

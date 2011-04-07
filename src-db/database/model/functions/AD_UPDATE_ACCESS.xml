@@ -116,32 +116,6 @@ BEGIN
                       WHERE AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
                         AND AD_ROLE_ID = AD_ROLE.AD_ROLE_ID);
 
---AD_WORKFLOW_ACCESS
-  INSERT INTO AD_WorkFlow_Access
-    (
-      AD_WorkFlow_Access_ID, AD_WorkFlow_ID, AD_Role_ID, AD_Client_ID,
-      AD_Org_ID, IsActive, Created,
-      CreatedBy, Updated, UpdatedBy,
-      IsReadWrite
-    )
-  SELECT get_uuid(), AD_WORKFLOW.AD_WORKFLOW_ID, AD_ROLE.AD_ROLE_ID, AD_ROLE.AD_CLIENT_ID,
-    AD_ROLE.AD_ORG_ID, 'Y', now(),
-    '0', now(), '0', 'Y'
-  FROM AD_WORKFLOW, AD_ROLE
-  WHERE AD_ROLE.ISMANUAL = 'N'
-  AND AD_WORKFLOW.IsActive='Y'
-    AND (
-      (AD_ROLE.USERLEVEL = 'S' AND AD_WORKFLOW.ACCESSLEVEL IN ('4','7','6'))
-      OR
-      (AD_ROLE.USERLEVEL IN (' CO', ' C') AND AD_WORKFLOW.ACCESSLEVEL IN ('7','6','3','1'))
-      OR
-      (AD_ROLE.USERLEVEL = '  O' AND AD_WORKFLOW.ACCESSLEVEL IN ('3','1','7'))
-    )
-    AND NOT EXISTS (SELECT 1
-                       FROM AD_WORKFLOW_ACCESS
-                      WHERE AD_WORKFLOW_ID = AD_WORKFLOW.AD_WORKFLOW_ID
-                        AND AD_ROLE_ID    = AD_ROLE.AD_ROLE_ID);
-
   --Add role 0 to user 100 (Openbravo)
   INSERT INTO AD_USER_ROLES
     (AD_USER_ROLES_ID , AD_USER_ID , AD_ROLE_ID, 

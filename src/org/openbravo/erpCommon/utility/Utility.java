@@ -2069,22 +2069,6 @@ public class Utility {
   }
 
   @Deprecated
-  public static boolean hasWorkflowAccess(ConnectionProvider conn, VariablesSecureApp vars,
-      String workflow) {
-    try {
-      if (workflow.equals(""))
-        return true;
-      else {
-        if (!WindowAccessData.hasWorkflowAccess(conn, vars.getRole(), workflow))
-          return false;
-      }
-    } catch (final ServletException e) {
-      return false;
-    }
-    return true;
-  }
-
-  @Deprecated
   public static boolean hasAccess(ConnectionProvider conn, VariablesSecureApp vars,
       String TableLevel, String AD_Client_ID, String AD_Org_ID, String window, String tab) {
     final String command = vars.getCommand();

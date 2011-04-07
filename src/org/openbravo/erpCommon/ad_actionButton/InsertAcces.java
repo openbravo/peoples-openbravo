@@ -207,14 +207,6 @@ public class InsertAcces extends HttpSecureAppServlet {
             log4j.error("Action: " + accesData[i].action + " form: " + accesData[i].adformid);
             InsertAccesData.insertForm(this, accesData[i].adformid, roleid, vars.getClient(), "0",
                 vars.getUser());
-          } else if (accesData[i].action.equals("F")
-              && (InsertAccesData.selectWorkflow(this, roleid, accesData[i].adworkflowid) == null || InsertAccesData
-                  .selectWorkflow(this, roleid, accesData[i].adworkflowid).equals(""))
-              && (strType.equals("F") || strType.equals(""))) {
-            log4j.error("Action: " + accesData[i].action + " workflow: "
-                + accesData[i].adworkflowid);
-            InsertAccesData.insertWorkflow(this, accesData[i].adworkflowid, roleid, vars
-                .getClient(), "0", vars.getUser());
           }
         }
       }

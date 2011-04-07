@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -80,7 +80,6 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TabTrl;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.ui.WindowTrl;
-import org.openbravo.model.ad.ui.Workflow;
 import org.openbravo.reference.ui.UIReference;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -1149,9 +1148,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     }
     if ("S".equals(processType)) {
       return "Reference: " + OBDal.getInstance().get(Reference.class, process).getName();
-    }
-    if ("F".equals(processType)) {
-      return "Workflow: " + OBDal.getInstance().get(Workflow.class, process).getName();
     }
     if ("C".equals(processType)) {
       String calloutLabel = getTranslatedMessage(adMessageIdForCallout);

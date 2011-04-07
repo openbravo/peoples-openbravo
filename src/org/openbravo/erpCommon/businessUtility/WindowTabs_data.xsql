@@ -88,7 +88,6 @@
         and (m.ad_window_ID = ? 
         or m.ad_process_ID = ? 
         or m.ad_form_ID = ? 
-        or m.ad_workflow_ID = ? 
         )
        ]]>
       </Sql>
@@ -98,12 +97,11 @@
       <Parameter name="adTabId"/>
       <Parameter name="adTabId"/>
       <Parameter name="adTabId"/>
-      <Parameter name="adTabId"/>
   </SqlMethod>
   <SqlMethod name="selectJavaInfo" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        select (CASE mo.Action WHEN 'F' THEN mo.AD_WorkFlow_ID 
+        select (CASE mo.Action
                    WHEN 'X' THEN mo.AD_Form_ID
                    WHEN 'P' THEN mo.AD_Process_ID
                    WHEN 'R' THEN mo.AD_Process_ID

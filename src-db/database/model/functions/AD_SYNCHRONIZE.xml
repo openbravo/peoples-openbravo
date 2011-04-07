@@ -31,7 +31,6 @@
   *  Synchronize Elements
   *  Update Column and Field with Names from Element and Process
   *  Update Process Parameters from Elements
-  *  Update Workflow Notes from Windows
   *  Update Menu from Window/Form/Process
   ************************************************************************/
   -- Logistice
@@ -1110,113 +1109,7 @@
       AND f.IsActive='Y'  AND(AD_PROCESS_PARA_TRL.NAME<>et.NAME OR COALESCE(TO_CHAR(AD_PROCESS_PARA_TRL.Description), ' ')<>COALESCE(TO_CHAR(et.Description), ' ')
       OR COALESCE(TO_CHAR(AD_PROCESS_PARA_TRL.Help), ' ')<>COALESCE(TO_CHAR(et.Help), ' '))
       );
-    -- Workflow Node - Window
-    DBMS_OUTPUT.PUT_LINE('Synchronize Workflow Node from Window') ;
-    UPDATE AD_WF_NODE
-      SET NAME=
-      (SELECT w.NAME FROM AD_WINDOW w  WHERE w.AD_Window_ID=AD_WF_NODE.AD_Window_ID)
-      , Description=
-      (SELECT w.Description
-      FROM AD_WINDOW w
-      WHERE w.AD_Window_ID=AD_WF_NODE.AD_Window_ID
-      )
-      , Help=
-      (SELECT w.Help FROM AD_WINDOW w  WHERE w.AD_Window_ID=AD_WF_NODE.AD_Window_ID)
-    WHERE AD_WF_NODE.IsCentrallyMaintained='Y'  AND EXISTS
-      (SELECT *
-      FROM AD_WINDOW w
-      WHERE w.AD_Window_ID=AD_WF_NODE.AD_Window_ID  AND(w.NAME<>AD_WF_NODE.NAME OR COALESCE(TO_CHAR(w.Description), ' ')<>COALESCE(TO_CHAR(AD_WF_NODE.Description), ' ')
-      OR COALESCE(TO_CHAR(w.Help), ' ')<>COALESCE(TO_CHAR(AD_WF_NODE.Help), ' '))
-      )
-      ;
-    v_rowcount:=SQL%ROWCOUNT;
-    DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
-    -- Workflow Translations - Window
-    DBMS_OUTPUT.PUT_LINE('Synchronize Workflow Node Trl from Window Trl') ;
-    UPDATE AD_WF_NODE_TRL
-      SET NAME=
-      (SELECT t.NAME
-      FROM AD_WINDOW_TRL t, AD_WF_NODE n
-      WHERE AD_WF_NODE_TRL.AD_WF_Node_ID=n.AD_WF_Node_ID AND n.AD_Window_ID=t.AD_Window_ID
-      AND AD_WF_NODE_TRL.AD_LANGUAGE=t.AD_LANGUAGE
-      )
-      , Description=
-      (SELECT t.Description
-      FROM AD_WINDOW_TRL t, AD_WF_NODE n
-      WHERE AD_WF_NODE_TRL.AD_WF_Node_ID=n.AD_WF_Node_ID AND n.AD_Window_ID=t.AD_Window_ID
-      AND AD_WF_NODE_TRL.AD_LANGUAGE=t.AD_LANGUAGE
-      )
-      , Help=
-      (SELECT t.Help
-      FROM AD_WINDOW_TRL t, AD_WF_NODE n
-      WHERE AD_WF_NODE_TRL.AD_WF_Node_ID=n.AD_WF_Node_ID AND n.AD_Window_ID=t.AD_Window_ID
-      AND AD_WF_NODE_TRL.AD_LANGUAGE=t.AD_LANGUAGE
-      )
-    WHERE EXISTS
-      (SELECT *
-      FROM AD_WINDOW_TRL t, AD_WF_NODE n
-      WHERE AD_WF_NODE_TRL.AD_WF_Node_ID=n.AD_WF_Node_ID AND n.AD_Window_ID=t.AD_Window_ID
-      AND AD_WF_NODE_TRL.AD_LANGUAGE=t.AD_LANGUAGE AND n.IsCentrallyMaintained='Y' AND n.IsActive='Y'
-      AND(AD_WF_NODE_TRL.NAME<>t.NAME OR COALESCE(TO_CHAR(AD_WF_NODE_TRL.Description), ' ')<>COALESCE(TO_CHAR(t.Description), ' ')
-      OR COALESCE(TO_CHAR(AD_WF_NODE_TRL.Help), ' ')<>COALESCE(TO_CHAR(t.Help), ' '))
-      )
-      ;
-    v_rowcount:=SQL%ROWCOUNT;
-    DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
-    -- Workflow Node - Form
-    DBMS_OUTPUT.PUT_LINE('Synchronize Workflow Node from Form') ;
-    UPDATE AD_WF_NODE
-      SET NAME=
-      (SELECT f.NAME  FROM AD_FORM f  WHERE f.AD_Form_ID=AD_WF_NODE.AD_Form_ID)
-      , Description=
-      (SELECT f.Description
-      FROM AD_FORM f
-      WHERE f.AD_Form_ID=AD_WF_NODE.AD_Form_ID
-      )
-      , Help=
-      (SELECT f.Help  FROM AD_FORM f  WHERE f.AD_Form_ID=AD_WF_NODE.AD_Form_ID)
-    WHERE AD_WF_NODE.IsCentrallyMaintained='Y'  AND EXISTS
-      (SELECT *
-      FROM AD_FORM f
-      WHERE f.AD_Form_ID=AD_WF_NODE.AD_Form_ID  AND(f.NAME<>AD_WF_NODE.NAME OR COALESCE(TO_CHAR(f.Description), ' ')<>COALESCE(TO_CHAR(AD_WF_NODE.Description), ' ')
-      OR COALESCE(TO_CHAR(f.Help), ' ')<>COALESCE(TO_CHAR(AD_WF_NODE.Help), ' '))
-      )
-      ;
-    v_rowcount:=SQL%ROWCOUNT;
-    DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
-    -- Workflow Translations - Form
-    DBMS_OUTPUT.PUT_LINE('Synchronize Workflow Node Trl from Form Trl') ;
-    UPDATE AD_WF_NODE_TRL
-      SET NAME=
-      (SELECT t.NAME
-      FROM AD_FORM_TRL t, AD_WF_NODE n
-      WHERE AD_WF_NODE_TRL.AD_WF_Node_ID=n.AD_WF_Node_ID AND n.AD_Form_ID=t.AD_Form_ID
-      AND AD_WF_NODE_TRL.AD_LANGUAGE=t.AD_LANGUAGE
-      )
-      , Description=
-      (SELECT t.Description
-      FROM AD_FORM_TRL t, AD_WF_NODE n
-      WHERE AD_WF_NODE_TRL.AD_WF_Node_ID=n.AD_WF_Node_ID AND n.AD_Form_ID=t.AD_Form_ID
-      AND AD_WF_NODE_TRL.AD_LANGUAGE=t.AD_LANGUAGE
-      )
-      , Help=
-      (SELECT t.Help
-      FROM AD_FORM_TRL t, AD_WF_NODE n
-      WHERE AD_WF_NODE_TRL.AD_WF_Node_ID=n.AD_WF_Node_ID AND n.AD_Form_ID=t.AD_Form_ID
-      AND AD_WF_NODE_TRL.AD_LANGUAGE=t.AD_LANGUAGE
-      )
-    WHERE EXISTS
-      (SELECT *
-      FROM AD_FORM_TRL t, AD_WF_NODE n
-      WHERE AD_WF_NODE_TRL.AD_WF_Node_ID=n.AD_WF_Node_ID AND n.AD_Form_ID=t.AD_Form_ID
-      AND AD_WF_NODE_TRL.AD_LANGUAGE=t.AD_LANGUAGE AND n.IsCentrallyMaintained='Y' AND n.IsActive='Y'
-      AND(AD_WF_NODE_TRL.NAME<>t.NAME OR COALESCE(TO_CHAR(AD_WF_NODE_TRL.Description), ' ')<>COALESCE(TO_CHAR(t.Description), ' ')
-      OR COALESCE(TO_CHAR(AD_WF_NODE_TRL.Help), ' ')<>COALESCE(TO_CHAR(t.Help), ' '))
-      )
-      ;
-    v_rowcount:=SQL%ROWCOUNT;
-    DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
-    
+   
     -- Sync Names - Window
     DBMS_OUTPUT.PUT_LINE('Synchronizing Menu with Window') ;
     UPDATE AD_MENU
@@ -1523,51 +1416,7 @@
       );
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  trl rows updated: ' || v_rowcount) ;
-    -- Sync Names - Workflow
-    DBMS_OUTPUT.PUT_LINE('Synchronizing Menu with Workflows') ;
-    UPDATE AD_MENU
-      SET NAME=
-      (SELECT p.NAME
-      FROM AD_WORKFLOW p
-      WHERE AD_MENU.AD_Workflow_ID=p.AD_Workflow_ID
-      )
-      , Description=
-      (SELECT p.Description
-      FROM AD_WORKFLOW p
-      WHERE AD_MENU.AD_Workflow_ID=p.AD_Workflow_ID
-      )
-    WHERE AD_MENU.AD_Workflow_ID IS NOT NULL  AND AD_MENU.Action='F';
-    v_rowcount:=SQL%ROWCOUNT;
-    DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
-    UPDATE AD_MENU_TRL
-      SET NAME=
-      (SELECT pt.NAME
-      FROM AD_WORKFLOW_TRL pt, AD_MENU m
-      WHERE AD_MENU_TRL.AD_Menu_ID=m.AD_Menu_ID AND m.AD_Workflow_ID=pt.AD_Workflow_ID
-      AND AD_MENU_TRL.AD_LANGUAGE=pt.AD_LANGUAGE
-      )
-      , Description=
-      (SELECT pt.Description
-      FROM AD_WORKFLOW_TRL pt, AD_MENU m
-      WHERE AD_MENU_TRL.AD_Menu_ID=m.AD_Menu_ID AND m.AD_Workflow_ID=pt.AD_Workflow_ID
-      AND AD_MENU_TRL.AD_LANGUAGE=pt.AD_LANGUAGE
-      )
-      , IsTranslated=
-      (SELECT pt.IsTranslated
-      FROM AD_WORKFLOW_TRL pt, AD_MENU m
-      WHERE AD_MENU_TRL.AD_Menu_ID=m.AD_Menu_ID AND m.AD_Workflow_ID=pt.AD_Workflow_ID
-      AND AD_MENU_TRL.AD_LANGUAGE=pt.AD_LANGUAGE
-      )
-    WHERE EXISTS
-      (SELECT *
-      FROM AD_WORKFLOW_TRL pt, AD_MENU m
-      WHERE AD_MENU_TRL.AD_Menu_ID=m.AD_Menu_ID AND m.AD_Workflow_ID=pt.AD_Workflow_ID
-      AND AD_MENU_TRL.AD_LANGUAGE=pt.AD_LANGUAGE  AND m.AD_Workflow_ID IS NOT NULL  AND Action='F'
-      )
-      ;
-    v_rowcount:=SQL%ROWCOUNT;
-    DBMS_OUTPUT.PUT_LINE('  trl rows updated: ' || v_rowcount) ;
-
+    
     -- Call extension points
     SELECT count(*) INTO v_count
     FROM DUAL

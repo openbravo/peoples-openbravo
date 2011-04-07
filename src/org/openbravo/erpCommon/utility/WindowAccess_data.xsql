@@ -149,19 +149,6 @@
 		<Parameter name="name"/>
 	</SqlMethod>
 	
-	<SqlMethod name="hasWorkflowAccess" type="preparedStatement" return="boolean">
-		<SqlMethodComment></SqlMethodComment>
-		<Sql>
-			select Count(*) AS TOTAL
-			FROM AD_Workflow_Access
-			WHERE AD_Role_ID = ?
-			AND AD_Workflow_ID = ?
-			AND IsActive = 'Y'
-		</Sql>
-		<Parameter name="adRoleId"/>
-		<Parameter name="adWorkflowId"/>
-	</SqlMethod>
-	
 	<SqlMethod name="hasFormAccess" type="preparedStatement" return="boolean">
 		<SqlMethodComment></SqlMethodComment>
 		<Sql>
