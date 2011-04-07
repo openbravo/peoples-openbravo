@@ -282,18 +282,17 @@ isc.OBNoteLayout.addProperties( {
 								value =  value + ' <span class="OBNoteListGridAuthor">' +
 								        OB.Utilities.getTimePassed(record.created) +
 										' ' + OB.I18N.getLabel('OBUIAPP_by') + ' ' +
-										record['createdBy._identifier'];
+										record['createdBy._identifier']+'</span>';
 
 								// show delete link if the note was created by
 								// the current user
 								if (record.createdBy === OB.User.id) {
 									value = value +
-											' <span class="OBNoteListGridDelete" >[ <a class="OBNoteListGridDelete" href="#" onclick="' +
+											' <span class="OBNoteListGridDelete" >[<a class="OBNoteListGridDelete" href="#" onclick="' +
 											this.layout.ID + '.deleteNote(\'' +
 											record.id +
-											'\')">' + OB.I18N.getLabel('OBUIAPP_delete') + '</a> ]</span>';
+											'\')">' + OB.I18N.getLabel('OBUIAPP_delete') + '</a>]</span>';
 								} 
-								value = value + '</span>';
 								return value;
 							},
 
