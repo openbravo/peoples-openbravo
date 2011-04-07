@@ -1036,6 +1036,7 @@ SELECT COALESCE(MAX(RECORD_REVISION),0)+1
                         and upper(c.columnname) = u.column_name
                         AND u.data_type != 'BLOB'
                         and upper(c.columnname) not in ('CREATED','CREATEDBY','UPDATED', 'UPDATEDBY')
+			and c.isexcludeaudit='N'
                         order by c.position) loop
       if (cur_cols.data_type in ('VARCHAR2', 'CHAR')) then
         datatype := 'CHAR';
