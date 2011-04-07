@@ -36,7 +36,8 @@
 		and ad_org_id in ('1')
         and not exists (SELECT AD_ORG_CLOSING.AD_ORG_ID
                         FROM AD_ORG_CLOSING
-                        WHERE C_YEAR_ID = ?)
+                        WHERE C_YEAR_ID = ?
+                          AND AD_ORG_CLOSING.AD_ORG_ID=AD_ORG.AD_ORG_ID)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>

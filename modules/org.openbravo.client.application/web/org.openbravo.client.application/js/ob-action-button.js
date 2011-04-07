@@ -64,7 +64,7 @@ isc.OBToolbarActionButton.addProperties( {
     if (this.modal){
       allProperties.Command = this.command;
       callbackFunction = function(){
-        OB.Layout.ClassicOBCompatibility.Popup.open('process', 900, 600, OB.Application.contextUrl + me.obManualURL, '', null, false, false, true, allProperties);
+        OB.Layout.ClassicOBCompatibility.Popup.open('process', 900, 600, OB.Utilities.applicationUrl(me.obManualURL), '', null, false, false, true, allProperties);
       };
     } else {
       var popupParams = {
@@ -98,7 +98,9 @@ isc.OBToolbarActionButton.addProperties( {
     OB.ActionButton.executingProcess = null;
     
     if (newWindow) {
-      var contextURL = location.href.substr(0, location.href.indexOf(OB.Application.contextUrl) + OB.Application.contextUrl.length);
+      var contextURL = location.protocol + '//' +
+                       location.host +
+                       location.pathname.substr(0, location.pathname.indexOf(OB.Application.contextUrl) + OB.Application.contextUrl.length);
       
       if (newWindow.indexOf(contextURL) !== -1){
         newWindow = newWindow.substr(contextURL.length);

@@ -1139,7 +1139,7 @@ OB.ToolbarUtils.print = function(view, url, directPrint){
   popupParams += '&inphiddenvalue=' + selectedIds;
   
   view.setContextInfo(sessionProperties, function(){
-    OB.Layout.ClassicOBCompatibility.Popup.open('print', 0, 0, OB.Application.contextUrl + '/businessUtility/PrinterReports.html?' + popupParams, '', window, false, false, true);
+    OB.Layout.ClassicOBCompatibility.Popup.open('print', 0, 0, OB.Application.contextUrl + 'businessUtility/PrinterReports.html?' + popupParams, '', window, false, false, true);
   });
 };
 
@@ -1164,7 +1164,7 @@ OB.ToolbarUtils.showAuditTrail = function(view){
     popupParams += '&inpRecordId=' + view.viewGrid.getSelectedRecord().id;
   }
   
-  OB.Layout.ClassicOBCompatibility.Popup.open('audit', 900, 600, OB.Application.contextUrl + '/businessUtility/AuditTrail.html?' + popupParams, '', window, false, false, true);
+  OB.Layout.ClassicOBCompatibility.Popup.open('audit', 900, 600, OB.Application.contextUrl + 'businessUtility/AuditTrail.html?' + popupParams, '', window, false, false, true);
 };
 
 OB.ToolbarUtils.showTree = function(view){
@@ -1174,7 +1174,7 @@ OB.ToolbarUtils.showTree = function(view){
     popupParams += '&Command=DEFAULT';
     popupParams += '&inpTabId=' + tabId;
     popupParams += '&hideMenu=true&noprefs=true';
-    OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + '/security/Menu.html?' + popupParams, '', window, false, false, true);
+    OB.Layout.ClassicOBCompatibility.Popup.open('tree', 750, 625, OB.Application.contextUrl + 'security/Menu.html?' + popupParams, '', window, false, false, true);
   }
   var tabId = view.tabId;
   

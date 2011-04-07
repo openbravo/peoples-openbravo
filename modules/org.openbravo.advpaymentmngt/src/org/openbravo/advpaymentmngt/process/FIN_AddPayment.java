@@ -243,8 +243,6 @@ public class FIN_AddPayment {
           glitemAmount);
       FIN_PaymentDetail pd = dao.getNewPaymentDetail(payment, psd, glitemAmount, BigDecimal.ZERO,
           false, glitem);
-      List<FIN_PaymentDetail> pdl = payment.getFINPaymentDetailList();
-      pdl.add(pd);
       pd.setFinPayment(payment);
       OBDal.getInstance().save(pd);
       OBDal.getInstance().save(payment);

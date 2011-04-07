@@ -113,9 +113,12 @@ isc.OBViewGrid.addProperties({
   
   emptyMessage: OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage'),
   discardEditsSaveButtonTitle: OB.I18N.getLabel('UINAVBA_Save'),
-  
-  quickDrawAheadRatio: 6.0,
-  drawAheadRatio: 4.0,
+
+  // commented out because of: https://issues.openbravo.com/view.php?id=16515
+  // default is much smaller which give smoother scrolling
+//  quickDrawAheadRatio: 2.0,
+//  drawAheadRatio: 1.0,
+  scrollRedrawDelay: 20,
   // note: don't set drawAllMaxCells too high as it results in extra reads
   // of data, Smartclient will try to read until drawAllMaxCells has been
   // reached
@@ -135,7 +138,11 @@ isc.OBViewGrid.addProperties({
   
   recordBaseStyleProperty: '_recordStyle',
   
-  modalEditing: true,
+  // set to false because of this: https://issues.openbravo.com/view.php?id=16509
+  modalEditing: false,
+  // set to true because if not all cols are drawn then when doing inline editing
+  // errors were reported for undrawn columns
+  showAllColumns: true,
   //showGridSummary: true,
   
   timeFormatter: 'to24HourTime',
@@ -316,7 +323,6 @@ isc.OBViewGrid.addProperties({
       this.getField(this.view.parentProperty).canFilter = false;
       this.getField(this.view.parentProperty).canEdit = false;
     }
-    
   },
   
   show: function(){
@@ -935,6 +941,9 @@ isc.OBViewGrid.addProperties({
         title: OB.I18N.getLabel('OBUIAPP_EditInGrid'),
         click: function(){
           grid.endEditing();
+          if (colNum || colNum === 0) {
+            grid.forceFocusColumn = grid.getField(colNum).name;
+          }
           grid.startEditing(rowNum, colNum);
         }
       });
@@ -1043,15 +1052,20 @@ isc.OBViewGrid.addProperties({
   
   selectOnMouseDown: function(record, recordNum, fieldNum, autoSaveDone){
     // don't change selection on right mouse down
-    var EH = isc.EventHandler, eventType;
+    var EH = isc.EventHandler, eventType = EH.getEventType();
     this.wasEditing = this.view.isEditingGrid;
     
     // don't do anything if right-clicking on a selected record
     if (EH.rightButtonDown() && this.isSelected(record)) {
       return;
     }
+
+    // do autosave when this is a click on a checkbox field or when this is not
+    // a mouse event, in other cases the autosave is done as part of the recordclick
+    // which is called for a mousedown also
+    var passToAutoSave = this.getCheckboxFieldPosition() === fieldNum || !EH.isMouseEvent(eventType);
     
-    if (!autoSaveDone) {
+    if (!autoSaveDone && passToAutoSave) {
       var actionObject = {
         target: this,
         method: this.selectOnMouseDown,
@@ -1094,7 +1108,6 @@ isc.OBViewGrid.addProperties({
       // if this method here would also handle mouseclicks then the
       // doubleClick
       // event is not captured anymore
-      eventType = EH.getEventType();
       if (!EH.isMouseEvent(eventType)) {
         this.handleRecordSelection(null, record, recordNum, null, fieldNum, null, null, true);
       }
@@ -1160,6 +1173,8 @@ isc.OBViewGrid.addProperties({
       
       // if we were editing then a single click continue edit mode
       if (wasEditing) {
+        // set the focus in the clicked cell
+        this.forceFocusColumn = this.getField(fieldNum).name;        
         this.startEditing(recordNum, fieldNum);
       }
     }
@@ -1556,7 +1571,8 @@ isc.OBViewGrid.addProperties({
       }
     }
     this.Super('saveEditedValues', [rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, saveCallback]);
-    this.view.standardWindow.setDirtyEditForm(null);
+    // commented out as it removes an autosave action which is done in the edit complete method
+//    this.view.standardWindow.setDirtyEditForm(null);
   },
   
   autoSave: function(){
@@ -1605,9 +1621,10 @@ isc.OBViewGrid.addProperties({
       return ret;
     }
     
-    if (this.getEditForm() && newRow) {
+    if (this.forceFocusColumn) {
       // set the field to focus on after returning from the fic
-      this.getEditForm().setFocusItem(this.getField(colNum).name);
+      this.getEditForm().forceFocusedField = this.forceFocusColumn;
+      delete this.forceFocusColumn;
     }
     
     var record = this.getRecord(rowNum);

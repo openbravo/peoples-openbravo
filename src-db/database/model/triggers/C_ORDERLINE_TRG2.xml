@@ -80,8 +80,9 @@ END IF;
       AND o.C_Currency_ID = c.C_Currency_ID;
 
   --Get the new "std" price from the Actual price (if actual price is the std price they will be equal)
-   v_Price := :NEW.PriceActual;
-    FOR Cur_Offer IN (SELECT M_OFFER_ID
+   --v_Price := :NEW.PriceActual;
+   v_Price := :NEW.PRICESTD;
+   /* FOR Cur_Offer IN (SELECT M_OFFER_ID
          FROM M_OFFER
          WHERE :NEW.DateOrdered BETWEEN DATEFROM AND COALESCE(DATETO,TO_DATE('31-12-9999','DD-MM-YYYY'))
    AND IsActive = 'Y'
@@ -123,7 +124,7 @@ END IF;
            AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID)))
          ORDER BY PRIORITY DESC, M_OFFER_ID) LOOP
     v_Price := M_Get_Offer_Std_Price(Cur_Offer.M_Offer_ID, v_Price);
-   END LOOP;
+   END LOOP;*/
 
 
 --   :new.PriceStd := v_Price;
@@ -173,7 +174,7 @@ END IF;
    Ad_Sequence_Next('C_OrderLine_Offer', :NEW.AD_Client_ID, v_OrderLine_Offer_ID);
    v_lineno := v_lineno + 10;
    v_PriceNew := M_Get_Offer_Price(Cur_Offer.M_Offer_ID, v_Price);
-   v_Amt := v_Price - v_PriceNew;
+   v_Amt := v_Price - coalesce(round(v_PriceNew, v_Precision), 0);
 
    IF (:NEW.CANCELPRICEAD='N')
     THEN
@@ -185,7 +186,7 @@ END IF;
          (v_OrderLine_Offer_ID, :NEW.AD_Client_ID, :NEW.AD_Org_ID, :NEW.IsActive,
         now(),:NEW.CreatedBy, now(),:NEW.UpdatedBy,
        :NEW.C_OrderLine_ID, v_lineno, Cur_Offer.M_Offer_Id, COALESCE(ROUND(v_Price,v_Precision),0), COALESCE(ROUND(v_Amt,v_Precision),0));
-      v_Price := v_PriceNew;
+      --v_Price := v_PriceNew;
    END IF;
   END LOOP;
  END IF;

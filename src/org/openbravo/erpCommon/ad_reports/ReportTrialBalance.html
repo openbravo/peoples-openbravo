@@ -480,8 +480,12 @@ function showHideFilters(identifier) {
             </tr>
             <tr>
             <td class="TitleCell"><span class="LabelText">Initial page number</span></td>
-              <td class="TextBox_ContentCell"> <input dojoType="openbravo:Textbox"  class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpPageNo" id="paramPageNo" size="10" maxlength="10" value=""></input><script>djConfig.searchIds.push("paramPageNo");</script>
-              </td>              
+              <td class="TextBox_ContentCell" colspan="2"> <input dojoType="openbravo:Textbox"  class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpPageNo" id="paramPageNo" size="10" maxlength="10" value=""></input><script>djConfig.searchIds.push("paramPageNo");</script>
+              </td>
+            </tr>
+	    <tr>
+              <td class="TitleCell"><span class="LabelText">Opening Entry Amount to Initial Balance</span></td>
+              <td class="Radio_Check_ContentCell"><input name="inpNotInitialBalance" type="checkbox" id="fieldNotInitialBalance" value="Y"></input></td>
             </tr>
             <tr id="AcctFromTo">
               <td class="TitleCell"><span class="LabelText">From Account</span></td>

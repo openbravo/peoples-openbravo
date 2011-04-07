@@ -21,7 +21,9 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
@@ -32,6 +34,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -40,9 +43,11 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.common.businesspartner.CustomerAccounts;
 import org.openbravo.model.common.businesspartner.VendorAccounts;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
+import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.gl.GLItemAccounts;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -146,6 +151,8 @@ public abstract class AcctServer {
   public static final String STATUS_DocumentLocked = "L";
   /** Document Status */
   public static final String STATUS_DocumentDisabled = "D";
+  /** Document Status */
+  public static final String STATUS_TableDisabled = "T";
   /** Document Status */
   public static final String STATUS_BackgroundDisabled = "d";
 
@@ -638,7 +645,25 @@ public abstract class AcctServer {
     // log4j.debug("AcctServer - Post - Antes de new Fact - C_CURRENCY_ID = "
     // + C_Currency_ID);
     m_fact = new Fact[m_as.length];
-
+    // AcctSchema Table check
+    boolean isTableActive = false;
+    for (AcctSchema as : m_as) {
+      AcctSchemaTable table = (AcctSchemaTable) OBDao.getFilteredCriteria(
+          AcctSchemaTable.class,
+          Expression.eq(AcctSchemaTable.PROPERTY_ACCOUNTINGSCHEMA, OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+              as.getC_AcctSchema_ID())),
+          Expression.eq(AcctSchemaTable.PROPERTY_TABLE, OBDal.getInstance().get(Table.class,
+              AD_Table_ID))).uniqueResult();
+      if (table != null) {
+        isTableActive = true;
+        break;
+      }
+    }
+    if (!isTableActive) {
+      setMessageResult(conn, vars, STATUS_TableDisabled, "Warning");
+      return false;
+    }
     // for all Accounting Schema
     boolean OK = true;
     if (log4j.isDebugEnabled())
@@ -1731,6 +1756,7 @@ public abstract class AcctServer {
     if (strStatus == null || strStatus.equals(""))
       strStatus = getStatus();
     String strMessage = "";
+    Map<String, String> parameters = new HashMap<String, String>();
     if (messageResult == null)
       messageResult = new OBError();
     if (strMessageType == null || strMessageType.equals(""))
@@ -1750,21 +1776,27 @@ public abstract class AcctServer {
     } else if (strStatus.equals(STATUS_BackgroundDisabled)) {
       strMessage = "@BackgroundDisabled@";
       messageResult.setType("Warning");
-    } else if (strStatus.equals(STATUS_InvalidAccount))
+    } else if (strStatus.equals(STATUS_InvalidAccount)) {
       strMessage = "@InvalidAccount@";
-    else if (strStatus.equals(STATUS_PeriodClosed))
-      strMessage = "@PeriodNotAvailable@";
-    else if (strStatus.equals(STATUS_NotConvertible))
+    } else if (strStatus.equals(STATUS_PeriodClosed)) {
+      strMessage = "@PeriodClosed@";
+    } else if (strStatus.equals(STATUS_NotConvertible)) {
       strMessage = "@NotConvertible@";
-    else if (strStatus.equals(STATUS_NotBalanced))
+    } else if (strStatus.equals(STATUS_NotBalanced)) {
       strMessage = "@NotBalanced@";
-    else if (strStatus.equals(STATUS_NotPosted))
+    } else if (strStatus.equals(STATUS_NotPosted)) {
       strMessage = "@NotPosted@";
-    else if (strStatus.equals(STATUS_PostPrepared))
+    } else if (strStatus.equals(STATUS_PostPrepared)) {
       strMessage = "@PostPrepared@";
-    else if (strStatus.equals(STATUS_Posted))
+    } else if (strStatus.equals(STATUS_Posted)) {
       strMessage = "@Posted@";
-    messageResult.setMessage(Utility.parseTranslation(conn, vars, vars.getLanguage(), strMessage));
+    } else if (strStatus.equals(STATUS_TableDisabled)) {
+      strMessage = "@TableDisabled@";
+      parameters.put("Table", tableName);
+      messageResult.setType("Warning");
+    }
+    messageResult.setMessage(Utility.parseTranslation(conn, vars, parameters, vars.getLanguage(),
+        Utility.parseTranslation(conn, vars, vars.getLanguage(), strMessage)));
   }
 
   public OBError getMessageResult() {

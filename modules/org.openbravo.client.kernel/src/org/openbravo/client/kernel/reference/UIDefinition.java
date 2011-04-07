@@ -164,7 +164,7 @@ public abstract class UIDefinition {
           defaultS = "";
         }
         if (defaultS.equalsIgnoreCase("@#Date@")) {
-          columnValue = this.convertToClassicString(new Date());
+          return setNOWDefault();
         } else if (!defaultS.startsWith("@SQL=")) {
           columnValue = Utility.getDefault(new DalConnectionProvider(false), rq
               .getVariablesSecureApp(), field.getColumn().getDBColumnName(), defaultS, field
@@ -213,6 +213,28 @@ public abstract class UIDefinition {
     } catch (JSONException e) {
       log.error("Couldn't get field property value for column "
           + field.getColumn().getDBColumnName());
+    }
+    return jsnobject.toString();
+  }
+
+  private String setNOWDefault() {
+    JSONObject jsnobject = new JSONObject();
+    try {
+      UIDefinition uiDef = this;
+      if (!(this instanceof DateUIDefinition)) {
+        for (UIDefinition def : UIDefinitionController.getInstance().getAllUIDefinitions()) {
+          if (def instanceof DateUIDefinition) {
+            uiDef = def;
+            break;
+          }
+        }
+      }
+      String columnValue = uiDef.convertToClassicString(new Date());
+      jsnobject.put("value", uiDef.createFromClassicString(columnValue));
+      jsnobject.put("classicValue", columnValue);
+      jsnobject.put("hasDateDefault", true);
+    } catch (JSONException e) {
+      log.error("Couldn't get field property value");
     }
     return jsnobject.toString();
   }

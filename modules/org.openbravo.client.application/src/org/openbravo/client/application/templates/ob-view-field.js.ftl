@@ -61,8 +61,8 @@
           firstFocusedField: true,
           </#if>
         </#if>
-        <#if fieldDefinition.type = "OBSectionItem" || fieldDefinition.type = "OBLinkedItemSectionItem" >
-        sectionExpanded: true,
+        <#if fieldDefinition.type = "OBSectionItem" || fieldDefinition.type = "OBNoteSectionItem" || fieldDefinition.type = "OBLinkedItemSectionItem" >
+        sectionExpanded: false,
         defaultValue: '${fieldDefinition.label?js_string}',
         itemIds: [
         <#list fieldDefinition.children as childField>

@@ -170,7 +170,8 @@ isc.OBStandardView.addProperties({
   
   initWidget: function(properties){
     this.messageBar = isc.OBMessageBar.create({
-      visibility: 'hidden'
+      visibility: 'hidden',
+      view: this
     });
     
     if (this.isRootView) {
@@ -842,7 +843,7 @@ isc.OBStandardView.addProperties({
     this.messageBar.hide();
     
     if (!this.isShowingForm) {
-      this.viewForm.showFormOnFICReturn = true;
+      this.switchFormGridVisibility();
     }
     
     if (!record) { //  new case

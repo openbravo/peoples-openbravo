@@ -30,6 +30,7 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -85,6 +86,10 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
   }
 
   public List<String> getAvailableWidgetClasses() throws Exception {
+    return getAvailableWidgetClasses(null);
+  }
+
+  public List<String> getAvailableWidgetClasses(String roleId) throws Exception {
     OBContext.setAdminMode();
     try {
       if (widgetClassDefinitions != null) {
@@ -97,7 +102,7 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
       final OBQuery<WidgetClass> widgetClassesQry = OBDal.getInstance().createQuery(
           WidgetClass.class, WidgetClass.PROPERTY_SUPERCLASS + " is false");
       for (WidgetClass widgetClass : widgetClassesQry.list()) {
-        if (isAccessible(widgetClass)) {
+        if (isAccessible(widgetClass, roleId)) {
           final WidgetProvider widgetProvider = myOBUtils.getWidgetProvider(widgetClass);
           if (!widgetProvider.validate()) {
             continue;
@@ -233,7 +238,7 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
     log.debug("Defined User widgets:" + userWidgets.size());
     // filter on the basis of role access
     for (WidgetInstance widget : userWidgets) {
-      if (isAccessible(widget.getWidgetClass())) {
+      if (isAccessible(widget.getWidgetClass(), null)) {
         widgets.add(widget);
       }
     }
@@ -290,11 +295,14 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
     }
   }
 
-  private boolean isAccessible(WidgetClass widgetClass) {
+  private boolean isAccessible(WidgetClass widgetClass, String _roleId) {
     if (widgetClass.isAllowAnonymousAccess()) {
       return true;
     }
-    final String roleId = OBContext.getOBContext().getRole().getId();
+    String roleId = _roleId;
+    if (StringUtils.isEmpty(roleId)) {
+      roleId = OBContext.getOBContext().getRole().getId();
+    }
     for (WidgetClassAccess widgetClassAccess : widgetClass.getOBKMOWidgetClassAccessList()) {
       if (DalUtil.getId(widgetClassAccess.getRole()).equals(roleId)) {
         return true;

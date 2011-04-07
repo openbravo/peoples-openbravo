@@ -122,7 +122,7 @@ isc.OBUIAPP_AlertManagement.addProperties({
     this.sections.Acknowledged = {
         title: this.translatedStatus.Acknowledged,
         alertStatus: 'Acknowledged',
-        expanded: false,
+        expanded: true,
         items: [this.grids.Acknowledged],
         controls: [this.AcknowledgedNew, this.AcknowledgedSuppressed]};
     this.sectionStack.addSection(this.sections.Acknowledged);
@@ -159,6 +159,7 @@ isc.OBUIAPP_AlertManagement.addProperties({
           }
           // Old status is always expanded to be able to select the rows
           OB.AlertManagement.grids[data.oldStatus].invalidateCache();
+          OB.AlertManager.call();
     });
   },
   

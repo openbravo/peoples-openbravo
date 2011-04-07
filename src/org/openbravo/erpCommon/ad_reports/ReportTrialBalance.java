@@ -80,6 +80,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           "ReportTrialBalance|C_ElementValue_IDTO", ReportTrialBalanceData.selectLastAccount(this,
               Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"), Utility.getContext(
                   this, vars, "#User_Client", "Account")));
+      String strNotInitialBalance = vars.getGlobalVariable("inpNotInitialBalance",
+          "ReportTrialBalance|notInitialBalance", "Y");
       String strcElementValueFromDes = "", strcElementValueToDes = "";
       if (!strcElementValueFrom.equals(""))
         strcElementValueFromDes = ReportTrialBalanceData.selectSubaccountDescription(this,
@@ -94,7 +96,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strPageNo, strOrg, strLevel,
           strcElementValueFrom, strcElementValueTo, strcElementValueFromDes, strcElementValueToDes,
-          strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId, strGroupBy);
+          strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId, strNotInitialBalance, strGroupBy);
 
     } else if (vars.commandIn("FIND")) {
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
@@ -116,6 +118,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           "ReportTrialBalance|C_ElementValue_IDFROM");
       String strcElementValueTo = vars.getRequestGlobalVariable("inpcElementValueIdTo",
           "ReportTrialBalance|C_ElementValue_IDTO");
+      String strNotInitialBalance = vars.getRequestGlobalVariable("inpNotInitialBalance",
+          "ReportTrialBalance|notInitialBalance");
       String strcElementValueFromDes = "", strcElementValueToDes = "";
       if (!strcElementValueFrom.equals(""))
         strcElementValueFromDes = ReportTrialBalanceData.selectSubaccountDescription(this,
@@ -128,7 +132,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strPageNo, strOrg, strLevel,
           strcElementValueFrom, strcElementValueTo, strcElementValueFromDes, strcElementValueToDes,
-          strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId, strGroupBy);
+          strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId, strNotInitialBalance, strGroupBy);
 
     } else if (vars.commandIn("PDF", "XLS")) {
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
@@ -159,15 +163,17 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           "ReportTrialBalance|cProjectId", "", IsIDFilter.instance);
       String strGroupBy = vars.getRequestGlobalVariable("inpGroupBy", "ReportTrialBalance|GroupBy");
       String strPageNo = vars.getRequestGlobalVariable("inpPageNo", "ReportTrialBalance|PageNo");
+      String strNotInitialBalance = vars.getRequestGlobalVariable("inpNotInitialBalance",
+          "ReportTrialBalance|notInitialBalance");
       if (vars.commandIn("PDF"))
         printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strOrg, strLevel,
             strcElementValueFrom, strcElementValueFromDes, strcElementValueTo,
-            strcElementValueToDes, strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId,
+            strcElementValueToDes, strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId, strNotInitialBalance,
             strGroupBy, strPageNo);
       else
         printPageDataXLS(request, response, vars, strDateFrom, strDateTo, strOrg, strLevel,
             strcElementValueFrom, strcElementValueTo, strcBpartnerId, strmProductId, strcProjectId,
-            strcAcctSchemaId, strGroupBy);
+            strcAcctSchemaId, strNotInitialBalance, strGroupBy);
 
     } else if (vars.commandIn("OPEN")) {
       String strAccountId = vars.getRequiredStringParameter("inpcAccountId");
@@ -185,9 +191,11 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strcProjectId = vars.getInGlobalVariable("inpcProjectId_IN",
           "ReportTrialBalance|cProjectId", "", IsIDFilter.instance);
       String strGroupBy = vars.getRequestGlobalVariable("inpGroupBy", "ReportTrialBalance|GroupBy");
+      String strNotInitialBalance = vars.getRequestGlobalVariable("inpNotInitialBalance",
+          "ReportTrialBalance|notInitialBalance");
 
       printPageOpen(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strcBpartnerId,
-          strmProductId, strcProjectId, strcAcctSchemaId, strGroupBy, strAccountId);
+          strmProductId, strcProjectId, strcAcctSchemaId, strGroupBy, strAccountId, strNotInitialBalance);
 
     } else {
       pageError(response);
@@ -197,7 +205,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
   private void printPageOpen(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strOrg, String strLevel, String strcBpartnerId,
       String strmProductId, String strcProjectId, String strcAcctSchemaId, String strGroupBy,
-      String strAccountId) throws IOException, ServletException {
+      String strAccountId, String strNotInitialBalance) throws IOException, ServletException {
 
     ReportTrialBalanceData[] data = null;
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
@@ -209,8 +217,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         strLevel, strOrgFamily, Utility
             .getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this,
             vars, "#AccessibleOrgTree", "ReportTrialBalance"), null, null, strDateFrom,
-        strAccountId, strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId, DateTimeData
-            .nDaysAfter(this, strDateTo, "1"));
+        strAccountId, strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId, (strNotInitialBalance.equals("Y")?"O":"P"), 
+        DateTimeData.nDaysAfter(this, strDateTo, "1"));
 
     if (data == null) {
       data = ReportTrialBalanceData.set();
@@ -262,7 +270,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strDateFrom, String strDateTo, String strPageNo, String strOrg, String strLevel,
       String strcElementValueFrom, String strcElementValueTo, String strcElementValueFromDes,
       String strcElementValueToDes, String strcBpartnerId, String strmProductId,
-      String strcProjectId, String strcAcctSchemaId, String strGroupBy) throws IOException,
+      String strcProjectId, String strcAcctSchemaId, String strNotInitialBalance, String strGroupBy) throws IOException,
       ServletException {
 
     String strMessage = "";
@@ -311,15 +319,15 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
             strAccountFromValue, strAccountToValue, strDateFrom, null, strcBpartnerId,
-            strmProductId, strcProjectId, strcAcctSchemaId, DateTimeData.nDaysAfter(this,
-                strDateTo, "1"));
+            strmProductId, strcProjectId, strcAcctSchemaId, (strNotInitialBalance.equals("Y")?"O":"P"), 
+            DateTimeData.nDaysAfter(this, strDateTo, "1"));
         if (strGroupBy.equals(""))
           discard[2] = "showExpand";
 
       } else {
         discard[2] = "showExpand";
         data = getDataWhenNotSubAccount(vars, strDateFrom, strDateTo, strOrg, strOrgFamily,
-            strcAcctSchemaId, strLevel, strTreeAccount);
+            strcAcctSchemaId, strLevel, strTreeAccount, strNotInitialBalance);
       }
 
       if (data != null && data.length > 0)
@@ -410,6 +418,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramMessage", (strMessage.equals("") ? "" : "alert('" + strMessage
         + "');"));
     xmlDocument.setParameter("groupbyselected", strGroupBy);
+    xmlDocument.setParameter("notInitialBalance", strNotInitialBalance);
 
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
         .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
@@ -421,7 +430,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
     xmlDocument.setData("reportCProjectId_IN", "liststructure", SelectorUtilityData.selectProject(
         this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
-            vars, "#User_Client", ""), strcProjectIdAux));
+            vars, "#User_Client", ""), strcProjectIdAux)); 
 
     if (data != null && data.length > 0) {
       xmlDocument.setData("structure1", data);
@@ -444,7 +453,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strDateFrom, String strDateTo, String strOrg,
       String strLevel, String strcElementValueFrom, String strcElementValueTo,
       String strcBpartnerId, String strmProductId, String strcProjectId, String strcAcctSchemaId,
-      String strGroupBy) throws IOException, ServletException {
+      String strNotInitialBalance, String strGroupBy) throws IOException, ServletException {
 
     response.setContentType("text/html; charset=UTF-8");
     ReportTrialBalanceData[] data = null;
@@ -471,11 +480,12 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility
                 .getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
             strAccountFromValue, strAccountToValue, strDateFrom, strcBpartnerId, strmProductId,
-            strcProjectId, strcAcctSchemaId, DateTimeData.nDaysAfter(this, strDateTo, "1"));
+            strcProjectId, strcAcctSchemaId, (strNotInitialBalance.equals("Y")?"O":"P"), 
+            DateTimeData.nDaysAfter(this, strDateTo, "1"));
         showDimensions = true;
       } else {
         data = getDataWhenNotSubAccount(vars, strDateFrom, strDateTo, strOrg, strOrgFamily,
-            strcAcctSchemaId, strLevel, strTreeAccount);
+            strcAcctSchemaId, strLevel, strTreeAccount, strNotInitialBalance);
       }
 
       if (data == null || data.length == 0) {
@@ -511,8 +521,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strDateFrom, String strDateTo, String strOrg,
       String strLevel, String strcElementValueFrom, String strcElementValueFromDes,
       String strcElementValueTo, String strcElementValueToDes, String strcBpartnerId,
-      String strmProductId, String strcProjectId, String strcAcctSchemaId, String strGroupBy,
-      String strPageNo) throws IOException, ServletException {
+      String strmProductId, String strcProjectId, String strcAcctSchemaId, String strNotInitialBalance, 
+      String strGroupBy, String strPageNo) throws IOException, ServletException {
 
     response.setContentType("text/html; charset=UTF-8");
     ReportTrialBalanceData[] data = null;
@@ -539,14 +549,14 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             strLevel, strOrgFamily, Utility.getContext(this, vars, "#User_Client",
                 "ReportTrialBalance"), Utility.getContext(this, vars, "#AccessibleOrgTree",
                 "ReportTrialBalance"), strAccountFromValue, strAccountToValue, strDateFrom, null,
-            strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId, DateTimeData
-                .nDaysAfter(this, strDateTo, "1"));
+            strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId, (strNotInitialBalance.equals("Y")?"O":"P"), 
+            DateTimeData.nDaysAfter(this, strDateTo, "1"));
         if (!strGroupBy.equals(""))
           strIsSubAccount = true;
 
       } else {
         data = getDataWhenNotSubAccount(vars, strDateFrom, strDateTo, strOrg, strOrgFamily,
-            strcAcctSchemaId, strLevel, strTreeAccount);
+            strcAcctSchemaId, strLevel, strTreeAccount, strNotInitialBalance);
       }
 
       if (data == null || data.length == 0) {
@@ -583,12 +593,12 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
   private ReportTrialBalanceData[] getDataWhenNotSubAccount(VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strOrg, String strOrgFamily,
-      String strcAcctSchemaId, String strLevel, String strTreeAccount) throws IOException,
+      String strcAcctSchemaId, String strLevel, String strTreeAccount, String strNotInitialBalance) throws IOException,
       ServletException {
     ReportTrialBalanceData[] data = null;
     ReportTrialBalanceData[] dataAux = null;
     dataAux = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strTreeAccount,
-        strcAcctSchemaId, strOrgFamily, Utility.getContext(this, vars, "#User_Client",
+        strcAcctSchemaId, strNotInitialBalance.equals("Y")?"O":"P", strOrgFamily, Utility.getContext(this, vars, "#User_Client",
             "ReportTrialBalance"), Utility.getContext(this, vars, "#AccessibleOrgTree",
             "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), "",
         "");
@@ -597,9 +607,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             "#User_Client", "ReportTrialBalance"));
 
     log4j.debug("Calculating tree...");
-    dataAux = calculateTree(dataAux, null, new Vector<Object>(), dataInitialBalance);
+    dataAux = calculateTree(dataAux, null, new Vector<Object>(), dataInitialBalance, strNotInitialBalance);
     dataAux = levelFilter(dataAux, null, false, strLevel);
     dataAux = dataFilter(dataAux);
+
     log4j.debug("Tree calculated");
 
     if (dataAux != null && dataAux.length > 0) {
@@ -611,7 +622,6 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     } else {
       data = dataAux;
     }
-
     return data;
 
   }
@@ -628,7 +638,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
   }
 
   private ReportTrialBalanceData[] calculateTree(ReportTrialBalanceData[] data, String indice,
-      Vector<Object> vecTotal, ReportTrialBalanceData[] dataIB) {
+      Vector<Object> vecTotal, ReportTrialBalanceData[] dataIB, String strNotInitialBalance) {
     if (data == null || data.length == 0)
       return data;
     if (indice == null)
@@ -659,7 +669,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         vecParcial.addElement("0");
         vecParcial.addElement("0");
         vecParcial.addElement("0");
-        ReportTrialBalanceData[] dataChilds = calculateTree(data, data[i].id, vecParcial, dataIB);
+        ReportTrialBalanceData[] dataChilds = calculateTree(data, data[i].id, vecParcial, dataIB, strNotInitialBalance);
         BigDecimal parcialDR = new BigDecimal((String) vecParcial.elementAt(0));
         BigDecimal parcialCR = new BigDecimal((String) vecParcial.elementAt(1));
         BigDecimal parcialInicial = new BigDecimal((String) vecParcial.elementAt(2));
@@ -675,8 +685,15 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         // Set calculated Initial Balances
         for (int k = 0; k < dataIB.length; k++) {
           if (dataIB[k].accountId.equals(data[i].id)) {
-            data[i].saldoInicial = (new BigDecimal(dataIB[k].saldoInicial).add(parcialInicial))
+            if (strNotInitialBalance.equals("Y")) {
+              data[i].saldoInicial = (new BigDecimal(dataIB[k].saldoInicial).add(parcialInicial))
                 .toPlainString();
+            } else {
+              data[i].amtacctdr = (new BigDecimal(dataIB[k].amtacctdr).add(parcialDR))
+                .toPlainString();
+              data[i].amtacctcr = (new BigDecimal(dataIB[k].amtacctcr).add(parcialCR))
+                .toPlainString();
+            }
             data[i].saldoFinal = (new BigDecimal(dataIB[k].saldoInicial).add(parcialDR)
                 .subtract(parcialCR)).toPlainString();
           }

@@ -36,7 +36,7 @@ try {
 
 // needed for backward compatibility... to open the registration form
 function openRegistration() {
-  OB.Utilities.openProcessPopup(OB.Application.contextUrl + '/ad_forms/Registration.html', true);
+  OB.Utilities.openProcessPopup(OB.Application.contextUrl + 'ad_forms/Registration.html', true);
 }
 
 isc.Canvas.addClassProperties({neverUsePNGWorkaround:true});
@@ -63,7 +63,7 @@ OB.Toolbar = isc.ToolStrip.create({
     var newMembers = [];
     for (var i = 0; i < members.length; i++) {
         // encapsulate in 2 hlayouts to handle correct mouse over/hover and show of box
-        var newMember = isc.HLayout.create({layoutLeftMargin: 10, layoutRightMargin: 10, width: '100%', height: '100%', styleName: 'OBNavBarComponent', members:[members[i]]}); 
+        var newMember = isc.HLayout.create({layoutLeftMargin: 0, layoutRightMargin: 0, width: '100%', height: '100%', styleName: 'OBNavBarComponent', members:[members[i]]}); 
         newMembers[i] = newMember;
     }    
     // note the array has to be placed in an array otherwise the newMembers

@@ -32,9 +32,14 @@ isc.OBAlertGrid.addProperties({
   canGroupBy: false,
   canAutoFitFields: false,
   selectionType: 'simple',
-  editEvent: 'click',
-  //editOnFocus: true,
+  //editEvent: 'click',
+  editOnFocus: true,
   showCellContextMenus: true,
+  selectOnEdit: false,
+
+  // keeps track if we are in objectSelectionMode or in toggleSelectionMode
+  // objectSelectionMode = singleRecordSelection === true
+  singleRecordSelection: false,
 
   dataProperties: {
     useClientFiltering: false//,
@@ -56,8 +61,8 @@ isc.OBAlertGrid.addProperties({
       canFilter: true,
       canEdit: false,
       filterOnKeypress: true,
-      filterEditorType: 'OBTextItem'
-        //, type: '_id_10'
+      filterEditorType: 'OBTextItem',
+      type: '_id_10'
     },
     { name: 'creationDate',
       title: OB.I18N.getLabel('OBUIAPP_AlertGrid_Time'),
@@ -78,8 +83,8 @@ isc.OBAlertGrid.addProperties({
         columnName: 'comments',
         disabled: false,
         updatable: true
-      }
-      //, type: '_id_10'
+      },
+      type: '_id_10'
     },
     { name: 'recordID',
       title: OB.I18N.getLabel('OBUIAPP_AlertGrid_Record'),
@@ -87,8 +92,12 @@ isc.OBAlertGrid.addProperties({
       canEdit: false,
       isLink: true,
       filterOnKeypress: true,
-      filterEditorType: 'OBTextItem'
-      //, type: '_id_10'
+      filterEditorType: 'OBTextItem',
+      type: '_id_10',
+      formatCellValueFunctionReplaced: true,
+      formatCellValue: function(value, record, rowNum, colNum, grid){
+          return '';
+        }
     }
     ],
   
@@ -108,7 +117,7 @@ isc.OBAlertGrid.addProperties({
 
     this.contextMenu = this.getMenuConstructor().create({items: []});
     
-    OB.Datasource.get('ADAlert', this);
+    OB.Datasource.get('ADAlert', this, null, true);
     
     this.Super('initWidget', arguments);
   },
@@ -123,7 +132,7 @@ isc.OBAlertGrid.addProperties({
 
     this.fetchData();
   },
-  
+
   dataArrived: function(startRow, endRow){
     this.getGridTotalRows();
     return this.Super('dataArrived', arguments);
@@ -178,11 +187,24 @@ isc.OBAlertGrid.addProperties({
         filterClause += ' or e.id in (' +OB.AlertManagement.alertRules[i].alerts + '))';
       }
     }
-    whereClause += ' and alertRule.id in (' + alertRuleIds + ')';
+    if (alertRuleIds !== '') {
+      whereClause += ' and alertRule.id in (' + alertRuleIds + ')';
+    } else {
+      whereClause += ' and 1=2';
+    }
     if (filterClause !== '') {
       whereClause += filterClause;
     }
     return whereClause;
+  },
+  
+  headerClick: function(fieldNum, header, autoSaveDone){
+    var field = this.fields[fieldNum];
+    if (this.isCheckboxField(field) && this.singleRecordSelection) {
+      this.deselectAllRecords();
+      this.singleRecordSelection = false;
+    }
+    return this.Super('headerClick', arguments);
   },
   
   cellClick: function (record, rowNum, colNum) {
@@ -197,11 +219,39 @@ isc.OBAlertGrid.addProperties({
     }
   },
   
-  selectionChanged: function(record, state){
-    this.updateSelectedCountDisplay();
-    this.Super('selectionChanged', arguments);
+  recordClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
+    this.handleRecordSelection(viewer, record, recordNum, field, fieldNum, value, rawValue, false, true);
   },
   
+//  recordDoubleClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
+//    var actionObject = {
+//      target: this.view,
+//      method: this.view.editRecord,
+//      parameters: [record, false, (field ? field.name : null)]
+//    };
+//    this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
+//  },
+
+  
+  // +++++++++++++++++++++++++++++ Record Selection Handling +++++++++++++++++++++++
+  // Functions based on the ob-view-grid.js Record Selection Handling.
+  deselectAllRecords: function(preventUpdateSelectInfo, autoSaveDone){
+    this.allSelected = false;
+    var ret = this.Super('deselectAllRecords', arguments);
+    this.lastSelectedRecord = null;
+    if (!preventUpdateSelectInfo) {
+      this.selectionUpdated();
+    }
+    return ret;
+  },
+
+  selectAllRecords: function(autoSaveDone){
+    this.allSelected = true;
+    var ret = this.Super('selectAllRecords', arguments);
+    this.selectionUpdated();
+    return ret;
+  },
+
   updateSelectedCountDisplay: function(){
     var selection = this.getSelection();
     var selectionLength = selection.getLength();
@@ -213,6 +263,190 @@ isc.OBAlertGrid.addProperties({
       this.filterEditor.getEditForm().setValue(this.getCheckboxField().name, newValue);
     }
   },
+  
+  // note when solving selection issues in the future also
+  // consider using the selectionChanged method, but that
+  // one has as disadvantage that it is called multiple times
+  // for one select/deselect action
+  selectionUpdated: function(record, recordList){
+  
+    this.stopHover();
+    this.updateSelectedCountDisplay();
+    if (this.getSelectedRecords() && this.getSelectedRecords().length !== 1) {
+      this.lastSelectedRecord = null;
+    } else {
+      this.lastSelectedRecord = this.getSelectedRecord();
+    }
+  },
+  
+  selectOnMouseDown: function(record, recordNum, fieldNum, autoSaveDone){
+    // don't change selection on right mouse down
+    var EH = isc.EventHandler, eventType;
+    
+    // don't do anything if right-clicking on a selected record
+    if (EH.rightButtonDown() && this.isSelected(record)) {
+      return;
+    }
+    
+    var previousSingleRecordSelection = this.singleRecordSelection;
+    var currentSelectedRecordSelected = (this.getSelectedRecord() === record);
+    if (this.getCheckboxFieldPosition() === fieldNum) {
+      if (this.singleRecordSelection) {
+        this.deselectAllRecords(true);
+      }
+      this.singleRecordSelection = false;
+      this.Super('selectOnMouseDown', arguments);
+      
+      // handle a special case:
+      // - singlerecordmode: checkbox is not checked
+      // - user clicks on checkbox
+      // in this case move to multi select mode and keep the record selected
+      if (previousSingleRecordSelection && currentSelectedRecordSelected) {
+        this.selectSingleRecord(record);
+      }
+      
+      this.selectionUpdated();
+      
+      this.markForRedraw('Selection checkboxes need to be redrawn');
+    } else {
+      // do some checking, the handleRecordSelection should only be called
+      // in case of keyboard navigation and not for real mouse clicks,
+      // these are handled by the recordClick and recordDoubleClick methods
+      // if this method here would also handle mouseclicks then the
+      // doubleClick
+      // event is not captured anymore
+      eventType = EH.getEventType();
+      if (!EH.isMouseEvent(eventType)) {
+        this.handleRecordSelection(null, record, recordNum, null, fieldNum, null, null, true);
+      }
+    }
+  },
+  
+  handleRecordSelection: function(viewer, record, recordNum, field, fieldNum, value, rawValue, fromSelectOnMouseDown){
+    var EH = isc.EventHandler;
+    var keyName = EH.getKey();
+    
+    // do nothing, click in the editrow itself
+    if ((this.getEditRow() || this.getEditRow() === 0) && this.getEditRow() === recordNum) {
+      return;
+    }
+    
+    // if the arrow key was pressed and no ctrl/shift pressed then
+    // go to single select mode
+    var arrowKeyPressed = keyName && (keyName === isc.OBViewGrid.ARROW_UP_KEY_NAME || keyName === isc.OBViewGrid.ARROW_DOWN_KEY_NAME);
+    
+    var previousSingleRecordSelection = this.singleRecordSelection;
+    if (arrowKeyPressed) {
+      if (EH.ctrlKeyDown() || EH.shiftKeyDown()) {
+        // move to multi-select mode, let the standard do it for us
+        this.singleRecordSelection = false;
+      } else {
+        this.doSelectSingleRecord(record);
+      }
+    } else if (this.getCheckboxFieldPosition() === fieldNum) {
+      if (this.singleRecordSelection) {
+        this.deselectAllRecords(true);
+      }
+      // click in checkbox field is done by standard logic
+      // in the selectOnMouseDown
+      this.singleRecordSelection = false;
+      this.selectionUpdated();
+    } else if (isc.EventHandler.ctrlKeyDown()) {
+      // only do something if record clicked and not from selectOnMouseDown
+      // this method got called twice from one clicK: through recordClick
+      // and
+      // to selectOnMouseDown. Only handle one.
+      if (!fromSelectOnMouseDown) {
+        this.singleRecordSelection = false;
+        // let ctrl-click also deselect records
+        if (this.isSelected(record)) {
+          this.deselectRecord(record);
+        } else {
+          this.selectRecord(record);
+        }
+      }
+    } else if (isc.EventHandler.shiftKeyDown()) {
+      this.singleRecordSelection = false;
+      this.selection.selectOnMouseDown(this, recordNum, fieldNum);
+    } else {
+      // click on the record which was already selected
+      this.doSelectSingleRecord(record);
+    }
+    
+    this.updateSelectedCountDisplay();
+
+    // mark some redraws if there are lines which don't
+    // have a checkbox flagged, so if we move from single record selection
+    // to multi record selection
+    if (!this.singleRecordSelection && previousSingleRecordSelection) {
+      this.markForRedraw('Selection checkboxes need to be redrawn');
+    }
+  },
+  
+  //selectRecordForEdit: function(record){
+  //  this.Super('selectRecordForEdit', arguments);
+  //  this.doSelectSingleRecord(record);
+  //},
+  
+  doSelectSingleRecord: function(record){
+    // if this record is already selected and the only one then do nothing
+    // note that when navigating with the arrow key that at a certain 2 are
+    // selected
+    // when going into this method therefore the extra check on length === 1
+    if (this.singleRecordSelection && this.getSelectedRecord() === record && this.getSelection().length === 1) {
+      return;
+    }
+    this.singleRecordSelection = true;
+    this.selectSingleRecord(record);
+    
+    // deselect the checkbox in the top
+    var fieldNum = this.getCheckboxFieldPosition(), field = this.fields[fieldNum];
+    var icon = this.checkboxFieldFalseImage || this.booleanFalseImage;
+    var title = this.getValueIconHTML(icon, field);
+    
+    this.setFieldTitle(fieldNum, title);
+  },
+  
+  // overridden to prevent the checkbox to be shown when only one record is selected.
+  getCellValue: function(record, recordNum, fieldNum, gridBody){
+    var field = this.fields[fieldNum];
+    if (!field || this.allSelected) {
+      return this.Super('getCellValue', arguments);
+    }
+    // do all the cases which are handled in the super directly
+    if (this.isCheckboxField(field)) {
+      // NOTE: code copied from super class
+      var icon;
+      if (!this.body.canSelectRecord(record)) {
+        // record cannot be selected but we want the space allocated for the
+        // checkbox anyway.
+        icon = '[SKINIMG]/blank.gif';
+      } else if (this.singleRecordSelection && !this.allSelected) {
+        // always show the false image
+        icon = (this.checkboxFieldFalseImage || this.booleanFalseImage);
+      } else {
+        // checked if selected, otherwise unchecked
+        var isSel = this.selection.isSelected(record) ? true : false;
+        icon = isSel ? (this.checkboxFieldTrueImage || this.booleanTrueImage) : (this.checkboxFieldFalseImage || this.booleanFalseImage);
+      }
+      // if the record is disabled, make the checkbox image disabled as well
+      // or if the record is new then also show disabled
+      if (!record || record[this.recordEnabledProperty] === false) {
+        icon = icon.replace('.', '_Disabled.');
+      }
+      
+      var html = this.getValueIconHTML(icon, field);
+      
+      return html;
+    } else {
+      return this.Super('getCellValue', arguments);
+    }
+  },
+  
+  getSelectedRecords: function(){
+    return this.getSelection();
+  },
+  // ++++++++++++++ end of Record Selection handling ++++++++++++++
   
   // overridden to support hover on the header for the checkbox field
   setFieldProperties: function(field, properties){

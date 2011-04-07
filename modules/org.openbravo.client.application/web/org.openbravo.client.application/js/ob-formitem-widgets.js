@@ -116,20 +116,7 @@ isc.OBSearchItem.addProperties({
   wrap: false,
   clipValue: true,
   validateOnChange: true,
-  
-  setValue: function(value){
-    var ret = this.Super('setValue', arguments);
-    // in this case the clearIcon needs to be shown or hidden
-    if (!this.disabled && !this.required) {
-      if (value) {
-        this.showIcon(this.instanceClearIcon);
-      } else {
-        this.hideIcon(this.instanceClearIcon);
-      }
-    }
-    return ret;
-  },
-  
+
   // NOTE: FormItem don't have initWidget but use init
   init: function(){
     this.instanceClearIcon = isc.shallowClone(this.clearIcon);
@@ -259,7 +246,7 @@ isc.OBSearchItem.addProperties({
       complementsNS4 = 'alwaysRaised=1, dependent=1, directories=0, hotkeys=0, menubar=0, ';
     }
     var complements = complementsNS4 + 'height=' + height + ', width=' + width + ', left=' + left + ', top=' + top + ', screenX=' + left + ', screenY=' + top + ', location=0, resizable=1, scrollbars=1, status=0, toolbar=0, titlebar=0, modal=\'yes\'';
-    isc.OBSearchItem.openedWindow = window.open(OB.Application.contextUrl + url + ((auxField === '') ? '' : '?' + auxField), 'SELECTOR', complements);
+    isc.OBSearchItem.openedWindow = window.open(OB.Utilities.applicationUrl(url) + ((auxField === '') ? '' : '?' + auxField), 'SELECTOR', complements);
     if (isc.OBSearchItem.openedWindow) {
       isc.OBSearchItem.openedWindow.focus();
       this.setUnloadEventHandling();
@@ -428,27 +415,35 @@ isc.OBSectionItem.addProperties({
   // visual state of disabled or non-disabled stays the same now
   showDisabled: false,
   
-  initWidget: function(){
-    var ret = this.Super('initWidget', arguments);
-    return ret;
-  },
-  
   // never disable a section item
   isDisabled: function(){
     return false;
   },
+
+  // Update the property alwaysTakeSpace when collapsing/expanding a section 
+  updateAlwaysTakeSpace: function(flag) {
+    var i, f = this.form;
+
+    for(i = 0; i < this.itemIds.length; i++) {
+      f.getItem(this.itemIds[i]).alwaysTakeSpace = flag;
+    }
+  },
   
-  collapseSection: function(){
+  collapseSection: function() {
     // when collapsing set the focus to the header
+    this.updateAlwaysTakeSpace(false);
     this.form.setFocusItem(this);
     var ret = this.Super('collapseSection', arguments);
     return ret;
   },
   
-  expandSection: function(){
+  expandSection: function() {
+    this.updateAlwaysTakeSpace(true);
+
     if (this.form.getFocusItem()) {
       this.form.getFocusItem().blurItem();
     }
+
     var ret = this.Super('expandSection', arguments);
     
     if (!this.form._preventFocusChanges) {
@@ -513,12 +508,16 @@ isc.OBListItem.addProperties({
   // addUnknownValues: false,
 
   selectOnFocus: true,
+  moveFocusOnPickValue: true,
   
   // is overridden to keep track that a value has been explicitly picked
   pickValue : function (value) {
     this._pickedValue = true;
     this.Super('pickValue', arguments);
     delete this._pickedValue;
+    if (this.moveFocusOnPickValue && this.form.focusInNextItem) {
+      this.form.focusInNextItem(this.name);
+    }
   },
 
   changed: function() {
@@ -558,6 +557,7 @@ isc.OBListItem.addProperties({
 isc.ClassFactory.defineClass('OBListFilterItem', OBListItem);
 
 isc.OBListFilterItem.addProperties({
+  moveFocusOnPickValue: false,
   operator: 'equals'
 });
 
@@ -607,6 +607,13 @@ isc.OBDateChooser.addProperties({
     // When data has changed, force the OBDateItem to get it. Other case OBDateItem.blur 
     // gets incorrect value on getValue()
     this.callingFormItem.setValue(this.getData());
+  },
+  dateClick: function() {
+    var ret = this.Super('dateClick', arguments);
+    if (this.callingForm.focusInNextItem) {
+      this.callingForm.focusInNextItem(this.callingFormItem.name);
+    }
+    return ret;
   }
 });
 

@@ -162,7 +162,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         // Do not do anything.
         if (!priceActual.equals(expectedPriceActual)) {
           priceStd = new BigDecimal(SLOrderProductData.getOffersStdPrice(this,
-              dataOrder[0].cBpartnerId, priceActual.toString().replace("\"", ""), strProduct,
+              dataOrder[0].cBpartnerId, expectedPriceActual.toString().replace("\"", ""), strProduct,
               dataOrder[0].dateordered, strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
         }
         // priceList

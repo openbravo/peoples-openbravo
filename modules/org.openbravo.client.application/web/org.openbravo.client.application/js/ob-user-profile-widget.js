@@ -26,7 +26,7 @@ isc.OBUserProfile.addProperties({
 
   layoutProperties: {},
   
-  baseStyle: 'OBNavBarButton',
+  baseStyle: 'OBNavBarTextButton',
   
   // ** {{{ title }}} **
   //
@@ -208,6 +208,13 @@ isc.OBUserProfile.addProperties({
         // note, need to make a copy of the initial values
         // otherwise they are updated when the form values change!
         roleForm.setValues(isc.addProperties({}, roleForm.localFormData.initialValues));
+        roleForm.setWarehouseValueMap();
+        //We set initial values again to set warehouse correctly
+        roleForm.setValues(isc.addProperties({}, roleForm.localFormData.initialValues));
+        if(roleForm.getItem('warehouse').getClientPickListData().length > 0 &&
+                !roleForm.getItem('warehouse').getValue()){
+            roleForm.getItem('warehouse').moveToFirstValue();
+        }
       },
       setInitialData: function(rpcResponse, data, rpcRequest){
         // order of these statements is important see comments in reset
@@ -218,6 +225,11 @@ isc.OBUserProfile.addProperties({
         roleForm.setValue('role', data.initialValues.role);
         roleForm.setValue('client', data.initialValues.client);
         roleForm.setValueMaps();
+        //First we set initial values, but warehouse will not work
+        //as its combo hasn't yet been filled
+        roleForm.setValues(isc.addProperties({}, data.initialValues));
+        roleForm.setWarehouseValueMap();
+        //We set initial values again to set warehouse correctly
         roleForm.setValues(isc.addProperties({}, data.initialValues));
       },
       // updates the dependent combos
@@ -227,6 +239,9 @@ isc.OBUserProfile.addProperties({
           if (roleForm.getItem('organization').getClientPickListData().length > 0) {
             roleForm.getItem('organization').moveToFirstValue();
           }
+        }
+        this.setWarehouseValueMap();
+        if (item.name !== 'warehouse') {
           if (roleForm.getItem('warehouse').getClientPickListData().length > 0) {
             roleForm.getItem('warehouse').moveToFirstValue();
           }
@@ -237,9 +252,26 @@ isc.OBUserProfile.addProperties({
         for (var i = 0; i < roleForm.localFormData.role.roles.length; i++) {
           var role = roleForm.localFormData.role.roles[i];
           if (role.id === roleId) {
-            roleForm.setValueMap('warehouse', role.warehouseValueMap);
             roleForm.setValueMap('organization', role.organizationValueMap);
             roleForm.setValue('client', role.client);
+          }
+        }
+      },
+      setWarehouseValueMap: function() {
+        var orgId = roleForm.getItem('organization').getValue();
+        if (!orgId) {
+          return;
+        }
+        var roleId = roleForm.getValue('role');
+        for (var i = 0; i < roleForm.localFormData.role.roles.length; i++) {
+          var role = roleForm.localFormData.role.roles[i];
+          if (role.id === roleId) {
+            for (var j = 0; j < role.warehouseOrgMap.length; j++) {
+              var warehouseOrg = role.warehouseOrgMap[j];
+              if (warehouseOrg.orgId === orgId) {
+                roleForm.setValueMap('warehouse', warehouseOrg.warehouseMap);
+              }
+            }
           }
         }
       },

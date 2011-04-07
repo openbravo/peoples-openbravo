@@ -712,3 +712,48 @@
 .OBDialogButtonToolBar {
   margin: 0px 40px 0px 0px;
 }
+
+/*=======================================================================
+ * Note section
+=======================================================================*/
+.OBNoteListGrid,
+.OBNoteListGridOver,
+.OBNoteListGridCell,
+.OBNoteListGridCellOver,
+.OBNoteListGridCurrentUserNoteCell,
+.OBNoteListGridCurrentUserNoteCellOver,
+.OBNoteListGridOtherUserNoteCell,
+.OBNoteListGridAuthor,
+.OBNoteListGridDelete,
+.OBNoteListGridOtherUserNoteCellOver {
+   border: 0px;
+   background-color: transparent;
+   padding:5px; 
+}
+
+.OBNoteListGridCurrentUserNoteCell,
+.OBNoteListGridCurrentUserNoteCellOver {
+    background-color: #898989;
+}
+
+.OBNoteListGridOtherUserNoteCell,
+.OBNoteListGridOtherUserNoteCellOver {
+    background-color: #58A618;
+}
+
+.OBNoteListGridAuthor {
+  font-style: italic;
+  font-size: 10px;
+  margin-left: 3px;
+}
+
+.OBNoteListGridDelete {
+  font-style: normal;
+  color: green;
+  margin-left: 0px;
+}
+
+a.OBNoteListGridDelete:link {
+  padding: 0px;
+}
+	

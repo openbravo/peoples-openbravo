@@ -336,7 +336,7 @@ public class MenuManager implements Serializable {
     // force a load
     final List<?> list = tabsQry.list();
 
-    final Map<String, MenuOption> menuOptionsByWindowId = new HashMap<String, MenuOption>();
+    final Map<String, List<MenuOption>> menuOptionsByWindowId = new HashMap<String, List<MenuOption>>();
     for (MenuOption menuOption : menuOptions) {
       if (menuOption.getMenu() != null && menuOption.getMenu().getWindow() != null) {
         // allow access if not running in a web container
@@ -344,7 +344,14 @@ public class MenuManager implements Serializable {
             || ActivationKey.getInstance().hasLicenseAccess("MW",
                 menuOption.getMenu().getWindow().getId()) == FeatureRestriction.NO_RESTRICTION;
         if (hasAccess) {
-          menuOptionsByWindowId.put(menuOption.getMenu().getWindow().getId(), menuOption);
+          final String windowId = menuOption.getMenu().getWindow().getId();
+          if (menuOptionsByWindowId.containsKey(windowId)) {
+            menuOptionsByWindowId.get(windowId).add(menuOption);
+          } else {
+            List<MenuOption> option = new ArrayList<MenuOption>();
+            option.add(menuOption);
+            menuOptionsByWindowId.put(windowId, option);
+          }
         }
         // make sure that the important parts are read into mem
         for (Tab windowTab : menuOption.getMenu().getWindow().getADTabList()) {
@@ -356,11 +363,13 @@ public class MenuManager implements Serializable {
 
     for (Tab tab : (List<Tab>) list) {
       final Window window = tab.getWindow();
-      final MenuOption menuOption = menuOptionsByWindowId.get(window.getId());
-      if (menuOption != null) {
-        menuOption.setType(MenuEntryType.Window);
-        menuOption.setId(tab.getId());
-        menuOption.setTab(tab);
+      final List<MenuOption> options = menuOptionsByWindowId.get(window.getId());
+      if (options != null) {
+        for (MenuOption menuOption : options) {
+          menuOption.setType(MenuEntryType.Window);
+          menuOption.setId(tab.getId());
+          menuOption.setTab(tab);
+        }
       }
     }
   }

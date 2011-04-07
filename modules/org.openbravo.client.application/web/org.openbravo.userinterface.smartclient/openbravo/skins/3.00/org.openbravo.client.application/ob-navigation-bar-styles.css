@@ -29,74 +29,47 @@
   Navbar button itself
 ============================================================*/
 
-.OBNavBarButton,
-.OBNavBarButtonOver,
-.OBNavBarButtonFocused,
-.OBNavBarButtonFocusedOver,
-.OBNavBarButtonDown,
-.OBNavBarButtonFocusedDown,
-.OBNavBarButtonSelected,
-.OBNavBarButtonSelectedFocused,
-.OBNavBarButtonSelectedDown,
-.OBNavBarButtonSelectedFocusedDown,
-.OBNavBarButtonSelectedOver,
-.OBNavBarButtonSelectedFocusedOver {
-	cursor: pointer;
-	font-size: 11px;
-}
-
-.OBNavBarButtonDisabled,
-.OBNavBarButtonSelectedDisabled {
-}
-
 .OBNavBarImgButton,
 .OBNavBarImgButtonOver,
-.OBNavBarImgButtonSelected,
-.OBNavBarImgButtonSelectedDisabled,
-.OBNavBarImgButtonSelectedOver,
+.OBNavBarImgButtonFocused,
+.OBNavBarImgButtonFocusedOver,
 .OBNavBarImgButtonDown,
+.OBNavBarImgButtonFocusedDown,
+.OBNavBarImgButtonSelected,
+.OBNavBarImgButtonSelectedFocused,
 .OBNavBarImgButtonSelectedDown,
-.OBNavBarImgButtonDisabled {
+.OBNavBarImgButtonSelectedFocusedDown,
+.OBNavBarImgButtonSelectedOver,
+.OBNavBarImgButtonSelectedFocusedOver {
+	cursor: pointer;
+	font-size: 11px;
+  text-align: center;
 }
 
-.OBNavBarImgButtonDisabled {
+.OBNavBarImgButtonDisabled,
+.OBNavBarImgButtonSelectedDisabled {
 }
 
-.OBNavBarStretchImgButton,
-.OBNavBarStretchImgButtonSelected,
-.OBNavBarStretchImgButtonSelectedOver,
-.OBNavBarStretchImgButtonOver,
-.OBNavBarStretchImgButtonDown,
-.OBNavBarStretchImgButtonSelectedDown,
-.OBNavBarStretchImgButtonSelectedDisabled,
-.OBNavBarStretchImgButtonDisabled {
+.OBNavBarTextButton,
+.OBNavBarTextButtonOver,
+.OBNavBarTextButtonFocused,
+.OBNavBarTextButtonFocusedOver,
+.OBNavBarTextButtonDown,
+.OBNavBarTextButtonFocusedDown,
+.OBNavBarTextButtonSelected,
+.OBNavBarTextButtonSelectedFocused,
+.OBNavBarTextButtonSelectedDown,
+.OBNavBarTextButtonSelectedFocusedDown,
+.OBNavBarTextButtonSelectedOver,
+.OBNavBarTextButtonSelectedFocusedOver {
+	cursor: pointer;
+	font-size: 11px;
+  text-align: center;
+  padding: 0px 10px;
 }
 
-.OBNavBarStretchImgButtonOver {
-}
-
-.OBNavBarStretchImgButtonSelectedDisabled,
-.OBNavBarStretchImgButtonDisabled {
-}
-
-.OBNavBarButtonTitle,
-.OBNavBarButtonTitleOver,
-.OBNavBarButtonTitleDown,
-.OBNavBarButtonTitleSelected,
-.OBNavBarButtonTitleFocused,
-.OBNavBarButtonTitleSelectedFocused,
-.OBNavBarButtonTitleSelectedOver,
-.OBNavBarButtonTitleFocusedOver,
-.OBNavBarButtonTitleSelectedFocusedOver,
-.OBNavBarButtonTitleSelectedDown,
-.OBNavBarButtonTitleFocusedDown,
-.OBNavBarButtonTitleSelectedFocusedDown,
-.OBNavBarButtonTitleDisabled,
-.OBNavBarButtonTitleSelectedDisabled {
-}
-
-.OBNavBarButtonTitleDisabled,
-.OBNavBarButtonTitleSelectedDisabled {
+.OBNavBarTextButtonDisabled,
+.OBNavBarTextButtonSelectedDisabled {
 }
 
 /*============================================================

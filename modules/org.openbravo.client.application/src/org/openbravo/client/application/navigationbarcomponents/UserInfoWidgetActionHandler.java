@@ -42,6 +42,7 @@ import org.openbravo.client.kernel.KernelServlet;
 import org.openbravo.client.kernel.StaticResourceComponent;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -180,24 +181,31 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
         orgValueMap.put(org.getId(), org.getIdentifier());
       }
       jsonRole.put("organizationValueMap", orgValueMap);
-      jsonRole.put("warehouseValueMap", getWarehouses(orgs, role.getClient().getId()));
+      jsonRole.put("warehouseOrgMap", getWarehouses(role.getClient().getId()));
       jsonRoles.put(jsonRole);
     }
     formItemInfo.put("roles", jsonRoles);
     return formItemInfo;
   }
 
-  private JSONObject getWarehouses(List<Organization> orgs, String clientId) throws JSONException {
-    if (orgs.isEmpty()) {
-      return new JSONObject();
+  private JSONArray getWarehouses(String clientId) throws JSONException {
+    List<JSONObject> orgWarehouseArray = new ArrayList<JSONObject>();
+    OBCriteria<Organization> orgs = OBDal.getInstance().createCriteria(Organization.class);
+    for (Organization org : orgs.list()) {
+      JSONObject orgWarehouse = new JSONObject();
+      orgWarehouse.put("orgId", org.getId());
+      final OBQuery<Warehouse> warehouses = OBDal
+          .getInstance()
+          .createQuery(Warehouse.class,
+              "ad_isorgincluded(organization.id, :orgId, :clientId)<>-1 and client.id=:clientId order by name");
+      warehouses.setNamedParameter("orgId", org.getId());
+      warehouses.setNamedParameter("clientId", clientId);
+      warehouses.setFilterOnReadableClients(false);
+      warehouses.setFilterOnReadableOrganization(false);
+      orgWarehouse.put("warehouseMap", createValueMapObject(warehouses.list()));
+      orgWarehouseArray.add(orgWarehouse);
     }
-    final OBQuery<Warehouse> warehouses = OBDal.getInstance().createQuery(Warehouse.class,
-        "organization in (:orgs) and client.id=:clientId order by name");
-    warehouses.setNamedParameter("orgs", orgs);
-    warehouses.setNamedParameter("clientId", clientId);
-    warehouses.setFilterOnReadableClients(false);
-    warehouses.setFilterOnReadableOrganization(false);
-    return createValueMapObject(warehouses.list());
+    return new JSONArray(orgWarehouseArray);
   }
 
   private List<Organization> getOrganizations(String roleId) throws JSONException {

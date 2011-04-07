@@ -38,6 +38,9 @@ isc.OBViewGrid.create({
               form.onFieldChanged(form, item, value);
             }
           </#if>
+          <#if field.firstFocusedField>
+          , firstFocusedField: true
+          </#if>          
           <#if field.showIf != "">
           , showIf: function(item, value, form, currentValues) {
               currentValues = currentValues || form.view.getCurrentValues();

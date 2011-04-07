@@ -18,10 +18,30 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.model.ad.ui.Field;
+
 public class PAttributeSearchUIDefinition extends FKSearchUIDefinition {
 
   @Override
   public String getFormEditorType() {
     return "OBPAttributeSearchItem";
+  }
+
+  @Override
+  public String getFieldProperties(Field field, boolean getValueFromSession) {
+    // TODO: This is hack to remove the default attribute set 0 in grid view, it should be removed
+    // when the strategy of display logic is defined for grid view
+    String fieldProperties = super.getFieldProperties(field, getValueFromSession);
+    try {
+      JSONObject o = new JSONObject(fieldProperties);
+      if (o.get("value") != null && o.get("value").equals("0")) {
+        o.put("value", "");
+      }
+      return o.toString();
+    } catch (Exception e) {
+      log.error("Error trying to modify JSON object: " + fieldProperties, e);
+    }
+    return fieldProperties;
   }
 }

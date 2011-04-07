@@ -773,3 +773,70 @@ OB.Utilities.isValidURL = function(url){
   }
   return (/^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i).test(url);
 };
+
+// ** {{{ applicationUrl(path) }}} **
+//
+// Get the full URL to the supplied path under the application context
+//
+// Parameters:
+//  * {{{path}}} path portion of URL
+//
+OB.Utilities.applicationUrl = function(path) {
+  var appUrl = OB.Application.contextUrl + path;
+  if(appUrl.indexOf('//') === 0 ) {
+    // Double slash at start of relative URL only keeps scheme, not server
+    appUrl = appUrl.substring(1);
+  }
+  return appUrl;
+};
+
+OB.Utilities.formatTimePassedMessage = function(
+/* number of time units */n, /*
+                 * message id
+                 */messageId) {
+  var message = OB.I18N.getLabel(messageId);
+  return message.replace(/^N/, n);
+};
+OB.Utilities.getTimePassed = function(
+  /* date the note was created */created) {
+    // 0-59 minutes: minutes
+  // 1-24 hours: hours
+  // >24 hours: days
+  // >7 days: weeks
+  // >30 days: months
+
+  var now = new Date(), 
+      msCreated = created.getTime(),
+      msNow = now.getTime(),
+      n;
+
+  // time difference in days
+  var diffDays = Math.floor((msNow - msCreated) / (1000 * 60 * 60 * 24));
+  if (diffDays >= 30) {
+    n = Math.floor(diffDays / 30);
+    return OB.Utilities.formatTimePassedMessage(n,
+        'OBUIAPP_months_ago');
+  } else if (diffDays >= 7) {
+    n = Math.floor(diffDays / 7);
+    return OB.Utilities.formatTimePassedMessage(n,
+        'OBUIAPP_weeks_ago');
+  } else if (diffDays >= 1) {
+    n = diffDays;
+    return OB.Utilities.formatTimePassedMessage(n,
+        'OBUIAPP_days_ago');
+  }
+
+  // time difference in hours
+  var diffHours = Math.floor((msNow - msCreated) / (1000 * 60 * 60));
+  if (diffHours >= 1) {
+    n = diffHours;
+    return OB.Utilities.formatTimePassedMessage(n,
+        'OBUIAPP_hours_ago');
+  }
+
+  // time difference in minutes
+  n = Math.floor((msNow - msCreated) / (1000 * 60));
+  return OB.Utilities.formatTimePassedMessage(n,
+      'OBUIAPP_minutes_ago');
+  };
+    

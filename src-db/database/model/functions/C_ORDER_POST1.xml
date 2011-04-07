@@ -618,8 +618,12 @@
     END IF;--END_PROCESSING
     IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
      /**************************************************************************
-        * Calculate Discounts
+        * Calculate Discounts only when processing the document.
         *************************************************************************/
+
+      -- AProove, COmplete, PRocess
+      IF(v_DocAction IN('AP', 'CO', 'PR')) THEN
+
         -- Delete first previous discounts if any and then recalculate them
         DELETE
         FROM C_ORDERLINE
@@ -706,6 +710,7 @@
           END LOOP;
           v_Line:=v_Line + 10;
         END LOOP;
+        END IF;
     END IF;
     
     IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN

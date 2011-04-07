@@ -70,6 +70,9 @@ OB.ViewFormProperties = {
   // Name to the first focused field defined in AD
   firstFocusedField: null,
 
+  // is set in the OBNoteSectionItem.initWidget
+  noteSection: null,
+  
   // is set in the OBLinkedItemSectionItem.initWidget
   linkedItemSection: null,
 
@@ -113,7 +116,7 @@ OB.ViewFormProperties = {
   
   editRecord: function(record, preventFocus, hasChanges, focusFieldName){
     var ret = this.Super('editRecord', arguments);
-    this.doEditRecordActions(preventFocus, false);
+    this.doEditRecordActions(preventFocus, record._new);
     if (hasChanges) {
       this.setHasChanged(true);
     }
@@ -180,6 +183,21 @@ OB.ViewFormProperties = {
     }
   },
   
+
+  enableNoteSection: function(enable){
+	    if (!this.noteSection) {
+	      return;
+	    }
+	    if (enable) {
+	      this.noteSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID));
+	      this.noteSection.collapseSection();
+	      this.noteSection.refresh();
+	      this.noteSection.show();
+	    } else {
+	      this.noteSection.hide();
+	    }
+  },
+  
   enableLinkedItemSection: function(enable){
     if (!this.linkedItemSection) {
       return;
@@ -221,6 +239,7 @@ OB.ViewFormProperties = {
     this.isNew = isNew;
     this.view.statusBar.setNewState(isNew);
     this.view.updateTabTitle();
+    this.enableNoteSection(!isNew);
     this.enableLinkedItemSection(!isNew);
 
     if (isNew) {
@@ -241,11 +260,15 @@ OB.ViewFormProperties = {
     }
   },
   
-  // reset the focus item to the first item which can get focus
   resetFocusItem: function() {
     var items = this.getItems(), length = items.length, item;
     
-    // used when double clicking a specific cell in a record
+    var errorFld = this.getFirstErrorItem();
+    if (errorFld) {
+      this.setFocusInItem(errorFld, true);
+      return;
+    }
+    
     if (this.forceFocusedField) {
       item = this.getItem(this.forceFocusedField);
       if(item && item.getCanFocus()) {
@@ -428,14 +451,7 @@ OB.ViewFormProperties = {
     // TODO: an error occured, handles this much better...
     if (!data || !data.columnValues) {
       this.setDisabled(false);
-      // still open the form, as the user can then correct errors
-      if (this.showFormOnFICReturn) {
-        if (!this.isVisible()) {
-          this.view.switchFormGridVisibility();
-        }
-        this.validate();
-        delete this.showFormOnFICReturn;
-      }
+      this.validate();
       return;
     }
     
@@ -524,12 +540,6 @@ OB.ViewFormProperties = {
     }
 
     this.markForRedraw();
-    if (this.showFormOnFICReturn) {
-      if (!this.isVisible()) {
-        this.view.switchFormGridVisibility();
-      }
-      delete this.showFormOnFICReturn;
-    }
 
     this.view.toolBar.updateButtonState(true);
     
@@ -628,6 +638,8 @@ OB.ViewFormProperties = {
       isc.SimpleType.getType(field.type).inheritsFrom === 'datetime');
       if (isDate) {
         this.setValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
+      } else if(columnValue.hasDateDefault){
+        this.setValue(field.name, columnValue.classicValue);
       } else {
         
         // set the identifier/display field if the identifier is passed also
@@ -883,7 +895,12 @@ OB.ViewFormProperties = {
         view.setRecentDocument(this.getValues());
         
         view.updateLastSelectedState();
-        
+                
+        // remove any new pointer
+        if (this.getValue('_new')) {
+          this.clearValue('_new');
+        }
+
         if (form.isNew) {
           view.refreshChildViews();
         }
@@ -925,9 +942,9 @@ OB.ViewFormProperties = {
       return;
     }
     
-    if(this.inFicCall){
+    if (this.inFicCall) {
       this.callSaveAfterFICReturn = true;
-    }else{
+    } else {
       // last parameter true prevents additional validation
       this.saveData(callback, {
         willHandleError: true,
@@ -936,8 +953,24 @@ OB.ViewFormProperties = {
     }
   },
   
-  // overridden to prevent focus setting when autoSaving
+  focusInNextItem: function(currentItem) {
+    var chooseNextItem, i, nextItem, length = this.getItems().length;
+    for (i = 0; i < length; i++) {
+      // some items don't have a name, ignore those
+      if (chooseNextItem && this.getItems()[i].name && this.getItems()[i].isFocusable && this.getItems()[i].isFocusable()) {
+        nextItem = this.getItems()[i];
+        break;
+      }
+      if (this.getItems()[i].name === currentItem) {
+        chooseNextItem = true;
+      }
+    }
+    if (nextItem) {
+      this.focusInItem(nextItem);
+    }
+  },
   
+  // overridden to prevent focus setting when autoSaving  
   showErrors: function(errors, hiddenErrors, suppressAutoFocus){
     if (this.view.standardWindow.isAutoSaving) {
       return this.Super('showErrors', [errors, hiddenErrors, true]);
@@ -996,11 +1029,11 @@ OB.ViewFormProperties = {
   },
   
   getFirstErrorItem: function() {
-    var flds = this.getFields();
+    var flds = this.getFields(), errs = this.getErrors();
     if (flds.length) {
       var length = flds.length;
       for (i = 0; i < length; i++) {
-        if (flds[i].getErrors()) {
+        if (flds[i].getErrors() || errs[flds[i].name]) {
           return flds[i];
         }
       }

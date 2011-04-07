@@ -516,7 +516,7 @@
     <numberOfCopies>0</numberOfCopies>
     <table id="318" entity-name="ADTable" identifier="C_Invoice"/>
     <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
+    <documentCancelled id="67C3266D11A04078B7A14AC21E91C711" entity-name="DocumentType" identifier="Reversed Sales Invoice"/>
     <expense>false</expense>
     <reversal>false</reversal>
   </DocumentType>
@@ -608,7 +608,7 @@
     <numberOfCopies>0</numberOfCopies>
     <table id="318" entity-name="ADTable" identifier="C_Invoice"/>
     <filterByOrganization>false</filterByOrganization>
-    <documentCancelled xsi:nil="true"/>
+    <documentCancelled id="AFFD4594FB734E9682D5769669A9D471" entity-name="DocumentType" identifier="Reversed Purchase Invoice"/>
     <expense>false</expense>
     <reversal>false</reversal>
   </DocumentType>
@@ -657,6 +657,29 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+  </DocumentType>
+  <DocumentType id="67C3266D11A04078B7A14AC21E91C711" identifier="Reversed Sales Invoice">
+    <id>67C3266D11A04078B7A14AC21E91C711</id>
+    <active>true</active>
+    <name>Reversed Sales Invoice</name>
+    <printText>Reversed Sales Invoice</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>ARI</documentCategory>
+    <salesTransaction>true</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment xsi:nil="true"/>
+    <documentTypeForInvoice xsi:nil="true"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="31A0AE4B070A49EAA5D755D33D7B9C8C" entity-name="ADSequence" identifier="Reversed Sales Invoice"/>
+    <gLCategory id="102C08DF5D4341D5B7FDF758632503D2" entity-name="FinancialMgmtGLCategory" identifier="AR Invoice"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="318" entity-name="ADTable" identifier="C_Invoice"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>true</reversal>
   </DocumentType>
   <DocumentType id="6B13D02AD3C44C4CB0CFBD1288E0CB10" identifier="Physical Inventory">
     <id>6B13D02AD3C44C4CB0CFBD1288E0CB10</id>
@@ -864,6 +887,29 @@
     <documentCancelled xsi:nil="true"/>
     <expense>false</expense>
     <reversal>false</reversal>
+  </DocumentType>
+  <DocumentType id="AFFD4594FB734E9682D5769669A9D471" identifier="Reversed Purchase Invoice">
+    <id>AFFD4594FB734E9682D5769669A9D471</id>
+    <active>true</active>
+    <name>Reversed Purchase Invoice</name>
+    <printText>Reversed Purchase Invoice</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>API</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment xsi:nil="true"/>
+    <documentTypeForInvoice xsi:nil="true"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="B277787F93854F888B32177DCF14C43D" entity-name="ADSequence" identifier="Reversed Purchase Invoice"/>
+    <gLCategory id="A431AFE1356141728139523053B672C4" entity-name="FinancialMgmtGLCategory" identifier="AP Invoice"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>0</numberOfCopies>
+    <table id="318" entity-name="ADTable" identifier="C_Invoice"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>true</reversal>
   </DocumentType>
   <DocumentType id="B476CFAE109047DEB5BC9AC80A03297A" identifier="AR Credit Memo">
     <id>B476CFAE109047DEB5BC9AC80A03297A</id>
@@ -1097,6 +1143,18 @@
     <usedForRecordID>false</usedForRecordID>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
+  <ADSequence id="31A0AE4B070A49EAA5D755D33D7B9C8C" identifier="Reversed Sales Invoice">
+    <id>31A0AE4B070A49EAA5D755D33D7B9C8C</id>
+    <active>true</active>
+    <name>Reversed Sales Invoice</name>
+    <description>Reversed Sales Invoice</description>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
+    <usedForRecordID>false</usedForRecordID>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
   <ADSequence id="4D72691638A24A0194882A302FCF9494" identifier="AP Payment">
     <id>4D72691638A24A0194882A302FCF9494</id>
     <active>true</active>
@@ -1253,6 +1311,18 @@
     <usedForRecordID>false</usedForRecordID>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
+  <ADSequence id="B277787F93854F888B32177DCF14C43D" identifier="Reversed Purchase Invoice">
+    <id>B277787F93854F888B32177DCF14C43D</id>
+    <active>true</active>
+    <name>Reversed Purchase Invoice</name>
+    <description>Reversed Purchase Invoice</description>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
+    <usedForRecordID>false</usedForRecordID>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
   <ADSequence id="B380E35582BD4D1A930146F1BA72C03F" identifier="GL Journal">
     <id>B380E35582BD4D1A930146F1BA72C03F</id>
     <active>true</active>
@@ -1392,7 +1462,7 @@
     <name>Purchase Order Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Purchase Order-@our_ref@</reportFilename>
-    <templateFilename>RptC_OrderPO.jrxml</templateFilename>
+    <templateFilename>C_OrderJR.jrxml</templateFilename>
     <showcompanydata>true</showcompanydata>
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>

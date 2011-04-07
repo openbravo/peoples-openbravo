@@ -275,6 +275,12 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     private String showIf;
     private boolean redrawOnChange;
 
+    public boolean isFirstFocusedField() {
+      Boolean focused = field.isFirstFocusedField();
+      Boolean displayed = field.isDisplayed();
+      return focused != null && focused && displayed != null && displayed;
+    }
+
     public String getColumnName() {
       return property.getColumnName();
     }

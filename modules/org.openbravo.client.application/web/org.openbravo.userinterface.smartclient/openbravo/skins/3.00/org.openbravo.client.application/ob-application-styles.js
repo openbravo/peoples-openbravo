@@ -68,7 +68,7 @@ isc.OBQuickRun.addProperties({
   // The base style for the quick run launch button. All other styles are
   // derived
   // from this base style.
-  baseStyle: 'OBNavBarButton'
+  baseStyle: 'OBNavBarImgButton'
 });
 
 isc.OBPopup.addProperties({
@@ -82,7 +82,7 @@ isc.OBStandardWindow.addProperties({
 
 // Styling properties for the help/about navigation bar component
 isc.OBHelpAbout.addProperties({
-  baseStyle: 'OBNavBarButton',
+  baseStyle: 'OBNavBarTextButton',
   iconHeight: 6,
   iconWidth: 10,
   iconSpacing: 10,
@@ -94,9 +94,9 @@ isc.OBHelpAbout.addProperties({
 
 // Styling properties for the logout button in the navbar
 OB.LogoutNavbarComponentStylingProperties = {
-  baseStyle: 'OBNavBarButton',
+  baseStyle: 'OBNavBarImgButton',
   height: 14,
-  width: 14,
+  width: 36,
   src: '[SKINIMG]../../org.openbravo.client.application/images/navbar/iconClose.png',
   showTitle: false,
   imageType: 'normal',
@@ -112,7 +112,7 @@ OB.LogoutNavbarComponentStylingProperties = {
 OB.QuickLaunchNavbarComponentStylingProperties = {
   // todo: it is nicer to move this to a style but then this issue occurs:
   // https://issues.openbravo.com/view.php?id=13786
-  width: 37,
+  width: 57,
   
   layoutProperties: {
     width: 250,

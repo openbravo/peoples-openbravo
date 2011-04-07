@@ -21,6 +21,8 @@ package org.openbravo.service.datasource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,6 +56,9 @@ import org.openbravo.client.kernel.BaseKernelServlet;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.OBUserException;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.client.kernel.reference.NumberUIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
@@ -61,6 +66,7 @@ import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.security.UsageAudit;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldTrl;
@@ -228,6 +234,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     List<String> refListCols = new ArrayList<String>();
     List<String> dateCols = new ArrayList<String>();
     List<String> dateTimeCols = new ArrayList<String>();
+    Map<String, DecimalFormat> formats = new HashMap<String, DecimalFormat>();
 
     public QueryJSONWriterToCSV(HttpServletRequest request, HttpServletResponse response,
         Map<String, String> parameters, Entity entity) {
@@ -293,6 +300,11 @@ public class DataSourceServlet extends BaseKernelServlet {
               }
             } else {
               niceFieldProperties.put(prop.getName(), col.getName());
+            }
+            UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(col.getId());
+            if (uiDef instanceof NumberUIDefinition) {
+              formats.put(prop.getName(), Utility.getFormat(vars, ((NumberUIDefinition) uiDef)
+                  .getFormat()));
             }
             if (!(prop.getDomainType() instanceof EnumerateDomainType)) {
               continue;
@@ -410,7 +422,12 @@ public class DataSourceServlet extends BaseKernelServlet {
           if (refListCols.contains(key)) {
             keyValue = refLists.get(key).get(keyValue);
           } else if (keyValue instanceof Number && keyValue != null) {
-            keyValue = keyValue.toString().replace(".", decimalSeparator);
+            DecimalFormat format = formats.get(key);
+            if (format == null) {
+              keyValue = keyValue.toString().replace(".", decimalSeparator);
+            } else {
+              keyValue = format.format(new BigDecimal(keyValue.toString()));
+            }
           } else if (dateCols.contains(key) && keyValue != null
               && !keyValue.toString().equals("null")) {
             Date date = JsonUtils.createDateFormat().parse(keyValue.toString());

@@ -82,7 +82,7 @@
 
     call : function() {
       OB.RemoteCallManager.call(
-          'org.openbravo.client.application.AlertActionHandler', {}, {},
+          'org.openbravo.client.application.AlertActionHandler', {}, {IsAjaxCall: '1', ignoreForSessionTimeout: '1'},
           OB.AlertManager._notify);
     }
   };
@@ -137,7 +137,7 @@ isc.OBAlertIcon
       iconWidth : 11,
       iconHeight : 13,
       autoFit : true,
-      baseStyle : 'OBNavBarButton',
+      baseStyle : 'OBNavBarTextButton',
       showTitle : true,
       iconOrientation : 'left',
       src : '',

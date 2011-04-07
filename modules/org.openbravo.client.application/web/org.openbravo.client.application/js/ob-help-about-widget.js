@@ -53,7 +53,7 @@ isc.OBHelpAbout.addProperties({
       handleClick: function(){
         isc.OBQuickRun.hide();
         
-        OB.Layout.ClassicOBCompatibility.Popup.open('About', 620, 500, OB.Application.contextUrl + '/ad_forms/about.html', '', window);
+        OB.Layout.ClassicOBCompatibility.Popup.open('About', 620, 500, OB.Application.contextUrl + 'ad_forms/about.html', '', window);
       }
     };
     
