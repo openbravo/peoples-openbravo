@@ -456,25 +456,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--152-->  <AD_ELEMENT_ID><![CDATA[113]]></AD_ELEMENT_ID>
 <!--152--></AD_PROCESS_PARA>
 
-<!--153--><AD_PROCESS_PARA>
-<!--153-->  <AD_PROCESS_PARA_ID><![CDATA[153]]></AD_PROCESS_PARA_ID>
-<!--153-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--153-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--153-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--153-->  <NAME><![CDATA[Import Format]]></NAME>
-<!--153-->  <HELP><![CDATA[The ID identifies a unique import format]]></HELP>
-<!--153-->  <AD_PROCESS_ID><![CDATA[135]]></AD_PROCESS_ID>
-<!--153-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--153-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
-<!--153-->  <AD_VAL_RULE_ID><![CDATA[1001100000]]></AD_VAL_RULE_ID>
-<!--153-->  <COLUMNNAME><![CDATA[AD_ImpFormat_ID]]></COLUMNNAME>
-<!--153-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--153-->  <FIELDLENGTH><![CDATA[50]]></FIELDLENGTH>
-<!--153-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--153-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--153-->  <AD_ELEMENT_ID><![CDATA[1311]]></AD_ELEMENT_ID>
-<!--153--></AD_PROCESS_PARA>
-
 <!--155--><AD_PROCESS_PARA>
 <!--155-->  <AD_PROCESS_PARA_ID><![CDATA[155]]></AD_PROCESS_PARA_ID>
 <!--155-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1853,82 +1834,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--258-->  <AD_ELEMENT_ID><![CDATA[1516]]></AD_ELEMENT_ID>
 <!--258--></AD_PROCESS_PARA>
 
-<!--259--><AD_PROCESS_PARA>
-<!--259-->  <AD_PROCESS_PARA_ID><![CDATA[259]]></AD_PROCESS_PARA_ID>
-<!--259-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--259-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--259-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--259-->  <NAME><![CDATA[Client]]></NAME>
-<!--259-->  <DESCRIPTION><![CDATA[Client for this installation.]]></DESCRIPTION>
-<!--259-->  <HELP><![CDATA[A Client is a company or a legal entity. You cannot share data between Clients.]]></HELP>
-<!--259-->  <AD_PROCESS_ID><![CDATA[196]]></AD_PROCESS_ID>
-<!--259-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--259-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
-<!--259-->  <COLUMNNAME><![CDATA[AD_Client_ID]]></COLUMNNAME>
-<!--259-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--259-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--259-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--259-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--259-->  <AD_ELEMENT_ID><![CDATA[102]]></AD_ELEMENT_ID>
-<!--259--></AD_PROCESS_PARA>
-
-<!--260--><AD_PROCESS_PARA>
-<!--260-->  <AD_PROCESS_PARA_ID><![CDATA[260]]></AD_PROCESS_PARA_ID>
-<!--260-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--260-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--260-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--260-->  <NAME><![CDATA[Client]]></NAME>
-<!--260-->  <DESCRIPTION><![CDATA[Client for this installation.]]></DESCRIPTION>
-<!--260-->  <HELP><![CDATA[A Client is a company or a legal entity. You cannot share data between Clients.]]></HELP>
-<!--260-->  <AD_PROCESS_ID><![CDATA[194]]></AD_PROCESS_ID>
-<!--260-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--260-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
-<!--260-->  <COLUMNNAME><![CDATA[AD_Client_ID]]></COLUMNNAME>
-<!--260-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--260-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--260-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--260-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--260-->  <AD_ELEMENT_ID><![CDATA[102]]></AD_ELEMENT_ID>
-<!--260--></AD_PROCESS_PARA>
-
-<!--261--><AD_PROCESS_PARA>
-<!--261-->  <AD_PROCESS_PARA_ID><![CDATA[261]]></AD_PROCESS_PARA_ID>
-<!--261-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--261-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--261-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--261-->  <NAME><![CDATA[Client]]></NAME>
-<!--261-->  <DESCRIPTION><![CDATA[Client for this installation.]]></DESCRIPTION>
-<!--261-->  <HELP><![CDATA[A Client is a company or a legal entity. You cannot share data between Clients.]]></HELP>
-<!--261-->  <AD_PROCESS_ID><![CDATA[197]]></AD_PROCESS_ID>
-<!--261-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--261-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
-<!--261-->  <COLUMNNAME><![CDATA[AD_Client_ID]]></COLUMNNAME>
-<!--261-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--261-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--261-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--261-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--261-->  <AD_ELEMENT_ID><![CDATA[102]]></AD_ELEMENT_ID>
-<!--261--></AD_PROCESS_PARA>
-
-<!--262--><AD_PROCESS_PARA>
-<!--262-->  <AD_PROCESS_PARA_ID><![CDATA[262]]></AD_PROCESS_PARA_ID>
-<!--262-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--262-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--262-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--262-->  <NAME><![CDATA[Accounting Element]]></NAME>
-<!--262-->  <DESCRIPTION><![CDATA[A unique identifier for an account type.]]></DESCRIPTION>
-<!--262-->  <HELP><![CDATA[The Account Element uniquely identifies an Account Type.  These are commonly known as a Chart of Accounts.]]></HELP>
-<!--262-->  <AD_PROCESS_ID><![CDATA[197]]></AD_PROCESS_ID>
-<!--262-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--262-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
-<!--262-->  <COLUMNNAME><![CDATA[C_Element_ID]]></COLUMNNAME>
-<!--262-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--262-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--262-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--262-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--262-->  <AD_ELEMENT_ID><![CDATA[199]]></AD_ELEMENT_ID>
-<!--262--></AD_PROCESS_PARA>
-
 <!--263--><AD_PROCESS_PARA>
 <!--263-->  <AD_PROCESS_PARA_ID><![CDATA[263]]></AD_PROCESS_PARA_ID>
 <!--263-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1966,63 +1871,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--264-->  <AD_ELEMENT_ID><![CDATA[1615]]></AD_ELEMENT_ID>
 <!--264--></AD_PROCESS_PARA>
 
-<!--265--><AD_PROCESS_PARA>
-<!--265-->  <AD_PROCESS_PARA_ID><![CDATA[265]]></AD_PROCESS_PARA_ID>
-<!--265-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--265-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--265-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--265-->  <NAME><![CDATA[Delete old imported records]]></NAME>
-<!--265-->  <DESCRIPTION><![CDATA[Before processing delete old imported records in the import table]]></DESCRIPTION>
-<!--265-->  <HELP><![CDATA[Before processing delete old imported records in the import table]]></HELP>
-<!--265-->  <AD_PROCESS_ID><![CDATA[196]]></AD_PROCESS_ID>
-<!--265-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--265-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
-<!--265-->  <COLUMNNAME><![CDATA[DeleteOldImported]]></COLUMNNAME>
-<!--265-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--265-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--265-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--265-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--265-->  <AD_ELEMENT_ID><![CDATA[1922]]></AD_ELEMENT_ID>
-<!--265--></AD_PROCESS_PARA>
-
-<!--266--><AD_PROCESS_PARA>
-<!--266-->  <AD_PROCESS_PARA_ID><![CDATA[266]]></AD_PROCESS_PARA_ID>
-<!--266-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--266-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--266-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--266-->  <NAME><![CDATA[Delete old imported records]]></NAME>
-<!--266-->  <DESCRIPTION><![CDATA[Before processing delete old imported records in the import table]]></DESCRIPTION>
-<!--266-->  <HELP><![CDATA[Before processing delete old imported records in the import table]]></HELP>
-<!--266-->  <AD_PROCESS_ID><![CDATA[197]]></AD_PROCESS_ID>
-<!--266-->  <SEQNO><![CDATA[50]]></SEQNO>
-<!--266-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
-<!--266-->  <COLUMNNAME><![CDATA[DeleteOldImported]]></COLUMNNAME>
-<!--266-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--266-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--266-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--266-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--266-->  <AD_ELEMENT_ID><![CDATA[1922]]></AD_ELEMENT_ID>
-<!--266--></AD_PROCESS_PARA>
-
-<!--267--><AD_PROCESS_PARA>
-<!--267-->  <AD_PROCESS_PARA_ID><![CDATA[267]]></AD_PROCESS_PARA_ID>
-<!--267-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--267-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--267-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--267-->  <NAME><![CDATA[Delete old imported records]]></NAME>
-<!--267-->  <DESCRIPTION><![CDATA[Before processing delete old imported records in the import table]]></DESCRIPTION>
-<!--267-->  <HELP><![CDATA[Before processing delete old imported records in the import table]]></HELP>
-<!--267-->  <AD_PROCESS_ID><![CDATA[194]]></AD_PROCESS_ID>
-<!--267-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--267-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
-<!--267-->  <COLUMNNAME><![CDATA[DeleteOldImported]]></COLUMNNAME>
-<!--267-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--267-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--267-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--267-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--267-->  <AD_ELEMENT_ID><![CDATA[1922]]></AD_ELEMENT_ID>
-<!--267--></AD_PROCESS_PARA>
-
 <!--268--><AD_PROCESS_PARA>
 <!--268-->  <AD_PROCESS_PARA_ID><![CDATA[268]]></AD_PROCESS_PARA_ID>
 <!--268-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -2041,45 +1889,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--268-->  <ISRANGE><![CDATA[N]]></ISRANGE>
 <!--268-->  <AD_ELEMENT_ID><![CDATA[1922]]></AD_ELEMENT_ID>
 <!--268--></AD_PROCESS_PARA>
-
-<!--269--><AD_PROCESS_PARA>
-<!--269-->  <AD_PROCESS_PARA_ID><![CDATA[269]]></AD_PROCESS_PARA_ID>
-<!--269-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--269-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--269-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--269-->  <NAME><![CDATA[Update Default Accounts]]></NAME>
-<!--269-->  <DESCRIPTION><![CDATA[Update Default Accounts]]></DESCRIPTION>
-<!--269-->  <HELP><![CDATA[Update Default Accounts]]></HELP>
-<!--269-->  <AD_PROCESS_ID><![CDATA[197]]></AD_PROCESS_ID>
-<!--269-->  <SEQNO><![CDATA[30]]></SEQNO>
-<!--269-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
-<!--269-->  <COLUMNNAME><![CDATA[UpdateDefaultAccounts]]></COLUMNNAME>
-<!--269-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--269-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--269-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--269-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--269-->  <AD_ELEMENT_ID><![CDATA[1926]]></AD_ELEMENT_ID>
-<!--269--></AD_PROCESS_PARA>
-
-<!--270--><AD_PROCESS_PARA>
-<!--270-->  <AD_PROCESS_PARA_ID><![CDATA[270]]></AD_PROCESS_PARA_ID>
-<!--270-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--270-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--270-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--270-->  <NAME><![CDATA[Create New Combination]]></NAME>
-<!--270-->  <DESCRIPTION><![CDATA[Create New Account Combination]]></DESCRIPTION>
-<!--270-->  <HELP><![CDATA[Create New Account Combination]]></HELP>
-<!--270-->  <AD_PROCESS_ID><![CDATA[197]]></AD_PROCESS_ID>
-<!--270-->  <SEQNO><![CDATA[40]]></SEQNO>
-<!--270-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
-<!--270-->  <COLUMNNAME><![CDATA[CreateNewCombination]]></COLUMNNAME>
-<!--270-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--270-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--270-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--270-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--270-->  <DEFAULTVALUE><![CDATA[Y]]></DEFAULTVALUE>
-<!--270-->  <AD_ELEMENT_ID><![CDATA[1927]]></AD_ELEMENT_ID>
-<!--270--></AD_PROCESS_PARA>
 
 <!--275--><AD_PROCESS_PARA>
 <!--275-->  <AD_PROCESS_PARA_ID><![CDATA[275]]></AD_PROCESS_PARA_ID>
@@ -2566,45 +2375,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--302-->  <AD_ELEMENT_ID><![CDATA[1143]]></AD_ELEMENT_ID>
 <!--302--></AD_PROCESS_PARA>
 
-<!--303--><AD_PROCESS_PARA>
-<!--303-->  <AD_PROCESS_PARA_ID><![CDATA[303]]></AD_PROCESS_PARA_ID>
-<!--303-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--303-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--303-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--303-->  <NAME><![CDATA[Client]]></NAME>
-<!--303-->  <DESCRIPTION><![CDATA[Client for this installation.]]></DESCRIPTION>
-<!--303-->  <HELP><![CDATA[A Client is a company or a legal entity. You cannot share data between Clients.]]></HELP>
-<!--303-->  <AD_PROCESS_ID><![CDATA[206]]></AD_PROCESS_ID>
-<!--303-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--303-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
-<!--303-->  <AD_VAL_RULE_ID><![CDATA[129]]></AD_VAL_RULE_ID>
-<!--303-->  <COLUMNNAME><![CDATA[AD_Client_ID]]></COLUMNNAME>
-<!--303-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--303-->  <FIELDLENGTH><![CDATA[10]]></FIELDLENGTH>
-<!--303-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--303-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--303-->  <AD_ELEMENT_ID><![CDATA[102]]></AD_ELEMENT_ID>
-<!--303--></AD_PROCESS_PARA>
-
-<!--304--><AD_PROCESS_PARA>
-<!--304-->  <AD_PROCESS_PARA_ID><![CDATA[304]]></AD_PROCESS_PARA_ID>
-<!--304-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--304-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--304-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--304-->  <NAME><![CDATA[Delete old imported records]]></NAME>
-<!--304-->  <DESCRIPTION><![CDATA[Before processing delete old imported records in the import table]]></DESCRIPTION>
-<!--304-->  <HELP><![CDATA[Before processing delete old imported records in the import table]]></HELP>
-<!--304-->  <AD_PROCESS_ID><![CDATA[206]]></AD_PROCESS_ID>
-<!--304-->  <SEQNO><![CDATA[40]]></SEQNO>
-<!--304-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
-<!--304-->  <COLUMNNAME><![CDATA[DeleteOldImported]]></COLUMNNAME>
-<!--304-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--304-->  <FIELDLENGTH><![CDATA[1]]></FIELDLENGTH>
-<!--304-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--304-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--304-->  <AD_ELEMENT_ID><![CDATA[1922]]></AD_ELEMENT_ID>
-<!--304--></AD_PROCESS_PARA>
-
 <!--305--><AD_PROCESS_PARA>
 <!--305-->  <AD_PROCESS_PARA_ID><![CDATA[305]]></AD_PROCESS_PARA_ID>
 <!--305-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -2643,48 +2413,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--306-->  <ISRANGE><![CDATA[N]]></ISRANGE>
 <!--306-->  <AD_ELEMENT_ID><![CDATA[1922]]></AD_ELEMENT_ID>
 <!--306--></AD_PROCESS_PARA>
-
-<!--307--><AD_PROCESS_PARA>
-<!--307-->  <AD_PROCESS_PARA_ID><![CDATA[307]]></AD_PROCESS_PARA_ID>
-<!--307-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--307-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--307-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--307-->  <NAME><![CDATA[Organization]]></NAME>
-<!--307-->  <DESCRIPTION><![CDATA[Organizational entity within client]]></DESCRIPTION>
-<!--307-->  <HELP><![CDATA[An organization is a unit of your client or legal entity - examples are store, department. You can share data between organizations.]]></HELP>
-<!--307-->  <AD_PROCESS_ID><![CDATA[206]]></AD_PROCESS_ID>
-<!--307-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--307-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
-<!--307-->  <AD_VAL_RULE_ID><![CDATA[130]]></AD_VAL_RULE_ID>
-<!--307-->  <COLUMNNAME><![CDATA[AD_Org_ID]]></COLUMNNAME>
-<!--307-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--307-->  <FIELDLENGTH><![CDATA[10]]></FIELDLENGTH>
-<!--307-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--307-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--307-->  <AD_ELEMENT_ID><![CDATA[113]]></AD_ELEMENT_ID>
-<!--307--></AD_PROCESS_PARA>
-
-<!--308--><AD_PROCESS_PARA>
-<!--308-->  <AD_PROCESS_PARA_ID><![CDATA[308]]></AD_PROCESS_PARA_ID>
-<!--308-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--308-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--308-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--308-->  <NAME><![CDATA[Document Action]]></NAME>
-<!--308-->  <DESCRIPTION><![CDATA[A means of changing the transaction status of the document.]]></DESCRIPTION>
-<!--308-->  <HELP><![CDATA[
-You find the current status in the Document Status field. The options are listed in a popup]]></HELP>
-<!--308-->  <AD_PROCESS_ID><![CDATA[206]]></AD_PROCESS_ID>
-<!--308-->  <SEQNO><![CDATA[30]]></SEQNO>
-<!--308-->  <AD_REFERENCE_ID><![CDATA[17]]></AD_REFERENCE_ID>
-<!--308-->  <AD_REFERENCE_VALUE_ID><![CDATA[135]]></AD_REFERENCE_VALUE_ID>
-<!--308-->  <COLUMNNAME><![CDATA[DocAction]]></COLUMNNAME>
-<!--308-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--308-->  <FIELDLENGTH><![CDATA[1]]></FIELDLENGTH>
-<!--308-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--308-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--308-->  <DEFAULTVALUE><![CDATA[PR]]></DEFAULTVALUE>
-<!--308-->  <AD_ELEMENT_ID><![CDATA[287]]></AD_ELEMENT_ID>
-<!--308--></AD_PROCESS_PARA>
 
 <!--309--><AD_PROCESS_PARA>
 <!--309-->  <AD_PROCESS_PARA_ID><![CDATA[309]]></AD_PROCESS_PARA_ID>
@@ -4565,44 +4293,6 @@ You find the current status in the Document Status field. The options are listed
 <!--800043-->  <ISRANGE><![CDATA[N]]></ISRANGE>
 <!--800043-->  <AD_ELEMENT_ID><![CDATA[1929]]></AD_ELEMENT_ID>
 <!--800043--></AD_PROCESS_PARA>
-
-<!--800044--><AD_PROCESS_PARA>
-<!--800044-->  <AD_PROCESS_PARA_ID><![CDATA[800044]]></AD_PROCESS_PARA_ID>
-<!--800044-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800044-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800044-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800044-->  <NAME><![CDATA[Delete old imported records]]></NAME>
-<!--800044-->  <DESCRIPTION><![CDATA[Before processing delete old imported records in the import table]]></DESCRIPTION>
-<!--800044-->  <HELP><![CDATA[Before processing delete old imported records in the import table]]></HELP>
-<!--800044-->  <AD_PROCESS_ID><![CDATA[800139]]></AD_PROCESS_ID>
-<!--800044-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--800044-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
-<!--800044-->  <COLUMNNAME><![CDATA[DeleteOldImported]]></COLUMNNAME>
-<!--800044-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--800044-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--800044-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--800044-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--800044-->  <AD_ELEMENT_ID><![CDATA[1922]]></AD_ELEMENT_ID>
-<!--800044--></AD_PROCESS_PARA>
-
-<!--800045--><AD_PROCESS_PARA>
-<!--800045-->  <AD_PROCESS_PARA_ID><![CDATA[800045]]></AD_PROCESS_PARA_ID>
-<!--800045-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800045-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800045-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800045-->  <NAME><![CDATA[Budget]]></NAME>
-<!--800045-->  <DESCRIPTION><![CDATA[A group of planned expenses for a task.]]></DESCRIPTION>
-<!--800045-->  <HELP><![CDATA[Used to define the anticipated costs of doing business]]></HELP>
-<!--800045-->  <AD_PROCESS_ID><![CDATA[800139]]></AD_PROCESS_ID>
-<!--800045-->  <SEQNO><![CDATA[0]]></SEQNO>
-<!--800045-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
-<!--800045-->  <COLUMNNAME><![CDATA[C_Budget_ID]]></COLUMNNAME>
-<!--800045-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--800045-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--800045-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--800045-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--800045-->  <AD_ELEMENT_ID><![CDATA[800605]]></AD_ELEMENT_ID>
-<!--800045--></AD_PROCESS_PARA>
 
 <!--800046--><AD_PROCESS_PARA>
 <!--800046-->  <AD_PROCESS_PARA_ID><![CDATA[800046]]></AD_PROCESS_PARA_ID>
