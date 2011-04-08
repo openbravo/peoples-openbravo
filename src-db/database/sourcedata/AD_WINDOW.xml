@@ -720,22 +720,6 @@
 <!--158-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--158--></AD_WINDOW>
 
-<!--160--><AD_WINDOW>
-<!--160-->  <AD_WINDOW_ID><![CDATA[160]]></AD_WINDOW_ID>
-<!--160-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--160-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--160-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--160-->  <NAME><![CDATA[Withholding (1099)]]></NAME>
-<!--160-->  <DESCRIPTION><![CDATA[Maintain Withholding Certificates]]></DESCRIPTION>
-<!--160-->  <HELP><![CDATA[The Withholding Window defines the rule used for calculating withholding amounts.]]></HELP>
-<!--160-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--160-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--160-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--160-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--160-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--160-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--160--></AD_WINDOW>
-
 <!--161--><AD_WINDOW>
 <!--161-->  <AD_WINDOW_ID><![CDATA[161]]></AD_WINDOW_ID>
 <!--161-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

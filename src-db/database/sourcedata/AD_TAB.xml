@@ -2365,29 +2365,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--239-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--239--></AD_TAB>
 
-<!--241--><AD_TAB>
-<!--241-->  <AD_TAB_ID><![CDATA[241]]></AD_TAB_ID>
-<!--241-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--241-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--241-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--241-->  <NAME><![CDATA[Withholding]]></NAME>
-<!--241-->  <DESCRIPTION><![CDATA[Withholding Rules]]></DESCRIPTION>
-<!--241-->  <HELP><![CDATA[The Withholding Rules Tab define the rules governing the withholding of amounts.]]></HELP>
-<!--241-->  <AD_TABLE_ID><![CDATA[304]]></AD_TABLE_ID>
-<!--241-->  <AD_WINDOW_ID><![CDATA[160]]></AD_WINDOW_ID>
-<!--241-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--241-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--241-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--241-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--241-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--241-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--241-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--241-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--241-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--241-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--241-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--241--></AD_TAB>
-
 <!--242--><AD_TAB>
 <!--242-->  <AD_TAB_ID><![CDATA[242]]></AD_TAB_ID>
 <!--242-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -3687,29 +3664,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--333-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--333-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--333--></AD_TAB>
-
-<!--334--><AD_TAB>
-<!--334-->  <AD_TAB_ID><![CDATA[334]]></AD_TAB_ID>
-<!--334-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--334-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--334-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--334-->  <NAME><![CDATA[Accounting]]></NAME>
-<!--334-->  <DESCRIPTION><![CDATA[Create an account number for the withholding in order to manage the G/L accounting.]]></DESCRIPTION>
-<!--334-->  <HELP><![CDATA[The Withholding Accounting Tab defines the accounting parameters for Withholding.]]></HELP>
-<!--334-->  <AD_TABLE_ID><![CDATA[400]]></AD_TABLE_ID>
-<!--334-->  <AD_WINDOW_ID><![CDATA[160]]></AD_WINDOW_ID>
-<!--334-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--334-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--334-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--334-->  <ISINFOTAB><![CDATA[Y]]></ISINFOTAB>
-<!--334-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--334-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--334-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--334-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--334-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--334-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--334-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--334--></AD_TAB>
 
 <!--336--><AD_TAB>
 <!--336-->  <AD_TAB_ID><![CDATA[336]]></AD_TAB_ID>
