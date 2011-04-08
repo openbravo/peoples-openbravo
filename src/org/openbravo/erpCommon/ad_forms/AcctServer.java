@@ -43,7 +43,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
-import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.common.businesspartner.CustomerAccounts;
 import org.openbravo.model.common.businesspartner.VendorAccounts;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
@@ -306,8 +305,8 @@ public abstract class AcctServer {
   public void run(VariablesSecureApp vars) throws IOException, ServletException {
     if (AD_Client_ID.equals(""))
       AD_Client_ID = vars.getClient();
+    Connection con = null;
     try {
-      Connection con = connectionProvider.getTransactionConnection();
       String strIDs = "";
 
       if (log4j.isDebugEnabled()) {
@@ -326,6 +325,7 @@ public abstract class AcctServer {
       }
 
       for (int i = 0; data != null && i < data.length; i++) {
+        con = connectionProvider.getTransactionConnection();
         strIDs += data[i].getField("ID") + ", ";
         this.setMessageResult(null);
         if (!post(data[i].getField("ID"), false, vars, connectionProvider, con)) {
@@ -333,7 +333,6 @@ public abstract class AcctServer {
           return;
         } else {
           connectionProvider.releaseCommitConnection(con);
-          con = connectionProvider.getTransactionConnection();
         }
       }
       if (log4j.isDebugEnabled() && data != null)
@@ -343,10 +342,20 @@ public abstract class AcctServer {
     } catch (NoConnectionAvailableException ex) {
       throw new ServletException("@CODE=NoConnectionAvailable", ex);
     } catch (SQLException ex2) {
+      try {
+        connectionProvider.releaseRollbackConnection(con);
+      } catch (SQLException se) {
+        log4j.error("Failed to close connection after an error", se);
+      }
       throw new ServletException("@CODE=" + Integer.toString(ex2.getErrorCode()) + "@"
           + ex2.getMessage(), ex2);
     } catch (Exception ex3) {
-      log4j.error(ex3.getMessage(), ex3);
+      log4j.error("Exception in AcctServer.run", ex3);
+      try {
+        connectionProvider.releaseRollbackConnection(con);
+      } catch (SQLException se) {
+        log4j.error("Failed to close connection after an error", se);
+      }
     }
   }
 
@@ -648,13 +657,13 @@ public abstract class AcctServer {
     // AcctSchema Table check
     boolean isTableActive = false;
     for (AcctSchema as : m_as) {
-      AcctSchemaTable table = (AcctSchemaTable) OBDao.getFilteredCriteria(
-          AcctSchemaTable.class,
-          Expression.eq(AcctSchemaTable.PROPERTY_ACCOUNTINGSCHEMA, OBDal.getInstance().get(
-              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-              as.getC_AcctSchema_ID())),
-          Expression.eq(AcctSchemaTable.PROPERTY_TABLE, OBDal.getInstance().get(Table.class,
-              AD_Table_ID))).uniqueResult();
+      AcctSchemaTable table = null;
+      OBCriteria<AcctSchemaTable> criteria = OBDao.getFilteredCriteria(AcctSchemaTable.class,
+          Expression.eq("accountingSchema.id", as.getC_AcctSchema_ID()), Expression.eq("table.id",
+              AD_Table_ID));
+      criteria.setFilterOnReadableClients(false);
+      criteria.setFilterOnReadableOrganization(false);
+      table = (AcctSchemaTable) criteria.uniqueResult();
       if (table != null) {
         isTableActive = true;
         break;
