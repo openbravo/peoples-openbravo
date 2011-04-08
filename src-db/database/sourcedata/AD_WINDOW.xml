@@ -720,22 +720,6 @@
 <!--158-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--158--></AD_WINDOW>
 
-<!--161--><AD_WINDOW>
-<!--161-->  <AD_WINDOW_ID><![CDATA[161]]></AD_WINDOW_ID>
-<!--161-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--161-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--161-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--161-->  <NAME><![CDATA[Charge]]></NAME>
-<!--161-->  <DESCRIPTION><![CDATA[Maintain Charges]]></DESCRIPTION>
-<!--161-->  <HELP><![CDATA[The Charges Window defines the different charges that may be incurred.  These can include Bank Charges, Vendor Charges and Handling Charges.]]></HELP>
-<!--161-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--161-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--161-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--161-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--161-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--161-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--161--></AD_WINDOW>
-
 <!--162--><AD_WINDOW>
 <!--162-->  <AD_WINDOW_ID><![CDATA[162]]></AD_WINDOW_ID>
 <!--162-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

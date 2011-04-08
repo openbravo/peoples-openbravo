@@ -2295,29 +2295,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--236-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
 <!--236--></AD_TAB>
 
-<!--237--><AD_TAB>
-<!--237-->  <AD_TAB_ID><![CDATA[237]]></AD_TAB_ID>
-<!--237-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--237-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--237-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--237-->  <NAME><![CDATA[Charge]]></NAME>
-<!--237-->  <DESCRIPTION><![CDATA[Charge]]></DESCRIPTION>
-<!--237-->  <HELP><![CDATA[The Charge Tab defines the unique charges that may be associated with a document.]]></HELP>
-<!--237-->  <AD_TABLE_ID><![CDATA[313]]></AD_TABLE_ID>
-<!--237-->  <AD_WINDOW_ID><![CDATA[161]]></AD_WINDOW_ID>
-<!--237-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--237-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--237-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--237-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--237-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--237-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--237-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--237-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--237-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--237-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--237-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--237--></AD_TAB>
-
 <!--238--><AD_TAB>
 <!--238-->  <AD_TAB_ID><![CDATA[238]]></AD_TAB_ID>
 <!--238-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -3595,29 +3572,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--329-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--329-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--329--></AD_TAB>
-
-<!--331--><AD_TAB>
-<!--331-->  <AD_TAB_ID><![CDATA[331]]></AD_TAB_ID>
-<!--331-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--331-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--331-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--331-->  <NAME><![CDATA[Accounting]]></NAME>
-<!--331-->  <DESCRIPTION><![CDATA[Charge Accounting]]></DESCRIPTION>
-<!--331-->  <HELP><![CDATA[The Accounting Tab defines the accounting parameters used for transactions including a charge or charges.]]></HELP>
-<!--331-->  <AD_TABLE_ID><![CDATA[396]]></AD_TABLE_ID>
-<!--331-->  <AD_WINDOW_ID><![CDATA[161]]></AD_WINDOW_ID>
-<!--331-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--331-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--331-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--331-->  <ISINFOTAB><![CDATA[Y]]></ISINFOTAB>
-<!--331-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--331-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--331-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--331-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--331-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--331-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--331-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--331--></AD_TAB>
 
 <!--332--><AD_TAB>
 <!--332-->  <AD_TAB_ID><![CDATA[332]]></AD_TAB_ID>

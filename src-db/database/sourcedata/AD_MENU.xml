@@ -728,19 +728,6 @@
 <!--171-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--171--></AD_MENU>
 
-<!--174--><AD_MENU>
-<!--174-->  <AD_MENU_ID><![CDATA[174]]></AD_MENU_ID>
-<!--174-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--174-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--174-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--174-->  <NAME><![CDATA[Charge]]></NAME>
-<!--174-->  <DESCRIPTION><![CDATA[Maintain Charges]]></DESCRIPTION>
-<!--174-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--174-->  <ACTION><![CDATA[W]]></ACTION>
-<!--174-->  <AD_WINDOW_ID><![CDATA[161]]></AD_WINDOW_ID>
-<!--174-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--174--></AD_MENU>
-
 <!--175--><AD_MENU>
 <!--175-->  <AD_MENU_ID><![CDATA[175]]></AD_MENU_ID>
 <!--175-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
