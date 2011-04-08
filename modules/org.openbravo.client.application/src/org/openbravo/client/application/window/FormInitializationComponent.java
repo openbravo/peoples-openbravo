@@ -387,11 +387,16 @@ public class FormInitializationComponent extends BaseActionHandler {
           }
 
           if (prop.isPrimitive()) {
-            final Object propValue = JsonToDataConverter
-                .convertJsonToPropertyValue(prop, jsonValue);
-            final String classicStr = uiDef.convertToClassicString(propValue);
-            jsCol.put("value", jsonValue);
-            jsCol.put("classicValue", classicStr);
+            if (JSONObject.NULL.equals(jsonValue)) {
+              jsonValue = null;
+            }
+            if (jsonValue instanceof String) {
+              jsCol.put("value", uiDef.createFromClassicString((String) jsonValue));
+              jsCol.put("classicValue", jsonValue);
+            } else {
+              jsCol.put("value", jsonValue);
+              jsCol.put("classicValue", uiDef.convertToClassicString(jsonValue));
+            }
             value = jsCol.toString();
           } else {
             jsCol.put("value", jsonValue);
@@ -563,19 +568,18 @@ public class FormInitializationComponent extends BaseActionHandler {
             + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
         try {
           if (jsContent.has(inpColName)) {
+            final Object jsonValue = jsContent.get(inpColName);
             String value;
-            if (jsContent.get(inpColName) == null
-                || jsContent.get(inpColName).toString().equals("null")) {
+            if (jsonValue == null || jsonValue.toString().equals("null")) {
               value = null;
-            } else if (prop.isPrimitive()) {
-              // convert to a dal value
+            } else if (!(jsonValue instanceof String)) {
               final Object propValue = JsonToDataConverter.convertJsonToPropertyValue(prop,
                   jsContent.get(inpColName));
               // convert to a valid classic string
               value = UIDefinitionController.getInstance().getUIDefinition(
                   field.getColumn().getId()).convertToClassicString(propValue);
             } else {
-              value = (String) jsContent.get(inpColName);
+              value = (String) jsonValue;
             }
 
             if (value != null && value.equals("null")) {
@@ -594,9 +598,8 @@ public class FormInitializationComponent extends BaseActionHandler {
     addSpecialParameters(tab, jsContent);
   }
 
-  @SuppressWarnings("unchecked")
   private void addSpecialParameters(Tab tab, JSONObject jsContent) {
-    Iterator it = jsContent.keys();
+    Iterator<?> it = jsContent.keys();
     while (it.hasNext()) {
       String key = it.next().toString();
       try {
