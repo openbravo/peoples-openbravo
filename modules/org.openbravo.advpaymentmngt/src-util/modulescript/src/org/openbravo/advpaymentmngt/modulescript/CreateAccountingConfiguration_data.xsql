@@ -73,6 +73,17 @@
       ]]>
     </Sql>
   </SqlMethod>
+  <SqlMethod name="deleteTableAccess" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      DELETE FROM ad_table_access
+      WHERE ad_table_id = '4D8C3B3C31D1410DA046140C9F024D17'
+        AND isreadonly = 'Y'
+        AND isexclude = 'N'
+      ]]>
+    </Sql>
+  </SqlMethod>
   <SqlMethod name="insertTableAccess" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
