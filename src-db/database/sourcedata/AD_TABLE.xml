@@ -2684,72 +2684,6 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--334-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D84B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--334--></AD_TABLE>
 
-<!--336--><AD_TABLE>
-<!--336-->  <AD_TABLE_ID><![CDATA[336]]></AD_TABLE_ID>
-<!--336-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--336-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--336-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--336-->  <NAME><![CDATA[RevenueRecognition]]></NAME>
-<!--336-->  <DESCRIPTION><![CDATA[Revenue Recognition]]></DESCRIPTION>
-<!--336-->  <HELP><![CDATA[The Revenue Recognition Tab defines the intervals at which revenue will be recognized.  You can also base the revenue recognition on provided Service Levels.]]></HELP>
-<!--336-->  <TABLENAME><![CDATA[C_RevenueRecognition]]></TABLENAME>
-<!--336-->  <CLASSNAME><![CDATA[RevenueRecognition]]></CLASSNAME>
-<!--336-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--336-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--336-->  <AD_WINDOW_ID><![CDATA[174]]></AD_WINDOW_ID>
-<!--336-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--336-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--336-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--336-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--336-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--336-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--336-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DE4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--336--></AD_TABLE>
-
-<!--337--><AD_TABLE>
-<!--337-->  <AD_TABLE_ID><![CDATA[337]]></AD_TABLE_ID>
-<!--337-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--337-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--337-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--337-->  <NAME><![CDATA[ServiceLevel]]></NAME>
-<!--337-->  <DESCRIPTION><![CDATA[View Service Level]]></DESCRIPTION>
-<!--337-->  <HELP><![CDATA[The service level is automatically created when creating an invoice with products using revenue recognition based on service levels.]]></HELP>
-<!--337-->  <TABLENAME><![CDATA[C_ServiceLevel]]></TABLENAME>
-<!--337-->  <CLASSNAME><![CDATA[ServiceLevel]]></CLASSNAME>
-<!--337-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--337-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--337-->  <AD_WINDOW_ID><![CDATA[220]]></AD_WINDOW_ID>
-<!--337-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--337-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--337-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--337-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--337-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--337-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--337-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DA4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--337--></AD_TABLE>
-
-<!--338--><AD_TABLE>
-<!--338-->  <AD_TABLE_ID><![CDATA[338]]></AD_TABLE_ID>
-<!--338-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--338-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--338-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--338-->  <NAME><![CDATA[ServiceLevelLine]]></NAME>
-<!--338-->  <DESCRIPTION><![CDATA[Maintain Service Levels]]></DESCRIPTION>
-<!--338-->  <HELP><![CDATA[Add new service level lines to change the recognized amount]]></HELP>
-<!--338-->  <TABLENAME><![CDATA[C_ServiceLevelLine]]></TABLENAME>
-<!--338-->  <CLASSNAME><![CDATA[ServiceLevelLine]]></CLASSNAME>
-<!--338-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--338-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--338-->  <AD_WINDOW_ID><![CDATA[220]]></AD_WINDOW_ID>
-<!--338-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--338-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--338-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--338-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--338-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--338-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--338-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DA4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--338--></AD_TABLE>
-
 <!--339--><AD_TABLE>
 <!--339-->  <AD_TABLE_ID><![CDATA[339]]></AD_TABLE_ID>
 <!--339-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -3849,48 +3783,6 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--437-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--437-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1FA4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--437--></AD_TABLE>
-
-<!--443--><AD_TABLE>
-<!--443-->  <AD_TABLE_ID><![CDATA[443]]></AD_TABLE_ID>
-<!--443-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--443-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--443-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--443-->  <NAME><![CDATA[RevenueRecognitionPlan]]></NAME>
-<!--443-->  <DESCRIPTION><![CDATA[View Revenue Recognition Plan]]></DESCRIPTION>
-<!--443-->  <HELP><![CDATA[The Revenue Recognition plan is generated then invoicing a product with revenue recognition.  With Revenue Recognition, the amount is posted to the Unrecognized revenue account and over time, or based on Service Level, will be booked to Earned Revenue.]]></HELP>
-<!--443-->  <TABLENAME><![CDATA[C_RevenueRecognition_Plan]]></TABLENAME>
-<!--443-->  <CLASSNAME><![CDATA[RevenueRecognitionPlan]]></CLASSNAME>
-<!--443-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--443-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--443-->  <AD_WINDOW_ID><![CDATA[174]]></AD_WINDOW_ID>
-<!--443-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--443-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--443-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--443-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--443-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--443-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--443-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DE4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--443--></AD_TABLE>
-
-<!--444--><AD_TABLE>
-<!--444-->  <AD_TABLE_ID><![CDATA[444]]></AD_TABLE_ID>
-<!--444-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--444-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--444-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--444-->  <NAME><![CDATA[RevenueRecognitionRun]]></NAME>
-<!--444-->  <TABLENAME><![CDATA[C_RevenueRecognition_Run]]></TABLENAME>
-<!--444-->  <CLASSNAME><![CDATA[RevenueRecognitionRun]]></CLASSNAME>
-<!--444-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--444-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--444-->  <AD_WINDOW_ID><![CDATA[174]]></AD_WINDOW_ID>
-<!--444-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--444-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--444-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--444-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--444-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--444-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--444-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DE4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--444--></AD_TABLE>
 
 <!--451--><AD_TABLE>
 <!--451-->  <AD_TABLE_ID><![CDATA[451]]></AD_TABLE_ID>

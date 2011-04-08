@@ -832,22 +832,6 @@
 <!--170-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--170--></AD_WINDOW>
 
-<!--174--><AD_WINDOW>
-<!--174-->  <AD_WINDOW_ID><![CDATA[174]]></AD_WINDOW_ID>
-<!--174-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--174-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--174-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--174-->  <NAME><![CDATA[Revenue Recognition]]></NAME>
-<!--174-->  <DESCRIPTION><![CDATA[Revenue Recognition Rules]]></DESCRIPTION>
-<!--174-->  <HELP><![CDATA[The Revenue Recognition Window defines the intervals at which revenue will be recognized. Alternatively, the revenue recognition may be linked to service levels provided.]]></HELP>
-<!--174-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--174-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--174-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--174-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--174-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--174-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--174--></AD_WINDOW>
-
 <!--175--><AD_WINDOW>
 <!--175-->  <AD_WINDOW_ID><![CDATA[175]]></AD_WINDOW_ID>
 <!--175-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1133,22 +1117,6 @@
 <!--210-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--210-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--210--></AD_WINDOW>
-
-<!--220--><AD_WINDOW>
-<!--220-->  <AD_WINDOW_ID><![CDATA[220]]></AD_WINDOW_ID>
-<!--220-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--220-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--220-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--220-->  <NAME><![CDATA[Service Level]]></NAME>
-<!--220-->  <DESCRIPTION><![CDATA[Maintain Service Levels]]></DESCRIPTION>
-<!--220-->  <HELP><![CDATA[Service Levels are generated when an invoice with products based on revenue recognition rules are generated.  You need to update the actual service level by adding an additional line.]]></HELP>
-<!--220-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
-<!--220-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--220-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--220-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--220-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--220-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--220--></AD_WINDOW>
 
 <!--223--><AD_WINDOW>
 <!--223-->  <AD_WINDOW_ID><![CDATA[223]]></AD_WINDOW_ID>

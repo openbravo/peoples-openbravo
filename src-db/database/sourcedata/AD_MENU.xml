@@ -814,19 +814,6 @@
 <!--183-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--183--></AD_MENU>
 
-<!--186--><AD_MENU>
-<!--186-->  <AD_MENU_ID><![CDATA[186]]></AD_MENU_ID>
-<!--186-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--186-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--186-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--186-->  <NAME><![CDATA[Revenue Recognition]]></NAME>
-<!--186-->  <DESCRIPTION><![CDATA[Revenue Recognition Rules]]></DESCRIPTION>
-<!--186-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--186-->  <ACTION><![CDATA[W]]></ACTION>
-<!--186-->  <AD_WINDOW_ID><![CDATA[174]]></AD_WINDOW_ID>
-<!--186-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--186--></AD_MENU>
-
 <!--187--><AD_MENU>
 <!--187-->  <AD_MENU_ID><![CDATA[187]]></AD_MENU_ID>
 <!--187-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1459,19 +1446,6 @@
 <!--280-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--280-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--280--></AD_MENU>
-
-<!--284--><AD_MENU>
-<!--284-->  <AD_MENU_ID><![CDATA[284]]></AD_MENU_ID>
-<!--284-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--284-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--284-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--284-->  <NAME><![CDATA[Service Level]]></NAME>
-<!--284-->  <DESCRIPTION><![CDATA[Maintain Service Levels]]></DESCRIPTION>
-<!--284-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--284-->  <ACTION><![CDATA[W]]></ACTION>
-<!--284-->  <AD_WINDOW_ID><![CDATA[220]]></AD_WINDOW_ID>
-<!--284-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--284--></AD_MENU>
 
 <!--286--><AD_MENU>
 <!--286-->  <AD_MENU_ID><![CDATA[286]]></AD_MENU_ID>

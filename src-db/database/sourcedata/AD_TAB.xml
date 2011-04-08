@@ -2769,29 +2769,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--271-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
 <!--271--></AD_TAB>
 
-<!--272--><AD_TAB>
-<!--272-->  <AD_TAB_ID><![CDATA[272]]></AD_TAB_ID>
-<!--272-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--272-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--272-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--272-->  <NAME><![CDATA[Revenue Recognition]]></NAME>
-<!--272-->  <DESCRIPTION><![CDATA[Revenue Recognition]]></DESCRIPTION>
-<!--272-->  <HELP><![CDATA[The Revenue Recognition Tab defines the intervals at which revenue will be recognized.  You can also base the revenue recognition on provided Service Levels.]]></HELP>
-<!--272-->  <AD_TABLE_ID><![CDATA[336]]></AD_TABLE_ID>
-<!--272-->  <AD_WINDOW_ID><![CDATA[174]]></AD_WINDOW_ID>
-<!--272-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--272-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--272-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--272-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--272-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--272-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--272-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--272-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--272-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--272-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--272-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--272--></AD_TAB>
-
 <!--273--><AD_TAB>
 <!--273-->  <AD_TAB_ID><![CDATA[273]]></AD_TAB_ID>
 <!--273-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -4035,97 +4012,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--365-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--365-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--365--></AD_TAB>
-
-<!--378--><AD_TAB>
-<!--378-->  <AD_TAB_ID><![CDATA[378]]></AD_TAB_ID>
-<!--378-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--378-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--378-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--378-->  <NAME><![CDATA[Revenue Recognition Plan]]></NAME>
-<!--378-->  <DESCRIPTION><![CDATA[View Revenue Recognition Plan]]></DESCRIPTION>
-<!--378-->  <HELP><![CDATA[The Revenue Recognition plan is generated then invoicing a product with revenue recognition.  With Revenue Recognition, the amount is posted to the Unrecognized revenue and over time or based on Service Level booked to Earned Revenue.]]></HELP>
-<!--378-->  <AD_TABLE_ID><![CDATA[443]]></AD_TABLE_ID>
-<!--378-->  <AD_WINDOW_ID><![CDATA[174]]></AD_WINDOW_ID>
-<!--378-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--378-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--378-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--378-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--378-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--378-->  <ISREADONLY><![CDATA[Y]]></ISREADONLY>
-<!--378-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--378-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--378-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--378-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--378-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
-<!--378--></AD_TAB>
-
-<!--379--><AD_TAB>
-<!--379-->  <AD_TAB_ID><![CDATA[379]]></AD_TAB_ID>
-<!--379-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--379-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--379-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--379-->  <NAME><![CDATA[Revenue Recognition Run]]></NAME>
-<!--379-->  <DESCRIPTION><![CDATA[View Revenue Recognition Run History]]></DESCRIPTION>
-<!--379-->  <AD_TABLE_ID><![CDATA[444]]></AD_TABLE_ID>
-<!--379-->  <AD_WINDOW_ID><![CDATA[174]]></AD_WINDOW_ID>
-<!--379-->  <SEQNO><![CDATA[30]]></SEQNO>
-<!--379-->  <TABLEVEL><![CDATA[2]]></TABLEVEL>
-<!--379-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--379-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--379-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--379-->  <ISREADONLY><![CDATA[Y]]></ISREADONLY>
-<!--379-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--379-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--379-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--379-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--379-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
-<!--379--></AD_TAB>
-
-<!--380--><AD_TAB>
-<!--380-->  <AD_TAB_ID><![CDATA[380]]></AD_TAB_ID>
-<!--380-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--380-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--380-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--380-->  <NAME><![CDATA[Service Level]]></NAME>
-<!--380-->  <DESCRIPTION><![CDATA[View Service Level]]></DESCRIPTION>
-<!--380-->  <HELP><![CDATA[The service level is automatically created when creating an invoice with products using revenue recognition based on service levels.]]></HELP>
-<!--380-->  <AD_TABLE_ID><![CDATA[337]]></AD_TABLE_ID>
-<!--380-->  <AD_WINDOW_ID><![CDATA[220]]></AD_WINDOW_ID>
-<!--380-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--380-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--380-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--380-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--380-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--380-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--380-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--380-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--380-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--380-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--380-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--380--></AD_TAB>
-
-<!--381--><AD_TAB>
-<!--381-->  <AD_TAB_ID><![CDATA[381]]></AD_TAB_ID>
-<!--381-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--381-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--381-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--381-->  <NAME><![CDATA[Service Level Line]]></NAME>
-<!--381-->  <DESCRIPTION><![CDATA[Maintain Service Levels]]></DESCRIPTION>
-<!--381-->  <HELP><![CDATA[Add new service level lines to change the recognized amount]]></HELP>
-<!--381-->  <AD_TABLE_ID><![CDATA[338]]></AD_TABLE_ID>
-<!--381-->  <AD_WINDOW_ID><![CDATA[220]]></AD_WINDOW_ID>
-<!--381-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--381-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--381-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--381-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--381-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--381-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--381-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--381-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--381-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--381-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--381-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--381--></AD_TAB>
 
 <!--384--><AD_TAB>
 <!--384-->  <AD_TAB_ID><![CDATA[384]]></AD_TAB_ID>
