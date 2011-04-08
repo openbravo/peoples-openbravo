@@ -368,22 +368,6 @@
 <!--127-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--127--></AD_WINDOW>
 
-<!--128--><AD_WINDOW>
-<!--128-->  <AD_WINDOW_ID><![CDATA[128]]></AD_WINDOW_ID>
-<!--128-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--128-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--128-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--128-->  <NAME><![CDATA[Attachment]]></NAME>
-<!--128-->  <DESCRIPTION><![CDATA[Maintain Attachments]]></DESCRIPTION>
-<!--128-->  <HELP><![CDATA[For System Maintenance Only.  The Maintain Attachments window is used for diagnostic purposes to display the attributes of an attachment.]]></HELP>
-<!--128-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--128-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--128-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--128-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--128-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--128-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--128--></AD_WINDOW>
-
 <!--129--><AD_WINDOW>
 <!--129-->  <AD_WINDOW_ID><![CDATA[129]]></AD_WINDOW_ID>
 <!--129-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

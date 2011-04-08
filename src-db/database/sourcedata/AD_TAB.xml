@@ -1145,29 +1145,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--172-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--172--></AD_TAB>
 
-<!--173--><AD_TAB>
-<!--173-->  <AD_TAB_ID><![CDATA[173]]></AD_TAB_ID>
-<!--173-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--173-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--173-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--173-->  <NAME><![CDATA[Attachment]]></NAME>
-<!--173-->  <DESCRIPTION><![CDATA[Attachment]]></DESCRIPTION>
-<!--173-->  <HELP><![CDATA[The Attachment tab displays the attributes of an attachment.]]></HELP>
-<!--173-->  <AD_TABLE_ID><![CDATA[254]]></AD_TABLE_ID>
-<!--173-->  <AD_WINDOW_ID><![CDATA[128]]></AD_WINDOW_ID>
-<!--173-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--173-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--173-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--173-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--173-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--173-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--173-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--173-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--173-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--173-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--173-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--173--></AD_TAB>
-
 <!--174--><AD_TAB>
 <!--174-->  <AD_TAB_ID><![CDATA[174]]></AD_TAB_ID>
 <!--174-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

@@ -143,19 +143,6 @@
 <!--113-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--113--></AD_MENU>
 
-<!--114--><AD_MENU>
-<!--114-->  <AD_MENU_ID><![CDATA[114]]></AD_MENU_ID>
-<!--114-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--114-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--114-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--114-->  <NAME><![CDATA[Attachment]]></NAME>
-<!--114-->  <DESCRIPTION><![CDATA[Maintain Attachments]]></DESCRIPTION>
-<!--114-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--114-->  <ACTION><![CDATA[W]]></ACTION>
-<!--114-->  <AD_WINDOW_ID><![CDATA[128]]></AD_WINDOW_ID>
-<!--114-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--114--></AD_MENU>
-
 <!--115--><AD_MENU>
 <!--115-->  <AD_MENU_ID><![CDATA[115]]></AD_MENU_ID>
 <!--115-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

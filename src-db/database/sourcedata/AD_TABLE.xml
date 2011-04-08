@@ -1570,28 +1570,6 @@ The Pricing Tab displays the List, Standard and Limit prices for each price list
 <!--253-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1FB4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--253--></AD_TABLE>
 
-<!--254--><AD_TABLE>
-<!--254-->  <AD_TABLE_ID><![CDATA[254]]></AD_TABLE_ID>
-<!--254-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--254-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--254-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--254-->  <NAME><![CDATA[Attachment]]></NAME>
-<!--254-->  <DESCRIPTION><![CDATA[Attachment]]></DESCRIPTION>
-<!--254-->  <HELP><![CDATA[The Attachment tab displays the attributes of an attachment.]]></HELP>
-<!--254-->  <TABLENAME><![CDATA[AD_Attachment]]></TABLENAME>
-<!--254-->  <CLASSNAME><![CDATA[AD_Attachment]]></CLASSNAME>
-<!--254-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--254-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--254-->  <AD_WINDOW_ID><![CDATA[128]]></AD_WINDOW_ID>
-<!--254-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--254-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--254-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--254-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--254-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--254-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--254-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D04B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--254--></AD_TABLE>
-
 <!--255--><AD_TABLE>
 <!--255-->  <AD_TABLE_ID><![CDATA[255]]></AD_TABLE_ID>
 <!--255-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

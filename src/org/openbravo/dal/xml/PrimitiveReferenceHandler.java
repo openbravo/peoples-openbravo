@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,6 @@ import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.model.ad.alert.Alert;
 import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.model.ad.utility.AD_Attachment;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
@@ -41,15 +40,14 @@ import org.openbravo.model.financialmgmt.payment.DebtPayment;
 /**
  * Handles primitive reference values. These are references which are not modeled as foreign keys to
  * a specific table but as string/table combinations stored in different fields. Sometimes the table
- * is stored in a separate field (see {@link AD_Attachment#PROPERTY_TABLE}, sometimes it needs to be
- * computed (see {@link Tree#PROPERTY_TYPEAREA}).
+ * is stored in a separate field, sometimes it needs to be computed (see
+ * {@link Tree#PROPERTY_TYPEAREA}).
  * 
  * 
  * This class provides utility methods to find these references and resolve them.
  * 
  * @see TreeNode#PROPERTY_NODE
  * @see TreeNode#PROPERTY_REPORTSET
- * @see AD_Attachment#PROPERTY_RECORDID
  * @see AccountingFact#PROPERTY_RECORDID
  * @see AccountingFact#PROPERTY_RECORDID2
  * @see Alert#PROPERTY_RECORDID
