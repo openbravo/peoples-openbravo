@@ -73,7 +73,7 @@ AND MA_WRPHASEPRODUCT.PRODUCTIONTYPE = '+']]></queryString>
 					<reportElement
 						x="200"
 						y="0"
-						width="107"
+						width="130"
 						height="20"
 						key="staticText-2"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -111,7 +111,7 @@ AND MA_WRPHASEPRODUCT.PRODUCTIONTYPE = '+']]></queryString>
 					<reportElement
 						x="200"
 						y="0"
-						width="107"
+						width="130"
 						height="18"
 						key="textField-2"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
