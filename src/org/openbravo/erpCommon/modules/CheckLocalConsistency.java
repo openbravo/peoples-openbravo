@@ -20,6 +20,7 @@
 package org.openbravo.erpCommon.modules;
 
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.DalInitializingTask;
 import org.openbravo.erpCommon.utility.OBError;
@@ -35,29 +36,31 @@ public class CheckLocalConsistency extends DalInitializingTask {
 
     OBError msg = new OBError();
 
+    Module[] modulesToInstall = new Module[0];
+    Module[] modulesToUpdate = new Module[0];
+    Module[] modulesToMerge = new Module[0];
+
+    VersionUtility.setPool(new DalConnectionProvider());
+
+    boolean checked;
     try {
-      Module[] modulesToInstall = new Module[0];
-      Module[] modulesToUpdate = new Module[0];
-      Module[] modulesToMerge = new Module[0];
-
-      VersionUtility.setPool(new DalConnectionProvider());
-
-      boolean checked = VersionUtility.checkLocal(vars, modulesToInstall, modulesToUpdate,
-          modulesToMerge, msg);
-      if (checked) {
-        System.out.println("Local Dependencies are OK");
-        System.out.println("=========================");
-
-      } else {
-        System.out.println("Local Dependencies are not satisfied");
-        System.out.println("====================================\n");
-
-        System.out.println(msg.getMessage());
-      }
+      checked = VersionUtility.checkLocal(vars, modulesToInstall, modulesToUpdate, modulesToMerge,
+          msg);
     } catch (Exception e) {
-      log4j.error("Error", e);
+      throw new BuildException("Error checking dependencies", e);
     }
 
+    if (checked) {
+      log4j.info("Local Dependencies are OK");
+      log4j.info("=========================");
+    } else {
+      log4j.error("Local Dependencies are not satisfied");
+      log4j.error("====================================\n");
+
+      log4j.error(msg.getMessage());
+
+      throw new BuildException("Dependencies are not satisfied");
+    }
   }
 
 }

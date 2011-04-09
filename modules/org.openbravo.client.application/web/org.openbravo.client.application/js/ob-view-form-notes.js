@@ -64,6 +64,11 @@ refresh : function() {
 	this.getNotePart().refresh();
 },
 
+expandSection: function() {
+  this.Super('expandSection',arguments);
+  this.form.noteSection.refresh();
+},
+
 hide: function(){
  this.Super('hide',arguments);
  if (this.canvasItem) {
@@ -219,7 +224,8 @@ isc.OBNoteLayout.addProperties( {
 
 							fetchData : function(criteria, callback,
 									requestProperties) {
-							  if (this.layout.isDrawn()) {
+							  if (this.layout.getForm() && this.layout.getForm().noteSection && 
+							      this.layout.getForm().noteSection.visible && this.layout.getForm().noteSection.isExpanded()) {
 								  return this.Super('fetchData', [ this.convertCriteria(criteria),
 										callback, requestProperties ]);
 							  }
@@ -276,7 +282,7 @@ isc.OBNoteLayout.addProperties( {
 								value =  value + ' <span class="OBNoteListGridAuthor">' +
 								        OB.Utilities.getTimePassed(record.created) +
 										' ' + OB.I18N.getLabel('OBUIAPP_by') + ' ' +
-										record['createdBy._identifier'];
+										record['createdBy._identifier']+'</span>';
 
 								// show delete link if the note was created by
 								// the current user
@@ -285,9 +291,8 @@ isc.OBNoteLayout.addProperties( {
 											' <span class="OBNoteListGridDelete" >[ <a class="OBNoteListGridDelete" href="#" onclick="' +
 											this.layout.ID + '.deleteNote(\'' +
 											record.id +
-											'\')">' + OB.I18N.getLabel('OBUIAPP_delete') + '</a> ]</span>';
+											'\')">' + OB.I18N.getLabel('OBUIAPP_delete') + ' </a>]</span>';
 								} 
-								value = value + '</span>';
 								return value;
 							},
 

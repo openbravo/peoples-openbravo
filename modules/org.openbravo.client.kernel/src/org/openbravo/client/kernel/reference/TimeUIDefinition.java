@@ -61,7 +61,7 @@ public class TimeUIDefinition extends UIDefinition {
   }
 
   @Override
-  protected synchronized Object createFromClassicString(String value) {
+  public synchronized Object createFromClassicString(String value) {
     try {
       if (value == null || value.length() == 0 || value.equals("null")) {
         return null;

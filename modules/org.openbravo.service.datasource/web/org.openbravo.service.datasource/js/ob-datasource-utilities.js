@@ -108,6 +108,11 @@ target, /* String */dsFieldName, /*Boolean*/ doNew) {
 // * {{{dsProperties}}}: the properties of the datasource which needs to be
 // created.
 OB.Datasource.create = function(/* Object */dsProperties) {
+  // if must be a new datasource then change the id 
+  // https://issues.openbravo.com/view.php?id=16581
+  if (dsProperties._new && dsProperties.ID) {
+    dsProperties.ID = dsProperties.ID + '_' + new Date().getTime();
+  }
   if (dsProperties.ID) {
     var ds = isc.DataSource.getDataSource(dsProperties.ID);
     if (ds) {

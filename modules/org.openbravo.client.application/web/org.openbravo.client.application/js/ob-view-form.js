@@ -786,7 +786,10 @@ OB.ViewFormProperties = {
 
     // disable with a delay to allow the focus to be moved to a new field
     // before disabling
-    this.delayCall('setDisabled', [true], 10);
+    // only do this if there is no popup currently
+    if (!this.view.standardWindow.inAutoSaveConfirmation) {
+      this.delayCall('setDisabled', [true], 10);
+    }
 
     var editRow = this.view.viewGrid.getEditRow();
     
@@ -1040,7 +1043,6 @@ OB.ViewFormProperties = {
       }
       return;
     }
-    this.resetFocusItem();
   },
   
   getFirstErrorItem: function() {

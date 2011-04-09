@@ -511,7 +511,7 @@ isc.OBListItem.addProperties({
   moveFocusOnPickValue: true,
   
   // is overridden to keep track that a value has been explicitly picked
-  pickValue : function (value) {
+  pickValue: function (value) {
     this._pickedValue = true;
     this.Super('pickValue', arguments);
     delete this._pickedValue;
@@ -898,6 +898,13 @@ isc.OBDateItem.addProperties({
   change: function(form, item, value, oldValue){ /* transformInput */
     var isADate = value !== null &&
               Object.prototype.toString.call(value) === '[object Date]';
+    // prevent a change if nothing changed
+    if (value === oldValue) {
+      return false;
+    }
+    if (isADate && value && oldValue && oldValue.getTime && value.getTime() === oldValue.getTime()) {
+      return false;
+    }
     if (isADate) {
       return;
     }

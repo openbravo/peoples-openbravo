@@ -225,6 +225,7 @@ isc.OBStandardWindow.addProperties({
     }
 
     var callback = function(ok){
+      delete me.inAutoSaveConfirmation;
       if (ok) {
         if (me.getDirtyEditForm()) {
           me.getDirtyEditForm().resetForm();
@@ -242,6 +243,7 @@ isc.OBStandardWindow.addProperties({
         }
       }
     };
+    this.inAutoSaveConfirmation = true;
     isc.ask(OB.I18N.getLabel('OBUIAPP_AutoSaveNotPossibleExecuteAction'), callback);
   },
   

@@ -62,7 +62,7 @@ import org.apache.log4j.Logger;
  * 
  * @author Barry van Oudtshoorn
  */
-public class CSSMinimizer {
+class CSSMinimizer {
 
   private static Logger log = Logger.getLogger(CSSMinimizer.class);
 
@@ -133,7 +133,7 @@ public class CSSMinimizer {
               selectors.addElement(new Selector(sb.substring(n, i + 1)));
             } catch (Exception e) {
               if (e.getMessage().contains("Empty selector body:")) {
-                log.warn(e.getMessage());
+                log.debug(e.getMessage());
               } else {
                 log.error(e.getMessage(), e);
               }

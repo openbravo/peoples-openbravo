@@ -62,7 +62,11 @@
           </#if>
         </#if>
         <#if fieldDefinition.type = "OBSectionItem" || fieldDefinition.type = "OBNoteSectionItem" || fieldDefinition.type = "OBLinkedItemSectionItem" || fieldDefinition.type = "OBAttachmentsSectionItem" >
+        <#if fieldDefinition.type = "OBNoteSectionItem">
         sectionExpanded: false,
+        <#else>
+        sectionExpanded: true,
+        </#if>
         defaultValue: '${fieldDefinition.label?js_string}',
         itemIds: [
         <#list fieldDefinition.children as childField>

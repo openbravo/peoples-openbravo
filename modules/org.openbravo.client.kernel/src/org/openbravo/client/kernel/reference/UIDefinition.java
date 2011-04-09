@@ -244,7 +244,7 @@ public abstract class UIDefinition {
    * 
    * @see PrimitiveDomainType#createFromString(String)
    */
-  protected Object createFromClassicString(String value) {
+  public Object createFromClassicString(String value) {
     if (getDomainType() instanceof PrimitiveDomainType) {
       return ((PrimitiveDomainType) getDomainType()).createFromString(value);
     } else {
