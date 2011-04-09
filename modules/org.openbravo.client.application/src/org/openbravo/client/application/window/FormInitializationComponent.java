@@ -224,7 +224,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
           + (t3 - t2) + "," + (t4 - t3) + "," + (t5 - t4) + "," + (t6 - t5) + "," + (t7 - t6) + ","
           + (t8 - t7) + "," + (t9 - t8) + ")");
-      log.info("Attachment exists: " + finalObject.getBoolean("attachmentExists"));
+      log.debug("Attachment exists: " + finalObject.getBoolean("attachmentExists"));
       return finalObject;
     } catch (Throwable t) {
       t.printStackTrace(System.err);
