@@ -223,7 +223,7 @@ isc.OBAttachmentsLayout.addProperties({
                     form.show();
                     form.submitForm();
             	  }
-                }
+                };
             	var lastChar=value.lastIndexOf("\\") + 1;
               	var fileName = lastChar===-1?value:value.substring(lastChar);
               	if(form.theCanvas.fileExists(fileName, attachments)){
@@ -271,7 +271,7 @@ isc.OBAttachmentsLayout.addProperties({
               Command: 'GET_MULTIPLE_RECORDS_OB3',
               tabId: canvas.tabId,
               recordIds: canvas.recordId
-            }
+            };
             OB.Utilities.postThroughHiddenForm('./businessUtility/TabAttachments_FS.html', d);
     	  }
         });
@@ -301,7 +301,7 @@ isc.OBAttachmentsLayout.addProperties({
 	  var buttonLayout = isc.HLayout.create();
       var attachmentLabel = isc.Label.create({
   	    contents: attachment.name,
-  	    width: '35%',
+  	    width: '35%'
   	  });
       var attachmentBy = isc.Label.create({
     	contents: " <i>"+OB.I18N.getLabel('OBUIAPP_AttachmentBy')+" "+attachment.createdby+"</i>"
