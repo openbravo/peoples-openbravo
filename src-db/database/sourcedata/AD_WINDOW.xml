@@ -1406,22 +1406,6 @@
 <!--260-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--260--></AD_WINDOW>
 
-<!--262--><AD_WINDOW>
-<!--262-->  <AD_WINDOW_ID><![CDATA[262]]></AD_WINDOW_ID>
-<!--262-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--262-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--262-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--262-->  <NAME><![CDATA[Vendor Expense Invoice]]></NAME>
-<!--262-->  <DESCRIPTION><![CDATA[Create and edit vendor invoices.]]></DESCRIPTION>
-<!--262-->  <HELP><![CDATA[Create and edit vendor invoices.]]></HELP>
-<!--262-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
-<!--262-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--262-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--262-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--262-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--262-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--262--></AD_WINDOW>
-
 <!--264--><AD_WINDOW>
 <!--264-->  <AD_WINDOW_ID><![CDATA[264]]></AD_WINDOW_ID>
 <!--264-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

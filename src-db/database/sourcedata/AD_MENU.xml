@@ -1896,19 +1896,6 @@
 <!--359-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--359--></AD_MENU>
 
-<!--360--><AD_MENU>
-<!--360-->  <AD_MENU_ID><![CDATA[360]]></AD_MENU_ID>
-<!--360-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--360-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--360-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--360-->  <NAME><![CDATA[Vendor Expense Invoice]]></NAME>
-<!--360-->  <DESCRIPTION><![CDATA[Create and edit vendor invoices.]]></DESCRIPTION>
-<!--360-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--360-->  <ACTION><![CDATA[W]]></ACTION>
-<!--360-->  <AD_WINDOW_ID><![CDATA[262]]></AD_WINDOW_ID>
-<!--360-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--360--></AD_MENU>
-
 <!--362--><AD_MENU>
 <!--362-->  <AD_MENU_ID><![CDATA[362]]></AD_MENU_ID>
 <!--362-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

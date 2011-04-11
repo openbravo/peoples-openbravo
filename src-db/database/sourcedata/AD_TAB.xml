@@ -4946,57 +4946,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--467-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--467--></AD_TAB>
 
-<!--470--><AD_TAB>
-<!--470-->  <AD_TAB_ID><![CDATA[470]]></AD_TAB_ID>
-<!--470-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--470-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--470-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--470-->  <NAME><![CDATA[Header]]></NAME>
-<!--470-->  <DESCRIPTION><![CDATA[Create and edit vendor invoices.]]></DESCRIPTION>
-<!--470-->  <HELP><![CDATA[Create and edit vendor invoices.]]></HELP>
-<!--470-->  <AD_TABLE_ID><![CDATA[318]]></AD_TABLE_ID>
-<!--470-->  <AD_WINDOW_ID><![CDATA[262]]></AD_WINDOW_ID>
-<!--470-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--470-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--470-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--470-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--470-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--470-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--470-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--470-->  <WHERECLAUSE><![CDATA[C_Invoice.IsSOTrx='N']]></WHERECLAUSE>
-<!--470-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--470-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--470-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--470-->  <INCLUDED_TAB_ID><![CDATA[471]]></INCLUDED_TAB_ID>
-<!--470-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--470-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--470-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=false]]></HQLWHERECLAUSE>
-<!--470--></AD_TAB>
-
-<!--471--><AD_TAB>
-<!--471-->  <AD_TAB_ID><![CDATA[471]]></AD_TAB_ID>
-<!--471-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--471-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--471-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--471-->  <NAME><![CDATA[Lines]]></NAME>
-<!--471-->  <DESCRIPTION><![CDATA[Add products or expenses to be included in your invoice.  Each product is added by creating a line.]]></DESCRIPTION>
-<!--471-->  <HELP><![CDATA[Add products or expenses to be included in your invoice.  Each product is added by creating a line.]]></HELP>
-<!--471-->  <AD_TABLE_ID><![CDATA[333]]></AD_TABLE_ID>
-<!--471-->  <AD_WINDOW_ID><![CDATA[262]]></AD_WINDOW_ID>
-<!--471-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--471-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--471-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--471-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--471-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--471-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--471-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--471-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--471-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--471-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--471-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--471-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--471--></AD_TAB>
-
 <!--475--><AD_TAB>
 <!--475-->  <AD_TAB_ID><![CDATA[475]]></AD_TAB_ID>
 <!--475-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
