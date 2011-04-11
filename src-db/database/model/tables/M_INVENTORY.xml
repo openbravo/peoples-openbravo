@@ -69,10 +69,6 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="M_PERPETUALINV_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="AD_ORGTRX_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -114,9 +110,6 @@
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="M_INVENTORY_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PERPETUALINV" name="M_INVENTORY_M_PERPETUALINV">
-        <reference local="M_PERPETUALINV_ID" foreign="M_PERPETUALINV_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_WAREHOUSE" name="M_INVENTORY_M_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>

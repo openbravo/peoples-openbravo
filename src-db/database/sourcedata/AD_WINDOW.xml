@@ -832,22 +832,6 @@
 <!--170-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--170--></AD_WINDOW>
 
-<!--175--><AD_WINDOW>
-<!--175-->  <AD_WINDOW_ID><![CDATA[175]]></AD_WINDOW_ID>
-<!--175-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--175-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--175-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--175-->  <NAME><![CDATA[Perpetual Inventory]]></NAME>
-<!--175-->  <DESCRIPTION><![CDATA[Maintain Perpetual Inventory Rules]]></DESCRIPTION>
-<!--175-->  <HELP><![CDATA[The Perpetual Inventory defines the rules to be applied when generating Physical Inventory counts.]]></HELP>
-<!--175-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--175-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--175-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--175-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--175-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--175-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--175--></AD_WINDOW>
-
 <!--178--><AD_WINDOW>
 <!--178-->  <AD_WINDOW_ID><![CDATA[178]]></AD_WINDOW_ID>
 <!--178-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

@@ -2792,27 +2792,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--273-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--273--></AD_TAB>
 
-<!--275--><AD_TAB>
-<!--275-->  <AD_TAB_ID><![CDATA[275]]></AD_TAB_ID>
-<!--275-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--275-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--275-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--275-->  <NAME><![CDATA[Perpetual Inventory]]></NAME>
-<!--275-->  <AD_TABLE_ID><![CDATA[342]]></AD_TABLE_ID>
-<!--275-->  <AD_WINDOW_ID><![CDATA[175]]></AD_WINDOW_ID>
-<!--275-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--275-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--275-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--275-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--275-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--275-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--275-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--275-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--275-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--275-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--275-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--275--></AD_TAB>
-
 <!--282--><AD_TAB>
 <!--282-->  <AD_TAB_ID><![CDATA[282]]></AD_TAB_ID>
 <!--282-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
