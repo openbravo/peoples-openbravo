@@ -1470,22 +1470,6 @@
 <!--268-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--268--></AD_WINDOW>
 
-<!--270--><AD_WINDOW>
-<!--270-->  <AD_WINDOW_ID><![CDATA[270]]></AD_WINDOW_ID>
-<!--270-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--270-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--270-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--270-->  <NAME><![CDATA[Change Log]]></NAME>
-<!--270-->  <DESCRIPTION><![CDATA[Log of data changes]]></DESCRIPTION>
-<!--270-->  <HELP><![CDATA[Log of data changes]]></HELP>
-<!--270-->  <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
-<!--270-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--270-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--270-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--270-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--270-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--270--></AD_WINDOW>
-
 <!--272--><AD_WINDOW>
 <!--272-->  <AD_WINDOW_ID><![CDATA[272]]></AD_WINDOW_ID>
 <!--272-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
