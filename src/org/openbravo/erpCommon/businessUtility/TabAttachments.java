@@ -248,7 +248,9 @@ public class TabAttachments extends HttpSecureAppServlet {
           writtenFiles.put(file.getName(), new Integer(0));
         } else {
           int num = writtenFiles.get(file.getName()) + 1;
-          zipName = file.getName() + "." + num;
+          int indDot = file.getName().lastIndexOf(".");
+          zipName = file.getName().substring(0, indDot) + " (" + num + ")"
+              + file.getName().substring(indDot);
           writtenFiles.put(file.getName(), new Integer(num));
         }
         byte[] buf = new byte[1024];
