@@ -1294,22 +1294,6 @@
 <!--246-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--246--></AD_WINDOW>
 
-<!--251--><AD_WINDOW>
-<!--251-->  <AD_WINDOW_ID><![CDATA[251]]></AD_WINDOW_ID>
-<!--251-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--251-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--251-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--251-->  <NAME><![CDATA[Asset]]></NAME>
-<!--251-->  <DESCRIPTION><![CDATA[Asset used internally or by customers]]></DESCRIPTION>
-<!--251-->  <HELP><![CDATA[Asset used internally or by customers]]></HELP>
-<!--251-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--251-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--251-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--251-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--251-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--251-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--251--></AD_WINDOW>
-
 <!--252--><AD_WINDOW>
 <!--252-->  <AD_WINDOW_ID><![CDATA[252]]></AD_WINDOW_ID>
 <!--252-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

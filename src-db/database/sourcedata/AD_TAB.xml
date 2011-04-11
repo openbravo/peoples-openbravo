@@ -4679,30 +4679,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--440-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--440--></AD_TAB>
 
-<!--450--><AD_TAB>
-<!--450-->  <AD_TAB_ID><![CDATA[450]]></AD_TAB_ID>
-<!--450-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--450-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--450-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--450-->  <NAME><![CDATA[Asset]]></NAME>
-<!--450-->  <DESCRIPTION><![CDATA[Asset used internally or by customers]]></DESCRIPTION>
-<!--450-->  <HELP><![CDATA[Asset used internally or by customers]]></HELP>
-<!--450-->  <AD_TABLE_ID><![CDATA[539]]></AD_TABLE_ID>
-<!--450-->  <AD_WINDOW_ID><![CDATA[251]]></AD_WINDOW_ID>
-<!--450-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--450-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--450-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--450-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--450-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--450-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--450-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--450-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--450-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--450-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--450-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--450-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--450--></AD_TAB>
-
 <!--452--><AD_TAB>
 <!--452-->  <AD_TAB_ID><![CDATA[452]]></AD_TAB_ID>
 <!--452-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

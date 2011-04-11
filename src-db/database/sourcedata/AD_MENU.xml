@@ -1770,19 +1770,6 @@
 <!--337-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--337--></AD_MENU>
 
-<!--342--><AD_MENU>
-<!--342-->  <AD_MENU_ID><![CDATA[342]]></AD_MENU_ID>
-<!--342-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--342-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--342-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--342-->  <NAME><![CDATA[Asset]]></NAME>
-<!--342-->  <DESCRIPTION><![CDATA[Asset used internally or by customers]]></DESCRIPTION>
-<!--342-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--342-->  <ACTION><![CDATA[W]]></ACTION>
-<!--342-->  <AD_WINDOW_ID><![CDATA[251]]></AD_WINDOW_ID>
-<!--342-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--342--></AD_MENU>
-
 <!--343--><AD_MENU>
 <!--343-->  <AD_MENU_ID><![CDATA[343]]></AD_MENU_ID>
 <!--343-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
