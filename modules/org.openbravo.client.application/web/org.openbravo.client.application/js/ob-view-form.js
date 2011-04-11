@@ -566,6 +566,10 @@ OB.ViewFormProperties = {
       delete this.callSaveAfterFICReturn;
       this.saveRow(true);
     }
+    if (this.expandAttachments) {
+      this.getItem('_attachments_').expandSection();
+      delete this.expandAttachments;
+    }
     if (editValues && editValues.actionAfterFicReturn) {
       OB.Utilities.callAction(editValues.actionAfterFicReturn);
       delete editValues.actionAfterFicReturn;

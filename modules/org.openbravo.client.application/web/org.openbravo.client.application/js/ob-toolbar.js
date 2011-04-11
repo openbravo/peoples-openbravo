@@ -235,10 +235,10 @@ isc.OBToolbar.addClassProperties({
       }
       if(attachmentExists){
         if(selectedRows.size() === 1){
-            this.view.editRecord(selectedRows[0]);
-            this.view.viewForm.getItem('_attachments_').expandSection();
-            this.view.viewForm.ignoreFirstFocusEvent = true;
-            this.view.viewForm.scrollToBottom();
+          this.view.viewForm.setFocusItem(this.view.viewForm.getItem('_attachments_'));
+          this.view.viewForm.forceFocusedField = '_attachments_';
+          this.view.viewForm.expandAttachments = true;
+          this.view.editRecord(selectedRows[0]);
         } else {
           var recordIds = "";
           for(var i=0; i<selectedRows.size(); i++){
