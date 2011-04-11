@@ -128,6 +128,26 @@ function onloadFunctions() {
   function onResizeDo(){
     resizeArea();
   }
+
+  function openGeneralLedgerJournal(recordid) {
+	  
+	  var myframe = getFrame('LayoutMDI') || top.opener;
+      if (myframe) {	  
+		  myframe.OB.RemoteCallManager.call('org.openbravo.erputils.ComputeTranslatedNameActionHandler', {}, {'processId': '800000'}, 
+		  function(response, data, request){
+		            myframe.OB.Layout.ViewManager.openView('OBClassicWindow', {
+		                command: 'DIRECT2',
+		                icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png',
+		                id: '800000',
+		                obManualURL: '/ad_reports/ReportGeneralLedgerJournal.html?inpFactAcctGroupId=' + recordid,
+		                processId: '800000',
+		                tabTitle: data.processTitle,
+		                type: 'report',
+		                viewId: 'OBClassicWindow'
+		            });		        		   
+		  });
+      }
+  }
   </script>
 
 
@@ -812,7 +832,7 @@ function onloadFunctions() {
                     <div id="sectionDetail">
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
                         <td width="10%" class="DataGrid_Body_Cell">
-                          <a href="#" onclick="submitCommandFormParameter('DIRECT2', document.frmMain.inpFactAcctGroupId, 'xx', false, document.frmMain, 'ReportGeneralLedgerJournal.html', '_self', false, true);return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"><span id="fieldDateacct">xx22/04/2010</span>
+                          <a href="#" onclick="openGeneralLedgerJournal('xx');return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"><span id="fieldDateacct">xx22/04/2010</span>
                           </a>
                         </td>
                         <!--input type="hidden" id="fieldTotalacctdr" value=""/>
