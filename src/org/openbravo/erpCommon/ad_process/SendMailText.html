@@ -13,7 +13,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,10 +47,6 @@
         if (frm.inpMailTemplate.value==null || frm.inpMailTemplate.value=="") {
           setWindowElementFocus(frm.inpMailTemplate);
           showJSMessage(7);
-          return false;
-        } else if (frm.inpInterestArea.value==null || frm.inpInterestArea.value=="") {
-          setWindowElementFocus(frm.inpInterestArea);
-          showJSMessage(1);
           return false;
         }
         return true;
@@ -259,15 +255,6 @@
                                 <select name="inpMailTemplate" id="inpMailTemplate" class="ComboKey Combo_TwoCells_width" onchange="logChanges(this);return true;">
                                   <option value=""></option>
                                   <div id="reportMailTemplate"></div>
-                                </select>
-                              </td>
-                              <td class="TitleCell">
-                                <span class="LabelText">Areas of interest</span>
-                              </td>
-                              <td class="Combo_ContentCell" colspan="2">
-                                <select name="inpInterestArea" id="inpInterestArea" class="ComboKey Combo_TwoCells_width" onchange="logChanges(this);return true;">
-                                  <option value=""></option>
-                                  <div id="reportInterestArea"></div>
                                 </select>
                               </td>
                             </tr>

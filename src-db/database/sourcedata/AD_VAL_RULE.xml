@@ -382,17 +382,6 @@ AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Ord
 <!--140-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--140--></AD_VAL_RULE>
 
-<!--141--><AD_VAL_RULE>
-<!--141-->  <AD_VAL_RULE_ID><![CDATA[141]]></AD_VAL_RULE_ID>
-<!--141-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--141-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--141-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--141-->  <NAME><![CDATA[AD_Table Import Tables]]></NAME>
-<!--141-->  <TYPE><![CDATA[S]]></TYPE>
-<!--141-->  <CODE><![CDATA[AD_Table.TableName LIKE 'I%']]></CODE>
-<!--141-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--141--></AD_VAL_RULE>
-
 <!--142--><AD_VAL_RULE>
 <!--142-->  <AD_VAL_RULE_ID><![CDATA[142]]></AD_VAL_RULE_ID>
 <!--142-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

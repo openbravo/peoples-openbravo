@@ -1,18 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--101--><AD_MENU>
-<!--101-->  <AD_MENU_ID><![CDATA[101]]></AD_MENU_ID>
-<!--101-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--101-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--101-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--101-->  <NAME><![CDATA[Task]]></NAME>
-<!--101-->  <DESCRIPTION><![CDATA[Define tasks to be used in the application for selected roles.]]></DESCRIPTION>
-<!--101-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--101-->  <ACTION><![CDATA[W]]></ACTION>
-<!--101-->  <AD_WINDOW_ID><![CDATA[114]]></AD_WINDOW_ID>
-<!--101-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--101--></AD_MENU>
-
 <!--102--><AD_MENU>
 <!--102-->  <AD_MENU_ID><![CDATA[102]]></AD_MENU_ID>
 <!--102-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -155,19 +142,6 @@
 <!--113-->  <AD_WINDOW_ID><![CDATA[127]]></AD_WINDOW_ID>
 <!--113-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--113--></AD_MENU>
-
-<!--114--><AD_MENU>
-<!--114-->  <AD_MENU_ID><![CDATA[114]]></AD_MENU_ID>
-<!--114-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--114-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--114-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--114-->  <NAME><![CDATA[Attachment]]></NAME>
-<!--114-->  <DESCRIPTION><![CDATA[Maintain Attachments]]></DESCRIPTION>
-<!--114-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--114-->  <ACTION><![CDATA[W]]></ACTION>
-<!--114-->  <AD_WINDOW_ID><![CDATA[128]]></AD_WINDOW_ID>
-<!--114-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--114--></AD_MENU>
 
 <!--115--><AD_MENU>
 <!--115-->  <AD_MENU_ID><![CDATA[115]]></AD_MENU_ID>
@@ -585,19 +559,6 @@
 <!--151-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--151--></AD_MENU>
 
-<!--152--><AD_MENU>
-<!--152-->  <AD_MENU_ID><![CDATA[152]]></AD_MENU_ID>
-<!--152-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--152-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--152-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--152-->  <NAME><![CDATA[Workflow]]></NAME>
-<!--152-->  <DESCRIPTION><![CDATA[Define workflows that guide users through steps required to complete a specified task.]]></DESCRIPTION>
-<!--152-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--152-->  <ACTION><![CDATA[W]]></ACTION>
-<!--152-->  <AD_WINDOW_ID><![CDATA[113]]></AD_WINDOW_ID>
-<!--152-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--152--></AD_MENU>
-
 <!--153--><AD_MENU>
 <!--153-->  <AD_MENU_ID><![CDATA[153]]></AD_MENU_ID>
 <!--153-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -685,17 +646,6 @@
 <!--161-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--161--></AD_MENU>
 
-<!--163--><AD_MENU>
-<!--163-->  <AD_MENU_ID><![CDATA[163]]></AD_MENU_ID>
-<!--163-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--163-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--163-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--163-->  <NAME><![CDATA[Import Data]]></NAME>
-<!--163-->  <DESCRIPTION><![CDATA[Open a folder where you can import data.]]></DESCRIPTION>
-<!--163-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
-<!--163-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--163--></AD_MENU>
-
 <!--164--><AD_MENU>
 <!--164-->  <AD_MENU_ID><![CDATA[164]]></AD_MENU_ID>
 <!--164-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -777,32 +727,6 @@
 <!--171-->  <AD_WINDOW_ID><![CDATA[158]]></AD_WINDOW_ID>
 <!--171-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--171--></AD_MENU>
-
-<!--173--><AD_MENU>
-<!--173-->  <AD_MENU_ID><![CDATA[173]]></AD_MENU_ID>
-<!--173-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--173-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--173-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--173-->  <NAME><![CDATA[Withholding (1099)]]></NAME>
-<!--173-->  <DESCRIPTION><![CDATA[Maintain Withholding Certificates]]></DESCRIPTION>
-<!--173-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--173-->  <ACTION><![CDATA[W]]></ACTION>
-<!--173-->  <AD_WINDOW_ID><![CDATA[160]]></AD_WINDOW_ID>
-<!--173-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--173--></AD_MENU>
-
-<!--174--><AD_MENU>
-<!--174-->  <AD_MENU_ID><![CDATA[174]]></AD_MENU_ID>
-<!--174-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--174-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--174-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--174-->  <NAME><![CDATA[Charge]]></NAME>
-<!--174-->  <DESCRIPTION><![CDATA[Maintain Charges]]></DESCRIPTION>
-<!--174-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--174-->  <ACTION><![CDATA[W]]></ACTION>
-<!--174-->  <AD_WINDOW_ID><![CDATA[161]]></AD_WINDOW_ID>
-<!--174-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--174--></AD_MENU>
 
 <!--175--><AD_MENU>
 <!--175-->  <AD_MENU_ID><![CDATA[175]]></AD_MENU_ID>
@@ -889,58 +813,6 @@
 <!--183-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--183-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--183--></AD_MENU>
-
-<!--185--><AD_MENU>
-<!--185-->  <AD_MENU_ID><![CDATA[185]]></AD_MENU_ID>
-<!--185-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--185-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--185-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--185-->  <NAME><![CDATA[Import Business Partner]]></NAME>
-<!--185-->  <DESCRIPTION><![CDATA[Import business partners in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--185-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--185-->  <ACTION><![CDATA[W]]></ACTION>
-<!--185-->  <AD_WINDOW_ID><![CDATA[172]]></AD_WINDOW_ID>
-<!--185-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--185--></AD_MENU>
-
-<!--186--><AD_MENU>
-<!--186-->  <AD_MENU_ID><![CDATA[186]]></AD_MENU_ID>
-<!--186-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--186-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--186-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--186-->  <NAME><![CDATA[Revenue Recognition]]></NAME>
-<!--186-->  <DESCRIPTION><![CDATA[Revenue Recognition Rules]]></DESCRIPTION>
-<!--186-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--186-->  <ACTION><![CDATA[W]]></ACTION>
-<!--186-->  <AD_WINDOW_ID><![CDATA[174]]></AD_WINDOW_ID>
-<!--186-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--186--></AD_MENU>
-
-<!--187--><AD_MENU>
-<!--187-->  <AD_MENU_ID><![CDATA[187]]></AD_MENU_ID>
-<!--187-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--187-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--187-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--187-->  <NAME><![CDATA[Perpetual Inventory]]></NAME>
-<!--187-->  <DESCRIPTION><![CDATA[Maintain Perpetual Inventory Rules]]></DESCRIPTION>
-<!--187-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--187-->  <ACTION><![CDATA[W]]></ACTION>
-<!--187-->  <AD_WINDOW_ID><![CDATA[175]]></AD_WINDOW_ID>
-<!--187-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--187--></AD_MENU>
-
-<!--188--><AD_MENU>
-<!--188-->  <AD_MENU_ID><![CDATA[188]]></AD_MENU_ID>
-<!--188-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--188-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--188-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--188-->  <NAME><![CDATA[Vendor Details]]></NAME>
-<!--188-->  <DESCRIPTION><![CDATA[Edit available product information grouped by the vendors who sell them.]]></DESCRIPTION>
-<!--188-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--188-->  <ACTION><![CDATA[W]]></ACTION>
-<!--188-->  <AD_WINDOW_ID><![CDATA[176]]></AD_WINDOW_ID>
-<!--188-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--188--></AD_MENU>
 
 <!--190--><AD_MENU>
 <!--190-->  <AD_MENU_ID><![CDATA[190]]></AD_MENU_ID>
@@ -1223,71 +1095,6 @@
 <!--218-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--218--></AD_MENU>
 
-<!--219--><AD_MENU>
-<!--219-->  <AD_MENU_ID><![CDATA[219]]></AD_MENU_ID>
-<!--219-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--219-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--219-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--219-->  <NAME><![CDATA[Project Setup and Use]]></NAME>
-<!--219-->  <DESCRIPTION><![CDATA[Setup of projects and project reporting]]></DESCRIPTION>
-<!--219-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--219-->  <ACTION><![CDATA[F]]></ACTION>
-<!--219-->  <AD_WORKFLOW_ID><![CDATA[101]]></AD_WORKFLOW_ID>
-<!--219-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--219--></AD_MENU>
-
-<!--220--><AD_MENU>
-<!--220-->  <AD_MENU_ID><![CDATA[220]]></AD_MENU_ID>
-<!--220-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--220-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--220-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--220-->  <NAME><![CDATA[Java Version]]></NAME>
-<!--220-->  <DESCRIPTION><![CDATA[Displays the version of the default Java VM]]></DESCRIPTION>
-<!--220-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--220-->  <ACTION><![CDATA[T]]></ACTION>
-<!--220-->  <AD_TASK_ID><![CDATA[102]]></AD_TASK_ID>
-<!--220-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--220--></AD_MENU>
-
-<!--222--><AD_MENU>
-<!--222-->  <AD_MENU_ID><![CDATA[222]]></AD_MENU_ID>
-<!--222-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--222-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--222-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--222-->  <NAME><![CDATA[Import Loader Format]]></NAME>
-<!--222-->  <DESCRIPTION><![CDATA[Define the file layout for product information which will be imported.]]></DESCRIPTION>
-<!--222-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--222-->  <ACTION><![CDATA[W]]></ACTION>
-<!--222-->  <AD_WINDOW_ID><![CDATA[189]]></AD_WINDOW_ID>
-<!--222-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--222--></AD_MENU>
-
-<!--223--><AD_MENU>
-<!--223-->  <AD_MENU_ID><![CDATA[223]]></AD_MENU_ID>
-<!--223-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--223-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--223-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--223-->  <NAME><![CDATA[Import File Loader]]></NAME>
-<!--223-->  <DESCRIPTION><![CDATA[Import .csv data files into temporary tables according to the parameters and selected format.]]></DESCRIPTION>
-<!--223-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--223-->  <ACTION><![CDATA[X]]></ACTION>
-<!--223-->  <AD_FORM_ID><![CDATA[101]]></AD_FORM_ID>
-<!--223-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--223--></AD_MENU>
-
-<!--224--><AD_MENU>
-<!--224-->  <AD_MENU_ID><![CDATA[224]]></AD_MENU_ID>
-<!--224-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--224-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--224-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--224-->  <NAME><![CDATA[Language Setup]]></NAME>
-<!--224-->  <DESCRIPTION><![CDATA[Setup a new Language of the system and translate elements]]></DESCRIPTION>
-<!--224-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--224-->  <ACTION><![CDATA[F]]></ACTION>
-<!--224-->  <AD_WORKFLOW_ID><![CDATA[103]]></AD_WORKFLOW_ID>
-<!--224-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--224--></AD_MENU>
-
 <!--225--><AD_MENU>
 <!--225-->  <AD_MENU_ID><![CDATA[225]]></AD_MENU_ID>
 <!--225-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1546,19 +1353,6 @@
 <!--260-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--260--></AD_MENU>
 
-<!--261--><AD_MENU>
-<!--261-->  <AD_MENU_ID><![CDATA[261]]></AD_MENU_ID>
-<!--261-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--261-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--261-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--261-->  <NAME><![CDATA[Initial Client Setup Review]]></NAME>
-<!--261-->  <DESCRIPTION><![CDATA[Review of system level setup of a new  Client]]></DESCRIPTION>
-<!--261-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--261-->  <ACTION><![CDATA[F]]></ACTION>
-<!--261-->  <AD_WORKFLOW_ID><![CDATA[104]]></AD_WORKFLOW_ID>
-<!--261-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--261--></AD_MENU>
-
 <!--263--><AD_MENU>
 <!--263-->  <AD_MENU_ID><![CDATA[263]]></AD_MENU_ID>
 <!--263-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1582,84 +1376,6 @@
 <!--264-->  <AD_WINDOW_ID><![CDATA[210]]></AD_WINDOW_ID>
 <!--264-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--264--></AD_MENU>
-
-<!--265--><AD_MENU>
-<!--265-->  <AD_MENU_ID><![CDATA[265]]></AD_MENU_ID>
-<!--265-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--265-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--265-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--265-->  <NAME><![CDATA[Accounting Setup]]></NAME>
-<!--265-->  <DESCRIPTION><![CDATA[Review and change Accounting Setup]]></DESCRIPTION>
-<!--265-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--265-->  <ACTION><![CDATA[F]]></ACTION>
-<!--265-->  <AD_WORKFLOW_ID><![CDATA[105]]></AD_WORKFLOW_ID>
-<!--265-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--265--></AD_MENU>
-
-<!--266--><AD_MENU>
-<!--266-->  <AD_MENU_ID><![CDATA[266]]></AD_MENU_ID>
-<!--266-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--266-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--266-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--266-->  <NAME><![CDATA[Business Partner Setup]]></NAME>
-<!--266-->  <DESCRIPTION><![CDATA[Setup Business Partner Rules]]></DESCRIPTION>
-<!--266-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--266-->  <ACTION><![CDATA[F]]></ACTION>
-<!--266-->  <AD_WORKFLOW_ID><![CDATA[106]]></AD_WORKFLOW_ID>
-<!--266-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--266--></AD_MENU>
-
-<!--267--><AD_MENU>
-<!--267-->  <AD_MENU_ID><![CDATA[267]]></AD_MENU_ID>
-<!--267-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--267-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--267-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--267-->  <NAME><![CDATA[Price List Setup]]></NAME>
-<!--267-->  <DESCRIPTION><![CDATA[Define your Price Lists and Discounts]]></DESCRIPTION>
-<!--267-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--267-->  <ACTION><![CDATA[F]]></ACTION>
-<!--267-->  <AD_WORKFLOW_ID><![CDATA[108]]></AD_WORKFLOW_ID>
-<!--267-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--267--></AD_MENU>
-
-<!--268--><AD_MENU>
-<!--268-->  <AD_MENU_ID><![CDATA[268]]></AD_MENU_ID>
-<!--268-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--268-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--268-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--268-->  <NAME><![CDATA[Product Setup]]></NAME>
-<!--268-->  <DESCRIPTION><![CDATA[Set up Products]]></DESCRIPTION>
-<!--268-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--268-->  <ACTION><![CDATA[F]]></ACTION>
-<!--268-->  <AD_WORKFLOW_ID><![CDATA[107]]></AD_WORKFLOW_ID>
-<!--268-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--268--></AD_MENU>
-
-<!--269--><AD_MENU>
-<!--269-->  <AD_MENU_ID><![CDATA[269]]></AD_MENU_ID>
-<!--269-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--269-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--269-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--269-->  <NAME><![CDATA[Sales Setup]]></NAME>
-<!--269-->  <DESCRIPTION><![CDATA[Setup Sales]]></DESCRIPTION>
-<!--269-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--269-->  <ACTION><![CDATA[F]]></ACTION>
-<!--269-->  <AD_WORKFLOW_ID><![CDATA[111]]></AD_WORKFLOW_ID>
-<!--269-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--269--></AD_MENU>
-
-<!--270--><AD_MENU>
-<!--270-->  <AD_MENU_ID><![CDATA[270]]></AD_MENU_ID>
-<!--270-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--270-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--270-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--270-->  <NAME><![CDATA[Tax Setup]]></NAME>
-<!--270-->  <DESCRIPTION><![CDATA[Setup tax calculation]]></DESCRIPTION>
-<!--270-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--270-->  <ACTION><![CDATA[F]]></ACTION>
-<!--270-->  <AD_WORKFLOW_ID><![CDATA[110]]></AD_WORKFLOW_ID>
-<!--270-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--270--></AD_MENU>
 
 <!--271--><AD_MENU>
 <!--271-->  <AD_MENU_ID><![CDATA[271]]></AD_MENU_ID>
@@ -1705,19 +1421,6 @@
 <!--280-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--280--></AD_MENU>
 
-<!--284--><AD_MENU>
-<!--284-->  <AD_MENU_ID><![CDATA[284]]></AD_MENU_ID>
-<!--284-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--284-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--284-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--284-->  <NAME><![CDATA[Service Level]]></NAME>
-<!--284-->  <DESCRIPTION><![CDATA[Maintain Service Levels]]></DESCRIPTION>
-<!--284-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--284-->  <ACTION><![CDATA[W]]></ACTION>
-<!--284-->  <AD_WINDOW_ID><![CDATA[220]]></AD_WINDOW_ID>
-<!--284-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--284--></AD_MENU>
-
 <!--286--><AD_MENU>
 <!--286-->  <AD_MENU_ID><![CDATA[286]]></AD_MENU_ID>
 <!--286-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1744,19 +1447,6 @@
 <!--287-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--287--></AD_MENU>
 
-<!--289--><AD_MENU>
-<!--289-->  <AD_MENU_ID><![CDATA[289]]></AD_MENU_ID>
-<!--289-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--289-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--289-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--289-->  <NAME><![CDATA[Database Export]]></NAME>
-<!--289-->  <DESCRIPTION><![CDATA[Export (save) the database]]></DESCRIPTION>
-<!--289-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--289-->  <ACTION><![CDATA[T]]></ACTION>
-<!--289-->  <AD_TASK_ID><![CDATA[103]]></AD_TASK_ID>
-<!--289-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--289--></AD_MENU>
-
 <!--292--><AD_MENU>
 <!--292-->  <AD_MENU_ID><![CDATA[292]]></AD_MENU_ID>
 <!--292-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1782,19 +1472,6 @@
 <!--296-->  <AD_WINDOW_ID><![CDATA[227]]></AD_WINDOW_ID>
 <!--296-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--296--></AD_MENU>
-
-<!--302--><AD_MENU>
-<!--302-->  <AD_MENU_ID><![CDATA[302]]></AD_MENU_ID>
-<!--302-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--302-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--302-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--302-->  <NAME><![CDATA[Database Transfer]]></NAME>
-<!--302-->  <DESCRIPTION><![CDATA[Transfer the database]]></DESCRIPTION>
-<!--302-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--302-->  <ACTION><![CDATA[T]]></ACTION>
-<!--302-->  <AD_TASK_ID><![CDATA[104]]></AD_TASK_ID>
-<!--302-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--302--></AD_MENU>
 
 <!--303--><AD_MENU>
 <!--303-->  <AD_MENU_ID><![CDATA[303]]></AD_MENU_ID>
@@ -1847,19 +1524,6 @@
 <!--308-->  <AD_WINDOW_ID><![CDATA[232]]></AD_WINDOW_ID>
 <!--308-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--308--></AD_MENU>
-
-<!--309--><AD_MENU>
-<!--309-->  <AD_MENU_ID><![CDATA[309]]></AD_MENU_ID>
-<!--309-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--309-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--309-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--309-->  <NAME><![CDATA[Request Setup]]></NAME>
-<!--309-->  <DESCRIPTION><![CDATA[Set up the client to process requests]]></DESCRIPTION>
-<!--309-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--309-->  <ACTION><![CDATA[F]]></ACTION>
-<!--309-->  <AD_WORKFLOW_ID><![CDATA[113]]></AD_WORKFLOW_ID>
-<!--309-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--309--></AD_MENU>
 
 <!--310--><AD_MENU>
 <!--310-->  <AD_MENU_ID><![CDATA[310]]></AD_MENU_ID>
@@ -2028,19 +1692,6 @@
 <!--332-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--332--></AD_MENU>
 
-<!--333--><AD_MENU>
-<!--333-->  <AD_MENU_ID><![CDATA[333]]></AD_MENU_ID>
-<!--333-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--333-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--333-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--333-->  <NAME><![CDATA[Areas of Interest]]></NAME>
-<!--333-->  <DESCRIPTION><![CDATA[Create and edit areas of interest to track the potential needs and wants of your business partners.]]></DESCRIPTION>
-<!--333-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--333-->  <ACTION><![CDATA[W]]></ACTION>
-<!--333-->  <AD_WINDOW_ID><![CDATA[245]]></AD_WINDOW_ID>
-<!--333-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--333--></AD_MENU>
-
 <!--334--><AD_MENU>
 <!--334-->  <AD_MENU_ID><![CDATA[334]]></AD_MENU_ID>
 <!--334-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -2079,58 +1730,6 @@
 <!--337-->  <AD_PROCESS_ID><![CDATA[195]]></AD_PROCESS_ID>
 <!--337-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--337--></AD_MENU>
-
-<!--339--><AD_MENU>
-<!--339-->  <AD_MENU_ID><![CDATA[339]]></AD_MENU_ID>
-<!--339-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--339-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--339-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--339-->  <NAME><![CDATA[Import Account]]></NAME>
-<!--339-->  <DESCRIPTION><![CDATA[Import accounts in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--339-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--339-->  <ACTION><![CDATA[W]]></ACTION>
-<!--339-->  <AD_WINDOW_ID><![CDATA[248]]></AD_WINDOW_ID>
-<!--339-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--339--></AD_MENU>
-
-<!--340--><AD_MENU>
-<!--340-->  <AD_MENU_ID><![CDATA[340]]></AD_MENU_ID>
-<!--340-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--340-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--340-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--340-->  <NAME><![CDATA[Import Products]]></NAME>
-<!--340-->  <DESCRIPTION><![CDATA[Import products in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--340-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--340-->  <ACTION><![CDATA[W]]></ACTION>
-<!--340-->  <AD_WINDOW_ID><![CDATA[247]]></AD_WINDOW_ID>
-<!--340-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--340--></AD_MENU>
-
-<!--341--><AD_MENU>
-<!--341-->  <AD_MENU_ID><![CDATA[341]]></AD_MENU_ID>
-<!--341-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--341-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--341-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--341-->  <NAME><![CDATA[Application Translation Check]]></NAME>
-<!--341-->  <DESCRIPTION><![CDATA[Create and edit translations for a selected application language.]]></DESCRIPTION>
-<!--341-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--341-->  <ACTION><![CDATA[W]]></ACTION>
-<!--341-->  <AD_WINDOW_ID><![CDATA[250]]></AD_WINDOW_ID>
-<!--341-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--341--></AD_MENU>
-
-<!--342--><AD_MENU>
-<!--342-->  <AD_MENU_ID><![CDATA[342]]></AD_MENU_ID>
-<!--342-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--342-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--342-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--342-->  <NAME><![CDATA[Asset]]></NAME>
-<!--342-->  <DESCRIPTION><![CDATA[Asset used internally or by customers]]></DESCRIPTION>
-<!--342-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--342-->  <ACTION><![CDATA[W]]></ACTION>
-<!--342-->  <AD_WINDOW_ID><![CDATA[251]]></AD_WINDOW_ID>
-<!--342-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--342--></AD_MENU>
 
 <!--343--><AD_MENU>
 <!--343-->  <AD_MENU_ID><![CDATA[343]]></AD_MENU_ID>
@@ -2421,19 +2020,6 @@
 <!--373-->  <AD_WINDOW_ID><![CDATA[277]]></AD_WINDOW_ID>
 <!--373-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--373--></AD_MENU>
-
-<!--376--><AD_MENU>
-<!--376-->  <AD_MENU_ID><![CDATA[376]]></AD_MENU_ID>
-<!--376-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--376-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--376-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--376-->  <NAME><![CDATA[Import Orders]]></NAME>
-<!--376-->  <DESCRIPTION><![CDATA[Import orders in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--376-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--376-->  <ACTION><![CDATA[W]]></ACTION>
-<!--376-->  <AD_WINDOW_ID><![CDATA[281]]></AD_WINDOW_ID>
-<!--376-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--376--></AD_MENU>
 
 <!--377--><AD_MENU>
 <!--377-->  <AD_MENU_ID><![CDATA[377]]></AD_MENU_ID>
@@ -3081,42 +2667,6 @@
 <!--800043-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800043--></AD_MENU>
 
-<!--800046--><AD_MENU>
-<!--800046-->  <AD_MENU_ID><![CDATA[800046]]></AD_MENU_ID>
-<!--800046-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800046-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800046-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800046-->  <NAME><![CDATA[Merge Script]]></NAME>
-<!--800046-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800046-->  <ACTION><![CDATA[T]]></ACTION>
-<!--800046-->  <AD_TASK_ID><![CDATA[800000]]></AD_TASK_ID>
-<!--800046-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800046--></AD_MENU>
-
-<!--800047--><AD_MENU>
-<!--800047-->  <AD_MENU_ID><![CDATA[800047]]></AD_MENU_ID>
-<!--800047-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800047-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800047-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800047-->  <NAME><![CDATA[Preinstall]]></NAME>
-<!--800047-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800047-->  <ACTION><![CDATA[T]]></ACTION>
-<!--800047-->  <AD_TASK_ID><![CDATA[800001]]></AD_TASK_ID>
-<!--800047-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800047--></AD_MENU>
-
-<!--800048--><AD_MENU>
-<!--800048-->  <AD_MENU_ID><![CDATA[800048]]></AD_MENU_ID>
-<!--800048-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800048-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800048-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800048-->  <NAME><![CDATA[Version]]></NAME>
-<!--800048-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800048-->  <ACTION><![CDATA[T]]></ACTION>
-<!--800048-->  <AD_TASK_ID><![CDATA[800002]]></AD_TASK_ID>
-<!--800048-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800048--></AD_MENU>
-
 <!--800052--><AD_MENU>
 <!--800052-->  <AD_MENU_ID><![CDATA[800052]]></AD_MENU_ID>
 <!--800052-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -3180,19 +2730,6 @@
 <!--800063-->  <AD_WINDOW_ID><![CDATA[800014]]></AD_WINDOW_ID>
 <!--800063-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800063--></AD_MENU>
-
-<!--800064--><AD_MENU>
-<!--800064-->  <AD_MENU_ID><![CDATA[800064]]></AD_MENU_ID>
-<!--800064-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800064-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800064-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800064-->  <NAME><![CDATA[Storage Bin Type]]></NAME>
-<!--800064-->  <DESCRIPTION><![CDATA[Define storage bin types to better organize your warehouse and inventory.]]></DESCRIPTION>
-<!--800064-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800064-->  <ACTION><![CDATA[W]]></ACTION>
-<!--800064-->  <AD_WINDOW_ID><![CDATA[800012]]></AD_WINDOW_ID>
-<!--800064-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800064--></AD_MENU>
 
 <!--800067--><AD_MENU>
 <!--800067-->  <AD_MENU_ID><![CDATA[800067]]></AD_MENU_ID>
@@ -3334,19 +2871,6 @@
 <!--800081-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800081-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800081--></AD_MENU>
-
-<!--800082--><AD_MENU>
-<!--800082-->  <AD_MENU_ID><![CDATA[800082]]></AD_MENU_ID>
-<!--800082-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800082-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800082-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800082-->  <NAME><![CDATA[Generate Help]]></NAME>
-<!--800082-->  <DESCRIPTION><![CDATA[Generate help windows in html format]]></DESCRIPTION>
-<!--800082-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800082-->  <ACTION><![CDATA[P]]></ACTION>
-<!--800082-->  <AD_PROCESS_ID><![CDATA[800071]]></AD_PROCESS_ID>
-<!--800082-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800082--></AD_MENU>
 
 <!--800083--><AD_MENU>
 <!--800083-->  <AD_MENU_ID><![CDATA[800083]]></AD_MENU_ID>
@@ -3927,19 +3451,6 @@
 <!--800160-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800160--></AD_MENU>
 
-<!--800167--><AD_MENU>
-<!--800167-->  <AD_MENU_ID><![CDATA[800167]]></AD_MENU_ID>
-<!--800167-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800167-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800167-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800167-->  <NAME><![CDATA[Production Setup]]></NAME>
-<!--800167-->  <DESCRIPTION><![CDATA[Set up Production module.]]></DESCRIPTION>
-<!--800167-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800167-->  <ACTION><![CDATA[F]]></ACTION>
-<!--800167-->  <AD_WORKFLOW_ID><![CDATA[800000]]></AD_WORKFLOW_ID>
-<!--800167-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800167--></AD_MENU>
-
 <!--800168--><AD_MENU>
 <!--800168-->  <AD_MENU_ID><![CDATA[800168]]></AD_MENU_ID>
 <!--800168-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -4184,19 +3695,6 @@
 <!--800191-->  <AD_PROCESS_ID><![CDATA[800137]]></AD_PROCESS_ID>
 <!--800191-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800191--></AD_MENU>
-
-<!--800192--><AD_MENU>
-<!--800192-->  <AD_MENU_ID><![CDATA[800192]]></AD_MENU_ID>
-<!--800192-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800192-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800192-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800192-->  <NAME><![CDATA[Import Budget]]></NAME>
-<!--800192-->  <DESCRIPTION><![CDATA[Import budgets in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--800192-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800192-->  <ACTION><![CDATA[W]]></ACTION>
-<!--800192-->  <AD_WINDOW_ID><![CDATA[800079]]></AD_WINDOW_ID>
-<!--800192-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800192--></AD_MENU>
 
 <!--800193--><AD_MENU>
 <!--800193-->  <AD_MENU_ID><![CDATA[800193]]></AD_MENU_ID>
@@ -4520,19 +4018,6 @@
 <!--800221-->  <AD_WINDOW_ID><![CDATA[800097]]></AD_WINDOW_ID>
 <!--800221-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800221--></AD_MENU>
-
-<!--800223--><AD_MENU>
-<!--800223-->  <AD_MENU_ID><![CDATA[800223]]></AD_MENU_ID>
-<!--800223-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800223-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800223-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800223-->  <NAME><![CDATA[Import Taxes]]></NAME>
-<!--800223-->  <DESCRIPTION><![CDATA[Import taxes in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--800223-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800223-->  <ACTION><![CDATA[W]]></ACTION>
-<!--800223-->  <AD_WINDOW_ID><![CDATA[800098]]></AD_WINDOW_ID>
-<!--800223-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800223--></AD_MENU>
 
 <!--800224--><AD_MENU>
 <!--800224-->  <AD_MENU_ID><![CDATA[800224]]></AD_MENU_ID>

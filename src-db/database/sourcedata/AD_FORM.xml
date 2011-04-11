@@ -12,19 +12,6 @@
 <!--100-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--100--></AD_FORM>
 
-<!--101--><AD_FORM>
-<!--101-->  <AD_FORM_ID><![CDATA[101]]></AD_FORM_ID>
-<!--101-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--101-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--101-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--101-->  <NAME><![CDATA[Import File Loader]]></NAME>
-<!--101-->  <DESCRIPTION><![CDATA[Import .csv data files into temporary tables according to the parameters and selected format.]]></DESCRIPTION>
-<!--101-->  <HELP><![CDATA[The Import File Loader parses the content of a flat file and loads it into import tables. Comments start with a '[' and end with a ']' and are ignored; example: [Some Heading].]]></HELP>
-<!--101-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--101-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.FileImport]]></CLASSNAME>
-<!--101-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--101--></AD_FORM>
-
 <!--102--><AD_FORM>
 <!--102-->  <AD_FORM_ID><![CDATA[102]]></AD_FORM_ID>
 <!--102-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -215,7 +202,7 @@
 <!--800012-->  <DESCRIPTION><![CDATA[Import an EDI (Electronic Data Interchange) file.]]></DESCRIPTION>
 <!--800012-->  <HELP><![CDATA[Imports EDI data from file.]]></HELP>
 <!--800012-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800012-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.EdiFileImport]]></CLASSNAME>
+<!--800012-->  <CLASSNAME><![CDATA[org.openbravo.deprecated.cleanupv3.erpCommon.ad_forms.EdiFileImport]]></CLASSNAME>
 <!--800012-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800012--></AD_FORM>
 

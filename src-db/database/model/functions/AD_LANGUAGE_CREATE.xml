@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2011 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -308,66 +308,6 @@
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Tab ' || v_rowcount) ;
     
-    --Tasks do not have module...
-    INSERT
-    INTO AD_Task_Trl
-      (
-        AD_Task_Trl_ID, AD_Task_ID, AD_Language, Name, Description,
-        Help, IsTranslated, Createdby, UpdatedBy,
-        AD_Client_ID, AD_Org_ID
-      )
-    SELECT get_uuid(), AD_Task_ID, AD_Language, AD_Task.Name, AD_Task.Description, AD_Task.Help, 'N', '0', '0', '0', '0'
-    FROM AD_Task, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  
-    AND NOT EXISTS (SELECT 1 FROM AD_Task_TRL
-                 WHERE AD_Task_ID = AD_Task.AD_Task_ID
-                   AND AD_LANGUAGE = AD_Language.AD_Language);  
-                   
-    v_rowcount:=SQL%ROWCOUNT;
-    v_Created:=v_Created + v_rowcount;
-    DBMS_OUTPUT.PUT_LINE('- AD_Task ' || v_rowcount) ;
-    INSERT
-    
-    INTO AD_Workflow_Trl
-      (
-        AD_Workflow_Trl_ID, AD_Workflow_ID, AD_Language, Name, Description,
-        Help, IsTranslated, Createdby, UpdatedBy,
-        AD_Client_ID, AD_Org_ID
-      )
-    SELECT get_uuid(), AD_Workflow_ID, AD_Language.AD_Language, AD_Workflow.Name, AD_Workflow.Description, AD_Workflow.Help, 'N', '0', '0', '0', '0'
-    FROM AD_Workflow, AD_Language, AD_Module M
-    WHERE AD_Language.IsActive='Y'  
-    AND AD_Language.IsSystemLanguage='Y'  
-    and m.ad_module_id = AD_Workflow.ad_module_id
-    AND M.AD_Language != AD_Language.AD_Language
-    AND NOT EXISTS (SELECT 1 FROM AD_Workflow_TRL
-                 WHERE AD_Workflow_ID = AD_Workflow.AD_Workflow_ID
-                   AND AD_LANGUAGE = AD_Language.AD_Language);  
-                   
-    v_rowcount:=SQL%ROWCOUNT;
-    v_Created:=v_Created + v_rowcount;
-    DBMS_OUTPUT.PUT_LINE('- AD_Workflow ' || v_rowcount) ;
-    INSERT
-    INTO AD_WF_Node_Trl
-      (
-        AD_WF_Node_Trl_ID, AD_WF_Node_ID, AD_Language, Name, Description,
-        Help, IsTranslated, Createdby, UpdatedBy,
-        AD_Client_ID, AD_Org_ID
-      )
-    SELECT get_uuid(), AD_WF_Node.AD_WF_Node_ID, AD_Language.AD_Language, AD_WF_Node.Name, AD_WF_Node.Description, AD_WF_Node.Help, 'N', '0', '0', '0', '0'
-    FROM AD_WF_Node, AD_Language, AD_Module M, AD_Workflow w
-    WHERE AD_Language.IsActive='Y'  
-    AND AD_Language.IsSystemLanguage='Y'  
-    and AD_WF_Node.AD_Workflow_id = w.AD_Workflow_id
-    and m.ad_module_id = w.ad_module_id
-    AND M.AD_Language != AD_Language.AD_Language
-    AND NOT EXISTS (SELECT 1 FROM AD_WF_Node_TRL
-                 WHERE AD_WF_Node_ID = AD_WF_Node.AD_WF_Node_ID
-                   AND AD_LANGUAGE = AD_Language.AD_Language); 
-
-    v_rowcount:=SQL%ROWCOUNT;
-    v_Created:=v_Created + v_rowcount;
-    DBMS_OUTPUT.PUT_LINE('- AD_WF_Node ' || v_rowcount) ;
     INSERT
     INTO AD_Window_Trl
       (

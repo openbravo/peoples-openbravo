@@ -46,7 +46,6 @@ import org.openbravo.model.ad.ui.Message;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TextInterface;
 import org.openbravo.model.ad.ui.Window;
-import org.openbravo.model.ad.ui.Workflow;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 
 /**
@@ -167,8 +166,7 @@ public class ModuleValidator implements SystemValidator {
     final boolean reportError = hasArtifact(Window.class, module) || hasArtifact(Tab.class, module)
         || hasArtifact(Field.class, module) || hasArtifact(Element.class, module)
         || hasArtifact(TextInterface.class, module) || hasArtifact(Message.class, module)
-        || hasArtifact(Form.class, module) || hasArtifact(Menu.class, module)
-        || hasArtifact(Workflow.class, module);
+        || hasArtifact(Form.class, module) || hasArtifact(Menu.class, module);
     if (reportError) {
       result.addError(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
           + " has UI Artifacts, " + "translation required should be set to 'Y', it is now 'N'.");
