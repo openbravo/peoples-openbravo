@@ -267,8 +267,8 @@ isc.OBToolbar.addClassProperties({
             {name: 'inpname', type: 'upload', change: function(form, item, value, oldvalue){
                 form.button.customState = 'Progress';
                 form.button.resetBaseStyle();
-            	form.submitForm();
-            	}},
+                form.submitForm();
+            }},
             {name: 'Command', type: 'hidden', value: 'SAVE_NEW_OB3'},
             {name: 'buttonId', type: 'hidden', value: this.ID},
             {name: 'inpKey', type: 'hidden', value: this.view.viewGrid.getSelectedRecord().id},
@@ -288,12 +288,12 @@ isc.OBToolbar.addClassProperties({
       }
     },
     callback: function(){
-    	if(this.oldForm){
-    	  this.oldForm.destroy();
-    	}
-        this.view.attachmentExists = true;
-        this.customState = '';
-        this.updateState();
+      if(this.oldForm){
+        this.oldForm.destroy();
+      }
+      this.view.attachmentExists = true;
+      this.customState = '';
+      this.updateState();
     },
     disabled: false,
     buttonType: 'attach',
@@ -301,7 +301,11 @@ isc.OBToolbar.addClassProperties({
       var selectedRows = this.view.viewGrid.getSelectedRecords();
       var attachmentExists = this.view.attachmentExists;
       if(attachmentExists){
-        this.prompt = OB.I18N.getLabel('OBUIAPP_DownloadAttachments');
+        if(selectedRows.size()===1){
+          this.prompt = OB.I18N.getLabel('OBUIAPP_GoToAttachments');
+        } else {
+          this.prompt = OB.I18N.getLabel('OBUIAPP_DownloadAttachments');
+        }
         this.buttonType = 'attachExists';
       }else{
         this.prompt = OB.I18N.getLabel('OBUIAPP_CreateAttachments');  
