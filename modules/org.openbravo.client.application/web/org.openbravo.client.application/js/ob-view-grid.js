@@ -1268,6 +1268,10 @@ isc.OBViewGrid.addProperties({
         }        
       }
     }
+    if (colNum || colNum === 0) {
+      this.forceFocusColumn = this.getField(colNum).name;
+    }
+    
     return this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
   },
 
@@ -1468,14 +1472,28 @@ isc.OBViewGrid.addProperties({
   // check if a fic call needs to be done when leaving a cell and moving to the next
   // row
   // see description in saveEditvalues
-  cellEditEnd : function (editCompletionEvent, newValue, ficCallDone) {
+  cellEditEnd: function (editCompletionEvent, newValue, ficCallDone, autoSaveDone) {
     var rowNum = this.getEditRow(), colNum = this.getEditCol();
+    var editForm = this.getEditForm(), focusItem = editForm.getFocusItem();
+    // sometimes rowNum and colnum are not set, then don't compute the next cell
+    var nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? this.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
+    var newRow = nextEditCell && nextEditCell[0] !== rowNum;
+    // the enter key saves anyway, so no autosave needed
+    var enterKey = editCompletionEvent === 'enter';
+    if (!enterKey && !autoSaveDone && newRow && (this.getEditForm().hasChanged || this.getEditForm().isNew)) {
+      var actionObject = {
+          target: this,
+          method: this.cellEditEnd,
+          parameters: [editCompletionEvent, newValue, ficCallDone, true]
+        };
+      this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
+      return;
+    }
     if (ficCallDone) {
       // get new value as the row can have changed
-      this.Super('cellEditEnd', [editCompletionEvent, this.getEditValue(rowNum, colNum), ficCallDone]);
+      this.Super('cellEditEnd', [editCompletionEvent, this.getEditValue(rowNum, colNum)]);
       return;
     } else {
-      var editForm = this.getEditForm(), focusItem = editForm.getFocusItem();
       if (focusItem) {
         focusItem.updateValue();
         editForm.handleItemChange(focusItem);
@@ -1485,13 +1503,17 @@ isc.OBViewGrid.addProperties({
           editValues.actionAfterFicReturn = {
             target: this,
             method: this.cellEditEnd,
-            parameters: [editCompletionEvent, newValue, true]
+            parameters: [editCompletionEvent, newValue, true, autoSaveDone]
           };
           return;
         }
       }      
-    }    
-    this.Super('cellEditEnd', arguments);
+    }
+    if (newValue) {
+      this.Super('cellEditEnd', [editCompletionEvent, newValue]);
+    } else {
+      this.Super('cellEditEnd', [editCompletionEvent]);
+    }
   },
   
   // overridden to set the enterkeyaction to nextrowstart in cases the current row
@@ -1614,6 +1636,10 @@ isc.OBViewGrid.addProperties({
       // if the focus does not get suppressed then the clicked field will receive focus
       // and won't be disabled so the user can already start typing      
       suppressFocus = true;
+
+      if (!this.forceFocusColumn && (colNum || colNum === 0)) {
+        this.forceFocusColumn = this.getField(colNum).name;
+      }
     }
     
     var ret = this.Super('showInlineEditor', [rowNum, colNum, newCell, newRow, suppressFocus]);

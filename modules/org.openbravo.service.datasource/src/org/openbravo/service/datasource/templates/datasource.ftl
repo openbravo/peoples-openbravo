@@ -39,6 +39,9 @@ although the same is done by the compressor
 <#if data.getParameter("_onlyGenerateCreateStatement") == "" || data.getParameter("_create") != "">
         ID:'${data.id}',
 </#if>
+<#if data.getParameter("_new") != "">
+        _new: true,
+</#if>
         titleField: OB.Constants.IDENTIFIER
         , dataURL:'${data.dataUrl?js_string}${data.name?js_string}'
         , recordXPath: '/response/data', dataFormat: 'json'

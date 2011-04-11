@@ -85,7 +85,7 @@ public class DateUIDefinition extends UIDefinition {
   }
 
   @Override
-  protected synchronized Object createFromClassicString(String value) {
+  public synchronized Object createFromClassicString(String value) {
     try {
       if (value == null || value.length() == 0 || value.equals("null")) {
         return null;
@@ -110,6 +110,8 @@ public class DateUIDefinition extends UIDefinition {
     sb.append("shortDisplayFormatter: function(value, field, component, record) {"
         + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},"
         + "normalDisplayFormatter: function(value, field, component, record) {"
+        + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},"
+        + "createClassicString: function(value) {"
         + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},");
     return sb.toString();
   }

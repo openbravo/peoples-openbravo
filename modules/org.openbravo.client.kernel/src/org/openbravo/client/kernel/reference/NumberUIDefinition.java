@@ -121,7 +121,7 @@ public abstract class NumberUIDefinition extends UIDefinition {
   }
 
   @Override
-  protected Object createFromClassicString(String value) {
+  public Object createFromClassicString(String value) {
     if (value == null || value.length() == 0) {
       return "";
     }
