@@ -288,8 +288,12 @@ isc.OBAttachmentsLayout.addProperties({
           recordIds: this.canvas.recordId
         };
         var canvas = this.canvas;
-        OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {}, d, function(response, data, request){
+        isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmRemoveAll'), function(clickedOK){
+          if(clickedOK){
+            OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {}, d, function(response, data, request){
               canvas.fillAttachments(data.attachments);
+            });
+          }
         });
       }
     });
@@ -313,8 +317,12 @@ isc.OBAttachmentsLayout.addProperties({
         attachId: this.attachmentId
       };
       var canvas = this.canvas;
-      OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {}, d, function(response, data, request){
-        canvas.fillAttachments(data.attachments);
+      isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmRemove'), function(clickedOK){
+        if(clickedOK){
+          OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {}, d, function(response, data, request){
+              canvas.fillAttachments(data.attachments);
+          });
+        }
       });
     };
     
