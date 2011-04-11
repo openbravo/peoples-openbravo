@@ -70,8 +70,6 @@ public class StyleSheetResourceComponent extends BaseComponent {
 
   @Override
   public String getETag() {
-    if (1 == 1)
-      return new Random().toString();
     final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
     final StringBuilder version = new StringBuilder();
     for (Module module : modules) {
