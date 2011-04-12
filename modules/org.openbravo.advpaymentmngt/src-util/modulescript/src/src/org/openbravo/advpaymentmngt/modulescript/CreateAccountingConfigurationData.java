@@ -244,45 +244,8 @@ static Logger log4j = Logger.getLogger(CreateAccountingConfigurationData.class);
       "      DELETE FROM ad_table_access" +
       "      WHERE ad_table_id = '4D8C3B3C31D1410DA046140C9F024D17'" +
       "        AND isreadonly = 'Y'" +
-      "        AND isexclude = 'N'";
-
-    int updateCount = 0;
-    PreparedStatement st = null;
-
-    try {
-    st = connectionProvider.getPreparedStatement(conn, strSql);
-
-      updateCount = st.executeUpdate();
-    } catch(SQLException e){
-      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
-    } catch(Exception ex){
-      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
-      throw new ServletException("@CODE=@" + ex.getMessage());
-    } finally {
-      try {
-        connectionProvider.releaseTransactionalPreparedStatement(st);
-      } catch(Exception ignore){
-        ignore.printStackTrace();
-      }
-    }
-    return(updateCount);
-  }
-
-  public static int insertTableAccess(Connection conn, ConnectionProvider connectionProvider)    throws ServletException {
-    String strSql = "";
-    strSql = strSql + 
-      "      INSERT INTO ad_table_access(" +
-      "                  ad_table_access_id, ad_role_id, ad_table_id, ad_client_id, ad_org_id," +
-      "                  isactive, created, createdby, updatedby, updated, isreadonly," +
-      "                  isexclude)" +
-      "      select get_uuid(), ad_role_id, '4D8C3B3C31D1410DA046140C9F024D17', ad_client_id, ad_org_id," +
-      "              'Y', now(), '100', '100', now(), 'Y'," +
-      "              'N'" +
-      "      from ad_role" +
-      "      where not exists (select 1 from ad_table_access a" +
-      "         where a.ad_role_id = ad_role.ad_role_id" +
-      "         and a.ad_table_id = '4D8C3B3C31D1410DA046140C9F024D17')";
+      "        AND isexclude = 'N'" +
+      "        AND created <= (SELECT created FROM ad_tab WHERE ad_tab_id = 'FF8080812F213146012F2135BC25000E')";
 
     int updateCount = 0;
     PreparedStatement st = null;

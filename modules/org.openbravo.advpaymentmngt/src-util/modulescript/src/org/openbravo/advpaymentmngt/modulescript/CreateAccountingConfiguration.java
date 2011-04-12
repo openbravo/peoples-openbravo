@@ -41,8 +41,6 @@ public class CreateAccountingConfiguration extends ModuleScript{
       ConnectionProvider cp = getConnectionProvider();
       createAcctSchemaTables(cp);
       createPeriodControl(cp);
-      //Table Access is not needed anymore since Openbravo 3 RC7
-      //createTableAccess(cp);
       deleteTableAccess(cp);
       updateTableDocType(cp);
       } catch (Exception e) {
@@ -69,12 +67,6 @@ public class CreateAccountingConfiguration extends ModuleScript{
   void createPeriodControl(ConnectionProvider cp) throws Exception{
     CreateAccountingConfigurationData.insertPeriodControl(cp.getConnection(), cp);
   }
-
-
-  //Inserts table access for FIN_FinAcc_Transaction table
-  //void createTableAccess(ConnectionProvider cp) throws Exception{
-  //  CreateAccountingConfigurationData.insertTableAccess(cp.getConnection(), cp);
-  //}
 
   void deleteTableAccess(ConnectionProvider cp) throws Exception{
     CreateAccountingConfigurationData.deleteTableAccess(cp.getConnection(), cp);
