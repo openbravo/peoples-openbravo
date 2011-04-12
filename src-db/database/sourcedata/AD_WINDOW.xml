@@ -1023,38 +1023,6 @@
 <!--200-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--200--></AD_WINDOW>
 
-<!--201--><AD_WINDOW>
-<!--201-->  <AD_WINDOW_ID><![CDATA[201]]></AD_WINDOW_ID>
-<!--201-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--201-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--201-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--201-->  <NAME><![CDATA[Request]]></NAME>
-<!--201-->  <DESCRIPTION><![CDATA[Work on your requests]]></DESCRIPTION>
-<!--201-->  <HELP><![CDATA[The Request Window is used to define and track any request assigned to you.]]></HELP>
-<!--201-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
-<!--201-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--201-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--201-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--201-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--201-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--201--></AD_WINDOW>
-
-<!--203--><AD_WINDOW>
-<!--203-->  <AD_WINDOW_ID><![CDATA[203]]></AD_WINDOW_ID>
-<!--203-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--203-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--203-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--203-->  <NAME><![CDATA[Request Processor]]></NAME>
-<!--203-->  <DESCRIPTION><![CDATA[Define Request Processors]]></DESCRIPTION>
-<!--203-->  <HELP><![CDATA[The Request Processor Window allows you to define different processes that you want to occur and the frequency and timing of these processes]]></HELP>
-<!--203-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--203-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--203-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--203-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--203-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--203-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--203--></AD_WINDOW>
-
 <!--204--><AD_WINDOW>
 <!--204-->  <AD_WINDOW_ID><![CDATA[204]]></AD_WINDOW_ID>
 <!--204-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1149,22 +1117,6 @@
 <!--228-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--228-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--228--></AD_WINDOW>
-
-<!--232--><AD_WINDOW>
-<!--232-->  <AD_WINDOW_ID><![CDATA[232]]></AD_WINDOW_ID>
-<!--232-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--232-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--232-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--232-->  <NAME><![CDATA[Request All]]></NAME>
-<!--232-->  <DESCRIPTION><![CDATA[View and work on all requests]]></DESCRIPTION>
-<!--232-->  <HELP><![CDATA[This Request window is used to view all available requests]]></HELP>
-<!--232-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--232-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--232-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--232-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--232-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--232-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--232--></AD_WINDOW>
 
 <!--233--><AD_WINDOW>
 <!--233-->  <AD_WINDOW_ID><![CDATA[233]]></AD_WINDOW_ID>
@@ -1261,22 +1213,6 @@
 <!--242-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--242-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--242--></AD_WINDOW>
-
-<!--244--><AD_WINDOW>
-<!--244-->  <AD_WINDOW_ID><![CDATA[244]]></AD_WINDOW_ID>
-<!--244-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--244-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--244-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--244-->  <NAME><![CDATA[Request Type]]></NAME>
-<!--244-->  <DESCRIPTION><![CDATA[Maintain Request Types]]></DESCRIPTION>
-<!--244-->  <HELP><![CDATA[Request Types are used for processing and categorizing requests. Options are Account Inquiry, Warranty Issue, etc.]]></HELP>
-<!--244-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--244-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--244-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--244-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--244-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--244-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--244--></AD_WINDOW>
 
 <!--246--><AD_WINDOW>
 <!--246-->  <AD_WINDOW_ID><![CDATA[246]]></AD_WINDOW_ID>

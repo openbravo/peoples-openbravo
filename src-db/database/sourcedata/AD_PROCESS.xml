@@ -904,27 +904,6 @@
 <!--155-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--155--></AD_PROCESS>
 
-<!--158--><AD_PROCESS>
-<!--158-->  <AD_PROCESS_ID><![CDATA[158]]></AD_PROCESS_ID>
-<!--158-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--158-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--158-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--158-->  <VALUE><![CDATA[R_Request_Process]]></VALUE>
-<!--158-->  <NAME><![CDATA[Process Requests]]></NAME>
-<!--158-->  <DESCRIPTION><![CDATA[Process request]]></DESCRIPTION>
-<!--158-->  <HELP><![CDATA[Onces the needed data is introduced it processes the request for its correct solution.]]></HELP>
-<!--158-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--158-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--158-->  <PROCEDURENAME><![CDATA[R_Request_Process0]]></PROCEDURENAME>
-<!--158-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--158-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--158-->  <CLASSNAME><![CDATA[ad_actionButton/RequestAction.html]]></CLASSNAME>
-<!--158-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--158-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--158-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--158-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--158--></AD_PROCESS>
-
 <!--159--><AD_PROCESS>
 <!--159-->  <AD_PROCESS_ID><![CDATA[159]]></AD_PROCESS_ID>
 <!--159-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1224,26 +1203,6 @@
 <!--176-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--176--></AD_PROCESS>
 
-<!--177--><AD_PROCESS>
-<!--177-->  <AD_PROCESS_ID><![CDATA[177]]></AD_PROCESS_ID>
-<!--177-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--177-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--177-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--177-->  <VALUE><![CDATA[R_RequestProcess_Run]]></VALUE>
-<!--177-->  <NAME><![CDATA[Run Process]]></NAME>
-<!--177-->  <DESCRIPTION><![CDATA[Run Process]]></DESCRIPTION>
-<!--177-->  <HELP><![CDATA[Run Process]]></HELP>
-<!--177-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--177-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--177-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--177-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--177-->  <CLASSNAME><![CDATA[org.openbravo.process.RequestProcess]]></CLASSNAME>
-<!--177-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--177-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--177-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--177-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--177--></AD_PROCESS>
-
 <!--179--><AD_PROCESS>
 <!--179-->  <AD_PROCESS_ID><![CDATA[179]]></AD_PROCESS_ID>
 <!--179-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1483,26 +1442,6 @@
 <!--193-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--193-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--193--></AD_PROCESS>
-
-<!--195--><AD_PROCESS>
-<!--195-->  <AD_PROCESS_ID><![CDATA[195]]></AD_PROCESS_ID>
-<!--195-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--195-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--195-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--195-->  <VALUE><![CDATA[R_Request_ReOpen]]></VALUE>
-<!--195-->  <NAME><![CDATA[Reopen Request]]></NAME>
-<!--195-->  <DESCRIPTION><![CDATA[Reopen closed requests]]></DESCRIPTION>
-<!--195-->  <HELP><![CDATA[Reopens a closed request.]]></HELP>
-<!--195-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--195-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--195-->  <PROCEDURENAME><![CDATA[R_Request_ReOpen]]></PROCEDURENAME>
-<!--195-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--195-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--195-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--195-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--195-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--195-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--195--></AD_PROCESS>
 
 <!--198--><AD_PROCESS>
 <!--198-->  <AD_PROCESS_ID><![CDATA[198]]></AD_PROCESS_ID>

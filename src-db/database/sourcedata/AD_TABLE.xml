@@ -3480,78 +3480,6 @@ Run Synchronize Terminology to update menu translation. You need only to transla
 <!--416-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EE4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--416--></AD_TABLE>
 
-<!--417--><AD_TABLE>
-<!--417-->  <AD_TABLE_ID><![CDATA[417]]></AD_TABLE_ID>
-<!--417-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--417-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--417-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--417-->  <NAME><![CDATA[Request]]></NAME>
-<!--417-->  <DESCRIPTION><![CDATA[Define Request
-Define Request
-Business Partner Requests]]></DESCRIPTION>
-<!--417-->  <HELP><![CDATA[The Request Tab defines any Request submitted by a Business Partner.
-The Request Tab defines any Request submitted by a Business Partner.
-Shows all the requests  of the partner selected.]]></HELP>
-<!--417-->  <TABLENAME><![CDATA[R_Request]]></TABLENAME>
-<!--417-->  <CLASSNAME><![CDATA[Request]]></CLASSNAME>
-<!--417-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--417-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--417-->  <AD_WINDOW_ID><![CDATA[201]]></AD_WINDOW_ID>
-<!--417-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--417-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--417-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--417-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--417-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--417-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--417-->  <AD_PACKAGE_ID><![CDATA[65C56C372A314EDDAB62B592084662AE]]></AD_PACKAGE_ID>
-<!--417--></AD_TABLE>
-
-<!--418--><AD_TABLE>
-<!--418-->  <AD_TABLE_ID><![CDATA[418]]></AD_TABLE_ID>
-<!--418-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--418-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--418-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--418-->  <NAME><![CDATA[RequestionAction]]></NAME>
-<!--418-->  <DESCRIPTION><![CDATA[Action History
-Action History]]></DESCRIPTION>
-<!--418-->  <HELP><![CDATA[The Action History Tab displays any actions which have been taken for a Request.
-The Action History Tab displays any actions which have been taken for a Request.]]></HELP>
-<!--418-->  <TABLENAME><![CDATA[R_RequestAction]]></TABLENAME>
-<!--418-->  <CLASSNAME><![CDATA[RequestionAction]]></CLASSNAME>
-<!--418-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--418-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--418-->  <AD_WINDOW_ID><![CDATA[201]]></AD_WINDOW_ID>
-<!--418-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--418-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--418-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--418-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--418-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--418-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--418-->  <AD_PACKAGE_ID><![CDATA[65C56C372A314EDDAB62B592084662AE]]></AD_PACKAGE_ID>
-<!--418--></AD_TABLE>
-
-<!--420--><AD_TABLE>
-<!--420-->  <AD_TABLE_ID><![CDATA[420]]></AD_TABLE_ID>
-<!--420-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--420-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--420-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--420-->  <NAME><![CDATA[RequestProcessor]]></NAME>
-<!--420-->  <DESCRIPTION><![CDATA[Request Processor]]></DESCRIPTION>
-<!--420-->  <HELP><![CDATA[The Request Processor Tab allows you to define processes that you want to occur and the frequency and timing of these processes. If no other user is found, the items are assigned to the supervisor.]]></HELP>
-<!--420-->  <TABLENAME><![CDATA[R_RequestProcessor]]></TABLENAME>
-<!--420-->  <CLASSNAME><![CDATA[RequestProcessor]]></CLASSNAME>
-<!--420-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--420-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--420-->  <AD_WINDOW_ID><![CDATA[203]]></AD_WINDOW_ID>
-<!--420-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--420-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--420-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--420-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--420-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--420-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--420-->  <AD_PACKAGE_ID><![CDATA[65C56C372A314EDDAB62B592084662AE]]></AD_PACKAGE_ID>
-<!--420--></AD_TABLE>
-
 <!--422--><AD_TABLE>
 <!--422-->  <AD_TABLE_ID><![CDATA[422]]></AD_TABLE_ID>
 <!--422-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -3931,28 +3859,6 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--473-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1F84B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--473--></AD_TABLE>
 
-<!--474--><AD_TABLE>
-<!--474-->  <AD_TABLE_ID><![CDATA[474]]></AD_TABLE_ID>
-<!--474-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--474-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--474-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--474-->  <NAME><![CDATA[RequestProcessorRoute]]></NAME>
-<!--474-->  <DESCRIPTION><![CDATA[Request Routing]]></DESCRIPTION>
-<!--474-->  <HELP><![CDATA[Define the sequence of keywords and to whom the web and mail requests should be routed to.]]></HELP>
-<!--474-->  <TABLENAME><![CDATA[R_RequestProcessor_Route]]></TABLENAME>
-<!--474-->  <CLASSNAME><![CDATA[RequestProcessorRoute]]></CLASSNAME>
-<!--474-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--474-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--474-->  <AD_WINDOW_ID><![CDATA[203]]></AD_WINDOW_ID>
-<!--474-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--474-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--474-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--474-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--474-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--474-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--474-->  <AD_PACKAGE_ID><![CDATA[65C56C372A314EDDAB62B592084662AE]]></AD_PACKAGE_ID>
-<!--474--></AD_TABLE>
-
 <!--475--><AD_TABLE>
 <!--475-->  <AD_TABLE_ID><![CDATA[475]]></AD_TABLE_ID>
 <!--475-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -4282,28 +4188,6 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--520-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--520-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D34B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--520--></AD_TABLE>
-
-<!--529--><AD_TABLE>
-<!--529-->  <AD_TABLE_ID><![CDATA[529]]></AD_TABLE_ID>
-<!--529-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--529-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--529-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--529-->  <NAME><![CDATA[RequestType]]></NAME>
-<!--529-->  <DESCRIPTION><![CDATA[Type of request (e.g. Inquiry, Complaint, ..)]]></DESCRIPTION>
-<!--529-->  <HELP><![CDATA[Request Types are used for processing and categorizing requests. Options are Account Inquiry, Warranty Issue, etc.]]></HELP>
-<!--529-->  <TABLENAME><![CDATA[R_RequestType]]></TABLENAME>
-<!--529-->  <CLASSNAME><![CDATA[RequestType]]></CLASSNAME>
-<!--529-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--529-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--529-->  <AD_WINDOW_ID><![CDATA[244]]></AD_WINDOW_ID>
-<!--529-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--529-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--529-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--529-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--529-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--529-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--529-->  <AD_PACKAGE_ID><![CDATA[65C56C372A314EDDAB62B592084662AE]]></AD_PACKAGE_ID>
-<!--529--></AD_TABLE>
 
 <!--531--><AD_TABLE>
 <!--531-->  <AD_TABLE_ID><![CDATA[531]]></AD_TABLE_ID>

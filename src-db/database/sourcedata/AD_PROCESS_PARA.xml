@@ -1814,26 +1814,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--257-->  <AD_ELEMENT_ID><![CDATA[558]]></AD_ELEMENT_ID>
 <!--257--></AD_PROCESS_PARA>
 
-<!--258--><AD_PROCESS_PARA>
-<!--258-->  <AD_PROCESS_PARA_ID><![CDATA[258]]></AD_PROCESS_PARA_ID>
-<!--258-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--258-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--258-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--258-->  <NAME><![CDATA[Request]]></NAME>
-<!--258-->  <DESCRIPTION><![CDATA[x not implemented]]></DESCRIPTION>
-<!--258-->  <HELP><![CDATA[The Request identifies a unique request from a Business Partner or Prospect.]]></HELP>
-<!--258-->  <AD_PROCESS_ID><![CDATA[195]]></AD_PROCESS_ID>
-<!--258-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--258-->  <AD_REFERENCE_ID><![CDATA[30]]></AD_REFERENCE_ID>
-<!--258-->  <AD_VAL_RULE_ID><![CDATA[156]]></AD_VAL_RULE_ID>
-<!--258-->  <COLUMNNAME><![CDATA[R_Request_ID]]></COLUMNNAME>
-<!--258-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--258-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--258-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--258-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--258-->  <AD_ELEMENT_ID><![CDATA[1516]]></AD_ELEMENT_ID>
-<!--258--></AD_PROCESS_PARA>
-
 <!--263--><AD_PROCESS_PARA>
 <!--263-->  <AD_PROCESS_PARA_ID><![CDATA[263]]></AD_PROCESS_PARA_ID>
 <!--263-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
