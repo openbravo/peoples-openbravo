@@ -42,6 +42,7 @@ import org.openbravo.client.kernel.KernelServlet;
 import org.openbravo.client.kernel.StaticResourceComponent;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -190,15 +191,15 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
 
   private JSONArray getWarehouses(String clientId) throws JSONException {
     List<JSONObject> orgWarehouseArray = new ArrayList<JSONObject>();
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
+        .getOrganizationStructureProvider(clientId);
     OBCriteria<Organization> orgs = OBDal.getInstance().createCriteria(Organization.class);
     for (Organization org : orgs.list()) {
       JSONObject orgWarehouse = new JSONObject();
       orgWarehouse.put("orgId", org.getId());
-      final OBQuery<Warehouse> warehouses = OBDal
-          .getInstance()
-          .createQuery(Warehouse.class,
-              "ad_isorgincluded(organization.id, :orgId, :clientId)<>-1 and client.id=:clientId order by name");
-      warehouses.setNamedParameter("orgId", org.getId());
+      final OBQuery<Warehouse> warehouses = OBDal.getInstance().createQuery(Warehouse.class,
+          "organization.id in (:orgList) and client.id=:clientId order by name");
+      warehouses.setNamedParameter("orgList", osp.getNaturalTree(org.getId()));
       warehouses.setNamedParameter("clientId", clientId);
       warehouses.setFilterOnReadableClients(false);
       warehouses.setFilterOnReadableOrganization(false);
