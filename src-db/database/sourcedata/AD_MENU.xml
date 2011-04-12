@@ -1959,19 +1959,6 @@
 <!--367-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--367--></AD_MENU>
 
-<!--369--><AD_MENU>
-<!--369-->  <AD_MENU_ID><![CDATA[369]]></AD_MENU_ID>
-<!--369-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--369-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--369-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--369-->  <NAME><![CDATA[Time Type]]></NAME>
-<!--369-->  <DESCRIPTION><![CDATA[Define types of time intervals to be applied your expenses and expense sheets.]]></DESCRIPTION>
-<!--369-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--369-->  <ACTION><![CDATA[W]]></ACTION>
-<!--369-->  <AD_WINDOW_ID><![CDATA[272]]></AD_WINDOW_ID>
-<!--369-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--369--></AD_MENU>
-
 <!--372--><AD_MENU>
 <!--372-->  <AD_MENU_ID><![CDATA[372]]></AD_MENU_ID>
 <!--372-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1994,19 +1981,6 @@
 <!--373-->  <AD_WINDOW_ID><![CDATA[277]]></AD_WINDOW_ID>
 <!--373-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--373--></AD_MENU>
-
-<!--377--><AD_MENU>
-<!--377-->  <AD_MENU_ID><![CDATA[377]]></AD_MENU_ID>
-<!--377-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--377-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--377-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--377-->  <NAME><![CDATA[Invoice Payment Schedule]]></NAME>
-<!--377-->  <DESCRIPTION><![CDATA[Maintain Invoice Payment Schedule]]></DESCRIPTION>
-<!--377-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--377-->  <ACTION><![CDATA[W]]></ACTION>
-<!--377-->  <AD_WINDOW_ID><![CDATA[275]]></AD_WINDOW_ID>
-<!--377-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--377--></AD_MENU>
 
 <!--378--><AD_MENU>
 <!--378-->  <AD_MENU_ID><![CDATA[378]]></AD_MENU_ID>
@@ -2072,19 +2046,6 @@
 <!--384-->  <AD_WINDOW_ID><![CDATA[283]]></AD_WINDOW_ID>
 <!--384-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--384--></AD_MENU>
-
-<!--387--><AD_MENU>
-<!--387-->  <AD_MENU_ID><![CDATA[387]]></AD_MENU_ID>
-<!--387-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--387-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--387-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--387-->  <NAME><![CDATA[Service Project (deprecated)]]></NAME>
-<!--387-->  <DESCRIPTION><![CDATA[Create and edit projects and tasks potentially requiring purchase and sales invoicing.]]></DESCRIPTION>
-<!--387-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--387-->  <ACTION><![CDATA[W]]></ACTION>
-<!--387-->  <AD_WINDOW_ID><![CDATA[286]]></AD_WINDOW_ID>
-<!--387-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--387--></AD_MENU>
 
 <!--392--><AD_MENU>
 <!--392-->  <AD_MENU_ID><![CDATA[392]]></AD_MENU_ID>
@@ -3877,19 +3838,6 @@
 <!--800208-->  <AD_PROCESS_ID><![CDATA[800199]]></AD_PROCESS_ID>
 <!--800208-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800208--></AD_MENU>
-
-<!--800209--><AD_MENU>
-<!--800209-->  <AD_MENU_ID><![CDATA[800209]]></AD_MENU_ID>
-<!--800209-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800209-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800209-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800209-->  <NAME><![CDATA[Expense Invoice]]></NAME>
-<!--800209-->  <DESCRIPTION><![CDATA[Edit expenses by breaking and then allocating them across multiple organizations, projects, etc.]]></DESCRIPTION>
-<!--800209-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800209-->  <ACTION><![CDATA[W]]></ACTION>
-<!--800209-->  <AD_WINDOW_ID><![CDATA[800021]]></AD_WINDOW_ID>
-<!--800209-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800209--></AD_MENU>
 
 <!--800210--><AD_MENU>
 <!--800210-->  <AD_MENU_ID><![CDATA[800210]]></AD_MENU_ID>

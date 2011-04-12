@@ -1154,7 +1154,6 @@ The Accounting Tab is used to define the Asset Account to use when a project is 
 <!--204-->  <CLASSNAME><![CDATA[ProjectAccounts]]></CLASSNAME>
 <!--204-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--204-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--204-->  <AD_WINDOW_ID><![CDATA[286]]></AD_WINDOW_ID>
 <!--204-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--204-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--204-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
@@ -3710,7 +3709,6 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--434-->  <CLASSNAME><![CDATA[ProjectLine]]></CLASSNAME>
 <!--434-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--434-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--434-->  <AD_WINDOW_ID><![CDATA[286]]></AD_WINDOW_ID>
 <!--434-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--434-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--434-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
@@ -4796,7 +4794,6 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--581-->  <CLASSNAME><![CDATA[TimeType]]></CLASSNAME>
 <!--581-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--581-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--581-->  <AD_WINDOW_ID><![CDATA[272]]></AD_WINDOW_ID>
 <!--581-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--581-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--581-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
@@ -5181,7 +5178,6 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--623-->  <CLASSNAME><![CDATA[ProjectIssue]]></CLASSNAME>
 <!--623-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--623-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--623-->  <AD_WINDOW_ID><![CDATA[286]]></AD_WINDOW_ID>
 <!--623-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--623-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--623-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>

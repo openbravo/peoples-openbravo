@@ -1470,38 +1470,6 @@
 <!--268-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--268--></AD_WINDOW>
 
-<!--272--><AD_WINDOW>
-<!--272-->  <AD_WINDOW_ID><![CDATA[272]]></AD_WINDOW_ID>
-<!--272-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--272-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--272-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--272-->  <NAME><![CDATA[Time Type]]></NAME>
-<!--272-->  <DESCRIPTION><![CDATA[Define types of time intervals to be applied your expenses and expense sheets.]]></DESCRIPTION>
-<!--272-->  <HELP><![CDATA[Define types of time intervals to be applied your expenses and expense sheets.]]></HELP>
-<!--272-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--272-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--272-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--272-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--272-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--272-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--272--></AD_WINDOW>
-
-<!--275--><AD_WINDOW>
-<!--275-->  <AD_WINDOW_ID><![CDATA[275]]></AD_WINDOW_ID>
-<!--275-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--275-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--275-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--275-->  <NAME><![CDATA[Invoice Payment Schedule]]></NAME>
-<!--275-->  <DESCRIPTION><![CDATA[Maintain Invoice Payment Schedule]]></DESCRIPTION>
-<!--275-->  <HELP><![CDATA[Maintain Invoice Payment Schedule]]></HELP>
-<!--275-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--275-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--275-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--275-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--275-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--275-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--275--></AD_WINDOW>
-
 <!--276--><AD_WINDOW>
 <!--276-->  <AD_WINDOW_ID><![CDATA[276]]></AD_WINDOW_ID>
 <!--276-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1597,22 +1565,6 @@
 <!--283-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--283-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--283--></AD_WINDOW>
-
-<!--286--><AD_WINDOW>
-<!--286-->  <AD_WINDOW_ID><![CDATA[286]]></AD_WINDOW_ID>
-<!--286-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--286-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--286-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--286-->  <NAME><![CDATA[Service Project (deprecated)]]></NAME>
-<!--286-->  <DESCRIPTION><![CDATA[Create and edit projects and tasks potentially requiring purchase and sales invoicing.]]></DESCRIPTION>
-<!--286-->  <HELP><![CDATA[Create and edit projects and tasks potentially requiring purchase and sales invoicing.]]></HELP>
-<!--286-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--286-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--286-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--286-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--286-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--286-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--286--></AD_WINDOW>
 
 <!--291--><AD_WINDOW>
 <!--291-->  <AD_WINDOW_ID><![CDATA[291]]></AD_WINDOW_ID>
@@ -1915,22 +1867,6 @@
 <!--800020-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800020-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--800020--></AD_WINDOW>
-
-<!--800021--><AD_WINDOW>
-<!--800021-->  <AD_WINDOW_ID><![CDATA[800021]]></AD_WINDOW_ID>
-<!--800021-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800021-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800021-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800021-->  <NAME><![CDATA[Expense Invoice]]></NAME>
-<!--800021-->  <DESCRIPTION><![CDATA[Edit expenses by breaking and then allocating them across multiple organizations, projects, etc.]]></DESCRIPTION>
-<!--800021-->  <HELP><![CDATA[Edit expenses by breaking and then allocating them across multiple organizations, projects, etc.]]></HELP>
-<!--800021-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800021-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800021-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800021-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800021-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800021-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800021--></AD_WINDOW>
 
 <!--800022--><AD_WINDOW>
 <!--800022-->  <AD_WINDOW_ID><![CDATA[800022]]></AD_WINDOW_ID>
