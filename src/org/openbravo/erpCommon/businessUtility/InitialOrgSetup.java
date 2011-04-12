@@ -152,6 +152,7 @@ public class InitialOrgSetup {
       OBDal.getInstance().flush();
       OBDal.getInstance().commitAndClose();
       org = OBDal.getInstance().get(Organization.class, strOrgId);
+      client = org.getClient();
       if (strcLocationId != null && !strcLocationId.equals(""))
         try {
           InitialSetupUtility.updateOrgLocation(org, OBDal.getInstance().get(Location.class,
