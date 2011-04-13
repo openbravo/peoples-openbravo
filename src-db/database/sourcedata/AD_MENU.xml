@@ -1249,19 +1249,6 @@
 <!--252-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--252--></AD_MENU>
 
-<!--254--><AD_MENU>
-<!--254-->  <AD_MENU_ID><![CDATA[254]]></AD_MENU_ID>
-<!--254-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--254-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--254-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--254-->  <NAME><![CDATA[Create Charges]]></NAME>
-<!--254-->  <DESCRIPTION><![CDATA[Generate Charges from natural accounts]]></DESCRIPTION>
-<!--254-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--254-->  <ACTION><![CDATA[X]]></ACTION>
-<!--254-->  <AD_FORM_ID><![CDATA[105]]></AD_FORM_ID>
-<!--254-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--254--></AD_MENU>
-
 <!--256--><AD_MENU>
 <!--256-->  <AD_MENU_ID><![CDATA[256]]></AD_MENU_ID>
 <!--256-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1368,32 +1355,6 @@
 <!--280-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--280-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--280--></AD_MENU>
-
-<!--286--><AD_MENU>
-<!--286-->  <AD_MENU_ID><![CDATA[286]]></AD_MENU_ID>
-<!--286-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--286-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--286-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--286-->  <NAME><![CDATA[Payment Selection (manual)]]></NAME>
-<!--286-->  <DESCRIPTION><![CDATA[Manual Payment Selection]]></DESCRIPTION>
-<!--286-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--286-->  <ACTION><![CDATA[X]]></ACTION>
-<!--286-->  <AD_FORM_ID><![CDATA[107]]></AD_FORM_ID>
-<!--286-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--286--></AD_MENU>
-
-<!--287--><AD_MENU>
-<!--287-->  <AD_MENU_ID><![CDATA[287]]></AD_MENU_ID>
-<!--287-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--287-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--287-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--287-->  <NAME><![CDATA[Payment Print/Export]]></NAME>
-<!--287-->  <DESCRIPTION><![CDATA[Print or export your payments]]></DESCRIPTION>
-<!--287-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--287-->  <ACTION><![CDATA[X]]></ACTION>
-<!--287-->  <AD_FORM_ID><![CDATA[106]]></AD_FORM_ID>
-<!--287-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--287--></AD_MENU>
 
 <!--292--><AD_MENU>
 <!--292-->  <AD_MENU_ID><![CDATA[292]]></AD_MENU_ID>
@@ -1716,19 +1677,6 @@
 <!--350-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--350--></AD_MENU>
 
-<!--351--><AD_MENU>
-<!--351-->  <AD_MENU_ID><![CDATA[351]]></AD_MENU_ID>
-<!--351-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--351-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--351-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--351-->  <NAME><![CDATA[Password Maintenance]]></NAME>
-<!--351-->  <DESCRIPTION><![CDATA[Maintain Passwords]]></DESCRIPTION>
-<!--351-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--351-->  <ACTION><![CDATA[X]]></ACTION>
-<!--351-->  <AD_FORM_ID><![CDATA[111]]></AD_FORM_ID>
-<!--351-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--351--></AD_MENU>
-
 <!--353--><AD_MENU>
 <!--353-->  <AD_MENU_ID><![CDATA[353]]></AD_MENU_ID>
 <!--353-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1952,19 +1900,6 @@
 <!--396-->  <AD_PROCESS_ID><![CDATA[209]]></AD_PROCESS_ID>
 <!--396-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--396--></AD_MENU>
-
-<!--397--><AD_MENU>
-<!--397-->  <AD_MENU_ID><![CDATA[397]]></AD_MENU_ID>
-<!--397-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--397-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--397-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--397-->  <NAME><![CDATA[Merge Entities]]></NAME>
-<!--397-->  <DESCRIPTION><![CDATA[Merge From Entity to To Entity - Delete From]]></DESCRIPTION>
-<!--397-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--397-->  <ACTION><![CDATA[X]]></ACTION>
-<!--397-->  <AD_FORM_ID><![CDATA[112]]></AD_FORM_ID>
-<!--397-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--397--></AD_MENU>
 
 <!--398--><AD_MENU>
 <!--398-->  <AD_MENU_ID><![CDATA[398]]></AD_MENU_ID>
@@ -2768,19 +2703,6 @@
 <!--800091-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800091--></AD_MENU>
 
-<!--800092--><AD_MENU>
-<!--800092-->  <AD_MENU_ID><![CDATA[800092]]></AD_MENU_ID>
-<!--800092-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800092-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800092-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800092-->  <NAME><![CDATA[Change Payment Status]]></NAME>
-<!--800092-->  <DESCRIPTION><![CDATA[Edit a previously completed payment changing the status from paid to unpaid.]]></DESCRIPTION>
-<!--800092-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800092-->  <ACTION><![CDATA[X]]></ACTION>
-<!--800092-->  <AD_FORM_ID><![CDATA[800008]]></AD_FORM_ID>
-<!--800092-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800092--></AD_MENU>
-
 <!--800093--><AD_MENU>
 <!--800093-->  <AD_MENU_ID><![CDATA[800093]]></AD_MENU_ID>
 <!--800093-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -3282,19 +3204,6 @@
 <!--800173-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800173--></AD_MENU>
 
-<!--800176--><AD_MENU>
-<!--800176-->  <AD_MENU_ID><![CDATA[800176]]></AD_MENU_ID>
-<!--800176-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800176-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800176-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800176-->  <NAME><![CDATA[Import EDI File]]></NAME>
-<!--800176-->  <DESCRIPTION><![CDATA[Import an EDI (Electronic Data Interchange) file.]]></DESCRIPTION>
-<!--800176-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800176-->  <ACTION><![CDATA[X]]></ACTION>
-<!--800176-->  <AD_FORM_ID><![CDATA[800012]]></AD_FORM_ID>
-<!--800176-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800176--></AD_MENU>
-
 <!--800177--><AD_MENU>
 <!--800177-->  <AD_MENU_ID><![CDATA[800177]]></AD_MENU_ID>
 <!--800177-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -3513,19 +3422,6 @@
 <!--800195-->  <AD_WINDOW_ID><![CDATA[800082]]></AD_WINDOW_ID>
 <!--800195-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800195--></AD_MENU>
-
-<!--800196--><AD_MENU>
-<!--800196-->  <AD_MENU_ID><![CDATA[800196]]></AD_MENU_ID>
-<!--800196-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800196-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800196-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800196-->  <NAME><![CDATA[Remittance Cancellation/Return]]></NAME>
-<!--800196-->  <DESCRIPTION><![CDATA[Edit pending remittances by cancelling or returning them.]]></DESCRIPTION>
-<!--800196-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800196-->  <ACTION><![CDATA[X]]></ACTION>
-<!--800196-->  <AD_FORM_ID><![CDATA[800013]]></AD_FORM_ID>
-<!--800196-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800196--></AD_MENU>
 
 <!--800197--><AD_MENU>
 <!--800197-->  <AD_MENU_ID><![CDATA[800197]]></AD_MENU_ID>

@@ -24,42 +24,6 @@
 <!--102-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--102--></AD_FORM>
 
-<!--105--><AD_FORM>
-<!--105-->  <AD_FORM_ID><![CDATA[105]]></AD_FORM_ID>
-<!--105-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--105-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--105-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--105-->  <NAME><![CDATA[Create Charges]]></NAME>
-<!--105-->  <DESCRIPTION><![CDATA[Generate Charges from natural accounts]]></DESCRIPTION>
-<!--105-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--105-->  <CLASSNAME><![CDATA[org.openbravo.VCharge]]></CLASSNAME>
-<!--105-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--105--></AD_FORM>
-
-<!--106--><AD_FORM>
-<!--106-->  <AD_FORM_ID><![CDATA[106]]></AD_FORM_ID>
-<!--106-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--106-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--106-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--106-->  <NAME><![CDATA[Payment Print/Export]]></NAME>
-<!--106-->  <DESCRIPTION><![CDATA[Print or export your payments]]></DESCRIPTION>
-<!--106-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--106-->  <CLASSNAME><![CDATA[org.openbravo.VPayPrint]]></CLASSNAME>
-<!--106-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--106--></AD_FORM>
-
-<!--107--><AD_FORM>
-<!--107-->  <AD_FORM_ID><![CDATA[107]]></AD_FORM_ID>
-<!--107-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--107-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--107-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--107-->  <NAME><![CDATA[Payment Selection (manual)]]></NAME>
-<!--107-->  <DESCRIPTION><![CDATA[Manual Payment Selection]]></DESCRIPTION>
-<!--107-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--107-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.PaymentSelectionmanual]]></CLASSNAME>
-<!--107-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--107--></AD_FORM>
-
 <!--110--><AD_FORM>
 <!--110-->  <AD_FORM_ID><![CDATA[110]]></AD_FORM_ID>
 <!--110-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -72,32 +36,6 @@
 <!--110-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.GenerateShipmentsmanual]]></CLASSNAME>
 <!--110-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--110--></AD_FORM>
-
-<!--111--><AD_FORM>
-<!--111-->  <AD_FORM_ID><![CDATA[111]]></AD_FORM_ID>
-<!--111-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--111-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--111-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--111-->  <NAME><![CDATA[Password Maintenance]]></NAME>
-<!--111-->  <DESCRIPTION><![CDATA[Maintain Passwords]]></DESCRIPTION>
-<!--111-->  <HELP><![CDATA[Maintain Passwords for Users and Business Partners]]></HELP>
-<!--111-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--111-->  <CLASSNAME><![CDATA[org.openbravo.VPassword]]></CLASSNAME>
-<!--111-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--111--></AD_FORM>
-
-<!--112--><AD_FORM>
-<!--112-->  <AD_FORM_ID><![CDATA[112]]></AD_FORM_ID>
-<!--112-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--112-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--112-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--112-->  <NAME><![CDATA[Merge Entities]]></NAME>
-<!--112-->  <DESCRIPTION><![CDATA[Merge From Entity to To Entity - Delete From]]></DESCRIPTION>
-<!--112-->  <HELP><![CDATA[<i>Dangerous - Please are aware of what you are doing!</i>|All instances of the From entity (e.g. Customer A) are changed to the To entity (e.g. Customer B). |The From entity (e.g. Customer A) is deleted. |<p><b>There is NO undo nor trace !  Please do a b]]></HELP>
-<!--112-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--112-->  <CLASSNAME><![CDATA[org.openbravo.VMerge]]></CLASSNAME>
-<!--112-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--112--></AD_FORM>
 
 <!--800000--><AD_FORM>
 <!--800000-->  <AD_FORM_ID><![CDATA[800000]]></AD_FORM_ID>
@@ -145,18 +83,6 @@
 <!--800007-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800007--></AD_FORM>
 
-<!--800008--><AD_FORM>
-<!--800008-->  <AD_FORM_ID><![CDATA[800008]]></AD_FORM_ID>
-<!--800008-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800008-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800008-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800008-->  <NAME><![CDATA[Change Payment Status]]></NAME>
-<!--800008-->  <DESCRIPTION><![CDATA[Edit a previously completed payment changing the status from paid to unpaid.]]></DESCRIPTION>
-<!--800008-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800008-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.DebtPaymentUnapply]]></CLASSNAME>
-<!--800008-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800008--></AD_FORM>
-
 <!--800009--><AD_FORM>
 <!--800009-->  <AD_FORM_ID><![CDATA[800009]]></AD_FORM_ID>
 <!--800009-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -192,31 +118,6 @@
 <!--800011-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.SQLExecutor]]></CLASSNAME>
 <!--800011-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800011--></AD_FORM>
-
-<!--800012--><AD_FORM>
-<!--800012-->  <AD_FORM_ID><![CDATA[800012]]></AD_FORM_ID>
-<!--800012-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800012-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800012-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800012-->  <NAME><![CDATA[Import EDI File]]></NAME>
-<!--800012-->  <DESCRIPTION><![CDATA[Import an EDI (Electronic Data Interchange) file.]]></DESCRIPTION>
-<!--800012-->  <HELP><![CDATA[Imports EDI data from file.]]></HELP>
-<!--800012-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800012-->  <CLASSNAME><![CDATA[org.openbravo.deprecated.cleanupv3.erpCommon.ad_forms.EdiFileImport]]></CLASSNAME>
-<!--800012-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800012--></AD_FORM>
-
-<!--800013--><AD_FORM>
-<!--800013-->  <AD_FORM_ID><![CDATA[800013]]></AD_FORM_ID>
-<!--800013-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800013-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800013-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800013-->  <NAME><![CDATA[Remittance Cancellation/Return]]></NAME>
-<!--800013-->  <DESCRIPTION><![CDATA[Edit pending remittances by cancelling or returning them.]]></DESCRIPTION>
-<!--800013-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800013-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.RemittanceCancel]]></CLASSNAME>
-<!--800013-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800013--></AD_FORM>
 
 <!--800014--><AD_FORM>
 <!--800014-->  <AD_FORM_ID><![CDATA[800014]]></AD_FORM_ID>
