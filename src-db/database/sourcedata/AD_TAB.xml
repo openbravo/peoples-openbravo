@@ -4856,30 +4856,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--478-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--478--></AD_TAB>
 
-<!--481--><AD_TAB>
-<!--481-->  <AD_TAB_ID><![CDATA[481]]></AD_TAB_ID>
-<!--481-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--481-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--481-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--481-->  <NAME><![CDATA[Inventory]]></NAME>
-<!--481-->  <DESCRIPTION><![CDATA[Import Inventory]]></DESCRIPTION>
-<!--481-->  <HELP><![CDATA[Validate and Import Inventory Transactions. The Locator is primarily determined by the Locator Key, then the Warehouse and X,Y,Z fields.<p>A Physical Inventory is created per Warehouse and Movement Date.]]></HELP>
-<!--481-->  <AD_TABLE_ID><![CDATA[572]]></AD_TABLE_ID>
-<!--481-->  <AD_WINDOW_ID><![CDATA[267]]></AD_WINDOW_ID>
-<!--481-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--481-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--481-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--481-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--481-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--481-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--481-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--481-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--481-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--481-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--481-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--481-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--481--></AD_TAB>
-
 <!--482--><AD_TAB>
 <!--482-->  <AD_TAB_ID><![CDATA[482]]></AD_TAB_ID>
 <!--482-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -5075,77 +5051,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--496-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--496-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--496--></AD_TAB>
-
-<!--507--><AD_TAB>
-<!--507-->  <AD_TAB_ID><![CDATA[507]]></AD_TAB_ID>
-<!--507-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--507-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--507-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--507-->  <NAME><![CDATA[Bank Statement]]></NAME>
-<!--507-->  <DESCRIPTION><![CDATA[Import Bank Statement]]></DESCRIPTION>
-<!--507-->  <AD_TABLE_ID><![CDATA[600]]></AD_TABLE_ID>
-<!--507-->  <AD_WINDOW_ID><![CDATA[277]]></AD_WINDOW_ID>
-<!--507-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--507-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--507-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--507-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--507-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--507-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--507-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--507-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--507-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--507-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--507-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--507-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--507--></AD_TAB>
-
-<!--508--><AD_TAB>
-<!--508-->  <AD_TAB_ID><![CDATA[508]]></AD_TAB_ID>
-<!--508-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--508-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--508-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--508-->  <NAME><![CDATA[General Ledger]]></NAME>
-<!--508-->  <DESCRIPTION><![CDATA[Import General Ledger]]></DESCRIPTION>
-<!--508-->  <HELP><![CDATA[A new Journal Batch is created, if the Batch Document No is different. A new Journal is created, if the Document No, Accounting Schema, Currency, Document Type, GL Category, Posting Type or Accounting type is different.<p>Please note that there are three]]></HELP>
-<!--508-->  <AD_TABLE_ID><![CDATA[599]]></AD_TABLE_ID>
-<!--508-->  <AD_WINDOW_ID><![CDATA[278]]></AD_WINDOW_ID>
-<!--508-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--508-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--508-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--508-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--508-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--508-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--508-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--508-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--508-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--508-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--508-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--508-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--508--></AD_TAB>
-
-<!--510--><AD_TAB>
-<!--510-->  <AD_TAB_ID><![CDATA[510]]></AD_TAB_ID>
-<!--510-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--510-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--510-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--510-->  <NAME><![CDATA[Invoice]]></NAME>
-<!--510-->  <DESCRIPTION><![CDATA[Import Invoices]]></DESCRIPTION>
-<!--510-->  <HELP><![CDATA[You should supply the Document Type Name (or ID). The Document Type is on purpose not fully derived as it has too many consequences if it's wrong.  The best way is to set the Document Type Name as a Constant in your Import File Format or as an imported fi]]></HELP>
-<!--510-->  <AD_TABLE_ID><![CDATA[598]]></AD_TABLE_ID>
-<!--510-->  <AD_WINDOW_ID><![CDATA[279]]></AD_WINDOW_ID>
-<!--510-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--510-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--510-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--510-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--510-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--510-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--510-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--510-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--510-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--510-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--510-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--510-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--510--></AD_TAB>
 
 <!--513--><AD_TAB>
 <!--513-->  <AD_TAB_ID><![CDATA[513]]></AD_TAB_ID>
