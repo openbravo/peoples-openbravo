@@ -1021,11 +1021,11 @@ public class FormInitializationComponent extends BaseActionHandler {
                     }
                   } else {
                     // A callout could modify the value of an auxiliary input
-                    log.debug("Changing the value of auxiliar input: " + name);
                     String calloutValue = (String) element.get(1, null);
                     for (AuxiliaryInput auxInput : tab.getADAuxiliaryInputList()) {
                       final String transformedInputName = "inp" + auxInput.getName().toLowerCase();
                       if (transformedInputName.equals(name)) {
+                        log.debug("Changing the value of auxiliar input: " + name);
                         JSONObject newValue = new JSONObject();
                         newValue.put("classicValue", calloutValue);
                         newValue.put("value", calloutValue);
