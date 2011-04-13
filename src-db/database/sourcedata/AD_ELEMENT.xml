@@ -286,19 +286,6 @@
 <!--126-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--126--></AD_ELEMENT>
 
-<!--128--><AD_ELEMENT>
-<!--128-->  <AD_ELEMENT_ID><![CDATA[128]]></AD_ELEMENT_ID>
-<!--128-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--128-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--128-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--128-->  <COLUMNNAME><![CDATA[AD_Task_ID]]></COLUMNNAME>
-<!--128-->  <NAME><![CDATA[OS Task]]></NAME>
-<!--128-->  <PRINTNAME><![CDATA[OS Task]]></PRINTNAME>
-<!--128-->  <DESCRIPTION><![CDATA[The name of an operating task.]]></DESCRIPTION>
-<!--128-->  <HELP><![CDATA[The Task field identifies a Operation System Task in the system.]]></HELP>
-<!--128-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--128--></AD_ELEMENT>
-
 <!--131--><AD_ELEMENT>
 <!--131-->  <AD_ELEMENT_ID><![CDATA[131]]></AD_ELEMENT_ID>
 <!--131-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -8840,43 +8827,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1515-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1515--></AD_ELEMENT>
 
-<!--1516--><AD_ELEMENT>
-<!--1516-->  <AD_ELEMENT_ID><![CDATA[1516]]></AD_ELEMENT_ID>
-<!--1516-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1516-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1516-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1516-->  <COLUMNNAME><![CDATA[R_Request_ID]]></COLUMNNAME>
-<!--1516-->  <NAME><![CDATA[Request]]></NAME>
-<!--1516-->  <PRINTNAME><![CDATA[Request]]></PRINTNAME>
-<!--1516-->  <DESCRIPTION><![CDATA[x not implemented]]></DESCRIPTION>
-<!--1516-->  <HELP><![CDATA[The Request identifies a unique request from a Business Partner or Prospect.]]></HELP>
-<!--1516-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1516--></AD_ELEMENT>
-
-<!--1517--><AD_ELEMENT>
-<!--1517-->  <AD_ELEMENT_ID><![CDATA[1517]]></AD_ELEMENT_ID>
-<!--1517-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1517-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1517-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1517-->  <COLUMNNAME><![CDATA[R_RequestAction_ID]]></COLUMNNAME>
-<!--1517-->  <NAME><![CDATA[Request action]]></NAME>
-<!--1517-->  <PRINTNAME><![CDATA[Request action]]></PRINTNAME>
-<!--1517-->  <DESCRIPTION><![CDATA[Action has been requested]]></DESCRIPTION>
-<!--1517-->  <HELP><![CDATA[The Request Action indicates if the Credit Card Company has requested further action be taken.]]></HELP>
-<!--1517-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1517--></AD_ELEMENT>
-
-<!--1519--><AD_ELEMENT>
-<!--1519-->  <AD_ELEMENT_ID><![CDATA[1519]]></AD_ELEMENT_ID>
-<!--1519-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1519-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1519-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1519-->  <COLUMNNAME><![CDATA[R_RequestProcessor_ID]]></COLUMNNAME>
-<!--1519-->  <NAME><![CDATA[Request processor]]></NAME>
-<!--1519-->  <PRINTNAME><![CDATA[Request processor]]></PRINTNAME>
-<!--1519-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1519--></AD_ELEMENT>
-
 <!--1520--><AD_ELEMENT>
 <!--1520-->  <AD_ELEMENT_ID><![CDATA[1520]]></AD_ELEMENT_ID>
 <!--1520-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -9897,19 +9847,6 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1696-->  <HELP><![CDATA[The item will be escalated and assigned to the supervisor after the number of days overdue.]]></HELP>
 <!--1696-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1696--></AD_ELEMENT>
-
-<!--1697--><AD_ELEMENT>
-<!--1697-->  <AD_ELEMENT_ID><![CDATA[1697]]></AD_ELEMENT_ID>
-<!--1697-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1697-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1697-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1697-->  <COLUMNNAME><![CDATA[R_RequestProcessor_Route_ID]]></COLUMNNAME>
-<!--1697-->  <NAME><![CDATA[Request Routing]]></NAME>
-<!--1697-->  <PRINTNAME><![CDATA[Request Routing]]></PRINTNAME>
-<!--1697-->  <DESCRIPTION><![CDATA[Automatic routing of requests]]></DESCRIPTION>
-<!--1697-->  <HELP><![CDATA[Automatic routing of requests]]></HELP>
-<!--1697-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1697--></AD_ELEMENT>
 
 <!--1698--><AD_ELEMENT>
 <!--1698-->  <AD_ELEMENT_ID><![CDATA[1698]]></AD_ELEMENT_ID>
@@ -10985,19 +10922,6 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1893-->  <HELP><![CDATA[Areas of Interest reflect interest in a topic by a contact. Areas of Interest can be used for marketing campaigns.]]></HELP>
 <!--1893-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1893--></AD_ELEMENT>
-
-<!--1894--><AD_ELEMENT>
-<!--1894-->  <AD_ELEMENT_ID><![CDATA[1894]]></AD_ELEMENT_ID>
-<!--1894-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1894-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1894-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1894-->  <COLUMNNAME><![CDATA[R_RequestType_ID]]></COLUMNNAME>
-<!--1894-->  <NAME><![CDATA[Request Type]]></NAME>
-<!--1894-->  <PRINTNAME><![CDATA[Request Type]]></PRINTNAME>
-<!--1894-->  <DESCRIPTION><![CDATA[x not implemented]]></DESCRIPTION>
-<!--1894-->  <HELP><![CDATA[Request Types are used for processing and categorizing requests. Options are Account Inquiry, Warranty Issue, etc.]]></HELP>
-<!--1894-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1894--></AD_ELEMENT>
 
 <!--1895--><AD_ELEMENT>
 <!--1895-->  <AD_ELEMENT_ID><![CDATA[1895]]></AD_ELEMENT_ID>
@@ -22553,17 +22477,6 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--5221067DBEC252DEE040007F01001FE1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5221067DBEC252DEE040007F01001FE1--></AD_ELEMENT>
 
-<!--5221067DBEC352DEE040007F01001FE1--><AD_ELEMENT>
-<!--5221067DBEC352DEE040007F01001FE1-->  <AD_ELEMENT_ID><![CDATA[5221067DBEC352DEE040007F01001FE1]]></AD_ELEMENT_ID>
-<!--5221067DBEC352DEE040007F01001FE1-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--5221067DBEC352DEE040007F01001FE1-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--5221067DBEC352DEE040007F01001FE1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--5221067DBEC352DEE040007F01001FE1-->  <COLUMNNAME><![CDATA[AD_Task_Trl_ID]]></COLUMNNAME>
-<!--5221067DBEC352DEE040007F01001FE1-->  <NAME><![CDATA[Task Translation]]></NAME>
-<!--5221067DBEC352DEE040007F01001FE1-->  <PRINTNAME><![CDATA[Task Translation]]></PRINTNAME>
-<!--5221067DBEC352DEE040007F01001FE1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--5221067DBEC352DEE040007F01001FE1--></AD_ELEMENT>
-
 <!--5221067DBEC452DEE040007F01001FE1--><AD_ELEMENT>
 <!--5221067DBEC452DEE040007F01001FE1-->  <AD_ELEMENT_ID><![CDATA[5221067DBEC452DEE040007F01001FE1]]></AD_ELEMENT_ID>
 <!--5221067DBEC452DEE040007F01001FE1-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -22596,17 +22509,6 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--5221067DBEC652DEE040007F01001FE1-->  <PRINTNAME><![CDATA[Reference List Translation]]></PRINTNAME>
 <!--5221067DBEC652DEE040007F01001FE1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5221067DBEC652DEE040007F01001FE1--></AD_ELEMENT>
-
-<!--5221067DBEC752DEE040007F01001FE1--><AD_ELEMENT>
-<!--5221067DBEC752DEE040007F01001FE1-->  <AD_ELEMENT_ID><![CDATA[5221067DBEC752DEE040007F01001FE1]]></AD_ELEMENT_ID>
-<!--5221067DBEC752DEE040007F01001FE1-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--5221067DBEC752DEE040007F01001FE1-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--5221067DBEC752DEE040007F01001FE1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--5221067DBEC752DEE040007F01001FE1-->  <COLUMNNAME><![CDATA[AD_Task_Access_ID]]></COLUMNNAME>
-<!--5221067DBEC752DEE040007F01001FE1-->  <NAME><![CDATA[AD_Task_Access_ID]]></NAME>
-<!--5221067DBEC752DEE040007F01001FE1-->  <PRINTNAME><![CDATA[AD_Task_Access_ID]]></PRINTNAME>
-<!--5221067DBEC752DEE040007F01001FE1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--5221067DBEC752DEE040007F01001FE1--></AD_ELEMENT>
 
 <!--5221067DBEC852DEE040007F01001FE1--><AD_ELEMENT>
 <!--5221067DBEC852DEE040007F01001FE1-->  <AD_ELEMENT_ID><![CDATA[5221067DBEC852DEE040007F01001FE1]]></AD_ELEMENT_ID>
