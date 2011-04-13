@@ -395,7 +395,7 @@ OB.ViewFormProperties = {
     var parentId = this.view.getParentId(), requestParams, parentColumn, me = this, mode;
     // note also in this case initial vvalues are passed in as in case of grid
     // editing the unsaved/error values from a previous edit session are maintained
-    var allProperties = this.view.getContextInfo(false, true, false, false);
+    var allProperties = this.view.getContextInfo(false, true, false, true);
     
     if (isNew) {
       mode = 'NEW';
@@ -752,7 +752,7 @@ OB.ViewFormProperties = {
   // note item can be null, is also called when the form is re-shown
   // to recompute combos
   doChangeFICCall: function(item){
-    var parentId = null, me = this, requestParams, allProperties = this.view.getContextInfo(false, true, false, false);
+    var parentId = null, me = this, requestParams, allProperties = this.view.getContextInfo(false, true, false, true);
     if (this.view.parentProperty) {
       parentId = this.view.getParentId();
     }

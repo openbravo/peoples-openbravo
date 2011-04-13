@@ -163,6 +163,12 @@ public abstract class NumberUIDefinition extends UIDefinition {
     public String getFormat() {
       return "integerEdition";
     }
+
+    @Override
+    public Object createFromClassicString(String value) {
+      final BigDecimal superValue = (BigDecimal) super.createFromClassicString(value);
+      return superValue.longValue();
+    }
   }
 
   public static class AmountUIDefinition extends NumberUIDefinition {

@@ -846,7 +846,7 @@ isc.OBToolbar.addProperties({
         TAB_ID: this.view.tabId,
         ROW_ID: currentValues.id
       };
-      var allProperties = this.view.getContextInfo(false, true, false, false);
+      var allProperties = this.view.getContextInfo(false, true, false, true);
       OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
         var sessionAttributes = data.sessionAttributes, auxInputs = data.auxiliaryInputValues;
         if (sessionAttributes) {
@@ -1113,7 +1113,7 @@ OB.ToolbarUtils.print = function(view, url, directPrint){
     return;
   }
   
-  var popupParams = 'Command=DEFAULT', allProperties = view.getContextInfo(false, true), sessionProperties = view.getContextInfo(true, true);
+  var popupParams = 'Command=DEFAULT', allProperties = view.getContextInfo(false, true, false, true), sessionProperties = view.getContextInfo(true, true, false, true);
   
   for (var param in allProperties) {
     if (allProperties.hasOwnProperty(param)) {

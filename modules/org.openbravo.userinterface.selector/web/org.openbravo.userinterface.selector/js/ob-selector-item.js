@@ -370,6 +370,7 @@ isc.OBSelectorItem.addProperties({
   },
   
   setValueFromRecord: function(record){
+    var currentValue = this.getValue();
     if (!record) {
       this.setValue(null);
       this.form.setValue(this.name + '.' + this.displayField, null);
@@ -387,7 +388,7 @@ isc.OBSelectorItem.addProperties({
         this.form.focusInNextItem(this.name);
       }
     }
-    if (this.form && this.form.handleItemChange) {
+    if (currentValue !== this.getValue() && this.form && this.form.handleItemChange) {
       this._hasChanged = true;
       this.form.handleItemChange(this);
     }

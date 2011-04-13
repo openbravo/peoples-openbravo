@@ -1706,7 +1706,7 @@ isc.OBStandardView.addProperties({
       return;
     }
     if (!sessionProperties) {
-      sessionProperties = this.getContextInfo(true, true);
+      sessionProperties = this.getContextInfo(true, true, false, true);
     }
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
       MODE: 'SETSESSION',

@@ -157,7 +157,13 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (property.getColumnName() != null) {
             final String inpName = "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
             if (jsContent.has(inpName)) {
-              convertedJson.put(property.getName(), jsContent.get(inpName));
+              final UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
+                  property.getColumnId());
+              Object jsonValue = jsContent.get(inpName);
+              if (jsonValue instanceof String) {
+                jsonValue = uiDef.createFromClassicString((String) jsonValue);
+              }
+              convertedJson.put(property.getName(), jsonValue);
             }
           }
         }
@@ -241,15 +247,17 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("CHANGE")) {
         JSONObject jsonColumnValues = new JSONObject();
         for (Field field : tab.getADFieldList()) {
-          jsonColumnValues.put(field.getColumn().getDBColumnName(), columnValues.get("inp"
-              + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())));
+          jsonColumnValues.put(
+              field.getColumn().getDBColumnName(),
+              columnValues.get("inp"
+                  + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())));
         }
         finalObject.put("columnValues", jsonColumnValues);
       }
       JSONObject jsonAuxiliaryInputValues = new JSONObject();
       for (AuxiliaryInput auxIn : tab.getADAuxiliaryInputList()) {
-        jsonAuxiliaryInputValues.put(auxIn.getName(), columnValues.get("inp"
-            + Sqlc.TransformaNombreColumna(auxIn.getName())));
+        jsonAuxiliaryInputValues.put(auxIn.getName(),
+            columnValues.get("inp" + Sqlc.TransformaNombreColumna(auxIn.getName())));
       }
 
       finalObject.put("auxiliaryInputValues", jsonAuxiliaryInputValues);
@@ -271,8 +279,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           // Adding session attributes in a dynamic expression
           // This session attributes could be a preference
           if (field.getDisplayLogic() != null && field.isDisplayed() && field.isActive()) {
-            final DynamicExpressionParser parser = new DynamicExpressionParser(field
-                .getDisplayLogic(), tab);
+            final DynamicExpressionParser parser = new DynamicExpressionParser(
+                field.getDisplayLogic(), tab);
 
             for (String attrName : parser.getSessionAttributes()) {
               if (!sessionAttributesMap.containsKey(attrName)) {
@@ -422,15 +430,16 @@ public class FormInitializationComponent extends BaseActionHandler {
               changedCols.add(field.getColumn().getDBColumnName());
             }
           }
-          columnValues.put("inp"
-              + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
+          columnValues
+              .put("inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()),
+                  jsonobject);
           setRequestContextParameter(field, jsonobject);
           // We also set the session value for the column in Edit or SetSession mode
           if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
             if (field.getColumn().isStoredInSession() || field.getColumn().isKeyColumn()) {
               setSessionValue(tab.getWindow().getId() + "|"
-                  + field.getColumn().getDBColumnName().toUpperCase(), jsonobject
-                  .has("classicValue") ? jsonobject.get("classicValue") : null);
+                  + field.getColumn().getDBColumnName().toUpperCase(),
+                  jsonobject.has("classicValue") ? jsonobject.get("classicValue") : null);
             }
           }
         }
@@ -456,8 +465,7 @@ public class FormInitializationComponent extends BaseActionHandler {
             "Couldn't get data for column " + field.getColumn().getDBColumnName(), e);
       }
       if (((mode.equals("NEW") && !classicValue.equals("") && (uiDef instanceof EnumUIDefinition || uiDef instanceof ForeignKeyUIDefinition)) || (mode
-          .equals("CHANGE")
-          && changedCols.contains(field.getColumn().getDBColumnName()) && changedColumn != null))
+          .equals("CHANGE") && changedCols.contains(field.getColumn().getDBColumnName()) && changedColumn != null))
           && field.getColumn().isValidateOnNew()) {
         if (field.getColumn().getCallout() != null) {
           addCalloutToList(field.getColumn(), calloutsToCall, lastfieldChanged);
@@ -498,8 +506,9 @@ public class FormInitializationComponent extends BaseActionHandler {
         JSONObject jsonobject = null;
         if (value != null) {
           jsonobject = new JSONObject(value);
-          columnValues.put("inp"
-              + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()), jsonobject);
+          columnValues
+              .put("inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()),
+                  jsonobject);
           setRequestContextParameter(field, jsonobject);
         }
       } catch (Exception e) {
@@ -576,8 +585,8 @@ public class FormInitializationComponent extends BaseActionHandler {
               final Object propValue = JsonToDataConverter.convertJsonToPropertyValue(prop,
                   jsContent.get(inpColName));
               // convert to a valid classic string
-              value = UIDefinitionController.getInstance().getUIDefinition(
-                  field.getColumn().getId()).convertToClassicString(propValue);
+              value = UIDefinitionController.getInstance()
+                  .getUIDefinition(field.getColumn().getId()).convertToClassicString(propValue);
             } else {
               value = (String) jsonValue;
             }
@@ -891,8 +900,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           RequestContext.get().setRequestParameter("inpLastFieldChanged", lastFieldChanged);
 
           // We then execute the callout
-          CalloutServletConfig config = new CalloutServletConfig(calloutClassName, RequestContext
-              .getServletContext());
+          CalloutServletConfig config = new CalloutServletConfig(calloutClassName,
+              RequestContext.getServletContext());
           Object[] initArgs = { config };
           init.invoke(calloutInstance, initArgs);
           CalloutHttpServletResponse fakeResponse = new CalloutHttpServletResponse(rq.getResponse());
@@ -986,16 +995,16 @@ public class FormInitializationComponent extends BaseActionHandler {
                       } else {
                         rq.setRequestParameter(colId, uiDef.convertToClassicString(el));
                       }
-                      JSONObject jsonobj = new JSONObject(uiDef.getFieldProperties(inpFields
-                          .get(name), true));
+                      JSONObject jsonobj = new JSONObject(uiDef.getFieldProperties(
+                          inpFields.get(name), true));
                       if (jsonobj.has("classicValue")) {
                         String newValue = jsonobj.getString("classicValue");
                         log.debug("Modified column: " + col.getDBColumnName() + "  Value: " + el);
                         if ((oldValue == null && newValue != null)
                             || (oldValue != null && newValue == null)
                             || (oldValue != null && newValue != null && !oldValue.equals(newValue))) {
-                          columnValues.put("inp"
-                              + Sqlc.TransformaNombreColumna(col.getDBColumnName()), jsonobj);
+                          columnValues.put(
+                              "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()), jsonobj);
                           changed = true;
                           if (dynamicCols.contains(colId)) {
                             changedCols.add(col.getDBColumnName());
@@ -1003,8 +1012,7 @@ public class FormInitializationComponent extends BaseActionHandler {
                           rq.setRequestParameter(colId, jsonobj.getString("classicValue"));
                         }
                       } else {
-                        log
-                            .debug("Column value didn't change. We do not attempt to execute any additional callout");
+                        log.debug("Column value didn't change. We do not attempt to execute any additional callout");
                       }
                     }
                     if (changed && col.getCallout() != null) {
@@ -1040,9 +1048,9 @@ public class FormInitializationComponent extends BaseActionHandler {
    */
   private void createNewPreferenceForWindow(Window window) {
 
-    OBCriteria<Preference> prefCriteria = OBDao.getFilteredCriteria(Preference.class, Expression
-        .eq(Preference.PROPERTY_PROPERTY, "OBUIAPP_UseClassicMode"), Expression.eq(
-        Preference.PROPERTY_WINDOW, window));
+    OBCriteria<Preference> prefCriteria = OBDao.getFilteredCriteria(Preference.class,
+        Expression.eq(Preference.PROPERTY_PROPERTY, "OBUIAPP_UseClassicMode"),
+        Expression.eq(Preference.PROPERTY_WINDOW, window));
     if (prefCriteria.count() > 0) {
       // Preference already exists. We don't create a new one.
       return;
