@@ -49,7 +49,6 @@ import org.openbravo.model.ad.ui.Tab;
  * @author iperdomo
  */
 public class OBViewFormComponent extends BaseTemplateComponent {
-  private static Long ZERO = new Long(0);
 
   private static final String TEMPLATE_ID = "C1D176407A354A40815DC46D24D70EB8";
   private static Logger log = Logger.getLogger(OBViewFormComponent.class);
@@ -60,6 +59,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
   private static final String TEXT_AD_REFERENCE_ID = "14";
 
   private Tab tab;
+  private List<String> statusBarFields = null;
 
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
@@ -82,6 +82,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     final List<Field> fieldsInDynamicExpression = new ArrayList<Field>();
     final Map<Field, String> displayLogicMap = new HashMap<Field, String>();
     final Map<Field, String> readOnlyLogicMap = new HashMap<Field, String>();
+
+    statusBarFields = new ArrayList<String>();
 
     // Processing dynamic expressions (display logic)
     for (Field f : adFields) {
@@ -121,7 +123,6 @@ public class OBViewFormComponent extends BaseTemplateComponent {
         }
       }
     }
-    // log.debug(tab.getId() + " - " + fieldsInDynamicExpression);
 
     OBViewFieldGroup currentFieldGroup = null;
     FieldGroup currentADFieldGroup = null;
@@ -138,6 +139,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       // a button domain type, continue for now
       if (ApplicationUtils.isUIButton(field)) {
         continue;
+      }
+
+      if (field.isShownInStatusBar() != null && field.isShownInStatusBar()) {
+        statusBarFields.add(property.getName());
       }
 
       final OBViewField viewField = new OBViewField();
@@ -196,6 +201,14 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     fields.add(linkedItemsCanvasFieldDefinition);
 
     return fields;
+  }
+
+  public List<String> getStatusBarFields() {
+    if (statusBarFields == null) {
+      log.warn("Calling getStatusBarFields without initializing fields cache");
+      return Collections.emptyList();
+    }
+    return statusBarFields;
   }
 
   private interface OBViewFieldDefinition {
@@ -430,14 +443,6 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public String getReadOnlyIf() {
       return readOnlyIf;
-    }
-
-    public boolean isShownInStatusBar() {
-      if (field.isShownInStatusBar() == null) {
-        return false;
-      } else {
-        return field.isShownInStatusBar();
-      }
     }
   }
 
@@ -772,10 +777,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       Long arg0Position = (arg0.getSequenceNumber() != null ? arg0.getSequenceNumber() : 0);
       Long arg1Position = (arg1.getSequenceNumber() != null ? arg1.getSequenceNumber() : 0);
       if (arg0Position == null) {
-        arg0Position = ZERO;
+        arg0Position = 0L;
       }
       if (arg1Position == null) {
-        arg1Position = ZERO;
+        arg1Position = 0L;
       }
       return (int) (arg0Position - arg1Position);
     }

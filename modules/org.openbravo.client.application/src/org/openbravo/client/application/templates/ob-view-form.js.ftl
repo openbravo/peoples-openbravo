@@ -23,7 +23,13 @@ isc.OBViewForm.create({
       <@createField field/><#if field_has_next>,</#if>
     </#list>    
     ],
-        
+
+    statusBarFields: [
+    <#list data.statusBarFields as sbf>
+      '${sbf?js_string}'<#if sbf_has_next>,</#if>
+    </#list>
+    ],
+
     // except for the fields all other form properties should be added to the formProperties
     // the formProperties are re-used for inline grid editing
     obFormProperties: {

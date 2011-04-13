@@ -70,6 +70,9 @@ OB.ViewFormProperties = {
   // Name to the first focused field defined in AD
   firstFocusedField: null,
 
+  // Name of the fields shown in status bar
+  statusBarFields: [],
+
   // is set in the OBNoteSectionItem.initWidget
   noteSection: null,
   
@@ -98,14 +101,12 @@ OB.ViewFormProperties = {
   },
 
   getStatusBarFields: function() {
-    var statusBarFields = [[],[]],
-        length, i, item;
-    length = this.getItems().length;
-    for(i = 0; i < length; i++) {
-      item = this.getItem(i);
-      if(item.shownInStatusBar && item.getTitle() && typeof item.getDisplayValue() !== 'undefined' && item.getDisplayValue() !== null && item.getDisplayValue().toString() !== '') {
-        statusBarFields[0].push(item.getTitle().toString());
-        statusBarFields[1].push(item.getDisplayValue().toString());
+    var statusBarFields = [[],[]], i, item;
+    for(i = 0; i < this.statusBarFields.length; i++) {
+      item = this.getItem(this.statusBarFields[i]);
+      if(item) {
+        statusBarFields[0].push(item.getTitle());
+        statusBarFields[1].push(item.getDisplayValue());
       }
     }
     return statusBarFields;
@@ -163,16 +164,12 @@ OB.ViewFormProperties = {
       this.validateAfterFicReturn = true;
     }
     
-    // note buttons are updated after fic return
-//    this.view.toolBar.updateButtonState(true);
+
     this.ignoreFirstFocusEvent = preventFocus;
     this.retrieveInitialValues(isNew);
     
     if (isNew) {
       this.view.statusBar.setContentLabel(this.view.statusBar.newIcon, 'OBUIAPP_New');
-    } else {
-      var vf = this;
-      setTimeout(function() { vf.view.statusBar.setContentLabel(null, null, vf.getStatusBarFields()); }, 250);
     }
   },
   
@@ -557,6 +554,7 @@ OB.ViewFormProperties = {
     this.markForRedraw();
 
     this.view.toolBar.updateButtonState(true);
+    this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());
     
     // note onFieldChanged uses the form.readOnly set above
     this.onFieldChanged(this);
