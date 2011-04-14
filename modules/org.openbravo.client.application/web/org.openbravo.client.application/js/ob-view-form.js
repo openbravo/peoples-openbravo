@@ -104,7 +104,7 @@ OB.ViewFormProperties = {
     var statusBarFields = [[],[]], i, item;
     for(i = 0; i < this.statusBarFields.length; i++) {
       item = this.getItem(this.statusBarFields[i]);
-      if(item) {
+      if(item && item.getDisplayValue() !== null && item.getDisplayValue() !== '') {
         statusBarFields[0].push(item.getTitle());
         statusBarFields[1].push(item.getDisplayValue());
       }
