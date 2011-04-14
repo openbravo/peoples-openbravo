@@ -554,8 +554,10 @@ OB.ViewFormProperties = {
     this.markForRedraw();
 
     this.view.toolBar.updateButtonState(true);
-    this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());
-    
+    if (!modeIsNew) {
+      this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());
+    }
+
     // note onFieldChanged uses the form.readOnly set above
     this.onFieldChanged(this);
 
