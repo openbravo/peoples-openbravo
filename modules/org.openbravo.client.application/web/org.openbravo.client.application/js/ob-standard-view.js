@@ -1270,7 +1270,7 @@ isc.OBStandardView.addProperties({
       if (this.viewForm.hasChanged) {
         var callback = function(ok){
           if (ok) {
-            this.viewGrid.refreshGrid(formRefresh);            
+            view.viewGrid.refreshGrid(formRefresh);            
           }
         };
         isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmRefresh'), callback);
