@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,35 +36,35 @@ var baseDirectory="../../../../../web/";
 </script>
 <script language="JavaScript" type="text/javascript">
 function closeThisPage() {
-	window.close();
-	return true;
+    closePage();
+    return true;
 }
 
 function submitThisPage(strCommand) {
-	submitCommandForm(strCommand, false, null, null, "_top");
-	return true;
+    submitCommandForm(strCommand, false, null, null);
+    return true;
 }
 </script>
-	<script language="JavaScript" type="text/javascript">
-	function onLoadDo(){
-		this.windowTables = new Array(
-		  new windowTableId('client', 'buttonOK')
-		);
-		setWindowTableParentElement();
-		enableShortcuts('popup');
-		setBrowserAutoComplete(false);
-		
-		xx();
+    <script language="JavaScript" type="text/javascript">
+    function onLoadDo(){
+        this.windowTables = new Array(
+          new windowTableId('client', 'buttonOK')
+        );
+        setWindowTableParentElement();
+        enableShortcuts('popup');
+        setBrowserAutoComplete(false);
+        
+        xx();
 
-		setWindowElementFocus('firstElement');
-	}
+        setWindowElementFocus('firstElement');
+    }
 
-	function onResizeDo(){
-	}
-	</script>
+    function onResizeDo(){
+    }
+    </script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="onLoadDo();" onresize="onResizeDo();" id="paramMessage">
-<form id="form" method="post" action="InsertAcces.html" name="frmMain" target="hiddenFrame">
+<form id="form" method="post" action="InsertAcces.html" name="frmMain">
   <input type="hidden" name="Command">
 <input type="hidden" name="IsPopUpCall" value="1"></input>
   <input type="hidden" name="inpLastFieldChanged"></input>
