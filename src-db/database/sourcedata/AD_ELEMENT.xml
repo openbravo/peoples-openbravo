@@ -13973,54 +13973,6 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800105-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800105--></AD_ELEMENT>
 
-<!--800108--><AD_ELEMENT>
-<!--800108-->  <AD_ELEMENT_ID><![CDATA[800108]]></AD_ELEMENT_ID>
-<!--800108-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800108-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800108-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800108-->  <COLUMNNAME><![CDATA[M_WH_Period_ID]]></COLUMNNAME>
-<!--800108-->  <NAME><![CDATA[Warehouse Period]]></NAME>
-<!--800108-->  <PRINTNAME><![CDATA[M_WH_Period_ID]]></PRINTNAME>
-<!--800108-->  <HELP><![CDATA[The ID identifies a unique period for the warehouse schedule]]></HELP>
-<!--800108-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800108--></AD_ELEMENT>
-
-<!--800109--><AD_ELEMENT>
-<!--800109-->  <AD_ELEMENT_ID><![CDATA[800109]]></AD_ELEMENT_ID>
-<!--800109-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800109-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800109-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800109-->  <COLUMNNAME><![CDATA[M_WH_Period_Invoiced_ID]]></COLUMNNAME>
-<!--800109-->  <NAME><![CDATA[M_WH_Period_Invoiced_ID]]></NAME>
-<!--800109-->  <PRINTNAME><![CDATA[M_WH_Period_Invoiced_ID]]></PRINTNAME>
-<!--800109-->  <HELP><![CDATA[The ID identifies a unique period invoiced for the period]]></HELP>
-<!--800109-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800109--></AD_ELEMENT>
-
-<!--800110--><AD_ELEMENT>
-<!--800110-->  <AD_ELEMENT_ID><![CDATA[800110]]></AD_ELEMENT_ID>
-<!--800110-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800110-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800110-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800110-->  <COLUMNNAME><![CDATA[M_WH_Schedule_ID]]></COLUMNNAME>
-<!--800110-->  <NAME><![CDATA[Warehouse Calendar]]></NAME>
-<!--800110-->  <PRINTNAME><![CDATA[M_WH_Schedule_ID]]></PRINTNAME>
-<!--800110-->  <HELP><![CDATA[The warehouse schedule ID identifies a unique schedule for renting locators.]]></HELP>
-<!--800110-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800110--></AD_ELEMENT>
-
-<!--800111--><AD_ELEMENT>
-<!--800111-->  <AD_ELEMENT_ID><![CDATA[800111]]></AD_ELEMENT_ID>
-<!--800111-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800111-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800111-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800111-->  <COLUMNNAME><![CDATA[M_WH_Schedule_Product_ID]]></COLUMNNAME>
-<!--800111-->  <NAME><![CDATA[M_WH_Schedule_Product_ID]]></NAME>
-<!--800111-->  <PRINTNAME><![CDATA[M_WH_Schedule_Product_ID]]></PRINTNAME>
-<!--800111-->  <HELP><![CDATA[The ID idenitfies a unique product for the warehouse shedule]]></HELP>
-<!--800111-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800111--></AD_ELEMENT>
-
 <!--800114--><AD_ELEMENT>
 <!--800114-->  <AD_ELEMENT_ID><![CDATA[800114]]></AD_ELEMENT_ID>
 <!--800114-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

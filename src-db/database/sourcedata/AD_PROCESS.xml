@@ -2670,26 +2670,6 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800048-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--800048--></AD_PROCESS>
 
-<!--800049--><AD_PROCESS>
-<!--800049-->  <AD_PROCESS_ID><![CDATA[800049]]></AD_PROCESS_ID>
-<!--800049-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800049-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800049-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800049-->  <VALUE><![CDATA[C_Invoice_Create1]]></VALUE>
-<!--800049-->  <NAME><![CDATA[C_Invoice_Create1]]></NAME>
-<!--800049-->  <DESCRIPTION><![CDATA[Generate and print Invoices (Warehouse storage)]]></DESCRIPTION>
-<!--800049-->  <HELP><![CDATA[Generate and print Invoices (Warehouse storage)]]></HELP>
-<!--800049-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--800049-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800049-->  <PROCEDURENAME><![CDATA[C_INVOICE_CREATE1]]></PROCEDURENAME>
-<!--800049-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800049-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800049-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800049-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800049-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800049-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--800049--></AD_PROCESS>
-
 <!--800050--><AD_PROCESS>
 <!--800050-->  <AD_PROCESS_ID><![CDATA[800050]]></AD_PROCESS_ID>
 <!--800050-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -2787,46 +2767,6 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800064-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800064-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800064--></AD_PROCESS>
-
-<!--800065--><AD_PROCESS>
-<!--800065-->  <AD_PROCESS_ID><![CDATA[800065]]></AD_PROCESS_ID>
-<!--800065-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800065-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800065-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800065-->  <VALUE><![CDATA[Generate periods]]></VALUE>
-<!--800065-->  <NAME><![CDATA[Create Periods]]></NAME>
-<!--800065-->  <DESCRIPTION><![CDATA[Generate periods for a warehouse schedule]]></DESCRIPTION>
-<!--800065-->  <HELP><![CDATA[Generate periods for a warehouse schedule]]></HELP>
-<!--800065-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800065-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800065-->  <PROCEDURENAME><![CDATA[M_Wh_Period_Generate]]></PROCEDURENAME>
-<!--800065-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800065-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800065-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800065-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800065-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800065-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--800065--></AD_PROCESS>
-
-<!--800066--><AD_PROCESS>
-<!--800066-->  <AD_PROCESS_ID><![CDATA[800066]]></AD_PROCESS_ID>
-<!--800066-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800066-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800066-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800066-->  <VALUE><![CDATA[Activate/Desactivate periods]]></VALUE>
-<!--800066-->  <NAME><![CDATA[Activate/Deactivate Periods]]></NAME>
-<!--800066-->  <DESCRIPTION><![CDATA[Activate/Deactivate Periods]]></DESCRIPTION>
-<!--800066-->  <HELP><![CDATA[Activate/Deactivate Periods]]></HELP>
-<!--800066-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800066-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800066-->  <PROCEDURENAME><![CDATA[M_Wh_Activate_Periods]]></PROCEDURENAME>
-<!--800066-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800066-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800066-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800066-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800066-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800066-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--800066--></AD_PROCESS>
 
 <!--800067--><AD_PROCESS>
 <!--800067-->  <AD_PROCESS_ID><![CDATA[800067]]></AD_PROCESS_ID>
