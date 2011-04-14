@@ -190,7 +190,7 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       // Computation of the Auxiliary Input values
       long t4 = System.currentTimeMillis();
-      computeAuxiliaryInputs(mode, tab, columnValues);
+      computeAuxiliaryInputs(mode, tab, columnValues, jsContent);
 
       // Computation of Column Values (using UIDefinition, so including combo values and all
       // relevant additional information)
@@ -211,7 +211,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (mode.equals("NEW")) {
         // In the case of NEW mode, we compute auxiliary inputs again to take into account that
         // auxiliary inputs could depend on a default value
-        computeAuxiliaryInputs(mode, tab, columnValues);
+        computeAuxiliaryInputs(mode, tab, columnValues, jsContent);
       }
       // Construction of the final JSONObject
       long t7 = System.currentTimeMillis();
@@ -519,21 +519,37 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   }
 
-  private void computeAuxiliaryInputs(String mode, Tab tab, Map<String, JSONObject> columnValues) {
+  private void computeAuxiliaryInputs(String mode, Tab tab, Map<String, JSONObject> columnValues,
+      JSONObject jsonContent) {
     for (AuxiliaryInput auxIn : tab.getADAuxiliaryInputList()) {
-      Object value = computeAuxiliaryInput(auxIn, tab.getWindow().getId());
-      log.debug("Final Computed Value. Name: " + auxIn.getName() + " Value: " + value);
+      Object value = null;
       JSONObject jsonObj = new JSONObject();
+      if (mode.equals("CHANGE")) {
+        try {
+          // Do not recompute the value of an auxiliary-input on CHANGE mode, since the value could
+          // have been modified by other user action e.g. A callout based on other field
+          value = jsonContent.get(auxIn.getName());
+        } catch (Exception e) {
+          log.error("Error trying to read the value of aux-input: " + auxIn.getName(), e);
+        }
+      } else {
+        value = computeAuxiliaryInput(auxIn, tab.getWindow().getId());
+      }
+
       try {
         jsonObj.put("value", value);
         jsonObj.put("classicValue", value);
       } catch (JSONException e) {
         log.error("Error while computing auxiliary input " + auxIn.getName(), e);
       }
+
+      log.debug("Final Computed Value. Name: " + auxIn.getName() + " Value: " + value);
       columnValues.put("inp" + Sqlc.TransformaNombreColumna(auxIn.getName()), jsonObj);
+
       RequestContext.get().setRequestParameter(
           "inp" + Sqlc.TransformaNombreColumna(auxIn.getName()),
           value == null || value.equals("null") ? null : value.toString());
+
       // Now we insert session values for auxiliary inputs
       if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
         setSessionValue(tab.getWindow().getId() + "|" + auxIn.getName(), value);
@@ -1022,7 +1038,8 @@ public class FormInitializationComponent extends BaseActionHandler {
                   } else {
                     // A callout could modify the value of an auxiliary input
                     for (AuxiliaryInput auxInput : tab.getADAuxiliaryInputList()) {
-                      final String transformedInputName = "inp" + auxInput.getName().toLowerCase();
+                      final String transformedInputName = "inp"
+                          + Sqlc.TransformaNombreColumna(auxInput.getName());
                       if (transformedInputName.equals(name)) {
                         log.debug("Changing the value of auxiliar input: " + name);
                         Object calloutValue = element.get(1, null);
