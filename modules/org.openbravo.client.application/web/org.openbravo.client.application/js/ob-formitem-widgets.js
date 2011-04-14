@@ -607,6 +607,7 @@ isc.OBDateChooser.addProperties({
     // When data has changed, force the OBDateItem to get it. Other case OBDateItem.blur 
     // gets incorrect value on getValue()
     this.callingFormItem.setValue(this.getData());
+    this.callingFormItem.changed();
   },
   dateClick: function() {
     var ret = this.Super('dateClick', arguments);
