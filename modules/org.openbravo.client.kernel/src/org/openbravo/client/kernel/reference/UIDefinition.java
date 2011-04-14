@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -215,6 +215,16 @@ public abstract class UIDefinition {
           + field.getColumn().getDBColumnName());
     }
     return jsnobject.toString();
+  }
+
+  /**
+   * Returns alignment in grid view. In case it returns null, default alignment for actual data type
+   * is used.
+   * 
+   * @return <code>null</code> for default alignment, "left", "center" or "right"
+   */
+  public String getCellAlign() {
+    return null;
   }
 
   private String setNOWDefault() {

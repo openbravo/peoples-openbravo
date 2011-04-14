@@ -893,6 +893,8 @@ isc.OBDateItem.addProperties({
   // is done by the blur event defined here
   validateOnExit: false,
   
+  textAlign: 'left',
+  
   // ** {{{ change }}} **
   // Called when changing a value.
   change: function(form, item, value, oldValue){ /* transformInput */
