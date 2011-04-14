@@ -1468,7 +1468,7 @@ isc.OBViewGrid.addProperties({
     }
     return ret;
   },
-
+  
   // check if a fic call needs to be done when leaving a cell and moving to the next
   // row
   // see description in saveEditvalues

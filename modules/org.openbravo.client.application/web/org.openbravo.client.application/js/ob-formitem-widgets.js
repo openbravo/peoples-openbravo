@@ -1072,6 +1072,14 @@ isc.OBNumberItem.addProperties({
     return this.Super('init', arguments);
   },
   
+  // after a change also store the textual value in the form
+  // for precision, the textual value is sent to the server
+  // which can be transferred to a bigdecimal there
+  changed: function (form, item, value) {
+    this.form.setTextualValue(this.name, this.getEnteredValue(), this.typeInstance);
+    this.Super('changed', arguments);
+  },
+  
   getMaskNumeric: function(){
     return this.typeInstance.maskNumeric;
   },
