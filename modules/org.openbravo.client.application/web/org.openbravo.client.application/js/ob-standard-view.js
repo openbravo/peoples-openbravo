@@ -1260,11 +1260,14 @@ isc.OBStandardView.addProperties({
     
     var me = this;
     var formRefresh = function() {
+      if (refreshCallback) {
+        refreshCallback();
+      }
       me.viewForm.refresh();
     };
     
     if (!this.isShowingForm) {
-      this.viewGrid.refreshGrid();
+      this.viewGrid.refreshGrid(refreshCallback);
     } else {
       var view = this;
       if (this.viewForm.hasChanged) {
@@ -1277,9 +1280,6 @@ isc.OBStandardView.addProperties({
       } else {
         this.viewGrid.refreshGrid(formRefresh);
       }
-    }
-    if (refreshCallback) {
-      refreshCallback();
     }
   },
   

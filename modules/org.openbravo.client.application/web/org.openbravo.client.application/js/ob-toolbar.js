@@ -866,7 +866,6 @@ isc.OBToolbar.addProperties({
         doRefresh(buttons, currentValues, false, me);
       });
     } else {
-      currentValues = this.view.getCurrentValues();
       doRefresh(buttons, currentValues, hideAllButtons, this);
     }
   },
