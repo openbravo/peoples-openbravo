@@ -388,7 +388,7 @@ isc.OBSelectorItem.addProperties({
         this.form.focusInNextItem(this.name);
       }
     }
-    if (currentValue !== this.getValue() && this.form && this.form.handleItemChange) {
+    if (this.form && this.form.handleItemChange) {
       this._hasChanged = true;
       this.form.handleItemChange(this);
     }
