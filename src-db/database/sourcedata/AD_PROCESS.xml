@@ -3545,26 +3545,6 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800118-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--800118--></AD_PROCESS>
 
-<!--800120--><AD_PROCESS>
-<!--800120-->  <AD_PROCESS_ID><![CDATA[800120]]></AD_PROCESS_ID>
-<!--800120-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800120-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800120-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800120-->  <VALUE><![CDATA[MA_PC_Case_Launched]]></VALUE>
-<!--800120-->  <NAME><![CDATA[Run Periodic Control]]></NAME>
-<!--800120-->  <DESCRIPTION><![CDATA[With this process are planed all the gatherings of the periodic control selected.]]></DESCRIPTION>
-<!--800120-->  <HELP><![CDATA[With this process are planed all the gatherings of the periodic control selected.]]></HELP>
-<!--800120-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800120-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800120-->  <PROCEDURENAME><![CDATA[MA_PC_CASE_CREATE]]></PROCEDURENAME>
-<!--800120-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800120-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800120-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800120-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800120-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800120-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--800120--></AD_PROCESS>
-
 <!--800123--><AD_PROCESS>
 <!--800123-->  <AD_PROCESS_ID><![CDATA[800123]]></AD_PROCESS_ID>
 <!--800123-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

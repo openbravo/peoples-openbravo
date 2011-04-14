@@ -16674,18 +16674,6 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800495-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800495--></AD_ELEMENT>
 
-<!--800496--><AD_ELEMENT>
-<!--800496-->  <AD_ELEMENT_ID><![CDATA[800496]]></AD_ELEMENT_ID>
-<!--800496-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800496-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800496-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800496-->  <COLUMNNAME><![CDATA[MA_Pc_Case_ID]]></COLUMNNAME>
-<!--800496-->  <NAME><![CDATA[Periodic Quality Control Case]]></NAME>
-<!--800496-->  <PRINTNAME><![CDATA[PC Case]]></PRINTNAME>
-<!--800496-->  <HELP><![CDATA[Identifies each instance of a periodic control.]]></HELP>
-<!--800496-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800496--></AD_ELEMENT>
-
 <!--800497--><AD_ELEMENT>
 <!--800497-->  <AD_ELEMENT_ID><![CDATA[800497]]></AD_ELEMENT_ID>
 <!--800497-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -16697,18 +16685,6 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800497-->  <HELP><![CDATA[Identifies each test done in a periodic control.]]></HELP>
 <!--800497-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800497--></AD_ELEMENT>
-
-<!--800498--><AD_ELEMENT>
-<!--800498-->  <AD_ELEMENT_ID><![CDATA[800498]]></AD_ELEMENT_ID>
-<!--800498-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800498-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800498-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800498-->  <COLUMNNAME><![CDATA[MA_Pc_Value_ID]]></COLUMNNAME>
-<!--800498-->  <NAME><![CDATA[Periodic Quality Control Value]]></NAME>
-<!--800498-->  <PRINTNAME><![CDATA[PC Value]]></PRINTNAME>
-<!--800498-->  <HELP><![CDATA[Identifies each result of a test in a periodic control case.]]></HELP>
-<!--800498-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800498--></AD_ELEMENT>
 
 <!--800499--><AD_ELEMENT>
 <!--800499-->  <AD_ELEMENT_ID><![CDATA[800499]]></AD_ELEMENT_ID>

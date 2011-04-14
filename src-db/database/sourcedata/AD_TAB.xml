@@ -7772,56 +7772,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800160-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800160--></AD_TAB>
 
-<!--800161--><AD_TAB>
-<!--800161-->  <AD_TAB_ID><![CDATA[800161]]></AD_TAB_ID>
-<!--800161-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800161-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800161-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800161-->  <NAME><![CDATA[Test]]></NAME>
-<!--800161-->  <DESCRIPTION><![CDATA[Create measurements at a predefined checkpoint for produced product.]]></DESCRIPTION>
-<!--800161-->  <HELP><![CDATA[Create measurements at a predefined checkpoint for produced product.]]></HELP>
-<!--800161-->  <AD_TABLE_ID><![CDATA[800141]]></AD_TABLE_ID>
-<!--800161-->  <AD_WINDOW_ID><![CDATA[800067]]></AD_WINDOW_ID>
-<!--800161-->  <SEQNO><![CDATA[0]]></SEQNO>
-<!--800161-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--800161-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--800161-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--800161-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--800161-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--800161-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--800161-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800161-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--800161-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--800161-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800161-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--800161--></AD_TAB>
-
-<!--800162--><AD_TAB>
-<!--800162-->  <AD_TAB_ID><![CDATA[800162]]></AD_TAB_ID>
-<!--800162-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800162-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800162-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800162-->  <NAME><![CDATA[Result]]></NAME>
-<!--800162-->  <DESCRIPTION><![CDATA[Create and edit quality tests for a specified checkpoint, and add test results of the performed tests.]]></DESCRIPTION>
-<!--800162-->  <HELP><![CDATA[Create and edit quality tests for a specified checkpoint, and add test results of the performed tests.]]></HELP>
-<!--800162-->  <AD_TABLE_ID><![CDATA[800142]]></AD_TABLE_ID>
-<!--800162-->  <AD_WINDOW_ID><![CDATA[800067]]></AD_WINDOW_ID>
-<!--800162-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--800162-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--800162-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--800162-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--800162-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--800162-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--800162-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--800162-->  <ORDERBYCLAUSE><![CDATA[MA_PC_Value.datadate]]></ORDERBYCLAUSE>
-<!--800162-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800162-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--800162-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--800162-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800162-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--800162-->  <HQLORDERBYCLAUSE><![CDATA[testDate]]></HQLORDERBYCLAUSE>
-<!--800162--></AD_TAB>
-
 <!--800163--><AD_TAB>
 <!--800163-->  <AD_TAB_ID><![CDATA[800163]]></AD_TAB_ID>
 <!--800163-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
