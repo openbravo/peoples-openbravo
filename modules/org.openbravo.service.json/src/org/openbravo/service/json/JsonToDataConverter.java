@@ -398,8 +398,17 @@ public class JsonToDataConverter {
           }
         } else if (property.getDomainType() instanceof BigDecimalDomainType
             && jsonObject.has(keyName + "_textualValue")) {
-          setValue(obObject, property,
-              new BigDecimal((String) jsonObject.get(keyName + "_textualValue")));
+          final String strValue = (String) jsonObject.get(keyName + "_textualValue");
+          try {
+            if (strValue == null || strValue.trim().length() == 0) {
+              setValue(obObject, property, null);
+            } else {
+              setValue(obObject, property, new BigDecimal(strValue));
+            }
+          } catch (Exception e) {
+            throw new OBException("Exception while trying to convert value:-->" + strValue + "<-- "
+                + e.getMessage(), e);
+          }
         } else {
           setValue(obObject, property, jsonObject.get(keyName));
         }
