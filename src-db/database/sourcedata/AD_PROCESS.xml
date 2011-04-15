@@ -3623,46 +3623,6 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800126-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--800126--></AD_PROCESS>
 
-<!--800129--><AD_PROCESS>
-<!--800129-->  <AD_PROCESS_ID><![CDATA[800129]]></AD_PROCESS_ID>
-<!--800129-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800129-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800129-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800129-->  <VALUE><![CDATA[MA_Maint_Part_CreateFrom]]></VALUE>
-<!--800129-->  <NAME><![CDATA[Create from Maintenance Part]]></NAME>
-<!--800129-->  <DESCRIPTION><![CDATA[Create from Maintenance Part]]></DESCRIPTION>
-<!--800129-->  <HELP><![CDATA[Create from Maintenance Part]]></HELP>
-<!--800129-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800129-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800129-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800129-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800129-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_actionButton.UpdateMaintenanceScheduled]]></CLASSNAME>
-<!--800129-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800129-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800129-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800129-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800129--></AD_PROCESS>
-
-<!--800130--><AD_PROCESS>
-<!--800130-->  <AD_PROCESS_ID><![CDATA[800130]]></AD_PROCESS_ID>
-<!--800130-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800130-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800130-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800130-->  <VALUE><![CDATA[MA_Maint_All]]></VALUE>
-<!--800130-->  <NAME><![CDATA[Insert Maintenances]]></NAME>
-<!--800130-->  <DESCRIPTION><![CDATA[Insert Maintenances]]></DESCRIPTION>
-<!--800130-->  <HELP><![CDATA[Insert Maintenances]]></HELP>
-<!--800130-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800130-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800130-->  <PROCEDURENAME><![CDATA[MA_Maint_All]]></PROCEDURENAME>
-<!--800130-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800130-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800130-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800130-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800130-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800130-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--800130--></AD_PROCESS>
-
 <!--800131--><AD_PROCESS>
 <!--800131-->  <AD_PROCESS_ID><![CDATA[800131]]></AD_PROCESS_ID>
 <!--800131-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
