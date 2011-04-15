@@ -615,7 +615,14 @@ isc.OBDateChooser.addProperties({
       this.callingForm.focusInNextItem(this.callingFormItem.name);
     }
     return ret;
-  }
+  },
+
+  initWidget: function() {
+    this.Super('initWidget', arguments);
+    
+    // Force associated date text box to have the same enable status as the picker has
+    this.callingFormItem.disabled = this.disabled;
+  }  
 });
 
 if (isc.OBDateChooser) {  // To force SC to load OBDateChooser instead of DateChooser
