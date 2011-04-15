@@ -30,6 +30,7 @@ import org.openbravo.advpaymentmngt.utility.FIN_BankStatementImport;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
@@ -121,14 +122,16 @@ public class ImportBankFile extends HttpSecureAppServlet {
     xmlDocument.setParameter("help", strHelp);
     xmlDocument.setParameter("tabId", tabId);
     // Bank File Formats
+    boolean isAnyFileFormatInstalled = false;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
           "FIN_BANKFILE_FORMAT_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ImportBankFile"), Utility.getContext(this, vars, "#User_Client", "ImportBankFile"),
           0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ImportBankFile", "");
-      xmlDocument.setData("reportfinBankFileFormatId", "liststructure", comboTableData
-          .select(false));
+      FieldProvider[] fileFormatCombo = comboTableData.select(false);
+      isAnyFileFormatInstalled = fileFormatCombo.length > 0;
+      xmlDocument.setData("reportfinBankFileFormatId", "liststructure", fileFormatCombo);
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -136,9 +139,17 @@ public class ImportBankFile extends HttpSecureAppServlet {
     xmlDocument.setParameter("finBankFileFormatId", "");
 
     if (isDefault) {
-      xmlDocument.setParameter("messageType", "");
-      xmlDocument.setParameter("messageTitle", "");
-      xmlDocument.setParameter("messageMessage", "");
+      if (!isAnyFileFormatInstalled) {
+        xmlDocument.setParameter("messageType", "Warning");
+        xmlDocument.setParameter("messageTitle", Utility.messageBD(this,
+            "APRM_NoBankFileAvailable", vars.getLanguage()));
+        xmlDocument.setParameter("messageMessage", Utility.messageBD(this,
+            "APRM_NoBankFileAvailableInfo", vars.getLanguage()));
+      } else {
+        xmlDocument.setParameter("messageType", "");
+        xmlDocument.setParameter("messageTitle", "");
+        xmlDocument.setParameter("messageMessage", "");
+      }
     } else {
       OBError myMessage = new OBError();
       myMessage.setTitle("");
