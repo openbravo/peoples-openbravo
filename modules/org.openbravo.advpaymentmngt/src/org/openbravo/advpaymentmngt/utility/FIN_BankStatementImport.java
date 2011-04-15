@@ -162,7 +162,8 @@ public abstract class FIN_BankStatementImport {
     } else if (getMyError() != null && getMyError().getType().toLowerCase().equals("success")) {
       return getMyError();
     } else {
-      return getOBError(conn, vars, numberOfLines + " " + "@RowsInserted@", "Success", "Success");
+      return getOBError(conn, vars, "@APRM_BankStatementNo@ " + bankStatement.getDocumentNo()
+          + "<br/>" + numberOfLines + " " + "@RowsInserted@", "Success", "Success");
     }
   }
 
