@@ -335,6 +335,16 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("recordIdentifierText", text);
 
+    String excludeAuditColumnNames = getExcludeAuditColumnNames(vars, tableId);
+    if (excludeAuditColumnNames.length() > 0) {
+      String auditText = Utility.messageBD(this, "AUDIT_HISTORY_EXCLUDE_AUDITCOLUMNS", vars
+          .getLanguage());
+      auditText = auditText.replace("@excludeauditcolumns@", excludeAuditColumnNames);
+      xmlDocument.setParameter("excludeAuditColumnText", auditText);
+    } else {
+      xmlDocument.setParameter("excludeAuditColumnText", "");
+    }
+
     // param for building 'View deleted records' link
     xmlDocument.setParameter("recordId", recordId);
     xmlDocument.setParameter("tabId", tabId);
@@ -472,6 +482,17 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       text = text.replace("@elementnameCurrentTab@", elementCurrentTab);
       xmlDocument.setParameter("recordIdentifierText", text);
 
+      // exclude audit column names in info bar
+      String excludeAuditColumnNames = getExcludeAuditColumnNames(vars, tableId);
+      if (excludeAuditColumnNames.length() > 0) {
+        String auditText = Utility.messageBD(this, "AUDIT_HISTORY_EXCLUDE_AUDITCOLUMNS", vars
+            .getLanguage());
+        auditText = auditText.replace("@excludeauditcolumns@", excludeAuditColumnNames);
+        xmlDocument.setParameter("excludeAuditColumnText", auditText);
+      } else {
+        xmlDocument.setParameter("excludeAuditColumnText", "");
+      }
+
     } else {
       // child-tab of another tab
       Tab parentTab = OBDal.getInstance().get(Tab.class, parentTabId);
@@ -527,6 +548,17 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         text = text.replace("@parentIdentifier@", parentIdentifier);
 
         xmlDocument.setParameter("recordIdentifierText", text);
+
+        // exclude audit column names in info bar
+        String excludeAuditColumnNames = getExcludeAuditColumnNames(vars, tableId);
+        if (excludeAuditColumnNames.length() > 0) {
+          String auditText = Utility.messageBD(this, "AUDIT_HISTORY_EXCLUDE_AUDITCOLUMNS", vars
+              .getLanguage());
+          auditText = auditText.replace("@excludeauditcolumns@", excludeAuditColumnNames);
+          xmlDocument.setParameter("excludeAuditColumnText", auditText);
+        } else {
+          xmlDocument.setParameter("excludeAuditColumnText", "");
+        }
 
         // save values for use in DATA request
         vars.setSessionValue("AuditTrail.fkColumnName", atpd.name);
@@ -836,6 +868,10 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     List<Field> fields = getFieldListForTab(vars, tab);
     for (Field field : fields) {
       Column col = field.getColumn();
+      // Remove grid generation for non audited columns
+      if (col.isExcludeAudit()) {
+        continue;
+      }
       gridCol = new SQLReturnObject();
       gridCol.setData("columnname", col.getDBColumnName());
       gridCol.setData("gridcolumnname", col.getDBColumnName());
@@ -1393,6 +1429,24 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     } else {
       return list.getName();
     }
+  }
+
+  private String getExcludeAuditColumnNames(VariablesSecureApp vars, String tableId) {
+    OBCriteria<Column> col = OBDal.getInstance().createCriteria(Column.class);
+    col.add(Expression.eq("table.id", tableId));
+    col.add(Expression.eq(Column.PROPERTY_EXCLUDEAUDIT, Boolean.TRUE));
+    StringBuilder result = new StringBuilder();
+    // loop over ExcludeAudit columns and concatenate column name
+    List<Column> columnList = col.list();
+    for (Column c : columnList) {
+      result.append(c.getName());
+      result.append(","); // delimiter between columns
+    }
+    // remove ',' after last column
+    if (result.length() > 0) {
+      result.setLength(result.length() - 1);
+    }
+    return result.toString();
   }
 
   /**
