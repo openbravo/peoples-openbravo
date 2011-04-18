@@ -1636,10 +1636,6 @@ isc.OBViewGrid.addProperties({
       // if the focus does not get suppressed then the clicked field will receive focus
       // and won't be disabled so the user can already start typing      
       suppressFocus = true;
-
-      if (!this.forceFocusColumn && (colNum || colNum === 0)) {
-        this.forceFocusColumn = this.getField(colNum).name;
-      }
     }
     
     var ret = this.Super('showInlineEditor', [rowNum, colNum, newCell, newRow, suppressFocus]);
