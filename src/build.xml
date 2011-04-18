@@ -274,7 +274,7 @@ build.war: build a war file in the lib directory.
 
   <!-- build-internal forking helper -->
   <target name="generate.entities.quick.forked" depends="compile.src.gen">
-    <taskdef name="workflow" classpathref="project.class.path" classname="org.openbravo.base.gen.GenerateEntitiesTaskFreemarker" />
+    <taskdef name="workflow" classpathref="project.class.path" classname="org.openbravo.base.gen.GenerateEntitiesTask" />
     <workflow friendlyWarnings="${friendlyWarnings}" srcGenPath="${base.src.gen}" propertiesFile="${base.config}/Openbravo.properties" />
   </target>
 
