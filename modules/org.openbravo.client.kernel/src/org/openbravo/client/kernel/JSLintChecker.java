@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.kernel;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.openbravo.base.provider.OBProvider;
@@ -51,32 +50,28 @@ public class JSLintChecker {
   }
 
   public String check(String componentIdentifier, String javascript) {
-    try {
-      JSLint jsLint = new JSLintBuilder().fromDefault();
-      jsLint.addOption(Option.BROWSER);
-      jsLint.addOption(Option.EQEQEQ);
-      jsLint.addOption(Option.EVIL);
-      jsLint.addOption(Option.LAXBREAK);
+    JSLint jsLint = new JSLintBuilder().fromDefault();
+    jsLint.addOption(Option.BROWSER);
+    // FIXME: option removed on jslint update: jsLint.addOption(Option.EQEQEQ);
+    jsLint.addOption(Option.EVIL);
+    // FIXME: option removed on jslint update: jsLint.addOption(Option.LAXBREAK);
 
-      final JSLintResult lintResult = jsLint.lint("0", javascript);
-      final List<Issue> issues = lintResult.getIssues();
-      if (issues.isEmpty()) {
-        return null;
-      }
-      final StringBuilder sb = new StringBuilder();
-      if (issues.size() > 0) {
-        sb.append(">>>>>>> Issues found in javascript <<<<<<<<<\n");
-        sb.append(javascript);
-        sb.append(">>>>>>> Issues <<<<<<<<<\n");
-      }
-      for (Issue issue : issues) {
-        sb.append(componentIdentifier + ":" + issue.getLine() + ":" + issue.getCharacter() + ": "
-            + issue.getReason() + "\n");
-      }
-      return sb.toString();
-    } catch (IOException e) {
-      throw new IllegalStateException(e);
+    final JSLintResult lintResult = jsLint.lint("0", javascript);
+    final List<Issue> issues = lintResult.getIssues();
+    if (issues.isEmpty()) {
+      return null;
     }
+    final StringBuilder sb = new StringBuilder();
+    if (issues.size() > 0) {
+      sb.append(">>>>>>> Issues found in javascript <<<<<<<<<\n");
+      sb.append(javascript);
+      sb.append(">>>>>>> Issues <<<<<<<<<\n");
+    }
+    for (Issue issue : issues) {
+      sb.append(componentIdentifier + ":" + issue.getLine() + ":" + issue.getCharacter() + ": "
+          + issue.getReason() + "\n");
+    }
+    return sb.toString();
   }
 
 }
