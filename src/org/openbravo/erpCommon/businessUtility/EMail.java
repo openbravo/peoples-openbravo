@@ -259,10 +259,10 @@ public class EMail {
     // Simple Message
     if (g_attachments == null || g_attachments.size() == 0) {
       if (g_messageHTML == null || g_messageHTML.length() == 0)
-        g_smtpMsg.setContent(getMessageCRLF(), "text/plain");
+        g_smtpMsg.setContent(getMessageCRLF(), "text/plain; charset=UTF-8");
       else
         g_smtpMsg.setDataHandler(new DataHandler(
-            new ByteArrayDataSource(g_messageHTML, "text/html")));
+            new ByteArrayDataSource(g_messageHTML, "text/html; charset=UTF-8")));
 
       if (log4j.isDebugEnabled())
         log4j.debug("setContent(simple) " + getSubject());
@@ -271,9 +271,9 @@ public class EMail {
       MimeBodyPart mbp_1 = new MimeBodyPart();
       mbp_1.setText("");
       if (g_messageHTML == null || g_messageHTML.length() == 0)
-        mbp_1.setContent(getMessageCRLF(), "text/plain");
+        mbp_1.setContent(getMessageCRLF(), "text/plain; charset=UTF-8");
       else
-        mbp_1.setDataHandler(new DataHandler(new ByteArrayDataSource(g_messageHTML, "text/html")));
+        mbp_1.setDataHandler(new DataHandler(new ByteArrayDataSource(g_messageHTML, "text/html; charset=UTF-8")));
 
       // Create Multipart and its parts to it
       Multipart mp = new MimeMultipart();
