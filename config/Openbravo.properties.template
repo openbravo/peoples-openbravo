@@ -112,7 +112,9 @@ sqlc.queryExecutionStrategy=optimized
 ##################
 
 # Leave this empty to use the default login handler.
-# LAM server example: org.openbravo.authentication.lam.LamAuthenticationManager
+# Examples:
+# - org.openbravo.authentication.basic.AutologonAuthenticationManager (included)
+# - org.openbravo.authentication.lam.LamAuthenticationManager (in external 'LAM Authentication Manager' module)
 authentication.class=
 
 ###########
