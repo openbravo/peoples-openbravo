@@ -438,7 +438,7 @@ function onloadFunctions() {
 					      <table style="border:0px;border-collapse:collapse;">
 					        <tr>
 					          <td style="padding-top: 0px;">
-                        		  <input displayFormat="xx" saveFormat="yy"  class="dojoValidateValid TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateReceiptxx" id="paramDateReceiptxx" onchange="validateDateTextBox(this.id);logChanges(this);return true;" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this);"></input>
+                        		  <input onblur="expandDateYear(this.id);" displayFormat="xx" saveFormat="yy"  class="dojoValidateValid TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateReceiptxx" id="paramDateReceiptxx" onchange="validateDateTextBox(this.id);logChanges(this);return true;" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this);"></input>
                               </td>			
 							</tr>
 					      </table>
