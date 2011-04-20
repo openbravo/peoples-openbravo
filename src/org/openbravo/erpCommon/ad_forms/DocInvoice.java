@@ -286,14 +286,14 @@ public class DocInvoice extends AcctServer {
             fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
                 m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(
                 m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
-                this.C_Currency_ID, DateAcct, "", conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
+                this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn), "",
+                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);		
           else
             fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
                 m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(
                 m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
-                this.C_Currency_ID, DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
+                this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn),
+                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
@@ -354,8 +354,8 @@ public class DocInvoice extends AcctServer {
           fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
               m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(((amount
               .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From,
-              this.C_Currency_ID, DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
+              this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn), Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
@@ -415,14 +415,14 @@ public class DocInvoice extends AcctServer {
             fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
                 m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(
                 m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
-                this.C_Currency_ID, DateAcct, "", conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
+                this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn), "",
+                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
           else
             fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
                 m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(
                 m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
-                this.C_Currency_ID, DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, conn);
+                this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn),
+                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
@@ -486,8 +486,8 @@ public class DocInvoice extends AcctServer {
           fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
               m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(((amount
               .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From,
-              this.C_Currency_ID, DateAcct, "", conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
+              this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn), "",
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
