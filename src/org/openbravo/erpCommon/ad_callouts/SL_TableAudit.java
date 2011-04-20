@@ -54,7 +54,7 @@ public class SL_TableAudit extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
       try {
-        printPage(response, vars);
+        printPage(response, vars, strChanged);
       } catch (Exception ex) {
         pageErrorCallOut(response);
       }
@@ -62,20 +62,33 @@ public class SL_TableAudit extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged)
+      throws IOException {
     // Change audit trail status regarding whether there are audited tables
-    boolean currentRecordFullyAudited = vars.getStringParameter("inpisfullyaudited").equals("Y");
     StringBuffer action = new StringBuffer();
-    if (currentRecordFullyAudited) {
-      SessionInfo.setAuditActive(true);
-      action.append("new Array(\"MESSAGE\", \""
-          + Utility.messageBD(this, "RegenerateAudit", vars.getLanguage()) + "\"),\n");
-      action.append("new Array(\"inpisindevelopment\", \"N\")");
-
-    } else {
-      OBCriteria<Table> obc = OBDal.getInstance().createCriteria(Table.class);
-      obc.add(Expression.eq(Table.PROPERTY_ISFULLYAUDITED, true));
-      SessionInfo.setAuditActive(obc.list().size() > 0);
+    if (strChanged.equalsIgnoreCase("inpisfullyaudited")) {
+      boolean currentRecordFullyAudited = vars.getStringParameter("inpisfullyaudited").equals("Y");
+      if (currentRecordFullyAudited) {
+        SessionInfo.setAuditActive(true);
+        action.append("new Array(\"MESSAGE\", \""
+            + Utility.messageBD(this, "RegenerateAudit_ExcludeColumn", vars.getLanguage())
+            + "\")\n");
+      } else {
+        OBCriteria<Table> obc = OBDal.getInstance().createCriteria(Table.class);
+        obc.add(Expression.eq(Table.PROPERTY_ISFULLYAUDITED, true));
+        SessionInfo.setAuditActive(obc.list().size() > 0);
+      }
+    } else if (strChanged.equalsIgnoreCase("inpisexcludeaudit")) {
+      boolean currentRecordExcludeAudit = vars.getStringParameter("inpisexcludeaudit").equals("Y");
+      if (currentRecordExcludeAudit) {
+        SessionInfo.setAuditActive(true);
+        action.append("new Array(\"MESSAGE\", \""
+            + Utility.messageBD(this, "RegenerateAudit", vars.getLanguage()) + "\")\n");
+      } else {
+        OBCriteria<Table> obc = OBDal.getInstance().createCriteria(Table.class);
+        obc.add(Expression.eq(Table.PROPERTY_ISFULLYAUDITED, true));
+        SessionInfo.setAuditActive(obc.list().size() > 0);
+      }
     }
 
     StringBuffer result = new StringBuffer();
