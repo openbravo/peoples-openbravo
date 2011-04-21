@@ -300,7 +300,7 @@ var baseDirectory = "../../../../../web/";
                           class="dojoValidateValid TextBox_btn_OneCell_width"
                           required="false" value="" maxlength="10" name="inpDateFrom"
                           onkeyup="autoCompleteDate(this);"
-                          displayformat="xx" saveformat="yy"/>
+                          onblur="expandDateYear(this.id);" displayformat="xx" saveformat="yy"/>
                         </td>
                         <td class="FieldButton_ContentCell">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;">
@@ -326,7 +326,7 @@ var baseDirectory = "../../../../../web/";
                           class="dojoValidateValid TextBox_btn_OneCell_width"
                           required="false" value="" maxlength="10" name="inpDateTo"
                           onkeyup="autoCompleteDate(this);"
-                          displayformat="xx" saveformat="yy"/>
+                          onblur="expandDateYear(this.id);" displayformat="xx" saveformat="yy"/>
                         </td>
                         <td class="FieldButton_ContentCell">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;">

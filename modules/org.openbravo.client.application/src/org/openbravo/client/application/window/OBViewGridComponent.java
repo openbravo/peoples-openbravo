@@ -434,6 +434,9 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       return field.getDisplayedLength();
     }
 
+    public String getCellAlign() {
+      return uiDefinition.getCellAlign();
+    }
   }
 
   private class GridFieldComparator implements Comparator<Field> {

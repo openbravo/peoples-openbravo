@@ -96,14 +96,20 @@ isc.OBToolbar.addClassProperties({
   },
   NEW_ROW_BUTTON_PROPERTIES: {
     action: function(){
-      // do -1 because the newrow logic adds one
-      this.view.newRow(this.view.viewGrid.getDrawArea()[0] - 1);
+      var view = this.view, 
+          grid = view.viewGrid;
+      
+      // In case of no record selected getRecordIndex(undefined) returns -1,
+      // which is the top position, other case it adds bellow current selected row.
+      view.newRow(grid.getRecordIndex(grid.getSelectedRecord()));
     },
     buttonType: 'newRow',
     prompt: OB.I18N.getLabel('OBUIAPP_NewRow'),
     updateState: function(){
-      var view = this.view;
-      this.setDisabled(view.isShowingForm || view.readOnly || view.singleRecord || !view.hasValidState());
+      var view = this.view, 
+          selectedRecords = view.viewGrid.getSelectedRecords();
+      this.setDisabled(view.isShowingForm || view.readOnly || view.singleRecord || !view.hasValidState() || 
+                       (selectedRecords && selectedRecords.length > 1));
     },
     keyboardShortcutId: 'ToolBar_NewRow'
   },
@@ -846,7 +852,7 @@ isc.OBToolbar.addProperties({
         TAB_ID: this.view.tabId,
         ROW_ID: currentValues.id
       };
-      var allProperties = this.view.getContextInfo(false, true, false, false);
+      var allProperties = this.view.getContextInfo(false, true, false, true);
       OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
         var sessionAttributes = data.sessionAttributes, auxInputs = data.auxiliaryInputValues;
         if (sessionAttributes) {
@@ -866,7 +872,6 @@ isc.OBToolbar.addProperties({
         doRefresh(buttons, currentValues, false, me);
       });
     } else {
-      currentValues = this.view.getCurrentValues();
       doRefresh(buttons, currentValues, hideAllButtons, this);
     }
   },
@@ -1113,7 +1118,7 @@ OB.ToolbarUtils.print = function(view, url, directPrint){
     return;
   }
   
-  var popupParams = 'Command=DEFAULT', allProperties = view.getContextInfo(false, true), sessionProperties = view.getContextInfo(true, true);
+  var popupParams = 'Command=DEFAULT', allProperties = view.getContextInfo(false, true, false, true), sessionProperties = view.getContextInfo(true, true, false, true);
   
   for (var param in allProperties) {
     if (allProperties.hasOwnProperty(param)) {

@@ -1482,9 +1482,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                 priceList = price[0].pricelist;
                 priceLimit = price[0].pricelimit;
                 priceStd = price[0].pricestd;
-                priceActual = CreateFromInvoiceData.getOffersPriceInvoice(this, strDateInvoiced,
-                    strBPartner, data[i].mProductId, priceStd, data[i].quantityorder, strPriceList,
-                    strKey);
+                priceActual = price[0].priceactual;
               }
               if (isSOTrx.equals("Y") && price[0].cancelpricead.equals("Y")) {
                 priceActual = priceStd;

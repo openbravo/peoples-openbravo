@@ -587,6 +587,9 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     String strSubtitle = Utility.messageBD(this, "CompanyName", vars.getLanguage()) + ": "
         + ReportGeneralLedgerJournalData.selectCompany(this, vars.getClient());
 
+    if (!("0".equals(strOrg)))
+      strSubtitle += " - " + ReportGeneralLedgerJournalData.selectOrg(this, strOrg);
+
     if (!"".equals(strDateFrom) || !"".equals(strDateTo))
       strSubtitle += " - " + Utility.messageBD(this, "Period", vars.getLanguage()) + ": "
           + strDateFrom + " - " + strDateTo;

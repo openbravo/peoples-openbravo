@@ -95,7 +95,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '10984';
+  var number = '11622';
   return number;
 }
 
@@ -4095,7 +4095,9 @@ function selected(cal, date) {
 */
 // .
 function closeHandler(cal) {
-  if (typeof (cal.sel.onchange)!="undefined") cal.sel.onchange();
+  if (typeof (cal.sel.onchange) != "undefined" && cal.sel.onchange != null) {
+    cal.sel.onchange();
+  }
   cal.sel.focus();
   cal.hide();                        // hide the calendar
 //  cal.destroy();

@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.kernel.BaseComponent;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.OBContext;
@@ -74,9 +75,11 @@ public class MainLayoutComponent extends BaseTemplateComponent {
       try {
         final Class<BaseTemplateComponent> clz = (Class<BaseTemplateComponent>) OBClassLoader
             .getInstance().loadClass(nbc.getJavaClassName());
-        final BaseTemplateComponent component = weldUtils.getInstance(clz);
+        final BaseComponent component = weldUtils.getInstance(clz);
         component.setId(nbc.getId());
-        component.setComponentTemplate(nbc.getTemplate());
+        if (component instanceof BaseTemplateComponent && nbc.getTemplate() != null) {
+          ((BaseTemplateComponent) component).setComponentTemplate(nbc.getTemplate());
+        }
         component.setParameters(getParameters());
 
         jsCode = component.generate();

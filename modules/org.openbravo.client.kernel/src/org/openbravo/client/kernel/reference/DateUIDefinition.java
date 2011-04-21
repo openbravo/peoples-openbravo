@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -114,5 +114,10 @@ public class DateUIDefinition extends UIDefinition {
         + "createClassicString: function(value) {"
         + "return OB.Utilities.Date.JSToOB(value, OB.Format.date);" + "},");
     return sb.toString();
+  }
+
+  @Override
+  public String getCellAlign() {
+    return "left";
   }
 }

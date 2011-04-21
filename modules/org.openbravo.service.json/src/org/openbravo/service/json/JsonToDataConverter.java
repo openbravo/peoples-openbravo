@@ -40,6 +40,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
 import org.openbravo.base.model.domaintype.HashedStringDomainType;
 import org.openbravo.base.model.domaintype.TimestampDomainType;
@@ -395,6 +396,19 @@ public class JsonToDataConverter {
           } else {
             // no _cleartext value found -> skipping field
           }
+        } else if (property.getDomainType() instanceof BigDecimalDomainType
+            && jsonObject.has(keyName + "_textualValue")) {
+          final String strValue = (String) jsonObject.get(keyName + "_textualValue");
+          try {
+            if (strValue == null || strValue.trim().length() == 0) {
+              setValue(obObject, property, null);
+            } else {
+              setValue(obObject, property, new BigDecimal(strValue));
+            }
+          } catch (Exception e) {
+            throw new OBException("Exception while trying to convert value:-->" + strValue + "<-- "
+                + e.getMessage(), e);
+          }
         } else {
           setValue(obObject, property, jsonObject.get(keyName));
         }
@@ -635,8 +649,8 @@ public class JsonToDataConverter {
           // there are mismatches between json and the database in
           // precision of times/dates, these are repaired here by
           // not updating if the relevant part is the same
-          if (areDatesEqual((Date) value, (Date) currentValue, property.isDatetime(), property
-              .getDomainType() instanceof TimestampDomainType)) {
+          if (areDatesEqual((Date) value, (Date) currentValue, property.isDatetime(),
+              property.getDomainType() instanceof TimestampDomainType)) {
             return;
           }
         }

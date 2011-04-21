@@ -49,6 +49,7 @@
     </SUBREPORT>
 
     <PARAMETER id="recordIdentifierText" name="recordIdentifierText" />
+    <PARAMETER id="excludeAuditColumnText" name="excludeAuditColumnText" />
 
     <PARAMETER id="paramLinkDeleted" name="recordId" attribute="href" replace="xx" />
     <PARAMETER id="paramLinkDeleted" name="tabId" attribute="href" replace="yy" />

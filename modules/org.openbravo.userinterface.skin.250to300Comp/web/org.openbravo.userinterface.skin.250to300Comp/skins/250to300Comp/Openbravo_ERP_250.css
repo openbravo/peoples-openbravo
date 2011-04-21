@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -304,23 +304,23 @@ table.DataGrid_Body_Table_focus {
 }
 
 tr.DataGrid_Body_Row_Even, tr.DataGrid_Body_Row_1 {
-  background-image: none;  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: none;
   background-color: #FFFFFF;
 }
 
 tr.DataGrid_Body_Row_Odd, tr.DataGrid_Body_Row_0 {
-  background-image: none;  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: none;
   background-color: #F5F5F5;
 }
 
 tr.DataGrid_Body_Row_focus {
-  background-image: none;  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: none;
   background-color: #FFBA6E;
   color: #000000;
 }
 
 tr.DataGrid_Body_Row_selected {
-  background-image: none;  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: none;
   background-color: #B8D587;
   color: #000000;
 }
@@ -374,7 +374,7 @@ td.DataGrid_Body_Cell_hover {
   font-family: arial, sans-serif !important;
   font-size: 12px !important;
   color: #000000 !important;
-  background-image: none;  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-image: none;
   background-color: #FFE1C0;
 }
 
@@ -550,7 +550,7 @@ a.LabelLink:visited {
 }
 
 a.LabelLink_focus {
-  background-image: none;  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: none;
   color: #333333;
   border-color: #FA962F;
 }
@@ -1309,13 +1309,13 @@ a.Main_ToolBar_Button:visited {
 }
 
 a.Main_ToolBar_Button:hover {
-  background-image: none;  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: none;
   background-color: #3a6b01;
   border: 1px solid #74a23f;
 }
 
 a.Main_ToolBar_Button:active {
-  background-image: none;  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: none;
   background-color: #2C4E00;
   border: 1px solid #74a23f;
 }
@@ -1332,7 +1332,7 @@ a.Main_ToolBar_Button_Selected {
   margin-right: 2px;
   width: 28px;
   height: 28px;
-  background-image: none;  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: none;
   background-color: #2C4E00;
   border: 1px solid #74a23f;
 }
@@ -1353,12 +1353,12 @@ a.Main_ToolBar_Button_Selected:visited {
 }
 
 a.Main_ToolBar_Button_Selected:hover {
-  background-image: none;  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: none;
   border: 1px solid #74a23f;
 }
 
 a.Main_ToolBar_Button_Selected:active {
-  background-image: none;  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  background-image: none;
 }
 
 a.Main_ToolBar_Button_Selected:focus {

@@ -382,6 +382,7 @@ public class DataSourceServlet extends BaseKernelServlet {
           keys.add(key);
           writer.append("'").append(key).append("'");
         }
+        propertiesWritten = true;
       } catch (Exception e) {
         throw new OBException("Error while writing column names when exporting a CSV file", e);
       }

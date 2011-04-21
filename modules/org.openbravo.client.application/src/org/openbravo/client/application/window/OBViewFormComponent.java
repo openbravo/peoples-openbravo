@@ -390,7 +390,14 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       if (property.isBoolean()) {
         return false;
       }
-      return property.isMandatory();
+
+      if (field.getColumn() != null) {
+        // Taking value from AD definition, mandatoriness of a column can be different in AD and in
+        // memory model, because memory model sets mandatoriness regarding physical DB definition.
+        return field.getColumn().isMandatory();
+      } else {
+        return property.isMandatory();
+      }
     }
 
     public int getLength() {

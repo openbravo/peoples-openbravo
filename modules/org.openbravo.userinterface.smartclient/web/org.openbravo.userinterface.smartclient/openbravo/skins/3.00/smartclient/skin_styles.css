@@ -613,6 +613,7 @@ background:#B2D7FF url(./images/cssButton/button_Over_stretch.png) repeat-x;
 .selectItemTextError,
 .selectItemTextDisabled,
 .selectItemTextFocused,
+.comboBoxItemPendingText,
 .pickListCell,
 .pickListCellSelected,
 .pickListCellDisabled,
@@ -629,6 +630,10 @@ background:#B2D7FF url(./images/cssButton/button_Over_stretch.png) repeat-x;
 .labelAnchorFocused {
     font-family:Arial,Verdana,sans-serif; font-size:11px;
     color:black;
+}
+
+.comboBoxItemPendingText {
+    color:#0066CC;
 }
 
 .formTitle,

@@ -572,6 +572,7 @@ public class SelectorComponent extends BaseTemplateComponent {
     localSelectorField.setTitle(" ");
     localSelectorField.setSort(false);
     localSelectorField.setFilter(false);
+    localSelectorField.setSelectorItem(isSelectorItem());
     pickListFields.add(localSelectorField);
     pickListFields.addAll(getSelectorFields(true, false));
     return pickListFields;
@@ -610,6 +611,7 @@ public class SelectorComponent extends BaseTemplateComponent {
       localSelectorField.setName(fieldName);
       localSelectorField.setTitle(getTranslatedName(selectorField));
       localSelectorField.setSort(!pickList && selectorField.isSortable());
+      localSelectorField.setSelectorItem(isSelectorItem());
 
       localSelectorField.setFilter(!pickList && selectorField.isFilterable());
       localSelectorField.setDomainType(domainType);
@@ -709,6 +711,7 @@ public class SelectorComponent extends BaseTemplateComponent {
     private String displayField;
     private boolean filter;
     private boolean sort;
+    private boolean isSelectorItem;
     private DomainType domainType;
     private UIDefinition uiDefinition;
     private SelectorField selectorField;
@@ -747,7 +750,7 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     public String getFilterEditorProperties() {
       if (getUIDefinition() != null) {
-        if (getUIDefinition() instanceof FKComboUIDefinition) {
+        if (getUIDefinition() instanceof FKComboUIDefinition && isSelectorItem) {
           return ", filterOperator: 'equals', filterOnKeypress: true, canFilter:true, required: false, filterEditorType: 'OBSelectorFilterSelectItem', filterEditorProperties: {entity: '"
               + getEntityName() + "', displayField: '" + JsonConstants.IDENTIFIER + "'}";
         }
@@ -803,6 +806,10 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     public void setSort(boolean sort) {
       this.sort = sort;
+    }
+
+    public void setSelectorItem(boolean isSelectorItem) {
+      this.isSelectorItem = isSelectorItem;
     }
 
     public static class LocalSelectorFieldProperty {

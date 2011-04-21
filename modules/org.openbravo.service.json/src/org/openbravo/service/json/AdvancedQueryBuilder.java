@@ -523,7 +523,7 @@ public class AdvancedQueryBuilder {
       orNesting--;
       return value;
     }
-    throw new IllegalArgumentException("Unsupported operation " + operator);
+    return parseSingleClause(advancedCriteria);
   }
 
   private String parseStructuredClause(JSONArray clauses, String hqlOperator) throws JSONException {
@@ -818,9 +818,7 @@ public class AdvancedQueryBuilder {
       } else {
         final List<Property> newIdentifierProperties = prop.getReferencedProperty().getEntity()
             .getIdentifierProperties();
-        sb
-            .append(createIdentifierLeftClause(newIdentifierProperties, prefix + prop.getName()
-                + "."));
+        sb.append(createIdentifierLeftClause(newIdentifierProperties, prefix + prop.getName() + "."));
       }
     }
 

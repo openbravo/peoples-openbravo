@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,9 @@ isc.OBViewGrid.create({
     <#list data.fields as field>
         { 
         autoExpand: ${field.autoExpand}, type: '${field.type}',
+        <#if field.cellAlign??>
+        cellAlign: '${field.cellAlign?js_string}',
+        </#if>
         editorProperties: {
           ${field.gridEditorFieldProperties}
           // note need to be repeated for editor fields
@@ -54,6 +57,7 @@ isc.OBViewGrid.create({
         ${field.filterEditorProperties}
         , title: '${field.title?js_string}'
         , prompt: '${field.title?js_string}'
+        , escapeHTML: true
         , showIf: '${field.initialShow?string}'
         , columnName: '${field.columnName?js_string}'
         , inpColumnName: '${field.inpColumnName?js_string}'
