@@ -621,7 +621,9 @@ isc.OBDateChooser.addProperties({
     this.Super('initWidget', arguments);
     
     // Force associated date text box to have the same enable status as the picker has
-    this.callingFormItem.disabled = this.disabled;
+    if (this.callingFormItem) {
+      this.callingFormItem.disabled = this.disabled;
+    }
   }  
 });
 
