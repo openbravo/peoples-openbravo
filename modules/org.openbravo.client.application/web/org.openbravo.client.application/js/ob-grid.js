@@ -29,6 +29,7 @@ isc.OBGrid.addProperties({
   poolComponentsPerColumn: true,
   showRecordComponents: true,
   canSelectText: true,
+  escapeHTML: true,
   
   createRecordComponent: function(record, colNum){
     var field = this.getField(colNum), rowNum = this.getRecordIndex(record);
@@ -166,7 +167,7 @@ isc.OBGrid.addProperties({
         // which is maybe used somewhere else
         criteria = isc.clone(criteria);
         var internCriteria = criteria.criteria;
-        if (internCriteria) {
+        if (internCriteria && this.getEditForm()) {
           // now remove anything which is not a field
           // otherwise smartclient will keep track of them and send them again
           var fields = this.getEditForm().getFields();
