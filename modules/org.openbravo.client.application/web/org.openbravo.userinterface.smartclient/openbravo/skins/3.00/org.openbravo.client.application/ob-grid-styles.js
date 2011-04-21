@@ -140,18 +140,13 @@ isc.OBGridToolStripSeparator.addProperties({
   src: '[SKIN]/../../org.openbravo.client.application/images/grid/gridButton-separator.png'
 });
 
-isc.OBGridToolStrip.addProperties({
-  height: '100%',
-  width: '100%',
-  styleName: 'OBGridToolStrip',
-  membersMargin: 4
-});
-
 isc.OBGridButtonsComponent.addProperties({
   height: 1,
   width: '100%',
   visible: 'overflow',
-  align: 'center'
+  align: 'center',
+  styleName: 'OBGridToolStrip',
+  membersMargin: 4
 });
 
 isc.OBGridLinkButton.addProperties({

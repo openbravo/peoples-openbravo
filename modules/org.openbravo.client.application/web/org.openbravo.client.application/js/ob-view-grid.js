@@ -61,7 +61,7 @@ isc.OBViewGrid.addProperties({
     canHide: false,
     showTitle: true,
     title: '&nbsp;',
-    autoFitWidth: true,
+    //autoFitWidth: true,
     canDragResize: false,
     canFilter: true,
     autoExpand: false,
@@ -71,6 +71,8 @@ isc.OBViewGrid.addProperties({
     },
     name: isc.OBViewGrid.EDIT_LINK_FIELD_NAME
   },
+  
+  editLinkColNum: -1,
   
   // ** {{{ dataPageSize }}} **
   // The data page size used for loading paged data from the server.
@@ -98,6 +100,7 @@ isc.OBViewGrid.addProperties({
   canOpenRecordEditor: true,
   showDetailFields: true,
   showErrorIcons: false,
+  virtualScrolling: true,
   
   // internal sc grid property, see the ListGrid source code
   preserveEditsOnSetData: false,
@@ -116,13 +119,15 @@ isc.OBViewGrid.addProperties({
 
   // commented out because of: https://issues.openbravo.com/view.php?id=16515
   // default is much smaller which give smoother scrolling
-//  quickDrawAheadRatio: 2.0,
-//  drawAheadRatio: 1.0,
-  scrollRedrawDelay: 20,
+//  quickDrawAheadRatio: 1.0,
+//  drawAheadRatio: 2.0,
+  // see this discussion:
+  // http://forums.smartclient.com/showthread.php?t=16376
+  scrollRedrawDelay: 0,
   // note: don't set drawAllMaxCells too high as it results in extra reads
   // of data, Smartclient will try to read until drawAllMaxCells has been
   // reached
-  drawAllMaxCells: 100,
+  drawAllMaxCells: 0,
   
   // keeps track if we are in objectSelectionMode or in toggleSelectionMode
   // objectSelectionMode = singleRecordSelection === true
@@ -131,7 +136,10 @@ isc.OBViewGrid.addProperties({
   // editing props
   rowEndEditAction: 'next',
   listEndEditAction: 'next',
+  // disabled as it costs performance, but need to recheck
+  // if rows are drawn with multiple lines
   enforceVClipping: true,
+  canDragSelectText: true,
   validateByCell: true,
   
   currentEditColumnLayout: null,
@@ -142,6 +150,10 @@ isc.OBViewGrid.addProperties({
   modalEditing: false,
   // set to true because if not all cols are drawn then when doing inline editing
   // errors were reported for undrawn columns
+  // need to rework how the FormInitializationComponent sets the valuemap and defaultvalue
+  // for non-existing columns this should be stored somewhere, see this reply in
+  // the smartclient forum:
+  // http://forums.smartclient.com/showthread.php?p=63146
   showAllColumns: true,
   //showGridSummary: true,
   
@@ -199,6 +211,8 @@ isc.OBViewGrid.addProperties({
       localEditLinkField = isc.addProperties({}, this.editLinkFieldProperties);
       localEditLinkField.width = this.editLinkColumnWidth;
       this.fields.unshift(localEditLinkField);
+      // is the column after the checkbox field
+      this.editLinkColNum = 1;
     }
     
     this.editFormDefaults = isc.addProperties({}, OB.ViewFormProperties, this.editFormDefaults);
@@ -1225,11 +1239,7 @@ isc.OBViewGrid.addProperties({
     if (this.isCheckboxField(field)) {
       // NOTE: code copied from super class
       var icon;
-      if (!this.body.canSelectRecord(record)) {
-        // record cannot be selected but we want the space allocated for the
-        // checkbox anyway.
-        icon = '[SKINIMG]/blank.gif';
-      } else if (this.singleRecordSelection && !this.allSelected) {
+      if (this.singleRecordSelection && !this.allSelected) {
         // always show the false image
         icon = (this.checkboxFieldFalseImage || this.booleanFalseImage);
       } else {
@@ -1757,13 +1767,11 @@ isc.OBViewGrid.addProperties({
    },
   
   cellHasErrors: function(rowNum, fieldID){
-    var record = this.getRecord(rowNum);
-    var itemName;
     if (this.Super('cellHasErrors', arguments)) {
       return true;
     }
     if (this.getEditRow() === rowNum) {
-      itemName = this.getEditorName(rowNum, fieldID);
+      var itemName = this.getEditorName(rowNum, fieldID);
       
       if (this.getEditForm().hasFieldErrors(itemName)) {
         return true;
@@ -1877,49 +1885,34 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++ functions for the edit-link column +++++++++++++++++
   
   createRecordComponent: function(record, colNum){
-    var layout = this.Super('createRecordComponent', arguments), rowNum;
-    if (layout) {
-      return layout;
-    }
     if (this.isEditLinkColumn(colNum)) {
-      rowNum = this.getRecordIndex(record);
       layout = isc.OBGridButtonsComponent.create({
         record: record,
-        grid: this,
-        rowNum: rowNum
+        grid: this
       });
-      layout.editButton.setErrorState(this.rowHasErrors(rowNum));
+      layout.editButton.setErrorState(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
       layout.editButton.setErrorMessage(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
       layout.showEditOpen();
       record.editColumnLayout = layout;
+      return layout;
     }
-    return layout;
   },
   
   updateRecordComponent: function(record, colNum, component, recordChanged){
-    var superComponent = this.Super('updateRecordComponent', arguments);
-    if (superComponent) {
-      return superComponent;
+    // clear the previous record pointer
+    if (recordChanged && component.record.editColumnLayout === component) {
+      component.record.editColumnLayout = null;
     }
-    if (this.isEditLinkColumn(colNum)) {
-      // clear the previous record pointer
-      if (recordChanged && component.record.editColumnLayout === component) {
-        component.record.editColumnLayout = null;
-      }
-      component.record = record;
-      record.editColumnLayout = component;
-      component.rowNum = this.getRecordIndex(record);
-      component.editButton.setErrorState(this.rowHasErrors(component.rowNum));
-      component.editButton.setErrorMessage(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
-      component.showEditOpen();
-      return component;
-    }
-    return null;
+    component.record = record;
+    record.editColumnLayout = component;
+    component.editButton.setErrorState(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
+    component.editButton.setErrorMessage(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
+    component.showEditOpen();
+    return component;
   },
   
   isEditLinkColumn: function(colNum){
-    var fieldName = this.getFieldName(colNum);
-    return (fieldName === isc.OBViewGrid.EDIT_LINK_FIELD_NAME);
+    return this.editLinkColNum === colNum;
   },
   
   reorderField: function(fieldNum, moveToPosition){
@@ -1948,12 +1941,6 @@ isc.OBViewGrid.addProperties({
   
 });
 
-// = OBGridToolStrip =
-// The component which is inside of OBGridButtonsComponent
-isc.ClassFactory.defineClass('OBGridToolStrip', isc.ToolStrip);
-
-isc.OBGridToolStrip.addProperties({});
-
 // = OBGridToolStripIcon =
 // The icons which are inside of OBGridToolStrip
 isc.ClassFactory.defineClass('OBGridToolStripIcon', isc.ImgButton);
@@ -1972,7 +1959,8 @@ isc.OBGridToolStripIcon.addProperties({
 // The separator between icons of OBGridToolStrip
 isc.ClassFactory.defineClass('OBGridToolStripSeparator', isc.Img);
 
-isc.OBGridToolStripSeparator.addProperties({});
+isc.OBGridToolStripSeparator.addProperties({  
+});
 
 // = OBGridButtonsComponent =
 // The component which is used to create the contents of the
@@ -1982,6 +1970,7 @@ isc.ClassFactory.defineClass('OBGridButtonsComponent', isc.HLayout);
 isc.OBGridButtonsComponent.addProperties({
   OBGridToolStrip: null,
   saveCancelLayout: null,
+  height: 22,
   
   // the grid to which this component belongs
   grid: null,
@@ -1992,9 +1981,7 @@ isc.OBGridButtonsComponent.addProperties({
   record: null,
   
   initWidget: function(){
-    var me = this, formButton, saveButton;
-    
-    this.progressIcon = isc.Img.create(this.grid.progressIconDefaults);
+    var me = this, formButton;
     
     this.editButton = isc.OBGridToolStripIcon.create({
       buttonType: 'edit',
@@ -2042,6 +2029,27 @@ isc.OBGridButtonsComponent.addProperties({
       }
     });
     
+    this.buttonSeparator1 = isc.OBGridToolStripSeparator.create({});
+    
+    if (me.grid.view.readOnly) {
+      this.buttonSeparator1.visibility = 'hidden';
+    }
+    
+    this.Super('initWidget', arguments);
+    this.addMembers([formButton, this.buttonSeparator1, this.editButton]);
+  },
+  
+  addSaveCancelProgressButtons: function() {
+    var me = this;
+    // already been here
+    if (this.cancelButton) {
+      return;
+    }
+    
+    this.progressIcon = isc.Img.create(this.grid.progressIconDefaults);
+    this.progressIcon.setVisibility(false);
+    this.addMember(this.progressIcon, 0);
+    
     // is referred to in OBViewForm.showClickMask
     this.cancelButton = isc.OBGridToolStripIcon.create({
       buttonType: 'cancel',
@@ -2051,7 +2059,7 @@ isc.OBGridButtonsComponent.addProperties({
       }
     });
     
-    saveButton = isc.OBGridToolStripIcon.create({
+    var saveButton = isc.OBGridToolStripIcon.create({
       buttonType: 'save',
       prompt: OB.I18N.getLabel('OBUIAPP_GridSaveButtonPrompt'),
       action: function(){
@@ -2059,64 +2067,67 @@ isc.OBGridButtonsComponent.addProperties({
       }
     });
     
-    this.buttonSeparator1 = isc.OBGridToolStripSeparator.create({});
-    
-    if (me.grid.view.readOnly) {
-      this.buttonSeparator1.visibility = 'hidden';
-    }
-    
-    buttonSeparator2 = isc.OBGridToolStripSeparator.create({});
-    
-    this.OBGridToolStrip = isc.OBGridToolStrip.create({
-      members: [formButton, this.buttonSeparator1, this.editButton, this.cancelButton, buttonSeparator2, saveButton]
-    });
-    
-    this.addMember(this.progressIcon);
-    this.addMember(this.OBGridToolStrip);
-    this.OBGridToolStrip.hideMember(5);
-    this.OBGridToolStrip.hideMember(4);
-    this.OBGridToolStrip.hideMember(3);
+    this.addMembers([ this.cancelButton, isc.OBGridToolStripSeparator.create({}), saveButton]);
   },
   
   toggleProgressIcon: function(toggle){
     if (toggle) {
-      this.progressIcon.show();
-      this.OBGridToolStrip.hide();
+      this.hideMember(6);
+      this.hideMember(5);
+      this.hideMember(4);
+      this.showMember(0);
     } else {
-      this.progressIcon.hide();
-      this.OBGridToolStrip.show();
+      var offset = 0;
+      if (this.cancelButton) {
+        offset = 1;
+        this.hideMember(0);
+      }
+      this.showMember(2 + offset);
+      this.showMember(1 + offset);
+      this.showMember(0 + offset);
     }
   },
   
   showEditOpen: function(){
-    this.OBGridToolStrip.hideMember(5);
-    this.OBGridToolStrip.hideMember(4);
-    this.OBGridToolStrip.hideMember(3);
-    this.OBGridToolStrip.showMember(0);
+    var offset = 0;
+    if (this.cancelButton) {
+      this.hideMember(6);
+      this.hideMember(5);
+      this.hideMember(4);
+      this.hideMember(0);
+      offset = 1;
+    }
+    this.showMember(0 + offset);
     if (this.editButton.showable()) {
-      this.OBGridToolStrip.showMember(1);
-      this.OBGridToolStrip.showMember(2);
+      this.showMember(1 + offset);
+      this.showMember(2 + offset);
     } else {
-      this.OBGridToolStrip.hideMember(1);
-      this.OBGridToolStrip.hideMember(2);
+      this.hideMember(1 + offset);
+      this.hideMember(2 + offset);
     }
     this.grid.currentEditColumnLayout = null;
   },
   
   showSaveCancel: function(){
-    this.OBGridToolStrip.hideMember(2);
-    this.OBGridToolStrip.hideMember(1);
-    this.OBGridToolStrip.hideMember(0);
-    this.OBGridToolStrip.showMember(3);
-    this.OBGridToolStrip.showMember(4);
-    this.OBGridToolStrip.showMember(5);
+    this.addSaveCancelProgressButtons();
+    
+    this.hideMember(3);
+    this.hideMember(2);
+    this.hideMember(1);
+    this.hideMember(0);
+    
+    this.showMember(4);
+    this.showMember(5);
+    this.showMember(6);
+    
     this.grid.currentEditColumnLayout = this;
   },
   
   doEdit: function(){
     this.showSaveCancel();
     this.grid.selectSingleRecord(this.record);
-    this.grid.startEditing(this.rowNum);
+    var rowNum = this.grid.getRecordIndex(this.record);
+    this.grid.startEditing(rowNum);
   },
   
   doOpen: function(){
@@ -2132,5 +2143,22 @@ isc.OBGridButtonsComponent.addProperties({
   
   doCancel: function(){
     this.grid.cancelEditing();
+  },
+  
+  hideMember: function(memberNo) {
+    // already hidden
+    if (this.members[memberNo].visibility === isc.Canvas.HIDDEN) {
+      return;
+    }
+    this.Super('hideMember', arguments);
+  },
+
+  showMember: function(memberNo) {
+    // already visible
+    if (this.members[memberNo].visibility === isc.Canvas.INHERIT || this.members[memberNo].visibility === isc.Canvas.VISIBLE) {
+      return;
+    }
+    this.Super('showMember', arguments);
   }
+
 });
