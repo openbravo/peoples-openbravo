@@ -57,6 +57,7 @@ isc.OBViewGrid.create({
         ${field.filterEditorProperties}
         , title: '${field.title?js_string}'
         , prompt: '${field.title?js_string}'
+        , escapeHTML: true
         , showIf: '${field.initialShow?string}'
         , columnName: '${field.columnName?js_string}'
         , inpColumnName: '${field.inpColumnName?js_string}'
