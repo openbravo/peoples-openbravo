@@ -32,7 +32,7 @@ isc.OBViewGrid.addClassProperties({
 // The OBViewGrid is the Openbravo specific subclass of the Smartclient
 // ListGrid.
 isc.OBViewGrid.addProperties({
-
+  
   // ** {{{ view }}} **
   // The view member contains the pointer to the composite canvas which
   // handles this form
@@ -100,7 +100,6 @@ isc.OBViewGrid.addProperties({
   canOpenRecordEditor: true,
   showDetailFields: true,
   showErrorIcons: false,
-  virtualScrolling: true,
   
   // internal sc grid property, see the ListGrid source code
   preserveEditsOnSetData: false,
@@ -120,10 +119,10 @@ isc.OBViewGrid.addProperties({
   // commented out because of: https://issues.openbravo.com/view.php?id=16515
   // default is much smaller which give smoother scrolling
 //  quickDrawAheadRatio: 1.0,
-//  drawAheadRatio: 2.0,
+  //drawAheadRatio: 2.0,
   // see this discussion:
   // http://forums.smartclient.com/showthread.php?t=16376
-  scrollRedrawDelay: 0,
+  //scrollRedrawDelay: 20,
   // note: don't set drawAllMaxCells too high as it results in extra reads
   // of data, Smartclient will try to read until drawAllMaxCells has been
   // reached
@@ -136,9 +135,9 @@ isc.OBViewGrid.addProperties({
   // editing props
   rowEndEditAction: 'next',
   listEndEditAction: 'next',
-  // disabled as it costs performance, but need to recheck
-  // if rows are drawn with multiple lines
+  
   enforceVClipping: true,
+  
   canDragSelectText: true,
   validateByCell: true,
   
@@ -1881,7 +1880,18 @@ isc.OBViewGrid.addProperties({
     }
     return this.Super('getRecord', arguments);
   },
+
+  // always work with fixed rowheights
+  // https://issues.openbravo.com/view.php?id=16307
+  shouldFixRowHeight: function() {
+    return true;
+  },
   
+  // needed for: https://issues.openbravo.com/view.php?id=16307
+  getRowHeight: function() {
+    return this.cellHeight;
+  },
+
   // +++++++++++++++++ functions for the edit-link column +++++++++++++++++
   
   createRecordComponent: function(record, colNum){
@@ -1970,7 +1980,6 @@ isc.ClassFactory.defineClass('OBGridButtonsComponent', isc.HLayout);
 isc.OBGridButtonsComponent.addProperties({
   OBGridToolStrip: null,
   saveCancelLayout: null,
-  height: 22,
   
   // the grid to which this component belongs
   grid: null,

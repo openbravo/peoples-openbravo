@@ -61,11 +61,11 @@ isc.OBGrid.addClassProperties({
 
   getDefaultColumnWidth: function(length) {
     if (length <= 1) {
-      return isc.OBViewGrid.defaultColumnWidths[0];
+      return isc.OBGrid.defaultColumnWidths[0];
     } else if (length <= 30) {
-      return isc.OBViewGrid.defaultColumnWidths[1];
+      return isc.OBGrid.defaultColumnWidths[1];
     } else if (length <= 60) {
-      return isc.OBViewGrid.defaultColumnWidths[2];
+      return isc.OBGrid.defaultColumnWidths[2];
     }
     return 200;
   }
@@ -93,13 +93,18 @@ isc.OBGrid.changeDefaults('headerButtonDefaults', {
   src: '[SKIN]/../../org.openbravo.client.application/images/grid/gridHeader_bg.png'
 });
 
+isc.OBViewGrid.addProperties({
+  // note should be the same as the height of the OBGridButtonsComponent
+  recordComponentHeight: 21,
+  cellHeight: 25
+});
+
 isc.OBGrid.changeDefaults('headerMenuButtonDefaults', {
   showDown: false,
   showTitle: true,
   baseStyle: 'pepe'
   //src: '[SKIN]/../../org.openbravo.client.application/images/grid/gridHeader_bg.png'
 });
-
 
 // Styling properties for the header button of a generic grid (ob-grid.js)
 isc.OBGridHeaderImgButton.addProperties({
@@ -108,7 +113,6 @@ isc.OBGridHeaderImgButton.addProperties({
   showFocusedAsOver: false,
   showDown: false
 });
-
 
 // Styling properties for the buttons of the grid in 'grid mode' (ob-view-grid.js)
 isc.OBGridToolStripIcon.addProperties({
@@ -141,10 +145,12 @@ isc.OBGridToolStripSeparator.addProperties({
 });
 
 isc.OBGridButtonsComponent.addProperties({
-  height: 1,
+  // note this height should be the same as the recordComponentHeight defined above
+  height: 21,
   width: '100%',
-  visible: 'overflow',
+  overflow: 'hidden',
   align: 'center',
+  defaultLayoutAlign: 'center',
   styleName: 'OBGridToolStrip',
   membersMargin: 4
 });
