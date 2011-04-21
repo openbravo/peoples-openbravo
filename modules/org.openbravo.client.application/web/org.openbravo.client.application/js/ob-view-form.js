@@ -990,19 +990,32 @@ OB.ViewFormProperties = {
   },
   
   focusInNextItem: function(currentItem) {
-    var chooseNextItem, i, nextItem, length = this.getItems().length;
+    var flds = (this.grid ? this.grid.getFields() : this.getFields);
+    var chooseNextItem, i, nextItem, length = flds.length;
     for (i = 0; i < length; i++) {
+      var item = this.getItem(flds[i].name);
+      if (!item) {
+        continue;
+      }
       // some items don't have a name, ignore those
-      if (chooseNextItem && this.getItems()[i].name && this.getItems()[i].isFocusable && this.getItems()[i].isFocusable()) {
-        nextItem = this.getItems()[i];
+      // !item.disabled because sometimes the whole form is disabled and needs to 
+      // be focused after enabling (after the fic call returns)
+      if (chooseNextItem && item.name && item.isFocusable && (item.isFocusable() || !item.disabled)) {
+        nextItem = item;
         break;
       }
-      if (this.getItems()[i].name === currentItem) {
+      if (item.name === currentItem) {
         chooseNextItem = true;
       }
     }
     if (nextItem) {
-      this.focusInItem(nextItem);
+      // in the fic call, all items are disabled, so let it be focused
+      // when returning
+      if (this.inFicCall) {
+        this.setFocusItem(nextItem);
+      } else {
+        this.focusInItem(nextItem);
+      }
     }
   },
   
