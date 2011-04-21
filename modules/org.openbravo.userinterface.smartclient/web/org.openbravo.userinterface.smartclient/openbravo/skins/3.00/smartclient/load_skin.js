@@ -14,7 +14,7 @@ with (theWindow) {
 //----------------------------------------
     // must be relative to your application file or isomorphicDir
 //    isc.Page.setSkinDir("[ISOMORPHIC]/skins/Enterprise/")
-    isc.Page.setSkinDir("[ISOMORPHIC]/../openbravo/skins/3.00/smartclient/")
+  isc.Page.setSkinDir("[ISOMORPHIC]/../openbravo/skins/3.00/smartclient/");  
 
 
 //----------------------------------------
@@ -730,6 +730,12 @@ with (theWindow) {
             manyItemsImage:"[SKIN]folder_file.png"
         });
     }
+    if (isc.ColumnTree) {
+        isc.ColumnTree.addProperties({
+            folderIcon:"[SKIN]folder.png",
+            nodeIcon:"[SKIN]file.png"
+        });
+    }
 
 
 //----------------------------------------
@@ -770,6 +776,7 @@ with (theWindow) {
     if (isc.ComboBoxItem) {isc.ComboBoxItem.addProperties({
         pickListTallBaseStyle:"tallPickListCell",
         textBoxStyle:"selectItemText",
+        pendingTextBoxStyle:"comboBoxItemPendingText",
         showFocusedPickerIcon:false,
         pickerIconSrc:"[SKIN]/pickers/comboBoxPicker.png",
         height:22,
