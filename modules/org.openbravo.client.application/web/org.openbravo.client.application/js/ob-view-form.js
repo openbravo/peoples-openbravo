@@ -554,7 +554,7 @@ OB.ViewFormProperties = {
     this.markForRedraw();
 
     this.view.toolBar.updateButtonState(true);
-    if (!modeIsNew) {
+    if (request.params.MODE === 'EDIT') {
       this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());
     }
 
