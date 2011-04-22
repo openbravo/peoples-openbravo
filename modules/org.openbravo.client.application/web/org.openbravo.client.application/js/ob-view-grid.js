@@ -1538,6 +1538,15 @@ isc.OBViewGrid.addProperties({
     } else {
       ret = this.Super('getNextEditCell', arguments);
     }
+        
+    // when moving between rows with the arrow keys, force the focus in the correct 
+    // column
+    if (ret && ret[0] !== rowNum && this.getField(colNum) && 
+          (editCompletionEvent === isc.ListGrid.UP_ARROW_KEYPRESS || 
+              editCompletionEvent === isc.ListGrid.DOWN_ARROW_KEYPRESS)) {
+      this.forceFocusColumn = this.getField(colNum).name;
+    }
+    
     delete this._inGetNextEditCell;
     return ret;
   },
@@ -1896,7 +1905,7 @@ isc.OBViewGrid.addProperties({
   
   createRecordComponent: function(record, colNum){
     if (this.isEditLinkColumn(colNum)) {
-      layout = isc.OBGridButtonsComponent.create({
+      var layout = isc.OBGridButtonsComponent.create({
         record: record,
         grid: this
       });
@@ -2044,8 +2053,8 @@ isc.OBGridButtonsComponent.addProperties({
       this.buttonSeparator1.visibility = 'hidden';
     }
     
-    this.Super('initWidget', arguments);
     this.addMembers([formButton, this.buttonSeparator1, this.editButton]);
+    this.Super('initWidget', arguments);
   },
   
   addSaveCancelProgressButtons: function() {
@@ -2156,7 +2165,7 @@ isc.OBGridButtonsComponent.addProperties({
   
   hideMember: function(memberNo) {
     // already hidden
-    if (this.members[memberNo].visibility === isc.Canvas.HIDDEN) {
+    if (this.members[memberNo] && this.members[memberNo].visibility === isc.Canvas.HIDDEN) {
       return;
     }
     this.Super('hideMember', arguments);
@@ -2164,7 +2173,7 @@ isc.OBGridButtonsComponent.addProperties({
 
   showMember: function(memberNo) {
     // already visible
-    if (this.members[memberNo].visibility === isc.Canvas.INHERIT || this.members[memberNo].visibility === isc.Canvas.VISIBLE) {
+    if (this.members[memberNo] && this.members[memberNo].visibility === isc.Canvas.INHERIT || this.members[memberNo].visibility === isc.Canvas.VISIBLE) {
       return;
     }
     this.Super('showMember', arguments);
