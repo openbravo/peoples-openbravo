@@ -1268,10 +1268,11 @@ isc.OBViewGrid.addProperties({
         }        
       }
     }
-    if (colNum || colNum === 0) {
-      this.forceFocusColumn = this.getField(colNum).name;
-    }
     
+    if (colNum || colNum === 0) {
+    	this.forceFocusColumn = this.getField(colNum).name;
+    }
+
     return this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
   },
 
@@ -1529,6 +1530,15 @@ isc.OBViewGrid.addProperties({
     } else {
       ret = this.Super('getNextEditCell', arguments);
     }
+    
+    // when moving between rows with the arrow keys, force the focus in the correct 
+    // column
+    if (ret && ret[0] !== rowNum && this.getField(colNum) && 
+    		(editCompletionEvent === isc.ListGrid.UP_ARROW_KEYPRESS || 
+    				editCompletionEvent === isc.ListGrid.DOWN_ARROW_KEYPRESS)) {
+    	this.forceFocusColumn = this.getField(colNum).name;
+    }
+    
     delete this._inGetNextEditCell;
     return ret;
   },
