@@ -190,6 +190,10 @@ isc.OBQueryListGrid.addProperties({
   canAutoFitFields: false,
   showGridSummary: true,
   
+  summaryRowProperties: {
+    showEmptyMessage: false
+  },
+  
   dataProperties: {
     useClientFiltering: false//,
     //useClientSorting: false
