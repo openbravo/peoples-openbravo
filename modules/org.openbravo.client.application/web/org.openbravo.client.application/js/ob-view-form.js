@@ -73,6 +73,9 @@ OB.ViewFormProperties = {
   // Name of the fields shown in status bar
   statusBarFields: [],
 
+  // Last returned array of function getStatusBarFields
+  statusBarFieldsJSArray: [],
+
   // is set in the OBNoteSectionItem.initWidget
   noteSection: null,
   
@@ -109,14 +112,16 @@ OB.ViewFormProperties = {
         statusBarFields[1].push(item.getDisplayValue());
       }
     }
+    this.statusBarFieldsJSArray = statusBarFields;
     return statusBarFields;
   },
   
   setHasChanged: function(value) {
     this.hasChanged = value;
     this.view.updateTabTitle();
-    if (value && !this.isNew) {
-      this.view.statusBar.setContentLabel(this.view.statusBar.newIcon, 'OBUIAPP_Editing');
+    if (value && !this.isNew && this.view.statusBar.mode !== 'EDIT') {
+      this.view.statusBar.mode = "EDIT";
+      this.view.statusBar.setContentLabel(this.view.statusBar.newIcon, 'OBUIAPP_Editing', this.statusBarFieldsJSArray);
     }
     
     if (value) {
@@ -169,6 +174,7 @@ OB.ViewFormProperties = {
     this.retrieveInitialValues(isNew);
     
     if (isNew) {
+      this.view.statusBar.mode = 'NEW';
       this.view.statusBar.setContentLabel(this.view.statusBar.newIcon, 'OBUIAPP_New');
     }
   },
@@ -556,6 +562,7 @@ OB.ViewFormProperties = {
 
     this.view.toolBar.updateButtonState(true);
     if (request.params.MODE === 'EDIT') {
+      this.view.statusBar.mode = 'VIEW';
       this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());
     }
 
@@ -872,6 +879,7 @@ OB.ViewFormProperties = {
     this.view.messageBar.hide();
     this.resetValues();
     this.setHasChanged(false);
+    this.view.statusBar.mode = 'VIEW';
     this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());
     this.view.toolBar.updateButtonState(true);
   },
@@ -941,6 +949,7 @@ OB.ViewFormProperties = {
         form.rememberValues();
         
         //view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_SaveSuccess'));
+        this.view.statusBar.mode = 'SAVED';
         view.statusBar.setContentLabel(view.statusBar.checkedIcon, 'OBUIAPP_Saved', this.getStatusBarFields());
         
         view.setRecentDocument(this.getValues());

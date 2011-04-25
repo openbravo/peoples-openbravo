@@ -101,6 +101,7 @@ isc.OBStatusBar.addProperties( {
   previousButton : null,
   newIcon : null,
   showingIcon : false,
+  mode : "",
 
   initWidget : function() {
     this.contentLabel = isc.OBStatusBarTextLabel.create( {
@@ -180,6 +181,7 @@ setNewState : function(isNew) {
   this.previousButton.setDisabled(isNew);
   this.nextButton.setDisabled(isNew);
   if (isNew) {
+    this.mode = 'NEW';
     this.setContentLabel(this.newIcon, 'OBUIAPP_New');
   }
 },
