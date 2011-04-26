@@ -31,7 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.provider.OBProvider;
@@ -116,10 +116,11 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         // Un-scheduling the process
         final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
             ProcessRequest.class);
-        prCriteria.add(Expression.and(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
-            Expression.or(Expression.eq(ProcessRequest.PROPERTY_STATUS,
-                org.openbravo.scheduling.Process.SCHEDULED), Expression.eq(
-                ProcessRequest.PROPERTY_STATUS, org.openbravo.scheduling.Process.MISFIRED))));
+        prCriteria.add(Restrictions.and(
+            Restrictions.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess), Restrictions.or(
+                Restrictions.eq(ProcessRequest.PROPERTY_STATUS,
+                    org.openbravo.scheduling.Process.SCHEDULED), Restrictions.eq(
+                    ProcessRequest.PROPERTY_STATUS, org.openbravo.scheduling.Process.MISFIRED))));
 
         final List<ProcessRequest> requestList = prCriteria.list();
 
@@ -187,10 +188,11 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         // Scheduling the process
         final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
             ProcessRequest.class);
-        prCriteria.add(Expression.and(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
-            Expression.or(Expression.eq(ProcessRequest.PROPERTY_STATUS,
-                org.openbravo.scheduling.Process.UNSCHEDULED), Expression.eq(
-                ProcessRequest.PROPERTY_STATUS, org.openbravo.scheduling.Process.MISFIRED))));
+        prCriteria.add(Restrictions.and(
+            Restrictions.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess), Restrictions.or(
+                Restrictions.eq(ProcessRequest.PROPERTY_STATUS,
+                    org.openbravo.scheduling.Process.UNSCHEDULED), Restrictions.eq(
+                    ProcessRequest.PROPERTY_STATUS, org.openbravo.scheduling.Process.MISFIRED))));
         final List<ProcessRequest> requestList = prCriteria.list();
 
         ProcessRequest pr = null;

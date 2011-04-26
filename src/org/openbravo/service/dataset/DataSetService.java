@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -112,7 +112,7 @@ public class DataSetService implements OBSingleton {
       final Entity entity = ModelProvider.getInstance().getEntityByTableName(
           dataSetTable.getTable().getDBTableName());
       final OBCriteria<T> obc = OBDal.getInstance().createCriteria(entity.getName());
-      obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
+      obc.add(Restrictions.gt(Organization.PROPERTY_UPDATED, afterDate));
       // todo: count is slower than exists, is exists possible?
       List<?> list = obc.list();
       if (obc.count() < 20 && obc.count() > 0) {
@@ -144,8 +144,8 @@ public class DataSetService implements OBSingleton {
   public DataSet getDataSetByValueModule(String value, String moduleId) {
     final Module module = OBDal.getInstance().get(Module.class, moduleId);
     final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
-    obc.add(Expression.eq(DataSet.PROPERTY_MODULE, module));
-    obc.add(Expression.eq(DataSet.PROPERTY_SEARCHKEY, value));
+    obc.add(Restrictions.eq(DataSet.PROPERTY_MODULE, module));
+    obc.add(Restrictions.eq(DataSet.PROPERTY_SEARCHKEY, value));
     final List<?> list = obc.list();
     Check.isTrue(list.size() <= 1,
         "There is more than one dataset available when searching using the name/id " + value + "/"
@@ -166,7 +166,7 @@ public class DataSetService implements OBSingleton {
   public List<DataSet> getDataSetsByModuleID(String moduleId) {
     final Module module = OBDal.getInstance().get(Module.class, moduleId);
     final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
-    obc.add(Expression.eq(DataSet.PROPERTY_MODULE, module));
+    obc.add(Restrictions.eq(DataSet.PROPERTY_MODULE, module));
     return obc.list();
   }
 
@@ -179,7 +179,7 @@ public class DataSetService implements OBSingleton {
    */
   public DataSet getDataSetByValue(String value) {
     final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
-    obc.add(Expression.eq(DataSet.PROPERTY_SEARCHKEY, value));
+    obc.add(Restrictions.eq(DataSet.PROPERTY_SEARCHKEY, value));
     final List<DataSet> ds = obc.list();
     // Check.isTrue(ds.size() > 0, "There is no DataSet with name " + value);
     if (ds.size() == 0) {

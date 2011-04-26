@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 
@@ -96,7 +96,7 @@ public class TemplateResolver {
     while (true) {
       final OBCriteria<Template> templateCriteria = OBDal.getInstance().createCriteria(
           Template.class);
-      templateCriteria.add(Expression.eq(Template.PROPERTY_OVERRIDESTEMPLATE, currentTemplate));
+      templateCriteria.add(Restrictions.eq(Template.PROPERTY_OVERRIDESTEMPLATE, currentTemplate));
       final List<Template> overridingTemplates = templateCriteria.list();
       if (overridingTemplates.size() == 0) {
         return currentTemplate;

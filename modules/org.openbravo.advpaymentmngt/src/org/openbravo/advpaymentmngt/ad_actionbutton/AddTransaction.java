@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -318,7 +318,7 @@ public class AddTransaction extends HttpSecureAppServlet {
         FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, paymentWithTransaction);
         OBCriteria<FIN_FinaccTransaction> obcTrans = OBDal.getInstance().createCriteria(
             FIN_FinaccTransaction.class);
-        obcTrans.add(Expression.eq(FIN_FinaccTransaction.PROPERTY_FINPAYMENT, payment));
+        obcTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_FINPAYMENT, payment));
         FIN_FinaccTransaction finTrans = obcTrans.list().get(0);
 
         matchBankStatementLine(vars, finTrans, strFinBankStatementLineId);

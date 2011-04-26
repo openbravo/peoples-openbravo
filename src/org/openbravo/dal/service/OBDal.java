@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.jdbc.BorrowedConnectionProxy;
 import org.openbravo.base.model.Entity;
@@ -403,11 +403,11 @@ public class OBDal implements OBSingleton {
     for (final UniqueConstraint uc : entity.getUniqueConstraints()) {
       final OBCriteria<BaseOBObject> criteria = createCriteria(entity.getName());
       if (id != null) {
-        criteria.add(Expression.ne("id", id));
+        criteria.add(Restrictions.ne("id", id));
       }
       for (final Property p : uc.getProperties()) {
         final Object value = obObject.getValue(p.getName());
-        criteria.add(Expression.eq(p.getName(), value));
+        criteria.add(Restrictions.eq(p.getName(), value));
       }
       final List<BaseOBObject> queryResult = criteria.list();
       // this is not fast, but the list should be small normally

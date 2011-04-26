@@ -32,7 +32,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -442,8 +442,8 @@ public class Reconciliation extends HttpSecureAppServlet {
     try {
       final OBCriteria<FIN_ReconciliationLine_v> obc = OBDal.getInstance().createCriteria(
           FIN_ReconciliationLine_v.class);
-      obc.add(Expression.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION, reconciliation));
-      obc.add(Expression.isNotNull(FIN_ReconciliationLine_v.PROPERTY_BANKSTATEMENTLINE));
+      obc.add(Restrictions.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION, reconciliation));
+      obc.add(Restrictions.isNotNull(FIN_ReconciliationLine_v.PROPERTY_BANKSTATEMENTLINE));
       obc.setMaxResults(1);
       final List<FIN_ReconciliationLine_v> rec = obc.list();
       return (rec.size() != 0);

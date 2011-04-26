@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.NonUniqueResultException;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDao;
 
@@ -56,7 +56,7 @@ public class URLWidgetProvider extends WidgetProvider {
       jsonObject.put(WidgetProvider.PARAMETERS, parameters);
       try {
         final WidgetURL widgetURL = (WidgetURL) OBDao.getFilteredCriteria(WidgetURL.class,
-            Expression.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass())).uniqueResult();
+            Restrictions.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass())).uniqueResult();
         if (widgetURL != null) {
           parameters.put(SRC, widgetURL.getURL());
         } else {
@@ -83,14 +83,16 @@ public class URLWidgetProvider extends WidgetProvider {
       addDefaultWidgetProperties(jsonObject, widgetInstance);
       final JSONObject parameters = jsonObject.getJSONObject(WidgetProvider.PARAMETERS);
       final WidgetURL widgetURL = (WidgetURL) OBDao.getFilteredCriteria(WidgetURL.class,
-          Expression.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass())).uniqueResult();
+          Restrictions.eq(WidgetURL.PROPERTY_WIDGETCLASS, getWidgetClass())).uniqueResult();
       if (widgetURL != null) {
         parameters.put(SRC, widgetURL.getURL());
       } else {
         log.error("No url widget defined for widget class " + widgetInstance.getWidgetClass());
       }
     } catch (NonUniqueResultException e) {
-      log.error("More than one active url defined for widget " + widgetInstance.getWidgetClass(), e);
+      log
+          .error("More than one active url defined for widget " + widgetInstance.getWidgetClass(),
+              e);
     } catch (Exception e) {
       throw new OBException(e);
     }

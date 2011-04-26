@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -126,7 +126,7 @@ public class PaymentMonitor {
     if (payment.getSettlementCancelled() == null)
       return getDaysToDue(payment.getDueDate());
     final OBCriteria<DebtPayment> obc = OBDal.getInstance().createCriteria(DebtPayment.class);
-    obc.add(Expression.eq("settlementGenerate", payment.getSettlementCancelled()));
+    obc.add(Restrictions.eq("settlementGenerate", payment.getSettlementCancelled()));
     obc.addOrderBy("dueDate", true);
     final List<DebtPayment> payments = obc.list();
     ArrayList<Long> allDaysToDue = new ArrayList<Long>();

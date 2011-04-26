@@ -22,7 +22,7 @@ package org.openbravo.test.xml;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
@@ -58,7 +58,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
     setSystemAdministratorContext();
     final Country country = getCountry("Norway");
     final OBCriteria<CountryTrl> obc = OBDal.getInstance().createCriteria(CountryTrl.class);
-    obc.add(Expression.eq("country", country));
+    obc.add(Restrictions.eq("country", country));
     final List<CountryTrl> countryTrls = obc.list();
     if (countryTrls.size() > 0) {
       return;
@@ -121,14 +121,14 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
 
   private Country getCountry(String name) {
     final OBCriteria<Country> obc = OBDal.getInstance().createCriteria(Country.class);
-    obc.add(Expression.eq("name", name));
+    obc.add(Restrictions.eq("name", name));
     return obc.list().get(0);
   }
 
   private <T extends BaseOBObject> String exportClass(Class<T> clz, String field, Object value) {
     final OBCriteria<?> obc = OBDal.getInstance().createCriteria(clz);
     if (field != null) {
-      obc.add(Expression.eq(field, value));
+      obc.add(Restrictions.eq(field, value));
     }
 
     final EntityXMLConverter exc = EntityXMLConverter.newInstance();

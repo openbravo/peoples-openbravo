@@ -34,8 +34,8 @@ import org.apache.ddlutils.model.Index;
 import org.apache.ddlutils.model.Reference;
 import org.apache.ddlutils.model.Unique;
 import org.apache.ddlutils.model.View;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.LogicalExpression;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.SimpleExpression;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -155,7 +155,7 @@ public class DatabaseValidator implements SystemValidator {
     }
 
     final OBCriteria<Table> tcs = OBDal.getInstance().createCriteria(Table.class);
-    tcs.add(Expression.eq(Table.PROPERTY_VIEW, false));
+    tcs.add(Restrictions.eq(Table.PROPERTY_VIEW, false));
     final List<Table> adTables = tcs.list();
     final Map<String, Table> adTablesByName = new HashMap<String, Table>();
     for (Table adTable : adTables) {
@@ -260,15 +260,15 @@ public class DatabaseValidator implements SystemValidator {
         org.openbravo.model.ad.domain.Reference.class, "16EC6DF4A59747749FDF256B7FBBB058");
 
     // if one of the old-booleans is set, but not using new reference-id's -> report as warning
-    SimpleExpression enc = Expression.eq(Column.PROPERTY_DISPLAYENCRIPTION, Boolean.TRUE);
-    LogicalExpression newRefs = Expression.or(Expression.eq(Column.PROPERTY_REFERENCE, hashed),
-        Expression.eq(Column.PROPERTY_REFERENCE, encrypted));
+    SimpleExpression enc = Restrictions.eq(Column.PROPERTY_DISPLAYENCRIPTION, Boolean.TRUE);
+    LogicalExpression newRefs = Restrictions.or(Restrictions.eq(Column.PROPERTY_REFERENCE, hashed),
+        Restrictions.eq(Column.PROPERTY_REFERENCE, encrypted));
     OBCriteria<Column> colQuery = OBDal.getInstance().createCriteria(Column.class);
-    colQuery.add(Expression.and(enc, Expression.not(newRefs)));
+    colQuery.add(Restrictions.and(enc, Restrictions.not(newRefs)));
 
     // only validate given module (if given)
     if (validateModule != null) {
-      colQuery.add(Expression.eq(Column.PROPERTY_MODULE, validateModule));
+      colQuery.add(Restrictions.eq(Column.PROPERTY_MODULE, validateModule));
     }
     if (colQuery.count() > 0) {
       List<Column> columns = colQuery.list();
@@ -295,7 +295,7 @@ public class DatabaseValidator implements SystemValidator {
   private void checkDataSetName(SystemValidationResult result) {
     OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
     if (validateModule != null) {
-      obc.add(Expression.eq(DataSet.PROPERTY_MODULE, validateModule));
+      obc.add(Restrictions.eq(DataSet.PROPERTY_MODULE, validateModule));
     }
     List<DataSet> dsList = obc.list();
     for (DataSet ds : dsList) {

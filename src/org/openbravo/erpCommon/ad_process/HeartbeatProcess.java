@@ -44,7 +44,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -762,9 +762,9 @@ public class HeartbeatProcess implements Process {
 
     final OBCriteria<ProcessRequest> prCriteria = OBDal.getInstance().createCriteria(
         ProcessRequest.class);
-    prCriteria.add(Expression.and(Expression.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
-        Expression.or(Expression.eq(ProcessRequest.PROPERTY_STATUS,
-            org.openbravo.scheduling.Process.SCHEDULED), Expression.eq(
+    prCriteria.add(Restrictions.and(Restrictions.eq(ProcessRequest.PROPERTY_PROCESS, HBProcess),
+        Restrictions.or(Restrictions.eq(ProcessRequest.PROPERTY_STATUS,
+            org.openbravo.scheduling.Process.SCHEDULED), Restrictions.eq(
             ProcessRequest.PROPERTY_STATUS, org.openbravo.scheduling.Process.MISFIRED))));
     final List<ProcessRequest> prRequestList = prCriteria.list();
 

@@ -29,7 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -343,11 +343,11 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
 
   public List<FIN_Payment> getCustomerPaymentsWithCredit(BusinessPartner bp, boolean isReceipt) {
     OBCriteria<FIN_Payment> obcPayment = OBDal.getInstance().createCriteria(FIN_Payment.class);
-    obcPayment.add(Expression.eq(FIN_Payment.PROPERTY_BUSINESSPARTNER, bp));
-    obcPayment.add(Expression.eq(FIN_Payment.PROPERTY_RECEIPT, isReceipt));
-    obcPayment.add(Expression.ne(FIN_Payment.PROPERTY_GENERATEDCREDIT, BigDecimal.ZERO));
-    obcPayment.add(Expression.ne(FIN_Payment.PROPERTY_STATUS, "RPAP"));
-    obcPayment.add(Expression.neProperty(FIN_Payment.PROPERTY_GENERATEDCREDIT,
+    obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_BUSINESSPARTNER, bp));
+    obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_RECEIPT, isReceipt));
+    obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_GENERATEDCREDIT, BigDecimal.ZERO));
+    obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_STATUS, "RPAP"));
+    obcPayment.add(Restrictions.neProperty(FIN_Payment.PROPERTY_GENERATEDCREDIT,
         FIN_Payment.PROPERTY_USEDCREDIT));
     obcPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, true);
     obcPayment.addOrderBy(FIN_Payment.PROPERTY_DOCUMENTNO, true);

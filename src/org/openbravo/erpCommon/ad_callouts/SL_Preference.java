@@ -20,7 +20,7 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.dal.core.OBContext;
@@ -47,54 +47,54 @@ public class SL_Preference extends SimpleCallout {
 
       String prefId = info.getStringParameter("inpadPreferenceId", idFilter);
       if (!prefId.isEmpty()) {
-        qPref.add(Expression.ne(Preference.PROPERTY_ID, prefId));
+        qPref.add(Restrictions.ne(Preference.PROPERTY_ID, prefId));
       }
 
       if (info.getStringParameter("inpispropertylist", booleanFilter).equals("Y")) {
-        qPref.add(Expression.eq(Preference.PROPERTY_PROPERTY, info.getStringParameter(
+        qPref.add(Restrictions.eq(Preference.PROPERTY_PROPERTY, info.getStringParameter(
             "inpproperty", null)));
       } else {
-        qPref.add(Expression.eq(Preference.PROPERTY_ATTRIBUTE, info.getStringParameter(
+        qPref.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, info.getStringParameter(
             "inpattribute", null)));
       }
 
-      qPref.add(Expression.eq(Preference.PROPERTY_SELECTED, true));
+      qPref.add(Restrictions.eq(Preference.PROPERTY_SELECTED, true));
 
       String client = info.getStringParameter("inpvisibleatClientId", idFilter);
       if (client.isEmpty() || client.equals("0")) {
-        qPref.add(Expression.or(Expression.isNull(Preference.PROPERTY_VISIBLEATCLIENT), Expression
-            .eq(Preference.PROPERTY_VISIBLEATCLIENT + ".id", "0")));
+        qPref.add(Restrictions.or(Restrictions.isNull(Preference.PROPERTY_VISIBLEATCLIENT),
+            Restrictions.eq(Preference.PROPERTY_VISIBLEATCLIENT + ".id", "0")));
       } else {
-        qPref.add(Expression.eq(Preference.PROPERTY_VISIBLEATCLIENT + ".id", client));
+        qPref.add(Restrictions.eq(Preference.PROPERTY_VISIBLEATCLIENT + ".id", client));
       }
 
       String org = info.getStringParameter("inpvisibleatOrgId", idFilter);
       if (org.isEmpty() || org.equals("0")) {
-        qPref.add(Expression.or(Expression.isNull(Preference.PROPERTY_VISIBLEATORGANIZATION),
-            Expression.eq(Preference.PROPERTY_VISIBLEATORGANIZATION + ".id", "0")));
+        qPref.add(Restrictions.or(Restrictions.isNull(Preference.PROPERTY_VISIBLEATORGANIZATION),
+            Restrictions.eq(Preference.PROPERTY_VISIBLEATORGANIZATION + ".id", "0")));
       } else {
-        qPref.add(Expression.eq(Preference.PROPERTY_VISIBLEATORGANIZATION + ".id", org));
+        qPref.add(Restrictions.eq(Preference.PROPERTY_VISIBLEATORGANIZATION + ".id", org));
       }
 
       String user = info.getStringParameter("inpadUserId", idFilter);
       if (user.isEmpty()) {
-        qPref.add(Expression.isNull(Preference.PROPERTY_USERCONTACT));
+        qPref.add(Restrictions.isNull(Preference.PROPERTY_USERCONTACT));
       } else {
-        qPref.add(Expression.eq(Preference.PROPERTY_USERCONTACT + ".id", user));
+        qPref.add(Restrictions.eq(Preference.PROPERTY_USERCONTACT + ".id", user));
       }
 
       String role = info.getStringParameter("inpvisibleatRoleId", idFilter);
       if (role.isEmpty()) {
-        qPref.add(Expression.isNull(Preference.PROPERTY_VISIBLEATROLE));
+        qPref.add(Restrictions.isNull(Preference.PROPERTY_VISIBLEATROLE));
       } else {
-        qPref.add(Expression.eq(Preference.PROPERTY_VISIBLEATROLE + ".id", role));
+        qPref.add(Restrictions.eq(Preference.PROPERTY_VISIBLEATROLE + ".id", role));
       }
 
       String window = info.getStringParameter("inpadWindowId", idFilter);
       if (window.isEmpty()) {
-        qPref.add(Expression.isNull(Preference.PROPERTY_WINDOW));
+        qPref.add(Restrictions.isNull(Preference.PROPERTY_WINDOW));
       } else {
-        qPref.add(Expression.eq(Preference.PROPERTY_WINDOW + ".id", window));
+        qPref.add(Restrictions.eq(Preference.PROPERTY_WINDOW + ".id", window));
       }
 
       if (qPref.count() > 0) {

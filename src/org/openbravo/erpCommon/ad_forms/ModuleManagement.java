@@ -33,8 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -1659,7 +1659,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // Populate module specific grid
       OBCriteria<org.openbravo.model.ad.module.Module> qModuleSpecific = OBDal.getInstance()
           .createCriteria(org.openbravo.model.ad.module.Module.class);
-      qModuleSpecific.add(Expression
+      qModuleSpecific.add(Restrictions
           .isNotNull(org.openbravo.model.ad.module.Module.PROPERTY_MATURITYUPDATE));
       qModuleSpecific.addOrder(Order.asc(org.openbravo.model.ad.module.Module.PROPERTY_NAME));
       ArrayList<HashMap<String, String>> moduleSpecifics = new ArrayList<HashMap<String, String>>();
@@ -1678,7 +1678,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // Populate combo of modules without specific setting
       OBCriteria<org.openbravo.model.ad.module.Module> qModule = OBDal.getInstance()
           .createCriteria(org.openbravo.model.ad.module.Module.class);
-      qModule.add(Expression.isNull(org.openbravo.model.ad.module.Module.PROPERTY_MATURITYUPDATE));
+      qModule
+          .add(Restrictions.isNull(org.openbravo.model.ad.module.Module.PROPERTY_MATURITYUPDATE));
       qModule.addOrder(Order.asc(org.openbravo.model.ad.module.Module.PROPERTY_NAME));
 
       ArrayList<HashMap<String, String>> modules = new ArrayList<HashMap<String, String>>();
@@ -1696,7 +1697,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // Dependencies table
       OBCriteria<org.openbravo.model.ad.module.ModuleDependency> qDeps = OBDal.getInstance()
           .createCriteria(org.openbravo.model.ad.module.ModuleDependency.class);
-      qDeps.add(Expression.eq(
+      qDeps.add(Restrictions.eq(
           org.openbravo.model.ad.module.ModuleDependency.PROPERTY_USEREDITABLEENFORCEMENT, true));
       qDeps.addOrder(Order.asc(org.openbravo.model.ad.module.ModuleDependency.PROPERTY_MODULE));
       qDeps.addOrder(Order.asc(org.openbravo.model.ad.module.ModuleDependency.PROPERTY_ISINCLUDED));
@@ -1719,7 +1720,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // Get the static text values once, not to query db each time for them
       OBCriteria<org.openbravo.model.ad.domain.List> qList = OBDal.getInstance().createCriteria(
           org.openbravo.model.ad.domain.List.class);
-      qList.add(Expression.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE + ".id",
+      qList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE + ".id",
           "8BA0A3775CE14CE69989B6C09982FB2E"));
       qList.addOrder(Order.asc(org.openbravo.model.ad.domain.List.PROPERTY_SEQUENCENUMBER));
       SQLReturnObject[] fpEnforcementCombo = new SQLReturnObject[qList.list().size()];

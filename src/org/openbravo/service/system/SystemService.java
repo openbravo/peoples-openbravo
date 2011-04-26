@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.apache.ddlutils.model.Database;
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -75,7 +75,7 @@ public class SystemService implements OBSingleton {
     for (Class<?> clz : clzs) {
       @SuppressWarnings("unchecked")
       final OBCriteria<?> obc = OBDal.getInstance().createCriteria((Class<BaseOBObject>) clz);
-      obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
+      obc.add(Restrictions.gt(Organization.PROPERTY_UPDATED, afterDate));
       // todo: count is slower than exists, is exists possible?
       if (obc.count() > 0) {
         return true;
@@ -261,7 +261,7 @@ public class SystemService implements OBSingleton {
     obc.setFilterOnActive(false);
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
-    obc.add(Expression.eq(Organization.PROPERTY_CLIENT, client));
+    obc.add(Restrictions.eq(Organization.PROPERTY_CLIENT, client));
     for (BaseOBObject bob : obc.list()) {
       for (Property p : e.getProperties()) {
         if (!p.isPrimitive() && !p.isOneToMany() && !p.isMandatory()) {

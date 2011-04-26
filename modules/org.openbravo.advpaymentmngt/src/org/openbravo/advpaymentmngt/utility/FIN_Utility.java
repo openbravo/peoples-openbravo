@@ -34,7 +34,7 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -295,9 +295,9 @@ public class FIN_Utility {
     DocumentType outDocType = null;
     OBCriteria<DocumentType> obcDoc = OBDal.getInstance().createCriteria(DocumentType.class);
 
-    obcDoc.add(Expression.in("organization.id", OBContext.getOBContext()
+    obcDoc.add(Restrictions.in("organization.id", OBContext.getOBContext()
         .getOrganizationStructureProvider().getParentTree(org.getId(), true)));
-    obcDoc.add(Expression.eq(DocumentType.PROPERTY_DOCUMENTCATEGORY, docCategory));
+    obcDoc.add(Restrictions.eq(DocumentType.PROPERTY_DOCUMENTCATEGORY, docCategory));
     obcDoc.addOrderBy(DocumentType.PROPERTY_DEFAULT, false);
     obcDoc.addOrderBy(DocumentType.PROPERTY_ID, false);
     List<DocumentType> docTypeList = obcDoc.list();
@@ -322,7 +322,7 @@ public class FIN_Utility {
       Sequence seq = docType.getDocumentSequence();
       if (seq == null && tableName != null) {
         OBCriteria<Sequence> obcSeq = OBDal.getInstance().createCriteria(Sequence.class);
-        obcSeq.add(Expression.eq(Sequence.PROPERTY_NAME, tableName));
+        obcSeq.add(Restrictions.eq(Sequence.PROPERTY_NAME, tableName));
         if (obcSeq != null && obcSeq.list().size() > 0) {
           seq = obcSeq.list().get(0);
         }
@@ -536,23 +536,23 @@ public class FIN_Utility {
     obc.setFilterOnReadableOrganization(setFilterOrg);
     for (Value value : values) {
       if (value.getValue() == null && "==".equals(value.getOperator())) {
-        obc.add(Expression.isNull(value.getField()));
+        obc.add(Restrictions.isNull(value.getField()));
       } else if (value.getValue() == null && "!=".equals(value.getOperator())) {
-        obc.add(Expression.isNotNull(value.getField()));
+        obc.add(Restrictions.isNotNull(value.getField()));
       } else if ("==".equals(value.getOperator())) {
-        obc.add(Expression.eq(value.getField(), value.getValue()));
+        obc.add(Restrictions.eq(value.getField(), value.getValue()));
       } else if ("!=".equals(value.getOperator())) {
-        obc.add(Expression.ne(value.getField(), value.getValue()));
+        obc.add(Restrictions.ne(value.getField(), value.getValue()));
       } else if ("<".equals(value.getOperator())) {
-        obc.add(Expression.lt(value.getField(), value.getValue()));
+        obc.add(Restrictions.lt(value.getField(), value.getValue()));
       } else if (">".equals(value.getOperator())) {
-        obc.add(Expression.gt(value.getField(), value.getValue()));
+        obc.add(Restrictions.gt(value.getField(), value.getValue()));
       } else if ("<=".equals(value.getOperator())) {
-        obc.add(Expression.le(value.getField(), value.getValue()));
+        obc.add(Restrictions.le(value.getField(), value.getValue()));
       } else if (">=".equals(value.getOperator())) {
-        obc.add(Expression.ge(value.getField(), value.getValue()));
+        obc.add(Restrictions.ge(value.getField(), value.getValue()));
       } else {
-        obc.add(Expression.eq(value.getField(), value.getValue()));
+        obc.add(Restrictions.eq(value.getField(), value.getValue()));
       }
     }
     return obc.list();
@@ -584,26 +584,26 @@ public class FIN_Utility {
     OBCriteria<T> obc = OBDal.getInstance().createCriteria(clazz);
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
-    obc.add(Expression.ne(Client.PROPERTY_ID, "0"));
+    obc.add(Restrictions.ne(Client.PROPERTY_ID, "0"));
     for (Value value : values) {
       if (value.getValue() == null && "==".equals(value.getOperator())) {
-        obc.add(Expression.isNull(value.getField()));
+        obc.add(Restrictions.isNull(value.getField()));
       } else if (value.getValue() == null && "!=".equals(value.getOperator())) {
-        obc.add(Expression.isNotNull(value.getField()));
+        obc.add(Restrictions.isNotNull(value.getField()));
       } else if ("==".equals(value.getOperator())) {
-        obc.add(Expression.eq(value.getField(), value.getValue()));
+        obc.add(Restrictions.eq(value.getField(), value.getValue()));
       } else if ("!=".equals(value.getOperator())) {
-        obc.add(Expression.ne(value.getField(), value.getValue()));
+        obc.add(Restrictions.ne(value.getField(), value.getValue()));
       } else if ("<".equals(value.getOperator())) {
-        obc.add(Expression.lt(value.getField(), value.getValue()));
+        obc.add(Restrictions.lt(value.getField(), value.getValue()));
       } else if (">".equals(value.getOperator())) {
-        obc.add(Expression.gt(value.getField(), value.getValue()));
+        obc.add(Restrictions.gt(value.getField(), value.getValue()));
       } else if ("<=".equals(value.getOperator())) {
-        obc.add(Expression.le(value.getField(), value.getValue()));
+        obc.add(Restrictions.le(value.getField(), value.getValue()));
       } else if (">=".equals(value.getOperator())) {
-        obc.add(Expression.ge(value.getField(), value.getValue()));
+        obc.add(Restrictions.ge(value.getField(), value.getValue()));
       } else {
-        obc.add(Expression.eq(value.getField(), value.getValue()));
+        obc.add(Restrictions.eq(value.getField(), value.getValue()));
       }
     }
 

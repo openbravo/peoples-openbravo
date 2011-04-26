@@ -31,7 +31,7 @@ import junit.framework.TestResult;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -275,8 +275,8 @@ public class BaseTest extends TestCase {
 
       String[] excludedUserIds = { "100", TEST_USER_ID };
       OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
-      obc.add(Expression.not(Expression.in(User.PROPERTY_ID, excludedUserIds)));
-      obc.add(Expression.isNotEmpty(User.PROPERTY_ADUSERROLESLIST));
+      obc.add(Restrictions.not(Restrictions.in(User.PROPERTY_ID, excludedUserIds)));
+      obc.add(Restrictions.isNotEmpty(User.PROPERTY_ADUSERROLESLIST));
 
       if (obc.count() == 0) {
         throw new RuntimeException("Unable to initialize the list of available users");

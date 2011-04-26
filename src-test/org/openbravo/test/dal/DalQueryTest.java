@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -195,12 +195,12 @@ public class DalQueryTest extends BaseTest {
   public void testUpdateCurrencyByUser() {
     setUserContext("30BB6B32AE984CF08705C57A6C7FAFB9");
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-    obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
+    obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
     final List<Currency> cs = obc.list();
     assertEquals(1, cs.size());
     final Currency c = cs.get(0);
     // Call getValue and setValue directly to work around security checks on the description
-    // that are not the objective of this test. 
+    // that are not the objective of this test.
     c
         .setValue(Currency.PROPERTY_DESCRIPTION, c.getValue(Currency.PROPERTY_DESCRIPTION)
             + " a test");

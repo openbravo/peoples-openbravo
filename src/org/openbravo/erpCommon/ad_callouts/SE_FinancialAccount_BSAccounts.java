@@ -27,7 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
@@ -142,7 +142,7 @@ public class SE_FinancialAccount_BSAccounts extends HttpSecureAppServlet {
         strfinFinancialAccountId);
     OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
         FinAccPaymentMethod.class);
-    obc.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, account));
+    obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, account));
     List<FinAccPaymentMethod> accountPaymentMethods = obc.list();
 
     // Configure clearing account for all payment methods upon clearing event

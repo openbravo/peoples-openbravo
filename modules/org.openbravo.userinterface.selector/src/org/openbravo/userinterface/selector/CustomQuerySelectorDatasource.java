@@ -35,7 +35,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
@@ -362,7 +362,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     // If sortByClause is empty set default sort options.
     if (sortByClause.length() == 0) {
       OBCriteria<SelectorField> selFieldsCrit = OBDao.getFilteredCriteria(SelectorField.class,
-          Expression.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel), Expression.eq(
+          Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel), Restrictions.eq(
               SelectorField.PROPERTY_SHOWINGRID, true));
       selFieldsCrit.addOrderBy(SelectorField.PROPERTY_SORTNO, true);
       for (SelectorField selField : selFieldsCrit.list()) {

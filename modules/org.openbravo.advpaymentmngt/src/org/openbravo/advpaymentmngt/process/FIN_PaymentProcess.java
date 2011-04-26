@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.exception.NoExecutionProcessFoundException;
@@ -390,7 +390,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
   private static boolean hasTransaction(FIN_Payment payment) {
     OBCriteria<FIN_FinaccTransaction> transaction = OBDal.getInstance().createCriteria(
         FIN_FinaccTransaction.class);
-    transaction.add(Expression.eq(FIN_FinaccTransaction.PROPERTY_FINPAYMENT, payment));
+    transaction.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_FINPAYMENT, payment));
     List<FIN_FinaccTransaction> list = transaction.list();
     if (list == null || list.size() == 0)
       return false;

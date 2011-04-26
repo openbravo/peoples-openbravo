@@ -28,7 +28,7 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
@@ -136,7 +136,7 @@ public class DocFINReconciliation extends AcctServer {
     try {
       OBCriteria<FIN_FinaccTransaction> trans = OBDal.getInstance().createCriteria(
           FIN_FinaccTransaction.class);
-      trans.add(Expression.eq(FIN_FinaccTransaction.PROPERTY_RECONCILIATION, reconciliation));
+      trans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_RECONCILIATION, reconciliation));
       trans.setFilterOnReadableClients(false);
       trans.setFilterOnReadableOrganization(false);
       transactions = trans.list();
@@ -605,8 +605,8 @@ public class DocFINReconciliation extends AcctServer {
     try {
       OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
-      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
           .getPaymentMethod()));
       obCriteria.setFilterOnReadableClients(false);
       obCriteria.setFilterOnReadableOrganization(false);
@@ -654,8 +654,8 @@ public class DocFINReconciliation extends AcctServer {
       if (payment != null) {
         OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
             FinAccPaymentMethod.class);
-        obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-        obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
+        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
             .getPaymentMethod()));
         obCriteria.setFilterOnReadableClients(false);
         obCriteria.setFilterOnReadableOrganization(false);
@@ -728,8 +728,9 @@ public class DocFINReconciliation extends AcctServer {
         if (payment != null) {
           OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
               FinAccPaymentMethod.class);
-          obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-          obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
+          obCriteria.add(Restrictions
+              .eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+          obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
               .getPaymentMethod()));
           obCriteria.setFilterOnReadableClients(false);
           obCriteria.setFilterOnReadableOrganization(false);
@@ -842,11 +843,11 @@ public class DocFINReconciliation extends AcctServer {
     try {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
           .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
       accounts.setFilterOnReadableOrganization(false);
       List<FIN_FinancialAccountAccounting> accountList = accounts.list();
@@ -869,19 +870,19 @@ public class DocFINReconciliation extends AcctServer {
     try {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, payment
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, payment
           .getAccount()));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
           .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
       accounts.setFilterOnReadableOrganization(false);
       List<FIN_FinancialAccountAccounting> accountList = accounts.list();
       OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
-      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
           .getPaymentMethod()));
       obCriteria.setFilterOnReadableClients(false);
       obCriteria.setFilterOnReadableOrganization(false);
@@ -929,11 +930,11 @@ public class DocFINReconciliation extends AcctServer {
     try {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
           .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
       accounts.setFilterOnReadableOrganization(false);
       List<FIN_FinancialAccountAccounting> accountList = accounts.list();
@@ -956,11 +957,11 @@ public class DocFINReconciliation extends AcctServer {
     try {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
           .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
       accounts.setFilterOnReadableOrganization(false);
       List<FIN_FinancialAccountAccounting> accountList = accounts.list();
@@ -984,20 +985,20 @@ public class DocFINReconciliation extends AcctServer {
     try {
       OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
-      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
           .getPaymentMethod()));
       obCriteria.setFilterOnReadableClients(false);
       obCriteria.setFilterOnReadableOrganization(false);
       List<FinAccPaymentMethod> lines = obCriteria.list();
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, payment
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, payment
           .getAccount()));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
           .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
       accounts.setFilterOnReadableOrganization(false);
       List<FIN_FinancialAccountAccounting> accountList = accounts.list();
@@ -1032,20 +1033,20 @@ public class DocFINReconciliation extends AcctServer {
     try {
       OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
-      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-      obCriteria.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
           .getPaymentMethod()));
       obCriteria.setFilterOnReadableClients(false);
       obCriteria.setFilterOnReadableOrganization(false);
       List<FinAccPaymentMethod> lines = obCriteria.list();
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, payment
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, payment
           .getAccount()));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
           .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
       accounts.setFilterOnReadableOrganization(false);
       List<FIN_FinancialAccountAccounting> accountList = accounts.list();

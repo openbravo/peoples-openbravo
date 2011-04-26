@@ -25,7 +25,7 @@ package org.openbravo.test.dal;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
@@ -101,7 +101,7 @@ public class DalTest extends BaseTest {
     addReadWriteAccess(Category.class);
     addReadWriteAccess(CategoryAccounts.class);
     final OBCriteria<Category> obCriteria = OBDal.getInstance().createCriteria(Category.class);
-    obCriteria.add(Expression.eq(Category.PROPERTY_NAME, "testname"));
+    obCriteria.add(Restrictions.eq(Category.PROPERTY_NAME, "testname"));
     final List<Category> bpgs = obCriteria.list();
     assertEquals(1, bpgs.size());
     final Category bpg = bpgs.get(0);
@@ -122,7 +122,7 @@ public class DalTest extends BaseTest {
     // first delete the related accounts
     final OBCriteria<CategoryAccounts> obc2 = OBDal.getInstance().createCriteria(
         CategoryAccounts.class);
-    obc2.add(Expression.eq(CategoryAccounts.PROPERTY_BUSINESSPARTNERCATEGORY, bpgs.get(0)));
+    obc2.add(Restrictions.eq(CategoryAccounts.PROPERTY_BUSINESSPARTNERCATEGORY, bpgs.get(0)));
     final List<CategoryAccounts> bpgas = obc2.list();
     for (final CategoryAccounts bga : bpgas) {
       OBDal.getInstance().remove(bga);
@@ -137,7 +137,7 @@ public class DalTest extends BaseTest {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
-    obc.add(Expression.eq(Category.PROPERTY_NAME, "testname"));
+    obc.add(Restrictions.eq(Category.PROPERTY_NAME, "testname"));
     final List<Category> bpgs = obc.list();
     assertEquals(0, bpgs.size());
   }
@@ -147,13 +147,15 @@ public class DalTest extends BaseTest {
   public void testUpdateCurrencyByUser() {
     setUserContext("30BB6B32AE984CF08705C57A6C7FAFB9");
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-    obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
+    obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
     final List<Currency> cs = obc.list();
     assertEquals(1, cs.size());
     final Currency c = cs.get(0);
     // Call getValue and setValue directly to work around security checks on the description
     // that are not the objective of this test.
-    c.setValue(Currency.PROPERTY_DESCRIPTION, c.getValue(Currency.PROPERTY_DESCRIPTION) + " a test");
+    c
+        .setValue(Currency.PROPERTY_DESCRIPTION, c.getValue(Currency.PROPERTY_DESCRIPTION)
+            + " a test");
     try {
       OBDal.getInstance().save(c);
       fail("No security check");
@@ -173,7 +175,7 @@ public class DalTest extends BaseTest {
     String newDescription = null;
     {
       final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-      obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
+      obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
       final List<Currency> cs = obc.list();
       assertEquals(1, cs.size());
       c = cs.get(0);
@@ -187,7 +189,7 @@ public class DalTest extends BaseTest {
     // roll back the change, while doing some checks
     {
       final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-      obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
+      obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
       final List<Currency> cs = obc.list();
       assertEquals(1, cs.size());
       final Currency newC = cs.get(0);
@@ -335,7 +337,7 @@ public class DalTest extends BaseTest {
     String cashBookId = "";
     {
       final OBCriteria<Currency> cc = OBDal.getInstance().createCriteria(Currency.class);
-      cc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
+      cc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
       final List<Currency> cs = cc.list();
       final Currency currency = cs.get(0);
       final CashBook c = OBProvider.getInstance().get(CashBook.class);
@@ -353,7 +355,7 @@ public class DalTest extends BaseTest {
     // cashbook account
     final OBCriteria<CashBookAccounts> cbc = OBDal.getInstance().createCriteria(
         CashBookAccounts.ENTITY_NAME);
-    cbc.add(Expression.eq(CashBookAccounts.PROPERTY_CASHBOOK + "." + CashBook.PROPERTY_ID,
+    cbc.add(Restrictions.eq(CashBookAccounts.PROPERTY_CASHBOOK + "." + CashBook.PROPERTY_ID,
         cashBookId));
     final List<?> cbas = cbc.list();
     assertTrue(cbas.size() > 0);

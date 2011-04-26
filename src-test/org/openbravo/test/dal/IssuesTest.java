@@ -32,7 +32,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Reference;
 import org.openbravo.base.model.domaintype.LongDomainType;
@@ -324,7 +324,7 @@ public class IssuesTest extends BaseTest {
     setSystemAdministratorContext();
 
     OBCriteria<Module> obc = OBDal.getInstance().createCriteria(Module.class);
-    obc.add(Expression.eq(Module.PROPERTY_INDEVELOPMENT, false));
+    obc.add(Restrictions.eq(Module.PROPERTY_INDEVELOPMENT, false));
 
     if (obc.list().size() == 0) {
       // Can't test DAL's connection provider

@@ -22,7 +22,7 @@ package org.openbravo.test.security;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -52,7 +52,7 @@ public class EntityAccessTest extends BaseTest {
   public void testCreateCurrency() {
     setTestAdminContext();
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-    obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "TE2"));
+    obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "TE2"));
     final List<Currency> cs = obc.list();
     if (cs.size() == 0) {
       final Currency c = OBProvider.getInstance().get(Currency.class);
@@ -76,7 +76,7 @@ public class EntityAccessTest extends BaseTest {
     setTestUserContext();
     addReadWriteAccess(Currency.class);
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-    obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "TE2"));
+    obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "TE2"));
     final List<Currency> cs = obc.list();
     assertEquals(1, cs.size());
     final Currency c = cs.get(0);
@@ -170,7 +170,7 @@ public class EntityAccessTest extends BaseTest {
     // setUserContext(getRandomUserId());
     // try {
     // final OBCriteria<Costing> obc = OBDal.getInstance().createCriteria(Costing.class);
-    // obc.add(Expression.eq(Costing.PROPERTY_ID, "FE8370A36E91432688A323A07D606622"));
+    // obc.add(Restrictions.eq(Costing.PROPERTY_ID, "FE8370A36E91432688A323A07D606622"));
     // final List<Costing> cs = obc.list();
     // assertTrue(cs.size() > 0);
     // fail("Non readable check not enforced");
@@ -188,7 +188,7 @@ public class EntityAccessTest extends BaseTest {
     addReadWriteAccess(Currency.class);
     addReadWriteAccess(CurrencyTrl.class);
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-    obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "TE2"));
+    obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "TE2"));
     final List<Currency> cs = obc.list();
     assertEquals(1, cs.size());
     OBDal.getInstance().remove(cs.get(0));

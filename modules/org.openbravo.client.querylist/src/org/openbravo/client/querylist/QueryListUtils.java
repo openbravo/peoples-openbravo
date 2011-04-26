@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -119,7 +119,7 @@ class QueryListUtils {
   public static List<OBCQL_QueryColumn> getColumns(OBCQL_WidgetQuery query) {
     OBCriteria<OBCQL_QueryColumn> obcColumns = OBDal.getInstance().createCriteria(
         OBCQL_QueryColumn.class);
-    obcColumns.add(Expression.eq(OBCQL_QueryColumn.PROPERTY_WIDGETQUERY, query));
+    obcColumns.add(Restrictions.eq(OBCQL_QueryColumn.PROPERTY_WIDGETQUERY, query));
     obcColumns.addOrderBy(OBCQL_QueryColumn.PROPERTY_SEQUENCENUMBER, true);
     return obcColumns.list();
   }

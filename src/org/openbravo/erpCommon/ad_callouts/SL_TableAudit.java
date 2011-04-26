@@ -27,7 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
@@ -75,7 +75,7 @@ public class SL_TableAudit extends HttpSecureAppServlet {
             + "\")\n");
       } else {
         OBCriteria<Table> obc = OBDal.getInstance().createCriteria(Table.class);
-        obc.add(Expression.eq(Table.PROPERTY_ISFULLYAUDITED, true));
+        obc.add(Restrictions.eq(Table.PROPERTY_ISFULLYAUDITED, true));
         SessionInfo.setAuditActive(obc.list().size() > 0);
       }
     } else if (strChanged.equalsIgnoreCase("inpisexcludeaudit")) {
@@ -86,7 +86,7 @@ public class SL_TableAudit extends HttpSecureAppServlet {
             + Utility.messageBD(this, "RegenerateAudit", vars.getLanguage()) + "\")\n");
       } else {
         OBCriteria<Table> obc = OBDal.getInstance().createCriteria(Table.class);
-        obc.add(Expression.eq(Table.PROPERTY_ISFULLYAUDITED, true));
+        obc.add(Restrictions.eq(Table.PROPERTY_ISFULLYAUDITED, true));
         SessionInfo.setAuditActive(obc.list().size() > 0);
       }
     }

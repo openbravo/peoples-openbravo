@@ -27,7 +27,7 @@ import org.apache.ddlutils.PlatformFactory;
 import org.apache.ddlutils.model.Database;
 import org.apache.ddlutils.platform.ExcludeFilter;
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.DalInitializingTask;
@@ -135,7 +135,7 @@ public class SystemValidationTask extends DalInitializingTask {
       return null;
     }
     final OBCriteria<Module> modules = OBDal.getInstance().createCriteria(Module.class);
-    modules.add(Expression.eq(Module.PROPERTY_JAVAPACKAGE, moduleJavaPackage));
+    modules.add(Restrictions.eq(Module.PROPERTY_JAVAPACKAGE, moduleJavaPackage));
 
     if (modules.list().size() == 0) {
       throw new OBException("Module with javapackage " + moduleJavaPackage + " does not exist");

@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -70,7 +70,7 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     super.setUp();
     setTestUserContext();
     OBCriteria<Warehouse> obc = OBDal.getInstance().createCriteria(Warehouse.class);
-    obc.add(Expression.eq(Warehouse.PROPERTY_ORGANIZATION, OBDal.getInstance().get(
+    obc.add(Restrictions.eq(Warehouse.PROPERTY_ORGANIZATION, OBDal.getInstance().get(
         Organization.class, TEST_US_ORG_ID)));
     numberOfWarehouses = obc.count();
     for (Warehouse w : obc.list()) {
@@ -123,7 +123,7 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     // deleted, force this by being admin
     OBContext.setAdminMode();
     try {
-      removeAll(Warehouse.class, numberOfWarehouses, Expression.in(Warehouse.PROPERTY_NAME,
+      removeAll(Warehouse.class, numberOfWarehouses, Restrictions.in(Warehouse.PROPERTY_NAME,
           warehouseNames));
     } finally {
       OBContext.restorePreviousMode();
@@ -170,9 +170,9 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     // deleted, force this by being admin
     OBContext.setAdminMode();
     try {
-      removeAll(Warehouse.class, numberOfWarehouses, Expression.in(Warehouse.PROPERTY_NAME,
+      removeAll(Warehouse.class, numberOfWarehouses, Restrictions.in(Warehouse.PROPERTY_NAME,
           warehouseNames));
-      removeAll(Location.class, numberOfLocations, Expression.in(Location.PROPERTY_ADDRESSLINE1,
+      removeAll(Location.class, numberOfLocations, Restrictions.in(Location.PROPERTY_ADDRESSLINE1,
           locationAddresses));
     } finally {
       OBContext.restorePreviousMode();
@@ -184,7 +184,7 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     if (c != null) {
       criteria.add(c);
     }
-    criteria.add(Expression.eq("client.id", QA_TEST_CLIENT_ID));
+    criteria.add(Restrictions.eq("client.id", QA_TEST_CLIENT_ID));
 
     @SuppressWarnings("unchecked")
     final List<T> list = criteria.list();

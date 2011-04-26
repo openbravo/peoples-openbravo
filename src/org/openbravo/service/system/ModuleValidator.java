@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.NamingUtil;
@@ -194,7 +194,7 @@ public class ModuleValidator implements SystemValidator {
         obCriteria.setFilterOnActive(false);
         obCriteria.setFilterOnReadableClients(false);
         obCriteria.setFilterOnReadableOrganization(false);
-        obCriteria.add(Expression.eq(moduleProperty.getName(), module));
+        obCriteria.add(Restrictions.eq(moduleProperty.getName(), module));
         for (BaseOBObject baseOBObject : obCriteria.list()) {
           checkIllegalId(baseOBObject, result, module);
         }
@@ -226,7 +226,7 @@ public class ModuleValidator implements SystemValidator {
 
   private <T extends BaseOBObject> boolean hasArtifact(Class<T> clz, Module module) {
     final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
-    obc.add(Expression.eq("module", module));
+    obc.add(Restrictions.eq("module", module));
     return obc.count() > 0;
   }
 
@@ -319,7 +319,7 @@ public class ModuleValidator implements SystemValidator {
   private void checkTableName(Module module, SystemValidationResult result) {
     for (org.openbravo.model.ad.module.DataPackage pckg : module.getDataPackageList()) {
       OBCriteria<Table> tablesCriteria = OBDal.getInstance().createCriteria(Table.class);
-      tablesCriteria.add(Expression.eq(Table.PROPERTY_DATAPACKAGE, pckg));
+      tablesCriteria.add(Restrictions.eq(Table.PROPERTY_DATAPACKAGE, pckg));
       final List<Table> tables = tablesCriteria.list();
       for (Table table : tables) {
         final String name = table.getName();
@@ -338,7 +338,7 @@ public class ModuleValidator implements SystemValidator {
   private void checkConfigurationProperties(Module module, SystemValidationResult result) {
     OBCriteria<PropertyConfiguration> pcs = OBDal.getInstance().createCriteria(
         PropertyConfiguration.class);
-    pcs.add(Expression.eq(PropertyConfiguration.PROPERTY_MODULE, module));
+    pcs.add(Restrictions.eq(PropertyConfiguration.PROPERTY_MODULE, module));
 
     if (pcs.count() > 0) {
       result
