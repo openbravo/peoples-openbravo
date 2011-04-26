@@ -109,12 +109,12 @@ function unMatchLine(bankStatementLineId, isChecked) {
 </script>
 <script language="JavaScript" type="text/javascript">
 function closeThisPage() {
-    parent.window.close();
+    closePage();
     return true;
 }
 function submitThisPage(strCommand) {
   if (validate(strCommand)) {
-    submitCommandForm(strCommand, false, null, 'MatchTransaction.html', '_top');
+    submitCommandForm(strCommand, false, null, 'MatchTransaction.html');
     return true;
   }
   return true;
@@ -329,15 +329,7 @@ function openAddTransaction(bankStatementLineId){
                                 <td style="vertical-align: top;" id="messageBoxIDContent">
                                   <span>
                                     <div class="MessageBox_TextTitle" id="messageBoxIDTitle">
-                                      xxInfo: AccessTableWithNoView      <TABLE style="display:none">
-        <TR>
-          <TD style="padding-top: 0px;">
-            <SCRIPT>var sc_FIN_FinAcc_Transaction_ID = null;</SCRIPT>
-            <INPUT type="hidden" name="inpfinFinaccTransactionId" id="FIN_FinAcc_Transaction_ID" value="" onreset="sc_FIN_FinAcc_Transaction_ID.resetSelector();" onchange="OB.Utilities.updateSmartClientComponentValue(this, sc_FIN_FinAcc_Transaction_ID.selectorField);"></INPUT>
-            <SCRIPT id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/6643B422022B41698FEFD6C7FAD7AC4B?columnName=FIN_FinAcc_Transaction_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=true&filterClass=org.openbravo.userinterface.selector.SelectorDataSourceFilter&_selectorDefinitionId=6643B422022B41698FEFD6C7FAD7AC4B"></SCRIPT>
-          </TD>
-        </TR>
-      </TABLE>
+                                      xxInfo: AccessTableWithNoView
                                     </div>
                                     <div class="MessageBox_TextDescription" id="messageBoxIDMessage">
                                       xxThe current information is empty.

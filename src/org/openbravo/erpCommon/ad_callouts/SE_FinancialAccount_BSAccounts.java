@@ -84,7 +84,8 @@ public class SE_FinancialAccount_BSAccounts extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     String strChanged = vars.getStringParameter("inpLastFieldChanged");
-    String strfinTransitoryAcct = vars.getStringParameter("inpfinTransitoryAcct");
+    // String strfinTransitoryAcct = vars.getStringParameter("inpfinTransitoryAcct");
+    String strfinTransitoryAcct = "";
     StringBuffer resultado = new StringBuffer();
 
     if ("inpfinTransitoryAcct".equals(strChanged) && !"".equals(strfinTransitoryAcct)) {

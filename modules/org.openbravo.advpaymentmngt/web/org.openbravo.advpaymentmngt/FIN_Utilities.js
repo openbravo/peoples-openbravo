@@ -514,11 +514,17 @@ function createCombo(object, innerHTML){
  */
 function reloadParentGrid() {
   if(top.opener) {
-	var dad = top.opener;
-	if (typeof dad.loadGrid === "function" || typeof dad.loadGrid === "object") {
-	  top.opener.loadGrid();
-	} else if (typeof dad.updateGridDataAfterFilter === "function" || typeof dad.updateGridDataAfterFilter === "object") {
-	  top.opener.updateGridDataAfterFilter();
-	}
+    var dad = top.opener;
+    if (typeof dad.loadGrid === "function" || typeof dad.loadGrid === "object") {
+      top.opener.loadGrid();
+    } else if (typeof dad.updateGridDataAfterFilter === "function" || typeof dad.updateGridDataAfterFilter === "object") {
+      top.opener.updateGridDataAfterFilter();
+    }
+  } else if (getFrame('LayoutMDI') && getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.view) {
+    var theView = getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.view;
+    theView.refresh(function(){
+        theView.getTabMessage();
+        theView.toolBar.refreshCustomButtons();
+    });
   }
 }
