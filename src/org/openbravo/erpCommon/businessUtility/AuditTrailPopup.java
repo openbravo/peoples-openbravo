@@ -91,6 +91,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private static final String auditActionsReferenceId = "4C36DC179A5F40DC80B3F3798E121152";
   private static final String adMessageIdForProcess = "437";
   private static final String adMessageIdForWindow = "614";
+  private static final String adMessageIdForCF = "32171A3EEE4847FABB69259868A34ED5";
   private static final String adMessageIdForForm = "D9912E810888475ABB8DFF416196FB5E";
   private static final String adMessageIdForCallout = "13F1AE1374AD4054BE7FD3743B56F266";
   private static final String adValRuleIdForFields = "9C6989B15CEA4987A502C0F5FF02B171";
@@ -1198,6 +1199,10 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     if ("C".equals(processType)) {
       String calloutLabel = getTranslatedMessage(adMessageIdForCallout);
       return calloutLabel + ": " + OBDal.getInstance().get(Callout.class, process).getName();
+    }
+    if ("CF".equals(processType)) {
+      String processCFLabel = getTranslatedMessage(adMessageIdForCF);
+      return processCFLabel + ": " + OBDal.getInstance().get(Table.class, process).getDBTableName();
     }
     // all other cases -> Tab
     String windowLabel = getTranslatedMessage(adMessageIdForWindow);
