@@ -121,9 +121,9 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <column name="ISSHOWNINSTATUSBAR" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ISSHOWNINSTATUSBAR" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_FIELD">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
