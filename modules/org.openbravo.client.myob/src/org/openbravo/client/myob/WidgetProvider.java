@@ -21,6 +21,7 @@ package org.openbravo.client.myob;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -246,6 +247,16 @@ public abstract class WidgetProvider {
       widgetParameters.put(parameterValue.getParameter().getDBColumnName(), ParameterUtils
           .getParameterValue(parameterValue));
     }
+
+    // Include fixed parameters in the definition.
+    for (Parameter parameter : widgetInstance.getWidgetClass()
+        .getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
+      if (!widgetParameters.has(parameter.getDBColumnName()) && parameter.isFixed()) {
+        widgetParameters.put(parameter.getDBColumnName(), ParameterUtils.getParameterFixedValue(
+            getStringParameters(getParameters()), parameter));
+
+      }
+    }
     jsonObject.put(PARAMETERS, widgetParameters);
   }
 
@@ -278,6 +289,18 @@ public abstract class WidgetProvider {
 
   public void setParameters(Map<String, Object> parameters) {
     this.parameters = parameters;
+  }
+
+  private Map<String, String> getStringParameters(Map<String, Object> _parameters) {
+    Map<String, String> stringParameters = new HashMap<String, String>();
+    final Iterator<String> keys = _parameters.keySet().iterator();
+    while (keys.hasNext()) {
+      final String keyName = keys.next();
+      if (_parameters.get(keyName) instanceof String) {
+        stringParameters.put(keyName, (String) _parameters.get(keyName));
+      }
+    }
+    return stringParameters;
   }
 
   private String getParameterLabel(Parameter parameter) {
