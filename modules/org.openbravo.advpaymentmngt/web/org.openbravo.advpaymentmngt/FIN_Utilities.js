@@ -509,28 +509,6 @@ function createCombo(object, innerHTML){
 }
 
 /**
- * This function forces a reload of the parent page. Code based on PopUp_Close_And_Refresh.html
- */
-function reloadParentPage() {
-  var buttonRefresh;
-  if (opener && opener.parent && opener.parent.appFrame && opener.parent.appFrame.document.getElementById('buttonRefresh')) {
-    buttonRefresh = opener.parent.appFrame.document.getElementById('buttonRefresh');
-  } else if (getFrame('LayoutMDI') && getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.getClassName() === 'OBClassicWindow') {
-    buttonRefresh = getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.getAppFrameWindow().document.getElementById('buttonRefresh');
-  }
-  if (buttonRefresh) {
-    buttonRefresh.onclick();
-  } else if (getFrame('LayoutMDI') && getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.view) {
-    var theView = getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.view;
-    theView.refresh(function(){
-        theView.getTabMessage();
-        theView.toolBar.refreshCustomButtons();
-    });
-  }
-  return true;
-}
-
-/**
  * Helper function to reload the opener window dynamic grid.
  * @return
  */
