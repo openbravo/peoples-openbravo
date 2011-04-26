@@ -22,9 +22,9 @@ package org.openbravo.base.session;
 import java.sql.Types;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
 import org.hibernate.dialect.Oracle10gDialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.type.StandardBasicTypes;
 
 /**
  * Extends the Oracle10Dialect to replace some java-oracle type mappings to support the current rdb
@@ -39,12 +39,13 @@ public class OBOracle10gDialect extends Oracle10gDialect {
   public OBOracle10gDialect() {
     super();
 
-    registerHibernateType(Types.NUMERIC, Hibernate.LONG.getName());
+    registerHibernateType(Types.NUMERIC, StandardBasicTypes.LONG.getName());
 
     registerColumnType(Types.VARCHAR, 4000, "nvarchar2($l)");
     registerColumnType(Types.VARCHAR, 100, "varchar2($l)");
     registerColumnType(Types.VARCHAR, 5, "char($l)");
-    registerFunction("to_number", new StandardSQLFunction("to_number", Hibernate.BIG_DECIMAL));
+    registerFunction("to_number", new StandardSQLFunction("to_number",
+        StandardBasicTypes.BIG_DECIMAL));
 
     log.debug("Created Openbravo specific Oracle DIalect");
   }

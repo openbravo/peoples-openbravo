@@ -29,10 +29,12 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 
+import org.hibernate.Cache;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
+import org.hibernate.TypeHelper;
 import org.hibernate.classic.Session;
 import org.hibernate.engine.FilterDefinition;
 import org.hibernate.engine.SessionImplementor;
@@ -52,7 +54,7 @@ import org.openbravo.database.SessionInfo;
  * @author mtaal
  * @see SessionFactoryController
  */
-
+@SuppressWarnings({ "deprecation", "rawtypes" })
 public class DalSessionFactory implements SessionFactory {
 
   private static final long serialVersionUID = 1L;
@@ -77,12 +79,10 @@ public class DalSessionFactory implements SessionFactory {
     delegateSessionFactory.close();
   }
 
-  @SuppressWarnings("unchecked")
   public void evict(Class persistentClass, Serializable id) throws HibernateException {
     delegateSessionFactory.evict(persistentClass, id);
   }
 
-  @SuppressWarnings("unchecked")
   public void evict(Class persistentClass) throws HibernateException {
     delegateSessionFactory.evict(persistentClass);
   }
@@ -116,12 +116,10 @@ public class DalSessionFactory implements SessionFactory {
     return delegateSessionFactory.getAllClassMetadata();
   }
 
-  @SuppressWarnings("unchecked")
   public Map getAllCollectionMetadata() throws HibernateException {
     return delegateSessionFactory.getAllCollectionMetadata();
   }
 
-  @SuppressWarnings("unchecked")
   public ClassMetadata getClassMetadata(Class persistentClass) throws HibernateException {
     return delegateSessionFactory.getClassMetadata(persistentClass);
   }
@@ -138,7 +136,6 @@ public class DalSessionFactory implements SessionFactory {
     return delegateSessionFactory.getCurrentSession();
   }
 
-  @SuppressWarnings("unchecked")
   public Set getDefinedFilterNames() {
     return delegateSessionFactory.getDefinedFilterNames();
   }
@@ -284,5 +281,17 @@ public class DalSessionFactory implements SessionFactory {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }
     return session;
+  }
+
+  public Cache getCache() {
+    return delegateSessionFactory.getCache();
+  }
+
+  public boolean containsFetchProfileDefinition(String name) {
+    return delegateSessionFactory.containsFetchProfileDefinition(name);
+  }
+
+  public TypeHelper getTypeHelper() {
+    return delegateSessionFactory.getTypeHelper();
   }
 }

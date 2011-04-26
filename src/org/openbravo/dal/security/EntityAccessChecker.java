@@ -108,7 +108,7 @@ public class EntityAccessChecker implements OBNotSingleton {
 
       // Don't use dal because otherwise we can end up in infinite loops
       String qryStr = "select t from " + Tab.class.getName() + " t"
-          + " join fetch t.window w join fetch t.window.aDWindowAccessList wa"
+          + " join fetch t.window w join fetch w.aDWindowAccessList wa"
           + " where wa.role.id= :roleId";
       final Query qry = SessionHandler.getInstance().createQuery(qryStr);
       qry.setParameter("roleId", getRoleId());

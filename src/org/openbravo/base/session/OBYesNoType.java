@@ -19,35 +19,67 @@
 
 package org.openbravo.base.session;
 
-import org.hibernate.type.YesNoType;
-import org.hibernate.util.EqualsHelper;
+import java.io.Serializable;
+
+import org.hibernate.dialect.Dialect;
+import org.hibernate.type.AbstractSingleColumnStandardBasicType;
+import org.hibernate.type.DiscriminatorType;
+import org.hibernate.type.PrimitiveType;
+import org.hibernate.type.StringType;
+import org.hibernate.type.descriptor.java.BooleanTypeDescriptor;
+import org.hibernate.type.descriptor.sql.CharTypeDescriptor;
 
 /**
- * Extends the hibernate yesno type, handles null values as false. As certain methods can not be
- * extended the solution is to catch the isDirty check by reimplementing the isEqual method.
+ * Implements the same logic as the hibernate yesno type, handles null values as false. As certain
+ * methods can not be extended the solution is to catch the isDirty check by reimplementing the
+ * areEqual method.
  * 
  * @author mtaal
  */
-public class OBYesNoType extends YesNoType {
+public class OBYesNoType extends AbstractSingleColumnStandardBasicType<Boolean> implements
+    PrimitiveType<Boolean>, DiscriminatorType<Boolean> {
   private static final long serialVersionUID = 1L;
 
-  /**
-   * The isEqual has been overridden from the standard Hibernate YesNo type. The main difference
-   * (with the implementation in the superclass) is that null is considered to be equal to false
-   * here.
-   */
-  @Override
-  public boolean isEqual(Object x, Object y) {
-    if (x == y) {
-      return true;
-    }
-    if (x == null && y != null && y instanceof Boolean) {
-      return ((Boolean) y).booleanValue() == false;
-    } else if (y == null && x != null && x instanceof Boolean) {
-      return ((Boolean) x).booleanValue() == false;
-    }
-
-    return EqualsHelper.equals(x, y);
+  public OBYesNoType() {
+    super(CharTypeDescriptor.INSTANCE, new LocalBooleanTypeDescriptor());
   }
 
+  public String getName() {
+    return "yes_no";
+  }
+
+  @SuppressWarnings("rawtypes")
+  public Class getPrimitiveClass() {
+    return boolean.class;
+  }
+
+  public Boolean stringToObject(String xml) throws Exception {
+    return fromString(xml);
+  }
+
+  public Serializable getDefaultValue() {
+    return Boolean.FALSE;
+  }
+
+  public String objectToSQLString(Boolean value, Dialect dialect) throws Exception {
+    return StringType.INSTANCE.objectToSQLString(value.booleanValue() ? "Y" : "N", dialect);
+  }
+
+  private static class LocalBooleanTypeDescriptor extends BooleanTypeDescriptor {
+
+    private static final long serialVersionUID = 1L;
+
+    public boolean areEqual(Boolean x, Boolean y) {
+      if (x == y) {
+        return true;
+      }
+      if (x == null && y != null && y instanceof Boolean) {
+        return ((Boolean) y).booleanValue() == false;
+      } else if (y == null && x != null && x instanceof Boolean) {
+        return ((Boolean) x).booleanValue() == false;
+      }
+
+      return super.areEqual(x, y);
+    }
+  }
 }
