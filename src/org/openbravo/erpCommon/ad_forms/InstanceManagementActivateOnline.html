@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,7 +44,7 @@
   </script>
   <script language="JavaScript" type="text/javascript" id="fieldWindowIDArray">
   function closeThisPage() {
-    window.close();
+    closePage();
     return true;
   }
   
@@ -52,6 +52,7 @@
         if (inputValue(frm.publicKey)==null || inputValue(frm.publicKey)=="") {
           setWindowElementFocus(frm.publicKey);
           showJSMessage(1);
+          setProcessingMode('popup', false);
           return false;
         }         
         return true;
@@ -312,7 +313,7 @@
                   <button type="button" 
                     id="buttonOK" 
                     class="ButtonLink" 
-                    onclick="submitCommandForm('ACTIVATE', true, null, 'InstanceManagement.html', '_self', null, false);return false;" 
+                    onclick="setProcessingMode('popup', true); submitCommandForm('ACTIVATE', true, null, 'InstanceManagement.html', '_self', null, false);return false;" 
                     onfocus="buttonEvent('onfocus', this); window.status='Continue'; return true;" 
                     onblur="buttonEvent('onblur', this);" 
                     onkeyup="buttonEvent('onkeyup', this);" 

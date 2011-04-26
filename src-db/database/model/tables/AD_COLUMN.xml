@@ -181,6 +181,10 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
+      <column name="ISEXCLUDEAUDIT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CALLOUT" name="AD_COLUMN_AD_CALLOUT">
         <reference local="AD_CALLOUT_ID" foreign="AD_CALLOUT_ID"/>
       </foreign-key>

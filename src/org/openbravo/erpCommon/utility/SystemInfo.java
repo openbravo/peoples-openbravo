@@ -54,8 +54,8 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.hibernate.Query;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -504,8 +504,8 @@ public class SystemInfo {
               SessionUsageAudit.class);
           qUsage.setFilterOnReadableClients(false);
           qUsage.setFilterOnReadableOrganization(false);
-          qUsage.add(Expression.eq(SessionUsageAudit.PROPERTY_MODULE, mod));
-          qUsage.add(Expression.ge(SessionUsageAudit.PROPERTY_CREATIONDATE, startOfPeriod));
+          qUsage.add(Restrictions.eq(SessionUsageAudit.PROPERTY_MODULE, mod));
+          qUsage.add(Restrictions.ge(SessionUsageAudit.PROPERTY_CREATIONDATE, startOfPeriod));
           modInfo.add(Integer.toString(qUsage.count()));
         }
         mods.put(modInfo);
@@ -620,8 +620,8 @@ public class SystemInfo {
       Calendar startOfPeriod = getStartOfPeriod();
 
       OBCriteria<Session> qSession = OBDal.getInstance().createCriteria(Session.class);
-      qSession.add(Expression.isNotNull(Session.PROPERTY_LASTPING));
-      qSession.add(Expression.ge(Session.PROPERTY_LASTPING, startOfPeriod.getTime()));
+      qSession.add(Restrictions.isNotNull(Session.PROPERTY_LASTPING));
+      qSession.add(Restrictions.ge(Session.PROPERTY_LASTPING, startOfPeriod.getTime()));
       qSession.addOrder(Order.asc(Session.PROPERTY_CREATIONDATE));
 
       // Prepare a list of events based on logins and logouts.
@@ -693,8 +693,8 @@ public class SystemInfo {
   private static void calculateNumberOfRejectedLoginsDueConcurrentUsersLastMonth(
       Calendar startOfPeriod) {
     OBCriteria<Session> qSession = OBDal.getInstance().createCriteria(Session.class);
-    qSession.add(Expression.ge(Session.PROPERTY_CREATIONDATE, startOfPeriod.getTime()));
-    qSession.add(Expression.eq(Session.PROPERTY_LOGINSTATUS, "CUR"));
+    qSession.add(Restrictions.ge(Session.PROPERTY_CREATIONDATE, startOfPeriod.getTime()));
+    qSession.add(Restrictions.eq(Session.PROPERTY_LOGINSTATUS, "CUR"));
 
     numberOfRejectedLoginsDueConcUsersThisMonth = qSession.count();
   }

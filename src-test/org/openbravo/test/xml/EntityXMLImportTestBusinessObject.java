@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -386,7 +386,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
 
   private List<PaymentTerm> getPaymentTerms() {
     final OBCriteria<PaymentTerm> obc = OBDal.getInstance().createCriteria(PaymentTerm.class);
-    obc.add(Expression.ilike("name", PREFIX + "%"));
+    obc.add(Restrictions.ilike("name", PREFIX + "%"));
     return obc.list();
   }
 

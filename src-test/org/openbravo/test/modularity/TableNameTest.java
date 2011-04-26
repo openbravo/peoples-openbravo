@@ -22,7 +22,7 @@ package org.openbravo.test.modularity;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.GenericJDBCException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -140,7 +140,7 @@ public class TableNameTest extends BaseTest {
   public void testChangePackage() {
     setSystemAdministratorContext();
     OBCriteria<Table> obCriteria = OBDal.getInstance().createCriteria(Table.class);
-    obCriteria.add(Expression.eq(Module.PROPERTY_NAME, "TEST1_Table1"));
+    obCriteria.add(Restrictions.eq(Module.PROPERTY_NAME, "TEST1_Table1"));
     List<Table> tables = obCriteria.list();
     Table table = tables.get(0);
     table.setDataPackage(getPackage("org.openbravo.model.ad.module"));
@@ -160,7 +160,7 @@ public class TableNameTest extends BaseTest {
   public void testCleanUp() {
     setSystemAdministratorContext();
     OBCriteria<Module> obCriteria = OBDal.getInstance().createCriteria(Module.class);
-    obCriteria.add(Expression.eq(Module.PROPERTY_NAME, "Test-table-names"));
+    obCriteria.add(Restrictions.eq(Module.PROPERTY_NAME, "Test-table-names"));
     List<Module> modules = obCriteria.list();
 
     log.debug("deleting " + modules.size() + " modules");
@@ -169,7 +169,7 @@ public class TableNameTest extends BaseTest {
 
       OBCriteria<ModuleDBPrefix> obCritPrefix = OBDal.getInstance().createCriteria(
           ModuleDBPrefix.class);
-      obCritPrefix.add(Expression.eq(ModuleDBPrefix.PROPERTY_MODULE, module));
+      obCritPrefix.add(Restrictions.eq(ModuleDBPrefix.PROPERTY_MODULE, module));
       List<ModuleDBPrefix> dbp = obCritPrefix.list();
       log.debug("  -deleting " + dbp.size() + " prefixes");
       for (ModuleDBPrefix p : dbp) {
@@ -178,13 +178,13 @@ public class TableNameTest extends BaseTest {
       }
 
       OBCriteria<DataPackage> obCritPack = OBDal.getInstance().createCriteria(DataPackage.class);
-      obCritPack.add(Expression.eq(ModuleDBPrefix.PROPERTY_MODULE, module));
+      obCritPack.add(Restrictions.eq(ModuleDBPrefix.PROPERTY_MODULE, module));
       List<DataPackage> packs = obCritPack.list();
       log.debug("  -deleting " + packs.size() + " packs");
       for (DataPackage p : packs) {
         log.debug("     +deleting pack:" + p.toString());
         OBCriteria<Table> obCritTable = OBDal.getInstance().createCriteria(Table.class);
-        obCritTable.add(Expression.eq(Table.PROPERTY_DATAPACKAGE, p));
+        obCritTable.add(Restrictions.eq(Table.PROPERTY_DATAPACKAGE, p));
         List<Table> tables = obCritTable.list();
         log.debug("     -deleting " + tables.size() + " tables");
         for (Table t : tables) {
@@ -203,7 +203,7 @@ public class TableNameTest extends BaseTest {
 
   private DataPackage getPackage(String name) {
     OBCriteria<DataPackage> obCriteria = OBDal.getInstance().createCriteria(DataPackage.class);
-    obCriteria.add(Expression.eq(DataPackage.PROPERTY_NAME, name));
+    obCriteria.add(Restrictions.eq(DataPackage.PROPERTY_NAME, name));
     List<DataPackage> pack = obCriteria.list();
     DataPackage p = pack.get(0);
     log.debug("Package: " + p.getName());

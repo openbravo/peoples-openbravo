@@ -35,8 +35,8 @@ import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.Transaction;
 import org.hibernate.classic.Session;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.domaintype.BaseDomainType;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
@@ -734,7 +734,7 @@ public class ModelProvider implements OBSingleton {
   private List<Module> retrieveModules(Session s) {
     final Criteria c = s.createCriteria(Module.class);
     c.addOrder(Order.asc("seqno"));
-    c.add(Expression.eq("active", true));
+    c.add(Restrictions.eq("active", true));
     return c.list();
   }
 

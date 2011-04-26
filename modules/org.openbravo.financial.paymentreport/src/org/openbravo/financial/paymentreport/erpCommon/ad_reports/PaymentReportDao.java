@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -881,10 +880,10 @@ public class PaymentReportDao {
 
       final OBCriteria<ConversionRate> obcConvRate = OBDal.getInstance().createCriteria(
           ConversionRate.class);
-      obcConvRate.add(Expression.eq(ConversionRate.PROPERTY_CURRENCY, transCurrency));
-      obcConvRate.add(Expression.eq(ConversionRate.PROPERTY_TOCURRENCY, baseCurrency));
-      obcConvRate.add(Expression.le(ConversionRate.PROPERTY_VALIDFROMDATE, conversionDateObj));
-      obcConvRate.add(Expression.ge(ConversionRate.PROPERTY_VALIDTODATE, conversionDateObj));
+      obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY, transCurrency));
+      obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, baseCurrency));
+      obcConvRate.add(Restrictions.le(ConversionRate.PROPERTY_VALIDFROMDATE, conversionDateObj));
+      obcConvRate.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, conversionDateObj));
 
       convRateList = obcConvRate.list();
 
@@ -905,9 +904,9 @@ public class PaymentReportDao {
     String values[];
     try {
       final OBCriteria<Reference> obc = OBDal.getInstance().createCriteria(Reference.class);
-      obc.add(Expression.eq(Reference.PROPERTY_NAME, refName));
+      obc.add(Restrictions.eq(Reference.PROPERTY_NAME, refName));
       final OBCriteria<List> obcValue = OBDal.getInstance().createCriteria(List.class);
-      obcValue.add(Expression.eq(List.PROPERTY_REFERENCE, obc.list().get(0)));
+      obcValue.add(Restrictions.eq(List.PROPERTY_REFERENCE, obc.list().get(0)));
       java.util.List<List> v = obcValue.list();
       int n = v.size();
 
@@ -937,7 +936,7 @@ public class PaymentReportDao {
 
       if (!"en_US".equals(language.getLanguage())) {
         OBCriteria<ListTrl> obcTrl = OBDal.getInstance().createCriteria(ListTrl.class);
-        obcTrl.add(Expression.eq(ListTrl.PROPERTY_LANGUAGE, language));
+        obcTrl.add(Restrictions.eq(ListTrl.PROPERTY_LANGUAGE, language));
         obcTrl.createAlias(ListTrl.PROPERTY_LISTREFERENCE, "lr");
         obcTrl.add(Restrictions.eq("lr." + List.PROPERTY_SEARCHKEY, strCode));
         obcTrl.setFilterOnReadableClients(false);
@@ -949,7 +948,7 @@ public class PaymentReportDao {
         OBCriteria<List> obc = OBDal.getInstance().createCriteria(List.class);
         obc.setFilterOnReadableClients(false);
         obc.setFilterOnReadableOrganization(false);
-        obc.add(Expression.eq(List.PROPERTY_SEARCHKEY, strCode));
+        obc.add(Restrictions.eq(List.PROPERTY_SEARCHKEY, strCode));
         strMessage = (obc.list() != null && obc.list().size() > 0) ? obc.list().get(0).getName()
             : null;
       }

@@ -48,8 +48,8 @@ import javax.crypto.Cipher;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -625,10 +625,10 @@ public class ActivationKey {
     OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
 
     // sesion_active='Y' and (lastPing is null or lastPing<lastValidPing)
-    obCriteria.add(Expression.and(Expression.eq(Session.PROPERTY_SESSIONACTIVE, true), Expression
-        .or(Expression.isNull(Session.PROPERTY_LASTPING), Expression.lt(Session.PROPERTY_LASTPING,
-            lastValidPingTime))));
-    obCriteria.add(Expression.ne(Session.PROPERTY_ID, currentSessionId));
+    obCriteria.add(Restrictions.and(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true),
+        Restrictions.or(Restrictions.isNull(Session.PROPERTY_LASTPING), Restrictions.lt(
+            Session.PROPERTY_LASTPING, lastValidPingTime))));
+    obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSessionId));
 
     boolean sessionDeactivated = false;
     for (Session expiredSession : obCriteria.list()) {
@@ -651,9 +651,9 @@ public class ActivationKey {
    */
   private int getActiveSessions(String currentSession) {
     OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
-    obCriteria.add(Expression.eq(Session.PROPERTY_SESSIONACTIVE, true));
+    obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
     if (currentSession != null && !currentSession.equals("")) {
-      obCriteria.add(Expression.ne(Session.PROPERTY_ID, currentSession));
+      obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSession));
     }
     return obCriteria.count();
   }
@@ -1025,10 +1025,10 @@ public class ActivationKey {
     OBContext.setAdminMode();
     try {
       OBCriteria<Module> mods = OBDal.getInstance().createCriteria(Module.class);
-      mods.add(Expression.eq(Module.PROPERTY_COMMERCIAL, true));
-      mods.add(Expression.eq(Module.PROPERTY_ENABLED, true));
+      mods.add(Restrictions.eq(Module.PROPERTY_COMMERCIAL, true));
+      mods.add(Restrictions.eq(Module.PROPERTY_ENABLED, true));
       // Allow development of commercial modules which are not in the license.
-      mods.add(Expression.eq(Module.PROPERTY_INDEVELOPMENT, false));
+      mods.add(Restrictions.eq(Module.PROPERTY_INDEVELOPMENT, false));
       mods.addOrder(Order.asc(Module.PROPERTY_NAME));
       for (Module mod : mods.list()) {
         if (isModuleSubscribed(mod.getId()) == CommercialModuleStatus.NO_SUBSCRIBED) {

@@ -26,7 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -123,8 +123,8 @@ public class SelectorFieldPropertyCallout extends HttpSecureAppServlet {
           Table.PROPERTY_DBTABLENAME + "='" + propertyEntity.getTableName() + "'").list().get(0);
 
       final OBCriteria<Column> columnCriteria = OBDal.getInstance().createCriteria(Column.class);
-      columnCriteria.add(Expression.and(Expression.eq(Column.PROPERTY_TABLE, propertyTable),
-          Expression.eq(Column.PROPERTY_DBCOLUMNNAME, foundProperty.getColumnName())));
+      columnCriteria.add(Restrictions.and(Restrictions.eq(Column.PROPERTY_TABLE, propertyTable),
+          Restrictions.eq(Column.PROPERTY_DBCOLUMNNAME, foundProperty.getColumnName())));
       final List<Column> columnList = columnCriteria.list();
       if (columnList.isEmpty()) {
         writeEmptyResult(response);

@@ -73,9 +73,11 @@ expandDateYear= function(/*String*/ id){
 getDateBlock= function(/*String*/ str_date, block){
   // date parsing and formatting routimes. modify them if you wish other date format 
   //function str2dt (str_date) { 
-  var re_date = /^(\d+)[\-|\/|/|:|.|\.](\d+)[\-|\/|/|:|.|\.](\d+)$/; 
-  if (!re_date.exec(str_date)) 
-    return false; 
+  var datePattern = "^(\\d+)[\\-|\\/|/|:|.|\\.](\\d+)[\\-|\\/|/|:|.|\\.](\\d+)$";
+  var dateRegExp = new RegExp(datePattern);
+  if (!dateRegExp.exec(str_date)) {
+    return false;
+  }
   var dateBlock = new Array();
   dateBlock[1] = RegExp.$1;
   dateBlock[2] = RegExp.$2;

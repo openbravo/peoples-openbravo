@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
@@ -95,7 +95,7 @@ public class InitialSetupUtility {
    */
   public static boolean existsClientName(String strClient) throws Exception {
     final OBCriteria<Client> obcClient = OBDal.getInstance().createCriteria(Client.class);
-    obcClient.add(Expression.eq(Client.PROPERTY_NAME, strClient));
+    obcClient.add(Restrictions.eq(Client.PROPERTY_NAME, strClient));
     return obcClient.count() > 0;
   }
 
@@ -112,7 +112,7 @@ public class InitialSetupUtility {
       final OBCriteria<User> obcUser = OBDal.getInstance().createCriteria(User.class);
       obcUser.setFilterOnReadableClients(false);
       obcUser.setFilterOnReadableOrganization(false);
-      obcUser.add(Expression.eq(User.PROPERTY_USERNAME, strUser));
+      obcUser.add(Restrictions.eq(User.PROPERTY_USERNAME, strUser));
       return obcUser.count() > 0;
     } finally {
       OBContext.restorePreviousMode();
@@ -162,7 +162,7 @@ public class InitialSetupUtility {
    */
   public static Language getLanguage(String strLanguage) throws Exception {
     final OBCriteria<Language> obcLanguage = OBDal.getInstance().createCriteria(Language.class);
-    obcLanguage.add(Expression.eq(Language.PROPERTY_LANGUAGE, strLanguage));
+    obcLanguage.add(Restrictions.eq(Language.PROPERTY_LANGUAGE, strLanguage));
     if (obcLanguage.list().size() > 0)
       return obcLanguage.list().get(0);
     else
@@ -180,7 +180,7 @@ public class InitialSetupUtility {
 
     final OBCriteria<org.openbravo.model.ad.domain.Reference> obcReference = OBDal.getInstance()
         .createCriteria(org.openbravo.model.ad.domain.Reference.class);
-    obcReference.add(Expression.eq(org.openbravo.model.ad.domain.Reference.PROPERTY_NAME,
+    obcReference.add(Restrictions.eq(org.openbravo.model.ad.domain.Reference.PROPERTY_NAME,
         "AD_TreeType Type"));
     List<org.openbravo.model.ad.domain.Reference> listReferences = obcReference.list();
     if (listReferences.size() != 1)
@@ -189,7 +189,7 @@ public class InitialSetupUtility {
     org.openbravo.model.ad.domain.Reference referenceTree = listReferences.get(0);
     final OBCriteria<org.openbravo.model.ad.domain.List> obcRefTreeList = OBDal.getInstance()
         .createCriteria(org.openbravo.model.ad.domain.List.class);
-    obcRefTreeList.add(Expression.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE,
+    obcRefTreeList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE,
         referenceTree));
     obcRefTreeList.addOrder(Order.asc("name"));
     return obcRefTreeList.list();
@@ -205,7 +205,7 @@ public class InitialSetupUtility {
    */
   public static Tree getSystemMenuTree(String strTreeTypeMenu) throws Exception {
     final OBCriteria<Tree> obcTree = OBDal.getInstance().createCriteria(Tree.class);
-    obcTree.add(Expression.eq(Tree.PROPERTY_TYPEAREA, strTreeTypeMenu));
+    obcTree.add(Restrictions.eq(Tree.PROPERTY_TYPEAREA, strTreeTypeMenu));
     List<Tree> lTrees = obcTree.list();
     if (lTrees.size() != 1)
       return null;
@@ -292,8 +292,8 @@ public class InitialSetupUtility {
     yourCompanyDocumentImage.setOrganization(org);
     yourCompanyDocumentImage.setBindaryData(image);
     yourCompanyDocumentImage.setName(strImageName);
-    org.getOrganizationInformationList().get(0)
-        .setYourCompanyDocumentImage(yourCompanyDocumentImage);
+    org.getOrganizationInformationList().get(0).setYourCompanyDocumentImage(
+        yourCompanyDocumentImage);
     yourCompanyDocumentImage.setOrganization(org);
     OBDal.getInstance().save(yourCompanyDocumentImage);
     OBDal.getInstance().save(org);
@@ -731,9 +731,9 @@ public class InitialSetupUtility {
     try {
       OBContext.setAdminMode();
       final OBCriteria<TreeNode> obcTreeNode = OBDal.getInstance().createCriteria(TreeNode.class);
-      obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_TREE, accountTree));
-      obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_CLIENT, client));
-      obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_ORGANIZATION, organization));
+      obcTreeNode.add(Restrictions.eq(TreeNode.PROPERTY_TREE, accountTree));
+      obcTreeNode.add(Restrictions.eq(TreeNode.PROPERTY_CLIENT, client));
+      obcTreeNode.add(Restrictions.eq(TreeNode.PROPERTY_ORGANIZATION, organization));
       if (OBContext.getOBContext().isInAdministratorMode()) {
         obcTreeNode.setFilterOnReadableClients(false);
         obcTreeNode.setFilterOnReadableOrganization(false);
@@ -851,8 +851,8 @@ public class InitialSetupUtility {
         return null;
       obcEV.setFilterOnReadableClients(false);
       obcEV.setFilterOnReadableOrganization(false);
-      obcEV.add(Expression.eq(ElementValue.PROPERTY_SEARCHKEY, value));
-      obcEV.add(Expression.eq(ElementValue.PROPERTY_ACCOUNTINGELEMENT, element));
+      obcEV.add(Restrictions.eq(ElementValue.PROPERTY_SEARCHKEY, value));
+      obcEV.add(Restrictions.eq(ElementValue.PROPERTY_ACCOUNTINGELEMENT, element));
       List<ElementValue> l = obcEV.list();
       if (l.size() != 1)
         return null;
@@ -967,72 +967,72 @@ public class InitialSetupUtility {
       Client client = defaultElementValues.get(strDefault).getClient();
       Organization org = defaultElementValues.get(strDefault).getOrganization();
       if (strDefault.equals("W_INVENTORY_ACCT"))
-        newAcctSchemaDefault.setWarehouseInventory(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setWarehouseInventory(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("W_DIFFERENCES_ACCT"))
-        newAcctSchemaDefault.setWarehouseDifferences(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setWarehouseDifferences(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("W_REVALUATION_ACCT"))
-        newAcctSchemaDefault.setInventoryRevaluation(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setInventoryRevaluation(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("W_INVACTUALADJUST_ACCT"))
-        newAcctSchemaDefault.setInventoryAdjustment(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setInventoryAdjustment(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("P_REVENUE_ACCT"))
-        newAcctSchemaDefault.setProductRevenue(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setProductRevenue(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("P_EXPENSE_ACCT"))
-        newAcctSchemaDefault.setProductExpense(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setProductExpense(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("P_ASSET_ACCT"))
-        newAcctSchemaDefault.setFixedAsset(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setFixedAsset(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("P_COGS_ACCT"))
-        newAcctSchemaDefault.setProductCOGS(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setProductCOGS(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("P_PURCHASEPRICEVARIANCE_ACCT"))
-        newAcctSchemaDefault.setPurchasePriceVariance(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setPurchasePriceVariance(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("P_INVOICEPRICEVARIANCE_ACCT"))
-        newAcctSchemaDefault.setInvoicePriceVariance(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setInvoicePriceVariance(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("P_TRADEDISCOUNTREC_ACCT"))
-        newAcctSchemaDefault.setTradeDiscountReceived(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setTradeDiscountReceived(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("P_TRADEDISCOUNTGRANT_ACCT"))
-        newAcctSchemaDefault.setTradeDiscountGranted(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setTradeDiscountGranted(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("C_RECEIVABLE_ACCT"))
-        newAcctSchemaDefault.setCustomerReceivablesNo(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setCustomerReceivablesNo(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("C_PREPAYMENT_ACCT"))
-        newAcctSchemaDefault.setCustomerPrepayment(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setCustomerPrepayment(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("V_LIABILITY_ACCT"))
-        newAcctSchemaDefault.setVendorLiability(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setVendorLiability(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("V_LIABILITY_SERVICES_ACCT"))
         newAcctSchemaDefault.setVendorServiceLiability(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
 
       if (strDefault.equals("V_PREPAYMENT_ACCT"))
-        newAcctSchemaDefault.setVendorPrepayment(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setVendorPrepayment(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("PAYDISCOUNT_EXP_ACCT"))
         newAcctSchemaDefault.setPaymentDiscountExpense(getAcctComb(client, org,
@@ -1043,170 +1043,170 @@ public class InitialSetupUtility {
             defaultElementValues.get(strDefault), acctSchema, true));
 
       if (strDefault.equals("WRITEOFF_ACCT"))
-        newAcctSchemaDefault.setWriteoff(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setWriteoff(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("UNREALIZEDGAIN_ACCT"))
-        newAcctSchemaDefault.setUnrealizedGainsAcct(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setUnrealizedGainsAcct(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("UNREALIZEDLOSS_ACCT"))
-        newAcctSchemaDefault.setUnrealizedLossesAcct(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setUnrealizedLossesAcct(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("REALIZEDGAIN_ACCT"))
-        newAcctSchemaDefault.setRealizedGainAcct(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setRealizedGainAcct(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("REALIZEDLOSS_ACCT"))
-        newAcctSchemaDefault.setRealizedLossAcct(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setRealizedLossAcct(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("WITHHOLDING_ACCT"))
-        newAcctSchemaDefault.setWithholdingAccount(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setWithholdingAccount(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("E_PREPAYMENT_ACCT"))
-        newAcctSchemaDefault.setEmployeePrepayments(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setEmployeePrepayments(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("E_EXPENSE_ACCT"))
-        newAcctSchemaDefault.setEmployeeExpenses(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setEmployeeExpenses(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("PJ_ASSET_ACCT"))
-        newAcctSchemaDefault.setProjectAsset(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setProjectAsset(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("PJ_WIP_ACCT"))
-        newAcctSchemaDefault.setWorkInProgress(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setWorkInProgress(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("T_EXPENSE_ACCT"))
-        newAcctSchemaDefault.setTaxExpense(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setTaxExpense(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("T_LIABILITY_ACCT"))
-        newAcctSchemaDefault.setTaxLiability(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setTaxLiability(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("T_RECEIVABLES_ACCT"))
-        newAcctSchemaDefault.setTaxReceivables(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setTaxReceivables(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("T_DUE_ACCT"))
-        newAcctSchemaDefault.setTaxDue(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setTaxDue(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("T_CREDIT_ACCT"))
-        newAcctSchemaDefault.setTaxCredit(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setTaxCredit(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("B_INTRANSIT_ACCT"))
-        newAcctSchemaDefault.setBankInTransit(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankInTransit(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("B_ASSET_ACCT"))
-        newAcctSchemaDefault.setBankAsset(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankAsset(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("B_EXPENSE_ACCT"))
-        newAcctSchemaDefault.setBankExpense(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankExpense(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("B_INTERESTREV_ACCT"))
-        newAcctSchemaDefault.setBankInterestRevenue(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankInterestRevenue(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("B_INTERESTEXP_ACCT"))
-        newAcctSchemaDefault.setBankInterestExpense(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankInterestExpense(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("B_UNIDENTIFIED_ACCT"))
         newAcctSchemaDefault.setBankUnidentifiedReceipts(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
 
       if (strDefault.equals("B_SETTLEMENTGAIN_ACCT"))
-        newAcctSchemaDefault.setBankSettlementGain(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankSettlementGain(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("B_SETTLEMENTLOSS_ACCT"))
-        newAcctSchemaDefault.setBankSettlementLoss(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankSettlementLoss(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("B_REVALUATIONGAIN_ACCT"))
-        newAcctSchemaDefault.setBankRevaluationGain(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankRevaluationGain(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("B_REVALUATIONLOSS_ACCT"))
-        newAcctSchemaDefault.setBankRevaluationLoss(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setBankRevaluationLoss(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("B_PAYMENTSELECT_ACCT"))
-        newAcctSchemaDefault.setPaymentSelection(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setPaymentSelection(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("B_UNALLOCATEDCASH_ACCT"))
-        newAcctSchemaDefault.setUnallocatedCash(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setUnallocatedCash(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("CH_EXPENSE_ACCT"))
-        newAcctSchemaDefault.setChargeExpense(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setChargeExpense(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("CH_REVENUE_ACCT"))
-        newAcctSchemaDefault.setChargeRevenue(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setChargeRevenue(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("UNEARNEDREVENUE_ACCT"))
-        newAcctSchemaDefault.setUnearnedRevenue(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setUnearnedRevenue(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("NOTINVOICEDRECEIVABLES_ACCT"))
         newAcctSchemaDefault.setNonInvoicedReceivables(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
 
       if (strDefault.equals("NOTINVOICEDREVENUE_ACCT"))
-        newAcctSchemaDefault.setNonInvoicedRevenues(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setNonInvoicedRevenues(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("NOTINVOICEDRECEIPTS_ACCT"))
-        newAcctSchemaDefault.setNonInvoicedReceipts(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setNonInvoicedReceipts(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("CB_ASSET_ACCT"))
-        newAcctSchemaDefault.setCashBookAsset(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setCashBookAsset(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("CB_CASHTRANSFER_ACCT"))
-        newAcctSchemaDefault.setCashTransfer(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setCashTransfer(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("CB_DIFFERENCES_ACCT"))
-        newAcctSchemaDefault.setCashBookDifferences(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setCashBookDifferences(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("CB_RECEIPT_ACCT"))
-        newAcctSchemaDefault.setCashBookReceipt(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setCashBookReceipt(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("A_DEPRECIATION_ACCT"))
-        newAcctSchemaDefault.setDepreciation(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setDepreciation(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
 
       if (strDefault.equals("A_ACCUMDEPRECIATION_ACCT"))
         newAcctSchemaDefault.setAccumulatedDepreciation(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
 
       if (strDefault.equals("A_DISPOSAL_LOSS"))
-        newAcctSchemaDefault.setDisposalLoss(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setDisposalLoss(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
       if (strDefault.equals("A_DISPOSAL_GAIN"))
-        newAcctSchemaDefault.setDisposalGain(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setDisposalGain(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
       if (strDefault.equals("CB_EXPENSE_ACCT"))
-        newAcctSchemaDefault.setCashBookExpense(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaDefault.setCashBookExpense(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
     }
 
     OBDal.getInstance().save(newAcctSchemaDefault);
@@ -1234,33 +1234,33 @@ public class InitialSetupUtility {
       Client client = defaultElementValues.get(strDefault).getClient();
       Organization org = defaultElementValues.get(strDefault).getOrganization();
       if (strDefault.equals("CURRENCYBALANCING_ACCT")) {
-        newAcctSchemaGL.setCurrencyBalancingAcct(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaGL.setCurrencyBalancingAcct(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
         newAcctSchemaGL.setCurrencyBalancingUse(true);
       }
       if (strDefault.equals("INTERCOMPANYDUEFROM_ACCT"))
-        newAcctSchemaGL.setDueFromIntercompany(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaGL.setDueFromIntercompany(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
       if (strDefault.equals("INTERCOMPANYDUETO_ACCT"))
-        newAcctSchemaGL.setDueToIntercompany(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaGL.setDueToIntercompany(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
       if (strDefault.equals("INCOMESUMMARY_ACCT"))
-        newAcctSchemaGL.setIncomeSummary(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaGL.setIncomeSummary(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
       if (strDefault.equals("PPVOFFSET_ACCT"))
         newAcctSchemaGL.setPPVOffset(getAcctComb(client, org, defaultElementValues.get(strDefault),
             acctSchema, true));
       if (strDefault.equals("RETAINEDEARNING_ACCT"))
-        newAcctSchemaGL.setRetainedEarning(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaGL.setRetainedEarning(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
       if (strDefault.equals("SUSPENSEBALANCING_ACCT")) {
-        newAcctSchemaGL.setSuspenseBalancing(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaGL.setSuspenseBalancing(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
         newAcctSchemaGL.setSuspenseBalancingUse(true);
       }
       if (strDefault.equals("SUSPENSEERROR_ACCT"))
-        newAcctSchemaGL.setSuspenseError(getAcctComb(client, org,
-            defaultElementValues.get(strDefault), acctSchema, true));
+        newAcctSchemaGL.setSuspenseError(getAcctComb(client, org, defaultElementValues
+            .get(strDefault), acctSchema, true));
     }
 
     OBDal.getInstance().save(newAcctSchemaGL);
@@ -1429,8 +1429,8 @@ public class InitialSetupUtility {
     } else
       organization = orgProvided;
     ImportResult myResult = null;
-    String strSourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("source.path");
+    String strSourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
+        "source.path");
     String strPath = "";
     try {
       OBContext.setAdminMode();
@@ -1566,8 +1566,8 @@ public class InitialSetupUtility {
     try {
       OBContext.setAdminMode();
       final OBCriteria<DataSet> obcDataSets = OBDal.getInstance().createCriteria(DataSet.class);
-      obcDataSets.add(Expression.eq(DataSet.PROPERTY_MODULE, module));
-      obcDataSets.add(Expression.in(DataSet.PROPERTY_DATAACCESSLEVEL, accessLevel));
+      obcDataSets.add(Restrictions.eq(DataSet.PROPERTY_MODULE, module));
+      obcDataSets.add(Restrictions.in(DataSet.PROPERTY_DATAACCESSLEVEL, accessLevel));
       if (obcDataSets.list().size() > 0)
         return obcDataSets.list();
       else
@@ -1590,7 +1590,7 @@ public class InitialSetupUtility {
 
       final OBCriteria<org.openbravo.model.ad.domain.List> obcRefList = OBDal.getInstance()
           .createCriteria(org.openbravo.model.ad.domain.List.class);
-      obcRefList.add(Expression.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, OBDal
+      obcRefList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, OBDal
           .getInstance().get(Reference.class, "181")));
       if (obcRefList.list().size() > 0)
         return obcRefList.list();
@@ -1666,8 +1666,8 @@ public class InitialSetupUtility {
       final OBCriteria<Organization> obcOrg = OBDal.getInstance()
           .createCriteria(Organization.class);
       obcOrg.setFilterOnReadableOrganization(false);
-      obcOrg.add(Expression.eq(Organization.PROPERTY_CLIENT, client));
-      obcOrg.add(Expression.eq(Organization.PROPERTY_NAME, strOrgName));
+      obcOrg.add(Restrictions.eq(Organization.PROPERTY_CLIENT, client));
+      obcOrg.add(Restrictions.eq(Organization.PROPERTY_NAME, strOrgName));
       return obcOrg.count() > 0;
     } finally {
       OBContext.restorePreviousMode();
@@ -1695,8 +1695,8 @@ public class InitialSetupUtility {
 
   public static Tree getOrgTree(Client client) throws Exception {
     OBCriteria<Tree> obcTree = OBDal.getInstance().createCriteria(Tree.class);
-    obcTree.add(Expression.eq(Tree.PROPERTY_TYPEAREA, "OO"));
-    obcTree.add(Expression.eq(Tree.PROPERTY_CLIENT, client));
+    obcTree.add(Restrictions.eq(Tree.PROPERTY_TYPEAREA, "OO"));
+    obcTree.add(Restrictions.eq(Tree.PROPERTY_CLIENT, client));
     return obcTree.list().get(0);
   }
 
@@ -1705,9 +1705,9 @@ public class InitialSetupUtility {
       OBContext.setAdminMode();
       final OBCriteria<TreeNode> obcTreeNode = OBDal.getInstance().createCriteria(TreeNode.class);
       obcTreeNode.setFilterOnReadableOrganization(false);
-      obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_TREE, tree));
-      obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_CLIENT, client));
-      obcTreeNode.add(Expression.eq(TreeNode.PROPERTY_NODE, org.getId()));
+      obcTreeNode.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
+      obcTreeNode.add(Restrictions.eq(TreeNode.PROPERTY_CLIENT, client));
+      obcTreeNode.add(Restrictions.eq(TreeNode.PROPERTY_NODE, org.getId()));
       return obcTreeNode.list().get(0);
     } finally {
       OBContext.restorePreviousMode();
@@ -1723,8 +1723,8 @@ public class InitialSetupUtility {
       final OBCriteria<TreeNode> obcTreeNodes = OBDal.getInstance().createCriteria(TreeNode.class);
       obcTreeNodes.setFilterOnReadableClients(false);
       obcTreeNodes.setFilterOnReadableOrganization(false);
-      obcTreeNodes.add(Expression.eq(TreeNode.PROPERTY_REPORTSET, parentOrg.getId()));
-      obcTreeNodes.add(Expression.eq(TreeNode.PROPERTY_TREE, tree));
+      obcTreeNodes.add(Restrictions.eq(TreeNode.PROPERTY_REPORTSET, parentOrg.getId()));
+      obcTreeNodes.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
       for (TreeNode treeNode : obcTreeNodes.list())
         if (treeNode.getSequenceNumber() > lSeqNo)
           lSeqNo = treeNode.getSequenceNumber();
@@ -1753,8 +1753,8 @@ public class InitialSetupUtility {
       OBCriteria<MessageTrl> obcMsgTrl = OBDal.getInstance().createCriteria(MessageTrl.class);
       obcMsgTrl.setFilterOnReadableClients(false);
       obcMsgTrl.setFilterOnReadableOrganization(false);
-      obcMsgTrl.add(Expression.eq(MessageTrl.PROPERTY_MESSAGE, msg));
-      obcMsgTrl.add(Expression.eq(MessageTrl.PROPERTY_LANGUAGE, language));
+      obcMsgTrl.add(Restrictions.eq(MessageTrl.PROPERTY_MESSAGE, msg));
+      obcMsgTrl.add(Restrictions.eq(MessageTrl.PROPERTY_LANGUAGE, language));
       MessageTrl trl = (MessageTrl) obcMsgTrl.uniqueResult();
       if (trl == null) {
         return msg.getMessageText();
@@ -1773,14 +1773,14 @@ public class InitialSetupUtility {
           .createCriteria(org.openbravo.model.ad.ui.Element.class);
       obcElement.setFilterOnReadableClients(false);
       obcElement.setFilterOnReadableOrganization(false);
-      obcElement.add(Expression.eq(org.openbravo.model.ad.ui.Element.PROPERTY_DBCOLUMNNAME,
+      obcElement.add(Restrictions.eq(org.openbravo.model.ad.ui.Element.PROPERTY_DBCOLUMNNAME,
           columnName));
       org.openbravo.model.ad.ui.Element element = (org.openbravo.model.ad.ui.Element) obcElement
           .uniqueResult();
 
       OBCriteria<ElementTrl> obcElementTrl = OBDal.getInstance().createCriteria(ElementTrl.class);
-      obcElementTrl.add(Expression.eq(ElementTrl.PROPERTY_APPLICATIONELEMENT, element));
-      obcElementTrl.add(Expression.eq(ElementTrl.PROPERTY_LANGUAGE, language));
+      obcElementTrl.add(Restrictions.eq(ElementTrl.PROPERTY_APPLICATIONELEMENT, element));
+      obcElementTrl.add(Restrictions.eq(ElementTrl.PROPERTY_LANGUAGE, language));
       ElementTrl trl = (ElementTrl) obcElementTrl.uniqueResult();
       if (trl == null) {
         return element.getName();
@@ -1811,9 +1811,9 @@ public class InitialSetupUtility {
       organization = orgProvided;
 
     final OBCriteria<Tree> obcTree = OBDal.getInstance().createCriteria(Tree.class);
-    obcTree.add(Expression.eq(Tree.PROPERTY_TYPEAREA, strTreeTypeMenu));
-    obcTree.add(Expression.eq(Tree.PROPERTY_CLIENT, client));
-    obcTree.add(Expression.eq(Tree.PROPERTY_ORGANIZATION, organization));
+    obcTree.add(Restrictions.eq(Tree.PROPERTY_TYPEAREA, strTreeTypeMenu));
+    obcTree.add(Restrictions.eq(Tree.PROPERTY_CLIENT, client));
+    obcTree.add(Restrictions.eq(Tree.PROPERTY_ORGANIZATION, organization));
     List<Tree> lTrees = obcTree.list();
     if (lTrees.size() != 1)
       return null;

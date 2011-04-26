@@ -24,7 +24,7 @@ import static org.openbravo.model.ad.system.Client.PROPERTY_ORGANIZATION;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
@@ -167,7 +167,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
     final OBCriteria<Greeting> obc = OBDal.getInstance().createCriteria(Greeting.class);
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
-    obc.add(Expression.eq(PROPERTY_ORGANIZATION, org));
+    obc.add(Restrictions.eq(PROPERTY_ORGANIZATION, org));
     // assertEquals(7, obc.list().size());
     for (final Greeting g : obc.list()) {
       OBDal.getInstance().remove(g);
@@ -186,7 +186,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
     final OBCriteria<Greeting> obc = OBDal.getInstance().createCriteria(Greeting.class);
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
-    obc.add(Expression.eq(PROPERTY_ORGANIZATION, org));
+    obc.add(Restrictions.eq(PROPERTY_ORGANIZATION, org));
     assertEquals(0, obc.list().size());
   }
 

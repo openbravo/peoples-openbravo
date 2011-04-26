@@ -22,7 +22,7 @@ package org.openbravo.test.dal;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -60,7 +60,7 @@ public class ValidationTest extends BaseTest {
   public void testTypeChecking() {
     setTestAdminContext();
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-    obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
+    obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
     final List<Currency> cs = obc.list();
     final Currency c = cs.get(0);
 

@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -119,12 +119,12 @@ public class InstanceManagement extends HttpSecureAppServlet {
     try {
       // Check for commercial modules installed in the instance
       OBCriteria<Module> qMods = OBDal.getInstance().createCriteria(Module.class);
-      qMods.add(Expression.eq(Module.PROPERTY_COMMERCIAL, true));
-      qMods.add(Expression.eq(Module.PROPERTY_ENABLED, true));
+      qMods.add(Restrictions.eq(Module.PROPERTY_COMMERCIAL, true));
+      qMods.add(Restrictions.eq(Module.PROPERTY_ENABLED, true));
       qMods.addOrder(Order.asc(Module.PROPERTY_NAME));
 
       // core can be commercial, do not take it into account
-      qMods.add(Expression.ne(Module.PROPERTY_ID, "0"));
+      qMods.add(Restrictions.ne(Module.PROPERTY_ID, "0"));
       boolean deactivable = true;
       String commercialModules = "";
       for (Module mod : qMods.list()) {

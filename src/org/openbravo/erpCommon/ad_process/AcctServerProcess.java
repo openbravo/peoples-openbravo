@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -64,7 +64,7 @@ public class AcctServerProcess extends DalBaseProcess {
     VariablesSecureApp vars = bundle.getContext().toVars();
     if (vars.getClient().equals(SYSTEM_CLIENT_ID)) {
       OBCriteria<Client> obc = OBDal.getInstance().createCriteria(Client.class);
-      obc.add(Expression.not(Expression.eq(Client.PROPERTY_ID, SYSTEM_CLIENT_ID)));
+      obc.add(Restrictions.not(Restrictions.eq(Client.PROPERTY_ID, SYSTEM_CLIENT_ID)));
       for (Client c : obc.list()) {
         final VariablesSecureApp vars1 = new VariablesSecureApp(bundle.getContext().getUser(), c
             .getId(), bundle.getContext().getOrganization());

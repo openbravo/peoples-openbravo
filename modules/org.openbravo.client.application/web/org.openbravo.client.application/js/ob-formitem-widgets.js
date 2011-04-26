@@ -607,6 +607,7 @@ isc.OBDateChooser.addProperties({
     // When data has changed, force the OBDateItem to get it. Other case OBDateItem.blur 
     // gets incorrect value on getValue()
     this.callingFormItem.setValue(this.getData());
+    this.callingFormItem.changed();
   },
   dateClick: function() {
     var ret = this.Super('dateClick', arguments);
@@ -614,7 +615,16 @@ isc.OBDateChooser.addProperties({
       this.callingForm.focusInNextItem(this.callingFormItem.name);
     }
     return ret;
-  }
+  },
+
+  initWidget: function() {
+    this.Super('initWidget', arguments);
+    
+    // Force associated date text box to have the same enable status as the picker has
+    if (this.callingFormItem) {
+      this.callingFormItem.disabled = this.disabled;
+    }
+  }  
 });
 
 if (isc.OBDateChooser) {  // To force SC to load OBDateChooser instead of DateChooser
@@ -893,18 +903,13 @@ isc.OBDateItem.addProperties({
   // is done by the blur event defined here
   validateOnExit: false,
   
+  textAlign: 'left',
+  
   // ** {{{ change }}} **
   // Called when changing a value.
   change: function(form, item, value, oldValue){ /* transformInput */
     var isADate = value !== null &&
               Object.prototype.toString.call(value) === '[object Date]';
-    // prevent a change if nothing changed
-    if (value === oldValue) {
-      return false;
-    }
-    if (isADate && value && oldValue && oldValue.getTime && value.getTime() === oldValue.getTime()) {
-      return false;
-    }
     if (isADate) {
       return;
     }
@@ -1070,6 +1075,14 @@ isc.OBNumberItem.addProperties({
     }
     this.validators = newValidators;
     return this.Super('init', arguments);
+  },
+  
+  // after a change also store the textual value in the form
+  // for precision, the textual value is sent to the server
+  // which can be transferred to a bigdecimal there
+  changed: function (form, item, value) {
+    this.form.setTextualValue(this.name, this.getEnteredValue(), this.typeInstance);
+    this.Super('changed', arguments);
   },
   
   getMaskNumeric: function(){

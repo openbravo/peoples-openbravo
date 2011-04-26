@@ -452,6 +452,7 @@ OB.ViewFormProperties = {
     if (!data || !data.columnValues) {
       this.setDisabled(false);
       this.validate();
+      delete this.inFicCall;
       return;
     }
     
@@ -673,6 +674,14 @@ OB.ViewFormProperties = {
       // which results it to not be sent to the server anymore
       this.setValue(field.name, null);
     }
+    
+    // store the textualvalue so that it is correctly send back to the server
+    if (field) {
+      var typeInstance = SimpleType.getType(field.type);
+      if (columnValue.classicValue && typeInstance.decSeparator) {
+        this.setTextualValue(field.name, columnValue.classicValue, typeInstance);
+      }
+    }
   },
   
   setColumnValuesInEditValues: function(columnName, columnValue, editValues){
@@ -727,9 +736,33 @@ OB.ViewFormProperties = {
       // note: do not use clearvalue as this removes the value from the form
       // which results it to not be sent to the server anymore
       editValues[prop] = null;
-    }    
+    }
+    
+    // store the textualvalue so that it is correctly send back to the server
+    if (field) {
+      var typeInstance = SimpleType.getType(field.type);
+      if (columnValue.classicValue && typeInstance.decSeparator) {
+        this.setTextualValue(field.name, columnValue.classicValue, typeInstance, editValues);
+      }
+    }
   },
   
+  // note textValue is in user format using users decimal and group separator
+  setTextualValue: function(fldName, textValue, type, editValues) {    
+    if (!textValue || textValue.trim() === '') {
+      textValue = '';
+    } else {
+      textValue = OB.Utilities.Number.OBMaskedToOBPlain(textValue, type.decSeparator, type.groupSeparator);
+      textValue = textValue.replace(type.decSeparator, '.');
+    }
+    if (editValues) {
+      editValues[fldName + '_textualValue'] = textValue;
+    } else if (this.grid) {
+      this.grid.getEditValues(this.grid.getEditRow())[fldName + '_textualValue'] = textValue;
+    }
+    this.setValue(fldName + '_textualValue', textValue);
+  },
+
   // called explicitly onblur and when non-editable fields change
   handleItemChange: function(item){
   
@@ -957,19 +990,32 @@ OB.ViewFormProperties = {
   },
   
   focusInNextItem: function(currentItem) {
-    var chooseNextItem, i, nextItem, length = this.getItems().length;
+    var flds = (this.grid ? this.grid.getFields() : this.getFields);
+    var chooseNextItem, i, nextItem, length = flds.length;
     for (i = 0; i < length; i++) {
+      var item = this.getItem(flds[i].name);
+      if (!item) {
+        continue;
+      }
       // some items don't have a name, ignore those
-      if (chooseNextItem && this.getItems()[i].name && this.getItems()[i].isFocusable && this.getItems()[i].isFocusable()) {
-        nextItem = this.getItems()[i];
+      // !item.disabled because sometimes the whole form is disabled and needs to 
+      // be focused after enabling (after the fic call returns)
+      if (chooseNextItem && item.name && item.isFocusable && (item.isFocusable() || !item.disabled)) {
+        nextItem = item;
         break;
       }
-      if (this.getItems()[i].name === currentItem) {
+      if (item.name === currentItem) {
         chooseNextItem = true;
       }
     }
     if (nextItem) {
-      this.focusInItem(nextItem);
+      // in the fic call, all items are disabled, so let it be focused
+      // when returning
+      if (this.inFicCall) {
+        this.setFocusItem(nextItem);
+      } else {
+        this.focusInItem(nextItem);
+      }
     }
   },
   

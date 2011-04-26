@@ -271,6 +271,16 @@
       ]]></Sql>
     <Parameter name="client"/>
   </SqlMethod>
+  <SqlMethod name="selectOrg" type="preparedStatement" return="string" default="0">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+        SELECT NAME
+        FROM AD_ORG
+        WHERE AD_ORG_ID = ?
+      ]]></Sql>
+    <Parameter name="orgId"/>
+  </SqlMethod>
   <SqlMethod name="selectOrgTaxID" type="preparedStatement" return="string">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

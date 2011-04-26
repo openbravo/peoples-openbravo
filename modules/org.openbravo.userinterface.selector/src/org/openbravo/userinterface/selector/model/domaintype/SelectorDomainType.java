@@ -24,8 +24,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Column;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Table;
@@ -57,7 +57,7 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
     Session session = ModelProvider.getInstance().getSession();
 
     final Criteria criteria = session.createCriteria(SelectorDefinition.class);
-    criteria.add(Expression.eq("referenceId", getReference().getId()));
+    criteria.add(Restrictions.eq("referenceId", getReference().getId()));
     final List<?> list = criteria.list();
     if (list.isEmpty()) {
       // a base reference
@@ -97,7 +97,7 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
   private List<Column> readColumns(Session session, Table table) {
     final Criteria c = session.createCriteria(Column.class);
     c.addOrder(Order.asc("position"));
-    c.add(Expression.eq("table", table));
+    c.add(Restrictions.eq("table", table));
     return c.list();
   }
 

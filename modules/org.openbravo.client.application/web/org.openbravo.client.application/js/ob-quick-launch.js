@@ -36,11 +36,19 @@ isc.OBQuickLaunch.addProperties({
       editorType: 'link',
       value: null,
       showTitle: false,
+      width: 1,
+      overflow: 'visible',
       target: 'javascript',
       shouldSaveValue: false,
       recentPropertyName: this.recentPropertyName,
       prefixLabel: this.prefixLabel,
       handleClick: function(){
+        // getting the last event prevents an error in chrome
+        // https://issues.openbravo.com/view.php?id=16847
+        var lastEvent = isc.EventHandler.getLastEvent();
+        if (!isc.EventHandler.leftButtonDown()) {
+          return;
+        }
         OB.RecentUtilities.addRecent(this.recentPropertyName, this.recentObject);
         if (this.recentObject.viewId) {
           OB.Layout.ViewManager.openView(this.recentObject.viewId, this.recentObject);
@@ -98,6 +106,11 @@ isc.OBQuickLaunch.addProperties({
   initWidget: function(){
     this.members = [isc.DynamicForm.create({
       visibility: 'hidden',
+      canSelectText: true,
+      handleClick: function() {
+        // overridden to prevent double firing of click event
+        // https://issues.openbravo.com/view.php?id=16847
+      },
       numCols: 1
     }), isc.DynamicForm.create({
       autoFocus: true,

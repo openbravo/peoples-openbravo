@@ -96,14 +96,20 @@ isc.OBToolbar.addClassProperties({
   },
   NEW_ROW_BUTTON_PROPERTIES: {
     action: function(){
-      // do -1 because the newrow logic adds one
-      this.view.newRow(this.view.viewGrid.getDrawArea()[0] - 1);
+      var view = this.view, 
+          grid = view.viewGrid;
+      
+      // In case of no record selected getRecordIndex(undefined) returns -1,
+      // which is the top position, other case it adds bellow current selected row.
+      view.newRow(grid.getRecordIndex(grid.getSelectedRecord()));
     },
     buttonType: 'newRow',
     prompt: OB.I18N.getLabel('OBUIAPP_NewRow'),
     updateState: function(){
-      var view = this.view;
-      this.setDisabled(view.isShowingForm || view.readOnly || view.singleRecord || !view.hasValidState());
+      var view = this.view, 
+          selectedRecords = view.viewGrid.getSelectedRecords();
+      this.setDisabled(view.isShowingForm || view.readOnly || view.singleRecord || !view.hasValidState() || 
+                       (selectedRecords && selectedRecords.length > 1));
     },
     keyboardShortcutId: 'ToolBar_NewRow'
   },
@@ -866,7 +872,6 @@ isc.OBToolbar.addProperties({
         doRefresh(buttons, currentValues, false, me);
       });
     } else {
-      currentValues = this.view.getCurrentValues();
       doRefresh(buttons, currentValues, hideAllButtons, this);
     }
   },

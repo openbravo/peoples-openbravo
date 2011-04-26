@@ -418,6 +418,8 @@
                         FETCH Cur_Storage INTO v_storage;
                         IF Cur_Storage%NOTFOUND THEN
                           NEXT_PRODUCT:=true;
+                          CLOSE Cur_Storage;
+                          Cur_Storage_ISOPEN:=false;
                         END IF;
                         IF(NOT NEXT_PRODUCT) THEN
                           v_QtyStorage:=v_storage.QtyOnHand;

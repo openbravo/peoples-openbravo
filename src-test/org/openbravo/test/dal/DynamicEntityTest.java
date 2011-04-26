@@ -22,7 +22,7 @@ package org.openbravo.test.dal;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -69,7 +69,7 @@ public class DynamicEntityTest extends BaseTest {
     addReadWriteAccess(Category.class);
     addReadWriteAccess(CategoryAccounts.class);
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
-    obc.add(Expression.eq(Category.PROPERTY_NAME, "hello world"));
+    obc.add(Restrictions.eq(Category.PROPERTY_NAME, "hello world"));
     final List<Category> bpgs = obc.list();
     assertEquals(1, bpgs.size());
     final Category bog = bpgs.get(0);
@@ -92,7 +92,7 @@ public class DynamicEntityTest extends BaseTest {
     // first delete the related accounts
     final OBCriteria<CategoryAccounts> obc2 = OBDal.getInstance().createCriteria(
         CategoryAccounts.class);
-    obc2.add(Expression.eq(CategoryAccounts.PROPERTY_BUSINESSPARTNERCATEGORY, bpgs.get(0)));
+    obc2.add(Restrictions.eq(CategoryAccounts.PROPERTY_BUSINESSPARTNERCATEGORY, bpgs.get(0)));
     final List<CategoryAccounts> bogas = obc2.list();
     for (final CategoryAccounts bga : bogas) {
       OBDal.getInstance().remove(bga);
@@ -107,7 +107,7 @@ public class DynamicEntityTest extends BaseTest {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
-    obc.add(Expression.eq(Category.PROPERTY_NAME, "hello world"));
+    obc.add(Restrictions.eq(Category.PROPERTY_NAME, "hello world"));
     final List<Category> bpgs = obc.list();
     assertEquals(0, bpgs.size());
   }

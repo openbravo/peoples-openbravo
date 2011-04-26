@@ -28,7 +28,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -75,8 +75,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
 
       OBCriteria<SelectorField> sfc = OBDal.getInstance().createCriteria(SelectorField.class);
-      sfc.add(Expression.isNotNull(SelectorField.PROPERTY_DEFAULTEXPRESSION));
-      sfc.add(Expression.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel));
+      sfc.add(Restrictions.isNotNull(SelectorField.PROPERTY_DEFAULTEXPRESSION));
+      sfc.add(Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel));
 
       if ((sel.getFilterExpression() == null || sel.getFilterExpression().equals(""))
           && sfc.count() == 0) { // Nothing to filter

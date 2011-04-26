@@ -21,7 +21,7 @@ package org.openbravo.test.modularity;
 
 import java.util.List;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -98,7 +98,7 @@ public class DBPrefixTest extends BaseTest {
   public void testDeleteModule() {
     setSystemAdministratorContext();
     final OBCriteria<Module> obCriteria = OBDal.getInstance().createCriteria(Module.class);
-    obCriteria.add(Expression.eq(Module.PROPERTY_JAVAPACKAGE, "org.openbravo.test.dbprefix"));
+    obCriteria.add(Restrictions.eq(Module.PROPERTY_JAVAPACKAGE, "org.openbravo.test.dbprefix"));
     final List<Module> modules = obCriteria.list();
     for (Module mod : modules) {
       System.out.println("Removing module: " + mod.getName());
@@ -110,7 +110,7 @@ public class DBPrefixTest extends BaseTest {
   private Module getModule() {
     setSystemAdministratorContext();
     final OBCriteria<Module> obCriteria = OBDal.getInstance().createCriteria(Module.class);
-    obCriteria.add(Expression.eq(Module.PROPERTY_JAVAPACKAGE, "org.openbravo.test.dbprefix"));
+    obCriteria.add(Restrictions.eq(Module.PROPERTY_JAVAPACKAGE, "org.openbravo.test.dbprefix"));
     final List<Module> modules = obCriteria.list();
     assertEquals("Not a single module obtained", 1, modules.size());
     return modules.get(0);

@@ -1260,26 +1260,26 @@ isc.OBStandardView.addProperties({
     
     var me = this;
     var formRefresh = function() {
+      if (refreshCallback) {
+        refreshCallback();
+      }
       me.viewForm.refresh();
     };
     
     if (!this.isShowingForm) {
-      this.viewGrid.refreshGrid();
+      this.viewGrid.refreshGrid(refreshCallback);
     } else {
       var view = this;
       if (this.viewForm.hasChanged) {
         var callback = function(ok){
           if (ok) {
-            this.viewGrid.refreshGrid(formRefresh);            
+            view.viewGrid.refreshGrid(formRefresh);            
           }
         };
         isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmRefresh'), callback);
       } else {
         this.viewGrid.refreshGrid(formRefresh);
       }
-    }
-    if (refreshCallback) {
-      refreshCallback();
     }
   },
   

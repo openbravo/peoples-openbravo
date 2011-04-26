@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -65,34 +65,34 @@ public class DisabledModules {
     OBContext.setAdminMode();
     try {
       OBCriteria<Module> qMods = OBDal.getInstance().createCriteria(Module.class);
-      qMods.add(Expression.eq(Module.PROPERTY_ENABLED, false));
+      qMods.add(Restrictions.eq(Module.PROPERTY_ENABLED, false));
       for (Module disabledModule : qMods.list()) {
         disabledModules.add(disabledModule.getId());
         log4j.debug(disabledModule.getName() + " module is disabled");
 
         OBCriteria<Window> qWindows = OBDal.getInstance().createCriteria(Window.class);
-        qWindows.add(Expression.eq(Window.PROPERTY_MODULE, disabledModule));
+        qWindows.add(Restrictions.eq(Window.PROPERTY_MODULE, disabledModule));
         for (Window window : qWindows.list()) {
           disabledTabs.add(window.getId());
           log4j.debug("Disabled tab: " + window.getIdentifier());
         }
 
         OBCriteria<Tab> qTabs = OBDal.getInstance().createCriteria(Tab.class);
-        qTabs.add(Expression.eq(Tab.PROPERTY_MODULE, disabledModule));
+        qTabs.add(Restrictions.eq(Tab.PROPERTY_MODULE, disabledModule));
         for (Tab tab : qTabs.list()) {
           disabledTabs.add(tab.getId());
           log4j.debug("Disabled tab: " + tab.getIdentifier());
         }
 
         OBCriteria<Process> qProcess = OBDal.getInstance().createCriteria(Process.class);
-        qProcess.add(Expression.eq(Process.PROPERTY_MODULE, disabledModule));
+        qProcess.add(Restrictions.eq(Process.PROPERTY_MODULE, disabledModule));
         for (Process process : qProcess.list()) {
           disabledProcesses.add(process.getId());
           log4j.debug("Disabled process: " + process.getIdentifier());
         }
 
         OBCriteria<Form> qForm = OBDal.getInstance().createCriteria(Form.class);
-        qForm.add(Expression.eq(Form.PROPERTY_MODULE, disabledModule));
+        qForm.add(Restrictions.eq(Form.PROPERTY_MODULE, disabledModule));
         for (Form form : qForm.list()) {
           disabledForms.add(form.getId());
           log4j.debug("Disabled form: " + form.getIdentifier());

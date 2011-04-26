@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -248,13 +248,13 @@ public class GenerateEntityModelWiki extends BaseTest {
 
   private Table getTable(String tableName) {
     final OBCriteria<Table> tables = OBDal.getInstance().createCriteria(Table.class);
-    tables.add(Expression.eq(Table.PROPERTY_DBTABLENAME, tableName));
+    tables.add(Restrictions.eq(Table.PROPERTY_DBTABLENAME, tableName));
     return tables.list().get(0);
   }
 
   private Column getColumn(Table table, String columnName) {
     final OBCriteria<Column> cs = OBDal.getInstance().createCriteria(Column.class);
-    cs.add(Expression.and(Expression.eq(Column.PROPERTY_TABLE, table), Expression.eq(
+    cs.add(Restrictions.and(Restrictions.eq(Column.PROPERTY_TABLE, table), Restrictions.eq(
         Column.PROPERTY_DBCOLUMNNAME, columnName)));
 
     if (cs.list().size() == 0) {

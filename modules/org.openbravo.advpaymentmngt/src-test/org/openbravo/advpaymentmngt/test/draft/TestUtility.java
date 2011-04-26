@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -79,7 +79,7 @@ public class TestUtility extends BaseTest {
     if (checkIfExist) {
       final OBCriteria<FIN_FinancialAccount> obc = OBDal.getInstance().createCriteria(
           FIN_FinancialAccount.class);
-      obc.add(Expression.eq(FIN_FinancialAccount.PROPERTY_NAME, name));
+      obc.add(Restrictions.eq(FIN_FinancialAccount.PROPERTY_NAME, name));
       if (obc.list() != null && obc.list().size() > 0) {
         return obc.list().get(0);
       }
@@ -149,7 +149,7 @@ public class TestUtility extends BaseTest {
     if (checkIfExist) {
       final OBCriteria<FIN_PaymentMethod> obc = OBDal.getInstance().createCriteria(
           FIN_PaymentMethod.class);
-      obc.add(Expression.eq(FIN_PaymentMethod.PROPERTY_NAME, name));
+      obc.add(Restrictions.eq(FIN_PaymentMethod.PROPERTY_NAME, name));
       if (obc.list() != null && obc.list().size() > 0) {
         return obc.list().get(0);
       }
@@ -419,9 +419,9 @@ public class TestUtility extends BaseTest {
 
     for (Value value : values) {
       if (value.getValue() == null) {
-        obCriteria.add(Expression.isNull(value.getField()));
+        obCriteria.add(Restrictions.isNull(value.getField()));
       } else {
-        obCriteria.add(Expression.eq(value.getField(), value.getValue()));
+        obCriteria.add(Restrictions.eq(value.getField(), value.getValue()));
       }
     }
 

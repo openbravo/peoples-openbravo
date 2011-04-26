@@ -156,14 +156,17 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
             dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct, priceStd.toString(),
             strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
         if (expectedPriceActual.scale() > PricePrecision)
-          expectedPriceActual = expectedPriceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+          expectedPriceActual = expectedPriceActual.setScale(PricePrecision,
+              BigDecimal.ROUND_HALF_UP);
 
-        // To avoid rounding issues if the expected priceActual is equals to the current priceActual.
+        // To avoid rounding issues if the expected priceActual is equals to the current
+        // priceActual.
         // Do not do anything.
         if (!priceActual.equals(expectedPriceActual)) {
           priceStd = new BigDecimal(SLOrderProductData.getOffersStdPrice(this,
-              dataOrder[0].cBpartnerId, expectedPriceActual.toString().replace("\"", ""), strProduct,
-              dataOrder[0].dateordered, strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
+              dataOrder[0].cBpartnerId, expectedPriceActual.toString().replace("\"", ""),
+              strProduct, dataOrder[0].dateordered, strQty, dataOrder[0].mPricelistId,
+              dataOrder[0].id));
         }
         // priceList
         resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
@@ -242,8 +245,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         priceStd = priceList.subtract(priceList.multiply(discount).divide(new BigDecimal("100"),
             12, BigDecimal.ROUND_HALF_EVEN));
         priceActual = new BigDecimal(SLOrderProductData.getOffersPrice(this,
-            dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct, priceStd.toString(),
-            strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
+            dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct,
+            priceStd.toPlainString(), strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
         if (priceStd.scale() > PricePrecision)
           priceStd = priceStd.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
         if (priceActual.scale() > PricePrecision)
@@ -262,8 +265,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
             resultStock = stockNoAttribute.subtract(qtyOrdered);
             if (stockSecurity.compareTo(resultStock) > 0) {
               resultado.append("new Array('MESSAGE', \""
-                  + FormatUtilities.replaceJS(Utility.messageBD(this, "StockLimit", vars
-                      .getLanguage())) + "\"),");
+                  + FormatUtilities.replaceJS(Utility.messageBD(this, "StockLimit",
+                      vars.getLanguage())) + "\"),");
             }
           } else {
             if (!strAttribute.equals("") && strAttribute != null) {
@@ -273,8 +276,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
               resultStock = stockAttribute.subtract(qtyOrdered);
               if (stockSecurity.compareTo(resultStock) > 0) {
                 resultado.append("new Array('MESSAGE', \""
-                    + FormatUtilities.replaceJS(Utility.messageBD(this, "StockLimit", vars
-                        .getLanguage())) + "\"),");
+                    + FormatUtilities.replaceJS(Utility.messageBD(this, "StockLimit",
+                        vars.getLanguage())) + "\"),");
               }
             }
           }

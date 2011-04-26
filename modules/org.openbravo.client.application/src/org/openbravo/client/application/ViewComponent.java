@@ -20,7 +20,7 @@ package org.openbravo.client.application;
 
 import javax.inject.Inject;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
@@ -115,8 +115,8 @@ public class ViewComponent extends BaseComponent {
   private OBUIAPPViewImplementation getView(String viewName) {
     OBCriteria<OBUIAPPViewImplementation> obc = OBDal.getInstance().createCriteria(
         OBUIAPPViewImplementation.class);
-    obc.add(Expression.or(Expression.eq(OBUIAPPViewImplementation.PROPERTY_NAME, viewName),
-        Expression.eq(OBUIAPPViewImplementation.PROPERTY_ID, viewName)));
+    obc.add(Restrictions.or(Restrictions.eq(OBUIAPPViewImplementation.PROPERTY_NAME, viewName),
+        Restrictions.eq(OBUIAPPViewImplementation.PROPERTY_ID, viewName)));
 
     if (obc.list().size() > 0) {
       return obc.list().get(0);

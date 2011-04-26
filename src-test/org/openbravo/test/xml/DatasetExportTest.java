@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -252,7 +252,7 @@ public class DatasetExportTest extends BaseTest {
 
   private DataSetTable createDataSetTable(DataSet ds, String tableName) {
     final OBCriteria<Table> obcTable = OBDal.getInstance().createCriteria(Table.class);
-    obcTable.add(Expression.eq(Table.PROPERTY_DBTABLENAME, tableName));
+    obcTable.add(Restrictions.eq(Table.PROPERTY_DBTABLENAME, tableName));
     assertTrue(obcTable.list().size() == 1);
     final Table table = obcTable.list().get(0);
 
@@ -283,8 +283,9 @@ public class DatasetExportTest extends BaseTest {
 
   private Column getColumn(DataSetTable dst, Property p) {
     final OBCriteria<Column> obcColumn = OBDal.getInstance().createCriteria(Column.class);
-    obcColumn.add(Expression.and(Expression.eq(Column.PROPERTY_DBCOLUMNNAME, p.getColumnName()),
-        Expression.eq(Column.PROPERTY_TABLE, dst.getTable())));
+    obcColumn.add(Restrictions.and(
+        Restrictions.eq(Column.PROPERTY_DBCOLUMNNAME, p.getColumnName()), Restrictions.eq(
+            Column.PROPERTY_TABLE, dst.getTable())));
     assertTrue(obcColumn.list().size() == 1);
     return obcColumn.list().get(0);
   }

@@ -26,7 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
@@ -67,9 +67,9 @@ public class SL_Column extends HttpSecureAppServlet {
     // Check there is only one key column per table
     if ("Y".equals(vars.getStringParameter("inpiskey"))) {
       OBCriteria<Column> keyCriteria = OBDal.getInstance().createCriteria(Column.class);
-      keyCriteria.add(Expression.eq(Column.PROPERTY_TABLE + ".id", vars
+      keyCriteria.add(Restrictions.eq(Column.PROPERTY_TABLE + ".id", vars
           .getStringParameter("inpadTableId")));
-      keyCriteria.add(Expression.eq(Column.PROPERTY_KEYCOLUMN, true));
+      keyCriteria.add(Restrictions.eq(Column.PROPERTY_KEYCOLUMN, true));
       if (keyCriteria.list().size() > 0) {
         resultData.append("new Array(\"inpiskey\",\"N\"),\n");
         resultData.append("new Array(\"WARNING\",\""

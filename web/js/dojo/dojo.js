@@ -12504,8 +12504,95 @@ openbravo.widget.DateTextbox.superclass.fillInTemplate.apply(this,arguments);
 this.invalidSpan.style.display="none";
 this.missingSpan.style.display="none";
 this.rangeSpan.style.display="none";
+},expandDateYear:function(_b1b,_b1c){
+getDateBlock=function(_b1d,_b1e){
+var _b1f="^(\\d+)[\\-|\\/|/|:|.|\\.](\\d+)[\\-|\\/|/|:|.|\\.](\\d+)$";
+var _b20=new RegExp(_b1f);
+if(!_b20.exec(_b1d)){
+return false;
+}
+var _b21=[];
+_b21[1]=RegExp.$1;
+_b21[2]=RegExp.$2;
+_b21[3]=RegExp.$3;
+if(_b1e===1||_b1e==="1"){
+return _b21[1];
+}else{
+if(_b1e===2||_b1e==="2"){
+return _b21[2];
+}else{
+if(_b1e===3||_b1e==="3"){
+return _b21[3];
+}else{
+return _b21;
+}
+}
+}
+};
+purgeDateFormat=function(_b22){
+_b22=_b22.replace("mm","MM").replace("dd","DD").replace("yyyy","YYYY");
+_b22=_b22.replace("mm","MM").replace("dd","DD").replace("yy","YY");
+_b22=_b22.replace("%D","%d").replace("%M","%m");
+_b22=_b22.replace("%d","DD").replace("%m","MM").replace("%y","YY").replace("%Y","YYYY");
+_b22=_b22.replace("/","-").replace("/","-").replace("/","-");
+_b22=_b22.replace(".","-").replace(".","-").replace(".","-");
+_b22=_b22.replace(":","-").replace(":","-").replace(":","-");
+return _b22;
+};
+_b1c=purgeDateFormat(_b1c);
+if(!_b1b||!_b1c){
+return false;
+}
+if(_b1c.indexOf("YYYY")!=-1){
+var _b23=50;
+var _b24=new Array();
+_b24[1]=getDateBlock(_b1b,1);
+_b24[2]=getDateBlock(_b1b,2);
+_b24[3]=getDateBlock(_b1b,3);
+if(!_b24[1]||!_b24[2]||!_b24[3]){
+return false;
+}
+if(_b1c.substr(1,1)=="Y"){
+var _b25=1;
+}else{
+if(_b1c.substr(7,1)=="Y"){
+var _b25=3;
+}else{
+return false;
+}
+}
+if(_b24[_b25].length==1){
+_b24[_b25]="000"+_b24[_b25];
+}else{
+if(_b24[_b25].length==2){
+if(_b24[_b25]<_b23){
+_b24[_b25]="20"+_b24[_b25];
+}else{
+_b24[_b25]="19"+_b24[_b25];
+}
+}else{
+if(_b24[_b25].length==3){
+_b24[_b25]="0"+_b24[_b25];
+}else{
+if(_b24[_b25].length==4){
+return true;
+}
+}
+}
+}
+var _b26=_b1c.replace(/D/g,"").replace(/M/g,"").replace(/Y/g,"").substr(0,1);
+var _b27=_b24[1]+_b26+_b24[2]+_b26+_b24[3];
+return _b27;
+}else{
+return false;
+}
+return true;
 },isValid:function(){
 if(this.getDate(this.textbox.value,this.displayFormat)){
+var _b28=this.expandDateYear(this.textbox.value,this.displayFormat);
+if(_b28!==true&&_b28!==false&&this.getDate(_b28,this.displayFormat)&&_b28.length>this.textbox.value.length){
+this.textbox.value=_b28;
+}
 return true;
 }else{
 return false;

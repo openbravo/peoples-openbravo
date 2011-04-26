@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,7 +34,7 @@
 
 <script language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";</script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
-<script language="JavaScript" type="text/javascript" id="paramLanguage">	defaultLang = "en_US";</script>
+<script language="JavaScript" type="text/javascript" id="paramLanguage">    defaultLang = "en_US";</script>
 
 <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
 <script language="JavaScript" src="../utility/DynamicJS.js" type="text/javascript"></script>
@@ -72,8 +72,8 @@
 </script>
 <script language="JavaScript" type="text/javascript">
   function sendData() {
-	if (validate("SAVE")) submitCommandForm("SAVE");
-	return true;
+    if (validate("SAVE")) submitCommandForm("SAVE");
+    return true;
   }
 </script>
 
@@ -236,9 +236,9 @@
             </tr>
           </tbody>
           </table>
-		</div>
-	  </td>
-	</tr>
+        </div>
+      </td>
+    </tr>
   </table>
 
   <table cellspacing="0" cellpadding="0" width="100%">
@@ -354,7 +354,7 @@
           </tr>
         </table>
       </div>
- 	</td>
+    </td>
   </tr>
   <tr>
     <td>
@@ -402,7 +402,7 @@
                 <button type="button" 
                   id="buttonCancel" 
                   class="ButtonLink" 
-                  onclick="top.close();return false;" 
+                  onclick="closePage();return false;" 
                   onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;" 
                   onblur="buttonEvent('onblur', this);" 
                   onkeyup="buttonEvent('onkeyup', this);" 

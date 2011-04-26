@@ -658,8 +658,7 @@ build.war: build a war file in the lib directory.
     <smartsprites rootdir="${skins.location}" documentrootdir="${skins.location}" outputdir="${skins.location}" cssfilesuffix="-sprite" csspropertyindent="  " loglevel="WARN" spritepngdepth="DIRECT" spritepngie6="false" />
     <move todir="${skins.location}">
       <fileset dir="${skins.location}">
-        <include name="*/*-sprite.css" />
-        <include name="*/*/*-sprite.css" />
+        <include name="**/*-sprite.css" />
       </fileset>
       <mapper type="glob" from="*-sprite.css" to="*.css" />
     </move>

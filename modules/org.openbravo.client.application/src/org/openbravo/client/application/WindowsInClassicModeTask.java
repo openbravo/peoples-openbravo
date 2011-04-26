@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.core.DalInitializingTask;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -39,7 +39,7 @@ public class WindowsInClassicModeTask extends DalInitializingTask {
     OBQuery<Module> modules = OBDal.getInstance().createQuery(Module.class, "");
     for (Module module : modules.list()) {
       List<String> classicWindowMessages = new ArrayList<String>();
-      OBCriteria<Window> windowsOfModule = OBDao.getFilteredCriteria(Window.class, Expression.eq(
+      OBCriteria<Window> windowsOfModule = OBDao.getFilteredCriteria(Window.class, Restrictions.eq(
           Window.PROPERTY_MODULE, module));
       for (Window window : windowsOfModule.list()) {
         ApplicationUtils.showWindowInClassicMode(window, classicWindowMessages);

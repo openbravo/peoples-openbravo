@@ -255,7 +255,7 @@
 					
 					        <tr>
 					          <td style="padding-top: 0px;">
-					            <input type="text" id="paramDateFrom" class="dojoValidateValid TextBox_btn_OneCell_width" required="false" value="" maxlength="10" name="inpDateFrom" onkeyup="autoCompleteDate(this);" onchange="validateDateTextBox(this.id);logChanges(this);return true;" displayformat="xx" saveformat="yy"></input>
+					            <input type="text" id="paramDateFrom" class="dojoValidateValid TextBox_btn_OneCell_width" required="false" value="" maxlength="10" name="inpDateFrom" onkeyup="autoCompleteDate(this);" onchange="validateDateTextBox(this.id);logChanges(this);return true;" onblur="expandDateYear(this.id);" displayformat="xx" saveformat="yy"></input>
 					          </td>
 					        </tr>
 					      </table>
@@ -321,7 +321,7 @@
 					
 					        <tr>
 					          <td style="padding-top: 0px;">
-					            <input type="text" id="paramDateTo" class="dojoValidateValid TextBox_btn_OneCell_width" required="false" value="" maxlength="10" name="inpDateTo" onkeyup="autoCompleteDate(this);" onchange="validateDateTextBox(this.id);logChanges(this);return true;" displayformat="xx" saveformat="yy"></input>
+					            <input type="text" id="paramDateTo" class="dojoValidateValid TextBox_btn_OneCell_width" required="false" value="" maxlength="10" name="inpDateTo" onkeyup="autoCompleteDate(this);" onchange="validateDateTextBox(this.id);logChanges(this);return true;" onblur="expandDateYear(this.id);" displayformat="xx" saveformat="yy"></input>
 					          </td>
 					        </tr>
 					      </table>

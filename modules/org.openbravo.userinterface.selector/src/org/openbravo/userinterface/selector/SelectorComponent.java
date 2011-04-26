@@ -30,7 +30,7 @@ import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -344,8 +344,8 @@ public class SelectorComponent extends BaseTemplateComponent {
    */
   public String getShowSelectorGrid() {
     if (OBDao.getFilteredCriteria(SelectorField.class,
-        Expression.eq(SelectorField.PROPERTY_OBUISELSELECTOR, getSelector()),
-        Expression.eq(SelectorField.PROPERTY_SHOWINGRID, true)).count() > 0) {
+        Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, getSelector()),
+        Restrictions.eq(SelectorField.PROPERTY_SHOWINGRID, true)).count() > 0) {
       return Boolean.TRUE.toString();
     }
     return Boolean.FALSE.toString();
@@ -542,10 +542,11 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     OBContext.setAdminMode();
     try {
-      final Criterion selectorConstraint = Expression.eq(SelectorField.PROPERTY_OBUISELSELECTOR,
+      final Criterion selectorConstraint = Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR,
           getSelector());
-      final Criterion isOutFieldConstraint = Expression.eq(SelectorField.PROPERTY_ISOUTFIELD, true);
-      final Criterion hasSuffixConstraint = Expression.isNotNull(SelectorField.PROPERTY_SUFFIX);
+      final Criterion isOutFieldConstraint = Restrictions.eq(SelectorField.PROPERTY_ISOUTFIELD,
+          true);
+      final Criterion hasSuffixConstraint = Restrictions.isNotNull(SelectorField.PROPERTY_SUFFIX);
       List<SelectorField> fields = OBDao.getFilteredCriteria(SelectorField.class,
           selectorConstraint, isOutFieldConstraint, hasSuffixConstraint).list();
       for (final SelectorField field : fields) {
@@ -572,6 +573,7 @@ public class SelectorComponent extends BaseTemplateComponent {
     localSelectorField.setTitle(" ");
     localSelectorField.setSort(false);
     localSelectorField.setFilter(false);
+    localSelectorField.setSelectorItem(isSelectorItem());
     pickListFields.add(localSelectorField);
     pickListFields.addAll(getSelectorFields(true, false));
     return pickListFields;
@@ -610,6 +612,7 @@ public class SelectorComponent extends BaseTemplateComponent {
       localSelectorField.setName(fieldName);
       localSelectorField.setTitle(getTranslatedName(selectorField));
       localSelectorField.setSort(!pickList && selectorField.isSortable());
+      localSelectorField.setSelectorItem(isSelectorItem());
 
       localSelectorField.setFilter(!pickList && selectorField.isFilterable());
       localSelectorField.setDomainType(domainType);
@@ -709,6 +712,7 @@ public class SelectorComponent extends BaseTemplateComponent {
     private String displayField;
     private boolean filter;
     private boolean sort;
+    private boolean isSelectorItem;
     private DomainType domainType;
     private UIDefinition uiDefinition;
     private SelectorField selectorField;
@@ -747,7 +751,7 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     public String getFilterEditorProperties() {
       if (getUIDefinition() != null) {
-        if (getUIDefinition() instanceof FKComboUIDefinition) {
+        if (getUIDefinition() instanceof FKComboUIDefinition && isSelectorItem) {
           return ", filterOperator: 'equals', filterOnKeypress: true, canFilter:true, required: false, filterEditorType: 'OBSelectorFilterSelectItem', filterEditorProperties: {entity: '"
               + getEntityName() + "', displayField: '" + JsonConstants.IDENTIFIER + "'}";
         }
@@ -803,6 +807,10 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     public void setSort(boolean sort) {
       this.sort = sort;
+    }
+
+    public void setSelectorItem(boolean isSelectorItem) {
+      this.isSelectorItem = isSelectorItem;
     }
 
     public static class LocalSelectorFieldProperty {

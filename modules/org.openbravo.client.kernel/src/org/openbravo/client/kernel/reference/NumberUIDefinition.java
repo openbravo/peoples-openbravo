@@ -123,7 +123,7 @@ public abstract class NumberUIDefinition extends UIDefinition {
   @Override
   public Object createFromClassicString(String value) {
     if (value == null || value.length() == 0) {
-      return "";
+      return null;
     }
     String valueStr = value.toString();
     VariablesSecureApp variables = RequestContext.get().getVariablesSecureApp();
@@ -166,6 +166,10 @@ public abstract class NumberUIDefinition extends UIDefinition {
 
     @Override
     public Object createFromClassicString(String value) {
+      if (value == null || value.length() == 0) {
+        return null;
+      }
+
       final BigDecimal superValue = (BigDecimal) super.createFromClassicString(value);
       return superValue.longValue();
     }

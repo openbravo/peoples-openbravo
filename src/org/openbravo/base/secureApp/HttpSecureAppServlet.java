@@ -49,7 +49,7 @@ import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;
@@ -981,8 +981,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         Tab tab = OBDal.getInstance().get(Tab.class, id);
         if (tab != null) {
           OBCriteria<WindowTrl> qtTrl = OBDal.getInstance().createCriteria(WindowTrl.class);
-          qtTrl.add(Expression.eq(WindowTrl.PROPERTY_WINDOW, tab.getWindow()));
-          qtTrl.add(Expression.eq(WindowTrl.PROPERTY_LANGUAGE + ".language", language));
+          qtTrl.add(Restrictions.eq(WindowTrl.PROPERTY_WINDOW, tab.getWindow()));
+          qtTrl.add(Restrictions.eq(WindowTrl.PROPERTY_LANGUAGE + ".language", language));
           if (qtTrl.list().size() != 0) {
             return qtTrl.list().get(0).getName();
           } else {
@@ -991,8 +991,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         }
       } else if ("X".equals(type)) {
         OBCriteria<FormTrl> qfTrl = OBDal.getInstance().createCriteria(FormTrl.class);
-        qfTrl.add(Expression.eq(FormTrl.PROPERTY_SPECIALFORM + ".id", id));
-        qfTrl.add(Expression.eq(FormTrl.PROPERTY_LANGUAGE + ".language", language));
+        qfTrl.add(Restrictions.eq(FormTrl.PROPERTY_SPECIALFORM + ".id", id));
+        qfTrl.add(Restrictions.eq(FormTrl.PROPERTY_LANGUAGE + ".language", language));
         if (qfTrl.list().size() != 0) {
           return qfTrl.list().get(0).getName();
         }
@@ -1003,8 +1003,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         }
       } else if ("R".endsWith(type) || "P".equals(type)) {
         OBCriteria<ProcessTrl> qfTrl = OBDal.getInstance().createCriteria(ProcessTrl.class);
-        qfTrl.add(Expression.eq(ProcessTrl.PROPERTY_PROCESS + ".id", id));
-        qfTrl.add(Expression.eq(ProcessTrl.PROPERTY_LANGUAGE + ".language", language));
+        qfTrl.add(Restrictions.eq(ProcessTrl.PROPERTY_PROCESS + ".id", id));
+        qfTrl.add(Restrictions.eq(ProcessTrl.PROPERTY_LANGUAGE + ".language", language));
         if (qfTrl.list().size() != 0) {
           return qfTrl.list().get(0).getName();
         }

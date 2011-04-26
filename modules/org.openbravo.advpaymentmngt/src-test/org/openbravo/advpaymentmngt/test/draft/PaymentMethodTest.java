@@ -21,7 +21,7 @@ package org.openbravo.advpaymentmngt.test.draft;
 
 import java.util.List;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
@@ -85,7 +85,7 @@ public class PaymentMethodTest extends BaseTest {
   public void testDeletePaymentMethod() {
     final OBCriteria<FIN_PaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
         FIN_PaymentMethod.class);
-    obCriteria.add(Expression.eq(FIN_PaymentMethod.PROPERTY_DESCRIPTION, STANDARD_DESCRIPTION));
+    obCriteria.add(Restrictions.eq(FIN_PaymentMethod.PROPERTY_DESCRIPTION, STANDARD_DESCRIPTION));
     final List<FIN_PaymentMethod> paymentMethods = obCriteria.list();
     for (FIN_PaymentMethod pm : paymentMethods) {
       System.out.println("Removing payment method: " + pm.getName());
