@@ -153,15 +153,6 @@
 <!--117-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--117--></AD_CALLOUT>
 
-<!--118--><AD_CALLOUT>
-<!--118-->  <AD_CALLOUT_ID><![CDATA[118]]></AD_CALLOUT_ID>
-<!--118-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--118-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--118-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--118-->  <NAME><![CDATA[SL_Command_ArgNumber]]></NAME>
-<!--118-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--118--></AD_CALLOUT>
-
 <!--119--><AD_CALLOUT>
 <!--119-->  <AD_CALLOUT_ID><![CDATA[119]]></AD_CALLOUT_ID>
 <!--119-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

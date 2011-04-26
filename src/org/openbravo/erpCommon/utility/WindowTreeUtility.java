@@ -74,7 +74,7 @@ class WindowTreeUtility {
     else if (keyColumnName.equals("C_Tax_Report_ID"))
       TreeType = "TR";
     else
-      TreeType = WindowTreeUtilityClient.getTreeType(keyColumnName);
+      TreeType = "";
     if (TreeType.equals(""))
       log4j.error("WindowTreeUtility.getTreeID() - Could not map " + keyColumnName);
     return TreeType;
@@ -150,17 +150,7 @@ class WindowTreeUtility {
     else if (TreeType.equals("TR"))
       data = WindowTreeData.selectTaxReport(conn, vars.getUser(), strEditable, strParentID,
           strNodeId, TreeID);
-    else {
-      FieldProvider[] fData = WindowTreeUtilityClient.getTree(conn, vars, TreeType, TreeID,
-          editable, strParentID, strNodeId, strTabID);
-      if (fData != null) {
-        data = new WindowTreeData[fData.length];
-        for (int i = 0; i < fData.length; i++) {
-          data[i] = WindowTreeUtility.transformFieldProvider(fData[i]);
-        }
-      }
-      fData = null;
-    }
+
     return data;
   }
 
@@ -285,7 +275,7 @@ class WindowTreeUtility {
     else if (type.equals("B"))
       return "BancoTrabajo";
     else
-      return WindowTreeUtilityClient.windowType(type);
+      return "";
   }
 
   /**
@@ -313,7 +303,7 @@ class WindowTreeUtility {
     else if (tipo.equals("B"))
       return "wb";
     else
-      return WindowTreeUtilityClient.windowTypeNico(tipo);
+      return "";
   }
 
   /**

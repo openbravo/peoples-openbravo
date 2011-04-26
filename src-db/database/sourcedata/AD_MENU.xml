@@ -2845,58 +2845,6 @@
 <!--800108-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800108--></AD_MENU>
 
-<!--800109--><AD_MENU>
-<!--800109-->  <AD_MENU_ID><![CDATA[800109]]></AD_MENU_ID>
-<!--800109-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800109-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800109-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800109-->  <NAME><![CDATA[Document]]></NAME>
-<!--800109-->  <DESCRIPTION><![CDATA[Create and edit documents to be used in automated tests.]]></DESCRIPTION>
-<!--800109-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800109-->  <ACTION><![CDATA[W]]></ACTION>
-<!--800109-->  <AD_WINDOW_ID><![CDATA[800022]]></AD_WINDOW_ID>
-<!--800109-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800109--></AD_MENU>
-
-<!--800110--><AD_MENU>
-<!--800110-->  <AD_MENU_ID><![CDATA[800110]]></AD_MENU_ID>
-<!--800110-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800110-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800110-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800110-->  <NAME><![CDATA[Role Login]]></NAME>
-<!--800110-->  <DESCRIPTION><![CDATA[Create a means of logging in to the application to complete a test.]]></DESCRIPTION>
-<!--800110-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800110-->  <ACTION><![CDATA[W]]></ACTION>
-<!--800110-->  <AD_WINDOW_ID><![CDATA[800023]]></AD_WINDOW_ID>
-<!--800110-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800110--></AD_MENU>
-
-<!--800111--><AD_MENU>
-<!--800111-->  <AD_MENU_ID><![CDATA[800111]]></AD_MENU_ID>
-<!--800111-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800111-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800111-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800111-->  <NAME><![CDATA[Instructions]]></NAME>
-<!--800111-->  <DESCRIPTION><![CDATA[Create and edit instructions for being used in automated tests.]]></DESCRIPTION>
-<!--800111-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800111-->  <ACTION><![CDATA[W]]></ACTION>
-<!--800111-->  <AD_WINDOW_ID><![CDATA[800024]]></AD_WINDOW_ID>
-<!--800111-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800111--></AD_MENU>
-
-<!--800112--><AD_MENU>
-<!--800112-->  <AD_MENU_ID><![CDATA[800112]]></AD_MENU_ID>
-<!--800112-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800112-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800112-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800112-->  <NAME><![CDATA[Command]]></NAME>
-<!--800112-->  <DESCRIPTION><![CDATA[Create and edit commands in order to configure the automated test.]]></DESCRIPTION>
-<!--800112-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800112-->  <ACTION><![CDATA[W]]></ACTION>
-<!--800112-->  <AD_WINDOW_ID><![CDATA[800025]]></AD_WINDOW_ID>
-<!--800112-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800112--></AD_MENU>
-
 <!--800113--><AD_MENU>
 <!--800113-->  <AD_MENU_ID><![CDATA[800113]]></AD_MENU_ID>
 <!--800113-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

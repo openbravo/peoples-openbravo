@@ -3225,66 +3225,6 @@ The product price of each receipt is calculated based on the on the product pric
 <!--800094-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--800094--></AD_PROCESS>
 
-<!--800095--><AD_PROCESS>
-<!--800095-->  <AD_PROCESS_ID><![CDATA[800095]]></AD_PROCESS_ID>
-<!--800095-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800095-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800095-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800095-->  <VALUE><![CDATA[AT_Test_Delete]]></VALUE>
-<!--800095-->  <NAME><![CDATA[Delete Lines from Test]]></NAME>
-<!--800095-->  <DESCRIPTION><![CDATA[Delete all the lines from one test]]></DESCRIPTION>
-<!--800095-->  <HELP><![CDATA[It allows to delete all the lines from a determinate test. It is very usefull when we have lots of lines  (2500 approx.).]]></HELP>
-<!--800095-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--800095-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800095-->  <PROCEDURENAME><![CDATA[AT_Test_Delete]]></PROCEDURENAME>
-<!--800095-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800095-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800095-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800095-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800095-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800095-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--800095--></AD_PROCESS>
-
-<!--800096--><AD_PROCESS>
-<!--800096-->  <AD_PROCESS_ID><![CDATA[800096]]></AD_PROCESS_ID>
-<!--800096-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800096-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800096-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800096-->  <VALUE><![CDATA[AT_Test_Copy]]></VALUE>
-<!--800096-->  <NAME><![CDATA[Copy Test Lines]]></NAME>
-<!--800096-->  <DESCRIPTION><![CDATA[Copy all Lines from other Test]]></DESCRIPTION>
-<!--800096-->  <HELP><![CDATA[Copy all Lines from other Test]]></HELP>
-<!--800096-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--800096-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800096-->  <PROCEDURENAME><![CDATA[AT_Test_Copy]]></PROCEDURENAME>
-<!--800096-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800096-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800096-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800096-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800096-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800096-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--800096--></AD_PROCESS>
-
-<!--800097--><AD_PROCESS>
-<!--800097-->  <AD_PROCESS_ID><![CDATA[800097]]></AD_PROCESS_ID>
-<!--800097-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800097-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800097-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800097-->  <VALUE><![CDATA[AT_Test_In]]></VALUE>
-<!--800097-->  <NAME><![CDATA[Test In]]></NAME>
-<!--800097-->  <DESCRIPTION><![CDATA[Imports test with using regular expressions.]]></DESCRIPTION>
-<!--800097-->  <HELP><![CDATA[It must be selected a correct formated txt file.]]></HELP>
-<!--800097-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--800097-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800097-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800097-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800097-->  <CLASSNAME><![CDATA[ad_actionButton/Test_In.html]]></CLASSNAME>
-<!--800097-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800097-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800097-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800097-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800097--></AD_PROCESS>
-
 <!--800098--><AD_PROCESS>
 <!--800098-->  <AD_PROCESS_ID><![CDATA[800098]]></AD_PROCESS_ID>
 <!--800098-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
