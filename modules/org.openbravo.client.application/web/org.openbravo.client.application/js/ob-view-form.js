@@ -104,12 +104,18 @@ OB.ViewFormProperties = {
   },
 
   getStatusBarFields: function() {
-    var statusBarFields = [[],[]], i, item;
+    var statusBarFields = [[],[]], i, item, value;
     for(i = 0; i < this.statusBarFields.length; i++) {
       item = this.getItem(this.statusBarFields[i]);
-      if(item && item.getDisplayValue() !== null && item.getDisplayValue() !== '') {
+      value = item.getDisplayValue();
+      if(item && value !== null && value !== '') {
+
+        if(value === item.getTitle()) { // Checkbox items return the title as display value
+          value = item.getValue();
+        }
+
         statusBarFields[0].push(item.getTitle());
-        statusBarFields[1].push(item.getDisplayValue());
+        statusBarFields[1].push(value);
       }
     }
     this.statusBarFieldsJSArray = statusBarFields;
