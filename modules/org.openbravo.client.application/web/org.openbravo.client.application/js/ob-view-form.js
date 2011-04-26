@@ -110,8 +110,12 @@ OB.ViewFormProperties = {
       value = item.getDisplayValue();
       if(item && value !== null && value !== '') {
 
-        if(value === item.getTitle()) { // Checkbox items return the title as display value
-          value = item.getValue();
+        if(value === item.getTitle() && typeof item.getValue() === 'boolean') { // Checkbox items return the title as display value
+          if (item.getValue() === true) {
+            value = OB.I18N.getLabel('OBUIAPP_Yes');
+          } else {
+            value = OB.I18N.getLabel('OBUIAPP_No');
+          }
         }
 
         statusBarFields[0].push(item.getTitle());
