@@ -111,7 +111,7 @@ OB.ViewFormProperties = {
       if(item && value !== null && value !== '') {
 
         if(value === item.getTitle() && typeof item.getValue() === 'boolean') { // Checkbox items return the title as display value
-          if (item.getValue() === true) {
+          if (item.getValue()) {
             value = OB.I18N.getLabel('OBUIAPP_Yes');
           } else {
             value = OB.I18N.getLabel('OBUIAPP_No');
