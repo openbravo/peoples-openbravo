@@ -685,6 +685,16 @@ isc.OBMiniDateRangeItem.addProperties({
   dateDisplayFormat: OB.Format.date,
   rangeDialogConstructor: isc.OBDateRangeDialog,
   
+  // prevent illegal values from showing up
+  updateValue : function(data) {
+    var illegalStart = data && data.start && !isc.isA.Date(data.start);
+    var illegalEnd = data && data.end && !isc.isA.Date(data.end);
+    if (illegalStart || illegalEnd) {
+      return;
+    }
+    this.Super('updateValue', arguments);
+  },
+  
   keyPress: function(item, form, keyName, characterValue){
     if (keyName === 'Enter') {
       this.showRangeDialog();
