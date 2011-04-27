@@ -585,29 +585,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--130-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--130--></AD_TAB>
 
-<!--131--><AD_TAB>
-<!--131-->  <AD_TAB_ID><![CDATA[131]]></AD_TAB_ID>
-<!--131-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--131-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--131-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--131-->  <NAME><![CDATA[Non Business Day]]></NAME>
-<!--131-->  <DESCRIPTION><![CDATA[Define non business days for a selected fiscal calendar.]]></DESCRIPTION>
-<!--131-->  <HELP><![CDATA[Define non business days for a selected fiscal calendar.]]></HELP>
-<!--131-->  <AD_TABLE_ID><![CDATA[163]]></AD_TABLE_ID>
-<!--131-->  <AD_WINDOW_ID><![CDATA[117]]></AD_WINDOW_ID>
-<!--131-->  <SEQNO><![CDATA[50]]></SEQNO>
-<!--131-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--131-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--131-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--131-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--131-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--131-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--131-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--131-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--131-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--131-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--131--></AD_TAB>
-
 <!--132--><AD_TAB>
 <!--132-->  <AD_TAB_ID><![CDATA[132]]></AD_TAB_ID>
 <!--132-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
