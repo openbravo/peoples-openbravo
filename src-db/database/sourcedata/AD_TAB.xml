@@ -4911,30 +4911,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--492-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--492--></AD_TAB>
 
-<!--493--><AD_TAB>
-<!--493-->  <AD_TAB_ID><![CDATA[493]]></AD_TAB_ID>
-<!--493-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--493-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--493-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--493-->  <NAME><![CDATA[Plan Costs]]></NAME>
-<!--493-->  <DESCRIPTION><![CDATA[Planned Costs of the Resource]]></DESCRIPTION>
-<!--493-->  <HELP><![CDATA[Planned (budgeted) Costs of the Resource]]></HELP>
-<!--493-->  <AD_TABLE_ID><![CDATA[582]]></AD_TABLE_ID>
-<!--493-->  <AD_WINDOW_ID><![CDATA[236]]></AD_WINDOW_ID>
-<!--493-->  <SEQNO><![CDATA[60]]></SEQNO>
-<!--493-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--493-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--493-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--493-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--493-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--493-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--493-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--493-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--493-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--493-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--493-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--493--></AD_TAB>
-
 <!--496--><AD_TAB>
 <!--496-->  <AD_TAB_ID><![CDATA[496]]></AD_TAB_ID>
 <!--496-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

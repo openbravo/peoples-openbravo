@@ -4577,28 +4577,6 @@ Run Synchronize Terminology to update menu translation. You need only to transla
 <!--581-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1FC4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--581--></AD_TABLE>
 
-<!--582--><AD_TABLE>
-<!--582-->  <AD_TABLE_ID><![CDATA[582]]></AD_TABLE_ID>
-<!--582-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--582-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--582-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--582-->  <NAME><![CDATA[ResourcePlanCost]]></NAME>
-<!--582-->  <DESCRIPTION><![CDATA[Planned Costs of the Resource]]></DESCRIPTION>
-<!--582-->  <HELP><![CDATA[Planned (budgeted) Costs of the Resource]]></HELP>
-<!--582-->  <TABLENAME><![CDATA[R_ResourcePlanCost]]></TABLENAME>
-<!--582-->  <CLASSNAME><![CDATA[ResourcePlanCost]]></CLASSNAME>
-<!--582-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--582-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--582-->  <AD_WINDOW_ID><![CDATA[236]]></AD_WINDOW_ID>
-<!--582-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--582-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--582-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--582-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--582-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--582-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--582-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1FC4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--582--></AD_TABLE>
-
 <!--583--><AD_TABLE>
 <!--583-->  <AD_TABLE_ID><![CDATA[583]]></AD_TABLE_ID>
 <!--583-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
