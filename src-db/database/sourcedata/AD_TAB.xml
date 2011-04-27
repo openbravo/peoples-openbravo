@@ -3529,29 +3529,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--329-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--329--></AD_TAB>
 
-<!--332--><AD_TAB>
-<!--332-->  <AD_TAB_ID><![CDATA[332]]></AD_TAB_ID>
-<!--332-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--332-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--332-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--332-->  <NAME><![CDATA[Accounting]]></NAME>
-<!--332-->  <DESCRIPTION><![CDATA[Organization Accounting]]></DESCRIPTION>
-<!--332-->  <HELP><![CDATA[The Organization Accounting Tab defines the default accounting parameters to be used by this Organization.]]></HELP>
-<!--332-->  <AD_TABLE_ID><![CDATA[397]]></AD_TABLE_ID>
-<!--332-->  <AD_WINDOW_ID><![CDATA[110]]></AD_WINDOW_ID>
-<!--332-->  <SEQNO><![CDATA[30]]></SEQNO>
-<!--332-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--332-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--332-->  <ISINFOTAB><![CDATA[Y]]></ISINFOTAB>
-<!--332-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--332-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--332-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--332-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--332-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--332-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--332-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--332--></AD_TAB>
-
 <!--333--><AD_TAB>
 <!--333-->  <AD_TAB_ID><![CDATA[333]]></AD_TAB_ID>
 <!--333-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

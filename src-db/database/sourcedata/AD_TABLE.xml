@@ -3237,28 +3237,6 @@ Available Quantity:
 <!--396-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1E54B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--396--></AD_TABLE>
 
-<!--397--><AD_TABLE>
-<!--397-->  <AD_TABLE_ID><![CDATA[397]]></AD_TABLE_ID>
-<!--397-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--397-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--397-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--397-->  <NAME><![CDATA[FinancialMgmtInterOrgAccounts]]></NAME>
-<!--397-->  <DESCRIPTION><![CDATA[Organization Accounting]]></DESCRIPTION>
-<!--397-->  <HELP><![CDATA[The Organization Accounting Tab defines the default accounting parameters to be used by this Organization.]]></HELP>
-<!--397-->  <TABLENAME><![CDATA[C_InterOrg_Acct]]></TABLENAME>
-<!--397-->  <CLASSNAME><![CDATA[InterOrgAccounts]]></CLASSNAME>
-<!--397-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--397-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--397-->  <AD_WINDOW_ID><![CDATA[110]]></AD_WINDOW_ID>
-<!--397-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--397-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--397-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--397-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--397-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--397-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--397-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DE4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--397--></AD_TABLE>
-
 <!--399--><AD_TABLE>
 <!--399-->  <AD_TABLE_ID><![CDATA[399]]></AD_TABLE_ID>
 <!--399-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
