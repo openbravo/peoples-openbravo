@@ -1583,26 +1583,6 @@
 <!--208-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--208--></AD_PROCESS>
 
-<!--209--><AD_PROCESS>
-<!--209-->  <AD_PROCESS_ID><![CDATA[209]]></AD_PROCESS_ID>
-<!--209-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--209-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--209-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--209-->  <VALUE><![CDATA[R_MailText Send]]></VALUE>
-<!--209-->  <NAME><![CDATA[Send Mail Text]]></NAME>
-<!--209-->  <DESCRIPTION><![CDATA[Send EMails to Business Partner Group]]></DESCRIPTION>
-<!--209-->  <HELP><![CDATA[You can send mails to the Contacts of a Business Partner Group. The User to send emails from needs to have valid EMail information.]]></HELP>
-<!--209-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--209-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--209-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--209-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--209-->  <CLASSNAME><![CDATA[ad_process/SendMailText.html]]></CLASSNAME>
-<!--209-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--209-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--209-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--209-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--209--></AD_PROCESS>
-
 <!--210--><AD_PROCESS>
 <!--210-->  <AD_PROCESS_ID><![CDATA[210]]></AD_PROCESS_ID>
 <!--210-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

@@ -1184,19 +1184,6 @@
 <!--236-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--236--></AD_MENU>
 
-<!--238--><AD_MENU>
-<!--238-->  <AD_MENU_ID><![CDATA[238]]></AD_MENU_ID>
-<!--238-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--238-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--238-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--238-->  <NAME><![CDATA[Mail Template]]></NAME>
-<!--238-->  <DESCRIPTION><![CDATA[Maintain Mail Template]]></DESCRIPTION>
-<!--238-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--238-->  <ACTION><![CDATA[W]]></ACTION>
-<!--238-->  <AD_WINDOW_ID><![CDATA[204]]></AD_WINDOW_ID>
-<!--238-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--238--></AD_MENU>
-
 <!--240--><AD_MENU>
 <!--240-->  <AD_MENU_ID><![CDATA[240]]></AD_MENU_ID>
 <!--240-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1887,19 +1874,6 @@
 <!--394-->  <AD_WINDOW_ID><![CDATA[291]]></AD_WINDOW_ID>
 <!--394-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--394--></AD_MENU>
-
-<!--396--><AD_MENU>
-<!--396-->  <AD_MENU_ID><![CDATA[396]]></AD_MENU_ID>
-<!--396-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--396-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--396-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--396-->  <NAME><![CDATA[Send Mail Text]]></NAME>
-<!--396-->  <DESCRIPTION><![CDATA[Send EMails to active subscribers of the Areas of Interest or Business Partner Group]]></DESCRIPTION>
-<!--396-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--396-->  <ACTION><![CDATA[P]]></ACTION>
-<!--396-->  <AD_PROCESS_ID><![CDATA[209]]></AD_PROCESS_ID>
-<!--396-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--396--></AD_MENU>
 
 <!--398--><AD_MENU>
 <!--398-->  <AD_MENU_ID><![CDATA[398]]></AD_MENU_ID>

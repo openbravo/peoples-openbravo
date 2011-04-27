@@ -3392,28 +3392,6 @@ Run Synchronize Terminology to update menu translation. You need only to transla
 <!--415-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--415--></AD_TABLE>
 
-<!--416--><AD_TABLE>
-<!--416-->  <AD_TABLE_ID><![CDATA[416]]></AD_TABLE_ID>
-<!--416-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--416-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--416-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--416-->  <NAME><![CDATA[MarketingMailText]]></NAME>
-<!--416-->  <DESCRIPTION><![CDATA[Mail template configuration]]></DESCRIPTION>
-<!--416-->  <HELP><![CDATA[The mail template configuration includes all template parameter configurations for the use.]]></HELP>
-<!--416-->  <TABLENAME><![CDATA[R_MailText]]></TABLENAME>
-<!--416-->  <CLASSNAME><![CDATA[MailText]]></CLASSNAME>
-<!--416-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--416-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--416-->  <AD_WINDOW_ID><![CDATA[204]]></AD_WINDOW_ID>
-<!--416-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--416-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--416-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--416-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--416-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--416-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--416-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EE4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--416--></AD_TABLE>
-
 <!--422--><AD_TABLE>
 <!--422-->  <AD_TABLE_ID><![CDATA[422]]></AD_TABLE_ID>
 <!--422-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

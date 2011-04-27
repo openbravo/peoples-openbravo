@@ -3644,29 +3644,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--343-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--343--></AD_TAB>
 
-<!--347--><AD_TAB>
-<!--347-->  <AD_TAB_ID><![CDATA[347]]></AD_TAB_ID>
-<!--347-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--347-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--347-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--347-->  <NAME><![CDATA[Mail Template]]></NAME>
-<!--347-->  <DESCRIPTION><![CDATA[Mail template configuration]]></DESCRIPTION>
-<!--347-->  <HELP><![CDATA[The mail template configuration includes all template parameter configurations for the use.]]></HELP>
-<!--347-->  <AD_TABLE_ID><![CDATA[416]]></AD_TABLE_ID>
-<!--347-->  <AD_WINDOW_ID><![CDATA[204]]></AD_WINDOW_ID>
-<!--347-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--347-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--347-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--347-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--347-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--347-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--347-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--347-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--347-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--347-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--347-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--347--></AD_TAB>
-
 <!--351--><AD_TAB>
 <!--351-->  <AD_TAB_ID><![CDATA[351]]></AD_TAB_ID>
 <!--351-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
