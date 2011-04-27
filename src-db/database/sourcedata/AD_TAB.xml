@@ -1285,29 +1285,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--181-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--181--></AD_TAB>
 
-<!--182--><AD_TAB>
-<!--182-->  <AD_TAB_ID><![CDATA[182]]></AD_TAB_ID>
-<!--182-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--182-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--182-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--182-->  <NAME><![CDATA[Replenish]]></NAME>
-<!--182-->  <DESCRIPTION><![CDATA[Define Replenishment]]></DESCRIPTION>
-<!--182-->  <HELP><![CDATA[The Replenishment Tab defines the type of replenishment quantities.  This is used for automated ordering.]]></HELP>
-<!--182-->  <AD_TABLE_ID><![CDATA[249]]></AD_TABLE_ID>
-<!--182-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
-<!--182-->  <SEQNO><![CDATA[50]]></SEQNO>
-<!--182-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
-<!--182-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--182-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--182-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--182-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--182-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--182-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--182-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--182-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--182-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--182--></AD_TAB>
-
 <!--183--><AD_TAB>
 <!--183-->  <AD_TAB_ID><![CDATA[183]]></AD_TAB_ID>
 <!--183-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

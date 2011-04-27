@@ -1454,28 +1454,6 @@ The Product Details allows you to display and maintain all products for a select
 <!--230-->  <TREETYPE><![CDATA[SR]]></TREETYPE>
 <!--230--></AD_TABLE>
 
-<!--249--><AD_TABLE>
-<!--249-->  <AD_TABLE_ID><![CDATA[249]]></AD_TABLE_ID>
-<!--249-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--249-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--249-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--249-->  <NAME><![CDATA[Replenish]]></NAME>
-<!--249-->  <DESCRIPTION><![CDATA[Define Replenishment]]></DESCRIPTION>
-<!--249-->  <HELP><![CDATA[The Replenishment defines the type of replenishment quantities.  This is used for automated ordering.]]></HELP>
-<!--249-->  <TABLENAME><![CDATA[M_Replenish]]></TABLENAME>
-<!--249-->  <CLASSNAME><![CDATA[Replenish]]></CLASSNAME>
-<!--249-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--249-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--249-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
-<!--249-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--249-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--249-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--249-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--249-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--249-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--249-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DA4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--249--></AD_TABLE>
-
 <!--251--><AD_TABLE>
 <!--251-->  <AD_TABLE_ID><![CDATA[251]]></AD_TABLE_ID>
 <!--251-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
