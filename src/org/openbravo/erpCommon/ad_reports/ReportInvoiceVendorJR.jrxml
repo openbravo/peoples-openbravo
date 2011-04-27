@@ -517,7 +517,7 @@
 					<textElement>
 						<font pdfFontName="Helvetica-Bold" size="8"/>
 					</textElement>
-				<text><![CDATA[Article]]></text>
+				<text><![CDATA[Item]]></text>
 				</staticText>
 				<staticText>
 					<reportElement

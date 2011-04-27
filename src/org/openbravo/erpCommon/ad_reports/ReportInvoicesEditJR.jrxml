@@ -651,7 +651,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="8"/>
 					</textElement>
-				<text><![CDATA[Concept]]></text>
+				<text><![CDATA[Item]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
