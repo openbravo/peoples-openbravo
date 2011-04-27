@@ -1011,7 +1011,7 @@ isc.OBDateItem.addProperties({
   validateOBDateItem: function(value){
     var dateValue = OB.Utilities.Date.OBToJS(value, this.dateFormat);
     var isValid = true;
-    if (this.getValue() !== null && dateValue === null) {
+    if (this.getValue() && dateValue === null) {
       isValid = false;
     }
     var isRequired = this.required;
