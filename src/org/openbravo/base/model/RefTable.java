@@ -37,6 +37,8 @@ public class RefTable extends ModelObject {
 
   private Column column;
 
+  private Column displayColumn;
+
   public Column getColumn() {
     return column;
   }
@@ -58,5 +60,13 @@ public class RefTable extends ModelObject {
     } else {
       ((TableDomainType) domainType).setRefTable(this);
     }
+  }
+
+  public Column getDisplayColumn() {
+    return displayColumn;
+  }
+
+  public void setDisplayColumn(Column displayColumn) {
+    this.displayColumn = displayColumn;
   }
 }

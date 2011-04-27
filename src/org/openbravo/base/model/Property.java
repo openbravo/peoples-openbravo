@@ -35,6 +35,7 @@ import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
 import org.openbravo.base.model.domaintype.HashedStringDomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
+import org.openbravo.base.model.domaintype.TableDomainType;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.validation.PropertyValidator;
 import org.openbravo.base.validation.ValidationException;
@@ -104,6 +105,9 @@ public class Property {
   // keeps track of the index of this property in the entity.getProperties()
   // gives a lot of performance/memory improvements when getting property values
   private int indexInEntity;
+
+  private Boolean hasDisplayColumn;
+  private String displayProperty;
 
   /**
    * Initializes this Property using the information from the Column.
@@ -368,10 +372,9 @@ public class Property {
 
     if (defaultValue == null && isBoolean()) {
       if (getName().equalsIgnoreCase("active")) {
-        log
-            .debug("Property "
-                + this
-                + " is probably the active column but does not have a default value set, supplying default value Y");
+        log.debug("Property "
+            + this
+            + " is probably the active column but does not have a default value set, supplying default value Y");
         defaultValue = "Y";
       } else {
         defaultValue = "N";
@@ -453,10 +456,9 @@ public class Property {
   public Object getActualDefaultValue() {
     if (defaultValue == null && isBoolean()) {
       if (getName().equalsIgnoreCase("isactive")) {
-        log
-            .debug("Property "
-                + this
-                + " is probably the active column but does not have a default value set, supplying default value Y");
+        log.debug("Property "
+            + this
+            + " is probably the active column but does not have a default value set, supplying default value Y");
         setDefaultValue("Y");
       } else {
         setDefaultValue("N");
@@ -1058,5 +1060,37 @@ public class Property {
 
   public void setEncrypted(boolean encrypted) {
     this.encrypted = encrypted;
+  }
+
+  /**
+   * @return true if the property is a table reference which defines an explicit display column.
+   *         This display column is then used as the identifier of objects referenced through this
+   *         property.
+   */
+  public boolean hasDisplayColumn() {
+    if (hasDisplayColumn == null) {
+      if (domainType instanceof TableDomainType) {
+        final TableDomainType tableDomainType = (TableDomainType) domainType;
+        hasDisplayColumn = tableDomainType.getRefTable().getDisplayColumn() != null;
+      } else {
+        hasDisplayColumn = false;
+      }
+    }
+    return hasDisplayColumn;
+  }
+
+  public String getDisplayPropertyName() {
+    if (displayProperty == null) {
+      final Column column = ((TableDomainType) domainType).getRefTable().getDisplayColumn();
+      final Entity referencedEntity = getTargetEntity();
+      for (Property prop : referencedEntity.getProperties()) {
+        if (prop.getColumnId().equals(column.getId())) {
+          displayProperty = prop.getName();
+          break;
+        }
+      }
+      log.warn("Display column for property " + this + " not found");
+    }
+    return displayProperty;
   }
 }
