@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/openbravo/lib/runtime/servlet-api.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/commons-dbcp-1.4.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/commons-pool-1.5.6.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/fop.jar"/>
@@ -16,5 +15,6 @@
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/commons-io-2.0.1.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/ant-1.7.1.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/ant-apache-log4j.jar"/>
+	<classpathentry kind="lib" path="/openbravo/lib/build/servlet-api.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
