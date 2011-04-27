@@ -344,13 +344,13 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
 
       bundle.setResult(msg);
     } catch (final Exception e) {
-      OBDal.getInstance().rollbackAndClose();
       e.printStackTrace(System.err);
       msg.setType("Error");
       msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
+      OBDal.getInstance().rollbackAndClose();
     }
   }
 
