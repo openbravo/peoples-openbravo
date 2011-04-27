@@ -681,6 +681,7 @@ isc.OBDateRangeDialog.addProperties({
 isc.ClassFactory.defineClass('OBMiniDateRangeItem', isc.MiniDateRangeItem);
 
 isc.OBMiniDateRangeItem.addProperties({
+  // note this one needs to be set to let the formatDate be called below
   dateDisplayFormat: OB.Format.date,
   rangeDialogConstructor: isc.OBDateRangeDialog,
   
@@ -690,6 +691,10 @@ isc.OBMiniDateRangeItem.addProperties({
       return false;
     }
     return true;
+  },
+  
+  formatDate: function(dt) {
+    return OB.Utilities.Date.JSToOB(dt, OB.Format.date);
   }
 
 });
