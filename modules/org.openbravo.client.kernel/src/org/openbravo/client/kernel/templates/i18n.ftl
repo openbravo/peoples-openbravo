@@ -30,9 +30,9 @@ OB.I18N.getLabel = function(key, params, object, property) {
         return 'UNDEFINED ' + key;
       } 
     }
-    var label = OB.I18N.labels[key];
+    var label = OB.I18N.labels[key], i;
     if (params && params.length && params.length > 0) {
-        for (var i = 0; i < params.length; i++) {
+        for (i = 0; i < params.length; i++) {
             label = label.replace("%" + i, params[i]);
         }
     }
@@ -53,9 +53,9 @@ OB.I18N.getLabel = function(key, params, object, property) {
       }
       return 'UNDEFINED ' + key;      
     }
-    var label = OB.I18N.labels[key];
+    var label = OB.I18N.labels[key], i;
     if (params && params.length && params.length > 0) {
-        for (var i = 0; i < params.length; i++) {
+        for (i = 0; i < params.length; i++) {
             label = label.replace("%" + i, params[i]);
         }
     }
