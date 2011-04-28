@@ -51,8 +51,6 @@ class WindowTreeUtility {
       TreeType = "MM";
     else if (keyColumnName.equals("C_ElementValue_ID"))
       TreeType = "EV";
-    else if (keyColumnName.equals("M_Product_ID"))
-      TreeType = "PR";
     else if (keyColumnName.equals("C_BPartner_ID"))
       TreeType = "BP";
     else if (keyColumnName.equals("AD_Org_ID"))
@@ -115,9 +113,6 @@ class WindowTreeUtility {
     } else if (TreeType.equals("OO"))
       data = WindowTreeData.selectOrg(conn, vars.getUser(), strEditable, strParentID, strNodeId,
           TreeID);
-    else if (TreeType.equals("PR"))
-      data = WindowTreeData.selectProduct(conn, vars.getUser(), strEditable, strParentID,
-          strNodeId, TreeID);
     else if (TreeType.equals("PC"))
       data = WindowTreeData.selectProductCategory(conn, vars.getUser(), strEditable, strParentID,
           strNodeId, TreeID);
@@ -330,9 +325,7 @@ class WindowTreeUtility {
     if (log4j.isDebugEnabled())
       log4j.debug("WindowTreeUtility.setNode() - TreeID: " + TreeID);
 
-    if (TreeType.equals("PR"))
-      WindowTreeData.updatePR(conn, vars.getUser(), strParentID, strSeqNo, TreeID, strLink);
-    else if (TreeType.equals("BP"))
+    if (TreeType.equals("BP"))
       WindowTreeData.updateBP(conn, vars.getUser(), strParentID, strSeqNo, TreeID, strLink);
     else
       WindowTreeData.update(conn, vars.getUser(), strParentID, strSeqNo, TreeID, strLink);
