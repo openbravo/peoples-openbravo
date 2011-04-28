@@ -73,8 +73,6 @@ BEGIN
         COALESCE(:NEW.IsSummary , '.') != COALESCE(:OLD.IsSummary , '.') OR
         COALESCE(:NEW.Action , '.') != COALESCE(:OLD.Action , '.') OR
         COALESCE(:NEW.AD_Window_ID , '.') != COALESCE(:OLD.AD_Window_ID , '.') OR
-        COALESCE(:NEW.AD_Workflow_ID , '.') != COALESCE(:OLD.AD_Workflow_ID , '.') OR
-        COALESCE(:NEW.AD_Task_ID , '.') != COALESCE(:OLD.AD_Task_ID , '.') OR
         COALESCE(:NEW.AD_Process_ID , '.') != COALESCE(:OLD.AD_Process_ID , '.') OR
         COALESCE(:NEW.AD_Form_ID , '.') != COALESCE(:OLD.AD_Form_ID , '.') OR
         COALESCE(:NEW.URL , '.') != COALESCE(:OLD.URL , '.') OR

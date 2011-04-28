@@ -681,8 +681,19 @@ isc.OBDateRangeDialog.addProperties({
 isc.ClassFactory.defineClass('OBMiniDateRangeItem', isc.MiniDateRangeItem);
 
 isc.OBMiniDateRangeItem.addProperties({
+  // note this one needs to be set to let the formatDate be called below
   dateDisplayFormat: OB.Format.date,
   rangeDialogConstructor: isc.OBDateRangeDialog,
+  
+  // prevent illegal values from showing up
+  updateValue : function(data) {
+    var illegalStart = data && data.start && !isc.isA.Date(data.start);
+    var illegalEnd = data && data.end && !isc.isA.Date(data.end);
+    if (illegalStart || illegalEnd) {
+      return;
+    }
+    this.Super('updateValue', arguments);
+  },
   
   keyPress: function(item, form, keyName, characterValue){
     if (keyName === 'Enter') {
@@ -690,6 +701,10 @@ isc.OBMiniDateRangeItem.addProperties({
       return false;
     }
     return true;
+  },
+  
+  formatDate: function(dt) {
+    return OB.Utilities.Date.JSToOB(dt, OB.Format.date);
   }
 
 });
@@ -996,7 +1011,7 @@ isc.OBDateItem.addProperties({
   validateOBDateItem: function(value){
     var dateValue = OB.Utilities.Date.OBToJS(value, this.dateFormat);
     var isValid = true;
-    if (this.getValue() !== null && dateValue === null) {
+    if (this.getValue() && dateValue === null) {
       isValid = false;
     }
     var isRequired = this.required;

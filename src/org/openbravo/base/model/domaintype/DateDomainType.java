@@ -31,7 +31,7 @@ import java.util.Date;
 
 public class DateDomainType extends BasePrimitiveDomainType {
 
-  private final SimpleDateFormat xmlDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
+  private final SimpleDateFormat xmlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   public DateDomainType() {
     xmlDateFormat.setLenient(true);

@@ -53,27 +53,27 @@
   }
   
   function closeThisPage() {
-    window.close();
+    closePage();
     return true;
   }
 
   function submitThisPage(strCommand) {
-	if (validate()) {
-      submitCommandForm(strCommand, false, null, null, '_top');
-	}
+    if (validate()) {
+      submitCommandForm(strCommand, false, null, null);
+    }
     return true;
   }
   </script>
   <script language="JavaScript" type="text/javascript">
     function onLoadDo(){
       modifyInputFile('inpFile');
-	  this.windowTables = new Array(
-	    new windowTableId('client', 'buttonOK')
-	   );
-	   setWindowTableParentElement();
-	   enableShortcuts('popup');
-	   setBrowserAutoComplete(false);
-       setWindowElementFocus('firstElement');
+      this.windowTables = new Array(
+        new windowTableId('client', 'buttonOK')
+      );
+      setWindowTableParentElement();
+      enableShortcuts('popup');
+      setBrowserAutoComplete(false);
+      setWindowElementFocus('firstElement');
     }
 
   function modifyInputFile(id) {
@@ -88,15 +88,15 @@
     object.style.display = '';
   }
 
-	function onResizeDo(){
-	}
+  function onResizeDo(){
+  }
   </script>
 </head>
 
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <form id="form" method="post" action="ImportBankFile.html" enctype="multipart/form-data" name="frmMain">
-  <input type="hidden" name="Command">
-<input type="hidden" name="IsPopUpCall" value="1"></input>
+  <input type="hidden" name="Command"/>
+  <input type="hidden" name="IsPopUpCall" value="1"></input>
   <input type="hidden" name="inpLastFieldChanged"></input>
   <input type="hidden" name="inpfinFinancialAccountId" value="" id="paramFINFinancialAccountId"></input>
   <input type="hidden" name="inpwindowId" value="" id="window"></input>
@@ -275,7 +275,7 @@
               </td>
             </tr>
 
-         <table/>
+         </table>
 
 
           <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
@@ -339,7 +339,7 @@
       </div>
     </td>
   </tr>
-</table>
-
+  </table>
+</form>
 </body>
 </html>

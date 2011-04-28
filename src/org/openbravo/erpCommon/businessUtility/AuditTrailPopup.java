@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -78,10 +78,8 @@ import org.openbravo.model.ad.ui.MessageTrl;
 import org.openbravo.model.ad.ui.ProcessTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TabTrl;
-import org.openbravo.model.ad.ui.Task;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.ui.WindowTrl;
-import org.openbravo.model.ad.ui.Workflow;
 import org.openbravo.reference.ui.UIReference;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -91,6 +89,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private static final String auditActionsReferenceId = "4C36DC179A5F40DC80B3F3798E121152";
   private static final String adMessageIdForProcess = "437";
   private static final String adMessageIdForWindow = "614";
+  private static final String adMessageIdForCF = "32171A3EEE4847FABB69259868A34ED5";
   private static final String adMessageIdForForm = "D9912E810888475ABB8DFF416196FB5E";
   private static final String adMessageIdForCallout = "13F1AE1374AD4054BE7FD3743B56F266";
   private static final String adValRuleIdForFields = "9C6989B15CEA4987A502C0F5FF02B171";
@@ -1184,20 +1183,16 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       String processLabel = getTranslatedMessage(adMessageIdForProcess);
       return processLabel + ": " + getTranslatedProcessName(process);
     }
-    // no translation for the next four, as either no _trl table exists, or the application elements
-    // are not used/don't trigger db-changes
-    if ("T".equals(processType)) {
-      return "Task: " + OBDal.getInstance().get(Task.class, process).getName();
-    }
     if ("S".equals(processType)) {
       return "Reference: " + OBDal.getInstance().get(Reference.class, process).getName();
-    }
-    if ("F".equals(processType)) {
-      return "Workflow: " + OBDal.getInstance().get(Workflow.class, process).getName();
     }
     if ("C".equals(processType)) {
       String calloutLabel = getTranslatedMessage(adMessageIdForCallout);
       return calloutLabel + ": " + OBDal.getInstance().get(Callout.class, process).getName();
+    }
+    if ("CF".equals(processType)) {
+      String processCFLabel = getTranslatedMessage(adMessageIdForCF);
+      return processCFLabel + ": " + OBDal.getInstance().get(Table.class, process).getDBTableName();
     }
     // all other cases -> Tab
     String windowLabel = getTranslatedMessage(adMessageIdForWindow);

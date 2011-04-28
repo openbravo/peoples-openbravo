@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,9 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.reference.ActionButtonData;
@@ -43,8 +41,6 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
@@ -259,16 +255,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
 
         BpartnerMiscData[] data1 = null;
         data1 = BpartnerMiscData.select(this, data.cBpartnerId);
-        boolean newFlow = isNewFlow();
-        if ((data1[0].paymentrule.equals("") || data1[0].paymentrule == null) && !newFlow) {
-          myMessage.setType("Error");
-          myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-          myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' '
-              + strCust + ' '
-              + Utility.messageBD(this, "FormofPaymentNotdefined", vars.getLanguage()) + ".");
-          return myMessage;
-        } else if ((data1[0].finPaymentmethodId.equals("") || data1[0].finPaymentmethodId == null)
-            && newFlow) {
+        if (data1[0].finPaymentmethodId.equals("") || data1[0].finPaymentmethodId == null) {
           myMessage.setType("Error");
           myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
           myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' '
@@ -585,27 +572,6 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
-  }
-
-  @SuppressWarnings("deprecation")
-  private boolean isNewFlow() {
-    // Extra check for Payment Flow-disabling switch
-    try {
-      // Use Utility.getPropertyValue for backward compatibility
-      try {
-        Preferences.getPreferenceValue("FinancialManagement", true, null, null, OBContext
-            .getOBContext().getUser(), null, null);
-        return true;
-      } catch (PropertyNotFoundException e) {
-        if (Utility.getPropertyValue("FinancialManagement", OBContext.getOBContext()
-            .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId()) != null) {
-          return true;
-        } else
-          return false;
-      }
-    } catch (PropertyException e) {
-      return false;
-    }
   }
 
   public String getServletInfo() {

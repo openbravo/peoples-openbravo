@@ -73,21 +73,15 @@
       ]]>
     </Sql>
   </SqlMethod>
-  <SqlMethod name="insertTableAccess" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="deleteTableAccess" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      INSERT INTO ad_table_access(
-                  ad_table_access_id, ad_role_id, ad_table_id, ad_client_id, ad_org_id,
-                  isactive, created, createdby, updatedby, updated, isreadonly,
-                  isexclude)
-      select get_uuid(), ad_role_id, '4D8C3B3C31D1410DA046140C9F024D17', ad_client_id, ad_org_id,
-              'Y', now(), '100', '100', now(), 'Y',
-              'N'
-      from ad_role
-      where not exists (select 1 from ad_table_access a
-         where a.ad_role_id = ad_role.ad_role_id
-         and a.ad_table_id = '4D8C3B3C31D1410DA046140C9F024D17')
+      DELETE FROM ad_table_access
+      WHERE ad_table_id = '4D8C3B3C31D1410DA046140C9F024D17'
+        AND isreadonly = 'Y'
+        AND isexclude = 'N'
+        AND created <= (SELECT created FROM ad_tab WHERE ad_tab_id = 'FF8080812F213146012F2135BC25000E')
       ]]>
     </Sql>
   </SqlMethod>

@@ -357,50 +357,6 @@ The User identifies a unique user in the system. This could be an internal user 
 <!--116-->  <TREETYPE><![CDATA[MM]]></TREETYPE>
 <!--116--></AD_TABLE>
 
-<!--117--><AD_TABLE>
-<!--117-->  <AD_TABLE_ID><![CDATA[117]]></AD_TABLE_ID>
-<!--117-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--117-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--117-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--117-->  <NAME><![CDATA[ADWorkflow]]></NAME>
-<!--117-->  <DESCRIPTION><![CDATA[Define Workflow]]></DESCRIPTION>
-<!--117-->  <HELP><![CDATA[The Workflow Tab defines Workflows in the system.]]></HELP>
-<!--117-->  <TABLENAME><![CDATA[AD_Workflow]]></TABLENAME>
-<!--117-->  <CLASSNAME><![CDATA[Workflow]]></CLASSNAME>
-<!--117-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--117-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--117-->  <AD_WINDOW_ID><![CDATA[113]]></AD_WINDOW_ID>
-<!--117-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--117-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--117-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--117-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--117-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--117-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--117-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--117--></AD_TABLE>
-
-<!--118--><AD_TABLE>
-<!--118-->  <AD_TABLE_ID><![CDATA[118]]></AD_TABLE_ID>
-<!--118-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--118-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--118-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--118-->  <NAME><![CDATA[ADTask]]></NAME>
-<!--118-->  <DESCRIPTION><![CDATA[Task]]></DESCRIPTION>
-<!--118-->  <HELP><![CDATA[The Task Tab defines the unique tasks that will be used.]]></HELP>
-<!--118-->  <TABLENAME><![CDATA[AD_Task]]></TABLENAME>
-<!--118-->  <CLASSNAME><![CDATA[Task]]></CLASSNAME>
-<!--118-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--118-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--118-->  <AD_WINDOW_ID><![CDATA[114]]></AD_WINDOW_ID>
-<!--118-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--118-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--118-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--118-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--118-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--118-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--118-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--118--></AD_TABLE>
-
 <!--119--><AD_TABLE>
 <!--119-->  <AD_TABLE_ID><![CDATA[119]]></AD_TABLE_ID>
 <!--119-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -469,28 +425,6 @@ Run Synchronize Terminology to update menu translation.]]></HELP>
 <!--123-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--123--></AD_TABLE>
 
-<!--124--><AD_TABLE>
-<!--124-->  <AD_TABLE_ID><![CDATA[124]]></AD_TABLE_ID>
-<!--124-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--124-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--124-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--124-->  <NAME><![CDATA[ADTaskTrl]]></NAME>
-<!--124-->  <DESCRIPTION><![CDATA[Allows the translation of any task of the application.]]></DESCRIPTION>
-<!--124-->  <HELP><![CDATA[Allows the translation of any task of the application. After performing any edits, the window must be regenerated.]]></HELP>
-<!--124-->  <TABLENAME><![CDATA[AD_Task_Trl]]></TABLENAME>
-<!--124-->  <CLASSNAME><![CDATA[TaskTrl]]></CLASSNAME>
-<!--124-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--124-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--124-->  <AD_WINDOW_ID><![CDATA[114]]></AD_WINDOW_ID>
-<!--124-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--124-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--124-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--124-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--124-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--124-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--124-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--124--></AD_TABLE>
-
 <!--126--><AD_TABLE>
 <!--126-->  <AD_TABLE_ID><![CDATA[126]]></AD_TABLE_ID>
 <!--126-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -535,72 +469,6 @@ Allows the translation of any field of the application. After performing any edi
 <!--127-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--127--></AD_TABLE>
 
-<!--129--><AD_TABLE>
-<!--129-->  <AD_TABLE_ID><![CDATA[129]]></AD_TABLE_ID>
-<!--129-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--129-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--129-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--129-->  <NAME><![CDATA[ADWFNode]]></NAME>
-<!--129-->  <DESCRIPTION><![CDATA[Define workflow nodes]]></DESCRIPTION>
-<!--129-->  <HELP><![CDATA[The Node Tab defines each Node or step in this Workflow.]]></HELP>
-<!--129-->  <TABLENAME><![CDATA[AD_WF_Node]]></TABLENAME>
-<!--129-->  <CLASSNAME><![CDATA[WFNode]]></CLASSNAME>
-<!--129-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--129-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--129-->  <AD_WINDOW_ID><![CDATA[113]]></AD_WINDOW_ID>
-<!--129-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--129-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--129-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--129-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--129-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--129-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--129-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--129--></AD_TABLE>
-
-<!--130--><AD_TABLE>
-<!--130-->  <AD_TABLE_ID><![CDATA[130]]></AD_TABLE_ID>
-<!--130-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--130-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--130-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--130-->  <NAME><![CDATA[ADWFNodeTrl]]></NAME>
-<!--130-->  <DESCRIPTION><![CDATA[Allows the translation of any workflow node of the application.]]></DESCRIPTION>
-<!--130-->  <HELP><![CDATA[Allows the translation of any workflow node of the application. After performing any edits, the window must be regenerated.]]></HELP>
-<!--130-->  <TABLENAME><![CDATA[AD_WF_Node_Trl]]></TABLENAME>
-<!--130-->  <CLASSNAME><![CDATA[WFNodeTrl]]></CLASSNAME>
-<!--130-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--130-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--130-->  <AD_WINDOW_ID><![CDATA[113]]></AD_WINDOW_ID>
-<!--130-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--130-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--130-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--130-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--130-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--130-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--130-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--130--></AD_TABLE>
-
-<!--131--><AD_TABLE>
-<!--131-->  <AD_TABLE_ID><![CDATA[131]]></AD_TABLE_ID>
-<!--131-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--131-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--131-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--131-->  <NAME><![CDATA[ADWFNodeNext]]></NAME>
-<!--131-->  <DESCRIPTION><![CDATA[Next Nodes]]></DESCRIPTION>
-<!--131-->  <HELP><![CDATA[The Next Nodes Tab defines the order or Nodes or Steps in a Workflow.]]></HELP>
-<!--131-->  <TABLENAME><![CDATA[AD_WF_NodeNext]]></TABLENAME>
-<!--131-->  <CLASSNAME><![CDATA[WFNodeNext]]></CLASSNAME>
-<!--131-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--131-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--131-->  <AD_WINDOW_ID><![CDATA[113]]></AD_WINDOW_ID>
-<!--131-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--131-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--131-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--131-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--131-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--131-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--131-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--131--></AD_TABLE>
-
 <!--132--><AD_TABLE>
 <!--132-->  <AD_TABLE_ID><![CDATA[132]]></AD_TABLE_ID>
 <!--132-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -622,28 +490,6 @@ Allows the translation of any field of the application. After performing any edi
 <!--132-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--132-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--132--></AD_TABLE>
-
-<!--133--><AD_TABLE>
-<!--133-->  <AD_TABLE_ID><![CDATA[133]]></AD_TABLE_ID>
-<!--133-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--133-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--133-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--133-->  <NAME><![CDATA[ADWorkflowTrl]]></NAME>
-<!--133-->  <DESCRIPTION><![CDATA[Allows the translation of any workflow of the application.]]></DESCRIPTION>
-<!--133-->  <HELP><![CDATA[Allows the translation of any workflow of the application. After performing any edits, the window must be regenerated.]]></HELP>
-<!--133-->  <TABLENAME><![CDATA[AD_Workflow_Trl]]></TABLENAME>
-<!--133-->  <CLASSNAME><![CDATA[WorkflowTrl]]></CLASSNAME>
-<!--133-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--133-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--133-->  <AD_WINDOW_ID><![CDATA[113]]></AD_WINDOW_ID>
-<!--133-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--133-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--133-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--133-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--133-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--133-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--133-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--133--></AD_TABLE>
 
 <!--135--><AD_TABLE>
 <!--135-->  <AD_TABLE_ID><![CDATA[135]]></AD_TABLE_ID>
@@ -914,28 +760,6 @@ The User Assignment Tab displays Users who have been defined for this Role.]]></
 <!--162-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--162-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D64B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--162--></AD_TABLE>
-
-<!--163--><AD_TABLE>
-<!--163-->  <AD_TABLE_ID><![CDATA[163]]></AD_TABLE_ID>
-<!--163-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--163-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--163-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--163-->  <NAME><![CDATA[FinancialMgmtNonBusinessDay]]></NAME>
-<!--163-->  <DESCRIPTION><![CDATA[Define Non Business Days]]></DESCRIPTION>
-<!--163-->  <HELP><![CDATA[The Non Business Days Tab defines those days to exclude when calculating the due date for given payment terms.  For example, if an invoice terms was Net 10 days and the Invoice Date was 2/17/2000 the due date would be 2/27/2000.  If 2/27/2000 was defined]]></HELP>
-<!--163-->  <TABLENAME><![CDATA[C_NonBusinessDay]]></TABLENAME>
-<!--163-->  <CLASSNAME><![CDATA[NonBusinessDay]]></CLASSNAME>
-<!--163-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--163-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--163-->  <AD_WINDOW_ID><![CDATA[117]]></AD_WINDOW_ID>
-<!--163-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--163-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--163-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--163-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--163-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--163-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--163-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1E34B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--163--></AD_TABLE>
 
 <!--164--><AD_TABLE>
 <!--164-->  <AD_TABLE_ID><![CDATA[164]]></AD_TABLE_ID>
@@ -1247,30 +1071,6 @@ The Report Access Tab determines who can access a report or process]]></HELP>
 <!--197-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--197--></AD_TABLE>
 
-<!--199--><AD_TABLE>
-<!--199-->  <AD_TABLE_ID><![CDATA[199]]></AD_TABLE_ID>
-<!--199-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--199-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--199-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--199-->  <NAME><![CDATA[ADTaskAccess]]></NAME>
-<!--199-->  <DESCRIPTION><![CDATA[Task Access
-Task Access]]></DESCRIPTION>
-<!--199-->  <HELP><![CDATA[The Task Access Tab defines the Task and type of access that this Role is granted.
-The Task Access Tab defines the Roles that will have access to this task and the type of access each Role is granted.]]></HELP>
-<!--199-->  <TABLENAME><![CDATA[AD_Task_Access]]></TABLENAME>
-<!--199-->  <CLASSNAME><![CDATA[TaskAccess]]></CLASSNAME>
-<!--199-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--199-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--199-->  <AD_WINDOW_ID><![CDATA[114]]></AD_WINDOW_ID>
-<!--199-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--199-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--199-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--199-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--199-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--199-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--199-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--199--></AD_TABLE>
-
 <!--201--><AD_TABLE>
 <!--201-->  <AD_TABLE_ID><![CDATA[201]]></AD_TABLE_ID>
 <!--201-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1294,30 +1094,6 @@ The Window Access Tab defines the Windows and type of access that this Role is g
 <!--201-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--201-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--201--></AD_TABLE>
-
-<!--202--><AD_TABLE>
-<!--202-->  <AD_TABLE_ID><![CDATA[202]]></AD_TABLE_ID>
-<!--202-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--202-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--202-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--202-->  <NAME><![CDATA[ADWorkflowAccess]]></NAME>
-<!--202-->  <DESCRIPTION><![CDATA[Workflow Access
-Workflow Access]]></DESCRIPTION>
-<!--202-->  <HELP><![CDATA[The Workflow Access Tab defines the Workflows and type of access that this Role is granted.
-The Workflow Access Tab defines the Roles who have access to this Workflow.]]></HELP>
-<!--202-->  <TABLENAME><![CDATA[AD_Workflow_Access]]></TABLENAME>
-<!--202-->  <CLASSNAME><![CDATA[WorkflowAccess]]></CLASSNAME>
-<!--202-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--202-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--202-->  <AD_WINDOW_ID><![CDATA[113]]></AD_WINDOW_ID>
-<!--202-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--202-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--202-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--202-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--202-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--202-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--202-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--202--></AD_TABLE>
 
 <!--203--><AD_TABLE>
 <!--203-->  <AD_TABLE_ID><![CDATA[203]]></AD_TABLE_ID>
@@ -1356,7 +1132,6 @@ The Accounting Tab is used to define the Asset Account to use when a project is 
 <!--204-->  <CLASSNAME><![CDATA[ProjectAccounts]]></CLASSNAME>
 <!--204-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--204-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--204-->  <AD_WINDOW_ID><![CDATA[286]]></AD_WINDOW_ID>
 <!--204-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--204-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--204-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
@@ -1679,28 +1454,6 @@ The Product Details allows you to display and maintain all products for a select
 <!--230-->  <TREETYPE><![CDATA[SR]]></TREETYPE>
 <!--230--></AD_TABLE>
 
-<!--249--><AD_TABLE>
-<!--249-->  <AD_TABLE_ID><![CDATA[249]]></AD_TABLE_ID>
-<!--249-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--249-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--249-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--249-->  <NAME><![CDATA[Replenish]]></NAME>
-<!--249-->  <DESCRIPTION><![CDATA[Define Replenishment]]></DESCRIPTION>
-<!--249-->  <HELP><![CDATA[The Replenishment defines the type of replenishment quantities.  This is used for automated ordering.]]></HELP>
-<!--249-->  <TABLENAME><![CDATA[M_Replenish]]></TABLENAME>
-<!--249-->  <CLASSNAME><![CDATA[Replenish]]></CLASSNAME>
-<!--249-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--249-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--249-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
-<!--249-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--249-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--249-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--249-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--249-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--249-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--249-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DA4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--249--></AD_TABLE>
-
 <!--251--><AD_TABLE>
 <!--251-->  <AD_TABLE_ID><![CDATA[251]]></AD_TABLE_ID>
 <!--251-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1771,28 +1524,6 @@ The Pricing Tab displays the List, Standard and Limit prices for each price list
 <!--253-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--253-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1FB4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--253--></AD_TABLE>
-
-<!--254--><AD_TABLE>
-<!--254-->  <AD_TABLE_ID><![CDATA[254]]></AD_TABLE_ID>
-<!--254-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--254-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--254-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--254-->  <NAME><![CDATA[Attachment]]></NAME>
-<!--254-->  <DESCRIPTION><![CDATA[Attachment]]></DESCRIPTION>
-<!--254-->  <HELP><![CDATA[The Attachment tab displays the attributes of an attachment.]]></HELP>
-<!--254-->  <TABLENAME><![CDATA[AD_Attachment]]></TABLENAME>
-<!--254-->  <CLASSNAME><![CDATA[AD_Attachment]]></CLASSNAME>
-<!--254-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--254-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--254-->  <AD_WINDOW_ID><![CDATA[128]]></AD_WINDOW_ID>
-<!--254-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--254-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--254-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--254-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--254-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--254-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--254-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D04B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--254--></AD_TABLE>
 
 <!--255--><AD_TABLE>
 <!--255-->  <AD_TABLE_ID><![CDATA[255]]></AD_TABLE_ID>
@@ -2560,7 +2291,6 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--313-->  <CLASSNAME><![CDATA[GLCharge]]></CLASSNAME>
 <!--313-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--313-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--313-->  <AD_WINDOW_ID><![CDATA[161]]></AD_WINDOW_ID>
 <!--313-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--313-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--313-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
@@ -2909,72 +2639,6 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--334-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D84B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--334--></AD_TABLE>
 
-<!--336--><AD_TABLE>
-<!--336-->  <AD_TABLE_ID><![CDATA[336]]></AD_TABLE_ID>
-<!--336-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--336-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--336-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--336-->  <NAME><![CDATA[RevenueRecognition]]></NAME>
-<!--336-->  <DESCRIPTION><![CDATA[Revenue Recognition]]></DESCRIPTION>
-<!--336-->  <HELP><![CDATA[The Revenue Recognition Tab defines the intervals at which revenue will be recognized.  You can also base the revenue recognition on provided Service Levels.]]></HELP>
-<!--336-->  <TABLENAME><![CDATA[C_RevenueRecognition]]></TABLENAME>
-<!--336-->  <CLASSNAME><![CDATA[RevenueRecognition]]></CLASSNAME>
-<!--336-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--336-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--336-->  <AD_WINDOW_ID><![CDATA[174]]></AD_WINDOW_ID>
-<!--336-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--336-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--336-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--336-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--336-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--336-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--336-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DE4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--336--></AD_TABLE>
-
-<!--337--><AD_TABLE>
-<!--337-->  <AD_TABLE_ID><![CDATA[337]]></AD_TABLE_ID>
-<!--337-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--337-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--337-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--337-->  <NAME><![CDATA[ServiceLevel]]></NAME>
-<!--337-->  <DESCRIPTION><![CDATA[View Service Level]]></DESCRIPTION>
-<!--337-->  <HELP><![CDATA[The service level is automatically created when creating an invoice with products using revenue recognition based on service levels.]]></HELP>
-<!--337-->  <TABLENAME><![CDATA[C_ServiceLevel]]></TABLENAME>
-<!--337-->  <CLASSNAME><![CDATA[ServiceLevel]]></CLASSNAME>
-<!--337-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--337-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--337-->  <AD_WINDOW_ID><![CDATA[220]]></AD_WINDOW_ID>
-<!--337-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--337-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--337-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--337-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--337-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--337-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--337-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DA4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--337--></AD_TABLE>
-
-<!--338--><AD_TABLE>
-<!--338-->  <AD_TABLE_ID><![CDATA[338]]></AD_TABLE_ID>
-<!--338-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--338-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--338-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--338-->  <NAME><![CDATA[ServiceLevelLine]]></NAME>
-<!--338-->  <DESCRIPTION><![CDATA[Maintain Service Levels]]></DESCRIPTION>
-<!--338-->  <HELP><![CDATA[Add new service level lines to change the recognized amount]]></HELP>
-<!--338-->  <TABLENAME><![CDATA[C_ServiceLevelLine]]></TABLENAME>
-<!--338-->  <CLASSNAME><![CDATA[ServiceLevelLine]]></CLASSNAME>
-<!--338-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--338-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--338-->  <AD_WINDOW_ID><![CDATA[220]]></AD_WINDOW_ID>
-<!--338-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--338-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--338-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--338-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--338-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--338-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--338-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DA4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--338--></AD_TABLE>
-
 <!--339--><AD_TABLE>
 <!--339-->  <AD_TABLE_ID><![CDATA[339]]></AD_TABLE_ID>
 <!--339-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -2996,26 +2660,6 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--339-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--339-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DB4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--339--></AD_TABLE>
-
-<!--342--><AD_TABLE>
-<!--342-->  <AD_TABLE_ID><![CDATA[342]]></AD_TABLE_ID>
-<!--342-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--342-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--342-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--342-->  <NAME><![CDATA[PerpetualInv]]></NAME>
-<!--342-->  <TABLENAME><![CDATA[M_PerpetualInv]]></TABLENAME>
-<!--342-->  <CLASSNAME><![CDATA[PerpetualInv]]></CLASSNAME>
-<!--342-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--342-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--342-->  <AD_WINDOW_ID><![CDATA[175]]></AD_WINDOW_ID>
-<!--342-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--342-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--342-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--342-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--342-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--342-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--342-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DA4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--342--></AD_TABLE>
 
 <!--346--><AD_TABLE>
 <!--346-->  <AD_TABLE_ID><![CDATA[346]]></AD_TABLE_ID>
@@ -3305,50 +2949,6 @@ The Forms Access Tab defines the access rules for this form]]></HELP>
 <!--378-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--378--></AD_TABLE>
 
-<!--381--><AD_TABLE>
-<!--381-->  <AD_TABLE_ID><![CDATA[381]]></AD_TABLE_ID>
-<!--381-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--381-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--381-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--381-->  <NAME><![CDATA[DataImportFormat]]></NAME>
-<!--381-->  <DESCRIPTION><![CDATA[Import Format]]></DESCRIPTION>
-<!--381-->  <HELP><![CDATA[The Import Format tab contains each record parameter configuration for each data import type.]]></HELP>
-<!--381-->  <TABLENAME><![CDATA[AD_ImpFormat]]></TABLENAME>
-<!--381-->  <CLASSNAME><![CDATA[ImportFormat]]></CLASSNAME>
-<!--381-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--381-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--381-->  <AD_WINDOW_ID><![CDATA[189]]></AD_WINDOW_ID>
-<!--381-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--381-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--381-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--381-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--381-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--381-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--381-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DD4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--381--></AD_TABLE>
-
-<!--382--><AD_TABLE>
-<!--382-->  <AD_TABLE_ID><![CDATA[382]]></AD_TABLE_ID>
-<!--382-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--382-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--382-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--382-->  <NAME><![CDATA[DataImportFormatRow]]></NAME>
-<!--382-->  <DESCRIPTION><![CDATA[Maintain Format Fields]]></DESCRIPTION>
-<!--382-->  <HELP><![CDATA[Define the individual field based on the table definition.  Please note that you have to make sure that a Constant has the correct  SQL data type (i.e. if it is a 'string', you need to enclose it like 'this')]]></HELP>
-<!--382-->  <TABLENAME><![CDATA[AD_ImpFormat_Row]]></TABLENAME>
-<!--382-->  <CLASSNAME><![CDATA[ImportFormatRow]]></CLASSNAME>
-<!--382-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--382-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--382-->  <AD_WINDOW_ID><![CDATA[189]]></AD_WINDOW_ID>
-<!--382-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--382-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--382-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--382-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--382-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--382-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--382-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DD4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--382--></AD_TABLE>
-
 <!--383--><AD_TABLE>
 <!--383-->  <AD_TABLE_ID><![CDATA[383]]></AD_TABLE_ID>
 <!--383-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -3439,28 +3039,6 @@ Available Quantity:
 <!--388-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
 <!--388-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D84B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--388--></AD_TABLE>
-
-<!--389--><AD_TABLE>
-<!--389-->  <AD_TABLE_ID><![CDATA[389]]></AD_TABLE_ID>
-<!--389-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--389-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--389-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--389-->  <NAME><![CDATA[ADNote]]></NAME>
-<!--389-->  <DESCRIPTION><![CDATA[System Notice]]></DESCRIPTION>
-<!--389-->  <HELP><![CDATA[The Notice Tab provides a method of viewing messages that are generated by this system when performing processes.]]></HELP>
-<!--389-->  <TABLENAME><![CDATA[AD_Note]]></TABLENAME>
-<!--389-->  <CLASSNAME><![CDATA[ADNote]]></CLASSNAME>
-<!--389-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--389-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--389-->  <AD_WINDOW_ID><![CDATA[193]]></AD_WINDOW_ID>
-<!--389-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--389-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--389-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--389-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--389-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--389-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--389-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D04B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--389--></AD_TABLE>
 
 <!--391--><AD_TABLE>
 <!--391-->  <AD_TABLE_ID><![CDATA[391]]></AD_TABLE_ID>
@@ -3584,7 +3162,6 @@ Available Quantity:
 <!--396-->  <CLASSNAME><![CDATA[GLChargeAccounts]]></CLASSNAME>
 <!--396-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--396-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--396-->  <AD_WINDOW_ID><![CDATA[161]]></AD_WINDOW_ID>
 <!--396-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--396-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--396-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
@@ -3593,28 +3170,6 @@ Available Quantity:
 <!--396-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--396-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1E54B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--396--></AD_TABLE>
-
-<!--397--><AD_TABLE>
-<!--397-->  <AD_TABLE_ID><![CDATA[397]]></AD_TABLE_ID>
-<!--397-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--397-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--397-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--397-->  <NAME><![CDATA[FinancialMgmtInterOrgAccounts]]></NAME>
-<!--397-->  <DESCRIPTION><![CDATA[Organization Accounting]]></DESCRIPTION>
-<!--397-->  <HELP><![CDATA[The Organization Accounting Tab defines the default accounting parameters to be used by this Organization.]]></HELP>
-<!--397-->  <TABLENAME><![CDATA[C_InterOrg_Acct]]></TABLENAME>
-<!--397-->  <CLASSNAME><![CDATA[InterOrgAccounts]]></CLASSNAME>
-<!--397-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--397-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--397-->  <AD_WINDOW_ID><![CDATA[110]]></AD_WINDOW_ID>
-<!--397-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--397-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--397-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--397-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--397-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--397-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--397-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DE4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--397--></AD_TABLE>
 
 <!--399--><AD_TABLE>
 <!--399-->  <AD_TABLE_ID><![CDATA[399]]></AD_TABLE_ID>
@@ -3650,7 +3205,6 @@ Available Quantity:
 <!--400-->  <CLASSNAME><![CDATA[WithholdingAccounts]]></CLASSNAME>
 <!--400-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--400-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--400-->  <AD_WINDOW_ID><![CDATA[160]]></AD_WINDOW_ID>
 <!--400-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--400-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--400-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
@@ -3816,100 +3370,6 @@ Run Synchronize Terminology to update menu translation. You need only to transla
 <!--415-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--415--></AD_TABLE>
 
-<!--416--><AD_TABLE>
-<!--416-->  <AD_TABLE_ID><![CDATA[416]]></AD_TABLE_ID>
-<!--416-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--416-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--416-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--416-->  <NAME><![CDATA[MarketingMailText]]></NAME>
-<!--416-->  <DESCRIPTION><![CDATA[Mail template configuration]]></DESCRIPTION>
-<!--416-->  <HELP><![CDATA[The mail template configuration includes all template parameter configurations for the use.]]></HELP>
-<!--416-->  <TABLENAME><![CDATA[R_MailText]]></TABLENAME>
-<!--416-->  <CLASSNAME><![CDATA[MailText]]></CLASSNAME>
-<!--416-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--416-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--416-->  <AD_WINDOW_ID><![CDATA[204]]></AD_WINDOW_ID>
-<!--416-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--416-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--416-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--416-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--416-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--416-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--416-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EE4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--416--></AD_TABLE>
-
-<!--417--><AD_TABLE>
-<!--417-->  <AD_TABLE_ID><![CDATA[417]]></AD_TABLE_ID>
-<!--417-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--417-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--417-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--417-->  <NAME><![CDATA[Request]]></NAME>
-<!--417-->  <DESCRIPTION><![CDATA[Define Request
-Define Request
-Business Partner Requests]]></DESCRIPTION>
-<!--417-->  <HELP><![CDATA[The Request Tab defines any Request submitted by a Business Partner.
-The Request Tab defines any Request submitted by a Business Partner.
-Shows all the requests  of the partner selected.]]></HELP>
-<!--417-->  <TABLENAME><![CDATA[R_Request]]></TABLENAME>
-<!--417-->  <CLASSNAME><![CDATA[Request]]></CLASSNAME>
-<!--417-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--417-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--417-->  <AD_WINDOW_ID><![CDATA[201]]></AD_WINDOW_ID>
-<!--417-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--417-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--417-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--417-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--417-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--417-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--417-->  <AD_PACKAGE_ID><![CDATA[65C56C372A314EDDAB62B592084662AE]]></AD_PACKAGE_ID>
-<!--417--></AD_TABLE>
-
-<!--418--><AD_TABLE>
-<!--418-->  <AD_TABLE_ID><![CDATA[418]]></AD_TABLE_ID>
-<!--418-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--418-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--418-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--418-->  <NAME><![CDATA[RequestionAction]]></NAME>
-<!--418-->  <DESCRIPTION><![CDATA[Action History
-Action History]]></DESCRIPTION>
-<!--418-->  <HELP><![CDATA[The Action History Tab displays any actions which have been taken for a Request.
-The Action History Tab displays any actions which have been taken for a Request.]]></HELP>
-<!--418-->  <TABLENAME><![CDATA[R_RequestAction]]></TABLENAME>
-<!--418-->  <CLASSNAME><![CDATA[RequestionAction]]></CLASSNAME>
-<!--418-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--418-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--418-->  <AD_WINDOW_ID><![CDATA[201]]></AD_WINDOW_ID>
-<!--418-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--418-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--418-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--418-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--418-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--418-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--418-->  <AD_PACKAGE_ID><![CDATA[65C56C372A314EDDAB62B592084662AE]]></AD_PACKAGE_ID>
-<!--418--></AD_TABLE>
-
-<!--420--><AD_TABLE>
-<!--420-->  <AD_TABLE_ID><![CDATA[420]]></AD_TABLE_ID>
-<!--420-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--420-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--420-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--420-->  <NAME><![CDATA[RequestProcessor]]></NAME>
-<!--420-->  <DESCRIPTION><![CDATA[Request Processor]]></DESCRIPTION>
-<!--420-->  <HELP><![CDATA[The Request Processor Tab allows you to define processes that you want to occur and the frequency and timing of these processes. If no other user is found, the items are assigned to the supervisor.]]></HELP>
-<!--420-->  <TABLENAME><![CDATA[R_RequestProcessor]]></TABLENAME>
-<!--420-->  <CLASSNAME><![CDATA[RequestProcessor]]></CLASSNAME>
-<!--420-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--420-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--420-->  <AD_WINDOW_ID><![CDATA[203]]></AD_WINDOW_ID>
-<!--420-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--420-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--420-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--420-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--420-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--420-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--420-->  <AD_PACKAGE_ID><![CDATA[65C56C372A314EDDAB62B592084662AE]]></AD_PACKAGE_ID>
-<!--420--></AD_TABLE>
-
 <!--422--><AD_TABLE>
 <!--422-->  <AD_TABLE_ID><![CDATA[422]]></AD_TABLE_ID>
 <!--422-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -4067,7 +3527,6 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--434-->  <CLASSNAME><![CDATA[ProjectLine]]></CLASSNAME>
 <!--434-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--434-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--434-->  <AD_WINDOW_ID><![CDATA[286]]></AD_WINDOW_ID>
 <!--434-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--434-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--434-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
@@ -4120,48 +3579,6 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--437-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--437-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1FA4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--437--></AD_TABLE>
-
-<!--443--><AD_TABLE>
-<!--443-->  <AD_TABLE_ID><![CDATA[443]]></AD_TABLE_ID>
-<!--443-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--443-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--443-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--443-->  <NAME><![CDATA[RevenueRecognitionPlan]]></NAME>
-<!--443-->  <DESCRIPTION><![CDATA[View Revenue Recognition Plan]]></DESCRIPTION>
-<!--443-->  <HELP><![CDATA[The Revenue Recognition plan is generated then invoicing a product with revenue recognition.  With Revenue Recognition, the amount is posted to the Unrecognized revenue account and over time, or based on Service Level, will be booked to Earned Revenue.]]></HELP>
-<!--443-->  <TABLENAME><![CDATA[C_RevenueRecognition_Plan]]></TABLENAME>
-<!--443-->  <CLASSNAME><![CDATA[RevenueRecognitionPlan]]></CLASSNAME>
-<!--443-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--443-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--443-->  <AD_WINDOW_ID><![CDATA[174]]></AD_WINDOW_ID>
-<!--443-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--443-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--443-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--443-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--443-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--443-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--443-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DE4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--443--></AD_TABLE>
-
-<!--444--><AD_TABLE>
-<!--444-->  <AD_TABLE_ID><![CDATA[444]]></AD_TABLE_ID>
-<!--444-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--444-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--444-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--444-->  <NAME><![CDATA[RevenueRecognitionRun]]></NAME>
-<!--444-->  <TABLENAME><![CDATA[C_RevenueRecognition_Run]]></TABLENAME>
-<!--444-->  <CLASSNAME><![CDATA[RevenueRecognitionRun]]></CLASSNAME>
-<!--444-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--444-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--444-->  <AD_WINDOW_ID><![CDATA[174]]></AD_WINDOW_ID>
-<!--444-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--444-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--444-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--444-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--444-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--444-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--444-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DE4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--444--></AD_TABLE>
 
 <!--451--><AD_TABLE>
 <!--451-->  <AD_TABLE_ID><![CDATA[451]]></AD_TABLE_ID>
@@ -4331,28 +3748,6 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--473-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--473-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1F84B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--473--></AD_TABLE>
-
-<!--474--><AD_TABLE>
-<!--474-->  <AD_TABLE_ID><![CDATA[474]]></AD_TABLE_ID>
-<!--474-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--474-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--474-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--474-->  <NAME><![CDATA[RequestProcessorRoute]]></NAME>
-<!--474-->  <DESCRIPTION><![CDATA[Request Routing]]></DESCRIPTION>
-<!--474-->  <HELP><![CDATA[Define the sequence of keywords and to whom the web and mail requests should be routed to.]]></HELP>
-<!--474-->  <TABLENAME><![CDATA[R_RequestProcessor_Route]]></TABLENAME>
-<!--474-->  <CLASSNAME><![CDATA[RequestProcessorRoute]]></CLASSNAME>
-<!--474-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--474-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--474-->  <AD_WINDOW_ID><![CDATA[203]]></AD_WINDOW_ID>
-<!--474-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--474-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--474-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--474-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--474-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--474-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--474-->  <AD_PACKAGE_ID><![CDATA[65C56C372A314EDDAB62B592084662AE]]></AD_PACKAGE_ID>
-<!--474--></AD_TABLE>
 
 <!--475--><AD_TABLE>
 <!--475-->  <AD_TABLE_ID><![CDATA[475]]></AD_TABLE_ID>
@@ -4684,73 +4079,6 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--520-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D34B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--520--></AD_TABLE>
 
-<!--528--><AD_TABLE>
-<!--528-->  <AD_TABLE_ID><![CDATA[528]]></AD_TABLE_ID>
-<!--528-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--528-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--528-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--528-->  <NAME><![CDATA[ContactInterest]]></NAME>
-<!--528-->  <DESCRIPTION><![CDATA[Business Partner Contact Areas of Interest<BR>Areas of Interest subscription]]></DESCRIPTION>
-<!--528-->  <HELP><![CDATA[Areas of Interest can be used for Marketing Campaigns
-The subscription is used to follow up with the contacts which are subscribed to specific areas of interest and also to add new subscribers.]]></HELP>
-<!--528-->  <TABLENAME><![CDATA[R_ContactInterest]]></TABLENAME>
-<!--528-->  <CLASSNAME><![CDATA[ContactInterest]]></CLASSNAME>
-<!--528-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--528-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--528-->  <AD_WINDOW_ID><![CDATA[245]]></AD_WINDOW_ID>
-<!--528-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--528-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--528-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--528-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--528-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--528-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--528-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D34B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--528--></AD_TABLE>
-
-<!--529--><AD_TABLE>
-<!--529-->  <AD_TABLE_ID><![CDATA[529]]></AD_TABLE_ID>
-<!--529-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--529-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--529-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--529-->  <NAME><![CDATA[RequestType]]></NAME>
-<!--529-->  <DESCRIPTION><![CDATA[Type of request (e.g. Inquiry, Complaint, ..)]]></DESCRIPTION>
-<!--529-->  <HELP><![CDATA[Request Types are used for processing and categorizing requests. Options are Account Inquiry, Warranty Issue, etc.]]></HELP>
-<!--529-->  <TABLENAME><![CDATA[R_RequestType]]></TABLENAME>
-<!--529-->  <CLASSNAME><![CDATA[RequestType]]></CLASSNAME>
-<!--529-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--529-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--529-->  <AD_WINDOW_ID><![CDATA[244]]></AD_WINDOW_ID>
-<!--529-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--529-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--529-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--529-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--529-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--529-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--529-->  <AD_PACKAGE_ID><![CDATA[65C56C372A314EDDAB62B592084662AE]]></AD_PACKAGE_ID>
-<!--529--></AD_TABLE>
-
-<!--530--><AD_TABLE>
-<!--530-->  <AD_TABLE_ID><![CDATA[530]]></AD_TABLE_ID>
-<!--530-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--530-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--530-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--530-->  <NAME><![CDATA[InterestArea]]></NAME>
-<!--530-->  <DESCRIPTION><![CDATA[Areas of Interest or Topic]]></DESCRIPTION>
-<!--530-->  <HELP><![CDATA[Areas of Interest reflect interest in a topic by a contact. Areas of Interest can be used for marketing campaigns.]]></HELP>
-<!--530-->  <TABLENAME><![CDATA[R_InterestArea]]></TABLENAME>
-<!--530-->  <CLASSNAME><![CDATA[InterestArea]]></CLASSNAME>
-<!--530-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--530-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--530-->  <AD_WINDOW_ID><![CDATA[245]]></AD_WINDOW_ID>
-<!--530-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--530-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--530-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--530-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--530-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--530-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--530-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D34B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--530--></AD_TABLE>
-
 <!--531--><AD_TABLE>
 <!--531-->  <AD_TABLE_ID><![CDATA[531]]></AD_TABLE_ID>
 <!--531-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -4772,71 +4100,6 @@ The subscription is used to follow up with the contacts which are subscribed to 
 <!--531-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--531-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CE4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--531--></AD_TABLE>
-
-<!--532--><AD_TABLE>
-<!--532-->  <AD_TABLE_ID><![CDATA[532]]></AD_TABLE_ID>
-<!--532-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--532-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--532-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--532-->  <NAME><![CDATA[DataImportProduct]]></NAME>
-<!--532-->  <DESCRIPTION><![CDATA[Import Products]]></DESCRIPTION>
-<!--532-->  <HELP><![CDATA[Before importing, Openbravo checks the Unit of Measure (default if not set), the Product Category (default if not set), the Business Partner, the Currency (defaults to accounting currency if not set), the Product Type (only Items and Services), the uniquen]]></HELP>
-<!--532-->  <TABLENAME><![CDATA[I_Product]]></TABLENAME>
-<!--532-->  <CLASSNAME><![CDATA[Product]]></CLASSNAME>
-<!--532-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--532-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--532-->  <AD_WINDOW_ID><![CDATA[247]]></AD_WINDOW_ID>
-<!--532-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--532-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--532-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--532-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--532-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--532-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--532-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DD4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--532--></AD_TABLE>
-
-<!--533--><AD_TABLE>
-<!--533-->  <AD_TABLE_ID><![CDATA[533]]></AD_TABLE_ID>
-<!--533-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--533-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--533-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--533-->  <NAME><![CDATA[DataImportBusinessPartner]]></NAME>
-<!--533-->  <HELP><![CDATA[The import business partner is an interim table which is used when importing external data into the system]]></HELP>
-<!--533-->  <TABLENAME><![CDATA[I_BPartner]]></TABLENAME>
-<!--533-->  <CLASSNAME><![CDATA[BusinessPartner]]></CLASSNAME>
-<!--533-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--533-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--533-->  <AD_WINDOW_ID><![CDATA[172]]></AD_WINDOW_ID>
-<!--533-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--533-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--533-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--533-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--533-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--533-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--533-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DD4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--533--></AD_TABLE>
-
-<!--534--><AD_TABLE>
-<!--534-->  <AD_TABLE_ID><![CDATA[534]]></AD_TABLE_ID>
-<!--534-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--534-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--534-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--534-->  <NAME><![CDATA[DataImportElementValue]]></NAME>
-<!--534-->  <DESCRIPTION><![CDATA[Accounting account importation]]></DESCRIPTION>
-<!--534-->  <HELP><![CDATA[This process imports the accounting accounts tree into the organization]]></HELP>
-<!--534-->  <TABLENAME><![CDATA[I_ElementValue]]></TABLENAME>
-<!--534-->  <CLASSNAME><![CDATA[ElementValue]]></CLASSNAME>
-<!--534-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--534-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--534-->  <AD_WINDOW_ID><![CDATA[248]]></AD_WINDOW_ID>
-<!--534-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--534-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--534-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--534-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--534-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--534-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--534-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DD4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--534--></AD_TABLE>
 
 <!--539--><AD_TABLE>
 <!--539-->  <AD_TABLE_ID><![CDATA[539]]></AD_TABLE_ID>
@@ -5205,28 +4468,6 @@ The subscription is used to follow up with the contacts which are subscribed to 
 <!--571-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--571--></AD_TABLE>
 
-<!--572--><AD_TABLE>
-<!--572-->  <AD_TABLE_ID><![CDATA[572]]></AD_TABLE_ID>
-<!--572-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--572-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--572-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--572-->  <NAME><![CDATA[DataImportInventory]]></NAME>
-<!--572-->  <DESCRIPTION><![CDATA[Import Inventory]]></DESCRIPTION>
-<!--572-->  <HELP><![CDATA[Validate and Import Inventory Transactions. The Locator is primarily determined by the Locator Key, then the Warehouse and X,Y,Z fields.<p>A Physical Inventory is created per Warehouse and Movement Date.]]></HELP>
-<!--572-->  <TABLENAME><![CDATA[I_Inventory]]></TABLENAME>
-<!--572-->  <CLASSNAME><![CDATA[Inventory]]></CLASSNAME>
-<!--572-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--572-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--572-->  <AD_WINDOW_ID><![CDATA[267]]></AD_WINDOW_ID>
-<!--572-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--572-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--572-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--572-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--572-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--572-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--572-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DD4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--572--></AD_TABLE>
-
 <!--575--><AD_TABLE>
 <!--575-->  <AD_TABLE_ID><![CDATA[575]]></AD_TABLE_ID>
 <!--575-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -5293,30 +4534,6 @@ The subscription is used to follow up with the contacts which are subscribed to 
 <!--577-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1F94B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--577--></AD_TABLE>
 
-<!--580--><AD_TABLE>
-<!--580-->  <AD_TABLE_ID><![CDATA[580]]></AD_TABLE_ID>
-<!--580-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--580-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--580-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--580-->  <NAME><![CDATA[ADChangeLog]]></NAME>
-<!--580-->  <DESCRIPTION><![CDATA[Data Changes
-Log of data changes]]></DESCRIPTION>
-<!--580-->  <HELP><![CDATA[Log of data changes
-Log of data changes]]></HELP>
-<!--580-->  <TABLENAME><![CDATA[AD_ChangeLog]]></TABLENAME>
-<!--580-->  <CLASSNAME><![CDATA[ADChangeLog]]></CLASSNAME>
-<!--580-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--580-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--580-->  <AD_WINDOW_ID><![CDATA[270]]></AD_WINDOW_ID>
-<!--580-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--580-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--580-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--580-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--580-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--580-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--580-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CE4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--580--></AD_TABLE>
-
 <!--581--><AD_TABLE>
 <!--581-->  <AD_TABLE_ID><![CDATA[581]]></AD_TABLE_ID>
 <!--581-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -5329,7 +4546,6 @@ Log of data changes]]></HELP>
 <!--581-->  <CLASSNAME><![CDATA[TimeType]]></CLASSNAME>
 <!--581-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--581-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--581-->  <AD_WINDOW_ID><![CDATA[272]]></AD_WINDOW_ID>
 <!--581-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--581-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--581-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
@@ -5338,28 +4554,6 @@ Log of data changes]]></HELP>
 <!--581-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
 <!--581-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1FC4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--581--></AD_TABLE>
-
-<!--582--><AD_TABLE>
-<!--582-->  <AD_TABLE_ID><![CDATA[582]]></AD_TABLE_ID>
-<!--582-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--582-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--582-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--582-->  <NAME><![CDATA[ResourcePlanCost]]></NAME>
-<!--582-->  <DESCRIPTION><![CDATA[Planned Costs of the Resource]]></DESCRIPTION>
-<!--582-->  <HELP><![CDATA[Planned (budgeted) Costs of the Resource]]></HELP>
-<!--582-->  <TABLENAME><![CDATA[R_ResourcePlanCost]]></TABLENAME>
-<!--582-->  <CLASSNAME><![CDATA[ResourcePlanCost]]></CLASSNAME>
-<!--582-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--582-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--582-->  <AD_WINDOW_ID><![CDATA[236]]></AD_WINDOW_ID>
-<!--582-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--582-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--582-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--582-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--582-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--582-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--582-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1FC4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--582--></AD_TABLE>
 
 <!--583--><AD_TABLE>
 <!--583-->  <AD_TABLE_ID><![CDATA[583]]></AD_TABLE_ID>
@@ -5405,25 +4599,6 @@ Log of data changes]]></HELP>
 <!--584-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1F94B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--584--></AD_TABLE>
 
-<!--585--><AD_TABLE>
-<!--585-->  <AD_TABLE_ID><![CDATA[585]]></AD_TABLE_ID>
-<!--585-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--585-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--585-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--585-->  <NAME><![CDATA[OrganizationAssignment]]></NAME>
-<!--585-->  <TABLENAME><![CDATA[C_OrgAssignment]]></TABLENAME>
-<!--585-->  <CLASSNAME><![CDATA[OrganizationAssignment]]></CLASSNAME>
-<!--585-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--585-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--585-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--585-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--585-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--585-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--585-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--585-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--585-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D54B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--585--></AD_TABLE>
-
 <!--591--><AD_TABLE>
 <!--591-->  <AD_TABLE_ID><![CDATA[591]]></AD_TABLE_ID>
 <!--591-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -5436,7 +4611,6 @@ Log of data changes]]></HELP>
 <!--591-->  <CLASSNAME><![CDATA[Order]]></CLASSNAME>
 <!--591-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--591-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--591-->  <AD_WINDOW_ID><![CDATA[281]]></AD_WINDOW_ID>
 <!--591-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--591-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--591-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
@@ -5556,71 +4730,6 @@ Log of data changes]]></HELP>
 <!--596-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1FB4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--596--></AD_TABLE>
 
-<!--598--><AD_TABLE>
-<!--598-->  <AD_TABLE_ID><![CDATA[598]]></AD_TABLE_ID>
-<!--598-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--598-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--598-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--598-->  <NAME><![CDATA[DataImportInvoice]]></NAME>
-<!--598-->  <DESCRIPTION><![CDATA[Import Invoices]]></DESCRIPTION>
-<!--598-->  <HELP><![CDATA[You should supply the Document Type Name (or ID). The Document Type is on purpose not fully derived as it has too many consequences if it's wrong.  The best way is to set the Document Type Name as a Constant in your Import File Format or as an imported fi]]></HELP>
-<!--598-->  <TABLENAME><![CDATA[I_Invoice]]></TABLENAME>
-<!--598-->  <CLASSNAME><![CDATA[Invoice]]></CLASSNAME>
-<!--598-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--598-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--598-->  <AD_WINDOW_ID><![CDATA[279]]></AD_WINDOW_ID>
-<!--598-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--598-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--598-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--598-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--598-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--598-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--598-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DD4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--598--></AD_TABLE>
-
-<!--599--><AD_TABLE>
-<!--599-->  <AD_TABLE_ID><![CDATA[599]]></AD_TABLE_ID>
-<!--599-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--599-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--599-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--599-->  <NAME><![CDATA[DataImportGLJournal]]></NAME>
-<!--599-->  <DESCRIPTION><![CDATA[Import General Ledger]]></DESCRIPTION>
-<!--599-->  <HELP><![CDATA[A new Journal Batch is created, if the Batch Document No is different. A new Journal is created, if the Document No, Accounting Schema, Currency, Document Type, GL Category, Posting Type or Accounting type is different.<p>Please note that there are three]]></HELP>
-<!--599-->  <TABLENAME><![CDATA[I_GLJournal]]></TABLENAME>
-<!--599-->  <CLASSNAME><![CDATA[GLJournal]]></CLASSNAME>
-<!--599-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--599-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--599-->  <AD_WINDOW_ID><![CDATA[278]]></AD_WINDOW_ID>
-<!--599-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--599-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--599-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--599-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--599-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--599-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--599-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DD4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--599--></AD_TABLE>
-
-<!--600--><AD_TABLE>
-<!--600-->  <AD_TABLE_ID><![CDATA[600]]></AD_TABLE_ID>
-<!--600-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--600-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--600-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--600-->  <NAME><![CDATA[DataImportBankStatement]]></NAME>
-<!--600-->  <HELP><![CDATA[Allows the bank statement import configuration and its execution]]></HELP>
-<!--600-->  <TABLENAME><![CDATA[I_BankStatement]]></TABLENAME>
-<!--600-->  <CLASSNAME><![CDATA[BankStatement]]></CLASSNAME>
-<!--600-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--600-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--600-->  <AD_WINDOW_ID><![CDATA[277]]></AD_WINDOW_ID>
-<!--600-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--600-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--600-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--600-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--600-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--600-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--600-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DD4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--600--></AD_TABLE>
-
 <!--616--><AD_TABLE>
 <!--616-->  <AD_TABLE_ID><![CDATA[616]]></AD_TABLE_ID>
 <!--616-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -5715,7 +4824,6 @@ Log of data changes]]></HELP>
 <!--623-->  <CLASSNAME><![CDATA[ProjectIssue]]></CLASSNAME>
 <!--623-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--623-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--623-->  <AD_WINDOW_ID><![CDATA[286]]></AD_WINDOW_ID>
 <!--623-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--623-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--623-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
@@ -6269,111 +5377,6 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800028-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D04B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--800028--></AD_TABLE>
 
-<!--800030--><AD_TABLE>
-<!--800030-->  <AD_TABLE_ID><![CDATA[800030]]></AD_TABLE_ID>
-<!--800030-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800030-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800030-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800030-->  <NAME><![CDATA[WarehouseSchedule]]></NAME>
-<!--800030-->  <HELP><![CDATA[Contains all the different schedules for a warehouse. These schedules are used to invoice rented locators]]></HELP>
-<!--800030-->  <TABLENAME><![CDATA[M_WH_Schedule]]></TABLENAME>
-<!--800030-->  <CLASSNAME><![CDATA[WarehouseSchedule]]></CLASSNAME>
-<!--800030-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800030-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800030-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800030-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800030-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800030-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800030-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800030-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800030-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--800030-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1F14B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800030--></AD_TABLE>
-
-<!--800031--><AD_TABLE>
-<!--800031-->  <AD_TABLE_ID><![CDATA[800031]]></AD_TABLE_ID>
-<!--800031-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800031-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800031-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800031-->  <NAME><![CDATA[WarehousePeriod]]></NAME>
-<!--800031-->  <HELP><![CDATA[Contains all the periods  for the schedule]]></HELP>
-<!--800031-->  <TABLENAME><![CDATA[M_WH_Period]]></TABLENAME>
-<!--800031-->  <CLASSNAME><![CDATA[WarehousePeriod]]></CLASSNAME>
-<!--800031-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800031-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800031-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800031-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800031-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800031-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800031-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800031-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800031-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--800031-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1F14B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800031--></AD_TABLE>
-
-<!--800032--><AD_TABLE>
-<!--800032-->  <AD_TABLE_ID><![CDATA[800032]]></AD_TABLE_ID>
-<!--800032-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800032-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800032-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800032-->  <NAME><![CDATA[WarehousePeriodInvoiced]]></NAME>
-<!--800032-->  <HELP><![CDATA[Contains all the invoices generated due based on the rented locators for that period]]></HELP>
-<!--800032-->  <TABLENAME><![CDATA[M_WH_Period_Invoiced]]></TABLENAME>
-<!--800032-->  <CLASSNAME><![CDATA[WarehousePeriodInvoiced]]></CLASSNAME>
-<!--800032-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800032-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800032-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800032-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800032-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800032-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800032-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800032-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800032-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--800032-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1F14B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800032--></AD_TABLE>
-
-<!--800033--><AD_TABLE>
-<!--800033-->  <AD_TABLE_ID><![CDATA[800033]]></AD_TABLE_ID>
-<!--800033-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800033-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800033-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800033-->  <NAME><![CDATA[WarehouseScheduleProduct]]></NAME>
-<!--800033-->  <HELP><![CDATA[Contains all the different products that will be used in the invoices]]></HELP>
-<!--800033-->  <TABLENAME><![CDATA[M_WH_Schedule_Product]]></TABLENAME>
-<!--800033-->  <CLASSNAME><![CDATA[WarehouseScheduleProduct]]></CLASSNAME>
-<!--800033-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800033-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800033-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800033-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800033-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800033-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800033-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800033-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800033-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--800033-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1F14B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800033--></AD_TABLE>
-
-<!--800035--><AD_TABLE>
-<!--800035-->  <AD_TABLE_ID><![CDATA[800035]]></AD_TABLE_ID>
-<!--800035-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800035-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800035-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800035-->  <NAME><![CDATA[LocatorType]]></NAME>
-<!--800035-->  <HELP><![CDATA[Contains all the different types for a locator]]></HELP>
-<!--800035-->  <TABLENAME><![CDATA[M_Locator_Type]]></TABLENAME>
-<!--800035-->  <CLASSNAME><![CDATA[LocatorType]]></CLASSNAME>
-<!--800035-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800035-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800035-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800035-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800035-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800035-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800035-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800035-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800035-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--800035-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D54B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800035--></AD_TABLE>
-
 <!--800036--><AD_TABLE>
 <!--800036-->  <AD_TABLE_ID><![CDATA[800036]]></AD_TABLE_ID>
 <!--800036-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -6657,7 +5660,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800049-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
 <!--800049-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
 <!--800049-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800049-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
+<!--800049-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--800049-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D54B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--800049--></AD_TABLE>
 
@@ -6682,167 +5685,6 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800050-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--800050-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DE4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--800050--></AD_TABLE>
-
-<!--800051--><AD_TABLE>
-<!--800051-->  <AD_TABLE_ID><![CDATA[800051]]></AD_TABLE_ID>
-<!--800051-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800051-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800051-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800051-->  <NAME><![CDATA[ATTest]]></NAME>
-<!--800051-->  <DESCRIPTION><![CDATA[This window contains all the instructions of the application.]]></DESCRIPTION>
-<!--800051-->  <HELP><![CDATA[This window contains all the instructions of the application.]]></HELP>
-<!--800051-->  <TABLENAME><![CDATA[AT_Test]]></TABLENAME>
-<!--800051-->  <CLASSNAME><![CDATA[ATTest]]></CLASSNAME>
-<!--800051-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800051-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--800051-->  <AD_WINDOW_ID><![CDATA[800024]]></AD_WINDOW_ID>
-<!--800051-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800051-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800051-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800051-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800051-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800051-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800051-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--800051-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D04B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800051--></AD_TABLE>
-
-<!--800052--><AD_TABLE>
-<!--800052-->  <AD_TABLE_ID><![CDATA[800052]]></AD_TABLE_ID>
-<!--800052-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800052-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800052-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800052-->  <NAME><![CDATA[TestDocument]]></NAME>
-<!--800052-->  <DESCRIPTION><![CDATA[This window contains different instructions' documents. Is based on the AT_Document table.]]></DESCRIPTION>
-<!--800052-->  <HELP><![CDATA[This window contains different instructions' documents.]]></HELP>
-<!--800052-->  <TABLENAME><![CDATA[AT_TestDocument]]></TABLENAME>
-<!--800052-->  <CLASSNAME><![CDATA[TestDocument]]></CLASSNAME>
-<!--800052-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800052-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--800052-->  <AD_WINDOW_ID><![CDATA[800022]]></AD_WINDOW_ID>
-<!--800052-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800052-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800052-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800052-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800052-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800052-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800052-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--800052-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D04B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800052--></AD_TABLE>
-
-<!--800053--><AD_TABLE>
-<!--800053-->  <AD_TABLE_ID><![CDATA[800053]]></AD_TABLE_ID>
-<!--800053-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800053-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800053-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800053-->  <NAME><![CDATA[Command]]></NAME>
-<!--800053-->  <DESCRIPTION><![CDATA[Test command configuration]]></DESCRIPTION>
-<!--800053-->  <HELP><![CDATA[This tab contains de test instruction commands.]]></HELP>
-<!--800053-->  <TABLENAME><![CDATA[AT_Command]]></TABLENAME>
-<!--800053-->  <CLASSNAME><![CDATA[Command]]></CLASSNAME>
-<!--800053-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800053-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--800053-->  <AD_WINDOW_ID><![CDATA[800025]]></AD_WINDOW_ID>
-<!--800053-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800053-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800053-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800053-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800053-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800053-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800053-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--800053-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D04B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800053--></AD_TABLE>
-
-<!--800054--><AD_TABLE>
-<!--800054-->  <AD_TABLE_ID><![CDATA[800054]]></AD_TABLE_ID>
-<!--800054-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800054-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800054-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800054-->  <NAME><![CDATA[CommandTrl]]></NAME>
-<!--800054-->  <DESCRIPTION><![CDATA[Test command translation]]></DESCRIPTION>
-<!--800054-->  <HELP><![CDATA[This tab contains de command translation]]></HELP>
-<!--800054-->  <TABLENAME><![CDATA[AT_Command_Trl]]></TABLENAME>
-<!--800054-->  <CLASSNAME><![CDATA[CommandTrl]]></CLASSNAME>
-<!--800054-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800054-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--800054-->  <AD_WINDOW_ID><![CDATA[800025]]></AD_WINDOW_ID>
-<!--800054-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800054-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800054-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800054-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800054-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800054-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800054-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--800054-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D04B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800054--></AD_TABLE>
-
-<!--800055--><AD_TABLE>
-<!--800055-->  <AD_TABLE_ID><![CDATA[800055]]></AD_TABLE_ID>
-<!--800055-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800055-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800055-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800055-->  <NAME><![CDATA[Line]]></NAME>
-<!--800055-->  <DESCRIPTION><![CDATA[This tab contains instructions lines. Is based on AT_Line]]></DESCRIPTION>
-<!--800055-->  <HELP><![CDATA[This tab contains instructions lines.]]></HELP>
-<!--800055-->  <TABLENAME><![CDATA[AT_Line]]></TABLENAME>
-<!--800055-->  <CLASSNAME><![CDATA[Line]]></CLASSNAME>
-<!--800055-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800055-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--800055-->  <AD_WINDOW_ID><![CDATA[800024]]></AD_WINDOW_ID>
-<!--800055-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800055-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800055-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800055-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800055-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800055-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800055-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--800055-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D04B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800055--></AD_TABLE>
-
-<!--800056--><AD_TABLE>
-<!--800056-->  <AD_TABLE_ID><![CDATA[800056]]></AD_TABLE_ID>
-<!--800056-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800056-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800056-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800056-->  <NAME><![CDATA[RolLogin]]></NAME>
-<!--800056-->  <DESCRIPTION><![CDATA[This window defines different ways of login in the application for tests. Is based on AT_Rollogin.]]></DESCRIPTION>
-<!--800056-->  <HELP><![CDATA[This window defines different ways of login in the application for tests.]]></HELP>
-<!--800056-->  <TABLENAME><![CDATA[AT_Rollogin]]></TABLENAME>
-<!--800056-->  <CLASSNAME><![CDATA[RolLogin]]></CLASSNAME>
-<!--800056-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800056-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--800056-->  <AD_WINDOW_ID><![CDATA[800023]]></AD_WINDOW_ID>
-<!--800056-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800056-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800056-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800056-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800056-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800056-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800056-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--800056-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D04B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800056--></AD_TABLE>
-
-<!--800057--><AD_TABLE>
-<!--800057-->  <AD_TABLE_ID><![CDATA[800057]]></AD_TABLE_ID>
-<!--800057-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800057-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800057-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800057-->  <NAME><![CDATA[TestDocumentLine]]></NAME>
-<!--800057-->  <DESCRIPTION><![CDATA[Document text configuration]]></DESCRIPTION>
-<!--800057-->  <HELP><![CDATA[This tab contains the document text configuration]]></HELP>
-<!--800057-->  <TABLENAME><![CDATA[AT_TestDocumentLine]]></TABLENAME>
-<!--800057-->  <CLASSNAME><![CDATA[TestDocumentLine]]></CLASSNAME>
-<!--800057-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800057-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--800057-->  <AD_WINDOW_ID><![CDATA[800025]]></AD_WINDOW_ID>
-<!--800057-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800057-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800057-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800057-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800057-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800057-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800057-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--800057-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D04B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800057--></AD_TABLE>
 
 <!--800058--><AD_TABLE>
 <!--800058-->  <AD_TABLE_ID><![CDATA[800058]]></AD_TABLE_ID>
@@ -7565,102 +6407,6 @@ This tab is used to indicate the different toolsets used in the selected process
 <!--800132-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EC4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--800132--></AD_TABLE>
 
-<!--800133--><AD_TABLE>
-<!--800133-->  <AD_TABLE_ID><![CDATA[800133]]></AD_TABLE_ID>
-<!--800133-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800133-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800133-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800133-->  <NAME><![CDATA[ManufacturingMeasureGroup]]></NAME>
-<!--800133-->  <DESCRIPTION><![CDATA[Group data registration]]></DESCRIPTION>
-<!--800133-->  <HELP><![CDATA[This tab contains the CCP data registered on this group]]></HELP>
-<!--800133-->  <TABLENAME><![CDATA[MA_Measure_Group]]></TABLENAME>
-<!--800133-->  <CLASSNAME><![CDATA[MeasureGroup]]></CLASSNAME>
-<!--800133-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800133-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--800133-->  <AD_WINDOW_ID><![CDATA[800064]]></AD_WINDOW_ID>
-<!--800133-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800133-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800133-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800133-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800133-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800133-->  <PO_WINDOW_ID><![CDATA[800064]]></PO_WINDOW_ID>
-<!--800133-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800133-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--800133-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EC4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800133--></AD_TABLE>
-
-<!--800134--><AD_TABLE>
-<!--800134-->  <AD_TABLE_ID><![CDATA[800134]]></AD_TABLE_ID>
-<!--800134-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800134-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800134-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800134-->  <NAME><![CDATA[ManufacturingMeasureTime]]></NAME>
-<!--800134-->  <DESCRIPTION><![CDATA[Time registration]]></DESCRIPTION>
-<!--800134-->  <HELP><![CDATA[This tab defines the time of the gathering.]]></HELP>
-<!--800134-->  <TABLENAME><![CDATA[MA_Measure_Time]]></TABLENAME>
-<!--800134-->  <CLASSNAME><![CDATA[MeasureTime]]></CLASSNAME>
-<!--800134-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800134-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--800134-->  <AD_WINDOW_ID><![CDATA[800064]]></AD_WINDOW_ID>
-<!--800134-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800134-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800134-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800134-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800134-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800134-->  <PO_WINDOW_ID><![CDATA[800064]]></PO_WINDOW_ID>
-<!--800134-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800134-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--800134-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EC4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800134--></AD_TABLE>
-
-<!--800135--><AD_TABLE>
-<!--800135-->  <AD_TABLE_ID><![CDATA[800135]]></AD_TABLE_ID>
-<!--800135-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800135-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800135-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800135-->  <NAME><![CDATA[ManufacturingMeasureValues]]></NAME>
-<!--800135-->  <DESCRIPTION><![CDATA[Values registration]]></DESCRIPTION>
-<!--800135-->  <HELP><![CDATA[In this table gathering values are registered.]]></HELP>
-<!--800135-->  <TABLENAME><![CDATA[MA_Measure_Values]]></TABLENAME>
-<!--800135-->  <CLASSNAME><![CDATA[MeasureValues]]></CLASSNAME>
-<!--800135-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800135-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--800135-->  <AD_WINDOW_ID><![CDATA[800064]]></AD_WINDOW_ID>
-<!--800135-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800135-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800135-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800135-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800135-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800135-->  <PO_WINDOW_ID><![CDATA[800064]]></PO_WINDOW_ID>
-<!--800135-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800135-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--800135-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EC4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800135--></AD_TABLE>
-
-<!--800138--><AD_TABLE>
-<!--800138-->  <AD_TABLE_ID><![CDATA[800138]]></AD_TABLE_ID>
-<!--800138-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800138-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800138-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800138-->  <NAME><![CDATA[ManufacturingMeasureShift]]></NAME>
-<!--800138-->  <DESCRIPTION><![CDATA[CCP data registration]]></DESCRIPTION>
-<!--800138-->  <HELP><![CDATA[This tab defines the shift and date in which the gathering is done]]></HELP>
-<!--800138-->  <TABLENAME><![CDATA[MA_Measure_Shift]]></TABLENAME>
-<!--800138-->  <CLASSNAME><![CDATA[MeasureShift]]></CLASSNAME>
-<!--800138-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800138-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--800138-->  <AD_WINDOW_ID><![CDATA[800064]]></AD_WINDOW_ID>
-<!--800138-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800138-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800138-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800138-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800138-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800138-->  <PO_WINDOW_ID><![CDATA[800064]]></PO_WINDOW_ID>
-<!--800138-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800138-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--800138-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EC4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800138--></AD_TABLE>
-
 <!--800139--><AD_TABLE>
 <!--800139-->  <AD_TABLE_ID><![CDATA[800139]]></AD_TABLE_ID>
 <!--800139-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -7706,52 +6452,6 @@ This tab is used to indicate the different toolsets used in the selected process
 <!--800140-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--800140-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EC4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--800140--></AD_TABLE>
-
-<!--800141--><AD_TABLE>
-<!--800141-->  <AD_TABLE_ID><![CDATA[800141]]></AD_TABLE_ID>
-<!--800141-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800141-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800141-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800141-->  <NAME><![CDATA[ManufacturingCase]]></NAME>
-<!--800141-->  <DESCRIPTION><![CDATA[Periodic control registration]]></DESCRIPTION>
-<!--800141-->  <HELP><![CDATA[This tab contains each periodic control realized.]]></HELP>
-<!--800141-->  <TABLENAME><![CDATA[MA_PC_Case]]></TABLENAME>
-<!--800141-->  <CLASSNAME><![CDATA[Case]]></CLASSNAME>
-<!--800141-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800141-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--800141-->  <AD_WINDOW_ID><![CDATA[800067]]></AD_WINDOW_ID>
-<!--800141-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800141-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800141-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800141-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800141-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800141-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800141-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--800141-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EC4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800141--></AD_TABLE>
-
-<!--800142--><AD_TABLE>
-<!--800142-->  <AD_TABLE_ID><![CDATA[800142]]></AD_TABLE_ID>
-<!--800142-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800142-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800142-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800142-->  <NAME><![CDATA[ManufacturingValue]]></NAME>
-<!--800142-->  <DESCRIPTION><![CDATA[Value registration]]></DESCRIPTION>
-<!--800142-->  <HELP><![CDATA[This tab registers the planned periodic control values.]]></HELP>
-<!--800142-->  <TABLENAME><![CDATA[MA_PC_Value]]></TABLENAME>
-<!--800142-->  <CLASSNAME><![CDATA[Value]]></CLASSNAME>
-<!--800142-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800142-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--800142-->  <AD_WINDOW_ID><![CDATA[800067]]></AD_WINDOW_ID>
-<!--800142-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800142-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800142-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800142-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800142-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800142-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800142-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--800142-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EC4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800142--></AD_TABLE>
 
 <!--800143--><AD_TABLE>
 <!--800143-->  <AD_TABLE_ID><![CDATA[800143]]></AD_TABLE_ID>
@@ -8084,72 +6784,6 @@ This tab is used to indicate the different toolsets used in the selected process
 <!--800160-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EA4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--800160--></AD_TABLE>
 
-<!--800161--><AD_TABLE>
-<!--800161-->  <AD_TABLE_ID><![CDATA[800161]]></AD_TABLE_ID>
-<!--800161-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800161-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800161-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800161-->  <NAME><![CDATA[ManufacturingMaintenanceSchedule]]></NAME>
-<!--800161-->  <HELP><![CDATA[Scheduled maintenances. Here there are all the maintenances done in the application, those generated by the maintenance periodicity or manually inserted.]]></HELP>
-<!--800161-->  <TABLENAME><![CDATA[MA_Maint_Scheduled]]></TABLENAME>
-<!--800161-->  <CLASSNAME><![CDATA[MaintenanceSchedule]]></CLASSNAME>
-<!--800161-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800161-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800161-->  <AD_WINDOW_ID><![CDATA[800074]]></AD_WINDOW_ID>
-<!--800161-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800161-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800161-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800161-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800161-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800161-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800161-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--800161-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EA4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800161--></AD_TABLE>
-
-<!--800163--><AD_TABLE>
-<!--800163-->  <AD_TABLE_ID><![CDATA[800163]]></AD_TABLE_ID>
-<!--800163-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800163-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800163-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800163-->  <NAME><![CDATA[ManufacturingMainteanceOrder]]></NAME>
-<!--800163-->  <HELP><![CDATA[In this table are stored all the maintenance parts.]]></HELP>
-<!--800163-->  <TABLENAME><![CDATA[MA_Maint_Part]]></TABLENAME>
-<!--800163-->  <CLASSNAME><![CDATA[MainteanceOrder]]></CLASSNAME>
-<!--800163-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800163-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800163-->  <AD_WINDOW_ID><![CDATA[800075]]></AD_WINDOW_ID>
-<!--800163-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800163-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800163-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800163-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800163-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800163-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800163-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--800163-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EA4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800163--></AD_TABLE>
-
-<!--800164--><AD_TABLE>
-<!--800164-->  <AD_TABLE_ID><![CDATA[800164]]></AD_TABLE_ID>
-<!--800164-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800164-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800164-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800164-->  <NAME><![CDATA[ManufacturingMaintenanceWorker]]></NAME>
-<!--800164-->  <HELP><![CDATA[Workers that take part in the scheduled maintenances.]]></HELP>
-<!--800164-->  <TABLENAME><![CDATA[MA_Maint_Worker]]></TABLENAME>
-<!--800164-->  <CLASSNAME><![CDATA[Worker]]></CLASSNAME>
-<!--800164-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800164-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800164-->  <AD_WINDOW_ID><![CDATA[800075]]></AD_WINDOW_ID>
-<!--800164-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800164-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800164-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800164-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800164-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800164-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800164-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--800164-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EA4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800164--></AD_TABLE>
-
 <!--800165--><AD_TABLE>
 <!--800165-->  <AD_TABLE_ID><![CDATA[800165]]></AD_TABLE_ID>
 <!--800165-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -8350,28 +6984,6 @@ This tab is used to indicate the different toolsets used in the selected process
 <!--800174-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--800174-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DE4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--800174--></AD_TABLE>
-
-<!--800175--><AD_TABLE>
-<!--800175-->  <AD_TABLE_ID><![CDATA[800175]]></AD_TABLE_ID>
-<!--800175-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800175-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800175-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800175-->  <NAME><![CDATA[DataImportBudgetLine]]></NAME>
-<!--800175-->  <HELP><![CDATA[Is an interim table which is used when external data into the system]]></HELP>
-<!--800175-->  <TABLENAME><![CDATA[I_Budgetline]]></TABLENAME>
-<!--800175-->  <CLASSNAME><![CDATA[BudgetLine]]></CLASSNAME>
-<!--800175-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800175-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--800175-->  <AD_WINDOW_ID><![CDATA[800079]]></AD_WINDOW_ID>
-<!--800175-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800175-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800175-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800175-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800175-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800175-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800175-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--800175-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DD4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800175--></AD_TABLE>
 
 <!--800176--><AD_TABLE>
 <!--800176-->  <AD_TABLE_ID><![CDATA[800176]]></AD_TABLE_ID>
@@ -9304,27 +7916,6 @@ This tab is used to indicate the different toolsets used in the selected process
 <!--800221-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--800221-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1F24B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--800221--></AD_TABLE>
-
-<!--800222--><AD_TABLE>
-<!--800222-->  <AD_TABLE_ID><![CDATA[800222]]></AD_TABLE_ID>
-<!--800222-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800222-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800222-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800222-->  <NAME><![CDATA[DataImportTax]]></NAME>
-<!--800222-->  <TABLENAME><![CDATA[I_Tax]]></TABLENAME>
-<!--800222-->  <CLASSNAME><![CDATA[Tax]]></CLASSNAME>
-<!--800222-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800222-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--800222-->  <AD_WINDOW_ID><![CDATA[800098]]></AD_WINDOW_ID>
-<!--800222-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--800222-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--800222-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--800222-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--800222-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--800222-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--800222-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--800222-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DD4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--800222--></AD_TABLE>
 
 <!--800223--><AD_TABLE>
 <!--800223-->  <AD_TABLE_ID><![CDATA[800223]]></AD_TABLE_ID>
@@ -10687,30 +9278,6 @@ You can also select if transactions are allowed or not for this organization typ
 <!--84B117B791D9407187EB929BB2B3DD19-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--84B117B791D9407187EB929BB2B3DD19-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1E34B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--84B117B791D9407187EB929BB2B3DD19--></AD_TABLE>
-
-<!--8BC1C3488EA046E89586458D0DAEDB82--><AD_TABLE>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <AD_TABLE_ID><![CDATA[8BC1C3488EA046E89586458D0DAEDB82]]></AD_TABLE_ID>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <NAME><![CDATA[ADPropertyConfiguration]]></NAME>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <DESCRIPTION><![CDATA[Value assignments for Configuration Properties,]]></DESCRIPTION>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <HELP><![CDATA[Value assignments for Configuration Properties,
-Configuration Properties are defined by modules with the purpose other modules are capable to assign them values.]]></HELP>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <TABLENAME><![CDATA[AD_Property_Configuration]]></TABLENAME>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <CLASSNAME><![CDATA[PropertyConfiguration]]></CLASSNAME>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <AD_WINDOW_ID><![CDATA[EFB5814F190840039AF5137B01C6E32B]]></AD_WINDOW_ID>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
-<!--8BC1C3488EA046E89586458D0DAEDB82-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CE4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--8BC1C3488EA046E89586458D0DAEDB82--></AD_TABLE>
 
 <!--8EABE4230116400FA30CAF1A57BBC579--><AD_TABLE>
 <!--8EABE4230116400FA30CAF1A57BBC579-->  <AD_TABLE_ID><![CDATA[8EABE4230116400FA30CAF1A57BBC579]]></AD_TABLE_ID>

@@ -70,6 +70,12 @@ OB.ViewFormProperties = {
   // Name to the first focused field defined in AD
   firstFocusedField: null,
 
+  // Name of the fields shown in status bar
+  statusBarFields: [],
+
+  // Last returned array of function getStatusBarFields
+  statusBarFieldsJSArray: [],
+
   // is set in the OBNoteSectionItem.initWidget
   noteSection: null,
   
@@ -96,12 +102,36 @@ OB.ViewFormProperties = {
     }
     delete this._preventFocusChanges;
   },
+
+  getStatusBarFields: function() {
+    var statusBarFields = [[],[]], i, item, value;
+    for(i = 0; i < this.statusBarFields.length; i++) {
+      item = this.getItem(this.statusBarFields[i]);
+      value = item.getDisplayValue();
+      if(item && value !== null && value !== '') {
+
+        if(value === item.getTitle() && typeof item.getValue() === 'boolean') { // Checkbox items return the title as display value
+          if (item.getValue()) {
+            value = OB.I18N.getLabel('OBUIAPP_Yes');
+          } else {
+            value = OB.I18N.getLabel('OBUIAPP_No');
+          }
+        }
+
+        statusBarFields[0].push(item.getTitle());
+        statusBarFields[1].push(value);
+      }
+    }
+    this.statusBarFieldsJSArray = statusBarFields;
+    return statusBarFields;
+  },
   
   setHasChanged: function(value) {
     this.hasChanged = value;
     this.view.updateTabTitle();
-    if (value && !this.isNew) {
-      this.view.statusBar.setStateLabel('OBUIAPP_Editing', this.view.statusBar.newIcon);
+    if (value && !this.isNew && this.view.statusBar.mode !== 'EDIT') {
+      this.view.statusBar.mode = "EDIT";
+      this.view.statusBar.setContentLabel(this.view.statusBar.newIcon, 'OBUIAPP_Editing', this.statusBarFieldsJSArray);
     }
     
     if (value) {
@@ -149,15 +179,13 @@ OB.ViewFormProperties = {
       this.validateAfterFicReturn = true;
     }
     
-    // note buttons are updated after fic return
-//    this.view.toolBar.updateButtonState(true);
+
     this.ignoreFirstFocusEvent = preventFocus;
     this.retrieveInitialValues(isNew);
     
     if (isNew) {
-      this.view.statusBar.setStateLabel('OBUIAPP_New', this.view.statusBar.newIcon);
-    } else {
-      this.view.statusBar.setStateLabel();
+      this.view.statusBar.mode = 'NEW';
+      this.view.statusBar.setContentLabel(this.view.statusBar.newIcon, 'OBUIAPP_New');
     }
   },
   
@@ -543,7 +571,11 @@ OB.ViewFormProperties = {
     this.markForRedraw();
 
     this.view.toolBar.updateButtonState(true);
-    
+    if (request.params.MODE === 'EDIT') {
+      this.view.statusBar.mode = 'VIEW';
+      this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());
+    }
+
     // note onFieldChanged uses the form.readOnly set above
     this.onFieldChanged(this);
 
@@ -857,7 +889,8 @@ OB.ViewFormProperties = {
     this.view.messageBar.hide();
     this.resetValues();
     this.setHasChanged(false);
-    this.view.statusBar.setStateLabel(null);
+    this.view.statusBar.mode = 'VIEW';
+    this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());
     this.view.toolBar.updateButtonState(true);
   },
   
@@ -926,7 +959,8 @@ OB.ViewFormProperties = {
         form.rememberValues();
         
         //view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_SaveSuccess'));
-        view.statusBar.setStateLabel('OBUIAPP_Saved', view.statusBar.checkedIcon);
+        this.view.statusBar.mode = 'SAVED';
+        view.statusBar.setContentLabel(view.statusBar.checkedIcon, 'OBUIAPP_Saved', this.getStatusBarFields());
         
         view.setRecentDocument(this.getValues());
         

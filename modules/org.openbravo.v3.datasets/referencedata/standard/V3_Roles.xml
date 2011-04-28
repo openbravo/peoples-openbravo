@@ -1089,18 +1089,6 @@
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <editableField>true</editableField>
   </ADWindowAccess>
-  <ADTableAccess id="8187D4C58A54424CB35D8DD5BEE1F12E" identifier="FIN_Finacc_Transaction">
-    <id>8187D4C58A54424CB35D8DD5BEE1F12E</id>
-    <role id="FF8081812250326E012250353BDE0005" entity-name="ADRole" identifier="Finance"/>
-    <table id="4D8C3B3C31D1410DA046140C9F024D17" entity-name="ADTable" identifier="FIN_Finacc_Transaction"/>
-    <active>true</active>
-    <creationDate transient="true">2011-01-17T12:49:30.174Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2011-01-17T12:49:30.174Z</updated>
-    <readOnly>false</readOnly>
-    <exclude>false</exclude>
-  </ADTableAccess>
   <ADProcessAccess id="1E5AE503111A4C359B98AFCC11C9554A" identifier="Stock Report - Purchase Management">
     <id>1E5AE503111A4C359B98AFCC11C9554A</id>
     <process id="800185" entity-name="ADProcess" identifier="Stock Report"/>

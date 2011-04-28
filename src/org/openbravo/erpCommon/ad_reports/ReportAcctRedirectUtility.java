@@ -76,11 +76,6 @@ public class ReportAcctRedirectUtility extends HttpSecureAppServlet {
     if ("B1B7075C46934F0A9FD4C4D0F1457B42".equals(strTableId)) {
       // Reconciliation as tab is built through a view and not directly with a table
       return "0DFF5BACFB964FDABAA5042C8809C813";
-    } else if ("4D8C3B3C31D1410DA046140C9F024D17".equals(strTableId)) {
-      // Transactions as tab is built through a different table, Financial account, as a workaround
-      // to
-      // avoid wrong behavior
-      return "B129E53BC0E747879F7BA17F0AECEC32";
     } else
       return strTableId;
   }

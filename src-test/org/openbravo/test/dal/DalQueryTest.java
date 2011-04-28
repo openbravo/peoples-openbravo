@@ -81,8 +81,6 @@ public class DalQueryTest extends BaseTest {
         + " left join mo."
         + ModelImplementation.PROPERTY_PROCESS
         + " left join mo."
-        + ModelImplementation.PROPERTY_WORKFLOW
-        + " left join mo."
         + ModelImplementation.PROPERTY_TAB
         + " where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.specialForm.module.id='0' or mo.process.module.id='0' or mo.workflow.module.id='0' or mo.tab.module.id='0'";
     final OBQuery<ModelImplementationMapping> obq = OBDal.getInstance().createQuery(

@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2011 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -26,7 +26,7 @@
     ***
     * Title: Window Trl Changes
     * Description:
-    *   - Update Translation in Menu + Workflow
+    *   - Update Translation in Menu
     ************************************************************************/
         
 BEGIN
@@ -68,40 +68,7 @@ BEGIN
       and mo.ad_language = :new.AD_Language
     )
     ;
-  -- Update Workflow
-  UPDATE AD_WF_Node_Trl
-    SET Name=:new.Name,
-    Description=:new.Description,
-    Help=:new.Help
-  WHERE AD_Language=:new.AD_Language
-    AND EXISTS
-    (
-    SELECT 1
-    FROM AD_WF_Node n, ad_module m, ad_workflow w
-    WHERE n.AD_WF_Node_ID=AD_WF_Node_Trl.AD_WF_Node_ID
-      AND n.AD_Window_ID=:new.AD_Window_ID
-      AND n.IsCentrallyMaintained='Y'
-      and w.ad_workflow_id = n.ad_workflow_id
-      and m.ad_module_id = w.ad_module_id
-      and m.ad_language != :new.AD_Language
-    )
-    ;
     
-    UPDATE AD_WF_Node n
-    SET Name=:new.Name,
-    Description=:new.Description,
-    Help=:new.Help
-  WHERE EXISTS
-    (
-    SELECT 1
-    FROM  ad_module m, ad_workflow w
-    WHERE n.AD_Window_ID=:new.AD_Window_ID
-      AND n.IsCentrallyMaintained='Y'
-      and w.ad_workflow_id = n.ad_workflow_id
-      and m.ad_module_id = w.ad_module_id
-      and m.ad_language = :new.AD_Language
-    )
-    ;
       END IF;
     END IF;
   --

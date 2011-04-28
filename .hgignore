@@ -20,6 +20,7 @@ WebContent
 config/Openbravo.properties
 config/Format.xml
 config/log4j.lcf
+config/userconfig.xml
 config/setup*
 config/checksums
 config/instance.revision

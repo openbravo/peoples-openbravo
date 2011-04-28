@@ -165,6 +165,14 @@ isc.PickList.getPrototype().cachePickListResults = false;
 // allow max 10000 days/years/quarters in the past/future
 isc.RelativeDateItem.changeDefaults('quantityFieldDefaults', {max: 1000});
 
+isc.RelativeDateItem.addProperties({
+  // overridden as the displayDateFormat does not seem to work fine
+  formatDate: function(dt) {
+    return OB.Utilities.Date.JSToOB(dt, OB.Format.date);
+  }
+
+});
+
 // uncomment this code and put a breakpoint to get a better control
 // on from where async operations are started
 //isc.Class._fireOnPause = isc.Class.fireOnPause;
