@@ -29,6 +29,7 @@ import java.util.Map;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.businesspartner.Location;
@@ -52,6 +53,12 @@ public class DalStoredProcedureTest extends BaseTest {
    */
   public void testCallProcess() {
     setSystemAdministratorContext();
+
+    // Set Core in development
+    final Module core = OBDal.getInstance().get(Module.class, "0");
+    core.setInDevelopment(true);
+    OBDal.getInstance().flush();
+
     final Tab tabtest = OBDal.getInstance().get(Tab.class, "100");
 
     final Map<String, String> parameters = new HashMap<String, String>();
