@@ -102,7 +102,6 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
     addTable("AD_TREE", "AD_CLIENT_ID <> '0'");
     addTable("AD_TREENODE", "AD_CLIENT_ID <> '0'");
     addTable("AD_TREENODEBP", "AD_CLIENT_ID <> '0'");
-    addTable("AD_TREENODEPR", "AD_CLIENT_ID <> '0'");
     removeTable("AD_VAL_RULE");
     removeTable("AD_WINDOW");
     removeTable("AD_WINDOW_TRL");

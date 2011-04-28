@@ -3622,27 +3622,6 @@ Run Synchronize Terminology to update menu translation. You need only to transla
 <!--452-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D04B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--452--></AD_TABLE>
 
-<!--453--><AD_TABLE>
-<!--453-->  <AD_TABLE_ID><![CDATA[453]]></AD_TABLE_ID>
-<!--453-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--453-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--453-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--453-->  <NAME><![CDATA[ProductTreeNode]]></NAME>
-<!--453-->  <DESCRIPTION><![CDATA[Product trees]]></DESCRIPTION>
-<!--453-->  <HELP><![CDATA[This table defines the relations of nodes for trees of products.]]></HELP>
-<!--453-->  <TABLENAME><![CDATA[AD_TreeNodePR]]></TABLENAME>
-<!--453-->  <CLASSNAME><![CDATA[ProductTreeNode]]></CLASSNAME>
-<!--453-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--453-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--453-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--453-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--453-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--453-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--453-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--453-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--453-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DA4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--453--></AD_TABLE>
-
 <!--456--><AD_TABLE>
 <!--456-->  <AD_TABLE_ID><![CDATA[456]]></AD_TABLE_ID>
 <!--456-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
