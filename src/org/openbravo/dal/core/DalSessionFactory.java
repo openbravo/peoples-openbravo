@@ -54,7 +54,7 @@ import org.openbravo.database.SessionInfo;
  * @author mtaal
  * @see SessionFactoryController
  */
-@SuppressWarnings({ "deprecation", "rawtypes" })
+@SuppressWarnings( { "deprecation", "rawtypes", "unchecked" })
 public class DalSessionFactory implements SessionFactory {
 
   private static final long serialVersionUID = 1L;
@@ -111,7 +111,6 @@ public class DalSessionFactory implements SessionFactory {
     delegateSessionFactory.evictQueries(cacheRegion);
   }
 
-  @SuppressWarnings("unchecked")
   public Map getAllClassMetadata() throws HibernateException {
     return delegateSessionFactory.getAllClassMetadata();
   }
