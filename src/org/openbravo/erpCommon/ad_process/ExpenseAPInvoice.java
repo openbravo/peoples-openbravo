@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,9 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -41,8 +39,6 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
@@ -149,24 +145,19 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           throw new Exception("ShiptoNotdefined");
 
         strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
-        if (isNewFlow() && (strPaymentRule == null || "".equals(strPaymentRule))) {
+        if (strPaymentRule == null || "".equals(strPaymentRule)) {
           strPaymentRule = "P";
         }
         if (strPaymentRule.equals(""))
           throw new Exception("FormofPaymentNotdefined");
-        if (isNewFlow()) {
-          strPaymentMethodId = ExpenseAPInvoiceData.paymentmethodId(this, data[i].cBpartnerId);
-          if (strPaymentMethodId.equals("")) {
-            throw new Exception("PayementMethodNotdefined");
-          }
-          strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
-          if (strPaymentRule.equals("")) {
-            strPaymentRule = "P";
-          }
-        } else {
-          strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
-          if (strPaymentRule.equals(""))
-            throw new Exception("FormofPaymentNotdefined");
+
+        strPaymentMethodId = ExpenseAPInvoiceData.paymentmethodId(this, data[i].cBpartnerId);
+        if (strPaymentMethodId.equals("")) {
+          throw new Exception("PayementMethodNotdefined");
+        }
+        strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
+        if (strPaymentRule.equals("")) {
+          strPaymentRule = "P";
         }
         strPaymentterm = ExpenseAPInvoiceData.paymentterm(this, data[i].cBpartnerId);
         if (strPaymentterm.equals(""))
@@ -543,27 +534,6 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
-  }
-
-  @SuppressWarnings("deprecation")
-  private boolean isNewFlow() {
-    // Extra check for Payment Flow-disabling switch
-    try {
-      // Use Utility.getPropertyValue for backward compatibility
-      try {
-        Preferences.getPreferenceValue("FinancialManagement", true, null, null, OBContext
-            .getOBContext().getUser(), null, null);
-        return true;
-      } catch (PropertyNotFoundException e) {
-        if (Utility.getPropertyValue("FinancialManagement", OBContext.getOBContext()
-            .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId()) != null) {
-          return true;
-        } else
-          return false;
-      }
-    } catch (PropertyException e) {
-      return false;
-    }
   }
 
   public String getServletInfo() {

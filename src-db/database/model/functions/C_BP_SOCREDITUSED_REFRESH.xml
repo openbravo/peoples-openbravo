@@ -35,8 +35,7 @@ BEGIN
     AND ad_module_id <> '0';
   IF (v_count > 1) THEN
     v_dummy := AD_GET_PREFERENCE_VALUE('CCU', 'Y', v_client_id, v_org_id, NULL, NULL, NULL);
-  -- Use AD_GET_PROPERTY_VALUE remain for backward compatibilty
-  ELSIF (v_count = 0 AND AD_GET_PROPERTY_VALUE('CCU', v_client_id, v_org_id) IS NULL) THEN
+  ELSIF (v_count = 0) THEN
     UPDATE C_BPARTNER
       SET SO_CreditUsed=
       (SELECT  COALESCE(SUM(C_Base_Convert((Amount - WriteOffAmt), C_Currency_ID, AD_Client_ID, DocDate, AD_Org_ID)), 0) AS TOTAL

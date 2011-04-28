@@ -37,7 +37,6 @@ import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
-import org.openbravo.model.ad.system.PropertyConfiguration;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Form;
@@ -106,8 +105,6 @@ public class ModuleValidator implements SystemValidator {
     checkHasUIArtifact(module, result);
 
     checkTableName(module, result);
-
-    checkConfigurationProperties(module, result);
 
     // disable this check until this issue has been commented:
     // https://issues.openbravo.com/view.php?id=7905
@@ -331,22 +328,6 @@ public class ModuleValidator implements SystemValidator {
         }
       }
     }
-  }
-
-  private void checkConfigurationProperties(Module module, SystemValidationResult result) {
-    OBCriteria<PropertyConfiguration> pcs = OBDal.getInstance().createCriteria(
-        PropertyConfiguration.class);
-    pcs.add(Restrictions.eq(PropertyConfiguration.PROPERTY_MODULE, module));
-
-    if (pcs.count() > 0) {
-      result
-          .addError(
-              SystemValidationType.HAS_PROPERTY_CONFIGURATION,
-              "Module "
-                  + module.getName()
-                  + " has entries in Property Configuration, which is deprecated. Use preferences instead.");
-    }
-
   }
 
   private void checkJavaPackages(Module module, SystemValidationResult result) {
