@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009 Openbravo SLU
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -95,9 +95,7 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
             .getOrganization(), OBContext.getOBContext().getUser(), OBContext.getOBContext()
             .getRole(), null);
       } catch (PropertyNotFoundException e) {
-        if (Utility.getPropertyValue("PaymentMonitor", vars.getClient(), invoice.getOrganization()
-            .getId()) == null
-            && invoice.isProcessed())
+        if (invoice.isProcessed())
           PaymentMonitor.updateInvoice(invoice);
       }
 

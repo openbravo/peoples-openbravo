@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -84,7 +84,6 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.FormatUtilities;
@@ -2069,44 +2068,6 @@ public class Utility {
   }
 
   @Deprecated
-  public static boolean hasTaskAccess(ConnectionProvider conn, VariablesSecureApp vars, String task) {
-    return hasTaskAccess(conn, vars, task, "");
-  }
-
-  @Deprecated
-  public static boolean hasTaskAccess(ConnectionProvider conn, VariablesSecureApp vars,
-      String task, String taskName) {
-    try {
-      if (task.equals("") && taskName.equals(""))
-        return true;
-      else if (!task.equals("")) {
-        if (!WindowAccessData.hasTaskAccess(conn, vars.getRole(), task))
-          return false;
-      } else if (!WindowAccessData.hasTaskAccessName(conn, vars.getRole(), taskName))
-        return false;
-    } catch (final ServletException e) {
-      return false;
-    }
-    return true;
-  }
-
-  @Deprecated
-  public static boolean hasWorkflowAccess(ConnectionProvider conn, VariablesSecureApp vars,
-      String workflow) {
-    try {
-      if (workflow.equals(""))
-        return true;
-      else {
-        if (!WindowAccessData.hasWorkflowAccess(conn, vars.getRole(), workflow))
-          return false;
-      }
-    } catch (final ServletException e) {
-      return false;
-    }
-    return true;
-  }
-
-  @Deprecated
   public static boolean hasAccess(ConnectionProvider conn, VariablesSecureApp vars,
       String TableLevel, String AD_Client_ID, String AD_Org_ID, String window, String tab) {
     final String command = vars.getCommand();
@@ -2592,43 +2553,6 @@ public class Utility {
       numberFormatDecimal = new DecimalFormat(format, dfs);
     }
     return numberFormatDecimal;
-  }
-
-  /**
-   * Gets the configuration property value if there is an extension module implementing the given
-   * property.
-   * 
-   * @deprecated Use Preferences instead
-   * @see Preferences#getPreferenceValue(String, boolean, org.openbravo.model.ad.system.Client,
-   *      org.openbravo.model.common.enterprise.Organization, org.openbravo.model.ad.access.User,
-   *      org.openbravo.model.ad.access.Role, Window) Preferences.getPreferenceValue
-   * 
-   * @param strProperty
-   *          String with the name of the property
-   * @param strClientId
-   *          ID of the client
-   * @param strOrgId
-   *          ID of the organization
-   * @return String containing the value of the property in case that exists a module implementing
-   *         the property. If the value is null returns '-'. Returns null if there isn't any module
-   *         implementing the property.
-   * @throws PropertyException
-   *           Throws a PropertyException when the StoredProcedure throws an exception, for example
-   *           on conflicting property values.
-   */
-  public static String getPropertyValue(String strProperty, String strClientId, String strOrgId)
-      throws PropertyException {
-    try {
-      final List<Object> parameters = new ArrayList<Object>();
-      parameters.add(strProperty);
-      parameters.add(strClientId);
-      parameters.add(strOrgId);
-      return (String) CallStoredProcedure.getInstance().call("AD_GET_PROPERTY_VALUE", parameters,
-          null);
-    } catch (Exception e) {
-      log4j.error(e.getMessage(), e);
-      throw new PropertyException(strProperty + " @PropertyConflict@");
-    }
   }
 
   /**

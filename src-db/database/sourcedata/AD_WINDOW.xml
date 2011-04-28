@@ -208,38 +208,6 @@
 <!--112-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--112--></AD_WINDOW>
 
-<!--113--><AD_WINDOW>
-<!--113-->  <AD_WINDOW_ID><![CDATA[113]]></AD_WINDOW_ID>
-<!--113-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--113-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--113-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--113-->  <NAME><![CDATA[Workflow]]></NAME>
-<!--113-->  <DESCRIPTION><![CDATA[Define workflows that guide users through steps required to complete a specified task.]]></DESCRIPTION>
-<!--113-->  <HELP><![CDATA[Define workflows that guide users through steps required to complete a specified task.]]></HELP>
-<!--113-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--113-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--113-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--113-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--113-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--113-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--113--></AD_WINDOW>
-
-<!--114--><AD_WINDOW>
-<!--114-->  <AD_WINDOW_ID><![CDATA[114]]></AD_WINDOW_ID>
-<!--114-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--114-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--114-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--114-->  <NAME><![CDATA[Task]]></NAME>
-<!--114-->  <DESCRIPTION><![CDATA[Define tasks to be used in the application for selected roles.]]></DESCRIPTION>
-<!--114-->  <HELP><![CDATA[Define tasks to be used in the application for selected roles.]]></HELP>
-<!--114-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--114-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--114-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--114-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--114-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--114-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--114--></AD_WINDOW>
-
 <!--115--><AD_WINDOW>
 <!--115-->  <AD_WINDOW_ID><![CDATA[115]]></AD_WINDOW_ID>
 <!--115-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -399,22 +367,6 @@
 <!--127-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--127-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--127--></AD_WINDOW>
-
-<!--128--><AD_WINDOW>
-<!--128-->  <AD_WINDOW_ID><![CDATA[128]]></AD_WINDOW_ID>
-<!--128-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--128-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--128-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--128-->  <NAME><![CDATA[Attachment]]></NAME>
-<!--128-->  <DESCRIPTION><![CDATA[Maintain Attachments]]></DESCRIPTION>
-<!--128-->  <HELP><![CDATA[For System Maintenance Only.  The Maintain Attachments window is used for diagnostic purposes to display the attributes of an attachment.]]></HELP>
-<!--128-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--128-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--128-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--128-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--128-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--128-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--128--></AD_WINDOW>
 
 <!--129--><AD_WINDOW>
 <!--129-->  <AD_WINDOW_ID><![CDATA[129]]></AD_WINDOW_ID>
@@ -768,38 +720,6 @@
 <!--158-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--158--></AD_WINDOW>
 
-<!--160--><AD_WINDOW>
-<!--160-->  <AD_WINDOW_ID><![CDATA[160]]></AD_WINDOW_ID>
-<!--160-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--160-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--160-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--160-->  <NAME><![CDATA[Withholding (1099)]]></NAME>
-<!--160-->  <DESCRIPTION><![CDATA[Maintain Withholding Certificates]]></DESCRIPTION>
-<!--160-->  <HELP><![CDATA[The Withholding Window defines the rule used for calculating withholding amounts.]]></HELP>
-<!--160-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--160-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--160-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--160-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--160-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--160-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--160--></AD_WINDOW>
-
-<!--161--><AD_WINDOW>
-<!--161-->  <AD_WINDOW_ID><![CDATA[161]]></AD_WINDOW_ID>
-<!--161-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--161-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--161-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--161-->  <NAME><![CDATA[Charge]]></NAME>
-<!--161-->  <DESCRIPTION><![CDATA[Maintain Charges]]></DESCRIPTION>
-<!--161-->  <HELP><![CDATA[The Charges Window defines the different charges that may be incurred.  These can include Bank Charges, Vendor Charges and Handling Charges.]]></HELP>
-<!--161-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--161-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--161-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--161-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--161-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--161-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--161--></AD_WINDOW>
-
 <!--162--><AD_WINDOW>
 <!--162-->  <AD_WINDOW_ID><![CDATA[162]]></AD_WINDOW_ID>
 <!--162-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -912,70 +832,6 @@
 <!--170-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--170--></AD_WINDOW>
 
-<!--172--><AD_WINDOW>
-<!--172-->  <AD_WINDOW_ID><![CDATA[172]]></AD_WINDOW_ID>
-<!--172-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--172-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--172-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--172-->  <NAME><![CDATA[Import Business Partner]]></NAME>
-<!--172-->  <DESCRIPTION><![CDATA[Import business partners in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--172-->  <HELP><![CDATA[Import business partners in .csv format from previously used databases/applications and past business operations.]]></HELP>
-<!--172-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--172-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--172-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--172-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--172-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--172-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--172--></AD_WINDOW>
-
-<!--174--><AD_WINDOW>
-<!--174-->  <AD_WINDOW_ID><![CDATA[174]]></AD_WINDOW_ID>
-<!--174-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--174-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--174-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--174-->  <NAME><![CDATA[Revenue Recognition]]></NAME>
-<!--174-->  <DESCRIPTION><![CDATA[Revenue Recognition Rules]]></DESCRIPTION>
-<!--174-->  <HELP><![CDATA[The Revenue Recognition Window defines the intervals at which revenue will be recognized. Alternatively, the revenue recognition may be linked to service levels provided.]]></HELP>
-<!--174-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--174-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--174-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--174-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--174-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--174-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--174--></AD_WINDOW>
-
-<!--175--><AD_WINDOW>
-<!--175-->  <AD_WINDOW_ID><![CDATA[175]]></AD_WINDOW_ID>
-<!--175-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--175-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--175-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--175-->  <NAME><![CDATA[Perpetual Inventory]]></NAME>
-<!--175-->  <DESCRIPTION><![CDATA[Maintain Perpetual Inventory Rules]]></DESCRIPTION>
-<!--175-->  <HELP><![CDATA[The Perpetual Inventory defines the rules to be applied when generating Physical Inventory counts.]]></HELP>
-<!--175-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--175-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--175-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--175-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--175-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--175-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--175--></AD_WINDOW>
-
-<!--176--><AD_WINDOW>
-<!--176-->  <AD_WINDOW_ID><![CDATA[176]]></AD_WINDOW_ID>
-<!--176-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--176-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--176-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--176-->  <NAME><![CDATA[Vendor Details]]></NAME>
-<!--176-->  <DESCRIPTION><![CDATA[Edit available product information grouped by the vendors who sell them.]]></DESCRIPTION>
-<!--176-->  <HELP><![CDATA[Edit available product information grouped by the vendors who sell them.]]></HELP>
-<!--176-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--176-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--176-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--176-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--176-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--176-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--176--></AD_WINDOW>
-
 <!--178--><AD_WINDOW>
 <!--178-->  <AD_WINDOW_ID><![CDATA[178]]></AD_WINDOW_ID>
 <!--178-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1055,22 +911,6 @@
 <!--187-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--187--></AD_WINDOW>
 
-<!--189--><AD_WINDOW>
-<!--189-->  <AD_WINDOW_ID><![CDATA[189]]></AD_WINDOW_ID>
-<!--189-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--189-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--189-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--189-->  <NAME><![CDATA[Import Loader Format]]></NAME>
-<!--189-->  <DESCRIPTION><![CDATA[Define the file layout for product information which will be imported.]]></DESCRIPTION>
-<!--189-->  <HELP><![CDATA[Define the file layout for product information which will be imported.]]></HELP>
-<!--189-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--189-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--189-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--189-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--189-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--189-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--189--></AD_WINDOW>
-
 <!--191--><AD_WINDOW>
 <!--191-->  <AD_WINDOW_ID><![CDATA[191]]></AD_WINDOW_ID>
 <!--191-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1102,22 +942,6 @@
 <!--192-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--192-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--192--></AD_WINDOW>
-
-<!--193--><AD_WINDOW>
-<!--193-->  <AD_WINDOW_ID><![CDATA[193]]></AD_WINDOW_ID>
-<!--193-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--193-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--193-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--193-->  <NAME><![CDATA[Notice]]></NAME>
-<!--193-->  <DESCRIPTION><![CDATA[Create and edit messages to appear while performing processes.]]></DESCRIPTION>
-<!--193-->  <HELP><![CDATA[Create and edit messages to appear while performing processes.]]></HELP>
-<!--193-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
-<!--193-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--193-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--193-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--193-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--193-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--193--></AD_WINDOW>
 
 <!--194--><AD_WINDOW>
 <!--194-->  <AD_WINDOW_ID><![CDATA[194]]></AD_WINDOW_ID>
@@ -1183,53 +1007,6 @@
 <!--200-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--200--></AD_WINDOW>
 
-<!--201--><AD_WINDOW>
-<!--201-->  <AD_WINDOW_ID><![CDATA[201]]></AD_WINDOW_ID>
-<!--201-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--201-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--201-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--201-->  <NAME><![CDATA[Request]]></NAME>
-<!--201-->  <DESCRIPTION><![CDATA[Work on your requests]]></DESCRIPTION>
-<!--201-->  <HELP><![CDATA[The Request Window is used to define and track any request assigned to you.]]></HELP>
-<!--201-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
-<!--201-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--201-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--201-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--201-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--201-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--201--></AD_WINDOW>
-
-<!--203--><AD_WINDOW>
-<!--203-->  <AD_WINDOW_ID><![CDATA[203]]></AD_WINDOW_ID>
-<!--203-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--203-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--203-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--203-->  <NAME><![CDATA[Request Processor]]></NAME>
-<!--203-->  <DESCRIPTION><![CDATA[Define Request Processors]]></DESCRIPTION>
-<!--203-->  <HELP><![CDATA[The Request Processor Window allows you to define different processes that you want to occur and the frequency and timing of these processes]]></HELP>
-<!--203-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--203-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--203-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--203-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--203-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--203-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--203--></AD_WINDOW>
-
-<!--204--><AD_WINDOW>
-<!--204-->  <AD_WINDOW_ID><![CDATA[204]]></AD_WINDOW_ID>
-<!--204-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--204-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--204-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--204-->  <NAME><![CDATA[Mail Template]]></NAME>
-<!--204-->  <DESCRIPTION><![CDATA[Maintain Mail Template]]></DESCRIPTION>
-<!--204-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--204-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--204-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--204-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--204-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--204-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--204--></AD_WINDOW>
-
 <!--207--><AD_WINDOW>
 <!--207-->  <AD_WINDOW_ID><![CDATA[207]]></AD_WINDOW_ID>
 <!--207-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1261,22 +1038,6 @@
 <!--210-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--210-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--210--></AD_WINDOW>
-
-<!--220--><AD_WINDOW>
-<!--220-->  <AD_WINDOW_ID><![CDATA[220]]></AD_WINDOW_ID>
-<!--220-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--220-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--220-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--220-->  <NAME><![CDATA[Service Level]]></NAME>
-<!--220-->  <DESCRIPTION><![CDATA[Maintain Service Levels]]></DESCRIPTION>
-<!--220-->  <HELP><![CDATA[Service Levels are generated when an invoice with products based on revenue recognition rules are generated.  You need to update the actual service level by adding an additional line.]]></HELP>
-<!--220-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
-<!--220-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--220-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--220-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--220-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--220-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--220--></AD_WINDOW>
 
 <!--223--><AD_WINDOW>
 <!--223-->  <AD_WINDOW_ID><![CDATA[223]]></AD_WINDOW_ID>
@@ -1325,22 +1086,6 @@
 <!--228-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--228-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--228--></AD_WINDOW>
-
-<!--232--><AD_WINDOW>
-<!--232-->  <AD_WINDOW_ID><![CDATA[232]]></AD_WINDOW_ID>
-<!--232-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--232-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--232-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--232-->  <NAME><![CDATA[Request All]]></NAME>
-<!--232-->  <DESCRIPTION><![CDATA[View and work on all requests]]></DESCRIPTION>
-<!--232-->  <HELP><![CDATA[This Request window is used to view all available requests]]></HELP>
-<!--232-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--232-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--232-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--232-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--232-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--232-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--232--></AD_WINDOW>
 
 <!--233--><AD_WINDOW>
 <!--233-->  <AD_WINDOW_ID><![CDATA[233]]></AD_WINDOW_ID>
@@ -1438,38 +1183,6 @@
 <!--242-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--242--></AD_WINDOW>
 
-<!--244--><AD_WINDOW>
-<!--244-->  <AD_WINDOW_ID><![CDATA[244]]></AD_WINDOW_ID>
-<!--244-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--244-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--244-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--244-->  <NAME><![CDATA[Request Type]]></NAME>
-<!--244-->  <DESCRIPTION><![CDATA[Maintain Request Types]]></DESCRIPTION>
-<!--244-->  <HELP><![CDATA[Request Types are used for processing and categorizing requests. Options are Account Inquiry, Warranty Issue, etc.]]></HELP>
-<!--244-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--244-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--244-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--244-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--244-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--244-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--244--></AD_WINDOW>
-
-<!--245--><AD_WINDOW>
-<!--245-->  <AD_WINDOW_ID><![CDATA[245]]></AD_WINDOW_ID>
-<!--245-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--245-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--245-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--245-->  <NAME><![CDATA[Areas of Interest]]></NAME>
-<!--245-->  <DESCRIPTION><![CDATA[Create and edit areas of interest to track the potential needs and wants of your business partners.]]></DESCRIPTION>
-<!--245-->  <HELP><![CDATA[Create and edit areas of interest to track the potential needs and wants of your business partners.]]></HELP>
-<!--245-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--245-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--245-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--245-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--245-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--245-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--245--></AD_WINDOW>
-
 <!--246--><AD_WINDOW>
 <!--246-->  <AD_WINDOW_ID><![CDATA[246]]></AD_WINDOW_ID>
 <!--246-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1485,70 +1198,6 @@
 <!--246-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--246-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--246--></AD_WINDOW>
-
-<!--247--><AD_WINDOW>
-<!--247-->  <AD_WINDOW_ID><![CDATA[247]]></AD_WINDOW_ID>
-<!--247-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--247-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--247-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--247-->  <NAME><![CDATA[Import Products]]></NAME>
-<!--247-->  <DESCRIPTION><![CDATA[Import products in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--247-->  <HELP><![CDATA[Import products in .csv format from previously used databases/applications and past business operations.]]></HELP>
-<!--247-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--247-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--247-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--247-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--247-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--247-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--247--></AD_WINDOW>
-
-<!--248--><AD_WINDOW>
-<!--248-->  <AD_WINDOW_ID><![CDATA[248]]></AD_WINDOW_ID>
-<!--248-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--248-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--248-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--248-->  <NAME><![CDATA[Import Account]]></NAME>
-<!--248-->  <DESCRIPTION><![CDATA[Import accounts in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--248-->  <HELP><![CDATA[Import accounts in .csv format from previously used databases/applications and past business operations.]]></HELP>
-<!--248-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--248-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--248-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--248-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--248-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--248-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--248--></AD_WINDOW>
-
-<!--250--><AD_WINDOW>
-<!--250-->  <AD_WINDOW_ID><![CDATA[250]]></AD_WINDOW_ID>
-<!--250-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--250-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--250-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--250-->  <NAME><![CDATA[Application Translation Check]]></NAME>
-<!--250-->  <DESCRIPTION><![CDATA[Create and edit translations for a selected application language.]]></DESCRIPTION>
-<!--250-->  <HELP><![CDATA[Create and edit translations for a selected application language.]]></HELP>
-<!--250-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--250-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--250-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--250-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--250-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--250-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--250--></AD_WINDOW>
-
-<!--251--><AD_WINDOW>
-<!--251-->  <AD_WINDOW_ID><![CDATA[251]]></AD_WINDOW_ID>
-<!--251-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--251-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--251-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--251-->  <NAME><![CDATA[Asset]]></NAME>
-<!--251-->  <DESCRIPTION><![CDATA[Asset used internally or by customers]]></DESCRIPTION>
-<!--251-->  <HELP><![CDATA[Asset used internally or by customers]]></HELP>
-<!--251-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--251-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--251-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--251-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--251-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--251-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--251--></AD_WINDOW>
 
 <!--252--><AD_WINDOW>
 <!--252-->  <AD_WINDOW_ID><![CDATA[252]]></AD_WINDOW_ID>
@@ -1662,22 +1311,6 @@
 <!--260-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--260--></AD_WINDOW>
 
-<!--262--><AD_WINDOW>
-<!--262-->  <AD_WINDOW_ID><![CDATA[262]]></AD_WINDOW_ID>
-<!--262-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--262-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--262-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--262-->  <NAME><![CDATA[Vendor Expense Invoice]]></NAME>
-<!--262-->  <DESCRIPTION><![CDATA[Create and edit vendor invoices.]]></DESCRIPTION>
-<!--262-->  <HELP><![CDATA[Create and edit vendor invoices.]]></HELP>
-<!--262-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
-<!--262-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--262-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--262-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--262-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--262-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--262--></AD_WINDOW>
-
 <!--264--><AD_WINDOW>
 <!--264-->  <AD_WINDOW_ID><![CDATA[264]]></AD_WINDOW_ID>
 <!--264-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1710,22 +1343,6 @@
 <!--265-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--265--></AD_WINDOW>
 
-<!--267--><AD_WINDOW>
-<!--267-->  <AD_WINDOW_ID><![CDATA[267]]></AD_WINDOW_ID>
-<!--267-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--267-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--267-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--267-->  <NAME><![CDATA[Import Inventory]]></NAME>
-<!--267-->  <DESCRIPTION><![CDATA[Import inventories in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--267-->  <HELP><![CDATA[Validate and Import Inventory Transactions]]></HELP>
-<!--267-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--267-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--267-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--267-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--267-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--267-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--267--></AD_WINDOW>
-
 <!--268--><AD_WINDOW>
 <!--268-->  <AD_WINDOW_ID><![CDATA[268]]></AD_WINDOW_ID>
 <!--268-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1742,54 +1359,6 @@
 <!--268-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--268--></AD_WINDOW>
 
-<!--270--><AD_WINDOW>
-<!--270-->  <AD_WINDOW_ID><![CDATA[270]]></AD_WINDOW_ID>
-<!--270-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--270-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--270-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--270-->  <NAME><![CDATA[Change Log]]></NAME>
-<!--270-->  <DESCRIPTION><![CDATA[Log of data changes]]></DESCRIPTION>
-<!--270-->  <HELP><![CDATA[Log of data changes]]></HELP>
-<!--270-->  <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
-<!--270-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--270-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--270-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--270-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--270-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--270--></AD_WINDOW>
-
-<!--272--><AD_WINDOW>
-<!--272-->  <AD_WINDOW_ID><![CDATA[272]]></AD_WINDOW_ID>
-<!--272-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--272-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--272-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--272-->  <NAME><![CDATA[Time Type]]></NAME>
-<!--272-->  <DESCRIPTION><![CDATA[Define types of time intervals to be applied your expenses and expense sheets.]]></DESCRIPTION>
-<!--272-->  <HELP><![CDATA[Define types of time intervals to be applied your expenses and expense sheets.]]></HELP>
-<!--272-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--272-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--272-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--272-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--272-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--272-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--272--></AD_WINDOW>
-
-<!--275--><AD_WINDOW>
-<!--275-->  <AD_WINDOW_ID><![CDATA[275]]></AD_WINDOW_ID>
-<!--275-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--275-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--275-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--275-->  <NAME><![CDATA[Invoice Payment Schedule]]></NAME>
-<!--275-->  <DESCRIPTION><![CDATA[Maintain Invoice Payment Schedule]]></DESCRIPTION>
-<!--275-->  <HELP><![CDATA[Maintain Invoice Payment Schedule]]></HELP>
-<!--275-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--275-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--275-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--275-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--275-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--275-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--275--></AD_WINDOW>
-
 <!--276--><AD_WINDOW>
 <!--276-->  <AD_WINDOW_ID><![CDATA[276]]></AD_WINDOW_ID>
 <!--276-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1805,70 +1374,6 @@
 <!--276-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--276-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--276--></AD_WINDOW>
-
-<!--277--><AD_WINDOW>
-<!--277-->  <AD_WINDOW_ID><![CDATA[277]]></AD_WINDOW_ID>
-<!--277-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--277-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--277-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--277-->  <NAME><![CDATA[Import Bank Statement]]></NAME>
-<!--277-->  <DESCRIPTION><![CDATA[Import Bank Statements]]></DESCRIPTION>
-<!--277-->  <HELP><![CDATA[Allows the bank statement import configuration and its execution]]></HELP>
-<!--277-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--277-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--277-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--277-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--277-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--277-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--277--></AD_WINDOW>
-
-<!--278--><AD_WINDOW>
-<!--278-->  <AD_WINDOW_ID><![CDATA[278]]></AD_WINDOW_ID>
-<!--278-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--278-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--278-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--278-->  <NAME><![CDATA[Import G/L Journal]]></NAME>
-<!--278-->  <DESCRIPTION><![CDATA[Import G/L jounals in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--278-->  <HELP><![CDATA[You way want to check the balance of the import with "Validate Only" before importing. Unbalanced Journals are imported; the handling is based on your settings for the posting process.]]></HELP>
-<!--278-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--278-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--278-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--278-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--278-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--278-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--278--></AD_WINDOW>
-
-<!--279--><AD_WINDOW>
-<!--279-->  <AD_WINDOW_ID><![CDATA[279]]></AD_WINDOW_ID>
-<!--279-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--279-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--279-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--279-->  <NAME><![CDATA[Import Invoices]]></NAME>
-<!--279-->  <DESCRIPTION><![CDATA[Import invoices in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--279-->  <HELP><![CDATA[Allows the invoice import configuration and its execution]]></HELP>
-<!--279-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--279-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--279-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--279-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--279-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--279-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--279--></AD_WINDOW>
-
-<!--281--><AD_WINDOW>
-<!--281-->  <AD_WINDOW_ID><![CDATA[281]]></AD_WINDOW_ID>
-<!--281-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--281-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--281-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--281-->  <NAME><![CDATA[Import Orders]]></NAME>
-<!--281-->  <DESCRIPTION><![CDATA[Import orders in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--281-->  <HELP><![CDATA[Import orders in .csv format from previously used databases/applications and past business operations.]]></HELP>
-<!--281-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--281-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--281-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--281-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--281-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--281-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--281--></AD_WINDOW>
 
 <!--282--><AD_WINDOW>
 <!--282-->  <AD_WINDOW_ID><![CDATA[282]]></AD_WINDOW_ID>
@@ -1901,22 +1406,6 @@
 <!--283-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--283-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--283--></AD_WINDOW>
-
-<!--286--><AD_WINDOW>
-<!--286-->  <AD_WINDOW_ID><![CDATA[286]]></AD_WINDOW_ID>
-<!--286-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--286-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--286-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--286-->  <NAME><![CDATA[Service Project (deprecated)]]></NAME>
-<!--286-->  <DESCRIPTION><![CDATA[Create and edit projects and tasks potentially requiring purchase and sales invoicing.]]></DESCRIPTION>
-<!--286-->  <HELP><![CDATA[Create and edit projects and tasks potentially requiring purchase and sales invoicing.]]></HELP>
-<!--286-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--286-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--286-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--286-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--286-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--286-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--286--></AD_WINDOW>
 
 <!--291--><AD_WINDOW>
 <!--291-->  <AD_WINDOW_ID><![CDATA[291]]></AD_WINDOW_ID>
@@ -2078,36 +1567,6 @@
 <!--800008-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--800008--></AD_WINDOW>
 
-<!--800010--><AD_WINDOW>
-<!--800010-->  <AD_WINDOW_ID><![CDATA[800010]]></AD_WINDOW_ID>
-<!--800010-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800010-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800010-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800010-->  <NAME><![CDATA[Warehouse Schedule]]></NAME>
-<!--800010-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800010-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800010-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800010-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800010-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800010-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800010--></AD_WINDOW>
-
-<!--800012--><AD_WINDOW>
-<!--800012-->  <AD_WINDOW_ID><![CDATA[800012]]></AD_WINDOW_ID>
-<!--800012-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800012-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800012-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800012-->  <NAME><![CDATA[Storage Bin Type]]></NAME>
-<!--800012-->  <DESCRIPTION><![CDATA[Define storage bin types to better organize your warehouse and inventory.]]></DESCRIPTION>
-<!--800012-->  <HELP><![CDATA[Define storage bin types to better organize your warehouse and inventory.]]></HELP>
-<!--800012-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800012-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800012-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800012-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800012-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800012-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800012--></AD_WINDOW>
-
 <!--800013--><AD_WINDOW>
 <!--800013-->  <AD_WINDOW_ID><![CDATA[800013]]></AD_WINDOW_ID>
 <!--800013-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -2235,86 +1694,6 @@
 <!--800020-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800020-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--800020--></AD_WINDOW>
-
-<!--800021--><AD_WINDOW>
-<!--800021-->  <AD_WINDOW_ID><![CDATA[800021]]></AD_WINDOW_ID>
-<!--800021-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800021-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800021-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800021-->  <NAME><![CDATA[Expense Invoice]]></NAME>
-<!--800021-->  <DESCRIPTION><![CDATA[Edit expenses by breaking and then allocating them across multiple organizations, projects, etc.]]></DESCRIPTION>
-<!--800021-->  <HELP><![CDATA[Edit expenses by breaking and then allocating them across multiple organizations, projects, etc.]]></HELP>
-<!--800021-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800021-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800021-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800021-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800021-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800021-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800021--></AD_WINDOW>
-
-<!--800022--><AD_WINDOW>
-<!--800022-->  <AD_WINDOW_ID><![CDATA[800022]]></AD_WINDOW_ID>
-<!--800022-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800022-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800022-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800022-->  <NAME><![CDATA[Document]]></NAME>
-<!--800022-->  <DESCRIPTION><![CDATA[Create and edit documents to be used in automated tests.]]></DESCRIPTION>
-<!--800022-->  <HELP><![CDATA[Create and edit documents to be used in automated tests.]]></HELP>
-<!--800022-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800022-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800022-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800022-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800022-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800022-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800022--></AD_WINDOW>
-
-<!--800023--><AD_WINDOW>
-<!--800023-->  <AD_WINDOW_ID><![CDATA[800023]]></AD_WINDOW_ID>
-<!--800023-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800023-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800023-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800023-->  <NAME><![CDATA[Role Login]]></NAME>
-<!--800023-->  <DESCRIPTION><![CDATA[Create a means of logging in to the application to complete a test.]]></DESCRIPTION>
-<!--800023-->  <HELP><![CDATA[Create a means of logging in to the application to complete a test.]]></HELP>
-<!--800023-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800023-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800023-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800023-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800023-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800023-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800023--></AD_WINDOW>
-
-<!--800024--><AD_WINDOW>
-<!--800024-->  <AD_WINDOW_ID><![CDATA[800024]]></AD_WINDOW_ID>
-<!--800024-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800024-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800024-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800024-->  <NAME><![CDATA[Instructions]]></NAME>
-<!--800024-->  <DESCRIPTION><![CDATA[Create and edit instructions for being used in automated tests.]]></DESCRIPTION>
-<!--800024-->  <HELP><![CDATA[Create and edit instructions for being used in automated tests.]]></HELP>
-<!--800024-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800024-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800024-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800024-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800024-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800024-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800024--></AD_WINDOW>
-
-<!--800025--><AD_WINDOW>
-<!--800025-->  <AD_WINDOW_ID><![CDATA[800025]]></AD_WINDOW_ID>
-<!--800025-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800025-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800025-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800025-->  <NAME><![CDATA[Command]]></NAME>
-<!--800025-->  <DESCRIPTION><![CDATA[Create and edit commands in order to configure the automated test.]]></DESCRIPTION>
-<!--800025-->  <HELP><![CDATA[Create and edit commands in order to configure the automated test.]]></HELP>
-<!--800025-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800025-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800025-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800025-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800025-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800025-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800025--></AD_WINDOW>
 
 <!--800026--><AD_WINDOW>
 <!--800026-->  <AD_WINDOW_ID><![CDATA[800026]]></AD_WINDOW_ID>
@@ -2540,22 +1919,6 @@
 <!--800063-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--800063--></AD_WINDOW>
 
-<!--800064--><AD_WINDOW>
-<!--800064-->  <AD_WINDOW_ID><![CDATA[800064]]></AD_WINDOW_ID>
-<!--800064-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800064-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800064-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800064-->  <NAME><![CDATA[Quality Control Report]]></NAME>
-<!--800064-->  <DESCRIPTION><![CDATA[Create and edit measurements and report findings at predefined checkpoints.  The goal is to ensure output quality during production.]]></DESCRIPTION>
-<!--800064-->  <HELP><![CDATA[Create and edit measurements and report findings at predefined checkpoints.  The goal is to ensure output quality during production.]]></HELP>
-<!--800064-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800064-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800064-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800064-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800064-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800064-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800064--></AD_WINDOW>
-
 <!--800066--><AD_WINDOW>
 <!--800066-->  <AD_WINDOW_ID><![CDATA[800066]]></AD_WINDOW_ID>
 <!--800066-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -2571,22 +1934,6 @@
 <!--800066-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800066-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--800066--></AD_WINDOW>
-
-<!--800067--><AD_WINDOW>
-<!--800067-->  <AD_WINDOW_ID><![CDATA[800067]]></AD_WINDOW_ID>
-<!--800067-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800067-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800067-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800067-->  <NAME><![CDATA[Periodic Quality Control Data]]></NAME>
-<!--800067-->  <DESCRIPTION><![CDATA[Create and edit data collection and measurements related to quality control.  This is done at predefined checkpoints for a produced product.]]></DESCRIPTION>
-<!--800067-->  <HELP><![CDATA[Create and edit data collection and measurements related to quality control.  This is done at predefined checkpoints for a produced product.]]></HELP>
-<!--800067-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800067-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800067-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800067-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800067-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800067-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800067--></AD_WINDOW>
 
 <!--800068--><AD_WINDOW>
 <!--800068-->  <AD_WINDOW_ID><![CDATA[800068]]></AD_WINDOW_ID>
@@ -2668,38 +2015,6 @@
 <!--800072-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--800072--></AD_WINDOW>
 
-<!--800074--><AD_WINDOW>
-<!--800074-->  <AD_WINDOW_ID><![CDATA[800074]]></AD_WINDOW_ID>
-<!--800074-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800074-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800074-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800074-->  <NAME><![CDATA[Maintenance Plan]]></NAME>
-<!--800074-->  <DESCRIPTION><![CDATA[Add and edit predefined maintenance plans.]]></DESCRIPTION>
-<!--800074-->  <HELP><![CDATA[Add and edit predefined maintenance plans.]]></HELP>
-<!--800074-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800074-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800074-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800074-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800074-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800074-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800074--></AD_WINDOW>
-
-<!--800075--><AD_WINDOW>
-<!--800075-->  <AD_WINDOW_ID><![CDATA[800075]]></AD_WINDOW_ID>
-<!--800075-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800075-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800075-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800075-->  <NAME><![CDATA[Maintenance Order]]></NAME>
-<!--800075-->  <DESCRIPTION><![CDATA[Create and edit the results of a scheduled maintenance order.]]></DESCRIPTION>
-<!--800075-->  <HELP><![CDATA[Create and edit the results of a scheduled maintenance order.]]></HELP>
-<!--800075-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800075-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800075-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800075-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800075-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800075-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800075--></AD_WINDOW>
-
 <!--800076--><AD_WINDOW>
 <!--800076-->  <AD_WINDOW_ID><![CDATA[800076]]></AD_WINDOW_ID>
 <!--800076-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -2731,22 +2046,6 @@
 <!--800077-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800077-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--800077--></AD_WINDOW>
-
-<!--800079--><AD_WINDOW>
-<!--800079-->  <AD_WINDOW_ID><![CDATA[800079]]></AD_WINDOW_ID>
-<!--800079-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800079-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800079-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800079-->  <NAME><![CDATA[Import Budget]]></NAME>
-<!--800079-->  <DESCRIPTION><![CDATA[Import budgets in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--800079-->  <HELP><![CDATA[Import budgets in .csv format from previously used databases/applications and past business operations.]]></HELP>
-<!--800079-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800079-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800079-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800079-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800079-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800079-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800079--></AD_WINDOW>
 
 <!--800080--><AD_WINDOW>
 <!--800080-->  <AD_WINDOW_ID><![CDATA[800080]]></AD_WINDOW_ID>
@@ -2955,22 +2254,6 @@
 <!--800097-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800097-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--800097--></AD_WINDOW>
-
-<!--800098--><AD_WINDOW>
-<!--800098-->  <AD_WINDOW_ID><![CDATA[800098]]></AD_WINDOW_ID>
-<!--800098-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800098-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800098-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800098-->  <NAME><![CDATA[Import Taxes]]></NAME>
-<!--800098-->  <DESCRIPTION><![CDATA[Import taxes in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--800098-->  <HELP><![CDATA[Import taxes in .csv format from previously used databases/applications and past business operations.]]></HELP>
-<!--800098-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800098-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800098-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800098-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800098-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800098-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800098--></AD_WINDOW>
 
 <!--800099--><AD_WINDOW>
 <!--800099-->  <AD_WINDOW_ID><![CDATA[800099]]></AD_WINDOW_ID>
@@ -3415,22 +2698,6 @@ You can also select if transactions are allowed or not for this organization typ
 <!--EF3E837705944F4DBF398D683D36ACE0-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--EF3E837705944F4DBF398D683D36ACE0-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--EF3E837705944F4DBF398D683D36ACE0--></AD_WINDOW>
-
-<!--EFB5814F190840039AF5137B01C6E32B--><AD_WINDOW>
-<!--EFB5814F190840039AF5137B01C6E32B-->  <AD_WINDOW_ID><![CDATA[EFB5814F190840039AF5137B01C6E32B]]></AD_WINDOW_ID>
-<!--EFB5814F190840039AF5137B01C6E32B-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--EFB5814F190840039AF5137B01C6E32B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--EFB5814F190840039AF5137B01C6E32B-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--EFB5814F190840039AF5137B01C6E32B-->  <NAME><![CDATA[Property Configuration]]></NAME>
-<!--EFB5814F190840039AF5137B01C6E32B-->  <DESCRIPTION><![CDATA[Value assignment for Configuration Properties. ]]></DESCRIPTION>
-<!--EFB5814F190840039AF5137B01C6E32B-->  <HELP><![CDATA[Value assignment for Configuration Properties. ]]></HELP>
-<!--EFB5814F190840039AF5137B01C6E32B-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--EFB5814F190840039AF5137B01C6E32B-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--EFB5814F190840039AF5137B01C6E32B-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--EFB5814F190840039AF5137B01C6E32B-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--EFB5814F190840039AF5137B01C6E32B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--EFB5814F190840039AF5137B01C6E32B-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--EFB5814F190840039AF5137B01C6E32B--></AD_WINDOW>
 
 <!--FEB8679CAA0D47E5978F10E22566FCEA--><AD_WINDOW>
 <!--FEB8679CAA0D47E5978F10E22566FCEA-->  <AD_WINDOW_ID><![CDATA[FEB8679CAA0D47E5978F10E22566FCEA]]></AD_WINDOW_ID>

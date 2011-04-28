@@ -49,9 +49,6 @@ isc.OBApplicationMenuButton.create({
         , type: 'report'
         , manualUrl: '${menuOption.id?js_string}'
         , manualProcessId: '${menuOption.menu.process.id}'
-    <#elseif menuOption.task>
-        , type: 'task'
-        , manualUrl: '${menuOption.id?js_string}'
     <#elseif menuOption.form>
         , type: 'form'
         , manualUrl: '${menuOption.id?js_string}'

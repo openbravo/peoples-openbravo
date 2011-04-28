@@ -54,8 +54,6 @@ public class OpenbravoMetadataFilter extends AbstractDatabaseFilter {
     addTable("AD_FORM", "AD_CLIENT_ID = '0'");
     addTable("AD_FORM_TRL", "AD_CLIENT_ID = '0'");
     addTable("AD_IMAGE", "AD_CLIENT_ID = '0'");
-    addTable("AD_IMPFORMAT", "AD_CLIENT_ID = '0'");
-    addTable("AD_IMPFORMAT_ROW", "AD_CLIENT_ID = '0'");
     addTable("AD_LANGUAGE", "AD_CLIENT_ID = '0'");
     addTable("AD_MENU", "AD_CLIENT_ID = '0'");
     addTable("AD_MENU_TRL", "AD_CLIENT_ID = '0'");
@@ -81,8 +79,6 @@ public class OpenbravoMetadataFilter extends AbstractDatabaseFilter {
     addTable("AD_TAB", "AD_CLIENT_ID = '0'");
     addTable("AD_TAB_TRL", "AD_CLIENT_ID = '0'");
     addTable("AD_TABLE", "AD_CLIENT_ID = '0'");
-    addTable("AD_TASK", "AD_CLIENT_ID = '0'");
-    addTable("AD_TASK_TRL", "AD_CLIENT_ID = '0'");
     addTable("AD_TEXTINTERFACES", "AD_CLIENT_ID = '0'");
     addTable("AD_TEXTINTERFACES_TRL", "AD_CLIENT_ID = '0'");
     addTable("AD_TREE", "AD_CLIENT_ID = '0'");
@@ -90,13 +86,8 @@ public class OpenbravoMetadataFilter extends AbstractDatabaseFilter {
     addTable("AD_TREENODEBP", "AD_CLIENT_ID = '0'");
     addTable("AD_TREENODEPR", "AD_CLIENT_ID = '0'");
     addTable("AD_VAL_RULE", "AD_CLIENT_ID = '0'");
-    addTable("AD_WF_NODE", "AD_CLIENT_ID = '0'");
-    addTable("AD_WF_NODE_TRL", "AD_CLIENT_ID = '0'");
-    addTable("AD_WF_NODENEXT", "AD_CLIENT_ID = '0'");
     addTable("AD_WINDOW", "AD_CLIENT_ID = '0'");
     addTable("AD_WINDOW_TRL", "AD_CLIENT_ID = '0'");
-    addTable("AD_WORKFLOW", "AD_CLIENT_ID = '0'");
-    addTable("AD_WORKFLOW_TRL", "AD_CLIENT_ID = '0'");
     /*
      * addTable("AD_ACCOUNTINGRPT_ELEMENT", "AD_CLIENT_ID = '0'");// addTable("C_COUNTRY",
      * "AD_CLIENT_ID = '0'");// addTable("C_COUNTRY_TRL",

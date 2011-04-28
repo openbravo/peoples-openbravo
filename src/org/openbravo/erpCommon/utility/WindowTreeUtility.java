@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,7 +74,7 @@ class WindowTreeUtility {
     else if (keyColumnName.equals("C_Tax_Report_ID"))
       TreeType = "TR";
     else
-      TreeType = WindowTreeUtilityClient.getTreeType(keyColumnName);
+      TreeType = "";
     if (TreeType.equals(""))
       log4j.error("WindowTreeUtility.getTreeID() - Could not map " + keyColumnName);
     return TreeType;
@@ -150,17 +150,7 @@ class WindowTreeUtility {
     else if (TreeType.equals("TR"))
       data = WindowTreeData.selectTaxReport(conn, vars.getUser(), strEditable, strParentID,
           strNodeId, TreeID);
-    else {
-      FieldProvider[] fData = WindowTreeUtilityClient.getTree(conn, vars, TreeType, TreeID,
-          editable, strParentID, strNodeId, strTabID);
-      if (fData != null) {
-        data = new WindowTreeData[fData.length];
-        for (int i = 0; i < fData.length; i++) {
-          data[i] = WindowTreeUtility.transformFieldProvider(fData[i]);
-        }
-      }
-      fData = null;
-    }
+
     return data;
   }
 
@@ -186,8 +176,6 @@ class WindowTreeUtility {
     aux.adWindowId = data.getField("adWindowId");
     aux.adProcessId = data.getField("adProcessId");
     aux.adFormId = data.getField("adFormId");
-    aux.adWorkflowId = data.getField("adWorkflowId");
-    aux.adTaskId = data.getField("adTaskId");
     return aux;
   }
 
@@ -287,7 +275,7 @@ class WindowTreeUtility {
     else if (type.equals("B"))
       return "BancoTrabajo";
     else
-      return WindowTreeUtilityClient.windowType(type);
+      return "";
   }
 
   /**
@@ -308,8 +296,6 @@ class WindowTreeUtility {
       return "form";
     else if (tipo.equals("P"))
       return "process";
-    else if (tipo.equals("T"))
-      return "task";
     else if (tipo.equals("R"))
       return "report";
     else if (tipo.equals("F"))
@@ -317,7 +303,7 @@ class WindowTreeUtility {
     else if (tipo.equals("B"))
       return "wb";
     else
-      return WindowTreeUtilityClient.windowTypeNico(tipo);
+      return "";
   }
 
   /**

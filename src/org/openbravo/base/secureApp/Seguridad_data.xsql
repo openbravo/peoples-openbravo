@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
  ************************************************************************************
- * Copyright (C) 2001-2009 Openbravo S.L.U.
+ * Copyright (C) 2001-2011 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -128,27 +128,11 @@
          WHERE T.AD_TABLE_ID = TB.AD_TABLE_ID
            AND TO_CHAR('W') = ?
            AND TB.AD_TAB_ID = ?
-         UNION
-         SELECT ACCESSLEVEL
-          FROM AD_TASK
-         WHERE TO_CHAR('T') = ? 
-           AND AD_TASK_ID = ?
-         UNION
-        SELECT ACCESSLEVEL
-          FROM AD_WORKFLOW
-         WHERE TO_CHAR('F') = ? 
-           AND AD_WORKFLOW_ID = ?
       ]]></Sql>
       <Parameter name="type"/>
       <Parameter name="id"/>
       
       <Parameter name="type"/>
-      <Parameter name="type"/>
-      <Parameter name="id"/>
-      
-      <Parameter name="type"/>
-      <Parameter name="id"/>
-      
       <Parameter name="type"/>
       <Parameter name="id"/>
       
@@ -198,20 +182,6 @@
                  AND t.IsActive = 'Y' 
                  AND t.IsExclude = 'Y'
                UNION
-              SELECT COUNT(*) AS TOTAL 
-                FROM AD_Task_Access 
-               WHERE AD_Role_ID = ? 
-                 AND TO_CHAR('T') = ?
-                 AND AD_Task_ID = ? 
-                 AND IsActive = 'Y' 
-               UNION
-              SELECT COUNT(*) AS TOTAL 
-                FROM AD_Workflow_Access 
-               WHERE AD_Role_ID = ?
-                 AND TO_CHAR('F') = ? 
-                 AND AD_Workflow_ID = ? 
-                 AND IsActive = 'Y'
-                 UNION
                SELECT COUNT(*) AS TOTAL 
                 FROM AD_Process_Access A,
                      AD_Process P
@@ -242,14 +212,6 @@
       <Parameter name="id"/>
       <Parameter name="id"/>
       <Parameter name="type"/>
-      
-      <Parameter name="role"/>
-      <Parameter name="type"/>
-      <Parameter name="id"/>
-      
-      <Parameter name="role"/>
-      <Parameter name="type"/>
-      <Parameter name="id"/>
       
       <Parameter name="role"/>
       <Parameter name="type"/>

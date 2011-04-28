@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009 Openbravo SLU
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
-import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessContext;
@@ -92,7 +91,6 @@ public class AcctServerProcess extends DalBaseProcess {
       log4j.debug("Processing client: " + vars.getClient());
     }
 
-    String adNoteId = "";
     if (isDirect) {
       addLog("@DL_STARTING@", false);
     } else {
@@ -132,7 +130,6 @@ public class AcctServerProcess extends DalBaseProcess {
       log4j.error(ex.getMessage());
       return;
     }
-    adNoteId = saveLog(adNoteId, vars.getClient());
     String[] tables = null;
     String strTable = "";
     // If it is the background process, we use 0
@@ -187,7 +184,6 @@ public class AcctServerProcess extends DalBaseProcess {
       } else {
         addLog("Table = " + strTableDesc + " - " + acct.getInfo(ctx.getLanguage()));
       }
-      adNoteId = saveLog(adNoteId, vars.getClient());
     }
   }
 
@@ -219,40 +215,6 @@ public class AcctServerProcess extends DalBaseProcess {
       lastLog.append("<span>").append(tmp.toString()).append(" - ").append(msg).append(
           "</span><br>");
     }
-  }
-
-  /**
-   * Saves the log as a note.
-   * 
-   * @param adNoteId
-   *          the note id, if passed as null then a new one is created
-   * @param adClientId
-   * @return the id of the note if a new one is created (if passed as null)
-   */
-  private String saveLog(String adNoteId, String adClientId) {
-    String strMessage = "", strNewMessage = "";
-    try {
-      if (adNoteId == null || adNoteId.equals("")) {
-        adNoteId = SequenceIdData.getUUID();
-        AcctServerProcessData.insert(connection, adNoteId, adClientId, "");
-      }
-      if (this.message.length() > 2000) {
-        strMessage = this.message.toString().substring(0, 1990) + "...";
-        strNewMessage = this.message.toString().substring(1990);
-        this.message.setLength(0);
-        this.message.append("...").append(strNewMessage);
-      } else {
-        strMessage = this.message.toString();
-      }
-      AcctServerProcessData.update(connection, strMessage, adNoteId);
-      if (!strNewMessage.equals("")) {
-        adNoteId = saveLog("", adClientId);
-      }
-
-    } catch (final ServletException ex) {
-      log4j.error(ex.getMessage());
-    }
-    return adNoteId;
   }
 
 }

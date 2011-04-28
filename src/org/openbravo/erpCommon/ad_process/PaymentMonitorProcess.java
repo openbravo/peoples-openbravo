@@ -9,7 +9,6 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
@@ -26,7 +25,6 @@ public class PaymentMonitorProcess extends DalBaseProcess {
     logger = bundle.getLogger();
     // Extra check for PaymentMonitor-disabling switch, to build correct message for users
     try {
-      // Use Utility.getPropertyValue for backward compatibility
       try {
         Preferences.getPreferenceValue("PaymentMonitor", true, null, null, OBContext.getOBContext()
             .getUser(), null, null);
@@ -35,14 +33,7 @@ public class PaymentMonitorProcess extends DalBaseProcess {
         logger.log("Core's background process is not executed.\n");
         return;
       } catch (PropertyNotFoundException e) {
-        if (Utility.getPropertyValue("PaymentMonitor", bundle.getContext().getClient(), bundle
-            .getContext().getOrganization()) != null) {
-          logger
-              .log("There is an extension module installed managing the Payment Monitor information.\n");
-          logger.log("Core's background process is not executed.\n");
-          return;
-        } else
-          logger.log("Starting Update Paid Amount for Invoices Background Process.\n");
+        logger.log("Starting Update Paid Amount for Invoices Background Process.\n");
       }
     } catch (PropertyException e) {
       logger.log("PropertyException, there is a conflict for PaymentMonitor property\n");

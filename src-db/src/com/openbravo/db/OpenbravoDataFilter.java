@@ -31,7 +31,6 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
 
     removeTable("AD_DEPENDENCIES");
     removeTable("AD_ID_TRANSLATION");
-    removeTable("AD_NOTE");
     removeTable("AD_PINSTANCE");
     removeTable("AD_PINSTANCE_PARA");
     removeTable("AD_REPLICATION");
@@ -74,8 +73,6 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
     removeTable("AD_FORM");
     removeTable("AD_FORM_TRL");
     addTable("AD_IMAGE", "AD_CLIENT_ID <> '0'");
-    addTable("AD_IMPFORMAT", "AD_CLIENT_ID <> '0'");
-    addTable("AD_IMPFORMAT_ROW", "AD_CLIENT_ID <> '0'");
     removeTable("AD_LANGUAGE");
     removeTable("AD_MENU");
     removeTable("AD_MENU_TRL");
@@ -100,8 +97,6 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
     removeTable("AD_TAB");
     removeTable("AD_TAB_TRL");
     removeTable("AD_TABLE");
-    removeTable("AD_TASK");
-    removeTable("AD_TASK_TRL");
     removeTable("AD_TEXTINTERFACES");
     removeTable("AD_TEXTINTERFACES_TRL");
     addTable("AD_TREE", "AD_CLIENT_ID <> '0'");
@@ -109,13 +104,8 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
     addTable("AD_TREENODEBP", "AD_CLIENT_ID <> '0'");
     addTable("AD_TREENODEPR", "AD_CLIENT_ID <> '0'");
     removeTable("AD_VAL_RULE");
-    removeTable("AD_WF_NODE");
-    removeTable("AD_WF_NODE_TRL");
-    removeTable("AD_WF_NODENEXT");
     removeTable("AD_WINDOW");
     removeTable("AD_WINDOW_TRL");
-    removeTable("AD_WORKFLOW");
-    removeTable("AD_WORKFLOW_TRL");
 
     addTable("AD_ACCOUNTINGRPT_ELEMENT", "AD_CLIENT_ID <> '0'");//
     addTable("C_COUNTRY", "AD_CLIENT_ID <> '0'");//
