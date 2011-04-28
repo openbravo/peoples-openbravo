@@ -59,7 +59,7 @@ public class DalQueryTest extends BaseTest {
    */
   public void testDalFirstWhereLeftJoinClause() {
     setTestAdminContext();
-    final String where = "as mo left join mo.callout left join mo.reference left join mo.specialForm left join mo.process left join mo.workflow left join mo.tab where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.specialForm.module.id='0' or mo.process.module.id='0' or mo.workflow.module.id='0' or mo.tab.module.id='0'";
+    final String where = "as mo left join mo.callout left join mo.reference left join mo.specialForm left join mo.process left join mo.tab where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.specialForm.module.id='0' or mo.process.module.id='0' or mo.tab.module.id='0'";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
         ModelImplementation.class, where);
     assertTrue(obq.list().size() > 0);
@@ -82,7 +82,7 @@ public class DalQueryTest extends BaseTest {
         + ModelImplementation.PROPERTY_PROCESS
         + " left join mo."
         + ModelImplementation.PROPERTY_TAB
-        + " where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.specialForm.module.id='0' or mo.process.module.id='0' or mo.workflow.module.id='0' or mo.tab.module.id='0'";
+        + " where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.specialForm.module.id='0' or mo.process.module.id='0' or mo.tab.module.id='0'";
     final OBQuery<ModelImplementationMapping> obq = OBDal.getInstance().createQuery(
         ModelImplementationMapping.class, where);
     assertTrue(obq.list().size() > 0);
