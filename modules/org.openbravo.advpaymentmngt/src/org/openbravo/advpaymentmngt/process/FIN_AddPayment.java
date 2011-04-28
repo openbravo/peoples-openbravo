@@ -589,29 +589,17 @@ public class FIN_AddPayment {
    */
   public static void updatePaymentScheduleAmounts(FIN_PaymentSchedule paymentSchedule,
       BigDecimal amount, BigDecimal writeOffAmount) {
-    BigDecimal totalPaid = amount;
-    BigDecimal outstanding = paymentSchedule.getOutstandingAmount();
+    paymentSchedule.setPaidAmount(paymentSchedule.getPaidAmount().add(amount));
+    paymentSchedule.setOutstandingAmount(paymentSchedule.getOutstandingAmount().subtract(amount));
     if (writeOffAmount != null && writeOffAmount.compareTo(BigDecimal.ZERO) != 0) {
-      totalPaid = amount.add(writeOffAmount);
+      paymentSchedule.setPaidAmount(paymentSchedule.getPaidAmount().add(writeOffAmount));
+      paymentSchedule.setOutstandingAmount(paymentSchedule.getOutstandingAmount().subtract(
+          writeOffAmount));
     }
-    // (totalPaid > 0 && totalPaid <= outstanding) || (totalPaid < 0 && totalPaid >= outstanding)
-    if ((totalPaid.compareTo(BigDecimal.ZERO) == 1 && totalPaid.compareTo(outstanding) <= 0)
-        || (totalPaid.compareTo(BigDecimal.ZERO) == -1 && totalPaid.compareTo(outstanding) >= 0)) {
-      paymentSchedule.setPaidAmount(paymentSchedule.getPaidAmount().add(amount));
-      paymentSchedule.setOutstandingAmount(paymentSchedule.getOutstandingAmount().subtract(amount));
-      if (writeOffAmount != null && writeOffAmount.compareTo(BigDecimal.ZERO) != 0) {
-        paymentSchedule.setPaidAmount(paymentSchedule.getPaidAmount().add(writeOffAmount));
-        paymentSchedule.setOutstandingAmount(paymentSchedule.getOutstandingAmount().subtract(
-            writeOffAmount));
-      }
-      OBDal.getInstance().save(paymentSchedule);
-      if (paymentSchedule.getInvoice() != null) {
-        updateInvoicePaymentMonitor(paymentSchedule.getInvoice(), paymentSchedule.getDueDate(),
-            amount, writeOffAmount);
-      }
-    } else {
-      throw new OBException(String.format(FIN_Utility.messageBD("APRM_AmountOutOfRange"), totalPaid
-          .toString(), paymentSchedule.getOutstandingAmount().toString()));
+    OBDal.getInstance().save(paymentSchedule);
+    if (paymentSchedule.getInvoice() != null) {
+      updateInvoicePaymentMonitor(paymentSchedule.getInvoice(), paymentSchedule.getDueDate(),
+          amount, writeOffAmount);
     }
   }
 
