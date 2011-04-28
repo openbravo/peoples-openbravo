@@ -50,13 +50,12 @@ public class JSLintChecker {
   }
 
   public String check(String componentIdentifier, String javascript) {
+    long t1 = System.currentTimeMillis();
     JSLint jsLint = new JSLintBuilder().fromDefault();
-    jsLint.addOption(Option.BROWSER);
-    // FIXME: option removed on jslint update: jsLint.addOption(Option.EQEQEQ);
-    jsLint.addOption(Option.EVIL);
-    // FIXME: option removed on jslint update: jsLint.addOption(Option.LAXBREAK);
-
-    final JSLintResult lintResult = jsLint.lint("0", javascript);
+    jsLint.addOption(Option.BROWSER); // browser globals are predefined
+    jsLint.addOption(Option.EVIL); // allow eval()
+    jsLint.addOption(Option.CONTINUE); // allow continue statement
+    final JSLintResult lintResult = jsLint.lint(componentIdentifier, javascript);
     final List<Issue> issues = lintResult.getIssues();
     if (issues.isEmpty()) {
       return null;
@@ -64,14 +63,16 @@ public class JSLintChecker {
     final StringBuilder sb = new StringBuilder();
     if (issues.size() > 0) {
       sb.append(">>>>>>> Issues found in javascript <<<<<<<<<\n");
-      sb.append(javascript);
-      sb.append(">>>>>>> Issues <<<<<<<<<\n");
-    }
-    for (Issue issue : issues) {
-      sb.append(componentIdentifier + ":" + issue.getLine() + ":" + issue.getCharacter() + ": "
-          + issue.getReason() + "\n");
+      for (Issue issue : issues) {
+        sb.append(componentIdentifier + ":" + issue.getLine() + ":" + issue.getCharacter() + ": "
+            + issue.getReason());
+        if (issue.getEvidence() != null) {
+          sb.append(" >> offending code: " + issue.getEvidence());
+        }
+        sb.append("\n");
+      }
+      sb.append(">>>>>>> Issues (" + (System.currentTimeMillis() - t1) + "ms)  <<<<<<<<<\n");
     }
     return sb.toString();
   }
-
 }
