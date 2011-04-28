@@ -72,7 +72,7 @@ public class DalStoredProcedureTest extends BaseTest {
     assertTrue(fieldsNo > 0);
 
     final Tab copyToTab = OBProvider.getInstance().get(Tab.class);
-    copyToTab.setName("copyToTab");
+    copyToTab.setName("CopyToTab");
     copyToTab.setTable(tabtest.getTable());
     copyToTab.setWindow(tabtest.getWindow());
     copyToTab.setSequenceNumber(new Long("10"));
@@ -84,7 +84,7 @@ public class DalStoredProcedureTest extends BaseTest {
         parameters);
     OBDal.getInstance().getSession().refresh(tabtest);
     OBDal.getInstance().getSession().refresh(copyToTab);
-    assertEquals("@Copied@=26", pInstance.getErrorMsg());
+    assertEquals("@Copied@=" + fieldsNo, pInstance.getErrorMsg());
     assertEquals(fieldsNo, tabtest.getADFieldList().size());
     assertEquals(fieldsNo, copyToTab.getADFieldList().size());
 
