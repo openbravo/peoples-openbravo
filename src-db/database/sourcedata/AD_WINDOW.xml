@@ -943,22 +943,6 @@
 <!--192-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--192--></AD_WINDOW>
 
-<!--193--><AD_WINDOW>
-<!--193-->  <AD_WINDOW_ID><![CDATA[193]]></AD_WINDOW_ID>
-<!--193-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--193-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--193-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--193-->  <NAME><![CDATA[Notice]]></NAME>
-<!--193-->  <DESCRIPTION><![CDATA[Create and edit messages to appear while performing processes.]]></DESCRIPTION>
-<!--193-->  <HELP><![CDATA[Create and edit messages to appear while performing processes.]]></HELP>
-<!--193-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
-<!--193-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--193-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--193-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--193-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--193-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--193--></AD_WINDOW>
-
 <!--194--><AD_WINDOW>
 <!--194-->  <AD_WINDOW_ID><![CDATA[194]]></AD_WINDOW_ID>
 <!--194-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

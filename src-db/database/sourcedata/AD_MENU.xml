@@ -1147,19 +1147,6 @@
 <!--232-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--232--></AD_MENU>
 
-<!--233--><AD_MENU>
-<!--233-->  <AD_MENU_ID><![CDATA[233]]></AD_MENU_ID>
-<!--233-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--233-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--233-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--233-->  <NAME><![CDATA[Notice]]></NAME>
-<!--233-->  <DESCRIPTION><![CDATA[Create and edit messages to appear while performing processes.]]></DESCRIPTION>
-<!--233-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--233-->  <ACTION><![CDATA[W]]></ACTION>
-<!--233-->  <AD_WINDOW_ID><![CDATA[193]]></AD_WINDOW_ID>
-<!--233-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--233--></AD_MENU>
-
 <!--234--><AD_MENU>
 <!--234-->  <AD_MENU_ID><![CDATA[234]]></AD_MENU_ID>
 <!--234-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

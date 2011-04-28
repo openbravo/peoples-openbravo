@@ -3389,31 +3389,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--324-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--324--></AD_TAB>
 
-<!--325--><AD_TAB>
-<!--325-->  <AD_TAB_ID><![CDATA[325]]></AD_TAB_ID>
-<!--325-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--325-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--325-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--325-->  <NAME><![CDATA[Notice]]></NAME>
-<!--325-->  <DESCRIPTION><![CDATA[System Notice]]></DESCRIPTION>
-<!--325-->  <HELP><![CDATA[System Notice]]></HELP>
-<!--325-->  <AD_TABLE_ID><![CDATA[389]]></AD_TABLE_ID>
-<!--325-->  <AD_WINDOW_ID><![CDATA[193]]></AD_WINDOW_ID>
-<!--325-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--325-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--325-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--325-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--325-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--325-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--325-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--325-->  <WHERECLAUSE><![CDATA[AD_Note.AD_User_ID IN ('0', @AD_User_ID@)]]></WHERECLAUSE>
-<!--325-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--325-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--325-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--325-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--325-->  <HQLWHERECLAUSE><![CDATA[e.user.id in ('0', @User.id@)]]></HQLWHERECLAUSE>
-<!--325--></AD_TAB>
-
 <!--327--><AD_TAB>
 <!--327-->  <AD_TAB_ID><![CDATA[327]]></AD_TAB_ID>
 <!--327-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

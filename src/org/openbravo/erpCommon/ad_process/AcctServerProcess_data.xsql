@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2008 Openbravo SLU
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,26 +71,6 @@
     <Parameter name="language"/>
     <Parameter name="language"/>
     <Parameter name="adTableId"/>
-   </SqlMethod>
-   <SqlMethod name="insert" type="preparedStatement" return="rowCount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        INSERT INTO AD_NOTE (AD_NOTE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-        AD_MESSAGE_ID, TEXT)
-        VALUES (?, ?, 0, 'Y', now(), 0, now(), 0, (SELECT MIN(AD_MESSAGE_ID) FROM AD_MESSAGE), ?)
-      </Sql>
-      <Parameter name="adNoteId"/>
-      <Parameter name="adClientId"/>
-      <Parameter name="text"/>
-   </SqlMethod>
-   <SqlMethod name="update" type="preparedStatement" return="rowCount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        UPDATE AD_NOTE SET UPDATED=now(), UPDATEDBY=0, TEXT=?
-        WHERE AD_NOTE_ID = ?
-      </Sql>
-      <Parameter name="text"/>
-      <Parameter name="adNoteId"/>
    </SqlMethod>
    <SqlMethod name="selectOrg" type="preparedStatement" return="String" default="">
      <SqlMethodComment></SqlMethodComment>
