@@ -1051,8 +1051,13 @@ isc.OBViewGrid.addProperties({
   // for one select/deselect action
   selectionUpdated: function(record, recordList){
   
-    // close any editors we may have
-    this.closeAnyOpenEditor();
+    // close any editors, but only if it is different from the one we are editing
+    if (this.isEditingGrid) {
+      var editRecord = this.getRecord(this.getEditRow());
+      if (editRecord !== record) {
+        this.closeAnyOpenEditor();
+      }
+    }
     this.stopHover();
     this.updateSelectedCountDisplay();
     this.view.recordSelected();
@@ -1315,7 +1320,9 @@ isc.OBViewGrid.addProperties({
     this.scrollToRow(rowNum);
     this.updateRowCountDisplay();
     this.view.toolBar.updateButtonState(true);
-    this.redraw();
+    
+    // do it with a delay to give the system time to set the record information
+    this.markForRedraw();
   },
   
   editFailed: function(rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse, dsRequest){
@@ -1347,6 +1354,7 @@ isc.OBViewGrid.addProperties({
   },
   
   editComplete: function(rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse){
+
     var record = this.getRecord(rowNum), editRow, editSession, autoSaveAction;
     
     // a new id has been computed use that now    
@@ -1620,21 +1628,31 @@ isc.OBViewGrid.addProperties({
     this.endEditing();
   },
   
-  // is called when clicking a header
   hideInlineEditor: function(focusInBody, suppressCMHide) {
+
     var rowNum = this.getEditRow(), record = this.getRecord(rowNum);
-    
-    // clear the errors so that they don't show up at the next row
-    if (this.getEditForm()) {
-      this.getEditForm().clearErrors();
+    if (rowNum === 0 || rowNum) {
+      if (!this.rowHasErrors(rowNum)) {
+        record[this.recordBaseStyleProperty] = null;
+      }
+      
+      // clear the errors so that they don't show up at the next row
+      if (this.getEditForm()) {
+        this.getEditForm().clearErrors();
+      }
+  
+      if (record && record.editColumnLayout) {
+        isc.Log.logDebug('hideInlineEditor has record and editColumnLayout', 'OB');
+        record.editColumnLayout.showEditOpen();
+      } else if (this.currentEditColumnLayout) {
+        this.currentEditColumnLayout.showEditOpen();
+      } else {
+        isc.Log.logDebug('hideInlineEditor has NO record and editColumnLayout', 'OB');
+      }
+      this.view.isEditingGrid = false;
+      this.refreshRow(rowNum);
     }
     
-    this.view.messageBar.hide();
-    if (record && record.editColumnLayout) {
-      record.editColumnLayout.showEditOpen();
-    } else if (this.getEditForm().getValues().editColumnLayout) {
-      this.getEditForm().getValues().editColumnLayout.showEditOpen();
-    }
     // always hide the clickmask, as it needs to be re-applied
     return this.Super('hideInlineEditor', [focusInBody, false]);
   },
@@ -1697,24 +1715,6 @@ isc.OBViewGrid.addProperties({
     this.view.messageBar.hide();
     
     return ret;
-  },
-  
-  rowEditorExit: function(editCompletionEvent, record, newValues, rowNum){
-    isc.Log.logDebug('rowEditorExit ' + this.getEditRow(), 'OB');
-    if (!this.rowHasErrors(rowNum)) {
-      record[this.recordBaseStyleProperty] = null;
-    }
-    
-    if (record && record.editColumnLayout) {
-      isc.Log.logDebug('hideInlineEditor has record and editColumnLayout', 'OB');
-      record.editColumnLayout.showEditOpen();
-    } else if (this.currentEditColumnLayout) {
-      this.currentEditColumnLayout.showEditOpen();
-    } else {
-      isc.Log.logDebug('hideInlineEditor has NO record and editColumnLayout', 'OB');
-    }
-    this.view.isEditingGrid = false;
-    this.refreshRow(rowNum);
   },
   
   closeAnyOpenEditor: function(){
@@ -2164,6 +2164,9 @@ isc.OBGridButtonsComponent.addProperties({
   },
   
   hideMember: function(memberNo) {
+    if (!this.members[memberNo]) {
+      return;
+    }
     // already hidden
     if (this.members[memberNo] && this.members[memberNo].visibility === isc.Canvas.HIDDEN) {
       return;
@@ -2172,6 +2175,9 @@ isc.OBGridButtonsComponent.addProperties({
   },
 
   showMember: function(memberNo) {
+    if (!this.members[memberNo]) {
+      return;
+    }
     // already visible
     if (this.members[memberNo] && this.members[memberNo].visibility === isc.Canvas.INHERIT || this.members[memberNo].visibility === isc.Canvas.VISIBLE) {
       return;

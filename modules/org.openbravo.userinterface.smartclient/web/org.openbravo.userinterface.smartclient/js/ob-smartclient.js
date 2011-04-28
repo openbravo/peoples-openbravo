@@ -56,6 +56,18 @@ isc.FormItem.addProperties({
   // disable tab to icons
   canTabToIcons: false,
   
+  // when a value is set the selectValue is called with a delay, during that delay
+  // the focus may have moved to another field, the selectValue will however again 
+  // put the focus in this field this results in infinite looping of calls
+  // https://issues.openbravo.com/view.php?id=16908
+  _selectValue : isc.FormItem.getPrototype().selectValue,
+  selectValue: function() {
+    if (!this.hasFocus) {
+      return;
+    }
+    return this._selectValue();
+  },
+  
   _original_init: isc.FormItem.getPrototype().init,
   init: function() {
     OB.Utilities.addRequiredSuffixToBaseStyle(this);
@@ -163,7 +175,31 @@ isc.Log.hasFireBug = function() { return false; };
 isc.PickList.getPrototype().cachePickListResults = false;
 
 // allow max 10000 days/years/quarters in the past/future
-isc.RelativeDateItem.changeDefaults('quantityFieldDefaults', {max: 1000});
+isc.RelativeDateItem.changeDefaults('quantityFieldDefaults', {max: 1000, alwaysTakeSpace: false});
+
+//isc.RelativeDateItem.changeDefaults('valueFieldDefaults', 
+//    {validateOnExit: true,
+//    icons : [{
+//    src: '[SKIN]/../../org.openbravo.client.application/images/form/date_control.png',
+//    canFocus: false,
+//    showOver: false,
+//    showFocused: false,
+//    showFocusedWithItem: false,
+//    width: 21,
+//    height: 21,
+//    hspace: 0,
+//    keyPress: function(keyName, character, form, item, icon){
+//      if (keyName === 'Enter' && isc.EventHandler.ctrlKeyDown()) {
+//        item.showPicker();
+//        return false;
+//      }
+//      return true;
+//    },
+//    click: function(form, item, icon){
+//      item.showPicker();
+//    }
+//  }]  
+//});
 
 isc.RelativeDateItem.addProperties({
   // overridden as the displayDateFormat does not seem to work fine

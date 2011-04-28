@@ -611,6 +611,9 @@ OB.ViewFormProperties = {
             this.getFocusItem().focusInItem();
           }
         }
+      } else {
+        this.redraw();
+        this.view.viewGrid.refreshEditRow();
       }
     }
   },
