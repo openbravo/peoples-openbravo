@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2011 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -658,7 +658,7 @@
         v_OldCumDiscount:=0;
         v_Line:=10;
         v_precision:=0;
-        SELECT MAX(LINE) +10
+        SELECT MAX(LINE)
         INTO v_OrderLineSeqNo
         FROM C_ORDERLINE
         WHERE C_ORDER_ID=v_Record_ID;
