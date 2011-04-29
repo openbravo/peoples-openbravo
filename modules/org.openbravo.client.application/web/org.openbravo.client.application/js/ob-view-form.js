@@ -445,6 +445,9 @@ OB.ViewFormProperties = {
     
     this.setDisabled(true);
 
+    // note that only the fields with errors are validated anyway
+    this.validateAfterFicReturn = true;
+
     // get the editRow before doing the call
     var editRow = me.view.viewGrid.getEditRow();
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
@@ -949,6 +952,15 @@ OB.ViewFormProperties = {
         recordIndex = view.viewGrid.data.indexOf(record);
       }
       
+      // not in the filter, insert the record in the cachedata so it will be made visible
+      if (status === isc.RPCResponse.STATUS_SUCCESS && recordIndex === -1) {
+        var visibleRows = view.viewGrid.body.getVisibleRows();
+        if (visibleRows[0] !== -1) {
+          view.viewGrid.data.insertCacheData(data, visibleRows[0]);
+          recordIndex = visibleRows[0];
+        }
+      }
+      
       if (recordIndex || recordIndex === 0) {
         // if this is not done the selection gets lost
         localRecord = view.viewGrid.data.get(recordIndex);
@@ -961,6 +973,8 @@ OB.ViewFormProperties = {
           localRecord.id = localRecord._newId;
           delete localRecord._newId;
         }
+        
+        view.viewGrid.scrollToRow(recordIndex);
       }
       
       if (status === isc.RPCResponse.STATUS_SUCCESS) {
@@ -973,6 +987,11 @@ OB.ViewFormProperties = {
         
         view.setRecentDocument(this.getValues());
         
+        if (localRecord && localRecord !== view.viewGrid.getSelectedRecord()) {
+          localRecord[view.viewGrid.selection.selectionProperty] = false;
+          view.viewGrid.doSelectSingleRecord(localRecord);
+        }
+        
         view.updateLastSelectedState();
                 
         // remove any new pointer
@@ -980,6 +999,8 @@ OB.ViewFormProperties = {
           this.clearValue('_new');
         }
 
+        view.viewGrid.markForRedraw();
+        
         if (form.isNew) {
           view.refreshChildViews();
         }
@@ -998,6 +1019,7 @@ OB.ViewFormProperties = {
         form.setNewState(false);
         
         view.refreshParentRecord();
+
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
         form.handleFieldErrors(resp.errors);
         view.standardWindow.autoSaveDone(view, false);

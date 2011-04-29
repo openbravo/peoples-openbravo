@@ -645,7 +645,9 @@ isc.OBViewGrid.addProperties({
   
   // overridden to prevent extra firing of selection updated event
   selectSingleRecord: function(record){
-    this.deselectAllRecords(true);
+    if (this.getSelectedRecord() && this.getSelectedRecord() !== record) {
+      this.deselectAllRecords(true);
+    }
     this.selectRecord(record);
     
     // keep it to try to get it back when the selection gets lost when
