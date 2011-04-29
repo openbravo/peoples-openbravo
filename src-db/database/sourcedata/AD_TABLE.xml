@@ -4080,6 +4080,26 @@ Run Synchronize Terminology to update menu translation. You need only to transla
 <!--531-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CE4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--531--></AD_TABLE>
 
+<!--533--><AD_TABLE>
+<!--533-->  <AD_TABLE_ID><![CDATA[533]]></AD_TABLE_ID>
+<!--533-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--533-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--533-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--533-->  <NAME><![CDATA[DataImportBusinessPartner]]></NAME>
+<!--533-->  <HELP><![CDATA[The import business partner is an interim table which is used when importing external data into the system]]></HELP>
+<!--533-->  <TABLENAME><![CDATA[I_BPartner]]></TABLENAME>
+<!--533-->  <CLASSNAME><![CDATA[BusinessPartner]]></CLASSNAME>
+<!--533-->  <ISVIEW><![CDATA[N]]></ISVIEW>
+<!--533-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
+<!--533-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
+<!--533-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
+<!--533-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
+<!--533-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
+<!--533-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
+<!--533-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
+<!--533-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DD4B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--533--></AD_TABLE>
+
 <!--539--><AD_TABLE>
 <!--539-->  <AD_TABLE_ID><![CDATA[539]]></AD_TABLE_ID>
 <!--539-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
