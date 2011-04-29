@@ -1651,6 +1651,11 @@ isc.OBViewGrid.addProperties({
       }
       this.view.isEditingGrid = false;
       this.refreshRow(rowNum);
+      // clear all values, as null values in the new row won't overwrite filled form
+      // values
+      if (this.getEditForm()) {
+        this.getEditForm().clearValues();
+      }
     }
     
     // always hide the clickmask, as it needs to be re-applied
