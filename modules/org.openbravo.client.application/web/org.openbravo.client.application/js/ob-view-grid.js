@@ -570,6 +570,8 @@ isc.OBViewGrid.addProperties({
   refreshGrid: function(callback){
     if (this.getSelectedRecord()) {
       this.targetRecordId = this.getSelectedRecord()[OB.Constants.ID];
+      // as the record is already selected it is already in the filter
+      this.notRemoveFilter = true;
     }
     this.actionAfterDataArrived = callback;
     this.invalidateCache();
@@ -584,6 +586,8 @@ isc.OBViewGrid.addProperties({
     if (this.body) {
       // don't need it anymore
       delete this.targetRecordId;
+      delete this.notRemoveFilter;
+
       var gridRecord = data.find(OB.Constants.ID, tmpTargetRecordId);
       
       // no grid record found, stop here
@@ -741,8 +745,10 @@ isc.OBViewGrid.addProperties({
       // add a dummy criteria to force a fetch
       criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
       
-      // remove the filter clause we don't want to use
-      this.filterClause = null;
+      if (!this.notRemoveFilter) {
+        // remove the filter clause we don't want to use it anymore
+        this.filterClause = null;
+      }
     } else {
       // remove the _dummy
       for (i = 0; i < criteria.criteria.length; i++) {
@@ -820,8 +826,10 @@ isc.OBViewGrid.addProperties({
     
     if (this.targetRecordId) {
       params._targetRecordId = this.targetRecordId;
-      // remove the filter clause we don't want to use it anymore
-      this.filterClause = null;
+      if (!this.notRemoveFilter) {
+        // remove the filter clause we don't want to use it anymore
+        this.filterClause = null;
+      }
     }
 
     // prevent the count operation
