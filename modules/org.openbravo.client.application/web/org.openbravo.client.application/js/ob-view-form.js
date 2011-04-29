@@ -588,6 +588,12 @@ OB.ViewFormProperties = {
       OB.Utilities.callAction(editValues.actionAfterFicReturn);
       delete editValues.actionAfterFicReturn;
     }
+
+    if(data.jscode) {
+      for(i = 0; i < data.jscode.length; i++) {
+        eval(data.jscode[i]);
+      }
+    }
   },
   
   setDisabled: function(state) {
