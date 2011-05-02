@@ -4911,6 +4911,30 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--496-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--496--></AD_TAB>
 
+<!--512--><AD_TAB>
+<!--512-->  <AD_TAB_ID><![CDATA[512]]></AD_TAB_ID>
+<!--512-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--512-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--512-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--512-->  <NAME><![CDATA[Import Order]]></NAME>
+<!--512-->  <DESCRIPTION><![CDATA[Import orders in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
+<!--512-->  <HELP><![CDATA[Import orders in .csv format from previously used databases/applications and past business operations.]]></HELP>
+<!--512-->  <AD_TABLE_ID><![CDATA[591]]></AD_TABLE_ID>
+<!--512-->  <AD_WINDOW_ID><![CDATA[281]]></AD_WINDOW_ID>
+<!--512-->  <SEQNO><![CDATA[10]]></SEQNO>
+<!--512-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
+<!--512-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
+<!--512-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
+<!--512-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
+<!--512-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
+<!--512-->  <HASTREE><![CDATA[N]]></HASTREE>
+<!--512-->  <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--512-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
+<!--512-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
+<!--512-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--512-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--512--></AD_TAB>
+
 <!--513--><AD_TAB>
 <!--513-->  <AD_TAB_ID><![CDATA[513]]></AD_TAB_ID>
 <!--513-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

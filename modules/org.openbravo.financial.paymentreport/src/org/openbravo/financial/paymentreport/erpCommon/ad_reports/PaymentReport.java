@@ -68,9 +68,10 @@ public class PaymentReport extends HttpSecureAppServlet {
           "PaymentReport|DueDateFrom");
       String strDueDateTo = vars
           .getRequestGlobalVariable("inpDueDateTo", "PaymentReport|DueDateTo");
-      String strAmountFrom = vars.getRequestGlobalVariable("inpAmountFrom",
+      String strAmountFrom = vars.getNumericRequestGlobalVariable("inpAmountFrom",
           "PaymentReport|AmountFrom");
-      String strAmountTo = vars.getRequestGlobalVariable("inpAmountTo", "PaymentReport|AmountTo");
+      String strAmountTo = vars.getNumericRequestGlobalVariable("inpAmountTo",
+          "PaymentReport|AmountTo");
       String strDocumentDateFrom = vars.getRequestGlobalVariable("inpDocumentDateFrom",
           "PaymentReport|DocumentDateFrom");
       String strDocumentDateTo = vars.getRequestGlobalVariable("inpDocumentDateTo",
@@ -114,9 +115,10 @@ public class PaymentReport extends HttpSecureAppServlet {
           "PaymentReport|DueDateFrom");
       String strDueDateTo = vars
           .getRequestGlobalVariable("inpDueDateTo", "PaymentReport|DueDateTo");
-      String strAmountFrom = vars.getRequestGlobalVariable("inpAmountFrom",
+      String strAmountFrom = vars.getNumericRequestGlobalVariable("inpAmountFrom",
           "PaymentReport|AmountFrom");
-      String strAmountTo = vars.getRequestGlobalVariable("inpAmountTo", "PaymentReport|AmountTo");
+      String strAmountTo = vars.getNumericRequestGlobalVariable("inpAmountTo",
+          "PaymentReport|AmountTo");
       String strDocumentDateFrom = vars.getRequestGlobalVariable("inpDocumentDateFrom",
           "PaymentReport|DocumentDateFrom");
       String strDocumentDateTo = vars.getRequestGlobalVariable("inpDocumentDateTo",

@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2010 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2011 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -169,27 +169,7 @@ BEGIN
      WHERE IsActive = 'Y' AND IsSystemLanguage = 'Y'
     AND EXISTS (SELECT * FROM AD_Client
      WHERE AD_Client_ID=:new.AD_Client_ID AND IsMultiLingualDocument='Y');
-     --  Create TreeNode --
-     --  get AD_Tree_ID + ParentID
-     SELECT  c.AD_Tree_Product_ID, n.Node_ID INTO v_xTree_ID, v_xParent_ID
-     FROM    AD_ClientInfo c, AD_TreeNodePR n
-     WHERE   c.AD_Tree_Product_ID=n.AD_Tree_ID
-         AND n.Parent_ID IS NULL
-         AND c.AD_Client_ID=:new.AD_Client_ID;
-
-     --  DBMS_OUTPUT.PUT_LINE('Tree='||v_xTree_ID||'  Node='||:new.M_Product_ID||'  Parent='||v_xParent_ID);
-
-     --  Insert into TreeNode
-     INSERT INTO AD_TreeNodePR
-         (AD_TreeNodePR_ID, AD_Client_ID, AD_Org_ID,
-         IsActive, Created, CreatedBy, Updated, UpdatedBy,
-         AD_Tree_ID, Node_ID,
-         Parent_ID, SeqNo)
-     VALUES
-         (get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID,
-         :new.IsActive, :new.Created, :new.CreatedBy, :new.Updated, :new.UpdatedBy,
-         v_xTree_ID, :new.M_Product_ID,
-         v_xParent_ID, (CASE :new.IsSummary WHEN 'Y' THEN 100 ELSE 999 END));    -- Summary Nodes first
+     
  END IF;
  IF (INSERTING OR UPDATING) THEN
     -- Checks on the attribute set value

@@ -108,19 +108,6 @@ BEGIN
                        and AD_Menu_Trl.ad_language = m1.ad_language
                        and AD_Menu_Trl.ad_menu_id = ad_menu.ad_menu_id);
         
-    IF (COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')) THEN
-        -- Update Workflow
-        UPDATE AD_WF_Node
-          SET IsActive=:new.IsActive
-        WHERE AD_Window_ID=:new.AD_Window_ID;
-        UPDATE AD_WF_Node
-          SET Name=:new.Name,
-          Description=:new.Description,
-          Help=:new.Help
-        WHERE AD_Window_ID=:new.AD_Window_ID
-          AND IsCentrallyMaintained='Y';
-    END IF;
-
     -- Translation
     UPDATE AD_Window_Trl
       SET IsTranslated='N',

@@ -1575,10 +1575,11 @@ isc.OBStandardView.addProperties({
       classicMode = true;
     }
     var value, field, record, form, component, propertyObj, type;
-    // different modes:
-    // 1) showing grid with one record selected
-    // 2) showing form with aux inputs
-    if (this.isEditingGrid) {
+
+    // a special case, the editform has been build but it is not present yet in the
+    // form, so isEditingGrid is true but the edit form is not there yet, in that 
+    // case use the viewGrid as component and the selected record
+    if (this.isEditingGrid && this.viewGrid.getEditForm()) {
       rowNum = this.viewGrid.getEditRow();
       if (rowNum || rowNum === 0) {
         record = isc.addProperties({}, this.viewGrid.getRecord(rowNum), this.viewGrid.getEditValues(rowNum));

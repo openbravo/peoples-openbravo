@@ -73,9 +73,8 @@ class WADValidator {
     try {
       WADValidatorData data[] = WADValidatorData.checkIdentifier(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(WADValidationType.MISSING_IDENTIFIER, "Table " + issue.objectname
-            + " has not identifier.");
-        result.addModule(issue.modulename);
+        result.addError(issue.moduleid, issue.modulename, WADValidationType.MISSING_IDENTIFIER,
+            "Table " + issue.objectname + " has not identifier.");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
@@ -91,16 +90,14 @@ class WADValidator {
       // Check tables without key
       WADValidatorData data[] = WADValidatorData.checkKey(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(WADValidationType.MISSING_KEY, "Table " + issue.objectname
-            + " has not primary key.");
-        result.addModule(issue.modulename);
+        result.addError(issue.moduleid, issue.modulename, WADValidationType.MISSING_KEY, "Table "
+            + issue.objectname + " has not primary key.");
       }
 
       data = WADValidatorData.checkMultipleKey(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(WADValidationType.MULTIPLE_KEYS, "Table " + issue.objectname
-            + " has more than one key column.");
-        result.addModule(issue.modulename);
+        result.addError(issue.moduleid, issue.modulename, WADValidationType.MULTIPLE_KEYS, "Table "
+            + issue.objectname + " has more than one key column.");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
@@ -115,14 +112,13 @@ class WADValidator {
     try {
       WADValidatorData data[] = WADValidatorData.checkModelObject(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(WADValidationType.MODEL_OBJECT, issue.objecttype + " " + issue.objectname
-            + " has classname: " + issue.currentvalue + ". But it should be in "
-            + issue.expectedvalue + " package.");
-        result.addModule(issue.modulename);
+        result.addError(issue.moduleid, issue.modulename, WADValidationType.MODEL_OBJECT,
+            issue.objecttype + " " + issue.objectname + " has classname: " + issue.currentvalue
+                + ". But it should be in " + issue.expectedvalue + " package.");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
-          "Error when executing query for validating moel object: " + e.getMessage());
+          "Error when executing query for validating model object: " + e.getMessage());
     }
   }
 
@@ -133,14 +129,13 @@ class WADValidator {
     try {
       WADValidatorData data[] = WADValidatorData.checkModelObjectMapping(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(WADValidationType.MODEL_OBJECT_MAPPING, issue.objecttype + " "
-            + issue.objectname + " has mapping: " + issue.currentvalue
-            + ". But it should start with /" + issue.expectedvalue + ".");
-        result.addModule(issue.modulename);
+        result.addError(issue.moduleid, issue.modulename, WADValidationType.MODEL_OBJECT_MAPPING,
+            issue.objecttype + " " + issue.objectname + " has mapping: " + issue.currentvalue
+                + ". But it should start with /" + issue.expectedvalue + ".");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
-          "Error when executing query for validating moel object: " + e.getMessage());
+          "Error when executing query for validating model object: " + e.getMessage());
     }
   }
 
@@ -151,14 +146,13 @@ class WADValidator {
     try {
       WADValidatorData data[] = WADValidatorData.checkColumnName(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(WADValidationType.COLUMN_NAME, issue.objecttype + " " + issue.objectname
-            + " has value: " + issue.currentvalue + ". But it should start with EM_"
-            + issue.expectedvalue);
-        result.addModule(issue.modulename);
+        result.addError(issue.moduleid, issue.modulename, WADValidationType.COLUMN_NAME,
+            issue.objecttype + " " + issue.objectname + " has value: " + issue.currentvalue
+                + ". But it should start with EM_" + issue.expectedvalue);
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
-          "Error when executing query for validating moel object: " + e.getMessage());
+          "Error when executing query for validating model object: " + e.getMessage());
     }
   }
 
@@ -169,8 +163,8 @@ class WADValidator {
     try {
       WADValidatorData data[] = WADValidatorData.checkAuxiliarInput(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(WADValidationType.AUXILIARINPUT, issue.objectname
-            + " does not start by its module's DBPrefix: " + issue.expectedvalue);
+        result.addError(issue.moduleid, issue.modulename, WADValidationType.AUXILIARINPUT,
+            issue.objectname + " does not start by its module's DBPrefix: " + issue.expectedvalue);
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
@@ -186,10 +180,10 @@ class WADValidator {
       WADValidatorData data[] = WADValidatorData.checkBaseReferenceWithParent(conn, modules,
           checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(WADValidationType.BASEREFERENCE_WITH_PARENT, issue.objectname
-            + " base reference has parent reference " + issue.currentvalue
-            + ". Base references should not have parent reference.");
-        result.addModule(issue.modulename);
+        result.addError(issue.moduleid, issue.modulename,
+            WADValidationType.BASEREFERENCE_WITH_PARENT, issue.objectname
+                + " base reference has parent reference " + issue.currentvalue
+                + ". Base references should not have parent reference.");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,

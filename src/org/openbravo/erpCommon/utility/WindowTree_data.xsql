@@ -95,23 +95,6 @@
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
         <Parameter name="adTreeId"/>
    </SqlMethod>
-   <SqlMethod name="selectProduct" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.M_Product_ID AS ID, m.Name,m.Description,m.IsSummary 
-        FROM AD_TreeNodePR tn left join AD_TreeBar tb on tn.AD_Tree_ID=tb.AD_Tree_ID
-                              AND tn.Node_ID=tb.Node_ID 
-                              AND tb.AD_User_ID  = ? , M_Product m
-        WHERE tn.Node_ID = m.M_Product_ID 
-        AND tn.AD_Tree_ID = ? 
-        ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
-      </Sql>
-        <Parameter name="adUserId"/>
-        <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND m.isActive='Y' AND "/>
-        <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
-        <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
-        <Parameter name="adTreeId"/>
-   </SqlMethod>
    <SqlMethod name="selectProductCategory" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
@@ -398,19 +381,6 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         UPDATE AD_TREENODE SET UPDATED=now(), UPDATEDBY = ?, PARENT_id = ?, SEQNO=TO_NUMBER(?) 
-        WHERE AD_TREE_ID = ? 
-        AND NODE_ID = ?
-      </Sql>
-        <Parameter name="updatedby"/>
-        <Parameter name="parentId"/>
-        <Parameter name="seqno"/>
-        <Parameter name="adTreeId"/>
-        <Parameter name="nodeId"/>
-   </SqlMethod>
-   <SqlMethod name="updatePR" type="preparedStatement" return="rowCount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        UPDATE AD_TREENODEPR SET UPDATED=now(), UPDATEDBY = ?, PARENT_id = ?, SEQNO=TO_NUMBER(?) 
         WHERE AD_TREE_ID = ? 
         AND NODE_ID = ?
       </Sql>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ ******************************************************************************
+ * The contents of this file are subject to the   Compiere License  Version 1.1
+ * ("License"); You may not use this file except in compliance with the License
+ * You may obtain a copy of the License at http://www.compiere.org/license.html
+ * Software distributed under the License is distributed on an  "AS IS"  basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ * The Original Code is                  Compiere  ERP & CRM  Business Solution
+ * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
+ * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
+ * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
+ * Contributor(s): Openbravo SLU
+ * Contributions are Copyright (C) 2001-2011 Openbravo S.L.U.
+ ******************************************************************************
+-->
+
+
+
+
+<SqlClass name="ImportProcessData" package="org.openbravo.erpCommon.ad_process">
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT PARAMETERNAME, P_STRING, P_STRING_TO, P_NUMBER, P_NUMBER_TO, 
+        P_DATE, P_DATE_TO, INFO, INFO_TO 
+        FROM AD_PINSTANCE_PARA
+        WHERE AD_PINSTANCE_ID = ?
+        ORDER BY SEQNO
+      ]]>
+    </Sql>
+    <Parameter name="adPinstanceId"/>
+  </SqlMethod>
+  <SqlMethod name="insertInstance" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      INSERT INTO AD_PInstance (AD_PINSTANCE_ID, AD_PROCESS_ID, RECORD_ID, ISPROCESSING, 
+      CREATED, AD_USER_ID, UPDATED, AD_CLIENT_ID, AD_ORG_ID, CREATEDBY, UPDATEDBY, ISACTIVE) 
+      VALUES (?, ?, ?, 'N', 
+      now(), ?, now(), ?, ?, ?, ?, 'Y')
+      ]]>
+    </Sql>
+    <Parameter name="adPinstanceId"/>
+    <Parameter name="adProcessId"/>
+    <Parameter name="recordId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="adUserId"/>
+  </SqlMethod>
+  <SqlMethod name="lockInstance" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      UPDATE AD_PInstance SET IsProcessing='Y' 
+      WHERE AD_PInstance_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="adPinstanceId"/>
+  </SqlMethod>
+  <SqlMethod name="unlockInstance" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      UPDATE AD_PInstance SET IsProcessing='N', Updated=to_date(now()), Result=to_number(?), ErrorMsg=TO_CHAR(?) 
+      WHERE AD_PInstance_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="result"/>
+    <Parameter name="errormsg"/>
+    <Parameter name="adPisntanceId"/>
+  </SqlMethod>
+  <SqlMethod name="insertPInstanceParam" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      INSERT INTO AD_PINSTANCE_PARA (ad_pinstance_para_id, AD_PINSTANCE_ID, SEQNO, PARAMETERNAME, P_STRING, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
+      VALUES(get_uuid(), ?,TO_NUMBER(?),?,?, ?, ?, now(), ?, now(), ?)
+    </Sql>
+    <Parameter name="adPinstanceId"/>
+    <Parameter name="seqno"/>
+    <Parameter name="parametername"/>
+    <Parameter name="pString"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="adUserId"/>
+  </SqlMethod>
+  <SqlMethod name="insertPInstanceParamNumber" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      INSERT INTO AD_PINSTANCE_PARA (ad_pinstance_para_id,AD_PINSTANCE_ID, SEQNO, PARAMETERNAME, P_NUMBER, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
+      VALUES(get_uuid(), ?,TO_NUMBER(?),?,TO_NUMBER(?), ?, ?, now(), ?, now(), ?)
+    </Sql>
+    <Parameter name="adPinstanceId"/>
+    <Parameter name="seqno"/>
+    <Parameter name="parametername"/>
+    <Parameter name="pNumber"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="adUserId"/>
+  </SqlMethod>
+  <SqlMethod name="insertPInstanceParamDate" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      INSERT INTO AD_PINSTANCE_PARA (ad_pinstance_para_id,AD_PINSTANCE_ID, SEQNO, PARAMETERNAME, P_DATE, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
+      VALUES(get_uuid(), ?,TO_NUMBER(?),?,TO_DATE(?), ?, ?, now(), ?, now(), ?)
+    </Sql>
+    <Parameter name="adPinstanceId"/>
+    <Parameter name="seqno"/>
+    <Parameter name="parametername"/>
+    <Parameter name="pDate"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="adUserId"/>
+  </SqlMethod>
+  <SqlMethod name="insertPInstanceParamInfo" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      INSERT INTO AD_PINSTANCE_PARA (ad_pinstance_para_id,AD_PINSTANCE_ID, SEQNO, PARAMETERNAME, INFO, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
+      VALUES(get_uuid(),?,TO_NUMBER(?),?,?, ?, ?, now(), ?, now(), ?)
+    </Sql>
+    <Parameter name="adPinstanceId"/>
+    <Parameter name="seqno"/>
+    <Parameter name="parametername"/>
+    <Parameter name="info"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="adUserId"/>
+  </SqlMethod>
+</SqlClass>
