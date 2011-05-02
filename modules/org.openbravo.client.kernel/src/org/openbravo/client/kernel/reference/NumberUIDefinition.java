@@ -99,6 +99,18 @@ public abstract class NumberUIDefinition extends UIDefinition {
   }
 
   @Override
+  public String getFieldProperties(Field field) {
+    String fieldProperties = super.getFieldProperties(field);
+    try {
+      JSONObject o = new JSONObject(fieldProperties);
+      o.put("width", "50%");
+      return o.toString();
+    } catch (Exception e) { // ignore
+      return fieldProperties;
+    }
+  }
+
+  @Override
   public String getFieldProperties(Field field, boolean getValueFromSession) {
     try {
       // If a column has a numeric reference, and is required, and doesn't have a default, then
@@ -108,9 +120,12 @@ public abstract class NumberUIDefinition extends UIDefinition {
         final JSONObject jsonObject = new JSONObject();
         jsonObject.put("value", 0);
         jsonObject.put("classicValue", 0);
+        jsonObject.put("width", "50%");
         return jsonObject.toString();
       }
-      return new JSONObject(super.getFieldProperties(field, getValueFromSession)).toString();
+      JSONObject o = new JSONObject(super.getFieldProperties(field, getValueFromSession));
+      o.put("width", "50%");
+      return o.toString();
     } catch (JSONException e) {
       throw new OBException(e);
     }
