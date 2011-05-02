@@ -22,7 +22,7 @@
   <SqlMethod name="checkIdentifier" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-          select t.tablename as objectName, m.name as moduleName
+          select t.tablename as objectName, m.name as moduleName, m.ad_module_id as moduleId
           from ad_table t, ad_module m, ad_package p
          where not exists (select 1
                              from ad_column c
@@ -43,7 +43,7 @@
   <SqlMethod name="checkKey" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-        select t.tablename as objectName, m.name as moduleName
+        select t.tablename as objectName, m.name as moduleName, m.ad_module_id as moduleId
           from ad_table t, ad_module m, ad_package p
          where not exists (select 1
                              from ad_column c
@@ -62,7 +62,7 @@
   <SqlMethod name="checkMultipleKey" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-        select t.tablename as objectName, m.name as moduleName
+        select t.tablename as objectName, m.name as moduleName, m.ad_module_id as moduleId
           from ad_table t, ad_module m, ad_package p
          where exists (select 1
                          from ad_column c
@@ -83,35 +83,35 @@
   <SqlMethod name="checkModelObject" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-        select to_char(p.name) as objectname, 'Process' as objectType, o.classname as currentvalue, m.javapackage as expectedvalue, m.name as moduleName
+        select to_char(p.name) as objectname, 'Process' as objectType, o.classname as currentvalue, m.javapackage as expectedvalue, m.name as moduleName, m.ad_module_id as moduleId
           from ad_model_object o, ad_process p, ad_module m
          where o.ad_process_id = p.ad_process_id
            and p.ad_module_id = m.ad_module_id
            and o.classname not like m.javapackage||'.%'
            and (1=1 and m.javapackage in ('1') or to_char('Y')=to_char(?))
          union
-        select to_char(f.name), 'Form' as objectType, o.classname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName
+        select to_char(f.name), 'Form' as objectType, o.classname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName, m.ad_module_id as moduleId
           from ad_model_object o, ad_form f, ad_module m
          where o.ad_form_id = f.ad_form_id
            and f.ad_module_id = m.ad_module_id
            and o.classname not like m.javapackage||'.%'
            and (2=2 and m.javapackage in ('2') or to_char('Y')=to_char(?))
          union
-        select to_char(c.name), 'Callout' as objectType, o.classname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName
+        select to_char(c.name), 'Callout' as objectType, o.classname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName, m.ad_module_id as moduleId
           from ad_model_object o, ad_callout c, ad_module m
          where o.ad_callout_id = c.ad_callout_id
            and c.ad_module_id = m.ad_module_id
            and o.classname not like m.javapackage||'.%'
            and (3=3 and m.javapackage in ('3') or to_char('Y')=to_char(?))
          union
-        select to_char(r.name), 'Reference' as objectType, o.classname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName
+        select to_char(r.name), 'Reference' as objectType, o.classname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName, m.ad_module_id as moduleId
           from ad_model_object o, ad_reference r, ad_module m
          where o.ad_reference_id = r.ad_reference_id
            and r.ad_module_id = m.ad_module_id
            and o.classname not like m.javapackage||'.%'
            and (4=4 and m.javapackage in ('4') or to_char('Y')=to_char(?))
          union
-        select  to_char(w.name||' >> '||t.name), 'Tab' as objectType, o.classname as currentvalue, (case when m2.ad_module_id='0' then 'org.openbravo.erpWindows.*' else 'org.openbravo.erpWindows.'||m2.javapackage||'.%' end) as expectedvalue, m.name as moduleName 
+        select  to_char(w.name||' >> '||t.name), 'Tab' as objectType, o.classname as currentvalue, (case when m2.ad_module_id='0' then 'org.openbravo.erpWindows.*' else 'org.openbravo.erpWindows.'||m2.javapackage||'.%' end) as expectedvalue, m.name as moduleName, m.ad_module_id as moduleId 
           from ad_model_object o, ad_window w, ad_tab t, ad_module m, ad_module m2
          where o.ad_tab_id = t.ad_tab_id
            and t.ad_window_id = w.ad_window_id
@@ -138,7 +138,7 @@
   <SqlMethod name="checkModelObjectMapping" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-        select to_char(p.name) as objectname, 'Process' as objectType, om.mappingname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName
+        select to_char(p.name) as objectname, 'Process' as objectType, om.mappingname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName, m.ad_module_id as moduleId
           from ad_model_object o, ad_process p, ad_module m, ad_model_object_mapping om
          where o.ad_process_id = p.ad_process_id
            and p.ad_module_id = m.ad_module_id
@@ -148,7 +148,7 @@
            and m.ad_module_id !='0'
            and (1=1 and m.javapackage in ('1') or to_char('Y')=to_char(?))
          union
-        select to_char(f.name), 'Form' as objectType, om.mappingname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName
+        select to_char(f.name), 'Form' as objectType, om.mappingname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName, m.ad_module_id as moduleId
           from ad_model_object o, ad_form f, ad_module m, ad_model_object_mapping om
          where o.ad_form_id = f.ad_form_id
            and f.ad_module_id = m.ad_module_id
@@ -158,7 +158,7 @@
            and m.ad_module_id !='0'
            and (2=2 and m.javapackage in ('2') or to_char('Y')=to_char(?))
          union
-        select to_char(c.name), 'Callout' as objectType, om.mappingname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName
+        select to_char(c.name), 'Callout' as objectType, om.mappingname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName, m.ad_module_id as moduleId
           from ad_model_object o, ad_callout c, ad_module m, ad_model_object_mapping om
          where o.ad_callout_id = c.ad_callout_id
            and c.ad_module_id = m.ad_module_id
@@ -168,7 +168,7 @@
            and m.ad_module_id !='0'
            and (3=3 and m.javapackage in ('3') or to_char('Y')=to_char(?))
          union
-        select to_char(r.name), 'Reference' as objectType, om.mappingname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName
+        select to_char(r.name), 'Reference' as objectType, om.mappingname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName, m.ad_module_id as moduleId
           from ad_model_object o, ad_reference r, ad_module m, ad_model_object_mapping om
          where o.ad_reference_id = r.ad_reference_id
            and r.ad_module_id = m.ad_module_id
@@ -178,7 +178,7 @@
            and m.ad_module_id !='0'
            and (4=4 and m.javapackage in ('4') or to_char('Y')=to_char(?))
          union
-        select to_char(w.name||' >> '||t.name), 'Tab' as objectType, om.mappingname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName
+        select to_char(w.name||' >> '||t.name), 'Tab' as objectType, om.mappingname as currentvalue, m.javapackage as expectedvalue , m.name as moduleName, m.ad_module_id as moduleId
           from ad_model_object o, ad_window w, ad_tab t, ad_module m, ad_model_object_mapping om
          where o.ad_tab_id = t.ad_tab_id
            and t.ad_window_id = w.ad_window_id
@@ -213,7 +213,7 @@
            (select max(name) 
               from AD_Module_DBPrefix dbp
              where dbp.AD_Module_ID = c.AD_Module_ID) as expectedvalue, 
-           m.name as moduleName
+           m.name as moduleName, m.ad_module_id as moduleId
           from ad_table t, ad_module m, ad_package p, ad_column c
          where t.ad_package_id = p.ad_package_id
            and t.ad_table_id = c.ad_table_id
@@ -234,7 +234,7 @@
         (select max(name) 
               from AD_Module_DBPrefix dbp
              where dbp.AD_Module_ID = c.AD_Module_ID) as expectedvalue, 
-        m.name as moduleName
+        m.name as moduleName, m.ad_module_id as moduleId
           from ad_table t, ad_module m, ad_package p, ad_column c
          where t.ad_package_id = p.ad_package_id
            and t.ad_table_id = c.ad_table_id
@@ -264,7 +264,7 @@
       <![CDATA[
         select i.name as objectName, (select max(name) 
                                        from AD_Module_DBPrefix p
-                                      where p.AD_Module_ID = i.AD_Module_ID) as expectedvalue
+                                      where p.AD_Module_ID = i.AD_Module_ID) as expectedvalue, m.name as moduleName, m.ad_module_id as moduleId
           from ad_auxiliarInput i, AD_Module m
          where i.ad_module_id != '0'
            and m.ad_module_id = i.ad_module_id
@@ -285,7 +285,7 @@
   <SqlMethod name="checkBaseReferenceWithParent" type="preparedStatement" return="multiple">
     <Sql>
       <![CDATA[
-        select r.name as objectName, m.name as moduleName, r2.name as currentvalue
+        select r.name as objectName, m.name as moduleName, r2.name as currentvalue, m.ad_module_id as moduleId
           from ad_reference r, ad_module m, ad_reference r2
          where r.isBaseReference = 'Y'
            and r.parentReference_ID is not null

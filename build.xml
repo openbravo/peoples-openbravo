@@ -648,6 +648,10 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="trl.clean" inheritAll="true" inheritRefs="true" />
   </target>
 
+  <target name="trl.remove.unused" depends="init">
+    <ant dir="${base.src}" target="trl.remove.unused" inheritAll="true" inheritRefs="true" />
+  </target>
+
   <target name="translate" depends="init">
     <ant dir="${base.src}" target="translate" inheritAll="true" inheritRefs="true" />
   </target>

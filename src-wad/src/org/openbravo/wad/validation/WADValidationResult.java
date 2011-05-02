@@ -33,6 +33,12 @@ import org.apache.log4j.Logger;
 class WADValidationResult {
   private static final Logger log = Logger.getLogger(WADValidationResult.class);
 
+  /*
+   * Whitelist of modules for which all validation problems will be ignored and not reported. So far
+   * only the special module "org.openbravo.deprecated.cleanupv3" is ignored.
+   */
+  private static final String[] moduleWhitelist = { "677192D0C60F411384832241227360E3" };
+
   /**
    * Types of possible WAD validations, they have an identifier and a description
    * 
@@ -71,8 +77,13 @@ class WADValidationResult {
    * @param warning
    *          warning message
    */
+  public void addWarning(String moduleId, String moduleName, WADValidationType validationType,
+      String warning) {
+    addToResult(moduleId, moduleName, warnings, validationType, warning);
+  }
+
   public void addWarning(WADValidationType validationType, String warning) {
-    addToResult(warnings, validationType, warning);
+    addWarning(null, null, validationType, warning);
   }
 
   /**
@@ -83,16 +94,27 @@ class WADValidationResult {
    * @param warning
    *          error message
    */
-  public void addError(WADValidationType validationType, String warning) {
-    addToResult(errors, validationType, warning);
+  public void addError(String moduleId, String moduleName, WADValidationType validationType,
+      String warning) {
+    addToResult(moduleId, moduleName, errors, validationType, warning);
   }
 
-  public void addModule(String moduleName) {
-    modules.add(moduleName);
-  }
+  private void addToResult(String moduleId, String moduleName,
+      Map<WADValidationType, List<String>> result, WADValidationType validationType, String msg) {
 
-  private void addToResult(Map<WADValidationType, List<String>> result,
-      WADValidationType validationType, String msg) {
+    // if not called for general error
+    if (moduleId != null && moduleName != null) {
+      // skip modules in whilelist completely
+      for (String s : moduleWhitelist) {
+        if (s.equals(moduleId)) {
+          return;
+        }
+      }
+
+      if (!modules.contains(moduleName)) {
+        modules.add(moduleName);
+      }
+    }
 
     List<String> msgList = result.get(validationType);
     if (msgList == null) {
