@@ -4,15 +4,15 @@
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
@@ -46,7 +46,6 @@
 .OBFormFieldError {
   font-family: 'lucida sans', sans-serif;
   padding: 4px 8px 4px 8px;
-  /*width: 100%;*/
 }
 
 .OBFormFieldLabel,
@@ -108,11 +107,50 @@
 .OBFormFieldDateInputDisabled,
 .OBFormFieldDateInputFocused,
 .OBFormFieldDateInputError,
-.OBFormFieldDateInputHint {
-  font-family: arial, sans-serif; 
+.OBFormFieldDateInputHint,
+
+.OBFormFieldNumberInput,
+.OBFormFieldNumberDisabled,
+.OBFormFieldNumberFocused,
+.OBFormFieldNumberError,
+.OBFormFieldNumberHint,
+
+.OBFormFieldDateInputRequired,
+.OBFormFieldDateInputRequiredFocused,
+.OBFormFieldDateInputRequiredDisabled,
+.OBFormFieldDateInputRequiredError,
+.OBFormFieldDateInputRequiredHint {
+  font-family: arial, sans-serif;
   font-size: 12px;
   padding: 2px 2px 0px 2px;
-  /*width: 100%;*/
+}
+
+.OBFormFieldDateInputRequired,
+.OBFormFieldDateInputRequiredFocused,
+.OBFormFieldDateInputRequiredDisabled,
+.OBFormFieldDateInputRequiredError,
+.OBFormFieldDateInputRequiredHint,
+
+.OBFormFieldDateInput,
+.OBFormFieldDateInputDisabled,
+.OBFormFieldDateInputFocused,
+.OBFormFieldDateInputError,
+.OBFormFieldDateInputHint {
+  width: 100%;
+}
+
+.OBFormFieldNumberInput,
+.OBFormFieldNumberInputDisabled,
+.OBFormFieldNumberInputFocused,
+.OBFormFieldNumberInputError,
+.OBFormFieldNumberInputHint,
+
+.OBFormFieldNumberInputRequired,
+.OBFormFieldNumberInputRequiredDisabled,
+.OBFormFieldNumberInputRequiredFocused,
+.OBFormFieldNumberInputRequiredError,
+.OBFormFieldNumberInputRequiredHint {
+  width: 50%;
 }
 
 .OBFormFieldStatic,
@@ -150,7 +188,19 @@
 .OBFormFieldDateInput,
 .OBFormFieldDateInputFocused,
 .OBFormFieldDateInputError,
-.OBFormFieldDateInputHint {
+.OBFormFieldDateInputHint,
+
+.OBFormFieldNumberInput,
+.OBFormFieldNumberInputDisabled,
+.OBFormFieldNumberInputFocused,
+.OBFormFieldNumberInputError,
+.OBFormFieldNumberInputHint,
+
+.OBFormFieldNumberInputRequired,
+.OBFormFieldNumberInputRequiredDisabled,
+.OBFormFieldNumberInputRequiredFocused,
+.OBFormFieldNumberInputRequiredError,
+.OBFormFieldNumberInputRequiredHint {
   border: 1px solid #cdd7bb;
   background-color: #F5F7F1;
   color: #333333;
@@ -164,6 +214,7 @@
 .OBFormFieldInputRequiredDisabled,
 .OBFormFieldSelectInputRequiredDisabled,
 .OBFormFieldDateInputRequiredDisabled,
+.OBFormFieldNumberInputRequiredDisabled,
 .OBFormFieldInputDisabled,
 .OBFormFieldSelectInputDisabled,
 .OBFormFieldDateInputDisabled {
@@ -185,7 +236,6 @@
 .OBFormFieldDateInputError,
 .OBFormFieldDateInputHint {
   margin-right: -6px;
- /*height: 17px !important;*/
 }
 
 .OBFormFieldSelectControl,
@@ -196,12 +246,12 @@
   font-family: arial, sans-serif; 
   font-size: 12px;
   color: #333;
-  /*width: 100%;*/
   border: 0px 0px 0px 0px;
 }
 
 .OBFormFieldInputRequiredError,
 .OBFormFieldDateInputRequiredError,
+.OBFormFieldNumberInputRequiredError,
 .OBFormFieldInputError,
 .OBFormFieldSelectInputError,
 .OBFormFieldDateInputError,
@@ -238,6 +288,9 @@
 .OBFormFieldDateInputRequired:focus,
 .OBFormFieldDateInputRequiredFocused,
 .OBFormFieldDateInputRequiredSelectedFocused,
+.OBFormFieldNumberInputRequired:focus,
+.OBFormFieldNumberInputRequiredFocused,
+.OBFormFieldNumberInputRequiredSelectedFocused,
 
 .OBFormFieldInput:focus,
 .OBFormFieldInputFocused,
@@ -247,7 +300,10 @@
 .OBFormFieldSelectInput:focus,
 .OBFormFieldDateInput:focus,
 .OBFormFieldDateInputFocused,
-.OBFormFieldDateInputSelectedFocused {
+.OBFormFieldDateInputSelectedFocused
+.OBFormFieldNumberInput:focus,
+.OBFormFieldNumberInputFocused,
+.OBFormFieldNumberInputSelectedFocused {
   -moz-outline-offset: -1;
   outline-offset: -1;
   border: 1px solid #fa962f;
@@ -271,6 +327,7 @@
 .OBFormFieldInputRequiredHint,
 .OBFormFieldSelectInputRequiredHint,
 .OBFormFieldDateInputRequiredHint,
+.OBFormFieldNumberInputRequiredHint,
 .OBFormFieldInputHint,
 .OBFormFieldSelectInputHint,
 .OBFormFieldDateInputHint {
@@ -306,7 +363,6 @@
 .OBFormFieldPickListCellSelectedFocused,
 .OBFormFieldPickListCellSelectedDark {
   background-color: #ddf0ff;
-  //background: url(./images/form/picklist-rollover.png) repeat-x scroll;
 }
 
 .OBFormFieldInputRequired,
@@ -322,7 +378,12 @@
 .OBFormFieldDateInputRequired,
 .OBFormFieldDateInputRequiredFocused,
 .OBFormFieldDateInputRequiredError,
-.OBFormFieldDateInputRequiredHint {
+.OBFormFieldDateInputRequiredHint,
+
+.OBFormFieldNumberInputRequired,
+.OBFormFieldNumberInputRequiredFocused,
+.OBFormFieldNumberInputRequiredError,
+.OBFormFieldNumberInputRequiredHint {
   background-color: #ffffcc;  
 }
 
@@ -366,7 +427,7 @@
 .OBDateChooserWeekendSelectedOver,
 .OBDateChooserWeekendSelectedDown,
 .OBDateChooserWeekendDisabled {
-  font-family: arial, sans-serif;
+  font-family: 'lucida sans', sans-serif;
   font-size: 12px;
   background-color: transparent;
   color: #333333;
