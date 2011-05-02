@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -20,7 +20,6 @@ import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.DebtPayment;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -38,15 +37,11 @@ public class PaymentMonitor {
   public static void updateInvoice(Invoice invoice) {
     // Check for PaymentMonitor-disabling switch.
     try {
-      // Use Utility.getPropertyValue for backward compatibility
       try {
         Preferences.getPreferenceValue("PaymentMonitor", true, invoice.getClient(), invoice
             .getOrganization(), null, null, null);
         return;
       } catch (PropertyNotFoundException e) {
-        if (Utility.getPropertyValue("PaymentMonitor", invoice.getClient().getId(), invoice
-            .getOrganization().getId()) != null)
-          return;
       }
     } catch (PropertyException e) {
       return;
@@ -126,7 +121,7 @@ public class PaymentMonitor {
     if (payment.getSettlementCancelled() == null)
       return getDaysToDue(payment.getDueDate());
     final OBCriteria<DebtPayment> obc = OBDal.getInstance().createCriteria(DebtPayment.class);
-    obc.add(Expression.eq("settlementGenerate", payment.getSettlementCancelled()));
+    obc.add(Restrictions.eq("settlementGenerate", payment.getSettlementCancelled()));
     obc.addOrderBy("dueDate", true);
     final List<DebtPayment> payments = obc.list();
     ArrayList<Long> allDaysToDue = new ArrayList<Long>();

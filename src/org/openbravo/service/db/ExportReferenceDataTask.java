@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.model.ad.system.Client;
 
@@ -87,7 +87,7 @@ public class ExportReferenceDataTask extends ReferenceDataTask {
   private Client getClient(String clientValue) {
     final org.openbravo.dal.service.OBCriteria<Client> obc = org.openbravo.dal.service.OBDal
         .getInstance().createCriteria(Client.class);
-    obc.add(Expression.eq(Client.PROPERTY_SEARCHKEY, clientValue));
+    obc.add(Restrictions.eq(Client.PROPERTY_SEARCHKEY, clientValue));
     final List<Client> result = obc.list();
     if (result.size() == 0) {
       throw new OBException("No client found using " + clientValue + " as the value in the query");

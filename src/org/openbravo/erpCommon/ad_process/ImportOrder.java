@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2009 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2011 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_process;
@@ -26,16 +26,12 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -411,9 +407,9 @@ public class ImportOrder extends ImportProcess {
           if (data[i].documentno != null && !data[i].documentno.equals("")) {
             corder.documentno = data[i].documentno;
           } else {
-            String docTargetType = ImportOrderData.cDoctypeTarget(con, conn,
-                Utility.getContext(conn, vars, "#User_Client", "ImportOrder"),
-                Utility.getContext(conn, vars, "#User_Org", "ImportOrder"));
+            String docTargetType = ImportOrderData.cDoctypeTarget(con, conn, Utility.getContext(
+                conn, vars, "#User_Client", "ImportOrder"), Utility.getContext(conn, vars,
+                "#User_Org", "ImportOrder"));
             corder.documentno = Utility.getDocumentNo(conn, vars, "", "C_Order", docTargetType,
                 docTargetType, false, true);
           }
@@ -814,7 +810,8 @@ public class ImportOrder extends ImportProcess {
         line.dateordered = data[i].dateordered.equals("") ? DateTimeData.today(conn)
             : data[i].dateordered;
         line.mWarehouseId = (data[i].mWarehouseId == null || data[i].mWarehouseId.equals("")) ? vars
-            .getWarehouse() : data[i].mWarehouseId;
+            .getWarehouse()
+            : data[i].mWarehouseId;
         if (line.cUomId == null || line.cUomId.equals(""))
           line.cUomId = ProductPriceData.selectCUomIdByProduct(conn, line.mProductId);
         if (line.cUomId == null || line.cUomId.equals(""))
@@ -835,62 +832,6 @@ public class ImportOrder extends ImportProcess {
         data[i].iIsimported = "Y";
         data[i].processed = "Y";
         data[i].update(con, conn);
-
-        if (!isNewFlow()) {
-          String[] arrayPayment = { data[i].paymentrule1, data[i].paymentrule2 };
-          String[] arrayAmount = { data[i].paymentamount1, data[i].paymentamount2 };
-          for (int k = 0; k < arrayPayment.length; k++) {
-            if (!arrayPayment[k].equals("")) {
-              CDebtpaymentData cdebtpayment = new CDebtpaymentData();
-              cdebtpayment.adClientId = data[i].adClientId;
-              cdebtpayment.adOrgId = data[i].adOrgId;
-              cdebtpayment.createdby = getAD_User_ID();
-              cdebtpayment.updatedby = getAD_User_ID();
-              cdebtpayment.cBpartnerId = corder_cbpartnerid;
-              cdebtpayment.cCurrencyId = corder_ccurrencyid;
-              /*
-               * cdebtpayment.cBankaccountId = ; cdebtpayment.cCashbookId = ;
-               */
-              cdebtpayment.paymentrule = arrayPayment[k];
-              cdebtpayment.amount = arrayAmount[k];
-              cdebtpayment.ispaid = "N";
-              cdebtpayment.dateplanned = data[i].dateordered.equals("") ? DateTimeData.today(conn)
-                  : data[i].dateordered;
-              cdebtpayment.ismanual = "N";
-              cdebtpayment.isvalid = "Y";
-              cdebtpayment.changesettlementcancel = "N";
-              cdebtpayment.cancelProcessed = "N";
-              cdebtpayment.generateProcessed = "N";
-              cdebtpayment.glitemamt = "0";
-              cdebtpayment.isdirectposting = "N";
-              cdebtpayment.status = "DE";
-              cdebtpayment.statusInitial = "DE";
-              cdebtpayment.cOrderId = data[i].cOrderId;
-              // Looking for same payment yet inserted
-              ImportOrderData[] paymentInserted = ImportOrderData.selectPaymentInserted(conn,
-                  cdebtpayment.adClientId, cdebtpayment.adOrgId, cdebtpayment.createdby,
-                  cdebtpayment.updatedby, cdebtpayment.cBpartnerId, cdebtpayment.cCurrencyId,
-                  cdebtpayment.paymentrule, cdebtpayment.amount, cdebtpayment.ispaid,
-                  cdebtpayment.ismanual, cdebtpayment.isvalid, cdebtpayment.changesettlementcancel,
-                  cdebtpayment.cancelProcessed, cdebtpayment.generateProcessed,
-                  cdebtpayment.glitemamt, cdebtpayment.isdirectposting, cdebtpayment.status,
-                  cdebtpayment.statusInitial, cdebtpayment.cOrderId);
-              if (paymentInserted != null && paymentInserted.length == 0) {
-                try {
-                  cdebtpayment.cDebtPaymentId = SequenceIdData.getUUID();
-                  cdebtpayment.insert(con, conn);
-                } catch (ServletException ex) {
-                  if (log4j.isDebugEnabled())
-                    log4j.debug("Insert Order - " + ex.toString());
-                  conn.releaseRollbackConnection(con);
-                  ImportOrderData.importOrderError(conn, ex.toString(), I_Order_ID);
-                  noInsert--;
-                  continue;
-                }
-              }
-            }
-          }
-        }
 
         try {
           String result = null;
@@ -950,8 +891,8 @@ public class ImportOrder extends ImportProcess {
             vars.getLanguage()));
       } else {
         myError.setType("Error");
-        myError
-            .setTitle(Utility.messageBD(conn, " No orders could be imported", vars.getLanguage()));
+        myError.setTitle(Utility
+            .messageBD(conn, " No orders could be imported", vars.getLanguage()));
       }
       myError.setMessage(Utility.messageBD(conn, getLog(), vars.getLanguage()));
 
@@ -978,8 +919,8 @@ public class ImportOrder extends ImportProcess {
   String cOrderPost(Connection con, ConnectionProvider conn, VariablesSecureApp vars,
       String strcOrderId, String order_documentno) throws IOException, ServletException {
     String pinstance = SequenceIdData.getUUID();
-    PInstanceProcessData.insertPInstance(con, conn, pinstance, "104", strcOrderId, "N",
-        vars.getUser(), vars.getClient(), vars.getOrg());
+    PInstanceProcessData.insertPInstance(con, conn, pinstance, "104", strcOrderId, "N", vars
+        .getUser(), vars.getClient(), vars.getOrg());
     ImportOrderData.cOrderPost0(con, conn, pinstance);
 
     PInstanceProcessData[] pinstanceData = PInstanceProcessData.selectConnection(con, conn,
@@ -999,25 +940,4 @@ public class ImportOrder extends ImportProcess {
     }
     return messageResult;
   }
-
-  private boolean isNewFlow() {
-    // Extra check for Payment Flow-disabling switch
-    try {
-      // Use Utility.getPropertyValue for backward compatibility
-      try {
-        Preferences.getPreferenceValue("FinancialManagement", true, null, null, OBContext
-            .getOBContext().getUser(), null, null);
-        return true;
-      } catch (PropertyNotFoundException e) {
-        if (Utility.getPropertyValue("FinancialManagement", OBContext.getOBContext()
-            .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId()) != null) {
-          return true;
-        } else
-          return false;
-      }
-    } catch (PropertyException e) {
-      return false;
-    }
-  }
-
 }

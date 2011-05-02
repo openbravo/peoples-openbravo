@@ -30,23 +30,23 @@ static Logger log4j = Logger.getLogger(CreateAccountingConfigurationData.class);
   }
 
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("c_acctschema_id") || fieldName.equals("cAcctschemaId"))
+    if (fieldName.equalsIgnoreCase("C_ACCTSCHEMA_ID") || fieldName.equals("cAcctschemaId"))
       return cAcctschemaId;
-    else if (fieldName.equalsIgnoreCase("ad_client_id") || fieldName.equals("adClientId"))
+    else if (fieldName.equalsIgnoreCase("AD_CLIENT_ID") || fieldName.equals("adClientId"))
       return adClientId;
-    else if (fieldName.equalsIgnoreCase("ad_org_id") || fieldName.equals("adOrgId"))
+    else if (fieldName.equalsIgnoreCase("AD_ORG_ID") || fieldName.equals("adOrgId"))
       return adOrgId;
-    else if (fieldName.equalsIgnoreCase("ad_table_id") || fieldName.equals("adTableId"))
+    else if (fieldName.equalsIgnoreCase("AD_TABLE_ID") || fieldName.equals("adTableId"))
       return adTableId;
-    else if (fieldName.equalsIgnoreCase("name"))
+    else if (fieldName.equalsIgnoreCase("NAME"))
       return name;
-    else if (fieldName.equalsIgnoreCase("c_period_id") || fieldName.equals("cPeriodId"))
+    else if (fieldName.equalsIgnoreCase("C_PERIOD_ID") || fieldName.equals("cPeriodId"))
       return cPeriodId;
-    else if (fieldName.equalsIgnoreCase("value"))
+    else if (fieldName.equalsIgnoreCase("VALUE"))
       return value;
-    else if (fieldName.equalsIgnoreCase("status"))
+    else if (fieldName.equalsIgnoreCase("STATUS"))
       return status;
-    else if (fieldName.equalsIgnoreCase("isdefaultacct"))
+    else if (fieldName.equalsIgnoreCase("ISDEFAULTACCT"))
       return isdefaultacct;
    else {
      log4j.debug("Field does not exist: " + fieldName);
@@ -83,15 +83,15 @@ static Logger log4j = Logger.getLogger(CreateAccountingConfigurationData.class);
       while(continueResult && result.next()) {
         countRecord++;
         CreateAccountingConfigurationData objectCreateAccountingConfigurationData = new CreateAccountingConfigurationData();
-        objectCreateAccountingConfigurationData.cAcctschemaId = UtilSql.getValue(result, "c_acctschema_id");
-        objectCreateAccountingConfigurationData.adClientId = UtilSql.getValue(result, "ad_client_id");
-        objectCreateAccountingConfigurationData.adOrgId = UtilSql.getValue(result, "ad_org_id");
-        objectCreateAccountingConfigurationData.adTableId = UtilSql.getValue(result, "ad_table_id");
-        objectCreateAccountingConfigurationData.name = UtilSql.getValue(result, "name");
-        objectCreateAccountingConfigurationData.cPeriodId = UtilSql.getValue(result, "c_period_id");
-        objectCreateAccountingConfigurationData.value = UtilSql.getValue(result, "value");
-        objectCreateAccountingConfigurationData.status = UtilSql.getValue(result, "status");
-        objectCreateAccountingConfigurationData.isdefaultacct = UtilSql.getValue(result, "isdefaultacct");
+        objectCreateAccountingConfigurationData.cAcctschemaId = UtilSql.getValue(result, "C_ACCTSCHEMA_ID");
+        objectCreateAccountingConfigurationData.adClientId = UtilSql.getValue(result, "AD_CLIENT_ID");
+        objectCreateAccountingConfigurationData.adOrgId = UtilSql.getValue(result, "AD_ORG_ID");
+        objectCreateAccountingConfigurationData.adTableId = UtilSql.getValue(result, "AD_TABLE_ID");
+        objectCreateAccountingConfigurationData.name = UtilSql.getValue(result, "NAME");
+        objectCreateAccountingConfigurationData.cPeriodId = UtilSql.getValue(result, "C_PERIOD_ID");
+        objectCreateAccountingConfigurationData.value = UtilSql.getValue(result, "VALUE");
+        objectCreateAccountingConfigurationData.status = UtilSql.getValue(result, "STATUS");
+        objectCreateAccountingConfigurationData.isdefaultacct = UtilSql.getValue(result, "ISDEFAULTACCT");
         objectCreateAccountingConfigurationData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectCreateAccountingConfigurationData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -136,7 +136,7 @@ static Logger log4j = Logger.getLogger(CreateAccountingConfigurationData.class);
 
       result = st.executeQuery();
       if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "name").equals("0");
+        boolReturn = !UtilSql.getValue(result, "NAME").equals("0");
       }
       result.close();
     } catch(SQLException e){
@@ -238,20 +238,14 @@ static Logger log4j = Logger.getLogger(CreateAccountingConfigurationData.class);
     return(updateCount);
   }
 
-  public static int insertTableAccess(Connection conn, ConnectionProvider connectionProvider)    throws ServletException {
+  public static int deleteTableAccess(Connection conn, ConnectionProvider connectionProvider)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
-      "      INSERT INTO ad_table_access(" +
-      "                  ad_table_access_id, ad_role_id, ad_table_id, ad_client_id, ad_org_id," +
-      "                  isactive, created, createdby, updatedby, updated, isreadonly," +
-      "                  isexclude)" +
-      "      select get_uuid(), ad_role_id, '4D8C3B3C31D1410DA046140C9F024D17', ad_client_id, ad_org_id," +
-      "              'Y', now(), '100', '100', now(), 'Y'," +
-      "              'N'" +
-      "      from ad_role" +
-      "      where not exists (select 1 from ad_table_access a" +
-      "         where a.ad_role_id = ad_role.ad_role_id" +
-      "         and a.ad_table_id = '4D8C3B3C31D1410DA046140C9F024D17')";
+      "      DELETE FROM ad_table_access" +
+      "      WHERE ad_table_id = '4D8C3B3C31D1410DA046140C9F024D17'" +
+      "        AND isreadonly = 'Y'" +
+      "        AND isexclude = 'N'" +
+      "        AND created <= (SELECT created FROM ad_tab WHERE ad_tab_id = 'FF8080812F213146012F2135BC25000E')";
 
     int updateCount = 0;
     PreparedStatement st = null;

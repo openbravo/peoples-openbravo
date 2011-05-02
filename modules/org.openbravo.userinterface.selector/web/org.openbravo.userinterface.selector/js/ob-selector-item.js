@@ -370,6 +370,7 @@ isc.OBSelectorItem.addProperties({
   },
   
   setValueFromRecord: function(record){
+    var currentValue = this.getValue();
     if (!record) {
       this.setValue(null);
       this.form.setValue(this.name + '.' + this.displayField, null);

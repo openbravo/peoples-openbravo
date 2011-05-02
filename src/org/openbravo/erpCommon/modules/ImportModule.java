@@ -60,7 +60,6 @@ import org.apache.ddlutils.io.DataToArraySink;
 import org.apache.ddlutils.io.DatabaseDataIO;
 import org.apache.ddlutils.model.Database;
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -1111,9 +1110,9 @@ public class ImportModule {
           OBCriteria<org.openbravo.model.ad.module.ModuleDependency> qDependentMod = OBDal
               .getInstance().createCriteria(org.openbravo.model.ad.module.ModuleDependency.class);
           qDependentMod
-              .add(Expression.eq(org.openbravo.model.ad.module.ModuleDependency.PROPERTY_MODULE
+              .add(Restrictions.eq(org.openbravo.model.ad.module.ModuleDependency.PROPERTY_MODULE
                   + ".id", ad_module_id));
-          qDependentMod.add(Expression.eq(
+          qDependentMod.add(Restrictions.eq(
               org.openbravo.model.ad.module.ModuleDependency.PROPERTY_DEPENDENTMODULE + ".id",
               modId));
           String enforcement = null;

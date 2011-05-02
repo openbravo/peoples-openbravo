@@ -29,7 +29,7 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -659,8 +659,8 @@ public abstract class AcctServer {
     for (AcctSchema as : m_as) {
       AcctSchemaTable table = null;
       OBCriteria<AcctSchemaTable> criteria = OBDao.getFilteredCriteria(AcctSchemaTable.class,
-          Expression.eq("accountingSchema.id", as.getC_AcctSchema_ID()), Expression.eq("table.id",
-              AD_Table_ID));
+          Restrictions.eq("accountingSchema.id", as.getC_AcctSchema_ID()), Restrictions.eq(
+              "table.id", AD_Table_ID));
       criteria.setFilterOnReadableClients(false);
       criteria.setFilterOnReadableOrganization(false);
       table = (AcctSchemaTable) criteria.uniqueResult();
@@ -1607,12 +1607,11 @@ public abstract class AcctServer {
     try {
       OBCriteria<GLItemAccounts> accounts = OBDal.getInstance()
           .createCriteria(GLItemAccounts.class);
-      accounts.add(Expression.eq(GLItemAccounts.PROPERTY_GLITEM, glItem));
-      accounts
-          .add(Expression.eq(GLItemAccounts.PROPERTY_ACCOUNTINGSCHEMA, OBDal.getInstance().get(
-              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(GLItemAccounts.PROPERTY_GLITEM, glItem));
+      accounts.add(Restrictions.eq(GLItemAccounts.PROPERTY_ACCOUNTINGSCHEMA, OBDal.getInstance()
+          .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
-      accounts.add(Expression.eq(GLItemAccounts.PROPERTY_ACTIVE, true));
+      accounts.add(Restrictions.eq(GLItemAccounts.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
       accounts.setFilterOnReadableOrganization(false);
       List<GLItemAccounts> accountList = accounts.list();
@@ -1635,11 +1634,11 @@ public abstract class AcctServer {
     try {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
           .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
-      accounts.add(Expression.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
       accounts.setFilterOnReadableOrganization(false);
       List<FIN_FinancialAccountAccounting> accountList = accounts.list();

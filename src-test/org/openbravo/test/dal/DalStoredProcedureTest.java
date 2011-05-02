@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,9 +29,9 @@ import java.util.Map;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.process.ProcessInstance;
-import org.openbravo.model.ad.utility.ATTest;
-import org.openbravo.model.ad.utility.Line;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
@@ -48,66 +48,45 @@ import org.openbravo.test.base.BaseTest;
 
 public class DalStoredProcedureTest extends BaseTest {
 
-  private final static int NUM_OF_TEST_LINES = 5;
-
   /**
    * Tests the {@link CallProcess} class
    */
   public void testCallProcess() {
     setSystemAdministratorContext();
-    final ATTest attest = OBProvider.getInstance().get(ATTest.class);
-    attest.setName("junittest");
-    attest.setDescription("junittest");
-    attest.setFileName("junittest");
-    attest.setCopyLines(true);
-    attest.setDeleted(false);
-    attest.setIntroduction("junittest");
-    attest.setType("M");
 
-    for (int i = 0; i < NUM_OF_TEST_LINES; i++) {
-      final Line line = OBProvider.getInstance().get(Line.class);
-      line.setTest(attest);
-      line.setArg1(i + "_arg1");
-      line.setArg2(i + "_arg2");
-      line.setArg3(i + "_arg3");
-      line.setArgNo(new Long(i));
-      line.setSequenceNumber(new Long(i));
-      line.setHelp1(i + "_H1");
-      line.setHelp2(i + "_H2");
-      line.setHelp3(i + "_H3");
-      line.setType("T");
-      attest.getLineList().add(line);
-    }
-    OBDal.getInstance().save(attest);
-
-    final ATTest copyToTest = OBProvider.getInstance().get(ATTest.class);
-    copyToTest.setName("copyToTest");
-    copyToTest.setDescription("copyToTest");
-    copyToTest.setFileName("copyToTest");
-    copyToTest.setCopyLines(true);
-    copyToTest.setDeleted(false);
-    copyToTest.setIntroduction("copyToTest");
-    copyToTest.setType("M");
-    OBDal.getInstance().save(copyToTest);
-
+    // Set Core in development
+    final Module core = OBDal.getInstance().get(Module.class, "0");
+    core.setInDevelopment(true);
     OBDal.getInstance().flush();
 
+    final Tab tabtest = OBDal.getInstance().get(Tab.class, "100");
+
     final Map<String, String> parameters = new HashMap<String, String>();
-    parameters.put("AT_Test_ID", attest.getId());
+    parameters.put("AD_Tab_ID", tabtest.getId());
 
     final org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
-        org.openbravo.model.ad.ui.Process.class, "800096");
-    assertNotNull("No copy test line process defined with id 800096", process);
-    assertNotNull("id of attest not set", attest.getId());
-    assertEquals(NUM_OF_TEST_LINES, attest.getLineList().size());
-    assertEquals(0, copyToTest.getLineList().size());
-    final ProcessInstance pInstance = CallProcess.getInstance().call(process, copyToTest.getId(),
+        org.openbravo.model.ad.ui.Process.class, "114");
+    assertNotNull("No copy test line process defined with id 114", process);
+    assertNotNull("id of attest not set", tabtest.getId());
+    final int fieldsNo = tabtest.getADFieldList().size();
+    assertTrue(fieldsNo > 0);
+
+    final Tab copyToTab = OBProvider.getInstance().get(Tab.class);
+    copyToTab.setName("CopyToTab");
+    copyToTab.setTable(tabtest.getTable());
+    copyToTab.setWindow(tabtest.getWindow());
+    copyToTab.setSequenceNumber(new Long("10"));
+    copyToTab.setTabLevel(new Long("0"));
+    copyToTab.setModule(tabtest.getModule());
+    OBDal.getInstance().save(copyToTab);
+    OBDal.getInstance().flush();
+    final ProcessInstance pInstance = CallProcess.getInstance().call(process, copyToTab.getId(),
         parameters);
-    OBDal.getInstance().getSession().refresh(attest);
-    OBDal.getInstance().getSession().refresh(copyToTest);
-    assertEquals("@Copied@=5 lines", pInstance.getErrorMsg());
-    assertEquals(NUM_OF_TEST_LINES, attest.getLineList().size());
-    assertEquals(NUM_OF_TEST_LINES, copyToTest.getLineList().size());
+    OBDal.getInstance().getSession().refresh(tabtest);
+    OBDal.getInstance().getSession().refresh(copyToTab);
+    assertEquals("@Copied@=" + fieldsNo, pInstance.getErrorMsg());
+    assertEquals(fieldsNo, tabtest.getADFieldList().size());
+    assertEquals(fieldsNo, copyToTab.getADFieldList().size());
 
     // always rollback to prevent updating the db
     OBDal.getInstance().rollbackAndClose();

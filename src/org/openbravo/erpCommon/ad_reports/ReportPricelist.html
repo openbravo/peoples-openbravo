@@ -52,11 +52,9 @@ function imprimir()
 }
 function validate() {
 	var frm = document.frmMain;
+	markCheckedAllElements(frm.inpmProductId_IN);
 	if (frm.inpmPricelistVersion.value == ""){
 		setWindowElementFocus(frm.inpmPricelistVersion);
-	}
-	else{
-		markCheckedAllElements(frm.inpmProductId_IN);
 	}
 	return true;
 }

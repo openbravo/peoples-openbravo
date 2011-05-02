@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -217,7 +217,7 @@ public class ClientExportImportTest extends XMLBaseTest {
     os.setFilterOnReadableClients(false);
     os.setFilterOnReadableOrganization(false);
     os.setFilterOnActive(false);
-    os.add(Expression.eq("client", client));
+    os.add(Restrictions.eq("client", client));
     for (Organization o : os.list()) {
       final Set<String> naturalTree = osp.getNaturalTree(o.getId());
       // all the organizations should at least have a tree of size 2

@@ -28,6 +28,22 @@
   font-family: 'lucida sans', sans-serif; 
   font-size: 11px;
   color: #333333;
+  font-weight: normal;  /* Don't change, property set via OBStatusBarTextLabel_Status, OBStatusBarTextLabel_Title and OBStatusBarTextLabel_Field */
+}
+
+.OBStatusBarTextLabel_Status {
+  font-weight: bold;
+}
+
+.OBStatusBarTextLabel_Title {
+  font-weight: bold;
+}
+
+.OBStatusBarTextLabel_Field {
+  font-weight: normal;
+}
+
+.OBStatusBarTextLabel_Separator {
   font-weight: bold;
 }
 

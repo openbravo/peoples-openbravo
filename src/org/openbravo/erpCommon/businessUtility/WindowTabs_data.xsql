@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -88,8 +88,6 @@
         and (m.ad_window_ID = ? 
         or m.ad_process_ID = ? 
         or m.ad_form_ID = ? 
-        or m.ad_task_ID = ? 
-        or m.ad_workflow_ID = ? 
         )
        ]]>
       </Sql>
@@ -99,18 +97,15 @@
       <Parameter name="adTabId"/>
       <Parameter name="adTabId"/>
       <Parameter name="adTabId"/>
-      <Parameter name="adTabId"/>
-      <Parameter name="adTabId"/>
   </SqlMethod>
   <SqlMethod name="selectJavaInfo" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        select (CASE mo.Action WHEN 'F' THEN mo.AD_WorkFlow_ID 
+        select (CASE mo.Action
                    WHEN 'X' THEN mo.AD_Form_ID
                    WHEN 'P' THEN mo.AD_Process_ID
                    WHEN 'R' THEN mo.AD_Process_ID
                    WHEN 'C' THEN mo.AD_CallOut_ID
-                   WHEN 'T' THEN mo.AD_Task_ID
                    WHEN 'S' THEN mo.AD_Reference_ID
                    ELSE mo.AD_Tab_ID END) AS AD_Tab_ID, 
         mom.MAPPINGNAME AS TabName, mo.action

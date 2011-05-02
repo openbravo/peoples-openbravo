@@ -162,7 +162,13 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (property.getColumnName() != null) {
             final String inpName = "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
             if (jsContent.has(inpName)) {
-              convertedJson.put(property.getName(), jsContent.get(inpName));
+              final UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
+                  property.getColumnId());
+              Object jsonValue = jsContent.get(inpName);
+              if (jsonValue instanceof String) {
+                jsonValue = uiDef.createFromClassicString((String) jsonValue);
+              }
+              convertedJson.put(property.getName(), jsonValue);
             }
           }
         }

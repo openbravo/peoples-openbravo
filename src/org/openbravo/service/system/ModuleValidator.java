@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.NamingUtil;
@@ -37,7 +37,6 @@ import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
-import org.openbravo.model.ad.system.PropertyConfiguration;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Form;
@@ -46,7 +45,6 @@ import org.openbravo.model.ad.ui.Message;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TextInterface;
 import org.openbravo.model.ad.ui.Window;
-import org.openbravo.model.ad.ui.Workflow;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 
 /**
@@ -108,8 +106,6 @@ public class ModuleValidator implements SystemValidator {
 
     checkTableName(module, result);
 
-    checkConfigurationProperties(module, result);
-
     // disable this check until this issue has been commented:
     // https://issues.openbravo.com/view.php?id=7905
     // checkHasIllegalId(module, result);
@@ -167,8 +163,7 @@ public class ModuleValidator implements SystemValidator {
     final boolean reportError = hasArtifact(Window.class, module) || hasArtifact(Tab.class, module)
         || hasArtifact(Field.class, module) || hasArtifact(Element.class, module)
         || hasArtifact(TextInterface.class, module) || hasArtifact(Message.class, module)
-        || hasArtifact(Form.class, module) || hasArtifact(Menu.class, module)
-        || hasArtifact(Workflow.class, module);
+        || hasArtifact(Form.class, module) || hasArtifact(Menu.class, module);
     if (reportError) {
       result.addError(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
           + " has UI Artifacts, " + "translation required should be set to 'Y', it is now 'N'.");
@@ -194,7 +189,7 @@ public class ModuleValidator implements SystemValidator {
         obCriteria.setFilterOnActive(false);
         obCriteria.setFilterOnReadableClients(false);
         obCriteria.setFilterOnReadableOrganization(false);
-        obCriteria.add(Expression.eq(moduleProperty.getName(), module));
+        obCriteria.add(Restrictions.eq(moduleProperty.getName(), module));
         for (BaseOBObject baseOBObject : obCriteria.list()) {
           checkIllegalId(baseOBObject, result, module);
         }
@@ -226,7 +221,7 @@ public class ModuleValidator implements SystemValidator {
 
   private <T extends BaseOBObject> boolean hasArtifact(Class<T> clz, Module module) {
     final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
-    obc.add(Expression.eq("module", module));
+    obc.add(Restrictions.eq("module", module));
     return obc.count() > 0;
   }
 
@@ -319,7 +314,7 @@ public class ModuleValidator implements SystemValidator {
   private void checkTableName(Module module, SystemValidationResult result) {
     for (org.openbravo.model.ad.module.DataPackage pckg : module.getDataPackageList()) {
       OBCriteria<Table> tablesCriteria = OBDal.getInstance().createCriteria(Table.class);
-      tablesCriteria.add(Expression.eq(Table.PROPERTY_DATAPACKAGE, pckg));
+      tablesCriteria.add(Restrictions.eq(Table.PROPERTY_DATAPACKAGE, pckg));
       final List<Table> tables = tablesCriteria.list();
       for (Table table : tables) {
         final String name = table.getName();
@@ -333,22 +328,6 @@ public class ModuleValidator implements SystemValidator {
         }
       }
     }
-  }
-
-  private void checkConfigurationProperties(Module module, SystemValidationResult result) {
-    OBCriteria<PropertyConfiguration> pcs = OBDal.getInstance().createCriteria(
-        PropertyConfiguration.class);
-    pcs.add(Expression.eq(PropertyConfiguration.PROPERTY_MODULE, module));
-
-    if (pcs.count() > 0) {
-      result
-          .addError(
-              SystemValidationType.HAS_PROPERTY_CONFIGURATION,
-              "Module "
-                  + module.getName()
-                  + " has entries in Property Configuration, which is deprecated. Use preferences instead.");
-    }
-
   }
 
   private void checkJavaPackages(Module module, SystemValidationResult result) {

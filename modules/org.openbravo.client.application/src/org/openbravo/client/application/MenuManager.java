@@ -44,7 +44,6 @@ import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.Menu;
 import org.openbravo.model.ad.ui.MenuTrl;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.ui.Task;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
@@ -60,7 +59,7 @@ public class MenuManager implements Serializable {
   private static final long serialVersionUID = 1L;
 
   public static enum MenuEntryType {
-    Window, Process, ProcessManual, Report, Task, Form, External, Summary, View
+    Window, Process, ProcessManual, Report, Form, External, Summary, View
   };
 
   private MenuOption cachedMenu;
@@ -83,7 +82,6 @@ public class MenuManager implements Serializable {
         linkWindows();
         linkProcesses();
         linkForms();
-        linkTasks();
 
         removeInvisibleNodes();
 
@@ -145,56 +143,6 @@ public class MenuManager implements Serializable {
       }
     }
     return false;
-  }
-
-  private void linkTasks() {
-    final String allowedTasksHql = "select t.id from ADTask t, ADTaskAccess ata "
-        + "where ata.role.id=:roleId and t.active = true and ata.oSTask = t";
-    final Query allowedTasksQry = OBDal.getInstance().getSession().createQuery(allowedTasksHql);
-    allowedTasksQry.setParameter("roleId", OBContext.getOBContext().getRole().getId());
-    final Map<String, String> allowedTaskIds = new HashMap<String, String>();
-    for (Object taskIdObj : allowedTasksQry.list()) {
-      allowedTaskIds.put((String) taskIdObj, (String) taskIdObj);
-    }
-    final String tasksHql = "select t, amim from ADTask t, ADModelImplementation ami, ADModelImplementationMapping amim, ADTaskAccess ata "
-        + "where ata.role.id=:roleId and t.active = true and ata.oSTask = t and ami.oSTask = t and amim.modelObject=ami and amim.default=true";
-    final Query tasksQry = OBDal.getInstance().getSession().createQuery(tasksHql);
-    tasksQry.setParameter("roleId", OBContext.getOBContext().getRole().getId());
-
-    // force a load
-    final List<?> list = tasksQry.list();
-
-    // build a map is faster than walking of large lists
-    final Map<String, MenuOption> menuOptionsByTaskId = new HashMap<String, MenuOption>();
-    for (MenuOption menuOption : menuOptions) {
-      if (menuOption.getMenu() != null && menuOption.getMenu().getOSTask() != null
-          && allowedTaskIds.containsKey(menuOption.getMenu().getOSTask().getId())) {
-        menuOptionsByTaskId.put(menuOption.getMenu().getOSTask().getId(), menuOption);
-      }
-    }
-    for (Object object : list) {
-      final Object[] values = (Object[]) object;
-      final Task task = (Task) values[0];
-      final ModelImplementationMapping mim = (ModelImplementationMapping) values[1];
-      final MenuOption menuOption = menuOptionsByTaskId.get(task.getId());
-      if (menuOption != null) {
-        menuOption.setType(MenuEntryType.Task);
-        menuOption.setId(mim.getMappingName());
-      }
-    }
-
-    // Note, the following logic is based
-    // } else if (action.equals("T")) {
-    // strResultado.append("/utility/ExecuteTask.html?inpadTaskId=").append(adTaskId);
-
-    for (String taskId : menuOptionsByTaskId.keySet()) {
-      final MenuOption menuOption = menuOptionsByTaskId.get(taskId);
-      if (menuOption.getId() == null && menuOption.getMenu() != null
-          && menuOption.getMenu().getAction().equals("T")) {
-        menuOption.setType(MenuEntryType.Process);
-        menuOption.setId("/utility/ExecuteTask.html?inpadTaskId=" + taskId);
-      }
-    }
   }
 
   private void linkForms() {
@@ -626,10 +574,6 @@ public class MenuManager implements Serializable {
 
     public boolean isForm() {
       return getType().equals(MenuEntryType.Form);
-    }
-
-    public boolean isTask() {
-      return getType().equals(MenuEntryType.Task);
     }
 
     public boolean isExternal() {

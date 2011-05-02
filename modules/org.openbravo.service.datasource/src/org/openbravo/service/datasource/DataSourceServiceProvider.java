@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.util.OBClassLoader;
@@ -67,7 +67,7 @@ public class DataSourceServiceProvider {
 
           final OBCriteria<DataSource> obCriteria = OBDal.getInstance().createCriteria(
               DataSource.class);
-          obCriteria.add(Expression.eq(DataSource.PROPERTY_NAME, name));
+          obCriteria.add(Restrictions.eq(DataSource.PROPERTY_NAME, name));
           if (!obCriteria.list().isEmpty()) {
             dataSource = obCriteria.list().get(0);
           }

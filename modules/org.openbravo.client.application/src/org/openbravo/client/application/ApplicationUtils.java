@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -168,8 +168,8 @@ public class ApplicationUtils {
 
       final OBCriteria<RoleOrganization> roleOrgs = OBDal.getInstance().createCriteria(
           RoleOrganization.class);
-      roleOrgs.add(Expression.eq(RoleOrganization.PROPERTY_ROLE, role));
-      roleOrgs.add(Expression.eq(RoleOrganization.PROPERTY_ORGADMIN, true));
+      roleOrgs.add(Restrictions.eq(RoleOrganization.PROPERTY_ROLE, role));
+      roleOrgs.add(Restrictions.eq(RoleOrganization.PROPERTY_ORGADMIN, true));
 
       return roleOrgs.list();
 
@@ -187,8 +187,8 @@ public class ApplicationUtils {
       OBContext.setAdminMode();
 
       final OBCriteria<UserRoles> userRoles = OBDal.getInstance().createCriteria(UserRoles.class);
-      userRoles.add(Expression.eq(UserRoles.PROPERTY_USERCONTACT, user));
-      userRoles.add(Expression.eq(UserRoles.PROPERTY_ROLEADMIN, true));
+      userRoles.add(Restrictions.eq(UserRoles.PROPERTY_USERCONTACT, user));
+      userRoles.add(Restrictions.eq(UserRoles.PROPERTY_ROLEADMIN, true));
 
       return userRoles.list();
 

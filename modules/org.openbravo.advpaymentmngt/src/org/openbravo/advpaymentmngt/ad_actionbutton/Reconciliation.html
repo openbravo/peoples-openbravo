@@ -97,7 +97,7 @@ function validate(action) {
 }
 
 function closeThisPage() {
-    parent.window.close();
+    closePage();
     return true;
 }
 
@@ -108,7 +108,7 @@ function validateDate(element) {
 
 function submitThisPage(strCommand) {
   if (validate(strCommand)) {
-    submitCommandForm(strCommand, false, null, null, '_top');
+    submitCommandForm(strCommand, false, null, null);
     return true;
   }
   return true;

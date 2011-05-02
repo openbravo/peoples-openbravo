@@ -79,7 +79,7 @@ public class DataToJsonConverter {
         for (String key : dataInstance.keySet()) {
           final Object value = dataInstance.get(key);
           if (value instanceof BaseOBObject) {
-            addBaseOBObject(jsonObject, key, null, (BaseOBObject) value);
+            addBaseOBObject(jsonObject, null, key, null, (BaseOBObject) value);
           } else {
             // TODO: format!
             jsonObject.put(key, convertPrimitiveValue(value));
@@ -149,8 +149,8 @@ public class DataToJsonConverter {
             // TODO: format!
             jsonObject.put(property.getName(), convertPrimitiveValue(property, value));
           } else {
-            addBaseOBObject(jsonObject, property.getName(), property.getReferencedProperty(),
-                (BaseOBObject) value);
+            addBaseOBObject(jsonObject, property, property.getName(),
+                property.getReferencedProperty(), (BaseOBObject) value);
           }
         } else {
           jsonObject.put(property.getName(), JSONObject.NULL);
@@ -163,8 +163,9 @@ public class DataToJsonConverter {
         }
         final Object value = DalUtil.getValueFromPath(bob, additionalProperty);
         if (value instanceof BaseOBObject) {
-          addBaseOBObject(jsonObject, additionalProperty, getPropertyFromPath(bob,
-              additionalProperty).getReferencedProperty(), (BaseOBObject) value);
+          final Property additonalPropertyObject = getPropertyFromPath(bob, additionalProperty);
+          addBaseOBObject(jsonObject, additonalPropertyObject, additionalProperty,
+              additonalPropertyObject.getReferencedProperty(), (BaseOBObject) value);
         } else {
           final Property property = DalUtil
               .getPropertyFromPath(bob.getEntity(), additionalProperty);
@@ -210,8 +211,8 @@ public class DataToJsonConverter {
     return result;
   }
 
-  private void addBaseOBObject(JSONObject jsonObject, String propertyName,
-      Property referencedProperty, BaseOBObject obObject) throws JSONException {
+  private void addBaseOBObject(JSONObject jsonObject, Property referencingProperty,
+      String propertyName, Property referencedProperty, BaseOBObject obObject) throws JSONException {
     // jsonObject.put(propertyName, toJsonObject(obObject, DataResolvingMode.SHORT));
     if (referencedProperty != null) {
       jsonObject.put(propertyName, obObject.get(referencedProperty.getName()));
@@ -219,7 +220,12 @@ public class DataToJsonConverter {
       jsonObject.put(propertyName, obObject.getId());
     }
     // jsonObject.put(propertyName + "." + JsonConstants.ID, obObject.getId());
-    jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER, obObject.getIdentifier());
+    if (referencingProperty != null && referencingProperty.hasDisplayColumn()) {
+      jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER,
+          obObject.get(referencingProperty.getDisplayPropertyName()));
+    } else {
+      jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER, obObject.getIdentifier());
+    }
   }
 
   // TODO: do some form of formatting here?

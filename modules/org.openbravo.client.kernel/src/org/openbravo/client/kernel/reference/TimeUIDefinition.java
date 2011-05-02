@@ -53,8 +53,14 @@ public class TimeUIDefinition extends UIDefinition {
 
   private SimpleDateFormat getClassicFormat() {
     if (classicFormat == null) {
-      classicFormat = new SimpleDateFormat((String) OBPropertiesProvider.getInstance()
-          .getOpenbravoProperties().get("dateTimeFormat.java"));
+      String dateTimeFormat = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .get("dateTimeFormat.java");
+      if (dateTimeFormat.contains(" ")) {
+        dateTimeFormat = dateTimeFormat.substring(dateTimeFormat.indexOf(" ") + 1);
+      } else {
+        dateTimeFormat = "HH:mm:ss";
+      }
+      classicFormat = new SimpleDateFormat(dateTimeFormat);
       classicFormat.setLenient(true);
     }
     return classicFormat;

@@ -70,6 +70,12 @@ OB.ViewFormProperties = {
   // Name to the first focused field defined in AD
   firstFocusedField: null,
 
+  // Name of the fields shown in status bar
+  statusBarFields: [],
+
+  // Last returned array of function getStatusBarFields
+  statusBarFieldsJSArray: [],
+
   // is set in the OBNoteSectionItem.initWidget
   noteSection: null,
   
@@ -99,12 +105,36 @@ OB.ViewFormProperties = {
     }
     delete this._preventFocusChanges;
   },
+
+  getStatusBarFields: function() {
+    var statusBarFields = [[],[]], i, item, value;
+    for(i = 0; i < this.statusBarFields.length; i++) {
+      item = this.getItem(this.statusBarFields[i]);
+      value = item.getDisplayValue();
+      if(item && value !== null && value !== '') {
+
+        if(value === item.getTitle() && typeof item.getValue() === 'boolean') { // Checkbox items return the title as display value
+          if (item.getValue()) {
+            value = OB.I18N.getLabel('OBUIAPP_Yes');
+          } else {
+            value = OB.I18N.getLabel('OBUIAPP_No');
+          }
+        }
+
+        statusBarFields[0].push(item.getTitle());
+        statusBarFields[1].push(value);
+      }
+    }
+    this.statusBarFieldsJSArray = statusBarFields;
+    return statusBarFields;
+  },
   
   setHasChanged: function(value) {
     this.hasChanged = value;
     this.view.updateTabTitle();
-    if (value && !this.isNew) {
-      this.view.statusBar.setStateLabel('OBUIAPP_Editing', this.view.statusBar.newIcon);
+    if (value && !this.isNew && this.view.statusBar.mode !== 'EDIT') {
+      this.view.statusBar.mode = "EDIT";
+      this.view.statusBar.setContentLabel(this.view.statusBar.newIcon, 'OBUIAPP_Editing', this.statusBarFieldsJSArray);
     }
     
     if (value) {
@@ -152,15 +182,13 @@ OB.ViewFormProperties = {
       this.validateAfterFicReturn = true;
     }
     
-    // note buttons are updated after fic return
-//    this.view.toolBar.updateButtonState(true);
+
     this.ignoreFirstFocusEvent = preventFocus;
     this.retrieveInitialValues(isNew);
     
     if (isNew) {
-      this.view.statusBar.setStateLabel('OBUIAPP_New', this.view.statusBar.newIcon);
-    } else {
-      this.view.statusBar.setStateLabel();
+      this.view.statusBar.mode = 'NEW';
+      this.view.statusBar.setContentLabel(this.view.statusBar.newIcon, 'OBUIAPP_New');
     }
   },
   
@@ -408,7 +436,7 @@ OB.ViewFormProperties = {
     var parentId = this.view.getParentId(), requestParams, parentColumn, me = this, mode;
     // note also in this case initial vvalues are passed in as in case of grid
     // editing the unsaved/error values from a previous edit session are maintained
-    var allProperties = this.view.getContextInfo(false, true, false, false);
+    var allProperties = this.view.getContextInfo(false, true, false, true);
     
     if (isNew) {
       mode = 'NEW';
@@ -429,6 +457,9 @@ OB.ViewFormProperties = {
     allProperties._entityName = this.view.entity;
     
     this.setDisabled(true);
+
+    // note that only the fields with errors are validated anyway
+    this.validateAfterFicReturn = true;
 
     // get the editRow before doing the call
     var editRow = me.view.viewGrid.getEditRow();
@@ -465,6 +496,7 @@ OB.ViewFormProperties = {
     if (!data || !data.columnValues) {
       this.setDisabled(false);
       this.validate();
+      delete this.inFicCall;
       return;
     }
     
@@ -557,7 +589,11 @@ OB.ViewFormProperties = {
     this.markForRedraw();
 
     this.view.toolBar.updateButtonState(true);
-    
+    if (request.params.MODE === 'EDIT') {
+      this.view.statusBar.mode = 'VIEW';
+      this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());
+    }
+
     // note onFieldChanged uses the form.readOnly set above
     this.onFieldChanged(this);
 
@@ -573,6 +609,12 @@ OB.ViewFormProperties = {
     if (editValues && editValues.actionAfterFicReturn) {
       OB.Utilities.callAction(editValues.actionAfterFicReturn);
       delete editValues.actionAfterFicReturn;
+    }
+
+    if(data.jscode) {
+      for(i = 0; i < data.jscode.length; i++) {
+        eval(data.jscode[i]);
+      }
     }
   },
   
@@ -597,6 +639,9 @@ OB.ViewFormProperties = {
             this.getFocusItem().focusInItem();
           }
         }
+      } else {
+        this.redraw();
+        this.view.viewGrid.refreshEditRow();
       }
     }
   },
@@ -692,6 +737,14 @@ OB.ViewFormProperties = {
       // which results it to not be sent to the server anymore
       this.setValue(field.name, null);
     }
+    
+    // store the textualvalue so that it is correctly send back to the server
+    if (field) {
+      var typeInstance = SimpleType.getType(field.type);
+      if (columnValue.classicValue && typeInstance.decSeparator) {
+        this.setTextualValue(field.name, columnValue.classicValue, typeInstance);
+      }
+    }
   },
   
   setColumnValuesInEditValues: function(columnName, columnValue, editValues){
@@ -746,9 +799,33 @@ OB.ViewFormProperties = {
       // note: do not use clearvalue as this removes the value from the form
       // which results it to not be sent to the server anymore
       editValues[prop] = null;
-    }    
+    }
+    
+    // store the textualvalue so that it is correctly send back to the server
+    if (field) {
+      var typeInstance = SimpleType.getType(field.type);
+      if (columnValue.classicValue && typeInstance.decSeparator) {
+        this.setTextualValue(field.name, columnValue.classicValue, typeInstance, editValues);
+      }
+    }
   },
   
+  // note textValue is in user format using users decimal and group separator
+  setTextualValue: function(fldName, textValue, type, editValues) {    
+    if (!textValue || textValue.trim() === '') {
+      textValue = '';
+    } else {
+      textValue = OB.Utilities.Number.OBMaskedToOBPlain(textValue, type.decSeparator, type.groupSeparator);
+      textValue = textValue.replace(type.decSeparator, '.');
+    }
+    if (editValues) {
+      editValues[fldName + '_textualValue'] = textValue;
+    } else if (this.grid) {
+      this.grid.getEditValues(this.grid.getEditRow())[fldName + '_textualValue'] = textValue;
+    }
+    this.setValue(fldName + '_textualValue', textValue);
+  },
+
   // called explicitly onblur and when non-editable fields change
   handleItemChange: function(item){
   
@@ -771,7 +848,7 @@ OB.ViewFormProperties = {
   // note item can be null, is also called when the form is re-shown
   // to recompute combos
   doChangeFICCall: function(item){
-    var parentId = null, me = this, requestParams, allProperties = this.view.getContextInfo(false, true, false, false);
+    var parentId = null, me = this, requestParams, allProperties = this.view.getContextInfo(false, true, false, true);
     if (this.view.parentProperty) {
       parentId = this.view.getParentId();
     }
@@ -843,7 +920,8 @@ OB.ViewFormProperties = {
     this.view.messageBar.hide();
     this.resetValues();
     this.setHasChanged(false);
-    this.view.statusBar.setStateLabel(null);
+    this.view.statusBar.mode = 'VIEW';
+    this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());
     this.view.toolBar.updateButtonState(true);
   },
   
@@ -893,6 +971,15 @@ OB.ViewFormProperties = {
         recordIndex = view.viewGrid.data.indexOf(record);
       }
       
+      // not in the filter, insert the record in the cachedata so it will be made visible
+      if (status === isc.RPCResponse.STATUS_SUCCESS && recordIndex === -1) {
+        var visibleRows = view.viewGrid.body.getVisibleRows();
+        if (visibleRows[0] !== -1) {
+          view.viewGrid.data.insertCacheData(data, visibleRows[0]);
+          recordIndex = visibleRows[0];
+        }
+      }
+      
       if (recordIndex || recordIndex === 0) {
         // if this is not done the selection gets lost
         localRecord = view.viewGrid.data.get(recordIndex);
@@ -905,6 +992,8 @@ OB.ViewFormProperties = {
           localRecord.id = localRecord._newId;
           delete localRecord._newId;
         }
+        
+        view.viewGrid.scrollToRow(recordIndex);
       }
       
       if (status === isc.RPCResponse.STATUS_SUCCESS) {
@@ -912,9 +1001,15 @@ OB.ViewFormProperties = {
         form.rememberValues();
         
         //view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_SaveSuccess'));
-        view.statusBar.setStateLabel('OBUIAPP_Saved', view.statusBar.checkedIcon);
+        this.view.statusBar.mode = 'SAVED';
+        view.statusBar.setContentLabel(view.statusBar.checkedIcon, 'OBUIAPP_Saved', this.getStatusBarFields());
         
         view.setRecentDocument(this.getValues());
+        
+        if (localRecord && localRecord !== view.viewGrid.getSelectedRecord()) {
+          localRecord[view.viewGrid.selection.selectionProperty] = false;
+          view.viewGrid.doSelectSingleRecord(localRecord);
+        }
         
         view.updateLastSelectedState();
                 
@@ -923,6 +1018,8 @@ OB.ViewFormProperties = {
           this.clearValue('_new');
         }
 
+        view.viewGrid.markForRedraw();
+        
         if (form.isNew) {
           view.refreshChildViews();
         }
@@ -941,6 +1038,7 @@ OB.ViewFormProperties = {
         form.setNewState(false);
         
         view.refreshParentRecord();
+
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
         form.handleFieldErrors(resp.errors);
         view.standardWindow.autoSaveDone(view, false);
@@ -976,19 +1074,32 @@ OB.ViewFormProperties = {
   },
   
   focusInNextItem: function(currentItem) {
-    var chooseNextItem, i, nextItem, length = this.getItems().length;
+    var flds = (this.grid ? this.grid.getFields() : this.getFields);
+    var chooseNextItem, i, nextItem, length = flds.length;
     for (i = 0; i < length; i++) {
+      var item = this.getItem(flds[i].name);
+      if (!item) {
+        continue;
+      }
       // some items don't have a name, ignore those
-      if (chooseNextItem && this.getItems()[i].name && this.getItems()[i].isFocusable && this.getItems()[i].isFocusable()) {
-        nextItem = this.getItems()[i];
+      // !item.disabled because sometimes the whole form is disabled and needs to 
+      // be focused after enabling (after the fic call returns)
+      if (chooseNextItem && item.name && item.isFocusable && (item.isFocusable() || !item.disabled)) {
+        nextItem = item;
         break;
       }
-      if (this.getItems()[i].name === currentItem) {
+      if (item.name === currentItem) {
         chooseNextItem = true;
       }
     }
     if (nextItem) {
-      this.focusInItem(nextItem);
+      // in the fic call, all items are disabled, so let it be focused
+      // when returning
+      if (this.inFicCall) {
+        this.setFocusItem(nextItem);
+      } else {
+        this.focusInItem(nextItem);
+      }
     }
   },
   

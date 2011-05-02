@@ -28,7 +28,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
@@ -100,7 +100,7 @@ public class XMLBaseTest extends BaseTest {
   protected <T extends BaseOBObject> List<T> getList(Class<T> clz, Organization org) {
     final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
     if (org != null)
-      obc.add(Expression.eq("organization", org));
+      obc.add(Restrictions.eq("organization", org));
     return obc.list();
   }
 
@@ -129,7 +129,7 @@ public class XMLBaseTest extends BaseTest {
     // exc.setOptionIncludeChildren(true);
     exc.setAddSystemAttributes(false);
     if (!(o == null))
-      obc.add(Expression.eq("organization", o));
+      obc.add(Restrictions.eq("organization", o));
     return exc.toXML(new ArrayList<BaseOBObject>(obc.list()));
   }
 }

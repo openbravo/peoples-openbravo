@@ -13,7 +13,7 @@
  * and  limitations under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2005-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2005-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s): Openbravo S.L.U.
  ************************************************************************
@@ -687,8 +687,7 @@ build.war: build a war file in the lib directory.
     <smartsprites rootdir="${skins.location}" documentrootdir="${skins.location}" outputdir="${skins.location}" cssfilesuffix="-sprite" csspropertyindent="  " loglevel="WARN" spritepngdepth="DIRECT" spritepngie6="false" />
     <move todir="${skins.location}">
       <fileset dir="${skins.location}">
-        <include name="*/*-sprite.css" />
-        <include name="*/*/*-sprite.css" />
+        <include name="**/*-sprite.css" />
       </fileset>
       <mapper type="glob" from="*-sprite.css" to="*.css" />
     </move>

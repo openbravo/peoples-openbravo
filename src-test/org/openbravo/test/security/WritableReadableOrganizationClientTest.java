@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -107,7 +107,7 @@ public class WritableReadableOrganizationClientTest extends BaseTest {
     setTestUserContext();
     addReadWriteAccess(Product.class);
     final OBCriteria<Product> obc = OBDal.getInstance().createCriteria(Product.class);
-    obc.add(Expression.eq("id", TEST_PRODUCT_ID));
+    obc.add(Restrictions.eq("id", TEST_PRODUCT_ID));
     final List<Product> ps = obc.list();
     assertEquals(1, ps.size());
     final Product p = ps.get(0);
@@ -133,7 +133,7 @@ public class WritableReadableOrganizationClientTest extends BaseTest {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
-    obc.add(Expression.eq("name", "Creditor"));
+    obc.add(Restrictions.eq("name", "Creditor"));
     final List<Category> bogs = obc.list();
     assertEquals(1, bogs.size());
     final Category bp = bogs.get(0);

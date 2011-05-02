@@ -35,9 +35,9 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -189,17 +189,17 @@ public class ReportReconciliation extends HttpSecureAppServlet {
     try {
       OBCriteria<FIN_FinaccTransaction> obcTrans = OBDal.getInstance().createCriteria(
           FIN_FinaccTransaction.class);
-      obcTrans.add(Expression.eq(FIN_FinaccTransaction.PROPERTY_ACCOUNT, recon.getAccount()));
-      obcTrans.add(Expression.le(FIN_FinaccTransaction.PROPERTY_TRANSACTIONDATE, recon
+      obcTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_ACCOUNT, recon.getAccount()));
+      obcTrans.add(Restrictions.le(FIN_FinaccTransaction.PROPERTY_TRANSACTIONDATE, recon
           .getEndingDate()));
       List<FIN_Reconciliation> afterReconciliations = MatchTransactionDao
           .getReconciliationListAfterDate(recon);
       if (afterReconciliations.size() > 0) {
-        obcTrans.add(Expression.or(
-            Expression.isNull(FIN_FinaccTransaction.PROPERTY_RECONCILIATION), Expression.in(
-                FIN_FinaccTransaction.PROPERTY_RECONCILIATION, afterReconciliations)));
+        obcTrans.add(Restrictions.or(Restrictions
+            .isNull(FIN_FinaccTransaction.PROPERTY_RECONCILIATION), Restrictions.in(
+            FIN_FinaccTransaction.PROPERTY_RECONCILIATION, afterReconciliations)));
       } else {
-        obcTrans.add(Expression.isNull(FIN_FinaccTransaction.PROPERTY_RECONCILIATION));
+        obcTrans.add(Restrictions.isNull(FIN_FinaccTransaction.PROPERTY_RECONCILIATION));
       }
 
       ProjectionList projections = Projections.projectionList();
@@ -248,18 +248,18 @@ public class ReportReconciliation extends HttpSecureAppServlet {
       obcBsl.createAlias(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, "bs");
       obcBsl.createAlias(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION, "tr",
           OBCriteria.LEFT_JOIN);
-      obcBsl.add(Expression.le(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE, recon
+      obcBsl.add(Restrictions.le(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE, recon
           .getEndingDate()));
       List<FIN_Reconciliation> afterReconciliations = MatchTransactionDao
           .getReconciliationListAfterDate(recon);
       if (afterReconciliations.size() > 0) {
-        obcBsl.add(Expression.or(Expression
-            .isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION), Expression.in(
+        obcBsl.add(Restrictions.or(Restrictions
+            .isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION), Restrictions.in(
             "tr." + FIN_FinaccTransaction.PROPERTY_RECONCILIATION, afterReconciliations)));
       } else {
-        obcBsl.add(Expression.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION));
+        obcBsl.add(Restrictions.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION));
       }
-      obcBsl.add(Expression.eq("bs." + FIN_BankStatement.PROPERTY_ACCOUNT, recon.getAccount()));
+      obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_ACCOUNT, recon.getAccount()));
       ProjectionList projections = Projections.projectionList();
       projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_CRAMOUNT));
       projections.add(Projections.sum(FIN_BankStatementLine.PROPERTY_DRAMOUNT));
@@ -296,8 +296,8 @@ public class ReportReconciliation extends HttpSecureAppServlet {
     try {
       OBCriteria<FIN_FinaccTransaction> obcTrans = OBDal.getInstance().createCriteria(
           FIN_FinaccTransaction.class);
-      obcTrans.add(Expression.eq(FIN_FinaccTransaction.PROPERTY_ACCOUNT, recon.getAccount()));
-      obcTrans.add(Expression.gt(FIN_FinaccTransaction.PROPERTY_TRANSACTIONDATE, recon
+      obcTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_ACCOUNT, recon.getAccount()));
+      obcTrans.add(Restrictions.gt(FIN_FinaccTransaction.PROPERTY_TRANSACTIONDATE, recon
           .getEndingDate()));
       ProjectionList projections = Projections.projectionList();
       projections.add(Projections.sum(FIN_FinaccTransaction.PROPERTY_PAYMENTAMOUNT));

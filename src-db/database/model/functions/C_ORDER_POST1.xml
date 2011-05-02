@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2011 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -104,6 +104,7 @@
     v_Discount NUMBER;
     v_precision NUMBER;
     Cur_OrderLine RECORD;
+    v_DiscountExist NUMBER;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -616,24 +617,48 @@
         END IF;
       END IF;
     END IF;--END_PROCESSING
+
     IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
      /**************************************************************************
-        * Calculate Discounts only when processing the document.
+        * Calculate Discounts
         *************************************************************************/
 
-      -- AProove, COmplete, PRocess
-      IF(v_DocAction IN('AP', 'CO', 'PR')) THEN
+        -- Delete first previous discounts (if possible) and then recalculate them
 
-        -- Delete first previous discounts if any and then recalculate them
+        UPDATE C_ORDER
+            SET DocStatus='IP', -- In progress
+            Processing='N',
+            Processed='N',
+            Updated=now(),
+            UpdatedBy=v_User
+        WHERE C_Order_ID=v_Record_ID;
+
         DELETE
         FROM C_ORDERLINE
         WHERE C_ORDER_DISCOUNT_ID IS NOT NULL
+        AND C_ORDER_ID = v_Record_ID
+        AND NOT EXISTS (SELECT C_INVOICELINE_ID FROM C_INVOICELINE WHERE C_INVOICELINE.C_ORDERLINE_ID = C_ORDERLINE.C_ORDERLINE_ID)
+        AND NOT EXISTS (SELECT M_INOUTLINE_ID FROM M_INOUTLINE WHERE M_INOUTLINE.C_ORDERLINE_ID = C_ORDERLINE.C_ORDERLINE_ID)
+        AND NOT EXISTS (SELECT M_MATCHPO_ID FROM M_MATCHPO WHERE M_MATCHPO.C_ORDERLINE_ID = C_ORDERLINE.C_ORDERLINE_ID);
+
+        UPDATE C_ORDERLINE
+        SET pricelist = 0, priceactual = 0, pricelimit = 0, linenetamt = 0, pricestd = 0
+        WHERE C_ORDER_DISCOUNT_ID IS NOT NULL
         AND C_ORDER_ID=v_Record_ID;
+
+        UPDATE C_ORDER
+            SET DocStatus=v_DocStatus, -- restore
+            Processing=v_IsProcessing,
+            Processed=v_IsProcessed,
+            Updated=now(),
+            UpdatedBy=v_User
+        WHERE C_Order_ID=v_Record_ID;
+
         v_CumDiscount:=0;
         v_OldCumDiscount:=0;
         v_Line:=10;
         v_precision:=0;
-        SELECT MAX(LINE) +10
+        SELECT MAX(LINE)
         INTO v_OrderLineSeqNo
         FROM C_ORDERLINE
         WHERE C_ORDER_ID=v_Record_ID;
@@ -674,43 +699,51 @@
             ELSE
               v_Discount:=(-1) * Cur_TaxDiscount.LINENETAMT * Cur_COrderDiscount.Discount/100;
             END IF;
-            v_OrderLineSeqNo:=10 + v_OrderLineSeqNo;
-            v_OrderLine:=get_uuid() ;
-            
-            INSERT INTO c_orderline
-              (
-                c_orderline_id, ad_client_id, ad_org_id, isactive, created, createdby, 
-                updated, updatedby, c_order_id, line, c_bpartner_id, c_bpartner_location_id, 
-                dateordered, datepromised, datedelivered, dateinvoiced, description, 
-                m_product_id, m_warehouse_id, directship, c_uom_id, qtyordered, 
-                qtyreserved, qtydelivered, qtyinvoiced, m_shipper_id, c_currency_id, 
-                pricelist, priceactual, pricelimit, linenetamt, discount, freightamt, 
-                c_charge_id, chargeamt, c_tax_id, s_resourceassignment_id, ref_orderline_id, 
-                m_attributesetinstance_id, isdescription, quantityorder, m_product_uom_id, 
-                m_offer_id, pricestd, C_ORDER_DISCOUNT_ID
-              )
-            VALUES 
-              (
-                v_OrderLine, v_Client_ID, v_Org_ID, 'Y', now(), v_UpdatedBy,
-                now(), v_UpdatedBy, v_Record_ID, v_OrderLineSeqNo, NULL, NULL, 
-                now(), now(), now(), now(), Cur_COrderDiscount.NAME, 
-                Cur_COrderDiscount.M_PRODUCT_ID, v_M_Warehouse_ID, 'N', Cur_COrderDiscount.C_UOM_ID, 1, 
-                0, 0, 0, NULL, v_c_currency_id, 
-                ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), 0, 0, 
-                NULL, NULL, Cur_TaxDiscount.C_TAX_ID, NULL, NULL, 
-                NULL, 'N', NULL, NULL, 
-                NULL, ROUND(v_Discount,v_precision), NULL
-              );
-           
-            UPDATE C_ORDERLINE
-            SET C_ORDER_DISCOUNT_ID=Cur_COrderDiscount.C_ORDER_DISCOUNT_ID
-            WHERE C_ORDERLINE_ID=v_OrderLine;
-            
 
+            SELECT COUNT(*) INTO v_DiscountExist FROM C_ORDERLINE
+            WHERE C_ORDERLINE.C_ORDER_DISCOUNT_ID = Cur_COrderDiscount.C_ORDER_DISCOUNT_ID
+            AND C_ORDERLINE.C_TAX_ID = Cur_TaxDiscount.C_TAX_ID;
+            
+	    IF (v_DiscountExist = 0) THEN
+		    v_OrderLineSeqNo:=10 + v_OrderLineSeqNo;
+		    v_OrderLine:=get_uuid();
+		    INSERT INTO c_orderline
+		      (
+			c_orderline_id, ad_client_id, ad_org_id, isactive, created, createdby,
+			updated, updatedby, c_order_id, line, c_bpartner_id, c_bpartner_location_id,
+			dateordered, datepromised, datedelivered, dateinvoiced, description,
+			m_product_id, m_warehouse_id, directship, c_uom_id, qtyordered,
+			qtyreserved, qtydelivered, qtyinvoiced, m_shipper_id, c_currency_id,
+			pricelist, priceactual, pricelimit, linenetamt, discount, freightamt,
+			c_charge_id, chargeamt, c_tax_id, s_resourceassignment_id, ref_orderline_id,
+			m_attributesetinstance_id, isdescription, quantityorder, m_product_uom_id,
+			m_offer_id, pricestd, C_ORDER_DISCOUNT_ID
+		      )
+		    VALUES
+		      (
+			v_OrderLine, v_Client_ID, v_Org_ID, 'Y', now(), v_UpdatedBy,
+			now(), v_UpdatedBy, v_Record_ID, v_OrderLineSeqNo, NULL, NULL,
+			now(), now(), now(), now(), Cur_COrderDiscount.NAME,
+			Cur_COrderDiscount.M_PRODUCT_ID, v_M_Warehouse_ID, 'N', Cur_COrderDiscount.C_UOM_ID, 1,
+			0, 0, 0, NULL, v_c_currency_id,
+			ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), 0, 0,
+			NULL, NULL, Cur_TaxDiscount.C_TAX_ID, NULL, NULL,
+			NULL, 'N', NULL, NULL,
+			NULL, ROUND(v_Discount,v_precision), NULL
+		      );
+
+		    UPDATE C_ORDERLINE
+		    SET C_ORDER_DISCOUNT_ID=Cur_COrderDiscount.C_ORDER_DISCOUNT_ID
+		    WHERE C_ORDERLINE_ID=v_OrderLine;
+            ELSE
+		    UPDATE C_ORDERLINE 
+		    SET pricelist = ROUND(v_Discount,v_precision), priceactual = ROUND(v_Discount,v_precision), pricelimit = ROUND(v_Discount,v_precision), linenetamt = ROUND(v_Discount,v_precision), pricestd = ROUND(v_Discount,v_precision)
+		    WHERE C_ORDERLINE.C_ORDER_DISCOUNT_ID = Cur_COrderDiscount.C_ORDER_DISCOUNT_ID
+		    AND C_ORDERLINE.C_TAX_ID = Cur_TaxDiscount.C_TAX_ID;
+            END IF;
           END LOOP;
           v_Line:=v_Line + 10;
         END LOOP;
-        END IF;
     END IF;
     
     IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN

@@ -20,7 +20,7 @@
 package org.openbravo.test.model;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -70,7 +70,7 @@ public class OneToManyTest extends BaseTest {
     addReadWriteAccess(OrderLine.class);
     addReadWriteAccess(OrderLineTax.class);
     final OBCriteria<Order> orders = OBDal.getInstance().createCriteria(Order.class);
-    orders.add(Expression.eq(Order.PROPERTY_DOCUMENTSTATUS, "DR")); // Draft
+    orders.add(Restrictions.eq(Order.PROPERTY_DOCUMENTSTATUS, "DR")); // Draft
     // document
 
     for (final Order o : orders.list()) {
@@ -108,7 +108,7 @@ public class OneToManyTest extends BaseTest {
     addReadWriteAccess(OrderLine.class);
     addReadWriteAccess(OrderLineTax.class);
     final OBCriteria<Order> orders = OBDal.getInstance().createCriteria(Order.class);
-    orders.add(Expression.eq(Order.PROPERTY_DOCUMENTSTATUS, "DR"));
+    orders.add(Restrictions.eq(Order.PROPERTY_DOCUMENTSTATUS, "DR"));
 
     OrderLine toRemove = null;
     for (final Order o : orders.list()) {
@@ -139,7 +139,7 @@ public class OneToManyTest extends BaseTest {
     addReadWriteAccess(OrderLineTax.class);
 
     final OBCriteria<OrderLine> lines = OBDal.getInstance().createCriteria(OrderLine.class);
-    lines.add(Expression.eq(OrderLine.PROPERTY_ID, lineId));
+    lines.add(Restrictions.eq(OrderLine.PROPERTY_ID, lineId));
 
     assertEquals(0, lines.list().size());
 
@@ -150,7 +150,7 @@ public class OneToManyTest extends BaseTest {
   // setFBUserContext();
   // final OBCriteria<BusinessPartner> bpartners = OBDal.getInstance().createCriteria(
   // BusinessPartner.class);
-  // bpartners.add(Expression.eq(BusinessPartner.PROPERTY_SEARCHKEY, "mafalda"));
+  // bpartners.add(Restrictions.eq(BusinessPartner.PROPERTY_SEARCHKEY, "mafalda"));
   //
   // if (bpartners.list().size() > 0) {
   // final BusinessPartner partner = bpartners.list().get(0);

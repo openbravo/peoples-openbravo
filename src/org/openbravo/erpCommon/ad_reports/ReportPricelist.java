@@ -29,6 +29,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -141,16 +142,9 @@ public class ReportPricelist extends HttpSecureAppServlet {
     xmlDocument.setParameter("mProductCategoryId", strProductCategory);
     xmlDocument.setParameter("mPricelistVersionId", strPricelistversionId);
 
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "MProductId_IN",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(
-              this, vars, "#User_Client", ""), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "", strmProductId);
-      xmlDocument.setData("reportMProductId_IN", "liststructure", comboTableData.select(false));
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
+    xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData.selectMproduct(
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
+            vars, "#User_Client", ""), strmProductId));
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",

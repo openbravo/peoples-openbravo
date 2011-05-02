@@ -281,7 +281,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 						style="GroupHeader_DarkGray"
 						x="1"
 						y="0"
-						width="149"
+						width="169"
 						height="23"
 						key="staticText"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -298,9 +298,9 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="GroupHeader_DarkGray"
-						x="150"
+						x="170"
 						y="0"
-						width="385"
+						width="365"
 						height="23"
 						key="textField"/>
 					<box leftPadding="5">					<pen lineWidth="0.0"/>
@@ -343,7 +343,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Group_Data_Field"
-						x="131"
+						x="146"
 						y="48"
 						width="296"
 						height="18"
@@ -361,7 +361,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Group_Data_Field"
-						x="131"
+						x="126"
 						y="28"
 						width="121"
 						height="18"
@@ -381,7 +381,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 						style="Group_Data_Label"
 						x="10"
 						y="28"
-						width="121"
+						width="115"
 						height="18"
 						key="element-90"/>
 					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -397,7 +397,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Group_Data_Field"
-						x="381"
+						x="376"
 						y="28"
 						width="103"
 						height="18"
@@ -415,7 +415,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 				<staticText>
 					<reportElement
 						style="Group_Data_Label"
-						x="265"
+						x="260"
 						y="28"
 						width="116"
 						height="18"
@@ -435,7 +435,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 						style="Group_Data_Label"
 						x="10"
 						y="48"
-						width="121"
+						width="136"
 						height="18"
 						key="element-90"/>
 					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -577,7 +577,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Group_Data_Field"
-						x="299"
+						x="340"
 						y="25"
 						width="100"
 						height="18"
@@ -631,9 +631,9 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]></que
 				<staticText>
 					<reportElement
 						style="Group_Data_Label"
-						x="243"
+						x="233"
 						y="25"
-						width="56"
+						width="107"
 						height="18"
 						key="element-90"/>
 					<box leftPadding="5" rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

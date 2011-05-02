@@ -84,7 +84,7 @@ public class SL_Internal_Consumption_Product extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_Internal_Consumption_Product';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpcUomId\", " + strUOM + "),\n");
+    resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),\n");
     if (strPLocator.startsWith("\""))
       strPLocator = strPLocator.substring(1, strPLocator.length() - 1);
     resultado.append("new Array(\"inpmLocatorId\", \"" + strPLocator + "\"),\n");

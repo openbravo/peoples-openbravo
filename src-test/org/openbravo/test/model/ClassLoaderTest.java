@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -60,7 +60,7 @@ public class ClassLoaderTest extends BaseTest {
     // Checking listener and filters classes
     OBCriteria<ModelImplementation> obc = OBDal.getInstance().createCriteria(
         ModelImplementation.class);
-    obc.add(Expression.in(ModelImplementation.PROPERTY_OBJECTTYPE, in));
+    obc.add(Restrictions.in(ModelImplementation.PROPERTY_OBJECTTYPE, in));
 
     for (ModelImplementation mi : obc.list()) {
       try {
@@ -72,10 +72,10 @@ public class ClassLoaderTest extends BaseTest {
 
     // Checking manual servlets
     obc = OBDal.getInstance().createCriteria(ModelImplementation.class);
-    obc.add(Expression.eq(ModelImplementation.PROPERTY_OBJECTTYPE, "S"));
-    obc.add(Expression.isNull(ModelImplementation.PROPERTY_TAB));
-    obc.add(Expression.isNull(ModelImplementation.PROPERTY_SPECIALFORM));
-    obc.add(Expression.isNull(ModelImplementation.PROPERTY_PROCESS));
+    obc.add(Restrictions.eq(ModelImplementation.PROPERTY_OBJECTTYPE, "S"));
+    obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_TAB));
+    obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_SPECIALFORM));
+    obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_PROCESS));
 
     for (ModelImplementation mi : obc.list()) {
       try {

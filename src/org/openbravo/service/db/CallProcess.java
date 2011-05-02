@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -78,7 +78,7 @@ public class CallProcess {
   public ProcessInstance call(String processName, String recordID, Map<String, String> parameters) {
     final OBCriteria<org.openbravo.model.ad.ui.Process> processCriteria = OBDal.getInstance()
         .createCriteria(org.openbravo.model.ad.ui.Process.class);
-    processCriteria.add(Expression.eq(org.openbravo.model.ad.ui.Process.PROPERTY_PROCEDURE,
+    processCriteria.add(Restrictions.eq(org.openbravo.model.ad.ui.Process.PROPERTY_PROCEDURE,
         processName));
     if (processCriteria.list().size() != 1) {
       throw new OBException("No process or more than one process found using procedurename "

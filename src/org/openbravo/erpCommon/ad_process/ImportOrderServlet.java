@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.ad_process.ImportData;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;

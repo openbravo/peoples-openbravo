@@ -20,8 +20,8 @@ package org.openbravo.advpaymentmngt.process;
 
 import java.util.List;
 
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -124,10 +124,12 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
   private boolean isLastReconciliation(FIN_Reconciliation reconciliation) {
     final OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance().createCriteria(
         FIN_Reconciliation.class);
-    obc.add(Expression.ge(FIN_Reconciliation.PROPERTY_ENDINGDATE, reconciliation.getEndingDate()));
-    obc.add(Expression.gt(FIN_Reconciliation.PROPERTY_CREATIONDATE, reconciliation
+    obc
+        .add(Restrictions
+            .ge(FIN_Reconciliation.PROPERTY_ENDINGDATE, reconciliation.getEndingDate()));
+    obc.add(Restrictions.gt(FIN_Reconciliation.PROPERTY_CREATIONDATE, reconciliation
         .getCreationDate()));
-    obc.add(Expression.eq(FIN_Reconciliation.PROPERTY_ACCOUNT, reconciliation.getAccount()));
+    obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT, reconciliation.getAccount()));
     obc.addOrder(Order.asc(FIN_Reconciliation.PROPERTY_ENDINGDATE));
     obc.addOrder(Order.asc(FIN_Reconciliation.PROPERTY_CREATIONDATE));
     final List<FIN_Reconciliation> reconciliations = obc.list();

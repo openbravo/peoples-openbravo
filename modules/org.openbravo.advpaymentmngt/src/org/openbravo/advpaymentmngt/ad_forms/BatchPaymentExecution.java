@@ -28,7 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
@@ -468,7 +468,7 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
     OBContext.setAdminMode();
     try {
       OBCriteria<Form> obc = OBDal.getInstance().createCriteria(Form.class);
-      obc.add(Expression.eq(Form.PROPERTY_JAVACLASSNAME, formClassName));
+      obc.add(Restrictions.eq(Form.PROPERTY_JAVACLASSNAME, formClassName));
       if (obc.list() == null || obc.list().size() == 0) {
         throw new OBException(formClassName + ": Error on window data");
       }

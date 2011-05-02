@@ -27,7 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -309,8 +309,9 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
         if (account != null) {
           OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
               FinAccPaymentMethod.class);
-          obc.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, account));
-          obc.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, selectedPaymentMethod));
+          obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, account));
+          obc.add(Restrictions
+              .eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, selectedPaymentMethod));
           if (obc.list() == null || obc.list().size() == 0) {
             message = Utility.messageBD(this, "PaymentmethodNotbelongsFinAccount", vars
                 .getLanguage());

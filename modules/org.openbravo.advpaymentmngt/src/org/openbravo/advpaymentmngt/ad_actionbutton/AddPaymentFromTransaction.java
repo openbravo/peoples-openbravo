@@ -30,7 +30,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -255,7 +255,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       if (bsline.getBusinessPartner() == null) {
         OBCriteria<BusinessPartner> obcBP = OBDal.getInstance().createCriteria(
             BusinessPartner.class);
-        obcBP.add(Expression.eq(BusinessPartner.PROPERTY_NAME, bsline.getBpartnername()));
+        obcBP.add(Restrictions.eq(BusinessPartner.PROPERTY_NAME, bsline.getBpartnername()));
         if (obcBP.list() != null && obcBP.list().size() > 0) {
           xmlDocument.setParameter("businessPartner", obcBP.list().get(0).getId());
           defaultPaymentMethod = (obcBP.list().get(0).getPaymentMethod() != null) ? obcBP.list()

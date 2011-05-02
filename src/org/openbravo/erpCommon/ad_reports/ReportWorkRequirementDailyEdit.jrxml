@@ -367,7 +367,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
-						x="263"
+						x="85"
 						y="23"
 						width="92"
 						height="16"
@@ -385,7 +385,7 @@
 				<staticText>
 					<reportElement
 						style="default"
-						x="198"
+						x="24"
 						y="23"
 						width="55"
 						height="16"
@@ -460,9 +460,9 @@
 				</line>
 				<subreport  isUsingCache="true">
 					<reportElement
-						x="80"
+						x="24"
 						y="47"
-						width="322"
+						width="507"
 						height="30"
 						key="subreport-1"/>
 					<subreportParameter  name="WRPID">

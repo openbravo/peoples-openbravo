@@ -141,6 +141,9 @@ function focusOnField() {
                 <tr>
                   <td class="Popup_InfoBar_text" id="recordIdentifierText"></td>
                 </tr>
+                <tr>
+                  <td class="Popup_InfoBar_text" id="excludeAuditColumnText"></td>
+                </tr>
               </table>
             </td>
           </tr>
@@ -198,7 +201,7 @@ function focusOnField() {
                                             required="false" value="" maxlength="10" name="inpDateFrom"
                                             onkeyup="autoCompleteDate(this);"
                                             onchange="validateDateTextBox(this.id);logChanges(this);return true;"
-                                            displayformat="xx" saveformat="yy"/>
+                                            onblur="expandDateYear(this.id);" displayformat="xx" saveformat="yy"/>
                                         </td>
                                     </tr>
                                 </table>

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -129,7 +129,7 @@ public class TransactionsDao {
     try {
       final OBCriteria<FIN_FinaccTransaction> obc = OBDal.getInstance().createCriteria(
           FIN_FinaccTransaction.class);
-      obc.add(Expression.eq(FIN_FinaccTransaction.PROPERTY_ACCOUNT, financialAccount));
+      obc.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_ACCOUNT, financialAccount));
       obc.addOrderBy(FIN_FinaccTransaction.PROPERTY_LINENO, false);
       obc.setMaxResults(1);
       final List<FIN_FinaccTransaction> fat = obc.list();
@@ -189,11 +189,11 @@ public class TransactionsDao {
     try {
       final OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance().createCriteria(
           FIN_Reconciliation.class);
-      obc.add(Expression.eq(FIN_Reconciliation.PROPERTY_ACCOUNT, account));
+      obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT, account));
       if ("Y".equals(isProcessed)) {
-        obc.add(Expression.eq(FIN_Reconciliation.PROPERTY_PROCESSED, true));
+        obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_PROCESSED, true));
       } else if ("N".equals(isProcessed)) {
-        obc.add(Expression.eq(FIN_Reconciliation.PROPERTY_PROCESSED, false));
+        obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_PROCESSED, false));
       }
       obc.addOrderBy(FIN_Reconciliation.PROPERTY_ENDINGDATE, false);
       obc.setMaxResults(1);
@@ -231,9 +231,9 @@ public class TransactionsDao {
   public static void updateAccountingDate(FIN_FinaccTransaction transaction) {
     final String FIN_FINACC_TRANSACTION_TABLE = "4D8C3B3C31D1410DA046140C9F024D17";
     OBCriteria<AccountingFact> obcAF = OBDal.getInstance().createCriteria(AccountingFact.class);
-    obcAF.add(Expression.eq(AccountingFact.PROPERTY_TABLE, OBDal.getInstance().get(Table.class,
+    obcAF.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, OBDal.getInstance().get(Table.class,
         FIN_FINACC_TRANSACTION_TABLE)));
-    obcAF.add(Expression.eq(AccountingFact.PROPERTY_RECORDID, transaction.getId()));
+    obcAF.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, transaction.getId()));
     for (AccountingFact aFact : obcAF.list()) {
       aFact.setAccountingDate(transaction.getTransactionDate());
       aFact.setTransactionDate(transaction.getTransactionDate());
@@ -245,8 +245,8 @@ public class TransactionsDao {
   public static Period getPeriod(Date date) {
     Period period = null;
     OBCriteria<Period> obcPe = OBDal.getInstance().createCriteria(Period.class);
-    obcPe.add(Expression.le(Period.PROPERTY_ENDINGDATE, date));
-    obcPe.add(Expression.ge(Period.PROPERTY_STARTINGDATE, date));
+    obcPe.add(Restrictions.le(Period.PROPERTY_ENDINGDATE, date));
+    obcPe.add(Restrictions.ge(Period.PROPERTY_STARTINGDATE, date));
     if (obcPe.list() != null && obcPe.list().size() > 0) {
       period = obcPe.list().get(0);
     }

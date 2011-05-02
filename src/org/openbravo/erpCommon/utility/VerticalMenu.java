@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -204,12 +204,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
       return "Forms";
     else if (tipo.equals("P"))
       return "Processes";
-    else if (tipo.equals("T"))
-      return "Tasks";
     else if (tipo.equals("R"))
       return "Reports";
-    else if (tipo.equals("F"))
-      return "WorkFlow";
     else if (tipo.equals("B"))
       return "WorkBench";
     else if (tipo.equals("L"))
@@ -227,8 +223,6 @@ public class VerticalMenu extends HttpSecureAppServlet {
       return "form";
     else if (tipo.equals("P"))
       return "process";
-    else if (tipo.equals("T"))
-      return "task";
     else if (tipo.equals("R"))
       return "report";
     else if (tipo.equals("F"))
@@ -270,8 +264,6 @@ public class VerticalMenu extends HttpSecureAppServlet {
           artifactId = menuData[i].adProcessId;
         } else if (menuAction.equals("X")) {
           artifactId = menuData[i].adFormId;
-        } else if (menuAction.equals("F")) {
-          artifactId = menuData[i].adWorkflowId;
         }
         boolean hasLicenseAccess = ActivationKey.getInstance().hasLicenseAccess(menuAction,
             artifactId) == FeatureRestriction.NO_RESTRICTION;
@@ -309,7 +301,6 @@ public class VerticalMenu extends HttpSecureAppServlet {
             }
             strText.append("', '");
             if (menuData[i].action.equals("F")
-                || menuData[i].action.equals("T")
                 || (menuData[i].action.equals("P") && menuData[i].mappingname.equals("") && !(menuData[i].isexternalservice
                     .equals("Y") && menuData[i].serviceType.equals("PS"))))
               strText.append("hiddenFrame");
@@ -335,11 +326,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
               "/images/blank.gif\" class=\"Menu_Client_Button_").append(
               (indice.equals("0") ? "Big" : "")).append("Icon");
           if (menuData[i].issummary.equals("N")) {
-            if (menuData[i].action.equals("F"))
-              strText.append(" Menu_Client_Button_Icon_childWorkFlow");
-            else if (menuData[i].action.equals("T"))
-              strText.append(" Menu_Client_Button_Icon_childTasks");
-            else if (menuData[i].action.equals("B"))
+            if (menuData[i].action.equals("B"))
               strText.append(" Menu_Client_Button_Icon_childWorkBench");
             else if (menuData[i].action.equals("P"))
               strText.append(" Menu_Client_Button_Icon_childProcesses");
@@ -395,15 +382,13 @@ public class VerticalMenu extends HttpSecureAppServlet {
   }
 
   public static String getUrlStringStatic(String strDireccionBase, String name, String action,
-      String classname, String mappingname, String adWorkflowId, String adTaskId,
-      String adProcessId, String isExternalService, String externalType) {
+      String classname, String mappingname, String adProcessId, String isExternalService,
+      String externalType) {
     MenuData menuItem = new MenuData();
     menuItem.name = name;
     menuItem.action = action;
     menuItem.classname = classname;
     menuItem.mappingname = mappingname;
-    menuItem.adWorkflowId = adWorkflowId;
-    menuItem.adTaskId = adTaskId;
     menuItem.adProcessId = adProcessId;
     menuItem.isexternalservice = isExternalService;
     menuItem.serviceType = externalType;
@@ -418,11 +403,6 @@ public class VerticalMenu extends HttpSecureAppServlet {
         strResultado.append("/" + ("0".equals(menuItem.windowmodule) ? "" : menuItem.windowpackage)
             + menuItem.windowname + "/" + menuItem.tabname
             + ("0".equals(menuItem.tabmodule) ? "" : menuItem.adTabId) + "_Relation.html");
-      } else if (menuItem.action.equals("F")) {
-        strResultado.append("/ad_workflow/WorkflowControl.html?inpadWorkflowId=").append(
-            menuItem.adWorkflowId);
-      } else if (menuItem.action.equals("T")) {
-        strResultado.append("/utility/ExecuteTask.html?inpadTaskId=").append(menuItem.adTaskId);
       } else if (menuItem.action.equals("P")) {
         if (menuItem.isexternalservice.equals("Y") && menuItem.serviceType.equals("PS"))
           strResultado.append("/utility/OpenPentaho.html?inpadProcessId=").append(

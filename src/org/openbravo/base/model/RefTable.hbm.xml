@@ -31,6 +31,8 @@
         <many-to-one name="reference" not-null="true" class="org.openbravo.base.model.Reference" column="ad_reference_id" insert="false" update="false"/>
 
 		<many-to-one name="column" not-null="true" class="org.openbravo.base.model.Column" column="ad_key"/>				
+
+    <many-to-one name="displayColumn" not-null="true" class="org.openbravo.base.model.Column" column="ad_display"/>        
 		
 		<property name="updated"/>
 		

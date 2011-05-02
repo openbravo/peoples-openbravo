@@ -29,7 +29,7 @@ import javax.servlet.ServletException;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
@@ -525,20 +525,21 @@ public class FIN_AddPayment {
     try {
       OBCriteria<FIN_PaymentScheduleDetail> psdFilter = OBDal.getInstance().createCriteria(
           FIN_PaymentScheduleDetail.class);
-      psdFilter.add(Expression.eq(FIN_PaymentScheduleDetail.PROPERTY_CLIENT, psd.getClient()));
-      psdFilter.add(Expression.eq(FIN_PaymentScheduleDetail.PROPERTY_ORGANIZATION, psd
+      psdFilter.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_CLIENT, psd.getClient()));
+      psdFilter.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_ORGANIZATION, psd
           .getOrganization()));
-      psdFilter.add(Expression.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+      psdFilter.add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
       if (psd.getOrderPaymentSchedule() == null)
-        psdFilter.add(Expression.isNull(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE));
+        psdFilter.add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE));
       else
-        psdFilter.add(Expression.eq(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, psd
+        psdFilter.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, psd
             .getOrderPaymentSchedule()));
       if (psd.getInvoicePaymentSchedule() == null)
-        psdFilter.add(Expression.isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
+        psdFilter.add(Restrictions
+            .isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
       else
-        psdFilter.add(Expression.eq(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE, psd
-            .getInvoicePaymentSchedule()));
+        psdFilter.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE,
+            psd.getInvoicePaymentSchedule()));
 
       // Update amount and remove payment schedule detail
       final List<String> removedPDSIds = new ArrayList<String>();
@@ -655,8 +656,8 @@ public class FIN_AddPayment {
   public static Boolean isForcedFinancialAccountTransaction(FIN_Payment payment) {
     OBCriteria<FinAccPaymentMethod> psdFilter = OBDal.getInstance().createCriteria(
         FinAccPaymentMethod.class);
-    psdFilter.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-    psdFilter.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
+    psdFilter.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+    psdFilter.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
         .getPaymentMethod()));
     for (FinAccPaymentMethod paymentMethod : psdFilter.list()) {
       return payment.isReceipt() ? paymentMethod.isAutomaticDeposit() : paymentMethod

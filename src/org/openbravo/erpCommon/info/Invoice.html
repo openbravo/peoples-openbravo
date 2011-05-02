@@ -258,7 +258,7 @@ function updateHeader(liveGrid, offset) {
 											required="false" value="" maxlength="10" name="inpDateFrom"
 											onkeyup="autoCompleteDate(this);"
 											onchange="validateDateTextBox(this.id);logChanges(this);return true;"
-											displayformat="xx" saveformat="yy"></input>
+											onblur="expandDateYear(this.id);" displayformat="xx" saveformat="yy"></input>
 										</td>
 									</tr>
 								</table>
@@ -350,7 +350,7 @@ function updateHeader(liveGrid, offset) {
 												required="false" value="" maxlength="10" name="inpDateTo"
 												onkeyup="autoCompleteDate(this);"
 												onchange="validateDateTextBox(this.id);logChanges(this);return true;"
-												displayformat="xx" saveformat="yy"></input>
+												onblur="expandDateYear(this.id);" displayformat="xx" saveformat="yy"></input>
 											</td>
 									</tr>
 								</table>

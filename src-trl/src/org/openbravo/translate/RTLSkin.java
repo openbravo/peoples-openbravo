@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2008 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -85,6 +85,7 @@ public class RTLSkin {
         File fImagesToFlip;
         BufferedReader in;
         String line;
+        File fileLTRSrcDeep, fileRTLSrcDeep;
 
         for (int i = 0; i < files.length; i++) {
             String pathModule = "";
@@ -125,20 +126,18 @@ public class RTLSkin {
                 vImagesToFlip.add(line.toLowerCase());
             }
             in.close();
-            if (pathModule != "") {
-                log4j.info("It is a module skin.");
-                runFolders(new File(pathModule), files[i], "", "RTL");
-                pathModule = "";
-            } else {
-                runFolders(fileRTLSrc, files[i], "", "RTL");
-            }
 
+            log4j.info("Processing RTL skin " + files[i]);
+            fileRTLSrcDeep = new File(srcDirRTLSkin + "/" + files[i], "");
+            runFolders(fileRTLSrcDeep, files[i], "", "RTL");
         }
 
         files = fileLTRSrc.list();
+
         for (int i = 0; i < files.length; i++) {
             log4j.info("Processing LTR skin " + files[i]);
-            runFolders(fileLTRSrc, files[i], "", "LTR");
+            fileLTRSrcDeep = new File(srcDirLTRSkin + "/" + files[i], "");
+            runFolders(fileLTRSrcDeep, files[i], "", "LTR");
         }
 
         log4j.info("Modified files: " + count);

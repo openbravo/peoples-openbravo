@@ -24,8 +24,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.LockMode;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
@@ -76,9 +76,9 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
     try {
       int counter = 0;
       final OBCriteria<Invoice> obc = OBDal.getInstance().createCriteria(Invoice.class);
-      obc.add(Expression.eq(Invoice.PROPERTY_PROCESSED, true));
-      obc.add(Expression.ne(Invoice.PROPERTY_OUTSTANDINGAMOUNT, BigDecimal.ZERO));
-      obc.add(Expression.isNotEmpty(Invoice.PROPERTY_FINPAYMENTSCHEDULELIST));
+      obc.add(Restrictions.eq(Invoice.PROPERTY_PROCESSED, true));
+      obc.add(Restrictions.ne(Invoice.PROPERTY_OUTSTANDINGAMOUNT, BigDecimal.ZERO));
+      obc.add(Restrictions.isNotEmpty(Invoice.PROPERTY_FINPAYMENTSCHEDULELIST));
 
       // For Background process execution at system level
       if (OBContext.getOBContext().isInAdministratorMode()) {
@@ -122,8 +122,8 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
 
     OBContext.setAdminMode();
     try {
-      obc.add(Expression.eq(FIN_PaymentSchedule.PROPERTY_INVOICE, invoice));
-      obc.add(Expression.ne(FIN_PaymentSchedule.PROPERTY_OUTSTANDINGAMOUNT, BigDecimal.ZERO));
+      obc.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_INVOICE, invoice));
+      obc.add(Restrictions.ne(FIN_PaymentSchedule.PROPERTY_OUTSTANDINGAMOUNT, BigDecimal.ZERO));
       obc.setProjection(Projections.min(FIN_PaymentSchedule.PROPERTY_DUEDATE));
       Object o = obc.list().get(0);
       if (o != null) {
@@ -156,18 +156,18 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
   private static boolean isPreferenceOfModule(String property, String moduleId) {
 
     final OBCriteria<Preference> obcNotSel = OBDal.getInstance().createCriteria(Preference.class);
-    obcNotSel.add(Expression.eq(Preference.PROPERTY_PROPERTY, property));
-    obcNotSel.add(Expression.eq(Preference.PROPERTY_MODULE, OBDal.getInstance().get(Module.class,
+    obcNotSel.add(Restrictions.eq(Preference.PROPERTY_PROPERTY, property));
+    obcNotSel.add(Restrictions.eq(Preference.PROPERTY_MODULE, OBDal.getInstance().get(Module.class,
         moduleId)));
-    obcNotSel.add(Expression.eq(Preference.PROPERTY_SELECTED, false));
+    obcNotSel.add(Restrictions.eq(Preference.PROPERTY_SELECTED, false));
     obcNotSel.setFilterOnReadableClients(false);
     obcNotSel.setFilterOnReadableOrganization(false);
 
     final OBCriteria<Preference> obcSel = OBDal.getInstance().createCriteria(Preference.class);
-    obcSel.add(Expression.eq(Preference.PROPERTY_PROPERTY, property));
-    obcSel.add(Expression.eq(Preference.PROPERTY_MODULE, OBDal.getInstance().get(Module.class,
+    obcSel.add(Restrictions.eq(Preference.PROPERTY_PROPERTY, property));
+    obcSel.add(Restrictions.eq(Preference.PROPERTY_MODULE, OBDal.getInstance().get(Module.class,
         moduleId)));
-    obcSel.add(Expression.eq(Preference.PROPERTY_SELECTED, true));
+    obcSel.add(Restrictions.eq(Preference.PROPERTY_SELECTED, true));
     obcSel.setFilterOnReadableClients(false);
     obcSel.setFilterOnReadableOrganization(false);
 

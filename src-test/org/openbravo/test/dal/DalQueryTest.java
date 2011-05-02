@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -59,7 +59,7 @@ public class DalQueryTest extends BaseTest {
    */
   public void testDalFirstWhereLeftJoinClause() {
     setTestAdminContext();
-    final String where = "as mo left join mo.callout left join mo.reference left join mo.specialForm left join mo.process left join mo.workflow left join mo.tab where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.specialForm.module.id='0' or mo.process.module.id='0' or mo.workflow.module.id='0' or mo.tab.module.id='0'";
+    final String where = "as mo left join mo.callout left join mo.reference left join mo.specialForm left join mo.process left join mo.tab where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.specialForm.module.id='0' or mo.process.module.id='0' or mo.tab.module.id='0'";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
         ModelImplementation.class, where);
     assertTrue(obq.list().size() > 0);
@@ -81,10 +81,8 @@ public class DalQueryTest extends BaseTest {
         + " left join mo."
         + ModelImplementation.PROPERTY_PROCESS
         + " left join mo."
-        + ModelImplementation.PROPERTY_WORKFLOW
-        + " left join mo."
         + ModelImplementation.PROPERTY_TAB
-        + " where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.specialForm.module.id='0' or mo.process.module.id='0' or mo.workflow.module.id='0' or mo.tab.module.id='0'";
+        + " where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.specialForm.module.id='0' or mo.process.module.id='0' or mo.tab.module.id='0'";
     final OBQuery<ModelImplementationMapping> obq = OBDal.getInstance().createQuery(
         ModelImplementationMapping.class, where);
     assertTrue(obq.list().size() > 0);
@@ -195,12 +193,12 @@ public class DalQueryTest extends BaseTest {
   public void testUpdateCurrencyByUser() {
     setUserContext("30BB6B32AE984CF08705C57A6C7FAFB9");
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
-    obc.add(Expression.eq(Currency.PROPERTY_ISOCODE, "USD"));
+    obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
     final List<Currency> cs = obc.list();
     assertEquals(1, cs.size());
     final Currency c = cs.get(0);
     // Call getValue and setValue directly to work around security checks on the description
-    // that are not the objective of this test. 
+    // that are not the objective of this test.
     c
         .setValue(Currency.PROPERTY_DESCRIPTION, c.getValue(Currency.PROPERTY_DESCRIPTION)
             + " a test");

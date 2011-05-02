@@ -108,15 +108,6 @@
 <!--111-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--111--></AD_CALLOUT>
 
-<!--112--><AD_CALLOUT>
-<!--112-->  <AD_CALLOUT_ID><![CDATA[112]]></AD_CALLOUT_ID>
-<!--112-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--112-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--112-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--112-->  <NAME><![CDATA[SE_Request_CopyText]]></NAME>
-<!--112-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--112--></AD_CALLOUT>
-
 <!--113--><AD_CALLOUT>
 <!--113-->  <AD_CALLOUT_ID><![CDATA[113]]></AD_CALLOUT_ID>
 <!--113-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -161,15 +152,6 @@
 <!--117-->  <NAME><![CDATA[SL_Charge]]></NAME>
 <!--117-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--117--></AD_CALLOUT>
-
-<!--118--><AD_CALLOUT>
-<!--118-->  <AD_CALLOUT_ID><![CDATA[118]]></AD_CALLOUT_ID>
-<!--118-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--118-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--118-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--118-->  <NAME><![CDATA[SL_Command_ArgNumber]]></NAME>
-<!--118-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--118--></AD_CALLOUT>
 
 <!--119--><AD_CALLOUT>
 <!--119-->  <AD_CALLOUT_ID><![CDATA[119]]></AD_CALLOUT_ID>
@@ -449,15 +431,6 @@
 <!--150-->  <NAME><![CDATA[SL_Proposal_Product]]></NAME>
 <!--150-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--150--></AD_CALLOUT>
-
-<!--151--><AD_CALLOUT>
-<!--151-->  <AD_CALLOUT_ID><![CDATA[151]]></AD_CALLOUT_ID>
-<!--151-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--151-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--151-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--151-->  <NAME><![CDATA[SL_Request_Action]]></NAME>
-<!--151-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--151--></AD_CALLOUT>
 
 <!--153--><AD_CALLOUT>
 <!--153-->  <AD_CALLOUT_ID><![CDATA[153]]></AD_CALLOUT_ID>

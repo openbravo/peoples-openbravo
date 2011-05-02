@@ -22,7 +22,7 @@ package org.openbravo.advpaymentmngt.test.draft;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -82,7 +82,8 @@ public class FinancialAccountTest extends BaseTest {
   public void testDeleteFinancialAccounts() {
     final OBCriteria<FIN_FinancialAccount> obCriteria = OBDal.getInstance().createCriteria(
         FIN_FinancialAccount.class);
-    obCriteria.add(Expression.eq(FIN_FinancialAccount.PROPERTY_DESCRIPTION, STANDARD_DESCRIPTION));
+    obCriteria
+        .add(Restrictions.eq(FIN_FinancialAccount.PROPERTY_DESCRIPTION, STANDARD_DESCRIPTION));
     final List<FIN_FinancialAccount> finAccs = obCriteria.list();
     for (FIN_FinancialAccount fa : finAccs) {
       System.out.println("Removing payment method: " + fa.getName());

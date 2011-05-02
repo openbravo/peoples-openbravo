@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,8 +35,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.FetchMode;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.filter.RequestFilter;
@@ -78,10 +78,8 @@ import org.openbravo.model.ad.ui.MessageTrl;
 import org.openbravo.model.ad.ui.ProcessTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TabTrl;
-import org.openbravo.model.ad.ui.Task;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.ui.WindowTrl;
-import org.openbravo.model.ad.ui.Workflow;
 import org.openbravo.reference.ui.UIReference;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -91,6 +89,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private static final String auditActionsReferenceId = "4C36DC179A5F40DC80B3F3798E121152";
   private static final String adMessageIdForProcess = "437";
   private static final String adMessageIdForWindow = "614";
+  private static final String adMessageIdForCF = "32171A3EEE4847FABB69259868A34ED5";
   private static final String adMessageIdForForm = "D9912E810888475ABB8DFF416196FB5E";
   private static final String adMessageIdForCallout = "13F1AE1374AD4054BE7FD3743B56F266";
   private static final String adValRuleIdForFields = "9C6989B15CEA4987A502C0F5FF02B171";
@@ -335,6 +334,16 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("recordIdentifierText", text);
 
+    String excludeAuditColumnNames = getExcludeAuditColumnNames(vars, tableId);
+    if (excludeAuditColumnNames.length() > 0) {
+      String auditText = Utility.messageBD(this, "AUDIT_HISTORY_EXCLUDE_AUDITCOLUMNS", vars
+          .getLanguage());
+      auditText = auditText.replace("@excludeauditcolumns@", excludeAuditColumnNames);
+      xmlDocument.setParameter("excludeAuditColumnText", auditText);
+    } else {
+      xmlDocument.setParameter("excludeAuditColumnText", "");
+    }
+
     // param for building 'View deleted records' link
     xmlDocument.setParameter("recordId", recordId);
     xmlDocument.setParameter("tabId", tabId);
@@ -370,8 +379,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
   private String getTranslatedElementName(Element element, Language language) {
     OBCriteria<ElementTrl> c = OBDal.getInstance().createCriteria(ElementTrl.class);
-    c.add(Expression.eq(ElementTrl.PROPERTY_APPLICATIONELEMENT, element));
-    c.add(Expression.eq(ElementTrl.PROPERTY_LANGUAGE, language));
+    c.add(Restrictions.eq(ElementTrl.PROPERTY_APPLICATIONELEMENT, element));
+    c.add(Restrictions.eq(ElementTrl.PROPERTY_LANGUAGE, language));
     ElementTrl trl = (ElementTrl) c.uniqueResult();
     if (trl == null) {
       return element.getName();
@@ -472,6 +481,17 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       text = text.replace("@elementnameCurrentTab@", elementCurrentTab);
       xmlDocument.setParameter("recordIdentifierText", text);
 
+      // exclude audit column names in info bar
+      String excludeAuditColumnNames = getExcludeAuditColumnNames(vars, tableId);
+      if (excludeAuditColumnNames.length() > 0) {
+        String auditText = Utility.messageBD(this, "AUDIT_HISTORY_EXCLUDE_AUDITCOLUMNS", vars
+            .getLanguage());
+        auditText = auditText.replace("@excludeauditcolumns@", excludeAuditColumnNames);
+        xmlDocument.setParameter("excludeAuditColumnText", auditText);
+      } else {
+        xmlDocument.setParameter("excludeAuditColumnText", "");
+      }
+
     } else {
       // child-tab of another tab
       Tab parentTab = OBDal.getInstance().get(Tab.class, parentTabId);
@@ -527,6 +547,17 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         text = text.replace("@parentIdentifier@", parentIdentifier);
 
         xmlDocument.setParameter("recordIdentifierText", text);
+
+        // exclude audit column names in info bar
+        String excludeAuditColumnNames = getExcludeAuditColumnNames(vars, tableId);
+        if (excludeAuditColumnNames.length() > 0) {
+          String auditText = Utility.messageBD(this, "AUDIT_HISTORY_EXCLUDE_AUDITCOLUMNS", vars
+              .getLanguage());
+          auditText = auditText.replace("@excludeauditcolumns@", excludeAuditColumnNames);
+          xmlDocument.setParameter("excludeAuditColumnText", auditText);
+        } else {
+          xmlDocument.setParameter("excludeAuditColumnText", "");
+        }
 
         // save values for use in DATA request
         vars.setSessionValue("AuditTrail.fkColumnName", atpd.name);
@@ -690,21 +721,21 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     long s1 = System.currentTimeMillis();
 
     OBCriteria<AuditTrailRaw> crit = OBDal.getInstance().createCriteria(AuditTrailRaw.class);
-    crit.add(Expression.eq(AuditTrailRaw.PROPERTY_TABLE, tableId));
-    crit.add(Expression.eq(AuditTrailRaw.PROPERTY_RECORDID, recordId));
+    crit.add(Restrictions.eq(AuditTrailRaw.PROPERTY_TABLE, tableId));
+    crit.add(Restrictions.eq(AuditTrailRaw.PROPERTY_RECORDID, recordId));
     // filter to only show rows which have their column shown in the tab
-    crit.add(Expression.in(AuditTrailRaw.PROPERTY_COLUMN, columnIds));
+    crit.add(Restrictions.in(AuditTrailRaw.PROPERTY_COLUMN, columnIds));
     if (!userId.isEmpty()) {
-      crit.add(Expression.eq(AuditTrailRaw.PROPERTY_USERCONTACT, userId));
+      crit.add(Restrictions.eq(AuditTrailRaw.PROPERTY_USERCONTACT, userId));
     }
     if (!columnId.isEmpty()) {
-      crit.add(Expression.eq(AuditTrailRaw.PROPERTY_COLUMN, columnId));
+      crit.add(Restrictions.eq(AuditTrailRaw.PROPERTY_COLUMN, columnId));
     }
     if (dateFrom != null) {
-      crit.add(Expression.ge(AuditTrailRaw.PROPERTY_EVENTTIME, dateFrom));
+      crit.add(Restrictions.ge(AuditTrailRaw.PROPERTY_EVENTTIME, dateFrom));
     }
     if (dateTo != null) {
-      crit.add(Expression.le(AuditTrailRaw.PROPERTY_EVENTTIME, dateTo));
+      crit.add(Restrictions.le(AuditTrailRaw.PROPERTY_EVENTTIME, dateTo));
     }
     int count = crit.count();
 
@@ -719,22 +750,22 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       Date dateTo, int offset, int pageSize, String language) throws ServletException {
 
     OBCriteria<AuditTrailRaw> crit = OBDal.getInstance().createCriteria(AuditTrailRaw.class);
-    crit.add(Expression.eq(AuditTrailRaw.PROPERTY_TABLE, tableId));
-    crit.add(Expression.eq(AuditTrailRaw.PROPERTY_RECORDID, recordId));
+    crit.add(Restrictions.eq(AuditTrailRaw.PROPERTY_TABLE, tableId));
+    crit.add(Restrictions.eq(AuditTrailRaw.PROPERTY_RECORDID, recordId));
     // filter to only show rows which have their column shown in the tab
-    crit.add(Expression.in(AuditTrailRaw.PROPERTY_COLUMN, tabFields.keySet()));
+    crit.add(Restrictions.in(AuditTrailRaw.PROPERTY_COLUMN, tabFields.keySet()));
     crit.addOrder(Order.desc(AuditTrailRaw.PROPERTY_EVENTTIME));
     if (!userId.isEmpty()) {
-      crit.add(Expression.eq(AuditTrailRaw.PROPERTY_USERCONTACT, userId));
+      crit.add(Restrictions.eq(AuditTrailRaw.PROPERTY_USERCONTACT, userId));
     }
     if (!columnId.isEmpty()) {
-      crit.add(Expression.eq(AuditTrailRaw.PROPERTY_COLUMN, columnId));
+      crit.add(Restrictions.eq(AuditTrailRaw.PROPERTY_COLUMN, columnId));
     }
     if (dateFrom != null) {
-      crit.add(Expression.ge(AuditTrailRaw.PROPERTY_EVENTTIME, dateFrom));
+      crit.add(Restrictions.ge(AuditTrailRaw.PROPERTY_EVENTTIME, dateFrom));
     }
     if (dateTo != null) {
-      crit.add(Expression.le(AuditTrailRaw.PROPERTY_EVENTTIME, dateTo));
+      crit.add(Restrictions.le(AuditTrailRaw.PROPERTY_EVENTTIME, dateTo));
     }
     crit.setFirstResult(offset);
     crit.setMaxResults(pageSize);
@@ -836,6 +867,10 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     List<Field> fields = getFieldListForTab(vars, tab);
     for (Field field : fields) {
       Column col = field.getColumn();
+      // Remove grid generation for non audited columns
+      if (col.isExcludeAudit()) {
+        continue;
+      }
       gridCol = new SQLReturnObject();
       gridCol.setData("columnname", col.getDBColumnName());
       gridCol.setData("gridcolumnname", col.getDBColumnName());
@@ -863,9 +898,9 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
    */
   private List<Field> getFieldListForTab(VariablesSecureApp vars, Tab tab) {
     OBCriteria<Field> c = OBDal.getInstance().createCriteria(Field.class);
-    c.add(Expression.eq(Field.PROPERTY_TAB, tab));
-    c.add(Expression.eq(Field.PROPERTY_DISPLAYED, Boolean.TRUE));
-    c.add(Expression.eq(Field.PROPERTY_SHOWINGRIDVIEW, Boolean.TRUE));
+    c.add(Restrictions.eq(Field.PROPERTY_TAB, tab));
+    c.add(Restrictions.eq(Field.PROPERTY_DISPLAYED, Boolean.TRUE));
+    c.add(Restrictions.eq(Field.PROPERTY_SHOWINGRIDVIEW, Boolean.TRUE));
     c.setFetchMode("column", FetchMode.JOIN); // optimize column association
     c.addOrderBy(Field.PROPERTY_SEQUENCENUMBER, true);
     List<Field> fields = c.list();
@@ -874,8 +909,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
   private String getTranslatedFieldName(Field field, Language lang) {
     OBCriteria<FieldTrl> c = OBDal.getInstance().createCriteria(FieldTrl.class);
-    c.add(Expression.eq(FieldTrl.PROPERTY_FIELD, field));
-    c.add(Expression.eq(FieldTrl.PROPERTY_LANGUAGE, lang));
+    c.add(Restrictions.eq(FieldTrl.PROPERTY_FIELD, field));
+    c.add(Restrictions.eq(FieldTrl.PROPERTY_LANGUAGE, lang));
     FieldTrl trl = (FieldTrl) c.uniqueResult();
     if (trl == null) {
       return field.getName();
@@ -1148,20 +1183,16 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       String processLabel = getTranslatedMessage(adMessageIdForProcess);
       return processLabel + ": " + getTranslatedProcessName(process);
     }
-    // no translation for the next four, as either no _trl table exists, or the application elements
-    // are not used/don't trigger db-changes
-    if ("T".equals(processType)) {
-      return "Task: " + OBDal.getInstance().get(Task.class, process).getName();
-    }
     if ("S".equals(processType)) {
       return "Reference: " + OBDal.getInstance().get(Reference.class, process).getName();
-    }
-    if ("F".equals(processType)) {
-      return "Workflow: " + OBDal.getInstance().get(Workflow.class, process).getName();
     }
     if ("C".equals(processType)) {
       String calloutLabel = getTranslatedMessage(adMessageIdForCallout);
       return calloutLabel + ": " + OBDal.getInstance().get(Callout.class, process).getName();
+    }
+    if ("CF".equals(processType)) {
+      String processCFLabel = getTranslatedMessage(adMessageIdForCF);
+      return processCFLabel + ": " + OBDal.getInstance().get(Table.class, process).getDBTableName();
     }
     // all other cases -> Tab
     String windowLabel = getTranslatedMessage(adMessageIdForWindow);
@@ -1171,8 +1202,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private String getTranslatedMessage(String msgId) {
     Message msg = OBDal.getInstance().get(Message.class, msgId);
     OBCriteria<MessageTrl> c = OBDal.getInstance().createCriteria(MessageTrl.class);
-    c.add(Expression.eq(MessageTrl.PROPERTY_MESSAGE, msg));
-    c.add(Expression.eq(MessageTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
+    c.add(Restrictions.eq(MessageTrl.PROPERTY_MESSAGE, msg));
+    c.add(Restrictions.eq(MessageTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
     MessageTrl trl = (MessageTrl) c.uniqueResult();
     if (trl == null) {
       return msg.getMessageText();
@@ -1182,8 +1213,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
   private String getTranslatedTabName(Tab tab) {
     OBCriteria<TabTrl> c = OBDal.getInstance().createCriteria(TabTrl.class);
-    c.add(Expression.eq(TabTrl.PROPERTY_TAB, tab));
-    c.add(Expression.eq(TabTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
+    c.add(Restrictions.eq(TabTrl.PROPERTY_TAB, tab));
+    c.add(Restrictions.eq(TabTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
     TabTrl trl = (TabTrl) c.uniqueResult();
     if (trl == null) {
       return tab.getName();
@@ -1194,8 +1225,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private String getTranslatedWindowName(String tabId) {
     Window w = OBDal.getInstance().get(Tab.class, tabId).getWindow();
     OBCriteria<WindowTrl> c = OBDal.getInstance().createCriteria(WindowTrl.class);
-    c.add(Expression.eq(WindowTrl.PROPERTY_WINDOW, w));
-    c.add(Expression.eq(WindowTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
+    c.add(Restrictions.eq(WindowTrl.PROPERTY_WINDOW, w));
+    c.add(Restrictions.eq(WindowTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
     WindowTrl trl = (WindowTrl) c.uniqueResult();
     if (trl == null) {
       return w.getName();
@@ -1207,8 +1238,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     org.openbravo.model.ad.ui.Process p = OBDal.getInstance().get(
         org.openbravo.model.ad.ui.Process.class, processId);
     OBCriteria<ProcessTrl> c = OBDal.getInstance().createCriteria(ProcessTrl.class);
-    c.add(Expression.eq(ProcessTrl.PROPERTY_PROCESS, p));
-    c.add(Expression.eq(ProcessTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
+    c.add(Restrictions.eq(ProcessTrl.PROPERTY_PROCESS, p));
+    c.add(Restrictions.eq(ProcessTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
     ProcessTrl trl = (ProcessTrl) c.uniqueResult();
     if (trl == null) {
       return p.getName();
@@ -1219,8 +1250,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private String getTranslatedFormName(String formId) {
     Form f = OBDal.getInstance().get(Form.class, formId);
     OBCriteria<FormTrl> c = OBDal.getInstance().createCriteria(FormTrl.class);
-    c.add(Expression.eq(FormTrl.PROPERTY_SPECIALFORM, f));
-    c.add(Expression.eq(FormTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
+    c.add(Restrictions.eq(FormTrl.PROPERTY_SPECIALFORM, f));
+    c.add(Restrictions.eq(FormTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
     FormTrl trl = (FormTrl) c.uniqueResult();
     if (trl == null) {
       return f.getName();
@@ -1310,7 +1341,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private String getFkTargetIdentifierViaReferencedColumn(VariablesSecureApp vars,
       Entity targetEntity, Property referencedProperty, String value) {
     OBCriteria<BaseOBObject> c = OBDal.getInstance().createCriteria(targetEntity.getName());
-    c.add(Expression.eq(referencedProperty.getName(), value));
+    c.add(Restrictions.eq(referencedProperty.getName(), value));
     BaseOBObject bob = (BaseOBObject) c.uniqueResult();
     if (bob != null) {
       return bob.getIdentifier();
@@ -1323,11 +1354,11 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       Property referencedProperty, String value) {
     // lookup record in audit data (for deleted records) to get its recordId
     OBCriteria<AuditTrailRaw> c = OBDal.getInstance().createCriteria(AuditTrailRaw.class);
-    c.add(Expression.eq(AuditTrailRaw.PROPERTY_ACTION, "D"));
-    c.add(Expression.eq(AuditTrailRaw.PROPERTY_TABLE, targetEntity.getTableId()));
-    // c.add(Expression.eq(AuditTrailRaw.PROPERTY_RECORDID, recordId));
-    c.add(Expression.eq(AuditTrailRaw.PROPERTY_COLUMN, referencedProperty.getColumnId()));
-    c.add(Expression.eq(AuditTrailRaw.PROPERTY_OLDCHAR, value));
+    c.add(Restrictions.eq(AuditTrailRaw.PROPERTY_ACTION, "D"));
+    c.add(Restrictions.eq(AuditTrailRaw.PROPERTY_TABLE, targetEntity.getTableId()));
+    // c.add(Restrictions.eq(AuditTrailRaw.PROPERTY_RECORDID, recordId));
+    c.add(Restrictions.eq(AuditTrailRaw.PROPERTY_COLUMN, referencedProperty.getColumnId()));
+    c.add(Restrictions.eq(AuditTrailRaw.PROPERTY_OLDCHAR, value));
     AuditTrailRaw atr = (AuditTrailRaw) c.uniqueResult();
     if (atr == null) {
       return "(unknown)";
@@ -1345,10 +1376,10 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     for (Property prop : targetEntity.getIdentifierProperties()) {
       // get value for the property from audit data
       OBCriteria<AuditTrailRaw> c = OBDal.getInstance().createCriteria(AuditTrailRaw.class);
-      c.add(Expression.eq(AuditTrailRaw.PROPERTY_ACTION, "D"));
-      c.add(Expression.eq(AuditTrailRaw.PROPERTY_TABLE, targetEntity.getTableId()));
-      c.add(Expression.eq(AuditTrailRaw.PROPERTY_RECORDID, recordId));
-      c.add(Expression.eq(AuditTrailRaw.PROPERTY_COLUMN, prop.getColumnId()));
+      c.add(Restrictions.eq(AuditTrailRaw.PROPERTY_ACTION, "D"));
+      c.add(Restrictions.eq(AuditTrailRaw.PROPERTY_TABLE, targetEntity.getTableId()));
+      c.add(Restrictions.eq(AuditTrailRaw.PROPERTY_RECORDID, recordId));
+      c.add(Restrictions.eq(AuditTrailRaw.PROPERTY_COLUMN, prop.getColumnId()));
       AuditTrailRaw atr = (AuditTrailRaw) c.uniqueResult();
       String value = "(unknown)";
       if (atr != null) {
@@ -1375,8 +1406,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private String getTranslatedListValueName(Reference listRef, String value) {
     OBCriteria<org.openbravo.model.ad.domain.List> critList = OBDal.getInstance().createCriteria(
         org.openbravo.model.ad.domain.List.class);
-    critList.add(Expression.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, listRef));
-    critList.add(Expression.eq(org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY, value));
+    critList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, listRef));
+    critList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY, value));
     org.openbravo.model.ad.domain.List list = (org.openbravo.model.ad.domain.List) critList
         .uniqueResult();
     if (list == null) {
@@ -1384,15 +1415,33 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     }
     // check if we have a translation
     OBCriteria<ListTrl> critListTrl = OBDal.getInstance().createCriteria(ListTrl.class);
-    critListTrl.add(Expression.eq(ListTrl.PROPERTY_LISTREFERENCE, list));
-    critListTrl.add(Expression
-        .eq(ListTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
+    critListTrl.add(Restrictions.eq(ListTrl.PROPERTY_LISTREFERENCE, list));
+    critListTrl.add(Restrictions.eq(ListTrl.PROPERTY_LANGUAGE, OBContext.getOBContext()
+        .getLanguage()));
     ListTrl trl = (ListTrl) critListTrl.uniqueResult();
     if (trl != null) {
       return trl.getName();
     } else {
       return list.getName();
     }
+  }
+
+  private String getExcludeAuditColumnNames(VariablesSecureApp vars, String tableId) {
+    OBCriteria<Column> col = OBDal.getInstance().createCriteria(Column.class);
+    col.add(Restrictions.eq("table.id", tableId));
+    col.add(Restrictions.eq(Column.PROPERTY_EXCLUDEAUDIT, Boolean.TRUE));
+    StringBuilder result = new StringBuilder();
+    // loop over ExcludeAudit columns and concatenate column name
+    List<Column> columnList = col.list();
+    for (Column c : columnList) {
+      result.append(c.getName());
+      result.append(","); // delimiter between columns
+    }
+    // remove ',' after last column
+    if (result.length() > 0) {
+      result.setLength(result.length() - 1);
+    }
+    return result.toString();
   }
 
   /**

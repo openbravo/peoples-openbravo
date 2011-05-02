@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
@@ -587,8 +587,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
     try {
       final OBCriteria<FIN_ReconciliationLine_v> obc = OBDal.getInstance().createCriteria(
           FIN_ReconciliationLine_v.class);
-      obc.add(Expression.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION, reconciliation));
-      obc.add(Expression.isNull(FIN_ReconciliationLine_v.PROPERTY_BANKSTATEMENTLINE));
+      obc.add(Restrictions.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION, reconciliation));
+      obc.add(Restrictions.isNull(FIN_ReconciliationLine_v.PROPERTY_BANKSTATEMENTLINE));
       obc.setMaxResults(1);
       final List<FIN_ReconciliationLine_v> rec = obc.list();
       return (rec.size() != 0);
@@ -831,8 +831,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
   private FIN_Payment getAlreadyExistingPayment(String strPaymentDocumentNo,
       Organization organization) {
     final OBCriteria<FIN_Payment> obc = OBDal.getInstance().createCriteria(FIN_Payment.class);
-    obc.add(Expression.eq(FIN_Payment.PROPERTY_DOCUMENTNO, strPaymentDocumentNo));
-    obc.add(Expression.eq(FIN_Payment.PROPERTY_ORGANIZATION, organization));
+    obc.add(Restrictions.eq(FIN_Payment.PROPERTY_DOCUMENTNO, strPaymentDocumentNo));
+    obc.add(Restrictions.eq(FIN_Payment.PROPERTY_ORGANIZATION, organization));
     obc.setMaxResults(1);
     final List<FIN_Payment> payments = obc.list();
     if (payments.size() == 0) {

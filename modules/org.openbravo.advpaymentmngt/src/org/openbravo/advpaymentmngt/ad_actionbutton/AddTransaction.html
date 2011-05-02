@@ -153,7 +153,7 @@ function showHideLayers() {
 }
 
 function closeThisPage() {
-  window.close();
+  closePage();
 }
 
 function validateDate(element) {
@@ -168,7 +168,7 @@ function updateSelectAll(mark) {
 
 function submitThisPage(strCommand) {
   if (validate()) {
-    submitCommandForm(strCommand, false, null, '../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html', '_top');
+    submitCommandForm(strCommand, false, null, '../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html');
     return true;
   }
   return true;

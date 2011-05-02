@@ -23,6 +23,7 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.ad_process.ImportProcessData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;

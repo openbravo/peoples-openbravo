@@ -28,7 +28,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.OBBindings;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
@@ -61,8 +61,8 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
 
       Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
       OBCriteria<SelectorField> obc = OBDal.getInstance().createCriteria(SelectorField.class);
-      obc.add(Expression.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel));
-      obc.add(Expression.isNotNull(SelectorField.PROPERTY_DEFAULTEXPRESSION));
+      obc.add(Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel));
+      obc.add(Restrictions.isNotNull(SelectorField.PROPERTY_DEFAULTEXPRESSION));
 
       if (obc.count() == 0) {
         return result;

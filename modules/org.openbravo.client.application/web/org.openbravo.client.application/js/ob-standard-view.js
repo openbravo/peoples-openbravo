@@ -1261,26 +1261,26 @@ isc.OBStandardView.addProperties({
     
     var me = this;
     var formRefresh = function() {
+      if (refreshCallback) {
+        refreshCallback();
+      }
       me.viewForm.refresh();
     };
     
     if (!this.isShowingForm) {
-      this.viewGrid.refreshGrid();
+      this.viewGrid.refreshGrid(refreshCallback);
     } else {
       var view = this;
       if (this.viewForm.hasChanged) {
         var callback = function(ok){
           if (ok) {
-            this.viewGrid.refreshGrid(formRefresh);            
+            view.viewGrid.refreshGrid(formRefresh);            
           }
         };
         isc.ask(OB.I18N.getLabel('OBUIAPP_ConfirmRefresh'), callback);
       } else {
         this.viewGrid.refreshGrid(formRefresh);
       }
-    }
-    if (refreshCallback) {
-      refreshCallback();
     }
   },
   
@@ -1576,10 +1576,11 @@ isc.OBStandardView.addProperties({
       classicMode = true;
     }
     var value, field, record, form, component, propertyObj, type;
-    // different modes:
-    // 1) showing grid with one record selected
-    // 2) showing form with aux inputs
-    if (this.isEditingGrid) {
+
+    // a special case, the editform has been build but it is not present yet in the
+    // form, so isEditingGrid is true but the edit form is not there yet, in that 
+    // case use the viewGrid as component and the selected record
+    if (this.isEditingGrid && this.viewGrid.getEditForm()) {
       rowNum = this.viewGrid.getEditRow();
       if (rowNum || rowNum === 0) {
         record = isc.addProperties({}, this.viewGrid.getRecord(rowNum), this.viewGrid.getEditValues(rowNum));
@@ -1707,7 +1708,7 @@ isc.OBStandardView.addProperties({
       return;
     }
     if (!sessionProperties) {
-      sessionProperties = this.getContextInfo(true, true);
+      sessionProperties = this.getContextInfo(true, true, false, true);
     }
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
       MODE: 'SETSESSION',

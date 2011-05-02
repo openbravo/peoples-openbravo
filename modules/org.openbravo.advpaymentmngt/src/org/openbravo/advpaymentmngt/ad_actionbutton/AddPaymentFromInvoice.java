@@ -29,7 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -457,8 +457,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
         strPmtMethodId);
     OBCriteria<FinAccPaymentMethod> psdFilter = OBDal.getInstance().createCriteria(
         FinAccPaymentMethod.class);
-    psdFilter.add(Expression.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, finAcc));
-    psdFilter.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, finPmtMethod));
+    psdFilter.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, finAcc));
+    psdFilter.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, finPmtMethod));
     for (FinAccPaymentMethod paymentMethod : psdFilter.list()) {
       return isReceipt ? paymentMethod.isAutomaticDeposit() : paymentMethod.isAutomaticWithdrawn();
     }

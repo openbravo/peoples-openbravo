@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,8 +51,6 @@ class WindowTreeUtility {
       TreeType = "MM";
     else if (keyColumnName.equals("C_ElementValue_ID"))
       TreeType = "EV";
-    else if (keyColumnName.equals("M_Product_ID"))
-      TreeType = "PR";
     else if (keyColumnName.equals("C_BPartner_ID"))
       TreeType = "BP";
     else if (keyColumnName.equals("AD_Org_ID"))
@@ -74,7 +72,7 @@ class WindowTreeUtility {
     else if (keyColumnName.equals("C_Tax_Report_ID"))
       TreeType = "TR";
     else
-      TreeType = WindowTreeUtilityClient.getTreeType(keyColumnName);
+      TreeType = "";
     if (TreeType.equals(""))
       log4j.error("WindowTreeUtility.getTreeID() - Could not map " + keyColumnName);
     return TreeType;
@@ -115,9 +113,6 @@ class WindowTreeUtility {
     } else if (TreeType.equals("OO"))
       data = WindowTreeData.selectOrg(conn, vars.getUser(), strEditable, strParentID, strNodeId,
           TreeID);
-    else if (TreeType.equals("PR"))
-      data = WindowTreeData.selectProduct(conn, vars.getUser(), strEditable, strParentID,
-          strNodeId, TreeID);
     else if (TreeType.equals("PC"))
       data = WindowTreeData.selectProductCategory(conn, vars.getUser(), strEditable, strParentID,
           strNodeId, TreeID);
@@ -150,17 +145,7 @@ class WindowTreeUtility {
     else if (TreeType.equals("TR"))
       data = WindowTreeData.selectTaxReport(conn, vars.getUser(), strEditable, strParentID,
           strNodeId, TreeID);
-    else {
-      FieldProvider[] fData = WindowTreeUtilityClient.getTree(conn, vars, TreeType, TreeID,
-          editable, strParentID, strNodeId, strTabID);
-      if (fData != null) {
-        data = new WindowTreeData[fData.length];
-        for (int i = 0; i < fData.length; i++) {
-          data[i] = WindowTreeUtility.transformFieldProvider(fData[i]);
-        }
-      }
-      fData = null;
-    }
+
     return data;
   }
 
@@ -186,8 +171,6 @@ class WindowTreeUtility {
     aux.adWindowId = data.getField("adWindowId");
     aux.adProcessId = data.getField("adProcessId");
     aux.adFormId = data.getField("adFormId");
-    aux.adWorkflowId = data.getField("adWorkflowId");
-    aux.adTaskId = data.getField("adTaskId");
     return aux;
   }
 
@@ -287,7 +270,7 @@ class WindowTreeUtility {
     else if (type.equals("B"))
       return "BancoTrabajo";
     else
-      return WindowTreeUtilityClient.windowType(type);
+      return "";
   }
 
   /**
@@ -308,8 +291,6 @@ class WindowTreeUtility {
       return "form";
     else if (tipo.equals("P"))
       return "process";
-    else if (tipo.equals("T"))
-      return "task";
     else if (tipo.equals("R"))
       return "report";
     else if (tipo.equals("F"))
@@ -317,7 +298,7 @@ class WindowTreeUtility {
     else if (tipo.equals("B"))
       return "wb";
     else
-      return WindowTreeUtilityClient.windowTypeNico(tipo);
+      return "";
   }
 
   /**
@@ -344,9 +325,7 @@ class WindowTreeUtility {
     if (log4j.isDebugEnabled())
       log4j.debug("WindowTreeUtility.setNode() - TreeID: " + TreeID);
 
-    if (TreeType.equals("PR"))
-      WindowTreeData.updatePR(conn, vars.getUser(), strParentID, strSeqNo, TreeID, strLink);
-    else if (TreeType.equals("BP"))
+    if (TreeType.equals("BP"))
       WindowTreeData.updateBP(conn, vars.getUser(), strParentID, strSeqNo, TreeID, strLink);
     else
       WindowTreeData.update(conn, vars.getUser(), strParentID, strSeqNo, TreeID, strLink);

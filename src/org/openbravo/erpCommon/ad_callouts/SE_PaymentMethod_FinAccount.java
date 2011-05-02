@@ -20,7 +20,7 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -58,7 +58,7 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
     if (srtPaymentMethodId.isEmpty() && srtPOPaymentMethodId.isEmpty()) {
       OBCriteria<FIN_FinancialAccount> obc = OBDal.getInstance().createCriteria(
           FIN_FinancialAccount.class);
-      obc.add(Expression.in("organization.id", OBContext.getOBContext()
+      obc.add(Restrictions.in("organization.id", OBContext.getOBContext()
           .getOrganizationStructureProvider().getNaturalTree(srtOrgId)));
       obc.setFilterOnReadableOrganization(false);
       for (FIN_FinancialAccount acc : obc.list()) {
@@ -68,8 +68,8 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
     } else {
       OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
-      obc.add(Expression.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
-      obc.add(Expression.in("organization.id", OBContext.getOBContext()
+      obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
+      obc.add(Restrictions.in("organization.id", OBContext.getOBContext()
           .getOrganizationStructureProvider().getNaturalTree(srtOrgId)));
 
       for (FinAccPaymentMethod accPm : obc.list()) {

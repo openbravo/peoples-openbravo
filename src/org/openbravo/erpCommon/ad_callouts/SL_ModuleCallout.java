@@ -27,7 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
@@ -80,10 +80,10 @@ public class SL_ModuleCallout extends HttpSecureAppServlet {
       String strADModuleID) throws IOException, ServletException {
     // Check whether there are more templates in development
     OBCriteria<Module> obc = OBDal.getInstance().createCriteria(Module.class);
-    obc.add(Expression.eq(Module.PROPERTY_TYPE, "T"));
-    obc.add(Expression.eq(Module.PROPERTY_INDEVELOPMENT, true));
+    obc.add(Restrictions.eq(Module.PROPERTY_TYPE, "T"));
+    obc.add(Restrictions.eq(Module.PROPERTY_INDEVELOPMENT, true));
     if (strADModuleID != null && !strADModuleID.equals("")) {
-      obc.add(Expression.ne(Module.PROPERTY_ID, strADModuleID));
+      obc.add(Restrictions.ne(Module.PROPERTY_ID, strADModuleID));
     }
     String devTemplates = "";
     for (Module template : obc.list()) {
