@@ -195,6 +195,8 @@ public class ActivationKey {
    * Singleton, so the {@link ActivationKey#getInstance()} method should be used instead.
    * <p/>
    * This constructor is public to maintain backwards compatibility.
+   * 
+   * @deprecated
    */
   public ActivationKey() {
     org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
