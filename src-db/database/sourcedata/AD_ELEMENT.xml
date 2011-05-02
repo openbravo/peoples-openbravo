@@ -1708,7 +1708,7 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--286-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--286-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--286-->  <COLUMNNAME><![CDATA[DivideRate]]></COLUMNNAME>
-<!--286-->  <NAME><![CDATA[Divide Rate by]]></NAME>
+<!--286-->  <NAME><![CDATA[Divide Rate By]]></NAME>
 <!--286-->  <PRINTNAME><![CDATA[Divide Rate]]></PRINTNAME>
 <!--286-->  <DESCRIPTION><![CDATA[The rate by which the base unit will be divided by to create the converted unit.]]></DESCRIPTION>
 <!--286-->  <HELP><![CDATA[To convert Source number to Target number, the Source is divided by the divide rate.  If you enter a Divide Rate, the Multiply Rate will be automatically calculated.]]></HELP>
@@ -2974,7 +2974,7 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--466-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--466-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--466-->  <COLUMNNAME><![CDATA[MultiplyRate]]></COLUMNNAME>
-<!--466-->  <NAME><![CDATA[Multiple Rate by]]></NAME>
+<!--466-->  <NAME><![CDATA[Multiple Rate By]]></NAME>
 <!--466-->  <PRINTNAME><![CDATA[Multiply Rate]]></PRINTNAME>
 <!--466-->  <DESCRIPTION><![CDATA[The rate by which the base unit will be mutiplied by to create the converted unit.]]></DESCRIPTION>
 <!--466-->  <HELP><![CDATA[To convert Source number to Target number, the Source is multiplied by the multiply rate.  If the Multiply Rate is entered, then the Divide Rate will be automatically calculated.]]></HELP>
@@ -4402,7 +4402,7 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--617-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--617-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--617-->  <COLUMNNAME><![CDATA[ValidFrom]]></COLUMNNAME>
-<!--617-->  <NAME><![CDATA[Valid from Date]]></NAME>
+<!--617-->  <NAME><![CDATA[Valid From Date]]></NAME>
 <!--617-->  <PRINTNAME><![CDATA[Valid from]]></PRINTNAME>
 <!--617-->  <DESCRIPTION><![CDATA[A parameter stating the starting time of a specified request.]]></DESCRIPTION>
 <!--617-->  <HELP><![CDATA[The Valid From date indicates the first day of a date range]]></HELP>
@@ -4415,7 +4415,7 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--618-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--618-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--618-->  <COLUMNNAME><![CDATA[ValidTo]]></COLUMNNAME>
-<!--618-->  <NAME><![CDATA[Valid to Date]]></NAME>
+<!--618-->  <NAME><![CDATA[Valid To Date]]></NAME>
 <!--618-->  <PRINTNAME><![CDATA[Valid to]]></PRINTNAME>
 <!--618-->  <DESCRIPTION><![CDATA[A parameter stating the ending time of a specified request.]]></DESCRIPTION>
 <!--618-->  <HELP><![CDATA[The Valid To date indicates the last day of a date range]]></HELP>
