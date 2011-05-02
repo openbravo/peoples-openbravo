@@ -2535,19 +2535,6 @@
 <!--800081-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800081--></AD_MENU>
 
-<!--800083--><AD_MENU>
-<!--800083-->  <AD_MENU_ID><![CDATA[800083]]></AD_MENU_ID>
-<!--800083-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800083-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800083-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800083-->  <NAME><![CDATA[Invoiced Returns Dimensional Report]]></NAME>
-<!--800083-->  <DESCRIPTION><![CDATA[Refund invoice customer dimensional analyze]]></DESCRIPTION>
-<!--800083-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800083-->  <ACTION><![CDATA[R]]></ACTION>
-<!--800083-->  <AD_PROCESS_ID><![CDATA[800072]]></AD_PROCESS_ID>
-<!--800083-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800083--></AD_MENU>
-
 <!--800084--><AD_MENU>
 <!--800084-->  <AD_MENU_ID><![CDATA[800084]]></AD_MENU_ID>
 <!--800084-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
