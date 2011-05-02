@@ -1005,6 +1005,21 @@ public class ActivationKey {
       return FeatureRestriction.TIER2_RESTRICTION;
     }
 
+    if ("W".equals(actualType)) {
+      // For windows, check also tab restrictions
+      return hasLicencesTabAccess(id);
+    }
+
+    return FeatureRestriction.NO_RESTRICTION;
+  }
+
+  public FeatureRestriction hasLicencesTabAccess(String tabId) {
+    if (tier1Artifacts.contains("T" + tabId)) {
+      return FeatureRestriction.TIER1_RESTRICTION;
+    }
+    if (tier2Artifacts.contains("T" + tabId)) {
+      return FeatureRestriction.TIER2_RESTRICTION;
+    }
     return FeatureRestriction.NO_RESTRICTION;
   }
 
