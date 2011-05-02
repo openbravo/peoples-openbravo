@@ -58,10 +58,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
 import org.openbravo.erpCommon.obps.DisabledModules.Artifacts;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
@@ -413,12 +411,9 @@ public class ActivationKey {
       ois.close();
 
       if (!isActive()) {
-        VersionComparator vc = new VersionComparator();
-        if (vc.compare("3.0.0", OBVersion.getInstance().getVersionNumber()) <= 0) {
-          // community 3.0 instance, restrict both tiers
-          tier1Artifacts.addAll(m1.get(TIER_1_PREMIUM_FEATURE));
-          tier2Artifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
-        }
+        // community instance, restrict both tiers
+        tier1Artifacts.addAll(m1.get(TIER_1_PREMIUM_FEATURE));
+        tier2Artifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
       } else if (licenseClass == LicenseClass.BASIC) {
         // basic, restrict tier 2
         tier2Artifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
@@ -434,7 +429,7 @@ public class ActivationKey {
     return licenseClass == null ? LicenseClass.COMMUNITY : licenseClass;
   }
 
-  @SuppressWarnings( { "static-access", "unchecked" })
+  @SuppressWarnings({ "static-access", "unchecked" })
   private void setLogger() {
     if (isActive() && !opsLog) {
       // add instance id to logger
@@ -943,7 +938,6 @@ public class ActivationKey {
    */
   public FeatureRestriction hasLicenseAccess(String type, String id) {
     String actualType = type;
-    VersionComparator vc = new VersionComparator();
 
     if (actualType == null || actualType.isEmpty() || id == null || id.isEmpty()) {
       return FeatureRestriction.NO_RESTRICTION;
@@ -1000,8 +994,7 @@ public class ActivationKey {
     }
 
     // Check core premium features restrictions
-    if ((!isActive() && vc.compare("3.0.0", OBVersion.getInstance().getVersionNumber()) > 0)
-        || licenseClass == LicenseClass.STD) {
+    if (licenseClass == LicenseClass.STD) {
       return FeatureRestriction.NO_RESTRICTION;
     }
 
@@ -1011,6 +1004,7 @@ public class ActivationKey {
     if (tier2Artifacts.contains(actualType + artifactId)) {
       return FeatureRestriction.TIER2_RESTRICTION;
     }
+
     return FeatureRestriction.NO_RESTRICTION;
   }
 
