@@ -61,8 +61,8 @@ public class PaymentTest_05 extends BaseTest {
    * Payment Proposal with two invoices of different business partner partially paid.
    */
   public void testRunPayment_05() {
-    String mcGiver = "1000008";
-    String turtle = "1000013";
+    String fruitBio = "8A64B71A2B0B2946012B0FE1E45F01B0";
+    String happyDrinks = "8A64B71A2B0B2946012B0FE1E37001AB";
     String currencyId = "102"; // EUR
     Invoice inv1;
     Invoice inv2;
@@ -70,8 +70,8 @@ public class PaymentTest_05 extends BaseTest {
     boolean exception = false;
 
     try {
-      inv1 = createPurchaseInvoice(mcGiver);
-      inv2 = createPurchaseInvoice(turtle);
+      inv1 = createPurchaseInvoice(fruitBio);
+      inv2 = createPurchaseInvoice(happyDrinks);
 
       inv1 = OBDal.getInstance().get(Invoice.class, inv1.getId());
       inv2 = OBDal.getInstance().get(Invoice.class, inv2.getId());
@@ -92,13 +92,13 @@ public class PaymentTest_05 extends BaseTest {
       mergeScheduleDetails.add(scheduleDetails2.get(0));
 
       HashMap<String, BigDecimal> amounts = new HashMap<String, BigDecimal>();
-      amounts.put(scheduleDetails1.get(0).getId(), new BigDecimal("100"));
-      amounts.put(scheduleDetails2.get(0).getId(), new BigDecimal("100"));
+      amounts.put(scheduleDetails1.get(0).getId(), new BigDecimal("5"));
+      amounts.put(scheduleDetails2.get(0).getId(), new BigDecimal("5"));
 
       OBContext.setAdminMode(true);
       try {
         // ORA-01779: cannot modify a column which maps to a non key-preserved table
-        FIN_AddPayment.savePaymentProposal(paymentProposal, new BigDecimal("200"),
+        FIN_AddPayment.savePaymentProposal(paymentProposal, new BigDecimal("10"),
             mergeScheduleDetails, amounts, null);
       } finally {
         OBContext.restorePreviousMode();
@@ -119,17 +119,17 @@ public class PaymentTest_05 extends BaseTest {
   private Invoice createPurchaseInvoice(String businessPartnerId) throws Exception {
 
     // DATA SETUP
-    String priceListId = "1000003"; // General Sales
-    String paymentTermId = "1000000"; // Immediate"
+    String priceListId = "8A64B71A2B0B2946012B0BD96C470131"; // Happy Drinks Price List
+    String paymentTermId = "3F22D83730EE4FD5AE42542A2839DAC4"; // 30 days
     String currencyId = "102"; // EUR
-    String productId = "1000006"; // Hat
-    String taxId = "1000002"; // VAT 4%
-    String docTypeId = "1000008"; // AR Invoice
+    String productId = "8A64B71A2B0B2946012B0BC4345000FB"; // Ale Beer
+    String taxId = "1FE610D3A8844F85B17CA32525C15353"; // NY Sales Tax
+    String docTypeId = "71F835BC045742ADAAF5B6856914BB26"; // US AP Invoice
     BigDecimal invoicedQuantity = new BigDecimal("5");
-    BigDecimal netUnitPrice = new BigDecimal("35");
-    BigDecimal netListPrice = new BigDecimal("37");
-    BigDecimal lineNetAmount = new BigDecimal("175");
-    BigDecimal priceLimit = new BigDecimal("33.50");
+    BigDecimal netUnitPrice = new BigDecimal("1.36");
+    BigDecimal netListPrice = new BigDecimal("1.36");
+    BigDecimal lineNetAmount = new BigDecimal("6.80");
+    BigDecimal priceLimit = new BigDecimal("1");
 
     PriceList testPriceList = OBDal.getInstance().get(PriceList.class, priceListId);
     BusinessPartner testBusinessPartner = OBDal.getInstance().get(BusinessPartner.class,
