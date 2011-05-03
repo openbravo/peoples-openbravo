@@ -415,6 +415,8 @@ isc.OBSectionItem.addProperties({
   // visual state of disabled or non-disabled stays the same now
   showDisabled: false,
   
+  alwaysTakeSpace: false,
+
   // never disable a section item
   isDisabled: function(){
     return false;
@@ -482,7 +484,6 @@ isc.OBSectionItem.addProperties({
       newFocusItem.focusInItem();
     }
   }
-  
 });
 
 // == OBListItem ==

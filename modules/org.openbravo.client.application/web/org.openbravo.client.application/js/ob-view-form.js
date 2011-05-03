@@ -488,9 +488,9 @@ OB.ViewFormProperties = {
     }
     
     var columnValues = data.columnValues, calloutMessages = data.calloutMessages,
-                       auxInputs = data.auxiliaryInputValues, prop, value, i,
+                       auxInputs = data.auxiliaryInputValues, prop, value, i, j,
                        dynamicCols = data.dynamicCols,
-                       sessionAttributes = data.sessionAttributes;
+                       sessionAttributes = data.sessionAttributes, item, section;
 
     // edit row has changed when returning, don't update the form anymore
     if (this.grid && this.grid.getEditRow() !== editRow) {
@@ -567,6 +567,33 @@ OB.ViewFormProperties = {
       for (i = 0; i < this.getFields().length; i++) {
         if (this.hasFieldErrors(this.getFields()[i].name)) {
           this.getFields()[i].validate();
+        }
+      }
+    }
+
+    // Hiding sections that where all fields are not visible
+    for(i = 0; i < this.getItems().length; i++) {
+      item = this.getItem(i);
+      if(item && item.getClassName() === 'OBSectionItem') {
+        section = item;
+        section.visible = false;
+        for(j = 0; j < section.itemIds.length; j++) {
+          item = this.getItem(section.itemIds[j]);
+          if(item && item.visible) {
+            section.visible = true;
+            break;
+          }
+        }
+
+        if(section.visible) {
+          continue;
+        }
+
+        for(j = 0; j < section.itemIds.length; j++) {
+          item = this.getItem(section.itemIds[j]);
+          if(item) {
+            item.alwaysTakeSpace = false;
+          }
         }
       }
     }
