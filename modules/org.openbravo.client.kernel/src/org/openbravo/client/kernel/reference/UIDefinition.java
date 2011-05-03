@@ -126,6 +126,9 @@ public abstract class UIDefinition {
    * @return a JSONObject string which is used to initialize the formitem.
    */
   public String getFieldProperties(Field field) {
+    if (field.isDisplayed() != null && !field.isDisplayed()) {
+      return "{width: ''}"; // Not displayed fields use HiddenItem
+    }
     return "{width: '*'}";
   }
 
