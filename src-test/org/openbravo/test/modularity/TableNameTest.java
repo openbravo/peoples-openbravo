@@ -22,6 +22,7 @@ package org.openbravo.test.modularity;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.QueryTimeoutException;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.GenericJDBCException;
 import org.openbravo.base.provider.OBProvider;
@@ -105,7 +106,9 @@ public class TableNameTest extends BaseTest {
       // force dal commit to throw exception
       commitTransaction();
       fail("Saved table but it shouldn't be");
-    } catch (GenericJDBCException e) {
+    } catch (GenericJDBCException e) { // thrown on pgsql
+      rollback();
+    } catch (QueryTimeoutException e) { // thrown on oracle
       rollback();
     }
   }
@@ -128,7 +131,9 @@ public class TableNameTest extends BaseTest {
       // force dal commit to throw exception
       commitTransaction();
       fail("Saved table but it shouldn't be");
-    } catch (GenericJDBCException e) {
+    } catch (GenericJDBCException e) { // thrown on pgsql
+      rollback();
+    } catch (QueryTimeoutException e) { // thrown on oracle
       rollback();
     }
   }
@@ -149,7 +154,9 @@ public class TableNameTest extends BaseTest {
       // force dal commit to throw exception
       commitTransaction();
       fail("Saved table but it shouldn't be");
-    } catch (GenericJDBCException e) {
+    } catch (GenericJDBCException e) { // thrown on pgsql
+      rollback();
+    } catch (QueryTimeoutException e) { // thrown on oracle
       rollback();
     }
   }
