@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SE_Order_Project extends HttpSecureAppServlet {
@@ -45,11 +46,13 @@ public class SE_Order_Project extends HttpSecureAppServlet {
       String strChanged = vars.getStringParameter("inpLastFieldChanged");
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
+      String strWindowId = vars.getStringParameter("inpwindowId");
       String strProjectId = vars.getStringParameter("inpcProjectId");
       String strTabId = vars.getStringParameter("inpTabId");
+      String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
 
       try {
-        printPage(response, vars, strProjectId, strTabId);
+        printPage(response, vars, strProjectId, strTabId, strIsSOTrx);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -58,7 +61,7 @@ public class SE_Order_Project extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strProjectId, String strTabId) throws IOException, ServletException {
+      String strProjectId, String strTabId, String strIsSOTrx) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -67,22 +70,28 @@ public class SE_Order_Project extends HttpSecureAppServlet {
     SEOrderProjectData[] data = SEOrderProjectData.select(this, strProjectId);
     boolean hasData = false;
     StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SE_Order_Project';\n\n");
-    resultado.append("var respuesta = new Array(");
-    if (data != null && data.length > 0) {
-      if (!data[0].paymentrule.equals("")) {
-        String strPaymentRule = data[0].paymentrule;
-        resultado.append("new Array(\"inppaymentrule\", \"" + strPaymentRule + "\")");
-        hasData = true;
+
+    if (strIsSOTrx.equals("Y")) {
+      resultado.append("var calloutName='SE_Order_Project';\n\n");
+      resultado.append("var respuesta = new Array(");
+      if (data != null && data.length > 0) {
+        if (!data[0].paymentrule.equals("")) {
+          String strPaymentRule = data[0].paymentrule;
+          resultado.append("new Array(\"inppaymentrule\", \"" + strPaymentRule + "\")");
+          hasData = true;
+        }
+        if (!data[0].paymentterm.equals("")) {
+          if (hasData)
+            resultado.append(",");
+          String PaymentTerm = data[0].paymentterm;
+          resultado.append("new Array(\"inpcPaymenttermId\", \"" + PaymentTerm + "\")");
+        }
       }
-      if (!data[0].paymentterm.equals("")) {
-        if (hasData)
-          resultado.append(",");
-        String PaymentTerm = data[0].paymentterm;
-        resultado.append("new Array(\"inpcPaymenttermId\", \"" + PaymentTerm + "\")");
-      }
+      resultado.append(");");
+    } else {
+      resultado.append("var calloutName='SE_Order_Project';\n\n");
+      resultado.append("var respuesta = null;");
     }
-    resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");
