@@ -61,10 +61,6 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
   // Audit fields
   private static final String AUDIT_GROUP_ID = "1000100001";
-  private static final Element createdElement = OBDal.getInstance().get(Element.class, "245");
-  private static final Element createdByElement = OBDal.getInstance().get(Element.class, "246");
-  private static final Element updatedElement = OBDal.getInstance().get(Element.class, "607");
-  private static final Element updatedByElement = OBDal.getInstance().get(Element.class, "608");
 
   private Tab tab;
   private List<String> statusBarFields = null;
@@ -154,19 +150,19 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     List<OBViewFieldDefinition> auditFields = new ArrayList<OBViewFieldDefinition>();
 
     if (!hasCreatedField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("creationDate", createdElement);
+      OBViewFieldAudit audit = new OBViewFieldAudit("creationDate", OBViewUtil.createdElement);
       auditFields.add(audit);
     }
     if (!hasCreatedByField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("createdBy", createdByElement);
+      OBViewFieldAudit audit = new OBViewFieldAudit("createdBy", OBViewUtil.createdByElement);
       auditFields.add(audit);
     }
     if (!hasUpdatedField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("updated", updatedElement);
+      OBViewFieldAudit audit = new OBViewFieldAudit("updated", OBViewUtil.updatedElement);
       auditFields.add(audit);
     }
     if (!hasUpdatedByField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("updatedBy", updatedByElement);
+      OBViewFieldAudit audit = new OBViewFieldAudit("updatedBy", OBViewUtil.updatedByElement);
       auditFields.add(audit);
     }
 

@@ -39,6 +39,7 @@ import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.order.Order;
@@ -243,7 +244,52 @@ public class OBViewGridComponent extends BaseTemplateComponent {
         fields.add(createLocalField(fld, prop, false));
       }
     }
+
     return fields;
+  }
+
+  public List<AuditLocalField> getAuditFields() {
+    boolean hasCreatedField = false, hasCreatedByField = false, hasUpdatedField = false, hasUpdatedByField = false;
+    for (Field f : tab.getADFieldList()) {
+      String dbColName = f.getColumn().getDBColumnName().toLowerCase();
+      if (!dbColName.startsWith("created") && !dbColName.startsWith("updated")) {
+        continue;
+      }
+      if (f.isActive() && f.getColumn().isActive() && (f.isDisplayed() || f.isShownInStatusBar())) {
+        if ("created".equals(dbColName)) {
+          hasCreatedField = true;
+        } else if ("createdby".equals(dbColName)) {
+          hasCreatedByField = true;
+        } else if ("updated".equals(dbColName)) {
+          hasUpdatedField = true;
+        } else if ("updatedby".equals(dbColName)) {
+          hasUpdatedByField = true;
+        }
+      }
+    }
+
+    List<AuditLocalField> auditFields = new ArrayList<OBViewGridComponent.AuditLocalField>();
+
+    if (!hasCreatedField) {
+      AuditLocalField created = new AuditLocalField("creationDate", OBViewUtil.createdElement);
+      auditFields.add(created);
+    }
+
+    if (!hasCreatedByField) {
+      AuditLocalField createdBy = new AuditLocalField("createdBy", OBViewUtil.createdByElement);
+      auditFields.add(createdBy);
+    }
+
+    if (!hasUpdatedField) {
+      AuditLocalField updated = new AuditLocalField("updated", OBViewUtil.updatedElement);
+      auditFields.add(updated);
+    }
+
+    if (!hasUpdatedByField) {
+      AuditLocalField updatedBy = new AuditLocalField("updatedBy", OBViewUtil.updatedByElement);
+      auditFields.add(updatedBy);
+    }
+    return auditFields;
   }
 
   private LocalField createLocalField(Field fld, Property prop, boolean showInitially) {
@@ -437,6 +483,73 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     public String getCellAlign() {
       return uiDefinition.getCellAlign();
     }
+  }
+
+  public class AuditLocalField extends LocalField {
+
+    private String refType;
+    private String refEntity;
+    private String name;
+    private Element element;
+
+    public AuditLocalField(String type, Element element) {
+      name = type;
+      this.element = element;
+      if (type.endsWith("By")) {
+        // User search
+        refType = "30";
+        refEntity = "User";
+      } else {
+        // Date time
+        refType = "16";
+        refEntity = "";
+      }
+    }
+
+    @Override
+    public String getColumnName() {
+      return name;
+    }
+
+    @Override
+    public String getTargetEntity() {
+      return refEntity;
+    }
+
+    @Override
+    public String getTitle() {
+      return OBViewUtil.getLabel(element, element.getADElementTrlList());
+    }
+
+    @Override
+    public String getType() {
+      return "_id_" + refType;
+    }
+
+    public String getEditorType() {
+      if ("30".equals(refType)) {
+        return "OBSearchItem";
+      } else {
+        return "OBDateItem";
+      }
+    }
+
+    public String getFilterEditorType() {
+      if ("30".equals(refType)) {
+        return "OBFKFilterTextItem";
+      } else {
+        return "OBMiniDateRangeItem";
+      }
+    }
+
+    public String getDisplayFieldJS() {
+      if ("30".equals(refType)) {
+        return "displayField: '" + name + "._identifier',valueField: '" + name + "',";
+      } else {
+        return "";
+      }
+    }
+
   }
 
   private class GridFieldComparator implements Comparator<Field> {
