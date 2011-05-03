@@ -384,7 +384,6 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     OBDal.getInstance().flush();
   }
 
-  @SuppressWarnings("unused")
   private void triggerAutomaticFinancialAccountTransaction(VariablesSecureApp vars,
       ConnectionProvider connectionProvider, FIN_Payment payment) {
     FIN_FinaccTransaction transaction = TransactionsDao.createFinAccTransaction(payment);

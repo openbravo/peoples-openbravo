@@ -83,7 +83,6 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
-  @SuppressWarnings("deprecation")
   private OBError process(VariablesSecureApp vars, String strKey) throws ServletException {
     OBError myError = null;
     try {
