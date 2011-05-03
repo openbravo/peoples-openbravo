@@ -202,10 +202,16 @@ isc.OBAttachmentsLayout.addProperties({
       contents: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentAdd')+' ]',
       width: '50%',
       canvas: me,
-	  action: function(){
-        var form = isc.DynamicForm.create({
-            fields: [
-              {name: 'inpname', type: 'upload', change: function(form, item, value, oldvalue){
+	    action: function(){
+      var form = isc.DynamicForm.create({
+          fields: [
+            {name: 'inpname', title: OB.I18N.getLabel('OBUIAPP_AttachmentFile'), type: 'upload', width: '100px', canFocus: false},
+            {name: 'Command', type: 'hidden', value: 'SAVE_NEW_OB3'},
+            {name: 'buttonId', type: 'hidden', value: this.canvas.ID},
+            {name: 'inpKey', type: 'hidden', value: this.canvas.recordId},
+            {name: 'inpTabId', type: 'hidden', value: this.canvas.tabId},
+            {name: 'submitbutton', type: 'button', title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit')  ,
+              click: function(form, item){
                 var addFunction = function(clickedOK){
                   if(clickedOK){
                     var hTempLayout = isc.HLayout.create();
@@ -220,10 +226,12 @@ isc.OBAttachmentsLayout.addProperties({
                     }
                     button.customState = 'Progress';
                     button.resetBaseStyle();
-                    form.show();
                     form.submitForm();
+                    form.popup.hide();
                   }
                 };
+                var value = form.getItem('inpname').getElement().value;
+                value = value?value:'';
                 var lastChar=value.lastIndexOf("\\") + 1;
                 var fileName = lastChar===-1?value:value.substring(lastChar);
                 if(form.theCanvas.fileExists(fileName, attachments)){
@@ -231,22 +239,31 @@ isc.OBAttachmentsLayout.addProperties({
                 }else{
                   addFunction(true);
                 }
-              }},
-              {name: 'Command', type: 'hidden', value: 'SAVE_NEW_OB3'},
-              {name: 'buttonId', type: 'hidden', value: this.canvas.ID},
-              {name: 'inpKey', type: 'hidden', value: this.canvas.recordId},
-              {name: 'inpTabId', type: 'hidden', value: this.canvas.tabId},
-              {name: 'inpwindowId', type: 'hidden', value: this.canvas.windowId}
-            ],
-            encoding: 'multipart',
-            action: './businessUtility/TabAttachments_FS.html',
-            target: "background_target",
-            position: 'absolute',
-            left: '-9000px',
-            theCanvas: this.canvas
-          });
-        form.show();
-        form.getItem('inpname').getElement().click();
+              }
+            },
+            {name: 'inpwindowId', type: 'hidden', value: this.canvas.windowId}
+          ],
+          encoding: 'multipart',
+          action: './businessUtility/TabAttachments_FS.html',
+          target: "background_target",
+          position: 'absolute',
+          left: '-9000px',
+          redraw: function(){
+          },
+          theCanvas: this.canvas
+        });
+        var horizontalLayout = isc.HLayout.create();
+        var popup = isc.OBPopup.create({
+          height: 50,
+          width: 600,
+          initWidget: function(args){
+          horizontalLayout.addMember(form);
+            this.items = horizontalLayout;
+            this.Super('initWidget', arguments);
+          }
+        });
+        form.popup = popup;
+        popup.show();
       }
     });
     hLayout.addMember(addButton);
