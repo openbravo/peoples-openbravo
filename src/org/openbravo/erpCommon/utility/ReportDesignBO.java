@@ -20,7 +20,6 @@ package org.openbravo.erpCommon.utility;
 
 import java.util.Iterator;
 
-import net.sf.jasperreports.engine.JRElement;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.design.JRDesignBand;
 import net.sf.jasperreports.engine.design.JRDesignExpression;
@@ -30,6 +29,7 @@ import net.sf.jasperreports.engine.design.JRDesignLine;
 import net.sf.jasperreports.engine.design.JRDesignStaticText;
 import net.sf.jasperreports.engine.design.JRDesignTextField;
 import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.type.StretchTypeEnum;
 
 import org.apache.log4j.Logger;
 
@@ -82,7 +82,7 @@ class ReportDesignBO {
   }
 
   private void addFieldValue(GridColumnVO columnVO) throws JRException {
-    JRDesignBand bDetalle = (JRDesignBand) jasperDesign.getDetail();
+    JRDesignBand bDetalle = (JRDesignBand) jasperDesign.getDetailSection().getBands()[0];
 
     JRDesignField f = new JRDesignField();
     f.setName(columnVO.getDbName());
@@ -108,7 +108,7 @@ class ReportDesignBO {
     textField.setItalic(gridReportVO.getDetailBandStyle().isItalic());
     textField.setUnderline(gridReportVO.getDetailBandStyle().isUnderline());
     textField.setStretchWithOverflow(true);
-    textField.setStretchType(JRElement.STRETCH_TYPE_RELATIVE_TO_TALLEST_OBJECT);
+    textField.setStretchType(StretchTypeEnum.RELATIVE_TO_TALLEST_OBJECT);
 
     bDetalle.addElement(textField);
   }
