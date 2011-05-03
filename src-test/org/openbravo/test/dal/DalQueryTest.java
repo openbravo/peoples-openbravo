@@ -59,7 +59,7 @@ public class DalQueryTest extends BaseTest {
    */
   public void testDalFirstWhereLeftJoinClause() {
     setTestAdminContext();
-    final String where = "as mo left join mo.callout left join mo.reference left join mo.specialForm left join mo.process left join mo.tab where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.specialForm.module.id='0' or mo.process.module.id='0' or mo.tab.module.id='0'";
+    final String where = "as mo left join mo.callout moc left join mo.reference mor left join mo.specialForm mof left join mo.process mop left join mo.tab mot where moc.module.id='0' or mor.module.id='0' or mof.module.id='0' or mop.module.id='0' or mot.module.id='0'";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
         ModelImplementation.class, where);
     assertTrue(obq.list().size() > 0);
@@ -74,15 +74,15 @@ public class DalQueryTest extends BaseTest {
         + ModelImplementationMapping.PROPERTY_MODELOBJECT
         + " as mo left join mo."
         + ModelImplementation.PROPERTY_CALLOUT
-        + " left join mo."
+        + " moc left join mo."
         + ModelImplementation.PROPERTY_REFERENCE
-        + " left join mo."
+        + " mor left join mo."
         + ModelImplementation.PROPERTY_SPECIALFORM
-        + " left join mo."
+        + " mof left join mo."
         + ModelImplementation.PROPERTY_PROCESS
-        + " left join mo."
+        + " mop left join mo."
         + ModelImplementation.PROPERTY_TAB
-        + " where mo.callout.module.id='0' or mo.reference.module.id='0' or mo.specialForm.module.id='0' or mo.process.module.id='0' or mo.tab.module.id='0'";
+        + " mot where moc.module.id='0' or mor.module.id='0' or mof.module.id='0' or mop.module.id='0' or mot.module.id='0'";
     final OBQuery<ModelImplementationMapping> obq = OBDal.getInstance().createQuery(
         ModelImplementationMapping.class, where);
     assertTrue(obq.list().size() > 0);
@@ -93,7 +93,7 @@ public class DalQueryTest extends BaseTest {
    */
   public void testDalWhereLeftJoinClause() {
     setTestAdminContext();
-    final String where = "as mo left join mo.callout left join mo.reference where mo.callout.module.id='0' or mo.reference.module.id='0'";
+    final String where = "as mo left join mo.callout moc left join mo.reference mor where moc.module.id='0' or mor.module.id='0'";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
         ModelImplementation.class, where);
     assertTrue(obq.list().size() > 0);
@@ -104,7 +104,7 @@ public class DalQueryTest extends BaseTest {
    */
   public void testDalOtherWhereLeftJoinClause() {
     setTestAdminContext();
-    final String where = "as mo left join mo.callout left join mo.reference where (mo.callout.module.id='0' or mo.reference.module.id='0') and exists(from ADUser where id<>'0')";
+    final String where = "as mo left join mo.callout moc left join mo.reference mor where (moc.module.id='0' or mor.module.id='0') and exists(from ADUser where id<>'0')";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
         ModelImplementation.class, where);
     assertTrue(obq.list().size() > 0);

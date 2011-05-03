@@ -60,8 +60,8 @@ OB.Layout = isc.VLayout.create({
 OB.Toolbar = isc.ToolStrip.create({  
   addMembers: function(members) {
     // encapsulate the members
-    var newMembers = [];
-    for (var i = 0; i < members.length; i++) {
+    var newMembers = [], i;
+    for (i = 0; i < members.length; i++) {
         // encapsulate in 2 hlayouts to handle correct mouse over/hover and show of box
         var newMember = isc.HLayout.create({layoutLeftMargin: 0, layoutRightMargin: 0, width: '100%', height: '100%', styleName: 'OBNavBarComponent', members:[members[i]]}); 
         newMembers[i] = newMember;
@@ -148,4 +148,4 @@ ${nbc.jscode}<#if nbc_has_next>,</#if>
 
  OB.RemoteCallManager.call('org.openbravo.client.application.HeartBeatPopupActionHandler', {}, {}, handleReturn);
 
-})();
+}());

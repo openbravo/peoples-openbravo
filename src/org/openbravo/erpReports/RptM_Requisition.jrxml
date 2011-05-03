@@ -1,52 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
-<jasperReport 
-	name="RptM_Requisition" 
-	pageWidth="595" 
-	pageHeight="842" 
-	columnWidth="483" 
-	leftMargin="56" 
-	rightMargin="56" 
-	topMargin="56" 
-	bottomMargin="56">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RptM_Requisition" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="56" bottomMargin="56">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="default" isDefault="false" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8"/>
-	<style name="Report_Title" isDefault="false" fontName="Bitstream Vera Sans" fontSize="18">
+	<style name="default" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8"/>
+	<style name="Report_Title" fontName="Bitstream Vera Sans" fontSize="18">
 		<box leftPadding="5"/>
 	</style>
-	<style name="Report_Subtitle" isDefault="false" forecolor="#555555" fontName="Bitstream Vera Sans" fontSize="14">
+	<style name="Report_Subtitle" forecolor="#555555" fontName="Bitstream Vera Sans" fontSize="14">
 		<box leftPadding="5"/>
 	</style>
-	<style name="Report_Data_Label" isDefault="false" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
-	<style name="Report_Data_Field" isDefault="false" fontName="Bitstream Vera Sans" fontSize="11" isBold="false"/>
-	<style name="Total_Field" isDefault="false" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11" isBold="true">
+	<style name="Report_Data_Label" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
+	<style name="Report_Data_Field" fontName="Bitstream Vera Sans" fontSize="11" isBold="false"/>
+	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11" isBold="true">
 		<box leftPadding="5"/>
 	</style>
-	<style name="GroupHeader_DarkGray" isDefault="false" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="12" isBold="true">
+	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="12" isBold="true">
 		<box leftPadding="5"/>
 	</style>
-	<style name="Group_Data_Label" isDefault="false" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
-	<style name="Group_Data_Field" isDefault="false" fontName="Bitstream Vera Sans" fontSize="11"/>
-	<style name="Detail_Header" isDefault="false" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="10" isBold="true">
+	<style name="Group_Data_Label" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
+	<style name="Group_Data_Field" fontName="Bitstream Vera Sans" fontSize="11"/>
+	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="10" isBold="true">
 		<box leftPadding="5">
 			<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 			<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 		</box>
 	</style>
-	<style name="Detail_Line" isDefault="false" fontName="Bitstream Vera Sans" fontSize="8">
+	<style name="Detail_Line" fontName="Bitstream Vera Sans" fontSize="8">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==1)]]></conditionExpression>
-			<style isDefault="false" style="Detail_Line" mode="Opaque" backcolor="#CCCCCC"/>
+			<style mode="Opaque" backcolor="#CCCCCC"/>
 		</conditionalStyle>
 	</style>
-	<style name="Total_Gray" isDefault="false" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC"/>
-	<style name="Detail_Data_Label" isDefault="false" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="10" isBold="true"/>
-	<style name="Detail_Data_Field" isDefault="false" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="10"/>
-	<style name="Group_Footer" isDefault="false" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
+	<style name="Total_Gray" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC"/>
+	<style name="Detail_Data_Label" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="10" isBold="true"/>
+	<style name="Detail_Data_Field" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="10"/>
+	<style name="Group_Footer" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
 	<style name="Report_Footer" isDefault="true" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
 	<parameter name="BASE_WEB" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/usr/local/src/AppsOpenbravo/web"]]></defaultValueExpression>
@@ -89,8 +80,8 @@
 	<group name="M_REQUISITION_ID" isStartNewPage="true" isResetPageNumber="true" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[$F{M_REQUISITION_ID}]]></groupExpression>
 		<groupHeader>
-			<band height="124">
-				<image isLazy="true" hyperlinkType="None">
+			<band height="124" splitType="Stretch">
+				<image isLazy="true">
 					<reportElement key="image-2" x="286" y="0" width="197" height="55"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -103,7 +94,7 @@
 				<line>
 					<reportElement key="line-2" x="1" y="96" width="482" height="1"/>
 				</line>
-				<textField isBlankWhenNull="false" hyperlinkType="None">
+				<textField isBlankWhenNull="false">
 					<reportElement key="textField-4" style="Report_Data_Field" x="0" y="98" width="152" height="18"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -151,7 +142,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
 					<text><![CDATA[Requester]]></text>
 				</staticText>
-				<textField isBlankWhenNull="false" hyperlinkType="None">
+				<textField isBlankWhenNull="false">
 					<reportElement key="textField" style="Group_Data_Field" x="359" y="98" width="118" height="18"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -165,8 +156,8 @@
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="20">
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="None">
+			<band height="20" splitType="Stretch">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement key="textField-8" style="Group_Data_Field" x="67" y="0" width="369" height="20"/>
 					<box leftPadding="24">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -181,19 +172,19 @@
 		</groupFooter>
 	</group>
 	<background>
-		<band/>
+		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band/>
+		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band/>
+		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band/>
+		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="76">
+		<band height="76" splitType="Stretch">
 			<subreport isUsingCache="true">
 				<reportElement key="subreport-1" x="0" y="0" width="483" height="76"/>
 				<subreportParameter name="NUMBERFORMAT">
@@ -211,11 +202,11 @@
 		</band>
 	</detail>
 	<columnFooter>
-		<band/>
+		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="34">
-			<textField isBlankWhenNull="false" hyperlinkType="None">
+		<band height="34" splitType="Stretch">
+			<textField isBlankWhenNull="false">
 				<reportElement key="textField-6" style="default" x="359" y="11" width="100" height="18"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -226,7 +217,7 @@
 				<textElement textAlignment="Right"/>
 				<textFieldExpression class="java.lang.String"><![CDATA["PAGE: " + $V{PAGE_NUMBER} + "/"]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Group" evaluationGroup="M_REQUISITION_ID" isBlankWhenNull="false" hyperlinkType="None">
+			<textField evaluationTime="Group" evaluationGroup="M_REQUISITION_ID" isBlankWhenNull="false">
 				<reportElement key="textField-7" style="default" x="461" y="11" width="18" height="18"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -248,7 +239,7 @@
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[Generated on]]></text>
 			</staticText>
-			<textField isBlankWhenNull="false" hyperlinkType="None">
+			<textField isBlankWhenNull="false">
 				<reportElement key="textField" style="default" x="205" y="11" width="100" height="18"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -265,6 +256,6 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band/>
+		<band splitType="Stretch"/>
 	</summary>
 </jasperReport>

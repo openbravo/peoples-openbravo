@@ -20,9 +20,12 @@
 package org.openbravo.base.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
@@ -330,25 +333,25 @@ public class Entity {
     // to prevent binary dependency
     final StringBuilder sb = new StringBuilder();
     if (isTraceable()) {
-      sb.append("org.openbravo.base.structure.Traceable");
+      sb.append("Traceable");
     }
     if (isClientEnabled()) {
       if (sb.length() > 0) {
         sb.append(", ");
       }
-      sb.append("org.openbravo.base.structure.ClientEnabled");
+      sb.append("ClientEnabled");
     }
     if (isOrganizationEnabled()) {
       if (sb.length() > 0) {
         sb.append(", ");
       }
-      sb.append("org.openbravo.base.structure.OrganizationEnabled");
+      sb.append("OrganizationEnabled");
     }
     if (isActiveEnabled()) {
       if (sb.length() > 0) {
         sb.append(", ");
       }
-      sb.append("org.openbravo.base.structure.ActiveEnabled");
+      sb.append("ActiveEnabled");
     }
     if (sb.length() == 0) {
       return "";
@@ -631,5 +634,111 @@ public class Entity {
 
   public void setView(boolean isView) {
     this.isView = isView;
+  }
+
+  List<String> getJavaImportsInternal() {
+    List<String> imports = new ArrayList<String>();
+    Set<String> simpleImports = new HashSet<String>();
+    imports.add("org.openbravo.base.structure.BaseOBObject");
+    simpleImports.add("BaseOBObject");
+
+    if (isTraceable()) {
+      imports.add("org.openbravo.base.structure.Traceable");
+      simpleImports.add("Traceable");
+    }
+    if (isClientEnabled()) {
+      imports.add("org.openbravo.base.structure.ClientEnabled");
+      simpleImports.add("ClientEnabled");
+    }
+    if (isOrganizationEnabled()) {
+      imports.add("org.openbravo.base.structure.OrganizationEnabled");
+      simpleImports.add("OrganizationEnabled");
+    }
+    if (isActiveEnabled()) {
+      imports.add("org.openbravo.base.structure.ActiveEnabled");
+      simpleImports.add("ActiveEnabled");
+    }
+
+    // collect types of properties
+    for (Property p : properties) {
+      String fullType, simpleType;
+      if (p.isOneToMany()) {
+        // add list-type here to take precedence over model class named List
+        fullType = "java.util.List";
+        simpleType = "List";
+        if (!simpleImports.contains(simpleType)) {
+          if (!simpleType.equals(getSimpleClassName())) {
+            if (!imports.contains(fullType)) {
+              imports.add(fullType);
+              simpleImports.add(simpleType);
+            }
+          }
+        }
+      }
+      if (p.getTargetEntity() != null) {
+        fullType = p.getTargetEntity().getClassName();
+        simpleType = p.getTargetEntity().getSimpleClassName();
+      } else if (p.isPrimitive() && !p.getPrimitiveType().isArray()) {
+        fullType = p.getPrimitiveType().getName();
+        simpleType = p.getPrimitiveType().getSimpleName();
+      } else {
+        continue;
+      }
+      if (!simpleImports.contains(simpleType)) {
+        if (!simpleType.equals(getSimpleClassName())) {
+          if (!imports.contains(fullType)) {
+            imports.add(fullType);
+            simpleImports.add(simpleType);
+          }
+        }
+      }
+      // for lists with defaults also add list type
+      if (p.hasDefaultValue() && p.isOneToMany()) {
+        fullType = "java.util.ArrayList";
+        simpleType = "ArrayList";
+        if (!simpleImports.contains(simpleType)) {
+          if (!simpleType.equals(getSimpleClassName())) {
+            if (!imports.contains(fullType)) {
+              imports.add(fullType);
+              simpleImports.add(simpleType);
+            }
+          }
+        }
+      }
+    }
+
+    Collections.sort(imports);
+    return imports;
+  }
+
+  private static String getPackageFromClassname(String className) {
+    int i = className.lastIndexOf(".");
+    return className.substring(0, i);
+  }
+
+  private static String getFirstPartOfPackage(String packageName) {
+    int i = packageName.indexOf(".");
+    return packageName.substring(0, i);
+  }
+
+  /**
+   * Used to generate java import statements during generate.entities
+   */
+  public List<String> getJavaImports() {
+    List<String> imports = getJavaImportsInternal();
+    List<String> result = new ArrayList<String>();
+    String lastImport = "";
+    for (String i : imports) {
+      String packageName = getPackageFromClassname(i);
+      if (!packageName.equals("java.lang") && !packageName.equals(getPackageName())) {
+        if (!getFirstPartOfPackage(packageName).equals(lastImport)) {
+          result.add("");
+        }
+        result.add("import " + i + ";");
+
+        lastImport = getFirstPartOfPackage(packageName);
+      }
+    }
+    return result;
   }
 }

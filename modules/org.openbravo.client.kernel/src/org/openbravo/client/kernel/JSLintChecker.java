@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.kernel;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.openbravo.base.provider.OBProvider;
@@ -51,32 +50,29 @@ public class JSLintChecker {
   }
 
   public String check(String componentIdentifier, String javascript) {
-    try {
-      JSLint jsLint = new JSLintBuilder().fromDefault();
-      jsLint.addOption(Option.BROWSER);
-      jsLint.addOption(Option.EQEQEQ);
-      jsLint.addOption(Option.EVIL);
-      jsLint.addOption(Option.LAXBREAK);
-
-      final JSLintResult lintResult = jsLint.lint("0", javascript);
-      final List<Issue> issues = lintResult.getIssues();
-      if (issues.isEmpty()) {
-        return null;
-      }
-      final StringBuilder sb = new StringBuilder();
-      if (issues.size() > 0) {
-        sb.append(">>>>>>> Issues found in javascript <<<<<<<<<\n");
-        sb.append(javascript);
-        sb.append(">>>>>>> Issues <<<<<<<<<\n");
-      }
+    long t1 = System.currentTimeMillis();
+    JSLint jsLint = new JSLintBuilder().fromDefault();
+    jsLint.addOption(Option.BROWSER); // browser globals are predefined
+    jsLint.addOption(Option.EVIL); // allow eval()
+    jsLint.addOption(Option.CONTINUE); // allow continue statement
+    final JSLintResult lintResult = jsLint.lint(componentIdentifier, javascript);
+    final List<Issue> issues = lintResult.getIssues();
+    if (issues.isEmpty()) {
+      return null;
+    }
+    final StringBuilder sb = new StringBuilder();
+    if (issues.size() > 0) {
+      sb.append(">>>>>>> Issues found in javascript <<<<<<<<<\n");
       for (Issue issue : issues) {
         sb.append(componentIdentifier + ":" + issue.getLine() + ":" + issue.getCharacter() + ": "
-            + issue.getReason() + "\n");
+            + issue.getReason());
+        if (issue.getEvidence() != null) {
+          sb.append(" >> offending code: " + issue.getEvidence());
+        }
+        sb.append("\n");
       }
-      return sb.toString();
-    } catch (IOException e) {
-      throw new IllegalStateException(e);
+      sb.append(">>>>>>> Issues (" + (System.currentTimeMillis() - t1) + "ms)  <<<<<<<<<\n");
     }
+    return sb.toString();
   }
-
 }

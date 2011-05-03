@@ -21,7 +21,9 @@ package org.openbravo.dal.core;
 
 import org.apache.log4j.Logger;
 import org.hibernate.EntityMode;
+import org.hibernate.EntityNameResolver;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.hibernate.property.Getter;
@@ -31,6 +33,7 @@ import org.hibernate.proxy.map.MapProxyFactory;
 import org.hibernate.tuple.Instantiator;
 import org.hibernate.tuple.entity.AbstractEntityTuplizer;
 import org.hibernate.tuple.entity.EntityMetamodel;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.DynamicOBObject;
 
 /**
@@ -40,7 +43,6 @@ import org.openbravo.base.structure.DynamicOBObject;
  * @see OBInstantiator
  * @author mtaal
  */
-@SuppressWarnings("unchecked")
 public class OBDynamicTuplizer extends AbstractEntityTuplizer {
   private static final Logger log = Logger.getLogger(OBDynamicTuplizer.class);
 
@@ -60,12 +62,24 @@ public class OBDynamicTuplizer extends AbstractEntityTuplizer {
   // PersistentClass mappedEntity) {
   // return new OBDynamicPropertyHandler.Getter(mappedProperty.getName());
   // }
-  //  
+  //
   // @Override
   // protected Setter buildPropertySetter(Property mappedProperty,
   // PersistentClass mappedEntity) {
   // return new OBDynamicPropertyHandler.Setter(mappedProperty.getName());
   // }
+
+  @Override
+  public String determineConcreteSubclassEntityName(Object entityInstance,
+      SessionFactoryImplementor factory) {
+    BaseOBObject bob = (BaseOBObject) entityInstance;
+    return bob.getEntity().getName();
+  }
+
+  @Override
+  public EntityNameResolver[] getEntityNameResolvers() {
+    return null;
+  }
 
   @Override
   protected Instantiator buildInstantiator(PersistentClass mappingInfo) {
@@ -85,10 +99,12 @@ public class OBDynamicTuplizer extends AbstractEntityTuplizer {
     return pf;
   }
 
+  @SuppressWarnings("rawtypes")
   public Class getMappedClass() {
     return persistentClass.getMappedClass();
   }
 
+  @SuppressWarnings("rawtypes")
   public Class getConcreteProxyClass() {
     return persistentClass.getMappedClass();
   }

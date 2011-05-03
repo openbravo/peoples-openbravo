@@ -20,9 +20,10 @@
 package org.openbravo.base.session;
 
 import java.sql.Types;
+
 import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
 import org.hibernate.dialect.DB2Dialect;
+import org.hibernate.type.StandardBasicTypes;
 
 /**
  * Extends the Oracle10Dialect to replace some java-oracle type mappings to support the current rdb
@@ -37,7 +38,7 @@ public class OBDB2v97Dialect extends DB2Dialect {
   public OBDB2v97Dialect() {
     super();
 
-    registerHibernateType(Types.NUMERIC, Hibernate.LONG.getName());
+    registerHibernateType(Types.NUMERIC, StandardBasicTypes.LONG.getName());
 
     // registerColumnType(Types.VARCHAR, 4000, "nvarchar2($l)");
     registerColumnType(Types.VARCHAR, 100, "varchar2($l)");
