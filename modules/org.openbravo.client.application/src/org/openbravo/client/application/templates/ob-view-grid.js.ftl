@@ -66,6 +66,35 @@ isc.OBViewGrid.create({
        }
        <#if field_has_next>,</#if>
     </#list>
+    <#list data.auditFields as field>
+     ,
+       { 
+        autoExpand: false, type: '${field.type}',
+        editorProperties: {
+          width: '*'
+          , columnName: '${field.columnName?js_string}'
+          , targetEntity: '${field.targetEntity?js_string}'
+          , disabled: true
+          , updatable: false
+        }
+        , showHover: false, 
+        width: isc.OBGrid.getDefaultColumnWidth(30), 
+        name: '${field.columnName?js_string}', 
+        canExport: true, 
+        canHide: true, 
+        editorType: '${field.editorType?js_string}',
+        filterEditorType: '${field.filterEditorType?js_string}',
+        ${field.displayFieldJS}
+         filterOnKeypress: true, canFilter:true, required: false
+        , title: '${field.title?js_string}'
+        , prompt: '${field.title?js_string}'
+        , escapeHTML: true
+        , showIf: 'false'
+        , columnName: '${field.columnName?js_string}'
+        , inpColumnName: ''
+        , targetEntity: '${field.targetEntity?js_string}'
+       }
+    </#list>
     ],
     autoExpandFieldNames:[
     <#list data.autoExpandFields as field>

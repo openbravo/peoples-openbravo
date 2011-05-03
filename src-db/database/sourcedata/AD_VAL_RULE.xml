@@ -827,17 +827,6 @@ AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Ord
 <!--800004-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800004--></AD_VAL_RULE>
 
-<!--800005--><AD_VAL_RULE>
-<!--800005-->  <AD_VAL_RULE_ID><![CDATA[800005]]></AD_VAL_RULE_ID>
-<!--800005-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800005-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800005-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800005-->  <NAME><![CDATA[AD_Process report]]></NAME>
-<!--800005-->  <TYPE><![CDATA[S]]></TYPE>
-<!--800005-->  <CODE><![CDATA[AD_Process.entitytype = 'U' and isreport='Y']]></CODE>
-<!--800005-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800005--></AD_VAL_RULE>
-
 <!--800006--><AD_VAL_RULE>
 <!--800006-->  <AD_VAL_RULE_ID><![CDATA[800006]]></AD_VAL_RULE_ID>
 <!--800006-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

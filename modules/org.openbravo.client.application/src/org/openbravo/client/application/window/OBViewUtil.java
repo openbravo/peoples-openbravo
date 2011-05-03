@@ -23,6 +23,8 @@ import java.util.List;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldTrl;
 
@@ -32,6 +34,11 @@ import org.openbravo.model.ad.ui.FieldTrl;
  * @author mtaal
  */
 public class OBViewUtil {
+
+  public static final Element createdElement = OBDal.getInstance().get(Element.class, "245");
+  public static final Element createdByElement = OBDal.getInstance().get(Element.class, "246");
+  public static final Element updatedElement = OBDal.getInstance().get(Element.class, "607");
+  public static final Element updatedByElement = OBDal.getInstance().get(Element.class, "608");
 
   /**
    * Method for retrieving the label of a field on the basis of the current language of the user.

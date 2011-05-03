@@ -434,7 +434,13 @@ public class TestUtility extends BaseTest {
   }
 
   public static void setTestContext() {
-    OBContext.setOBContext("100", "1000004", "1000000", "1000000");
+    // User = Openbravo
+    // Role = F&B International Group Admin
+    // Client = F&B International Group
+    // Org = F&B US, Inc.
+    OBContext.setOBContext("100", "FF8080812AFBCB14012AFBD3E4340031",
+        "FF8080812AFBCB14012AFBD3E373001F", "B9C7088AB859483A9B1FB342AC2BE17A");
+
   }
 
   private static ConnectionProvider getConnectionProviderMy() {
