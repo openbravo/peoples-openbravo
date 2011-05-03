@@ -3257,6 +3257,45 @@
 <!--800183-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800183--></AD_MENU>
 
+<!--800184--><AD_MENU>
+<!--800184-->  <AD_MENU_ID><![CDATA[800184]]></AD_MENU_ID>
+<!--800184-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800184-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800184-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800184-->  <NAME><![CDATA[Maintenance Plan]]></NAME>
+<!--800184-->  <DESCRIPTION><![CDATA[Add and edit predefined maintenance plans.]]></DESCRIPTION>
+<!--800184-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--800184-->  <ACTION><![CDATA[W]]></ACTION>
+<!--800184-->  <AD_WINDOW_ID><![CDATA[800074]]></AD_WINDOW_ID>
+<!--800184-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800184--></AD_MENU>
+
+<!--800185--><AD_MENU>
+<!--800185-->  <AD_MENU_ID><![CDATA[800185]]></AD_MENU_ID>
+<!--800185-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800185-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800185-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800185-->  <NAME><![CDATA[Maintenance Order]]></NAME>
+<!--800185-->  <DESCRIPTION><![CDATA[Create and edit the results of a scheduled maintenance order.]]></DESCRIPTION>
+<!--800185-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--800185-->  <ACTION><![CDATA[W]]></ACTION>
+<!--800185-->  <AD_WINDOW_ID><![CDATA[800075]]></AD_WINDOW_ID>
+<!--800185-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800185--></AD_MENU>
+
+<!--800186--><AD_MENU>
+<!--800186-->  <AD_MENU_ID><![CDATA[800186]]></AD_MENU_ID>
+<!--800186-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800186-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800186-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800186-->  <NAME><![CDATA[Insert Maintenances]]></NAME>
+<!--800186-->  <DESCRIPTION><![CDATA[Insert Maintenances]]></DESCRIPTION>
+<!--800186-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--800186-->  <ACTION><![CDATA[P]]></ACTION>
+<!--800186-->  <AD_PROCESS_ID><![CDATA[800130]]></AD_PROCESS_ID>
+<!--800186-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800186--></AD_MENU>
+
 <!--800188--><AD_MENU>
 <!--800188-->  <AD_MENU_ID><![CDATA[800188]]></AD_MENU_ID>
 <!--800188-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
