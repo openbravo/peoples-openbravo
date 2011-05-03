@@ -2170,25 +2170,6 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800006-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--800006--></AD_PROCESS>
 
-<!--800009--><AD_PROCESS>
-<!--800009-->  <AD_PROCESS_ID><![CDATA[800009]]></AD_PROCESS_ID>
-<!--800009-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800009-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800009-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800009-->  <VALUE><![CDATA[RptC_Proposal]]></VALUE>
-<!--800009-->  <NAME><![CDATA[Proposal print]]></NAME>
-<!--800009-->  <DESCRIPTION><![CDATA[Proposal print]]></DESCRIPTION>
-<!--800009-->  <HELP><![CDATA[Proposal print]]></HELP>
-<!--800009-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800009-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800009-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--800009-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800009-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800009-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800009-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800009-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800009--></AD_PROCESS>
-
 <!--800010--><AD_PROCESS>
 <!--800010-->  <AD_PROCESS_ID><![CDATA[800010]]></AD_PROCESS_ID>
 <!--800010-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -3183,6 +3164,7 @@ The product price of each receipt is calculated based on the on the product pric
 <!--800101-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800101-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800101-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800101-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800101-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800101-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800101--></AD_PROCESS>
