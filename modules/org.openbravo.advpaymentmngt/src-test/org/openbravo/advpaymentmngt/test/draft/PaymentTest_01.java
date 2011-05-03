@@ -160,18 +160,18 @@ public class PaymentTest_01 extends BaseTest {
   private Invoice dataSetup() throws Exception {
 
     // DATA SETUP
-    String bpartnerId = "1000008"; // McGiver
-    String priceListId = "1000003"; // General Sales
-    String paymentTermId = "1000000"; // Immediate"
+    String bpartnerId = "8A64B71A2B0B2946012B0FE1E51401C1"; // Sleep Well Hotel
+    String priceListId = "8A64B71A2B0B2946012B0BD96E850150"; // General Sales
+    String paymentTermId = "3F22D83730EE4FD5AE42542A2839DAC4"; // 30 days
     String currencyId = "102"; // EUR
-    String productId = "1000006"; // Hat
-    String taxId = "1000002"; // VAT 4%
-    String docTypeId = "1000001"; // AR Invoice
+    String productId = "8A64B71A2B0B2946012B0BC4345000FB"; // Ale Beer
+    String taxId = "1FE610D3A8844F85B17CA32525C15353"; // NY Sales Tax
+    String docTypeId = "C99C4AE941E1460B91BC97665BE5D141"; // AR Invoice
     BigDecimal invoicedQuantity = new BigDecimal("5");
-    BigDecimal netUnitPrice = new BigDecimal("35");
-    BigDecimal netListPrice = new BigDecimal("37");
-    BigDecimal lineNetAmount = new BigDecimal("175");
-    BigDecimal priceLimit = new BigDecimal("33.50");
+    BigDecimal netUnitPrice = new BigDecimal("2.04");
+    BigDecimal netListPrice = new BigDecimal("2.04");
+    BigDecimal lineNetAmount = new BigDecimal("10.20");
+    BigDecimal priceLimit = new BigDecimal("1");
 
     PriceList testPriceList = OBDal.getInstance().get(PriceList.class, priceListId);
     BusinessPartner testBusinessPartner = OBDal.getInstance()
