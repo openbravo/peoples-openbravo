@@ -14805,6 +14805,19 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800499-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800499--></AD_ELEMENT>
 
+<!--800506--><AD_ELEMENT>
+<!--800506-->  <AD_ELEMENT_ID><![CDATA[800506]]></AD_ELEMENT_ID>
+<!--800506-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800506-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800506-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800506-->  <COLUMNNAME><![CDATA[Observation]]></COLUMNNAME>
+<!--800506-->  <NAME><![CDATA[Comments]]></NAME>
+<!--800506-->  <PRINTNAME><![CDATA[Observation]]></PRINTNAME>
+<!--800506-->  <DESCRIPTION><![CDATA[A space to write additional related information.]]></DESCRIPTION>
+<!--800506-->  <HELP><![CDATA[Observations occurred during the process or operation.]]></HELP>
+<!--800506-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800506--></AD_ELEMENT>
+
 <!--800507--><AD_ELEMENT>
 <!--800507-->  <AD_ELEMENT_ID><![CDATA[800507]]></AD_ELEMENT_ID>
 <!--800507-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -15410,6 +15423,19 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800558-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800558--></AD_ELEMENT>
 
+<!--800559--><AD_ELEMENT>
+<!--800559-->  <AD_ELEMENT_ID><![CDATA[800559]]></AD_ELEMENT_ID>
+<!--800559-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800559-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800559-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800559-->  <COLUMNNAME><![CDATA[Confirmed]]></COLUMNNAME>
+<!--800559-->  <NAME><![CDATA[Confirmation]]></NAME>
+<!--800559-->  <PRINTNAME><![CDATA[Confirmed]]></PRINTNAME>
+<!--800559-->  <DESCRIPTION><![CDATA[An indication that an action is accepted and will be completed as planned.]]></DESCRIPTION>
+<!--800559-->  <HELP><![CDATA[Indicates that the maintenance schedule has been confirmed.]]></HELP>
+<!--800559-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800559--></AD_ELEMENT>
+
 <!--800560--><AD_ELEMENT>
 <!--800560-->  <AD_ELEMENT_ID><![CDATA[800560]]></AD_ELEMENT_ID>
 <!--800560-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -15436,6 +15462,19 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800561-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800561--></AD_ELEMENT>
 
+<!--800562--><AD_ELEMENT>
+<!--800562-->  <AD_ELEMENT_ID><![CDATA[800562]]></AD_ELEMENT_ID>
+<!--800562-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800562-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800562-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800562-->  <COLUMNNAME><![CDATA[MA_Maint_Part_ID]]></COLUMNNAME>
+<!--800562-->  <NAME><![CDATA[Maintenance Order]]></NAME>
+<!--800562-->  <PRINTNAME><![CDATA[Maintenance Part]]></PRINTNAME>
+<!--800562-->  <DESCRIPTION><![CDATA[A distinct characteristic of a machine used for processes and sometimes grouped within a category.]]></DESCRIPTION>
+<!--800562-->  <HELP><![CDATA[Identifies a maintenance part.]]></HELP>
+<!--800562-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800562--></AD_ELEMENT>
+
 <!--800563--><AD_ELEMENT>
 <!--800563-->  <AD_ELEMENT_ID><![CDATA[800563]]></AD_ELEMENT_ID>
 <!--800563-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -15447,6 +15486,30 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800563-->  <HELP><![CDATA[Identifies a periodicity defined for a maintenance.]]></HELP>
 <!--800563-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800563--></AD_ELEMENT>
+
+<!--800565--><AD_ELEMENT>
+<!--800565-->  <AD_ELEMENT_ID><![CDATA[800565]]></AD_ELEMENT_ID>
+<!--800565-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800565-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800565-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800565-->  <COLUMNNAME><![CDATA[MA_Maint_Scheduled_ID]]></COLUMNNAME>
+<!--800565-->  <NAME><![CDATA[Scheduled Maintenance]]></NAME>
+<!--800565-->  <PRINTNAME><![CDATA[MA_Maint_Scheduled_ID]]></PRINTNAME>
+<!--800565-->  <HELP><![CDATA[Identifies a scheduled maintenance.]]></HELP>
+<!--800565-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800565--></AD_ELEMENT>
+
+<!--800566--><AD_ELEMENT>
+<!--800566-->  <AD_ELEMENT_ID><![CDATA[800566]]></AD_ELEMENT_ID>
+<!--800566-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800566-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800566-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800566-->  <COLUMNNAME><![CDATA[MA_Maint_Worker_ID]]></COLUMNNAME>
+<!--800566-->  <NAME><![CDATA[Maintenance Worker]]></NAME>
+<!--800566-->  <PRINTNAME><![CDATA[MA_Maint_Worker_ID]]></PRINTNAME>
+<!--800566-->  <HELP><![CDATA[Identifies a worker that takes part on a maintenance part.]]></HELP>
+<!--800566-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800566--></AD_ELEMENT>
 
 <!--800567--><AD_ELEMENT>
 <!--800567-->  <AD_ELEMENT_ID><![CDATA[800567]]></AD_ELEMENT_ID>
@@ -15486,6 +15549,18 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800569-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800569--></AD_ELEMENT>
 
+<!--800570--><AD_ELEMENT>
+<!--800570-->  <AD_ELEMENT_ID><![CDATA[800570]]></AD_ELEMENT_ID>
+<!--800570-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800570-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800570-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800570-->  <COLUMNNAME><![CDATA[Partdate]]></COLUMNNAME>
+<!--800570-->  <NAME><![CDATA[Maintenance Order Date]]></NAME>
+<!--800570-->  <PRINTNAME><![CDATA[Part Date]]></PRINTNAME>
+<!--800570-->  <HELP><![CDATA[Date of the part.]]></HELP>
+<!--800570-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800570--></AD_ELEMENT>
+
 <!--800571--><AD_ELEMENT>
 <!--800571-->  <AD_ELEMENT_ID><![CDATA[800571]]></AD_ELEMENT_ID>
 <!--800571-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -15509,6 +15584,30 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800572-->  <HELP><![CDATA[Estimated time for the operation.]]></HELP>
 <!--800572-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800572--></AD_ELEMENT>
+
+<!--800573--><AD_ELEMENT>
+<!--800573-->  <AD_ELEMENT_ID><![CDATA[800573]]></AD_ELEMENT_ID>
+<!--800573-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800573-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800573-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800573-->  <COLUMNNAME><![CDATA[Scheduleddate]]></COLUMNNAME>
+<!--800573-->  <NAME><![CDATA[Planned Date]]></NAME>
+<!--800573-->  <PRINTNAME><![CDATA[Scheduled Date]]></PRINTNAME>
+<!--800573-->  <HELP><![CDATA[Scheduled date.]]></HELP>
+<!--800573-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800573--></AD_ELEMENT>
+
+<!--800574--><AD_ELEMENT>
+<!--800574-->  <AD_ELEMENT_ID><![CDATA[800574]]></AD_ELEMENT_ID>
+<!--800574-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800574-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800574-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800574-->  <COLUMNNAME><![CDATA[Usedtime]]></COLUMNNAME>
+<!--800574-->  <NAME><![CDATA[Time Used]]></NAME>
+<!--800574-->  <PRINTNAME><![CDATA[Used Time]]></PRINTNAME>
+<!--800574-->  <HELP><![CDATA[Used time in hours.]]></HELP>
+<!--800574-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800574--></AD_ELEMENT>
 
 <!--800575--><AD_ELEMENT>
 <!--800575-->  <AD_ELEMENT_ID><![CDATA[800575]]></AD_ELEMENT_ID>
@@ -15669,6 +15768,18 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800591-->  <HELP><![CDATA[The ID identifies a unique record]]></HELP>
 <!--800591-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800591--></AD_ELEMENT>
+
+<!--800592--><AD_ELEMENT>
+<!--800592-->  <AD_ELEMENT_ID><![CDATA[800592]]></AD_ELEMENT_ID>
+<!--800592-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800592-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800592-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800592-->  <COLUMNNAME><![CDATA[CreateMaint]]></COLUMNNAME>
+<!--800592-->  <NAME><![CDATA[Create Scheduled Maintenances]]></NAME>
+<!--800592-->  <PRINTNAME><![CDATA[Create Scheduled Maintenances]]></PRINTNAME>
+<!--800592-->  <HELP><![CDATA[Process to insert in the part the scheduled maintenances.]]></HELP>
+<!--800592-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800592--></AD_ELEMENT>
 
 <!--800593--><AD_ELEMENT>
 <!--800593-->  <AD_ELEMENT_ID><![CDATA[800593]]></AD_ELEMENT_ID>
