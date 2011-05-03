@@ -34,15 +34,18 @@
         inpColumnName: '${fieldDefinition.inpColumnName?string}',
         referencedKeyColumnName: '${fieldDefinition.referencedKeyColumnName?string}',
         targetEntity: '${fieldDefinition.targetEntity?string}',
+        <#if !fieldDefinition.displayed>
+        editorType: 'HiddenItem',
+        </#if>
         required: ${fieldDefinition.required?string},
-          <#if fieldDefinition.redrawOnChange?string = "true" >
+          <#if fieldDefinition.redrawOnChange?string = "true" && fieldDefinition.displayed>
           redrawOnChange: true,
           changed: function(form, item, value) {
             this.Super('changed', arguments);
             form.onFieldChanged(form, item, value);
           },
           </#if>
-          <#if fieldDefinition.showIf != "">
+          <#if fieldDefinition.showIf != "" && fieldDefinition.displayed>
           showIf: function(item, value, form, values) {            
             var context = form.view.getContextInfo(false, true, true),
                 currentValues = values || form.view.getCurrentValues();
@@ -62,6 +65,9 @@
           </#if>
         </#if>
         <#if fieldDefinition.type = "OBSectionItem" || fieldDefinition.type = "OBNoteSectionItem" || fieldDefinition.type = "OBLinkedItemSectionItem" >
+        <#if !fieldDefinition.displayed>
+        visible: false,
+        </#if>
         sectionExpanded: ${fieldDefinition.expanded?string},
         defaultValue: '${fieldDefinition.label?js_string}',
         itemIds: [
@@ -71,6 +77,6 @@
         ],
         </#if>
         ${fieldDefinition.fieldProperties}
-        dummy: "dummy"
+        dummy: ''
     }
 </#macro>

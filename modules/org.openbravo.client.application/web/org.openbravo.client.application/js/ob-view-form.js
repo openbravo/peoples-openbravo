@@ -104,7 +104,7 @@ OB.ViewFormProperties = {
   },
 
   getStatusBarFields: function() {
-    var statusBarFields = [[],[]], i, item, value;
+    var statusBarFields = [[],[]], i, item, value, tmpValue;
     for(i = 0; i < this.statusBarFields.length; i++) {
       item = this.getItem(this.statusBarFields[i]);
       value = item.getDisplayValue();
@@ -115,6 +115,13 @@ OB.ViewFormProperties = {
             value = OB.I18N.getLabel('OBUIAPP_Yes');
           } else {
             value = OB.I18N.getLabel('OBUIAPP_No');
+          }
+        }
+
+        if(item.editorType === 'HiddenItem') {
+          tmpValue = this.getValue(item.name + '._identifier');
+          if(typeof tmpValue !== 'undefined') {
+            value = tmpValue;
           }
         }
 
@@ -289,7 +296,7 @@ OB.ViewFormProperties = {
   },
   
   resetFocusItem: function() {
-    var items = this.getItems(), length = items.length, item;
+    var items = this.getItems(), length = items.length, item, i;
     
     var errorFld = this.getFirstErrorItem();
     if (errorFld) {
@@ -325,7 +332,7 @@ OB.ViewFormProperties = {
     }
 
     if (items) {
-      for (var i = 0; i < length; i++) {
+      for (i = 0; i < length; i++) {
         item = items[i];
         if (item.getCanFocus() && !item.isDisabled()) {
           this.setFocusInItem(item);
@@ -345,7 +352,7 @@ OB.ViewFormProperties = {
   
   setFindNewFocusItem: function() {
     var focusItem = this.getFocusItem(), item, items = this.getItems(),
-        length = items.length;
+        length = items.length, i;
     
     // used when double clicking a specific cell in a record
     if (this.forceFocusedField) {
@@ -372,7 +379,7 @@ OB.ViewFormProperties = {
     }
 
     if (items) {
-      for (var i = 0; i < length; i++) {
+      for (i = 0; i < length; i++) {
         item = items[i];
         if (item.getCanFocus() && !item.isDisabled()) {
           this.setFocusInItem(item, true);
@@ -382,10 +389,11 @@ OB.ViewFormProperties = {
     }    
   },
   
-  getFieldFromInpColumnName: function(inpColumnName){
+  getFieldFromInpColumnName: function(inpColumnName) {
+    var i;
     if (!this.fieldsByInpColumnName) {
       var localResult = [], fields = this.getFields();
-      for (var i = 0; i < fields.length; i++) {
+      for (i = 0; i < fields.length; i++) {
         if (fields[i].inpColumnName) {
           localResult[fields[i].inpColumnName.toLowerCase()] = fields[i];
         }
@@ -395,10 +403,11 @@ OB.ViewFormProperties = {
     return this.fieldsByInpColumnName[inpColumnName.toLowerCase()];
   },
   
-  getFieldFromColumnName: function(columnName){
+  getFieldFromColumnName: function(columnName) {
+    var i;
     if (!this.fieldsByColumnName) {
       var localResult = [], fields = this.getFields();
-      for (var i = 0; i < fields.length; i++) {
+      for (i = 0; i < fields.length; i++) {
         if (fields[i].columnName) {
           localResult[fields[i].columnName.toLowerCase()] = fields[i];
         }
@@ -579,7 +588,7 @@ OB.ViewFormProperties = {
         section.visible = false;
         for(j = 0; j < section.itemIds.length; j++) {
           item = this.getItem(section.itemIds[j]);
-          if(item && item.visible) {
+          if(item && item.visible && item.editorType !== 'HiddenItem') {
             section.visible = true;
             break;
           }
@@ -627,7 +636,7 @@ OB.ViewFormProperties = {
   },
   
   setDisabled: function(state) {
-    var previousAllItemsDisabled = this.allItemsDisabled;
+    var previousAllItemsDisabled = this.allItemsDisabled, i;
     this.allItemsDisabled = state;
 
     if (previousAllItemsDisabled !== this.allItemsDisabled) {
@@ -640,7 +649,7 @@ OB.ViewFormProperties = {
           this.redraw();
           this.view.viewGrid.refreshEditRow();
           // reset the canfocus
-          for (var i = 0; i < this.getFields().length; i++) {
+          for (i = 0; i < this.getFields().length; i++) {
             delete this.getFields()[i].canFocus;
           }
           if (this.view.isActiveView()) {
@@ -1120,11 +1129,11 @@ OB.ViewFormProperties = {
   },
   
   handleFieldErrors: function(errors){
-    var msg = OB.I18N.getLabel('OBUIAPP_ErrorInFields');
-    var additionalMsg = '';
+    var msg = OB.I18N.getLabel('OBUIAPP_ErrorInFields'),
+        additionalMsg = '', err;
     if (errors) {
       this.setErrors(errors, true);
-      for (var err in errors) {
+      for (err in errors) {
         if (errors.hasOwnProperty(err)) {
           var fld = this.getField(err); 
           if (!fld || !fld.visible) {

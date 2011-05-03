@@ -171,7 +171,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     int colNum = 1;
     for (Field field : adFields) {
 
-      if (field.getColumn() == null || !field.isDisplayed() || !field.isActive()) {
+      if (field.getColumn() == null || !field.isActive()
+          || (!field.isDisplayed() && !field.isShownInStatusBar())) {
         continue;
       }
 
@@ -194,7 +195,6 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
       viewField.setReadOnlyIf(readOnlyLogicMap.get(field) != null ? readOnlyLogicMap.get(field)
           : "");
-
       // Positioning some fields in odd-columns
       if (colNum % 2 == 0 && (field.isStartinoddcolumn() || viewField.getColSpan() == 2)) {
         final OBViewFieldSpacer spacer = new OBViewFieldSpacer();
@@ -300,6 +300,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public String getShowIf();
 
     public String getReadOnlyIf();
+
+    public boolean isDisplayed();
   }
 
   public class OBViewFieldAudit implements OBViewFieldDefinition {
@@ -428,6 +430,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public boolean isSearchField() {
       return !refEntity.isEmpty();
     }
+
+    public boolean isDisplayed() {
+      return true;
+    }
   }
 
   public class OBViewField implements OBViewFieldDefinition {
@@ -474,6 +480,9 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public String getType() {
+      if (field.isDisplayed() != null && !field.isDisplayed()) {
+        return "text";
+      }
       return getUIDefinition().getName();
     }
 
@@ -632,6 +641,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public String getReadOnlyIf() {
       return readOnlyIf;
     }
+
+    public boolean isDisplayed() {
+      return field.isDisplayed() != null && field.isDisplayed();
+    }
   }
 
   public class DefaultVirtualField implements OBViewFieldDefinition {
@@ -708,6 +721,9 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return "";
     }
 
+    public boolean isDisplayed() {
+      return true;
+    }
   }
 
   public class OBViewFieldGroup extends DefaultVirtualField {
@@ -764,6 +780,14 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       this.expanded = expanded;
     }
 
+    public boolean isDisplayed() {
+      for (OBViewFieldDefinition child : children) {
+        if (child.isDisplayed()) {
+          return true;
+        }
+      }
+      return false;
+    }
   }
 
   public class LinkedItemsField extends DefaultVirtualField {
@@ -975,6 +999,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public String getReadOnlyIf() {
       return "";
+    }
+
+    public boolean isDisplayed() {
+      return true;
     }
 
   }
