@@ -200,18 +200,19 @@ isc.OBAttachmentsLayout.addProperties({
     var me = this;
     var addButton = isc.OBSectionItemControlLink.create({
       contents: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentAdd')+' ]',
-      width: '50%',
+      width: '100%',
       canvas: me,
 	    action: function(){
       var attachmentFile = OB.I18N.getLabel('OBUIAPP_AttachmentFile');
       var form = isc.DynamicForm.create({
           fields: [
-            {name: 'inpname', title: attachmentFile, type: 'upload', width: '100px', canFocus: false},
+            {name: 'inpname', title: attachmentFile, type: 'upload', canFocus: false, align:'right'},
             {name: 'Command', type: 'hidden', value: 'SAVE_NEW_OB3'},
             {name: 'buttonId', type: 'hidden', value: this.canvas.ID},
             {name: 'inpKey', type: 'hidden', value: this.canvas.recordId},
             {name: 'inpTabId', type: 'hidden', value: this.canvas.tabId},
-            {name: 'submitbutton', type: 'button', title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit')  ,
+            {name: 'inpwindowId', type: 'hidden', value: this.canvas.windowId},
+            {name: 'submitbutton', type: 'button', title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit'), align:'right',
               click: function(form, item){
                 var addFunction = function(clickedOK){
                   if(clickedOK){
@@ -241,28 +242,25 @@ isc.OBAttachmentsLayout.addProperties({
                   addFunction(true);
                 }
               }
-            },
-            {name: 'inpwindowId', type: 'hidden', value: this.canvas.windowId}
+            }
           ],
           encoding: 'multipart',
           action: './businessUtility/TabAttachments_FS.html',
           target: "background_target",
-          position: 'absolute',
-          left: '-9000px',
           numCols: 4,
-          colWidths: ['24%', '24%', '24%', '24%'],
-          width: '10px',
-          height: '100%',
+          align: 'right',
           redraw: function(){
           },
           theCanvas: this.canvas
         });
-        var horizontalLayout = isc.HLayout.create({
-          width: '*'
+        var horizontalLayout = isc.VStack.create({
+          width: '100%',
+          align: 'right'
         });
         var popup = isc.OBPopup.create({
-          height: 50,
-          width: 600,
+          height: 30,
+          width: 300,
+          align: 'right',
           initWidget: function(args){
           horizontalLayout.addMember(form);
             this.items = horizontalLayout;

@@ -299,12 +299,14 @@ isc.OBToolbar.addClassProperties({
           button: this
         });
         this.oldForm = form;
-        var horizontalLayout = isc.HLayout.create({
-          width: '*'
+        var horizontalLayout = isc.VStack.create({
+          width: '100%',
+          align: 'right'
         });
         var popup = isc.OBPopup.create({
-          height: 50,
-          width: 600,
+          height: 30,
+          width: 300,
+          align: 'right',
           initWidget: function(args){
           horizontalLayout.addMember(form);
           this.items = horizontalLayout;
