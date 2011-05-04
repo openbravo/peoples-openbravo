@@ -3034,6 +3034,19 @@
 <!--800168-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800168--></AD_MENU>
 
+<!--800169--><AD_MENU>
+<!--800169-->  <AD_MENU_ID><![CDATA[800169]]></AD_MENU_ID>
+<!--800169-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800169-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800169-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800169-->  <NAME><![CDATA[Quality Control Report]]></NAME>
+<!--800169-->  <DESCRIPTION><![CDATA[Create and edit measurements and report findings at predefined checkpoints.  The goal is to ensure output quality during production.]]></DESCRIPTION>
+<!--800169-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--800169-->  <ACTION><![CDATA[W]]></ACTION>
+<!--800169-->  <AD_WINDOW_ID><![CDATA[800064]]></AD_WINDOW_ID>
+<!--800169-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800169--></AD_MENU>
+
 <!--800172--><AD_MENU>
 <!--800172-->  <AD_MENU_ID><![CDATA[800172]]></AD_MENU_ID>
 <!--800172-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

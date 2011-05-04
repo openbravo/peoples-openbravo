@@ -3292,6 +3292,26 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800112-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--800112--></AD_PROCESS>
 
+<!--800114--><AD_PROCESS>
+<!--800114-->  <AD_PROCESS_ID><![CDATA[800114]]></AD_PROCESS_ID>
+<!--800114-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800114-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800114-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800114-->  <VALUE><![CDATA[MA_Measure_Time_Explode]]></VALUE>
+<!--800114-->  <NAME><![CDATA[Input Time Measurement]]></NAME>
+<!--800114-->  <DESCRIPTION><![CDATA[With this process are inserted all the Control Points of the selected group to fill with taken measurements.]]></DESCRIPTION>
+<!--800114-->  <HELP><![CDATA[With this process are inserted all the Control Points of the selected group to fill with taken measurements.]]></HELP>
+<!--800114-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--800114-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
+<!--800114-->  <PROCEDURENAME><![CDATA[MA_Measure_Time_Explode0]]></PROCEDURENAME>
+<!--800114-->  <ISREPORT><![CDATA[N]]></ISREPORT>
+<!--800114-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
+<!--800114-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
+<!--800114-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800114-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800114-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
+<!--800114--></AD_PROCESS>
+
 <!--800115--><AD_PROCESS>
 <!--800115-->  <AD_PROCESS_ID><![CDATA[800115]]></AD_PROCESS_ID>
 <!--800115-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -3350,6 +3370,25 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800118-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800118-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--800118--></AD_PROCESS>
+
+<!--800119--><AD_PROCESS>
+<!--800119-->  <AD_PROCESS_ID><![CDATA[800119]]></AD_PROCESS_ID>
+<!--800119-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800119-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800119-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800119-->  <VALUE><![CDATA[Rpt MA_CCP_Measures]]></VALUE>
+<!--800119-->  <NAME><![CDATA[CCP Measures sheet]]></NAME>
+<!--800119-->  <DESCRIPTION><![CDATA[Print of the selected critical control points measures.]]></DESCRIPTION>
+<!--800119-->  <HELP><![CDATA[Print of the selected critical control points measures.]]></HELP>
+<!--800119-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--800119-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
+<!--800119-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
+<!--800119-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
+<!--800119-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
+<!--800119-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800119-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800119-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
+<!--800119--></AD_PROCESS>
 
 <!--800123--><AD_PROCESS>
 <!--800123-->  <AD_PROCESS_ID><![CDATA[800123]]></AD_PROCESS_ID>
@@ -3428,6 +3467,46 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800126-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800126-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--800126--></AD_PROCESS>
+
+<!--800127--><AD_PROCESS>
+<!--800127-->  <AD_PROCESS_ID><![CDATA[800127]]></AD_PROCESS_ID>
+<!--800127-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800127-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800127-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800127-->  <VALUE><![CDATA[MA_Measure_Shift_Explode]]></VALUE>
+<!--800127-->  <NAME><![CDATA[Explode Measure Shift]]></NAME>
+<!--800127-->  <DESCRIPTION><![CDATA[Explode Measure Shift]]></DESCRIPTION>
+<!--800127-->  <HELP><![CDATA[Explode Measure Shift]]></HELP>
+<!--800127-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--800127-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
+<!--800127-->  <PROCEDURENAME><![CDATA[MA_Measure_Shift_Explode]]></PROCEDURENAME>
+<!--800127-->  <ISREPORT><![CDATA[N]]></ISREPORT>
+<!--800127-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
+<!--800127-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
+<!--800127-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800127-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800127-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
+<!--800127--></AD_PROCESS>
+
+<!--800128--><AD_PROCESS>
+<!--800128-->  <AD_PROCESS_ID><![CDATA[800128]]></AD_PROCESS_ID>
+<!--800128-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800128-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800128-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800128-->  <VALUE><![CDATA[EditCCPMeasureValues]]></VALUE>
+<!--800128-->  <NAME><![CDATA[Edit CCP Measured Values]]></NAME>
+<!--800128-->  <DESCRIPTION><![CDATA[Edit CCP Measured Values]]></DESCRIPTION>
+<!--800128-->  <HELP><![CDATA[Edit CCP Measured Values]]></HELP>
+<!--800128-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--800128-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
+<!--800128-->  <ISREPORT><![CDATA[N]]></ISREPORT>
+<!--800128-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
+<!--800128-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_actionButton.EditCCPMeasureValues]]></CLASSNAME>
+<!--800128-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
+<!--800128-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800128-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800128-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
+<!--800128--></AD_PROCESS>
 
 <!--800129--><AD_PROCESS>
 <!--800129-->  <AD_PROCESS_ID><![CDATA[800129]]></AD_PROCESS_ID>

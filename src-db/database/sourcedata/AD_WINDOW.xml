@@ -1935,6 +1935,22 @@
 <!--800063-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--800063--></AD_WINDOW>
 
+<!--800064--><AD_WINDOW>
+<!--800064-->  <AD_WINDOW_ID><![CDATA[800064]]></AD_WINDOW_ID>
+<!--800064-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800064-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800064-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800064-->  <NAME><![CDATA[Quality Control Report]]></NAME>
+<!--800064-->  <DESCRIPTION><![CDATA[Create and edit measurements and report findings at predefined checkpoints.  The goal is to ensure output quality during production.]]></DESCRIPTION>
+<!--800064-->  <HELP><![CDATA[Create and edit measurements and report findings at predefined checkpoints.  The goal is to ensure output quality during production.]]></HELP>
+<!--800064-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
+<!--800064-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
+<!--800064-->  <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--800064-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+<!--800064-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800064-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
+<!--800064--></AD_WINDOW>
+
 <!--800066--><AD_WINDOW>
 <!--800066-->  <AD_WINDOW_ID><![CDATA[800066]]></AD_WINDOW_ID>
 <!--800066-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
