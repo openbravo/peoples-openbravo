@@ -806,6 +806,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public String getType() {
       return "OBAttachmentCanvasItem";
     }
+
   }
 
   public class AttachmentsField extends DefaultVirtualField {
@@ -848,6 +849,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public void setChildField(OBViewFieldDefinition childField) {
       this.childField = childField;
+    }
+
+    public boolean isExpanded() {
+      return false;
     }
   }
 
