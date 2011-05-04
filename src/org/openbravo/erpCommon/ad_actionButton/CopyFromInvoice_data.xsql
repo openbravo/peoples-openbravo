@@ -63,7 +63,7 @@
         S_RESOURCEASSIGNMENT_ID, TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, 
         PRICESTD)
         SELECT ?, ?, ?, ?, 'Y', now(), ?, now(), ?,
-        (SELECT COALESCE(MAX(LINE),0)+10 FROM C_InvoiceLine WHERE C_InvoiceLine_ID = ?), DESCRIPTION, M_PRODUCT_ID, 
+        (SELECT COALESCE(MAX(LINE),0)+10 FROM C_InvoiceLine WHERE C_Invoice_ID = ?), DESCRIPTION, M_PRODUCT_ID, 
         QTYINVOICED, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), C_CHARGE_ID, CHARGEAMT, C_UOM_ID, ?, 
         S_RESOURCEASSIGNMENT_ID, TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, 
         PRICESTD
@@ -77,7 +77,7 @@
     <Parameter name="adOrgId"/>
     <Parameter name="adUserId"/>
     <Parameter name="adUserId"/>
-    <Parameter name="cInvoicelineId"/>
+    <Parameter name="cInvoiceId"/>
     <Parameter name="priceList"/>
     <Parameter name="priceActual"/>
     <Parameter name="priceLimit"/>
