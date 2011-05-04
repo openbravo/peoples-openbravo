@@ -915,7 +915,7 @@ isc.OBStandardView.addProperties({
     if (!currentSelectedRecord) {
       return;
     }
-    ro+wNum = this.viewGrid.data.indexOf(currentSelectedRecord);
+    rowNum = this.viewGrid.data.indexOf(currentSelectedRecord);
     if (next) {
       newRowNum = rowNum + 1;
     } else {
