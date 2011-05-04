@@ -519,7 +519,11 @@ isc.OBViewGrid.addProperties({
     
     // no data and the grid is not visible
     if (endRow === 0 && !this.isVisible()) {
-      this.show();
+      if (this.view.isShowingForm) {
+        this.view.switchFormGridVisibility();
+      } else {
+        this.show();
+      }
     }
     
     if (this.targetOpenNewEdit) {
@@ -534,7 +538,7 @@ isc.OBViewGrid.addProperties({
     } else if (this.targetRecordId) {
       // direct link from other tab to a specific record
       this.delayedHandleTargetRecord(startRow, endRow);
-    } else if (this.view.shouldOpenDefaultEditMode() && !this.view.isShowingForm) {
+    } else if (this.view.shouldOpenDefaultEditMode()) {
       // ui-pattern: single record/edit mode
       this.view.openDefaultEditView(this.getRecord(startRow));
     } else if (this.data && this.data.getLength() === 1) {
