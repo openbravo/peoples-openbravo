@@ -311,6 +311,7 @@ isc.OBStandardWindow.addProperties({
       for (var i = 0; i < this.views.length; i++) {
         if (this.views[i].tabId === this.targetTabId) {
           targetEntity = this.views[i].entity;
+          this.views[i].openDirectTabView(true);
           break;
         }
       }
@@ -320,7 +321,7 @@ isc.OBStandardWindow.addProperties({
           targetRecordId: (this.targetRecordId ? this.targetRecordId : null),
           windowId: this.windowId
         }, function(response, data, request){
-          standardWindow.directTabInfo = data.result;
+          standardWindow.directTabInfo = data.result;          
           standardWindow.view.openDirectTab();
         });
         delete this.targetRecordId;

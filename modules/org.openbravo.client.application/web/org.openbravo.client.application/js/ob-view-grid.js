@@ -774,6 +774,9 @@ isc.OBViewGrid.addProperties({
       } else {
         parentPropertyFilterValue = selectedValues[0][OB.Constants.ID];
       }
+      
+      this.view.parentRecordId = parentPropertyFilterValue;
+      
       var fnd = false;
       var innerCriteria = criteria.criteria;
       for (i = 0; i < innerCriteria.length; i++) {
