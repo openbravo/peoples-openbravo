@@ -3631,9 +3631,9 @@ You find the current status in the Document Status field. The options are listed
 <!--800025-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800025-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800025-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800025-->  <NAME><![CDATA[Business Partner]]></NAME>
-<!--800025-->  <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
-<!--800025-->  <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
+<!--800025-->  <NAME><![CDATA[Vendor]]></NAME>
+<!--800025-->  <DESCRIPTION><![CDATA[A business partner who sells products or services.]]></DESCRIPTION>
+<!--800025-->  <HELP><![CDATA[Identifies a business partner that is a vendor.]]></HELP>
 <!--800025-->  <AD_PROCESS_ID><![CDATA[800075]]></AD_PROCESS_ID>
 <!--800025-->  <SEQNO><![CDATA[40]]></SEQNO>
 <!--800025-->  <AD_REFERENCE_ID><![CDATA[18]]></AD_REFERENCE_ID>
