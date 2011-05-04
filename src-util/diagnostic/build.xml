@@ -222,6 +222,6 @@
 
   <target name="test2" description="simple compilation task">
     <delete file="build/classes/Test.class" failonerror="false" />
-    <javac srcdir="src" destdir="build/classes" includes="**/Test*" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" deprecation="on" />
+    <javac srcdir="src" destdir="build/classes" includes="**/Test*" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" deprecation="on" includeantruntime="false" />
   </target>
 </project>
