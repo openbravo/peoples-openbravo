@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -30,11 +30,14 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.advpaymentmngt.utility.Value;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentPropDetailV;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentProposal;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcessParameter;
 import org.openbravo.model.financialmgmt.payment.PaymentRun;
@@ -107,8 +110,8 @@ public class FIN_ExecutePayment {
               dao.removeFromExecutionPending(paymentRunPayment.getPayment());
           }
 
+          String paymentStatus = paymentRunPayment.getPayment().getStatus();
           if ("S".equals(paymentRunPayment.getResult())) {
-            String paymentStatus = paymentRunPayment.getPayment().getStatus();
             if ("PPW".equals(paymentRun.getSourceOfTheExecution())) {
               FIN_PaymentProposal pp = getPaymentProposalFromPayment(paymentRunPayment.getPayment());
               pp.setStatus("PPM");
@@ -124,7 +127,13 @@ public class FIN_ExecutePayment {
               TransactionsDao.process(transaction);
             }
           }
+          if ("PPM".equals(paymentStatus) || "RPR".equals(paymentStatus)
+              || "PWNC".equals(paymentStatus) || "RDNC".equals(paymentStatus)
+              || "RPPC".equals(paymentStatus)) {
+            updatePaymentAmounts(paymentRunPayment.getPayment());
+          }
           OBDal.getInstance().save(paymentRunPayment.getPayment());
+
         }
         OBDal.getInstance().flush();
         return result;
@@ -164,4 +173,26 @@ public class FIN_ExecutePayment {
       if ("CONSTANT".equals(parameter.getInputType()))
         constantParameters.put(parameter.getSearchKey(), parameter.getDefaultTextValue());
   }
+
+  private static void updatePaymentAmounts(FIN_Payment payment) {
+    for (FIN_PaymentDetail pDetail : payment.getFINPaymentDetailList()) {
+      for (FIN_PaymentScheduleDetail psd : pDetail.getFINPaymentScheduleDetailList()) {
+        if (psd.getInvoicePaymentSchedule() != null) {
+          BusinessPartner bPartner = psd.getInvoicePaymentSchedule().getInvoice()
+              .getBusinessPartner();
+          BigDecimal creditUsed = bPartner.getCreditUsed();
+          creditUsed = creditUsed.subtract(pDetail.getAmount());
+          bPartner.setCreditUsed(creditUsed);
+          OBDal.getInstance().save(bPartner);
+          FIN_AddPayment.updatePaymentScheduleAmounts(psd.getInvoicePaymentSchedule(), pDetail
+              .getAmount(), pDetail.getWriteoffAmount());
+        }
+        if (psd.getOrderPaymentSchedule() != null) {
+          FIN_AddPayment.updatePaymentScheduleAmounts(psd.getOrderPaymentSchedule(), pDetail
+              .getAmount(), pDetail.getWriteoffAmount());
+        }
+      }
+    }
+  }
+
 }
