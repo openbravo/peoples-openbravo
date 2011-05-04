@@ -134,6 +134,8 @@ OB.Toolbar.addMembers([
 ${nbc.jscode}<#if nbc_has_next>,</#if>
 </#list>]);
 
+${data.notesDataSource}
+
 // test to see if we can show the heartbeat or registration popups (or not)
 (function _OB_checkHeartBeatRegistration() {
  var handleReturn = function(response, data, request) {

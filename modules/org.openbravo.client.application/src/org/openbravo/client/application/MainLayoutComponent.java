@@ -20,7 +20,9 @@ package org.openbravo.client.application;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -29,6 +31,8 @@ import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.BaseComponent;
 import org.openbravo.client.kernel.BaseTemplateComponent;
+import org.openbravo.client.kernel.Component;
+import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -36,6 +40,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.service.datasource.DataSourceConstants;
 
 /**
  * 
@@ -45,6 +50,10 @@ public class MainLayoutComponent extends BaseTemplateComponent {
 
   @Inject
   private WeldUtils weldUtils;
+
+  @Inject
+  @ComponentProvider.Qualifier(DataSourceConstants.DS_COMPONENT_TYPE)
+  private ComponentProvider dsComponentProvider;
 
   /*
    * (non-Javadoc)
@@ -143,6 +152,15 @@ public class MainLayoutComponent extends BaseTemplateComponent {
       return OBContext.getOBContext().getLanguage().getId() + "_"
           + OBContext.getOBContext().getRole().getId() + "_" + getModule().getVersion();
     }
+  }
+
+  public String getNotesDataSource() {
+    final String dsId = "090A37D22E61FE94012E621729090048";
+    final Map<String, Object> dsParameters = new HashMap<String, Object>(getParameters());
+    dsParameters.put(DataSourceConstants.DS_CREATE, true);
+    dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBViewDataSource");
+    final Component component = dsComponentProvider.getComponent(dsId, dsParameters);
+    return component.generate();
   }
 
   public static class NBComponent {
