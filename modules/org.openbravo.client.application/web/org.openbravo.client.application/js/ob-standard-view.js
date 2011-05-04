@@ -1042,7 +1042,7 @@ isc.OBStandardView.addProperties({
     // is actually a different parent selected, only then refresh children
     var differentRecordId = !this.lastRecordSelected || !this.viewGrid.getSelectedRecord() ||
       this.viewGrid.getSelectedRecord().id !== this.lastRecordSelected.id;
-    var selectedRecordId = this.viewGrid.getSelectedRecord().id;
+    var selectedRecordId = this.viewGrid.getSelectedRecord() ? this.viewGrid.getSelectedRecord().id : null;
     
     this.updateLastSelectedState();
     this.updateTabTitle();    

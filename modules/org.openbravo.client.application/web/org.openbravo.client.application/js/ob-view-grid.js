@@ -517,6 +517,11 @@ isc.OBViewGrid.addProperties({
       this.selectionUpdated();
     }
     
+    // no data and the grid is not visible
+    if (endRow === 0 && !this.isVisible()) {
+      this.show();
+    }
+    
     if (this.targetOpenNewEdit) {
       delete this.targetOpenNewEdit;
       // not passing record opens new
