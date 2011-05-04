@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -57,9 +57,9 @@ public class AttachmentsAH extends BaseActionHandler {
         Tab tab = OBDal.getInstance().get(Tab.class, tabId);
         String tableId = (String) DalUtil.getId(tab.getTable());
         OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
-            Expression.eq("table.id", tableId), Expression.in("record", recordIds.split(",")));
+            Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
         if (attachmentId != null) {
-          attachmentFiles.add(Expression.eq(Attachment.PROPERTY_ID, attachmentId));
+          attachmentFiles.add(Restrictions.eq(Attachment.PROPERTY_ID, attachmentId));
         }
         for (Attachment attachment : attachmentFiles.list()) {
           deleteFile(attachment);
@@ -103,8 +103,8 @@ public class AttachmentsAH extends BaseActionHandler {
 
   public static JSONObject getAttachmentJSONObject(Tab tab, String recordIds) {
     String tableId = (String) DalUtil.getId(tab.getTable());
-    OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class, Expression
-        .eq("table.id", tableId), Expression.in("record", recordIds.split(",")));
+    OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
+        Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
     List<JSONObject> attachments = new ArrayList<JSONObject>();
     for (Attachment attachment : attachmentFiles.list()) {
       JSONObject attachmentobj = new JSONObject();

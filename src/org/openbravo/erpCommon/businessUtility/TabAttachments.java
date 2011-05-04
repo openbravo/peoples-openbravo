@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.window.AttachmentsAH;
@@ -232,7 +232,7 @@ public class TabAttachments extends HttpSecureAppServlet {
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
       String tableId = (String) DalUtil.getId(tab.getTable());
       OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
-          Expression.eq("table.id", tableId), Expression.in("record", recordIds.split(",")));
+          Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
 
       response.setContentType("application/zip");
       response.setHeader("Content-Disposition", "attachment; filename=attachments.zip");

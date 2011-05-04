@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.Scriptable;
@@ -251,11 +251,11 @@ public class FormInitializationComponent extends BaseActionHandler {
     List<JSONObject> attachmentList = new ArrayList<JSONObject>();
     OBCriteria<Attachment> attachments;
     if (multipleRowIds == null) {
-      attachments = OBDao.getFilteredCriteria(Attachment.class, Expression.eq("table.id", tableId),
-          Expression.eq("record", rowId));
+      attachments = OBDao.getFilteredCriteria(Attachment.class, Restrictions
+          .eq("table.id", tableId), Restrictions.eq("record", rowId));
     } else {
-      attachments = OBDao.getFilteredCriteria(Attachment.class, Expression.eq("table.id", tableId),
-          Expression.in("record", multipleRowIds));
+      attachments = OBDao.getFilteredCriteria(Attachment.class, Restrictions
+          .eq("table.id", tableId), Restrictions.in("record", multipleRowIds));
     }
     for (Attachment attachment : attachments.list()) {
       JSONObject obj = new JSONObject();
@@ -816,7 +816,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
     }
     OBCriteria<AuxiliaryInput> auxInC = OBDal.getInstance().createCriteria(AuxiliaryInput.class);
-    auxInC.add(Expression.eq(AuxiliaryInput.PROPERTY_TAB, tab));
+    auxInC.add(Restrictions.eq(AuxiliaryInput.PROPERTY_TAB, tab));
     List<AuxiliaryInput> auxInputs = auxInC.list();
     for (AuxiliaryInput auxIn : auxInputs) {
       Object value = computeAuxiliaryInput(auxIn, tab.getWindow().getId());
@@ -1088,8 +1088,8 @@ public class FormInitializationComponent extends BaseActionHandler {
    */
   private void createNewPreferenceForWindow(Window window) {
 
-    OBCriteria<Preference> prefCriteria = OBDao.getFilteredCriteria(Preference.class, Expression
-        .eq(Preference.PROPERTY_PROPERTY, "OBUIAPP_UseClassicMode"), Expression.eq(
+    OBCriteria<Preference> prefCriteria = OBDao.getFilteredCriteria(Preference.class, Restrictions
+        .eq(Preference.PROPERTY_PROPERTY, "OBUIAPP_UseClassicMode"), Restrictions.eq(
         Preference.PROPERTY_WINDOW, window));
     if (prefCriteria.count() > 0) {
       // Preference already exists. We don't create a new one.
