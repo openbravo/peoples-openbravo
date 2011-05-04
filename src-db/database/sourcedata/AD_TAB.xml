@@ -2588,7 +2588,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--259-->  <SEQNO><![CDATA[10]]></SEQNO>
 <!--259-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
 <!--259-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
-<!--259-->  <ISINFOTAB><![CDATA[Y]]></ISINFOTAB>
+<!--259-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
 <!--259-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--259-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--259-->  <HASTREE><![CDATA[N]]></HASTREE>
