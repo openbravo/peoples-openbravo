@@ -307,7 +307,7 @@
             IF Cur_Order.DocSubTypeSO = 'WR' THEN
               v_NEWORDERDATE := Cur_Order.DATEORDERED; -- IS A POS ORDER
             ELSE
-              v_NEWORDERDATE := now();
+              v_NEWORDERDATE := TRUNC(now());
             END IF;
 
             --RAISE_APPLICATION_ERROR(-20100,'el numero documento es:'||COALESCE(v_DocumentNo,0)||' El doctypeId es: '||COALESCE(v_DocType_ID,0)||' El cOrderId es: '||COALESCE(Cur_Order.C_Order_ID,'0'));
@@ -332,7 +332,7 @@
               Cur_Order.AD_Org_ID, 'Y', now(), v_User_ID,
               now(), v_User_ID, v_DocumentNo, v_DocType_ID,
               Cur_Order.Description, 'N', 'C-', v_NEWORDERDATE,
-              now(), Cur_Order.C_BPartner_ID, Cur_Order.C_BPartner_Location_ID, Cur_Order.AD_User_ID,
+              TRUNC(now()), Cur_Order.C_BPartner_ID, Cur_Order.C_BPartner_Location_ID, Cur_Order.AD_User_ID,
               Cur_Order.M_Warehouse_ID, Cur_Order.POReference, Cur_Order.DateOrdered, Cur_Order.DeliveryRule,
               Cur_Order.FreightCostRule, Cur_Order.FreightAmt, Cur_Order.C_Project_ID, Cur_Order.C_Activity_ID,
               Cur_Order.C_Campaign_ID, Cur_Order.AD_OrgTrx_ID, Cur_Order.User1_ID, Cur_Order.User2_ID,

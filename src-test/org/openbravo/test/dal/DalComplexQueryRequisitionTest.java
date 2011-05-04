@@ -86,12 +86,12 @@ public class DalComplexQueryRequisitionTest extends BaseTest {
 
     // do a left outer join on business partner
     whereClause.append(" left join fetch rl.product");
-    whereClause.append(" left join fetch rl.businessPartner");
-    whereClause.append(" left join fetch rl.businessPartner.language");
-    whereClause.append(" left join fetch rl.requisition");
+    whereClause.append(" left join fetch rl.businessPartner rlbp");
+    whereClause.append(" left join fetch rlbp.language");
+    whereClause.append(" left join fetch rl.requisition rlr");
     whereClause.append(" left join fetch rl.priceList");
-    whereClause.append(" left join fetch rl.requisition.businessPartner");
-    whereClause.append(" left join fetch rl.requisition.businessPartner.language");
+    whereClause.append(" left join fetch rlr.businessPartner rlrbp");
+    whereClause.append(" left join fetch rlrbp.language");
 
     // AND COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID,M_REQUISITION.C_BPARTNER_ID) =
     // C_BPARTNER.C_BPARTNER_ID

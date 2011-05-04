@@ -33,7 +33,6 @@ public class PaymentMonitor {
    * Users of this method should check for existence of the PaymentMonitor property (disabling it)
    * to be able to provide the user with a relevant message.
    */
-  @SuppressWarnings("deprecation")
   public static void updateInvoice(Invoice invoice) {
     // Check for PaymentMonitor-disabling switch.
     try {

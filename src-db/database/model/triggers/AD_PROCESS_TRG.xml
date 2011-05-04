@@ -145,7 +145,6 @@ BEGIN
          WHERE AD_Column_ID = (SELECT AD_Column_ID
                                  FROM AD_Column
                                 WHERE AD_Process_ID = :NEW.AD_Process_ID);
-      -- AD_WF_Node
       END IF;
     END IF;
   END IF;

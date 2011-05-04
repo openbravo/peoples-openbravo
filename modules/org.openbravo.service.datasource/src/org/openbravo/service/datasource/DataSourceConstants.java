@@ -35,6 +35,8 @@ public class DataSourceConstants {
 
   public static final String DS_COMPONENT_TYPE = "OBSERDS_Datasource";
 
+  public static final String DS_CREATE = "_create";
+
   public static final String DS_ONLY_GENERATE_CREATESTATEMENT = "_onlyGenerateCreateStatement";
 
   public static final String DS_CLASS_NAME = "_className";

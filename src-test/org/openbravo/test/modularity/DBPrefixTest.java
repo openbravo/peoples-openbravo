@@ -134,7 +134,12 @@ public class DBPrefixTest extends BaseTest {
       OBDal.getInstance().flush();
       OBDal.getInstance().remove(dbPrefix);
       OBDal.getInstance().commitAndClose();
+      // thrown when using pgsql
     } catch (org.hibernate.exception.GenericJDBCException e) {
+      exception = true;
+      OBDal.getInstance().rollbackAndClose();
+      // thrown when using oracle
+    } catch (org.hibernate.QueryTimeoutException e) {
       exception = true;
       OBDal.getInstance().rollbackAndClose();
     }

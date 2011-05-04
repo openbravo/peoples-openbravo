@@ -21,6 +21,7 @@ package org.openbravo.client.kernel.reference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.client.kernel.RequestContext;
@@ -64,6 +65,18 @@ public class DateUIDefinition extends UIDefinition {
   @Override
   public String getFilterEditorProperties(Field field) {
     return ", filterOnKeypress: true" + super.getFilterEditorProperties(field);
+  }
+
+  @Override
+  public String getFieldProperties(Field field) {
+    String fieldProperties = super.getFieldProperties(field);
+    try {
+      JSONObject o = new JSONObject(fieldProperties);
+      o.put("width", "50%");
+      return o.toString();
+    } catch (Exception e) { // ignore
+      return fieldProperties;
+    }
   }
 
   private SimpleDateFormat getClassicFormat() {

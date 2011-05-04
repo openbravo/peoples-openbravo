@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -264,7 +264,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
   }
 
   protected List<Role> getRoles(Map<String, Object> parameters) {
-    ActivationKey ak = new ActivationKey();
+    ActivationKey ak = ActivationKey.getInstance();
     SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     boolean correctSystemStatus = sysInfo.getSystemStatus() == null
         || KernelServlet.getGlobalParameters().getOBProperty("safe.mode", "false")

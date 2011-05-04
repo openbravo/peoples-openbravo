@@ -1708,7 +1708,7 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--286-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--286-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--286-->  <COLUMNNAME><![CDATA[DivideRate]]></COLUMNNAME>
-<!--286-->  <NAME><![CDATA[Divide Rate by]]></NAME>
+<!--286-->  <NAME><![CDATA[Divide Rate By]]></NAME>
 <!--286-->  <PRINTNAME><![CDATA[Divide Rate]]></PRINTNAME>
 <!--286-->  <DESCRIPTION><![CDATA[The rate by which the base unit will be divided by to create the converted unit.]]></DESCRIPTION>
 <!--286-->  <HELP><![CDATA[To convert Source number to Target number, the Source is divided by the divide rate.  If you enter a Divide Rate, the Multiply Rate will be automatically calculated.]]></HELP>
@@ -2974,7 +2974,7 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--466-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--466-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--466-->  <COLUMNNAME><![CDATA[MultiplyRate]]></COLUMNNAME>
-<!--466-->  <NAME><![CDATA[Multiple Rate by]]></NAME>
+<!--466-->  <NAME><![CDATA[Multiple Rate By]]></NAME>
 <!--466-->  <PRINTNAME><![CDATA[Multiply Rate]]></PRINTNAME>
 <!--466-->  <DESCRIPTION><![CDATA[The rate by which the base unit will be mutiplied by to create the converted unit.]]></DESCRIPTION>
 <!--466-->  <HELP><![CDATA[To convert Source number to Target number, the Source is multiplied by the multiply rate.  If the Multiply Rate is entered, then the Divide Rate will be automatically calculated.]]></HELP>
@@ -4402,7 +4402,7 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--617-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--617-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--617-->  <COLUMNNAME><![CDATA[ValidFrom]]></COLUMNNAME>
-<!--617-->  <NAME><![CDATA[Valid from Date]]></NAME>
+<!--617-->  <NAME><![CDATA[Valid From Date]]></NAME>
 <!--617-->  <PRINTNAME><![CDATA[Valid from]]></PRINTNAME>
 <!--617-->  <DESCRIPTION><![CDATA[A parameter stating the starting time of a specified request.]]></DESCRIPTION>
 <!--617-->  <HELP><![CDATA[The Valid From date indicates the first day of a date range]]></HELP>
@@ -4415,7 +4415,7 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--618-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--618-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--618-->  <COLUMNNAME><![CDATA[ValidTo]]></COLUMNNAME>
-<!--618-->  <NAME><![CDATA[Valid to Date]]></NAME>
+<!--618-->  <NAME><![CDATA[Valid To Date]]></NAME>
 <!--618-->  <PRINTNAME><![CDATA[Valid to]]></PRINTNAME>
 <!--618-->  <DESCRIPTION><![CDATA[A parameter stating the ending time of a specified request.]]></DESCRIPTION>
 <!--618-->  <HELP><![CDATA[The Valid To date indicates the last day of a date range]]></HELP>
@@ -8069,6 +8069,32 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1482-->  <HELP><![CDATA[The Statement Amount indicates the amount of a single statement line.]]></HELP>
 <!--1482-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1482--></AD_ELEMENT>
+
+<!--1485--><AD_ELEMENT>
+<!--1485-->  <AD_ELEMENT_ID><![CDATA[1485]]></AD_ELEMENT_ID>
+<!--1485-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1485-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1485-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1485-->  <COLUMNNAME><![CDATA[V_Number]]></COLUMNNAME>
+<!--1485-->  <NAME><![CDATA[Value]]></NAME>
+<!--1485-->  <PRINTNAME><![CDATA[V_Number]]></PRINTNAME>
+<!--1485-->  <DESCRIPTION><![CDATA[A statement of worth or importance given in many forms.]]></DESCRIPTION>
+<!--1485-->  <HELP><![CDATA[Result of the measure in numeric format.]]></HELP>
+<!--1485-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1485--></AD_ELEMENT>
+
+<!--1486--><AD_ELEMENT>
+<!--1486-->  <AD_ELEMENT_ID><![CDATA[1486]]></AD_ELEMENT_ID>
+<!--1486-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1486-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1486-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1486-->  <COLUMNNAME><![CDATA[V_String]]></COLUMNNAME>
+<!--1486-->  <NAME><![CDATA[Text]]></NAME>
+<!--1486-->  <PRINTNAME><![CDATA[V_String]]></PRINTNAME>
+<!--1486-->  <DESCRIPTION><![CDATA[A place to add observations related to a specified check point.]]></DESCRIPTION>
+<!--1486-->  <HELP><![CDATA[Result of the measure in text format.]]></HELP>
+<!--1486-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1486--></AD_ELEMENT>
 
 <!--1487--><AD_ELEMENT>
 <!--1487-->  <AD_ELEMENT_ID><![CDATA[1487]]></AD_ELEMENT_ID>
@@ -14697,6 +14723,66 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800475-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800475--></AD_ELEMENT>
 
+<!--800476--><AD_ELEMENT>
+<!--800476-->  <AD_ELEMENT_ID><![CDATA[800476]]></AD_ELEMENT_ID>
+<!--800476-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800476-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800476-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800476-->  <COLUMNNAME><![CDATA[MA_Measure_Group_ID]]></COLUMNNAME>
+<!--800476-->  <NAME><![CDATA[Measurement Set]]></NAME>
+<!--800476-->  <PRINTNAME><![CDATA[Measure Group]]></PRINTNAME>
+<!--800476-->  <HELP><![CDATA[Indicates the groups that are measured in the measure shift.]]></HELP>
+<!--800476-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800476--></AD_ELEMENT>
+
+<!--800477--><AD_ELEMENT>
+<!--800477-->  <AD_ELEMENT_ID><![CDATA[800477]]></AD_ELEMENT_ID>
+<!--800477-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800477-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800477-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800477-->  <COLUMNNAME><![CDATA[MA_Measure_Time_ID]]></COLUMNNAME>
+<!--800477-->  <NAME><![CDATA[Measurement Time]]></NAME>
+<!--800477-->  <PRINTNAME><![CDATA[MEasure Time]]></PRINTNAME>
+<!--800477-->  <HELP><![CDATA[Identifies the time of the data gathering.]]></HELP>
+<!--800477-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800477--></AD_ELEMENT>
+
+<!--800478--><AD_ELEMENT>
+<!--800478-->  <AD_ELEMENT_ID><![CDATA[800478]]></AD_ELEMENT_ID>
+<!--800478-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800478-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800478-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800478-->  <COLUMNNAME><![CDATA[MA_Measure_Values_ID]]></COLUMNNAME>
+<!--800478-->  <NAME><![CDATA[Measurement Values]]></NAME>
+<!--800478-->  <PRINTNAME><![CDATA[MA_Measure_Values_ID]]></PRINTNAME>
+<!--800478-->  <HELP><![CDATA[Identifies each value measured in a measure time.]]></HELP>
+<!--800478-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800478--></AD_ELEMENT>
+
+<!--800479--><AD_ELEMENT>
+<!--800479-->  <AD_ELEMENT_ID><![CDATA[800479]]></AD_ELEMENT_ID>
+<!--800479-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800479-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800479-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800479-->  <COLUMNNAME><![CDATA[Measuredate]]></COLUMNNAME>
+<!--800479-->  <NAME><![CDATA[Measurement Date]]></NAME>
+<!--800479-->  <PRINTNAME><![CDATA[Measuredate]]></PRINTNAME>
+<!--800479-->  <HELP><![CDATA[Date when the measures are taken.]]></HELP>
+<!--800479-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800479--></AD_ELEMENT>
+
+<!--800480--><AD_ELEMENT>
+<!--800480-->  <AD_ELEMENT_ID><![CDATA[800480]]></AD_ELEMENT_ID>
+<!--800480-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800480-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800480-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800480-->  <COLUMNNAME><![CDATA[Measurehour]]></COLUMNNAME>
+<!--800480-->  <NAME><![CDATA[Measurement Hour]]></NAME>
+<!--800480-->  <PRINTNAME><![CDATA[Measurehour]]></PRINTNAME>
+<!--800480-->  <HELP><![CDATA[Time when the gathering was made.]]></HELP>
+<!--800480-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800480--></AD_ELEMENT>
+
 <!--800481--><AD_ELEMENT>
 <!--800481-->  <AD_ELEMENT_ID><![CDATA[800481]]></AD_ELEMENT_ID>
 <!--800481-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -14757,6 +14843,30 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800485-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800485--></AD_ELEMENT>
 
+<!--800490--><AD_ELEMENT>
+<!--800490-->  <AD_ELEMENT_ID><![CDATA[800490]]></AD_ELEMENT_ID>
+<!--800490-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800490-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800490-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800490-->  <COLUMNNAME><![CDATA[MA_Measure_Shift_ID]]></COLUMNNAME>
+<!--800490-->  <NAME><![CDATA[Measurement Shift]]></NAME>
+<!--800490-->  <PRINTNAME><![CDATA[Measure Shift]]></PRINTNAME>
+<!--800490-->  <HELP><![CDATA[Indicates a measure shift of critical control points.]]></HELP>
+<!--800490-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800490--></AD_ELEMENT>
+
+<!--800492--><AD_ELEMENT>
+<!--800492-->  <AD_ELEMENT_ID><![CDATA[800492]]></AD_ELEMENT_ID>
+<!--800492-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800492-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800492-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800492-->  <COLUMNNAME><![CDATA[V_Char]]></COLUMNNAME>
+<!--800492-->  <NAME><![CDATA[Check]]></NAME>
+<!--800492-->  <PRINTNAME><![CDATA[Check]]></PRINTNAME>
+<!--800492-->  <HELP><![CDATA[Yes/No result of the measure.]]></HELP>
+<!--800492-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800492--></AD_ELEMENT>
+
 <!--800493--><AD_ELEMENT>
 <!--800493-->  <AD_ELEMENT_ID><![CDATA[800493]]></AD_ELEMENT_ID>
 <!--800493-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -14804,6 +14914,19 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800499-->  <HELP><![CDATA[Identifies a periodic control.]]></HELP>
 <!--800499-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800499--></AD_ELEMENT>
+
+<!--800506--><AD_ELEMENT>
+<!--800506-->  <AD_ELEMENT_ID><![CDATA[800506]]></AD_ELEMENT_ID>
+<!--800506-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800506-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800506-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800506-->  <COLUMNNAME><![CDATA[Observation]]></COLUMNNAME>
+<!--800506-->  <NAME><![CDATA[Comments]]></NAME>
+<!--800506-->  <PRINTNAME><![CDATA[Observation]]></PRINTNAME>
+<!--800506-->  <DESCRIPTION><![CDATA[A space to write additional related information.]]></DESCRIPTION>
+<!--800506-->  <HELP><![CDATA[Observations occurred during the process or operation.]]></HELP>
+<!--800506-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800506--></AD_ELEMENT>
 
 <!--800507--><AD_ELEMENT>
 <!--800507-->  <AD_ELEMENT_ID><![CDATA[800507]]></AD_ELEMENT_ID>
@@ -15048,6 +15171,19 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800526-->  <HELP><![CDATA[Identifies a time schedule in a shift of a critical control point group.]]></HELP>
 <!--800526-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800526--></AD_ELEMENT>
+
+<!--800527--><AD_ELEMENT>
+<!--800527-->  <AD_ELEMENT_ID><![CDATA[800527]]></AD_ELEMENT_ID>
+<!--800527-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800527-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800527-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800527-->  <COLUMNNAME><![CDATA[Edit]]></COLUMNNAME>
+<!--800527-->  <NAME><![CDATA[Edit Measurements]]></NAME>
+<!--800527-->  <PRINTNAME><![CDATA[Edit]]></PRINTNAME>
+<!--800527-->  <DESCRIPTION><![CDATA[Edit measures of CCP]]></DESCRIPTION>
+<!--800527-->  <HELP><![CDATA[Edit measures of CCP]]></HELP>
+<!--800527-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800527--></AD_ELEMENT>
 
 <!--800528--><AD_ELEMENT>
 <!--800528-->  <AD_ELEMENT_ID><![CDATA[800528]]></AD_ELEMENT_ID>
@@ -15410,6 +15546,19 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800558-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800558--></AD_ELEMENT>
 
+<!--800559--><AD_ELEMENT>
+<!--800559-->  <AD_ELEMENT_ID><![CDATA[800559]]></AD_ELEMENT_ID>
+<!--800559-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800559-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800559-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800559-->  <COLUMNNAME><![CDATA[Confirmed]]></COLUMNNAME>
+<!--800559-->  <NAME><![CDATA[Confirmation]]></NAME>
+<!--800559-->  <PRINTNAME><![CDATA[Confirmed]]></PRINTNAME>
+<!--800559-->  <DESCRIPTION><![CDATA[An indication that an action is accepted and will be completed as planned.]]></DESCRIPTION>
+<!--800559-->  <HELP><![CDATA[Indicates that the maintenance schedule has been confirmed.]]></HELP>
+<!--800559-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800559--></AD_ELEMENT>
+
 <!--800560--><AD_ELEMENT>
 <!--800560-->  <AD_ELEMENT_ID><![CDATA[800560]]></AD_ELEMENT_ID>
 <!--800560-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -15436,6 +15585,19 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800561-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800561--></AD_ELEMENT>
 
+<!--800562--><AD_ELEMENT>
+<!--800562-->  <AD_ELEMENT_ID><![CDATA[800562]]></AD_ELEMENT_ID>
+<!--800562-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800562-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800562-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800562-->  <COLUMNNAME><![CDATA[MA_Maint_Part_ID]]></COLUMNNAME>
+<!--800562-->  <NAME><![CDATA[Maintenance Order]]></NAME>
+<!--800562-->  <PRINTNAME><![CDATA[Maintenance Part]]></PRINTNAME>
+<!--800562-->  <DESCRIPTION><![CDATA[A distinct characteristic of a machine used for processes and sometimes grouped within a category.]]></DESCRIPTION>
+<!--800562-->  <HELP><![CDATA[Identifies a maintenance part.]]></HELP>
+<!--800562-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800562--></AD_ELEMENT>
+
 <!--800563--><AD_ELEMENT>
 <!--800563-->  <AD_ELEMENT_ID><![CDATA[800563]]></AD_ELEMENT_ID>
 <!--800563-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -15447,6 +15609,30 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800563-->  <HELP><![CDATA[Identifies a periodicity defined for a maintenance.]]></HELP>
 <!--800563-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800563--></AD_ELEMENT>
+
+<!--800565--><AD_ELEMENT>
+<!--800565-->  <AD_ELEMENT_ID><![CDATA[800565]]></AD_ELEMENT_ID>
+<!--800565-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800565-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800565-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800565-->  <COLUMNNAME><![CDATA[MA_Maint_Scheduled_ID]]></COLUMNNAME>
+<!--800565-->  <NAME><![CDATA[Scheduled Maintenance]]></NAME>
+<!--800565-->  <PRINTNAME><![CDATA[MA_Maint_Scheduled_ID]]></PRINTNAME>
+<!--800565-->  <HELP><![CDATA[Identifies a scheduled maintenance.]]></HELP>
+<!--800565-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800565--></AD_ELEMENT>
+
+<!--800566--><AD_ELEMENT>
+<!--800566-->  <AD_ELEMENT_ID><![CDATA[800566]]></AD_ELEMENT_ID>
+<!--800566-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800566-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800566-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800566-->  <COLUMNNAME><![CDATA[MA_Maint_Worker_ID]]></COLUMNNAME>
+<!--800566-->  <NAME><![CDATA[Maintenance Worker]]></NAME>
+<!--800566-->  <PRINTNAME><![CDATA[MA_Maint_Worker_ID]]></PRINTNAME>
+<!--800566-->  <HELP><![CDATA[Identifies a worker that takes part on a maintenance part.]]></HELP>
+<!--800566-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800566--></AD_ELEMENT>
 
 <!--800567--><AD_ELEMENT>
 <!--800567-->  <AD_ELEMENT_ID><![CDATA[800567]]></AD_ELEMENT_ID>
@@ -15486,6 +15672,18 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800569-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800569--></AD_ELEMENT>
 
+<!--800570--><AD_ELEMENT>
+<!--800570-->  <AD_ELEMENT_ID><![CDATA[800570]]></AD_ELEMENT_ID>
+<!--800570-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800570-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800570-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800570-->  <COLUMNNAME><![CDATA[Partdate]]></COLUMNNAME>
+<!--800570-->  <NAME><![CDATA[Maintenance Order Date]]></NAME>
+<!--800570-->  <PRINTNAME><![CDATA[Part Date]]></PRINTNAME>
+<!--800570-->  <HELP><![CDATA[Date of the part.]]></HELP>
+<!--800570-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800570--></AD_ELEMENT>
+
 <!--800571--><AD_ELEMENT>
 <!--800571-->  <AD_ELEMENT_ID><![CDATA[800571]]></AD_ELEMENT_ID>
 <!--800571-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -15509,6 +15707,30 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800572-->  <HELP><![CDATA[Estimated time for the operation.]]></HELP>
 <!--800572-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800572--></AD_ELEMENT>
+
+<!--800573--><AD_ELEMENT>
+<!--800573-->  <AD_ELEMENT_ID><![CDATA[800573]]></AD_ELEMENT_ID>
+<!--800573-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800573-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800573-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800573-->  <COLUMNNAME><![CDATA[Scheduleddate]]></COLUMNNAME>
+<!--800573-->  <NAME><![CDATA[Planned Date]]></NAME>
+<!--800573-->  <PRINTNAME><![CDATA[Scheduled Date]]></PRINTNAME>
+<!--800573-->  <HELP><![CDATA[Scheduled date.]]></HELP>
+<!--800573-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800573--></AD_ELEMENT>
+
+<!--800574--><AD_ELEMENT>
+<!--800574-->  <AD_ELEMENT_ID><![CDATA[800574]]></AD_ELEMENT_ID>
+<!--800574-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800574-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800574-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800574-->  <COLUMNNAME><![CDATA[Usedtime]]></COLUMNNAME>
+<!--800574-->  <NAME><![CDATA[Time Used]]></NAME>
+<!--800574-->  <PRINTNAME><![CDATA[Used Time]]></PRINTNAME>
+<!--800574-->  <HELP><![CDATA[Used time in hours.]]></HELP>
+<!--800574-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800574--></AD_ELEMENT>
 
 <!--800575--><AD_ELEMENT>
 <!--800575-->  <AD_ELEMENT_ID><![CDATA[800575]]></AD_ELEMENT_ID>
@@ -15669,6 +15891,18 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800591-->  <HELP><![CDATA[The ID identifies a unique record]]></HELP>
 <!--800591-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800591--></AD_ELEMENT>
+
+<!--800592--><AD_ELEMENT>
+<!--800592-->  <AD_ELEMENT_ID><![CDATA[800592]]></AD_ELEMENT_ID>
+<!--800592-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800592-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800592-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800592-->  <COLUMNNAME><![CDATA[CreateMaint]]></COLUMNNAME>
+<!--800592-->  <NAME><![CDATA[Create Scheduled Maintenances]]></NAME>
+<!--800592-->  <PRINTNAME><![CDATA[Create Scheduled Maintenances]]></PRINTNAME>
+<!--800592-->  <HELP><![CDATA[Process to insert in the part the scheduled maintenances.]]></HELP>
+<!--800592-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800592--></AD_ELEMENT>
 
 <!--800593--><AD_ELEMENT>
 <!--800593-->  <AD_ELEMENT_ID><![CDATA[800593]]></AD_ELEMENT_ID>

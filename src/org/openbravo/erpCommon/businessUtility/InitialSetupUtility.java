@@ -1605,7 +1605,7 @@ public class InitialSetupUtility {
   /**
    * 
    * @param client
-   * @param org
+   * @param orgProvided
    *          optional parameter. If not provided, "*" organization used
    * @param module
    * @return ADClientModule object with the created element

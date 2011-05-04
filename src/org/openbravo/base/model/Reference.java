@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.domaintype.BaseEnumerateDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DatetimeDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
@@ -206,7 +207,7 @@ public class Reference extends ModelObject {
   }
 
   /**
-   * @deprecated use {@link StringEnumerateDomainType#addEnumerateValue(String)}.
+   * @deprecated use {@link BaseEnumerateDomainType#addEnumerateValue(Object)}.
    * @see #getDomainType()
    */
   public void addAllowedValue(String value) {

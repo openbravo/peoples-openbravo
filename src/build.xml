@@ -238,34 +238,8 @@ build.war: build a war file in the lib directory.
     <ant dir="${base.db}" target="database.postupdate.${bbdd.rdbms}" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="generate.entities" depends="compile.src.gen,clean.src.gen">
-    <taskdef name="workflow" classpathref="project.class.path" classname="org.openbravo.base.gen.GenerateEntitiesTask" />
-    <!-- debug="true" will perform the in-memory model initialization before generating entities
-	if an error occurs then, then a stacktrace is printed. -->
-    <workflow debug="false" friendlyWarnings="${friendlyWarnings}" srcGenPath="${base.src.gen}" propertiesFile="${base.config}/Openbravo.properties" file="${base.src}/org/openbravo/base/gen/gen_entity.oaw" fork="true" maxmemory="${build.maxmemory}">
-      <param name="ob.properties.location" value="${base.config}/Openbravo.properties" />
-      <param name="base.src.gen" value="${base.src.gen}" />
-      <param name="friendlyWarnings" value="${friendlyWarnings}"/>
-      <classpath>
-        <path refid="project.class.path" />
-      </classpath>
-    </workflow>
-
-    <!--
-    see issue: https://issues.openbravo.com/view.php?id=9331
-    Custom columns in standard tables should support a reference to a table in the module
-    if this occurs then possible the following javac has to be enabled instead of the two javacs below
-    <javac srcdir="${base.src}:${base.src.gen}" excludes="org/openbravo/base/*,org/openbravo/base/secureApp/**,org/openbravo/erpCommon/**,org/openbravo/erpReports/**,org/openbravo/scheduling/**,org/openbravo/service/web/**,org/openbravo/service/system/**,org/openbravo/service/rest/**,org/openbravo/service/db/**,org/openbravo/authentication/**,org/openbravo/services/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
-      <classpath refid="project.class.path" />
-    </javac>
-    -->
-    <javac srcdir="${base.src}:${base.src.gen}" includes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
-      <classpath refid="project.class.path" />
-    </javac>
-    <javac srcdir="${base.src.gen}" excludes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
-      <classpath refid="project.class.path" />
-    </javac>
-  </target>
+  <!-- full generate.entities -> clean + .quick -->
+  <target name="generate.entities" depends="clean.src.gen,generate.entities.quick" />
 
   <!-- 
 		Generates entities only when the application dictionary has changed.
@@ -275,36 +249,33 @@ build.war: build a war file in the lib directory.
 		is a source older than the last updated time of the Application Dictionary then the sources need to be regenerated.		
 	-->
   <target name="generate.entities.quick" depends="compile.src.gen">
-
-    <taskdef name="workflow" classpathref="project.class.path" classname="org.openbravo.base.gen.GenerateEntitiesTask" />
-    <!-- debug="true" will perform the in-memory model initialization before generating entities
-	if an error occurs then, then a stacktrace is printed. -->
-    <workflow debug="false" friendlyWarnings="${friendlyWarnings}" srcGenPath="${base.src.gen}" propertiesFile="${base.config}/Openbravo.properties" file="${base.src}/org/openbravo/base/gen/gen_entity.oaw" fork="true" maxmemory="${build.maxmemory}">
-      <param name="ob.properties.location" value="${base.config}/Openbravo.properties" />
-      <param name="base.src.gen" value="${base.src.gen}" />
-      <param name="friendlyWarnings" value="${friendlyWarnings}"/>
+    <java classname="org.openbravo.base.gen.GenerateEntitiesTask" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
+      <arg line="'${base.src}' '${friendlyWarnings}'" />
+      <classpath refid="project.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />
       </syspropertyset>
-      <classpath>
-        <path refid="project.class.path" />
-      </classpath>
-    </workflow>
+    </java>
+      <!--
+        see issue: https://issues.openbravo.com/view.php?id=9331
+        Custom columns in standard tables should support a reference to a table in the module
+        if this occurs then possible the following javac has to be enabled instead of the two javacs below
+      <javac srcdir="${base.src}:${base.src.gen}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
+        <classpath refid="project.class.path" />      
+      </javac>
+      -->
+      <javac srcdir="${base.src}:${base.src.gen}" includes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
+        <classpath refid="project.class.path" />      
+      </javac>
+      <javac srcdir="${base.src.gen}" excludes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
+        <classpath refid="project.class.path" />
+      </javac>
+  </target>
 
-    <!--
-      see issue: https://issues.openbravo.com/view.php?id=9331
-      Custom columns in standard tables should support a reference to a table in the module
-      if this occurs then possible the following javac has to be enabled instead of the two javacs below
-    <javac srcdir="${base.src}:${base.src.gen}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
-      <classpath refid="project.class.path" />      
-    </javac>
-    -->
-    <javac srcdir="${base.src}:${base.src.gen}" includes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
-      <classpath refid="project.class.path" />      
-    </javac>
-    <javac srcdir="${base.src.gen}" excludes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
-      <classpath refid="project.class.path" />
-    </javac>
+  <!-- build-internal forking helper -->
+  <target name="generate.entities.quick.forked" depends="compile.src.gen">
+    <taskdef name="workflow" classpathref="project.class.path" classname="org.openbravo.base.gen.GenerateEntitiesTask" />
+    <workflow friendlyWarnings="${friendlyWarnings}" srcGenPath="${base.src.gen}" propertiesFile="${base.config}/Openbravo.properties" />
   </target>
 
   <target name="run.tests" depends="compileSqlc,generate.entities.quick">
@@ -580,7 +551,6 @@ build.war: build a war file in the lib directory.
       <fileset dir="${base.lib}/runtime">
         <exclude name="openbravo-wad.jar" />
         <exclude name="openbravo-trl.jar" />
-        <exclude name="servlet-api.jar" />
         <exclude name="*.war" />
       </fileset>
       <fileset dir="${base.db}/lib">
@@ -900,7 +870,6 @@ build.war: build a war file in the lib directory.
     <war compress="true" destfile="${base.lib}/${context.name}.war" encoding="UTF-8" webxml="${base.context}/WEB-INF/web.xml">
       <zipfileset dir="${base.context}">
         <exclude name="**/WEB-INF/web.xml" />
-        <exclude name="**/WEB-INF/lib/servlet-api.jar" />
       </zipfileset>
       <classes dir="${build}" />
     </war>

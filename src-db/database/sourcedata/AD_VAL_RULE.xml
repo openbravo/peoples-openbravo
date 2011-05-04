@@ -827,17 +827,6 @@ AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Ord
 <!--800004-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800004--></AD_VAL_RULE>
 
-<!--800005--><AD_VAL_RULE>
-<!--800005-->  <AD_VAL_RULE_ID><![CDATA[800005]]></AD_VAL_RULE_ID>
-<!--800005-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800005-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800005-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800005-->  <NAME><![CDATA[AD_Process report]]></NAME>
-<!--800005-->  <TYPE><![CDATA[S]]></TYPE>
-<!--800005-->  <CODE><![CDATA[AD_Process.entitytype = 'U' and isreport='Y']]></CODE>
-<!--800005-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800005--></AD_VAL_RULE>
-
 <!--800006--><AD_VAL_RULE>
 <!--800006-->  <AD_VAL_RULE_ID><![CDATA[800006]]></AD_VAL_RULE_ID>
 <!--800006-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -894,6 +883,17 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800010-->  <CODE><![CDATA[C_Region.C_Country_ID=@From_Country_ID@]]></CODE>
 <!--800010-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800010--></AD_VAL_RULE>
+
+<!--800011--><AD_VAL_RULE>
+<!--800011-->  <AD_VAL_RULE_ID><![CDATA[800011]]></AD_VAL_RULE_ID>
+<!--800011-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800011-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800011-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800011-->  <NAME><![CDATA[MA_Scheduled_Maintenance MachineType]]></NAME>
+<!--800011-->  <TYPE><![CDATA[S]]></TYPE>
+<!--800011-->  <CODE><![CDATA[COALESCE(MA_Machine.MA_Machine_Type_ID,'-1') = COALESCE(@MA_Machine_Type_ID@, COALESCE(MA_Machine.MA_Machine_Type_ID,'-1'))]]></CODE>
+<!--800011-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800011--></AD_VAL_RULE>
 
 <!--800012--><AD_VAL_RULE>
 <!--800012-->  <AD_VAL_RULE_ID><![CDATA[800012]]></AD_VAL_RULE_ID>

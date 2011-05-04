@@ -26,7 +26,7 @@ import org.openbravo.base.validation.ValidationException;
 
 /**
  * The base class for primitive property types. Subclasses only need to implement
- * {@link DomainType#getPrimitiveType()}.
+ * {@link PrimitiveDomainType#getPrimitiveType()}.
  * 
  * @author mtaal
  */

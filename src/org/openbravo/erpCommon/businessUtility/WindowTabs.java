@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,8 @@ import java.util.Stack;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.utility.Utility;
 
 /**
@@ -318,11 +320,9 @@ public class WindowTabs {
         text.append("        <span class=\"tabTitle_elements_text\" id=\"tabTitle_text\">").append(
             this.Title).append("</span>\n");
       if (isFirst)
-        text
-            .append("        <span class=\"tabTitle_elements_separator\"><div class=\"tabTitle_elements_separator_icon\"></div></span>\n");
+        text.append("        <span class=\"tabTitle_elements_separator\"><div class=\"tabTitle_elements_separator_icon\"></div></span>\n");
       if (isFirst)
-        text
-            .append("        <span class=\"tabTitle_elements_image\"><div class=\"tabTitle_elements_image_normal_icon\" id=\"TabStatusIcon\"></div></span>\n");
+        text.append("        <span class=\"tabTitle_elements_image\"><div class=\"tabTitle_elements_image_normal_icon\" id=\"TabStatusIcon\"></div></span>\n");
       if (isFirst)
         text.append("      </span>\n");
       if (isFirst)
@@ -353,14 +353,15 @@ public class WindowTabs {
           else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N")
               && data.istranslationtab.equals("Y"))
             continue;
-          else if (data.isactive.equals("N") || data.enabled.equals("N"))
+          else if (data.isactive.equals("N")
+              || data.enabled.equals("N")
+              || ActivationKey.getInstance().hasLicencesTabAccess(data.adTabId) != FeatureRestriction.NO_RESTRICTION)
             continue;
           if (!isFirstTab)
             text.append("<span class=\"tabSeparator\">&nbsp;</span>\n");
-          text
-              .append(
-                  (isFirstTab && !((data.adTabId.equals(this.TabID) || data.isbreadcrumb
-                      .equals("Y")))) ? "<div class=\"marginLeft1\">" : "<div>")
+          text.append(
+              (isFirstTab && !((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y")))) ? "<div class=\"marginLeft1\">"
+                  : "<div>")
               .append("<span class=\"dojoTab")
               .append(
                   ((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y")) ? (isFirst ? "NULL dojoTabparentfirst"
@@ -425,11 +426,9 @@ public class WindowTabs {
       text.append("        <span class=\"tabTitle_elements_text\" id=\"tabTitle_text\">").append(
           this.Title).append("</span>\n");
     if (!hasParent)
-      text
-          .append("        <span class=\"tabTitle_elements_separator\"><div class=\"tabTitle_elements_separator_icon\"></div></span>\n");
+      text.append("        <span class=\"tabTitle_elements_separator\"><div class=\"tabTitle_elements_separator_icon\"></div></span>\n");
     if (!hasParent)
-      text
-          .append("        <span class=\"tabTitle_elements_image\"><div class=\"tabTitle_elements_image_normal_icon\" id=\"TabStatusIcon\"></div></span>\n");
+      text.append("        <span class=\"tabTitle_elements_image\"><div class=\"tabTitle_elements_image_normal_icon\" id=\"TabStatusIcon\"></div></span>\n");
     if (!hasParent)
       text.append("      </span>\n");
     if (!hasParent)
@@ -458,14 +457,15 @@ public class WindowTabs {
         else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N")
             && data.istranslationtab.equals("Y"))
           continue;
-        else if (data.isactive.equals("N") || data.enabled.equals("N"))
+        else if (data.isactive.equals("N")
+            || data.enabled.equals("N")
+            || ActivationKey.getInstance().hasLicencesTabAccess(data.adTabId) != FeatureRestriction.NO_RESTRICTION)
           continue;
         if (!isFirstTab)
           text.append("<span class=\"tabSeparator\">&nbsp;</span>\n");
-        text
-            .append(
-                (isFirstTab && !((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y")))) ? "<div class=\"marginLeft1\">"
-                    : "<div>")
+        text.append(
+            (isFirstTab && !((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y")))) ? "<div class=\"marginLeft1\">"
+                : "<div>")
             .append("<span class=\"")
             .append(
                 ((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y")) ? (!hasParent ? "dojoTabcurrentfirst"
@@ -525,7 +525,9 @@ public class WindowTabs {
       else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N")
           && data.istranslationtab.equals("Y"))
         continue;
-      else if (data.isactive.equals("N") || data.enabled.equals("N"))
+      else if (data.isactive.equals("N")
+          || data.enabled.equals("N")
+          || ActivationKey.getInstance().hasLicencesTabAccess(data.adTabId) != FeatureRestriction.NO_RESTRICTION)
         continue;
       if (!isFirst)
         text.append("<span class=\"tabSeparator\">&nbsp;</span>\n");

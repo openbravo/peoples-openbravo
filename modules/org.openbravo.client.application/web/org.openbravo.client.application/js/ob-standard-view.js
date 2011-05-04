@@ -264,6 +264,12 @@ isc.OBStandardView.addProperties({
         OB.TestRegistry.register('org.openbravo.client.application.ChildTabSet_' + this.tabId, this.viewForm);
       }
     }
+    
+    if (this.defaultEditMode) {
+      // prevent the grid from showing very shortly, so hide it right away
+      this.viewGrid.hide();
+    }
+
   },
     
   // handles different ways by which an error can be passed from the 
@@ -709,7 +715,7 @@ isc.OBStandardView.addProperties({
         
     if (this.shouldOpenDefaultEditMode()) {
       this.openDefaultEditView();
-    } else if (this.isShowingForm) {
+    } else if (this.isShowingForm && !(this.allowDefaultEditMode && this.defaultEditMode)) {
       this.switchFormGridVisibility();
     }
     this.viewGrid.refreshContents();
@@ -924,6 +930,33 @@ isc.OBStandardView.addProperties({
     this.editRecord(newRecord);
   },
   
+  openDirectTabView: function(showContent) {
+    if (this.parentTabSet && this.parentTabSet.getSelectedTab() !== this.tab) {
+      this.parentTabSet.selectTab(this.tab);
+    }
+
+    if (showContent) {
+      // this view is the last in the list then show it
+      if (this.parentTabSet) {
+        this.parentTabSet.setState(isc.OBStandardView.STATE_MID);
+      } else {
+        this.doHandleClick();
+      }
+      this.setMaximizeRestoreButtonState();
+      
+      // show the form with the selected record
+      if (!this.isShowingForm) {
+        // hide the grid as it should not show up in a short flash
+        this.viewGrid.hide();
+      }
+      this.setAsActiveView();
+    }
+
+    if (this.parentView) {
+      this.parentView.openDirectTabView(false);
+    } 
+  },
+  
   // is part of the flow to open all correct tabs when a user goes directly
   // to a specific tab and record, for example by clicking a link in another 
   // window, see the description in ob-standard-window.js
@@ -948,13 +981,9 @@ isc.OBStandardView.addProperties({
           this.viewGrid.targetOpenGrid = true;
         }
         
-        if (this.parentTabSet && this.parentTabSet.getSelectedTab() !== this.tab) {
-          this.parentTabSet.selectTab(this.tab);
-        } else {
-          // make sure that the content gets refreshed
-          // refresh and open a child view when all is done
-          this.doRefreshContents(true, true);
-        }
+        // make sure that the content gets refreshed
+        // refresh and open a child view when all is done
+        this.doRefreshContents(true, true);
         return true;
       }
     }
@@ -980,16 +1009,7 @@ isc.OBStandardView.addProperties({
         }
       }
     }
-    
-    // no child tabs to open anymore, show ourselves as the default view
-    // open this view
-    if (this.parentTabSet) {
-      this.parentTabSet.setState(isc.OBStandardView.STATE_MID);
-    } else {
-      this.doHandleClick();
-    }
-    this.setMaximizeRestoreButtonState();
-    
+        
     // show the form with the selected record
     if (!this.isShowingForm) {
       var gridRecord = this.viewGrid.getSelectedRecord();
@@ -997,7 +1017,6 @@ isc.OBStandardView.addProperties({
         this.editRecord(gridRecord);
       }
     }
-    this.setAsActiveView();
     
     // remove this info
     delete this.standardWindow.directTabInfo;
@@ -1024,7 +1043,8 @@ isc.OBStandardView.addProperties({
     // is actually a different parent selected, only then refresh children
     var differentRecordId = !this.lastRecordSelected || !this.viewGrid.getSelectedRecord() ||
       this.viewGrid.getSelectedRecord().id !== this.lastRecordSelected.id;
-      
+    var selectedRecordId = this.viewGrid.getSelectedRecord() ? this.viewGrid.getSelectedRecord().id : null;
+    
     this.updateLastSelectedState();
     this.updateTabTitle();    
     this.toolBar.updateButtonState(this.isEditingGrid || this.isShowingForm);
@@ -1035,7 +1055,10 @@ isc.OBStandardView.addProperties({
     if (this.childTabSet && differentRecordId) {
       for (var i = 0; i < this.childTabSet.tabs.length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
-        tabViewPane.doRefreshContents(true);
+        
+        if (!selectedRecordId || selectedRecordId !== tabViewPane.parentRecordId) {
+          tabViewPane.doRefreshContents(true); 
+        }
       }
     }
     // and recompute the count:
@@ -1225,7 +1248,8 @@ isc.OBStandardView.addProperties({
       tabSet.setTabTitle(tab, title);
     }
     
-    if (this.isRootView) {
+    // added check on tab as initially it is not set
+    if (this.isRootView && tab) {
       // update the document title
       document.title = 'Openbravo - ' + tab.title;
     }

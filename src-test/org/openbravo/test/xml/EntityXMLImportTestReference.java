@@ -131,9 +131,9 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
   }
 
   /**
-   * Repeat the action of importing the {@link Warehouse} objects from {@link TEST_CLIENT_ID}. Now
+   * Repeat the action of importing the {@link Warehouse} objects from {@link #TEST_CLIENT_ID}. Now
    * the {@link Location} objects are also exported but not imported as they already exist in
-   * {@link QA_TEST_CLIENT_ID}.
+   * {@link #QA_TEST_CLIENT_ID}.
    */
   public void test3Warehouse() {
     setTestUserContext();

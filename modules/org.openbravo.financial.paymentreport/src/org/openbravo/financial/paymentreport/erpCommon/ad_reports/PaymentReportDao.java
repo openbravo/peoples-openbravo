@@ -47,6 +47,7 @@ import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.invoice.Invoice;
@@ -54,6 +55,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
+import org.openbravo.model.project.Project;
 import org.openbravo.utils.Replace;
 
 public class PaymentReportDao {
@@ -93,18 +95,18 @@ public class PaymentReportDao {
     try {
 
       hsqlScript.append(" as fpsd ");
-      hsqlScript.append(" left outer join fpsd.paymentDetails.finPayment ");
-      hsqlScript.append(" left outer join fpsd.invoicePaymentSchedule ");
-      hsqlScript.append(" left outer join fpsd.invoicePaymentSchedule.invoice ");
-      hsqlScript
-          .append(" left outer join fpsd.paymentDetails.finPayment.businessPartner.businessPartnerCategory a");
-      hsqlScript
-          .append(" left outer join fpsd.invoicePaymentSchedule.invoice.businessPartner.businessPartnerCategory b");
+      hsqlScript.append(" left outer join fpsd.paymentDetails.finPayment pay");
+      hsqlScript.append(" left outer join pay.businessPartner.businessPartnerCategory paybpc");
+      hsqlScript.append(" left outer join fpsd.invoicePaymentSchedule invps");
+      hsqlScript.append(" left outer join invps.invoice inv");
+      hsqlScript.append(" left outer join inv.businessPartner.businessPartnerCategory invbpc");
+      hsqlScript.append(" left outer join fpsd.paymentDetails.finPayment.currency paycur");
+      hsqlScript.append(" left outer join fpsd.invoicePaymentSchedule.invoice.currency invcur");
+      hsqlScript.append(" left outer join pay.project paypro");
+      hsqlScript.append(" left outer join inv.project invpro");
       hsqlScript.append(" where (fpsd.");
       hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-      hsqlScript.append(" is not null or fpsd.");
-      hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-      hsqlScript.append(" is not null ");
+      hsqlScript.append(" is not null or invps is not null ");
       hsqlScript.append(") ");
 
       // organization + include sub-organization
@@ -135,17 +137,13 @@ public class PaymentReportDao {
 
       // due date from - due date to
       if (!strDueDateFrom.isEmpty()) {
-        hsqlScript.append(" and fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
+        hsqlScript.append(" and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
         hsqlScript.append(" > ?");
         parameters.add(FIN_Utility.getDate(strDueDateFrom));
       }
       if (!strDueDateTo.isEmpty()) {
-        hsqlScript.append(" and fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
+        hsqlScript.append(" and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
         hsqlScript.append(" < ?");
         parameters.add(FIN_Utility.getDate(strDueDateTo));
@@ -153,65 +151,35 @@ public class PaymentReportDao {
 
       // amount from - amount to
       if (!strAmountFrom.isEmpty()) {
-        hsqlScript.append(" and coalesce(fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
+        hsqlScript.append(" and coalesce(pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_AMOUNT);
-        hsqlScript.append(", fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
+        hsqlScript.append(", invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_AMOUNT);
-        hsqlScript.append(") > '");
+        hsqlScript.append(") > ");
         hsqlScript.append(strAmountFrom);
-        hsqlScript.append("'");
       }
       if (!strAmountTo.isEmpty()) {
-        hsqlScript.append(" and coalesce(fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
+        hsqlScript.append(" and coalesce(pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_AMOUNT);
-        hsqlScript.append(", fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
+        hsqlScript.append(", invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_AMOUNT);
-        hsqlScript.append(") < '");
+        hsqlScript.append(") < ");
         hsqlScript.append(strAmountTo);
-        hsqlScript.append("'");
       }
 
       // document date from - document date to
       if (!strDocumentDateFrom.isEmpty()) {
-        hsqlScript.append(" and coalesce(fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
+        hsqlScript.append(" and coalesce(pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        hsqlScript.append(", fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
+        hsqlScript.append(", inv.");
         hsqlScript.append(Invoice.PROPERTY_INVOICEDATE);
         hsqlScript.append(") > ?");
         parameters.add(FIN_Utility.getDate(strDocumentDateFrom));
       }
       if (!strDocumentDateTo.isEmpty()) {
-        hsqlScript.append(" and coalesce(fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
+        hsqlScript.append(" and coalesce(pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        hsqlScript.append(", fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
+        hsqlScript.append(", inv.");
         hsqlScript.append(Invoice.PROPERTY_INVOICEDATE);
         hsqlScript.append(") < ?");
         parameters.add(FIN_Utility.getDate(strDocumentDateTo));
@@ -219,17 +187,9 @@ public class PaymentReportDao {
 
       // business partner
       if (!strcBPartnerIdIN.isEmpty()) {
-        hsqlScript.append(" and coalesce(fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
+        hsqlScript.append(" and coalesce(pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_BUSINESSPARTNER);
-        hsqlScript.append(", fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
+        hsqlScript.append(", inv.");
         hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
         hsqlScript.append(") in ");
         hsqlScript.append(strcBPartnerIdIN);
@@ -237,40 +197,16 @@ public class PaymentReportDao {
 
       // business partner category
       if (!strcBPGroupIdIN.isEmpty()) {
-        hsqlScript.append(" and coalesce(fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_Payment.PROPERTY_BUSINESSPARTNER);
-        hsqlScript.append(".");
-        hsqlScript.append(BusinessPartner.PROPERTY_BUSINESSPARTNERCATEGORY);
-        hsqlScript.append(", fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
-        hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
-        hsqlScript.append(".");
-        hsqlScript.append(BusinessPartner.PROPERTY_BUSINESSPARTNERCATEGORY);
-        hsqlScript.append(") = '");
+        hsqlScript.append(" and coalesce(paybpc, invbpc) = '");
         hsqlScript.append(strcBPGroupIdIN);
         hsqlScript.append("'");
       }
 
       // project
       if (!strcProjectIdIN.isEmpty()) {
-        hsqlScript.append(" and coalesce(fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
+        hsqlScript.append(" and coalesce(pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PROJECT);
-        hsqlScript.append(", fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
+        hsqlScript.append(", inv.");
         hsqlScript.append(Invoice.PROPERTY_PROJECT);
         hsqlScript.append(") in ");
         hsqlScript.append(strcProjectIdIN);
@@ -278,11 +214,7 @@ public class PaymentReportDao {
 
       // status
       if (!strfinPaymSt.isEmpty() && !strfinPaymSt.equalsIgnoreCase("('')")) {
-        hsqlScript.append(" and (fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
+        hsqlScript.append(" and (pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_STATUS);
         hsqlScript.append(" in ");
         hsqlScript.append(strfinPaymSt);
@@ -297,17 +229,9 @@ public class PaymentReportDao {
 
       // payment method
       if (!strPaymentMethodId.isEmpty()) {
-        hsqlScript.append(" and coalesce(fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
+        hsqlScript.append(" and coalesce(pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTMETHOD);
-        hsqlScript.append(", fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
+        hsqlScript.append(", inv.");
         hsqlScript.append(Invoice.PROPERTY_PAYMENTMETHOD);
         hsqlScript.append(") = '");
         hsqlScript.append(strPaymentMethodId);
@@ -316,66 +240,37 @@ public class PaymentReportDao {
 
       // financial account
       if (!strFinancialAccountId.isEmpty()) {
-        hsqlScript.append(" and (fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(" is not null and fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
+        hsqlScript.append(" and (pay is not null and pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_ACCOUNT);
-        hsqlScript.append(" = '");
+        hsqlScript.append(".id = '");
         hsqlScript.append(strFinancialAccountId);
-        hsqlScript.append("' or ((fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
+        hsqlScript.append("' or ((inv.");
         hsqlScript.append(Invoice.PROPERTY_SALESTRANSACTION);
-        hsqlScript.append(" = 'Y' and fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
+        hsqlScript.append(" = 'Y'");
+        hsqlScript.append(" and inv.");
         hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
         hsqlScript.append(".");
         hsqlScript.append(BusinessPartner.PROPERTY_ACCOUNT);
-        hsqlScript.append(" = '");
+        hsqlScript.append(".id = '");
         hsqlScript.append(strFinancialAccountId);
-        hsqlScript.append("') or (fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
+        hsqlScript.append("')");
+        hsqlScript.append(" or (inv.");
         hsqlScript.append(Invoice.PROPERTY_SALESTRANSACTION);
-        hsqlScript.append(" = 'N' and fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
+        hsqlScript.append(" = 'N'");
+        hsqlScript.append(" and inv.");
         hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
         hsqlScript.append(".");
         hsqlScript.append(BusinessPartner.PROPERTY_POFINANCIALACCOUNT);
-        hsqlScript.append(" = '");
+        hsqlScript.append(".id = '");
         hsqlScript.append(strFinancialAccountId);
         hsqlScript.append("')))");
       }
 
       // currency
       if (!strcCurrency.isEmpty()) {
-        hsqlScript.append(" and coalesce(fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
+        hsqlScript.append(" and coalesce(pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_CURRENCY);
-        hsqlScript.append(", fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
+        hsqlScript.append(", inv.");
         hsqlScript.append(Invoice.PROPERTY_CURRENCY);
         hsqlScript.append(") = '");
         hsqlScript.append(strcCurrency);
@@ -384,47 +279,27 @@ public class PaymentReportDao {
 
       // payment type
       if (strPaymType.equalsIgnoreCase("FINPR_Receivables")) {
-        hsqlScript.append(" and (fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
+        hsqlScript.append(" and (pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_RECEIPT);
         hsqlScript.append(" = 'Y'");
-        hsqlScript.append(" or fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
+        hsqlScript.append(" or inv.");
         hsqlScript.append(Invoice.PROPERTY_SALESTRANSACTION);
         hsqlScript.append(" = 'Y')");
       } else if (strPaymType.equalsIgnoreCase("FINPR_Payables")) {
-        hsqlScript.append(" and (fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
+        hsqlScript.append(" and (pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_RECEIPT);
         hsqlScript.append(" = 'N'");
-        hsqlScript.append(" or fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
+        hsqlScript.append(" or inv.");
         hsqlScript.append(Invoice.PROPERTY_SALESTRANSACTION);
         hsqlScript.append(" = 'N')");
       }
 
       // overdue
       if (!strOverdue.isEmpty()) {
-        hsqlScript.append(" and fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
+        hsqlScript.append(" and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_OUTSTANDINGAMOUNT);
         hsqlScript.append(" != '0'");
-        hsqlScript.append(" and fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
+        hsqlScript.append(" and inv.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
         hsqlScript.append(" <  ?");
         parameters.add(FIN_Utility.getDate(dateFormat.format(new Date())));
@@ -433,56 +308,36 @@ public class PaymentReportDao {
       hsqlScript.append(" order by ");
 
       if (strGroupCrit.equalsIgnoreCase("APRM_FATS_BPARTNER")) {
-        hsqlScript.append(" coalesce(fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
+        hsqlScript.append(" coalesce(pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_BUSINESSPARTNER);
-        hsqlScript.append(", fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
         hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
+        hsqlScript.append(BusinessPartner.PROPERTY_NAME);
+        hsqlScript.append(", inv.");
         hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
+        hsqlScript.append(".");
+        hsqlScript.append(BusinessPartner.PROPERTY_NAME);
         hsqlScript.append("), ");
       } else if (strGroupCrit.equalsIgnoreCase("Project")) {
-        hsqlScript.append("  coalesce(fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_Payment.PROPERTY_PROJECT);
-        hsqlScript.append(", fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
-        hsqlScript.append(Invoice.PROPERTY_PROJECT);
+        hsqlScript.append("  coalesce(paypro.");
+        hsqlScript.append(Project.PROPERTY_NAME);
+        hsqlScript.append(", invpro.");
+        hsqlScript.append(Project.PROPERTY_NAME);
         hsqlScript.append("), ");
       } else if (strGroupCrit.equalsIgnoreCase("FINPR_BPartner_Category")) {
-        hsqlScript.append("  coalesce(a, b), ");
+        hsqlScript.append("  coalesce(paybpc.");
+        hsqlScript.append(Category.PROPERTY_NAME);
+        hsqlScript.append(", invbpc.");
+        hsqlScript.append(Category.PROPERTY_NAME);
+        hsqlScript.append("), ");
       } else if (strGroupCrit.equalsIgnoreCase("INS_CURRENCY")) {
-        hsqlScript.append("  coalesce(fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_Payment.PROPERTY_CURRENCY);
-        hsqlScript.append(", fpsd.");
-        hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        hsqlScript.append(".");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        hsqlScript.append(".");
-        hsqlScript.append(Invoice.PROPERTY_CURRENCY);
+        hsqlScript.append("  coalesce(paycur.");
+        hsqlScript.append(Currency.PROPERTY_ISOCODE);
+        hsqlScript.append(", invcur.");
+        hsqlScript.append(Currency.PROPERTY_ISOCODE);
         hsqlScript.append("), ");
       }
 
-      hsqlScript.append(" coalesce(fpsd.");
-      hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-      hsqlScript.append(".");
-      hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-      hsqlScript.append(".");
+      hsqlScript.append(" coalesce(pay.");
       hsqlScript.append(FIN_Payment.PROPERTY_STATUS);
       hsqlScript.append(", 'RPAP')");
 
@@ -491,82 +346,44 @@ public class PaymentReportDao {
 
         for (int i = 0; i < strOrdCritList.length; i++) {
           if (strOrdCritList[i].contains("Date")) {
-            hsqlScript.append(",  coalesce(fpsd.");
-            hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-            hsqlScript.append(".");
-            hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-            hsqlScript.append(".");
-            hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-            hsqlScript.append(", fpsd.");
-            hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-            hsqlScript.append(".");
-            hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-            hsqlScript.append(".");
+            /*
+             * hsqlScript.append(",  coalesce(pay.");
+             * hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE); hsqlScript.append(", inv.");
+             * hsqlScript.append(Invoice.PROPERTY_INVOICEDATE); hsqlScript.append(")");
+             */
+            hsqlScript.append(", inv.");
             hsqlScript.append(Invoice.PROPERTY_INVOICEDATE);
-            hsqlScript.append(")");
           }
           if (strOrdCritList[i].contains("Project")) {
-            hsqlScript.append(",  coalesce(fpsd.");
-            hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-            hsqlScript.append(".");
-            hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-            hsqlScript.append(".");
-            hsqlScript.append(FIN_Payment.PROPERTY_PROJECT);
-            hsqlScript.append(", fpsd.");
-            hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-            hsqlScript.append(".");
-            hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-            hsqlScript.append(".");
-            hsqlScript.append(Invoice.PROPERTY_PROJECT);
+            hsqlScript.append(",  coalesce(paypro.");
+            hsqlScript.append(Project.PROPERTY_NAME);
+            hsqlScript.append(", invpro.");
+            hsqlScript.append(Project.PROPERTY_NAME);
             hsqlScript.append(")");
           }
           if (strOrdCritList[i].contains("FINPR_BPartner_Category")) {
-            hsqlScript.append(",  coalesce(fpsd.");
-            hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-            hsqlScript.append(".");
-            hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-            hsqlScript.append(".");
-            hsqlScript.append(FIN_Payment.PROPERTY_BUSINESSPARTNER);
-            hsqlScript.append(".");
-            hsqlScript.append(BusinessPartner.PROPERTY_BUSINESSPARTNERCATEGORY);
-            hsqlScript.append(", fpsd.");
-            hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-            hsqlScript.append(".");
-            hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-            hsqlScript.append(".");
-            hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
-            hsqlScript.append(".");
-            hsqlScript.append(BusinessPartner.PROPERTY_BUSINESSPARTNERCATEGORY);
+            hsqlScript.append(",  coalesce(paybpc.");
+            hsqlScript.append(Category.PROPERTY_NAME);
+            hsqlScript.append(", invbpc.");
+            hsqlScript.append(Category.PROPERTY_NAME);
             hsqlScript.append(")");
           }
           if (strOrdCritList[i].contains("APRM_FATS_BPARTNER")) {
-            hsqlScript.append(",  coalesce(fpsd.");
-            hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-            hsqlScript.append(".");
-            hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-            hsqlScript.append(".");
+            hsqlScript.append(",  coalesce(pay.");
             hsqlScript.append(FIN_Payment.PROPERTY_BUSINESSPARTNER);
-            hsqlScript.append(", fpsd.");
-            hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
             hsqlScript.append(".");
-            hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-            hsqlScript.append(".");
+            hsqlScript.append(BusinessPartner.PROPERTY_NAME);
+            hsqlScript.append(", inv.");
             hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
+            hsqlScript.append(".");
+            hsqlScript.append(BusinessPartner.PROPERTY_NAME);
             hsqlScript.append(")");
           }
           if (strOrdCritList[i].contains("INS_CURRENCY")) {
-            hsqlScript.append(",  coalesce(fpsd.");
-            hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-            hsqlScript.append(".");
-            hsqlScript.append(FIN_PaymentDetail.PROPERTY_FINPAYMENT);
-            hsqlScript.append(".");
-            hsqlScript.append(FIN_Payment.PROPERTY_CURRENCY);
-            hsqlScript.append(", fpsd.");
-            hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-            hsqlScript.append(".");
-            hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-            hsqlScript.append(".");
-            hsqlScript.append(Invoice.PROPERTY_CURRENCY);
+            hsqlScript.append(",  coalesce(paycur.");
+            hsqlScript.append(Currency.PROPERTY_ISOCODE);
+            hsqlScript.append(", invcur.");
+            hsqlScript.append(Currency.PROPERTY_ISOCODE);
             hsqlScript.append(")");
           }
         }
@@ -576,11 +393,7 @@ public class PaymentReportDao {
       hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
       hsqlScript.append(".");
       hsqlScript.append(FIN_PaymentDetail.PROPERTY_ID);
-      hsqlScript.append(", fpsd.");
-      hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-      hsqlScript.append(".");
-      hsqlScript.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-      hsqlScript.append(".");
+      hsqlScript.append(", inv.");
       hsqlScript.append(Invoice.PROPERTY_ID);
 
       final OBQuery<FIN_PaymentScheduleDetail> obqPSD = OBDal.getInstance().createQuery(
@@ -702,34 +515,41 @@ public class PaymentReportDao {
           FieldProviderFactory.setField(data[i], "INVOICE_DATE", dateFormat.format(invoicedDate)
               .toString());
           // dueDate
-          FieldProviderFactory.setField(data[i], "DUE_DATE", dateFormat.format(
-              FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getDueDate()).toString());
+          FieldProviderFactory
+              .setField(
+                  data[i],
+                  "DUE_DATE",
+                  dateFormat.format(
+                      FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getDueDate())
+                      .toString());
           // plannedDSO
           plannedDSO = (FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getDueDate()
               .getTime() - FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getInvoice()
               .getInvoiceDate().getTime());
-          FieldProviderFactory.setField(data[i], "PLANNED_DSO", String.valueOf(plannedDSO
-              / (1000 * 60 * 60 * 24)));
+          FieldProviderFactory.setField(data[i], "PLANNED_DSO",
+              String.valueOf(plannedDSO / (1000 * 60 * 60 * 24)));
           // currentDSO
           currentTime = System.currentTimeMillis();
           if (currentTime < invoicedDate.getTime())
-            FieldProviderFactory.setField(data[i], "CURRENT_DSO", String.valueOf(plannedDSO
-                / (1000 * 60 * 60 * 24)));
+            FieldProviderFactory.setField(data[i], "CURRENT_DSO",
+                String.valueOf(plannedDSO / (1000 * 60 * 60 * 24)));
           else {
             currentDSO = currentTime
                 - FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getInvoice()
                     .getInvoiceDate().getTime();
-            FieldProviderFactory.setField(data[i], "CURRENT_DSO", String.valueOf((currentDSO)
-                / (1000 * 60 * 60 * 24)));
+            FieldProviderFactory.setField(data[i], "CURRENT_DSO",
+                String.valueOf((currentDSO) / (1000 * 60 * 60 * 24)));
           }
           // daysOverdue
           if (currentTime < FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getDueDate()
               .getTime())
             FieldProviderFactory.setField(data[i], "OVERDUE", "0");
           else
-            FieldProviderFactory.setField(data[i], "OVERDUE", String
-                .valueOf((currentTime - FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule()
-                    .getDueDate().getTime())
+            FieldProviderFactory.setField(
+                data[i],
+                "OVERDUE",
+                String.valueOf((currentTime - FIN_PaymentScheduleDetail[i]
+                    .getInvoicePaymentSchedule().getDueDate().getTime())
                     / (1000 * 60 * 60 * 24)));
         } else {
           // project
@@ -767,8 +587,8 @@ public class PaymentReportDao {
           if (convRate != null) {
             transAmount = FIN_PaymentScheduleDetail[i].getAmount();
             // baseAmount
-            FieldProviderFactory.setField(data[i], "BASE_AMOUNT", transAmount.multiply(
-                convRate.getMultipleRateBy()).toString());
+            FieldProviderFactory.setField(data[i], "BASE_AMOUNT",
+                transAmount.multiply(convRate.getMultipleRateBy()).toString());
           } else {
             FieldProvider[] fp = new FieldProvider[1];
             HashMap<String, String> hm = new HashMap<String, String>();
@@ -821,8 +641,8 @@ public class PaymentReportDao {
             if (previousConvRate == null) {
               FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.toString());
             } else {
-              FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.multiply(
-                  previousConvRate.getMultipleRateBy()).toString());
+              FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
+                  amountSum.multiply(previousConvRate.getMultipleRateBy()).toString());
             }
             groupedData.add(previousRow);
           }
@@ -842,8 +662,8 @@ public class PaymentReportDao {
           FieldProviderFactory.setField(data[i], "GROUP_CRIT_ID", data[i].getField("BP_GROUP"));
           FieldProviderFactory.setField(data[i], "GROUP_CRIT", "Business Partner Category");
         } else if (strGroupCrit.equalsIgnoreCase("INS_CURRENCY")) {
-          FieldProviderFactory.setField(data[i], "GROUP_CRIT_ID", data[i]
-              .getField("TRANS_CURRENCY"));
+          FieldProviderFactory.setField(data[i], "GROUP_CRIT_ID",
+              data[i].getField("TRANS_CURRENCY"));
           FieldProviderFactory.setField(data[i], "GROUP_CRIT", "Currency");
         } else {
           FieldProviderFactory.setField(data[i], "GROUP_CRIT_ID", "");
@@ -853,8 +673,8 @@ public class PaymentReportDao {
 
       if (convRate != null) {
         FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.toString());
-        FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.multiply(
-            convRate.getMultipleRateBy()).toString());
+        FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
+            amountSum.multiply(convRate.getMultipleRateBy()).toString());
         groupedData.add(previousRow);
       } else {
         FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.toString());

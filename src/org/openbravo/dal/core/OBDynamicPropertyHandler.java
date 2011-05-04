@@ -19,6 +19,7 @@
 
 package org.openbravo.dal.core;
 
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -35,7 +36,7 @@ import org.openbravo.base.structure.BaseOBObject;
  * 
  * @author mtaal
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings("rawtypes")
 public class OBDynamicPropertyHandler implements PropertyAccessor {
   public Getter getGetter(Class theClass, String propertyName) throws PropertyNotFoundException {
     return new Getter(NamingUtil.getStaticPropertyName(theClass, propertyName));
@@ -55,6 +56,10 @@ public class OBDynamicPropertyHandler implements PropertyAccessor {
     }
 
     public Method getMethod() {
+      return null;
+    }
+
+    public Member getMember() {
       return null;
     }
 
