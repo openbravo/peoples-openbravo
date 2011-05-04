@@ -11,22 +11,22 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 //Global variables definition
-var frm = null;
-var isReceipt = true;
-var globalMaskNumeric = "#0.00";
-var globalDecSeparator = ".";
-var globalGroupSeparator = ",";
-var globalGroupInterval = "3";
+var frm = null,
+    isReceipt = true,
+    globalMaskNumeric = "#0.00",
+    globalDecSeparator = ".",
+    globalGroupSeparator = ",",
+    globalGroupInterval = "3";
 
 function isTrue(objectName) {
-  return frm.elements[objectName].value == 'Y';
+  return frm.elements[objectName].value === 'Y';
 }
 
 function initFIN_Utilities(_frm) {
@@ -39,21 +39,21 @@ function initFIN_Utilities(_frm) {
 }
 
 function processLabels() {
-  var receiptlbls = getElementsByName('lblR');
-  for ( var i = 0; i < receiptlbls.length; i++) {
+  var receiptlbls = getElementsByName('lblR'), i;
+  for (i = 0; i < receiptlbls.length; i++) {
     displayLogicElement(receiptlbls[i].id, isReceipt);
   }
   var paidlbls = getElementsByName('lblP');
-  for ( i = 0; i < paidlbls.length; i++) {
+  for (i = 0; i < paidlbls.length; i++) {
     displayLogicElement(paidlbls[i].id, !isReceipt);
   }
-}
+} 
 
 function selectDifferenceAction(value) {
-  var diffAction = frm.inpDifferenceAction;
-  for (var i = 0; i < diffAction.length; i++) {
+  var diffAction = frm.inpDifferenceAction, i;
+  for (i = 0; i < diffAction.length; i++) {
     diffAction[i].checked = false;
-    diffAction[i].checked = (diffAction[i].value == value);
+    diffAction[i].checked = (diffAction[i].value === value);
   }
 }
 
@@ -81,6 +81,8 @@ function applyFormat(number) {
 * @deprecated TO BE REMOVED ON MP22
 */
 function formattedNumberOpTemp(number1, operator, number2, result_maskNumeric, decSeparator, groupSeparator, groupInterval) {
+  var result;
+
   if (result_maskNumeric === null || result_maskNumeric === "") {
     result_maskNumeric = getDefaultMaskNumeric();
   }
@@ -94,20 +96,18 @@ function formattedNumberOpTemp(number1, operator, number2, result_maskNumeric, d
     groupInterval = getGlobalGroupInterval();
   }
 
-  var result;
-
   number1 = returnFormattedToCalc(number1, decSeparator, groupSeparator);
   number1 = parseFloat(number1);
 
   number2 = returnFormattedToCalc(number2, decSeparator, groupSeparator);
   number2 = parseFloat(number2);
 
-  if (operator == "sqrt") {
+  if (operator === "sqrt") {
     result = Math.sqrt(number1);
-  } else if (operator == "round") {
+  } else if (operator === "round") {
     result = roundNumber(number1, number2);
   } else {
-	result = eval('('+number1+')' + operator + '('+number2+')');
+    result = eval('('+number1+')' + operator + '('+number2+')');
   }
   if (result !== true && result !== false && result !== null && result !== "") {
     result = returnCalcToFormatted(result, result_maskNumeric, decSeparator, groupSeparator, groupInterval);
@@ -173,11 +173,11 @@ function isBetweenZeroAndMaxValue(value, maxValue){
 }
 
 function validateSelectedAmounts(recordID, existsPendingAmount){
+  var pendingAmount = document.frmMain.elements["inpRecordAmt"+recordID].value,
+      amount = document.frmMain.elements["inpPaymentAmount"+recordID].value;
   if (existsPendingAmount === null) {
     existsPendingAmount = false;
   }
-  var pendingAmount = document.frmMain.elements["inpRecordAmt"+recordID].value;
-  var amount = document.frmMain.elements["inpPaymentAmount"+recordID].value;
   if (amount===null || amount==="") {
     setWindowElementFocus(frm.elements["inpPaymentAmount"+recordID]);
     showJSMessage(7);
@@ -197,12 +197,12 @@ function validateSelectedAmounts(recordID, existsPendingAmount){
 }
 
 function updateDifference() {
-  var expected = frm.inpExpectedPayment.value;
+  var expected = frm.inpExpectedPayment.value,
+      total = frm.inpTotal.value,
+      amount = total;
   if (expected === '') {
     expected = 0;
   }
-  var total = frm.inpTotal.value;
-  var amount = total;
   //var precision = Number(frm.curPrecision.value);
   if (frm.inpActualPayment !== null) {
     amount = frm.inpActualPayment.value;
@@ -211,12 +211,10 @@ function updateDifference() {
     amount = add(amount, frm.inpCredit.value);
   }
   if ( compare(abs(expected), '>', abs(total)) ) {
-	frm.inpDifference.value = subtract(expected, total);
-  }
-  else if ( compare(abs(amount), '>', abs(total)) ) {
-	frm.inpDifference.value = subtract(amount, total);
-  }
-  else {
+    frm.inpDifference.value = subtract(expected, total);
+  } else if ( compare(abs(amount), '>', abs(total)) ) {
+    frm.inpDifference.value = subtract(amount, total);
+  } else {
     frm.inpDifference.value = 0;
   }
   document.getElementById('paramDifference').innerHTML = frm.inpDifference.value;
@@ -235,9 +233,9 @@ function updateDifference() {
 }
 
 function updateTotal() {
-  var chk = frm.inpScheduledPaymentDetailId;
-  var total = 0;
-  var scheduledPaymentDetailId, pendingAmount, amount;
+  var chk = frm.inpScheduledPaymentDetailId,
+      total = 0,
+      scheduledPaymentDetailId, pendingAmount, amount, i;
   
   if (!chk) {
     if (frm.inpGeneratedCredit && !isReceipt){
@@ -245,7 +243,7 @@ function updateTotal() {
     }
     updateDifference();
     return;
-  }else if (!chk.length) {
+  } else if (!chk.length) {
     scheduledPaymentDetailId = frm.inpRecordId0.value;
     pendingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
     amount = frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value;
@@ -259,7 +257,7 @@ function updateTotal() {
     }
   } else {
     var rows = chk.length;
-    for ( var i = 0; i < rows; i++) {
+    for (i = 0; i < rows; i++) {
       scheduledPaymentDetailId = frm.elements["inpRecordId" + i].value;
       pendingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
       amount = frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value;
@@ -323,7 +321,7 @@ function distributeAmount(_amount) {
       if ( compare(amount, '==', 0) ) {
         frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = "";
         for ( j = 0; j < total; j++) {
-          if (chk[j].checked && chk[j].value == scheduledPaymentDetailId) {
+          if (chk[j].checked && chk[j].value === scheduledPaymentDetailId) {
             chk[j].checked = false;
             updateData(chk[j].value, chk[j].checked);
           }
@@ -331,7 +329,7 @@ function distributeAmount(_amount) {
       } else {
         frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value = outstandingAmount;
         for ( j = 0; j < total; j++) {
-          if (!chk[j].checked && chk[j].value == scheduledPaymentDetailId) {
+          if (!chk[j].checked && chk[j].value === scheduledPaymentDetailId) {
             chk[j].checked = true;
             updateData(chk[j].value, chk[j].checked);
           }
@@ -357,7 +355,7 @@ function updateReadOnly(key, mark) {
     frm.inpExpectedPayment.value = add(expectedAmount, recordAmount);
   } else {
     var classText = frm.elements["inpPaymentAmount" + key].className;
-    if (classText.search('readonly') == -1) {
+    if (classText.search('readonly') === -1) {
       frm.elements["inpPaymentAmount" + key].className = classText.concat(" readonly");
     }
     frm.elements["inpPaymentAmount" + key].value = '';
@@ -372,7 +370,7 @@ function updateReadOnly(key, mark) {
 function updateAll() {
   var frm = document.frmMain;
   var chk = frm.inpScheduledPaymentDetailId;
-  var recordAmount;
+  var recordAmount, i;
   
   if (!chk) {
     return;
@@ -386,12 +384,12 @@ function updateAll() {
   } else {
     frm.inpExpectedPayment.value = "0";
     var total = chk.length;
-    for ( var i = 0; i < total; i++) {
+    for (i = 0; i < total; i++) {
       if (!chk[i].checked) {
         recordAmount = frm.elements["inpRecordAmt" + chk[i].value].value;
         frm.inpExpectedPayment.value = add(frm.inpExpectedPayment.value, recordAmount);
-	  }
-    updateData(chk[i].value, chk[i].checked);
+      }
+      updateData(chk[i].value, chk[i].checked);
     }
   }
   return true;
@@ -408,7 +406,7 @@ function validateSelectedPendingPayments(allowCreditGeneration) {
     allowCreditGeneration = false;
   }
   var actualPayment = document.frmMain.inpActualPayment.value;
-  var expectedPayment = document.frmMain.inpExpectedPayment.value;
+  var expectedPayment = document.frmMain.inpExpectedPayment.value, i;
   if (document.frmMain.inpUseCredit.checked) {
     if ( compare(expectedPayment, '<=', actualPayment) ) {
       setWindowElementFocus(document.frmMain.inpUseCredit);
@@ -438,7 +436,7 @@ function validateSelectedPendingPayments(allowCreditGeneration) {
   } else {
     var total = chk.length;
     var isAnyChecked = false;
-    for (var i=0;i<total;i++) {
+    for (i=0; i<total; i++) {
       if (chk[i].checked) {
         isAnyChecked = true;
         if (!validateSelectedAmounts(chk[i].value, compare(selectedTotal, '<', actualPayment))) {
@@ -466,17 +464,17 @@ function validateSelectedPendingPayments(allowCreditGeneration) {
 function createCombo(object, innerHTML){
   object.innerHTML = "";
   var selTemp = document.createElement("temp");
-  var opt;
+  var opt, i, j;
   selTemp.id="temp1";
   document.body.appendChild(selTemp);
   selTemp = document.getElementById("temp1");
   selTemp.style.display="none";
   innerHTML = innerHTML.replace(/<option/g,"<span").replace(/<\/option/g,"</span");
   selTemp.innerHTML = innerHTML;
-        
-  for(var i=0;i<selTemp.childNodes.length;i++){
+
+  for (i=0; i<selTemp.childNodes.length; i++){
     var spantemp = selTemp.childNodes[i];
-  
+
     if (spantemp.tagName) {
       opt = document.createElement("option");
       if(document.all){ //IE
@@ -484,9 +482,9 @@ function createCombo(object, innerHTML){
       } else{
         object.appendChild(opt);
       }
-    
+
       //getting attributes
-      for(var j=0; j<spantemp.attributes.length ; j++){
+      for(j=0; j<spantemp.attributes.length ; j++){
         var attrName = spantemp.attributes[j].nodeName;
         var attrVal = spantemp.attributes[j].nodeValue;
         if(attrVal){
@@ -496,14 +494,14 @@ function createCombo(object, innerHTML){
           }catch(e){}
         }
       }
-	  //value and text
+      //value and text
       opt.value = spantemp.getAttribute("value");
       opt.text = spantemp.innerHTML;
       //IE
       opt.selected = spantemp.getAttribute('selected');
       opt.className = spantemp.className;
     }
-  }    
+  }
   document.body.removeChild(selTemp);
   selTemp = null;
 }
