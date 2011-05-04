@@ -419,6 +419,7 @@ public class EntityXMLConverter implements OBNotSingleton {
         xmlHandler.startElement("", "", p.getName(), propertyAttrs);
 
         // get all the children and export each child
+        @SuppressWarnings("unchecked")
         final Collection<BaseOBObject> c = (Collection<BaseOBObject>) value;
         List<BaseOBObject> childObjects = new ArrayList<BaseOBObject>(c);
         Collections.sort(childObjects, new BaseOBIDHexComparator());
