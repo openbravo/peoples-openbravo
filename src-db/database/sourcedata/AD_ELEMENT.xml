@@ -16542,6 +16542,42 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800475-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800475--></AD_ELEMENT>
 
+<!--800476--><AD_ELEMENT>
+<!--800476-->  <AD_ELEMENT_ID><![CDATA[800476]]></AD_ELEMENT_ID>
+<!--800476-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800476-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800476-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800476-->  <COLUMNNAME><![CDATA[MA_Measure_Group_ID]]></COLUMNNAME>
+<!--800476-->  <NAME><![CDATA[Measurement Set]]></NAME>
+<!--800476-->  <PRINTNAME><![CDATA[Measure Group]]></PRINTNAME>
+<!--800476-->  <HELP><![CDATA[Indicates the groups that are measured in the measure shift.]]></HELP>
+<!--800476-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800476--></AD_ELEMENT>
+
+<!--800477--><AD_ELEMENT>
+<!--800477-->  <AD_ELEMENT_ID><![CDATA[800477]]></AD_ELEMENT_ID>
+<!--800477-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800477-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800477-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800477-->  <COLUMNNAME><![CDATA[MA_Measure_Time_ID]]></COLUMNNAME>
+<!--800477-->  <NAME><![CDATA[Measurement Time]]></NAME>
+<!--800477-->  <PRINTNAME><![CDATA[MEasure Time]]></PRINTNAME>
+<!--800477-->  <HELP><![CDATA[Identifies the time of the data gathering.]]></HELP>
+<!--800477-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800477--></AD_ELEMENT>
+
+<!--800478--><AD_ELEMENT>
+<!--800478-->  <AD_ELEMENT_ID><![CDATA[800478]]></AD_ELEMENT_ID>
+<!--800478-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800478-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800478-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800478-->  <COLUMNNAME><![CDATA[MA_Measure_Values_ID]]></COLUMNNAME>
+<!--800478-->  <NAME><![CDATA[Measurement Values]]></NAME>
+<!--800478-->  <PRINTNAME><![CDATA[MA_Measure_Values_ID]]></PRINTNAME>
+<!--800478-->  <HELP><![CDATA[Identifies each value measured in a measure time.]]></HELP>
+<!--800478-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800478--></AD_ELEMENT>
+
 <!--800479--><AD_ELEMENT>
 <!--800479-->  <AD_ELEMENT_ID><![CDATA[800479]]></AD_ELEMENT_ID>
 <!--800479-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -16625,6 +16661,18 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800485-->  <HELP><![CDATA[A process that copies a selected reference version a new one and changing the corresponding time periods at the same time.]]></HELP>
 <!--800485-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800485--></AD_ELEMENT>
+
+<!--800490--><AD_ELEMENT>
+<!--800490-->  <AD_ELEMENT_ID><![CDATA[800490]]></AD_ELEMENT_ID>
+<!--800490-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800490-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800490-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800490-->  <COLUMNNAME><![CDATA[MA_Measure_Shift_ID]]></COLUMNNAME>
+<!--800490-->  <NAME><![CDATA[Measurement Shift]]></NAME>
+<!--800490-->  <PRINTNAME><![CDATA[Measure Shift]]></PRINTNAME>
+<!--800490-->  <HELP><![CDATA[Indicates a measure shift of critical control points.]]></HELP>
+<!--800490-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800490--></AD_ELEMENT>
 
 <!--800492--><AD_ELEMENT>
 <!--800492-->  <AD_ELEMENT_ID><![CDATA[800492]]></AD_ELEMENT_ID>
