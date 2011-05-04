@@ -76,7 +76,9 @@
         T.M_PRODUCT_UOM_ID,
         COALESCE(T.QtyOnHand, 0) AS Qty,
         T.QtyOrderOnHand AS QtyOrder
-      FROM M_STORAGE_DETAIL T,
+      FROM M_STORAGE_DETAIL T LEFT OUTER JOIN
+        M_ATTRIBUTESETINSTANCE A
+        ON T.M_ATTRIBUTESETINSTANCE_ID = A.M_ATTRIBUTESETINSTANCE_ID,
         M_LOCATOR L, M_WAREHOUSE W
       WHERE T.M_PRODUCT_ID=Product_ID
         AND T.C_UOM_ID=UOM
@@ -89,7 +91,7 @@
         END
         ),
         L.PRIORITYNO,
-        T.M_ATTRIBUTESETINSTANCE_ID,
+        A.CREATED, T.CREATED,
         T.M_PRODUCT_UOM_ID;
       v_storage CUR_STOCK%ROWTYPE;
       -- ProductionLines which are non-stocked BOMs (need to be resolved)
