@@ -26,7 +26,6 @@
 	<classpathentry including="**/*.java" kind="src" path="build/javasqlc/srcAD"/>
 	<classpathentry including="**/*.java" kind="src" path="build/javasqlc/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/runtime/org.openarchitectureware.core.workflow_4.3.1.20080910-1400PRD.jar"/>
 	<classpathentry kind="lib" path="lib/build/junit.jar"/>
 	<classpathentry kind="lib" path="lib/build/js.jar"/>
 	<classpathentry kind="output" path="build/classes"/>

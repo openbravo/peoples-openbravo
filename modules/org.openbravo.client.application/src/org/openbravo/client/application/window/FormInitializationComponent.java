@@ -915,6 +915,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           RequestContext rq = RequestContext.get();
 
           RequestContext.get().setRequestParameter("inpLastFieldChanged", lastFieldChanged);
+          RequestContext.get().setRequestParameter("inpOB3UIMode", "Y");
 
           // We then execute the callout
           CalloutServletConfig config = new CalloutServletConfig(calloutClassName, RequestContext

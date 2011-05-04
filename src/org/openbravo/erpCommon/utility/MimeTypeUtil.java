@@ -18,9 +18,8 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import org.apache.tika.config.TikaConfig;
+import org.apache.tika.Tika;
 import org.apache.tika.mime.MimeType;
-import org.apache.tika.mime.MimeTypes;
 
 /**
  * Utility class to detect MIME type based on data array. This class is based on Apache Tika part of
@@ -30,11 +29,11 @@ import org.apache.tika.mime.MimeTypes;
  * 
  */
 public class MimeTypeUtil {
-  private static MimeTypes mimeTypes;
   private static MimeTypeUtil instance = new MimeTypeUtil();
+  private static Tika tika;
 
   private static void init() {
-    mimeTypes = TikaConfig.getDefaultConfig().getMimeRepository();
+    tika = new Tika();
   }
 
   /**
@@ -43,7 +42,7 @@ public class MimeTypeUtil {
    * @return MimeTypeUtil instance
    */
   public static MimeTypeUtil getInstance() {
-    if (mimeTypes == null) {
+    if (tika == null) {
       init();
     }
     return instance;
@@ -59,9 +58,11 @@ public class MimeTypeUtil {
    * @param data
    *          byte array from which we want to detect the MIME type
    * @return MimeType representation
+   * @deprecated This method will always return <b>null</b>
    */
+  @Deprecated
   public MimeType getMimeType(byte[] data) {
-    return mimeTypes.getMimeType(data);
+    return null;
   }
 
   /**
@@ -73,7 +74,7 @@ public class MimeTypeUtil {
    * @return A MIME type name, e.g. "image/png"
    */
   public String getMimeTypeName(byte[] data) {
-    return mimeTypes.getMimeType(data).getName();
+    return tika.detect(data);
   }
 
 }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,40 +19,66 @@
 
 package org.openbravo.base.gen;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.openarchitectureware.workflow.ant.WorkflowAntTask;
+import org.apache.tools.ant.Task;
+import org.openbravo.base.AntExecutor;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.provider.OBConfigFileProvider;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.base.util.OBClassLoader;
+
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.TemplateException;
 
 /**
- * Task generates the entities using OpenArchitectureWare. It initializes the dal/model layer, the
- * rest of the work is done by the superclass.
+ * Task generates the entities using the freemarker template engine.
  * 
  * @author Martin Taal
+ * @author Stefan Huehner
  */
-public class GenerateEntitiesTask extends WorkflowAntTask {
+public class GenerateEntitiesTask extends Task {
   private static final Logger log = Logger.getLogger(GenerateEntitiesTask.class);
 
-  private static String basePath;
+  private String basePath;
   private String srcGenPath;
+  private String propertiesFile;
 
-  public static String getBasePath() {
+  public static void main(String[] args) {
+    final String srcPath = args[0];
+    String friendlyWarnings = "false";
+    if (args.length >= 2) {
+      friendlyWarnings = args[0];
+    }
+    final File srcDir = new File(srcPath);
+    final File baseDir = srcDir.getParentFile();
+    try {
+      final AntExecutor antExecutor = new AntExecutor(baseDir.getAbsolutePath());
+      antExecutor.setProperty("friendlyWarnings", friendlyWarnings);
+      antExecutor.runTask("generate.entities.quick.forked");
+    } catch (final Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  public String getBasePath() {
     return basePath;
   }
 
-  public static void setBasePath(String basePath) {
-    GenerateEntitiesTask.basePath = basePath;
+  public void setBasePath(String basePath) {
+    this.basePath = basePath;
   }
-
-  private String propertiesFile;
-  private String providerConfigDirectory;
-  private boolean debug;
 
   public boolean getFriendlyWarnings() {
     return OBPropertiesProvider.isFriendlyWarnings();
@@ -70,37 +96,56 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
     this.propertiesFile = propertiesFile;
   }
 
+  public String getSrcGenPath() {
+    return srcGenPath;
+  }
+
+  public void setSrcGenPath(String srcGenPath) {
+    this.srcGenPath = srcGenPath;
+  }
+
   @Override
   public void execute() {
-
     if (getBasePath() == null) {
       setBasePath(super.getProject().getBaseDir().getAbsolutePath());
     }
+
+    // the beautifier uses the source.path if it is not set
+    log.debug("initializating dal layer, getting properties from " + getPropertiesFile());
+    OBPropertiesProvider.getInstance().setProperties(getPropertiesFile());
 
     if (!hasChanged()) {
       log.info("Model has not changed since last run, not re-generating entities");
       return;
     }
 
-    if (debug) {
-      OBProvider.getInstance().register(OBClassLoader.class,
-          OBClassLoader.ClassOBClassLoader.class, false);
+    // read and parse template
+    String ftlFilename = "org/openbravo/base/gen/entity.ftl";
+    File ftlFile = new File(getBasePath(), ftlFilename);
+    freemarker.template.Template template = createTemplateImplementation(ftlFile);
 
-      // the beautifier uses the source.path if it is not set
-      log.debug("initializating dal layer, getting properties from " + getPropertiesFile());
-      OBPropertiesProvider.getInstance().setProperties(getPropertiesFile());
+    // process template & write file for each entity
+    List<Entity> entities = ModelProvider.getInstance().getModel();
+    for (Entity entity : entities) {
+      String classfileName = entity.getClassName().replaceAll("\\.", "/") + ".java";
+      log.debug("Generating file: " + classfileName);
+      File outFile = new File(srcGenPath, classfileName);
+      new File(outFile.getParent()).mkdirs();
 
-      if (getProviderConfigDirectory() != null) {
-        OBConfigFileProvider.getInstance().setFileLocation(getProviderConfigDirectory());
-      }
-
+      Writer outWriter;
       try {
-        ModelProvider.getInstance().getModel();
-      } catch (final Exception e) {
-        throw new OBException(e);
+        outWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),
+            "UTF-8"));
+        Map<String, Object> data = new HashMap<String, Object>();
+
+        data.put("entity", entity);
+        processTemplate(template, data, outWriter);
+      } catch (IOException e) {
+        log.error("Error generating file: " + classfileName, e);
       }
+
     }
-    super.execute();
+    log.info("Generated " + entities.size() + " entities");
   }
 
   private boolean hasChanged() {
@@ -111,17 +156,6 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
         + File.separator + "model" + File.separator + "ad");
     if (!modelDir.exists()) {
       return true;
-    }
-
-    OBProvider.getInstance().register(OBClassLoader.class, OBClassLoader.ClassOBClassLoader.class,
-        false);
-
-    // the beautifier uses the source.path if it is not set
-    log.debug("initializating dal layer, getting properties from " + getPropertiesFile());
-    OBPropertiesProvider.getInstance().setProperties(getPropertiesFile());
-
-    if (getProviderConfigDirectory() != null) {
-      OBConfigFileProvider.getInstance().setFileLocation(getProviderConfigDirectory());
     }
 
     // check if the logic to generate has changed...
@@ -181,27 +215,29 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
     return lastModified;
   }
 
-  public String getProviderConfigDirectory() {
-    return providerConfigDirectory;
+  private void processTemplate(freemarker.template.Template templateImplementation,
+      Map<String, Object> data, Writer output) {
+    try {
+      templateImplementation.process(data, output);
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    } catch (TemplateException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
-  public void setProviderConfigDirectory(String providerConfigDirectory) {
-    this.providerConfigDirectory = providerConfigDirectory;
+  private freemarker.template.Template createTemplateImplementation(File file) {
+    try {
+      return new freemarker.template.Template("template", new FileReader(file),
+          getNewConfiguration());
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
-  public boolean isDebug() {
-    return debug;
-  }
-
-  public void setDebug(boolean debug) {
-    this.debug = debug;
-  }
-
-  public String getSrcGenPath() {
-    return srcGenPath;
-  }
-
-  public void setSrcGenPath(String srcGenPath) {
-    this.srcGenPath = srcGenPath;
+  private Configuration getNewConfiguration() {
+    final Configuration cfg = new Configuration();
+    cfg.setObjectWrapper(new DefaultObjectWrapper());
+    return cfg;
   }
 }

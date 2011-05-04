@@ -970,8 +970,6 @@ public class TableSQLData implements Serializable {
   /**
    * Returns true in case the tab has internal filters. Internal filters are added to tabs with
    * filter clause and to transactional windows.
-   * 
-   * @return
    */
   public boolean hasInternalFilter() {
     return internalFilter.size() > 0;

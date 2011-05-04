@@ -94,7 +94,7 @@ public class BaseTest extends TestCase {
 
   /**
    * Record IDs of available users different than {@link #TEST_USER_ID} Note: Initialized to null,
-   * need to call {@link getRandomUserId} at least once
+   * need to call {@link #getRandomUser} at least once
    */
   protected static List<User> userIds = null;
 

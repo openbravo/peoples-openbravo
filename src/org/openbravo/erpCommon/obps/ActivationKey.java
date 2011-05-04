@@ -435,7 +435,7 @@ public class ActivationKey {
   private void setLogger() {
     if (isActive() && !opsLog) {
       // add instance id to logger
-      Enumeration<Appender> appenders = log.getRoot().getAllAppenders();
+      Enumeration<Appender> appenders = log.getRootLogger().getAllAppenders();
       while (appenders.hasMoreElements()) {
         Appender appender = appenders.nextElement();
         if (appender.getLayout() instanceof PatternLayout) {
@@ -455,7 +455,7 @@ public class ActivationKey {
     if (!isActive() && opsLog) {
 
       // remove instance id from logger
-      Enumeration<Appender> appenders = log.getRoot().getAllAppenders();
+      Enumeration<Appender> appenders = log.getRootLogger().getAllAppenders();
       while (appenders.hasMoreElements()) {
         Appender appender = appenders.nextElement();
         if (appender.getLayout() instanceof PatternLayout) {

@@ -18,7 +18,6 @@
  */
 package org.openbravo.test.mimetypes;
 
-import org.apache.tika.mime.MimeType;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.MimeTypeUtil;
@@ -40,7 +39,7 @@ public class MimeTypeTest extends BaseTest {
       byte[] imageBytes = img.getBindaryData();
       if (imageBytes != null) {
         try {
-          MimeType t = MimeTypeUtil.getInstance().getMimeType(imageBytes);
+          String t = MimeTypeUtil.getInstance().getMimeTypeName(imageBytes);
           System.out.println(t);
         } catch (Exception e) {
           e.printStackTrace();

@@ -61,7 +61,6 @@ public class OBDao {
    *          BaseOBObject from which the values are requested
    * @param property
    *          the name of the Property for which the value is requested
-   * @return
    */
   @SuppressWarnings("unchecked")
   public static <T extends BaseOBObject> List<T> getActiveOBObjectList(BaseOBObject obj,

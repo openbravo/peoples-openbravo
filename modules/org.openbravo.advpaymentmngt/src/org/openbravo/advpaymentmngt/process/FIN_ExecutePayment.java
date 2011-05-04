@@ -109,10 +109,6 @@ public class FIN_ExecutePayment {
 
           if ("S".equals(paymentRunPayment.getResult())) {
             String paymentStatus = paymentRunPayment.getPayment().getStatus();
-            if ("RPAE".equals(paymentStatus)) {
-              paymentStatus = paymentRunPayment.getPayment().isReceipt() ? "RPR" : "PPM";
-              paymentRunPayment.getPayment().setStatus(paymentStatus);
-            }
             if ("PPW".equals(paymentRun.getSourceOfTheExecution())) {
               FIN_PaymentProposal pp = getPaymentProposalFromPayment(paymentRunPayment.getPayment());
               pp.setStatus("PPM");

@@ -38,6 +38,7 @@ import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldGroup;
 import org.openbravo.model.ad.ui.Tab;
@@ -57,6 +58,9 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
   private static final long ONE_COLUMN_MAX_LENGTH = 60;
   private static final String TEXT_AD_REFERENCE_ID = "14";
+
+  // Audit fields
+  private static final String AUDIT_GROUP_ID = "1000100001";
 
   private Tab tab;
   private List<String> statusBarFields = null;
@@ -124,12 +128,51 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       }
     }
 
+    // Processing audit fields: if there's field for audit, don't put it in the "more info" section
+    boolean hasCreatedField = false, hasCreatedByField = false, hasUpdatedField = false, hasUpdatedByField = false;
+    for (Field f : adFields) {
+      String dbColName = f.getColumn().getDBColumnName().toLowerCase();
+      if (!dbColName.startsWith("created") && !dbColName.startsWith("updated")) {
+        continue;
+      }
+      if (f.isActive() && f.getColumn().isActive() && (f.isDisplayed() || f.isShownInStatusBar())) {
+        if ("created".equals(dbColName)) {
+          hasCreatedField = true;
+        } else if ("createdby".equals(dbColName)) {
+          hasCreatedByField = true;
+        } else if ("updated".equals(dbColName)) {
+          hasUpdatedField = true;
+        } else if ("updatedby".equals(dbColName)) {
+          hasUpdatedByField = true;
+        }
+      }
+    }
+    List<OBViewFieldDefinition> auditFields = new ArrayList<OBViewFieldDefinition>();
+
+    if (!hasCreatedField) {
+      OBViewFieldAudit audit = new OBViewFieldAudit("creationDate", OBViewUtil.createdElement);
+      auditFields.add(audit);
+    }
+    if (!hasCreatedByField) {
+      OBViewFieldAudit audit = new OBViewFieldAudit("createdBy", OBViewUtil.createdByElement);
+      auditFields.add(audit);
+    }
+    if (!hasUpdatedField) {
+      OBViewFieldAudit audit = new OBViewFieldAudit("updated", OBViewUtil.updatedElement);
+      auditFields.add(audit);
+    }
+    if (!hasUpdatedByField) {
+      OBViewFieldAudit audit = new OBViewFieldAudit("updatedBy", OBViewUtil.updatedByElement);
+      auditFields.add(audit);
+    }
+
     OBViewFieldGroup currentFieldGroup = null;
     FieldGroup currentADFieldGroup = null;
     int colNum = 1;
     for (Field field : adFields) {
 
-      if (field.getColumn() == null || !field.isDisplayed() || !field.isActive()) {
+      if (field.getColumn() == null || !field.isActive()
+          || (!field.isDisplayed() && !field.isShownInStatusBar())) {
         continue;
       }
 
@@ -152,7 +195,6 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
       viewField.setReadOnlyIf(readOnlyLogicMap.get(field) != null ? readOnlyLogicMap.get(field)
           : "");
-
       // Positioning some fields in odd-columns
       if (colNum % 2 == 0 && (field.isStartinoddcolumn() || viewField.getColSpan() == 2)) {
         final OBViewFieldSpacer spacer = new OBViewFieldSpacer();
@@ -169,6 +211,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
         final OBViewFieldGroup viewFieldGroup = new OBViewFieldGroup();
         fields.add(viewFieldGroup);
         viewFieldGroup.setFieldGroup(field.getFieldGroup());
+
         currentFieldGroup = viewFieldGroup;
         currentADFieldGroup = field.getFieldGroup();
         colNum = 1;
@@ -184,6 +227,16 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       if (colNum > 4) {
         colNum = 1;
       }
+    }
+
+    // Add audit info
+    if (!auditFields.isEmpty()) {
+      final OBViewFieldGroup viewFieldGroup = new OBViewFieldGroup();
+      viewFieldGroup.setExpanded(false);
+      fields.add(viewFieldGroup);
+      viewFieldGroup.setFieldGroup(OBDal.getInstance().get(FieldGroup.class, AUDIT_GROUP_ID));
+      viewFieldGroup.addChildren(auditFields);
+      fields.addAll(auditFields);
     }
 
     // add the notes part
@@ -247,6 +300,140 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public String getShowIf();
 
     public String getReadOnlyIf();
+
+    public boolean isDisplayed();
+  }
+
+  public class OBViewFieldAudit implements OBViewFieldDefinition {
+    private String name;
+    private String refType;
+    private String refEntity;
+    private Element element;
+
+    public OBViewFieldAudit(String type, Element element) {
+      name = type;
+      this.element = element;
+
+      if (type.endsWith("By")) {
+        // User search
+        refType = "30";
+        refEntity = "User";
+      } else {
+        // Date time
+        refType = "16";
+        refEntity = "";
+      }
+    }
+
+    @Override
+    public String getLabel() {
+      return OBViewUtil.getLabel(element, element.getADElementTrlList());
+    }
+
+    @Override
+    public String getName() {
+      return name;
+    }
+
+    @Override
+    public String getType() {
+      return "_id_" + refType;
+    }
+
+    @Override
+    public boolean getStandardField() {
+      return true;
+    }
+
+    @Override
+    public String getFieldProperties() {
+      return "'width': '*', ";
+    }
+
+    @Override
+    public String getInpColumnName() {
+      return "";
+    }
+
+    @Override
+    public String getReferencedKeyColumnName() {
+      return "";
+    }
+
+    @Override
+    public String getTargetEntity() {
+      return refEntity;
+    }
+
+    @Override
+    public boolean getStartRow() {
+      return false;
+    }
+
+    @Override
+    public boolean getEndRow() {
+      return false;
+    }
+
+    @Override
+    public long getColSpan() {
+      return 1;
+    }
+
+    @Override
+    public long getRowSpan() {
+      return 1;
+    }
+
+    @Override
+    public boolean isReadOnly() {
+      return true;
+    }
+
+    @Override
+    public boolean isUpdatable() {
+      return false;
+    }
+
+    @Override
+    public boolean isParentProperty() {
+      return false;
+    }
+
+    @Override
+    public boolean getRedrawOnChange() {
+      return false;
+    }
+
+    @Override
+    public String getShowIf() {
+      return "";
+    }
+
+    @Override
+    public String getReadOnlyIf() {
+      return "";
+    }
+
+    public boolean isRequired() {
+      return false;
+    }
+
+    public String getColumnName() {
+      return "";
+    }
+
+    public boolean isFirstFocusedField() {
+      return false;
+    }
+
+    public boolean isSearchField() {
+      return !refEntity.isEmpty();
+    }
+
+    public boolean isDisplayed() {
+      return true;
+    }
   }
 
   public class OBViewField implements OBViewFieldDefinition {
@@ -293,6 +480,9 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public String getType() {
+      if (field.isDisplayed() != null && !field.isDisplayed()) {
+        return "text";
+      }
       return getUIDefinition().getName();
     }
 
@@ -451,6 +641,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public String getReadOnlyIf() {
       return readOnlyIf;
     }
+
+    public boolean isDisplayed() {
+      return field.isDisplayed() != null && field.isDisplayed();
+    }
   }
 
   public class DefaultVirtualField implements OBViewFieldDefinition {
@@ -527,9 +721,13 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return "";
     }
 
+    public boolean isDisplayed() {
+      return true;
+    }
   }
 
   public class OBViewFieldGroup extends DefaultVirtualField {
+    private boolean expanded = true;
     private FieldGroup fieldGroup;
     private String label;
     private List<OBViewFieldDefinition> children = new ArrayList<OBViewFieldDefinition>();
@@ -558,6 +756,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       children.add(viewFieldDefinition);
     }
 
+    public void addChildren(List<OBViewFieldDefinition> viewFieldDefinitions) {
+      children.addAll(viewFieldDefinitions);
+    }
+
     public List<OBViewFieldDefinition> getChildren() {
       return children;
     }
@@ -570,6 +772,22 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return fieldGroup.getId();
     }
 
+    public boolean isExpanded() {
+      return expanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+      this.expanded = expanded;
+    }
+
+    public boolean isDisplayed() {
+      for (OBViewFieldDefinition child : children) {
+        if (child.isDisplayed()) {
+          return true;
+        }
+      }
+      return false;
+    }
   }
 
   public class LinkedItemsField extends DefaultVirtualField {
@@ -612,6 +830,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public void setChildField(OBViewFieldDefinition childField) {
       this.childField = childField;
+    }
+
+    public boolean isExpanded() {
+      return false;
     }
   }
 
@@ -676,6 +898,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public void setChildField(OBViewFieldDefinition childField) {
       this.childField = childField;
+    }
+
+    public boolean isExpanded() {
+      return false;
     }
   }
 
@@ -773,6 +999,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public String getReadOnlyIf() {
       return "";
+    }
+
+    public boolean isDisplayed() {
+      return true;
     }
 
   }

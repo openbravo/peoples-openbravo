@@ -363,11 +363,11 @@ public class Property {
             "Default value is only supported for composite ids, primitive types, and one-to-many properties: property "
                 + this);
     if (isCompositeId()) {
-      return " new Id()";
+      return "new Id()";
     }
 
     if (isOneToMany()) {
-      return " new java.util.ArrayList<Object>()";
+      return "new ArrayList<Object>()";
     }
 
     if (defaultValue == null && isBoolean()) {
@@ -386,7 +386,7 @@ public class Property {
         return null;
       }
       if (defaultValue.toLowerCase().equals("sysdate")) {
-        return " new java.util.Date()";
+        return "new Date()";
       }
 
       // ignore all other Date defaults for now
@@ -395,13 +395,13 @@ public class Property {
       }
 
       if (getPrimitiveType() == BigDecimal.class) {
-        return " new java.math.BigDecimal(" + defaultValue + ")";
+        return "new BigDecimal(" + defaultValue + ")";
       }
       if (getPrimitiveType() == Float.class || getPrimitiveType() == float.class) {
         return defaultValue + "f";
       }
       if (getPrimitiveType() == Long.class || getPrimitiveType() == long.class) {
-        return "(long)" + defaultValue;
+        return "(long) " + defaultValue;
       }
       if (getPrimitiveType() == String.class) {
         if (defaultValue.length() > 1
@@ -589,6 +589,43 @@ public class Property {
       return "java.lang.Object";
     } else {
       typeName = getTargetEntity().getClassName();
+    }
+    return typeName;
+  }
+
+  /**
+   * Used during generate.entities to generate short java type-names if a corresponding java import
+   * statement is generated for this type.
+   */
+  public String getShorterTypeName() {
+    List<String> imports = entity.getJavaImportsInternal();
+    String typeName = getTypeName();
+    if (typeName.equals(getEntity().getClassName())) {
+      return getSimpleTypeName();
+    }
+    if (imports.contains(typeName)) {
+      return getSimpleTypeName();
+    }
+    // needed to work around isKey columns mapped as TableDir (i.e. ad_clientinformation)
+    if ("java.lang.String".equals(typeName)) {
+      return getSimpleTypeName();
+    }
+    return typeName;
+  }
+
+  /**
+   * Used during generate.entities to generate short java type-names if a corresponding java import
+   * statement is generated for this type.
+   */
+  public String getShorterNameTargetEntity() {
+    List<String> imports = entity.getJavaImportsInternal();
+    String typeName = targetEntity.getClassName();
+    String simpleName = targetEntity.getSimpleClassName();
+    if (typeName.equals(getEntity().getClassName())) {
+      return simpleName;
+    }
+    if (imports.contains(typeName)) {
+      return simpleName;
     }
     return typeName;
   }
@@ -1089,7 +1126,9 @@ public class Property {
           break;
         }
       }
-      log.warn("Display column for property " + this + " not found");
+      if (displayProperty == null) {
+        log.warn("Display column for property " + this + " not found");
+      }
     }
     return displayProperty;
   }

@@ -543,6 +543,11 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="generate.entities.quick" inheritAll="true" inheritRefs="true" />
   </target>
 
+  <!-- build-internal forking helper -->
+  <target name="generate.entities.quick.forked">
+    <ant dir="${base.src}" target="generate.entities.quick.forked" inheritAll="true" inheritRefs="true" />
+  </target>
+
   <target name="run.tests" depends="init">
     <ant dir="${base.src}" target="run.tests" inheritAll="true" inheritRefs="true" />
   </target>
@@ -1098,12 +1103,12 @@ export.database: exports database structure and data to xml files.
       <arg line="'${base.config}/Openbravo.properties' ${logFileName}" />
       <classpath>
         <pathelement path="${build.core.lib}/openbravo-core.jar" />
-        <pathelement path="${base.lib}/runtime/log4j-1.2.8.jar" />
-        <pathelement path="${base.lib}/runtime/commons-pool.jar" />
-        <pathelement path="${base.lib}/runtime/commons-dbcp.jar" />
-        <pathelement path="${base.lib}/runtime/postgresql-jdbc3-8.2.jar" />
+        <pathelement path="${base.lib}/runtime/log4j-1.2.16.jar" />
+        <pathelement path="${base.lib}/runtime/commons-pool-1.5.6.jar" />
+        <pathelement path="${base.lib}/runtime/commons-dbcp-1.4.jar" />
+        <pathelement path="${base.lib}/runtime/postgresql-9.0-801.jdbc4.jar" />
         <pathelement path="${base.lib}/runtime/ojdbc6.jar" />
-        <pathelement path="${base.lib}/runtime/commons-collections.jar" />
+        <pathelement path="${base.lib}/runtime/commons-collectionsi-3.2.1.jar" />
         <pathelement path="${base.lib}/runtime/ant-1.7.1.jar" />
         <pathelement path="${base.lib}/runtime/ant-launcher.jar" />
         <pathelement path="${base.lib}/runtime/ant-apache-log4j.jar" />

@@ -504,8 +504,6 @@ public class FIN_Utility {
    * 
    * @param strCode
    *          String with the search key to search.
-   * @param strLanguage
-   *          String with the translation language.
    * @return String with the translated message.
    */
   public static String messageBD(String strCode) {

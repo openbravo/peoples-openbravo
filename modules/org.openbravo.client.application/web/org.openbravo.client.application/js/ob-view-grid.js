@@ -517,6 +517,15 @@ isc.OBViewGrid.addProperties({
       this.selectionUpdated();
     }
     
+    // no data and the grid is not visible
+    if (endRow === 0 && !this.isVisible()) {
+      if (this.view.isShowingForm) {
+        this.view.switchFormGridVisibility();
+      } else {
+        this.show();
+      }
+    }
+    
     if (this.targetOpenNewEdit) {
       delete this.targetOpenNewEdit;
       // not passing record opens new
@@ -529,7 +538,7 @@ isc.OBViewGrid.addProperties({
     } else if (this.targetRecordId) {
       // direct link from other tab to a specific record
       this.delayedHandleTargetRecord(startRow, endRow);
-    } else if (this.view.shouldOpenDefaultEditMode() && !this.view.isShowingForm) {
+    } else if (this.view.shouldOpenDefaultEditMode()) {
       // ui-pattern: single record/edit mode
       this.view.openDefaultEditView(this.getRecord(startRow));
     } else if (this.data && this.data.getLength() === 1) {
@@ -774,6 +783,9 @@ isc.OBViewGrid.addProperties({
       } else {
         parentPropertyFilterValue = selectedValues[0][OB.Constants.ID];
       }
+      
+      this.view.parentRecordId = parentPropertyFilterValue;
+      
       var fnd = false;
       var innerCriteria = criteria.criteria;
       for (i = 0; i < innerCriteria.length; i++) {
