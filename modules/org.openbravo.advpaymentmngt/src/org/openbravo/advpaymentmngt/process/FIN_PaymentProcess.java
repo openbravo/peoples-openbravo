@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -117,20 +117,12 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                     .getDocumentNo());
                 validateAmount(paymentScheduleDetail.getInvoicePaymentSchedule(), paymentDetail
                     .getAmount(), paymentDetail.getWriteoffAmount());
-                FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
-                    .getInvoicePaymentSchedule(), paymentDetail.getAmount(), paymentDetail
-                    .getWriteoffAmount());
-                updateCustomerCredit(paymentScheduleDetail.getInvoicePaymentSchedule(),
-                    paymentDetail.getAmount(), strAction);
               }
               if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
                 orderDocNos.add(paymentScheduleDetail.getOrderPaymentSchedule().getOrder()
                     .getDocumentNo());
                 validateAmount(paymentScheduleDetail.getOrderPaymentSchedule(), paymentDetail
                     .getAmount(), paymentDetail.getWriteoffAmount());
-                FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
-                    .getOrderPaymentSchedule(), paymentDetail.getAmount(), paymentDetail
-                    .getWriteoffAmount());
               }
               if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
                   && paymentScheduleDetail.getOrderPaymentSchedule() == null
@@ -241,6 +233,23 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             return;
           }
         } else {
+          for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList()) {
+            for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
+                .getFINPaymentScheduleDetailList()) {
+              if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
+                updateCustomerCredit(paymentScheduleDetail.getInvoicePaymentSchedule(),
+                    paymentDetail.getAmount(), strAction);
+                FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
+                    .getInvoicePaymentSchedule(), paymentDetail.getAmount(), paymentDetail
+                    .getWriteoffAmount());
+              }
+              if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
+                FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
+                    .getOrderPaymentSchedule(), paymentDetail.getAmount(), paymentDetail
+                    .getWriteoffAmount());
+              }
+            }
+          }
           payment.setStatus(isReceipt ? "RPR" : "PPM");
           if ((FIN_Utility.isAutomaticDepositWithdrawn(payment) || strAction.equals("D"))
               && payment.getAmount().compareTo(BigDecimal.ZERO) != 0)
@@ -279,6 +288,9 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           bundle.setResult(msg);
           return;
         }
+
+        // Do not restore paid amounts if the payment is awaiting execution.
+        boolean restorePaidAmounts = !"RPAE".equals(payment.getStatus());
         // Initialize amounts
         payment.setProcessed(false);
         OBDal.getInstance().save(payment);
@@ -310,14 +322,14 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             removedPDS = new ArrayList<FIN_PaymentScheduleDetail>();
             for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
                 .getFINPaymentScheduleDetailList()) {
-              if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
+              if (paymentScheduleDetail.getInvoicePaymentSchedule() != null && restorePaidAmounts) {
                 FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
                     .getInvoicePaymentSchedule(), paymentDetail.getAmount().negate(), paymentDetail
                     .getWriteoffAmount().negate());
                 updateCustomerCredit(paymentScheduleDetail.getInvoicePaymentSchedule(),
                     paymentDetail.getAmount(), strAction);
               }
-              if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
+              if (paymentScheduleDetail.getOrderPaymentSchedule() != null && restorePaidAmounts) {
                 FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
                     .getOrderPaymentSchedule(), paymentDetail.getAmount().negate(), paymentDetail
                     .getWriteoffAmount().negate());
