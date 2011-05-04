@@ -1126,7 +1126,9 @@ public class Property {
           break;
         }
       }
-      log.warn("Display column for property " + this + " not found");
+      if (displayProperty == null) {
+        log.warn("Display column for property " + this + " not found");
+      }
     }
     return displayProperty;
   }
