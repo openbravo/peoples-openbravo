@@ -203,9 +203,10 @@ isc.OBAttachmentsLayout.addProperties({
       width: '50%',
       canvas: me,
 	    action: function(){
+      var attachmentFile = OB.I18N.getLabel('OBUIAPP_AttachmentFile');
       var form = isc.DynamicForm.create({
           fields: [
-            {name: 'inpname', title: OB.I18N.getLabel('OBUIAPP_AttachmentFile'), type: 'upload', width: '100px', canFocus: false},
+            {name: 'inpname', title: attachmentFile, type: 'upload', width: '100px', canFocus: false},
             {name: 'Command', type: 'hidden', value: 'SAVE_NEW_OB3'},
             {name: 'buttonId', type: 'hidden', value: this.canvas.ID},
             {name: 'inpKey', type: 'hidden', value: this.canvas.recordId},
@@ -248,11 +249,17 @@ isc.OBAttachmentsLayout.addProperties({
           target: "background_target",
           position: 'absolute',
           left: '-9000px',
+          numCols: 4,
+          colWidths: ['24%', '24%', '24%', '24%'],
+          width: '10px',
+          height: '100%',
           redraw: function(){
           },
           theCanvas: this.canvas
         });
-        var horizontalLayout = isc.HLayout.create();
+        var horizontalLayout = isc.HLayout.create({
+          width: '*'
+        });
         var popup = isc.OBPopup.create({
           height: 50,
           width: 600,

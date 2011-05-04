@@ -262,8 +262,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       try {
         obj.put("name", attachment.getName());
         obj.put("id", attachment.getId());
-        SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
-        obj.put("creationDate", xmlDateTimeFormat.format(attachment.getCreationDate()));
+        SimpleDateFormat xmlDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        xmlDateTimeFormat.setLenient(true);
+        obj.put("creationDate", attachment.getCreationDate().getTime());
         obj.put("createdby", attachment.getCreatedBy().getName());
       } catch (JSONException e) {
         log.error("Error while reading attachments", e);

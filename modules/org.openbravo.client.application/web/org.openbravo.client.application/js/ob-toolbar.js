@@ -268,9 +268,10 @@ isc.OBToolbar.addClassProperties({
           });
         }
       }else{
+        var attachmentFile = OB.I18N.getLabel('OBUIAPP_AttachmentFile');
         var form = isc.DynamicForm.create({
           fields: [
-            {name: 'inpname', title: OB.I18N.getLabel('OBUIAPP_AttachmentFile'), type: 'upload'},
+            {name: 'inpname', title: attachmentFile, type: 'upload'},
             {name: 'Command', type: 'hidden', value: 'SAVE_NEW_OB3'},
             {name: 'buttonId', type: 'hidden', value: this.ID},
             {name: 'inpKey', type: 'hidden', value: this.view.viewGrid.getSelectedRecord().id},
@@ -290,19 +291,24 @@ isc.OBToolbar.addClassProperties({
           target: "background_target",
           position: 'absolute',
           left: '-9000px',
+          numCols: 4,
+          colWidths: ['24%', '24%', '24%', '24%'],
+          width: '10px',
           redraw: function(){
           },
           button: this
         });
         this.oldForm = form;
-        var verticalLayout = isc.VLayout.create();
+        var horizontalLayout = isc.HLayout.create({
+          width: '*'
+        });
         var popup = isc.OBPopup.create({
           height: 50,
           width: 600,
           initWidget: function(args){
-            verticalLayout.addMember(form);
-            this.items = verticalLayout;
-            this.Super('initWidget', arguments);
+          horizontalLayout.addMember(form);
+          this.items = horizontalLayout;
+          this.Super('initWidget', arguments);
           }
         });
         form.popup = popup;
