@@ -132,7 +132,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
   }
 
   /**
-   * Implemented here for backward compatibitility, calls the {@link #getGlobalResources()}
+   * Implemented here for backward compatibility, calls the {@link #getGlobalResources()}
    */
   public List<ComponentResource> getGlobalComponentResources() {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
@@ -142,8 +142,9 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     return globalResources;
   }
 
-  @SuppressWarnings("deprecation")
   // Implemented for backward compatibility
+  @Deprecated
+  @Override
   public List<String> getGlobalResources() {
     return Collections.emptyList();
   }
