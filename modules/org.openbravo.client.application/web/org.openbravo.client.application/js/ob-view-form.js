@@ -881,6 +881,12 @@ OB.ViewFormProperties = {
     item._hasChanged = false;
   },
   
+  setDisabledWhenStillInFIC: function() {
+    if (this.inFicCall) {
+      this.setDisabled(true);
+    }
+  },
+  
   // note item can be null, is also called when the form is re-shown
   // to recompute combos
   doChangeFICCall: function(item){
@@ -905,7 +911,7 @@ OB.ViewFormProperties = {
     // before disabling
     // only do this if there is no popup currently
     if (!this.view.standardWindow.inAutoSaveConfirmation) {
-      this.delayCall('setDisabled', [true], 10);
+      this.delayCall('setDisabledWhenStillInFIC', [true], 10);
     }
 
     var editRow = this.view.viewGrid.getEditRow();
