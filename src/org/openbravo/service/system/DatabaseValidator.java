@@ -662,7 +662,9 @@ public class DatabaseValidator implements SystemValidator {
           result
               .addWarning(
                   SystemValidationType.WRONG_NAME,
-                  "The table has a column created, Note that the audit column which stores the creation time MUST be called: creation Date");
+                  "The table "
+                      + entity.getTableName()
+                      + " has a column 'created', Note that the audit column which stores the creation time MUST be called: creation Date");
         }
       }
       // can this ever be false?
