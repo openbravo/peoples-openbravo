@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.erputils;
+package org.openbravo.client.application;
 
 import java.util.Map;
 
