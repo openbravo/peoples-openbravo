@@ -975,7 +975,7 @@ isc.OBToolbar.addProperties({
       numOfSelRecords = this.view.viewGrid.getSelectedRecords().length;
     }
     
-    if (!noSetSession && !this.view.isShowingForm && !isNew && !hideAllButtons) {
+    if (currentValues && !noSetSession && !this.view.isShowingForm && !isNew && !hideAllButtons) {
       var formView = this.view.viewForm, me = this;
       // Call FIC to obtain possible session attributes and set them in form
       requestParams = {
@@ -1009,10 +1009,10 @@ isc.OBToolbar.addProperties({
           }
         }
         formView.view.attachmentExists = attachmentExists;
-        doRefresh(buttons, currentValues, noneOrMultipleRecordsSelected, me);
+        doRefresh(buttons, currentValues || {}, noneOrMultipleRecordsSelected, me);
       });
     } else {
-      doRefresh(buttons, currentValues, hideAllButtons || noneOrMultipleRecordsSelected, this);
+      doRefresh(buttons, currentValues || {}, hideAllButtons || noneOrMultipleRecordsSelected, this);
     }
   },
   

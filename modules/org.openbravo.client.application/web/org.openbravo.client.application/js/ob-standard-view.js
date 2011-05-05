@@ -931,6 +931,9 @@ isc.OBStandardView.addProperties({
   },
   
   openDirectTabView: function(showContent) {
+    // our content is done through the direct mode stuff
+    this.refreshContents = false;
+    
     if (this.parentTabSet && this.parentTabSet.getSelectedTab() !== this.tab) {
       this.parentTabSet.selectTab(this.tab);
     }
@@ -945,81 +948,19 @@ isc.OBStandardView.addProperties({
       this.setMaximizeRestoreButtonState();
       
       // show the form with the selected record
-      if (!this.isShowingForm) {
+      // if there is one, otherwise we are in grid mode
+      if (this.viewGrid.targetRecordId && !this.isShowingForm) {
         // hide the grid as it should not show up in a short flash
         this.viewGrid.hide();
       }
-      this.setAsActiveView();
+      // bypass the autosave logic
+      this.standardWindow.setActiveView(this);
+      this.viewGrid.isOpenDirectMode = true;
     }
 
     if (this.parentView) {
       this.parentView.openDirectTabView(false);
     } 
-  },
-  
-  // is part of the flow to open all correct tabs when a user goes directly
-  // to a specific tab and record, for example by clicking a link in another 
-  // window, see the description in ob-standard-window.js
-  openDirectTab: function(){
-    if (!this.dataSource) {
-      // wait for the datasource to arrive
-      this.delayCall('openDirectTab', null, 200, this);
-      return;
-    }
-    var i, thisView = this, tabInfos = this.standardWindow.directTabInfo;
-    if (!tabInfos) {
-      return;
-    }
-    
-    for (i = 0; i < tabInfos.length; i++) {
-      if (tabInfos[i].targetTabId === this.tabId) {
-        // found it..., check if a record needs to be edited
-        if (tabInfos[i].targetRecordId) {
-          this.viewGrid.targetRecordId = tabInfos[i].targetRecordId;
-        } else {
-          // signal open grid
-          this.viewGrid.targetOpenGrid = true;
-        }
-        
-        // make sure that the content gets refreshed
-        // refresh and open a child view when all is done
-        this.doRefreshContents(true, true);
-        return true;
-      }
-    }
-    return false;
-  },
-  
-  // is part of the flow to open all correct tabs when a user goes directly
-  // to a specific tab and record, for example by clicking a link in another 
-  // window, see the description in ob-standard-window.js
-  openDirectChildTab: function(){
-    // only do this if we are walking through the tab structure
-    // this method is also called when a record is opened directly in a grid
-    // from a form
-    if (!this.standardWindow.directTabInfo) {
-      return;
-    }
-    
-    if (this.childTabSet) {
-      var i, tabs = this.childTabSet.tabs;
-      for (i = 0; i < tabs.length; i++) {
-        if (tabs[i].pane.openDirectTab()) {
-          return;
-        }
-      }
-    }
-        
-    // show the form with the selected record
-    if (!this.isShowingForm) {
-      var gridRecord = this.viewGrid.getSelectedRecord();
-      if (gridRecord) {
-        this.editRecord(gridRecord);
-      }
-    }
-    
-    // remove this info
-    delete this.standardWindow.directTabInfo;
   },
   
   // ** {{{ recordSelected }}} **

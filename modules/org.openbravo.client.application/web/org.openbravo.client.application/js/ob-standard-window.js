@@ -30,26 +30,11 @@ isc.OBStandardWindow.addClassProperties({
 //
 // The standard window can be opened as a result of a click on a link
 // in another tab. In this case the window should open all tabs from the
-// root to the target record, i.e. the target record can be in a grand-child
-// tab. The flow goes through the following steps:
-// 1- compute which tabs should be opened and on each tab which record (the
-// tabInfo list),
-// this is done in the draw method with a call to the
-// org.openbravo.client.application.window.ComputeSelectedRecordActionHandler
-// actionHandler
-// 2- this actionhandler returns a list of tab and record id's which should be
-// opened in sequence.
-// 3- the first tab is opened by calling view.openDirectTab()
-// 4- this loads the data in the grid, in the viewGrid.dataArrived method the
-// method delayedHandleTargetRecord is called to open a child tab or the direct
-// requested record.
-// 5- opening a child tab is done by calling openDirectChildTab on the view,
-// which again calls openDirectTab
-// for the tab in the tabInfo list (computed in step 1)
-//
-// Note that some parts of the flow are done asynchronously to give the system
-// time to
-// draw all the components.
+// target tab up to the root tab. The flow starts by opening the deepest tab.
+// This tab then forces the ancestor tabs to read data (asynchronously in sequence). This is 
+// controlled through the isOpenDirectMode flag which tells a tab that it 
+// should open its grid using a target record id and use the parent property
+// to define the parent id by which to filter (if the tab has a parent). 
 // 
 isc.OBStandardWindow.addProperties({
   toolBarLayout: null,
@@ -311,29 +296,21 @@ isc.OBStandardWindow.addProperties({
       for (var i = 0; i < this.views.length; i++) {
         if (this.views[i].tabId === this.targetTabId) {
           targetEntity = this.views[i].entity;
+          this.views[i].viewGrid.targetRecordId = this.targetRecordId;
           this.views[i].openDirectTabView(true);
+          this.views[i].viewGrid.refreshContents();
+          this.setFocusInView(this.views[i]);
           break;
         }
-      }
-      if (targetEntity) {
-        OB.RemoteCallManager.call('org.openbravo.client.application.window.ComputeSelectedRecordActionHandler', null, {
-          targetEntity: targetEntity,
-          targetRecordId: (this.targetRecordId ? this.targetRecordId : null),
-          windowId: this.windowId
-        }, function(response, data, request){
-          standardWindow.directTabInfo = data.result;          
-          standardWindow.view.openDirectTab();
-        });
-        delete this.targetRecordId;
-        delete this.targetTabId;
       }
     } else if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       var currentView = this.activeView || this.view;
       currentView.editRecord();
       this.command = null;
+    } else {
+      this.setFocusInView(this.view);
     }
     
-    this.setFocusInView(this.view);
     return ret;
   },
   
