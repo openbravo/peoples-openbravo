@@ -121,7 +121,8 @@ function onloadFunctions() {
         updateMenuIcon('buttonMenu');
 
         setWindowElementFocus('firstElement');
-        hideGroupedOrderingCriteria()
+        hideGroupedOrderingCriteria();
+        hideLeftRight()
     }
     function onResizeDo(){
         resizeArea();
@@ -132,27 +133,58 @@ function onloadFunctions() {
         var ord = document.frmMain.inpOrdCrit;
         var sho = document.frmMain.inpShown;
 
-        var last;
+        var lastOrd;
+        var lastSho;
+        var i;
 
         for (i = 0; i < ord.length; i++){
             if (gro.options[gro.selectedIndex].value == ord.options[i].value){
-                ord[i].style.display = 'none';
-                last = ord[i];
+                ord[i].style.visibility = "hidden";
+                lastOrd = ord[i];
             }
             else
-                ord[i].style.display = '';
+                ord[i].style.visibility = '';
         }
 
-        if (last != null){
-            ord.remove(last.index);
-            ord.add(last, null);
+        if (lastOrd != null){
+            ord.remove(lastOrd.index);
+            ord.add(lastOrd, null);
         }
 
         for (i = 0; i < sho.length ; i++){
-            if (gro.options[gro.selectedIndex].value == sho.options[i].value)
-                sho[i].style.display = 'none';
+            if (gro.options[gro.selectedIndex].value == sho.options[i].value){
+                sho[i].style.visibility = "hidden";
+                lastSho = sho[i];
+            }
             else
-                sho[i].style.display = '';
+                sho[i].style.visibility = '';
+        }
+        
+        if (lastSho != null){
+            sho.remove(lastSho.index);
+            sho.add(lastSho, null);
+        }
+    }
+    function hideLeftRight(){        
+        var ord = document.frmMain.inpOrdCrit;
+        var sho = document.frmMain.inpShown;
+
+        var last;
+        var i;
+        var j;
+        
+    	for (i = 0; i < ord.length; i++){
+            for (j = 0; j < sho.length; j++){
+                if (ord.options[i].value == sho.options[j].value){
+                    ord[i].style.visibility = "hidden";
+                    last = ord[i];
+                }
+            }
+        }
+        
+        if (last != null){
+            ord.remove(last.index);
+            ord.add(last, null);
         }
     }
     function openPaymentTab(isReceipt, recordId) {
@@ -764,7 +796,7 @@ function onloadFunctions() {
                     <span class="LabelText">Grouping Criteria</span>
                   </td>
                   <td class="Combo_ContentCell" colspan="2">
-                    <select  name="inpGroupCrit" id="paramGroupCrit" class="Combo Combo_TwoCells_width" onchange="hideGroupedOrderingCriteria();">
+                    <select  name="inpGroupCrit" id="paramGroupCrit" class="Combo Combo_TwoCells_width" onchange="hideGroupedOrderingCriteria();hideLeftRight();">
                       <option value=""> <div id="reportGroupCrit"></div> </option>
                     </select>
                   </td>

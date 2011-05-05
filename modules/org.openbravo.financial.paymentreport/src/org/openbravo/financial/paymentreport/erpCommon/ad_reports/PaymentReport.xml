@@ -50,12 +50,21 @@
   <PARAMETER id="paramDocumentDateTo" name="documentDateTo" attribute="value"/>
   <PARAMETER id="paramDocumentDateTo" name="documentDateTodisplaySave" attribute="displayformat" replace="xx"/>
   <PARAMETER id="paramDocumentDateTo" name="documentDateTodisplaySave" attribute="saveformat" replace="yy"/>
-  <PARAMETER id="paramcBPartnerId_IN" name="cBPartnerId_IN" attribute="value"/>
+  
+  <PARAMETER id="paramcBPartnerId_INselected" name="paramcBPartnerId_INselected" default=""/>
+  <SUBREPORT id="paramcBPartnerId_IN" name="paramcBPartnerId_IN" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="paramcBPartnerId_INselected"/>
+  </SUBREPORT>
+    
   <PARAMETER id="paramcBPGroupId_IN" name="cBPGroupId_IN" attribute="value"/>
   <SUBREPORT id="reportBPGroupId_IN" name="reportBPGroupId_IN" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramcBPGroupId_IN"/>
   </SUBREPORT>
-  <PARAMETER id="paramcProjectId_IN" name="cProjectId_IN" attribute="value"/>
+  
+  <PARAMETER id="paramcProjectId_INselected" name="paramcProjectId_INselected" default=""/>
+  <SUBREPORT id="paramcProjectId_IN" name="paramcProjectId_IN" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="paramcProjectId_INselected"/>
+  </SUBREPORT>
   
   <PARAMETER id="paramfinPaymSt" name="finPaymSt" attribute="value"/>
   <SUBREPORT id="paramfinPaymSt" name="reportStatus" report="org/openbravo/erpCommon/reference/List">
@@ -95,6 +104,11 @@
   <PARAMETER id="paramOrdCrit" name="ordCrit" attribute="value"/>
   <SUBREPORT id="reportOrdCrit" name="reportOrdCrit" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramOrdCrit"/>
+  </SUBREPORT>
+  
+  <PARAMETER id="paramShown" name="inpShown" attribute="value"/>
+  <SUBREPORT id="reportShown" name="reportShown" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="paramShown"/>
   </SUBREPORT>
   
   

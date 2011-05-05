@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Vector;
 
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -38,6 +39,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
+import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.List;
@@ -299,7 +301,7 @@ public class PaymentReportDao {
         hsqlScript.append(" and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_OUTSTANDINGAMOUNT);
         hsqlScript.append(" != '0'");
-        hsqlScript.append(" and inv.");
+        hsqlScript.append(" and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
         hsqlScript.append(" <  ?");
         parameters.add(FIN_Utility.getDate(dateFormat.format(new Date())));
@@ -515,41 +517,34 @@ public class PaymentReportDao {
           FieldProviderFactory.setField(data[i], "INVOICE_DATE", dateFormat.format(invoicedDate)
               .toString());
           // dueDate
-          FieldProviderFactory
-              .setField(
-                  data[i],
-                  "DUE_DATE",
-                  dateFormat.format(
-                      FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getDueDate())
-                      .toString());
+          FieldProviderFactory.setField(data[i], "DUE_DATE", dateFormat.format(
+              FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getDueDate()).toString());
           // plannedDSO
           plannedDSO = (FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getDueDate()
               .getTime() - FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getInvoice()
               .getInvoiceDate().getTime());
-          FieldProviderFactory.setField(data[i], "PLANNED_DSO",
-              String.valueOf(plannedDSO / (1000 * 60 * 60 * 24)));
+          FieldProviderFactory.setField(data[i], "PLANNED_DSO", String.valueOf(plannedDSO
+              / (1000 * 60 * 60 * 24)));
           // currentDSO
           currentTime = System.currentTimeMillis();
           if (currentTime < invoicedDate.getTime())
-            FieldProviderFactory.setField(data[i], "CURRENT_DSO",
-                String.valueOf(plannedDSO / (1000 * 60 * 60 * 24)));
+            FieldProviderFactory.setField(data[i], "CURRENT_DSO", String.valueOf(plannedDSO
+                / (1000 * 60 * 60 * 24)));
           else {
             currentDSO = currentTime
                 - FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getInvoice()
                     .getInvoiceDate().getTime();
-            FieldProviderFactory.setField(data[i], "CURRENT_DSO",
-                String.valueOf((currentDSO) / (1000 * 60 * 60 * 24)));
+            FieldProviderFactory.setField(data[i], "CURRENT_DSO", String.valueOf((currentDSO)
+                / (1000 * 60 * 60 * 24)));
           }
           // daysOverdue
           if (currentTime < FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getDueDate()
               .getTime())
             FieldProviderFactory.setField(data[i], "OVERDUE", "0");
           else
-            FieldProviderFactory.setField(
-                data[i],
-                "OVERDUE",
-                String.valueOf((currentTime - FIN_PaymentScheduleDetail[i]
-                    .getInvoicePaymentSchedule().getDueDate().getTime())
+            FieldProviderFactory.setField(data[i], "OVERDUE", String
+                .valueOf((currentTime - FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule()
+                    .getDueDate().getTime())
                     / (1000 * 60 * 60 * 24)));
         } else {
           // project
@@ -587,8 +582,8 @@ public class PaymentReportDao {
           if (convRate != null) {
             transAmount = FIN_PaymentScheduleDetail[i].getAmount();
             // baseAmount
-            FieldProviderFactory.setField(data[i], "BASE_AMOUNT",
-                transAmount.multiply(convRate.getMultipleRateBy()).toString());
+            FieldProviderFactory.setField(data[i], "BASE_AMOUNT", transAmount.multiply(
+                convRate.getMultipleRateBy()).toString());
           } else {
             FieldProvider[] fp = new FieldProvider[1];
             HashMap<String, String> hm = new HashMap<String, String>();
@@ -641,8 +636,8 @@ public class PaymentReportDao {
             if (previousConvRate == null) {
               FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.toString());
             } else {
-              FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
-                  amountSum.multiply(previousConvRate.getMultipleRateBy()).toString());
+              FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.multiply(
+                  previousConvRate.getMultipleRateBy()).toString());
             }
             groupedData.add(previousRow);
           }
@@ -662,8 +657,8 @@ public class PaymentReportDao {
           FieldProviderFactory.setField(data[i], "GROUP_CRIT_ID", data[i].getField("BP_GROUP"));
           FieldProviderFactory.setField(data[i], "GROUP_CRIT", "Business Partner Category");
         } else if (strGroupCrit.equalsIgnoreCase("INS_CURRENCY")) {
-          FieldProviderFactory.setField(data[i], "GROUP_CRIT_ID",
-              data[i].getField("TRANS_CURRENCY"));
+          FieldProviderFactory.setField(data[i], "GROUP_CRIT_ID", data[i]
+              .getField("TRANS_CURRENCY"));
           FieldProviderFactory.setField(data[i], "GROUP_CRIT", "Currency");
         } else {
           FieldProviderFactory.setField(data[i], "GROUP_CRIT_ID", "");
@@ -673,8 +668,8 @@ public class PaymentReportDao {
 
       if (convRate != null) {
         FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.toString());
-        FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
-            amountSum.multiply(convRate.getMultipleRateBy()).toString());
+        FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.multiply(
+            convRate.getMultipleRateBy()).toString());
         groupedData.add(previousRow);
       } else {
         FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.toString());
@@ -814,5 +809,34 @@ public class PaymentReportDao {
       OBContext.restorePreviousMode();
     }
     return hmValues;
+  }
+
+  public static FieldProvider[] getObjectList(String objectNames) {
+    Vector<Object> vector = new Vector<Object>(0);
+    if (objectNames.equalsIgnoreCase("")) {
+      FieldProvider objectListData[] = new FieldProvider[vector.size()];
+      vector.copyInto(objectListData);
+
+      return objectListData;
+    } else {
+      String[] names = objectNames.substring(1, objectNames.length() - 1).split(", ");
+      SQLReturnObject sqlRO;
+      String name = null;
+
+      for (int i = 0; i < names.length; i++) {
+        sqlRO = new SQLReturnObject();
+        names[i] = names[i];
+        name = names[i].substring(1, names[i].length() - 1);
+        sqlRO.setData("ID", name);
+        sqlRO.setData("NAME", FIN_Utility.messageBD(name));
+        sqlRO.setData("DESCRIPTION", "");
+        vector.addElement(sqlRO);
+      }
+
+      FieldProvider objectListData[] = new FieldProvider[vector.size()];
+      vector.copyInto(objectListData);
+
+      return objectListData;
+    }
   }
 }

@@ -36,6 +36,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -60,8 +61,54 @@ public class PaymentReport extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (vars.commandIn("FIND", "DEFAULT")) {
+    if (vars.commandIn("DEFAULT")) {
       String strOrg = vars.getGlobalVariable("inpOrg", "PaymentReport|Organization", "");
+      String strInclSubOrg = vars.getGlobalVariable("inpInclSubOrg",
+          "PaymentReport|IncludeSubOrganization", "");
+      String strDueDateFrom = vars.getGlobalVariable("inpDueDateFrom", "PaymentReport|DueDateFrom",
+          "");
+      String strDueDateTo = vars
+          .getRequestGlobalVariable("inpDueDateTo", "PaymentReport|DueDateTo");
+      String strAmountFrom = vars.getNumericGlobalVariable("inpAmountFrom",
+          "PaymentReport|AmountFrom", "");
+      String strAmountTo = vars.getNumericGlobalVariable("inpAmountTo", "PaymentReport|AmountTo",
+          "");
+      String strDocumentDateFrom = vars.getGlobalVariable("inpDocumentDateFrom",
+          "PaymentReport|DocumentDateFrom", "");
+      String strDocumentDateTo = vars.getGlobalVariable("inpDocumentDateTo",
+          "PaymentReport|DocumentDateTo", "");
+      String strcBPartnerIdIN = vars.getInGlobalVariable("inpcBPartnerId_IN",
+          "PaymentReport|BusinessPartner", "", IsIDFilter.instance);
+      String strcBPGroupIdIN = vars.getGlobalVariable("inpcBPGroupId_IN",
+          "PaymentReport|BusinessPartnerCategory", "");
+      String strcProjectIdIN = vars.getInGlobalVariable("inpcProjectId_IN",
+          "PaymentReport|Project", "", IsIDFilter.instance);
+      dao = new PaymentReportDao();
+      String strfinPaymSt = vars.getInGlobalVariable("inpfinPaymSt", "", "", new ValueListFilter(
+          dao.getReferenceListValues("FIN_Payment status", true)));
+      String strPaymentMethodId = vars.getGlobalVariable("inpPaymentMethodId",
+          "PaymentReport|PaymentMethodId", "", IsIDFilter.instance);
+      String strFinancialAccountId = vars.getGlobalVariable("inpFinancialAccountId",
+          "PaymentReport|FinancialAccountId", "", IsIDFilter.instance);
+      String strcCurrency = vars.getGlobalVariable("inpcCurrencyId", "PaymentReport|Currency", "",
+          IsIDFilter.instance);
+      String strConvertCurrency = vars.getGlobalVariable("inpConvertCurrencyId",
+          "PaymentReport|ConvertCurrency", "");
+      String strConversionDate = vars.getGlobalVariable("inpConversionDate",
+          "PaymentReport|ConversionDate", "");
+      String strPaymType = vars.getGlobalVariable("inpPaymType", "PaymentReport|PaymentType", "");
+      String strOverdue = vars.getGlobalVariable("inpOverdue", "PaymentReport|Overdue", "");
+      String strGroupCrit = vars.getGlobalVariable("inpGroupCrit", "PaymentReport|GroupCrit", "");
+      String strOrdCrit = vars.getInGlobalVariable("inpShown", "PaymentReport|OrdCrit", "",
+          new ValueListFilter("Date", "APRM_FATS_BPARTNER", "Project", "INS_CURRENCY",
+              "FINPR_BPartner_Category", ""));
+      printPageDataSheet(response, vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
+          strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
+          strcBPGroupIdIN, strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
+          strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
+          strOverdue, strGroupCrit, strOrdCrit);
+    } else if (vars.commandIn("FIND")) {
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "PaymentReport|Organization");
       String strInclSubOrg = vars.getRequestGlobalVariable("inpInclSubOrg",
           "PaymentReport|IncludeSubOrganization");
       String strDueDateFrom = vars.getRequestGlobalVariable("inpDueDateFrom",
@@ -91,11 +138,12 @@ public class PaymentReport extends HttpSecureAppServlet {
           "PaymentReport|FinancialAccountId", IsIDFilter.instance);
       String strcCurrency = vars.getRequestGlobalVariable("inpcCurrencyId",
           "PaymentReport|Currency", IsIDFilter.instance);
-      String strConvertCurrency = vars.getGlobalVariable("inpConvertCurrencyId",
-          "PaymentReport|ConvertCurrency", "");
-      String strConversionDate = vars.getGlobalVariable("inpConversionDate",
-          "PaymentReport|ConversionDate", "");
-      String strPaymType = vars.getGlobalVariable("inpPaymType", "PaymentReport|PaymentType", "");
+      String strConvertCurrency = vars.getRequestGlobalVariable("inpConvertCurrencyId",
+          "PaymentReport|ConvertCurrency", IsIDFilter.instance);
+      String strConversionDate = vars.getRequestGlobalVariable("inpConversionDate",
+          "PaymentReport|ConversionDate");
+      String strPaymType = vars
+          .getRequestGlobalVariable("inpPaymType", "PaymentReport|PaymentType");
       String strOverdue = vars.getRequestGlobalVariable("inpOverdue", "PaymentReport|Overdue");
       String strGroupCrit = vars
           .getRequestGlobalVariable("inpGroupCrit", "PaymentReport|GroupCrit");
@@ -264,7 +312,6 @@ public class PaymentReport extends HttpSecureAppServlet {
           discardAL.add("sectionStatus");
           discardAL.add("sectionTotal");
         }
-        discardAL.add("ieldInvLinkNo");
         discard = new String[discardAL.size()];
 
         xmlDocument = xmlEngine.readXmlTemplate(
@@ -350,7 +397,11 @@ public class PaymentReport extends HttpSecureAppServlet {
     xmlDocument.setParameter("documentDateTo", strDocumentDateTo);
     xmlDocument
         .setParameter("documentDateTodisplaySave", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("cBPartnerId_IN", strcBPartnerIdIN);
+
+    xmlDocument.setData("paramcBPartnerId_IN", "liststructure", SelectorUtilityData.selectBpartner(
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
+            vars, "#User_Client", ""), strcBPartnerIdIN));
+
     xmlDocument.setParameter("cBPGroupId_IN", strcBPGroupIdIN);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
@@ -362,14 +413,18 @@ public class PaymentReport extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    xmlDocument.setParameter("cProjectId_IN", strcProjectIdIN);
-    xmlDocument.setParameter("finPaymSt", strfinPaymSt);
+
+    xmlDocument.setData("paramcProjectId_IN", "liststructure", SelectorUtilityData.selectProject(
+        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
+            vars, "#User_Client", ""), strcProjectIdIN));
+
+    xmlDocument.setParameter("reportStatus", strfinPaymSt);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
           "FIN_Payment status", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "PaymentReport"), Utility.getContext(this, vars, "#User_Client", "PaymentReport"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "PaymentReport", strfinPaymSt);
-      xmlDocument.setData("reportStatus", "liststructure", comboTableData.select(false));
+      xmlDocument.setData("reportStatus", "liststructure", comboTableData.select(true));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -523,6 +578,7 @@ public class PaymentReport extends HttpSecureAppServlet {
     vector.copyInto(objectListData);
 
     xmlDocument.setData("reportOrdCrit", "liststructure", objectListData);
+    xmlDocument.setData("reportShown", "liststructure", PaymentReportDao.getObjectList(strOrdCrit));
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
