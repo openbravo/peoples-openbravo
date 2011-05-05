@@ -509,19 +509,24 @@ isc.OBSelectorItem.addProperties({
     // only filter if the display field is also passed
     // the displayField filter is not passed when the user clicks the drop-down button
     // display field is passed on the criteria.
-    if (crit[this.displayField]) {
-      var i;
+    var displayFieldValue = null, i;
+    for (i = 0; i < crit.criteria.length; i++) {
+      if (crit.criteria[i].fieldName === this.displayField) {
+        displayFieldValue = crit.criteria[i].value;
+      }
+    }
+    if (displayFieldValue !== null) {
       for (i = 0; i < this.extraSearchFields.length; i++) {
         criteria.criteria.push({
           fieldName: this.extraSearchFields[i],
           operator: 'iContains',
-          value: crit[this.displayField]
+          value: displayFieldValue
         });
       }
       criteria.criteria.push({
         fieldName: this.displayField,
         operator: 'iContains',
-        value: crit[this.displayField]
+        value: displayFieldValue
       });
     }
     return criteria;
