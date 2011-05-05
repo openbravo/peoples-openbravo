@@ -10220,31 +10220,6 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1905-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1905--></AD_ELEMENT>
 
-<!--1907--><AD_ELEMENT>
-<!--1907-->  <AD_ELEMENT_ID><![CDATA[1907]]></AD_ELEMENT_ID>
-<!--1907-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1907-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1907-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1907-->  <COLUMNNAME><![CDATA[ContactDescription]]></COLUMNNAME>
-<!--1907-->  <NAME><![CDATA[Contact Description]]></NAME>
-<!--1907-->  <PRINTNAME><![CDATA[Contact Description]]></PRINTNAME>
-<!--1907-->  <DESCRIPTION><![CDATA[Description of Contact]]></DESCRIPTION>
-<!--1907-->  <HELP><![CDATA[Description of Contact]]></HELP>
-<!--1907-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1907--></AD_ELEMENT>
-
-<!--1911--><AD_ELEMENT>
-<!--1911-->  <AD_ELEMENT_ID><![CDATA[1911]]></AD_ELEMENT_ID>
-<!--1911-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1911-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1911-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1911-->  <COLUMNNAME><![CDATA[I_BPartner_ID]]></COLUMNNAME>
-<!--1911-->  <NAME><![CDATA[Import Business Partner]]></NAME>
-<!--1911-->  <PRINTNAME><![CDATA[Import B.Partner]]></PRINTNAME>
-<!--1911-->  <HELP><![CDATA[The ID identifies a unique business partner to import]]></HELP>
-<!--1911-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1911--></AD_ELEMENT>
-
 <!--1915--><AD_ELEMENT>
 <!--1915-->  <AD_ELEMENT_ID><![CDATA[1915]]></AD_ELEMENT_ID>
 <!--1915-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -10296,19 +10271,6 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1922-->  <HELP><![CDATA[Before processing delete old imported records in the import table]]></HELP>
 <!--1922-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1922--></AD_ELEMENT>
-
-<!--1923--><AD_ELEMENT>
-<!--1923-->  <AD_ELEMENT_ID><![CDATA[1923]]></AD_ELEMENT_ID>
-<!--1923-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1923-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1923-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1923-->  <COLUMNNAME><![CDATA[GroupValue]]></COLUMNNAME>
-<!--1923-->  <NAME><![CDATA[Group Key]]></NAME>
-<!--1923-->  <PRINTNAME><![CDATA[Group Key]]></PRINTNAME>
-<!--1923-->  <DESCRIPTION><![CDATA[Business Partner Group Key]]></DESCRIPTION>
-<!--1923-->  <HELP><![CDATA[The value of the business partner group. This value is the short name for the group. If before inserting it doesn't exists in the table C_BP_Group, it won't work]]></HELP>
-<!--1923-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1923--></AD_ELEMENT>
 
 <!--1929--><AD_ELEMENT>
 <!--1929-->  <AD_ELEMENT_ID><![CDATA[1929]]></AD_ELEMENT_ID>
@@ -11486,32 +11448,6 @@ If selected, this column will be used in the Search Window as an available filte
 <!--2167-->  <HELP><![CDATA[Sales Tax: charged when selling - examples: Sales Tax, Output VAT (payable)Purchase Tax: tax charged when purchasing - examples: Use Tax, Input VAT (receivable)]]></HELP>
 <!--2167-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2167--></AD_ELEMENT>
-
-<!--2168--><AD_ELEMENT>
-<!--2168-->  <AD_ELEMENT_ID><![CDATA[2168]]></AD_ELEMENT_ID>
-<!--2168-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2168-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2168-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2168-->  <COLUMNNAME><![CDATA[IsValidateOnly]]></COLUMNNAME>
-<!--2168-->  <NAME><![CDATA[Only Validate Data]]></NAME>
-<!--2168-->  <PRINTNAME><![CDATA[Validate Only]]></PRINTNAME>
-<!--2168-->  <DESCRIPTION><![CDATA[Validate the date and do not process]]></DESCRIPTION>
-<!--2168-->  <HELP><![CDATA[Validate the date and do not process]]></HELP>
-<!--2168-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2168--></AD_ELEMENT>
-
-<!--2169--><AD_ELEMENT>
-<!--2169-->  <AD_ELEMENT_ID><![CDATA[2169]]></AD_ELEMENT_ID>
-<!--2169-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2169-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2169-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2169-->  <COLUMNNAME><![CDATA[IsImportOnlyNoErrors]]></COLUMNNAME>
-<!--2169-->  <NAME><![CDATA[Import only if No Errors]]></NAME>
-<!--2169-->  <PRINTNAME><![CDATA[Import No Errors]]></PRINTNAME>
-<!--2169-->  <DESCRIPTION><![CDATA[Only start the import, if there are no validation Errors]]></DESCRIPTION>
-<!--2169-->  <HELP><![CDATA[Only start the import, if there are no validation Errors]]></HELP>
-<!--2169-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2169--></AD_ELEMENT>
 
 <!--2178--><AD_ELEMENT>
 <!--2178-->  <AD_ELEMENT_ID><![CDATA[2178]]></AD_ELEMENT_ID>

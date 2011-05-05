@@ -2286,26 +2286,6 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800027-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800027--></AD_PROCESS>
 
-<!--800028--><AD_PROCESS>
-<!--800028-->  <AD_PROCESS_ID><![CDATA[800028]]></AD_PROCESS_ID>
-<!--800028-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800028-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800028-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800028-->  <VALUE><![CDATA[C_Order_Reset]]></VALUE>
-<!--800028-->  <NAME><![CDATA[Change Order Organization]]></NAME>
-<!--800028-->  <DESCRIPTION><![CDATA[Change Order Organization]]></DESCRIPTION>
-<!--800028-->  <HELP><![CDATA[Change Order Organization]]></HELP>
-<!--800028-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--800028-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800028-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800028-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800028-->  <CLASSNAME><![CDATA[ad_process/ChangeOrderOrg.html]]></CLASSNAME>
-<!--800028-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800028-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800028-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800028-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800028--></AD_PROCESS>
-
 <!--800030--><AD_PROCESS>
 <!--800030-->  <AD_PROCESS_ID><![CDATA[800030]]></AD_PROCESS_ID>
 <!--800030-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
