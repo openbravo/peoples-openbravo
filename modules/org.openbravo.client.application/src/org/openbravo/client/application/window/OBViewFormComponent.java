@@ -233,6 +233,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     if (!auditFields.isEmpty()) {
       final OBViewFieldGroup viewFieldGroup = new OBViewFieldGroup();
       viewFieldGroup.setExpanded(false);
+      viewFieldGroup.setType("OBAuditSectionItem");
       fields.add(viewFieldGroup);
       viewFieldGroup.setFieldGroup(OBDal.getInstance().get(FieldGroup.class, AUDIT_GROUP_ID));
       viewFieldGroup.addChildren(auditFields);
@@ -735,9 +736,14 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
   public class OBViewFieldGroup extends DefaultVirtualField {
     private boolean expanded = true;
+    private String type;
     private FieldGroup fieldGroup;
     private String label;
     private List<OBViewFieldDefinition> children = new ArrayList<OBViewFieldDefinition>();
+
+    public OBViewFieldGroup() {
+      type = "OBViewFieldGroup";
+    }
 
     public String getLabel() {
       // compute the label
@@ -772,7 +778,11 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public String getType() {
-      return "OBSectionItem";
+      return type;
+    }
+
+    public void setType(String type) {
+      this.type = type;
     }
 
     public String getName() {

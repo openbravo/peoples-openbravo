@@ -64,10 +64,10 @@
           firstFocusedField: true,
           </#if>
         </#if>
-        <#if fieldDefinition.type = "OBSectionItem" || fieldDefinition.type = "OBNoteSectionItem" || fieldDefinition.type = "OBLinkedItemSectionItem"  || fieldDefinition.type = "OBAttachmentsSectionItem">
-        <#if !fieldDefinition.displayed>
-        visible: false,
-        </#if>
+        <#if fieldDefinition.type = "OBSectionItem" || fieldDefinition.type = "OBNoteSectionItem" || fieldDefinition.type = "OBLinkedItemSectionItem"  || fieldDefinition.type = "OBAttachmentsSectionItem" || fieldDefinition.type = "OBAuditSectionItem">
+          <#if !fieldDefinition.displayed>
+          visible: false,
+          </#if>
         sectionExpanded: ${fieldDefinition.expanded?string},
         defaultValue: '${fieldDefinition.label?js_string}',
         itemIds: [
