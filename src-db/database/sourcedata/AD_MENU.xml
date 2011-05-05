@@ -2134,19 +2134,6 @@
 <!--800025-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800025--></AD_MENU>
 
-<!--800026--><AD_MENU>
-<!--800026-->  <AD_MENU_ID><![CDATA[800026]]></AD_MENU_ID>
-<!--800026-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800026-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800026-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800026-->  <NAME><![CDATA[Simple Sales Order]]></NAME>
-<!--800026-->  <DESCRIPTION><![CDATA[Create sales orders quickly using predefined product templates.]]></DESCRIPTION>
-<!--800026-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800026-->  <ACTION><![CDATA[W]]></ACTION>
-<!--800026-->  <AD_WINDOW_ID><![CDATA[800004]]></AD_WINDOW_ID>
-<!--800026-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800026--></AD_MENU>
-
 <!--800027--><AD_MENU>
 <!--800027-->  <AD_MENU_ID><![CDATA[800027]]></AD_MENU_ID>
 <!--800027-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
