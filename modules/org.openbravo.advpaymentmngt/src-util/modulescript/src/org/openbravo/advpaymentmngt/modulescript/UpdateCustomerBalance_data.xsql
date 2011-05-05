@@ -13,7 +13,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT '' as c_bpartner_id, '' as customercredit FROM DUAL
+        SELECT '' as c_bpartner_id, '' as customercredit, '' as existpreference FROM DUAL
       ]]>
     </Sql>
   </SqlMethod>
@@ -21,7 +21,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT count(*)
+        SELECT count(*) as existpreference
         FROM ad_preference
         WHERE attribute = 'IsCustomerBalanceRestored'
       ]]>
@@ -60,7 +60,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE c_bpartner SET so_creditused = ?, updatedby='0', updated=now() WHERE c_bpartner_id = ?
+        UPDATE c_bpartner SET so_creditused = TO_NUMBER(?), updatedby='0', updated=now() WHERE c_bpartner_id = ?
       ]]>
     </Sql>
     <Parameter name="cumstomeCredit"/>

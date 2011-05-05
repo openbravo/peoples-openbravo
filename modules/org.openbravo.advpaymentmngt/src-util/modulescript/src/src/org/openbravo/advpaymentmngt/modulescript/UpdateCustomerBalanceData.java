@@ -17,16 +17,19 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
   private String InitRecordNumber="0";
   public String cBpartnerId;
   public String customercredit;
+  public String existpreference;
 
   public String getInitRecordNumber() {
     return InitRecordNumber;
   }
 
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("C_BPARTNER_ID") || fieldName.equals("cBpartnerId"))
+    if (fieldName.equalsIgnoreCase("c_bpartner_id") || fieldName.equals("cBpartnerId"))
       return cBpartnerId;
-    else if (fieldName.equalsIgnoreCase("CUSTOMERCREDIT"))
+    else if (fieldName.equalsIgnoreCase("customercredit"))
       return customercredit;
+    else if (fieldName.equalsIgnoreCase("existpreference"))
+      return existpreference;
    else {
      log4j.debug("Field does not exist: " + fieldName);
      return null;
@@ -40,7 +43,7 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
   public static UpdateCustomerBalanceData[] select(ConnectionProvider connectionProvider, int firstRegister, int numberRegisters)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
-      "        SELECT '' as c_bpartner_id, '' as customercredit FROM DUAL";
+      "        SELECT '' as c_bpartner_id, '' as customercredit, '' as existpreference FROM DUAL";
 
     ResultSet result;
     Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
@@ -60,8 +63,9 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
       while(continueResult && result.next()) {
         countRecord++;
         UpdateCustomerBalanceData objectUpdateCustomerBalanceData = new UpdateCustomerBalanceData();
-        objectUpdateCustomerBalanceData.cBpartnerId = UtilSql.getValue(result, "C_BPARTNER_ID");
-        objectUpdateCustomerBalanceData.customercredit = UtilSql.getValue(result, "CUSTOMERCREDIT");
+        objectUpdateCustomerBalanceData.cBpartnerId = UtilSql.getValue(result, "c_bpartner_id");
+        objectUpdateCustomerBalanceData.customercredit = UtilSql.getValue(result, "customercredit");
+        objectUpdateCustomerBalanceData.existpreference = UtilSql.getValue(result, "existpreference");
         objectUpdateCustomerBalanceData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectUpdateCustomerBalanceData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -90,7 +94,7 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
   public static boolean isCustomerBalanceFixed(ConnectionProvider connectionProvider)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
-      "        SELECT count(*)" +
+      "        SELECT count(*) as existpreference" +
       "        FROM ad_preference" +
       "        WHERE attribute = 'IsCustomerBalanceRestored'";
 
@@ -103,7 +107,7 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
 
       result = st.executeQuery();
       if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "COUNT(*)").equals("0");
+        boolReturn = !UtilSql.getValue(result, "existpreference").equals("0");
       }
       result.close();
     } catch(SQLException e){
@@ -190,8 +194,8 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
       while(continueResult && result.next()) {
         countRecord++;
         UpdateCustomerBalanceData objectUpdateCustomerBalanceData = new UpdateCustomerBalanceData();
-        objectUpdateCustomerBalanceData.cBpartnerId = UtilSql.getValue(result, "C_BPARTNER_ID");
-        objectUpdateCustomerBalanceData.customercredit = UtilSql.getValue(result, "CUSTOMERCREDIT");
+        objectUpdateCustomerBalanceData.cBpartnerId = UtilSql.getValue(result, "c_bpartner_id");
+        objectUpdateCustomerBalanceData.customercredit = UtilSql.getValue(result, "customercredit");
         objectUpdateCustomerBalanceData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectUpdateCustomerBalanceData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -220,7 +224,7 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
   public static int updateCustomerCredit(ConnectionProvider connectionProvider, String cumstomeCredit, String businessPartnerId)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
-      "        UPDATE c_bpartner SET so_creditused = ?, updatedby='0', updated=now() WHERE c_bpartner_id = ?";
+      "        UPDATE c_bpartner SET so_creditused = TO_NUMBER(?), updatedby='0', updated=now() WHERE c_bpartner_id = ?";
 
     int updateCount = 0;
     PreparedStatement st = null;
