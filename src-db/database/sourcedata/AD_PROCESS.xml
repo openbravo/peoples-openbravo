@@ -2767,26 +2767,6 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800077-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--800077--></AD_PROCESS>
 
-<!--800078--><AD_PROCESS>
-<!--800078-->  <AD_PROCESS_ID><![CDATA[800078]]></AD_PROCESS_ID>
-<!--800078-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800078-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800078-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800078-->  <VALUE><![CDATA[C_Order_Actualize_Pricelist]]></VALUE>
-<!--800078-->  <NAME><![CDATA[Update Price List from Orders]]></NAME>
-<!--800078-->  <DESCRIPTION><![CDATA[Update pricelist from orders]]></DESCRIPTION>
-<!--800078-->  <HELP><![CDATA[Update pricelist from orders]]></HELP>
-<!--800078-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800078-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800078-->  <PROCEDURENAME><![CDATA[C_Order_Actualize_Pricelist]]></PROCEDURENAME>
-<!--800078-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800078-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800078-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800078-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800078-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800078-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--800078--></AD_PROCESS>
-
 <!--800079--><AD_PROCESS>
 <!--800079-->  <AD_PROCESS_ID><![CDATA[800079]]></AD_PROCESS_ID>
 <!--800079-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

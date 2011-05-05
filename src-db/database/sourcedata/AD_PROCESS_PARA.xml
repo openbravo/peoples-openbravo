@@ -3285,64 +3285,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--800027-->  <AD_ELEMENT_ID><![CDATA[267]]></AD_ELEMENT_ID>
 <!--800027--></AD_PROCESS_PARA>
 
-<!--800028--><AD_PROCESS_PARA>
-<!--800028-->  <AD_PROCESS_PARA_ID><![CDATA[800028]]></AD_PROCESS_PARA_ID>
-<!--800028-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800028-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800028-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800028-->  <NAME><![CDATA[Starting Date]]></NAME>
-<!--800028-->  <DESCRIPTION><![CDATA[A parameter stating the starting time range related to a specified request.]]></DESCRIPTION>
-<!--800028-->  <HELP><![CDATA[The Date From indicates the starting date of a range.]]></HELP>
-<!--800028-->  <AD_PROCESS_ID><![CDATA[800078]]></AD_PROCESS_ID>
-<!--800028-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--800028-->  <AD_REFERENCE_ID><![CDATA[15]]></AD_REFERENCE_ID>
-<!--800028-->  <COLUMNNAME><![CDATA[DateFrom]]></COLUMNNAME>
-<!--800028-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--800028-->  <FIELDLENGTH><![CDATA[10]]></FIELDLENGTH>
-<!--800028-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--800028-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--800028-->  <AD_ELEMENT_ID><![CDATA[1581]]></AD_ELEMENT_ID>
-<!--800028--></AD_PROCESS_PARA>
-
-<!--800029--><AD_PROCESS_PARA>
-<!--800029-->  <AD_PROCESS_PARA_ID><![CDATA[800029]]></AD_PROCESS_PARA_ID>
-<!--800029-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800029-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800029-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800029-->  <NAME><![CDATA[Ending Date]]></NAME>
-<!--800029-->  <DESCRIPTION><![CDATA[A parameter stating the ending time range related for a specified request, query, etc.]]></DESCRIPTION>
-<!--800029-->  <HELP><![CDATA[The Date To indicates the end date of a range (inclusive)]]></HELP>
-<!--800029-->  <AD_PROCESS_ID><![CDATA[800078]]></AD_PROCESS_ID>
-<!--800029-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--800029-->  <AD_REFERENCE_ID><![CDATA[15]]></AD_REFERENCE_ID>
-<!--800029-->  <COLUMNNAME><![CDATA[DateTo]]></COLUMNNAME>
-<!--800029-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--800029-->  <FIELDLENGTH><![CDATA[10]]></FIELDLENGTH>
-<!--800029-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--800029-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--800029-->  <AD_ELEMENT_ID><![CDATA[1582]]></AD_ELEMENT_ID>
-<!--800029--></AD_PROCESS_PARA>
-
-<!--800030--><AD_PROCESS_PARA>
-<!--800030-->  <AD_PROCESS_PARA_ID><![CDATA[800030]]></AD_PROCESS_PARA_ID>
-<!--800030-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800030-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800030-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800030-->  <NAME><![CDATA[Business Partner]]></NAME>
-<!--800030-->  <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
-<!--800030-->  <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
-<!--800030-->  <AD_PROCESS_ID><![CDATA[800078]]></AD_PROCESS_ID>
-<!--800030-->  <SEQNO><![CDATA[30]]></SEQNO>
-<!--800030-->  <AD_REFERENCE_ID><![CDATA[30]]></AD_REFERENCE_ID>
-<!--800030-->  <AD_REFERENCE_VALUE_ID><![CDATA[800057]]></AD_REFERENCE_VALUE_ID>
-<!--800030-->  <COLUMNNAME><![CDATA[C_BPartner_ID]]></COLUMNNAME>
-<!--800030-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--800030-->  <FIELDLENGTH><![CDATA[40]]></FIELDLENGTH>
-<!--800030-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--800030-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--800030-->  <AD_ELEMENT_ID><![CDATA[187]]></AD_ELEMENT_ID>
-<!--800030--></AD_PROCESS_PARA>
-
 <!--800031--><AD_PROCESS_PARA>
 <!--800031-->  <AD_PROCESS_PARA_ID><![CDATA[800031]]></AD_PROCESS_PARA_ID>
 <!--800031-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
