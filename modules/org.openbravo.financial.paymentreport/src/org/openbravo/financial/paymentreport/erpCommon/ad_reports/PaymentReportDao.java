@@ -515,31 +515,23 @@ public class PaymentReportDao {
               FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getDueDate()).toString());
           // plannedDSO
           plannedDSO = (FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getDueDate()
-              .getTime() - FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getInvoice()
-              .getInvoiceDate().getTime());
+              .getTime() - invoicedDate.getTime());
           FieldProviderFactory.setField(data[i], "PLANNED_DSO", String.valueOf(plannedDSO
               / (1000 * 60 * 60 * 24)));
           // currentDSO
-          currentTime = System.currentTimeMillis();
-          if (currentTime < invoicedDate.getTime())
-            FieldProviderFactory.setField(data[i], "CURRENT_DSO", String.valueOf(plannedDSO
-                / (1000 * 60 * 60 * 24)));
-          else {
-            currentDSO = currentTime
-                - FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getInvoice()
-                    .getInvoiceDate().getTime();
-            FieldProviderFactory.setField(data[i], "CURRENT_DSO", String.valueOf((currentDSO)
-                / (1000 * 60 * 60 * 24)));
+          if (FIN_PaymentScheduleDetail[i].getPaymentDetails() != null) {
+            currentDSO = FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
+                .getPaymentDate().getTime()
+                - invoicedDate.getTime();
+          } else {
+            currentTime = System.currentTimeMillis();
+            currentDSO = currentTime - invoicedDate.getTime();
           }
+          FieldProviderFactory.setField(data[i], "CURRENT_DSO", String.valueOf((currentDSO)
+              / (1000 * 60 * 60 * 24)));
           // daysOverdue
-          if (currentTime < FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getDueDate()
-              .getTime())
-            FieldProviderFactory.setField(data[i], "OVERDUE", "0");
-          else
-            FieldProviderFactory.setField(data[i], "OVERDUE", String
-                .valueOf((currentTime - FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule()
-                    .getDueDate().getTime())
-                    / (1000 * 60 * 60 * 24)));
+          FieldProviderFactory.setField(data[i], "OVERDUE", String
+              .valueOf((currentDSO - plannedDSO) / (1000 * 60 * 60 * 24)));
         } else {
           // project
           FieldProviderFactory.setField(data[i], "PROJECT", "");
