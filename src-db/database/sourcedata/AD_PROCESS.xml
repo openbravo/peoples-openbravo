@@ -1543,26 +1543,6 @@
 <!--205-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--205--></AD_PROCESS>
 
-<!--207--><AD_PROCESS>
-<!--207-->  <AD_PROCESS_ID><![CDATA[207]]></AD_PROCESS_ID>
-<!--207-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--207-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--207-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--207-->  <VALUE><![CDATA[Import_Invoice]]></VALUE>
-<!--207-->  <NAME><![CDATA[Import Invoice]]></NAME>
-<!--207-->  <DESCRIPTION><![CDATA[Import Invoice]]></DESCRIPTION>
-<!--207-->  <HELP><![CDATA[The Parameters are default values for null import record values, they do not overwrite any data.]]></HELP>
-<!--207-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--207-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--207-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--207-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--207-->  <CLASSNAME><![CDATA[org.openbravo.process.ImportInvoice]]></CLASSNAME>
-<!--207-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--207-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--207-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--207-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--207--></AD_PROCESS>
-
 <!--208--><AD_PROCESS>
 <!--208-->  <AD_PROCESS_ID><![CDATA[208]]></AD_PROCESS_ID>
 <!--208-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1763,46 +1743,6 @@
 <!--218-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--218-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--218--></AD_PROCESS>
-
-<!--219--><AD_PROCESS>
-<!--219-->  <AD_PROCESS_ID><![CDATA[219]]></AD_PROCESS_ID>
-<!--219-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--219-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--219-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--219-->  <VALUE><![CDATA[Import_Inventory]]></VALUE>
-<!--219-->  <NAME><![CDATA[Import Inventory]]></NAME>
-<!--219-->  <DESCRIPTION><![CDATA[Import Physical Inventory]]></DESCRIPTION>
-<!--219-->  <HELP><![CDATA[The Parameters are default values for null import record values, they do not overwrite any data.]]></HELP>
-<!--219-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--219-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--219-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--219-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--219-->  <CLASSNAME><![CDATA[org.openbravo.process.ImportInventory]]></CLASSNAME>
-<!--219-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--219-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--219-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--219-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--219--></AD_PROCESS>
-
-<!--220--><AD_PROCESS>
-<!--220-->  <AD_PROCESS_ID><![CDATA[220]]></AD_PROCESS_ID>
-<!--220-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--220-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--220-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--220-->  <VALUE><![CDATA[Import_GLJournal]]></VALUE>
-<!--220-->  <NAME><![CDATA[Import Journal]]></NAME>
-<!--220-->  <DESCRIPTION><![CDATA[Import General Ledger Batch/Journal/Line]]></DESCRIPTION>
-<!--220-->  <HELP><![CDATA[The Parameters are default values for null import record values, they do not overwrite any data.]]></HELP>
-<!--220-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--220-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--220-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--220-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--220-->  <CLASSNAME><![CDATA[org.openbravo.process.ImportGLJournal]]></CLASSNAME>
-<!--220-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--220-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--220-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--220-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--220--></AD_PROCESS>
 
 <!--221--><AD_PROCESS>
 <!--221-->  <AD_PROCESS_ID><![CDATA[221]]></AD_PROCESS_ID>
