@@ -1343,6 +1343,7 @@ isc.OBStandardView.addProperties({
   },
   
   deleteSelectedRows: function(autoSaveDone){
+  if (!this.readOnly) {
     // first save what we have edited
     if (!autoSaveDone) {
       var actionObject = {
@@ -1428,6 +1429,7 @@ isc.OBStandardView.addProperties({
       }
     };
     isc.ask(msg, callback);
+   }
   },
   
   newRow: function(rowNum) {
