@@ -81,7 +81,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
               Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"), Utility.getContext(
                   this, vars, "#User_Client", "Account")));
       String strNotInitialBalance = vars.getGlobalVariable("inpNotInitialBalance",
-          "ReportTrialBalance|notInitialBalance", "Y");
+          "ReportTrialBalance|notInitialBalance", "N");
       String strcElementValueFromDes = "", strcElementValueToDes = "";
       if (!strcElementValueFrom.equals(""))
         strcElementValueFromDes = ReportTrialBalanceData.selectSubaccountDescription(this,
