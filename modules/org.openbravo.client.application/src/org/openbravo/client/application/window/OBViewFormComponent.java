@@ -742,7 +742,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     private List<OBViewFieldDefinition> children = new ArrayList<OBViewFieldDefinition>();
 
     public OBViewFieldGroup() {
-      type = "OBViewFieldGroup";
+      type = "OBSectionItem";
     }
 
     public String getLabel() {
