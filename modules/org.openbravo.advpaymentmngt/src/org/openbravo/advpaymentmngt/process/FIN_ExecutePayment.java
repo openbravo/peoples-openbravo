@@ -181,7 +181,9 @@ public class FIN_ExecutePayment {
           BusinessPartner bPartner = psd.getInvoicePaymentSchedule().getInvoice()
               .getBusinessPartner();
           BigDecimal creditUsed = bPartner.getCreditUsed();
-          creditUsed = creditUsed.subtract(pDetail.getAmount());
+          BigDecimal amountWithSign = psd.getInvoicePaymentSchedule().getInvoice()
+              .isSalesTransaction() ? pDetail.getAmount() : pDetail.getAmount().negate();
+          creditUsed = creditUsed.subtract(amountWithSign);
           bPartner.setCreditUsed(creditUsed);
           OBDal.getInstance().save(bPartner);
           FIN_AddPayment.updatePaymentScheduleAmounts(psd.getInvoicePaymentSchedule(), pDetail
