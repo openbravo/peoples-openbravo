@@ -59,7 +59,8 @@ isc.OBSelectorPopupWindow.addProperties({
       operator = 'iStartsWith';      
     }
 
-    for (var i = 0; i < this.selectorGridFields.length; i++) {
+    var i;
+    for (i = 0; i < this.selectorGridFields.length; i++) {
       if (this.selectorGridFields[i].disableFilter) {
         this.selectorGridFields[i].canFilter = false;
       }
@@ -165,7 +166,8 @@ isc.OBSelectorPopupWindow.addProperties({
       selectorWindow.selectorGrid.filterByEditor();
     };
     
-    for (var i = 0; i < gridFields.length; i++) {
+    var i;
+    for (i = 0; i < gridFields.length; i++) {
       var gridField = gridFields[i];
       if (!gridField.filterEditorProperties) {
         gridField.filterEditorProperties = {
@@ -306,7 +308,10 @@ isc.OBSelectorItem.addProperties({
   
   pickListProperties: {
     fetchDelay: 400,
-    showHeaderContextMenu: false
+    showHeaderContextMenu: false,
+    dataProperties: {
+      useClientFiltering: false
+    }
   },
   
   setPickListWidth: function(){
@@ -320,6 +325,9 @@ isc.OBSelectorItem.addProperties({
   },
   
   showPickList: function() {
+    if (this.pickList) {
+      this.pickList.invalidateCache();
+    }
     // Set the pickListWidth just before being shown.
     this.setPickListWidth();
     this.Super('showPickList', arguments);
@@ -456,8 +464,9 @@ isc.OBSelectorItem.addProperties({
       requestProperties.params[OB.Constants.ORG_PARAMETER] = requestProperties.params.inpadOrgId;
     }
     
-    var criteria = this.getPickListFilterCriteria();
-    for (var i = 0; i < criteria.criteria.length; i++) {
+    var criteria = this.getPickListFilterCriteria(),
+        i;
+    for (i = 0; i < criteria.criteria.length; i++) {
       if (criteria.criteria[i].fieldName === this.displayField) {
         // for the suggestion box it is one big or
         requestProperties.params[OB.Constants.OR_EXPRESSION] = 'true';
@@ -501,7 +510,8 @@ isc.OBSelectorItem.addProperties({
     // the displayField filter is not passed when the user clicks the drop-down button
     // display field is passed on the criteria.
     if (crit[this.displayField]) {
-      for (var i = 0; i < this.extraSearchFields.length; i++) {
+      var i;
+      for (i = 0; i < this.extraSearchFields.length; i++) {
         criteria.criteria.push({
           fieldName: this.extraSearchFields[i],
           operator: 'iContains',
