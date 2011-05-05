@@ -471,7 +471,7 @@ BEGIN
             SELECT ps.fin_paymentmethod_id, ps.duedate, ps.c_currency_id, ps.ad_org_id, ps.fin_payment_schedule_id,
               sum(psd.amount) as outstandingamt
             FROM fin_payment_schedule ps
-              INNER JOIN fin_payment_scheduledetail psd ON ps.fin_payment_schedule_id = psd.fin_payment_schedule_order
+              INNER JOIN fin_payment_scheduledetail psd ON ps.fin_payment_schedule_id = psd.fin_payment_schedule_invoice
                                                            AND psd.fin_payment_detail_id is null
             WHERE ps.c_invoice_id = p_record_id
               AND ps.isactive = 'Y'
