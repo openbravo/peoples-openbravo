@@ -98,10 +98,12 @@ public class PaymentReportDao {
 
       hsqlScript.append(" as fpsd ");
       hsqlScript.append(" left outer join fpsd.paymentDetails.finPayment pay");
-      hsqlScript.append(" left outer join pay.businessPartner.businessPartnerCategory paybpc");
+      hsqlScript.append(" left outer join pay.businessPartner paybp");
+      hsqlScript.append(" left outer join paybp.businessPartnerCategory paybpc");
       hsqlScript.append(" left outer join fpsd.invoicePaymentSchedule invps");
       hsqlScript.append(" left outer join invps.invoice inv");
-      hsqlScript.append(" left outer join inv.businessPartner.businessPartnerCategory invbpc");
+      hsqlScript.append(" left outer join inv.businessPartner invbp");
+      hsqlScript.append(" left outer join invbp.businessPartnerCategory invbpc");
       hsqlScript.append(" left outer join fpsd.paymentDetails.finPayment.currency paycur");
       hsqlScript.append(" left outer join fpsd.invoicePaymentSchedule.invoice.currency invcur");
       hsqlScript.append(" left outer join pay.project paypro");
@@ -249,9 +251,7 @@ public class PaymentReportDao {
         hsqlScript.append("' or ((inv.");
         hsqlScript.append(Invoice.PROPERTY_SALESTRANSACTION);
         hsqlScript.append(" = 'Y'");
-        hsqlScript.append(" and inv.");
-        hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
-        hsqlScript.append(".");
+        hsqlScript.append(" and invbp.");
         hsqlScript.append(BusinessPartner.PROPERTY_ACCOUNT);
         hsqlScript.append(".id = '");
         hsqlScript.append(strFinancialAccountId);
@@ -259,9 +259,7 @@ public class PaymentReportDao {
         hsqlScript.append(" or (inv.");
         hsqlScript.append(Invoice.PROPERTY_SALESTRANSACTION);
         hsqlScript.append(" = 'N'");
-        hsqlScript.append(" and inv.");
-        hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
-        hsqlScript.append(".");
+        hsqlScript.append(" and invbp.");
         hsqlScript.append(BusinessPartner.PROPERTY_POFINANCIALACCOUNT);
         hsqlScript.append(".id = '");
         hsqlScript.append(strFinancialAccountId);
@@ -310,13 +308,9 @@ public class PaymentReportDao {
       hsqlScript.append(" order by ");
 
       if (strGroupCrit.equalsIgnoreCase("APRM_FATS_BPARTNER")) {
-        hsqlScript.append(" coalesce(pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_BUSINESSPARTNER);
-        hsqlScript.append(".");
+        hsqlScript.append(" coalesce(paybp.");
         hsqlScript.append(BusinessPartner.PROPERTY_NAME);
-        hsqlScript.append(", inv.");
-        hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
-        hsqlScript.append(".");
+        hsqlScript.append(", invbp.");
         hsqlScript.append(BusinessPartner.PROPERTY_NAME);
         hsqlScript.append("), ");
       } else if (strGroupCrit.equalsIgnoreCase("Project")) {
