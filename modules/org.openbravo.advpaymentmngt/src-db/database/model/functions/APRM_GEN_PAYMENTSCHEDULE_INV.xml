@@ -177,7 +177,7 @@ BEGIN
              fin_payment_scheduledetail_id,
              fin_payment_scheduledetail.fin_payment_schedule_order,
              fin_payment_scheduledetail.fin_payment_detail_id,
-             CASE WHEN fin_payment.status IS NULL OR fin_payment.status IN ('RPAP', 'RPAE') THEN 'N' ELSE 'Y' END AS paid
+             CASE WHEN fin_payment.status IN ('PPM', 'RPR', 'PWNC', 'RDNC', 'RPPC') THEN 'Y' ELSE 'N' END AS paid
       FROM c_invoiceline, c_orderline, fin_payment_schedule,
         fin_payment_scheduledetail LEFT JOIN fin_payment_detail ON fin_payment_scheduledetail.fin_payment_detail_id = fin_payment_detail.fin_payment_detail_id
                                    LEFT JOIN fin_payment ON fin_payment_detail.fin_payment_id = fin_payment.fin_payment_id
