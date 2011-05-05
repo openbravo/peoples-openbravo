@@ -1787,19 +1787,6 @@
 <!--372-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--372--></AD_MENU>
 
-<!--376--><AD_MENU>
-<!--376-->  <AD_MENU_ID><![CDATA[376]]></AD_MENU_ID>
-<!--376-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--376-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--376-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--376-->  <NAME><![CDATA[Import Orders]]></NAME>
-<!--376-->  <DESCRIPTION><![CDATA[Import orders in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--376-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--376-->  <ACTION><![CDATA[W]]></ACTION>
-<!--376-->  <AD_WINDOW_ID><![CDATA[281]]></AD_WINDOW_ID>
-<!--376-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--376--></AD_MENU>
-
 <!--381--><AD_MENU>
 <!--381-->  <AD_MENU_ID><![CDATA[381]]></AD_MENU_ID>
 <!--381-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
