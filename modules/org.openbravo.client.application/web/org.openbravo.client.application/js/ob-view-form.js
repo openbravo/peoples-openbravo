@@ -538,7 +538,9 @@ OB.ViewFormProperties = {
       }
     }
     
-    this.attachmentsSection.fillAttachments(data.attachments);
+    if(this.attachmentsSection) {
+      this.attachmentsSection.fillAttachments(data.attachments);
+    }
 
     // apparently sometimes an empty string is returned
     if (calloutMessages && calloutMessages.length > 0 && calloutMessages[0] !== '') {
