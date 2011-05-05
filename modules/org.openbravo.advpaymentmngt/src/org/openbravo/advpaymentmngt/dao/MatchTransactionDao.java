@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -165,7 +165,7 @@ public class MatchTransactionDao {
     final StringBuilder whereClause = new StringBuilder();
 
     whereClause.append(" as bsl ");
-    whereClause.append(" left outer join bsl.financialAccountTransaction ");
+    whereClause.append(" left outer join bsl.financialAccountTransaction as fat");
     whereClause.append(" where bsl.").append(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT);
     whereClause.append(".").append(FIN_BankStatement.PROPERTY_ACCOUNT).append(".id = '");
     whereClause.append(strFinancialAccountId).append("'");
@@ -180,17 +180,11 @@ public class MatchTransactionDao {
       whereClause.append("   or bsl.").append(FIN_BankStatementLine.PROPERTY_CRAMOUNT);
       whereClause.append(" = 0) ");
     }
-    whereClause.append("   and (bsl.").append(
-        FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION);
-    whereClause.append(" is null");
-    whereClause.append("   or (bsl.").append(
-        FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION);
-    whereClause.append(".").append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION);
+    whereClause.append("   and (fat is null");
+    whereClause.append("   or (fat.").append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION);
     whereClause.append(".id = '").append(strReconciliationId).append("'");
     if (!strShowCleared.equalsIgnoreCase("Y")) {
-      whereClause.append("   and bsl.").append(
-          FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION);
-      whereClause.append(".").append(FIN_FinaccTransaction.PROPERTY_STATUS);
+      whereClause.append("   and fat.").append(FIN_FinaccTransaction.PROPERTY_STATUS);
       whereClause.append(" <> 'RPPC' ");
     }
     whereClause.append("))");
