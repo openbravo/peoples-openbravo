@@ -264,6 +264,19 @@ isc.RelativeDateItem.addProperties({
 
 });
 
+isc.DateItem.changeDefaults('textFieldDefaults', {
+  isDisabled: function() {
+    var disabled = this.Super('isDisabled', arguments);
+    if (disabled) {
+      return true;
+    }
+    if (this.parentItem.isDisabled()) {
+      return true;
+    }
+    return false;
+  }
+});
+
 // uncomment this code and put a breakpoint to get a better control
 // on from where async operations are started
 //isc.Class._fireOnPause = isc.Class.fireOnPause;
