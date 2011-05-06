@@ -757,9 +757,9 @@ public class AdvancedQueryBuilder {
 
     // handle the following case:
     // table.window.identifier as the sort string
-    boolean isIdenfitier = localOrderBy.equals(JsonConstants.IDENTIFIER)
+    boolean isIdentifier = localOrderBy.equals(JsonConstants.IDENTIFIER)
         || localOrderBy.endsWith("." + JsonConstants.IDENTIFIER);
-    if (isIdenfitier) {
+    if (isIdentifier) {
       Entity searchEntity = getEntity();
       // a path to an entity, find the last entity
       final String prefix;

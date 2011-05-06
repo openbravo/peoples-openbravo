@@ -266,7 +266,7 @@ isc.OBNoteLayout.addProperties( {
                     value : view.viewGrid.getSelectedRecord().id
                   });
 
-                  criteria[OB.Constants.ORDERBY_PARAMETER] = 'updated desc';
+                  criteria[OB.Constants.ORDERBY_PARAMETER] = '-updated';
                 }
                 return criteria;
 
