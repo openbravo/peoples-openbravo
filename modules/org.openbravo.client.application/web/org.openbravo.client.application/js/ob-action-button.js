@@ -25,6 +25,7 @@ isc.ClassFactory.defineClass('OBToolbarActionButton', isc.OBToolbarTextButton);
 isc.OBToolbarActionButton.addProperties( {
   visible: false,
   modal: true,
+  contextView: null,
   
   action : function() {
     this.runProcess();
@@ -42,7 +43,7 @@ isc.OBToolbarActionButton.addProperties( {
   },
   
   doAction: function(){
-    var theView = this.view;
+    var theView = this.contextView;
 
     var allProperties = theView.getContextInfo(false, true, false, true);
     var sessionProperties = theView.getContextInfo(true, true, false, true);
@@ -89,10 +90,13 @@ isc.OBToolbarActionButton.addProperties( {
   
   closeProcessPopup: function(newWindow) {
     //Keep current view for the callback function. Refresh and look for tab message.
-    var theView = this.view;
-    this.view.refresh(function(){
-        theView.getTabMessage();
-        theView.toolBar.refreshCustomButtons();
+    var contextView = OB.ActionButton.executingProcess.contextView,
+        currentView = this.view;
+    
+    currentView.refresh(function(){
+        // Refresh current view, taking the message set in the process' context view
+        currentView.getTabMessage(contextView.tabId);
+        currentView.toolBar.refreshCustomButtons();
       });
 
     OB.ActionButton.executingProcess = null;
@@ -110,7 +114,7 @@ isc.OBToolbarActionButton.addProperties( {
         newWindow = '/'+newWindow;
       }
       
-      if (newWindow.startsWith(theView.mapping250)) {
+      if (newWindow.startsWith(contextView.mapping250)) {
         // Refreshing current tab, do not open it again.
         return;
       }
@@ -129,7 +133,7 @@ isc.OBToolbarActionButton.addProperties( {
       return;
     }
     
-    this.visible = !this.displayIf || this.displayIf(null, null, this.view.viewForm, record);
+    this.visible = !this.displayIf || this.displayIf(null, null, this.contextView.viewForm, record);
     
     // Even visible is correctly set, it is necessary to execute show() or hide()
     if (this.visible){
@@ -138,7 +142,7 @@ isc.OBToolbarActionButton.addProperties( {
       this.hide();
     }
     
-    var readonly = this.readOnlyIf && this.readOnlyIf(null, null, this.view.viewForm, record);
+    var readonly = this.readOnlyIf && this.readOnlyIf(null, null, this.contextView.viewForm, record);
     if (readonly) {
       this.disable();
     } else {

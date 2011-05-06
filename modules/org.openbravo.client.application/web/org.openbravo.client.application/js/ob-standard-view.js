@@ -184,11 +184,13 @@ isc.OBStandardView.addProperties({
     
     var rightMemberButtons = [];
     var leftMemberButtons = [];
-    var i;
+    var i, actionButton;
     
     if (this.actionToolbarButtons) {
       for (i = 0; i < this.actionToolbarButtons.length; i++) {
-        rightMemberButtons.push(isc.OBToolbarActionButton.create(this.actionToolbarButtons[i]));
+        actionButton = isc.OBToolbarActionButton.create(this.actionToolbarButtons[i]);
+        actionButton.contextView = this;
+        rightMemberButtons.push(actionButton);
       }
     }
     
@@ -518,6 +520,33 @@ isc.OBStandardView.addProperties({
     
     this.standardWindow.addView(childView);
     
+    // Add buttons in parent to child. Note that currently it is only added one level.
+    var i;
+    if (this.actionToolbarButtons && this.actionToolbarButtons.length>0){
+      for (i = 0; i < this.actionToolbarButtons.length; i++) {
+        actionButton = isc.OBToolbarActionButton.create(this.actionToolbarButtons[i]);
+        actionButton.contextView = this; // Context is still parent view
+        actionButton.toolBar = childView.toolBar;
+        actionButton.view = childView;
+        
+        childView.toolBar.rightMembers.push(actionButton);
+        
+        childView.toolBar.addMems([[actionButton]]);
+        childView.toolBar.addMems([[isc.HLayout.create({
+          width: (this.toolBar && this.toolBar.rightMembersMargin) || 12, 
+          height: 1
+        })]]);
+      }
+      
+      if (this.actionToolbarButtons.length > 0) {
+        // Add margin in the right
+        childView.toolBar.addMems([[isc.HLayout.create({
+          width: (this.toolBar && this.toolBar.rightMargin) || 4, 
+          height: 1
+        })]]);
+      }
+    }    
+ 
     childView.parentView = this;
     childView.parentTabSet = this.childTabSet;
     
@@ -1683,7 +1712,8 @@ isc.OBStandardView.addProperties({
     }, callbackFunction);
   },
   
-  getTabMessage: function(){
+  getTabMessage: function(forcedTabId){
+    var tabId = forcedTabId || this.tabId;
     var callback = function(resp, data, req){
       if (req.clientContext && data.type && (data.text || data.title)) {
         req.clientContext.messageBar.setMessage(OBMessageBar[data.type], data.title, data.text);
@@ -1691,7 +1721,7 @@ isc.OBStandardView.addProperties({
     };
     
     OB.RemoteCallManager.call('org.openbravo.client.application.window.GetTabMessageActionHandler', {
-      tabId: this.tabId
+      tabId: tabId
     }, null, callback, this);
   }
 });
