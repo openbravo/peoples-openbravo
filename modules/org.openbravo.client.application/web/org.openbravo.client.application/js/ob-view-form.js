@@ -103,6 +103,7 @@ OB.ViewFormProperties = {
         break;
       }
     }
+    
     delete this._preventFocusChanges;
   },
 
@@ -431,12 +432,22 @@ OB.ViewFormProperties = {
   },
   
   setFields: function(){
+    var i, item;
+    
     // is used in various places, prevent focus and scroll events
     this._preventFocusChanges = true;
     this.Super('setFields', arguments);
     delete this._preventFocusChanges;
     this.fieldsByInpColumnName = null;
     this.fieldsByColumnName = null;
+
+    for (i = 0; i < this.getItems().length; i++) {
+      item = this.getItem(i);
+      if(item && item.setSectionItemInContent) {
+        item.setSectionItemInContent(this);
+      }
+    }
+
   },
   
   retrieveInitialValues: function(isNew){

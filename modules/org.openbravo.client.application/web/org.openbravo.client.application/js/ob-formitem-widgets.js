@@ -417,6 +417,15 @@ isc.OBSectionItem.addProperties({
   
   alwaysTakeSpace: false,
 
+  setSectionItemInContent: function(form) {
+    var i = 0;
+    for (i = 0; i < this.itemIds.length; i++) {
+      if (form.getItem(this.itemIds[i])) {
+        form.getItem(this.itemIds[i]).section = this;
+      }
+    }
+  },
+  
   // never disable a section item
   isDisabled: function(){
     return false;
