@@ -247,9 +247,9 @@ isc.OBMyOpenbravo.addProperties({
       sendEvents: false,
 
       // the PortalColumn is an autochild of the PortalLayout with the
-      // child name of 'column', the properties of the PortalColumn
+      // child name of 'portalColumn', the properties of the PortalColumn
       // can be set like this using the AutoChild concept of SC
-      columnProperties: {
+      portalColumnProperties: {
         membersMargin: 12,
 
         // is used to prevent dropping on the left or right 
@@ -304,7 +304,7 @@ isc.OBMyOpenbravo.addProperties({
           if (userHeight !== null) {
             dynamicProperties.height = userHeight;
           }
-          var portalRow = this.createAutoChild('row', dynamicProperties);
+          var portalRow = this.createAutoChild('portalRow', dynamicProperties);
 
           this.addMember(portalRow, position);
           portalRow.addMember(portlet);
@@ -823,9 +823,8 @@ isc.OBMyOpenbravo.addProperties({
 
     this.portalLayout.sendEvents = false;
     this.isReloading = true;
-    this.portalLayout.getMembers()[0].removeAllRows();
+    this.portalLayout.getMembers()[0].removeAllRows();      
     this.portalLayout.getMembers()[1].removeAllRows();
-
     this.notifyEvent('RELOAD_WIDGETS');
   }
 });
