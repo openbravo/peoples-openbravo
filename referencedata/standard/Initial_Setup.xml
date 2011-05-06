@@ -306,21 +306,6 @@
     <default>true</default>
     <documentCategory inactive="true" xsi:nil="true"/>
   </FinancialMgmtGLCategory>
-  <ADPreference id="752C5DCD21EC45CEA13195D8DD49AFDF" identifier="C_DocTypeTarget_ID - ">
-    <id>752C5DCD21EC45CEA13195D8DD49AFDF</id>
-    <active>true</active>
-    <window id="800004" entity-name="ADWindow" identifier="Simple Sales Order"/>
-    <userContact xsi:nil="true"/>
-    <attribute>C_DocTypeTarget_ID</attribute>
-    <searchKey>76E7C671FCE34556908E563F825C2937</searchKey>
-    <property xsi:nil="true"/>
-    <propertyList>false</propertyList>
-    <visibleAtClient xsi:nil="true"/>
-    <visibleAtOrganization xsi:nil="true"/>
-    <visibleAtRole xsi:nil="true"/>
-    <selected>false</selected>
-    <module xsi:nil="true"/>
-  </ADPreference>
   <ADPreference id="AAEF5567618F49FE8BA729E550614AA0" identifier="C_DocTypeTarget_ID - ">
     <id>AAEF5567618F49FE8BA729E550614AA0</id>
     <active>true</active>
