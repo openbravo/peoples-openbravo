@@ -510,15 +510,14 @@ isc.OBSelectorItem.addProperties({
     // the displayField filter is not passed when the user clicks the drop-down button
     // display field is passed on the criteria.
     var displayFieldValue = null, i;
-    if (crit[this.displayField]) {
-      displayFieldValue = crit[this.displayField];
-    }
-    if (displayFieldValue === null && crit.criteria) {
+    if (crit.criteria) {
       for (i = 0; i < crit.criteria.length; i++) {
         if (crit.criteria[i].fieldName === this.displayField) {
           displayFieldValue = crit.criteria[i].value;
         }
       }
+    } else if (crit[this.displayField]) {
+      displayFieldValue = crit[this.displayField];
     }
     if (displayFieldValue !== null) {
       for (i = 0; i < this.extraSearchFields.length; i++) {
