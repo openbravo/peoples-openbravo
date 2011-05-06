@@ -725,7 +725,7 @@ public class AdvancedQueryBuilder {
       orderByClause = "";
       return orderByClause;
     }
-    final StringBuilder sb = new StringBuilder(" order by ");
+    final StringBuilder sb = new StringBuilder();
     boolean firstElement = true;
     for (String localOrderBy : orderBy.split(",")) {
       if (!firstElement) {
@@ -734,7 +734,13 @@ public class AdvancedQueryBuilder {
       sb.append(getOrderByClausePart(localOrderBy.trim()));
       firstElement = false;
     }
-    orderByClause = sb.toString();
+
+    // no order by elements, just use empty string
+    if (sb.toString().trim().length() == 0) {
+      orderByClause = "";
+    } else {
+      orderByClause = " order by " + sb.toString();
+    }
     return orderByClause;
   }
 
