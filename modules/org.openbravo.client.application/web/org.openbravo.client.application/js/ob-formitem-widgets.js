@@ -976,11 +976,11 @@ isc.OBDateItem.addProperties({
     }
     var difference = value1.getTime() - value2.getTime();
     if (difference < -1000) {
-      return 1;
+      return true;
     } else if (difference > 1000) {
-      return -1;
+      return false;
     } else {
-      return 0;
+      return true;
     }
   },
   
