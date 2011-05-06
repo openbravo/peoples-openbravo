@@ -1560,7 +1560,7 @@ and ((ad_table.accesslevel in ('3','1','7') and exists(select 1 from ad_dataset
 <!--B3DF10D5093140319BB2FBD43E5D8C47-->  <NAME><![CDATA[FIN_Payment Status validation]]></NAME>
 <!--B3DF10D5093140319BB2FBD43E5D8C47-->  <DESCRIPTION><![CDATA[Filter status in sales and purchase.]]></DESCRIPTION>
 <!--B3DF10D5093140319BB2FBD43E5D8C47-->  <TYPE><![CDATA[S]]></TYPE>
-<!--B3DF10D5093140319BB2FBD43E5D8C47-->  <CODE><![CDATA[((@Isreceipt@='Y') AND Value IN ('RPAP','RPAE','RPR','RDNC','RPPC')) OR ((@Isreceipt@='N') AND Value IN ('RPAP','RPAE','PPM','PWNC','RPPC'))]]></CODE>
+<!--B3DF10D5093140319BB2FBD43E5D8C47-->  <CODE><![CDATA[(((@Isreceipt@='Y') AND Value not IN  ('PPM','PWNC')) OR ((@Isreceipt@='N') AND Value not IN ('RPR','RDNC')))]]></CODE>
 <!--B3DF10D5093140319BB2FBD43E5D8C47-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B3DF10D5093140319BB2FBD43E5D8C47--></AD_VAL_RULE>
 
