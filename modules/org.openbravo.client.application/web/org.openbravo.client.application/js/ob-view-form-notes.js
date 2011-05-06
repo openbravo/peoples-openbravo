@@ -344,7 +344,7 @@ isc.OBNoteCanvasItem.addProperties( {
 	// setting width/height makes the canvasitem to be hidden after a few
 	// clicks on the section item, so don't do that for now
 	showTitle : false,
-	overflow : 'auto',
+	
 	// note that explicitly setting the canvas gives an error as not
 	// all props are set correctly on the canvas (for example the
 	// pointer back to this item: canvasItem
