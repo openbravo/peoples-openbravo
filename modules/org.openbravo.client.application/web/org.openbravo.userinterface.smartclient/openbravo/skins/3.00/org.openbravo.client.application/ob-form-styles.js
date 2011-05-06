@@ -282,8 +282,8 @@ isc.OBDateRangeDialog.addProperties({
 
   showShadow: false,
   shadowDepth: 5,
-  width: 400,
-  height: 160
+  width: 420,
+  height: 170
 });
 
 isc.OBDateRangeDialog.changeDefaults('headerDefaults', {
@@ -361,6 +361,7 @@ isc.DateRangeItem.addProperties({
 });
 
 isc.RelativeDateItem.addProperties({
+  showChooserIcon: false,
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
@@ -399,6 +400,23 @@ isc.RelativeDateItem.addProperties({
   }
 });
 
+isc.RelativeDateItem.changeDefaults('quantityFieldDefaults', {
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldSelectInput',
+  controlStyle: 'OBFormFieldSelectControl',
+  // max 1000 days/months in the past/future
+  max: 1000,
+  alwaysTakeSpace: false,
+  
+  // after leaving the quantity field the next time the rangeitem is visited the 
+  // focus should go to the value field again
+  blur: function() {
+    this.Super('blur', arguments);
+    this.form.setFocusItem(this.form.getItem('valueField'));
+  }
+});
+
 isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
@@ -415,65 +433,30 @@ isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
       return false;
     }
     return true;
+  },
+  
+  init: function() {
+    this.icons = [{
+      width: 21,
+      height: 21,
+      hspace: 0,
+      canFocus: false,
+      showFocused: false,
+      item: this,
+      src: '[SKIN]/../../org.openbravo.client.application/images/form/date_control.png',
+      click: function() {
+        this.item.form.canvasItem.showPicker();
+      }
+    }];
+    this.Super('init', arguments);
   }
-
+ 
 });
 
 isc.RelativeDateItem.changeDefaults('calculatedDateFieldDefaults', {
-  canFocus: false
-});
-
-isc.RelativeDateItem.changeDefaults('pickerIconDefaults', {
-  width: 21,
-  height: 21,
-  src: '[SKIN]/../../org.openbravo.client.application/images/form/date_control.png'
-});
-
-isc.RelativeDateItem.addProperties({
-  displayFormat: OB.Format.date,
-  inputFormat: OB.Format.date,
-  pickerConstructor: 'OBDateChooser',
-
-  fieldChanged: function () {
-    if (!this.valueField || !this.quantityField) {
-      return;
-    }
-    
-    var value = this.valueField.getValue(),
-      quantity = this.quantityField.getValue();
-
-    var showQuantity = (value && isc.isA.String(value) && this.relativePresets[value]);
-
-    if (!showQuantity) {
-      this.editor.colWidths[1] = 0;
-      this.quantityField.setWidth(0);
-      this.quantityField.hide();
-    } else {
-      this.editor.colWidths[1] = '*';
-      this.quantityField.setWidth('*');
-      this.quantityField.show();
-    }
-    
-    if (this.calculatedDateField) {
-      value = this.getValue();
-      var displayValue = this.editor.getValue('valueField');
-      // only show if the value is not a direct date
-      // https://issues.openbravo.com/view.php?id=16295
-      if (displayValue && displayValue.length > 0) {
-        displayValue = OB.Utilities.trim(displayValue);
-        // if it starts with a number then it must be a real date
-        if (displayValue.charAt(0) < '0' || displayValue.charAt(0) > '9' ) {
-          this.calculatedDateField.setValue(!value ? '' : 
-            '(' + this.formatDate(value) + ')');          
-        } else {
-          this.calculatedDateField.setValue('');                  
-        }
-      } else {
-        this.calculatedDateField.setValue('');                  
-      }
-    }
-  }
-
+  canFocus: false,
+  disabled: true,
+  showDisabled: false
 });
 
 /* =====================================================================

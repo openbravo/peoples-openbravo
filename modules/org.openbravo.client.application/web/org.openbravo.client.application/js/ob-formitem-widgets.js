@@ -663,23 +663,27 @@ isc.OBDateRangeDialog.addProperties({
   initWidget: function() {
     this.Super('initWidget', arguments);
     this.rangeForm.setFocusItem(this.rangeItem);
-  },
+   },
   
   show: function() {
     this.Super('show', arguments);
+    this.rangeForm.items[0].fromField.calculatedDateField.canFocus = false;
+    this.rangeForm.items[0].toField.calculatedDateField.canFocus = false;
+    this.rangeForm.items[0].fromField.valueField.focusInItem();
     this.rangeForm.focus();
   },
   
   // trick: overridden to let the ok and clear button change places
   addAutoChild: function(name, props) {
     if (name === 'okButton') {
-      return this.Super('addAutoChild', ['clearButton', { title: this.clearButtonTitle}]);
+      return this.Super('addAutoChild', ['clearButton', {canFocus:true, title: this.clearButtonTitle}]);
     } else if (name === 'clearButton') {
-      return this.Super('addAutoChild', ['okButton', { title: this.okButtonTitle}]);
+      return this.Super('addAutoChild', ['okButton', {canFocus:true, title: this.okButtonTitle}]);
     } else {
       return this.Super('addAutoChild', arguments);
     }
   }
+
 });
 
 isc.ClassFactory.defineClass('OBMiniDateRangeItem', isc.MiniDateRangeItem);
@@ -690,13 +694,26 @@ isc.OBMiniDateRangeItem.addProperties({
   rangeDialogConstructor: isc.OBDateRangeDialog,
   
   // prevent illegal values from showing up
-  updateValue : function(data) {
-    var illegalStart = data && data.start && !isc.isA.Date(data.start);
-    var illegalEnd = data && data.end && !isc.isA.Date(data.end);
+  updateValue: function(data) {
+    var illegalStart = data && data.start && !this.isCorrectRangeValue(data.start);
+    var illegalEnd = data && data.end && !this.isCorrectRangeValue(data.end);
     if (illegalStart || illegalEnd) {
       return;
     }
     this.Super('updateValue', arguments);
+  },
+  
+  isCorrectRangeValue: function(value) {
+    if (!value) {
+      return false;
+    }
+    if (isc.isA.Date(value)) {
+      return true;
+    }
+    if (value._constructor && value._constructor === 'RelativeDate') {
+      return true;
+    }
+    return false;
   },
   
   keyPress: function(item, form, keyName, characterValue){
