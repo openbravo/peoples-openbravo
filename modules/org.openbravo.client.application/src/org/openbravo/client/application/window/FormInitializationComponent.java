@@ -699,7 +699,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       log.debug("Columns in validation: '" + cols + "'");
     }
 
-    if (mode.equals("CHANGE")) {
+    if (mode.equals("CHANGE") && changedColumn != null) {
       // In case of a CHANGE event, we only add the changed column, to avoid firing reloads for
       // every column in the tab, instead firing reloads just for the dependant columns
       String changedCol = "";
