@@ -63,9 +63,9 @@
         v_AD_User_ID:=Cur_Parameter.AD_User_ID;
         v_Client_ID:=Cur_Parameter.AD_Client_ID;
         v_Org_ID:=Cur_Parameter.AD_Org_ID;
-        IF(Cur_Parameter.ParameterName='InitDate') THEN
+        IF(Cur_Parameter.ParameterName='Initdate') THEN
           v_InitDate:=Cur_Parameter.P_Date;
-          DBMS_OUTPUT.PUT_LINE('  InitDate=' || v_InitDate) ;
+          DBMS_OUTPUT.PUT_LINE('  Initdate=' || v_InitDate) ;
         ELSIF(Cur_Parameter.ParameterName='EndDate') THEN
           v_EndDate:=Cur_Parameter.P_Date;
           DBMS_OUTPUT.PUT_LINE('  EndDate=' || v_EndDate) ;
