@@ -100,15 +100,13 @@ public class DefaultJsonDataService implements JsonDataService {
         // explicitly
         boolean doCount = false;
         int count = -1;
-        int startRow = 0;
-        int computedMaxResults = Integer.MAX_VALUE;
+        int startRow = queryService.getFirstResult();
+        int endRow = startRow + queryService.getMaxResults();
+        int computedMaxResults = queryService.getMaxResults();
         if (startRowStr != null) {
           doCount = true;
-          startRow = Integer.parseInt(startRowStr);
         }
         if (endRowStr != null) {
-          int endRow = Integer.parseInt(endRowStr);
-          computedMaxResults = endRow - startRow + 1;
           // note computedmaxresults must be set before
           // endRow is increased by 1
           // increase by 1 to see if there are more results.
@@ -261,6 +259,8 @@ public class DefaultJsonDataService implements JsonDataService {
         // to make sure that we have a full page of data to display
         if (startRow < (computedMaxResults / 2)) {
           startRow = 0;
+        } else {
+          startRow -= 20;
         }
         queryService.setFirstResult(startRow);
       }

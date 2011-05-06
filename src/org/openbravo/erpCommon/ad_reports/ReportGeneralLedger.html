@@ -133,7 +133,7 @@ function onloadFunctions() {
 	  
 	  var myframe = getFrame('LayoutMDI') || top.opener;
       if (myframe) {	  
-		  myframe.OB.RemoteCallManager.call('org.openbravo.erputils.ComputeTranslatedNameActionHandler', {}, {'processId': '800000'}, 
+		  myframe.OB.RemoteCallManager.call('org.openbravo.client.application.ComputeTranslatedNameActionHandler', {}, {'processId': '800000'}, 
 		  function(response, data, request){
 		            myframe.OB.Layout.ViewManager.openView('OBClassicWindow', {
 		                command: 'DIRECT2',

@@ -65,6 +65,7 @@ v_FIN_FINACC_TRANSACTION_ID FIN_FINACC_TRANSACTION.FIN_FINACC_TRANSACTION_ID%TYP
 v_Line FIN_FINACC_TRANSACTION.LINE%TYPE;
 v_count NUMBER;
 v_PaymentPriority VARCHAR(32);
+v_creditmultiplier NUMBER:= 1;
 
 
 TYPE RECORD IS REF CURSOR;
@@ -107,6 +108,10 @@ BEGIN
       v_project_id, v_campaign_id, v_activity_id, v_user1, v_user2
   FROM c_invoice
   WHERE c_invoice_id=p_record_id;
+  
+  IF (v_IsSOTrx = 'N') THEN
+    v_creditmultiplier := -1;
+  END IF;
 
   -- complete invoice
   IF (p_docaction = 'CO') THEN
@@ -172,7 +177,7 @@ BEGIN
              fin_payment_scheduledetail_id,
              fin_payment_scheduledetail.fin_payment_schedule_order,
              fin_payment_scheduledetail.fin_payment_detail_id,
-             CASE WHEN fin_payment.status IS NULL OR fin_payment.status IN ('RPAP', 'RPAE') THEN 'N' ELSE 'Y' END AS paid
+             CASE WHEN fin_payment.status IN ('PPM', 'RPR', 'PWNC', 'RDNC', 'RPPC') THEN 'Y' ELSE 'N' END AS paid
       FROM c_invoiceline, c_orderline, fin_payment_schedule,
         fin_payment_scheduledetail LEFT JOIN fin_payment_detail ON fin_payment_scheduledetail.fin_payment_detail_id = fin_payment_detail.fin_payment_detail_id
                                    LEFT JOIN fin_payment ON fin_payment_detail.fin_payment_id = fin_payment.fin_payment_id
@@ -453,7 +458,7 @@ BEGIN
 
       -- Updating SO_CREDITUSED when Invoices are being processed
       UPDATE C_BPARTNER
-      SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) + V_OutstandingAmount
+      SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) + (COALESCE(V_OutstandingAmount, 0) * v_creditmultiplier)
       WHERE C_BPARTNER_ID = v_BPartner_ID;
 
       -- Automatic creation of payment and financial transaction
@@ -466,7 +471,7 @@ BEGIN
             SELECT ps.fin_paymentmethod_id, ps.duedate, ps.c_currency_id, ps.ad_org_id, ps.fin_payment_schedule_id,
               sum(psd.amount) as outstandingamt
             FROM fin_payment_schedule ps
-              INNER JOIN fin_payment_scheduledetail psd ON ps.fin_payment_schedule_id = psd.fin_payment_schedule_order
+              INNER JOIN fin_payment_scheduledetail psd ON ps.fin_payment_schedule_id = psd.fin_payment_schedule_invoice
                                                            AND psd.fin_payment_detail_id is null
             WHERE ps.c_invoice_id = p_record_id
               AND ps.isactive = 'Y'
@@ -583,7 +588,7 @@ BEGIN
                   AND TOTALPAID = GRANDTOTAL;
                 -- Updating SO_CREDITUSED when PAYMENT OCCUR and is not set in RPAE status
                 UPDATE C_BPARTNER
-                SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) - COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0)
+                SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) - (COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0) * v_creditmultiplier)
                 WHERE C_BPARTNER_ID = v_BPartner_ID;
               END IF;
 
@@ -621,6 +626,7 @@ BEGIN
     DECLARE
       v_count NUMBER;
       v_documentno VARCHAR2(40);
+      v_PaymentPlanExpectedTotal NUMBER:= 0;
     BEGIN
       SELECT count(*), max(p.documentno)
         INTO v_count, v_documentno
@@ -647,11 +653,12 @@ BEGIN
       v_delete_paymentplan := TRUE;
 
       -- Revert the bp used credit amount
-      SELECT SUM(fin_payment_schedule.paidamt) INTO v_PaidAmount
+      SELECT COALESCE(SUM(fin_payment_schedule.paidamt), 0), COALESCE(SUM(fin_payment_schedule.amount), 0)
+      INTO v_PaidAmount, v_PaymentPlanExpectedTotal
       FROM FIN_PAYMENT_SCHEDULE
-      WHERE FIN_PAYMENT_SCHEDULE.C_INVOICE_ID = p_record_id;
+      WHERE FIN_PAYMENT_SCHEDULE.C_INVOICE_ID = p_record_id ;
       UPDATE C_BPARTNER
-         SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) - V_GrandTotal + v_PaidAmount
+         SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) - ((v_PaymentPlanExpectedTotal - v_PaidAmount) * v_creditmultiplier)
       WHERE C_BPARTNER_ID = v_BPartner_ID;
     END;
 

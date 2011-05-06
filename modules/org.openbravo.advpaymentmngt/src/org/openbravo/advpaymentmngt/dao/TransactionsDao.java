@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -55,11 +55,9 @@ public class TransactionsDao {
     final List<Object> parameters = new ArrayList<Object>();
     final StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as td");
-    whereClause.append(" left outer join td.window");
-    whereClause.append(" left outer join td.masterDetailForm ");
-    whereClause.append(" where td.masterDetailForm = td.masterDetailForm.id");
-    whereClause.append(" and td.window = td.window.id");
-    whereClause.append(" and UPPER(td.masterDetailForm.javaClassName) = UPPER(?)");
+    whereClause.append(" left outer join td.window as win");
+    whereClause.append(" left outer join td.masterDetailForm as mdf");
+    whereClause.append(" where UPPER(mdf.javaClassName) = UPPER(?)");
     parameters.add(className);
 
     final OBQuery<Tab> obQuery = OBDal.getInstance().createQuery(Tab.class, whereClause.toString());
@@ -71,10 +69,10 @@ public class TransactionsDao {
     final List<Object> parameters = new ArrayList<Object>();
     final StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as ft");
-    whereClause.append(" left outer join ft.account");
-    whereClause.append(" left outer join ft.reconciliation");
-    whereClause.append(" where ft.account.id = ft.reconciliation.account.id");
-    whereClause.append(" and ft.account.id = ?");
+    whereClause.append(" left outer join ft.account as acc");
+    whereClause.append(" left outer join ft.reconciliation as rec");
+    whereClause.append(" where acc.id = rec.account.id");
+    whereClause.append(" and acc.id = ?");
     parameters.add(finFinancialAccountId);
     OBContext.setAdminMode();
     try {
@@ -264,7 +262,7 @@ public class TransactionsDao {
       whereClause.append(" as ft");
       whereClause.append(" left outer join ft.reconciliation as rec");
       whereClause.append(" where ft.account.id = ?");
-      whereClause.append(" and (ft.reconciliation is null or ft.reconciliation.processed = 'N')");
+      whereClause.append(" and (rec is null or rec.processed = 'N')");
       whereClause.append(" and ft.processed = 'Y'");
       parameters.add(account.getId());
       if (hideAfterDate) {
@@ -300,7 +298,7 @@ public class TransactionsDao {
       whereClause.append(" as ft");
       whereClause.append(" left outer join ft.reconciliation as rec");
       whereClause.append(" where ft.account.id = ?");
-      whereClause.append(" and (ft.reconciliation is null or ft.reconciliation.processed = 'N')");
+      whereClause.append(" and (rec is null or rec.processed = 'N')");
       whereClause.append(" and ft.processed = 'Y'");
       parameters.add(account.getId());
       if (hideAfterDate) {

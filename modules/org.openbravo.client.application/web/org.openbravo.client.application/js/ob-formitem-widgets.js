@@ -486,6 +486,9 @@ isc.OBSectionItem.addProperties({
   }
 });
 
+//== OBAuditSectionItem ==
+isc.ClassFactory.defineClass('OBAuditSectionItem', OBSectionItem);
+
 // == OBListItem ==
 // Combo box for list references, note is extended by OBFKItem again
 isc.ClassFactory.defineClass('OBListItem', ComboBoxItem);

@@ -123,7 +123,6 @@ function onloadFunctions() {
         setWindowElementFocus('firstElement');
         hideGroupedOrderingCriteria()
     }
-
     function onResizeDo(){
         resizeArea();
     }
@@ -156,15 +155,26 @@ function onloadFunctions() {
                 sho[i].style.display = '';
         }
     }
-    function setLinkParameters(adTableId, isReceipt, recordId){
-        var adTableId2 = document.frmMain.inpAdTableId;
-        var isReceipt2 = document.frmMain.inpIsReceipt;
-        var recordId2 = document.frmMain.inpRecordId;
-
-        adTableId2.value = adTableId;
-        isReceipt2.value = isReceipt;
-        recordId2.value = recordId;
+    function openPaymentTab(isReceipt, recordId) {
+       var myframe = getFrame('LayoutMDI') || top.opener;
+       if (myframe) {
+           if (isReceipt=="Y") {
+              myframe.OB.Utilities.openDirectTab('C4B6506838E14A349D6717D6856F1B56', recordId);
+           } else {
+              myframe.OB.Utilities.openDirectTab('F7A52FDAAA0346EFA07D53C125B40404', recordId);
+           }
+       }
     }
+    function openInvoiceTab(isReceipt, recordId) {
+        var myframe = getFrame('LayoutMDI') || top.opener;
+        if (myframe) {
+            if (isReceipt=="Y") {
+               myframe.OB.Utilities.openDirectTab('EB0466B2A22343F28773B356D292BC7E', recordId);
+            } else {
+               myframe.OB.Utilities.openDirectTab('A94442B27F664A41BF64735DFA76FB4D', recordId);
+            }
+        }
+     }
     </script>
 </head>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
@@ -973,14 +983,14 @@ function onloadFunctions() {
                               <td width="10%" id="fieldProject" class="DataGrid_Body_Cell">xx14500.34</td>
                               <td width="10%" id="fieldSalesPerson" class="DataGrid_Body_Cell">xx14500.34</td>
                               <td width="10%" class="DataGrid_Body_Cell">
-                                <a href="#" onclick="validate(); setLinkParameters('77182DC88AA842D499C01FB0BAE39561', 'yy', 'zz'); submitCommandFormParameter('LINK', '', '', false, document.frmMain, '', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldInvLink" style="xx">
+                                <a href="#" onclick="validate(); openInvoiceTab('yy', 'zz');" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldInvLink" style="xx">
                                   <span id="fieldInvoiceNumber">xx14500.34</span>
                                 </a>
                               </td>
                                 
                               <td width="10%" id="fieldInvoiceDate" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                               <td width="10%" class="DataGrid_Body_Cell_Amount">
-                                <a href="#" onclick="validate(); setLinkParameters('D1A97202E832470285C9B1EB026D54E2', 'yy', 'zz'); submitCommandFormParameter('LINK', '', '', false, document.frmMain, '', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldPaymLink" style="xx">
+                                <a href="#" onclick="validate(); openPaymentTab('yy', 'zz');" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldPaymLink" style="xx">
                                   <span id="fieldPayment">xx14500.34</span>
                                 </a>
                               </td>
@@ -1059,13 +1069,13 @@ function onloadFunctions() {
                                     <td width="10%" id="fieldProject2" class="DataGrid_Body_Cell">xx14500.34</td>
                                     <td width="10%" id="fieldSalesPerson2" class="DataGrid_Body_Cell">xx14500.34</td>
                                     <td width="10%" class="DataGrid_Body_Cell">
-                                      <a href="#" onclick="validate(); setLinkParameters('77182DC88AA842D499C01FB0BAE39561', 'yy', 'zz'); submitCommandFormParameter('LINK', '', '', false, document.frmMain, '', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldInvLink2" style="xx">
+                                      <a href="#" onclick="validate(); openInvoiceTab('yy', 'zz');" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldInvLink2" style="xx">
                                         <span id="fieldInvoiceNumber2">xx14500.34</span>
                                       </a>
                                     </td>
                                     <td width="10%" id="fieldInvoiceDate2" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                                     <td width="10%" class="DataGrid_Body_Cell_Amount">
-                                      <a href="#" onclick="validate(); setLinkParameters('D1A97202E832470285C9B1EB026D54E2', 'yy', 'zz'); submitCommandFormParameter('LINK', '', '', false, document.frmMain, '', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldPaymLink2" style="xx">
+                                      <a href="#" onclick="validate(); openPaymentTab('yy', 'zz');" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldPaymLink2" style="xx">
                                         <span id="fieldPayment2">xx14500.34</span>
                                       </a>
                                     </td>

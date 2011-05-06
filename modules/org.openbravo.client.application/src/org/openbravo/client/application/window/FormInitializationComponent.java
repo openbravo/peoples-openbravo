@@ -190,8 +190,8 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       // Calculation of validation dependencies
       long t3 = System.currentTimeMillis();
-      computeListOfColumnsSortedByValidationDependencies(tab, allColumns, columnsInValidation,
-          changeEventCols);
+      computeListOfColumnsSortedByValidationDependencies(mode, tab, allColumns,
+          columnsInValidation, changeEventCols, changedColumn);
 
       // Computation of the Auxiliary Input values
       long t4 = System.currentTimeMillis();
@@ -672,9 +672,9 @@ public class FormInitializationComponent extends BaseActionHandler {
     return referencedEntity.equals(parentEntity);
   }
 
-  private void computeListOfColumnsSortedByValidationDependencies(Tab tab,
+  private void computeListOfColumnsSortedByValidationDependencies(String mode, Tab tab,
       List<String> sortedColumns, Map<String, List<String>> columnsInValidation,
-      List<String> changeEventCols) {
+      List<String> changeEventCols, String changedColumn) {
     List<Field> fields = tab.getADFieldList();
     ArrayList<String> columns = new ArrayList<String>();
     List<String> columnsWithValidation = new ArrayList<String>();
@@ -699,51 +699,72 @@ public class FormInitializationComponent extends BaseActionHandler {
       log.debug("Columns in validation: '" + cols + "'");
     }
 
-    // Add client and org first to compute dependencies correctly
-    for (Field field : fields) {
-      String colName = field.getColumn().getDBColumnName();
-      if (colName.equalsIgnoreCase("Ad_Client_Id")) {
-        sortedColumns.add(colName);
+    if (mode.equals("CHANGE")) {
+      // In case of a CHANGE event, we only add the changed column, to avoid firing reloads for
+      // every column in the tab, instead firing reloads just for the dependant columns
+      String changedCol = "";
+      for (Field field : fields) {
+        String colName = field.getColumn().getDBColumnName();
+        if (changedColumn.equalsIgnoreCase("inp" + Sqlc.TransformaNombreColumna(colName))) {
+          sortedColumns.add(colName);
+          changedCol = colName;
+        }
       }
-    }
-    for (Field field : fields) {
-      String colName = field.getColumn().getDBColumnName();
-      if (colName.equalsIgnoreCase("Ad_Org_Id")) {
-        sortedColumns.add(colName);
-      }
-    }
-    // we add the columns not included in the sortedColumns
-    // (the ones which don't have validations)
-    for (Field field : fields) {
-      String colName = field.getColumn().getDBColumnName();
-      if (!columnsWithValidation.contains(field.getColumn().getDBColumnName())
-          && !sortedColumns.contains(colName) && !colName.equalsIgnoreCase("documentno")) {
-        sortedColumns.add(colName);
-      }
-    }
-    String nonDepColumn = pickNonDependantColumn(sortedColumns, columnsWithValidation,
-        columnsInValidation);
-    while (nonDepColumn != null) {
-      sortedColumns.add(nonDepColumn);
-      nonDepColumn = pickNonDependantColumn(sortedColumns, columnsWithValidation,
+      String depColumn = pickDependantColumn(sortedColumns, columnsWithValidation,
           columnsInValidation);
-    }
-
-    for (Field field : fields) {
-      String colName = field.getColumn().getDBColumnName();
-      if (colName.equalsIgnoreCase("documentno")) {
-        sortedColumns.add(colName);
+      while (depColumn != null) {
+        sortedColumns.add(depColumn);
+        depColumn = pickDependantColumn(sortedColumns, columnsWithValidation, columnsInValidation);
+      }
+      sortedColumns.remove(changedCol);
+    } else {
+      // Add client and org first to compute dependencies correctly
+      for (Field field : fields) {
+        String colName = field.getColumn().getDBColumnName();
+        if (colName.equalsIgnoreCase("Ad_Client_Id")) {
+          sortedColumns.add(colName);
+        }
+      }
+      for (Field field : fields) {
+        String colName = field.getColumn().getDBColumnName();
+        if (colName.equalsIgnoreCase("Ad_Org_Id")) {
+          sortedColumns.add(colName);
+        }
+      }
+      // we add the columns not included in the sortedColumns
+      // (the ones which don't have validations)
+      for (Field field : fields) {
+        String colName = field.getColumn().getDBColumnName();
+        if (!columnsWithValidation.contains(field.getColumn().getDBColumnName())
+            && !sortedColumns.contains(colName) && !colName.equalsIgnoreCase("documentno")) {
+          sortedColumns.add(colName);
+        }
+      }
+      String nonDepColumn = pickNonDependantColumn(sortedColumns, columnsWithValidation,
+          columnsInValidation);
+      while (nonDepColumn != null) {
+        sortedColumns.add(nonDepColumn);
+        nonDepColumn = pickNonDependantColumn(sortedColumns, columnsWithValidation,
+            columnsInValidation);
       }
     }
-    String cycleCols = "";
-    for (String col : columnsWithValidation) {
-      if (!sortedColumns.contains(col)) {
-        cycleCols += "," + col;
+    if (!mode.equalsIgnoreCase("CHANGE")) {
+      for (Field field : fields) {
+        String colName = field.getColumn().getDBColumnName();
+        if (colName.equalsIgnoreCase("documentno")) {
+          sortedColumns.add(colName);
+        }
       }
-    }
-    if (!cycleCols.equals("")) {
-      throw new OBException("Error. The columns " + cycleCols.substring(1)
-          + " have validations which form a cycle.");
+      String cycleCols = "";
+      for (String col : columnsWithValidation) {
+        if (!sortedColumns.contains(col)) {
+          cycleCols += "," + col;
+        }
+      }
+      if (!cycleCols.equals("")) {
+        throw new OBException("Error. The columns " + cycleCols.substring(1)
+            + " have validations which form a cycle.");
+      }
     }
     String finalCols = "";
     for (String col : sortedColumns) {
@@ -1141,6 +1162,21 @@ public class FormInitializationComponent extends BaseActionHandler {
     } catch (Exception e) {
       log.error("Couldn't parse callout response. The parsed response was: " + resp, e);
     }
+    return null;
+  }
+
+  private String pickDependantColumn(List<String> sortedColumns, List<String> columns,
+      Map<String, List<String>> columnsInValidation) {
+    for (String col : columns) {
+      if (sortedColumns.contains(col)) {
+        continue;
+      }
+      for (String depCol : columnsInValidation.get(col)) {
+        if (containsIgnoreCase(sortedColumns, depCol))
+          return col;
+      }
+    }
+
     return null;
   }
 

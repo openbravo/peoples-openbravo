@@ -21,6 +21,7 @@ package org.openbravo.service.datasource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +65,11 @@ public class ModelDataSourceService extends BaseDataSourceService {
   public String fetch(Map<String, String> parameters) {
 
     final Entity baseEntity = getBaseEntity(parameters);
-    final String propertyPath = parameters.get(DATASOURCE_FIELD);
+    String propertyPath = parameters.get(DATASOURCE_FIELD);
+    if (propertyPath == null) {
+      HashMap<String, String> criteria = getCriteria(parameters);
+      propertyPath = criteria.get(DATASOURCE_FIELD);
+    }
 
     if (baseEntity == null) {
       // The first request doesn't contain the adTableId
@@ -293,6 +298,26 @@ public class ModelDataSourceService extends BaseDataSourceService {
       throw new IllegalStateException(e);
     }
     return jsonObject;
+  }
+
+  private HashMap<String, String> getCriteria(Map<String, String> parameters) {
+    if (!"AdvancedCriteria".equals(parameters.get("_constructor"))) {
+      return null;
+    }
+    HashMap<String, String> criteriaValues = new HashMap<String, String>();
+    try {
+      JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
+      for (int i = 0; i < criterias.length(); i++) {
+        final JSONObject criteria = criterias.getJSONObject(i);
+        criteriaValues.put(criteria.getString("fieldName"), criteria.getString("value"));
+      }
+    } catch (JSONException e) {
+      // Ignore exception.
+    }
+    if (criteriaValues.isEmpty()) {
+      return null;
+    }
+    return criteriaValues;
   }
 
   /**

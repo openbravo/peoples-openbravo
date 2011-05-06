@@ -176,6 +176,16 @@ isc.OBViewGrid.addProperties({
       return this.Super('fetchRemoteData', arguments);
     },
     
+    clearLoadingMarkers: function(start, end) {
+      if (this.localData) {
+        for (var j = start; j < end; j++) { 
+          if (Array.isLoading(this.localData[j])) {
+            this.localData[j] = null;
+          }
+        }
+      }
+    },
+    
     transformData: function(newData, dsResponse){
       // only do this stuff for fetch operations, in other cases strange things
       // happen as update/delete operations do not return the totalRows parameter
@@ -191,6 +201,12 @@ isc.OBViewGrid.addProperties({
             break;
           }
         }
+
+        // get rid of old loading markers, this has to be done explicitly 
+        // as we can return another rowset than requested
+        // call with a delay otherwise the grid will keep requesting rows while processing the 
+        // current rowset
+        this.delayCall('clearLoadingMarkers', [dsResponse.context.startRow, dsResponse.context.endRow], 100);
       }
       if (this.localData && this.localData[dsResponse.totalRows]) {
         this.localData[dsResponse.totalRows] = null;
@@ -474,9 +490,13 @@ isc.OBViewGrid.addProperties({
     // anyway
     if (this.view.parentProperty && (!this.data || !this.data.getLength || this.data.getLength() === 0)) {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
-      if (selectedValues.length === 0) {
+      if (!this.isOpenDirectMode && selectedValues.length === 0) {
         if (callback) {
           callback();
+        }
+        // but in this case we should show ourselves also
+        if (!this.isVisible()) {
+          this.makeVisible();
         }
         return;
       }
@@ -519,12 +539,23 @@ isc.OBViewGrid.addProperties({
     
     // no data and the grid is not visible
     if (endRow === 0 && !this.isVisible()) {
-      if (this.view.isShowingForm) {
-        this.view.switchFormGridVisibility();
-      } else {
-        this.show();
+      this.makeVisible();
+    }
+    
+    // get the record id from any record
+    if (this.isOpenDirectMode && this.data && this.data.getLength() >= 1) {
+      // now tell the parent grid to refresh on the basis of this parentRecordId also
+      if (this.view.parentView) {
+        this.view.parentRecordId = this.data.get(0)[this.view.parentProperty];
+
+        this.view.parentView.viewGrid.isOpenDirectMode = true;
+        // prevents opening edit mode for parent views
+        this.view.parentView.viewGrid.isOpenDirectModeParent = true;
+        this.view.parentView.viewGrid.targetRecordId = this.view.parentRecordId;
+        this.view.parentView.viewGrid.delayCall('refreshContents', [], 10);
       }
     }
+    delete this.isOpenDirectMode;
     
     if (this.targetOpenNewEdit) {
       delete this.targetOpenNewEdit;
@@ -609,24 +640,17 @@ isc.OBViewGrid.addProperties({
         data.criteria._targetRecordId = null;
       }
       
-      // remove the isloading status from rows
-      for (i = 0; i < startRow; i++) {
-        if (Array.isLoading(data.localData[i])) {
-          data.localData[i] = null;
-        }
-      }
-      
-      this.scrollRecordIntoView(recordIndex, true);
       this.doSelectSingleRecord(gridRecord);
+
+      this.scrollCellIntoView(recordIndex, null, true, true);
       
-      // go to the children, if needed
-      if (this.view.standardWindow.directTabInfo) {
-        this.view.openDirectChildTab();
+      // show the form with the selected record
+      if (!this.view.isShowingForm && !this.isOpenDirectModeParent) {
+        this.view.editRecord(gridRecord);
       }
       
-      //      if (this.view.isShowingForm) {
-      //        this.view.viewForm.editRecord(gridRecord);
-      //      }
+      delete this.isOpenDirectModeParent;
+
     } else {
       // wait a bit longer til the body is drawn
       this.delayCall('delayedHandleTargetRecord', [startRow, endRow], 200, this);
@@ -773,7 +797,7 @@ isc.OBViewGrid.addProperties({
     // note pass in criteria otherwise infinite looping!
     this.resetEmptyMessage(criteria);
     
-    if (this.view.parentProperty) {
+    if (this.view.parentProperty && !this.isOpenDirectMode) {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
       var parentPropertyFilterValue = -1;
       if (selectedValues.length === 0) {
@@ -844,6 +868,14 @@ isc.OBViewGrid.addProperties({
         // remove the filter clause we don't want to use it anymore
         this.filterClause = null;
       }
+      
+      // this mode means that no parent is selected but the parent needs to be 
+      // determined from the target record and the parent property
+      if (this.isOpenDirectMode && this.view.parentView) {
+        params._filterByParentProperty = this.view.parentProperty;
+      }
+    } else if (params._targetRecordId) {
+      delete params._targetRecordId;
     }
 
     // prevent the count operation
@@ -878,6 +910,14 @@ isc.OBViewGrid.addProperties({
     delete this.filterClause;
     this.filterEditor.getEditForm().clearValues();
     this.filterEditor.performAction();
+  },
+  
+  makeVisible: function() {
+    if (this.view.isShowingForm) {
+      this.view.switchFormGridVisibility();
+    } else {
+      this.show();
+    }
   },
   
   // determine which field can be autoexpanded to use extra space

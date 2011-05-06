@@ -233,12 +233,31 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             return;
           }
         } else {
+          BusinessPartner businessPartner = payment.getBusinessPartner();
+          // When credit is used (consumed) we compensate so_creditused as this amount is already
+          // included in the payment details. Credit consumed should not affect to so_creditused
+          if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
+              && payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
+            if (isReceipt) {
+              increaseCustomerCredit(businessPartner, payment.getUsedCredit());
+            } else {
+              decreaseCustomerCredit(businessPartner, payment.getUsedCredit());
+            }
+          }
           for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList()) {
             for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
                 .getFINPaymentScheduleDetailList()) {
+              BigDecimal amount = paymentDetail.getAmount().add(paymentDetail.getWriteoffAmount());
               if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
-                updateCustomerCredit(paymentScheduleDetail.getInvoicePaymentSchedule(),
-                    paymentDetail.getAmount(), strAction);
+                // BP SO_CreditUsed
+                businessPartner = paymentScheduleDetail.getInvoicePaymentSchedule().getInvoice()
+                    .getBusinessPartner();
+                // Payments update credit opposite to invoices
+                if (isReceipt) {
+                  decreaseCustomerCredit(businessPartner, amount);
+                } else {
+                  increaseCustomerCredit(businessPartner, amount);
+                }
                 FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
                     .getInvoicePaymentSchedule(), paymentDetail.getAmount(), paymentDetail
                     .getWriteoffAmount());
@@ -247,6 +266,17 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                 FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
                     .getOrderPaymentSchedule(), paymentDetail.getAmount(), paymentDetail
                     .getWriteoffAmount());
+              }
+              // when generating credit for a BP SO_CreditUsed is also updated
+              if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
+                  && paymentScheduleDetail.getOrderPaymentSchedule() == null
+                  && paymentScheduleDetail.getPaymentDetails().getGLItem() == null) {
+                // BP SO_CreditUsed
+                if (isReceipt) {
+                  decreaseCustomerCredit(businessPartner, amount);
+                } else {
+                  increaseCustomerCredit(businessPartner, amount);
+                }
               }
             }
           }
@@ -298,12 +328,6 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         payment.setWriteoffAmount(BigDecimal.ZERO);
         payment.setAmount(BigDecimal.ZERO);
 
-        if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
-            && payment.getUsedCredit().compareTo(BigDecimal.ZERO) == 1)
-          undoUsedCredit(payment.getUsedCredit(), payment.getBusinessPartner(), payment.isReceipt());
-        payment.setGeneratedCredit(BigDecimal.ZERO);
-        payment.setUsedCredit(BigDecimal.ZERO);
-
         payment.setStatus("RPAP");
         payment.setDescription("");
         payment.setAPRMProcessPayment("P");
@@ -317,22 +341,52 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         // removed when new security implementation is done
         OBContext.setAdminMode();
         try {
+          BusinessPartner businessPartner = payment.getBusinessPartner();
+          // When credit is used (consumed) we compensate so_creditused as this amount is already
+          // included in the payment details. Credit consumed should not affect to so_creditused
+          if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
+              && payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
+            if (isReceipt) {
+              decreaseCustomerCredit(businessPartner, payment.getUsedCredit());
+            } else {
+              increaseCustomerCredit(businessPartner, payment.getUsedCredit());
+            }
+          }
           List<FIN_PaymentDetail> paymentDetails = payment.getFINPaymentDetailList();
           for (FIN_PaymentDetail paymentDetail : paymentDetails) {
             removedPDS = new ArrayList<FIN_PaymentScheduleDetail>();
             for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
                 .getFINPaymentScheduleDetailList()) {
+              BigDecimal amount = paymentDetail.getAmount().add(paymentDetail.getWriteoffAmount());
               if (paymentScheduleDetail.getInvoicePaymentSchedule() != null && restorePaidAmounts) {
                 FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
                     .getInvoicePaymentSchedule(), paymentDetail.getAmount().negate(), paymentDetail
                     .getWriteoffAmount().negate());
-                updateCustomerCredit(paymentScheduleDetail.getInvoicePaymentSchedule(),
-                    paymentDetail.getAmount(), strAction);
+                // BP SO_CreditUsed
+                businessPartner = paymentScheduleDetail.getInvoicePaymentSchedule().getInvoice()
+                    .getBusinessPartner();
+                if (isReceipt) {
+                  increaseCustomerCredit(businessPartner, amount);
+                } else {
+                  decreaseCustomerCredit(businessPartner, amount);
+                }
               }
               if (paymentScheduleDetail.getOrderPaymentSchedule() != null && restorePaidAmounts) {
                 FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
                     .getOrderPaymentSchedule(), paymentDetail.getAmount().negate(), paymentDetail
                     .getWriteoffAmount().negate());
+              }
+              // when generating credit for a BP SO_CreditUsed is also updated
+              if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
+                  && paymentScheduleDetail.getOrderPaymentSchedule() == null
+                  && paymentScheduleDetail.getPaymentDetails().getGLItem() == null
+                  && restorePaidAmounts) {
+                // BP SO_CreditUsed
+                if (isReceipt) {
+                  increaseCustomerCredit(businessPartner, amount);
+                } else {
+                  decreaseCustomerCredit(businessPartner, amount);
+                }
               }
               FIN_AddPayment.mergePaymentScheduleDetails(paymentScheduleDetail);
               removedPDS.add(paymentScheduleDetail);
@@ -354,7 +408,14 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           OBDal.getInstance().flush();
           OBContext.restorePreviousMode();
         }
+
+        if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
+            && payment.getUsedCredit().compareTo(BigDecimal.ZERO) == 1)
+          undoUsedCredit(payment.getUsedCredit(), payment.getBusinessPartner(), payment.isReceipt());
+        payment.setGeneratedCredit(BigDecimal.ZERO);
+        payment.setUsedCredit(BigDecimal.ZERO);
       }
+
       payment.setProcessNow(false);
       OBDal.getInstance().save(payment);
       OBDal.getInstance().flush();
@@ -375,25 +436,29 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
    * Method used to update the credit used when the user doing invoice processing or payment
    * processing
    * 
-   * @param invoicePaymentSchedule
-   *          . Invoice payment schedule for the sales invoice. {FIN_PaymentSchedule}.
+   * @param businessPartner
    * @param amount
-   *          . Payment amount.
-   * @param strAction
-   *          . Indicate the action of the request.
+   *          Payment amount
+   * @param add
    */
-  private void updateCustomerCredit(FIN_PaymentSchedule invoicePaymentSchedule, BigDecimal amount,
-      String strAction) {
-    BusinessPartner bPartner = invoicePaymentSchedule.getInvoice().getBusinessPartner();
-    BigDecimal creditUsed = bPartner.getCreditUsed();
-    if (strAction.equals("P")) {
-      creditUsed = creditUsed.subtract(amount);
-    } else if (strAction.equals("R")) {
+  private void updateCustomerCredit(BusinessPartner businessPartner, BigDecimal amount, boolean add) {
+    BigDecimal creditUsed = businessPartner.getCreditUsed();
+    if (add) {
       creditUsed = creditUsed.add(amount);
+    } else {
+      creditUsed = creditUsed.subtract(amount);
     }
-    bPartner.setCreditUsed(creditUsed);
-    OBDal.getInstance().save(bPartner);
+    businessPartner.setCreditUsed(creditUsed);
+    OBDal.getInstance().save(businessPartner);
     OBDal.getInstance().flush();
+  }
+
+  private void increaseCustomerCredit(BusinessPartner businessPartner, BigDecimal amount) {
+    updateCustomerCredit(businessPartner, amount, true);
+  }
+
+  private void decreaseCustomerCredit(BusinessPartner businessPartner, BigDecimal amount) {
+    updateCustomerCredit(businessPartner, amount, false);
   }
 
   private void triggerAutomaticFinancialAccountTransaction(VariablesSecureApp vars,

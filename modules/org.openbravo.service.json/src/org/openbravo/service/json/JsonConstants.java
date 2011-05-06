@@ -52,6 +52,7 @@ public class JsonConstants {
 
   public static final String USE_ALIAS = "_use_alias";
 
+  public static final String FILTERBYPARENTPROPERTY_PARAMETER = "_filterByParentProperty";
   public static final String WHERE_PARAMETER = "_where";
   public static final String ORDERBY_PARAMETER = "_orderBy";
   public static final String FILTER_PARAMETER = "_filter";

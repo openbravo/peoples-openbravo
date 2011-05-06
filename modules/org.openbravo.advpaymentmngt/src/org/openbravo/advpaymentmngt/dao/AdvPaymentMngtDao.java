@@ -129,12 +129,12 @@ public class AdvPaymentMngtDao {
     try {
 
       whereClause.append(" as psd "); // pending scheduled payments //
-      whereClause.append(" left outer join psd.orderPaymentSchedule ");
-      whereClause.append(" left outer join psd.orderPaymentSchedule.order ");
-      whereClause.append(" left outer join psd.orderPaymentSchedule.fINPaymentPriority ");
-      whereClause.append(" left outer join psd.invoicePaymentSchedule ");
-      whereClause.append(" left outer join psd.invoicePaymentSchedule.invoice ");
-      whereClause.append(" left outer join psd.invoicePaymentSchedule.fINPaymentPriority ");
+      whereClause.append(" left outer join psd.orderPaymentSchedule as ops ");
+      whereClause.append(" left outer join ops.order as ord");
+      whereClause.append(" left outer join ops.fINPaymentPriority as opriority");
+      whereClause.append(" left outer join psd.invoicePaymentSchedule as ips ");
+      whereClause.append(" left outer join ips.invoice as inv");
+      whereClause.append(" left outer join ips.fINPaymentPriority as ipriority");
       whereClause.append(" where psd.");
       whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
       whereClause.append(" is null");
@@ -169,46 +169,26 @@ public class AdvPaymentMngtDao {
       // Transaction type filter
       whereClause.append(" and (");
       if (strTransactionType.equals("I") || strTransactionType.equals("B")) {
-        whereClause.append(" (psd.");
-        whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        whereClause.append(".");
-        whereClause.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        whereClause.append(" is not null");
+        whereClause.append(" (inv is not null");
         if (businessPartner != null) {
-          whereClause.append(" and psd.");
-          whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-          whereClause.append(".");
-          whereClause.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-          whereClause.append(".");
+          whereClause.append(" and inv.");
           whereClause.append(Invoice.PROPERTY_BUSINESSPARTNER);
           whereClause.append(".id = '");
           whereClause.append(businessPartner.getId());
           whereClause.append("'");
         }
         if (paymentMethod != null) {
-          whereClause.append(" and psd.");
-          whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-          whereClause.append(".");
-          whereClause.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-          whereClause.append(".");
+          whereClause.append(" and inv.");
           whereClause.append(Invoice.PROPERTY_PAYMENTMETHOD);
           whereClause.append(".id = '");
           whereClause.append(paymentMethod.getId());
           whereClause.append("'");
         }
-        whereClause.append(" and psd.");
-        whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        whereClause.append(".");
-        whereClause.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        whereClause.append(".");
+        whereClause.append(" and inv.");
         whereClause.append(Invoice.PROPERTY_SALESTRANSACTION);
         whereClause.append(" = ");
         whereClause.append(isReceipt);
-        whereClause.append(" and psd.");
-        whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        whereClause.append(".");
-        whereClause.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        whereClause.append(".");
+        whereClause.append(" and inv.");
         whereClause.append(Invoice.PROPERTY_CURRENCY);
         whereClause.append(".id = '");
         whereClause.append(currency.getId());
@@ -218,46 +198,26 @@ public class AdvPaymentMngtDao {
       if (strTransactionType.equals("B"))
         whereClause.append(" or ");
       if (strTransactionType.equals("O") || strTransactionType.equals("B")) {
-        whereClause.append(" (psd.");
-        whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
-        whereClause.append(".");
-        whereClause.append(FIN_PaymentSchedule.PROPERTY_ORDER);
-        whereClause.append(" is not null");
+        whereClause.append(" (ord is not null");
         if (businessPartner != null) {
-          whereClause.append(" and psd.");
-          whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
-          whereClause.append(".");
-          whereClause.append(FIN_PaymentSchedule.PROPERTY_ORDER);
-          whereClause.append(".");
+          whereClause.append(" and ord.");
           whereClause.append(Order.PROPERTY_BUSINESSPARTNER);
           whereClause.append(".id = '");
           whereClause.append(businessPartner.getId());
           whereClause.append("'");
         }
         if (paymentMethod != null) {
-          whereClause.append(" and psd.");
-          whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
-          whereClause.append(".");
-          whereClause.append(FIN_PaymentSchedule.PROPERTY_ORDER);
-          whereClause.append(".");
+          whereClause.append(" and ord.");
           whereClause.append(Order.PROPERTY_PAYMENTMETHOD);
           whereClause.append(".id = '");
           whereClause.append(paymentMethod.getId());
           whereClause.append("'");
         }
-        whereClause.append(" and psd.");
-        whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
-        whereClause.append(".");
-        whereClause.append(FIN_PaymentSchedule.PROPERTY_ORDER);
-        whereClause.append(".");
+        whereClause.append(" and ord.");
         whereClause.append(Order.PROPERTY_SALESTRANSACTION);
         whereClause.append(" = ");
         whereClause.append(isReceipt);
-        whereClause.append(" and psd.");
-        whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
-        whereClause.append(".");
-        whereClause.append(FIN_PaymentSchedule.PROPERTY_ORDER);
-        whereClause.append(".");
+        whereClause.append(" and ord.");
         whereClause.append(Order.PROPERTY_CURRENCY);
         whereClause.append(".id = '");
         whereClause.append(currency.getId());
@@ -266,26 +226,18 @@ public class AdvPaymentMngtDao {
       whereClause.append(")");
       // dateFrom
       if (dueDateFrom != null) {
-        whereClause.append(" and COALESCE(psd.");
-        whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        whereClause.append(".");
+        whereClause.append(" and COALESCE(ips.");
         whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-        whereClause.append(", psd.");
-        whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
-        whereClause.append(".");
+        whereClause.append(", ops.");
         whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
         whereClause.append(") >= ?");
         parameters.add(dueDateFrom);
       }
       // dateTo
       if (dueDateTo != null) {
-        whereClause.append(" and COALESCE(psd.");
-        whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-        whereClause.append(".");
+        whereClause.append(" and COALESCE(ips.");
         whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-        whereClause.append(", psd.");
-        whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
-        whereClause.append(".");
+        whereClause.append(", ops.");
         whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
         whereClause.append(") < ?");
         parameters.add(dueDateTo);
@@ -293,40 +245,20 @@ public class AdvPaymentMngtDao {
       // TODO: Add order to show first scheduled payments from invoices and later scheduled payments
       // from not invoiced orders.
       whereClause.append(" order by");
-      whereClause.append(" COALESCE(psd.");
-      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-      whereClause.append(".");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_FINPAYMENTPRIORITY);
-      whereClause.append(".");
+      whereClause.append(" COALESCE(ipriority.");
       whereClause.append(PaymentPriority.PROPERTY_PRIORITY);
-      whereClause.append(", psd.");
-      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
-      whereClause.append(".");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_FINPAYMENTPRIORITY);
-      whereClause.append(".");
+      whereClause.append(", opriority.");
       whereClause.append(PaymentPriority.PROPERTY_PRIORITY);
       whereClause.append(")");
       whereClause.append(", ");
-      whereClause.append(" COALESCE(psd.");
-      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-      whereClause.append(".");
+      whereClause.append(" COALESCE(ips.");
       whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-      whereClause.append(", psd.");
-      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
-      whereClause.append(".");
+      whereClause.append(", ops.");
       whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
       whereClause.append(")");
-      whereClause.append(", COALESCE(psd.");
-      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-      whereClause.append(".");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-      whereClause.append(".");
+      whereClause.append(", COALESCE(inv.");
       whereClause.append(Invoice.PROPERTY_DOCUMENTNO);
-      whereClause.append(", psd.");
-      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
-      whereClause.append(".");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_ORDER);
-      whereClause.append(".");
+      whereClause.append(", ord.");
       whereClause.append(Order.PROPERTY_DOCUMENTNO);
       whereClause.append(")");
       whereClause.append(", psd.");
@@ -585,24 +517,15 @@ public class AdvPaymentMngtDao {
     try {
 
       whereClause.append(" as ppd ");
-      whereClause.append(" left outer join ppd.fINPaymentScheduledetail ");
-      whereClause.append(" left outer join ppd.fINPaymentScheduledetail.invoicePaymentSchedule ");
-      whereClause
-          .append(" left outer join ppd.fINPaymentScheduledetail.invoicePaymentSchedule.invoice ");
-      whereClause.append(" left outer join ppd.fINPaymentScheduledetail.orderPaymentSchedule ");
-      whereClause
-          .append(" left outer join ppd.fINPaymentScheduledetail.orderPaymentSchedule.order ");
+      whereClause.append(" left outer join ppd.fINPaymentScheduledetail as psd");
+      whereClause.append(" left outer join psd.invoicePaymentSchedule as ips");
+      whereClause.append(" left outer join ips.invoice as inv");
+      whereClause.append(" left outer join psd.orderPaymentSchedule as ops");
+      whereClause.append(" left outer join ops.order as ord");
       whereClause.append(" where ppd.finPaymentProposal.id='");
       whereClause.append(paymentProposal.getId());
       whereClause.append("' ");
-      whereClause
-          .append(" order by COALESCE (ppd.fINPaymentScheduledetail.invoicePaymentSchedule.invoice.businessPartner,ppd.fINPaymentScheduledetail.orderPaymentSchedule.order.businessPartner)");
-      // whereClause.append(" left outer join ppd. )
-      // whereClause.append(" where psd." + FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS
-      // + " is null");
-      // whereClause.append("   and psd." + FIN_PaymentScheduleDetail.PROPERTY_FINPAYMENTPROPDETAIL
-      // + "." + FIN_PaymentPropDetail.PROPERTY_FINPAYMENTPROPOSAL + ".id='"
-      // + paymentProposal.getId() + "'");
+      whereClause.append(" order by COALESCE (inv.businessPartner, ord.businessPartner)");
 
       final OBQuery<FIN_PaymentPropDetail> obqPSD = OBDal.getInstance().createQuery(
           FIN_PaymentPropDetail.class, whereClause.toString());

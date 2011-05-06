@@ -25,11 +25,13 @@ import java.util.Map;
 
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.json.DefaultJsonDataService;
-import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.DefaultJsonDataService.QueryResultWriter;
+import org.openbravo.service.json.JsonConstants;
 
 /**
  * The default implementation of the {@link DataSourceService}. Supports data retrieval, update
@@ -73,6 +75,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     if (getEntity() != null) {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
     }
+
     if (getWhereClause() != null) {
       if (parameters.get(JsonConstants.WHERE_PARAMETER) != null) {
         final String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
@@ -81,6 +84,24 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       } else {
         parameters.put(JsonConstants.WHERE_PARAMETER, getWhereClause());
       }
+    }
+
+    // add a filter on the parent of the entity
+    if (parameters.get(JsonConstants.FILTERBYPARENTPROPERTY_PARAMETER) != null
+        && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
+      final String parentProperty = parameters.get(JsonConstants.FILTERBYPARENTPROPERTY_PARAMETER);
+      final BaseOBObject bob = OBDal.getInstance().get(getEntity().getName(),
+          (String) parameters.get(JsonConstants.TARGETRECORDID_PARAMETER));
+      final String parentId = (String) DalUtil.getId((BaseOBObject) bob.get(parentProperty));
+      final String whereClause;
+      if (parameters.get(JsonConstants.WHERE_PARAMETER) != null
+          && !parameters.get(JsonConstants.WHERE_PARAMETER).equals("null")) {
+        whereClause = parameters.get(JsonConstants.WHERE_PARAMETER) + " and (";
+      } else {
+        whereClause = " (";
+      }
+      parameters.put(JsonConstants.WHERE_PARAMETER, whereClause + JsonConstants.MAIN_ALIAS + "."
+          + parentProperty + ".id='" + parentId + "')");
     }
 
     parameters.put(JsonConstants.USE_ALIAS, "true");
