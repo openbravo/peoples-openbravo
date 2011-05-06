@@ -357,7 +357,8 @@ isc.OBAttachmentsLayout.addProperties({
       var buttonLayout = isc.HLayout.create();
       var attachmentLabel = isc.Label.create({
         contents: attachment.name,
-        width: '200px'
+        width: '200px',
+        wrap: false
       });
       var attachmentBy = isc.Label.create({
         contents: " <i>"+OB.I18N.getLabel('OBUIAPP_AttachmentBy')+" "+attachment.createdby+"</i>"
