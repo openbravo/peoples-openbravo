@@ -538,7 +538,7 @@ isc.OBViewGrid.addProperties({
     }
     
     // no data and the grid is not visible
-    if (endRow === 0 && !this.isVisible()) {
+    if (this.data && this.data.getLength() === 0 && !this.isVisible()) {
       this.makeVisible();
     }
     
@@ -615,6 +615,11 @@ isc.OBViewGrid.addProperties({
     }
     this.actionAfterDataArrived = callback;
     this.invalidateCache();
+    
+    var context = {
+      showPrompt: false
+    };
+    this.filterData(this.getCriteria(), null, context);
   },
   
   // with a delay to handle the target record when the body has been drawn
@@ -645,10 +650,11 @@ isc.OBViewGrid.addProperties({
       this.scrollCellIntoView(recordIndex, null, true, true);
       
       // show the form with the selected record
-      if (!this.view.isShowingForm && !this.isOpenDirectModeParent) {
+      if (!this.view.isShowingForm && this.isOpenDirectModeLeaf) {
         this.view.editRecord(gridRecord);
       }
       
+      delete this.isOpenDirectModeLeaf;
       delete this.isOpenDirectModeParent;
 
     } else {

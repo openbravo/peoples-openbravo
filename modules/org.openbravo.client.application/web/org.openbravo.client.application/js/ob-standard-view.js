@@ -985,6 +985,7 @@ isc.OBStandardView.addProperties({
       // bypass the autosave logic
       this.standardWindow.setActiveView(this);
       this.viewGrid.isOpenDirectMode = true;
+      this.viewGrid.isOpenDirectModeLeaf = true;
     }
 
     if (this.parentView) {
