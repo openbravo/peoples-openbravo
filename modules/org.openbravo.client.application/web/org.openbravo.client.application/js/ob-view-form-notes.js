@@ -312,6 +312,11 @@ isc.OBNoteLayout.addProperties( {
 
 						});
 
+				this.noteListGrid.addSort({
+				  direction: 'desc',
+				  property: 'updated'
+				});
+				
 				this.addMember(this.noteListGrid);
 
 			},
