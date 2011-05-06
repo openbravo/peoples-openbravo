@@ -35,7 +35,7 @@ import org.hibernate.proxy.ProxyFactory;
 import org.hibernate.tuple.Instantiator;
 import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.tuple.entity.PojoEntityTuplizer;
-import org.hibernate.type.AbstractComponentType;
+import org.hibernate.type.CompositeType;
 import org.hibernate.util.ReflectHelper;
 import org.openbravo.base.util.Check;
 
@@ -46,7 +46,6 @@ import org.openbravo.base.util.Check;
  * @see OBInstantiator
  * @author mtaal
  */
-@SuppressWarnings("unchecked")
 public class OBTuplizer extends PojoEntityTuplizer {
   private static final Logger log = Logger.getLogger(OBTuplizer.class);
 
@@ -66,7 +65,7 @@ public class OBTuplizer extends PojoEntityTuplizer {
   // PersistentClass mappedEntity) {
   // return new OBDynamicPropertyHandler.Getter(mappedProperty.getName());
   // }
-  //  
+  //
   // @Override
   // protected Setter buildPropertySetter(Property mappedProperty,
   // PersistentClass mappedEntity) {
@@ -81,7 +80,7 @@ public class OBTuplizer extends PojoEntityTuplizer {
   @Override
   protected ProxyFactory buildProxyFactory(PersistentClass thePersistentClass, Getter idGetter,
       Setter idSetter) {
-    final Class mappedClass = thePersistentClass.getMappedClass();
+    final Class<?> mappedClass = thePersistentClass.getMappedClass();
     Check.isNotNull(mappedClass, "Mapped class of entity " + thePersistentClass.getEntityName()
         + " is null");
 
@@ -89,10 +88,10 @@ public class OBTuplizer extends PojoEntityTuplizer {
     // (if
     // any)
     // determine all interfaces needed by the resulting proxy
-    final HashSet proxyInterfaces = new HashSet();
+    final HashSet<Object> proxyInterfaces = new HashSet<Object>();
     proxyInterfaces.add(HibernateProxy.class);
 
-    final Class proxyInterface = thePersistentClass.getProxyInterface();
+    final Class<?> proxyInterface = thePersistentClass.getProxyInterface();
 
     if (proxyInterface != null && !mappedClass.equals(proxyInterface)) {
       if (!proxyInterface.isInterface()) {
@@ -106,11 +105,11 @@ public class OBTuplizer extends PojoEntityTuplizer {
       proxyInterfaces.add(mappedClass);
     }
 
-    final Iterator iter = thePersistentClass.getSubclassIterator();
+    final Iterator<?> iter = thePersistentClass.getSubclassIterator();
     while (iter.hasNext()) {
       final Subclass subclass = (Subclass) iter.next();
-      final Class subclassProxy = subclass.getProxyInterface();
-      final Class subclassClass = subclass.getMappedClass();
+      final Class<?> subclassProxy = subclass.getProxyInterface();
+      final Class<?> subclassClass = subclass.getMappedClass();
       if (subclassProxy != null && !subclassClass.equals(subclassProxy)) {
         if (proxyInterface == null || !proxyInterface.isInterface()) {
           throw new MappingException("proxy must be either an interface, or the class itself: "
@@ -132,7 +131,7 @@ public class OBTuplizer extends PojoEntityTuplizer {
     try {
       pf.postInstantiate(getEntityName(), mappedClass, proxyInterfaces, proxyGetIdentifierMethod,
           proxySetIdentifierMethod,
-          thePersistentClass.hasEmbeddedIdentifier() ? (AbstractComponentType) thePersistentClass
+          thePersistentClass.hasEmbeddedIdentifier() ? (CompositeType) thePersistentClass
               .getIdentifier().getType() : null);
     } catch (final HibernateException he) {
       log.warn("could not create proxy factory for:" + getEntityName(), he);
@@ -142,12 +141,12 @@ public class OBTuplizer extends PojoEntityTuplizer {
   }
 
   @Override
-  public Class getMappedClass() {
+  public Class<?> getMappedClass() {
     return persistentClass.getMappedClass();
   }
 
   @Override
-  public Class getConcreteProxyClass() {
+  public Class<?> getConcreteProxyClass() {
     return persistentClass.getMappedClass();
   }
 }
