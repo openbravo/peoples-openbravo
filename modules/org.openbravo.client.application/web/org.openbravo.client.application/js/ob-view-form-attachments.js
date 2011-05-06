@@ -181,10 +181,11 @@ isc.OBAttachmentsLayout.addProperties({
   },
   
   fileExists: function(fileName, attachments){
+	var i;
     if(!attachments || attachments.length === 0){
       return false;
     }
-    for(var i=0; i < attachments.length; i++){
+    for(i=0; i < attachments.length; i++){
       if(attachments[i].name === fileName){
         return true;
       }
@@ -316,7 +317,7 @@ isc.OBAttachmentsLayout.addProperties({
               canvas.fillAttachments(data.attachments);
             });
           }
-        });
+        },{title: OB.I18N.getLabel('OBUIAPP_ConfirmRemoveTitle')});
       }
     });
     hLayout.addMember(downloadAllButton);
@@ -331,6 +332,7 @@ isc.OBAttachmentsLayout.addProperties({
     };
     
     var removeActions = function(){
+      var i;
       var d = {
         Command: 'DELETE',
         tabId: this.canvas.tabId,
@@ -345,10 +347,10 @@ isc.OBAttachmentsLayout.addProperties({
               canvas.fillAttachments(data.attachments);
           });
         }
-      });
+      },{title: OB.I18N.getLabel('OBUIAPP_ConfirmRemoveTitle')});
     };
     
-    for(var i=0; i < attachments.length; i++){
+    for(i=0; i < attachments.length; i++){
       var attachment = attachments[i];
       var buttonLayout = isc.HLayout.create();
       var attachmentLabel = isc.Label.create({
