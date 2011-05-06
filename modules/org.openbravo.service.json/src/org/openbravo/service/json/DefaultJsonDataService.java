@@ -100,9 +100,9 @@ public class DefaultJsonDataService implements JsonDataService {
         // explicitly
         boolean doCount = false;
         int count = -1;
-        int startRow = queryService.getFirstResult();
-        int endRow = startRow + queryService.getMaxResults();
-        int computedMaxResults = queryService.getMaxResults();
+        int startRow = (startRowStr != null ? queryService.getFirstResult() : 0);
+        int computedMaxResults = (queryService.getMaxResults() == null ? Integer.MAX_VALUE
+            : queryService.getMaxResults());
         if (startRowStr != null) {
           doCount = true;
         }
@@ -111,9 +111,8 @@ public class DefaultJsonDataService implements JsonDataService {
           // endRow is increased by 1
           // increase by 1 to see if there are more results.
           if (preventCountOperation) {
-            endRow++;
             // set count here, is corrected in specific cases later
-            count = endRow;
+            count = queryService.getMaxResults();
           }
         } else {
           // can't do count if there is no endrow...
