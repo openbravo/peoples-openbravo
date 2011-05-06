@@ -158,7 +158,6 @@ public class MainLayoutComponent extends BaseTemplateComponent {
     final String dsId = "090A37D22E61FE94012E621729090048";
     final Map<String, Object> dsParameters = new HashMap<String, Object>(getParameters());
     dsParameters.put(DataSourceConstants.DS_CREATE, true);
-    dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBViewDataSource");
     final Component component = dsComponentProvider.getComponent(dsId, dsParameters);
     return component.generate();
   }
