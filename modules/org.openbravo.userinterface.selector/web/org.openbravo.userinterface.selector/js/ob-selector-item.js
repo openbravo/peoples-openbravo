@@ -271,7 +271,7 @@ isc.OBSelectorPopupWindow.addProperties({
   },
   
   setValueInField: function(){
-    this.selector.setValueFromRecord(this.selectorGrid.getSelectedRecord());
+    this.selector.setValueFromRecord(this.selectorGrid.getSelectedRecord(), true);
     this.hide();
   }
 });
@@ -377,7 +377,7 @@ isc.OBSelectorItem.addProperties({
     return this.Super('init', arguments);
   },
   
-  setValueFromRecord: function(record){
+  setValueFromRecord: function(record, fromPopup){
     var currentValue = this.getValue();
     if (!record) {
       this.setValue(null);
@@ -396,7 +396,7 @@ isc.OBSelectorItem.addProperties({
         this.form.focusInNextItem(this.name);
       }
     }
-    if (this.form && this.form.handleItemChange) {
+    if (fromPopup && this.form && this.form.handleItemChange) {
       this._hasChanged = true;
       this.form.handleItemChange(this);
     }
