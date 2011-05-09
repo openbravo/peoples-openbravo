@@ -130,19 +130,6 @@
 <!--111-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--111--></AD_MENU>
 
-<!--113--><AD_MENU>
-<!--113-->  <AD_MENU_ID><![CDATA[113]]></AD_MENU_ID>
-<!--113-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--113-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--113-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--113-->  <NAME><![CDATA[Test]]></NAME>
-<!--113-->  <DESCRIPTION><![CDATA[View an example of a window that shows fields with all possible references or data types.]]></DESCRIPTION>
-<!--113-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--113-->  <ACTION><![CDATA[W]]></ACTION>
-<!--113-->  <AD_WINDOW_ID><![CDATA[127]]></AD_WINDOW_ID>
-<!--113-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--113--></AD_MENU>
-
 <!--115--><AD_MENU>
 <!--115-->  <AD_MENU_ID><![CDATA[115]]></AD_MENU_ID>
 <!--115-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
