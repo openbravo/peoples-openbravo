@@ -40,6 +40,8 @@ public class OBOracle10gDialect extends Oracle10gDialect {
     super();
 
     registerHibernateType(Types.NUMERIC, StandardBasicTypes.LONG.getName());
+    registerHibernateType(Types.NVARCHAR, StandardBasicTypes.STRING.getName());
+    registerHibernateType(Types.NCHAR, StandardBasicTypes.STRING.getName());
 
     registerColumnType(Types.VARCHAR, 4000, "nvarchar2($l)");
     registerColumnType(Types.VARCHAR, 100, "varchar2($l)");
