@@ -623,6 +623,10 @@ OB.ViewFormProperties = {
         }
 
         if(section.visible) {
+          // 'More Information' is collapsed by default
+          if (section.name === '402880E72F1C15A5012F1C7AA98B00E8') {
+            section.collapseSection();
+          }
           continue;
         }
 
