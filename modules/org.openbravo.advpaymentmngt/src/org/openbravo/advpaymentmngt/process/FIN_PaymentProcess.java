@@ -172,118 +172,120 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               .concat("...").toString() : description.toString();
           payment.setDescription(truncateDescription);
 
+          if (paymentAmount.compareTo(payment.getAmount()) != 0)
+            payment.setUsedCredit(paymentAmount.subtract(payment.getAmount()));
+          if (payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0)
+            updateUsedCredit(payment.getUsedCredit(), payment.getBusinessPartner(), payment
+                .isReceipt());
+
+          payment.setWriteoffAmount(paymentWriteOfAmount);
+          payment.setProcessed(true);
+          payment.setAPRMProcessPayment("R");
+          // Execution Process
+          if (dao.isAutomatedExecutionPayment(payment.getAccount(), payment.getPaymentMethod(),
+              payment.isReceipt())) {
+            try {
+              payment.setStatus("RPAE");
+              payment.setProcessNow(false);
+              OBDal.getInstance().save(payment);
+              OBDal.getInstance().flush();
+
+              if (dao.hasNotDeferredExecutionProcess(payment.getAccount(), payment
+                  .getPaymentMethod(), payment.isReceipt())) {
+                PaymentExecutionProcess executionProcess = dao.getExecutionProcess(payment);
+                if (dao.isAutomaticExecutionProcess(executionProcess)) {
+                  final List<FIN_Payment> payments = new ArrayList<FIN_Payment>(1);
+                  payments.add(payment);
+                  FIN_ExecutePayment executePayment = new FIN_ExecutePayment();
+                  executePayment.init("APP", executionProcess, payments, null, payment
+                      .getOrganization());
+                  OBError result = executePayment.execute();
+                  if ("Error".equals(result.getType())) {
+                    msg.setType("Warning");
+                    msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+                        result.getMessage()));
+                  } else if (!"".equals(result.getMessage())) {
+                    String execProcessMsg = Utility.parseTranslation(conProvider, vars, vars
+                        .getLanguage(), result.getMessage());
+                    if (!"".equals(msg.getMessage()))
+                      msg.setMessage(msg.getMessage() + "<br>");
+                    msg.setMessage(msg.getMessage() + execProcessMsg);
+                  }
+                }
+              }
+            } catch (final NoExecutionProcessFoundException e) {
+              e.printStackTrace(System.err);
+              msg.setType("Warning");
+              msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+                  "@NoExecutionProcessFound@"));
+              bundle.setResult(msg);
+              return;
+            } catch (final Exception e) {
+              e.printStackTrace(System.err);
+              msg.setType("Warning");
+              msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+                  "@IssueOnExecutionProcess@"));
+              bundle.setResult(msg);
+              return;
+            }
+          } else {
+            BusinessPartner businessPartner = payment.getBusinessPartner();
+            // When credit is used (consumed) we compensate so_creditused as this amount is already
+            // included in the payment details. Credit consumed should not affect to so_creditused
+            if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
+                && payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
+              if (isReceipt) {
+                increaseCustomerCredit(businessPartner, payment.getUsedCredit());
+              } else {
+                decreaseCustomerCredit(businessPartner, payment.getUsedCredit());
+              }
+            }
+            for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList()) {
+              for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
+                  .getFINPaymentScheduleDetailList()) {
+                BigDecimal amount = paymentDetail.getAmount()
+                    .add(paymentDetail.getWriteoffAmount());
+                if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
+                  // BP SO_CreditUsed
+                  businessPartner = paymentScheduleDetail.getInvoicePaymentSchedule().getInvoice()
+                      .getBusinessPartner();
+                  // Payments update credit opposite to invoices
+                  if (isReceipt) {
+                    decreaseCustomerCredit(businessPartner, amount);
+                  } else {
+                    increaseCustomerCredit(businessPartner, amount);
+                  }
+                  FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
+                      .getInvoicePaymentSchedule(), paymentDetail.getAmount(), paymentDetail
+                      .getWriteoffAmount());
+                }
+                if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
+                  FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
+                      .getOrderPaymentSchedule(), paymentDetail.getAmount(), paymentDetail
+                      .getWriteoffAmount());
+                }
+                // when generating credit for a BP SO_CreditUsed is also updated
+                if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
+                    && paymentScheduleDetail.getOrderPaymentSchedule() == null
+                    && paymentScheduleDetail.getPaymentDetails().getGLItem() == null) {
+                  // BP SO_CreditUsed
+                  if (isReceipt) {
+                    decreaseCustomerCredit(businessPartner, amount);
+                  } else {
+                    increaseCustomerCredit(businessPartner, amount);
+                  }
+                }
+              }
+            }
+            payment.setStatus(isReceipt ? "RPR" : "PPM");
+            if ((FIN_Utility.isAutomaticDepositWithdrawn(payment) || strAction.equals("D"))
+                && payment.getAmount().compareTo(BigDecimal.ZERO) != 0)
+              triggerAutomaticFinancialAccountTransaction(vars, conProvider, payment);
+          }
+
         } finally {
           OBDal.getInstance().flush();
           OBContext.restorePreviousMode();
-        }
-        if (paymentAmount.compareTo(payment.getAmount()) != 0)
-          payment.setUsedCredit(paymentAmount.subtract(payment.getAmount()));
-        if (payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0)
-          updateUsedCredit(payment.getUsedCredit(), payment.getBusinessPartner(), payment
-              .isReceipt());
-
-        payment.setWriteoffAmount(paymentWriteOfAmount);
-        payment.setProcessed(true);
-        payment.setAPRMProcessPayment("R");
-        // Execution Process
-        if (dao.isAutomatedExecutionPayment(payment.getAccount(), payment.getPaymentMethod(),
-            payment.isReceipt())) {
-          try {
-            payment.setStatus("RPAE");
-            payment.setProcessNow(false);
-            OBDal.getInstance().save(payment);
-            OBDal.getInstance().flush();
-
-            if (dao.hasNotDeferredExecutionProcess(payment.getAccount(),
-                payment.getPaymentMethod(), payment.isReceipt())) {
-              PaymentExecutionProcess executionProcess = dao.getExecutionProcess(payment);
-              if (dao.isAutomaticExecutionProcess(executionProcess)) {
-                final List<FIN_Payment> payments = new ArrayList<FIN_Payment>(1);
-                payments.add(payment);
-                FIN_ExecutePayment executePayment = new FIN_ExecutePayment();
-                executePayment.init("APP", executionProcess, payments, null, payment
-                    .getOrganization());
-                OBError result = executePayment.execute();
-                if ("Error".equals(result.getType())) {
-                  msg.setType("Warning");
-                  msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
-                      result.getMessage()));
-                } else if (!"".equals(result.getMessage())) {
-                  String execProcessMsg = Utility.parseTranslation(conProvider, vars, vars
-                      .getLanguage(), result.getMessage());
-                  if (!"".equals(msg.getMessage()))
-                    msg.setMessage(msg.getMessage() + "<br>");
-                  msg.setMessage(msg.getMessage() + execProcessMsg);
-                }
-              }
-            }
-          } catch (final NoExecutionProcessFoundException e) {
-            e.printStackTrace(System.err);
-            msg.setType("Warning");
-            msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
-                "@NoExecutionProcessFound@"));
-            bundle.setResult(msg);
-            return;
-          } catch (final Exception e) {
-            e.printStackTrace(System.err);
-            msg.setType("Warning");
-            msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
-                "@IssueOnExecutionProcess@"));
-            bundle.setResult(msg);
-            return;
-          }
-        } else {
-          BusinessPartner businessPartner = payment.getBusinessPartner();
-          // When credit is used (consumed) we compensate so_creditused as this amount is already
-          // included in the payment details. Credit consumed should not affect to so_creditused
-          if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
-              && payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
-            if (isReceipt) {
-              increaseCustomerCredit(businessPartner, payment.getUsedCredit());
-            } else {
-              decreaseCustomerCredit(businessPartner, payment.getUsedCredit());
-            }
-          }
-          for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList()) {
-            for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
-                .getFINPaymentScheduleDetailList()) {
-              BigDecimal amount = paymentDetail.getAmount().add(paymentDetail.getWriteoffAmount());
-              if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
-                // BP SO_CreditUsed
-                businessPartner = paymentScheduleDetail.getInvoicePaymentSchedule().getInvoice()
-                    .getBusinessPartner();
-                // Payments update credit opposite to invoices
-                if (isReceipt) {
-                  decreaseCustomerCredit(businessPartner, amount);
-                } else {
-                  increaseCustomerCredit(businessPartner, amount);
-                }
-                FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
-                    .getInvoicePaymentSchedule(), paymentDetail.getAmount(), paymentDetail
-                    .getWriteoffAmount());
-              }
-              if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
-                FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
-                    .getOrderPaymentSchedule(), paymentDetail.getAmount(), paymentDetail
-                    .getWriteoffAmount());
-              }
-              // when generating credit for a BP SO_CreditUsed is also updated
-              if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
-                  && paymentScheduleDetail.getOrderPaymentSchedule() == null
-                  && paymentScheduleDetail.getPaymentDetails().getGLItem() == null) {
-                // BP SO_CreditUsed
-                if (isReceipt) {
-                  decreaseCustomerCredit(businessPartner, amount);
-                } else {
-                  increaseCustomerCredit(businessPartner, amount);
-                }
-              }
-            }
-          }
-          payment.setStatus(isReceipt ? "RPR" : "PPM");
-          if ((FIN_Utility.isAutomaticDepositWithdrawn(payment) || strAction.equals("D"))
-              && payment.getAmount().compareTo(BigDecimal.ZERO) != 0)
-            triggerAutomaticFinancialAccountTransaction(vars, conProvider, payment);
         }
 
         // ***********************
@@ -404,16 +406,19 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           payment.getFINPaymentDetailList().removeAll(removedPD);
           OBDal.getInstance().save(payment);
 
+          if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
+              && payment.getUsedCredit().compareTo(BigDecimal.ZERO) == 1) {
+            undoUsedCredit(payment.getUsedCredit(), payment.getBusinessPartner(), payment
+                .isReceipt());
+          }
+          payment.setGeneratedCredit(BigDecimal.ZERO);
+          payment.setUsedCredit(BigDecimal.ZERO);
+
         } finally {
           OBDal.getInstance().flush();
           OBContext.restorePreviousMode();
         }
 
-        if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
-            && payment.getUsedCredit().compareTo(BigDecimal.ZERO) == 1)
-          undoUsedCredit(payment.getUsedCredit(), payment.getBusinessPartner(), payment.isReceipt());
-        payment.setGeneratedCredit(BigDecimal.ZERO);
-        payment.setUsedCredit(BigDecimal.ZERO);
       }
 
       payment.setProcessNow(false);
