@@ -418,13 +418,13 @@ public class PaymentReport extends HttpSecureAppServlet {
         this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
             vars, "#User_Client", ""), strcProjectIdIN));
 
-    xmlDocument.setParameter("reportStatus", strfinPaymSt);
+    xmlDocument.setParameter("selectedStatuses", strfinPaymSt);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
           "FIN_Payment status", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "PaymentReport"), Utility.getContext(this, vars, "#User_Client", "PaymentReport"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "PaymentReport", strfinPaymSt);
-      xmlDocument.setData("reportStatus", "liststructure", comboTableData.select(true));
+      xmlDocument.setData("reportStatus", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);

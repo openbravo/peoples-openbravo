@@ -122,7 +122,8 @@ function onloadFunctions() {
 
         setWindowElementFocus('firstElement');
         hideGroupedOrderingCriteria();
-        hideLeftRight()
+        hideLeftRight();
+        selectedStatuses();
     }
     function onResizeDo(){
         resizeArea();
@@ -187,6 +188,28 @@ function onloadFunctions() {
             ord.add(last, null);
         }
     }
+    function selectedStatuses(){
+    	var selStatus = document.frmMain.inpSelectedStatuses;
+    	var strSelStatus;
+    	var arrSelStatus;
+    	var status = document.frmMain.paramfinPaymSt;
+    	
+    	var i;
+    	var j;
+    	
+    	strSelStatus = selStatus.value.replace("('","");
+    	strSelStatus = strSelStatus.replace("')","");
+    	
+    	arrSelStatus = strSelStatus.split("', '");
+    	
+    	for (i = 0; i < arrSelStatus.length; i++ ){
+    		for (j = 0; j < status.options.length; j++){
+    			if (arrSelStatus[i] == status.options[j].value){
+    				status.options[j].selected = true;
+    			}
+    		}
+    	}
+    }
     function openPaymentTab(isReceipt, recordId) {
        var myframe = getFrame('LayoutMDI') || top.opener;
        if (myframe) {
@@ -221,6 +244,7 @@ function onloadFunctions() {
   <input type="hidden" name="inpAdTableId"></input>
   <input type="hidden" name="inpIsReceipt"></input>
   <input type="hidden" name="inpRecordId"></input>
+  <input type="hidden" name="inpSelectedStatuses" id="inpSelectedStatuses" value=""></input>
   
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>

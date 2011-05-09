@@ -66,9 +66,10 @@
     <ARGUMENT name="parameterListSelected" withId="paramcProjectId_INselected"/>
   </SUBREPORT>
   
-  <PARAMETER id="paramfinPaymSt" name="finPaymSt" attribute="value"/>
+  <PARAMETER id="inpSelectedStatuses" name="selectedStatuses" attribute="value"/>
+  <PARAMETER id="paramStatus" name="paramStatus" default=""/>
   <SUBREPORT id="paramfinPaymSt" name="reportStatus" report="org/openbravo/erpCommon/reference/List">
-    <ARGUMENT name="parameterListSelected" withId="paramfinPaymSt"/>
+    <ARGUMENT name="parameterListSelected" withId="paramStatus"/>
   </SUBREPORT>
   
   <PARAMETER id="paramPaymentMethodId" name="paymentMethodId" attribute="value"/> 
