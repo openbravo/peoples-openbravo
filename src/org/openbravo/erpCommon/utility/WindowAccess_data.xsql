@@ -23,34 +23,6 @@
 <SqlClass name="WindowAccessData" package="org.openbravo.erpCommon.utility" accessModifier="public">
   <SqlClassComment></SqlClassComment>
   
-	<SqlMethod name="hasWindowAccess" type="preparedStatement" return="boolean">
-		<SqlMethodComment></SqlMethodComment>
-		<Sql>
-			select Count(*) AS TOTAL
-			FROM AD_Window_Access
-			WHERE AD_Role_ID = ?
-			AND AD_Window_ID = ?
-			AND IsActive = 'Y'
-		</Sql>
-		<Parameter name="adRoleId"/>
-		<Parameter name="adWindowId"/>
-	</SqlMethod>
-	
-	<SqlMethod name="hasNoTableAccess" type="preparedStatement" return="boolean">
-		<SqlMethodComment></SqlMethodComment>
-		<Sql>
-			select Count(*) AS TOTAL
-			FROM AD_Table_Access t, AD_Tab tb
-			WHERE t.AD_Table_ID = tb.AD_Table_ID
-			AND t.AD_Role_ID = ?
-			AND tb.AD_Tab_ID = ?
-			AND t.IsActive = 'Y'
-			AND t.IsExclude = 'Y'
-		</Sql>
-		<Parameter name="adRoleId"/>
-		<Parameter name="adTabId"/>
-	</SqlMethod>
-	
 	 <SqlMethod name="hasReadOnlyAccess" type="preparedStatement" return="boolean">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -122,60 +94,6 @@
     <Parameter name="adTabId"/>
   </SqlMethod>
   
-	<SqlMethod name="hasProcessAccess" type="preparedStatement" return="boolean">
-		<SqlMethodComment></SqlMethodComment>
-		<Sql>
-			select Count(*) AS TOTAL
-			FROM AD_Process_Access
-			WHERE AD_Role_ID = ?
-			AND AD_Process_ID = ?
-			AND IsActive = 'Y'
-		</Sql>
-		<Parameter name="adRoleId"/>
-		<Parameter name="adProcessId"/>
-	</SqlMethod>
-	
-	<SqlMethod name="hasProcessAccessName" type="preparedStatement" return="boolean">
-		<SqlMethodComment></SqlMethodComment>
-		<Sql>
-			select Count(*) AS TOTAL
-			FROM AD_Process_Access a, AD_Process p
-			WHERE a.AD_Role_ID = ?
-			AND a.AD_Process_ID = p.AD_Process_ID
-			AND UPPER(p.Value) = UPPER(?)
-			AND a.IsActive = 'Y'
-		</Sql>
-		<Parameter name="adRoleId"/>
-		<Parameter name="name"/>
-	</SqlMethod>
-	
-	<SqlMethod name="hasFormAccess" type="preparedStatement" return="boolean">
-		<SqlMethodComment></SqlMethodComment>
-		<Sql>
-			select Count(*) AS TOTAL
-			FROM AD_Form_Access
-			WHERE AD_Role_ID = ?
-			AND AD_Form_ID = ?
-			AND IsActive = 'Y'
-		</Sql>
-		<Parameter name="adRoleId"/>
-		<Parameter name="adFormId"/>
-	</SqlMethod>
-	
-	<SqlMethod name="hasFormAccessName" type="preparedStatement" return="boolean">
-		<SqlMethodComment></SqlMethodComment>
-		<Sql>
-			select Count(*) AS TOTAL
-			FROM AD_Form_Access a, AD_Form f
-			WHERE a.AD_Role_ID = ?
-			AND a.AD_Form_ID = f.AD_Form_ID
-			AND UPPER(f.ClassName) = UPPER(?)
-			AND a.IsActive = 'Y'
-		</Sql>
-		<Parameter name="adRoleId"/>
-		<Parameter name="name"/>
-	</SqlMethod>
-
 	<SqlMethod name="hasWriteAccess" type="preparedStatement" return="boolean">
 	   <SqlMethodComment></SqlMethodComment>
 	   <Sql>
