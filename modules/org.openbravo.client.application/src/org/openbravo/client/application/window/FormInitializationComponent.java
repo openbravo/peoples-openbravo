@@ -581,6 +581,11 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private BaseOBObject setSessionVariablesInParent(String mode, Tab tab, BaseOBObject row,
       String parentId) {
+    // If the FIC is called in CHANGE mode, we don't need to set session variables for the parent
+    // records, because those were already set in the previous FIC call (either in NEW or EDIT mode)
+    if (mode.equals("CHANGE")) {
+      return null;
+    }
     BaseOBObject parentRecord = null;
     if (mode.equals("EDIT")) {
       parentRecord = KernelUtils.getInstance().getParentRecord(row, tab);
