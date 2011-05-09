@@ -55,7 +55,8 @@ public class SystemValidatorTest extends BaseTest {
   /**
    * Executes the {@link DatabaseValidator#validate()} method on the current database.
    */
-  public void testSystemValidation() {
+  public void noTestSystemValidation() {
+    // disabled as covered by dbconsistency test and quite slow
     setSystemAdministratorContext();
     final DatabaseValidator databaseValidator = new DatabaseValidator();
     databaseValidator.setDatabase(createDatabaseObject(null));
@@ -67,7 +68,8 @@ public class SystemValidatorTest extends BaseTest {
    * Executes the {@link DatabaseValidator#validate()} method on the current database for all
    * modules.
    */
-  public void testSystemValidationModules() {
+  public void noTestSystemValidationModules() {
+    // disabled as covered by dbconsistency test and quite slow
     setSystemAdministratorContext();
     for (Module module : OBDal.getInstance().createQuery(Module.class, "").list()) {
       final DatabaseValidator databaseValidator = new DatabaseValidator();
