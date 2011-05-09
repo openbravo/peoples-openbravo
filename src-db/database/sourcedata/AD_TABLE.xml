@@ -357,6 +357,48 @@ The User identifies a unique user in the system. This could be an internal user 
 <!--116-->  <TREETYPE><![CDATA[MM]]></TREETYPE>
 <!--116--></AD_TABLE>
 
+<!--117--><AD_TABLE>
+<!--117-->  <AD_TABLE_ID><![CDATA[117]]></AD_TABLE_ID>
+<!--117-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--117-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--117-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--117-->  <NAME><![CDATA[ADWorkflow]]></NAME>
+<!--117-->  <DESCRIPTION><![CDATA[Define Workflow]]></DESCRIPTION>
+<!--117-->  <HELP><![CDATA[The Workflow Tab defines Workflows in the system.]]></HELP>
+<!--117-->  <TABLENAME><![CDATA[AD_Workflow]]></TABLENAME>
+<!--117-->  <CLASSNAME><![CDATA[Workflow]]></CLASSNAME>
+<!--117-->  <ISVIEW><![CDATA[N]]></ISVIEW>
+<!--117-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--117-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
+<!--117-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
+<!--117-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
+<!--117-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
+<!--117-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
+<!--117-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
+<!--117-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--117--></AD_TABLE>
+
+<!--118--><AD_TABLE>
+<!--118-->  <AD_TABLE_ID><![CDATA[118]]></AD_TABLE_ID>
+<!--118-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--118-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--118-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--118-->  <NAME><![CDATA[ADTask]]></NAME>
+<!--118-->  <DESCRIPTION><![CDATA[Task]]></DESCRIPTION>
+<!--118-->  <HELP><![CDATA[The Task Tab defines the unique tasks that will be used.]]></HELP>
+<!--118-->  <TABLENAME><![CDATA[AD_Task]]></TABLENAME>
+<!--118-->  <CLASSNAME><![CDATA[Task]]></CLASSNAME>
+<!--118-->  <ISVIEW><![CDATA[N]]></ISVIEW>
+<!--118-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--118-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
+<!--118-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
+<!--118-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
+<!--118-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
+<!--118-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
+<!--118-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
+<!--118-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--118--></AD_TABLE>
+
 <!--119--><AD_TABLE>
 <!--119-->  <AD_TABLE_ID><![CDATA[119]]></AD_TABLE_ID>
 <!--119-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1071,6 +1113,29 @@ The Report Access Tab determines who can access a report or process]]></HELP>
 <!--197-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--197--></AD_TABLE>
 
+<!--199--><AD_TABLE>
+<!--199-->  <AD_TABLE_ID><![CDATA[199]]></AD_TABLE_ID>
+<!--199-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--199-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--199-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--199-->  <NAME><![CDATA[ADTaskAccess]]></NAME>
+<!--199-->  <DESCRIPTION><![CDATA[Task Access
+Task Access]]></DESCRIPTION>
+<!--199-->  <HELP><![CDATA[The Task Access Tab defines the Task and type of access that this Role is granted.
+The Task Access Tab defines the Roles that will have access to this task and the type of access each Role is granted.]]></HELP>
+<!--199-->  <TABLENAME><![CDATA[AD_Task_Access]]></TABLENAME>
+<!--199-->  <CLASSNAME><![CDATA[TaskAccess]]></CLASSNAME>
+<!--199-->  <ISVIEW><![CDATA[N]]></ISVIEW>
+<!--199-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--199-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
+<!--199-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
+<!--199-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
+<!--199-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
+<!--199-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
+<!--199-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
+<!--199-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--199--></AD_TABLE>
+
 <!--201--><AD_TABLE>
 <!--201-->  <AD_TABLE_ID><![CDATA[201]]></AD_TABLE_ID>
 <!--201-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1094,6 +1159,29 @@ The Window Access Tab defines the Windows and type of access that this Role is g
 <!--201-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--201-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--201--></AD_TABLE>
+
+<!--202--><AD_TABLE>
+<!--202-->  <AD_TABLE_ID><![CDATA[202]]></AD_TABLE_ID>
+<!--202-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--202-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--202-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--202-->  <NAME><![CDATA[ADWorkflowAccess]]></NAME>
+<!--202-->  <DESCRIPTION><![CDATA[Workflow Access
+Workflow Access]]></DESCRIPTION>
+<!--202-->  <HELP><![CDATA[The Workflow Access Tab defines the Workflows and type of access that this Role is granted.
+The Workflow Access Tab defines the Roles who have access to this Workflow.]]></HELP>
+<!--202-->  <TABLENAME><![CDATA[AD_Workflow_Access]]></TABLENAME>
+<!--202-->  <CLASSNAME><![CDATA[WorkflowAccess]]></CLASSNAME>
+<!--202-->  <ISVIEW><![CDATA[N]]></ISVIEW>
+<!--202-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--202-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
+<!--202-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
+<!--202-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
+<!--202-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
+<!--202-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
+<!--202-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
+<!--202-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--202--></AD_TABLE>
 
 <!--203--><AD_TABLE>
 <!--203-->  <AD_TABLE_ID><![CDATA[203]]></AD_TABLE_ID>
