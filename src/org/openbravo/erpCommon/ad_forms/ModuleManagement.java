@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,10 +53,10 @@ import org.openbravo.erpCommon.modules.UninstallModule;
 import org.openbravo.erpCommon.modules.VersionUtility;
 import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
 import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.erpCommon.obps.DisabledModules;
 import org.openbravo.erpCommon.obps.ActivationKey.CommercialModuleStatus;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 import org.openbravo.erpCommon.obps.ActivationKey.SubscriptionStatus;
+import org.openbravo.erpCommon.obps.DisabledModules;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.HttpsUtils;
@@ -1147,7 +1147,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     ActivationKey ak = ActivationKey.getInstance();
     for (Module mod : modulesToCheck) {
       if (mod.isIsCommercial()
-          && ak.isModuleSubscribed(mod.getModuleID()) != CommercialModuleStatus.ACTIVE) {
+          && (!ak.isActive() || ak.isModuleSubscribed(mod.getModuleID()) != CommercialModuleStatus.ACTIVE)) {
         notAllowedModules.add(mod);
       }
     }
