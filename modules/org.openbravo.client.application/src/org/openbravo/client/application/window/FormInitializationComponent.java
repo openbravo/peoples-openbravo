@@ -1062,6 +1062,12 @@ public class FormInitializationComponent extends BaseActionHandler {
                       }
                       JSONObject jsonobj = new JSONObject(uiDef.getFieldProperties(inpFields
                           .get(name), true));
+                      if (el == null && jsonobj.has("entries")) {
+                        // Special case for null values for combos: we must clean the combo values
+                        jsonobj.put("value", "");
+                        jsonobj.put("classicValue", "");
+                        jsonobj.put("entries", new JSONArray());
+                      }
                       if (jsonobj.has("classicValue")) {
                         String newValue = jsonobj.getString("classicValue");
                         log.debug("Modified column: " + col.getDBColumnName() + "  Value: " + el);
