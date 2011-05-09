@@ -138,7 +138,6 @@ isc.OBViewGrid.addProperties({
   
   enforceVClipping: true,
   
-  canDragSelectText: true,
   validateByCell: true,
   
   currentEditColumnLayout: null,
