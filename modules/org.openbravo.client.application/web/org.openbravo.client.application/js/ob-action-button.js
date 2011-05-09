@@ -97,6 +97,9 @@ isc.OBToolbarActionButton.addProperties( {
         // Refresh current view, taking the message set in the process' context view
         currentView.getTabMessage(contextView.tabId);
         currentView.toolBar.refreshCustomButtons();
+        
+        // Refresh in order to show possible new records
+        currentView.refresh();
       });
 
     OB.ActionButton.executingProcess = null;
