@@ -32,6 +32,8 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Reference;
@@ -599,4 +601,27 @@ public class IssuesTest extends BaseTest {
 
     OBDal.getInstance().remove(hbLogRead);
   }
+
+  /**
+   * Testing issue 0017058. It verifies that the NVARCHAR JDBC type is properly mapped The test SQL
+   * query is used in the IDL module.
+   */
+  public void test17058() {
+
+    setSystemAdministratorContext();
+
+    final Session session = OBDal.getInstance().getSession();
+    SQLQuery query = session
+        .createSQLQuery("SELECT AD_REF_LIST.VALUE AS VALUE, AD_REF_LIST.NAME AS LISTNAME, TRL.NAME AS TRLNAME "
+            + "FROM AD_REF_LIST LEFT OUTER JOIN "
+            + "(SELECT AD_REF_LIST_ID, NAME FROM AD_REF_LIST_TRL WHERE AD_REF_LIST_TRL.AD_LANGUAGE = ?) TRL "
+            + "ON AD_REF_LIST.AD_REF_LIST_ID = TRL.AD_REF_LIST_ID "
+            + "WHERE AD_REF_LIST.AD_REFERENCE_ID = ?");
+    query.setString(0, "en_US");
+    query.setString(1, "800025");
+
+    java.util.List<Object[]> l = query.list();
+
+  }
+
 }
