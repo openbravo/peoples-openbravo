@@ -1279,13 +1279,13 @@ isc.OBStandardView.addProperties({
     }
   },
   
-  refreshParentRecord: function() {
+  refreshParentRecord: function(callBackFunction) {
     if (this.parentView) {
-      this.parentView.refreshCurrentRecord();
+      this.parentView.refreshCurrentRecord(callBackFunction);
     }
   },
   
-  refreshCurrentRecord: function() {
+  refreshCurrentRecord: function(callBackFunction) {
     if (!this.viewGrid.getSelectedRecord()) {
       return;
     }
@@ -1320,10 +1320,15 @@ isc.OBStandardView.addProperties({
         me.viewGrid.refreshRow(recordIndex);
         me.viewGrid.redraw();
       }
+      
+      
+      if (callBackFunction) {
+        callBackFunction();
+      }
     };
     
     this.getDataSource().fetchData(criteria, callback);
-    this.refreshParentRecord();
+    this.refreshParentRecord(callBackFunction);
   },
   
   saveRow: function(){

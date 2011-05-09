@@ -93,7 +93,7 @@ isc.OBToolbarActionButton.addProperties( {
     var contextView = OB.ActionButton.executingProcess.contextView,
         currentView = this.view;
     
-    currentView.refresh(function(){
+    currentView.refreshCurrentRecord(function(){
         // Refresh current view, taking the message set in the process' context view
         currentView.getTabMessage(contextView.tabId);
         currentView.toolBar.refreshCustomButtons();
