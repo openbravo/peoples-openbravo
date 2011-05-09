@@ -796,29 +796,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--151-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--151--></AD_TAB>
 
-<!--152--><AD_TAB>
-<!--152-->  <AD_TAB_ID><![CDATA[152]]></AD_TAB_ID>
-<!--152-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--152-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--152-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--152-->  <NAME><![CDATA[Test]]></NAME>
-<!--152-->  <DESCRIPTION><![CDATA[View examples of several references (data types) and their display within a automatically generated window.]]></DESCRIPTION>
-<!--152-->  <HELP><![CDATA[View examples of several references (data types) and their display within a automatically generated window.]]></HELP>
-<!--152-->  <AD_TABLE_ID><![CDATA[135]]></AD_TABLE_ID>
-<!--152-->  <AD_WINDOW_ID><![CDATA[127]]></AD_WINDOW_ID>
-<!--152-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--152-->  <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--152-->  <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--152-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--152-->  <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--152-->  <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--152-->  <HASTREE><![CDATA[N]]></HASTREE>
-<!--152-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--152-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--152-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--152-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--152--></AD_TAB>
-
 <!--153--><AD_TAB>
 <!--153-->  <AD_TAB_ID><![CDATA[153]]></AD_TAB_ID>
 <!--153-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

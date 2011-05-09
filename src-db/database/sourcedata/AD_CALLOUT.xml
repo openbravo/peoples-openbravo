@@ -450,15 +450,6 @@
 <!--154-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--154--></AD_CALLOUT>
 
-<!--155--><AD_CALLOUT>
-<!--155-->  <AD_CALLOUT_ID><![CDATA[155]]></AD_CALLOUT_ID>
-<!--155-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--155-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--155-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--155-->  <NAME><![CDATA[SL_ThisIsATest]]></NAME>
-<!--155-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--155--></AD_CALLOUT>
-
 <!--156--><AD_CALLOUT>
 <!--156-->  <AD_CALLOUT_ID><![CDATA[156]]></AD_CALLOUT_ID>
 <!--156-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

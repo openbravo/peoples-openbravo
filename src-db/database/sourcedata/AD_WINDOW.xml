@@ -352,22 +352,6 @@
 <!--125-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
 <!--125--></AD_WINDOW>
 
-<!--127--><AD_WINDOW>
-<!--127-->  <AD_WINDOW_ID><![CDATA[127]]></AD_WINDOW_ID>
-<!--127-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--127-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--127-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--127-->  <NAME><![CDATA[Test]]></NAME>
-<!--127-->  <DESCRIPTION><![CDATA[View an example of a window that shows fields with all possible references or data types.]]></DESCRIPTION>
-<!--127-->  <HELP><![CDATA[View an example of a window that shows fields with all possible references or data types.]]></HELP>
-<!--127-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
-<!--127-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--127-->  <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--127-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--127-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--127-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--127--></AD_WINDOW>
-
 <!--129--><AD_WINDOW>
 <!--129-->  <AD_WINDOW_ID><![CDATA[129]]></AD_WINDOW_ID>
 <!--129-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
