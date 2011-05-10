@@ -122,14 +122,8 @@ isc.OBNoteLayout.addProperties( {
 							'client' : OB.User.clientId,
 							'organization' : OB.User.organizationId,
 							'table' : this.getForm().view.standardProperties.inpTableId,
-							'record' : this.getForm().view.viewGrid
-									.getSelectedRecord().id,
-							'note' : note,
-							'isactive' : 'Y',
-							'created' : currentTime,
-							'createdBy' : OB.User.id,
-							'updated' : currentTime,
-							'updatedBy' : OB.User.id
+							'record' : this.getForm().view.viewGrid.getSelectedRecord().id,
+							'note' : note
 						});
 
 				// clean text area
@@ -280,7 +274,7 @@ isc.OBNoteLayout.addProperties( {
 								}
 
 								value =  value + ' <span class="OBNoteListGridAuthor">' +
-								        OB.Utilities.getTimePassed(record.created) +
+								        OB.Utilities.getTimePassed(record.creationDate) +
 										' ' + OB.I18N.getLabel('OBUIAPP_by') + ' ' +
 										record['createdBy._identifier']+'</span>';
 
