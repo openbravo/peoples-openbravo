@@ -27,15 +27,13 @@
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.AD_Menu_ID AS ID, m.Name,m.Description,m.IsSummary,
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.AD_Menu_ID AS ID, m.Name,m.Description,m.IsSummary,
         m.Action, m.AD_Window_ID, m.AD_Process_ID, m.AD_Form_ID,
         (case when (select count(*) from ad_module where type='T' and isindevelopment='Y')=0 
                then Mo.ISINDEVELOPMENT 
                else 'Y' end) as isInDevelopment, 
         '' as IsReady, '' as AD_OrgType_ID
-        FROM AD_TreeNode tn left join AD_TreeBar tb on tn.AD_Tree_ID=tb.AD_Tree_ID 
-                                                  AND tn.Node_ID=tb.Node_ID 
-                                                  AND tb.AD_User_ID  = ?,          
+        FROM AD_TreeNode tn,          
              AD_Menu m,
              AD_Module Mo
         WHERE tn.Node_ID = m.AD_Menu_ID 
@@ -43,7 +41,6 @@
         AND Mo.AD_Module_ID = m.AD_Module_ID
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>
-        <Parameter name="adUserId"/>
         <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND m.isActive='Y' AND "/>
         <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
@@ -52,15 +49,13 @@
    <SqlMethod name="selectTrl" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.AD_Menu_ID AS ID, 
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.AD_Menu_ID AS ID, 
                COALESCE (t.Name, m.Name) as name,t.Description,m.IsSummary,
         m.Action, m.AD_Window_ID, m.AD_Process_ID, m.AD_Form_ID,
         (case when (select count(*) from ad_module where type='T' and isindevelopment='Y')=0 
                then Mo.ISINDEVELOPMENT 
                else 'Y' end) as isInDevelopment
-        FROM AD_TreeNode tn left join AD_TreeBar tb on tn.AD_Tree_ID=tb.AD_Tree_ID  
-                                                      AND tn.Node_ID=tb.Node_ID
-                                                      AND tb.AD_User_ID  = ? , 
+        FROM AD_TreeNode tn, 
              AD_Menu m left join AD_Menu_Trl t on m.AD_Menu_ID = t.AD_Menu_ID 
                                                AND t.AD_Language = ?
                                                AND m.AD_Menu_ID = t.AD_Menu_ID,
@@ -70,7 +65,6 @@
         AND Mo.AD_Module_ID = m.AD_Module_ID
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>
-        <Parameter name="adUserId"/>
         <Parameter name="adLanguage"/>
         <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND m.isActive='Y' AND "/>
         <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
@@ -80,16 +74,13 @@
    <SqlMethod name="selectOrg" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.AD_Org_ID AS ID, m.Name,m.Description,m.IsSummary,m.IsReady, m.AD_OrgType_ID
-        FROM AD_TreeNode tn left join AD_TreeBar tb on tn.AD_Tree_ID=tb.AD_Tree_ID 
-                                            AND tn.Node_ID=tb.Node_ID 
-                                            AND tb.AD_User_ID  = ? ,
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.AD_Org_ID AS ID, m.Name,m.Description,m.IsSummary,m.IsReady, m.AD_OrgType_ID
+        FROM AD_TreeNode tn,
          AD_Org m
         WHERE tn.Node_ID = m.AD_Org_ID 
         AND tn.AD_Tree_ID = ? 
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>
-        <Parameter name="adUserId"/>
         <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND m.isActive='Y' AND "/>
         <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
@@ -98,16 +89,13 @@
    <SqlMethod name="selectProductCategory" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.M_Product_Category_ID AS ID, m.Name,m.Description, 'N' AS IsSummary 
-        FROM AD_TreeNode tn left join AD_TreeBar tb on tn.AD_Tree_ID=tb.AD_Tree_ID  
-                                            AND tn.Node_ID=tb.Node_ID 
-                                            AND tb.AD_User_ID  = ? , 
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.M_Product_Category_ID AS ID, m.Name,m.Description, 'N' AS IsSummary 
+        FROM AD_TreeNode tn, 
           M_Product_Category m
         WHERE tn.Node_ID = m.M_Product_Category_ID 
         AND tn.AD_Tree_ID = ? 
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>
-        <Parameter name="adUserId"/>
         <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND m.isActive='Y' AND "/>
         <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
@@ -116,17 +104,14 @@
    <SqlMethod name="selectBOM" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.M_Product_BOM_ID AS ID, p.Name,p.Description, p.IsBOM AS IsSummary 
-        FROM AD_TreeNode tn left join AD_TreeBar tb on  tn.AD_Tree_ID=tb.AD_Tree_ID 
-                                AND tn.Node_ID=tb.Node_ID 
-                                AND tb.AD_User_ID = ? , 
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.M_Product_BOM_ID AS ID, p.Name,p.Description, p.IsBOM AS IsSummary 
+        FROM AD_TreeNode tn, 
           M_Product_BOM m, M_Product p
         WHERE tn.Node_ID = m.M_Product_BOM_ID 
         AND m.M_ProductBOM_ID = p.M_Product_ID 
         AND tn.AD_Tree_ID = ? 
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>
-        <Parameter name="adUserId"/>
         <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND m.isActive='Y' AND "/>
         <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
@@ -135,20 +120,17 @@
    <SqlMethod name="selectElementValue" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.C_ElementValue_ID AS ID, 
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.C_ElementValue_ID AS ID, 
                 m.value||' - '||coalesce(mt.name, m.name) as Name,m.Description,m.IsSummary 
         FROM C_ElementValue m left join c_elementvalue_trl mt on mt.c_elementvalue_id = m.c_elementvalue_id
                                   and mt.ad_language = ?,
-             AD_TreeNode tn left join AD_TreeBar tb on tn.AD_Tree_ID=tb.AD_Tree_ID 
-                                AND tn.Node_ID=tb.Node_ID 
-                                AND tb.AD_User_ID = ?  
+             AD_TreeNode tn
         WHERE tn.Node_ID = m.C_ElementValue_ID 
         AND tn.AD_Tree_ID = ? 
         AND m.C_Element_ID = ? 
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>
 	  	<Parameter name="adLanguage"/>
-        <Parameter name="adUserId"/>
         <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND m.isActive='Y' AND "/>
         <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
@@ -158,16 +140,13 @@
    <SqlMethod name="selectCampaign" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.C_Campaign_ID AS ID, m.Name,m.Description, 'N' AS IsSummary 
-        FROM AD_TreeNode tn left join AD_TreeBar tb on tn.AD_Tree_ID=tb.AD_Tree_ID 
-                            AND tn.Node_ID=tb.Node_ID 
-                            AND tb.AD_User_ID = ? , 
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.C_Campaign_ID AS ID, m.Name,m.Description, 'N' AS IsSummary 
+        FROM AD_TreeNode tn, 
               C_Campaign m
         WHERE  tn.Node_ID = m.C_Campaign_ID 
         AND tn.AD_Tree_ID = ? 
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>
-        <Parameter name="adUserId"/>
         <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND m.isActive='Y' AND "/>
         <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
@@ -176,16 +155,12 @@
    <SqlMethod name="selectProject" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.C_Project_ID AS ID, m.Name,m.Description,m.IsSummary 
-        FROM AD_TreeNode tn left join AD_TreeBar tb on  tn.AD_Tree_ID=tb.AD_Tree_ID 
-                            AND tn.Node_ID=tb.Node_ID 
-                            AND tb.AD_User_ID  = ?  , 
-              C_Project m
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.C_Project_ID AS ID, m.Name,m.Description,m.IsSummary 
+        FROM AD_TreeNode tn, C_Project m
         WHERE tn.Node_ID = m.C_Project_ID 
         AND tn.AD_Tree_ID = ? 
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>
-        <Parameter name="adUserId"/>
         <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND m.isActive='Y' AND "/>
         <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
@@ -194,16 +169,12 @@
    <SqlMethod name="selectActivity" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.C_Activity_ID AS ID, m.Name,m.Description,m.IsSummary 
-        FROM AD_TreeNode tn left join AD_TreeBar tb on tn.AD_Tree_ID=tb.AD_Tree_ID 
-                            AND tn.Node_ID=tb.Node_ID 
-                            AND tb.AD_User_ID  = ?  , 
-                        C_Activity m
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.C_Activity_ID AS ID, m.Name,m.Description,m.IsSummary 
+        FROM AD_TreeNode tn, C_Activity m
         WHERE  tn.Node_ID = m.C_Activity_ID 
         AND tn.AD_Tree_ID = ? 
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>
-        <Parameter name="adUserId"/>
         <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND m.isActive='Y' AND "/>
         <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
@@ -212,16 +183,12 @@
    <SqlMethod name="selectSalesRegion" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.C_SalesRegion_ID AS ID, m.Name,m.Description,m.IsSummary 
-        FROM AD_TreeNode tn left join AD_TreeBar tb on  tn.AD_Tree_ID=tb.AD_Tree_ID
-                                  AND tn.Node_ID=tb.Node_ID 
-                                  AND tb.AD_User_ID = ?  , 
-            C_SalesRegion m
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, m.C_SalesRegion_ID AS ID, m.Name,m.Description,m.IsSummary 
+        FROM AD_TreeNode tn, C_SalesRegion m
         WHERE tn.Node_ID = m.C_SalesRegion_ID 
         AND tn.AD_Tree_ID = ? 
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>
-        <Parameter name="adUserId"/>
         <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND m.isActive='Y' AND "/>
         <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
@@ -230,16 +197,12 @@
    <SqlMethod name="selectAccountingReport" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, ar.AD_AccountingRpt_Element_ID AS ID, ar.Name,ar.Description,ar.IsSummary 
-        FROM AD_TreeNode tn left join AD_TreeBar tb on  tn.AD_Tree_ID=tb.AD_Tree_ID
-                                  AND tn.Node_ID=tb.Node_ID 
-                                  AND tb.AD_User_ID = ?  , 
-            AD_AccountingRpt_Element ar
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, ar.AD_AccountingRpt_Element_ID AS ID, ar.Name,ar.Description,ar.IsSummary 
+        FROM AD_TreeNode tn, AD_AccountingRpt_Element ar
         WHERE tn.Node_ID = ar.AD_AccountingRpt_Element_ID 
         AND tn.AD_Tree_ID = ? 
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>
-        <Parameter name="adUserId"/>
         <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND ar.isActive='Y' AND "/>
         <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>
@@ -248,16 +211,12 @@
    <SqlMethod name="selectTaxReport" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, tr.C_TAX_REPORT_ID AS ID, tr.NAME,tr.Description,tr.IsSummary 
-        FROM AD_TREENODE tn LEFT JOIN AD_TREEBAR tb ON  tn.AD_Tree_ID=tb.AD_Tree_ID
-                                  AND tn.Node_ID=tb.Node_ID 
-                                  AND tb.AD_User_ID = ?  , 
-            C_TAX_REPORT tr
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, tr.C_TAX_REPORT_ID AS ID, tr.NAME,tr.Description,tr.IsSummary 
+        FROM AD_TREENODE tn, C_TAX_REPORT tr
         WHERE tn.Node_ID = tr.C_TAX_REPORT_ID
         AND tn.AD_Tree_ID = ? 
         ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       </Sql>
-        <Parameter name="adUserId"/>
         <Parameter name="editable" optional="true" type="none" after="WHERE " text="tn.IsActive='Y' AND tr.isActive='Y' AND "/>
         <Parameter name="parentId" optional="true" after="WHERE " text="tn.Parent_ID = ? AND "/>
         <Parameter name="nodeId" optional="true" after="WHERE " text="tn.Node_ID = ? AND "/>

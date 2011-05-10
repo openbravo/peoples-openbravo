@@ -108,40 +108,33 @@ class WindowTreeUtility {
     WindowTreeData[] data = null;
     String strEditable = (editable ? "editable" : "");
     if (TreeType.equals("MM")) {
-      data = WindowTreeData.selectTrl(conn, vars.getUser(), vars.getLanguage(), strEditable,
-          strParentID, strNodeId, TreeID);
-    } else if (TreeType.equals("OO"))
-      data = WindowTreeData.selectOrg(conn, vars.getUser(), strEditable, strParentID, strNodeId,
-          TreeID);
-    else if (TreeType.equals("PC"))
-      data = WindowTreeData.selectProductCategory(conn, vars.getUser(), strEditable, strParentID,
+      data = WindowTreeData.selectTrl(conn, vars.getLanguage(), strEditable, strParentID,
           strNodeId, TreeID);
+    } else if (TreeType.equals("OO"))
+      data = WindowTreeData.selectOrg(conn, strEditable, strParentID, strNodeId, TreeID);
+    else if (TreeType.equals("PC"))
+      data = WindowTreeData
+          .selectProductCategory(conn, strEditable, strParentID, strNodeId, TreeID);
     else if (TreeType.equals("BB"))
-      data = WindowTreeData.selectBOM(conn, vars.getUser(), strEditable, strParentID, strNodeId,
-          TreeID);
+      data = WindowTreeData.selectBOM(conn, strEditable, strParentID, strNodeId, TreeID);
     else if (TreeType.equals("EV")) {
       String strElementId = vars.getSessionValue(Utility.getWindowID(conn, strTabID)
           + "|C_Element_ID");
-      data = WindowTreeData.selectElementValue(conn, vars.getLanguage(), vars.getUser(),
-          strEditable, strParentID, strNodeId, TreeID, strElementId);
+      data = WindowTreeData.selectElementValue(conn, vars.getLanguage(), strEditable, strParentID,
+          strNodeId, TreeID, strElementId);
     } else if (TreeType.equals("MC"))
-      data = WindowTreeData.selectCampaign(conn, vars.getUser(), strEditable, strParentID,
-          strNodeId, TreeID);
+      data = WindowTreeData.selectCampaign(conn, strEditable, strParentID, strNodeId, TreeID);
     else if (TreeType.equals("PJ"))
-      data = WindowTreeData.selectProject(conn, vars.getUser(), strEditable, strParentID,
-          strNodeId, TreeID);
+      data = WindowTreeData.selectProject(conn, strEditable, strParentID, strNodeId, TreeID);
     else if (TreeType.equals("AY"))
-      data = WindowTreeData.selectActivity(conn, vars.getUser(), strEditable, strParentID,
-          strNodeId, TreeID);
+      data = WindowTreeData.selectActivity(conn, strEditable, strParentID, strNodeId, TreeID);
     else if (TreeType.equals("SR"))
-      data = WindowTreeData.selectSalesRegion(conn, vars.getUser(), strEditable, strParentID,
-          strNodeId, TreeID);
+      data = WindowTreeData.selectSalesRegion(conn, strEditable, strParentID, strNodeId, TreeID);
     else if (TreeType.equals("AR"))
-      data = WindowTreeData.selectAccountingReport(conn, vars.getUser(), strEditable, strParentID,
-          strNodeId, TreeID);
+      data = WindowTreeData.selectAccountingReport(conn, strEditable, strParentID, strNodeId,
+          TreeID);
     else if (TreeType.equals("TR"))
-      data = WindowTreeData.selectTaxReport(conn, vars.getUser(), strEditable, strParentID,
-          strNodeId, TreeID);
+      data = WindowTreeData.selectTaxReport(conn, strEditable, strParentID, strNodeId, TreeID);
 
     return data;
   }
@@ -159,7 +152,6 @@ class WindowTreeUtility {
     aux.nodeId = data.getField("nodeId");
     aux.parentId = data.getField("parentId");
     aux.seqno = data.getField("seqno");
-    aux.isactive = data.getField("isactive");
     aux.id = data.getField("id");
     aux.name = data.getField("name");
     aux.description = data.getField("description");

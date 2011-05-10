@@ -35,7 +35,7 @@ public class OrgTree implements Serializable {
   public OrgTree(ConnectionProvider conn, String strClient) {
     try {
       String treeID = WindowTreeData.selectTreeID(conn, "'" + strClient + "'", "OO")[0].id;
-      WindowTreeData[] data = WindowTreeData.selectOrg(conn, "", "", "", "", treeID);
+      WindowTreeData[] data = WindowTreeData.selectOrg(conn, "", "", "", treeID);
       this.nodes = OrgTreeNode.createTree(data);
     } catch (Exception e) {
       e.printStackTrace();
