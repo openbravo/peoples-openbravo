@@ -124,10 +124,7 @@ class WindowTreeUtility {
           + "|C_Element_ID");
       data = WindowTreeData.selectElementValue(conn, vars.getLanguage(), vars.getUser(),
           strEditable, strParentID, strNodeId, TreeID, strElementId);
-    } else if (TreeType.equals("BP"))
-      data = WindowTreeData.selectBPartner(conn, vars.getUser(), strEditable, strParentID,
-          strNodeId, TreeID);
-    else if (TreeType.equals("MC"))
+    } else if (TreeType.equals("MC"))
       data = WindowTreeData.selectCampaign(conn, vars.getUser(), strEditable, strParentID,
           strNodeId, TreeID);
     else if (TreeType.equals("PJ"))
@@ -325,10 +322,7 @@ class WindowTreeUtility {
     if (log4j.isDebugEnabled())
       log4j.debug("WindowTreeUtility.setNode() - TreeID: " + TreeID);
 
-    if (TreeType.equals("BP"))
-      WindowTreeData.updateBP(conn, vars.getUser(), strParentID, strSeqNo, TreeID, strLink);
-    else
-      WindowTreeData.update(conn, vars.getUser(), strParentID, strSeqNo, TreeID, strLink);
+    WindowTreeData.update(conn, vars.getUser(), strParentID, strSeqNo, TreeID, strLink);
   }
 
 }

@@ -70,25 +70,6 @@ BEGIN
       )
       ;
   END IF;
-  --  Insert into TreeNodeBP
-  IF(:new.TREETYPE='BP') THEN
-    INSERT
-    INTO AD_TreeNodeBP
-      (
-        AD_TreeNodeBP_ID, AD_Client_ID, AD_Org_ID, IsActive,
-        Created, CreatedBy, Updated,
-        UpdatedBy, AD_Tree_ID, Node_ID,
-        Parent_ID, SeqNo
-      )
-      VALUES
-      (
-        get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
-        :new.Created, :new.CreatedBy, :new.Updated,
-        :new.UpdatedBy, :new.AD_Tree_ID, '0',
-        NULL, 0
-      )
-      ;
-  END IF;
 END AD_TREE_TRG
 ]]></body>
     </trigger>

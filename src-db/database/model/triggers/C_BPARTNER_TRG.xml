@@ -34,8 +34,6 @@
    Cur_Defaults RECORD;
    Cur_Defaults2 RECORD;
 
-  v_xTree_ID                  varchar2(32);
-  v_xParent_ID                varchar2(32);
   v_BP_Acct_ID                varchar2(32);
   v_C_Receivable_Acct         varchar2(32);
   v_C_Prepayment_Acct         varchar2(32);
@@ -240,33 +238,6 @@ BEGIN
     
      END LOOP;
 
-     /*
-       Create TreeNode --
-         
-       get AD_Tree_ID + ParentID
-    */
-     SELECT  c.AD_Tree_BPartner_ID, n.Node_ID
-     INTO  v_xTree_ID, v_xParent_ID
-     FROM    AD_ClientInfo c, AD_TreeNodeBP n
-     WHERE   c.AD_Tree_BPartner_ID=n.AD_Tree_ID
-         AND n.Parent_ID IS NULL
-         AND c.AD_Client_ID=:new.AD_Client_ID;
-
-     --  DBMS_OUTPUT.PUT_LINE('Tree='||v_xTree_ID||'  Node='||:new.AD_Menu_ID||'  Parent='||v_xParent_ID);
-
-     /*
-      Insert into TreeNode
-     */
-     INSERT INTO AD_TreeNodeBP
-         (AD_TreeNodeBP_ID, AD_Client_ID, AD_Org_ID,
-         IsActive, Created, CreatedBy, Updated, UpdatedBy,
-         AD_Tree_ID, Node_ID,
-         Parent_ID, SeqNo)
-     VALUES
-         (get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID,
-         :new.IsActive, :new.Created, :new.CreatedBy, :new.Updated, :new.UpdatedBy,
-         v_xTree_ID, :new.C_BPartner_ID,
-         v_xParent_ID, (CASE :new.IsSummary WHEN 'Y' THEN 100 ELSE 999 END));     -- Summary Nodes first
   ELSIF (UPDATING) THEN
      UPDATE C_BP_CUSTOMER_ACCT SET AD_ORG_ID = :new.AD_Org_ID
      WHERE C_BPARTNER_ID = :new.C_BPartner_ID;
