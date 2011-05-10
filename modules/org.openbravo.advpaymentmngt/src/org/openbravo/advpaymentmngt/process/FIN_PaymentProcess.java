@@ -243,8 +243,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList()) {
               for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
                   .getFINPaymentScheduleDetailList()) {
-                BigDecimal amount = paymentDetail.getAmount()
-                    .add(paymentDetail.getWriteoffAmount());
+                BigDecimal amount = paymentScheduleDetail.getAmount().add(
+                    paymentScheduleDetail.getWriteoffAmount());
                 if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
                   // BP SO_CreditUsed
                   businessPartner = paymentScheduleDetail.getInvoicePaymentSchedule().getInvoice()
@@ -256,13 +256,13 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                     increaseCustomerCredit(businessPartner, amount);
                   }
                   FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
-                      .getInvoicePaymentSchedule(), paymentDetail.getAmount(), paymentDetail
-                      .getWriteoffAmount());
+                      .getInvoicePaymentSchedule(), paymentScheduleDetail.getAmount(),
+                      paymentScheduleDetail.getWriteoffAmount());
                 }
                 if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
                   FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
-                      .getOrderPaymentSchedule(), paymentDetail.getAmount(), paymentDetail
-                      .getWriteoffAmount());
+                      .getOrderPaymentSchedule(), paymentScheduleDetail.getAmount(),
+                      paymentScheduleDetail.getWriteoffAmount());
                 }
                 // when generating credit for a BP SO_CreditUsed is also updated
                 if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
