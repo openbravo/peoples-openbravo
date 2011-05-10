@@ -1091,6 +1091,17 @@ public class FormInitializationComponent extends BaseActionHandler {
                       // We need to fire this callout, as the column value was changed
                       addCalloutToList(col, calloutsToCall, lastfieldChangedList);
                     }
+                  } else {
+                    for (AuxiliaryInput aux : tab.getADAuxiliaryInputList()) {
+                      if (name
+                          .equalsIgnoreCase("inp" + Sqlc.TransformaNombreColumna(aux.getName()))) {
+                        Object el = element.get(1, null);
+                        JSONObject obj = new JSONObject();
+                        obj.put("value", el);
+                        obj.put("classicValue", el);
+                        columnValues.put(name, obj);
+                      }
+                    }
                   }
                 }
               }
