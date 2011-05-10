@@ -68,6 +68,10 @@ public class EnumUIDefinition extends UIDefinition {
     }
   }
 
+  public String getFieldPropertiesWithoutCombo(Field field, boolean getValueFromSession) {
+    return super.getFieldProperties(field, getValueFromSession);
+  }
+
   @Override
   public String getFilterEditorProperties(Field field) {
     return ", filterOnKeypress: true" + super.getFilterEditorProperties(field);

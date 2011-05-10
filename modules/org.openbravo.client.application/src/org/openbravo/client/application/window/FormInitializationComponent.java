@@ -53,6 +53,7 @@ import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.reference.EnumUIDefinition;
+import org.openbravo.client.kernel.reference.FKComboUIDefinition;
 import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
@@ -603,6 +604,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private void setValuesInRequest(String mode, Tab tab, BaseOBObject row, JSONObject jsContent) {
+
     List<Field> fields = tab.getADFieldList();
     if (mode.equals("EDIT")) {
       // In EDIT mode we initialize them from the database
@@ -610,7 +612,6 @@ public class FormInitializationComponent extends BaseActionHandler {
         setValueOfColumnInRequest(row, field.getColumn().getDBColumnName());
       }
     }
-
     // and then overwrite with what gets passed in
     if (mode.equals("EDIT") || mode.equals("CHANGE") || mode.equals("SETSESSION")) {
       // In CHANGE and SETSESSION we get them from the request
@@ -913,6 +914,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   private List<String> runCallouts(Map<String, JSONObject> columnValues, Tab tab,
       List<String> calledCallouts, List<String> calloutsToCall, List<String> lastfieldChangedList,
       List<String> messages, List<String> dynamicCols) {
+    HashMap<String, Object> calloutInstances = new HashMap<String, Object>();
 
     // flush&commit to release lock in db which otherwise interfere with callouts which run in their
     // own jdbc connection (i.e. lock on AD_Sequence when using with Sales Invoice window)
@@ -923,7 +925,6 @@ public class FormInitializationComponent extends BaseActionHandler {
     } catch (SQLException e1) {
       throw new OBException("Error committing before runnings callouts", e1);
     }
-
     List<Field> fields = tab.getADFieldList();
     HashMap<String, Field> inpFields = buildInpField(fields);
     String lastCalledCallout = "";
@@ -942,11 +943,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       log.debug("Calling callout " + calloutClassName + " with field changed " + lastFieldChanged);
       try {
         Class<?> calloutClass = Class.forName(calloutClassName);
-        calloutsToCall.remove(calloutClassName);
-        lastfieldChangedList.remove(lastFieldChanged);
-        Object calloutInstance = calloutClass.newInstance();
         Method init = null;
         Method service = null;
+        Method post = null;
         for (Method m : calloutClass.getMethods()) {
           if (m.getName().equals("init") && m.getParameterTypes().length == 1) {
             init = m;
@@ -954,7 +953,12 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (m.getName().equals("service")) {
             service = m;
           }
+          if (m.getName().equals("doPost")) {
+            post = m;
+          }
         }
+        calloutsToCall.remove(calloutClassName);
+        lastfieldChangedList.remove(lastFieldChanged);
 
         if (init == null || service == null) {
           log.info("Couldn't find method in Callout " + calloutClassName);
@@ -963,20 +967,26 @@ public class FormInitializationComponent extends BaseActionHandler {
 
           RequestContext.get().setRequestParameter("inpLastFieldChanged", lastFieldChanged);
           RequestContext.get().setRequestParameter("inpOB3UIMode", "Y");
-
           // We then execute the callout
-          CalloutServletConfig config = new CalloutServletConfig(calloutClassName, RequestContext
-              .getServletContext());
-          Object[] initArgs = { config };
-          init.invoke(calloutInstance, initArgs);
+          Object calloutInstance;
           CalloutHttpServletResponse fakeResponse = new CalloutHttpServletResponse(rq.getResponse());
           Object[] arguments = { rq.getRequest(), fakeResponse };
+          if (calloutInstances.get(calloutClassName) != null) {
+            calloutInstance = calloutInstances.get(calloutClassName);
+            post.invoke(calloutInstance, arguments);
+          } else {
+            calloutInstance = calloutClass.newInstance();
+            calloutInstances.put(calloutClassName, calloutInstance);
+            CalloutServletConfig config = new CalloutServletConfig(calloutClassName, RequestContext
+                .getServletContext());
+            Object[] initArgs = { config };
+            init.invoke(calloutInstance, initArgs);
+            // We invoke the service method. This method will automatically call the doPost() method
+            // of the callout servlet
+            service.invoke(calloutInstance, arguments);
+          }
 
-          // We invoke the service method. This method will automatically call the doPost() method
-          // of the callout servlet
-          service.invoke(calloutInstance, arguments);
           String calloutResponse = fakeResponse.getOutputFromWriter();
-
           // Now we parse the callout response and modify the stored values of the columns modified
           // by the callout
           ArrayList<NativeArray> returnedArray = new ArrayList<NativeArray>();
@@ -1060,9 +1070,18 @@ public class FormInitializationComponent extends BaseActionHandler {
                       } else {
                         rq.setRequestParameter(colId, uiDef.convertToClassicString(el));
                       }
-                      JSONObject jsonobj = new JSONObject(uiDef.getFieldProperties(inpFields
-                          .get(name), true));
-                      if (el == null && jsonobj.has("entries")) {
+                      String jsonStr;
+                      if (uiDef instanceof FKComboUIDefinition) {
+                        jsonStr = ((FKComboUIDefinition) uiDef).getFieldPropertiesWithoutCombo(
+                            inpFields.get(name), true);
+                      } else if (uiDef instanceof EnumUIDefinition) {
+                        jsonStr = ((EnumUIDefinition) uiDef).getFieldPropertiesWithoutCombo(
+                            inpFields.get(name), true);
+                      } else {
+                        jsonStr = uiDef.getFieldProperties(inpFields.get(name), true);
+                      }
+                      JSONObject jsonobj = new JSONObject(jsonStr);
+                      if (el == null && uiDef instanceof ForeignKeyUIDefinition) {
                         // Special case for null values for combos: we must clean the combo values
                         jsonobj.put("value", "");
                         jsonobj.put("classicValue", "");
