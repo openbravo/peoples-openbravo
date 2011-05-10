@@ -232,9 +232,6 @@ public class OBViewGridComponent extends BaseTemplateComponent {
         if (prop.isId()) {
           continue;
         }
-        if (!fld.isDisplayed()) {
-          continue;
-        }
         if (ApplicationUtils.isUIButton(fld)) {
           continue;
         }
