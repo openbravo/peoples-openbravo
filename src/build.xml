@@ -25,7 +25,6 @@ List of methods infside:
 init: creates all the folders.
 trl.clean: clean the AD_TEXTINTERFACES table
 clean: delete all folders.
-copy.srcClient: copy the content of the srcClient to the src folder.
 sqlc: generates the java from the xsql files.
 compileSqlc: compiles all the java generated from the xsqls.
 wad: generates all the files from the mda.
@@ -71,7 +70,6 @@ build.war: build a war file in the lib directory.
   <property name="tab" value="%" />
 
   <property name="base.translate.structure" value="org/openbravo/erpWindows" />
-  <property name="client.web.xml" value="${base.client.src}/web.xml" />
   <property name="extension" value="html" />
   <property name="src" value="." />
   <property name="tr" value="yes" />
@@ -182,7 +180,7 @@ build.war: build a war file in the lib directory.
     </javac>
   </target>
   
-  <target name="sqlc" depends="copy.srcClient">
+  <target name="sqlc">
     <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}'/Openbravo.properties .xsql . '${build.sqlc}'/src" />
       <classpath refid="project.class.path" />
@@ -201,15 +199,6 @@ build.war: build a war file in the lib directory.
     <copy file="${base.src}/buildAD.xml" tofile="${build.AD}/build.xml" />
     <copy file="${base.src}/log4j.lcf" tofile="${build.AD}/log4j.lcf" />
     <ant dir="${build.AD}" target="buildAD" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="copy.srcClient">
-    <mkdir dir="${base.client.src}" />
-    <copy todir="${basedir}" overwrite="true" failonerror="false">
-      <fileset dir="${base.client.src}">
-        <exclude name="**/web.xml" />
-      </fileset>
-    </copy>
   </target>
 
   <target name="clean.src.gen">
@@ -422,7 +411,7 @@ build.war: build a war file in the lib directory.
   
   <target name="wad" depends="init, wadvalidation">
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}" failonerror="true">
-      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick'" />
+      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick'" />
       <classpath refid="wad.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />
@@ -433,7 +422,7 @@ build.war: build a war file in the lib directory.
 
   <target name="wad.quick" depends="init, wadvalidation">
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick'" />
+      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick'" />
       <classpath refid="wad.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />
@@ -500,7 +489,7 @@ build.war: build a war file in the lib directory.
   </target>
 
   <!-- FIXME: These tasks is only for development and testing purposes, remove it afterwards-->
-  <target name="sqlcmod" depends="copy.srcClient">
+  <target name="sqlcmod">
     <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${build.sqlc}'/src */src" />
       <classpath refid="project.class.path" />

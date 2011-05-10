@@ -11,17 +11,15 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.wad;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,7 +111,6 @@ public class Wad extends DefaultHandler {
     String dirActionButton;
     boolean generateWebXml;
     boolean generateTabs;
-    String dirWebClients;
     String attachPath;
     String webPath;
     boolean complete;
@@ -183,10 +180,7 @@ public class Wad extends DefaultHandler {
       // was argv[8] no longer used
 
       // Path to find the client's web.xml file
-      if (argv.length <= 9)
-        dirWebClients = "";
-      else
-        dirWebClients = argv[9];
+      // was argv[9] no longer used
 
       // Path of the root project
       // was argv[10] no longer used
@@ -238,7 +232,6 @@ public class Wad extends DefaultHandler {
       log4j.info("directory web.xml: " + dirWebXml);
       log4j.info("directory ActionButtons: " + dirActionButton);
       log4j.info("generate web.xml: " + generateWebXml);
-      log4j.info("generate web.xml cliente: " + dirWebClients);
       log4j.info("generate tabs: " + generateTabs);
       log4j.info("File separator: " + wad.strSystemSeparator);
       log4j.info("Attach path: " + attachPath);
@@ -271,16 +264,6 @@ public class Wad extends DefaultHandler {
         log4j.error("No such directory: " + fileWebXml.getAbsoluteFile());
 
         return;
-      }
-
-      File fileWebXmlClient = null;
-      if (dirWebClients != null && !dirWebClients.equals("")) {
-        fileWebXmlClient = new File(dirWebClients);
-        if (!fileWebXmlClient.exists()) {
-          fileWebXmlClient = null;
-        } else {
-          log4j.info("srcClient folder found.");
-        }
       }
 
       final File fileActionButton = new File(dirActionButton);
@@ -345,7 +328,7 @@ public class Wad extends DefaultHandler {
       if (generateWebXml) {
 
         if (!quick || WadData.genereteWebXml(wad.pool))
-          wad.processWebXml(fileWebXml, fileWebXmlClient, attachPath, webPath);
+          wad.processWebXml(fileWebXml, attachPath, webPath);
         else
           log4j.info("No changes in web.xml");
       }
@@ -638,8 +621,6 @@ public class Wad extends DefaultHandler {
    * 
    * @param fileWebXml
    *          path to generate the new web.xml file.
-   * @param fileClients
-   *          Path where is allocated the client web.xml file.
    * @param attachPath
    *          The path where are the attached files.
    * @param webPath
@@ -647,30 +628,13 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processWebXml(File fileWebXml, File fileClients, String attachPath, String webPath)
+  private void processWebXml(File fileWebXml, String attachPath, String webPath)
       throws ServletException, IOException {
     try {
       log4j.info("Processing web.xml");
       final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/webConf")
           .createXmlDocument();
-      final StringBuffer sb = new StringBuffer();
 
-      try {
-        if (fileClients != null) {
-          final BufferedReader fileBuffer = new BufferedReader(new FileReader(fileClients));
-
-          String nextLine = fileBuffer.readLine();
-          while (nextLine != null) {
-            sb.append(nextLine).append("\n");
-            nextLine = fileBuffer.readLine();
-          }
-          fileBuffer.close();
-        }
-      } catch (final Exception e) {
-        e.printStackTrace();
-        return;
-      }
-      xmlDocument.setParameter("webClients", sb.toString());
       xmlDocument.setParameter("webPath", webPath);
       xmlDocument.setParameter("attachPath", attachPath);
       xmlDocument.setData("structureListener", WadData.selectListener(pool));
