@@ -89,6 +89,27 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     if (tab.getHqlorderbyclause() != null) {
       return tab.getHqlorderbyclause();
     }
+
+    return "";
+  }
+
+  public String getSortField() {
+    if (getOrderByClause().length() > 0) {
+      return "";
+    }
+
+    long lowestSortno = Long.MAX_VALUE;
+    LocalField sortByField = null;
+    for (LocalField localField : getFields()) {
+      final Long recordSortno = localField.getField().getRecordSortNo();
+      if (localField.isInitialShow() && recordSortno != null && recordSortno < lowestSortno) {
+        sortByField = localField;
+      }
+    }
+    if (sortByField != null && sortByField.getProperty() != null) {
+      return sortByField.getProperty().getName();
+    }
+
     // use 2 examples of sequence number of line no
     if (entity.hasProperty(Tab.PROPERTY_SEQUENCENUMBER)) {
       return Tab.PROPERTY_SEQUENCENUMBER;
@@ -97,7 +118,12 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       return OrderLine.PROPERTY_LINENO;
     }
 
-    return JsonConstants.IDENTIFIER;
+    for (LocalField localField : getFields()) {
+      if (localField.getProperty() != null && localField.getProperty().isIdentifier()) {
+        return localField.getProperty().getName();
+      }
+    }
+    return "";
   }
 
   public String getFilterClause() {
