@@ -4471,50 +4471,6 @@ Run Synchronize Terminology to update menu translation. You need only to transla
 <!--566-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--566--></AD_TABLE>
 
-<!--567--><AD_TABLE>
-<!--567-->  <AD_TABLE_ID><![CDATA[567]]></AD_TABLE_ID>
-<!--567-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--567-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--567-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--567-->  <NAME><![CDATA[ADRecordAccess]]></NAME>
-<!--567-->  <DESCRIPTION><![CDATA[Maintain Record Access]]></DESCRIPTION>
-<!--567-->  <HELP><![CDATA[If listed here, the Role can(not) access the data records of this table, even if the role has access to the functionality]]></HELP>
-<!--567-->  <TABLENAME><![CDATA[AD_Record_Access]]></TABLENAME>
-<!--567-->  <CLASSNAME><![CDATA[RecordAccess]]></CLASSNAME>
-<!--567-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--567-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--567-->  <AD_WINDOW_ID><![CDATA[268]]></AD_WINDOW_ID>
-<!--567-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--567-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--567-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--567-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--567-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--567-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--567-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--567--></AD_TABLE>
-
-<!--571--><AD_TABLE>
-<!--571-->  <AD_TABLE_ID><![CDATA[571]]></AD_TABLE_ID>
-<!--571-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--571-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--571-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--571-->  <NAME><![CDATA[ADColumnAccess]]></NAME>
-<!--571-->  <DESCRIPTION><![CDATA[Maintain Column Access]]></DESCRIPTION>
-<!--571-->  <HELP><![CDATA[If listed here, the Role can(not) access the column of this table, even if the role has access to the functionality]]></HELP>
-<!--571-->  <TABLENAME><![CDATA[AD_Column_Access]]></TABLENAME>
-<!--571-->  <CLASSNAME><![CDATA[ColumnAccess]]></CLASSNAME>
-<!--571-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--571-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--571-->  <AD_WINDOW_ID><![CDATA[268]]></AD_WINDOW_ID>
-<!--571-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--571-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--571-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--571-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--571-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--571-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--571-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--571--></AD_TABLE>
-
 <!--575--><AD_TABLE>
 <!--575-->  <AD_TABLE_ID><![CDATA[575]]></AD_TABLE_ID>
 <!--575-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
