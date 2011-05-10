@@ -18,13 +18,12 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2006 Openbravo SLU
+* All portions are Copyright (C) 2001-2011 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_xTree_ID VARCHAR2(32);
   v_xParent_ID VARCHAR2(32);
-  v_NextNo     VARCHAR2(32);
     
 BEGIN
     
@@ -36,14 +35,6 @@ BEGIN
   --  for Translation
   --  and TreeNode
   IF INSERTING THEN
-    --  Create TreeNode --
-    --  get AD_Tree_ID + ParentID
-    --SELECT  c.AD_Tree_Menu_ID, n.Node_ID
-    -- INTO  v_xTree_ID, v_xParent_ID
-    -- FROM    AD_CLIENTINFO c, AD_TREENODE n -- AD_TreeNodeMM n
-    --  WHERE   c.AD_Tree_Menu_ID=n.AD_Tree_ID
-    --    AND n.Parent_ID IS NULL
-    --AND c.AD_Client_ID=:NEW.AD_Client_ID;
     SELECT AD_TREE_ID,
       '0'
     INTO v_xTree_ID,
@@ -55,7 +46,6 @@ BEGIN
     --  Insert into TreeNode
     INSERT
     INTO AD_TREENODE
-      -- AD_TreeNodeMM
       (
         AD_TreeNode_ID, AD_Client_ID, AD_Org_ID, IsActive,
         Created, CreatedBy, Updated,
@@ -87,16 +77,8 @@ BEGIN
    OR COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')))
   THEN
       IF(:OLD.IsActive!=:NEW.IsActive) THEN
-        --  get AD_Tree_ID + ParentID
-        --SELECT  c.AD_Tree_Menu_ID, n.Node_ID
-        --INTO  v_xTree_ID, v_xParent_ID
-        --FROM    AD_CLIENTINFO c, AD_TREENODE n -- AD_TreeNodeMM n
-        --WHERE   c.AD_Tree_Menu_ID=n.AD_Tree_ID
-        --  AND n.Parent_ID IS NULL
-        --AND c.AD_Client_ID=:NEW.AD_Client_ID;
         -- Update
         UPDATE AD_TREENODE
-          -- AD_TreeNodeMM
           SET IsActive=:NEW.IsActive
         WHERE AD_Tree_ID=v_xTree_ID
           AND Node_ID=:NEW.AD_Accountingrpt_Element_ID;
