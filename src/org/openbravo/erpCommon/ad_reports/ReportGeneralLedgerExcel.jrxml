@@ -134,7 +134,7 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#333333"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
 				<text><![CDATA[Debit]]></text>
@@ -147,7 +147,7 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#333333"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
 				<text><![CDATA[Credit]]></text>

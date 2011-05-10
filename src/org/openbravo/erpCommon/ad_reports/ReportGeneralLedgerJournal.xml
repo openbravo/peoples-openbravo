@@ -78,8 +78,8 @@
     <FIELD id="fieldIdentifier" attribute="onclick" replace="yy">dateacct</FIELD>
     <FIELD id="fieldDateacct">dateacct</FIELD>
     <FIELD id="fieldName">name</FIELD>
-    <FIELD id="fieldAmtacctdr" format="euroEdition">amtacctdr</FIELD>
-    <FIELD id="fieldAmtacctcr" format="euroEdition">amtacctcr</FIELD>
+    <FIELD id="fieldAmtacctdr" format="euroInform">amtacctdr</FIELD>
+    <FIELD id="fieldAmtacctcr" format="euroInform">amtacctcr</FIELD>
     <FIELD id="fieldValue">value</FIELD>
     <FIELD id="fieldDescription">description</FIELD>
     <FIELD id="fieldId" attribute="onclick" replace="xx">id</FIELD>

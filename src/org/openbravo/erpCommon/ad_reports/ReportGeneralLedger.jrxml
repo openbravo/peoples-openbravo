@@ -327,7 +327,7 @@
 						<bottomPen lineWidth="0.0" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement>
+					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
 					<text><![CDATA[Debit]]></text>
@@ -340,7 +340,7 @@
 						<bottomPen lineWidth="0.0" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement>
+					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
 					<text><![CDATA[Credit]]></text>
@@ -353,7 +353,7 @@
 						<bottomPen lineWidth="0.0" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement>
+					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
 					<text><![CDATA[Balance]]></text>
