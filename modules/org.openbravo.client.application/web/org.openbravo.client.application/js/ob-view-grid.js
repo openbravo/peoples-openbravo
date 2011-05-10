@@ -548,6 +548,8 @@ isc.OBViewGrid.addProperties({
         this.view.parentRecordId = this.data.get(0)[this.view.parentProperty];
 
         this.view.parentView.viewGrid.isOpenDirectMode = true;
+        // makes sure that the parent refresh will not fire back to cause a child refresh
+        this.view.parentView.isOpenDirectModeParent = true;
         // prevents opening edit mode for parent views
         this.view.parentView.viewGrid.isOpenDirectModeParent = true;
         this.view.parentView.viewGrid.targetRecordId = this.view.parentRecordId;
