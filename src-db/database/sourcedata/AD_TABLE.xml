@@ -3648,27 +3648,6 @@ Run Synchronize Terminology to update menu translation. You need only to transla
 <!--437-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1FA4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--437--></AD_TABLE>
 
-<!--456--><AD_TABLE>
-<!--456-->  <AD_TABLE_ID><![CDATA[456]]></AD_TABLE_ID>
-<!--456-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--456-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--456-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--456-->  <NAME><![CDATA[ADTreeBar]]></NAME>
-<!--456-->  <DESCRIPTION><![CDATA[Tree of bookmarks]]></DESCRIPTION>
-<!--456-->  <HELP><![CDATA[This table defines the relations between nodes for bookmarks trees.]]></HELP>
-<!--456-->  <TABLENAME><![CDATA[AD_TreeBar]]></TABLENAME>
-<!--456-->  <CLASSNAME><![CDATA[TreeBar]]></CLASSNAME>
-<!--456-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--456-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--456-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--456-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--456-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--456-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--456-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--456-->  <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
-<!--456-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D04B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--456--></AD_TABLE>
-
 <!--461--><AD_TABLE>
 <!--461-->  <AD_TABLE_ID><![CDATA[461]]></AD_TABLE_ID>
 <!--461-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
