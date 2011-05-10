@@ -44,15 +44,10 @@ public class WebServiceAdmin extends Task {
       throw new BuildException("Not valid action: " + action + ". It must be deploy/undeploy.");
     }
 
-    // (un)deploy core webservices
-    File wssdFile = new File(baseDir + "/src/" + wsddFileName);
-    if (wssdFile.exists()) {
-      deployFile(wssdFile);
-    }
     // (un)deploy module webservices
     File modulesDir = new File(baseDir + "/modules");
     for (File module : modulesDir.listFiles()) {
-      wssdFile = new File(module.getAbsoluteFile() + "/src/" + wsddFileName);
+      File wssdFile = new File(module.getAbsoluteFile() + "/src/" + wsddFileName);
       if (wssdFile.exists()) {
         deployFile(wssdFile);
       }

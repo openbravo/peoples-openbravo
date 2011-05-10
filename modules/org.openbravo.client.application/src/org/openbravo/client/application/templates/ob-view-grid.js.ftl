@@ -103,6 +103,7 @@ isc.OBViewGrid.create({
     ],
     whereClause: '${data.whereClause?js_string}',
     orderByClause: '${data.orderByClause?js_string}',
+    sortField: '${data.sortField?js_string}',
     filterClause: '${data.filterClause?js_string}',
     
     foreignKeyFieldNames:[

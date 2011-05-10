@@ -30,9 +30,9 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.service.json.DataToJsonConverter;
+import org.openbravo.service.json.DefaultJsonDataService.QueryResultWriter;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
-import org.openbravo.service.json.DefaultJsonDataService.QueryResultWriter;
 
 /**
  * The SimpleDataSourceService provides a simple way of returning data in the correct format for a
@@ -54,7 +54,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
 
     final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
     final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
-    int startRow = -1;
+    int startRow = 0;
     boolean doCount = false;
     if (startRowStr != null) {
       startRow = Integer.parseInt(startRowStr);
