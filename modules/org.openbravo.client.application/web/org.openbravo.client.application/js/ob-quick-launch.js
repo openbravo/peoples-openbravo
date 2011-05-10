@@ -144,11 +144,7 @@ isc.OBQuickLaunch.addProperties({
         
         // client filtering does not always work great...         
         pickListProperties: {
-          dataProperties: {
-            useClientFiltering: false
-          },
           textMatchStyle: 'substring',
-          fetchDelay: 50,
           bodyStyleName: 'OBPickListBody'
         },
         pickListHeaderHeight: 0,
@@ -173,7 +169,7 @@ isc.OBQuickLaunch.addProperties({
           displayField: OB.Constants.IDENTIFIER,
           valueField: OB.Constants.ID
         }],
-        autoFetchData: false,
+        autoFetchData: true,
         titleOrientation: 'top',
         title: OB.I18N.getLabel(this.titleLabel),
         editorType: 'comboBox',
@@ -181,7 +177,8 @@ isc.OBQuickLaunch.addProperties({
         // local filtering enabled, remove the Id filter
         // explicitly from the criteria list, see getPickListFilter
         filterLocally: true,
-        
+        fetchDelay: 50,
+
         optionDataSource: OB.Datasource.get(this.dataSourceId),
         
         emptyPickListMessage: OB.I18N.getLabel('OBUISC_ListGrid.emptyMessage'),

@@ -182,16 +182,16 @@ public class FIN_ExecutePayment {
               .getBusinessPartner();
           BigDecimal creditUsed = bPartner.getCreditUsed();
           BigDecimal amountWithSign = psd.getInvoicePaymentSchedule().getInvoice()
-              .isSalesTransaction() ? pDetail.getAmount() : pDetail.getAmount().negate();
+              .isSalesTransaction() ? psd.getAmount() : psd.getAmount().negate();
           creditUsed = creditUsed.subtract(amountWithSign);
           bPartner.setCreditUsed(creditUsed);
           OBDal.getInstance().save(bPartner);
-          FIN_AddPayment.updatePaymentScheduleAmounts(psd.getInvoicePaymentSchedule(), pDetail
-              .getAmount(), pDetail.getWriteoffAmount());
+          FIN_AddPayment.updatePaymentScheduleAmounts(psd.getInvoicePaymentSchedule(), psd
+              .getAmount(), psd.getWriteoffAmount());
         }
         if (psd.getOrderPaymentSchedule() != null) {
-          FIN_AddPayment.updatePaymentScheduleAmounts(psd.getOrderPaymentSchedule(), pDetail
-              .getAmount(), pDetail.getWriteoffAmount());
+          FIN_AddPayment.updatePaymentScheduleAmounts(psd.getOrderPaymentSchedule(), psd
+              .getAmount(), psd.getWriteoffAmount());
         }
       }
     }

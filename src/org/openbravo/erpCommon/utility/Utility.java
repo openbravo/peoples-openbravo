@@ -1149,45 +1149,6 @@ public class Utility {
   }
 
   /**
-   * Deprecated. Used in the old order by window.
-   * 
-   * @deprecated
-   * @param SQL
-   * @param fields
-   */
-  @Deprecated
-  public static String getOrderByFromSELECT(String[] SQL, Vector<String> fields) {
-    if (SQL == null || SQL.length == 0)
-      return "";
-    else if (fields == null || fields.size() == 0)
-      return "";
-    final StringBuffer script = new StringBuffer();
-    for (int i = 0; i < fields.size(); i++) {
-      String token = fields.elementAt(i);
-      token = token.trim();
-      boolean isnegative = false;
-      if (token.startsWith("-")) {
-        token = token.substring(1);
-        isnegative = true;
-      }
-      if (Integer.valueOf(token).intValue() > SQL.length)
-        log4j.error("Field not found in select - at position: " + token);
-      if (!script.toString().equals(""))
-        script.append(", ");
-      String strAux = SQL[Integer.valueOf(token).intValue() - 1];
-      strAux = strAux.toUpperCase().trim();
-      final int pos = strAux.indexOf(" AS ");
-      if (pos != -1)
-        strAux = strAux.substring(0, pos);
-      strAux = strAux.trim();
-      script.append(strAux);
-      if (isnegative)
-        script.append(" DESC");
-    }
-    return script.toString();
-  }
-
-  /**
    * Gets the window id for a tab.
    * 
    * @param conn
@@ -1201,17 +1162,6 @@ public class Utility {
       throws ServletException {
     return UtilityData.getWindowID(conn, strTabID);
   }
-
-  /*
-   * public static String getRegistryKey(String key) { RegistryKey aKey = null; RegStringValue
-   * regValue = null;
-   * 
-   * try{ aKey =com.ice.jni.registry.Registry.HKEY_LOCAL_MACHINE.openSubKey(
-   * "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment"); regValue =
-   * (RegStringValue)aKey.getValue("PATH"); } catch(NoSuchValueException e) { //Key value does not
-   * exist. } catch(RegistryException e) { //Any other registry API error. } return
-   * regValue.toString(); }
-   */
 
   /**
    * Saves the content into a fisical file.
@@ -1323,47 +1273,6 @@ public class Utility {
         }
       }
     }
-  }
-
-  /**
-   * Auxiliar method, used by fillSQLParameters and fillTableSQLParameters to get the values for
-   * each parameter.
-   * 
-   * Deprecated as only internal utility function for ComboTableData and TableSQLData code, should
-   * never be used directly by other code.
-   * 
-   * @param conn
-   *          Handler for the database connection.
-   * @param vars
-   *          Handler for the session info.
-   * @param data
-   *          FieldProvider with the columns values.
-   * @param name
-   *          Name of the parameter.
-   * @param window
-   *          Window id.
-   * @param actual_value
-   *          Actual value.
-   * @return String with the parsed parameter.
-   * @throws Exception
-   */
-  @Deprecated
-  public static String parseParameterValue(ConnectionProvider conn, VariablesSecureApp vars,
-      FieldProvider data, String name, String window, String actual_value) throws Exception {
-    String strAux = null;
-    if (name.equalsIgnoreCase("@ACTUAL_VALUE@"))
-      return actual_value;
-    if (data != null)
-      strAux = data.getField(name);
-    if (strAux == null) {
-      strAux = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(name));
-      if (log4j.isDebugEnabled())
-        log4j.debug("parseParameterValues - getStringParameter(inp"
-            + Sqlc.TransformaNombreColumna(name) + "): " + strAux);
-      if (strAux == null || strAux.equals(""))
-        strAux = getContext(conn, vars, name, window);
-    }
-    return strAux;
   }
 
   /**
@@ -2014,105 +1923,6 @@ public class Utility {
       throws ServletException {
     final String strISOSymbol = UtilityData.getISOSymbol(conn, strCurrencyID);
     return strISOSymbol;
-  }
-
-  @Deprecated
-  public static boolean hasFormAccess(ConnectionProvider conn, VariablesSecureApp vars,
-      String process) {
-    return hasFormAccess(conn, vars, process, "");
-  }
-
-  @Deprecated
-  public static boolean hasFormAccess(ConnectionProvider conn, VariablesSecureApp vars,
-      String process, String processName) {
-    try {
-      if (process.equals("") && processName.equals(""))
-        return true;
-      else if (!process.equals("")) {
-
-        if (!WindowAccessData.hasFormAccess(conn, vars.getRole(), process))
-          return false;
-      } else {
-        if (!WindowAccessData.hasFormAccessName(conn, vars.getRole(), processName))
-          return false;
-      }
-    } catch (final ServletException e) {
-      return false;
-    }
-    return true;
-  }
-
-  @Deprecated
-  public static boolean hasProcessAccess(ConnectionProvider conn, VariablesSecureApp vars,
-      String process) {
-    return hasProcessAccess(conn, vars, process, "");
-  }
-
-  @Deprecated
-  public static boolean hasProcessAccess(ConnectionProvider conn, VariablesSecureApp vars,
-      String process, String processName) {
-    try {
-      if (process.equals("") && processName.equals(""))
-        return true;
-      else if (!process.equals("")) {
-        if (!WindowAccessData.hasProcessAccess(conn, vars.getRole(), process))
-          return false;
-      } else {
-        if (!WindowAccessData.hasProcessAccessName(conn, vars.getRole(), processName))
-          return false;
-      }
-    } catch (final ServletException e) {
-      return false;
-    }
-    return true;
-  }
-
-  @Deprecated
-  public static boolean hasAccess(ConnectionProvider conn, VariablesSecureApp vars,
-      String TableLevel, String AD_Client_ID, String AD_Org_ID, String window, String tab) {
-    final String command = vars.getCommand();
-    try {
-      if (!canViewInsert(conn, vars, TableLevel, window))
-        return false;
-      else if (!WindowAccessData.hasWindowAccess(conn, vars.getRole(), window))
-        return false;
-      else if (WindowAccessData.hasNoTableAccess(conn, vars.getRole(), tab))
-        return false;
-      else if (command.toUpperCase().startsWith("SAVE")) {
-        if (!canUpdate(conn, vars, AD_Client_ID, AD_Org_ID, window))
-          return false;
-      } else if (command.toUpperCase().startsWith("DELETE")) {
-        if (!canUpdate(conn, vars, AD_Client_ID, AD_Org_ID, window))
-          return false;
-      }
-    } catch (final ServletException e) {
-      return false;
-    }
-    return true;
-  }
-
-  @Deprecated
-  public static boolean canViewInsert(ConnectionProvider conn, VariablesSecureApp vars,
-      String TableLevel, String window) {
-    final String User_Level = getContext(conn, vars, "#User_Level", window);
-
-    boolean retValue = true;
-
-    if (TableLevel.equals("4") && User_Level.indexOf("S") == -1)
-      retValue = false;
-    else if (TableLevel.equals("1") && User_Level.indexOf("O") == -1)
-      retValue = false;
-    else if (TableLevel.equals("3")
-        && (!(User_Level.indexOf("C") != -1 || User_Level.indexOf("O") != -1)))
-      retValue = false;
-    else if (TableLevel.equals("6")
-        && (!(User_Level.indexOf("S") != -1 || User_Level.indexOf("C") != -1)))
-      retValue = false;
-
-    if (retValue)
-      return retValue;
-
-    return retValue;
   }
 
   @Deprecated
