@@ -500,7 +500,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--127-->  <HELP><![CDATA[Create conversion rates for a selected currency.]]></HELP>
 <!--127-->  <AD_TABLE_ID><![CDATA[140]]></AD_TABLE_ID>
 <!--127-->  <AD_WINDOW_ID><![CDATA[115]]></AD_WINDOW_ID>
-<!--127-->  <SEQNO><![CDATA[30]]></SEQNO>
+<!--127-->  <SEQNO><![CDATA[20]]></SEQNO>
 <!--127-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--127-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--127-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
@@ -2142,7 +2142,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--230-->  <HELP><![CDATA[Edit your document type translations for the predefined languages of your choice.]]></HELP>
 <!--230-->  <AD_TABLE_ID><![CDATA[300]]></AD_TABLE_ID>
 <!--230-->  <AD_WINDOW_ID><![CDATA[135]]></AD_WINDOW_ID>
-<!--230-->  <SEQNO><![CDATA[20]]></SEQNO>
+<!--230-->  <SEQNO><![CDATA[40]]></SEQNO>
 <!--230-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--230-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--230-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
@@ -5290,7 +5290,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--557-->  <HELP><![CDATA[Edit your currency translations for the predefined languages of your choice.]]></HELP>
 <!--557-->  <AD_TABLE_ID><![CDATA[617]]></AD_TABLE_ID>
 <!--557-->  <AD_WINDOW_ID><![CDATA[115]]></AD_WINDOW_ID>
-<!--557-->  <SEQNO><![CDATA[20]]></SEQNO>
+<!--557-->  <SEQNO><![CDATA[30]]></SEQNO>
 <!--557-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--557-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--557-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
@@ -9729,7 +9729,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1000500001-->  <HELP><![CDATA[Set up the Jasper JRXML templates for each document type. ]]></HELP>
 <!--1000500001-->  <AD_TABLE_ID><![CDATA[1000500001]]></AD_TABLE_ID>
 <!--1000500001-->  <AD_WINDOW_ID><![CDATA[135]]></AD_WINDOW_ID>
-<!--1000500001-->  <SEQNO><![CDATA[30]]></SEQNO>
+<!--1000500001-->  <SEQNO><![CDATA[20]]></SEQNO>
 <!--1000500001-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--1000500001-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--1000500001-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
@@ -9756,7 +9756,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1000500002-->  <HELP><![CDATA[Configure different templates in different lenguage. Using these template allow you not to write each email you send out.]]></HELP>
 <!--1000500002-->  <AD_TABLE_ID><![CDATA[1000500004]]></AD_TABLE_ID>
 <!--1000500002-->  <AD_WINDOW_ID><![CDATA[135]]></AD_WINDOW_ID>
-<!--1000500002-->  <SEQNO><![CDATA[40]]></SEQNO>
+<!--1000500002-->  <SEQNO><![CDATA[30]]></SEQNO>
 <!--1000500002-->  <TABLEVEL><![CDATA[2]]></TABLEVEL>
 <!--1000500002-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--1000500002-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
