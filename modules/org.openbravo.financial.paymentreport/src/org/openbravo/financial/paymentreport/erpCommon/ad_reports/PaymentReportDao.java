@@ -365,13 +365,9 @@ public class PaymentReportDao {
             hsqlScript.append(")");
           }
           if (strOrdCritList[i].contains("APRM_FATS_BPARTNER")) {
-            hsqlScript.append(",  coalesce(pay.");
-            hsqlScript.append(FIN_Payment.PROPERTY_BUSINESSPARTNER);
-            hsqlScript.append(".");
+            hsqlScript.append(",  coalesce(paybp.");
             hsqlScript.append(BusinessPartner.PROPERTY_NAME);
-            hsqlScript.append(", inv.");
-            hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
-            hsqlScript.append(".");
+            hsqlScript.append(", invbp.");
             hsqlScript.append(BusinessPartner.PROPERTY_NAME);
             hsqlScript.append(")");
           }

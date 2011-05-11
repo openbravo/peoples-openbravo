@@ -137,28 +137,34 @@ function onloadFunctions() {
         var lastOrd;
         var lastSho;
         var i;
-
+        
+        // Ordering criteria left: The option in grouping criteria gets hidden and it is put at the end.
         for (i = 0; i < ord.length; i++){
             if (gro.options[gro.selectedIndex].value == ord.options[i].value){
                 ord[i].style.visibility = "hidden";
                 lastOrd = ord[i];
             }
-            else
-                ord[i].style.visibility = '';
+            else {
+            	ord[i].style.visibility = '';
+            }
+                
         }
 
         if (lastOrd != null){
             ord.remove(lastOrd.index);
             ord.add(lastOrd, null);
         }
-
+        
+        // Ordering criteria right: The option in grouping criteria gets hidden and it is put at the end.
         for (i = 0; i < sho.length ; i++){
             if (gro.options[gro.selectedIndex].value == sho.options[i].value){
                 sho[i].style.visibility = "hidden";
                 lastSho = sho[i];
             }
-            else
-                sho[i].style.visibility = '';
+            else {
+            	sho[i].style.visibility = '';
+            }
+                
         }
         
         if (lastSho != null){
@@ -170,23 +176,56 @@ function onloadFunctions() {
         var ord = document.frmMain.inpOrdCrit;
         var sho = document.frmMain.inpShown;
 
-        var last;
         var i;
         var j;
-        
-    	for (i = 0; i < ord.length; i++){
+        var hiddenElement;
+        var elementsToRemove = new Array();
+
+        // If there is any duplicate value, it is removed.
+        for (i = 0; i < ord.length; i++){
+            // Duplicates between left and right.
             for (j = 0; j < sho.length; j++){
-                if (ord.options[i].value == sho.options[j].value){
-                    ord[i].style.visibility = "hidden";
-                    last = ord[i];
-                }
+	            if (ord.options[i].value == sho.options[j].value){
+	                elementsToRemove.push(i);
+	            }
+            }
+            // Duplicates in left part.
+            for (j = 0; j < ord.length; j++){
+	            if (ord.options[i].value == ord.options[j].value && i != j){
+	                if (ord.options[i].style.visibility == "hidden"){
+	                	elementsToRemove.push(i);
+	                } else {
+	                	elementsToRemove.push(j);
+	                }
+	            }
             }
         }
         
-        if (last != null){
-            ord.remove(last.index);
-            ord.add(last, null);
+        elementsToRemove = elementsToRemove.sort(sortNumber);
+        for (i = 0; i < elementsToRemove.length; i++){
+        	ord.options.remove(elementsToRemove[i]);
         }
+
+        // Ordering criteria left: Moving to last position intermediate hidden objects.
+        for (i = 0; i < ord.length; i++){
+            if (ord.options[i].style.visibility == "hidden"){
+                hiddenElement = ord[i];
+                ord.remove(i);
+                ord.add(hiddenElement, null);
+            }
+        }
+
+        // Ordering criteria right: Moving to last position intermediate hidden objects.
+        for (i = 0; i < sho.length; i++){
+            if (sho.options[i].style.visibility == "hidden"){
+	            hiddenElement = sho[i];
+	            sho.remove(i);
+	            sho.add(hiddenElement, null);
+            }
+        }
+    }
+    function sortNumber(a,b){
+        return b - a;
     }
     function selectedStatuses(){
     	var selStatus = document.frmMain.inpSelectedStatuses;
@@ -843,7 +882,7 @@ function onloadFunctions() {
                         <tr>
                           <td>
                             <a class="Dimension_LeftRight_Button_TopLink" href="#"
-                              onclick="addList(document.frmMain.inpOrdCrit, document.frmMain.inpShown);return false;"
+                              onclick="addList(document.frmMain.inpOrdCrit, document.frmMain.inpShown);hideLeftRight();return false;"
                               onfocus="setWindowElementFocus(this); window.status='Include'; return true;"
                               onblur="window.status=''; return true;"
                               onkeypress="this.className='Dimension_LeftRight_Button_TopLink_active'; return true;"
@@ -869,7 +908,7 @@ function onloadFunctions() {
                         <tr>
                           <td>
                             <a class="Dimension_LeftRight_Button_BottomLink" href="#"
-                              onclick="addList(document.frmMain.inpShown, document.frmMain.inpOrdCrit);return false;"
+                              onclick="addList(document.frmMain.inpShown, document.frmMain.inpOrdCrit);hideLeftRight();return false;"
                               onfocus="setWindowElementFocus(this); window.status='Exclude'; return true;"
                               onblur="this.className='Dimension_LeftRight_Button_BottomLink'; window.status=''; return true;"
                               onkeypress="this.className='Dimension_LeftRight_Button_BottomLink_active'; return true;"
