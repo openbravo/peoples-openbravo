@@ -612,7 +612,16 @@ OB.ViewFormProperties = {
     for(i = 0; i < this.getItems().length; i++) {
       item = this.getItem(i);
       if(item && item.getClassName() === 'OBSectionItem') {
+             
         section = item;
+        
+        // Keep whether it was expanded and expand in case it was not. Collapsed
+        // sections keep all its fields as not visible, so they were hidden.
+        var wasExpanded = section.isExpanded();
+        if (!wasExpanded) {
+          section.expandSection();
+        }   
+        
         section.visible = false;
         for(j = 0; j < section.itemIds.length; j++) {
           item = this.getItem(section.itemIds[j]);
@@ -622,19 +631,18 @@ OB.ViewFormProperties = {
           }
         }
 
-        if(section.visible) {
-          // 'More Information' is collapsed by default
-          if (section.name === '402880E72F1C15A5012F1C7AA98B00E8') {
-            section.collapseSection();
+        if(!section.visible) {
+          for(j = 0; j < section.itemIds.length; j++) {
+            item = this.getItem(section.itemIds[j]);
+            if(item) {
+              item.alwaysTakeSpace = false;
+            }
           }
-          continue;
         }
-
-        for(j = 0; j < section.itemIds.length; j++) {
-          item = this.getItem(section.itemIds[j]);
-          if(item) {
-            item.alwaysTakeSpace = false;
-          }
+        
+        // Restore previous expand mode
+        if (!wasExpanded) {
+          section.collapseSection();
         }
       }
     }

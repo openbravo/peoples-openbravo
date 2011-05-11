@@ -59,8 +59,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
   private static final long ONE_COLUMN_MAX_LENGTH = 60;
   private static final String TEXT_AD_REFERENCE_ID = "14";
 
-  // Audit fields
   private static final String AUDIT_GROUP_ID = "1000100001";
+  private static final String MORE_INFO_GROUP_ID = "402880E72F1C15A5012F1C7AA98B00E8";
 
   private Tab tab;
   private List<String> statusBarFields = null;
@@ -232,7 +232,6 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     // Add audit info
     if (!auditFields.isEmpty()) {
       final OBViewFieldGroup viewFieldGroup = new OBViewFieldGroup();
-      viewFieldGroup.setExpanded(false);
       viewFieldGroup.setType("OBAuditSectionItem");
       fields.add(viewFieldGroup);
       viewFieldGroup.setFieldGroup(OBDal.getInstance().get(FieldGroup.class, AUDIT_GROUP_ID));
@@ -735,6 +734,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
   }
 
   public class OBViewFieldGroup extends DefaultVirtualField {
+
     private boolean expanded = true;
     private String type;
     private FieldGroup fieldGroup;
@@ -762,6 +762,11 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public void setFieldGroup(FieldGroup fieldGroup) {
+      if (AUDIT_GROUP_ID.equals(fieldGroup.getId())
+          || MORE_INFO_GROUP_ID.equals(fieldGroup.getId())) {
+        expanded = false;
+      }
+
       this.fieldGroup = fieldGroup;
     }
 
