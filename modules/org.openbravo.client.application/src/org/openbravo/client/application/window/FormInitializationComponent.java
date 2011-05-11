@@ -53,7 +53,6 @@ import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.reference.EnumUIDefinition;
-import org.openbravo.client.kernel.reference.FKComboUIDefinition;
 import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
@@ -1070,16 +1069,7 @@ public class FormInitializationComponent extends BaseActionHandler {
                       } else {
                         rq.setRequestParameter(colId, uiDef.convertToClassicString(el));
                       }
-                      String jsonStr;
-                      if (uiDef instanceof FKComboUIDefinition) {
-                        jsonStr = ((FKComboUIDefinition) uiDef).getFieldPropertiesWithoutCombo(
-                            inpFields.get(name), true);
-                      } else if (uiDef instanceof EnumUIDefinition) {
-                        jsonStr = ((EnumUIDefinition) uiDef).getFieldPropertiesWithoutCombo(
-                            inpFields.get(name), true);
-                      } else {
-                        jsonStr = uiDef.getFieldProperties(inpFields.get(name), true);
-                      }
+                      String jsonStr = uiDef.getFieldProperties(inpFields.get(name), true);
                       JSONObject jsonobj = new JSONObject(jsonStr);
                       if (el == null && uiDef instanceof ForeignKeyUIDefinition) {
                         // Special case for null values for combos: we must clean the combo values
