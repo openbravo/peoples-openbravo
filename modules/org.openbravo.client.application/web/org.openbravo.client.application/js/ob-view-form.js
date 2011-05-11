@@ -453,7 +453,7 @@ OB.ViewFormProperties = {
   retrieveInitialValues: function(isNew){
     this.setParentDisplayInfo();
     
-    var parentId = this.view.getParentId(), requestParams, parentColumn, me = this, mode;
+    var parentId = this.view.getParentId(), i, fldNames = [], requestParams, parentColumn, me = this, mode;
     // note also in this case initial vvalues are passed in as in case of grid
     // editing the unsaved/error values from a previous edit session are maintained
     var allProperties = this.view.getContextInfo(false, true, false, true);
@@ -475,6 +475,14 @@ OB.ViewFormProperties = {
       requestParams[parentColumn] = parentId;
     }
     allProperties._entityName = this.view.entity;
+    
+    // only put the visible field names in the call
+    for (i = 0; i < this.getFields().length; i++) {
+      if (this.getFields()[i].inpColumnName) {
+        fldNames.push(this.getFields()[i].name)
+      }
+    }
+    allProperties._visibleProperties = fldNames;
     
     this.setDisabled(true);
 
