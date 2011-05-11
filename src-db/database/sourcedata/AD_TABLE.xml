@@ -4197,27 +4197,6 @@ Run Synchronize Terminology to update menu translation. You need only to transla
 <!--584-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1F94B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--584--></AD_TABLE>
 
-<!--591--><AD_TABLE>
-<!--591-->  <AD_TABLE_ID><![CDATA[591]]></AD_TABLE_ID>
-<!--591-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--591-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--591-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--591-->  <NAME><![CDATA[DataImportOrder]]></NAME>
-<!--591-->  <DESCRIPTION><![CDATA[Import Orders]]></DESCRIPTION>
-<!--591-->  <HELP><![CDATA[You should supply the Document Type Name (or ID). The Document Type is on purpose not fully derived as it has too many consequences if it's wrong.  The best way is to set the Document Type Name as a Constant in your Import File Format or as an imported fi]]></HELP>
-<!--591-->  <TABLENAME><![CDATA[I_Order]]></TABLENAME>
-<!--591-->  <CLASSNAME><![CDATA[Order]]></CLASSNAME>
-<!--591-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--591-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--591-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
-<!--591-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
-<!--591-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
-<!--591-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
-<!--591-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--591-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
-<!--591-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DD4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--591--></AD_TABLE>
-
 <!--592--><AD_TABLE>
 <!--592-->  <AD_TABLE_ID><![CDATA[592]]></AD_TABLE_ID>
 <!--592-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
