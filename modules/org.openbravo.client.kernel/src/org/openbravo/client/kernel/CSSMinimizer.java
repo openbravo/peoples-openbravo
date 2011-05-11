@@ -95,8 +95,8 @@ class CSSMinimizer {
 
       log.debug("Removing comments...");
 
-      n = 0;
       // Find the start of the comment
+      n = 0;
       while ((n = sb.indexOf("/*", n)) != -1) {
         if (sb.charAt(n + 2) == '*') { // Retain special comments
           n += 2;
@@ -285,8 +285,8 @@ class Selector {
    * @param properties1
    *          The array to be sorted.
    */
-  private void sortProperties(Property[] props) {
-    Arrays.sort(props);
+  private void sortProperties(Property[] properties) {
+    Arrays.sort(properties);
   }
 }
 
@@ -308,7 +308,7 @@ class Property implements Comparable<Property> {
   public Property(String property) throws Exception {
     try {
       // Parse the property.
-      ArrayList<String> _parts = new ArrayList<String>();
+      ArrayList<String> parts = new ArrayList<String>();
       boolean bCanSplit = true;
       int j = 0;
       String substr;
@@ -323,19 +323,19 @@ class Property implements Comparable<Property> {
         } else if (property.charAt(i) == ':') {
           substr = property.substring(j, i);
           if (!(substr.trim().equals("") || (substr == null)))
-            _parts.add(substr);
+            parts.add(substr);
           j = i + 1;
         }
       }
       substr = property.substring(j, property.length());
       if (!(substr.trim().equals("") || (substr == null)))
-        _parts.add(substr);
-      if (_parts.size() < 2) {
+        parts.add(substr);
+      if (parts.size() < 2) {
         throw new Exception("\t\tWarning: Incomplete property: " + property);
       }
-      this.property = _parts.get(0).trim().toLowerCase();
+      this.property = parts.get(0).trim().toLowerCase();
 
-      this.parts = parseValues(simplifyColours(_parts.get(1).trim().replaceAll(", ", ",")));
+      this.parts = parseValues(simplifyColours(parts.get(1).trim().replaceAll(", ", ",")));
 
     } catch (PatternSyntaxException e) {
       // Invalid regular expression used.
@@ -369,6 +369,7 @@ class Property implements Comparable<Property> {
     // prefixes last -- eg, *display should come after display.
     String thisProp = this.property;
     String thatProp = other.property;
+    String[] parts;
 
     if (thisProp.charAt(0) == '-') {
       thisProp = thisProp.substring(1);
@@ -395,12 +396,12 @@ class Property implements Comparable<Property> {
    * @returns An array of Parts
    */
   private Part[] parseValues(String contents) {
-    String[] _parts = contents.split(",");
-    Part[] results = new Part[_parts.length];
+    String[] parts = contents.split(",");
+    Part[] results = new Part[parts.length];
 
-    for (int i = 0; i < _parts.length; i++) {
+    for (int i = 0; i < parts.length; i++) {
       try {
-        results[i] = new Part(_parts[i]);
+        results[i] = new Part(parts[i], property);
       } catch (Exception e) {
         log.error(e.getMessage(), e);
         results[i] = null;
@@ -450,6 +451,7 @@ class Property implements Comparable<Property> {
 
 class Part {
   String contents;
+  String property;
 
   /**
    * Create a new property by parsing the given string.
@@ -459,11 +461,12 @@ class Part {
    * @throws Exception
    *           If the part cannot be parsed.
    */
-  public Part(String contents) throws Exception {
+  public Part(String contents, String property) throws Exception {
     // Many of these regular expressions are adapted from those used in the YUI CSS Compressor.
 
     // For simpler regexes.
     this.contents = " " + contents;
+    this.property = property;
 
     simplify();
   }
@@ -540,6 +543,9 @@ class Part {
   }
 
   private void simplifyFontWeights() {
+    if (!this.property.equals("font-weight"))
+      return;
+
     String lcContents = this.contents.toLowerCase();
 
     for (int i = 0; i < Constants.fontWeightNames.length; i++) {
