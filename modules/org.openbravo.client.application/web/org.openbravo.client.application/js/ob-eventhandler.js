@@ -59,7 +59,9 @@
               return true;
             }
           }
-          if (!canvas.parentElement && canvas.grid) {
+          if (canvas.mouseDownCancelParentPropagation) { // Added to be able to scroll the toolbar without focusing top level view
+            canvas = null;
+          } else if (!canvas.parentElement && canvas.grid) {
             canvas = canvas.grid;
           } else {
             canvas = canvas.parentElement;

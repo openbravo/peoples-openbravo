@@ -149,6 +149,10 @@ public class FormInitializationComponent extends BaseActionHandler {
       } catch (JSONException e) {
         throw new OBException("Error while parsing content", e);
       }
+      List<String> visibleProperties = null;
+      if (jsContent.has("_visibleProperties")) {
+        visibleProperties = convertJSONArray(jsContent.getJSONArray("_visibleProperties"));
+      }
       // create the row from the json content then
       if (row == null) {
         final JsonToDataConverter fromJsonConverter = OBProvider.getInstance().get(
@@ -201,7 +205,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       // relevant additional information)
       long t5 = System.currentTimeMillis();
       computeColumnValues(mode, tab, allColumns, columnValues, parentRecord, parentId,
-          changedColumn, jsContent, changeEventCols, calloutsToCall, lastfieldChanged);
+          changedColumn, jsContent, changeEventCols, calloutsToCall, lastfieldChanged,
+          visibleProperties);
 
       // Execution of callouts
       long t6 = System.currentTimeMillis();
@@ -244,6 +249,18 @@ public class FormInitializationComponent extends BaseActionHandler {
       OBContext.restorePreviousMode();
     }
     return null;
+  }
+
+  private List<String> convertJSONArray(JSONArray jsonArray) {
+    List<String> visibleProperties = new ArrayList<String>();
+    for (int i = 0; i < jsonArray.length(); i++) {
+      try {
+        visibleProperties.add(jsonArray.getString(i));
+      } catch (JSONException e) {
+        throw new OBException("Error while reading the visible properties JSON array");
+      }
+    }
+    return visibleProperties;
   }
 
   private List<JSONObject> attachmentForRows(Tab tab, String rowId, String[] multipleRowIds) {
@@ -378,7 +395,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   private void computeColumnValues(String mode, Tab tab, List<String> allColumns,
       Map<String, JSONObject> columnValues, BaseOBObject parentRecord, String parentId,
       String changedColumn, JSONObject jsContent, List<String> changeEventCols,
-      List<String> calloutsToCall, List<String> lastfieldChanged) {
+      List<String> calloutsToCall, List<String> lastfieldChanged, List<String> visibleProperties) {
     boolean forceComboReload = (mode.equals("CHANGE") && changedColumn == null);
     if (mode.equals("CHANGE") && changedColumn != null) {
       RequestContext.get().setRequestParameter("donotaddcurrentelement", "true");
@@ -411,7 +428,16 @@ public class FormInitializationComponent extends BaseActionHandler {
             value = uiDef.getFieldProperties(field, true);
           } else {
             // Else, the default is used
-            value = uiDef.getFieldProperties(field, false);
+            if (visibleProperties != null && !field.getColumn().isMandatory()
+                && !visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col))) {
+              // If the column is not currently visible, and its not mandatory, we don't need to
+              // compute the combo.
+              // If a column is mandatory then the combo needs to be computed, because the selected
+              // value can depend on the computation if there is no default value
+              value = uiDef.getFieldPropertiesWithoutCombo(field, false);
+            } else {
+              value = uiDef.getFieldProperties(field, false);
+            }
           }
         } else if (mode.equals("EDIT")
             || (mode.equals("CHANGE") && (forceComboReload || changeEventCols
@@ -419,7 +445,16 @@ public class FormInitializationComponent extends BaseActionHandler {
           // On EDIT mode, the values are computed through the UIDefinition (the values have been
           // previously set in the RequestContext)
           // This is also done this way on CHANGE mode where a combo reload is needed
-          value = uiDef.getFieldProperties(field, true);
+          if (visibleProperties != null
+              && !visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col))) {
+            // If the column is not currently visible, and its not mandatory, we don't need to
+            // compute the combo.
+            // If a column is mandatory then the combo needs to be computed, because the selected
+            // value can depend on the computation if there is no default value
+            uiDef.getFieldPropertiesWithoutCombo(field, true);
+          } else {
+            value = uiDef.getFieldProperties(field, true);
+          }
         } else if (mode.equals("CHANGE") || mode.equals("SETSESSION")) {
           // On CHANGE and SETSESSION mode, the values are read from the request
           JSONObject jsCol = new JSONObject();
@@ -603,6 +638,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private void setValuesInRequest(String mode, Tab tab, BaseOBObject row, JSONObject jsContent) {
+
     List<Field> fields = tab.getADFieldList();
     if (mode.equals("EDIT")) {
       // In EDIT mode we initialize them from the database
@@ -610,7 +646,6 @@ public class FormInitializationComponent extends BaseActionHandler {
         setValueOfColumnInRequest(row, field.getColumn().getDBColumnName());
       }
     }
-
     // and then overwrite with what gets passed in
     if (mode.equals("EDIT") || mode.equals("CHANGE") || mode.equals("SETSESSION")) {
       // In CHANGE and SETSESSION we get them from the request
@@ -704,7 +739,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       log.debug("Columns in validation: '" + cols + "'");
     }
 
-    if (mode.equals("CHANGE") && changedColumn != null) {
+    if (mode.equals("CHANGE") && changedColumn != null && !changedColumn.equals("inpadOrgId")) {
       // In case of a CHANGE event, we only add the changed column, to avoid firing reloads for
       // every column in the tab, instead firing reloads just for the dependant columns
       String changedCol = "";
@@ -913,6 +948,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   private List<String> runCallouts(Map<String, JSONObject> columnValues, Tab tab,
       List<String> calledCallouts, List<String> calloutsToCall, List<String> lastfieldChangedList,
       List<String> messages, List<String> dynamicCols) {
+    HashMap<String, Object> calloutInstances = new HashMap<String, Object>();
 
     // flush&commit to release lock in db which otherwise interfere with callouts which run in their
     // own jdbc connection (i.e. lock on AD_Sequence when using with Sales Invoice window)
@@ -923,7 +959,6 @@ public class FormInitializationComponent extends BaseActionHandler {
     } catch (SQLException e1) {
       throw new OBException("Error committing before runnings callouts", e1);
     }
-
     List<Field> fields = tab.getADFieldList();
     HashMap<String, Field> inpFields = buildInpField(fields);
     String lastCalledCallout = "";
@@ -942,11 +977,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       log.debug("Calling callout " + calloutClassName + " with field changed " + lastFieldChanged);
       try {
         Class<?> calloutClass = Class.forName(calloutClassName);
-        calloutsToCall.remove(calloutClassName);
-        lastfieldChangedList.remove(lastFieldChanged);
-        Object calloutInstance = calloutClass.newInstance();
         Method init = null;
         Method service = null;
+        Method post = null;
         for (Method m : calloutClass.getMethods()) {
           if (m.getName().equals("init") && m.getParameterTypes().length == 1) {
             init = m;
@@ -954,7 +987,12 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (m.getName().equals("service")) {
             service = m;
           }
+          if (m.getName().equals("doPost")) {
+            post = m;
+          }
         }
+        calloutsToCall.remove(calloutClassName);
+        lastfieldChangedList.remove(lastFieldChanged);
 
         if (init == null || service == null) {
           log.info("Couldn't find method in Callout " + calloutClassName);
@@ -963,20 +1001,26 @@ public class FormInitializationComponent extends BaseActionHandler {
 
           RequestContext.get().setRequestParameter("inpLastFieldChanged", lastFieldChanged);
           RequestContext.get().setRequestParameter("inpOB3UIMode", "Y");
-
           // We then execute the callout
-          CalloutServletConfig config = new CalloutServletConfig(calloutClassName, RequestContext
-              .getServletContext());
-          Object[] initArgs = { config };
-          init.invoke(calloutInstance, initArgs);
+          Object calloutInstance;
           CalloutHttpServletResponse fakeResponse = new CalloutHttpServletResponse(rq.getResponse());
           Object[] arguments = { rq.getRequest(), fakeResponse };
+          if (calloutInstances.get(calloutClassName) != null) {
+            calloutInstance = calloutInstances.get(calloutClassName);
+            post.invoke(calloutInstance, arguments);
+          } else {
+            calloutInstance = calloutClass.newInstance();
+            calloutInstances.put(calloutClassName, calloutInstance);
+            CalloutServletConfig config = new CalloutServletConfig(calloutClassName, RequestContext
+                .getServletContext());
+            Object[] initArgs = { config };
+            init.invoke(calloutInstance, initArgs);
+            // We invoke the service method. This method will automatically call the doPost() method
+            // of the callout servlet
+            service.invoke(calloutInstance, arguments);
+          }
 
-          // We invoke the service method. This method will automatically call the doPost() method
-          // of the callout servlet
-          service.invoke(calloutInstance, arguments);
           String calloutResponse = fakeResponse.getOutputFromWriter();
-
           // Now we parse the callout response and modify the stored values of the columns modified
           // by the callout
           ArrayList<NativeArray> returnedArray = new ArrayList<NativeArray>();
@@ -1060,9 +1104,9 @@ public class FormInitializationComponent extends BaseActionHandler {
                       } else {
                         rq.setRequestParameter(colId, uiDef.convertToClassicString(el));
                       }
-                      JSONObject jsonobj = new JSONObject(uiDef.getFieldProperties(inpFields
-                          .get(name), true));
-                      if (el == null && jsonobj.has("entries")) {
+                      String jsonStr = uiDef.getFieldProperties(inpFields.get(name), true);
+                      JSONObject jsonobj = new JSONObject(jsonStr);
+                      if (el == null && uiDef instanceof ForeignKeyUIDefinition) {
                         // Special case for null values for combos: we must clean the combo values
                         jsonobj.put("value", "");
                         jsonobj.put("classicValue", "");
@@ -1090,6 +1134,17 @@ public class FormInitializationComponent extends BaseActionHandler {
                     if (changed && col.getCallout() != null) {
                       // We need to fire this callout, as the column value was changed
                       addCalloutToList(col, calloutsToCall, lastfieldChangedList);
+                    }
+                  } else {
+                    for (AuxiliaryInput aux : tab.getADAuxiliaryInputList()) {
+                      if (name
+                          .equalsIgnoreCase("inp" + Sqlc.TransformaNombreColumna(aux.getName()))) {
+                        Object el = element.get(1, null);
+                        JSONObject obj = new JSONObject();
+                        obj.put("value", el);
+                        obj.put("classicValue", el);
+                        columnValues.put(name, obj);
+                      }
                     }
                   }
                 }

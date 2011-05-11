@@ -536,8 +536,9 @@ isc.OBViewGrid.addProperties({
       this.selectionUpdated();
     }
     
-    // no data and the grid is not visible
-    if (this.data && this.data.getLength() === 0 && !this.isVisible()) {
+    // no data and the grid is not visible, only do this is if the 
+    // form is not in new mode
+    if (this.data && this.data.getLength() === 0 && !this.isVisible() && !this.view.viewForm.isNew) {
       this.makeVisible();
     }
     
@@ -548,6 +549,8 @@ isc.OBViewGrid.addProperties({
         this.view.parentRecordId = this.data.get(0)[this.view.parentProperty];
 
         this.view.parentView.viewGrid.isOpenDirectMode = true;
+        // makes sure that the parent refresh will not fire back to cause a child refresh
+        this.view.parentView.isOpenDirectModeParent = true;
         // prevents opening edit mode for parent views
         this.view.parentView.viewGrid.isOpenDirectModeParent = true;
         this.view.parentView.viewGrid.targetRecordId = this.view.parentRecordId;

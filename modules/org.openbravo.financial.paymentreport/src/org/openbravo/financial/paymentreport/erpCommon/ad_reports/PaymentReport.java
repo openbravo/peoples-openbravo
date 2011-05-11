@@ -115,8 +115,14 @@ public class PaymentReport extends HttpSecureAppServlet {
           "PaymentReport|DueDateFrom");
       String strDueDateTo = vars
           .getRequestGlobalVariable("inpDueDateTo", "PaymentReport|DueDateTo");
+      if (vars.getNumericParameter("inpAmountFrom").isEmpty()) {
+        vars.removeSessionValue("PaymentReport|AmountFrom");
+      }
       String strAmountFrom = vars.getNumericRequestGlobalVariable("inpAmountFrom",
           "PaymentReport|AmountFrom");
+      if (vars.getNumericParameter("inpAmountTo").isEmpty()) {
+        vars.removeSessionValue("PaymentReport|AmountTo");
+      }
       String strAmountTo = vars.getNumericRequestGlobalVariable("inpAmountTo",
           "PaymentReport|AmountTo");
       String strDocumentDateFrom = vars.getRequestGlobalVariable("inpDocumentDateFrom",

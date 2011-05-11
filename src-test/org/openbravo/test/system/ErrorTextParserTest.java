@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,10 +41,12 @@ public class ErrorTextParserTest extends BaseTest {
     doErrorTextParserTest(1);
   }
 
-  // test disabled as postgresql notnull error message text cannot be parsed right now
-  // public void testNotNull() throws Exception {
-  // doErrorTextParserTest(2);
-  // }
+  public void testNotNull() throws Exception {
+    // test disabled on pgsql, as its error message text in not-null case cannot be parsed so far
+    if (getConnectionProvider().getRDBMS().equals("ORACLE")) {
+      doErrorTextParserTest(2);
+    }
+  }
 
   public void testBoolean() throws Exception {
     doErrorTextParserTest(3);

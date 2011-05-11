@@ -1023,15 +1023,17 @@ isc.OBStandardView.addProperties({
     var tabViewPane = null;
     
     // refresh the tabs
-    if (this.childTabSet && differentRecordId) {
+    if (this.childTabSet && (differentRecordId || !this.isOpenDirectModeParent)) {
       for (var i = 0; i < this.childTabSet.tabs.length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
         
-        if (!selectedRecordId || selectedRecordId !== tabViewPane.parentRecordId) {
+        if (!selectedRecordId || !this.isOpenDirectModeParent || selectedRecordId !== tabViewPane.parentRecordId) {
           tabViewPane.doRefreshContents(true); 
         }
       }
     }
+    delete this.isOpenDirectModeParent;
+    
     // and recompute the count:
     this.updateChildCount();
   },

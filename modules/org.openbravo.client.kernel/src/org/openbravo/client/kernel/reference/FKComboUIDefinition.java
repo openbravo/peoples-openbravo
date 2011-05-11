@@ -55,4 +55,9 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
     }
   }
 
+  @Override
+  public String getFieldPropertiesWithoutCombo(Field field, boolean getValueFromSession) {
+    return super.getFieldProperties(field, getValueFromSession);
+  }
+
 }
