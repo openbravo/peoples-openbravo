@@ -4055,63 +4055,6 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--581-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--581--></AD_ELEMENT>
 
-<!--582--><AD_ELEMENT>
-<!--582-->  <AD_ELEMENT_ID><![CDATA[582]]></AD_ELEMENT_ID>
-<!--582-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--582-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--582-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--582-->  <COLUMNNAME><![CDATA[T_Amount]]></COLUMNNAME>
-<!--582-->  <NAME><![CDATA[Amount]]></NAME>
-<!--582-->  <PRINTNAME><![CDATA[Amt]]></PRINTNAME>
-<!--582-->  <DESCRIPTION><![CDATA[A monetary total.]]></DESCRIPTION>
-<!--582-->  <HELP><![CDATA[A monetary total.]]></HELP>
-<!--582-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--582--></AD_ELEMENT>
-
-<!--583--><AD_ELEMENT>
-<!--583-->  <AD_ELEMENT_ID><![CDATA[583]]></AD_ELEMENT_ID>
-<!--583-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--583-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--583-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--583-->  <COLUMNNAME><![CDATA[T_Date]]></COLUMNNAME>
-<!--583-->  <NAME><![CDATA[Date]]></NAME>
-<!--583-->  <PRINTNAME><![CDATA[Date]]></PRINTNAME>
-<!--583-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--583--></AD_ELEMENT>
-
-<!--584--><AD_ELEMENT>
-<!--584-->  <AD_ELEMENT_ID><![CDATA[584]]></AD_ELEMENT_ID>
-<!--584-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--584-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--584-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--584-->  <COLUMNNAME><![CDATA[T_DateTime]]></COLUMNNAME>
-<!--584-->  <NAME><![CDATA[DateTime]]></NAME>
-<!--584-->  <PRINTNAME><![CDATA[DateTime]]></PRINTNAME>
-<!--584-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--584--></AD_ELEMENT>
-
-<!--585--><AD_ELEMENT>
-<!--585-->  <AD_ELEMENT_ID><![CDATA[585]]></AD_ELEMENT_ID>
-<!--585-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--585-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--585-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--585-->  <COLUMNNAME><![CDATA[T_Integer]]></COLUMNNAME>
-<!--585-->  <NAME><![CDATA[Integer]]></NAME>
-<!--585-->  <PRINTNAME><![CDATA[Integer]]></PRINTNAME>
-<!--585-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--585--></AD_ELEMENT>
-
-<!--586--><AD_ELEMENT>
-<!--586-->  <AD_ELEMENT_ID><![CDATA[586]]></AD_ELEMENT_ID>
-<!--586-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--586-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--586-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--586-->  <COLUMNNAME><![CDATA[T_Number]]></COLUMNNAME>
-<!--586-->  <NAME><![CDATA[Number]]></NAME>
-<!--586-->  <PRINTNAME><![CDATA[Number]]></PRINTNAME>
-<!--586-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--586--></AD_ELEMENT>
-
 <!--587--><AD_ELEMENT>
 <!--587-->  <AD_ELEMENT_ID><![CDATA[587]]></AD_ELEMENT_ID>
 <!--587-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -4137,17 +4080,6 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--590-->  <HELP><![CDATA[The Tax ID field identifies the legal Identification number of this Entity.]]></HELP>
 <!--590-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--590--></AD_ELEMENT>
-
-<!--592--><AD_ELEMENT>
-<!--592-->  <AD_ELEMENT_ID><![CDATA[592]]></AD_ELEMENT_ID>
-<!--592-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--592-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--592-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--592-->  <COLUMNNAME><![CDATA[AD_Test_ID]]></COLUMNNAME>
-<!--592-->  <NAME><![CDATA[Test ID]]></NAME>
-<!--592-->  <PRINTNAME><![CDATA[Test ID]]></PRINTNAME>
-<!--592-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--592--></AD_ELEMENT>
 
 <!--593--><AD_ELEMENT>
 <!--593-->  <AD_ELEMENT_ID><![CDATA[593]]></AD_ELEMENT_ID>
@@ -4928,32 +4860,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--893-->  <HELP><![CDATA[The Offset Month Due indicates the number of months from the current month to indicate an invoice is due.  A 0 indicates the same month, a 1 the following month. ]]></HELP>
 <!--893-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--893--></AD_ELEMENT>
-
-<!--912--><AD_ELEMENT>
-<!--912-->  <AD_ELEMENT_ID><![CDATA[912]]></AD_ELEMENT_ID>
-<!--912-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--912-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--912-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--912-->  <COLUMNNAME><![CDATA[I_ErrorMsg]]></COLUMNNAME>
-<!--912-->  <NAME><![CDATA[Import Error Message]]></NAME>
-<!--912-->  <PRINTNAME><![CDATA[Import Error Message]]></PRINTNAME>
-<!--912-->  <DESCRIPTION><![CDATA[A message that appears when errors occur during the importing process.]]></DESCRIPTION>
-<!--912-->  <HELP><![CDATA[The Import Error Message displays any error messages generated during the import process.]]></HELP>
-<!--912-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--912--></AD_ELEMENT>
-
-<!--913--><AD_ELEMENT>
-<!--913-->  <AD_ELEMENT_ID><![CDATA[913]]></AD_ELEMENT_ID>
-<!--913-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--913-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--913-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--913-->  <COLUMNNAME><![CDATA[I_IsImported]]></COLUMNNAME>
-<!--913-->  <NAME><![CDATA[Import Process Complete]]></NAME>
-<!--913-->  <PRINTNAME><![CDATA[Imported]]></PRINTNAME>
-<!--913-->  <DESCRIPTION><![CDATA[A indication that the desired process has been completed successfully.]]></DESCRIPTION>
-<!--913-->  <HELP><![CDATA[The Imported check box indicates if this import has been processed.]]></HELP>
-<!--913-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--913--></AD_ELEMENT>
 
 <!--916--><AD_ELEMENT>
 <!--916-->  <AD_ELEMENT_ID><![CDATA[916]]></AD_ELEMENT_ID>
@@ -5978,19 +5884,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1065-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1065--></AD_ELEMENT>
 
-<!--1068--><AD_ELEMENT>
-<!--1068-->  <AD_ELEMENT_ID><![CDATA[1068]]></AD_ELEMENT_ID>
-<!--1068-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1068-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1068-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1068-->  <COLUMNNAME><![CDATA[Account_Acct]]></COLUMNNAME>
-<!--1068-->  <NAME><![CDATA[Account]]></NAME>
-<!--1068-->  <PRINTNAME><![CDATA[Account_Acct]]></PRINTNAME>
-<!--1068-->  <DESCRIPTION><![CDATA[The identification code used for accounting.]]></DESCRIPTION>
-<!--1068-->  <HELP><![CDATA[The identification code used for accounting.]]></HELP>
-<!--1068-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1068--></AD_ELEMENT>
-
 <!--1070--><AD_ELEMENT>
 <!--1070-->  <AD_ELEMENT_ID><![CDATA[1070]]></AD_ELEMENT_ID>
 <!--1070-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -6402,17 +6295,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1126-->  <PRINTNAME><![CDATA[Create]]></PRINTNAME>
 <!--1126-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1126--></AD_ELEMENT>
-
-<!--1132--><AD_ELEMENT>
-<!--1132-->  <AD_ELEMENT_ID><![CDATA[1132]]></AD_ELEMENT_ID>
-<!--1132-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1132-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1132-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1132-->  <COLUMNNAME><![CDATA[T_Qty]]></COLUMNNAME>
-<!--1132-->  <NAME><![CDATA[Quantity]]></NAME>
-<!--1132-->  <PRINTNAME><![CDATA[Qty]]></PRINTNAME>
-<!--1132-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1132--></AD_ELEMENT>
 
 <!--1133--><AD_ELEMENT>
 <!--1133-->  <AD_ELEMENT_ID><![CDATA[1133]]></AD_ELEMENT_ID>
@@ -6945,41 +6827,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1244-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1244--></AD_ELEMENT>
 
-<!--1249--><AD_ELEMENT>
-<!--1249-->  <AD_ELEMENT_ID><![CDATA[1249]]></AD_ELEMENT_ID>
-<!--1249-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1249-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1249-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1249-->  <COLUMNNAME><![CDATA[NetAmtToInvoice]]></COLUMNNAME>
-<!--1249-->  <NAME><![CDATA[Invoice net Amount]]></NAME>
-<!--1249-->  <PRINTNAME><![CDATA[Invoice net Amt]]></PRINTNAME>
-<!--1249-->  <DESCRIPTION><![CDATA[Net amount of this Invoice]]></DESCRIPTION>
-<!--1249-->  <HELP><![CDATA[Indicates the net amount for this invoice.  It does not include shipping or any additional charges.]]></HELP>
-<!--1249-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1249--></AD_ELEMENT>
-
-<!--1250--><AD_ELEMENT>
-<!--1250-->  <AD_ELEMENT_ID><![CDATA[1250]]></AD_ELEMENT_ID>
-<!--1250-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1250-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1250-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1250-->  <COLUMNNAME><![CDATA[QtyToDeliver]]></COLUMNNAME>
-<!--1250-->  <NAME><![CDATA[Qty to deliver]]></NAME>
-<!--1250-->  <PRINTNAME><![CDATA[Qty to deliver]]></PRINTNAME>
-<!--1250-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1250--></AD_ELEMENT>
-
-<!--1251--><AD_ELEMENT>
-<!--1251-->  <AD_ELEMENT_ID><![CDATA[1251]]></AD_ELEMENT_ID>
-<!--1251-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1251-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1251-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1251-->  <COLUMNNAME><![CDATA[QtyToInvoice]]></COLUMNNAME>
-<!--1251-->  <NAME><![CDATA[Qty to invoice]]></NAME>
-<!--1251-->  <PRINTNAME><![CDATA[Qty to invoice]]></PRINTNAME>
-<!--1251-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1251--></AD_ELEMENT>
-
 <!--1253--><AD_ELEMENT>
 <!--1253-->  <AD_ELEMENT_ID><![CDATA[1253]]></AD_ELEMENT_ID>
 <!--1253-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -7071,19 +6918,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1270-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1270--></AD_ELEMENT>
 
-<!--1272--><AD_ELEMENT>
-<!--1272-->  <AD_ELEMENT_ID><![CDATA[1272]]></AD_ELEMENT_ID>
-<!--1272-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1272-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1272-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1272-->  <COLUMNNAME><![CDATA[LineDiscount]]></COLUMNNAME>
-<!--1272-->  <NAME><![CDATA[Line Discount %]]></NAME>
-<!--1272-->  <PRINTNAME><![CDATA[Discount %]]></PRINTNAME>
-<!--1272-->  <DESCRIPTION><![CDATA[Line Discount as a percentage]]></DESCRIPTION>
-<!--1272-->  <HELP><![CDATA[The Line Discount Percent indicates the discount for this line as a percentage.]]></HELP>
-<!--1272-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1272--></AD_ELEMENT>
-
 <!--1273--><AD_ELEMENT>
 <!--1273-->  <AD_ELEMENT_ID><![CDATA[1273]]></AD_ELEMENT_ID>
 <!--1273-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -7118,17 +6952,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1275-->  <PRINTNAME><![CDATA[List Amt]]></PRINTNAME>
 <!--1275-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1275--></AD_ELEMENT>
-
-<!--1276--><AD_ELEMENT>
-<!--1276-->  <AD_ELEMENT_ID><![CDATA[1276]]></AD_ELEMENT_ID>
-<!--1276-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1276-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1276-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1276-->  <COLUMNNAME><![CDATA[LineOverLimit]]></COLUMNNAME>
-<!--1276-->  <NAME><![CDATA[Gross margin %]]></NAME>
-<!--1276-->  <PRINTNAME><![CDATA[Margin %]]></PRINTNAME>
-<!--1276-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1276--></AD_ELEMENT>
 
 <!--1277--><AD_ELEMENT>
 <!--1277-->  <AD_ELEMENT_ID><![CDATA[1277]]></AD_ELEMENT_ID>
@@ -7644,17 +7467,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1388-->  <HELP><![CDATA[The Charge Revenue Account identifies the account to use when recording charges paid by customers.]]></HELP>
 <!--1388-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1388--></AD_ELEMENT>
-
-<!--1390--><AD_ELEMENT>
-<!--1390-->  <AD_ELEMENT_ID><![CDATA[1390]]></AD_ELEMENT_ID>
-<!--1390-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1390-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1390-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1390-->  <COLUMNNAME><![CDATA[Contact]]></COLUMNNAME>
-<!--1390-->  <NAME><![CDATA[Contact]]></NAME>
-<!--1390-->  <PRINTNAME><![CDATA[Contact]]></PRINTNAME>
-<!--1390-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1390--></AD_ELEMENT>
 
 <!--1395--><AD_ELEMENT>
 <!--1395-->  <AD_ELEMENT_ID><![CDATA[1395]]></AD_ELEMENT_ID>
@@ -9947,71 +9759,6 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1832-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1832--></AD_ELEMENT>
 
-<!--1837--><AD_ELEMENT>
-<!--1837-->  <AD_ELEMENT_ID><![CDATA[1837]]></AD_ELEMENT_ID>
-<!--1837-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1837-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1837-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1837-->  <COLUMNNAME><![CDATA[BPContactGreeting]]></COLUMNNAME>
-<!--1837-->  <NAME><![CDATA[BP Contact Greeting]]></NAME>
-<!--1837-->  <PRINTNAME><![CDATA[BP Contact Greeting]]></PRINTNAME>
-<!--1837-->  <DESCRIPTION><![CDATA[Greeting for Business Partner Contact]]></DESCRIPTION>
-<!--1837-->  <HELP><![CDATA[Greeting for Business Partner Contact]]></HELP>
-<!--1837-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1837--></AD_ELEMENT>
-
-<!--1838--><AD_ELEMENT>
-<!--1838-->  <AD_ELEMENT_ID><![CDATA[1838]]></AD_ELEMENT_ID>
-<!--1838-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1838-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1838-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1838-->  <COLUMNNAME><![CDATA[BPGreeting]]></COLUMNNAME>
-<!--1838-->  <NAME><![CDATA[BP Greeting]]></NAME>
-<!--1838-->  <PRINTNAME><![CDATA[BP Greeting]]></PRINTNAME>
-<!--1838-->  <DESCRIPTION><![CDATA[Greeting for Business Partner]]></DESCRIPTION>
-<!--1838-->  <HELP><![CDATA[Greeting for Business Partner]]></HELP>
-<!--1838-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1838--></AD_ELEMENT>
-
-<!--1839--><AD_ELEMENT>
-<!--1839-->  <AD_ELEMENT_ID><![CDATA[1839]]></AD_ELEMENT_ID>
-<!--1839-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1839-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1839-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1839-->  <COLUMNNAME><![CDATA[ContactName]]></COLUMNNAME>
-<!--1839-->  <NAME><![CDATA[Contact Name]]></NAME>
-<!--1839-->  <PRINTNAME><![CDATA[Contact Name]]></PRINTNAME>
-<!--1839-->  <DESCRIPTION><![CDATA[The name of the person to get in touch with.]]></DESCRIPTION>
-<!--1839-->  <HELP><![CDATA[Business Partner Contact Name]]></HELP>
-<!--1839-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1839--></AD_ELEMENT>
-
-<!--1841--><AD_ELEMENT>
-<!--1841-->  <AD_ELEMENT_ID><![CDATA[1841]]></AD_ELEMENT_ID>
-<!--1841-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1841-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1841-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1841-->  <COLUMNNAME><![CDATA[DocumentType]]></COLUMNNAME>
-<!--1841-->  <NAME><![CDATA[Document Type Name]]></NAME>
-<!--1841-->  <PRINTNAME><![CDATA[Document Type Name]]></PRINTNAME>
-<!--1841-->  <DESCRIPTION><![CDATA[Document Type]]></DESCRIPTION>
-<!--1841-->  <HELP><![CDATA[Document Type]]></HELP>
-<!--1841-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1841--></AD_ELEMENT>
-
-<!--1842--><AD_ELEMENT>
-<!--1842-->  <AD_ELEMENT_ID><![CDATA[1842]]></AD_ELEMENT_ID>
-<!--1842-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1842-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1842-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1842-->  <COLUMNNAME><![CDATA[DocumentTypeNote]]></COLUMNNAME>
-<!--1842-->  <NAME><![CDATA[Document Type Note]]></NAME>
-<!--1842-->  <PRINTNAME><![CDATA[Document Type Note]]></PRINTNAME>
-<!--1842-->  <DESCRIPTION><![CDATA[Optional note of a document type]]></DESCRIPTION>
-<!--1842-->  <HELP><![CDATA[Optional note of a document type]]></HELP>
-<!--1842-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1842--></AD_ELEMENT>
-
 <!--1843--><AD_ELEMENT>
 <!--1843-->  <AD_ELEMENT_ID><![CDATA[1843]]></AD_ELEMENT_ID>
 <!--1843-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -10025,110 +9772,6 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1843-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1843--></AD_ELEMENT>
 
-<!--1847--><AD_ELEMENT>
-<!--1847-->  <AD_ELEMENT_ID><![CDATA[1847]]></AD_ELEMENT_ID>
-<!--1847-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1847-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1847-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1847-->  <COLUMNNAME><![CDATA[PaymentTerm]]></COLUMNNAME>
-<!--1847-->  <NAME><![CDATA[Payment Term]]></NAME>
-<!--1847-->  <PRINTNAME><![CDATA[Payment Term]]></PRINTNAME>
-<!--1847-->  <DESCRIPTION><![CDATA[Payment Term]]></DESCRIPTION>
-<!--1847-->  <HELP><![CDATA[Payment Term]]></HELP>
-<!--1847-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1847--></AD_ELEMENT>
-
-<!--1848--><AD_ELEMENT>
-<!--1848-->  <AD_ELEMENT_ID><![CDATA[1848]]></AD_ELEMENT_ID>
-<!--1848-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1848-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1848-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1848-->  <COLUMNNAME><![CDATA[PaymentTermNote]]></COLUMNNAME>
-<!--1848-->  <NAME><![CDATA[Payment Term Note]]></NAME>
-<!--1848-->  <PRINTNAME><![CDATA[Payment Term Note]]></PRINTNAME>
-<!--1848-->  <DESCRIPTION><![CDATA[Note of a Payment Term]]></DESCRIPTION>
-<!--1848-->  <HELP><![CDATA[Note of a Payment Term]]></HELP>
-<!--1848-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1848--></AD_ELEMENT>
-
-<!--1849--><AD_ELEMENT>
-<!--1849-->  <AD_ELEMENT_ID><![CDATA[1849]]></AD_ELEMENT_ID>
-<!--1849-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1849-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1849-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1849-->  <COLUMNNAME><![CDATA[ResourceDescription]]></COLUMNNAME>
-<!--1849-->  <NAME><![CDATA[Resource Description]]></NAME>
-<!--1849-->  <PRINTNAME><![CDATA[Resource Description]]></PRINTNAME>
-<!--1849-->  <DESCRIPTION><![CDATA[Resource Allocation Description]]></DESCRIPTION>
-<!--1849-->  <HELP><![CDATA[Resource Allocation Description]]></HELP>
-<!--1849-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1849--></AD_ELEMENT>
-
-<!--1850--><AD_ELEMENT>
-<!--1850-->  <AD_ELEMENT_ID><![CDATA[1850]]></AD_ELEMENT_ID>
-<!--1850-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1850-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1850-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1850-->  <COLUMNNAME><![CDATA[Revenue]]></COLUMNNAME>
-<!--1850-->  <NAME><![CDATA[Revenue]]></NAME>
-<!--1850-->  <PRINTNAME><![CDATA[Revenue]]></PRINTNAME>
-<!--1850-->  <DESCRIPTION><![CDATA[Revenue]]></DESCRIPTION>
-<!--1850-->  <HELP><![CDATA[Revenue]]></HELP>
-<!--1850-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1850--></AD_ELEMENT>
-
-<!--1851--><AD_ELEMENT>
-<!--1851-->  <AD_ELEMENT_ID><![CDATA[1851]]></AD_ELEMENT_ID>
-<!--1851-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1851-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1851-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1851-->  <COLUMNNAME><![CDATA[SO_CreditAvailable]]></COLUMNNAME>
-<!--1851-->  <NAME><![CDATA[Credit Available]]></NAME>
-<!--1851-->  <PRINTNAME><![CDATA[Credit Available]]></PRINTNAME>
-<!--1851-->  <DESCRIPTION><![CDATA[Available Credit]]></DESCRIPTION>
-<!--1851-->  <HELP><![CDATA[Available Credit]]></HELP>
-<!--1851-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1851--></AD_ELEMENT>
-
-<!--1874--><AD_ELEMENT>
-<!--1874-->  <AD_ELEMENT_ID><![CDATA[1874]]></AD_ELEMENT_ID>
-<!--1874-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1874-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1874-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1874-->  <COLUMNNAME><![CDATA[Org_Location_ID]]></COLUMNNAME>
-<!--1874-->  <NAME><![CDATA[Org Location]]></NAME>
-<!--1874-->  <PRINTNAME><![CDATA[Org Location]]></PRINTNAME>
-<!--1874-->  <DESCRIPTION><![CDATA[Organization Location/Address]]></DESCRIPTION>
-<!--1874-->  <HELP><![CDATA[Organization Location/Address]]></HELP>
-<!--1874-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1874--></AD_ELEMENT>
-
-<!--1875--><AD_ELEMENT>
-<!--1875-->  <AD_ELEMENT_ID><![CDATA[1875]]></AD_ELEMENT_ID>
-<!--1875-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1875-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1875-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1875-->  <COLUMNNAME><![CDATA[Warehouse_Location_ID]]></COLUMNNAME>
-<!--1875-->  <NAME><![CDATA[Warehouse Location]]></NAME>
-<!--1875-->  <PRINTNAME><![CDATA[Warehouse Location]]></PRINTNAME>
-<!--1875-->  <DESCRIPTION><![CDATA[Warehouse Location/Address]]></DESCRIPTION>
-<!--1875-->  <HELP><![CDATA[Address of Warehouse]]></HELP>
-<!--1875-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1875--></AD_ELEMENT>
-
-<!--1876--><AD_ELEMENT>
-<!--1876-->  <AD_ELEMENT_ID><![CDATA[1876]]></AD_ELEMENT_ID>
-<!--1876-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1876-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1876-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1876-->  <COLUMNNAME><![CDATA[BPValue]]></COLUMNNAME>
-<!--1876-->  <NAME><![CDATA[BP Search Key]]></NAME>
-<!--1876-->  <PRINTNAME><![CDATA[Customer No]]></PRINTNAME>
-<!--1876-->  <DESCRIPTION><![CDATA[Business Partner Key Value]]></DESCRIPTION>
-<!--1876-->  <HELP><![CDATA[Search Key of Business Partner]]></HELP>
-<!--1876-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1876--></AD_ELEMENT>
-
 <!--1884--><AD_ELEMENT>
 <!--1884-->  <AD_ELEMENT_ID><![CDATA[1884]]></AD_ELEMENT_ID>
 <!--1884-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -10141,19 +9784,6 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1884-->  <HELP><![CDATA[Any item of economic value owned by the corporation, especially that which could be converted to cash.]]></HELP>
 <!--1884-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1884--></AD_ELEMENT>
-
-<!--1886--><AD_ELEMENT>
-<!--1886-->  <AD_ELEMENT_ID><![CDATA[1886]]></AD_ELEMENT_ID>
-<!--1886-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1886-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1886-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1886-->  <COLUMNNAME><![CDATA[SalesRep_Name]]></COLUMNNAME>
-<!--1886-->  <NAME><![CDATA[Sales Representative Name]]></NAME>
-<!--1886-->  <PRINTNAME><![CDATA[Sales Representative Name]]></PRINTNAME>
-<!--1886-->  <PO_NAME><![CDATA[Company Agent]]></PO_NAME>
-<!--1886-->  <PO_PRINTNAME><![CDATA[Company Agent]]></PO_PRINTNAME>
-<!--1886-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1886--></AD_ELEMENT>
 
 <!--1891--><AD_ELEMENT>
 <!--1891-->  <AD_ELEMENT_ID><![CDATA[1891]]></AD_ELEMENT_ID>
@@ -11217,58 +10847,6 @@ If selected, this column will be used in the Search Window as an available filte
 <!--2088-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2088--></AD_ELEMENT>
 
-<!--2094--><AD_ELEMENT>
-<!--2094-->  <AD_ELEMENT_ID><![CDATA[2094]]></AD_ELEMENT_ID>
-<!--2094-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2094-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2094-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2094-->  <COLUMNNAME><![CDATA[BPartnerValue]]></COLUMNNAME>
-<!--2094-->  <NAME><![CDATA[Business Partner Search Key]]></NAME>
-<!--2094-->  <PRINTNAME><![CDATA[Business Partner Key]]></PRINTNAME>
-<!--2094-->  <DESCRIPTION><![CDATA[An abbreviated name (or a code) to help find a business partner.]]></DESCRIPTION>
-<!--2094-->  <HELP><![CDATA[An abbreviated name (or a code) to help find a business partner. Usually, a company's internal identifier is entered here.]]></HELP>
-<!--2094-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2094--></AD_ELEMENT>
-
-<!--2098--><AD_ELEMENT>
-<!--2098-->  <AD_ELEMENT_ID><![CDATA[2098]]></AD_ELEMENT_ID>
-<!--2098-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2098-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2098-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2098-->  <COLUMNNAME><![CDATA[DocTypeName]]></COLUMNNAME>
-<!--2098-->  <NAME><![CDATA[Document Type Name]]></NAME>
-<!--2098-->  <PRINTNAME><![CDATA[DocType Name]]></PRINTNAME>
-<!--2098-->  <DESCRIPTION><![CDATA[A value defining what sequence and process setup are used to handle this document.]]></DESCRIPTION>
-<!--2098-->  <HELP><![CDATA[A value defining what sequence and process setup are used to handle this document.]]></HELP>
-<!--2098-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2098--></AD_ELEMENT>
-
-<!--2104--><AD_ELEMENT>
-<!--2104-->  <AD_ELEMENT_ID><![CDATA[2104]]></AD_ELEMENT_ID>
-<!--2104-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2104-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2104-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2104-->  <COLUMNNAME><![CDATA[I_Order_ID]]></COLUMNNAME>
-<!--2104-->  <NAME><![CDATA[Import Order]]></NAME>
-<!--2104-->  <PRINTNAME><![CDATA[Import Order]]></PRINTNAME>
-<!--2104-->  <DESCRIPTION><![CDATA[Import Orders]]></DESCRIPTION>
-<!--2104-->  <HELP><![CDATA[Import Orders]]></HELP>
-<!--2104-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2104--></AD_ELEMENT>
-
-<!--2108--><AD_ELEMENT>
-<!--2108-->  <AD_ELEMENT_ID><![CDATA[2108]]></AD_ELEMENT_ID>
-<!--2108-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2108-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2108-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2108-->  <COLUMNNAME><![CDATA[LineDescription]]></COLUMNNAME>
-<!--2108-->  <NAME><![CDATA[Line Description]]></NAME>
-<!--2108-->  <PRINTNAME><![CDATA[Line Description]]></PRINTNAME>
-<!--2108-->  <DESCRIPTION><![CDATA[An additional detail regarding one item or charge.]]></DESCRIPTION>
-<!--2108-->  <HELP><![CDATA[An additional detail regarding one item or charge.]]></HELP>
-<!--2108-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2108--></AD_ELEMENT>
-
 <!--2110--><AD_ELEMENT>
 <!--2110-->  <AD_ELEMENT_ID><![CDATA[2110]]></AD_ELEMENT_ID>
 <!--2110-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -11320,19 +10898,6 @@ If selected, this column will be used in the Search Window as an available filte
 <!--2113-->  <HELP><![CDATA[The number of packages being shipped.]]></HELP>
 <!--2113-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2113--></AD_ELEMENT>
-
-<!--2116--><AD_ELEMENT>
-<!--2116-->  <AD_ELEMENT_ID><![CDATA[2116]]></AD_ELEMENT_ID>
-<!--2116-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2116-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2116-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2116-->  <COLUMNNAME><![CDATA[PaymentTermValue]]></COLUMNNAME>
-<!--2116-->  <NAME><![CDATA[Payment Term Key]]></NAME>
-<!--2116-->  <PRINTNAME><![CDATA[Payment Term Key]]></PRINTNAME>
-<!--2116-->  <DESCRIPTION><![CDATA[Key of the Payment Term]]></DESCRIPTION>
-<!--2116-->  <HELP><![CDATA[Key of the Payment Term]]></HELP>
-<!--2116-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2116--></AD_ELEMENT>
 
 <!--2117--><AD_ELEMENT>
 <!--2117-->  <AD_ELEMENT_ID><![CDATA[2117]]></AD_ELEMENT_ID>
@@ -11435,45 +11000,6 @@ If selected, this column will be used in the Search Window as an available filte
 <!--2159-->  <PRINTNAME><![CDATA[Language ID]]></PRINTNAME>
 <!--2159-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2159--></AD_ELEMENT>
-
-<!--2161--><AD_ELEMENT>
-<!--2161-->  <AD_ELEMENT_ID><![CDATA[2161]]></AD_ELEMENT_ID>
-<!--2161-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2161-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2161-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2161-->  <COLUMNNAME><![CDATA[ProjectName]]></COLUMNNAME>
-<!--2161-->  <NAME><![CDATA[Project Name]]></NAME>
-<!--2161-->  <PRINTNAME><![CDATA[Project Name]]></PRINTNAME>
-<!--2161-->  <DESCRIPTION><![CDATA[Name of the Project]]></DESCRIPTION>
-<!--2161-->  <HELP><![CDATA[Name of the Project]]></HELP>
-<!--2161-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2161--></AD_ELEMENT>
-
-<!--2162--><AD_ELEMENT>
-<!--2162-->  <AD_ELEMENT_ID><![CDATA[2162]]></AD_ELEMENT_ID>
-<!--2162-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2162-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2162-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2162-->  <COLUMNNAME><![CDATA[ProjectPhaseName]]></COLUMNNAME>
-<!--2162-->  <NAME><![CDATA[Project Phase]]></NAME>
-<!--2162-->  <PRINTNAME><![CDATA[Project Phase]]></PRINTNAME>
-<!--2162-->  <DESCRIPTION><![CDATA[Name of the Project Phase]]></DESCRIPTION>
-<!--2162-->  <HELP><![CDATA[Name of the Project Phase]]></HELP>
-<!--2162-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2162--></AD_ELEMENT>
-
-<!--2163--><AD_ELEMENT>
-<!--2163-->  <AD_ELEMENT_ID><![CDATA[2163]]></AD_ELEMENT_ID>
-<!--2163-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2163-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2163-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2163-->  <COLUMNNAME><![CDATA[ProjectTypeName]]></COLUMNNAME>
-<!--2163-->  <NAME><![CDATA[Project Type Name]]></NAME>
-<!--2163-->  <PRINTNAME><![CDATA[Project Type Name]]></PRINTNAME>
-<!--2163-->  <DESCRIPTION><![CDATA[Name of the Project Type]]></DESCRIPTION>
-<!--2163-->  <HELP><![CDATA[Name of the Project Type]]></HELP>
-<!--2163-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2163--></AD_ELEMENT>
 
 <!--2167--><AD_ELEMENT>
 <!--2167-->  <AD_ELEMENT_ID><![CDATA[2167]]></AD_ELEMENT_ID>
@@ -14915,50 +14441,6 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800507-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800507--></AD_ELEMENT>
 
-<!--800508--><AD_ELEMENT>
-<!--800508-->  <AD_ELEMENT_ID><![CDATA[800508]]></AD_ELEMENT_ID>
-<!--800508-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800508-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800508-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800508-->  <COLUMNNAME><![CDATA[Billto_Upc]]></COLUMNNAME>
-<!--800508-->  <NAME><![CDATA[Bill to UPC]]></NAME>
-<!--800508-->  <PRINTNAME><![CDATA[Billto_Upc]]></PRINTNAME>
-<!--800508-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800508--></AD_ELEMENT>
-
-<!--800509--><AD_ELEMENT>
-<!--800509-->  <AD_ELEMENT_ID><![CDATA[800509]]></AD_ELEMENT_ID>
-<!--800509-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800509-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800509-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800509-->  <COLUMNNAME><![CDATA[Bpartnerupc]]></COLUMNNAME>
-<!--800509-->  <NAME><![CDATA[Business Partner UPC]]></NAME>
-<!--800509-->  <PRINTNAME><![CDATA[Bpartnerupc]]></PRINTNAME>
-<!--800509-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800509--></AD_ELEMENT>
-
-<!--800510--><AD_ELEMENT>
-<!--800510-->  <AD_ELEMENT_ID><![CDATA[800510]]></AD_ELEMENT_ID>
-<!--800510-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800510-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800510-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800510-->  <COLUMNNAME><![CDATA[C_Bpartner_Location_Upc]]></COLUMNNAME>
-<!--800510-->  <NAME><![CDATA[UPC Address]]></NAME>
-<!--800510-->  <PRINTNAME><![CDATA[C_Bpartner_Location_Upc]]></PRINTNAME>
-<!--800510-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800510--></AD_ELEMENT>
-
-<!--800511--><AD_ELEMENT>
-<!--800511-->  <AD_ELEMENT_ID><![CDATA[800511]]></AD_ELEMENT_ID>
-<!--800511-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800511-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800511-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800511-->  <COLUMNNAME><![CDATA[Order_Referenceno]]></COLUMNNAME>
-<!--800511-->  <NAME><![CDATA[Order Reference No.]]></NAME>
-<!--800511-->  <PRINTNAME><![CDATA[Order_Referenceno]]></PRINTNAME>
-<!--800511-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800511--></AD_ELEMENT>
-
 <!--800512--><AD_ELEMENT>
 <!--800512-->  <AD_ELEMENT_ID><![CDATA[800512]]></AD_ELEMENT_ID>
 <!--800512-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -15509,17 +14991,6 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800557-->  <HELP><![CDATA[Specifies whether bank location is going to be printed.]]></HELP>
 <!--800557-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800557--></AD_ELEMENT>
-
-<!--800558--><AD_ELEMENT>
-<!--800558-->  <AD_ELEMENT_ID><![CDATA[800558]]></AD_ELEMENT_ID>
-<!--800558-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800558-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800558-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800558-->  <COLUMNNAME><![CDATA[Vendor_Upc]]></COLUMNNAME>
-<!--800558-->  <NAME><![CDATA[Vendor UPC]]></NAME>
-<!--800558-->  <PRINTNAME><![CDATA[Vendor_Upc]]></PRINTNAME>
-<!--800558-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800558--></AD_ELEMENT>
 
 <!--800559--><AD_ELEMENT>
 <!--800559-->  <AD_ELEMENT_ID><![CDATA[800559]]></AD_ELEMENT_ID>
@@ -20142,17 +19613,6 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--5221067DBEBB52DEE040007F01001FE1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5221067DBEBB52DEE040007F01001FE1--></AD_ELEMENT>
 
-<!--5221067DBEBC52DEE040007F01001FE1--><AD_ELEMENT>
-<!--5221067DBEBC52DEE040007F01001FE1-->  <AD_ELEMENT_ID><![CDATA[5221067DBEBC52DEE040007F01001FE1]]></AD_ELEMENT_ID>
-<!--5221067DBEBC52DEE040007F01001FE1-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--5221067DBEBC52DEE040007F01001FE1-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--5221067DBEBC52DEE040007F01001FE1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--5221067DBEBC52DEE040007F01001FE1-->  <COLUMNNAME><![CDATA[AD_TreeNodeMM_ID]]></COLUMNNAME>
-<!--5221067DBEBC52DEE040007F01001FE1-->  <NAME><![CDATA[AD_TreeNodeMM_ID]]></NAME>
-<!--5221067DBEBC52DEE040007F01001FE1-->  <PRINTNAME><![CDATA[AD_TreeNodeMM_ID]]></PRINTNAME>
-<!--5221067DBEBC52DEE040007F01001FE1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--5221067DBEBC52DEE040007F01001FE1--></AD_ELEMENT>
-
 <!--5221067DBEBD52DEE040007F01001FE1--><AD_ELEMENT>
 <!--5221067DBEBD52DEE040007F01001FE1-->  <AD_ELEMENT_ID><![CDATA[5221067DBEBD52DEE040007F01001FE1]]></AD_ELEMENT_ID>
 <!--5221067DBEBD52DEE040007F01001FE1-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -20340,39 +19800,6 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--5221067DBED252DEE040007F01001FE1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5221067DBED252DEE040007F01001FE1--></AD_ELEMENT>
 
-<!--5221067DBED352DEE040007F01001FE1--><AD_ELEMENT>
-<!--5221067DBED352DEE040007F01001FE1-->  <AD_ELEMENT_ID><![CDATA[5221067DBED352DEE040007F01001FE1]]></AD_ELEMENT_ID>
-<!--5221067DBED352DEE040007F01001FE1-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--5221067DBED352DEE040007F01001FE1-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--5221067DBED352DEE040007F01001FE1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--5221067DBED352DEE040007F01001FE1-->  <COLUMNNAME><![CDATA[AD_Record_Access_ID]]></COLUMNNAME>
-<!--5221067DBED352DEE040007F01001FE1-->  <NAME><![CDATA[Record Access]]></NAME>
-<!--5221067DBED352DEE040007F01001FE1-->  <PRINTNAME><![CDATA[Record Access]]></PRINTNAME>
-<!--5221067DBED352DEE040007F01001FE1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--5221067DBED352DEE040007F01001FE1--></AD_ELEMENT>
-
-<!--5221067DBED452DEE040007F01001FE1--><AD_ELEMENT>
-<!--5221067DBED452DEE040007F01001FE1-->  <AD_ELEMENT_ID><![CDATA[5221067DBED452DEE040007F01001FE1]]></AD_ELEMENT_ID>
-<!--5221067DBED452DEE040007F01001FE1-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--5221067DBED452DEE040007F01001FE1-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--5221067DBED452DEE040007F01001FE1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--5221067DBED452DEE040007F01001FE1-->  <COLUMNNAME><![CDATA[AD_TreeBar_ID]]></COLUMNNAME>
-<!--5221067DBED452DEE040007F01001FE1-->  <NAME><![CDATA[AD_TreeBar_ID]]></NAME>
-<!--5221067DBED452DEE040007F01001FE1-->  <PRINTNAME><![CDATA[AD_TreeBar_ID]]></PRINTNAME>
-<!--5221067DBED452DEE040007F01001FE1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--5221067DBED452DEE040007F01001FE1--></AD_ELEMENT>
-
-<!--5221067DBED552DEE040007F01001FE1--><AD_ELEMENT>
-<!--5221067DBED552DEE040007F01001FE1-->  <AD_ELEMENT_ID><![CDATA[5221067DBED552DEE040007F01001FE1]]></AD_ELEMENT_ID>
-<!--5221067DBED552DEE040007F01001FE1-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--5221067DBED552DEE040007F01001FE1-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--5221067DBED552DEE040007F01001FE1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--5221067DBED552DEE040007F01001FE1-->  <COLUMNNAME><![CDATA[AD_TreeNodeBP_ID]]></COLUMNNAME>
-<!--5221067DBED552DEE040007F01001FE1-->  <NAME><![CDATA[AD_TreeNodeBP_ID]]></NAME>
-<!--5221067DBED552DEE040007F01001FE1-->  <PRINTNAME><![CDATA[AD_TreeNodeBP_ID]]></PRINTNAME>
-<!--5221067DBED552DEE040007F01001FE1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--5221067DBED552DEE040007F01001FE1--></AD_ELEMENT>
-
 <!--5221067DBED652DEE040007F01001FE1--><AD_ELEMENT>
 <!--5221067DBED652DEE040007F01001FE1-->  <AD_ELEMENT_ID><![CDATA[5221067DBED652DEE040007F01001FE1]]></AD_ELEMENT_ID>
 <!--5221067DBED652DEE040007F01001FE1-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -20548,17 +19975,6 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--5221067DBEE852DEE040007F01001FE1-->  <PRINTNAME><![CDATA[Field Translation]]></PRINTNAME>
 <!--5221067DBEE852DEE040007F01001FE1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5221067DBEE852DEE040007F01001FE1--></AD_ELEMENT>
-
-<!--5221067DBEE952DEE040007F01001FE1--><AD_ELEMENT>
-<!--5221067DBEE952DEE040007F01001FE1-->  <AD_ELEMENT_ID><![CDATA[5221067DBEE952DEE040007F01001FE1]]></AD_ELEMENT_ID>
-<!--5221067DBEE952DEE040007F01001FE1-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--5221067DBEE952DEE040007F01001FE1-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--5221067DBEE952DEE040007F01001FE1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--5221067DBEE952DEE040007F01001FE1-->  <COLUMNNAME><![CDATA[AD_Column_Access_ID]]></COLUMNNAME>
-<!--5221067DBEE952DEE040007F01001FE1-->  <NAME><![CDATA[Column Access]]></NAME>
-<!--5221067DBEE952DEE040007F01001FE1-->  <PRINTNAME><![CDATA[Column Access]]></PRINTNAME>
-<!--5221067DBEE952DEE040007F01001FE1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--5221067DBEE952DEE040007F01001FE1--></AD_ELEMENT>
 
 <!--5221067DBEEB52DEE040007F01001FE1--><AD_ELEMENT>
 <!--5221067DBEEB52DEE040007F01001FE1-->  <AD_ELEMENT_ID><![CDATA[5221067DBEEB52DEE040007F01001FE1]]></AD_ELEMENT_ID>
@@ -21677,50 +21093,6 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--58494BA1BA40610CE040007F010057B4-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--58494BA1BA40610CE040007F010057B4--></AD_ELEMENT>
 
-<!--584A0583033F4C58E040A8C054666A78--><AD_ELEMENT>
-<!--584A0583033F4C58E040A8C054666A78-->  <AD_ELEMENT_ID><![CDATA[584A0583033F4C58E040A8C054666A78]]></AD_ELEMENT_ID>
-<!--584A0583033F4C58E040A8C054666A78-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--584A0583033F4C58E040A8C054666A78-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--584A0583033F4C58E040A8C054666A78-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--584A0583033F4C58E040A8C054666A78-->  <COLUMNNAME><![CDATA[Paymentamount1]]></COLUMNNAME>
-<!--584A0583033F4C58E040A8C054666A78-->  <NAME><![CDATA[Paymentamount1]]></NAME>
-<!--584A0583033F4C58E040A8C054666A78-->  <PRINTNAME><![CDATA[Paymentamount1]]></PRINTNAME>
-<!--584A0583033F4C58E040A8C054666A78-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--584A0583033F4C58E040A8C054666A78--></AD_ELEMENT>
-
-<!--584A058303414C58E040A8C054666A78--><AD_ELEMENT>
-<!--584A058303414C58E040A8C054666A78-->  <AD_ELEMENT_ID><![CDATA[584A058303414C58E040A8C054666A78]]></AD_ELEMENT_ID>
-<!--584A058303414C58E040A8C054666A78-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--584A058303414C58E040A8C054666A78-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--584A058303414C58E040A8C054666A78-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--584A058303414C58E040A8C054666A78-->  <COLUMNNAME><![CDATA[Paymentamount2]]></COLUMNNAME>
-<!--584A058303414C58E040A8C054666A78-->  <NAME><![CDATA[Paymentamount2]]></NAME>
-<!--584A058303414C58E040A8C054666A78-->  <PRINTNAME><![CDATA[Paymentamount2]]></PRINTNAME>
-<!--584A058303414C58E040A8C054666A78-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--584A058303414C58E040A8C054666A78--></AD_ELEMENT>
-
-<!--584A058303424C58E040A8C054666A78--><AD_ELEMENT>
-<!--584A058303424C58E040A8C054666A78-->  <AD_ELEMENT_ID><![CDATA[584A058303424C58E040A8C054666A78]]></AD_ELEMENT_ID>
-<!--584A058303424C58E040A8C054666A78-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--584A058303424C58E040A8C054666A78-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--584A058303424C58E040A8C054666A78-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--584A058303424C58E040A8C054666A78-->  <COLUMNNAME><![CDATA[Paymentrule2]]></COLUMNNAME>
-<!--584A058303424C58E040A8C054666A78-->  <NAME><![CDATA[Paymentrule2]]></NAME>
-<!--584A058303424C58E040A8C054666A78-->  <PRINTNAME><![CDATA[Paymentrule2]]></PRINTNAME>
-<!--584A058303424C58E040A8C054666A78-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--584A058303424C58E040A8C054666A78--></AD_ELEMENT>
-
-<!--584A058303434C58E040A8C054666A78--><AD_ELEMENT>
-<!--584A058303434C58E040A8C054666A78-->  <AD_ELEMENT_ID><![CDATA[584A058303434C58E040A8C054666A78]]></AD_ELEMENT_ID>
-<!--584A058303434C58E040A8C054666A78-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--584A058303434C58E040A8C054666A78-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--584A058303434C58E040A8C054666A78-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--584A058303434C58E040A8C054666A78-->  <COLUMNNAME><![CDATA[Paymentrule1]]></COLUMNNAME>
-<!--584A058303434C58E040A8C054666A78-->  <NAME><![CDATA[Paymentrule1]]></NAME>
-<!--584A058303434C58E040A8C054666A78-->  <PRINTNAME><![CDATA[Paymentrule1]]></PRINTNAME>
-<!--584A058303434C58E040A8C054666A78-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--584A058303434C58E040A8C054666A78--></AD_ELEMENT>
-
 <!--584A058303444C58E040A8C054666A78--><AD_ELEMENT>
 <!--584A058303444C58E040A8C054666A78-->  <AD_ELEMENT_ID><![CDATA[584A058303444C58E040A8C054666A78]]></AD_ELEMENT_ID>
 <!--584A058303444C58E040A8C054666A78-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -22525,18 +21897,6 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--69C0AB4BC5474357B8119A12E75FBBA9-->  <HELP><![CDATA[Expected cost of services outsourced. The real number will originate from all expense sheets (lines marked as Time Sheet) related to this project.]]></HELP>
 <!--69C0AB4BC5474357B8119A12E75FBBA9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--69C0AB4BC5474357B8119A12E75FBBA9--></AD_ELEMENT>
-
-<!--6A859170F5A64BF18E4B6E807D9B76F5--><AD_ELEMENT>
-<!--6A859170F5A64BF18E4B6E807D9B76F5-->  <AD_ELEMENT_ID><![CDATA[6A859170F5A64BF18E4B6E807D9B76F5]]></AD_ELEMENT_ID>
-<!--6A859170F5A64BF18E4B6E807D9B76F5-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--6A859170F5A64BF18E4B6E807D9B76F5-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--6A859170F5A64BF18E4B6E807D9B76F5-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--6A859170F5A64BF18E4B6E807D9B76F5-->  <COLUMNNAME><![CDATA[Attributesetident]]></COLUMNNAME>
-<!--6A859170F5A64BF18E4B6E807D9B76F5-->  <NAME><![CDATA[Attributeset Identification]]></NAME>
-<!--6A859170F5A64BF18E4B6E807D9B76F5-->  <PRINTNAME><![CDATA[Attributesetident]]></PRINTNAME>
-<!--6A859170F5A64BF18E4B6E807D9B76F5-->  <DESCRIPTION><![CDATA[The identifier for the attribute set. This identifier is the result of all the columns that are marked as isidentifier]]></DESCRIPTION>
-<!--6A859170F5A64BF18E4B6E807D9B76F5-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--6A859170F5A64BF18E4B6E807D9B76F5--></AD_ELEMENT>
 
 <!--6A9B2495752F4B609B0E4B9EB10A6D0F--><AD_ELEMENT>
 <!--6A9B2495752F4B609B0E4B9EB10A6D0F-->  <AD_ELEMENT_ID><![CDATA[6A9B2495752F4B609B0E4B9EB10A6D0F]]></AD_ELEMENT_ID>
