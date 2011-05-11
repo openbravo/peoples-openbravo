@@ -347,7 +347,7 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{AMTACCTCR}!=BigDecimal.ZERO && $F{AMTACCTCR}!=null)?$P{NUMBERFORMAT}.format($F{AMTACCTCR}).toString():new String(" ")]]></textFieldExpression>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{AMTACCTCR}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" stretchType="RelativeToBandHeight" x="350" y="0" width="80" height="13"/>
@@ -360,7 +360,7 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{AMTACCTDR}!=BigDecimal.ZERO && $F{AMTACCTDR}!=null)?$P{NUMBERFORMAT}.format($F{AMTACCTDR}).toString():new String(" ")]]></textFieldExpression>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{AMTACCTDR}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
 				<reportElement key="textField-22" stretchType="RelativeToBandHeight" x="280" y="0" width="70" height="13"/>
