@@ -730,7 +730,8 @@
 .OBSectionItemControlLinkDown,
 .OBSectionItemControlLinkFocused,
 .OBSectionItemControlLinkFocusedOver,
-.OBSectionItemControlLinkFocusedDown {
+.OBSectionItemControlLinkFocusedDown ,
+.OBSectionItemControlLinkUploading {
   font-family: 'lucida sans', sans-serif;
   font-size: 12px;
   vertical-align: middle;
@@ -738,6 +739,7 @@
   text-align: right;
   cursor: pointer;
   padding-right: 5px;
+  padding:5px; 
 }
 
 .OBSectionItemControlLink,
@@ -755,6 +757,9 @@
 .OBSectionItemControlLinkFocusedDown {
   color: #004E27;
   text-decoration: underline;
+}
+.OBSectionItemControlLinkUploading {
+  color: #FA962F;
 }
 
 /*=======================================================================

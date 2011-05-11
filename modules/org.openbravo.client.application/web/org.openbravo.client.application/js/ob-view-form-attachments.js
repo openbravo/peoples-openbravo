@@ -219,9 +219,14 @@ isc.OBAttachmentsLayout.addProperties({
                   if(clickedOK){
                     var hTempLayout = isc.HLayout.create();
                     form.theCanvas.addMember(hTempLayout,form.theCanvas.getMembers().size());
-                    var uploading = isc.Label.create({
-                      contents: fileName + '    '+OB.I18N.getLabel('OBUIAPP_AttachmentUploading')
+                    var uploadingFile = isc.Label.create({
+                      contents: fileName
                     });
+                    var uploading = isc.Label.create({
+                        className: 'OBSectionItemControlLinkUploading',
+                        contents: '    '+OB.I18N.getLabel('OBUIAPP_AttachmentUploading')
+                    });
+                    hTempLayout.addMember(uploadingFile);
                     hTempLayout.addMember(uploading);
                     var button =  form.theCanvas.getForm().view.toolBar.getLeftMember(isc.OBToolbar.TYPE_ATTACHMENTS);
                     if(!button) {
@@ -357,15 +362,17 @@ isc.OBAttachmentsLayout.addProperties({
       var buttonLayout = isc.HLayout.create();
       var attachmentLabel = isc.Label.create({
         contents: attachment.name,
+        className: 'OBNoteListGrid',
         width: '200px',
+        height: 20,
         wrap: false
       });
-      var attachmentBy = isc.Label.create({
-        contents: " <i>"+OB.I18N.getLabel('OBUIAPP_AttachmentBy')+" "+attachment.createdby+"</i>"
-      });
       var creationDate = OB.Utilities.getTimePassed(new Date(attachment.creationDate));
-      var attachmentCreationDate = isc.Label.create({
-        contents: creationDate
+      var attachmentBy = isc.Label.create({
+        height:  1,
+        className: 'OBNoteListGridAuthor',
+        width: '200px',
+        contents: creationDate+" "+OB.I18N.getLabel('OBUIAPP_AttachmentBy')+" "+attachment.createdby
       });
       var downloadAttachment = isc.OBSectionItemControlLink.create({
         contents: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentDownload')+' ]',
@@ -374,6 +381,7 @@ isc.OBAttachmentsLayout.addProperties({
         attachId: attachment.id,
         action: downloadActions
       });
+      downloadAttachment.height=0;
       var removeAttachment = isc.OBSectionItemControlLink.create({
         contents: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentRemove')+' ]',
         width: '30px',
@@ -383,7 +391,6 @@ isc.OBAttachmentsLayout.addProperties({
         action: removeActions
       });
       buttonLayout.addMember(attachmentLabel);
-      buttonLayout.addMember(attachmentCreationDate);
       buttonLayout.addMember(attachmentBy);
       buttonLayout.addMember(downloadAttachment);
       buttonLayout.addMember(removeAttachment);
