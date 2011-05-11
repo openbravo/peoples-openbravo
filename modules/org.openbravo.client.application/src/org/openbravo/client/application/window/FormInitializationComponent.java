@@ -149,6 +149,10 @@ public class FormInitializationComponent extends BaseActionHandler {
       } catch (JSONException e) {
         throw new OBException("Error while parsing content", e);
       }
+      List<String> visibleProperties = null;
+      if (jsContent.has("_visibleProperties")) {
+        visibleProperties = convertJSONArray(jsContent.getJSONArray("_visibleProperties"));
+      }
       // create the row from the json content then
       if (row == null) {
         final JsonToDataConverter fromJsonConverter = OBProvider.getInstance().get(
@@ -201,7 +205,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       // relevant additional information)
       long t5 = System.currentTimeMillis();
       computeColumnValues(mode, tab, allColumns, columnValues, parentRecord, parentId,
-          changedColumn, jsContent, changeEventCols, calloutsToCall, lastfieldChanged);
+          changedColumn, jsContent, changeEventCols, calloutsToCall, lastfieldChanged,
+          visibleProperties);
 
       // Execution of callouts
       long t6 = System.currentTimeMillis();
@@ -244,6 +249,18 @@ public class FormInitializationComponent extends BaseActionHandler {
       OBContext.restorePreviousMode();
     }
     return null;
+  }
+
+  private List<String> convertJSONArray(JSONArray jsonArray) {
+    List<String> visibleProperties = new ArrayList<String>();
+    for (int i = 0; i < jsonArray.length(); i++) {
+      try {
+        visibleProperties.add(jsonArray.getString(i));
+      } catch (JSONException e) {
+        throw new OBException("Error while reading the visible properties JSON array");
+      }
+    }
+    return visibleProperties;
   }
 
   private List<JSONObject> attachmentForRows(Tab tab, String rowId, String[] multipleRowIds) {
@@ -378,7 +395,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   private void computeColumnValues(String mode, Tab tab, List<String> allColumns,
       Map<String, JSONObject> columnValues, BaseOBObject parentRecord, String parentId,
       String changedColumn, JSONObject jsContent, List<String> changeEventCols,
-      List<String> calloutsToCall, List<String> lastfieldChanged) {
+      List<String> calloutsToCall, List<String> lastfieldChanged, List<String> visibleProperties) {
     boolean forceComboReload = (mode.equals("CHANGE") && changedColumn == null);
     if (mode.equals("CHANGE") && changedColumn != null) {
       RequestContext.get().setRequestParameter("donotaddcurrentelement", "true");
@@ -411,7 +428,16 @@ public class FormInitializationComponent extends BaseActionHandler {
             value = uiDef.getFieldProperties(field, true);
           } else {
             // Else, the default is used
-            value = uiDef.getFieldProperties(field, false);
+            if (visibleProperties != null && !field.getColumn().isMandatory()
+                && !visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col))) {
+              // If the column is not currently visible, and its not mandatory, we don't need to
+              // compute the combo.
+              // If a column is mandatory then the combo needs to be computed, because the selected
+              // value can depend on the computation if there is no default value
+              value = uiDef.getFieldPropertiesWithoutCombo(field, false);
+            } else {
+              value = uiDef.getFieldProperties(field, false);
+            }
           }
         } else if (mode.equals("EDIT")
             || (mode.equals("CHANGE") && (forceComboReload || changeEventCols
@@ -419,7 +445,16 @@ public class FormInitializationComponent extends BaseActionHandler {
           // On EDIT mode, the values are computed through the UIDefinition (the values have been
           // previously set in the RequestContext)
           // This is also done this way on CHANGE mode where a combo reload is needed
-          value = uiDef.getFieldProperties(field, true);
+          if (visibleProperties != null
+              && !visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col))) {
+            // If the column is not currently visible, and its not mandatory, we don't need to
+            // compute the combo.
+            // If a column is mandatory then the combo needs to be computed, because the selected
+            // value can depend on the computation if there is no default value
+            uiDef.getFieldPropertiesWithoutCombo(field, true);
+          } else {
+            value = uiDef.getFieldProperties(field, true);
+          }
         } else if (mode.equals("CHANGE") || mode.equals("SETSESSION")) {
           // On CHANGE and SETSESSION mode, the values are read from the request
           JSONObject jsCol = new JSONObject();

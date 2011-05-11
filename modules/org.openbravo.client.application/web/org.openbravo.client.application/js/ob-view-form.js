@@ -479,7 +479,7 @@ OB.ViewFormProperties = {
     // only put the visible field names in the call
     for (i = 0; i < this.getFields().length; i++) {
       if (this.getFields()[i].inpColumnName) {
-        fldNames.push(this.getFields()[i].name)
+        fldNames.push(this.getFields()[i].inpColumnName);
       }
     }
     allProperties._visibleProperties = fldNames;

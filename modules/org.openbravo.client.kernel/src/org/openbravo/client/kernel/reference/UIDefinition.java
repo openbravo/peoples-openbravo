@@ -221,6 +221,16 @@ public abstract class UIDefinition {
   }
 
   /**
+   * It returns the same as getFieldProperties except in the case of combo UIDefinitions. In combo
+   * UI definitions, a call to the super will be done, but the combo computation itself will not be
+   * done (so only the default value, or the current request value, will be considered).
+   * 
+   */
+  public String getFieldPropertiesWithoutCombo(Field field, boolean getValueFromSession) {
+    return getFieldProperties(field, getValueFromSession);
+  }
+
+  /**
    * Returns alignment in grid view. In case it returns null, default alignment for actual data type
    * is used.
    * 

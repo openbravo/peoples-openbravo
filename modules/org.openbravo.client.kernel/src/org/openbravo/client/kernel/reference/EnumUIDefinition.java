@@ -68,6 +68,7 @@ public class EnumUIDefinition extends UIDefinition {
     }
   }
 
+  @Override
   public String getFieldPropertiesWithoutCombo(Field field, boolean getValueFromSession) {
     return super.getFieldProperties(field, getValueFromSession);
   }
