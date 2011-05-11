@@ -72,13 +72,15 @@ public class SE_Project_BPartner extends HttpSecureAppServlet {
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    String strPaymentrule, strPaymentterm, strPricelist;
-    strPaymentrule = strPaymentterm = strPricelist = "";
+    String strPaymentrule, strPaymentterm, strPricelist, strPaymentMethod;
+    strPaymentrule = strPaymentterm = strPricelist = strPaymentMethod = "";
     BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
     if (data != null && data.length > 0) {
       strPaymentrule = (strIsSOTrx.equals("Y") ? data[0].paymentrule : data[0].paymentrulepo);
       strPaymentterm = (strIsSOTrx.equals("Y") ? data[0].cPaymenttermId : data[0].poPaymenttermId);
       strPricelist = (strIsSOTrx.equals("Y") ? data[0].mPricelistId : data[0].poPricelistId);
+      strPaymentMethod = (strIsSOTrx.equals("Y") ? data[0].finPaymentmethodId
+          : data[0].poPaymentmethodId);
     }
 
     StringBuffer resultado = new StringBuffer();
@@ -176,7 +178,8 @@ public class SE_Project_BPartner extends HttpSecureAppServlet {
     resultado.append("\n),");
     resultado.append("new Array(\"inppaymentrule\", \"" + strPaymentrule + "\"),");
     resultado.append("new Array(\"inpcPaymenttermId\", \"" + strPaymentterm + "\"),");
-    resultado.append("new Array(\"inpmPricelistId\", \"" + strPricelist + "\")");
+    resultado.append("new Array(\"inpmPricelistId\", \"" + strPricelist + "\"),");
+    resultado.append("new Array(\"inpfinPaymentmethodId\", \"" + strPaymentMethod + "\")");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     response.setContentType("text/html; charset=UTF-8");
