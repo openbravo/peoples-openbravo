@@ -56,6 +56,7 @@ isc.OBStandardWindow.addProperties({
     this.views = [];
     
     this.toolBarLayout = isc.HLayout.create({
+      mouseDownCancelParentPropagation: true,
       width: '100%',
       height: 1, // is set by its content
       overflow: 'visible'
