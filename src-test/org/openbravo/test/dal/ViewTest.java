@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.test.base.BaseTest;
 
 /**
@@ -61,10 +61,10 @@ public class ViewTest extends BaseTest {
     OBContext.setAdminMode();
     boolean testDone = false;
     try {
-      for (ShipmentInOut o : OBDal.getInstance().createQuery(ShipmentInOut.class, "").list()) {
-        if (!o.getMaterialMgmtShipmentInOutLineVList().isEmpty()) {
-          final ShipmentInOut copied = (ShipmentInOut) DalUtil.copy(o);
-          assertTrue(copied.getMaterialMgmtShipmentInOutLineVList().isEmpty());
+      for (Invoice o : OBDal.getInstance().createQuery(Invoice.class, "").list()) {
+        if (!o.getFINPaymentSchedInvVList().isEmpty()) {
+          final Invoice copied = (Invoice) DalUtil.copy(o);
+          assertTrue(copied.getFINPaymentSchedInvVList().isEmpty());
           testDone = true;
         }
       }
