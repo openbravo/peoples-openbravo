@@ -1823,6 +1823,7 @@ isc.OBViewGrid.addProperties({
   // having a valueMap property results in setValueMap to be called
   // on an item. On items with a picklist this causes calls to the
   // server side
+  //  https://issues.openbravo.com/view.php?id=16611
   getEditItem: function() {
     var result = this.Super('getEditItem', arguments);
     if (result.hasOwnProperty('valueMap') && !result.valueMap) {
@@ -1833,6 +1834,7 @@ isc.OBViewGrid.addProperties({
 
   // set some flags to prevent the picklist fields from doing extra datasource 
   // requests
+  // https://issues.openbravo.com/view.php?id=16611
   storeUpdatedEditorValue : function (suppressChange, editCol) {
     this._storingUpdatedEditorValue = true;
     this.Super('storeUpdatedEditorValue', arguments);

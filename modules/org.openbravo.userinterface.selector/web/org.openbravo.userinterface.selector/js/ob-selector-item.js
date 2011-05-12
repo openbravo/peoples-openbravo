@@ -323,6 +323,7 @@ isc.OBSelectorItem.addProperties({
 
   // don't do update value in all cases, updatevalue results in a data source request
   // to the server, so only do updatevalue when the user changes information
+  // https://issues.openbravo.com/view.php?id=16611
   updateValue: function () {
     if (this.form && this.form.grid && 
         (this.form.grid._storingUpdatedEditorValue || this.form.grid._showingEditor || this.form.grid._hidingInlineEditor)) {
@@ -334,6 +335,7 @@ isc.OBSelectorItem.addProperties({
   
   // at setvalue set the display value in a valuemap to prevent datasource requests to
   // get the display value
+  // https://issues.openbravo.com/view.php?id=16611
   setValue: function(newValue) {
     if (this.form && this.form.getValues() && this.form.getValues()[this.name] === newValue &&
         this.form.getValues()[this.name + '._identifier']) {
