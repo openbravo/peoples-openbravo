@@ -36,7 +36,7 @@ isc.OBAlertGrid.addProperties({
   editOnFocus: true,
   showCellContextMenus: true,
   selectOnEdit: false,
-
+  
   // keeps track if we are in objectSelectionMode or in toggleSelectionMode
   // objectSelectionMode = singleRecordSelection === true
   singleRecordSelection: false,
@@ -122,11 +122,10 @@ isc.OBAlertGrid.addProperties({
     this.Super('initWidget', arguments);
   },
   
-  setDataSource: function() {
-    this.Super('setDataSource', arguments);
+  setDataSource: function(ds) {
+    this.Super('setDataSource', [ds, this.gridFields]);
     // Some properties need to be set when the datasource is loaded to avoid errors when form is
     // open the first time.
-    this.setFields(this.gridFields);
     this.setSelectionAppearance('checkbox');
     
     // this extra call is needed to solve this issue:
