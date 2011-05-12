@@ -27,6 +27,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -35,6 +36,7 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
+import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
@@ -146,6 +148,23 @@ public class ApplicationUtils {
         }
       }
     }
+
+    // handle a special case: it is possible to define a column in the child tab to be linked to a
+    // secondary key in the parent tab
+    if (returnProperty == null) {
+      for (Column parentCol : parentTab.getTable().getADColumnList()) {
+        if (!parentCol.isSecondaryKey()) {
+          continue;
+        }
+        for (Column childCol : tab.getTable().getADColumnList()) {
+          if (childCol.isLinkToParentColumn()
+              && childCol.getDBColumnName().equalsIgnoreCase(parentCol.getDBColumnName())) {
+            returnProperty = KernelUtils.getInstance().getPropertyFromColumn(childCol);
+          }
+        }
+      }
+    }
+
     return (returnProperty != null ? returnProperty.getName() : "");
   }
 
