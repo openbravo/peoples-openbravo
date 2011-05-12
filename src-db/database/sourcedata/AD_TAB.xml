@@ -4298,7 +4298,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--431-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--431-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--431-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
-<!--431-->  <HQLWHERECLAUSE><![CDATA[e in (select t1.businessPartner from TimeAndExpenseSheet as t1, TimeAndExpenseSheetLine as t2 where t1=t2.expenseSheet and t1.processed='Y' and t2.reinvoice='Y' and t2.salesOrderLine is null))]]></HQLWHERECLAUSE>
+<!--431-->  <HQLWHERECLAUSE><![CDATA[e in (select t2.businessPartner from TimeAndExpenseSheet as t1, TimeAndExpenseSheetLine as t2 where t1=t2.expenseSheet and t1.processed='Y' and t2.reinvoice='Y' and t2.salesOrderLine is null))]]></HQLWHERECLAUSE>
 <!--431--></AD_TAB>
 
 <!--432--><AD_TAB>
