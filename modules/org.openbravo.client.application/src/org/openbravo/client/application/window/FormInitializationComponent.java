@@ -173,6 +173,9 @@ public class FormInitializationComponent extends BaseActionHandler {
                 jsonValue = uiDef.createFromClassicString((String) jsonValue);
               }
               convertedJson.put(property.getName(), jsonValue);
+              if (property.isId()) {
+                setSessionValue(tab.getWindow().getId() + "|" + property.getColumnName(), jsonValue);
+              }
             }
           }
         }
@@ -181,6 +184,14 @@ public class FormInitializationComponent extends BaseActionHandler {
         convertedJson.put(JsonConstants.ENTITYNAME, entity.getName());
         row = fromJsonConverter.toBaseOBObject(convertedJson);
         row.setNewOBObject(true);
+      } else {
+        final Entity entity = ModelProvider.getInstance().getEntityByTableName(
+            tab.getTable().getDBTableName());
+        for (Property property : entity.getProperties()) {
+          if (property.isId()) {
+            setSessionValue(tab.getWindow().getId() + "|" + property.getColumnName(), row.getId());
+          }
+        }
       }
 
       // First the parent record is retrieved and the session variables for the parent records are
