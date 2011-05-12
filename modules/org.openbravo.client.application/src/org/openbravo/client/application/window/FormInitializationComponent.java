@@ -440,6 +440,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           } else {
             // Else, the default is used
             if (visibleProperties != null && !field.getColumn().isMandatory()
+                && field.getColumn().getDefaultValue() == null
                 && !visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col))) {
               // If the column is not currently visible, and its not mandatory, we don't need to
               // compute the combo.
