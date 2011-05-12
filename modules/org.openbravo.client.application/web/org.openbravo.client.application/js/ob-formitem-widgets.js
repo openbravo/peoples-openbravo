@@ -497,19 +497,19 @@ isc.OBSectionItem.addProperties({
   showIf: function(item, value, form, values) {
     var i, field;
 
-    if(!this.itemIds || !isAn.Array(this.itemIds)) {
+    if(!this.itemIds) {
       return false;
     }
 
     for (i = 0; i < this.itemIds.length; i++) {
       field = form.getItem(this.itemIds[i]);
 
-      if(!field) {
+      if(!field || field.editorType === 'HiddenItem') {
         continue;
       }
 
-      if (field.showIf) {
-        if(field.showIf(field, value, form)) {
+      if (field.obShowIf) {
+        if(field.obShowIf(field, value, form)) {
           return true;
         }
       } else {
