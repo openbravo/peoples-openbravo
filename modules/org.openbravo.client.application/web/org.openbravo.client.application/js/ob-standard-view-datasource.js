@@ -155,8 +155,8 @@ isc.OBViewDataSource.addProperties({
       if (errorStatus) {
         var handled = this.view.setErrorMessageFromResponse(dsResponse, jsonData, dsRequest);
         
-        if (!handled && !dsRequest.willHandleError) {
-          OB.KernelUtilities.handleSystemException(error.message);
+        if (!handled && !dsRequest.willHandleError && jsonData.response && jsonData.response.error) { 
+          OB.KernelUtilities.handleSystemException(jsonData.response.error.message);
         }
       } else {
         // there are some cases where the jsonData is not passed, in case of
