@@ -120,8 +120,8 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
       String[] queryAliases = widgetQuery.getReturnAliases();
 
       if (!isExport && "widget".equals(viewMode) && !showAll) {
-        int rowsNumber = Integer.valueOf((parameters.get("rowsNumber") != null) ? parameters
-            .get("rowsNumber") : "10");
+        int rowsNumber = Integer.valueOf((parameters.get("rowsNumber") != null && !parameters.get(
+            "rowsNumber").equals("null")) ? parameters.get("rowsNumber") : "10");
         widgetQuery.setMaxResults(rowsNumber);
       } else if (!isExport) {
         if (startRow > 0) {
@@ -210,15 +210,15 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
     HashMap<String, Object> parameterValues = new HashMap<String, Object>();
     for (ParameterValue value : widgetInstance
         .getOBUIAPPParameterValueEMObkmoWidgetInstanceIDList()) {
-      parameterValues.put(value.getParameter().getDBColumnName(), ParameterUtils
-          .getParameterValue(value));
+      parameterValues.put(value.getParameter().getDBColumnName(),
+          ParameterUtils.getParameterValue(value));
     }
 
     for (Parameter parameter : widgetInstance.getWidgetClass()
         .getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
       if (!parameterValues.containsKey(parameter.getDBColumnName()) && parameter.isFixed()) {
-        parameterValues.put(parameter.getDBColumnName(), ParameterUtils.getParameterFixedValue(
-            parameters, parameter));
+        parameterValues.put(parameter.getDBColumnName(),
+            ParameterUtils.getParameterFixedValue(parameters, parameter));
       }
     }
     return parameterValues;
