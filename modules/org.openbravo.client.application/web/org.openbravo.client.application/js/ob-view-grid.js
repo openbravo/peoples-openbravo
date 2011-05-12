@@ -432,6 +432,10 @@ isc.OBViewGrid.addProperties({
   },
   
   deselectAllRecords: function(preventUpdateSelectInfo, autoSaveDone){
+    // if there is nothing to deselect then don't deselect
+    if (!this.getSelectedRecord()) {
+      return;
+    }
     if (!autoSaveDone) {
       var actionObject = {
         target: this,
@@ -682,24 +686,6 @@ isc.OBViewGrid.addProperties({
     recordIndex = this.getRecordIndex(gridRecord);
     this.scrollRecordIntoView(recordIndex, true);
     this.doSelectSingleRecord(gridRecord);
-  },
-  
-  // overridden to prevent extra firing of selection updated event
-  selectSingleRecord: function(record){
-    if (this.getSelectedRecord() && this.getSelectedRecord() !== record) {
-      this.deselectAllRecords(true);
-    }
-    this.selectRecord(record);
-    
-    // keep it to try to get it back when the selection gets lost when
-    // loading data
-    this.lastSelectedRecord = record;
-  },
-  
-  // overridden to prevent extra firing of selection updated event
-  // selectrecords will fire it once
-  selectRecord: function(record, state, colNum){
-    this.selectRecords(record, state, colNum);
   },
   
   filterData: function(criteria, callback, requestProperties){
@@ -1120,6 +1106,9 @@ isc.OBViewGrid.addProperties({
   // one has as disadvantage that it is called multiple times
   // for one select/deselect action
   selectionUpdated: function(record, recordList){
+    if (record === this.lastSelectedRecord && (this.lastSelectedRecord || record)) {
+      return;
+    }
   
     // close any editors, but only if it is different from the one we are editing
     if (this.isEditingGrid) {
@@ -1581,7 +1570,10 @@ isc.OBViewGrid.addProperties({
       this.Super('cellEditEnd', [editCompletionEvent, this.getEditValue(rowNum, colNum)]);
       return;
     } else {
-      if (focusItem) {
+      // only needed for non picklist fields
+      // as picklist fields will always have picked a value
+      // note that focusItem updatevalue for picklist can result in extra datasource requests
+      if (focusItem && !focusItem.hasPickList) {
         focusItem.updateValue();
         editForm.handleItemChange(focusItem);
         if (editForm.inFicCall) {
@@ -1701,6 +1693,7 @@ isc.OBViewGrid.addProperties({
   hideInlineEditor: function(focusInBody, suppressCMHide) {
 
     var rowNum = this.getEditRow(), record = this.getRecord(rowNum);
+    this._hidingInlineEditor = true;
     if (rowNum === 0 || rowNum) {
       if (!this.rowHasErrors(rowNum)) {
         record[this.recordBaseStyleProperty] = null;
@@ -1727,9 +1720,10 @@ isc.OBViewGrid.addProperties({
         this.getEditForm().clearValues();
       }
     }
-    
     // always hide the clickmask, as it needs to be re-applied
-    return this.Super('hideInlineEditor', [focusInBody, false]);
+    var ret = this.Super('hideInlineEditor', [focusInBody, false]);
+    delete this._hidingInlineEditor;
+    return ret;
   },
   
   getEditDisplayValue: function(rowNum, colNum, record){
@@ -1740,6 +1734,9 @@ isc.OBViewGrid.addProperties({
   },
   
   showInlineEditor: function(rowNum, colNum, newCell, newRow, suppressFocus){
+    
+    this._showingEditor = true;
+    
     if (newRow) {
       if (this.getEditForm()) {
         this.getEditForm().clearErrors();
@@ -1750,6 +1747,8 @@ isc.OBViewGrid.addProperties({
     }
     
     var ret = this.Super('showInlineEditor', [rowNum, colNum, newCell, newRow, suppressFocus]);
+    
+    delete this._showingEditor;
     if (!newRow) {
       return ret;
     }
@@ -1821,6 +1820,25 @@ isc.OBViewGrid.addProperties({
     }
   },
   
+  // having a valueMap property results in setValueMap to be called
+  // on an item. On items with a picklist this causes calls to the
+  // server side
+  getEditItem: function() {
+    var result = this.Super('getEditItem', arguments);
+    if (result.hasOwnProperty('valueMap') && !result.valueMap) {
+      delete result.valueMap;
+    }
+    return result;
+  },
+
+  // set some flags to prevent the picklist fields from doing extra datasource 
+  // requests
+  storeUpdatedEditorValue : function (suppressChange, editCol) {
+    this._storingUpdatedEditorValue = true;
+    this.Super('storeUpdatedEditorValue', arguments);
+    delete this._storingUpdatedEditorValue;
+  },
+
   // the form gets recreated many times, maintain the already read valuemap
   getEditorValueMap: function(field, values){
     var editRow = this.getEditRow(), editValues = this.getEditValues(editRow);

@@ -286,6 +286,7 @@ isc.ClassFactory.defineClass('OBSelectorItem', ComboBoxItem);
 isc.ClassFactory.mixInInterface('OBSelectorItem', 'OBLinkTitleItem');
 
 isc.OBSelectorItem.addProperties({
+  hasPickList: true,
   popupTextMatchStyle: 'startswith',
   suggestionTextMatchStyle: 'startswith',
   selectOnFocus: true,
@@ -314,6 +315,36 @@ isc.OBSelectorItem.addProperties({
     }
   },
   
+  setUpPickList: function (show, queueFetches, request) {
+    // Set the pickListWidth just before being shown.
+    this.setPickListWidth();
+    this.Super('setUpPickList', arguments);
+  },
+
+  // don't do update value in all cases, updatevalue results in a data source request
+  // to the server, so only do updatevalue when the user changes information
+  updateValue: function () {
+    if (this.form && this.form.grid && 
+        (this.form.grid._storingUpdatedEditorValue || this.form.grid._showingEditor || this.form.grid._hidingInlineEditor)) {
+      // prevent updatevalue while the form is being shown or hidden
+      return;
+    }
+    this.Super('updateValue', arguments);
+  },
+  
+  // at setvalue set the display value in a valuemap to prevent datasource requests to
+  // get the display value
+  setValue: function(newValue) {
+    if (this.form && this.form.getValues() && this.form.getValues()[this.name] === newValue &&
+        this.form.getValues()[this.name + '._identifier']) {
+      if (!this.valueMap) {
+        this.valueMap = {};
+      }
+      this.valueMap[newValue] = this.form.getValues()[this.name + '._identifier'];
+    }
+    this.Super('setValue', arguments);
+  },
+  
   setPickListWidth: function(){
     var extraWidth = 0,
         fieldWidth = this.getVisibleWidth();
@@ -322,15 +353,6 @@ isc.OBSelectorItem.addProperties({
     }
     
     this.pickListWidth = (fieldWidth < 150 ? 150 : fieldWidth) + extraWidth;
-  },
-  
-  showPickList: function() {
-    if (this.pickList) {
-      this.pickList.invalidateCache();
-    }
-    // Set the pickListWidth just before being shown.
-    this.setPickListWidth();
-    this.Super('showPickList', arguments);
   },
   
   init: function(){
@@ -375,6 +397,16 @@ isc.OBSelectorItem.addProperties({
     };
     
     return this.Super('init', arguments);
+  },
+  
+  // reset the cache without reloading directly
+  resetCache: function() {
+    if (this.pickList && this.pickList.data) {
+      // don't use field.pickList.invalidateCache as it will force a fetch
+      // the fetch is only needed later when someone really changes the value
+      this.pickList.data.invalidateRows();
+      this.pickList.data.totalRows = 0;
+    }
   },
   
   setValueFromRecord: function(record, fromPopup){
@@ -439,8 +471,10 @@ isc.OBSelectorItem.addProperties({
   },
   
   pickValue: function(value){
-    var ret = this.Super('pickValue', arguments);
-    this.setValueFromRecord(this.pickList.getSelectedRecord());
+    // get the selected record before calling the super, as this super call
+    // will deselect the record
+    var selectedRecord = this.pickList.getSelectedRecord(), ret = this.Super('pickValue', arguments);
+    this.setValueFromRecord(selectedRecord);
     return ret;
   },
   

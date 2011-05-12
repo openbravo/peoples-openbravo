@@ -742,6 +742,10 @@ OB.ViewFormProperties = {
       return;
     }
     
+    if (field && field.resetCache) {
+      field.resetCache();
+    }
+    
     // note field can be a datasource field, see above, in that case
     // don't set the entries    
     if (field.form && entries) {
@@ -966,6 +970,7 @@ OB.ViewFormProperties = {
   // in contrast to other actions which are done at blur
   // see: handleItemChange
   itemChangeActions: function(){
+    var i = 0;
     // special case, item change is called when the inline form is being hidden
     if (!this.view.isShowingForm && !this.view.isEditingGrid) {
       return;
@@ -975,6 +980,14 @@ OB.ViewFormProperties = {
     this.setHasChanged(true);
     this.view.messageBar.hide();
     this.view.toolBar.updateButtonState(true);
+    
+    // invalidate the cache of picklists on a change
+    for (i = 0; i < this.getFields().length; i++) {
+      if (this.getFields()[i].resetCache) {
+        this.getFields()[i].resetCache();
+      }
+   }
+ 
   },
   
   // make sure that any field errors also appear in the grid
