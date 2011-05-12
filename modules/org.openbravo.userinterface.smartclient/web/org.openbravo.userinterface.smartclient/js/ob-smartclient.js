@@ -70,6 +70,7 @@ isc.FormItem.addProperties({
   
   _original_init: isc.FormItem.getPrototype().init,
   init: function() {
+    this.obShowIf = this.showIf; // Copy the reference of showIf definition
     OB.Utilities.addRequiredSuffixToBaseStyle(this);
     // and continue with the original init
     this._original_init();
@@ -188,19 +189,21 @@ isc.RelativeDateItem.addProperties({
   // Shows or hides the quantity box and updates the hint to reflect the current value.
   // overridden to solve: https://issues.openbravo.com/view.php?id=16295
   updateEditor : function () {
-  
-      if (!this.valueField || !this.quantityField) return;
-      
+
+      if (!this.valueField || !this.quantityField) {
+        return;
+      }
+
       var focusItem,
           selectionRange,
           mustRefocus = false;
-          
+
       if (this.valueField.hasFocus) {
           focusItem = this.valueField;
           selectionRange = this.valueField.getSelectionRange();
       } else if (this.quantityField.hasFocus) {
           focusItem = this.quantityField;
-          selectionRange = this.quantityField.getSelectionRange()
+          selectionRange = this.quantityField.getSelectionRange();
       }
       
       var value = this.valueField.getValue(),
@@ -242,8 +245,8 @@ isc.RelativeDateItem.addProperties({
       // If we redrew the form to show or hide the qty field, we may need to refocus and
       // reset the selection range
       
-      if (mustRefocus && focusItem != null) {
-          if (!showQuantity && focusItem == this.quantityField) {
+      if (mustRefocus && focusItem !== null) {
+          if (!showQuantity && focusItem === this.quantityField) {
               this.valueField.focusInItem();
           } else {
               if (selectionRange) {
@@ -286,7 +289,7 @@ isc.RPCManager.addClassProperties({
       this._handleError(response, request);
     }
   }
-})
+});
 
 // uncomment this code and put a breakpoint to get a better control
 // on from where async operations are started
