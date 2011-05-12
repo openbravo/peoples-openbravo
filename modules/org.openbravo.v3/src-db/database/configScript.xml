@@ -32,10 +32,6 @@
       <oldValue><![CDATA[100]]></oldValue>
       <newValue><![CDATA[70]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_TAB" columnname="ISACTIVE" pkRow="239">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_TAB" columnname="ISACTIVE" pkRow="317">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -105,10 +101,6 @@
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_TAB" columnname="ISACTIVE" pkRow="800224">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TAB" columnname="ISACTIVE" pkRow="800241">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
