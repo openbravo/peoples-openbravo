@@ -251,24 +251,28 @@ isc.OBMyOpenbravo.addProperties({
       // can be set like this using the AutoChild concept of SC
       portalColumnProperties: {
         membersMargin: 12,
+        canAcceptDrop: true,
+        dropTypes: ["Portlet"],
 
         // is used to prevent dropping on the left or right 
         // of a widget
         // the PortalRow is an autochild of PortalColumn, the 
         // rowProperties are used to set properties of PortalRow
-        rowProperties: {
+        portalRowProperties: {
           isHDrop: function(){
             return false;
           }
         },
-
+        
         // after dropping create the widget here
         getDropComponent: function(dragTarget, position){
+          var component;
           if (dragTarget.createWidgetInstance) {
-            dragTarget.createWidgetInstance(this.colNum, position);
+            component = dragTarget.createWidgetInstance(this.colNum, position);
           } else {
-            this.Super('getDropComponent', arguments);
+            component = dragTarget;;
           }
+          this.addPortlet(component, position);
         },
 
         // copied from PortalColumn to set fixed row heights based

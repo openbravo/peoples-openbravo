@@ -1151,7 +1151,9 @@ isc.OBNumberItem.addProperties({
   // for precision, the textual value is sent to the server
   // which can be transferred to a bigdecimal there
   changed: function (form, item, value) {
-    this.form.setTextualValue(this.name, this.getEnteredValue(), this.typeInstance);
+    if (this.form.setTextualValue) {
+      this.form.setTextualValue(this.name, this.getEnteredValue(), this.typeInstance);
+    }
     this.Super('changed', arguments);
   },
   
