@@ -286,7 +286,7 @@ isc.RPCManager.addClassProperties({
   _handleError: isc.RPCManager.getPrototype().handleError,
   handleError : function (response, request) {
     if (!request.willHandleError) {
-      this._handleError(response, request);
+      isc.RPCManager._handleError(response, request);
     }
   }
 });
