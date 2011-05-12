@@ -212,69 +212,75 @@ isc.OBAttachmentsLayout.addProperties({
             {name: 'buttonId', type: 'hidden', value: this.canvas.ID},
             {name: 'inpKey', type: 'hidden', value: this.canvas.recordId},
             {name: 'inpTabId', type: 'hidden', value: this.canvas.tabId},
-            {name: 'inpwindowId', type: 'hidden', value: this.canvas.windowId},
-            {name: 'submitbutton', type: 'button', title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit'), align:'right',
-              click: function(form, item){
-                var addFunction = function(clickedOK){
-                  if(clickedOK){
-                    var hTempLayout = isc.HLayout.create();
-                    form.theCanvas.addMember(hTempLayout,form.theCanvas.getMembers().size());
-                    var uploadingFile = isc.Label.create({
-                      contents: fileName
-                    });
-                    var uploading = isc.Label.create({
-                        className: 'OBSectionItemControlLinkUploading',
-                        contents: '    '+OB.I18N.getLabel('OBUIAPP_AttachmentUploading')
-                    });
-                    hTempLayout.addMember(uploadingFile);
-                    hTempLayout.addMember(uploading);
-                    var button =  form.theCanvas.getForm().view.toolBar.getLeftMember(isc.OBToolbar.TYPE_ATTACHMENTS);
-                    if(!button) {
-                      button =  form.theCanvas.getForm().view.toolBar.getLeftMember("attachExists");
-                    }
-                    button.customState = 'Progress';
-                    button.resetBaseStyle();
-                    form.submitForm();
-                    form.popup.hide();
-                  }
-                };
-                var value = form.getItem('inpname').getElement().value;
-                value = value?value:'';
-                var lastChar=value.lastIndexOf("\\") + 1;
-                var fileName = lastChar===-1?value:value.substring(lastChar);
-                if(form.theCanvas.fileExists(fileName, attachments)){
-                  isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmUploadOverwrite'), addFunction);
-                }else{
-                  addFunction(true);
-                }
-              }
-            }
+            {name: 'inpwindowId', type: 'hidden', value: this.canvas.windowId}
           ],
           encoding: 'multipart',
           action: './businessUtility/TabAttachments_FS.html',
           target: "background_target",
           numCols: 4,
           align: 'right',
+          height: '30px',
           redraw: function(){
           },
           theCanvas: this.canvas
-        });
-        var horizontalLayout = isc.VStack.create({
-          width: '100%',
-          align: 'right'
-        });
-        var popup = isc.OBPopup.create({
-          height: 30,
-          width: 300,
-          align: 'right',
-          initWidget: function(args){
-          horizontalLayout.addMember(form);
-            this.items = horizontalLayout;
-            this.Super('initWidget', arguments);
+      });
+      var submitbutton = isc.Button.create({
+        title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit'),
+        theForm: form,
+        click: function(){
+          var form = this.theForm;
+          var addFunction = function(clickedOK){
+            if(clickedOK){
+              var hTempLayout = isc.HLayout.create();
+               form.theCanvas.addMember(hTempLayout,form.theCanvas.getMembers().size());
+              var uploadingFile = isc.Label.create({
+                contents: fileName
+              });
+              var uploading = isc.Label.create({
+                 className: 'OBSectionItemControlLinkUploading',
+                 contents: '    '+OB.I18N.getLabel('OBUIAPP_AttachmentUploading')
+              });
+              hTempLayout.addMember(uploadingFile);
+              hTempLayout.addMember(uploading);
+              var button =  form.theCanvas.getForm().view.toolBar.getLeftMember(isc.OBToolbar.TYPE_ATTACHMENTS);
+              if(!button) {
+                button =  form.theCanvas.getForm().view.toolBar.getLeftMember("attachExists");
+              }
+              button.customState = 'Progress';
+              button.resetBaseStyle();
+              form.submitForm();
+              form.popup.hide();
+            }
+          };
+          var value = this.theForm.getItem('inpname').getElement().value;
+          value = value?value:'';
+          var lastChar=value.lastIndexOf("\\") + 1;
+          var fileName = lastChar===-1?value:value.substring(lastChar);
+          if(this.theForm.theCanvas.fileExists(fileName, attachments)){
+            isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmUploadOverwrite'), addFunction);
+          }else{
+            addFunction(true);
           }
-        });
-        form.popup = popup;
-        popup.show();
+        }
+      });
+      var horizontalLayout = isc.HLayout.create({
+        width: '100%',
+        height: '30px',
+        align: 'right'
+      });
+      var popup = isc.OBPopup.create({
+        height: 30,
+        width: 300,
+        align: 'right',
+        initWidget: function(args){
+          horizontalLayout.addMember(form);
+          horizontalLayout.addMember(submitbutton);
+          this.items = horizontalLayout;
+          this.Super('initWidget', arguments);
+        }
+      });
+      form.popup = popup;
+      popup.show();
       }
     });
     hLayout.addMember(addButton);

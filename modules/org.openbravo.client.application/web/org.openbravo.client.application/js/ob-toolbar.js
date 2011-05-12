@@ -138,8 +138,8 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'eliminate',
     prompt: OB.I18N.getLabel('OBUIAPP_DeleteRow'),
     updateState: function(){
-      var view = this.view, form = view.viewForm, grid = view.viewGrid, selectedRecords = grid.getSelectedRecords();
-      for (var i = 0; i < selectedRecords.length; i++) {
+      var view = this.view, form = view.viewForm, grid = view.viewGrid, selectedRecords = grid.getSelectedRecords(), i;
+      for (i = 0; i < selectedRecords.length; i++) {
         if (!grid.isWritable(selectedRecords[i])) {
           this.setDisabled(true);
           return;
@@ -186,7 +186,7 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'undo',
     prompt: OB.I18N.getLabel('OBUIAPP_Undo'),
     updateState: function(){
-      var view = this.view, form = view.viewForm, grid = view.viewGrid, hasErrors = false, editRow;
+      var view = this.view, form = view.viewForm, grid = view.viewGrid, hasErrors = false, editRow, i;
       if (view.isShowingForm) {
         this.setDisabled(form.isSaving || form.readOnly || !view.hasValidState() ||
         !form.hasChanged);
@@ -200,7 +200,7 @@ isc.OBToolbar.addClassProperties({
         !form.hasChanged));
       } else {
         var selectedRecords = grid.getSelectedRecords(), allRowsHaveErrors = true;
-        for (var i = 0; i < selectedRecords.length; i++) {
+        for (i = 0; i < selectedRecords.length; i++) {
           var rowNum = grid.getRecordIndex(selectedRecords[i]);
           allRowsHaveErrors = allRowsHaveErrors && grid.rowHasErrors(rowNum);
         }
@@ -276,15 +276,7 @@ isc.OBToolbar.addClassProperties({
             {name: 'buttonId', type: 'hidden', value: this.ID},
             {name: 'inpKey', type: 'hidden', value: this.view.viewGrid.getSelectedRecord().id},
             {name: 'inpTabId', type: 'hidden', value: this.view.tabId},
-            {name: 'inpwindowId', type: 'hidden', value: this.view.windowId},
-            {name: 'submitbutton', type: 'button', title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit'),
-              click: function(form, item){
-                form.button.customState = 'Progress';
-                form.button.resetBaseStyle();
-                form.submitForm();
-                popup.hide();
-              }
-            }
+            {name: 'inpwindowId', type: 'hidden', value: this.view.windowId}
           ],
           encoding: 'multipart',
           action: './businessUtility/TabAttachments_FS.html',
@@ -298,9 +290,22 @@ isc.OBToolbar.addClassProperties({
           },
           button: this
         });
+
+      	var submitbutton = isc.Button.create({
+      		title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit'),
+      		theForm: form,
+      		click: function(){
+      		  var form = this.theForm;
+      		  form.button.customState = 'Progress';
+      		  form.button.resetBaseStyle();
+      		  form.submitForm();
+              popup.hide();
+            }
+      	});
         this.oldForm = form;
-        var horizontalLayout = isc.VStack.create({
+        var horizontalLayout = isc.HLayout.create({
           width: '100%',
+          height: '30px',
           align: 'right'
         });
         var popup = isc.OBPopup.create({
@@ -309,6 +314,7 @@ isc.OBToolbar.addClassProperties({
           align: 'right',
           initWidget: function(args){
           horizontalLayout.addMember(form);
+          horizontalLayout.addMember(submitbutton);
           this.items = horizontalLayout;
           this.Super('initWidget', arguments);
           }
