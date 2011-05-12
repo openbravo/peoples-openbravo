@@ -203,7 +203,7 @@ isc.OBSearchItem.addProperties({
     var height, width, top, left;
     var complementsNS4 = '';
     var auxField = '';
-    var hidden;
+    var hidden, i;
     
     if (url.indexOf('Location') !== -1) {
       height = 300;
@@ -226,7 +226,7 @@ isc.OBSearchItem.addProperties({
     }
     if (parameters) {
       var total = parameters.length;
-      for (var i = 0; i < total; i++) {
+      for (i = 0; i < total; i++) {
         if (auxField !== '') {
           auxField += '&';
         }
@@ -353,7 +353,7 @@ isc.OBLinkItem.addProperties({
     src : '[SKIN]/../../org.openbravo.client.application/images/form/search_picker.png',
     click: function(form, item) {
       var url = item.getValue();
-      if(!url || url.indexOf('://') == -1) {
+      if(!url || url.indexOf('://') === -1) {
         return;
       }
       window.open(url);
@@ -476,8 +476,8 @@ isc.OBSectionItem.addProperties({
   },
     
   setNewFocusItemExpanding: function(){
-    var newFocusItem = null;
-    for (var i = 0; i < this.itemIds.length; i++) {
+    var newFocusItem = null, i;
+    for (i = 0; i < this.itemIds.length; i++) {
       var itemName = this.itemIds[i], item = this.form.getItem(itemName);
       // isFocusable is a method added in ob-smartclient.js
       if (item.isFocusable()) {
@@ -492,6 +492,31 @@ isc.OBSectionItem.addProperties({
     } else {
       newFocusItem.focusInItem();
     }
+  },
+
+  showIf: function(item, value, form, values) {
+    var i, field;
+
+    if(!this.itemIds || !isAn.Array(this.itemIds)) {
+      return false;
+    }
+
+    for (i = 0; i < this.itemIds.length; i++) {
+      field = form.getItem(this.itemIds[i]);
+
+      if(!field) {
+        continue;
+      }
+
+      if (field.showIf) {
+        if(field.showIf(field, value, form)) {
+          return true;
+        }
+      } else {
+        return true;
+      }
+    }
+    return false;
   }
 });
 
@@ -1107,10 +1132,10 @@ isc.OBNumberItem.addProperties({
   init: function(){
     this.setKeyPressFilter(this.keyPressFilterNumeric);
     this.typeInstance = SimpleType.getType(this.type);
-    var newValidators = [];
+    var newValidators = [], i;
     // get rid of the isFloat validators, as we have 
     // specific validation based on the format definition
-    for (var i = 0; i < this.validators.length; i++) {
+    for (i = 0; i < this.validators.length; i++) {
       if (this.validators[i].type !== 'isFloat') {
         newValidators.push(this.validators[i]);
       }
@@ -1147,8 +1172,8 @@ isc.OBNumberItem.addProperties({
   },
   
   returnNewCaretPosition: function(numberStr, oldCaretPosition){
-    var newCaretPosition = oldCaretPosition;
-    for (var i = oldCaretPosition; i > 0; i--) {
+    var newCaretPosition = oldCaretPosition, i;
+    for (i = oldCaretPosition; i > 0; i--) {
       if (numberStr.substring(i - 1, i) === this.getGroupSeparator()) {
         newCaretPosition = newCaretPosition - 1;
       }
