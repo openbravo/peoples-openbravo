@@ -2333,7 +2333,7 @@
 <!--800063-->  <AD_MENU_ID><![CDATA[800063]]></AD_MENU_ID>
 <!--800063-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800063-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800063-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800063-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800063-->  <NAME><![CDATA[Outgoing Shipment]]></NAME>
 <!--800063-->  <DESCRIPTION><![CDATA[Create and manage goods shipments to your customers.]]></DESCRIPTION>
 <!--800063-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
