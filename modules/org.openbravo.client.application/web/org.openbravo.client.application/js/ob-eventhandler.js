@@ -47,6 +47,14 @@
           canvas.pane.setAsActiveView();
           return true;
         }
+        
+        // when clicking in the tabbar
+        if (canvas.tabSet && canvas.tabSet.getSelectedTab() && canvas.tabSet.getSelectedTab().pane 
+            && canvas.tabSet.getSelectedTab().pane.setAsActiveView) {
+          canvas.tabSet.getSelectedTab().pane.setAsActiveView();
+          return true;
+        }
+        
         do {
           if (canvas.view && canvas.view.setAsActiveView) {
             canvas.view.setAsActiveView();
