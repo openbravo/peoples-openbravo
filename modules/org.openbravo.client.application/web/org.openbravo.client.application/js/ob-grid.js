@@ -23,6 +23,8 @@ isc.ClassFactory.defineClass('OBGrid', isc.ListGrid);
 // grid implementations.
 isc.OBGrid.addProperties({
 
+  dragTrackerMode: 'none',
+  
   recordComponentPoolingMode: 'recycle',
   showRecordComponentsByCell: true,
   recordComponentPosition: 'within',

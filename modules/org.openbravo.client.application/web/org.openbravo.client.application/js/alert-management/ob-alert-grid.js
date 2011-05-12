@@ -128,6 +128,11 @@ isc.OBAlertGrid.addProperties({
     // open the first time.
     this.setFields(this.gridFields);
     this.setSelectionAppearance('checkbox');
+    
+    // this extra call is needed to solve this issue:
+    https://issues.openbravo.com/view.php?id=17145
+    this.refreshFields();
+    
     this.sort('creationDate', 'descending');
 
     this.fetchData();
