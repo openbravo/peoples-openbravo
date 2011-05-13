@@ -77,17 +77,6 @@
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <editableField>true</editableField>
   </ADFormAccess>
-  <ADFormAccess id="D8F47EEFBEA24FCAAFAE22F31449DAAE" identifier="Import File Loader - Finance">
-    <id>D8F47EEFBEA24FCAAFAE22F31449DAAE</id>
-    <specialForm id="101" entity-name="ADForm" identifier="Import File Loader"/>
-    <role id="FF8081812250326E012250353BDE0005" entity-name="ADRole" identifier="Finance"/>
-    <active>true</active>
-    <creationDate transient="true">2011-01-17T12:49:30.190Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2011-01-17T12:49:30.190Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
-  </ADFormAccess>
   <ADFormAccess id="E1FB2FF7692542BEAF95900E75598FA9" identifier="About - Material Management">
     <id>E1FB2FF7692542BEAF95900E75598FA9</id>
     <specialForm id="800015" entity-name="ADForm" identifier="About"/>
@@ -334,17 +323,6 @@
     <id>58C228D635EB4F2C8F3FC4A1EA075201</id>
     <window id="1004400000" entity-name="ADWindow" identifier="Manage Requisitions"/>
     <role id="D7D7D228E4594ACE8D00FD0E08B333DE" entity-name="ADRole" identifier="Purchase Management"/>
-    <active>true</active>
-    <creationDate transient="true">2011-01-17T12:49:30.186Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2011-01-17T12:49:30.186Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
-  </ADWindowAccess>
-  <ADWindowAccess id="5C6BB84A35BE44D887371FA31F57CE2F" identifier="Import Budget - Finance">
-    <id>5C6BB84A35BE44D887371FA31F57CE2F</id>
-    <window id="800079" entity-name="ADWindow" identifier="Import Budget"/>
-    <role id="FF8081812250326E012250353BDE0005" entity-name="ADRole" identifier="Finance"/>
     <active>true</active>
     <creationDate transient="true">2011-01-17T12:49:30.186Z</creationDate>
     <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
