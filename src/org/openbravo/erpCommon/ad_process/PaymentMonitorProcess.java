@@ -19,7 +19,6 @@ public class PaymentMonitorProcess extends DalBaseProcess {
 
   private ProcessLogger logger;
 
-  @SuppressWarnings("deprecation")
   public void doExecute(ProcessBundle bundle) throws Exception {
 
     logger = bundle.getLogger();
