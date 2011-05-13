@@ -91,16 +91,23 @@ isc.OBToolbarActionButton.addProperties( {
   closeProcessPopup: function(newWindow) {
     //Keep current view for the callback function. Refresh and look for tab message.
     var contextView = OB.ActionButton.executingProcess.contextView,
-        currentView = this.view;
+        currentView = this.view,
+        afterRefresh = function(){
+          // Refresh current view, taking the message set in the process' context view
+          currentView.getTabMessage(contextView.tabId);
+          currentView.toolBar.refreshCustomButtons();
+      
+          // Refresh in order to show possible new records
+          currentView.refresh();
+        };
     
-    currentView.refreshCurrentRecord(function(){
-        // Refresh current view, taking the message set in the process' context view
-        currentView.getTabMessage(contextView.tabId);
-        currentView.toolBar.refreshCustomButtons();
-        
-        // Refresh in order to show possible new records
-        currentView.refresh();
-      });
+    if (currentView.getSelectedRecord()) {
+      // There is a record selected, refresh it and its parent
+      currentView.refreshCurrentRecord(afterRefresh);
+    } else {
+      // No record selected, refresh parent
+      currentView.refreshParentRecord(afterRefresh);
+    }
 
     OB.ActionButton.executingProcess = null;
     
