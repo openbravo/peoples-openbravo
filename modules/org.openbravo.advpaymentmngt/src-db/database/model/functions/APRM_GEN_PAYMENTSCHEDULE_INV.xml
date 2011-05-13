@@ -65,7 +65,7 @@ v_FIN_FINACC_TRANSACTION_ID FIN_FINACC_TRANSACTION.FIN_FINACC_TRANSACTION_ID%TYP
 v_Line FIN_FINACC_TRANSACTION.LINE%TYPE;
 v_count NUMBER;
 v_PaymentPriority VARCHAR(32);
-v_creditmultiplier NUMBER:= 1;
+v_creditmultiplier NUMBER := 1;
 
 
 TYPE RECORD IS REF CURSOR;
@@ -164,6 +164,7 @@ BEGIN
       v_invoicedamount NUMBER;
       v_notassignedamount NUMBER;
       v_assignedamount NUMBER;
+      v_pendingAmountFromOrder NUMBER:=0;
       v_scheduledetailamount NUMBER;
       v_oldorder VARCHAR2(32) := '-1';
       v_payment_schedule_invoice VARCHAR2(32);
@@ -335,6 +336,16 @@ BEGIN
 
               IF(v_Count=0) THEN
                 v_differenceamount:= 0;
+                -- Calculate
+                SELECT SUM(amount) + v_pendingAmountFromOrder INTO v_pendingAmountFromOrder
+                FROM fin_payment_scheduledetail
+                WHERE fin_payment_schedule_order = order_schdet.fin_payment_schedule_order
+                AND fin_payment_detail_id is null;
+                -- link remaining payment schedule detail from order to the invoice as it is fully invoiced
+                UPDATE fin_payment_scheduledetail
+                SET fin_payment_schedule_invoice = v_payment_schedule_invoice
+                WHERE fin_payment_schedule_order = order_schdet.fin_payment_schedule_order
+                      AND fin_payment_detail_id is null;
               END IF;
 
               IF (v_differenceamount > 0) THEN
@@ -400,7 +411,7 @@ BEGIN
             v_oldorder := order_schdet.order_id;
           END LOOP;
 
-          IF (v_scheduledamount != 0 ) THEN
+          IF (v_scheduledamount - v_pendingAmountFromOrder != 0 ) THEN
             -- no orders, insert payment schedule detail with remaining amount
             INSERT INTO fin_payment_scheduledetail
             (
@@ -418,8 +429,9 @@ BEGIN
               null,
               v_payment_schedule_invoice,
               null,
-              v_scheduledamount
+              v_scheduledamount - v_pendingAmountFromOrder
             );
+            v_pendingAmountFromOrder:=0;
           END IF;
         END LOOP;
 
@@ -433,7 +445,7 @@ BEGIN
       FROM FIN_PAYMENT_SCHEDULE
       WHERE C_INVOICE_ID=P_RECORD_ID;
       -- Getting DueAmount from FIN_PAYMENT_SCHEDULE for the Invoice
-      SELECT sum(OUTSTANDINGAMT) as DueAmount
+      SELECT coalesce(sum(OUTSTANDINGAMT),0) as DueAmount
         INTO V_DueAmount
       FROM FIN_PAYMENT_SCHEDULE
       WHERE C_INVOICE_ID=P_RECORD_ID
@@ -567,20 +579,43 @@ BEGIN
                     AND FIN_PAYMENT_SCHEDULE_ORDER IS NOT NULL
                   GROUP BY FIN_PAYMENT_SCHEDULE_ORDER
                   ) LOOP
+
                   UPDATE FIN_PAYMENT_SCHEDULE
-                  SET PAIDAMT = PAIDAMT + cur_paymentschedule.OUTSTANDINGAMT,
-                      OUTSTANDINGAMT=OUTSTANDINGAMT - cur_paymentschedule.OUTSTANDINGAMT
+                  SET PAIDAMT = (SELECT COALESCE(sum(amount + COALESCE(writeoffamt, 0)), 0)
+                                 FROM fin_payment_scheduledetail
+                                 WHERE fin_payment_schedule_order=cur_PaymentScheduleOrder.FIN_PAYMENT_SCHEDULE_ORDER AND
+                                       fin_payment_detail_id is not null AND
+                                       exists (SELECT 1
+                                               FROM fin_payment, fin_payment_detail
+                                               WHERE fin_payment.fin_payment_id = fin_payment_detail.fin_payment_id
+                                                      and fin_payment.processed='Y' and fin_payment.status<>'RPAE'
+                                                      and fin_payment_detail.fin_payment_detail_id = fin_payment_scheduledetail.fin_payment_detail_id)),
+                      OUTSTANDINGAMT = (SELECT COALESCE(sum(amount), 0)
+                                        FROM fin_payment_scheduledetail
+                                        WHERE fin_payment_schedule_order=cur_PaymentScheduleOrder.FIN_PAYMENT_SCHEDULE_ORDER AND
+                                              (fin_payment_detail_id is null OR
+                                       exists (SELECT 1
+                                               FROM fin_payment, fin_payment_detail
+                                               WHERE fin_payment.fin_payment_id = fin_payment_detail.fin_payment_id
+                                                      and fin_payment.processed='Y' and fin_payment.status = 'RPAE'
+                                                      and fin_payment_detail.fin_payment_detail_id = fin_payment_scheduledetail.fin_payment_detail_id)))
                   WHERE FIN_PAYMENT_SCHEDULE_ID = cur_PaymentScheduleOrder.FIN_PAYMENT_SCHEDULE_ORDER;
                 END LOOP;
 
                 UPDATE FIN_PAYMENT_SCHEDULE
                 SET PAIDAMT = PAIDAMT + COALESCE(cur_paymentschedule.OUTSTANDINGAMT,0),
-                    OUTSTANDINGAMT=0
+                    OUTSTANDINGAMT = OUTSTANDINGAMT - COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0)
                 WHERE FIN_PAYMENT_SCHEDULE_ID = cur_paymentschedule.FIN_PAYMENT_SCHEDULE_ID;
+                -- Getting DueAmount from FIN_PAYMENT_SCHEDULE for the Invoice
+                SELECT coalesce(sum(OUTSTANDINGAMT),0) as DueAmount
+                INTO V_DueAmount
+                FROM FIN_PAYMENT_SCHEDULE
+                WHERE C_INVOICE_ID=P_RECORD_ID
+                AND duedate<=now();
                 UPDATE C_INVOICE
                 SET TOTALPAID = TOTALPAID + COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0),
-                    OUTSTANDINGAMT = 0,
-                    DUEAMT = DUEAMT - COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0)
+                    OUTSTANDINGAMT = OUTSTANDINGAMT - COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0),
+                    DUEAMT = V_DueAmount
                 WHERE C_INVOICE_ID = P_RECORD_ID;
                 UPDATE C_INVOICE
                 SET ISPAID = 'Y'
@@ -626,7 +661,7 @@ BEGIN
     DECLARE
       v_count NUMBER;
       v_documentno VARCHAR2(40);
-      v_PaymentPlanExpectedTotal NUMBER:= 0;
+      v_PaymentPlanExpectedTotal NUMBER := 0;
     BEGIN
       SELECT count(*), max(p.documentno)
         INTO v_count, v_documentno
