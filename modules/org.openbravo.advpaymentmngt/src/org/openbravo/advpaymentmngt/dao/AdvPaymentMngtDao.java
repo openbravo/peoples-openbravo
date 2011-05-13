@@ -115,6 +115,41 @@ public class AdvPaymentMngtDao {
     }
   }
 
+  public List<FIN_PaymentScheduleDetail> getOrderPendingScheduledPaymentDetails(Order order) {
+    final StringBuilder whereClause = new StringBuilder();
+
+    // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
+    // removed when new security implementation is done
+    OBContext.setAdminMode();
+    try {
+
+      whereClause.append(" as psd ");
+      whereClause.append(" where psd.");
+      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
+      whereClause.append(" is null");
+      whereClause.append("   and psd.");
+      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
+      whereClause.append(".");
+      whereClause.append(FIN_PaymentSchedule.PROPERTY_ORDER);
+      whereClause.append(".id = '");
+      whereClause.append(order.getId());
+      whereClause.append("'");
+      whereClause.append(" order by psd.");
+      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
+      whereClause.append(".");
+      whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
+      whereClause.append(", psd.");
+      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT);
+      final OBQuery<FIN_PaymentScheduleDetail> obqPSD = OBDal.getInstance().createQuery(
+          FIN_PaymentScheduleDetail.class, whereClause.toString());
+
+      return obqPSD.list();
+
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   public List<FIN_PaymentScheduleDetail> getFilteredScheduledPaymentDetails(
       Organization organization, BusinessPartner businessPartner, Currency currency,
       Date dueDateFrom, Date dueDateTo, String strTransactionType, FIN_PaymentMethod paymentMethod,

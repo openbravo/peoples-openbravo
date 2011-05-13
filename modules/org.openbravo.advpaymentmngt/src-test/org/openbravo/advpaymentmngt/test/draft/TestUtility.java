@@ -46,9 +46,12 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.geography.Location;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -255,6 +258,82 @@ public class TestUtility extends BaseTest {
 
   }
 
+  public static Order createNewOrder(Client client, Organization org, Date orderDate,
+      Date accountingDate, Date taxDate, DocumentType documentType, BusinessPartner bp,
+      org.openbravo.model.common.businesspartner.Location loc, Warehouse warehouse,
+      String invoiceTerm, PriceList priceList, Currency currency, FIN_PaymentMethod paymentMethod,
+      PaymentTerm paymentTerm, Product product, UOM uom, BigDecimal orderedQuantity,
+      BigDecimal netUnitPrice, BigDecimal netListPrice, BigDecimal priceLimit, TaxRate taxRate,
+      BigDecimal lineNetAmount, boolean isReceipt) throws Exception {
+
+    // Create header
+    Order order = OBProvider.getInstance().get(Order.class);
+    order.setOrganization(org);
+    order.setClient(client);
+    order.setDocumentType(documentType);
+    order.setTransactionDocument(documentType);
+    order.setDocumentNo(FIN_Utility.getDocumentNo(org, "SOO", "C_Order"));
+    order.setAccountingDate(accountingDate);
+    order.setOrderDate(orderDate);
+    order.setWarehouse(warehouse);
+    if (!"".equals(invoiceTerm)) {
+      order.setInvoiceTerms(invoiceTerm);
+    }
+    // order.setTaxDate(taxDate);
+    order.setBusinessPartner(bp);
+    order.setPartnerAddress(loc);
+    order.setPriceList(priceList);
+    order.setCurrency(currency);
+    order.setSummedLineAmount(BigDecimal.ZERO);
+    order.setGrandTotalAmount(BigDecimal.ZERO);
+    // order.setWithholdingamount(BigDecimal.ZERO);
+    order.setSalesTransaction(isReceipt);
+    order.setPaymentMethod(paymentMethod);
+    order.setPaymentTerms(paymentTerm);
+
+    OBDal.getInstance().save(order);
+    OBDal.getInstance().flush();
+
+    // Create one line
+    OrderLine orderLine = OBProvider.getInstance().get(OrderLine.class);
+    orderLine.setOrganization(org);
+    orderLine.setClient(client);
+    orderLine.setSalesOrder(order);
+    orderLine.setOrderDate(orderDate);
+    orderLine.setWarehouse(warehouse);
+    orderLine.setCurrency(currency);
+    orderLine.setLineNo(new Long("10"));
+    orderLine.setProduct(product);
+    orderLine.setUOM(uom);
+    orderLine.setInvoicedQuantity(BigDecimal.ZERO);
+    orderLine.setOrderedQuantity(orderedQuantity);
+    orderLine.setUnitPrice(netUnitPrice);
+    orderLine.setListPrice(netListPrice);
+    orderLine.setPriceLimit(priceLimit);
+    orderLine.setTax(taxRate);
+    orderLine.setLineNetAmount(lineNetAmount);
+
+    OBDal.getInstance().save(orderLine);
+    OBDal.getInstance().flush();
+
+    return order;
+  }
+
+  public static boolean processOrder(Order order) throws Exception {
+    OBContext.setAdminMode();
+    Process process = null;
+    try {
+      process = OBDal.getInstance().get(Process.class, "104");
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    final ProcessInstance pinstance = CallProcess.getInstance().call(process, order.getId(), null);
+    OBDal.getInstance().save(order);
+    OBDal.getInstance().flush();
+    OBDal.getInstance().commitAndClose();
+    return (pinstance.getResult() == 0L);
+  }
+
   public static Invoice createNewInvoice(Client client, Organization org, Date invoiceDate,
       Date accountingDate, Date taxDate, DocumentType documentType, BusinessPartner bp,
       org.openbravo.model.common.businesspartner.Location loc, PriceList priceList,
@@ -306,7 +385,6 @@ public class TestUtility extends BaseTest {
     OBDal.getInstance().flush();
 
     return invoice;
-
   }
 
   public static boolean processInvoice(Invoice invoice) throws Exception {
@@ -341,6 +419,26 @@ public class TestUtility extends BaseTest {
             invoice.getOrganization(), "APP", "FIN_Payment"), invoice.getBusinessPartner(), invoice
             .getPaymentMethod(), account, amount.toString(), new Date(), invoice.getOrganization(),
         null, scheduleDetails, paidAmount, isWriteOff, false);
+
+    return payment;
+  }
+
+  public static FIN_Payment addPaymentFromOrder(Order order, FIN_FinancialAccount account,
+      BigDecimal amount, boolean isWriteOff) throws Exception {
+    AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
+
+    OBDal.getInstance().getSession().refresh(order);
+    List<FIN_PaymentScheduleDetail> scheduleDetails = dao
+        .getOrderPendingScheduledPaymentDetails(order);
+
+    HashMap<String, BigDecimal> paidAmount = new HashMap<String, BigDecimal>();
+    paidAmount.put(scheduleDetails.get(0).getId(), amount);
+
+    FIN_Payment payment = FIN_AddPayment.savePayment(null, order.isSalesTransaction(), FIN_Utility
+        .getDocumentType(order.getOrganization(), "ARR"), FIN_Utility.getDocumentNo(order
+        .getOrganization(), "APP", "FIN_Payment"), order.getBusinessPartner(), order
+        .getPaymentMethod(), account, amount.toString(), new Date(), order.getOrganization(), null,
+        scheduleDetails, paidAmount, isWriteOff, false);
 
     return payment;
   }
@@ -440,7 +538,15 @@ public class TestUtility extends BaseTest {
     // Org = F&B US, Inc.
     OBContext.setOBContext("100", "FF8080812AFBCB14012AFBD3E4340031",
         "FF8080812AFBCB14012AFBD3E373001F", "B9C7088AB859483A9B1FB342AC2BE17A");
+  }
 
+  public static void setTestContextSpain() {
+    // User = Openbravo
+    // Role = F&B International Group Admin
+    // Client = F&B International Group
+    // Org = F&B US, Inc.
+    OBContext.setOBContext("100", "FF8080812AFBCB14012AFBD3E4340031",
+        "FF8080812AFBCB14012AFBD3E373001F", "4F68EB1C1B734E79B27DE9D2DF56089F");
   }
 
   private static ConnectionProvider getConnectionProviderMy() {
