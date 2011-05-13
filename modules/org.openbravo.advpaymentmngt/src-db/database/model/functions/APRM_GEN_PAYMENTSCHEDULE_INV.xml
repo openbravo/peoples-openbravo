@@ -65,7 +65,7 @@ v_FIN_FINACC_TRANSACTION_ID FIN_FINACC_TRANSACTION.FIN_FINACC_TRANSACTION_ID%TYP
 v_Line FIN_FINACC_TRANSACTION.LINE%TYPE;
 v_count NUMBER;
 v_PaymentPriority VARCHAR(32);
-v_creditmultiplier NUMBER := 1;
+v_creditmultiplier NUMBER:= 1;
 
 
 TYPE RECORD IS REF CURSOR;
@@ -661,7 +661,7 @@ BEGIN
     DECLARE
       v_count NUMBER;
       v_documentno VARCHAR2(40);
-      v_PaymentPlanExpectedTotal NUMBER := 0;
+      v_PaymentPlanExpectedTotal NUMBER:= 0;
     BEGIN
       SELECT count(*), max(p.documentno)
         INTO v_count, v_documentno
