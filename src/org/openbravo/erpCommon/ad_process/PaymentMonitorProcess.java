@@ -2,7 +2,7 @@ package org.openbravo.erpCommon.ad_process;
 
 import java.util.List;
 
-import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -52,7 +52,8 @@ public class PaymentMonitorProcess extends DalBaseProcess {
       }
       final List<Invoice> invoices = obqParameters.list();
       for (Invoice invoice : invoices) {
-        OBDal.getInstance().getSession().lock(Invoice.ENTITY_NAME, invoice, LockMode.NONE);
+        OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE).lock(
+            Invoice.ENTITY_NAME, invoice);
         PaymentMonitor.updateInvoice(invoice);
         counter++;
         OBDal.getInstance().getSession().flush();
