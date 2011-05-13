@@ -749,7 +749,7 @@ isc.OBStandardView.addProperties({
     }
     this.viewGrid.refreshContents();
 
-    this.toolBar.updateButtonState();    
+    this.toolBar.updateButtonState(true);    
 
     // if not visible or the parent also needs to be refreshed
     // enable the following code if we don't automatically select the first
