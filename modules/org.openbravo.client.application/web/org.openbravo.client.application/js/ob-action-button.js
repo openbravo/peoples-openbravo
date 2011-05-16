@@ -47,11 +47,11 @@ isc.OBToolbarActionButton.addProperties( {
 
     var allProperties = theView.getContextInfo(false, true, false, true);
     var sessionProperties = theView.getContextInfo(true, true, false, true);
-    var me = this, callbackFunction;
+    var me = this, callbackFunction, param;
 
     OB.ActionButton.executingProcess = this;
 
-    for (var param in allProperties) {
+    for (param in allProperties) {
       // TODO: these transformations shoulnd't be needed here as soon as getContextInfo returns 
       // the transformed values.
       
