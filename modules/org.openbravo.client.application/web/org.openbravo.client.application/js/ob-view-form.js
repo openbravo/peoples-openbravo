@@ -250,13 +250,17 @@ OB.ViewFormProperties = {
     }
   },
   
-  enableAttachmentsSection: function(){
+  enableAttachmentsSection: function(enable){
     if (!this.attachmentsSection) {
       return;
     }
-    this.attachmentsSection.collapseSection();
-    this.attachmentsSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID), this.view.tabId);
-    this.attachmentsSection.show();
+    if(enable){
+      this.attachmentsSection.collapseSection();
+      this.attachmentsSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID), this.view.tabId);
+      this.attachmentsSection.show();
+    }else{
+      this.attachmentsSection.hide();
+    }
   },
   
   // add the undo buttons to the clickmask so that no save happens when 
@@ -289,7 +293,7 @@ OB.ViewFormProperties = {
     this.view.updateTabTitle();
     this.enableNoteSection(!isNew);
     this.enableLinkedItemSection(!isNew);
-    this.enableAttachmentsSection();
+    this.enableAttachmentsSection(!isNew);
 
     if (isNew) {
       this.view.statusBar.newIcon.prompt = OB.I18N.getLabel('OBUIAPP_NewIconPrompt');
@@ -992,11 +996,13 @@ OB.ViewFormProperties = {
   // there the save call is done through the grid saveEditedValues
   // function
   saveRow: function(){
+    var savingNewRecord = this.isNew;
     // store the value of the current focus item
     if (this.getFocusItem()) {
       this.getFocusItem().updateValue();
       this.handleItemChange(this.getFocusItem());
     }
+
     
     var i, length, flds, form = this, ficCallDone;
     var record = form.view.viewGrid.getSelectedRecord(),
@@ -1088,6 +1094,11 @@ OB.ViewFormProperties = {
         
         view.refreshParentRecord();
 
+        // We fill attachments in case the record is new, so that components
+        // of the attachments section are created
+        if(savingNewRecord){
+          this.attachmentsSection.fillAttachments(null);
+        }
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
         form.handleFieldErrors(resp.errors);
         view.standardWindow.autoSaveDone(view, false);

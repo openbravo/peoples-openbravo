@@ -197,6 +197,9 @@ isc.OBAttachmentsLayout.addProperties({
     this.savedAttachments = attachments;
     this.removeMembers(this.getMembers());
     var hLayout = isc.HLayout.create();
+    if(this.getForm().isNew){
+      return;	
+    }
     this.addMember(hLayout);
     var me = this;
     var addButton = isc.OBSectionItemControlLink.create({
