@@ -101,7 +101,7 @@ isc.OBToolbarActionButton.addProperties( {
           currentView.refresh();
         };
     
-    if (currentView.getSelectedRecord()) {
+    if (currentView.viewGrid.getSelectedRecord()) {
       // There is a record selected, refresh it and its parent
       currentView.refreshCurrentRecord(afterRefresh);
     } else {
