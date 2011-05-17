@@ -405,6 +405,7 @@ public class PaymentReportDao {
       BigDecimal amountSum = BigDecimal.ZERO;
       FieldProvider previousRow = null;
       ConversionRate previousConvRate = null;
+      long milisecDayConv = (1000 * 60 * 60 * 24);
 
       for (int i = 0; i < data.length; i++) {
         if (FIN_PaymentScheduleDetail[i].getPaymentDetails() != null) {
@@ -511,23 +512,22 @@ public class PaymentReportDao {
               FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getDueDate()).toString());
           // plannedDSO
           plannedDSO = (FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getDueDate()
-              .getTime() - invoicedDate.getTime());
-          FieldProviderFactory.setField(data[i], "PLANNED_DSO", String.valueOf(plannedDSO
-              / (1000 * 60 * 60 * 24)));
+              .getTime() - invoicedDate.getTime())
+              / milisecDayConv;
+          FieldProviderFactory.setField(data[i], "PLANNED_DSO", String.valueOf(plannedDSO));
           // currentDSO
           if (FIN_PaymentScheduleDetail[i].getPaymentDetails() != null) {
-            currentDSO = FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
-                .getPaymentDate().getTime()
-                - invoicedDate.getTime();
+            currentDSO = (FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
+                .getPaymentDate().getTime() - invoicedDate.getTime())
+                / milisecDayConv;
           } else {
             currentTime = System.currentTimeMillis();
-            currentDSO = currentTime - invoicedDate.getTime();
+            currentDSO = (currentTime - invoicedDate.getTime()) / milisecDayConv;
           }
-          FieldProviderFactory.setField(data[i], "CURRENT_DSO", String.valueOf((currentDSO)
-              / (1000 * 60 * 60 * 24)));
+          FieldProviderFactory.setField(data[i], "CURRENT_DSO", String.valueOf((currentDSO)));
           // daysOverdue
           FieldProviderFactory.setField(data[i], "OVERDUE", String
-              .valueOf((currentDSO - plannedDSO) / (1000 * 60 * 60 * 24)));
+              .valueOf((currentDSO - plannedDSO)));
         } else {
           // project
           FieldProviderFactory.setField(data[i], "PROJECT", "");
