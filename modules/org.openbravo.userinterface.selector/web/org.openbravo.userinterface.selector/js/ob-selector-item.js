@@ -78,7 +78,7 @@ isc.OBSelectorPopupWindow.addProperties({
         useClientFiltering: false,
         useClientSorting: false
       },
-      
+
       width: this.selectorGridProperties.width,
       height: this.selectorGridProperties.height,
       alternateRecordStyles: this.selectorGridProperties.alternateRecordStyles,
@@ -337,12 +337,15 @@ isc.OBSelectorItem.addProperties({
   // get the display value
   // https://issues.openbravo.com/view.php?id=16611
   setValue: function(newValue) {
+	  if (!this.valueMap) {
+	    this.valueMap = {};
+    }
     if (this.form && this.form.getValues() && this.form.getValues()[this.name] === newValue &&
         this.form.getValues()[this.name + '._identifier']) {
-      if (!this.valueMap) {
-        this.valueMap = {};
-      }
       this.valueMap[newValue] = this.form.getValues()[this.name + '._identifier'];
+    }
+    if (newValue === '') {
+      this.valueMap[newValue] = '';
     }
     this.Super('setValue', arguments);
   },
@@ -480,7 +483,7 @@ isc.OBSelectorItem.addProperties({
     return ret;
   },
   
-  filterDataBoundPickList : function (requestProperties, dropCache){
+  filterDataBoundPickList: function (requestProperties, dropCache){
     requestProperties = requestProperties || {};
     requestProperties.params = requestProperties.params || {};
     

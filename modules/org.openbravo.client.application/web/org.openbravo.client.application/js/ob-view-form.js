@@ -660,10 +660,10 @@ OB.ViewFormProperties = {
       if (this.getFocusItem()) {
         if (this.allItemsDisabled) {
           this.getFocusItem().blurItem();
-          this.redraw();
+          this.setHandleDisabled(state);
           this.view.viewGrid.refreshEditRow();
         } else {
-          this.redraw();
+          this.setHandleDisabled(state);
           this.view.viewGrid.refreshEditRow();
           // reset the canfocus
           for (i = 0; i < this.getFields().length; i++) {
