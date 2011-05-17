@@ -97,29 +97,29 @@
 .OBFormFieldSelectInputRequiredError,
 .OBFormFieldSelectInputRequiredHint,
 
-.OBFormFieldDateInputRequired,
-.OBFormFieldDateInputRequiredFocused,
-.OBFormFieldDateInputRequiredDisabled,
-.OBFormFieldDateInputRequiredError,
-.OBFormFieldDateInputRequiredHint,
-
 .OBFormFieldDateInput,
 .OBFormFieldDateInputDisabled,
 .OBFormFieldDateInputFocused,
 .OBFormFieldDateInputError,
 .OBFormFieldDateInputHint,
 
-.OBFormFieldNumberInput,
-.OBFormFieldNumberDisabled,
-.OBFormFieldNumberFocused,
-.OBFormFieldNumberError,
-.OBFormFieldNumberHint,
-
 .OBFormFieldDateInputRequired,
 .OBFormFieldDateInputRequiredFocused,
 .OBFormFieldDateInputRequiredDisabled,
 .OBFormFieldDateInputRequiredError,
-.OBFormFieldDateInputRequiredHint {
+.OBFormFieldDateInputRequiredHint,
+
+.OBFormFieldNumberInput,
+.OBFormFieldNumberInputDisabled,
+.OBFormFieldNumberInputFocused,
+.OBFormFieldNumberInputError,
+.OBFormFieldNumberInputHint,
+
+.OBFormFieldNumberInputRequired,
+.OBFormFieldNumberInputRequiredFocused,
+.OBFormFieldNumberInputRequiredDisabled,
+.OBFormFieldNumberInputRequiredError,
+.OBFormFieldNumberInputRequiredHint {
   font-family: arial, sans-serif;
   font-size: 12px;
   padding: 2px 2px 0px 2px;
@@ -218,9 +218,10 @@
 .OBFormFieldNumberInputRequiredDisabled,
 .OBFormFieldInputDisabled,
 .OBFormFieldSelectInputDisabled,
-.OBFormFieldDateInputDisabled {
-  border: 1px solid #d7d7d7;
-  background-color: #ffffff;
+.OBFormFieldDateInputDisabled,
+.OBFormFieldNumberInputDisabled {
+  border: 0px none;
+  background-color: transparent;
   color: #7d7d7d;
   -webkit-text-fill-color: #7d7d7d;
 }
