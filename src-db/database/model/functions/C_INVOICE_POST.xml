@@ -369,6 +369,20 @@ BEGIN --BODY
      * Void if Document not processed
      */
     IF (v_DocAction='VO' AND v_DocStatus NOT IN('CO', 'RE')) THEN
+
+        SELECT COUNT(*) INTO v_count
+        FROM C_INVOICE
+        WHERE C_INVOICE_ID=v_Record_ID
+        AND (EXISTS (SELECT 1
+            FROM C_INVOICELINE
+            WHERE C_INVOICE_ID=v_Record_ID)
+	    OR EXISTS (SELECT 1
+            FROM C_INVOICETAX
+            WHERE C_INVOICE_ID=v_Record_ID));
+	IF (v_count=0) THEN
+            RAISE_APPLICATION_ERROR(-20000, '@InvoicesNeedLines@');
+        END IF;
+
       SELECT COUNT(*) INTO v_count
       FROM C_DEBT_PAYMENT
       WHERE C_Invoice_ID = v_Record_ID;
