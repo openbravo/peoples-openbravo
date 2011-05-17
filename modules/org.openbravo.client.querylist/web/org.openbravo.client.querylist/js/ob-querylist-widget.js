@@ -193,15 +193,16 @@ isc.OBQueryListGrid.addProperties({
   summaryRowProperties: {
     showEmptyMessage: false
   },
-  
+
   dataProperties: {
     useClientFiltering: false//,
     //useClientSorting: false
   },
-  
+
   initWidget: function() {
+    var i;
     // overridden as query list widgets can't handle date ranges (yet)
-    for (var i = 0; i < this.getFields().length; i++) {
+    for (i = 0; i < this.getFields().length; i++) {
       var fld = this.getFields()[i];
       if (fld.filterEditorType === 'OBMiniDateRangeItem') {
         fld.filterEditorType = 'OBDateItem';
@@ -209,7 +210,7 @@ isc.OBQueryListGrid.addProperties({
     }
     this.Super('initWidget', arguments);
   },
-  
+
   filterData: function(criteria, callback, requestProperties){
     var crit = criteria || {},
     reqProperties = requestProperties || {};
