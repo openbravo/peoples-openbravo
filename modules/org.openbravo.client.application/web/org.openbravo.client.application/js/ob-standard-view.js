@@ -1019,7 +1019,7 @@ isc.OBStandardView.addProperties({
     
     this.updateLastSelectedState();
     this.updateTabTitle();    
-    this.toolBar.updateButtonState(this.isEditingGrid || this.isShowingForm);
+    this.toolBar.updateButtonState(this.isEditingGrid || this.isShowingForm || this.viewForm.isNewRecord());
 
     var tabViewPane = null, i;
 
