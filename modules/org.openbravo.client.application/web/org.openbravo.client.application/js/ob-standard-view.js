@@ -1018,7 +1018,8 @@ isc.OBStandardView.addProperties({
     
     this.updateLastSelectedState();
     this.updateTabTitle();    
-    this.toolBar.updateButtonState(this.isEditingGrid || this.isShowingForm);
+    // note only set session info if there is a record selected
+    this.toolBar.updateButtonState(!selectedRecordId || this.isEditingGrid || this.isShowingForm);
 
     var tabViewPane = null;
     
