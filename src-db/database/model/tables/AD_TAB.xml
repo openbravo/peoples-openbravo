@@ -202,6 +202,7 @@
       <unique name="AD_TAB_WINDOW_NAME_UNIQUE">
         <unique-column name="AD_WINDOW_ID"/>
         <unique-column name="NAME"/>
+        <unique-column name="AD_MODULE_ID"/>
       </unique>
       <check name="AD_TAB_HASTREE_CHK"><![CDATA[HASTREE IN ('Y', 'N')]]></check>
       <check name="AD_TAB_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
