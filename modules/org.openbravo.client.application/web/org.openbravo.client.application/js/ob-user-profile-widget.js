@@ -25,7 +25,7 @@ isc.ClassFactory.defineClass('OBUserProfile', isc.OBQuickRun);
 isc.OBUserProfile.addProperties({
 
   layoutProperties: {},
-  
+   
   baseStyle: 'OBNavBarTextButton',
   
   // ** {{{ title }}} **
@@ -86,14 +86,16 @@ isc.OBUserProfile.addProperties({
   //
   // Creates the forms, fields and buttons.
   initWidget: function(){
-  
+    var formLayout, newPasswordField, passwordForm, confirmPasswordField, buttonLayout, currentPasswordField, roleForm, widgetInstance, ComboBoxField, roleField, orgField, warehouseField, languageField,
+     defaultField, clientField, tabSet, pwdButtonLayout, pwdFormLayout, pwdSaveButton;
+    
     OB.Layout.userProfileWidget = this;
     
     // have a pointer to this instance
-    var widgetInstance = this;
+    widgetInstance = this;
     
     // create a default form field types
-    var ComboBoxField = function(props){
+    ComboBoxField = function(props){
       if (props) {
         isc.addProperties(this, props);
       }
@@ -127,23 +129,23 @@ isc.OBUserProfile.addProperties({
       defaultToFirstOption: true
     };
     
-    var roleField = new ComboBoxField({
+    roleField = new ComboBoxField({
       name: 'role',
       title: OB.I18N.getLabel('UINAVBA_Role')
     });
-    var orgField = new ComboBoxField({
+    orgField = new ComboBoxField({
       name: 'organization',
       title: OB.I18N.getLabel('UINAVBA_Organization')
     });
-    var warehouseField = new ComboBoxField({
+    warehouseField = new ComboBoxField({
       name: 'warehouse',
       title: OB.I18N.getLabel('UINAVBA_Warehouse')
     });
-    var languageField = new ComboBoxField({
+    languageField = new ComboBoxField({
       name: 'language',
       title: OB.I18N.getLabel('UINAVBA_Language')
     });
-    var defaultField = {
+    defaultField = {
       cellStyle: 'OBFormField',
       titleStyle: 'OBFormFieldLabel',
       textBoxStyle: 'OBFormFieldLabel',
@@ -154,7 +156,7 @@ isc.OBUserProfile.addProperties({
       editorType: 'checkbox'
     };
     
-    var clientField = {
+    clientField = {
       errorOrientation: 'left',
       cellStyle: 'OBFormField',
       titleStyle: 'OBFormFieldLabel',
@@ -171,7 +173,7 @@ isc.OBUserProfile.addProperties({
     };
     
     // create the form for the role information
-    var roleForm = isc.DynamicForm.create({
+    roleForm = isc.DynamicForm.create({
       autoFocus: true,
       overflow: 'visible',
       numCols: 1,
@@ -248,9 +250,9 @@ isc.OBUserProfile.addProperties({
         }
       },
       setValueMaps: function(){
-        var roleId = roleForm.getValue('role');
-        for (var i = 0; i < roleForm.localFormData.role.roles.length; i++) {
-          var role = roleForm.localFormData.role.roles[i];
+        var i, role, roleId = roleForm.getValue('role');
+        for (i = 0; i < roleForm.localFormData.role.roles.length; i++) {
+          role = roleForm.localFormData.role.roles[i];
           if (role.id === roleId) {
             roleForm.setValueMap('organization', role.organizationValueMap);
             roleForm.setValue('client', role.client);
@@ -258,16 +260,16 @@ isc.OBUserProfile.addProperties({
         }
       },
       setWarehouseValueMap: function() {
-        var orgId = roleForm.getItem('organization').getValue();
+        var i, j, warehouseOrg, role, roleId, orgId = roleForm.getItem('organization').getValue();
         if (!orgId) {
           return;
         }
-        var roleId = roleForm.getValue('role');
-        for (var i = 0; i < roleForm.localFormData.role.roles.length; i++) {
-          var role = roleForm.localFormData.role.roles[i];
+        roleId = roleForm.getValue('role');
+        for (i = 0; i < roleForm.localFormData.role.roles.length; i++) {
+          role = roleForm.localFormData.role.roles[i];
           if (role.id === roleId) {
-            for (var j = 0; j < role.warehouseOrgMap.length; j++) {
-              var warehouseOrg = role.warehouseOrgMap[j];
+            for (j = 0; j < role.warehouseOrgMap.length; j++) {
+              warehouseOrg = role.warehouseOrgMap[j];
               if (warehouseOrg.orgId === orgId) {
                 roleForm.setValueMap('warehouse', warehouseOrg.warehouseMap);
               }
@@ -297,7 +299,7 @@ isc.OBUserProfile.addProperties({
     });
     
     // create the form layout which contains both the form and the buttons
-    var formLayout = isc.VStack.create({
+    formLayout = isc.VStack.create({
       align: 'center',
       overflow: 'visible',
       height: 1,
@@ -309,7 +311,7 @@ isc.OBUserProfile.addProperties({
     widgetInstance.roleForm = roleForm;
     
     // create the buttons
-    var buttonLayout = isc.HStack.create({
+    buttonLayout = isc.HStack.create({
       layoutTopMargin: 10,
       membersMargin: 10,
       align: 'center',
@@ -340,7 +342,7 @@ isc.OBUserProfile.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.CancelButton', buttonLayout.members[1]);
     
     // now create the fields for the password form
-    var currentPasswordField = {
+    currentPasswordField = {
       name: 'currentPwd',
       errorOrientation: 'left',
       cellStyle: 'OBFormField',
@@ -348,12 +350,13 @@ isc.OBUserProfile.addProperties({
       textBoxStyle: 'OBFormFieldInput',
       titleOrientation: 'top',
       width: '*',
+      showErrorIcon: false,
       showFocused: true,
       title: OB.I18N.getLabel('UINAVBA_CurrentPwd'),
       required: true,
       editorType: 'PasswordItem'
     };
-    var newPasswordField = {
+    newPasswordField = {
       name: 'newPwd',
       errorOrientation: 'left',
       cellStyle: 'OBFormField',
@@ -361,12 +364,13 @@ isc.OBUserProfile.addProperties({
       textBoxStyle: 'OBFormFieldInput',
       titleOrientation: 'top',
       width: '*',
+      showErrorIcon: false,
       showFocused: true,
       title: OB.I18N.getLabel('UINAVBA_NewPwd'),
       required: true,
       editorType: 'PasswordItem'
     };
-    var confirmPasswordField = {
+    confirmPasswordField = {
       name: 'confirmPwd',
       errorOrientation: 'left',
       cellStyle: 'OBFormField',
@@ -375,13 +379,14 @@ isc.OBUserProfile.addProperties({
       titleOrientation: 'top',
       showFocused: true,
       width: '*',
+      showErrorIcon: false,
       title: OB.I18N.getLabel('UINAVBA_ConfirmPwd'),
       required: true,
       editorType: 'PasswordItem'
     };
     
     // create the password form
-    var passwordForm = isc.DynamicForm.create({
+    passwordForm = isc.DynamicForm.create({
       autoFocus: true,
       overflow: 'visible',
       width: '100%',
@@ -410,6 +415,7 @@ isc.OBUserProfile.addProperties({
       
       // the callback displays an info dialog and then hides the form
       doSaveCallback: function(rpcResponse, data, rpcRequest){
+        var i;
         if (data.result === OB.Constants.SUCCESS) {
           isc.OBQuickRun.hide();
           isc.say(OB.I18N.getLabel('UINAVBA_PasswordChanged'));
@@ -418,7 +424,7 @@ isc.OBUserProfile.addProperties({
             isc.showPrompt(OB.I18N.getLabel(data.message));
           }
           if (data.fields) {
-            for (var i = 0; i < data.fields.length; i++) {
+            for (i = 0; i < data.fields.length; i++) {
               var field = data.fields[i];
               passwordForm.addFieldErrors(field.field, OB.I18N.getLabel(field.messageCode), true);
             }
@@ -454,7 +460,7 @@ isc.OBUserProfile.addProperties({
     });
     
     // create the layout that holds the form and the buttons
-    var pwdFormLayout = isc.VStack.create({
+    pwdFormLayout = isc.VStack.create({
       overflow: 'visible',
       height: 1,
       width: '100%',
@@ -464,12 +470,13 @@ isc.OBUserProfile.addProperties({
     
     widgetInstance.passwordForm = passwordForm;
     
-    var pwdSaveButton = isc.OBFormButton.create({
+    pwdSaveButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUIAPP_Apply'),
       action: passwordForm.doSave,
       disabled: true
     });
-    var pwdButtonLayout = isc.HStack.create({
+
+    pwdButtonLayout = isc.HStack.create({
       layoutTopMargin: 10,
       membersMargin: 10,
       width: '100%',
@@ -485,7 +492,7 @@ isc.OBUserProfile.addProperties({
     pwdFormLayout.addMembers(pwdButtonLayout);
     
     // and create the tabset
-    var tabSet = isc.TabSet.create({
+    tabSet = isc.TabSet.create({
       paneContainerOverflow: 'visible',
       overflow: 'visible',
       useSimpleTabs: true,
