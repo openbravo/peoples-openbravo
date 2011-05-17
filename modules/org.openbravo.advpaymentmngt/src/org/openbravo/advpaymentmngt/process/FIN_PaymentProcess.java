@@ -115,14 +115,10 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
                 invoiceDocNos.add(paymentScheduleDetail.getInvoicePaymentSchedule().getInvoice()
                     .getDocumentNo());
-                validateAmount(paymentScheduleDetail.getInvoicePaymentSchedule(), paymentDetail
-                    .getAmount(), paymentDetail.getWriteoffAmount());
               }
               if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
                 orderDocNos.add(paymentScheduleDetail.getOrderPaymentSchedule().getOrder()
                     .getDocumentNo());
-                validateAmount(paymentScheduleDetail.getOrderPaymentSchedule(), paymentDetail
-                    .getAmount(), paymentDetail.getWriteoffAmount());
               }
               if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
                   && paymentScheduleDetail.getOrderPaymentSchedule() == null
@@ -241,8 +237,15 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               }
             }
             for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList()) {
-              for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
-                  .getFINPaymentScheduleDetailList()) {
+              // Get payment schedule detail list ordered by amount asc.
+              // First negative if they exist and then positives
+              OBCriteria<FIN_PaymentScheduleDetail> obcPSD = OBDal.getInstance().createCriteria(
+                  FIN_PaymentScheduleDetail.class);
+              obcPSD.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS,
+                  paymentDetail));
+              obcPSD.addOrderBy(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT, true);
+
+              for (FIN_PaymentScheduleDetail paymentScheduleDetail : obcPSD.list()) {
                 BigDecimal amount = paymentScheduleDetail.getAmount().add(
                     paymentScheduleDetail.getWriteoffAmount());
                 if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
@@ -255,11 +258,15 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   } else {
                     increaseCustomerCredit(businessPartner, amount);
                   }
+                  validateAmount(paymentScheduleDetail.getInvoicePaymentSchedule(),
+                      paymentScheduleDetail.getAmount(), paymentScheduleDetail.getWriteoffAmount());
                   FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
                       .getInvoicePaymentSchedule(), paymentScheduleDetail.getAmount(),
                       paymentScheduleDetail.getWriteoffAmount());
                 }
                 if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
+                  validateAmount(paymentScheduleDetail.getOrderPaymentSchedule(),
+                      paymentScheduleDetail.getAmount(), paymentScheduleDetail.getWriteoffAmount());
                   FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail
                       .getOrderPaymentSchedule(), paymentScheduleDetail.getAmount(),
                       paymentScheduleDetail.getWriteoffAmount());
@@ -538,9 +545,12 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     if (writeOffAmount != null && writeOffAmount.compareTo(BigDecimal.ZERO) != 0) {
       totalPaid = amount.add(writeOffAmount);
     }
-    // (totalPaid > 0 && totalPaid <= outstanding) || (totalPaid < 0 && totalPaid >= outstanding)
-    if ((totalPaid.compareTo(BigDecimal.ZERO) == 1 && totalPaid.compareTo(outstanding) <= 0)
-        || (totalPaid.compareTo(BigDecimal.ZERO) == -1 && totalPaid.compareTo(outstanding) >= 0)) {
+    // ((totalPaid > 0 || outstanding > 0) && totalPaid <= outstanding)
+    // || (totalPaid < 0 && outstanding < 0 && totalPaid >= outstanding)
+    if (((totalPaid.compareTo(BigDecimal.ZERO) == 1 || outstanding.compareTo(BigDecimal.ZERO) == 1) && totalPaid
+        .compareTo(outstanding) <= 0)
+        || (totalPaid.compareTo(BigDecimal.ZERO) == -1
+            && outstanding.compareTo(BigDecimal.ZERO) == -1 && totalPaid.compareTo(outstanding) >= 0)) {
       return true;
     } else {
       throw new OBException(String.format(FIN_Utility.messageBD("APRM_AmountOutOfRange"), totalPaid
