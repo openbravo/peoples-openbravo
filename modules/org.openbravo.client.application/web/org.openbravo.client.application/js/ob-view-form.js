@@ -706,11 +706,7 @@ OB.ViewFormProperties = {
     if (prop === OB.Constants.ID) {
       return;
     }
-    
-    if (field && field.resetCache) {
-      field.resetCache();
-    }
-    
+     
     // note field can be a datasource field, see above, in that case
     // don't set the entries    
     if (field.form && entries) {
@@ -944,15 +940,7 @@ OB.ViewFormProperties = {
     // remove the message
     this.setHasChanged(true);
     this.view.messageBar.hide();
-    this.view.toolBar.updateButtonState(true);
-    
-    // invalidate the cache of picklists on a change
-    for (i = 0; i < this.getFields().length; i++) {
-      if (this.getFields()[i].resetCache) {
-        this.getFields()[i].resetCache();
-      }
-   }
- 
+    this.view.toolBar.updateButtonState(true); 
   },
   
   // make sure that any field errors also appear in the grid

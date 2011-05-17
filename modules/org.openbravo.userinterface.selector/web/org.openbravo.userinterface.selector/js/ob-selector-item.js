@@ -404,16 +404,6 @@ isc.OBSelectorItem.addProperties({
     return this.Super('init', arguments);
   },
   
-  // reset the cache without reloading directly
-  resetCache: function() {
-    if (this.pickList && this.pickList.data) {
-      // don't use field.pickList.invalidateCache as it will force a fetch
-      // the fetch is only needed later when someone really changes the value
-      this.pickList.data.invalidateRows();
-      this.pickList.data.totalRows = 0;
-    }
-  },
-  
   setValueFromRecord: function(record, fromPopup){
     var currentValue = this.getValue();
     if (!record) {
@@ -535,15 +525,10 @@ isc.OBSelectorItem.addProperties({
                      _constructor: 'AdvancedCriteria',
                      criteria:[]};
 
-    // add organization to the criteria as a dummy
     var contextInfo = this.form.view.getContextInfo(false, true);
-    if (contextInfo.inpadOrgId) {
-        criteria.criteria.push({
-          fieldName: '_dummy',
-          operator: 'equals',
-          value: contextInfo.inpadOrgId
-        });
-    }
+
+    // add a dummy criteria to force a fetch
+    criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
 
     // only filter if the display field is also passed
     // the displayField filter is not passed when the user clicks the drop-down button
