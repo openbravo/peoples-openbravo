@@ -184,7 +184,7 @@ isc.OBToolbar.addClassProperties({
     },
     disabled: true,
     buttonType: 'undo',
-    prompt: OB.I18N.getLabel('OBUIAPP_Undo'),
+    prompt: OB.I18N.getLabel('OBUIAPP_ConfirmCancelEdit'),
     updateState: function(){
       var view = this.view, form = view.viewForm, grid = view.viewGrid, hasErrors = false, editRow, i;
       if (view.isShowingForm) {
