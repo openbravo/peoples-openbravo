@@ -489,7 +489,7 @@ isc.OBSelectorWidget
       // ** {{{ setFilterEditorProperties }}} **
       // Called to set the filter editor properties on each grid field.
       setFilterEditorProperties : function(gridFields) {
-        var selector = this;
+        var selector = this, i;
         var keyPressFunction = function(item, form, keyName, characterValue) {
           if (keyName === 'Escape') {
             selector.selectorWindow.hide();
@@ -504,7 +504,7 @@ isc.OBSelectorWidget
           selector.selectorGrid.filterByEditor();
         };
 
-        for ( var i = 0; i < gridFields.length; i++) {
+        for (i = 0; i < gridFields.length; i++) {
           var gridField = gridFields[i];
           if (!gridField.filterEditorProperties) {
             gridField.filterEditorProperties = {
@@ -663,7 +663,7 @@ isc.OBSelectorWidget
             },
               getPickListFilterCriteria : function() {
 
-                var criteria = this.Super('getPickListFilterCriteria'), defValue, prop;
+                var criteria = this.Super('getPickListFilterCriteria'), defValue, prop, i;
 
                 if (!criteria) {
                   criteria = {};
@@ -681,7 +681,7 @@ isc.OBSelectorWidget
                 // the user clicks the
                 // drop-down button
                 if (criteria[this.displayField]) {
-                  for ( var i = 0; i < this.selector.extraSearchFields.length; i++) {
+                  for (i = 0; i < this.selector.extraSearchFields.length; i++) {
                     if (!criteria[this.selector.extraSearchFields[i]]) {
                       criteria[this.selector.extraSearchFields[i]] = this
                           .getDisplayValue();
