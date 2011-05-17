@@ -374,8 +374,9 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
     return formLayout;
   },
   
-  allRequiredParametersSet: function(){
-    for (var i = 0; i < this.fieldDefinitions.length; i++) {
+  allRequiredParametersSet: function() {
+    var i;
+    for (i = 0; i < this.fieldDefinitions.length; i++) {
       fieldDefinition = this.fieldDefinitions[i];
       if (fieldDefinition.required && !this.parameters[fieldDefinition.name] &&
       this.parameters[fieldDefinition.name] !== false) {
@@ -422,7 +423,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   refresh: function(){
     isc.Log.logInfo('The subclass needs to implement this method');
   },
-  
+
   //
   // ** {{{ OBWidget.showAbout }}} **
   //
@@ -430,11 +431,11 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   //
   showAbout: function(){
      isc.OBAboutPopupWindow.create({
-    	 title: OB.I18N.getLabel('OBKMO_WMO_About') + ' ' + this.title, 
-    	 aboutFieldDefinitions: this.aboutFieldDefinitions
+       title: OB.I18N.getLabel('OBKMO_WMO_About') + ' ' + this.title,
+       aboutFieldDefinitions: this.aboutFieldDefinitions
      }).show();
   },
-  
+
   //
   // ** {{{ OBWidget.isSameWidget }}} **
   //

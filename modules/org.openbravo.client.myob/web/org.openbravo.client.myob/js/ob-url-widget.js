@@ -28,7 +28,7 @@ isc.defineClass('OBUrlWidget', isc.OBWidget).addProperties({
       this.contentSource = this.evaluateContents(this.parameters.src);
     }
 
-    if(this.contentSource.indexOf('butler.openbravo.com') != -1) {
+    if(this.contentSource.indexOf('butler.openbravo.com') !== -1) {
       this.contentSource = document.location.protocol + this.contentSource.substring(this.contentSource.indexOf('//'));
     }
 

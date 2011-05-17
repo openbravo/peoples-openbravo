@@ -41,7 +41,7 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
         'adminMode' : 'false'
       },
       'widgets' : []
-    }
+    };
 
     var me = this;
     var haveInternet = false;
@@ -53,16 +53,16 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
       me.setOBContent(false);
     }, 10000);
     $LAB.script(document.location.protocol + OB.Application.butlerUtilsUrl).wait(function() {
-    	haveInternet = (typeof internetConnection !== 'undefined');
-    	// callback did fire so clear timer as its no longer needed
-    	clearTimeout(timerNoInternet);
+      haveInternet = (typeof internetConnection !== 'undefined');
+      // callback did fire so clear timer as its no longer needed
+      clearTimeout(timerNoInternet);
 
-    	if (haveInternet) {
+      if (haveInternet) {
         OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function(response, data, request) {
-        	var communityBrandingUrl = data.url;
-        	me.setOBContent(haveInternet, communityBrandingUrl);
+          var communityBrandingUrl = data.url;
+          me.setOBContent(haveInternet, communityBrandingUrl);
         });
-    	} else {
+      } else {
           me.setOBContent(false);
         }
     });
@@ -113,7 +113,7 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
 //    this.versionLabel.styleName = this.getPurposeStyleClass();
 //    this.versionLabel.draw();
   },
-  
+
   getPurposeStyleClass: function(){
     var purposeCode = OB.Application.purpose;
     if (purposeCode === 'D') {

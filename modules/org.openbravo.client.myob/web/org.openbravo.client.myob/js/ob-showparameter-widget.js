@@ -57,12 +57,10 @@ isc.defineClass('OBShowParameterWidget', isc.OBWidget).addProperties({
       width: '100%',
       height: '100%',
       wrapItemTitles: false
-    });
+    }), items = [], values = {}, i;
 
-    var items = [];
-    var values = {};
-    for (var i in this.parameters) {
-      if (i) {
+    for (i in this.parameters) {
+      if (this.parameters.hasOwnProperty(i)) {
         items.push({
           name: i,
           title: i,

@@ -270,7 +270,7 @@ isc.OBMyOpenbravo.addProperties({
           if (dragTarget.createWidgetInstance) {
             component = dragTarget.createWidgetInstance(this.colNum, position);
           } else {
-            component = dragTarget;;
+            component = dragTarget;
           }
           this.addPortlet(component, position);
         },
