@@ -1019,7 +1019,8 @@ isc.OBStandardView.addProperties({
     
     this.updateLastSelectedState();
     this.updateTabTitle();    
-    this.toolBar.updateButtonState(this.isEditingGrid || this.isShowingForm || this.viewForm.isNewRecord());
+    // note only set session info if there is a record selected
+    this.toolBar.updateButtonState(!selectedRecordId || this.isEditingGrid || this.isShowingForm);
 
     var tabViewPane = null, i;
 
@@ -1034,9 +1035,6 @@ isc.OBStandardView.addProperties({
       }
     }
     delete this.isOpenDirectModeParent;
-
-    // and recompute the count:
-    this.updateChildCount();
   },
 
   hasSelectionStateChanged: function() {
@@ -1068,59 +1066,6 @@ isc.OBStandardView.addProperties({
     }
 
     return this.parentView.viewGrid.getSelectedRecord();
-  },
-
-  updateChildCount: function(){
-    // note disabled for now
-    if (true) {
-      return;
-    }
-    if (!this.childTabSet) {
-      return;
-    }
-    if (this.viewGrid.getSelectedRecords().length !== 1) {
-      return;
-    }
-
-    var infoByTab = [], tabInfo, childView, data = {}, me = this, callback, i;
-
-    data.parentId = this.getParentId();
-
-    for (i = 0; i < this.childTabSet.tabs.length; i++) {
-      tabInfo = {};
-      childView = this.childTabSet.tabs[i].pane;
-      tabInfo.parentProperty = childView.parentProperty;
-      tabInfo.tabId = childView.tabId;
-      tabInfo.entity = childView.entity;
-      if (childView.viewGrid.whereClause) {
-        tabInfo.whereClause = childView.viewGrid.whereClause;
-      }
-      infoByTab.push(tabInfo);
-    }
-    data.tabs = infoByTab;
-    
-    // walks through the tabs and sets the title
-    callback = function(resp, data, req){
-      var tab, tabPane;
-      var tabInfos = data.result, i;
-      if (!tabInfos || tabInfos.length !== me.childTabSet.tabs.length) {
-        // error, something has changed
-        return;
-      }
-      for (i = 0; i < me.childTabSet.tabs.length; i++) {
-        childView = me.childTabSet.tabs[i].pane;
-        tab = me.childTabSet.getTab(i);
-        if (childView.tabId === tabInfos[i].tabId) {
-          tabPane = me.childTabSet.getTabPane(tab);
-          tabPane.recordCount = tabInfos[i].count;
-          tabPane.updateTabTitle();
-        }
-      }
-    };
-    
-    var props = this.getContextInfo(true, false);
-    
-    OB.RemoteCallManager.call('org.openbravo.client.application.ChildTabRecordCounterActionHandler', data, props, callback, null);
   },
   
   updateTabTitle: function(){
