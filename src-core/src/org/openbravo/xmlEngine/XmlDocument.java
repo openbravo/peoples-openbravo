@@ -319,7 +319,8 @@ public class XmlDocument implements XmlComponentValue {
   }
 
   /**
-   * Utility method to translate all CharacterComponents contained in the passed translateXmlVectorValue.
+   * Utility method to translate all CharacterComponents contained in the passed
+   * translateXmlVectorValue.
    */
   private void translateXmlVectorValue(XmlVectorValue vecXmlVectorValue) {
 
@@ -367,5 +368,5 @@ public class XmlDocument implements XmlComponentValue {
       elementDataValue.connect();
     }
   }
-  
+
 }
