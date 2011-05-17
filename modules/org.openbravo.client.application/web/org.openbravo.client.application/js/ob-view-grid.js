@@ -345,6 +345,19 @@ isc.OBViewGrid.addProperties({
       this.getField(this.view.parentProperty).canFilter = false;
       this.getField(this.view.parentProperty).canEdit = false;
     }
+ 
+  //// Begins-added to have the additional filter clause and tabid..Mallikarjun M
+ //URL example:http://localhost:8080/openbravo/?tabId=186&filterClause=e.businessPartner.searchKey%3D%27mcgiver%27&replaceDefaultFilter=true&
+    if (this.view.tabId === this.view.standardWindow.additionalFilterTabId) {
+        
+      if (!this.filterClause || this.view.standardWindow.replaceDefaultFilter==='true') {
+        this.filterClause = unescape(this.view.standardWindow.additionalFilterClause);
+      } else if (this.filterClause) {
+        this.filterClause = '((' + this.filterClause + ') and (' +unescape(this.view.standardWindow.additionalFilterClause)  + '))';
+      }
+    }
+ //// Ends..
+  
   },
   
   show: function(){
@@ -472,7 +485,7 @@ isc.OBViewGrid.addProperties({
     } else if (length === 0) {
       newValue = '&nbsp;';
     } else {
-      newValue = '' + length;
+      newValue = length;
     }
     if (this.filterEditor && this.filterEditor.getEditForm()) {
       this.filterEditor.getEditForm().setValue(isc.OBViewGrid.EDIT_LINK_FIELD_NAME, newValue);
@@ -772,6 +785,10 @@ isc.OBViewGrid.addProperties({
         // remove the filter clause we don't want to use it anymore
         this.filterClause = null;
       }
+    } else if (this.forceRefresh) {
+      // add a dummy criteria to force a fetch
+      criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+      delete this.forceRefresh;
     } else {
       // remove the _dummy
       for (i = 0; i < criteria.criteria.length; i++) {
@@ -896,6 +913,7 @@ isc.OBViewGrid.addProperties({
   
   clearFilter: function(){
     delete this.filterClause;
+    this.forceRefresh = true;
     this.filterEditor.getEditForm().clearValues();
     this.filterEditor.performAction();
   },
@@ -1089,7 +1107,7 @@ isc.OBViewGrid.addProperties({
     var selectionLength = selection.getLength();
     var newValue = '&nbsp;';
     if (selectionLength > 0) {
-      newValue = selectionLength + '';
+      newValue = selectionLength;
     }
     if (this.filterEditor) {
       this.filterEditor.getEditForm().setValue(this.getCheckboxField().name, newValue);
@@ -2194,7 +2212,7 @@ isc.OBGridButtonsComponent.addProperties({
       }
       this.showMember(2 + offset);
       this.showMember(1 + offset);
-      this.showMember(0 + offset);
+      this.showMember(offset);
     }
   },
   
@@ -2207,7 +2225,7 @@ isc.OBGridButtonsComponent.addProperties({
       this.hideMember(0);
       offset = 1;
     }
-    this.showMember(0 + offset);
+    this.showMember(offset);
     if (this.editButton.showable()) {
       this.showMember(1 + offset);
       this.showMember(2 + offset);
@@ -2271,7 +2289,7 @@ isc.OBGridButtonsComponent.addProperties({
       return;
     }
     // already visible
-    if (this.members[memberNo] && this.members[memberNo].visibility === isc.Canvas.INHERIT || this.members[memberNo].visibility === isc.Canvas.VISIBLE) {
+    if (this.members[memberNo] && (this.members[memberNo].visibility === isc.Canvas.INHERIT || this.members[memberNo].visibility === isc.Canvas.VISIBLE)) {
       return;
     }
     this.Super('showMember', arguments);

@@ -267,6 +267,9 @@ OB.Utilities.openDirectTab = function(tabId, recordId, command){
   recordId = OB.Utilities.removeFragment(recordId);
   command = OB.Utilities.removeFragment(command);
   
+  var urlParams = OB.Utilities.getUrlParameters();
+  
+  //added to have the additional filter clause and tabid. Mallikarjun M
   var callback = function(response, data, request){
     command = command || 'DEFAULT';
     var view = {
@@ -284,6 +287,19 @@ OB.Utilities.openDirectTab = function(tabId, recordId, command){
     if (recordId) {
       view.targetRecordId = recordId;
     }
+    
+    //// Begins-added to have the additional filter clause and tabid..Mallikarjun M
+    //URL example:http://localhost:8080/openbravo/?tabId=186&filterClause=e.businessPartner.searchKey%3D%27mcgiver%27&replaceDefaultFilter=true&
+    if (urlParams.filterClause) {
+      view.additionalFilterTabId = data.tabId;
+        view.additionalFilterClause = urlParams.filterClause;
+    }
+     
+    if (urlParams.replaceDefaultFilter) {
+       view.replaceDefaultFilter = urlParams.replaceDefaultFilter;
+    }
+    ////Ends..
+    
     OB.Layout.ViewManager.openView(view.viewId, view);
   };
   
