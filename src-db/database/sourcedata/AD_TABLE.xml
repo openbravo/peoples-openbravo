@@ -783,6 +783,28 @@ The User Assignment Tab displays Users who have been defined for this Role.]]></
 <!--162-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D64B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--162--></AD_TABLE>
 
+<!--163--><AD_TABLE>
+<!--163-->  <AD_TABLE_ID><![CDATA[163]]></AD_TABLE_ID>
+<!--163-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--163-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--163-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--163-->  <NAME><![CDATA[FinancialMgmtNonBusinessDay]]></NAME>
+<!--163-->  <DESCRIPTION><![CDATA[Define Non Business Days]]></DESCRIPTION>
+<!--163-->  <HELP><![CDATA[The Non Business Days Tab defines those days to exclude when calculating the due date for given payment terms.  For example, if an invoice terms was Net 10 days and the Invoice Date was 2/17/2000 the due date would be 2/27/2000.  If 2/27/2000 was defined]]></HELP>
+<!--163-->  <TABLENAME><![CDATA[C_NonBusinessDay]]></TABLENAME>
+<!--163-->  <CLASSNAME><![CDATA[NonBusinessDay]]></CLASSNAME>
+<!--163-->  <ISVIEW><![CDATA[N]]></ISVIEW>
+<!--163-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--163-->  <AD_WINDOW_ID><![CDATA[117]]></AD_WINDOW_ID>
+<!--163-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
+<!--163-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
+<!--163-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
+<!--163-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
+<!--163-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
+<!--163-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
+<!--163-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1E34B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--163--></AD_TABLE>
+
 <!--164--><AD_TABLE>
 <!--164-->  <AD_TABLE_ID><![CDATA[164]]></AD_TABLE_ID>
 <!--164-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
