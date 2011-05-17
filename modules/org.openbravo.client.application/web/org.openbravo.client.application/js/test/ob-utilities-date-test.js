@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,7 +23,7 @@ test('OB.Utilities.Date.* functions', function() {
 
   var outputText = '';
 
-  ok(function(){
+  ok((function(){
        var expectedCenturyReference = 50;
        var successText = 'OB.Utilities.Date.centuryReference has a valid value';
        var failureText = 'OB.Utilities.Date.centuryReference ';
@@ -40,9 +40,9 @@ test('OB.Utilities.Date.* functions', function() {
          outputText = failureText;
        }
        return success;
-     }(), outputText);
+     }()), outputText);
 
-  ok(function(){
+  ok((function(){
        var i;
        var successText = 'OB.Utilities.Date.normalizeDisplayFormat works properly';
        var failureText = 'OB.Utilities.Date.normalizeDisplayFormat failed while eval';
@@ -80,9 +80,9 @@ test('OB.Utilities.Date.* functions', function() {
          outputText = failureText;
        }
        return success;
-     }(), outputText);
+     }()), outputText);
 
-  ok(function(){
+  ok((function(){
        var i;
        var successText = 'OB.Utilities.Date.OBToJS works properly';
        var failureText = 'OB.Utilities.Date.OBToJS failed while eval';
@@ -97,7 +97,7 @@ test('OB.Utilities.Date.* functions', function() {
          ['12-31-2010', '%m-%d-%Y', new Date(2010, 11, 31, 0, 0, 0, 0)],
          ['2010-31-12', '%Y-%d-%m', new Date(2010, 11, 31, 0, 0, 0, 0)],
          ['2010-12-31', '%Y-%m-%d', new Date(2010, 11, 31, 0, 0, 0, 0)],
-         ['01-01-0001', '%d-%m-%Y', function(){var date = new Date(1, 0, 1, 0, 0, 0, 0); date.setFullYear('1'); return date;}()],
+         ['01-01-0001', '%d-%m-%Y', (function(){var date = new Date(1, 0, 1, 0, 0, 0, 0); date.setFullYear('1'); return date;}())],
          ['31-12-10', '%d-%m-%y', new Date(2010, 11, 31, 0, 0, 0, 0)],
          ['12-31-10', '%m-%d-%y', new Date(2010, 11, 31, 0, 0, 0, 0)],
          ['10-31-12', '%y-%d-%m', new Date(2010, 11, 31, 0, 0, 0, 0)],
@@ -128,10 +128,10 @@ test('OB.Utilities.Date.* functions', function() {
          outputText = failureText;
        }
        return success;
-     }(), outputText);
+     }()), outputText);
 
 
-  ok(function(){
+  ok((function(){
        var i;
        var successText = 'OB.Utilities.Date.JSToOB works properly';
        var failureText = 'OB.Utilities.Date.JSToOB failed while eval';
@@ -146,7 +146,7 @@ test('OB.Utilities.Date.* functions', function() {
          [new Date(2010, 11, 31, 0, 0, 0, 0), '%m-%d-%Y', '12-31-2010'],
          [new Date(2010, 11, 31, 0, 0, 0, 0), '%Y-%d-%m', '2010-31-12'],
          [new Date(2010, 11, 31, 0, 0, 0, 0), '%Y-%m-%d', '2010-12-31'],
-         [function(){var date = new Date(1, 0, 1, 0, 0, 0, 0); date.setFullYear('1'); return date;}(), '%d-%m-%Y', '01-01-0001'],
+         [(function(){var date = new Date(1, 0, 1, 0, 0, 0, 0); date.setFullYear('1'); return date;}()), '%d-%m-%Y', '01-01-0001'],
          [new Date(2010, 11, 31, 0, 0, 0, 0), '%d-%m-%y', '31-12-10'],
          [new Date(2010, 11, 31, 0, 0, 0, 0), '%m-%d-%y', '12-31-10'],
          [new Date(2010, 11, 31, 0, 0, 0, 0), '%y-%d-%m', '10-31-12'],
@@ -178,5 +178,5 @@ test('OB.Utilities.Date.* functions', function() {
          outputText = failureText;
        }
        return success;
-     }(), outputText);
+     }()), outputText);
 });

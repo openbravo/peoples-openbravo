@@ -65,8 +65,8 @@
       },
 
       getTabNumberFromViewParam: function(param, value) {
-        var numberOfTabs = tabSet.tabs.length, viewParam = '', result = null;
-        for (var i = 0; i < numberOfTabs; i++) {
+        var numberOfTabs = tabSet.tabs.length, viewParam = '', result = null, i;
+        for (i = 0; i < numberOfTabs; i++) {
           viewParam = tabSet.getTabPane(i)[param];
           if (viewParam === value) {
             result = i;
@@ -92,10 +92,11 @@
     },
 
     findLoadingTab: function(params) {
+      var i;
       if (!params.loadingTabId) {
         return null;
       }
-      for (var i = 0; i < tabSet.tabs.length; i++) {
+      for (i = 0; i < tabSet.tabs.length; i++) {
         var pane = tabSet.tabs[i].pane;
         if (pane.viewTabId && pane.viewTabId === params.loadingTabId) {
           return tabSet.tabs[i];
@@ -537,4 +538,4 @@
 
   // Initialize ViewManager object
   vmgr = L.ViewManager = OB.ViewManager = new ViewManager();
-})(OB, isc);
+}(OB, isc));

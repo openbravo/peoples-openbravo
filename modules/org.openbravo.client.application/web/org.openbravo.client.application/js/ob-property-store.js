@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,28 +74,29 @@
     // * {{{propertyName}}}: the name of the property
     // * {{{value}}}: the value of the property
     //
-    set: function(/* String */propertyName, /* Object */ value, windowId, noSetInServer){
-      var currentValue = OB.Properties[propertyName], data={property: propertyName}, localPropertyName=propertyName;
+    set: function(/* String */propertyName, /* Object */ value, windowId, noSetInServer) {
+      var currentValue = OB.Properties[propertyName], data={property: propertyName},
+          localPropertyName=propertyName, i;
       if(windowId){
         data.windowId=windowId;
         localPropertyName=propertyName + '_' + windowId;
       }
       // set it locally
       OB.Properties[localPropertyName] = value;
-      
+
       if (!noSetInServer) {
         // and set it in the server also
         OB.RemoteCallManager.call('org.openbravo.client.application.StorePropertyActionHandler', value, data, function(){
         });
       }
-      
+
       // call the listeners
-      for (var i = 0; i < this.listeners.length; i++) {
+      for (i = 0; i < this.listeners.length; i++) {
         this.listeners[i](localPropertyName, currentValue, value);
       }
-      
+
     },
-    
+
     // ** {{{addListener(listener) }}} **
     //
     // Register a new listener which will be called when a property change occurs.
@@ -106,9 +107,9 @@
     // received. The function will get three parameters: property name, old value, new value
     addListener: function(/* function */listener){
       this.listeners[this.listeners.length] = listener;
-    }  
+    }
   };
-  
+
   // Initialize PropertyStore object
   pstore = OB.PropertyStore = new PropertyStore();
-})(OB, isc);
+}(OB, isc));

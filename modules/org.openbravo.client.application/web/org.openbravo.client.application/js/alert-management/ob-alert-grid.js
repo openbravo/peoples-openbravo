@@ -267,13 +267,13 @@ isc.OBAlertGrid.addProperties({
       this.filterEditor.getEditForm().setValue(this.getCheckboxField().name, newValue);
     }
   },
-  
+
   // note when solving selection issues in the future also
   // consider using the selectionChanged method, but that
   // one has as disadvantage that it is called multiple times
   // for one select/deselect action
   selectionUpdated: function(record, recordList){
-  
+
     this.stopHover();
     this.updateSelectedCountDisplay();
     if (this.getSelectedRecords() && this.getSelectedRecords().length !== 1) {

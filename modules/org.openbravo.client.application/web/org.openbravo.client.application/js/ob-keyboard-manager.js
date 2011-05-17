@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -137,9 +137,10 @@
         }
         delete this.list[position];
       },
-      
-      getPosition: function(element, searchPattern){
-        for (var i = 0; i < this.list.length; i++) {
+
+      getPosition: function(element, searchPattern) {
+        var i;
+        for (i = 0; i < this.list.length; i++) {
           if (searchPattern === 'id' && this.list[i].id === element) {
             return i;
           } else if (searchPattern === 'keyComb' &&
@@ -155,21 +156,21 @@
         }
         return null;
       },
-      
+
       execute: function(position){
         if (this.list[position].action !== null) {
           this.list[position].action(this.list[position].funcParam);
         }
       },
-      
+
       list: []
     }
-  
+
   };
-  
+
   // Initialize KeyboardManager object
   keyboardMgr = O.KeyboardManager = new KeyboardManager();
-  
+
   isc.Page.setEvent('keyPress', 'OB.KeyboardManager.action.keyDown()');
-  
-})(OB, isc);
+
+}(OB, isc));

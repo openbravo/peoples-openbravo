@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -183,8 +183,8 @@ isc.OBGrid.addProperties({
               var index = prop.lastIndexOf('.');
               prop = prop.substring(0, index);
             }
-            var fnd = false;
-            for (var j = 0; j < fields.length; j++) {
+            var fnd = false, j;
+            for (j = 0; j < fields.length; j++) {
               if (fields[j].displayField === fullPropName) {
                 fnd = true;
                 break;
@@ -302,10 +302,11 @@ isc.OBGrid.addProperties({
   },
   
   isGridFilteredWithCriteria: function(criteria) {
+    var i;
     if (!criteria) {
       return false;
     }
-    for (var i = 0; i < criteria.length; i++) {
+    for (i = 0; i < criteria.length; i++) {
       var criterion = criteria[i];
       var prop = criterion.fieldName;
       var fullPropName = prop;
@@ -321,12 +322,12 @@ isc.OBGrid.addProperties({
         var index = prop.lastIndexOf('.');
         prop = prop.substring(0, index);
       }
-      
+
       var field = this.filterEditor.getField(prop);
       if (this.isValidFilterField(field) && (value === false || value || value === 0)) {
         return true;
       }
-      
+
       field = this.filterEditor.getField(fullPropName);
       if (this.isValidFilterField(field) && (value === false || value || value === 0)) {
         return true;
@@ -334,14 +335,14 @@ isc.OBGrid.addProperties({
     }
     return false;
   },
-  
+
   isValidFilterField: function(field){
     if (!field) {
       return false;
     }
     return !field.name.startsWith('_') && field.canFilter;
   },
-  
+
   // = exportData =
   // The exportData function exports the data of the grid to a file. The user will 
   // be presented with a save-as dialog.

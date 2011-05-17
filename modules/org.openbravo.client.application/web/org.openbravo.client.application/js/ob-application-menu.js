@@ -244,9 +244,9 @@ isc.OBApplicationMenuButton.addProperties({
   setMenuItems: function () {
     var recent = OB.RecentUtilities.getRecentValue('UINAVBA_MenuRecentList');
     var recentEntries = [];
-    var completeMenuTree;
+    var completeMenuTree, recentIndex;
     if (recent && recent.length > 0) {
-      for (var recentIndex = 0; recentIndex < recent.length; recentIndex++) {
+      for (recentIndex = 0; recentIndex < recent.length; recentIndex++) {
         var recentEntry = recent[recentIndex];
         if (recentEntry) {
           recentEntries[recentIndex] = {title: recentEntry.tabTitle, recentObject: recentEntry, type: recentEntry.type/*, _baseStyle: 'OBNavBarComponentMenuItemCell'*/};

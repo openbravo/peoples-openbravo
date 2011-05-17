@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,9 +39,9 @@ test('Create Canvas' , function(){
 
   ok(typeof canvas !== 'undefined', 'Canvas created');
 
-  ok(function(c){
+  ok((function(c){
        return c.height !== 0 && c.width !== 0;
-     }(canvas), 'Canvas height and width are not zero');
+     }(canvas)), 'Canvas height and width are not zero');
 
   ok(isc.Log.getStackTrace() !== undefined, 'getStackTrace()');
 });

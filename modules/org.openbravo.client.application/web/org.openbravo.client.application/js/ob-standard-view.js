@@ -483,18 +483,18 @@ isc.OBStandardView.addProperties({
     var qIndex = url.indexOf('?');
     var dIndex = url.indexOf('#');
     var index = -1;
-    if (dIndex != -1 && qIndex != -1) {
+    if (dIndex !== -1 && qIndex !== -1) {
       if (dIndex < qIndex) {
         index = dIndex;
       } else {
         index = qIndex;
       }
-    } else if (qIndex != -1) {
+    } else if (qIndex !== -1) {
       index = qIndex;
-    } else if (dIndex != -1) {
+    } else if (dIndex !== -1) {
       index = dIndex;
     }
-    if (index != -1) {
+    if (index !== -1) {
       url = url.substring(0, index);
     }
     
@@ -759,10 +759,11 @@ isc.OBStandardView.addProperties({
     // set this at false at the end
     this.refreshContents = false;
   },
-  
+
   refreshChildViews: function() {
+    var i;
     if (this.childTabSet) {
-      for (var i = 0; i < this.childTabSet.tabs.length; i++) {
+      for (i = 0; i < this.childTabSet.tabs.length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
         // force a refresh, only the visible ones will really 
         // be refreshed
@@ -1020,55 +1021,55 @@ isc.OBStandardView.addProperties({
     this.updateTabTitle();    
     this.toolBar.updateButtonState(this.isEditingGrid || this.isShowingForm);
 
-    var tabViewPane = null;
-    
+    var tabViewPane = null, i;
+
     // refresh the tabs
     if (this.childTabSet && (differentRecordId || !this.isOpenDirectModeParent)) {
-      for (var i = 0; i < this.childTabSet.tabs.length; i++) {
+      for (i = 0; i < this.childTabSet.tabs.length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
-        
+
         if (!selectedRecordId || !this.isOpenDirectModeParent || selectedRecordId !== tabViewPane.parentRecordId) {
           tabViewPane.doRefreshContents(true); 
         }
       }
     }
     delete this.isOpenDirectModeParent;
-    
+
     // and recompute the count:
     this.updateChildCount();
   },
-  
+
   hasSelectionStateChanged: function() {
     return ((this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length !== this.lastRecordSelectedCount) || 
         (this.viewGrid.getSelectedRecord() && this.viewGrid.getSelectedRecord().id !== this.lastRecordSelected.id)) || 
       (this.lastRecordSelected && !this.viewGrid.getSelectedRecord());
   },
-  
+
   updateLastSelectedState: function() {
     this.lastRecordSelectedCount = this.viewGrid.getSelectedRecords().length;
     this.lastRecordSelected = this.viewGrid.getSelectedRecord(); 
   },
-    
+
   getParentId: function(){
     var parentRecord = this.getParentRecord();
     if (parentRecord) {
       return parentRecord.id;
     }
   },
-  
+
   getParentRecord: function(){
     if (!this.parentView || !this.parentView.viewGrid.getSelectedRecords() || this.parentView.viewGrid.getSelectedRecords().length !== 1) {
       return null;
     }
-    
+
     // a new parent is not a real parent
     if (this.parentView.viewGrid.getSelectedRecord()._new) {
       return null;
     }
-    
+
     return this.parentView.viewGrid.getSelectedRecord();
   },
-  
+
   updateChildCount: function(){
     // note disabled for now
     if (true) {
@@ -1080,12 +1081,12 @@ isc.OBStandardView.addProperties({
     if (this.viewGrid.getSelectedRecords().length !== 1) {
       return;
     }
-    
-    var infoByTab = [], tabInfo, childView, data = {}, me = this, callback;
-    
+
+    var infoByTab = [], tabInfo, childView, data = {}, me = this, callback, i;
+
     data.parentId = this.getParentId();
-    
-    for (var i = 0; i < this.childTabSet.tabs.length; i++) {
+
+    for (i = 0; i < this.childTabSet.tabs.length; i++) {
       tabInfo = {};
       childView = this.childTabSet.tabs[i].pane;
       tabInfo.parentProperty = childView.parentProperty;
@@ -1101,12 +1102,12 @@ isc.OBStandardView.addProperties({
     // walks through the tabs and sets the title
     callback = function(resp, data, req){
       var tab, tabPane;
-      var tabInfos = data.result;
+      var tabInfos = data.result, i;
       if (!tabInfos || tabInfos.length !== me.childTabSet.tabs.length) {
         // error, something has changed
         return;
       }
-      for (var i = 0; i < me.childTabSet.tabs.length; i++) {
+      for (i = 0; i < me.childTabSet.tabs.length; i++) {
         childView = me.childTabSet.tabs[i].pane;
         tab = me.childTabSet.getTab(i);
         if (childView.tabId === tabInfos[i].tabId) {
@@ -1362,7 +1363,7 @@ isc.OBStandardView.addProperties({
     
     var callback = function(ok){
       var i, data, deleteData, error, recordInfos = [], removeCallBack = function(resp, data, req){
-        var localData = resp.dataObject || resp.data || data;
+        var localData = resp.dataObject || resp.data || data, i;
         if (!localData) {
           // bail out, an error occured which should be displayed to the user now
           return;
@@ -1381,7 +1382,7 @@ isc.OBStandardView.addProperties({
           view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [deleteCount]));
           if (deleteData) {
             // deleteData is computed below
-            for (var i = 0 ; i < deleteData.ids.length; i++) {
+            for (i = 0 ; i < deleteData.ids.length; i++) {
               recordInfos.push({id: deleteData.ids[i]});
             }
             view.viewGrid.data.handleUpdate('remove', recordInfos);
@@ -1536,8 +1537,8 @@ isc.OBStandardView.addProperties({
   },
   
   getPropertyFromColumnName: function(columnName){
-    var length = this.view.propertyToColumns.length;
-    for (var i = 0; i < length; i++) {
+    var length = this.view.propertyToColumns.length, i;
+    for (i = 0; i < length; i++) {
       var propDef = this.view.propertyToColumns[i];
       if (propDef.dbColumn === columnName) {
         return propDef.property;
@@ -1547,8 +1548,8 @@ isc.OBStandardView.addProperties({
   },
   
   getPropertyFromDBColumnName: function(columnName){
-    var length = this.propertyToColumns.length;
-    for (var i = 0; i < length; i++) {
+    var length = this.propertyToColumns.length, i;
+    for (i = 0; i < length; i++) {
       var propDef = this.propertyToColumns[i];
       if (propDef.dbColumn === columnName) {
         return propDef.property;
@@ -1558,8 +1559,8 @@ isc.OBStandardView.addProperties({
   },
   
   getPropertyDefinitionFromInpColumnName: function(columnName){
-    var length = this.propertyToColumns.length;
-    for (var i = 0; i < length; i++) {
+    var length = this.propertyToColumns.length, i;
+    for (i = 0; i < length; i++) {
       var propDef = this.propertyToColumns[i];
       if (propDef.inpColumn === columnName) {
         return propDef;
@@ -1606,7 +1607,7 @@ isc.OBStandardView.addProperties({
       component = this.viewGrid;
     }
     
-    var properties = this.propertyToColumns;
+    var properties = this.propertyToColumns, i, p;
     
     if (record) {
     
@@ -1616,7 +1617,7 @@ isc.OBStandardView.addProperties({
         record[OB.Constants.ID] = this.viewGrid.getSelectedRecord()[OB.Constants.ID];
       }
       
-      for (var i = 0; i < properties.length; i++) {
+      for (i = 0; i < properties.length; i++) {
         propertyObj = properties[i];
         value = record[propertyObj.property];
         field = component.getField(propertyObj.property);
@@ -1642,7 +1643,7 @@ isc.OBStandardView.addProperties({
       }
       
       if (!onlySessionProperties){
-        for (var p in this.standardProperties){
+        for (p in this.standardProperties){
           if (this.standardProperties.hasOwnProperty(p)){
             if (classicMode) {
               contextInfo[p] = this.convertContextValue(this.standardProperties[p]);
@@ -1692,8 +1693,8 @@ isc.OBStandardView.addProperties({
   },
   
   getPropertyDefinition: function(property) {
-    var properties = this.propertyToColumns;
-    for (var i = 0; i < properties.length; i++) {
+    var properties = this.propertyToColumns, i;
+    for (i = 0; i < properties.length; i++) {
       if (property === properties[i].property) {
         return properties[i];
       }

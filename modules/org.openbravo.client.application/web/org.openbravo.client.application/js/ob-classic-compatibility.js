@@ -109,8 +109,8 @@
             if (field.selectedIndex === -1) {
               return result;
             } else {
-              var length = field.options.length;
-              for (var fieldsCount = 0; fieldsCount < length; fieldsCount++) {
+              var length = field.options.length, fieldsCount;
+              for (fieldsCount = 0; fieldsCount < length; fieldsCount++) {
                 if (field.options[fieldsCount].selected) {
                   result.name = name;
                   result.value = field.options[fieldsCount].value;
@@ -129,8 +129,8 @@
                 return result;
               }
             } else {
-              var total = field.length;
-              for (var i = 0; i < total; i++) {
+              var total = field.length, i;
+              for (i = 0; i < total; i++) {
                 if (field[i].checked) {
                   result.name = name;
                   result.value = field[i].value;
@@ -144,20 +144,21 @@
             return result;
           }
         }
-        
+
         return result;
       }
-      
+
       //
       // Returns a JSON of all the form fields. Also adds Command and IsAjaxCall
       // parameters to communicate with the classic OB class
       //
       function getXHRParamsObj(/* String */action, /* Object */ formObject){
-        var paramsObj = {};
+        var paramsObj = {}, i;
+
         paramsObj.Command = action;
         paramsObj.IsAjaxCall = '1';
 
-        for (var i = 0; i < formObject.elements.length; i++) {
+        for (i = 0; i < formObject.elements.length; i++) {
           if (formObject.elements[i].type) {
           var param =  inputValueForms(formObject.elements[i].name, formObject.elements[i]);
 
@@ -221,21 +222,22 @@
       if (tabNumber === null) {
         return false;
       }
-      
+
       tabPane = tabSet.getTabPane(tabNumber);
-      
+
       tabSet.setTabTitle(tabNumber, title);
       tabPane.updateTabInformation(windowId, tabId, recordId, mode, obManualURL, title);
     },
-    
+
     Keyboard: {
       getMDIKS: function(){
-        var key, auxKey, action, funcParam, keyMap;
-        var ClassicKeyJSON = [];
-        var LKS = O.KeyboardManager.KS;
-        for (var i = 0; i < LKS.list.length; i++) {
+        var key, auxKey, action, funcParam, keyMap,
+            ClassicKeyJSON = [],
+            LKS = O.KeyboardManager.KS, i;
+
+        for (i = 0; i < LKS.list.length; i++) {
           auxKey = '';
-          
+
           if (LKS.list[i].keyComb.ctrl === true) {
             auxKey = auxKey + 'ctrlKey';
           }
@@ -248,13 +250,13 @@
           if (LKS.list[i].keyComb.key !== null) {
             key = LKS.list[i].keyComb.key;
           }
-          
+
           action = LKS.list[i].action;
           funcParam = LKS.list[i].funcParam;
-          
+
           // Special keys nomenclature adaptation from Smartclient way to
           // classic utils.js way
-          
+
           keyMap = {
             'Backspace': 'BACKSPACE',
             'Tab': 'TAB',
@@ -286,9 +288,9 @@
             'f11': 'F11',
             'f12': 'F12'
           };
-          
+
           key = keyMap[key] || key;
-          
+
           ClassicKeyJSON.push({
             'key': key,
             'auxKey': auxKey,
@@ -296,18 +298,18 @@
             'funcParam': funcParam
           });
         }
-        
+
         return ClassicKeyJSON;
       },
-      
+
       executeKSFunction: function(func, funcParam){
         func(funcParam);
       }
     },
-    
+
     Popup: {
       secString: 'dbXE8hjGuKyMefVf',
-      
+
       // ** {{{ Popup.open(name, width, height, url, title, theOpener) }}} **
       //
       // Shows a new popup with content
@@ -396,10 +398,10 @@
           } else {
             // Create a form and POST parameters as input hidden values
             var doc = cPopup.getIframeHtmlObj().contentWindow.frames[0].document,
-                frm = doc.createElement('form');
+                frm = doc.createElement('form'), i;
             frm.setAttribute('method','post');
             frm.setAttribute('action', cPopup.popupURL);
-            for (var i in postParams) {
+            for (i in postParams) {
               if (postParams.hasOwnProperty(i)){
                 var inp = doc.createElement('input');
                 inp.setAttribute('type', 'hidden');
@@ -490,7 +492,7 @@
       openHeartbeat: function(){
         cobcomp.Popup.open('Heartbeat', 600, 500, OB.Application.contextUrl + 'ad_forms/Heartbeat.html', '', window, false, false, true);
       },
-      
+
       // ** {{{ Popup.openRegistration() }}} **
       //
       // Opens directly the "Registration" window inside a popup
@@ -499,7 +501,7 @@
       }
     }
   };
-  
+
   // Initialize ClassicOBCompatibility object
   cobcomp = L.ClassicOBCompatibility = new ClassicOBCompatibility();
-})(OB, isc);
+}(OB, isc));

@@ -64,8 +64,8 @@ isc.OBViewDataSource.addProperties({
     // only update the values of the record itself but not of any referenced 
     // entity
     if (operationType === 'update' || operationType === 'add') {
-      var correctedData = {};
-      for (var prop in data) {
+      var correctedData = {}, prop;
+      for (prop in data) {
         if (data.hasOwnProperty(prop) && !prop.contains('.')) {
           correctedData[prop] = data[prop];
         }
@@ -109,13 +109,14 @@ isc.OBViewDataSource.addProperties({
     }
     this.Super('performDSOperation', [operationType, data, callback, newRequestProperties]);
   },
-  
+
   getAdditionalProps: function() {
+    var prop;
     if (this.additionalProps !== null) {
       return this.additionalProps;
     }
     this.additionalProps = "";
-    for (var prop in this.getFields()) {
+    for (prop in this.getFields()) {
       if (this.getFields().hasOwnProperty(prop)) {
         var fld = this.getFields()[prop];
         if (fld.additional) {
@@ -123,12 +124,12 @@ isc.OBViewDataSource.addProperties({
             this.additionalProps += ",";
           }
           this.additionalProps += fld.name;
-        }        
+        }
       }
     }
     return this.additionalProps;
   },
-  
+
   // do special id-handling so that we can replace the old if with the new
   // id
   // in the correct way, see the ob-view-grid.js editComplete method

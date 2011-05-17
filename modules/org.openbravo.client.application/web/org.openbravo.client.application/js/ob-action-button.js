@@ -43,7 +43,7 @@ isc.OBToolbarActionButton.addProperties( {
   },
   
   doAction: function(){
-    var theView = this.contextView;
+    var theView = this.contextView, param;
 
     var allProperties = theView.getContextInfo(false, true, false, true);
     var sessionProperties = theView.getContextInfo(true, true, false, true);

@@ -70,11 +70,12 @@
     },
 
     _notify : function(rpcResponse, data, rpcRequest) {
+      var i;
       // store info for new listeners
       OB.AlertManager.lastResponse = rpcResponse;
       OB.AlertManager.lastData = data;
       OB.AlertManager.lastRequest = rpcRequest;
-      for ( var i = 0; i < OB.AlertManager.listeners.length; i++) {
+      for (i = 0; i < OB.AlertManager.listeners.length; i++) {
         OB.AlertManager.listeners[i](rpcResponse, data, rpcRequest);
       }
       isc.Timer.setTimeout(OB.AlertManager.call, OB.AlertManager.delay);
@@ -93,7 +94,7 @@
 
   // call it ones to update the pings and start the timer
   OB.AlertManager.call();
-})(OB, isc);
+}(OB, isc));
 
 isc.ClassFactory.defineClass('OBAlertIcon', isc.ImgButton);
 

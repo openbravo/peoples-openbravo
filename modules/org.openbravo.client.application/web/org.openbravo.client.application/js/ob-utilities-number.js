@@ -172,9 +172,9 @@ OB.Utilities.Number.OBPlainToOBMasked = function(/* Number */number, /* String *
   }
   
   if (decNumber.length < decMask.length) {
-    var decNumber_temp = '';
-    var decMaskLength = decMask.length;
-    for (var i = 0; i < decMaskLength; i++) {
+    var decNumber_temp = '',
+        decMaskLength = decMask.length, i;
+    for (i = 0; i < decMaskLength; i++) {
       if (decMask.substring(i, i + 1) === '#') {
         if (decNumber.substring(i, i + 1) !== '') {
           decNumber_temp = decNumber_temp + decNumber.substring(i, i + 1);
@@ -196,15 +196,15 @@ OB.Utilities.Number.OBPlainToOBMasked = function(/* Number */number, /* String *
   if (intMask.indexOf(groupSeparator) !== -1) {
     isGroup = true;
   }
-  
+
   var groupRegExp = new RegExp('\\' + groupSeparator, 'g');
   intMask = intMask.replace(groupRegExp, '');
-  
+
   var intNumber_temp;
   if (intNumber.length < intMask.length) {
     intNumber_temp = '';
-    var diff = intMask.length - intNumber.length;
-    for (var j = intMask.length; j > 0; j--) {
+    var diff = intMask.length - intNumber.length, j;
+    for (j = intMask.length; j > 0; j--) {
       if (intMask.substring(j - 1, j) === '#') {
         if (intNumber.substring(j - 1 - diff, j - diff) !== '') {
           intNumber_temp = intNumber.substring(j - 1 - diff, j - diff) +
@@ -221,11 +221,11 @@ OB.Utilities.Number.OBPlainToOBMasked = function(/* Number */number, /* String *
     }
     intNumber = intNumber_temp;
   }
-  
+
   if (isGroup === true) {
     intNumber_temp = '';
-    var groupCounter = 0;
-    for (var k = intNumber.length; k > 0; k--) {
+    var groupCounter = 0, k;
+    for (k = intNumber.length; k > 0; k--) {
       intNumber_temp = intNumber.substring(k - 1, k) + intNumber_temp;
       groupCounter++;
       if (groupCounter.toString() === groupInterval.toString() &&

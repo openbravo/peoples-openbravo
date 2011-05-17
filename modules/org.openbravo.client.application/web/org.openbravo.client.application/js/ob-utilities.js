@@ -198,8 +198,8 @@ OB.Utilities.callAction = function(action){
     
     object.customApplyMethod = method;
     
-    var argsString = [];
-    for (var i = 0; i < parameters.length; i++) {
+    var argsString = [], i;
+    for (i = 0; i < parameters.length; i++) {
       argsString[i] = 'parameters[' + i + ']';
     }
     
@@ -228,8 +228,9 @@ OB.Utilities.callAction = function(action){
 
 // ** {{{OB.Utilities.replaceNullStringValue}}} **
 // Replaces values which are 'null' with null
-OB.Utilities.replaceNullStringValue = function(form, values){
-  for (var prop in values) {
+OB.Utilities.replaceNullStringValue = function(form, values) {
+  var prop;
+  for (prop in values) {
     if (values.hasOwnProperty(prop)) {
       var value = values[prop];
       if (value === 'null') {
@@ -382,11 +383,11 @@ OB.Utilities.openDirectView = function(sourceWindowId, keyColumn, targetEntity, 
 // ** {{{OB.Utilities.getPromptString}}} **
 // Translates a string or array of strings to a string with html returns.
 OB.Utilities.getPromptString = function(msg){
-  var msgString = '';
+  var msgString = '', i;
   if (!isc.isAn.Array(msg)) {
     msg = [msg];
   }
-  for (var i = 0; i < msg.length; i++) {
+  for (i = 0; i < msg.length; i++) {
     msgString += (i > 0 ? '<br>' : '') + msg[i].asHTML();
   }
   return msgString;
@@ -396,9 +397,9 @@ OB.Utilities.getPromptString = function(msg){
 // where no & is used for character encoding, this is fine for most cases.
 OB.Utilities.getUrlParameters = function(href){
   href = href || window.location.href;
-  var vars = {}, hash, hashes = href.slice(href.indexOf('?') + 1).split('&');
-  
-  for (var i = 0; i < hashes.length; i++) {
+  var vars = {}, hash, hashes = href.slice(href.indexOf('?') + 1).split('&'), i;
+
+  for (i = 0; i < hashes.length; i++) {
     hash = hashes[i].split('=');
     if (hash[i] && hash[i].contains('#')) {
       hash[i] = hash[i].substring(0, hash[i].indexOf('#'));
@@ -466,13 +467,13 @@ OB.Utilities.openProcessPopup = function(/* String */url, noFrameSet, postParams
     '<frame name="hiddenFrame" scrolling="no" noresize="" src=""></frame>' +
     '</frameset>' +
     '</html>';
-    
+
     winPopUp.document.write(html);
     if (postParams) {
-      var doc = winPopUp.frames[1].document, frm = doc.createElement('form');
+      var doc = winPopUp.frames[1].document, frm = doc.createElement('form'), i;
       frm.setAttribute('method', 'post');
       frm.setAttribute('action', url);
-      for (var i in postParams) {
+      for (i in postParams) {
         if (postParams.hasOwnProperty(i)) {
           var inp = winPopUp.document.createElement('input');
           inp.setAttribute('type', 'hidden');
@@ -645,10 +646,10 @@ OB.Utilities.getClassicValue = function(/* Boolean */value){
 // * {{{defaultValues}}}: the default values to set in the fields object (if the
 // property is not set in the fields object).
 OB.Utilities.applyDefaultValues = function(/* Object */fields, /* Object */ defaultValues){
-  var fieldsLength = fields.length;
-  for (var i = 0; i < fieldsLength; i++) {
+  var fieldsLength = fields.length, i, property;
+  for (i = 0; i < fieldsLength; i++) {
     var field = fields[i];
-    for (var property in defaultValues) {
+    for (property in defaultValues) {
       if (defaultValues.hasOwnProperty(property)) {
         if (!field[property] && field[property] !== false) {
           field[property] = defaultValues[property];
@@ -696,15 +697,16 @@ OB.Utilities.addFormInputsToCriteria = function(/* Object */criteria, /* Window 
 // * {{{url}}}: the url to post the request.
 // * {{{data}}}: the data to include in the request.
 
-OB.Utilities.postThroughHiddenForm = function(url, data){
+OB.Utilities.postThroughHiddenForm = function(url, data) {
+  var key;
   OB.GlobalHiddenForm.setAttribute('action', url);
-  
+
   // remove all children, needs to be done like this as the 
   // children array is getting updated while removing a child  
   while (OB.GlobalHiddenForm.children[0]) {
     OB.GlobalHiddenForm.removeChild(OB.GlobalHiddenForm.children[0]);
   }
-  
+
   var encodeProperties = {
     // prevents timezone issues
     encodeDate: function(dt) {
@@ -712,11 +714,11 @@ OB.Utilities.postThroughHiddenForm = function(url, data){
       isc.Comm.xmlSchemaMode = true;
       ret = dt.toSerializeableDate();
       isc.Comm.xmlSchemaMode = oldXMLSchemaMode;
-      return '"' + ret + '"';      
+      return '"' + ret + '"';
     }
   };
-  
-  for (var key in data) {
+
+  for (key in data) {
     if (data.hasOwnProperty(key)) {
       var field = document.createElement('input');
       field.setAttribute('type', 'hidden');
@@ -729,7 +731,7 @@ OB.Utilities.postThroughHiddenForm = function(url, data){
       OB.GlobalHiddenForm.appendChild(field);
     }
   }
-  
+
   OB.GlobalHiddenForm.submit();
 };
 

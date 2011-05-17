@@ -97,7 +97,8 @@ isc.OBStandardWindow.addProperties({
   },
   
   // set window specific user settings, purposely set on class level
-  setWindowSettings: function(data){
+  setWindowSettings: function(data) {
+    var i;
     if (this.getClass().windowSettingsRead) {
       return;
     }
@@ -105,26 +106,25 @@ isc.OBStandardWindow.addProperties({
     this.getClass().uiPattern = data.uiPattern;
     this.getClass().autoSave = data.autoSave;
     // set the views to readonly
-    for (var i = 0; i < this.views.length; i++) {
+    for (i = 0; i < this.views.length; i++) {
       this.views[i].setReadOnly(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_READONLY);
       this.views[i].setSingleRecord(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_SINGLERECORD);
-      
       this.views[i].toolBar.updateButtonState(true);
     }
   },
-  
+
   isAutoSaveEnabled: function(){
     return this.getClass().autoSave;
   },
-  
+
   isDirty: function() {
     return this.dirtyEditForm;
   },
-  
+
   getDirtyEditForm: function() {
     return this.dirtyEditForm;
   },
-  
+
   setDirtyEditForm: function (editObject) {
     this.dirtyEditForm = editObject;
     if (!editObject) {
@@ -135,15 +135,15 @@ isc.OBStandardWindow.addProperties({
   autoSave: function() {
     this.doActionAfterAutoSave(null, true);
   },
-  
+
   doActionAfterAutoSave: function(action, forceDialogOnFailure, ignoreAutoSaveEnabled) {
     // if not dirty or we know that the object has errors
     if (!this.isDirty() || (this.getDirtyEditForm() && this.getDirtyEditForm().hasErrors())) {
-      
+
       // clean up before calling the action, as the action
       // can set dirty form again
       this.cleanUpAutoSaveProperties();
-      
+
       // nothing to do, execute immediately
       OB.Utilities.callAction(action);
       return;
@@ -152,12 +152,12 @@ isc.OBStandardWindow.addProperties({
     if (action) {
       this.autoSaveAction = action;
     }
-    
+
     // saving stuff already, go away
     if (this.isAutoSaving) {
       return;
     }
-    
+
     if (!this.isAutoSaveEnabled() && !ignoreAutoSaveEnabled) {
       this.autoSaveConfirmAction();
       return;
@@ -167,7 +167,7 @@ isc.OBStandardWindow.addProperties({
     this.forceDialogOnFailure = forceDialogOnFailure;
     this.getDirtyEditForm().autoSave();
   },
-  
+
   callAutoSaveAction: function() {
     var action = this.autoSaveAction;
     this.cleanUpAutoSaveProperties();
@@ -183,13 +183,13 @@ isc.OBStandardWindow.addProperties({
     delete this.autoSaveAction;
     delete this.forceDialogOnFailure;
   },
-  
+
   autoSaveDone: function(view, success) {
     if (!this.isAutoSaving) {
       this.cleanUpAutoSaveProperties();
       return;
     }
-    
+
     if (success) {
       this.callAutoSaveAction();
     } else if (!view.isVisible() || this.forceDialogOnFailure) {
@@ -289,12 +289,12 @@ isc.OBStandardWindow.addProperties({
     this.setFocusInView();
     return ret;
   },
-  
+
   draw: function(){
-    var standardWindow = this, targetEntity;
-    var ret = this.Super('draw', arguments);
+    var standardWindow = this, targetEntity,
+        ret = this.Super('draw', arguments), i;
     if (this.targetTabId) {
-      for (var i = 0; i < this.views.length; i++) {
+      for (i = 0; i < this.views.length; i++) {
         if (this.views[i].tabId === this.targetTabId) {
           targetEntity = this.views[i].entity;
           this.views[i].viewGrid.targetRecordId = this.targetRecordId;
@@ -394,20 +394,20 @@ isc.OBStandardWindow.addProperties({
     }
     return this.isEqualParams(params) && viewName === this.getClassName();
   },
-  
+
   setTargetInformation: function(tabId, recordId) {
     this.targetTabId = tabId;
     this.targetRecordId = recordId;
     OB.Layout.HistoryManager.updateHistory();
   },
-  
+
   storeViewState: function(){
-	var result={};
-    for (var i = 0; i < this.views.length; i++) {
+    var result = {}, i;
+    for (i = 0; i < this.views.length; i++) {
       if(this.views[i].viewGrid){
         result[this.views[i].tabId]=this.views[i].viewGrid.getViewState();
       }
     }
-	OB.PropertyStore.set('OBUIAPP_GridConfiguration', result, this.windowId);
+    OB.PropertyStore.set('OBUIAPP_GridConfiguration', result, this.windowId);
   }
 });

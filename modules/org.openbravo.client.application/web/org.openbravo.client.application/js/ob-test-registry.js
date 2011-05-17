@@ -30,7 +30,7 @@
       message: 'openbravo and isc objects are required'
     };
   }
-  
+
   var fullUrl = parent.document.URL;
   var queryString = fullUrl.substring(fullUrl.indexOf('?') + 1, fullUrl.length);
   var isTestEnvironment = queryString.indexOf('test=true') !== -1;
@@ -39,14 +39,14 @@
   } else {
     isc.Log.logDebug('No Test Environment, registering test components disabled', 'OB');
   }
-  
+
   function TestRegistry(){
   }
-  
+
   TestRegistry.prototype = {
-  
+
     registry: {},
-    
+
     register: function(key, object){
       if (true || isTestEnvironment) {
         isc.Log.logDebug('Registering ' + key + ' in test registry ', 'OB');
@@ -54,6 +54,6 @@
       }
     }
   };
-  
+
   OB.TestRegistry = new TestRegistry();
-})(OB, isc);
+}(OB, isc));

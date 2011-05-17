@@ -232,8 +232,8 @@ isc.OBToolbar.addClassProperties({
   },
   ATTACHMENTS_BUTTON_PROPERTIES: {
     action: function(){
-      var selectedRows = this.view.viewGrid.getSelectedRecords();
-      var attachmentExists = this.view.attachmentExists;
+      var selectedRows = this.view.viewGrid.getSelectedRecords(),
+          attachmentExists = this.view.attachmentExists, i;
       if(this.view.isShowingForm){
           this.view.viewForm.getItem('_attachments_').expandSection();
         this.view.viewForm.scrollToBottom();
@@ -247,7 +247,7 @@ isc.OBToolbar.addClassProperties({
           this.view.editRecord(selectedRows[0]);
         } else {
           var recordIds = "";
-          for(var i=0; i<selectedRows.size(); i++){
+          for(i=0; i<selectedRows.size(); i++){
             if(i>0){
               recordIds = recordIds + ",";  
             }
@@ -291,17 +291,17 @@ isc.OBToolbar.addClassProperties({
           button: this
         });
 
-      	var submitbutton = isc.Button.create({
-      		title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit'),
-      		theForm: form,
-      		click: function(){
-      		  var form = this.theForm;
-      		  form.button.customState = 'Progress';
-      		  form.button.resetBaseStyle();
-      		  form.submitForm();
+        var submitbutton = isc.Button.create({
+            title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit'),
+            theForm: form,
+            click: function(){
+              var form = this.theForm;
+              form.button.customState = 'Progress';
+              form.button.resetBaseStyle();
+              form.submitForm();
               popup.hide();
             }
-      	});
+        });
         this.oldForm = form;
         var horizontalLayout = isc.HLayout.create({
           width: '100%',
@@ -958,14 +958,15 @@ isc.OBToolbar.addProperties({
     }
     return;
   },
-  
+
   // ** {{{ refreshCustomButtons }}} **
   //
   // Refreshes all the custom buttons in the toolbar based on current record selection
   //
   refreshCustomButtons: function(noSetSession){
-    function doRefresh(buttons, currentValues, hideAllButtons, me){
-      for (var i = 0; i < buttons.length; i++) {
+    function doRefresh(buttons, currentValues, hideAllButtons, me) {
+      var i;
+      for (i = 0; i < buttons.length; i++) {
         if (buttons[i].updateState) {
           me.defineRightMembersShortcuts();
           buttons[i].updateState(currentValues, hideAllButtons);
@@ -978,9 +979,9 @@ isc.OBToolbar.addProperties({
         }
       }
     }
-    
+
     var buttons = this.getRightMembers(), buttonContexts = [], currentContext, buttonsByContext = [];
-    for (var i = 0; i < buttons.length; i++) {
+    for (i = 0; i < buttons.length; i++) {
       if (!currentContext || currentContext !== buttons[i].contextView) {
         // Adding new context
         currentContext = buttons[i].contextView;
@@ -988,21 +989,21 @@ isc.OBToolbar.addProperties({
         buttonsByContext[currentContext] = [];
       }
       buttonsByContext[currentContext].push(buttons[i]);
-    }    
-    
+    }
+
     var iButtonContext;
-    
+
     // This is needed to prevent JSLint complaining about "Don't make functions within a loop.
     var callbackHandler = function (currentContext, me) {
       return function(response, data, request) {
-        var sessionAttributes = data.sessionAttributes, auxInputs = data.auxiliaryInputValues, attachmentExists = data.attachmentExists;
+        var sessionAttributes = data.sessionAttributes, auxInputs = data.auxiliaryInputValues, attachmentExists = data.attachmentExists, prop;
         if (sessionAttributes) {
           currentContext.viewForm.sessionAttributes = sessionAttributes;
         }
-        
+
         if (auxInputs) {
           this.auxInputs = {};
-          for (var prop in auxInputs) {
+          for (prop in auxInputs) {
             if (auxInputs.hasOwnProperty(prop)) {
               currentContext.viewForm.setValue(prop, auxInputs[prop].value);
               currentContext.viewForm.auxInputs[prop] = auxInputs[prop].value;
@@ -1013,19 +1014,19 @@ isc.OBToolbar.addProperties({
         doRefresh(buttonsByContext[currentContext], currentValues || {}, noneOrMultipleRecordsSelected, me);
       };
     };
-      
-      
+
+
     for (iButtonContext = 0; iButtonContext < buttonContexts.length; iButtonContext++) {
       currentContext = buttonContexts[iButtonContext];
       var numOfSelRecords = 0, 
           isNew = currentContext.viewForm.isNew, 
           hideAllButtons = typeof(isNew) !== 'undefined' && !isNew && (!currentContext.isShowingForm && (currentContext.viewGrid.getSelectedRecords().size()===0)), currentValues = currentContext.getCurrentValues();
-      
+
       var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1;
       if (currentContext.viewGrid.getSelectedRecords()) {
         numOfSelRecords = currentContext.viewGrid.getSelectedRecords().length;
       }
-      
+
       if (currentValues && !noSetSession && !currentContext.isShowingForm && !isNew && !hideAllButtons) {
         var me = this;
         // Call FIC to obtain possible session attributes and set them in form
@@ -1048,12 +1049,12 @@ isc.OBToolbar.addProperties({
       } else {
         doRefresh(buttonsByContext[currentContext], currentValues || {}, hideAllButtons || noneOrMultipleRecordsSelected, this);
       }
-    }   
-    
-    
-   
+    }
+
+
+
   },
-  
+
   visibilityChanged: function(state){
     if (state) {
       this.enableShortcuts();
@@ -1061,15 +1062,15 @@ isc.OBToolbar.addProperties({
       this.disableShortcuts();
     }
   },
-  
+
   draw: function(){
     this.Super('draw', arguments);
     this.defineRightMembersShortcuts();
     this.enableShortcuts();
   },
-  
+
   rightMembersShortcuts: [],
-  
+
   defineRightMembersShortcuts: function(){
     var i, j, k, l, id, character, position;
     function isAssignedCharacter(character, me){
@@ -1290,37 +1291,38 @@ OB.ToolbarUtils = {};
 
 OB.ToolbarUtils.print = function(view, url, directPrint){
   var selectedRecords = view.viewGrid.getSelectedRecords();
-  
+
   if (selectedRecords.length === 0) {
     view.messageBar.setMessage(OBMessageBar.TYPE_WARNING, '', OB.I18N.getLabel('OBUIAPP_PrintNoRecordSelected'));
     return;
   }
-  
-  var popupParams = 'Command=DEFAULT', allProperties = view.getContextInfo(false, true, false, true), sessionProperties = view.getContextInfo(true, true, false, true);
-  
-  for (var param in allProperties) {
+
+  var popupParams = 'Command=DEFAULT', allProperties = view.getContextInfo(false, true, false, true),
+      sessionProperties = view.getContextInfo(true, true, false, true), param, i;
+
+  for (param in allProperties) {
     if (allProperties.hasOwnProperty(param)) {
       var value = allProperties[param];
-      
+
       if (typeof value === 'boolean') {
         value = value ? 'Y' : 'N';
       }
-      
+
       popupParams += '&' + param + '=' + value;
     }
   }
-  
+
   popupParams += '&inppdfpath=' + url;
   popupParams += '&inphiddenkey=' + view.standardProperties.inpKeyName;
   popupParams += '&inpdirectprint=' + (directPrint ? 'Y' : 'N');
-  
+
   var selectedIds = '';
-  for (var i = 0; i < selectedRecords.length; i++) {
+  for (i = 0; i < selectedRecords.length; i++) {
     selectedIds += (i > 0 ? ',' : '') + selectedRecords[i].id;
   }
-  
+
   popupParams += '&inphiddenvalue=' + selectedIds;
-  
+
   view.setContextInfo(sessionProperties, function(){
     OB.Layout.ClassicOBCompatibility.Popup.open('print', 0, 0, OB.Application.contextUrl + 'businessUtility/PrinterReports.html?' + popupParams, '', window, false, false, true);
   });
@@ -1328,7 +1330,7 @@ OB.ToolbarUtils.print = function(view, url, directPrint){
 
 OB.ToolbarUtils.showAuditTrail = function(view){
   var selectedRecords = view.viewGrid.getSelectedRecords();
-  
+
   if (selectedRecords.length > 1) {
     var setWarning = {
       set: function(label){
@@ -1338,15 +1340,15 @@ OB.ToolbarUtils.showAuditTrail = function(view){
     OB.I18N.getLabel('JS28', null, setWarning, 'set');
     return;
   }
-  
+
   var popupParams = 'Command=POPUP_HISTORY';
   popupParams += '&inpTabId=' + view.tabId;
   popupParams += '&inpTableId=' + view.standardProperties.inpTableId;
-  
+
   if (view.viewGrid.getSelectedRecord()) {
     popupParams += '&inpRecordId=' + view.viewGrid.getSelectedRecord().id;
   }
-  
+
   OB.Layout.ClassicOBCompatibility.Popup.open('audit', 900, 600, OB.Application.contextUrl + 'businessUtility/AuditTrail.html?' + popupParams, '', window, false, false, true);
 };
 

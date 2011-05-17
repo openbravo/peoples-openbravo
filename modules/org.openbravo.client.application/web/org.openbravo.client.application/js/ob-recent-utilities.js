@@ -94,8 +94,8 @@
       }
       var currentRecentValue = this.getRecentValue(propertyName);
       // check if there is already an entry for the new recent
-      var currentIndex = -1;
-      for (var i = 0; i < currentRecentValue.length; i++) {
+      var currentIndex = -1, i;
+      for (i = 0; i < currentRecentValue.length; i++) {
         // if the title is the same then assume they are the same, only 
         // check this if there is no recentId being used
         if (!currentRecentValue[i].recentId && currentRecentValue[i].tabTitle && 
@@ -136,4 +136,4 @@
   // Initialize RemoteCallManager object
   rcutils = OB.RecentUtilities = new RecentUtilities();
   OB.RecentUtilitiesClass = RecentUtilities;
-})(OB, isc);
+}(OB, isc));

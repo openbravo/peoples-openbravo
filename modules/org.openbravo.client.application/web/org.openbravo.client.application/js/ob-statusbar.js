@@ -141,12 +141,12 @@ isc.OBStatusBar.addProperties( {
     });
     var buttonSpacer = isc.HLayout.create( {
       width : this.iconButtonGroupSpacerWidth
-    });
-    var buttonBar = isc.OBStatusBarIconButtonBar.create( {});
+    }),
+    buttonBar = isc.OBStatusBarIconButtonBar.create( {}), i;
 
     buttonBar.addMembers( [ this.previousButton, this.nextButton, buttonSpacer,
         this.maximizeButton, this.restoreButton, this.closeButton ]);
-    for ( var i = 0; i < buttonBar.members.length; i++) {
+    for (i = 0; i < buttonBar.members.length; i++) {
       if (buttonBar.members[i].buttonType) {
         OB.TestRegistry.register(
             'org.openbravo.client.application.statusbar.button.' + buttonBar.members[i].buttonType + '.' + this.view.tabId,

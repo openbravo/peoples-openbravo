@@ -81,4 +81,4 @@
   
   OB.EventHandler = new EventHandler();
   isc.Page.setEvent(isc.EH.MOUSE_DOWN, OB.EventHandler, null, 'mouseDown');
-})(OB, isc);
+}(OB, isc));

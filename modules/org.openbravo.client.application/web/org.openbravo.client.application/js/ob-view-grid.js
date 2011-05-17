@@ -174,18 +174,20 @@ isc.OBViewGrid.addProperties({
 
       return this.Super('fetchRemoteData', arguments);
     },
-    
+
     clearLoadingMarkers: function(start, end) {
+      var j;
       if (this.localData) {
-        for (var j = start; j < end; j++) { 
+        for (j = start; j < end; j++) { 
           if (Array.isLoading(this.localData[j])) {
             this.localData[j] = null;
           }
         }
       }
     },
-    
-    transformData: function(newData, dsResponse){
+
+    transformData: function(newData, dsResponse) {
+      var i;
       // only do this stuff for fetch operations, in other cases strange things
       // happen as update/delete operations do not return the totalRows parameter
       if (dsResponse && dsResponse.context && dsResponse.context.operationType !== 'fetch') {
@@ -193,7 +195,7 @@ isc.OBViewGrid.addProperties({
       }
       // correct the length if there is already data in the localData array
       if (this.localData) {
-        for (var i = dsResponse.endRow + 1; i < this.localData.length; i++) {
+        for (i = dsResponse.endRow + 1; i < this.localData.length; i++) {
           if (!Array.isLoading(this.localData[i]) && this.localData[i]) {
             dsResponse.totalRows = i + 1;
           } else {
@@ -212,13 +214,13 @@ isc.OBViewGrid.addProperties({
       }
     }
   },
-  
+
   initWidget: function(){
     // make a copy of the dataProperties otherwise we get 
     // change results that values of one grid are copied/coming back
     // in other grids
     this.dataProperties = isc.addProperties({}, this.dataProperties);
-    
+
     var thisGrid = this, localEditLinkField;
     if (this.editGrid) {
       // add the edit pencil in the beginning
@@ -228,9 +230,9 @@ isc.OBViewGrid.addProperties({
       // is the column after the checkbox field
       this.editLinkColNum = 1;
     }
-    
+
     this.editFormDefaults = isc.addProperties({}, OB.ViewFormProperties, this.editFormDefaults);
-    
+
     // added for showing counts in the filtereditor row
     this.checkboxFieldDefaults = isc.addProperties(this.checkboxFieldDefaults, {
       canFilter: true,
@@ -245,7 +247,7 @@ isc.OBViewGrid.addProperties({
       },
       filterEditorType: 'StaticTextItem'
     });
-    
+
     var grid = this;
     var menuItems = [{
         title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
@@ -261,27 +263,19 @@ isc.OBViewGrid.addProperties({
         }
       }
     ];
-    
+
     this.contextMenu = this.getMenuConstructor().create({items: menuItems});
-    
+
     var ret = this.Super('initWidget', arguments);
-    
+
     this.noDataEmptyMessage = OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage'); // OB.I18N.getLabel('OBUIAPP_GridNoRecords')
-    // + ' <span
-    // onclick="window[\''
-    // + this.ID +
-    // '\'].createNew();"
-    // class="OBLabelLink">'
-    // +
-    // OB.I18N.getLabel('OBUIAPP_GridCreateOne')+
-    // '</span>';
     this.filterNoRecordsEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') +
     ' <span onclick="window[\'' +
     this.ID +
     '\'].clearFilter();" class="OBLabelLink">' +
     OB.I18N.getLabel('OBUIAPP_GridClearFilter') +
     '</span>';
-    
+
     return ret;
   },
 
@@ -913,10 +907,11 @@ isc.OBViewGrid.addProperties({
       this.show();
     }
   },
-  
+
   // determine which field can be autoexpanded to use extra space
-  getAutoFitExpandField: function(){
-    for (var i = 0; i < this.autoExpandFieldNames.length; i++) {
+  getAutoFitExpandField: function() {
+    var i;
+    for (i = 0; i < this.autoExpandFieldNames.length; i++) {
       var field = this.getField(this.autoExpandFieldNames[i]);
       if (field && field.name) {
         return field.name;
@@ -924,7 +919,7 @@ isc.OBViewGrid.addProperties({
     }
     return this.Super('getAutoFitExpandField', arguments);
   },
-  
+
   recordClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
     var actionObject = {
       target: this,
@@ -933,7 +928,7 @@ isc.OBViewGrid.addProperties({
     };
     this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
   },
-  
+
   recordDoubleClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
     var actionObject = {
       target: this.view,
@@ -978,7 +973,7 @@ isc.OBViewGrid.addProperties({
     var ret = this.Super('cellContextClick', arguments);
     return ret;
   },
-  
+
   makeCellContextItems: function(record, rowNum, colNum){
     var sourceWindow = this.view.standardWindow.windowId;
     var menuItems = [];
@@ -987,8 +982,8 @@ isc.OBViewGrid.addProperties({
     var field = this.getField(colNum);
     var grid = this;
     if (recordsSelected) {
-      var allSelectedHaveErrors = true;
-      for (var i = 0; i < this.getSelectedRecords().length; i++) {
+      var allSelectedHaveErrors = true, i;
+      for (i = 0; i < this.getSelectedRecords().length; i++) {
         var localRowNum = this.getRecordIndex(this.getSelectedRecords()[i]);
         if (!this.rowHasErrors(localRowNum)) {
           allSelectedHaveErrors = false;
@@ -1327,24 +1322,25 @@ isc.OBViewGrid.addProperties({
   getSelectedRecords: function(){
     return this.getSelection();
   },
-  
+
   // +++++++++++++++++ functions for grid editing +++++++++++++++++
-  
+
   startEditing: function (rowNum, colNum, suppressFocus, eCe, suppressWarning) {
+    var i;
     // if a row is set and not a col then check if we should focus in the
     // first error field
     if ((rowNum || rowNum === 0) && (!colNum && colNum !== 0) && this.rowHasErrors(rowNum))  {
-      for (var i = 0; i < this.getFields().length; i++) {
+      for (i = 0; i < this.getFields().length; i++) {
         if (this.cellHasErrors(rowNum, i)) {
          colNum = i;
          break; 
-        }        
+        }
       }
     }
     if (colNum || colNum === 0) {
       this.forceFocusColumn = this.getField(colNum).name;
     }
-    
+
     return this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
   },
 
@@ -1456,10 +1452,10 @@ isc.OBViewGrid.addProperties({
     this.view.messageBar.hide();
     this.view.refreshParentRecord();
   },
-  
+
   undoEditSelectedRows: function(){
-    var selectedRecords = this.getSelectedRecords(), toRemove = [];
-    for (var i = 0; i < selectedRecords.length; i++) {
+    var selectedRecords = this.getSelectedRecords(), toRemove = [], i;
+    for (i = 0; i < selectedRecords.length; i++) {
       var rowNum = this.getRecordIndex(selectedRecords[i]);
       var record = selectedRecords[i];
       this.Super('discardEdits', [rowNum, false, false, isc.ListGrid.PROGRAMMATIC]);
@@ -1806,20 +1802,20 @@ isc.OBViewGrid.addProperties({
     var ret = this.Super('validateField', [editField, validators, value, record, options]);
     return ret;
   },
-  
+
   refreshEditRow: function(){
-    var editRow = this.view.viewGrid.getEditRow();
+    var editRow = this.view.viewGrid.getEditRow(), i;
     if (editRow || editRow === 0) {
       // don't refresh the frozen fields, this give strange
       // styling issues in chrome
-      for (var i = 0; i < this.view.viewGrid.fields.length; i++) {
+      for (i = 0; i < this.view.viewGrid.fields.length; i++) {
         if (!this.fieldIsFrozen(i)) {
           this.view.viewGrid.refreshCell(editRow, i, true);
         }
       }
     }
   },
-  
+
   // having a valueMap property results in setValueMap to be called
   // on an item. On items with a picklist this causes calls to the
   // server side
@@ -1922,21 +1918,22 @@ isc.OBViewGrid.addProperties({
       isc.warn(OB.I18N.getLabel('OBUIAPP_TabWithErrors', [this.view.tabTitle]));
     }
   },
-  
+
   isWritable: function(record){
     return !record._readOnly;
   },
-  
+
   allSelectedRecordsWritable: function() {
-    for (var i = 0; i < this.getSelectedRecords().length; i++) {
+    var i;
+    for (i = 0; i < this.getSelectedRecords().length; i++) {
       var record = this.getSelectedRecords()[i];
       if (!this.isWritable(record)) {
         return false;
       }
     }
-    return true;    
+    return true;
   },
-  
+
   setRecordErrorMessage: function(rowNum, msg){
     var record = this.getRecord(rowNum);
     if (!record) {

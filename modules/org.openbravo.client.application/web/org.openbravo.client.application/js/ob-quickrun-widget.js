@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -108,23 +108,23 @@ isc.OBQuickRun.addProperties({
       shadowDepth: 5,
       bodyBackgroundColor: null
     };
-    
+
     // compute the height
     if (this.members) {
       defaultLayoutProperties.members = this.members;
-      var computedHeight = 0;
-      for (var i = 0; i < this.members.length; i++) {
+      var computedHeight = 0, i;
+      for (i = 0; i < this.members.length; i++) {
         if (this.members[i].height) {
           computedHeight = computedHeight + this.members[i].height;
         }
       }
       defaultLayoutProperties.height = computedHeight;
     }
-    
+
     // set the properties which are used, override by user set properties
     var usedLayoutProperties = {};
     isc.addProperties(usedLayoutProperties, defaultLayoutProperties, this.layoutProperties);
-    
+
     // create the layout
     if (!this.layout) {
       this.layout = isc.VLayout.create(usedLayoutProperties);
@@ -132,7 +132,7 @@ isc.OBQuickRun.addProperties({
     // this.overCanvas = this.layout;
     // this.showOverCanvas = true;
   },
-  
+
   // ** {{{ click }}} **
   // clicking the button shows or hides the layout.
   click: function(){
@@ -161,7 +161,7 @@ isc.OBQuickRun.addProperties({
     }
     return true;
   },
-  
+
   // ** {{{ doShow }}} **
   // Called to actually show the layout.
   doShow: function(){
@@ -174,20 +174,20 @@ isc.OBQuickRun.addProperties({
     // }
     // }
     this.focusOnHide = isc.EH.getFocusCanvas();
-    
+
     var left = this.getLeftPosition() + 1;
     var top = this.getPageTop() + this.getVisibleHeight() - 1;
-    
+
     this.beforeShow();
-    
+
     this.layout.placeNear(left, top);
-    
+
     isc.OBQuickRun.clickMask = this.showClickMask('isc.OBQuickRun.hide()', 'soft', [this, this.layout]);
-    
+
     this.layout.show();
-    
+
     isc.OBQuickRun.currentQuickRun = this;
-    
+
     // this code hides the horizontal line between the menu button and the
     // menu
     var layoutContainer = this.getLayoutContainer();
@@ -203,44 +203,44 @@ isc.OBQuickRun.addProperties({
     });
     this.selectedHideLayout.show();
     this.selectedHideLayout.moveAbove(this.layout);
-    
+
     this.showing = true;
   },
-  
+
   getLayoutContainer: function(){
     return this.parentElement;
   },
-  
+
   getLeftPosition: function(){
     return this.parentElement.getPageLeft() - 1;
   },
-  
+
   // ** {{{ beforeShow }}} **
   // Intended to be overridden, is called just before the layout.show()
   // method
   // is called.
   beforeShow: function(){
   },
-  
+
   // ** {{{ doHide }}} **
   // Hide the expanded layout.
   doHide: function(){
     this.hideClickMask();
     this.layout.hide();
-    
+
     this.getLayoutContainer().setStyleName('OBNavBarComponent');
-    
+
     if (this.selectedHideLayout) {
       this.selectedHideLayout.hide();
       this.selectedHideLayout.destroy();
       this.selectedHideLayout = null;
     }
-    
+
     this.showing = false;
     if (isc.OBQuickRun.currentQuickRun === this) {
       isc.OBQuickRun.currentQuickRun = null;
     }
-    
+
     if (isc.isA.Canvas(this.focusOnHide)) {
       this.focusOnHide.focus();
     }

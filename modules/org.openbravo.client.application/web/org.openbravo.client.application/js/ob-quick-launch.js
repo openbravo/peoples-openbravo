@@ -75,11 +75,11 @@ isc.OBQuickLaunch.addProperties({
         return null;
       }
     };
-    
+
     if (recent && recent.length > 0) {
       var newFields = [];
-      var index = 0;
-      for (var recentIndex = 0; recentIndex < recent.length; recentIndex++) {
+      var index = 0, recentIndex;
+      for (recentIndex = 0; recentIndex < recent.length; recentIndex++) {
         if (recent[recentIndex]) {
           newFields[index] = new RecentFieldType(recent[recentIndex]);
           index++;
@@ -89,20 +89,20 @@ isc.OBQuickLaunch.addProperties({
       this.layout.showMember(this.members[0]);
     }
     this.members[1].getField('value').setValue(null);
-    this.members[1].getField('value').setElementValue('', null);      
+    this.members[1].getField('value').setElementValue('', null);
   },
-  
+
   // handle the case that someone entered a url in the quick launch
   doHide: function(){
     if (this.members[1].getField('value').getValue() && this.members[1].getField('value').getValue().contains('?')) {
       var params = OB.Utilities.getUrlParameters(this.members[1].getField('value').getValue());
       if (params && params.tabId) {
         OB.Utilities.openDirectTab(params.tabId, params.recordId, params.command);
-      }      
+      }
     }
     this.Super('doHide', arguments);
   },
-  
+
   initWidget: function(){
     this.members = [isc.DynamicForm.create({
       visibility: 'hidden',
@@ -131,24 +131,24 @@ isc.OBQuickLaunch.addProperties({
         // fixes issue https://issues.openbravo.com/view.php?id=15105
         pickListCellHeight: OB.DefaultPickListStyleProperties.quickRunPickListCellHeight,
         recentPropertyName : this.recentPropertyName,
-        
+
         getControlTableCSS: function(){
           // prevent extra width settings, super class
           // sets width to 0 on purpose
           return 'cursor:default;';
         },
-        
+
         selectOnFocus: true,
         textMatchStyle: 'substring',
         width: '100%',
-        
-        // client filtering does not always work great...         
+
+        // client filtering does not always work great...
         pickListProperties: {
           textMatchStyle: 'substring',
           bodyStyleName: 'OBPickListBody'
         },
         pickListHeaderHeight: 0,
-        
+
         getPickListFilterCriteria: function(){
           // only filter on identifier
           var criteria = {};
@@ -173,16 +173,16 @@ isc.OBQuickLaunch.addProperties({
         titleOrientation: 'top',
         title: OB.I18N.getLabel(this.titleLabel),
         editorType: 'comboBox',
-        
+
         // local filtering enabled, remove the Id filter
         // explicitly from the criteria list, see getPickListFilter
         filterLocally: true,
         fetchDelay: 50,
 
         optionDataSource: OB.Datasource.get(this.dataSourceId),
-        
+
         emptyPickListMessage: OB.I18N.getLabel('OBUISC_ListGrid.emptyMessage'),
-        
+
         command: this.command,
 
         pickValue: function(theValue){
@@ -192,9 +192,9 @@ isc.OBQuickLaunch.addProperties({
             this.setValueMap({});
           }
           this.getValueMap()[theValue] = '';
-          
+
           this.Super('pickValue', arguments);
-          
+
           if (this.getSelectedRecord()) {
             var record = this.getSelectedRecord();
             var viewValue = record.viewValue;
@@ -254,20 +254,20 @@ isc.OBQuickLaunch.addProperties({
             }
             openObject.singleRecord = record.singleRecord;
             openObject.readOnly = record.readOnly;
-            
+
             openObject.icon = record.icon;
-            
+
             OB.Layout.ViewManager.openView(openObject.viewId, openObject);
-            
+
             OB.RecentUtilities.addRecent(this.recentPropertyName, openObject);
-            
+
             this.setValue(null);
           }
         },
-        
+
         handleKeyPress: function(){
           var result = this.Super('handleKeyPress', arguments);
-          
+
           var key = isc.EH.lastEvent.keyName;
           if (key === 'Escape' || key === 'Enter') {
             if (isc.OBQuickRun.currentQuickRun) {
@@ -280,15 +280,15 @@ isc.OBQuickLaunch.addProperties({
     })];
 
     var ret = this.Super('initWidget', arguments);
-    
+
     // register the field in the registry
     var suggestionField = this.members[1].getField('value');
     OB.TestRegistry.register(this.recentPropertyName + '_RECENTFORM', this.members[0]);
     OB.TestRegistry.register(this.recentPropertyName + '_FORM', this.members[1]);
     OB.TestRegistry.register(this.recentPropertyName + '_BUTTON', this);
     OB.TestRegistry.register(this.recentPropertyName + '_FIELD', suggestionField);
-    
+
     return ret;
   }
-  
+
 });
