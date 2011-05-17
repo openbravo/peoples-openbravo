@@ -207,7 +207,20 @@ isc.OBGrid.addProperties({
 
         return this.Super('setValuesAsCriteria', [criteria, refresh]);
       },
-
+      
+      // the filtereditor will assign the grids datasource to a field
+      // if it has a display field and no datasource
+      // prevent this as we get the datasource later it is not 
+      // yet set
+      getEditorProperties : function (field) {
+        var noDataSource = field.displayField && !field.optionDataSource,
+          ret = this.Super('getEditorProperties', arguments);
+        if (ret.optionDataSource && noDataSource) {
+          delete ret.optionDataSource;
+        }
+        return ret;
+      },
+      
       actionButtonProperties: {
         baseStyle: 'OBGridFilterFunnelIcon',
         visibility: 'hidden',
