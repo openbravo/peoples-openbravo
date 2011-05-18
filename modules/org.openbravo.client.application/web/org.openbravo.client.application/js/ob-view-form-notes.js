@@ -183,6 +183,7 @@ isc.OBNoteLayout.addProperties({
 
     this.saveNoteButton = isc.OBFormButton.create({
       layout : this,
+      margin : 4, //hLayout layoutTopMargin is not affecting completly the button, so this magin tries to balance it
       title : OB.I18N.getLabel('OBUIAPP_SaveNoteButtonTitle'),
       click : 'this.layout.saveNote()'
     });
