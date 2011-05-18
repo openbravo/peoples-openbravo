@@ -1527,13 +1527,18 @@ isc.OBStandardView.addProperties({
   },
   
   getCurrentValues: function(){
+    var ret;
     if (this.isShowingForm) {
-      return this.viewForm.getValues();
+      ret = this.viewForm.getValues();
     } else if (this.isEditingGrid) {
-      return isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewGrid.getEditForm().getValues());
+      ret = isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewGrid.getEditForm().getValues());
     } else {
-      return this.viewGrid.getSelectedRecord();
+      ret = this.viewGrid.getSelectedRecord();
     }
+    // return an empty object if ret is not set
+    // this happens when a new record could not be saved
+    // and the form view is switched for grid view
+    return ret || {};
   },
   
   getPropertyFromColumnName: function(columnName){
