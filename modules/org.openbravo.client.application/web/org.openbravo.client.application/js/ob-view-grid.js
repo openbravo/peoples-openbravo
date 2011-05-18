@@ -1946,7 +1946,7 @@ isc.OBViewGrid.addProperties({
     var i;
     for (i = 0; i < this.getSelectedRecords().length; i++) {
       var record = this.getSelectedRecords()[i];
-      if (!this.isWritable(record)) {
+      if (!this.isWritable(record) || record._new) {
         return false;
       }
     }
