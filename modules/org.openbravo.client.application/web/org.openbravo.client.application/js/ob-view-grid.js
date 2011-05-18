@@ -1244,6 +1244,7 @@ isc.OBViewGrid.addProperties({
     } else if (isc.EventHandler.shiftKeyDown()) {
       this.singleRecordSelection = false;
       this.selection.selectOnMouseDown(this, recordNum, fieldNum);
+      this.selectionUpdated(this.getSelectedRecord(), this.getSelection());
     } else {
       // click on the record which was already selected
       this.doSelectSingleRecord(record);
