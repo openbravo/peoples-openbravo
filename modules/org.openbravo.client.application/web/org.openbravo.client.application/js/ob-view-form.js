@@ -571,7 +571,6 @@ OB.ViewFormProperties = {
       this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, null, calloutMessages[0]);
     }
     if (auxInputs) {
-      this.auxInputs = {};
       for (prop in auxInputs) {
         if (auxInputs.hasOwnProperty(prop)) {
           value = typeof auxInputs[prop].value !== 'undefined' ? auxInputs[prop].value : '';
