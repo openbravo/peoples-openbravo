@@ -29,7 +29,7 @@
         requestParams = {
             orderId:view.viewGrid.getSelectedRecord().id
         };
-        OB.RemoteCallManager.call('org.openbravo.client.application.businesslogic.ClonePropertyActionHandler', {}, 
+        OB.RemoteCallManager.call('org.openbravo.client.application.businesslogic.CloneOrderActionHandler', {}, 
             requestParams, function(rpcResponse, data, rpcRequest) {
 
               var recordIndex = view.viewGrid.getRecordIndex(view.viewGrid.getSelectedRecord()) + 1;
