@@ -1106,7 +1106,7 @@ isc.OBViewGrid.addProperties({
   // one has as disadvantage that it is called multiple times
   // for one select/deselect action
   selectionUpdated: function(record, recordList){
-    if (recordList.length == 1 && record === this.lastSelectedRecord && (this.lastSelectedRecord || record)) {
+    if ((!recordList || recordList.length == 1) && record === this.lastSelectedRecord && (this.lastSelectedRecord || record)) {
       return;
     }
   
