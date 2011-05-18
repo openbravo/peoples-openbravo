@@ -14,7 +14,7 @@
  * The Initial Developer of the Original Code is Openbravo SLU
  * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
- * Contributor(s):  ______________________________________.
+ * Contributor(s): Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
 -->
 <html>
@@ -159,6 +159,22 @@ function actualPaymentOnChange(){
     distributeAmount(amount);
   }
 }
+
+function displayMulticurrencyControls() {
+  var invCurrency = document.getElementById('paramCurrencyId').value
+  var accountCurrency = document.getElementById('paramFinancialAccountCurrencyId').value
+
+  var display = ( invCurrency && accountCurrency && invCurrency != accountCurrency );
+
+  displayLogicElement('paramExchangeRate', display );
+  displayLogicElement('lblExchangeRate', display );
+  displayLogicElement('paramExpectedConverted', display );
+  displayLogicElement('lblExpectedConverted', display );
+  displayLogicElement('paramActualConverted', display );
+  displayLogicElement('lblActualConverted', display );
+}
+
+
 </script>
 <script language="JavaScript" type="text/javascript">
 function loadGridList() {
@@ -243,15 +259,20 @@ function reFillPaymentMethodCombo() {
 }
 
 function callBackFinancialAccount(paramXMLParticular, XMLHttpRequestObj) {
-var strText = "";
   if (getReadyStateHandler(XMLHttpRequestObj)) {
     try {
       if (XMLHttpRequestObj.responseText) {
-        strText = XMLHttpRequestObj.responseText;
-        createCombo(document.getElementById('inpFinancialAccount'), strText);
+        var resp = decodeJSON(XMLHttpRequestObj.responseText);
+        createCombo(document.getElementById('inpFinancialAccount'), resp.combo);
+        document.getElementById('paramFinancialAccountCurrencyId').value = resp.financialAccountCurrencyId;
+        document.getElementById('paramExchangeRate').value = resp.exchangeRate;
       } else {
         document.getElementById('inpFinancialAccount').innerHTML = '';
+        document.getElementById('paramFinancialAccountCurrencyId').value = '';
+        document.getElementById('paramExchangeRate').value = '';
       }
+      displayMulticurrencyControls();
+      updateConvertedAmounts();
     } catch (e) {
     }
   }
@@ -298,10 +319,11 @@ var strText = "";
     processLabels();
     displayLogicElement('paramCustBalance', isTrue('isReceipt'));
     displayLogicElement('NoPackageslinkCalc', isTrue('isReceipt'));
-    displayLogicElement('paramCredit', compare(document.getElementById('paramCredit').value, '>', "0") );
-    displayLogicElement('lblCredit', compare(document.getElementById('paramCredit').value, '>', "0") );
-    displayLogicElement('paramUseCredit', compare(document.getElementById('paramCredit').value, '>', "0") );
-    displayLogicElement('lblUseCredit', compare(document.getElementById('paramCredit').value, '>', "0") );
+    var hasCredit = compare(document.getElementById('paramCredit').value, '>', "0");
+    displayLogicElement('paramCredit', hasCredit );
+    displayLogicElement('paramUseCreditContainer', hasCredit );
+    displayLogicElement('rowCredit', hasCredit );
+    displayMulticurrencyControls();
     if (isTrue('isReceipt')) {
         setWindowElementFocus(frm.inpActualPayment);
     } else {
@@ -591,12 +613,22 @@ var strText = "";
               <td class="TitleCell"><span class="LabelText" name="lblP" id="lblPToBePaidTo">To Be Paid To</span><span class="LabelText" name="lblR" id="lblRReceivedFrom">Received From</span></td>
               <td class="TextBox_ContentCell" colspan="2"><input class="readonly dojoValidateValid TextBox_TwoCells_width" type="text" name="inpBusinessPartner" value="" id="paramBusinessPartner" readonly="true"></input>
               <input type="hidden" name="inpBusinessPartnerId" value="" id="paramBusinessPartnerId"></input></td>
+              <td class="TitleCell"><span class="LabelText">Reference No.</span></td>
+              <td class="TextBox_ContentCell" colspan="2"><input class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpReferenceNo" value="" id="paramReferenceNo"></input></td>
+              <td class="TitleCell"></td>
+            </tr>
+
+            <!-- Line 3 (Hidden if no credit)-->
+            <tr id="rowCredit">
               <td class="TitleCell"><span class="LabelText" name="lbl" id="lblCredit">Available Credit</span></td>
               <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid TextBox_OneCell_width number" type="text" name="inpCredit" value="0" id="paramCredit"></input></td>
               <td class="TitleCell"></td>
+              <td class="TitleCell"><span class="LabelText" name="lbl" id="lblUseCredit">Use Available Credit</span></td>
+              <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused" id="paramUseCreditContainer"><input type="checkbox" name="inpUseCredit" value="Y" id="paramUseCredit" onclick="useCreditOnChange();"></input></span></td>
+              <td class="TitleCell"></td>
             </tr>
             
-            <!-- Line 3 -->
+            <!-- Line 4 -->
             <tr>
               <td class="TitleCell"><span class="LabelText">Payment Method</span></td>
               <td class="Combo_ContentCell" colspan="2">
@@ -607,15 +639,11 @@ var strText = "";
                   <div id="sectionDetailPaymentMethod"></div>
                 </select>
               </td>
-              <td class="TitleCell"><span class="LabelText" name="lbl" id="lblUseCredit">Use Available Credit</span></td>
-              <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpUseCredit" value="Y" id="paramUseCredit" onclick="useCreditOnChange();"></input></span></td>
-              <td class="TitleCell"></td>
-            </tr>
-            
-            <!-- Line 4 -->
-            <tr>
               <td class="TitleCell"><span class="LabelText" name="lblP" id="lblPTakeFrom">Take From</span><span class="LabelText" name="lblR" id="lblRDepositTo">Deposit To</span></td>
               <td class="Combo_ContentCell" colspan="2">
+                <input type="hidden" id="paramFinancialAccountCurrencyId" name="financialAccountCurrencyId" value=""/>
+                <input type="hidden" id="paramFinancialAccountCurrencyPrecision" name="inpFinancialAccountCurrencyPrecision" value="2"/>
+
                 <select name="inpFinancialAccount"
                         onkeypress="changeToEditingMode('onkeypress');"
                         onchange="changeToEditingMode('onchange', this);logChanges(this);loadPaymentMethodCombo(); reFillFinancialAccountCombo(); return true;"
@@ -623,14 +651,11 @@ var strText = "";
                   <div id="sectionDetailFinancialAccount"></div>
                 </select>
               </td>
-              <td class="TitleCell"><span class="LabelText">Reference No.</span></td>
-              <td class="TextBox_ContentCell" colspan="2"><input class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpReferenceNo" value="" id="paramReferenceNo"></input></td>
-              <td class="TitleCell"></td>
             </tr>
-            
+
             <!-- Line 5 -->
             <tr>
-              <td class="TitleCell"><span class="LabelText">Currency</span></td>
+              <td class="TitleCell"><span class="LabelText">Invoice Currency</span></td>
               <td class="Combo_ContentCell">
                 <input type="hidden" id="paramPrecision" name="curPrecision" value="2"/>
                 <select name="inpCurrencyId" id="paramCurrencyId" class="ComboKeyReadOnly Combo_OneCell_width" onchange="selectCombo(this, 'xx');return true;">
@@ -638,17 +663,21 @@ var strText = "";
                 </select>
               </td>
               <td class="TitleCell"></td>
-              <td class="TitleCell"></td>
+              <td class="TitleCell"><span class="LabelText" id="lblExchangeRate">Exchange Rate</span></td>
+              <td class="TextBox_ContentCell"> <input class="dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExchangeRate" name="inpExchangeRate" value="" onchange="updateConvertedAmounts();" ></input>
+              </td>
               <td class="TitleCell"></td>
             </tr>
             
             <!-- Line 6 -->
             <tr>
               <td class="TitleCell"><span name="lblP" id="lblPExpectedPaym" class="LabelText">Expected Payment Out</span><span name="lblR" id="lblRExpectedPaym" class="LabelText">Expected Payment In</span></td>
-              <td class="TextBox_ContentCell"> <input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExpectedPayment" name="inpExpectedPayment" value="" onchange="updateDifference();" disabled="true"></input>
+              <td class="TextBox_ContentCell"> <input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExpectedPayment" name="inpExpectedPayment" value="" onchange="updateDifference();updateConvertedAmounts();" disabled="true"></input>
               </td>
               <td class="TitleCell"></td>
-              <td class="TitleCell"></td>
+              <td class="TitleCell"><span class="LabelText" id="lblExpectedConverted">Expected Converted</span></td>
+              <td class="TextBox_ContentCell"> <input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExpectedConverted" name="inpExpectedConverted" value="" onchange="" disabled="true"></input>
+              </td>
               <td class="TitleCell"></td>
             </tr>
             
@@ -661,7 +690,7 @@ var strText = "";
                       <td class="Textbox_ContentCell">
                       <table style="border: 0px none; border-collapse: collapse;">
                         <tr><td style="padding-top: 0px;">
-                          <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="actualPaymentOnChange();return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpActualPayment" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramActualPayment"/>
+                          <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="actualPaymentOnChange();updateConvertedAmounts();return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpActualPayment" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramActualPayment"/>
                         </td></tr>
                       </table>
                       <span id="paramActualPaymentinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
@@ -700,7 +729,9 @@ var strText = "";
                   </table>
               </td>
               <td class="TitleCell"></td>
-              <td class="TitleCell"></td>
+              <td class="TitleCell"><span class="LabelText" id="lblActualConverted">Actual Converted</span></td>
+              <td class="TextBox_ContentCell"> <input class="dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramActualConverted" name="inpActualConverted" value="" onchange="updateConvertedAmounts(true);" ></input>
+              </td>
               <td class="TitleCell"></td>
             </tr>
             

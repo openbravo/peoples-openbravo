@@ -93,7 +93,6 @@ OR (@AD_Reference_ID@ = '28' and AD_Reference.ParentReference_ID='17')]]></CODE>
 <!--116-->  <NAME><![CDATA[AD_Client Login]]></NAME>
 <!--116-->  <DESCRIPTION><![CDATA[Restrict to login client]]></DESCRIPTION>
 <!--116-->  <TYPE><![CDATA[S]]></TYPE>
-<!--116-->  <CODE><![CDATA[AD_Client.AD_Client_ID=@#AD_Client_ID@]]></CODE>
 <!--116-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--116--></AD_VAL_RULE>
 
@@ -1665,7 +1664,13 @@ and ((ad_table.accesslevel in ('3','1','7') and exists(select 1 from ad_dataset
 <!--DC79E946854746F1A7965DCADF1D76FE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--DC79E946854746F1A7965DCADF1D76FE-->  <NAME><![CDATA[Currency of Financial Account]]></NAME>
 <!--DC79E946854746F1A7965DCADF1D76FE-->  <TYPE><![CDATA[S]]></TYPE>
-<!--DC79E946854746F1A7965DCADF1D76FE-->  <CODE><![CDATA[c_currency.c_currency_id in (select c_currency_id from fin_financial_account where fin_financial_account_id = @FIN_Financial_Account_ID@)]]></CODE>
+<!--DC79E946854746F1A7965DCADF1D76FE-->  <CODE><![CDATA[c_currency.c_currency_id in (select c_currency_id from fin_financial_account where fin_financial_account_id = @FIN_Financial_Account_ID@) 
+OR 
+exists (select 1 from fin_finacc_paymentmethod where fin_financial_account_id = @FIN_Financial_Account_ID@ and fin_paymentmethod_id = @FIN_PaymentMethod_ID@ and isactive='Y' and  (
+(@IsReceipt@ = 'Y' and payin_allow ='Y' and payin_ismulticurrency='Y')
+OR
+(@IsReceipt@ = 'N' and payout_allow ='Y' and payout_ismulticurrency='Y')
+))]]></CODE>
 <!--DC79E946854746F1A7965DCADF1D76FE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--DC79E946854746F1A7965DCADF1D76FE--></AD_VAL_RULE>
 

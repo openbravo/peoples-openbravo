@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -48,6 +49,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 
 public class DocFINFinAccTransaction extends AcctServer {
@@ -57,6 +59,7 @@ public class DocFINFinAccTransaction extends AcctServer {
   public static final String TRXTYPE_BankFee = "BF";
   BigDecimal usedCredit = ZERO;
   BigDecimal generatedCredit = ZERO;
+  String paymentDate = null;
 
   private static final long serialVersionUID = 1L;
   private static final Logger log4j = Logger.getLogger(DocFINFinAccTransaction.class);
@@ -84,6 +87,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     generatedCredit = "".equals(data[0].getField("GeneratedCredit")) ? ZERO : new BigDecimal(
         data[0].getField("GeneratedCredit"));
     Amounts[AMTTYPE_Gross] = depositAmount.subtract(paymentAmount).toString();
+    paymentDate = data[0].getField("paymentDate");
     loadDocumentType();
     p_lines = loadLines();
     return true;
@@ -320,11 +324,12 @@ public class DocFINFinAccTransaction extends AcctServer {
     FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
         Record_ID);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
-    if (!getDocumentPaymentConfirmation(transaction.getFinPayment())) {
+    final FIN_Payment txnFinPayment = transaction.getFinPayment();
+    if (!getDocumentPaymentConfirmation(txnFinPayment)) {
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
         DocLine_FINFinAccTransaction line = (DocLine_FINFinAccTransaction) p_lines[i];
         boolean isPrepayment = "Y".equals(line.getIsPrepayment());
-        boolean isReceipt = transaction.getFinPayment().isReceipt();
+        boolean isReceipt = txnFinPayment.isReceipt();
         BigDecimal bpamount = new BigDecimal(line.getAmount());
         if (!"".equals(line.getWriteOffAmt())
             && ZERO.compareTo(new BigDecimal(line.getWriteOffAmt())) != 0) {
@@ -333,34 +338,34 @@ public class DocFINFinAccTransaction extends AcctServer {
                   .getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
           bpamount = bpamount.add(new BigDecimal(line.getWriteOffAmt()));
         }
+
         fact.createLine(line, getAccountBPartner(
             (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
                 : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
             !isReceipt ? bpamount.toString() : "", isReceipt ? bpamount.toString() : "",
-            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, paymentDate, conn);
       }
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
       // credit is generated
-      if (transaction.getFinPayment().getUsedCredit().compareTo(ZERO) != 0
-          && transaction.getFinPayment().getGeneratedCredit().compareTo(ZERO) == 0) {
-        fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, transaction.getFinPayment()
+      if (txnFinPayment.getUsedCredit().compareTo(ZERO) != 0
+          && txnFinPayment.getGeneratedCredit().compareTo(ZERO) == 0) {
+        fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, txnFinPayment
             .isReceipt(), true, conn), C_Currency_ID,
-            (transaction.getFinPayment().isReceipt() ? transaction.getFinPayment().getUsedCredit()
-                .toString() : ""), (transaction.getFinPayment().isReceipt() ? "" : transaction
-                .getFinPayment().getUsedCredit().toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            (txnFinPayment.isReceipt() ? txnFinPayment.getUsedCredit()
+                .toString() : ""), (txnFinPayment.isReceipt() ? "" : txnFinPayment.getUsedCredit().toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
       }
     } else {
-      fact.createLine(null, getAccountPayment(conn, transaction.getFinPayment().getPaymentMethod(),
-          transaction.getFinPayment().getAccount(), as, transaction.getFinPayment().isReceipt()),
-          C_Currency_ID, !transaction.getFinPayment().isReceipt() ? transaction.getFinPayment()
-              .getAmount().toString() : "", transaction.getFinPayment().isReceipt() ? transaction
-              .getFinPayment().getAmount().toString() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, conn);
+      fact.createLine(null, getAccountPayment(conn, txnFinPayment.getPaymentMethod(),
+          txnFinPayment.getAccount(), as, txnFinPayment.isReceipt()),
+          C_Currency_ID, !txnFinPayment.isReceipt() ?
+              txnFinPayment.getFinancialTransactionAmount().toString() : "",
+          txnFinPayment.isReceipt() ? txnFinPayment.getFinancialTransactionAmount().toString() : "",
+          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, paymentDate, conn);
     }
     fact.createLine(null,
-        getAccountUponDepositWithdrawal(conn, transaction.getFinPayment().getPaymentMethod(),
-            transaction.getAccount(), as, transaction.getFinPayment().isReceipt()), C_Currency_ID,
+        getAccountUponDepositWithdrawal(conn, txnFinPayment.getPaymentMethod(),
+            transaction.getAccount(), as, txnFinPayment.isReceipt()), C_Currency_ID,
         transaction.getDepositAmount().toString(), transaction.getPaymentAmount().toString(),
         Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
 
@@ -722,6 +727,9 @@ public class DocFINFinAccTransaction extends AcctServer {
           .getDateAcct()));
       FieldProviderFactory.setField(data[0], "trxdate", outputFormat.format(transaction
           .getTransactionDate()));
+      FieldProviderFactory.setField(data[0], "paymentDate",
+          transaction.getFinPayment() != null ? outputFormat.format(transaction.getFinPayment()
+              .getPaymentDate()) : "");
       FieldProviderFactory.setField(data[0], "Posted", transaction.getPosted());
       FieldProviderFactory.setField(data[0], "Processed", transaction.isProcessed() ? "Y" : "N");
       FieldProviderFactory.setField(data[0], "Processing", transaction.isProcessNow() ? "Y" : "N");

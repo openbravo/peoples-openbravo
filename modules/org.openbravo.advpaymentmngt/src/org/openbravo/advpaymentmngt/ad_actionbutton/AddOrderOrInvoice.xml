@@ -34,6 +34,14 @@
     <PARAMETER id="paramActualPayment" name="actualPayment" attribute="value" format="euroEdition" default="0"/>
     <PARAMETER id="paramCredit" name="credit" attribute="value" format="euroEdition"/>
     <PARAMETER id="paramGeneratedCredit" name="generatedCredit" attribute="value" format="euroEdition"/>
+    <PARAMETER id="paramCurrencyName" name="currencyName" attribute="value"/>
+    <PARAMETER id="paramCurrencyId" name="currencyId" attribute="value"/>
+    <PARAMETER id="paramFinancialAccountCurrencyId" name="financialAccountCurrencyId" attribute="value"/>
+    <PARAMETER id="paramFinancialAccountCurrencyName" name="financialAccountCurrencyName" attribute="value"/>
+    <PARAMETER id="paramFinancialAccountCurrencyPrecision" name="financialAccountCurrencyPrecision" attribute="value"/>
+    <PARAMETER id="paramExchangeRate" name="exchangeRate" attribute="value" format="generalQtyEdition"/>
+    <PARAMETER id="paramExpectedConverted" name="expectedConverted" attribute="value" format="euroEdition"/>
+    <PARAMETER id="paramActualConverted" name="actualConverted" attribute="value" format="euroEdition" default="0"/>
     <PARAMETER id="fieldOrg" name="orgId" attribute="value"/>
     <PARAMETER id="fieldPayment" name="paymentId" attribute="value"/>
     <PARAMETER id="fieldWindowId" name="windowId" attribute="value"/>
