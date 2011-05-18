@@ -16,6 +16,7 @@
  * Contributor(s): Valery Lezhebokov.
  ************************************************************************
  */
+
 // = OBNotesItems =
 //
 // Represents the notes section shown in the bottom of the form.
@@ -23,337 +24,329 @@
 //
 isc.ClassFactory.defineClass('OBNoteSectionItem', isc.OBSectionItem);
 
-isc.OBNoteSectionItem.addProperties( {
-	// as the name is always the same there should be at most
-	// one note section per form
-	name : '_notes_',
+isc.OBNoteSectionItem.addProperties({
+  // as the name is always the same there should be at most
+  // one note section per form
+  name : '_notes_',
 
-	overflow : 'hidden',
+  overflow : 'hidden',
 
-	canFocus : true,
+  canFocus : true,
 
-	prompt : OB.I18N.getLabel('OBUIAPP_NotesPrompt'),
+  prompt : OB.I18N.getLabel('OBUIAPP_NotesPrompt'),
 
-	canvasItem : null,
+  canvasItem : null,
 
-	visible : true,
+  visible : true,
 
-	// note formitems don't have an initWidget but an init method
-	init : function() {
-		// override the one passed in
-	this.defaultValue = OB.I18N.getLabel('OBUIAPP_NotesTitle');
+  // note formitems don't have an initWidget but an init method
+  init : function() {
+    // override the one passed in
+    this.defaultValue = OB.I18N.getLabel('OBUIAPP_NotesTitle');
 
-	/* tell the form who we are */
-	this.form.noteSection = this;
+    /* tell the form who we are */
+    this.form.noteSection = this;
 
-	this.Super('init', arguments);
-},
+    this.Super('init', arguments);
+  },
 
-getNotePart : function() {
-	if (!this.canvasItem) {
-		this.canvasItem = this.form.getField(this.itemIds[0]);
-	}
-	return this.canvasItem.canvas;
-},
+  getNotePart : function() {
+    if (!this.canvasItem) {
+      this.canvasItem = this.form.getField(this.itemIds[0]);
+    }
+    return this.canvasItem.canvas;
+  },
 
-setRecordInfo : function(entity, id) {
-	this.getNotePart().setRecordInfo(entity, id);
-},
+  setRecordInfo : function(entity, id) {
+    this.getNotePart().setRecordInfo(entity, id);
+  },
 
-refresh : function() {
-	this.getNotePart().refresh();
-},
+  refresh : function() {
+    this.getNotePart().refresh();
+  },
 
-expandSection: function() {
-  this.Super('expandSection',arguments);
-  this.form.noteSection.refresh();
-},
+  expandSection: function() {
+    this.Super('expandSection',arguments);
+    this.form.noteSection.refresh();
+  },
 
-hide: function(){
- this.Super('hide',arguments);
- if (this.canvasItem) {
-   // Solves issue #16663: Forcing call to canvas hide. 
-   // Shouldn't this be invoked by SmartClient 
-   this.canvasItem.hide();
- }
-}
+  hide: function() {
+    this.Super('hide',arguments);
+    if (this.canvasItem) {
+      // Solves issue #16663: Forcing call to canvas hide. 
+      // Shouldn't this be invoked by SmartClient 
+      this.canvasItem.hide();
+    }
+  }
 
 });
 
 isc.ClassFactory.defineClass('OBNoteLayout', isc.VLayout);
 
-isc.OBNoteLayout.addProperties( {
+isc.OBNoteLayout.addProperties({
 
-			entity : null,
+  entity : null,
 
-			recordId : null,
+  recordId : null,
 
-			layoutMargin : 0,
+  layoutMargin : 0,
 
-			membersMargin : 10,
+  membersMargin : 10,
 
-			noteTextAreaItem : null,
+  noteTextAreaItem : null,
 
-			noteDynamicForm : null,
+  noteDynamicForm : null,
 
-			saveNoteButton : null,
+  saveNoteButton : null,
 
-			noteDSId : '090A37D22E61FE94012E621729090048',
+  noteDSId : '090A37D22E61FE94012E621729090048',
 
-			noteListGrid : null,
+  noteListGrid : null,
 
-			/**
-			 * Saves the note to the DB.
-			 */
-			saveNote : function() {
-				var note = this.noteDynamicForm.getField('noteOBTextAreaItem').getValue();
-				
-				if (!note) {
-				  return;
-				} 
-				
-				this.noteDynamicForm.validate();
+  /**
+   * Saves the note to the DB.
+   */
+  saveNote : function() {
+    var note = this.noteDynamicForm.getField('noteOBTextAreaItem').getValue();
 
-				var noteDS = this.getNoteDataSource();
+    if (!note) {
+      return;
+    }
 
-				var currentTime = new Date();
+    this.noteDynamicForm.validate();
 
-				noteDS.addData( {
-							'client' : OB.User.clientId,
-							'organization' : OB.User.organizationId,
-							'table' : this.getForm().view.standardProperties.inpTableId,
-							'record' : this.getForm().view.viewGrid.getSelectedRecord().id,
-							'note' : note
-						});
+    var noteDS = this.getNoteDataSource();
 
-				// clean text area
-				this.noteDynamicForm.getItem('noteOBTextAreaItem').clearValue();
-			},
+    var currentTime = new Date();
 
-			/**
-			 * Deletes the note from the DB.
-			 */
-			deleteNote : function( /* note id to delete */id) {
-				var noteDS = this.getNoteDataSource();
-				noteDS.removeData( {
-					'id' : id
-				});
-			},
-			
+    noteDS.addData({
+          'client' : OB.User.clientId,
+          'organization' : OB.User.organizationId,
+          'table' : this.getForm().view.standardProperties.inpTableId,
+          'record' : this.getForm().view.viewGrid.getSelectedRecord().id,
+          'note' : note
+        });
 
-			/**
-			 * Returns Notes data source.
-			 */
-			getNoteDataSource : function() {
-				return isc.DataSource.getDataSource(this.noteDSId);
-			},
+    // clean text area
+    this.noteDynamicForm.getItem('noteOBTextAreaItem').clearValue();
+  },
 
-			/**
-			 * Initializes the widget.
-			 */
-			initWidget : function() {
-				this.Super('initWidget', arguments);
+  /**
+   * Deletes the note from the DB.
+   */
+  deleteNote : function( /* note id to delete */id) {
+    var noteDS = this.getNoteDataSource();
+    noteDS.removeData({
+      'id' : id
+    });
+  },
 
-				// register note DS
-				OB.Datasource.get(this.noteDSId);
+  /**
+   * Returns Notes data source.
+   */
+  getNoteDataSource : function() {
+    return isc.DataSource.getDataSource(this.noteDSId);
+  },
 
-				var hLayout = isc.HLayout.create( {
-					width : '50%',
-					height : '100%',
-					layoutMargin : 0,
-					layoutTopMargin : 10,
-					membersMargin : 10
-				});
-				hLayout.setLayoutMargin();
+  /**
+   * Initializes the widget.
+   */
+  initWidget : function() {
+    this.Super('initWidget', arguments);
 
-				this.noteDynamicForm = isc.DynamicForm.create( {
-					numCols : 1,
-					width : '100%', 
-					fields : [ {
-						name : 'noteOBTextAreaItem',
-						type : 'OBTextAreaItem',
-						showTitle : false,
-						layout : this,
-						width : '*',
-						validators : [ {
-							type : 'required'
-						} ]
-					}]
-				});
+    // register note DS
+    OB.Datasource.get(this.noteDSId);
 
-				this.saveNoteButton = isc.OBFormButton.create( {
-					layout : this,
-					title : OB.I18N.getLabel('OBUIAPP_SaveNoteButtonTitle'),
-					click : 'this.layout.saveNote()'
-				});
+    var hLayout = isc.HLayout.create({
+      width : '50%',
+      height : '100%',
+      layoutMargin : 0,
+      layoutTopMargin : 10,
+      membersMargin : 10
+    });
+    hLayout.setLayoutMargin();
 
-				hLayout.addMember(this.noteDynamicForm);
-				hLayout.addMember(this.saveNoteButton);
-				// add the grids to the vertical layout
-				this.addMember(hLayout);
+    this.noteDynamicForm = isc.DynamicForm.create({
+      numCols : 1,
+      width : '100%', 
+      fields : [ {
+        name : 'noteOBTextAreaItem',
+        type : 'OBTextAreaItem',
+        showTitle : false,
+        layout : this,
+        width : '*',
+        validators : [ {
+          type : 'required'
+        } ]
+      }]
+    });
 
-				this.noteListGrid = isc.OBGrid
-						.create( {
-							width : '50%',
-							autoFitData: 'vertical',
-							fields : [ {
-								name : 'colorBar',
-								width : '5'
-							}, {
-								name : 'note'
-							} ],
-							alternateRecordStyles : false,
-							autoFetchData : true,
-							baseStyle : 'OBNoteListGridCell',
-							dataSource : this.noteDSId,
-							fixedRecordHeights : false,
-							filterOnKeypress : true,
-							headerHeight : 0,
-							hoverStyle : 'OBNoteListGridCellOver',
-							layout : this,
-							selectionType : 'none',
-							showEmptyMessage : false,
-							styleName : 'OBNoteListGrid',
-							wrapCells : true,
+    this.saveNoteButton = isc.OBFormButton.create({
+      layout : this,
+      title : OB.I18N.getLabel('OBUIAPP_SaveNoteButtonTitle'),
+      click : 'this.layout.saveNote()'
+    });
 
-							fetchData : function(criteria, callback,
-									requestProperties) {
-							  if (this.layout.getForm() && this.layout.getForm().noteSection && 
-							      this.layout.getForm().noteSection.visible && this.layout.getForm().noteSection.isExpanded()) {
-								  return this.Super('fetchData', [ this.convertCriteria(criteria),
-										callback, requestProperties ]);
-							  }
-							},
+    hLayout.addMember(this.noteDynamicForm);
+    hLayout.addMember(this.saveNoteButton);
+    // add the grids to the vertical layout
+    this.addMember(hLayout);
 
-							filterData : function(criteria, callback,
-									requestProperties) {
-								return this.Super('filterData', [
-										this.convertCriteria(criteria),
-										callback, requestProperties ]);
-							},
+    this.noteListGrid = isc.OBGrid.create({
+      width : '50%',
+      autoFitData: 'vertical',
+      fields : [ {
+        name : 'colorBar',
+        width : '5'
+      }, {
+        name : 'note'
+      } ],
+      alternateRecordStyles : false,
+      autoFetchData : true,
+      baseStyle : 'OBNoteListGridCell',
+      dataSource : this.noteDSId,
+      fixedRecordHeights : false,
+      filterOnKeypress : true,
+      headerHeight : 0,
+      hoverStyle : 'OBNoteListGridCellOver',
+      layout : this,
+      selectionType : 'none',
+      showEmptyMessage : false,
+      styleName : 'OBNoteListGrid',
+      wrapCells : true,
 
-							getCriteria : function() {
-								var criteria = this.Super('getCriteria',
-										arguments) || {};
-								criteria = this.convertCriteria(criteria);
-								return criteria;
-							},
+      fetchData : function(criteria, callback, requestProperties) {
+        if (this.layout.getForm() && this.layout.getForm().noteSection && 
+            this.layout.getForm().noteSection.visible && this.layout.getForm().noteSection.isExpanded()) {
+          return this.Super('fetchData', [ this.convertCriteria(criteria),
+            callback, requestProperties ]);
+        }
+      },
 
-							convertCriteria : function(criteria) {
-								criteria = isc.addProperties( {}, criteria || {});
+      filterData : function(criteria, callback, requestProperties) {
+        return this.Super('filterData', [
+            this.convertCriteria(criteria),
+            callback, requestProperties ]);
+      },
 
-								if (!criteria.criteria) {
-									criteria.criteria = [];
-								}
+      getCriteria : function() {
+        var criteria = this.Super('getCriteria', arguments) || {};
+        criteria = this.convertCriteria(criteria);
+        return criteria;
+      },
 
-								var view = this.layout.getForm().view;
-                if (view && view.viewGrid.getSelectedRecord()) {
-                  criteria.criteria.push( {
-                    fieldName : 'table',
-                    operator : 'equals',
-                    value : view.standardProperties.inpTableId
-                   });
+      convertCriteria : function(criteria) {
+        criteria = isc.addProperties({}, criteria || {});
 
-                  criteria.criteria.push( {
-                    fieldName : 'record',
-                    operator : 'equals',
-                    value : view.viewGrid.getSelectedRecord().id
-                  });
+        if (!criteria.criteria) {
+          criteria.criteria = [];
+        }
 
-                  criteria[OB.Constants.ORDERBY_PARAMETER] = '-updated';
-                }
-                return criteria;
+        var view = this.layout.getForm().view;
+        if (view && view.viewGrid.getSelectedRecord()) {
+          criteria.criteria.push({
+            fieldName : 'table',
+            operator : 'equals',
+            value : view.standardProperties.inpTableId
+           });
 
-							},
+          criteria.criteria.push({
+            fieldName : 'record',
+            operator : 'equals',
+            value : view.viewGrid.getSelectedRecord().id
+          });
 
-							formatCellValue : function(value, record, rowNum,
-									colNum) {
+          criteria[OB.Constants.ORDERBY_PARAMETER] = '-updated';
+        }
+        return criteria;
 
-								if (this.getFieldName(colNum) !== 'note') {
-									return value;	
-								}
+      },
 
-								value =  value + ' <span class="OBNoteListGridAuthor">' +
-								        OB.Utilities.getTimePassed(record.creationDate) +
-										' ' + OB.I18N.getLabel('OBUIAPP_by') + ' ' +
-										record['createdBy._identifier']+'</span>';
+      formatCellValue : function(value, record, rowNum, colNum) {
 
-								// show delete link if the note was created by
-								// the current user
-								if (record.createdBy === OB.User.id) {
-									value = value +
-											' <span class="OBNoteListGridDelete" >[ <a class="OBNoteListGridDelete" href="#" onclick="' +
-											this.layout.ID + '.deleteNote(\'' +
-											record.id +
-											'\')">' + OB.I18N.getLabel('OBUIAPP_delete') + ' </a>]</span>';
-								} 
-								return value;
-							},
+        if (this.getFieldName(colNum) !== 'note') {
+          return value;  
+        }
 
+        value =  value + ' <span class="OBNoteListGridAuthor">' +
+                OB.Utilities.getTimePassed(record.creationDate) +
+            ' ' + OB.I18N.getLabel('OBUIAPP_by') + ' ' +
+            record['createdBy._identifier']+'</span>';
 
+        // show delete link if the note was created by
+        // the current user
+        if (record.createdBy === OB.User.id) {
+          value = value +
+              ' <span class="OBNoteListGridDelete" >[ <a class="OBNoteListGridDelete" href="#" onclick="' +
+              this.layout.ID + '.deleteNote(\'' +
+              record.id +
+              '\')">' + OB.I18N.getLabel('OBUIAPP_delete') + ' </a>]</span>';
+        } 
+        return value;
+      },
 
-						getBaseStyle : function(record, rowNum, colNum) {
-							if (this.getFieldName(colNum) !== 'colorBar') {
-								return this.baseStyle;
-							}
+      getBaseStyle : function(record, rowNum, colNum) {
+        if (this.getFieldName(colNum) !== 'colorBar') {
+          return this.baseStyle;
+        }
 
-							if (record.createdBy === OB.User.id) {
-							  return 'OBNoteListGridCurrentUserNoteCell';
-						} else {
-							return 'OBNoteListGridOtherUserNoteCell';
-						}
-					}
+        if (record.createdBy === OB.User.id) {
+          return 'OBNoteListGridCurrentUserNoteCell';
+        } else {
+          return 'OBNoteListGridOtherUserNoteCell';
+        }
+      }
 
-						});
+    });
 
-				this.noteListGrid.addSort({
-				  direction: 'desc',
-				  property: 'updated'
-				});
-				
-				this.addMember(this.noteListGrid);
+    this.noteListGrid.addSort({
+      direction: 'desc',
+      property: 'updated'
+    });
+    
+    this.addMember(this.noteListGrid);
 
-			},
+  },
 
-			/**
-			 * Sets record information.
-			 */
-			setRecordInfo : function(entity, id) {
-				this.entity = entity;
-				this.recordId = id;
-			},
+  /**
+   * Sets record information.
+   */
+  setRecordInfo : function(entity, id) {
+    this.entity = entity;
+    this.recordId = id;
+  },
 
-			refresh : function() {
-				this.noteDynamicForm.getItem('noteOBTextAreaItem').clearValue();
-				this.noteListGrid.fetchData();
-			},
+  refresh : function() {
+    this.noteDynamicForm.getItem('noteOBTextAreaItem').clearValue();
+    this.noteListGrid.fetchData();
+  },
 
-			getForm : function() {
-				return this.canvasItem.form;
-			}
+  getForm : function() {
+    return this.canvasItem.form;
+  }
 
-		});
+});
 
 isc.ClassFactory.defineClass('OBNoteCanvasItem', isc.CanvasItem);
 
-isc.OBNoteCanvasItem.addProperties( {
+isc.OBNoteCanvasItem.addProperties({
 
-	canFocus : true,
+  canFocus : true,
 
-	// setting width/height makes the canvasitem to be hidden after a few
-	// clicks on the section item, so don't do that for now
-	showTitle : false,
-	
-	// note that explicitly setting the canvas gives an error as not
-	// all props are set correctly on the canvas (for example the
-	// pointer back to this item: canvasItem
-	// for setting more properties use canvasProperties, etc. see
-	// the docs
-	canvasConstructor : 'OBNoteLayout',
+  // setting width/height makes the canvasitem to be hidden after a few
+  // clicks on the section item, so don't do that for now
+  showTitle : false,
+  
+  // note that explicitly setting the canvas gives an error as not
+  // all props are set correctly on the canvas (for example the
+  // pointer back to this item: canvasItem
+  // for setting more properties use canvasProperties, etc. see
+  // the docs
+  canvasConstructor : 'OBNoteLayout',
 
-	// never disable this one
-	isDisabled : function() {
-		return false;
-	}
+  // never disable this one
+  isDisabled : function() {
+    return false;
+  }
 
 });
