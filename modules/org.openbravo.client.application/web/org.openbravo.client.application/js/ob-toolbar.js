@@ -13,7 +13,7 @@
  * The Initial Developer of the Original Code is Openbravo SLU
  * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
- * Contributor(s):  ______________________________________.
+ * Contributor(s):   Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
  ************************************************************************
  */
 isc.ClassFactory.defineClass('OBToolbar', isc.ToolStrip);
@@ -27,6 +27,7 @@ isc.OBToolbar.addClassProperties({
   TYPE_REFRESH: 'refresh',
   TYPE_EXPORT: 'export',
   TYPE_ATTACHMENTS: 'attach',
+  TYPE_CLONE: 'clone',
   
   SAVE_BUTTON_PROPERTIES: {
     action: function(){
@@ -426,7 +427,28 @@ isc.OBToolbar.addClassProperties({
         this.setDisabled(disabled);
       }
     }
-  }
+  },
+  CLONE_BUTTON_PROPERTIES: {
+	    action: function(){
+	      alert('this method must be overridden when registering the button');
+	    },
+	    disabled: false,
+	    buttonType: 'clone',
+	    prompt: OB.I18N.getLabel('OBUIAPP_CloneData'),
+	    updateState: function(){
+	        var view = this.view, form = view.viewForm, grid = view.viewGrid, selectedRecords = grid.getSelectedRecords();
+	        if (selectedRecords && selectedRecords.length > 1) {
+	          this.setDisabled(true);
+	        } else if (view.isShowingForm && form.isNew) {
+	          this.setDisabled(true);
+	        } else if (view.isEditingGrid && grid.getEditForm().isNew) {
+		        this.setDisabled(true);
+		      } else {
+		        this.setDisabled(selectedRecords.length === 0);
+		      }
+	    },
+	    keyboardShortcutId: 'ToolBar_Clone'
+	  }
 });
 
 // = OBToolbar =
@@ -449,7 +471,7 @@ isc.OBToolbar.addProperties({
     this.members = null;
     
     var newMembers = [], i = 0, j = 0;
-    
+    this.leftMembers = OB.ToolbarRegistry.getButtons(this.view.tabId);
     newMembers[j] = isc.HLayout.create({
       width: this.leftMargin,
       height: 1
@@ -458,10 +480,13 @@ isc.OBToolbar.addProperties({
     
     if (this.leftMembers) {
       for (i = 0; i < this.leftMembers.length; i++) {
+       
         newMembers[j] = this.leftMembers[i];
         
         if (newMembers[j].buttonType && isc.OBToolbar.BUTTON_PROPERTIES[newMembers[j].buttonType]) {
+       
           isc.addProperties(newMembers[j], isc.OBToolbar.BUTTON_PROPERTIES[newMembers[j].buttonType]);
+         
         }
         
         OB.TestRegistry.register('org.openbravo.client.application.toolbar.button.' + this.leftMembers[i].buttonType + '.' + this.view.tabId, this.leftMembers[i]);
@@ -1365,3 +1390,67 @@ OB.ToolbarUtils.showTree = function(view){
   
   view.setContextInfo(view.getContextInfo(true, true, true, true), openPopupTree, true);
 };
+
+OB.ToolbarRegistry = {
+    buttonDefinitions: [],
+    registerButton: function(buttonId, clazz, properties, sortOrder, tabId) {
+      // declare the vars and the object which will be stored
+      var i, index = 0, buttonDef = {
+          buttonId: buttonId,
+          clazz: clazz,
+          properties: properties,
+          sortOrder: sortOrder,
+          tabId: tabId
+      };
+ 
+      // already registered, bail
+      for (i = 0; i < this.buttonDefinitions.length; i++) {   
+        if (this.buttonDefinitions[i].buttonId === buttonId) {
+          return;
+        }
+      }
+      
+      index = this.buttonDefinitions.length;
+      for (i = 0; i < this.buttonDefinitions.length; i++) {   
+        if (this.buttonDefinitions[i].sortOrder > sortOrder) {
+          index = i;
+          break;
+        }
+      }
+
+      if (index === this.buttonDefinitions.length) {
+        this.buttonDefinitions[index] = buttonDef;
+      } else {
+        this.buttonDefinitions.splice(index, 0, buttonDef);
+      }
+    },
+
+		getButtons: function(tabId) {
+		  // get the buttons for the tabId, this includes all buttons with that tabId or with no tabId set
+		  // as the button defs are already stored by their sortorder we can just iterate over the array
+		  // and pick them up in the correct order
+		  // the return should be an array of button instances created by doing 
+		  //  btnDefinitionClass.create(btnDefinitionProperties);
+		  var result = [], resultIndex = 0, i;	
+		  for (i = 0; i < this.buttonDefinitions.length; i++) {	
+		    if (!this.buttonDefinitions[i].tabId || tabId === this.buttonDefinitions[i].tabId) {
+		      result[resultIndex++] = this.buttonDefinitions[i].clazz.create(isc.clone(this.buttonDefinitions[i].properties));
+		    }
+		  }
+		  return result;
+		}
+};
+
+//These are the icon toolbar buttons shown in all the tabs 
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.NEW_DOC_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.NEW_DOC_BUTTON_PROPERTIES, 10, null);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.NEW_ROW_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.NEW_ROW_BUTTON_PROPERTIES, 20, null);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.SAVE_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.SAVE_BUTTON_PROPERTIES, 30, null);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.SAVECLOSE_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.SAVECLOSE_BUTTON_PROPERTIES, 40, null);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.UNDO_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.UNDO_BUTTON_PROPERTIES, 50, null);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.DELETE_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.DELETE_BUTTON_PROPERTIES, 60, null);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.REFRESH_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.REFRESH_BUTTON_PROPERTIES, 70, null);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.EXPORT_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.EXPORT_BUTTON_PROPERTIES, 80, null);
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES, 90, null);
+          
+//and add the direct link at the end
+OB.ToolbarRegistry.registerButton(isc.OBToolbar.LINK_BUTTON_PROPERTIES.buttonType, isc.OBToolbarIconButton, isc.OBToolbar.LINK_BUTTON_PROPERTIES, 300, null);

@@ -158,6 +158,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/ob-eventhandler.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-section-stack.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/ob-clone-order.js", false));
 
     // Styling
     globalResources.add(createStyleSheetResource(

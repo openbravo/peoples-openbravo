@@ -50,7 +50,7 @@ isc.OBStandardView.addClassProperties({
   
   UI_PATTERN_READONLY: 'RO',
   UI_PATTERN_SINGLERECORD: 'SR',
-  UI_PATTERN_STANDARD: 'ST'  
+  UI_PATTERN_STANDARD: 'ST'
 });
 
 isc.OBStandardView.addProperties({
@@ -194,25 +194,13 @@ isc.OBStandardView.addProperties({
       }
     }
     
-    // These are the icon toolbar buttons shown in all the tabs 
-    leftMemberButtons = [isc.OBToolbarIconButton.create(isc.OBToolbar.NEW_DOC_BUTTON_PROPERTIES),
-                   isc.OBToolbarIconButton.create(isc.OBToolbar.NEW_ROW_BUTTON_PROPERTIES), 
-                   isc.OBToolbarIconButton.create(isc.OBToolbar.SAVE_BUTTON_PROPERTIES), 
-                   isc.OBToolbarIconButton.create(isc.OBToolbar.SAVECLOSE_BUTTON_PROPERTIES), 
-                   isc.OBToolbarIconButton.create(isc.OBToolbar.UNDO_BUTTON_PROPERTIES), 
-                   isc.OBToolbarIconButton.create(isc.OBToolbar.DELETE_BUTTON_PROPERTIES), 
-                   isc.OBToolbarIconButton.create(isc.OBToolbar.REFRESH_BUTTON_PROPERTIES),
-                   isc.OBToolbarIconButton.create(isc.OBToolbar.EXPORT_BUTTON_PROPERTIES),
-                   isc.OBToolbarIconButton.create(isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES)];
-    
-    // Look for specific toolabr buttons for this tab
+    // Look for specific toolbar buttons for this tab
     if (this.iconToolbarButtons) {
       for (i = 0; i < this.iconToolbarButtons.length; i++) {
-        leftMemberButtons.push(isc.OBToolbarIconButton.create(this.iconToolbarButtons[i]));
+        // note create a somewhat unique id by concatenating the tabid and the index
+        OB.ToolbarRegistry.registerButton(this.tabId + '_' + i, isc.OBToolbarIconButton, this.iconToolbarButtons[i], 200 + (i * 10), this.tabId);
       }
     }
-    // and add the direct link at the end
-    leftMemberButtons.push(isc.OBToolbarIconButton.create(isc.OBToolbar.LINK_BUTTON_PROPERTIES));
     
     this.toolBar = isc.OBToolbar.create({
       view: this,
@@ -1286,95 +1274,95 @@ isc.OBStandardView.addProperties({
       this.viewForm.saveRow();
     }
   },
-  
+ 
   deleteSelectedRows: function(autoSaveDone){
-  if (!this.readOnly) {
-    // first save what we have edited
-    if (!autoSaveDone) {
-      var actionObject = {
-          target: this,
-          method: this.deleteSelectedRows,
-          parameters: [true]
-        };
-      this.standardWindow.doActionAfterAutoSave(actionObject, true);
-      return;
-    }
+    if (!this.readOnly) {
+      // first save what we have edited
+      if (!autoSaveDone) {
+        var actionObject = {
+            target: this,
+            method: this.deleteSelectedRows,
+            parameters: [true]
+          };
+        this.standardWindow.doActionAfterAutoSave(actionObject, true);
+        return;
+      }
     
-    var msg, view = this, deleteCount = this.viewGrid.getSelection().length;
-    if (deleteCount === 1) {
-      msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationSingle');
-    } else {
-      msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationMultiple', [this.viewGrid.getSelection().length]);
-    }
+      var msg, view = this, deleteCount = this.viewGrid.getSelection().length;
+      if (deleteCount === 1) {
+        msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationSingle');
+      } else {
+        msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationMultiple', [this.viewGrid.getSelection().length]);
+      }
     
-    var callback = function(ok){
-      var i, data, deleteData, error, recordInfos = [], removeCallBack = function(resp, data, req){
-        var localData = resp.dataObject || resp.data || data, i;
-        if (!localData) {
-          // bail out, an error occured which should be displayed to the user now
-          return;
-        }
-        var status = resp.status;
-        if (localData && localData.hasOwnProperty('status')) {
-          status = localData.status;
-        }
-        if (localData && localData.response && localData.response.hasOwnProperty('status')) {
-          status = localData.response.status;
-        }
-        if (status === isc.RPCResponse.STATUS_SUCCESS) {
-          if (view.isShowingForm) {
-            view.switchFormGridVisibility();
+      var callback = function(ok){
+        var i, data, deleteData, error, recordInfos = [], removeCallBack = function(resp, data, req){
+          var localData = resp.dataObject || resp.data || data, i;
+          if (!localData) {
+            // bail out, an error occured which should be displayed to the user now
+            return;
           }
-          view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [deleteCount]));
-          if (deleteData) {
-            // deleteData is computed below
-            for (i = 0 ; i < deleteData.ids.length; i++) {
-              recordInfos.push({id: deleteData.ids[i]});
+          var status = resp.status;
+          if (localData && localData.hasOwnProperty('status')) {
+            status = localData.status;
+          }
+          if (localData && localData.response && localData.response.hasOwnProperty('status')) {
+            status = localData.response.status;
+          }
+          if (status === isc.RPCResponse.STATUS_SUCCESS) {
+            if (view.isShowingForm) {
+              view.switchFormGridVisibility();
             }
-            view.viewGrid.data.handleUpdate('remove', recordInfos);
-          }
-          view.viewGrid.updateRowCountDisplay();
-          view.refreshChildViews();
-          view.refreshParentRecord();
-        } else {
-          // get the error message from the dataObject 
-          if (localData.response && localData.response.error && localData.response.error.message) {
-            error = localData.response.error;
-            if (error.type && error.type === 'user') {
-              view.messageBar.setLabel(isc.OBMessageBar.TYPE_ERROR, null, error.message, error.params);
-            } else if (error.message && error.params) {
+            view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [deleteCount]));
+            if (deleteData) {
+              // deleteData is computed below
+              for (i = 0 ; i < deleteData.ids.length; i++) {
+                recordInfos.push({id: deleteData.ids[i]});
+              }
+              view.viewGrid.data.handleUpdate('remove', recordInfos);
+            }
+            view.viewGrid.updateRowCountDisplay();
+            view.refreshChildViews();
+            view.refreshParentRecord();
+          } else {
+            // get the error message from the dataObject 
+            if (localData.response && localData.response.error && localData.response.error.message) {
+              error = localData.response.error;
+              if (error.type && error.type === 'user') {
                 view.messageBar.setLabel(isc.OBMessageBar.TYPE_ERROR, null, error.message, error.params);
-            } else if (error.message) {
-              view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, error.message);
-            } else {
-              view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [0]));
+              } else if (error.message && error.params) {
+                  view.messageBar.setLabel(isc.OBMessageBar.TYPE_ERROR, null, error.message, error.params);
+              } else if (error.message) {
+                view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, error.message);
+              } else {
+                view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [0]));
+              }
             }
+          }
+        };
+        
+        if (ok) {
+          var selection = view.viewGrid.getSelection().duplicate();
+          // deselect the current records
+          view.viewGrid.deselectAllRecords();
+          
+          if (selection.length > 1) {
+            deleteData = {};
+            deleteData.entity = view.entity;
+            deleteData.ids = [];
+            for (i = 0; i < selection.length; i++) {
+              deleteData.ids.push(selection[i][OB.Constants.ID]);
+            }
+            OB.RemoteCallManager.call('org.openbravo.client.application.MultipleDeleteActionHandler', deleteData, {}, removeCallBack, {
+              refreshGrid: true
+            });
+          } else {
+            view.viewGrid.removeData(selection[0], removeCallBack, {});
           }
         }
       };
-      
-      if (ok) {
-        var selection = view.viewGrid.getSelection().duplicate();
-        // deselect the current records
-        view.viewGrid.deselectAllRecords();
-        
-        if (selection.length > 1) {
-          deleteData = {};
-          deleteData.entity = view.entity;
-          deleteData.ids = [];
-          for (i = 0; i < selection.length; i++) {
-            deleteData.ids.push(selection[i][OB.Constants.ID]);
-          }
-          OB.RemoteCallManager.call('org.openbravo.client.application.MultipleDeleteActionHandler', deleteData, {}, removeCallBack, {
-            refreshGrid: true
-          });
-        } else {
-          view.viewGrid.removeData(selection[0], removeCallBack, {});
-        }
-      }
-    };
-    isc.ask(msg, callback);
-   }
+      isc.ask(msg, callback);
+    }
   },
   
   newRow: function(rowNum) {
@@ -1681,3 +1669,4 @@ isc.OBStandardView.addProperties({
     }, null, callback, this);
   }
 });
+
