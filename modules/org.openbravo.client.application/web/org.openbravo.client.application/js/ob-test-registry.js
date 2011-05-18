@@ -48,7 +48,7 @@
     registry: {},
 
     register: function(key, object){
-      if (true || isTestEnvironment) {
+      if (isTestEnvironment) {
         isc.Log.logDebug('Registering ' + key + ' in test registry ', 'OB');
         this.registry[key] = object;
       }

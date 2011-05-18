@@ -261,7 +261,7 @@ isc.OBAlertGrid.addProperties({
     var selectionLength = selection.getLength();
     var newValue = '&nbsp;';
     if (selectionLength > 0) {
-      newValue = selectionLength + '';
+      newValue = String(selectionLength);
     }
     if (this.filterEditor) {
       this.filterEditor.getEditForm().setValue(this.getCheckboxField().name, newValue);

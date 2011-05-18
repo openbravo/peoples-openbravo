@@ -52,7 +52,7 @@
       }
       
       // is the value valid
-      if (!this.recentNum || ('' + this.recentNum) !== ('' + parseInt(this.recentNum, 10))) {
+      if (!this.recentNum || (String(this.recentNum)) !== (String(parseInt(this.recentNum, 10)))) {
         this.recentNum = 3;
       }
       return this.recentNum;

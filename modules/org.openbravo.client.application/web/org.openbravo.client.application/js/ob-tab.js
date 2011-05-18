@@ -299,7 +299,7 @@ isc.OBTabSetChild.addProperties({
     },
 
     dragMove: function(){
-      var offset = (0 - isc.EH.dragOffsetY);
+      var offset = -1 * isc.EH.dragOffsetY;
       this.resizeTarget(this.tabSet, true, true, offset, -1 * this.getHeight(), null, true);
       this.tabSet.draggedHeight = this.tabSet.getHeight();
       // if (this.tabSet.getHeight() === this.getHeight()) {
