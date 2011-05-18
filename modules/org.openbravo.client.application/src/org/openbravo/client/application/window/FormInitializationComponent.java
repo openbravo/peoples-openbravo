@@ -128,6 +128,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<String> changeEventCols = new ArrayList<String>();
       Map<String, List<String>> columnsInValidation = new HashMap<String, List<String>>();
       List<String> calloutMessages = new ArrayList<String>();
+      List<String> jsExcuteCode = new ArrayList<String>();
 
       log.debug("Form Initialization Component Execution. Tab Name: " + tab.getWindow().getName()
           + "." + tab.getName() + " Tab Id:" + tab.getId());
@@ -219,10 +220,16 @@ public class FormInitializationComponent extends BaseActionHandler {
           changedColumn, jsContent, changeEventCols, calloutsToCall, lastfieldChanged,
           visibleProperties);
 
+      if (mode.equals("NEW")) {
+        // In the case of NEW mode, we compute auxiliary inputs again to take into account that
+        // auxiliary inputs could depend on a default value
+        computeAuxiliaryInputs(mode, tab, columnValues);
+      }
+
       // Execution of callouts
       long t6 = System.currentTimeMillis();
       List<String> changedCols = executeCallouts(mode, tab, columnValues, changedColumn,
-          calloutsToCall, lastfieldChanged, calloutMessages, changeEventCols);
+          calloutsToCall, lastfieldChanged, calloutMessages, changeEventCols, jsExcuteCode);
 
       if (changedCols.size() > 0) {
         RequestContext.get().setRequestParameter("donotaddcurrentelement", "true");
@@ -233,15 +240,10 @@ public class FormInitializationComponent extends BaseActionHandler {
       long t7 = System.currentTimeMillis();
       List<JSONObject> attachments = attachmentForRows(tab, rowId, multipleRowIds);
 
-      if (mode.equals("NEW")) {
-        // In the case of NEW mode, we compute auxiliary inputs again to take into account that
-        // auxiliary inputs could depend on a default value
-        computeAuxiliaryInputs(mode, tab, columnValues);
-      }
       // Construction of the final JSONObject
       long t8 = System.currentTimeMillis();
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
-          calloutMessages, attachments);
+          calloutMessages, attachments, jsExcuteCode);
       long t9 = System.currentTimeMillis();
       log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
           + (t3 - t2) + "," + (t4 - t3) + "," + (t5 - t4) + "," + (t6 - t5) + "," + (t7 - t6) + ","
@@ -304,7 +306,7 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private JSONObject buildJSONObject(String mode, Tab tab, Map<String, JSONObject> columnValues,
       BaseOBObject row, List<String> changeEventCols, List<String> calloutMessages,
-      List<JSONObject> attachments) {
+      List<JSONObject> attachments, List<String> jsExcuteCode) {
     JSONObject finalObject = new JSONObject();
     try {
       if (mode.equals("NEW") || mode.equals("CHANGE")) {
@@ -395,6 +397,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       finalObject.put("attachments", new JSONArray(attachments));
       finalObject.put("attachmentExists", attachments.size() > 0);
 
+      if (!jsExcuteCode.isEmpty()) {
+        finalObject.put("jscode", new JSONArray(jsExcuteCode));
+      }
       log.debug(finalObject.toString(1));
       return finalObject;
     } catch (JSONException e) {
@@ -931,7 +936,7 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private List<String> executeCallouts(String mode, Tab tab, Map<String, JSONObject> columnValues,
       String changedColumn, List<String> calloutsToCall, List<String> lastfieldChanged,
-      List<String> messages, List<String> dynamicCols) {
+      List<String> messages, List<String> dynamicCols, List<String> jsExecuteCode) {
 
     // In CHANGE mode, we will add the initial callout call for the changed column, if there is
     // one
@@ -953,13 +958,13 @@ public class FormInitializationComponent extends BaseActionHandler {
       return new ArrayList<String>();
     }
     return runCallouts(columnValues, tab, calledCallouts, calloutsToCall, lastfieldChanged,
-        messages, dynamicCols);
+        messages, dynamicCols, jsExecuteCode);
 
   }
 
   private List<String> runCallouts(Map<String, JSONObject> columnValues, Tab tab,
       List<String> calledCallouts, List<String> calloutsToCall, List<String> lastfieldChangedList,
-      List<String> messages, List<String> dynamicCols) {
+      List<String> messages, List<String> dynamicCols, List<String> jsExecuteCode) {
     HashMap<String, Object> calloutInstances = new HashMap<String, Object>();
 
     // flush&commit to release lock in db which otherwise interfere with callouts which run in their
@@ -1046,6 +1051,12 @@ public class FormInitializationComponent extends BaseActionHandler {
               if (name.equals("MESSAGE")) {
                 log.debug("Callout message: " + element.get(1, null));
                 messages.add(element.get(1, null).toString());
+              } else if (name.equals("JSEXECUTE")) {
+                // The code on a JSEXECUTE command is sent directly to the client for eval()
+                String code = (String) element.get(1, null);
+                if (code != null) {
+                  jsExecuteCode.add(code);
+                }
               } else if (name.equals("EXECUTE")) {
                 String js = element.get(1, null) == null ? null : element.get(1, null).toString();
                 if (js != null && !js.equals("")) {
