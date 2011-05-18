@@ -278,10 +278,10 @@ isc.OBNoteLayout.addProperties({
         // the current user
         if (record.createdBy === OB.User.id) {
           value = value +
-              ' <span class="OBNoteListGridDelete" >[ <a class="OBNoteListGridDelete" href="#" onclick="' +
+              ' <span class="OBNoteListGridDelete" ><a class="OBNoteListGridDelete" href="#" onclick="' +
               this.layout.ID + '.deleteNote(\'' +
               record.id +
-              '\')">' + OB.I18N.getLabel('OBUIAPP_delete') + ' </a>]</span>';
+              '\')">[ ' + OB.I18N.getLabel('OBUIAPP_delete') + ' ]</a></span>';
         } 
         return value;
       },

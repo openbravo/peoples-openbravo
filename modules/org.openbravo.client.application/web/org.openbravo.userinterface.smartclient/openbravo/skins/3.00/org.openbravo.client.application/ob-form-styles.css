@@ -784,8 +784,12 @@
 /*=======================================================================
  * Note section
 =======================================================================*/
+
 .OBNoteListGrid,
-.OBNoteListGridOver,
+.OBNoteListGridOver {
+   margin: 0px 0px 8px 8px;
+}
+
 .OBNoteListGridCell,
 .OBNoteListGridCellOver,
 .OBNoteListGridCurrentUserNoteCell,
@@ -796,13 +800,14 @@
 .OBNoteListGridOtherUserNoteCellOver {
    border: 0px;
    background-color: transparent;
-   padding:5px; 
-   font-family: arial;
+   padding: 5px;
+   font-family: arial, sans-serif;
    font-size: 12px;
 }
 
 .OBNoteListGridCurrentUserNoteCell,
 .OBNoteListGridCurrentUserNoteCellOver {
+    width: 1px; /* To avoid strange IE effect where the bar is too width. Even with this is still widther than FF and Chrome */
     background-color: #898989;
 }
 
@@ -812,7 +817,7 @@
 }
 
 .OBNoteListGridAuthor {
-  font-family: arial;
+  font-family: arial, sans-serif;
   font-style: italic;
   font-size: 11px;
   margin-left: 3px;
@@ -822,7 +827,7 @@
   font-family: 'lucida sans', sans-serif;
   font-style: normal;
   font-size: 12px;
-  color: #0d7813;
+  color: #58a618;
   margin-left: 0px;
 }
 
