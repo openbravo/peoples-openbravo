@@ -71,7 +71,19 @@ public class EnumUIDefinition extends UIDefinition {
 
   @Override
   public String getFieldPropertiesWithoutCombo(Field field, boolean getValueFromSession) {
-    return super.getFieldProperties(field, getValueFromSession);
+    try {
+      JSONObject value = new JSONObject(super.getFieldProperties(field, getValueFromSession));
+      if (!getValueFromSession
+          && ((String) DalUtil.getId(field.getColumn().getReference())).equals("28")
+          && !value.has("value")) {
+        // When reference is button, set 'N' as default if there is default
+        value.put("value", "N");
+        value.put("classicValue", "N");
+      }
+      return value.toString();
+    } catch (JSONException ex) {
+      throw new OBException("Error while computing combo data", ex);
+    }
   }
 
   @Override
