@@ -809,6 +809,7 @@ isc.OBStandardView.addProperties({
       // clear the form    
       this.viewForm.resetForm();
       this.isShowingForm = false;
+      this.viewGrid.markForRedraw('showing');
       this.viewGrid.show();
       if (this.isActiveView()) {
         this.viewGrid.focusInFilterEditor();
