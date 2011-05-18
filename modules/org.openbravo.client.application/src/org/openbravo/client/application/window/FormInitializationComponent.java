@@ -219,6 +219,12 @@ public class FormInitializationComponent extends BaseActionHandler {
           changedColumn, jsContent, changeEventCols, calloutsToCall, lastfieldChanged,
           visibleProperties);
 
+      if (mode.equals("NEW")) {
+        // In the case of NEW mode, we compute auxiliary inputs again to take into account that
+        // auxiliary inputs could depend on a default value
+        computeAuxiliaryInputs(mode, tab, columnValues);
+      }
+
       // Execution of callouts
       long t6 = System.currentTimeMillis();
       List<String> changedCols = executeCallouts(mode, tab, columnValues, changedColumn,
@@ -233,11 +239,6 @@ public class FormInitializationComponent extends BaseActionHandler {
       long t7 = System.currentTimeMillis();
       List<JSONObject> attachments = attachmentForRows(tab, rowId, multipleRowIds);
 
-      if (mode.equals("NEW")) {
-        // In the case of NEW mode, we compute auxiliary inputs again to take into account that
-        // auxiliary inputs could depend on a default value
-        computeAuxiliaryInputs(mode, tab, columnValues);
-      }
       // Construction of the final JSONObject
       long t8 = System.currentTimeMillis();
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
