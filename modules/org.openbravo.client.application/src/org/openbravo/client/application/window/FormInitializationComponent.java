@@ -610,6 +610,13 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private void computeAuxiliaryInputs(String mode, Tab tab, Map<String, JSONObject> columnValues) {
+    if (mode.equals("CHANGE")) {
+      // Auxiliary Inputs are not computed in CHANGE mode, only in the initial request in NEW or
+      // EDIT mode. This is done to prevent accidental overwriting of auxiliary input values which
+      // have been set by callouts
+      // See issue 17239 for more information
+      return;
+    }
     for (AuxiliaryInput auxIn : tab.getADAuxiliaryInputList()) {
       Object value = computeAuxiliaryInput(auxIn, tab.getWindow().getId());
       log.debug("Final Computed Value. Name: " + auxIn.getName() + " Value: " + value);
