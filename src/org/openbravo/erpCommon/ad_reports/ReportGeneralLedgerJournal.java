@@ -594,8 +594,15 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       strSubtitle += " - " + Utility.messageBD(this, "Period", vars.getLanguage()) + ": "
           + strDateFrom + " - " + strDateTo;
 
-    String strOutput = vars.commandIn("PDF") ? "pdf" : "xls";
-    String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournal.jrxml";
+    String strOutput;
+    String strReportName;
+    if (vars.commandIn("PDF")) {
+      strOutput = "pdf";
+      strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournal.jrxml";
+    } else {
+      strOutput = "xls";
+      strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournalExcel.jrxml";
+    }
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("Subtitle", strSubtitle);
