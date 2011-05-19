@@ -861,7 +861,9 @@ OB.ViewFormProperties = {
 
   // called explicitly onblur and when non-editable fields change
   handleItemChange: function(item){
-  
+    // is used to prevent infinite loops during save
+    delete this.saveFocusItemChanged;
+
     if (item._hasChanged) {
       this.itemChangeActions();
       
@@ -989,11 +991,14 @@ OB.ViewFormProperties = {
   saveRow: function(){
     var savingNewRecord = this.isNew;
     // store the value of the current focus item
-    if (this.getFocusItem()) {
+    if (this.getFocusItem() && this.saveFocusItemChanged !== this.getFocusItem()) {
       this.getFocusItem().updateValue();
       this.handleItemChange(this.getFocusItem());
+      // prevent infinite loops
+      this.saveFocusItemChanged = this.getFocusItem();
+    } else {
+      delete this.saveFocusItemChanged;
     }
-
     
     var i, length, flds, form = this, ficCallDone;
     var record = form.view.viewGrid.getSelectedRecord(),
