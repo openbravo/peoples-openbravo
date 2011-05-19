@@ -36,6 +36,7 @@ isc.OBAlertGrid.addProperties({
   editOnFocus: true,
   showCellContextMenus: true,
   selectOnEdit: false,
+  showRecordComponents: false,
   
   // keeps track if we are in objectSelectionMode or in toggleSelectionMode
   // objectSelectionMode = singleRecordSelection === true
