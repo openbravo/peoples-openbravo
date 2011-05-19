@@ -554,7 +554,7 @@ public class Fact {
     BigDecimal result = ZERO;
     for (int i = 0; i < m_lines.size(); i++) {
       FactLine line = (FactLine) m_lines.get(i);
-      BigDecimal balance = new BigDecimal(line.getAcctBalance());
+      BigDecimal balance = line.getAcctBalance();
       result = result.add(balance);
     }
     return result;
@@ -607,7 +607,7 @@ public class Fact {
       // Find line
       for (int i = 0; i < m_lines.size(); i++) {
         FactLine l = (FactLine) m_lines.get(i);
-        BigDecimal amt = new BigDecimal(l.getAcctBalance());
+        BigDecimal amt = l.getAcctBalance();
         amt = amt.abs();
         if (l.isBalanceSheet() && amt.compareTo(BSamount) > 0) {
           BSamount = amt;

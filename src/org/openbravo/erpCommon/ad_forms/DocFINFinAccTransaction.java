@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.util.Convert;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -42,6 +43,8 @@ import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
+import org.openbravo.model.financialmgmt.accounting.coa.AccountingCombination;
+import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaDefault;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
@@ -369,6 +372,7 @@ public class DocFINFinAccTransaction extends AcctServer {
         transaction.getDepositAmount().toString(), transaction.getPaymentAmount().toString(),
         Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
 
+    createFactCurrencyBalancing(as, conn, fact, Fact_Acct_Group_ID, transaction);
     SeqNo = "0";
     return fact;
   }
@@ -414,6 +418,70 @@ public class DocFINFinAccTransaction extends AcctServer {
       ConnectionProvider conn, Fact fact) throws ServletException {
     return createFactGLItem(as, conn, fact);
   }
+
+  private void createFactCurrencyBalancing(AcctSchema as, ConnectionProvider conn, Fact fact,
+      String fact_Acct_Group_ID, FIN_FinaccTransaction finaccTransaction) throws ServletException {
+    final BigDecimal acctBalance = fact.getAcctBalance();
+    if( BigDecimal.ZERO.compareTo(acctBalance) != 0 ) {
+      // Need to add balancing entry
+      // Balance == AcctDr - AcctCr
+      String currencyLossDR = "0";
+      String currencyGainCR = "0";
+      boolean isGain = acctBalance.compareTo(BigDecimal.ZERO) > 0;
+      if(isGain) {
+        // debit > credit = need to credit
+        currencyGainCR = Convert.toString(acctBalance);
+      } else {
+        // debit < credit = need to debit
+        currencyLossDR = Convert.toString(acctBalance.negate());
+      }
+
+      String currencyLossGainAcctComboId = null;
+      // Find gain / loss accounts from account
+      for( FIN_FinancialAccountAccounting accounting:
+          finaccTransaction.getAccount().getFINFinancialAccountAcctList() ) {
+        if( accounting.getAccountingSchema().getId().equals(as.getC_AcctSchema_ID())) {
+          AccountingCombination revaluationAcct;
+          if( isGain ){
+            revaluationAcct = accounting.getFINBankrevaluationgainAcct();
+          } else {
+            revaluationAcct = accounting.getFINBankrevaluationlossAcct();
+          }
+          if( revaluationAcct != null ) {
+            currencyLossGainAcctComboId = revaluationAcct.getId();
+          }
+          break;
+        }
+      }
+      if( currencyLossGainAcctComboId == null) {
+        // Find default gain/loss accounts from schema
+        final OBQuery<AcctSchemaDefault> obqAcctSchemDefault= OBDal.getInstance().createQuery(
+            AcctSchemaDefault.class, " where accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+        final AcctSchemaDefault acctSchemaDefault = obqAcctSchemDefault.list().get(0);
+        AccountingCombination defaultRevaluationAcct;
+        if( isGain) {
+          defaultRevaluationAcct = acctSchemaDefault.getBankRevaluationGain();
+        } else {
+          defaultRevaluationAcct = acctSchemaDefault.getBankRevaluationLoss();
+        }
+        if(currencyLossGainAcctComboId == null && defaultRevaluationAcct != null ) {
+          currencyLossGainAcctComboId = defaultRevaluationAcct.getId();
+        }
+      }
+      Account accountGainLoss= Account.getAccount(conn, currencyLossGainAcctComboId);
+      if( accountGainLoss == null ) {
+        // Fall back to currency balancing
+        accountGainLoss = as.getCurrencyBalancing_Acct();
+      }
+
+
+      if( accountGainLoss != null ) {
+        final FactLine line = fact.createLine(null, accountGainLoss, as.getC_Currency_ID(), currencyLossDR, currencyGainCR, fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        line.setAmtSource(C_Currency_ID,"0","0"); // Mimic normal currency balancing
+      }
+    }
+  }
+
 
   public String nextSeqNo(String oldSeqNo) {
     BigDecimal seqNo = new BigDecimal(oldSeqNo);
