@@ -960,8 +960,12 @@ OB.ViewFormProperties = {
     this.view.messageBar.hide();
     this.resetValues();
     this.setHasChanged(false);
-    this.view.statusBar.mode = 'VIEW';
-    this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());
+    if (this.isNew) {
+      this.setNewState(this.isNew);
+    } else {
+      this.view.statusBar.mode = 'VIEW';
+      this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());      
+    }
     this.view.toolBar.updateButtonState(true);
   },
   
