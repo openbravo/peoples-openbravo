@@ -273,11 +273,18 @@ public class DocFINPayment extends AcctServer {
         }
       }
       FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, Record_ID);
-      fact.createLine(null, getAccount(conn, payment.getPaymentMethod(), payment.getAccount(), as,
-          payment.isReceipt()), financialAccountCurrencyId,
+      final FactLine paymentLine = fact.createLine(null, getAccount(conn, payment.getPaymentMethod(),
+          payment.getAccount(), as, payment.isReceipt()), financialAccountCurrencyId,
           (payment.isReceipt() ? financialTransactionAmount : ""),
           (payment.isReceipt() ? "" : financialTransactionAmount), Fact_Acct_Group_ID, "999999",
           DocumentType, conn);
+      if( MultiCurrency && C_Currency_ID.equals(as.getC_Currency_ID()) ) {
+        // If payment currency matches schema currency, then conversion should be done using
+        // exchange rate in payment, not system
+        final String paymentAmount = Convert.toString(payment.getAmount());
+        paymentLine.setAmtAcct((payment.isReceipt() ? paymentAmount : ""),
+            (payment.isReceipt() ? "" : paymentAmount));
+      }
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
       // credit is generated
       if (new BigDecimal(usedAmount).compareTo(ZERO) != 0
