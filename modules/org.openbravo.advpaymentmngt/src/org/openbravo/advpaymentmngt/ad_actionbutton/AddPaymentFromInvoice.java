@@ -139,6 +139,12 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       refreshPaymentMethodCombo(response, strPaymentMethodId, "", strOrgId, isReceipt);
 
+    } else if (vars.commandIn("EXCHANGERATE")) {
+      final String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
+      final String strFinancialAccountCurrencyId = vars.getRequestGlobalVariable("inpFinancialAccountCurrencyId", "");
+      final String strPaymentDate = vars.getRequestGlobalVariable("inpPaymentDate", "");
+      refreshExchangeRate(response, strCurrencyId,strFinancialAccountCurrencyId,strPaymentDate);
+
     } else if (vars.commandIn("SAVE") || vars.commandIn("SAVEANDPROCESS")) {
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       String strAction = null;
@@ -349,17 +355,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency.getStandardPrecision().toString());
     }
 
-    String exchangeRate = "1.0";
-    if( financialAccountCurrency != null && !financialAccountCurrency.equals(paymentCurrency)) {
-      final CurrencyDao currencyDao = new CurrencyDao();
-      final ConversionRate conversionRate = currencyDao.getConversionRate(paymentCurrency, financialAccountCurrency, new Date());
-      if( conversionRate != null ) {
-        exchangeRate = Convert.toStringWithPrecision(conversionRate.getMultipleRateBy(),
-            CurrencyDao.CONVERSION_RATE_PRECISION);
-      } else {
-        exchangeRate = "";
-      }
-    }
+    String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, new Date());
     xmlDocument.setParameter("exchangeRate", exchangeRate);
     
     boolean forcedFinancialAccountTransaction = false;
@@ -455,17 +451,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     final Currency financialAccountCurrency = dao.getFinancialAccountCurrency(strFinancialAccountId);
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
 
-    String exchangeRate = "1.0";
-    if( !financialAccountCurrency.equals(paymentCurrency)) {
-      final CurrencyDao currencyDao = new CurrencyDao();
-      final ConversionRate conversionRate = currencyDao.getConversionRate(paymentCurrency, financialAccountCurrency, FIN_Utility.getDate(paymentDate));
-      if( conversionRate != null ) {
-        exchangeRate = Convert.toStringWithPrecision(conversionRate.getMultipleRateBy(),
-            CurrencyDao.CONVERSION_RATE_PRECISION);
-      } else {
-        exchangeRate = "";
-      }
-    }
+    String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency,
+         FIN_Utility.getDate(paymentDate));
 
     JSONObject msg = new JSONObject();
     try {
@@ -484,6 +471,47 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     out.close();
 
   }
+
+  private void refreshExchangeRate(HttpServletResponse response, String strCurrencyId,
+        String strFinancialAccountCurrencyId, String strPaymentDate)
+       throws IOException, ServletException {
+
+     AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
+
+     final Currency financialAccountCurrency = dao.getObject(Currency.class, strFinancialAccountCurrencyId);
+     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
+
+     String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency,
+         FIN_Utility.getDate(strPaymentDate));
+
+     JSONObject msg = new JSONObject();
+     try {
+       msg.put("exchangeRate",exchangeRate );
+     } catch (JSONException e) {
+       log4j.debug("JSON object error" + msg.toString());
+     }
+     response.setContentType("application/json; charset=UTF-8");
+     PrintWriter out = response.getWriter();
+     out.println(msg.toString());
+     out.close();
+   }
+
+   private String findExchangeRate(Currency paymentCurrency, Currency financialAccountCurrency,
+       Date paymentDate) {
+     String exchangeRate = "1.0";
+     if( !financialAccountCurrency.equals(paymentCurrency)) {
+       final CurrencyDao currencyDao = new CurrencyDao();
+       final ConversionRate conversionRate = currencyDao.getConversionRate(paymentCurrency,
+           financialAccountCurrency, paymentDate);
+       if( conversionRate != null ) {
+         exchangeRate = Convert.toStringWithPrecision(conversionRate.getMultipleRateBy(),
+             CurrencyDao.CONVERSION_RATE_PRECISION);
+       } else {
+         exchangeRate = "";
+       }
+     }
+     return exchangeRate;
+   }
 
   private FieldProvider[] set() throws ServletException {
     HashMap<String, String> empty = new HashMap<String, String>();
