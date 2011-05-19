@@ -369,6 +369,22 @@ public class OBDal implements OBSingleton {
   }
 
   /**
+   * Creates an OBCriteria object for the specified class.
+   *
+   * @param clz
+   *          the class used to create the OBCriteria
+   * @param alias
+   *          an alias that can be used to refer to the specified object
+   * @return a new OBCriteria object
+   */
+  public <T extends BaseOBObject> OBCriteria<T> createCriteria(Class<T> clz, String alias) {
+    checkReadAccess(clz);
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(clz.getName(), alias);
+    obCriteria.setEntity(ModelProvider.getInstance().getEntity(clz));
+    return obCriteria;
+  }
+
+  /**
    * Creates an OBCriteria object for the specified entity.
    * 
    * @param entityName
@@ -378,6 +394,22 @@ public class OBDal implements OBSingleton {
   public <T extends BaseOBObject> OBCriteria<T> createCriteria(String entityName) {
     checkReadAccess(entityName);
     final OBCriteria<T> obCriteria = new OBCriteria<T>(entityName);
+    obCriteria.setEntity(ModelProvider.getInstance().getEntity(entityName));
+    return obCriteria;
+  }
+
+  /**
+   * Creates an OBCriteria object for the specified entity.
+   *
+   * @param entityName
+   *          the type used to create the OBCriteria
+   * @param alias
+   *          an alias that can be used to refer to the specified object
+   * @return a new OBCriteria object
+   */
+  public <T extends BaseOBObject> OBCriteria<T> createCriteria(String entityName, String alias) {
+    checkReadAccess(entityName);
+    final OBCriteria<T> obCriteria = new OBCriteria<T>(entityName, alias);
     obCriteria.setEntity(ModelProvider.getInstance().getEntity(entityName));
     return obCriteria;
   }

@@ -110,15 +110,19 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
     } else if (vars.commandIn("CALLOUTPAYMENTMETHOD")) {
       String strPaymentMethodId = vars.getRequestGlobalVariable("inpPaymentMethod", "");
       String strOrgId = vars.getRequestGlobalVariable("inpOrgId", "");
-      reloadPaymentMethodCombo(response, strPaymentMethodId, "", strOrgId);
+      boolean isReceipt = "Y".equals(vars.getGlobalVariable("inpIsReceipt",
+          "BatchPaymentExecution|IsReceipt", ""));
+      reloadPaymentMethodCombo(response, strPaymentMethodId, "", strOrgId, isReceipt);
 
     } else if (vars.commandIn("CALLOUTFINANCIALACCOUNT")) {
       String strFinancialAccountId = vars.getRequestGlobalVariable("inpFinancialAccount", "");
       String strPaymentMethodId = vars.getRequiredStringParameter("inpPaymentMethod");
       String strOrgId = vars.getRequestGlobalVariable("inpOrgId", "");
       String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
+      boolean isReceipt = "Y".equals(vars.getGlobalVariable("inpIsReceipt",
+          "BatchPaymentExecution|IsReceipt", ""));
       reloadFinancialAccountCombo(response, strPaymentMethodId, strFinancialAccountId, strOrgId,
-          strCurrencyId);
+          strCurrencyId, isReceipt );
 
     } else
       pageError(response);
@@ -188,14 +192,15 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
     xmlDocument.setParameter("grid_Default", "0");
 
     // Payment Method combobox
+    final boolean isReceipt = "Y".equals(strIsReceipt);
     String paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(strPaymentMethodId, "",
-        newOrg, true, true);
+        newOrg, true, true, isReceipt);
     xmlDocument.setParameter("sectionDetailPaymentMethod", paymentMethodComboHtml);
 
     // Financial Account combobox
     // Currency - not filtered
     String finAccountComboHtml = FIN_Utility.getFinancialAccountList(strPaymentMethodId,
-        strFinancialAccountId, newOrg, true, "");
+        strFinancialAccountId, newOrg, true, "", isReceipt);
     xmlDocument.setParameter("sectionDetailFinancialAccount", finAccountComboHtml);
 
     OBError myMessage = vars.getMessage(adFormId);
@@ -436,11 +441,12 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
   }
 
   private void reloadPaymentMethodCombo(HttpServletResponse response, String srtPaymentMethod,
-      String strFinancialAccountId, String strOrgId) throws IOException, ServletException {
+      String strFinancialAccountId, String strOrgId, boolean isReceipt)
+      throws IOException, ServletException {
     log4j.debug("Callout: Financial Account has changed to");
 
     String paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(srtPaymentMethod,
-        strFinancialAccountId, strOrgId, true, true);
+        strFinancialAccountId, strOrgId, true, true, isReceipt);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -450,12 +456,12 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
   }
 
   private void reloadFinancialAccountCombo(HttpServletResponse response, String strPaymentMethodId,
-      String strFinancialAccountId, String strOrgId, String strCurrencyId) throws IOException,
+      String strFinancialAccountId, String strOrgId, String strCurrencyId, boolean isReceipt) throws IOException,
       ServletException {
     log4j.debug("Callout: Payment Method has changed to " + strPaymentMethodId);
 
     String finAccountComboHtml = FIN_Utility.getFinancialAccountList(strPaymentMethodId,
-        strFinancialAccountId, strOrgId, true, strCurrencyId);
+        strFinancialAccountId, strOrgId, true, strCurrencyId, isReceipt);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
