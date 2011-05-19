@@ -292,10 +292,12 @@
     INTO AD_Tab_Trl
       (
         AD_Tab_Trl_ID, AD_Tab_ID, AD_Language, Name, Description,
-        Help, IsTranslated, Createdby, UpdatedBy,
+        Help, filterName,
+        IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT get_uuid(), AD_Tab_ID, AD_Language.AD_Language, AD_Tab.Name, AD_Tab.Description, AD_Tab.Help, 'N', '0', '0', '0', '0'
+    SELECT get_uuid(), AD_Tab_ID, AD_Language.AD_Language, AD_Tab.Name, AD_Tab.Description, 
+           AD_Tab.Help, filterName, 'N', '0', '0', '0', '0'
     FROM AD_Tab, AD_Language, AD_MODULE M
     WHERE AD_Language.IsActive='Y'  
     AND AD_Language.IsSystemLanguage='Y'  

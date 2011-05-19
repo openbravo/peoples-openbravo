@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2011 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -46,13 +46,14 @@ BEGIN
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy,
       Name, Description, Help,
-      IsTranslated
+      filterName, IsTranslated
     )
   SELECT get_uuid(), :new.AD_Tab_ID,
     AD_Language.AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
     :new.IsActive, :new.Created, :new.CreatedBy,
     :new.Updated, :new.UpdatedBy, :new.Name,
-    :new.Description, :new.Help, 'N'
+    :new.Description, :new.Help, 
+    :new.filterName, 'N'
   FROM AD_Language, AD_Module M
   WHERE AD_Language.IsActive='Y'
     AND IsSystemLanguage='Y'
@@ -65,7 +66,8 @@ BEGIN
  IF UPDATING THEN
   IF(COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
   OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
-  OR COALESCE(:old.Help, '.') <> COALESCE(:NEW.Help, '.'))
+  OR COALESCE(:old.Help, '.') <> COALESCE(:NEW.Help, '.')
+  OR COALESCE(:old.FilterName, '.') <> COALESCE(:new.FilterName, '.'))
  THEN
     UPDATE AD_Tab_Trl
       SET IsTranslated='N',

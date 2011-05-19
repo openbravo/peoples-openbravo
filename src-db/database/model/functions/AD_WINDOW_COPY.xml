@@ -119,7 +119,8 @@
           NAME, DESCRIPTION, HELP, AD_TABLE_ID, TabLevel,
           SEQNO, ISSINGLEROW, ISINFOTAB, ISTRANSLATIONTAB, ISREADONLY,
           AD_COLUMN_ID, HASTREE, WHERECLAUSE, ORDERBYCLAUSE, COMMITWARNING,
-          AD_PROCESS_ID, PROCESSING, AD_Module_ID
+          AD_PROCESS_ID, PROCESSING, AD_Module_ID,
+          FilterName
         )
         select
           v_NextNo_T, v_Record_ID,
@@ -127,7 +128,8 @@
           coalesce(sub.name, Cur_Tabs.NAME), coalesce(sub.description, Cur_Tabs.DESCRIPTION), coalesce(sub.help, Cur_Tabs.HELP), Cur_Tabs.AD_TABLE_ID, Cur_Tabs.TabLevel,
           Cur_Tabs.SEQNO, Cur_Tabs.ISSINGLEROW, Cur_Tabs.ISINFOTAB, Cur_Tabs.ISTRANSLATIONTAB, Cur_Tabs.ISREADONLY,
           Cur_Tabs.AD_COLUMN_ID, Cur_Tabs.HASTREE, Cur_Tabs.WHERECLAUSE, Cur_Tabs.ORDERBYCLAUSE, Cur_Tabs.COMMITWARNING,
-          Cur_Tabs.AD_PROCESS_ID, Cur_Tabs.PROCESSING, v_dest_ad_module_id
+          Cur_Tabs.AD_PROCESS_ID, Cur_Tabs.PROCESSING, v_dest_ad_module_id, 
+          coalesce(sub.filterName, Cur_Tabs.filterName)
          FROM ad_tab s left join 
         (select * from AD_tab_trl where ad_language=v_dest_ad_module_lang and ad_tab_id=Cur_Tabs.ad_tab_id ) sub
          on sub.ad_tab_id=s.ad_tab_id where s.ad_tab_id=Cur_Tabs.ad_tab_id;
@@ -149,6 +151,12 @@
         Help=
         (SELECT coalesce((select help from AD_Tab_Trl s
         WHERE s.AD_Language=AD_Tab_Trl.AD_Language and s.AD_Tab_ID=Cur_Tabs.AD_Tab_ID), Cur_Tabs.help)
+        FROM ad_tab t
+         WHERE t.AD_Tab_ID=Cur_Tabs.AD_Tab_ID)
+         ,
+         FilterName=
+         (SELECT coalesce((select FilterName from AD_Tab_Trl s
+        WHERE s.AD_Language=AD_Tab_Trl.AD_Language and s.AD_Tab_ID=Cur_Tabs.AD_Tab_ID), Cur_Tabs.FilterName)
         FROM ad_tab t
          WHERE t.AD_Tab_ID=Cur_Tabs.AD_Tab_ID)
       WHERE AD_Tab_Trl.AD_Tab_ID=v_NextNo_T;
