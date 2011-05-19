@@ -41,6 +41,9 @@ public class DeleteTransaction implements Process {
     Map<String, Object> params = bundle.getParams();
 
     String strKey = (String) params.get("Fin_Finacc_Transaction_ID");
+    if (strKey == null) {
+      strKey = (String) params.get("Aprm_Finacc_Transaction_V_ID");
+    }
     FIN_FinaccTransaction transaction = OBDal.getInstance()
         .get(FIN_FinaccTransaction.class, strKey);
     try {

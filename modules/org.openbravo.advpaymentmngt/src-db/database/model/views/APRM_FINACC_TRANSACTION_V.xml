@@ -4,7 +4,9 @@
 CASE trx.status
 WHEN 'RPPC' THEN 'Y'
 ELSE 'N'
-END AS cleared, p.c_bpartner_id, p.documentno AS paymentdocno, COALESCE(r.processed, 'N') AS reconciled, 'N' AS delete_btn
+END AS cleared, p.c_bpartner_id, p.documentno AS paymentdocno, COALESCE(r.processed, 'N') AS reconciled, 'N' AS delete_btn, (SELECT ad_table.ad_table_id
+FROM ad_table
+WHERE lower(ad_table.tablename) = 'fin_finacc_transaction') AS forced_table_id
 FROM fin_finacc_transaction trx
 LEFT JOIN fin_payment p ON trx.fin_payment_id = p.fin_payment_id
 LEFT JOIN fin_reconciliation r ON trx.fin_reconciliation_id = r.fin_reconciliation_id]]></view>
