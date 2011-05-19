@@ -184,6 +184,7 @@
 <!--107-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--107-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--107-->  <HQLFILTERCLAUSE><![CDATA[e.displayed=true]]></HQLFILTERCLAUSE>
+<!--107-->  <FILTERNAME><![CDATA[Displayed fields]]></FILTERNAME>
 <!--107--></AD_TAB>
 
 <!--108--><AD_TAB>
@@ -1028,6 +1029,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--167-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--167-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--167-->  <HQLFILTERCLAUSE><![CDATA[e.active='Y']]></HQLFILTERCLAUSE>
+<!--167-->  <FILTERNAME><![CDATA[Active documents]]></FILTERNAME>
 <!--167--></AD_TAB>
 
 <!--169--><AD_TAB>
@@ -4665,6 +4667,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--475-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--475-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--475-->  <HQLFILTERCLAUSE><![CDATA[e.sessionActive='Y']]></HQLFILTERCLAUSE>
+<!--475-->  <FILTERNAME><![CDATA[Active sessions]]></FILTERNAME>
 <!--475--></AD_TAB>
 
 <!--476--><AD_TAB>
