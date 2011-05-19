@@ -35,9 +35,11 @@ class WADValidationResult {
 
   /*
    * Whitelist of modules for which all validation problems will be ignored and not reported. So far
-   * only the special module "org.openbravo.deprecated.cleanupv3" is ignored.
+   * only the special modules "org.openbravo.deprecated.cleanupv3", "org.openbravo.importdata" are
+   * ignored.
    */
-  private static final String[] moduleWhitelist = { "677192D0C60F411384832241227360E3" };
+  private static final String[] moduleWhitelist = { "677192D0C60F411384832241227360E3",
+      "FF8081812FBF677A012FBF6A0D3E0003" };
 
   /**
    * Types of possible WAD validations, they have an identifier and a description
