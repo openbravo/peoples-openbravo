@@ -513,7 +513,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     BigDecimal pendingDeallocateAmount = usedAmount;
     for (FIN_Payment payment : payments) {
       BigDecimal paymentUsedAmount = payment.getUsedCredit();
-      if (pendingDeallocateAmount.compareTo(usedAmount) == 1) {
+      if (usedAmount.compareTo(paymentUsedAmount) == 1) {
         payment.setUsedCredit(BigDecimal.ZERO);
         pendingDeallocateAmount = pendingDeallocateAmount.subtract(paymentUsedAmount);
         OBDal.getInstance().save(payment);
