@@ -14,7 +14,7 @@
  * The Initial Developer of the Original Code is Openbravo SLU
  * All portions are Copyright (C) 2010 Openbravo SLU
  * All Rights Reserved.
- * Contributor(s):  ______________________________________.
+ * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
 -->
 <html>
@@ -78,6 +78,16 @@ function validate(action) {
       setWindowElementFocus(frm.inpBpartnerId_DES);
       showJSMessage(7);
       return false;
+    } else if (isMulticurrencyTxn()) {
+      if (frm.inpActualConverted.value==null || frm.inpActualConverted.value=="") {
+        setWindowElementFocus(frm.inpActualConverted);
+        showJSMessage(7);
+        return false;
+      } else if (frm.inpExchangeRate.value==null || frm.inpExchangeRate.value=="") {
+        setWindowElementFocus(frm.inpExchangeRate);
+        showJSMessage(7);
+        return false;
+      }
     } else {
       if (!validateSelectedPendingPayments()) return false;
     }
@@ -157,6 +167,86 @@ function actualPaymentOnChange(){
   }
 }
 
+
+function isMulticurrencyTxn() {
+  var invCurrency = document.getElementById('paramCurrencyId').value
+  var accountCurrency = document.getElementById('paramFinancialAccountCurrencyId').value
+  return invCurrency && accountCurrency && invCurrency != accountCurrency;
+}
+
+function displayMulticurrencyControls() {
+  var display = isMulticurrencyTxn();
+  displayLogicElement('paramExchangeRate', display );
+  displayLogicElement('lblExchangeRate', display );
+  displayLogicElement('paramExpectedConverted', display );
+  displayLogicElement('lblExpectedConverted', display );
+  displayLogicElement('paramActualConvertedCell', display );
+  displayLogicElement('lblActualConverted', display );
+}
+
+function currencyOnChange() {
+  if( isPaymentMethodMulticurrency() ) {
+    changeClass('paramCurrencyId','ComboKeyReadOnly ', 'ComboKey dojoValidateValid required ')
+    loadGridList();
+    return refreshExchangeRate();
+  }else {
+    // Reset currency
+    changeClass('paramCurrencyId', 'ComboKey dojoValidateValid required ', 'ComboKeyReadOnly ')
+    selectCombo(document.getElementById('paramCurrencyId'), document.getElementById('paramFinancialAccountCurrencyId').value);
+    document.getElementById('paramExchangeRate').value='1';
+    updateConvertedAmounts();
+    displayMulticurrencyControls();
+    loadGridList();
+  }
+}
+
+function refreshExchangeRate() {
+  try {
+    var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddPaymentFromTransaction.html";
+    var paramXMLReq = null;
+    return submitXmlHttpRequest(callBackExchangeRate, document.frmMain, "EXCHANGERATE", url, false, null, paramXMLReq);
+  } catch (e) {
+    alert(e);
+  }
+}
+
+function callBackExchangeRate(paramXMLParticular, XMLHttpRequestObj) {
+  if (getReadyStateHandler(XMLHttpRequestObj)) {
+    try {
+      if (XMLHttpRequestObj.responseText) {
+        var resp = decodeJSON(XMLHttpRequestObj.responseText);
+        document.getElementById('paramExchangeRate').value=resp.exchangeRate;
+      } else {
+        document.getElementById('paramExchangeRate').value='';
+      }
+      updateConvertedAmounts();
+      displayMulticurrencyControls();
+    } catch (e) {
+    }
+  }
+  return true;
+}
+
+
+function paymentMethodOnChange(){
+  currencyOnChange();
+}
+function paymentDateOnChange(){
+  return refreshExchangeRate();
+}
+
+function isPaymentMethodMulticurrency(combo) {
+  if( combo == null ) {
+    combo = document.frmMain.inpPaymentMethod;
+  }
+  var paymentMethodId = inputValue(combo);
+  var multicurrency = false;
+  if( paymentMethodId ) {
+    multicurrency  = paymentMethodMulticurrency[paymentMethodId]
+  }
+  return multicurrency;
+}
+
 function initializeTemplate(){
   initFIN_Utilities(document.frmMain);
   processLabels();
@@ -174,10 +264,10 @@ function initializeTemplate(){
 </script>
 <script language="JavaScript" type="text/javascript">
 function displayLogicForCredit() {
-  displayLogicElement('paramCredit', compare(document.getElementById('paramCredit').value, '>', "0") );
-  displayLogicElement('lblCredit', compare(document.getElementById('paramCredit').value, '>', "0") );
-  displayLogicElement('paramUseCredit', compare(document.getElementById('paramCredit').value, '>', "0") );
-  displayLogicElement('lblUseCredit', compare(document.getElementById('paramCredit').value, '>', "0") );
+  var hasCredit = compare(document.getElementById('paramCredit').value, '>', "0");
+  displayLogicElement('paramCredit', hasCredit );
+  displayLogicElement('paramUseCreditContainer', hasCredit );
+  displayLogicElement('rowCredit', hasCredit );
 }
 
 function onchangeBPartner(dummy){
@@ -249,6 +339,7 @@ function callBackPaymentMethod(paramXMLParticular, XMLHttpRequestObj) {
       if (XMLHttpRequestObj.responseText) {
         strText = XMLHttpRequestObj.responseText;
         createCombo(document.getElementById('inpPaymentMethod'), strText);
+        paymentMethodOnChange();
       }
     } catch (e) {}
   }
@@ -309,6 +400,7 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
     displayLogicElement('sectionDifference', false);
     displayLogicElement('sectionDifferenceBox', false);
     displayLogicForCredit();
+    displayMulticurrencyControls();
 
     resizeAreaCreateFrom();
   }
@@ -322,7 +414,6 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
 <form name="frmMain" method="post" action="AddPaymentFromTransaction.html">
   <input type="hidden" name="Command" />
   <input type="hidden" name="IsPopUpCall" value="1" />
-  <input type="hidden" name="inpFinancialAccountId" value="" id="paramFinancialAccountId"/>
   <input type="hidden" name="isReceipt" value="" id="fieldReceipt"/>
   <input type="hidden" name="inpFinBankStatementLineId" value="" id="paramFinBankStatementLineId"></input>
   <div class="Popup_ContentPane_CircleLogo">
@@ -589,26 +680,15 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
               <td class="TitleCell"><span class="LabelText" name="lblP" id="lblPTakeFrom">Take From</span><span class="LabelText" name="lblR" id="lblRDepositTo">Deposit To</span></td>
               <td class="TextBox_ContentCell" colspan="2"><input type="text" name="inpFinancialAccount" id="paramFinancialAccount" class="readonly dojoValidateValid required TextBox_TwoCells_width" value="" />
                 <input type="hidden" name="inpFinancialAccountId" id="paramFinancialAccountId" value="">
+                <input type="hidden" id="paramFinancialAccountCurrencyId" name="inpFinancialAccountCurrencyId" value=""/>
+                <input type="hidden" id="paramFinancialAccountCurrencyPrecision" name="inpFinancialAccountCurrencyPrecision" value="2"/>
               </td>
               <td class="TitleCell"><span class="LabelText">Reference No.</span></td>
               <td class="TextBox_ContentCell" colspan="2"><input class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpReferenceNo" value="" id="paramReferenceNo"></input></td>
               <td class="TitleCell"></td>
             </tr>
-            
+
             <!-- Line 3 -->
-            <tr>
-              <td class="TitleCell"><span class="LabelText">Currency</span></td>
-              <td class="TextBox_ContentCell" colspan="2">
-                <input type="hidden" id="paramPrecision" name="curPrecision" value="2"/>
-                <input type="text" name="inpCurrency" id="paramCurrency" class="readonly dojoValidateValid required TextBox_TwoCells_width" value="" />
-              </td>
-              <td class="TitleCell"></td>
-              <td class="TitleCell"></td>
-              <td class="TitleCell"></td>
-              <td class="TitleCell"></td>
-            </tr>
-            
-            <!-- Line 4 -->
             <tr>
               <td class="TitleCell"><span class="LabelText" name="lblP" id="lblPToBePaidTo">To Be Paid To</span><span class="LabelText" name="lblR" id="lblRReceivedFrom">Received From</span></td>
               <td class="TextBox_ContentCell" colspan="2">
@@ -626,6 +706,17 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
               <td class="TitleCell"></td>
               <td class="TitleCell"></td>
             </tr>
+
+            <!-- Line 4 (Hidden if no credit)-->
+            <tr id="rowCredit">
+              <td class="TitleCell"><span class="LabelText" name="lbl" id="lblCredit">Available Credit</span></td>
+              <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid TextBox_OneCell_width number" type="text" name="inpCredit" value="0" id="paramCredit"></input></td>
+              <td class="TitleCell"></td>
+              <td class="TitleCell"></td>
+              <td class="TitleCell"><span class="LabelText" name="lbl" id="lblUseCredit">Use Available Credit</span></td>
+              <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpUseCredit" value="Y" id="paramUseCredit" onclick="useCreditOnChange();"></input></span></td>
+            </tr>
+
             
             <!-- Line 5 -->
             <tr>
@@ -633,13 +724,22 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
               <td class="Combo_ContentCell" colspan="2">
                 <select name="inpPaymentMethod"
                         onkeypress="changeToEditingMode('onkeypress');"
-                        onchange="changeToEditingMode('onchange', this);logChanges(this);return true;"
+                        onchange="changeToEditingMode('onchange', this);logChanges(this);paymentMethodOnChange(this);return true;"
                         class="dojoValidateValid ComboKey Combo_TwoCells_width required" id="inpPaymentMethod">
                   <div id="sectionDetailPaymentMethod"></div>
                 </select>
+                <div id="sectionDetailPaymentMethodMulticurrency"></div>
               </td>
-              <td class="TitleCell"></td>
-              <td class="TitleCell"></td>
+              <td class="TitleCell"><span class="LabelText">Currency</span></td>
+              <td class="TextBox_ContentCell" colspan="2">
+                <input type="hidden" id="paramPrecision" name="curPrecision" value="2"/>
+                <select name="inpCurrencyId" id="paramCurrencyId" class="ComboKeyReadOnly Combo_OneCell_width"
+                        onkeypress="changeToEditingMode('onkeypress');"
+                        onchange="changeToEditingMode('onchange', this);logChanges(this);currencyOnChange();return true;">
+                    <option value=""><div id="reportCurrencyId"></div></option>
+                </select>
+
+              </td>
               <td class="TitleCell"></td>
             </tr>
             
@@ -648,8 +748,9 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
               <td class="TitleCell"><span name="lblP" id="lblPExpectedPaym" class="LabelText">Expected Payment Out</span><span name="lblR" id="lblRExpectedPaym" class="LabelText">Expected Payment In</span></td>
               <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExpectedPayment" name="inpExpectedPayment" value="" onchange="updateDifference();"></input></td>
               <td class="TitleCell"></td>
-              <td class="TitleCell"><span class="LabelText" name="lbl" id="lblCredit">Available Credit</span></td>
-              <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid TextBox_OneCell_width number" type="text" name="inpCredit" value="0" id="paramCredit"></input></td>
+              <td class="TitleCell"><span class="LabelText" id="lblExpectedConverted">Expected Converted</span></td>
+              <td class="TextBox_ContentCell"> <input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExpectedConverted" name="inpExpectedConverted" value="" onchange="" disabled="true"></input>
+              </td>
               <td class="TitleCell"></td>
             </tr>
 
@@ -692,8 +793,43 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
                   </table>
               </td>
               <td class="TitleCell"></td>
-              <td class="TitleCell"><span class="LabelText" name="lbl" id="lblUseCredit">Use Available Credit</span></td>
-              <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpUseCredit" value="Y" id="paramUseCredit" onclick="useCreditOnChange();"></input></span></td>
+              <td class="TitleCell"><span class="LabelText" id="lblActualConverted">Actual Converted</span></td>
+              <td class="TextBox_btn_ContentCell">
+                  <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;" id="paramActualConvertedCell">
+                    <tr>
+                      <td class="Textbox_ContentCell">
+                      <table style="border: 0px none; border-collapse: collapse;">
+                        <tr><td style="padding-top: 0px;">
+                          <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="euroEdition" onchange="updateConvertedAmounts(true);return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpActualConverted" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramActualConverted"/>
+                        </td></tr>
+                      </table>
+                      <span id="paramActualConvertedinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                        <table class="TextBox_MsgContainer_table">
+                          <tbody><tr class="TextBox_MsgContainer_tr">
+                            <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
+                          </tr>
+                          <tr>
+                            <td class="invalid" colspan="2"><div name="invalidText" id="paramActualConvertedinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
+                          </tr>
+                        </tbody></table>
+                      </span>
+                      </td>
+                      <td class="FieldButton_ContentCell">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpActualConverted', document.frmMain.inpActualConverted.value, false);return false;">
+                      <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
+                          <tr>
+                            <td class="FieldButton_bg">
+                              <img alt="Calculator" class="FieldButton_Icon FieldButton_Icon_Calc" title="Amount" src="../../../../../web/images/blank.gif" border="0" id="buttonCalc"></img>
+                            </td>
+                          </tr>
+                        </table>
+                      </a>
+                      </td>
+                    </tr>
+                  </table>
+              </td>
+
+              <td class="TitleCell"></td>
             </tr>
             
             <!-- Line 8 -->
@@ -703,7 +839,18 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="dojoValidateValid required TextBox_btn_OneCell_width" type="text" name="inpPaymentDate" id="paramPaymentDate" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramPaymentDate");</script>
+                      <table style="border: 0px none; border-collapse: collapse;">
+                        <tr><td style="padding-top: 0px;">
+                          <input type="text" id="paramPaymentDate" class="dojoValidateValid required TextBox_btn_OneCell_width" value="" maxlength="10" name="inpPaymentDate" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id);  paymentDateOnChange(this);return true;" displayFormat="xx" saveFormat="xx"></input>
+                        </td></tr>
+                      </table>
+                      <span id="paramPaymentDateinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                        <table class="TextBox_MsgContainer_table">
+                          <tbody><tr class="TextBox_MsgContainer_tr"><td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td></tr>
+                          <tr><td class="invalid" colspan="2"><div name="invalidText" id="paramPaymentDateinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td></tr>
+                        </tbody></table>
+                      </span>
+
                     </td>
                     <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpPaymentDate', document.frmMain.inpPaymentDate.value, false);return false;">
@@ -720,8 +867,24 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
                 </table>
               </td>
               <td class="TitleCell"></td>
-              <td class="TitleCell"></td>
-              <td class="TitleCell"></td>
+              <td class="TitleCell"><span class="LabelText" id="lblExchangeRate">Exchange Rate</span></td>
+              <td class="Textbox_ContentCell">
+                <table style="border: 0px none; border-collapse: collapse;">
+                  <tr><td style="padding-top: 0px;">
+                    <input type="text" onblur="numberInputEvent('onblur', this);" onfocus="numberInputEvent('onfocus', this);" outputformat="generalQtyEdition" onchange="updateConvertedAmounts();return true;" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown'); numberInputEvent('onkeydown', this, event);" onkeyup="" name="inpExchangeRate" maxlength="22" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width number" id="paramExchangeRate"/>
+                  </td></tr>
+                </table>
+                <span id="paramExchangeRateinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                  <table class="TextBox_MsgContainer_table">
+                    <tbody><tr class="TextBox_MsgContainer_tr">
+                      <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
+                    </tr>
+                    <tr>
+                      <td class="invalid" colspan="2"><div name="invalidText" id="paramExchangeRateinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
+                    </tr>
+                  </tbody></table>
+                </span>
+              </td>
             </tr>
             
             <!-- Text -->

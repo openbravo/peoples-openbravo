@@ -333,7 +333,7 @@ public class AdvPaymentMngtDao {
     if( paymentCurrency != null ) {
        newPayment.setCurrency(paymentCurrency);
     } else {
-    newPayment.setCurrency(finAccount.getCurrency());
+       newPayment.setCurrency(finAccount.getCurrency());
     }
     newPayment.setReferenceNo(referenceNo);
     if( finTxnConvertRate == null || finTxnConvertRate.compareTo(BigDecimal.ZERO) <= 0 ) {
