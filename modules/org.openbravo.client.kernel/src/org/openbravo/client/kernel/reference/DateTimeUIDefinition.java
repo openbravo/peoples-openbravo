@@ -18,6 +18,11 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import java.util.Date;
+
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
+
 /**
  * Implementation of the date time ui definition.
  * 
@@ -33,6 +38,22 @@ public class DateTimeUIDefinition extends DateUIDefinition {
   @Override
   public String getFormEditorType() {
     return "OBDateTimeItem";
+  }
+
+  @Override
+  public synchronized Object createFromClassicString(String value) {
+    try {
+      if (value == null || value.length() == 0 || value.equals("null")) {
+        return null;
+      }
+      if (value.contains("T")) {
+        return value;
+      }
+      final Date date = getClassicFormat().parse(value);
+      return ((PrimitiveDomainType) getDomainType()).convertToString(date);
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
   }
 
 }

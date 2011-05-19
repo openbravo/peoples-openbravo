@@ -23,7 +23,6 @@ import java.util.Date;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.model.ad.ui.Field;
 
@@ -34,10 +33,12 @@ import org.openbravo.model.ad.ui.Field;
  */
 public class DateUIDefinition extends UIDefinition {
   private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
+  private static final String UIPATTERN = "yyyy-MM-dd";
 
   private SimpleDateFormat format = null;
   private String lastUsedPattern = null;
   private SimpleDateFormat dateFormat = null;
+  private SimpleDateFormat uiDateFormat = null;
 
   public SimpleDateFormat getFormat() {
     if (format == null) {
@@ -79,7 +80,7 @@ public class DateUIDefinition extends UIDefinition {
     }
   }
 
-  private SimpleDateFormat getClassicFormat() {
+  protected SimpleDateFormat getClassicFormat() {
     String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATEFORMAT").toString();
     if (dateFormat == null || !pattern.equals(lastUsedPattern)) {
       dateFormat = new SimpleDateFormat(pattern);
@@ -89,8 +90,16 @@ public class DateUIDefinition extends UIDefinition {
     return dateFormat;
   }
 
+  private SimpleDateFormat getUIFormat() {
+    if (uiDateFormat == null) {
+      uiDateFormat = new SimpleDateFormat(UIPATTERN);
+      uiDateFormat.setLenient(true);
+    }
+    return uiDateFormat;
+  }
+
   @Override
-  public String convertToClassicString(Object value) {
+  public synchronized String convertToClassicString(Object value) {
     if (value == null) {
       return "";
     }
@@ -107,7 +116,7 @@ public class DateUIDefinition extends UIDefinition {
         return value;
       }
       final Date date = getClassicFormat().parse(value);
-      return ((PrimitiveDomainType) getDomainType()).convertToString(date);
+      return getUIFormat().format(date);
     } catch (Exception e) {
       throw new OBException(e);
     }
