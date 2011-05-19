@@ -530,7 +530,8 @@ public class AdvancedQueryBuilder {
     final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < clauses.length(); i++) {
       final JSONObject clause = clauses.getJSONObject(i);
-      if (clause.get("value") != null && clause.getString("value").equals("")) {
+      if (clause.has("value") && clause.get("value") != null
+          && clause.getString("value").equals("")) {
         continue;
       }
       final String clauseString = parseCriteria(clause);
