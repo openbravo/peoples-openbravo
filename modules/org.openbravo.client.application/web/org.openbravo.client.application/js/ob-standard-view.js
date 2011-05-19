@@ -566,7 +566,7 @@ isc.OBStandardView.addProperties({
   
   setViewFocus: function(){
     
-    var object, functionName;
+    var object, functionName, items, item, i;
     
     // clear for a non-focusable item
     if (this.lastFocusedItem && !this.lastFocusedItem.getCanFocus()) {
@@ -582,9 +582,27 @@ isc.OBStandardView.addProperties({
     } else if (this.lastFocusedItem) {
       object = this.lastFocusedItem;
       functionName = 'focusInItem';
-    } else if (this.viewGrid && !this.isShowingForm) {
+    } else if (this.viewGrid && !this.isShowingForm && this.viewGrid.getFilterEditor() && this.viewGrid.getFilterEditor().getEditForm()) {
+      // there is a filter editor
+      object = this.viewGrid.getFilterEditor().getEditForm();
+      
+      // compute a focus item
+      if (!object.getFocusItem()) {
+        items = object.getItems();
+
+        for (i = 0; i < items.length; i++) {
+          item = items[i];
+          if (item.getCanFocus() && !item.isDisabled()) {
+            object.setFocusItem(item);
+            break;
+          }
+        }
+      }
+      
+      functionName = 'focus';
+    } else if (this.viewGrid) {
       object = this.viewGrid;
-      functionName = 'focusInFilterEditor';
+      functionName = 'focus';
     }
     
     isc.Page.setEvent(isc.EH.IDLE, object, isc.Page.FIRE_ONCE, functionName);

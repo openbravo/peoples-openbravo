@@ -47,6 +47,8 @@ isc.Button.addProperties({
   }
 });
 
+isc.StaticTextItem.getPrototype().getCanFocus = function() {return false;};
+
 // NOTE BEWARE: methods/props added here will overwrite and NOT extend FormItem
 // properties! 
 isc.FormItem.addProperties({
