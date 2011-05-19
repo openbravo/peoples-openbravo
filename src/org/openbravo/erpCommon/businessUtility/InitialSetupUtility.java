@@ -679,6 +679,32 @@ public class InitialSetupUtility {
       String name, String value, String description, String accountType, String accountSign,
       boolean isDocControlled, boolean isSummary, String elementLevel, boolean doFlush)
       throws Exception {
+    return insertElementValue(element, orgProvided, name, value, description, accountType,
+        accountSign, isDocControlled, isSummary, elementLevel, doFlush, null, null);
+  }
+
+  /**
+   * 
+   * @param element
+   * @param orgProvided
+   * @param name
+   * @param value
+   * @param description
+   * @param accountType
+   * @param accountSign
+   * @param isDocControlled
+   * @param isSummary
+   * @param elementLevel
+   * @param doFlush
+   * @param a
+   * @param b
+   * @return
+   * @throws Exception
+   */
+  public static ElementValue insertElementValue(Element element, Organization orgProvided,
+      String name, String value, String description, String accountType, String accountSign,
+      boolean isDocControlled, boolean isSummary, String elementLevel, boolean doFlush,
+      String showValueCond, String titleNode) throws Exception {
     try {
       OBContext.setAdminMode();
 
@@ -701,6 +727,10 @@ public class InitialSetupUtility {
       newElementValue.setDocumentControlled(isDocControlled);
       newElementValue.setSummaryLevel(isSummary);
       newElementValue.setElementLevel(elementLevel);
+      if (showValueCond != null && !"".equals(showValueCond))
+        newElementValue.setShowValueCondition(showValueCond);
+      if (titleNode != null && !"".equals(titleNode))
+        newElementValue.setTitleNode("Y".equals(titleNode));
       OBDal.getInstance().save(newElementValue);
       if (doFlush)
         OBDal.getInstance().flush();

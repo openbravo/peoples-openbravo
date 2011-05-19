@@ -51,6 +51,7 @@ import org.openbravo.model.financialmgmt.accounting.coa.ElementValue;
 import org.openbravo.model.financialmgmt.accounting.coa.ElementValueOperand;
 import org.openbravo.model.financialmgmt.calendar.Calendar;
 import org.openbravo.model.financialmgmt.calendar.Year;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * @author David Alsasua
@@ -499,6 +500,12 @@ public class COAUtility {
       dataAux.setCElementValueId(data[i].getField("cElementValueId"));
       log4j.debug("parseData() - dataAux.cElementValueId: " + dataAux.getCElementValueId());
       vec.addElement(dataAux);
+
+      dataAux.setShowValueCond(data[i].getField("showValueCond"));
+      log4j.debug("parseData() - showValueCond: " + dataAux.getShowValueCond());
+      dataAux.setTitleNode(data[i].getField("titleNode"));
+      log4j.debug("parseData() - dataAux.accountValue: " + dataAux.getTitleNode());
+
     }
     log4j.debug("parseData() - All elements processed correctly.");
     result = new COAData[vec.size()];
@@ -665,6 +672,31 @@ public class COAUtility {
       Boolean IsSummary = data[i].getAccountSummary().equals("Yes");
       String C_ElementValue_ID = data[i].getCElementValueId();
       String accountType = setAccountType(data[i]);
+      String showValueCond = data[i].getShowValueCond();
+      String titleNode = data[i].getTitleNode();
+      OBContext.setAdminMode();
+      try {
+        String language = OBContext.getOBContext().getLanguage().getLanguage();
+
+        if (!"".equals(showValueCond) && !showValueCond.equals("P") && !showValueCond.equals("N")
+            && !showValueCond.equals("A")) {
+          showValueCond = null;
+          logEvent(String
+              .format(Utility.messageBD(new DalConnectionProvider(),
+                  "ValueIgnoredImportingAccount", language), data[i].getAccountValue(),
+                  "ShowValueCond"));
+        }
+
+        if (!"".equals(titleNode) && !titleNode.equals("Y") && !titleNode.equals("N")) {
+          titleNode = null;
+          logEvent(String.format(Utility.messageBD(new DalConnectionProvider(),
+              "ValueIgnoredImportingAccount", language), data[i].getAccountValue(), "TitleNode"));
+        }
+
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+
       if (accountType == null) {
         logError("@CreateAccountingFailed@",
             "insertElementValuesInDB() - Account type could not be stablished for account "
@@ -689,7 +721,7 @@ public class COAUtility {
           elementValue = InitialSetupUtility.insertElementValue(element, organization,
               data[i].getAccountName(), data[i].getAccountValue(), data[i].getAccountDescription(),
               accountType, accountSign, IsDocControlled, IsSummary, data[i].getElementLevel(),
-              false);
+              false, showValueCond, titleNode);
         } catch (Exception e) {
           return logError(
               "@CreateAccountingFailed@",

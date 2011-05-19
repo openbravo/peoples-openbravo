@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,6 +48,8 @@ public class COAData extends MultipartRequest implements FieldProvider {
   String balanceSheetName = "";
   String uS1120BalanceSheet = "";
   String uS1120BalanceSheetName = "";
+  String showValueCond = "";
+  String titleNode = "";
 
   public void setAccountValue(String accountValue) {
     this.accountValue = accountValue;
@@ -131,6 +133,14 @@ public class COAData extends MultipartRequest implements FieldProvider {
 
   public void setCashFlowName(String cashFlowName) {
     this.cashFlowName = cashFlowName;
+  }
+
+  public void setShowValueCond(String showValueCond) {
+    this.showValueCond = showValueCond;
+  }
+
+  public void setTitleNode(String titleNode) {
+    this.titleNode = titleNode;
   }
 
   String profitAndLoss = "";
@@ -246,6 +256,14 @@ public class COAData extends MultipartRequest implements FieldProvider {
     return cElementValueId;
   }
 
+  public String getShowValueCond() {
+    return showValueCond;
+  }
+
+  public String getTitleNode() {
+    return titleNode;
+  }
+
   public void setCElementValueId(String elementValueId) {
     cElementValueId = elementValueId;
   }
@@ -307,6 +325,11 @@ public class COAData extends MultipartRequest implements FieldProvider {
     else if (fieldName.equalsIgnoreCase("C_ELEMENT_VALUE_ID")
         || fieldName.equalsIgnoreCase("CELEMENTVALUEID"))
       return cElementValueId;
+    else if (fieldName.equalsIgnoreCase("SHOW_VALUE_COND")
+        || fieldName.equalsIgnoreCase("showValueCond"))
+      return showValueCond;
+    else if (fieldName.equalsIgnoreCase("TITLE_NODE") || fieldName.equalsIgnoreCase("titleNode"))
+      return titleNode;
     else {
       log4j.debug("COAData - getField - Field does not exist: " + fieldName);
       return null;
@@ -381,34 +404,10 @@ public class COAData extends MultipartRequest implements FieldProvider {
         coaData.setOperands(text);
         break;
       case 11:
-        coaData.setBalanceSheet(text);
+        coaData.setShowValueCond(text);
         break;
       case 12:
-        coaData.setBalanceSheetName(text);
-        break;
-      case 13:
-        coaData.setUS1120BalanceSheet(text);
-        break;
-      case 14:
-        coaData.setUS1120BalanceSheetName(text);
-        break;
-      case 15:
-        coaData.setProfitAndLoss(text);
-        break;
-      case 16:
-        coaData.setProfitAndLossName(text);
-        break;
-      case 17:
-        coaData.setUS1120IncomeStatement(text);
-        break;
-      case 18:
-        coaData.setUS1120IncomeStatementName(text);
-        break;
-      case 19:
-        coaData.setCashFlow(text);
-        break;
-      case 20:
-        coaData.setCashFlowName(text);
+        coaData.setTitleNode(text);
         break;
       }
       previous = next + 1;
