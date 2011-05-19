@@ -340,12 +340,14 @@ BEGIN
                 SELECT SUM(amount) + v_pendingAmountFromOrder INTO v_pendingAmountFromOrder
                 FROM fin_payment_scheduledetail
                 WHERE fin_payment_schedule_order = order_schdet.fin_payment_schedule_order
-                AND fin_payment_detail_id is null;
+                      AND fin_payment_detail_id is null
+                      AND fin_payment_scheduledetail_id <> v_scheduledetailid;
                 -- link remaining payment schedule detail from order to the invoice as it is fully invoiced
                 UPDATE fin_payment_scheduledetail
                 SET fin_payment_schedule_invoice = v_payment_schedule_invoice
                 WHERE fin_payment_schedule_order = order_schdet.fin_payment_schedule_order
-                      AND fin_payment_detail_id is null;
+                      AND fin_payment_detail_id is null
+                      AND fin_payment_scheduledetail_id <> v_scheduledetailid;
               END IF;
 
               IF (v_differenceamount > 0) THEN

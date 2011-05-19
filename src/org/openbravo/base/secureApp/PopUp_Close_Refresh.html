@@ -16,13 +16,31 @@
 <link rel="shortcut icon" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
-<script language="JavaScript" type="text/javascript" id="paramLanguage">	defaultLang = "en_US";</script>
+<script language="JavaScript" type="text/javascript" id="paramLanguage">    defaultLang = "en_US";</script>
 <script language="JavaScript" type="text/javascript">
 function closeThisPage() {
-  var refreshButton = opener.document.getElementById('buttonRefresh');
-  if(refreshButton)
-    refreshButton.onclick();	
-  top.close();
+  if (top && opener && opener.document && opener.document.getElementById('buttonRefresh')) {
+    opener.document.getElementById('buttonRefresh').onclick();
+  } else {
+    var process;
+    if (getFrame('LayoutMDI')) {
+      process = getFrame('LayoutMDI').OB.ActionButton.executingProcess;
+    } else if (top && top.opener) {
+      process = top.opener.OB.ActionButton.executingProcess;
+    }
+     
+    if (process) {
+      // 3.0 window process
+      process.closeProcessPopup();
+    } else if (getFrame('LayoutMDI') && getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.getAppFrameWindow 
+               && getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.getAppFrameWindow() 
+               && getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.getAppFrameWindow().submitCommandForm) {
+      // 2.50 modal popup process
+      getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.getAppFrameWindow().submitCommandForm("DEFAULT", false, null, null, '_self');
+    }
+  }
+  
+  closePage();
   return true;
 }
 </script>

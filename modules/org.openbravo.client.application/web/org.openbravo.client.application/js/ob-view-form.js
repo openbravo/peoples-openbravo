@@ -571,7 +571,6 @@ OB.ViewFormProperties = {
       this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, null, calloutMessages[0]);
     }
     if (auxInputs) {
-      this.auxInputs = {};
       for (prop in auxInputs) {
         if (auxInputs.hasOwnProperty(prop)) {
           value = typeof auxInputs[prop].value !== 'undefined' ? auxInputs[prop].value : '';
@@ -660,10 +659,10 @@ OB.ViewFormProperties = {
       if (this.getFocusItem()) {
         if (this.allItemsDisabled) {
           this.getFocusItem().blurItem();
-          this.redraw();
+          this.setHandleDisabled(state);
           this.view.viewGrid.refreshEditRow();
         } else {
-          this.redraw();
+          this.setHandleDisabled(state);
           this.view.viewGrid.refreshEditRow();
           // reset the canfocus
           for (i = 0; i < this.getFields().length; i++) {

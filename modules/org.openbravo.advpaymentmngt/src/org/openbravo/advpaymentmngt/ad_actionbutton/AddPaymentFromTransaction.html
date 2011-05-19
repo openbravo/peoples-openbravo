@@ -92,7 +92,7 @@ function closeThisPage() {
 }
 function submitThisPage(strCommand) {
   if (validate(strCommand)) {
-    submitCommandForm(strCommand, false, null, null, '_top');
+    submitCommandForm(strCommand, false, null, null, '_self');
     return true;
   }
   return true;
@@ -314,7 +314,7 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
   }
 
   function onResizeDo(){
-	  resizeAreaCreateFrom(true);
+      resizeAreaCreateFrom(true);
   }
 </script>
 </head>

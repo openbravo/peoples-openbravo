@@ -487,9 +487,6 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public String getType() {
-      if (field.isDisplayed() != null && !field.isDisplayed()) {
-        return "text";
-      }
       return getUIDefinition().getName();
     }
 

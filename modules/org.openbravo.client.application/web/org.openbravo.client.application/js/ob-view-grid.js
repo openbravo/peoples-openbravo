@@ -1106,7 +1106,7 @@ isc.OBViewGrid.addProperties({
   // one has as disadvantage that it is called multiple times
   // for one select/deselect action
   selectionUpdated: function(record, recordList){
-    if (record === this.lastSelectedRecord && (this.lastSelectedRecord || record)) {
+    if ((!recordList || recordList.length === 1) && record === this.lastSelectedRecord && (this.lastSelectedRecord || record)) {
       return;
     }
   
@@ -1244,6 +1244,7 @@ isc.OBViewGrid.addProperties({
     } else if (isc.EventHandler.shiftKeyDown()) {
       this.singleRecordSelection = false;
       this.selection.selectOnMouseDown(this, recordNum, fieldNum);
+      this.selectionUpdated(this.getSelectedRecord(), this.getSelection());
     } else {
       // click on the record which was already selected
       this.doSelectSingleRecord(record);

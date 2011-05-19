@@ -1000,6 +1000,19 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--202-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--202--></AD_ELEMENT>
 
+<!--203--><AD_ELEMENT>
+<!--203-->  <AD_ELEMENT_ID><![CDATA[203]]></AD_ELEMENT_ID>
+<!--203-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--203-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--203-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--203-->  <COLUMNNAME><![CDATA[C_NonBusinessDay_ID]]></COLUMNNAME>
+<!--203-->  <NAME><![CDATA[Non Business Day]]></NAME>
+<!--203-->  <PRINTNAME><![CDATA[Non Business Day]]></PRINTNAME>
+<!--203-->  <DESCRIPTION><![CDATA[Day on which business is not transacted]]></DESCRIPTION>
+<!--203-->  <HELP><![CDATA[The Non Business Day identifies a day that should not be considered a day when business is transacted]]></HELP>
+<!--203-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--203--></AD_ELEMENT>
+
 <!--204--><AD_ELEMENT>
 <!--204-->  <AD_ELEMENT_ID><![CDATA[204]]></AD_ELEMENT_ID>
 <!--204-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1519,6 +1532,19 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--260-->  <HELP><![CDATA[Used for EDI - For details see   www.dnb.com/dunsno/list.htm]]></HELP>
 <!--260-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--260--></AD_ELEMENT>
+
+<!--262--><AD_ELEMENT>
+<!--262-->  <AD_ELEMENT_ID><![CDATA[262]]></AD_ELEMENT_ID>
+<!--262-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--262-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--262-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--262-->  <COLUMNNAME><![CDATA[Date1]]></COLUMNNAME>
+<!--262-->  <NAME><![CDATA[Non Business Day Date]]></NAME>
+<!--262-->  <PRINTNAME><![CDATA[Date]]></PRINTNAME>
+<!--262-->  <DESCRIPTION><![CDATA[Date when business is not conducted]]></DESCRIPTION>
+<!--262-->  <HELP><![CDATA[The Date field identifies a calendar date on which business will not be conducted.]]></HELP>
+<!--262-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--262--></AD_ELEMENT>
 
 <!--263--><AD_ELEMENT>
 <!--263-->  <AD_ELEMENT_ID><![CDATA[263]]></AD_ELEMENT_ID>

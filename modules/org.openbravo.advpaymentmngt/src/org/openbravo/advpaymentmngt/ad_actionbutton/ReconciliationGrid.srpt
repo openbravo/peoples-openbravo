@@ -28,6 +28,6 @@
     <td class="DataGrid_Body_Cell" title="zz" id="fieldDescription">xxDescription</td>
     <td class="DataGrid_Body_Cell_Amount" id="fieldPaymentAmount">xx150.00</td>
     <td class="DataGrid_Body_Cell_Amount" id="fieldDepositAmount">xx60.00</td>
-    <td class="DataGrid_Body_LineNoCell"><input type="checkbox" name="inpTransactionId" value="" id="fieldTransactionId" onchange="saveTransactionLineStatus(this.checked, this.value); updateAmounts(this.value, this.checked); unselectClearAll(this.checked); return true;"/></td>
+    <td class="DataGrid_Body_LineNoCell"><input type="checkbox" name="inpTransactionId" value="" id="fieldTransactionId" onclick="saveTransactionLineStatus(this.checked, this.value); updateAmounts(this.value, this.checked); unselectClearAll(this.checked); return true;"/></td>
   </tr>
 </span>

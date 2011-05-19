@@ -656,6 +656,8 @@ public abstract class AcctServer {
     m_fact = new Fact[m_as.length];
     // AcctSchema Table check
     boolean isTableActive = false;
+    try {
+      OBContext.setAdminMode(true);
     for (AcctSchema as : m_as) {
       AcctSchemaTable table = null;
       OBCriteria<AcctSchemaTable> criteria = OBDao.getFilteredCriteria(AcctSchemaTable.class,
@@ -668,6 +670,9 @@ public abstract class AcctServer {
         isTableActive = true;
         break;
       }
+    }
+    } finally {
+      OBContext.restorePreviousMode();
     }
     if (!isTableActive) {
       setMessageResult(conn, vars, STATUS_TableDisabled, "Warning");

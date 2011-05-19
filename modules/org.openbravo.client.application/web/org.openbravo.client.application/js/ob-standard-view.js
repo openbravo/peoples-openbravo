@@ -1018,7 +1018,8 @@ isc.OBStandardView.addProperties({
     
     this.updateLastSelectedState();
     this.updateTabTitle();    
-    this.toolBar.updateButtonState(this.isEditingGrid || this.isShowingForm);
+    // note only set session info if there is a record selected
+    this.toolBar.updateButtonState(!selectedRecordId || this.isEditingGrid || this.isShowingForm);
 
     var tabViewPane = null;
     
@@ -1526,13 +1527,18 @@ isc.OBStandardView.addProperties({
   },
   
   getCurrentValues: function(){
+    var ret;
     if (this.isShowingForm) {
-      return this.viewForm.getValues();
+      ret = this.viewForm.getValues();
     } else if (this.isEditingGrid) {
-      return isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewGrid.getEditForm().getValues());
+      ret = isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewGrid.getEditForm().getValues());
     } else {
-      return this.viewGrid.getSelectedRecord();
+      ret = this.viewGrid.getSelectedRecord();
     }
+    // return an empty object if ret is not set
+    // this happens when a new record could not be saved
+    // and the form view is switched for grid view
+    return ret || {};
   },
   
   getPropertyFromColumnName: function(columnName){
