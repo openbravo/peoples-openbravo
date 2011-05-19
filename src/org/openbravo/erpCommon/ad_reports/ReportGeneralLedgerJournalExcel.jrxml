@@ -594,7 +594,7 @@
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[($V{entry}!=null)?$V{entry}.add(new BigDecimal($P{InitialEntryNumber})): new BigDecimal("1")]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[($V{entry}!=null)?$V{entry}.add(new BigDecimal($P{InitialEntryNumber})).subtract(BigDecimal.ONE): BigDecimal.ONE]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
