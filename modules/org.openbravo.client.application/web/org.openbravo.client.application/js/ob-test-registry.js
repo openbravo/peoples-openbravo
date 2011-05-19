@@ -34,7 +34,7 @@
   var fullUrl = parent.document.URL;
   var queryString = fullUrl.substring(fullUrl.indexOf('?') + 1, fullUrl.length);
   var isTestEnvironment = queryString.indexOf('test=true') !== -1;
-  if (isTestEnvironment) {
+  if (isTestEnvironment || OB.Application.testEnvironment) {
     isc.Log.logDebug('Test Environment, registering test components enabled', 'OB');
   } else {
     isc.Log.logDebug('No Test Environment, registering test components disabled', 'OB');
@@ -46,11 +46,9 @@
   TestRegistry.prototype = {
 
     registry: {},
-
-    testEnvironment: false,
     
     register: function(key, object){
-      if (isTestEnvironment || this.testEnvironment) {
+      if (isTestEnvironment || OB.Application.testEnvironment) {
         isc.Log.logDebug('Registering ' + key + ' in test registry ', 'OB');
         this.registry[key] = object;
       }

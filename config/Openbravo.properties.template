@@ -185,3 +185,8 @@ login.trial.user.lock=0
 # You are not allowed to run ant commands with the root user.
 # Set allow.root to true to override this.
 allow.root=false
+
+# Specifies if the current instance is used for automated tests.
+# Setting this to true will enable extra (hidden) functionality used 
+# automated test scripts.
+test.environment=false

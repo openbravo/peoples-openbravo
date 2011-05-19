@@ -64,6 +64,12 @@ public class ApplicationComponent extends BaseTemplateComponent {
     return getFormatDefinition().getDecimalSymbol();
   }
 
+  public boolean isTestEnvironment() {
+    final String testEnvironmentStr = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("test.environment");
+    return testEnvironmentStr != null && "true".equals(testEnvironmentStr);
+  }
+
   public String getDefaultNumericMask() {
     return getFormatDefinition().getFormat();
   }
