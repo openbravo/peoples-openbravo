@@ -60,15 +60,19 @@ public class OBViewUtil {
    * @return a translated name if found or otherwise the name of the owner
    */
   public static String getLabel(BaseOBObject owner, List<?> trlObjects) {
+    return getLabel(owner, trlObjects, Field.PROPERTY_NAME);
+  }
+
+  public static String getLabel(BaseOBObject owner, List<?> trlObjects, String propertyName) {
     final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
     for (Object o : trlObjects) {
       final BaseOBObject trlObject = (BaseOBObject) o;
       final String trlLanguageId = (String) DalUtil
           .getId(trlObject.get(FieldTrl.PROPERTY_LANGUAGE));
       if (trlLanguageId.equals(userLanguageId)) {
-        return (String) trlObject.get(FieldTrl.PROPERTY_NAME);
+        return (String) trlObject.get(propertyName);
       }
     }
-    return (String) owner.get(Field.PROPERTY_NAME);
+    return (String) owner.get(propertyName);
   }
 }

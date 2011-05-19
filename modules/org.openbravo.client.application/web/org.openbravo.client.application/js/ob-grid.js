@@ -286,6 +286,7 @@ isc.OBGrid.addProperties({
       return;
     }
     var gridIsFiltered = this.isGridFiltered(criteria);
+    
     if (this.filterClause && gridIsFiltered) {
       this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterBothToolTip');      
       this.filterImage.show(true);
@@ -297,8 +298,28 @@ isc.OBGrid.addProperties({
       this.filterImage.show(true);
     } else {
       this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterIconToolTip');
+      if (this.view.messageBar.hasFilterMessage) {
+        this.view.messageBar.hide();
+      }
       this.filterImage.hide();
     }
+    
+    if (this.filterClause  && !this.view.messageBar.isVisible()) {
+      var showMessageProperty = OB.PropertyStore.get('OBUIAPP_ShowImplicitFilterMsg'),
+          showMessage = (showMessageProperty !== 'N' && showMessageProperty !== '"N"');
+      if (showMessage) {
+        this.view.messageBar.setMessage(OBMessageBar.TYPE_INFO, '<div><div style="float: left;">'+
+            this.filterName + ' ' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + 
+            '</div><div style="float: right; padding: 15px; padding-bottom: 0;"><a href="#" style="font-weight:normal; color:inherit;" onclick="console.log(\''+
+            this.view.messageBar.ID+'\'); window[\''+
+            this.view.messageBar.ID+'\'].hide(); OB.PropertyStore.set(\'OBUIAPP_ShowImplicitFilterMsg\', \'N\');">'+
+            OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain')+'</a></div></div>',' ');
+        this.view.messageBar.hasFilterMessage = true;
+      } 
+    }
+    
+    
+
   },
   
   isGridFiltered: function(criteria) {

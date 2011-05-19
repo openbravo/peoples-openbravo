@@ -69,7 +69,7 @@ isc.OBMessageBar.addProperties({
       this.text.setContents(text);
     } else {
       // TODO: low-prio, move styling to a css class
-      this.text.setContents('<b>' + title + '</b><br/>' + text);
+      this.text.setContents('<b>' + title + '</b>' + (text? '<br/>'+ text:''));
     }
   },
   
@@ -99,6 +99,7 @@ isc.OBMessageBar.addProperties({
       text = newText + '</ul>';
     }
     this.setText(title || this.getDefaultTitle(type), text);
+    delete this.hasFilterMessage;
     this.show();
   },
   

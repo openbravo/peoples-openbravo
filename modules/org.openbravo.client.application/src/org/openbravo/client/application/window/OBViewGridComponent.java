@@ -32,18 +32,22 @@ import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelUtils;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.client.kernel.reference.StringUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
 /**
@@ -131,6 +135,41 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       return addTransactionalFilter(tab.getHqlfilterclause());
     }
     return addTransactionalFilter("");
+  }
+
+  public String getFilterName() {
+    String filterName = "";
+
+    if (tab.getHqlfilterclause() != null) {
+      filterName = Utility.messageBD(new DalConnectionProvider(false), "OBUIAPP_ImplicitFilter",
+          OBContext.getOBContext().getLanguage().getLanguage());
+      if (tab.getFilterName() != null) {
+        filterName += "<i>("
+            + OBViewUtil.getLabel(tab, tab.getADTabTrlList(), Tab.PROPERTY_FILTERNAME) + ")</i>";
+      }
+    }
+
+    if (isApplyTransactionalFilter()) {
+      if (!filterName.isEmpty()) {
+        filterName += " "
+            + Utility.messageBD(new DalConnectionProvider(false), "And", OBContext.getOBContext()
+                .getLanguage().getLanguage()) + " ";
+      }
+      filterName += Utility.messageBD(new DalConnectionProvider(false),
+          "OBUIAPP_TransactionalFilter", OBContext.getOBContext().getLanguage().getLanguage())
+          .replace(
+              "%n",
+              Utility.getTransactionalDate(new DalConnectionProvider(false), RequestContext.get()
+                  .getVariablesSecureApp(), tab.getWindow().getId()));
+    }
+
+    if (!filterName.isEmpty()) {
+      filterName = Utility.messageBD(new DalConnectionProvider(false), "OBUIAPP_FilteredGrid",
+          OBContext.getOBContext().getLanguage().getLanguage())
+          + " " + filterName;
+    }
+
+    return filterName;
   }
 
   private String addTransactionalFilter(String filterClause) {
