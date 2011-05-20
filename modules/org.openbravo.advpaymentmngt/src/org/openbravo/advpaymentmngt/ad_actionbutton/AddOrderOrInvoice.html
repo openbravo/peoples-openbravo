@@ -215,7 +215,19 @@ function actualPaymentOnChange(){
     }
     document.frmMain.inpActualPayment.value=amount;
   }
+  updateConvertedAmounts();
 }
+
+function displayMulticurrencyControls() {
+  var invCurrency = document.getElementById('paramCurrencyId').value
+  var accountCurrency = document.getElementById('paramFinancialAccountCurrencyId').value
+
+  var display = ( invCurrency && accountCurrency && invCurrency != accountCurrency );
+
+  displayLogicElement('multiCurrencyRow', display );
+}
+
+
 </script>
 <script language="JavaScript" type="text/javascript">
   function addGLItem() {
@@ -240,6 +252,7 @@ function actualPaymentOnChange(){
           amount = 0;
       }
       document.frmMain.inpActualPayment.value = amount;
+      updateConvertedAmounts();
       return submitXmlHttpRequest(callBackGLItem, document.frmMain, "ADDGLITEM", url, false, null, paramXMLReq);
     } catch (e) {
       alert(e);
@@ -255,6 +268,7 @@ function actualPaymentOnChange(){
         else
           document.frmMain.inpActualPayment.value = 0;
         document.frmMain.inpGLSumAmount.value = subtract(document.frmMain.inpGLSumAmount.value, document.frmMain.elements['inpHiddenAmt'+key].value);
+        updateConvertedAmounts();
         return submitXmlHttpRequest(callBackGLItem, document.frmMain, "REMOVEGLITEM", url, false, null, paramXMLReq);
       } catch (e) {
         alert(e);
@@ -418,6 +432,7 @@ function actualPaymentOnChange(){
     displayLogicElement('lblCredit', compare(document.getElementById('paramCredit').value, '>', "0"));
     displayLogicElement('paramUseCredit', compare(document.getElementById('paramCredit').value, '>', "0") && compare(document.frmMain.inpGeneratedCredit.value, '==', "0") );
     displayLogicElement('lblUseCredit', compare(document.getElementById('paramCredit').value, '>', "0") && compare(document.frmMain.inpGeneratedCredit.value, '==', "0") );
+    displayMulticurrencyControls();
     if (isTrue('isReceipt')) {
         setWindowElementFocus(frm.inpActualPayment);
     } else {
@@ -726,8 +741,9 @@ function actualPaymentOnChange(){
               <td class="TextBox_ContentCell"> <input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExpectedPayment" name="inpExpectedPayment" value="" onchange="updateDifference();"></input>
               </td>
               <td class="TitleCell"></td>
-              <td class="TitleCell"></td>
-              <td class="TitleCell"></td>
+              <td class="TitleCell"><span class="LabelText">Expected Converted</span></td>
+              <td class="TextBox_ContentCell"> <input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExpectedConverted" name="inpExpectedConverted" value="" onchange="" disabled="true"></input>
+              </td>
               <td class="TitleCell"></td>
             </tr>
 
@@ -773,7 +789,27 @@ function actualPaymentOnChange(){
               <td class="TitleCell"><span class="LabelText" name="lbl" id="lblUseCredit">Use Available Credit</span></td>
               <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpUseCredit" value="Y" id="paramUseCredit" onclick="useCreditOnChange();"></input></span></td>
             </tr>
-            
+
+            <!-- Line 3 -->
+            <tr id="multiCurrencyRow">
+              <td class="TitleCell"><span class="LabelText" id="lblActualConverted">Actual Converted</span></td>
+              <td class="TextBox_ContentCell"> <input class="dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramActualConverted" name="inpActualConverted" value="" onchange="updateConvertedAmounts(true);" ></input>
+              </td>
+              <td class="TextBox_ContentCell">
+                <input type="hidden" id="paramFinancialAccountCurrencyId" name="financialAccountCurrencyId" value=""/>
+                <input type="hidden" id="paramFinancialAccountCurrencyPrecision" name="inpFinancialAccountCurrencyPrecision" value="2"/>
+                <input class="readonly dojoValidateValid required TextBox_OneCell_width" type="text" id="paramFinancialAccountCurrencyName" name="paramFinancialAccountCurrencyName" value=""></input>
+              </td>
+              <td class="TitleCell"><span class="LabelText" id="lblExchangeRate">Exchange Rate</span></td>
+              <td class="TextBox_ContentCell"> <input class="dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExchangeRate" name="inpExchangeRate" value="" onchange="updateConvertedAmounts();" ></input>
+              </td>
+              <td class="TextBox_ContentCell">
+                <input type="hidden" id="paramCurrencyId" name="inpCurrencyId" value=""/>
+                <input class="readonly dojoValidateValid required TextBox_OneCell_width" type="text" id="paramCurrencyName" name="paramCurrencyName" value=""></input>
+              </td>
+            </tr>
+
+
             <tr class="FieldGroup_BottomMargin"></tr>
             
             <!-- Table filters -->
