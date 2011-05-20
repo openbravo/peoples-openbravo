@@ -33,8 +33,11 @@ public class DateDomainType extends BasePrimitiveDomainType {
 
   private final SimpleDateFormat xmlDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
 
+  private final SimpleDateFormat previousXmlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
   public DateDomainType() {
     xmlDateFormat.setLenient(true);
+    previousXmlDateFormat.setLenient(true);
   }
 
   /**
@@ -58,7 +61,11 @@ public class DateDomainType extends BasePrimitiveDomainType {
       if (strValue == null || strValue.trim().length() == 0) {
         return null;
       }
-      return xmlDateFormat.parse(strValue);
+      if (strValue.contains("T")) {
+        return xmlDateFormat.parse(strValue);
+      } else {
+        return previousXmlDateFormat.parseObject(strValue);
+      }
     } catch (ParseException e) {
       throw new IllegalArgumentException(e);
     }
