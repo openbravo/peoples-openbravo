@@ -166,7 +166,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     if (!filterName.isEmpty()) {
       filterName = Utility.messageBD(new DalConnectionProvider(false), "OBUIAPP_FilteredGrid",
           OBContext.getOBContext().getLanguage().getLanguage())
-          + " " + filterName;
+          + " " + filterName + ".";
     }
 
     return filterName;

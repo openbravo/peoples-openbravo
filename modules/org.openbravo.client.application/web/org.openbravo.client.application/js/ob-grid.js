@@ -304,22 +304,19 @@ isc.OBGrid.addProperties({
       this.filterImage.hide();
     }
     
-    if (this.filterClause  && !this.view.messageBar.isVisible()) {
+    if (this.filterClause && !this.view.isShowingForm && !this.view.messageBar.isVisible()) {
       var showMessageProperty = OB.PropertyStore.get('OBUIAPP_ShowImplicitFilterMsg'),
           showMessage = (showMessageProperty !== 'N' && showMessageProperty !== '"N"');
       if (showMessage) {
         this.view.messageBar.setMessage(OBMessageBar.TYPE_INFO, '<div><div style="float: left;">'+
-            this.filterName + ' ' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + 
-            '</div><div style="float: right; padding: 15px; padding-bottom: 0;"><a href="#" style="font-weight:normal; color:inherit;" onclick="console.log(\''+
+            this.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + 
+            '</div><div style="float: right; padding-top: 15px;"><a href="#" style="font-weight:normal; color:inherit;" onclick="console.log(\''+
             this.view.messageBar.ID+'\'); window[\''+
             this.view.messageBar.ID+'\'].hide(); OB.PropertyStore.set(\'OBUIAPP_ShowImplicitFilterMsg\', \'N\');">'+
             OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain')+'</a></div></div>',' ');
         this.view.messageBar.hasFilterMessage = true;
       } 
     }
-    
-    
-
   },
   
   isGridFiltered: function(criteria) {
