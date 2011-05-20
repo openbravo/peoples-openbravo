@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.kernel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openbravo.base.provider.OBProvider;
@@ -56,7 +57,8 @@ public class JSLintChecker {
     jsLint.addOption(Option.EVIL); // allow eval()
     jsLint.addOption(Option.CONTINUE); // allow continue statement
     final JSLintResult lintResult = jsLint.lint(componentIdentifier, javascript);
-    final List<Issue> issues = lintResult.getIssues();
+    final List<Issue> issues = purgeIssuesList(lintResult.getIssues());
+
     if (issues.isEmpty()) {
       return null;
     }
@@ -74,5 +76,19 @@ public class JSLintChecker {
       sb.append(">>>>>>> Issues (" + (System.currentTimeMillis() - t1) + "ms)  <<<<<<<<<\n");
     }
     return sb.toString();
+  }
+
+  private List<Issue> purgeIssuesList(List<Issue> issues) {
+    // FreeMarker escapes '>' to '\>' this doesn't affect the resulting value of the
+    // string. Tested: Chrome, IE, Opera, FF
+    // https://sourceforge.net/tracker/index.php?func=detail&aid=3303868&group_id=794&atid=100794
+    List<Issue> purgedList = new ArrayList<Issue>();
+    for (Issue issue : issues) {
+      if (issue.getReason().equals("Unexpected '\\'.") && issue.getEvidence().contains("\\>")) {
+        continue;
+      }
+      purgedList.add(issue);
+    }
+    return purgedList;
   }
 }
