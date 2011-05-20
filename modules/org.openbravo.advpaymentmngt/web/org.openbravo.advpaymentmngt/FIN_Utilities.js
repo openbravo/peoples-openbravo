@@ -289,39 +289,7 @@ function updateTotal() {
     }
   }
   updateDifference();
-  updateConvertedAmounts();
 }
-
-function multiplyAndRound(lhs, rhs, precision) {
-    if( lhs && rhs ) {
-        var res = lhs * rhs;
-        return res.toFixed(precision);
-    } else {
-        return '';
-    }
-}
-
-function updateConvertedAmounts( recalcExchangeRate ) {
-  var exchangeRate = frm.inpExchangeRate;
-  var precision = frm.inpFinancialAccountCurrencyPrecision.value;
-  var expectedConverted = frm.inpExpectedConverted;
-  var actualConverted = frm.inpActualConverted;
-  var expectedPayment= frm.inpExpectedPayment;
-  var actualPayment= frm.inpActualPayment;
-
-  if( recalcExchangeRate ) {
-    if( actualConverted.value && actualPayment.value) {
-      exchangeRate.value = actualConverted.value / actualPayment.value
-    } else {
-      exchangeRate.value = '';
-    }
-  } else {
-    actualConverted.value = multiplyAndRound(actualPayment.value, exchangeRate.value, precision);
-  }
-
-  expectedConverted.value = multiplyAndRound(expectedPayment.value,exchangeRate.value, precision);
-}
-
 
 function distributeAmount(_amount) {
   var amount = applyFormat(_amount);
@@ -557,16 +525,4 @@ function reloadParentGrid() {
         theView.toolBar.refreshCustomButtons();
     });
   }
-}
-
-/**
- * Helper function to turn a JSON string representation into an object.
- * @param jsonString
- */
-function decodeJSON(jsonString) {
-    try{
-        return eval('(' + jsonString + ')'); // do the eval
-    }catch(e){
-        throw new SyntaxError("Invalid JSON string: " + e.message + " parsing: "+ str);
-    }
 }

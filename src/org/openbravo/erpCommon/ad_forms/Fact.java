@@ -84,7 +84,7 @@ public class Fact {
 
   /**
    * Create and convert Fact Line. Used to create a DR and/or CR entry
-   *
+   * 
    * @param docLine
    *          the document line or null
    * @param account
@@ -100,37 +100,6 @@ public class Fact {
   public FactLine createLine(DocLine docLine, Account account, String C_Currency_ID,
       String debitAmt, String creditAmt, String Fact_Acct_Group_ID, String SeqNo,
       String DocBaseType, ConnectionProvider conn) {
-    return createLine(docLine,account, C_Currency_ID, debitAmt, creditAmt, Fact_Acct_Group_ID,
-        SeqNo, DocBaseType, m_doc.DateAcct,  conn);
-  }
-
-  /**
-   * Create and convert Fact Line using a specified conversion date.
-   * Used to create a DR and/or CR entry
-   * 
-   * @param docLine
-   *          the document line or null
-   * @param account
-   *          if null, line is not created
-   * @param C_Currency_ID
-   *          the currency
-   * @param debitAmt
-   *          debit amount, can be null
-   * @param creditAmt
-   *          credit amount, can be null
-   * @param Fact_Acct_Group_ID
-   *
-   * @param SeqNo
-   *
-   * @param DocBaseType
-   *
-   * @param conversionDate
-   *          Date to convert currencies if required
-   * @return Fact Line
-   */
-  public FactLine createLine(DocLine docLine, Account account, String C_Currency_ID,
-      String debitAmt, String creditAmt, String Fact_Acct_Group_ID, String SeqNo,
-      String DocBaseType, String conversionDate, ConnectionProvider conn) {
 
     String strNegate = "";
     try {
@@ -177,13 +146,10 @@ public class Fact {
     // Amounts - one needs to be both not zero
     if (!line.setAmtSource(C_Currency_ID, debitAmt, creditAmt))
       return null;
-    if( conversionDate == null || conversionDate.isEmpty()) {
-      conversionDate = m_doc.DateAcct;
-    }
-    log4jFact.debug("C_Currency_ID: " + m_acctSchema.getC_Currency_ID() + " - ConversionDate: "
-        + conversionDate + " - CurrencyRateType: " + m_acctSchema.getCurrencyRateType());
+    log4jFact.debug("C_Currency_ID: " + m_acctSchema.getC_Currency_ID() + " - DateAcct: "
+        + m_doc.DateAcct + " - CurrencyRateType: " + m_acctSchema.getCurrencyRateType());
     // Convert
-    line.convert(m_acctSchema.getC_Currency_ID(), conversionDate, m_acctSchema
+    line.convert(m_acctSchema.getC_Currency_ID(), m_doc.DateAcct, m_acctSchema
         .getCurrencyRateType(), conn);
     // Optionally overwrite Acct Amount
     if (docLine != null && !docLine.m_AmtAcctDr.equals("") && !docLine.m_AmtAcctCr.equals(""))
@@ -554,7 +520,7 @@ public class Fact {
     BigDecimal result = ZERO;
     for (int i = 0; i < m_lines.size(); i++) {
       FactLine line = (FactLine) m_lines.get(i);
-      BigDecimal balance = line.getAcctBalance();
+      BigDecimal balance = new BigDecimal(line.getAcctBalance());
       result = result.add(balance);
     }
     return result;
@@ -607,7 +573,7 @@ public class Fact {
       // Find line
       for (int i = 0; i < m_lines.size(); i++) {
         FactLine l = (FactLine) m_lines.get(i);
-        BigDecimal amt = l.getAcctBalance();
+        BigDecimal amt = new BigDecimal(l.getAcctBalance());
         amt = amt.abs();
         if (l.isBalanceSheet() && amt.compareTo(BSamount) > 0) {
           BSamount = amt;

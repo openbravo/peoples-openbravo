@@ -43,8 +43,6 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
 
     String tabId = info.getTabId();
     boolean isVendorTab = "224".equals(tabId);
-    String finIsReceipt= info.getStringParameter("inpfinIsreceipt",null );
-    boolean isPaymentOut=isVendorTab || "N".equals(finIsReceipt);
     String srtOrgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
 
     FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
@@ -73,11 +71,6 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
       obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
       obc.add(Restrictions.in("organization.id", OBContext.getOBContext()
           .getOrganizationStructureProvider().getNaturalTree(srtOrgId)));
-      if(isPaymentOut) {
-        obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYOUTALLOW, true));
-      } else {
-        obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYINALLOW, true));
-      }
 
       for (FinAccPaymentMethod accPm : obc.list()) {
         if (srtSelectedFinancialAccount.equals(accPm.getAccount().getId())) {

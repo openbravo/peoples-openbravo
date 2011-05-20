@@ -29,14 +29,12 @@ import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.util.Convert;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
-import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -87,9 +85,6 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
         Organization orgId = paymentProposal.getOrganization();
         Date paymentDate = paymentProposal.getPaymentDate();
         boolean isReceipt = paymentProposal.isReceipt();
-        Currency paymentCurrency = paymentProposal.getCurrency();
-        Currency financialAccountCurrency = paymentProposal.getAccount().getCurrency();
-        BigDecimal exchangeRate = paymentProposal.getFinancialTransactionConvertRate();
 
         OBContext.setAdminMode();
         try {
@@ -129,16 +124,11 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
               String strPaymentDocumentNo = FIN_Utility.getDocumentNo(orgId, (isReceipt) ? "ARR"
                   : "APP", "DocumentNo_FIN_Payment_Proposal");
 
-              BigDecimal finAccTxnAmount = Convert.toNumberWithPrecision(
-                  paymentTotal.multiply(exchangeRate),
-                  financialAccountCurrency.getStandardPrecision()
-              );
               FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt, dao.getObject(
                   DocumentType.class, strDocTypeId), strPaymentDocumentNo, dao.getObject(
                   BusinessPartner.class, strBusinessPartner_old), paymentMethodId,
                   financialAccountId, paymentTotal.toString(), paymentDate, orgId, null,
-                  selectedPaymentDetails, selectedPaymentDetailsAmounts, isWriteOff, isRefund,
-                  paymentCurrency, exchangeRate, finAccTxnAmount);
+                  selectedPaymentDetails, selectedPaymentDetailsAmounts, isWriteOff, isRefund);
 
               // process payment
               message = FIN_AddPayment.processPayment(vars, conProvider, "P", payment);
@@ -174,17 +164,11 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
           String strPaymentDocumentNo = FIN_Utility.getDocumentNo(orgId, (isReceipt) ? "ARR"
               : "APP", "DocumentNo_FIN_Payment_Proposal");
 
-          BigDecimal finAccTxnAmount = Convert.toNumberWithPrecision(
-              paymentTotal.multiply(exchangeRate),
-              financialAccountCurrency.getStandardPrecision()
-          );
-
           FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt, dao.getObject(
               DocumentType.class, strDocTypeId), strPaymentDocumentNo, dao.getObject(
               BusinessPartner.class, strBusinessPartner), paymentMethodId, financialAccountId,
               paymentTotal.toString(), paymentDate, orgId, null, selectedPaymentDetails,
-              selectedPaymentDetailsAmounts, isWriteOff, isRefund,
-              paymentCurrency, exchangeRate, finAccTxnAmount);
+              selectedPaymentDetailsAmounts, isWriteOff, isRefund);
           paymentProposal.setStatus(isReceipt ? "RPR" : "PPM");
           // process payment
           message = FIN_AddPayment.processPayment(vars, conProvider, "P", payment);

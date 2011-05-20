@@ -14,7 +14,7 @@
  * The Initial Developer of the Original Code is Openbravo SLU
  * All portions are Copyright (C) 2010 Openbravo SLU
  * All Rights Reserved.
- * Contributor(s): Enterprise Intelligence Systems (http://www.eintel.com.au).
+ * Contributor(s):  ______________________________________.
  *************************************************************************
 -->
 <REPORT>
@@ -37,11 +37,6 @@
     <PARAMETER id="paramC_Currency_ID" name="CurrencyId" attribute="value"/>
     <PARAMETER id="paramExpectedPayment" name="expectedPayment" attribute="value" format="euroEdition"/>
     <PARAMETER id="paramActualPayment" name="actualPayment" attribute="value" format="euroEdition" default="0"/>
-    <PARAMETER id="paramFinancialAccountCurrencyId" name="financialAccountCurrencyId" attribute="value"/>
-    <PARAMETER id="paramFinancialAccountCurrencyPrecision" name="financialAccountCurrencyPrecision" attribute="value"/>
-    <PARAMETER id="paramExchangeRate" name="exchangeRate" attribute="value" format="generalQtyEdition"/>
-    <PARAMETER id="paramExpectedConverted" name="expectedConverted" attribute="value" format="euroEdition"/>
-    <PARAMETER id="paramActualConverted" name="actualConverted" attribute="value" format="euroEdition" default="0"/>
     <PARAMETER id="paramCredit" name="credit" attribute="value" format="euroEdition"/>
     <PARAMETER id="fieldOrg" name="orgId" attribute="value"/>
     <PARAMETER id="fieldInvoice" name="invoiceId" attribute="value"/>

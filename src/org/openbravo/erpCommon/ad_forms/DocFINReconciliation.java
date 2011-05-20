@@ -225,7 +225,7 @@ public class DocFINReconciliation extends AcctServer {
             .toString());
         FieldProviderFactory.setField(data[i], "PaymentAmount", transaction.getPaymentAmount()
             .toString());
-        FieldProviderFactory.setField(data[i], "Amount", payment.getFinancialTransactionAmount().toString());
+        FieldProviderFactory.setField(data[i], "Amount", payment.getAmount().toString());
         FieldProviderFactory.setField(data[i], "WriteOffAmt", payment.getWriteoffAmount()
             .toString());
         FieldProviderFactory.setField(data[i], "cBpartnerId", payment.getBusinessPartner().getId());

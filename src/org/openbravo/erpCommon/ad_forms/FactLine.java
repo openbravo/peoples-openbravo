@@ -786,14 +786,14 @@ public class FactLine {
    * 
    * @return accounting balance
    */
-  public BigDecimal getAcctBalance() {
+  public String getAcctBalance() {
     if (m_AmtAcctDr.equals(""))
       m_AmtAcctDr = "0";
     if (m_AmtAcctCr.equals(""))
       m_AmtAcctCr = "0";
     BigDecimal AmtAcctDr = new BigDecimal(m_AmtAcctDr);
     BigDecimal AmtAcctCr = new BigDecimal(m_AmtAcctCr);
-    return AmtAcctDr.subtract(AmtAcctCr);
+    return AmtAcctDr.subtract(AmtAcctCr).toString();
   } // getAcctBalance
 
   /**

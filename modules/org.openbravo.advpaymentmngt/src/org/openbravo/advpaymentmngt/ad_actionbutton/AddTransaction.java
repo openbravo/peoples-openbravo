@@ -140,23 +140,31 @@ public class AddTransaction extends HttpSecureAppServlet {
             selectedPaymentIds);
 
         for (FIN_Payment p : selectedPayments) {
-          BigDecimal depositAmt = FIN_Utility.getDepositAmount(p.isReceipt(),
-              p.getFinancialTransactionAmount());
-          BigDecimal paymentAmt = FIN_Utility.getPaymentAmount(p.isReceipt(),
-              p.getFinancialTransactionAmount());
+          BigDecimal depositAmt = BigDecimal.ZERO;
+          BigDecimal paymentAmt = BigDecimal.ZERO;
 
+          if (p.isReceipt()) {
+            if (p.getAmount().compareTo(BigDecimal.ZERO) == -1)
+              paymentAmt = p.getAmount().abs();
+            else
+              depositAmt = p.getAmount();
+          } else {
+            if (p.getAmount().compareTo(BigDecimal.ZERO) == -1)
+              depositAmt = p.getAmount().abs();
+            else
+              paymentAmt = p.getAmount();
+          }
           String description = null;
           if (p.getDescription() != null) {
             description = p.getDescription().replace("\n", ". ");
           }
 
-          FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(p.getOrganization(),
-              p.getAccount(), TransactionsDao.getTransactionMaxLineNo(p.getAccount()) + 10,
-              p, description, FIN_Utility.getDate(strTransactionDate), null,
-              p.isReceipt() ? "RDNC" : "PWNC", depositAmt, paymentAmt, null, null, null,
-              p.isReceipt() ? "BPD" : "BPW", FIN_Utility.getDate(strTransactionDate),
-              p.getCurrency(), p.getFinancialTransactionConvertRate(),
-              p.getAmount());
+          FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(p.getOrganization(), p
+              .getCurrency(), p.getAccount(), TransactionsDao.getTransactionMaxLineNo(p
+              .getAccount()) + 10, p, description, FIN_Utility.getDate(strTransactionDate), null, p
+              .isReceipt() ? "RDNC" : "PWNC", depositAmt, paymentAmt, null, null, null, p
+              .isReceipt() ? "BPD" : "BPW", FIN_Utility.getDate(strTransactionDate));
+
           TransactionsDao.process(finTrans);
           if (!"".equals(strFinBankStatementLineId)) {
             matchBankStatementLine(vars, finTrans, strFinBankStatementLineId);
@@ -181,10 +189,10 @@ public class AddTransaction extends HttpSecureAppServlet {
 
         // Currency, Organization, paymentDate,
         FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(account.getOrganization(),
-            account, TransactionsDao.getTransactionMaxLineNo(account) + 10, null, description,
-            FIN_Utility.getDate(strTransactionDate), glItem, isReceipt ? "RDNC" : "PWNC",
-            glItemDepositAmt, glItemPaymentAmt, null, null, null, isReceipt ? "BPD" : "BPW",
-            FIN_Utility.getDate(strTransactionDate), null, null, null);
+            account.getCurrency(), account, TransactionsDao.getTransactionMaxLineNo(account) + 10,
+            null, description, FIN_Utility.getDate(strTransactionDate), glItem, isReceipt ? "RDNC"
+                : "PWNC", glItemDepositAmt, glItemPaymentAmt, null, null, null, isReceipt ? "BPD"
+                : "BPW", FIN_Utility.getDate(strTransactionDate));
 
         TransactionsDao.process(finTrans);
         strMessage = "1 " + "@RowsInserted@";
@@ -202,10 +210,10 @@ public class AddTransaction extends HttpSecureAppServlet {
             vars.getLanguage()) : strFeeDescription;
 
         FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(account.getOrganization(),
-            account, TransactionsDao.getTransactionMaxLineNo(account) + 10, null, description,
-            FIN_Utility.getDate(strTransactionDate), null, isReceipt ? "RDNC": "PWNC",
-            feeDepositAmt, feePaymentAmt, null, null, null, "BF",
-            FIN_Utility.getDate(strTransactionDate), null, null, null);
+            account.getCurrency(), account, TransactionsDao.getTransactionMaxLineNo(account) + 10,
+            null, description, FIN_Utility.getDate(strTransactionDate), null, isReceipt ? "RDNC"
+                : "PWNC", feeDepositAmt, feePaymentAmt, null, null, null, "BF", FIN_Utility
+                .getDate(strTransactionDate));
 
         TransactionsDao.process(finTrans);
         strMessage = "1 " + "@RowsInserted@";

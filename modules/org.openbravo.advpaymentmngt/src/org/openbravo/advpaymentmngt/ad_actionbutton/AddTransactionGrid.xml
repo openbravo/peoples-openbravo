@@ -30,8 +30,8 @@
     <FIELD id="fieldDescription">paymentDescriptionTrunc</FIELD>
     <FIELD id="fieldDescription" attribute="title" replace="zz">paymentDescription</FIELD>
     <FIELD id="fieldDate">paymentDate</FIELD>
-    <FIELD id="fieldDepositAmount">depositAmount</FIELD>
-    <FIELD id="fieldPaymentAmount">paymentAmount</FIELD>
+    <FIELD id="fieldDepositAmount" format="euroEdition">depositAmount</FIELD>
+    <FIELD id="fieldPaymentAmount" format="euroEdition">paymentAmount</FIELD>
 
     <SECTION id="sectionLinesDetail"/>
   </structure>

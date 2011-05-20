@@ -35,7 +35,6 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.base.util.Convert;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -46,7 +45,6 @@ import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
-import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
@@ -104,15 +102,6 @@ public class FIN_AddPayment {
    *          Scheduled PAyment Detail amount.
    * @param isRefund
    *          Not used.
-   * @param paymentCurrency
-   *          The currency that the payment is being made in.  Will default to financial account
-   *          currency if not specified
-   * @param finTxnConvertRate
-   *          Exchange rate to convert between payment currency and financial account currency
-   *          for this payment.
-   *          Defaults to 1.0 if not supplied
-   * @param finTxnAmount
-   *          Amount of payment in currency of financial account
    * @return The FIN_Payment OBObject containing all the Payment Details.
    */
   public static FIN_Payment savePayment(FIN_Payment _payment, boolean isReceipt,
@@ -121,8 +110,7 @@ public class FIN_AddPayment {
       Date paymentDate, Organization organization, String referenceNo,
       List<FIN_PaymentScheduleDetail> selectedPaymentScheduleDetails,
       HashMap<String, BigDecimal> selectedPaymentScheduleDetailsAmounts, boolean isWriteoff,
-      boolean isRefund, Currency paymentCurrency, BigDecimal finTxnConvertRate,
-      BigDecimal finTxnAmount) {
+      boolean isRefund) {
     dao = new AdvPaymentMngtDao();
 
     BigDecimal assignedAmount = BigDecimal.ZERO;
@@ -131,8 +119,7 @@ public class FIN_AddPayment {
       payment = _payment;
     else
       payment = dao.getNewPayment(isReceipt, organization, docType, strPaymentDocumentNo,
-          businessPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate, referenceNo,
-          paymentCurrency, finTxnConvertRate, finTxnAmount);
+          businessPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate, referenceNo);
 
     for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList())
       assignedAmount = assignedAmount.add(paymentDetail.getAmount());
@@ -170,23 +157,6 @@ public class FIN_AddPayment {
     }
 
     return payment;
-  }
-
-  /*
-  * Temporary method to supply defaults for exchange Rate and converted amount
-  * TODO BPS Remove this
-  */
-  public static FIN_Payment savePayment(FIN_Payment _payment, boolean isReceipt,
-      DocumentType docType, String strPaymentDocumentNo, BusinessPartner businessPartner,
-      FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,
-      Date paymentDate, Organization organization, String referenceNo,
-      List<FIN_PaymentScheduleDetail> selectedPaymentScheduleDetails,
-      HashMap<String, BigDecimal> selectedPaymentScheduleDetailsAmounts, boolean isWriteoff,
-      boolean isRefund) {
-    return savePayment(_payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
-        paymentMethod, finAccount, strPaymentAmount, paymentDate,organization, referenceNo,
-        selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff,
-        isRefund, null, null, null);
   }
 
   public static FIN_Payment createRefundPayment(ConnectionProvider conProvider,
@@ -241,18 +211,6 @@ public class FIN_AddPayment {
     dao = new AdvPaymentMngtDao();
     paymentProposal.setAmount(paymentAmount);
     paymentProposal.setWriteoffAmount((writeOffAmt != null) ? writeOffAmt : BigDecimal.ZERO);
-    BigDecimal convertRate = paymentProposal.getFinancialTransactionConvertRate();
-    if( BigDecimal.ONE.equals(convertRate)) {
-      paymentProposal.setFinancialTransactionAmount(paymentAmount);
-    } else {
-      Currency finAccountCurrency = paymentProposal.getAccount().getCurrency();
-      BigDecimal finAccountTxnAmount = paymentAmount.multiply(convertRate);
-      finAccountTxnAmount = Convert.toNumberWithPrecision(finAccountTxnAmount,
-                                          finAccountCurrency.getStandardPrecision());
-      paymentProposal.setFinancialTransactionAmount(finAccountTxnAmount);
-    }
-
-
     for (FIN_PaymentScheduleDetail paymentScheduleDetail : selectedPaymentScheduleDetails) {
       BigDecimal detailWriteOffAmt = null;
       if (writeOffAmt != null)

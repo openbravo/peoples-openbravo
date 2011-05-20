@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
-import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
@@ -520,18 +519,12 @@ public class Transactions extends HttpSecureAppServlet {
                 columnData = finaccTrx.getDescription();
               break;
             case 4: // receivedamount
-              if (finaccTrx.getDepositAmount() != null) {
-                columnData = FIN_Utility.multiCurrencyAmountToDisplay(
-                    finaccTrx.getDepositAmount(), finaccTrx.getCurrency(),
-                    finaccTrx.getForeignAmount(), finaccTrx.getForeignCurrency());
-              }
+              if (finaccTrx.getPaymentAmount() != null)
+                columnData = finaccTrx.getDepositAmount().toString();
               break;
             case 5: // paidamount
-              if (finaccTrx.getPaymentAmount() != null) {
-                columnData = FIN_Utility.multiCurrencyAmountToDisplay(
-                    finaccTrx.getPaymentAmount(), finaccTrx.getCurrency(),
-                    finaccTrx.getForeignAmount(), finaccTrx.getForeignCurrency());
-              }
+              if (finaccTrx.getDepositAmount() != null)
+                columnData = finaccTrx.getPaymentAmount().toString();
               break;
             case 6: // cleared
               columnData = Utility.messageBD(myPool, ((finaccTrx.getStatus().equals("RPPC")) ? "Y"

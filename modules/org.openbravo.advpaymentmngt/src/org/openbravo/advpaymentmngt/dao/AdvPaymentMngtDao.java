@@ -13,7 +13,7 @@
  * The Initial Developer of the Original Code is Openbravo SLU
  * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
- * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
+ * Contributor(s):  ______________________________________.
  *************************************************************************
  */
 
@@ -26,10 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
 import org.openbravo.advpaymentmngt.APRMPendingPaymentFromInvoice;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.advpaymentmngt.utility.Value;
@@ -315,8 +312,7 @@ public class AdvPaymentMngtDao {
   public FIN_Payment getNewPayment(boolean isReceipt, Organization organization,
       DocumentType docType, String strPaymentDocumentNo, BusinessPartner businessPartner,
       FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,
-      Date paymentDate, String referenceNo, Currency paymentCurrency, BigDecimal finTxnConvertRate,
-      BigDecimal finTxnAmount) {
+      Date paymentDate, String referenceNo) {
     final FIN_Payment newPayment = OBProvider.getInstance().get(FIN_Payment.class);
     newPayment.setReceipt(isReceipt);
     newPayment.setDocumentType(docType);
@@ -327,24 +323,10 @@ public class AdvPaymentMngtDao {
     newPayment.setBusinessPartner(businessPartner);
     newPayment.setPaymentMethod(paymentMethod);
     newPayment.setAccount(finAccount);
-    final BigDecimal paymentAmount = new BigDecimal(strPaymentAmount);
-    newPayment.setAmount(paymentAmount);
+    newPayment.setAmount(new BigDecimal(strPaymentAmount));
     newPayment.setPaymentDate(paymentDate);
-    if( paymentCurrency != null ) {
-       newPayment.setCurrency(paymentCurrency);
-    } else {
-       newPayment.setCurrency(finAccount.getCurrency());
-    }
+    newPayment.setCurrency(finAccount.getCurrency());
     newPayment.setReferenceNo(referenceNo);
-    if( finTxnConvertRate == null || finTxnConvertRate.compareTo(BigDecimal.ZERO) <= 0 ) {
-      finTxnConvertRate = BigDecimal.ONE;
-    }
-    newPayment.setFinancialTransactionConvertRate(finTxnConvertRate);
-
-    if( finTxnAmount == null || finTxnAmount.equals(BigDecimal.ZERO)  ) {
-      finTxnAmount = paymentAmount.multiply(finTxnConvertRate);
-    }
-    newPayment.setFinancialTransactionAmount(finTxnAmount);
 
     OBDal.getInstance().save(newPayment);
     OBDal.getInstance().flush();
@@ -432,28 +414,25 @@ public class AdvPaymentMngtDao {
     FIN_FinaccTransaction transaction = FIN_Utility.getOneInstance(FIN_FinaccTransaction.class,
         new Value(FIN_FinaccTransaction.PROPERTY_FINPAYMENT, payment));
     if (transaction == null) {
-      transaction = getNewFinancialTransaction(payment.getOrganization(),
+      transaction = getNewFinancialTransaction(payment.getOrganization(), payment.getCurrency(),
           payment.getAccount(), TransactionsDao.getTransactionMaxLineNo(payment.getAccount()) + 10,
-          payment, payment.getDescription(), payment.getPaymentDate(), null, "RPPC",
-          FIN_Utility.getDepositAmount(payment.isReceipt(), payment.getFinancialTransactionAmount()),
-          FIN_Utility.getPaymentAmount(payment.isReceipt(), payment.getFinancialTransactionAmount()),
-          payment.getProject(), payment.getSalesCampaign(),
-          payment.getActivity(), payment.isReceipt() ? "BPD" : "BPW", payment.getPaymentDate(),
-          payment.getCurrency(), payment.getFinancialTransactionConvertRate(), payment.getAmount());
+          payment, payment.getDescription(), payment.getPaymentDate(), null, "RPPC", payment
+              .isReceipt() ? payment.getAmount() : BigDecimal.ZERO, !payment.isReceipt() ? payment
+              .getAmount() : BigDecimal.ZERO, payment.getProject(), payment.getSalesCampaign(),
+          payment.getActivity(), payment.isReceipt() ? "BPD" : "BPW", payment.getPaymentDate());
     }
     return transaction;
   }
 
   public FIN_FinaccTransaction getNewFinancialTransaction(Organization organization,
-      FIN_FinancialAccount account, Long line, FIN_Payment payment,
+      Currency currency, FIN_FinancialAccount account, Long line, FIN_Payment payment,
       String description, Date accountingDate, GLItem glItem, String status,
       BigDecimal depositAmount, BigDecimal paymentAmount, Project project, Campaign campaing,
-      ABCActivity activity, String transactionType, Date statementDate,
-      Currency paymentCurrency, BigDecimal convertRate, BigDecimal sourceAmount) {
+      ABCActivity activity, String transactionType, Date statementDate) {
     FIN_FinaccTransaction finTrans = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
     finTrans.setActive(true);
     finTrans.setOrganization(organization);
-    finTrans.setCurrency(account.getCurrency());
+    finTrans.setCurrency(currency);
     finTrans.setAccount(account);
     finTrans.setLineNo(line);
     finTrans.setFinPayment(payment);
@@ -473,11 +452,6 @@ public class AdvPaymentMngtDao {
     finTrans.setActivity(activity);
     finTrans.setTransactionType(transactionType);
     finTrans.setTransactionDate(statementDate);
-    if(paymentCurrency != null && !paymentCurrency.equals(finTrans.getCurrency())) {
-      finTrans.setForeignCurrency(paymentCurrency);
-      finTrans.setForeignConversionRate(convertRate);
-      finTrans.setForeignAmount(sourceAmount);
-    }
 
     OBDal.getInstance().save(finTrans);
     OBDal.getInstance().flush();
@@ -808,18 +782,20 @@ public class AdvPaymentMngtDao {
       FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(paymentOBList);
 
       for (int i = 0; i < data.length; i++) {
-        Boolean paymentIsReceipt = FIN_Payments[i].isReceipt();
+        BigDecimal depositAmt = BigDecimal.ZERO;
+        BigDecimal paymentAmt = BigDecimal.ZERO;
 
-        BigDecimal depositAmt = FIN_Utility.getDepositAmount(paymentIsReceipt,
-            FIN_Payments[i].getFinancialTransactionAmount());
-        BigDecimal paymentAmt = FIN_Utility.getPaymentAmount(paymentIsReceipt,
-            FIN_Payments[i].getFinancialTransactionAmount());
-        BigDecimal foreignDepositAmt = FIN_Utility.getDepositAmount(paymentIsReceipt,
-            FIN_Payments[i].getAmount());
-        BigDecimal foreignPaymentAmt = FIN_Utility.getPaymentAmount(paymentIsReceipt,
-            FIN_Payments[i].getAmount());
-
-        final Currency foreignCurrency = FIN_Payments[i].getCurrency();
+        if (FIN_Payments[i].isReceipt()) {
+          if (FIN_Payments[i].getAmount().compareTo(BigDecimal.ZERO) == -1)
+            paymentAmt = FIN_Payments[i].getAmount().abs();
+          else
+            depositAmt = FIN_Payments[i].getAmount();
+        } else {
+          if (FIN_Payments[i].getAmount().compareTo(BigDecimal.ZERO) == -1)
+            depositAmt = FIN_Payments[i].getAmount().abs();
+          else
+            paymentAmt = FIN_Payments[i].getAmount();
+        }
 
         FieldProviderFactory.setField(data[i], "paymentId", FIN_Payments[i].getId());
         FieldProviderFactory.setField(data[i], "paymentInfo", FIN_Payments[i].getDocumentNo()
@@ -839,13 +815,8 @@ public class AdvPaymentMngtDao {
 
         FieldProviderFactory.setField(data[i], "paymentDate", dateFormater.format(
             FIN_Payments[i].getPaymentDate()).toString());
-        FieldProviderFactory.setField(data[i], "depositAmount",
-            FIN_Utility.multiCurrencyAmountToDisplay(depositAmt, account.getCurrency(),
-                foreignDepositAmt, foreignCurrency));
-        FieldProviderFactory.setField(data[i], "paymentAmount",
-            FIN_Utility.multiCurrencyAmountToDisplay(paymentAmt, account.getCurrency(),
-                foreignPaymentAmt, foreignCurrency));
-
+        FieldProviderFactory.setField(data[i], "depositAmount", depositAmt.toString());
+        FieldProviderFactory.setField(data[i], "paymentAmount", paymentAmt.toString());
         FieldProviderFactory.setField(data[i], "rownum", "" + i);
       }
 
@@ -869,7 +840,7 @@ public class AdvPaymentMngtDao {
   }
 
   public List<FIN_PaymentMethod> getFilteredPaymentMethods(String strFinancialAccountId,
-      String strOrgId, boolean excludePaymentMethodWithoutAccount, boolean isInPayment) {
+      String strOrgId, boolean excludePaymentMethodWithoutAccount) {
     final OBCriteria<FIN_PaymentMethod> obc = OBDal.getInstance().createCriteria(
         FIN_PaymentMethod.class);
     obc.add(Restrictions.in("organization.id", OBContext.getOBContext()
@@ -880,12 +851,7 @@ public class AdvPaymentMngtDao {
     if (strFinancialAccountId != null && !strFinancialAccountId.isEmpty()) {
       for (FinAccPaymentMethod finAccPayMethod : getObject(FIN_FinancialAccount.class,
           strFinancialAccountId).getFinancialMgmtFinAccPaymentMethodList()) {
-        if( isInPayment && finAccPayMethod.isPayinAllow() ) {
         payMethods.add(finAccPayMethod.getPaymentMethod().getId());
-        } else if (!isInPayment && finAccPayMethod.isPayoutAllow() ) {
-          payMethods.add(finAccPayMethod.getPaymentMethod().getId());
-      }
-        // else not valid for this type of payment
       }
       if (payMethods.isEmpty()) {
         return (new ArrayList<FIN_PaymentMethod>());
@@ -908,37 +874,22 @@ public class AdvPaymentMngtDao {
         }
         obc.add(Restrictions.in("id", payMethods));
       }
-      if(isInPayment) {
-        obc.add(Restrictions.eq(FIN_PaymentMethod.PROPERTY_PAYINALLOW, true));
-      } else {
-        obc.add(Restrictions.eq(FIN_PaymentMethod.PROPERTY_PAYINALLOW, true));
-    }
     }
 
     return obc.list();
   }
 
   public List<FIN_FinancialAccount> getFilteredFinancialAccounts(String strPaymentMethodId,
-      String strOrgId, String strCurrencyId, boolean isInPayment) {
+      String strOrgId, String strCurrencyId) {
     final OBCriteria<FIN_FinancialAccount> obc = OBDal.getInstance().createCriteria(
-        FIN_FinancialAccount.class,"acc");
+        FIN_FinancialAccount.class);
     obc.add(Restrictions.in("organization.id", OBContext.getOBContext()
         .getOrganizationStructureProvider().getNaturalTree(strOrgId)));
     obc.setFilterOnReadableOrganization(false);
 
-    Currency requiredCurrency = null;
     if (strCurrencyId != null && !strCurrencyId.isEmpty()) {
-      String multiCurrProperty = isInPayment ? FinAccPaymentMethod.PROPERTY_PAYINISMULTICURRENCY
-          : FinAccPaymentMethod.PROPERTY_PAYOUTISMULTICURRENCY;
-      DetachedCriteria multiCurrAllowed =
-          DetachedCriteria.forEntityName(FinAccPaymentMethod.ENTITY_NAME,"fapm")
-          .add(Restrictions.eqProperty(FinAccPaymentMethod.PROPERTY_ACCOUNT+".id", "acc.id"))
-          .add(Restrictions.eq(multiCurrProperty, true));
-      requiredCurrency = OBDal.getInstance().get(Currency.class, strCurrencyId);
-      obc.add(Restrictions.or(
-          Restrictions.eq(FIN_FinancialAccount.PROPERTY_CURRENCY, requiredCurrency),
-          Subqueries.exists(multiCurrAllowed.setProjection(Projections.id()))
-      ));
+      obc.add(Restrictions.eq(FIN_FinancialAccount.PROPERTY_CURRENCY, OBDal.getInstance().get(
+          Currency.class, strCurrencyId)));
     }
 
     if (strPaymentMethodId != null && !strPaymentMethodId.isEmpty()) {
@@ -951,21 +902,7 @@ public class AdvPaymentMngtDao {
       ExpressionForFinAccPayMethod exp = new ExpressionForFinAccPayMethod();
 
       for (FinAccPaymentMethod finAccPayMethod : finAccsMethods) {
-        boolean validPaymentDirection =
-              isInPayment ? finAccPayMethod.isPayinAllow(): finAccPayMethod.isPayoutAllow();
-
-        boolean validCurrency = true;
-        if( requiredCurrency  != null ) {
-          boolean multiCurrencyAllowed = isInPayment ?
-              finAccPayMethod.isPayinIsMulticurrency(): finAccPayMethod.isPayoutIsMulticurrency();
-          validCurrency = multiCurrencyAllowed ||
-              requiredCurrency.equals(finAccPayMethod.getAccount().getCurrency());
-        }
-
-        if( validPaymentDirection && validCurrency) {
         exp.addFinAccPaymentMethod(finAccPayMethod);
-      }
-
       }
 
       obc.add(exp.getCriterion()); // compoundexp will be always != null because
@@ -1258,28 +1195,4 @@ public class AdvPaymentMngtDao {
     return obcPayment.list();
   }
 
-  public Currency getFinancialAccountCurrency(String strFinancialAccountId) {
-    if(strFinancialAccountId != null && !strFinancialAccountId.isEmpty() ) {
-      final FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId);
-      return account.getCurrency();
-    }
-    return null;
-  }
-
-  public FIN_FinancialAccount getDefaultFinancialAccountFor(String strOrgId) {
-    final OBCriteria<FIN_FinancialAccount> obc = OBDal.getInstance().createCriteria(
-        FIN_FinancialAccount.class,"acc");
-    obc.add(Restrictions.in("organization.id", OBContext.getOBContext()
-        .getOrganizationStructureProvider().getNaturalTree(strOrgId)));
-    obc.setFilterOnReadableOrganization(false);
-
-    obc.add(Restrictions.eq(FIN_FinancialAccount.PROPERTY_DEFAULT, true));
-
-    final List<FIN_FinancialAccount> defaultAccounts = obc.list();
-    if( defaultAccounts.size() > 0 ) {
-      return defaultAccounts.get(0);
-    } else {
-      return null;
-    }
-  }
 }

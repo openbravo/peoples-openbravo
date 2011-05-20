@@ -336,7 +336,6 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         OBDal.getInstance().flush();
         payment.setWriteoffAmount(BigDecimal.ZERO);
         payment.setAmount(BigDecimal.ZERO);
-        payment.setFinancialTransactionAmount(BigDecimal.ZERO);
 
         payment.setStatus("RPAP");
         payment.setDescription("");
