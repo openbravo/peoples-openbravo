@@ -67,7 +67,9 @@
         pushedKS.key = isc.Event.getKey();
         var position = keyboardMgr.KS.getPosition(pushedKS, 'keyComb');
         if (position !== null) {
-          keyboardMgr.KS.execute(position);
+          return keyboardMgr.KS.execute(position);
+        } else {
+          return true;
         }
       }
     },
@@ -159,7 +161,9 @@
 
       execute: function(position){
         if (this.list[position].action !== null) {
-          this.list[position].action(this.list[position].funcParam);
+          return this.list[position].action(this.list[position].funcParam);
+        } else {
+          return true;
         }
       },
 

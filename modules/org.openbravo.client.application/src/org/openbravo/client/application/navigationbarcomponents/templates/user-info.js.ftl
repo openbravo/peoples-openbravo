@@ -28,6 +28,7 @@
         var me = this;
         var ksAction = function() {
           OB.Utilities.logout();
+          return false; //To avoid keyboard shortcut propagation
         };
         OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction);
         this.Super("draw", arguments);

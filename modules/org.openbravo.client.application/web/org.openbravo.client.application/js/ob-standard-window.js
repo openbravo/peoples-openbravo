@@ -341,6 +341,7 @@ isc.OBStandardWindow.addProperties({
     var moveFocusAction = function(){
       // standardWindow
 //      console.log('-->' + standardWindow.tabTitle);
+      return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.KS.set('StandardWindow_MoveFocus', moveFocusAction);
   },

@@ -167,6 +167,7 @@ isc.OBApplicationMenuButton.addProperties({
           OB.MainView.TabSet.getSelectedTab().pane.focusTab();
         }
       }
+      return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction);
     this.Super('draw', arguments);

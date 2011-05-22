@@ -1239,6 +1239,7 @@ isc.OBToolbarIconButton.addProperties({
         if (!me.disabled) {
           me.action();
         }
+        return false; //To avoid keyboard shortcut propagation
       };
       OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction);
     }

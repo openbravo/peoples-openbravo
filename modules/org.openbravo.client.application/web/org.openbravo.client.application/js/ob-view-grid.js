@@ -423,17 +423,19 @@ isc.OBViewGrid.addProperties({
   enableKeyBoardShortCuts: function() {
     var grid = this;
     var editInGridAction = function(){
-      if (grid.getSelectedRecords().length === 1) {    
+      if (grid.getSelectedRecords().length === 1) {
         grid.endEditing();
         grid.startEditing(grid.getRecordIndex(grid.getSelectedRecords()[0]));
       }
+      return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.KS.set('Grid_EditInGrid', editInGridAction);
     var editInFormAction = function(){
-      if (grid.getSelectedRecords().length === 1) {          
+      if (grid.getSelectedRecords().length === 1) {
         grid.endEditing();
         grid.view.editRecord(grid.getSelectedRecords()[0]);
       }
+      return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.KS.set('Grid_EditInForm', editInFormAction);
   },

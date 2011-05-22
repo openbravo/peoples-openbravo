@@ -114,6 +114,7 @@ isc.OBTabSetMain.addProperties({
         tabArray.push(i);
       }
       me.removeTabs(tabArray);
+      return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.KS.set('TabSet_closeAllTabs', ksAction_closeAllTabs);
     var ksAction_ActivateRightTab = function() {
@@ -121,6 +122,7 @@ isc.OBTabSetMain.addProperties({
       if(typeof me.getSelectedTab().pane.focusTab === 'function') {
         me.getSelectedTab().pane.focusTab();
       }
+      return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.KS.set('TabSet_ActivateRightTab', ksAction_ActivateRightTab);
     var ksAction_ActivateLeftTab = function() {
@@ -128,6 +130,7 @@ isc.OBTabSetMain.addProperties({
       if(typeof me.getSelectedTab().pane.focusTab === 'function') {
         me.getSelectedTab().pane.focusTab();
       }
+      return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.KS.set('TabSet_ActivateLeftTab', ksAction_ActivateLeftTab);
     this.Super('draw', arguments);
