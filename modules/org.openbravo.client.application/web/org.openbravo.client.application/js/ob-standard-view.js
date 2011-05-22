@@ -666,6 +666,7 @@ isc.OBStandardView.addProperties({
   setActiveViewProps: function(state){
     if (state) {
       this.toolBar.show();
+      this.statusBar.setActive(true);
       this.activeBar.setActive(true);
       this.setViewFocus();
       this.viewGrid.setActive(true);
@@ -679,8 +680,9 @@ isc.OBStandardView.addProperties({
       this.viewGrid.closeAnyOpenEditor();
       
       this.toolBar.hide();
-      this.viewGrid.setActive(false);
+      this.statusBar.setActive(false);
       this.activeBar.setActive(false);
+      this.viewGrid.setActive(false);
       // note we can not check on viewForm visibility as 
       // the grid and form can both be hidden when changing
       // to another tab, this handles the case that the grid

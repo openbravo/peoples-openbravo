@@ -44,6 +44,7 @@ isc.OBStatusBarIconButton.addProperties( {
   view : null,
   // to allow setting the active view when clicking in the statusbar
   canFocus : true,
+  keyboardShortcutId : null,
 
   // always go through the autosave of the window
   action : function() {
@@ -67,7 +68,7 @@ isc.OBStatusBarIconButton.addProperties( {
   },
 
   doAction : function() {
-    var rowNum, newRowNum, newRecord;
+    var rowNum, newRowNum, newRecord, theButtonVar, i;
     if (this.buttonType === 'previous') {
       this.view.editNextPreviousRecord(false);
     } else if (this.buttonType === 'maximize') {
@@ -79,6 +80,40 @@ isc.OBStatusBarIconButton.addProperties( {
     } else if (this.buttonType === 'close') {
       this.view.switchFormGridVisibility();
       this.view.messageBar.hide();
+    } else if (this.buttonType === 'maximizeRestore') {
+      theButtonVar = this.view.statusBar.buttonBar;
+      if (theButtonVar.members) {
+        for (i = 0; i < theButtonVar.members.length; i++) {
+          if (theButtonVar.members[i].buttonType === 'maximize' && !theButtonVar.members[i].isDisabled() && theButtonVar.members[i].isVisible()) {
+            theButtonVar.members[i].action();
+            break;
+          } else if (theButtonVar.members[i].buttonType === 'restore' && !theButtonVar.members[i].isDisabled() && theButtonVar.members[i].isVisible()) {
+            theButtonVar.members[i].action();
+            break;
+          }
+        }
+      }
+    }
+  },
+
+  enableShortcut: function() {
+    if (this.keyboardShortcutId) {
+      var me = this;
+      var ksAction = function(){
+        if ((!me.isDisabled() && me.isVisible()) || me.buttonType === 'maximizeRestore') {
+          me.action();
+        }
+        return false; //To avoid keyboard shortcut propagation
+      };
+      OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction);
+    }
+  },
+
+  disableShortcut: function() {
+    if (this.keyboardShortcutId) {
+      OB.KeyboardManager.KS.set(this.keyboardShortcutId, function(){
+        return true;
+      });
     }
   },
 
@@ -101,7 +136,9 @@ isc.OBStatusBar.addProperties( {
   previousButton : null,
   newIcon : null,
   showingIcon : false,
-  mode : "",
+  mode : '',
+  isActive : true,
+  buttonBar : null,
 
   initWidget : function() {
     this.contentLabel = isc.OBStatusBarTextLabel.create( {
@@ -116,11 +153,13 @@ isc.OBStatusBar.addProperties( {
     this.previousButton = isc.OBStatusBarIconButton.create( {
       view : this.view,
       buttonType : 'previous',
+      keyboardShortcutId : 'StatusBar_Previous',
       prompt : OB.I18N.getLabel('OBUIAPP_PREVIOUSBUTTON')
     });
     this.nextButton = isc.OBStatusBarIconButton.create( {
       view : this.view,
       buttonType : 'next',
+      keyboardShortcutId : 'StatusBar_Next',
       prompt : OB.I18N.getLabel('OBUIAPP_NEXTBUTTON')
     });
     this.closeButton = isc.OBStatusBarIconButton.create( {
@@ -139,18 +178,25 @@ isc.OBStatusBar.addProperties( {
       buttonType : 'restore',
       prompt : OB.I18N.getLabel('OBUIAPP_RESTOREBUTTON')
     });
+    this.maximizeRestoreButton = isc.OBStatusBarIconButton.create( { // Only for implement 'StatusBar_Maximize-Restore' keyboard shortcut
+      visibility : 'hidden',
+      view : this.view,
+      buttonType : 'maximizeRestore',
+      keyboardShortcutId : 'StatusBar_Maximize-Restore'
+    });
+    this.buttonBar = isc.OBStatusBarIconButtonBar.create( {});
+
     var buttonSpacer = isc.HLayout.create( {
       width : this.iconButtonGroupSpacerWidth
-    }),
-    buttonBar = isc.OBStatusBarIconButtonBar.create( {}), i;
+    }), i;
 
-    buttonBar.addMembers( [ this.previousButton, this.nextButton, buttonSpacer,
-        this.maximizeButton, this.restoreButton, this.closeButton ]);
-    for (i = 0; i < buttonBar.members.length; i++) {
-      if (buttonBar.members[i].buttonType) {
+    this.buttonBar.addMembers( [ this.previousButton, this.nextButton, buttonSpacer,
+        this.maximizeButton, this.restoreButton, this.closeButton, this.maximizeRestoreButton ]);
+    for (i = 0; i < this.buttonBar.members.length; i++) {
+      if (this.buttonBar.members[i].buttonType) {
         OB.TestRegistry.register(
-            'org.openbravo.client.application.statusbar.button.' + buttonBar.members[i].buttonType + '.' + this.view.tabId,
-            buttonBar.members[i]);
+            'org.openbravo.client.application.statusbar.button.' + this.buttonBar.members[i].buttonType + '.' + this.view.tabId,
+            this.buttonBar.members[i]);
       }
     }
 
@@ -161,54 +207,98 @@ isc.OBStatusBar.addProperties( {
     });
     this.leftStatusBar.addMember(this.spacer, 0);
 
-    this.addMembers( [ this.leftStatusBar, buttonBar ]);
+    this.addMembers( [ this.leftStatusBar, this.buttonBar ]);
     this.Super('initWidget', arguments);
   },
 
-addIcon : function(icon) {
-    // remove any existing icon or spacer
-  this.leftStatusBar.removeMember(this.leftStatusBar.members[0]);
-  this.leftStatusBar.addMember(icon, 0);
-},
+  draw: function(){
+    this.Super('draw', arguments);
+  },
 
-removeIcon : function() {
-  // remove any existing icon or spacer
-  this.leftStatusBar.removeMember(this.leftStatusBar.members[0]);
-  this.leftStatusBar.addMember(this.spacer, 0);
-},
-
-setNewState : function(isNew) {
-  this.previousButton.setDisabled(isNew);
-  this.nextButton.setDisabled(isNew);
-  if (isNew) {
-    this.mode = 'NEW';
-    this.setContentLabel(this.newIcon, 'OBUIAPP_New');
-  }
-},
-
-setContentLabel : function(icon, statusCode, arrayTitleField) {
-  var msg = '', i;
-  if (statusCode) {
-    msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(statusCode) + '</span>';
-  }
-  if (arrayTitleField) {
-    for (i = 0; i < arrayTitleField[0].length; i++) {
-      if (i !== 0 || statusCode) {
-        msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
+  visibilityChanged: function(state){
+    if (this.isActive) {
+      if (state) {
+        this.enableShortcuts();
+      } else {
+        this.disableShortcuts();
       }
-      msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + arrayTitleField[0][i] + ': ' + '</span>';
-      msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + arrayTitleField[1][i] + '</span>';
+    }
+  },
+
+  setActive: function(value){
+    if (value) {
+      this.isActive = true;
+      this.enableShortcuts();
+    } else {
+      this.isActive = false;
+      this.disableShortcuts();
+    }
+  },
+
+  enableShortcuts: function(){
+    if (this.buttonBar.members) {
+      for (i = 0; i < this.buttonBar.members.length; i++) {
+        if (this.buttonBar.members[i].enableShortcut) {
+          this.buttonBar.members[i].enableShortcut();
+        }
+      }
+    }
+  },
+
+  disableShortcuts: function(){
+    if (this.buttonBar.members) {
+      for (i = 0; i < this.buttonBar.members.length; i++) {
+        if (this.buttonBar.members[i].disableShortcut) {
+          this.buttonBar.members[i].disableShortcut();
+        }
+      }
+    }
+  },
+
+  addIcon : function(icon) {
+      // remove any existing icon or spacer
+    this.leftStatusBar.removeMember(this.leftStatusBar.members[0]);
+    this.leftStatusBar.addMember(icon, 0);
+  },
+
+  removeIcon : function() {
+    // remove any existing icon or spacer
+    this.leftStatusBar.removeMember(this.leftStatusBar.members[0]);
+    this.leftStatusBar.addMember(this.spacer, 0);
+  },
+
+  setNewState : function(isNew) {
+    this.previousButton.setDisabled(isNew);
+    this.nextButton.setDisabled(isNew);
+    if (isNew) {
+      this.mode = 'NEW';
+      this.setContentLabel(this.newIcon, 'OBUIAPP_New');
+    }
+  },
+
+  setContentLabel : function(icon, statusCode, arrayTitleField) {
+    var msg = '', i;
+    if (statusCode) {
+      msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(statusCode) + '</span>';
+    }
+    if (arrayTitleField) {
+      for (i = 0; i < arrayTitleField[0].length; i++) {
+        if (i !== 0 || statusCode) {
+          msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
+        }
+        msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + arrayTitleField[0][i] + ': ' + '</span>';
+        msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + arrayTitleField[1][i] + '</span>';
+      }
+    }
+    if (this.labelOverflowHidden) {
+      msg = '<nobr>' + msg + '</nobr>';
+    }
+    this.contentLabel.setContents(msg);
+    if (icon) {
+      this.addIcon(icon);
+    } else {
+      this.removeIcon(icon);
     }
   }
-  if (this.labelOverflowHidden) {
-    msg = '<nobr>' + msg + '</nobr>';
-  }
-  this.contentLabel.setContents(msg);
-  if (icon) {
-    this.addIcon(icon);
-  } else {
-    this.removeIcon(icon);
-  }
-}
 
 });
