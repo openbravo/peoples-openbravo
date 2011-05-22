@@ -426,6 +426,9 @@ isc.OBToolbar.addClassProperties({
         }
         this.setDisabled(disabled);
       }
+    },
+    'print' : {
+      keyboardShortcutId: 'ToolBar_Print'
     }
   },
   CLONE_BUTTON_PROPERTIES: {

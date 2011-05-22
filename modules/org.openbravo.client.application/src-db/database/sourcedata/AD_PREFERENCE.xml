@@ -58,7 +58,8 @@
   {"id": "ToolBar_NewDoc", "keyComb": {"ctrl": true, "alt": true, "key": "N"}},
   {"id": "ToolBar_Eliminate", "keyComb": {"ctrl": true, "alt": true, "key": "D"}},
   {"id": "ToolBar_Refresh", "keyComb": {"ctrl": true, "alt": true, "key": "R"}},
-  {"id": "ToolBar_Undo", "keyComb": {"ctrl": true, "alt": true, "key": "Z"}}
+  {"id": "ToolBar_Undo", "keyComb": {"ctrl": true, "alt": true, "key": "Z"}},
+  {"id": "ToolBar_Print", "keyComb": {"ctrl": true, "alt": true, "key": "P"}}
 ]]]></VALUE>
 <!--7EE6D055A7FE4C4DA7EB557F6C61D0EC-->  <PROPERTY><![CDATA[UITOOLB_KeyboardShortcuts]]></PROPERTY>
 <!--7EE6D055A7FE4C4DA7EB557F6C61D0EC-->  <ISPROPERTYLIST><![CDATA[Y]]></ISPROPERTYLIST>
