@@ -835,10 +835,10 @@ public class DocFINReconciliation extends AcctServer {
         Period period = documentGetPeriod(reconciliation.getTransactionDate());
         OBCriteria<FIN_ReconciliationLine_v> obCriteria = OBDal.getInstance().createCriteria(
             FIN_ReconciliationLine_v.class);
-        obCriteria.add(Expression.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION,
+        obCriteria.add(Restrictions.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION,
             reconciliation));
-        obCriteria.add(Expression.or(Expression.ge(
-            FIN_ReconciliationLine_v.PROPERTY_ACCOUNTINGDATE, period.getEndingDate()), Expression
+        obCriteria.add(Restrictions.or(Restrictions.ge(
+            FIN_ReconciliationLine_v.PROPERTY_ACCOUNTINGDATE, period.getEndingDate()), Restrictions
             .le(FIN_ReconciliationLine_v.PROPERTY_ACCOUNTINGDATE, period.getStartingDate())));
         obCriteria.setFilterOnReadableOrganization(false);
         obCriteria.addOrder(Order.asc(FIN_ReconciliationLine_v.PROPERTY_ACCOUNTINGDATE));
@@ -1147,15 +1147,15 @@ public class DocFINReconciliation extends AcctServer {
     OBCriteria<PeriodControl> obCriteria = OBDal.getInstance().createCriteria(PeriodControl.class);
     obCriteria.createAlias(PeriodControl.PROPERTY_PERIOD, "p");
     obCriteria.createAlias("p." + Period.PROPERTY_YEAR, "y");
-    obCriteria.add(Expression.eq(PeriodControl.PROPERTY_PERIODSTATUS, "O"));
-    obCriteria.add(Expression.eq(PeriodControl.PROPERTY_DOCUMENTCATEGORY,
+    obCriteria.add(Restrictions.eq(PeriodControl.PROPERTY_PERIODSTATUS, "O"));
+    obCriteria.add(Restrictions.eq(PeriodControl.PROPERTY_DOCUMENTCATEGORY,
         AcctServer.DOCTYPE_Reconciliation));
-    obCriteria.add(Expression.eq("y." + Year.PROPERTY_CALENDAR, getCalendar(AD_Org_ID)));
-    obCriteria.add(Expression.in(PeriodControl.PROPERTY_ORGANIZATION + "."
+    obCriteria.add(Restrictions.eq("y." + Year.PROPERTY_CALENDAR, getCalendar(AD_Org_ID)));
+    obCriteria.add(Restrictions.in(PeriodControl.PROPERTY_ORGANIZATION + "."
         + Organization.PROPERTY_ID, OBContext.getOBContext().getOrganizationStructureProvider()
         .getNaturalTree(AD_Org_ID)));
-    obCriteria.add(Expression.le("p." + Period.PROPERTY_STARTINGDATE, date));
-    obCriteria.add(Expression.ge("p." + Period.PROPERTY_ENDINGDATE, date));
+    obCriteria.add(Restrictions.le("p." + Period.PROPERTY_STARTINGDATE, date));
+    obCriteria.add(Restrictions.ge("p." + Period.PROPERTY_ENDINGDATE, date));
     obCriteria.setFilterOnReadableOrganization(false);
     List<PeriodControl> lines = obCriteria.list();
     return lines.size() == 0 ? null : lines.get(0).getPeriod();
@@ -1163,7 +1163,7 @@ public class DocFINReconciliation extends AcctServer {
 
   Calendar getCalendar(String organization) {
     OBCriteria<Organization> obCriteria = OBDal.getInstance().createCriteria(Organization.class);
-    obCriteria.add(Expression.eq(Organization.PROPERTY_ID, organization));
+    obCriteria.add(Restrictions.eq(Organization.PROPERTY_ID, organization));
     obCriteria.setFilterOnReadableClients(false);
     obCriteria.setFilterOnReadableOrganization(false);
     List<Organization> lines = obCriteria.list();
