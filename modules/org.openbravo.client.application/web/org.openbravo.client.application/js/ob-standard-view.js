@@ -670,6 +670,7 @@ isc.OBStandardView.addProperties({
       this.activeBar.setActive(true);
       this.setViewFocus();
       this.viewGrid.setActive(true);
+      this.viewGrid.markForRedraw();
       // if we are in form view
       if (this.isShowingForm && !this.viewForm.isNew) {        
         this.setTargetRecordInWindow(this.viewGrid.getSelectedRecord().id);
@@ -683,6 +684,7 @@ isc.OBStandardView.addProperties({
       this.statusBar.setActive(false);
       this.activeBar.setActive(false);
       this.viewGrid.setActive(false);
+      this.viewGrid.markForRedraw();
       // note we can not check on viewForm visibility as 
       // the grid and form can both be hidden when changing
       // to another tab, this handles the case that the grid

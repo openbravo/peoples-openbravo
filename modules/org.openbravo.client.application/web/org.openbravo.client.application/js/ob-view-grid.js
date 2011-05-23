@@ -1502,6 +1502,19 @@ isc.OBViewGrid.addProperties({
     this.view.toolBar.updateButtonState(true);
   },
   
+  getCellStyle: function (record, rowNum, colNum) {
+    // inactive, selected
+    if (record && record[this.recordCustomStyleProperty] !== null) {
+      return record[this.recordCustomStyleProperty];
+    }
+
+    if (!this.view.isActiveView() && record[this.selection.selectionProperty]) {
+      return this.recordStyleSelectedViewInActive;
+    }
+
+    return this.Super('getCellStyle', arguments);
+  },
+  
   discardEdits: function(rowNum, colNum, dontHideEditor, editCompletionEvent, preventConfirm){
     var localArguments = arguments;
     var me = this, record = this.getRecord(rowNum);

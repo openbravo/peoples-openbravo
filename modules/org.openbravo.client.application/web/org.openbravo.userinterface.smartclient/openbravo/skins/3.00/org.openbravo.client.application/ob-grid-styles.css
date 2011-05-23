@@ -36,6 +36,9 @@
 .OBGridCellDisabled,
 .OBGridCellDisabledDark,
 
+.OBGridCellSelectedViewInactive,
+.OBGridCellSelectedViewInactiveDark,
+
 .OBGridCellEdit,
 .OBGridCellEditOver,
 .OBGridCellEditDark,
@@ -117,6 +120,11 @@
 .OBGridCellSelected,
 .OBGridCellSelectedDark {
   background-color: #ffe1c0; /* Orange for active grid, for non active grid: #b8d587 */
+}
+
+.OBGridCellSelectedViewInactive,
+.OBGridCellSelectedViewInactiveDark {
+  background-color: #e1e1e1;
 }
 
 .OBGridCellEditSelected,

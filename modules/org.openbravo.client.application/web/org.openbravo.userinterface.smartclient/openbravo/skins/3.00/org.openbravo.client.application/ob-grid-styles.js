@@ -24,6 +24,7 @@ isc.OBGrid.addProperties({
   baseStyle: 'OBGridCell',
   baseStyleEdit: 'OBGridCellEdit', // for use in ob-view-grid.js while editing a cell
   recordStyleError: 'OBGridCellError',
+  recordStyleSelectedViewInActive: 'OBGridCellSelectedViewInactive',
   headerBaseStyle: 'OBGridHeaderCell',
   headerBarStyle: 'OBGridHeaderBar',
   headerTitleStyle: 'OBGridHeaderCellTitle',
