@@ -29,9 +29,13 @@ function isTrue(objectName) {
   return frm.elements[objectName].value === 'Y';
 }
 
-function initFIN_Utilities(_frm) {
+function initFIN_Utilities(_frm, _creditAllowed) {
   frm = _frm;
   isReceipt = isTrue('isReceipt');
+  isCreditAllowed = _creditAllowed !== undefined ? _creditAllowed : true;
+  if (!isCreditAllowed) {
+    frm.inpUseCredit.checked = false;
+  }
   globalMaskNumeric = getDefaultMaskNumeric();
   globalDecSeparator = getGlobalDecSeparator();
   globalGroupSeparator = getGlobalGroupSeparator();
@@ -237,12 +241,12 @@ function updateDifference() {
   displayLogicElement('sectionDifferenceBox', ( compare(expected, '!=', total) || compareWithSign(amount, '>', total) ) );
   displayLogicElement('writeoff', compare(expected, '!=', total) );
   displayLogicElement('underpayment', compareWithSign(expected, '>', total) );
-  displayLogicElement('credit', compareWithSign(amount, '>', total) );
+  displayLogicElement('credit', isCreditAllowed && compareWithSign(amount, '>', total) );
   displayLogicElement('refund', isReceipt && compareWithSign(amount, '>', total) );
-  if ( compareWithSign(amount, '>', total) ) {
+  if ( isCreditAllowed && compareWithSign(amount, '>', total) ) {
     selectDifferenceAction('credit');
   }
-  else if ( compareWithSign(expected, '>', total) ) {
+  else if ( !isCreditAllowed && compareWithSign(expected, '>', total) ) {
     selectDifferenceAction('underpayment');
   }
 }
@@ -419,10 +423,12 @@ function updateAll(drivenByGrid) {
  *        zero.
  * @return true if validations are fine.
  */
-function validateSelectedPendingPayments(allowCreditGeneration, action) {
-  if (allowCreditGeneration === undefined) {
-    allowCreditGeneration = false;
+function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action) {
+  if (allowNotSelectingPendingPayment === undefined) {
+    allowNotSelectingPendingPayment = false;
   }
+  // If no credit usage is allowed we are forced to select at least one pending payment.
+  allowNotSelectingPendingPayment = isCreditAllowed && allowNotSelectingPendingPayment;
   var actualPayment = document.frmMain.inpActualPayment.value;
   var expectedPayment = document.frmMain.inpExpectedPayment.value, i;
   if (document.frmMain.inpUseCredit.checked) {
@@ -447,7 +453,7 @@ function validateSelectedPendingPayments(allowCreditGeneration, action) {
       if (!validateSelectedAmounts(chk.value, compare(selectedTotal, '<', actualPayment), action)) {
         return false;
       }
-    } else if ( !allowCreditGeneration || compare(document.frmMain.inpDifference.value, '==', "0") ){
+    } else if ( !allowNotSelectingPendingPayment || compare(document.frmMain.inpDifference.value, '==', "0") ){
       showJSMessage('APRM_JSNOTLINESELECTED');
       return false;
     }
@@ -463,7 +469,7 @@ function validateSelectedPendingPayments(allowCreditGeneration, action) {
       }
     }
     if (!isAnyChecked &&
-        (!allowCreditGeneration || compare(document.frmMain.inpDifference.value, '==', "0")) 
+        (!allowNotSelectingPendingPayment || compare(document.frmMain.inpDifference.value, '==', "0")) 
         ) {
       showJSMessage('APRM_JSNOTLINESELECTED');
       return false;

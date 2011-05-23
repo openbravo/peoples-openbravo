@@ -240,8 +240,7 @@ function validate(action) {
         if (diffAction[i].checked) break;
       }
       var selectedAction = diffAction[i].value;
-      var allowCreditGeneration = true;
-      if (!validateSelectedPendingPayments(allowCreditGeneration, selectedAction)) { return false };
+      if (!validateSelectedPendingPayments(true, selectedAction)) { return false; }
     }
   }
   return true;
@@ -400,7 +399,7 @@ function onLoadDo(){
   setBrowserAutoComplete(false);
   hasBPartner = document.frmMain.inpBusinessPartnerId.value !== null && document.frmMain.inpBusinessPartnerId.value !== '';
 
-  initFIN_Utilities(document.frmMain);
+  initFIN_Utilities(document.frmMain, hasBPartner);
   try {
     onloadFunctions();
   } catch (e) {}

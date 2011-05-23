@@ -266,6 +266,13 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("actualPayment", payment.getAmount().toString());
     xmlDocument.setParameter("headerAmount", payment.getAmount().toString());
     xmlDocument.setParameter("isReceipt", (payment.isReceipt() ? "Y" : "N"));
+    if (payment.getBusinessPartner() == null
+        && (payment.getGeneratedCredit() != null || payment.getGeneratedCredit().compareTo(
+            BigDecimal.ZERO) != 0)) {
+      payment.setGeneratedCredit(BigDecimal.ZERO);
+      OBDal.getInstance().save(payment);
+      OBDal.getInstance().flush();
+    }
     xmlDocument.setParameter("generatedCredit", payment.getGeneratedCredit() != null ? payment
         .getGeneratedCredit().toString() : BigDecimal.ZERO.toString());
     OBContext.setAdminMode();
