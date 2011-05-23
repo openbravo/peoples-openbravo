@@ -39,8 +39,6 @@ BEGIN
     -- If invoice is processed, is not allowed to change C_BPartner
     IF UPDATING
     THEN
-    -- If V_Count > 0, means that this invoice was created to void another one.
-    SELECT COUNT(*) INTO V_COUNT FROM C_INVOICE_REVERSE WHERE C_INVOICE_ID=:OLD.C_INVOICE_ID;
 
     IF(:OLD.Processed='Y'
     AND ((COALESCE(:OLD.C_BPartner_ID, '0') <> COALESCE(:NEW.C_BPartner_ID, '0'))
