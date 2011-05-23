@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -87,7 +87,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
       }
       final List<Invoice> invoices = obc.list();
       for (Invoice invoice : invoices) {
-        OBDal.getInstance().getSession().lock(Invoice.ENTITY_NAME, invoice, LockMode.NONE);
+        OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE);
         updateInvoice(invoice);
         counter++;
         OBDal.getInstance().getSession().flush();
