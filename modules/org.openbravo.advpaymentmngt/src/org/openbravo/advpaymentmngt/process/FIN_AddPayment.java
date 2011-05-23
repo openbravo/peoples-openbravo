@@ -753,4 +753,31 @@ public class FIN_AddPayment {
     myMessage = (OBError) pb.getResult();
     return myMessage;
   }
+
+  /**
+   * It calls the Bank Statement Process for the given bank statement and action.
+   * 
+   * @param vars
+   *          VariablesSecureApp with the session data.
+   * @param conn
+   *          ConnectionProvider with the connection being used.
+   * @param strBankStatementAction
+   *          String with the action of the process. {P, R}
+   * @param strBankStatementId
+   *          String with FIN_BankStatement Id to be processed.
+   * @return a OBError with the result message of the process.
+   * @throws Exception
+   */
+  public static OBError processBankStatement(VariablesSecureApp vars, ConnectionProvider conn,
+      String strBankStatementAction, String strBankStatementId) throws Exception {
+    ProcessBundle pb = new ProcessBundle("58A9261BACEF45DDA526F29D8557272D", vars).init(conn);
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("action", strBankStatementAction);
+    parameters.put("FIN_Bankstatement_ID", strBankStatementId);
+    pb.setParams(parameters);
+    OBError myMessage = null;
+    new FIN_BankStatementProcess().execute(pb);
+    myMessage = (OBError) pb.getResult();
+    return myMessage;
+  }
 }

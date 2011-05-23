@@ -29,6 +29,7 @@ import java.util.List;
 import org.apache.commons.fileupload.FileItem;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
+import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -151,7 +152,7 @@ public abstract class FIN_BankStatementImport {
 
     try {
       numberOfLines = saveFINBankStatementLines(bankStatementLines);
-      process(bankStatement);
+      FIN_AddPayment.processBankStatement(vars, conn, "P", bankStatement.getId());
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       return getMyError();
@@ -256,14 +257,6 @@ public abstract class FIN_BankStatementImport {
       DocumentType documentType) {
     return Utility.getDocumentNo(conn, vars, "AddPaymentFromInvoice", "FIN_Payment", documentType
         .getId(), documentType.getId(), false, true);
-
-  }
-
-  private void process(FIN_BankStatement bankStatement) {
-    bankStatement.setProcessed(true);
-    OBDal.getInstance().save(bankStatement);
-    OBDal.getInstance().flush();
-    return;
 
   }
 

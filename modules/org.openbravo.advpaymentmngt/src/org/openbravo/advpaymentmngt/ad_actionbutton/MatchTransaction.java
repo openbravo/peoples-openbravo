@@ -197,8 +197,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
                   FIN_FinaccTransaction.class, strTransaction);
               transactionLine.setReconciliation(MatchTransactionDao.getObject(
                   FIN_Reconciliation.class, strReconciliationId));
-              item.getBankStatement().setFINReconciliation(
-                  MatchTransactionDao.getObject(FIN_Reconciliation.class, strReconciliationId));
               if (isInArray(strRecordsChecked, item.getId())) {
                 transactionLine.setStatus("RPPC");
                 if (transactionLine.getFinPayment() != null) {
