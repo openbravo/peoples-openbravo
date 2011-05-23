@@ -150,8 +150,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
           "inpScheduledPaymentDetailId", "", IsIDFilter.instance);
       String strDifferenceAction = "";
       BigDecimal refundAmount = BigDecimal.ZERO;
-      String strDifference = vars.getNumericParameter("inpDifference", "");
-      if (!"".equals(strDifference)) {
+      String strDifference = vars.getNumericParameter("inpDifference", "0");
+      if (!"0".equals(strDifference)) {
         refundAmount = new BigDecimal(vars.getRequiredNumericParameter("inpDifference"));
         strDifferenceAction = vars.getRequiredStringParameter("inpDifferenceAction");
       }
