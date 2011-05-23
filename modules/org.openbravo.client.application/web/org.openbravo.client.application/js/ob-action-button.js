@@ -93,14 +93,20 @@ isc.OBToolbarActionButton.addProperties( {
     var contextView = OB.ActionButton.executingProcess.contextView,
         currentView = this.view,
         afterRefresh = function(){
-          // Refresh current view, taking the message set in the process' context view
-          currentView.getTabMessage(contextView.tabId);
+          // Refresh context view
+          contextView.getTabMessage();
           currentView.toolBar.refreshCustomButtons();
-      
+
+          if (contextView !== currentView && currentView.state === isc.OBStandardView.STATE_TOP_MAX) {
+            // Executing an action defined in parent tab, current tab is maximized,
+            // let's set half for each in order to see the message
+            contextView.setHalfSplit();
+          }
+
           // Refresh in order to show possible new records
           currentView.refresh();
         };
-    
+
     if (currentView.viewGrid.getSelectedRecord()) {
       // There is a record selected, refresh it and its parent
       currentView.refreshCurrentRecord(afterRefresh);
