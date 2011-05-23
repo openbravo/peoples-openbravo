@@ -1504,7 +1504,7 @@ isc.OBViewGrid.addProperties({
   
   getCellStyle: function (record, rowNum, colNum) {
     // inactive, selected
-    if (record && record[this.recordCustomStyleProperty] !== null) {
+    if (record && record[this.recordCustomStyleProperty]) {
       return record[this.recordCustomStyleProperty];
     }
 
