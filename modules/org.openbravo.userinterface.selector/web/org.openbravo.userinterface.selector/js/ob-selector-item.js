@@ -108,6 +108,9 @@ isc.OBSelectorPopupWindow.addProperties({
         params._selectorDefinitionId = this.selector.selectorDefinitionId;
         params._requestType = 'Window';
 
+        // add field's default filter expressions
+        params.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
+
         if(this.getSelectedRecord()) {
           params._targetRecordId = this.targetRecordId;
         }
