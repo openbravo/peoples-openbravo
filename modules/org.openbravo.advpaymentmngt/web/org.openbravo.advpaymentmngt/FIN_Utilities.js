@@ -254,9 +254,40 @@ function updateDifference() {
 }
 
 function updateTotal() {
-  var chk = frm.inpScheduledPaymentDetailId,
-      total = 0,
-      scheduledPaymentDetailId, pendingAmount, amount, i;
+  var chk = frm.inpScheduledPaymentDetailId;
+  var total = 0, i;
+  var scheduledPaymentDetailId, pendingAmount, amount, isAnyChecked = false;
+  var selectedBusinessPartners = {
+     numberofitems: 0,
+     increase: function(obj) {
+       if (obj && obj.value) {
+         var key = obj.value;
+            var value = this[key];
+         if (value) {
+           this[key] = value + 1;
+         } else {
+           this[key] = 1;
+           this.numberofitems = this.numberofitems + 1;
+         }
+       }
+     },
+     reset: function() {
+          var i;
+       this.numberofitems = 0;
+       for (i in this) {
+         if (this.hasOwnProperty(i)) {
+           if (typeof this[i] !== "function") {
+             this[i] = 0;
+           }
+         }
+       }
+     },
+     isMultibpleSelection: function() {
+       return (this.numberofitems > 1);
+     }
+  };
+   
+  selectedBusinessPartners.reset();
   
   if (!chk) {
     if (frm.inpGeneratedCredit && !isReceipt){
@@ -276,6 +307,8 @@ function updateTotal() {
     if (chk.checked) {
       document.getElementById('paraminvalidSpan'+scheduledPaymentDetailId).style.display = !isBetweenZeroAndMaxValue(amount, pendingAmount) ? 'block' : 'none';
       total = (frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value === '') ? "0" : frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value;
+      selectedBusinessPartners.increase(frm.elements['inpRecordBP'+scheduledPaymentDetailId]);
+      isAnyChecked = true;
     }
   } else {
     var rows = chk.length;
@@ -291,6 +324,8 @@ function updateTotal() {
       if (chk[i].checked) {
         document.getElementById('paraminvalidSpan'+scheduledPaymentDetailId).style.display = !isBetweenZeroAndMaxValue(amount, pendingAmount) ? 'block' : 'none';
         total = (frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value === '') ? total : add(total,frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value);
+        selectedBusinessPartners.increase(frm.elements['inpRecordBP'+scheduledPaymentDetailId]);
+        isAnyChecked = true;
       }
     }
   }
@@ -305,12 +340,15 @@ function updateTotal() {
         frm.inpActualPayment.value = 0;
       }
     } else {
-      frm.inpActualPayment.value = frm.inpTotal.value;
+      if (isAnyChecked) {
+        frm.inpActualPayment.value = frm.inpTotal.value;
+      }
       if (frm.inpGeneratedCredit) {
         frm.inpActualPayment.value = add(frm.inpTotal.value, frm.inpGeneratedCredit.value);
       }
     }
   }
+  isCreditAllowed = !selectedBusinessPartners.isMultibpleSelection();
   updateDifference();
 }
 

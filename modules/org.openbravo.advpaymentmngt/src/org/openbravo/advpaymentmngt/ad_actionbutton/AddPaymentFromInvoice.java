@@ -358,9 +358,10 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
     log4j.debug("Output: Grid with pending payments");
     dao = new AdvPaymentMngtDao();
+    String[] discard = { "businessPartnerName" };
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentGrid").createXmlDocument();
+        "org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentGrid", discard).createXmlDocument();
 
     Invoice inv = dao.getObject(Invoice.class, strInvoiceId);
 

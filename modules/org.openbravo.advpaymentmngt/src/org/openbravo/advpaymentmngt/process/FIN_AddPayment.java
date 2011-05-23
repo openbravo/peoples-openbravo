@@ -419,6 +419,8 @@ public class FIN_AddPayment {
           // Truncate Business Partner
           String businessPartner = FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule()
               .getInvoice().getBusinessPartner().getIdentifier();
+          FieldProviderFactory.setField(data[i], "businessPartnerId", FIN_PaymentScheduleDetails[i]
+              .getInvoicePaymentSchedule().getInvoice().getBusinessPartner().getId());
           String truncateBusinessPartner = (businessPartner.length() > 18) ? businessPartner
               .substring(0, 15).concat("...").toString() : businessPartner;
           FieldProviderFactory.setField(data[i], "businessPartnerName",
@@ -453,6 +455,8 @@ public class FIN_AddPayment {
           // Truncate Business Partner
           String businessPartner = FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule()
               .getOrder().getBusinessPartner().getIdentifier();
+          FieldProviderFactory.setField(data[i], "businessPartnerId", FIN_PaymentScheduleDetails[i]
+              .getOrderPaymentSchedule().getOrder().getBusinessPartner().getId());
           String truncateBusinessPartner = (businessPartner.length() > 18) ? businessPartner
               .substring(0, 15).concat("...").toString() : businessPartner;
           FieldProviderFactory.setField(data[i], "businessPartnerName",

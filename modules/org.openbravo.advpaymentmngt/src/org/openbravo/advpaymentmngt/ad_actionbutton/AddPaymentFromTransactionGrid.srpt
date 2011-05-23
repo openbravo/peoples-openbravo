@@ -20,6 +20,7 @@
 <div id="sectionLinesDetail">
   <input type="hidden" name="inpRecordIdxx" value="" id="fieldRecordId"/>
   <input type="hidden" name="inpRecordAmtxx" value="" id="fieldRecordAmt"/>
+  <input type="hidden" name="inpRecordBPxx" value="" id="fieldRecordBPid"/>
   <tr id="funcEvenOddRow" class="DataGrid_Body_Row DataGrid_Body_Row_xx" bgcolor="#E1E1E1">
     <td class="DataGrid_Body_LineNoCell"> <input type="checkbox" name="inpScheduledPaymentDetailId" value="" id="fieldScheduledPaymentDetailId" onchange="updateData(this.value, this.checked, true);return true;"/></td>
     <td class="DataGrid_Body_Cell" id="fieldOrderNr">xx</td>

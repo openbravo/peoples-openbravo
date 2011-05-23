@@ -28,6 +28,8 @@
     <FIELD id="fieldRecordId" attribute="name" replace="xx">rownum</FIELD>
     <FIELD id="fieldRecordAmt" attribute="value" format="euroEdition">outstandingAmount</FIELD>
     <FIELD id="fieldRecordAmt" attribute="name" replace="xx">finScheduledPaymentDetailId</FIELD>
+    <FIELD id="fieldRecordBPid" attribute="value">businessPartnerId</FIELD>
+    <FIELD id="fieldRecordBPid" attribute="name" replace="xx">finScheduledPaymentDetailId</FIELD>
     <FIELD id="fieldOrderNr">orderNr</FIELD>
     <FIELD id="fieldInvoiceNr">invoiceNr</FIELD>
     <FIELD id="fieldPaymentMethod">paymentMethodName</FIELD>
