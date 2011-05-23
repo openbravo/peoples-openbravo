@@ -3119,7 +3119,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--800013-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800013-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800013-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800013-->  <NAME><![CDATA[Regularization]]></NAME>
+<!--800013-->  <NAME><![CDATA[Set Book Quantity to zero]]></NAME>
 <!--800013-->  <AD_PROCESS_ID><![CDATA[105]]></AD_PROCESS_ID>
 <!--800013-->  <SEQNO><![CDATA[30]]></SEQNO>
 <!--800013-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -3129,7 +3129,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--800013-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
 <!--800013-->  <ISRANGE><![CDATA[N]]></ISRANGE>
 <!--800013-->  <DEFAULTVALUE><![CDATA[N]]></DEFAULTVALUE>
-<!--800013-->  <AD_ELEMENT_ID><![CDATA[800141]]></AD_ELEMENT_ID>
 <!--800013--></AD_PROCESS_PARA>
 
 <!--800014--><AD_PROCESS_PARA>
