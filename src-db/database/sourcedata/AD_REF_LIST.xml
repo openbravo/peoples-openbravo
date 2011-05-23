@@ -789,7 +789,7 @@
 <!--165-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--165-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--165-->  <VALUE><![CDATA[CO]]></VALUE>
-<!--165-->  <NAME><![CDATA[Completed]]></NAME>
+<!--165-->  <NAME><![CDATA[Booked]]></NAME>
 <!--165-->  <AD_REFERENCE_ID><![CDATA[131]]></AD_REFERENCE_ID>
 <!--165-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--165--></AD_REF_LIST>
@@ -932,7 +932,7 @@
 <!--178-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--178-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--178-->  <VALUE><![CDATA[CO]]></VALUE>
-<!--178-->  <NAME><![CDATA[Complete]]></NAME>
+<!--178-->  <NAME><![CDATA[Book]]></NAME>
 <!--178-->  <DESCRIPTION><![CDATA[Generate documents and complete transaction]]></DESCRIPTION>
 <!--178-->  <AD_REFERENCE_ID><![CDATA[135]]></AD_REFERENCE_ID>
 <!--178-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
