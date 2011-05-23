@@ -3129,6 +3129,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--800013-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
 <!--800013-->  <ISRANGE><![CDATA[N]]></ISRANGE>
 <!--800013-->  <DEFAULTVALUE><![CDATA[N]]></DEFAULTVALUE>
+<!--800013-->  <AD_ELEMENT_ID><![CDATA[800141]]></AD_ELEMENT_ID>
 <!--800013--></AD_PROCESS_PARA>
 
 <!--800014--><AD_PROCESS_PARA>
