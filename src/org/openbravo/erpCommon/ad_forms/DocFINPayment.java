@@ -38,6 +38,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
@@ -96,6 +97,17 @@ public class DocFINPayment extends AcctServer {
             .getId());
         FieldProviderFactory.setField(data[i], "FIN_Payment_Detail_ID", paymentDetails.get(i)
             .getId());
+        // Calculate Business Partner from payment header or from details if header is null
+        BusinessPartner bPartner = payment.getBusinessPartner() != null ? payment
+            .getBusinessPartner() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+            .getInvoicePaymentSchedule() != null ? paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
+            .getBusinessPartner() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+            .getOrderPaymentSchedule() != null ? paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+            .getBusinessPartner() : null));
+        FieldProviderFactory.setField(data[i], "cBpartnerId", bPartner != null ? bPartner.getId()
+            : "");
         FieldProviderFactory.setField(data[i], "Amount", paymentDetails.get(i).getAmount()
             .toString());
         FieldProviderFactory.setField(data[i], "isprepayment",
