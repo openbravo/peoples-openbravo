@@ -244,8 +244,21 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentOut", vars
           .getLanguage()));
     xmlDocument.setParameter("dateDisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("businessPartner", payment.getBusinessPartner().getIdentifier());
-    xmlDocument.setParameter("businessPartnerId", payment.getBusinessPartner().getId());
+    if (payment.getBusinessPartner() != null) {
+      xmlDocument.setParameter("businessPartner", payment.getBusinessPartner().getIdentifier());
+      xmlDocument.setParameter("businessPartnerId", payment.getBusinessPartner().getId());
+      xmlDocument.setParameter("credit", dao.getCustomerCredit(payment.getBusinessPartner(),
+          payment.isReceipt()).toString());
+      xmlDocument.setParameter("customerBalance",
+          payment.getBusinessPartner().getCreditUsed() != null ? payment.getBusinessPartner()
+              .getCreditUsed().toString() : BigDecimal.ZERO.toString());
+    } else {
+      xmlDocument.setParameter("businessPartner", "");
+      xmlDocument.setParameter("businessPartnerId", "");
+      xmlDocument.setParameter("credit", "");
+      xmlDocument.setParameter("customerBalance", "");
+
+    }
     xmlDocument.setParameter("windowId", strWindowId);
     xmlDocument.setParameter("tabId", strTabId);
     xmlDocument.setParameter("orgId", payment.getOrganization().getId());
@@ -253,14 +266,9 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("actualPayment", payment.getAmount().toString());
     xmlDocument.setParameter("headerAmount", payment.getAmount().toString());
     xmlDocument.setParameter("isReceipt", (payment.isReceipt() ? "Y" : "N"));
-    xmlDocument.setParameter("credit", dao.getCustomerCredit(payment.getBusinessPartner(),
-        payment.isReceipt()).toString());
     xmlDocument.setParameter("generatedCredit", payment.getGeneratedCredit() != null ? payment
         .getGeneratedCredit().toString() : BigDecimal.ZERO.toString());
     OBContext.setAdminMode();
-    xmlDocument.setParameter("customerBalance",
-        payment.getBusinessPartner().getCreditUsed() != null ? payment.getBusinessPartner()
-            .getCreditUsed().toString() : BigDecimal.ZERO.toString());
     try {
       xmlDocument
           .setParameter("precision", payment.getCurrency().getStandardPrecision().toString());

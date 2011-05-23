@@ -324,7 +324,9 @@ public class TransactionsDao {
         FieldProviderFactory.setField(data[i], "transactionDate", dateFormater
             .format(FIN_Transactions[i].getTransactionDate()));
         if (FIN_Transactions[i].getFinPayment() != null) {
-          strBusinessPartner = FIN_Transactions[i].getFinPayment().getBusinessPartner().getName();
+          if (FIN_Transactions[i].getFinPayment().getBusinessPartner() != null) {
+            strBusinessPartner = FIN_Transactions[i].getFinPayment().getBusinessPartner().getName();
+          }
           strPaymentDocNo = FIN_Transactions[i].getFinPayment().getDocumentNo();
         }
 
