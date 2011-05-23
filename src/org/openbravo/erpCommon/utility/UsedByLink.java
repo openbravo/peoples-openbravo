@@ -342,7 +342,7 @@ public class UsedByLink extends HttpSecureAppServlet {
         if (!data[i].referencedColumnId.equals(keyColumnId)) {
           try {
             keyValue = UsedByLinkData.selectKeyValue(this, UsedByLinkData.selectColumnName(this,
-                data[i].referencedColumnId), UsedByLinkData.selectTableName(this, tableId),
+                data[i].referencedColumnId), data[i].tablename,
                 data[i].columnname, keyId);
           } catch (Exception e) {
             // TODO: handle exception
