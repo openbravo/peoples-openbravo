@@ -175,4 +175,9 @@ public class UIList extends UIReference {
     comboTableData.addOrderByField("(CASE WHEN td_trl" + myIndex + ".name IS NULL THEN td"
         + myIndex + ".name ELSE td_trl" + myIndex + ".name END)");
   }
+
+  @Override
+  public boolean canBeCached() {
+    return true;
+  }
 }

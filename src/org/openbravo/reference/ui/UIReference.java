@@ -234,4 +234,17 @@ public class UIReference {
     }
   }
 
+  /**
+   * Indicates whether this reference is a cacheable combo Basically, this indicates whether the
+   * ComboTableData instances related to this class will be // cached and reused by the
+   * FormInitializationComponent or not. // For them to be cached, it's very important that the
+   * Combo values themselves only depend on the // parameter values the combo uses; that is, that
+   * they do not depend on things like session // variables, ...
+   * 
+   * @return
+   */
+  public boolean canBeCached() {
+    return false;
+  }
+
 }

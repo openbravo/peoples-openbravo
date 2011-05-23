@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
@@ -192,7 +194,9 @@ public class DynamicExpressionParser {
   private DisplayLogicElement getDisplayLogicTextTranslate(String token) {
     if (token == null || token.trim().equals(""))
       return new DisplayLogicElement("", false);
-    for (Field field : tab.getADFieldList()) {
+    ApplicationDictionaryCachedStructures cachedStructures = WeldUtils
+        .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
+    for (Field field : cachedStructures.getFieldsOfTab(tab.getId())) {
       if (token.equalsIgnoreCase(field.getColumn().getDBColumnName())) {
         fieldsInExpression.add(field);
         final String fieldName = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn())
@@ -205,7 +209,7 @@ public class DynamicExpressionParser {
             uiDef instanceof YesNoUIDefinition);
       }
     }
-    for (AuxiliaryInput auxIn : tab.getADAuxiliaryInputList()) {
+    for (AuxiliaryInput auxIn : cachedStructures.getAuxiliarInputList(tab.getId())) {
       if (token.equalsIgnoreCase(auxIn.getName())) {
         auxInputsInExpression.add(auxIn);
         return new DisplayLogicElement(TOKEN_PREFIX + auxIn.getName(), false);

@@ -146,4 +146,9 @@ public class UITable extends UIReference {
     comboTableData.identifier("td" + myIndex, fieldsAux);
     comboTableData.addOrderByField(orderByAux);
   }
+
+  @Override
+  public boolean canBeCached() {
+    return true;
+  }
 }

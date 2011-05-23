@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -96,6 +98,9 @@ public class FormInitializationComponent extends BaseActionHandler {
   private static final Logger log = Logger.getLogger(FormInitializationComponent.class);
 
   private static final int MAX_CALLOUT_CALLS = 50;
+
+  @Inject
+  private ApplicationDictionaryCachedStructures cachedStructures;
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -315,18 +320,17 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
       if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("CHANGE")) {
         JSONObject jsonColumnValues = new JSONObject();
-        for (Field field : tab.getADFieldList()) {
+        for (Field field : getADFieldList(tab.getId())) {
           jsonColumnValues.put(field.getColumn().getDBColumnName(), columnValues.get("inp"
               + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())));
         }
         finalObject.put("columnValues", jsonColumnValues);
       }
       JSONObject jsonAuxiliaryInputValues = new JSONObject();
-      for (AuxiliaryInput auxIn : tab.getADAuxiliaryInputList()) {
+      for (AuxiliaryInput auxIn : getAuxiliaryInputList(tab.getId())) {
         jsonAuxiliaryInputValues.put(auxIn.getName(), columnValues.get("inp"
             + Sqlc.TransformaNombreColumna(auxIn.getName())));
       }
-
       finalObject.put("auxiliaryInputValues", jsonAuxiliaryInputValues);
 
       if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
@@ -334,7 +338,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         // and we add the columns which have a callout
 
         final Map<String, String> sessionAttributesMap = new HashMap<String, String>();
-        for (Field field : tab.getADFieldList()) {
+        for (Field field : getADFieldList(tab.getId())) {
           if (field.getColumn().getCallout() != null) {
             final String columnName = "inp"
                 + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
@@ -357,7 +361,6 @@ public class FormInitializationComponent extends BaseActionHandler {
                 sessionAttributesMap.put(attrName.startsWith("#") ? attrName.replace("#", "_")
                     : attrName, attrValue);
               }
-
             }
           }
 
@@ -417,7 +420,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       RequestContext.get().setRequestParameter("donotaddcurrentelement", "true");
     }
     HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
-    for (Field field : tab.getADFieldList()) {
+    for (Field field : getADFieldList(tab.getId())) {
       columnsOfFields.put(field.getColumn().getDBColumnName(), field);
     }
     List<String> changedCols = new ArrayList<String>();
@@ -539,7 +542,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
     }
 
-    for (Field field : tab.getADFieldList()) {
+    for (Field field : getADFieldList(tab.getId())) {
       String columnId = field.getColumn().getId();
       UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(columnId);
       // We need to fire callouts if the field is a combo
@@ -581,7 +584,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
     }
     HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
-    for (Field field : tab.getADFieldList()) {
+    for (Field field : getADFieldList(tab.getId())) {
       for (String col : columnsToComputeAgain) {
         if (col.equalsIgnoreCase(field.getColumn().getDBColumnName())) {
           columnsOfFields.put(col, field);
@@ -617,7 +620,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       // See issue 17239 for more information
       return;
     }
-    for (AuxiliaryInput auxIn : tab.getADAuxiliaryInputList()) {
+    for (AuxiliaryInput auxIn : getAuxiliaryInputList(tab.getId())) {
       Object value = computeAuxiliaryInput(auxIn, tab.getWindow().getId());
       log.debug("Final Computed Value. Name: " + auxIn.getName() + " Value: " + value);
       JSONObject jsonObj = new JSONObject();
@@ -663,7 +666,7 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private void setValuesInRequest(String mode, Tab tab, BaseOBObject row, JSONObject jsContent) {
 
-    List<Field> fields = tab.getADFieldList();
+    List<Field> fields = getADFieldList(tab.getId());
     if (mode.equals("EDIT")) {
       // In EDIT mode we initialize them from the database
       for (Field field : fields) {
@@ -739,7 +742,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   private void computeListOfColumnsSortedByValidationDependencies(String mode, Tab tab,
       List<String> sortedColumns, Map<String, List<String>> columnsInValidation,
       List<String> changeEventCols, String changedColumn) {
-    List<Field> fields = tab.getADFieldList();
+    List<Field> fields = getADFieldList(tab.getId());
     ArrayList<String> columns = new ArrayList<String>();
     List<String> columnsWithValidation = new ArrayList<String>();
     HashMap<String, String> validations = new HashMap<String, String>();
@@ -878,7 +881,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private void setSessionValues(BaseOBObject object, Tab tab) {
-    for (Column col : tab.getTable().getADColumnList()) {
+    for (Column col : getADColumnList(tab.getTable().getId())) {
       if (col.isStoredInSession() || col.isKeyColumn()) {
         Property prop = object.getEntity().getPropertyByColumnName(col.getDBColumnName());
         Object value = object.get(prop.getName());
@@ -900,9 +903,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         setValueOfColumnInRequest(object, col.getDBColumnName());
       }
     }
-    OBCriteria<AuxiliaryInput> auxInC = OBDal.getInstance().createCriteria(AuxiliaryInput.class);
-    auxInC.add(Restrictions.eq(AuxiliaryInput.PROPERTY_TAB, tab));
-    List<AuxiliaryInput> auxInputs = auxInC.list();
+    List<AuxiliaryInput> auxInputs = getAuxiliaryInputList(tab.getId());
     for (AuxiliaryInput auxIn : auxInputs) {
       Object value = computeAuxiliaryInput(auxIn, tab.getWindow().getId());
       setSessionValue(tab.getWindow().getId() + "|" + auxIn.getName(), value);
@@ -949,7 +950,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     // one
     if (mode.equals("CHANGE")) {
       if (changedColumn != null) {
-        for (Column col : tab.getTable().getADColumnList()) {
+        for (Column col : getADColumnList(tab.getTable().getId())) {
           if (("inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName())).equals(changedColumn)) {
             if (col.getCallout() != null) {
               // The column has a callout. We will add the callout to the callout list
@@ -983,7 +984,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     } catch (SQLException e1) {
       throw new OBException("Error committing before runnings callouts", e1);
     }
-    List<Field> fields = tab.getADFieldList();
+    List<Field> fields = getADFieldList(tab.getId());
     HashMap<String, Field> inpFields = buildInpField(fields);
     String lastCalledCallout = "";
     String lastFieldOfLastCalloutCalled = "";
@@ -1392,4 +1393,17 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
     return null;
   }
+
+  private List<Field> getADFieldList(String tabId) {
+    return cachedStructures.getFieldsOfTab(tabId);
+  }
+
+  private List<Column> getADColumnList(String tableId) {
+    return cachedStructures.getColumnsOfTable(tableId);
+  }
+
+  private List<AuxiliaryInput> getAuxiliaryInputList(String tabId) {
+    return cachedStructures.getAuxiliarInputList(tabId);
+  }
+
 }

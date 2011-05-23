@@ -292,4 +292,9 @@ public class UITableDir extends UIReference {
       comboTableData.identifier("td" + myIndex, trd[i]);
     comboTableData.addOrderByField("2");
   }
+
+  @Override
+  public boolean canBeCached() {
+    return true;
+  }
 }

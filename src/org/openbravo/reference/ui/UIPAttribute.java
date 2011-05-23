@@ -87,4 +87,9 @@ public class UIPAttribute extends UITableDir {
     UIString stringRef = new UIString(reference, subReference);
     stringRef.generateFilterAcceptScript(field, params, paramsData);
   }
+
+  @Override
+  public boolean canBeCached() {
+    return true;
+  }
 }

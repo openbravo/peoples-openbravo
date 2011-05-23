@@ -38,6 +38,8 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBDal;
@@ -427,13 +429,16 @@ public abstract class UIDefinition {
             .getTab().getWindow().getId(), Integer.parseInt(field.getTab().getTable()
             .getDataAccessLevel()));
       }
-      ComboTableData comboTableData = new ComboTableData(vars, new DalConnectionProvider(false),
-          ref, field.getColumn().getDBColumnName(), objectReference, validation, orgList,
-          clientList, 0);
+      ApplicationDictionaryCachedStructures cachedStructures = WeldUtils
+          .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
+      ComboTableData comboTableData = cachedStructures.getComboTableData(vars, ref, field
+          .getColumn().getDBColumnName(), objectReference, validation, orgList, clientList);
       FieldProvider tabData = generateTabData(field.getTab().getADFieldList(), field, columnValue);
-      comboTableData.fillParameters(tabData, field.getTab().getWindow().getId(),
+      Map<String, String> parameters = comboTableData.fillSQLParametersIntoMap(
+          new DalConnectionProvider(false), vars, tabData, field.getTab().getWindow().getId(),
           (getValueFromSession && !comboreload) ? columnValue : "");
-      FieldProvider[] fps = comboTableData.select(getValueFromSession && !comboreload);
+      FieldProvider[] fps = comboTableData.select(new DalConnectionProvider(false), parameters,
+          getValueFromSession && !comboreload);
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
       values.addAll(Arrays.asList(fps));
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();

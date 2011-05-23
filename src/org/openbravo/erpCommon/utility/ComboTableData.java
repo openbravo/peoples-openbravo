@@ -22,6 +22,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
@@ -57,6 +58,7 @@ public class ComboTableData {
   private Vector<QueryFieldStructure> from = new Vector<QueryFieldStructure>();
   private Vector<QueryFieldStructure> where = new Vector<QueryFieldStructure>();
   private Vector<QueryFieldStructure> orderBy = new Vector<QueryFieldStructure>();
+  private boolean canBeCached;
   public int index = 0;
 
   /**
@@ -819,6 +821,7 @@ public class ComboTableData {
           .getField("referenceValue"));
     }
     uiref.setComboTableDataIdentifier(this, tableName, field);
+    canBeCached = uiref.canBeCached();
   }
 
   /**
@@ -956,13 +959,15 @@ public class ComboTableData {
    *          Array with the groups to discard.
    * @return Integer with the next parameter's index.
    */
-  private int setSQLParameters(PreparedStatement st, int iParameter, String[] discard) {
+  private int setSQLParameters(PreparedStatement st, Map<String, String> lparameters,
+      int iParameter, String[] discard) {
     Vector<QueryParameterStructure> vAux = getSelectParameters();
     if (vAux != null) {
       for (int i = 0; i < vAux.size(); i++) {
         QueryParameterStructure aux = vAux.elementAt(i);
         if (!isInArray(discard, aux.getType())) {
-          String strAux = getParameter(aux.getName());
+          String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
+              .getName().toUpperCase())) : getParameter(aux.getName());
           if (log4j.isDebugEnabled())
             log4j.debug("Parameter - " + iParameter + " - " + aux.getName() + ": " + strAux);
           UtilSql.setValue(st, ++iParameter, 12, null, strAux);
@@ -974,7 +979,8 @@ public class ComboTableData {
       for (int i = 0; i < vAux.size(); i++) {
         QueryParameterStructure aux = vAux.elementAt(i);
         if (!isInArray(discard, aux.getType())) {
-          String strAux = getParameter(aux.getName());
+          String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
+              .getName().toUpperCase())) : getParameter(aux.getName());
           if (log4j.isDebugEnabled())
             log4j.debug("Parameter - " + iParameter + " - " + aux.getName() + ": " + strAux);
           UtilSql.setValue(st, ++iParameter, 12, null, strAux);
@@ -986,7 +992,8 @@ public class ComboTableData {
       for (int i = 0; i < vAux.size(); i++) {
         QueryParameterStructure aux = vAux.elementAt(i);
         if (!isInArray(discard, aux.getType())) {
-          String strAux = getParameter(aux.getName());
+          String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
+              .getName().toUpperCase())) : getParameter(aux.getName());
           if (log4j.isDebugEnabled())
             log4j.debug("Parameter - " + iParameter + " - " + aux.getName() + ": " + strAux);
           UtilSql.setValue(st, ++iParameter, 12, null, strAux);
@@ -998,7 +1005,8 @@ public class ComboTableData {
       for (int i = 0; i < vAux.size(); i++) {
         QueryParameterStructure aux = vAux.elementAt(i);
         if (!isInArray(discard, aux.getType())) {
-          String strAux = getParameter(aux.getName());
+          String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
+              .getName().toUpperCase())) : getParameter(aux.getName());
           if (log4j.isDebugEnabled())
             log4j.debug("Parameter - " + iParameter + " - " + aux.getName() + ": " + strAux);
           UtilSql.setValue(st, ++iParameter, 12, null, strAux);
@@ -1018,16 +1026,21 @@ public class ComboTableData {
    * @throws Exception
    */
   public FieldProvider[] select(boolean includeActual) throws Exception {
+    return select(getPool(), null, includeActual);
+  }
+
+  public FieldProvider[] select(ConnectionProvider conn, Map<String, String> lparameters,
+      boolean includeActual) throws Exception {
     String strSql = getQuery(false, null);
     if (log4j.isDebugEnabled())
       log4j.debug("SQL: " + strSql);
-    PreparedStatement st = getPool().getPreparedStatement(strSql);
+    PreparedStatement st = conn.getPreparedStatement(strSql);
     ResultSet result;
     Vector<Object> vector = new Vector<Object>(0);
 
     try {
       int iParameter = 0;
-      iParameter = setSQLParameters(st, iParameter, null);
+      iParameter = setSQLParameters(st, lparameters, iParameter, null);
       boolean idFound = false;
       String actual = getParameter("@ACTUAL_VALUE@");
       result = st.executeQuery();
@@ -1050,13 +1063,13 @@ public class ComboTableData {
       result.close();
 
       if (includeActual && actual != null && !actual.equals("") && !idFound) {
-        getPool().releasePreparedStatement(st);
+        conn.releasePreparedStatement(st);
         String[] discard = { "filter", "orderBy", "CLIENT_LIST", "ORG_LIST" };
         strSql = getQuery(true, discard);
         if (log4j.isDebugEnabled())
           log4j.debug("SQL Actual ID: " + strSql);
-        st = getPool().getPreparedStatement(strSql);
-        iParameter = setSQLParameters(st, 0, discard);
+        st = conn.getPreparedStatement(strSql);
+        iParameter = setSQLParameters(st, lparameters, 0, discard);
         UtilSql.setValue(st, ++iParameter, 12, null, actual);
         result = st.executeQuery();
         while (result.next()) {
@@ -1074,7 +1087,9 @@ public class ComboTableData {
           SQLReturnObject sqlReturnObject = new SQLReturnObject();
           sqlReturnObject.setData("ID", actual);
           sqlReturnObject.setData("NAME", INACTIVE_DATA
-              + Utility.messageBD(getPool(), "NotFound", getParameter("#AD_LANGUAGE")));
+              + Utility.messageBD(conn, "NotFound", lparameters != null ? lparameters
+                  .get("#AD_LANGUAGE") : getParameter("#AD_LANGUAGE")));
+
           vector.addElement(sqlReturnObject);
         }
       }
@@ -1082,7 +1097,7 @@ public class ComboTableData {
       log4j.error("Error of SQL in query: " + strSql + "Exception:" + e);
       throw new Exception("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
     } finally {
-      getPool().releasePreparedStatement(st);
+      conn.releasePreparedStatement(st);
     }
     FieldProvider objectListData[] = new FieldProvider[vector.size()];
     vector.copyInto(objectListData);
@@ -1156,4 +1171,39 @@ public class ComboTableData {
     }
   }
 
+  public Map<String, String> fillSQLParametersIntoMap(ConnectionProvider conn,
+      VariablesSecureApp vars, FieldProvider data, String window, String actual_value)
+      throws ServletException {
+    final Vector<String> vAux = getParameters();
+    Hashtable<String, String> lparameters = new Hashtable<String, String>();
+    // We first add all current parameters in the combo
+    for (String key : parameters.keySet()) {
+      lparameters.put(key, parameters.get(key));
+    }
+    if (vAux != null && vAux.size() > 0) {
+      if (log4j.isDebugEnabled())
+        log4j.debug("Combo Parameters: " + vAux.size());
+      for (int i = 0; i < vAux.size(); i++) {
+        final String strAux = vAux.elementAt(i);
+        try {
+          final String value = Utility.parseParameterValue(conn, vars, data, strAux, "", window,
+              actual_value, false);
+          if (log4j.isDebugEnabled())
+            log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
+          if (value == null || value.equals(""))
+            lparameters.remove(strAux.toUpperCase());
+          else
+            lparameters.put(strAux.toUpperCase(), value);
+        } catch (final Exception ex) {
+          throw new ServletException(ex);
+        }
+      }
+    }
+    return lparameters;
+
+  }
+
+  public boolean canBeCached() {
+    return canBeCached;
+  }
 }
