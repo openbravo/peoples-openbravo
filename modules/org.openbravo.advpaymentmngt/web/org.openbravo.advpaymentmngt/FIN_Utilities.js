@@ -242,7 +242,7 @@ function updateDifference() {
   displayLogicElement('writeoff', compare(expected, '!=', total) );
   displayLogicElement('underpayment', compareWithSign(expected, '>', total) );
   displayLogicElement('credit', isCreditAllowed && compareWithSign(amount, '>', total) );
-  displayLogicElement('refund', isReceipt && compareWithSign(amount, '>', total) );
+  displayLogicElement('refund', isCreditAllowed && isReceipt && compareWithSign(amount, '>', total) );
   if ( isCreditAllowed && compareWithSign(amount, '>', total) ) {
     selectDifferenceAction('credit');
   }
