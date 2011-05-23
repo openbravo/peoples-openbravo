@@ -52,6 +52,8 @@
 </script>
 
 <script language="JavaScript" type="text/javascript">
+var hasBPartner = null;
+
 function validate(action) {
   var frm = document.frmMain;
   if (action=='openprocess') {
@@ -136,6 +138,11 @@ function setGLItemMode(toGLItem){
   displayLogicElement('gridGLItem', toGLItem);
   displayLogicElement('inpAlternativeLabel', !toGLItem);
   displayLogicElement('inpAlternativeChkBox', !toGLItem);
+  if (toGLItem) {
+    displayLogicElement('bpartnerfilterRow', !toGLItem);
+  } else {
+    displayLogicElement('bpartnerfilterRow', !hasBPartner);
+  }
 
   resizeAreaCreateFrom();
 
@@ -403,6 +410,7 @@ function actualPaymentOnChange(){
     setWindowTableParentElement();
     enableShortcuts('popup');
     setBrowserAutoComplete(false);
+    hasBPartner = document.frmMain.inpBusinessPartnerId.value !== null && document.frmMain.inpBusinessPartnerId.value !== '';
 
     initFIN_Utilities(document.frmMain);
     try {
@@ -435,6 +443,11 @@ function actualPaymentOnChange(){
   function onResizeDo(){
     resizeAreaCreateFrom(true);
   }
+  isc.OBSelectorWidget.addProperties({
+    onValueChanged: function(selected) {
+	  loadGridList();
+    }
+  });
 </script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
@@ -718,6 +731,7 @@ function actualPaymentOnChange(){
               <input type="hidden" name="inpBusinessPartnerId" value="" id="paramBusinessPartnerId"></input></td>
               <td class="TitleCell"><span class="LabelText" name="lblR" id="lblRCustomerBalance">Customer Balance</span></td>
               <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid TextBox_OneCell_width number" type="text" name="inpCustBalance" value="" id="paramCustBalance"></input></td>
+              <td class="TitleCell"></td>
             </tr>
 
             <!-- Line hidden -->
@@ -787,8 +801,7 @@ function actualPaymentOnChange(){
                   <option value="G">GL Items</option>
                 </select>
               </td>
-              <td></td>
-              <td class="TitleCell" id="glitemBlank" colspan="4"></td>
+              <td class="TitleCell"></td>
               <td class="TitleCell" id="DueDateFromLbl"><span class="LabelText">Due Date From</span></td>
               <td class="TextBox_btn_ContentCell" id="DueDateFrom">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
@@ -821,13 +834,14 @@ function actualPaymentOnChange(){
                   </tr>
                 </table>
               </td>
+              <td class="TitleCell"></td>
              </tr>
             <tr>
               <td class="TitleCell" id="inpAlternativeLabel"><span class="TitleCell LabelText"><label name="lblP" id="lblPShowPaym" for="paramAlternativePaymentMethod">Show payments out for alternative payment methods</label></span><span class="TitleCell LabelText"><label name="lblR" id="lblRShowPaym" for="paramAlternativePaymentMethod">Show payments in for alternative payment methods</label></span></td>
               <td class="Radio_Check_ContentCell" id="inpAlternativeChkBox">
               <span class="Radio_Check_ContentCell Checkbox_container_NOT_Focused"><input type="checkbox" name="inpAlternativePaymentMethod" value="Y" id="paramAlternativePaymentMethod" onclick="loadGridList()"></input></span>
              </td>
-             <td></td>
+             <td class="TitleCell"></td>
              <td class="TitleCell" id="DueDateToLbl"><span class="LabelText">Due Date To</span></td>
              <td class="TextBox_btn_ContentCell" id="DueDateTo">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
@@ -860,6 +874,24 @@ function actualPaymentOnChange(){
                   </tr>
                 </table>
              </td>
+            </tr>
+            </tr>
+            <tr id="bpartnerfilterRow">
+              <td class="TitleCell"><span class="LabelText">Business Partner</span></td>
+              <td class="TextBox_ContentCell" colspan="2">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_C_BPartner_ID = null;</script>
+                      <input type="hidden" name="inpcBPartnerId" id="C_BPartner_ID" value="" onreset="sc_C_BPartner_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_BPartner_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/A98899B1C75A4F4EBD3414F1B654EFAB?columnName=C_BPartner_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=true"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td class="TitleCell"></td>
+              <td class="TitleCell"></td>
+              <td class="TitleCell"></td>
             </tr>
             <tr id="glitemRow">
               <td class="TitleCell"><span class="LabelText">GL Item</span></td>
