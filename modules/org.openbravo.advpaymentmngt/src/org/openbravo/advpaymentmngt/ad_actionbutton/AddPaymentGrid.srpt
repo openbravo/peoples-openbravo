@@ -24,6 +24,7 @@
     <td class="DataGrid_Body_LineNoCell"> <input type="checkbox" name="inpScheduledPaymentDetailId" value="" id="fieldScheduledPaymentDetailId" onclick="updateData(this.value, this.checked, true);return true;"/></td>
     <td class="DataGrid_Body_Cell" id="fieldOrderNr">xx</td>
     <td class="DataGrid_Body_Cell" id="fieldInvoiceNr">xxINV30004 (2/3)</td>
+    <td class="DataGrid_Body_Cell" id="businessPartnerName">xxBPartner</td>
     <td class="DataGrid_Body_Cell" title="zz" id="fieldPaymentMethod">xxCash</td>
     <td class="DataGrid_Body_Cell" id="fieldDueDate">xx12/12/2009</td>
     <td class="DataGrid_Body_Cell_Amount" id="fieldInvoicedAmount">xx150.00</td>

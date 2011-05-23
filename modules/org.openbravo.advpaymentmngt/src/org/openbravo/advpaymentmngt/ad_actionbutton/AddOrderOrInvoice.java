@@ -230,8 +230,13 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     log4j.debug("Output: Add Payment button pressed on Make / Receipt Payment windows");
 
     FIN_Payment payment = new AdvPaymentMngtDao().getObject(FIN_Payment.class, strPaymentId);
+    String[] discard = { "discard" };
+    if (payment.getBusinessPartner() != null) {
+      discard[0] = "bpGridColumn";
+    }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/AddOrderOrInvoice").createXmlDocument();
+        "org/openbravo/advpaymentmngt/ad_actionbutton/AddOrderOrInvoice", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -312,9 +317,13 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
 
     log4j.debug("Output: Grid with pending payments");
     dao = new AdvPaymentMngtDao();
+    String[] discard = { "" };
+    if (!"".equals(vars.getRequestGlobalVariable("inpBusinessPartnerId", ""))) {
+      discard[0] = "businessPartnerName";
+    }
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentGrid").createXmlDocument();
+        "org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentGrid", discard).createXmlDocument();
 
     // Pending Payments from invoice
     final List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails = FIN_AddPayment
