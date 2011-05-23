@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -74,12 +74,14 @@ function validate(action) {
       setWindowElementFocus(frm.inpPaymentDate);
       showJSMessage(7);
       return false;
-    } else if (frm.inpcBpartnerId.value==null || frm.inpcBpartnerId.value=="") {
-      setWindowElementFocus(frm.inpBpartnerId_DES);
-      showJSMessage(7);
-      return false;
     } else {
-      if (!validateSelectedPendingPayments()) return false;
+      var diffAction = frm.inpDifferenceAction;
+      var i;
+      for (i = 0; i < diffAction.length; i++) {
+        if (diffAction[i].checked) break;
+      }
+      var selectedAction = diffAction[i].value;
+      if (!validateSelectedPendingPayments(true, selectedAction)) return false;
     }
   }
   return true;
@@ -119,13 +121,43 @@ function closeProcessPayment() {
   document.getElementById('client_bottom').style.display = 'block';
 }
 
-function updateData(key, mark) {
+function updateData(key, mark, drivenByGrid) {
   if (mark==null) mark=false;
   updateReadOnly(key, mark);
   var paymentAmount = document.frmMain.elements['inpPaymentAmount'+key];
   if (!isTrue('isReceipt')){
     if (mark && paymentAmount.value=='') {
       paymentAmount.value = document.frmMain.elements['inpRecordAmt'+key].value;
+    }
+  } else { // sales
+    if (drivenByGrid && mark && !paymentAmount.value) {
+      var total = document.getElementById('inpTotal').value ? document.getElementById('inpTotal').value : 0;
+      var actualPayment = document.getElementById('paramActualPayment').value;
+      if (frm.inpUseCredit.checked) {
+        actualPayment = add(actualPayment, document.frmMain.inpCredit.value);
+      }
+      var gridAmt = document.frmMain.elements['inpRecordAmt'+key].value;
+      if ( compare(actualPayment, '<', 0) && compare(gridAmt, '>=', 0) ) {
+        paymentAmount.value = 0;
+      } else {
+        if ( compare(actualPayment, '<', 0) && compare(gridAmt, '<', 0) ) {
+          total = abs(total);
+          actualPayment = abs(actualPayment);
+          subtotal = add(total, abs(gridAmt));
+          if ( compare(subtotal, '>', actualPayment)) {
+            paymentAmount.value = subtract(0, subtract(actualPayment, total));
+          } else {
+            paymentAmount.value = gridAmt;
+          }
+        } else {
+          var subtotal = add(total, gridAmt);
+          if ( compare(subtotal, '>', actualPayment)) {
+            paymentAmount.value = subtract(actualPayment, total);
+          } else {
+            paymentAmount.value = gridAmt;
+          }
+        }
+      }
     }
   }
   updateTotal();
@@ -180,8 +212,7 @@ function displayLogicForCredit() {
   displayLogicElement('lblUseCredit', compare(document.getElementById('paramCredit').value, '>', "0") );
 }
 
-function onchangeBPartner(dummy){
-  markAll(document.frmMain.inpScheduledPaymentDetailId, false);
+function onchangeBPartner(dummy) {
   loadGridList();
   loadCreditAvailable();
   loadPaymentMethodCombo();
@@ -646,7 +677,7 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
             <!-- Line 6 -->
             <tr>
               <td class="TitleCell"><span name="lblP" id="lblPExpectedPaym" class="LabelText">Expected Payment Out</span><span name="lblR" id="lblRExpectedPaym" class="LabelText">Expected Payment In</span></td>
-              <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid required TextBox_OneCell_width number" type="text" id="paramExpectedPayment" name="inpExpectedPayment" value="" onchange="updateDifference();"></input></td>
+              <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid required TextBox_OneCell_width number" readonly type="text" id="paramExpectedPayment" name="inpExpectedPayment" value="" onchange="updateDifference();"></input></td>
               <td class="TitleCell"></td>
               <td class="TitleCell"><span class="LabelText" name="lbl" id="lblCredit">Available Credit</span></td>
               <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid TextBox_OneCell_width number" type="text" name="inpCredit" value="0" id="paramCredit"></input></td>
@@ -809,6 +840,72 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
                 </table>
               </td>
             </tr>
+            <tr> 
+             <td class="TitleCell"></td>
+             <td class="Combo_OneCell_width"></td>
+             <td class="TitleCell"><span class="LabelText">Transaction Date From</span></td>
+             <td class="TextBox_btn_ContentCell">
+                <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                  <tr>
+                    <td class="TextBox_ContentCell">
+                      <table style="border: 0px none; border-collapse: collapse;">
+                        <tr><td style="padding-top: 0px;">
+                          <input type="text" id="paramTransDateFrom" class="dojoValidateValid TextBox_btn_OneCell_width" value="" maxlength="10" name="inpTransDateFrom" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id);  validateDate(this);return true;" displayFormat="xx" saveFormat="xx"></input>
+                        </td></tr>
+                      </table>
+                      <span id="paramTransDateFrominvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                        <table class="TextBox_MsgContainer_table">
+                          <tbody><tr class="TextBox_MsgContainer_tr"><td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td></tr>
+                          <tr><td class="invalid" colspan="2"><div name="invalidText" id="paramTransDateFrominvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td></tr>
+                        </tbody></table>
+                      </span>
+                    </td>
+                    <td class="FieldButton_ContentCell">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpTransDateFrom', document.frmMain.inpTransDateFrom.value, false);return false;">
+                        <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                          <tr>
+                            <td class="FieldButton_bg">
+                              <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                            </td>
+                          </tr>
+                        </table>
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+             <td class="TitleCell"><span class="LabelText">Transaction Date To</span></td>
+             <td class="TextBox_btn_ContentCell">
+                <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                  <tr>
+                    <td class="TextBox_ContentCell">
+                      <table style="border: 0px none; border-collapse: collapse;">
+                        <tr><td style="padding-top: 0px;">
+                          <input type="text" id="paramTransDateTo" class="dojoValidateValid TextBox_btn_OneCell_width" value="" maxlength="10" name="inpTransDateTo" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id); validateDate(this);return true;" displayFormat="xx" saveFormat="xx"></input>
+                        </td></tr>
+                      </table>
+                      <span id="paramTransDateToinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                        <table class="TextBox_MsgContainer_table">
+                          <tbody><tr class="TextBox_MsgContainer_tr"><td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td></tr>
+                          <tr><td class="invalid" colspan="2"><div name="invalidText" id="paramTransDateToinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td></tr>
+                        </tbody></table>
+                      </span>
+                    </td>
+                    <td class="FieldButton_ContentCell">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpTransDateTo', document.frmMain.inpTransDateTo.value, false);return false;">
+                        <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                          <tr>
+                            <td class="FieldButton_bg">
+                              <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                            </td>
+                          </tr>
+                        </table>
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
             <tr class="FieldGroup_BottomMargin"></tr>
           </table>
         </div>
@@ -830,11 +927,13 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
                     <thead>
                       <tr class="DataGrid_Body_Row">
                         <th class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox" width="25"> 
-                          <input type="checkbox" name="inpAllLines" onclick="markAll(document.frmMain.inpScheduledPaymentDetailId, this.checked);updateAll();return true;"/>
+                          <input type="checkbox" name="inpAllLines" onclick="markAll(document.frmMain.inpScheduledPaymentDetailId, this.checked);updateAll(true);return true;"/>
                         </th>
                         <th class="DataGrid_Header_Cell" width="120"><span name="lblP" id="lblPPON">Purchase Order No.</span><span name="lblR" id="lblRSON">Sales Order No.</span></th>
                         <th class="DataGrid_Header_Cell" width="120"><span name="lblP" id="lblPPIN">Purchase Invoice No.</span><span name="lblR" id="lblRSIN">Sales Invoice No.</span></th>
                         <th class="DataGrid_Header_Cell" width="100">Payment Method</th>
+                        <th class="DataGrid_Header_Cell" width="100">Bussines Partner</th>
+                        <th class="DataGrid_Header_Cell" width="70">Transaction Date</th>
                         <th class="DataGrid_Header_Cell" width="70">Due Date</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Invoiced Amount</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Expected Amount</th>

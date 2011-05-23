@@ -126,6 +126,11 @@ function updateData(key, mark) {
   }
   updateTotal();
 
+  if (!mark) { // Clear difference td
+    var selTd = getElementsByName("inpDifference"+key, "td");
+	selTd[0].innerHTML = '';
+  }
+
   return true;
 }
 
@@ -138,7 +143,7 @@ function updateDiffinTable(element){
   var amount = document.frmMain.elements["inpPaymentAmount"+diffRowId].value;
   var outstanding = document.frmMain.elements["inpRecordAmt"+diffRowId].value;
   var selTd = getElementsByName("inpDifference"+diffRowId, "td");
-  selTd[0].innerHTML = subtract(outstanding, amount);
+  selTd[0].innerHTML = subtract(outstanding, amount ? amount : 0);
 }
 
 </script>

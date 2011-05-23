@@ -408,6 +408,9 @@ public class FIN_AddPayment {
         if (FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule() != null) {
           FieldProviderFactory.setField(data[i], "dueDate", dateFormater.format(
               FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getDueDate()).toString());
+          FieldProviderFactory.setField(data[i], "transactionDate", dateFormater.format(
+              FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getInvoice()
+                  .getInvoiceDate()).toString());
           FieldProviderFactory.setField(data[i], "invoicedAmount", FIN_PaymentScheduleDetails[i]
               .getInvoicePaymentSchedule().getInvoice().getGrandTotalAmount().toString());
           FieldProviderFactory.setField(data[i], "expectedAmount", FIN_PaymentScheduleDetails[i]
@@ -440,6 +443,9 @@ public class FIN_AddPayment {
         } else {
           FieldProviderFactory.setField(data[i], "dueDate", dateFormater.format(
               FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getDueDate()).toString());
+          FieldProviderFactory.setField(data[i], "transactionDate", dateFormater.format(
+              FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getOrder().getOrderDate())
+              .toString());
           FieldProviderFactory.setField(data[i], "invoicedAmount", "");
           FieldProviderFactory.setField(data[i], "expectedAmount", FIN_PaymentScheduleDetails[i]
               .getOrderPaymentSchedule().getAmount().toString());

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -84,13 +84,16 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
           IsIDFilter.instance);
       final String strDueDateFrom = vars.getStringParameter("inpDueDateFrom", "");
       final String strDueDateTo = vars.getStringParameter("inpDueDateTo", "");
+      final String strTransDateFrom = vars.getStringParameter("inpTransDateFrom", "");
+      final String strTransDateTo = vars.getStringParameter("inpTransDateTo", "");
       final String strDocumentType = vars.getStringParameter("inpDocumentType", "");
       final String strSelectedPaymentDetails = vars.getInStringParameter(
           "inpScheduledPaymentDetailId", IsIDFilter.instance);
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
 
       printGrid(response, vars, strFinancialAccountId, strBusinessPartnerId, strDueDateFrom,
-          strDueDateTo, strDocumentType, strSelectedPaymentDetails, isReceipt);
+          strDueDateTo, strTransDateFrom, strTransDateTo, strDocumentType,
+          strSelectedPaymentDetails, isReceipt);
 
     } else if (vars.commandIn("PAYMENTMETHODCOMBO")) {
       final String strBusinessPartnerId = vars.getRequestGlobalVariable("inpcBpartnerId", "");
@@ -120,13 +123,16 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
         strAction = vars.getRequiredStringParameter("inpActionDocument");
       }
       String strPaymentDocumentNo = vars.getRequiredStringParameter("inpDocNumber");
-      String strReceivedFromId = vars.getRequiredStringParameter("inpcBpartnerId");
+      String strReceivedFromId = vars.getStringParameter("inpcBpartnerId");
       String strPaymentMethodId = vars.getRequiredStringParameter("inpPaymentMethod");
       String strFinancialAccountId = vars.getRequiredStringParameter("inpFinancialAccountId");
       String strPaymentAmount = vars.getRequiredNumericParameter("inpActualPayment");
       String strPaymentDate = vars.getRequiredStringParameter("inpPaymentDate");
-      String strSelectedScheduledPaymentDetailIds = vars.getRequiredInParameter(
+      String strSelectedScheduledPaymentDetailIds = vars.getInParameter(
           "inpScheduledPaymentDetailId", IsIDFilter.instance);
+      if (strSelectedScheduledPaymentDetailIds == null) {
+        strSelectedScheduledPaymentDetailIds = "";
+      }
       String strDifferenceAction = vars.getRequiredStringParameter("inpDifferenceAction");
       BigDecimal refundAmount = BigDecimal.ZERO;
       if (strDifferenceAction.equals("refund"))
@@ -142,6 +148,16 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
             FIN_PaymentScheduleDetail.class, strSelectedScheduledPaymentDetailIds);
         HashMap<String, BigDecimal> selectedPaymentDetailAmounts = FIN_AddPayment
             .getSelectedPaymentDetailsAndAmount(vars, selectedPaymentDetails);
+
+        // When creating a payment for orders/invoices of different business partners (factoring)
+        // the business partner must be empty
+        BusinessPartner paymentBusinessPartner = null;
+        if (selectedPaymentDetails.size() == 0 && !"".equals(strReceivedFromId)) {
+          paymentBusinessPartner = OBDal.getInstance()
+              .get(BusinessPartner.class, strReceivedFromId);
+        } else {
+          paymentBusinessPartner = getMultiBPartner(selectedPaymentDetails);
+        }
 
         final List<Object> parameters = new ArrayList<Object>();
         parameters.add(vars.getClient());
@@ -159,13 +175,13 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
         }
 
         FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt, dao.getObject(
-            DocumentType.class, strDocTypeId), strPaymentDocumentNo, dao.getObject(
-            BusinessPartner.class, strReceivedFromId), dao.getObject(FIN_PaymentMethod.class,
-            strPaymentMethodId), dao.getObject(FIN_FinancialAccount.class, strFinancialAccountId),
-            strPaymentAmount, FIN_Utility.getDate(strPaymentDate), dao.getObject(
-                FIN_FinancialAccount.class, strFinancialAccountId).getOrganization(),
-            strReferenceNo, selectedPaymentDetails, selectedPaymentDetailAmounts,
-            strDifferenceAction.equals("writeoff"), strDifferenceAction.equals("refund"));
+            DocumentType.class, strDocTypeId), strPaymentDocumentNo, paymentBusinessPartner, dao
+            .getObject(FIN_PaymentMethod.class, strPaymentMethodId), dao.getObject(
+            FIN_FinancialAccount.class, strFinancialAccountId), strPaymentAmount, FIN_Utility
+            .getDate(strPaymentDate), dao.getObject(FIN_FinancialAccount.class,
+            strFinancialAccountId).getOrganization(), strReferenceNo, selectedPaymentDetails,
+            selectedPaymentDetailAmounts, strDifferenceAction.equals("writeoff"),
+            strDifferenceAction.equals("refund"));
 
         if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
             || strAction.equals("PPW")) {
@@ -247,7 +263,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       FIN_BankStatementLine bsline = dao.getObject(FIN_BankStatementLine.class,
           strFinBankStatementLineId);
       xmlDocument.setParameter("actualPayment", (isReceipt) ? bsline.getCramount().subtract(
-          bsline.getDramount()).toString() : BigDecimal.ZERO.toString());
+          bsline.getDramount()).toString() : bsline.getDramount().subtract(bsline.getCramount())
+          .toString());
       String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
           "dateFormat.java");
       SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
@@ -334,8 +351,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
 
   private void printGrid(HttpServletResponse response, VariablesSecureApp vars,
       String strFinancialAccountId, String strBusinessPartnerId, String strDueDateFrom,
-      String strDueDateTo, String strDocumentType, String strSelectedPaymentDetails,
-      boolean isReceipt) throws IOException, ServletException {
+      String strDueDateTo, String strTransDateFrom, String strTransDateTo, String strDocumentType,
+      String strSelectedPaymentDetails, boolean isReceipt) throws IOException, ServletException {
 
     log4j.debug("Output: Grid with pending payments");
 
@@ -344,7 +361,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
         strFinancialAccountId);
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentGrid").createXmlDocument();
+        "org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentFromTransactionGrid")
+        .createXmlDocument();
 
     // Pending Payments from invoice
     final List<FIN_PaymentScheduleDetail> invoiceScheduledPaymentDetails = new ArrayList<FIN_PaymentScheduleDetail>();
@@ -353,14 +371,16 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
         .getSelectedPaymentDetails(invoiceScheduledPaymentDetails, strSelectedPaymentDetails);
 
     List<FIN_PaymentScheduleDetail> filteredScheduledPaymentDetails = new ArrayList<FIN_PaymentScheduleDetail>();
+
+    // If business partner is empty search for all filtered scheduled payments list
     if (!"".equals(strBusinessPartnerId))
-      // filtered scheduled payments list
       filteredScheduledPaymentDetails = dao.getFilteredScheduledPaymentDetails(financialAccount
           .getOrganization(), dao.getObject(BusinessPartner.class, strBusinessPartnerId),
           financialAccount.getCurrency(), FIN_Utility.getDate(strDueDateFrom), FIN_Utility
-              .getDate(DateTimeData.nDaysAfter(this, strDueDateTo, "1")), strDocumentType, null,
-          selectedScheduledPaymentDetails, isReceipt);
-
+              .getDate(DateTimeData.nDaysAfter(this, strDueDateTo, "1")), FIN_Utility
+              .getDate(strTransDateFrom), FIN_Utility.getDate(DateTimeData.nDaysAfter(this,
+              strTransDateTo, "1")), strDocumentType, null, selectedScheduledPaymentDetails,
+          isReceipt);
     final FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
         selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null);
     xmlDocument.setData("structure", (data == null) ? set() : data);
@@ -376,19 +396,52 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     log4j.debug("Callout: Business Partner has changed to" + strBusinessPartnerId);
 
     String paymentMethodComboHtml = "";
-    if (!strBusinessPartnerId.isEmpty()) {
-      FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          strFinancialAccountId);
-      BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, strBusinessPartnerId);
-      paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(
-          (bp.getPaymentMethod() != null) ? bp.getPaymentMethod().getId() : null,
-          strFinancialAccountId, account.getOrganization().getId(), true, true);
-    }
+    FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
+        strFinancialAccountId);
+    BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, strBusinessPartnerId);
+    paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(
+        (bp != null && bp.getPaymentMethod() != null) ? bp.getPaymentMethod().getId() : null,
+        strFinancialAccountId, account.getOrganization().getId(), true, true);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(paymentMethodComboHtml.replaceAll("\"", "\\'"));
     out.close();
+  }
+
+  /**
+   * Returns the business partner (if is the same for all the elements in the list) or null in other
+   * case.
+   * 
+   * @param paymentScheduleDetailList
+   *          List of payment schedule details.
+   * @return Business Partner if the payment schedule details belong to the same business partner.
+   *         Null if the list of payment schedule details are associated to more than one business
+   *         partner.
+   * 
+   */
+  private BusinessPartner getMultiBPartner(List<FIN_PaymentScheduleDetail> paymentScheduleDetailList) {
+    String previousBPId = null;
+    String currentBPId = null;
+    for (FIN_PaymentScheduleDetail psd : paymentScheduleDetailList) {
+      if (psd.getInvoicePaymentSchedule() != null) { // Invoice
+        currentBPId = psd.getInvoicePaymentSchedule().getInvoice().getBusinessPartner().getId();
+        if (!currentBPId.equals(previousBPId) && previousBPId != null) {
+          return null;
+        } else {
+          previousBPId = currentBPId;
+        }
+      }
+      if (psd.getOrderPaymentSchedule() != null) { // Order
+        currentBPId = psd.getOrderPaymentSchedule().getOrder().getBusinessPartner().getId();
+        if (!currentBPId.equals(previousBPId) && previousBPId != null) {
+          return null;
+        } else {
+          previousBPId = currentBPId;
+        }
+      }
+    }
+    return currentBPId != null ? OBDal.getInstance().get(BusinessPartner.class, currentBPId) : null;
   }
 
   private FieldProvider[] set() throws ServletException {

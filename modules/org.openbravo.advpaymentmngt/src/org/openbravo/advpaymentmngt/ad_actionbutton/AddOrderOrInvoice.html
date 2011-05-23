@@ -234,8 +234,14 @@ function validate(action) {
       //Do nothing on case of GL Item.
       return true;
     } else {
+      var diffAction = frm.inpDifferenceAction;
+      var i;
+      for (i = 0; i < diffAction.length; i++) {
+        if (diffAction[i].checked) break;
+      }
+      var selectedAction = diffAction[i].value;
       var allowCreditGeneration = true;
-      if (!validateSelectedPendingPayments(allowCreditGeneration)) { return false };
+      if (!validateSelectedPendingPayments(allowCreditGeneration, selectedAction)) { return false };
     }
   }
   return true;
@@ -280,7 +286,7 @@ function setGLItemMode(toGLItem){
   }
   return true;
 }
-function updateData(key, mark) {
+function updateData(key, mark, drivenByGrid) {
   if (mark==null) mark=false;
   updateReadOnly(key, mark);
   var paymentAmount = document.frmMain.elements['inpPaymentAmount'+key];
@@ -288,7 +294,38 @@ function updateData(key, mark) {
     if (mark && paymentAmount.value=='') {
       paymentAmount.value=document.frmMain.elements['inpRecordAmt'+key].value;
     }
+  } else { // sales
+    if (drivenByGrid && mark && !paymentAmount.value) {
+      var total = document.getElementById('inpTotal').value ? document.getElementById('inpTotal').value : 0;
+      var actualPayment = document.getElementById('paramActualPayment').value;
+      if (frm.inpUseCredit.checked) {
+        actualPayment = add(actualPayment, document.frmMain.inpCredit.value);
+      }
+      var gridAmt = document.frmMain.elements['inpRecordAmt'+key].value;
+      if ( compare(actualPayment, '<', 0) && compare(gridAmt, '>=', 0) ) {
+        paymentAmount.value = 0;
+      } else {
+        if ( compare(actualPayment, '<', 0) && compare(gridAmt, '<', 0) ) {
+          total = abs(total);
+          actualPayment = abs(actualPayment);
+          subtotal = add(total, abs(gridAmt));
+          if ( compare(subtotal, '>', actualPayment)) {
+            paymentAmount.value = subtract(0, subtract(actualPayment, total));
+          } else {
+            paymentAmount.value = gridAmt;
+          }
+        } else {
+          var subtotal = add(total, gridAmt);
+          if ( compare(subtotal, '>', actualPayment)) {
+            paymentAmount.value = subtract(actualPayment, total);
+          } else {
+            paymentAmount.value = gridAmt;
+          }
+        }
+      }
+    }
   }
+
   updateTotal();
 
   return true;
@@ -982,7 +1019,7 @@ function closeProcessPayment() {
                     <thead>
                       <tr class="DataGrid_Body_Row">
                         <th class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox" width="25"> 
-                          <input type="checkbox" name="inpAllLines" onclick="markAll(document.frmMain.inpScheduledPaymentDetailId, this.checked);updateAll();return true;"/>
+                          <input type="checkbox" name="inpAllLines" onclick="markAll(document.frmMain.inpScheduledPaymentDetailId, this.checked);updateAll(true);return true;"/>
                         </th>
                         <th class="DataGrid_Header_Cell" width="120"><span name="lblP" id="lblPPON">Purchase Order No.</span><span name="lblR" id="lblRSON">Sales Order No.</span></th>
                         <th class="DataGrid_Header_Cell" width="120"><span name="lblP" id="lblPPIN">Purchase Invoice No.</span><span name="lblR" id="lblRSIN">Sales Invoice No.</span></th>

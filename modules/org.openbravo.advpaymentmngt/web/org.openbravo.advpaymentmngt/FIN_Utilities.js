@@ -167,12 +167,24 @@ function compare(number1, operator, number2) {
   return formattedNumberOpTemp(number1, operator, number2, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);	
 }
 
-function isBetweenZeroAndMaxValue(value, maxValue){
-  return ((compare(value, '>', 0) && compare(value, '<=', maxValue)) ||
-          (compare(value, '<', 0) && compare(value, '>=', maxValue)));
+/**
+ * Compares two Strings using the operator.
+ * If both numbers are negative it compares using the absolute value. 
+ */
+function compareWithSign(number1, operator, number2) {
+  if (compare(number1, '<', 0) && compare(number2, '<', 0)) {
+    return formattedNumberOpTemp(abs(number1), operator, abs(number2), globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+  } else {
+    return formattedNumberOpTemp(number1, operator, number2, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+  }
 }
 
-function validateSelectedAmounts(recordID, existsPendingAmount){
+function isBetweenZeroAndMaxValue(value, maxValue){
+  return ((compare(value, '>=', 0) && compare(value, '<=', maxValue)) ||
+          (compare(value, '<=', 0) && compare(value, '>=', maxValue)));
+}
+
+function validateSelectedAmounts(recordID, existsPendingAmount, selectedAction){
   var pendingAmount = document.frmMain.elements["inpRecordAmt"+recordID].value,
       amount = document.frmMain.elements["inpPaymentAmount"+recordID].value;
   if (existsPendingAmount === null) {
@@ -188,6 +200,12 @@ function validateSelectedAmounts(recordID, existsPendingAmount){
     showJSMessage(9);
     return false;
   }
+  // Only possible to pay 0 in case of a write off
+  if (selectedAction != "writeoff" && compare(amount, '==', 0)) {
+	setWindowElementFocus(frm.elements["inpPaymentAmount"+recordID]);
+	showJSMessage(9);
+    return false;
+  }
   if ( existsPendingAmount && compare(amount, '<', pendingAmount) ) {
     setWindowElementFocus(frm.elements["inpPaymentAmount"+recordID]);
     showJSMessage('APRM_JSNOTALLAMOUTALLOCATED');
@@ -197,37 +215,34 @@ function validateSelectedAmounts(recordID, existsPendingAmount){
 }
 
 function updateDifference() {
-  var expected = frm.inpExpectedPayment.value,
-      total = frm.inpTotal.value,
-      amount = total;
-  if (expected === '') {
-    expected = 0;
-  }
-  //var precision = Number(frm.curPrecision.value);
+  var expected = (frm.inpExpectedPayment && frm.inpExpectedPayment.value) ? frm.inpExpectedPayment.value : 0;
+  var total = (frm.inpTotal && frm.inpTotal.value) ? frm.inpTotal.value : 0;
+  var amount = total;
+
   if (frm.inpActualPayment !== null) {
     amount = frm.inpActualPayment.value;
   }
   if (frm.inpUseCredit.checked) {
     amount = add(amount, frm.inpCredit.value);
   }
-  if ( compare(abs(expected), '>', abs(total)) ) {
+  if ( compareWithSign(expected, '>', total) ) {
     frm.inpDifference.value = subtract(expected, total);
-  } else if ( compare(abs(amount), '>', abs(total)) ) {
+  } else if ( compareWithSign(amount, '>', total) ) {
     frm.inpDifference.value = subtract(amount, total);
   } else {
     frm.inpDifference.value = 0;
   }
   document.getElementById('paramDifference').innerHTML = frm.inpDifference.value;
-  displayLogicElement('sectionDifference', ( compare(expected, '!=', total) || compare(abs(amount), '>', abs(total)) ) );
-  displayLogicElement('sectionDifferenceBox', ( compare(expected, '!=', total) || compare(abs(amount), '>', abs(total)) ) );
+  displayLogicElement('sectionDifference', ( compare(expected, '!=', total) || compareWithSign(amount, '>', total) ) );
+  displayLogicElement('sectionDifferenceBox', ( compare(expected, '!=', total) || compareWithSign(amount, '>', total) ) );
   displayLogicElement('writeoff', compare(expected, '!=', total) );
-  displayLogicElement('underpayment', compare(abs(expected), '>', abs(total)) );
-  displayLogicElement('credit', compare(abs(amount), '>', abs(total)) );
-  displayLogicElement('refund', isReceipt && compare(abs(amount), '>', abs(total)) );
-  if ( compare(abs(amount), '>', abs(total)) ) {
+  displayLogicElement('underpayment', compareWithSign(expected, '>', total) );
+  displayLogicElement('credit', compareWithSign(amount, '>', total) );
+  displayLogicElement('refund', isReceipt && compareWithSign(amount, '>', total) );
+  if ( compareWithSign(amount, '>', total) ) {
     selectDifferenceAction('credit');
   }
-  else if ( compare(abs(expected), '>', abs(total)) ) {
+  else if ( compareWithSign(expected, '>', total) ) {
     selectDifferenceAction('underpayment');
   }
 }
@@ -253,6 +268,7 @@ function updateTotal() {
       initialize_MessageBox('messageBoxID');
     }
     if (chk.checked) {
+      document.getElementById('paraminvalidSpan'+scheduledPaymentDetailId).style.display = !isBetweenZeroAndMaxValue(amount, pendingAmount) ? 'block' : 'none';
       total = (frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value === '') ? "0" : frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value;
     }
   } else {
@@ -267,6 +283,7 @@ function updateTotal() {
         initialize_MessageBox('messageBoxID');
       }
       if (chk[i].checked) {
+        document.getElementById('paraminvalidSpan'+scheduledPaymentDetailId).style.display = !isBetweenZeroAndMaxValue(amount, pendingAmount) ? 'block' : 'none';
         total = (frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value === '') ? total : add(total,frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value);
       }
     }
@@ -360,6 +377,7 @@ function updateReadOnly(key, mark) {
     }
     frm.elements["inpPaymentAmount" + key].value = '';
     frm.inpExpectedPayment.value = subtract(expectedAmount, recordAmount);
+    document.getElementById('paraminvalidSpan'+key).style.display = 'none';
   }
   if (!mark) {
     frm.inpAllLines.checked = false;
@@ -367,7 +385,7 @@ function updateReadOnly(key, mark) {
   return true;
 }
 
-function updateAll() {
+function updateAll(drivenByGrid) {
   var frm = document.frmMain;
   var chk = frm.inpScheduledPaymentDetailId;
   var recordAmount, i;
@@ -380,7 +398,7 @@ function updateAll() {
       recordAmount = frm.elements["inpRecordAmt" + chk.value].value;
       frm.inpExpectedPayment.value = add(frm.inpExpectedPayment.value, recordAmount);
     }
-    updateData(chk.value, chk.checked);
+    updateData(chk.value, chk.checked, drivenByGrid);
   } else {
     frm.inpExpectedPayment.value = "0";
     var total = chk.length;
@@ -389,7 +407,7 @@ function updateAll() {
         recordAmount = frm.elements["inpRecordAmt" + chk[i].value].value;
         frm.inpExpectedPayment.value = add(frm.inpExpectedPayment.value, recordAmount);
       }
-      updateData(chk[i].value, chk[i].checked);
+      updateData(chk[i].value, chk[i].checked, drivenByGrid);
     }
   }
   return true;
@@ -401,22 +419,22 @@ function updateAll() {
  *        zero.
  * @return true if validations are fine.
  */
-function validateSelectedPendingPayments(allowCreditGeneration) {
+function validateSelectedPendingPayments(allowCreditGeneration, action) {
   if (allowCreditGeneration === undefined) {
     allowCreditGeneration = false;
   }
   var actualPayment = document.frmMain.inpActualPayment.value;
   var expectedPayment = document.frmMain.inpExpectedPayment.value, i;
   if (document.frmMain.inpUseCredit.checked) {
-    if ( compare(expectedPayment, '<=', actualPayment) ) {
+    /*if ( compare(expectedPayment, '<=', actualPayment) ) {
       setWindowElementFocus(document.frmMain.inpUseCredit);
       showJSMessage('APRM_JSCANNOTUSECREDIT');
       return false;
-    }
+    }*/
     actualPayment = add(actualPayment, document.frmMain.inpCredit.value);
   }
   var selectedTotal = document.frmMain.inpTotal.value;
-  if ( compare(selectedTotal, '>', actualPayment) ) {
+  if ( compareWithSign(selectedTotal, '>', actualPayment) ) {
     setWindowElementFocus(document.frmMain.inpActualPayment);
     showJSMessage('APRM_JSMOREAMOUTALLOCATED');
     return false;
@@ -426,7 +444,7 @@ function validateSelectedPendingPayments(allowCreditGeneration) {
     return true;
   } else if (!chk.length) {
     if (chk.checked) {
-      if (!validateSelectedAmounts(chk.value, compare(selectedTotal, '<', actualPayment))) {
+      if (!validateSelectedAmounts(chk.value, compare(selectedTotal, '<', actualPayment), action)) {
         return false;
       }
     } else if ( !allowCreditGeneration || compare(document.frmMain.inpDifference.value, '==', "0") ){
@@ -439,7 +457,7 @@ function validateSelectedPendingPayments(allowCreditGeneration) {
     for (i=0; i<total; i++) {
       if (chk[i].checked) {
         isAnyChecked = true;
-        if (!validateSelectedAmounts(chk[i].value, compare(selectedTotal, '<', actualPayment))) {
+        if (!validateSelectedAmounts(chk[i].value, compare(selectedTotal, '<', actualPayment), action)) {
           return false;
         }
       }

@@ -508,7 +508,8 @@ public class Transactions extends HttpSecureAppServlet {
               break;
             case 1: // bpartner
               if (finaccTrx.getFinPayment() != null)
-                columnData = finaccTrx.getFinPayment().getBusinessPartner().getIdentifier();
+                columnData = (finaccTrx.getFinPayment().getBusinessPartner() != null) ? finaccTrx
+                    .getFinPayment().getBusinessPartner().getIdentifier() : "";
               break;
             case 2: // paymentno
               if (finaccTrx.getFinPayment() != null)

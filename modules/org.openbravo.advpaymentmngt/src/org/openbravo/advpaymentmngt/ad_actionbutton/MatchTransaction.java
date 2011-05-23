@@ -490,7 +490,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
         FieldProviderFactory.setField(data[i], "bankLineTransactionDate", Utility.formatDate(
             FIN_BankStatementLines[i].getTransactionDate(), vars.getJavaDateFormat()));
         FieldProviderFactory.setField(data[i], "bankLineBusinessPartner", FIN_BankStatementLines[i]
-            .getBpartnername());
+            .getBusinessPartner() != null ? FIN_BankStatementLines[i].getBusinessPartner()
+            .getIdentifier() : FIN_BankStatementLines[i].getBpartnername());
         FieldProviderFactory.setField(data[i], "bankLineReferenceNo", FIN_BankStatementLines[i]
             .getReferenceNo());
         // CREDIT - DEBIT
@@ -531,9 +532,14 @@ public class MatchTransaction extends HttpSecureAppServlet {
               .getFinPayment().getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList()
               .get(0).getInvoicePaymentSchedule() != null ? MATCHED_AGAINST_INVOICE
               : MATCHED_AGAINST_ORDER)));
-          FieldProviderFactory.setField(data[i], "transactionBPartner",
-              transaction.getFinPayment() != null ? transaction.getFinPayment()
-                  .getBusinessPartner().getName() : "");
+          String bpName = "";
+          if (transaction.getFinPayment() != null) {
+            if (transaction.getFinPayment().getBusinessPartner() != null) {
+              bpName = transaction.getFinPayment().getBusinessPartner().getName();
+            }
+          }
+          FieldProviderFactory.setField(data[i], "transactionBPartner", bpName);
+
           FieldProviderFactory
               .setField(
                   data[i],

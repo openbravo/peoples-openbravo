@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -51,6 +51,12 @@
     
     <PARAMETER id="paramDueDateTo" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
     <PARAMETER id="paramDueDateTo" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
+    
+    <PARAMETER id="paramTransDateFrom" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
+    <PARAMETER id="paramTransDateFrom" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
+    
+    <PARAMETER id="paramTransDateTo" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
+    <PARAMETER id="paramTransDateTo" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
     
     <PARAMETER id="sectionDetailPaymentMethod" name="sectionDetailPaymentMethod"/>
     

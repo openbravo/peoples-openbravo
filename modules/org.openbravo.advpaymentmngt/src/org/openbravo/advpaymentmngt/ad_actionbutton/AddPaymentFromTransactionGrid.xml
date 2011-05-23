@@ -18,7 +18,7 @@
  *************************************************************************
 -->
 <REPORT>
-  <template file="AddPaymentProposalGrid.srpt"/> 
+  <template file="AddPaymentFromTransactionGrid.srpt"/> 
 
   <structure name="structure">
     <FIELD id="fieldSelectedPaymentDetailId" attribute="value">finSelectedPaymentDetailId</FIELD>
@@ -28,20 +28,17 @@
     <FIELD id="fieldRecordId" attribute="name" replace="xx">rownum</FIELD>
     <FIELD id="fieldRecordAmt" attribute="value" format="euroEdition">outstandingAmount</FIELD>
     <FIELD id="fieldRecordAmt" attribute="name" replace="xx">finScheduledPaymentDetailId</FIELD>
-    <FIELD id="fieldPaymentMethod">paymentMethodNameTrunc</FIELD>
-    <FIELD id="fieldPaymentMethod" attribute="title" replace="zz">paymentMethodName</FIELD>
-    <FIELD id="fieldBusinessPartner">businessPartnerNameTrunc</FIELD>
-    <FIELD id="fieldBusinessPartner" attribute="title" replace="zz">businessPartnerName</FIELD>
     <FIELD id="fieldOrderNr">orderNr</FIELD>
     <FIELD id="fieldInvoiceNr">invoiceNr</FIELD>
+    <FIELD id="fieldPaymentMethod">paymentMethodName</FIELD>
+    <FIELD id="fieldBusinessPartner">businessPartnerName</FIELD>
+    <FIELD id="fieldTransactionDate">transactionDate</FIELD>
     <FIELD id="fieldDueDate">dueDate</FIELD>
     <FIELD id="fieldInvoicedAmount" format="euroEdition">invoicedAmount</FIELD>
     <FIELD id="fieldExpectedAmount" format="euroEdition">expectedAmount</FIELD>
     <FIELD id="fieldOutstandingAmount" format="euroEdition">outstandingAmount</FIELD>
     <FIELD id="inpPaymentAmount" attribute="name" replace="xx">finScheduledPaymentDetailId</FIELD>
-    <FIELD id="inpPaymentAmount" format="euroEdition" attribute="value">paymentAmount</FIELD>
-    <FIELD id="fieldDifference" attribute="name" replace="xx">finScheduledPaymentDetailId</FIELD>
-    <FIELD id="fieldDifference" format="euroEdition">difference</FIELD>
+    <FIELD id="inpPaymentAmount" attribute="value" format="euroEdition">paymentAmount</FIELD>
     <FIELD id="funcEvenOddRow" attribute="bgcolor" replace="#E1E1E1">gridLineColor</FIELD>
     <FIELD id="paraminvalidSpanxx" attribute="id" replace="xx">finScheduledPaymentDetailId</FIELD>
 

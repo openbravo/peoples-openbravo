@@ -102,7 +102,8 @@ public class TransactionsDao {
       newTransaction.setActivity(payment.getActivity());
       newTransaction.setProject(payment.getProject());
       newTransaction.setCurrency(payment.getCurrency());
-      newTransaction.setDescription(payment.getDescription().replace("\n", ". "));
+      newTransaction.setDescription(payment.getDescription().replace("\n", ". ").substring(0,
+          payment.getDescription().length() > 254 ? 254 : payment.getDescription().length()));
       newTransaction.setClient(payment.getClient());
       newTransaction.setLineNo(getTransactionMaxLineNo(payment.getAccount()) + 10);
       newTransaction
