@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -497,6 +497,9 @@ public class MatchTransaction extends HttpSecureAppServlet {
         // CREDIT - DEBIT
         FieldProviderFactory.setField(data[i], "bankLineAmount", FIN_BankStatementLines[i]
             .getCramount().subtract(FIN_BankStatementLines[i].getDramount()).toString());
+        FieldProviderFactory.setField(data[i], "bankLineDescription", FIN_BankStatementLines[i]
+            .getDescription()
+            + " " + FIN_BankStatementLines[i].getBpartnername());
         FieldProviderFactory
             .setField(
                 data[i],
@@ -519,6 +522,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
               .equals(matchingType)
               || alreadyMatched ? "Y" : "N");
           FieldProviderFactory.setField(data[i], "finTransactionId", transaction.getId());
+          FieldProviderFactory.setField(data[i], "trxDescription", transaction.getDescription());
           FieldProviderFactory.setField(data[i], "transactionDate", Utility.formatDate(transaction
               .getTransactionDate().compareTo(reconciliation.getEndingDate()) > 0 ? reconciliation
               .getEndingDate() : transaction.getTransactionDate(), vars.getJavaDateFormat()));
@@ -554,6 +558,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
           FieldProviderFactory.setField(data[i], "disabled", "Y");
           FieldProviderFactory.setField(data[i], "checked", "N");
           FieldProviderFactory.setField(data[i], "finTransactionId", "");
+          FieldProviderFactory.setField(data[i], "trxDescription", "");
           FieldProviderFactory.setField(data[i], "transactionDate", "");
           FieldProviderFactory.setField(data[i], "transactionBPartner", "");
           FieldProviderFactory.setField(data[i], "transactionReferenceNo", "");

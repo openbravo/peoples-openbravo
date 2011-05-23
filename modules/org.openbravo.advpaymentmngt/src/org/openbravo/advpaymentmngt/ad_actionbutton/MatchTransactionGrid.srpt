@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -23,7 +23,7 @@
     <td class="DataGrid_Body_LineNoCell"></td>
     <!--input type="hidden" id="fieldBLId" name="inpRecordIdxx" value=""></input-->
     <td class="DataGrid_Body_Cell"><span id="fieldBLTransactionDate">xx01-07-2010</span></td>
-    <td class="DataGrid_Body_Cell"><span id="fieldBLBusinessPartner">xxBP Name</span></td>
+    <td class="DataGrid_Body_Cell"><span id="fieldBLBusinessPartner" title="">xxBP Name</span></td>
     <td class="DataGrid_Body_Cell"><span id="fieldBLReferenceNo">xx11100011</span></td>
     <td class="DataGrid_Body_Cell_Amount"><span id="fieldAmount">xx12233</span></td>
     <td class="DataGrid_Body_LineNoCell" style="background-color: xx;" id="inpMatchStyle_xx" name="inpMatchStyle_xx">
@@ -36,9 +36,9 @@
       <a href="#" onclick="openAddTransaction('xx');" id="fieldAddLink">add</a>
     </td>
     <td class="DataGrid_Body_Cell" id="inpMatchedDocument_xx">xxTransaction</td>
-    <td class="DataGrid_Body_Cell" id="inpTransactionDate_xx">xx01-01-2010</td>
-    <td class="DataGrid_Body_Cell" id="inpBPartner_xx">xxBP Name</td>
-    <td class="DataGrid_Body_Cell" id="inpReferenceNo_xx">xx111999111</td>
-    <td class="DataGrid_Body_Cell_Amount" id="inpAmount_xx">xx111222</td>
+    <td class="DataGrid_Body_Cell" id="inpTransactionDate_xx" title="">xx01-01-2010</td>
+    <td class="DataGrid_Body_Cell" id="inpBPartner_xx" title="">xxBP Name</td>
+    <td class="DataGrid_Body_Cell" id="inpReferenceNo_xx" title="">xx111999111</td>
+    <td class="DataGrid_Body_Cell_Amount" id="inpAmount_xx" title="">xx111222</td>
   </tr>
 </div>
