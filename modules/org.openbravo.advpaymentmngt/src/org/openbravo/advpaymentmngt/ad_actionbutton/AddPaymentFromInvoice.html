@@ -82,12 +82,19 @@ function validate(action) {
       showJSMessage(7);
       return false;
     } else {
-      var diffAction = frm.inpDifferenceAction;
-      var i;
+      var diffAction = frm.inpDifferenceAction,
+          i,
+          selectedAction = null,
+          actionSelected = false;
       for (i = 0; i < diffAction.length; i++) {
-        if (diffAction[i].checked) break;
+        if (diffAction[i].checked) {
+          actionSelected = true;
+          break;
+        }
       }
-      var selectedAction = diffAction[i].value;
+      if (actionSelected) {
+        selectedAction = diffAction[i].value;
+      }
       if (!validateSelectedPendingPayments(false, selectedAction)) return false;
     }
   }
@@ -852,8 +859,8 @@ var strText = "";
              </tr>
              
              <tr>
-              <td class="TitleCell" ><span name="lblP" id="lblPText" class="TitleCell LabelText"><label for="paramAlternativePaymentMethod">Show payments out for alternative payment methods</label></span></td>
-              <span name="lblR" id="lblRText" class="TitleCell LabelText"><label for="paramAlternativePaymentMethod">Show payments in for alternative payment methods</label></span>
+              <td class="TitleCell" ><span name="lblP" id="lblPShowAlternative" class="TitleCell LabelText"><label for="paramAlternativePaymentMethod">Show payments out for alternative payment methods</label></span>
+                                     <span name="lblR" id="lblRShowAlternative" class="TitleCell LabelText"><label for="paramAlternativePaymentMethod">Show payments in for alternative payment methods</label></span></td>
               <td class="Radio_Check_ContentCell">
                 <span class="Radio_Check_ContentCell Checkbox_container_NOT_Focused"><input type="checkbox" name="inpAlternativePaymentMethod" value="Y" id="paramAlternativePaymentMethod" onclick="loadGridList()"></input></span>                
               </td>
