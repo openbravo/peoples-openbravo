@@ -238,15 +238,17 @@ function updateDifference() {
   }
   document.getElementById('paramDifference').innerHTML = frm.inpDifference.value;
   displayLogicElement('sectionDifference', ( compare(expected, '!=', total) || compareWithSign(amount, '>', total) ) );
-  displayLogicElement('sectionDifferenceBox', ( compare(expected, '!=', total) || compareWithSign(amount, '>', total) ) );
+  displayLogicElement('sectionDifferenceBox', ( compare(expected, '!=', total) || (isCreditAllowed && compareWithSign(amount, '>', total)) ) );
   displayLogicElement('writeoff', compare(expected, '!=', total) );
   displayLogicElement('underpayment', compareWithSign(expected, '>', total) );
   displayLogicElement('credit', isCreditAllowed && compareWithSign(amount, '>', total) );
   displayLogicElement('refund', isCreditAllowed && isReceipt && compareWithSign(amount, '>', total) );
-  if ( isCreditAllowed && compareWithSign(amount, '>', total) ) {
+  if (!(compare(expected, '!=', total) || (isCreditAllowed && compareWithSign(amount, '>', total)) )) {
+    // No action available
+    selectDifferenceAction('none');
+  } else if ( isCreditAllowed && compareWithSign(amount, '>', total) ) {
     selectDifferenceAction('credit');
-  }
-  else if ( !isCreditAllowed && compareWithSign(expected, '>', total) ) {
+  } else if ( !isCreditAllowed && compareWithSign(expected, '>', total) ) {
     selectDifferenceAction('underpayment');
   }
 }
@@ -438,6 +440,10 @@ function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action
       return false;
     }*/
     actualPayment = add(actualPayment, document.frmMain.inpCredit.value);
+  }
+  if (action === null && compare(frm.inpDifference.value, '!=', 0)) {
+    showJSMessage('APRM_JSDIFFERENCEWITHOUTACTION');
+    return false;
   }
   var selectedTotal = document.frmMain.inpTotal.value;
   if ( compareWithSign(selectedTotal, '>', actualPayment) ) {

@@ -234,12 +234,17 @@ function validate(action) {
       //Do nothing on case of GL Item.
       return true;
     } else {
-      var diffAction = frm.inpDifferenceAction;
-      var i;
+      var diffAction = frm.inpDifferenceAction,
+          selectedAction = null, i, actionSelected = false;
       for (i = 0; i < diffAction.length; i++) {
-        if (diffAction[i].checked) break;
+        if (diffAction[i].checked) {
+          actionSelected = true;
+          break;
+        }
       }
-      var selectedAction = diffAction[i].value;
+      if (actionSelected) {
+         selectedAction = diffAction[i].value;
+      }
       if (!validateSelectedPendingPayments(true, selectedAction)) { return false; }
     }
   }
