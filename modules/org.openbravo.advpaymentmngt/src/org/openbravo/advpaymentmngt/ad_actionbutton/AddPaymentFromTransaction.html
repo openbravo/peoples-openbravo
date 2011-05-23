@@ -256,7 +256,8 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
         updateAll();
         updateTotal();
 
-        if (document.frmMain.paramFinBankStatementLineId.value != "") {
+        if (document.frmMain.paramFinBankStatementLineId.value != "" && document.frmMain.isFirstLoad.value === 'true') {
+          document.frmMain.isFirstLoad.value='false';
           actualPaymentOnChange();
         }
       } else {
@@ -361,6 +362,7 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
   <input type="hidden" name="inpFinancialAccountId" value="" id="paramFinancialAccountId"/>
   <input type="hidden" name="isReceipt" value="" id="fieldReceipt"/>
   <input type="hidden" name="inpFinBankStatementLineId" value="" id="paramFinBankStatementLineId"></input>
+  <input type="hidden" name="isFirstLoad" value="true"/>
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
       <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>
