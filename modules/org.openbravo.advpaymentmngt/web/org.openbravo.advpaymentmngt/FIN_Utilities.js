@@ -20,6 +20,7 @@
 //Global variables definition
 var frm = null,
     isReceipt = true,
+    isCreditAllowed = true,
     globalMaskNumeric = "#0.00",
     globalDecSeparator = ".",
     globalGroupSeparator = ",",
