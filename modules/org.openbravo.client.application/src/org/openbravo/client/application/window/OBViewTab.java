@@ -634,4 +634,8 @@ public class OBViewTab extends BaseTemplateComponent {
     this.isRootTab = isRootTab;
   }
 
+  public boolean isShowParentButtons() {
+    return tab.isShowParentsButtons();
+  }
+
 }
