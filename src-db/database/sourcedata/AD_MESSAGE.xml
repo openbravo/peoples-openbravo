@@ -18335,7 +18335,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--C535B71262404F3A846A3412824FBEBF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C535B71262404F3A846A3412824FBEBF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C535B71262404F3A846A3412824FBEBF-->  <VALUE><![CDATA[CannotEnableNonSubscribedModules]]></VALUE>
-<!--C535B71262404F3A846A3412824FBEBF-->  <MSGTEXT><![CDATA[Cannot enable the following commercial modules because the current license do not include them]]></MSGTEXT>
+<!--C535B71262404F3A846A3412824FBEBF-->  <MSGTEXT><![CDATA[Cannot enable the following commercial modules because the current license does not include them]]></MSGTEXT>
 <!--C535B71262404F3A846A3412824FBEBF-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--C535B71262404F3A846A3412824FBEBF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C535B71262404F3A846A3412824FBEBF--></AD_MESSAGE>
