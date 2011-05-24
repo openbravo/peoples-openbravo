@@ -333,11 +333,20 @@ public class DocFINFinAccTransaction extends AcctServer {
                   .getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
           bpamount = bpamount.add(new BigDecimal(line.getWriteOffAmt()));
         }
-        fact.createLine(line, getAccountBPartner(
-            (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
-                : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
-            !isReceipt ? bpamount.toString() : "", isReceipt ? bpamount.toString() : "",
-            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        // Bug critical: Before GL Item was not taken into account
+        if (!"".equals(line.cGlItemId)) {
+          fact.createLine(line, getAccountGLItem(OBDal.getInstance().get(GLItem.class,
+              line.getCGlItemId()), as, isReceipt, conn), C_Currency_ID, line.getPaymentAmount(),
+              line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        } else {
+          fact
+              .createLine(line,
+                  getAccountBPartner((line.m_C_BPartner_ID == null || line.m_C_BPartner_ID
+                      .equals("")) ? this.C_BPartner_ID : line.m_C_BPartner_ID, as, isReceipt,
+                      isPrepayment, conn), C_Currency_ID, !isReceipt ? bpamount.toString() : "",
+                  isReceipt ? bpamount.toString() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                  DocumentType, conn);
+        }
       }
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
       // credit is generated
