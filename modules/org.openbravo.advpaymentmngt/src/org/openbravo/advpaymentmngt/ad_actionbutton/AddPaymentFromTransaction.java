@@ -372,8 +372,9 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
 
     List<FIN_PaymentScheduleDetail> filteredScheduledPaymentDetails = new ArrayList<FIN_PaymentScheduleDetail>();
 
-    // If business partner is empty search for all filtered scheduled payments list
-    if (!"".equals(strBusinessPartnerId))
+    // If business partner and document number are empty search for all filtered scheduled payments
+    // list
+    if (!"".equals(strBusinessPartnerId) || !"".equals(strDocumentNo)) {
       filteredScheduledPaymentDetails = dao.getFilteredScheduledPaymentDetails(financialAccount
           .getOrganization(), dao.getObject(BusinessPartner.class, strBusinessPartnerId),
           financialAccount.getCurrency(), FIN_Utility.getDate(strDueDateFrom), FIN_Utility
@@ -381,6 +382,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
               .getDate(strTransDateFrom), FIN_Utility.getDate(DateTimeData.nDaysAfter(this,
               strTransDateTo, "1")), strDocumentType, strDocumentNo, null,
           selectedScheduledPaymentDetails, isReceipt);
+    }
     final FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
         selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null);
     xmlDocument.setData("structure", (data == null) ? set() : data);
