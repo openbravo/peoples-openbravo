@@ -68,7 +68,11 @@ public class ModelDataSourceService extends BaseDataSourceService {
     String propertyPath = parameters.get(DATASOURCE_FIELD);
     if (propertyPath == null) {
       HashMap<String, String> criteria = getCriteria(parameters);
-      propertyPath = criteria.get(DATASOURCE_FIELD);
+      if (criteria != null && criteria.containsKey(DATASOURCE_FIELD)) {
+        propertyPath = criteria.get(DATASOURCE_FIELD);
+      } else {
+        propertyPath = "";
+      }
     }
 
     if (baseEntity == null) {
