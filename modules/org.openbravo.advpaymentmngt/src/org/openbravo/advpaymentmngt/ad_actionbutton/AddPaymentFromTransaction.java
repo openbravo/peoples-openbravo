@@ -133,7 +133,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       if (strSelectedScheduledPaymentDetailIds == null) {
         strSelectedScheduledPaymentDetailIds = "";
       }
-      String strDifferenceAction = vars.getRequiredStringParameter("inpDifferenceAction");
+      String strDifferenceAction = vars.getStringParameter("inpDifferenceAction", "");
       BigDecimal refundAmount = BigDecimal.ZERO;
       if (strDifferenceAction.equals("refund"))
         refundAmount = new BigDecimal(vars.getRequiredNumericParameter("inpDifference"));

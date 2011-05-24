@@ -153,7 +153,7 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       String strDifference = vars.getNumericParameter("inpDifference", "0");
       if (!"0".equals(strDifference)) {
         refundAmount = new BigDecimal(vars.getRequiredNumericParameter("inpDifference"));
-        strDifferenceAction = vars.getRequiredStringParameter("inpDifferenceAction");
+        strDifferenceAction = vars.getStringParameter("inpDifferenceAction", "");
       }
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       String strPaymentAmount = vars.getRequiredNumericParameter("inpActualPayment");

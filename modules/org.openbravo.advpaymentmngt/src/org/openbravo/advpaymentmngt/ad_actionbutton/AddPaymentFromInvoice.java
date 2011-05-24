@@ -149,7 +149,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       BigDecimal refundAmount = BigDecimal.ZERO;
       if (!strDifference.equals("0")) {
         refundAmount = new BigDecimal(strDifference);
-        strDifferenceAction = vars.getRequiredStringParameter("inpDifferenceAction");
+        strDifferenceAction = vars.getStringParameter("inpDifferenceAction", "");
       }
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       String strReferenceNo = vars.getStringParameter("inpReferenceNo", "");
