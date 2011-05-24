@@ -435,6 +435,7 @@ function updateAll(drivenByGrid) {
   var recordAmount, i;
   
   if (!chk) {
+    frm.inpExpectedPayment.value = "0";
     return;
   } else if (!chk.length) {
     frm.inpExpectedPayment.value = "0";

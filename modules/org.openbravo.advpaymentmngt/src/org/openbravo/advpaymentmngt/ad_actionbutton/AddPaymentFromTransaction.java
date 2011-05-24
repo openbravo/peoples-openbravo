@@ -21,7 +21,6 @@ package org.openbravo.advpaymentmngt.ad_actionbutton;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +38,6 @@ import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -75,8 +73,10 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
           "inpFinFinancialAccountId", IsIDFilter.instance);
       String strFinBankStatementLineId = vars.getStringParameter("inpFinBankStatementLineId", "",
           IsIDFilter.instance);
+      String strTransactionDate = vars.getStringParameter("inpMainDate", "");
 
-      printPage(response, vars, strFinancialAccountId, isReceipt, strFinBankStatementLineId);
+      printPage(response, vars, strFinancialAccountId, isReceipt, strFinBankStatementLineId,
+          strTransactionDate);
 
     } else if (vars.commandIn("GRIDLIST")) {
       final String strBusinessPartnerId = vars.getRequestGlobalVariable("inpcBpartnerId", "");
@@ -246,8 +246,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strFinancialAccountId, boolean isReceipt, String strFinBankStatementLineId)
-      throws IOException, ServletException {
+      String strFinancialAccountId, boolean isReceipt, String strFinBankStatementLineId,
+      String strTransactionDate) throws IOException, ServletException {
     log4j.debug("Output: Add Payment button pressed on Add Transaction popup.");
     dao = new AdvPaymentMngtDao();
     String defaultPaymentMethod = "";
@@ -265,10 +265,6 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       xmlDocument.setParameter("actualPayment", (isReceipt) ? bsline.getCramount().subtract(
           bsline.getDramount()).toString() : bsline.getDramount().subtract(bsline.getCramount())
           .toString());
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-          "dateFormat.java");
-      SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
-      xmlDocument.setParameter("paymentDate", dateFormater.format(bsline.getTransactionDate()));
       if (bsline.getBusinessPartner() == null) {
         OBCriteria<BusinessPartner> obcBP = OBDal.getInstance().createCriteria(
             BusinessPartner.class);
@@ -281,8 +277,10 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       } else {
         xmlDocument.setParameter("businessPartner", bsline.getBusinessPartner().getId());
       }
-    } else
-      xmlDocument.setParameter("paymentDate", DateTimeData.today(this));
+    }
+    // Take payment date from the add transaction popup
+    xmlDocument.setParameter("paymentDate", strTransactionDate.isEmpty() ? DateTimeData.today(this)
+        : strTransactionDate);
 
     if (isReceipt)
       xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentIn", vars

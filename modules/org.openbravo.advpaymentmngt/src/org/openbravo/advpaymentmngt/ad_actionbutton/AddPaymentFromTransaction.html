@@ -85,6 +85,11 @@ function validate(action) {
       }
       if (actionSelected) {
         selectedAction = diffAction[i].value;
+        if ((frm.inpcBpartnerId.value==null || frm.inpcBpartnerId.value=="") && (selectedAction === "credit" || selectedAction === "refund") ) {
+            setWindowElementFocus(frm.inpBpartnerId_DES);
+            showJSMessage(7);
+            return false;
+        }
       }
       if (!validateSelectedPendingPayments(true, selectedAction)) return false;
     }
@@ -218,6 +223,7 @@ function displayLogicForCredit() {
 }
 
 function onchangeBPartner(dummy) {
+  initialize_MessageBox('messageBoxID');
   loadGridList();
   loadCreditAvailable();
   loadPaymentMethodCombo();
