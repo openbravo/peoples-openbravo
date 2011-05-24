@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRMPendingPaymentFromInvoice;
@@ -155,14 +156,14 @@ public class AdvPaymentMngtDao {
       Date dueDateFrom, Date dueDateTo, String strTransactionType, FIN_PaymentMethod paymentMethod,
       List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails, boolean isReceipt) {
     return getFilteredScheduledPaymentDetails(organization, businessPartner, currency, dueDateFrom,
-        dueDateTo, null, null, strTransactionType, paymentMethod, selectedScheduledPaymentDetails,
-        isReceipt);
+        dueDateTo, null, null, strTransactionType, "", paymentMethod,
+        selectedScheduledPaymentDetails, isReceipt);
   }
 
   public List<FIN_PaymentScheduleDetail> getFilteredScheduledPaymentDetails(
       Organization organization, BusinessPartner businessPartner, Currency currency,
       Date dueDateFrom, Date dueDateTo, Date transactionDateFrom, Date transactionDateTo,
-      String strTransactionType, FIN_PaymentMethod paymentMethod,
+      String strTransactionType, String strDocumentNo, FIN_PaymentMethod paymentMethod,
       List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails, boolean isReceipt) {
 
     final StringBuilder whereClause = new StringBuilder();
@@ -245,6 +246,13 @@ public class AdvPaymentMngtDao {
         whereClause.append(Invoice.PROPERTY_SALESTRANSACTION);
         whereClause.append(" = ");
         whereClause.append(isReceipt);
+        if (!StringUtils.isEmpty(strDocumentNo)) {
+          whereClause.append(" and inv.");
+          whereClause.append(Invoice.PROPERTY_DOCUMENTNO);
+          whereClause.append(" like '%");
+          whereClause.append(strDocumentNo);
+          whereClause.append("%' ");
+        }
         whereClause.append(" and inv.");
         whereClause.append(Invoice.PROPERTY_CURRENCY);
         whereClause.append(".id = '");
@@ -281,6 +289,13 @@ public class AdvPaymentMngtDao {
           whereClause.append(Order.PROPERTY_ORDERDATE);
           whereClause.append(" < ?");
           parameters.add(transactionDateTo);
+        }
+        if (!StringUtils.isEmpty(strDocumentNo)) {
+          whereClause.append(" and ord.");
+          whereClause.append(Order.PROPERTY_DOCUMENTNO);
+          whereClause.append(" like '%");
+          whereClause.append(strDocumentNo);
+          whereClause.append("%' ");
         }
         whereClause.append(" and ord.");
         whereClause.append(Order.PROPERTY_SALESTRANSACTION);

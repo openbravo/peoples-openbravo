@@ -87,12 +87,13 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       final String strTransDateFrom = vars.getStringParameter("inpTransDateFrom", "");
       final String strTransDateTo = vars.getStringParameter("inpTransDateTo", "");
       final String strDocumentType = vars.getStringParameter("inpDocumentType", "");
+      final String strDocumentNo = vars.getStringParameter("inpDocumentNo", "");
       final String strSelectedPaymentDetails = vars.getInStringParameter(
           "inpScheduledPaymentDetailId", IsIDFilter.instance);
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
 
       printGrid(response, vars, strFinancialAccountId, strBusinessPartnerId, strDueDateFrom,
-          strDueDateTo, strTransDateFrom, strTransDateTo, strDocumentType,
+          strDueDateTo, strTransDateFrom, strTransDateTo, strDocumentType, strDocumentNo,
           strSelectedPaymentDetails, isReceipt);
 
     } else if (vars.commandIn("PAYMENTMETHODCOMBO")) {
@@ -350,7 +351,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
   private void printGrid(HttpServletResponse response, VariablesSecureApp vars,
       String strFinancialAccountId, String strBusinessPartnerId, String strDueDateFrom,
       String strDueDateTo, String strTransDateFrom, String strTransDateTo, String strDocumentType,
-      String strSelectedPaymentDetails, boolean isReceipt) throws IOException, ServletException {
+      String strDocumentNo, String strSelectedPaymentDetails, boolean isReceipt)
+      throws IOException, ServletException {
 
     log4j.debug("Output: Grid with pending payments");
 
@@ -377,8 +379,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
           financialAccount.getCurrency(), FIN_Utility.getDate(strDueDateFrom), FIN_Utility
               .getDate(DateTimeData.nDaysAfter(this, strDueDateTo, "1")), FIN_Utility
               .getDate(strTransDateFrom), FIN_Utility.getDate(DateTimeData.nDaysAfter(this,
-              strTransDateTo, "1")), strDocumentType, null, selectedScheduledPaymentDetails,
-          isReceipt);
+              strTransDateTo, "1")), strDocumentType, strDocumentNo, null,
+          selectedScheduledPaymentDetails, isReceipt);
     final FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
         selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null);
     xmlDocument.setData("structure", (data == null) ? set() : data);
