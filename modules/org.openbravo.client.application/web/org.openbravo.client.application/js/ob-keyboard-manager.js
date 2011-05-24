@@ -160,7 +160,7 @@
       },
 
       execute: function(position){
-        if (this.list[position].action !== null) {
+        if (this.list[position].action !== null && typeof this.list[position].action === 'function') {
           return this.list[position].action(this.list[position].funcParam);
         } else {
           return true;
@@ -175,6 +175,14 @@
   // Initialize KeyboardManager object
   keyboardMgr = O.KeyboardManager = new KeyboardManager();
 
-  isc.Page.setEvent('keyPress', 'OB.KeyboardManager.action.keyDown()');
+  /* isc.Page.setEvent('keyPress', 'OB.KeyboardManager.action.keyDown()'); // Discart due to Chrome event propagation problems http://forums.smartclient.com/showthread.php?p=65578 */
+  isc.Canvas.getPrototype()._originalKeyDown = isc.Canvas.getPrototype().keyDown;
+  isc.Canvas.getPrototype().keyDown = function() {
+    var response = OB.KeyboardManager.action.keyDown();
+    if (response) { // To ensure that if a previous keyDown was set in the Canvas it is executed if the action KeyboardManager.action should be propagated
+      response = this._originalKeyDown();
+    }
+    return response;
+  };
 
 }(OB, isc));
