@@ -5203,10 +5203,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--955-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--955-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--955-->  <COLUMNNAME><![CDATA[PriceLimit]]></COLUMNNAME>
-<!--955-->  <NAME><![CDATA[Price Limit]]></NAME>
-<!--955-->  <PRINTNAME><![CDATA[Limit Price]]></PRINTNAME>
-<!--955-->  <DESCRIPTION><![CDATA[The lowest price a specified item may be sold for.]]></DESCRIPTION>
-<!--955-->  <HELP><![CDATA[The Price Limit indicates the lowest price for a product stated in the Price List Currency.]]></HELP>
+<!--955-->  <NAME><![CDATA[Net Price Limit]]></NAME>
+<!--955-->  <PRINTNAME><![CDATA[Net Price Limit]]></PRINTNAME>
+<!--955-->  <DESCRIPTION><![CDATA[The lowest net price a specified item may be sold for.]]></DESCRIPTION>
+<!--955-->  <HELP><![CDATA[The Net Price Limit indicates the lowest price for a product stated in the Price List Currency.]]></HELP>
 <!--955-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--955--></AD_ELEMENT>
 
@@ -25348,5 +25348,16 @@ Solved: The alert has been solved and is not an issue any more.
 Exception: The alert has been acknowledged but not action is going to be made to solve it.]]></HELP>
 <!--FF8080812EC85BDE012EC8B056D20017-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--FF8080812EC85BDE012EC8B056D20017--></AD_ELEMENT>
+
+<!--FF8081813021C3180130226601410050--><AD_ELEMENT>
+<!--FF8081813021C3180130226601410050-->  <AD_ELEMENT_ID><![CDATA[FF8081813021C3180130226601410050]]></AD_ELEMENT_ID>
+<!--FF8081813021C3180130226601410050-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--FF8081813021C3180130226601410050-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--FF8081813021C3180130226601410050-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--FF8081813021C3180130226601410050-->  <COLUMNNAME><![CDATA[BaseNetUnitPrice]]></COLUMNNAME>
+<!--FF8081813021C3180130226601410050-->  <NAME><![CDATA[Base Net Unit Price ]]></NAME>
+<!--FF8081813021C3180130226601410050-->  <PRINTNAME><![CDATA[Base Net Unit Price ]]></PRINTNAME>
+<!--FF8081813021C3180130226601410050-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--FF8081813021C3180130226601410050--></AD_ELEMENT>
 
 </data>
