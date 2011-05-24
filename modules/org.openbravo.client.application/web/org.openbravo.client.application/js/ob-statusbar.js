@@ -68,7 +68,7 @@ isc.OBStatusBarIconButton.addProperties( {
   },
 
   doAction : function() {
-    var rowNum, newRowNum, newRecord, theButtonVar, i;
+    var rowNum, newRowNum, newRecord, theButtonBar, i;
     if (this.buttonType === 'previous') {
       this.view.editNextPreviousRecord(false);
     } else if (this.buttonType === 'maximize') {
@@ -81,14 +81,14 @@ isc.OBStatusBarIconButton.addProperties( {
       this.view.switchFormGridVisibility();
       this.view.messageBar.hide();
     } else if (this.buttonType === 'maximizeRestore') {
-      theButtonVar = this.view.statusBar.buttonBar;
-      if (theButtonVar.members) {
-        for (i = 0; i < theButtonVar.members.length; i++) {
-          if (theButtonVar.members[i].buttonType === 'maximize' && !theButtonVar.members[i].isDisabled() && theButtonVar.members[i].isVisible()) {
-            theButtonVar.members[i].action();
+      theButtonBar = this.view.statusBar.buttonBar;
+      if (theButtonBar.members) {
+        for (i = 0; i < theButtonBar.members.length; i++) {
+          if (theButtonBar.members[i].buttonType === 'maximize' && !theButtonBar.members[i].isDisabled() && theButtonBar.members[i].isVisible()) {
+            theButtonBar.members[i].action();
             break;
-          } else if (theButtonVar.members[i].buttonType === 'restore' && !theButtonVar.members[i].isDisabled() && theButtonVar.members[i].isVisible()) {
-            theButtonVar.members[i].action();
+          } else if (theButtonBar.members[i].buttonType === 'restore' && !theButtonBar.members[i].isDisabled() && theButtonBar.members[i].isVisible()) {
+            theButtonBar.members[i].action();
             break;
           }
         }
@@ -100,7 +100,8 @@ isc.OBStatusBarIconButton.addProperties( {
     if (this.keyboardShortcutId) {
       var me = this;
       var ksAction = function(){
-        if ((!me.isDisabled() && me.isVisible()) || me.buttonType === 'maximizeRestore') {
+        if ((!me.isDisabled() && me.isVisible()) || me.forceKeyboardShortcut) {
+          me.focus();
           me.action();
         }
         return false; //To avoid keyboard shortcut propagation
@@ -182,6 +183,7 @@ isc.OBStatusBar.addProperties( {
       visibility : 'hidden',
       view : this.view,
       buttonType : 'maximizeRestore',
+      forceKeyboardShortcut : true,
       keyboardShortcutId : 'StatusBar_Maximize-Restore'
     });
     this.buttonBar = isc.OBStatusBarIconButtonBar.create( {});
