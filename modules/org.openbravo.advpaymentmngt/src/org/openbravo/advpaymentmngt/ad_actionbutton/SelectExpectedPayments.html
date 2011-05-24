@@ -60,12 +60,30 @@ function validate(action) {
       showJSMessage(7);
       return false;
     } else {
+      var diffAction = frm.inpDifferenceAction, i,
+                       selectedAction, isActionSelected = false;
+      for (i = 0; i < diffAction.length; i++) {
+        if (diffAction[i].checked) {
+          isActionSelected = true;
+          break;
+        }
+      }
+      if (isActionSelected) {
+        selectedAction = diffAction[i].value;
+      }
+      
       var chk = frm.inpScheduledPaymentDetailId;
       if (!chk) return true;
       else if (!chk.length) {
         if (chk.checked) {
           var pendingAmount = document.frmMain.elements["inpRecordAmt"+chk.value].value;
           var amount = document.frmMain.elements["inpPaymentAmount"+chk.value].value;
+          // Only possible to pay 0 in case of a write off
+          if (selectedAction != "writeoff" && compare(amount, '==', 0)) {
+            setWindowElementFocus(frm.elements["inpPaymentAmount"+chk.value]);
+            showJSMessage(9);
+            return false;
+          }
           if (amount==null || amount=="") {
             setWindowElementFocus(frm.elements["inpPaymentAmount"+chk.value]);
             showJSMessage(7);
@@ -83,6 +101,12 @@ function validate(action) {
           if (chk[i].checked ) {
             var pendingAmount = document.frmMain.elements["inpRecordAmt"+chk[i].value].value;
             var amount = document.frmMain.elements["inpPaymentAmount"+chk[i].value].value;
+            // Only possible to pay 0 in case of a write off
+            if (selectedAction != "writeoff" && compare(amount, '==', 0)) {
+              setWindowElementFocus(frm.elements["inpPaymentAmount"+chk[i].value]);
+              showJSMessage(9);
+              return false;
+            }
             if (amount==null || amount=="") {
               setWindowElementFocus(frm.elements["inpPaymentAmount"+chk[i].value]);
               showJSMessage(7);
@@ -128,7 +152,7 @@ function updateData(key, mark) {
 
   if (!mark) { // Clear difference td
     var selTd = getElementsByName("inpDifference"+key, "td");
-	selTd[0].innerHTML = '';
+    selTd[0].innerHTML = '';
   }
 
   return true;
