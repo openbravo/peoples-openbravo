@@ -35,6 +35,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.SearchDomainType;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.base.util.Check;
 import org.openbravo.client.kernel.RequestContext;
@@ -369,9 +370,7 @@ public class AdvancedQueryBuilder {
     if (fieldName.equals(JsonConstants.IDENTIFIER)
         || fieldName.endsWith("." + JsonConstants.IDENTIFIER)) {
       clause = computeLeftWhereClauseForIdentifier(property, fieldName, clause);
-    }
-
-    if (!property.isPrimitive()) {
+    } else if (!property.isPrimitive()) {
       clause = clause + ".id";
     }
 
@@ -433,10 +432,13 @@ public class AdvancedQueryBuilder {
     if (value == null) {
       return value;
     }
-    // a FK
-    if (!property.isPrimitive()) {
+
+    // a FK. Old selectors is an special key, though they are not primitive they should be treated
+    // as text
+    if (!property.isPrimitive() && !(property.getDomainType() instanceof SearchDomainType)) {
       return value;
     }
+
     if (isLike(operator)) {
       if (operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_ICONTAINS)
           || operator.equals(OPERATOR_CONTAINSFIELD)) {
@@ -456,6 +458,10 @@ public class AdvancedQueryBuilder {
         typedValues.add(getTypeSafeValue(OPERATOR_EQUALS, property, values.get(i)));
       }
       return typedValues;
+    }
+
+    if (property.getDomainType() instanceof SearchDomainType) {
+      return value;
     }
 
     if (Boolean.class == property.getPrimitiveObjectType()) {
