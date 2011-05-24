@@ -35,7 +35,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.base.model.domaintype.SearchDomainType;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.base.util.Check;
 import org.openbravo.client.kernel.RequestContext;
@@ -370,7 +369,9 @@ public class AdvancedQueryBuilder {
     if (fieldName.equals(JsonConstants.IDENTIFIER)
         || fieldName.endsWith("." + JsonConstants.IDENTIFIER)) {
       clause = computeLeftWhereClauseForIdentifier(property, fieldName, clause);
-    } else if (!isPrimitive(property)) {
+    }
+
+    if (!property.isPrimitive()) {
       clause = clause + ".id";
     }
 
@@ -403,7 +404,7 @@ public class AdvancedQueryBuilder {
       clause = alias;
     }
 
-    if (!isPrimitive(property)) {
+    if (!property.isPrimitive()) {
       // an in parameter use it...
       if (localValue.toString().contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
         final List<String> values = new ArrayList<String>();
@@ -433,7 +434,7 @@ public class AdvancedQueryBuilder {
       return value;
     }
     // a FK
-    if (!isPrimitive(property)) {
+    if (!property.isPrimitive()) {
       return value;
     }
     if (isLike(operator)) {
@@ -455,10 +456,6 @@ public class AdvancedQueryBuilder {
         typedValues.add(getTypeSafeValue(OPERATOR_EQUALS, property, values.get(i)));
       }
       return typedValues;
-    }
-
-    if (property.getDomainType() instanceof SearchDomainType) {
-      return value;
     }
 
     if (Boolean.class == property.getPrimitiveObjectType()) {
@@ -785,7 +782,7 @@ public class AdvancedQueryBuilder {
           // not supported ignoring it
           continue;
         }
-        if (!isPrimitive(prop)) {
+        if (!prop.isPrimitive()) {
           // get identifier properties from target entity
           // TODO: currently only supports one level, recursive
           // calls have the danger of infinite loops in case of
@@ -909,7 +906,7 @@ public class AdvancedQueryBuilder {
     // check if any new JoinDefinitions should be created
     for (int i = (joinedPropertyIndex + 1); i < props.size(); i++) {
       final Property prop = props.get(i);
-      if (isPrimitive(prop)) {
+      if (prop.isPrimitive()) {
         break;
       }
       // a joinable property
@@ -999,14 +996,5 @@ public class AdvancedQueryBuilder {
 
   public void setCriteria(JSONObject criteria) {
     this.criteria = criteria;
-  }
-
-  /**
-   * Returns whether current property is primitive, old selectors are treated as primitive for
-   * filtering purposes.
-   * 
-   */
-  private boolean isPrimitive(Property prop) {
-    return prop.isPrimitive() || prop.getDomainType() instanceof SearchDomainType;
   }
 }
