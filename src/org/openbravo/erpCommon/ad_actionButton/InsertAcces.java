@@ -173,6 +173,13 @@ public class InsertAcces extends HttpSecureAppServlet {
               InsertAccesData.insertProcess(this, accesData[i].printreport, roleid, vars
                   .getClient(), "0", vars.getUser());
             }
+            if (!accesData[i].editreference.equals("")
+                    && (InsertAccesData.selectForm(this, roleid, accesData[i].editreference) == null || InsertAccesData
+                        .selectForm(this, roleid, accesData[i].editreference).equals(""))) {
+                  log4j.error("Action window fomr tab: " + accesData[i].editreference);
+                  InsertAccesData.insertForm(this, accesData[i].editreference, roleid, vars
+                      .getClient(), "0", vars.getUser());
+                }
             InsertAccesData[] buttons = InsertAccesData.selectWindowButtons(this,
                 accesData[i].adwindowid, roleid);
             if (buttons != null && buttons.length > 0) {

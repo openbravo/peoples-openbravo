@@ -30,10 +30,10 @@
     <![CDATA[
         SELECT DISTINCT tn.Node_ID,tn.Parent_ID, m.ISSUMMARY, m.action, m.AD_WINDOW_ID as adwindowid,
         m.AD_PROCESS_ID as adprocessid, m.AD_FORM_ID as adformid,
-        tb.ad_process_id as printreport
+        tb.ad_process_id as printreport, tb.editreference as editreference
         FROM AD_TREENODE tn, AD_MENU m left join ad_tab tb 
                                        on m.ad_window_id = tb.ad_window_id
-                                          and tb.ad_process_id is not null
+                                          and (tb.ad_process_id is not null or tb.editreference is not null)
         WHERE tn.NODE_ID = m.AD_MENU_ID 
         AND tn.ad_tree_id = '10' 
         AND tn.IsActive='Y' 
