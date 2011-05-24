@@ -21,19 +21,15 @@ package org.openbravo.advpaymentmngt.utility;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
-import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -45,7 +41,6 @@ import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatement;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
-import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.db.CallStoredProcedure;
 
 public abstract class FIN_BankStatementImport {
@@ -179,36 +174,7 @@ public abstract class FIN_BankStatementImport {
 
   private int saveFINBankStatementLines(List<FIN_BankStatementLine> bankStatementLines) {
     int counter = 0;
-    Date maxBSLDate = null;
     for (FIN_BankStatementLine bankStatementLine : bankStatementLines) {
-      if (maxBSLDate == null) {
-        maxBSLDate = getMaxBSLDate(bankStatementLine.getBankStatement().getAccount(),
-            bankStatementLine.getBankStatement());
-      }
-      if (maxBSLDate == null) {
-        FIN_Reconciliation rec = TransactionsDao.getLastReconciliation(bankStatementLine
-            .getBankStatement().getAccount(), null);
-        OBContext.setAdminMode(true);
-        try {
-          maxBSLDate = (rec == null) ? null : rec.getEndingDate();
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-      }
-
-      if (maxBSLDate != null && bankStatementLine.getTransactionDate().compareTo(maxBSLDate) <= 0) {
-        String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-            .getProperty("dateFormat.java");
-        SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
-        OBError msg = new OBError();
-        msg.setType("Error");
-        msg.setTitle(org.openbravo.advpaymentmngt.utility.FIN_Utility.messageBD("Error"));
-        msg.setMessage(org.openbravo.advpaymentmngt.utility.FIN_Utility
-            .messageBD("APRM_BankStatementLineWrongDate")
-            + dateFormater.format(maxBSLDate));
-        setMyError(msg);
-        throw new OBException();
-      }
       bankStatementLine
           .setBusinessPartner(matchBusinessPartner(bankStatementLine.getBpartnername()));
       OBDal.getInstance().save(bankStatementLine);
@@ -216,28 +182,6 @@ public abstract class FIN_BankStatementImport {
     }
     OBDal.getInstance().flush();
     return counter;
-  }
-
-  private Date getMaxBSLDate(FIN_FinancialAccount account, FIN_BankStatement bankstatement) {
-    final StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" as bsl ");
-    whereClause.append(" where bsl.");
-    whereClause.append(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT);
-    whereClause.append("." + FIN_BankStatement.PROPERTY_ACCOUNT + ".id = ");
-    whereClause.append("'" + account.getId() + "'");
-    whereClause.append(" and bsl.");
-    whereClause.append(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT);
-    whereClause.append(".id <> '" + bankstatement.getId() + "'");
-    whereClause.append(" order by bsl.");
-    whereClause.append(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE);
-    whereClause.append(" desc");
-
-    final OBQuery<FIN_BankStatementLine> obData = OBDal.getInstance().createQuery(
-        FIN_BankStatementLine.class, whereClause.toString());
-    for (FIN_BankStatementLine bsl : obData.list()) {
-      return bsl.getTransactionDate();
-    }
-    return null;
   }
 
   private DocumentType getDocumentType() throws Exception {
