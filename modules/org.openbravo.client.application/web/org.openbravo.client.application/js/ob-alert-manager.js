@@ -104,53 +104,63 @@ isc.ClassFactory.defineClass('OBAlertIcon', isc.ImgButton);
 // prompt.
 // The OBAlertIcon extends from the Smartclient Button.
 // The OBAlertIcon registers itself as a listener in the Alert Manager.
-isc.OBAlertIcon
-    .addProperties( {
-      initWidget : function() {
-        var instance = this;
-                
-        var listener = function(rpcResponse, data, rpcRequest) {
-          if (data.cnt > 0) {
-            OB.I18N.getLabel(instance.alertLabel,
-                [ data.cnt ], instance, 'setTitle');
-            instance.setIcon(instance.alertIcon);
-          } else {
-            OB.I18N.getLabel(instance.alertLabel,
-                [ 0 ], instance, 'setTitle');
-            instance.setIcon( {});
-          }
-          instance.markForRedraw();
-        };
+isc.OBAlertIcon.addProperties( {
+  initWidget : function() {
+    var instance = this;
 
-        this.Super('initWidget', arguments);
-
+    var listener = function(rpcResponse, data, rpcRequest) {
+      if (data.cnt > 0) {
         OB.I18N.getLabel(instance.alertLabel,
-            [ '-' ], instance, 'setTitle');
-
-        // call it to update the number of alerts directly after login
-        OB.AlertManager.addListener(listener);
-        OB.TestRegistry.register('org.openbravo.client.application.AlertButton', this);
-      },
-      alertIcon : {
-        src : '[SKINIMG]../../org.openbravo.client.application/images/navbar/iconAlert.png'
-      },
-      alertLabel : 'UINAVBA_Alerts',
-      iconWidth : 11,
-      iconHeight : 13,
-      autoFit : true,
-      baseStyle : 'OBNavBarTextButton',
-      showTitle : true,
-      iconOrientation : 'left',
-      src : '',
-      overflow : 'visible',
-      click : function() {
-        var viewDefinition = {
-          //obManualURL : '/ad_forms/AlertManagement.html',
-          //command : 'DEFAULT',
-          //formId : '800016',
-          i18nTabTitle : 'UINAVBA_AlertManagement'
-        };
-        OB.Layout.ViewManager.openView('OBUIAPP_AlertManagement', viewDefinition);
+            [ data.cnt ], instance, 'setTitle');
+        instance.setIcon(instance.alertIcon);
+      } else {
+        OB.I18N.getLabel(instance.alertLabel,
+            [ 0 ], instance, 'setTitle');
+        instance.setIcon( {});
       }
+      instance.markForRedraw();
+    };
 
-    });
+    this.Super('initWidget', arguments);
+
+    OB.I18N.getLabel(instance.alertLabel,
+        [ '-' ], instance, 'setTitle');
+
+    // call it to update the number of alerts directly after login
+    OB.AlertManager.addListener(listener);
+    OB.TestRegistry.register('org.openbravo.client.application.AlertButton', this);
+  },
+  click : function() {
+    var viewDefinition = {
+      //obManualURL : '/ad_forms/AlertManagement.html',
+      //command : 'DEFAULT',
+      //formId : '800016',
+      i18nTabTitle : 'UINAVBA_AlertManagement'
+    };
+    OB.Layout.ViewManager.openView('OBUIAPP_AlertManagement', viewDefinition);
+  },
+  keyboardShortcutId: 'NavBar_OBAlertIcon',
+  draw: function(){
+    if (this.keyboardShortcutId) {
+      var me = this;
+      var ksAction = function(){
+        me.click();
+        return false; //To avoid keyboard shortcut propagation
+      };
+      OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction);
+    }
+    this.Super('draw', arguments);
+  },
+  alertIcon : {
+    src : '[SKINIMG]../../org.openbravo.client.application/images/navbar/iconAlert.png'
+  },
+  alertLabel : 'UINAVBA_Alerts',
+  iconWidth : 11,
+  iconHeight : 13,
+  autoFit : true,
+  baseStyle : 'OBNavBarTextButton',
+  showTitle : true,
+  iconOrientation : 'left',
+  src : '',
+  overflow : 'visible'
+});

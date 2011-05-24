@@ -404,7 +404,7 @@ isc.OBToolbar.addClassProperties({
     prompt: OB.I18N.getLabel('OBUIAPP_GetDirectLink'),
     updateState: function(){
     },
-    keyboardShortcutId: 'ToolBar_Link'    
+    keyboardShortcutId: 'ToolBar_Link'
   },
   // This offers a mechanism to add properties at runtime to buttons created through
   // templates and java
@@ -425,10 +425,14 @@ isc.OBToolbar.addClassProperties({
           disabled = true;
         }
         this.setDisabled(disabled);
-      }
+      },
+      keyboardShortcutId: 'ToolBar_Audit'
     },
     'print' : {
       keyboardShortcutId: 'ToolBar_Print'
+    },
+    'email' : {
+      keyboardShortcutId: 'ToolBar_Email'
     }
   },
   CLONE_BUTTON_PROPERTIES: {

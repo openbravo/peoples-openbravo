@@ -166,6 +166,7 @@ isc.OBStatusBar.addProperties( {
     this.closeButton = isc.OBStatusBarIconButton.create( {
       view : this.view,
       buttonType : 'close',
+      keyboardShortcutId : 'StatusBar_Close',
       prompt : OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON')
     });
     this.maximizeButton = isc.OBStatusBarIconButton.create( {
