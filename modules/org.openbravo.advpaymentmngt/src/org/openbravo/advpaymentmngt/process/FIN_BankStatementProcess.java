@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
@@ -54,8 +55,10 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
             if (bsl.getTransactionDate().compareTo(maxBSLDate) <= 0) {
               msg.setType("Error");
               msg.setTitle(FIN_Utility.messageBD("Error"));
+              String pattern = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+                  .getProperty("dateFormat.java");
               msg.setMessage(FIN_Utility.messageBD("APRM_BankStatementLineWrongDate")
-                  + Utility.formatDate(maxBSLDate, vars.getJavaDateFormat()));
+                  + Utility.formatDate(maxBSLDate, pattern));
               bundle.setResult(msg);
               return;
             }
