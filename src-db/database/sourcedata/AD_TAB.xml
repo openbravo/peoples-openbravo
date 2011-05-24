@@ -21,6 +21,7 @@
 <!--100-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--100-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--100-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--100-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--100--></AD_TAB>
 
 <!--101--><AD_TAB>
@@ -44,6 +45,7 @@
 <!--101-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--101-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--101-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--101-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--101--></AD_TAB>
 
 <!--102--><AD_TAB>
@@ -67,6 +69,7 @@
 <!--102-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--102-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--102-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--102-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--102--></AD_TAB>
 
 <!--103--><AD_TAB>
@@ -90,6 +93,7 @@
 <!--103-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--103-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--103-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--103-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--103--></AD_TAB>
 
 <!--104--><AD_TAB>
@@ -113,6 +117,7 @@
 <!--104-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--104-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--104-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--104-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--104--></AD_TAB>
 
 <!--105--><AD_TAB>
@@ -136,6 +141,7 @@
 <!--105-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--105-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--105-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--105-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--105--></AD_TAB>
 
 <!--106--><AD_TAB>
@@ -159,6 +165,7 @@
 <!--106-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--106-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--106-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--106-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--106--></AD_TAB>
 
 <!--107--><AD_TAB>
@@ -185,6 +192,7 @@
 <!--107-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--107-->  <HQLFILTERCLAUSE><![CDATA[e.displayed=true]]></HQLFILTERCLAUSE>
 <!--107-->  <FILTERNAME><![CDATA[Displayed fields]]></FILTERNAME>
+<!--107-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--107--></AD_TAB>
 
 <!--108--><AD_TAB>
@@ -208,6 +216,7 @@
 <!--108-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--108-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--108-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--108-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--108--></AD_TAB>
 
 <!--109--><AD_TAB>
@@ -231,6 +240,7 @@
 <!--109-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--109-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--109-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--109-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--109--></AD_TAB>
 
 <!--110--><AD_TAB>
@@ -254,6 +264,7 @@
 <!--110-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--110-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--110-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--110-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--110--></AD_TAB>
 
 <!--111--><AD_TAB>
@@ -277,6 +288,7 @@
 <!--111-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--111-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--111-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--111-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--111--></AD_TAB>
 
 <!--112--><AD_TAB>
@@ -300,6 +312,7 @@
 <!--112-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--112-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--112-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--112-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--112--></AD_TAB>
 
 <!--113--><AD_TAB>
@@ -323,6 +336,7 @@
 <!--113-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--113-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--113-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--113-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--113--></AD_TAB>
 
 <!--115--><AD_TAB>
@@ -346,6 +360,7 @@
 <!--115-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--115-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--115-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--115-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--115--></AD_TAB>
 
 <!--116--><AD_TAB>
@@ -369,6 +384,7 @@
 <!--116-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--116-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--116-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--116-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--116--></AD_TAB>
 
 <!--117--><AD_TAB>
@@ -392,6 +408,7 @@
 <!--117-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--117-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--117-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--117-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--117--></AD_TAB>
 
 <!--118--><AD_TAB>
@@ -418,6 +435,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--118-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--118-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--118-->  <HQLFILTERCLAUSE><![CDATA[e.businessPartner.id in (select id from BusinessPartner bp where bp.employee='Y' or bp.salesRepresentative='Y') or e.businessPartner is null]]></HQLFILTERCLAUSE>
+<!--118-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--118--></AD_TAB>
 
 <!--119--><AD_TAB>
@@ -441,6 +459,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--119-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--119-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--119-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--119-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--119--></AD_TAB>
 
 <!--120--><AD_TAB>
@@ -465,6 +484,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--120-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--120-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--120-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--120-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--120--></AD_TAB>
 
 <!--121--><AD_TAB>
@@ -489,6 +509,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--121-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--121-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--121-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--121-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--121--></AD_TAB>
 
 <!--127--><AD_TAB>
@@ -515,6 +536,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--127-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--127-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--127-->  <HQLWHERECLAUSE><![CDATA[1=1]]></HQLWHERECLAUSE>
+<!--127-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--127--></AD_TAB>
 
 <!--128--><AD_TAB>
@@ -538,6 +560,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--128-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--128-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--128-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--128-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--128--></AD_TAB>
 
 <!--129--><AD_TAB>
@@ -561,6 +584,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--129-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--129-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--129-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--129-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--129--></AD_TAB>
 
 <!--130--><AD_TAB>
@@ -584,6 +608,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--130-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--130-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--130-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--130-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--130--></AD_TAB>
 
 <!--131--><AD_TAB>
@@ -607,6 +632,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--131-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--131-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--131-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--131-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--131--></AD_TAB>
 
 <!--132--><AD_TAB>
@@ -630,6 +656,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--132-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--132-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--132-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--132-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--132--></AD_TAB>
 
 <!--133--><AD_TAB>
@@ -653,6 +680,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--133-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--133-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--133-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--133-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--133--></AD_TAB>
 
 <!--134--><AD_TAB>
@@ -677,6 +705,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--134-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--134-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--134-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--134-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--134--></AD_TAB>
 
 <!--135--><AD_TAB>
@@ -700,6 +729,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--135-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--135-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--135-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--135-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--135--></AD_TAB>
 
 <!--136--><AD_TAB>
@@ -723,6 +753,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--136-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--136-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--136-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--136-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--136--></AD_TAB>
 
 <!--143--><AD_TAB>
@@ -747,6 +778,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--143-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--143-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--143-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--143-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--143--></AD_TAB>
 
 <!--145--><AD_TAB>
@@ -772,6 +804,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--145-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--145-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--145-->  <HQLWHERECLAUSE><![CDATA[e.id=@client@ or e.id='0']]></HQLWHERECLAUSE>
+<!--145-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--145--></AD_TAB>
 
 <!--146--><AD_TAB>
@@ -795,6 +828,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--146-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--146-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--146-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--146-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--146--></AD_TAB>
 
 <!--151--><AD_TAB>
@@ -818,6 +852,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--151-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--151-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--151-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--151-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--151--></AD_TAB>
 
 <!--153--><AD_TAB>
@@ -841,6 +876,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--153-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--153-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--153-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--153-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--153--></AD_TAB>
 
 <!--154--><AD_TAB>
@@ -864,6 +900,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--154-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--154-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--154-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--154-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--154--></AD_TAB>
 
 <!--156--><AD_TAB>
@@ -887,6 +924,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--156-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--156-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--156-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--156-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--156--></AD_TAB>
 
 <!--157--><AD_TAB>
@@ -912,6 +950,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--157-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--157-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--157-->  <HQLWHERECLAUSE><![CDATA[e.projectCategory='S']]></HQLWHERECLAUSE>
+<!--157-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--157--></AD_TAB>
 
 <!--158--><AD_TAB>
@@ -935,6 +974,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--158-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--158-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--158-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--158-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--158--></AD_TAB>
 
 <!--159--><AD_TAB>
@@ -958,6 +998,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--159-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--159-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--159-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--159-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--159--></AD_TAB>
 
 <!--160--><AD_TAB>
@@ -981,6 +1022,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--160-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--160-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--160-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--160-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--160--></AD_TAB>
 
 <!--161--><AD_TAB>
@@ -1004,6 +1046,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--161-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--161-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--161-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--161-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--161--></AD_TAB>
 
 <!--167--><AD_TAB>
@@ -1030,6 +1073,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--167-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--167-->  <HQLFILTERCLAUSE><![CDATA[e.active='Y']]></HQLFILTERCLAUSE>
 <!--167-->  <FILTERNAME><![CDATA[Active documents]]></FILTERNAME>
+<!--167-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--167--></AD_TAB>
 
 <!--169--><AD_TAB>
@@ -1053,6 +1097,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--169-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--169-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--169-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
+<!--169-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--169--></AD_TAB>
 
 <!--170--><AD_TAB>
@@ -1076,6 +1121,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--170-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--170-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--170-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--170-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--170--></AD_TAB>
 
 <!--171--><AD_TAB>
@@ -1099,6 +1145,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--171-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--171-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--171-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--171-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--171--></AD_TAB>
 
 <!--172--><AD_TAB>
@@ -1122,6 +1169,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--172-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--172-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--172-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--172-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--172--></AD_TAB>
 
 <!--174--><AD_TAB>
@@ -1145,6 +1193,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--174-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--174-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--174-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--174-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--174--></AD_TAB>
 
 <!--176--><AD_TAB>
@@ -1168,6 +1217,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--176-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--176-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--176-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--176-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--176--></AD_TAB>
 
 <!--177--><AD_TAB>
@@ -1191,6 +1241,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--177-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--177-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--177-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--177-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--177--></AD_TAB>
 
 <!--178--><AD_TAB>
@@ -1214,6 +1265,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--178-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--178-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--178-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--178-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--178--></AD_TAB>
 
 <!--179--><AD_TAB>
@@ -1239,6 +1291,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--179-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--179-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--179-->  <HQLWHERECLAUSE><![CDATA[e.quantityOnHand<>0 AND e.storageBin.id=@Locator.id@]]></HQLWHERECLAUSE>
+<!--179-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--179--></AD_TAB>
 
 <!--180--><AD_TAB>
@@ -1262,6 +1315,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--180-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--180-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--180-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--180-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--180--></AD_TAB>
 
 <!--181--><AD_TAB>
@@ -1285,6 +1339,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--181-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--181-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--181-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--181-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--181--></AD_TAB>
 
 <!--183--><AD_TAB>
@@ -1309,6 +1364,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--183-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--183-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--183-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--183-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--183--></AD_TAB>
 
 <!--184--><AD_TAB>
@@ -1332,6 +1388,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--184-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--184-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--184-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--184-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--184--></AD_TAB>
 
 <!--185--><AD_TAB>
@@ -1355,6 +1412,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--185-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--185-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--185-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--185-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--185--></AD_TAB>
 
 <!--186--><AD_TAB>
@@ -1381,6 +1439,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--186-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--186-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--186-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=true]]></HQLWHERECLAUSE>
+<!--186-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--186--></AD_TAB>
 
 <!--187--><AD_TAB>
@@ -1404,6 +1463,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--187-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--187-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--187-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--187-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--187--></AD_TAB>
 
 <!--189--><AD_TAB>
@@ -1427,6 +1487,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--189-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--189-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--189-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--189-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--189--></AD_TAB>
 
 <!--191--><AD_TAB>
@@ -1450,6 +1511,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--191-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--191-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--191-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--191-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--191--></AD_TAB>
 
 <!--192--><AD_TAB>
@@ -1476,6 +1538,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--192-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--192-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--192-->  <HQLWHERECLAUSE><![CDATA[e.product in (select p from Product as p where p.active=true)]]></HQLWHERECLAUSE>
+<!--192-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--192--></AD_TAB>
 
 <!--193--><AD_TAB>
@@ -1499,6 +1562,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--193-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--193-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--193-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--193-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--193--></AD_TAB>
 
 <!--198--><AD_TAB>
@@ -1522,6 +1586,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--198-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--198-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--198-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--198-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--198--></AD_TAB>
 
 <!--199--><AD_TAB>
@@ -1546,6 +1611,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--199-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--199-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--199-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--199-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--199--></AD_TAB>
 
 <!--200--><AD_TAB>
@@ -1571,6 +1637,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--200-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--200-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--200-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--200-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--200--></AD_TAB>
 
 <!--201--><AD_TAB>
@@ -1594,6 +1661,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--201-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--201-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--201-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--201-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--201--></AD_TAB>
 
 <!--202--><AD_TAB>
@@ -1617,6 +1685,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--202-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--202-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--202-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--202-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--202--></AD_TAB>
 
 <!--203--><AD_TAB>
@@ -1640,6 +1709,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--203-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--203-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--203-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--203-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--203--></AD_TAB>
 
 <!--204--><AD_TAB>
@@ -1663,6 +1733,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--204-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--204-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--204-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--204-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--204--></AD_TAB>
 
 <!--205--><AD_TAB>
@@ -1686,6 +1757,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--205-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--205-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--205-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--205-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--205--></AD_TAB>
 
 <!--206--><AD_TAB>
@@ -1709,6 +1781,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--206-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--206-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--206-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--206-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--206--></AD_TAB>
 
 <!--207--><AD_TAB>
@@ -1732,6 +1805,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--207-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--207-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--207-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--207-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--207--></AD_TAB>
 
 <!--209--><AD_TAB>
@@ -1755,6 +1829,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--209-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--209-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--209-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--209-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--209--></AD_TAB>
 
 <!--210--><AD_TAB>
@@ -1778,6 +1853,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--210-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--210-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--210-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--210-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--210--></AD_TAB>
 
 <!--211--><AD_TAB>
@@ -1801,6 +1877,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--211-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--211-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--211-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--211-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--211--></AD_TAB>
 
 <!--212--><AD_TAB>
@@ -1825,6 +1902,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--212-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--212-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--212-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--212-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--212--></AD_TAB>
 
 <!--213--><AD_TAB>
@@ -1849,6 +1927,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--213-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--213-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--213-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--213-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--213--></AD_TAB>
 
 <!--214--><AD_TAB>
@@ -1872,6 +1951,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--214-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--214-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--214-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--214-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--214--></AD_TAB>
 
 <!--215--><AD_TAB>
@@ -1895,6 +1975,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--215-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--215-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--215-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--215-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--215--></AD_TAB>
 
 <!--217--><AD_TAB>
@@ -1920,6 +2001,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--217-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--217-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--217-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--217-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--217--></AD_TAB>
 
 <!--220--><AD_TAB>
@@ -1944,6 +2026,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--220-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--220-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--220-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--220-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--220--></AD_TAB>
 
 <!--222--><AD_TAB>
@@ -1967,6 +2050,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--222-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--222-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--222-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--222-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--222--></AD_TAB>
 
 <!--223--><AD_TAB>
@@ -1991,6 +2075,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--223-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--223-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--223-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
+<!--223-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--223--></AD_TAB>
 
 <!--224--><AD_TAB>
@@ -2015,6 +2100,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--224-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--224-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--224-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
+<!--224-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--224--></AD_TAB>
 
 <!--225--><AD_TAB>
@@ -2039,6 +2125,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--225-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--225-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--225-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--225-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--225--></AD_TAB>
 
 <!--226--><AD_TAB>
@@ -2062,6 +2149,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--226-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--226-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--226-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--226-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--226--></AD_TAB>
 
 <!--227--><AD_TAB>
@@ -2085,6 +2173,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--227-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--227-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--227-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--227-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--227--></AD_TAB>
 
 <!--228--><AD_TAB>
@@ -2108,6 +2197,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--228-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--228-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--228-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--228-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--228--></AD_TAB>
 
 <!--229--><AD_TAB>
@@ -2132,6 +2222,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--229-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--229-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--229-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--229-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--229--></AD_TAB>
 
 <!--230--><AD_TAB>
@@ -2155,6 +2246,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--230-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--230-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--230-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--230-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--230--></AD_TAB>
 
 <!--232--><AD_TAB>
@@ -2178,6 +2270,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--232-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--232-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--232-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--232-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--232--></AD_TAB>
 
 <!--233--><AD_TAB>
@@ -2201,6 +2294,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--233-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--233-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--233-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--233-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--233--></AD_TAB>
 
 <!--235--><AD_TAB>
@@ -2224,6 +2318,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--235-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--235-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--235-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--235-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--235--></AD_TAB>
 
 <!--236--><AD_TAB>
@@ -2249,6 +2344,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--236-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--236-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--236-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
+<!--236-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--236--></AD_TAB>
 
 <!--238--><AD_TAB>
@@ -2272,6 +2368,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--238-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--238-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--238-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--238-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--238--></AD_TAB>
 
 <!--239--><AD_TAB>
@@ -2296,6 +2393,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--239-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--239-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--239-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--239-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--239--></AD_TAB>
 
 <!--242--><AD_TAB>
@@ -2319,6 +2417,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--242-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--242-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--242-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--242-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--242--></AD_TAB>
 
 <!--243--><AD_TAB>
@@ -2342,6 +2441,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--243-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--243-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--243-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--243-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--243--></AD_TAB>
 
 <!--245--><AD_TAB>
@@ -2365,6 +2465,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--245-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--245-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--245-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--245-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--245--></AD_TAB>
 
 <!--246--><AD_TAB>
@@ -2388,6 +2489,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--246-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--246-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--246-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--246-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--246--></AD_TAB>
 
 <!--247--><AD_TAB>
@@ -2411,6 +2513,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--247-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--247-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--247-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--247-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--247--></AD_TAB>
 
 <!--248--><AD_TAB>
@@ -2434,6 +2537,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--248-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--248-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--248-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--248-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--248--></AD_TAB>
 
 <!--249--><AD_TAB>
@@ -2456,6 +2560,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--249-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--249-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--249-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--249-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--249--></AD_TAB>
 
 <!--252--><AD_TAB>
@@ -2480,6 +2585,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--252-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--252-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--252-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--252-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--252--></AD_TAB>
 
 <!--255--><AD_TAB>
@@ -2503,6 +2609,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--255-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--255-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--255-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--255-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--255--></AD_TAB>
 
 <!--256--><AD_TAB>
@@ -2526,6 +2633,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--256-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--256-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--256-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--256-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--256--></AD_TAB>
 
 <!--257--><AD_TAB>
@@ -2552,6 +2660,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--257-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--257-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--257-->  <HQLWHERECLAUSE><![CDATA[e.movementType IN ('C-', 'C+') and e.logistic = 'N']]></HQLWHERECLAUSE>
+<!--257-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--257--></AD_TAB>
 
 <!--258--><AD_TAB>
@@ -2575,6 +2684,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--258-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--258-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--258-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--258-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--258--></AD_TAB>
 
 <!--259--><AD_TAB>
@@ -2598,6 +2708,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--259-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--259-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--259-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--259-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--259--></AD_TAB>
 
 <!--260--><AD_TAB>
@@ -2623,6 +2734,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--260-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--260-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--260-->  <HQLORDERBYCLAUSE><![CDATA[line]]></HQLORDERBYCLAUSE>
+<!--260-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--260--></AD_TAB>
 
 <!--262--><AD_TAB>
@@ -2649,6 +2761,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--262-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--262-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--262-->  <HQLWHERECLAUSE><![CDATA[e.storageBin.id=@Locator.id@]]></HQLWHERECLAUSE>
+<!--262-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--262--></AD_TAB>
 
 <!--263--><AD_TAB>
@@ -2675,6 +2788,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--263-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--263-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--263-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=true]]></HQLWHERECLAUSE>
+<!--263-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--263--></AD_TAB>
 
 <!--270--><AD_TAB>
@@ -2698,6 +2812,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--270-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--270-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--270-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--270-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--270--></AD_TAB>
 
 <!--271--><AD_TAB>
@@ -2723,6 +2838,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--271-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--271-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--271-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
+<!--271-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--271--></AD_TAB>
 
 <!--273--><AD_TAB>
@@ -2746,6 +2862,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--273-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--273-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--273-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--273-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--273--></AD_TAB>
 
 <!--282--><AD_TAB>
@@ -2768,6 +2885,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--282-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--282-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--282-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--282-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--282--></AD_TAB>
 
 <!--283--><AD_TAB>
@@ -2790,6 +2908,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--283-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--283-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--283-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--283-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--283--></AD_TAB>
 
 <!--284--><AD_TAB>
@@ -2812,6 +2931,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--284-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--284-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--284-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--284-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--284--></AD_TAB>
 
 <!--289--><AD_TAB>
@@ -2838,6 +2958,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--289-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--289-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--289-->  <HQLWHERECLAUSE><![CDATA[e.product.id=@Product.id@]]></HQLWHERECLAUSE>
+<!--289-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--289--></AD_TAB>
 
 <!--290--><AD_TAB>
@@ -2864,6 +2985,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--290-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--290-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--290-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=false]]></HQLWHERECLAUSE>
+<!--290-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--290--></AD_TAB>
 
 <!--291--><AD_TAB>
@@ -2887,6 +3009,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--291-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--291-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--291-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--291-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--291--></AD_TAB>
 
 <!--292--><AD_TAB>
@@ -2912,6 +3035,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--292-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--292-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--292-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
+<!--292-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--292--></AD_TAB>
 
 <!--293--><AD_TAB>
@@ -2935,6 +3059,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--293-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--293-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--293-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--293-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--293--></AD_TAB>
 
 <!--294--><AD_TAB>
@@ -2961,6 +3086,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--294-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--294-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--294-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=false]]></HQLWHERECLAUSE>
+<!--294-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--294--></AD_TAB>
 
 <!--295--><AD_TAB>
@@ -2986,6 +3112,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--295-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--295-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--295-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
+<!--295-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--295--></AD_TAB>
 
 <!--296--><AD_TAB>
@@ -3012,6 +3139,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--296-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--296-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--296-->  <HQLWHERECLAUSE><![CDATA[e.movementType IN ('V-', 'V+') and e.logistic = 'N']]></HQLWHERECLAUSE>
+<!--296-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--296--></AD_TAB>
 
 <!--297--><AD_TAB>
@@ -3035,6 +3163,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--297-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--297-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--297-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--297-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--297--></AD_TAB>
 
 <!--302--><AD_TAB>
@@ -3058,6 +3187,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--302-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--302-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--302-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--302-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--302--></AD_TAB>
 
 <!--303--><AD_TAB>
@@ -3081,6 +3211,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--303-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--303-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--303-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--303-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--303--></AD_TAB>
 
 <!--304--><AD_TAB>
@@ -3105,6 +3236,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--304-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--304-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--304-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--304-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--304--></AD_TAB>
 
 <!--305--><AD_TAB>
@@ -3129,6 +3261,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--305-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--305-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--305-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--305-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--305--></AD_TAB>
 
 <!--306--><AD_TAB>
@@ -3153,6 +3286,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--306-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--306-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--306-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--306-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--306--></AD_TAB>
 
 <!--308--><AD_TAB>
@@ -3177,6 +3311,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--308-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--308-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--308-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--308-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--308--></AD_TAB>
 
 <!--309--><AD_TAB>
@@ -3201,6 +3336,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--309-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--309-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--309-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--309-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--309--></AD_TAB>
 
 <!--311--><AD_TAB>
@@ -3225,6 +3361,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--311-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--311-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--311-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--311-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--311--></AD_TAB>
 
 <!--317--><AD_TAB>
@@ -3248,6 +3385,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--317-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--317-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--317-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--317-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--317--></AD_TAB>
 
 <!--319--><AD_TAB>
@@ -3273,6 +3411,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--319-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--319-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--319-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=true]]></HQLWHERECLAUSE>
+<!--319-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--319--></AD_TAB>
 
 <!--320--><AD_TAB>
@@ -3296,6 +3435,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--320-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--320-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--320-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--320-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--320--></AD_TAB>
 
 <!--321--><AD_TAB>
@@ -3319,6 +3459,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--321-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--321-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--321-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--321-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--321--></AD_TAB>
 
 <!--322--><AD_TAB>
@@ -3342,6 +3483,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--322-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--322-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--322-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--322-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--322--></AD_TAB>
 
 <!--323--><AD_TAB>
@@ -3366,6 +3508,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--323-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--323-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--323-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--323-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--323--></AD_TAB>
 
 <!--324--><AD_TAB>
@@ -3389,6 +3532,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--324-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--324-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--324-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--324-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--324--></AD_TAB>
 
 <!--327--><AD_TAB>
@@ -3412,6 +3556,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--327-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--327-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--327-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--327-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--327--></AD_TAB>
 
 <!--328--><AD_TAB>
@@ -3435,6 +3580,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--328-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--328-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--328-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--328-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--328--></AD_TAB>
 
 <!--329--><AD_TAB>
@@ -3458,6 +3604,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--329-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--329-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--329-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--329-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--329--></AD_TAB>
 
 <!--333--><AD_TAB>
@@ -3481,6 +3628,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--333-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--333-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--333-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--333-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--333--></AD_TAB>
 
 <!--336--><AD_TAB>
@@ -3504,6 +3652,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--336-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--336-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--336-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--336-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--336--></AD_TAB>
 
 <!--337--><AD_TAB>
@@ -3527,6 +3676,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--337-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--337-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--337-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--337-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--337--></AD_TAB>
 
 <!--338--><AD_TAB>
@@ -3550,6 +3700,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--338-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--338-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--338-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--338-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--338--></AD_TAB>
 
 <!--339--><AD_TAB>
@@ -3573,6 +3724,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--339-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--339-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--339-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--339-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--339--></AD_TAB>
 
 <!--342--><AD_TAB>
@@ -3596,6 +3748,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--342-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--342-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--342-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--342-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--342--></AD_TAB>
 
 <!--343--><AD_TAB>
@@ -3619,6 +3772,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--343-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--343-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--343-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--343-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--343--></AD_TAB>
 
 <!--351--><AD_TAB>
@@ -3642,6 +3796,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--351-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--351-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--351-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--351-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--351--></AD_TAB>
 
 <!--355--><AD_TAB>
@@ -3665,6 +3820,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--355-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--355-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--355-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--355-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--355--></AD_TAB>
 
 <!--356--><AD_TAB>
@@ -3688,6 +3844,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--356-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--356-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--356-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--356-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--356--></AD_TAB>
 
 <!--362--><AD_TAB>
@@ -3711,6 +3868,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--362-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--362-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--362-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--362-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--362--></AD_TAB>
 
 <!--363--><AD_TAB>
@@ -3734,6 +3892,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--363-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--363-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--363-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--363-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--363--></AD_TAB>
 
 <!--364--><AD_TAB>
@@ -3758,6 +3917,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--364-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--364-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--364-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--364-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--364--></AD_TAB>
 
 <!--365--><AD_TAB>
@@ -3781,6 +3941,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--365-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--365-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--365-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--365-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--365--></AD_TAB>
 
 <!--384--><AD_TAB>
@@ -3804,6 +3965,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--384-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--384-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--384-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--384-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--384--></AD_TAB>
 
 <!--391--><AD_TAB>
@@ -3829,6 +3991,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--391-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--391-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--391-->  <HQLWHERECLAUSE><![CDATA[e.bindaryData is null]]></HQLWHERECLAUSE>
+<!--391-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--391--></AD_TAB>
 
 <!--404--><AD_TAB>
@@ -3853,6 +4016,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--404-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--404-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--404-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--404-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--404--></AD_TAB>
 
 <!--405--><AD_TAB>
@@ -3877,6 +4041,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--405-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--405-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--405-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--405-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--405--></AD_TAB>
 
 <!--407--><AD_TAB>
@@ -3904,6 +4069,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--407-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--407-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--407-->  <HQLWHERECLAUSE><![CDATA[e.productCategory.id=@ProductCategory.id@]]></HQLWHERECLAUSE>
+<!--407-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--407--></AD_TAB>
 
 <!--408--><AD_TAB>
@@ -3928,6 +4094,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--408-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--408-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--408-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--408-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--408--></AD_TAB>
 
 <!--409--><AD_TAB>
@@ -3952,6 +4119,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--409-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--409-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--409-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--409-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--409--></AD_TAB>
 
 <!--410--><AD_TAB>
@@ -3976,6 +4144,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--410-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--410-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--410-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--410-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--410--></AD_TAB>
 
 <!--411--><AD_TAB>
@@ -4001,6 +4170,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--411-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--411-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--411-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--411-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--411--></AD_TAB>
 
 <!--412--><AD_TAB>
@@ -4025,6 +4195,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--412-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--412-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--412-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--412-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--412--></AD_TAB>
 
 <!--413--><AD_TAB>
@@ -4049,6 +4220,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--413-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--413-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--413-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--413-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--413--></AD_TAB>
 
 <!--414--><AD_TAB>
@@ -4073,6 +4245,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--414-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--414-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--414-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--414-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--414--></AD_TAB>
 
 <!--415--><AD_TAB>
@@ -4098,6 +4271,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--415-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--415-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--415-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--415-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--415--></AD_TAB>
 
 <!--416--><AD_TAB>
@@ -4122,6 +4296,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--416-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--416-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--416-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--416-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--416--></AD_TAB>
 
 <!--417--><AD_TAB>
@@ -4147,6 +4322,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--417-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--417-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--417-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--417-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--417--></AD_TAB>
 
 <!--418--><AD_TAB>
@@ -4171,6 +4347,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--418-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--418-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--418-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--418-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--418--></AD_TAB>
 
 <!--419--><AD_TAB>
@@ -4196,6 +4373,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--419-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--419-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--419-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--419-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--419--></AD_TAB>
 
 <!--420--><AD_TAB>
@@ -4221,6 +4399,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--420-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--420-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--420-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--420-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--420--></AD_TAB>
 
 <!--421--><AD_TAB>
@@ -4246,6 +4425,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--421-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--421-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--421-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--421-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--421--></AD_TAB>
 
 <!--422--><AD_TAB>
@@ -4271,6 +4451,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--422-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--422-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--422-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--422-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--422--></AD_TAB>
 
 <!--430--><AD_TAB>
@@ -4297,6 +4478,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--430-->  <ISSORTTAB><![CDATA[Y]]></ISSORTTAB>
 <!--430-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--430-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--430-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--430--></AD_TAB>
 
 <!--431--><AD_TAB>
@@ -4324,6 +4506,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--431-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--431-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--431-->  <HQLWHERECLAUSE><![CDATA[e in (select t2.businessPartner from TimeAndExpenseSheet as t1, TimeAndExpenseSheetLine as t2 where t1=t2.expenseSheet and t1.processed='Y' and t2.reinvoice='Y' and t2.salesOrderLine is null))]]></HQLWHERECLAUSE>
+<!--431-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--431--></AD_TAB>
 
 <!--432--><AD_TAB>
@@ -4350,6 +4533,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--432-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--432-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--432-->  <HQLWHERECLAUSE><![CDATA[e.reinvoice='Y' and e.expenseSheet in (select t from TimeAndExpenseSheet t where t.processed='Y'))]]></HQLWHERECLAUSE>
+<!--432-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--432--></AD_TAB>
 
 <!--440--><AD_TAB>
@@ -4374,6 +4558,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--440-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--440-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--440-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--440-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--440--></AD_TAB>
 
 <!--452--><AD_TAB>
@@ -4398,6 +4583,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--452-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--452-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--452-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--452-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--452--></AD_TAB>
 
 <!--456--><AD_TAB>
@@ -4423,6 +4609,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--456-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--456-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--456-->  <HQLWHERECLAUSE><![CDATA[e in (select t1.businessPartner from TimeAndExpenseSheet as t1, TimeAndExpenseSheetLine as t2 where t1=t2.expenseSheet and t1.processed='Y' and t2.timeSheet<>'Y' and t2.invoiceLine is null))]]></HQLWHERECLAUSE>
+<!--456-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--456--></AD_TAB>
 
 <!--457--><AD_TAB>
@@ -4447,6 +4634,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--457-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--457-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--457-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--457-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--457--></AD_TAB>
 
 <!--458--><AD_TAB>
@@ -4472,6 +4660,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--458-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--458-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--458-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--458-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--458--></AD_TAB>
 
 <!--461--><AD_TAB>
@@ -4496,6 +4685,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--461-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--461-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--461-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--461-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--461--></AD_TAB>
 
 <!--462--><AD_TAB>
@@ -4520,6 +4710,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--462-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--462-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--462-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--462-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--462--></AD_TAB>
 
 <!--463--><AD_TAB>
@@ -4544,6 +4735,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--463-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--463-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--463-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--463-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--463--></AD_TAB>
 
 <!--464--><AD_TAB>
@@ -4568,6 +4760,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--464-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--464-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--464-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--464-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--464--></AD_TAB>
 
 <!--465--><AD_TAB>
@@ -4592,6 +4785,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--465-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--465-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--465-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--465-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--465--></AD_TAB>
 
 <!--466--><AD_TAB>
@@ -4616,6 +4810,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--466-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--466-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--466-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--466-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--466--></AD_TAB>
 
 <!--467--><AD_TAB>
@@ -4641,6 +4836,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--467-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--467-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--467-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--467-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--467--></AD_TAB>
 
 <!--475--><AD_TAB>
@@ -4668,6 +4864,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--475-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--475-->  <HQLFILTERCLAUSE><![CDATA[e.sessionActive='Y']]></HQLFILTERCLAUSE>
 <!--475-->  <FILTERNAME><![CDATA[Active sessions]]></FILTERNAME>
+<!--475-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--475--></AD_TAB>
 
 <!--476--><AD_TAB>
@@ -4692,6 +4889,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--476-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--476-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--476-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--476-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--476--></AD_TAB>
 
 <!--477--><AD_TAB>
@@ -4716,6 +4914,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--477-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--477-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--477-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--477-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--477--></AD_TAB>
 
 <!--478--><AD_TAB>
@@ -4740,6 +4939,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--478-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--478-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--478-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--478-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--478--></AD_TAB>
 
 <!--482--><AD_TAB>
@@ -4765,6 +4965,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--482-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--482-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--482-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--482-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--482--></AD_TAB>
 
 <!--485--><AD_TAB>
@@ -4789,6 +4990,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--485-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--485-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--485-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--485-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--485--></AD_TAB>
 
 <!--490--><AD_TAB>
@@ -4813,6 +5015,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--490-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--490-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--490-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--490-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--490--></AD_TAB>
 
 <!--492--><AD_TAB>
@@ -4837,6 +5040,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--492-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--492-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--492-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--492-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--492--></AD_TAB>
 
 <!--496--><AD_TAB>
@@ -4862,6 +5066,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--496-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--496-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--496-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--496-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--496--></AD_TAB>
 
 <!--513--><AD_TAB>
@@ -4886,6 +5091,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--513-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--513-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--513-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--513-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--513--></AD_TAB>
 
 <!--514--><AD_TAB>
@@ -4910,6 +5116,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--514-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--514-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--514-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--514-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--514--></AD_TAB>
 
 <!--515--><AD_TAB>
@@ -4934,6 +5141,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--515-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--515-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--515-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--515-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--515--></AD_TAB>
 
 <!--516--><AD_TAB>
@@ -4958,6 +5166,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--516-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--516-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--516-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--516-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--516--></AD_TAB>
 
 <!--517--><AD_TAB>
@@ -4982,6 +5191,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--517-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--517-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--517-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--517-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--517--></AD_TAB>
 
 <!--518--><AD_TAB>
@@ -5006,6 +5216,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--518-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--518-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--518-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--518-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--518--></AD_TAB>
 
 <!--519--><AD_TAB>
@@ -5030,6 +5241,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--519-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--519-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--519-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--519-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--519--></AD_TAB>
 
 <!--520--><AD_TAB>
@@ -5054,6 +5266,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--520-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--520-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--520-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--520-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--520--></AD_TAB>
 
 <!--526--><AD_TAB>
@@ -5078,6 +5291,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--526-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--526-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--526-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--526-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--526--></AD_TAB>
 
 <!--549--><AD_TAB>
@@ -5103,6 +5317,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--549-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--549-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--549-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--549-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--549--></AD_TAB>
 
 <!--550--><AD_TAB>
@@ -5127,6 +5342,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--550-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--550-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--550-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--550-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--550--></AD_TAB>
 
 <!--551--><AD_TAB>
@@ -5153,6 +5369,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--551-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--551-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--551-->  <HQLWHERECLAUSE><![CDATA[e.businessPartner.id=@BusinessPartner.id@]]></HQLWHERECLAUSE>
+<!--551-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--551--></AD_TAB>
 
 <!--552--><AD_TAB>
@@ -5179,6 +5396,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--552-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--552-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--552-->  <HQLWHERECLAUSE><![CDATA[e.businessPartner.id=@BusinessPartner.id@]]></HQLWHERECLAUSE>
+<!--552-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--552--></AD_TAB>
 
 <!--553--><AD_TAB>
@@ -5205,6 +5423,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--553-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--553-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--553-->  <HQLWHERECLAUSE><![CDATA[e.businessPartner.id=@BusinessPartner.id@]]></HQLWHERECLAUSE>
+<!--553-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--553--></AD_TAB>
 
 <!--555--><AD_TAB>
@@ -5231,6 +5450,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--555-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--555-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--555-->  <HQLWHERECLAUSE><![CDATA[e.businessPartner.id=@BusinessPartner.id@]]></HQLWHERECLAUSE>
+<!--555-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--555--></AD_TAB>
 
 <!--557--><AD_TAB>
@@ -5256,6 +5476,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--557-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--557-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--557-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--557-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--557--></AD_TAB>
 
 <!--800000--><AD_TAB>
@@ -5280,6 +5501,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800000-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800000-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800000-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800000--></AD_TAB>
 
 <!--800001--><AD_TAB>
@@ -5304,6 +5526,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800001-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800001-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800001-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800001--></AD_TAB>
 
 <!--800002--><AD_TAB>
@@ -5330,6 +5553,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800002-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800002-->  <HQLWHERECLAUSE><![CDATA[(e.projectCategory<>'S' or e.projectCategory IS NULL)]]></HQLWHERECLAUSE>
+<!--800002-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800002--></AD_TAB>
 
 <!--800003--><AD_TAB>
@@ -5356,6 +5580,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800003-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800003-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
+<!--800003-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800003--></AD_TAB>
 
 <!--800004--><AD_TAB>
@@ -5381,6 +5606,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800004-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800004-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800004-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800004-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800004--></AD_TAB>
 
 <!--800005--><AD_TAB>
@@ -5405,6 +5631,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800005-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800005-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800005-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800005-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800005--></AD_TAB>
 
 <!--800006--><AD_TAB>
@@ -5429,6 +5656,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800006-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800006-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800006-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800006-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800006--></AD_TAB>
 
 <!--800007--><AD_TAB>
@@ -5453,6 +5681,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800007-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800007-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800007-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800007-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800007--></AD_TAB>
 
 <!--800008--><AD_TAB>
@@ -5477,6 +5706,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800008-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800008-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800008-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800008-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800008--></AD_TAB>
 
 <!--800009--><AD_TAB>
@@ -5503,6 +5733,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800009-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800009-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800009-->  <HQLWHERECLAUSE><![CDATA[e.BusinessPartner.id = @BusinessPartner.id@]]></HQLWHERECLAUSE>
+<!--800009-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800009--></AD_TAB>
 
 <!--800012--><AD_TAB>
@@ -5527,6 +5758,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800012-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800012-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800012-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800012-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800012--></AD_TAB>
 
 <!--800013--><AD_TAB>
@@ -5551,6 +5783,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800013-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800013-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800013-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800013-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800013--></AD_TAB>
 
 <!--800014--><AD_TAB>
@@ -5575,6 +5808,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800014-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800014-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800014-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800014-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800014--></AD_TAB>
 
 <!--800015--><AD_TAB>
@@ -5599,6 +5833,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800015-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800015-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800015-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800015-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800015--></AD_TAB>
 
 <!--800016--><AD_TAB>
@@ -5625,6 +5860,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800016-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800016-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800016-->  <HQLWHERECLAUSE><![CDATA[e.volumeDiscount.id=@VolumeDiscount.id@]]></HQLWHERECLAUSE>
+<!--800016-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800016--></AD_TAB>
 
 <!--800017--><AD_TAB>
@@ -5649,6 +5885,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800017-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800017-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800017-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800017-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800017--></AD_TAB>
 
 <!--800018--><AD_TAB>
@@ -5675,6 +5912,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800018-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800018-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800018-->  <HQLWHERECLAUSE><![CDATA["e.bPVolumeDiscount.id = @BusinessPartner.id@"]]></HQLWHERECLAUSE>
+<!--800018-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800018--></AD_TAB>
 
 <!--800019--><AD_TAB>
@@ -5699,6 +5937,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800019-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800019-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800019-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800019-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800019--></AD_TAB>
 
 <!--800025--><AD_TAB>
@@ -5728,6 +5967,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800025-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800025-->  <HQLWHERECLAUSE><![CDATA[e.settlementType<>'I']]></HQLWHERECLAUSE>
 <!--800025-->  <HQLFILTERCLAUSE><![CDATA[e.settlementType='C']]></HQLFILTERCLAUSE>
+<!--800025-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800025--></AD_TAB>
 
 <!--800026--><AD_TAB>
@@ -5752,6 +5992,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800026-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800026-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800026-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--800026-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800026--></AD_TAB>
 
 <!--800027--><AD_TAB>
@@ -5779,6 +6020,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800027-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800027-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800027-->  <HQLWHERECLAUSE><![CDATA[e.manual='N']]></HQLWHERECLAUSE>
+<!--800027-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800027--></AD_TAB>
 
 <!--800028--><AD_TAB>
@@ -5804,6 +6046,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800028-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800028-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800028-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800028-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800028--></AD_TAB>
 
 <!--800029--><AD_TAB>
@@ -5829,6 +6072,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800029-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800029-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800029-->  <HQLWHERECLAUSE><![CDATA[e.settlementType='I']]></HQLWHERECLAUSE>
+<!--800029-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800029--></AD_TAB>
 
 <!--800031--><AD_TAB>
@@ -5854,6 +6098,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800031-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800031-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800031-->  <HQLWHERECLAUSE><![CDATA[e.manual='Y']]></HQLWHERECLAUSE>
+<!--800031-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800031--></AD_TAB>
 
 <!--800032--><AD_TAB>
@@ -5878,6 +6123,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800032-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800032-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800032-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800032-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800032--></AD_TAB>
 
 <!--800033--><AD_TAB>
@@ -5902,6 +6148,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800033-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800033-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800033-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800033-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800033--></AD_TAB>
 
 <!--800034--><AD_TAB>
@@ -5926,6 +6173,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800034-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800034-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800034-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800034-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800034--></AD_TAB>
 
 <!--800035--><AD_TAB>
@@ -5950,6 +6198,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800035-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800035-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800035-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--800035-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800035--></AD_TAB>
 
 <!--800036--><AD_TAB>
@@ -5975,6 +6224,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800036-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800036-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800036-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800036-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800036--></AD_TAB>
 
 <!--800038--><AD_TAB>
@@ -5999,6 +6249,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800038-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800038-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800038-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800038-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800038--></AD_TAB>
 
 <!--800041--><AD_TAB>
@@ -6023,6 +6274,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800041-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800041-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800041-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800041-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800041--></AD_TAB>
 
 <!--800049--><AD_TAB>
@@ -6046,6 +6298,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800049-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800049-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800049-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800049-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800049--></AD_TAB>
 
 <!--800050--><AD_TAB>
@@ -6072,6 +6325,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800050-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800050-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800050-->  <HQLWHERECLAUSE><![CDATA[e.movementType IN ('V-', 'V+') and e.logistic = 'Y']]></HQLWHERECLAUSE>
+<!--800050-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800050--></AD_TAB>
 
 <!--800051--><AD_TAB>
@@ -6098,6 +6352,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800051-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800051-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800051-->  <HQLWHERECLAUSE><![CDATA[e.movementType IN ('C-', 'C+') and e.logistic = 'Y']]></HQLWHERECLAUSE>
+<!--800051-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800051--></AD_TAB>
 
 <!--800052--><AD_TAB>
@@ -6121,6 +6376,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800052-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800052-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800052-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800052-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800052--></AD_TAB>
 
 <!--800054--><AD_TAB>
@@ -6145,6 +6401,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800054-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800054-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800054-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800054-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800054--></AD_TAB>
 
 <!--800055--><AD_TAB>
@@ -6169,6 +6426,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800055-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800055-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800055-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800055-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800055--></AD_TAB>
 
 <!--800056--><AD_TAB>
@@ -6193,6 +6451,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800056-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800056-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800056-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800056-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800056--></AD_TAB>
 
 <!--800057--><AD_TAB>
@@ -6219,6 +6478,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800057-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800057-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800057-->  <HQLORDERBYCLAUSE><![CDATA[startingDate, endingDate]]></HQLORDERBYCLAUSE>
+<!--800057-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800057--></AD_TAB>
 
 <!--800058--><AD_TAB>
@@ -6244,6 +6504,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800058-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800058-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800058-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800058-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800058--></AD_TAB>
 
 <!--800059--><AD_TAB>
@@ -6266,6 +6527,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800059-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800059-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800059-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800059-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800059--></AD_TAB>
 
 <!--800060--><AD_TAB>
@@ -6290,6 +6552,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800060-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800060-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800060-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800060-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800060--></AD_TAB>
 
 <!--800061--><AD_TAB>
@@ -6314,6 +6577,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800061-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800061-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800061-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800061-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800061--></AD_TAB>
 
 <!--800062--><AD_TAB>
@@ -6338,6 +6602,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800062-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800062-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800062-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800062-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800062--></AD_TAB>
 
 <!--800063--><AD_TAB>
@@ -6364,6 +6629,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800063-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800063-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800063-->  <HQLORDERBYCLAUSE><![CDATA[searchKey]]></HQLORDERBYCLAUSE>
+<!--800063-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800063--></AD_TAB>
 
 <!--800064--><AD_TAB>
@@ -6388,6 +6654,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800064-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800064-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800064-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800064-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800064--></AD_TAB>
 
 <!--800074--><AD_TAB>
@@ -6412,6 +6679,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800074-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800074-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800074-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800074-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800074--></AD_TAB>
 
 <!--800075--><AD_TAB>
@@ -6436,6 +6704,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800075-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800075-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800075-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800075-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800075--></AD_TAB>
 
 <!--800076--><AD_TAB>
@@ -6460,6 +6729,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800076-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800076-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800076-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800076-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800076--></AD_TAB>
 
 <!--800077--><AD_TAB>
@@ -6484,6 +6754,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800077-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800077-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800077-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800077-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800077--></AD_TAB>
 
 <!--800078--><AD_TAB>
@@ -6509,6 +6780,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800078-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800078-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800078-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800078-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800078--></AD_TAB>
 
 <!--800079--><AD_TAB>
@@ -6533,6 +6805,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800079-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800079-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800079-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800079-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800079--></AD_TAB>
 
 <!--800080--><AD_TAB>
@@ -6557,6 +6830,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800080-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800080-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800080-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800080-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800080--></AD_TAB>
 
 <!--800081--><AD_TAB>
@@ -6581,6 +6855,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800081-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800081-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800081-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800081-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800081--></AD_TAB>
 
 <!--800082--><AD_TAB>
@@ -6605,6 +6880,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800082-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800082-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800082-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800082-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800082--></AD_TAB>
 
 <!--800083--><AD_TAB>
@@ -6629,6 +6905,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800083-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800083-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800083-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800083-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800083--></AD_TAB>
 
 <!--800084--><AD_TAB>
@@ -6653,6 +6930,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800084-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800084-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800084-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800084-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800084--></AD_TAB>
 
 <!--800085--><AD_TAB>
@@ -6677,6 +6955,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800085-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800085-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800085-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800085-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800085--></AD_TAB>
 
 <!--800086--><AD_TAB>
@@ -6701,6 +6980,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800086-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800086-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800086-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800086-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800086--></AD_TAB>
 
 <!--800087--><AD_TAB>
@@ -6725,6 +7005,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800087-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800087-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800087-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800087-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800087--></AD_TAB>
 
 <!--800088--><AD_TAB>
@@ -6749,6 +7030,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800088-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800088-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800088-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800088-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800088--></AD_TAB>
 
 <!--800089--><AD_TAB>
@@ -6773,6 +7055,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800089-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800089-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800089-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--800089-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800089--></AD_TAB>
 
 <!--800096--><AD_TAB>
@@ -6797,6 +7080,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800096-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800096-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800096-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800096-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800096--></AD_TAB>
 
 <!--800097--><AD_TAB>
@@ -6821,6 +7105,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800097-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800097-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800097-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800097-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800097--></AD_TAB>
 
 <!--800098--><AD_TAB>
@@ -6845,6 +7130,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800098-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800098-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800098-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--800098-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800098--></AD_TAB>
 
 <!--800104--><AD_TAB>
@@ -6869,6 +7155,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800104-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800104-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800104-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800104-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800104--></AD_TAB>
 
 <!--800108--><AD_TAB>
@@ -6894,6 +7181,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800108-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800108-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800108-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800108-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800108--></AD_TAB>
 
 <!--800109--><AD_TAB>
@@ -6918,6 +7206,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800109-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800109-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800109-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800109-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800109--></AD_TAB>
 
 <!--800110--><AD_TAB>
@@ -6942,6 +7231,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800110-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800110-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800110-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800110-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800110--></AD_TAB>
 
 <!--800111--><AD_TAB>
@@ -6970,6 +7260,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800111-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800111-->  <HQLORDERBYCLAUSE><![CDATA[-startingDate]]></HQLORDERBYCLAUSE>
 <!--800111-->  <HQLFILTERCLAUSE><![CDATA[e.closed='N']]></HQLFILTERCLAUSE>
+<!--800111-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800111--></AD_TAB>
 
 <!--800112--><AD_TAB>
@@ -6994,6 +7285,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800112-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800112-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800112-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800112-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800112--></AD_TAB>
 
 <!--800113--><AD_TAB>
@@ -7018,6 +7310,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800113-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800113-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800113-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800113-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800113--></AD_TAB>
 
 <!--800114--><AD_TAB>
@@ -7046,6 +7339,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800114-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800114-->  <HQLWHERECLAUSE><![CDATA[e.salesTransaction=false]]></HQLWHERECLAUSE>
 <!--800114-->  <HQLORDERBYCLAUSE><![CDATA[-movementDate, -documentNo]]></HQLORDERBYCLAUSE>
+<!--800114-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800114--></AD_TAB>
 
 <!--800115--><AD_TAB>
@@ -7070,6 +7364,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800115-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800115-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800115-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800115-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800115--></AD_TAB>
 
 <!--800116--><AD_TAB>
@@ -7096,6 +7391,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800116-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800116-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800116-->  <HQLORDERBYCLAUSE><![CDATA[startingTime]]></HQLORDERBYCLAUSE>
+<!--800116-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800116--></AD_TAB>
 
 <!--800117--><AD_TAB>
@@ -7122,6 +7418,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800117-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800117-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800117-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
+<!--800117-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800117--></AD_TAB>
 
 <!--800118--><AD_TAB>
@@ -7146,6 +7443,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800118-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800118-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800118-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800118-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800118--></AD_TAB>
 
 <!--800119--><AD_TAB>
@@ -7172,6 +7470,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800119-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800119-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800119-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
+<!--800119-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800119--></AD_TAB>
 
 <!--800143--><AD_TAB>
@@ -7195,6 +7494,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800143-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800143-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800143-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800143-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800143--></AD_TAB>
 
 <!--800144--><AD_TAB>
@@ -7218,6 +7518,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800144-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800144-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800144-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800144-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800144--></AD_TAB>
 
 <!--800146--><AD_TAB>
@@ -7243,6 +7544,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800146-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800146-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800146-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800146-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800146--></AD_TAB>
 
 <!--800151--><AD_TAB>
@@ -7268,6 +7570,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800151-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800151-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800151-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800151-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800151--></AD_TAB>
 
 <!--800152--><AD_TAB>
@@ -7292,6 +7595,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800152-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800152-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800152-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800152-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800152--></AD_TAB>
 
 <!--800153--><AD_TAB>
@@ -7318,6 +7622,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800153-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800153-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800153-->  <HQLORDERBYCLAUSE><![CDATA[sequenceNumber]]></HQLORDERBYCLAUSE>
+<!--800153-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800153--></AD_TAB>
 
 <!--800154--><AD_TAB>
@@ -7344,6 +7649,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800154-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800154-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800154-->  <HQLORDERBYCLAUSE><![CDATA[measurementHour]]></HQLORDERBYCLAUSE>
+<!--800154-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800154--></AD_TAB>
 
 <!--800155--><AD_TAB>
@@ -7370,6 +7676,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800155-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800155-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800155-->  <HQLORDERBYCLAUSE><![CDATA[sequenceNumber]]></HQLORDERBYCLAUSE>
+<!--800155-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800155--></AD_TAB>
 
 <!--800158--><AD_TAB>
@@ -7397,6 +7704,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800158-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800158-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800158-->  <HQLORDERBYCLAUSE><![CDATA[-measurementDate]]></HQLORDERBYCLAUSE>
+<!--800158-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800158--></AD_TAB>
 
 <!--800159--><AD_TAB>
@@ -7421,6 +7729,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800159-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800159-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800159-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800159-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800159--></AD_TAB>
 
 <!--800160--><AD_TAB>
@@ -7445,6 +7754,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800160-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800160-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800160-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800160-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800160--></AD_TAB>
 
 <!--800163--><AD_TAB>
@@ -7469,6 +7779,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800163-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800163-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800163-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800163-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800163--></AD_TAB>
 
 <!--800165--><AD_TAB>
@@ -7495,6 +7806,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800165-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800165-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800165-->  <HQLORDERBYCLAUSE><![CDATA[created]]></HQLORDERBYCLAUSE>
+<!--800165-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800165--></AD_TAB>
 
 <!--800167--><AD_TAB>
@@ -7519,6 +7831,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800167-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800167-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800167-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800167-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800167--></AD_TAB>
 
 <!--800168--><AD_TAB>
@@ -7543,6 +7856,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800168-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800168-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800168-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800168-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800168--></AD_TAB>
 
 <!--800170--><AD_TAB>
@@ -7568,6 +7882,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800170-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800170-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800170-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800170-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800170--></AD_TAB>
 
 <!--800171--><AD_TAB>
@@ -7592,6 +7907,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800171-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800171-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800171-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800171-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800171--></AD_TAB>
 
 <!--800174--><AD_TAB>
@@ -7616,6 +7932,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800174-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800174-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800174-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800174-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800174--></AD_TAB>
 
 <!--800175--><AD_TAB>
@@ -7640,6 +7957,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800175-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800175-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800175-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800175-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800175--></AD_TAB>
 
 <!--800176--><AD_TAB>
@@ -7664,6 +7982,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800176-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800176-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800176-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800176-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800176--></AD_TAB>
 
 <!--800177--><AD_TAB>
@@ -7690,6 +8009,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800177-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800177-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800177-->  <HQLWHERECLAUSE><![CDATA[e.action='C']]></HQLWHERECLAUSE>
+<!--800177-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800177--></AD_TAB>
 
 <!--800178--><AD_TAB>
@@ -7714,6 +8034,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800178-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800178-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800178-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800178-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800178--></AD_TAB>
 
 <!--800179--><AD_TAB>
@@ -7738,6 +8059,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800179-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800179-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800179-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800179-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800179--></AD_TAB>
 
 <!--800180--><AD_TAB>
@@ -7762,6 +8084,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800180-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800180-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800180-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800180-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800180--></AD_TAB>
 
 <!--800181--><AD_TAB>
@@ -7786,6 +8109,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800181-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800181-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800181-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800181-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800181--></AD_TAB>
 
 <!--800182--><AD_TAB>
@@ -7810,6 +8134,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800182-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800182-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800182-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800182-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800182--></AD_TAB>
 
 <!--800183--><AD_TAB>
@@ -7834,6 +8159,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800183-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800183-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800183-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800183-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800183--></AD_TAB>
 
 <!--800184--><AD_TAB>
@@ -7858,6 +8184,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800184-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800184-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800184-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800184-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800184--></AD_TAB>
 
 <!--800185--><AD_TAB>
@@ -7882,6 +8209,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800185-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800185-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800185-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800185-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800185--></AD_TAB>
 
 <!--800186--><AD_TAB>
@@ -7906,6 +8234,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800186-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800186-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800186-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800186-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800186--></AD_TAB>
 
 <!--800188--><AD_TAB>
@@ -7934,6 +8263,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800188-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800188-->  <HQLORDERBYCLAUSE><![CDATA[plannedDate]]></HQLORDERBYCLAUSE>
 <!--800188-->  <HQLFILTERCLAUSE><![CDATA[e.maintenanceOrder is null]]></HQLFILTERCLAUSE>
+<!--800188-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800188--></AD_TAB>
 
 <!--800189--><AD_TAB>
@@ -7958,6 +8288,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800189-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800189-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800189-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800189-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800189--></AD_TAB>
 
 <!--800190--><AD_TAB>
@@ -7982,6 +8313,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800190-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800190-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800190-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800190-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800190--></AD_TAB>
 
 <!--800191--><AD_TAB>
@@ -8006,6 +8338,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800191-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800191-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800191-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800191-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800191--></AD_TAB>
 
 <!--800192--><AD_TAB>
@@ -8030,6 +8363,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800192-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800192-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800192-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800192-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800192--></AD_TAB>
 
 <!--800194--><AD_TAB>
@@ -8054,6 +8388,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800194-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800194-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800194-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800194-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800194--></AD_TAB>
 
 <!--800195--><AD_TAB>
@@ -8080,6 +8415,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800195-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800195-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800195-->  <HQLWHERECLAUSE><![CDATA[e.action='X']]></HQLWHERECLAUSE>
+<!--800195-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800195--></AD_TAB>
 
 <!--800196--><AD_TAB>
@@ -8104,6 +8440,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800196-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800196-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800196-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800196-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800196--></AD_TAB>
 
 <!--800198--><AD_TAB>
@@ -8128,6 +8465,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800198-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800198-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800198-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800198-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800198--></AD_TAB>
 
 <!--800199--><AD_TAB>
@@ -8152,6 +8490,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800199-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800199-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800199-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800199-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800199--></AD_TAB>
 
 <!--800200--><AD_TAB>
@@ -8178,6 +8517,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800200-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800200-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800200-->  <HQLWHERECLAUSE><![CDATA[e.action in ('P','R')]]></HQLWHERECLAUSE>
+<!--800200-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800200--></AD_TAB>
 
 <!--800201--><AD_TAB>
@@ -8202,6 +8542,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800201-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800201-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800201-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800201-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800201--></AD_TAB>
 
 <!--800202--><AD_TAB>
@@ -8226,6 +8567,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800202-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800202-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800202-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800202-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800202--></AD_TAB>
 
 <!--800203--><AD_TAB>
@@ -8250,6 +8592,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800203-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800203-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800203-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800203-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800203--></AD_TAB>
 
 <!--800204--><AD_TAB>
@@ -8274,6 +8617,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800204-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800204-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800204-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800204-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800204--></AD_TAB>
 
 <!--800205--><AD_TAB>
@@ -8298,6 +8642,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800205-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800205-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800205-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800205-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800205--></AD_TAB>
 
 <!--800206--><AD_TAB>
@@ -8322,6 +8667,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800206-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800206-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800206-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800206-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800206--></AD_TAB>
 
 <!--800209--><AD_TAB>
@@ -8348,6 +8694,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800209-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800209-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800209-->  <HQLORDERBYCLAUSE><![CDATA[documentNo]]></HQLORDERBYCLAUSE>
+<!--800209-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800209--></AD_TAB>
 
 <!--800210--><AD_TAB>
@@ -8374,6 +8721,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800210-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800210-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800210-->  <HQLORDERBYCLAUSE><![CDATA[line]]></HQLORDERBYCLAUSE>
+<!--800210-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800210--></AD_TAB>
 
 <!--800211--><AD_TAB>
@@ -8398,6 +8746,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800211-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800211-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800211-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800211-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800211--></AD_TAB>
 
 <!--800212--><AD_TAB>
@@ -8423,6 +8772,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800212-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800212-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800212-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800212-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800212--></AD_TAB>
 
 <!--800213--><AD_TAB>
@@ -8450,6 +8800,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800213-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800213-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800213-->  <HQLORDERBYCLAUSE><![CDATA[documentNo]]></HQLORDERBYCLAUSE>
+<!--800213-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800213--></AD_TAB>
 
 <!--800214--><AD_TAB>
@@ -8476,6 +8827,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800214-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800214-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800214-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
+<!--800214-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800214--></AD_TAB>
 
 <!--800215--><AD_TAB>
@@ -8501,6 +8853,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800215-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800215-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800215-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800215-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800215--></AD_TAB>
 
 <!--800216--><AD_TAB>
@@ -8526,6 +8879,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800216-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800216-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800216-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800216-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800216--></AD_TAB>
 
 <!--800217--><AD_TAB>
@@ -8551,6 +8905,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800217-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800217-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800217-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800217-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800217--></AD_TAB>
 
 <!--800218--><AD_TAB>
@@ -8575,6 +8930,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800218-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800218-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800218-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800218-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800218--></AD_TAB>
 
 <!--800219--><AD_TAB>
@@ -8599,6 +8955,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800219-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800219-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800219-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800219-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800219--></AD_TAB>
 
 <!--800220--><AD_TAB>
@@ -8623,6 +8980,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800220-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800220-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800220-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800220-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800220--></AD_TAB>
 
 <!--800221--><AD_TAB>
@@ -8649,6 +9007,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800221-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800221-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--800221-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
+<!--800221-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800221--></AD_TAB>
 
 <!--800222--><AD_TAB>
@@ -8673,6 +9032,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800222-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800222-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800222-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--800222-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800222--></AD_TAB>
 
 <!--800223--><AD_TAB>
@@ -8697,6 +9057,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800223-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800223-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800223-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--800223-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800223--></AD_TAB>
 
 <!--800224--><AD_TAB>
@@ -8721,6 +9082,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800224-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800224-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800224-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800224-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800224--></AD_TAB>
 
 <!--800225--><AD_TAB>
@@ -8745,6 +9107,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800225-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800225-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800225-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800225-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800225--></AD_TAB>
 
 <!--800226--><AD_TAB>
@@ -8769,6 +9132,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800226-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800226-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800226-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800226-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800226--></AD_TAB>
 
 <!--800227--><AD_TAB>
@@ -8793,6 +9157,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800227-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800227-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800227-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800227-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800227--></AD_TAB>
 
 <!--800228--><AD_TAB>
@@ -8817,6 +9182,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800228-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800228-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800228-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800228-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800228--></AD_TAB>
 
 <!--800229--><AD_TAB>
@@ -8841,6 +9207,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800229-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800229-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800229-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800229-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800229--></AD_TAB>
 
 <!--800230--><AD_TAB>
@@ -8865,6 +9232,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800230-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800230-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800230-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800230-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800230--></AD_TAB>
 
 <!--800231--><AD_TAB>
@@ -8891,6 +9259,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800231-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800231-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800231-->  <HQLORDERBYCLAUSE><![CDATA[name]]></HQLORDERBYCLAUSE>
+<!--800231-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800231--></AD_TAB>
 
 <!--800232--><AD_TAB>
@@ -8915,6 +9284,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800232-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800232-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800232-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800232-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800232--></AD_TAB>
 
 <!--800233--><AD_TAB>
@@ -8939,6 +9309,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800233-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800233-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800233-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800233-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800233--></AD_TAB>
 
 <!--800234--><AD_TAB>
@@ -8963,6 +9334,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800234-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800234-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800234-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800234-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800234--></AD_TAB>
 
 <!--800235--><AD_TAB>
@@ -8987,6 +9359,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800235-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800235-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800235-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800235-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800235--></AD_TAB>
 
 <!--800236--><AD_TAB>
@@ -9013,6 +9386,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800236-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800236-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800236-->  <HQLORDERBYCLAUSE><![CDATA[validFromDate]]></HQLORDERBYCLAUSE>
+<!--800236-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800236--></AD_TAB>
 
 <!--800237--><AD_TAB>
@@ -9037,6 +9411,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800237-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800237-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800237-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800237-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800237--></AD_TAB>
 
 <!--800238--><AD_TAB>
@@ -9061,6 +9436,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800238-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800238-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800238-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800238-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800238--></AD_TAB>
 
 <!--800239--><AD_TAB>
@@ -9085,6 +9461,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800239-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800239-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800239-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800239-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800239--></AD_TAB>
 
 <!--800241--><AD_TAB>
@@ -9109,6 +9486,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800241-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800241-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800241-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800241-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800241--></AD_TAB>
 
 <!--800242--><AD_TAB>
@@ -9133,6 +9511,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800242-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800242-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800242-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--800242-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800242--></AD_TAB>
 
 <!--800243--><AD_TAB>
@@ -9157,6 +9536,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800243-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800243-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800243-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--800243-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800243--></AD_TAB>
 
 <!--800244--><AD_TAB>
@@ -9181,6 +9561,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800244-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800244-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800244-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--800244-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800244--></AD_TAB>
 
 <!--800245--><AD_TAB>
@@ -9205,6 +9586,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800245-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800245-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800245-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800245-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800245--></AD_TAB>
 
 <!--800246--><AD_TAB>
@@ -9229,6 +9611,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800246-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800246-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800246-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800246-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800246--></AD_TAB>
 
 <!--800248--><AD_TAB>
@@ -9252,6 +9635,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800248-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800248-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800248-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800248-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800248--></AD_TAB>
 
 <!--800249--><AD_TAB>
@@ -9279,6 +9663,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800249-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800249-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800249-->  <HQLWHERECLAUSE><![CDATA[e.userContact.id=@user@]]></HQLWHERECLAUSE>
+<!--800249-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800249--></AD_TAB>
 
 <!--800251--><AD_TAB>
@@ -9304,6 +9689,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800251-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800251-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800251-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800251-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800251--></AD_TAB>
 
 <!--800252--><AD_TAB>
@@ -9328,6 +9714,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800252-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800252-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800252-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800252-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800252--></AD_TAB>
 
 <!--800253--><AD_TAB>
@@ -9352,6 +9739,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800253-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800253-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800253-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800253-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800253--></AD_TAB>
 
 <!--800255--><AD_TAB>
@@ -9376,6 +9764,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800255-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800255-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800255-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800255-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800255--></AD_TAB>
 
 <!--800257--><AD_TAB>
@@ -9400,6 +9789,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800257-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800257-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800257-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800257-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800257--></AD_TAB>
 
 <!--800258--><AD_TAB>
@@ -9424,6 +9814,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800258-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800258-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800258-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800258-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800258--></AD_TAB>
 
 <!--800259--><AD_TAB>
@@ -9448,6 +9839,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800259-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800259-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800259-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800259-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800259--></AD_TAB>
 
 <!--800261--><AD_TAB>
@@ -9472,6 +9864,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800261-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800261-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800261-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800261-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800261--></AD_TAB>
 
 <!--800262--><AD_TAB>
@@ -9498,6 +9891,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800262-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800262-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800262-->  <HQLORDERBYCLAUSE><![CDATA[line]]></HQLORDERBYCLAUSE>
+<!--800262-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800262--></AD_TAB>
 
 <!--800263--><AD_TAB>
@@ -9524,6 +9918,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800263-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800263-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--800263-->  <HQLORDERBYCLAUSE><![CDATA[line]]></HQLORDERBYCLAUSE>
+<!--800263-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800263--></AD_TAB>
 
 <!--800264--><AD_TAB>
@@ -9549,6 +9944,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800264-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800264-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800264-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800264-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800264--></AD_TAB>
 
 <!--800265--><AD_TAB>
@@ -9573,6 +9969,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800265-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800265-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800265-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800265-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800265--></AD_TAB>
 
 <!--800266--><AD_TAB>
@@ -9597,6 +9994,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800266-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800266-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800266-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800266-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800266--></AD_TAB>
 
 <!--800267--><AD_TAB>
@@ -9621,6 +10019,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800267-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800267-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800267-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--800267-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800267--></AD_TAB>
 
 <!--800268--><AD_TAB>
@@ -9645,6 +10044,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800268-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800268-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800268-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--800268-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800268--></AD_TAB>
 
 <!--1000500000--><AD_TAB>
@@ -9670,6 +10070,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1000500000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500000-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1000500000-->  <HQLWHERECLAUSE><![CDATA[1=1]]></HQLWHERECLAUSE>
+<!--1000500000-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1000500000--></AD_TAB>
 
 <!--1000500001--><AD_TAB>
@@ -9697,6 +10098,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1000500001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500001-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1000500001-->  <HQLWHERECLAUSE><![CDATA[e.documentType.id=@DocumentType.id@]]></HQLWHERECLAUSE>
+<!--1000500001-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1000500001--></AD_TAB>
 
 <!--1000500002--><AD_TAB>
@@ -9723,6 +10125,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1000500002-->  <INCLUDED_TAB_ID><![CDATA[1000500001]]></INCLUDED_TAB_ID>
 <!--1000500002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500002-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1000500002-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1000500002--></AD_TAB>
 
 <!--1002100000--><AD_TAB>
@@ -9746,6 +10149,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1002100000-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1002100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100000-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1002100000-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1002100000--></AD_TAB>
 
 <!--1002100005--><AD_TAB>
@@ -9769,6 +10173,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1002100005-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1002100005-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100005-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1002100005-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1002100005--></AD_TAB>
 
 <!--1002100009--><AD_TAB>
@@ -9793,6 +10198,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1002100009-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1002100009-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100009-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1002100009-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1002100009--></AD_TAB>
 
 <!--1002100010--><AD_TAB>
@@ -9817,6 +10223,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1002100010-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1002100010-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100010-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1002100010-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1002100010--></AD_TAB>
 
 <!--1002100011--><AD_TAB>
@@ -9842,6 +10249,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1002100011-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1002100011-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100011-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1002100011-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1002100011--></AD_TAB>
 
 <!--1002100012--><AD_TAB>
@@ -9867,6 +10275,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1002100012-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1002100012-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100012-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1002100012-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1002100012--></AD_TAB>
 
 <!--1002100013--><AD_TAB>
@@ -9891,6 +10300,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1002100013-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1002100013-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100013-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1002100013-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1002100013--></AD_TAB>
 
 <!--1004400000--><AD_TAB>
@@ -9915,6 +10325,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1004400000-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1004400000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400000-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--1004400000-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1004400000--></AD_TAB>
 
 <!--1004400001--><AD_TAB>
@@ -9940,6 +10351,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1004400001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400001-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--1004400001-->  <HQLFILTERCLAUSE><![CDATA[e.documentStatus='CO']]></HQLFILTERCLAUSE>
+<!--1004400001-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1004400001--></AD_TAB>
 
 <!--1004400002--><AD_TAB>
@@ -9963,6 +10375,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1004400002-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1004400002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400002-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1004400002-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1004400002--></AD_TAB>
 
 <!--1004400003--><AD_TAB>
@@ -9985,6 +10398,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1004400003-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1004400003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400003-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1004400003-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1004400003--></AD_TAB>
 
 <!--1005100000--><AD_TAB>
@@ -10009,6 +10423,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1005100000-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1005100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005100000-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1005100000-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1005100000--></AD_TAB>
 
 <!--1005400005--><AD_TAB>
@@ -10033,6 +10448,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1005400005-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1005400005-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005400005-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
+<!--1005400005-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1005400005--></AD_TAB>
 
 <!--1005400006--><AD_TAB>
@@ -10057,6 +10473,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1005400006-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1005400006-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005400006-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--1005400006-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1005400006--></AD_TAB>
 
 <!--1007400000--><AD_TAB>
@@ -10081,6 +10498,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1007400000-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1007400000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1007400000-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1007400000-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1007400000--></AD_TAB>
 
 <!--1011100000--><AD_TAB>
@@ -10103,6 +10521,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1011100000-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1011100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1011100000-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1011100000-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1011100000--></AD_TAB>
 
 <!--1011100001--><AD_TAB>
@@ -10125,6 +10544,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1011100001-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1011100001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1011100001-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1011100001-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1011100001--></AD_TAB>
 
 <!--01F5E95D71544D428E1B9004B05D0298--><AD_TAB>
@@ -10149,6 +10569,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--01F5E95D71544D428E1B9004B05D0298-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--01F5E95D71544D428E1B9004B05D0298-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--01F5E95D71544D428E1B9004B05D0298--></AD_TAB>
 
 <!--0675F934EA9E40C799826AABC47CD837--><AD_TAB>
@@ -10175,6 +10596,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--0675F934EA9E40C799826AABC47CD837-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0675F934EA9E40C799826AABC47CD837-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--0675F934EA9E40C799826AABC47CD837-->  <HQLORDERBYCLAUSE><![CDATA[created]]></HQLORDERBYCLAUSE>
+<!--0675F934EA9E40C799826AABC47CD837-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--0675F934EA9E40C799826AABC47CD837--></AD_TAB>
 
 <!--07F009753DA647C2AF38697BA9F1B1A0--><AD_TAB>
@@ -10197,6 +10619,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--07F009753DA647C2AF38697BA9F1B1A0-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--07F009753DA647C2AF38697BA9F1B1A0-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--07F009753DA647C2AF38697BA9F1B1A0-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--07F009753DA647C2AF38697BA9F1B1A0-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--07F009753DA647C2AF38697BA9F1B1A0--></AD_TAB>
 
 <!--134DE6BD8CD34FDFB6DC940BF857BC25--><AD_TAB>
@@ -10223,6 +10646,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--134DE6BD8CD34FDFB6DC940BF857BC25-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--134DE6BD8CD34FDFB6DC940BF857BC25-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--134DE6BD8CD34FDFB6DC940BF857BC25-->  <HQLWHERECLAUSE><![CDATA[e.isIncluded='N']]></HQLWHERECLAUSE>
+<!--134DE6BD8CD34FDFB6DC940BF857BC25-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--134DE6BD8CD34FDFB6DC940BF857BC25--></AD_TAB>
 
 <!--1705E06D88D14A0DB0907E5B0A61D8D2--><AD_TAB>
@@ -10247,6 +10671,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1705E06D88D14A0DB0907E5B0A61D8D2-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1705E06D88D14A0DB0907E5B0A61D8D2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1705E06D88D14A0DB0907E5B0A61D8D2-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--1705E06D88D14A0DB0907E5B0A61D8D2-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1705E06D88D14A0DB0907E5B0A61D8D2--></AD_TAB>
 
 <!--173B46EC4F91406E9B68DCF6464BB308--><AD_TAB>
@@ -10270,6 +10695,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--173B46EC4F91406E9B68DCF6464BB308-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--173B46EC4F91406E9B68DCF6464BB308-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--173B46EC4F91406E9B68DCF6464BB308-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--173B46EC4F91406E9B68DCF6464BB308-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--173B46EC4F91406E9B68DCF6464BB308--></AD_TAB>
 
 <!--1ACDA2572EAB4D84A59265DC256F07AD--><AD_TAB>
@@ -10293,6 +10719,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1ACDA2572EAB4D84A59265DC256F07AD-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1ACDA2572EAB4D84A59265DC256F07AD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1ACDA2572EAB4D84A59265DC256F07AD-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--1ACDA2572EAB4D84A59265DC256F07AD-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1ACDA2572EAB4D84A59265DC256F07AD--></AD_TAB>
 
 <!--25C70617A7964B479BDA71197E7E88E9--><AD_TAB>
@@ -10319,6 +10746,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--25C70617A7964B479BDA71197E7E88E9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--25C70617A7964B479BDA71197E7E88E9-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--25C70617A7964B479BDA71197E7E88E9-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
+<!--25C70617A7964B479BDA71197E7E88E9-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--25C70617A7964B479BDA71197E7E88E9--></AD_TAB>
 
 <!--27456D8A387F4580B30EA784C63831BB--><AD_TAB>
@@ -10344,6 +10772,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--27456D8A387F4580B30EA784C63831BB-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--27456D8A387F4580B30EA784C63831BB-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--27456D8A387F4580B30EA784C63831BB-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
+<!--27456D8A387F4580B30EA784C63831BB-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--27456D8A387F4580B30EA784C63831BB--></AD_TAB>
 
 <!--2845D761A8394468BD3BA4710AA888D4--><AD_TAB>
@@ -10366,6 +10795,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--2845D761A8394468BD3BA4710AA888D4-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--2845D761A8394468BD3BA4710AA888D4-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2845D761A8394468BD3BA4710AA888D4-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--2845D761A8394468BD3BA4710AA888D4-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--2845D761A8394468BD3BA4710AA888D4--></AD_TAB>
 
 <!--28D602B576DF417AB289B4EC94BE2C17--><AD_TAB>
@@ -10390,6 +10820,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--28D602B576DF417AB289B4EC94BE2C17-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--28D602B576DF417AB289B4EC94BE2C17-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--28D602B576DF417AB289B4EC94BE2C17-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--28D602B576DF417AB289B4EC94BE2C17-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--28D602B576DF417AB289B4EC94BE2C17--></AD_TAB>
 
 <!--29021BB9A96244BDA7E8AEBA71ADFB11--><AD_TAB>
@@ -10420,6 +10851,7 @@ The corresponding tables have then the following setting:
 <!--29021BB9A96244BDA7E8AEBA71ADFB11-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--29021BB9A96244BDA7E8AEBA71ADFB11-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11--></AD_TAB>
 
 <!--2DD6F1E2CAE0456AA9797A1D627BFF5E--><AD_TAB>
@@ -10446,6 +10878,7 @@ The corresponding tables have then the following setting:
 <!--2DD6F1E2CAE0456AA9797A1D627BFF5E-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--2DD6F1E2CAE0456AA9797A1D627BFF5E-->  <HQLWHERECLAUSE><![CDATA[e.receipt='N']]></HQLWHERECLAUSE>
 <!--2DD6F1E2CAE0456AA9797A1D627BFF5E-->  <HQLORDERBYCLAUSE><![CDATA[-documentNo]]></HQLORDERBYCLAUSE>
+<!--2DD6F1E2CAE0456AA9797A1D627BFF5E-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--2DD6F1E2CAE0456AA9797A1D627BFF5E--></AD_TAB>
 
 <!--3690EB6BA1614375A6F058BBA61B19BC--><AD_TAB>
@@ -10474,6 +10907,7 @@ The corresponding tables have then the following setting:
 <!--3690EB6BA1614375A6F058BBA61B19BC-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--3690EB6BA1614375A6F058BBA61B19BC-->  <HQLWHERECLAUSE><![CDATA[e.client.id=@client@]]></HQLWHERECLAUSE>
 <!--3690EB6BA1614375A6F058BBA61B19BC-->  <HQLORDERBYCLAUSE><![CDATA[-eventTime]]></HQLORDERBYCLAUSE>
+<!--3690EB6BA1614375A6F058BBA61B19BC-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--3690EB6BA1614375A6F058BBA61B19BC--></AD_TAB>
 
 <!--39B3DB3BF4C44EE192BE3F6CA69903C0--><AD_TAB>
@@ -10498,6 +10932,7 @@ The corresponding tables have then the following setting:
 <!--39B3DB3BF4C44EE192BE3F6CA69903C0-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--39B3DB3BF4C44EE192BE3F6CA69903C0-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--39B3DB3BF4C44EE192BE3F6CA69903C0-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--39B3DB3BF4C44EE192BE3F6CA69903C0-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--39B3DB3BF4C44EE192BE3F6CA69903C0--></AD_TAB>
 
 <!--3ED38B380CD849B38F0AC1B52F992C34--><AD_TAB>
@@ -10522,6 +10957,7 @@ The corresponding tables have then the following setting:
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3ED38B380CD849B38F0AC1B52F992C34-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--3ED38B380CD849B38F0AC1B52F992C34-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--3ED38B380CD849B38F0AC1B52F992C34--></AD_TAB>
 
 <!--40207FE1E4F94FDDA026C37C4E1E1847--><AD_TAB>
@@ -10546,6 +10982,7 @@ The corresponding tables have then the following setting:
 <!--40207FE1E4F94FDDA026C37C4E1E1847-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--40207FE1E4F94FDDA026C37C4E1E1847-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--40207FE1E4F94FDDA026C37C4E1E1847-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--40207FE1E4F94FDDA026C37C4E1E1847-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--40207FE1E4F94FDDA026C37C4E1E1847--></AD_TAB>
 
 <!--449063A42EFD4B80A0A6D415684C8BC4--><AD_TAB>
@@ -10568,6 +11005,7 @@ The corresponding tables have then the following setting:
 <!--449063A42EFD4B80A0A6D415684C8BC4-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--449063A42EFD4B80A0A6D415684C8BC4-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--449063A42EFD4B80A0A6D415684C8BC4-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--449063A42EFD4B80A0A6D415684C8BC4-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--449063A42EFD4B80A0A6D415684C8BC4--></AD_TAB>
 
 <!--4764AA8524BC4D3DAA9A86181C778595--><AD_TAB>
@@ -10590,6 +11028,7 @@ The corresponding tables have then the following setting:
 <!--4764AA8524BC4D3DAA9A86181C778595-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--4764AA8524BC4D3DAA9A86181C778595-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--4764AA8524BC4D3DAA9A86181C778595-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--4764AA8524BC4D3DAA9A86181C778595-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--4764AA8524BC4D3DAA9A86181C778595--></AD_TAB>
 
 <!--47B7A4ACDDDE4FF7BFB5506C47892CDD--><AD_TAB>
@@ -10615,6 +11054,7 @@ The corresponding tables have then the following setting:
 <!--47B7A4ACDDDE4FF7BFB5506C47892CDD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--47B7A4ACDDDE4FF7BFB5506C47892CDD-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--47B7A4ACDDDE4FF7BFB5506C47892CDD-->  <HQLORDERBYCLAUSE><![CDATA[created]]></HQLORDERBYCLAUSE>
+<!--47B7A4ACDDDE4FF7BFB5506C47892CDD-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--47B7A4ACDDDE4FF7BFB5506C47892CDD--></AD_TAB>
 
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1--><AD_TAB>
@@ -10641,6 +11081,7 @@ The corresponding tables have then the following setting:
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1-->  <HQLWHERECLAUSE><![CDATA[e.module.id = @ADModule.id@]]></HQLWHERECLAUSE>
+<!--47F87F1A284B4A7D9FB6ED2D02C5CDA1-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--47F87F1A284B4A7D9FB6ED2D02C5CDA1--></AD_TAB>
 
 <!--4A00053300254EBC8868ABADEBD95525--><AD_TAB>
@@ -10665,6 +11106,7 @@ The corresponding tables have then the following setting:
 <!--4A00053300254EBC8868ABADEBD95525-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--4A00053300254EBC8868ABADEBD95525-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--4A00053300254EBC8868ABADEBD95525-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--4A00053300254EBC8868ABADEBD95525-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--4A00053300254EBC8868ABADEBD95525--></AD_TAB>
 
 <!--4DE17FC05C3843C4959166BB67967486--><AD_TAB>
@@ -10689,6 +11131,7 @@ The corresponding tables have then the following setting:
 <!--4DE17FC05C3843C4959166BB67967486-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--4DE17FC05C3843C4959166BB67967486-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--4DE17FC05C3843C4959166BB67967486-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--4DE17FC05C3843C4959166BB67967486-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--4DE17FC05C3843C4959166BB67967486--></AD_TAB>
 
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB--><AD_TAB>
@@ -10713,6 +11156,7 @@ The corresponding tables have then the following setting:
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--4F9E1C27F7F040C58C5CA2E6FD5B26CB-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--4F9E1C27F7F040C58C5CA2E6FD5B26CB--></AD_TAB>
 
 <!--5247D51755AA43F384EBC35006FC2329--><AD_TAB>
@@ -10739,6 +11183,7 @@ The corresponding tables have then the following setting:
 <!--5247D51755AA43F384EBC35006FC2329-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5247D51755AA43F384EBC35006FC2329-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--5247D51755AA43F384EBC35006FC2329-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
+<!--5247D51755AA43F384EBC35006FC2329-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--5247D51755AA43F384EBC35006FC2329--></AD_TAB>
 
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918--><AD_TAB>
@@ -10770,6 +11215,7 @@ AD_Model_Object.AD_CALLOUT_ID    is null ]]></FILTERCLAUSE>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <HQLFILTERCLAUSE><![CDATA[e.tab is null and e.process is null and e.oSTask is null and e.specialForm is null and e.reference is null and e.callout is null]]></HQLFILTERCLAUSE>
+<!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918--></AD_TAB>
 
 <!--5DD4A4D36D71411FB3BE2783C3D55473--><AD_TAB>
@@ -10795,6 +11241,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--5DD4A4D36D71411FB3BE2783C3D55473-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--5DD4A4D36D71411FB3BE2783C3D55473-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5DD4A4D36D71411FB3BE2783C3D55473-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--5DD4A4D36D71411FB3BE2783C3D55473-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--5DD4A4D36D71411FB3BE2783C3D55473--></AD_TAB>
 
 <!--6349699C48D74C72BF982551E927AF1D--><AD_TAB>
@@ -10818,6 +11265,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6349699C48D74C72BF982551E927AF1D-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--6349699C48D74C72BF982551E927AF1D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6349699C48D74C72BF982551E927AF1D-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--6349699C48D74C72BF982551E927AF1D-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--6349699C48D74C72BF982551E927AF1D--></AD_TAB>
 
 <!--6456FDAA469148E580B92126863C5A20--><AD_TAB>
@@ -10848,6 +11296,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6456FDAA469148E580B92126863C5A20-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--6456FDAA469148E580B92126863C5A20-->  <HQLWHERECLAUSE><![CDATA[e.displayed='Y' AND e.active='Y']]></HQLWHERECLAUSE>
 <!--6456FDAA469148E580B92126863C5A20-->  <HQLORDERBYCLAUSE><![CDATA[sequenceNumber]]></HQLORDERBYCLAUSE>
+<!--6456FDAA469148E580B92126863C5A20-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--6456FDAA469148E580B92126863C5A20--></AD_TAB>
 
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA--><AD_TAB>
@@ -10875,6 +11324,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <HQLFILTERCLAUSE><![CDATA[e.periodStatus='O']]></HQLFILTERCLAUSE>
+<!--6BC4F7D2CBE94AEE939CCB5990B55FEA-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--6BC4F7D2CBE94AEE939CCB5990B55FEA--></AD_TAB>
 
 <!--719D6C8507CA4B27886C0D8A7859B543--><AD_TAB>
@@ -10901,6 +11351,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--719D6C8507CA4B27886C0D8A7859B543-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--719D6C8507CA4B27886C0D8A7859B543-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--719D6C8507CA4B27886C0D8A7859B543-->  <HQLORDERBYCLAUSE><![CDATA[executionDate]]></HQLORDERBYCLAUSE>
+<!--719D6C8507CA4B27886C0D8A7859B543-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--719D6C8507CA4B27886C0D8A7859B543--></AD_TAB>
 
 <!--73D6D0CBB55B434E98EB10767ADD74AC--><AD_TAB>
@@ -10927,6 +11378,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--73D6D0CBB55B434E98EB10767ADD74AC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--73D6D0CBB55B434E98EB10767ADD74AC-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--73D6D0CBB55B434E98EB10767ADD74AC-->  <HQLORDERBYCLAUSE><![CDATA[priority]]></HQLORDERBYCLAUSE>
+<!--73D6D0CBB55B434E98EB10767ADD74AC-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--73D6D0CBB55B434E98EB10767ADD74AC--></AD_TAB>
 
 <!--7580F9AE37704571BB0D3935252CAC5A--><AD_TAB>
@@ -10953,6 +11405,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--7580F9AE37704571BB0D3935252CAC5A-->  <HQLWHERECLAUSE><![CDATA[e.organization.id=@Organization.id@]]></HQLWHERECLAUSE>
+<!--7580F9AE37704571BB0D3935252CAC5A-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--7580F9AE37704571BB0D3935252CAC5A--></AD_TAB>
 
 <!--7F5E8E4C55914138A358F5087B532B59--><AD_TAB>
@@ -10975,6 +11428,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--7F5E8E4C55914138A358F5087B532B59-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--7F5E8E4C55914138A358F5087B532B59-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7F5E8E4C55914138A358F5087B532B59-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
+<!--7F5E8E4C55914138A358F5087B532B59-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--7F5E8E4C55914138A358F5087B532B59--></AD_TAB>
 
 <!--81F3CB82FABC4208BA76DEBB3728A14B--><AD_TAB>
@@ -10997,6 +11451,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--81F3CB82FABC4208BA76DEBB3728A14B-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--81F3CB82FABC4208BA76DEBB3728A14B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--81F3CB82FABC4208BA76DEBB3728A14B-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--81F3CB82FABC4208BA76DEBB3728A14B-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--81F3CB82FABC4208BA76DEBB3728A14B--></AD_TAB>
 
 <!--824A999EA7D14B92A3CC74D9D95BFD75--><AD_TAB>
@@ -11019,6 +11474,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--824A999EA7D14B92A3CC74D9D95BFD75-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--824A999EA7D14B92A3CC74D9D95BFD75-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--824A999EA7D14B92A3CC74D9D95BFD75-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--824A999EA7D14B92A3CC74D9D95BFD75-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--824A999EA7D14B92A3CC74D9D95BFD75--></AD_TAB>
 
 <!--8391062D5C6A47EA94A83A304AD720BE--><AD_TAB>
@@ -11043,6 +11499,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8391062D5C6A47EA94A83A304AD720BE-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--8391062D5C6A47EA94A83A304AD720BE-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--8391062D5C6A47EA94A83A304AD720BE--></AD_TAB>
 
 <!--8652BB9E40664869A5132CEB8A907B9B--><AD_TAB>
@@ -11067,6 +11524,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--8652BB9E40664869A5132CEB8A907B9B-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--8652BB9E40664869A5132CEB8A907B9B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8652BB9E40664869A5132CEB8A907B9B-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
+<!--8652BB9E40664869A5132CEB8A907B9B-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--8652BB9E40664869A5132CEB8A907B9B--></AD_TAB>
 
 <!--8E5972CF3664486D9D887BDEDA88627D--><AD_TAB>
@@ -11095,6 +11553,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--8E5972CF3664486D9D887BDEDA88627D-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--8E5972CF3664486D9D887BDEDA88627D-->  <HQLORDERBYCLAUSE><![CDATA[-created]]></HQLORDERBYCLAUSE>
 <!--8E5972CF3664486D9D887BDEDA88627D-->  <HQLFILTERCLAUSE><![CDATA[e.securityBasedOnRole='Y' or e.userContact.id=@user@]]></HQLFILTERCLAUSE>
+<!--8E5972CF3664486D9D887BDEDA88627D-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--8E5972CF3664486D9D887BDEDA88627D--></AD_TAB>
 
 <!--99DCADEC674D4ECCB158CA5F3DDBFF83--><AD_TAB>
@@ -11119,6 +11578,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--99DCADEC674D4ECCB158CA5F3DDBFF83-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--99DCADEC674D4ECCB158CA5F3DDBFF83-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--99DCADEC674D4ECCB158CA5F3DDBFF83-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--99DCADEC674D4ECCB158CA5F3DDBFF83-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--99DCADEC674D4ECCB158CA5F3DDBFF83--></AD_TAB>
 
 <!--A4A463FA34F946BFA3F687DC8754ED93--><AD_TAB>
@@ -11141,6 +11601,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--A4A463FA34F946BFA3F687DC8754ED93-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--A4A463FA34F946BFA3F687DC8754ED93-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--A4A463FA34F946BFA3F687DC8754ED93-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--A4A463FA34F946BFA3F687DC8754ED93-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--A4A463FA34F946BFA3F687DC8754ED93--></AD_TAB>
 
 <!--A9F3CB2CCAA0406AB97E73274DF60B93--><AD_TAB>
@@ -11165,6 +11626,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--A9F3CB2CCAA0406AB97E73274DF60B93-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--A9F3CB2CCAA0406AB97E73274DF60B93-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--A9F3CB2CCAA0406AB97E73274DF60B93-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--A9F3CB2CCAA0406AB97E73274DF60B93-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--A9F3CB2CCAA0406AB97E73274DF60B93--></AD_TAB>
 
 <!--AB9A0625167C4B169E0DAACBF82B1A8B--><AD_TAB>
@@ -11189,6 +11651,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--AB9A0625167C4B169E0DAACBF82B1A8B-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--AB9A0625167C4B169E0DAACBF82B1A8B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--AB9A0625167C4B169E0DAACBF82B1A8B-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--AB9A0625167C4B169E0DAACBF82B1A8B-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--AB9A0625167C4B169E0DAACBF82B1A8B--></AD_TAB>
 
 <!--ABD19F77982D41F7A53F7A61948A137D--><AD_TAB>
@@ -11215,6 +11678,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--ABD19F77982D41F7A53F7A61948A137D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--ABD19F77982D41F7A53F7A61948A137D-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--ABD19F77982D41F7A53F7A61948A137D-->  <HQLORDERBYCLAUSE><![CDATA[executionDate]]></HQLORDERBYCLAUSE>
+<!--ABD19F77982D41F7A53F7A61948A137D-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--ABD19F77982D41F7A53F7A61948A137D--></AD_TAB>
 
 <!--ADBD1719BFA14C97A32C7B6E8452D14F--><AD_TAB>
@@ -11240,6 +11704,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
+<!--ADBD1719BFA14C97A32C7B6E8452D14F-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--ADBD1719BFA14C97A32C7B6E8452D14F--></AD_TAB>
 
 <!--B30CF79CF71245339E94B4B332BAABF1--><AD_TAB>
@@ -11266,6 +11731,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--B30CF79CF71245339E94B4B332BAABF1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B30CF79CF71245339E94B4B332BAABF1-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--B30CF79CF71245339E94B4B332BAABF1-->  <HQLWHERECLAUSE><![CDATA[e.isIncluded='Y']]></HQLWHERECLAUSE>
+<!--B30CF79CF71245339E94B4B332BAABF1-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--B30CF79CF71245339E94B4B332BAABF1--></AD_TAB>
 
 <!--B3B9080A60E443C58F9476506EEE3D4E--><AD_TAB>
@@ -11290,6 +11756,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--B3B9080A60E443C58F9476506EEE3D4E-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--B3B9080A60E443C58F9476506EEE3D4E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B3B9080A60E443C58F9476506EEE3D4E-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--B3B9080A60E443C58F9476506EEE3D4E-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--B3B9080A60E443C58F9476506EEE3D4E--></AD_TAB>
 
 <!--B909C00C6F5242F8A092D5567278FBCB--><AD_TAB>
@@ -11313,6 +11780,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--B909C00C6F5242F8A092D5567278FBCB-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--B909C00C6F5242F8A092D5567278FBCB-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B909C00C6F5242F8A092D5567278FBCB-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--B909C00C6F5242F8A092D5567278FBCB-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--B909C00C6F5242F8A092D5567278FBCB--></AD_TAB>
 
 <!--C4B6506838E14A349D6717D6856F1B56--><AD_TAB>
@@ -11341,6 +11809,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--C4B6506838E14A349D6717D6856F1B56-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <HQLWHERECLAUSE><![CDATA[e.receipt='Y']]></HQLWHERECLAUSE>
 <!--C4B6506838E14A349D6717D6856F1B56-->  <HQLORDERBYCLAUSE><![CDATA[-documentNo]]></HQLORDERBYCLAUSE>
+<!--C4B6506838E14A349D6717D6856F1B56-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--C4B6506838E14A349D6717D6856F1B56--></AD_TAB>
 
 <!--C53967BA96E64FC6B2E4166A7C945168--><AD_TAB>
@@ -11365,6 +11834,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--C53967BA96E64FC6B2E4166A7C945168-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--C53967BA96E64FC6B2E4166A7C945168-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C53967BA96E64FC6B2E4166A7C945168-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--C53967BA96E64FC6B2E4166A7C945168-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--C53967BA96E64FC6B2E4166A7C945168--></AD_TAB>
 
 <!--C56E698100314ABBBBD3A89626CA551C--><AD_TAB>
@@ -11389,6 +11859,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--C56E698100314ABBBBD3A89626CA551C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C56E698100314ABBBBD3A89626CA551C-->  <UIPATTERN><![CDATA[SR]]></UIPATTERN>
 <!--C56E698100314ABBBBD3A89626CA551C-->  <HQLORDERBYCLAUSE><![CDATA[-transactionDate]]></HQLORDERBYCLAUSE>
+<!--C56E698100314ABBBBD3A89626CA551C-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--C56E698100314ABBBBD3A89626CA551C--></AD_TAB>
 
 <!--C65BA4DF317D46CDA72EF9414A3A23ED--><AD_TAB>
@@ -11415,6 +11886,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--C65BA4DF317D46CDA72EF9414A3A23ED-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C65BA4DF317D46CDA72EF9414A3A23ED-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--C65BA4DF317D46CDA72EF9414A3A23ED-->  <HQLORDERBYCLAUSE><![CDATA[created]]></HQLORDERBYCLAUSE>
+<!--C65BA4DF317D46CDA72EF9414A3A23ED-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--C65BA4DF317D46CDA72EF9414A3A23ED--></AD_TAB>
 
 <!--CD573DF1E351485EA2B2DE487DCACA6F--><AD_TAB>
@@ -11445,6 +11917,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--CD573DF1E351485EA2B2DE487DCACA6F-->  <HQLWHERECLAUSE><![CDATA[e.process.background = true]]></HQLWHERECLAUSE>
 <!--CD573DF1E351485EA2B2DE487DCACA6F-->  <HQLORDERBYCLAUSE><![CDATA[-created]]></HQLORDERBYCLAUSE>
 <!--CD573DF1E351485EA2B2DE487DCACA6F-->  <HQLFILTERCLAUSE><![CDATA[e.channel='Process Scheduler']]></HQLFILTERCLAUSE>
+<!--CD573DF1E351485EA2B2DE487DCACA6F-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--CD573DF1E351485EA2B2DE487DCACA6F--></AD_TAB>
 
 <!--D144E28320BF40A5B5E5E3C5B92D10E9--><AD_TAB>
@@ -11469,6 +11942,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--D144E28320BF40A5B5E5E3C5B92D10E9-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--D144E28320BF40A5B5E5E3C5B92D10E9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--D144E28320BF40A5B5E5E3C5B92D10E9-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--D144E28320BF40A5B5E5E3C5B92D10E9-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--D144E28320BF40A5B5E5E3C5B92D10E9--></AD_TAB>
 
 <!--D88DE0446AFD4A55BF850C5B75CD7974--><AD_TAB>
@@ -11492,6 +11966,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--D88DE0446AFD4A55BF850C5B75CD7974-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--D88DE0446AFD4A55BF850C5B75CD7974-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--D88DE0446AFD4A55BF850C5B75CD7974-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--D88DE0446AFD4A55BF850C5B75CD7974-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--D88DE0446AFD4A55BF850C5B75CD7974--></AD_TAB>
 
 <!--DB9FB0EB697C4501B84A2B60E8456FDB--><AD_TAB>
@@ -11514,6 +11989,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--DB9FB0EB697C4501B84A2B60E8456FDB-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--DB9FB0EB697C4501B84A2B60E8456FDB-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--DB9FB0EB697C4501B84A2B60E8456FDB-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--DB9FB0EB697C4501B84A2B60E8456FDB-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--DB9FB0EB697C4501B84A2B60E8456FDB--></AD_TAB>
 
 <!--E13E29EB8CF349BAA3D4CB71873CC896--><AD_TAB>
@@ -11536,6 +12012,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--E13E29EB8CF349BAA3D4CB71873CC896-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--E13E29EB8CF349BAA3D4CB71873CC896-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E13E29EB8CF349BAA3D4CB71873CC896-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
+<!--E13E29EB8CF349BAA3D4CB71873CC896-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--E13E29EB8CF349BAA3D4CB71873CC896--></AD_TAB>
 
 <!--F53E35A11C564F20BE4082A7B8CFF6B7--><AD_TAB>
@@ -11560,6 +12037,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--F53E35A11C564F20BE4082A7B8CFF6B7-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--F53E35A11C564F20BE4082A7B8CFF6B7-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F53E35A11C564F20BE4082A7B8CFF6B7-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--F53E35A11C564F20BE4082A7B8CFF6B7-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--F53E35A11C564F20BE4082A7B8CFF6B7--></AD_TAB>
 
 <!--F7A52FDAAA0346EFA07D53C125B40404--><AD_TAB>
@@ -11587,6 +12065,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <HQLWHERECLAUSE><![CDATA[e.receipt='N']]></HQLWHERECLAUSE>
 <!--F7A52FDAAA0346EFA07D53C125B40404-->  <HQLORDERBYCLAUSE><![CDATA[-documentNo]]></HQLORDERBYCLAUSE>
+<!--F7A52FDAAA0346EFA07D53C125B40404-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--F7A52FDAAA0346EFA07D53C125B40404--></AD_TAB>
 
 <!--FBC60525011346D6B026D7F8C68199B4--><AD_TAB>
@@ -11609,6 +12088,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--FBC60525011346D6B026D7F8C68199B4-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--FBC60525011346D6B026D7F8C68199B4-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--FBC60525011346D6B026D7F8C68199B4-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--FBC60525011346D6B026D7F8C68199B4-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--FBC60525011346D6B026D7F8C68199B4--></AD_TAB>
 
 <!--FD79A6D6DB094BE88F2F0E0333A399B2--><AD_TAB>
@@ -11633,6 +12113,7 @@ This tab is read only. If you want to control the periods you must use the "Open
 <!--FD79A6D6DB094BE88F2F0E0333A399B2-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--FD79A6D6DB094BE88F2F0E0333A399B2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--FD79A6D6DB094BE88F2F0E0333A399B2-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--FD79A6D6DB094BE88F2F0E0333A399B2-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--FD79A6D6DB094BE88F2F0E0333A399B2--></AD_TAB>
 
 </data>
