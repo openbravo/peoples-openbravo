@@ -384,7 +384,9 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
             columnData = pay.getDocumentNo();
             break;
           case 1: // businesspartner
-            columnData = pay.getBusinessPartner().getIdentifier();
+            if (pay.getBusinessPartner() != null) {
+              columnData = pay.getBusinessPartner().getIdentifier();
+            }
             break;
           case 2: // description
             if (pay.getDescription() != null)

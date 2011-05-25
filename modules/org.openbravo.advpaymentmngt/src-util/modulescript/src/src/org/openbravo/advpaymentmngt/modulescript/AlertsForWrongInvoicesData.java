@@ -58,7 +58,7 @@ static Logger log4j = Logger.getLogger(AlertsForWrongInvoicesData.class);
       "      where c_invoice.c_invoice_id = fin_payment_schedule.c_invoice_id " +
       "      and fin_payment_schedule.fin_payment_schedule_id = fin_payment_scheduledetail.fin_payment_schedule_invoice" +
       "      group by fin_payment_schedule.ad_client_id, fin_payment_schedule.ad_org_id, c_invoice.issotrx, fin_payment_schedule.fin_payment_schedule_id, fin_payment_schedule.c_invoice_id, fin_payment_schedule.amount" +
-      "      having fin_payment_schedule.amount <> sum(fin_payment_scheduledetail.amount)" +
+      "      having fin_payment_schedule.amount <> sum(fin_payment_scheduledetail.amount + coalesce(fin_payment_scheduledetail.writeoffamt,0))" +
       "      order by 1, 2";
 
     ResultSet result;

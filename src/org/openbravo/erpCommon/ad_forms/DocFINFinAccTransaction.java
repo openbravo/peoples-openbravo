@@ -39,6 +39,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
@@ -136,7 +137,17 @@ public class DocFINFinAccTransaction extends AcctServer {
         FieldProviderFactory.setField(data[i], "cGlItemId",
             paymentDetails.get(i).getGLItem() != null ? paymentDetails.get(i).getGLItem().getId()
                 : "");
-        FieldProviderFactory.setField(data[i], "cBpartnerId", payment.getBusinessPartner().getId());
+        // Calculate Business Partner from payment header or from details if header is null
+        BusinessPartner bPartner = payment.getBusinessPartner() != null ? payment
+            .getBusinessPartner() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+            .getInvoicePaymentSchedule() != null ? paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
+            .getBusinessPartner() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+            .getOrderPaymentSchedule() != null ? paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+            .getBusinessPartner() : null));
+        FieldProviderFactory.setField(data[i], "cBpartnerId", bPartner != null ? bPartner.getId()
+            : "");
         FieldProviderFactory.setField(data[i], "Refund", paymentDetails.get(i).isRefund() ? "Y"
             : "N");
         FieldProviderFactory.setField(data[i], "adOrgId", transaction.getOrganization().getId());
@@ -333,11 +344,20 @@ public class DocFINFinAccTransaction extends AcctServer {
                   .getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
           bpamount = bpamount.add(new BigDecimal(line.getWriteOffAmt()));
         }
-        fact.createLine(line, getAccountBPartner(
-            (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
-                : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
-            !isReceipt ? bpamount.toString() : "", isReceipt ? bpamount.toString() : "",
-            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        // Bug critical: Before GL Item was not taken into account
+        if (!"".equals(line.cGlItemId)) {
+          fact.createLine(line, getAccountGLItem(OBDal.getInstance().get(GLItem.class,
+              line.getCGlItemId()), as, isReceipt, conn), C_Currency_ID, line.getPaymentAmount(),
+              line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        } else {
+          fact
+              .createLine(line,
+                  getAccountBPartner((line.m_C_BPartner_ID == null || line.m_C_BPartner_ID
+                      .equals("")) ? this.C_BPartner_ID : line.m_C_BPartner_ID, as, isReceipt,
+                      isPrepayment, conn), C_Currency_ID, !isReceipt ? bpamount.toString() : "",
+                  isReceipt ? bpamount.toString() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                  DocumentType, conn);
+        }
       }
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
       // credit is generated
@@ -706,9 +726,10 @@ public class DocFINFinAccTransaction extends AcctServer {
       // FieldProviderFactory.setField(data[0], "User2_ID", transaction.getNdDimension().getId());
       FieldProviderFactory.setField(data[0], "FIN_Payment_ID",
           transaction.getFinPayment() != null ? transaction.getFinPayment().getId() : "");
-      FieldProviderFactory.setField(data[0], "C_BPartner_ID",
-          transaction.getFinPayment() != null ? transaction.getFinPayment().getBusinessPartner()
-              .getId() : "");
+      FieldProviderFactory
+          .setField(data[0], "C_BPartner_ID", (transaction.getFinPayment() != null && transaction
+              .getFinPayment().getBusinessPartner() != null) ? transaction.getFinPayment()
+              .getBusinessPartner().getId() : "");
       FieldProviderFactory.setField(data[0], "UsedCredit",
           transaction.getFinPayment() != null ? transaction.getFinPayment().getUsedCredit()
               .toString() : "");

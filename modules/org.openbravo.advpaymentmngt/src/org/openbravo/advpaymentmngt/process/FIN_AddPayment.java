@@ -408,6 +408,9 @@ public class FIN_AddPayment {
         if (FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule() != null) {
           FieldProviderFactory.setField(data[i], "dueDate", dateFormater.format(
               FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getDueDate()).toString());
+          FieldProviderFactory.setField(data[i], "transactionDate", dateFormater.format(
+              FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getInvoice()
+                  .getInvoiceDate()).toString());
           FieldProviderFactory.setField(data[i], "invoicedAmount", FIN_PaymentScheduleDetails[i]
               .getInvoicePaymentSchedule().getInvoice().getGrandTotalAmount().toString());
           FieldProviderFactory.setField(data[i], "expectedAmount", FIN_PaymentScheduleDetails[i]
@@ -416,6 +419,8 @@ public class FIN_AddPayment {
           // Truncate Business Partner
           String businessPartner = FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule()
               .getInvoice().getBusinessPartner().getIdentifier();
+          FieldProviderFactory.setField(data[i], "businessPartnerId", FIN_PaymentScheduleDetails[i]
+              .getInvoicePaymentSchedule().getInvoice().getBusinessPartner().getId());
           String truncateBusinessPartner = (businessPartner.length() > 18) ? businessPartner
               .substring(0, 15).concat("...").toString() : businessPartner;
           FieldProviderFactory.setField(data[i], "businessPartnerName",
@@ -440,6 +445,9 @@ public class FIN_AddPayment {
         } else {
           FieldProviderFactory.setField(data[i], "dueDate", dateFormater.format(
               FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getDueDate()).toString());
+          FieldProviderFactory.setField(data[i], "transactionDate", dateFormater.format(
+              FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getOrder().getOrderDate())
+              .toString());
           FieldProviderFactory.setField(data[i], "invoicedAmount", "");
           FieldProviderFactory.setField(data[i], "expectedAmount", FIN_PaymentScheduleDetails[i]
               .getOrderPaymentSchedule().getAmount().toString());
@@ -447,6 +455,8 @@ public class FIN_AddPayment {
           // Truncate Business Partner
           String businessPartner = FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule()
               .getOrder().getBusinessPartner().getIdentifier();
+          FieldProviderFactory.setField(data[i], "businessPartnerId", FIN_PaymentScheduleDetails[i]
+              .getOrderPaymentSchedule().getOrder().getBusinessPartner().getId());
           String truncateBusinessPartner = (businessPartner.length() > 18) ? businessPartner
               .substring(0, 15).concat("...").toString() : businessPartner;
           FieldProviderFactory.setField(data[i], "businessPartnerName",
@@ -750,6 +760,33 @@ public class FIN_AddPayment {
     pb.setParams(parameters);
     OBError myMessage = null;
     new FIN_PaymentProposalProcess().execute(pb);
+    myMessage = (OBError) pb.getResult();
+    return myMessage;
+  }
+
+  /**
+   * It calls the Bank Statement Process for the given bank statement and action.
+   * 
+   * @param vars
+   *          VariablesSecureApp with the session data.
+   * @param conn
+   *          ConnectionProvider with the connection being used.
+   * @param strBankStatementAction
+   *          String with the action of the process. {P, R}
+   * @param strBankStatementId
+   *          String with FIN_BankStatement Id to be processed.
+   * @return a OBError with the result message of the process.
+   * @throws Exception
+   */
+  public static OBError processBankStatement(VariablesSecureApp vars, ConnectionProvider conn,
+      String strBankStatementAction, String strBankStatementId) throws Exception {
+    ProcessBundle pb = new ProcessBundle("58A9261BACEF45DDA526F29D8557272D", vars).init(conn);
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("action", strBankStatementAction);
+    parameters.put("FIN_Bankstatement_ID", strBankStatementId);
+    pb.setParams(parameters);
+    OBError myMessage = null;
+    new FIN_BankStatementProcess().execute(pb);
     myMessage = (OBError) pb.getResult();
     return myMessage;
   }

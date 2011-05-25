@@ -44,7 +44,6 @@ isc.OBApplicationMenuTree.addProperties({
     this.submenuInheritanceMask.push('getBaseStyle');
 
     this.Super('initWidget', arguments);
-    isc.Page.registerKey({keyName: 'm', ctrlKey: true, shiftKey: true}, function(key, target) {theMenu.menuButton.showMenu();});
   },
 
   draw: function() {

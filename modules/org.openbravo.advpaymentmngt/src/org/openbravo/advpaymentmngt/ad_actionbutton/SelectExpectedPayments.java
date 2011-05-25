@@ -86,7 +86,7 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
           "inpScheduledPaymentDetailId", IsIDFilter.instance);
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       String strPaymentAmount = vars.getRequiredNumericParameter("inpActualPayment");
-      String strDifferenceAction = vars.getRequiredStringParameter("inpDifferenceAction");
+      String strDifferenceAction = vars.getStringParameter("inpDifferenceAction", "");
       String strDifferenceAmount = vars.getRequiredNumericParameter("inpDifference");
 
       saveAndClose(response, vars, strPaymentProposalId, strSelectedScheduledPaymentDetailIds,

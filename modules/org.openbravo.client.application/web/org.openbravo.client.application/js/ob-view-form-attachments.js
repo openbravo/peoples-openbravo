@@ -256,6 +256,10 @@ isc.OBAttachmentsLayout.addProperties({
             }
           };
           var value = this.theForm.getItem('inpname').getElement().value;
+          if(!value){
+            isc.say(OB.I18N.getLabel('OBUIAPP_AttachmentsSpecifyFile'));
+            return;
+          }
           value = value?value:'';
           var lastChar=value.lastIndexOf("\\") + 1;
           var fileName = lastChar===-1?value:value.substring(lastChar);

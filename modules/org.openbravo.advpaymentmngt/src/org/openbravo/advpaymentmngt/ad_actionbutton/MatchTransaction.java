@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -197,8 +197,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
                   FIN_FinaccTransaction.class, strTransaction);
               transactionLine.setReconciliation(MatchTransactionDao.getObject(
                   FIN_Reconciliation.class, strReconciliationId));
-              item.getBankStatement().setFINReconciliation(
-                  MatchTransactionDao.getObject(FIN_Reconciliation.class, strReconciliationId));
               if (isInArray(strRecordsChecked, item.getId())) {
                 transactionLine.setStatus("RPPC");
                 if (transactionLine.getFinPayment() != null) {
@@ -492,12 +490,16 @@ public class MatchTransaction extends HttpSecureAppServlet {
         FieldProviderFactory.setField(data[i], "bankLineTransactionDate", Utility.formatDate(
             FIN_BankStatementLines[i].getTransactionDate(), vars.getJavaDateFormat()));
         FieldProviderFactory.setField(data[i], "bankLineBusinessPartner", FIN_BankStatementLines[i]
-            .getBpartnername());
+            .getBusinessPartner() != null ? FIN_BankStatementLines[i].getBusinessPartner()
+            .getIdentifier() : FIN_BankStatementLines[i].getBpartnername());
         FieldProviderFactory.setField(data[i], "bankLineReferenceNo", FIN_BankStatementLines[i]
             .getReferenceNo());
         // CREDIT - DEBIT
         FieldProviderFactory.setField(data[i], "bankLineAmount", FIN_BankStatementLines[i]
             .getCramount().subtract(FIN_BankStatementLines[i].getDramount()).toString());
+        FieldProviderFactory.setField(data[i], "bankLineDescription", FIN_BankStatementLines[i]
+            .getDescription()
+            + " " + FIN_BankStatementLines[i].getBpartnername());
         FieldProviderFactory
             .setField(
                 data[i],
@@ -520,6 +522,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
               .equals(matchingType)
               || alreadyMatched ? "Y" : "N");
           FieldProviderFactory.setField(data[i], "finTransactionId", transaction.getId());
+          FieldProviderFactory.setField(data[i], "trxDescription", transaction.getDescription());
           FieldProviderFactory.setField(data[i], "transactionDate", Utility.formatDate(transaction
               .getTransactionDate().compareTo(reconciliation.getEndingDate()) > 0 ? reconciliation
               .getEndingDate() : transaction.getTransactionDate(), vars.getJavaDateFormat()));
@@ -533,9 +536,14 @@ public class MatchTransaction extends HttpSecureAppServlet {
               .getFinPayment().getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList()
               .get(0).getInvoicePaymentSchedule() != null ? MATCHED_AGAINST_INVOICE
               : MATCHED_AGAINST_ORDER)));
-          FieldProviderFactory.setField(data[i], "transactionBPartner",
-              transaction.getFinPayment() != null ? transaction.getFinPayment()
-                  .getBusinessPartner().getName() : "");
+          String bpName = "";
+          if (transaction.getFinPayment() != null) {
+            if (transaction.getFinPayment().getBusinessPartner() != null) {
+              bpName = transaction.getFinPayment().getBusinessPartner().getName();
+            }
+          }
+          FieldProviderFactory.setField(data[i], "transactionBPartner", bpName);
+
           FieldProviderFactory
               .setField(
                   data[i],
@@ -550,6 +558,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
           FieldProviderFactory.setField(data[i], "disabled", "Y");
           FieldProviderFactory.setField(data[i], "checked", "N");
           FieldProviderFactory.setField(data[i], "finTransactionId", "");
+          FieldProviderFactory.setField(data[i], "trxDescription", "");
           FieldProviderFactory.setField(data[i], "transactionDate", "");
           FieldProviderFactory.setField(data[i], "transactionBPartner", "");
           FieldProviderFactory.setField(data[i], "transactionReferenceNo", "");

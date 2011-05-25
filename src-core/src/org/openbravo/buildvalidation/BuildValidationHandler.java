@@ -28,7 +28,7 @@ public class BuildValidationHandler {
 
   public static void main(String[] args) {
     basedir = new File(args[0]);
-    module = args[1];
+    module = null; // The module is not set so that all BuildValidations are always executed.
     PropertyConfigurator.configure("log4j.lcf");
     List<String> classes = new ArrayList<String>();
     ArrayList<File> modFolders = new ArrayList<File>();

@@ -858,7 +858,7 @@ OB.ViewFormProperties = {
     }
     this.setValue(fldName + '_textualValue', textValue);
   },
-
+  
   // called explicitly onblur and when non-editable fields change
   handleItemChange: function(item){
     // is used to prevent infinite loops during save
@@ -941,7 +941,7 @@ OB.ViewFormProperties = {
     // remove the message
     this.setHasChanged(true);
     this.view.messageBar.hide();
-    this.view.toolBar.updateButtonState(true); 
+    this.view.toolBar.updateButtonState(true, true); 
   },
   
   // make sure that any field errors also appear in the grid

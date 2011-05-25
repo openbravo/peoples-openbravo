@@ -82,7 +82,20 @@ function validate(action) {
       showJSMessage(7);
       return false;
     } else {
-      if (!validateSelectedPendingPayments()) return false;
+      var diffAction = frm.inpDifferenceAction,
+          i,
+          selectedAction = null,
+          actionSelected = false;
+      for (i = 0; i < diffAction.length; i++) {
+        if (diffAction[i].checked) {
+          actionSelected = true;
+          break;
+        }
+      }
+      if (actionSelected) {
+        selectedAction = diffAction[i].value;
+      }
+      if (!validateSelectedPendingPayments(false, selectedAction)) return false;
     }
   }
   return true;
@@ -122,13 +135,44 @@ function closeProcessPayment() {
   document.getElementById('client_bottom').style.display = 'block';
 }
 
-function updateData(key, mark) {
+function updateData(key, mark, drivenByGrid) {
   if (mark==null) mark=false;
   updateReadOnly(key, mark);
   var paymentAmount = document.frmMain.elements['inpPaymentAmount'+key];
   if (!isTrue('isReceipt')){
     if (mark && paymentAmount.value=='') {
       paymentAmount.value = document.frmMain.elements['inpRecordAmt'+key].value;
+    }
+  } else { // sales
+    if (drivenByGrid && mark && !paymentAmount.value) {
+      var total = document.getElementById('inpTotal').value ? document.getElementById('inpTotal').value : 0;
+      var actualPayment = document.getElementById('paramActualPayment').value;
+      if (frm.inpUseCredit.checked) {
+        actualPayment = add(actualPayment, document.frmMain.inpCredit.value);
+      }
+      var gridAmt = document.frmMain.elements['inpRecordAmt'+key].value;
+
+      if ( compare(actualPayment, '<', 0) && compare(gridAmt, '>=', 0) ) {
+        paymentAmount.value = 0;
+      } else {
+        if ( compare(actualPayment, '<', 0) && compare(gridAmt, '<', 0) ) {
+          total = abs(total);
+          actualPayment = abs(actualPayment);
+          subtotal = add(total, abs(gridAmt));
+          if ( compare(subtotal, '>', actualPayment)) {
+            paymentAmount.value = subtract(0, subtract(actualPayment, total));
+          } else {
+            paymentAmount.value = gridAmt;
+          }
+        } else {
+          var subtotal = add(total, gridAmt);
+          if ( compare(subtotal, '>', actualPayment)) {
+            paymentAmount.value = subtract(actualPayment, total);
+          } else {
+            paymentAmount.value = gridAmt;
+          }
+        }
+      }
     }
   }
   updateTotal();
@@ -193,6 +237,13 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
         
         updateAll();
         updateTotal();
+
+        if (document.frmMain.isFirstLoad.value=="true" && isTrue('isReceipt')) {
+          document.frmMain.isFirstLoad.value="false";
+          document.getElementById('paramActualPayment').value = document.getElementById('paramExpectedPayment').value;
+          distributeAmount(document.getElementById('paramActualPayment').value);
+        }
+        
       } else {
         document.getElementById('sectionGrid').innerHTML = '';
       }
@@ -327,6 +378,7 @@ var strText = "";
   <input type="hidden" name="inpadWindowId" value="" id="fieldWindowId"/>
   <input type="hidden" name="inpTabId" value="" id="fieldTabId"/>
   <input type="hidden" name="isReceipt" value="" id="fieldReceipt"/>
+  <input type="hidden" name="isFirstLoad" value="true"/>
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
       <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>
@@ -807,8 +859,8 @@ var strText = "";
              </tr>
              
              <tr>
-              <td class="TitleCell" ><span name="lblP" id="lblPText" class="TitleCell LabelText"><label for="paramAlternativePaymentMethod">Show payments out for alternative payment methods</label></span></td>
-              <span name="lblR" id="lblRText" class="TitleCell LabelText"><label for="paramAlternativePaymentMethod">Show payments in for alternative payment methods</label></span>
+              <td class="TitleCell" ><span name="lblP" id="lblPShowAlternative" class="TitleCell LabelText"><label for="paramAlternativePaymentMethod">Show payments out for alternative payment methods</label></span>
+                                     <span name="lblR" id="lblRShowAlternative" class="TitleCell LabelText"><label for="paramAlternativePaymentMethod">Show payments in for alternative payment methods</label></span></td>
               <td class="Radio_Check_ContentCell">
                 <span class="Radio_Check_ContentCell Checkbox_container_NOT_Focused"><input type="checkbox" name="inpAlternativePaymentMethod" value="Y" id="paramAlternativePaymentMethod" onclick="loadGridList()"></input></span>                
               </td>
@@ -866,7 +918,7 @@ var strText = "";
                     <thead>
                       <tr class="DataGrid_Body_Row">
                         <th class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox" width="25"> 
-                          <input type="checkbox" name="inpAllLines" onclick="markAll(document.frmMain.inpScheduledPaymentDetailId, this.checked);updateAll();return true;"/>
+                          <input type="checkbox" name="inpAllLines" onclick="markAll(document.frmMain.inpScheduledPaymentDetailId, this.checked);updateAll(true);return true;"/>
                         </th>
                         <th class="DataGrid_Header_Cell" width="120"><span name="lblP" id="lblPPON">Purchase Order No.</span><span name="lblR" id="lblRSON">Sales Order No.</span></th>
                         <th class="DataGrid_Header_Cell" width="120"><span name="lblP" id="lblPPIN">Purchase Invoice No.</span><span name="lblR" id="lblRSIN">Sales Invoice No.</span></th>

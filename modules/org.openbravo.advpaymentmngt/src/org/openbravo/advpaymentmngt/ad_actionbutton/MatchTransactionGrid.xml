@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -30,6 +30,7 @@
     <!--FIELD id="fieldBLId" attribute="name" replace="xx">finBankLineId</FIELD-->
     <FIELD id="fieldBLTransactionDate">bankLineTransactionDate</FIELD>
     <FIELD id="fieldBLBusinessPartner">bankLineBusinessPartner</FIELD>
+    <FIELD id="fieldBLBusinessPartner" attribute="title">bankLineDescription</FIELD>
     <FIELD id="fieldBLReferenceNo">bankLineReferenceNo</FIELD>
     <FIELD id="inpBSAmount_xx" attribute="value" format="euroEdition">bankLineAmount</FIELD>
     <FIELD id="inpBSAmount_xx" attribute="id" replace="xx">finBankLineId</FIELD>
@@ -51,14 +52,18 @@
     <FIELD id="inpMatchingType_xx" attribute="id" replace="xx">finBankLineId</FIELD>
     <FIELD id="fieldAddLink" attribute="onclick" replace="xx">finBankLineId</FIELD>
     <FIELD id="inpTransactionDate_xx">transactionDate</FIELD>
+    <FIELD id="inpTransactionDate_xx" attribute="title">trxDescription</FIELD>
     <FIELD id="inpTransactionDate_xx" attribute="id" replace="xx">finBankLineId</FIELD>
     <FIELD id="inpMatchedDocument_xx">matchedDocument</FIELD>
     <FIELD id="inpMatchedDocument_xx" attribute="id" replace="xx">finBankLineId</FIELD>
     <FIELD id="inpBPartner_xx">transactionBPartner</FIELD>
+    <FIELD id="inpBPartner_xx" attribute="title">trxDescription</FIELD>
     <FIELD id="inpBPartner_xx" attribute="id" replace="xx">finBankLineId</FIELD>
     <FIELD id="inpReferenceNo_xx">transactionReferenceNo</FIELD>
+    <FIELD id="inpReferenceNo_xx" attribute="title">trxDescription</FIELD>
     <FIELD id="inpReferenceNo_xx" attribute="id" replace="xx">finBankLineId</FIELD>
     <FIELD id="inpAmount_xx" format="euroEdition">transactionAmount</FIELD>
+    <FIELD id="inpAmount_xx" attribute="title">trxDescription</FIELD>
     <FIELD id="inpAmount_xx" attribute="id" replace="xx">finBankLineId</FIELD>
     <SECTION id="sectionDetail"/>
   </structure>

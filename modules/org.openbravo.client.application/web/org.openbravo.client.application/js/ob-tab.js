@@ -229,6 +229,23 @@ isc.OBTabSetChild.addProperties({
 
     dblClickWaiting: false,
 
+    click: function() {
+      if (this.itemClicked) {
+        delete this.itemClicked;
+        return false;
+      }
+      this.tabSet.doHandleClick();
+    },
+
+    doubleClick: function() {
+      if (this.itemClicked || this.itemDoubleClicked) {
+        delete this.itemClicked;
+        delete this.itemDoubleClicked;
+        return false;
+      }
+      this.tabSet.doHandleDoubleClick();
+    },
+    
     canDrag: false,
     dragAppearance: 'none',
     dragStartDistance: 1,
@@ -236,6 +253,11 @@ isc.OBTabSetChild.addProperties({
 
     itemClick: function(item, itemNum){
       var me = this, tab = item;
+      this.itemClicked = true;
+      if (this.tabSet.ignoreItemClick) {
+        delete this.tabSet.ignoreItemClick;
+        return false;
+      }
       me.dblClickWaiting = true;
       isc.Timer.setTimeout(function(){
         // if no double click happened then do the single click
@@ -244,12 +266,12 @@ isc.OBTabSetChild.addProperties({
           me.tabSet.doHandleClick();
         }
       }, OB.Constants.DBL_CLICK_DELAY);
-
+      return false;
     },
 
     itemDoubleClick: function(item, itemNum){
-      var tab = item;
       this.dblClickWaiting = false;
+      this.itemDoubleClicked = true;
       this.tabSet.doHandleDoubleClick();
     },
 
@@ -261,31 +283,33 @@ isc.OBTabSetChild.addProperties({
     },
 
     mouseDown: function() {
-      if (this.state === isc.OBStandardView.STATE_IN_MID) {
+      if (this.tabSet.state === isc.OBStandardView.STATE_IN_MID) {
         this.setCursor(isc.Canvas.MOVE);
       }
     },
 
     mouseUp: function() {
-      if (this.state === isc.OBStandardView.STATE_IN_MID) {
+      if (this.tabSet.state === isc.OBStandardView.STATE_IN_MID) {
         this.setCursor(isc.Canvas.ROW_RESIZE);
       }
     },
 
     mouseOut: function() {
-      if (this.state === isc.OBStandardView.STATE_IN_MID) {
+      if (this.tabSet.state === isc.OBStandardView.STATE_IN_MID) {
         this.setCursor(isc.Canvas.ROW_RESIZE);
       }
     },
 
     mouseOver: function() {
-      if (this.state === isc.OBStandardView.STATE_IN_MID) {
+      if (this.tabSet.state === isc.OBStandardView.STATE_IN_MID) {
         this.setCursor(isc.Canvas.ROW_RESIZE);
+      } else {
+        this.setCursor(isc.Canvas.HAND);
       }
     },
 
     getCurrentCursor: function() {
-      if (this.state === isc.OBStandardView.STATE_IN_MID) {
+      if (this.tabSet.state === isc.OBStandardView.STATE_IN_MID) {
         if (isc.EventHandler.leftButtonDown()) {
           return isc.Canvas.MOVE;
         }
@@ -340,6 +364,8 @@ isc.OBTabSetChild.addProperties({
       }
     } else if (this.state === isc.OBStandardView.STATE_BOTTOM_MAX) {
       this.setState(isc.OBStandardView.STATE_MID);
+    } else if (this.state === isc.OBStandardView.STATE_TOP_MAX || this.state === isc.OBStandardView.STATE_MID) {
+      this.doHandleDoubleClick();
     }
   },
 
@@ -488,8 +514,15 @@ isc.OBTabSetChild.addProperties({
   },
 
   tabSelected: function(tabNum, tabPane, ID, tab){
+    var event = isc.EventHandler.getLastEvent();
     if (tabPane.refreshContents) {
       tabPane.doRefreshContents(true, true);
+    }
+    // if the event is a mouse event then let the item click not do max/min
+    // tabselected events are also fired when drawing
+    if (this.isDrawn() && event && isc.EventHandler.isMouseEvent(event.eventType) && tabPane.parentView &&
+        tabPane.parentView.state !== isc.OBStandardView.STATE_TOP_MAX && tabPane.parentView.state !== isc.OBStandardView.STATE_MID) {
+      this.ignoreItemClick = true;
     }
   },
 

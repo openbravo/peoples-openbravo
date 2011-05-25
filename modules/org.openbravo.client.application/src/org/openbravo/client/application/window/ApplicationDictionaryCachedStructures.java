@@ -19,8 +19,6 @@
 package org.openbravo.client.application.window;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +28,7 @@ import javax.enterprise.context.SessionScoped;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.model.Property;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.model.ad.datamodel.Column;
@@ -61,7 +57,6 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   private Map<String, List<Column>> columnMap = new HashMap<String, List<Column>>();
   private Map<String, List<AuxiliaryInput>> auxInputMap = new HashMap<String, List<AuxiliaryInput>>();
   private Map<String, ComboTableData> comboTableDataMap = new HashMap<String, ComboTableData>();
-  private List<Object> initializedObjs = new ArrayList<Object>();
 
   private boolean useCache;
 
@@ -142,34 +137,6 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     List<AuxiliaryInput> auxInputs = tab.getADAuxiliaryInputList();
     auxInputMap.put(tabId, auxInputs);
     return auxInputs;
-  }
-
-  private void fullyInitializeList(Collection<?> listOfObjs) {
-    if (initializedObjs.contains(listOfObjs)) {
-      return;
-    }
-    for (Object obj : listOfObjs) {
-      fullyInitializeEntity((BaseOBObject) obj);
-    }
-  }
-
-  private void fullyInitializeEntity(BaseOBObject obj) {
-    if (initializedObjs.contains(obj)) {
-      return;
-    }
-    initializedObjs.add(obj);
-    for (Property p : obj.getEntity().getProperties()) {
-      final Object value = obj.get(p.getName());
-      if (value instanceof BaseOBObject || value instanceof Collection<?>) {
-        Hibernate.initialize(value);
-        if (value instanceof BaseOBObject && !initializedObjs.contains((BaseOBObject) value)) {
-          fullyInitializeEntity((BaseOBObject) value);
-        } else if (value instanceof Collection<?>) {
-          fullyInitializeList((Collection<?>) value);
-          initializedObjs.add(value);
-        }
-      }
-    }
   }
 
   public ComboTableData getComboTableData(VariablesSecureApp vars, String ref, String colName,

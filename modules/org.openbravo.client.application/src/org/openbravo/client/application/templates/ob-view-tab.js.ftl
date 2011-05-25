@@ -88,6 +88,8 @@
       }<#if field_has_next>,</#if>
     </#list>],
     
+    showParentButtons: ${tabComponent.showParentButtons?string},
+    
     buttonsHaveSessionLogic: ${tabComponent.buttonSessionLogic?string},
     
     iconToolbarButtons: [

@@ -113,18 +113,19 @@ public abstract class NumberUIDefinition extends UIDefinition {
   @Override
   public String getFieldProperties(Field field, boolean getValueFromSession) {
     try {
+      JSONObject o = new JSONObject(super.getFieldProperties(field, getValueFromSession));
+      o.put("width", "50%");
       // If a column has a numeric reference, and is required, and doesn't have a default, then
       // the default '0' is set
       if (!getValueFromSession && field.getColumn().isMandatory()
-          && field.getColumn().getDefaultValue() == null) {
+          && field.getColumn().getDefaultValue() == null
+          && (!o.has("value") || o.get("value").equals(""))) {
         final JSONObject jsonObject = new JSONObject();
         jsonObject.put("value", 0);
         jsonObject.put("classicValue", 0);
         jsonObject.put("width", "50%");
         return jsonObject.toString();
       }
-      JSONObject o = new JSONObject(super.getFieldProperties(field, getValueFromSession));
-      o.put("width", "50%");
       return o.toString();
     } catch (JSONException e) {
       throw new OBException(e);

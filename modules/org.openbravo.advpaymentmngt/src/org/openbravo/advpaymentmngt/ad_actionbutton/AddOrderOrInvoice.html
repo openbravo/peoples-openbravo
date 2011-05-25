@@ -50,26 +50,396 @@
 <script type="text/javascript">
   window.onunload = reloadOpener; // reloads opener on closing
 </script>
+<script language="JavaScript" type="text/javascript">
+var hasBPartner = null;
+</script>
+<script language="JavaScript" type="text/javascript">
+//Ajax calls
+function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
+  var strText = '';
+  if (getReadyStateHandler(XMLHttpRequestObj)) {
+    try {
+      if (XMLHttpRequestObj.responseText) {
+        strText = XMLHttpRequestObj.responseText;
+        var aux = strText.substring(29, strText.length-8);
+        var tableBody = document.getElementById('sectionGrid');
+        var browserName = getBrowserInfo('name');
+        if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') !== -1) {
+          var temp = document.createElement('span');
+          temp.id = 'temp';
+          temp.style.display = 'none';
+          var newRows = '<table><tbody id=\"sectionGrid\">'+ aux;
+          temp.innerHTML = newRows;
+          tableBody.parentNode.replaceChild(temp.firstChild.firstChild, tableBody);
+          temp.parentNode.removeChild(temp);
+        }
+        tableBody.innerHTML = aux;
 
+        if (document.frmMain.isFirstLoad.value === 'true'){
+          document.frmMain.isFirstLoad.value='false';
+          if (isTrue('isReceipt')) {
+            var amount = document.frmMain.inpActualPayment.value;
+            if (document.frmMain.inpUseCredit.checked) {
+              amount = add(amount, document.frmMain.inpCredit.value);
+            }
+            distributeAmount(amount);
+          }
+        }
+        updateAll();
+        updateTotal();
+      } else {
+        document.getElementById('sectionGrid').innerHTML = '';
+      }
+    } catch (e) {
+    }
+  }
+  return true;
+}
+function loadGridList() {
+  try {
+    var url = '../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html';
+    var paramXMLReq = null;
+    return submitXmlHttpRequest(callBackGrid, document.frmMain, 'GRIDLIST', url, false, null, paramXMLReq);
+  } catch (e) {
+    alert(e);
+  }
+}
+function callBackGLItemGrid(paramXMLParticular, XMLHttpRequestObj) {
+  var strText = '';
+  if (getReadyStateHandler(XMLHttpRequestObj)) {
+    try {
+      if (XMLHttpRequestObj.responseText) {
+        strText = XMLHttpRequestObj.responseText;
+        var aux = strText.substring(29, strText.length-8);
+        var tableBody = document.getElementById('sectionGLItemGrid');
+        var browserName = getBrowserInfo('name');
+        if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') !== -1) {
+          var temp = document.createElement('span');
+          temp.id = 'temp';
+          temp.style.display = 'none';
+          var newRows = '<table><tbody id=\"sectionGLItemGrid\">'+ aux;
+          temp.innerHTML = newRows;
+          tableBody.parentNode.replaceChild(temp.firstChild.firstChild, tableBody);
+          temp.parentNode.removeChild(temp);
+        }
+        tableBody.innerHTML = aux;
+            
+        updateGLItemTotal();
+      } else {
+        document.getElementById('sectionGLItemGrid').innerHTML = '';
+      }
+    } catch (e) {
+    }
+  }
+  return true;
+}
+function loadGLItemList() {
+  try {
+    var url = '../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html';
+    var paramXMLReq = null;
+    return submitXmlHttpRequest(callBackGLItemGrid, document.frmMain, 'GLITEMGRIDLIST', url, false, null, paramXMLReq);
+  } catch (e) {
+    alert(e);
+  }
+}
+function callBackGLItem(paramXMLParticular, XMLHttpRequestObj) {
+  var strText = '';
+  if (getReadyStateHandler(XMLHttpRequestObj)) {
+    try {
+      if (XMLHttpRequestObj.responseText) {
+        strText = XMLHttpRequestObj.responseText;
+        if (strText !== '' && strText !== '\r\n') {
+          setValues_MessageBox('messageBoxID', 'WARNING', '', strText);
+        } else {
+          initialize_MessageBox('messageBoxID');
+        }
+        if (paramXMLParticular !== null) {
+          closePage();
+          return true;
+        }
+        loadGLItemList();
+      } else {
+        initialize_MessageBox('messageBoxID');
+      }
+    } catch (e) {
+    }
+  }
+  return true;
+}
+function addGLItem() {
+  if (frm.inpGLItemAmount.value === null || frm.inpGLItemAmount.value === '') {
+    setWindowElementFocus(frm.inpGLItemAmount);
+    showJSMessage(7);
+    return false;
+  } else if (frm.inpcGlitemId.value === null || frm.inpcGlitemId.value === '') {
+    setWindowElementFocus(frm.inpcGlitemId);
+    showJSMessage(7);
+    return false;
+  }
+
+  try {
+    var url = '../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html';
+    var paramXMLReq = null;
+    document.frmMain.inpGLSumAmount.value = add(document.frmMain.inpGLSumAmount.value, document.frmMain.inpGLItemAmount.value);
+    var amount = document.frmMain.inpGLSumAmount.value;
+    if (document.frmMain.inpUseCredit.checked) {
+      amount = subtract(amount, document.frmMain.inpCredit.value);
+      if ( compare(amount, '<', '0') ) {
+        amount = 0;
+      }
+    }
+    document.frmMain.inpActualPayment.value = amount;
+    return submitXmlHttpRequest(callBackGLItem, document.frmMain, 'ADDGLITEM', url, false, null, paramXMLReq);
+  } catch (e) {
+    alert(e);
+  }
+}
+function removeGLItem(key) {
+  try {
+    document.frmMain.inpDeleteGLItem.value = key;
+    var url = '../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html';
+    var paramXMLReq = null;
+    if ( compare(document.frmMain.inpActualPayment.value, '>', document.frmMain.elements['inpHiddenAmt'+key].value) ) {
+      document.frmMain.inpActualPayment.value = subtract(document.frmMain.inpActualPayment.value, document.frmMain.elements['inpHiddenAmt'+key].value);
+    } else {
+      document.frmMain.inpActualPayment.value = 0;
+    }
+    document.frmMain.inpGLSumAmount.value = subtract(document.frmMain.inpGLSumAmount.value, document.frmMain.elements['inpHiddenAmt'+key].value);
+    return submitXmlHttpRequest(callBackGLItem, document.frmMain, 'REMOVEGLITEM', url, false, null, paramXMLReq);
+  } catch (e) {
+    alert(e);
+  }
+}
+function removeAllGLItem(closePopup) {
+  try {
+    document.frmMain.inpDeleteGLItem.value = '';
+    var url = '../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html';
+    var paramXMLReq = closePopup ? closePopup : null;
+    return submitXmlHttpRequest(callBackGLItem, document.frmMain, 'REMOVEALLGLITEM', url, false, null, paramXMLReq);
+  } catch (e) {
+    alert(e);
+  }
+}
+</script>
 <script language="JavaScript" type="text/javascript">
 function validate(action) {
   var frm = document.frmMain;
-  if (action=='openprocess') {
-    if (frm.inpActualPayment.value==null || frm.inpActualPayment.value=="") {
+  if (action === 'openprocess') {
+    if (frm.inpActualPayment.value === null || frm.inpActualPayment.value === '') {
       setWindowElementFocus(frm.inpActualPayment);
       showJSMessage(7);
       return false;
     } else if (isTrue('isGLItem')) {
       //Do nothing on case of GL Item.
+      return true;
     } else {
-      var allowCreditGeneration = true;
-      if (!validateSelectedPendingPayments(allowCreditGeneration)) return false;
+      var diffAction = frm.inpDifferenceAction,
+          selectedAction = null, i, actionSelected = false;
+      for (i = 0; i < diffAction.length; i++) {
+        if (diffAction[i].checked) {
+          actionSelected = true;
+          break;
+        }
+      }
+      if (actionSelected) {
+         selectedAction = diffAction[i].value;
+      }
+      if (!validateSelectedPendingPayments(true, selectedAction)) { return false; }
     }
   }
   return true;
 }
+function setGLItemMode(toGLItem){
+  if (isTrue('isReceipt')) {
+    if (toGLItem){
+      document.getElementById('paramActualPayment').className.replace(' readonly', '');
+      document.getElementById('paramActualPayment').readOnly = true;
+      var classText = document.getElementById('paramActualPayment').className;
+      document.getElementById('paramActualPayment').className = classText.concat(' readonly');
+      displayLogicElement('NoPackageslinkCalc', false);
+    } else {
+      var classTextReadOnly = document.getElementById('paramActualPayment').className.replace(' readonly', '');
+      document.getElementById('paramActualPayment').className = classTextReadOnly;
+      document.getElementById('paramActualPayment').readOnly = false;
+      displayLogicElement('NoPackageslinkCalc', true);
+    }
+  }
+
+  displayLogicElement('glitemBlank', toGLItem);
+  displayLogicElement('glitemBlank', toGLItem);
+  displayLogicElement('glitemRow', toGLItem);
+  displayLogicElement('glitemAddRow', toGLItem);
+  displayLogicElement('DueDateFromLbl', !toGLItem);
+  displayLogicElement('DueDateFrom', !toGLItem);
+  displayLogicElement('DueDateToLbl', !toGLItem);
+  displayLogicElement('DueDateTo', !toGLItem);
+  displayLogicElement('gridPayment', !toGLItem);
+  displayLogicElement('gridGLItem', toGLItem);
+  displayLogicElement('inpAlternativeLabel', !toGLItem);
+  displayLogicElement('inpAlternativeChkBox', !toGLItem);
+  if (toGLItem) {
+    displayLogicElement('bpartnerfilterRow', !toGLItem);
+  } else {
+    displayLogicElement('bpartnerfilterRow', !hasBPartner);
+  }
+
+  resizeAreaCreateFrom();
+  if (toGLItem) {
+    loadGLItemList();
+  }
+  return true;
+}
+function updateData(key, mark, drivenByGrid) {
+  if (mark === null) { mark=false; }
+  updateReadOnly(key, mark);
+  var paymentAmount = document.frmMain.elements['inpPaymentAmount'+key];
+  if (!isTrue('isReceipt')){
+    if (mark && paymentAmount.value === '') {
+      paymentAmount.value=document.frmMain.elements['inpRecordAmt'+key].value;
+    }
+  } else { // sales
+    if (drivenByGrid && mark && !paymentAmount.value) {
+      var total = document.getElementById('inpTotal').value ? document.getElementById('inpTotal').value : 0;
+      var actualPayment = document.getElementById('paramActualPayment').value;
+      if (frm.inpUseCredit.checked) {
+        actualPayment = add(actualPayment, document.frmMain.inpCredit.value);
+      }
+      var gridAmt = document.frmMain.elements['inpRecordAmt'+key].value;
+      if ( compare(actualPayment, '<', 0) && compare(gridAmt, '>=', 0) ) {
+        paymentAmount.value = 0;
+      } else {
+        if ( compare(actualPayment, '<', 0) && compare(gridAmt, '<', 0) ) {
+          total = abs(total);
+          actualPayment = abs(actualPayment);
+          subtotal = add(total, abs(gridAmt));
+          if ( compare(subtotal, '>', actualPayment)) {
+            paymentAmount.value = subtract(0, subtract(actualPayment, total));
+          } else {
+            paymentAmount.value = gridAmt;
+          }
+        } else {
+          var subtotal = add(total, gridAmt);
+          if ( compare(subtotal, '>', actualPayment)) {
+            paymentAmount.value = subtract(actualPayment, total);
+          } else {
+            paymentAmount.value = gridAmt;
+          }
+        }
+      }
+    }
+  }
+
+  updateTotal();
+
+  return true;
+}
+function validateDate(element){
+  if(isValidDate(element.value, element.getAttribute('displayformat'))) {
+    loadGridList();
+  }
+}
+function paymentAmountOnChange(element){
+  updateTotal();
+  numberInputEvent('onchange', element);
+}
+function documentTypeOnChange(value){
+  if ('G' === value) {
+    if (!isTrue('isGLItem')) {
+      document.frmMain.isGLItem.value='Y';
+      setGLItemMode(true);
+      document.frmMain.inpHeaderAmount.value = document.frmMain.inpActualPayment.value;
+      var amount = document.frmMain.inpGLSumAmount.value;
+      if (document.frmMain.inpUseCredit.checked) {
+        amount = subtract(amount, document.frmMain.inpCredit.value);
+        if ( compare(amount, '<', '0') ) {
+          amount = 0;
+        }
+      }
+      document.frmMain.inpActualPayment.value = amount;
+    }
+  } else {
+    document.frmMain.inpActualPayment.value=document.frmMain.inpHeaderAmount.value;
+    document.frmMain.isFirstLoad.value = 'true';
+    loadGridList();
+    if (isTrue('isGLItem')) {
+      document.frmMain.isGLItem.value='N';
+      setGLItemMode(false);
+      updateTotal();
+    }
+  }
+}
+function actualPaymentOnChange(){
+  var amount = null;
+  if (isTrue('isReceipt') && !isTrue('isGLItem')) {
+    amount = document.frmMain.inpActualPayment.value;
+    if (document.frmMain.inpUseCredit.checked) {
+      amount = add(amount, document.frmMain.inpCredit.value);
+    }
+    distributeAmount(amount);
+  } else if (isTrue('isGLItem')) {
+    amount = document.frmMain.inpGLSumAmount.value;
+    if (document.frmMain.inpUseCredit.checked) {
+      amount = subtract(amount, document.frmMain.inpCredit.value);
+      if ( compare(amount, '<', '0') ) {
+        amount = 0;
+      }
+    }
+    document.frmMain.inpActualPayment.value=amount;
+  }
+}
+function useCreditOnChange(){
+  actualPaymentOnChange();
+  updateTotal();
+}
 </script>
 <script language="JavaScript" type="text/javascript">
+function onLoadDo() {
+  var tableTopPopup = new windowTableId('client_top_popup', 'buttonOK'),
+      tableTop = new windowTableId('client_top', 'buttonProcess'),
+      tableMiddle = new  windowTableId('client_middle', 'buttonProcess'),
+      tableBottom = new windowTableId('client_bottom', 'buttonProcess');
+  this.windowTables = new Array(tableTopPopup, tableTop, tableMiddle, tableBottom);
+
+  setWindowTableParentElement();
+  enableShortcuts('popup');
+  setBrowserAutoComplete(false);
+  hasBPartner = document.frmMain.inpBusinessPartnerId.value !== null && document.frmMain.inpBusinessPartnerId.value !== '';
+
+  initFIN_Utilities(document.frmMain, hasBPartner);
+  try {
+    onloadFunctions();
+  } catch (e) {}
+  setGLItemMode(isTrue('isGLItem'));
+  displayLogicElement('sectionDifference', false);
+  displayLogicElement('sectionDifferenceBox', false);
+  processLabels();
+  displayLogicElement('paramCustBalance', isReceipt);
+  displayLogicElement('NoPackageslinkCalc', isTrue('isReceipt'));
+  displayLogicElement('paramCredit', compare(document.getElementById('paramCredit').value, '>', '0') );
+  displayLogicElement('lblCredit', compare(document.getElementById('paramCredit').value, '>', '0'));
+  displayLogicElement('paramUseCredit', compare(document.getElementById('paramCredit').value, '>', '0') && compare(document.frmMain.inpGeneratedCredit.value, '==', '0') );
+  displayLogicElement('lblUseCredit', compare(document.getElementById('paramCredit').value, '>', '0') && compare(document.frmMain.inpGeneratedCredit.value, '==', '0') );
+  if (isTrue('isReceipt')) {
+    setWindowElementFocus(frm.inpActualPayment);
+  } else {
+    document.getElementById('paramActualPayment').readOnly = true;
+    document.getElementById('paramActualPayment').className = 'readonly required dojoValidateValid TextBox_btn_OneCell_width number';
+    setWindowElementFocus(frm.inpDocNumber);
+    updateTotal();
+  }
+
+  //numberInputEvent('onchange', document.frmMain.inpGLItemAmount);
+  loadGridList();
+  resizeAreaCreateFrom();
+}
+function onResizeDo(){
+  resizeAreaCreateFrom(true);
+}
+isc.OBSelectorWidget.addProperties({
+  onValueChanged: function(selected) {
+                    loadGridList();
+                  }
+});
 function closeThisPage() {
   removeAllGLItem(true);
   return true;
@@ -107,334 +477,6 @@ function closeProcessPayment() {
   document.getElementById('client_bottom').style.display = 'block';
   setGLItemMode(isTrue('isGLItem'));
 }
-
-function setGLItemMode(toGLItem){
-  if (isTrue('isReceipt')) {
-    if (toGLItem){
-      document.getElementById('paramActualPayment').className.replace(' readonly', '');
-      document.getElementById('paramActualPayment').readOnly = true;
-      var classText = document.getElementById('paramActualPayment').className;
-      document.getElementById('paramActualPayment').className = classText.concat(" readonly");
-      displayLogicElement('NoPackageslinkCalc', false);
-    } else {
-      var classTextReadOnly = document.getElementById('paramActualPayment').className.replace(' readonly', '');
-      document.getElementById('paramActualPayment').className = classTextReadOnly;
-      document.getElementById('paramActualPayment').readOnly = false;
-      displayLogicElement('NoPackageslinkCalc', true);
-    }
-  }
-
-  displayLogicElement('glitemBlank', toGLItem);
-  displayLogicElement('glitemBlank', toGLItem);
-  displayLogicElement('glitemRow', toGLItem);
-  displayLogicElement('glitemAddRow', toGLItem);
-  displayLogicElement('DueDateFromLbl', !toGLItem);
-  displayLogicElement('DueDateFrom', !toGLItem);
-  displayLogicElement('DueDateToLbl', !toGLItem);
-  displayLogicElement('DueDateTo', !toGLItem);
-  displayLogicElement('gridPayment', !toGLItem);
-  displayLogicElement('gridGLItem', toGLItem);
-  displayLogicElement('inpAlternativeLabel', !toGLItem);
-  displayLogicElement('inpAlternativeChkBox', !toGLItem);
-
-  resizeAreaCreateFrom();
-
-  if (toGLItem)
-    loadGLItemList();
-
-  return true;
-}
-
-function updateData(key, mark) {
-  if (mark==null) mark=false;
-  updateReadOnly(key, mark);
-  var paymentAmount = document.frmMain.elements['inpPaymentAmount'+key];
-  if (!isTrue('isReceipt')){
-    if (mark && paymentAmount.value=='') {
-      paymentAmount.value=document.frmMain.elements['inpRecordAmt'+key].value;
-    }
-  }
-  updateTotal();
-
-  return true;
-}
-
-function validateDate(element){
-  if(isValidDate(element.value, element.getAttribute("displayformat")))
-    loadGridList();
-}
-
-function paymentAmountOnChange(element){
-  updateTotal();
-  numberInputEvent('onchange', element);
-}
-
-function documentTypeOnChange(value){
-  if ("G" == value){
-    if (!isTrue('isGLItem')) {
-      document.frmMain.isGLItem.value="Y";
-      setGLItemMode(true);
-      document.frmMain.inpHeaderAmount.value = document.frmMain.inpActualPayment.value;
-      var amount = document.frmMain.inpGLSumAmount.value;
-      if (document.frmMain.inpUseCredit.checked) {
-        amount = subtract(amount, document.frmMain.inpCredit.value);
-        if ( compare(amount, '<', "0") )
-          amount = 0;
-      }
-      document.frmMain.inpActualPayment.value = amount;
-    }
-  } else {
-    document.frmMain.inpActualPayment.value=document.frmMain.inpHeaderAmount.value;
-    document.frmMain.isFirstLoad.value = "true";
-    loadGridList();
-    if (isTrue('isGLItem')) {
-      document.frmMain.isGLItem.value="N";
-      setGLItemMode(false);
-      updateTotal();
-    }
-  }
-}
-
-function useCreditOnChange(){
-  actualPaymentOnChange();
-  updateTotal();
-}
-
-function actualPaymentOnChange(){
-  if (isTrue('isReceipt') && !isTrue('isGLItem')) {
-    var amount = document.frmMain.inpActualPayment.value;
-    if (document.frmMain.inpUseCredit.checked)
-      amount = add(amount, document.frmMain.inpCredit.value);
-    distributeAmount(amount);
-  } if (isTrue('isGLItem')) {
-    var amount = document.frmMain.inpGLSumAmount.value;
-    if (document.frmMain.inpUseCredit.checked) {
-      amount = subtract(amount, document.frmMain.inpCredit.value);
-      if ( compare(amount, '<', "0") )
-        amount = 0;
-    }
-    document.frmMain.inpActualPayment.value=amount;
-  }
-}
-</script>
-<script language="JavaScript" type="text/javascript">
-  function addGLItem() {
-    if (frm.inpGLItemAmount.value==null || frm.inpGLItemAmount.value=="") {
-      setWindowElementFocus(frm.inpGLItemAmount);
-      showJSMessage(7);
-      return false;
-    } else if (frm.inpcGlitemId.value==null || frm.inpcGlitemId.value=="") {
-      setWindowElementFocus(frm.inpcGlitemId);
-      showJSMessage(7);
-      return false;
-    }
-
-    try {
-      var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html";
-      var paramXMLReq = null;
-      document.frmMain.inpGLSumAmount.value = add(document.frmMain.inpGLSumAmount.value, document.frmMain.inpGLItemAmount.value);
-      var amount = document.frmMain.inpGLSumAmount.value;
-      if (document.frmMain.inpUseCredit.checked) {
-        amount = subtract(amount, document.frmMain.inpCredit.value);
-        if ( compare(amount, '<', "0") )
-          amount = 0;
-      }
-      document.frmMain.inpActualPayment.value = amount;
-      return submitXmlHttpRequest(callBackGLItem, document.frmMain, "ADDGLITEM", url, false, null, paramXMLReq);
-    } catch (e) {
-      alert(e);
-    }
-  }
-    function removeGLItem(key) {
-      try {
-        document.frmMain.inpDeleteGLItem.value = key;
-        var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html";
-        var paramXMLReq = null;
-        if ( compare(document.frmMain.inpActualPayment.value, '>', document.frmMain.elements['inpHiddenAmt'+key].value) ) 
-          document.frmMain.inpActualPayment.value = subtract(document.frmMain.inpActualPayment.value, document.frmMain.elements['inpHiddenAmt'+key].value);
-        else
-          document.frmMain.inpActualPayment.value = 0;
-        document.frmMain.inpGLSumAmount.value = subtract(document.frmMain.inpGLSumAmount.value, document.frmMain.elements['inpHiddenAmt'+key].value);
-        return submitXmlHttpRequest(callBackGLItem, document.frmMain, "REMOVEGLITEM", url, false, null, paramXMLReq);
-      } catch (e) {
-        alert(e);
-      }
-    }
-    function removeAllGLItem(closePopup) {
-      try {
-        document.frmMain.inpDeleteGLItem.value = "";
-        var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html";
-        var paramXMLReq = closePopup ? closePopup : null;
-        return submitXmlHttpRequest(callBackGLItem, document.frmMain, "REMOVEALLGLITEM", url, false, null, paramXMLReq);
-      } catch (e) {
-        alert(e);
-      }
-    }
-
-    function callBackGLItem(paramXMLParticular, XMLHttpRequestObj) {
-     var strText = "";
-      if (getReadyStateHandler(XMLHttpRequestObj)) {
-        try {
-          if (XMLHttpRequestObj.responseText) {
-            strText = XMLHttpRequestObj.responseText;
-            if (strText != "" && strText != "\r\n")
-              setValues_MessageBox('messageBoxID', 'WARNING', '', strText);
-            else
-              initialize_MessageBox('messageBoxID');
-
-            if (paramXMLParticular != null) {
-              closePage();
-              return true;
-            }
-
-            loadGLItemList();
-          } else {
-            initialize_MessageBox('messageBoxID');
-          }
-        } catch (e) {
-        }
-      }
-      return true;
-    }
-</script>
-<script language="JavaScript" type="text/javascript">
-    function loadGLItemList() {
-      try {
-        var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html";
-        var paramXMLReq = null;
-        return submitXmlHttpRequest(callBackGLItemGrid, document.frmMain, "GLITEMGRIDLIST", url, false, null, paramXMLReq);
-      } catch (e) {
-        alert(e);
-      }
-    }
-
-    function callBackGLItemGrid(paramXMLParticular, XMLHttpRequestObj) {
-     var strText = "";
-      if (getReadyStateHandler(XMLHttpRequestObj)) {
-        try {
-          if (XMLHttpRequestObj.responseText) {
-            strText = XMLHttpRequestObj.responseText;
-            var aux = strText.substring(29, strText.length-8);
-            var tableBody = document.getElementById('sectionGLItemGrid');
-            var browserName = getBrowserInfo('name');
-            if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
-              var temp = document.createElement("span");
-              temp.id = 'temp';
-              temp.style.display = 'none';
-              var newRows = '<table><tbody id=\"sectionGLItemGrid\">'+ aux;
-              temp.innerHTML = newRows;
-              tableBody.parentNode.replaceChild(temp.firstChild.firstChild, tableBody);
-              temp.parentNode.removeChild(temp);
-            }
-            tableBody.innerHTML = aux;
-            
-            updateGLItemTotal();
-          } else {
-            document.getElementById('sectionGLItemGrid').innerHTML = '';
-          }
-        } catch (e) {
-        }
-      }
-      return true;
-    }
-
-</script>
-<script language="JavaScript" type="text/javascript">
-    function loadGridList() {
-      try {
-        var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html";
-        var paramXMLReq = null;
-        return submitXmlHttpRequest(callBackGrid, document.frmMain, "GRIDLIST", url, false, null, paramXMLReq);
-      } catch (e) {
-        alert(e);
-      }
-    }
-
-    function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
-     var strText = "";
-      if (getReadyStateHandler(XMLHttpRequestObj)) {
-        try {
-          if (XMLHttpRequestObj.responseText) {
-            strText = XMLHttpRequestObj.responseText;
-            var aux = strText.substring(29, strText.length-8);
-            var tableBody = document.getElementById('sectionGrid');
-            var browserName = getBrowserInfo('name');
-            if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
-              var temp = document.createElement("span");
-              temp.id = 'temp';
-              temp.style.display = 'none';
-              var newRows = '<table><tbody id=\"sectionGrid\">'+ aux;
-              temp.innerHTML = newRows;
-              tableBody.parentNode.replaceChild(temp.firstChild.firstChild, tableBody);
-              temp.parentNode.removeChild(temp);
-            }
-            tableBody.innerHTML = aux;
-
-            if (document.frmMain.isFirstLoad.value=="true"){
-              document.frmMain.isFirstLoad.value="false";
-              if (isTrue('isReceipt')) {
-                var amount = document.frmMain.inpActualPayment.value;
-                if (document.frmMain.inpUseCredit.checked)
-                  amount = add(amount, document.frmMain.inpCredit.value);
-                distributeAmount(amount);
-              }
-            }
-            updateAll();
-            updateTotal();
-          } else {
-            document.getElementById('sectionGrid').innerHTML = '';
-          }
-        } catch (e) {
-        }
-      }
-      return true;
-    }
-
-</script>
-<script language="JavaScript" type="text/javascript">
-  function onLoadDo(){
-    this.windowTables = new Array(
-      new windowTableId('client_top_popup', 'buttonOK'),
-      new windowTableId('client_top', 'buttonProcess'),
-      new windowTableId('client_middle', 'buttonProcess'),
-      new windowTableId('client_botton', 'buttonProcess')
-    );
-
-    setWindowTableParentElement();
-    enableShortcuts('popup');
-    setBrowserAutoComplete(false);
-
-    initFIN_Utilities(document.frmMain);
-    try {
-      onloadFunctions();
-    } catch (e) {}
-    setGLItemMode(isTrue('isGLItem'));
-    displayLogicElement('sectionDifference', false);
-    displayLogicElement('sectionDifferenceBox', false);
-    processLabels();
-    displayLogicElement('paramCustBalance', isReceipt);
-    displayLogicElement('NoPackageslinkCalc', isTrue('isReceipt'));
-    displayLogicElement('paramCredit', compare(document.getElementById('paramCredit').value, '>', "0") );
-    displayLogicElement('lblCredit', compare(document.getElementById('paramCredit').value, '>', "0"));
-    displayLogicElement('paramUseCredit', compare(document.getElementById('paramCredit').value, '>', "0") && compare(document.frmMain.inpGeneratedCredit.value, '==', "0") );
-    displayLogicElement('lblUseCredit', compare(document.getElementById('paramCredit').value, '>', "0") && compare(document.frmMain.inpGeneratedCredit.value, '==', "0") );
-    if (isTrue('isReceipt')) {
-        setWindowElementFocus(frm.inpActualPayment);
-    } else {
-        document.getElementById('paramActualPayment').readOnly = true;
-        document.getElementById('paramActualPayment').className = "readonly required dojoValidateValid TextBox_btn_OneCell_width number";
-        setWindowElementFocus(frm.inpDocNumber);
-        updateTotal();
-    }
-
-    //numberInputEvent('onchange', document.frmMain.inpGLItemAmount);
-    loadGridList();
-    resizeAreaCreateFrom();
-  }
-
-  function onResizeDo(){
-    resizeAreaCreateFrom(true);
-  }
 </script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
@@ -718,6 +760,7 @@ function actualPaymentOnChange(){
               <input type="hidden" name="inpBusinessPartnerId" value="" id="paramBusinessPartnerId"></input></td>
               <td class="TitleCell"><span class="LabelText" name="lblR" id="lblRCustomerBalance">Customer Balance</span></td>
               <td class="TextBox_ContentCell"><input class="readonly dojoValidateValid TextBox_OneCell_width number" type="text" name="inpCustBalance" value="" id="paramCustBalance"></input></td>
+              <td class="TitleCell"></td>
             </tr>
 
             <!-- Line hidden -->
@@ -787,8 +830,7 @@ function actualPaymentOnChange(){
                   <option value="G">GL Items</option>
                 </select>
               </td>
-              <td></td>
-              <td class="TitleCell" id="glitemBlank" colspan="4"></td>
+              <td class="TitleCell"></td>
               <td class="TitleCell" id="DueDateFromLbl"><span class="LabelText">Due Date From</span></td>
               <td class="TextBox_btn_ContentCell" id="DueDateFrom">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
@@ -821,13 +863,14 @@ function actualPaymentOnChange(){
                   </tr>
                 </table>
               </td>
+              <td class="TitleCell"></td>
              </tr>
             <tr>
               <td class="TitleCell" id="inpAlternativeLabel"><span class="TitleCell LabelText"><label name="lblP" id="lblPShowPaym" for="paramAlternativePaymentMethod">Show payments out for alternative payment methods</label></span><span class="TitleCell LabelText"><label name="lblR" id="lblRShowPaym" for="paramAlternativePaymentMethod">Show payments in for alternative payment methods</label></span></td>
               <td class="Radio_Check_ContentCell" id="inpAlternativeChkBox">
               <span class="Radio_Check_ContentCell Checkbox_container_NOT_Focused"><input type="checkbox" name="inpAlternativePaymentMethod" value="Y" id="paramAlternativePaymentMethod" onclick="loadGridList()"></input></span>
              </td>
-             <td></td>
+             <td class="TitleCell"></td>
              <td class="TitleCell" id="DueDateToLbl"><span class="LabelText">Due Date To</span></td>
              <td class="TextBox_btn_ContentCell" id="DueDateTo">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
@@ -860,6 +903,24 @@ function actualPaymentOnChange(){
                   </tr>
                 </table>
              </td>
+            </tr>
+            </tr>
+            <tr id="bpartnerfilterRow">
+              <td class="TitleCell"><span class="LabelText">Business Partner</span></td>
+              <td class="TextBox_ContentCell" colspan="2">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_C_BPartner_ID = null;</script>
+                      <input type="hidden" name="inpcBPartnerId" id="C_BPartner_ID" value="" onreset="sc_C_BPartner_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_BPartner_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/A98899B1C75A4F4EBD3414F1B654EFAB?columnName=C_BPartner_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=true"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td class="TitleCell"></td>
+              <td class="TitleCell"></td>
+              <td class="TitleCell"></td>
             </tr>
             <tr id="glitemRow">
               <td class="TitleCell"><span class="LabelText">GL Item</span></td>
@@ -963,10 +1024,11 @@ function actualPaymentOnChange(){
                     <thead>
                       <tr class="DataGrid_Body_Row">
                         <th class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox" width="25"> 
-                          <input type="checkbox" name="inpAllLines" onclick="markAll(document.frmMain.inpScheduledPaymentDetailId, this.checked);updateAll();return true;"/>
+                          <input type="checkbox" name="inpAllLines" onclick="markAll(document.frmMain.inpScheduledPaymentDetailId, this.checked);updateAll(true);return true;"/>
                         </th>
                         <th class="DataGrid_Header_Cell" width="120"><span name="lblP" id="lblPPON">Purchase Order No.</span><span name="lblR" id="lblRSON">Sales Order No.</span></th>
                         <th class="DataGrid_Header_Cell" width="120"><span name="lblP" id="lblPPIN">Purchase Invoice No.</span><span name="lblR" id="lblRSIN">Sales Invoice No.</span></th>
+                        <th class="DataGrid_Header_Cell" width="100" id="bpGridColumn">Business Partner</th>
                         <th class="DataGrid_Header_Cell" width="100">Payment Method</th>
                         <th class="DataGrid_Header_Cell" width="70">Due Date</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Invoiced Amount</th>
@@ -983,8 +1045,8 @@ function actualPaymentOnChange(){
                   <table cellspacing="0" cellpadding="0" width="100%" class="" style="table-layout: auto;">
                     <tr class="FieldGroup_BottomMargin"></tr>
                     <tr>
-                      <td width="715" class="LabelText" style="text-align:right">Total</td>
-                      <td class="LabelText number" style="padding-right:10px;font-weight: bold;"><span id="paramTotal"></span></td>
+                      <td class="LabelText" style="text-align:right">Total</td>
+                      <td width="100" class="LabelText number" style="padding-right:10px;font-weight: bold;"><span id="paramTotal"></span></td>
                     </tr>
                     <tr id="sectionDifference">
                       <td class="LabelText" style="text-align:right">There is a difference of</td>

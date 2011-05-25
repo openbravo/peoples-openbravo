@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -73,6 +73,9 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
 
     } else if (vars.commandIn("GRIDLIST")) {
       String strBusinessPartnerId = vars.getRequestGlobalVariable("inpBusinessPartnerId", "");
+      if ("".equals(strBusinessPartnerId)) {
+        strBusinessPartnerId = vars.getRequestGlobalVariable("inpcBPartnerId", "");
+      }
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
       String strPaymentId = vars.getRequestGlobalVariable("inpfinPaymentId", "");
       String strDueDateFrom = vars.getStringParameter("inpDueDateFrom", "");
@@ -145,10 +148,13 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       String strPaymentId = vars.getRequiredStringParameter("inpfinPaymentId");
       String strSelectedScheduledPaymentDetailIds = vars.getInParameter(
           "inpScheduledPaymentDetailId", "", IsIDFilter.instance);
-      String strDifferenceAction = vars.getRequiredStringParameter("inpDifferenceAction");
+      String strDifferenceAction = "";
       BigDecimal refundAmount = BigDecimal.ZERO;
-      if (strDifferenceAction.equals("refund"))
+      String strDifference = vars.getNumericParameter("inpDifference", "0");
+      if (!"0".equals(strDifference)) {
         refundAmount = new BigDecimal(vars.getRequiredNumericParameter("inpDifference"));
+        strDifferenceAction = vars.getStringParameter("inpDifferenceAction", "");
+      }
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       String strPaymentAmount = vars.getRequiredNumericParameter("inpActualPayment");
       String strDocumentType = vars.getStringParameter("inpDocumentType", "");
@@ -227,8 +233,13 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     log4j.debug("Output: Add Payment button pressed on Make / Receipt Payment windows");
 
     FIN_Payment payment = new AdvPaymentMngtDao().getObject(FIN_Payment.class, strPaymentId);
+    String[] discard = { "discard" };
+    if (payment.getBusinessPartner() != null) {
+      discard[0] = "bpGridColumn";
+    }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/AddOrderOrInvoice").createXmlDocument();
+        "org/openbravo/advpaymentmngt/ad_actionbutton/AddOrderOrInvoice", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -241,8 +252,21 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentOut", vars
           .getLanguage()));
     xmlDocument.setParameter("dateDisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("businessPartner", payment.getBusinessPartner().getIdentifier());
-    xmlDocument.setParameter("businessPartnerId", payment.getBusinessPartner().getId());
+    if (payment.getBusinessPartner() != null) {
+      xmlDocument.setParameter("businessPartner", payment.getBusinessPartner().getIdentifier());
+      xmlDocument.setParameter("businessPartnerId", payment.getBusinessPartner().getId());
+      xmlDocument.setParameter("credit", dao.getCustomerCredit(payment.getBusinessPartner(),
+          payment.isReceipt()).toString());
+      xmlDocument.setParameter("customerBalance",
+          payment.getBusinessPartner().getCreditUsed() != null ? payment.getBusinessPartner()
+              .getCreditUsed().toString() : BigDecimal.ZERO.toString());
+    } else {
+      xmlDocument.setParameter("businessPartner", "");
+      xmlDocument.setParameter("businessPartnerId", "");
+      xmlDocument.setParameter("credit", "");
+      xmlDocument.setParameter("customerBalance", "");
+
+    }
     xmlDocument.setParameter("windowId", strWindowId);
     xmlDocument.setParameter("tabId", strTabId);
     xmlDocument.setParameter("orgId", payment.getOrganization().getId());
@@ -250,14 +274,16 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("actualPayment", payment.getAmount().toString());
     xmlDocument.setParameter("headerAmount", payment.getAmount().toString());
     xmlDocument.setParameter("isReceipt", (payment.isReceipt() ? "Y" : "N"));
-    xmlDocument.setParameter("credit", dao.getCustomerCredit(payment.getBusinessPartner(),
-        payment.isReceipt()).toString());
+    if (payment.getBusinessPartner() == null
+        && (payment.getGeneratedCredit() != null || payment.getGeneratedCredit().compareTo(
+            BigDecimal.ZERO) != 0)) {
+      payment.setGeneratedCredit(BigDecimal.ZERO);
+      OBDal.getInstance().save(payment);
+      OBDal.getInstance().flush();
+    }
     xmlDocument.setParameter("generatedCredit", payment.getGeneratedCredit() != null ? payment
         .getGeneratedCredit().toString() : BigDecimal.ZERO.toString());
     OBContext.setAdminMode();
-    xmlDocument.setParameter("customerBalance",
-        payment.getBusinessPartner().getCreditUsed() != null ? payment.getBusinessPartner()
-            .getCreditUsed().toString() : BigDecimal.ZERO.toString());
     try {
       xmlDocument
           .setParameter("precision", payment.getCurrency().getStandardPrecision().toString());
@@ -294,9 +320,13 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
 
     log4j.debug("Output: Grid with pending payments");
     dao = new AdvPaymentMngtDao();
+    String[] discard = { "" };
+    if (!"".equals(vars.getRequestGlobalVariable("inpBusinessPartnerId", ""))) {
+      discard[0] = "businessPartnerName";
+    }
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentGrid").createXmlDocument();
+        "org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentGrid", discard).createXmlDocument();
 
     // Pending Payments from invoice
     final List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails = FIN_AddPayment

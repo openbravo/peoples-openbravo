@@ -113,17 +113,17 @@ public class YesNoUIDefinition extends UIDefinition {
   @Override
   public String getFieldProperties(Field field, boolean getValueFromSession) {
     String result = super.getFieldProperties(field, getValueFromSession);
-    if (!getValueFromSession && field.getColumn().getDefaultValue() == null) {
-      JSONObject jsnobject;
-      try {
-        jsnobject = new JSONObject(result);
+    try {
+      JSONObject jsnobject = new JSONObject(result);
+      if (!getValueFromSession && field.getColumn().getDefaultValue() == null
+          && (!jsnobject.has("value") || jsnobject.get("value").equals(""))) {
         jsnobject.put("value", createFromClassicString("N"));
         jsnobject.put("classicValue", "N");
         return jsnobject.toString();
-      } catch (JSONException e) {
-        throw new OBException("Exception when parsing boolean value", e);
       }
+      return result;
+    } catch (JSONException e) {
+      throw new OBException("Error while parsing boolean value", e);
     }
-    return result;
   }
 }

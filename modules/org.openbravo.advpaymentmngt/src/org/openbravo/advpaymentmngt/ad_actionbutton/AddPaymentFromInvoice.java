@@ -144,10 +144,13 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strSelectedScheduledPaymentDetailIds = vars.getRequiredInParameter(
           "inpScheduledPaymentDetailId", IsIDFilter.instance);
       String strOrgId = vars.getRequiredStringParameter("inpadOrgId");
-      String strDifferenceAction = vars.getRequiredStringParameter("inpDifferenceAction");
+      String strDifferenceAction = "";
+      String strDifference = vars.getNumericParameter("inpDifference", "0");
       BigDecimal refundAmount = BigDecimal.ZERO;
-      if (strDifferenceAction.equals("refund"))
-        refundAmount = new BigDecimal(vars.getRequiredNumericParameter("inpDifference"));
+      if (!strDifference.equals("0")) {
+        refundAmount = new BigDecimal(strDifference);
+        strDifferenceAction = vars.getStringParameter("inpDifferenceAction", "");
+      }
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       String strReferenceNo = vars.getStringParameter("inpReferenceNo", "");
       OBError message = null;
@@ -358,9 +361,10 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
     log4j.debug("Output: Grid with pending payments");
     dao = new AdvPaymentMngtDao();
+    String[] discard = { "businessPartnerName" };
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentGrid").createXmlDocument();
+        "org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentGrid", discard).createXmlDocument();
 
     Invoice inv = dao.getObject(Invoice.class, strInvoiceId);
 

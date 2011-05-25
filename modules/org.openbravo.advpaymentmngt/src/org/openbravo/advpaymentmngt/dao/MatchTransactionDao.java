@@ -189,7 +189,8 @@ public class MatchTransactionDao {
     }
     whereClause.append("))");
 
-    whereClause.append(" order by bsl.").append(FIN_BankStatementLine.PROPERTY_LINENO);
+    whereClause.append(" order by bsl.").append(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE);
+    whereClause.append(", bsl.").append(FIN_BankStatementLine.PROPERTY_LINENO);
     whereClause.append(", bsl.").append(FIN_BankStatementLine.PROPERTY_BPARTNERNAME);
     final OBQuery<FIN_BankStatementLine> obData = OBDal.getInstance().createQuery(
         FIN_BankStatementLine.class, whereClause.toString());

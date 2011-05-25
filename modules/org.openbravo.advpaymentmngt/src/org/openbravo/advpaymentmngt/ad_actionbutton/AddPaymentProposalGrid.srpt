@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -38,6 +38,20 @@
       outputformat="euroEdition"
       onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);"
       onchange="paymentAmountOnChange(this);" />
+      
+      <span id="paraminvalidSpanxx" style="display: none;" class="TextBox_MsgContainer_span">
+        <table class="TextBox_MsgContainer_table">
+          <tbody>
+            <tr class="TextBox_MsgContainer_tr">
+              <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td>
+            </tr>
+            <tr>
+              <td class="invalid" colspan="2"><div id="paramGridLineAmountinvalidSpanText" class="TextBox_MsgContainer_div2">Out of range</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </span>
+
     </td>
     <td class="DataGrid_Body_Cell_Amount" name="inpDifferencexx" id="fieldDifference">xx2009</td>
   </tr>

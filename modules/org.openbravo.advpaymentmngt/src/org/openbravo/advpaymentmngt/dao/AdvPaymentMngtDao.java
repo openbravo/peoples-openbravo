@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRMPendingPaymentFromInvoice;
@@ -154,6 +155,16 @@ public class AdvPaymentMngtDao {
       Organization organization, BusinessPartner businessPartner, Currency currency,
       Date dueDateFrom, Date dueDateTo, String strTransactionType, FIN_PaymentMethod paymentMethod,
       List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails, boolean isReceipt) {
+    return getFilteredScheduledPaymentDetails(organization, businessPartner, currency, dueDateFrom,
+        dueDateTo, null, null, strTransactionType, "", paymentMethod,
+        selectedScheduledPaymentDetails, isReceipt);
+  }
+
+  public List<FIN_PaymentScheduleDetail> getFilteredScheduledPaymentDetails(
+      Organization organization, BusinessPartner businessPartner, Currency currency,
+      Date dueDateFrom, Date dueDateTo, Date transactionDateFrom, Date transactionDateTo,
+      String strTransactionType, String strDocumentNo, FIN_PaymentMethod paymentMethod,
+      List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails, boolean isReceipt) {
 
     final StringBuilder whereClause = new StringBuilder();
     final List<Object> parameters = new ArrayList<Object>();
@@ -219,10 +230,29 @@ public class AdvPaymentMngtDao {
           whereClause.append(paymentMethod.getId());
           whereClause.append("'");
         }
+        if (transactionDateFrom != null) {
+          whereClause.append(" and inv.");
+          whereClause.append(Invoice.PROPERTY_INVOICEDATE);
+          whereClause.append(" >= ?");
+          parameters.add(transactionDateFrom);
+        }
+        if (transactionDateTo != null) {
+          whereClause.append(" and inv.");
+          whereClause.append(Invoice.PROPERTY_INVOICEDATE);
+          whereClause.append(" < ?");
+          parameters.add(transactionDateTo);
+        }
         whereClause.append(" and inv.");
         whereClause.append(Invoice.PROPERTY_SALESTRANSACTION);
         whereClause.append(" = ");
         whereClause.append(isReceipt);
+        if (!StringUtils.isEmpty(strDocumentNo)) {
+          whereClause.append(" and inv.");
+          whereClause.append(Invoice.PROPERTY_DOCUMENTNO);
+          whereClause.append(" like '%");
+          whereClause.append(strDocumentNo);
+          whereClause.append("%' ");
+        }
         whereClause.append(" and inv.");
         whereClause.append(Invoice.PROPERTY_CURRENCY);
         whereClause.append(".id = '");
@@ -247,6 +277,25 @@ public class AdvPaymentMngtDao {
           whereClause.append(".id = '");
           whereClause.append(paymentMethod.getId());
           whereClause.append("'");
+        }
+        if (transactionDateFrom != null) {
+          whereClause.append(" and ord.");
+          whereClause.append(Order.PROPERTY_ORDERDATE);
+          whereClause.append(" >= ?");
+          parameters.add(transactionDateFrom);
+        }
+        if (transactionDateTo != null) {
+          whereClause.append(" and ord.");
+          whereClause.append(Order.PROPERTY_ORDERDATE);
+          whereClause.append(" < ?");
+          parameters.add(transactionDateTo);
+        }
+        if (!StringUtils.isEmpty(strDocumentNo)) {
+          whereClause.append(" and ord.");
+          whereClause.append(Order.PROPERTY_DOCUMENTNO);
+          whereClause.append(" like '%");
+          whereClause.append(strDocumentNo);
+          whereClause.append("%' ");
         }
         whereClause.append(" and ord.");
         whereClause.append(Order.PROPERTY_SALESTRANSACTION);
@@ -277,6 +326,7 @@ public class AdvPaymentMngtDao {
         whereClause.append(") < ?");
         parameters.add(dueDateTo);
       }
+
       // TODO: Add order to show first scheduled payments from invoices and later scheduled payments
       // from not invoiced orders.
       whereClause.append(" order by");
@@ -318,7 +368,7 @@ public class AdvPaymentMngtDao {
     newPayment.setDocumentType(docType);
     newPayment.setDocumentNo(strPaymentDocumentNo);
     newPayment.setOrganization(organization);
-    newPayment.setClient(businessPartner.getClient());
+    newPayment.setClient(organization.getClient());
     newPayment.setStatus("RPAP");
     newPayment.setBusinessPartner(businessPartner);
     newPayment.setPaymentMethod(paymentMethod);
@@ -799,7 +849,9 @@ public class AdvPaymentMngtDao {
 
         FieldProviderFactory.setField(data[i], "paymentId", FIN_Payments[i].getId());
         FieldProviderFactory.setField(data[i], "paymentInfo", FIN_Payments[i].getDocumentNo()
-            + " - " + FIN_Payments[i].getBusinessPartner().getName() + " - "
+            + " - "
+            + ((FIN_Payments[i].getBusinessPartner() != null) ? FIN_Payments[i]
+                .getBusinessPartner().getName() : "") + " - "
             + FIN_Payments[i].getCurrency().getISOCode());
 
         // Truncate description

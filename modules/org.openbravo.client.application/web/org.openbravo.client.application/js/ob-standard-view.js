@@ -510,7 +510,7 @@ isc.OBStandardView.addProperties({
     
     // Add buttons in parent to child. Note that currently it is only added one level.
     var i;
-    if (this.actionToolbarButtons && this.actionToolbarButtons.length>0){
+    if (this.actionToolbarButtons && this.actionToolbarButtons.length>0 && childView.showParentButtons){
       for (i = 0; i < this.actionToolbarButtons.length; i++) {
         actionButton = isc.OBToolbarActionButton.create(this.actionToolbarButtons[i]);
         actionButton.contextView = this; // Context is still parent view

@@ -445,6 +445,7 @@ public abstract class UIDefinition {
       ArrayList<String> possibleIds = new ArrayList<String>();
       // If column is mandatory we add an initial blank value
       if (!field.getColumn().isMandatory()) {
+        possibleIds.add("");
         JSONObject entry = new JSONObject();
         entry.put(JsonConstants.ID, (String) null);
         entry.put(JsonConstants.IDENTIFIER, (String) null);

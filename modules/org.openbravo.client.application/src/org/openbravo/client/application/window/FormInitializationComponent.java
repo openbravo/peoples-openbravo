@@ -1137,7 +1137,8 @@ public class FormInitializationComponent extends BaseActionHandler {
                       }
                       String jsonStr = uiDef.getFieldProperties(inpFields.get(name), true);
                       JSONObject jsonobj = new JSONObject(jsonStr);
-                      if (el == null && uiDef instanceof ForeignKeyUIDefinition) {
+                      if (el == null
+                          && (uiDef instanceof ForeignKeyUIDefinition || uiDef instanceof EnumUIDefinition)) {
                         // Special case for null values for combos: we must clean the combo values
                         jsonobj.put("value", "");
                         jsonobj.put("classicValue", "");
