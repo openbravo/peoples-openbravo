@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2011 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -11,6 +11,7 @@
  */
 package org.openbravo.base.secureApp;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -22,9 +23,13 @@ import javax.servlet.http.HttpSession;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.ddlutils.util.DBSMOBUtil;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.security.Login;
 import org.openbravo.erpCommon.security.SessionLogin;
@@ -210,11 +215,11 @@ public class LoginHandler extends HttpBaseServlet {
         return;
       }
 
+      // Build checks
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
       if (sysInfo.getSystemStatus() == null || sysInfo.getSystemStatus().equals("RB70")
           || this.globalParameters.getOBProperty("safe.mode", "false").equalsIgnoreCase("false")) {
-        // Last build went fine and tomcat was restarted. We should login as usual
-        goToTarget(res, vars);
+        // Last build went fine and tomcat was restarted. We should continue with the rest of checks
       } else if (sysInfo.getSystemStatus().equals("RB60")
           || sysInfo.getSystemStatus().equals("RB51")) {
         String msg = Utility.messageBD(myPool, "TOMCAT_NOT_RESTARTED", vars.getLanguage());
@@ -222,12 +227,45 @@ public class LoginHandler extends HttpBaseServlet {
         log4j.warn("Tomcat not restarted");
         updateDBSession(sessionId, true, "RT");
         goToRetry(res, vars, msg, title, "Warning", "../security/Menu.html");
+        return;
       } else {
         String msg = Utility.messageBD(myPool, "LAST_BUILD_FAILED", vars.getLanguage());
         String title = Utility.messageBD(myPool, "LAST_BUILD_FAILED_TITLE", vars.getLanguage());
         updateDBSession(sessionId, msgType.equals("Warning"), "LBF");
         goToRetry(res, vars, msg, title, msgType, action);
+        return;
       }
+
+      // Check all applied configuration scripts are exported in 3.0
+      OBCriteria<Module> qMod = OBDal.getInstance().createCriteria(Module.class);
+      qMod.add(Restrictions.eq(Module.PROPERTY_TYPE, "T"));
+      qMod.add(Restrictions.eq(Module.PROPERTY_ENABLED, true));
+      qMod.add(Restrictions.eq(Module.PROPERTY_APPLYCONFIGURATIONSCRIPT, true));
+      String obDir = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
+          "source.path");
+      String oldScripts = "";
+      for (Module mod : qMod.list()) {
+        File cfScript = new File(obDir + "/modules/" + mod.getJavaPackage() + "/src-db/database",
+            "configScript.xml");
+        if (cfScript.exists() && DBSMOBUtil.isOldConfigScript(cfScript)) {
+          if (!oldScripts.isEmpty()) {
+            oldScripts += ", ";
+          }
+          oldScripts += mod.getName();
+          log4j.info(mod.getName() + " config script is not exported in 3.0");
+        }
+      }
+
+      if (!oldScripts.isEmpty()) {
+        String title = Utility.messageBD(myPool, "Warning", vars.getLanguage());
+        String msg = Utility.messageBD(myPool, "OldConfigScript", vars.getLanguage()).replace("%0",
+            oldScripts);
+        goToRetry(res, vars, msg, title, "Warning", action);
+        return;
+      }
+
+      // All checks passed successfully, continue logging in
+      goToTarget(res, vars);
     } finally {
       OBContext.restorePreviousMode();
     }
