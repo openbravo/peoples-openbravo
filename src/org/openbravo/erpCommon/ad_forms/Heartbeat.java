@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2009 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2011 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 
@@ -51,9 +51,10 @@ public class Heartbeat extends HttpSecureAppServlet {
 
     updateServletContainer(request.getSession().getServletContext().getServerInfo());
 
-    if (vars.commandIn("DEFAULT", "DEFAULT_MODULE", "UPDATE_MODULE")) {
+    if (vars.commandIn("DEFAULT", "DEFAULT_MODULE", "UPDATE_MODULE", "UPGRADE_MODULE")) {
       printPageDataSheet(response, vars);
-    } else if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE_UPDATE", "CONFIGURE_MODULE_INSTALL")) {
+    } else if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE_UPDATE", "CONFIGURE_MODULE_INSTALL",
+        "CONFIGURE_MODULE_UPGRADE")) {
       response.sendRedirect(strDireccion + "/ad_process/TestHeartbeat.html?Command="
           + vars.getCommand() + "&inpcRecordId="
           + vars.getStringParameter("inpcRecordId", IsIDFilter.instance));
@@ -97,7 +98,8 @@ public class Heartbeat extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       jsCommand += "CONFIGURE";
     } else {
-      String moduleAction = vars.getCommand().equals("UPDATE_MODULE") ? "UPDATE" : "INSTALL";
+      String moduleAction = vars.getCommand().equals("UPDATE_MODULE") ? "UPDATE" : vars
+          .getCommand().equals("UPGRADE_MODULE") ? "UPGRADE" : "INSTALL";
       jsCommand += "CONFIGURE_MODULE_" + moduleAction;
     }
     jsCommand += "';";

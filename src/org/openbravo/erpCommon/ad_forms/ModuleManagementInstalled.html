@@ -188,10 +188,8 @@ var baseDirectory = "../../../../../web/";
   }
   
   function installUpgrade(id) {
-    alert(id);
-    return;
     frmMain.inpcUpdate.value = id;
-    openServletNewWindow('UPGRADE', false, 'ModuleManagement.html', 'Update', null, true, 700, 900, null, null, null, null, true);
+    openServletNewWindow('UPGRADE', false, 'ModuleManagement.html', 'Upgrade', null, true, 700, 900, null, null, null, null, true);
   }
 
   function uninstallModule(){

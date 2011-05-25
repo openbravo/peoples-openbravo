@@ -179,6 +179,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // For update obtain just update maturity level
       printPageInstall1(response, request, vars, null, false, null, modulesToUpdate, ModuleUtiltiy
           .getSystemMaturityLevels(false));
+    } else if (vars.commandIn("UPGRADE")) {
+      printPageUpgrade(response, request);
     } else if (vars.commandIn("SETTINGS", "SETTINGS_ADD", "SETTINGS_REMOVE", "SETTINGS_SAVE")) {
       printPageSettings(response, request);
     } else {
@@ -670,6 +672,21 @@ public class ModuleManagement extends HttpSecureAppServlet {
         throw new ServletException(e);
       }
     }
+  }
+
+  private void printPageUpgrade(HttpServletResponse response, HttpServletRequest request)
+      throws IOException, ServletException {
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
+    final String moduleId = vars.getStringParameter("inpcUpdate");
+    // Remote upgrade is only allowed for heartbeat enabled instances
+    if (!HeartbeatProcess.isHeartbeatEnabled()) {
+      String command = "UPGRADE";
+      response.sendRedirect(strDireccion + "/ad_forms/Heartbeat.html?Command=" + command
+          + "_MODULE&inpcRecordId=" + moduleId);
+      return;
+    }
+
+    System.out.println("upgrade:" + vars.getStringParameter("inpcUpdate"));
   }
 
   /**
