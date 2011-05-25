@@ -22,6 +22,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -179,7 +180,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // For update obtain just update maturity level
       printPageInstall1(response, request, vars, null, false, null, modulesToUpdate, ModuleUtiltiy
           .getSystemMaturityLevels(false));
-    } else if (vars.commandIn("UPGRADE")) {
+    } else if (vars.commandIn("UPGRADE", "UPGRADE1")) {
       printPageUpgrade(response, request);
     } else if (vars.commandIn("SETTINGS", "SETTINGS_ADD", "SETTINGS_REMOVE", "SETTINGS_SAVE")) {
       printPageSettings(response, request);
@@ -683,32 +684,74 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
     final String moduleId = vars.getStringParameter("inpcUpdate");
     final String version = vars.getStringParameter("upgradeVersion");
-    // Remote upgrade is only allowed for heartbeat enabled instances
-    if (!HeartbeatProcess.isHeartbeatEnabled()) {
-      String command = "UPGRADE";
-      response.sendRedirect(strDireccion + "/ad_forms/Heartbeat.html?Command=" + command
-          + "_MODULE&inpcRecordId=" + moduleId + "&version=" + version);
-      return;
-    }
 
-    final ImportModule im = new ImportModule(this, vars.getSessionValue("#sourcePath"), vars);
-    im.setInstallLocal(false);
+    if (vars.commandIn("UPGRADE")) {
 
-    HashMap<String, String> additionalInfo = ModuleUtiltiy.getSystemMaturityLevels(false);
-    additionalInfo.put("upgrade.module", moduleId);
-    additionalInfo.put("upgrade.version", version);
-
-    try {
-      boolean check = im.checkDependenciesId(new String[0], new String[0], additionalInfo);
-      if (im.isUpgradePrecheckFail()) {
-        printPageUpgradeError(response, request, new JSONArray(im.getDependencyErrors()[1]));
+      // Remote upgrade is only allowed for heartbeat enabled instances
+      if (!HeartbeatProcess.isHeartbeatEnabled()) {
+        String command = "UPGRADE";
+        response.sendRedirect(strDireccion + "/ad_forms/Heartbeat.html?Command=" + command
+            + "_MODULE&inpcRecordId=" + moduleId + "&version=" + version);
+        return;
       }
 
-      System.out.println("upgrade:" + vars.getStringParameter("inpcUpdate") + " - "
-          + vars.getStringParameter("upgradeVersion") + " check:" + check);
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      // Show information about upgrade
+      org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
+          org.openbravo.model.ad.module.Module.class, moduleId);
+      String upgradeName = mod.getName() + " - " + version;
+
+      String upgradeInfo = "";
+      try {
+        String infoRequest = "Command=info";
+        infoRequest += "&modId=" + moduleId;
+        infoRequest += "&version=" + version;
+        infoRequest += "&lang=" + vars.getLanguage();
+        infoRequest += "&aprm=N"; // TODO: calculate aprm
+
+        upgradeInfo = new JSONObject(
+            HttpsUtils
+                .sendSecure(
+                    new URL(
+                        "https://butler.openbravo.com/heartbeat-server/org.openbravo.utility.centralrepository/UpgradeInfo"),
+                    infoRequest)).getString("description");
+
+        System.out.println("info:" + upgradeInfo);
+      } catch (Exception e1) {
+        log4j.error("Error getting upgrade info", e1);
+      }
+
+      final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+          "org/openbravo/erpCommon/ad_forms/ModuleManagement_UpgradeInfo").createXmlDocument();
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("theme", vars.getTheme());
+      xmlDocument.setParameter("upgradeName", upgradeName);
+      xmlDocument.setParameter("upgradeInfo", upgradeInfo);
+      xmlDocument.setParameter("moduleID", moduleId);
+      xmlDocument.setParameter("upgradeVersion", version);
+
+      response.setContentType("text/html; charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+      out.println(xmlDocument.print());
+      out.close();
+    }
+
+    if (vars.commandIn("UPGRADE1")) {
+      //
+
+      try {
+        HashMap<String, String> additionalInfo = ModuleUtiltiy.getSystemMaturityLevels(false);
+        additionalInfo.put("upgrade.module", moduleId);
+        additionalInfo.put("upgrade.version", version);
+        final ImportModule im = new ImportModule(this, vars.getSessionValue("#sourcePath"), vars);
+        im.setInstallLocal(false);
+        boolean check = im.checkDependenciesId(new String[0], new String[0], additionalInfo);
+        if (im.isUpgradePrecheckFail()) {
+          printPageUpgradeError(response, request, new JSONArray(im.getDependencyErrors()[1]));
+        }
+      } catch (Exception e) {
+        log4j.error("Error on upgrade");
+      }
     }
 
   }
