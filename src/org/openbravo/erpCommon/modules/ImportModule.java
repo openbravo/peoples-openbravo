@@ -1529,6 +1529,7 @@ public class ImportModule {
    * @param vars
    * @return the list of updates keyed by module id
    */
+  @SuppressWarnings("unchecked")
   public static HashMap<String, String> scanForUpdates(ConnectionProvider conn,
       VariablesSecureApp vars) {
     scanError = new StringBuilder();
@@ -1571,7 +1572,17 @@ public class ImportModule {
       if (updates != null && updates.length > 0) {
         for (int i = 0; i < updates.length; i++) {
 
-          HashMap additionalInfo = updates[i].getAdditionalInfo();
+          if (!ImportModuleData.existsVersion(conn, updates[i].getVersionNo(), updates[i]
+              .getModuleVersionID())) {
+            ImportModuleData.updateNewVersionAvailable(conn, updates[i].getVersionNo(), updates[i]
+                .getModuleVersionID(), updates[i].getUpdateDescription(), updates[i].getModuleID());
+            ImportModuleData.insertLog(conn, user, updates[i].getModuleID(), updates[i]
+                .getModuleVersionID(), updates[i].getName(), "Found new version "
+                + updates[i].getVersionNo() + " for module " + updates[i].getName(), "S");
+            updateModules.put(updates[i].getModuleID(), "U");
+          }
+
+          HashMap<String, String> additionalInfo = updates[i].getAdditionalInfo();
           if (additionalInfo != null && additionalInfo.containsKey("upgrade")) {
             log4j.info("Upgrade found:" + additionalInfo.get("upgrade"));
             JSONObject upgrade = new JSONObject((String) additionalInfo.get("upgrade"));
@@ -1586,21 +1597,10 @@ public class ImportModule {
               } finally {
                 OBInterceptor.setPreventUpdateInfoChange(false);
               }
-
             } else {
               log4j.error("There is an upgrade for module " + moduleId
                   + ", but it is not present in the instance.");
             }
-          }
-
-          if (!ImportModuleData.existsVersion(conn, updates[i].getVersionNo(), updates[i]
-              .getModuleVersionID())) {
-            ImportModuleData.updateNewVersionAvailable(conn, updates[i].getVersionNo(), updates[i]
-                .getModuleVersionID(), updates[i].getUpdateDescription(), updates[i].getModuleID());
-            ImportModuleData.insertLog(conn, user, updates[i].getModuleID(), updates[i]
-                .getModuleVersionID(), updates[i].getName(), "Found new version "
-                + updates[i].getVersionNo() + " for module " + updates[i].getName(), "S");
-            updateModules.put(updates[i].getModuleID(), "U");
           }
         }
         addParentUpdates(updateModules, conn);
