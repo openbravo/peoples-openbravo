@@ -704,19 +704,6 @@ public abstract class AcctServer {
     // commitFact
     Status = postCommit(Status, conn, vars, con);
 
-    // Create Note
-    if (!Status.equals(STATUS_Posted)) {
-      // Insert Note
-      String AD_Message = "PostingError-" + Status;
-      // Text - Only Status
-      String Text = Status;
-      // API - DocNo - 2000-01-31
-      String Reference = DocumentType + " - " + DocumentNo + " - " + DateDoc;
-      String AD_User_ID = "0";
-      insertNote(AD_Client_ID, AD_Org_ID, AD_User_ID, AD_Table_ID, Record_ID, AD_Message, Text,
-          Reference, vars, conn, con);
-    }
-
     // dispose facts
     for (int i = 0; i < m_fact.length; i++)
       if (m_fact[i] != null)
@@ -956,48 +943,17 @@ public abstract class AcctServer {
     // " - DocumentType: " + DocumentType);
   }
 
+  /**
+   * @deprecated During cleanup for 3.0 the entire table ad_node was removed from core, so this
+   *             insertNote method doesn't serve have any purpose anymore. Keep as deprecated noop
+   *             in case any module may call it.
+   */
+  @Deprecated
   public boolean insertNote(String AD_Client_ID, String AD_Org_ID, String AD_User_ID,
       String AD_Table_ID, String Record_ID, String AD_MessageValue, String Text, String Reference,
       VariablesSecureApp vars, ConnectionProvider conn, Connection con) {
-
-    if (AD_MessageValue.equals("") || AD_MessageValue.length() == 0)
-      throw new IllegalArgumentException(
-          "AcctServer - insertNote - required parameter missing - AD_Message");
-
-    // Database limits
-    if (Text == null)
-      Text = "";
-    if (Text.length() > 2000)
-      Text = Text.substring(0, 1999);
-    if (Reference == null)
-      Reference = "";
-    if (Reference.length() > 60)
-      Reference = Reference.substring(0, 59);
-    //
-    // if (log4j.isDebugEnabled()) log4j.debug("AcctServer - insertNote - "
-    // + AD_MessageValue + " - " + Reference);
-    //
-    int no = 0;
-    try {
-      String AD_Note_ID = SequenceIdData.getUUID();
-      // Create Entry
-      no = AcctServerData.insertNote(con, conn, AD_Note_ID, AD_Client_ID, AD_Org_ID, AD_User_ID,
-          Text, Reference, AD_Table_ID, Record_ID, AD_MessageValue);
-
-      // AD_Message must exist, so if not created, it is probably
-      // due to non-existing AD_Message
-      if (no == 0) {
-        // Try again
-        no = AcctServerData.insertNote(con, conn, AD_Note_ID, AD_Client_ID, AD_Org_ID, AD_User_ID,
-            Text, Reference, AD_Table_ID, Record_ID, "NoMessageFound");
-      }
-    } catch (ServletException e) {
-      log4j.warn(e);
-      e.printStackTrace();
-    }
-
-    return no == 1;
-  } // insertNote
+    return false;
+  }
 
   /**
    * Posting logic for Accounting Schema index
