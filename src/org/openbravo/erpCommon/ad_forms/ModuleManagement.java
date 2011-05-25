@@ -242,7 +242,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
     String notificationsHTML = "";
     try {
       JSONObject updatesUpgrades = getNotificationsJSON(vars.getLanguage());
-      notificationsHTML = updatesUpgrades.getString("updatesRebuildHTML");
+      if (updatesUpgrades.has("updatesRebuildHTML")) {
+        notificationsHTML = updatesUpgrades.getString("updatesRebuildHTML");
+      }
       List<Map<String, String>> upgs = new ArrayList<Map<String, String>>();
       if (updatesUpgrades.has("upgrades")) {
         JSONArray jsonUpgrades = updatesUpgrades.getJSONArray("upgrades");
