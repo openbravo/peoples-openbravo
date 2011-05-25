@@ -41,6 +41,7 @@ import org.openbravo.model.ad.system.SystemInformation;
 public class ModuleUtiltiy {
   protected static Logger log4j = Logger.getLogger(ModuleUtiltiy.class);
   public final static String TEMPLATE_30 = "0138E7A89B5E4DC3932462252801FFBC";
+  public final static String APRM_MODULE = "A918E3331C404B889D69AA9BFAFB23AC";
 
   /**
    * It receives an ArrayList<String> with modules IDs and returns the same list ordered taking into
