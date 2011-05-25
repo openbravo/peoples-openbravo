@@ -47,6 +47,7 @@ isc.OBSelectorPopupWindow.addProperties({
       title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
       click: function(){
         selectorWindow.hide();
+        selectorWindow.selector.focusInItem();
       }
     });
     
@@ -391,7 +392,8 @@ isc.OBSelectorItem.addProperties({
     
     if (this.showSelectorGrid) {
       this.selectorWindow = isc.OBSelectorPopupWindow.create({
-        title: this.title,
+        // solves issue: https://issues.openbravo.com/view.php?id=17268
+        title: (this.form && this.form.grid ? this.form.grid.getField(this.name).title : this.title),
         dataSource: this.optionDataSource,
         selector: this,
         valueField: this.valueField,
@@ -705,7 +707,8 @@ isc.OBSelectorLinkItem.addProperties({
     }
     
     this.selectorWindow = isc.OBSelectorPopupWindow.create({
-      title: this.title,
+      // solves issue: https://issues.openbravo.com/view.php?id=17268
+      title: (this.form && this.form.grid ? this.form.grid.getField(this.name).title : this.title),
       dataSource: this.dataSource,
       selector: this,
       valueField: this.gridValueField,
