@@ -244,7 +244,7 @@ public class LoginHandler extends HttpBaseServlet {
       if (aprmMigration != null) {
         boolean usingAprm;
         try {
-          usingAprm = "Y".equals(Preferences.getPreferenceValue("isAPRMready", false, "0", "0",
+          usingAprm = "Y".equals(Preferences.getPreferenceValue("APRM_Ready", false, "0", "0",
               null, null, null));
         } catch (PropertyException e) {
           usingAprm = false;
