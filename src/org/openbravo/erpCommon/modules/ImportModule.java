@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1570,6 +1570,29 @@ public class ImportModule {
 
       if (updates != null && updates.length > 0) {
         for (int i = 0; i < updates.length; i++) {
+
+          HashMap additionalInfo = updates[i].getAdditionalInfo();
+          if (additionalInfo != null && additionalInfo.containsKey("upgrade")) {
+            log4j.info("Upgrade found:" + additionalInfo.get("upgrade"));
+            JSONObject upgrade = new JSONObject((String) additionalInfo.get("upgrade"));
+            final String moduleId = upgrade.getString("moduleId");
+            org.openbravo.model.ad.module.Module module = OBDal.getInstance().get(
+                org.openbravo.model.ad.module.Module.class, moduleId);
+            if (module != null) {
+              try {
+                OBInterceptor.setPreventUpdateInfoChange(true);
+                module.setUpgradeAvailable(upgrade.getString("sowVersion"));
+                OBDal.getInstance().flush();
+              } finally {
+                OBInterceptor.setPreventUpdateInfoChange(false);
+              }
+
+            } else {
+              log4j.error("There is an upgrade for module " + moduleId
+                  + ", but it is not present in the instance.");
+            }
+          }
+
           if (!ImportModuleData.existsVersion(conn, updates[i].getVersionNo(), updates[i]
               .getModuleVersionID())) {
             ImportModuleData.updateNewVersionAvailable(conn, updates[i].getVersionNo(), updates[i]
