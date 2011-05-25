@@ -998,7 +998,7 @@ isc.OBDateItem.addProperties({
   inBlur: false,
 
   // compare while ignoring milli difference
-  compareValues : function (value1, value2) {
+  compareValues: function (value1, value2) {
     // not a date let the super class do it
     if (!isc.isA.Date(value1) || !isc.isA.Date(value2)) {
       return this.Super('compareValues', arguments);

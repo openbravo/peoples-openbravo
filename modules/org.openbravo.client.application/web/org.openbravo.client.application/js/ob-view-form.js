@@ -858,7 +858,7 @@ OB.ViewFormProperties = {
     }
     this.setValue(fldName + '_textualValue', textValue);
   },
-
+  
   // called explicitly onblur and when non-editable fields change
   handleItemChange: function(item){
     // is used to prevent infinite loops during save
