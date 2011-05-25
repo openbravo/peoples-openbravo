@@ -49,7 +49,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ImportModule;
 import org.openbravo.erpCommon.modules.ModuleTree;
@@ -69,7 +68,6 @@ import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBErrorBuilder;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
@@ -696,7 +694,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final String moduleId = vars.getStringParameter("inpcUpdate");
     final String version = vars.getStringParameter("upgradeVersion");
 
-    String usingAprm = isUsingAprm() ? "Y" : "N";
+    String usingAprm = "Y";
 
     if (vars.commandIn("UPGRADE")) {
 
@@ -862,27 +860,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
     }
 
-  }
-
-  /**
-   * Checks whether APM is in use
-   */
-  private boolean isUsingAprm() {
-    if (OBDal.getInstance().get(org.openbravo.model.ad.module.Module.class,
-        ModuleUtiltiy.APRM_MODULE) == null) {
-      return false;
-    }
-
-    try {
-      // In case APRM module is installed, check whether UsingAPRM property is set. Only in this
-      // case APRM is actually in use.
-
-      String usingAprm = Preferences.getPreferenceValue("UsingAPRM", false, "0", "0", null, null,
-          null);
-      return "Y".equals(usingAprm);
-    } catch (PropertyException e) {
-      return false;
-    }
   }
 
   private void printPageUpgradeError(HttpServletResponse response, HttpServletRequest request,
