@@ -658,19 +658,19 @@ public abstract class AcctServer {
     boolean isTableActive = false;
     try {
       OBContext.setAdminMode(true);
-    for (AcctSchema as : m_as) {
-      AcctSchemaTable table = null;
-      OBCriteria<AcctSchemaTable> criteria = OBDao.getFilteredCriteria(AcctSchemaTable.class,
-          Restrictions.eq("accountingSchema.id", as.getC_AcctSchema_ID()), Restrictions.eq(
-              "table.id", AD_Table_ID));
-      criteria.setFilterOnReadableClients(false);
-      criteria.setFilterOnReadableOrganization(false);
-      table = (AcctSchemaTable) criteria.uniqueResult();
-      if (table != null) {
-        isTableActive = true;
-        break;
+      for (AcctSchema as : m_as) {
+        AcctSchemaTable table = null;
+        OBCriteria<AcctSchemaTable> criteria = OBDao.getFilteredCriteria(AcctSchemaTable.class,
+            Restrictions.eq("accountingSchema.id", as.getC_AcctSchema_ID()), Restrictions.eq(
+                "table.id", AD_Table_ID));
+        criteria.setFilterOnReadableClients(false);
+        criteria.setFilterOnReadableOrganization(false);
+        table = (AcctSchemaTable) criteria.uniqueResult();
+        if (table != null) {
+          isTableActive = true;
+          break;
+        }
       }
-    }
     } finally {
       OBContext.restorePreviousMode();
     }
