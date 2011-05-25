@@ -1426,7 +1426,8 @@ isc.OBViewGrid.addProperties({
     if (rowNum || rowNum === 0) {
       insertRow = rowNum + 1;
     } else {
-      insertRow = this.getTotalRows();
+      
+      insertRow = this.getDrawArea()[0];
     }
     this.createNewRecordForEditing(insertRow);
     this.startEditing(insertRow);

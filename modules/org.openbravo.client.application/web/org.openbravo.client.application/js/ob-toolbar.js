@@ -103,7 +103,11 @@ isc.OBToolbar.addClassProperties({
       
       // In case of no record selected getRecordIndex(undefined) returns -1,
       // which is the top position, other case it adds bellow current selected row.
-      view.newRow(grid.getRecordIndex(grid.getSelectedRecord()));
+      if (grid.getSelectedRecord()) {
+        view.newRow(grid.getRecordIndex(grid.getSelectedRecord()));
+      } else {
+        view.newRow(0);
+      }
     },
     buttonType: 'newRow',
     prompt: OB.I18N.getLabel('OBUIAPP_NewRow'),
@@ -557,7 +561,6 @@ isc.OBToolbar.addProperties({
   // NOTE: new buttons should implement the updateState method.
   //
   updateButtonState: function(noSetSession, changeEvent){
-
     for (i = 0; i < this.leftMembers.length; i++) {
       if (this.leftMembers[i].updateState) {
         this.leftMembers[i].updateState();
