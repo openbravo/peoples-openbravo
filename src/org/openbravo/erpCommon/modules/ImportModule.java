@@ -36,9 +36,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -129,6 +129,8 @@ public class ImportModule {
   boolean checked;
   private String[] dependencyErrors;
   private boolean upgradePrecheckFail;
+
+  private final static String V3_TEMPLATE_ID = "0138E7A89B5E4DC3932462252801FFBC";
 
   /**
    * Initializes a new ImportModule object, it reads from obdir directory the database model to be
@@ -703,7 +705,7 @@ public class ImportModule {
       final Vector<DynaBean> dynDbPrefix = new Vector<DynaBean>();
       installModule(obx, module.getModuleID(), dynMod, dynDep, dynDbPrefix);
 
-      insertDynaModulesInDB(dynMod, dynDep, dynDbPrefix);
+      insertDynaModulesInDB(dynMod, dynDep, dynDbPrefix, newModule);
       if (newModule) {
         // Add entries in .classpath for eclipse users
         addDynaClasspathEntries(dynMod);
@@ -1236,10 +1238,12 @@ public class ImportModule {
    * 
    * @param dModulesToInstall
    * @param dependencies1
+   * @param newModule
    * @throws Exception
    */
   private void insertDynaModulesInDB(Vector<DynaBean> dModulesToInstall,
-      Vector<DynaBean> dependencies1, Vector<DynaBean> dbPrefix) throws Exception {
+      Vector<DynaBean> dependencies1, Vector<DynaBean> dbPrefix, boolean newModule)
+      throws Exception {
     final Properties obProperties = new Properties();
     obProperties.load(new FileInputStream(obDir + "/config/Openbravo.properties"));
 
@@ -1272,19 +1276,31 @@ public class ImportModule {
       ImportModuleData.cleanModuleDBPrefixInstall(pool, moduleId);
       ImportModuleData.cleanModuleDependencyInstall(pool, moduleId);
 
+      String type = (String) module.get("TYPE");
+      String applyConfigScript = "Y";
+      if ("T".equals(type)) {
+        if (newModule && V3_TEMPLATE_ID.equals(moduleId)) {
+          // When installing V3 template do not apply its config script
+          applyConfigScript = "N";
+        } else {
+          org.openbravo.model.ad.module.Module template = OBDal.getInstance().get(
+              org.openbravo.model.ad.module.Module.class, moduleId);
+          applyConfigScript = template.isApplyConfigurationScript() ? "Y" : "N";
+        }
+      }
+
       // Insert data in temporary tables
       ImportModuleData.insertModuleInstall(pool, moduleId, (String) module.get("NAME"),
           (String) module.get("VERSION"), (String) module.get("DESCRIPTION"), (String) module
-              .get("HELP"), (String) module.get("URL"), (String) module.get("TYPE"),
-          (String) module.get("LICENSE"), (String) module.get("ISINDEVELOPMENT"), (String) module
-              .get("ISDEFAULT"), seqNo.toString(), (String) module.get("JAVAPACKAGE"),
-          (String) module.get("LICENSETYPE"), (String) module.get("AUTHOR"), (String) module
-              .get("STATUS"), (String) module.get("UPDATE_AVAILABLE"), (String) module
-              .get("ISTRANSLATIONREQUIRED"), (String) module.get("AD_LANGUAGE"), (String) module
-              .get("HASCHARTOFACCOUNTS"), (String) module.get("ISTRANSLATIONMODULE"),
-          (String) module.get("HASREFERENCEDATA"), (String) module.get("ISREGISTERED"),
-          (String) module.get("UPDATEINFO"), (String) module.get("UPDATE_VER_ID"), (String) module
-              .get("REFERENCEDATAINFO"));
+              .get("HELP"), (String) module.get("URL"), type, (String) module.get("LICENSE"),
+          (String) module.get("ISINDEVELOPMENT"), (String) module.get("ISDEFAULT"), seqNo
+              .toString(), (String) module.get("JAVAPACKAGE"), (String) module.get("LICENSETYPE"),
+          (String) module.get("AUTHOR"), (String) module.get("STATUS"), (String) module
+              .get("UPDATE_AVAILABLE"), (String) module.get("ISTRANSLATIONREQUIRED"),
+          (String) module.get("AD_LANGUAGE"), (String) module.get("HASCHARTOFACCOUNTS"),
+          (String) module.get("ISTRANSLATIONMODULE"), (String) module.get("HASREFERENCEDATA"),
+          (String) module.get("ISREGISTERED"), (String) module.get("UPDATEINFO"), (String) module
+              .get("UPDATE_VER_ID"), (String) module.get("REFERENCEDATAINFO"), applyConfigScript);
 
       // Set installed for modules being updated
       ImportModuleData.setModuleUpdated(pool, (String) module.get("AD_MODULE_ID"));
