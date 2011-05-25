@@ -972,13 +972,15 @@ isc.OBViewGrid.addProperties({
         field = this.getSpecifiedField(property);
         fieldNum = this.getFieldNum(property);
         sortHeader = this.getFieldHeader(fieldNum);
-        sortButton = sortHeader.getMember(this.getLocalFieldNum(fieldNum));
-        if (sortButton) {
-          if (field) {
-            field.sortDirection = Array.shouldSortAscending(specifier.direction);
+        if (sortHeader) {
+          sortButton = sortHeader.getMember(this.getLocalFieldNum(fieldNum));
+          if (sortButton) {
+            if (field) {
+              field.sortDirection = Array.shouldSortAscending(specifier.direction);
+            }
+            sortHeader.selectButton(sortButton);
+            sortButton.setTitle(this.getHeaderButtonTitle(sortButton));
           }
-          sortHeader.selectButton(sortButton);
-          sortButton.setTitle(this.getHeaderButtonTitle(sortButton));
         }
       }
     }
