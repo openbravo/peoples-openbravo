@@ -717,6 +717,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         infoRequest += "&version=" + version;
         infoRequest += "&lang=" + vars.getLanguage();
         infoRequest += "&aprm=" + usingAprm;
+        infoRequest += "&commercial=" + (ActivationKey.getInstance().isActive() ? "Y" : "N");
 
         upgradeInfo = new JSONObject(HttpsUtils.sendSecure(new URL(UPGRADE_INFO_URL), infoRequest))
             .getString("description");
@@ -749,6 +750,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       infoRequest += "&version=" + version;
       infoRequest += "&lang=" + vars.getLanguage();
       infoRequest += "&aprm=" + usingAprm;
+      infoRequest += "&commercial=" + (ActivationKey.getInstance().isActive() ? "Y" : "N");
 
       try {
         JSONArray requirements = new JSONObject(HttpsUtils.sendSecure(new URL(UPGRADE_INFO_URL),
