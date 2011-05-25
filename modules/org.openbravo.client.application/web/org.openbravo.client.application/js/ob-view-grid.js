@@ -138,6 +138,7 @@ isc.OBViewGrid.addProperties({
   listEndEditAction: 'next',
   
   enforceVClipping: true,
+  fixedRecordHeights: true,
   
   validateByCell: true,
   

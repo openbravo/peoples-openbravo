@@ -54,7 +54,7 @@ OB.Application.startPage = '${data.startPage}';
 OB.Layout = isc.VLayout.create({
   width: '100%',
   height: '100%',
-  overflow: 'auto'
+  overflow: 'hidden'
 });
 
 // create the bar with navigation components
