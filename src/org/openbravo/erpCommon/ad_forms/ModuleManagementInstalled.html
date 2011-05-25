@@ -94,7 +94,7 @@ var baseDirectory = "../../../../../web/";
     if (getReadyStateHandler(XMLHttpRequestObj)) {
       try {
         if (XMLHttpRequestObj.responseText) {
-		  jsonResponse = eval("(" + XMLHttpRequestObj.responseText + ")");
+          jsonResponse = eval("(" + XMLHttpRequestObj.responseText + ")");
 
           // revert all tree item icons to default state
           var treeItems = document.getElementsByClassName('Tree_Row');
@@ -103,18 +103,18 @@ var baseDirectory = "../../../../../web/";
 
               for (j=1;j<treeItemChildren.length;j++) {
                   if(treeItemChildren[j].id == "icon"){
-                	  treeItemChildren[j].childNodes[1].setAttribute("class","");
+                      treeItemChildren[j].childNodes[1].setAttribute("class","");
                   }
               }
           }
           
           document.getElementById('notifications').innerHTML = jsonResponse.updatesRebuildHTML || "";
           
-		  // Set updates in the tree
-		  if (jsonResponse.updates) {
-		    for (up in jsonResponse.updates) {
-			  if (jsonResponse.updates.hasOwnProperty(up)) {
-			  	var icon = document.getElementById("icon2_" + up),
+          // Set updates in the tree
+          if (jsonResponse.updates) {
+            for (up in jsonResponse.updates) {
+              if (jsonResponse.updates.hasOwnProperty(up)) {
+                var icon = document.getElementById("icon2_" + up),
                     link = document.getElementById("link_" + up);
                 if (icon) {
                   icon.className="Tree_Icon_Update";
@@ -123,47 +123,47 @@ var baseDirectory = "../../../../../web/";
                   link.innerHTML = "Update Available"; //TODO: set proper language  
                   link.setAttribute("onclick", "gt_getUpdateDescription(event,'"+up+"');");
                 }
-			  }
-			}
-		  }
-		  
-		  
-		  // Remove upgrades to regenerate them
-		  var upgradeList = document.getElementById('upgradeList')
-		  if (upgradeList.hasChildNodes()){
+              }
+            }
+          }
+          
+          
+          // Remove upgrades to regenerate them
+          var upgradeList = document.getElementById('upgradeList')
+          if (upgradeList.hasChildNodes()){
             while (upgradeList.childNodes.length >= 1){
               upgradeList.removeChild(upgradeList.firstChild );       
             } 
           }
-		  
-		  // Generate upgrades
-		  if (jsonResponse.upgrades && jsonResponse.upgrades.length>0) {
-		  	var separator = document.createElement('span');
-			separator.innerHTML = '&nbsp;&nbsp;&nbsp;';
-			for (i=0; i<jsonResponse.upgrades.length; i++){
-			  var upgrNotif = document.createElement('p'), 
-			      spMod = document.createElement('span'),
-				  link = document.createElement('a');
-				  
-		      spMod.appendChild(document.createTextNode(jsonResponse.upgrades[i].moduleName+ ' '+
-			   jsonResponse.upgrades[i].version));
-			  
-			  link.setAttribute('class', 'LabelLink_noicon');
-			  link.setAttribute('href', '#'); 
-			  link.setAttribute('onclick', 'installUpgrade("'+jsonResponse.upgrades[i].moduleId+'", "'+jsonResponse.upgrades[i].version+'"); return false;');
-			  link.appendChild(document.createTextNode('Install Now')); //TODO: translatable
-			  
-			  upgrNotif.appendChild(spMod);
-			  upgrNotif.appendChild(separator);
-			  upgrNotif.appendChild(link);
-			  
-			  
-			  upgradeList.appendChild(upgrNotif);
-			}
-		  	document.getElementById('upgrades').style.display = null;
-		  } else {
-		  	document.getElementById('upgrades').style.display = 'none';
-		  }
+          
+          // Generate upgrades
+          if (jsonResponse.upgrades && jsonResponse.upgrades.length>0) {
+            var separator = document.createElement('span');
+            separator.innerHTML = '&nbsp;&nbsp;&nbsp;';
+            for (i=0; i<jsonResponse.upgrades.length; i++){
+              var upgrNotif = document.createElement('p'), 
+                  spMod = document.createElement('span'),
+                  link = document.createElement('a');
+                  
+              spMod.appendChild(document.createTextNode(jsonResponse.upgrades[i].moduleName+ ' '+
+               jsonResponse.upgrades[i].version));
+              
+              link.setAttribute('class', 'LabelLink_noicon');
+              link.setAttribute('href', '#'); 
+              link.setAttribute('onclick', 'installUpgrade("'+jsonResponse.upgrades[i].moduleId+'", "'+jsonResponse.upgrades[i].version+'"); return false;');
+              link.appendChild(document.createTextNode('Install Now')); //TODO: translatable
+              
+              upgrNotif.appendChild(spMod);
+              upgrNotif.appendChild(separator);
+              upgrNotif.appendChild(link);
+              
+              
+              upgradeList.appendChild(upgrNotif);
+            }
+            document.getElementById('upgrades').style.display = null;
+          } else {
+            document.getElementById('upgrades').style.display = 'none';
+          }
           changeClass('notifications', 'Tree_Actions_Processing', 'Tree_Actions');
         }
       } catch (e) {
@@ -188,9 +188,9 @@ var baseDirectory = "../../../../../web/";
   }
   
   function installUpgrade(id, version) {
-  	frmMain.inpcUpdate.value = id;
-	frmMain.upgradeVersion.value = version;
-	openServletNewWindow('UPGRADE', false, 'ModuleManagement.html', 'Upgrade', null, true, 700, 900, null, null, null, null, true);
+    frmMain.inpcUpdate.value = id;
+    frmMain.upgradeVersion.value = version;
+    openServletNewWindow('UPGRADE', false, 'ModuleManagement.html', 'Upgrade', null, true, 700, 900, null, null, null, null, true);
   }
 
   function uninstallModule(){
@@ -201,15 +201,15 @@ var baseDirectory = "../../../../../web/";
   
   function disableModule(id){
     if (showJSMessage(31)) {
-	  submitCommandForm('DISABLE', false, null, 'ModuleManagement.html', '_self', null, true);
-	}
+      submitCommandForm('DISABLE', false, null, 'ModuleManagement.html', '_self', null, true);
+    }
   }
 
   function enableModule(id){
-	if (showJSMessage(32)) {
-	 frmMain.inpcRecordId.value = id;  
-	 submitCommandForm('ENABLE', false, null, 'ModuleManagement.html', '_self', null, true);
-	}
+    if (showJSMessage(32)) {
+     frmMain.inpcRecordId.value = id;  
+     submitCommandForm('ENABLE', false, null, 'ModuleManagement.html', '_self', null, true);
+    }
   }
   </script>
 </head>
@@ -433,20 +433,27 @@ var baseDirectory = "../../../../../web/";
                   <td/>
                 </tr>
                 <tr><td style="height: 10px;"></td></tr>
-				
-				<tr id="upgrades" style="display:none;">
-				  <td colspan="4"> 
-				    <div class="PlainText_normal Tree_Upgrade">
-				      <p style="font-weight:normal;">A major upgrade is available.</p>
-					  <div  id="upgradeList">
-					  	<p><span id="upgrName">xxcore</span><span>&nbsp;&nbsp;&nbsp;</span> <a id="upgrLink" href="#" onclick="installUpgrade('xx', 'yy'); return false;" class="LabelLink_noicon">Install Now</a></p>
-					  </div>
-					  
-					</div>
-				  </td>
-				</tr>
-				
-				<tr><td style="height: 10px;"></td></tr>
+                
+                <tr id="upgrades" style="display:none;">
+                  <td colspan="4"> 
+                    <div class="PlainText_normal Tree_Upgrade">
+                      <p style="font-weight:normal;">A major upgrade is available.</p>
+                      <p style="font-weight:normal; font-size: 8pt;">
+                      
+                        <ul style="font-weight:normal; font-size: 8pt; margin: 5px; margin-left: 20px;">
+                          <li>An&nbsp;<b>upgrade</b>&nbsp;installs a higher major version than the one currently installed. It is a major enhancement.</li>
+                          <li>An&nbsp;<b>update</b>&nbsp;updates the major minor version of a module, but doesn't upgrade it to the next major version (if one exists).</li>
+                        </ul>
+                      </p>
+                      <div  id="upgradeList">
+                        <p><span id="upgrName">xxcore</span><span>&nbsp;&nbsp;&nbsp;</span> <a id="upgrLink" href="#" onclick="installUpgrade('xx', 'yy'); return false;" class="LabelLink_noicon">Install Now</a></p>
+                      </div>
+                      
+                    </div>
+                  </td>
+                </tr>
+                
+                <tr><td style="height: 10px;"></td></tr>
                 
                 <tr>
                   <PARAMETER_TMP id="moduleTree"/> <!-- Prints module tree 4 cols -->
