@@ -241,7 +241,22 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     String notificationsHTML = "";
     try {
-      notificationsHTML = getNotificationsJSON(vars.getLanguage()).getString("updatesRebuildHTML");
+      JSONObject updatesUpgrades = getNotificationsJSON(vars.getLanguage());
+      notificationsHTML = updatesUpgrades.getString("updatesRebuildHTML");
+      List<Map<String, String>> upgs = new ArrayList<Map<String, String>>();
+      if (updatesUpgrades.has("upgrades")) {
+        JSONArray jsonUpgrades = updatesUpgrades.getJSONArray("upgrades");
+        for (int i = 0; i < jsonUpgrades.length(); i++) {
+          Map<String, String> upg = new HashMap<String, String>();
+          upg.put("id", ((JSONObject) jsonUpgrades.get(i)).getString("moduleId"));
+          upg.put("name", ((JSONObject) jsonUpgrades.get(i)).getString("moduleName") + " "
+              + ((JSONObject) jsonUpgrades.get(i)).getString("version"));
+          upgs.add(upg);
+        }
+        xmlDocument.setParameter("showUpgrades", "");
+      }
+      xmlDocument.setData("upgrades", FieldProviderFactory.getFieldProviderArray(upgs));
+
     } catch (JSONException e) {
       log4j.error("Error getting notifications", e);
     }

@@ -139,7 +139,6 @@ var baseDirectory = "../../../../../web/";
           // Generate upgrades
           if (jsonResponse.upgrades && jsonResponse.upgrades.length>0) {
             var separator = document.createElement('span');
-            //separator.appendChild(document.createTextNode('   '));
             separator.innerHTML = '&nbsp;&nbsp;&nbsp;';
             for (i=0; i<jsonResponse.upgrades.length; i++){
               var upgrNotif = document.createElement('p'), 
@@ -150,7 +149,8 @@ var baseDirectory = "../../../../../web/";
                jsonResponse.upgrades[i].version));
               
               link.setAttribute('class', 'LabelLink_noicon');
-              link.setAttribute('href', '#'); //TODO: set action
+              link.setAttribute('href', '#'); 
+              link.setAttribute('onclick', 'installUpgrade("'+jsonResponse.upgrades[i].moduleId+'"); return false;');
               link.appendChild(document.createTextNode('Install Now')); //TODO: translatable
               
               upgrNotif.appendChild(spMod);
@@ -161,6 +161,8 @@ var baseDirectory = "../../../../../web/";
               upgradeList.appendChild(upgrNotif);
             }
             document.getElementById('upgrades').style.display = null;
+          } else {
+            document.getElementById('upgrades').style.display = 'none';
           }
           changeClass('notifications', 'Tree_Actions_Processing', 'Tree_Actions');
         }
@@ -183,6 +185,13 @@ var baseDirectory = "../../../../../web/";
   function installUpdate(id){
     frmMain.inpcUpdate.value = id;
     openServletNewWindow('UPDATE', false, 'ModuleManagement.html', 'Update', null, true, 700, 900, null, null, null, null, true);
+  }
+  
+  function installUpgrade(id) {
+    alert(id);
+    return;
+    frmMain.inpcUpdate.value = id;
+    openServletNewWindow('UPGRADE', false, 'ModuleManagement.html', 'Update', null, true, 700, 900, null, null, null, null, true);
   }
 
   function uninstallModule(){
@@ -430,7 +439,7 @@ var baseDirectory = "../../../../../web/";
                     <div class="PlainText_normal Tree_Upgrade">
                       <p style="font-weight:normal;">A major upgrade is available.</p>
                       <div  id="upgradeList">
-                        <p><span>xxcore</span><span>&nbsp;&nbsp;&nbsp;</span> <a href="#" class="LabelLink_noicon">Install Now</a></p>
+                        <p><span id="upgrName">xxcore</span><span>&nbsp;&nbsp;&nbsp;</span> <a id="upgrLink" href="#" onclick="installUpgrade('xx'); return false;" class="LabelLink_noicon">Install Now</a></p>
                       </div>
                       
                     </div>
