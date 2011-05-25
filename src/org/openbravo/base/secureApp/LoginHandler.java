@@ -30,10 +30,12 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.ddlutils.util.DBSMOBUtil;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.security.Login;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.OBVersion;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
@@ -56,6 +58,7 @@ import org.openbravo.xmlEngine.XmlDocument;
  */
 public class LoginHandler extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
+  private static final String APRM_MIGRATION_TOOL_ID = "4BD3D4B262B048518FE62496EF09D549";
   private String strServletPorDefecto;
 
   @Override
@@ -234,6 +237,24 @@ public class LoginHandler extends HttpBaseServlet {
         updateDBSession(sessionId, msgType.equals("Warning"), "LBF");
         goToRetry(res, vars, msg, title, msgType, action);
         return;
+      }
+
+      // Check APRM
+      Module aprmMigration = OBDal.getInstance().get(Module.class, APRM_MIGRATION_TOOL_ID);
+      if (aprmMigration != null) {
+        boolean usingAprm;
+        try {
+          usingAprm = "Y".equals(Preferences.getPreferenceValue("isAPRMready", false, "0", "0",
+              null, null, null));
+        } catch (PropertyException e) {
+          usingAprm = false;
+        }
+        if (!usingAprm) {
+          String title = Utility.messageBD(myPool, "Warning", vars.getLanguage());
+          String msg = Utility.messageBD(myPool, "APRMNotMigrated", vars.getLanguage());
+          goToRetry(res, vars, msg, title, "Warning", action);
+          return;
+        }
       }
 
       // Check all applied configuration scripts are exported in 3.0
