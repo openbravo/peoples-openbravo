@@ -238,7 +238,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final ModuleTree tree = new ModuleTree(this);
     tree.setLanguage(vars.getLanguage());
     tree.showNotifications(true);
-    tree.setNotifications(getNotificationsHTML(vars.getLanguage()));
+
+    String notificationsHTML = "";
+    try {
+      notificationsHTML = getNotificationsJSON(vars.getLanguage()).getString("updatesRebuildHTML");
+    } catch (JSONException e) {
+      log4j.error("Error getting notifications", e);
+    }
+    tree.setNotifications(notificationsHTML);
 
     // Obtains a tree for the installed modules
     xmlDocument.setParameter("moduleTree", tree.toHtml());
@@ -279,42 +286,50 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @param lang
    * @return
    */
-  private String getNotificationsHTML(String lang) {
-    String rt = "";
+  private JSONObject getNotificationsJSON(String lang) {
+    String updatesRebuildHTML = "";
     try {
-      // Check for rebuild system
-      String total = ModuleManagementData.selectRebuild(this);
-      if (!total.equals("0")) {
-        rt = total
-            + "&nbsp;"
-            + Utility.messageBD(this, "ApplyModules", lang)
-            + ", <a id=\"rebuildNow\" class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900, null, null, null, null, true);return false;\">"
-            + Utility.messageBD(this, "RebuildNow", lang) + "</a>";
-      }
       String restartTomcat = ModuleManagementData.selectRestartTomcat(this);
       // Check if last build was done but Tomcat wasn't restarted
       if (!restartTomcat.equals("0")) {
-        rt = "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('TOMCAT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 650, 900, null, null, null, null, true);return false;\">"
+        updatesRebuildHTML = "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('TOMCAT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 650, 900, null, null, null, null, true);return false;\">"
             + Utility.messageBD(this, "Restart_Tomcat", lang) + "</a>";
-        return rt;
-
-      }
-
-      // Check for updates
-      total = ModuleManagementData.selectUpdate(this);
-      if (!total.equals("0")) {
-        if (!rt.isEmpty()) {
-          rt += "&nbsp;/&nbsp;";
+      } else {
+        // Check for rebuild system
+        String total = ModuleManagementData.selectRebuild(this);
+        if (!total.equals("0")) {
+          updatesRebuildHTML = total
+              + "&nbsp;"
+              + Utility.messageBD(this, "ApplyModules", lang)
+              + ", <a id=\"rebuildNow\" class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900, null, null, null, null, true);return false;\">"
+              + Utility.messageBD(this, "RebuildNow", lang) + "</a>";
         }
-        rt += total
-            + "&nbsp;"
-            + Utility.messageBD(this, "UpdateAvailable", lang)
-            + "&nbsp;"
-            + "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"installUpdate('all'); return false;\">"
-            + Utility.messageBD(this, "InstallUpdatesNow", lang) + "</a>";
+
+        // Check for updates
+        total = ModuleManagementData.selectUpdate(this);
+        if (!total.equals("0")) {
+          if (!updatesRebuildHTML.isEmpty()) {
+            updatesRebuildHTML += "&nbsp;/&nbsp;";
+          }
+          updatesRebuildHTML += total
+              + "&nbsp;"
+              + Utility.messageBD(this, "UpdateAvailable", lang)
+              + "&nbsp;"
+              + "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"installUpdate('all'); return false;\">"
+              + Utility.messageBD(this, "InstallUpdatesNow", lang) + "</a>";
+        }
       }
     } catch (final Exception e) {
       log4j.error(e.getMessage(), e);
+    }
+
+    JSONObject rt = new JSONObject();
+    try {
+      if (!updatesRebuildHTML.isEmpty()) {
+        rt.put("updatesRebuildHTML", updatesRebuildHTML);
+      }
+    } catch (JSONException e) {
+      log4j.error("Error genrating updates notifications", e);
     }
     return rt;
   }
@@ -1502,30 +1517,35 @@ public class ModuleManagement extends HttpSecureAppServlet {
   private void printScan(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
-      log4j.debug("Output: ajaxreponse");
+      log4j.debug("Output: ajax response ");
 
     // clean module updates if there are any
     cleanModulesUpdates();
 
     final HashMap<String, String> updates = ImportModule.scanForUpdates(this, vars);
-    String up = "";
-    for (final String node : updates.keySet())
-      up += node + "," + updates.get(node) + "|";
 
-    String notifications = getNotificationsHTML(vars.getLanguage());
-    if (notifications.equals("")) {
-      if (!"".equals(ImportModule.getScanError().toString())) {
-        notifications = Utility.messageBD(this, ImportModule.getScanError().toString(), vars
-            .getLanguage());
-      } else {
-        notifications = Utility.messageBD(this, "NoUpdatesAvailable", vars.getLanguage());
+    JSONObject notifications = new JSONObject();
+    try {
+      notifications = getNotificationsJSON(vars.getLanguage());
+      if (!notifications.has("updatesRebuildHTML")) {
+        if (!"".equals(ImportModule.getScanError().toString())) {
+          notifications.put("updatesRebuildHTML", Utility.messageBD(this, ImportModule
+              .getScanError().toString(), vars.getLanguage()));
+        } else {
+          notifications = notifications.put("updatesRebuildHTML", Utility.messageBD(this,
+              "NoUpdatesAvailable", vars.getLanguage()));
+        }
       }
+
+      JSONObject jsonUpdates = new JSONObject(updates);
+      notifications.put("updates", jsonUpdates);
+    } catch (Exception e) {
+      log4j.error("Error reading notifications", e);
     }
-    up = notifications + "|" + up + "|";
-    response.setContentType("text/plain; charset=UTF-8");
+    response.setContentType("Content-type: application/json; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     final PrintWriter out = response.getWriter();
-    out.println(up);
+    out.println(notifications.toString());
     out.close();
   }
 

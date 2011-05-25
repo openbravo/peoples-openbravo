@@ -13,7 +13,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -94,6 +94,8 @@ var baseDirectory = "../../../../../web/";
     if (getReadyStateHandler(XMLHttpRequestObj)) {
       try {
         if (XMLHttpRequestObj.responseText) {
+          var jsonResponse = eval("(" + XMLHttpRequestObj.responseText + ")");
+            
           strText = XMLHttpRequestObj.responseText;
 
           // revert all tree item icons to default state
@@ -103,26 +105,29 @@ var baseDirectory = "../../../../../web/";
 
               for (var j=1;j<treeItemChildren.length;j++) {
                   if(treeItemChildren[j].id == "icon"){
-                	  treeItemChildren[j].childNodes[1].setAttribute("class","");
+                      treeItemChildren[j].childNodes[1].setAttribute("class","");
                   }
               }
           }
           
-          var elements = strText.split("|");
-          document.getElementById('notifications').innerHTML=elements[0];
-          for (var i=1;i<elements.length;i++) {
-            var updates = elements[i].split(",");
-            var icon = document.getElementById("icon2_"+updates[0]);
-            var link = document.getElementById("link_"+updates[0]);
-            if (icon!=null) {
-              icon.className="Tree_Icon_Update";
+          document.getElementById('notifications').innerHTML = jsonResponse.updatesRebuildHTML || "";
+          
+          if (jsonResponse.updates) {
+            for (var up in jsonResponse.updates) {
+              if (jsonResponse.updates.hasOwnProperty(up)) {
+                var icon = document.getElementById("icon2_" + up),
+                    link = document.getElementById("link_" + up);
+                if (icon) {
+                  icon.className="Tree_Icon_Update";
+                }
+                if (link && jsonResponse.updates[up]==="U") {
+                  link.innerHTML = "Update Available"; //TODO: set proper language  
+                  link.setAttribute("onclick", "gt_getUpdateDescription(event,'"+up+"');");
+                }
+              }
             }
-            if (link!=null && updates!=null && updates.length>1 && updates[1]=="U") {
-              link.innerHTML = "Update Available"; //TODO: set proper language  
-              link.setAttribute("onclick", "gt_getUpdateDescription('"+elements[i]+"');");
-            }
-            
           }
+          
           changeClass('notifications', 'Tree_Actions_Processing', 'Tree_Actions');
         }
       } catch (e) {
@@ -154,15 +159,15 @@ var baseDirectory = "../../../../../web/";
   
   function disableModule(id){
     if (showJSMessage(31)) {
-	  submitCommandForm('DISABLE', false, null, 'ModuleManagement.html', '_self', null, true);
-	}
+      submitCommandForm('DISABLE', false, null, 'ModuleManagement.html', '_self', null, true);
+    }
   }
 
   function enableModule(id){
-	if (showJSMessage(32)) {
-	 frmMain.inpcRecordId.value = id;  
-	 submitCommandForm('ENABLE', false, null, 'ModuleManagement.html', '_self', null, true);
-	}
+    if (showJSMessage(32)) {
+     frmMain.inpcRecordId.value = id;  
+     submitCommandForm('ENABLE', false, null, 'ModuleManagement.html', '_self', null, true);
+    }
   }
   </script>
 </head>
