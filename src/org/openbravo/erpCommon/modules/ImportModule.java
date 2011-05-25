@@ -127,6 +127,8 @@ public class ImportModule {
   Vector<DynaBean> dbprefix = new Vector<DynaBean>();
 
   boolean checked;
+  private String[] dependencyErrors;
+  private boolean upgradePrecheckFail;
 
   /**
    * Initializes a new ImportModule object, it reads from obdir directory the database model to be
@@ -299,6 +301,7 @@ public class ImportModule {
     final ModuleInstallDetail mid = VersionUtility.checkRemote(vars, installableModules,
         updateableModules, errors, maturityLevels);
     modulesToInstall = mid.getModulesToInstall();
+    dependencyErrors = mid.getDependencyErrors();
 
     // In case core is in the list of modules to update, put in at the last module to update, so it
     // will be updated only in case the rest of modules were successfully downloaded and updated.
@@ -327,6 +330,10 @@ public class ImportModule {
     modulesToMerge = merges.toArray(new Module[0]);
 
     checked = mid.isValidConfiguration();
+
+    upgradePrecheckFail = !checked && mid.getDependencyErrors() != null
+        && mid.getDependencyErrors().length > 0
+        && "upgrade-precheck".equals(mid.getDependencyErrors()[0]);
 
     return checked;
   }
@@ -1879,6 +1886,14 @@ public class ImportModule {
 
   public void setForce(boolean force) {
     this.force = force;
+  }
+
+  public String[] getDependencyErrors() {
+    return dependencyErrors;
+  }
+
+  public boolean isUpgradePrecheckFail() {
+    return upgradePrecheckFail;
   }
 
 }

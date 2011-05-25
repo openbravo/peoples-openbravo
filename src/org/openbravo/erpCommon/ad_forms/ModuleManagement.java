@@ -691,8 +691,119 @@ public class ModuleManagement extends HttpSecureAppServlet {
       return;
     }
 
-    System.out.println("upgrade:" + vars.getStringParameter("inpcUpdate") + " - "
-        + vars.getStringParameter("upgradeVersion"));
+    final ImportModule im = new ImportModule(this, vars.getSessionValue("#sourcePath"), vars);
+    im.setInstallLocal(false);
+
+    HashMap<String, String> additionalInfo = ModuleUtiltiy.getSystemMaturityLevels(false);
+    additionalInfo.put("upgrade.module", moduleId);
+    additionalInfo.put("upgrade.version", version);
+
+    try {
+      boolean check = im.checkDependenciesId(new String[0], new String[0], additionalInfo);
+      if (im.isUpgradePrecheckFail()) {
+        printPageUpgradeError(response, request, new JSONArray(im.getDependencyErrors()[1]));
+      }
+
+      System.out.println("upgrade:" + vars.getStringParameter("inpcUpdate") + " - "
+          + vars.getStringParameter("upgradeVersion") + " check:" + check);
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
+
+  private void printPageUpgradeError(HttpServletResponse response, HttpServletRequest request,
+      JSONArray upgradeErrors) throws IOException, JSONException {
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
+    List<Map<String, String>> noCRs = new ArrayList<Map<String, String>>();
+    List<Map<String, String>> crs = new ArrayList<Map<String, String>>();
+    List<Map<String, String>> crMaturities = new ArrayList<Map<String, String>>();
+
+    String msgDepGeneric = Utility.messageBD(this, "Dependency", vars.getLanguage());
+    for (int i = 0; i < upgradeErrors.length(); i++) {
+      boolean isMaturityError = false;
+      JSONObject mod = upgradeErrors.getJSONObject(i);
+
+      Map<String, String> error = new HashMap<String, String>();
+      String modId = mod.getString("module");
+      String name;
+      if (!mod.getString("name").isEmpty()) {
+        name = mod.getString("name");
+      } else {
+        org.openbravo.model.ad.module.Module m = OBDal.getInstance().get(
+            org.openbravo.model.ad.module.Module.class, modId);
+        if (m != null) {
+          name = m.getName();
+        } else {
+          name = modId;
+        }
+      }
+
+      JSONArray errors = mod.getJSONArray("errors");
+      String msg = "";
+      for (int e = 0; e < errors.length(); e++) {
+        JSONObject err = errors.getJSONObject(e);
+
+        String msgTxt = Utility.messageBD(this, err.getString("errorCode"), vars.getLanguage());
+        if (msgTxt.equals(err.getString("errorCode"))) {
+          msgTxt = err.getString("message");
+        } else if (err.getBoolean("isMaturity")) {
+          isMaturityError = true;
+          msgTxt = msgTxt.replace("{required}", err.getString("minMaturityRequired")).replace(
+              "{max}", err.getString("maxMaturityAvailable"));
+        }
+
+        String dep = "";
+        if (err.has("dependency")) {
+          JSONObject dependency = err.getJSONObject("dependency");
+          String depModID = dependency.getString("moduleId");
+          org.openbravo.model.ad.module.Module module = OBDal.getInstance().get(
+              org.openbravo.model.ad.module.Module.class, depModID);
+          String depModName;
+          if (module == null) {
+            depModName = depModID;
+          } else {
+            depModName = module.getName();
+          }
+
+          String depVersion = dependency.getString("firstVersion")
+              + (dependency.has("lastVersion") ? " - " + dependency.getString("lastVersion") : "");
+          dep = msgDepGeneric.replace("{1}", depModName).replace("{2}", depVersion).replace("{3}",
+              dependency.getString("enforcement"));
+        }
+
+        msg += "<li>" + dep + " " + msgTxt + "</li>";
+      }
+      error.put("msg", msg);
+      error.put("name", name);
+
+      if (!mod.getBoolean("cr")) {
+        noCRs.add(error);
+      } else if (isMaturityError) {
+        crMaturities.add(error);
+      } else {
+        crs.add(error);
+      }
+    }
+
+    String discard[] = { noCRs.isEmpty() ? "noCR" : "", crs.isEmpty() ? "CR" : "",
+        crMaturities.isEmpty() ? "CRMaturity" : "" };
+
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_forms/ModuleManagement_ErrorUpgrade", discard)
+        .createXmlDocument();
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setData("noCR", FieldProviderFactory.getFieldProviderArray(noCRs));
+    xmlDocument.setData("CR", FieldProviderFactory.getFieldProviderArray(crs));
+    xmlDocument.setData("CRMaturity", FieldProviderFactory.getFieldProviderArray(crMaturities));
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+
   }
 
   /**
