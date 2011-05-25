@@ -426,12 +426,16 @@ isc.OBSelectorItem.addProperties({
         this.form.focusInNextItem(this.name);
       }
     }
-    if (fromPopup && this.form && this.form.handleItemChange) {
+    if (this.form && this.form.handleItemChange) {
       this._hasChanged = true;
       this.form.handleItemChange(this);
     }
   },
-  
+
+  // override blur to not do any change handling
+  blur: function(form, item){
+  },
+
   handleOutFields: function(record){
     var i, outFields = this.outFields, form = this.form;
     for (i in outFields) {
