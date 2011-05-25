@@ -265,6 +265,12 @@ isc.OBViewGrid.addProperties({
       }
     ];
 
+    if (this.showSortArrow === 'field') {
+      // solves https://issues.openbravo.com/view.php?id=17362
+      this.showSortArrow = isc.ListGrid.BOTH;
+      this.sorterDefaults = {};
+    }
+    
     this.contextMenu = this.getMenuConstructor().create({items: menuItems});
 
     var ret = this.Super('initWidget', arguments);
