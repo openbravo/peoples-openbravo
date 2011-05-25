@@ -250,6 +250,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
                 : "&inpcUpdate=" + recordId);
           } else if (command.equals("UPGRADE")) {
             recordId = "&inpcUpdate=" + recordId;
+            recordId += "&upgradeVersion=" + vars.getStringParameter("version");
           } else {
             recordId = "&inpcRecordId=" + recordId;
           }

@@ -157,7 +157,7 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
-      <column name="UPGRADE_AVAILABLE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="UPGRADE_AVAILABLE" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

@@ -1592,7 +1592,7 @@ public class ImportModule {
             if (module != null) {
               try {
                 OBInterceptor.setPreventUpdateInfoChange(true);
-                module.setUpgradeAvailable(upgrade.getString("sowVersion"));
+                module.setUpgradeAvailable(upgrade.getJSONArray("showVersion").toString());
                 OBDal.getInstance().flush();
               } finally {
                 OBInterceptor.setPreventUpdateInfoChange(false);

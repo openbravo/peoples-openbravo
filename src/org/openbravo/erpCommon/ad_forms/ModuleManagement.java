@@ -251,11 +251,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
       if (updatesUpgrades.has("upgrades")) {
         JSONArray jsonUpgrades = updatesUpgrades.getJSONArray("upgrades");
         for (int i = 0; i < jsonUpgrades.length(); i++) {
-          Map<String, String> upg = new HashMap<String, String>();
-          upg.put("id", ((JSONObject) jsonUpgrades.get(i)).getString("moduleId"));
-          upg.put("name", ((JSONObject) jsonUpgrades.get(i)).getString("moduleName") + " "
-              + ((JSONObject) jsonUpgrades.get(i)).getString("version"));
-          upgs.add(upg);
+          JSONArray versions = jsonUpgrades.getJSONObject(i).getJSONArray("version");
+          for (int v = 0; v < versions.length(); v++) {
+            Map<String, String> upg = new HashMap<String, String>();
+            upg.put("id", ((JSONObject) jsonUpgrades.get(i)).getString("moduleId"));
+            upg.put("name", ((JSONObject) jsonUpgrades.get(i)).getString("moduleName") + " "
+                + versions.get(v));
+            upg.put("version", versions.getString(v));
+            upgs.add(upg);
+          }
         }
         xmlDocument.setParameter("showUpgrades", "");
       }
@@ -349,7 +353,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       for (org.openbravo.model.ad.module.Module upgr : qUpgr.list()) {
         JSONObject upgrade = new JSONObject();
         upgrade.put("moduleId", upgr.getId());
-        upgrade.put("version", upgr.getUpgradeAvailable());
+        upgrade.put("version", new JSONArray(upgr.getUpgradeAvailable()));
         upgrade.put("moduleName", upgr.getName());
         upgrades.put(upgrade);
       }
@@ -678,15 +682,17 @@ public class ModuleManagement extends HttpSecureAppServlet {
       throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
     final String moduleId = vars.getStringParameter("inpcUpdate");
+    final String version = vars.getStringParameter("upgradeVersion");
     // Remote upgrade is only allowed for heartbeat enabled instances
     if (!HeartbeatProcess.isHeartbeatEnabled()) {
       String command = "UPGRADE";
       response.sendRedirect(strDireccion + "/ad_forms/Heartbeat.html?Command=" + command
-          + "_MODULE&inpcRecordId=" + moduleId);
+          + "_MODULE&inpcRecordId=" + moduleId + "&version=" + version);
       return;
     }
 
-    System.out.println("upgrade:" + vars.getStringParameter("inpcUpdate"));
+    System.out.println("upgrade:" + vars.getStringParameter("inpcUpdate") + " - "
+        + vars.getStringParameter("upgradeVersion"));
   }
 
   /**
@@ -1930,7 +1936,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         mod.setUpgradeAvailable(null);
         hasChanged = true;
       }
-      OBDal.getInstance().flush();
+      // OBDal.getInstance().flush();
     } finally {
       OBInterceptor.setPreventUpdateInfoChange(false);
     }

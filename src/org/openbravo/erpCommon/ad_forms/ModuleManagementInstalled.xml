@@ -38,6 +38,7 @@
   <structure name="upgrades">
     <FIELD id="upgrName">name</FIELD>
     <FIELD id="upgrLink" attribute="onclick" replace="xx">id</FIELD>
+	<FIELD id="upgrLink" attribute="onclick" replace="yy">version</FIELD>
     <SECTION id="upgradeList"/>
   </structure>
   <PARAMETER id="upgrades" name="showUpgrades" attribute="style" replace="none" default="none"/>
