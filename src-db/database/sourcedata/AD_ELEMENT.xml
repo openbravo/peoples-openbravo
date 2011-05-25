@@ -6573,8 +6573,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1215-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1215-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1215-->  <COLUMNNAME><![CDATA[Limit_AddAmt]]></COLUMNNAME>
-<!--1215-->  <NAME><![CDATA[Surcharge Price Limit Amount]]></NAME>
-<!--1215-->  <PRINTNAME><![CDATA[Limit price Surcharge Amt]]></PRINTNAME>
+<!--1215-->  <NAME><![CDATA[Surcharge Net Price Limit Amount]]></NAME>
+<!--1215-->  <PRINTNAME><![CDATA[Surcharge Net Price Limit Amount]]></PRINTNAME>
 <!--1215-->  <DESCRIPTION><![CDATA[Amount added to the converted/copied price before multiplying]]></DESCRIPTION>
 <!--1215-->  <HELP><![CDATA[Indicates the amount to be added to the Limit price prior to multiplication.]]></HELP>
 <!--1215-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6612,8 +6612,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1218-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1218-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1218-->  <COLUMNNAME><![CDATA[Limit_MinAmt]]></COLUMNNAME>
-<!--1218-->  <NAME><![CDATA[Limit price min Margin]]></NAME>
-<!--1218-->  <PRINTNAME><![CDATA[Limit price min Margin]]></PRINTNAME>
+<!--1218-->  <NAME><![CDATA[Net Price min Margin]]></NAME>
+<!--1218-->  <PRINTNAME><![CDATA[Net Price min Margin]]></PRINTNAME>
 <!--1218-->  <DESCRIPTION><![CDATA[Minimum difference to original limit price; ignored if zero]]></DESCRIPTION>
 <!--1218-->  <HELP><![CDATA[Indicates the minimum margin for a product.  The margin is calculated by subtracting the original limit price from the newly calculated price.  If this field contains 0.00 then it is ignored.]]></HELP>
 <!--1218-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6625,8 +6625,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1220-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1220-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1220-->  <COLUMNNAME><![CDATA[Limit_Rounding]]></COLUMNNAME>
-<!--1220-->  <NAME><![CDATA[Price Limit Rounding]]></NAME>
-<!--1220-->  <PRINTNAME><![CDATA[Limit price Rounding]]></PRINTNAME>
+<!--1220-->  <NAME><![CDATA[Net Price Limit Rounding]]></NAME>
+<!--1220-->  <PRINTNAME><![CDATA[Net Price Limit Rounding]]></PRINTNAME>
 <!--1220-->  <DESCRIPTION><![CDATA[Rounding of the final result]]></DESCRIPTION>
 <!--1220-->  <HELP><![CDATA[A drop down list box which indicates the rounding (if any) will apply to the final prices in this price list.]]></HELP>
 <!--1220-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6638,8 +6638,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1221-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1221-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1221-->  <COLUMNNAME><![CDATA[List_AddAmt]]></COLUMNNAME>
-<!--1221-->  <NAME><![CDATA[Surcharge List Price Amount]]></NAME>
-<!--1221-->  <PRINTNAME><![CDATA[List price Surcharge Amt]]></PRINTNAME>
+<!--1221-->  <NAME><![CDATA[Surcharge Net List Price Amount]]></NAME>
+<!--1221-->  <PRINTNAME><![CDATA[Surcharge Net List Price Amount]]></PRINTNAME>
 <!--1221-->  <DESCRIPTION><![CDATA[List Price Surcharge Amount]]></DESCRIPTION>
 <!--1221-->  <HELP><![CDATA[The List Price Surcharge Amount indicates the amount to be added to the price prior to multiplication.]]></HELP>
 <!--1221-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6716,8 +6716,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1229-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1229-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1229-->  <COLUMNNAME><![CDATA[Std_AddAmt]]></COLUMNNAME>
-<!--1229-->  <NAME><![CDATA[Surcharge Standard Price Amount]]></NAME>
-<!--1229-->  <PRINTNAME><![CDATA[Standard price Surcharge Amt]]></PRINTNAME>
+<!--1229-->  <NAME><![CDATA[Surcharge Net Unit Price Amount]]></NAME>
+<!--1229-->  <PRINTNAME><![CDATA[Surcharge Net Unit Price Amount]]></PRINTNAME>
 <!--1229-->  <DESCRIPTION><![CDATA[Amount added to a price as a surcharge]]></DESCRIPTION>
 <!--1229-->  <HELP><![CDATA[The Standard Price Surcharge Amount indicates the amount to be added to the price prior to multiplication.]]></HELP>
 <!--1229-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6768,8 +6768,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1234-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1234-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1234-->  <COLUMNNAME><![CDATA[Std_Rounding]]></COLUMNNAME>
-<!--1234-->  <NAME><![CDATA[Standard Price Rounding]]></NAME>
-<!--1234-->  <PRINTNAME><![CDATA[Standard price Rounding]]></PRINTNAME>
+<!--1234-->  <NAME><![CDATA[Net Unit Price Rounding]]></NAME>
+<!--1234-->  <PRINTNAME><![CDATA[Net Unit Price Rounding]]></PRINTNAME>
 <!--1234-->  <DESCRIPTION><![CDATA[Rounding rule for calculated price]]></DESCRIPTION>
 <!--1234-->  <HELP><![CDATA[The Standard Price Rounding indicates how the final Standard price will be rounded.]]></HELP>
 <!--1234-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6794,8 +6794,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1236-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1236-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1236-->  <COLUMNNAME><![CDATA[Limit_Discount]]></COLUMNNAME>
-<!--1236-->  <NAME><![CDATA[Price Limit Discount %]]></NAME>
-<!--1236-->  <PRINTNAME><![CDATA[Limit price Discount %]]></PRINTNAME>
+<!--1236-->  <NAME><![CDATA[Net Price Limit Discount %]]></NAME>
+<!--1236-->  <PRINTNAME><![CDATA[Net Price Limit Discount %]]></PRINTNAME>
 <!--1236-->  <DESCRIPTION><![CDATA[Discount in percent to be subtracted from base, if negative it will be added to base price]]></DESCRIPTION>
 <!--1236-->  <HELP><![CDATA[Indicates the discount in percent to be subtracted from base, if negative it will be added to base price]]></HELP>
 <!--1236-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6820,8 +6820,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1238-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1238-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1238-->  <COLUMNNAME><![CDATA[Std_Discount]]></COLUMNNAME>
-<!--1238-->  <NAME><![CDATA[Standard Price Discount %]]></NAME>
-<!--1238-->  <PRINTNAME><![CDATA[Standard price Discount %]]></PRINTNAME>
+<!--1238-->  <NAME><![CDATA[Net Unit Price Discount %]]></NAME>
+<!--1238-->  <PRINTNAME><![CDATA[Net Unit Price Discount %]]></PRINTNAME>
 <!--1238-->  <DESCRIPTION><![CDATA[Discount percentage to subtract from base price]]></DESCRIPTION>
 <!--1238-->  <HELP><![CDATA[The Standard Price Discount Percentage indicates the percentage discount which will be subtracted from the base price.  A negative amount indicates the percentage which will be added to the base price.]]></HELP>
 <!--1238-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
