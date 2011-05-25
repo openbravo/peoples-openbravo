@@ -6586,8 +6586,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1216-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1216-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1216-->  <COLUMNNAME><![CDATA[Limit_Base]]></COLUMNNAME>
-<!--1216-->  <NAME><![CDATA[Base Limit Price]]></NAME>
-<!--1216-->  <PRINTNAME><![CDATA[Limit price Base]]></PRINTNAME>
+<!--1216-->  <NAME><![CDATA[Base Net Limit Price]]></NAME>
+<!--1216-->  <PRINTNAME><![CDATA[Base Net Limit Price]]></PRINTNAME>
 <!--1216-->  <DESCRIPTION><![CDATA[Base price for calculation of the new price]]></DESCRIPTION>
 <!--1216-->  <HELP><![CDATA[Identifies the price to be used as the base for calculating a new price list.]]></HELP>
 <!--1216-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6651,8 +6651,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1222-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1222-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1222-->  <COLUMNNAME><![CDATA[List_Base]]></COLUMNNAME>
-<!--1222-->  <NAME><![CDATA[Base List Price]]></NAME>
-<!--1222-->  <PRINTNAME><![CDATA[List price Base]]></PRINTNAME>
+<!--1222-->  <NAME><![CDATA[Base Net List Price]]></NAME>
+<!--1222-->  <PRINTNAME><![CDATA[Base Net List Price]]></PRINTNAME>
 <!--1222-->  <DESCRIPTION><![CDATA[Price used as the basis for price list calculations]]></DESCRIPTION>
 <!--1222-->  <HELP><![CDATA[The List Price Base indicates the price to use as the basis for the calculation of a new price list.]]></HELP>
 <!--1222-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
