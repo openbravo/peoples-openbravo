@@ -33,6 +33,8 @@
             requestParams, function(rpcResponse, data, rpcRequest) {
 
               var recordIndex = view.viewGrid.getRecordIndex(view.viewGrid.getSelectedRecord()) + 1;
+              // takes care of transforming dates etc.
+              data = view.viewGrid.getDataSource().recordsFromObjects(data)[0];
               view.viewGrid.data.insertCacheData(data, recordIndex);
               view.viewGrid.scrollToRow(recordIndex);
               view.viewGrid.markForRedraw();
