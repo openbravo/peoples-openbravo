@@ -1894,12 +1894,22 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * info if so.
    */
   private boolean cleanModulesUpdates() throws ServletException {
+    boolean hasChanged = false;
+    OBCriteria<org.openbravo.model.ad.module.Module> qUpgr = OBDal.getInstance().createCriteria(
+        org.openbravo.model.ad.module.Module.class);
+    qUpgr.add(Restrictions
+        .isNotNull(org.openbravo.model.ad.module.Module.PROPERTY_UPGRADEAVAILABLE));
+    for (org.openbravo.model.ad.module.Module mod : qUpgr.list()) {
+      mod.setUpgradeAvailable(null);
+      hasChanged = true;
+    }
+
     if (ModuleManagementData.selectUpdateable(this).length > 0) {
       // cleaning modules updates
       ModuleManagementData.cleanModulesUpdates(this);
       return true;
     }
-    return false;
+    return hasChanged;
   }
 
   /**
