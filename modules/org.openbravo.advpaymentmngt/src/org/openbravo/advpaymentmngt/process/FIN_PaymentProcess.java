@@ -71,6 +71,11 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       OBDal.getInstance().save(payment);
       OBDal.getInstance().flush();
       if (strAction.equals("P") || strAction.equals("D")) {
+        // Set APRM_Ready preference
+        if (!dao.existsAPRMReadyPreference()) {
+          dao.createAPRMReadyPreference();
+        }
+
         Set<String> documentOrganizations = OBContext.getOBContext()
             .getOrganizationStructureProvider().getNaturalTree(payment.getOrganization().getId());
         if (!documentOrganizations.contains(payment.getAccount().getOrganization().getId())) {
