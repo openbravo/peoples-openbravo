@@ -5216,8 +5216,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--957-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--957-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--957-->  <COLUMNNAME><![CDATA[PriceStd]]></COLUMNNAME>
-<!--957-->  <NAME><![CDATA[Net Standard Price]]></NAME>
-<!--957-->  <PRINTNAME><![CDATA[Net Standard Price]]></PRINTNAME>
+<!--957-->  <NAME><![CDATA[Net Unit Price]]></NAME>
+<!--957-->  <PRINTNAME><![CDATA[Net Unit Price]]></PRINTNAME>
 <!--957-->  <DESCRIPTION><![CDATA[The regular or normal price of a product in the respective price list.]]></DESCRIPTION>
 <!--957-->  <HELP><![CDATA[The Standard Price indicates the standard or normal price for a product on this price list]]></HELP>
 <!--957-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -7602,8 +7602,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1416-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1416-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1416-->  <COLUMNNAME><![CDATA[Price]]></COLUMNNAME>
-<!--1416-->  <NAME><![CDATA[Price]]></NAME>
-<!--1416-->  <PRINTNAME><![CDATA[Price]]></PRINTNAME>
+<!--1416-->  <NAME><![CDATA[Net Unit Price]]></NAME>
+<!--1416-->  <PRINTNAME><![CDATA[Net Unit Price]]></PRINTNAME>
 <!--1416-->  <DESCRIPTION><![CDATA[The cost or value of a good or service.]]></DESCRIPTION>
 <!--1416-->  <HELP><![CDATA[The Price indicates the Price for a product or service.]]></HELP>
 <!--1416-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9726,8 +9726,8 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1817-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1817-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1817-->  <COLUMNNAME><![CDATA[InvoicePrice]]></COLUMNNAME>
-<!--1817-->  <NAME><![CDATA[Invoice Price]]></NAME>
-<!--1817-->  <PRINTNAME><![CDATA[Invoice Price]]></PRINTNAME>
+<!--1817-->  <NAME><![CDATA[Net Unit Price]]></NAME>
+<!--1817-->  <PRINTNAME><![CDATA[Net Unit Price]]></PRINTNAME>
 <!--1817-->  <DESCRIPTION><![CDATA[The price at which something may be invoiced, shown in the currency of the invoiced business partner.]]></DESCRIPTION>
 <!--1817-->  <HELP><![CDATA[Unit Price in the currency of the business partner!  If it is 0, the standard price of the sales price list of the business partner (customer) is used.]]></HELP>
 <!--1817-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -15678,8 +15678,8 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800635-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800635-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800635-->  <COLUMNNAME><![CDATA[Isprice]]></COLUMNNAME>
-<!--800635-->  <NAME><![CDATA[Price]]></NAME>
-<!--800635-->  <PRINTNAME><![CDATA[Price]]></PRINTNAME>
+<!--800635-->  <NAME><![CDATA[Net Unit Price]]></NAME>
+<!--800635-->  <PRINTNAME><![CDATA[Net Unit Price]]></PRINTNAME>
 <!--800635-->  <DESCRIPTION><![CDATA[The cost or value of a good or service.]]></DESCRIPTION>
 <!--800635-->  <HELP><![CDATA[This field indicates if it is a fixed price or it is per unit.]]></HELP>
 <!--800635-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
