@@ -9262,8 +9262,8 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1746-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1746-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1746-->  <COLUMNNAME><![CDATA[Std_Fixed]]></COLUMNNAME>
-<!--1746-->  <NAME><![CDATA[Fixed Standard Price]]></NAME>
-<!--1746-->  <PRINTNAME><![CDATA[Fixed Standard]]></PRINTNAME>
+<!--1746-->  <NAME><![CDATA[Fixed Net Unit Price]]></NAME>
+<!--1746-->  <PRINTNAME><![CDATA[Fixed Net Unit Price]]></PRINTNAME>
 <!--1746-->  <DESCRIPTION><![CDATA[Fixed Standard Price (not calculated)]]></DESCRIPTION>
 <!--1746-->  <HELP><![CDATA[Fixed Standard Price (not calculated)]]></HELP>
 <!--1746-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -13347,8 +13347,8 @@ For example, if you want to create different invoices for each ship location for
 <!--800270-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800270-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800270-->  <COLUMNNAME><![CDATA[Fixed]]></COLUMNNAME>
-<!--800270-->  <NAME><![CDATA[Fixed Price]]></NAME>
-<!--800270-->  <PRINTNAME><![CDATA[Fixed]]></PRINTNAME>
+<!--800270-->  <NAME><![CDATA[Fixed Net Unit Price]]></NAME>
+<!--800270-->  <PRINTNAME><![CDATA[Fixed Net Unit Price]]></PRINTNAME>
 <!--800270-->  <DESCRIPTION><![CDATA[A price that does not change when price adjustments are made.]]></DESCRIPTION>
 <!--800270-->  <HELP><![CDATA[Fixed price for the price adjustment]]></HELP>
 <!--800270-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
