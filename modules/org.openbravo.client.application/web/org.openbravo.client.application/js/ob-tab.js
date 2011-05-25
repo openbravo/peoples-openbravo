@@ -303,8 +303,7 @@ isc.OBTabSetChild.addProperties({
     mouseOver: function() {
       if (this.tabSet.state === isc.OBStandardView.STATE_IN_MID) {
         this.setCursor(isc.Canvas.ROW_RESIZE);
-      }
-      if (this.tabSet.state === isc.OBStandardView.STATE_TOP_MAX) {
+      } else {
         this.setCursor(isc.Canvas.HAND);
       }
     },
@@ -365,7 +364,7 @@ isc.OBTabSetChild.addProperties({
       }
     } else if (this.state === isc.OBStandardView.STATE_BOTTOM_MAX) {
       this.setState(isc.OBStandardView.STATE_MID);
-    } else if (this.state === isc.OBStandardView.STATE_TOP_MAX) {
+    } else if (this.state === isc.OBStandardView.STATE_TOP_MAX || this.state === isc.OBStandardView.STATE_MID) {
       this.doHandleDoubleClick();
     }
   },
@@ -515,10 +514,16 @@ isc.OBTabSetChild.addProperties({
   },
 
   tabSelected: function(tabNum, tabPane, ID, tab){
+    var event = isc.EventHandler.getLastEvent();
     if (tabPane.refreshContents) {
       tabPane.doRefreshContents(true, true);
     }
-    this.ignoreItemClick = true;
+    // if the event is a mouse event then let the item click not do max/min
+    // tabselected events are also fired when drawing
+    if (this.isDrawn() && event && isc.EventHandler.isMouseEvent(event.eventType) && tabPane.parentView &&
+        tabPane.parentView.state !== isc.OBStandardView.STATE_TOP_MAX && tabPane.parentView.state !== isc.OBStandardView.STATE_MID) {
+      this.ignoreItemClick = true;
+    }
   },
 
   initWidget: function(){
