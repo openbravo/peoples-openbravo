@@ -556,7 +556,7 @@ isc.OBToolbar.addProperties({
   // 
   // NOTE: new buttons should implement the updateState method.
   //
-  updateButtonState: function(noSetSession){
+  updateButtonState: function(noSetSession, changeEvent){
 
     for (i = 0; i < this.leftMembers.length; i++) {
       if (this.leftMembers[i].updateState) {
@@ -565,7 +565,9 @@ isc.OBToolbar.addProperties({
     }
     
     // and refresh the process toolbar buttons
-    this.refreshCustomButtons(noSetSession);
+    if (!changeEvent) {
+      this.refreshCustomButtons(noSetSession);
+    }
   },
   
   // ** {{{ getLeftMember(member) }}} **
@@ -996,6 +998,7 @@ isc.OBToolbar.addProperties({
   // Refreshes all the custom buttons in the toolbar based on current record selection
   //
   refreshCustomButtons: function(noSetSession){
+    var selectedRecords, isNewRecord = false;
     function doRefresh(buttons, currentValues, hideAllButtons, me) {
       var i;
       for (i = 0; i < buttons.length; i++) {
@@ -1047,12 +1050,20 @@ isc.OBToolbar.addProperties({
       };
     };
 
-
     for (iButtonContext = 0; iButtonContext < buttonContexts.length; iButtonContext++) {
       currentContext = buttonContexts[iButtonContext];
+
+      selectedRecords = currentContext.viewGrid.getSelectedRecords() || [];
+      for (i = 0; i < selectedRecords.length; i++) {
+        if (selectedRecords[i]._new) {
+          isNewRecord = true;
+          break;
+        }
+      }
       var numOfSelRecords = 0, 
           isNew = currentContext.viewForm.isNew, 
-          hideAllButtons = typeof(isNew) !== 'undefined' && !isNew && (!currentContext.isShowingForm && (currentContext.viewGrid.getSelectedRecords().size()===0)), currentValues = currentContext.getCurrentValues();
+          hideAllButtons = isNew || selectedRecords.size() === 0 || isNewRecord,
+          currentValues = currentContext.getCurrentValues();
 
       var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1;
       if (currentContext.viewGrid.getSelectedRecords()) {
@@ -1069,7 +1080,6 @@ isc.OBToolbar.addProperties({
           ROW_ID: currentValues.id
         };
         var multipleSelectedRowIds = [];
-        var selectedRecords = currentContext.viewGrid.getSelectedRecords();
         if(selectedRecords.size() > 1){
           for (i = 0; i < selectedRecords.size(); i++) {
             multipleSelectedRowIds[i] = selectedRecords[i].id;
@@ -1082,9 +1092,6 @@ isc.OBToolbar.addProperties({
         doRefresh(buttonsByContext[currentContext], currentValues || {}, hideAllButtons || noneOrMultipleRecordsSelected, this);
       }
     }
-
-
-
   },
 
   visibilityChanged: function(state){
