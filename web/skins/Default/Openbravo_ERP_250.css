@@ -4972,6 +4972,7 @@ td.TextBox_MsgContainerVt_td {
   height: 19px;
 }
 
+.Tree_Upgrade,
 .Tree_Actions {
   height: 16px;
   vertical-align: center;
@@ -4983,6 +4984,17 @@ td.TextBox_MsgContainerVt_td {
   -moz-border-radius-topright: 8px;
   -moz-border-radius-bottomright: 8px;
   -moz-border-radius-bottomleft: 8px;
+}
+
+.Tree_Upgrade {
+  text-align:left; 
+  border-radius: 0px; 
+  border: 1px; 
+  border-style: solid; 
+  border-color: #4D98CA; 
+  height: auto;
+  line-height: 1.5;
+  font-size: 10pt;
 }
 
 .Tree_Actions_Processing {

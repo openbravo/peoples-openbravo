@@ -288,7 +288,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    */
   private JSONObject getNotificationsJSON(String lang) {
     String updatesRebuildHTML = "";
-    Map<String, String> upgrades = new HashMap<String, String>();
+
+    JSONArray upgrades = new JSONArray();
     try {
       String restartTomcat = ModuleManagementData.selectRestartTomcat(this);
       // Check if last build was done but Tomcat wasn't restarted
@@ -327,7 +328,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
           .isNotNull(org.openbravo.model.ad.module.Module.PROPERTY_UPGRADEAVAILABLE));
 
       for (org.openbravo.model.ad.module.Module upgr : qUpgr.list()) {
-        upgrades.put(upgr.getId(), upgr.getUpgradeAvailable());
+        JSONObject upgrade = new JSONObject();
+        upgrade.put("moduleId", upgr.getId());
+        upgrade.put("version", upgr.getUpgradeAvailable());
+        upgrade.put("moduleName", upgr.getName());
+        upgrades.put(upgrade);
       }
 
     } catch (final Exception e) {
@@ -340,9 +345,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
         rt.put("updatesRebuildHTML", updatesRebuildHTML);
       }
 
-      if (!upgrades.isEmpty()) {
-        JSONObject jsonUpgrades = new JSONObject(upgrades);
-        rt.put("upgrades", jsonUpgrades);
+      if (upgrades.length() != 0) {
+        rt.put("upgrades", upgrades);
       }
     } catch (JSONException e) {
       log4j.error("Error genrating updates notifications", e);
