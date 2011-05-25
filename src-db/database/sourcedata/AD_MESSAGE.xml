@@ -12427,12 +12427,14 @@ Control Digit must be length 1.]]></MSGTEXT>
 <!--1004400015-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1004400015-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1004400015-->  <VALUE><![CDATA[RequisitionToOrderCreate]]></VALUE>
-<!--1004400015-->  <MSGTEXT><![CDATA[To create the Purchase Order, after selecting the desired Requisition Lines, it is necessary to set some values:
--The date of the Purchase Order.
--The vendor. If all the selected requisition lines are associated with the same Vendor the field is filled with it.
--The price list. If all the selected requisition lines are associated with the same Price List the field is filled with it.
--The organization. If all the selected requisition lines belong to the same Organization the field is filled with it.
-For the other necessary values the corresponding default values are used. Once the Purchase Order is created it is also completed and its Document number shown in the success message.]]></MSGTEXT>
+<!--1004400015-->  <MSGTEXT><![CDATA[This process will create the Purchase Orders necessary to complete all the requisition lines. 
+An order line is created for each requisition line.
+The process closes the requisition when it finishes successfully. 
+The Order Date is the date of the Purchase Orders. 
+The Business Partner is the preferred vendor the the Purchase Orders. If it is left blank, then the Partner defined in the requisition (or requisition line) is used. If these are not defined, then the current vendor set for the product is used.
+The Price List is the price list for the Purchase Orders. If it is left blank, then the Price List defined in the requisition (or requisition line) is used.
+The Organization is the organization used by the Purchase Orders.
+The Warehouse is the warehouse used by the Purchase Orders.]]></MSGTEXT>
 <!--1004400015-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1004400015-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400015--></AD_MESSAGE>
@@ -12553,7 +12555,7 @@ For the other necessary values the corresponding default values are used. Once t
 <!--1005300002-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005300002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005300002-->  <VALUE><![CDATA[OrderWithoutLines]]></VALUE>
-<!--1005300002-->  <MSGTEXT><![CDATA[The order cannot be completed because it has no lines]]></MSGTEXT>
+<!--1005300002-->  <MSGTEXT><![CDATA[The order cannot be booked because it has no lines]]></MSGTEXT>
 <!--1005300002-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--1005300002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005300002--></AD_MESSAGE>
@@ -18425,7 +18427,7 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--C6DE79E703C743D7B0BF88E03EE2F742-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C6DE79E703C743D7B0BF88E03EE2F742-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C6DE79E703C743D7B0BF88E03EE2F742-->  <VALUE><![CDATA[DocumentAssociated]]></VALUE>
-<!--C6DE79E703C743D7B0BF88E03EE2F742-->  <MSGTEXT><![CDATA[Sales Order has been already completed for the document]]></MSGTEXT>
+<!--C6DE79E703C743D7B0BF88E03EE2F742-->  <MSGTEXT><![CDATA[Sales Order has been already booked for the document]]></MSGTEXT>
 <!--C6DE79E703C743D7B0BF88E03EE2F742-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--C6DE79E703C743D7B0BF88E03EE2F742-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C6DE79E703C743D7B0BF88E03EE2F742--></AD_MESSAGE>
