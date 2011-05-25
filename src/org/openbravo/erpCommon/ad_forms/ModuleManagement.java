@@ -132,7 +132,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       final String record = vars.getStringParameter("inpcRecordId");
 
       printPageInstall1(response, request, vars, record, false, null, new String[0], ModuleUtiltiy
-          .getSystemMaturityLevels(true));
+          .getSystemMaturityLevels(true), null);
     } else if (vars.commandIn("INSTALL2")) {
       printPageInstall2(response, vars);
     } else if (vars.commandIn("INSTALL3")) {
@@ -180,7 +180,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       // For update obtain just update maturity level
       printPageInstall1(response, request, vars, null, false, null, modulesToUpdate, ModuleUtiltiy
-          .getSystemMaturityLevels(false));
+          .getSystemMaturityLevels(false), null);
     } else if (vars.commandIn("UPGRADE", "UPGRADE1")) {
       OBContext.setAdminMode();
       try {
@@ -673,7 +673,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         if (im.isModuleUpdate(fi.getInputStream())) {
           vars.setSessionObject("ModuleManagementInstall|File", vars.getMultiFile("inpFile"));
           printPageInstall1(response, request, vars, null, true, fi.getInputStream(),
-              new String[0], null);
+              new String[0], null, null);
         } else {
           OBError message = im.getOBError(this);
           printSearchFile(response, vars, message);
@@ -721,7 +721,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
 
       final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_forms/ModuleManagement_UpgradeInfo").createXmlDocument();
+          "org/openbravo/erpCommon/ad_forms/ModuleManagement_UpgradeInfo",
+          new String[] { "updateNeeded" }).createXmlDocument();
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("theme", vars.getTheme());
@@ -837,9 +838,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
         additionalInfo.put("upgrade.version", version);
         final ImportModule im = new ImportModule(this, vars.getSessionValue("#sourcePath"), vars);
         im.setInstallLocal(false);
-        boolean check = im.checkDependenciesId(new String[0], new String[0], additionalInfo);
+        im.checkDependenciesId(new String[0], new String[0], additionalInfo);
         if (im.isUpgradePrecheckFail()) {
           printPageUpgradeError(response, request, new JSONArray(im.getDependencyErrors()[1]));
+        } else {
+          // Continue with standard update
+          printPageInstall1(response, request, vars, "0", false, null, new String[] { "0" },
+              ModuleUtiltiy.getSystemMaturityLevels(false), im);
         }
       } catch (Exception e) {
         log4j.error("Error on upgrade", e);
@@ -953,13 +958,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @param islocal
    * @param obx
    * @param maturityLevels
+   * @param upgradeIM
+   *          TODO
    * @throws IOException
    * @throws ServletException
    */
   private void printPageInstall1(HttpServletResponse response, HttpServletRequest request,
       VariablesSecureApp vars, String recordId, boolean islocal, InputStream obx,
-      String[] updateModules, HashMap<String, String> maturityLevels) throws IOException,
-      ServletException {
+      String[] updateModules, HashMap<String, String> maturityLevels, ImportModule upgradeIM)
+      throws IOException, ServletException {
     final String discard[] = { "", "", "", "", "", "", "warnMaturity", "", "missingDeps" };
     Module module = null;
 
@@ -983,7 +990,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
       return;
     }
 
-    if (!islocal && (updateModules == null || updateModules.length == 0)) {
+    if (upgradeIM != null) {
+      for (Module mod : upgradeIM.getModulesToUpdate()) {
+        if (mod.getModuleID().equals(ModuleUtiltiy.TEMPLATE_30)) {
+          module = mod;
+        }
+      }
+    } else if (!islocal && (updateModules == null || updateModules.length == 0)) {
       // if it is a remote installation get the module from webservice,
       // other case the obx file is passed as an InputStream
       try {
@@ -1010,15 +1023,25 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     VersionUtility.setPool(this);
 
-    // Craete a new ImportModule instance which will be used to check
-    // depencecies and to process the installation
-    final ImportModule im = new ImportModule(this, vars.getSessionValue("#sourcePath"), vars);
+    // Create a new ImportModule instance which will be used to check
+    // dependencies and to process the installation
+    ImportModule im;
+    if (upgradeIM == null) {
+      im = new ImportModule(this, vars.getSessionValue("#sourcePath"), vars);
+    } else {
+      im = upgradeIM;
+    }
     im.setInstallLocal(islocal);
     try {
-      // check the dependenies and obtain the modules to install/update
+      // check the dependencies and obtain the modules to install/update
+      if (upgradeIM != null) {
+        check = im.isChecked();
+      }
       if (!islocal) {
         final String[] installableModules = { module != null ? module.getModuleVersionID() : "" };
-        check = im.checkDependenciesId(installableModules, updateModules, maturityLevels);
+        if (upgradeIM == null) {
+          check = im.checkDependenciesId(installableModules, updateModules, maturityLevels);
+        }
       } else {
         check = im.checkDependenciesFile(obx);
       }
@@ -1092,7 +1115,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
         // Show warning message when installing/updating modules not in General availability level
         if (!islocal) {
-          if (!"500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
+          if (module != null
+              && !"500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
             discard[6] = "";
           } else {
             if (inst != null) {
