@@ -4,14 +4,14 @@
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 package org.openbravo.client.kernel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +55,7 @@ public class KernelUtils {
 
   // the static dependency list is used when a cycle is detected
   // in the modules
-  private static String[] STATICDEPENDENCYLIST = new String[] { "org.openbravo",
+  private static final String[] STATICDEPENDENCYLIST = new String[] { "org.openbravo",
       "org.openbravo.base.weld", "org.openbravo.service.json", "org.openbravo.client.kernel",
       "org.openbravo.userinterface.smartclient", "org.openbravo.service.datasource",
       "org.openbravo.client.application", "org.openbravo.userinterface.selector" };
@@ -200,7 +201,13 @@ public class KernelUtils {
       final OBCriteria<Module> modules = OBDal.getInstance().createCriteria(Module.class);
       modules.setFetchMode(Module.PROPERTY_MODULEDEPENDENCYLIST, FetchMode.JOIN);
       final List<Module> handledModules = new ArrayList<Module>();
+
       try {
+        // Core has a non declared dependency on client.kernel, client.application
+        // Build the known dependency list and then check the rest of modules
+        // https://issues.openbravo.com/view.php?id=17249
+        buildKnownDependencies(modules, moduleLowLevelCodes, handledModules);
+
         for (Module module : modules.list()) {
           if (handledModules.contains(module)) {
             continue;
@@ -213,27 +220,9 @@ public class KernelUtils {
         }
       } catch (ModuleDependencyCycleException e) {
         // use static list...
-        moduleLowLevelCodes.clear();
-        handledModules.clear();
-        for (Module module : modules.list()) {
-          if (handledModules.contains(module)) {
-            continue;
-          }
-          handledModules.add(module);
-          final ModuleWithLowLevelCode moduleLowLevelCode = new ModuleWithLowLevelCode();
-          moduleLowLevelCode.setModule(module);
-          int index = 0;
-          for (String pkg : STATICDEPENDENCYLIST) {
-            if (pkg.equals(module.getJavaPackage())) {
-              break;
-            }
-
-            index++;
-          }
-          moduleLowLevelCode.setLowLevelCode(index);
-          moduleLowLevelCodes.add(moduleLowLevelCode);
-        }
+        buildKnownDependencies(modules, moduleLowLevelCodes, handledModules);
       }
+
       Collections.sort(moduleLowLevelCodes);
       final List<Module> result = new ArrayList<Module>();
       for (ModuleWithLowLevelCode moduleLowLevelCode : moduleLowLevelCodes) {
@@ -243,6 +232,33 @@ public class KernelUtils {
       return result;
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  private void buildKnownDependencies(OBCriteria<Module> modules,
+      List<ModuleWithLowLevelCode> moduleLowLevelCodes, List<Module> handledModules) {
+    final List<String> knownDependencies = Arrays.asList(STATICDEPENDENCYLIST);
+
+    moduleLowLevelCodes.clear();
+    handledModules.clear();
+
+    for (Module module : modules.list()) {
+      if (handledModules.contains(module) || !knownDependencies.contains(module.getJavaPackage())) {
+        continue;
+      }
+      handledModules.add(module);
+      final ModuleWithLowLevelCode moduleLowLevelCode = new ModuleWithLowLevelCode();
+      moduleLowLevelCode.setModule(module);
+      int index = 0;
+      for (String pkg : STATICDEPENDENCYLIST) {
+        if (pkg.equals(module.getJavaPackage())) {
+          break;
+        }
+
+        index++;
+      }
+      moduleLowLevelCode.setLowLevelCode(index);
+      moduleLowLevelCodes.add(moduleLowLevelCode);
     }
   }
 
