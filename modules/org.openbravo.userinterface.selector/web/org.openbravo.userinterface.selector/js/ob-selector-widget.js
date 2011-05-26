@@ -600,7 +600,7 @@ isc.OBSelectorWidget
                 // feature:
                 // http://forums.smartclient.com/showthread.php?p=34868
                 keyPress : function(keyName, character, form, item, icon) {
-                  if (keyName === 'Enter' && isc.EventHandler.ctrlKeyDown()) {
+                  if (keyName === 'Enter' && isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown()) {
                     this.selector.openSelectorWindow(form, item, icon);
                     return false;
                   }
@@ -632,7 +632,7 @@ isc.OBSelectorWidget
               },
 
               keyPress : function(item, form, keyName, characterValue) {
-                if (keyName === 'Enter' && isc.EventHandler.ctrlKeyDown()) {
+                if (keyName === 'Enter' && isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown()) {
                   this.selector.openSelectorWindow(form, item, null);
                   return false;
                 }

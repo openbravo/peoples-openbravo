@@ -82,7 +82,12 @@
   {"id": "StatusBar_Previous", "keyComb": {"alt": true, "shift": true, "key": "Page_Up"}},
   {"id": "StatusBar_Next", "keyComb": {"alt": true, "shift": true, "key": "Page_Down"}},
   {"id": "StatusBar_Maximize-Restore", "keyComb": {"ctrl": true, "alt": true, "key": "Enter"}},
-  {"id": "StatusBar_Close", "keyComb": {"key": "Escape"}}
+  {"id": "StatusBar_Close", "keyComb": {"key": "Escape"}},
+  {"id": "SectionItem_MoreInformation", "keyComb": {"ctrl": true, "shift": true, "key": "1"}},
+  {"id": "SectionItem_Audit", "keyComb": {"ctrl": true, "shift": true, "key": "2"}},
+  {"id": "SectionItem_Notes", "keyComb": {"ctrl": true, "shift": true, "key": "3"}},
+  {"id": "SectionItem_LinkedItems", "keyComb": {"ctrl": true, "shift": true, "key": "4"}},
+  {"id": "SectionItem_Attachments", "keyComb": {"ctrl": true, "shift": true, "key": "5"}}
 ]]]></VALUE>
 <!--8EE6D055A7FE4C4DA7EB557F6C61D0ED-->  <PROPERTY><![CDATA[UISTATB_KeyboardShortcuts]]></PROPERTY>
 <!--8EE6D055A7FE4C4DA7EB557F6C61D0ED-->  <ISPROPERTYLIST><![CDATA[Y]]></ISPROPERTYLIST>

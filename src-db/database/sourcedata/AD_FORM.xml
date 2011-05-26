@@ -37,17 +37,6 @@
 <!--110-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--110--></AD_FORM>
 
-<!--800000--><AD_FORM>
-<!--800000-->  <AD_FORM_ID><![CDATA[800000]]></AD_FORM_ID>
-<!--800000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800000-->  <NAME><![CDATA[In-Out Report]]></NAME>
-<!--800000-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800000-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.InformeInOut]]></CLASSNAME>
-<!--800000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800000--></AD_FORM>
-
 <!--800002--><AD_FORM>
 <!--800002-->  <AD_FORM_ID><![CDATA[800002]]></AD_FORM_ID>
 <!--800002-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -94,18 +83,6 @@
 <!--800009-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.MaterialReceiptPending]]></CLASSNAME>
 <!--800009-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800009--></AD_FORM>
-
-<!--800010--><AD_FORM>
-<!--800010-->  <AD_FORM_ID><![CDATA[800010]]></AD_FORM_ID>
-<!--800010-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800010-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800010-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800010-->  <NAME><![CDATA[InvoiceVendorMultiline]]></NAME>
-<!--800010-->  <DESCRIPTION><![CDATA[Expense Invoice multiline edition]]></DESCRIPTION>
-<!--800010-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800010-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.InvoiceVendorMultiline]]></CLASSNAME>
-<!--800010-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800010--></AD_FORM>
 
 <!--800011--><AD_FORM>
 <!--800011-->  <AD_FORM_ID><![CDATA[800011]]></AD_FORM_ID>

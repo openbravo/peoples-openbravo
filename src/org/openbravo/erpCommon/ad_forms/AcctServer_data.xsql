@@ -109,28 +109,6 @@
     <Parameter name="Table"/>
     <Parameter name="Record"/>
     </SqlMethod>
-     <SqlMethod name="insertNote" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        INSERT INTO AD_Note (AD_Note_ID,AD_Client_ID,AD_Org_ID,IsActive, Created,CreatedBy,Updated,UpdatedBy,
-        AD_Message_ID,Text,Reference, AD_User_ID,AD_Table_ID,Record_ID,Processed)
-        SELECT ?,?,?, 'Y',now(),?,now(),0,
-               AD_Message_ID,?,?,?,?,?,'N'
-        FROM AD_Message WHERE Value=?
-      ]]>
-     </Sql>
-        <Parameter name="note"/>
-        <Parameter name="client"/>
-        <Parameter name="org"/>
-        <Parameter name="user"/>
-        <Parameter name="text"/>
-        <Parameter name="reference"/>
-        <Parameter name="user"/>
-        <Parameter name="table"/>
-        <Parameter name="Record"/>
-        <Parameter name="messageValue"/>
-     </SqlMethod>
    <SqlMethod name="currencyConvert" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

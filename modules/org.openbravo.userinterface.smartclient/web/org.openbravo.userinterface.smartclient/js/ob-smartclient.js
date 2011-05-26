@@ -78,6 +78,17 @@ isc.FormItem.addProperties({
     this._original_init();
   },
   
+  // overridden to not make a difference between undefined and null
+  _original_compareValues: isc.FormItem.getPrototype().compareValues,
+  compareValues: function (value1, value2) {
+    var undef, val1NullOrUndefined = (value1 === null || value1 === undef || value1 === ''), 
+      val2NullOrUndefined = (value2 === null || value2 === undef || value2 === '');
+    if (val1NullOrUndefined && val2NullOrUndefined) {
+      return true;
+    }
+    return this._original_compareValues(value1, value2);
+  },
+
   _handleTitleClick: isc.FormItem.getPrototype().handleTitleClick,
   
   handleTitleClick: function() {

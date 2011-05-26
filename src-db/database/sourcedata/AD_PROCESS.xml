@@ -4918,12 +4918,11 @@ The second one is to update one property in the product organization specific ta
 <!--1004400000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1004400000-->  <VALUE><![CDATA[M_Requisition_CreatePO]]></VALUE>
 <!--1004400000-->  <NAME><![CDATA[Create Purchase Order]]></NAME>
-<!--1004400000-->  <HELP><![CDATA[This process will create several Purchase Orders to complete all the requisition lines. One order line is created for each requisition line with the necessary quantity to fulfill the requested quantity. The process closes the requisition when it finishes successfully.
-The Order Date is used for the necessary dates of the Purchase Orders.
-The Business Partner is the preferred vendor for the Purchase Orders, if it is leaved blank is used the Partner defined in the requisition line or in the requisition. If those are also not defined is used the current vendor set for the product.
-The Price List is the preferred price list for the Purchase Orders, if it is leaved blank it is used the Price List defined in the requisition line or in the requisition.
-The Organization is the Organization used for the Purchase Orders.
-The Service Point is the Warehouse needed in the Purchase Order headers.]]></HELP>
+<!--1004400000-->  <HELP><![CDATA[In order to create a Purchase Order from selected Requisition Lines, it is necessary to set some values:<br/>
+Order Date: The date of the Purchase Order<br/>
+For Business Partner, Price List and Organization: If all the selected requisition lines have a common Business Partner, Price List or Organization, then the common value is shown in the appropriate field.<br/>
+For other required values the corresponding default values are used.<br/>
+Once the Purchase Order is created, it is marked as Completed and its Document Number is shown in the success message.]]></HELP>
 <!--1004400000-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--1004400000-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--1004400000-->  <PROCEDURENAME><![CDATA[M_Requisition_CreatePO]]></PROCEDURENAME>
@@ -4931,6 +4930,7 @@ The Service Point is the Warehouse needed in the Purchase Order headers.]]></HEL
 <!--1004400000-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--1004400000-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--1004400000-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--1004400000-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--1004400000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400000-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--1004400000--></AD_PROCESS>
