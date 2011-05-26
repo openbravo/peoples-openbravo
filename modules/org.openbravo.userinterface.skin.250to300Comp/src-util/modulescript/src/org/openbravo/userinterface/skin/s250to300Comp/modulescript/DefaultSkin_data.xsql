@@ -39,7 +39,7 @@
   <SqlMethod name="setSkin" type="preparedStatement" return="rowcount">
     <Sql><![CDATA[
       update ad_system 
-         set tad_thme = ?
+         set tad_theme = ?
     ]]></Sql>
     <Parameter name="skin"/>
   </SqlMethod>

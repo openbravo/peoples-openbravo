@@ -21,7 +21,7 @@ static Logger log4j = Logger.getLogger(DefaultSkinData.class);
   }
 
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("T"))
+    if (fieldName.equalsIgnoreCase("t"))
       return t;
    else {
      log4j.debug("Field does not exist: " + fieldName);
@@ -45,7 +45,7 @@ static Logger log4j = Logger.getLogger(DefaultSkinData.class);
 
       result = st.executeQuery();
       if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "T").equals("0");
+        boolReturn = !UtilSql.getValue(result, "t").equals("0");
       }
       result.close();
     } catch(SQLException e){
@@ -79,7 +79,7 @@ static Logger log4j = Logger.getLogger(DefaultSkinData.class);
 
       result = st.executeQuery();
       if(result.next()) {
-        strReturn = UtilSql.getValue(result, "T");
+        strReturn = UtilSql.getValue(result, "t");
       }
       result.close();
     } catch(SQLException e){
@@ -102,7 +102,7 @@ static Logger log4j = Logger.getLogger(DefaultSkinData.class);
     String strSql = "";
     strSql = strSql + 
       "      update ad_system " +
-      "         set tad_thme = ?";
+      "         set tad_theme = ?";
 
     int updateCount = 0;
     PreparedStatement st = null;
