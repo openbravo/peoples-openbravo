@@ -1268,6 +1268,7 @@ public class ImportModule {
       module.set("STATUS", "I");
       module.set("SEQNO", seqNo);
       module.set("UPDATE_AVAILABLE", null);
+      module.set("UPGRADE_AVAILABLE", null);
       log4j.info("Inserting in DB info for module: " + module.get("NAME"));
 
       String moduleId = (String) module.get("AD_MODULE_ID");
