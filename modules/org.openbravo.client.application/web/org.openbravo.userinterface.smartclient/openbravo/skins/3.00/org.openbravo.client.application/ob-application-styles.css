@@ -23,14 +23,14 @@ html {
   font-size: 62.5%;
   margin: 0;
   padding: 0;
-  overflow: auto;
+  overflow: hidden;
 }
 
 body {
   background-color: #fff;
   margin: 0;
   padding: 0;
-  overflow: auto;
+  overflow: hidden;
   font-family: 'lucida sans', sans-serif;
   font-size: 1em;
   line-height: 1.6em;

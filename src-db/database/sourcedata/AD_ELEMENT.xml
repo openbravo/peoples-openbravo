@@ -3457,8 +3457,8 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--520-->  <COLUMNNAME><![CDATA[PriceList]]></COLUMNNAME>
 <!--520-->  <NAME><![CDATA[Net List Price]]></NAME>
 <!--520-->  <PRINTNAME><![CDATA[Net List Price]]></PRINTNAME>
-<!--520-->  <DESCRIPTION><![CDATA[The official price of a product in a specified currency.]]></DESCRIPTION>
-<!--520-->  <HELP><![CDATA[The List Price is the official price stated by the selected pricelist and the currency of the document.]]></HELP>
+<!--520-->  <DESCRIPTION><![CDATA[The official net price of a product in a specified currency.]]></DESCRIPTION>
+<!--520-->  <HELP><![CDATA[The Net List Price is the official price stated by the selected pricelist and the currency of the document.]]></HELP>
 <!--520-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--520--></AD_ELEMENT>
 
@@ -5164,10 +5164,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--955-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--955-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--955-->  <COLUMNNAME><![CDATA[PriceLimit]]></COLUMNNAME>
-<!--955-->  <NAME><![CDATA[Price Limit]]></NAME>
-<!--955-->  <PRINTNAME><![CDATA[Limit Price]]></PRINTNAME>
-<!--955-->  <DESCRIPTION><![CDATA[The lowest price a specified item may be sold for.]]></DESCRIPTION>
-<!--955-->  <HELP><![CDATA[The Price Limit indicates the lowest price for a product stated in the Price List Currency.]]></HELP>
+<!--955-->  <NAME><![CDATA[Net Price Limit]]></NAME>
+<!--955-->  <PRINTNAME><![CDATA[Net Price Limit]]></PRINTNAME>
+<!--955-->  <DESCRIPTION><![CDATA[The lowest net price a specified item may be sold for.]]></DESCRIPTION>
+<!--955-->  <HELP><![CDATA[The Net Price Limit indicates the lowest price for a product stated in the Price List Currency.]]></HELP>
 <!--955-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--955--></AD_ELEMENT>
 
@@ -5177,8 +5177,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--957-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--957-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--957-->  <COLUMNNAME><![CDATA[PriceStd]]></COLUMNNAME>
-<!--957-->  <NAME><![CDATA[Net Standard Price]]></NAME>
-<!--957-->  <PRINTNAME><![CDATA[Net Standard Price]]></PRINTNAME>
+<!--957-->  <NAME><![CDATA[Net Unit Price]]></NAME>
+<!--957-->  <PRINTNAME><![CDATA[Net Unit Price]]></PRINTNAME>
 <!--957-->  <DESCRIPTION><![CDATA[The regular or normal price of a product in the respective price list.]]></DESCRIPTION>
 <!--957-->  <HELP><![CDATA[The Standard Price indicates the standard or normal price for a product on this price list]]></HELP>
 <!--957-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6534,8 +6534,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1215-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1215-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1215-->  <COLUMNNAME><![CDATA[Limit_AddAmt]]></COLUMNNAME>
-<!--1215-->  <NAME><![CDATA[Surcharge Price Limit Amount]]></NAME>
-<!--1215-->  <PRINTNAME><![CDATA[Limit price Surcharge Amt]]></PRINTNAME>
+<!--1215-->  <NAME><![CDATA[Surcharge Net Price Limit Amount]]></NAME>
+<!--1215-->  <PRINTNAME><![CDATA[Surcharge Net Price Limit Amount]]></PRINTNAME>
 <!--1215-->  <DESCRIPTION><![CDATA[Amount added to the converted/copied price before multiplying]]></DESCRIPTION>
 <!--1215-->  <HELP><![CDATA[Indicates the amount to be added to the Limit price prior to multiplication.]]></HELP>
 <!--1215-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6547,8 +6547,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1216-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1216-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1216-->  <COLUMNNAME><![CDATA[Limit_Base]]></COLUMNNAME>
-<!--1216-->  <NAME><![CDATA[Base Limit Price]]></NAME>
-<!--1216-->  <PRINTNAME><![CDATA[Limit price Base]]></PRINTNAME>
+<!--1216-->  <NAME><![CDATA[Base Net Limit Price]]></NAME>
+<!--1216-->  <PRINTNAME><![CDATA[Base Net Limit Price]]></PRINTNAME>
 <!--1216-->  <DESCRIPTION><![CDATA[Base price for calculation of the new price]]></DESCRIPTION>
 <!--1216-->  <HELP><![CDATA[Identifies the price to be used as the base for calculating a new price list.]]></HELP>
 <!--1216-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6560,8 +6560,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1217-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1217-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1217-->  <COLUMNNAME><![CDATA[Limit_MaxAmt]]></COLUMNNAME>
-<!--1217-->  <NAME><![CDATA[Max. Price Limit Margin]]></NAME>
-<!--1217-->  <PRINTNAME><![CDATA[Limit price max Margin]]></PRINTNAME>
+<!--1217-->  <NAME><![CDATA[Max. Net Price Limit Margin]]></NAME>
+<!--1217-->  <PRINTNAME><![CDATA[Max. Net Price Limit Margin]]></PRINTNAME>
 <!--1217-->  <DESCRIPTION><![CDATA[Maximum difference to original limit price; ignored if zero]]></DESCRIPTION>
 <!--1217-->  <HELP><![CDATA[Indicates the maximum margin for a product.  The margin is calculated by subtracting the original limit price from the newly calculated price.  If this field contains 0.00 then it is ignored.]]></HELP>
 <!--1217-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6573,8 +6573,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1218-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1218-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1218-->  <COLUMNNAME><![CDATA[Limit_MinAmt]]></COLUMNNAME>
-<!--1218-->  <NAME><![CDATA[Limit price min Margin]]></NAME>
-<!--1218-->  <PRINTNAME><![CDATA[Limit price min Margin]]></PRINTNAME>
+<!--1218-->  <NAME><![CDATA[Net Price min Margin]]></NAME>
+<!--1218-->  <PRINTNAME><![CDATA[Net Price min Margin]]></PRINTNAME>
 <!--1218-->  <DESCRIPTION><![CDATA[Minimum difference to original limit price; ignored if zero]]></DESCRIPTION>
 <!--1218-->  <HELP><![CDATA[Indicates the minimum margin for a product.  The margin is calculated by subtracting the original limit price from the newly calculated price.  If this field contains 0.00 then it is ignored.]]></HELP>
 <!--1218-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6586,8 +6586,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1220-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1220-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1220-->  <COLUMNNAME><![CDATA[Limit_Rounding]]></COLUMNNAME>
-<!--1220-->  <NAME><![CDATA[Price Limit Rounding]]></NAME>
-<!--1220-->  <PRINTNAME><![CDATA[Limit price Rounding]]></PRINTNAME>
+<!--1220-->  <NAME><![CDATA[Net Price Limit Rounding]]></NAME>
+<!--1220-->  <PRINTNAME><![CDATA[Net Price Limit Rounding]]></PRINTNAME>
 <!--1220-->  <DESCRIPTION><![CDATA[Rounding of the final result]]></DESCRIPTION>
 <!--1220-->  <HELP><![CDATA[A drop down list box which indicates the rounding (if any) will apply to the final prices in this price list.]]></HELP>
 <!--1220-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6599,8 +6599,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1221-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1221-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1221-->  <COLUMNNAME><![CDATA[List_AddAmt]]></COLUMNNAME>
-<!--1221-->  <NAME><![CDATA[Surcharge List Price Amount]]></NAME>
-<!--1221-->  <PRINTNAME><![CDATA[List price Surcharge Amt]]></PRINTNAME>
+<!--1221-->  <NAME><![CDATA[Surcharge Net List Price Amount]]></NAME>
+<!--1221-->  <PRINTNAME><![CDATA[Surcharge Net List Price Amount]]></PRINTNAME>
 <!--1221-->  <DESCRIPTION><![CDATA[List Price Surcharge Amount]]></DESCRIPTION>
 <!--1221-->  <HELP><![CDATA[The List Price Surcharge Amount indicates the amount to be added to the price prior to multiplication.]]></HELP>
 <!--1221-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6612,8 +6612,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1222-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1222-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1222-->  <COLUMNNAME><![CDATA[List_Base]]></COLUMNNAME>
-<!--1222-->  <NAME><![CDATA[Base List Price]]></NAME>
-<!--1222-->  <PRINTNAME><![CDATA[List price Base]]></PRINTNAME>
+<!--1222-->  <NAME><![CDATA[Base Net List Price]]></NAME>
+<!--1222-->  <PRINTNAME><![CDATA[Base Net List Price]]></PRINTNAME>
 <!--1222-->  <DESCRIPTION><![CDATA[Price used as the basis for price list calculations]]></DESCRIPTION>
 <!--1222-->  <HELP><![CDATA[The List Price Base indicates the price to use as the basis for the calculation of a new price list.]]></HELP>
 <!--1222-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6625,8 +6625,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1223-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1223-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1223-->  <COLUMNNAME><![CDATA[List_MaxAmt]]></COLUMNNAME>
-<!--1223-->  <NAME><![CDATA[Max. List Price Margin]]></NAME>
-<!--1223-->  <PRINTNAME><![CDATA[List price max Margin]]></PRINTNAME>
+<!--1223-->  <NAME><![CDATA[Max. Net List Price Margin]]></NAME>
+<!--1223-->  <PRINTNAME><![CDATA[Max. Net List Price Margin]]></PRINTNAME>
 <!--1223-->  <DESCRIPTION><![CDATA[Maximum margin for a product]]></DESCRIPTION>
 <!--1223-->  <HELP><![CDATA[The List Price Max Margin indicates the maximum margin for a product.  The margin is calculated by subtracting the original list price from the newly calculated price.  If this field contains 0.00 then it is ignored.]]></HELP>
 <!--1223-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6638,8 +6638,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1224-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1224-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1224-->  <COLUMNNAME><![CDATA[List_MinAmt]]></COLUMNNAME>
-<!--1224-->  <NAME><![CDATA[Min. List Price Margin]]></NAME>
-<!--1224-->  <PRINTNAME><![CDATA[List price min Margin]]></PRINTNAME>
+<!--1224-->  <NAME><![CDATA[Min. Net List Price Margin]]></NAME>
+<!--1224-->  <PRINTNAME><![CDATA[Min. Net List Price Margin]]></PRINTNAME>
 <!--1224-->  <DESCRIPTION><![CDATA[Minimum margin for a product]]></DESCRIPTION>
 <!--1224-->  <HELP><![CDATA[The List Price Min Margin indicates the minimum margin for a product.  The margin is calculated by subtracting the original list price from the newly calculated price.  If this field contains 0.00 then it is ignored.]]></HELP>
 <!--1224-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6651,8 +6651,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1226-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1226-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1226-->  <COLUMNNAME><![CDATA[List_Rounding]]></COLUMNNAME>
-<!--1226-->  <NAME><![CDATA[List Price Rounding]]></NAME>
-<!--1226-->  <PRINTNAME><![CDATA[List price Rounding]]></PRINTNAME>
+<!--1226-->  <NAME><![CDATA[Net List Price Rounding]]></NAME>
+<!--1226-->  <PRINTNAME><![CDATA[Net List Price Rounding]]></PRINTNAME>
 <!--1226-->  <DESCRIPTION><![CDATA[Rounding rule for final list price]]></DESCRIPTION>
 <!--1226-->  <HELP><![CDATA[The List Price Rounding indicates how the final list price will be rounded.]]></HELP>
 <!--1226-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6677,8 +6677,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1229-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1229-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1229-->  <COLUMNNAME><![CDATA[Std_AddAmt]]></COLUMNNAME>
-<!--1229-->  <NAME><![CDATA[Surcharge Standard Price Amount]]></NAME>
-<!--1229-->  <PRINTNAME><![CDATA[Standard price Surcharge Amt]]></PRINTNAME>
+<!--1229-->  <NAME><![CDATA[Surcharge Net Unit Price Amount]]></NAME>
+<!--1229-->  <PRINTNAME><![CDATA[Surcharge Net Unit Price Amount]]></PRINTNAME>
 <!--1229-->  <DESCRIPTION><![CDATA[Amount added to a price as a surcharge]]></DESCRIPTION>
 <!--1229-->  <HELP><![CDATA[The Standard Price Surcharge Amount indicates the amount to be added to the price prior to multiplication.]]></HELP>
 <!--1229-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6716,8 +6716,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1232-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1232-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1232-->  <COLUMNNAME><![CDATA[Std_MinAmt]]></COLUMNNAME>
-<!--1232-->  <NAME><![CDATA[Min. Standard Price Margin]]></NAME>
-<!--1232-->  <PRINTNAME><![CDATA[Standard price min Margin]]></PRINTNAME>
+<!--1232-->  <NAME><![CDATA[Min. Net Unit Price Margin]]></NAME>
+<!--1232-->  <PRINTNAME><![CDATA[Min. Net Unit Price Margin]]></PRINTNAME>
 <!--1232-->  <DESCRIPTION><![CDATA[Minimum margin allowed for a product]]></DESCRIPTION>
 <!--1232-->  <HELP><![CDATA[The Standard Price Min Margin indicates the minimum margin for a product.  The margin is calculated by subtracting the original Standard price from the newly calculated price.  If this field contains 0.00 then it is ignored.]]></HELP>
 <!--1232-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6729,8 +6729,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1234-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1234-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1234-->  <COLUMNNAME><![CDATA[Std_Rounding]]></COLUMNNAME>
-<!--1234-->  <NAME><![CDATA[Standard Price Rounding]]></NAME>
-<!--1234-->  <PRINTNAME><![CDATA[Standard price Rounding]]></PRINTNAME>
+<!--1234-->  <NAME><![CDATA[Net Unit Price Rounding]]></NAME>
+<!--1234-->  <PRINTNAME><![CDATA[Net Unit Price Rounding]]></PRINTNAME>
 <!--1234-->  <DESCRIPTION><![CDATA[Rounding rule for calculated price]]></DESCRIPTION>
 <!--1234-->  <HELP><![CDATA[The Standard Price Rounding indicates how the final Standard price will be rounded.]]></HELP>
 <!--1234-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6755,8 +6755,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1236-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1236-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1236-->  <COLUMNNAME><![CDATA[Limit_Discount]]></COLUMNNAME>
-<!--1236-->  <NAME><![CDATA[Price Limit Discount %]]></NAME>
-<!--1236-->  <PRINTNAME><![CDATA[Limit price Discount %]]></PRINTNAME>
+<!--1236-->  <NAME><![CDATA[Net Price Limit Discount %]]></NAME>
+<!--1236-->  <PRINTNAME><![CDATA[Net Price Limit Discount %]]></PRINTNAME>
 <!--1236-->  <DESCRIPTION><![CDATA[Discount in percent to be subtracted from base, if negative it will be added to base price]]></DESCRIPTION>
 <!--1236-->  <HELP><![CDATA[Indicates the discount in percent to be subtracted from base, if negative it will be added to base price]]></HELP>
 <!--1236-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6768,8 +6768,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1237-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1237-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1237-->  <COLUMNNAME><![CDATA[List_Discount]]></COLUMNNAME>
-<!--1237-->  <NAME><![CDATA[List Price Discount %]]></NAME>
-<!--1237-->  <PRINTNAME><![CDATA[List price Discount %]]></PRINTNAME>
+<!--1237-->  <NAME><![CDATA[Net List Price Discount %]]></NAME>
+<!--1237-->  <PRINTNAME><![CDATA[Net List Price Discount %]]></PRINTNAME>
 <!--1237-->  <DESCRIPTION><![CDATA[Discount from list price as a percentage]]></DESCRIPTION>
 <!--1237-->  <HELP><![CDATA[The List Price Discount Percentage indicates the percentage discount which will be subtracted from the base price.  A negative amount indicates the percentage which will be added to the base price.]]></HELP>
 <!--1237-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -6781,8 +6781,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1238-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1238-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1238-->  <COLUMNNAME><![CDATA[Std_Discount]]></COLUMNNAME>
-<!--1238-->  <NAME><![CDATA[Standard Price Discount %]]></NAME>
-<!--1238-->  <PRINTNAME><![CDATA[Standard price Discount %]]></PRINTNAME>
+<!--1238-->  <NAME><![CDATA[Net Unit Price Discount %]]></NAME>
+<!--1238-->  <PRINTNAME><![CDATA[Net Unit Price Discount %]]></PRINTNAME>
 <!--1238-->  <DESCRIPTION><![CDATA[Discount percentage to subtract from base price]]></DESCRIPTION>
 <!--1238-->  <HELP><![CDATA[The Standard Price Discount Percentage indicates the percentage discount which will be subtracted from the base price.  A negative amount indicates the percentage which will be added to the base price.]]></HELP>
 <!--1238-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -7563,8 +7563,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1416-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1416-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1416-->  <COLUMNNAME><![CDATA[Price]]></COLUMNNAME>
-<!--1416-->  <NAME><![CDATA[Price]]></NAME>
-<!--1416-->  <PRINTNAME><![CDATA[Price]]></PRINTNAME>
+<!--1416-->  <NAME><![CDATA[Net Unit Price]]></NAME>
+<!--1416-->  <PRINTNAME><![CDATA[Net Unit Price]]></PRINTNAME>
 <!--1416-->  <DESCRIPTION><![CDATA[The cost or value of a good or service.]]></DESCRIPTION>
 <!--1416-->  <HELP><![CDATA[The Price indicates the Price for a product or service.]]></HELP>
 <!--1416-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9197,8 +9197,8 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1744-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1744-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1744-->  <COLUMNNAME><![CDATA[Limit_Fixed]]></COLUMNNAME>
-<!--1744-->  <NAME><![CDATA[Fixed Limit Price]]></NAME>
-<!--1744-->  <PRINTNAME><![CDATA[Fixed Limit]]></PRINTNAME>
+<!--1744-->  <NAME><![CDATA[Fixed Net Price Limit]]></NAME>
+<!--1744-->  <PRINTNAME><![CDATA[Fixed Net Price Limit]]></PRINTNAME>
 <!--1744-->  <DESCRIPTION><![CDATA[Fixed Limit Price (not calculated)]]></DESCRIPTION>
 <!--1744-->  <HELP><![CDATA[Fixed Limit Price (not calculated)]]></HELP>
 <!--1744-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9210,8 +9210,8 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1745-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1745-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1745-->  <COLUMNNAME><![CDATA[List_Fixed]]></COLUMNNAME>
-<!--1745-->  <NAME><![CDATA[Fixed List Price]]></NAME>
-<!--1745-->  <PRINTNAME><![CDATA[Fixed List]]></PRINTNAME>
+<!--1745-->  <NAME><![CDATA[Fixed Net List Price]]></NAME>
+<!--1745-->  <PRINTNAME><![CDATA[Fixed Net List Price]]></PRINTNAME>
 <!--1745-->  <DESCRIPTION><![CDATA[Fixes List Price (not calculated)]]></DESCRIPTION>
 <!--1745-->  <HELP><![CDATA[Fixes List Price (not calculated)]]></HELP>
 <!--1745-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9223,8 +9223,8 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1746-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1746-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1746-->  <COLUMNNAME><![CDATA[Std_Fixed]]></COLUMNNAME>
-<!--1746-->  <NAME><![CDATA[Fixed Standard Price]]></NAME>
-<!--1746-->  <PRINTNAME><![CDATA[Fixed Standard]]></PRINTNAME>
+<!--1746-->  <NAME><![CDATA[Fixed Net Unit Price]]></NAME>
+<!--1746-->  <PRINTNAME><![CDATA[Fixed Net Unit Price]]></PRINTNAME>
 <!--1746-->  <DESCRIPTION><![CDATA[Fixed Standard Price (not calculated)]]></DESCRIPTION>
 <!--1746-->  <HELP><![CDATA[Fixed Standard Price (not calculated)]]></HELP>
 <!--1746-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -9687,8 +9687,8 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1817-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1817-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1817-->  <COLUMNNAME><![CDATA[InvoicePrice]]></COLUMNNAME>
-<!--1817-->  <NAME><![CDATA[Invoice Price]]></NAME>
-<!--1817-->  <PRINTNAME><![CDATA[Invoice Price]]></PRINTNAME>
+<!--1817-->  <NAME><![CDATA[Net Unit Price]]></NAME>
+<!--1817-->  <PRINTNAME><![CDATA[Net Unit Price]]></PRINTNAME>
 <!--1817-->  <DESCRIPTION><![CDATA[The price at which something may be invoiced, shown in the currency of the invoiced business partner.]]></DESCRIPTION>
 <!--1817-->  <HELP><![CDATA[Unit Price in the currency of the business partner!  If it is 0, the standard price of the sales price list of the business partner (customer) is used.]]></HELP>
 <!--1817-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -13308,8 +13308,8 @@ For example, if you want to create different invoices for each ship location for
 <!--800270-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800270-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800270-->  <COLUMNNAME><![CDATA[Fixed]]></COLUMNNAME>
-<!--800270-->  <NAME><![CDATA[Fixed Price]]></NAME>
-<!--800270-->  <PRINTNAME><![CDATA[Fixed]]></PRINTNAME>
+<!--800270-->  <NAME><![CDATA[Fixed Net Unit Price]]></NAME>
+<!--800270-->  <PRINTNAME><![CDATA[Fixed Net Unit Price]]></PRINTNAME>
 <!--800270-->  <DESCRIPTION><![CDATA[A price that does not change when price adjustments are made.]]></DESCRIPTION>
 <!--800270-->  <HELP><![CDATA[Fixed price for the price adjustment]]></HELP>
 <!--800270-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -15639,8 +15639,8 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800635-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800635-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800635-->  <COLUMNNAME><![CDATA[Isprice]]></COLUMNNAME>
-<!--800635-->  <NAME><![CDATA[Price]]></NAME>
-<!--800635-->  <PRINTNAME><![CDATA[Price]]></PRINTNAME>
+<!--800635-->  <NAME><![CDATA[Net Unit Price]]></NAME>
+<!--800635-->  <PRINTNAME><![CDATA[Net Unit Price]]></PRINTNAME>
 <!--800635-->  <DESCRIPTION><![CDATA[The cost or value of a good or service.]]></DESCRIPTION>
 <!--800635-->  <HELP><![CDATA[This field indicates if it is a fixed price or it is per unit.]]></HELP>
 <!--800635-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -25287,5 +25287,16 @@ Solved: The alert has been solved and is not an issue any more.
 Exception: The alert has been acknowledged but not action is going to be made to solve it.]]></HELP>
 <!--FF8080812EC85BDE012EC8B056D20017-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--FF8080812EC85BDE012EC8B056D20017--></AD_ELEMENT>
+
+<!--FF8081813021C3180130226601410050--><AD_ELEMENT>
+<!--FF8081813021C3180130226601410050-->  <AD_ELEMENT_ID><![CDATA[FF8081813021C3180130226601410050]]></AD_ELEMENT_ID>
+<!--FF8081813021C3180130226601410050-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--FF8081813021C3180130226601410050-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--FF8081813021C3180130226601410050-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--FF8081813021C3180130226601410050-->  <COLUMNNAME><![CDATA[BaseNetUnitPrice]]></COLUMNNAME>
+<!--FF8081813021C3180130226601410050-->  <NAME><![CDATA[Base Net Unit Price ]]></NAME>
+<!--FF8081813021C3180130226601410050-->  <PRINTNAME><![CDATA[Base Net Unit Price ]]></PRINTNAME>
+<!--FF8081813021C3180130226601410050-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--FF8081813021C3180130226601410050--></AD_ELEMENT>
 
 </data>

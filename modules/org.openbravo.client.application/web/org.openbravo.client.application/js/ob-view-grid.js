@@ -138,6 +138,7 @@ isc.OBViewGrid.addProperties({
   listEndEditAction: 'next',
   
   enforceVClipping: true,
+  fixedRecordHeights: true,
   
   validateByCell: true,
   
@@ -971,13 +972,15 @@ isc.OBViewGrid.addProperties({
         field = this.getSpecifiedField(property);
         fieldNum = this.getFieldNum(property);
         sortHeader = this.getFieldHeader(fieldNum);
-        sortButton = sortHeader.getMember(this.getLocalFieldNum(fieldNum));
-        if (sortButton) {
-          if (field) {
-            field.sortDirection = Array.shouldSortAscending(specifier.direction);
+        if (sortHeader) {
+          sortButton = sortHeader.getMember(this.getLocalFieldNum(fieldNum));
+          if (sortButton) {
+            if (field) {
+              field.sortDirection = Array.shouldSortAscending(specifier.direction);
+            }
+            sortHeader.selectButton(sortButton);
+            sortButton.setTitle(this.getHeaderButtonTitle(sortButton));
           }
-          sortHeader.selectButton(sortButton);
-          sortButton.setTitle(this.getHeaderButtonTitle(sortButton));
         }
       }
     }
@@ -1426,7 +1429,8 @@ isc.OBViewGrid.addProperties({
     if (rowNum || rowNum === 0) {
       insertRow = rowNum + 1;
     } else {
-      insertRow = this.getTotalRows();
+      
+      insertRow = this.getDrawArea()[0];
     }
     this.createNewRecordForEditing(insertRow);
     this.startEditing(insertRow);
