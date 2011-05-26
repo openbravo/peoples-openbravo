@@ -1018,6 +1018,7 @@ isc.OBViewGrid.addProperties({
   },
   
   resetEmptyMessage: function(criteria){
+    var selectedValues, parentIsNew, oldMessage = this.emptyMessage;
     criteria = criteria || this.getCriteria();
     if (!this.view) {
       this.emptyMessage = this.noDataEmptyMessage;
@@ -1027,15 +1028,20 @@ isc.OBViewGrid.addProperties({
       this.emptyMessage = this.noDataEmptyMessage;
     } else {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
-      if (selectedValues.length === 0) {
-        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_NoParentSelected');
-      } else if (selectedValues.length === 1 && selectedValues[0]._new) {
+      parentIsNew = this.view.parentView.isShowingForm && this.view.parentView.viewForm.isNew;
+      parentIsNew = parentIsNew || (selectedValues.length === 1 && selectedValues[0]._new);
+      if (parentIsNew) {
         this.emptyMessage = OB.I18N.getLabel('OBUIAPP_ParentIsNew');
+      } else if (selectedValues.length === 0) {
+        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_NoParentSelected');
       } else if (selectedValues.length > 1) {
         this.emptyMessage = OB.I18N.getLabel('OBUIAPP_MultipleParentsSelected');
       } else {
         this.emptyMessage = this.noDataEmptyMessage;
       }
+    }
+    if (oldMessage !== this.emptyMessage) {
+      this.markForRedraw();
     }
   },
   
@@ -1442,6 +1448,7 @@ isc.OBViewGrid.addProperties({
     }
     this.createNewRecordForEditing(insertRow);
     this.startEditing(insertRow);
+    this.view.refreshChildViews();
   },
   
   initializeEditValues: function(rowNum, colNum){
@@ -1621,6 +1628,7 @@ isc.OBViewGrid.addProperties({
         }]);
         me.updateRowCountDisplay();
         me.view.toolBar.updateButtonState(true);
+        me.view.refreshChildViews();
       } else {
         // remove the error style/msg    
         me.setRecordErrorMessage(rowNum, null);
@@ -1630,7 +1638,6 @@ isc.OBViewGrid.addProperties({
       
       // update after removing the error msg
       this.view.updateTabTitle();
-      this.view.toolBar.updateButtonState(true);
     }
   },
   

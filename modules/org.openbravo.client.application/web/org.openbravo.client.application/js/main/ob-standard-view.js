@@ -897,6 +897,7 @@ isc.OBStandardView.addProperties({
     if (!record) { //  new case
       this.viewGrid.deselectAllRecords();
       this.viewForm.editNewRecord(preventFocus);
+      this.refreshChildViews();
     } else {
       this.viewGrid.doSelectSingleRecord(record);
       
