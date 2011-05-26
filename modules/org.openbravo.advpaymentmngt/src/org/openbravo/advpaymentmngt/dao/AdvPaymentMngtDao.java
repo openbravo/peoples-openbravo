@@ -1253,7 +1253,7 @@ public class AdvPaymentMngtDao {
     OBCriteria<Preference> obcPreference = OBDal.getInstance().createCriteria(Preference.class);
     obcPreference.setFilterOnReadableClients(false);
     obcPreference.setFilterOnReadableOrganization(false);
-    obcPreference.add(Expression.eq(Preference.PROPERTY_ATTRIBUTE, "APRM_Ready"));
+    obcPreference.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, "APRM_Ready"));
 
     return obcPreference.count() > 0;
   }
