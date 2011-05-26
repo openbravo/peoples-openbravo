@@ -39,8 +39,10 @@
     <PARAMETER id="C_Bpartner_ID" name="businessPartner" attribute="value"/>
     <PARAMETER id="paramCredit" name="credit" attribute="value" format="euroEdition"/>
     <PARAMETER id="fieldReceipt" name="isReceipt" attribute="value"/>
+    <PARAMETER id="fieldIsSoTrx" name="isSoTrx" attribute="value"/>
     <PARAMETER id="paramPrecision" name="precision" attribute="value"/>
     <PARAMETER id="paramFinBankStatementLineId" name="finBankStatementLineId" attribute="value" default=""/>
+    <PARAMETER id="fieldOrg" name="orgId" attribute="value"/>
     
     <PARAMETER id="paramPaymentDate" name="paymentDate" attribute="value"/>
     <PARAMETER id="paramPaymentDate" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>

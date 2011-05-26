@@ -293,7 +293,9 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("isReceipt", (isReceipt) ? "Y" : "N");
+    xmlDocument.setParameter("isSoTrx", (isReceipt) ? "Y" : "N");
     xmlDocument.setParameter("finBankStatementLineId", strFinBankStatementLineId);
+    xmlDocument.setParameter("orgId", financialAccount.getOrganization().getId());
 
     // get DocumentNo
     final List<Object> parameters = new ArrayList<Object>();

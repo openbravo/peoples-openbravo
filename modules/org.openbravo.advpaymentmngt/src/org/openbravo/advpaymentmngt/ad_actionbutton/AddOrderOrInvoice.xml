@@ -39,6 +39,7 @@
     <PARAMETER id="fieldWindowId" name="windowId" attribute="value"/>
     <PARAMETER id="fieldTabId" name="tabId" attribute="value"/>
     <PARAMETER id="fieldReceipt" name="isReceipt" attribute="value"/>
+    <PARAMETER id="fieldIsSoTrx" name="isSoTrx" attribute="value"/>
     <PARAMETER id="paramPrecision" name="precision" attribute="value"/>
     <PARAMETER id="paramHeaderAmount" name="headerAmount" attribute="value" format="euroEdition"/>
 
