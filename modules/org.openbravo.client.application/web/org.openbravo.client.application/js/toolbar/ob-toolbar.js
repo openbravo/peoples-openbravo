@@ -109,7 +109,8 @@ isc.OBToolbar.addClassProperties({
       if (grid.getSelectedRecord()) {
         view.newRow(grid.getRecordIndex(grid.getSelectedRecord()));
       } else {
-        view.newRow(0);
+        // pass in -1, as newrow will put the new row one further
+        view.newRow();
       }
     },
     buttonType: 'newRow',

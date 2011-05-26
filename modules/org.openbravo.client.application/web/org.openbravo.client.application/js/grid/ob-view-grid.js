@@ -1425,12 +1425,20 @@ isc.OBViewGrid.addProperties({
   },
 
   startEditingNew: function(rowNum){
-    var insertRow;
-    if (rowNum || rowNum === 0) {
-      insertRow = rowNum + 1;
+    // several cases:
+    // - no current rows, add at position 0
+    // - row selected, add row after selected row
+    // - no row selected, add in the bottom
+    var undef, insertRow;
+    if (rowNum === undef) {
+      // nothing selected
+      if (!this.getSelectedRecord()) {
+        insertRow = this.getTotalRows();
+      } else {
+        insertRow = 1 + this.getRecordIndex(this.getSelectedRecord()); 
+      }
     } else {
-      
-      insertRow = this.getDrawArea()[0];
+      insertRow = rowNum + 1;
     }
     this.createNewRecordForEditing(insertRow);
     this.startEditing(insertRow);
@@ -1467,10 +1475,12 @@ isc.OBViewGrid.addProperties({
     
     // set the default error message, 
     // is possibly overridden in the next call
-    if (!record[isc.OBViewGrid.ERROR_MESSAGE_PROP]) {
-      this.setRecordErrorMessage(rowNum, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
-    } else {
-      record[this.recordBaseStyleProperty] = this.recordStyleError;
+    if (record) {
+      if (!record[isc.OBViewGrid.ERROR_MESSAGE_PROP]) {
+        this.setRecordErrorMessage(rowNum, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
+      } else {
+        record[this.recordBaseStyleProperty] = this.recordStyleError;
+      }
     }
     
     if (!this.isVisible()) {
@@ -1484,7 +1494,7 @@ isc.OBViewGrid.addProperties({
     view.toolBar.updateButtonState(true);
     
     // if nothing else got selected, select ourselves then
-    if (!this.getSelectedRecord()) {
+    if (record && !this.getSelectedRecord()) {
       this.selectRecord(record);
     }
   },
@@ -1784,7 +1794,7 @@ isc.OBViewGrid.addProperties({
 
     var rowNum = this.getEditRow(), record = this.getRecord(rowNum);
     this._hidingInlineEditor = true;
-    if (rowNum === 0 || rowNum) {
+    if (record && (rowNum === 0 || rowNum)) {
       if (!this.rowHasErrors(rowNum)) {
         record[this.recordBaseStyleProperty] = null;
       }
@@ -1990,6 +2000,9 @@ isc.OBViewGrid.addProperties({
     if (this.Super('rowHasErrors', arguments)) {
       return true;
     }
+    if (!this.getEditForm()) {
+      return false;
+    }
     if (this.getEditRow() === rowNum && this.getEditForm().hasErrors()) {
       return true;
     }
@@ -2048,6 +2061,9 @@ isc.OBViewGrid.addProperties({
   
   setRecordFieldErrorMessages: function(rowNum, errors){
     var record = this.getRecord(rowNum);
+    if (!record) {
+      return;
+    }
     if (record.editColumnLayout) {
       record.editColumnLayout.editButton.setErrorState(errors);
       record.editColumnLayout.editButton.setErrorMessage(OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
