@@ -416,7 +416,7 @@ isc.OBSelectorItem.addProperties({
       this.form.setValue(this.name + '.' + this.displayField, null);
     } else {
       this.handleOutFields(record);
-      this.setValue(record[this.valueField]);
+      this.storeValue(record[this.valueField]);
       this.form.setValue(this.name + '.' + this.displayField, record[this.displayField]);
       if (!this.valueMap) {
         this.valueMap = {};
