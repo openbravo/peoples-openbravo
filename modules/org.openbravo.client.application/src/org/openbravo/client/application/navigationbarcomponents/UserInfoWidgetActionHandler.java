@@ -197,8 +197,10 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
     for (Organization org : orgs.list()) {
       JSONObject orgWarehouse = new JSONObject();
       orgWarehouse.put("orgId", org.getId());
-      final OBQuery<Warehouse> warehouses = OBDal.getInstance().createQuery(Warehouse.class,
-          "organization.id in (:orgList) and client.id=:clientId order by name");
+      final OBQuery<Warehouse> warehouses = OBDal
+          .getInstance()
+          .createQuery(Warehouse.class,
+              "organization.id in (:orgList) and client.id=:clientId and organization.active=true order by name");
       warehouses.setNamedParameter("orgList", osp.getNaturalTree(org.getId()));
       warehouses.setNamedParameter("clientId", clientId);
       warehouses.setFilterOnReadableClients(false);
@@ -211,7 +213,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
 
   private List<Organization> getOrganizations(String roleId) throws JSONException {
     final OBQuery<RoleOrganization> roleOrgs = OBDal.getInstance().createQuery(
-        RoleOrganization.class, "role.id=:roleId");
+        RoleOrganization.class, "role.id=:roleId and active=true");
     roleOrgs.setFilterOnReadableClients(false);
     roleOrgs.setFilterOnReadableOrganization(false);
     roleOrgs.setNamedParameter("roleId", roleId);
