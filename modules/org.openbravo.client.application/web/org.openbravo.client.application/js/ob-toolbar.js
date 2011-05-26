@@ -240,92 +240,42 @@ isc.OBToolbar.addClassProperties({
       var selectedRows = this.view.viewGrid.getSelectedRecords(),
           attachmentExists = this.view.attachmentExists, i;
       if(this.view.isShowingForm){
-          this.view.viewForm.getItem('_attachments_').expandSection();
+        this.view.viewForm.getItem('_attachments_').expandSection();
         this.view.viewForm.scrollToBottom();
+        if(!attachmentExists){
+          this.view.viewForm.getItem('_attachments_').canvasItem.canvas.getMember(0).getMember(0).click();
+        }
         return;
       }
-      if(attachmentExists){
-        if(selectedRows.size() === 1){
-          this.view.viewForm.setFocusItem(this.view.viewForm.getItem('_attachments_'));
-          this.view.viewForm.forceFocusedField = '_attachments_';
-          this.view.viewForm.expandAttachments = true;
-          this.view.editRecord(selectedRows[0]);
-        } else {
-          var recordIds = "";
-          for(i=0; i<selectedRows.size(); i++){
-            if(i>0){
-              recordIds = recordIds + ",";  
-            }
-            recordIds=recordIds + selectedRows[i].id;
-          }
-          var vTabId = this.view.tabId;
-          var vbuttonId = this.ID;
-             isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmDownloadMultiple'), function(clickedOK){
-            if(clickedOK){
-              var d = {
-                Command: 'GET_MULTIPLE_RECORDS_OB3',
-                tabId: vTabId,
-                buttonId: vbuttonId,
-                recordIds: recordIds
-              };
-              OB.Utilities.postThroughHiddenForm('./businessUtility/TabAttachments_FS.html', d);
-            }
-          });
+      if(selectedRows.size() === 1){
+        this.view.viewForm.setFocusItem(this.view.viewForm.getItem('_attachments_'));
+        this.view.viewForm.forceFocusedField = '_attachments_';
+        this.view.viewForm.expandAttachments = true;
+        this.view.editRecord(selectedRows[0]);
+        if(!attachmentExists){
+          this.view.viewForm.getItem('_attachments_').canvasItem.canvas.getMember(0).getMember(0).click();
         }
-      }else{
-        var attachmentFile = OB.I18N.getLabel('OBUIAPP_AttachmentFile');
-        var form = isc.DynamicForm.create({
-          fields: [
-            {name: 'inpname', title: attachmentFile, type: 'upload'},
-            {name: 'Command', type: 'hidden', value: 'SAVE_NEW_OB3'},
-            {name: 'buttonId', type: 'hidden', value: this.ID},
-            {name: 'inpKey', type: 'hidden', value: this.view.viewGrid.getSelectedRecord().id},
-            {name: 'inpTabId', type: 'hidden', value: this.view.tabId},
-            {name: 'inpwindowId', type: 'hidden', value: this.view.windowId}
-          ],
-          encoding: 'multipart',
-          action: './businessUtility/TabAttachments_FS.html',
-          target: "background_target",
-          position: 'absolute',
-          left: '-9000px',
-          numCols: 4,
-          colWidths: ['24%', '24%', '24%', '24%'],
-          width: '10px',
-          redraw: function(){
-          },
-          button: this
-        });
-
-        var submitbutton = isc.Button.create({
-            title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit'),
-            theForm: form,
-            click: function(){
-              var form = this.theForm;
-              form.button.customState = 'Progress';
-              form.button.resetBaseStyle();
-              form.submitForm();
-              popup.hide();
-            }
-        });
-        this.oldForm = form;
-        var horizontalLayout = isc.HLayout.create({
-          width: '100%',
-          height: '30px',
-          align: 'right'
-        });
-        var popup = isc.OBPopup.create({
-          height: 30,
-          width: 300,
-          align: 'right',
-          initWidget: function(args){
-          horizontalLayout.addMember(form);
-          horizontalLayout.addMember(submitbutton);
-          this.items = horizontalLayout;
-          this.Super('initWidget', arguments);
+      } else {
+        var recordIds = "";
+        for(i=0; i<selectedRows.size(); i++){
+          if(i>0){
+            recordIds = recordIds + ",";  
+          }
+          recordIds=recordIds + selectedRows[i].id;
+        }
+        var vTabId = this.view.tabId;
+        var vbuttonId = this.ID;
+          isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmDownloadMultiple'), function(clickedOK){
+          if(clickedOK){
+            var d = {
+              Command: 'GET_MULTIPLE_RECORDS_OB3',
+              tabId: vTabId,
+              buttonId: vbuttonId,
+              recordIds: recordIds
+            };
+            OB.Utilities.postThroughHiddenForm('./businessUtility/TabAttachments_FS.html', d);
           }
         });
-        form.popup = popup;
-        popup.show();
       }
     },
     callback: function(){
