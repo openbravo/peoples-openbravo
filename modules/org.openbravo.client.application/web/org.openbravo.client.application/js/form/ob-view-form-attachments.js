@@ -380,7 +380,7 @@ isc.OBAttachmentsLayout.addProperties({
         height: 20,
         wrap: false
       });
-      var creationDate = OB.Utilities.getTimePassed(new Date(attachment.creationDate));
+      var creationDate = OB.Utilities.getTimePassed(isc.Date.parseSchemaDate(attachment.creationDate));
       var attachmentBy = isc.Label.create({
         height:  1,
         className: 'OBNoteListGridAuthor',

@@ -297,9 +297,12 @@ public class FormInitializationComponent extends BaseActionHandler {
       try {
         obj.put("name", attachment.getName());
         obj.put("id", attachment.getId());
-        SimpleDateFormat xmlDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        xmlDateTimeFormat.setLenient(true);
-        obj.put("creationDate", attachment.getCreationDate().getTime());
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
+        dateFormat.setLenient(true);
+        String date = dateFormat.format(attachment.getCreationDate());
+        String d1 = date.substring(0, date.length() - 2);
+        String d2 = date.substring(date.length() - 2, date.length());
+        obj.put("creationDate", d1 + ":" + d2);
         obj.put("createdby", attachment.getCreatedBy().getName());
       } catch (JSONException e) {
         log.error("Error while reading attachments", e);

@@ -39,7 +39,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
-import org.openbravo.service.json.JsonUtils;
 import org.openbravo.utils.FileUtility;
 
 public class AttachmentsAH extends BaseActionHandler {
@@ -111,8 +110,12 @@ public class AttachmentsAH extends BaseActionHandler {
       try {
         attachmentobj.put("id", attachment.getId());
         attachmentobj.put("name", attachment.getName());
-        SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
-        attachmentobj.put("creationDate", xmlDateTimeFormat.format(attachment.getCreationDate()));
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
+        dateFormat.setLenient(true);
+        String date = dateFormat.format(attachment.getCreationDate());
+        String d1 = date.substring(0, date.length() - 2);
+        String d2 = date.substring(date.length() - 2, date.length());
+        attachmentobj.put("creationDate", d1 + ":" + d2);
         attachmentobj.put("createdby", attachment.getCreatedBy().getName());
       } catch (Exception e) {
         throw new OBException("Error while reading attachments:", e);
