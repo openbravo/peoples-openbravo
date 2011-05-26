@@ -85,8 +85,52 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/ob-utilities-date.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-utilities-number.js", true));
+
     globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/ob-formitem-widgets.js", true));
+        "web/org.openbravo.client.application/js/form/ob-form-button.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-checkbox.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-datechooser.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-date.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-datetime.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-encrypted.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-linktitle.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-text.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-link.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-list.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-list-filter.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-fk.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-fk-filter.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-minidaterange.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-number.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-search.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-search-attribute.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-section.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-section-audit.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-textarea.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-time.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/ob-formitem-yesno.js", true));
+
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/ob-application-menu.js", false));
     globalResources.add(createStaticResource("web/org.openbravo.client.application/js/ob-tab.js",
