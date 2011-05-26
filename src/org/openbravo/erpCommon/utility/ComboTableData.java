@@ -1042,7 +1042,8 @@ public class ComboTableData {
       int iParameter = 0;
       iParameter = setSQLParameters(st, lparameters, iParameter, null);
       boolean idFound = false;
-      String actual = getParameter("@ACTUAL_VALUE@");
+      String actual = lparameters != null ? lparameters.get("@ACTUAL_VALUE@")
+          : getParameter("@ACTUAL_VALUE@");
       result = st.executeQuery();
       while (result.next()) {
         SQLReturnObject sqlReturnObject = new SQLReturnObject();
