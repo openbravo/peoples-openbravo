@@ -1110,11 +1110,7 @@ OB.ViewFormProperties = {
     
     // note validate will also set the formfocus, this is 
     // done by calling showErrors without the third parameter to true
-    if (!this.validate()) {
-      this.handleFieldErrors(null);
-      form.view.standardWindow.autoSaveDone(form.view, false);
-      form.isSaving = false;
-      form.view.toolBar.updateButtonState(true);
+    if (!form.validateForm()) {
       return;
     }
     
@@ -1128,7 +1124,19 @@ OB.ViewFormProperties = {
       }, true);
     }
   },
-  
+
+  validateForm: function() {
+    var form = this;
+    if (!form.validate()) {
+      form.handleFieldErrors(null);
+      form.view.standardWindow.autoSaveDone(form.view, false);
+      form.isSaving = false;
+      form.view.toolBar.updateButtonState(true);
+      return false;
+    }
+    return true;
+  },
+
   focusInNextItem: function(currentItem) {
     var flds = (this.grid ? this.grid.getFields() : this.getFields());
     var chooseNextItem, i, nextItem, length = flds.length;

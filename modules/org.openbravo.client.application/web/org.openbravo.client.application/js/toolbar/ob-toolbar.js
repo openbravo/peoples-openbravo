@@ -67,7 +67,10 @@ isc.OBToolbar.addClassProperties({
       this.view.standardWindow.doActionAfterAutoSave(actionObject, true, true);      
     },
     
-    saveAndClose: function(){
+    saveAndClose: function() {
+      if(!this.view.viewForm.validateForm()) {
+        return;
+      }
       this.view.switchFormGridVisibility();
       this.view.messageBar.hide();
     },

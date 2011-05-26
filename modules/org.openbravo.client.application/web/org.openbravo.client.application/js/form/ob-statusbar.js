@@ -84,6 +84,9 @@ isc.OBStatusBarIconButton.addProperties( {
     } else if (this.buttonType === 'next') {
       this.view.editNextPreviousRecord(true);
     } else if (this.buttonType === 'close') {
+      if(!this.view.viewForm.validateForm()) {
+        return;
+      }
       this.view.switchFormGridVisibility();
       this.view.messageBar.hide();
     } else if (this.buttonType === 'maximizeRestore') {
