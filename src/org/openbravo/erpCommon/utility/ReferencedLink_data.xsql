@@ -47,6 +47,7 @@
       AND T.ISACTIVE = 'Y' 
       AND W.AD_WINDOW_ID = ? 
       AND T.AD_TABLE_ID = ? 
+      ORDER BY T.TABLEVEL
     </Sql>
     <Parameter name="adWindowId"/>
     <Parameter name="adTableId"/>
