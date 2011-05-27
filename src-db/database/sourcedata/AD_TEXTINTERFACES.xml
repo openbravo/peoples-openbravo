@@ -1,27 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--800002--><AD_TEXTINTERFACES>
-<!--800002-->  <AD_TEXTINTERFACES_ID><![CDATA[800002]]></AD_TEXTINTERFACES_ID>
-<!--800002-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800002-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800002-->  <TEXT><![CDATA[Daily occupation summary report]]></TEXT>
-<!--800002-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportTaxInvoice_Excel.html]]></FILENAME>
-<!--800002-->  <ISUSED><![CDATA[Y]]></ISUSED>
-<!--800002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800002--></AD_TEXTINTERFACES>
-
-<!--800004--><AD_TEXTINTERFACES>
-<!--800004-->  <AD_TEXTINTERFACES_ID><![CDATA[800004]]></AD_TEXTINTERFACES_ID>
-<!--800004-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800004-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800004-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800004-->  <TEXT><![CDATA[Nat.]]></TEXT>
-<!--800004-->  <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportTaxInvoice_Excel.html]]></FILENAME>
-<!--800004-->  <ISUSED><![CDATA[Y]]></ISUSED>
-<!--800004-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800004--></AD_TEXTINTERFACES>
-
 <!--800007--><AD_TEXTINTERFACES>
 <!--800007-->  <AD_TEXTINTERFACES_ID><![CDATA[800007]]></AD_TEXTINTERFACES_ID>
 <!--800007-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
