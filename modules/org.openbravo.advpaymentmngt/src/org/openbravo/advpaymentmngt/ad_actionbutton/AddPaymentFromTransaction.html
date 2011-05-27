@@ -135,7 +135,8 @@ function updateData(key, mark, drivenByGrid) {
   if (mark==null) mark=false;
   updateReadOnly(key, mark);
   var paymentAmount = document.frmMain.elements['inpPaymentAmount'+key];
-  if (!isTrue('isReceipt')){
+  var isInheritedActualPayment = (document.getElementById('paramInheritedActualPayment').value === 'Y');
+  if (!isTrue('isReceipt') && !isInheritedActualPayment) {
     if (mark && paymentAmount.value=='') {
       paymentAmount.value = document.frmMain.elements['inpRecordAmt'+key].value;
     }
@@ -371,6 +372,7 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
   <input type="hidden" name="inpFinBankStatementLineId" value="" id="paramFinBankStatementLineId"></input>
   <input type="hidden" name="isFirstLoad" value="true"/>
   <input type="hidden" name="inpadOrgId" value="" id="fieldOrg"/>
+  <input type="hidden" name="inpInheritedActualPayment" value="N" id="paramInheritedActualPayment"/>
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
       <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>

@@ -249,8 +249,10 @@ function updateDifference() {
     selectDifferenceAction('none');
   } else if ( isCreditAllowed && compareWithSign(amount, '>', total) ) {
     selectDifferenceAction('credit');
-  } else if ( !isCreditAllowed && compareWithSign(expected, '>', total) ) {
+  } else if ( !isCreditAllowed || compareWithSign(expected, '>', total) ) {
     selectDifferenceAction('underpayment');
+  } else {
+    selectDifferenceAction('none');
   }
 }
 
@@ -332,7 +334,8 @@ function updateTotal() {
   }
   frm.inpTotal.value = total;
   document.getElementById('paramTotal').innerHTML = frm.inpTotal.value;
-  if (!isReceipt) {
+  var inheritedActualPayment = (frm.paramInheritedActualPayment && frm.paramInheritedActualPayment.value === "Y");
+  if (!isReceipt && !inheritedActualPayment) {
     if (frm.inpUseCredit.checked) {
       if ( compare(total, '>',frm.inpCredit.value) ) {
         frm.inpActualPayment.value = subtract(total, frm.inpCredit.value);

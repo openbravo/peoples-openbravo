@@ -296,6 +296,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("isSoTrx", (isReceipt) ? "Y" : "N");
     xmlDocument.setParameter("finBankStatementLineId", strFinBankStatementLineId);
     xmlDocument.setParameter("orgId", financialAccount.getOrganization().getId());
+    xmlDocument.setParameter("inheritedActualPayment", strFinBankStatementLineId.isEmpty() ? "N"
+        : "Y");
 
     // get DocumentNo
     final List<Object> parameters = new ArrayList<Object>();
