@@ -140,7 +140,7 @@ public class DataSourceProperty {
 
     final List<RefListEntry> translatedValues = new ArrayList<RefListEntry>();
 
-    final String readReferenceHql = "select searchKey, name, sequenceNumber from ADList where reference.id=?";
+    final String readReferenceHql = "select searchKey, name, sequenceNumber from ADList rlist where reference.id=? and rlist.active=true";
     final Query readReferenceQry = OBDal.getInstance().getSession().createQuery(readReferenceHql);
     readReferenceQry.setString(0, referenceId);
     for (Object o : readReferenceQry.list()) {
