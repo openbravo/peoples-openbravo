@@ -199,27 +199,5 @@
            ]]></Sql>      
    </SqlMethod>
    
-   <SqlMethod name="getFirstElementsOptions" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT ro.ad_role_id AS DEFAULT_AD_ROLE_ID, 
-          ro.ad_org_id AS DEFAULT_AD_ORG_ID, 
-          ro.ad_client_id AS DEFAULT_AD_CLIENT_ID, 
-        (SELECT MAX(w.m_warehouse_id) 
-          FROM m_warehouse w, ad_role_orgaccess roa WHERE w.isActive='Y' 
-          AND roa.ad_role_id = ro.ad_role_id 
-          AND roa.isActive = 'Y'
-          AND w.ad_org_id=roa.ad_org_id 
-          AND w.ad_client_id = ro.ad_client_id)
-          AS DEFAULT_M_WAREHOUSE_ID, 
-        (SELECT MIN(ad_language) FROM ad_language WHERE isbaselanguage='Y' AND isactive='Y') AS DEFAULT_AD_LANGUAGE 
-        FROM ad_role_orgaccess ro
-        WHERE ro.ad_role_id = (SELECT MAX(ad_role_id) FROM ad_user_roles WHERE ad_user_id = ? AND isActive = 'Y')
-        AND ro.isactive = 'Y'
-        ORDER BY ro.ad_org_id, ro.ad_client_id
-      ]]></Sql>
-      <Parameter name="aduserid"/>
-   </SqlMethod>
-
 </SqlClass>
 

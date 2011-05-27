@@ -98,17 +98,6 @@
         <Parameter name="org"/>
    </SqlMethod>
 
-   <SqlMethod name="saveProcessed" type="preparedStatement" return="rowCount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        UPDATE AD_SESSION SET UPDATED = now(), UPDATEDBY = ?, 
-        PROCESSED = 'Y' 
-        WHERE AD_SESSION_ID = ?
-      </Sql>
-      <Parameter name="adUserId"/>
-      <Parameter name="adSessionId"/>
-   </SqlMethod>
-
    <SqlMethod name="selectAccessLevel" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[

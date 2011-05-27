@@ -60,39 +60,5 @@ SELECT DISTINCT REPLACE(table3.HEADERNOTE, CHR(10), '') AS headernote, table3.C_
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
    </SqlMethod>
-   <SqlMethod name="selectLines" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-      <![CDATA[
-        SELECT table3.C_BPartner_ID, '' as proposal, 
-        replace(C_ProjectProposalLine.Description, chr(10), '')as line_desc,to_char( table6.Name ) as M_Product_ID_D, table6.description as description, C_ProjectProposalLine.Price as price,C_ProjectProposalLine.Qty as quantity, table7.NAME as UOMNAME,'' as address1, '' as address, '' as phone, '' as fax, '' as fecha, '' as BPname , '' as namecontacto, '' as contacto, '' as headernote, '' as footnote, '' as reference, '' as CURSYMBOL
-        FROM C_ProjectProposalLine, AD_Client table1, 
-        AD_Org table2, C_Projectproposal table3, C_BPartner table4, C_Project table5, M_Product table6, C_UOM table7
-        WHERE C_ProjectProposalLine.C_Projectproposal_ID = ?
-        AND C_ProjectProposalLine.AD_Client_ID = table1.AD_Client_ID 
-        AND C_ProjectProposalLine.AD_Org_ID = table2.AD_Org_ID 
-        AND C_ProjectProposalLine.C_Projectproposal_ID = table3.C_Projectproposal_ID 
-        AND table3.C_BPartner_ID = table4.C_BPartner_ID 
-        AND table3.C_Project_ID = table5.C_Project_ID 
-        AND C_ProjectProposalLine.M_Product_ID = table6.M_Product_ID
-        AND table6.C_UOM_ID = table7.C_UOM_ID
-        and C_ProjectProposalLine.IsActive = 'Y'
-        ORDER BY C_PROJECTPROPOSALLINE.LINENO ASC
-        ]]>
-        </Sql>
-        <Parameter name="cProjectProposalId"/>
-   </SqlMethod>
-   <SqlMethod name="selectFootnote" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-      <![CDATA[
-         SELECT DISTINCT REPLACE(C_PROJECTPROPOSAL.FOOTNOTE, CHR(10), '') AS FOOTNOTE
-         FROM C_PROJECTPROPOSAL, C_PROJECTPROPOSALLINE
-         WHERE C_PROJECTPROPOSALLINE.C_PROJECTPROPOSAL_ID=?
-         AND C_PROJECTPROPOSALLINE.c_projectproposal_id=C_PROJECTPROPOSAL.c_projectproposal_id
-        ]]>
-        </Sql>
-        <Parameter name="cProjectProposalId"/>
-   </SqlMethod>
    
 </SqlClass>

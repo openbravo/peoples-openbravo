@@ -179,13 +179,5 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
   </SqlMethod>
-  <SqlMethod name="bPartnerDescription" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    SELECT NAME FROM C_BPARTNER 
-    WHERE C_BPARTNER_ID = ?
-    </Sql>
-    <Parameter name="cBpartnerId"/>
-  </SqlMethod>
 </SqlClass>
 

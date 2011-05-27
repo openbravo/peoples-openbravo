@@ -64,19 +64,4 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
   </SqlMethod>
-  <SqlMethod name="inprocess" type="preparedStatement" return="String" default="">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        <![CDATA[
-          SELECT sum((wrp.QUANTITY - wrp.DONEQUANTITY) * wrpp.MOVEMENTQTY) AS cantidad
-          FROM MA_WRPhaseProduct wrpp, MA_WRPhase wrp 
-          WHERE wrpp.MA_WRPHASE_ID = wrp.MA_WRPHASE_ID
-          AND wrpp.PRODUCTIONTYPE = '+'
-          AND wrp.MA_WORKREQUIREMENT_ID IN ( ? )
-          AND wrpp.M_PRODUCT_ID IN ( ? )
-          AND wrp.CLOSED = 'N'
-        ]]></Sql>
-        <Parameter name="wrid"/>
-        <Parameter name="wrppproduct"/>
-  </SqlMethod>
 </SqlClass>

@@ -19,14 +19,6 @@
 -->
 
 <SqlClass name="ProcessData" package="org.openbravo.scheduling">
-   <SqlMethod name="select" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-      	SELECT AD_Process_ID as Id, Name, AccessLevel, IsUserStartable, ProcedureName, IsReport, IsDirectPrint, 
-      	ClassName, IsBackground, IsJasper, JRName, Service_Type, IsExternalService, Service_Source
-      	FROM AD_Process
-    ]]></Sql>
-   </SqlMethod>
    <SqlMethod name="select" type="preparedStatement" return="single">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[

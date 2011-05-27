@@ -34,16 +34,4 @@
         <Parameter name="cDebtPaymentId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DEBT_PAYMENT_ID IN ]]></Parameter>
    </SqlMethod>
 
-   <SqlMethod name="selectDescription" type="preparedStatement" return="string">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-      <![CDATA[
-          SELECT C_DEBT_PAYMENT.DESCRIPTION
-          FROM C_DEBT_PAYMENT
-          WHERE C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID = ?
-        ]]>
-        </Sql>
-        <Parameter name="cDebtPaymentId"/>
-   </SqlMethod>
-   
 </SqlClass>
