@@ -1384,9 +1384,10 @@ public class FormInitializationComponent extends BaseActionHandler {
         if (rs.next()) {
           fvalue = rs.getString(1);
         }
-      } else if (code.contains("@")) {
+      } else if (code.startsWith("@")) {
+        String codeWithoutAt = code.substring(1, code.length() - 1);
         fvalue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-            .getVariablesSecureApp(), code, windowId);
+            .getVariablesSecureApp(), codeWithoutAt, windowId);
       } else {
         fvalue = code;
       }
