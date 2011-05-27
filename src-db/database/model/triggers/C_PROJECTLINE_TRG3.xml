@@ -56,7 +56,11 @@ BEGIN
  IF(UPDATING OR DELETING) THEN
  v_oldLine_PlannedQty:= COALESCE(:old.PlannedQty,0);
  v_oldLine_PlannedAmt:=COALESCE(:old.PlannedAmt,0);
- v_oldLine_PlannedMarginAmt:=COALESCE((COALESCE(:old.PLANNEDPRICE,0)-COALESCE(:old.PLANNEDPOPRICE,0))*100/COALESCE(:old.PLANNEDPRICE,1),0);
+ IF (:old.PLANNEDPRICE = 0) THEN
+   v_oldLine_PlannedMarginAmt := 0;
+ ELSE
+   v_oldLine_PlannedMarginAmt:=COALESCE((COALESCE(:old.PLANNEDPRICE,0)-COALESCE(:old.PLANNEDPOPRICE,0))*100/COALESCE(:old.PLANNEDPRICE,1),0);
+ END IF;
  v_oldLine_CommittedAmt :=COALESCE(:old.CommittedAmt,0);
  v_oldLine_CommittedQty :=COALESCE(:old.CommittedQty,0);
  v_oldLine_InvoicedAmt :=COALESCE(:old.InvoicedAmt,0);
@@ -66,7 +70,11 @@ BEGIN
  IF (INSERTING OR UPDATING) THEN
  v_newLine_PlannedQty := COALESCE(:new.PlannedQty,0);
   v_newLine_PlannedAmt:=COALESCE(:new.PlannedAmt,0);
-  v_newLine_PlannedMarginAmt:=COALESCE((COALESCE(:new.PLANNEDPRICE,0)-COALESCE(:new.PLANNEDPOPRICE,0))*100/COALESCE(:new.PLANNEDPRICE,1),0);
+  IF (:new.PLANNEDPRICE = 0) THEN
+    v_newLine_PlannedMarginAmt := 0;
+  ELSE
+    v_newLine_PlannedMarginAmt:=COALESCE((COALESCE(:new.PLANNEDPRICE,0)-COALESCE(:new.PLANNEDPOPRICE,0))*100/COALESCE(:new.PLANNEDPRICE,1),0);
+  END IF;
   v_newLine_CommittedAmt :=COALESCE(:new.CommittedAmt,0);
   v_newLine_CommittedQty :=COALESCE(:new.CommittedQty,0);
   v_newLine_InvoicedAmt :=COALESCE(:new.InvoicedAmt,0);

@@ -69,6 +69,9 @@ BEGIN
     IF(v_PlannedMargin <> 0) THEN
       :new.PlannedMarginAmt:=:new.PlannedAmt * v_PlannedMargin;
     END IF;
+  ELSIF (:new.PlannedPrice = 0) THEN
+    :new.PlannedPOPrice := 0;
+    :new.PlannedMarginAmt := 0;
   END IF;
 END C_PROJECTLINE_TRG
 ]]></body>
