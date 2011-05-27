@@ -101,19 +101,6 @@ public class DebtPayment extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  private void printPageFS(HttpServletResponse response, VariablesSecureApp vars)
-      throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: DebtPayments seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/DebtPayment_FS").createXmlDocument();
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
   private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())

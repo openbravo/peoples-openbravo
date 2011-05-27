@@ -128,16 +128,6 @@ public class AccountElementValue extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  private void printPageSave(HttpServletResponse response, VariablesSecureApp vars,
-      AccountElementValueData data) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: Saved");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(data.name);
-    out.close();
-  }
-
   private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
       AccountElementValueData[] data) throws IOException, ServletException {
     if (log4j.isDebugEnabled())

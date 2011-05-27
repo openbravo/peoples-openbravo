@@ -20,7 +20,6 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -125,27 +124,6 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
     } else {
       printPagePreferences(response, vars);
     }
-  }
-
-  private boolean existsWindow(Vector<Object> windows, String windowId) {
-    if (windows.size() == 0)
-      return false;
-    for (int i = 0; i < windows.size(); i++) {
-      String aux = (String) windows.elementAt(i);
-      if (aux.equals(windowId))
-        return true;
-    }
-    return false;
-  }
-
-  private String windowName(ShowSessionPreferencesData[] windows, String windowId) {
-    if (windows == null || windowId == null || windowId.equals(""))
-      return "";
-    for (int i = 0; i < windows.length; i++) {
-      if (windows[i].id.equals(windowId))
-        return windows[i].name;
-    }
-    return "";
   }
 
   private void printPagePreferences(HttpServletResponse response, VariablesSecureApp vars)

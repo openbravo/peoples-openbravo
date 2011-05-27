@@ -19,7 +19,6 @@
 package org.openbravo.erpCommon.utility;
 
 import java.util.Properties;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
@@ -35,7 +34,6 @@ public class KeyMap {
   private ConnectionProvider conn;
   private String TabID = "";
   private Properties myData = new Properties();
-  private Vector<Properties> structure = new Vector<Properties>();
 
   /**
    * Constructor
@@ -103,29 +101,6 @@ public class KeyMap {
       return "";
     else
       return aux;
-  }
-
-  /**
-   * Adds new structure of additional information for this tab.
-   * 
-   * @param _prop
-   *          Properties with all the additional info for this tab.
-   */
-  private void addStructure(Properties _prop) {
-    if (_prop == null)
-      return;
-    if (this.structure == null)
-      this.structure = new Vector<Properties>();
-    this.structure.addElement(_prop);
-  }
-
-  /**
-   * Gets the additional information for this tab.
-   * 
-   * @return Vector with the additional information.
-   */
-  private Vector<Properties> getStructure() {
-    return this.structure;
   }
 
   /**

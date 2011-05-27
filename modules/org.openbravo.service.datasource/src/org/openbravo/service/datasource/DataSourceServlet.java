@@ -696,13 +696,6 @@ public class DataSourceServlet extends BaseKernelServlet {
     w.close();
   }
 
-  private void writeResultCSV(HttpServletRequest request, HttpServletResponse response,
-      Map<String, String> parameters, String result) throws IOException, JSONException {
-
-    StringBuffer csv = new StringBuffer();
-
-  }
-
   private String getRequestContent(HttpServletRequest request) throws IOException {
     final BufferedReader reader = request.getReader();
     if (reader == null) {

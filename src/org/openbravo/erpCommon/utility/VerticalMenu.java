@@ -197,25 +197,6 @@ public class VerticalMenu extends HttpSecureAppServlet {
     out.close();
   }
 
-  private String tipoVentana(String tipo) {
-    if (tipo.equals("W"))
-      return "Windows";
-    else if (tipo.equals("X"))
-      return "Forms";
-    else if (tipo.equals("P"))
-      return "Processes";
-    else if (tipo.equals("R"))
-      return "Reports";
-    else if (tipo.equals("B"))
-      return "WorkBench";
-    else if (tipo.equals("L"))
-      return "ExternalLink";
-    else if (tipo.equals("I"))
-      return "InternalLink";
-    else
-      return "";
-  }
-
   private String tipoVentanaNico(String tipo) {
     if (tipo.equals("W"))
       return "window";

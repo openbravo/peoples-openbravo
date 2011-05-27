@@ -127,11 +127,6 @@ public class OrgTree implements Serializable {
    * @param strRole
    * @return the created {@link OrgTree}
    */
-  private OrgTree getAccessibleTree(ConnectionProvider conn, String strRole, boolean withZero) {
-    // TODO: this method with boolean should be removed.
-    return getAccessibleTree(conn, strRole);
-  }
-
   public OrgTree getAccessibleTree(ConnectionProvider conn, String strRole) {
     try {
       OrgTreeData[] data = OrgTreeData.select(conn, strRole);
@@ -143,23 +138,6 @@ public class OrgTree implements Serializable {
     } catch (Exception e) {
       return new OrgTree();
     }
-  }
-
-  /**
-   * Obtains a tree with all the nodes that can be referenced from the original one.
-   * 
-   * @param tree
-   *          tree contains all the nodes to reference from
-   * @return new tree with referenceable nodes.
-   */
-  private OrgTree getReferenceableTree(OrgTree tree) {
-    Iterator<OrgTreeNode> iterator = tree.iterator();
-    OrgTree refeTree = new OrgTree();
-    while (iterator.hasNext()) {
-      OrgTreeNode o = iterator.next();
-      refeTree.addTree(this.getLogicPath(o.getId()));
-    }
-    return refeTree;
   }
 
   /**
@@ -215,44 +193,6 @@ public class OrgTree implements Serializable {
 
   private Iterator<OrgTreeNode> iterator() {
     return nodes.iterator();
-  }
-
-  private static String getAllOrgsString(ConnectionProvider conn, String name) {
-    try {
-      OrgTreeData[] dataClients = OrgTreeData.selectAllClients(conn);
-      String retVal = "";
-      if (dataClients == null)
-        return "";
-      retVal += "var " + name + "=new Array(";
-      for (int i = 0; i < dataClients.length; i++) {
-        OrgTree t = new OrgTree(conn, dataClients[i].adClientId);
-        OrgTreeData[] dataRole = OrgTreeData.selectRoles(conn, dataClients[i].adClientId);
-        if (dataRole != null) {
-          for (int j = 0; j < dataRole.length; j++) {
-            OrgTree tRole = t.getAccessibleTree(conn, dataRole[j].adRoleId, dataRole[j].userlevel
-                .contains("S"));
-            Iterator<OrgTreeNode> iterator = tRole.iterator();
-            while (iterator.hasNext()) {
-              OrgTreeNode n = iterator.next();
-              retVal += "new Array(\""
-                  + dataRole[j].adRoleId
-                  + "\", \""
-                  + n.getId()
-                  + "\", \""
-                  + n.getValue()
-                  + "\")"
-                  + ((!iterator.hasNext() && (j == dataRole.length - 1) && (i == dataClients.length - 1)) ? "\n"
-                      : ",\n");
-            }
-          }
-        }
-      }
-      retVal += ");";
-
-      return retVal;
-    } catch (Exception e) {
-      return "";
-    }
   }
 
   /**
