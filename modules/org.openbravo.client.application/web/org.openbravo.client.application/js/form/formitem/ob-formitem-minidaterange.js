@@ -132,24 +132,24 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
   },
   
   expandSingleValue: function(){
-    var newValue = this.parseValue(), oldValue = this.getValue(), dateValue, editRow;
+    var newValue = this.parseValue(), oldValue = this.mapValueToDisplay(), dateValue, editRow;
     
     if (!this.singleDateMode) {
       return;
     }
     
-    if (this.singleDateMode && oldValue !== newValue) {
+    if (this.singleDateMode) {
       dateValue = OB.Utilities.Date.OBToJS(newValue, this.dateFormat);
       if (isc.isA.Date(dateValue)) {
         this.singleDateValue = dateValue;
         this.singleDateDisplayValue = newValue;
         this.singleDateMode = true;
         this.setElementValue(newValue, newValue);
-        return true;
       } else {
         this.singleDateValue = null;
         this.singleDateMode = false;
       }
+      return true;
     }
     return false;
   },
@@ -190,7 +190,7 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
   },
 
   getCriterion: function() {
-    if (this.singleDateMode) {
+    if (this.singleDateValue) {
       return {
         fieldName: this.name,
         operator: 'equals', 
@@ -212,6 +212,10 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
        : false;
   },
 
+  itemHoverHTML: function(item, form) {
+    return this.mapValueToDisplay();
+  },
+  
   updateStoredDates: function() {
     var value = this.rangeItemValue, i;
     
@@ -320,16 +324,19 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
     if (keyName === 'Enter') {
       if (this.singleDateMode) {
         this.expandSingleValue();
-        return this.Super('keyPress', arguments);
+        this.form.grid.performAction();
+        return false;
       }
       this.showRangeDialog();
       return false;
-    } else {
+    } else if (characterValue || keyName === 'Backspace' || keyName === 'Delete') {
+      // only do this if something got really typed in
       this.fromDate = null;
       this.toDate = null;
       
       // typing, change to single date mode
       this.singleDateMode = true;
+      this.singleDateValue = null;
       this.rangeItemValue = null;
       // typing a new value
       this.singleDateDisplayValue = null;
