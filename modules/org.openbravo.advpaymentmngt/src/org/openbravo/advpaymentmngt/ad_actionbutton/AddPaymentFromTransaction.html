@@ -46,8 +46,6 @@
 <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/dojotoolkit/dojo/dojo.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/org.openbravo.advpaymentmngt/FIN_Utilities.js" type="text/javascript"></script>
 
 <script language="JavaScript" type="text/javascript">
@@ -751,7 +749,7 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="dojoValidateValid required TextBox_btn_OneCell_width" type="text" name="inpPaymentDate" id="paramPaymentDate" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramPaymentDate");</script>
+                      <input type="text" id="paramPaymentDate" class="dojoValidateValid required TextBox_btn_OneCell_width" value="" maxlength="10" name="inpPaymentDate" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" displayFormat="xx" saveFormat="yy"></input>
                     </td>
                     <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpPaymentDate', document.frmMain.inpPaymentDate.value, false);return false;">
@@ -832,7 +830,6 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
                       <table style="border: 0px none; border-collapse: collapse;">
                         <tr><td style="padding-top: 0px;">
                           <input type="text" id="paramDueDateTo" class="dojoValidateValid TextBox_btn_OneCell_width" value="" maxlength="10" name="inpDueDateTo" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id); validateDate(this);return true;" displayFormat="xx" saveFormat="xx"></input>
-                          <!--input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDueDateTo" id="paramDueDateTo" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;" onblur="loadGridList();return true;"></input><script>djConfig.searchIds.push("paramDueDateTo");</script-->
                         </td></tr>
                       </table>
                       <span id="paramDueDateToinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
