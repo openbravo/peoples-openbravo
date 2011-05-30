@@ -116,9 +116,9 @@
             this.list[position].keyComb.ctrl = keyComb.ctrl;
             if (keyComb.ctrl === true) {
               if (this.list[position].keyComb.text.length > 0) {
-                this.list[position].keyComb.text += "+";
+                this.list[position].keyComb.text += '+';
               }
-              this.list[position].keyComb.text += "Ctrl";
+              this.list[position].keyComb.text += 'Ctrl';
             }
           }
           if (typeof keyComb.alt === 'undefined') {
@@ -127,9 +127,9 @@
             this.list[position].keyComb.alt = keyComb.alt;
             if (keyComb.alt === true) {
               if (this.list[position].keyComb.text.length > 0) {
-                this.list[position].keyComb.text += "+";
+                this.list[position].keyComb.text += '+';
               }
-              this.list[position].keyComb.text += "Alt";
+              this.list[position].keyComb.text += 'Alt';
             }
           }
           if (typeof keyComb.shift === 'undefined') {
@@ -138,9 +138,9 @@
             this.list[position].keyComb.shift = keyComb.shift;
             if (keyComb.shift === true) {
               if (this.list[position].keyComb.text.length > 0) {
-                this.list[position].keyComb.text += "+";
+                this.list[position].keyComb.text += '+';
               }
-              this.list[position].keyComb.text += "Shift";
+              this.list[position].keyComb.text += 'Shift';
             }
           }
           if (typeof keyComb.key === 'undefined') {
@@ -149,7 +149,7 @@
             this.list[position].keyComb.key = keyComb.key;
             if (keyComb.key) {
               if (this.list[position].keyComb.text.length > 0) {
-                this.list[position].keyComb.text += "+";
+                this.list[position].keyComb.text += '+';
               }
               this.list[position].keyComb.text += keyComb.key;
             }
