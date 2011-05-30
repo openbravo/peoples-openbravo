@@ -1088,6 +1088,7 @@ isc.OBViewGrid.addProperties({
     if (singleSelected && this.canEdit && this.isWritable(record) && !this.view.readOnly) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_EditInGrid'),
+        keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','Grid_EditInGrid','id'),
         click: function(){
           grid.endEditing();
           if (colNum || colNum === 0) {
@@ -1107,6 +1108,7 @@ isc.OBViewGrid.addProperties({
 
     menuItems.add({
       title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
+      keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','ToolBar_NewRow','id'),
       click: function(){
         grid.startEditingNew(rowNum);
       }
@@ -1158,6 +1160,7 @@ isc.OBViewGrid.addProperties({
     if (recordsSelected && !this.view.readOnly && this.allSelectedRecordsWritable()) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_Delete'),
+        keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','ToolBar_Eliminate','id'),
         click: function(){
           grid.view.deleteSelectedRows();
         }
