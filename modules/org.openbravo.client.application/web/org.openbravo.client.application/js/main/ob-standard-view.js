@@ -642,7 +642,7 @@ isc.OBStandardView.addProperties({
           method: this.setAsActiveView,
           parameters: [true]
         };
-      this.standardWindow.doActionAfterAutoSave(actionObject, true);
+      this.standardWindow.doActionAfterAutoSave(actionObject, false);
       return;
     }
     this.standardWindow.setActiveView(this);
@@ -1210,7 +1210,7 @@ isc.OBStandardView.addProperties({
           method: this.refresh,
           parameters: [refreshCallback, true]
         };
-      this.standardWindow.doActionAfterAutoSave(actionObject, true);
+      this.standardWindow.doActionAfterAutoSave(actionObject, false);
       return;
     }
     
@@ -1330,7 +1330,7 @@ isc.OBStandardView.addProperties({
             method: this.deleteSelectedRows,
             parameters: [true]
           };
-        this.standardWindow.doActionAfterAutoSave(actionObject, true);
+        this.standardWindow.doActionAfterAutoSave(actionObject, false);
         return;
       }
     
@@ -1417,7 +1417,7 @@ isc.OBStandardView.addProperties({
         method: this.editNewRecordGrid,
         parameters: [rowNum]
       };
-    this.standardWindow.doActionAfterAutoSave(actionObject, true);
+    this.standardWindow.doActionAfterAutoSave(actionObject, false);
   },
   
   newDocument: function(){
@@ -1426,7 +1426,7 @@ isc.OBStandardView.addProperties({
       method: this.editRecord,
       parameters: null
     };
-    this.standardWindow.doActionAfterAutoSave(actionObject, true);
+    this.standardWindow.doActionAfterAutoSave(actionObject, false);
   },
   
   undo: function(){

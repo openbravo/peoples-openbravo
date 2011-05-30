@@ -133,7 +133,7 @@ isc.OBStandardWindow.addProperties({
   },
 
   autoSave: function() {
-    this.doActionAfterAutoSave(null, true);
+    this.doActionAfterAutoSave(null, false);
   },
 
   doActionAfterAutoSave: function(action, forceDialogOnFailure, ignoreAutoSaveEnabled) {
@@ -258,7 +258,7 @@ isc.OBStandardWindow.addProperties({
       method: tabSet.doCloseClick,
       parameters: [tab]
     };
-    this.doActionAfterAutoSave(actionObject, true);
+    this.doActionAfterAutoSave(actionObject, false);
   },
   
   setActiveView: function(view){

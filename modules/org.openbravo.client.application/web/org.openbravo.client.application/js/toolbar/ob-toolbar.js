@@ -64,7 +64,7 @@ isc.OBToolbar.addClassProperties({
         method: this.saveAndClose,
         parameters: []
       };
-      this.view.standardWindow.doActionAfterAutoSave(actionObject, true, true);      
+      this.view.standardWindow.doActionAfterAutoSave(actionObject, false, true);
     },
     
     saveAndClose: function() {

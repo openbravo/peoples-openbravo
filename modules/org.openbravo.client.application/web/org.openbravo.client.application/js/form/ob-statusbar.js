@@ -70,7 +70,7 @@ isc.OBStatusBarIconButton.addProperties( {
       method : this.doAction,
       parameters : []
     };
-    this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
+    this.view.standardWindow.doActionAfterAutoSave(actionObject, false);
   },
 
   doAction : function() {
