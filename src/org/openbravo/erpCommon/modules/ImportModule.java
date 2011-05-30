@@ -1287,7 +1287,8 @@ public class ImportModule {
         } else {
           org.openbravo.model.ad.module.Module template = OBDal.getInstance().get(
               org.openbravo.model.ad.module.Module.class, moduleId);
-          applyConfigScript = template.isApplyConfigurationScript() ? "Y" : "N";
+          applyConfigScript = template == null ? "Y" : template.isApplyConfigurationScript() ? "Y"
+              : "N";
         }
       }
 
