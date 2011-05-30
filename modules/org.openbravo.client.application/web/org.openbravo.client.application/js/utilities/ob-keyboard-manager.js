@@ -114,37 +114,45 @@
             this.list[position].keyComb.ctrl = false;
           } else {
             this.list[position].keyComb.ctrl = keyComb.ctrl;
-            if (this.list[position].keyComb.text.length > 0) {
-              this.list[position].keyComb.text += "+";
+            if (keyComb.ctrl === true) {
+              if (this.list[position].keyComb.text.length > 0) {
+                this.list[position].keyComb.text += "+";
+              }
+              this.list[position].keyComb.text += "Ctrl";
             }
-            this.list[position].keyComb.text += "Ctrl";
           }
           if (typeof keyComb.alt === 'undefined') {
             this.list[position].keyComb.alt = false;
           } else {
             this.list[position].keyComb.alt = keyComb.alt;
-            if (this.list[position].keyComb.text.length > 0) {
-              this.list[position].keyComb.text += "+";
+            if (keyComb.alt === true) {
+              if (this.list[position].keyComb.text.length > 0) {
+                this.list[position].keyComb.text += "+";
+              }
+              this.list[position].keyComb.text += "Alt";
             }
-            this.list[position].keyComb.text += "Alt";
           }
           if (typeof keyComb.shift === 'undefined') {
             this.list[position].keyComb.shift = false;
           } else {
             this.list[position].keyComb.shift = keyComb.shift;
-            if (this.list[position].keyComb.text.length > 0) {
-              this.list[position].keyComb.text += "+";
+            if (keyComb.shift === true) {
+              if (this.list[position].keyComb.text.length > 0) {
+                this.list[position].keyComb.text += "+";
+              }
+              this.list[position].keyComb.text += "Shift";
             }
-            this.list[position].keyComb.text += "Shift";
           }
           if (typeof keyComb.key === 'undefined') {
             this.list[position].keyComb.key = null;
           } else {
             this.list[position].keyComb.key = keyComb.key;
-            if (this.list[position].keyComb.text.length > 0) {
-              this.list[position].keyComb.text += "+";
+            if (keyComb.key) {
+              if (this.list[position].keyComb.text.length > 0) {
+                this.list[position].keyComb.text += "+";
+              }
+              this.list[position].keyComb.text += keyComb.key;
             }
-            this.list[position].keyComb.text += keyComb.key;
           }
         }
       },
