@@ -617,7 +617,7 @@ isc.OBSelectorLinkItem.addProperties({
   },
   
   keyPress: function(item, form, keyName, characterValue){
-    if (keyName === 'Enter') {
+    if (keyName === 'Enter' && !isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown()) {
       this.showPicker();
       return false;
     }
