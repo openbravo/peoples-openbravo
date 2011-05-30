@@ -32,8 +32,10 @@
     <FIELD id="fieldRecordBPid" attribute="name" replace="xx">finScheduledPaymentDetailId</FIELD>
     <FIELD id="fieldOrderNr">orderNr</FIELD>
     <FIELD id="fieldInvoiceNr">invoiceNr</FIELD>
-    <FIELD id="fieldPaymentMethod">paymentMethodName</FIELD>
-    <FIELD id="fieldBusinessPartner">businessPartnerName</FIELD>
+    <FIELD id="fieldPaymentMethod">paymentMethodNameTrunc</FIELD>
+    <FIELD id="fieldPaymentMethod" attribute="title">paymentMethodName</FIELD>
+    <FIELD id="fieldBusinessPartner">businessPartnerNameTrunc</FIELD>
+    <FIELD id="fieldBusinessPartner" attribute="title">businessPartnerName</FIELD>
     <FIELD id="fieldTransactionDate">transactionDate</FIELD>
     <FIELD id="fieldDueDate">dueDate</FIELD>
     <FIELD id="fieldInvoicedAmount" format="euroEdition">invoicedAmount</FIELD>
