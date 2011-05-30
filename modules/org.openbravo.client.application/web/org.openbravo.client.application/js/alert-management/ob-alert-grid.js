@@ -228,16 +228,7 @@ isc.OBAlertGrid.addProperties({
     this.handleRecordSelection(viewer, record, recordNum, field, fieldNum, value, rawValue, false, true);
   },
   
-//  recordDoubleClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
-//    var actionObject = {
-//      target: this.view,
-//      method: this.view.editRecord,
-//      parameters: [record, false, (field ? field.name : null)]
-//    };
-//    this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
-//  },
-
-  
+ 
   // +++++++++++++++++++++++++++++ Record Selection Handling +++++++++++++++++++++++
   // Functions based on the ob-view-grid.js Record Selection Handling.
   deselectAllRecords: function(preventUpdateSelectInfo, autoSaveDone){
