@@ -28,10 +28,6 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_TAB" columnname="SEQNO" pkRow="210">
-      <oldValue><![CDATA[100]]></oldValue>
-      <newValue><![CDATA[70]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_TAB" columnname="ISACTIVE" pkRow="317">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -67,10 +63,6 @@
     <columnDataChange tablename="AD_TAB" columnname="ISACTIVE" pkRow="800036">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TAB" columnname="SEQNO" pkRow="800057">
-      <oldValue><![CDATA[70]]></oldValue>
-      <newValue><![CDATA[100]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_TAB" columnname="ISACTIVE" pkRow="800074">
       <oldValue><![CDATA[Y]]></oldValue>
