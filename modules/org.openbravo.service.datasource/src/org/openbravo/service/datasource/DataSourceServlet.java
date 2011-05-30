@@ -321,7 +321,7 @@ public class DataSourceServlet extends BaseKernelServlet {
             }
             final String hqltrl = "select al.searchKey, trl.name from ADList al, ADListTrl trl where "
                 + " al.reference.id=? and trl.listReference=al and trl.language.id=?"
-                + " and al.active=true and trl.active=true and trl.translation=true";
+                + " and al.active=true and trl.active=true";
             final Query qrytrl = OBDal.getInstance().getSession().createQuery(hqltrl);
             qrytrl.setString(0, referenceId);
             qrytrl.setString(1, userLanguageId);

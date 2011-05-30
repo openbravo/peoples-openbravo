@@ -178,12 +178,7 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'refresh',
     prompt: OB.I18N.getLabel('OBUIAPP_RefreshData'),
     updateState: function(){
-      var view = this.view, form = view.viewForm;
-      if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || form.isNew || !view.hasValidState());
-      } else {
-        this.setDisabled(!view.hasValidState());
-      }
+      this.setDisabled(!this.view.hasNotChanged());
     },
     keyboardShortcutId: 'ToolBar_Refresh'
   },
@@ -194,27 +189,8 @@ isc.OBToolbar.addClassProperties({
     disabled: true,
     buttonType: 'undo',
     prompt: OB.I18N.getLabel('OBUIAPP_CancelEdit'),
-    updateState: function(){
-      var view = this.view, form = view.viewForm, grid = view.viewGrid, hasErrors = false, editRow, i;
-      if (view.isShowingForm) {
-        this.setDisabled(form.isSaving || form.readOnly || !view.hasValidState() ||
-        !form.hasChanged);
-      } else if (view.isEditingGrid) {
-        editRow = view.viewGrid.getEditRow();
-        hasErrors = view.viewGrid.rowHasErrors(editRow);
-        form = grid.getEditForm();
-        this.setDisabled(!form.isNew && !hasErrors &&
-        (form.isSaving || form.readOnly ||
-        !view.hasValidState() ||
-        !form.hasChanged));
-      } else {
-        var selectedRecords = grid.getSelectedRecords(), allRowsHaveErrors = true;
-        for (i = 0; i < selectedRecords.length; i++) {
-          var rowNum = grid.getRecordIndex(selectedRecords[i]);
-          allRowsHaveErrors = allRowsHaveErrors && grid.rowHasErrors(rowNum);
-        }
-        this.setDisabled(selectedRecords.length === 0 || !allRowsHaveErrors);
-      }
+    updateState: function() {
+      this.setDisabled(this.view.hasNotChanged());
     },
     keyboardShortcutId: 'ToolBar_Undo'
   },
@@ -551,8 +527,7 @@ isc.OBToolbar.addProperties({
     
     this.Super('addMembers', [newMembers]);
   },
- 
-  
+
   addMems: function(m) {
       this.Super('addMembers', m );
    },

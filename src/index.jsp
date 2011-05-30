@@ -3,6 +3,7 @@
 <%@ page import="org.openbravo.base.util.OBClassLoader" %>
 <%@ page import="org.openbravo.base.session.OBPropertiesProvider" %>
 <%@ page import="org.openbravo.authentication.AuthenticationManager" %>
+<%@ page import="org.apache.log4j.Logger" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%
 /*
@@ -23,7 +24,8 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
- 
+
+Logger log = Logger.getLogger(org.openbravo.authentication.AuthenticationManager.class); 
 Properties obProperties = OBPropertiesProvider.getInstance().getOpenbravoProperties();
 String authClass = obProperties.getProperty("authentication.class");
 
@@ -31,7 +33,13 @@ if(authClass == null || authClass.equals("")) {
   authClass = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
 }
 
-AuthenticationManager authManager = (AuthenticationManager) OBClassLoader.getInstance().loadClass(authClass).newInstance();
+AuthenticationManager authManager = null;
+try {
+  authManager = (AuthenticationManager) OBClassLoader.getInstance().loadClass(authClass).newInstance();
+} catch (ClassNotFoundException cnfe) {
+  log.error("Defined authentication manager cannot be loaded. Verify the 'authentication.class' entry in Openbravo.properties");
+  authManager = new org.openbravo.authentication.basic.DefaultAuthenticationManager();
+}
 
 HttpBaseServlet s = new HttpBaseServlet(); // required for ConnectionProvider
 s.init(getServletConfig());

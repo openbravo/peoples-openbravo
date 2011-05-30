@@ -65,7 +65,7 @@ public class DateUIDefinition extends UIDefinition {
 
   @Override
   public String getFilterEditorProperties(Field field) {
-    return ", filterOnKeypress: true" + super.getFilterEditorProperties(field);
+    return ", filterOnKeypress: false" + super.getFilterEditorProperties(field);
   }
 
   @Override

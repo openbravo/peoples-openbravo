@@ -129,9 +129,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   public void init(ServletConfig config) {
     super.init(config);
 
-    // Authentication manager load
-    // String sAuthManagerClass =
-    // config.getServletContext().getInitParameter("AuthenticationManager");
     String sAuthManagerClass = globalParameters.getOBProperty("authentication.class");
     if (sAuthManagerClass == null || sAuthManagerClass.equals("")) {
       // If not defined, load default
@@ -141,7 +138,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     try {
       m_AuthManager = (AuthenticationManager) Class.forName(sAuthManagerClass).newInstance();
     } catch (final Exception e) {
-      log4j.error("Authentication manager not defined", e);
+      log4j
+          .error("Defined authentication manager cannot be loaded. Verify the 'authentication.class' entry in Openbravo.properties");
       m_AuthManager = new DefaultAuthenticationManager();
     }
 

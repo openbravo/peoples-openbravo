@@ -22,7 +22,8 @@
 // adds autocomplete and formatting based on the Openbravo date pattern
 isc.ClassFactory.defineClass('OBDateItem', isc.DateItem);
 
-isc.OBDateItem.addProperties({
+// done like this because the props are re-used in the minidaterange
+OB.DateItemProperties = {
   operator: 'equals',
   // ** {{{ pickerConstructor }}} **
   // Picker constructor class
@@ -52,7 +53,7 @@ isc.OBDateItem.addProperties({
 
   dateParts : [],
 
-  init: function() {
+  doInit: function() {
     var i, dateFormatUpper, index = 0, currentTime;
     dateFormatUpper = this.dateFormat.toUpperCase();
     this.dateSeparator = this.dateFormat.toUpperCase().replace(/D/g, '')
@@ -93,29 +94,9 @@ isc.OBDateItem.addProperties({
       return true;
     }
   },
-  
-  // ** {{{ blur }}} **
-  // Called when the focus leaves the field (sets value and validates)
-  blur: function(){
-    var newValue = this.blurValue(), oldValue = this.getValue(), editRow;
-    
-    if (oldValue !== newValue) {
-      this.storeValue(OB.Utilities.Date.OBToJS(newValue, this.dateFormat));
-    }
-    if (!this.inBlur) {
-      this.inBlur = true;
-      this.checkOBDateItemValue();
-      this.inBlur = false;
-    }
-    return this.Super('blur', arguments);
-  },
-  
-  blurValue: function() {
-    return this.parseValue();
-  },
 
   parseValue: function() {
-    var i, str = this.getValue(), parts = [ '', '', '' ], partIndex = 0, result;
+    var i, str = this.blurValue(), parts = [ '', '', '' ], partIndex = 0, result;
     if (!str || isc.isA.Date(str)) {
       return str;
     }
@@ -190,6 +171,35 @@ isc.OBDateItem.addProperties({
   isSeparator : function(str, position) {
     return str.charAt(position) === '-' || str.charAt(position) === '\\'
         || str.charAt(position) === '/';
+  } 
+};
+
+isc.OBDateItem.addProperties(OB.DateItemProperties,
+  {
+  
+  init: function() {
+    // this call super.init
+    this.doInit();
+  },
+  
+  // ** {{{ blur }}} **
+  // Called when the focus leaves the field (sets value and validates)
+  blur: function(){
+    var newValue = this.parseValue(), oldValue = this.getValue(), editRow;
+    
+    if (oldValue !== newValue) {
+      this.storeValue(OB.Utilities.Date.OBToJS(newValue, this.dateFormat));
+    }
+    if (!this.inBlur) {
+      this.inBlur = true;
+      this.checkOBDateItemValue();
+      this.inBlur = false;
+    }
+    return this.Super('blur', arguments);
+  },
+  
+  blurValue: function() {
+    return this.getValue();
   },
 
   // ** {{{ checkOBDateItemValue }}} **
@@ -214,30 +224,30 @@ isc.OBDateItem.addProperties({
       this.form.markForRedraw();
     }
   },
-  
+
   validateOBDateItem: function(value){
-    var dateValue = OB.Utilities.Date.OBToJS(value, this.dateFormat);
-    var isValid = true;
-    if (this.getValue() && dateValue === null) {
-      isValid = false;
-    }
-    var isRequired = this.required;
-    if (isValid === false) {
-      return false;
-    } else if (isRequired === true && value === null) {
-      return false;
-    }
-    return true;
-  },
-  
-  validators: [{
-    type: 'custom',
-    condition: function(item, validator, value){
-      return item.validateOBDateItem(value);
-    }
-  }]
- 
-});
+      var dateValue = OB.Utilities.Date.OBToJS(value, this.dateFormat);
+      var isValid = true;
+      if (this.getValue() && dateValue === null) {
+        isValid = false;
+      }
+      var isRequired = this.required;
+      if (isValid === false) {
+        return false;
+      } else if (isRequired === true && value === null) {
+        return false;
+      }
+      return true;
+    },
+    
+    validators: [{
+      type: 'custom',
+      condition: function(item, validator, value){
+        return item.validateOBDateItem(value);
+      }
+    }]
+  }    
+);
 
 OB.I18N.getLabel('OBUIAPP_InvalidValue', null, isc.OBDateItem, 'invalidValueLabel');
 OB.I18N.getLabel('OBUISC_Validator.requiredField', null, isc.OBDateItem, 'requiredValueLabel');
