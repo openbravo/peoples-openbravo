@@ -31,6 +31,40 @@ isc.OBGrid.addProperties({
   poolComponentsPerColumn: true,
   showRecordComponents: true,
   escapeHTML: true,
+
+  bodyKeyPress : function (event, eventInfo) {
+    if (event.keyName === 'F' && 
+      (isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && isc.EventHandler.shiftKeyDown())) {
+      var i;
+      for (i=0; i<this.fields.length; i++) {
+        if (this.fields[i].name !== '_checkboxField' && this.fields[i].name !== '_editLink') {
+          this.focusInFilterEditor(this.fields[i].name);
+          return false;
+        }
+      }
+    }
+
+    if (event.keyName === 'Delete' && 
+      (!isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
+      this.clearCriteria();
+      return false;
+    }
+
+    if (event.keyName === 'A' && 
+      (isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
+      this.selectAllRecords();
+      return false;
+    }
+
+    if (event.keyName === 'Escape' && 
+      (!isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
+      if (this.getSelectedRecords().length > 1) {
+        this.deselectAllRecords();
+      }
+      return false;
+    }
+    return this.Super('bodyKeyPress', arguments);
+  },
   
   createRecordComponent: function(record, colNum){
     var field = this.getField(colNum), rowNum = this.getRecordIndex(record);
@@ -81,9 +115,34 @@ isc.OBGrid.addProperties({
       return '';
     };
 
+    setFieldsKeyDown = function(item, form, keyName) {
+      if (isc.EventHandler.getKeyName() === 'Delete' && 
+        (!isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
+        thisGrid.clearCriteria();
+        return false;
+      }
+      if (isc.EventHandler.getKeyName() === 'Escape' && 
+        (!isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
+        thisGrid.focus();
+        return false;
+      }
+      if (isc.EventHandler.getKeyName() === 'Tab' && 
+        (!isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown())) {
+        return false; // To avoid strange double field jump while pressing Tab Key
+      }
+      return this.Super('keyPress', arguments);
+    };
+
     if (this.fields) {
       for (i = 0; i < this.fields.length; i++) {
         field = this.fields[i];
+
+        if (!field.filterEditorProperties) {
+          field.filterEditorProperties = {};
+        }
+
+        field.filterEditorProperties.keyDown = setFieldsKeyDown;
+
         if (field.isLink) {
           // store the originalFormatCellValue if not already set
           if (field.formatCellValue && !field.formatCellValueFunctionReplaced) {

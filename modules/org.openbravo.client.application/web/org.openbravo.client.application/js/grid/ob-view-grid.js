@@ -401,9 +401,10 @@ isc.OBViewGrid.addProperties({
 
   // handle the del key when rows have been selected or space key
   bodyKeyPress : function (event, eventInfo) {
-    if (event.keyName === 'Delete' && this.getSelectedRecords().length > 0) {
+    if (event.keyName === 'Delete' && this.getSelectedRecords().length > 0 && 
+      (!isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
       this.view.deleteSelectedRows();
-      return;      
+      return false;
     }
     // don't let the default space action do something if others keys are also 
     // pressed
@@ -411,6 +412,7 @@ isc.OBViewGrid.addProperties({
       (isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown())) {
       return true;
     }
+
     return this.Super('bodyKeyPress', arguments);
   },
 
