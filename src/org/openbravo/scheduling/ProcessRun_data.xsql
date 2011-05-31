@@ -19,14 +19,11 @@
 -->
 
 <SqlClass name="ProcessRunData" package="org.openbravo.scheduling">
-   <SqlMethod name="select" type="preparedStatement" return="single">
+   <SqlMethod name="dummy" type="preparedStatement" return="single">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      	SELECT AD_Process_Run_ID, Status, Start_Time, End_Time, Runtime	 
-      	FROM AD_Process_Run
-      	WHERE AD_Process_Run_ID = ?
+      	SELECT '' as dummy from dual	 
     ]]></Sql>
-    <Parameter name="id"/>
    </SqlMethod>
    <SqlMethod name="insert" type="preparedStatement" return="rowcount">
       <SqlMethodComment></SqlMethodComment>

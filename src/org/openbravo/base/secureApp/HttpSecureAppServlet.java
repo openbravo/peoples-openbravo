@@ -129,9 +129,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   public void init(ServletConfig config) {
     super.init(config);
 
-    // Authentication manager load
-    // String sAuthManagerClass =
-    // config.getServletContext().getInitParameter("AuthenticationManager");
     String sAuthManagerClass = globalParameters.getOBProperty("authentication.class");
     if (sAuthManagerClass == null || sAuthManagerClass.equals("")) {
       // If not defined, load default
@@ -141,7 +138,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     try {
       m_AuthManager = (AuthenticationManager) Class.forName(sAuthManagerClass).newInstance();
     } catch (final Exception e) {
-      log4j.error("Authentication manager not defined", e);
+      log4j
+          .error("Defined authentication manager cannot be loaded. Verify the 'authentication.class' entry in Openbravo.properties");
       m_AuthManager = new DefaultAuthenticationManager();
     }
 
@@ -646,11 +644,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     vars.setHistoryCommand(strCommand);
   }
 
-  private void advise(HttpServletResponse response, String strTipo, String strTitulo,
-      String strTexto) throws IOException {
-    advise(null, response, strTipo, strTitulo, strTexto);
-  }
-
   protected void advise(HttpServletRequest request, HttpServletResponse response, String strTipo,
       String strTitulo, String strTexto) throws IOException {
 
@@ -715,16 +708,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     advisePopUpRefresh(request, response, "Error", strTitle, strText);
   }
 
-  private void advisePopUpRefresh(HttpServletResponse response, String strTitle, String strText)
-      throws IOException {
-    advisePopUpRefresh(null, response, "Error", strTitle, strText);
-  }
-
-  private void advisePopUpRefresh(HttpServletResponse response, String strType, String strTitle,
-      String strText) throws IOException {
-    advisePopUpRefresh(null, response, strTitle, strText);
-  }
-
   /**
    * Creates a pop up that when closed, will refresh the parent window.
    * 
@@ -760,11 +743,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
-  private void bdError(HttpServletResponse response, String strCode, String strLanguage)
-      throws IOException {
-    bdError(null, response, strCode, strLanguage);
-  }
-
   protected void bdError(HttpServletRequest request, HttpServletResponse response, String strCode,
       String strLanguage) throws IOException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/Error")
@@ -783,11 +761,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
-  }
-
-  private void bdErrorGeneralPopUp(HttpServletResponse response, String strTitle, String strText)
-      throws IOException {
-    bdErrorGeneralPopUp(null, response, strTitle, strText);
   }
 
   protected void bdErrorGeneralPopUp(HttpServletRequest request, HttpServletResponse response,
@@ -809,11 +782,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
-  }
-
-  private void bdErrorGeneral(HttpServletResponse response, String strTitle, String strText)
-      throws IOException {
-    bdErrorGeneral(null, response, strTitle, strText);
   }
 
   private void bdErrorGeneral(HttpServletRequest request, HttpServletResponse response,

@@ -321,7 +321,7 @@ public class DataSourceServlet extends BaseKernelServlet {
             }
             final String hqltrl = "select al.searchKey, trl.name from ADList al, ADListTrl trl where "
                 + " al.reference.id=? and trl.listReference=al and trl.language.id=?"
-                + " and al.active=true and trl.active=true and trl.translation=true";
+                + " and al.active=true and trl.active=true";
             final Query qrytrl = OBDal.getInstance().getSession().createQuery(hqltrl);
             qrytrl.setString(0, referenceId);
             qrytrl.setString(1, userLanguageId);
@@ -694,13 +694,6 @@ public class DataSourceServlet extends BaseKernelServlet {
     final Writer w = response.getWriter();
     w.write(result);
     w.close();
-  }
-
-  private void writeResultCSV(HttpServletRequest request, HttpServletResponse response,
-      Map<String, String> parameters, String result) throws IOException, JSONException {
-
-    StringBuffer csv = new StringBuffer();
-
   }
 
   private String getRequestContent(HttpServletRequest request) throws IOException {

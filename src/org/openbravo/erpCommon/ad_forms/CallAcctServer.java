@@ -70,14 +70,6 @@ public class CallAcctServer extends HttpSecureAppServlet {
       // acctServer.cancelDirectProcess();
       printPage(response, vars, strTableId, strAdOrgId, "");
     } else if (vars.commandIn("REFRESH_INFO")) {
-      // String strMessage = "";
-      // if (!acctServer.getOut().equals("")) {
-      // strMessage = acctServer.getOut();
-      // acctServer.clearLastLog();
-      // } else if (!acctServer.isProcessing()) {
-      // strMessage = "ENDOFPROCESS";
-      // }
-      // printPageAjax(response,vars, strMessage);
     } else if (vars.commandIn("RUN")) {
       String strTableId = vars.getStringParameter("inpadTableId");
       String strAdOrgId = vars.getStringParameter("inpadOrgId");
@@ -203,35 +195,6 @@ public class CallAcctServer extends HttpSecureAppServlet {
       vars.setMessage("CallAcctServer", myMessage);
       printPage(response, vars, strTableId, strOrgId, "");
     }
-  }
-
-  /*
-   * private void runProcess(HttpServletResponse response, VariablesSecureApp vars, String
-   * strTableId, String strOrgId, String adProcessId) throws IOException, ServletException { OBError
-   * myMessage = new OBError(); myMessage.setTitle(""); try { String adPinstanceId =
-   * SequenceIdData.getUUID(); PInstanceProcessData.insertPInstance(this, adPinstanceId,
-   * adProcessId, adOrgId, "N", vars.getUser(), vars.getClient(), vars.getOrg());
-   * PInstanceProcessData.insertPInstanceParam(this, adPinstanceId, "10", "AD_Table_ID", strTableId,
-   * vars.getClient(), vars.getOrg(), vars.getUser());
-   * PInstanceProcessData.insertPInstanceParam(this, adPinstanceId, "20", "AD_Org_ID", strOrgId,
-   * vars.getClient(), vars.getOrg(), vars.getUser()); if (acctServer.directLaunch(vars,
-   * adPinstanceId)) { while(acctServer.isDirectProcess() && !acctServer.isProcessing()){ if
-   * (log4j.isDebugEnabled()) log4j.debug("Waiting for the thread to begin"); }
-   * myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
-   * acctServer.getOut())); myMessage.setType("Info"); } else {
-   * myMessage.setMessage(Utility.messageBD(this, "BP_RUNNING", vars.getLanguage()));
-   * myMessage.setType("Error"); } } catch(Exception e) { log4j.error(e.getMessage()); } finally {
-   * vars.setMessage("CallAcctServer", myMessage); printPage(response,vars, strTableId, strOrgId,
-   * ""); } }
-   */
-
-  private void printPageAjax(HttpServletResponse response, VariablesSecureApp vars,
-      String strMessage) throws IOException, ServletException {
-    response.setContentType("text/plain; charset=UTF-8");
-    response.setHeader("Cache-Control", "no-cache");
-    PrintWriter out = response.getWriter();
-    out.println(strMessage);
-    out.close();
   }
 
   public String getServletInfo() {

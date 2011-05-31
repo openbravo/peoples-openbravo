@@ -44,8 +44,6 @@
 <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/org.openbravo.advpaymentmngt/FIN_Utilities.js" type="text/javascript"></script>
 <script type="text/javascript">
   window.onunload = reloadOpener; // reloads opener on closing
@@ -61,13 +59,13 @@ function showWarning(){
 function validate(action) {
   var frm = document.frmMain;
   if (frm.inpStatementDate.value==null || frm.inpStatementDate.value=="") {
-	setWindowElementFocus(frm.inpStatementDate);
+    setWindowElementFocus(frm.inpStatementDate);
     showJSMessage(7);
     return false;
   } else if (frm.inpEndBalance.value==null || frm.inpEndBalance.value=="") {
-	setWindowElementFocus(frm.inpEndBalance);
-	showJSMessage(7);
-	return false;
+    setWindowElementFocus(frm.inpEndBalance);
+    showJSMessage(7);
+    return false;
   }
   if (action=='PROCESS') {
     var chk = frm.inpTransactionId;
@@ -120,16 +118,16 @@ function hideClearedTransactions(isChecked) {
     return true;
   } else if (chk.length === undefined) {
     if (chk.checked) {
-	  var sel = document.getElementById('funcEvenOddRow'+chk.value);
-	  sel.style.display = (isChecked) ? 'none' : '';
+      var sel = document.getElementById('funcEvenOddRow'+chk.value);
+      sel.style.display = (isChecked) ? 'none' : '';
     }
   } else {
-	var total = chk.length;
-	for (var i=0;i<total;i++) {
-	  if (chk[i].checked) {
-	    var sel = document.getElementById('funcEvenOddRow'+chk[i].value);
-	    sel.style.display = (isChecked) ? 'none' : '';
-	  }
+    var total = chk.length;
+    for (var i=0;i<total;i++) {
+      if (chk[i].checked) {
+        var sel = document.getElementById('funcEvenOddRow'+chk[i].value);
+        sel.style.display = (isChecked) ? 'none' : '';
+      }
     }
   }
   return true;
@@ -183,7 +181,7 @@ function updateWhenAjaxResponse() {
   document.getElementById('paramTxtDifference').innerHTML = frm.inpCalcDifference.value;
   document.getElementById('paramTotalPayAmount').innerHTML = frm.inpCalcTotalPayment.value;
   document.getElementById('paramTotalDepositAmount').innerHTML = frm.inpCalcTotalDeposit.value;
-	  
+      
   return true;
 }
 
@@ -225,9 +223,9 @@ function updateAmounts(transactionId, isChecked) {
     frm.inpCalcTotalPayment.value = add(totalPayment, paymentAmt);
     frm.inpCalcTotalDeposit.value = add(totalDeposit, depositAmt);
   } else {
-	frm.inpCalcCurrentlyCleared.value = subtract(add(currentlyCleared, paymentAmt), depositAmt);
-	frm.inpCalcTotalPayment.value = subtract(totalPayment, paymentAmt);
-	frm.inpCalcTotalDeposit.value = subtract(totalDeposit, depositAmt);
+    frm.inpCalcCurrentlyCleared.value = subtract(add(currentlyCleared, paymentAmt), depositAmt);
+    frm.inpCalcTotalPayment.value = subtract(totalPayment, paymentAmt);
+    frm.inpCalcTotalDeposit.value = subtract(totalDeposit, depositAmt);
   }
   
   document.getElementById('paramTxtCurrentlyCleared').innerHTML = frm.inpCalcCurrentlyCleared.value;
@@ -532,7 +530,6 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
                   <tr>
                     <td class="TextBox_ContentCell">
                       <input type="text" id="paramStatementDate" class="dojoValidateValid TextBox_btn_OneCell_width required" value="" maxlength="10" name="inpStatementDate" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDate(this);return true;" displayFormat="xx" saveFormat="yy"></input>
-                      <!-- <input dojoType="openbravo:DateTextbox" lowerThan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script> -->
                     </td>
                     <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpStatementDate', document.frmMain.inpStatementDate.value, false);return false;">

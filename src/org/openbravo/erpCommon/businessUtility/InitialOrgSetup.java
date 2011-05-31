@@ -329,8 +329,8 @@ public class InitialOrgSetup {
       List<DataSet> lDataSets;
       try {
         ArrayList<String> accessLevel = new ArrayList<String>();
-        accessLevel.add("3");
-        accessLevel.add("6");
+        accessLevel.add("3"); // Client/Org
+        accessLevel.add("1"); // Organization
         lDataSets = InitialSetupUtility.getDataSets(module, accessLevel);
         if (lDataSets == null)
           return logErrorAndRollback("@CreateReferenceDataFailed@",

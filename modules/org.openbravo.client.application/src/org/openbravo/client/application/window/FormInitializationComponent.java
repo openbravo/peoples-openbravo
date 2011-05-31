@@ -297,9 +297,12 @@ public class FormInitializationComponent extends BaseActionHandler {
       try {
         obj.put("name", attachment.getName());
         obj.put("id", attachment.getId());
-        SimpleDateFormat xmlDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        xmlDateTimeFormat.setLenient(true);
-        obj.put("creationDate", attachment.getCreationDate().getTime());
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
+        dateFormat.setLenient(true);
+        String date = dateFormat.format(attachment.getCreationDate());
+        String d1 = date.substring(0, date.length() - 2);
+        String d2 = date.substring(date.length() - 2, date.length());
+        obj.put("creationDate", d1 + ":" + d2);
         obj.put("createdby", attachment.getCreatedBy().getName());
       } catch (JSONException e) {
         log.error("Error while reading attachments", e);
@@ -1381,9 +1384,10 @@ public class FormInitializationComponent extends BaseActionHandler {
         if (rs.next()) {
           fvalue = rs.getString(1);
         }
-      } else if (code.contains("@")) {
+      } else if (code.startsWith("@")) {
+        String codeWithoutAt = code.substring(1, code.length() - 1);
         fvalue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-            .getVariablesSecureApp(), code, windowId);
+            .getVariablesSecureApp(), codeWithoutAt, windowId);
       } else {
         fvalue = code;
       }

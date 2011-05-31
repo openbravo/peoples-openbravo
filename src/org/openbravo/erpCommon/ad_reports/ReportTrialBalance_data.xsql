@@ -468,27 +468,6 @@
     <Parameter name="organization"/>
   </SqlMethod>
   
-  <SqlMethod name="selectAcctSchemaName" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-        SELECT NAME
-        FROM C_ACCTSCHEMA
-        WHERE C_ACCTSCHEMA_ID = ?
-    </Sql>
-    <Parameter name="acctSchema"/>
-  </SqlMethod>
-  
-  <SqlMethod name="selectAccountingName" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-        SELECT C_ELEMENTVALUE.VALUE||'-'||C_ELEMENTVALUE.NAME
-        FROM C_ELEMENTVALUE
-        WHERE C_ELEMENTVALUE.VALUE = ?
-        AND C_ELEMENTVALUE.ISACTIVE = 'Y'
-    ]]></Sql>
-  <Parameter name="cElementvalueId"/>
-  </SqlMethod>
-  
   <SqlMethod name="selectLastAccount" type="preparedStatement" return="string" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[

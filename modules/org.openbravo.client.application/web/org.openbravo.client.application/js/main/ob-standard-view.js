@@ -642,7 +642,7 @@ isc.OBStandardView.addProperties({
           method: this.setAsActiveView,
           parameters: [true]
         };
-      this.standardWindow.doActionAfterAutoSave(actionObject, true);
+      this.standardWindow.doActionAfterAutoSave(actionObject, false);
       return;
     }
     this.standardWindow.setActiveView(this);
@@ -1210,7 +1210,7 @@ isc.OBStandardView.addProperties({
           method: this.refresh,
           parameters: [refreshCallback, true]
         };
-      this.standardWindow.doActionAfterAutoSave(actionObject, true);
+      this.standardWindow.doActionAfterAutoSave(actionObject, false);
       return;
     }
     
@@ -1290,7 +1290,29 @@ isc.OBStandardView.addProperties({
     this.getDataSource().fetchData(criteria, callback);
     this.refreshParentRecord(callBackFunction);
   },
-  
+
+  hasNotChanged: function() {
+    var view = this, form = view.viewForm, grid = view.viewGrid, hasErrors = false, editRow, i;
+    if (view.isShowingForm) {
+      if(form.isNew) {
+        return false;
+      }
+      return form.isSaving || form.readOnly || !view.hasValidState() || !form.hasChanged;
+    } else if (view.isEditingGrid) {
+      editRow = view.viewGrid.getEditRow();
+      hasErrors = view.viewGrid.rowHasErrors(editRow);
+      form = grid.getEditForm();
+      return !form.isNew && !hasErrors && (form.isSaving || form.readOnly || !view.hasValidState() || !form.hasChanged);
+    } else {
+      var selectedRecords = grid.getSelectedRecords(), allRowsHaveErrors = true;
+      for (i = 0; i < selectedRecords.length; i++) {
+        var rowNum = grid.getRecordIndex(selectedRecords[i]);
+        allRowsHaveErrors = allRowsHaveErrors && grid.rowHasErrors(rowNum);
+      }
+      return selectedRecords.length === 0 || !allRowsHaveErrors;
+    }
+  },
+
   saveRow: function(){
     if (this.isEditingGrid) {
       this.viewGrid.endEditing();
@@ -1308,7 +1330,7 @@ isc.OBStandardView.addProperties({
             method: this.deleteSelectedRows,
             parameters: [true]
           };
-        this.standardWindow.doActionAfterAutoSave(actionObject, true);
+        this.standardWindow.doActionAfterAutoSave(actionObject, false);
         return;
       }
     
@@ -1395,7 +1417,7 @@ isc.OBStandardView.addProperties({
         method: this.editNewRecordGrid,
         parameters: [rowNum]
       };
-    this.standardWindow.doActionAfterAutoSave(actionObject, true);
+    this.standardWindow.doActionAfterAutoSave(actionObject, false);
   },
   
   newDocument: function(){
@@ -1404,7 +1426,7 @@ isc.OBStandardView.addProperties({
       method: this.editRecord,
       parameters: null
     };
-    this.standardWindow.doActionAfterAutoSave(actionObject, true);
+    this.standardWindow.doActionAfterAutoSave(actionObject, false);
   },
   
   undo: function(){

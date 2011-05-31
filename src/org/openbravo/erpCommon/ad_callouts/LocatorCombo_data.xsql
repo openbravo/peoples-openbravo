@@ -37,15 +37,4 @@
             <Parameter name="warehouse"/>
             <Parameter name="client"/>
        </SqlMethod>
-       <SqlMethod name="selectCombo" type="preparedStatement" return="multiple">
-          <SqlMethodComment>Relación de organizaciones de un rol de la aplicacion</SqlMethodComment>
-          <Sql><![CDATA[
-            SELECT M_LOCATOR_ID, X AS Name 
-            FROM M_LOCATOR
-            WHERE IsActive='Y' 
-            AND AD_Client_ID IN ('1') 
-            ORDER BY Name
-          ]]></Sql>
-            <Parameter name="adUserClient" type="replace" optional="true" after="AD_Client_ID IN (" text="'1'"/>
-       </SqlMethod>
     </SqlClass>

@@ -1641,13 +1641,13 @@ public class CreateFrom extends HttpSecureAppServlet {
             String strMultiplyRate = "";
             int stdPrecision = 0;
             if ("Y".equals(strbreakdown)) {
-              if (dataUomIdConversion[i].cUomIdConversion.equals("")) {
+              if (dataUomIdConversion[0].cUomIdConversion.equals("")) {
                 releaseRollbackConnection(conn);
                 myMessage = Utility.translateError(this, vars, vars.getLanguage(),
                     "ProcessRunError");
                 return myMessage;
               }
-              final String strInitUOM = dataUomIdConversion[i].cUomIdConversion;
+              final String strInitUOM = dataUomIdConversion[0].cUomIdConversion;
               final String strUOM = data[i].cUomId;
               if (strInitUOM.equals(strUOM))
                 strMultiplyRate = "1";
@@ -1662,7 +1662,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                     "ProcessRunError");
                 return myMessage;
               }
-              stdPrecision = Integer.valueOf(dataUomIdConversion[i].stdprecision).intValue();
+              stdPrecision = Integer.valueOf(dataUomIdConversion[0].stdprecision).intValue();
               BigDecimal quantity, qty, multiplyRate;
 
               multiplyRate = new BigDecimal(strMultiplyRate);

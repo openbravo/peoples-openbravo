@@ -401,9 +401,10 @@ isc.OBViewGrid.addProperties({
 
   // handle the del key when rows have been selected or space key
   bodyKeyPress : function (event, eventInfo) {
-    if (event.keyName === 'Delete' && this.getSelectedRecords().length > 0) {
+    if (event.keyName === 'Delete' && this.getSelectedRecords().length > 0 && 
+      (!isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
       this.view.deleteSelectedRows();
-      return;      
+      return false;
     }
     // don't let the default space action do something if others keys are also 
     // pressed
@@ -411,6 +412,7 @@ isc.OBViewGrid.addProperties({
       (isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown())) {
       return true;
     }
+
     return this.Super('bodyKeyPress', arguments);
   },
 
@@ -1088,6 +1090,7 @@ isc.OBViewGrid.addProperties({
     if (singleSelected && this.canEdit && this.isWritable(record) && !this.view.readOnly) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_EditInGrid'),
+        keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','Grid_EditInGrid','id'),
         click: function(){
           grid.endEditing();
           if (colNum || colNum === 0) {
@@ -1107,6 +1110,7 @@ isc.OBViewGrid.addProperties({
 
     menuItems.add({
       title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
+      keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','ToolBar_NewRow','id'),
       click: function(){
         grid.startEditingNew(rowNum);
       }
@@ -1158,6 +1162,7 @@ isc.OBViewGrid.addProperties({
     if (recordsSelected && !this.view.readOnly && this.allSelectedRecordsWritable()) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_Delete'),
+        keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','ToolBar_Eliminate','id'),
         click: function(){
           grid.view.deleteSelectedRows();
         }
@@ -1412,7 +1417,7 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++ functions for grid editing +++++++++++++++++
 
   startEditing: function (rowNum, colNum, suppressFocus, eCe, suppressWarning) {
-    var i;
+    var i, ret;
     // if a row is set and not a col then check if we should focus in the
     // first error field
     if ((rowNum || rowNum === 0) && (!colNum && colNum !== 0) && this.rowHasErrors(rowNum))  {
@@ -1427,7 +1432,8 @@ isc.OBViewGrid.addProperties({
       this.forceFocusColumn = this.getField(colNum).name;
     }
 
-    return this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
+    ret = this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
+    return ret;
   },
 
   startEditingNew: function(rowNum){
@@ -1593,18 +1599,23 @@ isc.OBViewGrid.addProperties({
   },
   
   discardEdits: function(rowNum, colNum, dontHideEditor, editCompletionEvent, preventConfirm){
-    var localArguments = arguments;
+    var localArguments = arguments, editForm = this.getEditForm(), totalRows;
     var me = this, record = this.getRecord(rowNum);
     
     if (!preventConfirm &&
-    (this.getEditForm().hasChanged || this.rowHasErrors(rowNum))) {
+    (editForm.hasChanged || this.rowHasErrors(rowNum))) {
       me.Super('discardEdits', localArguments);
       
       // remove the record if new
       if (record._new) {
+        totalRows = me.data.totalRows;
         me.data.handleUpdate('remove', [{
           id: record.id
         }]);
+        // the total rows should be decreased
+        if (me.data.totalRows === totalRows) {
+          me.data.totalRows = me.data.totalRows - 1;
+        }
         me.updateRowCountDisplay();
         me.view.toolBar.updateButtonState(true);
         me.view.refreshChildViews();
@@ -1623,9 +1634,14 @@ isc.OBViewGrid.addProperties({
       
       // remove the record if new
       if (record && record._new) {
+        totalRows = me.data.totalRows;
         me.data.handleUpdate('remove', [{
           id: record.id
         }]);
+        // the total rows should be decreased
+        if (me.data.totalRows === totalRows) {
+          me.data.totalRows = me.data.totalRows - 1;
+        }
         me.updateRowCountDisplay();
         me.view.toolBar.updateButtonState(true);
         me.view.refreshChildViews();
@@ -1735,6 +1751,7 @@ isc.OBViewGrid.addProperties({
   // this interferes sometimes with the very dynamic enabling 
   // disabling of fields by the readonlylogic
   canEditCell: function (rowNum, colNum) {
+    var ret;
     if (this._inGetNextEditCell) {
       var field = this.getField(colNum);
       if (field && this.getEditForm()) {
@@ -1744,7 +1761,13 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
-    return this.Super('canEditCell', arguments);    
+    
+    if (!colNum && colNum !== 0) {
+      return false;
+    }
+
+    ret = this.Super('canEditCell', arguments);
+    return ret;
   },
       
   // saveEditedValues: when saving, first check if a FIC call needs to be done to update to the 
@@ -1799,16 +1822,11 @@ isc.OBViewGrid.addProperties({
   
   hideInlineEditor: function(focusInBody, suppressCMHide) {
 
-    var rowNum = this.getEditRow(), record = this.getRecord(rowNum);
+    var rowNum = this.getEditRow(), record = this.getRecord(rowNum), editForm = this.getEditForm();
     this._hidingInlineEditor = true;
     if (record && (rowNum === 0 || rowNum)) {
       if (!this.rowHasErrors(rowNum)) {
         record[this.recordBaseStyleProperty] = null;
-      }
-      
-      // clear the errors so that they don't show up at the next row
-      if (this.getEditForm()) {
-        this.getEditForm().clearErrors();
       }
   
       if (record && record.editColumnLayout) {
@@ -1821,12 +1839,19 @@ isc.OBViewGrid.addProperties({
       }
       this.view.isEditingGrid = false;
       this.refreshRow(rowNum);
+    }
+
+    if (editForm) {
+      // canFocus is set when disabling a form item
+      // a new record needs to compute canFocus again
+      editForm.resetCanFocus();
       // clear all values, as null values in the new row won't overwrite filled form
       // values
-      if (this.getEditForm()) {
-        this.getEditForm().clearValues();
-      }
+      editForm.clearValues();      
+      // clear the errors so that they don't show up at the next row
+      editForm.clearErrors();
     }
+    
     // always hide the clickmask, as it needs to be re-applied
     var ret = this.Super('hideInlineEditor', [focusInBody, false]);
     delete this._hidingInlineEditor;

@@ -156,6 +156,7 @@ OB.ViewFormProperties = {
   },
   
   editRecord: function(record, preventFocus, hasChanges, focusFieldName){
+    
     var ret = this.Super('editRecord', arguments);
     this.doEditRecordActions(preventFocus, record._new);
     if (hasChanges) {
@@ -317,14 +318,14 @@ OB.ViewFormProperties = {
     var items = this.getItems(), length = items.length, item, i;
     
     var errorFld = this.getFirstErrorItem();
-    if (errorFld) {
+    if (errorFld && !errorFld.isDisabled()) {
       this.setFocusInItem(errorFld, true);
       return;
     }
     
     if (this.forceFocusedField) {
       item = this.getItem(this.forceFocusedField);
-      if(item && item.getCanFocus()) {
+      if(item && item.isFocusable()) {
         this.setFocusInItem(item, true);
         delete this.forceFocusedField;
         return;
@@ -334,14 +335,14 @@ OB.ViewFormProperties = {
 
     if(this.firstFocusedField) {
       item = this.getItem(this.firstFocusedField);
-      if(item && item.getCanFocus()) {
+      if(item && item.isFocusable()) {
         this.setFocusInItem(item);
         return;
       }
     }
 
     // is set for inline grid editing for example
-    if (this.getFocusItem() && this.getFocusItem().getCanFocus()) {
+    if (this.getFocusItem() && this.getFocusItem().isFocusable()) {
       if (this.view.isActiveView()) {
         this.getFocusItem().focusInItem();
       }
@@ -352,7 +353,7 @@ OB.ViewFormProperties = {
     if (items) {
       for (i = 0; i < length; i++) {
         item = items[i];
-        if (item.getCanFocus() && !item.isDisabled()) {
+        if (item.isFocusable()) {
           this.setFocusInItem(item);
           return;
         }
@@ -375,7 +376,7 @@ OB.ViewFormProperties = {
     // used when double clicking a specific cell in a record
     if (this.forceFocusedField) {
       item = this.getItem(this.forceFocusedField);
-      if(item && item.getCanFocus()) {
+      if(item && item.isFocusable()) {
         this.setFocusInItem(item, true);
         delete this.forceFocusedField;
         return;
@@ -385,21 +386,21 @@ OB.ViewFormProperties = {
     
     if(this.firstFocusedField) {
       item = this.getItem(this.firstFocusedField);
-      if(item && item.getCanFocus()) {
+      if(item && item.isFocusable()) {
         this.setFocusInItem(item, true);
         return;
       }
     }
 
     // no need to find a new item
-    if (focusItem && !focusItem.isDisabled() && focusItem.getCanFocus()) {
+    if (focusItem && focusItem.isFocusable()) {
       return;
     }
 
     if (items) {
       for (i = 0; i < length; i++) {
         item = items[i];
-        if (item.getCanFocus() && !item.isDisabled()) {
+        if (item.isFocusable()) {
           this.setFocusInItem(item, true);
           return;
         }
@@ -511,10 +512,19 @@ OB.ViewFormProperties = {
         delete this.ignoreFirstFocusEvent;
         return;
       }
-      if (me.getFocusItem() && me.view.isActiveView()) {
+      if (me.getFocusItem() && me.view.isActiveView() && me.getFocusItem().isFocusable()) {
         me.getFocusItem().focusInItem();
       }
     });
+  },
+  
+  // used in grid editing, when an edit is discarded then the canFocus needs to be
+  // reset
+  resetCanFocus: function() {
+    var i;
+    for (i = 0; i < this.getItems().length; i++) {
+      delete this.getItems()[i].canFocus;
+    }
   },
   
   processFICReturn: function(response, data, request, editValues, editRow){
@@ -607,6 +617,9 @@ OB.ViewFormProperties = {
       }
     }
 
+    // note onFieldChanged uses the form.readOnly set above
+    this.onFieldChanged(this);
+
     this.setDisabled(false);
 
     if (this.validateAfterFicReturn) {
@@ -626,9 +639,6 @@ OB.ViewFormProperties = {
       this.view.statusBar.mode = 'VIEW';
       this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());
     }
-
-    // note onFieldChanged uses the form.readOnly set above
-    this.onFieldChanged(this);
 
     delete this.inFicCall;
     if (this.callSaveAfterFICReturn) {
@@ -668,7 +678,7 @@ OB.ViewFormProperties = {
           for (i = 0; i < this.getFields().length; i++) {
             delete this.getFields()[i].canFocus;
           }
-          if (this.view.isActiveView()) {
+          if (this.view.isActiveView() && this.getFocusItem().isFocusable()) {
             this.getFocusItem().focusInItem();
           }
         }

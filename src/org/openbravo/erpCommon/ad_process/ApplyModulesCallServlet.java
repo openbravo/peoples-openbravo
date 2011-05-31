@@ -36,7 +36,6 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.erpCommon.ad_process.buildStructure.Build;
 import org.openbravo.erpCommon.ad_process.buildStructure.BuildMainStep;
 import org.openbravo.erpCommon.ad_process.buildStructure.BuildMainStepTranslation;
-import org.openbravo.erpCommon.ad_process.buildStructure.BuildStep;
 import org.openbravo.erpCommon.ad_process.buildStructure.BuildTranslation;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -406,17 +405,4 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
     }
   }
 
-  private BuildMainStep getMainStep(Build build, String stepCode) {
-    for (BuildMainStep mstep : build.getMainSteps()) {
-      if (mstep.getCode().equals(stepCode)) {
-        return mstep;
-      }
-      for (BuildStep step : mstep.getStepList()) {
-        if (step.getCode().equals(stepCode)) {
-          return mstep;
-        }
-      }
-    }
-    return null;
-  }
 }

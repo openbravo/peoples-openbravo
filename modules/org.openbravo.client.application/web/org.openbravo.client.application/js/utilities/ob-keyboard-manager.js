@@ -65,7 +65,7 @@
           pushedKS.shift = true;
         }
         pushedKS.key = isc.Event.getKey();
-        var position = keyboardMgr.KS.getPosition(pushedKS, 'keyComb');
+        var position = keyboardMgr.KS.getProperty('position', pushedKS, 'keyComb');
         if (position !== null) {
           return keyboardMgr.KS.execute(position);
         } else {
@@ -93,11 +93,12 @@
           return false;
         }
 
-        var position = this.getPosition(id, 'id');
+        var position = this.getProperty('position', id, 'id');
         if (position === null) {
           position = this.list.length;
           this.list[position] = {};
           this.list[position].keyComb = {};
+          this.list[position].keyComb.text = '';
         }
         if (typeof id !== 'undefined' && id !== null) {
           this.list[position].id = id;
@@ -113,50 +114,84 @@
             this.list[position].keyComb.ctrl = false;
           } else {
             this.list[position].keyComb.ctrl = keyComb.ctrl;
+            if (keyComb.ctrl === true) {
+              if (this.list[position].keyComb.text.length > 0) {
+                this.list[position].keyComb.text += '+';
+              }
+              this.list[position].keyComb.text += 'Ctrl';
+            }
           }
           if (typeof keyComb.alt === 'undefined') {
             this.list[position].keyComb.alt = false;
           } else {
             this.list[position].keyComb.alt = keyComb.alt;
+            if (keyComb.alt === true) {
+              if (this.list[position].keyComb.text.length > 0) {
+                this.list[position].keyComb.text += '+';
+              }
+              this.list[position].keyComb.text += 'Alt';
+            }
           }
           if (typeof keyComb.shift === 'undefined') {
             this.list[position].keyComb.shift = false;
           } else {
             this.list[position].keyComb.shift = keyComb.shift;
+            if (keyComb.shift === true) {
+              if (this.list[position].keyComb.text.length > 0) {
+                this.list[position].keyComb.text += '+';
+              }
+              this.list[position].keyComb.text += 'Shift';
+            }
           }
           if (typeof keyComb.key === 'undefined') {
             this.list[position].keyComb.key = null;
           } else {
             this.list[position].keyComb.key = keyComb.key;
+            if (keyComb.key) {
+              if (this.list[position].keyComb.text.length > 0) {
+                this.list[position].keyComb.text += '+';
+              }
+              this.list[position].keyComb.text += keyComb.key;
+            }
           }
         }
       },
       
       remove: function(id){
-        var position = this.getPosition(id, 'id');
+        var position = this.getProperty('position', id, 'id');
         if (position === null) {
           return false;
         }
         delete this.list[position];
       },
 
-      getPosition: function(element, searchPattern) {
-        var i;
+      getProperty: function(property, element, searchPattern) {
+        var i, position = null;
         for (i = 0; i < this.list.length; i++) {
           if (searchPattern === 'id' && this.list[i].id === element) {
-            return i;
+            position = i;
           } else if (searchPattern === 'keyComb' &&
           this.list[i].keyComb.ctrl === element.ctrl &&
           this.list[i].keyComb.alt === element.alt &&
           this.list[i].keyComb.shift === element.shift &&
           this.list[i].keyComb.key === element.key) {
-            return i;
+            position = i;
           } else if (searchPattern === 'action' &&
           this.list[i].action === element) {
-            return i;
+            position = i;
           }
         }
-        return null;
+        if (position !== null) {
+          if (property === 'position') {
+            return position;
+          } else if (property.indexOf('keyComb.') === 0 && this.list[position].keyComb[property.substring(8, property.length)]) {
+            return this.list[position].keyComb[property.substring(8, property.length)];
+          } else if (this.list[position][property]) {
+            return this.list[position][property];
+          }
+        } else {
+          return null;
+        }
       },
 
       execute: function(position){

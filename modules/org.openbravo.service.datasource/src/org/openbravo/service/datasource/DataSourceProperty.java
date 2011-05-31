@@ -140,7 +140,7 @@ public class DataSourceProperty {
 
     final List<RefListEntry> translatedValues = new ArrayList<RefListEntry>();
 
-    final String readReferenceHql = "select searchKey, name, sequenceNumber from ADList where reference.id=?";
+    final String readReferenceHql = "select searchKey, name, sequenceNumber from ADList rlist where reference.id=? and rlist.active=true";
     final Query readReferenceQry = OBDal.getInstance().getSession().createQuery(readReferenceHql);
     readReferenceQry.setString(0, referenceId);
     for (Object o : readReferenceQry.list()) {
@@ -164,7 +164,7 @@ public class DataSourceProperty {
     // set the default if no translation found
     final String hql = "select al.searchKey, trl.name from ADList al, ADListTrl trl where "
         + " al.reference.id=? and trl.listReference=al and trl.language.id=?"
-        + " and al.active=true and trl.active=true and trl.translation=true";
+        + " and al.active=true and trl.active=true";
     final Query qry = OBDal.getInstance().getSession().createQuery(hql);
     qry.setString(0, referenceId);
     qry.setString(1, userLanguageId);

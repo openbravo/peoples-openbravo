@@ -490,6 +490,8 @@ public class DocFINReconciliation extends AcctServer {
       for (int i = 0; i < data.length; i++) {
         if (data[i] == null)
           continue;
+        line.setCGlItemId(data[i].getField("cGlItemId"));
+        line.m_C_BPartner_ID = data[i].getField("cBpartnerId");
         // Cambiar line to reflect BPs
         FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
             data[i].getField("FIN_Payment_Detail_ID"));
@@ -580,9 +582,16 @@ public class DocFINReconciliation extends AcctServer {
           : paymentDetail.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
               .getOrder().getBusinessPartner().getId();
     }
-    fact.createLine(line, getAccountBPartner(bpartnerId, as, isReceipt, isPrepayment, conn),
-        C_Currency_ID, !isReceipt ? bpAmount.toString() : "", isReceipt ? bpAmount.toString() : "",
-        Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+    if (line.cGlItemId != null && !"".equals(line.cGlItemId)) {
+      fact.createLine(line, getAccountGLItem(OBDal.getInstance().get(GLItem.class, line.cGlItemId),
+          as, isReceipt, conn), C_Currency_ID, (isReceipt ? "" : bpAmount.toString()),
+          (isReceipt ? bpAmount.toString() : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
+    } else {
+      fact.createLine(line, getAccountBPartner(bpartnerId, as, isReceipt, isPrepayment, conn),
+          C_Currency_ID, !isReceipt ? bpAmount.toString() : "", isReceipt ? bpAmount.toString()
+              : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+    }
 
     SeqNo = "0";
     return fact;

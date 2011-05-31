@@ -384,6 +384,8 @@ isc.OBMyOpenbravo.addProperties({
             } else {
               icon = '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png';
             }
+          } else {
+            icon = '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png';
           }
 
           // if the recent was added through quick create then repair this

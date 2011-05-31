@@ -46,8 +46,6 @@
 <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/org.openbravo.advpaymentmngt/FIN_Utilities.js" type="text/javascript"></script>
 
 <script language="JavaScript" type="text/javascript">
@@ -99,7 +97,7 @@ function validate(action) {
 </script>
 <script language="JavaScript" type="text/javascript">
 function closeThisPage() {
-    parent.window.close();
+    closePage();
     return true;
 }
 function submitThisPage(strCommand) {
@@ -135,7 +133,8 @@ function updateData(key, mark, drivenByGrid) {
   if (mark==null) mark=false;
   updateReadOnly(key, mark);
   var paymentAmount = document.frmMain.elements['inpPaymentAmount'+key];
-  if (!isTrue('isReceipt')){
+  var isInheritedActualPayment = (document.getElementById('paramInheritedActualPayment').value === 'Y');
+  if (!isTrue('isReceipt') && !isInheritedActualPayment) {
     if (mark && paymentAmount.value=='') {
       paymentAmount.value = document.frmMain.elements['inpRecordAmt'+key].value;
     }
@@ -367,8 +366,11 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
   <input type="hidden" name="IsPopUpCall" value="1" />
   <input type="hidden" name="inpFinancialAccountId" value="" id="paramFinancialAccountId"/>
   <input type="hidden" name="isReceipt" value="" id="fieldReceipt"/>
+  <input type="hidden" name="inpissotrx" value="" id="fieldIsSoTrx"/>
   <input type="hidden" name="inpFinBankStatementLineId" value="" id="paramFinBankStatementLineId"></input>
   <input type="hidden" name="isFirstLoad" value="true"/>
+  <input type="hidden" name="inpadOrgId" value="" id="fieldOrg"/>
+  <input type="hidden" name="inpInheritedActualPayment" value="N" id="paramInheritedActualPayment"/>
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
       <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>
@@ -661,7 +663,7 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
                     <td style="padding-top: 0px;">
                       <script>var sc_C_Bpartner_ID = null;</script>
                       <input type="hidden" name="inpcBpartnerId" id="C_Bpartner_ID" value="" onreset="sc_C_Bpartner_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_Bpartner_ID.selectorField);"></input>
-                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/A98899B1C75A4F4EBD3414F1B654EFAB?columnName=C_Bpartner_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&callOut=onchangeBPartner&required=false"></script>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/A98899B1C75A4F4EBD3414F1B654EFAB?columnName=C_Bpartner_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&callOut=onchangeBPartner&required=false&filterClass=org.openbravo.userinterface.selector.SelectorDataSourceFilter&_selectorDefinitionId=A98899B1C75A4F4EBD3414F1B654EFAB"></script>
                     </td>
                   </tr>
                 </table>
@@ -747,7 +749,7 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="dojoValidateValid required TextBox_btn_OneCell_width" type="text" name="inpPaymentDate" id="paramPaymentDate" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramPaymentDate");</script>
+                      <input type="text" id="paramPaymentDate" class="dojoValidateValid required TextBox_btn_OneCell_width" value="" maxlength="10" name="inpPaymentDate" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" displayFormat="xx" saveFormat="yy"></input>
                     </td>
                     <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpPaymentDate', document.frmMain.inpPaymentDate.value, false);return false;">
@@ -828,7 +830,6 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
                       <table style="border: 0px none; border-collapse: collapse;">
                         <tr><td style="padding-top: 0px;">
                           <input type="text" id="paramDueDateTo" class="dojoValidateValid TextBox_btn_OneCell_width" value="" maxlength="10" name="inpDueDateTo" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id); validateDate(this);return true;" displayFormat="xx" saveFormat="xx"></input>
-                          <!--input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDueDateTo" id="paramDueDateTo" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;" onblur="loadGridList();return true;"></input><script>djConfig.searchIds.push("paramDueDateTo");</script-->
                         </td></tr>
                       </table>
                       <span id="paramDueDateToinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">

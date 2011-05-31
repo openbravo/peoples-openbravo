@@ -364,14 +364,6 @@
      <Parameter name="dateTo"/>
      <Parameter name="mProductId"/>
    </SqlMethod>
-  <SqlMethod name="bPartnerDescription" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    SELECT max(NAME) as name FROM C_BPARTNER 
-    WHERE C_BPARTNER_ID = ?
-    </Sql>
-    <Parameter name="cBpartnerId"/>
-  </SqlMethod>
 
   <SqlMethod name="mProductDescription" type="preparedStatement" return="String" default="">
      <SqlMethodComment></SqlMethodComment>

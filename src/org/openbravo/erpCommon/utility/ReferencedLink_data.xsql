@@ -24,19 +24,6 @@
 
 <SqlClass name="ReferencedLinkData" package="org.openbravo.erpCommon.utility">
    <SqlClassComment></SqlClassComment>
-   <SqlMethod name="selectTabs" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT AD_TAB_ID, AD_WINDOW_ID, SEQNO, NAME, AD_TABLE_ID, 
-      '' AS PO_WINDOW_ID, '' AS WINDOWNAME, NAME AS TABNAME 
-      FROM AD_TAB
-      WHERE AD_WINDOW_ID = (SELECT AD_WINDOW_ID FROM AD_TAB WHERE AD_TAB_ID = ?) 
-      AND TABLEVEL = ? 
-      ORDER BY SEQNO
-    </Sql>
-    <Parameter name="adTabId"/>
-    <Parameter name="tablevel"/>
-  </SqlMethod>
    <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -47,6 +34,7 @@
       AND T.ISACTIVE = 'Y' 
       AND W.AD_WINDOW_ID = ? 
       AND T.AD_TABLE_ID = ? 
+      ORDER BY T.TABLEVEL
     </Sql>
     <Parameter name="adWindowId"/>
     <Parameter name="adTableId"/>
@@ -76,31 +64,6 @@
     </Sql>
     <Parameter name="adWindowId"/>
   </SqlMethod>
-  <SqlMethod name="selectSOTrx" type="preparedStatement" return="Boolean">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT (case ISSOTRX when 'Y' then 1 else 0 end) AS ISSOTRX 
-        FROM C_ORDER 
-        WHERE C_ORDER_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="table" optional="true" type="replace" after="FROM " text="C_ORDER"/>
-    <Parameter name="keyName" optional="true" type="replace" after="WHERE " text="C_ORDER_ID"/>
-    <Parameter name="keyId"/>
-  </SqlMethod>
-  <SqlMethod name="hasIsSOTrx" type="preparedStatement" return="Boolean">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT COUNT(*) AS TOTAL 
-        FROM AD_COLUMN 
-        WHERE AD_TABLE_ID = ? 
-        AND UPPER(COLUMNNAME) = 'ISSOTRX'
-      ]]>
-    </Sql>
-    <Parameter name="adTableId"/>
-  </SqlMethod>
   <SqlMethod name="selectTableName" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -111,87 +74,5 @@
       ]]>
     </Sql>
     <Parameter name="adTableId"/>
-  </SqlMethod>
-  <SqlMethod name="selectTabLevel" type="preparedStatement" return="String" default="0">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT TABLEVEL 
-        FROM AD_TAB 
-        WHERE AD_TAB_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="adTabId"/>
-  </SqlMethod>
-  <SqlMethod name="selectKeyColumn" type="preparedStatement" return="String">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT MAX(COLUMNNAME) AS NAME
-        FROM AD_COLUMN 
-        WHERE AD_TABLE_ID = ?
-        AND (ISKEY='Y' OR ISSECONDARYKEY='Y')
-        AND COLUMNNAME <> COALESCE(?,'XXX')
-      ]]>
-    </Sql>
-    <Parameter name="adTableId"/>
-    <Parameter name="columnName"/>
-  </SqlMethod>
-  <SqlMethod name="selectKeyID" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT 1 AS NAME 
-        FROM AD_SYSTEM 
-        WHERE 2 = (SELECT 3 FROM  DUAL WHERE  4=? AND 5=  6)
-      ]]>
-    </Sql>
-    <Parameter name="keyName" optional="true" type="replace" after="SELECT " text="1"/>
-    <Parameter name="table" optional="true" type="replace" after="FROM " text="AD_SYSTEM"/>
-    <Parameter name="keyName" optional="true" type="replace" after="WHERE " text="2"/>
-    <Parameter name="keyName" optional="true" type="replace" after="(SELECT " text="3"/>
-    <Parameter name="parentTable" optional="true" type="replace" after="FROM  " text="DUAL"/>
-    <Parameter name="parentKey" optional="true" type="replace" after="WHERE  " text="4"/>
-    <Parameter name="parentKeyId"/>
-    <Parameter name="parentKey2" optional="true" type="replace" after="AND " text="5"/>
-    <Parameter name="parentKey2Id" optional="true" type="replace" after="=  " text="6"/>
-  </SqlMethod>
-  <SqlMethod name="isChild" type="preparedStatement" return="Boolean">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT COUNT(*) AS TOTAL 
-        FROM AD_TAB 
-        WHERE SEQNO > TO_NUMBER(?) 
-        AND 1=1 
-        AND AD_TAB_ID = ? 
-      ]]>
-    </Sql>
-    <Parameter name="initseqno"/>
-    <Parameter name="endseqno" optional="true" after="AND 1=1"><![CDATA[ AND SEQNO < TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="adTabId"/>
-  </SqlMethod>
-  <SqlMethod name="parentsColumnName" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT ColumnName AS NAME 
-        FROM AD_FIELD, AD_COLUMN 
-        WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id 
-        AND ad_tab_id = ? AND isParent='Y' 
-        AND EXISTS(SELECT 1 FROM AD_COLUMN c, AD_FIELD f WHERE c.ad_column_id = f.ad_column_id AND c.iskey='Y'
-        AND ad_tab_id=? AND UPPER(c.columnname) = UPPER(AD_COLUMN.columnname))
-      ]]></Sql>
-      <Parameter name="tab"/>
-      <Parameter name="parentTab"/>
-  </SqlMethod>
-  <SqlMethod name="selectTabName" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT t.AD_TAB_ID, t.AD_WINDOW_ID, t.NAME AS TABNAME, w.NAME AS WINDOWNAME 
-      FROM AD_TAB t, AD_WINDOW w
-      WHERE t.AD_Window_ID = w.AD_Window_ID 
-      AND t.AD_Tab_ID = ? 
-    </Sql>
-    <Parameter name="adTabId"/>
   </SqlMethod>
 </SqlClass>

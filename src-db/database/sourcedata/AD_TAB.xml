@@ -1352,7 +1352,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--183-->  <HELP><![CDATA[Define prices which will be used to buy or sell this product.]]></HELP>
 <!--183-->  <AD_TABLE_ID><![CDATA[251]]></AD_TABLE_ID>
 <!--183-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
-<!--183-->  <SEQNO><![CDATA[80]]></SEQNO>
+<!--183-->  <SEQNO><![CDATA[20]]></SEQNO>
 <!--183-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--183-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--183-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
@@ -1842,7 +1842,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--210-->  <HELP><![CDATA[Create and edit G/L accounts to be used in transactions including a selected product.]]></HELP>
 <!--210-->  <AD_TABLE_ID><![CDATA[273]]></AD_TABLE_ID>
 <!--210-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
-<!--210-->  <SEQNO><![CDATA[100]]></SEQNO>
+<!--210-->  <SEQNO><![CDATA[30]]></SEQNO>
 <!--210-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--210-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--210-->  <ISINFOTAB><![CDATA[Y]]></ISINFOTAB>
@@ -2944,7 +2944,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--289-->  <HELP><![CDATA[View all transactions related to this product.]]></HELP>
 <!--289-->  <AD_TABLE_ID><![CDATA[329]]></AD_TABLE_ID>
 <!--289-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
-<!--289-->  <SEQNO><![CDATA[110]]></SEQNO>
+<!--289-->  <SEQNO><![CDATA[50]]></SEQNO>
 <!--289-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--289-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--289-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
@@ -6464,7 +6464,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800057-->  <HELP><![CDATA[Define cost information for this specific product.]]></HELP>
 <!--800057-->  <AD_TABLE_ID><![CDATA[800043]]></AD_TABLE_ID>
 <!--800057-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
-<!--800057-->  <SEQNO><![CDATA[70]]></SEQNO>
+<!--800057-->  <SEQNO><![CDATA[40]]></SEQNO>
 <!--800057-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--800057-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--800057-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>

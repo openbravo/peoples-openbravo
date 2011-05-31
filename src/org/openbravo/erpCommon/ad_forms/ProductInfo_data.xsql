@@ -85,28 +85,4 @@
       <Parameter name="M_Product_ID"/>
       <Parameter name="date"/>
    </SqlMethod>
-   <SqlMethod name="selectPriceList" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-  SELECT pl.C_Currency_ID, pp.PriceList, pp.PriceStd, pp.PriceLimit 
-  FROM M_PriceList pl, M_PriceList_Version plv, M_ProductPrice pp 
-  WHERE pl.M_PriceList_ID = plv.M_PriceList_ID
-  AND plv.M_PriceList_Version_ID = pp.M_PriceList_Version_ID
-  AND pp.M_Product_ID=?
-  AND 1=1
-  ORDER BY pl.IsSOPriceList ASC, plv.ValidFrom DESC
-      </Sql>
-      <Parameter name="M_Product_ID"/>
-      <Parameter name="onlyPOPriceList" optional="true" type="none" after="AND 1=1" text=" AND pl.IsSOPriceList='N'"/>
-   </SqlMethod>
-   <SqlMethod name="selectPOCost" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-  SELECT C_Currency_ID, PriceList,PricePO,PriceLastPO 
-  FROM M_Product_PO 
-  WHERE M_Product_ID = ? 
-  ORDER BY IsCurrentVendor DESC
-      </Sql>
-      <Parameter name="M_Product_ID"/>
-   </SqlMethod>
    </SqlClass>

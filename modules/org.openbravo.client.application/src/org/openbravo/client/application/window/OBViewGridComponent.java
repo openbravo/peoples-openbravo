@@ -619,12 +619,15 @@ public class OBViewGridComponent extends BaseTemplateComponent {
           .getSequenceNumber());
       Long arg1Position = (arg1.getGridPosition() != null ? arg1.getGridPosition() : arg1
           .getSequenceNumber());
-      if (arg0Position == null) {
-        arg0Position = ZERO;
+
+      if (arg0Position == null && arg1Position == null) {
+        return arg0.getId().compareTo(arg1.getId());
+      } else if (arg0Position == null) {
+        return 1;
+      } else if (arg1Position == null) {
+        return -1;
       }
-      if (arg1Position == null) {
-        arg1Position = ZERO;
-      }
+
       return (int) (arg0Position - arg1Position);
     }
 

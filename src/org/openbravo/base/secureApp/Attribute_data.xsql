@@ -29,21 +29,6 @@
       <Parameter name="clientlist" optional="true" type="replace" after="AND a.AD_CLIENT_ID IN (" text="'1'"/>
       <Parameter name="orglist" optional="true" type="replace" after="AND a.AD_ORG_ID IN (" text="'1'"/>
    </SqlMethod>
-   <SqlMethod name="selectAttributes" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        SELECT Attribute, Value, AD_Window_ID 
-        FROM AD_Preference 
-        WHERE AD_Client_ID IN ('0', ?)
-        AND AD_Org_ID IN ('0', ?)
-        AND (AD_User_ID IS NULL OR AD_User_ID='0' OR AD_User_ID=?)
-        AND IsActive='Y' 
-        ORDER BY Attribute, AD_Client_ID, AD_Org_ID, AD_User_ID
-      </Sql>
-      <Parameter name="adClientId"/>
-      <Parameter name="adOrgId"/>
-      <Parameter name="adUserId"/>
-   </SqlMethod>
    <SqlMethod name="selectIsSOTrx" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

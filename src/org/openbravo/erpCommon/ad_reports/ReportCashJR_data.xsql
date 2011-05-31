@@ -80,22 +80,4 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
   </SqlMethod>
-    <SqlMethod name="BeginningBalance" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-      SELECT COALESCE(SUM(C_CASHLINE.AMOUNT),0) AS TOTAL_AMT
-      FROM C_CASH, C_CASHLINE
-      WHERE C_CASH.C_CASH_ID=C_CASHLINE.C_CASH_ID
-      AND C_CASH.AD_Client_ID IN ('1') 
-      AND C_CASH.AD_ORG_ID IN ('1') 
-      AND C_CASH.STATEMENTDATE < TO_DATE(?)
-      AND C_CASH.C_CASHBOOK_ID = ?
-      AND C_CASH.PROCESSED='Y'
-      ]]></Sql>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_CASH.AD_Client_ID IN (" text="'1'"/>
-    <Parameter name="adUserOrg" type="replace" optional="true" after="AND C_CASH.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="statementDate"/>
-    <Parameter name="c_cashbookId"/>
-  </SqlMethod>
 </SqlClass>

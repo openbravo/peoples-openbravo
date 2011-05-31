@@ -431,6 +431,9 @@ function onLoadDo() {
   //numberInputEvent('onchange', document.frmMain.inpGLItemAmount);
   loadGridList();
   resizeAreaCreateFrom();
+
+  //set dimensions 600x1050, avoid horizontal scrolling
+  popupResizeTo(1050, 600);
 }
 function onResizeDo(){
   resizeAreaCreateFrom(true);
@@ -488,6 +491,7 @@ function closeProcessPayment() {
   <input type="hidden" name="inpadWindowId" value="" id="fieldWindowId"/>
   <input type="hidden" name="inpTabId" value="" id="fieldTabId"/>
   <input type="hidden" name="isReceipt" value="" id="fieldReceipt"/>
+  <input type="hidden" name="inpissotrx" value="" id="fieldIsSoTrx"/>
   <input type="hidden" name="isFirstLoad" value="true"/>
   <input type="hidden" name="isGLItem" value="N"/>
   <input type="hidden" name="inpDeleteGLItem" value=""/>
@@ -839,7 +843,6 @@ function closeProcessPayment() {
                       <table style="border: 0px none; border-collapse: collapse;">
                         <tr><td style="padding-top: 0px;">
                           <input type="text" id="paramDueDateFrom" class="dojoValidateValid TextBox_btn_OneCell_width" value="" maxlength="10" name="inpDueDateFrom" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id); validateDate(this); return true;" displayFormat="xx" saveFormat="xx"></input>
-                          <!--input dojoType="openbravo:DateTextbox" lowerThan="paramDueDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDueDateFrom" id="paramDueDateFrom" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;" onblur="loadGridList();return true;"></input><script>djConfig.searchIds.push("paramDueDateFrom");</script-->
                         </td></tr>
                       </table>
                       <span id="paramDueDateFrominvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
@@ -879,7 +882,6 @@ function closeProcessPayment() {
                       <table style="border: 0px none; border-collapse: collapse;">
                         <tr><td style="padding-top: 0px;">
                           <input type="text" id="paramDueDateTo" class="dojoValidateValid TextBox_btn_OneCell_width" value="" maxlength="10" name="inpDueDateTo" onkeyup="autoCompleteDate(this);" onkeydown="changeToEditingMode('onkeydown');" onkeypress="changeToEditingMode('onkeypress');" oncut="changeToEditingMode('oncut');" onpaste="changeToEditingMode('onpaste');" oncontextmenu="changeToEditingMode('oncontextmenu');" onblur="expandDateYear(this.id);" onchange="validateDateTextBox(this.id); validateDate(this);return true;" displayFormat="xx" saveFormat="xx"></input>
-                          <!--input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDueDateTo" id="paramDueDateTo" size="10" maxlength="10" value="" onkeyup="autoCompleteDate(this.textbox, this.displayFormat);return true;" onblur="loadGridList();return true;"></input><script>djConfig.searchIds.push("paramDueDateTo");</script-->
                           </td></tr>
                       </table>
                       <span id="paramDueDateToinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
@@ -913,7 +915,7 @@ function closeProcessPayment() {
                     <td style="padding-top: 0px;">
                       <script>var sc_C_BPartner_ID = null;</script>
                       <input type="hidden" name="inpcBPartnerId" id="C_BPartner_ID" value="" onreset="sc_C_BPartner_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_BPartner_ID.selectorField);"></input>
-                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/A98899B1C75A4F4EBD3414F1B654EFAB?columnName=C_BPartner_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=true"></script>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/A98899B1C75A4F4EBD3414F1B654EFAB?columnName=C_BPartner_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=true&filterClass=org.openbravo.userinterface.selector.SelectorDataSourceFilter&_selectorDefinitionId=A98899B1C75A4F4EBD3414F1B654EFAB"></script>
                     </td>
                   </tr>
                 </table>

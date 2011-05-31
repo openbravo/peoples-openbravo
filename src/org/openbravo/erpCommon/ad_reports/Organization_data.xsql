@@ -50,17 +50,6 @@
 <Parameter name="adClientId"></Parameter><Parameter name="isactive"></Parameter><Parameter name="cLocationId"></Parameter><Parameter name="cLocationIdr"></Parameter><Parameter name="duns"></Parameter><Parameter name="taxid"></Parameter><Parameter name="paGoalId"></Parameter><Parameter name="cBpartnerId"></Parameter><Parameter name="cBpartnerIdr"></Parameter><Parameter name="logo"></Parameter><Parameter name="referenceOrder"></Parameter>
    </SqlMethod>
 
-   <SqlMethod name="selectAddress" type="preparedStatement" return="String" default="">
-    <SqlMethodComment>Select Address</SqlMethodComment>
-    <Sql><![CDATA[
-        SELECT  ( loc.Address1  || ' - ' || loc.Address2  || ' - ' || loc.Postal  || ' - ' || loc.City  || ' - ' || loc.C_Region_ID  || ' - ' || loc.C_Country_ID ) as C_Location_ID 
-        FROM C_Location loc 
-        WHERE loc.isActive='Y' 
-        AND loc.C_Location_ID = ?  
-    ]]></Sql>
-<Parameter name="C_Location_IDR"/>
-  </SqlMethod>
-
    <SqlMethod name="selectOrgName" type="preparedStatement" return="string" default="">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

@@ -145,11 +145,13 @@ isc.FormItem.addProperties({
     // disabled if the property can not be updated and the form or record is new
     // explicitly comparing with false as it is only set for edit form fields
     if (this.updatable === false && !(this.form.isNew || this.form.getValue('_new'))) {
+      // note: see the ob-view-form.js resetCanFocus method 
       this.canFocus = false;
       return true;
     }
     var disabled = this.form.readOnly || this.disabled;
     // allow focus if all items are disabled
+    // note: see the ob-view-form.js resetCanFocus method 
     this.canFocus = this.form.allItemsDisabled || !disabled;
     return disabled || this.form.allItemsDisabled;
   },

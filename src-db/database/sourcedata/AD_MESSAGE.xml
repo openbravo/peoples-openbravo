@@ -12431,7 +12431,7 @@ Control Digit must be length 1.]]></MSGTEXT>
 An order line is created for each requisition line.
 The process closes the requisition when it finishes successfully. 
 The Order Date is the date of the Purchase Orders. 
-The Business Partner is the preferred vendor the the Purchase Orders. If it is left blank, then the Partner defined in the requisition (or requisition line) is used. If these are not defined, then the current vendor set for the product is used.
+The Business Partner is the preferred vendor the Purchase Orders. If it is left blank, then the Partner defined in the requisition (or requisition line) is used. If these are not defined, then the current vendor set for the product is used.
 The Price List is the price list for the Purchase Orders. If it is left blank, then the Price List defined in the requisition (or requisition line) is used.
 The Organization is the organization used by the Purchase Orders.
 The Warehouse is the warehouse used by the Purchase Orders.]]></MSGTEXT>

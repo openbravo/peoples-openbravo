@@ -318,11 +318,4 @@ public class ReportManager {
     return designParameters;
   }
 
-  private String getBaseDesignPath(String language) {
-    String designPath = _strDefaultDesignPath;
-    designPath = _prefix + "/" + _strBaseDesignPath + "/" + designPath;
-
-    return designPath;
-  }
-
 }

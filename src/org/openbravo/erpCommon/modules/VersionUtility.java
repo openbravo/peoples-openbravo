@@ -93,11 +93,6 @@ public class VersionUtility {
     }
   }
 
-  static private void destroyPool() {
-    if (log4j.isDebugEnabled())
-      log4j.debug("destroy");
-  }
-
   static private boolean checkVersion(String depParentMod, Dep dep, Mod mod, Vector<String> errors) {
     String strModName = dep.modName != null ? dep.modName : "< @CR_NameNotAvailable@ >";
     if ("MINOR".equals(dep.enforcement)) {
