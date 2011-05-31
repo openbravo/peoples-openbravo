@@ -121,6 +121,48 @@ public class DocFINPayment extends AcctServer {
             : "N");
         FieldProviderFactory.setField(data[i], "isprepayment",
             paymentDetails.get(i).isPrepayment() ? "Y" : "N");
+        FieldProviderFactory.setField(data[i], "cProjectId", paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
+            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                .getInvoicePaymentSchedule().getInvoice().getProject() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+            .getInvoice().getProject().getId() : (paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null
+            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                .getOrderPaymentSchedule().getOrder().getProject() != null ? paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+            .getProject().getId() : ""));
+        FieldProviderFactory
+            .setField(
+                data[i],
+                "cCampaignId",
+                paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                    .getInvoicePaymentSchedule() != null
+                    && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                        .getInvoicePaymentSchedule().getInvoice().getSalesCampaign() != null ? paymentDetails
+                    .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+                    .getInvoice().getSalesCampaign().getId()
+                    : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                        .getOrderPaymentSchedule() != null
+                        && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                            .getOrderPaymentSchedule().getOrder().getSalesCampaign() != null ? paymentDetails
+                        .get(i).getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
+                        .getOrder().getSalesCampaign().getId()
+                        : ""));
+        FieldProviderFactory.setField(data[i], "cActivityId", paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
+            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                .getInvoicePaymentSchedule().getInvoice().getActivity() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+            .getInvoice().getActivity().getId()
+            : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                .getOrderPaymentSchedule() != null ? paymentDetails.get(i)
+                .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+                .getActivity().getId() : ""));
+        // This lines can be uncommented when User1 and User2 are implemented
+        // FieldProviderFactory.setField(data[0], "User1_ID", payment.getStDimension().getId());
+        // FieldProviderFactory.setField(data[0], "User2_ID", payment.getNdDimension().getId());
+
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -231,30 +273,33 @@ public class DocFINPayment extends AcctServer {
             String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
                 .getProperty("dateFormat.java");
             SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-            bpAmountConverted = convertAmount(bpAmount, isReceipt, DateAcct, outputFormat
-                .format(invoice.getAccountingDate()), C_Currency_ID, as.m_C_Currency_ID, line, as,
-                fact, Fact_Acct_Group_ID, conn);
+            bpAmountConverted = convertAmount(bpAmount, isReceipt, DateAcct,
+                outputFormat.format(invoice.getAccountingDate()), C_Currency_ID,
+                as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, conn);
             strcCurrencyId = as.m_C_Currency_ID;
           }
-          fact
-              .createLine(line,
-                  getAccountBPartner((line.m_C_BPartner_ID == null || line.m_C_BPartner_ID
-                      .equals("")) ? this.C_BPartner_ID : line.m_C_BPartner_ID, as, isReceipt,
-                      isPrepayment, conn), strcCurrencyId, (isReceipt ? "" : bpAmountConverted),
-                  (isReceipt ? bpAmountConverted : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                  DocumentType, conn);
+          fact.createLine(
+              line,
+              getAccountBPartner(
+                  (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
+                      : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), strcCurrencyId,
+              (isReceipt ? "" : bpAmountConverted), (isReceipt ? bpAmountConverted : ""),
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         } else {
-          fact.createLine(line, getAccountGLItem(OBDal.getInstance().get(GLItem.class,
-              line.getC_GLItem_ID()), as, isReceipt, conn), C_Currency_ID, (isReceipt ? ""
-              : bpAmount), (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
+          fact.createLine(
+              line,
+              getAccountGLItem(OBDal.getInstance().get(GLItem.class, line.getC_GLItem_ID()), as,
+                  isReceipt, conn), C_Currency_ID, (isReceipt ? "" : bpAmount),
+              (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
       }
       FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, Record_ID);
-      fact.createLine(null, getAccount(conn, payment.getPaymentMethod(), payment.getAccount(), as,
-          payment.isReceipt()), C_Currency_ID, (payment.isReceipt() ? Amounts[AMTTYPE_Gross] : ""),
-          (payment.isReceipt() ? "" : Amounts[AMTTYPE_Gross]), Fact_Acct_Group_ID, "999999",
-          DocumentType, conn);
+      fact.createLine(
+          null,
+          getAccount(conn, payment.getPaymentMethod(), payment.getAccount(), as,
+              payment.isReceipt()), C_Currency_ID, (payment.isReceipt() ? Amounts[AMTTYPE_Gross]
+              : ""), (payment.isReceipt() ? "" : Amounts[AMTTYPE_Gross]), Fact_Acct_Group_ID,
+          "999999", DocumentType, conn);
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
       // credit is generated
       if (new BigDecimal(usedAmount).compareTo(ZERO) != 0
@@ -322,8 +367,8 @@ public class DocFINPayment extends AcctServer {
         OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
             FinAccPaymentMethod.class);
         obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
-            .getPaymentMethod()));
+        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+            payment.getPaymentMethod()));
         obCriteria.setFilterOnReadableClients(false);
         obCriteria.setFilterOnReadableOrganization(false);
         List<FinAccPaymentMethod> lines = obCriteria.list();
@@ -381,11 +426,11 @@ public class DocFINPayment extends AcctServer {
     FieldProviderFactory.setField(data[0], "C_BPartner_ID",
         payment.getBusinessPartner() != null ? payment.getBusinessPartner().getId() : "");
     FieldProviderFactory.setField(data[0], "DocumentNo", payment.getDocumentNo());
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-        "dateFormat.java");
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
     SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-    FieldProviderFactory.setField(data[0], "PaymentDate", outputFormat.format(payment
-        .getPaymentDate()));
+    FieldProviderFactory.setField(data[0], "PaymentDate",
+        outputFormat.format(payment.getPaymentDate()));
     FieldProviderFactory.setField(data[0], "C_DocType_ID", payment.getDocumentType().getId());
     FieldProviderFactory.setField(data[0], "C_Currency_ID", payment.getCurrency().getId());
     FieldProviderFactory.setField(data[0], "Amount", payment.getAmount().toString());
@@ -420,8 +465,10 @@ public class DocFINPayment extends AcctServer {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(
+          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
