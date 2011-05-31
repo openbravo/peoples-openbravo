@@ -119,6 +119,9 @@
                 this.list[position].keyComb.text += '+';
               }
               this.list[position].keyComb.text += 'Ctrl';
+              if (id === 'ToolBar_Eliminate') { //TODO: Fast hack until ob-grid shortcuts can be defined via AD_PREFERENCE.xml
+                this.list[position].keyComb.text = '';
+              }
             }
           }
           if (typeof keyComb.alt === 'undefined') {
@@ -150,6 +153,39 @@
             if (keyComb.key) {
               if (this.list[position].keyComb.text.length > 0) {
                 this.list[position].keyComb.text += '+';
+              }
+              switch (keyComb.key) {
+                case 'f1': keyComb.key = 'F1'; break;
+                case 'f2': keyComb.key = 'F2'; break;
+                case 'f3': keyComb.key = 'F3'; break;
+                case 'f4': keyComb.key = 'F4'; break;
+                case 'f5': keyComb.key = 'F5'; break;
+                case 'f6': keyComb.key = 'F6'; break;
+                case 'f7': keyComb.key = 'F7'; break;
+                case 'f8': keyComb.key = 'F8'; break;
+                case 'f9': keyComb.key = 'F9'; break;
+                case 'f10': keyComb.key = 'F10'; break;
+                case 'f11': keyComb.key = 'F11'; break;
+                case 'f12': keyComb.key = 'F12'; break;
+                case 'I': keyComb.key = 'i'; break; //Special case to ensure 'I' is different than 'l'
+                case 'Space': keyComb.key = 'Space'; break;
+                case 'Tab': keyComb.key = 'Tab'; break;
+                case 'Enter': keyComb.key = 'Enter'; break;
+                case 'Escape': keyComb.key = 'Esc'; break;
+                case 'Backspace': keyComb.key = 'Backspace'; break;
+                case 'Insert': keyComb.key = 'Ins'; break;
+                case 'Delete': keyComb.key = 'Del'; break;
+                case 'Arrow_Up': keyComb.key = 'ArrowUp'; break;
+                case 'Arrow_Down': keyComb.key = 'ArrowDown'; break;
+                case 'Arrow_Left': keyComb.key = 'ArrowLeft'; break;
+                case 'Arrow_Right': keyComb.key = 'ArrowRight'; break;
+                case 'Home': keyComb.key = 'Home'; break;
+                case 'End': keyComb.key = 'End'; break;
+                case 'Page_Up': keyComb.key = 'PgUp'; break;
+                case 'Page_Down': keyComb.key = 'PgDn'; break;
+                case 'Shift': keyComb.key = 'Shift'; break;
+                case 'Ctrl': keyComb.key = 'Ctrl'; break;
+                case 'Alt': keyComb.key = 'Alt'; break;
               }
               this.list[position].keyComb.text += keyComb.key;
             }
