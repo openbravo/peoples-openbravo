@@ -84,11 +84,6 @@ isc.OBQuickRun.addProperties({
         isc.EH.clickMaskClick();
       }
       me.click();
-      if (!me.showing) {
-        if (typeof OB.MainView.TabSet.getSelectedTab().pane.focusTab === 'function') {
-          OB.MainView.TabSet.getSelectedTab().pane.focusTab();
-        }
-      }
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction);
@@ -244,6 +239,10 @@ isc.OBQuickRun.addProperties({
 
     if (isc.isA.Canvas(this.focusOnHide)) {
       this.focusOnHide.focus();
+    }
+
+    if (typeof OB.MainView.TabSet.getSelectedTab().pane.tabSelected === 'function') {
+      OB.MainView.TabSet.getSelectedTab().pane.tabSelected();
     }
   }
 });

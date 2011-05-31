@@ -69,6 +69,7 @@ isc.OBTabSetMain.addProperties({
     if (tabPane.tabSelected) {
       tabPane.tabSelected(tabNum, tabPane, ID, tab);
     }
+
     // update the document title
     document.title = 'Openbravo - ' + tab.title;
   },
@@ -119,17 +120,11 @@ isc.OBTabSetMain.addProperties({
     OB.KeyboardManager.KS.set('TabSet_closeAllTabs', ksAction_closeAllTabs);
     var ksAction_ActivateRightTab = function() {
       me.selectTab((me.getTabNumber(me.getSelectedTab()))+1);
-      if(typeof me.getSelectedTab().pane.focusTab === 'function') {
-        me.getSelectedTab().pane.focusTab();
-      }
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.KS.set('TabSet_ActivateRightTab', ksAction_ActivateRightTab);
     var ksAction_ActivateLeftTab = function() {
       me.selectTab((me.getTabNumber(me.getSelectedTab()))-1);
-      if(typeof me.getSelectedTab().pane.focusTab === 'function') {
-        me.getSelectedTab().pane.focusTab();
-      }
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.KS.set('TabSet_ActivateLeftTab', ksAction_ActivateLeftTab);

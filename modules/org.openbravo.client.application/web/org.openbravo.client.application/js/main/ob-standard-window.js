@@ -241,6 +241,12 @@ isc.OBStandardWindow.addProperties({
       view.setReadOnly(this.getClass().readOnlyTabDefinition[view.tabId]);
     }
   },
+
+  tabSelected: function(tabNum, tabPane, ID, tab) {
+    if (this.activeView && this.activeView.setViewFocus) {
+      this.activeView.setViewFocus();
+    }
+  },
   
   // is called from the main app tabset
   tabDeselected: function(tabNum, tabPane, ID, tab, newTab){

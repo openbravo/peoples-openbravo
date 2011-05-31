@@ -85,10 +85,10 @@ isc.OBClassicWindow.addMethods({
     }
   },
   
-  // ** {{{ focusTab }}} **
+  // ** {{{ tabSelected }}} **
   //
   // Is used to place the focus in a tab after one of the flyouts is closed.
-  focusTab: function(){
+  tabSelected: function(){
     if (this.getAppFrameWindow()) {
       this.getAppFrameWindow().putFocusOnWindow();
     }
