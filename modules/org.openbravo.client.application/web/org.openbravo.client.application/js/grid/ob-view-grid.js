@@ -1599,7 +1599,7 @@ isc.OBViewGrid.addProperties({
   },
   
   discardEdits: function(rowNum, colNum, dontHideEditor, editCompletionEvent, preventConfirm){
-    var localArguments = arguments, editForm = this.getEditForm();
+    var localArguments = arguments, editForm = this.getEditForm(), totalRows;
     var me = this, record = this.getRecord(rowNum);
     
     if (!preventConfirm &&
@@ -1608,9 +1608,14 @@ isc.OBViewGrid.addProperties({
       
       // remove the record if new
       if (record._new) {
+        totalRows = me.data.totalRows;
         me.data.handleUpdate('remove', [{
           id: record.id
         }]);
+        // the total rows should be decreased
+        if (me.data.totalRows === totalRows) {
+          me.data.totalRows = me.data.totalRows - 1;
+        }
         me.updateRowCountDisplay();
         me.view.toolBar.updateButtonState(true);
         me.view.refreshChildViews();
@@ -1629,9 +1634,14 @@ isc.OBViewGrid.addProperties({
       
       // remove the record if new
       if (record && record._new) {
+        totalRows = me.data.totalRows;
         me.data.handleUpdate('remove', [{
           id: record.id
         }]);
+        // the total rows should be decreased
+        if (me.data.totalRows === totalRows) {
+          me.data.totalRows = me.data.totalRows - 1;
+        }
         me.updateRowCountDisplay();
         me.view.toolBar.updateButtonState(true);
         me.view.refreshChildViews();
