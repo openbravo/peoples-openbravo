@@ -20,7 +20,7 @@ with (theWindow) {
 //----------------------------------------
 // Load skin style sheet(s)
 //----------------------------------------
-//    isc.Page.loadStyleSheet("[SKIN]/skin_styles.css", theWindow)
+  //  isc.Page.loadStyleSheet("[SKIN]/skin_styles.css", theWindow)
 
 
 
