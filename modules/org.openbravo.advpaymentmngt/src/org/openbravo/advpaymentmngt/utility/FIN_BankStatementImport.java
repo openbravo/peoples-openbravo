@@ -107,7 +107,11 @@ public abstract class FIN_BankStatementImport {
     newBankStatement.setDocumentType(doc);
     newBankStatement.setDocumentNo(documentNo);
     newBankStatement.setOrganization(financialAccount.getOrganization());
-    newBankStatement.setName((documentNo + " - " + filename).substring(0, 60));
+    String name = documentNo + " - " + filename;
+    if (name.length() > 60) {
+      name = name.substring(0, 60);
+    }
+    newBankStatement.setName(name);
     newBankStatement.setImportdate(new Date());
     newBankStatement.setTransactionDate(new Date());
     newBankStatement.setFileName(filename);
