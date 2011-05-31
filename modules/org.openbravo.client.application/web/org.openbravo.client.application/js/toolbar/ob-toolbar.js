@@ -1032,6 +1032,7 @@ isc.OBToolbar.addProperties({
       };
     };
 
+    var currentTabCalled = false;
     for (iButtonContext = 0; iButtonContext < buttonContexts.length; iButtonContext++) {
       currentContext = buttonContexts[iButtonContext];
 
@@ -1053,6 +1054,9 @@ isc.OBToolbar.addProperties({
       }
 
       if (currentValues && !noSetSession && !currentContext.isShowingForm && !isNew && !hideAllButtons) {
+      	if(this.view.tabId===currentContext.tabId){
+      	  currentTabCalled = true;	
+      	}
         var me = this;
         // Call FIC to obtain possible session attributes and set them in form
         requestParams = {
@@ -1073,6 +1077,38 @@ isc.OBToolbar.addProperties({
       } else {
         doRefresh(buttonsByContext[currentContext], currentValues || {}, hideAllButtons || noneOrMultipleRecordsSelected, this);
       }
+    }
+
+    if(!currentTabCalled && !noSetSession && !this.view.isShowingForm && !this.view.viewForm.isNew && this.view.viewGrid.getSelectedRecords().size() !== 0){
+      var selectedRecords = this.view.viewGrid.getSelectedRecords();
+      //The call to the FIC for the current tab was not done (probably because it doesn't have buttons, or the buttons do not depend on session vars/aux ins.
+      //However, a call still needs to be done, to set the attachments information
+      requestParams = {
+        MODE: 'SETSESSION',
+        PARENT_ID: this.view.getParentId(),
+        TAB_ID: this.view.tabId,
+      };
+      var multipleSelectedRowIds = [];
+      if(selectedRecords.size() >= 1){
+        for (i = 0; i < selectedRecords.size(); i++) {
+          if(i === 0){
+            requestParams.ROW_ID = selectedRecords[i].id;  
+          }
+          multipleSelectedRowIds[i] = selectedRecords[i].id;
+        }
+        if(selectedRecords.size() > 1){
+          requestParams.MULTIPLE_ROW_IDS = multipleSelectedRowIds;
+        }
+      }
+      var allProperties = this.view.getContextInfo(false, true, false, true);
+      var me = this;
+      OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
+    	  var attachmentExists = data.attachmentExists;
+    	  me.view.attachmentExists = attachmentExists;
+    	  //Call to refresh the buttons. As its called with noSetSession=true, it will not cause an infinite recursive loop
+    	  me.updateButtonState(true);
+        }  
+      );
     }
   },
 
