@@ -432,8 +432,10 @@ function onLoadDo() {
   loadGridList();
   resizeAreaCreateFrom();
 
-  //set dimensions 600x1050, avoid horizontal scrolling
-  popupResizeTo(1050, 600);
+  //avoid horizontal scrolling when business partner column is displayed in the grid
+  if (!document.getElementById('paramBusinessPartner').value) {
+    popupResizeTo(1050, 600);
+  }
 }
 function onResizeDo(){
   resizeAreaCreateFrom(true);

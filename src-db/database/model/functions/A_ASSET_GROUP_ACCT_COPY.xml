@@ -29,6 +29,7 @@
     Cur_Parameter RECORD;
     --
     v_A_Asset_Group_ID VARCHAR2(32);
+    v_C_Acctschema_ID VARCHAR2(32);
     Cur_Acct RECORD;
     --
     v_Updated NUMBER:=0;
@@ -57,6 +58,9 @@
       IF(Cur_Parameter.ParameterName='A_Asset_Group_ID') THEN
         v_A_Asset_Group_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  A_Asset_Group_ID=' || v_A_Asset_Group_ID) ;
+      ELSIF(Cur_Parameter.ParameterName='C_AcctSchema_ID') THEN
+        v_C_Acctschema_ID:=Cur_Parameter.P_String;
+        DBMS_OUTPUT.PUT_LINE('  C_AcctSchema_ID=' || v_C_Acctschema_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
       END IF;
@@ -66,7 +70,15 @@
     * For all Accounting Schema of the Category
     */
     FOR Cur_Acct IN
-      (SELECT *  FROM A_Asset_Group_Acct  WHERE A_Asset_Group_ID=v_A_Asset_Group_ID)
+      (SELECT *
+      FROM A_Asset_Group_Acct
+      WHERE A_Asset_Group_ID=v_A_Asset_Group_ID
+      AND (A_Asset_Group_Acct.C_ACCTSCHEMA_ID = v_C_Acctschema_ID OR v_C_Acctschema_ID IS NULL)
+          AND EXISTS (SELECT 1 FROM AD_Org_AcctSchema oa
+	     WHERE A_Asset_Group_Acct.C_AcctSchema_ID = oa.C_AcctSchema_ID
+	    AND (AD_IsOrgIncluded(oa.AD_Org_ID, A_Asset_Group_Acct.AD_Org_ID, A_Asset_Group_Acct.AD_Client_ID)<>-1
+	    OR AD_IsOrgIncluded(A_Asset_Group_Acct.AD_Org_ID, oa.AD_Org_ID, A_Asset_Group_Acct.AD_Client_ID)<>-1))
+      )
     LOOP
       -- Update existing Assets
       UPDATE A_Asset_Acct
