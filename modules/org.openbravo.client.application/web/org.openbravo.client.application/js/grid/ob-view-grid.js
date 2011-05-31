@@ -1417,7 +1417,7 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++ functions for grid editing +++++++++++++++++
 
   startEditing: function (rowNum, colNum, suppressFocus, eCe, suppressWarning) {
-    var i;
+    var i, ret;
     // if a row is set and not a col then check if we should focus in the
     // first error field
     if ((rowNum || rowNum === 0) && (!colNum && colNum !== 0) && this.rowHasErrors(rowNum))  {
@@ -1432,7 +1432,8 @@ isc.OBViewGrid.addProperties({
       this.forceFocusColumn = this.getField(colNum).name;
     }
 
-    return this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
+    ret = this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
+    return ret;
   },
 
   startEditingNew: function(rowNum){
@@ -1598,11 +1599,11 @@ isc.OBViewGrid.addProperties({
   },
   
   discardEdits: function(rowNum, colNum, dontHideEditor, editCompletionEvent, preventConfirm){
-    var localArguments = arguments;
+    var localArguments = arguments, editForm = this.getEditForm();
     var me = this, record = this.getRecord(rowNum);
     
     if (!preventConfirm &&
-    (this.getEditForm().hasChanged || this.rowHasErrors(rowNum))) {
+    (editForm.hasChanged || this.rowHasErrors(rowNum))) {
       me.Super('discardEdits', localArguments);
       
       // remove the record if new
@@ -1740,6 +1741,7 @@ isc.OBViewGrid.addProperties({
   // this interferes sometimes with the very dynamic enabling 
   // disabling of fields by the readonlylogic
   canEditCell: function (rowNum, colNum) {
+    var ret;
     if (this._inGetNextEditCell) {
       var field = this.getField(colNum);
       if (field && this.getEditForm()) {
@@ -1749,7 +1751,13 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
-    return this.Super('canEditCell', arguments);    
+    
+    if (!colNum && colNum !== 0) {
+      return false;
+    }
+
+    ret = this.Super('canEditCell', arguments);
+    return ret;
   },
       
   // saveEditedValues: when saving, first check if a FIC call needs to be done to update to the 
@@ -1804,16 +1812,11 @@ isc.OBViewGrid.addProperties({
   
   hideInlineEditor: function(focusInBody, suppressCMHide) {
 
-    var rowNum = this.getEditRow(), record = this.getRecord(rowNum);
+    var rowNum = this.getEditRow(), record = this.getRecord(rowNum), editForm = this.getEditForm();
     this._hidingInlineEditor = true;
     if (record && (rowNum === 0 || rowNum)) {
       if (!this.rowHasErrors(rowNum)) {
         record[this.recordBaseStyleProperty] = null;
-      }
-      
-      // clear the errors so that they don't show up at the next row
-      if (this.getEditForm()) {
-        this.getEditForm().clearErrors();
       }
   
       if (record && record.editColumnLayout) {
@@ -1826,12 +1829,19 @@ isc.OBViewGrid.addProperties({
       }
       this.view.isEditingGrid = false;
       this.refreshRow(rowNum);
+    }
+
+    if (editForm) {
+      // canFocus is set when disabling a form item
+      // a new record needs to compute canFocus again
+      editForm.resetCanFocus();
       // clear all values, as null values in the new row won't overwrite filled form
       // values
-      if (this.getEditForm()) {
-        this.getEditForm().clearValues();
-      }
+      editForm.clearValues();      
+      // clear the errors so that they don't show up at the next row
+      editForm.clearErrors();
     }
+    
     // always hide the clickmask, as it needs to be re-applied
     var ret = this.Super('hideInlineEditor', [focusInBody, false]);
     delete this._hidingInlineEditor;
