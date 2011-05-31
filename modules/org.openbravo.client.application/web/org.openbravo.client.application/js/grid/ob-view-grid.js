@@ -272,8 +272,12 @@ isc.OBViewGrid.addProperties({
       this.sorterDefaults = {};
     }
     
-    this.contextMenu = this.getMenuConstructor().create({items: menuItems});
-
+	// TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
+    // add context-menu only if 'new' is allowed in tab definition
+    if (this.uiPattern !== 'SR' && this.uiPattern !== 'RO') {
+      this.contextMenu = this.getMenuConstructor().create({items: menuItems});
+    }
+  
     var ret = this.Super('initWidget', arguments);
     
     this.noDataEmptyMessage = OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage'); // OB.I18N.getLabel('OBUIAPP_GridNoRecords')
@@ -540,7 +544,8 @@ isc.OBViewGrid.addProperties({
   // - if there is only one record then select it directly
   dataArrived: function(startRow, endRow){
     // do this now, to replace the loading message
-    if (this.view.readOnly) {
+    // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
+    if (this.uiPattern === 'SR' || this.uiPattern === 'RO') {
       this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_NoDataInGrid');
     } else {
       this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridNoRecords') +
@@ -1108,13 +1113,15 @@ isc.OBViewGrid.addProperties({
 //      });
     }
 
-    menuItems.add({
-      title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
-      keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','ToolBar_NewRow','id'),
-      click: function(){
-        grid.startEditingNew(rowNum);
-      }
-    });
+    if (!this.view.singleRecord && !this.view.readOnly) {
+      menuItems.add({
+        title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
+        keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','ToolBar_NewRow','id'),
+        click: function(){
+          grid.startEditingNew(rowNum);
+        }
+      });
+    }
 //    menuItems.add({
 //      title: OB.I18N.getLabel('OBUIAPP_CreateRecordInForm'),
 //      click: function(){
@@ -1159,7 +1166,7 @@ isc.OBViewGrid.addProperties({
         }
       });
     }
-    if (recordsSelected && !this.view.readOnly && this.allSelectedRecordsWritable()) {
+    if (recordsSelected && !this.view.readOnly && !this.view.singleRecord && this.allSelectedRecordsWritable()) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_Delete'),
         keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','ToolBar_Eliminate','id'),
