@@ -87,7 +87,7 @@ isc.OBMessageBar.addProperties({
   },
   
   setMessage: function(type, title, text){
-    var i, length, newText;
+    var i, length, newText, form = this.view.viewForm, grid = this.view.viewGrid;
     this.setType(type);
     if (isc.isAn.Array(text)) {
       length = text.length;
@@ -98,6 +98,11 @@ isc.OBMessageBar.addProperties({
       }
       text = newText + '</ul>';
     }
+
+    if((form && form.isSaving) || (grid && grid.isSaving)) {
+      text = OB.I18N.getLabel('OBUIAPP_ErrorSavingFailed') + ' ' + text;
+    }
+
     this.setText(title || this.getDefaultTitle(type), text);
     delete this.hasFilterMessage;
     this.show();
