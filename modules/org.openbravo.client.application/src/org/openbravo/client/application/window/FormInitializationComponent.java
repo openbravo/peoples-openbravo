@@ -132,7 +132,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<String> lastfieldChanged = new ArrayList<String>();
       List<String> changeEventCols = new ArrayList<String>();
       Map<String, List<String>> columnsInValidation = new HashMap<String, List<String>>();
-      List<String> calloutMessages = new ArrayList<String>();
+      List<JSONObject> calloutMessages = new ArrayList<JSONObject>();
       List<String> jsExcuteCode = new ArrayList<String>();
 
       log.debug("Form Initialization Component Execution. Tab Name: " + tab.getWindow().getName()
@@ -313,7 +313,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private JSONObject buildJSONObject(String mode, Tab tab, Map<String, JSONObject> columnValues,
-      BaseOBObject row, List<String> changeEventCols, List<String> calloutMessages,
+      BaseOBObject row, List<String> changeEventCols, List<JSONObject> calloutMessages,
       List<JSONObject> attachments, List<String> jsExcuteCode) {
     JSONObject finalObject = new JSONObject();
     try {
@@ -947,7 +947,7 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private List<String> executeCallouts(String mode, Tab tab, Map<String, JSONObject> columnValues,
       String changedColumn, List<String> calloutsToCall, List<String> lastfieldChanged,
-      List<String> messages, List<String> dynamicCols, List<String> jsExecuteCode) {
+      List<JSONObject> messages, List<String> dynamicCols, List<String> jsExecuteCode) {
 
     // In CHANGE mode, we will add the initial callout call for the changed column, if there is
     // one
@@ -975,7 +975,7 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private List<String> runCallouts(Map<String, JSONObject> columnValues, Tab tab,
       List<String> calledCallouts, List<String> calloutsToCall, List<String> lastfieldChangedList,
-      List<String> messages, List<String> dynamicCols, List<String> jsExecuteCode) {
+      List<JSONObject> messages, List<String> dynamicCols, List<String> jsExecuteCode) {
     HashMap<String, Object> calloutInstances = new HashMap<String, Object>();
 
     // flush&commit to release lock in db which otherwise interfere with callouts which run in their
@@ -1059,9 +1059,13 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (returnedArray.size() > 0) {
             for (NativeArray element : returnedArray) {
               String name = (String) element.get(0, null);
-              if (name.equals("MESSAGE")) {
+              if (name.equals("MESSAGE") || name.equals("INFO") || name.equals("WARNING")
+                  || name.equals("ERROR") || name.equals("SUCCESS")) {
                 log.debug("Callout message: " + element.get(1, null));
-                messages.add(element.get(1, null).toString());
+                JSONObject message = new JSONObject();
+                message.put("text", element.get(1, null).toString());
+                message.put("severity", name.equals("MESSAGE") ? "TYPE_INFO" : "TYPE_" + name);
+                messages.add(message);
               } else if (name.equals("JSEXECUTE")) {
                 // The code on a JSEXECUTE command is sent directly to the client for eval()
                 String code = (String) element.get(1, null);
@@ -1074,9 +1078,12 @@ public class FormInitializationComponent extends BaseActionHandler {
                   if (js.equals("displayLogic();")) {
                     // We don't do anything, this is a harmless js response
                   } else {
-                    messages.add(Utility.messageBD(new DalConnectionProvider(false),
+                    JSONObject message = new JSONObject();
+                    message.put("text", Utility.messageBD(new DalConnectionProvider(false),
                         "OBUIAPP_ExecuteInCallout", RequestContext.get().getVariablesSecureApp()
                             .getLanguage()));
+                    message.put("severity", "TYPE_ERROR");
+                    messages.add(message);
                     createNewPreferenceForWindow(tab.getWindow());
                     log.warn("An EXECUTE element has been found in the response of the callout "
                         + calloutClassName + ". A preference has been created for the window "

@@ -576,9 +576,9 @@ OB.ViewFormProperties = {
     }
 
     // apparently sometimes an empty string is returned
-    if (calloutMessages && calloutMessages.length > 0 && calloutMessages[0] !== '') {
+    if (calloutMessages && calloutMessages.length > 0 && calloutMessages[0].text !== '') {
       // TODO: check as what type should call out messages be displayed
-      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, null, calloutMessages[0]);
+      this.view.messageBar.setMessage(isc.OBMessageBar[calloutMessages[0].severity], null, calloutMessages[0].text);
     }
     if (auxInputs) {
       for (prop in auxInputs) {
