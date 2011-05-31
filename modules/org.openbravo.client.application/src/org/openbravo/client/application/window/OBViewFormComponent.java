@@ -1087,16 +1087,23 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
   public static class FormFieldComparator implements Comparator<Field> {
 
+    /**
+     * Fields with null sequence number are in the bottom of the form. In case multiple null
+     * sequences, it is sorted by field UUID.
+     */
     @Override
     public int compare(Field arg0, Field arg1) {
-      Long arg0Position = (arg0.getSequenceNumber() != null ? arg0.getSequenceNumber() : 0);
-      Long arg1Position = (arg1.getSequenceNumber() != null ? arg1.getSequenceNumber() : 0);
-      if (arg0Position == null) {
-        arg0Position = 0L;
+      Long arg0Position = arg0.getSequenceNumber();
+      Long arg1Position = arg1.getSequenceNumber();
+
+      if (arg0Position == null && arg1Position == null) {
+        return arg0.getId().compareTo(arg1.getId());
+      } else if (arg0Position == null) {
+        return 1;
+      } else if (arg1Position == null) {
+        return -1;
       }
-      if (arg1Position == null) {
-        arg1Position = 0L;
-      }
+
       return (int) (arg0Position - arg1Position);
     }
 
