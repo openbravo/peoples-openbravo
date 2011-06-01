@@ -127,6 +127,11 @@ isc.OBTabSetMain.addProperties({
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.KS.set('TabSet_SelectNextTab', ksAction_SelectNextTab);
+    var ksAction_SelectWorkspaceTab = function() {
+      me.selectTab(0);
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.KS.set('TabSet_SelectWorkspaceTab', ksAction_SelectWorkspaceTab);
     this.Super('draw', arguments);
   },
 

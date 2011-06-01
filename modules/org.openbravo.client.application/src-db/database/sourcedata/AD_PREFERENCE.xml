@@ -22,6 +22,7 @@
   {"id": "TabSet_SelectChildTab", "keyComb": {"alt": true, "shift": true, "key": "Arrow_Down"}},
   {"id": "TabSet_SelectPreviousTab", "keyComb": {"alt": true, "shift": true, "key": "Arrow_Left"}},
   {"id": "TabSet_SelectNextTab", "keyComb": {"alt": true, "shift": true, "key": "Arrow_Right"}},
+  {"id": "TabSet_SelectWorkspaceTab", "keyComb": {"alt": true, "shift": true, "key": "1"}},
   {"id": "Grid_EditInForm", "keyComb": {"ctrl": true, "alt": false, "key": "f2"}},
   {"id": "Grid_EditInGrid", "keyComb": {"ctrl": false, "alt": false, "key": "f2"}}
 ]]]></VALUE>
