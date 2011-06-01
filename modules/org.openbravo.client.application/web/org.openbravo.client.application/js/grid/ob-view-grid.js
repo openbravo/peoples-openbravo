@@ -2093,9 +2093,6 @@ isc.OBViewGrid.addProperties({
   
   // we are being reshown, get new values for the combos
   visibilityChanged: function(visible){
-    if (visible && this.view.isActiveView()) {      
-      this.enableKeyBoardShortCuts();
-    }
     if (visible && this.getEditRow()) {
       this.getEditForm().doChangeFICCall();
     }
