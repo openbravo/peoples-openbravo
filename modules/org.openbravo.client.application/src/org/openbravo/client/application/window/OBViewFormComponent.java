@@ -275,6 +275,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
       statusBarFields.add(property.getName());
 
+      if (field.isDisplayed()) {
+        continue;
+      }
+
       final OBViewField viewField = new OBViewField();
       viewField.setField(field);
       viewField.setProperty(property);
