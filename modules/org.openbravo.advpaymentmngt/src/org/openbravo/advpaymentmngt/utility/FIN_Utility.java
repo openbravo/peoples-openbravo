@@ -294,9 +294,12 @@ public class FIN_Utility {
   public static DocumentType getDocumentType(Organization org, String docCategory) {
     DocumentType outDocType = null;
     OBCriteria<DocumentType> obcDoc = OBDal.getInstance().createCriteria(DocumentType.class);
+    obcDoc.setFilterOnReadableClients(false);
+    obcDoc.setFilterOnReadableOrganization(false);
 
-    obcDoc.add(Restrictions.in("organization.id", OBContext.getOBContext()
-        .getOrganizationStructureProvider().getParentTree(org.getId(), true)));
+    obcDoc.add(Restrictions
+        .in("organization.id", OBContext.getOBContext().getOrganizationStructureProvider(
+            org.getClient().getId()).getParentTree(org.getId(), true)));
     obcDoc.add(Restrictions.eq(DocumentType.PROPERTY_DOCUMENTCATEGORY, docCategory));
     obcDoc.addOrderBy(DocumentType.PROPERTY_DEFAULT, false);
     obcDoc.addOrderBy(DocumentType.PROPERTY_ID, false);

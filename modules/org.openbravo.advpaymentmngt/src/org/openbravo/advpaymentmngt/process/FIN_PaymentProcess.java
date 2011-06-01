@@ -72,12 +72,14 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       OBDal.getInstance().flush();
       if (strAction.equals("P") || strAction.equals("D")) {
         // Set APRM_Ready preference
-        if (!dao.existsAPRMReadyPreference()) {
+        if (!dao.existsAPRMReadyPreference()
+            && vars.getSessionValue("APRMT_MigrationToolRunning", "N").equals("Y")) {
           dao.createAPRMReadyPreference();
         }
 
         Set<String> documentOrganizations = OBContext.getOBContext()
-            .getOrganizationStructureProvider().getNaturalTree(payment.getOrganization().getId());
+            .getOrganizationStructureProvider(payment.getClient().getId()).getNaturalTree(
+                payment.getOrganization().getId());
         if (!documentOrganizations.contains(payment.getAccount().getOrganization().getId())) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
