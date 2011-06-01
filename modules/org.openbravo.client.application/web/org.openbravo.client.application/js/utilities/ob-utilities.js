@@ -815,6 +815,7 @@ OB.Utilities.formatTimePassedMessage = function(
   var message = OB.I18N.getLabel(messageId);
   return message.replace(/^N/, n);
 };
+
 OB.Utilities.getTimePassed = function(
   /* date the note was created */created) {
     // 0-59 minutes: minutes
@@ -824,10 +825,12 @@ OB.Utilities.getTimePassed = function(
   // >30 days: months
 
   var now = new Date(), 
+      // created is in gmt
+      /// our local date has a time zone difference, correct for it
       msCreated = created.getTime(),
-      msNow = now.getTime(),
+      msNow = now.getTime() + (-1 * now.getTimezoneOffset() * 60000),
       n;
-
+  
   // time difference in days
   var diffDays = Math.floor((msNow - msCreated) / (1000 * 60 * 60 * 24));
   if (diffDays >= 30) {
