@@ -1838,7 +1838,7 @@ isc.OBViewGrid.addProperties({
       newValues = this.getEditValues(editValuesID);
     } else {
       var editForm = this.getEditForm(), focusItem = editForm.getFocusItem();
-      if (focusItem) {
+      if (focusItem && !focusItem.hasPickList) {
         focusItem.updateValue();
         editForm.handleItemChange(focusItem);
         if (editForm.inFicCall) {
@@ -1881,7 +1881,6 @@ isc.OBViewGrid.addProperties({
         isc.Log.logDebug('hideInlineEditor has NO record and editColumnLayout', 'OB');
       }
       this.view.isEditingGrid = false;
-      this.refreshRow(rowNum);
     }
 
     if (editForm) {

@@ -873,7 +873,7 @@ OB.ViewFormProperties = {
     }
     if (editValues) {
       editValues[fldName + '_textualValue'] = textValue;
-    } else if (this.grid) {
+    } else if (this.grid && this.grid.getEditForm()) {
       this.grid.getEditValues(this.grid.getEditRow())[fldName + '_textualValue'] = textValue;
     }
     this.setValue(fldName + '_textualValue', textValue);
