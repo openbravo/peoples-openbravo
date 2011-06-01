@@ -82,20 +82,9 @@ OB.DateItemProperties = {
 
   // compare while ignoring milli difference
   compareValues: function (value1, value2) {
-    // not a date let the super class do it
-    if (!isc.isA.Date(value1) || !isc.isA.Date(value2)) {
-      return this.Super('compareValues', arguments);
-    }
-    var difference = value1.getTime() - value2.getTime();
-    if (difference < -1000) {
-      return true;
-    } else if (difference > 1000) {
-      return false;
-    } else {
-      return true;
-    }
+    return (0 === isc.Date.compareLogicalDates(value1, value2));
   },
-
+  
   parseValue: function() {
     var i, str = this.blurValue(), parts = [ '', '', '' ], partIndex = 0, result;
     if (!str || isc.isA.Date(str)) {
@@ -172,7 +161,14 @@ OB.DateItemProperties = {
   isSeparator : function(str, position) {
     return str.charAt(position) === '-' || str.charAt(position) === '\\'
         || str.charAt(position) === '/';
-  } 
+  },
+  
+  pickerDataChanged: function(picker) {
+    this.Super('pickerDataChanged', arguments);
+    if (this.form.focusInNextItem) {
+      this.form.focusInNextItem(this.name);
+    }
+  }
 };
 
 isc.OBDateItem.addProperties(OB.DateItemProperties,
@@ -181,16 +177,11 @@ isc.OBDateItem.addProperties(OB.DateItemProperties,
   init: function() {
     // this call super.init
     this.doInit();
-  },
+   },
   
   // ** {{{ blur }}} **
   // Called when the focus leaves the field (sets value and validates)
   blur: function(){
-    var newValue = this.parseValue(), oldValue = this.getValue(), editRow;
-    
-    if (oldValue !== newValue) {
-      this.storeValue(OB.Utilities.Date.OBToJS(newValue, this.dateFormat));
-    }
     
     if (!this.inBlur) {
       this.inBlur = true;
@@ -201,8 +192,23 @@ isc.OBDateItem.addProperties(OB.DateItemProperties,
     return this.Super('blur', arguments);
   },
   
+  expandValue: function() {
+    var newValue = this.parseValue(), oldValue = this.blurValue();
+    
+    if (oldValue !== newValue) {
+      this.dateTextField.setValue(newValue);
+    }
+  },
+  
+  // update the value in update value as this is called from cellEditEnd in the
+  // grid
+  updateValue: function() {
+    this.expandValue();
+    this.Super('updateValue', arguments);
+  },
+  
   blurValue: function() {
-    return this.getValue();
+    return this.dateTextField.getElementValue();
   },
   
   // ** {{{ checkOBDateItemValue }}} **
@@ -227,7 +233,7 @@ isc.OBDateItem.addProperties(OB.DateItemProperties,
       this.form.markForRedraw();
     }
   },
-  
+
   validateOBDateItem: function(value){
       var dateValue = OB.Utilities.Date.OBToJS(value, this.dateFormat);
       var isValid = true;
@@ -249,7 +255,7 @@ isc.OBDateItem.addProperties(OB.DateItemProperties,
         return item.validateOBDateItem(value);
       }
     }]
-  }    
+  } 
 );
 
 OB.I18N.getLabel('OBUIAPP_InvalidValue', null, isc.OBDateItem, 'invalidValueLabel');
