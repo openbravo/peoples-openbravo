@@ -43,8 +43,6 @@ isc.Canvas.addClassProperties({neverUsePNGWorkaround:true});
 
 OB.KeyboardManager.KS.setPredefinedKSList('OBUIAPP_KeyboardShortcuts');
 OB.KeyboardManager.KS.setPredefinedKSList('UINAVBA_KeyboardShortcuts');
-OB.KeyboardManager.KS.setPredefinedKSList('UITOOLB_KeyboardShortcuts');
-OB.KeyboardManager.KS.setPredefinedKSList('UISTATB_KeyboardShortcuts');
 
 // should be moved to client.kernel component
 // placed here to prevent dependencies of client.kernel on Preferences
