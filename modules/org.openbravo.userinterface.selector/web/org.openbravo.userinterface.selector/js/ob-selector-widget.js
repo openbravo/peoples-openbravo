@@ -662,15 +662,24 @@ isc.OBSelectorWidget
               this.selector.checkDefaultValidations(form, item);
             },
               getPickListFilterCriteria : function() {
+                var defValue, prop, i,
+                    criteria = {
+                      operator: 'or',
+                      _constructor: 'AdvancedCriteria',
+                      criteria:[]
+                    };
 
-                var criteria = this.Super('getPickListFilterCriteria'), defValue, prop, i;
-
-                if (!criteria) {
-                  criteria = {};
-                }
+                criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
 
                 // also adds the special ORG parameter
                 OB.Utilities.addFormInputsToCriteria(criteria);
+
+                criteria.criteria.push({
+                  fieldName: this.displayField,
+                  operator: 'iContains',
+                  value: this.getDisplayValue()
+                });
+
 
                 // adds the selector id to filter used to get filter information
                 criteria._selectorDefinitionId = this.selector.selectorDefinitionId;
@@ -680,17 +689,18 @@ isc.OBSelectorWidget
                 // the displayField filter is not passed when
                 // the user clicks the
                 // drop-down button
-                if (criteria[this.displayField]) {
-                  for (i = 0; i < this.selector.extraSearchFields.length; i++) {
-                    if (!criteria[this.selector.extraSearchFields[i]]) {
-                      criteria[this.selector.extraSearchFields[i]] = this
-                          .getDisplayValue();
-                    }
+                for (i = 0; i < this.selector.extraSearchFields.length; i++) {
+                  if (!criteria[this.selector.extraSearchFields[i]]) {
+                    criteria.criteria.push({
+                      fieldName: this.selector.extraSearchFields[i],
+                      operator: 'iContains',
+                      value: this.getDisplayValue()
+                    });
                   }
-
-                  // for the suggestion box it is one big or
-                  criteria[OB.Constants.OR_EXPRESSION] = 'true';
                 }
+
+                // for the suggestion box it is one big or
+                criteria[OB.Constants.OR_EXPRESSION] = 'true';
 
                 // the additional where clause
                 criteria[OB.Constants.WHERE_PARAMETER] = this.selector.whereClause;
