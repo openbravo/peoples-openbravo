@@ -301,6 +301,33 @@ isc.OBViewGrid.addProperties({
     this.setFields(this.completeFields.duplicate());
   },
   
+  draw: function() {
+    var drawnBefore = this.isDrawn(), form;
+    this.Super('draw', arguments);
+    // set the focus in the filter editor
+    if (this.view && this.view.isActiveView() && !drawnBefore && this.isVisible() &&
+        this.getFilterEditor() && this.getFilterEditor().getEditForm()) {
+      // there is a filter editor
+      form = this.getFilterEditor().getEditForm();
+      
+      // compute a focus item, set focus with some delay
+      // to give everyone time to be ready
+      if (!form.getFocusItem()) {
+        items = form.getItems();
+
+        for (i = 0; i < items.length; i++) {
+          item = items[i];
+          if (item.getCanFocus() && !item.isDisabled()) {
+            item.delayCall('focusInItem', null, 100);
+            break;
+          }
+        }
+      } else {
+        form.getFocusItem().delayCall('focusInItem', null, 100);
+      }
+    }
+  },
+  
   // add the properties from the form
   addFormProperties: function(props){
     isc.addProperties(this.editFormDefaults, props);
