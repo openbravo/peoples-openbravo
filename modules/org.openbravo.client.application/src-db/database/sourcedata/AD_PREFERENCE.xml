@@ -39,7 +39,7 @@
   {"id": "ToolBar_Link", "keyComb": {"ctrl": true, "shift": true, "key": "U"}},
   {"id": "StatusBar_Previous", "keyComb": {"alt": true, "shift": true, "key": "Page_Up"}},
   {"id": "StatusBar_Next", "keyComb": {"alt": true, "shift": true, "key": "Page_Down"}},
-  {"id": "StatusBar_Maximize-Restore", "keyComb": {"ctrl": true, "alt": true, "key": "Enter"}},
+  {"id": "StatusBar_Maximize-Restore", "keyComb": {"alt": true, "shift": true, "key": "Enter"}},
   {"id": "StatusBar_Close", "keyComb": {"key": "Escape"}},
   {"id": "Grid_EditInForm", "keyComb": {"ctrl": true, "alt": false, "key": "f2"}},
   {"id": "Grid_EditInGrid", "keyComb": {"ctrl": false, "alt": false, "key": "f2"}}
