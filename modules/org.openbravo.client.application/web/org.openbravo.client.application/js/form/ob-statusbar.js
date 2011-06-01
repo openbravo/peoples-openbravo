@@ -48,8 +48,8 @@ isc.OBStatusBarIconButton.addProperties( {
 
   // always go through the autosave of the window
   action : function() {
-    // to avoid issue that autosave is executed when expading/collapsing sections using KS
-    if (this.buttonType === 'maximizeRestore' || this.buttonType === 'sectionMoreInformation' || this.buttonType === 'sectionAudit' || this.buttonType === 'sectionNotes' || this.buttonType === 'sectionLinkedItems' || this.buttonType === 'sectionAttachments') {
+    // to avoid issue that autosave is executed when maximize/minimize views using KS
+    if (this.buttonType === 'maximizeRestore') {
       this.doAction();
       return;
     }
@@ -102,26 +102,6 @@ isc.OBStatusBarIconButton.addProperties( {
           }
         }
       }
-    } else if (this.buttonType === 'sectionMoreInformation') {
-      this.handleSectionExpandCollapse('402880E72F1C15A5012F1C7AA98B00E8');
-    } else if (this.buttonType === 'sectionAudit') {
-      this.handleSectionExpandCollapse('1000100001');
-    } else if (this.buttonType === 'sectionNotes') {
-      this.handleSectionExpandCollapse('_notes_');
-    } else if (this.buttonType === 'sectionLinkedItems') {
-      this.handleSectionExpandCollapse('_linkedItems_');
-    } else if (this.buttonType === 'sectionAttachments') {
-      this.handleSectionExpandCollapse('_attachments_');
-    }
-  },
-
-  handleSectionExpandCollapse: function(name) {
-    if (this.view.viewForm.getItem(name)) {
-      if (this.view.viewForm.getItem(name).sectionExpanded ) {
-        this.view.viewForm.getItem(name).collapseSection();
-      } else {
-        this.view.viewForm.getItem(name).expandSection();
-      }
     }
   },
 
@@ -170,11 +150,6 @@ isc.OBStatusBar.addProperties( {
   maximizeButton : null,
   restoreButton : null,
   maximizeRestoreButton : null,
-  sectionMoreInformation : null,
-  sectionAudit : null,
-  sectionNotes : null,
-  sectionLinkedItems : null,
-  sectionAttachments : null,
 
   newIcon : null,
   showingIcon : false,
@@ -228,41 +203,6 @@ isc.OBStatusBar.addProperties( {
       forceKeyboardShortcut : true,
       keyboardShortcutId : 'StatusBar_Maximize-Restore'
     });
-    this.sectionMoreInformation = isc.OBStatusBarIconButton.create( { // Only for implement 'SectionItem_MoreInformation' keyboard shortcut
-      visibility : 'hidden',
-      view : this.view,
-      buttonType : 'sectionMoreInformation',
-      forceKeyboardShortcut : true,
-      keyboardShortcutId : 'SectionItem_MoreInformation'
-    });
-    this.sectionAudit = isc.OBStatusBarIconButton.create( { // Only for implement 'SectionItem_Audit' keyboard shortcut
-      visibility : 'hidden',
-      view : this.view,
-      buttonType : 'sectionAudit',
-      forceKeyboardShortcut : true,
-      keyboardShortcutId : 'SectionItem_Audit'
-    });
-    this.sectionNotes = isc.OBStatusBarIconButton.create( { // Only for implement 'SectionItem_Notes' keyboard shortcut
-      visibility : 'hidden',
-      view : this.view,
-      buttonType : 'sectionNotes',
-      forceKeyboardShortcut : true,
-      keyboardShortcutId : 'SectionItem_Notes'
-    });
-    this.sectionLinkedItems = isc.OBStatusBarIconButton.create( { // Only for implement 'SectionItem_LinkedItems' keyboard shortcut
-      visibility : 'hidden',
-      view : this.view,
-      buttonType : 'sectionLinkedItems',
-      forceKeyboardShortcut : true,
-      keyboardShortcutId : 'SectionItem_LinkedItems'
-    });
-    this.sectionAttachments = isc.OBStatusBarIconButton.create( { // Only for implement 'SectionItem_Attachments' keyboard shortcut
-      visibility : 'hidden',
-      view : this.view,
-      buttonType : 'sectionAttachments',
-      forceKeyboardShortcut : true,
-      keyboardShortcutId : 'SectionItem_Attachments'
-    });
     this.buttonBar = isc.OBStatusBarIconButtonBar.create( {});
 
     var buttonSpacer = isc.HLayout.create( {
@@ -270,7 +210,7 @@ isc.OBStatusBar.addProperties( {
     }), i;
 
     this.buttonBar.addMembers( [ this.previousButton, this.nextButton, buttonSpacer,
-        this.maximizeButton, this.restoreButton, this.closeButton, this.maximizeRestoreButton, this.sectionMoreInformation, this.sectionAudit, this.sectionNotes, this.sectionLinkedItems, this.sectionAttachments ]);
+        this.maximizeButton, this.restoreButton, this.closeButton, this.maximizeRestoreButton ]);
     for (i = 0; i < this.buttonBar.members.length; i++) {
       if (this.buttonBar.members[i].buttonType) {
         OB.TestRegistry.register(

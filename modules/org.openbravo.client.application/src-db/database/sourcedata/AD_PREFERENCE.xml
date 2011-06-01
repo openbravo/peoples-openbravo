@@ -41,11 +41,6 @@
   {"id": "StatusBar_Next", "keyComb": {"alt": true, "shift": true, "key": "Page_Down"}},
   {"id": "StatusBar_Maximize-Restore", "keyComb": {"ctrl": true, "alt": true, "key": "Enter"}},
   {"id": "StatusBar_Close", "keyComb": {"key": "Escape"}},
-  {"id": "SectionItem_MoreInformation", "keyComb": {"ctrl": true, "shift": true, "key": "1"}},
-  {"id": "SectionItem_Audit", "keyComb": {"ctrl": true, "shift": true, "key": "2"}},
-  {"id": "SectionItem_Notes", "keyComb": {"ctrl": true, "shift": true, "key": "3"}},
-  {"id": "SectionItem_LinkedItems", "keyComb": {"ctrl": true, "shift": true, "key": "4"}},
-  {"id": "SectionItem_Attachments", "keyComb": {"ctrl": true, "shift": true, "key": "5"}},
   {"id": "Grid_EditInForm", "keyComb": {"ctrl": true, "alt": false, "key": "f2"}},
   {"id": "Grid_EditInGrid", "keyComb": {"ctrl": false, "alt": false, "key": "f2"}}
 ]]]></VALUE>
