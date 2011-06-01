@@ -116,7 +116,8 @@ isc.OBViewGrid.addProperties({
   
   emptyMessage: OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage'),
   discardEditsSaveButtonTitle: OB.I18N.getLabel('UINAVBA_Save'),
-
+  editPendingCSSText: null,
+  
   // commented out because of: https://issues.openbravo.com/view.php?id=16515
   // default is much smaller which give smoother scrolling
 //  quickDrawAheadRatio: 1.0,
@@ -1435,8 +1436,16 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
+    
     if (colNum || colNum === 0) {
       this.forceFocusColumn = this.getField(colNum).name;
+    } else {
+      // set the first focused column
+      for (i = 0; i < this.getFields().length; i++) {
+        if (this.getFields()[i].editorProperties && this.getFields()[i].editorProperties.firstFocusedField) {
+          colNum = i;
+        }
+      }    
     }
 
     ret = this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
@@ -1873,6 +1882,7 @@ isc.OBViewGrid.addProperties({
   },
   
   showInlineEditor: function(rowNum, colNum, newCell, newRow, suppressFocus){
+    var fld;
     
     this._showingEditor = true;
     
@@ -1896,6 +1906,9 @@ isc.OBViewGrid.addProperties({
       // set the field to focus on after returning from the fic
       this.getEditForm().forceFocusedField = this.forceFocusColumn;
       delete this.forceFocusColumn;
+    } else if (colNum || colNum === 0) {
+      fld = this.getField(colNum);
+      this.getEditForm().forceFocusedField = fld.name;
     }
     
     var record = this.getRecord(rowNum);
