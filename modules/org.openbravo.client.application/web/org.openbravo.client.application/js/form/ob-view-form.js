@@ -373,7 +373,7 @@ OB.ViewFormProperties = {
     }
   },
   
-  computeFocusItem: function() {
+  computeFocusItem: function(changeState) {
     var items = this.getItems(), length = items.length, item, i;
     
     var errorFld = this.getFirstErrorItem();
@@ -391,7 +391,7 @@ OB.ViewFormProperties = {
       }
     }
 
-    if (this.firstFocusedField) {
+    if (!changeState && this.firstFocusedField) {
       item = this.getItem(this.firstFocusedField);
       if(item) {
         this.setFocusItem(item);
@@ -886,7 +886,9 @@ OB.ViewFormProperties = {
 
     if (item._hasChanged) {
       this.itemChangeActions();
-      
+
+      this.onFieldChanged(this);
+
       var i;
       for (i = 0; i < this.dynamicCols.length; i++) {
         if (this.dynamicCols[i] === item.inpColumnName) {
@@ -941,7 +943,7 @@ OB.ViewFormProperties = {
         editValues = me.view.viewGrid.getEditValues(editRow);
       }
 
-      me.computeFocusItem();
+      me.computeFocusItem(true);
 
       me.processFICReturn(response, data, request, editValues, editRow);
     });
