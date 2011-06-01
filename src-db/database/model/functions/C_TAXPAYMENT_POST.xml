@@ -287,7 +287,7 @@ BEGIN
       RAISE_APPLICATION_ERROR(-20100, '@TwoRegisterTypesNeeded@');
       end if;
 
-      select case when tt.issotrx='Y' then max(glitem_debit_acct) else max(glitem_credit_acct) end, max(tt.c_glitem_id)
+      select case when tt.issotrx='Y' then max(glitem_credit_acct) else max(glitem_debit_acct) end, max(tt.c_glitem_id)
       into v_glitem_acct, v_glitem_id
       from c_taxregister_type tt
       inner join c_glitem_acct gia on gia.c_glitem_id=tt.c_glitem_id
