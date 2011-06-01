@@ -149,7 +149,7 @@ isc.FormItem.addProperties({
       this.canFocus = false;
       return true;
     }
-    var disabled = this.form.readOnly || this.disabled;
+    var disabled = this.form.readOnly || this.readonly;
     // allow focus if all items are disabled
     // note: see the ob-view-form.js resetCanFocus method 
     this.canFocus = this.form.allItemsDisabled || !disabled;
