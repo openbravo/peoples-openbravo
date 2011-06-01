@@ -6540,7 +6540,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800060-->  <HELP><![CDATA[Add discounts which may be made available to this business partner.]]></HELP>
 <!--800060-->  <AD_TABLE_ID><![CDATA[800046]]></AD_TABLE_ID>
 <!--800060-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
-<!--800060-->  <SEQNO><![CDATA[152]]></SEQNO>
+<!--800060-->  <SEQNO><![CDATA[110]]></SEQNO>
 <!--800060-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--800060-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--800060-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
