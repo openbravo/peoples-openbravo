@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,9 +36,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -60,6 +60,7 @@ import org.apache.ddlutils.io.DataToArraySink;
 import org.apache.ddlutils.io.DatabaseDataIO;
 import org.apache.ddlutils.model.Database;
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -127,6 +128,10 @@ public class ImportModule {
   Vector<DynaBean> dbprefix = new Vector<DynaBean>();
 
   boolean checked;
+  private String[] dependencyErrors;
+  private boolean upgradePrecheckFail;
+
+  private final static String V3_TEMPLATE_ID = "0138E7A89B5E4DC3932462252801FFBC";
 
   /**
    * Initializes a new ImportModule object, it reads from obdir directory the database model to be
@@ -299,6 +304,7 @@ public class ImportModule {
     final ModuleInstallDetail mid = VersionUtility.checkRemote(vars, installableModules,
         updateableModules, errors, maturityLevels);
     modulesToInstall = mid.getModulesToInstall();
+    dependencyErrors = mid.getDependencyErrors();
 
     // In case core is in the list of modules to update, put in at the last module to update, so it
     // will be updated only in case the rest of modules were successfully downloaded and updated.
@@ -327,6 +333,10 @@ public class ImportModule {
     modulesToMerge = merges.toArray(new Module[0]);
 
     checked = mid.isValidConfiguration();
+
+    upgradePrecheckFail = !checked && mid.getDependencyErrors() != null
+        && mid.getDependencyErrors().length > 0
+        && "upgrade-precheck".equals(mid.getDependencyErrors()[0]);
 
     return checked;
   }
@@ -696,7 +706,7 @@ public class ImportModule {
       final Vector<DynaBean> dynDbPrefix = new Vector<DynaBean>();
       installModule(obx, module.getModuleID(), dynMod, dynDep, dynDbPrefix);
 
-      insertDynaModulesInDB(dynMod, dynDep, dynDbPrefix);
+      insertDynaModulesInDB(dynMod, dynDep, dynDbPrefix, newModule);
       if (newModule) {
         // Add entries in .classpath for eclipse users
         addDynaClasspathEntries(dynMod);
@@ -1229,10 +1239,12 @@ public class ImportModule {
    * 
    * @param dModulesToInstall
    * @param dependencies1
+   * @param newModule
    * @throws Exception
    */
   private void insertDynaModulesInDB(Vector<DynaBean> dModulesToInstall,
-      Vector<DynaBean> dependencies1, Vector<DynaBean> dbPrefix) throws Exception {
+      Vector<DynaBean> dependencies1, Vector<DynaBean> dbPrefix, boolean newModule)
+      throws Exception {
     final Properties obProperties = new Properties();
     obProperties.load(new FileInputStream(obDir + "/config/Openbravo.properties"));
 
@@ -1256,6 +1268,7 @@ public class ImportModule {
       module.set("STATUS", "I");
       module.set("SEQNO", seqNo);
       module.set("UPDATE_AVAILABLE", null);
+      module.set("UPGRADE_AVAILABLE", null);
       log4j.info("Inserting in DB info for module: " + module.get("NAME"));
 
       String moduleId = (String) module.get("AD_MODULE_ID");
@@ -1265,19 +1278,32 @@ public class ImportModule {
       ImportModuleData.cleanModuleDBPrefixInstall(pool, moduleId);
       ImportModuleData.cleanModuleDependencyInstall(pool, moduleId);
 
+      String type = (String) module.get("TYPE");
+      String applyConfigScript = "Y";
+      if ("T".equals(type)) {
+        if (newModule && V3_TEMPLATE_ID.equals(moduleId)) {
+          // When installing V3 template do not apply its config script
+          applyConfigScript = "N";
+        } else {
+          org.openbravo.model.ad.module.Module template = OBDal.getInstance().get(
+              org.openbravo.model.ad.module.Module.class, moduleId);
+          applyConfigScript = template == null ? "Y" : template.isApplyConfigurationScript() ? "Y"
+              : "N";
+        }
+      }
+
       // Insert data in temporary tables
       ImportModuleData.insertModuleInstall(pool, moduleId, (String) module.get("NAME"),
           (String) module.get("VERSION"), (String) module.get("DESCRIPTION"), (String) module
-              .get("HELP"), (String) module.get("URL"), (String) module.get("TYPE"),
-          (String) module.get("LICENSE"), (String) module.get("ISINDEVELOPMENT"), (String) module
-              .get("ISDEFAULT"), seqNo.toString(), (String) module.get("JAVAPACKAGE"),
-          (String) module.get("LICENSETYPE"), (String) module.get("AUTHOR"), (String) module
-              .get("STATUS"), (String) module.get("UPDATE_AVAILABLE"), (String) module
-              .get("ISTRANSLATIONREQUIRED"), (String) module.get("AD_LANGUAGE"), (String) module
-              .get("HASCHARTOFACCOUNTS"), (String) module.get("ISTRANSLATIONMODULE"),
-          (String) module.get("HASREFERENCEDATA"), (String) module.get("ISREGISTERED"),
-          (String) module.get("UPDATEINFO"), (String) module.get("UPDATE_VER_ID"), (String) module
-              .get("REFERENCEDATAINFO"));
+              .get("HELP"), (String) module.get("URL"), type, (String) module.get("LICENSE"),
+          (String) module.get("ISINDEVELOPMENT"), (String) module.get("ISDEFAULT"), seqNo
+              .toString(), (String) module.get("JAVAPACKAGE"), (String) module.get("LICENSETYPE"),
+          (String) module.get("AUTHOR"), (String) module.get("STATUS"), (String) module
+              .get("UPDATE_AVAILABLE"), (String) module.get("ISTRANSLATIONREQUIRED"),
+          (String) module.get("AD_LANGUAGE"), (String) module.get("HASCHARTOFACCOUNTS"),
+          (String) module.get("ISTRANSLATIONMODULE"), (String) module.get("HASREFERENCEDATA"),
+          (String) module.get("ISREGISTERED"), (String) module.get("UPDATEINFO"), (String) module
+              .get("UPDATE_VER_ID"), (String) module.get("REFERENCEDATAINFO"), applyConfigScript);
 
       // Set installed for modules being updated
       ImportModuleData.setModuleUpdated(pool, (String) module.get("AD_MODULE_ID"));
@@ -1529,6 +1555,7 @@ public class ImportModule {
    * @param vars
    * @return the list of updates keyed by module id
    */
+  @SuppressWarnings("unchecked")
   public static HashMap<String, String> scanForUpdates(ConnectionProvider conn,
       VariablesSecureApp vars) {
     scanError = new StringBuilder();
@@ -1570,6 +1597,7 @@ public class ImportModule {
 
       if (updates != null && updates.length > 0) {
         for (int i = 0; i < updates.length; i++) {
+
           if (!ImportModuleData.existsVersion(conn, updates[i].getVersionNo(), updates[i]
               .getModuleVersionID())) {
             ImportModuleData.updateNewVersionAvailable(conn, updates[i].getVersionNo(), updates[i]
@@ -1578,6 +1606,27 @@ public class ImportModule {
                 .getModuleVersionID(), updates[i].getName(), "Found new version "
                 + updates[i].getVersionNo() + " for module " + updates[i].getName(), "S");
             updateModules.put(updates[i].getModuleID(), "U");
+          }
+
+          HashMap<String, String> additionalInfo = updates[i].getAdditionalInfo();
+          if (additionalInfo != null && additionalInfo.containsKey("upgrade")) {
+            log4j.info("Upgrade found:" + additionalInfo.get("upgrade"));
+            JSONObject upgrade = new JSONObject((String) additionalInfo.get("upgrade"));
+            final String moduleId = upgrade.getString("moduleId");
+            org.openbravo.model.ad.module.Module module = OBDal.getInstance().get(
+                org.openbravo.model.ad.module.Module.class, moduleId);
+            if (module != null) {
+              try {
+                OBInterceptor.setPreventUpdateInfoChange(true);
+                module.setUpgradeAvailable(upgrade.getJSONArray("showVersion").toString());
+                OBDal.getInstance().flush();
+              } finally {
+                OBInterceptor.setPreventUpdateInfoChange(false);
+              }
+            } else {
+              log4j.error("There is an upgrade for module " + moduleId
+                  + ", but it is not present in the instance.");
+            }
           }
         }
         addParentUpdates(updateModules, conn);
@@ -1856,6 +1905,14 @@ public class ImportModule {
 
   public void setForce(boolean force) {
     this.force = force;
+  }
+
+  public String[] getDependencyErrors() {
+    return dependencyErrors;
+  }
+
+  public boolean isUpgradePrecheckFail() {
+    return upgradePrecheckFail;
   }
 
 }

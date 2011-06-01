@@ -44,6 +44,8 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.domain.Preference;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -1245,6 +1247,32 @@ public class AdvPaymentMngtDao {
     obcPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, false);
     obcPayment.addOrderBy(FIN_Payment.PROPERTY_DOCUMENTNO, false);
     return obcPayment.list();
+  }
+
+  public boolean existsAPRMReadyPreference() {
+    OBCriteria<Preference> obcPreference = OBDal.getInstance().createCriteria(Preference.class);
+    obcPreference.setFilterOnReadableClients(false);
+    obcPreference.setFilterOnReadableOrganization(false);
+    obcPreference.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, "APRM_Ready"));
+
+    return obcPreference.count() > 0;
+  }
+
+  /**
+   * Create a preference to be able to determine that the instance is ready to use APRM.
+   */
+  public void createAPRMReadyPreference() {
+    Organization org0 = OBDal.getInstance().get(Organization.class, "0");
+    Client client0 = OBDal.getInstance().get(Client.class, "0");
+
+    Preference newPref = OBProvider.getInstance().get(Preference.class);
+    newPref.setClient(client0);
+    newPref.setOrganization(org0);
+    newPref.setPropertyList(false);
+    newPref.setAttribute("APRM_Ready");
+
+    OBDal.getInstance().save(newPref);
+    OBDal.getInstance().flush();
   }
 
 }

@@ -22,6 +22,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -33,6 +34,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.filter.IsIDFilter;
@@ -84,6 +88,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ModuleManagement extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   public static final String UPDATE_ALL_RECORD_ID = "FFF";
+  private static final String UPGRADE_INFO_URL = "https://butler.openbravo.com/heartbeat-server/org.openbravo.utility.centralrepository/UpgradeInfo";
 
   /**
    * Main method that controls the sent command
@@ -130,7 +135,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       final String record = vars.getStringParameter("inpcRecordId");
 
       printPageInstall1(response, request, vars, record, false, null, new String[0], ModuleUtiltiy
-          .getSystemMaturityLevels(true));
+          .getSystemMaturityLevels(true), null);
     } else if (vars.commandIn("INSTALL2")) {
       printPageInstall2(response, vars);
     } else if (vars.commandIn("INSTALL3")) {
@@ -178,7 +183,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       // For update obtain just update maturity level
       printPageInstall1(response, request, vars, null, false, null, modulesToUpdate, ModuleUtiltiy
-          .getSystemMaturityLevels(false));
+          .getSystemMaturityLevels(false), null);
+    } else if (vars.commandIn("UPGRADE", "UPGRADE1")) {
+      OBContext.setAdminMode();
+      try {
+        printPageUpgrade(response, request);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
     } else if (vars.commandIn("SETTINGS", "SETTINGS_ADD", "SETTINGS_REMOVE", "SETTINGS_SAVE")) {
       printPageSettings(response, request);
     } else {
@@ -238,7 +250,35 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final ModuleTree tree = new ModuleTree(this);
     tree.setLanguage(vars.getLanguage());
     tree.showNotifications(true);
-    tree.setNotifications(getNotificationsHTML(vars.getLanguage()));
+
+    String notificationsHTML = "";
+    try {
+      JSONObject updatesUpgrades = getNotificationsJSON(vars.getLanguage());
+      if (updatesUpgrades.has("updatesRebuildHTML")) {
+        notificationsHTML = updatesUpgrades.getString("updatesRebuildHTML");
+      }
+      List<Map<String, String>> upgs = new ArrayList<Map<String, String>>();
+      if (updatesUpgrades.has("upgrades")) {
+        JSONArray jsonUpgrades = updatesUpgrades.getJSONArray("upgrades");
+        for (int i = 0; i < jsonUpgrades.length(); i++) {
+          JSONArray versions = jsonUpgrades.getJSONObject(i).getJSONArray("version");
+          for (int v = 0; v < versions.length(); v++) {
+            Map<String, String> upg = new HashMap<String, String>();
+            upg.put("id", ((JSONObject) jsonUpgrades.get(i)).getString("moduleId"));
+            upg.put("name", ((JSONObject) jsonUpgrades.get(i)).getString("moduleName") + " "
+                + versions.get(v));
+            upg.put("version", versions.getString(v));
+            upgs.add(upg);
+          }
+        }
+        xmlDocument.setParameter("showUpgrades", "");
+      }
+      xmlDocument.setData("upgrades", FieldProviderFactory.getFieldProviderArray(upgs));
+
+    } catch (JSONException e) {
+      log4j.error("Error getting notifications", e);
+    }
+    tree.setNotifications(notificationsHTML);
 
     // Obtains a tree for the installed modules
     xmlDocument.setParameter("moduleTree", tree.toHtml());
@@ -279,42 +319,70 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @param lang
    * @return
    */
-  private String getNotificationsHTML(String lang) {
-    String rt = "";
+  private JSONObject getNotificationsJSON(String lang) {
+    String updatesRebuildHTML = "";
+
+    JSONArray upgrades = new JSONArray();
     try {
-      // Check for rebuild system
-      String total = ModuleManagementData.selectRebuild(this);
-      if (!total.equals("0")) {
-        rt = total
-            + "&nbsp;"
-            + Utility.messageBD(this, "ApplyModules", lang)
-            + ", <a id=\"rebuildNow\" class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900, null, null, null, null, true);return false;\">"
-            + Utility.messageBD(this, "RebuildNow", lang) + "</a>";
-      }
       String restartTomcat = ModuleManagementData.selectRestartTomcat(this);
       // Check if last build was done but Tomcat wasn't restarted
       if (!restartTomcat.equals("0")) {
-        rt = "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('TOMCAT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 650, 900, null, null, null, null, true);return false;\">"
+        updatesRebuildHTML = "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('TOMCAT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 650, 900, null, null, null, null, true);return false;\">"
             + Utility.messageBD(this, "Restart_Tomcat", lang) + "</a>";
-        return rt;
-
-      }
-
-      // Check for updates
-      total = ModuleManagementData.selectUpdate(this);
-      if (!total.equals("0")) {
-        if (!rt.isEmpty()) {
-          rt += "&nbsp;/&nbsp;";
+      } else {
+        // Check for rebuild system
+        String total = ModuleManagementData.selectRebuild(this);
+        if (!total.equals("0")) {
+          updatesRebuildHTML = total
+              + "&nbsp;"
+              + Utility.messageBD(this, "ApplyModules", lang)
+              + ", <a id=\"rebuildNow\" class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900, null, null, null, null, true);return false;\">"
+              + Utility.messageBD(this, "RebuildNow", lang) + "</a>";
         }
-        rt += total
-            + "&nbsp;"
-            + Utility.messageBD(this, "UpdateAvailable", lang)
-            + "&nbsp;"
-            + "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"installUpdate('all'); return false;\">"
-            + Utility.messageBD(this, "InstallUpdatesNow", lang) + "</a>";
+
+        // Check for updates
+        total = ModuleManagementData.selectUpdate(this);
+        if (!total.equals("0")) {
+          if (!updatesRebuildHTML.isEmpty()) {
+            updatesRebuildHTML += "&nbsp;/&nbsp;";
+          }
+          updatesRebuildHTML += total
+              + "&nbsp;"
+              + Utility.messageBD(this, "UpdateAvailable", lang)
+              + "&nbsp;"
+              + "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"installUpdate('all'); return false;\">"
+              + Utility.messageBD(this, "InstallUpdatesNow", lang) + "</a>";
+        }
       }
+
+      OBCriteria<org.openbravo.model.ad.module.Module> qUpgr = OBDal.getInstance().createCriteria(
+          org.openbravo.model.ad.module.Module.class);
+      qUpgr.add(Restrictions
+          .isNotNull(org.openbravo.model.ad.module.Module.PROPERTY_UPGRADEAVAILABLE));
+
+      for (org.openbravo.model.ad.module.Module upgr : qUpgr.list()) {
+        JSONObject upgrade = new JSONObject();
+        upgrade.put("moduleId", upgr.getId());
+        upgrade.put("version", new JSONArray(upgr.getUpgradeAvailable()));
+        upgrade.put("moduleName", upgr.getName());
+        upgrades.put(upgrade);
+      }
+
     } catch (final Exception e) {
       log4j.error(e.getMessage(), e);
+    }
+
+    JSONObject rt = new JSONObject();
+    try {
+      if (!updatesRebuildHTML.isEmpty()) {
+        rt.put("updatesRebuildHTML", updatesRebuildHTML);
+      }
+
+      if (upgrades.length() != 0) {
+        rt.put("upgrades", upgrades);
+      }
+    } catch (JSONException e) {
+      log4j.error("Error genrating updates notifications", e);
     }
     return rt;
   }
@@ -608,7 +676,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         if (im.isModuleUpdate(fi.getInputStream())) {
           vars.setSessionObject("ModuleManagementInstall|File", vars.getMultiFile("inpFile"));
           printPageInstall1(response, request, vars, null, true, fi.getInputStream(),
-              new String[0], null);
+              new String[0], null, null);
         } else {
           OBError message = im.getOBError(this);
           printSearchFile(response, vars, message);
@@ -618,6 +686,273 @@ public class ModuleManagement extends HttpSecureAppServlet {
         throw new ServletException(e);
       }
     }
+  }
+
+  private void printPageUpgrade(HttpServletResponse response, HttpServletRequest request)
+      throws IOException, ServletException {
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
+    final String moduleId = vars.getStringParameter("inpcUpdate");
+    final String version = vars.getStringParameter("upgradeVersion");
+
+    String usingAprm = "Y";
+
+    if (vars.commandIn("UPGRADE")) {
+
+      // Remote upgrade is only allowed for heartbeat enabled instances
+      if (!HeartbeatProcess.isHeartbeatEnabled()) {
+        String command = "UPGRADE";
+        response.sendRedirect(strDireccion + "/ad_forms/Heartbeat.html?Command=" + command
+            + "_MODULE&inpcRecordId=" + moduleId + "&version=" + version);
+        return;
+      }
+
+      // Show information about upgrade
+      org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
+          org.openbravo.model.ad.module.Module.class, moduleId);
+      String upgradeName = mod.getName() + " - " + version;
+
+      String upgradeInfo = "";
+      try {
+        String infoRequest = "Command=info";
+        infoRequest += "&modId=" + moduleId;
+        infoRequest += "&version=" + version;
+        infoRequest += "&lang=" + vars.getLanguage();
+        infoRequest += "&aprm=" + usingAprm;
+        infoRequest += "&commercial=" + (ActivationKey.getInstance().isActive() ? "Y" : "N");
+
+        upgradeInfo = new JSONObject(HttpsUtils.sendSecure(new URL(UPGRADE_INFO_URL), infoRequest))
+            .getString("description");
+      } catch (Exception e1) {
+        log4j.error("Error getting upgrade info", e1);
+      }
+
+      final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+          "org/openbravo/erpCommon/ad_forms/ModuleManagement_UpgradeInfo",
+          new String[] { "updateNeeded" }).createXmlDocument();
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("theme", vars.getTheme());
+      xmlDocument.setParameter("upgradeName", upgradeName);
+      xmlDocument.setParameter("upgradeInfo", upgradeInfo);
+      xmlDocument.setParameter("moduleID", moduleId);
+      xmlDocument.setParameter("upgradeVersion", version);
+
+      response.setContentType("text/html; charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+      out.println(xmlDocument.print());
+      out.close();
+      return;
+    }
+
+    if (vars.commandIn("UPGRADE1")) {
+      // Check the pre-requisites are fulfilled
+      String infoRequest = "Command=requirements";
+      infoRequest += "&modId=" + moduleId;
+      infoRequest += "&version=" + version;
+      infoRequest += "&lang=" + vars.getLanguage();
+      infoRequest += "&aprm=" + usingAprm;
+      infoRequest += "&commercial=" + (ActivationKey.getInstance().isActive() ? "Y" : "N");
+
+      try {
+        JSONArray requirements = new JSONObject(HttpsUtils.sendSecure(new URL(UPGRADE_INFO_URL),
+            infoRequest)).getJSONArray("requirements");
+
+        List<Map<String, String>> requiredUpdates = new ArrayList<Map<String, String>>();
+
+        SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
+        Integer maturityUpdate = Integer.parseInt(sys.getMaturityUpdate());
+
+        for (int i = 0; i < requirements.length(); i++) {
+          JSONObject requisit = requirements.getJSONObject(i);
+          log4j.debug("Checking upgrade prerequisit " + requisit.toString());
+
+          String modId = requisit.getString("moduleId");
+          org.openbravo.model.ad.module.Module mod = OBDal.getInstance().get(
+              org.openbravo.model.ad.module.Module.class, modId);
+          if (mod == null) {
+            log4j.debug("Module is not installed, skipt it");
+            continue;
+          }
+
+          String requiredVersion = requisit.getString("version");
+          String installedVersion = mod.getVersion();
+          if (new VersionUtility.VersionComparator().compare(installedVersion, requiredVersion) >= 0) {
+            log4j.debug("ok " + installedVersion + ">=" + requiredVersion);
+            continue;
+          }
+
+          Map<String, String> requiredUpdate = new HashMap<String, String>();
+          requiredUpdate.put("id", modId);
+          requiredUpdate.put("name", mod.getName());
+          requiredUpdate.put("installed", installedVersion);
+          requiredUpdate.put("required", requisit.getString("versionName"));
+
+          Integer maximumMaturity = Integer.parseInt(requisit.getString("maturity"));
+          Integer acceptedMaturity;
+          if (mod.getMaturityUpdate() != null) {
+            acceptedMaturity = Integer.parseInt(mod.getMaturityUpdate());
+          } else {
+            acceptedMaturity = maturityUpdate;
+          }
+
+          if (maximumMaturity < acceptedMaturity) {
+            requiredUpdate.put("displayMaturity", "block");
+            requiredUpdate.put("mat", requisit.getString("maturityName"));
+          } else {
+            requiredUpdate.put("displayMaturity", "none");
+          }
+          requiredUpdates.add(requiredUpdate);
+        }
+
+        if (!requiredUpdates.isEmpty()) {
+          String discard[] = { "buttonContinue", "info" };
+          OBError msg = new OBError();
+          msg.setType("Warning");
+          msg.setTitle(Utility.messageBD(this, "UpgradeRequiresUpdates", vars.getLanguage()));
+          msg.setMessage(Utility.messageBD(this, "UpgradeRequiresUpdatesMsg", vars.getLanguage()));
+
+          final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+              "org/openbravo/erpCommon/ad_forms/ModuleManagement_UpgradeInfo", discard)
+              .createXmlDocument();
+
+          xmlDocument.setParameter("messageType", msg.getType());
+          xmlDocument.setParameter("messageTitle", msg.getTitle());
+          xmlDocument.setParameter("messageMessage", msg.getMessage());
+
+          xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith
+              + "/\";\n");
+          xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+          xmlDocument.setParameter("theme", vars.getTheme());
+          xmlDocument.setParameter("moduleID", moduleId);
+          xmlDocument.setParameter("upgradeVersion", version);
+
+          xmlDocument.setData("updateNeeded", FieldProviderFactory
+              .getFieldProviderArray(requiredUpdates));
+
+          response.setContentType("text/html; charset=UTF-8");
+          final PrintWriter out = response.getWriter();
+          out.println(xmlDocument.print());
+          out.close();
+          return;
+        }
+      } catch (Exception e) {
+        log4j.error("Error getting upgrade pre requisites", e);
+      }
+
+      // All pre-checks were successful, now start with the upgrade
+      try {
+        HashMap<String, String> additionalInfo = ModuleUtiltiy.getSystemMaturityLevels(false);
+        additionalInfo.put("upgrade.module", moduleId);
+        additionalInfo.put("upgrade.version", version);
+        additionalInfo.put("upgrade.aprm", usingAprm);
+        final ImportModule im = new ImportModule(this, vars.getSessionValue("#sourcePath"), vars);
+        im.setInstallLocal(false);
+        im.checkDependenciesId(new String[0], new String[0], additionalInfo);
+        if (im.isUpgradePrecheckFail()) {
+          printPageUpgradeError(response, request, new JSONArray(im.getDependencyErrors()[1]));
+        } else {
+          // Continue with standard update
+          printPageInstall1(response, request, vars, "0", false, null, new String[] { "0" },
+              ModuleUtiltiy.getSystemMaturityLevels(false), im);
+        }
+      } catch (Exception e) {
+        log4j.error("Error on upgrade", e);
+      }
+    }
+
+  }
+
+  private void printPageUpgradeError(HttpServletResponse response, HttpServletRequest request,
+      JSONArray upgradeErrors) throws IOException, JSONException {
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
+    List<Map<String, String>> noCRs = new ArrayList<Map<String, String>>();
+    List<Map<String, String>> crs = new ArrayList<Map<String, String>>();
+    List<Map<String, String>> crMaturities = new ArrayList<Map<String, String>>();
+
+    String msgDepGeneric = Utility.messageBD(this, "Dependency", vars.getLanguage());
+    for (int i = 0; i < upgradeErrors.length(); i++) {
+      boolean isMaturityError = false;
+      JSONObject mod = upgradeErrors.getJSONObject(i);
+
+      Map<String, String> error = new HashMap<String, String>();
+      String modId = mod.getString("module");
+      String name;
+      if (!mod.getString("name").isEmpty()) {
+        name = mod.getString("name");
+      } else {
+        org.openbravo.model.ad.module.Module m = OBDal.getInstance().get(
+            org.openbravo.model.ad.module.Module.class, modId);
+        if (m != null) {
+          name = m.getName();
+        } else {
+          name = modId;
+        }
+      }
+
+      JSONArray errors = mod.getJSONArray("errors");
+      String msg = "";
+      for (int e = 0; e < errors.length(); e++) {
+        JSONObject err = errors.getJSONObject(e);
+
+        String msgTxt = Utility.messageBD(this, err.getString("errorCode"), vars.getLanguage());
+        if (msgTxt.equals(err.getString("errorCode"))) {
+          msgTxt = err.getString("message");
+        } else if (err.getBoolean("isMaturity")) {
+          isMaturityError = true;
+          msgTxt = msgTxt.replace("{required}", err.getString("minMaturityRequired")).replace(
+              "{max}", err.getString("maxMaturityAvailable"));
+        }
+
+        String dep = "";
+        if (err.has("dependency")) {
+          JSONObject dependency = err.getJSONObject("dependency");
+          String depModID = dependency.getString("moduleId");
+          org.openbravo.model.ad.module.Module module = OBDal.getInstance().get(
+              org.openbravo.model.ad.module.Module.class, depModID);
+          String depModName;
+          if (module == null) {
+            depModName = depModID;
+          } else {
+            depModName = module.getName();
+          }
+
+          String depVersion = dependency.getString("firstVersion")
+              + (dependency.has("lastVersion") ? " - " + dependency.getString("lastVersion") : "");
+          dep = msgDepGeneric.replace("{1}", depModName).replace("{2}", depVersion).replace("{3}",
+              dependency.getString("enforcement"));
+        }
+
+        msg += "<li>" + dep + " " + msgTxt + "</li>";
+      }
+      error.put("msg", msg);
+      error.put("name", name);
+
+      if (!mod.getBoolean("cr")) {
+        noCRs.add(error);
+      } else if (isMaturityError) {
+        crMaturities.add(error);
+      } else {
+        crs.add(error);
+      }
+    }
+
+    String discard[] = { noCRs.isEmpty() ? "noCR" : "", crs.isEmpty() ? "CR" : "",
+        crMaturities.isEmpty() ? "CRMaturity" : "" };
+
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_forms/ModuleManagement_ErrorUpgrade", discard)
+        .createXmlDocument();
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setData("noCR", FieldProviderFactory.getFieldProviderArray(noCRs));
+    xmlDocument.setData("CR", FieldProviderFactory.getFieldProviderArray(crs));
+    xmlDocument.setData("CRMaturity", FieldProviderFactory.getFieldProviderArray(crMaturities));
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+
   }
 
   /**
@@ -632,13 +967,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @param islocal
    * @param obx
    * @param maturityLevels
+   * @param upgradeIM
+   *          TODO
    * @throws IOException
    * @throws ServletException
    */
   private void printPageInstall1(HttpServletResponse response, HttpServletRequest request,
       VariablesSecureApp vars, String recordId, boolean islocal, InputStream obx,
-      String[] updateModules, HashMap<String, String> maturityLevels) throws IOException,
-      ServletException {
+      String[] updateModules, HashMap<String, String> maturityLevels, ImportModule upgradeIM)
+      throws IOException, ServletException {
     final String discard[] = { "", "", "", "", "", "", "warnMaturity", "", "missingDeps" };
     Module module = null;
 
@@ -662,7 +999,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
       return;
     }
 
-    if (!islocal && (updateModules == null || updateModules.length == 0)) {
+    if (upgradeIM != null) {
+      for (Module mod : upgradeIM.getModulesToUpdate()) {
+        if (mod.getModuleID().equals(ModuleUtiltiy.TEMPLATE_30)) {
+          module = mod;
+        }
+      }
+    } else if (!islocal && (updateModules == null || updateModules.length == 0)) {
       // if it is a remote installation get the module from webservice,
       // other case the obx file is passed as an InputStream
       try {
@@ -689,15 +1032,25 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     VersionUtility.setPool(this);
 
-    // Craete a new ImportModule instance which will be used to check
-    // depencecies and to process the installation
-    final ImportModule im = new ImportModule(this, vars.getSessionValue("#sourcePath"), vars);
+    // Create a new ImportModule instance which will be used to check
+    // dependencies and to process the installation
+    ImportModule im;
+    if (upgradeIM == null) {
+      im = new ImportModule(this, vars.getSessionValue("#sourcePath"), vars);
+    } else {
+      im = upgradeIM;
+    }
     im.setInstallLocal(islocal);
     try {
-      // check the dependenies and obtain the modules to install/update
+      // check the dependencies and obtain the modules to install/update
+      if (upgradeIM != null) {
+        check = im.isChecked();
+      }
       if (!islocal) {
         final String[] installableModules = { module != null ? module.getModuleVersionID() : "" };
-        check = im.checkDependenciesId(installableModules, updateModules, maturityLevels);
+        if (upgradeIM == null) {
+          check = im.checkDependenciesId(installableModules, updateModules, maturityLevels);
+        }
       } else {
         check = im.checkDependenciesFile(obx);
       }
@@ -771,7 +1124,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
         // Show warning message when installing/updating modules not in General availability level
         if (!islocal) {
-          if (!"500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
+          if (module != null
+              && !"500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
             discard[6] = "";
           } else {
             if (inst != null) {
@@ -1502,30 +1856,35 @@ public class ModuleManagement extends HttpSecureAppServlet {
   private void printScan(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
       ServletException {
     if (log4j.isDebugEnabled())
-      log4j.debug("Output: ajaxreponse");
+      log4j.debug("Output: ajax response ");
 
     // clean module updates if there are any
     cleanModulesUpdates();
 
     final HashMap<String, String> updates = ImportModule.scanForUpdates(this, vars);
-    String up = "";
-    for (final String node : updates.keySet())
-      up += node + "," + updates.get(node) + "|";
 
-    String notifications = getNotificationsHTML(vars.getLanguage());
-    if (notifications.equals("")) {
-      if (!"".equals(ImportModule.getScanError().toString())) {
-        notifications = Utility.messageBD(this, ImportModule.getScanError().toString(), vars
-            .getLanguage());
-      } else {
-        notifications = Utility.messageBD(this, "NoUpdatesAvailable", vars.getLanguage());
+    JSONObject notifications = new JSONObject();
+    try {
+      notifications = getNotificationsJSON(vars.getLanguage());
+      if (!notifications.has("updatesRebuildHTML")) {
+        if (!"".equals(ImportModule.getScanError().toString())) {
+          notifications.put("updatesRebuildHTML", Utility.messageBD(this, ImportModule
+              .getScanError().toString(), vars.getLanguage()));
+        } else {
+          notifications = notifications.put("updatesRebuildHTML", Utility.messageBD(this,
+              "NoUpdatesAvailable", vars.getLanguage()));
+        }
       }
+
+      JSONObject jsonUpdates = new JSONObject(updates);
+      notifications.put("updates", jsonUpdates);
+    } catch (Exception e) {
+      log4j.error("Error reading notifications", e);
     }
-    up = notifications + "|" + up + "|";
-    response.setContentType("text/plain; charset=UTF-8");
+    response.setContentType("Content-type: application/json; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     final PrintWriter out = response.getWriter();
-    out.println(up);
+    out.println(notifications.toString());
     out.close();
   }
 
@@ -1837,12 +2196,30 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * info if so.
    */
   private boolean cleanModulesUpdates() throws ServletException {
+    boolean hasChanged = false;
+
     if (ModuleManagementData.selectUpdateable(this).length > 0) {
       // cleaning modules updates
       ModuleManagementData.cleanModulesUpdates(this);
-      return true;
+      hasChanged = true;
     }
-    return false;
+
+    // cleaning module upgrades
+    OBCriteria<org.openbravo.model.ad.module.Module> qUpgr = OBDal.getInstance().createCriteria(
+        org.openbravo.model.ad.module.Module.class);
+    qUpgr.add(Restrictions
+        .isNotNull(org.openbravo.model.ad.module.Module.PROPERTY_UPGRADEAVAILABLE));
+    try {
+      OBInterceptor.setPreventUpdateInfoChange(true);
+      for (org.openbravo.model.ad.module.Module mod : qUpgr.list()) {
+        mod.setUpgradeAvailable(null);
+        hasChanged = true;
+      }
+      // OBDal.getInstance().flush();
+    } finally {
+      OBInterceptor.setPreventUpdateInfoChange(false);
+    }
+    return hasChanged;
   }
 
   /**

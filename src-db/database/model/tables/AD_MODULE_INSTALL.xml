@@ -153,6 +153,10 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
+      <column name="ISCONFIGSCRIPTAPPLIED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_MODULE_INSTALL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -161,6 +165,7 @@
       </foreign-key>
       <check name="AD_MOD_INS_INDEVELOPMENT_CHK"><![CDATA[ISINDEVELOPMENT IN ('Y', 'N')]]></check>
       <check name="AD_MOD_INS_ISTRANSLATEABLE_CHK"><![CDATA[ISTRANSLATIONREQUIRED IN ('Y', 'N')]]></check>
+      <check name="AD_MODULE_INS_APPLYCFG_CHK"><![CDATA[ISCONFIGSCRIPTAPPLIED IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_INS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_INS_ISREGISTERED_CHK"><![CDATA[ISREGISTERED IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_INS_TYPE_CHK"><![CDATA[TYPE IN ('M', 'P', 'T')]]></check>

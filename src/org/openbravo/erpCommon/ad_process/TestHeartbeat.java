@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -173,7 +173,8 @@ public class TestHeartbeat extends HttpSecureAppServlet {
           msg += "\n" + log;
           msg = Utility.formatMessageBDToHtml(msg);
 
-          if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE_INSTALL", "CONFIGURE_MODULE_UPDATE")) {
+          if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE_INSTALL", "CONFIGURE_MODULE_UPDATE",
+              "CONFIGURE_MODULE_UPGRADE")) {
             OBError err = new OBError();
             err.setType("Error");
             err.setMessage(msg);
@@ -237,14 +238,19 @@ public class TestHeartbeat extends HttpSecureAppServlet {
           OBScheduler.getInstance().reschedule(pr.getId(), bundle2);
         }
 
-        if (vars.commandIn("CONFIGURE_MODULE_INSTALL", "CONFIGURE_MODULE_UPDATE")) {
+        if (vars.commandIn("CONFIGURE_MODULE_INSTALL", "CONFIGURE_MODULE_UPDATE",
+            "CONFIGURE_MODULE_UPGRADE")) {
           // Continue with the module install
           String recordId = vars.getStringParameter("inpcRecordId", IsIDFilter.instance);
-          String command = vars.getCommand().endsWith("UPDATE") ? "UPDATE" : "INSTALL";
+          String command = vars.getCommand().endsWith("UPDATE") ? "UPDATE" : vars.getCommand()
+              .endsWith("UPGRADE") ? "UPGRADE" : "INSTALL";
 
           if (command.equals("UPDATE")) {
             recordId = (recordId.equals(ModuleManagement.UPDATE_ALL_RECORD_ID) ? "&inpcUpdate=all"
                 : "&inpcUpdate=" + recordId);
+          } else if (command.equals("UPGRADE")) {
+            recordId = "&inpcUpdate=" + recordId;
+            recordId += "&upgradeVersion=" + vars.getStringParameter("version");
           } else {
             recordId = "&inpcRecordId=" + recordId;
           }

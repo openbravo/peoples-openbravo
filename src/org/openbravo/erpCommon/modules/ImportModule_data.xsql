@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -87,6 +87,7 @@
       <Sql>
         UPDATE AD_MODULE
            SET UPDATE_AVAILABLE = null,
+               UPGRADE_AVAILABLE = null,
                STATUS = 'I'           
          WHERE AD_MODULE_ID = ?
       </Sql>
@@ -150,7 +151,7 @@
                 ISTRANSLATIONREQUIRED, AD_LANGUAGE          , HASCHARTOFACCOUNTS   ,                                                                                                                                                                          
                 ISTRANSLATIONMODULE  , HASREFERENCEDATA     , ISREGISTERED         ,                                                                                                                                                                          
                 UPDATEINFO           , UPDATE_VER_ID        , REFERENCEDATAINFO    ,
-                ENABLED) 
+                ENABLED, ISCONFIGSCRIPTAPPLIED) 
        VALUES ( get_uuid(), '0', '0',                                                                                                                                                                          
                 'Y', NOW(), '0',                                                                                                                                                                          
                 NOW(), '0', ?,                                                                                                                                                                          
@@ -164,7 +165,7 @@
                 ?, ?, ?,
                 (COALESCE((SELECT ENABLED
                    FROM AD_MODULE 
-                  WHERE AD_MODULE_ID = ?),'Y')))
+                  WHERE AD_MODULE_ID = ?),'Y')), ?)
      </Sql>                                                                                                                                                                        
     <Parameter name="AD_MODULE_ID"/>                                                                                                                                                                          
     <Parameter name="NAME"/>                 <Parameter name="VERSION"/>      <Parameter name="DESCRIPTION"/>                                                                                                                                                                          
@@ -175,7 +176,7 @@
     <Parameter name="ISTRANSLATIONREQUIRED"/> <Parameter name="AD_LANGUAGE"/> <Parameter name="HASCHARTOFACCOUNTS"/>                                                                                                                                                                          
     <Parameter name="ISTRANSLATIONMODULE"/>  <Parameter name="HASREFERENCEDATA"/> <Parameter name="ISREGISTERED"/>                                                                                                                                                                          
     <Parameter name="UPDATEINFO"/>           <Parameter name="UPDATE_VER_ID"/> <Parameter name="REFERENCEDATAINFO"/>
-    <Parameter name="AD_MODULE_ID"/>  
+    <Parameter name="AD_MODULE_ID"/>         <Parameter name="ISCONFIGSCRIPTAPPLIED"/>
    </SqlMethod>
    
    <SqlMethod name="insertModuleDBPrefixInstall" type="preparedStatement" return="rowcount">
