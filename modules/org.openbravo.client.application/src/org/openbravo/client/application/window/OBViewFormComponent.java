@@ -63,7 +63,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
   private static final String MORE_INFO_GROUP_ID = "402880E72F1C15A5012F1C7AA98B00E8";
 
   private Tab tab;
-  private List<String> statusBarFields = null;
+  private List<String> statusBarFields = new ArrayList<String>();
 
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
@@ -86,8 +86,6 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     final List<Field> fieldsInDynamicExpression = new ArrayList<Field>();
     final Map<Field, String> displayLogicMap = new HashMap<Field, String>();
     final Map<Field, String> readOnlyLogicMap = new HashMap<Field, String>();
-
-    statusBarFields = new ArrayList<String>();
 
     // Processing dynamic expressions (display logic)
     for (Field f : adFields) {
@@ -171,22 +169,13 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     int colNum = 1;
     for (Field field : adFields) {
 
-      if (field.getColumn() == null || !field.isActive()
-          || (!field.isDisplayed() && !field.isShownInStatusBar())) {
+      if (field.getColumn() == null || !field.isActive() || !field.isDisplayed()
+          || ApplicationUtils.isUIButton(field)) {
         continue;
       }
 
       final Property property = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn(),
           false);
-
-      // a button domain type, continue for now
-      if (ApplicationUtils.isUIButton(field)) {
-        continue;
-      }
-
-      if (field.isShownInStatusBar() != null && field.isShownInStatusBar()) {
-        statusBarFields.add(property.getName());
-      }
 
       final OBViewField viewField = new OBViewField();
       viewField.setField(field);
@@ -260,6 +249,9 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     fields.add(attachmentDefinition);
     fields.add(attachmentsCanvas);
 
+    // add status bar fields
+    processStatusBarFields(fields, adFields);
+
     return fields;
   }
 
@@ -269,6 +261,29 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return Collections.emptyList();
     }
     return statusBarFields;
+  }
+
+  private void processStatusBarFields(List<OBViewFieldDefinition> fields, List<Field> adFields) {
+    for (Field field : adFields) {
+
+      if (field.isShownInStatusBar() == null || !field.isShownInStatusBar()) {
+        continue;
+      }
+
+      final Property property = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn(),
+          false);
+
+      statusBarFields.add(property.getName());
+
+      final OBViewField viewField = new OBViewField();
+      viewField.setField(field);
+      viewField.setProperty(property);
+      viewField.setRedrawOnChange(false);
+      viewField.setShowIf("");
+      viewField.setReadOnlyIf("");
+
+      fields.add(viewField);
+    }
   }
 
   private interface OBViewFieldDefinition {

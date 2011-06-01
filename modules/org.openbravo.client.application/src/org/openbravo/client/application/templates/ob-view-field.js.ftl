@@ -36,6 +36,7 @@
         targetEntity: '${fieldDefinition.targetEntity?string}',
         <#if !fieldDefinition.displayed>
         editorType: 'HiddenItem',
+        alwaysTakeSpace: false,
         </#if>
         required: ${fieldDefinition.required?string},
           <#if fieldDefinition.redrawOnChange?string = "true" && fieldDefinition.displayed>
