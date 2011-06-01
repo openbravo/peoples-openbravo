@@ -369,9 +369,8 @@ isc.OBGrid.addProperties({
       if (showMessage) {
         this.view.messageBar.setMessage(OBMessageBar.TYPE_INFO, '<div><div style="float: left;">'+
             this.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + 
-            '</div><div style="float: right; padding-top: 15px;"><a href="#" style="font-weight:normal; color:inherit;" onclick="console.log(\''+
-            this.view.messageBar.ID+'\'); window[\''+
-            this.view.messageBar.ID+'\'].hide(); OB.PropertyStore.set(\'OBUIAPP_ShowImplicitFilterMsg\', \'N\');">'+
+            '</div><div style="float: right; padding-top: 15px;"><a href="#" style="font-weight:normal; color:inherit;" onclick="' +
+            'window[\'' + this.view.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'OBUIAPP_ShowImplicitFilterMsg\', \'N\');">'+
             OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain')+'</a></div></div>',' ');
         this.view.messageBar.hasFilterMessage = true;
       } 
