@@ -178,8 +178,6 @@ OB.DateItemProperties = {
 isc.OBDateItem.addProperties(OB.DateItemProperties,
   {
   
-  validateOnExit: true,
-  
   init: function() {
     // this call super.init
     this.doInit();
@@ -193,13 +191,43 @@ isc.OBDateItem.addProperties(OB.DateItemProperties,
     if (oldValue !== newValue) {
       this.storeValue(OB.Utilities.Date.OBToJS(newValue, this.dateFormat));
     }
+    
+    if (!this.inBlur) {
+      this.inBlur = true;
+      this.checkOBDateItemValue();
+      this.inBlur = false;
+    }
+
     return this.Super('blur', arguments);
   },
   
   blurValue: function() {
     return this.getValue();
   },
-
+  
+  // ** {{{ checkOBDateItemValue }}} **
+  // Validate the entered date and add a form error, is called onblur
+  checkOBDateItemValue: function(){
+    var value = this.getValue();
+    var validatorLength = this.validators.length;
+    var isValid = this.validators[validatorLength - 1].condition(this, this.form, value);
+    var isRequired = this.required;
+    if (typeof this.name === 'undefined') {
+      this.name = 'isc_' + this.getRandomString(this.getRandomInteger(6, 12));
+    }
+    if (isValid === false) {
+      this.form.addFieldErrors(this.name, isc.OBDateItem.invalidValueLabel, false);
+      this.form.markForRedraw();
+    } else if (isRequired === true &&
+    (value === null || value === '' || typeof value === 'undefined')) {
+      this.form.addFieldErrors(this.name, isc.OBDateItem.requiredValueLabel, false);
+      this.form.markForRedraw();
+    } else {
+      this.form.clearFieldErrors(this.name, false);
+      this.form.markForRedraw();
+    }
+  },
+  
   validateOBDateItem: function(value){
       var dateValue = OB.Utilities.Date.OBToJS(value, this.dateFormat);
       var isValid = true;
