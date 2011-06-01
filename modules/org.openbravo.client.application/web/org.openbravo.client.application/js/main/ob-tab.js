@@ -102,11 +102,11 @@ isc.OBTabSetMain.addProperties({
 
   draw : function() {
     var me = this;
-    var ksAction_closeSelectedTab = function() {
+    var ksAction_CloseSelectedTab = function() {
       me.closeSelectedTab();
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.KS.set('TabSet_closeSelectedTab', ksAction_closeSelectedTab);
+    OB.KeyboardManager.KS.set('TabSet_CloseSelectedTab', ksAction_CloseSelectedTab);
     var ksAction_SelectParentTab = function() {
       me.selectParentTab();
       return false; //To avoid keyboard shortcut propagation

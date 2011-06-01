@@ -451,18 +451,18 @@ isc.OBViewGrid.addProperties({
   // called when the view gets activated
   setActive: function(active) {
     if (active) {
-      this.enableKeyBoardShortCuts();
+      this.enableShortcuts();
     } else {
-      this.disableKeyBoardShortCuts();
-    }    
+      this.disableShortcuts();
+    }
   },
 
-  disableKeyBoardShortCuts: function() {
+  disableShortcuts: function() {
     OB.KeyboardManager.KS.set('Grid_EditInGrid', function() { return true; });
     OB.KeyboardManager.KS.set('Grid_EditInForm', function() { return true; });
   },
   
-  enableKeyBoardShortCuts: function() {
+  enableShortcuts: function() {
     var grid = this;
     var editInGridAction = function(){
       if (grid.getSelectedRecords().length === 1) {

@@ -252,7 +252,6 @@ isc.OBStandardWindow.addProperties({
   // is called from the main app tabset. Redirects to custom viewDeselected
   tabDeselected: function(tabNum, tabPane, ID, tab, newTab){
     this.wasDeselected = true;
-    this.disableKeyBoardShortCuts();
   },
 
   // ** {{{ selectParentTab }}} **
@@ -445,7 +444,6 @@ isc.OBStandardWindow.addProperties({
   },
   
   doHandleClick: function(){
-    this.enableKeyBoardShortCuts();
     // happens when we are getting selected
     // then don't change state
     if (this.wasDeselected) {
@@ -453,25 +451,10 @@ isc.OBStandardWindow.addProperties({
       return;
     }
     this.setActiveView(this.view);
-    this.view.doHandleClick();    
-  },
-  
-  disableKeyBoardShortCuts: function() {
-    OB.KeyboardManager.KS.set('StandardWindow_MoveFocus', function() { return true; });
-  },
-  
-  enableKeyBoardShortCuts: function() {
-    var standardWindow = this;
-    var moveFocusAction = function(){
-      // standardWindow
-//      console.log('-->' + standardWindow.tabTitle);
-      return false; //To avoid keyboard shortcut propagation
-    };
-    OB.KeyboardManager.KS.set('StandardWindow_MoveFocus', moveFocusAction);
+    this.view.doHandleClick();
   },
   
   doHandleDoubleClick: function(){
-    this.enableKeyBoardShortCuts();
     // happens when we are getting selected
     // then don't change state
     if (this.wasDeselected) {
