@@ -75,7 +75,7 @@ isc.OBStandardWindow.addProperties({
     if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       this.viewProperties.allowDefaultEditMode = false;
     }
-    this.viewState = OB.PropertyStore.get("OBUIAPP_GridConfiguration", this.windowId);
+    this.viewState = OB.PropertyStore.get('OBUIAPP_GridConfiguration', this.windowId);
     this.view = isc.OBStandardView.create(this.viewProperties);
     this.addView(this.view);
     this.addMember(this.view);
@@ -242,16 +242,134 @@ isc.OBStandardWindow.addProperties({
     }
   },
 
+  // is called from the main app tabset. Redirects to custom viewSelected
   tabSelected: function(tabNum, tabPane, ID, tab) {
     if (this.activeView && this.activeView.setViewFocus) {
       this.activeView.setViewFocus();
     }
   },
-  
-  // is called from the main app tabset
+
+  // is called from the main app tabset. Redirects to custom viewDeselected
   tabDeselected: function(tabNum, tabPane, ID, tab, newTab){
     this.wasDeselected = true;
     this.disableKeyBoardShortCuts();
+  },
+
+  // ** {{{ selectParentTab }}} **
+  //
+  // Called from the main app tabset
+  // Selects the parent tab of the current selected and active tab (independently of its level)
+  selectParentTab: function(mainTabSet) {
+    if (!this.activeView.parentView) {
+      return false;
+    }
+
+    var parentTabSet = this.activeView.parentView.parentTabSet;
+
+    if (!parentTabSet) { // If parentTabSet is null means that we are going to move to the top level
+      parentTabSet = mainTabSet;
+    }
+
+    var parentTab = parentTabSet.getSelectedTab(),
+        parentTabNum = parentTabSet.getTabNumber(parentTab),
+        parentTabPane = parentTabSet.getTabPane(parentTab);
+
+    parentTabSet.selectTab(parentTabNum);
+    if (parentTabPane.setAsActiveView) {
+      parentTabPane.setAsActiveView();
+      isc.Timer.setTimeout(function(){ // Inside a timeout like in itemClick case. Also to avoid a strange effect that child tab not deployed properly
+        parentTabSet.doHandleClick();
+      }, 0);
+    } else if (parentTabPane.view.setAsActiveView) {
+      parentTabPane.view.setAsActiveView();
+      isc.Timer.setTimeout(function(){ // Inside a timeout like in itemClick case. Also to avoid a strange effect that parent tab not deployed properly
+        parentTabPane.view.doHandleClick();
+      }, 0);
+    }
+  },
+
+  // ** {{{ selectChildTab }}} **
+  //
+  // Called from the main app tabset
+  // Selects the child tab of the current selected and active tab (independently of its level)
+  selectChildTab: function(mainTabSet) {
+    var childTabSet = this.activeView.childTabSet;
+
+    if (!childTabSet) {
+      return false;
+    }
+
+    var childTab = childTabSet.getSelectedTab(),
+        childTabNum = childTabSet.getTabNumber(childTab),
+        childTabPane = childTabSet.getTabPane(childTab);
+
+    childTabSet.selectTab(childTabNum);
+    if (childTabPane.setAsActiveView) {
+      childTabPane.setAsActiveView();
+      isc.Timer.setTimeout(function(){ // Inside a timeout like in itemClick case. Also to avoid a strange effect that child tab not deployed properly
+        childTabSet.doHandleClick();
+      }, 0);
+    }
+  },
+
+  // ** {{{ selectPreviousTab }}} **
+  //
+  // Called from the main app tabset
+  // Selects the previous tab of the current selected and active tab (independently of its level)
+  selectPreviousTab: function(mainTabSet) {
+    var activeTabSet = this.activeView.parentTabSet;
+    if (!activeTabSet) { // If activeTabSet is null means that we are in the top level
+      activeTabSet = mainTabSet;
+    }
+    var activeTab = activeTabSet.getSelectedTab(),
+        activeTabNum = activeTabSet.getTabNumber(activeTab),
+        activeTabPane = activeTabSet.getTabPane(activeTab);
+
+    if ((activeTabNum-1) < 0) {
+      return false;
+    }
+
+    activeTabSet.selectTab(activeTabNum-1);
+
+    // after select the new tab, activeTab related variables are updated
+    activeTab = activeTabSet.getSelectedTab();
+    activeTabNum = activeTabSet.getTabNumber(activeTab);
+    activeTabPane = activeTabSet.getTabPane(activeTab);
+
+    // and the new selected view is set as active
+    if (activeTabPane.setAsActiveView) {
+      activeTabPane.setAsActiveView();
+    }
+  },
+
+  // ** {{{ selectNextTab }}} **
+  //
+  // Called from the main app tabset
+  // Selects the next tab of the current selected and active tab (independently of its level)
+  selectNextTab: function(mainTabSet) {
+    var activeTabSet = this.activeView.parentTabSet;
+    if (!activeTabSet) { // If activeTabSet is null means that we are in the top level
+      activeTabSet = mainTabSet;
+    }
+    var activeTab = activeTabSet.getSelectedTab(),
+        activeTabNum = activeTabSet.getTabNumber(activeTab),
+        activeTabPane = activeTabSet.getTabPane(activeTab);
+
+    if ((activeTabNum+1) >= activeTabSet.tabs.getLength()) {
+      return false;
+    }
+
+    activeTabSet.selectTab(activeTabNum+1);
+
+    // after select the new tab, activeTab related variables are updated
+    activeTab = activeTabSet.getSelectedTab();
+    activeTabNum = activeTabSet.getTabNumber(activeTab);
+    activeTabPane = activeTabSet.getTabPane(activeTab);
+
+    // and the new selected view is set as active
+    if (activeTabPane.setAsActiveView) {
+      activeTabPane.setAsActiveView();
+    }
   },
   
   closeClick: function(tab, tabSet){

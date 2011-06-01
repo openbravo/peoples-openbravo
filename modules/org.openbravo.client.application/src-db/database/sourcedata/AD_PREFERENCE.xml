@@ -17,11 +17,11 @@
 <!--5EE6D055A7FE4C4DA7EB557F6C61D0EA-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--5EE6D055A7FE4C4DA7EB557F6C61D0EA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--5EE6D055A7FE4C4DA7EB557F6C61D0EA-->  <VALUE><![CDATA[[
-  {"id": "TabSet_closeAllTabs", "keyComb": {"ctrl": true, "alt": true, "key": "0"}},
-  {"id": "TabSet_ActivateParentTab", "keyComb": {"alt": true, "shift": true, "key": "Arrow_Up"}},
-  {"id": "TabSet_ActivateChildTab", "keyComb": {"alt": true, "shift": true, "key": "Arrow_Down"}},
-  {"id": "TabSet_ActivateLeftTab", "keyComb": {"alt": true, "shift": true, "key": "Arrow_Left"}},
-  {"id": "TabSet_ActivateRightTab", "keyComb": {"alt": true, "shift": true, "key": "Arrow_Right"}},
+  {"id": "TabSet_closeSelectedTab", "keyComb": {"alt": true, "shift": true, "key": "W"}},
+  {"id": "TabSet_SelectParentTab", "keyComb": {"alt": true, "shift": true, "key": "Arrow_Up"}},
+  {"id": "TabSet_SelectChildTab", "keyComb": {"alt": true, "shift": true, "key": "Arrow_Down"}},
+  {"id": "TabSet_SelectPreviousTab", "keyComb": {"alt": true, "shift": true, "key": "Arrow_Left"}},
+  {"id": "TabSet_SelectNextTab", "keyComb": {"alt": true, "shift": true, "key": "Arrow_Right"}},
   {"id": "Grid_EditInForm", "keyComb": {"ctrl": true, "alt": false, "key": "f2"}},
   {"id": "Grid_EditInGrid", "keyComb": {"ctrl": false, "alt": false, "key": "f2"}}
 ]]]></VALUE>
