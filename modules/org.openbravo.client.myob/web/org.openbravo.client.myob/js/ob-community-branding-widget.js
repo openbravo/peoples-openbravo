@@ -144,7 +144,7 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
   
    activateButton = isc.addProperties({}, isc.Dialog.OK, {
           getTitle: function() {
-            return OB.I18N.getLabel('OBKMO_ActivateLabel');
+            return OB.I18N.getLabel('OBKMO_LearnMore');
           },
           click: function() {
             this.topElement.cancelClick();
