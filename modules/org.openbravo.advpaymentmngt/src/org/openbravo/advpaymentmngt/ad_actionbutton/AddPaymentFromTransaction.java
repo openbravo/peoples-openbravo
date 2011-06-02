@@ -21,6 +21,7 @@ package org.openbravo.advpaymentmngt.ad_actionbutton;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,12 +42,10 @@ import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.util.Convert;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.dao.CurrencyDao;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
@@ -56,6 +55,7 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -72,6 +72,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
+    int conversionRatePrecision = FIN_Utility.getConversionRatePrecision(vars);
 
     if (vars.commandIn("DEFAULT")) {
       final RequestFilter docTypeFilter = new ValueListFilter("RCIN", "PDOUT");
@@ -85,7 +86,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       String strTransactionDate = vars.getStringParameter("inpMainDate", "");
 
       printPage(response, vars, strFinancialAccountId, isReceipt, strFinBankStatementLineId,
-          strTransactionDate, strCurrencyId);
+          strTransactionDate, strCurrencyId, conversionRatePrecision);
 
     } else if (vars.commandIn("GRIDLIST")) {
       final String strBusinessPartnerId = vars.getRequestGlobalVariable("inpcBpartnerId", "");
@@ -130,7 +131,11 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       final String strFinancialAccountCurrencyId = vars.getRequestGlobalVariable(
           "inpFinancialAccountCurrencyId", "");
       final String strPaymentDate = vars.getRequestGlobalVariable("inpPaymentDate", "");
-      refreshExchangeRate(response, strCurrencyId, strFinancialAccountCurrencyId, strPaymentDate);
+      final String strFinancialAccountId = vars.getRequiredStringParameter("inpFinancialAccountId");
+      FIN_FinancialAccount fa = OBDal.getInstance().get(FIN_FinancialAccount.class,
+          strFinancialAccountId);
+      refreshExchangeRate(response, strCurrencyId, strFinancialAccountCurrencyId, strPaymentDate,
+          fa.getOrganization(), conversionRatePrecision);
     } else if (vars.commandIn("SAVE") || vars.commandIn("SAVEANDPROCESS")) {
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       String strAction = null;
@@ -271,7 +276,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strFinancialAccountId, boolean isReceipt, String strFinBankStatementLineId,
-      String strTransactionDate, String strCurrencyId) throws IOException, ServletException {
+      String strTransactionDate, String strCurrencyId, int conversionRatePrecision)
+      throws IOException, ServletException {
     log4j.debug("Output: Add Payment button pressed on Add Transaction popup.");
     dao = new AdvPaymentMngtDao();
     String defaultPaymentMethod = "";
@@ -344,7 +350,6 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("currencyId", paymentCurrency.getId());
-    OBContext.setAdminMode();
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
           "", "",
@@ -370,7 +375,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
 
     String exchangeRate = "1.0";
     if (financialAccountCurrency != null && !financialAccountCurrency.equals(paymentCurrency)) {
-      exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, new Date());
+      exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, new Date(),
+          financialAccount.getOrganization(), conversionRatePrecision);
     }
     xmlDocument.setParameter("exchangeRate", exchangeRate);
 
@@ -391,7 +397,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
         }
       }
     } catch (JSONException e) {
-      log4j.debug("JSON object error" + json.toString());
+      log4j.error("JSON object error" + json.toString());
     }
     StringBuilder sb = new StringBuilder();
     sb.append("<script language='JavaScript' type='text/javascript'>");
@@ -529,23 +535,23 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
   }
 
   private void refreshExchangeRate(HttpServletResponse response, String strCurrencyId,
-      String strFinancialAccountCurrencyId, String strPaymentDate) throws IOException,
-      ServletException {
+      String strFinancialAccountCurrencyId, String strPaymentDate, Organization organization,
+      int conversionRatePrecision) throws IOException, ServletException {
 
-    AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
+    dao = new AdvPaymentMngtDao();
 
     final Currency financialAccountCurrency = dao.getObject(Currency.class,
         strFinancialAccountCurrencyId);
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
 
     String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, FIN_Utility
-        .getDate(strPaymentDate));
+        .getDate(strPaymentDate), organization, conversionRatePrecision);
 
     JSONObject msg = new JSONObject();
     try {
       msg.put("exchangeRate", exchangeRate);
     } catch (JSONException e) {
-      log4j.debug("JSON object error" + msg.toString());
+      log4j.error("JSON object error" + msg.toString());
     }
     response.setContentType("application/json; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -554,17 +560,16 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
   }
 
   private String findExchangeRate(Currency paymentCurrency, Currency financialAccountCurrency,
-      Date paymentDate) {
+      Date paymentDate, Organization organization, int conversionRatePrecision) {
     String exchangeRate = "1.0";
     if (!financialAccountCurrency.equals(paymentCurrency)) {
-      final CurrencyDao currencyDao = new CurrencyDao();
-      final ConversionRate conversionRate = currencyDao.getConversionRate(paymentCurrency,
-          financialAccountCurrency, paymentDate);
-      if (conversionRate != null) {
-        exchangeRate = Convert.toStringWithPrecision(conversionRate.getMultipleRateBy(),
-            CurrencyDao.CONVERSION_RATE_PRECISION);
-      } else {
+      final ConversionRate conversionRate = FIN_Utility.getConversionRate(paymentCurrency,
+          financialAccountCurrency, paymentDate, organization);
+      if (conversionRate == null) {
         exchangeRate = "";
+      } else {
+        exchangeRate = conversionRate.getMultipleRateBy().setScale(conversionRatePrecision,
+            RoundingMode.HALF_UP).toPlainString();
       }
     }
     return exchangeRate;

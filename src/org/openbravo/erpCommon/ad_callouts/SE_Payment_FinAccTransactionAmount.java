@@ -23,9 +23,9 @@ import java.math.MathContext;
 
 import javax.servlet.ServletException;
 
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.util.Convert;
-import org.openbravo.erpCommon.dao.CurrencyDao;
 
 /**
  * Update exchange rate
@@ -47,8 +47,8 @@ public class SE_Payment_FinAccTransactionAmount extends SimpleCallout {
 
     if (finaccTxnAmount != null && amount != null && amount.compareTo(BigDecimal.ZERO) != 0) {
       BigDecimal convertRate = finaccTxnAmount.divide(amount, MathContext.DECIMAL32);
-      String strConvertRate = Convert.toStringWithPrecision(convertRate,
-          CurrencyDao.CONVERSION_RATE_PRECISION);
+      String strConvertRate = Convert.toStringWithPrecision(convertRate, FIN_Utility
+          .getConversionRatePrecision(vars));
       info.addResult("inpfinaccTxnConvertRate", strConvertRate);
     }
 

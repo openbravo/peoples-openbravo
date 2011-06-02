@@ -294,7 +294,6 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("generatedCredit", payment.getGeneratedCredit() != null ? payment
         .getGeneratedCredit().toString() : BigDecimal.ZERO.toString());
-    OBContext.setAdminMode();
 
     final Currency financialAccountCurrency = payment.getAccount().getCurrency();
     if (financialAccountCurrency != null) {

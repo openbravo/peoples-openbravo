@@ -51,6 +51,7 @@ import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Sequence;
+import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
@@ -756,6 +757,72 @@ public class FIN_Utility {
     }
 
     return out.toString();
+  }
+
+  /**
+   * Determine the conversion rate from one currency to another on a given date. Will use the spot
+   * conversion rate defined by the system for that date
+   * 
+   * @param fromCurrency
+   *          Currency to convert from
+   * @param toCurrency
+   *          Currency being converted to
+   * @param conversionDate
+   *          Date conversion is being performed
+   * @return A valid conversion rate for the parameters, or null if no conversion rate can be found
+   */
+  public static ConversionRate getConversionRate(Currency fromCurrency, Currency toCurrency,
+      Date conversionDate, Organization org) {
+    java.util.List<ConversionRate> conversionRateList;
+    ConversionRate conversionRate;
+    OBContext.setAdminMode(true);
+    try {
+      final OBCriteria<ConversionRate> obcConvRate = OBDal.getInstance().createCriteria(
+          ConversionRate.class);
+      obcConvRate.setFilterOnReadableOrganization(false);
+      obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_ORGANIZATION, org));
+      obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY, fromCurrency));
+      obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, toCurrency));
+      obcConvRate.add(Restrictions.le(ConversionRate.PROPERTY_VALIDFROMDATE, conversionDate));
+      obcConvRate.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, conversionDate));
+      conversionRateList = obcConvRate.list();
+      if ((conversionRateList != null) && (conversionRateList.size() != 0)) {
+        conversionRate = conversionRateList.get(0);
+      } else {
+        if ("0".equals(org.getId())) {
+          conversionRate = null;
+        } else {
+          return getConversionRate(fromCurrency, toCurrency, conversionDate, OBDal.getInstance()
+              .get(
+                  Organization.class,
+                  OBContext.getOBContext().getOrganizationStructureProvider().getParentOrg(
+                      org.getId())));
+        }
+      }
+    } catch (Exception e) {
+      log4j.error(e);
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return conversionRate;
+  }
+
+  public static int getConversionRatePrecision(VariablesSecureApp vars) {
+    try {
+      String formatOutput = vars.getSessionValue("#FormatOutput|generalQtyEdition", "#0.######");
+      String decimalSeparator = vars.getSessionValue("#DecimalSeparator|generalQtyEdition", ".");
+      if (formatOutput.contains(decimalSeparator)) {
+        formatOutput = formatOutput.substring(formatOutput.indexOf(decimalSeparator), formatOutput
+            .length());
+        return formatOutput.length() - decimalSeparator.length();
+      } else {
+        return 0;
+      }
+    } catch (Exception e) {
+      log4j.error(e);
+      return 6; // by default precision of 6 decimals as is defaulted in Format.xml
+    }
   }
 
 }

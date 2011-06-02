@@ -27,8 +27,8 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.util.Convert;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.dao.CurrencyDao;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.common.currency.Currency;
@@ -266,8 +266,7 @@ public class FactLine {
       return false;
     }
 
-    final CurrencyDao currencyDao = new CurrencyDao();
-    final Currency acctCurrency = currencyDao.getCurrency(Acct_Currency_ID);
+    final Currency acctCurrency = OBDal.getInstance().get(Currency.class, Acct_Currency_ID);
 
     BigDecimal sourceDr = Convert.toAmount(m_AmtSourceDr);
     BigDecimal sourceCr = Convert.toAmount(m_AmtSourceCr);

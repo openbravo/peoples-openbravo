@@ -21,6 +21,7 @@ package org.openbravo.advpaymentmngt.ad_actionbutton;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,12 +42,10 @@ import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.util.Convert;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.dao.CurrencyDao;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
@@ -74,6 +73,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
+    int conversionRatePrecision = FIN_Utility.getConversionRatePrecision(vars);
 
     if (vars.commandIn("DEFAULT")) {
       String strBPfromInvoiceId = vars.getRequestGlobalVariable("inpcBpartnerId", "");
@@ -88,7 +88,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       boolean isReceipt = vars.getGlobalVariable("inpissotrx", "Y").equals("Y");
 
       printPage(response, vars, strBPfromInvoice, strBPfromInvoiceId, strCurrencyId, strInvoiceId,
-          strOrgId, strWindowId, strTabId, isReceipt);
+          strOrgId, strWindowId, strTabId, isReceipt, conversionRatePrecision);
 
     } else if (vars.commandIn("GRIDLIST")) {
       String strBPfromInvoiceId = vars.getRequestGlobalVariable("inpBusinessPartnerId", "");
@@ -124,7 +124,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strPaymentDate = vars.getRequestGlobalVariable("inpPaymentDate", "");
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       refreshFinancialAccountCombo(response, strPaymentMethodId, strFinancialAccountId, strOrgId,
-          strCurrencyId, isReceipt, strPaymentDate);
+          strCurrencyId, isReceipt, strPaymentDate, conversionRatePrecision);
     } else if (vars.commandIn("FILLFINANCIALACCOUNT")) {
       String strFinancialAccountId = vars.getRequestGlobalVariable("inpFinancialAccount", "");
       String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
@@ -132,7 +132,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       String strPaymentDate = vars.getRequestGlobalVariable("inpPaymentDate", "");
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       refreshFinancialAccountCombo(response, "", strFinancialAccountId, strOrgId, strCurrencyId,
-          isReceipt, strPaymentDate);
+          isReceipt, strPaymentDate, conversionRatePrecision);
 
     } else if (vars.commandIn("FILLPAYMENTMETHOD")) {
       String strPaymentMethodId = vars.getRequiredStringParameter("inpPaymentMethod");
@@ -144,8 +144,11 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       final String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
       final String strFinancialAccountCurrencyId = vars.getRequestGlobalVariable(
           "inpFinancialAccountCurrencyId", "");
+      final String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "");
       final String strPaymentDate = vars.getRequestGlobalVariable("inpPaymentDate", "");
-      refreshExchangeRate(response, strCurrencyId, strFinancialAccountCurrencyId, strPaymentDate);
+      Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
+      refreshExchangeRate(response, strCurrencyId, strFinancialAccountCurrencyId, strPaymentDate,
+          org, conversionRatePrecision);
 
     } else if (vars.commandIn("SAVE") || vars.commandIn("SAVEANDPROCESS")) {
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
@@ -271,8 +274,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strBPfromInvoice, String strBPfromInvoiceId, String strCurrencyId,
-      String strInvoiceId, String strOrgId, String strWindowId, String strTabId, boolean isReceipt)
-      throws IOException, ServletException {
+      String strInvoiceId, String strOrgId, String strWindowId, String strTabId, boolean isReceipt,
+      int conversionRatePrecision) throws IOException, ServletException {
 
     log4j.debug("Output: Add Payment button pressed on Sales Invoice window");
     dao = new AdvPaymentMngtDao();
@@ -338,7 +341,6 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     // Currency
     xmlDocument.setParameter("CurrencyId", strCurrencyId);
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
-    OBContext.setAdminMode();
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
@@ -360,7 +362,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
           .getStandardPrecision().toString());
     }
 
-    String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, new Date());
+    String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, new Date(),
+        OBDal.getInstance().get(Organization.class, strOrgId), conversionRatePrecision);
     xmlDocument.setParameter("exchangeRate", exchangeRate);
 
     boolean forcedFinancialAccountTransaction = false;
@@ -445,11 +448,11 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
   private void refreshFinancialAccountCombo(HttpServletResponse response,
       String strPaymentMethodId, String strFinancialAccountId, String strOrgId,
-      String strCurrencyId, boolean isReceipt, String paymentDate) throws IOException,
-      ServletException {
+      String strCurrencyId, boolean isReceipt, String paymentDate, int conversionRatePrecision)
+      throws IOException, ServletException {
     log4j.debug("Callout: Payment Method has changed to " + strPaymentMethodId);
 
-    AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
+    dao = new AdvPaymentMngtDao();
 
     String finAccountComboHtml = FIN_Utility.getFinancialAccountList(strPaymentMethodId,
         strFinancialAccountId, strOrgId, true, strCurrencyId, isReceipt);
@@ -459,7 +462,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
 
     String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, FIN_Utility
-        .getDate(paymentDate));
+        .getDate(paymentDate), OBDal.getInstance().get(Organization.class, strOrgId),
+        conversionRatePrecision);
 
     JSONObject msg = new JSONObject();
     try {
@@ -468,7 +472,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       msg.put("exchangeRate", exchangeRate);
       msg.put("financialAccountCurrencyPrecision", financialAccountCurrency.getStandardPrecision());
     } catch (JSONException e) {
-      log4j.debug("JSON object error" + msg.toString());
+      log4j.error("JSON object error" + msg.toString());
     }
 
     response.setContentType("application/json; charset=UTF-8");
@@ -479,23 +483,23 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
   }
 
   private void refreshExchangeRate(HttpServletResponse response, String strCurrencyId,
-      String strFinancialAccountCurrencyId, String strPaymentDate) throws IOException,
-      ServletException {
+      String strFinancialAccountCurrencyId, String strPaymentDate, Organization organization,
+      int conversionRatePrecision) throws IOException, ServletException {
 
-    AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
+    dao = new AdvPaymentMngtDao();
 
     final Currency financialAccountCurrency = dao.getObject(Currency.class,
         strFinancialAccountCurrencyId);
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
 
     String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, FIN_Utility
-        .getDate(strPaymentDate));
+        .getDate(strPaymentDate), organization, conversionRatePrecision);
 
     JSONObject msg = new JSONObject();
     try {
       msg.put("exchangeRate", exchangeRate);
     } catch (JSONException e) {
-      log4j.debug("JSON object error" + msg.toString());
+      log4j.error("JSON object error" + msg.toString());
     }
     response.setContentType("application/json; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -504,17 +508,16 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
   }
 
   private String findExchangeRate(Currency paymentCurrency, Currency financialAccountCurrency,
-      Date paymentDate) {
+      Date paymentDate, Organization organization, int conversionRatePrecision) {
     String exchangeRate = "1.0";
     if (!financialAccountCurrency.equals(paymentCurrency)) {
-      final CurrencyDao currencyDao = new CurrencyDao();
-      final ConversionRate conversionRate = currencyDao.getConversionRate(paymentCurrency,
-          financialAccountCurrency, paymentDate);
-      if (conversionRate != null) {
-        exchangeRate = Convert.toStringWithPrecision(conversionRate.getMultipleRateBy(),
-            CurrencyDao.CONVERSION_RATE_PRECISION);
-      } else {
+      final ConversionRate conversionRate = FIN_Utility.getConversionRate(paymentCurrency,
+          financialAccountCurrency, paymentDate, organization);
+      if (conversionRate == null) {
         exchangeRate = "";
+      } else {
+        exchangeRate = conversionRate.getMultipleRateBy().setScale(conversionRatePrecision,
+            RoundingMode.HALF_UP).toPlainString();
       }
     }
     return exchangeRate;

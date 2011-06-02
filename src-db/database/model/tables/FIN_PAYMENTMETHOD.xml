@@ -142,5 +142,7 @@
       <check name="FIN_PAYMENTMETH_WITHDRAW_CHK"><![CDATA[AUTOMATIC_WITHDRAWN IN ('Y', 'N')]]></check>
       <check name="FIN_PAYMENTMETHOD_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="FIN_PAYMENTMETHOD_PAYINDEF_CHK"><![CDATA[PAYIN_DEFERRED IN ('Y', 'N')]]></check>
+      <check name="FIN_PM_PINMULTICUR_CHECK"><![CDATA[PAYIN_ISMULTICURRENCY IN ('Y', 'N')]]></check>
+      <check name="FIN_PM_POUTMULTICUR_CHECK"><![CDATA[PAYOUT_ISMULTICURRENCY IN ('Y', 'N')]]></check>
     </table>
   </database>
