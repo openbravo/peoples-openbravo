@@ -161,6 +161,28 @@ function subtract(number1, number2) {
 }
 
 /**
+ * Arithmetic divide operation of two Strings using the global formats.
+ * @param {String} number1 The first operand
+ * @param {String} number2 The second operand
+ * @return The result of dividing number1 to number2 using the global formats.
+ * @type String
+ */
+function divide(number1, number2) {
+  return formattedNumberOpTemp(number1, '/', number2, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+}
+
+/**
+ * Arithmetic multiply operation of two Strings using the global formats.
+ * @param {String} number1 The first operand
+ * @param {String} number2 The second operand
+ * @return The result of multiplying number1 to number2 using the global formats.
+ * @type String
+ */
+function multiply(number1, number2) {
+  return formattedNumberOpTemp(number1, '*', number2, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);	
+}
+
+/**
  * Compares two Strings using the operator
  * @param {String} number1 The first operand
  * @param {String} operator The operator (+ - * / % < > <= >= ...)
@@ -187,6 +209,28 @@ function compareWithSign(number1, operator, number2) {
 function isBetweenZeroAndMaxValue(value, maxValue){
   return ((compare(value, '>=', 0) && compare(value, '<=', maxValue)) ||
           (compare(value, '<=', 0) && compare(value, '>=', maxValue)));
+}
+
+function updateConvertedAmounts( recalcExchangeRate ) {
+  var exchangeRate = frm.inpExchangeRate;
+  var precision = frm.inpFinancialAccountCurrencyPrecision ? frm.inpFinancialAccountCurrencyPrecision.value : 2;
+  var expectedConverted = frm.inpExpectedConverted;
+  var actualConverted = frm.inpActualConverted;
+  var expectedPayment= frm.inpExpectedPayment;
+  var actualPayment= frm.inpActualPayment;
+  
+  if (actualConverted && expectedConverted && exchangeRate) {
+    if( recalcExchangeRate ) {
+      if( actualConverted.value && actualPayment.value) {
+        exchangeRate.value = divide(actualConverted.value, actualPayment.value);
+      } else {
+        exchangeRate.value = '';
+      }
+    } else {
+      actualConverted.value = multiply(actualPayment.value, exchangeRate.value).toFixed(precision);
+    }
+    expectedConverted.value = multiply(expectedPayment.value,exchangeRate.value).toFixed(precision);
+  }
 }
 
 function validateSelectedAmounts(recordID, existsPendingAmount, selectedAction){
@@ -354,6 +398,7 @@ function updateTotal() {
   }
   isCreditAllowed = !selectedBusinessPartners.isMultibpleSelection();
   updateDifference();
+  updateConvertedAmounts();
 }
 
 function distributeAmount(_amount) {
@@ -598,4 +643,16 @@ function reloadParentGrid() {
         theView.toolBar.refreshCustomButtons();
     });
   }
+}
+
+/**
+ * Helper function to turn a JSON string representation into an object.
+ * @param jsonString
+ */
+function decodeJSON(jsonString) {
+    try{
+        return eval('(' + jsonString + ')'); // do the eval
+    }catch(e){
+        throw new SyntaxError("Invalid JSON string: " + e.message + " parsing: "+ str);
+    }
 }

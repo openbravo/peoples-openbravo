@@ -26,9 +26,12 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.util.Convert;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.dao.CurrencyDao;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.model.common.currency.Currency;
 
 public class FactLine {
   static Logger log4jFactLine = Logger.getLogger(FactLine.class);
@@ -233,6 +236,47 @@ public class FactLine {
       return false;
     m_AmtAcctCr = AcctServer.getConvertedAmt(m_AmtSourceCr, m_C_Currency_ID, Acct_Currency_ID,
         ConversionDate, CurrencyRateType, m_docVO.AD_Client_ID, m_docVO.AD_Org_ID, conn);
+    return true;
+  } // convert
+
+  /**
+   * Convert to Accounted Currency
+   * 
+   * @param Acct_Currency_ID
+   *          acct currency
+   * @param conversionRate
+   *          Rate to convert from source amount to account amount
+   * @return true if converted
+   */
+  public boolean convertByRate(String Acct_Currency_ID, BigDecimal conversionRate) {
+    // Document has no currency
+    log4jFactLine.debug("convert - beginning");
+    log4jFactLine.debug("convert - m_C_Currency_ID : " + m_C_Currency_ID);
+    if (m_C_Currency_ID == null || m_C_Currency_ID.equals(AcctServer.NO_CURRENCY))
+      m_C_Currency_ID = Acct_Currency_ID;
+    log4jFactLine.debug("convert - Acct_Currency_ID : " + Acct_Currency_ID);
+    if (Acct_Currency_ID.equals(m_C_Currency_ID)) {
+      m_AmtAcctDr = m_AmtSourceDr;
+      m_AmtAcctCr = m_AmtSourceCr;
+      return true;
+    }
+
+    if (conversionRate == null) {
+      log4jFactLine.warn("convert - No conversion rate");
+      return false;
+    }
+
+    final CurrencyDao currencyDao = new CurrencyDao();
+    final Currency acctCurrency = currencyDao.getCurrency(Acct_Currency_ID);
+
+    BigDecimal sourceDr = Convert.toAmount(m_AmtSourceDr);
+    BigDecimal sourceCr = Convert.toAmount(m_AmtSourceCr);
+
+    BigDecimal acctDr = sourceDr.multiply(conversionRate);
+    BigDecimal acctCr = sourceCr.multiply(conversionRate);
+
+    m_AmtAcctDr = Convert.toStringWithPrecision(acctDr, acctCurrency.getStandardPrecision());
+    m_AmtAcctCr = Convert.toStringWithPrecision(acctCr, acctCurrency.getStandardPrecision());
     return true;
   } // convert
 
@@ -782,19 +826,30 @@ public class FactLine {
   } // getC_SalesRegion_ID
 
   /**
-   * /** Get Accounted Balance
+   * Get Accounted Balance
    * 
    * @return accounting balance
    */
-  public String getAcctBalance() {
+  public BigDecimal getAccountingBalance() {
     if (m_AmtAcctDr.equals(""))
       m_AmtAcctDr = "0";
     if (m_AmtAcctCr.equals(""))
       m_AmtAcctCr = "0";
     BigDecimal AmtAcctDr = new BigDecimal(m_AmtAcctDr);
     BigDecimal AmtAcctCr = new BigDecimal(m_AmtAcctCr);
-    return AmtAcctDr.subtract(AmtAcctCr).toString();
-  } // getAcctBalance
+    return AmtAcctDr.subtract(AmtAcctCr);
+  } // getAccountingBalance
+
+  /**
+   * Get Accounted Balance
+   * 
+   * @return accounting balance
+   */
+  @Deprecated
+  // Use getAccountingBalance which returns BigDecimal
+  public String getAcctBalance() {
+    return Convert.toString(getAccountingBalance());
+  } // getAccBalanclance
 
   /**
    * Is Account on Balance Sheet

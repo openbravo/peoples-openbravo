@@ -282,7 +282,8 @@ public class DocFINReconciliation extends AcctServer {
             .toString());
         FieldProviderFactory.setField(data[i], "PaymentAmount", transaction.getPaymentAmount()
             .toString());
-        FieldProviderFactory.setField(data[i], "Amount", payment.getAmount().toString());
+        FieldProviderFactory.setField(data[i], "Amount", payment.getFinancialTransactionAmount()
+            .toString());
         String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
             .getProperty("dateFormat.java");
         SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
