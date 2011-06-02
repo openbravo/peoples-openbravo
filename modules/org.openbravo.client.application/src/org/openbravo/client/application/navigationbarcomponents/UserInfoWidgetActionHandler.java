@@ -213,7 +213,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
 
   private List<Organization> getOrganizations(String roleId) throws JSONException {
     final OBQuery<RoleOrganization> roleOrgs = OBDal.getInstance().createQuery(
-        RoleOrganization.class, "role.id=:roleId and active=true");
+        RoleOrganization.class, "role.id=:roleId and organization.active=true");
     roleOrgs.setFilterOnReadableClients(false);
     roleOrgs.setFilterOnReadableOrganization(false);
     roleOrgs.setNamedParameter("roleId", roleId);
