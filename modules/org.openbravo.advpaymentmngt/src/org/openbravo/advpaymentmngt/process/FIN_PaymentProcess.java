@@ -471,7 +471,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     }
     businessPartner.setCreditUsed(creditUsed);
     OBDal.getInstance().save(businessPartner);
-    OBDal.getInstance().flush();
+    // OBDal.getInstance().flush();
   }
 
   private void increaseCustomerCredit(BusinessPartner businessPartner, BigDecimal amount) {

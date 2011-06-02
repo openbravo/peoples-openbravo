@@ -342,7 +342,7 @@ public class FIN_Utility {
           nextDocNumber += seq.getSuffix();
         seq.setNextAssignedNumber(seq.getNextAssignedNumber() + seq.getIncrementBy());
         OBDal.getInstance().save(seq);
-        OBDal.getInstance().flush();
+        // OBDal.getInstance().flush();
       }
     }
 

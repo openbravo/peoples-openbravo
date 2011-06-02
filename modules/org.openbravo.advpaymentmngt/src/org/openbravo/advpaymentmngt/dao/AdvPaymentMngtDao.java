@@ -416,7 +416,6 @@ public class AdvPaymentMngtDao {
     newPayment.setFinancialTransactionAmount(finTxnAmount);
 
     OBDal.getInstance().save(newPayment);
-    OBDal.getInstance().flush();
 
     return newPayment;
   }
@@ -450,7 +449,7 @@ public class AdvPaymentMngtDao {
     OBDal.getInstance().save(payment);
     OBDal.getInstance().save(newPaymentDetail);
     OBDal.getInstance().save(paymentScheduleDetail);
-    OBDal.getInstance().flush();
+    // OBDal.getInstance().flush();
 
     return newPaymentDetail;
   }
@@ -466,7 +465,7 @@ public class AdvPaymentMngtDao {
     newPaymentScheduleDetail.setAmount(amount);
 
     OBDal.getInstance().save(newPaymentScheduleDetail);
-    OBDal.getInstance().flush();
+    // OBDal.getInstance().flush();
 
     return newPaymentScheduleDetail;
   }
@@ -1421,6 +1420,5 @@ public class AdvPaymentMngtDao {
     newPref.setAttribute("APRM_Ready");
 
     OBDal.getInstance().save(newPref);
-    OBDal.getInstance().flush();
   }
 }

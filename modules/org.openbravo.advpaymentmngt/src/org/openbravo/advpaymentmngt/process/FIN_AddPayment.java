@@ -129,10 +129,11 @@ public class FIN_AddPayment {
     final FIN_Payment payment;
     if (_payment != null)
       payment = _payment;
-    else
+    else {
       payment = dao.getNewPayment(isReceipt, organization, docType, strPaymentDocumentNo,
-          businessPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate, referenceNo,
-          paymentCurrency, finTxnConvertRate, finTxnAmount);
+          businessPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate, referenceNo);
+      OBDal.getInstance().flush();
+    }
 
     for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList())
       assignedAmount = assignedAmount.add(paymentDetail.getAmount());
