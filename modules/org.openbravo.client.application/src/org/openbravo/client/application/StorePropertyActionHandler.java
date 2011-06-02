@@ -29,7 +29,11 @@ import org.openbravo.client.kernel.StaticResourceComponent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.User;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * Is responsible for storing a preference.
@@ -56,9 +60,26 @@ public class StorePropertyActionHandler extends BaseActionHandler {
       if (windowId != null) {
         window = OBDal.getInstance().get(Window.class, windowId);
       }
-      Preferences.setPreferenceValue(propertyName, cleanedData, true, OBContext.getOBContext()
-          .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-          .getOBContext().getUser(), OBContext.getOBContext().getRole(), window, null);
+
+      Client client;
+      Organization org;
+      User user;
+      Role role;
+
+      if (Boolean.parseBoolean((String) parameters.get("system"))) {
+        client = null;
+        org = null;
+        user = null;
+        role = null;
+      } else {
+        client = OBContext.getOBContext().getCurrentClient();
+        org = OBContext.getOBContext().getCurrentOrganization();
+        user = OBContext.getOBContext().getUser();
+        role = OBContext.getOBContext().getRole();
+      }
+
+      Preferences.setPreferenceValue(propertyName, cleanedData, true, client, org, user, role,
+          window, null);
       OBDal.getInstance().flush();
       return new JSONObject("{msg: 'Property Stored'}");
     } catch (Exception e) {
