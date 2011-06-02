@@ -324,12 +324,12 @@ isc.OBSelectorItem.addProperties({
   // get the display value
   // https://issues.openbravo.com/view.php?id=16611
   setValue: function(newValue) {
-	  if (!this.valueMap) {
-	    this.valueMap = {};
+    if (!this.valueMap) {
+      this.valueMap = {};
     }
     if (this.form && this.form.getValues() && this.form.getValues()[this.name] === newValue &&
         this.form.getValues()[this.name + '._identifier']) {
-      this.valueMap[newValue] = this.form.getValues()[this.name + '._identifier'];
+      this.form.setValue(this.name + '._identifier', this.valueMap[newValue]);
     }
     if (newValue === '') {
       this.valueMap[newValue] = '';
