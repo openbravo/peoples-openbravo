@@ -55,13 +55,12 @@ import org.openbravo.service.db.DalConnectionProvider;
 public class HeartBeatPopupActionHandler extends BaseActionHandler {
   private static final Logger log = Logger.getLogger(HeartBeatPopupActionHandler.class);
   private static final String APRM_MIGRATION_TOOL_ID = "4BD3D4B262B048518FE62496EF09D549";
-  private static final String SYS_ADMIN_ROLE_ID = "0";
 
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     try {
       final JSONObject result = new JSONObject();
 
-      boolean sysAdmin = SYS_ADMIN_ROLE_ID.equals(OBContext.getOBContext().getRole().getId());
+      boolean sysAdmin = "S".equals(OBContext.getOBContext().getRole().getUserLevel());
 
       boolean isUpgrading = false;
       try {
