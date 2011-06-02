@@ -1,6 +1,6 @@
 /*
  * Isomorphic SmartClient
- * Version SC_SNAPSHOT-2011-05-30 (2011-05-30)
+ * Version SC_SNAPSHOT-2011-06-02 (2011-06-02)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -12,7 +12,7 @@
 var isc = window.isc ? window.isc : {};if(window.isc&&!window.isc.module_Core){isc.module_Core=1;isc._moduleStart=isc._Core_start=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc._moduleEnd&&(!isc.Log||(isc.Log && isc.Log.logIsDebugEnabled('loadTime')))){isc._pTM={ message:'Core load/parse time: ' + (isc._moduleStart-isc._moduleEnd) + 'ms', category:'loadTime'};
 if(isc.Log && isc.Log.logDebug)isc.Log.logDebug(isc._pTM.message,'loadTime')
 else if(isc._preLog)isc._preLog[isc._preLog.length]=isc._pTM
-else isc._preLog=[isc._pTM]}isc.definingFramework=true;var isc=window.isc?window.isc:{};isc.$d=new Date().getTime();isc.version="SC_SNAPSHOT-2011-05-30/LGPL Deployment";isc.versionNumber="SC_SNAPSHOT-2011-05-30";isc.buildDate="2011-05-30";isc.expirationDate="";isc.licenseType="LGPL";isc.licenseCompany="Isomorphic Software";isc.licenseSerialNumber="ISC_LGPL_NIGHTLY";isc.licensingPage="http://smartclient.com/product/";isc.$41r={SCServer:{present:"false",name:"SmartClient Server",serverOnly:true,isPro:true},Drawing:{present:"false",name:"Drawing Module"},PluginBridges:{present:"true",name:"PluginBridges Module"},RichTextEditor:{present:"true",name:"RichTextEditor Module"},Calendar:{present:"true",name:"Calendar Module"},Analytics:{present:"false",name:"Analytics Module"},Tools:{present:"${includeTools}",name:"Portal and Tools Module"},NetworkPerformance:{present:"false",name:"Network Performance Module"},FileLoader:{present:"false",name:"Network Performance Module"},RealtimeMessaging:{present:"false",name:"RealtimeMessaging Module"},serverCriteria:{present:"false",name:"Server Advanced Filtering",serverOnly:true,isFeature:true},customSQL:{present:"false",name:"SQL Templating",serverOnly:true,isFeature:true},chaining:{present:"false",name:"Transaction Chaining",serverOnly:true,isFeature:true},batchDSGenerator:{present:"false",name:"Batch DS-Generator",serverOnly:true,isFeature:true},batchUploader:{present:"false",name:"Batch Uploader",serverOnly:true,isFeature:true},transactions:{present:"false",name:"Automatic Transaction Management",serverOnly:true,isFeature:true}};isc.canonicalizeModules=function(_1){if(!_1)return null;if(isc.isA.String(_1)){if(_1.indexOf(",")!=-1){_1=_1.split(",");var _2=/^\s+/,_3=/\s+$/;for(var i=0;i<_1.length;i++){_1[i]=_1[i].replace(_2,"").replace(_3,"")}}else _1=[_1]}
+else isc._preLog=[isc._pTM]}isc.definingFramework=true;var isc=window.isc?window.isc:{};isc.$d=new Date().getTime();isc.version="SC_SNAPSHOT-2011-06-02/LGPL Deployment";isc.versionNumber="SC_SNAPSHOT-2011-06-02";isc.buildDate="2011-06-02";isc.expirationDate="";isc.licenseType="LGPL";isc.licenseCompany="Isomorphic Software";isc.licenseSerialNumber="ISC_LGPL_NIGHTLY";isc.licensingPage="http://smartclient.com/product/";isc.$41r={SCServer:{present:"false",name:"SmartClient Server",serverOnly:true,isPro:true},Drawing:{present:"false",name:"Drawing Module"},PluginBridges:{present:"true",name:"PluginBridges Module"},RichTextEditor:{present:"true",name:"RichTextEditor Module"},Calendar:{present:"true",name:"Calendar Module"},Analytics:{present:"false",name:"Analytics Module"},Tools:{present:"${includeTools}",name:"Portal and Tools Module"},NetworkPerformance:{present:"false",name:"Network Performance Module"},FileLoader:{present:"false",name:"Network Performance Module"},RealtimeMessaging:{present:"false",name:"RealtimeMessaging Module"},serverCriteria:{present:"false",name:"Server Advanced Filtering",serverOnly:true,isFeature:true},customSQL:{present:"false",name:"SQL Templating",serverOnly:true,isFeature:true},chaining:{present:"false",name:"Transaction Chaining",serverOnly:true,isFeature:true},batchDSGenerator:{present:"false",name:"Batch DS-Generator",serverOnly:true,isFeature:true},batchUploader:{present:"false",name:"Batch Uploader",serverOnly:true,isFeature:true},transactions:{present:"false",name:"Automatic Transaction Management",serverOnly:true,isFeature:true}};isc.canonicalizeModules=function(_1){if(!_1)return null;if(isc.isA.String(_1)){if(_1.indexOf(",")!=-1){_1=_1.split(",");var _2=/^\s+/,_3=/\s+$/;for(var i=0;i<_1.length;i++){_1[i]=_1[i].replace(_2,"").replace(_3,"")}}else _1=[_1]}
 return _1};isc.hasOptionalModules=function(_1){if(!_1)return true;_1=isc.canonicalizeModules(_1);for(var i=0;i<_1.length;i++)if(!isc.hasOptionalModule(_1[i]))return false;return true};isc.getMissingModules=function(_1){var _2=[];_1=isc.canonicalizeModules(_1);for(var i=0;i<_1.length;i++){var _4=_1[i];if(!isc.hasOptionalModule(_4))_2.add(isc.$41r[_4])}
 return _2};isc.hasOptionalModule=function(_1){var v=isc.$41r[_1];if(!v){if(isc.Log)isc.Log.logWarn("isc.hasOptionalModule - unknown module: "+_1);return false}
 return v.present=="true"||v.present.charAt(0)=="$"};isc.getOptionalModule=function(_1){return isc.$41r[_1]};isc.$a=window.isc_useSimpleNames;if(isc.$a==null)isc.$a=true;if(window.OpenAjax){isc.$b=isc.versionNumber.replace(/[a-zA-Z_]+/,".0");OpenAjax.registerLibrary("SmartClient","http://smartclient.com/SmartClient",isc.$b,{namespacedMode:!isc.$a,iscVersion:isc.version,buildDate:isc.buildDate,licenseType:isc.licenseType,licenseCompany:isc.licenseCompany,licenseSerialNumber:isc.licenseSerialNumber});OpenAjax.registerGlobals("SmartClient",["isc"])}
@@ -136,7 +136,7 @@ return this.$bn.test(_1)}
 ,isc.A.ClassObject=function isc_isA_ClassObject(_1){return(_1!=null&&_1.$bp==true)}
 ,isc.A.Interface=function isc_isA_Interface(_1){return(_1!=null&&_1.$a5==true)}
 ,isc.A.InstancePrototype=function isc_isA_InstancePrototype(_1){return(isc.isAn.Instance(_1)&&_1.$76y==_1)}
-);isc.B._maxIndex=isc.C+4;isc.A=isc.ClassFactory;isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.A.$f="isc.";isc.A.$bq="Window";isc.A.$br="Selection";isc.A.$bs={};isc.A.$bt="object";isc.A.$bu=["if(object==null||object.isA==null||object.isA==isc.isA)return false;return object.isA(isc.",null,")"];isc.A.$60l={toolbar:true,parent:true,window:true};isc.A._$isc_OID_="isc_OID_";isc.A._$isc_="isc_";isc.A.$bv="_";isc.A.$bw=[];isc.A.$75m={};isc.A.reuseGlobalIDs=true;isc.A.globalIDClassPoolSize=1000;isc.A.$63v={};isc.A.$bx=0;isc.A._$isc_="isc_";isc.A.$by=[null,"_",null];isc.A.reuseDOMIDs=false;isc.A.DOMIDPoolSize=10000;isc.A.$63w=[];isc.A.$bz=["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];isc.A.$b0=[];isc.A.$b1="a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p";isc.B.push(isc.A.defineClass=function isc_ClassFactory_defineClass(_1,_2,_3,_4){return this.$b2(_1,_2,_3,null,_4)}
+);isc.B._maxIndex=isc.C+4;isc.A=isc.ClassFactory;isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.A.$f="isc.";isc.A.$bq="Window";isc.A.$br="Selection";isc.A.$bs={};isc.A.$bt="object";isc.A.$bu=["if(object==null||object.isA==null||object.isA==isc.isA)return false;return object.isA(isc.",null,")"];isc.A.$60l={toolbar:true,parent:true,window:true,top:true,opener:true,event:true};isc.A._$isc_OID_="isc_OID_";isc.A._$isc_="isc_";isc.A.$bv="_";isc.A.$bw=[];isc.A.$75m={};isc.A.reuseGlobalIDs=true;isc.A.globalIDClassPoolSize=1000;isc.A.$63v={};isc.A.$bx=0;isc.A._$isc_="isc_";isc.A.$by=[null,"_",null];isc.A.reuseDOMIDs=false;isc.A.DOMIDPoolSize=10000;isc.A.$63w=[];isc.A.$bz=["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];isc.A.$b0=[];isc.A.$b1="a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p";isc.B.push(isc.A.defineClass=function isc_ClassFactory_defineClass(_1,_2,_3,_4){return this.$b2(_1,_2,_3,null,_4)}
 ,isc.A.overwriteClass=function isc_ClassFactory_overwriteClass(_1,_2,_3,_4){return this.$b2(_1,_2,_3,null,_4,true)}
 ,isc.A.defineInterface=function isc_ClassFactory_defineInterface(_1,_2){return this.$b2(_1,_2,null,true)}
 ,isc.A.defineRootClass=function isc_ClassFactory_defineRootClass(_1){return this.$b3(_1,null)}
@@ -623,7 +623,7 @@ var _16=_10.join(_3||this.localeProperties.groupingSymbol);if(_9)_16=_16+(_2||th
 );isc.B._maxIndex=isc.C+3;isc.Math={random:function(_1,_2){if(_2==null){return Math.round(Math.random()*_1)}else{return Math.round(Math.random()*(_2-_1))+_1}}}
 isc.defineClass("DateUtil");isc.addGlobal("timeStamp",function(){return new Date().getTime()});isc.addGlobal("timestamp",isc.timeStamp);Date.prototype.Class="Date";Date.Class="Date";isc.Date=Date;isc.A=Date;isc.A.INVALID_DATE_STRING="Invalid date format";isc.A=Date;isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.A.$64g={toUSShortDate:"MDY",toUSShortDateTime:"MDY",toUSShortDatetime:"MDY",toEuropeanShortDate:"DMY",toEuropeanShortDateTime:"DMY",toEuropeanShortDatetime:"DMY",toJapanShortDate:"YMD",toJapanShortDateTime:"YMD",toJapanShortDatetime:"YMD"};isc.B.push(isc.A.newInstance=function isc_Date_newInstance(_1,_2,_3,_4,_5,_6,_7){return new Date(_1,_2,_3,_4,_5,_6,_7)}
 ,isc.A.create=function isc_Date_create(_1,_2,_3,_4,_5,_6,_7){var _8;if(_1===_8)return new Date();if(_2===_8)return new Date(_1);if(_3===_8)_3=0;if(_4===_8)_4=0;if(_5===_8)_5=0;if(_6===_8)_6=0;if(_7===_8)_7=0;return new Date(_1,_2,_3,_4,_5,_6,_7)}
-,isc.A.createLogicalDate=function isc_Date_createLogicalDate(_1,_2,_3){var d=new Date();d.setHours(12);d.setMinutes(0);d.setSeconds(0);d.setMilliseconds(0);if(_1!=null)d.setYear(_1);if(_2!=null)d.setMonth(_2);if(_3!=null)d.setDate(_3);d.logicalDate=true;return d}
+,isc.A.createLogicalDate=function isc_Date_createLogicalDate(_1,_2,_3){var d=new Date(0);d.setHours(12);d.setMinutes(0);d.setSeconds(0);d.setMilliseconds(0);if(_3!=null)d.setDate(1);if(_1!=null)d.setYear(_1);if(_2!=null)d.setMonth(_2);if(_3!=null)d.setDate(_3);d.logicalDate=true;return d}
 ,isc.A.compareDates=function isc_Date_compareDates(_1,_2){var _3=(_1!=null?_1.getTime():0),_4=(_2!=null?_2.getTime():0);return _3>_4?-1:(_4>_3?1:0)}
 ,isc.A.compareLogicalDates=function isc_Date_compareLogicalDates(_1,_2){if(_1==_2)return 0;if(!isc.isA.Date(_1)||!isc.isA.Date(_2))return false;var _3=_1.getFullYear(),_4=_1.getMonth(),_5=_1.getDate(),_6=_2.getFullYear(),_7=_2.getMonth(),_8=_2.getDate();var _9=_3*10000+_4*100+_5,_10=_6*10000+_7*100+_8;return _9>_10?-1:(_10>_9?1:0)}
 ,isc.A.setInputFormat=function isc_Date_setInputFormat(_1){this.$ei=_1}
@@ -4128,7 +4128,7 @@ isc.Page.logInfo("SmartClient Core ("+isc.version+" "+isc.buildDate+") initializ
 isc._moduleEnd=isc._Core_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('Core module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'Core'.");}
 /*
  * Isomorphic SmartClient
- * Version SC_SNAPSHOT-2011-05-30 (2011-05-30)
+ * Version SC_SNAPSHOT-2011-06-02 (2011-06-02)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -4139,7 +4139,7 @@ isc._moduleEnd=isc._Core_end=(isc.timestamp?isc.timestamp():new Date().getTime()
 
 /*
  * Isomorphic SmartClient
- * Version SC_SNAPSHOT-2011-05-30 (2011-05-30)
+ * Version SC_SNAPSHOT-2011-06-02 (2011-06-02)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -5085,7 +5085,7 @@ return _3}
 ,isc.A.getMemberOffset=function isc_SectionStack_getMemberOffset(_1,_2,_3){var _4=this.itemIndent;if(_1.isSectionHeader)return _2;if(this.itemStartIndent!=null)_4=this.itemStartIndent;if(_3==isc.Canvas.RIGHT||_3==isc.Canvas.BOTTOM)
 _4*=-1;return _2+_4}
 );isc.B._maxIndex=isc.C+39;isc.$6q={icon:"[SKIN]SectionHeader/opener.gif",overflow:"hidden",baseStyle:"sectionHeader",showDisabled:true,expanded:false,setExpanded:function(_1){this.expanded=_1;this.stateChanged()},setOpen:function(_1){this.setExpanded(_1)},getCustomState:function(){return this.expanded?"opened":"closed"}};isc.$6r={overflow:"hidden",wrap:false,height:20,expanded:false,canCollapse:true,getSectionStack:function(){var _1=this.layout;if(_1)return isc.isA.String(_1)?window[_1]:_1;else return null},keyPress:function(){var _1=this.getSectionStack();if(_1==null)return;var _2=isc.EH.getKey();if(_2=="Enter"||_2=="Space"){if(this.canCollapse)return _1.sectionHeaderClick(this)}else if(_2=="Arrow_Up"||_2=="Arrow_Down"){var _3=_1.getDragResizeTarget(this);if(_3==null)return false;var _4=(_2=="Arrow_Up"?-5:5);this.bringToFront();this.resizeTarget(_3,true,this.resizeInRealTime,0,0,(this.getPageTop()+_4))
-this.$6s=_3}},keyUp:function(){if(this.$6s){var _1=isc.EH.getKey();if(_1=="Arrow_Up"||_1=="Arrow_Down"){this.finishTargetResize(this.$6s,true,this.resizeInRealTime);this.$6s=null}}},$kk:function(){var _1=this.getSectionStack();if(_1)return _1.canTabToHeaders==true;else return true},$71i:function(){var _1=this.getSectionStack();return _1?true:false},schemaName:"SectionStackSection",addItem:function(_1,_2){if(!this.$71i())return;var _3=this.getSectionStack();_3.addItem(this,_1,_2);_3.expandSection(this)},removeItem:function(_1){if(!this.$71i())return;this.getSectionStack().removeItem(this,_1)},canDrag:true,dragAppearance:"none",isSectionHeader:true,dragStart:function(){if(!this.$71i())return;var _1=this.getSectionStack().getDragResizeTarget(this);this.$6t=_1;if(_1==null)return false;this.bringToFront()},dragMove:function(){if(!this.$71i())return;var _1=this.getSectionStack().$6p;var _2=0-isc.EH.dragOffsetY;this.resizeTarget(this.$6t,true,this.resizeInRealTime,_2,_1)},dragStop:function(){this.finishTargetResize(this.$6t,true,this.resizeInRealTime)},destroy:function(){if(!this.expanded&&this.items){var _1=this.items;for(var i=0;i<_1.length;i++){if(isc.isA.Canvas(_1[i])&&_1[i].parentElement!=this.parentElement){_1[i].destroy()}}}
+this.$6s=_3}},keyUp:function(){if(this.$6s){var _1=isc.EH.getKey();if(_1=="Arrow_Up"||_1=="Arrow_Down"){this.finishTargetResize(this.$6s,true,this.resizeInRealTime);this.$6s=null}}},$kk:function(){var _1=this.getSectionStack();if(_1)return(_1.canTabToHeaders==true||_1.canTabToHeader==true);else return true},$71i:function(){var _1=this.getSectionStack();return _1?true:false},schemaName:"SectionStackSection",addItem:function(_1,_2){if(!this.$71i())return;var _3=this.getSectionStack();_3.addItem(this,_1,_2);_3.expandSection(this)},removeItem:function(_1){if(!this.$71i())return;this.getSectionStack().removeItem(this,_1)},canDrag:true,dragAppearance:"none",isSectionHeader:true,dragStart:function(){if(!this.$71i())return;var _1=this.getSectionStack().getDragResizeTarget(this);this.$6t=_1;if(_1==null)return false;this.bringToFront()},dragMove:function(){if(!this.$71i())return;var _1=this.getSectionStack().$6p;var _2=0-isc.EH.dragOffsetY;this.resizeTarget(this.$6t,true,this.resizeInRealTime,_2,_1)},dragStop:function(){this.finishTargetResize(this.$6t,true,this.resizeInRealTime)},destroy:function(){if(!this.expanded&&this.items){var _1=this.items;for(var i=0;i<_1.length;i++){if(isc.isA.Canvas(_1[i])&&_1[i].parentElement!=this.parentElement){_1[i].destroy()}}}
 var _3=this.controls,_4=this.controlsLayout;if(_3){if(!isc.isAn.Array(_3))_3=[_3];for(var _5=0;_5<_3.length;_5++){if(_3[_5].destroy&&!_3[_5].destroyed&&(_4==null||_3[_5].parentElement!=_4))
 {_3[_5].destroy()}}}
 return this.Super("destroy",arguments)},controlsLayoutDefaults:{_constructor:isc.HStack,defaultLayoutAlign:"center",snapTo:"R",membersMargin:5,layoutEndMargin:5,addAsChild:true},addControls:function(){if(!this.controls)return;this.addAutoChild("controlsLayout",{height:this.getInnerHeight(),align:this.isRTL()?"left":"right",members:this.controls});this.allowContentAndChildren=true},refreshControls:function(){if(!this.controls)return;if(!this.controlsLayout)this.addControls();var _1=this.controlsLayout;_1.addMembers(this.controls);this.allowContentAndChildren=true},getPrintStyleName:function(){var _1=this.parentElement;if(_1&&_1.printHeaderStyleName!=null){this.printStyleName=_1.printHeaderStyleName}
@@ -5350,7 +5350,7 @@ this.updateUI();if(_2&&this.paneChanged!=null)this.paneChanged(_1)}
 );isc.B._maxIndex=isc.C+34;isc.SplitPane.registerStringMethods({paneChanged:"pane"});isc._moduleEnd=isc._Foundation_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('Foundation module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'Foundation'.");}
 /*
  * Isomorphic SmartClient
- * Version SC_SNAPSHOT-2011-05-30 (2011-05-30)
+ * Version SC_SNAPSHOT-2011-06-02 (2011-06-02)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -5361,7 +5361,7 @@ this.updateUI();if(_2&&this.paneChanged!=null)this.paneChanged(_1)}
 
 /*
  * Isomorphic SmartClient
- * Version SC_SNAPSHOT-2011-05-30 (2011-05-30)
+ * Version SC_SNAPSHOT-2011-06-02 (2011-06-02)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -5871,7 +5871,7 @@ if(this.convertToMethod("keyPress"))return this.keyPress(_1,_2)}
 );isc.B._maxIndex=isc.C+1;isc.TabSet.registerDupProperties("tabs",["pane"]);isc._moduleEnd=isc._Containers_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('Containers module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'Containers'.");}
 /*
  * Isomorphic SmartClient
- * Version SC_SNAPSHOT-2011-05-30 (2011-05-30)
+ * Version SC_SNAPSHOT-2011-06-02 (2011-06-02)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -5882,7 +5882,7 @@ if(this.convertToMethod("keyPress"))return this.keyPress(_1,_2)}
 
 /*
  * Isomorphic SmartClient
- * Version SC_SNAPSHOT-2011-05-30 (2011-05-30)
+ * Version SC_SNAPSHOT-2011-06-02 (2011-06-02)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -7364,7 +7364,7 @@ return _4}
 ,isc.A.$79v=function isc_ListGrid__handleErrorIconHover(){if(this.$79y==null)return;var _1=this.$79y[0],_2=this.$79y[1];var _3=this.getCellErrors(_1,_2);if(_3==null)return;var _4=isc.FormItem.getErrorPromptString(_3);isc.Hover.show(_4,this.$wc())}
 ,isc.A.$790=function isc_ListGrid__handleErrorIconOut(){delete this.$79y;if(isc.Hover.isActive){isc.Hover.clear()}}
 ,isc.A.$315=function isc_ListGrid__formatCellValue(_1,_2,_3,_4,_5){if(_3&&_3.userSummary){_1=this.getSummaryFieldValue(_3,_2)}else{if(_3&&_3.formatCellValue!=null){_1=_3.formatCellValue(_1,_2,_4,_5,this)}else if(_3&&_3.cellValueTemplate){_1=_3.cellValueTemplate.evalDynamicString(this,{value:_1,record:_2,field:_3})}else if(this.formatCellValue!=null){_1=this.formatCellValue(_1,_2,_4,_5)}else if(_3&&_3.$63!=null){_1=_3.$62.shortDisplayFormatter(_1,_3,this,_2,_4,_5)}else if(_3&&_3.$31r!=null){_1=_3.$31r(_1,_3,this,_2,_4,_5)}}
-if(_1==null||isc.is.emptyString(_1)){if(_3.emptyCellValue!=null){_1=_3.emptyCellValue}else if(_3.type=="summary"){_1=this.invalidSummaryValue}else{_1=this.emptyCellValue}}else if(this.$54y[_1]==true){_1=this.$54t}else if(!isc.isA.String(_1)){if(isc.isA.Date(_1)){if(this.$851(_3)){var _6=this.$30o(_3);_1=isc.Time.toTime(_1,_6)}else{var _7=_3&&isc.SimpleType.inheritsFrom(_3.type,"datetime"),_8=!isDateTime&&_3&&isc.SimpleType.inheritsFrom(_3.type,"date"),_6=this.$45i(_3);if(_7)_1=_1.toShortDateTime(_6,true);else _1=_1.toShortDate(_6,!_8)}}else{_1=isc.iscToLocaleString(_1)}}
+if(_1==null||isc.is.emptyString(_1)){if(_3.emptyCellValue!=null){_1=_3.emptyCellValue}else if(_3.type=="summary"){_1=this.invalidSummaryValue}else{_1=this.emptyCellValue}}else if(this.$54y[_1]==true){_1=this.$54t}else if(!isc.isA.String(_1)){if(isc.isA.Date(_1)){if(this.$851(_3)){var _6=this.$30o(_3);_1=isc.Time.toTime(_1,_6)}else{var _7=_3&&isc.SimpleType.inheritsFrom(_3.type,"datetime"),_8=!_7&&_3&&isc.SimpleType.inheritsFrom(_3.type,"date"),_6=this.$45i(_3);if(_7)_1=_1.toShortDateTime(_6,true);else _1=_1.toShortDate(_6,!_8)}}else{_1=isc.iscToLocaleString(_1)}}
 if(this.formatDisplayValue){_1=this.formatDisplayValue(_1,_2,_4,_5)}
 if(_3&&_3.escapeHTML){if(isc.isA.String(_1)&&_1!=this.$54t){_1=_1.asHTML()}}
 return _1}
@@ -7432,6 +7432,7 @@ if(!_12){return _3.addEmbeddedComponent(_8,_1,_4,_5,this.getRecordComponentPosit
 ,isc.A.$81w=function isc_ListGrid__cleanUpRecordComponent(_1,_2){if(this.logIsDebugEnabled("recordComponents")){this.logDebug("cleaning up recordComponent:"+_1,"recordComponents")}
 var _3=this.recordComponentPoolingMode;if(_2)_3="viewport";if(_3=="data"){}else{var _4=isc.Canvas.getById(_1.$669),_5=_1.embeddedRecord,_6=_1.$81k;delete _5.$81y[_6];if(_4!=null){_4.removeEmbeddedComponent(_1.embeddedRecord,_1)}
 if(_3=="viewport"){_1.markForDestroy()}else{if(_1.destroying||_1.destroyed||_1.$65i)return;this.addToRecordComponentPool(_1)}}}
+,isc.A.getLiveRecordComponent=function isc_ListGrid_getLiveRecordComponent(_1,_2,_3){if(!_1)return null;if(isc.isA.Number(_1))_1=this.getRecord(_1);if(!_3)_3=this.body.getID();return this.$81u(_1,_2,_3)}
 ,isc.A.$81u=function isc_ListGrid__getLiveRecordComponent(_1,_2,_3){if(_2==null)_2=this.$81m;var _4=_1.$81y;if(_4==null||_4[_2]==null)return null;var _5=_4[_2];if(_5.$669!=_3){return null}
 if(_5.isNullMarker&&_5.$81x!=this.$81z){return null}
 if(_5.destroyed||_5.destroying||_5.$65i){this.logWarn("Destroyed or Destroying record component:"+_5+" present on record. Ignoring","recordComponents");_4[_2]=null;return null}
@@ -7772,9 +7773,9 @@ if(this.editByCell){var _9=(this.frozenFields!=null)||(this.baseStyle==null);if(
 if(!this.$286.clickMaskUp()){if(!this.$32w)
 this.$32w=new Function(this.getID()+".$32x()");this.$286.showClickMask(this.$32w,(this.stopOnErrors?isc.EH.SOFT_CANCEL:isc.EH.SOFT),this.$286)}}
 ,isc.A.stopHover=function isc_ListGrid_stopHover(){if(this.$30a&&isc.EH.getTarget()==this.getEditForm())return;return this.Super("stopHover",arguments)}
-,isc.A.shouldWaitForSave=function isc_ListGrid_shouldWaitForSave(){if(this.stopOnErrors&&!this.waitForSave){var _1="Note: ListGrid initialized with 'waitForSave' false, and 'stopOnErrors' true."+" In this case user input will be be blocked during save, to allow server side "+" errors to be determined before the editor is hidden. Setting 'waitForSave' to true.";if(this.waitForSave==false)this.logWarn(_1,"gridEdit");else this.logInfo(_1,"gridEdit");this.waitForSave=true}
+);isc.evalBoundary;isc.B.push(isc.A.shouldWaitForSave=function isc_ListGrid_shouldWaitForSave(){if(this.stopOnErrors&&!this.waitForSave){var _1="Note: ListGrid initialized with 'waitForSave' false, and 'stopOnErrors' true."+" In this case user input will be be blocked during save, to allow server side "+" errors to be determined before the editor is hidden. Setting 'waitForSave' to true.";if(this.waitForSave==false)this.logWarn(_1,"gridEdit");else this.logInfo(_1,"gridEdit");this.waitForSave=true}
 return!!(this.waitForSave||this.stopOnErrors)}
-);isc.evalBoundary;isc.B.push(isc.A.hideInlineEditor=function isc_ListGrid_hideInlineEditor(_1,_2){_1=_1&&(this.hasFocus||(this.body&&this.body.hasFocus)||(this.getEditForm()&&this.getEditForm().hasFocus)||(isc.ListGrid.$32u&&isc.ListGrid.$32u.hasFocus));if(!this.$30a)return false;this.$30a=null;this.$519=null;var _3=this.$285,_4=this.$30u;this.$285=this.$30u=null;if(!_2)this.$286.hideClickMask();if(this.getEditValues(_3,_4)!=null&&(!this.$31o||!this.$31o[this.getEditValuesID(_3,_4)])&&!this.recordHasChanges(_3,_4,false))
+,isc.A.hideInlineEditor=function isc_ListGrid_hideInlineEditor(_1,_2){_1=_1&&(this.hasFocus||(this.body&&this.body.hasFocus)||(this.getEditForm()&&this.getEditForm().hasFocus)||(isc.ListGrid.$32u&&isc.ListGrid.$32u.hasFocus));if(!this.$30a)return false;this.$30a=null;this.$519=null;var _3=this.$285,_4=this.$30u;this.$285=this.$30u=null;if(!_2)this.$286.hideClickMask();if(this.getEditValues(_3,_4)!=null&&(!this.$31o||!this.$31o[this.getEditValuesID(_3,_4)])&&!this.recordHasChanges(_3,_4,false))
 {this.logInfo("hideInlineEditor for row with no edits - dropping edit values","gridEdit");this.$321(_3,_4)}
 if(!this.body)return true;var _5=this.$286;if(_5.hasFocus){_5.blur()}
 if(isc.Browser.isIE){var _6=_5.getFocusSubItem(),_7=isc.EH.$ld;if(_5.hasFocus||(_7&&((_7==_5)||(isc.EH.$ld.form==_5))))
@@ -8008,7 +8009,9 @@ return[_3,_4]}
 );isc.evalBoundary;isc.B.push(isc.A.$wo=function isc_ListGrid__filter(_1,_2,_3,_4,_5){if(!_5&&this.confirmDiscardEdits&&this.dataSource!=null){if(this.hasChanges()&&!(isc.ResultSet&&isc.isA.ResultSet(this.data)&&this.data.compareCriteria(_2,this.data.getCriteria())==0))
 {this.showLostEditsConfirmation({target:this,methodName:"$33r"},{target:this,methodName:"$33s"});this.$33t={type:_1,criteria:_2,callback:_3,requestProperties:_4}
 return}}
-this.setFilterValues(_2);return this.Super("$wo",[_1,_2,_3,_4],arguments)}
+var _6=_2
+if(isc.isA.Class(_6)){_6=isc.DynamicForm.getFilterCriteria(_6)}
+this.setFilterValues(_6);return this.Super("$wo",[_1,_2,_3,_4],arguments)}
 ,isc.A.$33r=function isc_ListGrid__continueFilter(){var _1=this.$33t,_2=_1.type,_3=_1.criteria,_4=_1.callback,_5=_1.requestProperties;delete this.$33t;this.$wo(_2,_3,_4,_5,true)}
 ,isc.A.$33s=function isc_ListGrid__cancelFilter(){delete this.$33t}
 ,isc.A.showLostEditsConfirmation=function isc_ListGrid_showLostEditsConfirmation(_1,_2){this.$33u=_1;this.$33v=_2;isc.confirm(this.confirmDiscardEditsMessage,"if(window[this.targetGridID])window[this.targetGridID].lostEditsCallback(value, this);",{targetGridID:this.getID(),buttons:[isc.Dialog.OK,{title:this.discardEditsSaveButtonTitle,width:75,click:"this.hide();this.topElement.returnValue('save');"},isc.Dialog.CANCEL]})}
@@ -8512,7 +8515,7 @@ var _3=this.fields[_1];if(this.isCheckboxField(_3)&&this.selectionType!="single"
 {this.$63m(true)}}
 return false}
 if(this.canAutoFitFields&&this.headerAutoFitEvent=="click"){this.autoFitField(_1)}
-if(this.canSort==false||!_3||this.$66c(_3)==false)return false;var _4=_3[this.fieldIdProperty],_5=this.isSortField(_4)?this.getSortSpecifier(_4):null,_6=isc.EventHandler,_7=_6.getKey(),_8=_6.shiftKeyDown(),_9=this.$765,_10=this.getSpecifiedField(_4).sortDirection;if(_8&&this.canMultiSort){if(this.isSortField(_4)){if(_10==_9||this.canUnsort==false){this.toggleSort(_4)}else{this.toggleSort(_4,"unsort")}}else{this.$73z(_4)}}else{if(this.isSortField(_4)&&this.getSortFieldCount()==1){if(_10==_9||this.canUnsort==false){this.toggleSort(_4)}else{this.toggleSort(_4,"unsort")}}else{this.setSort([{property:_4,direction:_9?"ascending":"descending"}])}}
+if(this.canSort==false||!_3||this.$66c(_3)==false)return false;var _4=_3[this.fieldIdProperty],_5=this.isSortField(_4)?this.getSortSpecifier(_4):null,_6=isc.EventHandler,_7=_6.getKey(),_8=_6.shiftKeyDown(),_9=this.$765,_10=_3.sortDirection;if(_8&&this.canMultiSort){if(this.isSortField(_4)){if(_10==_9||this.canUnsort==false){this.toggleSort(_4)}else{this.toggleSort(_4,"unsort")}}else{this.$73z(_4)}}else{if(this.isSortField(_4)&&this.getSortFieldCount()==1){if(_10==_9||this.canUnsort==false){this.toggleSort(_4)}else{this.toggleSort(_4,"unsort")}}else{this.setSort([{property:_4,direction:_9?"ascending":"descending"}])}}
 return false}
 ,isc.A.$774=function isc_ListGrid__headerDoubleClick(_1,_2){var _3=_2.getMember(_1).masterIndex;return this.headerDoubleClick(_3,_2)}
 ,isc.A.headerDoubleClick=function isc_ListGrid_headerDoubleClick(_1,_2){var _3=this.fields[_1];if(this.isCheckboxField(_3))return;if(this.canAutoFitFields&&this.headerAutoFitEvent=="doubleClick"){this.autoFitField(_1)}
@@ -8626,15 +8629,18 @@ var _2=null;if(this.fields){_2=isc.Class.getArrayItem(_1,this.fields,this.fieldI
 if(!_2&&this.completeFields){_2=isc.Class.getArrayItem(_1,this.completeFields,this.fieldIdProperty)}
 if(!_2&&this.dataSource){if(!isc.isA.DataSource(this.dataSource))this.dataSource=this.getDataSource(this.dataSource);_2=this.dataSource.getField(_1)}
 return _2}
-,isc.A.toggleSort=function isc_ListGrid_toggleSort(_1,_2){var _3=this.$73p?isc.shallowClone(this.$73p):[],_4=_3.find("property",_1);if(!_4)return;if(!_2)
-_2=Array.shouldSortAscending(_4.direction)?"descending":"ascending";if(_2=="unsort")_3.remove(_4);else _4.direction=_2;this.setSort(_3)}
+,isc.A.toggleSort=function isc_ListGrid_toggleSort(_1,_2){var _3=this.getSpecifiedField(_1),_4=this.$73p?isc.shallowClone(this.$73p):[],_5=_4.find("property",_1);if(!_5&&_3.displayField){_5=_4.find("property",_3.displayField);if(!_5)return}
+if(!_2)
+_2=Array.shouldSortAscending(_5.direction)?"descending":"ascending";if(_2=="unsort")_4.remove(_5);else _5.direction=_2;this.setSort(_4)}
 ,isc.A.$73z=function isc_ListGrid__addSort(_1,_2){var _3=_2!=null?_2:this.$765;this.addSort({property:_1,direction:_3?"ascending":"descending"})}
 ,isc.A.addSort=function isc_ListGrid_addSort(_1){var _2=this.$73p?isc.shallowClone(this.$73p):[];_2.add(_1);this.setSort(_2)}
 ,isc.A.getSort=function isc_ListGrid_getSort(){if(this.$73p){return isc.shallowClone(this.$73p)}else if(this.initialSort){return isc.shallowClone(this.initialSort)}else{var _1;if(this.sortFieldNum!=null)_1=this.getField(this.sortFieldNum);if(!_1&&this.sortField!=null){_1=this.getUnderlyingField(this.sortField)}
 if(_1){var _2=this.$766(_1);return[{property:_1[this.fieldIdProperty],direction:_2}]}}}
-,isc.A.getSortSpecifier=function isc_ListGrid_getSortSpecifier(_1){var _2=this.$73p?this.$73p.find("property",_1):null;return _2}
+,isc.A.getSortSpecifier=function isc_ListGrid_getSortSpecifier(_1){var _2=null;if(this.$73p&&this.$73p.length>0){_2=this.$73p.find("property",_1);if(!_2){var _3=this.getSpecifiedField(_1);if(_3&&_3.displayField){_2=this.$73p.find("property",_3.displayField)}}}
+return _2}
 ,isc.A.getSortFieldCount=function isc_ListGrid_getSortFieldCount(){return this.$73p?this.$73p.length:0}
-,isc.A.isSortField=function isc_ListGrid_isSortField(_1){return this.getSortSpecifier(_1)?true:false}
+,isc.A.isSortField=function isc_ListGrid_isSortField(_1){var _2=this.getSortSpecifier(_1)?true:false;if(!_2){var _3=this.getSpecifiedField(_1);if(_3&&_3.displayField){_2=this.getSortSpecifier(_3.displayField)?true:false}}
+return _2}
 ,isc.A.getSortNumeralHTML=function isc_ListGrid_getSortNumeralHTML(_1,_2){return"<span class="+this.sortNumeralStyle+">"+(_2+1)+"</span>"}
 ,isc.A.clearSort=function isc_ListGrid_clearSort(){this.setSort(null)}
 ,isc.A.setSort=function isc_ListGrid_setSort(_1){if(this.logIsInfoEnabled("sorting"))this.logInfo("Entering setSort","sorting");if(!this.fields&&!this.getDataSource()){if(this.logIsInfoEnabled("sorting")){this.logInfo("setSort() not performing sort - no fields","sorting")}
@@ -8648,7 +8654,7 @@ this.logInfo("null or zero-length sortSpecifiers - unsorting only","sorting")}
 for(var i=0;i<this.$73p.length;i++){var _7=this.$73p[i],_6=_1,_8=this.getUnderlyingField(_7.property),_9=this.getField(_7.property),_10=null;if(_8){if(_9){if(!_3)_3=_9}
 if(!_7.normalizer){if(_8.sortNormalizer){_10=_8.sortNormalizer}else if(_8.valueMap){_10=isc.isA.String(_8.valueMap)?this.getGlobalReference(_8.valueMap):_8.valueMap}else if(_8.type!=null){_10=_8.type}
 _7.normalizer=_10}
-if(!_7.direction)_7.direction="ascending";if(_3&&_3==_9)_7.primarySort=true;if(_7.primarySort){this.sortDirection=Array.shouldSortAscending(_7.direction)}
+if(_7.direction==null)_7.direction="ascending";if(_3&&_3==_9)_7.primarySort=true;if(_7.primarySort){this.sortDirection=Array.shouldSortAscending(_7.direction)}
 if(!_7.context)_7.context=this;_7.sortIndex=i}}
 var _11=this.$73p[0],_12=_11?_11.property:null,_13=_12?this.getFieldNum(_12):null,_14=_12?this.getUnderlyingField(_12):null,_15=_11?Array.shouldSortAscending(_11.direction):null;if(!_14){if(_11)this.logWarn("Field does not exist: "+_11.property)}
 if(_13>=0){this.$600(_13)}else{this.$600(null)}
@@ -8659,10 +8665,12 @@ this.data.setSort(this.$73p)}else if(this.data.sortByProperty){if(this.logIsInfo
 this.data.sortByProperty(_11.property,Array.shouldSortAscending(_11.direction),_11.normalizer,_11.context)}}else{if(this.logIsInfoEnabled("sorting")){this.logInfo("In setSort - not sorting:\nthis.data is"+this.echoAll(this.data),"sorting")}}}else{if(this.data){if(this.data.setSort!=null)this.data.setSort([]);else if(this.data.unsort)this.data.unsort()}
 if(this.invalidateCacheOnUnsort){this.invalidateCache()}}
 var _16=(this.header&&isc.isA.Toolbar(this.header));if(_2){if(_2.length>0){if(this.logIsInfoEnabled("sorting")){this.logInfo("In setSort - Removing sort-media from now unsorted fields:\n"+isc.echoAll(_2),"sorting")}}
-for(var i=0;i<_2.length;i++){var _17=_2[i],_8=this.getSpecifiedField(_17.property),_18=this.getFieldNum(_17.property);if(_8)delete _8.sortDirection;if(_18>=0&&_16){var _19=this.getFieldHeaderButton(_18);if(_19)_19.setTitle(_19.getTitle())}}}
-if(this.$73p&&this.$73p.length>0){this.logInfo("In setSort - Setting sort-media for sorted fields:\n"+isc.echoAll(this.$73p),"sorting");var _20=false;for(var i=0;i<this.$73p.length;i++){var _17=this.$73p[i],_8=this.getSpecifiedField(_17.property),_18=this.getFieldNum(_17.property);if(_8)_8.sortDirection=Array.shouldSortAscending(_17.direction);if(_16&&_18>=0){var _21=this.getFieldHeader(_18),_19=this.getFieldHeaderButton(_18);if(_19){if(!_20){_21.selectButton(_19);_20=true}
-_19.setTitle(this.getHeaderButtonTitle(_19))}}}}else if(_16){var _22;if(this.header){_22=this.header.getSelectedButton();if(_22)_22.deselect()}
-if(this.frozenHeader){_22=this.frozenHeader.getSelectedButton();if(_22)_22.deselect()}}
+for(var i=0;i<_2.length;i++){var _17=_2[i],_8=this.getSpecifiedField(_17.property),_18=this.getFieldNum(_17.property);if(!_8){var _19=this.getFields();_8=_19.find("displayField",_17.property);_18=this.getFieldNum(_8)}
+if(_8)delete _8.sortDirection;if(_18>=0&&_16){var _20=this.getFieldHeaderButton(_18);if(_20)_20.setTitle(_20.getTitle())}}}
+if(this.$73p&&this.$73p.length>0){this.logInfo("In setSort - Setting sort-media for sorted fields:\n"+isc.echoAll(this.$73p),"sorting");var _21=false;for(var i=0;i<this.$73p.length;i++){var _17=this.$73p[i],_8=this.getSpecifiedField(_17.property),_18=this.getFieldNum(_17.property);if(!_8){var _19=this.getFields();_8=_19.find("displayField",_17.property);_18=this.getFieldNum(_8)}
+if(_8)_8.sortDirection=Array.shouldSortAscending(_17.direction);if(_16&&_18>=0){var _22=this.getFieldHeader(_18),_20=this.getFieldHeaderButton(_18);if(_20){if(!_21){_22.selectButton(_20);_21=true}
+_20.setTitle(this.getHeaderButtonTitle(_20))}}}}else if(_16){var _23;if(this.header){_23=this.header.getSelectedButton();if(_23)_23.deselect()}
+if(this.frozenHeader){_23=this.frozenHeader.getSelectedButton();if(_23)_23.deselect()}}
 if(_13>=0){if(this.logIsInfoEnabled("sorting")){this.logInfo("In setSort - $600 called with fieldNum: "+_13+" - sortField is now: "+this.sortField+"\ngetSortState() now returns: "+isc.echoAll(this.getSortState()),"sorting")}}
 if(this.sorter){this.sorter.setTitle(this.sorter.getTitle())}
 if(this.body&&this.showRecordComponents)delete this.body.$74k;this.$25a(this.$73y);if(this.logIsInfoEnabled("sorting"))this.logInfo("Leaving setSort","sorting");this.handleSortChanged(this.$73p);return true}
@@ -8708,7 +8716,7 @@ var _5;if(this.groupTree){if(this.canCollapseGroup&&this.retainOpenStateOnRegrou
 {_5=[];this.$45q(this.groupTree,this.groupTree.getRoot(),_5,true)}
 this.ignore(this.groupTree,"changeDataVisibility");this.groupTree.destroy()}
 this.groupTree=this.createAutoChild("groupTree",{idField:this.groupIdField,parentIdField:this.groupParentIdField,titleProperty:"groupValue",childrenProperty:"groupMembers",parentProperty:"_groupTree_"+this.ID,showRoot:false,isGroupedOutput:true,alwaysSortGroupHeaders:(this.showGroupSummary&&this.showGroupSummaryInHeader),$684:this.groupByField,criteria:this.data.criteria,separateFolders:true,getCriteria:function(){return this.criteria},getChildren:function(_26,_27){var _6=this.Super("getChildren",arguments);if(_27==isc.Tree.FOLDERS_ONLY||_26==this.getRoot()){return _6}
-var _7=this.creator;if(_7&&_7.showGroupSummary&&!_7.showGroupSummaryInHeader){var _8=_6.duplicate(),_9=this.combineWithEditVals(_8);var _10=_7.getGroupSummaryData(_9,_26)
+var _7=this.creator;if(_7&&_7.showGroupSummary&&!_7.showGroupSummaryInHeader){var _8=_6?_6.duplicate():[],_9=this.combineWithEditVals(_8);var _10=_7.getGroupSummaryData(_9,_26)
 if(!_10!=null){if(!isc.isAn.Array(_10))_10=[_10];_8.addList(_10)}
 return _8}else{return _6}},combineWithEditVals:function(_6){var _7=this.creator,_9=[];_9.addList(_6);var _11=_7.getAllEditRows();if(_11.length>0){var _12;for(var i=0;i<_9.length;i++){var _14=_7.getEditSession(_9[i]);if(_14){var _15=isc.addProperties({},_9[i],_14.$31x);_9[i]=_15}}}
 return _9},primaryKeyFields:this.dataSource?this.getDataSource().getPrimaryKeyFieldNames():null,indexOf:function(_26){var _16=this.Super("indexOf",arguments);if(_16==-1&&this.creator.getDataSource()!=null){var _17=this.$27l();_16=_17.findByKeys(_26,this.creator.getDataSource())}
@@ -8744,12 +8752,12 @@ else if(!_2.getGroupValue&&_2.$62&&_2.$62.getGroupTitle){return _2.$62.getGroupT
 ,isc.A.$52u=function isc_ListGrid__addRecordToGroup(_1,_2,_3){var _4,_5=this.groupTree.getRoot(),_6=this.getGroupByFields();for(var i=0;i<_6.length;i++){var _8=_6[i],_9=(this.completeFields||this.fields).findIndex(this.fieldIdProperty,_8),_10=(this.completeFields||this.fields).get(_9),_11=this.data.indexOf(_1);var _12=this.getRawCellValue(_1,_11,_8,true);if(_10.getGroupValue){_12=_10.getGroupValue(_12,_1,_10,_8,this)}else if(_10.userFormula){_12=this.getFormulaFieldValue(_10,_1)}else if(_10.userSummary){_12=this.getSummaryFieldValue(_10,_1)}else if(_10.$62&&_10.$62.getGroupValue){_12=_10.$62.getGroupValue(_12,_1,_10,_8,this)}
 if(_10.valueMap&&_10.valueMap[_12]){_12=_10.valueMap[_12]}
 if(_12==null||isc.isAn.emptyString(_12)){_12=this.nullGroupTitle}
-if(this.groupTree.getChildren(_5)==null)_4=null;else _4=this.groupTree.getChildren(_5).find('groupValue',_12);if(!_4){_4={groupName:_8,groupValue:_12,$52e:true,canDrag:false,canSelect:false};if(this.singleCellGroupHeaders())_4.singleCellValue=_12;else _4.groupTitle=_12;_4[_8]=_12;_4[this.recordCustomStyleProperty]=this.groupNodeStyle
+var _13=this.groupTree.getChildren(_5);if(_13==null)_4=null;else _4=_13.find('groupValue',_12);if(!_4){_4={groupName:_8,groupValue:_12,$52e:true,canDrag:false,canSelect:false};if(this.singleCellGroupHeaders())_4.singleCellValue=_12;else _4.groupTitle=_12;_4[_8]=_12;_4[this.recordCustomStyleProperty]=this.groupNodeStyle
 _4[this.recordEditProperty]=false
 if(_3!=null){_4[this.groupTree.openProperty]=_3.find(_8,_12)?true:false}
 this.groupTree.add(_4,_5)}
 _5=_4}
-this.groupTree.add(_1,_5);if(_2){var _13=this.groupTree.getParents(_1);for(var i=_13.length-2,j=0;i>=0;i--,j++){var _15=this.getGroupTitle(_13[i]);if(!this.singleCellGroupHeaders())_13[i].groupTitle=_15;else _13[i][this.singleCellValueProperty]=_15}}}
+this.groupTree.add(_1,_5);if(_2){var _14=this.groupTree.getParents(_1);for(var i=_14.length-2,j=0;i>=0;i--,j++){var _16=this.getGroupTitle(_14[i]);if(!this.singleCellGroupHeaders())_14[i].groupTitle=_16;else _14[i][this.singleCellValueProperty]=_16}}}
 ,isc.A.applyGroupSummaryToHeader=function isc_ListGrid_applyGroupSummaryToHeader(_1){var _2=this.groupTree,_3=_2.combineWithEditVals(_2.getChildren(_1));var _4=this.getGroupSummaryData(_3,_1);if(isc.isAn.Array(_4))_4=_4[0];var _5=this.completeFields||this.fields;for(var i=0;i<_5.length;i++){var _7=_5[i].name;if(_7=="groupTitle")continue;_1[_7]=_4[_7]}
 _1.isGroupSummary=true}
 ,isc.A.ungroup=function isc_ListGrid_ungroup(){this.$75p=this.getSelectedState(true);this.groupBy(null)}
@@ -8771,7 +8779,7 @@ if(this.$45l[_1]!=null){this.body.setProperty(this.$45l[_1],_2);this.markForRedr
 {var _5=(_4.displayField!=null&&!_4.valueMap&&!_4.getCellValue&&this.$425(_4));var _6=this.getRecordIndex(_1),_7;_7=this.getRawCellValue(_1,_6,_5?_4.displayField:_2,true);_7=this.$315(_7,_1,_4,_6,_3);var _8=this.getFieldHilites(_1,_4);if(_8)_7=this.applyHiliteHTML(_8,_7);return this.htmlUnescapeExportFieldTitle(_7.toString())}
 return this.Super("getExportFieldValue",arguments)}
 ,isc.A.getOriginalData=function isc_ListGrid_getOriginalData(){return(this.isGrouped&&this.originalData)?this.originalData:this.getData()}
-);isc.B._maxIndex=isc.C+668;isc.ListGrid.registerStringMethods(isc.GridRenderer.$294);isc.ListGrid.registerStringMethods({recordClick:"viewer,record,recordNum,field,fieldNum,value,rawValue",recordDoubleClick:"viewer,record,recordNum,field,fieldNum,value,rawValue",recordsDropped:"records,rowNum,viewer,sourceWidget",recordDropMove:"viewer,recordNum,record,position",editValueChanged:"rowNum,fieldName,newValue,oldValue",editorChange:"record,newValue,oldValue,rowNum,colNum",cellChanged:"record,newValue,oldValue,rowNum,colNum,grid,recordNum,fieldNum",editComplete:"rowNum,colNum,newValues,oldValues,editCompletionEvent,dsResponse",editFailed:"rowNum,colNum,newValues,oldValues,editCompletionEvent,dsResponse,dsRequest",editorEnter:"record,value,rowNum,colNum",rowEditorEnter:"record,editValues,rowNum",editorExit:"editCompletionEvent,record,newValue,rowNum,colNum",rowEditorExit:"editCompletionEvent,record,newValues,rowNum",validateCellValue:"rowNum,colNum,newValue,oldValue",validateFieldValue:"newValue,oldValue,record,field,rowNum,colNum",formatCellValue:"value,record,rowNum,colNum",formatEditorValue:"value,record,rowNum,colNum",parseEditorValue:"value,record,rowNum,colNum",sortChanged:"sortSpecifiers",fieldStateChanged:"",viewStateChanged:"",dataArrived:"startRow,endRow",headerClick:"fieldNum",onHeaderClick:"fieldNum",onRecordDrop:"dropRecords,targetRecord,index,sourceWidget",onExpandRecord:"record",onCollapseRecord:"record",drawAreaChanged:"oldStartRow,oldEndRow,oldStartCol,oldEndCol",showRecordComponent:"record,colNum",createRecordComponent:"record,colNum",updateRecordComponent:"record,colNum,component,recordChanged",updateFilterEditorValues:"criteria",filterEditorSubmit:"criteria",handleGroupBy:"fields"});isc.ListGrid.$24j=isc.addProperties({},isc.ListGrid.getInstanceProperty("headerDefaults"));isc.ListGrid.$24k=isc.addProperties({},isc.ListGrid.getInstanceProperty("headerButtonDefaults"));isc.ListGrid.classInit();isc.defineClass("LineEditor",isc.ListGrid);isc.A=isc.LineEditor.getPrototype();isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.A.canEdit=true;isc.A.editEvent="click";isc.A.editOnFocus=true;isc.A.modalEditing=true;isc.A.enterKeyEditAction="nextRowStart";isc.A.listEndEditAction="next";isc.A.height=50;isc.A.emptyMessage="Click to add data";isc.A.emptyMessageStyle="normal";isc.A.autoFitData="vertical";isc.A.leaveScrollbarGap=false;isc.B.push(isc.A.click=function isc_LineEditor_click(){var _1=this.getRecord(this.getEventRow());this.Super("click",arguments);if(_1==null&&isc.EH.lastEvent.target==this.body)this.startEditingNew()}
+);isc.B._maxIndex=isc.C+669;isc.ListGrid.registerStringMethods(isc.GridRenderer.$294);isc.ListGrid.registerStringMethods({recordClick:"viewer,record,recordNum,field,fieldNum,value,rawValue",recordDoubleClick:"viewer,record,recordNum,field,fieldNum,value,rawValue",recordsDropped:"records,rowNum,viewer,sourceWidget",recordDropMove:"viewer,recordNum,record,position",editValueChanged:"rowNum,fieldName,newValue,oldValue",editorChange:"record,newValue,oldValue,rowNum,colNum",cellChanged:"record,newValue,oldValue,rowNum,colNum,grid,recordNum,fieldNum",editComplete:"rowNum,colNum,newValues,oldValues,editCompletionEvent,dsResponse",editFailed:"rowNum,colNum,newValues,oldValues,editCompletionEvent,dsResponse,dsRequest",editorEnter:"record,value,rowNum,colNum",rowEditorEnter:"record,editValues,rowNum",editorExit:"editCompletionEvent,record,newValue,rowNum,colNum",rowEditorExit:"editCompletionEvent,record,newValues,rowNum",validateCellValue:"rowNum,colNum,newValue,oldValue",validateFieldValue:"newValue,oldValue,record,field,rowNum,colNum",formatCellValue:"value,record,rowNum,colNum",formatEditorValue:"value,record,rowNum,colNum",parseEditorValue:"value,record,rowNum,colNum",sortChanged:"sortSpecifiers",fieldStateChanged:"",viewStateChanged:"",dataArrived:"startRow,endRow",headerClick:"fieldNum",onHeaderClick:"fieldNum",onRecordDrop:"dropRecords,targetRecord,index,sourceWidget",onExpandRecord:"record",onCollapseRecord:"record",drawAreaChanged:"oldStartRow,oldEndRow,oldStartCol,oldEndCol",showRecordComponent:"record,colNum",createRecordComponent:"record,colNum",updateRecordComponent:"record,colNum,component,recordChanged",updateFilterEditorValues:"criteria",filterEditorSubmit:"criteria",handleGroupBy:"fields"});isc.ListGrid.$24j=isc.addProperties({},isc.ListGrid.getInstanceProperty("headerDefaults"));isc.ListGrid.$24k=isc.addProperties({},isc.ListGrid.getInstanceProperty("headerButtonDefaults"));isc.ListGrid.classInit();isc.defineClass("LineEditor",isc.ListGrid);isc.A=isc.LineEditor.getPrototype();isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.A.canEdit=true;isc.A.editEvent="click";isc.A.editOnFocus=true;isc.A.modalEditing=true;isc.A.enterKeyEditAction="nextRowStart";isc.A.listEndEditAction="next";isc.A.height=50;isc.A.emptyMessage="Click to add data";isc.A.emptyMessageStyle="normal";isc.A.autoFitData="vertical";isc.A.leaveScrollbarGap=false;isc.B.push(isc.A.click=function isc_LineEditor_click(){var _1=this.getRecord(this.getEventRow());this.Super("click",arguments);if(_1==null&&isc.EH.lastEvent.target==this.body)this.startEditingNew()}
 );isc.B._maxIndex=isc.C+1;isc.ClassFactory.defineClass("TreeGrid","ListGrid");isc.addGlobal("TreeViewer",isc.TreeGrid);isc.defineClass("TreeGridBody",isc.GridBody);isc.A=isc.TreeGridBody.getPrototype();isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.A.$34w="TABLE";isc.A.$34x="padding:0px;border:0px;";isc.B.push(isc.A.$29h=function isc_TreeGridBody__updateCellStyle(_1,_2,_3,_4,_5){if(_4==null)_4=this.getTableElement(_2,_3);if(_4==null)return;if(!this.showHiliteInCells&&_3==this.grid.getLocalFieldNum(this.grid.getTreeFieldNum()))
 {if(_1==null)_1=this.getCellRecord(_2,_3);if(_5==null)_5=this.getCellStyle(_1,_2,_3);var _6=_4.childNodes[0];while(_6&&_6.tagName!=this.$34w)_6=_6.childNodes[0];if(_6){var _7;if(this.getCellCSSText){_7=this.getCellCSSText(_1,_2,_3);if(_7!=null&&!isc.isAn.emptyString(_7)){_7+=isc.Canvas.$42a}else _7=null}
 _6.className=_5;if(_7!=null)_6.cssText=_7;var _8=_6.rows,_9=_8[0].cells;if(_9&&_9.length>0){for(var i=0;i<_9.length;i++){_9[i].className=_5;if(_7){if(i==_9.length-1){_7+="paddingLeft:"+this.iconPadding}
@@ -9340,7 +9348,7 @@ this.logDebug('calling layoutTiles from setRecordValues',"TileGrid");this.layout
 ,isc.A.dataArrived=function isc_TileGrid_dataArrived(_1,_2){}
 ,isc.A.dataChanged=function isc_TileGrid_dataChanged(_1,_2,_3,_4){if(!this.data||(isc.ResultSet&&isc.isA.ResultSet(this.data)&&!this.data.lengthIsKnown()))
 {this.logDebug("dataChanged: returning due to no data yet","TileGrid");return}
-this.computeTileDimensions();if(!this.$257)this.$257=0;if(_1=="add"){this.logDebug("add","TileGrid");this.layoutTiles()}else if(_1=="remove"){this.logDebug("remove","TileGrid");if((this.recycleTiles&&this.data.getLength()<this.getDrawnEndIndex()-this.getDrawnStartIndex()+1)||!this.recycleTiles){var _5=this.tiles.removeAt(this.tiles.getLength()-1);_5.destroy()}
+this.computeTileDimensions();if(!this.$257)this.$257=0;if(_1=="add"){this.logDebug("add","TileGrid");this.layoutTiles()}else if(_1=="remove"){this.logDebug("remove","TileGrid");if((this.recycleTiles&&this.data.getLength()<this.getDrawnEndIndex()-this.getDrawnStartIndex()+1)||!this.recycleTiles){var _5=this.tiles[_3];this.tiles.remove(_5);_5.destroy()}
 this.layoutTiles()}else if(_1=="update"){this.logDebug("update","TileGrid");this.layoutTiles()}else if(this.data.getLength()>=this.$257){this.logDebug("filter or sort, new data same or longer","TileGrid");if(this.$257>0)this.$582();else this.layoutTiles()}else{this.logDebug("filter or sort, new data shorter","TileGrid");this.selection.deselectAll();var _6=this.getDrawnEndIndex()+1;var _7=_6>this.data.getLength()?this.data.getLength():_6;var _8=this.getTilesPerLine();if(Math.floor(_6/ _8)>Math.floor(_7/ _8)&&this.getScrollTop()!=0&&this.recycleTiles){this.scrollToTop();this.layoutTiles()}else{this.$582()}}
 this.$257=this.data.getLength();if(this.data.getLength()==0){this.cleanupExtraTiles(0)}}
 ,isc.A.$582=function isc_TileGrid__layoutAfterDataChange(){if(this.destroying)return;if(this.animateTileChange){if(this.$35v){var _1=this.$0j;for(var i=0;i<_1.length;i++){this.finishAnimation(_1[i].ID);_1[i].tile.hide()}
@@ -9887,7 +9895,7 @@ this.clearEditorData();this.reportGrid.deselectAllRecords();this.reportGrid.sele
 );isc.B._maxIndex=isc.C+17;isc._moduleEnd=isc._Grids_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('Grids module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'Grids'.");}
 /*
  * Isomorphic SmartClient
- * Version SC_SNAPSHOT-2011-05-30 (2011-05-30)
+ * Version SC_SNAPSHOT-2011-06-02 (2011-06-02)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -9898,7 +9906,7 @@ this.clearEditorData();this.reportGrid.deselectAllRecords();this.reportGrid.sele
 
 /*
  * Isomorphic SmartClient
- * Version SC_SNAPSHOT-2011-05-30 (2011-05-30)
+ * Version SC_SNAPSHOT-2011-06-02 (2011-06-02)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -10118,7 +10126,7 @@ if(this.keyPress){this.convertToMethod("keyPress");return this.keyPress(_1,_2)}}
 if(isc.ListGrid){isc.ClassFactory.defineClass("ScrollingMenu","ListGrid");isc.A=isc.ScrollingMenu.getPrototype();isc.A.useBackMask=true;isc.A.canFocus=true;isc.A.showHeader=false;isc.A.showEdges=false;isc.A.autoDraw=false;isc.A.className="scrollingMenu";isc.A.bodyStyleName="scrollingMenuBody";isc.A.selectionType="single";isc.A.showRollOver=false;isc.A.leaveScrollbarGap=false;isc.A.generateClickOnSpace=false;isc.A.generateDoubleClickOnEnter=false;isc.A.generateClickOnEnter=true;isc.A.showModal=true;isc.A.arrowKeyAction="focus";isc.A.enableSelectOnRowOver=true;isc.A.filterOnKeypress=true;isc.ScrollingMenu.changeDefaults("filterEditorDefaults",{backgroundColor:"white",editorKeyPress:function(_1,_2,_3){if(_2=="Arrow_Down"){this.sourceWidget.$318(1);return false}
 if(_2=="Arrow_Up"){this.sourceWidget.$318(-1);return false}
 if(_2=="Enter"){this.sourceWidget.$240();return}
-return this.Super("editorKeyPress",arguments)}});isc.A=isc.ScrollingMenu.getPrototype();isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.B.push(isc.A.show=function isc_ScrollingMenu_show(){if(this.showModal)this.showClickMask({target:this,methodName:"cancel"},false,[this]);this.Super("show",arguments);if(this.showModal)this.body.focus()}
+return this.Super("editorKeyPress",arguments)}});isc.A=isc.ScrollingMenu.getPrototype();isc.B=isc._allFuncs;isc.C=isc.B._maxIndex;isc.D=isc._funcClasses;isc.D[isc.C]=isc.A.Class;isc.A.$859=true;isc.B.push(isc.A.show=function isc_ScrollingMenu_show(){if(this.showModal)this.showClickMask({target:this,methodName:"cancel"},false,[this]);this.Super("show",arguments);if(this.showModal)this.body.focus()}
 ,isc.A.recordClick=function isc_ScrollingMenu_recordClick(_1,_2,_3,_4,_5,_6,_7){this.hide();if(_2!=null)this.itemClick(_2)}
 ,isc.A.itemClick=function isc_ScrollingMenu_itemClick(_1){}
 ,isc.A.rowOver=function isc_ScrollingMenu_rowOver(_1,_2,_3){if(this.enableSelectOnRowOver)this.selection.selectOnRowOver(_1)}
@@ -10129,7 +10137,7 @@ if(_3=="Escape"){this.cancel();return false}
 return this.Super("bodyKeyPress",arguments)}
 ,isc.A.cancel=function isc_ScrollingMenu_cancel(){this.hide()}
 ,isc.A.hide=function isc_ScrollingMenu_hide(){this.hideClickMask();return this.Super("hide",arguments)}
-,isc.A.dataChanged=function isc_ScrollingMenu_dataChanged(){var _1=this.Super("dataChanged",arguments);if(this.data&&this.data.getLength()>0&&this.selection&&!this.selection.anySelected()&&(isc.isA.ResultSet==null||!isc.isA.ResultSet(this.data)||this.data.rowIsLoaded(0)))
+,isc.A.dataChanged=function isc_ScrollingMenu_dataChanged(){var _1=this.Super("dataChanged",arguments);if(!this.$859)return;if(this.data&&this.data.getLength()>0&&this.selection&&!this.selection.anySelected()&&(isc.isA.ResultSet==null||!isc.isA.ResultSet(this.data)||this.data.rowIsLoaded(0)))
 {this.selection.selectItem(0)}
 return _1}
 );isc.B._maxIndex=isc.C+10}
@@ -11605,8 +11613,8 @@ _3=_4=_2.resultingValue}
 if(_2.min!=null||_2.max!=null){if(!isc.Validator.processValidator(_1,_2,_3,"floatRange")){return false}else{if(_4!=null&&_2.resultingValue==null&&_2.roundToPrecision)
 _2.resultingValue=_4}}
 return true},floatRange:function(_1,_2,_3){if(_3==null||isc.is.emptyString(_3))return true;var _4=_3;if(!isc.isA.String(_3))_4=parseFloat(_4);if(isNaN(_4)||_4!=_3)return true;_2.dynamicErrorMessageArguments={validator:_2,max:_2.max,min:_2.min}
-var _5,_6;if(_2.max){_5=isc.isA.Number(_2.max)?_2.max:parseFloat(_2.max)}
-if(_2.min){_6=isc.isA.Number(_2.min)?_2.min:parseFloat(_2.min)}
+var _5,_6;if(_2.max!=null){_5=isc.isA.Number(_2.max)?_2.max:parseFloat(_2.max)}
+if(_2.min!=null){_6=isc.isA.Number(_2.min)?_2.min:parseFloat(_2.min)}
 if(isc.isA.Number(_5)&&((!_2.exclusive&&_4>_5)||(_2.exclusive&&_4>=_5)))
 {if(!_2.errorMessage){_2.defaultErrorMessage=isc.Validator.mustBeLessThan}
 return false}
@@ -11937,7 +11945,7 @@ delete window[_10].pickList}}
 _4.$51v.delayCall("destroy")}}}}else{isc.PickList.$14w=this.pickList}},getPickListCellHeight:function(){var _1=this.pickListCellHeight;if(this.pickListProperties&&this.pickListProperties.cellHeight!=null){_1=this.pickListProperties.cellHeight}
 if(this.valueIcons!=null||this.getValueIcon!=null){var _2=this.getValueIconHeight();if(_2>_1)_1=_2}
 return _1},setUpPickList:function(_1,_2,_3){var _4=this.pickList;var _5=this.getPickListCellHeight();_4.setCellHeight(_5);this.$19n();this.setUpPickListFields();if(!_4.originalEmptyMessage)_4.originalEmptyMessage=_4.emptyMessage;_4.emptyMessage=this.emptyPickListMessage||_4.originalEmptyMessage;this.pickList.emptyMessageHeight=this.emptyPickListHeight;this.pickList.setWidth(Math.max(1,this.pickListWidth||this.getElementWidth()));var _6=this.autoSizePickList&&!this.pickList.showHeader;this.pickList.autoFitFieldWidths=_6;this.pickList.setAutoFitData(_6?"both":"vertical");var _7=1;if(this.pickList.showHeader)_7+=this.pickList.headerHeight;if(this.pickList.showFilterEditor)_7+=this.pickList.filterEditorHeight;this.pickList.setHeight(_7);this.pickList.setAutoFitMaxHeight(this.pickListHeight);this.pickList.setAutoFitMaxWidth(this.pickListMaxWidth);this.filterPickList(_1,_2,_3)},$19n:function(){var _1=this.pickList.formItem;if(_1==this)return;var _2=this.pickListProperties||{};isc.addProperties(_2,{formItem:this,normalBaseStyle:this.pickListBaseStyle,tallBaseStyle:(this.pickListTallBaseStyle||this.pickListBaseStyle),hiliteColor:this.pickListHiliteColor,hiliteTextColor:this.pickListHiliteTextColor,showModal:this.modalPickList,dateFormatter:this.dateFormatter,dataArrived:function(_3,_4){if(isc.$cv)arguments.$cw=this;this.Super("dataArrived",arguments);if(this.formItem)this.formItem.handleDataArrived(_3,_4,this.data)}});if(this.multiple&&this.multipleAppearance=="picklist"&&this.allowMultiSelect)
-{_2.selectionAppearance="checkbox";_2.allowMultiSelect=true;_2.enableSelectOnRowOver=false;_2.selectionType="simple";_2.className="listGrid";_2.bodyStyleName="gridBody"}else{_2.selectionAppearance="rowStyle";_2.allowMultiSelect=false;_2.enableSelectOnRowOver=true;_2.selectionType="single";_2.className="scrollingMenu",_2.bodyStyleName="pickListMenuBody"}
+{_2.selectionAppearance="checkbox";_2.allowMultiSelect=true;_2.enableSelectOnRowOver=false;_2.selectionType="simple";_2.$859=false;_2.className="listGrid";_2.bodyStyleName="gridBody"}else{_2.selectionAppearance="rowStyle";_2.allowMultiSelect=false;_2.enableSelectOnRowOver=true;_2.selectionType="single";_2.$859=true;_2.className="scrollingMenu",_2.bodyStyleName="pickListMenuBody"}
 this.pickList.setProperties(_2);if(!this.pickList.$513)this.pickList.$513={};this.pickList.$513[this.getID()]=true;if(_1){if(this.pickList.isObserving(_1.containerWidget,"hide")){this.pickList.ignore(_1.containerWidget,"hide")}
 if(this.pickList.isObserving(_1.containerWidget,"clear")){this.pickList.ignore(_1.containerWidget,"clear")}}
 if(!this.pickList.isObserving(this.containerWidget,"hide")){this.pickList.observe(this.containerWidget,"hide","observer.hide();")}
@@ -13329,7 +13337,7 @@ isc.defineClass("ReportChooserItem","ComboBoxItem");isc.A=isc.ReportChooserItem.
 );isc.B._maxIndex=isc.C+4;isc._moduleEnd=isc._Forms_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('Forms module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'Forms'.");}
 /*
  * Isomorphic SmartClient
- * Version SC_SNAPSHOT-2011-05-30 (2011-05-30)
+ * Version SC_SNAPSHOT-2011-06-02 (2011-06-02)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -13340,7 +13348,7 @@ isc.defineClass("ReportChooserItem","ComboBoxItem");isc.A=isc.ReportChooserItem.
 
 /*
  * Isomorphic SmartClient
- * Version SC_SNAPSHOT-2011-05-30 (2011-05-30)
+ * Version SC_SNAPSHOT-2011-06-02 (2011-06-02)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -13945,7 +13953,7 @@ var _2=this.getDataFormat(_1);if(_2=="xml"){var _13=_11.spoofedResponse;if(!_13)
 ,isc.A.$79c=function isc_DataSource__applySparseAndNoNullUpdates(_1,_2,_3,_4){var _5=_4||this;if(!_5.noNullUpdates){if(!_5.sparseUpdates)return;if(_2==null)return}
 for(var _6 in _1){if(_6==isc.gwtRef)continue;var _7=_1[_6];if(_5.noNullUpdates&&_7===null){if(_3=="add"&&_5.omitNullDefaultsOnAdd==true){delete _1[_6]}else{var _8=_5.getField(_6),_9;if(_8&&_8.nullReplacementValue!==_9){_1[_6]=_8.nullReplacementValue}else{var _10=isc.SimpleType.getBaseType(_8.type,_5);if(_10=="integer"){_1[_6]=_5.nullIntegerValue}else if(_10=="float"){_1[_6]=_5.nullFloatValue}else if(_10=="date"||_10=="time"){_1[_6]=_5.nullDateValue}else if(_10=="boolean"){_1[_6]=_5.nullBooleanValue}else{_1[_6]=_5.nullStringValue}}}}else if(_5.sparseUpdates&&_3=="update"){if(_2==null)continue;var _11=_2[_6];if(_11==null&&!(_7==null))continue;if(_5!=null){var _8=_5.getField(_6);if(_8&&_8.primaryKey)continue}
 if(isc.isA.Date(_7)&&Date.compareDates(_7,_11)==0){delete _1[_6]}else if(isc.isAn.Array(_7)){for(var i=0;i<_7.length;i++){this.$79c(_7[i],_11[i],_3,_8==null?null:isc.DataSource.get(_8.type));var _13=0;for(var _14 in _7[i])_13++;if(_13==0)delete _7[i]}
-var _15;for(var i=0;i<_7.length;i++){if(_7[i]!=null){_15=true;break}}
+var _15=false;for(var i=0;i<_7.length;i++){if(_7[i]!=null){_15=true;break}}
 if(!_15)delete _1[_6]}else if(isc.isAn.Object(_7)){this.$79c(_7,_11,_3,_8==null?null:isc.DataSource.get(_8.type));var _13=0;for(var _14 in _7)_13++;if(_13==0)delete _1[_6]}else if(_7==_11){delete _1[_6]}}}}
 ,isc.A.fulfilledFromOffline=function isc_DataSource_fulfilledFromOffline(_1){var _2=_1.unconvertedDSRequest?_1.unconvertedDSRequest:_1;if(this.useOfflineStorage&&isc.Offline){var _3=_1.dataSource+"."+_1.operationType;if(isc.Offline.isOffline()){var _4=isc.Offline.getResponse(_2);this.logInfo("currently offline, for request: "+_3+" found cached response: "+this.echoLeaf(_4),"offline");if(this.useOfflineResponse&&!this.useOfflineResponse(_2,_4)){this.logInfo("User-written useOfflineResponse() method returned false; "+"not using cached response","offline");_4=null}
 this.processOfflineResponse(_1,_4);return true}else if(_2.useOfflineCache||_2.useOfflineCacheOnly){var _4=isc.Offline.getResponse(_2);if(_4!=null){this.logInfo("request: "+_3+", returning cached offline response","offline");if(this.useOfflineResponse&&!this.useOfflineResponse(_2,_4)){this.logInfo("User-written useOfflineResponse() method returned false; "+"not using cached response","offline");_4=null}
@@ -16478,7 +16486,7 @@ var _9=isc.Tree.create({modelType:"parent",childrenProperty:"fields",titleProper
 isc._moduleEnd=isc._DataBinding_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('DataBinding module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'DataBinding'.");}
 /*
  * Isomorphic SmartClient
- * Version SC_SNAPSHOT-2011-05-30 (2011-05-30)
+ * Version SC_SNAPSHOT-2011-06-02 (2011-06-02)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -16489,7 +16497,7 @@ isc._moduleEnd=isc._DataBinding_end=(isc.timestamp?isc.timestamp():new Date().ge
 
 /*
  * Isomorphic SmartClient
- * Version SC_SNAPSHOT-2011-05-30 (2011-05-30)
+ * Version SC_SNAPSHOT-2011-06-02 (2011-06-02)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
@@ -16712,7 +16720,7 @@ var _1=this.canvas.getValue();return this.$10y(_1)}
 );isc.B._maxIndex=isc.C+6;isc._moduleEnd=isc._RichTextEditor_end=(isc.timestamp?isc.timestamp():new Date().getTime());if(isc.Log&&isc.Log.logIsInfoEnabled('loadTime'))isc.Log.logInfo('RichTextEditor module init time: ' + (isc._moduleEnd-isc._moduleStart) + 'ms','loadTime');delete isc.definingFramework;}else{if(window.isc && isc.Log && isc.Log.logWarn)isc.Log.logWarn("Duplicate load of module 'RichTextEditor'.");}
 /*
  * Isomorphic SmartClient
- * Version SC_SNAPSHOT-2011-05-30 (2011-05-30)
+ * Version SC_SNAPSHOT-2011-06-02 (2011-06-02)
  * Copyright(c) 1998 and beyond Isomorphic Software, Inc. All rights reserved.
  * "SmartClient" is a trademark of Isomorphic Software, Inc.
  *
