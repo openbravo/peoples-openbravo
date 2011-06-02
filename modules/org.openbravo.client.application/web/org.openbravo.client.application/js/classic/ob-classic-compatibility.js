@@ -522,7 +522,6 @@
     	  var actionButton = isc.addProperties({}, isc.Dialog.OK, {
                 click: function() {
                   this.topElement.cancelClick();
-                  alert('a');
                   OB.PropertyStore.set('isUpgrading', 'N', null, false, true);
                 }});
     	  
