@@ -478,6 +478,61 @@
       },
       
       /** Particular windows * */
+      openAPRMPopup:function() {
+  
+    	  var actionButton = isc.addProperties({}, isc.Dialog.OK, {
+              getTitle: function() {
+                  return OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMBtn');
+                },
+                click: function() {
+                  this.topElement.cancelClick();
+                  OB.Layout.ViewManager.openView('OBClassicWindow',
+                      {command: "DEFAULT",
+                	  formId: "E4F4AAC7DD6D4FBDA3AF973B7767F374",
+                	  icon: "Form",
+                	  id: "/org.openbravo.erputil.aprmigrationtool.ad_forms/MigrationTool.html",
+                	  obManualURL: "/org.openbravo.erputil.aprmigrationtool.ad_forms/MigrationTool.html",
+                	  tabTitle: OB.I18N.getLabel('APRMT_MigrationToolTitle'),
+                	  viewId: "OBClassicWindow"});
+                }});
+    	  
+    	  isc.confirm(OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMDesc') , {
+              isModal: true,
+              showModalMask: true,
+              title: OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMTitle'),
+              toolbarButtons: [actionButton, isc.Dialog.CANCEL]
+          });
+      },
+      
+      openConfigScriptPopup: function(scripts) {
+    	  var actionButton = isc.addProperties({}, isc.Dialog.OK, {
+              click: function() {
+                this.topElement.cancelClick();
+              }});
+  	  
+  	     isc.confirm(OB.I18N.getLabel('OBUIAPP_UpgradeScriptDesc', [scripts]), {
+            isModal: true,
+            showModalMask: true,
+            title: OB.I18N.getLabel('OBUIAPP_UpgradeScriptTitle'),
+            toolbarButtons: [actionButton]
+        });
+      },
+      
+      openSuccessUpgradePopup: function() {
+    	  var actionButton = isc.addProperties({}, isc.Dialog.OK, {
+                click: function() {
+                  this.topElement.cancelClick();
+                  alert('a');
+                  OB.PropertyStore.set('isUpgrading', 'N', null, false, true);
+                }});
+    	  
+    	  isc.confirm(OB.I18N.getLabel('OBUIAPP_UpgradeEndDesc'), {
+              isModal: true,
+              showModalMask: true,
+              title: OB.I18N.getLabel('OBUIAPP_UpgradeEndTitle'),
+              toolbarButtons: [actionButton]
+          });
+      }, 
       
       // ** {{{ Popup.openInstancePurpose() }}} **
       //

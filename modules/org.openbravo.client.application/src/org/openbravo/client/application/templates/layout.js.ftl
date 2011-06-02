@@ -140,12 +140,21 @@ ${data.notesDataSource}
 // test to see if we can show the heartbeat or registration popups (or not)
 (function _OB_checkHeartBeatRegistration() {
  var handleReturn = function(response, data, request) {
-     if (data.showInstancePurpose) {
+
+     if (data.showAPRM) {
+       OB.Layout.ClassicOBCompatibility.Popup.openAPRMPopup();
+     } else if (data.showExportScripts) {
+       OB.Layout.ClassicOBCompatibility.Popup.openConfigScriptPopup(data.oldConfigScripts);
+     } else if (data.showSuccessUpgrade) {
+       OB.Layout.ClassicOBCompatibility.Popup.openSuccessUpgradePopup();
+     } else if (data.showInstancePurpose) {
        OB.Layout.ClassicOBCompatibility.Popup.openInstancePurpose();
      } else if (data.showHeartbeat) {
        OB.Layout.ClassicOBCompatibility.Popup.openHeartbeat();
      } else if (data.showRegistration) {
        OB.Layout.ClassicOBCompatibility.Popup.openRegistration();
+     } else {
+     OB.Layout.ClassicOBCompatibility.Popup.test();
      }
  };
 
