@@ -28,7 +28,8 @@ isc.setAutoDraw(false);
 // We have dates/times in the database without timezone, we assume GMT therefore 
 // for all our date/times we use GMT on both the server and the client
 // NOTE: causes issue https://issues.openbravo.com/view.php?id=16014
-Time.setDefaultDisplayTimezone(0);
+// NOTE: disabled as now timezone is send from the client to the server
+// Time.setDefaultDisplayTimezone(0);
 
 //Let the click on an ImgButton and Button fall through to its action method 
 isc.ImgButton.addProperties({
@@ -149,7 +150,7 @@ isc.FormItem.addProperties({
       this.canFocus = false;
       return true;
     }
-    var disabled = this.form.readOnly || this.readonly;
+    var disabled = this.form.readOnly || this.readonly || this.disabled;
     // allow focus if all items are disabled
     // note: see the ob-view-form.js resetCanFocus method 
     this.canFocus = this.form.allItemsDisabled || !disabled;
