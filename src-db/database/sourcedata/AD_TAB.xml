@@ -687,7 +687,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--134-->  <AD_TAB_ID><![CDATA[134]]></AD_TAB_ID>
 <!--134-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--134-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--134-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--134-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--134-->  <NAME><![CDATA[Conversion]]></NAME>
 <!--134-->  <DESCRIPTION><![CDATA[Edit the conversion rate of one unit of measure into another one.]]></DESCRIPTION>
 <!--134-->  <HELP><![CDATA[Edit the conversion rate of one unit of measure into another one.]]></HELP>
@@ -1322,7 +1322,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--181-->  <AD_TAB_ID><![CDATA[181]]></AD_TAB_ID>
 <!--181-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--181-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--181-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--181-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--181-->  <NAME><![CDATA[Substitute]]></NAME>
 <!--181-->  <DESCRIPTION><![CDATA[Define substitute products to be used if this product becomes unavailable.]]></DESCRIPTION>
 <!--181-->  <HELP><![CDATA[Define substitute products to be used if this product becomes unavailable.]]></HELP>
@@ -3368,7 +3368,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--317-->  <AD_TAB_ID><![CDATA[317]]></AD_TAB_ID>
 <!--317-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--317-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--317-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--317-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--317-->  <NAME><![CDATA[Bill of Materials]]></NAME>
 <!--317-->  <DESCRIPTION><![CDATA[Edit the bill of materials components the selected product consists of.]]></DESCRIPTION>
 <!--317-->  <HELP><![CDATA[Edit the bill of materials components the selected product consists of.]]></HELP>
@@ -5483,7 +5483,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800000-->  <AD_TAB_ID><![CDATA[800000]]></AD_TAB_ID>
 <!--800000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800000-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800000-->  <NAME><![CDATA[UOM]]></NAME>
 <!--800000-->  <DESCRIPTION><![CDATA[Add a unit of measurement to this product.]]></DESCRIPTION>
 <!--800000-->  <HELP><![CDATA[Add a unit of measurement to this product.]]></HELP>
@@ -5713,7 +5713,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800009-->  <AD_TAB_ID><![CDATA[800009]]></AD_TAB_ID>
 <!--800009-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800009-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800009-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800009-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800009-->  <NAME><![CDATA[Product Template]]></NAME>
 <!--800009-->  <DESCRIPTION><![CDATA[Create a product template to be used to carry out simple sales order transactions with this business partner.]]></DESCRIPTION>
 <!--800009-->  <HELP><![CDATA[Create a product template to be used to carry out simple sales order transactions with this business partner.]]></HELP>
@@ -5740,7 +5740,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800012-->  <AD_TAB_ID><![CDATA[800012]]></AD_TAB_ID>
 <!--800012-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800012-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800012-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800012-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800012-->  <NAME><![CDATA[Shipment Route]]></NAME>
 <!--800012-->  <DESCRIPTION><![CDATA[Create a delivery position for this business partner on a defined shipment route, in case the wharehouse is defined as Shipment Vehicle.]]></DESCRIPTION>
 <!--800012-->  <HELP><![CDATA[Create a delivery position for this business partner on a defined shipment route, in case the wharehouse is defined as Shipment Vehicle.]]></HELP>
@@ -5765,7 +5765,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800013-->  <AD_TAB_ID><![CDATA[800013]]></AD_TAB_ID>
 <!--800013-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800013-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800013-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800013-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800013-->  <NAME><![CDATA[Shipment Routing]]></NAME>
 <!--800013-->  <DESCRIPTION><![CDATA[Create shipment routes for the selected warehouse.]]></DESCRIPTION>
 <!--800013-->  <HELP><![CDATA[Create shipment routes for the selected warehouse.]]></HELP>
@@ -5867,7 +5867,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800017-->  <AD_TAB_ID><![CDATA[800017]]></AD_TAB_ID>
 <!--800017-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800017-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800017-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800017-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800017-->  <NAME><![CDATA[Volume Discount]]></NAME>
 <!--800017-->  <DESCRIPTION><![CDATA[Add volume discounts which may be made available to this business partner.]]></DESCRIPTION>
 <!--800017-->  <HELP><![CDATA[Add volume discounts which may be made available to this business partner.]]></HELP>
@@ -5892,7 +5892,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800018-->  <AD_TAB_ID><![CDATA[800018]]></AD_TAB_ID>
 <!--800018-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800018-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800018-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800018-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800018-->  <NAME><![CDATA[Volume Discount Settlement]]></NAME>
 <!--800018-->  <DESCRIPTION><![CDATA[View invoices for volume discounts accepted and used by this business partner.]]></DESCRIPTION>
 <!--800018-->  <HELP><![CDATA[View invoices for volume discounts accepted and used by this business partner.]]></HELP>
@@ -6027,7 +6027,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800028-->  <AD_TAB_ID><![CDATA[800028]]></AD_TAB_ID>
 <!--800028-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800028-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800028-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800028-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800028-->  <NAME><![CDATA[Payment]]></NAME>
 <!--800028-->  <DESCRIPTION><![CDATA[Create an obligation for accounting to expect to receive all or part of your Invoice amount in advance.]]></DESCRIPTION>
 <!--800028-->  <HELP><![CDATA[Create an obligation for accounting to expect to receive all or part of your Invoice amount in advance.]]></HELP>
@@ -6205,7 +6205,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800036-->  <AD_TAB_ID><![CDATA[800036]]></AD_TAB_ID>
 <!--800036-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800036-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800036-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800036-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800036-->  <NAME><![CDATA[Payment]]></NAME>
 <!--800036-->  <DESCRIPTION><![CDATA[Create an obligation for accounting to pay for all or part of your invoice amount.]]></DESCRIPTION>
 <!--800036-->  <HELP><![CDATA[Create an obligation for accounting to pay for all or part of your invoice amount.]]></HELP>
@@ -6661,7 +6661,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800074-->  <AD_TAB_ID><![CDATA[800074]]></AD_TAB_ID>
 <!--800074-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800074-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800074-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800074-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800074-->  <NAME><![CDATA[Lines]]></NAME>
 <!--800074-->  <DESCRIPTION><![CDATA[Add individual payment term criteria to be included in your payment in the case of a split payment.  Each term is shown on its own line.]]></DESCRIPTION>
 <!--800074-->  <HELP><![CDATA[Add individual payment term criteria to be included in your payment in the case of a split payment.  Each term is shown on its own line.]]></HELP>
@@ -6686,7 +6686,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800075-->  <AD_TAB_ID><![CDATA[800075]]></AD_TAB_ID>
 <!--800075-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800075-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800075-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800075-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800075-->  <NAME><![CDATA[Accounting dimension]]></NAME>
 <!--800075-->  <DESCRIPTION><![CDATA[Accounting dimension]]></DESCRIPTION>
 <!--800075-->  <HELP><![CDATA[Accounting dimension]]></HELP>
@@ -8937,7 +8937,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800219-->  <AD_TAB_ID><![CDATA[800219]]></AD_TAB_ID>
 <!--800219-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800219-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800219-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800219-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800219-->  <NAME><![CDATA[Payment]]></NAME>
 <!--800219-->  <DESCRIPTION><![CDATA[Create an obligation for accounting to expect to receive all or part of your sales order amount in advance.]]></DESCRIPTION>
 <!--800219-->  <HELP><![CDATA[Create an obligation for accounting to expect to receive all or part of your sales order amount in advance.]]></HELP>
@@ -8962,7 +8962,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800220-->  <AD_TAB_ID><![CDATA[800220]]></AD_TAB_ID>
 <!--800220-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800220-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800220-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800220-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800220-->  <NAME><![CDATA[Payment]]></NAME>
 <!--800220-->  <DESCRIPTION><![CDATA[Create an obligation for accounting to pay for all or part of your purchase order amount in advance.]]></DESCRIPTION>
 <!--800220-->  <HELP><![CDATA[Create an obligation for accounting to pay for all or part of your purchase order amount in advance.]]></HELP>
@@ -8987,7 +8987,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800221-->  <AD_TAB_ID><![CDATA[800221]]></AD_TAB_ID>
 <!--800221-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800221-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800221-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800221-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800221-->  <NAME><![CDATA[Price Adjustment]]></NAME>
 <!--800221-->  <DESCRIPTION><![CDATA[View applied price adjustments for each order line.]]></DESCRIPTION>
 <!--800221-->  <HELP><![CDATA[View applied price adjustments for each order line.]]></HELP>
@@ -9014,7 +9014,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800222-->  <AD_TAB_ID><![CDATA[800222]]></AD_TAB_ID>
 <!--800222-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800222-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800222-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800222-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800222-->  <NAME><![CDATA[Price Adjustments]]></NAME>
 <!--800222-->  <DESCRIPTION><![CDATA[View applied price adjustments for each order line.]]></DESCRIPTION>
 <!--800222-->  <HELP><![CDATA[View applied price adjustments for each order line.]]></HELP>
@@ -9039,7 +9039,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800223-->  <AD_TAB_ID><![CDATA[800223]]></AD_TAB_ID>
 <!--800223-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800223-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800223-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800223-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800223-->  <NAME><![CDATA[Price Adjustments]]></NAME>
 <!--800223-->  <DESCRIPTION><![CDATA[View applied price adjustments for each order line.]]></DESCRIPTION>
 <!--800223-->  <HELP><![CDATA[View applied price adjustments for each order line.]]></HELP>
@@ -9064,7 +9064,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800224-->  <AD_TAB_ID><![CDATA[800224]]></AD_TAB_ID>
 <!--800224-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800224-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800224-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--800224-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800224-->  <NAME><![CDATA[Price Adjustment]]></NAME>
 <!--800224-->  <DESCRIPTION><![CDATA[View applied price adjustments for each order line.]]></DESCRIPTION>
 <!--800224-->  <HELP><![CDATA[View applied price adjustments for each order line.]]></HELP>
@@ -10405,7 +10405,7 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1005100000-->  <AD_TAB_ID><![CDATA[1005100000]]></AD_TAB_ID>
 <!--1005100000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1005100000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005100000-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--1005100000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005100000-->  <NAME><![CDATA[Cost Salary Category]]></NAME>
 <!--1005100000-->  <DESCRIPTION><![CDATA[Salary category historic]]></DESCRIPTION>
 <!--1005100000-->  <AD_TABLE_ID><![CDATA[1005100000]]></AD_TABLE_ID>
