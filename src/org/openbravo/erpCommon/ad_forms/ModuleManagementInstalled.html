@@ -138,23 +138,17 @@ var baseDirectory = "../../../../../web/";
           
           // Generate upgrades
           if (jsonResponse.upgrades && jsonResponse.upgrades.length>0) {
-            var separator = document.createElement('span');
-            separator.innerHTML = '&nbsp;&nbsp;&nbsp;';
             for (i=0; i<jsonResponse.upgrades.length; i++){
               var upgrNotif = document.createElement('p'), 
                   spMod = document.createElement('span'),
                   link = document.createElement('a');
-                  
-              spMod.appendChild(document.createTextNode(jsonResponse.upgrades[i].moduleName+ ' '+
-               jsonResponse.upgrades[i].version));
               
               link.setAttribute('class', 'LabelLink_noicon');
               link.setAttribute('href', '#'); 
               link.setAttribute('onclick', 'installUpgrade("'+jsonResponse.upgrades[i].moduleId+'", "'+jsonResponse.upgrades[i].version+'"); return false;');
-              link.appendChild(document.createTextNode('Install Now')); //TODO: translatable
+              link.appendChild(document.createTextNode('Install upgrade now')); //TODO: translatable
               
               upgrNotif.appendChild(spMod);
-              upgrNotif.appendChild(separator);
               upgrNotif.appendChild(link);
               
               
@@ -437,7 +431,7 @@ var baseDirectory = "../../../../../web/";
                 <tr id="upgrades" style="display:none;">
                   <td colspan="4"> 
                     <div class="PlainText_normal Tree_Upgrade">
-                      <p style="font-weight:normal;">A major upgrade is available.</p>
+                      <p style="font-weight:normal;">A major upgrade is available:&nbsp;<b id="upgrName">xxcore</b></p>
                       <p style="font-weight:normal; font-size: 8pt;">
                       
                         <ul style="font-weight:normal; font-size: 8pt; margin: 5px; margin-left: 20px;">
@@ -445,8 +439,8 @@ var baseDirectory = "../../../../../web/";
                           <li>An&nbsp;<b>update</b>&nbsp;updates the major minor version of a module, but doesn't upgrade it to the next major version (if one exists).</li>
                         </ul>
                       </p>
-                      <div  id="upgradeList">
-                        <p><span id="upgrName">xxcore</span><span>&nbsp;&nbsp;&nbsp;</span> <a id="upgrLink" href="#" onclick="installUpgrade('xx', 'yy'); return false;" class="LabelLink_noicon">Install Now</a></p>
+                      <div id="upgradeList">
+                        <p><a id="upgrLink" href="#" onclick="installUpgrade('xx', 'yy'); return false;" class="LabelLink_noicon">Install upgrade now</a></p>
                       </div>
                       
                     </div>

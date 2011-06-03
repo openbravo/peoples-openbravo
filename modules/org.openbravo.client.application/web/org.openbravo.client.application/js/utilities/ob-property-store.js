@@ -74,13 +74,14 @@
     // * {{{propertyName}}}: the name of the property
     // * {{{value}}}: the value of the property
     //
-    set: function(/* String */propertyName, /* Object */ value, windowId, noSetInServer) {
-      var currentValue = OB.Properties[propertyName], data={property: propertyName},
+    set: function(/* String */propertyName, /* Object */ value, windowId, noSetInServer, setAsSystem) {
+      var currentValue = OB.Properties[propertyName], data={property: propertyName, system: setAsSystem?true:false},
           localPropertyName=propertyName, i;
       if(windowId){
         data.windowId=windowId;
         localPropertyName=propertyName + '_' + windowId;
       }
+      
       // set it locally
       OB.Properties[localPropertyName] = value;
 

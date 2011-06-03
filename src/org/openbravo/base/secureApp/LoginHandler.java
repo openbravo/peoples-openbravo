@@ -11,7 +11,6 @@
  */
 package org.openbravo.base.secureApp;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -23,19 +22,13 @@ import javax.servlet.http.HttpSession;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.HttpBaseServlet;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.ddlutils.util.DBSMOBUtil;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.security.Login;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.OBVersion;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.module.Module;
@@ -236,52 +229,6 @@ public class LoginHandler extends HttpBaseServlet {
         String title = Utility.messageBD(myPool, "LAST_BUILD_FAILED_TITLE", vars.getLanguage());
         updateDBSession(sessionId, msgType.equals("Warning"), "LBF");
         goToRetry(res, vars, msg, title, msgType, action);
-        return;
-      }
-
-      // Check APRM
-      Module aprmMigration = OBDal.getInstance().get(Module.class, APRM_MIGRATION_TOOL_ID);
-      if (aprmMigration != null) {
-        boolean usingAprm;
-        try {
-          usingAprm = "Y".equals(Preferences.getPreferenceValue("APRM_Ready", false, "0", "0",
-              null, null, null));
-        } catch (PropertyException e) {
-          usingAprm = false;
-        }
-        if (!usingAprm) {
-          String title = Utility.messageBD(myPool, "Warning", vars.getLanguage());
-          String msg = Utility.messageBD(myPool, "APRMNotMigrated", vars.getLanguage());
-          goToRetry(res, vars, msg, title, "Warning", action);
-          return;
-        }
-      }
-
-      // Check all applied configuration scripts are exported in 3.0
-      OBCriteria<Module> qMod = OBDal.getInstance().createCriteria(Module.class);
-      qMod.add(Restrictions.eq(Module.PROPERTY_TYPE, "T"));
-      qMod.add(Restrictions.eq(Module.PROPERTY_ENABLED, true));
-      qMod.add(Restrictions.eq(Module.PROPERTY_APPLYCONFIGURATIONSCRIPT, true));
-      String obDir = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-          "source.path");
-      String oldScripts = "";
-      for (Module mod : qMod.list()) {
-        File cfScript = new File(obDir + "/modules/" + mod.getJavaPackage() + "/src-db/database",
-            "configScript.xml");
-        if (cfScript.exists() && DBSMOBUtil.isOldConfigScript(cfScript)) {
-          if (!oldScripts.isEmpty()) {
-            oldScripts += ", ";
-          }
-          oldScripts += mod.getName();
-          log4j.info(mod.getName() + " config script is not exported in 3.0");
-        }
-      }
-
-      if (!oldScripts.isEmpty()) {
-        String title = Utility.messageBD(myPool, "Warning", vars.getLanguage());
-        String msg = Utility.messageBD(myPool, "OldConfigScript", vars.getLanguage()).replace("%0",
-            oldScripts);
-        goToRetry(res, vars, msg, title, "Warning", action);
         return;
       }
 

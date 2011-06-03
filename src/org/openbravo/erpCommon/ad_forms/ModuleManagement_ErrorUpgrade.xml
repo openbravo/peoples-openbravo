@@ -27,27 +27,18 @@
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   
-  <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
-  <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
-  <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
-  
   <PARAMETER id="minCoreVersion" name="minCoreVersion" default=""/>
+  <PARAMETER id="instanceMat" name="instanceMat" default=""/>
 
-  <structure name="noCR">
-    <FIELD id="noCRModName">name</FIELD>
-	<FIELD id="noCRMsg">msg</FIELD>
-    <SECTION id="sectionNoCR"/>
+  <structure name="deps">
+    <FIELD id="depModName">name</FIELD>
+	<FIELD id="depMsg">msg</FIELD>
+    <SECTION id="sectionDeps"/>
   </structure>
 
-  <structure name="CR">
-    <FIELD id="CRModName">name</FIELD>
-    <FIELD id="CRMsg">msg</FIELD>
-    <SECTION id="sectionCR"/>
-  </structure>
-  
-  <structure name="CRMaturity">
-    <FIELD id="CRMaturityModName">name</FIELD>
-    <FIELD id="CRMaturityMsg">msg</FIELD>
-    <SECTION id="sectionCRMaturity"/>
+  <structure name="maturity">
+    <FIELD id="matModName">name</FIELD>
+    <FIELD id="matMsg">msg</FIELD>
+    <SECTION id="sectionMat"/>
   </structure>
 </REPORT>

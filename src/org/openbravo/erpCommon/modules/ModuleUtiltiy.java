@@ -29,6 +29,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -222,6 +223,8 @@ public class ModuleUtiltiy {
       } else {
         maturityLevels.put("install.level", sys.getMaturityUpdate());
       }
+      maturityLevels.put("isProfessional", ActivationKey.getInstance().isActive() ? "true"
+          : "false");
       return maturityLevels;
     } finally {
       OBContext.restorePreviousMode();

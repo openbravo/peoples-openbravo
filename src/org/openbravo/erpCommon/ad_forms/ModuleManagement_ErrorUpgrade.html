@@ -95,7 +95,7 @@
          
    <!-- MessageBox -->
 
-                            <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
+                            <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxWarning">
                               <tbody>
                               <tr class="MessageBox_TopMargin">
                                 <td class="MessageBox_LeftMargin"></td>
@@ -137,10 +137,11 @@
                                                   <td style="vertical-align: top;" id="messageBoxIDContent">
                                                     <span>
                                                       <div class="MessageBox_TextTitle" id="messageBoxIDTitle">
-                                                        xxInfo: AccessTableWithNoView
+                                                       
                                                       </div>
                                                       <div class="MessageBox_TextDescription" id="messageBoxIDMessage">
-                                                        xxThe current information is empty.
+                                                        <div>The upgrade cannot be completed because one or more of your currently installed modules are not compatible with a new major release.</div>
+                                                        <div>You must either fix the problems or uninstall these modules before you can install this upgrade.</div>
                                                       </div>
                                                       <div class="MessageBox_TextSeparator"></div>
                                                     </span>
@@ -205,49 +206,31 @@
             
             <tr>
               <td class="PlainText_normal" colspan="4" style="padding: 0 0 10 0; text-align: left;">
-                <div class="Label_ReadOnly_Text">
-                  <p>The selected upgrade cannot be completed because some of the installed modules are not compatible with it.</p>
-				  <br/>
-                </div>
+
               
-                <div id="noCR" class="Label_ReadOnly_Text">
-                  <p>The following modules, that are not published in Central Repository, have dependency problems. If you are their owner, you can extend their dependencies:</p>
+                <div id="dependency" class="Label_ReadOnly_Text">
+                  <p>Dependency problems.<span style="font-weight: normal;">&nbsp;The following modules do not declare in its dependencies compatibility with the new major release.&nbsp;
+                  <a class="Label_ReadOnly_Text LabelLink_noicon" style="font-weight: normal;" href="http://wiki.openbravo.com/wiki/ERP/3.0/Upgrading_From_2.50#Extend_Module_Dependencies" target="_blank">Learn more how to fix it</a></span></p>
 				  <br/>
-				  <ul style="padding: 0 25;" id="sectionNoCR">
-                    <li id="noCRModName">xxmodule
-                      <ul style="padding: 0 25;" id="noCRMsg"></ul>
-                    </li>
-                  </ul>
+				  <div style="padding: 0 25;" id="sectionDeps">
+                    <span id="depModName">xxmodule</span>:&nbsp;<span id="depMsg" style="font-weight: normal;"></span><br/>
+                  </div>
 				  <br/>
-				  
                 </div>
                 
-				<div id="CRMaturity" class="Label_ReadOnly_Text">
-                  <p>The following modules, that are published in Central Repository, have a compatible version in a lower status than the one you accept updates for.
-				  You can wait these version to reach your accepted status or downgrade your minimum acceptance.
+				<div id="maturity" class="Label_ReadOnly_Text">
+                  <p>Maturity level problems.<span style="font-weight: normal;">&nbsp;The following modules are available in a lower maturity level than the one configured in your system -&nbsp;
+                  <b id="instanceMat">xxGA</b>. 
+                  You can either wait for a more mature module or relax maturity level settings.&nbsp;
+                  <a class="Label_ReadOnly_Text LabelLink_noicon" style="font-weight: normal;" href="http://wiki.openbravo.com/wiki/ERP/3.0/Configuration_Manual/Modules_Management#Advanced_settings" target="_blank">Learn more about maturity status</a>
+				  </span>
 				  </p>
                   <br/>
-				  <ul style="padding: 0 25;" id="sectionCRMaturity">
-                    <li id="CRMaturityModName">xxmodule
-                      <ul style="padding: 0 25;" id="CRMaturityMsg"></ul>
-                    </li>
-                  </ul>
+                  <div style="padding: 0 25;" id="sectionMat">
+                    <span id="matModName">xxmodule</span>:&nbsp;<span id="matMsg" style="font-weight: normal;"></span><br/>
+                  </div>
                   <br/>
                 </div>
-				
-                <div id="CR" class="Label_ReadOnly_Text">
-                  <p>The following modules are published in Central Repository and do not have a compatible version. You might ask their owner to publish a new compatible version:</p>
-                  <br/>
-                  <ul style="padding: 0 25;" id="sectionCR">
-                    <li id="CRModName">xxmodule
-                      <ul style="padding: 0 25;" id="CRMsg"></ul>
-                    </li>
-                  </ul>
-                  <br/>
-                </div>
-                              
-                <p><a class="Label_ReadOnly_Text LabelLink_noicon" href="http://wiki.openbravo.com/wiki/ERP/2.50/Developers_Guide/Concepts/How_to_Migrate_2.50_Modules_to_3.0" target="_blank">Learn more...</a></p>
-
                </td>
             </tr>
             
