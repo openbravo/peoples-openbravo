@@ -2153,9 +2153,11 @@
 <!--FF808181304F1CD101304F8BD9840026-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FF808181304F1CD101304F8BD9840026-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF808181304F1CD101304F8BD9840026-->  <VALUE><![CDATA[OBUIAPP_UpgradeRunAPRMDesc]]></VALUE>
-<!--FF808181304F1CD101304F8BD9840026-->  <MSGTEXT><![CDATA[This instance has not yet been migrated to the recently installed 
-Advanced Payables and Receivables module.
-You need to run the APRM Migration Tool in order to do so.]]></MSGTEXT>
+<!--FF808181304F1CD101304F8BD9840026-->  <MSGTEXT><![CDATA[This instance has not yet been migrated to the recently installed Advanced Payables and Receivables module.<br/>
+You need to run the APRM Migration Tool in order to do so.<br/>
+<a class="OBNoteListGridDelete" target="_blank" href="http://wiki.openbravo.com/wiki/Projects/APR_Migration_Tool/User_Manual">Read Migration Tool user manual.</a><br/>
+<br/>
+After the migration you need to logout and re-login to continue with the upgrade process.]]></MSGTEXT>
 <!--FF808181304F1CD101304F8BD9840026-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--FF808181304F1CD101304F8BD9840026-->  <AD_MODULE_ID><![CDATA[9BA0836A3CD74EE4AB48753A47211BCC]]></AD_MODULE_ID>
 <!--FF808181304F1CD101304F8BD9840026--></AD_MESSAGE>
@@ -2188,10 +2190,11 @@ You need to run the APRM Migration Tool in order to do so.]]></MSGTEXT>
 <!--FF808181304F1CD101304F8F7D580035-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FF808181304F1CD101304F8F7D580035-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF808181304F1CD101304F8F7D580035-->  <VALUE><![CDATA[OBUIAPP_UpgradeScriptDesc]]></VALUE>
-<!--FF808181304F1CD101304F8F7D580035-->  <MSGTEXT><![CDATA[The following configuration script(s) were not exported:
-%0.
-Field layout modifications in these template(s) were removed during the upgrade process.
-You should export your configuration script to synchronize it with your source code. The ant task is: ant export.config.script
+<!--FF808181304F1CD101304F8F7D580035-->  <MSGTEXT><![CDATA[The following configuration script(s) were not exported:<br/>
+%0.<br/>
+Field layout modifications in these template(s) were removed during the upgrade process.<br/>
+You should export your configuration script to synchronize it with your source code.<br/>
+<a target="_blank" href="http://wiki.openbravo.com/wiki/ERP/2.50/Developers_Guide/Concepts/Development_Build_Tasks#Modules" class="OBNoteListGridDelete">Learn more about exporting configuration script. </a><br/>
 You then need to logout and re-login for the changes to be effective.]]></MSGTEXT>
 <!--FF808181304F1CD101304F8F7D580035-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--FF808181304F1CD101304F8F7D580035-->  <AD_MODULE_ID><![CDATA[9BA0836A3CD74EE4AB48753A47211BCC]]></AD_MODULE_ID>
