@@ -35,13 +35,8 @@ isc.OBGrid.addProperties({
   bodyKeyPress : function (event, eventInfo) {
     if (event.keyName === 'F' && 
       (isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && isc.EventHandler.shiftKeyDown())) {
-      var i;
-      for (i=0; i<this.fields.length; i++) {
-        if (this.fields[i].name !== '_checkboxField' && this.fields[i].name !== '_editLink') {
-          this.focusInFilterEditor(this.fields[i].name);
-          return false;
-        }
-      }
+      this.focusInFirstFilterEditor();
+      return false;
     }
 
     if (event.keyName === 'Delete' && 
@@ -64,6 +59,17 @@ isc.OBGrid.addProperties({
       return false;
     }
     return this.Super('bodyKeyPress', arguments);
+  },
+
+  focusInFirstFilterEditor: function() {
+    var i;
+    for (i=0; i<this.fields.length; i++) {
+      if (this.fields[i].name !== '_checkboxField' && this.fields[i].name !== '_editLink') {
+        this.focusInFilterEditor(this.fields[i].name);
+        return true;
+      }
+    }
+    return false;
   },
   
   createRecordComponent: function(record, colNum){

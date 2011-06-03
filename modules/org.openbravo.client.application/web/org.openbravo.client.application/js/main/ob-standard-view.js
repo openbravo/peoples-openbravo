@@ -834,7 +834,7 @@ isc.OBStandardView.addProperties({
       this.viewGrid.markForRedraw('showing');
       this.viewGrid.show();
       if (this.isActiveView()) {
-        this.viewGrid.focusInFilterEditor();
+        this.viewGrid.focusInFirstFilterEditor();
       }
       
       this.viewGrid.setHeight('100%');
