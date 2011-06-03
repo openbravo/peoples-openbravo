@@ -931,7 +931,7 @@
 <!--194-->  <AD_WINDOW_ID><![CDATA[194]]></AD_WINDOW_ID>
 <!--194-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--194-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--194-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--194-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--194-->  <NAME><![CDATA[Bank Statement]]></NAME>
 <!--194-->  <DESCRIPTION><![CDATA[View your bank statements against transactions created and edited in the application.]]></DESCRIPTION>
 <!--194-->  <HELP><![CDATA[View your bank statements against transactions created and edited in the application.]]></HELP>
@@ -963,7 +963,7 @@
 <!--198-->  <AD_WINDOW_ID><![CDATA[198]]></AD_WINDOW_ID>
 <!--198-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--198-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--198-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--198-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--198-->  <NAME><![CDATA[Cash Journal]]></NAME>
 <!--198-->  <DESCRIPTION><![CDATA[Add individual cash transactions to be managed and viewed in the cashbook.]]></DESCRIPTION>
 <!--198-->  <HELP><![CDATA[Add individual cash transactions to be managed and viewed in the cashbook.]]></HELP>
@@ -1475,7 +1475,7 @@
 <!--800005-->  <AD_WINDOW_ID><![CDATA[800005]]></AD_WINDOW_ID>
 <!--800005-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800005-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800005-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800005-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800005-->  <NAME><![CDATA[Settlement]]></NAME>
 <!--800005-->  <DESCRIPTION><![CDATA[Edit payments by summing one or many into one or by dividing one into many.  Here you manage payments that come from invoices generated in the application.]]></DESCRIPTION>
 <!--800005-->  <HELP><![CDATA[Edit payments by summing one or many into one or by dividing one into many.  Here you manage payments that come from invoices generated in the application.]]></HELP>
@@ -1491,7 +1491,7 @@
 <!--800006-->  <AD_WINDOW_ID><![CDATA[800006]]></AD_WINDOW_ID>
 <!--800006-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800006-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800006-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800006-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800006-->  <NAME><![CDATA[Manual Settlement]]></NAME>
 <!--800006-->  <DESCRIPTION><![CDATA[Create and edit payments with no corresponding document/transaction in the application.]]></DESCRIPTION>
 <!--800006-->  <HELP><![CDATA[Create and edit payments with no corresponding document/transaction in the application.]]></HELP>
@@ -2067,7 +2067,7 @@
 <!--800080-->  <AD_WINDOW_ID><![CDATA[800080]]></AD_WINDOW_ID>
 <!--800080-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800080-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800080-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800080-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800080-->  <NAME><![CDATA[Payment Status Management]]></NAME>
 <!--800080-->  <DESCRIPTION><![CDATA[Edit the status of payments for the accounting purposes.]]></DESCRIPTION>
 <!--800080-->  <HELP><![CDATA[Edit the status of payments for the accounting purposes.]]></HELP>

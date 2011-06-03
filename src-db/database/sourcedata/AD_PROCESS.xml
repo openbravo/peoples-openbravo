@@ -2250,7 +2250,7 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800026-->  <AD_PROCESS_ID><![CDATA[800026]]></AD_PROCESS_ID>
 <!--800026-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800026-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800026-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800026-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800026-->  <VALUE><![CDATA[RV_ReportDebtPayment]]></VALUE>
 <!--800026-->  <NAME><![CDATA[Payment Report]]></NAME>
 <!--800026-->  <DESCRIPTION><![CDATA[Report debt payment]]></DESCRIPTION>
@@ -2710,7 +2710,7 @@ The Excel export generates an xls file that can be used to perform more advanced
 <!--800076-->  <AD_PROCESS_ID><![CDATA[800076]]></AD_PROCESS_ID>
 <!--800076-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800076-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800076-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800076-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800076-->  <VALUE><![CDATA[ReportDebtPaymentTrack]]></VALUE>
 <!--800076-->  <NAME><![CDATA[Payment Tracker]]></NAME>
 <!--800076-->  <DESCRIPTION><![CDATA[Payment Tracker]]></DESCRIPTION>
@@ -4425,7 +4425,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800191-->  <AD_PROCESS_ID><![CDATA[800191]]></AD_PROCESS_ID>
 <!--800191-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800191-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800191-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800191-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800191-->  <VALUE><![CDATA[ReportCashJR]]></VALUE>
 <!--800191-->  <NAME><![CDATA[Cash Report]]></NAME>
 <!--800191-->  <DESCRIPTION><![CDATA[Report cash]]></DESCRIPTION>
@@ -4580,7 +4580,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800200-->  <AD_PROCESS_ID><![CDATA[800200]]></AD_PROCESS_ID>
 <!--800200-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800200-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800200-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800200-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800200-->  <VALUE><![CDATA[ReportBankJR]]></VALUE>
 <!--800200-->  <NAME><![CDATA[Bank Report]]></NAME>
 <!--800200-->  <DESCRIPTION><![CDATA[Report bank]]></DESCRIPTION>
@@ -4875,7 +4875,7 @@ The second one is to update one property in the product organization specific ta
 <!--1002100003-->  <AD_PROCESS_ID><![CDATA[1002100003]]></AD_PROCESS_ID>
 <!--1002100003-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1002100003-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1002100003-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1002100003-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--1002100003-->  <VALUE><![CDATA[RV_WithholdingReport]]></VALUE>
 <!--1002100003-->  <NAME><![CDATA[Withholding Report]]></NAME>
 <!--1002100003-->  <DESCRIPTION><![CDATA[Withholding Report]]></DESCRIPTION>
