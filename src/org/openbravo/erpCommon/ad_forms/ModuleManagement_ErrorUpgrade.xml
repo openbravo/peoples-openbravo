@@ -41,10 +41,4 @@
     <FIELD id="matMsg">msg</FIELD>
     <SECTION id="sectionMat"/>
   </structure>
-  
-  <structure name="CRMaturity">
-    <FIELD id="CRMaturityModName">name</FIELD>
-    <FIELD id="CRMaturityMsg">msg</FIELD>
-    <SECTION id="sectionCRMaturity"/>
-  </structure>
 </REPORT>
