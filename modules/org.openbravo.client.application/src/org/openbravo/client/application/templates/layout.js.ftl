@@ -153,8 +153,6 @@ ${data.notesDataSource}
        OB.Layout.ClassicOBCompatibility.Popup.openHeartbeat();
      } else if (data.showRegistration) {
        OB.Layout.ClassicOBCompatibility.Popup.openRegistration();
-     } else {
-     OB.Layout.ClassicOBCompatibility.Popup.test();
      }
  };
 
