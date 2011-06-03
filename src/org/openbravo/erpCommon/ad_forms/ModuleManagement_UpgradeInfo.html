@@ -75,7 +75,7 @@
             <td class="Popup_NavBar_bg_logo_left"></td>
             <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
             <td class="Popup_NavBar_bg_logo_right"></td>
-            <td class="Popup_NavBar_Popup_title_cell"><span>Install Modules</span></td>
+            <td class="Popup_NavBar_Popup_title_cell"><span>Install Upgrade</span></td>
             <td class="Popup_NavBar_separator_cell"></td>
           </tr>
         </table>
@@ -212,7 +212,7 @@
             <tr>
               <td class="PlainText_normal" colspan="4" style="padding: 0 0 10 0; text-align: left;">
                 <span>
-                    <p id="info">Do you want to install the following upgrade?</p>
+                    <b id="info">Do you want to install the following upgrade?</b>
                 </span>
               </td>
             </tr>
@@ -220,9 +220,9 @@
               <td colspan="4" style="padding: 0 0 0 0;">
                 <div style="background-color: white; border: 1px solid #7F9DB9; padding: 5 5 5 10; height: 200px; overflow: auto;">
                   <FIELD_TMP id="info">
-                    <div class="Label_ReadOnly_Text" id="upgradeName">xxUpgrade</div>
+                    <div class="Label_ReadOnly_Text" style="font-weight: normal;">Upgrade:&nbsp;<span id="upgradeName" class="Label_ReadOnly_Text">xxUpgrade</span></div>
                     <div style="height: 10px;"></div>
-                    <div class="PlainText_normal"><span id="upgradeInfo">xxModuleName</span>
+                    <div class="PlainText_normal"><span id="upgradeInfo">xxInfo</span>
                     </div>
                     <div style="height: 15px;"></div>
                   </FIELD_TMP>
