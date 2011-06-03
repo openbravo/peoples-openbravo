@@ -26,6 +26,8 @@ isc.OBSectionItem.addProperties({
   // revisit when/if we allow disabling of section items
   // visual state of disabled or non-disabled stays the same now
   showDisabled: false,
+
+  canTabToHeader: true,
   
   alwaysTakeSpace: false,
 
