@@ -139,7 +139,9 @@ ${data.notesDataSource}
 (function _OB_checkHeartBeatRegistration() {
  var handleReturn = function(response, data, request) {
 
-     if (data.showAPRM) {
+     if (data.upgradingNoAdmin) {
+       OB.Layout.ClassicOBCompatibility.Popup.standardUpgrading();
+     } else if (data.showAPRM) {
        OB.Layout.ClassicOBCompatibility.Popup.openAPRMPopup();
      } else if (data.showExportScripts) {
        OB.Layout.ClassicOBCompatibility.Popup.openConfigScriptPopup(data.oldConfigScripts);

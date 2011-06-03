@@ -25,15 +25,12 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.security.Login;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.OBVersion;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
-import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -233,32 +230,6 @@ public class LoginHandler extends HttpBaseServlet {
         updateDBSession(sessionId, msgType.equals("Warning"), "LBF");
         goToRetry(res, vars, msg, title, msgType, action);
         return;
-      }
-
-      // Upgrading check
-      boolean isUpgrading = false;
-      try {
-        isUpgrading = "Y".equals(Preferences.getPreferenceValue("isUpgrading", true, "0", "0",
-            null, null, null));
-      } catch (PropertyException e) {
-        isUpgrading = false;
-      }
-
-      if (isUpgrading) {
-        OBContext.setAdminMode();
-        try {
-          User user = OBDal.getInstance().get(User.class, strUserAuth);
-          if (user != null && user.getDefaultRole() != null
-              && !"S".equals(user.getDefaultRole().getUserLevel())) {
-            // Show alert for non sys admin roles
-            String title = Utility.messageBD(myPool, "Warning", vars.getLanguage());
-            String msg = Utility.messageBD(myPool, "UpgradeInProcess", vars.getLanguage());
-            goToRetry(res, vars, msg, title, "Warning", action);
-            return;
-          }
-        } finally {
-          OBContext.restorePreviousMode();
-        }
       }
 
       // All checks passed successfully, continue logging in

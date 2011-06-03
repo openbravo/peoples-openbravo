@@ -486,12 +486,31 @@
         }
       },
       
-      /** Particular windows * */
+      
+      /** Upgrading process pop ups **/
+      standardUpgrading: function(){
+        var actionButton = isc.addProperties({}, isc.Dialog.OK, {
+              getTitle: function() {
+                  return '<b>'+OB.I18N.getLabel('OBUIAPP_LogOut')+'</b>';
+                },
+                click: function() {
+                  this.topElement.cancelClick();
+                  OB.Utilities.logout();
+                }});
+    	  
+    	isc.confirm(OB.I18N.getLabel('OBUIAPP_UpgradeDesc'), {
+              isModal: true,
+              showModalMask: true,
+              title: OB.I18N.getLabel('OBUIAPP_UpgradeTitle'),
+              toolbarButtons: [actionButton, isc.Dialog.CANCEL]
+        });
+      },
+      
       openAPRMPopup:function() {
   
     	  var actionButton = isc.addProperties({}, isc.Dialog.OK, {
               getTitle: function() {
-                  return OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMBtn');
+                  return '<b>'+OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMBtn')+'</b>';
                 },
                 click: function() {
                   this.topElement.cancelClick();
@@ -505,7 +524,7 @@
                 	  viewId: "OBClassicWindow"});
                 }});
     	  
-    	  isc.confirm(OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMDesc') , {
+    	  isc.confirm(OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMDesc'), {
               isModal: true,
               showModalMask: true,
               title: OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMTitle'),
@@ -542,6 +561,7 @@
           });
       }, 
       
+      /** Particular windows * */
       // ** {{{ Popup.openInstancePurpose() }}} **
       //
       // Opens directly the "Instance Purpose" window inside a popup

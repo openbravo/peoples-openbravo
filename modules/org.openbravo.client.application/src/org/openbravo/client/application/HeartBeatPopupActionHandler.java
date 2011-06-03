@@ -59,14 +59,11 @@ public class HeartBeatPopupActionHandler extends BaseActionHandler {
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     try {
       final JSONObject result = new JSONObject();
-
-      boolean sysAdmin = "S".equals(OBContext.getOBContext().getRole().getUserLevel());
-
+      boolean sysAdmin = false;
       boolean isUpgrading = false;
       try {
-        isUpgrading = sysAdmin
-            && "Y".equals(Preferences.getPreferenceValue("isUpgrading", true, "0", "0", null, null,
-                null));
+        isUpgrading = "Y".equals(Preferences.getPreferenceValue("isUpgrading", true, "0", "0",
+            null, null, null));
       } catch (PropertyException e) {
         isUpgrading = false;
       }
@@ -74,34 +71,37 @@ public class HeartBeatPopupActionHandler extends BaseActionHandler {
       boolean usingAprm = true;
       boolean exportConfigScript = false;
       if (isUpgrading) {
-        if (OBDal.getInstance().exists(Module.ENTITY_NAME, APRM_MIGRATION_TOOL_ID)) {
-          usingAprm = new AdvPaymentMngtDao().existsAPRMReadyPreference();
-        }
-
-        // Check all applied configuration scripts are exported in 3.0
-        OBCriteria<Module> qMod = OBDal.getInstance().createCriteria(Module.class);
-        qMod.add(Restrictions.eq(Module.PROPERTY_TYPE, "T"));
-        qMod.add(Restrictions.eq(Module.PROPERTY_ENABLED, true));
-        qMod.add(Restrictions.eq(Module.PROPERTY_APPLYCONFIGURATIONSCRIPT, true));
-        String obDir = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-            "source.path");
-        String oldScripts = "";
-        for (Module mod : qMod.list()) {
-          File cfScript = new File(obDir + "/modules/" + mod.getJavaPackage() + "/src-db/database",
-              "configScript.xml");
-          if (cfScript.exists() && DBSMOBUtil.isOldConfigScript(cfScript)) {
-            if (!oldScripts.isEmpty()) {
-              oldScripts += ", ";
-            }
-            oldScripts += mod.getName();
-            log.info(mod.getName() + " config script is not exported in 3.0");
+        sysAdmin = "S".equals(OBContext.getOBContext().getRole().getUserLevel());
+        if (sysAdmin) {
+          if (OBDal.getInstance().exists(Module.ENTITY_NAME, APRM_MIGRATION_TOOL_ID)) {
+            usingAprm = new AdvPaymentMngtDao().existsAPRMReadyPreference();
           }
-        }
 
-        exportConfigScript = !oldScripts.isEmpty();
+          // Check all applied configuration scripts are exported in 3.0
+          OBCriteria<Module> qMod = OBDal.getInstance().createCriteria(Module.class);
+          qMod.add(Restrictions.eq(Module.PROPERTY_TYPE, "T"));
+          qMod.add(Restrictions.eq(Module.PROPERTY_ENABLED, true));
+          qMod.add(Restrictions.eq(Module.PROPERTY_APPLYCONFIGURATIONSCRIPT, true));
+          String obDir = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
+              "source.path");
+          String oldScripts = "";
+          for (Module mod : qMod.list()) {
+            File cfScript = new File(obDir + "/modules/" + mod.getJavaPackage()
+                + "/src-db/database", "configScript.xml");
+            if (cfScript.exists() && DBSMOBUtil.isOldConfigScript(cfScript)) {
+              if (!oldScripts.isEmpty()) {
+                oldScripts += ", ";
+              }
+              oldScripts += mod.getName();
+              log.info(mod.getName() + " config script is not exported in 3.0");
+            }
+          }
 
-        if (exportConfigScript) {
-          result.put("oldConfigScripts", oldScripts);
+          exportConfigScript = !oldScripts.isEmpty();
+
+          if (exportConfigScript) {
+            result.put("oldConfigScripts", oldScripts);
+          }
         }
       }
 
@@ -109,6 +109,7 @@ public class HeartBeatPopupActionHandler extends BaseActionHandler {
           .isLoginPopupRequired(new VariablesSecureApp((HttpServletRequest) parameters
               .get(KernelConstants.HTTP_REQUEST)), new DalConnectionProvider());
 
+      result.put("upgradingNoAdmin", isUpgrading && !sysAdmin);
       result.put("showAPRM", isUpgrading && !usingAprm);
       result.put("showExportScripts", isUpgrading && exportConfigScript);
       result.put("showSuccessUpgrade", isUpgrading && usingAprm && !exportConfigScript);
