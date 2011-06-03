@@ -43,6 +43,8 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
 
     String tabId = info.getTabId();
     boolean isVendorTab = "224".equals(tabId);
+    String finIsReceipt = info.getStringParameter("inpfinIsreceipt", null);
+    boolean isPaymentOut = isVendorTab || "N".equals(finIsReceipt);
     String srtOrgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
 
     FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
@@ -53,6 +55,7 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
         isVendorTab ? "inppoFinancialAccountId" : "inpfinFinancialAccountId", IsIDFilter.instance);
 
     boolean isSelected = true;
+    boolean isMultiCurrencyEnabled = false;
 
     // No Payment Method selected
     if (srtPaymentMethodId.isEmpty() && srtPOPaymentMethodId.isEmpty()) {
@@ -71,19 +74,37 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
       obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
       obc.add(Restrictions.in("organization.id", OBContext.getOBContext()
           .getOrganizationStructureProvider().getNaturalTree(srtOrgId)));
+      if (isPaymentOut) {
+        obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYOUTALLOW, true));
+      } else {
+        obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYINALLOW, true));
+      }
 
+      FinAccPaymentMethod selectedPaymentMethod = null;
       for (FinAccPaymentMethod accPm : obc.list()) {
         if (srtSelectedFinancialAccount.equals(accPm.getAccount().getId())) {
           isSelected = true;
+          selectedPaymentMethod = accPm;
         } else if (srtSelectedFinancialAccount.isEmpty()) {
           srtSelectedFinancialAccount = accPm.getAccount().getIdentifier();
           isSelected = true;
+          selectedPaymentMethod = accPm;
         }
         info.addSelectResult(accPm.getAccount().getId(), accPm.getAccount().getIdentifier(),
             isSelected);
         isSelected = false;
       }
+      if (selectedPaymentMethod != null) {
+        if (isPaymentOut) {
+          isMultiCurrencyEnabled = selectedPaymentMethod.isPayoutAllow()
+              && selectedPaymentMethod.isPayoutIsMulticurrency();
+        } else {
+          isMultiCurrencyEnabled = selectedPaymentMethod.isPayinAllow()
+              && selectedPaymentMethod.isPayinIsMulticurrency();
+        }
+      }
     }
     info.endSelect();
+    info.addResult("inpismulticurrencyenabled", isMultiCurrencyEnabled ? "Y" : "N");
   }
 }

@@ -66,15 +66,16 @@ isc.OBTabSetMain.addProperties({
     if (!tabPane.isLoadingTab) {
       OB.Layout.HistoryManager.updateHistory();
     }
-    if (tabPane.tabSelected) {
+    if (tabPane.tabSelected) { //Redirect if tabPane has its own tabSelected handler
       tabPane.tabSelected(tabNum, tabPane, ID, tab);
     }
+
     // update the document title
     document.title = 'Openbravo - ' + tab.title;
   },
 
   tabDeselected: function (tabNum, tabPane, ID, tab, newTab) {
-    if (tabPane.tabDeselected) {
+    if (tabPane.tabDeselected) { //Redirect if tabPane has its own tabDeselected handler
       tabPane.tabDeselected(tabNum, tabPane, ID, tab, newTab);
     }
   },
@@ -101,39 +102,127 @@ isc.OBTabSetMain.addProperties({
 
   draw : function() {
     var me = this;
-    var ksAction_closeAllTabs = function() {
-      var tabCount, tabArray = [], i;
-      for (i = 1; i > 0; i++) {
-        if (typeof me.getTab(i) === 'undefined') {
-          break;
-        }
-      }
-      tabCount = i-1;
+    var ksAction_CloseSelectedTab = function() {
+      me.closeSelectedTab();
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.KS.set('TabSet_CloseSelectedTab', ksAction_CloseSelectedTab);
+    var ksAction_SelectParentTab = function() {
+      me.selectParentTab();
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.KS.set('TabSet_SelectParentTab', ksAction_SelectParentTab);
+    var ksAction_SelectChildTab = function() {
+      me.selectChildTab();
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.KS.set('TabSet_SelectChildTab', ksAction_SelectChildTab);
+    var ksAction_SelectPreviousTab = function() {
+      me.selectPreviousTab();
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.KS.set('TabSet_SelectPreviousTab', ksAction_SelectPreviousTab);
+    var ksAction_SelectNextTab = function() {
+      me.selectNextTab();
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.KS.set('TabSet_SelectNextTab', ksAction_SelectNextTab);
+    var ksAction_SelectWorkspaceTab = function() {
       me.selectTab(0);
-      for (i = 1; i <= tabCount; i++) {
-        tabArray.push(i);
-      }
-      me.removeTabs(tabArray);
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.KS.set('TabSet_closeAllTabs', ksAction_closeAllTabs);
-    var ksAction_ActivateRightTab = function() {
-      me.selectTab((me.getTabNumber(me.getSelectedTab()))+1);
-      if(typeof me.getSelectedTab().pane.focusTab === 'function') {
-        me.getSelectedTab().pane.focusTab();
-      }
-      return false; //To avoid keyboard shortcut propagation
-    };
-    OB.KeyboardManager.KS.set('TabSet_ActivateRightTab', ksAction_ActivateRightTab);
-    var ksAction_ActivateLeftTab = function() {
-      me.selectTab((me.getTabNumber(me.getSelectedTab()))-1);
-      if(typeof me.getSelectedTab().pane.focusTab === 'function') {
-        me.getSelectedTab().pane.focusTab();
-      }
-      return false; //To avoid keyboard shortcut propagation
-    };
-    OB.KeyboardManager.KS.set('TabSet_ActivateLeftTab', ksAction_ActivateLeftTab);
+    OB.KeyboardManager.KS.set('TabSet_SelectWorkspaceTab', ksAction_SelectWorkspaceTab);
     this.Super('draw', arguments);
+  },
+
+  closeAllTabs: function() { // Except "Workspace" tab
+    var tabCount, tabArray = [], i;
+    for (i = 1; i > 0; i++) {
+      if (typeof this.getTab(i) === 'undefined') {
+        break;
+      }
+    }
+    tabCount = i-1;
+    this.selectTab(0);
+    for (i = 1; i <= tabCount; i++) {
+      tabArray.push(i);
+    }
+    this.removeTabs(tabArray);
+  },
+
+  closeSelectedTab: function() { // Only if selected tab is closable
+    var selectedTab = this.getSelectedTab();
+    if (selectedTab.canClose) {
+      this.removeTabs(selectedTab);
+    }
+  },
+
+  selectParentTab : function() {
+    var tabSet = this,
+        tab = tabSet.getSelectedTab(),
+        ID = tab.ID,
+        tabNum = tabSet.getTabNumber(tab),
+        tabPane = tabSet.getTabPane(tab);
+
+    if (tabPane.selectParentTab) { //Redirect if tabPane has its own selectPreviousTab handler
+      tabPane.selectParentTab(tabSet);
+    }
+
+    return true;
+  },
+
+  selectChildTab : function() {
+    var tabSet = this,
+        tab = tabSet.getSelectedTab(),
+        ID = tab.ID,
+        tabNum = tabSet.getTabNumber(tab),
+        tabPane = tabSet.getTabPane(tab);
+
+    if (tabPane.selectChildTab) { //Redirect if tabPane has its own selectPreviousTab handler
+      tabPane.selectChildTab(tabSet);
+    }
+
+    return true;
+  },
+
+  selectPreviousTab : function(doDefaultAction) {
+    var tabSet = this,
+        tab = tabSet.getSelectedTab(),
+        ID = tab.ID,
+        tabNum = tabSet.getTabNumber(tab),
+        tabPane = tabSet.getTabPane(tab);
+
+    if (!doDefaultAction) {
+      doDefaultAction = false;
+    }
+
+    if (!doDefaultAction && tabPane.selectPreviousTab) { //Redirect if tabPane has its own selectPreviousTab handler
+      tabPane.selectPreviousTab(tabSet);
+    } else {
+      tabSet.selectTab(tabNum-1);
+    }
+
+    return true;
+  },
+
+  selectNextTab : function(doDefaultAction) {
+    var tabSet = this,
+        tab = tabSet.getSelectedTab(),
+        ID = tab.ID,
+        tabNum = tabSet.getTabNumber(tab),
+        tabPane = tabSet.getTabPane(tab);
+
+    if (!doDefaultAction) {
+      doDefaultAction = false;
+    }
+
+    if (!doDefaultAction && tabPane.selectNextTab) { //Redirect if tabPane has its own selectNextTab handler
+      tabPane.selectNextTab(tabSet);
+    } else {
+      tabSet.selectTab(tabNum+1);
+    }
+
+    return true;
   },
 
   // is used by selenium

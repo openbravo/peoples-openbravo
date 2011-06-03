@@ -103,7 +103,11 @@ public abstract class NumberUIDefinition extends UIDefinition {
     String fieldProperties = super.getFieldProperties(field);
     try {
       JSONObject o = new JSONObject(fieldProperties);
-      o.put("width", "50%");
+      if (field.isDisplayed() != null && field.isDisplayed()) {
+        o.put("width", "50%");
+      } else {
+        o.put("width", "");
+      }
       return o.toString();
     } catch (Exception e) { // ignore
       return fieldProperties;
@@ -114,7 +118,11 @@ public abstract class NumberUIDefinition extends UIDefinition {
   public String getFieldProperties(Field field, boolean getValueFromSession) {
     try {
       JSONObject o = new JSONObject(super.getFieldProperties(field, getValueFromSession));
-      o.put("width", "50%");
+      if (field.isDisplayed() != null && field.isDisplayed()) {
+        o.put("width", "50%");
+      } else {
+        o.put("width", "");
+      }
       // If a column has a numeric reference, and is required, and doesn't have a default, then
       // the default '0' is set
       if (!getValueFromSession && field.getColumn().isMandatory()
@@ -123,7 +131,11 @@ public abstract class NumberUIDefinition extends UIDefinition {
         final JSONObject jsonObject = new JSONObject();
         jsonObject.put("value", 0);
         jsonObject.put("classicValue", 0);
-        jsonObject.put("width", "50%");
+        if (field.isDisplayed() != null && field.isDisplayed()) {
+          o.put("width", "50%");
+        } else {
+          o.put("width", "");
+        }
         return jsonObject.toString();
       }
       return o.toString();

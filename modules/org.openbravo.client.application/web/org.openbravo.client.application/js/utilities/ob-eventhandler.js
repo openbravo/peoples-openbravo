@@ -40,6 +40,16 @@
       },
       
       processEvent: function(canvas) {
+        var onClickTarget = null, lastEvent = isc.EventHandler.lastEvent;
+        
+        // handle a special case:
+        // https://issues.openbravo.com/view.php?id=17439
+        // when setting the active view we loose the click
+        if (lastEvent && lastEvent.eventType === 'mouseDown' &&
+            lastEvent.DOMevent && lastEvent.DOMevent.target && lastEvent.DOMevent.target.onclick) {
+          onClickTarget = lastEvent.DOMevent.target;
+        }
+        
         if (!canvas) {
           return true;
         }
@@ -57,7 +67,14 @@
         
         do {
           if (canvas.view && canvas.view.setAsActiveView) {
+            // don't do this if already activec
+            if (canvas.view.isActiveView()) {
+              onClickTarget = null;
+            }
             canvas.view.setAsActiveView();
+            if (onClickTarget) {
+              onClickTarget.onclick();
+            }
             return true;
           }
           if (isc.FormItem.isA(canvas)) {

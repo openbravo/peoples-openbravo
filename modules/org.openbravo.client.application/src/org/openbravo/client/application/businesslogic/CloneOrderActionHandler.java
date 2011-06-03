@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
@@ -38,8 +37,8 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       String orderId = (String) parameters.get("orderId");
       Order objOrder = OBDal.getInstance().get(Order.class, orderId);
       Order objCloneOrder = (Order) DalUtil.copy(objOrder, false);
-      objCloneOrder.setSummedLineAmount(new BigDecimal("0"));
-      objCloneOrder.setGrandTotalAmount(new BigDecimal("0"));
+      BigDecimal bLineNetAmt = getLineNetAmt(orderId);
+
       objCloneOrder.setDocumentAction("CO");
       objCloneOrder.setDocumentStatus("DR");
       objCloneOrder.setPosted("N");
@@ -48,37 +47,35 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       objCloneOrder.setDocumentNo(null);
       // save the cloned order object
       OBDal.getInstance().save(objCloneOrder);
+
+      objCloneOrder.setSummedLineAmount(objCloneOrder.getSummedLineAmount().subtract(bLineNetAmt));
+      objCloneOrder.setGrandTotalAmount(objCloneOrder.getGrandTotalAmount().subtract(bLineNetAmt));
+
       // get the lines associated with the order and clone them to the new
       // order line.
-      List<OrderLine> lsOrderLines = getOrderLines(objOrder);
-
-      for (OrderLine ordLine : lsOrderLines) {
+      for (OrderLine ordLine : objOrder.getOrderLineList()) {
         String strPriceVersionId = getPriceListVersion(objOrder.getPriceList().getId(), objOrder
             .getClient().getId());
         BigDecimal bdPriceList = getPriceList(ordLine.getProduct().getId(), strPriceVersionId);
         OrderLine objCloneOrdLine = (OrderLine) DalUtil.copy(ordLine, false);
-        objCloneOrdLine.setReservedQuantity(new BigDecimal("0"));//
-        objCloneOrdLine.setDeliveredQuantity(new BigDecimal("0"));//
-        objCloneOrdLine.setInvoicedQuantity(new BigDecimal("0"));//
-        objCloneOrdLine.setListPrice(bdPriceList);//
+        objCloneOrdLine.setReservedQuantity(new BigDecimal("0"));
+        objCloneOrdLine.setDeliveredQuantity(new BigDecimal("0"));
+        objCloneOrdLine.setInvoicedQuantity(new BigDecimal("0"));
+        objCloneOrdLine.setListPrice(bdPriceList);
         objCloneOrder.getOrderLineList().add(objCloneOrdLine);
         objCloneOrdLine.setSalesOrder(objCloneOrder);
       }
+
       OBDal.getInstance().save(objCloneOrder);
+
       OBDal.getInstance().flush();
+      OBDal.getInstance().refresh(objCloneOrder);
       json = jsonConverter.toJsonObject(objCloneOrder, DataResolvingMode.FULL);
       OBDal.getInstance().commitAndClose();
       return json;
     } catch (Exception e) {
       throw new OBException(e);
     }
-  }
-
-  private List<OrderLine> getOrderLines(Order objOrder) throws ServletException {
-    String whereClause = "salesOrder = :objOrder";
-    OBQuery<OrderLine> qOrderLines = OBDal.getInstance().createQuery(OrderLine.class, whereClause);
-    qOrderLines.setNamedParameter("objOrder", objOrder);
-    return qOrderLines.list();
   }
 
   private String getPriceListVersion(String priceList, String clientId) {
@@ -116,4 +113,19 @@ public class CloneOrderActionHandler extends BaseActionHandler {
 
     return (bdPriceList);
   }
+
+  public static BigDecimal getLineNetAmt(String strOrderId) {
+
+    BigDecimal bdLineNetAmt = new BigDecimal("0");
+    final String readLineNetAmtHql = " select (ol.lineNetAmount + ol.freightAmount + ol.chargeAmount) as LineNetAmt from OrderLine ol where ol.salesOrder.id=?";
+    final Query readLineNetAmtQry = OBDal.getInstance().getSession().createQuery(readLineNetAmtHql);
+    readLineNetAmtQry.setString(0, strOrderId);
+
+    for (int i = 0; i < readLineNetAmtQry.list().size(); i++) {
+      bdLineNetAmt = bdLineNetAmt.add(((BigDecimal) readLineNetAmtQry.list().get(i)));
+    }
+
+    return bdLineNetAmt;
+  }
+
 }

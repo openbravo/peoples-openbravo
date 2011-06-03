@@ -101,19 +101,24 @@ public class TransactionsDao {
       newTransaction.setTransactionDate(payment.getPaymentDate());
       newTransaction.setActivity(payment.getActivity());
       newTransaction.setProject(payment.getProject());
-      newTransaction.setCurrency(payment.getCurrency());
+      newTransaction.setCurrency(payment.getAccount().getCurrency());
       newTransaction.setDescription(payment.getDescription().replace("\n", ". ").substring(0,
           payment.getDescription().length() > 254 ? 254 : payment.getDescription().length()));
       newTransaction.setClient(payment.getClient());
       newTransaction.setLineNo(getTransactionMaxLineNo(payment.getAccount()) + 10);
       newTransaction
           .setDepositAmount(payment.getDocumentType().getDocumentCategory().equals("ARR") ? payment
-              .getAmount() : BigDecimal.ZERO);
+              .getFinancialTransactionAmount() : BigDecimal.ZERO);
       newTransaction
           .setPaymentAmount(payment.getDocumentType().getDocumentCategory().equals("ARR") ? BigDecimal.ZERO
-              : payment.getAmount());
+              : payment.getFinancialTransactionAmount());
       newTransaction.setStatus(newTransaction.getDepositAmount().compareTo(
           newTransaction.getPaymentAmount()) > 0 ? "RPR" : "PPM");
+      if (!newTransaction.getCurrency().equals(payment.getCurrency())) {
+        newTransaction.setForeignCurrency(payment.getCurrency());
+        newTransaction.setForeignConversionRate(payment.getFinancialTransactionConvertRate());
+        newTransaction.setForeignAmount(payment.getAmount());
+      }
       OBDal.getInstance().save(newTransaction);
       OBDal.getInstance().flush();
     } finally {

@@ -13,7 +13,7 @@
  * The Initial Developer of the Original Code is Openbravo SLU
  * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
- * Contributor(s):  ______________________________________.
+ * Contributor(s): Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
  */
 package org.openbravo.advpaymentmngt.ad_actionbutton;
@@ -21,7 +21,9 @@ package org.openbravo.advpaymentmngt.ad_actionbutton;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,6 +31,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
@@ -48,12 +52,16 @@ import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.currency.ConversionRate;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
+import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -64,6 +72,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
+    int conversionRatePrecision = FIN_Utility.getConversionRatePrecision(vars);
 
     if (vars.commandIn("DEFAULT")) {
       final RequestFilter docTypeFilter = new ValueListFilter("RCIN", "PDOUT");
@@ -73,10 +82,11 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
           "inpFinFinancialAccountId", IsIDFilter.instance);
       String strFinBankStatementLineId = vars.getStringParameter("inpFinBankStatementLineId", "",
           IsIDFilter.instance);
+      String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
       String strTransactionDate = vars.getStringParameter("inpMainDate", "");
 
       printPage(response, vars, strFinancialAccountId, isReceipt, strFinBankStatementLineId,
-          strTransactionDate);
+          strTransactionDate, strCurrencyId, conversionRatePrecision);
 
     } else if (vars.commandIn("GRIDLIST")) {
       final String strBusinessPartnerId = vars.getRequestGlobalVariable("inpcBpartnerId", "");
@@ -87,6 +97,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       final String strTransDateFrom = vars.getStringParameter("inpTransDateFrom", "");
       final String strTransDateTo = vars.getStringParameter("inpTransDateTo", "");
       final String strDocumentType = vars.getStringParameter("inpDocumentType", "");
+      final String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
       final String strDocumentNo = vars.getStringParameter("inpDocumentNo", "");
       final String strSelectedPaymentDetails = vars.getInStringParameter(
           "inpScheduledPaymentDetailId", IsIDFilter.instance);
@@ -94,13 +105,14 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
 
       printGrid(response, vars, strFinancialAccountId, strBusinessPartnerId, strDueDateFrom,
           strDueDateTo, strTransDateFrom, strTransDateTo, strDocumentType, strDocumentNo,
-          strSelectedPaymentDetails, isReceipt);
+          strSelectedPaymentDetails, isReceipt, strCurrencyId);
 
     } else if (vars.commandIn("PAYMENTMETHODCOMBO")) {
       final String strBusinessPartnerId = vars.getRequestGlobalVariable("inpcBpartnerId", "");
       final String strFinancialAccountId = vars.getRequiredStringParameter("inpFinancialAccountId",
           IsIDFilter.instance);
-      refreshPaymentMethod(response, strBusinessPartnerId, strFinancialAccountId);
+      boolean isReceipt = "Y".equals(vars.getRequiredStringParameter("isReceipt"));
+      refreshPaymentMethod(response, strBusinessPartnerId, strFinancialAccountId, isReceipt);
 
     } else if (vars.commandIn("LOADCREDIT")) {
       final String strBusinessPartnerId = vars.getRequiredStringParameter("inpcBpartnerId");
@@ -114,6 +126,16 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       out.println(customerCredit);
       out.close();
 
+    } else if (vars.commandIn("EXCHANGERATE")) {
+      final String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
+      final String strFinancialAccountCurrencyId = vars.getRequestGlobalVariable(
+          "inpFinancialAccountCurrencyId", "");
+      final String strPaymentDate = vars.getRequestGlobalVariable("inpPaymentDate", "");
+      final String strFinancialAccountId = vars.getRequiredStringParameter("inpFinancialAccountId");
+      FIN_FinancialAccount fa = OBDal.getInstance().get(FIN_FinancialAccount.class,
+          strFinancialAccountId);
+      refreshExchangeRate(response, strCurrencyId, strFinancialAccountCurrencyId, strPaymentDate,
+          fa.getOrganization(), conversionRatePrecision);
     } else if (vars.commandIn("SAVE") || vars.commandIn("SAVEANDPROCESS")) {
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       String strAction = null;
@@ -139,6 +161,11 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       if (strDifferenceAction.equals("refund"))
         refundAmount = new BigDecimal(vars.getRequiredNumericParameter("inpDifference"));
       String strReferenceNo = vars.getStringParameter("inpReferenceNo", "");
+      String paymentCurrencyId = vars.getRequiredStringParameter("inpCurrencyId");
+      BigDecimal exchangeRate = new BigDecimal(vars.getRequiredNumericParameter("inpExchangeRate",
+          "1.0"));
+      BigDecimal convertedAmount = new BigDecimal(vars.getRequiredNumericParameter(
+          "inpActualConverted", strPaymentAmount));
       OBError message = null;
       // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
       // removed when new security implementation is done
@@ -182,7 +209,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
             .getDate(strPaymentDate), dao.getObject(FIN_FinancialAccount.class,
             strFinancialAccountId).getOrganization(), strReferenceNo, selectedPaymentDetails,
             selectedPaymentDetailAmounts, strDifferenceAction.equals("writeoff"),
-            strDifferenceAction.equals("refund"));
+            strDifferenceAction.equals("refund"), dao.getObject(Currency.class, paymentCurrencyId),
+            exchangeRate, convertedAmount);
 
         if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
             || strAction.equals("PPW")) {
@@ -248,7 +276,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strFinancialAccountId, boolean isReceipt, String strFinBankStatementLineId,
-      String strTransactionDate) throws IOException, ServletException {
+      String strTransactionDate, String strCurrencyId, int conversionRatePrecision)
+      throws IOException, ServletException {
     log4j.debug("Output: Add Payment button pressed on Add Transaction popup.");
     dao = new AdvPaymentMngtDao();
     String defaultPaymentMethod = "";
@@ -313,21 +342,70 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("documentType", dao.getObject(DocumentType.class, strDocTypeId)
         .getName());
 
+    Currency paymentCurrency;
+    if (strCurrencyId == null || strCurrencyId.isEmpty()) {
+      paymentCurrency = financialAccount.getCurrency();
+    } else {
+      paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
+    }
+
+    xmlDocument.setParameter("currencyId", paymentCurrency.getId());
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
+          "", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "AddPaymentFromTransaction"),
+          Utility.getContext(this, vars, "#User_Client", "AddPaymentFromTransaction"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "AddPaymentFromTransaction",
+          strCurrencyId);
+      xmlDocument.setData("reportCurrencyId", "liststructure", comboTableData.select(false));
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
     xmlDocument.setParameter("financialAccountId", strFinancialAccountId);
     xmlDocument.setParameter("financialAccount", financialAccount.getIdentifier());
-    OBContext.setAdminMode();
-    try {
-      xmlDocument.setParameter("currency", financialAccount.getCurrency().getISOCode());
-      xmlDocument.setParameter("precision", financialAccount.getCurrency().getStandardPrecision()
-          .toString());
-    } finally {
-      OBContext.restorePreviousMode();
+
+    final Currency financialAccountCurrency = dao
+        .getFinancialAccountCurrency(strFinancialAccountId);
+    if (financialAccountCurrency != null) {
+      xmlDocument.setParameter("financialAccountCurrencyId", financialAccountCurrency.getId());
+      xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
+          .getStandardPrecision().toString());
     }
+
+    String exchangeRate = "1.0";
+    if (financialAccountCurrency != null && !financialAccountCurrency.equals(paymentCurrency)) {
+      exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, new Date(),
+          financialAccount.getOrganization(), conversionRatePrecision);
+    }
+    xmlDocument.setParameter("exchangeRate", exchangeRate);
 
     // Payment Method combobox
     String paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(defaultPaymentMethod,
-        strFinancialAccountId, financialAccount.getOrganization().getId(), true, true);
+        strFinancialAccountId, financialAccount.getOrganization().getId(), true, true, isReceipt);
     xmlDocument.setParameter("sectionDetailPaymentMethod", paymentMethodComboHtml);
+
+    final List<FinAccPaymentMethod> paymentMethods = financialAccount
+        .getFinancialMgmtFinAccPaymentMethodList();
+    JSONObject json = new JSONObject();
+    try {
+      for (FinAccPaymentMethod method : paymentMethods) {
+        if (isReceipt) {
+          json.put(method.getPaymentMethod().getId(), method.isPayinIsMulticurrency());
+        } else {
+          json.put(method.getPaymentMethod().getId(), method.isPayoutIsMulticurrency());
+        }
+      }
+    } catch (JSONException e) {
+      log4j.error("JSON object error" + json.toString());
+    }
+    StringBuilder sb = new StringBuilder();
+    sb.append("<script language='JavaScript' type='text/javascript'>");
+    sb.append("var paymentMethodMulticurrency = ");
+    sb.append(json.toString());
+    sb.append(";");
+    sb.append("</script>");
+    xmlDocument.setParameter("sectionDetailPaymentMethodMulticurrency", sb.toString());
 
     xmlDocument.setParameter("dateDisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
 
@@ -355,8 +433,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
   private void printGrid(HttpServletResponse response, VariablesSecureApp vars,
       String strFinancialAccountId, String strBusinessPartnerId, String strDueDateFrom,
       String strDueDateTo, String strTransDateFrom, String strTransDateTo, String strDocumentType,
-      String strDocumentNo, String strSelectedPaymentDetails, boolean isReceipt)
-      throws IOException, ServletException {
+      String strDocumentNo, String strSelectedPaymentDetails, boolean isReceipt,
+      String strCurrencyId) throws IOException, ServletException {
 
     log4j.debug("Output: Grid with pending payments");
 
@@ -379,13 +457,19 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     // If business partner and document number are empty search for all filtered scheduled payments
     // list
     if (!"".equals(strBusinessPartnerId) || !"".equals(strDocumentNo)) {
+      Currency paymentCurrency;
+      if (strCurrencyId == null || strCurrencyId.isEmpty()) {
+        paymentCurrency = financialAccount.getCurrency();
+      } else {
+        paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
+      }
+
       filteredScheduledPaymentDetails = dao.getFilteredScheduledPaymentDetails(financialAccount
           .getOrganization(), dao.getObject(BusinessPartner.class, strBusinessPartnerId),
-          financialAccount.getCurrency(), FIN_Utility.getDate(strDueDateFrom), FIN_Utility
-              .getDate(DateTimeData.nDaysAfter(this, strDueDateTo, "1")), FIN_Utility
-              .getDate(strTransDateFrom), FIN_Utility.getDate(DateTimeData.nDaysAfter(this,
-              strTransDateTo, "1")), strDocumentType, strDocumentNo, null,
-          selectedScheduledPaymentDetails, isReceipt);
+          paymentCurrency, FIN_Utility.getDate(strDueDateFrom), FIN_Utility.getDate(DateTimeData
+              .nDaysAfter(this, strDueDateTo, "1")), FIN_Utility.getDate(strTransDateFrom),
+          FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strTransDateTo, "1")), strDocumentType,
+          strDocumentNo, null, selectedScheduledPaymentDetails, isReceipt);
     }
     final FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
         selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null);
@@ -398,7 +482,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
   }
 
   private void refreshPaymentMethod(HttpServletResponse response, String strBusinessPartnerId,
-      String strFinancialAccountId) throws IOException, ServletException {
+      String strFinancialAccountId, boolean isReceipt) throws IOException, ServletException {
     log4j.debug("Callout: Business Partner has changed to" + strBusinessPartnerId);
 
     String paymentMethodComboHtml = "";
@@ -407,7 +491,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, strBusinessPartnerId);
     paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(
         (bp != null && bp.getPaymentMethod() != null) ? bp.getPaymentMethod().getId() : null,
-        strFinancialAccountId, account.getOrganization().getId(), true, true);
+        strFinancialAccountId, account.getOrganization().getId(), true, true, isReceipt);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -448,6 +532,47 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       }
     }
     return currentBPId != null ? OBDal.getInstance().get(BusinessPartner.class, currentBPId) : null;
+  }
+
+  private void refreshExchangeRate(HttpServletResponse response, String strCurrencyId,
+      String strFinancialAccountCurrencyId, String strPaymentDate, Organization organization,
+      int conversionRatePrecision) throws IOException, ServletException {
+
+    dao = new AdvPaymentMngtDao();
+
+    final Currency financialAccountCurrency = dao.getObject(Currency.class,
+        strFinancialAccountCurrencyId);
+    final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
+
+    String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, FIN_Utility
+        .getDate(strPaymentDate), organization, conversionRatePrecision);
+
+    JSONObject msg = new JSONObject();
+    try {
+      msg.put("exchangeRate", exchangeRate);
+    } catch (JSONException e) {
+      log4j.error("JSON object error" + msg.toString());
+    }
+    response.setContentType("application/json; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(msg.toString());
+    out.close();
+  }
+
+  private String findExchangeRate(Currency paymentCurrency, Currency financialAccountCurrency,
+      Date paymentDate, Organization organization, int conversionRatePrecision) {
+    String exchangeRate = "1.0";
+    if (!financialAccountCurrency.equals(paymentCurrency)) {
+      final ConversionRate conversionRate = FIN_Utility.getConversionRate(paymentCurrency,
+          financialAccountCurrency, paymentDate, organization);
+      if (conversionRate == null) {
+        exchangeRate = "";
+      } else {
+        exchangeRate = conversionRate.getMultipleRateBy().setScale(conversionRatePrecision,
+            RoundingMode.HALF_UP).toPlainString();
+      }
+    }
+    return exchangeRate;
   }
 
   private FieldProvider[] set() throws ServletException {

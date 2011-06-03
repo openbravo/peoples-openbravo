@@ -106,6 +106,10 @@ isc.OBApplicationMenuTree.addProperties({
     if (this.hideStyle) {
       this.hideStyle();
     }
+
+    if (typeof OB.MainView.TabSet.getSelectedTab().pane.tabSelected === 'function') {
+      OB.MainView.TabSet.getSelectedTab().pane.tabSelected();
+    }
   },
 
   itemClick: function(item, colNum) {
@@ -161,11 +165,6 @@ isc.OBApplicationMenuButton.addProperties({
         isc.EH.clickMaskClick();
       }
       me.click();
-      if (!me.menu.showing) {
-        if(typeof OB.MainView.TabSet.getSelectedTab().pane.focusTab === 'function') {
-          OB.MainView.TabSet.getSelectedTab().pane.focusTab();
-        }
-      }
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction);

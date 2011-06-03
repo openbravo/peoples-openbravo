@@ -116,7 +116,8 @@ isc.OBViewGrid.addProperties({
   
   emptyMessage: OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage'),
   discardEditsSaveButtonTitle: OB.I18N.getLabel('UINAVBA_Save'),
-
+  editPendingCSSText: null,
+  
   // commented out because of: https://issues.openbravo.com/view.php?id=16515
   // default is much smaller which give smoother scrolling
 //  quickDrawAheadRatio: 1.0,
@@ -272,8 +273,12 @@ isc.OBViewGrid.addProperties({
       this.sorterDefaults = {};
     }
     
-    this.contextMenu = this.getMenuConstructor().create({items: menuItems});
-
+	// TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
+    // add context-menu only if 'new' is allowed in tab definition
+    if (this.uiPattern !== 'SR' && this.uiPattern !== 'RO') {
+      this.contextMenu = this.getMenuConstructor().create({items: menuItems});
+    }
+  
     var ret = this.Super('initWidget', arguments);
     
     this.noDataEmptyMessage = OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage'); // OB.I18N.getLabel('OBUIAPP_GridNoRecords')
@@ -294,6 +299,33 @@ isc.OBViewGrid.addProperties({
 
   refreshFields: function(){
     this.setFields(this.completeFields.duplicate());
+  },
+  
+  draw: function() {
+    var drawnBefore = this.isDrawn(), form;
+    this.Super('draw', arguments);
+    // set the focus in the filter editor
+    if (this.view && this.view.isActiveView() && !drawnBefore && this.isVisible() &&
+        this.getFilterEditor() && this.getFilterEditor().getEditForm()) {
+      // there is a filter editor
+      form = this.getFilterEditor().getEditForm();
+      
+      // compute a focus item, set focus with some delay
+      // to give everyone time to be ready
+      if (!form.getFocusItem()) {
+        items = form.getItems();
+
+        for (i = 0; i < items.length; i++) {
+          item = items[i];
+          if (item.getCanFocus() && !item.isDisabled()) {
+            item.delayCall('focusInItem', null, 100);
+            break;
+          }
+        }
+      } else {
+        form.getFocusItem().delayCall('focusInItem', null, 100);
+      }
+    }
   },
   
   // add the properties from the form
@@ -419,18 +451,18 @@ isc.OBViewGrid.addProperties({
   // called when the view gets activated
   setActive: function(active) {
     if (active) {
-      this.enableKeyBoardShortCuts();
+      this.enableShortcuts();
     } else {
-      this.disableKeyBoardShortCuts();
-    }    
+      this.disableShortcuts();
+    }
   },
 
-  disableKeyBoardShortCuts: function() {
+  disableShortcuts: function() {
     OB.KeyboardManager.KS.set('Grid_EditInGrid', function() { return true; });
     OB.KeyboardManager.KS.set('Grid_EditInForm', function() { return true; });
   },
   
-  enableKeyBoardShortCuts: function() {
+  enableShortcuts: function() {
     var grid = this;
     var editInGridAction = function(){
       if (grid.getSelectedRecords().length === 1) {
@@ -540,7 +572,8 @@ isc.OBViewGrid.addProperties({
   // - if there is only one record then select it directly
   dataArrived: function(startRow, endRow){
     // do this now, to replace the loading message
-    if (this.view.readOnly) {
+    // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
+    if (this.uiPattern === 'SR' || this.uiPattern === 'RO') {
       this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_NoDataInGrid');
     } else {
       this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridNoRecords') +
@@ -937,57 +970,6 @@ isc.OBViewGrid.addProperties({
       this.show();
     }
   },
-
-  toggleSort: function(fieldName, direction) {
-    var fld = this.getField(fieldName);
-    if (fld && fld.displayField) {
-      this.Super('toggleSort', [fld.displayField, direction]);
-    } else {
-      this.Super('toggleSort', arguments);
-    }
-  },
-  
-  getSortSpecifier : function (fieldName) {
-    var fld = this.getField(fieldName), ret;
-    if (fld && fld.displayField) {
-      ret = this.Super('getSortSpecifier', [fld.displayField]);
-    } else {
-      ret = this.Super('getSortSpecifier', arguments);
-    }
-    return ret;
-  },
-
-  // overridden to solve an issue that for fields with a displayfield no 
-  // sort arrow is shown
-  setSort: function(sortSpecs) {
-    var i, specifier, dotIndex, sortHeader, sortButton, property, field, fieldNum, ret = this.Super('setSort', arguments);
-    
-    if (sortSpecs && sortSpecs.length > 0) {
-      // set the sort indicators on any fields that are sorted and are visible
-      for (i = 0; i < sortSpecs.length; i++) {
-        specifier = sortSpecs[i];
-        property = specifier.property;
-        if (!property.endsWith(OB.Constants.IDENTIFIER)) {
-          continue;
-        }
-        property = property.substring(0, property.length - 1 - OB.Constants.IDENTIFIER.length);
-        field = this.getSpecifiedField(property);
-        fieldNum = this.getFieldNum(property);
-        sortHeader = this.getFieldHeader(fieldNum);
-        if (sortHeader) {
-          sortButton = sortHeader.getMember(this.getLocalFieldNum(fieldNum));
-          if (sortButton) {
-            if (field) {
-              field.sortDirection = Array.shouldSortAscending(specifier.direction);
-            }
-            sortHeader.selectButton(sortButton);
-            sortButton.setTitle(this.getHeaderButtonTitle(sortButton));
-          }
-        }
-      }
-    }
-    return ret;
-  },
   
   // determine which field can be autoexpanded to use extra space
   getAutoFitExpandField: function() {
@@ -1108,13 +1090,15 @@ isc.OBViewGrid.addProperties({
 //      });
     }
 
-    menuItems.add({
-      title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
-      keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','ToolBar_NewRow','id'),
-      click: function(){
-        grid.startEditingNew(rowNum);
-      }
-    });
+    if (!this.view.singleRecord && !this.view.readOnly) {
+      menuItems.add({
+        title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
+        keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','ToolBar_NewRow','id'),
+        click: function(){
+          grid.startEditingNew(rowNum);
+        }
+      });
+    }
 //    menuItems.add({
 //      title: OB.I18N.getLabel('OBUIAPP_CreateRecordInForm'),
 //      click: function(){
@@ -1159,7 +1143,7 @@ isc.OBViewGrid.addProperties({
         }
       });
     }
-    if (recordsSelected && !this.view.readOnly && this.allSelectedRecordsWritable()) {
+    if (recordsSelected && !this.view.readOnly && !this.view.singleRecord && this.allSelectedRecordsWritable()) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_Delete'),
         keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','ToolBar_Eliminate','id'),
@@ -1428,8 +1412,16 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
+    
     if (colNum || colNum === 0) {
       this.forceFocusColumn = this.getField(colNum).name;
+    } else {
+      // set the first focused column
+      for (i = 0; i < this.getFields().length; i++) {
+        if (this.getFields()[i].editorProperties && this.getFields()[i].editorProperties.firstFocusedField) {
+          colNum = i;
+        }
+      }    
     }
 
     ret = this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
@@ -1795,7 +1787,7 @@ isc.OBViewGrid.addProperties({
       newValues = this.getEditValues(editValuesID);
     } else {
       var editForm = this.getEditForm(), focusItem = editForm.getFocusItem();
-      if (focusItem) {
+      if (focusItem && !focusItem.hasPickList) {
         focusItem.updateValue();
         editForm.handleItemChange(focusItem);
         if (editForm.inFicCall) {
@@ -1838,7 +1830,6 @@ isc.OBViewGrid.addProperties({
         isc.Log.logDebug('hideInlineEditor has NO record and editColumnLayout', 'OB');
       }
       this.view.isEditingGrid = false;
-      this.refreshRow(rowNum);
     }
 
     if (editForm) {
@@ -1866,6 +1857,7 @@ isc.OBViewGrid.addProperties({
   },
   
   showInlineEditor: function(rowNum, colNum, newCell, newRow, suppressFocus){
+    var fld;
     
     this._showingEditor = true;
     
@@ -1889,6 +1881,9 @@ isc.OBViewGrid.addProperties({
       // set the field to focus on after returning from the fic
       this.getEditForm().forceFocusedField = this.forceFocusColumn;
       delete this.forceFocusColumn;
+    } else if (colNum || colNum === 0) {
+      fld = this.getField(colNum);
+      this.getEditForm().forceFocusedField = fld.name;
     }
     
     var record = this.getRecord(rowNum);
@@ -2047,9 +2042,6 @@ isc.OBViewGrid.addProperties({
   
   // we are being reshown, get new values for the combos
   visibilityChanged: function(visible){
-    if (visible && this.view.isActiveView()) {      
-      this.enableKeyBoardShortCuts();
-    }
     if (visible && this.getEditRow()) {
       this.getEditForm().doChangeFICCall();
     }

@@ -191,23 +191,6 @@ isc.OBSelectorPopupWindow.addProperties({
       gridField.filterEditorProperties.showTitle = false;
       gridField.filterEditorProperties.selectorWindow = selectorWindow;
       gridField.filterEditorProperties.textMatchStyle = selectorWindow.selector.popupTextMatchStyle;
-      
-      // add the icon on the right to the other icons
-      //      var icons = gridField.filterEditorProperties.icons;
-      //      var iconsLength = icons.length;
-      //      icons[iconsLength] = {
-      //        showDown: true,
-      //        showDownIcon: true,
-      //        showFocused: true,
-      //        showOver: true,
-      //        src: '[SKINIMG]../../org.openbravo.client.application/images/form/filterClear.png',
-      //        // note unsupportedfeature:
-      //        // http://forums.smartclient.com/showthread.php?p=34868
-      //        width: 15,
-      //        height: 15,
-      //        hspace: 0,
-      //        click: clickFunction
-      //      };
     }
   },
   
@@ -341,12 +324,12 @@ isc.OBSelectorItem.addProperties({
   // get the display value
   // https://issues.openbravo.com/view.php?id=16611
   setValue: function(newValue) {
-	  if (!this.valueMap) {
-	    this.valueMap = {};
+    if (!this.valueMap) {
+      this.valueMap = {};
     }
     if (this.form && this.form.getValues() && this.form.getValues()[this.name] === newValue &&
         this.form.getValues()[this.name + '._identifier']) {
-      this.valueMap[newValue] = this.form.getValues()[this.name + '._identifier'];
+      this.form.setValue(this.name + '._identifier', this.valueMap[newValue]);
     }
     if (newValue === '') {
       this.valueMap[newValue] = '';
@@ -502,8 +485,7 @@ isc.OBSelectorItem.addProperties({
       requestProperties.params[OB.Constants.ORG_PARAMETER] = requestProperties.params.inpadOrgId;
     }
     
-    var criteria = this.getPickListFilterCriteria(),
-        i;
+    var criteria = this.getPickListFilterCriteria(), i;
     for (i = 0; i < criteria.criteria.length; i++) {
       if (criteria.criteria[i].fieldName === this.displayField) {
         // for the suggestion box it is one big or
@@ -533,8 +515,6 @@ isc.OBSelectorItem.addProperties({
     var criteria = { operator: 'or',
                      _constructor: 'AdvancedCriteria',
                      criteria:[]};
-
-    var contextInfo = this.form.view.getContextInfo(false, true);
 
     // add a dummy criteria to force a fetch
     criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());

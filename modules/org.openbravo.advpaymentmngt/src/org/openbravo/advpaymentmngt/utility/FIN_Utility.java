@@ -19,7 +19,9 @@
 
 package org.openbravo.advpaymentmngt.utility;
 
+import java.math.BigDecimal;
 import java.sql.BatchUpdateException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -48,6 +51,8 @@ import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Sequence;
+import org.openbravo.model.common.currency.ConversionRate;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -294,9 +299,12 @@ public class FIN_Utility {
   public static DocumentType getDocumentType(Organization org, String docCategory) {
     DocumentType outDocType = null;
     OBCriteria<DocumentType> obcDoc = OBDal.getInstance().createCriteria(DocumentType.class);
+    obcDoc.setFilterOnReadableClients(false);
+    obcDoc.setFilterOnReadableOrganization(false);
 
-    obcDoc.add(Restrictions.in("organization.id", OBContext.getOBContext()
-        .getOrganizationStructureProvider().getParentTree(org.getId(), true)));
+    obcDoc.add(Restrictions
+        .in("organization.id", OBContext.getOBContext().getOrganizationStructureProvider(
+            org.getClient().getId()).getParentTree(org.getId(), true)));
     obcDoc.add(Restrictions.eq(DocumentType.PROPERTY_DOCUMENTCATEGORY, docCategory));
     obcDoc.addOrderBy(DocumentType.PROPERTY_DEFAULT, false);
     obcDoc.addOrderBy(DocumentType.PROPERTY_ID, false);
@@ -335,7 +343,7 @@ public class FIN_Utility {
           nextDocNumber += seq.getSuffix();
         seq.setNextAssignedNumber(seq.getNextAssignedNumber() + seq.getIncrementBy());
         OBDal.getInstance().save(seq);
-        OBDal.getInstance().flush();
+        // OBDal.getInstance().flush();
       }
     }
 
@@ -382,12 +390,49 @@ public class FIN_Utility {
    *          Payment Methods that belongs to at least on Financial Account
    * @return a String with the html code with the options to fill the drop-down of Payment Methods.
    */
+  @Deprecated
   public static String getPaymentMethodList(String strPaymentMethodId,
       String strFinancialAccountId, String strOrgId, boolean isMandatory,
       boolean excludePaymentMethodWithoutAccount) {
     dao = new AdvPaymentMngtDao();
     List<FIN_PaymentMethod> paymentMethods = dao.getFilteredPaymentMethods(strFinancialAccountId,
-        strOrgId, excludePaymentMethodWithoutAccount);
+        strOrgId, excludePaymentMethodWithoutAccount, AdvPaymentMngtDao.PaymentDirection.EITHER);
+    String options = getOptionsList(paymentMethods, strPaymentMethodId, isMandatory);
+    return options;
+  }
+
+  /**
+   * Gets the available Payment Methods and returns in a String the html code containing all the
+   * Payment Methods in the natural tree of the given organization filtered by the Financial
+   * Account.
+   * 
+   * @param strPaymentMethodId
+   *          the Payment Method id that will be selected by default in case it is present in the
+   *          list.
+   * @param strFinancialAccountId
+   *          optional Financial Account id to filter the Payment Methods.
+   * @param strOrgId
+   *          the Organization id the record belongs to.
+   * @param isMandatory
+   *          boolean parameter to add an extra blank option if the drop-down is optional.
+   * @param excludePaymentMethodWithoutAccount
+   *          if the strPaymentMethodId is empty or null then depending on this parameter the list
+   *          will include payment methods with no Financial Accounts associated or only show the
+   *          Payment Methods that belongs to at least on Financial Account
+   * @param isInPayment
+   *          specifies the type of payment to get payment methods for. If true, will return payment
+   *          methods with Payment In enabled, if false will return payment methods with Payment Out
+   *          enabled.
+   * @return a String with the html code with the options to fill the drop-down of Payment Methods.
+   */
+  public static String getPaymentMethodList(String strPaymentMethodId,
+      String strFinancialAccountId, String strOrgId, boolean isMandatory,
+      boolean excludePaymentMethodWithoutAccount, boolean isInPayment) {
+    dao = new AdvPaymentMngtDao();
+    List<FIN_PaymentMethod> paymentMethods = dao.getFilteredPaymentMethods(strFinancialAccountId,
+        strOrgId, excludePaymentMethodWithoutAccount,
+        isInPayment ? AdvPaymentMngtDao.PaymentDirection.IN
+            : AdvPaymentMngtDao.PaymentDirection.OUT);
     String options = getOptionsList(paymentMethods, strPaymentMethodId, isMandatory);
     return options;
   }
@@ -409,10 +454,44 @@ public class FIN_Utility {
    * @return a String with the html code with the options to fill the drop-down of Financial
    *         Accounts.
    */
+  @Deprecated
   public static String getFinancialAccountList(String strPaymentMethodId,
       String strFinancialAccountId, String strOrgId, boolean isMandatory, String strCurrencyId) {
     List<FIN_FinancialAccount> financialAccounts = dao.getFilteredFinancialAccounts(
-        strPaymentMethodId, strOrgId, strCurrencyId);
+        strPaymentMethodId, strOrgId, strCurrencyId, AdvPaymentMngtDao.PaymentDirection.EITHER);
+    String options = getOptionsList(financialAccounts, strFinancialAccountId, isMandatory);
+    return options;
+  }
+
+  /**
+   * Gets the available Financial Accounts and returns in a String the html code containing all the
+   * Financial Accounts in the natural tree of the given organization filtered by the Payment
+   * Method.
+   * 
+   * @param strPaymentMethodId
+   *          optional Payment Method id to filter the Financial Accounts.
+   * @param strFinancialAccountId
+   *          the Financial Account id that will be selected by default in case it is present in the
+   *          list.
+   * @param strOrgId
+   *          the Organization id the record belongs to.
+   * @param strCurrencyId
+   *          optional Currency id to filter the Financial Accounts.
+   * @param isInPayment
+   *          specifies the type of payment to that is being made. If true, will return accounts
+   *          with payment methods that have Payment In enabled, if false will return accounts with
+   *          payment methods that have Payment Out enabled.
+   * @return a String with the html code with the options to fill the drop-down of Financial
+   *         Accounts.
+   */
+  public static String getFinancialAccountList(String strPaymentMethodId,
+      String strFinancialAccountId, String strOrgId, boolean isMandatory, String strCurrencyId,
+      boolean isInPayment) {
+
+    List<FIN_FinancialAccount> financialAccounts = dao.getFilteredFinancialAccounts(
+        strPaymentMethodId, strOrgId, strCurrencyId,
+        isInPayment ? AdvPaymentMngtDao.PaymentDirection.IN
+            : AdvPaymentMngtDao.PaymentDirection.OUT);
     String options = getOptionsList(financialAccounts, strFinancialAccountId, isMandatory);
     return options;
   }
@@ -612,6 +691,138 @@ public class FIN_Utility {
       return null;
     }
 
+  }
+
+  public static BigDecimal getDepositAmount(Boolean isReceipt, BigDecimal amount) {
+    BigDecimal deposit = BigDecimal.ZERO;
+    if (isReceipt) {
+      if (amount.compareTo(BigDecimal.ZERO) == 1) {
+        deposit = amount;
+      }
+      // else received payment was negative so treat as payment
+    } else {
+      if (amount.compareTo(BigDecimal.ZERO) == -1) {
+        // Negative payment out is a deposit
+        deposit = amount.abs();
+      }
+    }
+    return deposit;
+  }
+
+  public static BigDecimal getPaymentAmount(Boolean isReceipt, BigDecimal amount) {
+    BigDecimal payment = BigDecimal.ZERO;
+    if (isReceipt) {
+      if (amount.compareTo(BigDecimal.ZERO) == -1) {
+        // Negative payment in, treat as payment
+        payment = amount.abs();
+      }
+    } else {
+      if (amount.compareTo(BigDecimal.ZERO) == 1) {
+        payment = amount;
+      }
+      // else sent payment was negative so treat as deposit
+    }
+    return payment;
+
+  }
+
+  /**
+   * Convert a multi currency amount to a string for display in the UI. If amount has been converted
+   * to a different currency, then output that converted amount and currency as well
+   * 
+   * @param amt
+   *          Amount of payment
+   * @param currency
+   *          Currency payment was made in
+   * @param convertedAmt
+   *          Amount of payment in converted currency
+   * @param convertedCurrency
+   *          Currency payment was converted to/from
+   * @return String version of amount formatted for display to user
+   */
+  public static String multiCurrencyAmountToDisplay(BigDecimal amt, Currency currency,
+      BigDecimal convertedAmt, Currency convertedCurrency) {
+    StringBuffer out = new StringBuffer();
+    final UIDefinitionController.FormatDefinition formatDef = UIDefinitionController.getInstance()
+        .getFormatDefinition("euro", "Edition");
+    DecimalFormat amountFormatter = new DecimalFormat(formatDef.getFormat());
+    amountFormatter.setMaximumFractionDigits(currency.getStandardPrecision().intValue());
+
+    out.append(amountFormatter.format(amt));
+    if (convertedCurrency != null && !currency.equals(convertedCurrency)
+        && amt.compareTo(BigDecimal.ZERO) != 0) {
+      amountFormatter.setMaximumFractionDigits(convertedCurrency.getStandardPrecision().intValue());
+      out.append(" (").append(amountFormatter.format(convertedAmt)).append(" ").append(
+          convertedCurrency.getISOCode()).append(")");
+    }
+
+    return out.toString();
+  }
+
+  /**
+   * Determine the conversion rate from one currency to another on a given date. Will use the spot
+   * conversion rate defined by the system for that date
+   * 
+   * @param fromCurrency
+   *          Currency to convert from
+   * @param toCurrency
+   *          Currency being converted to
+   * @param conversionDate
+   *          Date conversion is being performed
+   * @return A valid conversion rate for the parameters, or null if no conversion rate can be found
+   */
+  public static ConversionRate getConversionRate(Currency fromCurrency, Currency toCurrency,
+      Date conversionDate, Organization org) {
+    java.util.List<ConversionRate> conversionRateList;
+    ConversionRate conversionRate;
+    OBContext.setAdminMode(true);
+    try {
+      final OBCriteria<ConversionRate> obcConvRate = OBDal.getInstance().createCriteria(
+          ConversionRate.class);
+      obcConvRate.setFilterOnReadableOrganization(false);
+      obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_ORGANIZATION, org));
+      obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY, fromCurrency));
+      obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, toCurrency));
+      obcConvRate.add(Restrictions.le(ConversionRate.PROPERTY_VALIDFROMDATE, conversionDate));
+      obcConvRate.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, conversionDate));
+      conversionRateList = obcConvRate.list();
+      if ((conversionRateList != null) && (conversionRateList.size() != 0)) {
+        conversionRate = conversionRateList.get(0);
+      } else {
+        if ("0".equals(org.getId())) {
+          conversionRate = null;
+        } else {
+          return getConversionRate(fromCurrency, toCurrency, conversionDate, OBDal.getInstance()
+              .get(
+                  Organization.class,
+                  OBContext.getOBContext().getOrganizationStructureProvider().getParentOrg(
+                      org.getId())));
+        }
+      }
+    } catch (Exception e) {
+      log4j.error(e);
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return conversionRate;
+  }
+
+  public static int getConversionRatePrecision(VariablesSecureApp vars) {
+    try {
+      String formatOutput = vars.getSessionValue("#FormatOutput|generalQtyEdition", "#0.######");
+      String decimalSeparator = vars.getSessionValue("#DecimalSeparator|generalQtyEdition", ".");
+      if (formatOutput.contains(decimalSeparator)) {
+        formatOutput = formatOutput.substring(formatOutput.indexOf(decimalSeparator), formatOutput
+            .length());
+        return formatOutput.length() - decimalSeparator.length();
+      } else {
+        return 0;
+      }
+    } catch (Exception e) {
+      log4j.error(e);
+      return 6; // by default precision of 6 decimals as is defaulted in Format.xml
+    }
   }
 
 }

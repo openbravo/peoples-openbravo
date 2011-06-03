@@ -18,6 +18,7 @@
 */
 
 isc.OBViewGrid.create({
+    uiPattern: '${data.uiPattern}', 
     fields:[
     <#list data.fields as field>
         { 

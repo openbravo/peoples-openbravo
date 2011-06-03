@@ -60,18 +60,6 @@ used as model:
   src/org/openbravo/erpCommon/ad_forms        ProductInfo_data.xsql         server/src/org/compiere/acct    ProductInfo.java
   src/org/openbravo/erpCommon/ad_forms        Translation.java              client/Src/org/compiere/install Translation.java
   src/org/openbravo/erpCommon/ad_forms        TranslationHandler.java       client/Src/org/compiere/install TranslationHandler.java
-  src/org/openbravo/erpCommon/process         ImportAccount.java            base/src/org/compiere/process   ImportAccount.java
-  src/org/openbravo/erpCommon/process         ImportAccountServlet.java     base/src/org/compiere/process   ImportAccount.java
-  src/org/openbravo/erpCommon/process         ImportAccount_data.xsql       base/src/org/compiere/process   ImportAccount.java
-  src/org/openbravo/erpCommon/process         ImportBPartner.java           base/src/org/compiere/process   ImportBPartner.java
-  src/org/openbravo/erpCommon/process         ImportBPartnerServlet.java    base/src/org/compiere/process   ImportBPartner.java
-  src/org/openbravo/erpCommon/process         ImportBPartner_data.xsql      base/src/org/compiere/process   ImportBPartner.java
-  src/org/openbravo/erpCommon/process         ImportOrder.java              base/src/org/compiere/process   ImportOrder.java
-  src/org/openbravo/erpCommon/process         ImportOrderServlet.java       base/src/org/compiere/process   ImportOrder.java
-  src/org/openbravo/erpCommon/process         ImportOrderServlet_data.xsql  base/src/org/compiere/process   ImportOrder.java
-  src/org/openbravo/erpCommon/process         ImportOrder_data.xsql         base/src/org/compiere/process   ImportOrder.java
-  src/org/openbravo/erpCommon/ad_process      SendMailText.java             base/src/org/compiere/process   SendMailText.java
-  src/org/openbravo/erpCommon/ad_process      SendMailText_data.xsql        base/src/org/compiere/process   SendMailText.java
   src/org/openbravo/erpCommon/businessUtility AccountTree.java              base/src/org/compiere/model     Account.java
   src/org/openbravo/erpCommon/businessUtility AccountTree_data.xsql         base/src/org/compiere/model     Account.java
   src/org/openbravo/erpCommon/businessUtility ByteArrayDatasource.java      base/src/org/compiere/util      ByteArrayDataSource.java
@@ -91,7 +79,6 @@ themselves. Each file properly identifies Compiere Inc. as the original
 developer using comments.
   Type          Name
   ----          ----
-  FUNCTION      AD_MESSAGE_GET
   FUNCTION      AD_SEQUENCE_NEXTNO
   FUNCTION      M_BOM_PRICELIMIT (original name: BOM_PRICELIMIT)
   FUNCTION      M_BOM_PRICELIST (original name: BOM_PRICELIST)
@@ -106,10 +93,7 @@ developer using comments.
   FUNCTION      C_CURRENCY_RATE
   FUNCTION      C_CURRENCY_ROUND
   FUNCTION      C_UOM_CONVERT
-  FUNCTION      GL_PERIOD_OPEN
-  FUNCTION      R_REQUEST_DUETYPE
   PROCEDURE     A_ASSET_CREATE
-  PROCEDURE     AD_IMPFORMAT_COPY
   PROCEDURE     AD_LANGUAGE_CREATE
   PROCEDURE     AD_SEQUENCE_DOC
   PROCEDURE     AD_SEQUENCE_DOCTYPE
@@ -128,7 +112,6 @@ developer using comments.
   PROCEDURE     C_COMMISSION_COPY
   PROCEDURE     C_COMMISSION_PROCESS
   PROCEDURE     C_COMMISSIONRUN_PROCESS
-  PROCEDURE     C_ELEMENTVALUE_COPY
   PROCEDURE     C_INVOICE_CANCEL
   PROCEDURE     C_INVOICE_CREATE
   PROCEDURE     C_INVOICE_CREATERECEIPT
@@ -162,11 +145,7 @@ developer using comments.
   PROCEDURE     M_PRICELIST_CREATE
   PROCEDURE     M_PRODUCT_BOM_CHECK
   PROCEDURE     M_PRODUCT_CATEGORY_ACCT_COPY
-  PROCEDURE     M_PRODUCT_DELETE
   PROCEDURE     M_PRODUCTION_RUN
-  PROCEDURE     R_REQUEST_PROCESS
-  PROCEDURE     R_REQUEST_PROCESS0
-  PROCEDURE     R_REQUEST_REOPEN
   PROCEDURE     S_TIMEEXPENSE_POST
   TRIGGER       AD_CLIENT_TRG
   TRIGGER       AD_COLUMN_TRG
@@ -187,12 +166,9 @@ developer using comments.
   TRIGGER       AD_ROLE_TRG
   TRIGGER       AD_TABLE_TRG
   TRIGGER       AD_TAB_TRG
-  TRIGGER       AD_TASK_TRG
   TRIGGER       AD_TREE_TRG
-  TRIGGER       AD_WF_NODE_TRG
   TRIGGER       AD_WINDOW_TRG
   TRIGGER       AD_WINDOW_TRL_TRG
-  TRIGGER       AD_WORKFLOW_TRG
   TRIGGER       C_ACCTSCHEMA_ELEMENT_TRG
   TRIGGER       C_BANKACCOUNT_TRG
   TRIGGER       C_BANKSTATEMENTLINE_TRG
@@ -222,7 +198,6 @@ developer using comments.
   TRIGGER       C_PROJECTLINE_TRG2
   TRIGGER       C_PROJECT_TRG
   TRIGGER       C_PROJECT_TRG2
-  TRIGGER       C_REVENUERECOGNITION_PLAN_TRG
   TRIGGER       C_SALESREGION_TRG
   TRIGGER       C_TAXCATEGORY_TRG
   TRIGGER       C_TAX_TRG
@@ -261,12 +236,9 @@ name and the original Compiere name is reported in brackets:
   AD_ALERT
   AD_ALERTRECIPIENT
   AD_ALERTRULE
-  AD_ATTACHMENT
-  AD_CHANGELOG
   AD_CLIENT
   AD_CLIENTINFO
   AD_COLUMN
-  AD_COLUMN_ACCESS
   AD_ELEMENT
   AD_ELEMENT_TRL
   AD_FIELD
@@ -277,14 +249,11 @@ name and the original Compiere name is reported in brackets:
   AD_FORM_ACCESS
   AD_FORM_TRL
   AD_IMAGE
-  AD_IMPFORMAT
-  AD_IMPFORMAT_ROW
   AD_LANGUAGE
   AD_MENU
   AD_MENU_TRL
   AD_MESSAGE
   AD_MESSAGE_TRL
-  AD_NOTE
   AD_ORG
   AD_ORGINFO
   AD_PINSTANCE
@@ -295,7 +264,6 @@ name and the original Compiere name is reported in brackets:
   AD_PROCESS_PARA
   AD_PROCESS_PARA_TRL
   AD_PROCESS_TRL
-  AD_RECORD_ACCESS
   AD_REF_LIST
   AD_REF_LIST_TRL
   AD_REF_TABLE
@@ -310,28 +278,14 @@ name and the original Compiere name is reported in brackets:
   AD_TAB_TRL
   AD_TABLE
   AD_TABLE_ACCESS
-  AD_TASK
-  AD_TASK_ACCESS
-  AD_TASK_TRL
-  AD_TEST (original name: TEST)
   AD_TREE
-  AD_TREEBAR
   AD_TREENODE
-  AD_TREENODEBP
-  AD_TREENODEMM
-  AD_TREENODEPR
   AD_USER
   AD_USER_ROLES
   AD_VAL_RULE
-  AD_WF_NODE
-  AD_WF_NODE_TRL
-  AD_WF_NODENEXT
   AD_WINDOW
   AD_WINDOW_ACCESS
   AD_WINDOW_TRL
-  AD_WORKFLOW
-  AD_WORKFLOW_ACCESS
-  AD_WORKFLOW_TRL
   C_ACCTSCHEMA
   C_ACCTSCHEMA_DEFAULT
   C_ACCTSCHEMA_ELEMENT
@@ -350,12 +304,10 @@ name and the original Compiere name is reported in brackets:
   C_BP_VENDOR_ACCT
   C_BP_WITHHOLDING
   C_BPARTNER
-  C_BPARTNER_V (original name: RV_BPARTNER)
   C_BPARTNER_LOCATION
   C_CALENDAR
   C_CAMPAIGN
   C_CASH
-  C_CASH_DETAIL (original name: RV_CASH_DETAIL)
   C_CASHBOOK
   C_CASHBOOK_ACCT
   C_CASHLINE
@@ -363,14 +315,6 @@ name and the original Compiere name is reported in brackets:
   C_CHARGE
   C_CHARGE_ACCT
   C_INVOICE_V2 (original name: RV_C_INVOICE)
-  C_INVOICE_CUSTOMERPRODQTR (original name: RV_C_INVOICE_CUSTOMERPRODQTR)
-  C_INVOICE_CUSTOMERVENDQTR (original name: RV_C_INVOICE_CUSTOMERVENDQTR)
-  C_INVOICE_DAY (original name: RV_C_INVOICE_DAY)
-  C_INVOICE_MONTH (original name: RV_C_INVOICE_MONTH)
-  C_INVOICE_PRODMONTH (original name: RV_C_INVOICE_PRODMONTH)
-  C_INVOICE_PRODWEEK (original name: RV_C_INVOICE_PRODWEEK)
-  C_INVOICE_VENDORMONTH (original name: RV_C_INVOICE_VENDORMONTH)
-  C_INVOICE_WEEK (original name: RV_C_INVOICE_WEEK)
   C_INVOICELINE (original name: RV_C_INVOICELINE)
   C_CITY
   C_COMMISSION
@@ -391,22 +335,15 @@ name and the original Compiere name is reported in brackets:
   C_ELEMENTVALUE_TRL
   C_GREETING
   C_GREETING_TRL
-  C_INTERORG_ACCT
   C_INVOICE
-  C_INVOICE_HEADER_V
-  C_INVOICE_LINETAX_V
   C_INVOICELINE
   C_INVOICESCHEDULE
   C_INVOICETAX
   C_LOCATION
   C_NONBUSINESSDAY
   C_ORDER
-  C_ORDER_HEADER_V
-  C_ORDER_LINETAX_V
   C_ORDERLINE
-  C_ORDER_OPEN (original name: RV_ORDER_OPEN)
   C_ORDERTAX
-  C_ORGASSIGNMENT
   C_PAYMENTTERM
   C_PAYMENTTERM_TRL
   C_PERIOD
@@ -414,19 +351,12 @@ name and the original Compiere name is reported in brackets:
   C_PHASE
   C_PROJECT
   C_PROJECT_ACCT
-  C_PROJECT_DETAILS_V
-  C_PROJECT_HEADER_V
   C_PROJECTLINE
   C_PROJECTPHASE
   C_PROJECTTASK
   C_PROJECTTYPE
   C_REGION
-  C_REVENUERECOGNITION
-  C_REVENUERECOGNITION_PLAN
-  C_REVENUERECOGNITION_RUN
   C_SALESREGION
-  C_SERVICELEVEL
-  C_SERVICELEVELLINE
   C_TASK
   C_TAX
   C_TAX_ACCT
@@ -445,14 +375,6 @@ name and the original Compiere name is reported in brackets:
   GL_JOURNAL
   GL_JOURNALBATCH
   GL_JOURNALLINE
-  I_BANKSTATEMENT
-  I_BPARTNER
-  I_ELEMENTVALUE
-  I_GLJOURNAL
-  I_INVENTORY
-  I_INVOICE
-  I_ORDER
-  I_PRODUCT
   M_ATTRIBUTE
   M_ATTRIBUTEINSTANCE
   M_ATTRIBUTESET
@@ -464,8 +386,6 @@ name and the original Compiere name is reported in brackets:
   M_FREIGHT
   M_FREIGHTCATEGORY
   M_INOUT
-  M_INOUT_HEADER_V
-  M_INOUT_LINE_V
   M_INOUTLINE
   M_INVENTORY
   M_INVENTORYLINE
@@ -476,7 +396,6 @@ name and the original Compiere name is reported in brackets:
   M_MATCHPO
   M_MOVEMENT
   M_MOVEMENTLINE
-  M_PERPETUALINV
   M_PRICELIST
   M_PRICELIST_VERSION
   M_PRODUCT
@@ -490,24 +409,13 @@ name and the original Compiere name is reported in brackets:
   M_PRODUCTIONLINE
   M_PRODUCTIONPLAN
   M_PRODUCTPRICE
-  M_REPLENISH
   M_SERNOCTL
   M_SHIPPER
   M_SUBSTITUTE
   M_TRANSACTION
   M_TRANSACTION_V (original name: RV_M_TRANSACTION)
-  M_TRANSACTION_SUM (original name: RV_M_TRANSACTION_SUM)
   M_WAREHOUSE
   M_WAREHOUSE_ACCT
-  R_CONTACTINTEREST
-  R_INTERESTAREA
-  R_MAILTEXT
-  R_REQUEST
-  R_REQUESTACTION
-  R_REQUESTPROCESSOR
-  R_REQUESTPROCESSOR_ROUTE
-  R_REQUESTTYPE
-  R_RESOURCEPLANCOST
   S_EXPENSETYPE
   S_RESOURCE
   S_RESOURCEASSIGNMENT
@@ -534,8 +442,6 @@ technical requirements:
   AD_FIELD
   AD_FIELDGROUP
   AD_FORM
-  AD_IMPFORMAT
-  AD_IMPFORMAT_ROW
   AD_LANGUAGE
   AD_MENU
   AD_MESSAGE
@@ -551,7 +457,6 @@ technical requirements:
   AD_ROLE_ORGACCESS
   AD_TAB
   AD_TABLE
-  AD_TASK
   AD_TREE
   AD_TREENODE
   AD_TREENODEBP
@@ -559,10 +464,7 @@ technical requirements:
   AD_USER
   AD_USER_ROLES
   AD_VAL_RULE
-  AD_WF_NODE
-  AD_WF_NODENEXT
   AD_WINDOW
-  AD_WORKFLOW
 
 These tables also contain additional records that have been autonomously 
 defined by Openbravo. The  records derived by Compiere can be identified by

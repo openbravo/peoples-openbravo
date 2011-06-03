@@ -119,6 +119,9 @@
                 this.list[position].keyComb.text += '+';
               }
               this.list[position].keyComb.text += 'Ctrl';
+              if (id === 'ToolBar_Eliminate') { //TODO: Fast hack until ob-grid shortcuts can be defined via AD_PREFERENCE.xml
+                this.list[position].keyComb.text = '';
+              }
             }
           }
           if (typeof keyComb.alt === 'undefined') {
@@ -150,6 +153,39 @@
             if (keyComb.key) {
               if (this.list[position].keyComb.text.length > 0) {
                 this.list[position].keyComb.text += '+';
+              }
+              switch (keyComb.key) {
+                case 'f1': keyComb.key = 'F1'; break;
+                case 'f2': keyComb.key = 'F2'; break;
+                case 'f3': keyComb.key = 'F3'; break;
+                case 'f4': keyComb.key = 'F4'; break;
+                case 'f5': keyComb.key = 'F5'; break;
+                case 'f6': keyComb.key = 'F6'; break;
+                case 'f7': keyComb.key = 'F7'; break;
+                case 'f8': keyComb.key = 'F8'; break;
+                case 'f9': keyComb.key = 'F9'; break;
+                case 'f10': keyComb.key = 'F10'; break;
+                case 'f11': keyComb.key = 'F11'; break;
+                case 'f12': keyComb.key = 'F12'; break;
+                case 'I': keyComb.key = 'i'; break; //Special case to ensure 'I' is different than 'l'
+                case 'Space': keyComb.key =  OB.I18N.getLabel('OBUIAPP_SpaceKey'); break;
+                case 'Tab': keyComb.key = OB.I18N.getLabel('OBUIAPP_TabKey'); break;
+                case 'Enter': keyComb.key = OB.I18N.getLabel('OBUIAPP_EnterKey'); break;
+                case 'Escape': keyComb.key = OB.I18N.getLabel('OBUIAPP_EscKey'); break;
+                case 'Backspace': keyComb.key = OB.I18N.getLabel('OBUIAPP_BackspaceKey'); break;
+                case 'Insert': keyComb.key = OB.I18N.getLabel('OBUIAPP_InsKey'); break;
+                case 'Delete': keyComb.key = OB.I18N.getLabel('OBUIAPP_DelKey'); break;
+                case 'Arrow_Up': keyComb.key = OB.I18N.getLabel('OBUIAPP_ArrowUpKey'); break;
+                case 'Arrow_Down': keyComb.key = OB.I18N.getLabel('OBUIAPP_ArrowDownKey'); break;
+                case 'Arrow_Left': keyComb.key = OB.I18N.getLabel('OBUIAPP_ArrowLeftKey'); break;
+                case 'Arrow_Right': keyComb.key = OB.I18N.getLabel('OBUIAPP_ArrowRightKey'); break;
+                case 'Home': keyComb.key = OB.I18N.getLabel('OBUIAPP_HomeKey'); break;
+                case 'End': keyComb.key = OB.I18N.getLabel('OBUIAPP_EndKey'); break;
+                case 'Page_Up': keyComb.key = OB.I18N.getLabel('OBUIAPP_PgUpKey'); break;
+                case 'Page_Down': keyComb.key = OB.I18N.getLabel('OBUIAPP_PgDnKey'); break;
+                case 'Shift': keyComb.key = OB.I18N.getLabel('OBUIAPP_ShiftKey'); break;
+                case 'Ctrl': keyComb.key = OB.I18N.getLabel('OBUIAPP_CtrlKey'); break;
+                case 'Alt': keyComb.key = OB.I18N.getLabel('OBUIAPP_AltKey'); break;
               }
               this.list[position].keyComb.text += keyComb.key;
             }

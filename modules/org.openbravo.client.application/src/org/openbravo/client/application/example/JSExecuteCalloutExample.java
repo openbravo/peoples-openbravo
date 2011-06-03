@@ -35,6 +35,10 @@ public class JSExecuteCalloutExample extends SimpleCallout {
   protected void execute(CalloutInfo info) throws ServletException {
     // info.addResult(JSEXECUTE, "debugger;isc.say('hello world');");
     info.addResult(JSEXECUTE, "isc.say('hello world');");
+    // info.addResult("MESSAGE", "a message");
+    // info.addResult("WARNING", "a warning message");
+    // info.addResult("ERROR", "an error message");
+    // info.addResult("INFO", "an info message");
   }
 
 }

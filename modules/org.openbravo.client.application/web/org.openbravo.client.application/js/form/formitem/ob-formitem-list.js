@@ -23,6 +23,7 @@ isc.ClassFactory.defineClass('OBListItem', ComboBoxItem);
 
 isc.OBListItem.addProperties({
   operator: 'equals',
+  hasPickList: true,
   showPickListOnKeypress: true,  
   cachePickListResults: false,
   validateOnExit: true,  

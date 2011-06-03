@@ -113,6 +113,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="PAYIN_ISMULTICURRENCY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="PAYOUT_ISMULTICURRENCY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_PAYMENTMETHOD">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -134,5 +142,7 @@
       <check name="FIN_PAYMENTMETH_WITHDRAW_CHK"><![CDATA[AUTOMATIC_WITHDRAWN IN ('Y', 'N')]]></check>
       <check name="FIN_PAYMENTMETHOD_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="FIN_PAYMENTMETHOD_PAYINDEF_CHK"><![CDATA[PAYIN_DEFERRED IN ('Y', 'N')]]></check>
+      <check name="FIN_PM_PINMULTICUR_CHECK"><![CDATA[PAYIN_ISMULTICURRENCY IN ('Y', 'N')]]></check>
+      <check name="FIN_PM_POUTMULTICUR_CHECK"><![CDATA[PAYOUT_ISMULTICURRENCY IN ('Y', 'N')]]></check>
     </table>
   </database>

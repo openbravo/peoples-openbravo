@@ -113,6 +113,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="PAYIN_ISMULTICURRENCY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="PAYOUT_ISMULTICURRENCY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_FINACC_PAYMETHOD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -135,6 +143,8 @@
         <unique-column name="FIN_PAYMENTMETHOD_ID"/>
         <unique-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
       </unique>
+      <check name="FIN_FAPM_PINMULTICUR_CHECK"><![CDATA[PAYIN_ISMULTICURRENCY IN ('Y', 'N')]]></check>
+      <check name="FIN_FAPM_POUTMULTICUR_CHECK"><![CDATA[PAYOUT_ISMULTICURRENCY IN ('Y', 'N')]]></check>
       <check name="FIN_FINACC_METHOD_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="FIN_FINACC_METHOD_DEPOSIT_CHK"><![CDATA[AUTOMATIC_DEPOSIT IN ('Y', 'N')]]></check>
       <check name="FIN_FINACC_METHOD_PAYMENT_CHK"><![CDATA[AUTOMATIC_PAYMENT IN ('Y', 'N')]]></check>

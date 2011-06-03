@@ -191,7 +191,6 @@ OB.ViewFormProperties = {
       this.validateAfterFicReturn = true;
     }
     
-
     this.ignoreFirstFocusEvent = preventFocus;
     this.retrieveInitialValues(isNew);
     
@@ -223,7 +222,6 @@ OB.ViewFormProperties = {
     }
   },
   
-
   enableNoteSection: function(enable){
 	    if (!this.noteSection) {
 	      return;
@@ -314,29 +312,29 @@ OB.ViewFormProperties = {
     }
   },
   
-  resetFocusItem: function() {
-    var items = this.getItems(), length = items.length, item, i;
+  resetFocusItem: function(startItem) {
+    var items = this.getItems(), length = items.length, item, i, nextItem;
     
     var errorFld = this.getFirstErrorItem();
-    if (errorFld && !errorFld.isDisabled()) {
-      this.setFocusInItem(errorFld, true);
+    if (errorFld && errorFld.isFocusable()) {
+      this.setFocusInItem(errorFld, this.view.isActiveView());
       return;
     }
     
     if (this.forceFocusedField) {
       item = this.getItem(this.forceFocusedField);
       if(item && item.isFocusable()) {
-        this.setFocusInItem(item, true);
+        this.setFocusInItem(item, this.view.isActiveView());
         delete this.forceFocusedField;
         return;
       }
       delete this.forceFocusedField;
     }
 
-    if(this.firstFocusedField) {
+    if (this.firstFocusedField) {
       item = this.getItem(this.firstFocusedField);
       if(item && item.isFocusable()) {
-        this.setFocusInItem(item);
+        this.setFocusInItem(item, this.view.isActiveView());
         return;
       }
     }
@@ -351,6 +349,20 @@ OB.ViewFormProperties = {
     }
 
     if (items) {
+      
+      if (startItem) {
+        for (i = 0; i < length; i++) {
+          item = items[i];
+          if (!nextItem && item === startItem) {
+            nextItem = true;
+          } else if (nextItem && item.isFocusable()) {
+            this.setFocusInItem(item, this.view.isActiveView());
+            return;
+          }
+        }
+      }
+      
+      // not found start from new again
       for (i = 0; i < length; i++) {
         item = items[i];
         if (item.isFocusable()) {
@@ -361,51 +373,52 @@ OB.ViewFormProperties = {
     }
   },
   
+  computeFocusItem: function(changeState) {
+    var items = this.getItems(), length = items.length, item, i;
+    
+    var errorFld = this.getFirstErrorItem();
+    if (errorFld) {
+      this.setFocusItem(errorFld);
+      return;
+    }
+    
+    if (this.forceFocusedField) {
+      item = this.getItem(this.forceFocusedField);
+      delete this.forceFocusedField;
+      if(item) {
+        this.setFocusItem(item);
+        return;
+      }
+    }
+
+    if (!changeState && this.firstFocusedField) {
+      item = this.getItem(this.firstFocusedField);
+      if(item) {
+        this.setFocusItem(item);
+        return;
+      }
+    }
+  },
+
+  // checks if there is a focusable focusitem, if so just uses that one
+  // if not will find the next one
+  setFocusInForm: function() {
+    if (this.getFocusItem() && this.getFocusItem().isFocusable()) {
+      this.getFocusItem().focusInItem();
+      this.view.lastFocusedItem = this.getFocusItem();
+      return;
+    }
+    
+    // find a new one
+    this.resetFocusItem(this.getFocusItem());
+  },
+  
   setFocusInItem: function(item, doFocus) {
     this.setFocusItem(item);
     this.view.lastFocusedItem = item;
     if (doFocus && this.view.isActiveView()) {
       item.focusInItem();
     }
-  },
-  
-  setFindNewFocusItem: function() {
-    var focusItem = this.getFocusItem(), item, items = this.getItems(),
-        length = items.length, i;
-    
-    // used when double clicking a specific cell in a record
-    if (this.forceFocusedField) {
-      item = this.getItem(this.forceFocusedField);
-      if(item && item.isFocusable()) {
-        this.setFocusInItem(item, true);
-        delete this.forceFocusedField;
-        return;
-      }
-      delete this.forceFocusedField;
-    }
-    
-    if(this.firstFocusedField) {
-      item = this.getItem(this.firstFocusedField);
-      if(item && item.isFocusable()) {
-        this.setFocusInItem(item, true);
-        return;
-      }
-    }
-
-    // no need to find a new item
-    if (focusItem && focusItem.isFocusable()) {
-      return;
-    }
-
-    if (items) {
-      for (i = 0; i < length; i++) {
-        item = items[i];
-        if (item.isFocusable()) {
-          this.setFocusInItem(item, true);
-          return;
-        }
-      }
-    }    
   },
   
   getFieldFromInpColumnName: function(inpColumnName) {
@@ -501,19 +514,15 @@ OB.ViewFormProperties = {
       if (editRow || editRow === 0) {
         editValues = me.view.viewGrid.getEditValues(editRow);
       }
+
+      // note focus is set when the form is set to not being disabled anymore
+      me.computeFocusItem();
+      
       me.processFICReturn(response, data, request, editValues, editRow);
+      
       if (!this.grid || this.grid.getEditRow() !== editRow) {
         // remember the initial values, if we are still editing the same row
         me.rememberValues();
-      }
-      // do some focus stuff
-      me.resetFocusItem();
-      if (me.ignoreFirstFocusEvent) {
-        delete this.ignoreFirstFocusEvent;
-        return;
-      }
-      if (me.getFocusItem() && me.view.isActiveView() && me.getFocusItem().isFocusable()) {
-        me.getFocusItem().focusInItem();
       }
     });
   },
@@ -576,9 +585,9 @@ OB.ViewFormProperties = {
     }
 
     // apparently sometimes an empty string is returned
-    if (calloutMessages && calloutMessages.length > 0 && calloutMessages[0] !== '') {
+    if (calloutMessages && calloutMessages.length > 0 && calloutMessages[0].text !== '') {
       // TODO: check as what type should call out messages be displayed
-      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, null, calloutMessages[0]);
+      this.view.messageBar.setMessage(isc.OBMessageBar[calloutMessages[0].severity], null, calloutMessages[0].text);
     }
     if (auxInputs) {
       for (prop in auxInputs) {
@@ -678,9 +687,10 @@ OB.ViewFormProperties = {
           for (i = 0; i < this.getFields().length; i++) {
             delete this.getFields()[i].canFocus;
           }
-          if (this.view.isActiveView() && this.getFocusItem().isFocusable()) {
-            this.getFocusItem().focusInItem();
+          if (!this.ignoreFirstFocusEvent && this.view.isActiveView()) {
+            this.setFocusInForm();
           }
+          delete this.ignoreFirstFocusEvent;
         }
       } else {
         this.redraw();
@@ -863,7 +873,7 @@ OB.ViewFormProperties = {
     }
     if (editValues) {
       editValues[fldName + '_textualValue'] = textValue;
-    } else if (this.grid) {
+    } else if (this.grid && this.grid.getEditForm()) {
       this.grid.getEditValues(this.grid.getEditRow())[fldName + '_textualValue'] = textValue;
     }
     this.setValue(fldName + '_textualValue', textValue);
@@ -876,7 +886,9 @@ OB.ViewFormProperties = {
 
     if (item._hasChanged) {
       this.itemChangeActions();
-      
+
+      this.onFieldChanged(this);
+
       var i;
       for (i = 0; i < this.dynamicCols.length; i++) {
         if (this.dynamicCols[i] === item.inpColumnName) {
@@ -930,6 +942,9 @@ OB.ViewFormProperties = {
       if (editRow || editRow === 0) {
         editValues = me.view.viewGrid.getEditValues(editRow);
       }
+
+      me.computeFocusItem(true);
+
       me.processFICReturn(response, data, request, editValues, editRow);
     });
   },
@@ -1147,6 +1162,8 @@ OB.ViewFormProperties = {
     return true;
   },
 
+  // called when someone picks something from a picklist, the focus should go to the next
+  // item
   focusInNextItem: function(currentItem) {
     var flds = (this.grid ? this.grid.getFields() : this.getFields());
     var chooseNextItem, i, nextItem, length = flds.length;
@@ -1158,7 +1175,7 @@ OB.ViewFormProperties = {
       // some items don't have a name, ignore those
       // !item.disabled because sometimes the whole form is disabled and needs to 
       // be focused after enabling (after the fic call returns)
-      if (chooseNextItem && item.name && item.isVisible() && item.isFocusable && (item.isFocusable() || !item.disabled)) {
+      if (chooseNextItem && item.name && item.isFocusable && (item.isFocusable() || !item.disabled)) {
         nextItem = item;
         break;
       }

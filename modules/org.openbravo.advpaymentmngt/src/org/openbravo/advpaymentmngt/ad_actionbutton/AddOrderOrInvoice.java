@@ -37,6 +37,7 @@ import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.util.Convert;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -46,6 +47,7 @@ import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -158,6 +160,11 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       String strPaymentAmount = vars.getRequiredNumericParameter("inpActualPayment");
       String strDocumentType = vars.getStringParameter("inpDocumentType", "");
+      String paymentCurrencyId = vars.getRequiredStringParameter("inpCurrencyId");
+      BigDecimal exchangeRate = new BigDecimal(vars.getRequiredNumericParameter("inpExchangeRate",
+          "1.0"));
+      BigDecimal convertedAmount = new BigDecimal(vars.getRequiredNumericParameter(
+          "inpActualConverted", strPaymentAmount));
       OBError message = null;
       // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
       // removed when new security implementation is done
@@ -175,11 +182,14 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
 
         FIN_Payment payment = dao.getObject(FIN_Payment.class, strPaymentId);
         BigDecimal newPaymentAmount = new BigDecimal(strPaymentAmount);
-        if (newPaymentAmount.compareTo(payment.getAmount()) != 0)
+        if (newPaymentAmount.compareTo(payment.getAmount()) != 0) {
           payment.setAmount(newPaymentAmount);
+        }
+        FIN_AddPayment.setFinancialTransactionAmountAndRate(payment, exchangeRate, convertedAmount);
         payment = FIN_AddPayment.savePayment(payment, isReceipt, null, null, null, null, null,
             null, null, null, null, selectedPaymentDetails, selectedPaymentDetailAmounts,
-            strDifferenceAction.equals("writeoff"), strDifferenceAction.equals("refund"));
+            strDifferenceAction.equals("writeoff"), strDifferenceAction.equals("refund"), dao
+                .getObject(Currency.class, paymentCurrencyId), exchangeRate, convertedAmount);
 
         if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
             || strAction.equals("PPW")) {
@@ -284,13 +294,24 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("generatedCredit", payment.getGeneratedCredit() != null ? payment
         .getGeneratedCredit().toString() : BigDecimal.ZERO.toString());
-    OBContext.setAdminMode();
-    try {
-      xmlDocument
-          .setParameter("precision", payment.getCurrency().getStandardPrecision().toString());
-    } finally {
-      OBContext.restorePreviousMode();
+
+    final Currency financialAccountCurrency = payment.getAccount().getCurrency();
+    if (financialAccountCurrency != null) {
+      xmlDocument.setParameter("financialAccountCurrencyId", financialAccountCurrency.getId());
+      xmlDocument.setParameter("financialAccountCurrencyName", financialAccountCurrency
+          .getISOCode());
+      xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
+          .getStandardPrecision().toString());
     }
+    xmlDocument.setParameter("exchangeRate", Convert.toString(payment
+        .getFinancialTransactionConvertRate()));
+    xmlDocument.setParameter("actualConverted", Convert.toString(payment
+        .getFinancialTransactionAmount()));
+    xmlDocument.setParameter("expectedConverted", Convert.toString(payment
+        .getFinancialTransactionAmount()));
+    xmlDocument.setParameter("currencyId", payment.getCurrency().getId());
+    xmlDocument.setParameter("currencyName", payment.getCurrency().getISOCode());
+
     boolean forcedFinancialAccountTransaction = false;
     forcedFinancialAccountTransaction = FIN_AddPayment.isForcedFinancialAccountTransaction(payment);
     // Action Regarding Document

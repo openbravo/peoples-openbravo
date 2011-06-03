@@ -72,9 +72,6 @@ public class TimeUIDefinition extends UIDefinition {
       if (value == null || value.length() == 0 || value.equals("null")) {
         return null;
       }
-      if (value.contains("T")) {
-        return value;
-      }
       // sometimes the default value gets passed which is already in the correct
       // format, in that case just use that.
       if (value.indexOf(":") == 2 && value.indexOf(":", 3) == 5) {
@@ -84,8 +81,7 @@ public class TimeUIDefinition extends UIDefinition {
         return value;
       }
       final java.util.Date date = getClassicFormat().parse(value);
-      // always return in gmt
-      return xmlTimeFormat.format(date) + "+00:00";
+      return xmlTimeFormat.format(date);
     } catch (Exception e) {
       throw new OBException("Exception when handling value " + value, e);
     }

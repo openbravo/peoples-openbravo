@@ -95,7 +95,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '11622';
+  var number = '11665';
   return number;
 }
 
@@ -1499,7 +1499,9 @@ function keyControl(pushedKey) {
                 (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) ||
                 (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) ||
                 (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) ||
-                (keyArray[i].auxKey == "ctrlKey+altKey" && pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey)) {
+                (keyArray[i].auxKey == "ctrlKey+altKey" && pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "altKey+shiftKey" && !pushedKey.ctrlKey && pushedKey.altKey && pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "ctrlKey+altKey+shiftKey" && pushedKey.ctrlKey && pushedKey.altKey && pushedKey.shiftKey)) {
               try {
                 if (!isWindowInMDIContext || typeof keyArray[i].evalfunc !== "object") {
                   eval(evalfuncTrl);
@@ -1573,7 +1575,9 @@ function keyControl(pushedKey) {
                 (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) ||
                 (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) ||
                 (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) ||
-                (keyArray[i].auxKey == "ctrlKey+altKey" && pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey)) {
+                (keyArray[i].auxKey == "ctrlKey+altKey" && pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "altKey+shiftKey" && !pushedKey.ctrlKey && pushedKey.altKey && pushedKey.shiftKey) ||
+                (keyArray[i].auxKey == "ctrlKey+altKey+shiftKey" && pushedKey.ctrlKey && pushedKey.altKey && pushedKey.shiftKey)) {
               try {
                 if (!isWindowInMDIContext || typeof keyArray[i].evalfunc !== "object") {
                   eval(evalfuncTrl);

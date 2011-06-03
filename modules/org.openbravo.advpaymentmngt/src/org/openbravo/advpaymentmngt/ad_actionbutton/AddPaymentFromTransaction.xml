@@ -14,7 +14,7 @@
  * The Initial Developer of the Original Code is Openbravo SLU
  * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
- * Contributor(s):  ______________________________________.
+ * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
 -->
 <REPORT>
@@ -32,15 +32,19 @@
     <PARAMETER id="paramDocType" name="documentType" attribute="value"/>
     <PARAMETER id="paramFinancialAccountId" name="financialAccountId" attribute="value"/>
     <PARAMETER id="paramFinancialAccount" name="financialAccount" attribute="value"/>
-    <PARAMETER id="paramCurrency" name="currency" attribute="value"/>
+    <PARAMETER id="paramCurrencyId" name="currencyId" attribute="value"/>
     <PARAMETER id="paramPaymentMethod" name="paymentMethod" attribute="value"/>
     <PARAMETER id="paramExpectedPayment" name="expectedPayment" attribute="value" format="euroEdition"/>
     <PARAMETER id="paramActualPayment" name="actualPayment" attribute="value" format="euroEdition" default="0"/>
+    <PARAMETER id="paramFinancialAccountCurrencyId" name="financialAccountCurrencyId" attribute="value"/>
+    <PARAMETER id="paramFinancialAccountCurrencyPrecision" name="financialAccountCurrencyPrecision" attribute="value"/>
+    <PARAMETER id="paramExchangeRate" name="exchangeRate" attribute="value" format="generalQtyEdition"/>
+    <PARAMETER id="paramExpectedConverted" name="expectedConverted" attribute="value" format="euroEdition"/>
+    <PARAMETER id="paramActualConverted" name="actualConverted" attribute="value" format="euroEdition" default="0"/>
     <PARAMETER id="C_Bpartner_ID" name="businessPartner" attribute="value"/>
     <PARAMETER id="paramCredit" name="credit" attribute="value" format="euroEdition"/>
     <PARAMETER id="fieldReceipt" name="isReceipt" attribute="value"/>
     <PARAMETER id="fieldIsSoTrx" name="isSoTrx" attribute="value"/>
-    <PARAMETER id="paramPrecision" name="precision" attribute="value"/>
     <PARAMETER id="paramFinBankStatementLineId" name="finBankStatementLineId" attribute="value" default=""/>
     <PARAMETER id="fieldOrg" name="orgId" attribute="value"/>
     <PARAMETER id="paramInheritedActualPayment" name="inheritedActualPayment" attribute="value"/>
@@ -62,6 +66,12 @@
     <PARAMETER id="paramTransDateTo" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
     
     <PARAMETER id="sectionDetailPaymentMethod" name="sectionDetailPaymentMethod"/>
+    <PARAMETER id="sectionDetailPaymentMethodMulticurrency" name="sectionDetailPaymentMethodMulticurrency"/>
+
+    <PARAMETER id="paramCurrencyId" name="currencyId" attribute="onchange" replace="xx"/>
+    <SUBREPORT id="reportCurrencyId" name="reportCurrencyId" report="org/openbravo/erpCommon/reference/List">
+      <ARGUMENT name="parameterListSelected" withId="paramCurrencyId"/>
+    </SUBREPORT>
     
     <PARAMETER id="paramActionDocument" name="ActionDocument" attribute="value"/>
     <SUBREPORT id="reportActionDocument" name="reportActionDocument" report="org/openbravo/erpCommon/reference/List">

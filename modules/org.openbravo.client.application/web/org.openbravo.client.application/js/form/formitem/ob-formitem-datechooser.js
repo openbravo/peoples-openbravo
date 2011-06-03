@@ -28,19 +28,6 @@ isc.OBDateChooser.addProperties({
   showCancelButton: true,
   todayButtonTitle: OB.I18N.getLabel('OBUISC_DateChooser.todayButtonTitle'),
   cancelButtonTitle: OB.I18N.getLabel('OBUISC_DateChooser.cancelButtonTitle'),
-  dataChanged: function(){
-    // When data has changed, force the OBDateItem to get it. Other case OBDateItem.blur 
-    // gets incorrect value on getValue()
-    this.callingFormItem.setValue(this.getData());
-    this.callingFormItem.changed();
-  },
-  dateClick: function() {
-    var ret = this.Super('dateClick', arguments);
-    if (this.callingForm.focusInNextItem) {
-      this.callingForm.focusInNextItem(this.callingFormItem.name);
-    }
-    return ret;
-  },
 
   initWidget: function() {
     this.Super('initWidget', arguments);

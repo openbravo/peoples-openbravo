@@ -189,6 +189,10 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     return transactionalFilter;
   }
 
+  public String getUiPattern() {
+    return tab.getUIPattern();
+  }
+
   public List<String> getForeignKeyFields() {
     final List<String> fkFields = new ArrayList<String>();
     for (LocalField field : getFields()) {

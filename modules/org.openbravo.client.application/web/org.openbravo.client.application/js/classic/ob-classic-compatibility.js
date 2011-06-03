@@ -239,13 +239,22 @@
           auxKey = '';
 
           if (LKS.list[i].keyComb.ctrl === true) {
-            auxKey = auxKey + 'ctrlKey';
+            if (auxKey.length > 0) {
+              auxKey += '+';
+            }
+            auxKey += 'ctrlKey';
           }
           if (LKS.list[i].keyComb.alt === true) {
-            auxKey = auxKey + '+altKey';
+            if (auxKey.length > 0) {
+              auxKey += '+';
+            }
+            auxKey += 'altKey';
           }
           if (LKS.list[i].keyComb.shift === true) {
-            auxKey = auxKey + '+shiftKey';
+            if (auxKey.length > 0) {
+              auxKey += '+';
+            }
+            auxKey += 'shiftKey';
           }
           if (LKS.list[i].keyComb.key !== null) {
             key = LKS.list[i].keyComb.key;

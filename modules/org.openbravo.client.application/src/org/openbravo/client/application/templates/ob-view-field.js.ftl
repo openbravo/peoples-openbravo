@@ -23,6 +23,7 @@
         title: '${fieldDefinition.label?js_string}',
         type: '${fieldDefinition.type}',
         disabled: ${fieldDefinition.readOnly?string},
+        readonly: ${fieldDefinition.readOnly?string},
         updatable: ${fieldDefinition.updatable?string},
         parentProperty: ${fieldDefinition.parentProperty?string},
         colSpan: ${fieldDefinition.colSpan},
@@ -36,6 +37,7 @@
         targetEntity: '${fieldDefinition.targetEntity?string}',
         <#if !fieldDefinition.displayed>
         editorType: 'HiddenItem',
+        alwaysTakeSpace: false,
         </#if>
         required: ${fieldDefinition.required?string},
           <#if fieldDefinition.redrawOnChange?string = "true" && fieldDefinition.displayed>
