@@ -317,14 +317,14 @@ OB.ViewFormProperties = {
     
     var errorFld = this.getFirstErrorItem();
     if (errorFld && errorFld.isFocusable()) {
-      this.setFocusInItem(errorFld, true);
+      this.setFocusInItem(errorFld, this.view.isActiveView());
       return;
     }
     
     if (this.forceFocusedField) {
       item = this.getItem(this.forceFocusedField);
       if(item && item.isFocusable()) {
-        this.setFocusInItem(item, true);
+        this.setFocusInItem(item, this.view.isActiveView());
         delete this.forceFocusedField;
         return;
       }
@@ -334,7 +334,7 @@ OB.ViewFormProperties = {
     if (this.firstFocusedField) {
       item = this.getItem(this.firstFocusedField);
       if(item && item.isFocusable()) {
-        this.setFocusInItem(item);
+        this.setFocusInItem(item, this.view.isActiveView());
         return;
       }
     }
@@ -356,7 +356,7 @@ OB.ViewFormProperties = {
           if (!nextItem && item === startItem) {
             nextItem = true;
           } else if (nextItem && item.isFocusable()) {
-            this.setFocusInItem(item);
+            this.setFocusInItem(item, this.view.isActiveView());
             return;
           }
         }
