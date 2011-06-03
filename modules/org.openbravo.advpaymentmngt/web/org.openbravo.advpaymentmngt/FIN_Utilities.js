@@ -211,9 +211,28 @@ function isBetweenZeroAndMaxValue(value, maxValue){
           (compare(value, '<=', 0) && compare(value, '>=', maxValue)));
 }
 
+function applyPrecisionToMask(currencyPrecision) {
+  var i, c, output, currentDecimalMask, currentPrecision;
+  var toConvertDecimalMask = globalMaskNumeric;
+  if (globalMaskNumeric.indexOf(globalDecSeparator) !== -1) {
+	currentDecimalMask = globalMaskNumeric.substring(globalMaskNumeric.indexOf(globalDecSeparator), globalMaskNumeric.length);
+    currentPrecision = currentDecimalMask.length - globalDecSeparator.length;
+    if (currentPrecision) {
+      toConvertDecimalMask = globalDecSeparator;
+      c = currentDecimalMask.charAt(1);
+      for (i = 0; i < currencyPrecision; i++) {
+        toConvertDecimalMask = toConvertDecimalMask + c;
+      }
+      toConvertDecimalMask = globalMaskNumeric.replace(currentDecimalMask, toConvertDecimalMask);
+    }
+  }
+  return toConvertDecimalMask;
+}
+
 function updateConvertedAmounts( recalcExchangeRate ) {
   var exchangeRate = frm.inpExchangeRate;
   var precision = frm.inpFinancialAccountCurrencyPrecision ? frm.inpFinancialAccountCurrencyPrecision.value : 2;
+  var roundedMask = applyPrecisionToMask(precision);
   var expectedConverted = frm.inpExpectedConverted;
   var actualConverted = frm.inpActualConverted;
   var expectedPayment= frm.inpExpectedPayment;
@@ -222,14 +241,14 @@ function updateConvertedAmounts( recalcExchangeRate ) {
   if (actualConverted && expectedConverted && exchangeRate) {
     if( recalcExchangeRate ) {
       if( actualConverted.value && actualPayment.value) {
-        exchangeRate.value = divide(actualConverted.value, actualPayment.value);
+        exchangeRate.value = formattedNumberOpTemp(actualConverted.value, '/', actualPayment.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
       } else {
         exchangeRate.value = '';
       }
     } else {
-      actualConverted.value = multiply(actualPayment.value, exchangeRate.value).toFixed(precision);
+      actualConverted.value = formattedNumberOpTemp(actualPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
     }
-    expectedConverted.value = multiply(expectedPayment.value,exchangeRate.value).toFixed(precision);
+    expectedConverted.value = formattedNumberOpTemp(expectedPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
   }
 }
 
@@ -302,7 +321,7 @@ function updateDifference() {
 
 function updateTotal() {
   var chk = frm.inpScheduledPaymentDetailId;
-  var total = 0, i;
+  var total = 0, i, invalidSpan;
   var scheduledPaymentDetailId, pendingAmount, amount, isAnyChecked = false;
   var selectedBusinessPartners = {
      numberofitems: 0,
@@ -352,7 +371,10 @@ function updateTotal() {
       initialize_MessageBox('messageBoxID');
     }
     if (chk.checked) {
-      document.getElementById('paraminvalidSpan'+scheduledPaymentDetailId).style.display = !isBetweenZeroAndMaxValue(amount, pendingAmount) ? 'block' : 'none';
+      invalidSpan = document.getElementById('paraminvalidSpan'+scheduledPaymentDetailId);
+      if (invalidSpan) {
+        document.getElementById('paraminvalidSpan'+scheduledPaymentDetailId).style.display = !isBetweenZeroAndMaxValue(amount, pendingAmount) ? 'block' : 'none';
+      }
       total = (frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value === '') ? "0" : frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value;
       selectedBusinessPartners.increase(frm.elements['inpRecordBP'+scheduledPaymentDetailId]);
       isAnyChecked = true;
@@ -369,7 +391,10 @@ function updateTotal() {
         initialize_MessageBox('messageBoxID');
       }
       if (chk[i].checked) {
-        document.getElementById('paraminvalidSpan'+scheduledPaymentDetailId).style.display = !isBetweenZeroAndMaxValue(amount, pendingAmount) ? 'block' : 'none';
+        invalidSpan = document.getElementById('paraminvalidSpan'+scheduledPaymentDetailId);
+        if (invalidSpan) {
+          document.getElementById('paraminvalidSpan'+scheduledPaymentDetailId).style.display = !isBetweenZeroAndMaxValue(amount, pendingAmount) ? 'block' : 'none';
+        }
         total = (frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value === '') ? total : add(total,frm.elements["inpPaymentAmount" + scheduledPaymentDetailId].value);
         selectedBusinessPartners.increase(frm.elements['inpRecordBP'+scheduledPaymentDetailId]);
         isAnyChecked = true;
@@ -457,7 +482,7 @@ function updateReadOnly(key, mark) {
     mark = false;
   }
   frm.elements["inpPaymentAmount" + key].disabled = !mark;
-  var expectedAmount = frm.inpExpectedPayment.value;
+  var expectedAmount = frm.inpExpectedPayment.value, invalidSpan;
   var recordAmount = frm.elements["inpRecordAmt" + key].value;
 
   if (mark) {
@@ -470,7 +495,10 @@ function updateReadOnly(key, mark) {
     }
     frm.elements["inpPaymentAmount" + key].value = '';
     frm.inpExpectedPayment.value = subtract(expectedAmount, recordAmount);
-    document.getElementById('paraminvalidSpan'+key).style.display = 'none';
+    invalidSpan = document.getElementById('paraminvalidSpan'+key);
+    if (invalidSpan) {
+      document.getElementById('paraminvalidSpan'+key).style.display = 'none';
+    }
   }
   if (!mark) {
     frm.inpAllLines.checked = false;

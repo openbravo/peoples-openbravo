@@ -37,6 +37,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
@@ -214,48 +215,49 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
 
         if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
             || strAction.equals("PPW")) {
-          try {
-            message = FIN_AddPayment.processPayment(vars, this,
-                (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
-
-            // PPW: process made payment and withdrawal
-            // PRD: process made payment and deposit
-            if ((strAction.equals("PRD") || strAction.equals("PPW"))
-                && !"Error".equals(message.getType())) {
-              vars.setSessionValue("AddPaymentFromTransaction|closeAutomatically", "Y");
-              vars.setSessionValue("AddPaymentFromTransaction|PaymentId", payment.getId());
-            }
-            if (strDifferenceAction.equals("refund")) {
-              Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
-              FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(this, vars, payment,
-                  refundAmount.negate());
-              OBError auxMessage = FIN_AddPayment.processPayment(vars, this, (strAction
-                  .equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
-              if (newPayment) {
-                final String strNewRefundPaymentMessage = Utility.parseTranslation(this, vars, vars
-                    .getLanguage(), "@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo())
-                    + ".";
-                message.setMessage(strNewRefundPaymentMessage + " " + message.getMessage());
-                if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) != 0) {
-                  payment.setDescription(payment.getDescription() + strNewRefundPaymentMessage
-                      + "\n");
-                  OBDal.getInstance().save(payment);
-                  OBDal.getInstance().flush();
-                }
-              } else {
-                message = auxMessage;
+          message = FIN_AddPayment.processPayment(vars, this, (strAction.equals("PRP") || strAction
+              .equals("PPP")) ? "P" : "D", payment);
+          if (message != null && "Error".equals(message.getType())) {
+            throw new OBException();
+          }
+          // PPW: process made payment and withdrawal
+          // PRD: process made payment and deposit
+          if ((strAction.equals("PRD") || strAction.equals("PPW"))
+              && !"Error".equals(message.getType())) {
+            vars.setSessionValue("AddPaymentFromTransaction|closeAutomatically", "Y");
+            vars.setSessionValue("AddPaymentFromTransaction|PaymentId", payment.getId());
+          }
+          if (strDifferenceAction.equals("refund")) {
+            Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
+            FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(this, vars, payment,
+                refundAmount.negate());
+            OBError auxMessage = FIN_AddPayment.processPayment(vars, this,
+                (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
+            if (newPayment) {
+              final String strNewRefundPaymentMessage = Utility.parseTranslation(this, vars, vars
+                  .getLanguage(), "@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo())
+                  + ".";
+              message.setMessage(strNewRefundPaymentMessage + " " + message.getMessage());
+              if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) != 0) {
+                payment
+                    .setDescription(payment.getDescription() + strNewRefundPaymentMessage + "\n");
+                OBDal.getInstance().save(payment);
+                OBDal.getInstance().flush();
               }
-            }
-          } catch (Exception ex) {
-            message = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            log4j.error(ex);
-            if (!message.isConnectionAvailable()) {
-              bdErrorConnection(response);
-              return;
+            } else {
+              message = auxMessage;
             }
           }
         }
 
+      } catch (Exception ex) {
+        String strMessage = FIN_Utility.getExceptionMessage(ex);
+        if (message != null && "Error".equals(message.getType())) {
+          strMessage = message.getMessage();
+        }
+        bdErrorGeneralPopUp(request, response, "Error", strMessage);
+        OBDal.getInstance().rollbackAndClose();
+        return;
       } finally {
         OBContext.restorePreviousMode();
       }
