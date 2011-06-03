@@ -138,23 +138,17 @@ var baseDirectory = "../../../../../web/";
           
           // Generate upgrades
           if (jsonResponse.upgrades && jsonResponse.upgrades.length>0) {
-            var separator = document.createElement('span');
-            separator.innerHTML = '&nbsp;&nbsp;&nbsp;';
             for (i=0; i<jsonResponse.upgrades.length; i++){
               var upgrNotif = document.createElement('p'), 
                   spMod = document.createElement('span'),
                   link = document.createElement('a');
-                  
-              spMod.appendChild(document.createTextNode(jsonResponse.upgrades[i].moduleName+ ' '+
-               jsonResponse.upgrades[i].version));
               
               link.setAttribute('class', 'LabelLink_noicon');
               link.setAttribute('href', '#'); 
               link.setAttribute('onclick', 'installUpgrade("'+jsonResponse.upgrades[i].moduleId+'", "'+jsonResponse.upgrades[i].version+'"); return false;');
-              link.appendChild(document.createTextNode('Install Now')); //TODO: translatable
+              link.appendChild(document.createTextNode('Install upgrade now')); //TODO: translatable
               
               upgrNotif.appendChild(spMod);
-              upgrNotif.appendChild(separator);
               upgrNotif.appendChild(link);
               
               
