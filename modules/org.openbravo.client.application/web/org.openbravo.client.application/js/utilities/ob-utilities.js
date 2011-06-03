@@ -825,10 +825,8 @@ OB.Utilities.getTimePassed = function(
   // >30 days: months
 
   var now = new Date(), 
-      // created is in gmt
-      /// our local date has a time zone difference, correct for it
       msCreated = created.getTime(),
-      msNow = now.getTime() + (-1 * now.getTimezoneOffset() * 60000),
+      msNow = now.getTime(),
       n;
   
   // time difference in days

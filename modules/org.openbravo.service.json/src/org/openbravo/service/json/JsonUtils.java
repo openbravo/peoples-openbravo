@@ -64,7 +64,7 @@ public class JsonUtils {
    *         date format has lenient set to true.
    */
   public static SimpleDateFormat createTimeFormat() {
-    final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ssZZZZZ");
     dateFormat.setLenient(true);
     return dateFormat;
   }
@@ -79,7 +79,7 @@ public class JsonUtils {
   public static SimpleDateFormat createDateTimeFormat() {
     // Note users of this method will also use the convertToCorrectXSDFormat
     // method
-    final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
     dateFormat.setLenient(true);
     return dateFormat;
   }

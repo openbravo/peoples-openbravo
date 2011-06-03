@@ -1661,19 +1661,9 @@ isc.OBStandardView.addProperties({
   },
   
   convertContextValue: function(value, type) {
-    if (isc.isA.Date(value)) {
-      var ret, isTime = type && isc.SimpleType.getType(type).inheritsFrom === 'time';
-      if (isTime) {
-        return value.getUTCHours() + ':' + value.getUTCMinutes() + ':' + value.getUTCSeconds();
-      } else {
-        // this prevents strange timezone issues, the result is a timezoneless
-        // string
-        var oldXMLSchemaMode = isc.Comm.xmlSchemaMode;
-        isc.Comm.xmlSchemaMode = true;
-        ret = value.toSerializeableDate();
-        isc.Comm.xmlSchemaMode = oldXMLSchemaMode;
-        return ret;
-      }
+    var isTime = isc.isA.Date(value) && type && isc.SimpleType.getType(type).inheritsFrom === 'time';
+    if (isTime) {
+      return value.getUTCHours() + ':' + value.getUTCMinutes() + ':' + value.getUTCSeconds();
     }
     return value;
   },

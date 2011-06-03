@@ -29,6 +29,17 @@ isc.OBTimeItem.addProperties({
   short24TimeFormat: 'HH:MM:SS',
   shortTimeFormat: 'HH:MM:SS',
   long24TimeFormat: 'HH:MM:SS',
-  longTimeFormat: 'HH:MM:SS'
+  longTimeFormat: 'HH:MM:SS',
+  
+  // make sure that the undo/save buttons get enabled, needs to be done like
+  // this because changeOnKeypress is false
+  keyPress: function(item, form, keyName, characterValue){
+    if (characterValue || keyName === 'Backspace' || keyName === 'Delete') {
+      if (this.form.itemChangeActions) {
+        this.form.itemChangeActions();
+      }
+    }
+    return this.Super('keyPress', arguments);
+  }
 });
 
