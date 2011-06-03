@@ -970,57 +970,6 @@ isc.OBViewGrid.addProperties({
       this.show();
     }
   },
-
-  toggleSort: function(fieldName, direction) {
-    var fld = this.getField(fieldName);
-    if (fld && fld.displayField) {
-      this.Super('toggleSort', [fld.displayField, direction]);
-    } else {
-      this.Super('toggleSort', arguments);
-    }
-  },
-  
-  getSortSpecifier : function (fieldName) {
-    var fld = this.getField(fieldName), ret;
-    if (fld && fld.displayField) {
-      ret = this.Super('getSortSpecifier', [fld.displayField]);
-    } else {
-      ret = this.Super('getSortSpecifier', arguments);
-    }
-    return ret;
-  },
-
-  // overridden to solve an issue that for fields with a displayfield no 
-  // sort arrow is shown
-  setSort: function(sortSpecs) {
-    var i, specifier, dotIndex, sortHeader, sortButton, property, field, fieldNum, ret = this.Super('setSort', arguments);
-    
-    if (sortSpecs && sortSpecs.length > 0) {
-      // set the sort indicators on any fields that are sorted and are visible
-      for (i = 0; i < sortSpecs.length; i++) {
-        specifier = sortSpecs[i];
-        property = specifier.property;
-        if (!property.endsWith(OB.Constants.IDENTIFIER)) {
-          continue;
-        }
-        property = property.substring(0, property.length - 1 - OB.Constants.IDENTIFIER.length);
-        field = this.getSpecifiedField(property);
-        fieldNum = this.getFieldNum(property);
-        sortHeader = this.getFieldHeader(fieldNum);
-        if (sortHeader) {
-          sortButton = sortHeader.getMember(this.getLocalFieldNum(fieldNum));
-          if (sortButton) {
-            if (field) {
-              field.sortDirection = Array.shouldSortAscending(specifier.direction);
-            }
-            sortHeader.selectButton(sortButton);
-            sortButton.setTitle(this.getHeaderButtonTitle(sortButton));
-          }
-        }
-      }
-    }
-    return ret;
-  },
   
   // determine which field can be autoexpanded to use extra space
   getAutoFitExpandField: function() {
