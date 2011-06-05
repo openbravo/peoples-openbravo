@@ -363,9 +363,39 @@ isc.OBToolbar.addClassProperties({
       keyboardShortcutId: 'ToolBar_Audit'
     },
     'print' : {
-      keyboardShortcutId: 'ToolBar_Print'
+      updateState: function() {
+        var view = this.view, form = view.viewForm, grid = view.viewGrid;
+        var selectedRecords = grid.getSelectedRecords();
+        var disabled = false;
+        if(selectedRecords.length===0) {
+          disabled=true;
+        }
+        if(this.view.viewGrid.getTotalRows()===0) {
+          disabled=true;
+        }
+        if(view.isShowingForm && form.isNew){
+          disabled=true;
+        }
+        this.setDisabled(disabled);
+      }, 
+    keyboardShortcutId: 'ToolBar_Print'
     },
     'email' : {
+      updateState: function() {
+        var view = this.view, form = view.viewForm, grid = view.viewGrid;
+        var selectedRecords = grid.getSelectedRecords();
+        var disabled = false;
+        if(selectedRecords.length===0) {
+          disabled=true;
+        }
+        if(this.view.viewGrid.getTotalRows()===0) {
+          disabled=true;
+        }
+        if(view.isShowingForm && form.isNew){
+          disabled=true;
+        }
+        this.setDisabled(disabled);
+      }, 
       keyboardShortcutId: 'ToolBar_Email'
     }
   },
