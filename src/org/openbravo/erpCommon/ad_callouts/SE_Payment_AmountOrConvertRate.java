@@ -39,7 +39,7 @@ public class SE_Payment_AmountOrConvertRate extends SimpleCallout {
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
     VariablesSecureApp vars = info.vars;
-    String strConvertRate = vars.getStringParameter("inpfinaccTxnConvertRate");
+    String strConvertRate = vars.getNumericParameter("inpfinaccTxnConvertRate");
     BigDecimal convertRate = Convert.toBigDecimal(strConvertRate);
 
     String strAmount = vars.getNumericParameter("inpamount");

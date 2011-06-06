@@ -564,7 +564,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
   private String findExchangeRate(Currency paymentCurrency, Currency financialAccountCurrency,
       Date paymentDate, Organization organization, int conversionRatePrecision) {
     String exchangeRate = "1.0";
-    if (!financialAccountCurrency.equals(paymentCurrency)) {
+    if (financialAccountCurrency != null && !financialAccountCurrency.equals(paymentCurrency)) {
       final ConversionRate conversionRate = FIN_Utility.getConversionRate(paymentCurrency,
           financialAccountCurrency, paymentDate, organization);
       if (conversionRate == null) {

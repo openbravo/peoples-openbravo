@@ -334,8 +334,14 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("sectionDetailPaymentMethod", paymentMethodComboHtml);
 
     // Financial Account combobox
-    String finAccountComboHtml = FIN_Utility.getFinancialAccountList(strPaymentMethodId,
-        strFinancialAccountId, strOrgId, true, strCurrencyId, isReceipt);
+    List<FIN_FinancialAccount> financialAccounts = dao.getFilteredFinancialAccounts(
+        strPaymentMethodId, strOrgId, strCurrencyId,
+        isReceipt ? AdvPaymentMngtDao.PaymentDirection.IN : AdvPaymentMngtDao.PaymentDirection.OUT);
+    String finAccountComboHtml = FIN_Utility.getOptionsList(financialAccounts,
+        strFinancialAccountId, true);
+    if (financialAccounts.size() > 0 && account == null) {
+      strFinancialAccountId = financialAccounts.get(0).getId();
+    }
     xmlDocument.setParameter("sectionDetailFinancialAccount", finAccountComboHtml);
 
     // Currency
@@ -510,7 +516,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
   private String findExchangeRate(Currency paymentCurrency, Currency financialAccountCurrency,
       Date paymentDate, Organization organization, int conversionRatePrecision) {
     String exchangeRate = "1.0";
-    if (!financialAccountCurrency.equals(paymentCurrency)) {
+    if (financialAccountCurrency != null && !financialAccountCurrency.equals(paymentCurrency)) {
       final ConversionRate conversionRate = FIN_Utility.getConversionRate(paymentCurrency,
           financialAccountCurrency, paymentDate, organization);
       if (conversionRate == null) {
