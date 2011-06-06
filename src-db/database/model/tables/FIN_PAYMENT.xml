@@ -133,7 +133,7 @@
         <default><![CDATA[1]]></default>
         <onCreateDefault><![CDATA[1]]></onCreateDefault>
       </column>
-      <column name="FINACC_TXN_AMOUNT" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+      <column name="FINACC_TXN_AMOUNT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault><![CDATA[AMOUNT]]></onCreateDefault>
       </column>

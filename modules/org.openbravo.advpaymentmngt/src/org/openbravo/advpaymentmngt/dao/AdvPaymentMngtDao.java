@@ -1081,8 +1081,10 @@ public class AdvPaymentMngtDao {
 
       }
 
-      obc.add(exp.getCriterion()); // compoundexp will be always != null because
-      // finAccsMethods.isEmpty() == false
+      Criterion crit = exp.getCriterion();
+      if (crit != null) {
+        obc.add(crit);
+      }
     }
     return obc.list();
   }

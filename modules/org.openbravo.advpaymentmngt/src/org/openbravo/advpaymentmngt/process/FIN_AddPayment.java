@@ -131,7 +131,8 @@ public class FIN_AddPayment {
       payment = _payment;
     else {
       payment = dao.getNewPayment(isReceipt, organization, docType, strPaymentDocumentNo,
-          businessPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate, referenceNo);
+          businessPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate, referenceNo,
+          paymentCurrency, finTxnConvertRate, finTxnAmount);
       OBDal.getInstance().flush();
     }
 
