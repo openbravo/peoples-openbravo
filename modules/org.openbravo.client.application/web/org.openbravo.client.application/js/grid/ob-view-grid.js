@@ -1285,7 +1285,7 @@ isc.OBViewGrid.addProperties({
       if ((EH.ctrlKeyDown() && !EH.altKeyDown() && !EH.shiftKeyDown()) || (!EH.ctrlKeyDown() && !EH.altKeyDown() && EH.shiftKeyDown())) {
         // move to multi-select mode, let the standard do it for us
         this.singleRecordSelection = false;
-      } else {
+      } else if (!(!EH.ctrlKeyDown() && EH.altKeyDown() && EH.shiftKeyDown())) {  // 'if' statement to avoid do an action when the KS to move to a child tab is fired
         this.doSelectSingleRecord(record);
       }
     } else if (this.getCheckboxFieldPosition() === fieldNum) {
