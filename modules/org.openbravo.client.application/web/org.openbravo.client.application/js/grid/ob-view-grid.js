@@ -1296,7 +1296,7 @@ isc.OBViewGrid.addProperties({
       // in the selectOnMouseDown
       this.singleRecordSelection = false;
       this.selectionUpdated();
-    } else if (isc.EventHandler.ctrlKeyDown()) {
+    } else if (isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown()) {
       // only do something if record clicked and not from selectOnMouseDown
       // this method got called twice from one clicK: through recordClick
       // and
@@ -1310,7 +1310,7 @@ isc.OBViewGrid.addProperties({
           this.selectRecord(record);
         }
       }
-    } else if (isc.EventHandler.shiftKeyDown()) {
+    } else if (!isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && isc.EventHandler.shiftKeyDown()) {
       this.singleRecordSelection = false;
       this.selection.selectOnMouseDown(this, recordNum, fieldNum);
       this.selectionUpdated(this.getSelectedRecord(), this.getSelection());
