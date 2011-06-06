@@ -34,6 +34,7 @@ isc.OBViewGrid.create({
           , referencedKeyColumnName: '${field.referencedKeyColumnName?js_string}'        
           , targetEntity: '${field.targetEntity?js_string}'
           , disabled: ${field.readOnly?string}
+          , readonly: ${field.readOnly?string}
           , updatable: ${field.updatable?string}
           <#if field.redrawOnChange?string = "true" >
           , redrawOnChange: true
