@@ -21,6 +21,7 @@
 var frm = null,
     isReceipt = true,
     isCreditAllowed = true,
+    isCreditCheckedFromBPinGrid = false,
     globalMaskNumeric = "#0.00",
     globalDecSeparator = ".",
     globalGroupSeparator = ",",
@@ -30,10 +31,11 @@ function isTrue(objectName) {
   return frm.elements[objectName].value === 'Y';
 }
 
-function initFIN_Utilities(_frm, _creditAllowed) {
+function initFIN_Utilities(_frm, _creditAllowed, _isCreditCheckedFromBPinGrid) {
   frm = _frm;
   isReceipt = isTrue('isReceipt');
   isCreditAllowed = _creditAllowed !== undefined ? _creditAllowed : true;
+  isCreditCheckedFromBPinGrid = _isCreditCheckedFromBPinGrid !== undefined ? _isCreditCheckedFromBPinGrid : false;
   if (!isCreditAllowed) {
     frm.inpUseCredit.checked = false;
   }
@@ -421,7 +423,9 @@ function updateTotal() {
       }
     }
   }
-  isCreditAllowed = !selectedBusinessPartners.isMultibpleSelection();
+  if (isCreditCheckedFromBPinGrid) {
+    isCreditAllowed = !selectedBusinessPartners.isMultibpleSelection();
+  }
   updateDifference();
   updateConvertedAmounts();
 }
