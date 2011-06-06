@@ -1282,7 +1282,7 @@ isc.OBViewGrid.addProperties({
     
     var previousSingleRecordSelection = this.singleRecordSelection;
     if (arrowKeyPressed) {
-      if (EH.ctrlKeyDown() || EH.shiftKeyDown()) {
+      if ((EH.ctrlKeyDown() && !EH.altKeyDown() && !EH.shiftKeyDown()) || (!EH.ctrlKeyDown() && !EH.altKeyDown() && EH.shiftKeyDown())) {
         // move to multi-select mode, let the standard do it for us
         this.singleRecordSelection = false;
       } else {
