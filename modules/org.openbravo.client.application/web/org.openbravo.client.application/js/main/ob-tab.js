@@ -290,6 +290,15 @@ isc.OBTabBarMain.addProperties({
       this.initWidgetStyle();
     }
     this.Super('initWidget', arguments);
+  },
+
+
+  keyPress: function() {
+    var ret;
+    this.tabWithinToolbar = true;
+    ret = this.Super('keyPress', arguments);
+    this.tabWithinToolbar = false;
+    return ret;
   }
 });
 
