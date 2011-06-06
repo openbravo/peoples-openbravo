@@ -289,7 +289,8 @@ function isPaymentMethodMulticurrency(combo) {
 }
 
 function initializeTemplate(){
-  initFIN_Utilities(document.frmMain);
+  // credit is allowed looking at the business partner selection in the grid
+  initFIN_Utilities(document.frmMain, true, true);
   processLabels();
   displayLogicElement('paramCustBalance', isTrue('isReceipt'));
   displayLogicElement('NoPackageslinkCalc', isTrue('isReceipt'));
