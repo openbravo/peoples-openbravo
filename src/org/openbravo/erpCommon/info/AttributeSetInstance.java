@@ -95,6 +95,8 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
           "");
       String strProduct = vars.getGlobalVariable("inpProduct", "AttributeSetInstance.product", "");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+      if (strIsSOTrx.equals(""))
+        strIsSOTrx = "N";
       if (log4j.isDebugEnabled())
         log4j.debug("strNameValue: " + strNameValue);
       String strAttrSetValueType = "";
