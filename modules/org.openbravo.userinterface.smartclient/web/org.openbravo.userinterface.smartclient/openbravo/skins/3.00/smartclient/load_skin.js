@@ -16,11 +16,10 @@ with (theWindow) {
  //   isc.Page.setSkinDir("[ISOMORPHIC]/skins/Enterprise/")
   isc.Page.setSkinDir("[ISOMORPHIC]/../openbravo/skins/3.00/smartclient/");  
 
-
 //----------------------------------------
 // Load skin style sheet(s)
 //----------------------------------------
-  //  isc.Page.loadStyleSheet("[SKIN]/skin_styles.css", theWindow)
+ //   isc.Page.loadStyleSheet("[SKIN]/skin_styles.css", theWindow)
 
 
 
