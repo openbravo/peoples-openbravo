@@ -293,6 +293,9 @@ isc.OBSelectorItem.addProperties({
   showPickerIcon: true,
   validateOnChange: true,
   completeOnTab: true,
+  // note validateonexit does not work when completeOnTab is true
+  // setting it anyway, the this.validate() is called in the blur
+  validateOnExit: true,
   
   pickListProperties: {
     fetchDelay: 400,
@@ -419,6 +422,7 @@ isc.OBSelectorItem.addProperties({
 
   // override blur to not do any change handling
   blur: function(form, item){
+    this.validate();
   },
 
   handleOutFields: function(record){
