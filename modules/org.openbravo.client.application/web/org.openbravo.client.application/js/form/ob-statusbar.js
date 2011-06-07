@@ -74,7 +74,7 @@ isc.OBStatusBarIconButton.addProperties( {
   },
 
   doAction : function() {
-    var rowNum, newRowNum, newRecord, theButtonBar, i;
+    var rowNum, newRowNum, newRecord, theButtonBar, i, wasNew;
     if (this.buttonType === 'previous') {
       this.view.editNextPreviousRecord(false);
     } else if (this.buttonType === 'maximize') {
@@ -89,6 +89,9 @@ isc.OBStatusBarIconButton.addProperties( {
       }
       this.view.switchFormGridVisibility();
       this.view.messageBar.hide();
+      if (this.view.viewForm.isNew) {
+        this.view.refreshChildViews();
+      }
     } else if (this.buttonType === 'maximizeRestore') {
       theButtonBar = this.view.statusBar.buttonBar;
       if (theButtonBar.members) {
