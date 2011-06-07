@@ -355,7 +355,7 @@ isc.OBToolbar.addClassProperties({
         } else if (view.isEditingGrid && grid.getEditForm().isNew) {
           disabled = true;
         } else if ((selectedRecords && selectedRecords.length > 1) || 
-                  (selectedRecords && selectedRecords.lenght === 1 && selectedRecords[0].updated && selectedRecords[0].creationDate && selectedRecords[0].updated.getTime() === selectedRecords[0].creationDate.getTime())) {
+                  (selectedRecords && selectedRecords.length === 1 && selectedRecords[0].updated && selectedRecords[0].creationDate && selectedRecords[0].updated.getTime() === selectedRecords[0].creationDate.getTime())) {
           disabled = true;
         }
         this.setDisabled(disabled);
