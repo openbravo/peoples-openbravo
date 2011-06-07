@@ -307,6 +307,9 @@ isc.RPCManager.addClassProperties({
   }
 });
 
+//Prevent errors in smartclient for screenreader, is quite new and unstable for now
+isc.screenReader = false;
+
 // uncomment this code and put a breakpoint to get a better control
 // on from where async operations are started
 //isc.Class._fireOnPause = isc.Class.fireOnPause;
