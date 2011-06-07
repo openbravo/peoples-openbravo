@@ -74,7 +74,7 @@ isc.OBStatusBarIconButton.addProperties( {
   },
 
   doAction : function() {
-    var rowNum, newRowNum, newRecord, theButtonBar, i, wasNew;
+    var rowNum, newRowNum, newRecord, theButtonBar, i;
     if (this.buttonType === 'previous') {
       this.view.editNextPreviousRecord(false);
     } else if (this.buttonType === 'maximize') {
