@@ -307,6 +307,8 @@ isc.RPCManager.addClassProperties({
   }
 });
 
+isc.screenReader = false;
+
 // uncomment this code and put a breakpoint to get a better control
 // on from where async operations are started
 //isc.Class._fireOnPause = isc.Class.fireOnPause;
