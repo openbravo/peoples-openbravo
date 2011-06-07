@@ -4839,7 +4839,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800028-->  <TABLENAME><![CDATA[C_File]]></TABLENAME>
 <!--800028-->  <CLASSNAME><![CDATA[Attachment]]></CLASSNAME>
 <!--800028-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--800028-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--800028-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--800028-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--800028-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--800028-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
