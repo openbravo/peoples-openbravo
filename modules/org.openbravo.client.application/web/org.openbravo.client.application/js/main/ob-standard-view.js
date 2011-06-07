@@ -583,22 +583,7 @@ isc.OBStandardView.addProperties({
       object = this.lastFocusedItem;
       functionName = 'focusInItem';
     } else if (this.viewGrid && !this.isShowingForm && this.viewGrid.getFilterEditor() && this.viewGrid.getFilterEditor().getEditForm()) {
-      // there is a filter editor
-      object = this.viewGrid.getFilterEditor().getEditForm();
-      
-      // compute a focus item
-      if (!object.getFocusItem()) {
-        items = object.getItems();
-
-        for (i = 0; i < items.length; i++) {
-          item = items[i];
-          if (item.getCanFocus() && !item.isDisabled()) {
-            object.setFocusItem(item);
-            break;
-          }
-        }
-      }
-      
+      this.viewGrid.focusInFirstFilterEditor();
       functionName = 'focus';
     } else if (this.viewGrid) {
       object = this.viewGrid;
@@ -834,7 +819,11 @@ isc.OBStandardView.addProperties({
       this.viewGrid.markForRedraw('showing');
       this.viewGrid.show();
       if (this.isActiveView()) {
-        this.viewGrid.focusInFirstFilterEditor();
+        if (this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length === 1) {
+          this.viewGrid.focus();
+        } else {
+          this.viewGrid.focusInFirstFilterEditor();
+        }
       }
       
       this.viewGrid.setHeight('100%');
