@@ -89,6 +89,9 @@ isc.OBStatusBarIconButton.addProperties( {
       }
       this.view.switchFormGridVisibility();
       this.view.messageBar.hide();
+      if (this.view.viewForm.isNew) {
+        this.view.refreshChildViews();
+      }
     } else if (this.buttonType === 'maximizeRestore') {
       theButtonBar = this.view.statusBar.buttonBar;
       if (theButtonBar.members) {
