@@ -1342,8 +1342,8 @@ isc.OBStandardView.addProperties({
       }
     
       var callback = function(ok){
-        var i, data, deleteData, error, recordInfos = [], removeCallBack = function(resp, data, req){
-          var localData = resp.dataObject || resp.data || data, i;
+        var i, doUpdateTotalRows, data, deleteData, error, recordInfos = [], removeCallBack = function(resp, data, req){
+          var localData = resp.dataObject || resp.data || data, i, updateTotalRows;
           if (!localData) {
             // bail out, an error occured which should be displayed to the user now
             return;
@@ -1361,11 +1361,19 @@ isc.OBStandardView.addProperties({
             }
             view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [deleteCount]));
             if (deleteData) {
+              // note totalrows is used when inserting a new row, to determine after which
+              // record to add a new row
+              updateTotalRows = (view.viewGrid.data.getLength() === view.viewGrid.data.totalRows);
               // deleteData is computed below
               for (i = 0 ; i < deleteData.ids.length; i++) {
                 recordInfos.push({id: deleteData.ids[i]});
               }
               view.viewGrid.data.handleUpdate('remove', recordInfos);
+              if (updateTotalRows) {
+                view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
+              }
+            } else if (doUpdateTotalRows) {
+              view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
             }
             view.viewGrid.updateRowCountDisplay();
             view.refreshChildViews();
@@ -1403,6 +1411,9 @@ isc.OBStandardView.addProperties({
               refreshGrid: true
             });
           } else {
+            // note totalrows is used when inserting a new row, to determine after which
+            // record to add a new row
+            doUpdateTotalRows = (view.viewGrid.data.getLength() === view.viewGrid.data.totalRows);
             view.viewGrid.removeData(selection[0], removeCallBack, {});
           }
         }
