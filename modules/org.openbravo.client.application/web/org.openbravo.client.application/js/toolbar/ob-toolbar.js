@@ -489,7 +489,7 @@ isc.OBToolbar.addProperties({
   // 
   // NOTE: new buttons should implement the updateState method.
   //
-  updateButtonState: function(noSetSession, changeEvent){
+  updateButtonState: function(noSetSession){
     for (i = 0; i < this.leftMembers.length; i++) {
       if (this.leftMembers[i].updateState) {
         this.leftMembers[i].updateState();
@@ -497,9 +497,7 @@ isc.OBToolbar.addProperties({
     }
     
     // and refresh the process toolbar buttons
-    if (!changeEvent) {
-      this.refreshCustomButtons(noSetSession);
-    }
+    this.refreshCustomButtons(noSetSession);
   },
   
   // ** {{{ getLeftMember(member) }}} **
@@ -930,7 +928,7 @@ isc.OBToolbar.addProperties({
   // Refreshes all the custom buttons in the toolbar based on current record selection
   //
   refreshCustomButtons: function(noSetSession){
-    var selectedRecords, isNewRecord = false;
+    var selectedRecords, multipleSelectedRowIds, allProperties;
     function doRefresh(buttons, currentValues, hideAllButtons, me) {
       var i;
       for (i = 0; i < buttons.length; i++) {
@@ -982,20 +980,14 @@ isc.OBToolbar.addProperties({
       };
     };
 
-    var currentTabCalled = false;
+    var currentTabCalled = false, me = this;
     for (iButtonContext = 0; iButtonContext < buttonContexts.length; iButtonContext++) {
       currentContext = buttonContexts[iButtonContext];
 
       selectedRecords = currentContext.viewGrid.getSelectedRecords() || [];
-      for (i = 0; i < selectedRecords.length; i++) {
-        if (selectedRecords[i]._new) {
-          isNewRecord = true;
-          break;
-        }
-      }
       var numOfSelRecords = 0, 
           isNew = currentContext.viewForm.isNew, 
-          hideAllButtons = isNew || selectedRecords.size() === 0 || isNewRecord,
+          hideAllButtons = isNew || selectedRecords.size() === 0,
           currentValues = currentContext.getCurrentValues();
 
       var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1;
@@ -1004,10 +996,9 @@ isc.OBToolbar.addProperties({
       }
 
       if (currentValues && !noSetSession && !currentContext.isShowingForm && !isNew && !hideAllButtons) {
-      	if(this.view.tabId===currentContext.tabId){
-      	  currentTabCalled = true;	
-      	}
-        var me = this;
+        if(this.view.tabId===currentContext.tabId){
+          currentTabCalled = true;	
+        }
         // Call FIC to obtain possible session attributes and set them in form
         requestParams = {
           MODE: 'SETSESSION',
@@ -1015,14 +1006,14 @@ isc.OBToolbar.addProperties({
           TAB_ID: currentContext.tabId,
           ROW_ID: currentValues.id
         };
-        var multipleSelectedRowIds = [];
+        multipleSelectedRowIds = [];
         if(selectedRecords.size() > 1){
           for (i = 0; i < selectedRecords.size(); i++) {
             multipleSelectedRowIds[i] = selectedRecords[i].id;
           }
           requestParams.MULTIPLE_ROW_IDS = multipleSelectedRowIds;
         }
-        var allProperties = currentContext.getContextInfo(false, true, false, true);
+        allProperties = currentContext.getContextInfo(false, true, false, true);
         OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, callbackHandler(currentContext, me));
       } else {
         doRefresh(buttonsByContext[currentContext], currentValues || {}, hideAllButtons || noneOrMultipleRecordsSelected, this);
@@ -1030,15 +1021,15 @@ isc.OBToolbar.addProperties({
     }
 
     if(!currentTabCalled && !noSetSession && !this.view.isShowingForm && !this.view.viewForm.isNew && this.view.viewGrid.getSelectedRecords().size() !== 0){
-      var selectedRecords = this.view.viewGrid.getSelectedRecords();
+      selectedRecords = this.view.viewGrid.getSelectedRecords();
       //The call to the FIC for the current tab was not done (probably because it doesn't have buttons, or the buttons do not depend on session vars/aux ins.
       //However, a call still needs to be done, to set the attachments information
       requestParams = {
         MODE: 'SETSESSION',
         PARENT_ID: this.view.getParentId(),
-        TAB_ID: this.view.tabId,
+        TAB_ID: this.view.tabId
       };
-      var multipleSelectedRowIds = [];
+      multipleSelectedRowIds = [];
       if(selectedRecords.size() >= 1){
         for (i = 0; i < selectedRecords.size(); i++) {
           if(i === 0){
@@ -1050,14 +1041,13 @@ isc.OBToolbar.addProperties({
           requestParams.MULTIPLE_ROW_IDS = multipleSelectedRowIds;
         }
       }
-      var allProperties = this.view.getContextInfo(false, true, false, true);
-      var me = this;
+      allProperties = this.view.getContextInfo(false, true, false, true);
       OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
-    	  var attachmentExists = data.attachmentExists;
-    	  me.view.attachmentExists = attachmentExists;
-    	  //Call to refresh the buttons. As its called with noSetSession=true, it will not cause an infinite recursive loop
-    	  me.updateButtonState(true);
-        }  
+        var attachmentExists = data.attachmentExists;
+        me.view.attachmentExists = attachmentExists;
+        //Call to refresh the buttons. As its called with noSetSession=true, it will not cause an infinite recursive loop
+        me.updateButtonState(true);
+      }  
       );
     }
   },
