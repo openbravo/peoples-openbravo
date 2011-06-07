@@ -811,7 +811,7 @@ public class FIN_Utility {
   public static int getConversionRatePrecision(VariablesSecureApp vars) {
     try {
       String formatOutput = vars.getSessionValue("#FormatOutput|generalQtyEdition", "#0.######");
-      String decimalSeparator = vars.getSessionValue("#DecimalSeparator|generalQtyEdition", ".");
+      String decimalSeparator = ".";
       if (formatOutput.contains(decimalSeparator)) {
         formatOutput = formatOutput.substring(formatOutput.indexOf(decimalSeparator), formatOutput
             .length());

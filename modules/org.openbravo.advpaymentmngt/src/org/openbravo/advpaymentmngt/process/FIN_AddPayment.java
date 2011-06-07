@@ -20,6 +20,7 @@ package org.openbravo.advpaymentmngt.process;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,7 +37,6 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.base.util.Convert;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -276,8 +276,9 @@ public class FIN_AddPayment {
     } else {
       Currency finAccountCurrency = paymentProposal.getAccount().getCurrency();
       BigDecimal finAccountTxnAmount = paymentAmount.multiply(convertRate);
-      finAccountTxnAmount = Convert.toNumberWithPrecision(finAccountTxnAmount, finAccountCurrency
-          .getStandardPrecision());
+      long faPrecision = finAccountCurrency.getStandardPrecision();
+      finAccountTxnAmount = finAccountTxnAmount.setScale((int) faPrecision, RoundingMode.HALF_UP);
+
       paymentProposal.setFinancialTransactionAmount(finAccountTxnAmount);
     }
 

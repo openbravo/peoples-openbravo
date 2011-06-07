@@ -32,7 +32,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.base.util.Convert;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -389,10 +388,10 @@ public class DocFINPayment extends AcctServer {
       boolean isGain = acctBalance.compareTo(BigDecimal.ZERO) > 0;
       if (isGain) {
         // debit > credit = need to credit
-        currencyGainCR = Convert.toString(acctBalance);
+        currencyGainCR = acctBalance == null ? "" : acctBalance.toPlainString();
       } else {
         // debit < credit = need to debit
-        currencyLossDR = Convert.toString(acctBalance.negate());
+        currencyLossDR = acctBalance.negate() == null ? "" : acctBalance.negate().toPlainString();
       }
 
       String currencyLossGainAcctComboId = null;
