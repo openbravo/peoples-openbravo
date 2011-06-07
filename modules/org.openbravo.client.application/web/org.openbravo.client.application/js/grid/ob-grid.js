@@ -62,11 +62,18 @@ isc.OBGrid.addProperties({
   },
 
   focusInFirstFilterEditor: function() {
-    var i;
-    for (i=0; i<this.fields.length; i++) {
-      if (this.fields[i].name !== '_checkboxField' && this.fields[i].name !== '_editLink') {
-        this.focusInFilterEditor(this.fields[i].name);
-        return true;
+    if (this.getFilterEditor()) { // there is a filter editor
+      var object = this.getFilterEditor().getEditForm(),
+        items, item, i;
+
+      // compute a focusable item
+      items = object.getItems();
+      for (i = 0; i < items.length; i++) {
+        item = items[i];
+        if (item.getCanFocus() && !item.isDisabled()) {
+          this.focusInFilterEditor(item);
+          return true;
+        }
       }
     }
     return false;
