@@ -312,6 +312,7 @@ isc.OBMyOpenbravo.addProperties({
 
           this.addMember(portalRow, position);
           portalRow.addMember(portlet);
+          portlet.portalRow = portalRow;
           
           if (this.portalLayout.sendEvents && OB.MyOB && !OB.MyOB.isReloading) {
             eventType = portlet.dbInstanceId ? 'WIDGET_MOVED' : 'WIDGET_ADDED';
