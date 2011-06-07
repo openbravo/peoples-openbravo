@@ -110,7 +110,6 @@ isc.OBClassicPopup.addProperties({
       this.setHeight(frameHeight);
     }
   },
-  ID: 'OBPopupClassicContent',
   autoSize: false,
   showMaximizeButton : true,
   showHeaderIcon: true,
@@ -122,10 +121,6 @@ isc.OBClassicPopup.addProperties({
   height: 500,
   percentualWidth: false,
   percentualHeight: false,
-  closeClick : function () {
-    this.removeItems(0);
-    this.Super('closeClick', arguments);
-  },
   getIframeHtmlObj: function() {
     var container, 
         iframes;
