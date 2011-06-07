@@ -1335,7 +1335,18 @@ OB.ViewFormProperties = {
       return;
     }
     return this.Super('updateFocusItemValue', arguments);
-  } 
+  },
+
+  keyDown: function() {
+    if (isc.EventHandler.getKey() === 'Enter' &&
+      (isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown()) &&
+      this.getFocusItem && this.getFocusItem().titleClick) {
+      this.getFocusItem().titleClick(this, this.getFocusItem());
+      return false;
+    } else {
+      return true;
+    }
+  }
 
 };
 
