@@ -19,6 +19,7 @@
 package org.openbravo.advpaymentmngt.process;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,7 +30,6 @@ import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.util.Convert;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -129,8 +129,9 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
               String strPaymentDocumentNo = FIN_Utility.getDocumentNo(orgId, (isReceipt) ? "ARR"
                   : "APP", "DocumentNo_FIN_Payment_Proposal");
 
-              BigDecimal finAccTxnAmount = Convert.toNumberWithPrecision(paymentTotal
-                  .multiply(exchangeRate), financialAccountCurrency.getStandardPrecision());
+              BigDecimal finAccTxnAmount = paymentTotal.multiply(exchangeRate);
+              long faPrecision = financialAccountCurrency.getStandardPrecision();
+              finAccTxnAmount = finAccTxnAmount.setScale((int) faPrecision, RoundingMode.HALF_UP);
               FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt, dao.getObject(
                   DocumentType.class, strDocTypeId), strPaymentDocumentNo, dao.getObject(
                   BusinessPartner.class, strBusinessPartner_old), paymentMethodId,
@@ -172,8 +173,9 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
           String strPaymentDocumentNo = FIN_Utility.getDocumentNo(orgId, (isReceipt) ? "ARR"
               : "APP", "DocumentNo_FIN_Payment_Proposal");
 
-          BigDecimal finAccTxnAmount = Convert.toNumberWithPrecision(paymentTotal
-              .multiply(exchangeRate), financialAccountCurrency.getStandardPrecision());
+          BigDecimal finAccTxnAmount = paymentTotal.multiply(exchangeRate);
+          long faPrecision = financialAccountCurrency.getStandardPrecision();
+          finAccTxnAmount = finAccTxnAmount.setScale((int) faPrecision, RoundingMode.HALF_UP);
 
           FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt, dao.getObject(
               DocumentType.class, strDocTypeId), strPaymentDocumentNo, dao.getObject(

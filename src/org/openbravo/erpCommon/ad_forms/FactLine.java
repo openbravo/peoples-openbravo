@@ -17,6 +17,7 @@
 package org.openbravo.erpCommon.ad_forms;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,7 +27,6 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.util.Convert;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -268,14 +268,14 @@ public class FactLine {
 
     final Currency acctCurrency = OBDal.getInstance().get(Currency.class, Acct_Currency_ID);
 
-    BigDecimal sourceDr = Convert.toAmount(m_AmtSourceDr);
-    BigDecimal sourceCr = Convert.toAmount(m_AmtSourceCr);
+    BigDecimal sourceDr = new BigDecimal(m_AmtSourceDr);
+    BigDecimal sourceCr = new BigDecimal(m_AmtSourceCr);
 
     BigDecimal acctDr = sourceDr.multiply(conversionRate);
     BigDecimal acctCr = sourceCr.multiply(conversionRate);
 
-    m_AmtAcctDr = Convert.toStringWithPrecision(acctDr, acctCurrency.getStandardPrecision());
-    m_AmtAcctCr = Convert.toStringWithPrecision(acctCr, acctCurrency.getStandardPrecision());
+    m_AmtAcctDr = toStringWithPrecision(acctDr, acctCurrency.getStandardPrecision());
+    m_AmtAcctCr = toStringWithPrecision(acctCr, acctCurrency.getStandardPrecision());
     return true;
   } // convert
 
@@ -847,7 +847,8 @@ public class FactLine {
   @Deprecated
   // Use getAccountingBalance which returns BigDecimal
   public String getAcctBalance() {
-    return Convert.toString(getAccountingBalance());
+    BigDecimal accBalance = getAccountingBalance();
+    return accBalance == null ? "" : getAccountingBalance().toPlainString();
   } // getAccBalanclance
 
   /**
@@ -986,5 +987,51 @@ public class FactLine {
    */
   public String getM_AmtAcctCr() {
     return m_AmtAcctCr;
+  }
+
+  /**
+   * Convert a BigDecimal to a string with a specified number of decimal places
+   * 
+   * @param in
+   *          BigDecimal to convert to a string
+   * @param precision
+   *          (Max) Number of decimal places to output Note: precision generally refers to the total
+   *          number of digits in a number, but within Openbravo it refers to the number of
+   *          significant digits after the decimal point.
+   * @return String representation of input
+   */
+  private String toStringWithPrecision(BigDecimal in, long precision) {
+    if (in == null) {
+      return "";
+    }
+    try {
+      return in.setScale((int) precision, RoundingMode.HALF_UP).toPlainString();
+    } catch (ArithmeticException e) {
+      log4jFactLine.error(e.getMessage(), e);
+      return null;
+    }
+  }
+
+  /**
+   * Convert a BigDecimal to a BigDecimal with a specified number of decimal places
+   * 
+   * @param in
+   *          BigDecimal to set the precision
+   * @param precision
+   *          (Max) Number of decimal places to output Note: precision generally refers to the total
+   *          number of digits in a number, but within Openbravo it refers to the number of
+   *          significant digits after the decimal point.
+   * @return BigDecimal with specified number of significant decimal places
+   */
+  private BigDecimal toNumberWithPrecision(BigDecimal in, long precision) {
+    if (in == null) {
+      return null;
+    }
+    try {
+      return in.setScale((int) precision, RoundingMode.HALF_UP);
+    } catch (ArithmeticException e) {
+      log4jFactLine.error(e.getMessage(), e);
+      return null;
+    }
   }
 }

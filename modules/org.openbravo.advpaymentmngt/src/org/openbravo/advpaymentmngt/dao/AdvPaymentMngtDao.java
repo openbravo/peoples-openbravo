@@ -449,7 +449,7 @@ public class AdvPaymentMngtDao {
     OBDal.getInstance().save(payment);
     OBDal.getInstance().save(newPaymentDetail);
     OBDal.getInstance().save(paymentScheduleDetail);
-    // OBDal.getInstance().flush();
+    OBDal.getInstance().flush();
 
     return newPaymentDetail;
   }

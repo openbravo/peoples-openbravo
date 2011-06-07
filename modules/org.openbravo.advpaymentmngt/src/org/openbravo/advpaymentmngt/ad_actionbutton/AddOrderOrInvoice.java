@@ -37,7 +37,6 @@ import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.util.Convert;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -303,12 +302,15 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
           .getStandardPrecision().toString());
     }
-    xmlDocument.setParameter("exchangeRate", Convert.toString(payment
-        .getFinancialTransactionConvertRate()));
-    xmlDocument.setParameter("actualConverted", Convert.toString(payment
-        .getFinancialTransactionAmount()));
-    xmlDocument.setParameter("expectedConverted", Convert.toString(payment
-        .getFinancialTransactionAmount()));
+    xmlDocument.setParameter("exchangeRate",
+        payment.getFinancialTransactionConvertRate() == null ? "" : payment
+            .getFinancialTransactionConvertRate().toPlainString());
+    xmlDocument.setParameter("actualConverted",
+        payment.getFinancialTransactionAmount() == null ? "" : payment
+            .getFinancialTransactionAmount().toString());
+    xmlDocument.setParameter("expectedConverted",
+        payment.getFinancialTransactionAmount() == null ? "" : payment
+            .getFinancialTransactionAmount().toPlainString());
     xmlDocument.setParameter("currencyId", payment.getCurrency().getId());
     xmlDocument.setParameter("currencyName", payment.getCurrency().getISOCode());
 
