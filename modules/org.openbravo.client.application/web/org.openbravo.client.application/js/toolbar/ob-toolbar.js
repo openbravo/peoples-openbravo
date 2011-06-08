@@ -989,10 +989,10 @@ isc.OBToolbar.addProperties({
       selectedRecords = currentContext.viewGrid.getSelectedRecords() || [];
       var numOfSelRecords = 0, 
           isNew = currentContext.viewForm.isNew, 
-          hideAllButtons = isNew || selectedRecords.size() === 0,
+          hideAllButtons = selectedRecords.size() === 0,
           currentValues = currentContext.getCurrentValues();
 
-      var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1;
+      var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1 && !isNew;
       if (currentContext.viewGrid.getSelectedRecords()) {
         numOfSelRecords = currentContext.viewGrid.getSelectedRecords().length;
       }
