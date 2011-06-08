@@ -635,9 +635,7 @@ OB.ViewFormProperties = {
       delete this.validateAfterFicReturn;
       // only validate the fields which have errors
       for (i = 0; i < this.getFields().length; i++) {
-        if (this.hasFieldErrors(this.getFields()[i].name)) {
-          this.getFields()[i].validate();
-        }
+        this.getFields()[i].validate();
       }
     }
 
@@ -966,7 +964,7 @@ OB.ViewFormProperties = {
     // remove the message
     this.setHasChanged(true);
     this.view.messageBar.hide();
-    this.view.toolBar.updateButtonState(true); 
+    this.view.toolBar.updateButtonState(true, true); 
   },
   
   // make sure that any field errors also appear in the grid
