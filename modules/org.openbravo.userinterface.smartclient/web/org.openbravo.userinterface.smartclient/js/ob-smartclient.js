@@ -136,9 +136,6 @@ isc.FormItem.addProperties({
   },
 
   blur: function(form, item){
-    // always validate
-    this.validate();
-
     if (item._hasChanged && form && form.handleItemChange) {
       form.handleItemChange(this);
     }

@@ -171,9 +171,9 @@ public abstract class UIDefinition {
         if (defaultS.equalsIgnoreCase("@#Date@")) {
           return setNOWDefault();
         } else if (!defaultS.startsWith("@SQL=")) {
-          columnValue = Utility.getDefault(new DalConnectionProvider(false), rq
-              .getVariablesSecureApp(), field.getColumn().getDBColumnName(), defaultS, field
-              .getTab().getWindow().getId(), "");
+          columnValue = Utility.getDefault(new DalConnectionProvider(false),
+              rq.getVariablesSecureApp(), field.getColumn().getDBColumnName(), defaultS, field
+                  .getTab().getWindow().getId(), "");
         } else {
           ArrayList<String> params = new ArrayList<String>();
           String sql = parseSQL(defaultS, params);
@@ -317,9 +317,9 @@ public abstract class UIDefinition {
    */
   public String getFilterEditorProperties(Field field) {
     if (getFilterEditorType() == null) {
-      return ",canFilter: false, required: false";
+      return ",canFilter: false";
     }
-    return ", canFilter:true, required: false, filterEditorType: '" + getFilterEditorType() + "'"
+    return ", canFilter:true, filterEditorType: '" + getFilterEditorType() + "'"
         + getFilterEditorPropertiesProperty(field);
   }
 
@@ -419,15 +419,15 @@ public abstract class UIDefinition {
           "#User_Client", field.getTab().getWindow().getId());
       if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
         clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
-            field.getTab().getWindow().getId(), Integer.parseInt(field.getTab().getTable()
-                .getDataAccessLevel()));
+            field.getTab().getWindow().getId(),
+            Integer.parseInt(field.getTab().getTable().getDataAccessLevel()));
         clientList = vars.getSessionValue("#User_Client");
         orgList = null;
       }
       if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_ORG_ID")) {
         orgList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Org", field
-            .getTab().getWindow().getId(), Integer.parseInt(field.getTab().getTable()
-            .getDataAccessLevel()));
+            .getTab().getWindow().getId(),
+            Integer.parseInt(field.getTab().getTable().getDataAccessLevel()));
       }
       ApplicationDictionaryCachedStructures cachedStructures = WeldUtils
           .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);

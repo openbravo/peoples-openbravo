@@ -26,7 +26,6 @@ isc.OBListItem.addProperties({
   hasPickList: true,
   showPickListOnKeypress: true,  
   cachePickListResults: false,
-  validateOnExit: true,  
   completeOnTab: true,
   
   // without this in chrome the content is sorted according to the id/value
@@ -51,6 +50,14 @@ isc.OBListItem.addProperties({
     if (this.moveFocusOnPickValue && this.form.focusInNextItem) {
       this.form.focusInNextItem(this.name);
     }
+  },
+  
+  blur: function(form, item){
+    // always validate if not part of a filter editor
+    if (!this.form.grid || !this.form.grid.isAFilterEditor || !this.form.grid.isAFilterEditor()) {
+      this.validate();
+    }
+    return this.Super('blur', arguments);
   },
 
   changed: function() {
