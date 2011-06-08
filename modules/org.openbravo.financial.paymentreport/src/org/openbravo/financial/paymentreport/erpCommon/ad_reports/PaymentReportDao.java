@@ -409,13 +409,17 @@ public class PaymentReportDao {
 
       for (int i = 0; i < data.length; i++) {
         if (FIN_PaymentScheduleDetail[i].getPaymentDetails() != null) {
-          // bp_group -- bp_category
-          FieldProviderFactory.setField(data[i], "BP_GROUP", FIN_PaymentScheduleDetail[i]
-              .getPaymentDetails().getFinPayment().getBusinessPartner()
-              .getBusinessPartnerCategory().getName());
-          // bpartner
-          FieldProviderFactory.setField(data[i], "BPARTNER", FIN_PaymentScheduleDetail[i]
-              .getPaymentDetails().getFinPayment().getBusinessPartner().getName());
+          BusinessPartner bp = getDocumentBusinessPartner(FIN_PaymentScheduleDetail[i]);
+          if (bp == null) {
+            FieldProviderFactory.setField(data[i], "BP_GROUP", "");
+            FieldProviderFactory.setField(data[i], "BPARTNER", "");
+          } else {
+            // bp_group -- bp_category
+            FieldProviderFactory.setField(data[i], "BP_GROUP", bp.getBusinessPartnerCategory()
+                .getName());
+            // bpartner
+            FieldProviderFactory.setField(data[i], "BPARTNER", bp.getName());
+          }
 
           // transCurrency
           transCurrency = FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
@@ -820,5 +824,19 @@ public class PaymentReportDao {
 
       return objectListData;
     }
+  }
+
+  private BusinessPartner getDocumentBusinessPartner(FIN_PaymentScheduleDetail psd) {
+    BusinessPartner bp = null;
+    if (psd.getInvoicePaymentSchedule() != null) { // Invoice
+      bp = psd.getInvoicePaymentSchedule().getInvoice().getBusinessPartner();
+    }
+    if (psd.getOrderPaymentSchedule() != null) { // Order
+      bp = psd.getOrderPaymentSchedule().getOrder().getBusinessPartner();
+    }
+    if (bp == null) {
+      bp = psd.getPaymentDetails().getFinPayment().getBusinessPartner();
+    }
+    return bp;
   }
 }
