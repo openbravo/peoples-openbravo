@@ -481,6 +481,20 @@ isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
   titleStyle: 'OBSectionItemButton_Title_',
   backgroundColor: 'transparent'
 });
+isc.OBSectionItemButton.addProperties({
+  focusChanged: function() { // "ImgSectionHeader" is not a StatefulCanvas so -Focused- status should be done programmatically
+    if (this.background) {
+      if (this.containsFocus()) {
+        this.background.setSrc(this.background.src.replace(/(\.)(png)$/, '_Focused.png'));
+        this.background.setIcon(this.background.icon.replace(/(\.)(png)$/, '_Focused.png'));
+      } else {
+        this.background.setSrc(this.background.src.replace(/(_Focused)(\.)(png)$/, '.png'));
+        this.background.setIcon(this.background.icon.replace(/(_Focused)(\.)(png)$/, '.png'));
+      }
+    }
+    this.Super("focusChanged", arguments);
+  }
+});
 
 isc.ClassFactory.defineClass('OBSectionItemControlLink', isc.Label);
 isc.OBSectionItemControlLink.addProperties({
@@ -492,6 +506,5 @@ isc.OBSectionItemControlLink.addProperties({
   height: 20,
   wrap: false,
   width: '*'
-
 });
 
