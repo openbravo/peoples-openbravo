@@ -27,6 +27,7 @@ isc.OBListItem.addProperties({
   showPickListOnKeypress: true,  
   cachePickListResults: false,
   completeOnTab: true,
+  validateOnExit: true,
   
   // without this in chrome the content is sorted according to the id/value
   // not the displayfield
@@ -64,20 +65,12 @@ isc.OBListItem.addProperties({
     }
   },
   
-  blur: function(form, item){
-    // always validate if not part of a filter editor
-    if (!this.form.grid || !this.form.grid.isAFilterEditor || !this.form.grid.isAFilterEditor()) {
-      this.validate();
-    }
-    return this.Super('blur', arguments);
-  },
-  
   pickListProperties: {
     showHeaderContextMenu: false
   },
 
   // prevent ids from showing up
-  mapValueToDisplay : function (value) {
+  mapValueToDisplay: function (value) {
     var ret = this.Super('mapValueToDisplay', arguments);
     if (ret === value && this.isDisabled()) {
       return '';
