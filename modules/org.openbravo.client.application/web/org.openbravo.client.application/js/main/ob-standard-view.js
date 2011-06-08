@@ -265,6 +265,7 @@ isc.OBStandardView.addProperties({
   // handles different ways by which an error can be passed from the 
   // system, translates this to an object with a type, title and message
   setErrorMessageFromResponse: function(resp, data, req){
+    var errorCode;
     // only handle it once
     if (resp._errorMessageHandled) {
       return true;
@@ -326,7 +327,7 @@ isc.OBStandardView.addProperties({
       }
     } else if (isLabel) {
       if (gridEditing) {
-        this.setLabelInRow(req.clientContext.editRow, errorCode, params);
+        this.setLabelInRow(req.clientContext.editRow, msg, params);
       } else {
         this.messageBar.setLabel(type, title, msg, params);
       }
