@@ -46,13 +46,13 @@ isc.OBGrid.addProperties({
     }
 
     if (event.keyName === 'A' && 
-      (isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
+      (!isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && isc.EventHandler.shiftKeyDown())) {
       this.selectAllRecords();
       return false;
     }
 
-    if (event.keyName === 'Escape' && 
-      (!isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
+    if (event.keyName === 'N' && 
+      (!isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && isc.EventHandler.shiftKeyDown())) {
       if (this.getSelectedRecords().length > 1) {
         this.deselectAllRecords();
       }
