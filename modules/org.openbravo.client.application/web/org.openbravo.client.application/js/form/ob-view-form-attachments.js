@@ -230,6 +230,7 @@ isc.OBAttachmentsLayout.addProperties({
       var submitbutton = isc.Button.create({
         title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit'),
         theForm: form,
+        canvas: me,
         click: function(){
           var form = this.theForm;
           var addFunction = function(clickedOK){
@@ -263,7 +264,7 @@ isc.OBAttachmentsLayout.addProperties({
           value = value?value:'';
           var lastChar=value.lastIndexOf("\\") + 1;
           var fileName = lastChar===-1?value:value.substring(lastChar);
-          if(this.theForm.theCanvas.fileExists(fileName, attachments)){
+          if(this.theForm.theCanvas.fileExists(fileName, this.canvas.savedAttachments)){
             isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmUploadOverwrite'), addFunction);
           }else{
             addFunction(true);
