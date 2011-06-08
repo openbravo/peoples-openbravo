@@ -635,7 +635,9 @@ OB.ViewFormProperties = {
       delete this.validateAfterFicReturn;
       // only validate the fields which have errors
       for (i = 0; i < this.getFields().length; i++) {
-        this.getFields()[i].validate();
+        if (this.hasFieldErrors(this.getFields()[i].name)) {
+          this.getFields()[i].validate();
+        }
       }
     }
 
