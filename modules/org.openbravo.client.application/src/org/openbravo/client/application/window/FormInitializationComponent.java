@@ -1169,8 +1169,7 @@ public class FormInitializationComponent extends BaseActionHandler {
                           rq.setRequestParameter(colId, jsonobj.getString("classicValue"));
                         }
                       } else {
-                        log
-                            .debug("Column value didn't change. We do not attempt to execute any additional callout");
+                        log.debug("Column value didn't change. We do not attempt to execute any additional callout");
                       }
                     }
                     if (changed && col.getCallout() != null) {
@@ -1363,7 +1362,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     try {
       String code = auxIn.getValidationCode();
       log.debug("Auxiliary Input: " + auxIn.getName() + " Code:" + code);
-      String fvalue = null;
+      Object fvalue = null;
       if (code.startsWith("@SQL=")) {
         ArrayList<String> params = new ArrayList<String>();
         String sql = UIDefinition.parseSQL(code, params);
@@ -1389,7 +1388,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
-          fvalue = rs.getString(1);
+          fvalue = rs.getObject(1);
         }
       } else if (code.startsWith("@")) {
         String codeWithoutAt = code.substring(1, code.length() - 1);
