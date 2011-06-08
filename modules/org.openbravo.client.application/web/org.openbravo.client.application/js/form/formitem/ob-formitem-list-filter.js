@@ -23,5 +23,7 @@ isc.ClassFactory.defineClass('OBListFilterItem', OBListItem);
 
 isc.OBListFilterItem.addProperties({
   moveFocusOnPickValue: false,
-  operator: 'equals'
+  operator: 'equals',
+  validateOnExit: false,
+  validateOnChange: false
 });
