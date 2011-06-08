@@ -966,7 +966,7 @@ OB.ViewFormProperties = {
     // remove the message
     this.setHasChanged(true);
     this.view.messageBar.hide();
-    this.view.toolBar.updateButtonState(true, true); 
+    this.view.toolBar.updateButtonState(true); 
   },
   
   // make sure that any field errors also appear in the grid
