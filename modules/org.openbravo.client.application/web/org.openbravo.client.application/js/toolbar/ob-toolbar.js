@@ -519,7 +519,7 @@ isc.OBToolbar.addProperties({
   // 
   // NOTE: new buttons should implement the updateState method.
   //
-  updateButtonState: function(noSetSession){
+  updateButtonState: function(noSetSession, changeEvent){
     for (i = 0; i < this.leftMembers.length; i++) {
       if (this.leftMembers[i].updateState) {
         this.leftMembers[i].updateState();
@@ -527,7 +527,9 @@ isc.OBToolbar.addProperties({
     }
     
     // and refresh the process toolbar buttons
-    this.refreshCustomButtons(noSetSession);
+    if (!changeEvent) {
+      this.refreshCustomButtons(noSetSession);
+    }
   },
   
   // ** {{{ getLeftMember(member) }}} **
