@@ -590,7 +590,9 @@ isc.OBStandardView.addProperties({
       functionName = 'focus';
     }
     
-    isc.Page.setEvent(isc.EH.IDLE, object, isc.Page.FIRE_ONCE, functionName);
+    if (object && functionName) {
+      isc.Page.setEvent(isc.EH.IDLE, object, isc.Page.FIRE_ONCE, functionName);
+    }
   },
   
   setTabButtonState: function(active){
