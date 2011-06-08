@@ -74,6 +74,8 @@ import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.Zip;
+import org.openbravo.model.ad.module.ModuleInstall;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.service.web.ResourceNotFoundException;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
@@ -1722,10 +1724,39 @@ public class ImportModule {
     try {
       OBContext.setAdminMode();
 
+      String defaultMaturity = OBDal.getInstance().get(SystemInformation.class, "0")
+          .getMaturityUpdate();
+      List<String> installingMods = new ArrayList<String>();
+
+      // Taking into account modules in process of intallation. These modules have higher priority
+      // over actually installed ones
+      OBCriteria<ModuleInstall> qModInstall = OBDal.getInstance().createCriteria(
+          ModuleInstall.class);
+      for (ModuleInstall mod : qModInstall.list()) {
+        org.openbravo.model.ad.module.Module currentDBVersion = OBDal.getInstance().get(
+            org.openbravo.model.ad.module.Module.class, mod.getModule());
+
+        String[][] versionInfo = new String[1][0];
+        versionInfo[0] = new String[3];
+        versionInfo[0][0] = "M";
+        versionInfo[0][1] = mod.getVersion();
+        versionInfo[0][2] = currentDBVersion == null ? defaultMaturity : currentDBVersion
+            .getMaturityUpdate();
+
+        // Dependencies are not needed as it is a version installed from CR
+
+        rt.put(mod.getModule(), versionInfo);
+        installingMods.add(mod.getModule());
+      }
+
       OBCriteria<org.openbravo.model.ad.module.Module> obCriteria = OBDal.getInstance()
           .createCriteria(org.openbravo.model.ad.module.Module.class);
       obCriteria.add(Restrictions.not(Restrictions.eq(
           org.openbravo.model.ad.module.Module.PROPERTY_STATUS, "U")));
+      if (!installingMods.isEmpty()) {
+        obCriteria.add(Restrictions.not(Restrictions.in(
+            org.openbravo.model.ad.module.Module.PROPERTY_ID, installingMods)));
+      }
       List<org.openbravo.model.ad.module.Module> modules = obCriteria.list();
 
       for (org.openbravo.model.ad.module.Module mod : modules) {
