@@ -1649,7 +1649,7 @@ isc.OBViewGrid.addProperties({
     }
   },
   
-  saveEdits: function(editCompletionEvent, callback, rowNum, colNum, validateOnly){
+  saveEdits: function(editCompletionEvent, callback, rowNum, colNum, validateOnly, skipValidation){
     var ret = this.Super('saveEdits', arguments);
     // save was not done, because there were no changes probably
     if (!ret) {
