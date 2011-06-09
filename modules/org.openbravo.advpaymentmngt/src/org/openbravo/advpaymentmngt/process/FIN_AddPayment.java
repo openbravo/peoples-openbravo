@@ -177,7 +177,6 @@ public class FIN_AddPayment {
   /*
    * Temporary method to supply defaults for exchange Rate and converted amount
    */
-  @Deprecated
   public static FIN_Payment savePayment(FIN_Payment _payment, boolean isReceipt,
       DocumentType docType, String strPaymentDocumentNo, BusinessPartner businessPartner,
       FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,
