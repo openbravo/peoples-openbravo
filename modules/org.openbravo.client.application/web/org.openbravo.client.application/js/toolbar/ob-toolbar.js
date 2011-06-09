@@ -930,19 +930,26 @@ isc.OBToolbar.addProperties({
   // Refreshes all the custom buttons in the toolbar based on current record selection
   //
   refreshCustomButtons: function(noSetSession){
-    var selectedRecords, multipleSelectedRowIds, allProperties;
+    var selectedRecords, multipleSelectedRowIds, allProperties, i;
     function doRefresh(buttons, currentValues, hideAllButtons, me) {
       var i;
+      for (i = 0; i < me.rightMembers.length; i++) { // To disable any button previous defined keyboard shortcut
+        me.rightMembers[i].disableShortcut();
+      }
       for (i = 0; i < buttons.length; i++) {
         if (buttons[i].updateState) {
-          me.defineRightMembersShortcuts();
           buttons[i].updateState(currentValues, hideAllButtons);
-          me.rightMembers[i].enableShortcut();
         }
       }
       for (i = 0; i < me.leftMembers.length; i++) {
         if (me.leftMembers[i].updateState) {
             me.leftMembers[i].updateState();
+        }
+      }
+      if (me.view.isActiveView()) {
+        me.defineRightMembersShortcuts(); // To re-calculate the target key for keyboard shortcuts
+        for (i = 0; i < me.rightMembers.length; i++) {
+          me.rightMembers[i].enableShortcut(); // To enable each button keyboard shortcut
         }
       }
     }
@@ -1071,17 +1078,23 @@ isc.OBToolbar.addProperties({
   rightMembersShortcuts: [],
 
   defineRightMembersShortcuts: function(){
-    var i, j, k, l, id, character, position;
+    var i, j, k, id, character, position;
     function isAssignedCharacter(character, me){
+      var n;
+      if (character === ' ') {
+        return true;
+      }
       character = character.toString();
       character = character.toUpperCase();
-      for (k = 0; k < me.rightMembersShortcuts.length; k++) {
-        if (me.rightMembersShortcuts[k][0] === character) {
+      for (n = 0; n < me.rightMembersShortcuts.length; n++) {
+        if (me.rightMembersShortcuts[n][0] === character) {
           return true;
         }
       }
       return false;
     }
+
+    this.rightMembersShortcuts = [];
     for (i = 0; i < this.rightMembers.length; i++) {
       var title = this.rightMembers[i].realTitle, haveToContinue = true;
       this.rightMembersShortcuts[i] = [];
@@ -1098,9 +1111,9 @@ isc.OBToolbar.addProperties({
       }
       if (haveToContinue) { // Check if free number and assign
         haveToContinue = true;
-        for (l = 1; l < 10; l++) {
-          if (!isAssignedCharacter(l, this)) {
-            this.rightMembersShortcuts[i][0] = l;
+        for (k = 1; k < 10; k++) {
+          if (!isAssignedCharacter(k, this)) {
+            this.rightMembersShortcuts[i][0] = k;
             this.rightMembersShortcuts[i][1] = 'end';
             haveToContinue = false;
             break;
@@ -1254,6 +1267,7 @@ isc.OBToolbarTextButton.addProperties({
         if (!me.disabled && me.visible) {
           me.action();
         }
+        return false; //To avoid keyboard shortcut propagation
       };
       if (this.keyboardShortcutPosition === 'end') {
         newTitle = newTitle + ' (<u>' + this.keyboardShortcutCharacter + '</u>)';
