@@ -192,11 +192,12 @@ public class DocFINFinAccTransaction extends AcctServer {
             && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
                 .getInvoicePaymentSchedule().getInvoice().getActivity() != null ? paymentDetails
             .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
-            .getInvoice().getActivity().getId()
-            : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                .getOrderPaymentSchedule() != null ? paymentDetails.get(i)
-                .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-                .getActivity().getId() : ""));
+            .getInvoice().getActivity().getId() : (paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null
+            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                .getOrderPaymentSchedule().getOrder().getActivity() != null ? paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+            .getActivity().getId() : ""));
         FieldProviderFactory.setField(data[i], "lineno", transaction.getLineNo().toString());
       }
     } finally {
@@ -416,13 +417,14 @@ public class DocFINFinAccTransaction extends AcctServer {
               .getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
               DocumentType, null, paymentToSchemaConversionRate, conn);
         } else {
-          fact
-              .createLine(line,
-                  getAccountBPartner((line.m_C_BPartner_ID == null || line.m_C_BPartner_ID
-                      .equals("")) ? this.C_BPartner_ID : line.m_C_BPartner_ID, as, isReceipt,
-                      isPrepayment, conn), paymentCurrencyId,
-                  !isReceipt ? bpamount.toString() : "", isReceipt ? bpamount.toString() : "",
-                  Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, paymentDate, conn);
+          fact.createLine(
+              line,
+              getAccountBPartner(
+                  (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
+                      : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn),
+              paymentCurrencyId, !isReceipt ? bpamount.toString() : "", isReceipt ? bpamount
+                  .toString() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+              paymentDate, conn);
         }
       }
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
