@@ -110,6 +110,7 @@
           this.list[position].funcParam = funcParam;
         }
         if (typeof keyComb !== 'undefined' && keyComb !== null) {
+          this.list[position].keyComb.text = '';
           if (typeof keyComb.ctrl === 'undefined') {
             this.list[position].keyComb.ctrl = false;
           } else {
@@ -204,6 +205,9 @@
       getProperty: function(property, element, searchPattern) {
         var i, position = null;
         for (i = 0; i < this.list.length; i++) {
+          if (typeof this.list[i] === 'undefined') {
+            break;
+          }
           if (searchPattern === 'id' && this.list[i].id === element) {
             position = i;
           } else if (searchPattern === 'keyComb' &&
