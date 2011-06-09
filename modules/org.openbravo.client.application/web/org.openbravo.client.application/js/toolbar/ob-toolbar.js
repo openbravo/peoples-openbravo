@@ -42,7 +42,7 @@ isc.OBToolbar.addClassProperties({
         this.setDisabled(!form.isNew &&
         (form.isSaving || form.readOnly ||
         !view.hasValidState() ||
-        !form.hasChanged));
+        !form.hasChanged) || form.inFicCall);
       } else if (view.isEditingGrid) {
         form = view.viewGrid.getEditForm();
         editRow = view.viewGrid.getEditRow();
@@ -84,7 +84,7 @@ isc.OBToolbar.addClassProperties({
         var saveDisabled = (!form.isNew &&
         (form.isSaving || form.readOnly ||
         !view.hasValidState() ||
-        !form.hasChanged));
+        !form.hasChanged) || form.inFicCall);
         if (saveDisabled) {
           this.buttonType = 'savecloseX';
           this.prompt = OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON');

@@ -673,13 +673,13 @@ OB.ViewFormProperties = {
 
     this.markForRedraw();
 
+    delete this.inFicCall;
     this.view.toolBar.updateButtonState(true);
     if (request.params.MODE === 'EDIT') {
       this.view.statusBar.mode = 'VIEW';
       this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());
     }
 
-    delete this.inFicCall;
     if (this.callSaveAfterFICReturn) {
       delete this.callSaveAfterFICReturn;
       this.saveRow(true);
@@ -987,6 +987,7 @@ OB.ViewFormProperties = {
 
       me.processFICReturn(response, data, request, editValues, editRow);
     });
+    this.view.toolBar.updateButtonState(true);
   },
   
   itemChanged: function(item, newValue){
