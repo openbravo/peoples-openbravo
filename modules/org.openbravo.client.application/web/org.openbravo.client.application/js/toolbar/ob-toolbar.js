@@ -39,18 +39,18 @@ isc.OBToolbar.addClassProperties({
     updateState: function(){
       var view = this.view, form = view.viewForm, hasErrors = false, editRow;
       if (view.isShowingForm) {
-        this.setDisabled(!form.isNew &&
+        this.setDisabled((!form.isNew &&
         (form.isSaving || form.readOnly ||
         !view.hasValidState() ||
-        !form.hasChanged) || form.inFicCall);
+        !form.hasChanged)) || form.inFicCall);
       } else if (view.isEditingGrid) {
         form = view.viewGrid.getEditForm();
         editRow = view.viewGrid.getEditRow();
         hasErrors = view.viewGrid.rowHasErrors(editRow);
-        this.setDisabled(!form.isNew && !hasErrors &&
+        this.setDisabled((!form.isNew && !hasErrors &&
         (form.isSaving || form.readOnly ||
         !view.hasValidState() ||
-        !form.hasChanged));
+        !form.hasChanged)) || form.inFicCall);
       } else {
         this.setDisabled(true);
       }
@@ -84,7 +84,7 @@ isc.OBToolbar.addClassProperties({
         var saveDisabled = (!form.isNew &&
         (form.isSaving || form.readOnly ||
         !view.hasValidState() ||
-        !form.hasChanged) || form.inFicCall);
+        !form.hasChanged)) || form.inFicCall;
         if (saveDisabled) {
           this.buttonType = 'savecloseX';
           this.prompt = OB.I18N.getLabel('OBUIAPP_CLOSEBUTTON');
