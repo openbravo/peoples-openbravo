@@ -163,6 +163,17 @@ package="org.openbravo.wad.Window">
   &#60;/SqlMethod&#62;
 </FIELDS_TMP>
 
+<PARAMETER_TMP id="parentSecondaryKey">
+  <SqlMethod name="selectParentSecondaryKeyID" type="preparedStatement" return="String" default="">
+    <SqlMethodComment>return the parent ID</SqlMethodComment>
+    <Sql>&#60;&#33;[CDATA[
+        SELECT <PARENT_TMP id="parentTableName">Almacen</PARENT_TMP>_ID AS NAME
+        FROM <PARAMETER_TMP id="parentTableName">table</PARAMETER_TMP>
+        WHERE <PARAMETER_TMP id="keySecondary">table</PARAMETER_TMP> = ?
+    ]]&#62;</Sql>
+    <Parameter name="key"/>
+  </SqlMethod>
+</PARAMETER_TMP>
 <FIELDS_TMP id="sectionParentTrl">
    &#60;SqlMethod name="selectParentTrl" type="preparedStatement" return="String" default=""&#62;
     &#60;SqlMethodComment&#62;Select for parent field&#60;/SqlMethodComment&#62;

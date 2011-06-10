@@ -38,12 +38,14 @@
   <PARAMETER id="windowName" name = "windowName" default=" "/>
   <PARAMETER id="key" name = "key" default=" "/>
   <PARAMETER id="keyParent" name = "keyParent" default=" "/>
+  <PARAMETER id="keyParentColName" name = "keyParentColName" default=""/>
   <PARAMETER id="parentFieldID" name = "parentFieldID" default=""/>
   <PARAMETER id="keyParentT" name = "keyParentT" default=" "/>
   <PARAMETER id="keyParentSimple" name = "keyParentSimple" default=" "/>
   <PARAMETER id="parentTab" name = "parentTab" default=" "/>
   <PARAMETER id="parentTabName" name = "parentTabName" default=" "/>
   <PARAMETER id="keyParentINP" name = "keyParentINP" default=" "/>
+  <PARAMETER id="keyParentTabINP" name = "keyParentTabINP" default=" "/>
   <PARAMETER id="defaultView" name = "defaultView" default=" "/>
   <PARAMETER id="keyData" name = "keyData" default=" "/>
   <PARAMETER id="grandfatherName" name = "grandfatherName" default=" "/>

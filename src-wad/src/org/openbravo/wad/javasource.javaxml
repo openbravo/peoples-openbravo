@@ -212,7 +212,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         response.sendRedirect(strDireccion + "<PARAMETER_TMP id="paramEditReference">xx</PARAMETER_TMP>");
 </PARAMETERS_TMP>
     } else if (vars.commandIn("TAB")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParentSimple">Almacen</PARENT_TMP>", false, false, true, "");
+<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentTabINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParentSimple">Almacen</PARENT_TMP>", false, false, true, "");
       vars.removeSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>");
       <PARAMETER_TMP id="refreshTabParentSession">refreshParentSession(vars, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);</PARAMETER_TMP>
 </PARAMETER_TMP>
@@ -721,7 +721,8 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 
 
 <PARAMETER_TMP id="parent">  private void refreshParentSession(VariablesSecureApp vars, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>) throws IOException,ServletException {
-      <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data[] data = <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data.selectEdit(this, vars.getSessionValue("#AD_SqlDateTimeFormat"), vars.getLanguage()<PARAMETER_TMP id="parentwhereclause"></PARAMETER_TMP><PARAMETER_TMP id="grandfather">, vars.getSessionValue(windowId + "|<PARAMETER_TMP id="grandfatherName">xx</PARAMETER_TMP>")</PARAMETER_TMP>, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel));
+      <PARENT_TMP id="parentSecondaryKey">String strParentId=getActualParentId(strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);</PARENT_TMP>
+      <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data[] data = <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data.selectEdit(this, vars.getSessionValue("#AD_SqlDateTimeFormat"), vars.getLanguage()<PARAMETER_TMP id="parentwhereclause"></PARAMETER_TMP><PARAMETER_TMP id="grandfather">, vars.getSessionValue(windowId + "|<PARAMETER_TMP id="grandfatherName">xx</PARAMETER_TMP>")</PARAMETER_TMP>, strP<PARENT_TMP id="keyParentColName">Almacen</PARENT_TMP>, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel));
       if (data==null || data.length==0) return;
       <FIELDS_TMP id="sectionDetailParentSession">    vars.setSessionValue(windowId + "|<FIELD_TMP id="fieldRealName8">claveAlmacen</FIELD_TMP>", data[0].<FIELD_TMP id="fieldName8">claveAlmacen</FIELD_TMP>);</FIELDS_TMP>
       vars.setSessionValue(windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>", strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>); //to ensure key parent is set for EM_* cols
@@ -731,7 +732,13 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       vars.setSessionValue(windowId + "|<LIST_TMP id="fieldParentNameParam">Almacen</LIST_TMP>", <LIST_TMP id="paramParentCode">dd</LIST_TMP>);
       </LISTS_TMP>
   }
-    
+  
+  <PARENT_TMP id="parentSecondaryKey">
+  private String getActualParentId(String secondaryKeyName) throws ServletException {
+    return <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectParentSecondaryKeyID(this, secondaryKeyName);
+  }
+  
+  </PARENT_TMP>
   private String getParentID(VariablesSecureApp vars, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>) throws ServletException {
     String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectParentID(this, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
     if (strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>.equals("")) {

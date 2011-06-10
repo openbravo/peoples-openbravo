@@ -1567,12 +1567,15 @@ public class Wad extends DefaultHandler {
     }
 
     final String[] discard = { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "hasReference", "", "", "", "", "", "", "", "hasOrgKey", "", "" };
+        "", "", "", "", "hasReference", "", "", "", "", "", "", "", "hasOrgKey", "", "", "" };
 
     if (parentsFieldsData == null || parentsFieldsData.length == 0) {
       discard[0] = "parent"; // remove the parent tags
       hasParentsFields = false;
+    } else if (!"Y".equals(parentsFieldsData[0].issecondarykey)) {
+      discard[32] = "parentSecondaryKey";
     }
+
     if (tableName.toUpperCase().endsWith("_ACCESS")) {
       discard[18] = "client";
       discard[1] = "org";
@@ -1689,10 +1692,24 @@ public class Wad extends DefaultHandler {
     if (parentsFieldsData.length > 0) {
 
       xmlDocument.setParameter("keyParent", parentsFieldsData[0].name);
+      xmlDocument.setParameter("keyParentColName",
+          "Y".equals(parentsFieldsData[0].issecondarykey) ? "arentId" : parentsFieldsData[0].name);
+
       xmlDocument.setParameter("keyParentSimple", WadUtility.columnName(parentsFieldsData[0].name,
           parentsFieldsData[0].tablemodule, parentsFieldsData[0].columnmodule));
       xmlDocument.setParameter("keyParentT", Sqlc
           .TransformaNombreColumna(parentsFieldsData[0].name));
+
+      String keyTabName;
+      if ("Y".equals(parentsFieldsData[0].issecondarykey)) {
+        keyTabName = parentsFieldsData[0].tablename + "_ID";
+      } else {
+        keyTabName = parentsFieldsData[0].name;
+      }
+
+      xmlDocument.setParameter("keyParentTabINP", Sqlc.TransformaNombreColumna(WadUtility
+          .columnName(keyTabName, parentsFieldsData[0].tablemodule,
+              parentsFieldsData[0].columnmodule)));
       xmlDocument.setParameter("keyParentINP", Sqlc.TransformaNombreColumna(WadUtility.columnName(
           parentsFieldsData[0].name, parentsFieldsData[0].tablemodule,
           parentsFieldsData[0].columnmodule)));
@@ -2441,10 +2458,14 @@ public class Wad extends DefaultHandler {
       throws ServletException, IOException {
     log4j.debug("Procesig xsql: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentXsql;
-    final String[] discard = { "", "", "", "", "", "", "", "", "", "" };
+    final String[] discard = { "", "", "", "", "", "", "", "", "", "", "" };
 
-    if (parentsFieldsData == null || parentsFieldsData.length == 0)
+    if (parentsFieldsData == null || parentsFieldsData.length == 0) {
       discard[0] = "parent"; // remove the parent tags
+    } else if (!"Y".equals(parentsFieldsData[0].issecondarykey)) {
+      discard[10] = "parentSecondaryKey";
+    }
+
     if (tableName.toUpperCase().endsWith("_ACCESS")) {
       discard[6] = "client";
       discard[1] = "org";
@@ -2557,6 +2578,12 @@ public class Wad extends DefaultHandler {
       for (int s = 0; s < vecParameters.size(); s++) {
         fieldsParent[0].whereclause += vecParameters.elementAt(s).toString() + "\n";
       }
+
+      if ("Y".equals(parentsFieldsData[0].issecondarykey)) {
+        xmlDocumentXsql.setParameter("parentTableName", parentsFieldsData[0].tablename);
+        xmlDocumentXsql.setParameter("keySecondary", parentsFieldsData[0].name);
+      }
+
       xmlDocumentXsql.setData("structure14", fieldsParent);
     } else {
       xmlDocumentXsql.setData("structure14", null);
@@ -3807,11 +3834,9 @@ public class Wad extends DefaultHandler {
 
         strFieldGroup = auxControl.getData("AD_FieldGroup_ID");
         html.append("      <tr><td colspan=\"4\">\n");
-        html
-            .append("      <table border=0 cellspacing=0 cellpadding=0 class=\"FieldGroup\" id=\"fldgrp"
-                + strFieldGroup + "\"><tr class=\"FieldGroup_TopMargin\"></tr>\n<tr>\n");
-        html
-            .append("<td class=\"FieldGroupTitle_Left\"><img src=\"../../../../../web/images/blank.gif\" class=\"FieldGroupTitle_Left_bg\" border=0/></td>");
+        html.append("      <table border=0 cellspacing=0 cellpadding=0 class=\"FieldGroup\" id=\"fldgrp"
+            + strFieldGroup + "\"><tr class=\"FieldGroup_TopMargin\"></tr>\n<tr>\n");
+        html.append("<td class=\"FieldGroupTitle_Left\"><img src=\"../../../../../web/images/blank.gif\" class=\"FieldGroupTitle_Left_bg\" border=0/></td>");
         String strText = "";
         strText = EditionFieldsData.fieldGroupName(pool, strFieldGroup);
 
@@ -3826,10 +3851,8 @@ public class Wad extends DefaultHandler {
         final String labelText = fieldGroupLabelBuilder.getBasicLabelText();
 
         html.append("<td class=\"FieldGroupTitle\">").append(labelText).append("</td>");
-        html
-            .append("<td class=\"FieldGroupTitle_Right\"><img src=\"../../../../../web/images/blank.gif\" class=\"FieldGroupTitle_Right_bg\" border=0/></td>");
-        html
-            .append("<td class=\"FieldGroupContent\">&nbsp;</td></tr>\n<tr class=\"FieldGroup_BottomMargin\"></tr></table>");
+        html.append("<td class=\"FieldGroupTitle_Right\"><img src=\"../../../../../web/images/blank.gif\" class=\"FieldGroupTitle_Right_bg\" border=0/></td>");
+        html.append("<td class=\"FieldGroupContent\">&nbsp;</td></tr>\n<tr class=\"FieldGroup_BottomMargin\"></tr></table>");
         html.append("      </td></tr>\n");
 
       }

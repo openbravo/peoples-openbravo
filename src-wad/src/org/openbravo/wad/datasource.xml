@@ -28,6 +28,9 @@
   <PARAMETER id="table" name = "table" default=" "/>
   <PARAMETER id="key" name = "key" default=" "/>
   <PARAMETER id="keyParent" name = "keyParent" default=" "/>
+  <PARAMETER id="parentTableName" name="parentTableName" default=""/>
+  <PARAMETER id="keySecondary" name="keySecondary" default=""/>
+  
   <PARAMETER id="fields" name = "fields" default=" "/>
   <PARAMETER id="tables" name = "tables" default=" "/>
   <PARAMETER id="where" name = "where" default=" "/>
