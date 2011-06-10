@@ -920,10 +920,12 @@ public class AdvPaymentMngtDao {
 
         FieldProviderFactory.setField(data[i], "paymentDate", dateFormater.format(
             FIN_Payments[i].getPaymentDate()).toString());
-        FieldProviderFactory.setField(data[i], "depositAmount", FIN_Utility
+        FieldProviderFactory.setField(data[i], "depositAmount", account.getCurrency().getId()
+            .equals(foreignCurrency.getId()) ? foreignDepositAmt.toString() : FIN_Utility
             .multiCurrencyAmountToDisplay(depositAmt, account.getCurrency(), foreignDepositAmt,
                 foreignCurrency));
-        FieldProviderFactory.setField(data[i], "paymentAmount", FIN_Utility
+        FieldProviderFactory.setField(data[i], "paymentAmount", account.getCurrency().getId()
+            .equals(foreignCurrency.getId()) ? foreignPaymentAmt.toString() : FIN_Utility
             .multiCurrencyAmountToDisplay(paymentAmt, account.getCurrency(), foreignPaymentAmt,
                 foreignCurrency));
 
