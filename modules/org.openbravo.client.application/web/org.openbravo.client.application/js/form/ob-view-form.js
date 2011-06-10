@@ -1184,6 +1184,7 @@ OB.ViewFormProperties = {
       form.isSaving = false;
       view.toolBar.updateButtonState(true);
       if (form.isVisible() && saveFocusItem) {
+        this.setFocusItem(saveFocusItem);
         saveFocusItem.focusInItem();
       }
       return false;
