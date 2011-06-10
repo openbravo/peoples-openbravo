@@ -285,8 +285,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("isReceipt", (payment.isReceipt() ? "Y" : "N"));
     xmlDocument.setParameter("isSoTrx", (payment.isReceipt()) ? "Y" : "N");
     if (payment.getBusinessPartner() == null
-        && (payment.getGeneratedCredit() != null || payment.getGeneratedCredit().compareTo(
-            BigDecimal.ZERO) != 0)) {
+        && (payment.getGeneratedCredit() == null || BigDecimal.ZERO.compareTo(payment
+            .getGeneratedCredit()) != 0)) {
       payment.setGeneratedCredit(BigDecimal.ZERO);
       OBDal.getInstance().save(payment);
       OBDal.getInstance().flush();
