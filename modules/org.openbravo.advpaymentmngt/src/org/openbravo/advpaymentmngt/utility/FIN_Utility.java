@@ -22,6 +22,7 @@ package org.openbravo.advpaymentmngt.utility;
 import java.math.BigDecimal;
 import java.sql.BatchUpdateException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -745,7 +746,24 @@ public class FIN_Utility {
     StringBuffer out = new StringBuffer();
     final UIDefinitionController.FormatDefinition formatDef = UIDefinitionController.getInstance()
         .getFormatDefinition("euro", "Edition");
-    DecimalFormat amountFormatter = new DecimalFormat(formatDef.getFormat());
+
+    String formatWithDot = formatDef.getFormat();
+    DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+    try {
+      dfs.setDecimalSeparator(formatDef.getDecimalSymbol().charAt(0));
+      dfs.setGroupingSeparator(formatDef.getGroupingSymbol().charAt(0));
+      // Use . as decimal separator
+      final String DOT = ".";
+      if (!DOT.equals(formatDef.getDecimalSymbol())) {
+        formatWithDot = formatWithDot.replace(formatDef.getGroupingSymbol(), "@");
+        formatWithDot = formatWithDot.replace(formatDef.getDecimalSymbol(), ".");
+        formatWithDot = formatWithDot.replace("@", ",");
+      }
+    } catch (Exception e) {
+      // If any error use euroEdition default format
+      formatWithDot = "#0.00";
+    }
+    DecimalFormat amountFormatter = new DecimalFormat(formatWithDot, dfs);
     amountFormatter.setMaximumFractionDigits(currency.getStandardPrecision().intValue());
 
     out.append(amountFormatter.format(amt));
