@@ -495,7 +495,7 @@
                 },
                 click: function() {
                   this.topElement.cancelClick();
-                  OB.Utilities.logout();
+                  OB.Utilities.logout(true);
                 }});
     	  
     	isc.confirm(OB.I18N.getLabel('OBUIAPP_UpgradeDesc'), {
