@@ -302,7 +302,7 @@ isc.OBViewGrid.addProperties({
   },
   
   draw: function() {
-    var drawnBefore = this.isDrawn(), form;
+    var drawnBefore = this.isDrawn(), form, item;
     this.Super('draw', arguments);
     // set the focus in the filter editor
     if (this.view && this.view.isActiveView() && !drawnBefore && this.isVisible() &&
