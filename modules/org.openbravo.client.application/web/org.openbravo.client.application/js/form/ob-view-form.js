@@ -1064,7 +1064,7 @@ OB.ViewFormProperties = {
   // there the save call is done through the grid saveEditedValues
   // function
   saveRow: function(){
-    var savingNewRecord = this.isNew;
+    var savingNewRecord = this.isNew, saveFocusItem = this.getFocusItem();
     // store the value of the current focus item
     if (this.getFocusItem() && this.saveFocusItemChanged !== this.getFocusItem()) {
       this.getFocusItem().updateValue();
@@ -1180,6 +1180,9 @@ OB.ViewFormProperties = {
 
       form.isSaving = false;
       view.toolBar.updateButtonState(true);
+      if (form.isVisible() && saveFocusItem) {
+        saveFocusItem.focusInItem();
+      }
       return false;
     };
     
