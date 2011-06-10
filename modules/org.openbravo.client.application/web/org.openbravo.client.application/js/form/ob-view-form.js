@@ -1398,9 +1398,8 @@ OB.ViewFormProperties = {
       this.getFocusItem && this.getFocusItem().titleClick) {
       this.getFocusItem().titleClick(this, this.getFocusItem());
       return false;
-    } else {
-      return true;
     }
+    return this.Super('keyDown', arguments);
   }
 
 };
