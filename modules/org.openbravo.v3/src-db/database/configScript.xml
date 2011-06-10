@@ -65,10 +65,6 @@
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
-    <columnDataChange tablename="AD_TAB" columnname="ISACTIVE" pkRow="800074">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
     <columnDataChange tablename="AD_TAB" columnname="ISACTIVE" pkRow="800075">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
