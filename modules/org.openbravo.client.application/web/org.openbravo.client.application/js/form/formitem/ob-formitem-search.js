@@ -34,7 +34,7 @@ w.closeSearch = function (action, value, display, parameters, wait){
       targetFld.valueMap = {};
     }
     
-    targetFld.setValue(value);
+    targetFld.storeValue(value);
     if (!targetFld.valueMap) {
       targetFld.valueMap = {};
     }
