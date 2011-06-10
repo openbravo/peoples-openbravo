@@ -103,7 +103,10 @@ OB.ViewFormProperties = {
         break;
       }
     }
-    
+    if (!this.firstFocusedField) {
+      this.firstFocusedField = this.getItem(0).name;
+    }
+
     delete this._preventFocusChanges;
   },
 
