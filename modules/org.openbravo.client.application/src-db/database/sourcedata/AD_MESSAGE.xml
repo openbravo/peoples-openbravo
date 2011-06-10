@@ -2391,8 +2391,7 @@ After the migration you need to logout and re-login to continue with the upgrade
 <!--FF808181304F1CD101304F8F7D580035-->  <MSGTEXT><![CDATA[The following configuration script(s) were not exported:<br/>
 %0.<br/>
 Field layout modifications in these template(s) were removed during the upgrade process.<br/>
-You should export your configuration script to synchronize it with your source code.<br/>
-<a target="_blank" href="http://wiki.openbravo.com/wiki/ERP/2.50/Developers_Guide/Concepts/Development_Build_Tasks#Modules" class="OBNoteListGridDelete">Learn more about exporting configuration script. </a><br/>
+You should export your configuration script to update your source code.  <a target="_blank" href="http://wiki.openbravo.com/wiki/ERP/2.50/Developers_Guide/Concepts/Development_Build_Tasks#Modules" class="OBNoteListGridDelete">Learn more about exporting configuration script. </a><br/>
 You then need to logout and re-login for the changes to be effective.]]></MSGTEXT>
 <!--FF808181304F1CD101304F8F7D580035-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--FF808181304F1CD101304F8F7D580035-->  <AD_MODULE_ID><![CDATA[9BA0836A3CD74EE4AB48753A47211BCC]]></AD_MODULE_ID>
@@ -2421,7 +2420,7 @@ Next steps:
 <ul>
 <li>Read the <a class="OBNoteListGridDelete" href="http://wiki.openbravo.com/wiki/ERP/3.0/Release_Notes" target="_blank">release notes</a></li>
 <li>In case your previous instance used a customized field layout, it is recommended to review the new layout and modify it if needed. <a class="OBNoteListGridDelete" target="_blank" href="http://wiki.openbravo.com/wiki/ERP/3.0/Developers_Guide/How_to_customize_the_Openbravo_look_and_feel">Learn how to do it.</a></li>
-<li>Some special customizations could prevent Openbravo elements (windows, pop-ups and so on) to be shown in the new user interface. <a class="OBNoteListGridDelete" herf="http://wiki.openbravo.com/wiki/ERP/2.50/Developers_Guide/Concepts/How_to_Migrate_2.50_Modules_to_3.0#Required_changes" target="_blank">Learn more how to detect and fix those cases.</a></li>
+<li>Some special customizations could prevent Openbravo elements (windows, pop-ups and so on) to be shown in the new user interface. <a class="OBNoteListGridDelete" href="http://wiki.openbravo.com/wiki/ERP/2.50/Developers_Guide/Concepts/How_to_Migrate_2.50_Modules_to_3.0#Required_changes" target="_blank">Learn more how to detect and fix those cases.</a></li>
 <li>Test your business processes before deploying release into a production environment</li>
 </ul>]]></MSGTEXT>
 <!--FF808181304F1CD101304F927C880049-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
