@@ -181,13 +181,13 @@ isc.OBUIAPP_AlertManagement.addProperties({
   }
 });
 
-isc.ClassFactory.defineClass('OBAlertSectionStackControl', isc.OBSectionItemControlLink);
+isc.ClassFactory.defineClass('OBAlertSectionStackControl', isc.OBLinkButtonItem);
 isc.OBAlertSectionStackControl.addProperties({
   newStatus: null,
   currentStatus: null,
   
   initWidget: function () {
-    this.setContents(OB.I18N.getLabel('OBUIAPP_MoveSelectedToStatus', [OB.AlertManagement.translatedStatus[this.newStatus]]));
+    this.setTitle(OB.I18N.getLabel('OBUIAPP_MoveSelectedToStatus', [OB.AlertManagement.translatedStatus[this.newStatus]]));
     this.Super('initWidget', arguments);
   },
   

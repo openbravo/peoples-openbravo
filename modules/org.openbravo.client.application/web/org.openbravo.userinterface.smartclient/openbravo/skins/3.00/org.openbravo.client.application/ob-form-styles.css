@@ -23,8 +23,10 @@
  * Form Fields/Items
  * Date Picker
  * Form Buttons
+ * LinkButton Item
  * SectionItem Button
  * Dialog
+ * Note section
 =======================================================================*/
 
 /*=======================================================================
@@ -707,6 +709,40 @@
 .OBFormButtonTitleSelectedDisabled {
   font-weight: normal;
   color: #777;
+}
+
+/*=======================================================================
+ * LinkButton Item
+=======================================================================*/
+
+.OBLinkButtonItem,
+.OBLinkButtonItemOver,
+.OBLinkButtonItemDown,
+.OBLinkButtonItemFocused,
+.OBLinkButtonItemFocusedOver,
+.OBLinkButtonItemFocusedDown {
+  font-family: 'lucida sans', sans-serif;
+  font-size: 12px;
+  vertical-align: middle;
+  background: transparent;
+  padding: 5px 5px 5px 5px;
+}
+
+.OBLinkButtonItem,
+.OBLinkButtonItemOver,
+.OBLinkButtonItemDown {
+  color: #58A618;
+}
+
+.OBLinkButtonItemFocused,
+.OBLinkButtonItemFocusedOver,
+.OBLinkButtonItemFocusedDown {
+  color: #fa962f;
+}
+
+.OBLinkButtonItemOver,
+.OBLinkButtonItemFocusedOver {
+  text-decoration: underline;
 }
 
 /*=======================================================================

@@ -167,6 +167,16 @@ isc.OBLinkItem.addProperties({
   newTabIconSize: 8
 });
 
+isc.OBLinkButtonItem.addProperties({
+  baseStyle: 'OBLinkButtonItem',
+  showDown: true,
+  showFocused: true,
+  showFocusedAsOver: false,
+  showRollOver: true,
+  autoFit: true,
+  height: 1,
+  overflow: 'visible'
+});
 
 isc.OBDateChooser.addProperties({
   headerStyle: 'OBDateChooserButton',

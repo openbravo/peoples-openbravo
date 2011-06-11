@@ -202,8 +202,8 @@ isc.OBAttachmentsLayout.addProperties({
     }
     this.addMember(hLayout);
     var me = this;
-    var addButton = isc.OBSectionItemControlLink.create({
-      contents: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentAdd')+' ]',
+    var addButton = isc.OBLinkButtonItem.create({
+      title: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentAdd')+' ]',
       width: '30px',
       canvas: me,
 	    action: function(){
@@ -241,7 +241,7 @@ isc.OBAttachmentsLayout.addProperties({
                 contents: fileName
               });
               var uploading = isc.Label.create({
-                 className: 'OBSectionItemControlLinkUploading',
+                 className: 'OBLinkButtonItemFocused',
                  contents: '    '+OB.I18N.getLabel('OBUIAPP_AttachmentUploading')
               });
               hTempLayout.addMember(uploadingFile);
@@ -302,8 +302,8 @@ isc.OBAttachmentsLayout.addProperties({
     this.getForm().view.attachmentExists = true;
     this.getForm().view.toolBar.updateButtonState();
     isc_OBAttachmentsSectionItem_0.setValue(OB.I18N.getLabel('OBUIAPP_AttachmentTitle')+" ("+attachments.length+")");
-    var downloadAllButton = isc.OBSectionItemControlLink.create({
-      contents: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentDownloadAll')+' ]',
+    var downloadAllButton = isc.OBLinkButtonItem.create({
+      title: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentDownloadAll')+' ]',
       width: '30px',
       canvas: this,
       action: function(){
@@ -320,8 +320,8 @@ isc.OBAttachmentsLayout.addProperties({
         });
       }
     });
-    var removeAllButton = isc.OBSectionItemControlLink.create({
-      contents: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentRemoveAll')+' ]',
+    var removeAllButton = isc.OBLinkButtonItem.create({
+      title: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentRemoveAll')+' ]',
       width: '30px',
       canvas: me,
       action: function(){
@@ -388,16 +388,16 @@ isc.OBAttachmentsLayout.addProperties({
         width: '200px',
         contents: creationDate+" "+OB.I18N.getLabel('OBUIAPP_AttachmentBy')+" "+attachment.createdby
       });
-      var downloadAttachment = isc.OBSectionItemControlLink.create({
-        contents: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentDownload')+' ]',
+      var downloadAttachment = isc.OBLinkButtonItem.create({
+        title: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentDownload')+' ]',
         width: '30px',
         attachmentName: attachment.name,
         attachId: attachment.id,
         action: downloadActions
       });
       downloadAttachment.height=0;
-      var removeAttachment = isc.OBSectionItemControlLink.create({
-        contents: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentRemove')+' ]',
+      var removeAttachment = isc.OBLinkButtonItem.create({
+        title: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentRemove')+' ]',
         width: '30px',
         attachmentName: attachment.name,
         attachmentId: attachment.id,
