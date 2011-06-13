@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -117,30 +117,7 @@ public class ActionButtonJava_Responser extends HttpSecureAppServlet {
         printPageButton<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>(response, vars, strProcessId<FIELD_TMP id="FieldsLoadName1">, strFields</FIELD_TMP>);
 </FIELDS_TMP>
 <FIELDS_TMP id="sectionActionButtons3">    } else if (vars.commandIn("SAVE_BUTTONActionButton<FIELD_TMP id="ProcessID3">button</FIELD_TMP>")) {
-        <FIELD_TMP id="FieldsLoad3">String strField = vars.getStringParameter("inpFields");</FIELD_TMP>
-        
-        ProcessBundle pb = new ProcessBundle(strProcessId, vars).init(this);
-        HashMap&lt;String, Object&gt; params= new HashMap&lt;String, Object&gt;();
-       
-        <FIELD_TMP id="FieldsLoadParams3">PInstanceProcessData.insertPInstanceParam(this, pinstance, )</FIELD_TMP>
-        
-        pb.setParams(params);
-        OBError myMessage = null;
-        try {
-          <FIELD_TMP id="ProcessCode3">execute process</FIELD_TMP>
-          myMessage = (OBError) pb.getResult();
-          myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), myMessage.getMessage()));
-          myMessage.setTitle(Utility.parseTranslation(this, vars, vars.getLanguage(), myMessage.getTitle()));
-        } catch (Exception ex) {
-          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-          log4j.error(ex);
-          if (!myMessage.isConnectionAvailable()) {
-            bdErrorConnection(response);
-            return;
-          }
-        }
-
-        processButtonHelper(request, response, vars, myMessage);        
+        process<FIELD_TMP id="ProcessID3">button</FIELD_TMP>(strProcessId, vars, request, response);
 </FIELDS_TMP>
     } else pageErrorPopUp(response);
   }
@@ -202,6 +179,35 @@ public class ActionButtonJava_Responser extends HttpSecureAppServlet {
       out.println(xmlDocument.print());
       out.close();
     }
+</FIELDS_TMP>
+
+<FIELDS_TMP id="sectionActionButtonsProcess">    private void process<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>(String strProcessId, VariablesSecureApp vars, HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
+        <FIELD_TMP id="FieldsLoad4">String strField = vars.getStringParameter("inpFields");</FIELD_TMP>
+        
+        ProcessBundle pb = new ProcessBundle(strProcessId, vars).init(this);
+        HashMap&lt;String, Object&gt; params= new HashMap&lt;String, Object&gt;();
+       
+        <FIELD_TMP id="FieldsLoadParams4">PInstanceProcessData.insertPInstanceParam(this, pinstance, )</FIELD_TMP>
+        
+        pb.setParams(params);
+        OBError myMessage = null;
+        try {
+          <FIELD_TMP id="ProcessCode4">execute process</FIELD_TMP>
+          myMessage = (OBError) pb.getResult();
+          myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), myMessage.getMessage()));
+          myMessage.setTitle(Utility.parseTranslation(this, vars, vars.getLanguage(), myMessage.getTitle()));
+        } catch (Exception ex) {
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          log4j.error(ex);
+          if (!myMessage.isConnectionAvailable()) {
+            bdErrorConnection(response);
+            return;
+          }
+        }
+
+        processButtonHelper(request, response, vars, myMessage); 
+   }
 </FIELDS_TMP>
 
   public String getServletInfo() {

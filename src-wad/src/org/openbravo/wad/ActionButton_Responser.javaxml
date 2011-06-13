@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -116,16 +116,7 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
         printPageButton<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>(response, vars, strProcessId<FIELD_TMP id="FieldsLoadName1">, strFields</FIELD_TMP>);
 </FIELDS_TMP>
 <FIELDS_TMP id="sectionActionButtons3">    } else if (vars.commandIn("SAVE_BUTTONActionButton<FIELD_TMP id="ProcessID3">button</FIELD_TMP>")) {
-        <FIELD_TMP id="FieldsLoad3">String strField = vars.getStringParameter("inpFields");</FIELD_TMP>
-        String strProcessing = vars.getStringParameter("inpprocessing");
-        String pinstance = SequenceIdData.getUUID();
-        PInstanceProcessData.insertPInstance(this, pinstance, "<FIELD_TMP id="ProcessID3">button</FIELD_TMP>", "0", strProcessing, vars.getUser(), vars.getClient(), vars.getOrg());
-        <FIELD_TMP id="FieldsLoadParams3">PInstanceProcessData.insertPInstanceParam(this, pinstance, )</FIELD_TMP>
-        <FIELD_TMP id="AdditionalCode3">code</FIELD_TMP>
-        ProcessBundle bundle = ProcessBundle.pinstance(pinstance, vars, this);
-        new ProcessRunner(bundle).execute(this);
-
-        processButtonHelper(request, response, vars, pinstance);        
+       process<FIELD_TMP id="ProcessID3">button</FIELD_TMP>(vars, request, response);    
 </FIELDS_TMP>
     } else pageErrorPopUp(response);
   }
@@ -185,6 +176,22 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
       out.println(xmlDocument.print());
       out.close();
     }
+</FIELDS_TMP>
+
+
+<FIELDS_TMP id="sectionActionButtonsProcess">    private void process<FIELD_TMP id="ProcessID4">xx</FIELD_TMP>(VariablesSecureApp vars, HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException{
+         <FIELD_TMP id="FieldsLoad4">String strField = vars.getStringParameter("inpFields");</FIELD_TMP>
+        String strProcessing = vars.getStringParameter("inpprocessing");
+        String pinstance = SequenceIdData.getUUID();
+        PInstanceProcessData.insertPInstance(this, pinstance, "<FIELD_TMP id="ProcessID4">button</FIELD_TMP>", "0", strProcessing, vars.getUser(), vars.getClient(), vars.getOrg());
+        <FIELD_TMP id="FieldsLoadParams4">PInstanceProcessData.insertPInstanceParam(this, pinstance, )</FIELD_TMP>
+        <FIELD_TMP id="AdditionalCode4">code</FIELD_TMP>
+        ProcessBundle bundle = ProcessBundle.pinstance(pinstance, vars, this);
+        new ProcessRunner(bundle).execute(this);
+
+        processButtonHelper(request, response, vars, pinstance);    
+  }
 </FIELDS_TMP>
 
   public String getServletInfo() {

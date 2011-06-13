@@ -206,6 +206,7 @@ class WadActionButton {
     ActionButtonRelationData[] fab = null;
     try {
       fab = ActionButtonRelationData.selectGenerics(conn);
+      System.out.println(fab.length);
     } catch (final ServletException e) {
       return null;
     }
@@ -251,6 +252,7 @@ class WadActionButton {
         fab[i].additionalCode = getAdditionalCode(fab[i], "", "");
       }
     }
+    System.out.println(fab.length);
     return fab;
   }
 
@@ -482,11 +484,10 @@ class WadActionButton {
               html.append("Data.selectActDef");
               html.append(FormatUtilities.replace(data[i].columnname));
               html.append("(this, ");
-              html
-                  .append(((data[i].defaultvalue.equals("") || data[i].defaultvalue.indexOf("@") == -1) ? "\""
-                      + data[i].defaultvalue + "\""
-                      : WadUtility.getWadContext(data[i].defaultvalue, vecFields, vecParams, null,
-                          false, isSOTrx, window)));
+              html.append(((data[i].defaultvalue.equals("") || data[i].defaultvalue.indexOf("@") == -1) ? "\""
+                  + data[i].defaultvalue + "\""
+                  : WadUtility.getWadContext(data[i].defaultvalue, vecFields, vecParams, null,
+                      false, isSOTrx, window)));
               html.append(")");
             } else {
               html.append("\"\"");
@@ -509,18 +510,15 @@ class WadActionButton {
       } catch (final ServletException e) {
       }
       html.append("xmlDocument.setParameter(\"processDescription\", \"" + strAux + "\");\n");
-      html
-          .append("xmlDocument.setParameter(\"docaction\", (strdocaction.equals(\"--\")?\"CL\":strdocaction));\n");
-      html
-          .append("FieldProvider[] dataDocAction = ActionButtonUtility.docAction(this, vars, strdocaction, \""
-              + fd.adReferenceValueId + "\", strdocstatus, strProcessing, stradTableId);\n");
+      html.append("xmlDocument.setParameter(\"docaction\", (strdocaction.equals(\"--\")?\"CL\":strdocaction));\n");
+      html.append("FieldProvider[] dataDocAction = ActionButtonUtility.docAction(this, vars, strdocaction, \""
+          + fd.adReferenceValueId + "\", strdocstatus, strProcessing, stradTableId);\n");
       html.append("xmlDocument.setData(\"reportdocaction\", \"liststructure\", dataDocAction);\n");
       html.append("StringBuffer dact = new StringBuffer();\n");
       html.append("if (dataDocAction!=null) {\n");
       html.append("  dact.append(\"var arrDocAction = new Array(\\n\");\n");
       html.append("  for (int i=0;i<dataDocAction.length;i++) {\n");
-      html
-          .append("    dact.append(\"new Array(\\\"\" + dataDocAction[i].getField(\"id\") + \"\\\", \\\"\" + dataDocAction[i].getField(\"name\") + \"\\\", \\\"\" + dataDocAction[i].getField(\"description\") + \"\\\")\\n\");\n");
+      html.append("    dact.append(\"new Array(\\\"\" + dataDocAction[i].getField(\"id\") + \"\\\", \\\"\" + dataDocAction[i].getField(\"name\") + \"\\\", \\\"\" + dataDocAction[i].getField(\"description\") + \"\\\")\\n\");\n");
       html.append("    if (i<dataDocAction.length-1) dact.append(\",\\n\");\n");
       html.append("  }\n");
       html.append("  dact.append(\");\");\n");
@@ -535,17 +533,14 @@ class WadActionButton {
       }
       html.append("xmlDocument.setParameter(\"processDescription\", \"" + strAux + "\");\n");
       html.append("xmlDocument.setParameter(\"projectaction\", strchangeprojectstatus);\n");
-      html
-          .append("FieldProvider[] dataProjectAction = ActionButtonUtility.projectAction(this, vars, strchangeprojectstatus, \""
-              + fd.adReferenceValueId + "\", strprojectstatus);\n");
-      html
-          .append("xmlDocument.setData(\"reportprojectaction\", \"liststructure\", dataProjectAction);\n");
+      html.append("FieldProvider[] dataProjectAction = ActionButtonUtility.projectAction(this, vars, strchangeprojectstatus, \""
+          + fd.adReferenceValueId + "\", strprojectstatus);\n");
+      html.append("xmlDocument.setData(\"reportprojectaction\", \"liststructure\", dataProjectAction);\n");
       html.append("StringBuffer dact = new StringBuffer();\n");
       html.append("if (dataProjectAction!=null) {\n");
       html.append("  dact.append(\"var arrProjectAction = new Array(\\n\");\n");
       html.append("  for (int i=0;i<dataProjectAction.length;i++) {\n");
-      html
-          .append("    dact.append(\"new Array(\\\"\" + dataProjectAction[i].getField(\"id\") + \"\\\", \\\"\" + dataProjectAction[i].getField(\"name\") + \"\\\", \\\"\" + dataProjectAction[i].getField(\"description\") + \"\\\")\\n\");\n");
+      html.append("    dact.append(\"new Array(\\\"\" + dataProjectAction[i].getField(\"id\") + \"\\\", \\\"\" + dataProjectAction[i].getField(\"name\") + \"\\\", \\\"\" + dataProjectAction[i].getField(\"description\") + \"\\\")\\n\");\n");
       html.append("    if (i<dataProjectAction.length-1) dact.append(\",\\n\");\n");
       html.append("  }\n");
       html.append("  dact.append(\");\");\n");

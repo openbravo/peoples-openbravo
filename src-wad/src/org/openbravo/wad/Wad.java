@@ -485,6 +485,7 @@ public class Wad extends DefaultHandler {
       xmlDocumentData.setData("structure1", abrd);
       xmlDocumentData.setData("structure2", abrd);
       xmlDocumentData.setData("structure3", abrd);
+      xmlDocumentData.setData("structure4", abrd);
 
       WadUtility.writeFile(fileReference, "ActionButton_Responser.java", xmlDocumentData.print());
 
@@ -497,6 +498,7 @@ public class Wad extends DefaultHandler {
       xmlDocumentData.setData("structure1", abrd);
       xmlDocumentData.setData("structure2", abrd);
       xmlDocumentData.setData("structure3", abrd);
+      xmlDocumentData.setData("structure4", abrd);
 
       WadUtility.writeFile(fileReference, "ActionButtonJava_Responser.java", xmlDocumentData
           .print());
