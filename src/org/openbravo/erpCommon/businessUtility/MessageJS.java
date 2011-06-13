@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2006 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.xmlEngine.XmlDocument;
 
 public class MessageJS extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -45,10 +44,7 @@ public class MessageJS extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strValue)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: print page message");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/businessUtility/MessageJS").createXmlDocument();
+
     String type = "Hidden";
     String title = "";
     String description = "";
@@ -70,15 +66,25 @@ public class MessageJS extends HttpSecureAppServlet {
       description = "<![CDATA[" + data[0].msgtext + "]]>";
     }
 
-    xmlDocument.setParameter("type", type);
-    xmlDocument.setParameter("title", title);
-    xmlDocument.setParameter("description", Utility.formatMessageBDToHtml(description));
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
+
+    // Fixing issue #17486
+    // Don't use xmlEngine to prevent translation of message codes
+    StringBuilder xml = new StringBuilder();
+    xml.append("<?xml version='1.0' encoding='UTF-8' ?>\n");
+    xml.append("<xml-structure>\n");
+    xml.append("  <status>\n");
+    xml.append("    <type>").append(type).append("</type>\n");
+    xml.append("    <title>").append(title).append("</title>\n");
+    xml.append("    <description>").append(description).append("</description>\n");
+    xml.append("  </status>\n");
+    xml.append("</xml-structure>\n");
+
+    log4j.debug(xml.toString());
+
     final PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
-      log4j.debug(xmlDocument.print());
-    out.println(xmlDocument.print());
+    out.println(xml.toString());
     out.close();
   }
 }
