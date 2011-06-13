@@ -403,6 +403,7 @@ OB.ViewFormProperties = {
       item = this.getItem(this.firstFocusedField);
       if(item) {
         this.setFocusItem(item);
+        this.parentElement.delayCall('scrollTo', [null, this.getTop()], 100);
         return;
       }
     }
