@@ -505,16 +505,3 @@ isc.OBSectionItemButton.addProperties({
     this.Super("focusChanged", arguments);
   }
 });
-
-isc.ClassFactory.defineClass('OBSectionItemControlLink', isc.Label);
-isc.OBSectionItemControlLink.addProperties({
-  className: 'OBSectionItemControlLink',
-  showDown: true,
-  showFocused: true,
-  showFocusedAsOver: true,
-  showRollOver: true,
-  height: 20,
-  wrap: false,
-  width: '*'
-});
-
