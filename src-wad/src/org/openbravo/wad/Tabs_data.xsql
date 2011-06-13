@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -197,6 +197,16 @@
                        AND C.UPDATED > SI.LAST_BUILD
                         AND C.AD_TABLE_ID = TB.AD_TABLE_ID
                         AND W.AD_WINDOW_ID = TB.AD_WINDOW_ID
+                    UNION
+                      SELECT 1
+                        FROM AD_COLUMN C, AD_TAB TB, AD_WINDOW W, AD_COLUMN C2, AD_REF_SEARCH R
+                       WHERE AD_WINDOW.AD_WINDOW_ID = W.AD_WINDOW_ID
+                         AND R.AD_TABLE_ID = C.AD_TABLE_ID
+                         AND C.UPDATED > SI.LAST_BUILD
+                         AND C2.AD_REFERENCE_ID = '30'
+                         AND C2.AD_REFERENCE_VALUE_ID = R.AD_REFERENCE_ID
+                         AND C2.AD_TABLE_ID = TB.AD_TABLE_ID
+                         AND W.AD_WINDOW_ID = TB.AD_WINDOW_ID
                        )
         ORDER BY AD_WINDOW.name, AD_TAB.tablevel, AD_TAB.seqno
           ]]>
