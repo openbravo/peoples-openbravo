@@ -45,8 +45,6 @@
   <PARAMETER id="paramAD_ORGID" name="adOrgId"/>
   <PARAMETER id="parameterComparative" name="constantComprative" default="Y"/>
   <PARAMETER id="paramComparative" name="comparative" boolean="checked" withId="parameterComparative"/>
-  <PARAMETER id="parameterNonCero" name="constantNonCero" default="Y"/>
-  <PARAMETER id="paramNonCero" name="noncero" boolean="checked" withId="parameterNonCero"/>
   <PARAMETER id="paramConstanteNormalOrder" name="constanteNormalOrder" default="Normal"/>
   <PARAMETER id="paramNormalOrder" name="normal" boolean="checked" withId="paramConstanteNormalOrder"/>
   <PARAMETER id="paramConstanteAmountascOrder" name="constanteAmountascOrder" default="Amountasc"/>

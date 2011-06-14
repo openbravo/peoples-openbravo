@@ -111,17 +111,6 @@ function onloadFunctions() {
 
 	function onResizeDo(){
 		resizeArea();
-	}
-	function showHide() {
-		var frm = document.frmMain;
-	    if (frm.inpMayor.value!="" || frm.inpMenor.value!="") {
-	    	document.getElementById('label0').style.display='none';
-	    	frm.inpNonCero.style.display='none';
-	    }
-	    else{
-	    	frm.inpNonCero.style.display='';
-	        document.getElementById('label0').style.display='';
-	    }
 	} 
 	</script>
 </head>
@@ -376,13 +365,11 @@ function onloadFunctions() {
                 </tr>
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Amount Greater Than</span></td>
-                  <td class="TextBox_ContentCell"> <input dojoType="openbravo:RealNumberTextbox" lowerThan="paramMenor" class="TextBox_OneCell_width" type="text" name="inpMayor" maxlength="10" id="paramMayor" value="" outputformat="euroEdition" onchange="showHide()"></input><script>djConfig.searchIds.push("paramMayor");</script>
+                  <td class="TextBox_ContentCell"> <input dojoType="openbravo:RealNumberTextbox" lowerThan="paramMenor" class="TextBox_OneCell_width" type="text" name="inpMayor" maxlength="10" id="paramMayor" value="" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramMayor");</script>
                   </td>
                   <td class="TitleCell"><span class="LabelText">Less Than</span></td>
-                  <td class="TextBox_ContentCell"> <input dojoType="openbravo:RealNumberTextbox" greaterThan="paramMayor" class="TextBox_OneCell_width" type="text" name="inpMenor" maxlength="10" id="paramMenor" value="" outputformat="euroEdition" onchange="showHide()"></input><script>djConfig.searchIds.push("paramMenor");</script>
+                  <td class="TextBox_ContentCell"> <input dojoType="openbravo:RealNumberTextbox" greaterThan="paramMayor" class="TextBox_OneCell_width" type="text" name="inpMenor" maxlength="10" id="paramMenor" value="" outputformat="euroEdition"></input><script>djConfig.searchIds.push("paramMenor");</script>
                   </td>
-                  <td class="TitleCell" ><span class="LabelText" id='label0'>Include orders with zero Total amount</span></td>
-                  <td class="Radio_Check_ContentCell" ><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpNonCero" value="Y" id="paramNonCero"></input></span></td>
                 </tr>
                 <tr>
                   <td colspan="6">
