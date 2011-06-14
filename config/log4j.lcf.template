@@ -28,7 +28,7 @@ log4j.appender.R.MaxFileSize=10000KB
 
 # R uses PatternLayout.
 log4j.appender.R.layout=org.apache.log4j.PatternLayout
-log4j.appender.R.layout.ConversionPattern=%d{HH:mm:ss} [%t] %-5p %c - %m%n
+log4j.appender.R.layout.ConversionPattern=%d{ISO8601} [%t] %-5p %c - %m%n
 
 # Keep one backup file
 log4j.appender.R.MaxBackupIndex=1
@@ -52,7 +52,7 @@ log4j.appender.HB.MaxFileSize=10000KB
 
 # R uses PatternLayout.
 log4j.appender.HB.layout=org.apache.log4j.PatternLayout
-log4j.appender.HB.layout.ConversionPattern=%d{HH:mm:ss} [%t] %-5p %c - %m%n
+log4j.appender.HB.layout.ConversionPattern=%d{ISO8601} [%t] %-5p %c - %m%n
 
 # Keep one backup file
 log4j.appender.HB.MaxBackupIndex=1
