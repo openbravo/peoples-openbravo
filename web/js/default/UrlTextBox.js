@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2007 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,8 +45,8 @@ isMissingUrlTextBox= function(/*String*/ id){
 isValidUrl = function(/*String*/str_url) {
   if (str_url.length == 0) return true;
 // url parsing and formatting routimes. modify them if you wish other url format
-	var re_date = /^([http|ftp])+\:\/\/(([A-Za-z0-9]+)(\.)?(\-)?)+((\/)([A-Za-z0-9\-\_]*(\.)?[A-Za-z0-9\-\_]*))*$/;
-	if (!re_date.exec(str_url))
-		return false;
-	return (true);
+  var re_date = /^([https?|ftp|file])+\:\/\/\/?(([A-Za-z0-9]+)(\.)?(\-)?)+((\/)([A-Za-z0-9\-\_]*(\.)?[A-Za-z0-9\-\_]*))*$/;
+  if (!re_date.exec(str_url))
+    return false;
+  return (true);
 }
