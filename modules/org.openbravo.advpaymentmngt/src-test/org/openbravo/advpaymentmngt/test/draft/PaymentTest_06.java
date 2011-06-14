@@ -77,13 +77,15 @@ public class PaymentTest_06 extends BaseTest {
             new Value(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE, invoice
                 .getFINPaymentScheduleList().get(0)));
 
-        assertTrue("Payment Schedule Outstanding Amount != 0", BigDecimal.ZERO.compareTo(invoice
-            .getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
-        assertTrue("Payment Schedule Received Amount != Total Amount", invoice
+        assertTrue("Payment Schedule Outstanding Amount ("
+            + invoice.getFINPaymentScheduleList().get(0).getOutstandingAmount().toPlainString()
+            + ") != Total Amount (" + invoice.getGrandTotalAmount().toPlainString() + ")", invoice
             .getGrandTotalAmount().compareTo(
-                invoice.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
+                invoice.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
+        assertTrue("Payment Schedule Received Amount != 0", BigDecimal.ZERO.compareTo(invoice
+            .getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
 
-        assertTrue("Payment Schedule Deatail Amount != Total Amount", invoice.getGrandTotalAmount()
+        assertTrue("Payment Schedule Detail Amount != Total Amount", invoice.getGrandTotalAmount()
             .compareTo(psd.getAmount()) == 0);
         assertTrue("Payment Schedule Detail Write-off Amount != 0", BigDecimal.ZERO.compareTo(psd
             .getWriteoffAmount()) == 0);
