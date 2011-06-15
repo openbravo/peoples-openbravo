@@ -128,6 +128,15 @@ isc.OBFKItem.addProperties({
 
 isc.OBYesNoItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
 
+isc.OBCheckboxItem.addProperties({
+  textBoxStyle: 'OBFormFieldLabel',
+  showValueIconOver: true,
+  showValueIconFocused: true,
+  defaultValue: false,
+  checkedImage: '[SKIN]/../../org.openbravo.client.application/images/form/checked.png',
+  uncheckedImage: '[SKIN]/../../org.openbravo.client.application/images/form/unchecked.png'
+});
+
 
 isc.OBSearchItem.addProperties({
   cellStyle: 'OBFormField',

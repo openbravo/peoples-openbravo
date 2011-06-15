@@ -22,13 +22,7 @@
 isc.ClassFactory.defineClass('OBCheckboxItem', CheckboxItem);
 
 isc.OBCheckboxItem.addProperties({
-  operator: 'equals',
+  operator: 'equals'
   // no validation on change or exit here
-  textBoxStyle: 'OBFormFieldLabel',
-  showValueIconOver: true,
-  showValueIconFocused: true,
-  defaultValue: false,
-  checkedImage: '[SKIN]/../../org.openbravo.client.application/images/form/checked.png',
-  uncheckedImage: '[SKIN]/../../org.openbravo.client.application/images/form/unchecked.png'
 });
 
