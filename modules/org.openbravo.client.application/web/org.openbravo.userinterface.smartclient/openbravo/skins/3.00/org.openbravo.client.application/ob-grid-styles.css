@@ -173,14 +173,14 @@
 }
 
 .OBGridFilterFunnelBackground {
-  background-color: #c9d6ba;
+  background-color: #CDD7BB;
 }
 
 .OBGridFilterFunnelIconDown,
 .OBGridFilterFunnelIconSelected,
 .OBGridFilterFunnelIconFocused,
 .OBGridFilterFunnelIcon {
-  background-color: #c9d6ba;
+  background-color: #CDD7BB;
   cursor: 'pointer';
 }
 
