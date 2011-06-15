@@ -29,6 +29,9 @@
   <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+  
+  <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
+  
 
   <script language="JavaScript" type="text/javascript" id="paramDirectory">
   var baseDirectory="../../../../../web/";
@@ -248,7 +251,7 @@
                   <button type="button" 
                     id="buttonContinue" 
                     class="ButtonLink" 
-                    onclick="submitCommandForm('UPGRADE1', false, null, 'ModuleManagement.html', '_self', null, false);return false;" 
+                    onclick="setProcessingMode('popup', true); submitCommandForm('UPGRADE1', false, null, 'ModuleManagement.html', '_self', null, false);return false;" 
                     onfocus="buttonEvent('onfocus', this); window.status='Continue'; return true;" 
                     onblur="buttonEvent('onblur', this);" 
                     onkeyup="buttonEvent('onkeyup', this);" 
