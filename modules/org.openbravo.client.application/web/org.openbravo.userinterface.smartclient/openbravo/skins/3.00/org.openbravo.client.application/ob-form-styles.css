@@ -729,9 +729,12 @@
 }
 
 .OBLinkButtonItem,
-.OBLinkButtonItemOver,
-.OBLinkButtonItemDown {
+.OBLinkButtonItemOver {
   color: #58A618;
+}
+
+.OBLinkButtonItemDown {
+  color: #004E27;
 }
 
 .OBLinkButtonItemFocused,

@@ -270,19 +270,22 @@
 }
 
 .OBGridLinkButton,
-.OBGridLinkButtonFocused {
-  color: #00A651;
-}
-
 .OBGridLinkButtonOver {
-  color: #00A651;
-  text-decoration: underline;
+  color: #58A618;
 }
 
-.OBGridLinkButtonDown,
+.OBGridLinkButtonDown {
+  color: #004E27;
+}
+
+.OBGridLinkButtonFocused,
 .OBGridLinkButtonFocusedOver,
 .OBGridLinkButtonFocusedDown {
-  color: #004E27;
+  color: #fa962f;
+}
+
+.OBGridLinkButtonOver,
+.OBGridLinkButtonFocusedOver {
   text-decoration: underline;
 }
 
