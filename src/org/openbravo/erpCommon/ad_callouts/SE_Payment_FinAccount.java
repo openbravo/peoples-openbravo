@@ -18,6 +18,8 @@
  */
 package org.openbravo.erpCommon.ad_callouts;
 
+import java.math.BigDecimal;
+
 import javax.servlet.ServletException;
 
 import org.openbravo.base.filter.IsIDFilter;
@@ -48,10 +50,12 @@ public class SE_Payment_FinAccount extends SimpleCallout {
       info.addResult("inpfinancialaccountcurrencyid", DalUtil.getId(financialAccount.getCurrency())
           .toString());
 
-      info.addResult("inpfinaccTxnConvertRate", 1);
+      info.addResult("inpfinaccTxnConvertRate", BigDecimal.ONE);
 
       String strAmount = vars.getNumericParameter("inpamount");
-      info.addResult("inpfinaccTxnAmount", strAmount);
+      if (!strAmount.isEmpty()) {
+        info.addResult("inpfinaccTxnAmount", new BigDecimal(strAmount));
+      }
     } else {
       info.addResult("inpfinaccTxnConvertRate", "");
       info.addResult("inpfinaccTxnAmount", "");

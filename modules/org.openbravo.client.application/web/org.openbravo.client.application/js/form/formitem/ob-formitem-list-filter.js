@@ -23,5 +23,17 @@ isc.ClassFactory.defineClass('OBListFilterItem', OBListItem);
 
 isc.OBListFilterItem.addProperties({
   moveFocusOnPickValue: false,
-  operator: 'equals'
+  operator: 'equals',
+  validateOnExit: false,
+  validateOnChange: false,
+  
+  // note: can't override changed as it is used by the filter editor 
+  // itself, see the RecordEditor source code and the changed event
+  change: function(form, item, value, oldValue) {
+    if (this._pickedValue || !value) {
+      // filter with a delay to let the value be set
+      isc.Page.setEvent(isc.EH.IDLE, this.form.grid, isc.Page.FIRE_ONCE, 'performAction');
+    }
+    this.Super('change', arguments);
+  }
 });

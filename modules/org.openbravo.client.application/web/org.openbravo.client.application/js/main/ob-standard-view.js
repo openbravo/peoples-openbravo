@@ -265,6 +265,7 @@ isc.OBStandardView.addProperties({
   // handles different ways by which an error can be passed from the 
   // system, translates this to an object with a type, title and message
   setErrorMessageFromResponse: function(resp, data, req){
+    var errorCode;
     // only handle it once
     if (resp._errorMessageHandled) {
       return true;
@@ -326,7 +327,7 @@ isc.OBStandardView.addProperties({
       }
     } else if (isLabel) {
       if (gridEditing) {
-        this.setLabelInRow(req.clientContext.editRow, errorCode, params);
+        this.setLabelInRow(req.clientContext.editRow, msg, params);
       } else {
         this.messageBar.setLabel(type, title, msg, params);
       }
@@ -583,29 +584,16 @@ isc.OBStandardView.addProperties({
       object = this.lastFocusedItem;
       functionName = 'focusInItem';
     } else if (this.viewGrid && !this.isShowingForm && this.viewGrid.getFilterEditor() && this.viewGrid.getFilterEditor().getEditForm()) {
-      // there is a filter editor
-      object = this.viewGrid.getFilterEditor().getEditForm();
-      
-      // compute a focus item
-      if (!object.getFocusItem()) {
-        items = object.getItems();
-
-        for (i = 0; i < items.length; i++) {
-          item = items[i];
-          if (item.getCanFocus() && !item.isDisabled()) {
-            object.setFocusItem(item);
-            break;
-          }
-        }
-      }
-      
+      this.viewGrid.focusInFirstFilterEditor();
       functionName = 'focus';
     } else if (this.viewGrid) {
       object = this.viewGrid;
       functionName = 'focus';
     }
     
-    isc.Page.setEvent(isc.EH.IDLE, object, isc.Page.FIRE_ONCE, functionName);
+    if (object && functionName) {
+      isc.Page.setEvent(isc.EH.IDLE, object, isc.Page.FIRE_ONCE, functionName);
+    }
   },
   
   setTabButtonState: function(active){
@@ -632,7 +620,11 @@ isc.OBStandardView.addProperties({
   },
   
   isActiveView: function() {
-    return this.standardWindow.activeView === this;
+    if (this.standardWindow && this.standardWindow.activeView) {
+      return this.standardWindow.activeView === this;
+    } else {
+      return false;
+    }
   },
     
   setAsActiveView: function(autoSaveDone){
@@ -834,7 +826,11 @@ isc.OBStandardView.addProperties({
       this.viewGrid.markForRedraw('showing');
       this.viewGrid.show();
       if (this.isActiveView()) {
-        this.viewGrid.focusInFirstFilterEditor();
+        if (this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length === 1) {
+          this.viewGrid.focus();
+        } else {
+          this.viewGrid.focusInFirstFilterEditor();
+        }
       }
       
       this.viewGrid.setHeight('100%');
@@ -1342,8 +1338,8 @@ isc.OBStandardView.addProperties({
       }
     
       var callback = function(ok){
-        var i, data, deleteData, error, recordInfos = [], removeCallBack = function(resp, data, req){
-          var localData = resp.dataObject || resp.data || data, i;
+        var i, doUpdateTotalRows, data, deleteData, error, recordInfos = [], removeCallBack = function(resp, data, req){
+          var localData = resp.dataObject || resp.data || data, i, updateTotalRows;
           if (!localData) {
             // bail out, an error occured which should be displayed to the user now
             return;
@@ -1361,11 +1357,19 @@ isc.OBStandardView.addProperties({
             }
             view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [deleteCount]));
             if (deleteData) {
+              // note totalrows is used when inserting a new row, to determine after which
+              // record to add a new row
+              updateTotalRows = (view.viewGrid.data.getLength() === view.viewGrid.data.totalRows);
               // deleteData is computed below
               for (i = 0 ; i < deleteData.ids.length; i++) {
                 recordInfos.push({id: deleteData.ids[i]});
               }
               view.viewGrid.data.handleUpdate('remove', recordInfos);
+              if (updateTotalRows) {
+                view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
+              }
+            } else if (doUpdateTotalRows) {
+              view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
             }
             view.viewGrid.updateRowCountDisplay();
             view.refreshChildViews();
@@ -1403,6 +1407,9 @@ isc.OBStandardView.addProperties({
               refreshGrid: true
             });
           } else {
+            // note totalrows is used when inserting a new row, to determine after which
+            // record to add a new row
+            doUpdateTotalRows = (view.viewGrid.data.getLength() === view.viewGrid.data.totalRows);
             view.viewGrid.removeData(selection[0], removeCallBack, {});
           }
         }

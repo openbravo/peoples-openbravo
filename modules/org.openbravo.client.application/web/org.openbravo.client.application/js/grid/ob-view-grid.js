@@ -302,7 +302,7 @@ isc.OBViewGrid.addProperties({
   },
   
   draw: function() {
-    var drawnBefore = this.isDrawn(), form;
+    var drawnBefore = this.isDrawn(), form, item;
     this.Super('draw', arguments);
     // set the focus in the filter editor
     if (this.view && this.view.isActiveView() && !drawnBefore && this.isVisible() &&
@@ -1285,7 +1285,7 @@ isc.OBViewGrid.addProperties({
       if ((EH.ctrlKeyDown() && !EH.altKeyDown() && !EH.shiftKeyDown()) || (!EH.ctrlKeyDown() && !EH.altKeyDown() && EH.shiftKeyDown())) {
         // move to multi-select mode, let the standard do it for us
         this.singleRecordSelection = false;
-      } else {
+      } else if (!(!EH.ctrlKeyDown() && EH.altKeyDown() && EH.shiftKeyDown())) {  // 'if' statement to avoid do an action when the KS to move to a child tab is fired
         this.doSelectSingleRecord(record);
       }
     } else if (this.getCheckboxFieldPosition() === fieldNum) {
@@ -1649,7 +1649,7 @@ isc.OBViewGrid.addProperties({
     }
   },
   
-  saveEdits: function(editCompletionEvent, callback, rowNum, colNum, validateOnly){
+  saveEdits: function(editCompletionEvent, callback, rowNum, colNum, validateOnly, skipValidation){
     var ret = this.Super('saveEdits', arguments);
     // save was not done, because there were no changes probably
     if (!ret) {

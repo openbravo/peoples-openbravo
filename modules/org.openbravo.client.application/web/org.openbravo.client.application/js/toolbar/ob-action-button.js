@@ -32,18 +32,30 @@ isc.OBToolbarActionButton.addProperties( {
   },
 
   runProcess : function() {
-    var theView = this.view;
+    var theView = this.view,
+      record, rowNum;
+
+    if (!theView.isShowingForm && theView.viewGrid.getSelectedRecords().length === 1){
+      // Keep current selection that might be lost in autosave
+      record = theView.viewGrid.getSelectedRecord();
+      rowNum = theView.viewGrid.getRecordIndex(record);
+    }
     
     var actionObject = {
         target: this,
         method: this.doAction,
-        parameters: null
+        parameters: [ rowNum ]
       };
     theView.standardWindow.doActionAfterAutoSave(actionObject);
   },
   
-  doAction: function(){
+  doAction: function(rowNum){
     var theView = this.contextView, param;
+
+    if (rowNum && !theView.viewGrid.getSelectedRecord()) {
+      // Current selection was lost, restore it
+      theView.viewGrid.selectRecord(rowNum);
+    }
 
     var allProperties = theView.getContextInfo(false, true, false, true);
     var sessionProperties = theView.getContextInfo(true, true, false, true);

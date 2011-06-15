@@ -449,7 +449,7 @@ public class AdvPaymentMngtDao {
     OBDal.getInstance().save(payment);
     OBDal.getInstance().save(newPaymentDetail);
     OBDal.getInstance().save(paymentScheduleDetail);
-    // OBDal.getInstance().flush();
+    OBDal.getInstance().flush();
 
     return newPaymentDetail;
   }
@@ -1081,8 +1081,10 @@ public class AdvPaymentMngtDao {
 
       }
 
-      obc.add(exp.getCriterion()); // compoundexp will be always != null because
-      // finAccsMethods.isEmpty() == false
+      Criterion crit = exp.getCriterion();
+      if (crit != null) {
+        obc.add(crit);
+      }
     }
     return obc.list();
   }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,37 +71,42 @@ public class HeartBeatPopupActionHandler extends BaseActionHandler {
       boolean usingAprm = true;
       boolean exportConfigScript = false;
       if (isUpgrading) {
-        sysAdmin = "S".equals(OBContext.getOBContext().getRole().getUserLevel());
-        if (sysAdmin) {
-          if (OBDal.getInstance().exists(Module.ENTITY_NAME, APRM_MIGRATION_TOOL_ID)) {
-            usingAprm = new AdvPaymentMngtDao().existsAPRMReadyPreference();
-          }
+        OBContext.setAdminMode();
+        try {
+          sysAdmin = "S".equals(OBContext.getOBContext().getRole().getUserLevel());
+          if (sysAdmin) {
+            if (OBDal.getInstance().exists(Module.ENTITY_NAME, APRM_MIGRATION_TOOL_ID)) {
+              usingAprm = new AdvPaymentMngtDao().existsAPRMReadyPreference();
+            }
 
-          // Check all applied configuration scripts are exported in 3.0
-          OBCriteria<Module> qMod = OBDal.getInstance().createCriteria(Module.class);
-          qMod.add(Restrictions.eq(Module.PROPERTY_TYPE, "T"));
-          qMod.add(Restrictions.eq(Module.PROPERTY_ENABLED, true));
-          qMod.add(Restrictions.eq(Module.PROPERTY_APPLYCONFIGURATIONSCRIPT, true));
-          String obDir = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-              "source.path");
-          String oldScripts = "";
-          for (Module mod : qMod.list()) {
-            File cfScript = new File(obDir + "/modules/" + mod.getJavaPackage()
-                + "/src-db/database", "configScript.xml");
-            if (cfScript.exists() && DBSMOBUtil.isOldConfigScript(cfScript)) {
-              if (!oldScripts.isEmpty()) {
-                oldScripts += ", ";
+            // Check all applied configuration scripts are exported in 3.0
+            OBCriteria<Module> qMod = OBDal.getInstance().createCriteria(Module.class);
+            qMod.add(Restrictions.eq(Module.PROPERTY_TYPE, "T"));
+            qMod.add(Restrictions.eq(Module.PROPERTY_ENABLED, true));
+            qMod.add(Restrictions.eq(Module.PROPERTY_APPLYCONFIGURATIONSCRIPT, true));
+            String obDir = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
+                "source.path");
+            String oldScripts = "";
+            for (Module mod : qMod.list()) {
+              File cfScript = new File(obDir + "/modules/" + mod.getJavaPackage()
+                  + "/src-db/database", "configScript.xml");
+              if (cfScript.exists() && DBSMOBUtil.isOldConfigScript(cfScript)) {
+                if (!oldScripts.isEmpty()) {
+                  oldScripts += ", ";
+                }
+                oldScripts += mod.getName();
+                log.info(mod.getName() + " config script is not exported in 3.0");
               }
-              oldScripts += mod.getName();
-              log.info(mod.getName() + " config script is not exported in 3.0");
+            }
+
+            exportConfigScript = !oldScripts.isEmpty();
+
+            if (exportConfigScript) {
+              result.put("oldConfigScripts", oldScripts);
             }
           }
-
-          exportConfigScript = !oldScripts.isEmpty();
-
-          if (exportConfigScript) {
-            result.put("oldConfigScripts", oldScripts);
-          }
+        } finally {
+          OBContext.restorePreviousMode();
         }
       }
 

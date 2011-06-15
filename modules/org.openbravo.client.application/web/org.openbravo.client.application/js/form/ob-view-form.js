@@ -103,7 +103,10 @@ OB.ViewFormProperties = {
         break;
       }
     }
-    
+    if (!this.firstFocusedField) {
+      this.firstFocusedField = this.getItem(0).name;
+    }
+
     delete this._preventFocusChanges;
   },
 
@@ -376,10 +379,15 @@ OB.ViewFormProperties = {
   computeFocusItem: function(changeState) {
     var items = this.getItems(), length = items.length, item, i;
     
-    var errorFld = this.getFirstErrorItem();
-    if (errorFld) {
-      this.setFocusItem(errorFld);
-      return;
+    if (!changeState) {
+      var errorFld = this.getFirstErrorItem();
+      if (errorFld) {
+        // get rid of this one, to not set the focus back to this field
+        delete this.forceFocusedField;
+        
+        this.setFocusItem(errorFld);
+        return;
+      }
     }
     
     if (this.forceFocusedField) {
@@ -527,6 +535,18 @@ OB.ViewFormProperties = {
     });
   },
   
+  rememberValues: function() {
+    var i, flds = this.getFields();
+    this.Super('rememberValues', arguments);
+    
+    // also remember the valuemaps
+    for (i = 0; i < flds.length; i++) {
+      if (flds[i].valueMap) {
+        flds[i]._rememberedValueMap = flds[i].valueMap;
+      }
+    }
+  },
+  
   // used in grid editing, when an edit is discarded then the canFocus needs to be
   // reset
   resetCanFocus: function() {
@@ -537,7 +557,7 @@ OB.ViewFormProperties = {
   },
   
   processFICReturn: function(response, data, request, editValues, editRow){
-    var modeIsNew = request.params.MODE === 'NEW';
+    var modeIsNew = request.params.MODE === 'NEW', noErrors, errorSolved;
 
     // needs to be recomputed as for grid editing the fields
     // are reset for every edit session
@@ -633,12 +653,25 @@ OB.ViewFormProperties = {
 
     if (this.validateAfterFicReturn) {
       delete this.validateAfterFicReturn;
-      // only validate the fields which have errors
+      // only validate the fields which have errors or which have changed
+      noErrors = true;
       for (i = 0; i < this.getFields().length; i++) {
-        if (this.hasFieldErrors(this.getFields()[i].name)) {
-          this.getFields()[i].validate();
+        if (this.getFields()[i]._changedByFic || this.hasFieldErrors(this.getFields()[i].name)) {
+          errorSolved = this.getFields()[i].validate();
+          noErrors = noErrors && errorSolved;
+          if (errorSolved && this.grid) {
+            this.grid.clearFieldError(this.grid.getEditRow(), this.getFields()[i].name);
+          }
         }
       }
+      if (this.grid && noErrors) {
+        this.grid.clearRowErrors(this.grid.getEditRow());
+        this.grid.refreshRow(this.grid.getEditRow());
+      }
+    }
+
+    for (i = 0; i < this.getFields().length; i++) {
+      delete this.getFields()[i]._changedByFic;
     }
 
     this.markForRedraw();
@@ -707,7 +740,7 @@ OB.ViewFormProperties = {
   },
   
   processColumnValue: function(columnName, columnValue, editValues){
-    var isDate, i, valueMap = {}, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
+    var isDate, i, valueMap = {}, oldValue, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
     // not a field on the form, probably a datasource field
     var prop = this.view.getPropertyFromDBColumnName(columnName);
     var id, identifier;
@@ -730,6 +763,7 @@ OB.ViewFormProperties = {
     // don't set the entries    
     if (field.form && entries) {
       var required = field.required;
+      // keep the current entries in the valuemap
       for (i = 0; i < entries.length; i++) {
         id = entries[i][OB.Constants.ID] || '';
         identifier = entries[i][OB.Constants.IDENTIFIER] || '';
@@ -743,6 +777,8 @@ OB.ViewFormProperties = {
       // when the form is rebuild
       editValues[prop + '._valueMap'] = field.valueMap;
     }
+    
+    oldValue = this.getValue(field.name);
     
     if (columnValue.value && (columnValue.value === 'null' || columnValue.value === '')) {
       // handle the case that the FIC returns a null value as a string
@@ -789,6 +825,13 @@ OB.ViewFormProperties = {
       // note: do not use clearvalue as this removes the value from the form
       // which results it to not be sent to the server anymore
       this.setValue(field.name, null);
+      if (this.getValue(field.name + '.' + OB.Constants.IDENTIFIER)) {
+        this.setValue(field.name + '.' + OB.Constants.IDENTIFIER, null);
+      }
+    }
+    
+    if (field.compareValues && !field.compareValues(oldValue, this.getValue(field.name))) {
+      field._changedByFic = true;
     }
     
     // store the textualvalue so that it is correctly send back to the server
@@ -984,6 +1027,15 @@ OB.ViewFormProperties = {
   },
   
   undo: function(){
+    var i, flds = this.getFields();
+    
+    // also restore the valuemaps
+    for (i = 0; i < flds.length; i++) {
+      if (flds[i]._rememberedValueMap) {
+        flds[i].valueMap = flds[i]._rememberedValueMap;
+      }
+    }
+    
     this.view.messageBar.hide();
     this.resetValues();
     this.setHasChanged(false);
@@ -1014,7 +1066,7 @@ OB.ViewFormProperties = {
   // there the save call is done through the grid saveEditedValues
   // function
   saveRow: function(){
-    var savingNewRecord = this.isNew;
+    var savingNewRecord = this.isNew, saveFocusItem = this.getFocusItem();
     // store the value of the current focus item
     if (this.getFocusItem() && this.saveFocusItemChanged !== this.getFocusItem()) {
       this.getFocusItem().updateValue();
@@ -1037,7 +1089,7 @@ OB.ViewFormProperties = {
     this.view.messageBar.hide();
     
     var callback = function(resp, data, req){
-      var index1, index2, errorCode, view = form.view, localRecord;
+      var index1, index2, view = form.view, localRecord;
       var status = resp.status;
 
       // if no recordIndex then select explicitly
@@ -1130,6 +1182,10 @@ OB.ViewFormProperties = {
 
       form.isSaving = false;
       view.toolBar.updateButtonState(true);
+      if (form.isVisible() && saveFocusItem) {
+        this.setFocusItem(saveFocusItem);
+        saveFocusItem.focusInItem();
+      }
       return false;
     };
     
@@ -1335,7 +1391,17 @@ OB.ViewFormProperties = {
       return;
     }
     return this.Super('updateFocusItemValue', arguments);
-  } 
+  },
+
+  keyDown: function() {
+    if (isc.EventHandler.getKey() === 'Enter' &&
+      (isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown()) &&
+      this.getFocusItem && this.getFocusItem().titleClick) {
+      this.getFocusItem().titleClick(this, this.getFocusItem());
+      return false;
+    }
+    return this.Super('keyDown', arguments);
+  }
 
 };
 

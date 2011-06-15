@@ -246,19 +246,19 @@ isc.OBMyOpenbravo.addProperties({
       height: '100%',
       sendEvents: false,
 
-      // the PortalColumn is an autochild of the PortalLayout with the
-      // child name of 'portalColumn', the properties of the PortalColumn
+      // the Column is an autochild of the PortalLayout with the
+      // child name of 'column', the properties of the Column
       // can be set like this using the AutoChild concept of SC
-      portalColumnProperties: {
+      columnProperties: {
         membersMargin: 12,
         canAcceptDrop: true,
         dropTypes: ["Portlet"],
 
         // is used to prevent dropping on the left or right 
         // of a widget
-        // the PortalRow is an autochild of PortalColumn, the 
-        // rowProperties are used to set properties of PortalRow
-        portalRowProperties: {
+        // the Row is an autochild of Column, the 
+        // rowProperties are used to set properties of Row
+        rowProperties: {
           isHDrop: function(){
             return false;
           }
@@ -275,7 +275,7 @@ isc.OBMyOpenbravo.addProperties({
           this.addPortlet(component, position);
         },
 
-        // copied from PortalColumn to set fixed row heights based
+        // copied from Column (portal) to set fixed row heights based
         // on the portlets height, see the NOTE line below
         addPortlet: function(portlet, position){
           var eventType = '';
@@ -308,10 +308,11 @@ isc.OBMyOpenbravo.addProperties({
           if (userHeight !== null) {
             dynamicProperties.height = userHeight;
           }
-          var portalRow = this.createAutoChild('portalRow', dynamicProperties);
+          var portalRow = this.createAutoChild('row', dynamicProperties);
 
           this.addMember(portalRow, position);
           portalRow.addMember(portlet);
+          portlet.portalRow = portalRow;
           
           if (this.portalLayout.sendEvents && OB.MyOB && !OB.MyOB.isReloading) {
             eventType = portlet.dbInstanceId ? 'WIDGET_MOVED' : 'WIDGET_ADDED';

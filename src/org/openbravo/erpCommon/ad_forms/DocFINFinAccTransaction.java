@@ -32,7 +32,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.base.util.Convert;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -85,8 +84,8 @@ public class DocFINFinAccTransaction extends AcctServer {
         : new BigDecimal(data[0].getField("PaymentAmount"));
     BigDecimal depositAmount = "".equals(data[0].getField("DepositAmount")) ? ZERO
         : new BigDecimal(data[0].getField("DepositAmount"));
-    usedCredit = "".equals(data[0].getField("UsedCredit")) ? ZERO : new BigDecimal(
-        data[0].getField("UsedCredit"));
+    usedCredit = "".equals(data[0].getField("UsedCredit")) ? ZERO : new BigDecimal(data[0]
+        .getField("UsedCredit"));
     generatedCredit = "".equals(data[0].getField("GeneratedCredit")) ? ZERO : new BigDecimal(
         data[0].getField("GeneratedCredit"));
     Amounts[AMTTYPE_Gross] = depositAmount.subtract(paymentAmount).toString();
@@ -193,11 +192,12 @@ public class DocFINFinAccTransaction extends AcctServer {
             && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
                 .getInvoicePaymentSchedule().getInvoice().getActivity() != null ? paymentDetails
             .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
-            .getInvoice().getActivity().getId()
-            : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                .getOrderPaymentSchedule() != null ? paymentDetails.get(i)
-                .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-                .getActivity().getId() : ""));
+            .getInvoice().getActivity().getId() : (paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null
+            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                .getOrderPaymentSchedule().getOrder().getActivity() != null ? paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+            .getActivity().getId() : ""));
         FieldProviderFactory.setField(data[i], "lineno", transaction.getLineNo().toString());
       }
     } finally {
@@ -340,8 +340,8 @@ public class DocFINFinAccTransaction extends AcctServer {
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_FINFinAccTransaction line = (DocLine_FINFinAccTransaction) p_lines[i];
-      fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID,
-          line.getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+      fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID, line
+          .getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn);
       fact.createLine(line, getWithdrawalAccount(as, null, transaction.getAccount(), conn),
           C_Currency_ID, line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID,
@@ -417,13 +417,14 @@ public class DocFINFinAccTransaction extends AcctServer {
               .getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
               DocumentType, null, paymentToSchemaConversionRate, conn);
         } else {
-          fact
-              .createLine(line,
-                  getAccountBPartner((line.m_C_BPartner_ID == null || line.m_C_BPartner_ID
-                      .equals("")) ? this.C_BPartner_ID : line.m_C_BPartner_ID, as, isReceipt,
-                      isPrepayment, conn), paymentCurrencyId,
-                  !isReceipt ? bpamount.toString() : "", isReceipt ? bpamount.toString() : "",
-                  Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, paymentDate, conn);
+          fact.createLine(
+              line,
+              getAccountBPartner(
+                  (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
+                      : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn),
+              paymentCurrencyId, !isReceipt ? bpamount.toString() : "", isReceipt ? bpamount
+                  .toString() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+              paymentDate, conn);
         }
       }
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
@@ -507,10 +508,10 @@ public class DocFINFinAccTransaction extends AcctServer {
       boolean isGain = acctBalance.compareTo(BigDecimal.ZERO) > 0;
       if (isGain) {
         // debit > credit = need to credit
-        currencyGainCR = Convert.toString(acctBalance);
+        currencyGainCR = acctBalance == null ? "" : acctBalance.toPlainString();
       } else {
         // debit < credit = need to debit
-        currencyLossDR = Convert.toString(acctBalance.negate());
+        currencyLossDR = acctBalance.negate() == null ? "" : acctBalance.negate().toPlainString();
       }
 
       String currencyLossGainAcctComboId = null;

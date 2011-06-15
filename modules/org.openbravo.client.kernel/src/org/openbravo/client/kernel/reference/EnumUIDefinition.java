@@ -62,8 +62,8 @@ public class EnumUIDefinition extends UIDefinition {
         value.put("value", "N");
         value.put("classicValue", "N");
       }
-      return getValueInComboReference(field, getValueFromSession, value.has("classicValue") ? value
-          .getString("classicValue") : "");
+      return getValueInComboReference(field, getValueFromSession,
+          value.has("classicValue") ? value.getString("classicValue") : "");
     } catch (JSONException e) {
       throw new OBException("Error while computing combo data", e);
     }
@@ -88,7 +88,7 @@ public class EnumUIDefinition extends UIDefinition {
 
   @Override
   public String getFilterEditorProperties(Field field) {
-    return ", filterOnKeypress: true" + super.getFilterEditorProperties(field);
+    return ", filterOnKeypress: false" + super.getFilterEditorProperties(field);
   }
 
 }

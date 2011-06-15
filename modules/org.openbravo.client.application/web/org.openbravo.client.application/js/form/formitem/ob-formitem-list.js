@@ -26,8 +26,8 @@ isc.OBListItem.addProperties({
   hasPickList: true,
   showPickListOnKeypress: true,  
   cachePickListResults: false,
-  validateOnExit: true,  
   completeOnTab: true,
+  validateOnExit: true,
   
   // without this in chrome the content is sorted according to the id/value
   // not the displayfield
@@ -70,7 +70,7 @@ isc.OBListItem.addProperties({
   },
 
   // prevent ids from showing up
-  mapValueToDisplay : function (value) {
+  mapValueToDisplay: function (value) {
     var ret = this.Super('mapValueToDisplay', arguments);
     if (ret === value && this.isDisabled()) {
       return '';

@@ -293,6 +293,9 @@ isc.OBSelectorItem.addProperties({
   showPickerIcon: true,
   validateOnChange: true,
   completeOnTab: true,
+  // note validateonexit does not work when completeOnTab is true
+  // setting it anyway, the this.validate() is called in the blur
+  validateOnExit: true,
   
   pickListProperties: {
     fetchDelay: 400,
@@ -319,22 +322,15 @@ isc.OBSelectorItem.addProperties({
     }
     this.Super('updateValue', arguments);
   },
-  
-  // at setvalue set the display value in a valuemap to prevent datasource requests to
-  // get the display value
-  // https://issues.openbravo.com/view.php?id=16611
-  setValue: function(newValue) {
-    if (!this.valueMap) {
-      this.valueMap = {};
+
+  // changed handles the case that the user removes the value using the keyboard
+  // this should do the same things as setting the value through the pickvalue
+  changed: function(form, item, newValue) {
+    // only do the identifier actions when clearing
+    // in all other cases pickValue is called
+    if (!newValue) {
+      this.setValueFromRecord(null);
     }
-    if (this.form && this.form.getValues() && this.form.getValues()[this.name] === newValue &&
-        this.form.getValues()[this.name + '._identifier']) {
-      this.form.setValue(this.name + '._identifier', this.valueMap[newValue]);
-    }
-    if (newValue === '') {
-      this.valueMap[newValue] = '';
-    }
-    this.Super('setValue', arguments);
   },
   
   setPickListWidth: function(){
@@ -393,24 +389,34 @@ isc.OBSelectorItem.addProperties({
   },
   
   setValueFromRecord: function(record, fromPopup){
-    var currentValue = this.getValue();
+    var currentValue = this.getValue(), identifierFieldName = this.name + '.' + OB.Constants.IDENTIFIER;
     if (!record) {
-      this.setValue(null);
+      this.storeValue(null);
       this.form.setValue(this.name + '.' + this.displayField, null);
+      this.form.setValue(identifierFieldName, null);
+      
+      // make sure that the grid does not display the old identifier
+      if (this.form.grid && this.form.grid.getEditForm()) {
+        this.form.grid.setEditValue(this.form.grid.getEditRow(), this.name, null);
+        this.form.grid.setEditValue(this.form.grid.getEditRow(), identifierFieldName, '');
+        this.form.grid.setEditValue(this.form.grid.getEditRow(), this.name + '.' + this.displayField, '');
+      }
     } else {
       this.handleOutFields(record);
       this.storeValue(record[this.valueField]);
       this.form.setValue(this.name + '.' + this.displayField, record[this.displayField]);
+      this.form.setValue(identifierFieldName, record[OB.Constants.IDENTIFIER]);
       if (!this.valueMap) {
         this.valueMap = {};
       }
       this.valueMap[record[this.valueField]] = record[this.displayField];
       this.updateValueMap();
-      
-      if (this.form.focusInNextItem) {
-        this.form.focusInNextItem(this.name);
-      }
     }
+    
+    if (this.form.focusInNextItem) {
+      this.form.focusInNextItem(this.name);
+    }
+
     if (this.form && this.form.handleItemChange) {
       this._hasChanged = true;
       this.form.handleItemChange(this);

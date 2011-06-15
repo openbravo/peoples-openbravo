@@ -28,9 +28,17 @@ isc.OBFKItem.addProperties({
     
   // set the identifier field also, that's what gets displayed in the grid
   changed: function (form, item, value) {
-    var display = this.mapValueToDisplay(value);
-    form.setValue(this.name + '.' + OB.Constants.IDENTIFIER, display);
-    return this.Super('changed', [arguments]);
+    if (!this._pickedValue && value) {
+      return;
+    }
+
+    var display = this.mapValueToDisplay(value), identifierFieldName = this.name + '.' + OB.Constants.IDENTIFIER;
+    form.setValue(identifierFieldName, display);
+    // make sure that the grid does not display the old identifier
+    if (form.grid) {
+      form.grid.setEditValue(form.grid.getEditRow(), identifierFieldName, display);
+    }
+    return this.Super('changed', arguments);
   }
 });
 

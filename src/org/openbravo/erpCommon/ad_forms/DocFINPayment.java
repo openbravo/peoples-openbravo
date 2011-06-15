@@ -32,7 +32,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.base.util.Convert;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -171,11 +170,12 @@ public class DocFINPayment extends AcctServer {
             && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
                 .getInvoicePaymentSchedule().getInvoice().getActivity() != null ? paymentDetails
             .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
-            .getInvoice().getActivity().getId()
-            : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                .getOrderPaymentSchedule() != null ? paymentDetails.get(i)
-                .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-                .getActivity().getId() : ""));
+            .getInvoice().getActivity().getId() : (paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null
+            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                .getOrderPaymentSchedule().getOrder().getActivity() != null ? paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+            .getActivity().getId() : ""));
         // This lines can be uncommented when User1 and User2 are implemented
         // FieldProviderFactory.setField(data[0], "User1_ID", payment.getStDimension().getId());
         // FieldProviderFactory.setField(data[0], "User2_ID", payment.getNdDimension().getId());
@@ -326,13 +326,13 @@ public class DocFINPayment extends AcctServer {
         }
 
         if ("".equals(line.getC_GLItem_ID())) {
-          fact
-              .createLine(line,
-                  getAccountBPartner((line.m_C_BPartner_ID == null || line.m_C_BPartner_ID
-                      .equals("")) ? this.C_BPartner_ID : line.m_C_BPartner_ID, as, isReceipt,
-                      isPrepayment, conn), C_Currency_ID, (isReceipt ? "" : bpAmount),
-                  (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-                  invoiceAccountingDate, conn);
+          fact.createLine(
+              line,
+              getAccountBPartner(
+                  (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
+                      : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
+              (isReceipt ? "" : bpAmount), (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, invoiceAccountingDate, conn);
         } else {
           fact.createLine(line, getAccountGLItem(OBDal.getInstance().get(GLItem.class,
               line.getC_GLItem_ID()), as, isReceipt, conn), C_Currency_ID, (isReceipt ? ""
@@ -389,10 +389,10 @@ public class DocFINPayment extends AcctServer {
       boolean isGain = acctBalance.compareTo(BigDecimal.ZERO) > 0;
       if (isGain) {
         // debit > credit = need to credit
-        currencyGainCR = Convert.toString(acctBalance);
+        currencyGainCR = acctBalance == null ? "" : acctBalance.toPlainString();
       } else {
         // debit < credit = need to debit
-        currencyLossDR = Convert.toString(acctBalance.negate());
+        currencyLossDR = acctBalance.negate() == null ? "" : acctBalance.negate().toPlainString();
       }
 
       String currencyLossGainAcctComboId = null;

@@ -960,19 +960,26 @@ isc.OBToolbar.addProperties({
   // Refreshes all the custom buttons in the toolbar based on current record selection
   //
   refreshCustomButtons: function(noSetSession){
-    var selectedRecords, isNewRecord = false;
+    var selectedRecords, multipleSelectedRowIds, allProperties, i;
     function doRefresh(buttons, currentValues, hideAllButtons, me) {
       var i;
+      for (i = 0; i < me.rightMembers.length; i++) { // To disable any button previous defined keyboard shortcut
+        me.rightMembers[i].disableShortcut();
+      }
       for (i = 0; i < buttons.length; i++) {
         if (buttons[i].updateState) {
-          me.defineRightMembersShortcuts();
           buttons[i].updateState(currentValues, hideAllButtons);
-          me.rightMembers[i].enableShortcut();
         }
       }
       for (i = 0; i < me.leftMembers.length; i++) {
         if (me.leftMembers[i].updateState) {
             me.leftMembers[i].updateState();
+        }
+      }
+      if (me.view.isActiveView()) {
+        me.defineRightMembersShortcuts(); // To re-calculate the target key for keyboard shortcuts
+        for (i = 0; i < me.rightMembers.length; i++) {
+          me.rightMembers[i].enableShortcut(); // To enable each button keyboard shortcut
         }
       }
     }
@@ -1012,32 +1019,25 @@ isc.OBToolbar.addProperties({
       };
     };
 
-    var currentTabCalled = false;
+    var currentTabCalled = false, me = this;
     for (iButtonContext = 0; iButtonContext < buttonContexts.length; iButtonContext++) {
       currentContext = buttonContexts[iButtonContext];
 
       selectedRecords = currentContext.viewGrid.getSelectedRecords() || [];
-      for (i = 0; i < selectedRecords.length; i++) {
-        if (selectedRecords[i]._new) {
-          isNewRecord = true;
-          break;
-        }
-      }
       var numOfSelRecords = 0, 
           isNew = currentContext.viewForm.isNew, 
-          hideAllButtons = isNew || selectedRecords.size() === 0 || isNewRecord,
+          hideAllButtons = selectedRecords.size() === 0 && !currentContext.isShowingForm,
           currentValues = currentContext.getCurrentValues();
 
-      var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1;
+      var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1 && !isNew;
       if (currentContext.viewGrid.getSelectedRecords()) {
         numOfSelRecords = currentContext.viewGrid.getSelectedRecords().length;
       }
 
       if (currentValues && !noSetSession && !currentContext.isShowingForm && !isNew && !hideAllButtons) {
-      	if(this.view.tabId===currentContext.tabId){
-      	  currentTabCalled = true;	
-      	}
-        var me = this;
+        if(this.view.tabId===currentContext.tabId){
+          currentTabCalled = true;	
+        }
         // Call FIC to obtain possible session attributes and set them in form
         requestParams = {
           MODE: 'SETSESSION',
@@ -1045,14 +1045,14 @@ isc.OBToolbar.addProperties({
           TAB_ID: currentContext.tabId,
           ROW_ID: currentValues.id
         };
-        var multipleSelectedRowIds = [];
+        multipleSelectedRowIds = [];
         if(selectedRecords.size() > 1){
           for (i = 0; i < selectedRecords.size(); i++) {
             multipleSelectedRowIds[i] = selectedRecords[i].id;
           }
           requestParams.MULTIPLE_ROW_IDS = multipleSelectedRowIds;
         }
-        var allProperties = currentContext.getContextInfo(false, true, false, true);
+        allProperties = currentContext.getContextInfo(false, true, false, true);
         OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, callbackHandler(currentContext, me));
       } else {
         doRefresh(buttonsByContext[currentContext], currentValues || {}, hideAllButtons || noneOrMultipleRecordsSelected, this);
@@ -1060,15 +1060,15 @@ isc.OBToolbar.addProperties({
     }
 
     if(!currentTabCalled && !noSetSession && !this.view.isShowingForm && !this.view.viewForm.isNew && this.view.viewGrid.getSelectedRecords().size() !== 0){
-      var selectedRecords = this.view.viewGrid.getSelectedRecords();
+      selectedRecords = this.view.viewGrid.getSelectedRecords();
       //The call to the FIC for the current tab was not done (probably because it doesn't have buttons, or the buttons do not depend on session vars/aux ins.
       //However, a call still needs to be done, to set the attachments information
       requestParams = {
         MODE: 'SETSESSION',
         PARENT_ID: this.view.getParentId(),
-        TAB_ID: this.view.tabId,
+        TAB_ID: this.view.tabId
       };
-      var multipleSelectedRowIds = [];
+      multipleSelectedRowIds = [];
       if(selectedRecords.size() >= 1){
         for (i = 0; i < selectedRecords.size(); i++) {
           if(i === 0){
@@ -1080,14 +1080,13 @@ isc.OBToolbar.addProperties({
           requestParams.MULTIPLE_ROW_IDS = multipleSelectedRowIds;
         }
       }
-      var allProperties = this.view.getContextInfo(false, true, false, true);
-      var me = this;
+      allProperties = this.view.getContextInfo(false, true, false, true);
       OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
-    	  var attachmentExists = data.attachmentExists;
-    	  me.view.attachmentExists = attachmentExists;
-    	  //Call to refresh the buttons. As its called with noSetSession=true, it will not cause an infinite recursive loop
-    	  me.updateButtonState(true);
-        }  
+        var attachmentExists = data.attachmentExists;
+        me.view.attachmentExists = attachmentExists;
+        //Call to refresh the buttons. As its called with noSetSession=true, it will not cause an infinite recursive loop
+        me.updateButtonState(true);
+      }  
       );
     }
   },
@@ -1109,17 +1108,23 @@ isc.OBToolbar.addProperties({
   rightMembersShortcuts: [],
 
   defineRightMembersShortcuts: function(){
-    var i, j, k, l, id, character, position;
+    var i, j, k, id, character, position;
     function isAssignedCharacter(character, me){
+      var n;
+      if (character === ' ') {
+        return true;
+      }
       character = character.toString();
       character = character.toUpperCase();
-      for (k = 0; k < me.rightMembersShortcuts.length; k++) {
-        if (me.rightMembersShortcuts[k][0] === character) {
+      for (n = 0; n < me.rightMembersShortcuts.length; n++) {
+        if (me.rightMembersShortcuts[n][0] === character) {
           return true;
         }
       }
       return false;
     }
+
+    this.rightMembersShortcuts = [];
     for (i = 0; i < this.rightMembers.length; i++) {
       var title = this.rightMembers[i].realTitle, haveToContinue = true;
       this.rightMembersShortcuts[i] = [];
@@ -1136,9 +1141,9 @@ isc.OBToolbar.addProperties({
       }
       if (haveToContinue) { // Check if free number and assign
         haveToContinue = true;
-        for (l = 1; l < 10; l++) {
-          if (!isAssignedCharacter(l, this)) {
-            this.rightMembersShortcuts[i][0] = l;
+        for (k = 1; k < 10; k++) {
+          if (!isAssignedCharacter(k, this)) {
+            this.rightMembersShortcuts[i][0] = k;
             this.rightMembersShortcuts[i][1] = 'end';
             haveToContinue = false;
             break;
@@ -1292,6 +1297,7 @@ isc.OBToolbarTextButton.addProperties({
         if (!me.disabled && me.visible) {
           me.action();
         }
+        return false; //To avoid keyboard shortcut propagation
       };
       if (this.keyboardShortcutPosition === 'end') {
         newTitle = newTitle + ' (<u>' + this.keyboardShortcutCharacter + '</u>)';

@@ -165,8 +165,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
     if (!filterName.isEmpty()) {
       filterName = Utility.messageBD(new DalConnectionProvider(false), "OBUIAPP_FilteredGrid",
-          OBContext.getOBContext().getLanguage().getLanguage())
-          + " " + filterName + ".";
+          OBContext.getOBContext().getLanguage().getLanguage()) + " " + filterName + ".";
     }
 
     return filterName;
@@ -234,6 +233,23 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     final List<Field> sortedFields = new ArrayList<Field>(tab.getADFieldList());
     Collections.sort(sortedFields, new GridFieldComparator());
 
+    // Processing dynamic expressions (display logic)
+    for (Field f : sortedFields) {
+      if (f.getDisplayLogic() == null || f.getDisplayLogic().equals("") || !f.isActive()
+          || !f.isDisplayed()) {
+        continue;
+      }
+
+      final DynamicExpressionParser parser = new DynamicExpressionParser(f.getDisplayLogic(), tab);
+      displayLogicMap.put(f, parser.getJSExpression());
+
+      for (Field fieldExpression : parser.getFields()) {
+        if (!fieldsInDynamicExpression.contains(fieldExpression)) {
+          fieldsInDynamicExpression.add(fieldExpression);
+        }
+      }
+    }
+
     // first add the grid fields
     for (Field fld : sortedFields) {
       if (fld.isActive() && fld.isShowInGridView()) {
@@ -253,23 +269,6 @@ public class OBViewGridComponent extends BaseTemplateComponent {
         }
 
         fields.add(createLocalField(fld, prop, true));
-      }
-    }
-
-    // Processing dynamic expressions (display logic)
-    for (Field f : sortedFields) {
-      if (f.getDisplayLogic() == null || f.getDisplayLogic().equals("") || !f.isActive()
-          || !f.isDisplayed()) {
-        continue;
-      }
-
-      final DynamicExpressionParser parser = new DynamicExpressionParser(f.getDisplayLogic(), tab);
-      displayLogicMap.put(f, parser.getJSExpression());
-
-      for (Field fieldExpression : parser.getFields()) {
-        if (!fieldsInDynamicExpression.contains(fieldExpression)) {
-          fieldsInDynamicExpression.add(fieldExpression);
-        }
       }
     }
 
