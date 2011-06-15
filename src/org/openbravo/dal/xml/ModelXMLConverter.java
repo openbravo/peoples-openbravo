@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -84,16 +84,22 @@ public class ModelXMLConverter implements OBSingleton {
    */
   public Document getSchema() {
     final Document doc = XMLUtil.getInstance().createDomDocument();
-    doc
-        .addComment("\n* ***********************************************************************************\n"
-            + "* Copyright (C) 2001-2009 Openbravo S.L.U. Licensed under the Apache Software\n"
-            + "* License version 2.0 You may obtain a copy of the License at\n"
-            + "* http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law\n"
-            + "* or agreed to in writing, software distributed under the License is\n"
-            + "* distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n"
-            + "* KIND, either express or implied. See the License for the specific language\n"
-            + "* governing permissions and limitations under the License.\n"
-            + "* ***********************************************************************************\n");
+    doc.addComment("\n* ***********************************************************************************\n"
+        + "* The contents of this file are subject to the Openbravo  Public  License"
+        + "* Version  1.1  (the  \"License\"),  being   the  Mozilla   Public  License"
+        + "* Version 1.1  with a permitted attribution clause; you may not  use this"
+        + "* file except in compliance with the License. You  may  obtain  a copy of"
+        + "* the License at http://www.openbravo.com/legal/license.html "
+        + "* Software distributed under the License  is  distributed  on  an \"AS IS\""
+        + "* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the"
+        + "* License for the specific  language  governing  rights  and  limitations"
+        + "* under the License. "
+        + "* The Original Code is Openbravo ERP. "
+        + "* The Initial Developer of the Original Code is Openbravo SLU"
+        + "* All portions are Copyright (C) 2008-2011 Openbravo SLU"
+        + "* All Rights Reserved. "
+        + "* Contributor(s):  ______________________________________."
+        + "* ***********************************************************************************\n");
     final Element root = doc.addElement("xs:schema");
     root.addNamespace("xs", "http://www.w3.org/2001/XMLSchema");
     root.addNamespace("ob", "http://www.openbravo.com");
@@ -195,12 +201,12 @@ public class ModelXMLConverter implements OBSingleton {
    */
   protected void addReferenceAttributes(Element elem) {
     final Element complexElem = elem.addElement("xs:complexType");
-    complexElem.addElement("xs:attribute").addAttribute("name", "id").addAttribute("type",
-        "xs:string").addAttribute("use", "optional");
-    complexElem.addElement("xs:attribute").addAttribute("name", "entityName").addAttribute("type",
-        "xs:string").addAttribute("use", "optional");
-    complexElem.addElement("xs:attribute").addAttribute("name", "identifier").addAttribute("type",
-        "xs:string").addAttribute("use", "optional");
+    complexElem.addElement("xs:attribute").addAttribute("name", "id")
+        .addAttribute("type", "xs:string").addAttribute("use", "optional");
+    complexElem.addElement("xs:attribute").addAttribute("name", "entityName")
+        .addAttribute("type", "xs:string").addAttribute("use", "optional");
+    complexElem.addElement("xs:attribute").addAttribute("name", "identifier")
+        .addAttribute("type", "xs:string").addAttribute("use", "optional");
   }
 
   private void addReferenceType(Element schemaElement) {
@@ -243,8 +249,8 @@ public class ModelXMLConverter implements OBSingleton {
     final Element errElem = rootSchema.addElement("xs:element").addAttribute("name", "error");
     final Element complexType = errElem.addElement("xs:complexType");
     final Element seqElement = complexType.addElement("xs:sequence");
-    seqElement.addElement("xs:element").addAttribute("name", "message").addAttribute("type",
-        "xs:string");
+    seqElement.addElement("xs:element").addAttribute("name", "message")
+        .addAttribute("type", "xs:string");
   }
 
   private void addResultSchema(Element schemaElement) {
@@ -285,8 +291,8 @@ public class ModelXMLConverter implements OBSingleton {
     }
     Collections.sort(entityNames);
     for (String entityName : entityNames) {
-      choiceElement.addElement("xs:element").addAttribute("name", entityName).addAttribute("type",
-          "ob:ResultEntityType");
+      choiceElement.addElement("xs:element").addAttribute("name", entityName)
+          .addAttribute("type", "ob:ResultEntityType");
     }
     addGroupTypeDef(schemaElement);
   }
