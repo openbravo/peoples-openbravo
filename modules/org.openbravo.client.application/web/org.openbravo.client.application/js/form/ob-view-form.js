@@ -103,10 +103,7 @@ OB.ViewFormProperties = {
         break;
       }
     }
-    if (!this.firstFocusedField) {
-      this.firstFocusedField = this.getItem(0).name;
-    }
-
+    
     delete this._preventFocusChanges;
   },
 
@@ -1066,7 +1063,7 @@ OB.ViewFormProperties = {
   // there the save call is done through the grid saveEditedValues
   // function
   saveRow: function(){
-    var savingNewRecord = this.isNew, saveFocusItem = this.getFocusItem();
+    var savingNewRecord = this.isNew;
     // store the value of the current focus item
     if (this.getFocusItem() && this.saveFocusItemChanged !== this.getFocusItem()) {
       this.getFocusItem().updateValue();
@@ -1182,10 +1179,6 @@ OB.ViewFormProperties = {
 
       form.isSaving = false;
       view.toolBar.updateButtonState(true);
-      if (form.isVisible() && saveFocusItem) {
-        this.setFocusItem(saveFocusItem);
-        saveFocusItem.focusInItem();
-      }
       return false;
     };
     
@@ -1399,8 +1392,9 @@ OB.ViewFormProperties = {
       this.getFocusItem && this.getFocusItem().titleClick) {
       this.getFocusItem().titleClick(this, this.getFocusItem());
       return false;
+    } else {
+      return true;
     }
-    return this.Super('keyDown', arguments);
   }
 
 };

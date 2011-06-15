@@ -517,8 +517,7 @@ BEGIN
               INSERT INTO fin_payment(
                 fin_payment_id, ad_client_id, ad_org_id, created, createdby,
                 updated, updatedby, isactive, isreceipt, c_bpartner_id, paymentdate,
-                c_currency_id, amount, writeoffamt,
-                finacc_txn_amount,fin_paymentmethod_id, documentno,
+                c_currency_id, amount, writeoffamt, finacc_txn_amount, fin_paymentmethod_id, documentno,
                 referenceno,
                 status,
                 processed, processing, posted, description,
@@ -527,8 +526,7 @@ BEGIN
                 em_aprm_add_scheduledpayments)
               VALUES (v_FIN_PAYMENT_ID, v_client_id, cur_paymentschedule.AD_ORG_ID, now(), p_user,
                 now(), p_user, 'Y', v_IsSOTrx, v_bpartner_id, cur_paymentschedule.DUEDATE,
-                cur_paymentschedule.C_CURRENCY_ID, COALESCE(cur_paymentschedule.OUTSTANDINGAMT,0), 0,
-                COALESCE(cur_paymentschedule.OUTSTANDINGAMT,0), cur_paymentschedule.FIN_PAYMENTMETHOD_ID, v_PaymentDocumentNo,
+                cur_paymentschedule.C_CURRENCY_ID, COALESCE(cur_paymentschedule.OUTSTANDINGAMT,0), 0, 0, cur_paymentschedule.FIN_PAYMENTMETHOD_ID, v_PaymentDocumentNo,
                 '',
                 CASE
                   WHEN cur_finaccpaymentmethod.ExecutionType = 'A' THEN 'RPAE'

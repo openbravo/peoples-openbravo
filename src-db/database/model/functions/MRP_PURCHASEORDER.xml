@@ -105,6 +105,7 @@
         AND rp.C_OrderLine_ID IS NULL
         AND rp.C_Bpartner_ID = bp.C_BPartner_ID
         AND pl.M_PriceList_ID = bp.PO_PRICELIST_ID
+        AND rp.isactive='Y'
         AND p.M_Product_ID = rp.M_Product_ID
       ORDER BY rp.C_BPartner_ID, rp.PLANNEDDATE
       ) LOOP

@@ -369,7 +369,6 @@ public class AdvPaymentMngtDao {
     }
   }
 
-  @Deprecated
   public FIN_Payment getNewPayment(boolean isReceipt, Organization organization,
       DocumentType docType, String strPaymentDocumentNo, BusinessPartner businessPartner,
       FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,

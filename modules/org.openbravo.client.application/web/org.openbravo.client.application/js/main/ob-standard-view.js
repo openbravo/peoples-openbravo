@@ -620,11 +620,7 @@ isc.OBStandardView.addProperties({
   },
   
   isActiveView: function() {
-    if (this.standardWindow && this.standardWindow.activeView) {
-      return this.standardWindow.activeView === this;
-    } else {
-      return false;
-    }
+    return this.standardWindow.activeView === this;
   },
     
   setAsActiveView: function(autoSaveDone){

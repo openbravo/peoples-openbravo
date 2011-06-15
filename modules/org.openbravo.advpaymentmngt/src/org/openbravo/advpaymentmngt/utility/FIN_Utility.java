@@ -22,7 +22,6 @@ package org.openbravo.advpaymentmngt.utility;
 import java.math.BigDecimal;
 import java.sql.BatchUpdateException;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,7 +34,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
@@ -747,24 +745,7 @@ public class FIN_Utility {
     StringBuffer out = new StringBuffer();
     final UIDefinitionController.FormatDefinition formatDef = UIDefinitionController.getInstance()
         .getFormatDefinition("euro", "Edition");
-
-    String formatWithDot = formatDef.getFormat();
-    DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-    try {
-      dfs.setDecimalSeparator(formatDef.getDecimalSymbol().charAt(0));
-      dfs.setGroupingSeparator(formatDef.getGroupingSymbol().charAt(0));
-      // Use . as decimal separator
-      final String DOT = ".";
-      if (!DOT.equals(formatDef.getDecimalSymbol())) {
-        formatWithDot = formatWithDot.replace(formatDef.getGroupingSymbol(), "@");
-        formatWithDot = formatWithDot.replace(formatDef.getDecimalSymbol(), ".");
-        formatWithDot = formatWithDot.replace("@", ",");
-      }
-    } catch (Exception e) {
-      // If any error use euroEdition default format
-      formatWithDot = "#0.00";
-    }
-    DecimalFormat amountFormatter = new DecimalFormat(formatWithDot, dfs);
+    DecimalFormat amountFormatter = new DecimalFormat(formatDef.getFormat());
     amountFormatter.setMaximumFractionDigits(currency.getStandardPrecision().intValue());
 
     out.append(amountFormatter.format(amt));
@@ -842,76 +823,6 @@ public class FIN_Utility {
       log4j.error(e);
       return 6; // by default precision of 6 decimals as is defaulted in Format.xml
     }
-  }
-
-  /**
-   * Formats a number using the given format, decimal and grouping separator.
-   * 
-   * @param number
-   *          Number to be formatted.
-   * @param format
-   *          Java number format pattern.
-   * @param decimalSeparator
-   *          Symbol used as decimal separator.
-   * @param groupingSeparator
-   *          Symbol used as grouping separator.
-   * @return Formatted string.
-   */
-  public static String formatNumber(BigDecimal number, String javaFormat, String _decimalSeparator,
-      String _groupingSeparator) {
-    if (StringUtils.isEmpty(javaFormat)) {
-      return formatNumber(number);
-    }
-    String decimalSeparator = _decimalSeparator;
-    String groupingSeparator = _groupingSeparator;
-    if (StringUtils.isEmpty(decimalSeparator) || StringUtils.isEmpty(groupingSeparator)) {
-      decimalSeparator = ".";
-      groupingSeparator = ",";
-    }
-    DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-    DecimalFormat dc;
-    try {
-      dfs.setDecimalSeparator(decimalSeparator.charAt(0));
-      dfs.setGroupingSeparator(groupingSeparator.charAt(0));
-      dc = new DecimalFormat(javaFormat, dfs);
-
-    } catch (Exception e) {
-      // If any error use euroEdition default format
-      dc = new DecimalFormat("#0.00", dfs);
-    }
-    return dc.format(number);
-  }
-
-  /**
-   * Formats a number using the euroEdition (see Format.xml) format.
-   * 
-   * @param number
-   *          Number to be formatted.
-   * @return Formatted string.
-   */
-  public static String formatNumber(BigDecimal number) {
-    final UIDefinitionController.FormatDefinition formatDef = UIDefinitionController.getInstance()
-        .getFormatDefinition("euro", "Edition");
-
-    String formatWithDot = formatDef.getFormat();
-    DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-    DecimalFormat amountFormatter;
-    try {
-      dfs.setDecimalSeparator(formatDef.getDecimalSymbol().charAt(0));
-      dfs.setGroupingSeparator(formatDef.getGroupingSymbol().charAt(0));
-      // Use . as decimal separator
-      final String DOT = ".";
-      if (!DOT.equals(formatDef.getDecimalSymbol())) {
-        formatWithDot = formatWithDot.replace(formatDef.getGroupingSymbol(), "@");
-        formatWithDot = formatWithDot.replace(formatDef.getDecimalSymbol(), ".");
-        formatWithDot = formatWithDot.replace("@", ",");
-      }
-      amountFormatter = new DecimalFormat(formatWithDot, dfs);
-    } catch (Exception e) {
-      // If any error use euroEdition default format
-      amountFormatter = new DecimalFormat("#0.00", dfs);
-    }
-    return amountFormatter.format(number);
   }
 
 }

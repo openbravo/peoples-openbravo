@@ -53,7 +53,7 @@ isc.OBListItem.addProperties({
     }
   },
 
-  changed: function() {
+  changed: function(form, item, value) {
     this.Super('changed', arguments);
     // if not picking a value then don't do a fic call
     // otherwise every keypress would result in a fic call
