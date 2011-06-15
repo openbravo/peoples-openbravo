@@ -67,7 +67,6 @@ isc.OBApplicationMenuButton.create({
     <#list menuOption.parameters as parameter>
         , '${parameter.name?js_string}': '${parameter.parameterValue?js_string}'        
     </#list>
-    , '_baseStyle': 'OBNavBarComponentMenuItemCell'
     <#if menuOption.children?size &gt; 0>
     , type: 'folder'
     , submenu: [

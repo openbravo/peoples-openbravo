@@ -248,7 +248,7 @@ isc.OBApplicationMenuButton.addProperties({
       for (recentIndex = 0; recentIndex < recent.length; recentIndex++) {
         var recentEntry = recent[recentIndex];
         if (recentEntry) {
-          recentEntries[recentIndex] = {title: recentEntry.tabTitle, recentObject: recentEntry, type: recentEntry.type/*, _baseStyle: 'OBNavBarComponentMenuItemCell'*/};
+          recentEntries[recentIndex] = {title: recentEntry.tabTitle, recentObject: recentEntry, type: recentEntry.type};
         }
       }
       recentEntries[recent.length] = {isSeparator: true};
