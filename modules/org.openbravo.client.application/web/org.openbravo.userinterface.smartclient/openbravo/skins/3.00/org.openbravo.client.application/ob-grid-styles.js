@@ -97,13 +97,13 @@ isc.OBGrid.changeDefaults('headerButtonDefaults', {
 isc.OBViewGrid.addProperties({
   // note should be the same as the height of the OBGridButtonsComponent
   recordComponentHeight: 21,
-  cellHeight: 25
+  cellHeight: 25,
+  bodyStyleName: 'OBViewGridBody'
 });
 
 isc.OBGrid.changeDefaults('headerMenuButtonDefaults', {
   showDown: false,
-  showTitle: true,
-  baseStyle: 'pepe'
+  showTitle: true
   //src: '[SKIN]/../../org.openbravo.client.application/images/grid/gridHeader_bg.png'
 });
 

@@ -16,6 +16,18 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
+
+
+isc.ClassFactory.defineClass('OBFormContainerLayout', isc.VLayout);
+
+isc.OBFormContainerLayout.addProperties({
+  canFocus: true,
+  width: '100%',
+  height: '*',
+  overflow: 'auto'
+});
+
+
 // = OBStandardView =
 //
 // An OBStandardView represents a single Openbravo tab. An OBStandardView consists
@@ -417,12 +429,7 @@ isc.OBStandardView.addProperties({
       });
       
       // to make sure that the form gets the correct scrollbars
-      this.formContainerLayout = isc.VLayout.create({
-        canFocus: true,
-        width: '100%',
-        height: '*',
-        overflow: 'auto'
-      });
+      this.formContainerLayout = isc.OBFormContainerLayout.create({});
       this.formContainerLayout.addMember(this.viewForm);
       
       this.statusBarFormLayout.addMember(this.statusBar);
