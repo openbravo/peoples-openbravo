@@ -310,6 +310,7 @@
 .OBFormFieldNumberInputSelectedFocused {
   -moz-outline-offset: -1;
   outline-offset: -1;
+  outline: none;
   border: 1px solid #fa962f;
 }
 
