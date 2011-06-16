@@ -198,8 +198,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-recent-utilities.js", false));
     globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/alert-management/ob-alert-manager.js", false));
-    globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/navbar/ob-user-profile-widget.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/navbar/ob-help-about-widget.js", false));
@@ -211,6 +209,15 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/utilities/ob-section-stack.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/toolbar/ob-clone-order.js", false));
+
+    // Alert Management
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/alert-management/ob-alert-manager.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/alert-management/ob-alert-grid.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/alert-management/ob-alert-management-view.js",
+        false));
 
     // Styling
     globalResources.add(createStyleSheetResource(
@@ -314,13 +321,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/classic/ob-classic-compatibility.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-history-manager.js", false));
-
-    // Alert Management
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/alert-management/ob-alert-grid.js", false));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/alert-management/ob-alert-management-view.js",
-        false));
 
     return globalResources;
   }

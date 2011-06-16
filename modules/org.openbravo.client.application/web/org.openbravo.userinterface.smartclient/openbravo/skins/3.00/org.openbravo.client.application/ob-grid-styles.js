@@ -95,13 +95,6 @@ isc.OBGrid.changeDefaults('headerButtonDefaults', {
   src: '[SKIN]/../../org.openbravo.client.application/images/grid/gridHeader_bg.png'
 });
 
-isc.OBViewGrid.addProperties({
-  // note should be the same as the height of the OBGridButtonsComponent
-  recordComponentHeight: 21,
-  cellHeight: 25,
-  bodyStyleName: 'OBViewGridBody'
-});
-
 isc.OBGrid.changeDefaults('headerMenuButtonDefaults', {
   showDown: false,
   showTitle: true
@@ -167,3 +160,20 @@ isc.OBGridLinkButton.addProperties({
   height: 1,
   overflow: 'visible'
 });
+
+/******************************/
+
+isc.OBViewGrid.addProperties({
+  // note should be the same as the height of the OBGridButtonsComponent
+  recordComponentHeight: 21,
+  cellHeight: 25,
+  bodyStyleName: 'OBViewGridBody'
+});
+
+/******************************/
+
+isc.OBAlertGrid.addProperties({
+  bodyStyleName: 'OBAlertGridBody'
+});
+
+/******************************/

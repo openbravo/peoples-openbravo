@@ -18,11 +18,6 @@
 */
 
 
-.OBViewGridBody {
-  background-color: #FFFFFF;
-}
-
-
 .OBGridToolStrip {
   padding: 0px 0px 1px 3px;
 }
@@ -327,3 +322,17 @@
   text-decoration: underline;
   background-color: #e1e1e1;
 }
+
+/******************************/
+
+.OBViewGridBody {
+  background-color: #FFFFFF;
+}
+
+/******************************/
+
+.OBAlertGridBody {
+  background-color: #FFFFFF;
+}
+
+/******************************/
