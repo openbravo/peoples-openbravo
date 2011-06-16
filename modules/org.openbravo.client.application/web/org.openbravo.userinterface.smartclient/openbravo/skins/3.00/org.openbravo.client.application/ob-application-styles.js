@@ -38,7 +38,7 @@ OB.MainLayoutStylingProperties.Toolbar = {
   defaultLayoutAlign: 'center',
   styleName: 'OBNavBarToolStrip',
   width: 1,
-  layoutLeftMargin: 2,
+  layoutLeftMargin: 0,
   separatorSize: 0,
   height: 28
 };
@@ -47,9 +47,17 @@ OB.MainLayoutStylingProperties.Toolbar = {
 OB.MainLayoutStylingProperties.TopLayout = {
   width: '100%',
   height: '1',
+  styleName: 'OBTopLayout',
   overflow: 'visible',
   layoutTopMargin: 4
 };
+
+  // Styling of the main layout spacer, between toplayout and tabs
+OB.MainLayoutStylingProperties.TopLayoutSpacer = {
+  height: '10',
+  styleName: 'OBTopLayoutSpacer'
+};
+
 
 // Properties for the custom company image
 OB.MainLayoutStylingProperties.CompanyImageLogo = {

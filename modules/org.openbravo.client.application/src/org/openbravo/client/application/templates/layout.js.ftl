@@ -112,7 +112,7 @@ OB.TopLayout.addMember(
 OB.Layout.addMember(OB.TopLayout);
 
 // create some vertical space
-OB.Layout.addMember(isc.LayoutSpacer.create({height: 10}));
+OB.Layout.addMember(isc.HLayout.create({}, OB.MainLayoutStylingProperties.TopLayoutSpacer));
 
 OB.MainView = isc.VLayout.create({
   width: '100%',

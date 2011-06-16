@@ -21,6 +21,7 @@
   The main navbar
 ============================================================*/
 .OBNavBarToolStrip {
+  margin-left: 2px;
   height: 26px;
   background-color: #FFFFFF;
 }
@@ -77,11 +78,11 @@
 ============================================================*/
 
 .OBNavBarComponent {
-  background: #FFFFFF;
+  background-color: #FFFFFF;
   color: #000000;
   cursor: pointer;
   
-  border-top: 1px solid #fff;
+  border-top: 1px solid #FFFFFF;
   
   background-image: url(./images/navbar/navbar-separator.png);
   background-position: right;
