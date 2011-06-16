@@ -17,6 +17,10 @@
  ************************************************************************
  */ 
  
+.OBQueryListView {
+  background-color: #FFFFFF;
+}
+
 /* QueryList */
 .OBQueryListShowAllLabel,
 .OBQueryListShowAllLabelOver,
