@@ -78,11 +78,19 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_VERSION_PARAMETER
             + "/org.openbravo.client.myob/ob-widget-styles.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_VERSION_PARAMETER
+            + "/org.openbravo.client.myob/ob-myopenbravo-styles.js", false));
 
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_VERSION_PARAMETER
             + "/org.openbravo.client.myob/ob-widget-styles.css", false));
+    globalResources.add(createStyleSheetResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_VERSION_PARAMETER
+            + "/org.openbravo.client.myob/ob-myopenbravo-styles.css", false));
 
     return globalResources;
   }

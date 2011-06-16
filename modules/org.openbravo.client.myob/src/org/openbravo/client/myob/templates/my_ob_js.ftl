@@ -16,7 +16,6 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
-isc.defineClass("OBMyOpenbravoImplementation", OBMyOpenbravo);
 
 isc.OBMyOpenbravoImplementation.addProperties({
   enableAdminMode: ${data.enableAdminMode},

@@ -836,6 +836,9 @@ isc.OBMyOpenbravo.addProperties({
   }
 });
 
+
+isc.defineClass('OBMyOpenbravoImplementation', isc.OBMyOpenbravo);
+
 isc.defineClass('OBMyOBDialog', isc.Window).addProperties({
   width: '100%',
   form: null,
