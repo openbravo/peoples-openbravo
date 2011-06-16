@@ -23,7 +23,7 @@
 ============================================================*/
 
 .OBTabBarMain {
-  background: #ffffff url(./images/tab/tabBarMain_bg.gif) repeat-x scroll;
+  background: #ffffff url(./images/tab/tabBarMain_bg.png) repeat-x scroll;
   background-position: center top;
 }
 
@@ -65,13 +65,13 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBTabBarButtonMainTopSelectedDisabled {
   background-position: center top;
   background-repeat: repeat-x;
-  background-image: url(./images/tab/tabBarButtonMain_Selected.gif);
+  background-image: url(./images/tab/tabBarButtonMain_Selected.png);
 }
 
 .OBTabBarButtonMainTopSelectedOver {
   background-position: center top;
   background-repeat: repeat-x;
-  background-image: url(./images/tab/tabBarButtonMain_Selected_Over.gif);
+  background-image: url(./images/tab/tabBarButtonMain_Selected_Over.png);
 }
 
 .OBTabBarButtonMainTopSelectedInactive,
@@ -82,13 +82,13 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBTabBarButtonMainTopSelectedDisabledInactive {
   background-position: center top;
   background-repeat: repeat-x;
-  background-image: url(./images/tab/tabBarButtonMain_Selected_Inactive.gif);
+  background-image: url(./images/tab/tabBarButtonMain_Selected_Inactive.png);
 }
 
 .OBTabBarButtonMainTopSelectedOverInactive {
   background-position: center top;
   background-repeat: repeat-x;
-  background-image: url(./images/tab/tabBarButtonMain_Selected_Inactive_Over.gif);
+  background-image: url(./images/tab/tabBarButtonMain_Selected_Inactive_Over.png);
 }
 
 .OBTabBarButtonMainTop,
@@ -102,7 +102,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
   padding: 0;
   height: 30px;
   color: #000;
-  background-image: url(./images/tab/tabBarButtonMain_Unselected.gif);
+  background-image: url(./images/tab/tabBarButtonMain_Unselected.png);
   background-position: center top;
   background-repeat: repeat-x;
 }
@@ -114,7 +114,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
   padding: 0;
   height: 30px;
   color: #000;
-  background-image: url(./images/tab/tabBarButtonMain_Unselected_Over.gif);
+  background-image: url(./images/tab/tabBarButtonMain_Unselected_Over.png);
   background-position: center top;
   background-repeat: repeat-x;
 }
@@ -186,7 +186,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 ============================================================*/
 
 .OBTabBarChild {
-  background: #ffffff url(./images/tab/tabBarChild_bg.gif) repeat-x scroll;
+  background: #ffffff url(./images/tab/tabBarChild_bg.png) repeat-x scroll;
   background-position: center top;
 }
 
@@ -228,13 +228,13 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBTabBarButtonChildTopSelectedDisabled {
   background-position: center 2px;
   background-repeat: repeat-x;
-  background-image: url(./images/tab/tabBarButtonChild_Selected.gif);
+  background-image: url(./images/tab/tabBarButtonChild_Selected.png);
 }
 
 .OBTabBarButtonChildTopSelectedOver {
   background-position: center 2px;
   background-repeat: repeat-x;
-  background-image: url(./images/tab/tabBarButtonChild_Selected_Over.gif);
+  background-image: url(./images/tab/tabBarButtonChild_Selected_Over.png);
 }
 
 .OBTabBarButtonChildTopSelectedInactive,
@@ -245,13 +245,13 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBTabBarButtonChildTopSelectedDisabledInactive {
   background-position: center 2px;
   background-repeat: repeat-x;
-  background-image: url(./images/tab/tabBarButtonChild_Selected_Inactive.gif);
+  background-image: url(./images/tab/tabBarButtonChild_Selected_Inactive.png);
 }
 
 .OBTabBarButtonChildTopSelectedOverInactive {
   background-position: center 2px;
   background-repeat: repeat-x;
-  background-image: url(./images/tab/tabBarButtonChild_Selected_Inactive_Over.gif);
+  background-image: url(./images/tab/tabBarButtonChild_Selected_Inactive_Over.png);
 }
 
 .OBTabBarButtonChildTop,
@@ -265,7 +265,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
   padding: 0;
   height: 38px;
   color: #000;
-  background-image: url(./images/tab/tabBarButtonChild_Unselected.gif);
+  background-image: url(./images/tab/tabBarButtonChild_Unselected.png);
   background-position: center 2px;
   background-repeat: repeat-x;
 }
@@ -277,7 +277,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
   padding: 0;
   height: 38px;
   color: #000;
-  background-image: url(./images/tab/tabBarButtonChild_Unselected_Over.gif);
+  background-image: url(./images/tab/tabBarButtonChild_Unselected_Over.png);
   background-position: center 2px;
   background-repeat: repeat-x;
 }

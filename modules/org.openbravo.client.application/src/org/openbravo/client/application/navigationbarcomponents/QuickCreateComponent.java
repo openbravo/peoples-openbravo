@@ -58,7 +58,7 @@ public class QuickCreateComponent extends BaseTemplateComponent {
   }
 
   public String getIcon() {
-    return "[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-asterisk.gif";
+    return "[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-asterisk.png";
   }
 
   public String getRecentPropertyName() {

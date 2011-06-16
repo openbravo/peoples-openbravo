@@ -58,7 +58,7 @@ public class QuickLaunchComponent extends BaseTemplateComponent {
   }
 
   public String getIcon() {
-    return "[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-forward.gif";
+    return "[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-forward.png";
   }
 
   public String getRecentPropertyName() {

@@ -87,7 +87,7 @@ isc.OBHelpAbout.addProperties({
   iconWidth: 10,
   iconSpacing: 10,
   icon: {
-    src: '[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-green-arrow-down.gif'
+    src: '[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-green-arrow-down.png'
   },
   iconOrientation: 'right'
 });
@@ -156,8 +156,9 @@ isc.ListGrid.addProperties({
 isc._original_confirm = isc.confirm;
 isc.confirm = function (message, callback, properties) {
   // override to set the styling
+  var i;
   if (properties && properties.buttons) {
-    for (var i = 0; i < properties.buttons.length; i++) {
+    for (i = 0; i < properties.buttons.length; i++) {
       properties.buttons[i].baseStyle = 'OBFormButton';
       properties.buttons[i].titleStyle = 'OBFormButtonTitle';
       properties.buttons[i].buttonConstructor = isc.OBFormButton;

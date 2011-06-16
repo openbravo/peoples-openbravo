@@ -83,7 +83,7 @@
   
   border-top: 1px solid #fff;
   
-  background-image: url(./images/navbar/navbar-separator.gif);
+  background-image: url(./images/navbar/navbar-separator.png);
   background-position: right;
   background-repeat: no-repeat;
   margin: 0px;
@@ -98,7 +98,7 @@
 
   margin-left: -1px;
 
-  background-image: url(./images/navbar/navbar-right-border.gif);
+  background-image: url(./images/navbar/navbar-right-border.png);
   background-position: right;
   background-repeat: repeat-y;
 }
@@ -116,7 +116,7 @@
 
   margin-left: -1px;
 
-  background-image: url(./images/navbar/navbar-right-border.gif);
+  background-image: url(./images/navbar/navbar-right-border.png);
   background-position: right;
   background-repeat: repeat-y;
 }

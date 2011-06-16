@@ -30,8 +30,8 @@ isc.OBGrid.addProperties({
   headerTitleStyle: 'OBGridHeaderCellTitle',
   cellPadding: 0, /* Set in the CSS */
   cellAlign: 'center',
-  sortAscendingImage:{src:'[SKIN]/../../../org.openbravo.client.application/images/grid/gridHeader_sortAscending.gif', width:7, height:11},
-  sortDescendingImage:{src:'[SKIN]/../../../org.openbravo.client.application/images/grid/gridHeader_sortDescending.gif', width:7, height:11},
+  sortAscendingImage:{src:'[SKIN]/../../../org.openbravo.client.application/images/grid/gridHeader_sortAscending.png', width:7, height:11},
+  sortDescendingImage:{src:'[SKIN]/../../../org.openbravo.client.application/images/grid/gridHeader_sortDescending.png', width:7, height:11},
   headerMenuButtonConstructor: 'OBGridHeaderImgButton',
   headerMenuButtonWidth: 17,
   headerMenuButtonSrc: '[SKIN]/../../org.openbravo.client.application/images/grid/gridHeaderMenuButton.png',
