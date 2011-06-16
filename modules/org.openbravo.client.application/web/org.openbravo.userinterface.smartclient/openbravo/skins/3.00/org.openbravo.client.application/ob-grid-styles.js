@@ -21,6 +21,7 @@
 isc.OBGrid.addProperties({
   editFailedBaseStyle: null, // is done through the additional csstext
   editFailedCSSText: 'background-color: red; border-right-color: red; border-bottom-color: red;',
+  bodyStyleName: 'OBGridBody',
   baseStyle: 'OBGridCell',
   baseStyleEdit: 'OBGridCellEdit', // for use in ob-view-grid.js while editing a cell
   recordStyleError: 'OBGridCellError',

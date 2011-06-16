@@ -30,6 +30,10 @@
 .OBGridToolStripIcon {
 }
 
+.OBGridBody {
+  background-color: #FFFFFF;
+}
+
 .OBGridCell,
 .OBGridCellOver,
 .OBGridCellDark,
