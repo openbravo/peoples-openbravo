@@ -22,6 +22,10 @@ isc.OBQueryListView.addProperties({
   styleName: 'OBQueryListView'
 });
 
+isc.OBQueryListGrid.addProperties({
+  bodyStyleName: 'OBQueryListGridBody'
+});
+
 isc.OBQueryListWidget.addProperties({
   OBQueryListShowAllLabelHeight: 20
 });

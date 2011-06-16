@@ -21,6 +21,10 @@
   background-color: #FFFFFF;
 }
 
+.OBQueryListGridBody {
+  background-color: #FFFFFF;
+}
+
 /* QueryList */
 .OBQueryListShowAllLabel,
 .OBQueryListShowAllLabelOver,
