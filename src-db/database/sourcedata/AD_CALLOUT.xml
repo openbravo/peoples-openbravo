@@ -9,15 +9,6 @@
 <!--100-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--100--></AD_CALLOUT>
 
-<!--101--><AD_CALLOUT>
-<!--101-->  <AD_CALLOUT_ID><![CDATA[101]]></AD_CALLOUT_ID>
-<!--101-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--101-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--101-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--101-->  <NAME><![CDATA[SE_Assignment_Product]]></NAME>
-<!--101-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--101--></AD_CALLOUT>
-
 <!--102--><AD_CALLOUT>
 <!--102-->  <AD_CALLOUT_ID><![CDATA[102]]></AD_CALLOUT_ID>
 <!--102-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
