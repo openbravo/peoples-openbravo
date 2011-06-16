@@ -38,7 +38,7 @@ OB.MainLayoutStylingProperties.Toolbar = {
   defaultLayoutAlign: 'center',
   styleName: 'OBNavBarToolStrip',
   width: 1,
-  layoutLeftMargin: 0,
+  layoutLeftMargin: 1,
   separatorSize: 0,
   height: 28
 };
