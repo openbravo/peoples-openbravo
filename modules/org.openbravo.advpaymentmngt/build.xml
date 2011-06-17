@@ -36,11 +36,12 @@
     </dirset>
   </path>
   
-  <target name="all" depends="PaymentMethodTest, FinancialAccountTest,
-                              PaymentTest_01, PaymentTest_02, PaymentTest_03,
-                              PaymentTest_04, PaymentTest_05, PaymentTest_06,
-                              PaymentTest_07, PaymentTest_08, PaymentTest_09,
-                              PaymentTest_10, PaymentTest_11">
+  <target name="all">
+    <junit printsummary="yes" haltonfailure="yes">
+      <classpath refid="project.class.path" />
+      <formatter type="plain" usefile="no"/>
+      <test name="org.openbravo.advpaymentmngt.test.draft.AllTests" haltonfailure="true"/>
+    </junit>
   </target>
 
   <target name="PaymentMethodTest">

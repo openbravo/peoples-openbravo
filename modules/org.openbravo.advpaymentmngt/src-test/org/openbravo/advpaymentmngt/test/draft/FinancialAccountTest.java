@@ -67,16 +67,6 @@ public class FinancialAccountTest extends BaseTest {
   }
 
   /**
-   * Currency is mandatory
-   */
-  public void testAddFinancialAccountNotValid1() {
-    TestUtility.insertFinancialAccount("APRM_FINANCIAL_ACCOUNT_4", STANDARD_DESCRIPTION, null,
-        BANK, false, getOneInstance(Location.class), getOneInstance(BusinessPartner.class), "2054",
-        null, null, null, null, null, null, null, null, BigDecimal.ZERO, BigDecimal.ZERO, null,
-        false, false);
-  }
-
-  /**
    * Deletes all the Payment Methods created for testing
    */
   public void testDeleteFinancialAccounts() {
@@ -86,7 +76,6 @@ public class FinancialAccountTest extends BaseTest {
         .add(Restrictions.eq(FIN_FinancialAccount.PROPERTY_DESCRIPTION, STANDARD_DESCRIPTION));
     final List<FIN_FinancialAccount> finAccs = obCriteria.list();
     for (FIN_FinancialAccount fa : finAccs) {
-      System.out.println("Removing payment method: " + fa.getName());
       OBDal.getInstance().remove(fa);
     }
   }

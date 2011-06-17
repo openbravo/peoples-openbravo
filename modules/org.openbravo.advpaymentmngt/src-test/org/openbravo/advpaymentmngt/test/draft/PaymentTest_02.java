@@ -99,8 +99,10 @@ public class PaymentTest_02 extends BaseTest {
             new Value(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE, invoice
                 .getFINPaymentScheduleList().get(0)));
 
-        assertTrue("Payment Schedule Outstanding Amount != 0", invoice.getFINPaymentScheduleList()
-            .get(0).getOutstandingAmount().compareTo(psd.getAmount()) == 0);
+        assertTrue("Payment Schedule Outstanding Amount ("
+            + invoice.getFINPaymentScheduleList().get(0).getOutstandingAmount().toPlainString()
+            + ") != " + paymentAmount.toPlainString(), invoice.getFINPaymentScheduleList().get(0)
+            .getOutstandingAmount().compareTo(paymentAmount) == 0);
 
         assertTrue("Payment Schedule Received Amount != Total Amount", invoice
             .getGrandTotalAmount().compareTo(
@@ -171,9 +173,9 @@ public class PaymentTest_02 extends BaseTest {
     String taxId = "1FE610D3A8844F85B17CA32525C15353"; // NY Sales Tax
     String docTypeId = "C99C4AE941E1460B91BC97665BE5D141"; // AR Invoice
     BigDecimal invoicedQuantity = new BigDecimal("5");
-    BigDecimal netUnitPrice = new BigDecimal("2.04");
-    BigDecimal netListPrice = new BigDecimal("2.04");
-    BigDecimal lineNetAmount = new BigDecimal("10.20");
+    BigDecimal netUnitPrice = new BigDecimal("2");
+    BigDecimal netListPrice = new BigDecimal("2");
+    BigDecimal lineNetAmount = new BigDecimal("1");
     BigDecimal priceLimit = new BigDecimal("1");
 
     PriceList testPriceList = OBDal.getInstance().get(PriceList.class, priceListId);

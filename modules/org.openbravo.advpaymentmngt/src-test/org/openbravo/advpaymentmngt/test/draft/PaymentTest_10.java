@@ -74,6 +74,7 @@ public class PaymentTest_10 extends BaseTest {
   private static final String DEPOSIT_ACCOUNT = "DEP";
   private static final String CASH = "C";
   private static final String STANDARD_DESCRIPTION = "JUnit Test Payment_10";
+  private static final String SIMPLE_EXECUTION_PROCESS = "717D521D5F454FAD9199B831001BB4E0";
 
   private String financialAccountId;
 
@@ -93,14 +94,19 @@ public class PaymentTest_10 extends BaseTest {
       try {
         // DATA SETUP
         Invoice invoice = dataSetup();
-        FIN_Payment payment = invoice.getFINPaymentScheduleList().get(0)
-            .getFINPaymentScheduleDetailInvoicePaymentScheduleList().get(0).getPaymentDetails()
-            .getFinPayment();
+        FIN_Payment payment = null;
+        for (FIN_PaymentScheduleDetail psd : invoice.getFINPaymentScheduleList().get(0)
+            .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
+          if ("RPAE".equals(psd.getPaymentDetails().getFinPayment().getStatus())) {
+            payment = psd.getPaymentDetails().getFinPayment();
+          }
+        }
+
         FIN_ExecutePayment executePayment = new FIN_ExecutePayment();
         List<FIN_Payment> payments = new ArrayList<FIN_Payment>();
         payments.add(payment);
-        executePayment.init("OTHER", payment.getPaymentMethod().getPayinExecutionProcess(),
-            payments, null, payment.getOrganization());
+        executePayment.init("OTHER", OBDal.getInstance().get(PaymentExecutionProcess.class,
+            SIMPLE_EXECUTION_PROCESS), payments, null, payment.getOrganization());
         OBError result = executePayment.execute();
         // CHECK PAYMENT EXECUTION
         assertTrue("Payment error while executing", !"Error".equals(result.getType()));
@@ -109,7 +115,10 @@ public class PaymentTest_10 extends BaseTest {
         // CHECK OUTPUT DATA ORDER
         assertTrue("Order Payment Schedule Outstanding Amount != 0", BigDecimal.ZERO
             .compareTo(order.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
-        assertTrue("Order Payment Schedule Received Amount != Total Amount", order
+        assertTrue("Invoice: " + invoice.getDocumentNo()
+            + " Order Payment Schedule Received Amount ("
+            + order.getGrandTotalAmount().toPlainString() + ") != Total Amount ("
+            + getPaidAmount(order.getFINPaymentScheduleList()).toPlainString() + ")", order
             .getGrandTotalAmount().compareTo(getPaidAmount(order.getFINPaymentScheduleList())) == 0);
         assertTrue("Status != Payment Received", "RPR".equals(payment.getStatus()));
         // CHECK OUTPUT DATA INVOICE
@@ -149,7 +158,7 @@ public class PaymentTest_10 extends BaseTest {
     String orderDocTypeId = "CB6EEA256BBC41109911215C5A14D39B"; // Standard Order
     String warehouseId = "71B43F2AAE3641CA849B131960BCEFF4";
     String discountId = "831A7639FBE348B1A06EA3C0B0616B75"; // Descuento 10%
-    final String SIMPLE_EXECUTION_PROCESS = "717D521D5F454FAD9199B831001BB4E0"; // Simple Execution
+
     // Process
     BigDecimal quantity = new BigDecimal("10");
     BigDecimal invoicedQuantity = new BigDecimal("10");
@@ -300,6 +309,7 @@ public class PaymentTest_10 extends BaseTest {
 
     TestUtility.processInvoice(invoice);
     invoice = OBDal.getInstance().get(Invoice.class, invoice.getId());
+
     return invoice;
   }
 

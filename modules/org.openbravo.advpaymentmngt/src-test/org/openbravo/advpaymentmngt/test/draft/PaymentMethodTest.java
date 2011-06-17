@@ -88,7 +88,6 @@ public class PaymentMethodTest extends BaseTest {
     obCriteria.add(Restrictions.eq(FIN_PaymentMethod.PROPERTY_DESCRIPTION, STANDARD_DESCRIPTION));
     final List<FIN_PaymentMethod> paymentMethods = obCriteria.list();
     for (FIN_PaymentMethod pm : paymentMethods) {
-      System.out.println("Removing payment method: " + pm.getName());
       OBDal.getInstance().remove(pm);
     }
   }
