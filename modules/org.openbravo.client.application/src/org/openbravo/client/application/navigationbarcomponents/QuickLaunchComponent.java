@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -57,8 +57,8 @@ public class QuickLaunchComponent extends BaseTemplateComponent {
     return "UINAVBA_QUICK_LAUNCH";
   }
 
-  public String getIcon() {
-    return "[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-forward.png";
+  public String getButtonType() {
+    return "quickLaunch";
   }
 
   public String getRecentPropertyName() {

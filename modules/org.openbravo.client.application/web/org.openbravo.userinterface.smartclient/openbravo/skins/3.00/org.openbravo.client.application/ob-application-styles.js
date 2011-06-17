@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -125,6 +125,16 @@ OB.QuickLaunchNavbarComponentStylingProperties = {
   layoutProperties: {
     width: 250,
     membersMargin: 10
+  },
+
+  initWidgetStyle: function() {
+    if (this.buttonType) {
+      if (this.buttonType === 'createNew') {
+        this.setSrc('[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-asterisk.png');
+      } else if (this.buttonType === 'quickLaunch') {
+        this.setSrc('[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-forward.png');
+      }
+    }
   }
 };
 
