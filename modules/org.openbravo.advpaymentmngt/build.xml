@@ -17,7 +17,7 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************
 -->
-<project name="APRMJUnit" default="all" basedir="../../.">
+<project name="APRMJUnit" default="aprm.run.all.tests" basedir="../../.">
 
   <property name="build" location="build/classes" />
   <property name="base.modules" location="modules" />
@@ -36,7 +36,7 @@
     </dirset>
   </path>
   
-  <target name="all">
+  <target name="aprm.run.all.tests">
     <junit printsummary="yes" haltonfailure="yes">
       <classpath refid="project.class.path" />
       <formatter type="plain" usefile="no"/>
