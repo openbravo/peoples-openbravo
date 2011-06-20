@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010 Openbravo SLU
+* All portions are Copyright (C) 2010-2011 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 *************************************************************************/
@@ -33,7 +33,7 @@ BEGIN
       SELECT TYPE INTO v_Type FROM FIN_FINANCIAL_ACCOUNT WHERE FIN_FINANCIAL_ACCOUNT_ID = :NEW.FIN_FINANCIAL_ACCOUNT_ID;
 
       IF (v_Type='B') THEN
-        RAISE NO_DATA_FOUND;
+        RAISE_APPLICATION_ERROR(-20000, '@APRM_GainLossFeeAccountsError@');
       END IF;
     END IF;
   END IF;
