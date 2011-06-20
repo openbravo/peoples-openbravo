@@ -245,24 +245,29 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 .ComboKey,
 .Combo,
 .Combo_focus {
-  border: 1px solid #CDD7BB;
-  color: #333333;
-  background-color: #F5F7F1;
   font-family: arial, sans-serif;
   font-size: 12px;
+  font-weight: normal;
   padding: 1px 0px 0px 0px;
   margin-top: 0px;
   height: 21px;
+}
+
+.ComboKey,
+.Combo,
+.Combo_focus {
+  border: 1px solid #CDD7BB;
+  color: #333333;
+  background-color: #F5F7F1;
 }
 
 .ComboKeyNoUpdatable,
 .ComboNoUpdatable,
 .ComboReadOnly,
 .ComboKeyReadOnly {
-  border: 1px solid #FFFFFF;
+  border: 1px solid #FFFFFF !important;
   color: #7D7D7D;
-  font-weight: normal;
-  background-color: transparent;
+  background-color: #FFFFFF;
 }
 
 .ComboKey {
@@ -929,7 +934,7 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
 }
 
 .readonly {
-  border: 1px solid #FFFFFF;
+  border: 1px solid #FFFFFF !important;
 }
 
 .readonly,
