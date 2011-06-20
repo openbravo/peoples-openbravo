@@ -67,6 +67,16 @@ public class FinancialAccountTest extends BaseTest {
   }
 
   /**
+   * Currency is mandatory
+   */
+  public void testAddFinancialAccountNotValid1() {
+    TestUtility.insertFinancialAccount("APRM_FINANCIAL_ACCOUNT_4", STANDARD_DESCRIPTION, null,
+        BANK, false, getOneInstance(Location.class), getOneInstance(BusinessPartner.class), "2054",
+        null, null, null, null, null, null, null, null, BigDecimal.ZERO, BigDecimal.ZERO, null,
+        false, false);
+  }
+
+  /**
    * Deletes all the Payment Methods created for testing
    */
   public void testDeleteFinancialAccounts() {

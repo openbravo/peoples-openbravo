@@ -195,7 +195,7 @@ public class TestUtility extends BaseTest {
       // force dal commit to throw exception
       OBDal.getInstance().flush();
       OBDal.getInstance().commitAndClose();
-    } catch (org.hibernate.exception.GenericJDBCException e) {
+    } catch (Exception e) {
       log.error(e);
       exception = true;
       OBDal.getInstance().rollbackAndClose();
