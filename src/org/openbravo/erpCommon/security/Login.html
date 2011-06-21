@@ -278,9 +278,8 @@ var recBrowserSafari = '5.0.0.0';
   }
 
   function browserVersionTrim(versionNum) {
-    var dotPosition = versionNum.indexOf('.');
-    if (dotPosition !== -1) {
-      versionNum = versionNum.substring(0, dotPosition);
+    while ((versionNum.substring(versionNum.length-1, versionNum.length) === '0' && versionNum.indexOf('.') !== -1) || versionNum.substring(versionNum.length-1, versionNum.length) === '.') {
+      versionNum = versionNum.substring(0, versionNum.length-1);
     }
     return versionNum;
   }
