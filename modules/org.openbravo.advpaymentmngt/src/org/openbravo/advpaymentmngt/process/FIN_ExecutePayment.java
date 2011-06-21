@@ -99,8 +99,15 @@ public class FIN_ExecutePayment {
           } else
             dao.setPaymentExecuting(paymentRunPayment.getPayment(), true);
         }
-
-        OBError result = paymentExecutionProcess.execute(paymentRun);
+        OBError result = null;
+        try {
+          result = paymentExecutionProcess.execute(paymentRun);
+        } catch (final Exception e) {
+          // Execution process should never throw exceptions. If an unhandled exception is handled a
+          // rollback is performed.
+          OBDal.getInstance().rollbackAndClose();
+          throw e;
+        }
 
         for (PaymentRunPayment paymentRunPayment : paymentRun
             .getFinancialMgmtPaymentRunPaymentList()) {
