@@ -622,8 +622,10 @@ public class DocFINReconciliation extends AcctServer {
       bpartnerId = paymentDetail.getFINPaymentScheduleDetailList().get(0)
           .getInvoicePaymentSchedule() != null ? paymentDetail.getFINPaymentScheduleDetailList()
           .get(0).getInvoicePaymentSchedule().getInvoice().getBusinessPartner().getId()
-          : paymentDetail.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
-              .getOrder().getBusinessPartner().getId();
+          : paymentDetail.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null ? paymentDetail
+              .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+              .getBusinessPartner().getId()
+              : "";
     }
     if (line.cGlItemId != null && !"".equals(line.cGlItemId)) {
       fact.createLine(line, getAccountGLItem(OBDal.getInstance().get(GLItem.class, line.cGlItemId),
