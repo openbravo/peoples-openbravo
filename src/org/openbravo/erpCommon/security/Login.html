@@ -45,8 +45,9 @@ var validBrowserExplorer = '7.0.0.0';
 var validBrowserSafari = '5.0.0.0';
 
 var recBrowserFirefox = '4.0.0.0';
-var recBrowserChrome = '8.0.0.0';
+var recBrowserChrome = '9.0.0.0';
 var recBrowserExplorer = '9.0.0.0';
+var recBrowserSafari = '5.0.0.0';
 </script>
 
 <script type="text/javascript">
@@ -277,8 +278,9 @@ var recBrowserExplorer = '9.0.0.0';
   }
 
   function browserVersionTrim(versionNum) {
-    while (versionNum.substring(versionNum.length-1, versionNum.length) === '0' || versionNum.substring(versionNum.length-1, versionNum.length) === '.') {
-      versionNum = versionNum.substring(0, versionNum.length-1);
+    var dotPosition = versionNum.indexOf('.');
+    if (dotPosition !== -1) {
+      versionNum = versionNum.substring(0, dotPosition);
     }
     return versionNum;
   }
@@ -331,6 +333,10 @@ var recBrowserExplorer = '9.0.0.0';
       if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserChrome)) {
         isRecommended = true;
       }
+    } else if (browserName.toUpperCase().indexOf('APPLE SAFARI') != -1) {
+      if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserSafari)) {
+        isRecommended = true;
+      }
     }
     return isRecommended;
   }
@@ -347,8 +353,8 @@ var recBrowserExplorer = '9.0.0.0';
 
   function buildRecBrowserMsgText() {
     var displayRecBrowserMsgText = recBrowserMsgText;
-    displayRecBrowserMsgText = displayRecBrowserMsgText.replace('XX', 'Google Chrome ' + browserVersionTrim(recBrowserChrome) + ', Mozilla Firefox ' + browserVersionTrim(recBrowserFirefox));
-    displayRecBrowserMsgText = displayRecBrowserMsgText.replace('YY', 'Internet Explorer ' + browserVersionTrim(recBrowserExplorer) + '');
+    displayRecBrowserMsgText = displayRecBrowserMsgText.replace('XX', 'Google Chrome ' + browserVersionTrim(recBrowserChrome) + ', Mozilla Firefox ' + browserVersionTrim(recBrowserFirefox) + ', Internet Explorer ' + browserVersionTrim(recBrowserExplorer));
+    displayRecBrowserMsgText = displayRecBrowserMsgText.replace('YY', 'Apple Safari ' + browserVersionTrim(recBrowserSafari) + '');
     return displayRecBrowserMsgText;
   }
 </script>
