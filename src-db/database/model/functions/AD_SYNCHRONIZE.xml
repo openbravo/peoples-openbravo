@@ -634,19 +634,25 @@
     DBMS_OUTPUT.PUT_LINE('Synchronize PO Field Translations') ;
     UPDATE AD_FIELD_TRL
       SET NAME=
-      (SELECT e.PO_Name
+      (SELECT (CASE WHEN e.PO_Name='' THEN e.Name
+           ELSE COALESCE(e.PO_Name, e.Name)
+       END)
       FROM AD_ELEMENT_TRL e, AD_COLUMN c, AD_FIELD f
       WHERE e.AD_LANGUAGE=AD_FIELD_TRL.AD_LANGUAGE AND e.AD_Element_ID=c.AD_Element_ID
       AND c.AD_Column_ID=f.AD_Column_ID AND f.AD_Field_ID=AD_FIELD_TRL.AD_Field_ID
       )
       , Description=
-      (SELECT e.PO_Description
+      (SELECT (CASE WHEN e.PO_Description='' THEN e.Description
+           ELSE COALESCE(e.PO_Description, e.Description)
+       END)
       FROM AD_ELEMENT_TRL e, AD_COLUMN c, AD_FIELD f
       WHERE e.AD_LANGUAGE=AD_FIELD_TRL.AD_LANGUAGE AND e.AD_Element_ID=c.AD_Element_ID
       AND c.AD_Column_ID=f.AD_Column_ID AND f.AD_Field_ID=AD_FIELD_TRL.AD_Field_ID
       )
       , Help=
-      (SELECT e.PO_Help
+      (SELECT (CASE WHEN e.PO_Help='' THEN e.Help
+           ELSE COALESCE(e.PO_Help, e.Help)
+       END)
       FROM AD_ELEMENT_TRL e, AD_COLUMN c, AD_FIELD f
       WHERE e.AD_LANGUAGE=AD_FIELD_TRL.AD_LANGUAGE AND e.AD_Element_ID=c.AD_Element_ID
       AND c.AD_Column_ID=f.AD_Column_ID AND f.AD_Field_ID=AD_FIELD_TRL.AD_Field_ID
@@ -668,7 +674,7 @@
       AND (M.ISINDEVELOPMENT='Y' OR v_TemplateInDev ='Y')
       AND M.AD_LANGUAGE != E.AD_LANGUAGE
       AND(AD_FIELD_TRL.NAME<>e.PO_Name OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')<>COALESCE(TO_CHAR(e.PO_Description), ' ')
-      OR COALESCE(TO_CHAR(AD_FIELD_TRL.Help), ' ')<>COALESCE(TO_CHAR(e.PO_Help), ' ')) AND (e.PO_Name IS NOT NULL AND e.PO_Name <> '')
+      OR COALESCE(TO_CHAR(AD_FIELD_TRL.Help), ' ')<>COALESCE(TO_CHAR(e.PO_Help), ' '))
       )
       AND EXISTS
       (SELECT *
@@ -681,19 +687,25 @@
       --Translation from non-trl table     
       UPDATE AD_FIELD_TRL
       SET NAME=
-      (SELECT e.PO_Name
+      (SELECT (CASE WHEN e.PO_Name='' THEN e.Name
+           ELSE COALESCE(e.PO_Name, e.Name)
+       END)
       FROM AD_ELEMENT e, AD_COLUMN c, AD_FIELD f
       WHERE e.AD_Element_ID=c.AD_Element_ID
       AND c.AD_Column_ID=f.AD_Column_ID AND f.AD_Field_ID=AD_FIELD_TRL.AD_Field_ID
       )
       , Description=
-      (SELECT e.PO_Description
+      (SELECT (CASE WHEN e.PO_Description='' THEN e.Description
+           ELSE COALESCE(e.PO_Description, e.Description)
+       END)
       FROM AD_ELEMENT e, AD_COLUMN c, AD_FIELD f
       WHERE e.AD_Element_ID=c.AD_Element_ID
       AND c.AD_Column_ID=f.AD_Column_ID AND f.AD_Field_ID=AD_FIELD_TRL.AD_Field_ID
       )
       , Help=
-      (SELECT e.PO_Help
+      (SELECT (CASE WHEN e.PO_Help='' THEN e.Help
+           ELSE COALESCE(e.PO_Help, e.Help)
+       END)
       FROM AD_ELEMENT e, AD_COLUMN c, AD_FIELD f
       WHERE e.AD_Element_ID=c.AD_Element_ID
       AND c.AD_Column_ID=f.AD_Column_ID AND f.AD_Field_ID=AD_FIELD_TRL.AD_Field_ID
@@ -712,7 +724,7 @@
       AND M1.AD_MODULE_ID = E.AD_MODULE_ID
       AND M.AD_LANGUAGE != M1.AD_LANGUAGE
       AND(AD_FIELD_TRL.NAME<>e.PO_Name OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')<>COALESCE(TO_CHAR(e.PO_Description), ' ')
-      OR COALESCE(TO_CHAR(AD_FIELD_TRL.Help), ' ')<>COALESCE(TO_CHAR(e.PO_Help), ' ')) AND (e.PO_Name IS NOT NULL AND e.PO_Name <> '')
+      OR COALESCE(TO_CHAR(AD_FIELD_TRL.Help), ' ')<>COALESCE(TO_CHAR(e.PO_Help), ' '))
       )
       AND EXISTS
       (SELECT *
