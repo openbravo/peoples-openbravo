@@ -221,13 +221,13 @@ isc.OBAttachmentsLayout.addProperties({
           action: './businessUtility/TabAttachments_FS.html',
           target: "background_target",
           numCols: 4,
-          align: 'right',
+          align: 'center',
           height: '30px',
           redraw: function(){
           },
           theCanvas: this.canvas
       });
-      var submitbutton = isc.Button.create({
+      var submitbutton = isc.OBFormButton.create({
         title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit'),
         theForm: form,
         canvas: me,
@@ -274,16 +274,24 @@ isc.OBAttachmentsLayout.addProperties({
       var horizontalLayout = isc.HLayout.create({
         width: '100%',
         height: '30px',
-        align: 'right'
+        align: 'center'
       });
       var popup = isc.OBPopup.create({
         height: 30,
-        width: 300,
-        align: 'right',
+        width: 450,
+        align: 'center',
+        showMinimizeButton : false,
+        showMaximizeButton : false,
+        title: OB.I18N.getLabel('OBUIAPP_AttachFile'),
         initWidget: function(args){
           horizontalLayout.addMember(form);
           horizontalLayout.addMember(submitbutton);
-          this.items = horizontalLayout;
+          //An empty HLayout is added to move the form items a bit down (styling)
+          this.addItem(isc.HLayout.create({
+            width: '100%',
+            height: '10px'
+          }));
+          this.addItem(horizontalLayout);
           this.Super('initWidget', arguments);
         }
       });
