@@ -43,7 +43,7 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
 
     String tabId = info.getTabId();
     boolean isVendorTab = "224".equals(tabId);
-    String finIsReceipt = info.getStringParameter("inpfinIsreceipt", null);
+    String finIsReceipt = info.getStringParameter("inpisreceipt", null);
     boolean isPaymentOut = isVendorTab || "N".equals(finIsReceipt);
     String srtOrgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
 
