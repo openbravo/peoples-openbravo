@@ -89,13 +89,13 @@ isc.OBUserProfile.addProperties({
     };
     ComboBoxField.prototype = {
       errorOrientation: 'left',
-      cellStyle: 'OBFormField',
-      titleStyle: 'OBFormFieldLabel',
-      textBoxStyle: 'OBFormFieldSelectInput',
-      controlStyle: 'OBFormFieldSelectControl',
+      cellStyle: this.ComboBoxField_cellStyle,
+      titleStyle: this.ComboBoxField_titleStyle,
+      textBoxStyle: this.ComboBoxField_textBoxStyle,
+      controlStyle: this.ComboBoxField_controlStyle,
       width: '*',
-      pickListBaseStyle: 'OBFormFieldPickListCell',
-      pickerIconSrc: '[SKIN]/../../org.openbravo.client.application/images/form/comboBoxPicker.png',
+      pickListBaseStyle: this.ComboBoxField_pickListBaseStyle,
+      pickerIconSrc: this.ComboBoxField_pickerIconSrc,
       
       // without this in chrome the content is sorted according to the id/value
       // not the displayfield
@@ -105,7 +105,7 @@ isc.OBUserProfile.addProperties({
       pickerIconWidth: 21,
       pickListCellHeight: 22,
       pickListProperties: {
-        bodyStyleName: 'OBPickListBody'
+        bodyStyleName: this.ComboBoxField_pickListProperties_bodyStyleName
       },
       titleOrientation: 'top',
       showFocused: true,
@@ -132,33 +132,51 @@ isc.OBUserProfile.addProperties({
       name: 'language',
       title: OB.I18N.getLabel('UINAVBA_Language')
     });
-    defaultField = {
-      cellStyle: 'OBFormField',
-      titleStyle: 'OBFormFieldLabel',
-      textBoxStyle: 'OBFormFieldLabel',
-      name: 'default',
+
+
+    CheckboxField = function(props){
+      if (props) {
+        isc.addProperties(this, props);
+      }
+    };
+    CheckboxField.prototype = {
+      cellStyle: this.CheckboxField_cellStyle,
+      titleStyle: this.CheckboxField_titleStyle,
+      textBoxStyle: this.CheckboxField_textBoxStyle,
       showFocused: true,
       titleOrientation: 'right',
-      title: OB.I18N.getLabel('UINAVBA_SetAsDefault'),
       editorType: 'checkbox'
     };
-    
-    clientField = {
+
+    defaultField = new CheckboxField({
+      name: 'default',
+      title: OB.I18N.getLabel('UINAVBA_SetAsDefault')
+    });
+
+    TextField = function(props){
+      if (props) {
+        isc.addProperties(this, props);
+      }
+    };
+    TextField.prototype = {
       errorOrientation: 'left',
-      cellStyle: 'OBFormField',
-      titleStyle: 'OBFormFieldLabel',
-      textBoxStyle: 'OBFormFieldInput',
+      cellStyle: this.TextField_cellStyle,
+      titleStyle: this.TextField_titleStyle,
+      textBoxStyle: this.TextField_textBoxStyle,
       showFocused: true,
       showDisabled: false,
       disabled: true,
       showIcons: false,
-      name: 'client',
       width: '*',
       titleOrientation: 'top',
-      title: OB.I18N.getLabel('UINAVBA_Client'),
       editorType: 'TextItem'
     };
-    
+
+    clientField = new TextField({
+      name: 'client',
+      title: OB.I18N.getLabel('UINAVBA_Client')
+    });
+
     // create the form for the role information
     roleForm = isc.DynamicForm.create({
       autoFocus: true,
@@ -329,49 +347,39 @@ isc.OBUserProfile.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.CancelButton', buttonLayout.members[1]);
     
     // now create the fields for the password form
-    currentPasswordField = {
+    PasswordField = function(props){
+      if (props) {
+        isc.addProperties(this, props);
+      }
+    };
+    PasswordField.prototype = {
+      errorOrientation: 'left',
+      cellStyle: this.PasswordField_cellStyle,
+      titleStyle: this.PasswordField_titleStyle,
+      textBoxStyle: this.PasswordField_textBoxStyle,
+      titleOrientation: 'top',
+      width: '*',
+      showErrorIcon: false,
+      showFocused: true,
+      required: true,
+      editorType: 'PasswordItem'
+    };
+
+    currentPasswordField = new PasswordField({
       name: 'currentPwd',
-      errorOrientation: 'left',
-      cellStyle: 'OBFormField',
-      titleStyle: 'OBFormFieldLabel',
-      textBoxStyle: 'OBFormFieldInput',
-      titleOrientation: 'top',
-      width: '*',
-      showErrorIcon: false,
-      showFocused: true,
-      title: OB.I18N.getLabel('UINAVBA_CurrentPwd'),
-      required: true,
-      editorType: 'PasswordItem'
-    };
-    newPasswordField = {
+      title: OB.I18N.getLabel('UINAVBA_CurrentPwd')
+    });
+
+    newPasswordField = new PasswordField({
       name: 'newPwd',
-      errorOrientation: 'left',
-      cellStyle: 'OBFormField',
-      titleStyle: 'OBFormFieldLabel',
-      textBoxStyle: 'OBFormFieldInput',
-      titleOrientation: 'top',
-      width: '*',
-      showErrorIcon: false,
-      showFocused: true,
-      title: OB.I18N.getLabel('UINAVBA_NewPwd'),
-      required: true,
-      editorType: 'PasswordItem'
-    };
-    confirmPasswordField = {
+      title: OB.I18N.getLabel('UINAVBA_NewPwd')
+    });
+
+    confirmPasswordField = new PasswordField({
       name: 'confirmPwd',
-      errorOrientation: 'left',
-      cellStyle: 'OBFormField',
-      titleStyle: 'OBFormFieldLabel',
-      textBoxStyle: 'OBFormFieldInput',
-      titleOrientation: 'top',
-      showFocused: true,
-      width: '*',
-      showErrorIcon: false,
-      title: OB.I18N.getLabel('UINAVBA_ConfirmPwd'),
-      required: true,
-      editorType: 'PasswordItem'
-    };
-    
+      title: OB.I18N.getLabel('UINAVBA_ConfirmPwd')
+    });
+
     // create the password form
     passwordForm = isc.DynamicForm.create({
       autoFocus: true,
