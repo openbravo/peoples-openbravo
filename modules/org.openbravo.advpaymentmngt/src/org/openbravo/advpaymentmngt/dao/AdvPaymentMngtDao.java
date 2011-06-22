@@ -1422,4 +1422,59 @@ public class AdvPaymentMngtDao {
 
     OBDal.getInstance().save(newPref);
   }
+
+  /**
+   * Gets the oldest credit payment for the given parameters
+   * 
+   * @param organization
+   * @param businessPartner
+   * @param amount
+   * @param currency
+   * @param isReceipt
+   * @param toDate
+   * @return if exists, returns the credit payment, else returns null
+   */
+  public FIN_Payment getCreditPayment(final Organization organization,
+      final BusinessPartner businessPartner, final BigDecimal amount, final Currency currency,
+      final boolean isReceipt, final Date toDate) {
+    try {
+      OBContext.setAdminMode(true);
+      OBCriteria<FIN_Payment> obcFinPayment = OBDal.getInstance().createCriteria(FIN_Payment.class);
+      obcFinPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_PROCESSED, true));
+      obcFinPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_BUSINESSPARTNER, businessPartner));
+      obcFinPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_GENERATEDCREDIT, amount));
+      obcFinPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_USEDCREDIT, BigDecimal.ZERO));
+      obcFinPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_CURRENCY, currency));
+      obcFinPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_RECEIPT, isReceipt));
+      obcFinPayment.add(Restrictions.le(FIN_Payment.PROPERTY_PAYMENTDATE, toDate));
+      obcFinPayment.add(Restrictions.in("organization.id", OBContext.getOBContext()
+          .getOrganizationStructureProvider().getNaturalTree(organization.getId())));
+      obcFinPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, true);
+
+      final List<FIN_Payment> finPayments = obcFinPayment.list();
+      if (finPayments.size() > 0) {
+        return finPayments.get(0);
+      } else {
+        return null;
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Gets the oldest credit payment for the given invoice
+   * 
+   * @param invoice
+   * @return if exists, returns the credit payment, else returns null
+   */
+  public FIN_Payment getCreditPayment(final Invoice invoice) {
+    if (invoice == null) {
+      return null;
+    } else {
+      return getCreditPayment(invoice.getOrganization(), invoice.getBusinessPartner(), invoice
+          .getGrandTotalAmount(), invoice.getCurrency(), invoice.isSalesTransaction(), invoice
+          .getInvoiceDate());
+    }
+  }
 }

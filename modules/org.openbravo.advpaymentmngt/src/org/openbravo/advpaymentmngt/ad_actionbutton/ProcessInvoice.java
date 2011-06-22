@@ -20,6 +20,9 @@ package org.openbravo.advpaymentmngt.ad_actionbutton;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -27,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
+import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -40,8 +44,11 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
+import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -142,6 +149,64 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           return;
         } else
           vars.setMessage(strTabId, myMessage);
+      }
+
+      /*
+       * Cancel credit (if any) for the invoice's bp
+       */
+      if ("CO".equals(strdocaction)) {
+        try {
+          OBContext.setAdminMode(true);
+          final Invoice invoice = OBDal.getInstance().get(Invoice.class, strC_Invoice_ID);
+          final FIN_Payment creditPayment = dao.getCreditPayment(invoice);
+          if (creditPayment != null) {
+            log4j.info("Detected credit payment: " + creditPayment.getIdentifier()
+                + ", that matches the invoice: " + invoice.getIdentifier());
+            // Set Used Credit = Invoice's Grand Total Amount
+            creditPayment.setUsedCredit(invoice.getGrandTotalAmount());
+            final StringBuffer description = new StringBuffer();
+            if (creditPayment.getDescription() != null
+                && !creditPayment.getDescription().equals(""))
+              description.append(creditPayment.getDescription()).append("\n");
+            description.append(String.format(Utility.messageBD(this, "APRM_CreditUsedinInvoice",
+                vars.getLanguage()), invoice.getDocumentNo()));
+            creditPayment.setDescription(description.toString());
+
+            final List<FIN_PaymentScheduleDetail> paymentScheduleDetails = new ArrayList<FIN_PaymentScheduleDetail>();
+            final HashMap<String, BigDecimal> paymentScheduleDetailsAmounts = new HashMap<String, BigDecimal>();
+            for (final FIN_PaymentSchedule paymentSchedule : invoice.getFINPaymentScheduleList()) {
+              for (final FIN_PaymentScheduleDetail paymentScheduleDetail : paymentSchedule
+                  .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
+                paymentScheduleDetails.add(paymentScheduleDetail);
+                paymentScheduleDetailsAmounts.put(paymentScheduleDetail.getId(),
+                    paymentScheduleDetail.getAmount());
+              }
+            }
+
+            // Create new Payment
+            final boolean isSalesTransaction = invoice.isSalesTransaction();
+            final DocumentType docType = FIN_Utility.getDocumentType(invoice.getOrganization(),
+                isSalesTransaction ? "ARR" : "APP");
+            final String strPaymentDocumentNo = FIN_Utility.getDocumentNo(docType, docType
+                .getTable() != null ? docType.getTable().getDBTableName() : "");
+            final FIN_Payment newPayment = FIN_AddPayment.savePayment(null, isSalesTransaction,
+                docType, strPaymentDocumentNo, invoice.getBusinessPartner(), invoice
+                    .getPaymentMethod(), isSalesTransaction ? invoice.getBusinessPartner()
+                    .getAccount() : invoice.getBusinessPartner().getPOFinancialAccount(), "0",
+                creditPayment.getPaymentDate(), invoice.getOrganization(), invoice.getDocumentNo(),
+                paymentScheduleDetails, paymentScheduleDetailsAmounts, false, false);
+            newPayment.setAmount(BigDecimal.ZERO);
+            newPayment.setGeneratedCredit(BigDecimal.ZERO);
+            newPayment.setUsedCredit(invoice.getGrandTotalAmount());
+            // Process the new payment
+            FIN_AddPayment.processPayment(vars, this, "P", newPayment);
+          }
+        } catch (final Exception e) {
+          log4j.error("Exception while canceling the credit in the invoice: " + strC_Invoice_ID);
+          e.printStackTrace();
+        } finally {
+          OBContext.restorePreviousMode();
+        }
       }
 
       List<FIN_Payment> payments = null;
