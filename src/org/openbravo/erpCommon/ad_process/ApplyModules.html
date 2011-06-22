@@ -252,7 +252,12 @@
           }
         }
         if(response.statusofstate=="Error"){
-          var errs=response.errors.string;
+          var errs;
+          if(response.errors instanceof Array){
+              errs=response.errors[0].string;
+          }else{
+              errs=response.errors.string;
+          }
           if(errs){
             if(!(errs instanceof Array)){
               errs=[errs];

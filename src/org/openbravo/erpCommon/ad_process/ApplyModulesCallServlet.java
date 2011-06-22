@@ -171,7 +171,7 @@ public class ApplyModulesCallServlet extends HttpBaseServlet {
     boolean warning = false;
     boolean error = false;
     try {
-      ps2 = getPreparedStatement("SELECT MESSAGE, SYSTEM_STATUS, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' ORDER BY CREATED ");
+      ps2 = getPreparedStatement("SELECT MESSAGE, SYSTEM_STATUS, LINE_NUMBER FROM AD_ERROR_LOG WHERE ERROR_LEVEL='ERROR' AND MESSAGE NOT LIKE 'Task%' AND MESSAGE NOT LIKE 'Target%' ORDER BY CREATED DESC");
       ps2.executeQuery();
       ResultSet rs2 = ps2.getResultSet();
       ArrayList<String> errors = new ArrayList<String>();
