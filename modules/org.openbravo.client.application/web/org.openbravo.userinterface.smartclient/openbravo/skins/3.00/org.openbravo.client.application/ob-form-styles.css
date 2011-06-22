@@ -653,7 +653,7 @@
   padding: 5px 20px 5px;
   font-family:'lucida sans',sans-serif; 
   font-size:12px;
-  background-image:url(./images/form/bg-bt-orange.png);
+  background-image:url(./images/form/textButton-bg-normal.png);
   color:#000000;
   background-position:right top;
   background-repeat: no-repeat;
@@ -664,7 +664,7 @@
 .OBFormButtonDisabled,
 .OBFormButtonSelectedDisabled {
   border:1px solid #d0d1cd;
-  background-image: url(./images/form/bg-bt-orange-disabled.png);
+  background-image: url(./images/form/textButton-bg-disabled.png);
   font-weight:normal;
   color:#777;
 }
@@ -681,14 +681,14 @@
 .OBFormButtonFocusedOver,
 .OBFormButtonSelectedFocused,
 .OBFormButtonSelectedFocusedOver {
-  background-image: url(./images/form/bg-bt-orange-hover.png);
+  background-image: url(./images/form/textButton-bg-hover.png);
 }
 
 .OBFormButtonDown,
 .OBFormButtonFocusedDown,
 .OBFormButtonSelectedDown,
 .OBFormButtonSelectedFocusedDown {
-  background-image: url(./images/form/bg-bt-orange-down.png);
+  background-image: url(./images/form/textButton-bg-down.png);
 }
 
 .OBFormButtonTitle,
