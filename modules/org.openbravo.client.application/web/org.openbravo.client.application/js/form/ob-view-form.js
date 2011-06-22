@@ -1191,15 +1191,15 @@ OB.ViewFormProperties = {
       return false;
     };
     
-    // note validate will also set the formfocus, this is 
-    // done by calling showErrors without the third parameter to true
-    if (!form.validateForm()) {
-      return;
-    }
     
     if (this.inFicCall) {
       this.callSaveAfterFICReturn = true;
     } else {
+      // note validate will also set the formfocus, this is 
+      // done by calling showErrors without the third parameter to true
+      if (!form.validateForm()) {
+        return;
+      }
       // last parameter true prevents additional validation
       this.saveData(callback, {
         willHandleError: true,
