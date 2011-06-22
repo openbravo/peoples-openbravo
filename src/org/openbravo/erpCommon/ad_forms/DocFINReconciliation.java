@@ -46,6 +46,7 @@ import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
 import org.openbravo.model.financialmgmt.accounting.coa.AccountingCombination;
+import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaDefault;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
 import org.openbravo.model.financialmgmt.calendar.Calendar;
 import org.openbravo.model.financialmgmt.calendar.Period;
@@ -216,6 +217,12 @@ public class DocFINReconciliation extends AcctServer {
             "cGlItemId",
             transaction.getGLItem() != null ? transaction.getGLItem().getId() : data[i]
                 .getField("cGlItemId"));
+        FieldProviderFactory.setField(data[i], "cInvoiceId", paymentDetails.get(i)
+                .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
+                && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                    .getInvoicePaymentSchedule().getInvoice() != null ? paymentDetails
+                .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+                .getInvoice().getId() : "");
         FieldProviderFactory.setField(data[i], "description", transaction.getDescription());
         FieldProviderFactory.setField(data[i], "cCurrencyId", transaction.getCurrency().getId());
         FieldProviderFactory.setField(data[i], "cProjectId", paymentDetails.get(i)
@@ -521,7 +528,7 @@ public class DocFINReconciliation extends AcctServer {
       fact.createLine(line, getAccountTransactionPayment(conn, payment, as), C_Currency_ID,
           !payment.isReceipt() ? line.getAmount() : "",
           payment.isReceipt() ? line.getAmount() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, conn);
+          DocumentType, null, null, EXCHANGE_DOCTYPE_Transaction, transaction.getId(), conn);
     else if (!getDocumentPaymentConfirmation(payment)) {
       FieldProviderFactory[] data = loadLinesPaymentDetailsFieldProvider(transaction);
       for (int i = 0; i < data.length; i++) {
@@ -545,31 +552,95 @@ public class DocFINReconciliation extends AcctServer {
         fact = createFactPaymentDetails(detail, paymentDetail, as, conn, fact, Fact_Acct_Group_ID);
       }
     } else {
-      fact.createLine(line, getAccountPayment(conn, payment, as), C_Currency_ID,
-          !payment.isReceipt() ? line.getAmount() : "",
-          payment.isReceipt() ? line.getAmount() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, conn);
+      fact.createLine(line, getAccountPayment(conn, payment, as), C_Currency_ID, !payment
+          .isReceipt() ? line.getAmount() : "", payment.isReceipt() ? line.getAmount() : "",
+          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,  null, null, EXCHANGE_DOCTYPE_Payment, payment.getId(), conn);
     }
-    fact.createLine(line, getAccountReconciliation(conn, payment, as), C_Currency_ID,
-        payment.isReceipt() ? line.getAmount() : "", !payment.isReceipt() ? line.getAmount() : "",
-        Fact_Acct_Group_ID, "999999", DocumentType, conn);
+    fact.createLine(line, getAccountReconciliation(conn, payment, as), C_Currency_ID, payment
+        .isReceipt() ? line.getAmount() : "", !payment.isReceipt() ? line.getAmount() : "",
+        Fact_Acct_Group_ID, "999999", DocumentType, null, null, EXCHANGE_DOCTYPE_Transaction, transaction.getId(),conn);
     if (!getDocumentPaymentConfirmation(payment)
         && !getDocumentTransactionConfirmation(transaction)) {
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
       // credit is generated
       if (payment.getUsedCredit().compareTo(ZERO) != 0
           && payment.getGeneratedCredit().compareTo(ZERO) == 0) {
-        fact.createLine(
-            line,
-            getAccountBPartner(payment.getBusinessPartner().getId(), as, payment.isReceipt(), true,
-                conn), C_Currency_ID, (payment.isReceipt() ? payment.getUsedCredit().toString()
-                : ""), (payment.isReceipt() ? "" : payment.getUsedCredit().toString()),
-            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        fact.createLine(line, getAccountBPartner(payment.getBusinessPartner().getId(), as, payment
+            .isReceipt(), true, conn), C_Currency_ID, (payment.isReceipt() ? payment
+            .getUsedCredit().toString() : ""), (payment.isReceipt() ? "" : payment.getUsedCredit()
+            .toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, null, null ,EXCHANGE_DOCTYPE_Invoice, line.getInvoiceId(), conn);
       }
     }
+    //Create balancing
+    FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class, Record_ID);
+    createFactCurrencyBalancing(as, conn, fact, Fact_Acct_Group_ID, reconciliation);
+    
     SeqNo = "0";
     return fact;
   }
+  private void createFactCurrencyBalancing(AcctSchema as, ConnectionProvider conn, Fact fact,
+	      String fact_Acct_Group_ID, FIN_Reconciliation reconciliation) throws ServletException {
+	    final BigDecimal acctBalance = fact.getAcctBalance();
+	    if (BigDecimal.ZERO.compareTo(acctBalance) != 0) {
+	      // Need to add balancing entry
+	      // Balance == AcctDr - AcctCr
+	      String currencyLossDR = "0";
+	      String currencyGainCR = "0";
+	      boolean isGain = acctBalance.compareTo(BigDecimal.ZERO) > 0;
+	      if (isGain) {
+	        // debit > credit = need to credit
+	        currencyGainCR = acctBalance == null ? "" : acctBalance.toPlainString();
+	      } else {
+	        // debit < credit = need to debit
+	        currencyLossDR = acctBalance.negate() == null ? "" : acctBalance.negate().toPlainString();
+	      }
+
+	      String currencyLossGainAcctComboId = null;
+	      // Find gain / loss accounts from account
+	      for (FIN_FinancialAccountAccounting accounting : reconciliation.getAccount()
+	          .getFINFinancialAccountAcctList()) {
+	        if (accounting.getAccountingSchema().getId().equals(as.getC_AcctSchema_ID())) {
+	          AccountingCombination revaluationAcct;
+	          if (isGain) {
+	            revaluationAcct = accounting.getFINBankrevaluationgainAcct();
+	          } else {
+	            revaluationAcct = accounting.getFINBankrevaluationlossAcct();
+	          }
+	          if (revaluationAcct != null) {
+	            currencyLossGainAcctComboId = revaluationAcct.getId();
+	          }
+	          break;
+	        }
+	      }
+	      if (currencyLossGainAcctComboId == null) {
+	        // Find default gain/loss accounts from schema
+	        final OBQuery<AcctSchemaDefault> obqAcctSchemDefault = OBDal.getInstance().createQuery(
+	            AcctSchemaDefault.class, " where accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+	        final AcctSchemaDefault acctSchemaDefault = obqAcctSchemDefault.list().get(0);
+	        AccountingCombination defaultRevaluationAcct;
+	        if (isGain) {
+	          defaultRevaluationAcct = acctSchemaDefault.getBankRevaluationGain();
+	        } else {
+	          defaultRevaluationAcct = acctSchemaDefault.getBankRevaluationLoss();
+	        }
+	        if (currencyLossGainAcctComboId == null && defaultRevaluationAcct != null) {
+	          currencyLossGainAcctComboId = defaultRevaluationAcct.getId();
+	        }
+	      }
+	      Account accountGainLoss = Account.getAccount(conn, currencyLossGainAcctComboId);
+	      if (accountGainLoss == null) {
+	        // Fall back to currency balancing
+	        accountGainLoss = as.getCurrencyBalancing_Acct();
+	      }
+
+	      if (accountGainLoss != null) {
+	        final FactLine line = fact.createLine(null, accountGainLoss, as.getC_Currency_ID(),
+	            currencyLossDR, currencyGainCR, fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+	            conn);
+	        line.setAmtSource(C_Currency_ID, "0", "0"); // Mimic normal currency balancing
+	      }
+	    }
+	  }
 
   @Deprecated
   public Fact createFactPaymentDetails(DocLine_FINReconciliation line, AcctSchema as,

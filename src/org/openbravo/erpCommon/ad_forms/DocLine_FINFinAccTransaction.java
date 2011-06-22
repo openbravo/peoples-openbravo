@@ -31,6 +31,7 @@ public class DocLine_FINFinAccTransaction extends DocLine {
   String isPrepayment = "";
   String finPaymentId = "";
   String WriteOffAmt = "";
+  String cInvoiceId = "";
 
   /**
    * @return the isPrepayment
@@ -146,4 +147,19 @@ public class DocLine_FINFinAccTransaction extends DocLine {
   public String getServletInfo() {
     return "Servlet for accounting";
   } // end of getServletInfo() method
+  
+  /**
+   * @return the cInvoiceId
+   */
+  public String getInvoiceId(){
+	  return cInvoiceId;
+  }
+  /**
+   * @param Invoice_ID
+   *          the Invoice_ID to set
+   */
+  public void setInvoice_ID(String invoice_ID) {
+    cInvoiceId = invoice_ID;
+  }
+
 }
