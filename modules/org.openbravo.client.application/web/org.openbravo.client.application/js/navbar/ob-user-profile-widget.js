@@ -45,7 +45,7 @@ isc.OBUserProfile.addProperties({
   iconWidth: 10,
   iconSpacing: 10,
   icon: {
-    src: '[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-green-arrow-down.png'
+    src: '[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-arrow-down.png'
   },
   iconOrientation: 'right',
   
