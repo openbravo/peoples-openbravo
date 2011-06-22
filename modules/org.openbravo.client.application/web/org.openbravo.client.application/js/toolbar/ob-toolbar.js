@@ -442,7 +442,9 @@ isc.OBToolbar.addProperties({
     this.members = null;
     
     var newMembers = [], i = 0, j = 0;
-    this.leftMembers = OB.ToolbarRegistry.getButtons(this.view.tabId);
+    if(!this.leftMembers || this.leftMembers.length===0){
+      this.leftMembers = OB.ToolbarRegistry.getButtons(this.view.tabId);
+    }
     newMembers[j] = isc.HLayout.create({
       width: this.leftMargin,
       height: 1
