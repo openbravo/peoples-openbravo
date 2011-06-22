@@ -66,7 +66,7 @@ isc.defineClass('OBWidgetMenuItem', IMenuButton).addProperties({
   showFocusedAsOver: false,
   showTitle: false,
   imageType: isc.Img.CENTER,
-  src: '[SKINIMG]../../org.openbravo.client.myob/images/widget/edit.png',
+  src: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/widget/edit.png',
   baseStyle: 'OBWidgetMenuButton',
 
   // only show the middle image without stretch appended

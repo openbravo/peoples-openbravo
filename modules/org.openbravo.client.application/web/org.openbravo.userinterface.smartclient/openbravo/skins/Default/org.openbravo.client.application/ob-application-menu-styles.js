@@ -58,18 +58,18 @@ isc.OBApplicationMenuButton.addProperties({
   iconAlign: 'left',
   iconOrientation: 'right',
   nodeIcons: {
-    Window: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png',
-    Process: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconProcess.png',
-    ProcessManual: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconProcess.png',
-    Report: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png',
-    Task: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconTask.png',
-    Form: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconForm.png',
-    ExternalLink: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconExternalLink.png',
-    Folder: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconFolderOpened.png',
-    View: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconForm.png'
+    Window: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png',
+    Process: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png',
+    ProcessManual: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png',
+    Report: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png',
+    Task: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconTask.png',
+    Form: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png',
+    ExternalLink: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconExternalLink.png',
+    Folder: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconFolderOpened.png',
+    View: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png'
   },
   icon: {
-    src: '[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-arrow-down.png'
+    src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-arrow-down.png'
   },
   showMenuStyle: function() {
     this.parentElement.setStyleName('OBNavBarComponentSelected');

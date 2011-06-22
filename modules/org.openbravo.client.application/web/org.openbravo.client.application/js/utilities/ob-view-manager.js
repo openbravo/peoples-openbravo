@@ -134,7 +134,7 @@
 
     addRecentDocument: function(params) {
       vmgr.recentManager.addRecent('OBUIAPP_RecentDocumentsList', 
-          isc.addProperties({icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png'}, 
+          isc.addProperties({icon: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png'}, 
               params));
     },
 
@@ -234,7 +234,7 @@
         }
         // add and set a default icon
         vmgr.recentManager.addRecent('OBUIAPP_RecentViewList', 
-            isc.addProperties({icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png'}, 
+            isc.addProperties({icon: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png'}, 
                 params));
       }
 

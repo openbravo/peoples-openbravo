@@ -377,16 +377,16 @@ isc.OBMyOpenbravo.addProperties({
           icon = null;
           if (recent.icon) {
             if (recent.icon === 'Process') {
-              icon = '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconProcess.png';
+              icon = OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png';
             } else if (recent.icon === 'Report') {
-              icon = '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png';
+              icon = OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png';
             } else if (recent.icon === 'Form') {
-              icon = '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconForm.png';
+              icon = OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png';
             } else {
-              icon = '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png';
+              icon = OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png';
             }
           } else {
-            icon = '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png';
+            icon = OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png';
           }
 
           // if the recent was added through quick create then repair this
@@ -430,7 +430,7 @@ isc.OBMyOpenbravo.addProperties({
               // todo move this to styling
               width: 11,
               height: 11,
-              src: '[SKINIMG]../../org.openbravo.client.myob/images/management/iconCreateNew.png',
+              src: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/management/iconCreateNew.png',
 
               recent: newRecent,
               click: handleClickFunction
@@ -473,7 +473,7 @@ isc.OBMyOpenbravo.addProperties({
             baseStyle: 'OBMyOBRecentViewsEntry',
             handleClick: handleClickFunction,
             iconOrientation: 'left',
-            icon: '[SKINIMG]../../org.openbravo.client.myob/images/management/IconRecentDocs.png',
+            icon: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/management/IconRecentDocs.png',
             iconWidth: 13,
             iconHeight: 15
           });
@@ -931,7 +931,7 @@ isc.defineClass('OBMyOBAddWidgetDialog', isc.OBMyOBDialog).addProperties({
         controlStyle: 'OBFormFieldSelectControl',
         width: '*',
         pickListBaseStyle: 'OBFormFieldPickListCell',
-        pickerIconSrc: '[SKIN]/../../org.openbravo.client.application/images/form/comboBoxPicker.png',
+        pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
         height: 21,
         pickerIconWidth: 21,
         pickListProperties: {
@@ -1000,7 +1000,7 @@ isc.defineClass('OBMyOBAdminModeDialog', isc.OBMyOBDialog).addProperties({
       textBoxStyle: 'OBFormFieldSelectInput',
       controlStyle: 'OBFormFieldSelectControl',
       pickListBaseStyle: 'OBFormFieldPickListCell',
-      pickerIconSrc: '[SKIN]/../../org.openbravo.client.application/images/form/comboBoxPicker.png',
+      pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
       height: 21,
       pickerIconWidth: 21,
       pickListProperties: {
@@ -1027,7 +1027,7 @@ isc.defineClass('OBMyOBAdminModeDialog', isc.OBMyOBDialog).addProperties({
         controlStyle: 'OBFormFieldSelectControl',
         width: '*',
         pickListBaseStyle: 'OBFormFieldPickListCell',
-        pickerIconSrc: '[SKIN]/../../org.openbravo.client.application/images/form/comboBoxPicker.png',
+        pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
         height: 21,
         pickerIconWidth: 21,
         pickListProperties: {

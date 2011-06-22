@@ -191,7 +191,7 @@ isc.OBGrid.addProperties({
       },
       
       filterImg: {
-        src: '[SKINIMG]../../org.openbravo.client.application/images/grid/funnel-icon.png'
+        src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/grid/funnel-icon.png'
       },
       
       makeActionButton: function(){

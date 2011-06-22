@@ -19,7 +19,7 @@
 isc.OBWidget.addProperties({
   headerStyle: 'OBWidgetHeader',
   showEdges:true,
-  edgeImage: "[SKINIMG]../../org.openbravo.client.myob/images/widget/window.png",
+  edgeImage: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/widget/window.png',
   customEdges:null,
   edgeSize:2,
   edgeTop:27,
@@ -58,28 +58,28 @@ isc.OBWidget.changeDefaults('headerLabelDefaults', {
 
 isc.OBWidget.changeDefaults('restoreButtonDefaults', {
   baseStyle: 'OBWidgetIconRestore',
-  src: '[SKINIMG]../../org.openbravo.client.myob/images/widget/restore.png',
+  src: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/widget/restore.png',
   width: 24,
   height: 20
 });
 
 isc.OBWidget.changeDefaults('closeButtonDefaults', {
   baseStyle: 'OBWidgetIconClose',
-  src: '[SKINIMG]../../org.openbravo.client.myob/images/widget/close.png',
+  src: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/widget/close.png',
   width: 24,
   height: 20
 });
 
 isc.OBWidget.changeDefaults('maximizeButtonDefaults', {
   baseStyle: 'OBWidgetIconMaximize',
-  src: '[SKINIMG]../../org.openbravo.client.myob/images/widget/maximize.png',
+  src: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/widget/maximize.png',
   width: 24,
   height: 20
 });
 
 isc.OBWidget.changeDefaults('minimizeButtonDefaults', {
   baseStyle: 'OBWidgetIconMinimize',
-  src: '[SKINIMG]../../org.openbravo.client.myob/images/widget/minimize.png',
+  src: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/widget/minimize.png',
   width: 24,
   height: 20
 });
@@ -89,7 +89,7 @@ isc.OBWidget.changeDefaults('minimizeButtonDefaults', {
 isc.OBMyOBDialog.addProperties({
   headerStyle : 'OBMyOBDialogHeader',
   showEdges : true,
-  edgeImage : "[SKINIMG]../../org.openbravo.client.myob/images/dialog/window.png",
+  edgeImage : OB.SkinsPath + 'Default/org.openbravo.client.myob/images/dialog/window.png',
   customEdges : null,
   edgeSize : 6,
   edgeTop : 23,
@@ -124,7 +124,7 @@ isc.OBMyOBDialog.changeDefaults('headerLabelDefaults', {
 });
 
 isc.OBMyOBDialog.changeDefaults("closeButtonDefaults", {
-  src:"[SKINIMG]../../org.openbravo.client.myob/images/dialog/headerIcons/close.png",
+  src: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/dialog/headerIcons/close.png',
   showRollOver:true,
   showDown:false,
   width:15,

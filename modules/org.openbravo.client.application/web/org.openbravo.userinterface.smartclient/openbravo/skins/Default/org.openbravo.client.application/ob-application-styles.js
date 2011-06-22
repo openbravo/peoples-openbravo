@@ -86,7 +86,7 @@ isc.OBStandardWindow.addProperties({
 OB.LoadingPrompt = {
   mainLayoutStyleName: 'OBLoadingPromptModalMask',
   loadingLayoutStyleName: 'OBLoadingPromptLabel',
-  loadingImage: {src:'[SKIN]/../../org.openbravo.client.application/images/system/windowLoading.gif', width: 220, height:16}
+  loadingImage: {src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/system/windowLoading.gif', width: 220, height:16}
 };
 
 /* =====================================================================

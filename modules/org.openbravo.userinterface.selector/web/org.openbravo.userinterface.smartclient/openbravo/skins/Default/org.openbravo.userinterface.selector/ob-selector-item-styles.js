@@ -30,7 +30,7 @@ isc.OBSelectorPopupWindow.addProperties({
 //  headerIconProperties: {
 //    width: 16,
 //    height: 16,
-//    src: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png'
+//    src: 'OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png'
 //  },
   buttonBarHeight: 40,
   buttonBarSpace: 20,
@@ -46,10 +46,10 @@ isc.OBSelectorPopupWindow.addProperties({
 isc.OBSelectorItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
 
 isc.OBSelectorItem.addProperties({
-  newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
+  newTabIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/ico-to-new-tab.png',
   newTabIconSize: 8,  
   
-  popupIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
+  popupIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
   popupIconWidth: 21,
   popupIconHeight: 21,
   popupIconHspace: 0
@@ -59,15 +59,15 @@ isc.OBSelectorLinkItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldInput',
-  newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
+  newTabIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/ico-to-new-tab.png',
   newTabIconSize: 8,
   pickerIconHeight: 21,
   pickerIconWidth: 21,
   height: 21,
-  pickerIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',  
+  pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',  
   showPickerIcon: true,
   clearIcon: {        
-    src: '[SKINIMG]../../org.openbravo.client.application/images/form/clear-field.png',
+    src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/clear-field.png',
     height: 15,
     width: 15,
     showHover: true,

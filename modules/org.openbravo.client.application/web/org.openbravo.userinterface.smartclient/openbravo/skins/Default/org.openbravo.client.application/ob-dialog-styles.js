@@ -22,7 +22,7 @@
 isc.Dialog.addProperties({
   // rounded frame edges
   showEdges: true,
-  edgeImage: '[SKIN]/../../../org.openbravo.client.application/images/popup/border.png',
+  edgeImage: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/border.png',
   customEdges: null,
   edgeSize: 2,
   edgeTop: 27,
@@ -66,40 +66,40 @@ isc.Dialog.changeDefaults('headerLabelDefaults', {
 });
 
 isc.Dialog.changeDefaults('resizerDefaults', {
-  src: '[SKIN]/../../org.openbravo.client.application/images/popup/resizer.png'
+  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/resizer.png'
 });
 
 isc.Dialog.changeDefaults('headerIconDefaults', {
   styleName: 'OBPopupHeaderIcon',
-  src: '[SKIN]/../../org.openbravo.client.application/images/popup/iconHeader.png',
+  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/iconHeader.png',
   width: 20,
   height: 16
 });
 
 isc.Dialog.changeDefaults('restoreButtonDefaults', {
   baseStyle: 'OBPopupIconRestore',
-  src: '[SKIN]/../../org.openbravo.client.application/images/popup/restore.png',
+  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/restore.png',
   width: 24,
   height: 20
 });
 
 isc.Dialog.changeDefaults('closeButtonDefaults', {
   baseStyle: 'OBPopupIconClose',
-  src: '[SKIN]/../../org.openbravo.client.application/images/popup/close.png',
+  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/close.png',
   width: 24,
   height: 20
 });
 
 isc.Dialog.changeDefaults('maximizeButtonDefaults', {
   baseStyle: 'OBPopupIconMaximize',
-  src: '[SKIN]/../../org.openbravo.client.application/images/popup/maximize.png',
+  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/maximize.png',
   width: 24,
   height: 20
 });
 
 isc.Dialog.changeDefaults('minimizeButtonDefaults', {
   baseStyle: 'OBPopupIconMinimize',
-  src: '[SKIN]/../../org.openbravo.client.application/images/popup/minimize.png',
+  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/minimize.png',
   width: 24,
   height: 20
 });

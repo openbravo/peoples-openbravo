@@ -63,13 +63,13 @@ isc.OBQuickLaunch.addProperties({
       getValueIcon: function(value){
         if (this.recentObject.icon) {
           if (this.recentObject.icon === 'Process') {
-            return '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconProcess.png';
+            return OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png';
           } else if (this.recentObject.icon === 'Report') {
-            return '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png';
+            return OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png';
           } else if (this.recentObject.icon === 'Form') {
-            return '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconForm.png';
+            return OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png';
           } else {
-            return '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png';
+            return OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png';
           }
         }
         return null;
@@ -159,10 +159,10 @@ isc.OBQuickLaunch.addProperties({
           showValueIconOnly: true,
           name: 'icon',
           valueIcons: {
-            Process: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconProcess.png',
-            Report: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png',
-            Form: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconForm.png',
-            Window: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconWindow.png'
+            Process: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png',
+            Report: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png',
+            Form: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png',
+            Window: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png'
           }
         }, {
           name: OB.Constants.IDENTIFIER,

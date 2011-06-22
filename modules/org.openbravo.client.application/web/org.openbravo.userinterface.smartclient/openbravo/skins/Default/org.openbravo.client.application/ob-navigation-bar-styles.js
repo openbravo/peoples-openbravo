@@ -34,7 +34,7 @@ isc.OBHelpAbout.addProperties({
   iconWidth: 10,
   iconSpacing: 10,
   icon: {
-    src: '[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-arrow-down.png'
+    src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-arrow-down.png'
   },
   iconOrientation: 'right'
 });
@@ -49,7 +49,7 @@ isc.OBUserProfile.addProperties({
   iconWidth: 10,
   iconSpacing: 10,
   icon: {
-    src: '[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-arrow-down.png'
+    src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-arrow-down.png'
   },
   iconOrientation: 'right',
 
@@ -58,7 +58,7 @@ isc.OBUserProfile.addProperties({
   ComboBoxField_textBoxStyle: 'OBFormFieldSelectInput',
   ComboBoxField_controlStyle: 'OBFormFieldSelectControl',
   ComboBoxField_pickListBaseStyle: 'OBFormFieldPickListCell',
-  ComboBoxField_pickerIconSrc: '[SKIN]/../../org.openbravo.client.application/images/form/comboBoxPicker.png',
+  ComboBoxField_pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
   ComboBoxField_pickListProperties_bodyStyleName: 'OBPickListBody',
 
   CheckboxField_cellStyle: 'OBFormField',
@@ -89,9 +89,9 @@ OB.QuickLaunchNavbarComponentStylingProperties = {
   initWidgetStyle: function() {
     if (this.buttonType) {
       if (this.buttonType === 'createNew') {
-        this.setSrc('[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-asterisk.png');
+        this.setSrc(OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-asterisk.png');
       } else if (this.buttonType === 'quickLaunch') {
-        this.setSrc('[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-forward.png');
+        this.setSrc(OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-forward.png');
       }
     }
   }
@@ -102,7 +102,7 @@ OB.LogoutNavbarComponentStylingProperties = {
   baseStyle: 'OBNavBarImgButton',
   height: 14,
   width: 36,
-  src: '[SKINIMG]../../org.openbravo.client.application/images/navbar/iconClose.png',
+  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/iconClose.png',
   showTitle: false,
   imageType: 'normal',
   layoutAlign: 'center',

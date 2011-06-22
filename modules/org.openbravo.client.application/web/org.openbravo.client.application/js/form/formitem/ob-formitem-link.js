@@ -24,7 +24,7 @@ isc.ClassFactory.defineClass('OBLinkItem', TextItem);
 isc.OBLinkItem.addProperties({
   validateOnExit: true,
   icons: [{
-    src : '[SKIN]/../../org.openbravo.client.application/images/form/search_picker.png',
+    src : OB.SkinsPath + 'Default//org.openbravo.client.application/images/form/search_picker.png',
     click: function(form, item) {
       var url = item.getValue();
       if(!url || url.indexOf('://') === -1) {

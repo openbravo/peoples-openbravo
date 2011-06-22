@@ -34,7 +34,7 @@ isc.OBStatusBar.addProperties({
   checkedIconDefaults: {
     height: 14,
     width: 14,
-    src:  '[SKINIMG]../../org.openbravo.client.application/images/statusbar/check-saved.png'
+    src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/statusbar/check-saved.png'
   },
 
   newIconDefaults: {
@@ -42,7 +42,7 @@ isc.OBStatusBar.addProperties({
     prompt: OB.I18N.getLabel('OBUIAPP_NewIconPrompt'),
     height: 14,
     width: 14,
-    src:  '[SKINIMG]../../org.openbravo.client.application/images/form/asterisk-new.png'
+    src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/asterisk-new.png'
   },
 
   iconButtonGroupSpacerWidth: 5
@@ -77,6 +77,6 @@ isc.OBStatusBarIconButton.addProperties({
   showDown: true,
   showFocused: false,
   initWidgetStyle: function() {
-    this.setSrc('[SKINIMG]../../org.openbravo.client.application/images/statusbar/iconButton-' + this.buttonType + '.png');
+    this.setSrc(OB.SkinsPath + 'Default/org.openbravo.client.application/images/statusbar/iconButton-' + this.buttonType + '.png');
   }
 });

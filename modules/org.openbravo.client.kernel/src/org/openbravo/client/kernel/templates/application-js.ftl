@@ -40,7 +40,7 @@ var OB = {
         date: '${data.dateFormat}',
         dateTime: '${data.dateTimeFormat}'
     },
-    
+
     Constants : {
         IDENTIFIER : '_identifier',
         ID : 'id',
@@ -53,8 +53,10 @@ var OB = {
         TEXT_MATCH_PARAMETER_OVERRIDE: '_textMatchStyleOverride',
         SUCCESS : 'success',
         DBL_CLICK_DELAY: 300,
-        ERROR : 'error'        
+        ERROR : 'error'
     },
-    
+
+    SkinsPath : '${data.contextUrl}' + 'web/org.openbravo.userinterface.smartclient/openbravo/skins/',
+
     I18N: {}
 };

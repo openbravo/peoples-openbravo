@@ -97,7 +97,7 @@ OB.DefaultPickListStyleProperties = {
   // tallbasestyle is used when the cellheight is different
   // from the standard
   pickListTallBaseStyle: 'OBFormFieldPickListCell',
-  pickerIconSrc: '[SKIN]/../../org.openbravo.client.application/images/form/comboBoxPicker.png',
+  pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
   height: 21,
   pickerIconWidth: 21,
   pickerIconHeight: 21, 
@@ -126,7 +126,7 @@ isc.OBListItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProper
 isc.OBFKItem.addProperties(isc.addProperties({}, OB.DefaultPickListStyleProperties));
 
 isc.OBFKItem.addProperties({
-  newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
+  newTabIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/ico-to-new-tab.png',
   newTabIconSize: 8
 });
 
@@ -137,8 +137,8 @@ isc.OBCheckboxItem.addProperties({
   showValueIconOver: true,
   showValueIconFocused: true,
   defaultValue: false,
-  checkedImage: '[SKIN]/../../org.openbravo.client.application/images/form/checked.png',
-  uncheckedImage: '[SKIN]/../../org.openbravo.client.application/images/form/unchecked.png'
+  checkedImage: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/checked.png',
+  uncheckedImage: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/unchecked.png'
 });
 
 
@@ -149,15 +149,15 @@ isc.OBSearchItem.addProperties({
   pickerIconHeight: 21,
   pickerIconWidth: 21,
   height: 21,
-  pickerIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
+  pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
   clearIcon: {
     showHover: true,
     height: 15,
     width: 15,
-    src: '[SKINIMG]../../org.openbravo.client.application/images/form/clear-field.png',    
+    src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/clear-field.png',    
     prompt: OB.I18N.getLabel('OBUIAPP_ClearIconPrompt')
   },
-  newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
+  newTabIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/ico-to-new-tab.png',
   newTabIconSize: 8
 });
 
@@ -168,15 +168,15 @@ isc.OBLinkItem.addProperties({
   pickerIconHeight: 21,
   pickerIconWidth: 21,
   height: 21,
-  pickerIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/search_picker.png',
+  pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
   clearIcon: {
     showHover: true,
     height: 15,
     width: 15,
-    src: '[SKINIMG]../../org.openbravo.client.application/images/form/clear-field.png',    
+    src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/clear-field.png',    
     prompt: OB.I18N.getLabel('OBUIAPP_ClearIconPrompt')
   },
-  newTabIconSrc: '[SKINIMG]../../org.openbravo.client.application/images/form/ico-to-new-tab.png',
+  newTabIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/ico-to-new-tab.png',
   newTabIconSize: 8
 });
 
@@ -203,7 +203,7 @@ isc.OBDateChooser.addProperties({
 
   showEdges: true,
 
-  edgeImage: '[SKIN]/../../../org.openbravo.client.application/images/form/dateChooser-popup.png',
+  edgeImage: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/dateChooser-popup.png',
   edgeSize: 6,
   edgeTop: 26,
   edgeBottom: 5,
@@ -224,16 +224,16 @@ isc.OBDateChooser.addProperties({
   shadowOffset: 5,
 
   showDoubleYearIcon: false,
-  prevYearIcon: '[SKIN]/../../../org.openbravo.client.application/images/form/dateChooser-doubleArrow_left.png',
+  prevYearIcon: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/dateChooser-doubleArrow_left.png',
   prevYearIconWidth: 16,
   prevYearIconHeight: 16,
-  nextYearIcon: '[SKIN]/../../../org.openbravo.client.application/images/form/dateChooser-doubleArrow_right.png',
+  nextYearIcon: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/dateChooser-doubleArrow_right.png',
   nextYearIconWidth: 16,
   nextYearIconHeight: 16,
-  prevMonthIcon: '[SKIN]/../../../org.openbravo.client.application/images/form/dateChooser-arrow_left.png',
+  prevMonthIcon: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/dateChooser-arrow_left.png',
   prevMonthIconWidth: 16,
   prevMonthIconHeight: 16,
-  nextMonthIcon: '[SKIN]/../../../org.openbravo.client.application/images/form/dateChooser-arrow_right.png',
+  nextMonthIcon: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/dateChooser-arrow_right.png',
   nextMonthIconWidth: 16,
   nextMonthIconHeight: 16
 });
@@ -255,7 +255,7 @@ OB.OBDateItemStyleProperties = {
 
   pickerIconWidth: 21,
   pickerIconHeight: 21,
-  pickerIconSrc: '[SKIN]/../../org.openbravo.client.application/images/form/date_control.png'
+  pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/date_control.png'
 };
 
 isc.OBDateItem.addProperties(isc.addProperties({}, OB.OBDateItemStyleProperties));
@@ -277,7 +277,7 @@ isc.OBNumberItem.addProperties({
 isc.OBDateRangeDialog.addProperties({
   // rounded frame edges
   showEdges: true,
-  edgeImage: '[SKIN]/../../../org.openbravo.client.application/images/popup/border.png',
+  edgeImage: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/border.png',
   customEdges: null,
   edgeSize: 2,
   edgeTop: 27,
@@ -328,14 +328,14 @@ isc.OBDateRangeDialog.changeDefaults('buttonLayoutDefaults', {
 
 isc.OBDateRangeDialog.changeDefaults('closeButtonDefaults', {
   baseStyle: 'OBPopupIconClose',
-  src: '[SKIN]/../../org.openbravo.client.application/images/popup/close.png',
+  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/close.png',
   width: 24,
   height: 20
 });
 
 isc.OBDateRangeDialog.changeDefaults('headerIconProperties', {
   styleName: 'OBPopupHeaderIcon',
-  src: '[SKIN]/../../org.openbravo.client.application/images/popup/iconHeader.png',
+  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/iconHeader.png',
   width: 20,
   height: 16
 });
@@ -353,7 +353,7 @@ isc.OBDateRangeDialog.addProperties({
 isc.OBMiniDateRangeItem.changeDefaults('pickerIconDefaults', {
   width: 21,
   height: 21,
-  src: '[SKIN]/../../org.openbravo.client.application/images/form/date_control.png'
+  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/date_control.png'
 });
 
 isc.OBMiniDateRangeItem.addProperties({
@@ -445,7 +445,7 @@ isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
   controlStyle: 'OBFormFieldSelectControl',
-  pickerIconSrc: '[SKIN]/../../org.openbravo.client.application/images/form/comboBoxPicker.png',
+  pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
   pickerIconWidth: 21,
   pickerIconHeight: 21,
   
@@ -466,7 +466,7 @@ isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
       canFocus: false,
       showFocused: false,
       item: this,
-      src: '[SKIN]/../../org.openbravo.client.application/images/form/date_control.png',
+      src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/date_control.png',
       click: function() {
         this.item.form.canvasItem.showPicker();
       }
@@ -497,8 +497,8 @@ isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
   showDown: false,
   showDisabledIcon: false,
   showRollOverIcon: false,
-  src: '[SKIN]/../../org.openbravo.client.application/images/form/sectionItem-bg.png',
-  icon: '[SKIN]/../../org.openbravo.client.application/images/form/sectionItem-ico.png',
+  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/sectionItem-bg.png',
+  icon: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/sectionItem-ico.png',
   iconSize: 12,
   capSize: 12,
   titleStyle: 'OBSectionItemButton_Title_',
