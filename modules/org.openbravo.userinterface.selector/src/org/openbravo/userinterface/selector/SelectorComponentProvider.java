@@ -69,7 +69,7 @@ public class SelectorComponentProvider extends BaseComponentProvider {
 
     resources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_VERSION_PARAMETER
+            + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.userinterface.selector/ob-selector-item-styles.js", false, true));
 
     return resources;

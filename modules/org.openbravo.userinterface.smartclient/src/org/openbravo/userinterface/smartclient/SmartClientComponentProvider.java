@@ -65,7 +65,7 @@ public class SmartClientComponentProvider extends BaseComponentProvider {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_VERSION_PARAMETER + "/smartclient/skin_styles.css", true));
+            + KernelConstants.SKIN_PARAMETER + "/smartclient/skin_styles.css", true));
 
     // note ISC_Combined.js is only added for the classic mode
     globalResources.add(createStaticResource(
@@ -73,7 +73,7 @@ public class SmartClientComponentProvider extends BaseComponentProvider {
 
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_VERSION_PARAMETER + "/smartclient/load_skin.js", true));
+            + KernelConstants.SKIN_PARAMETER + "/smartclient/load_skin.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/js/ob-smartclient-labels.js", true));
     globalResources.add(createStaticResource(

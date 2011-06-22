@@ -140,9 +140,11 @@ public class StaticResourceComponent extends BaseComponent {
 
     final String skinParam;
     if (classicMode) {
-      skinParam = KernelConstants.SKIN_VERSION_CLASSIC;
+      skinParam = KernelConstants.SKIN_CLASSIC;
+    } else if (getParameters().containsKey(KernelConstants.SKIN_PARAMETER)) {
+      skinParam = (String) getParameters().get(KernelConstants.SKIN_PARAMETER);
     } else {
-      skinParam = KernelConstants.SKIN_VERSION_300;
+      skinParam = KernelConstants.SKIN_DEFAULT;
     }
 
     int cntDynamicScripts = 0;
@@ -176,9 +178,8 @@ public class StaticResourceComponent extends BaseComponent {
               } else {
 
                 // Skin version handling
-                if (resourcePath.contains(KernelConstants.SKIN_VERSION_PARAMETER)) {
-                  resourcePath = resourcePath.replaceAll(KernelConstants.SKIN_VERSION_PARAMETER,
-                      skinParam);
+                if (resourcePath.contains(KernelConstants.SKIN_PARAMETER)) {
+                  resourcePath = resourcePath.replaceAll(KernelConstants.SKIN_PARAMETER, skinParam);
                 }
 
                 try {
@@ -211,8 +212,7 @@ public class StaticResourceComponent extends BaseComponent {
       }
     }
 
-    sb
-        .append("if (typeof(OBStartApplication) !== 'undefined' && isc.isA.Function(OBStartApplication)) { OBStartApplication(); }");
+    sb.append("if (typeof(OBStartApplication) !== 'undefined' && isc.isA.Function(OBStartApplication)) { OBStartApplication(); }");
 
     for (int i = 0; i < cntDynamicScripts; i++) {
       // add extra exception handling code otherwise exceptions occuring in

@@ -46,9 +46,24 @@ public class KernelConstants {
 
   public static final String RESOURCE_VERSION_PARAMETER = "_version";
   public static final String RESOURCE_LANGUAGE_PARAMETER = "_language";
+
+  /**
+   * @deprecated use {@link #SKIN_PARAMETER}
+   */
   public static final String SKIN_VERSION_PARAMETER = "_skinVersion";
+  /**
+   * @deprecated use {@link #SKIN_DEFAULT}
+   */
   public static final String SKIN_VERSION_300 = "3.00";
+  /**
+   * @deprecated use {@link #SKIN_CLASSIC}
+   */
   public static final String SKIN_VERSION_CLASSIC = "2.50_emulation";
+
+  public static final String SKIN_PARAMETER = "_skinVersion";
+  public static final String SKIN_DEFAULT = "Default";
+  public static final String SKIN_CLASSIC = "250To300Comp";
+
   public static final String MODE_PARAMETER = "_mode";
   public static final String MODE_PARAMETER_300 = "3.00";
   public static final String MODE_PARAMETER_CLASSIC = "classic";

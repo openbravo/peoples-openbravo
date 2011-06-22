@@ -53,12 +53,12 @@ public class QueryListComponentProvider extends BaseComponentProvider {
 
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_VERSION_PARAMETER
+            + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.querylist/ob-querylist-styles.js", false));
 
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_VERSION_PARAMETER
+            + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.querylist/ob-querylist-styles.css", false));
 
     return globalResources;

@@ -235,12 +235,12 @@ public class KernelServlet extends BaseKernelServlet {
       parameterMap.put(KernelConstants.SERVLET_CONTEXT, servletContext);
     }
 
-    if (!parameterMap.containsKey(KernelConstants.SKIN_VERSION_PARAMETER)) {
+    if (!parameterMap.containsKey(KernelConstants.SKIN_PARAMETER)) {
       if (OBContext.getOBContext().isNewUI()) { // FIXME: isNewUI true the first load?
-        parameterMap.put(KernelConstants.SKIN_VERSION_PARAMETER, KernelConstants.SKIN_VERSION_300);
+        parameterMap.put(KernelConstants.SKIN_PARAMETER, KernelConstants.SKIN_DEFAULT);
       } else {
-        parameterMap.put(KernelConstants.SKIN_VERSION_PARAMETER,
-            KernelConstants.SKIN_VERSION_CLASSIC);
+        parameterMap.put(KernelConstants.SKIN_PARAMETER,
+            KernelConstants.SKIN_CLASSIC);
       }
     }
 

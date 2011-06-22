@@ -22,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.StringReader;
 import java.util.List;
-import java.util.Random;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -112,11 +111,12 @@ public class StyleSheetResourceComponent extends BaseComponent {
         && getParameters().get("_cssDataUri").equals("true");
 
     final String skinParam;
-
     if (classicMode) {
-      skinParam = KernelConstants.SKIN_VERSION_CLASSIC;
+      skinParam = KernelConstants.SKIN_CLASSIC;
+    } else if (getParameters().containsKey(KernelConstants.SKIN_PARAMETER)) {
+      skinParam = (String) getParameters().get(KernelConstants.SKIN_PARAMETER);
     } else {
-      skinParam = KernelConstants.SKIN_VERSION_300;
+      skinParam = KernelConstants.SKIN_DEFAULT;
     }
 
     for (Module module : modules) {
@@ -139,9 +139,8 @@ public class StyleSheetResourceComponent extends BaseComponent {
               String resourcePath = resource.getPath();
 
               // Skin version handling
-              if (resourcePath.contains(KernelConstants.SKIN_VERSION_PARAMETER)) {
-                resourcePath = resourcePath.replaceAll(KernelConstants.SKIN_VERSION_PARAMETER,
-                    skinParam);
+              if (resourcePath.contains(KernelConstants.SKIN_PARAMETER)) {
+                resourcePath = resourcePath.replaceAll(KernelConstants.SKIN_PARAMETER, skinParam);
               }
 
               try {

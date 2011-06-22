@@ -85,7 +85,7 @@ if (isMSIE) {
 <meta name="keywords" content="openbravo">
 <meta name="description" content="Openbravo S.L.U.">
 <link rel="shortcut icon" href="./web/images/favicon.ico" />
-<link rel="stylesheet" type="text/css" href="./org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_mode=3.00&_skinVersion=3.00&_cssDataUri=<%=(!isMSIE || (isMSIE && verMSIE >=8))%>"/>
+<link rel="stylesheet" type="text/css" href="./org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_mode=3.00&_skinVersion=Default&_cssDataUri=<%=(!isMSIE || (isMSIE && verMSIE >=8))%>"/>
 
 <title>Openbravo</title>
 <script type="text/javascript" src="./web/org.openbravo.client.kernel/js/LAB.min.js"></script>
@@ -134,7 +134,7 @@ if (isMSIE) {
                     <span class="OBLoadingPromptLabel">LOADING...</span>
                 </td>
                 <td>
-                    <img width="220" height="16" src="./web/org.openbravo.userinterface.smartclient/openbravo/skins/3.00/org.openbravo.client.application/images/system/windowLoading.gif"/>
+                    <img width="220" height="16" src="./web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/system/windowLoading.gif"/>
                 </td>
             </tr>
         </table>
@@ -157,7 +157,7 @@ function OBStartApplication() {
 </script>
 <script type="text/javascript" src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined.js"></script>
 <script type="text/javascript" src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_History.js"></script>
-<script type="text/javascript" src="./org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_mode=3.00&_skinVersion=3.00"></script>
+<script type="text/javascript" src="./org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_mode=3.00&_skinVersion=Default"></script>
 <iframe name="background_target" id="background_target" height="0" width="0" style="display:none;"></iframe>
 <form name="OBGlobalHiddenForm" method="post" action="blank.html" target="background_target">
 </form>
