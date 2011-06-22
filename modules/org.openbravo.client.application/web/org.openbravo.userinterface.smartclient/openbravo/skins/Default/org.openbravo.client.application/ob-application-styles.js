@@ -69,15 +69,6 @@ OB.MainLayoutStylingProperties.CompanyImageLogo = {
 /* =====================================================================
  * Main components styling properties
  =======================================================================*/
-// The quick run widget is used for flyouts in the navigation bar
-isc.OBQuickRun.addProperties({
-
-  // ** {{{ baseStyle }}} **
-  // The base style for the quick run launch button. All other styles are
-  // derived
-  // from this base style.
-  baseStyle: 'OBNavBarImgButton'
-});
 
 isc.OBPopup.addProperties({
   width: 600,
@@ -88,55 +79,6 @@ isc.OBStandardWindow.addProperties({
   toolBarHeight: 40
 });
 
-// Styling properties for the help/about navigation bar component
-isc.OBHelpAbout.addProperties({
-  baseStyle: 'OBNavBarTextButton',
-  iconHeight: 6,
-  iconWidth: 10,
-  iconSpacing: 10,
-  icon: {
-    src: '[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-arrow-down.png'
-  },
-  iconOrientation: 'right'
-});
-
-// Styling properties for the logout button in the navbar
-OB.LogoutNavbarComponentStylingProperties = {
-  baseStyle: 'OBNavBarImgButton',
-  height: 14,
-  width: 36,
-  src: '[SKINIMG]../../org.openbravo.client.application/images/navbar/iconClose.png',
-  showTitle: false,
-  imageType: 'normal',
-  layoutAlign: 'center',
-  overflow: 'visible',
-  showRollOver: false,
-  showFocused: false,
-  showDown: false
-};
-
-// Styling properties for the quick launch and quick create components
-// See also isc.OBQuickRun styling properties
-OB.QuickLaunchNavbarComponentStylingProperties = {
-  // todo: it is nicer to move this to a style but then this issue occurs:
-  // https://issues.openbravo.com/view.php?id=13786
-  width: 57,
-  
-  layoutProperties: {
-    width: 250,
-    membersMargin: 10
-  },
-
-  initWidgetStyle: function() {
-    if (this.buttonType) {
-      if (this.buttonType === 'createNew') {
-        this.setSrc('[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-asterisk.png');
-      } else if (this.buttonType === 'quickLaunch') {
-        this.setSrc('[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-forward.png');
-      }
-    }
-  }
-};
 
 /* =====================================================================
  * Loading prompt

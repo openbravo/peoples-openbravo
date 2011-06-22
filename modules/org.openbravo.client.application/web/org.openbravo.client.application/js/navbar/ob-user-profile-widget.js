@@ -26,8 +26,6 @@ isc.OBUserProfile.addProperties({
 
   layoutProperties: {},
    
-  baseStyle: 'OBNavBarTextButton',
-  
   // ** {{{ title }}} **
   //
   // Contains the user name of the user
@@ -37,17 +35,6 @@ isc.OBUserProfile.addProperties({
   //
   // Set to empty to prevent an icon from being displayed on the button.
   src: '',
-  
-  // ** {{{ icon settings }}} **
-  //
-  // The green triangle icon on the right of the button.
-  iconHeight: 6,
-  iconWidth: 10,
-  iconSpacing: 10,
-  icon: {
-    src: '[SKINIMG]../../org.openbravo.client.application/images/navbar/ico-arrow-down.png'
-  },
-  iconOrientation: 'right',
   
   // ** {{{ prompt }}} **
   //

@@ -310,6 +310,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.application/ob-application-styles.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_PARAMETER
+            + "/org.openbravo.client.application/ob-navigation-bar-styles.js", false));
 
     // Application - dynamic as it contains the generated menu also (which is user/role dependant)
     globalResources.add(createDynamicResource("org.openbravo.client.kernel/"
