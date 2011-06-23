@@ -33,8 +33,7 @@
   }
   
   // cache object references locally
-  var L = OB.Layout, M = OB.MainView, ISC = isc, vmgr, // Local reference to ViewManager instance
-      tabSet = M.TabSet;
+  var L = OB.Layout, ISC = isc, vmgr; // Local reference to ViewManager instance
 
   function ViewManager(){
     // keep the last 5 opened views
@@ -65,9 +64,9 @@
       },
 
       getTabNumberFromViewParam: function(param, value) {
-        var numberOfTabs = tabSet.tabs.length, viewParam = '', result = null, i;
+        var numberOfTabs = OB.MainView.TabSet.tabs.length, viewParam = '', result = null, i;
         for (i = 0; i < numberOfTabs; i++) {
-          viewParam = tabSet.getTabPane(i)[param];
+          viewParam = OB.MainView.TabSet.getTabPane(i)[param];
           if (viewParam === value) {
             result = i;
           }
@@ -96,10 +95,10 @@
       if (!params.loadingTabId) {
         return null;
       }
-      for (i = 0; i < tabSet.tabs.length; i++) {
-        var pane = tabSet.tabs[i].pane;
+      for (i = 0; i < OB.MainView.TabSet.tabs.length; i++) {
+        var pane = OB.MainView.TabSet.tabs[i].pane;
         if (pane.viewTabId && pane.viewTabId === params.loadingTabId) {
-          return tabSet.tabs[i];
+          return OB.MainView.TabSet.tabs[i];
         }
       }
       return null;
@@ -167,7 +166,7 @@
       }
 
       // Adding to the MainView tabSet
-      tabSet.addTab(tabDef);
+      OB.MainView.TabSet.addTab(tabDef);
 
       if (params.i18nTabTitle) {
         tabTitle = '';
@@ -175,7 +174,7 @@
         // with the tabid to set the label
         OB.I18N.getLabel(params.i18nTabTitle, null, {
           setTitle: function(label){
-            tabSet.setTabTitle(viewTabId, label);
+            OB.MainView.TabSet.setTabTitle(viewTabId, label);
           }
         }, 'setTitle');
       }
@@ -199,7 +198,7 @@
       });
 
       // the select tab event will update the history
-      tabSet.selectTab(viewTabId);
+      OB.MainView.TabSet.selectTab(viewTabId);
     },
 
     // ** {{{ ViewManager.openView(viewName, params) }}} **
@@ -276,7 +275,7 @@
           if (viewInstance && viewInstance.show && viewInstance.showsItself) {
             if (loadingTab) {
               delete params.loadingTabId;
-              tabSet.removeTab(loadingTab.viewTabId);
+              OB.MainView.TabSet.removeTab(loadingTab.viewTabId);
             }
             viewInstance.show();
             return;
@@ -286,9 +285,9 @@
           // still refresh it
           if (viewTabId !== null) {
             // refresh the view
-            tabSet.updateTab(viewTabId, viewInstance);
+            OB.MainView.TabSet.updateTab(viewTabId, viewInstance);
             // and show it
-            tabSet.selectTab(viewTabId);
+            OB.MainView.TabSet.selectTab(viewTabId);
 
             // tell the viewinstance what tab it is on
             // note do not use tabId on the viewInstance
@@ -315,10 +314,10 @@
             // important part
             
             // the select tab event will update the history
-            if (tabSet.getSelectedTab() && tabSet.getSelectedTab().pane.viewTabId === viewTabId) {
+            if (OB.MainView.TabSet.getSelectedTab() && OB.MainView.TabSet.getSelectedTab().pane.viewTabId === viewTabId) {
               OB.Layout.HistoryManager.updateHistory();
             } else {              
-              tabSet.selectTab(viewTabId);
+              OB.MainView.TabSet.selectTab(viewTabId);
             }
 
             return;
@@ -380,7 +379,7 @@
 
       // create an empty layout
       if (!newState) {
-        tabSet.removeTabs(tabSet.tabs);
+        OB.MainView.TabSet.removeTabs(OB.MainView.TabSet.tabs);
         vmgr.views.cache = [];
         vmgr.inStateHandling = false;
         return;
@@ -388,11 +387,11 @@
 
       // do some comparison
       tabsLength = newState.bm.length;
-      hasChanged = tabSet.tabs.length !== tabsLength;
+      hasChanged = OB.MainView.TabSet.tabs.length !== tabsLength;
       // same length, compare individual tabs
       if (!hasChanged) {
         for (i = 0; i < tabsLength; i++) {
-          tabObject = tabSet.getTabObject(i);
+          tabObject = OB.MainView.TabSet.getTabObject(i);
           
           // changed if the view id is different
           if (newState.bm[i].viewId !== tabObject.viewName) {
@@ -409,7 +408,7 @@
       // changes occured, start from scratch again, recreating each view
       if (hasChanged) {
         // stop if tabSet removed failed because a tab has incorrect data
-        if (!tabSet.removeTabs(tabSet.tabs)) {
+        if (!OB.MainView.TabSet.removeTabs(OB.MainView.TabSet.tabs)) {
           vmgr.inStateHandling = false;
           return;
         }
@@ -461,7 +460,7 @@
 
             vmgr.openView(newState.bm[i].viewId, newState.bm[i].params, stateData);
           }
-          tabSet.selectTab(newState.st);
+          OB.MainView.TabSet.selectTab(newState.st);
           vmgr.inStateHandling = false;
         };
 
@@ -492,7 +491,7 @@
         }
       }
       
-      tabSet.selectTab(newState.st);
+      OB.MainView.TabSet.selectTab(newState.st);
 
       vmgr.inStateHandling = false;
     },

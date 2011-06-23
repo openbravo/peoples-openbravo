@@ -55,83 +55,88 @@ OB.Layout = isc.VLayout.create({
   overflow: 'hidden'
 });
 
-// create the bar with navigation components
-OB.Toolbar = isc.ToolStrip.create({  
-  addMembers: function(members) {
-    // encapsulate the members
-    var newMembers = [], i;
-    for (i = 0; i < members.length; i++) {
-        // encapsulate in 2 hlayouts to handle correct mouse over/hover and show of box
-        var newMember = isc.HLayout.create({layoutLeftMargin: 0, layoutRightMargin: 0, width: '100%', height: '100%', styleName: 'OBNavBarComponent', members:[members[i]]}); 
-        newMembers[i] = newMember;
-    }    
-    // note the array has to be placed in an array otherwise the newMembers
-    // is considered to the argument list
-    this.Super('addMembers', [newMembers]);
-  }
-}, OB.MainLayoutStylingProperties.Toolbar);
+// initialize the content of the layout, as late as possible
+// is called from index.jsp
+OB.Layout.initialize = function() {
 
-// the TopLayout has the navigation bar on the left and the logo on the right
-OB.TopLayout = isc.HLayout.create({}, OB.MainLayoutStylingProperties.TopLayout);
-    
-// create the navbar on the left and the logo on the right
-OB.TopLayout.CompanyImageLogo = isc.Img.create({
-  imageType: 'normal'
-}, OB.MainLayoutStylingProperties.CompanyImageLogo);
-OB.TestRegistry.register('org.openbravo.client.application.companylogo', OB.TopLayout.CompanyImageLogo);
-
-OB.TopLayout.OpenbravoLogo = isc.Img.create({
-    imageType: 'normal',
-    imageWidth: '130',
-    imageHeight: '32',
-    src: OB.Application.contextUrl + 'utility/GetOpenbravoLogo.png',
-    getInnerHTML: function() {
-        var html = this.Super('getInnerHTML', arguments);
-        <#if data.addProfessionalLink>
-        return '<a href="http://www.openbravo.com/product/erp/professional/" target="_new">' + html + '</a>';
-        <#else>
-        return html;
-        </#if>
+  // create the bar with navigation components
+  OB.Toolbar = isc.ToolStrip.create({  
+    addMembers: function(members) {
+      // encapsulate the members
+      var newMembers = [], i;
+      for (i = 0; i < members.length; i++) {
+          // encapsulate in 2 hlayouts to handle correct mouse over/hover and show of box
+          var newMember = isc.HLayout.create({layoutLeftMargin: 0, layoutRightMargin: 0, width: '100%', height: '100%', styleName: 'OBNavBarComponent', members:[members[i]]}); 
+          newMembers[i] = newMember;
+      }    
+      // note the array has to be placed in an array otherwise the newMembers
+      // is considered to the argument list
+      this.Super('addMembers', [newMembers]);
     }
-});
-OB.TestRegistry.register('org.openbravo.client.application.openbravologo', OB.TopLayout.OpenbravoLogo);    
+  }, OB.MainLayoutStylingProperties.Toolbar);
+  
+  // the TopLayout has the navigation bar on the left and the logo on the right
+  OB.TopLayout = isc.HLayout.create({}, OB.MainLayoutStylingProperties.TopLayout);
+      
+  // create the navbar on the left and the logo on the right
+  OB.TopLayout.CompanyImageLogo = isc.Img.create({
+    imageType: 'normal'
+  }, OB.MainLayoutStylingProperties.CompanyImageLogo);
+  OB.TestRegistry.register('org.openbravo.client.application.companylogo', OB.TopLayout.CompanyImageLogo);
+  
+  OB.TopLayout.OpenbravoLogo = isc.Img.create({
+      imageType: 'normal',
+      imageWidth: '130',
+      imageHeight: '32',
+      src: OB.Application.contextUrl + 'utility/GetOpenbravoLogo.png',
+      getInnerHTML: function() {
+          var html = this.Super('getInnerHTML', arguments);
+          <#if data.addProfessionalLink>
+          return '<a href="http://www.openbravo.com/product/erp/professional/" target="_new">' + html + '</a>';
+          <#else>
+          return html;
+          </#if>
+      }
+  });
+  OB.TestRegistry.register('org.openbravo.client.application.openbravologo', OB.TopLayout.OpenbravoLogo);    
+  
+  OB.TopLayout.addMember(OB.Toolbar);
+  OB.TopLayout.addMember(
+          isc.HLayout.create({
+              width: '100%',
+              align: 'right',
+              layoutRightMargin: 10,
+              membersMargin: 10,
+              defaultLayoutAlign: 'center',
+              members: [OB.TopLayout.CompanyImageLogo, OB.TopLayout.OpenbravoLogo]
+          })      
+  );
+  
+  // add the top part to the main layout
+  OB.Layout.addMember(OB.TopLayout);
+  
+  // create some vertical space
+  OB.Layout.addMember(isc.HLayout.create({}, OB.MainLayoutStylingProperties.TopLayoutSpacer));
+  
+  OB.MainView = isc.VLayout.create({
+    width: '100%',
+    height: '100%'
+  });
+  OB.Layout.addMember(OB.MainView);
 
-OB.TopLayout.addMember(OB.Toolbar);
-OB.TopLayout.addMember(
-        isc.HLayout.create({
-            width: '100%',
-            align: 'right',
-            layoutRightMargin: 10,
-            membersMargin: 10,
-            defaultLayoutAlign: 'center',
-            members: [OB.TopLayout.CompanyImageLogo, OB.TopLayout.OpenbravoLogo]
-        })      
-);
-
-// add the top part to the main layout
-OB.Layout.addMember(OB.TopLayout);
-
-// create some vertical space
-OB.Layout.addMember(isc.HLayout.create({}, OB.MainLayoutStylingProperties.TopLayoutSpacer));
-
-OB.MainView = isc.VLayout.create({
-  width: '100%',
-  height: '100%'
-});
-OB.Layout.addMember(OB.MainView);
-
-OB.MainView.TabSet = isc.OBTabSetMain.create({});
-
-OB.MainView.addMember(OB.MainView.TabSet);
-
-OB.TestRegistry.register('org.openbravo.client.application.mainview', OB.MainView);
-OB.TestRegistry.register('org.openbravo.client.application.mainview.tabset', OB.MainView.TabSet);
-OB.TestRegistry.register('org.openbravo.client.application.layout', OB.Layout);
-
-OB.Toolbar.addMembers([
-<#list data.navigationBarComponents as nbc>
-${nbc.jscode}<#if nbc_has_next>,</#if>
-</#list>]);
+  OB.MainView.TabSet = isc.OBTabSetMain.create({});
+  
+  OB.MainView.addMember(OB.MainView.TabSet);
+  
+  OB.TestRegistry.register('org.openbravo.client.application.mainview', OB.MainView);
+  OB.TestRegistry.register('org.openbravo.client.application.mainview.tabset', OB.MainView.TabSet);
+  OB.TestRegistry.register('org.openbravo.client.application.layout', OB.Layout);
+  
+  OB.Toolbar.addMembers([
+  <#list data.navigationBarComponents as nbc>
+  ${nbc.jscode}<#if nbc_has_next>,</#if>
+  </#list>]);
+};
 
 ${data.notesDataSource}
 

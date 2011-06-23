@@ -148,6 +148,7 @@ var isomorphicDir='./web/org.openbravo.userinterface.smartclient/isomorphic/';
 
 // starts the application is called as the last statement in the StaticResources part
 function OBStartApplication() {
+  OB.Layout.initialize();
   OB.Layout.draw();
   OB.Layout.ViewManager.createAddStartTab();
   // get rid of the loading stuff

@@ -37,7 +37,7 @@
   }
 
   // cache object references locally
-  var L = OB.Layout, M = OB.MainView, QUOTE_REPLACE = '__', ISC = isc, historyMgr;
+  var L = OB.Layout, QUOTE_REPLACE = '__', ISC = isc, historyMgr;
 
   function HistoryManager() {
   }
@@ -63,20 +63,20 @@
 
       // the selected tab, note short name to
       // help with browser url restriction
-      state.st = M.TabSet.getSelectedTabNumber();
+      state.st = OB.MainView.TabSet.getSelectedTabNumber();
 
       // then for each tab store the book mark parameters
       // note name is abbreviated to help with browser url restriction
       state.bm = [];
-      tabsLength = M.TabSet.tabs.length;
+      tabsLength = OB.MainView.TabSet.tabs.length;
       data = [];
       for (i = 0; i < tabsLength; i++) {
-        tab = M.TabSet.tabs[i];
+        tab = OB.MainView.TabSet.tabs[i];
 
         state.bm[i] = {};
 
         // get the original tab object
-        tabObject = M.TabSet.getTabObject(tab);
+        tabObject = OB.MainView.TabSet.getTabObject(tab);
 
         state.bm[i] = {
           viewId : tabObject.viewName
