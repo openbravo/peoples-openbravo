@@ -141,11 +141,17 @@ public class ImportBankFile extends HttpSecureAppServlet {
 
     if (isDefault) {
       if (!isAnyFileFormatInstalled) {
-        xmlDocument.setParameter("messageType", "Warning");
-        xmlDocument.setParameter("messageTitle", Utility.messageBD(this,
-            "APRM_NoBankFileAvailable", vars.getLanguage()));
-        xmlDocument.setParameter("messageMessage", Utility.messageBD(this,
-            "APRM_NoBankFileAvailableInfo", vars.getLanguage()));
+        String strWindowPath = Utility.getTabURL(tabId, "R", true);
+        if (strWindowPath.equals(""))
+          strWindowPath = strDefaultServlet;
+        OBError message = new OBError();
+        message.setType("Warning");
+        message.setTitle(Utility.messageBD(this, "APRM_NoBankFileAvailable", vars.getLanguage()));
+        message.setMessage(Utility.messageBD(this, "APRM_NoBankFileAvailableInfo", vars
+            .getLanguage()));
+        vars.setMessage(tabId, message);
+        printPageClosePopUp(response, vars, strWindowPath);
+        return;
       } else {
         xmlDocument.setParameter("messageType", "");
         xmlDocument.setParameter("messageTitle", "");
