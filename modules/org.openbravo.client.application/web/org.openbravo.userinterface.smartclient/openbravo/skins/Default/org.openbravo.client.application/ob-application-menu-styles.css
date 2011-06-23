@@ -104,7 +104,7 @@
   padding: 0px 0px 0px 25px;
   border-right: none;
   background-position: left center;
-  background-repeat: repeat-x;
+  background-repeat: no-repeat;
   background-image: url(./images/application-menu/menuSeparator.png);
 }
 
