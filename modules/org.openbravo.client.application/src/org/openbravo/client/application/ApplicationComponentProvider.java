@@ -200,6 +200,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/navbar/ob-user-profile-widget.js", false));
     globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/navbar/ob-logout-widget.js", false));
+    globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/navbar/ob-help-about-widget.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/toolbar/ob-action-button.js", false));

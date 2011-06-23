@@ -76,7 +76,7 @@ isc.OBUserProfile.addProperties({
 
 // Styling properties for the quick launch and quick create components
 // See also isc.OBQuickRun styling properties
-OB.QuickLaunchNavbarComponentStylingProperties = {
+isc.OBQuickLaunch.addProperties({
   // todo: it is nicer to move this to a style but then this issue occurs:
   // https://issues.openbravo.com/view.php?id=13786
   width: 57,
@@ -86,19 +86,12 @@ OB.QuickLaunchNavbarComponentStylingProperties = {
     membersMargin: 10
   },
 
-  initWidgetStyle: function() {
-    if (this.buttonType) {
-      if (this.buttonType === 'createNew') {
-        this.setSrc(OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-asterisk.png');
-      } else if (this.buttonType === 'quickLaunch') {
-        this.setSrc(OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-forward.png');
-      }
-    }
-  }
-};
+  createNew_src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-createNew.png',
+  quickLaunch_src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-quickLaunch.png'
+});
 
 // Styling properties for the logout button in the navbar
-OB.LogoutNavbarComponentStylingProperties = {
+isc.OBLogout.addProperties({
   baseStyle: 'OBNavBarImgButton',
   height: 14,
   width: 36,
@@ -110,4 +103,4 @@ OB.LogoutNavbarComponentStylingProperties = {
   showRollOver: false,
   showFocused: false,
   showDown: false
-};
+});

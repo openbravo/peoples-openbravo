@@ -18,20 +18,24 @@
 */
 
 /* jslint */
-isc.OBQuickLaunch.create(OB.QuickLaunchNavbarComponentStylingProperties, {
-     title: '',
-     prompt: OB.I18N.getLabel('${data.label}'),
-     buttonType: '${data.buttonType}',
-     prefixLabel: '${data.prefixRecent}',
-     keyboardShortcutId : '${data.keyboardShortcutId}',
-     recentPropertyName: '${data.recentPropertyName}',
-     titleLabel: '${data.label}',
-     dataSourceId: '${data.dataSourceId}',
-     command: '${data.command}',
-     initWidget: function(){
-       if (this.initWidgetStyle) {
-         this.initWidgetStyle();
-       }
-       this.Super('initWidget', arguments);
+isc.OBQuickLaunch.create({
+  title: '',
+  prompt: OB.I18N.getLabel('${data.label}'),
+  buttonType: '${data.buttonType}',
+  prefixLabel: '${data.prefixRecent}',
+  keyboardShortcutId : '${data.keyboardShortcutId}',
+  recentPropertyName: '${data.recentPropertyName}',
+  titleLabel: '${data.label}',
+  dataSourceId: '${data.dataSourceId}',
+  command: '${data.command}',
+  initWidget: function(){
+   if (this.buttonType) {
+     if (this.buttonType === 'createNew' && this.createNew_src) {
+       this.setSrc(this.createNew_src);
+     } else if (this.buttonType === 'quickLaunch' && this.quickLaunch_src) {
+       this.setSrc(this.quickLaunch_src);
      }
+   }
+   this.Super('initWidget', arguments);
+  }
 })
