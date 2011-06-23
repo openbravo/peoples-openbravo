@@ -161,6 +161,10 @@ isc.OBSearchItem.addProperties({
   newTabIconSize: 8
 });
 
+isc.OBLinkItemIcon.addProperties({
+  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png'
+});
+
 isc.OBLinkItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',

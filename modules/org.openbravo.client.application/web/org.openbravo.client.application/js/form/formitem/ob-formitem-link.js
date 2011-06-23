@@ -17,22 +17,27 @@
  ************************************************************************
  */
 
+isc.ClassFactory.defineClass('OBLinkItemIcon', Canvas);
+
+isc.OBLinkItemIcon.addProperties({
+  height: 21,
+  width: 21,
+  click: function(form, item) {
+    var url = item.getValue();
+    if(!url || url.indexOf('://') === -1) {
+      return;
+    }
+    window.open(url);
+  }
+});
+
 //== OBLinkItem ==
 //Input for normal strings (links) with an added icon to navigate to the link  
 isc.ClassFactory.defineClass('OBLinkItem', TextItem);
 
 isc.OBLinkItem.addProperties({
   validateOnExit: true,
-  icons: [{
-    src : OB.SkinsPath + 'Default//org.openbravo.client.application/images/form/search_picker.png',
-    click: function(form, item) {
-      var url = item.getValue();
-      if(!url || url.indexOf('://') === -1) {
-        return;
-      }
-      window.open(url);
-    }
-  }],
+  icons: [OBLinkItemIcon.create({})],
   validate: function() {
     var url = this.getValue();
     if(!url) {
