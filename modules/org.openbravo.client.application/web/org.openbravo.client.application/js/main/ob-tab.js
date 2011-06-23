@@ -94,9 +94,6 @@ isc.OBTabSetMain.addProperties({
 
   initWidget: function() {
     this.tabBarProperties.tabSet = this;
-    if (this.initWidgetStyle) {
-      this.initWidgetStyle();
-    }
     this.Super('initWidget', arguments);
   },
 
@@ -286,9 +283,6 @@ isc.ClassFactory.defineClass('OBTabBarMain', isc.OBTabBar);
 
 isc.OBTabBarMain.addProperties({
   initWidget: function() {
-    if (this.initWidgetStyle) {
-      this.initWidgetStyle();
-    }
     this.Super('initWidget', arguments);
   },
 
@@ -632,9 +626,6 @@ isc.OBTabSetChild.addProperties({
 
   initWidget: function(){
     this.tabBarProperties.tabSet = this;
-    if (this.initWidgetStyle) {
-      this.initWidgetStyle();
-    }
     this.Super('initWidget', arguments);
   }
 });
@@ -643,9 +634,6 @@ isc.ClassFactory.defineClass('OBTabBarChild', isc.OBTabBar);
 
 isc.OBTabBarChild.addProperties({
   initWidget: function() {
-    if (this.initWidgetStyle) {
-      this.initWidgetStyle();
-    }
     this.Super('initWidget', arguments);
   }
 });

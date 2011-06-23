@@ -59,16 +59,11 @@ isc.OBTabSetMain.addProperties({
 
   //symmetricScroller:true,
   scrollerSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/tab/tabBarButtonMain_OverflowIcon.png',
-  pickerButtonSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/tab/tabBarButtonMain_OverflowIconPicker.png',
-
-  initWidgetStyle: function() {
-  }
+  pickerButtonSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/tab/tabBarButtonMain_OverflowIconPicker.png'
 });
 
 isc.OBTabBarMain.addProperties({
-  styleName: 'OBTabBarMain',
-  initWidgetStyle: function() {
-  }
+  styleName: 'OBTabBarMain'
 });
 
 
@@ -103,14 +98,9 @@ isc.OBTabSetChild.addProperties({
   paneContainerClassName: 'OBTabSetChildContainer',
 
   scrollerSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/tab/tabBarButtonChild_OverflowIcon.png',
-  pickerButtonSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/tab/tabBarButtonChild_OverflowIconPicker.png',
-
-  initWidgetStyle: function() {
-  }
+  pickerButtonSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/tab/tabBarButtonChild_OverflowIconPicker.png'
 });
 
 isc.OBTabBarChild.addProperties({
-  styleName: 'OBTabBarChild',
-  initWidgetStyle: function() {
-  }
+  styleName: 'OBTabBarChild'
 });
