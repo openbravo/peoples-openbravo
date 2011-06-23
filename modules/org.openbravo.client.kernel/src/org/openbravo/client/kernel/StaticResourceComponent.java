@@ -99,10 +99,11 @@ public class StaticResourceComponent extends BaseComponent {
 
       StringBuilder result = new StringBuilder();
       if (classicMode) {
-        result
-            .append("document.write(\"<LINK rel='stylesheet' type='text/css' href='"
-                + getContextUrl()
-                + "org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_skinVersion=2.50_emulation&_mode=classic'></link>\");\n");
+        result.append("document.write(\"<LINK rel='stylesheet' type='text/css' href='"
+            + getContextUrl()
+            + "org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_skinVersion="
+            + KernelConstants.SKIN_CLASSIC + "&_mode=" + KernelConstants.MODE_PARAMETER_CLASSIC
+            + "'></link>\");\n");
         result
             .append("var isomorphicDir='../web/org.openbravo.userinterface.smartclient/isomorphic/';\n");
       }

@@ -62,7 +62,7 @@ public class KernelConstants {
 
   public static final String SKIN_PARAMETER = "_skinVersion";
   public static final String SKIN_DEFAULT = "Default";
-  public static final String SKIN_CLASSIC = "250To300Comp";
+  public static final String SKIN_CLASSIC = "250to300Comp";
 
   public static final String MODE_PARAMETER = "_mode";
   public static final String MODE_PARAMETER_300 = "3.00";
