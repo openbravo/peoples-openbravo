@@ -161,18 +161,15 @@ isc.OBSearchItem.addProperties({
   newTabIconSize: 8
 });
 
-isc.OBLinkItemIcon.addProperties({
-  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png'
-});
-
 isc.OBLinkItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldInput',
+  height: 21,
   pickerIconHeight: 21,
   pickerIconWidth: 21,
-  height: 21,
   pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
+  pickerIcoHspace: 0,
   clearIcon: {
     showHover: true,
     height: 15,

@@ -17,27 +17,28 @@
  ************************************************************************
  */
 
-isc.ClassFactory.defineClass('OBLinkItemIcon', Canvas);
-
-isc.OBLinkItemIcon.addProperties({
-  height: 21,
-  width: 21,
-  click: function(form, item) {
-    var url = item.getValue();
-    if(!url || url.indexOf('://') === -1) {
-      return;
-    }
-    window.open(url);
-  }
-});
-
 //== OBLinkItem ==
 //Input for normal strings (links) with an added icon to navigate to the link  
 isc.ClassFactory.defineClass('OBLinkItem', TextItem);
 
 isc.OBLinkItem.addProperties({
   validateOnExit: true,
-  icons: [OBLinkItemIcon.create({})],
+  init: function(){
+    this.icons = [{
+      src: this.pickerIconSrc,
+      width: this.pickerIconWidth,
+      height: this.pickerIconHeight,
+      hspace: this.pickerIconHspace,
+      click: function(form, item) {
+        var url = item.getValue();
+        if(!url || url.indexOf('://') === -1) {
+          return;
+        }
+        window.open(url);
+      }
+    }];
+    return this.Super('init', arguments);
+  },
   validate: function() {
     var url = this.getValue();
     if(!url) {
