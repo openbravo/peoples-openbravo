@@ -87,7 +87,9 @@ isc.OBWidget.changeDefaults('minimizeButtonDefaults', {
 // MyOpenbravo dialogs (left menu)
 
 isc.OBMyOBDialog.addProperties({
+  styleName : 'OBMyOBDialog',
   headerStyle : 'OBMyOBDialogHeader',
+  bodyStyle : "OBMyOBDialogBody",
   showEdges : true,
   edgeImage : OB.SkinsPath + 'Default/org.openbravo.client.myob/images/dialog/window.png',
   customEdges : null,
@@ -100,9 +102,7 @@ isc.OBMyOBDialog.addProperties({
   showHeaderBackground : false, // part of edges
   showHeaderIcon : true,
 
-  backgroundColor : '#E6F0DB',
   border : null,
-  bodyStyle : "OBMyOBDialogBody",
 
   layoutMargin : 0,
   membersMargin : 0,
