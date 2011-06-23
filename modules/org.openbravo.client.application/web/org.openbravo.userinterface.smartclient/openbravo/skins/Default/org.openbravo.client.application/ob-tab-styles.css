@@ -23,8 +23,10 @@
 ============================================================*/
 
 .OBTabBarMain {
-  background: #FFFFFF url(./images/tab/tabBarMain_bg.png) repeat-x scroll;
+  background-color: #FFFFFF;
+  background-image: url(./images/tab/tabBarMain_bg.png);
   background-position: center top;
+  background-repeat: repeat-x scroll;
 }
 
 .OBTabSetMainContainer {
@@ -186,8 +188,10 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 ============================================================*/
 
 .OBTabBarChild {
-  background: #ffffff url(./images/tab/tabBarChild_bg.png) repeat-x scroll;
+  background-color: #FFFFFF;
+  background-image: url(./images/tab/tabBarChild_bg.png);
   background-position: center top;
+  background-repeat: repeat-x scroll;
 }
 
 .OBTabSetChildContainer {
