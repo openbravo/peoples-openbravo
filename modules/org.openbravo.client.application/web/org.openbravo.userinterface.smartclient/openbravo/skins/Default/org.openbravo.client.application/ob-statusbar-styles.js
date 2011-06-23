@@ -34,7 +34,7 @@ isc.OBStatusBar.addProperties({
   checkedIconDefaults: {
     height: 14,
     width: 14,
-    src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/statusbar/check-saved.png'
+    src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/statusbar/ico-saved.png'
   },
 
   newIconDefaults: {
@@ -42,7 +42,7 @@ isc.OBStatusBar.addProperties({
     prompt: OB.I18N.getLabel('OBUIAPP_NewIconPrompt'),
     height: 14,
     width: 14,
-    src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/asterisk-new.png'
+    src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/statusbar/ico-new.png'
   },
 
   iconButtonGroupSpacerWidth: 5
