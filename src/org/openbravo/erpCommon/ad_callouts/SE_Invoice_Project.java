@@ -80,9 +80,10 @@ public class SE_Invoice_Project extends HttpSecureAppServlet {
         resultado.append("var calloutName='SE_Invoice_Project';\n\n");
         resultado.append("var respuesta = new Array(");
 
-        String strPaymentRule = data[0].paymentrule;
-        if (strPaymentRule != null && !"".equals(strPaymentRule)) {
-          resultado.append("new Array(\"inppaymentrule\", \"" + strPaymentRule + "\"),");
+        String strFinPaymentmethodId = data[0].finPaymentmethodId;
+        if (strFinPaymentmethodId != null && !"".equals(strFinPaymentmethodId)) {
+          resultado.append("new Array(\"inpfinPaymentmethodId\", \"" + strFinPaymentmethodId
+              + "\"),");
         }
         String PaymentTerm = data[0].paymentterm;
         if (PaymentTerm != null && !"".equals(PaymentTerm)) {
