@@ -41,19 +41,19 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_INVOICE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="C_INVOICE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FIN_PAYMENT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="FIN_PAYMENT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="APRM_FINACC_TRANSACTION_V_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="APRM_FINACC_TRANSACTION_V_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="RATE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+      <column name="RATE" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -66,6 +66,12 @@
       </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="C_CURRENCYRATEDOC_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="C_CURRENCYRATEDOC_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="C_CURRENCYRATEDOC_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_INVOICE" name="C_CURRENCYRATEDOCINV">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
