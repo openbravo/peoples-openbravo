@@ -182,6 +182,8 @@ isc.OBLinkItem.addProperties({
 });
 
 isc.OBLinkButtonItem.addProperties({
+  width: 1, //To allow button be just text width
+  align: 'left',
   baseStyle: 'OBLinkButtonItem',
   showDown: true,
   showFocused: true,
