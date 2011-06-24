@@ -126,3 +126,16 @@ isc.OBQuickLaunchRecentLinkButton.addProperties({
   height: 1,
   overflow: 'visible'
 });
+
+isc.OBHelpAboutLinkButton.addProperties({
+  width: 1, //To allow button be just text width
+  align: 'left',
+  baseStyle: 'OBHelpAboutLinkButton',
+  showDown: true,
+  showFocused: true,
+  showFocusedAsOver: false,
+  showRollOver: true,
+  autoFit: true,
+  height: 1,
+  overflow: 'visible'
+});

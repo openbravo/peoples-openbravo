@@ -220,3 +220,45 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBQuickLaunchRecentLinkButton:hover {
   text-decoration: underline;
 }
+
+/*=======================================================================
+ * OBHelpAboutLinkButton Item
+=======================================================================*/
+
+.OBHelpAboutLinkButton,
+.OBHelpAboutLinkButtonOver,
+.OBHelpAboutLinkButtonDown,
+.OBHelpAboutLinkButtonFocused,
+.OBHelpAboutLinkButtonFocusedOver,
+.OBHelpAboutLinkButtonFocusedDown {
+  font-family: 'lucida sans', sans-serif;
+  font-size: 11px;
+  vertical-align: middle;
+  background: transparent;
+  padding: 3px 5px 3px 5px;
+}
+
+.OBHelpAboutLinkButton,
+.OBHelpAboutLinkButtonOver,
+.OBHelpAboutLinkButton:hover {
+  cursor: pointer;
+  color: #58A618;
+}
+
+.OBHelpAboutLinkButtonDown,
+.OBHelpAboutLinkButton:active {
+  color: #004E27;
+}
+
+.OBHelpAboutLinkButtonFocused,
+.OBHelpAboutLinkButtonFocusedOver,
+.OBHelpAboutLinkButtonFocusedDown,
+.OBHelpAboutLinkButton:focus {
+  color: #fa962f;
+}
+
+.OBHelpAboutLinkButtonOver,
+.OBHelpAboutLinkButtonFocusedOver,
+.OBHelpAboutLinkButton:hover {
+  text-decoration: underline;
+}

@@ -16,6 +16,9 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
+
+isc.ClassFactory.defineClass('OBHelpAboutLinkButton', isc.Button);
+
 isc.ClassFactory.defineClass('OBHelpAbout', isc.OBQuickRun);
 
 // = OB Help About =
@@ -42,34 +45,23 @@ isc.OBHelpAbout.addProperties({
     // determine if the help should be displayed or not
     var tabPane = null, aboutLink = null, helpLink = null, helpView = null;
     
-    aboutLink = {
+    aboutLink = isc.OBHelpAboutLinkButton.create({
       name: 'aboutLink',
-      editorType: 'link',
-      value: null,
-      showTitle: false,
-      target: 'javascript',
-      shouldSaveValue: false,
-      linkTitle: OB.I18N.getLabel('UINAVBA_About'),
-      handleClick: function(){
+      title: OB.I18N.getLabel('UINAVBA_About'),
+      action: function(){
         isc.OBQuickRun.hide();
-        
         OB.Layout.ClassicOBCompatibility.Popup.open('About', 620, 500, OB.Application.contextUrl + 'ad_forms/about.html', '', window);
       }
-    };
+    });
     
-    helpLink = {
+    helpLink = isc.OBHelpAboutLinkButton.create({
       name: 'helpLink',
-      editorType: 'link',
-      value: null,
-      showTitle: false,
-      target: 'javascript',
-      shouldSaveValue: false,
-      linkTitle: OB.I18N.getLabel('UINAVBA_Help'),
-      handleClick: function(){
+      title: OB.I18N.getLabel('UINAVBA_Help'),
+      action: function(){
         isc.OBQuickRun.hide();
         OB.Layout.ViewManager.openView(helpView.viewId, helpView);
       }
-    };
+    });
     
     // get the selected tab
     var selectedTab = OB.MainView.TabSet.getSelectedTab();
@@ -78,21 +70,21 @@ isc.OBHelpAbout.addProperties({
     }
     // determine if a help link should be shown or not
     if (!tabPane) {
-      this.members[0].setFields([aboutLink]);
+      this.members[0].setMembers([aboutLink]);
     } else {
       helpView = tabPane.getHelpView();
       if (!helpView) {
-        this.members[0].setFields([aboutLink]);
+        this.members[0].setMembers([aboutLink]);
       } else {
-        this.members[0].setFields([helpLink, aboutLink]);
+        this.members[0].setMembers([helpLink, aboutLink]);
       }
     }
     OB.TestRegistry.register('org.openbravo.client.application.HelpAboutForm.HelpLink', this.members[0].getField('helpLink'));
     OB.TestRegistry.register('org.openbravo.client.application.HelpAboutForm.AboutLink', this.members[0].getField('aboutLink'));
   },
   
-  members: [isc.DynamicForm.create({
-    numCols: 1,
+  members: [isc.VLayout.create({
+    height: 1,
     initWidget: function(){
       OB.TestRegistry.register('org.openbravo.client.application.HelpAboutForm', this);
       this.Super('initWidget', arguments);
