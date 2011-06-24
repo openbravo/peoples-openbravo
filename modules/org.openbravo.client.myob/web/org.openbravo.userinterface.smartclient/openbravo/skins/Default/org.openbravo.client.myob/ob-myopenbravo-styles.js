@@ -17,6 +17,84 @@
  ************************************************************************
 */
 
+OB.MyOBStyles = {
+  recentViewsLayout: {
+    baseStyle: 'OBMyOBRecentViews',
+    nodeIcons: {
+      Window: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png',
+      Process: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png',
+      Report: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png',
+      Form: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png'
+    },
+    Label: {
+      baseStyle: 'OBMyOBRecentViewsEntry'
+    },
+    newIcon: {
+      src: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/management/iconCreateNew.png'
+    }
+  },
+  recentDocumentsLayout: {
+    baseStyle: 'OBMyOBRecentViews',
+    Label: {
+      baseStyle: 'OBMyOBRecentViewsEntry',
+      icon: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/management/IconRecentDocs.png'
+    }
+  },
+  actionTitle: {
+    baseStyle: 'OBMyOBRecentViews'
+  },
+  refreshLayout: {
+    styleName: 'OBMyOBLeftColumnLink'
+  },
+  addWidgetLayout: {
+    styleName: 'OBMyOBLeftColumnLink'
+  },
+  adminOtherMyOBLayout: {
+    styleName: 'OBMyOBLeftColumnLink'
+  },
+  leftColumnLayout: {
+    styleName: 'OBMyOBLeftColumn'
+  },
+  portalLayout: {
+    styleName: 'OBMyOBPortal'
+  }
+};
+
+OB.OBMyOBAddWidgetDialog = {
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldSelectInput',
+  controlStyle: 'OBFormFieldSelectControl',
+  pickListBaseStyle: 'OBFormFieldPickListCell',
+  pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
+  height: 21,
+  pickerIconWidth: 21,
+  pickListProperties: {
+    bodyStyleName: 'OBPickListBody'
+  }
+};
+
+OB.OBMyOBAdminModeDialogStyles = {
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
+  textBoxStyle: 'OBFormFieldSelectInput',
+  controlStyle: 'OBFormFieldSelectControl',
+  pickListBaseStyle: 'OBFormFieldPickListCell',
+  pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
+  height: 21,
+  pickerIconWidth: 21,
+  pickListProperties: {
+    bodyStyleName: 'OBPickListBody'
+  }
+};
+
+OB.OBMyOBPublishChangesDialogStyles = {
+  form: {
+    styleName: 'OBMyOBPublishLegend'
+  }
+};
+
+
 isc.OBMyOpenbravo.addProperties({
   styleName: 'OBMyOpenbravo'
 });

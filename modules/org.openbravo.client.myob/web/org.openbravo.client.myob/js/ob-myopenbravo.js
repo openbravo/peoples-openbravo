@@ -99,7 +99,7 @@ isc.OBMyOpenbravo.addProperties({
     recentViewsLayout.addMember(isc.Label.create({
       height: 1,
       overflow: 'visible',
-      baseStyle: 'OBMyOBRecentViews',
+      baseStyle: OB.MyOBStyles.recentViewsLayout.baseStyle,
       contents: OB.I18N.getLabel('OBKMO_RecentViews')
     }));
 
@@ -120,7 +120,7 @@ isc.OBMyOpenbravo.addProperties({
     recentDocumentsLayout.addMember(isc.Label.create({
       height: 1,
       overflow: 'visible',
-      baseStyle: 'OBMyOBRecentViews',
+      baseStyle: OB.MyOBStyles.recentDocumentsLayout.baseStyle,
       contents: OB.I18N.getLabel('OBKMO_RecentDocuments')
     }));
 
@@ -144,7 +144,7 @@ isc.OBMyOpenbravo.addProperties({
     actionTitle.addMember(isc.Label.create({
       height: 1,
       overflow: 'visible',
-      baseStyle: 'OBMyOBRecentViews',
+      baseStyle: OB.MyOBStyles.actionTitle.baseStyle,
       contents: OB.I18N.getLabel('OBKMO_Manage_MyOpenbravo')
     }));
 
@@ -153,7 +153,7 @@ isc.OBMyOpenbravo.addProperties({
       overflow: 'visible'
     });
     refreshLayout.addMember(isc.Label.create({
-      styleName: 'OBMyOBLeftColumnLink',
+      styleName: OB.MyOBStyles.refreshLayout.styleName,
       width: '100%',
       height: 1,
       overflow: 'visible',
@@ -169,7 +169,7 @@ isc.OBMyOpenbravo.addProperties({
       overflow: 'visible'
     });
     addWidgetLayout.addMember(isc.Label.create({
-      styleName: 'OBMyOBLeftColumnLink',
+      styleName: OB.MyOBStyles.addWidgetLayout.styleName,
       width: '100%',
       height: 1,
       overflow: 'visible',
@@ -188,7 +188,7 @@ isc.OBMyOpenbravo.addProperties({
     if (this.enableAdminMode) {
       adminOtherMyOBLayout = isc.VLayout.create({});
       adminOtherMyOBLayout.addMember(isc.Label.create({
-        styleName: 'OBMyOBLeftColumnLink',
+        styleName: OB.MyOBStyles.adminOtherMyOBLayout.styleName,
         height: 1,
         width: '100%',
         overflow: 'visible',
@@ -211,7 +211,7 @@ isc.OBMyOpenbravo.addProperties({
 
     // the left layout containing the recent views and available widgets
     this.leftColumnLayout = isc.VStack.create({
-      styleName: 'OBMyOBLeftColumn',
+      styleName: OB.MyOBStyles.leftColumnLayout.styleName,
       width: '15%',
       height: 1,
       overflow: 'visible',
@@ -234,7 +234,7 @@ isc.OBMyOpenbravo.addProperties({
 
     // the portallayout containing the widgets
     this.portalLayout = isc.PortalLayout.create({
-      styleName: 'OBMyOBPortal',
+      styleName: OB.MyOBStyles.portalLayout.styleName,
       numColumns: 2,
       width: '85%',
       showColumnMenus: false,
@@ -377,16 +377,16 @@ isc.OBMyOpenbravo.addProperties({
           icon = null;
           if (recent.icon) {
             if (recent.icon === 'Process') {
-              icon = OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png';
+              icon = OB.MyOBStyles.recentViewsLayout.nodeIcons.Process;
             } else if (recent.icon === 'Report') {
-              icon = OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png';
+              icon = OB.MyOBStyles.recentViewsLayout.nodeIcons.Report;
             } else if (recent.icon === 'Form') {
-              icon = OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png';
+              icon = OB.MyOBStyles.recentViewsLayout.nodeIcons.Form;
             } else {
-              icon = OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png';
+              icon = OB.MyOBStyles.recentViewsLayout.nodeIcons.Window;
             }
           } else {
-            icon = OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png';
+            icon = OB.MyOBStyles.recentViewsLayout.nodeIcons.Window;
           }
 
           // if the recent was added through quick create then repair this
@@ -400,7 +400,7 @@ isc.OBMyOpenbravo.addProperties({
             recent: recent,
             width: '100%',
             updateRecent: true,
-            baseStyle: 'OBMyOBRecentViewsEntry',
+            baseStyle: OB.MyOBStyles.recentViewsLayout.Label.baseStyle,
             handleClick: handleClickFunction,
             iconOrientation: 'left',
             icon: icon
@@ -430,7 +430,7 @@ isc.OBMyOpenbravo.addProperties({
               // todo move this to styling
               width: 11,
               height: 11,
-              src: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/management/iconCreateNew.png',
+              src: OB.MyOBStyles.recentViewsLayout.newIcon.src,
 
               recent: newRecent,
               click: handleClickFunction
@@ -469,11 +469,11 @@ isc.OBMyOpenbravo.addProperties({
             width: '100%',
             showHover: true,
             showPrompt: true,
-            prompt: recent.tabTitle + ' - ' + recent.recentTitle,            
-            baseStyle: 'OBMyOBRecentViewsEntry',
+            prompt: recent.tabTitle + ' - ' + recent.recentTitle,
+            baseStyle: OB.MyOBStyles.recentDocumentsLayout.Label.baseStyle,
             handleClick: handleClickFunction,
             iconOrientation: 'left',
-            icon: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/management/IconRecentDocs.png',
+            icon: OB.MyOBStyles.recentDocumentsLayout.Label.icon,
             iconWidth: 13,
             iconHeight: 15
           });
@@ -924,18 +924,18 @@ isc.defineClass('OBMyOBAddWidgetDialog', isc.OBMyOBDialog).addProperties({
       titleOrientation: 'top',
       fields: [{
         name: 'widget',
-        errorOrientation: 'left',
-        cellStyle: 'OBFormField',
-        titleStyle: 'OBFormFieldLabel',
-        textBoxStyle: 'OBFormFieldSelectInput',
-        controlStyle: 'OBFormFieldSelectControl',
         width: '*',
-        pickListBaseStyle: 'OBFormFieldPickListCell',
-        pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
-        height: 21,
-        pickerIconWidth: 21,
+        errorOrientation: 'left',
+        cellStyle: OB.OBMyOBAddWidgetDialog.cellStyle,
+        titleStyle: OB.OBMyOBAddWidgetDialog.titleStyle,
+        textBoxStyle: OB.OBMyOBAddWidgetDialog.textBoxStyle,
+        controlStyle: OB.OBMyOBAddWidgetDialog.controlStyle,
+        pickListBaseStyle: OB.OBMyOBAddWidgetDialog.pickListBaseStyle,
+        pickerIconSrc: OB.OBMyOBAddWidgetDialog.pickerIconSrc,
+        height: OB.OBMyOBAddWidgetDialog.height,
+        pickerIconWidth: OB.OBMyOBAddWidgetDialog.pickerIconWidth,
         pickListProperties: {
-          bodyStyleName: 'OBPickListBody'
+          bodyStyleName: OB.OBMyOBAddWidgetDialog.pickListProperties.bodyStyleName
         },
         title: OB.I18N.getLabel('OBKMO_WidgetLabel'),
         titleSuffix: '',
@@ -995,16 +995,16 @@ isc.defineClass('OBMyOBAdminModeDialog', isc.OBMyOBDialog).addProperties({
       type: 'select',
       width: '*',
       errorOrientation: 'left',
-      cellStyle: 'OBFormField',
-      titleStyle: 'OBFormFieldLabel',
-      textBoxStyle: 'OBFormFieldSelectInput',
-      controlStyle: 'OBFormFieldSelectControl',
-      pickListBaseStyle: 'OBFormFieldPickListCell',
-      pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
-      height: 21,
-      pickerIconWidth: 21,
+      cellStyle: OB.OBMyOBAdminModeDialogStyles.cellStyle,
+      titleStyle: OB.OBMyOBAdminModeDialogStyles.titleStyle,
+      textBoxStyle: OB.OBMyOBAdminModeDialogStyles.textBoxStyle,
+      controlStyle: OB.OBMyOBAdminModeDialogStyles.controlStyle,
+      pickListBaseStyle: OB.OBMyOBAdminModeDialogStyles.pickListBaseStyle,
+      pickerIconSrc: OB.OBMyOBAdminModeDialogStyles.pickerIconSrc,
+      height: OB.OBMyOBAdminModeDialogStyles.height,
+      pickerIconWidth: OB.OBMyOBAdminModeDialogStyles.pickerIconWidth,
       pickListProperties: {
-        bodyStyleName: 'OBPickListBody'
+        bodyStyleName: OB.OBMyOBAdminModeDialogStyles.pickListProperties.bodyStyleName
       },
       valueMap: OB.MyOB.adminModeValueMap.level,
       changed: function(){
@@ -1020,18 +1020,18 @@ isc.defineClass('OBMyOBAdminModeDialog', isc.OBMyOBDialog).addProperties({
         name: 'levelValue',
         title: '',
         type: 'select',
-        errorOrientation: 'left',
-        cellStyle: 'OBFormField',
-        titleStyle: 'OBFormFieldLabel',
-        textBoxStyle: 'OBFormFieldSelectInput',
-        controlStyle: 'OBFormFieldSelectControl',
         width: '*',
-        pickListBaseStyle: 'OBFormFieldPickListCell',
-        pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
-        height: 21,
-        pickerIconWidth: 21,
+        errorOrientation: 'left',
+        cellStyle: OB.OBMyOBAdminModeDialogStyles.cellStyle,
+        titleStyle: OB.OBMyOBAdminModeDialogStyles.titleStyle,
+        textBoxStyle: OB.OBMyOBAdminModeDialogStyles.textBoxStyle,
+        controlStyle: OB.OBMyOBAdminModeDialogStyles.controlStyle,
+        pickListBaseStyle: OB.OBMyOBAdminModeDialogStyles.pickListBaseStyle,
+        pickerIconSrc: OB.OBMyOBAdminModeDialogStyles.pickerIconSrc,
+        height: OB.OBMyOBAdminModeDialogStyles.height,
+        pickerIconWidth: OB.OBMyOBAdminModeDialogStyles.pickerIconWidth,
         pickListProperties: {
-          bodyStyleName: 'OBPickListBody'
+          bodyStyleName: OB.OBMyOBAdminModeDialogStyles.pickListProperties.bodyStyleName
         },
         addUnknownValues: false
       });
@@ -1101,7 +1101,7 @@ isc.defineClass('OBMyOBPublishChangesDialog', isc.OBMyOBDialog).addProperties({
 
     this.form = isc.HTMLFlow.create({
       width: '100%',
-      styleName: 'OBMyOBPublishLegend',
+      styleName: OB.OBMyOBPublishChangesDialogStyles.form.styleName,
       contents: htmlContents
     });
 

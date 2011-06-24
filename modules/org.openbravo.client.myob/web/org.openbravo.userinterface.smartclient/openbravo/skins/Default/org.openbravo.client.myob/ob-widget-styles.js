@@ -11,11 +11,37 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
+isc.OBWidgetMenu.addProperties({
+  baseStyle: 'OBWidgetMenuCell', // menu in standard SC
+  styleName: 'OBWidgetMenu', // normal in standard sc
+  bodyStyleName: 'OBWidgetMenuBody', // normal in standard sc
+  tableStyle: 'OBWidgetMenuTable', // menuTable in standard SC
+  iconBodyStyleName: 'OBWidgetMenuTable'
+});
+
+isc.OBWidgetMenuItem.addProperties({
+  showIcon: false,
+  showOver: true,
+  showRollOver: true,
+  showDown: false,
+  showFocused: false,
+  showFocusedAsOver: false,
+  showTitle: false,
+  imageType: isc.Img.CENTER,
+  width: 24,
+  height: 24,
+  src: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/widget/edit.png',
+  baseStyle: 'OBWidgetMenuButton',
+  overflow: 'visible'
+});
+
+
 isc.OBWidget.addProperties({
   headerStyle: 'OBWidgetHeader',
   showEdges:true,

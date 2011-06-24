@@ -26,11 +26,6 @@
 isc.defineClass('OBWidgetMenu', isc.Menu).addProperties({
   portlet: null,
   fields: ['icon', 'title'],
-  baseStyle: 'OBWidgetMenuCell', // menu in standard SC
-  styleName: 'OBWidgetMenu', // normal in standard sc
-  bodyStyleName: 'OBWidgetMenuBody', // normal in standard sc
-  tableStyle: 'OBWidgetMenuTable', // menuTable in standard SC
-  iconBodyStyleName: 'OBWidgetMenuTable',
 
   // overridden to get reliable custom style name
   getBaseStyle: function (record, rowNum, colNum) {
@@ -58,16 +53,6 @@ isc.defineClass('OBWidgetMenu', isc.Menu).addProperties({
 isc.defineClass('OBWidgetMenuItem', IMenuButton).addProperties({
   widget: null,
   menu: null,
-  showIcon: false,
-  showOver: false,
-  showRollOver: true,
-  showDown: false,
-  showFocused: false,
-  showFocusedAsOver: false,
-  showTitle: false,
-  imageType: isc.Img.CENTER,
-  src: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/widget/edit.png',
-  baseStyle: 'OBWidgetMenuButton',
 
   // only show the middle image without stretch appended
   items: [{
@@ -75,10 +60,6 @@ isc.defineClass('OBWidgetMenuItem', IMenuButton).addProperties({
     width: '*',
     height: '*'
   }],
-
-  overflow: 'visible',
-  width: 24,
-  height: 24,
 
   editFormLayout: null,
   windowContents: null,
