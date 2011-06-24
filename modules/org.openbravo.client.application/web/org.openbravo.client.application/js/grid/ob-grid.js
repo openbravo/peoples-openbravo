@@ -358,6 +358,8 @@ isc.OBGrid.addProperties({
       return;
     }
     var gridIsFiltered = this.isGridFiltered(criteria);
+    var noParentOrParentSelected = !this.view.parentView ||
+        (this.view.parentView.viewGrid.getSelectedRecords() && this.view.parentView.viewGrid.getSelectedRecords().length > 0);
     
     if (this.filterClause && gridIsFiltered) {
       this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterBothToolTip');      
@@ -378,7 +380,7 @@ isc.OBGrid.addProperties({
     
     if (this.filterClause && !this.view.isShowingForm && !this.view.messageBar.isVisible()) {
       var showMessageProperty = OB.PropertyStore.get('OBUIAPP_ShowImplicitFilterMsg'),
-          showMessage = (showMessageProperty !== 'N' && showMessageProperty !== '"N"');
+          showMessage = (showMessageProperty !== 'N' && showMessageProperty !== '"N"' && noParentOrParentSelected);
       if (showMessage) {
         this.view.messageBar.setMessage(OBMessageBar.TYPE_INFO, '<div><div style="float: left;">'+
             this.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + 
