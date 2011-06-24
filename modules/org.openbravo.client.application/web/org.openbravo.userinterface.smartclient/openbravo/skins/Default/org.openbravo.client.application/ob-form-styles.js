@@ -385,60 +385,17 @@ isc.DateRangeItem.addProperties({
 });
 
 isc.RelativeDateItem.addProperties({
-  showChooserIcon: false,
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
-  controlStyle: 'OBFormFieldSelectControl',
-  timeUnitOptions: ['day', 'week', 'month', 'quarter', 'year'],
-  todayTitle: OB.I18N.getLabel('OBUISC_DateChooser.todayButtonTitle'),
-  
-  millisecondsAgoTitle: OB.I18N.getLabel('OBUIAPP_milliseconds_ago'),
-  secondsAgoTitle: OB.I18N.getLabel('OBUIAPP_seconds_ago'),
-  minutesAgoTitle: OB.I18N.getLabel('OBUIAPP_minutes_ago'),  
-  hoursAgoTitle: OB.I18N.getLabel('OBUIAPP_hours_ago'),
-  daysAgoTitle: OB.I18N.getLabel('OBUIAPP_days_ago'),
-  weeksAgoTitle: OB.I18N.getLabel('OBUIAPP_weeks_ago'),
-  monthsAgoTitle: OB.I18N.getLabel('OBUIAPP_months_ago'),
-  quartersAgoTitle: OB.I18N.getLabel('OBUIAPP_quarters_ago'),
-  yearsAgoTitle: OB.I18N.getLabel('OBUIAPP_years_ago'),
-  
-  millisecondsFromNowTitle: OB.I18N.getLabel('OBUIAPP_milliseconds_from_now'),
-  secondsFromNowTitle: OB.I18N.getLabel('OBUIAPP_seconds_from_now'),
-  minutesFromNowTitle: OB.I18N.getLabel('OBUIAPP_minutes_from_now'),
-  hoursFromNowTitle: OB.I18N.getLabel('OBUIAPP_hours_from_now'),
-  daysFromNowTitle: OB.I18N.getLabel('OBUIAPP_days_from_now'),
-  weeksFromNowTitle: OB.I18N.getLabel('OBUIAPP_weeks_from_now'),
-  monthsFromNowTitle: OB.I18N.getLabel('OBUIAPP_months_from_now'),
-  quartersFromNowTitle: OB.I18N.getLabel('OBUIAPP_quarters_from_now'),
-  yearsFromNowTitle: OB.I18N.getLabel('OBUIAPP_years_from_now'),
-  
-  presetOptions: {
-    "$today" : OB.I18N.getLabel('OBUISC_DateChooser.todayButtonTitle'),
-    "$yesterday" : OB.I18N.getLabel('OBUIAPP_Yesterday'),
-    "$tomorrow" : OB.I18N.getLabel('OBUIAPP_Tomorrow'),
-    "-1w" : OB.I18N.getLabel('OBUIAPP_Current_day_of_last_week'),
-    "+1w" : OB.I18N.getLabel('OBUIAPP_Current_day_of_next_week'),
-    "-1m" : OB.I18N.getLabel('OBUIAPP_Current_day_of_last_month'),
-    "+1m" : OB.I18N.getLabel('OBUIAPP_Current_day_of_next_month')
-  }
+  controlStyle: 'OBFormFieldSelectControl'
 });
 
 isc.RelativeDateItem.changeDefaults('quantityFieldDefaults', {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
-  controlStyle: 'OBFormFieldSelectControl',
-  // max 1000 days/months in the past/future
-  max: 1000,
-  alwaysTakeSpace: false,
-  
-  // after leaving the quantity field the next time the rangeitem is visited the 
-  // focus should go to the value field again
-  blur: function() {
-    this.Super('blur', arguments);
-    this.form.setFocusItem(this.form.getItem('valueField'));
-  }
+  controlStyle: 'OBFormFieldSelectControl'
 });
 
 isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
@@ -449,32 +406,10 @@ isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
   pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
   pickerIconWidth: 21,
   pickerIconHeight: 21,
-  
-  keyPress: function(item, form, keyName, characterValue){
-    if (keyName === 'Enter') {
-      // canvasItem is the rangeItem
-      form.canvasItem.showPicker();
-      return false;
-    }
-    return true;
-  },
-  
-  init: function() {
-    this.icons = [{
-      width: 21,
-      height: 21,
-      hspace: 0,
-      canFocus: false,
-      showFocused: false,
-      item: this,
-      src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/date_control.png',
-      click: function() {
-        this.item.form.canvasItem.showPicker();
-      }
-    }];
-    this.Super('init', arguments);
-  }
- 
+  calendarIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/date_control.png',
+  calendarIconWidth: 21,
+  calendarIconHeight: 21,
+  calendarIconHspace: 0
 });
 
 isc.RelativeDateItem.changeDefaults('calculatedDateFieldDefaults', {
