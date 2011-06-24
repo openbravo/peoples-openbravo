@@ -281,11 +281,11 @@ isc.OBViewGrid.addProperties({
   
     var ret = this.Super('initWidget', arguments);
     
-    this.noDataEmptyMessage = OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage'); // OB.I18N.getLabel('OBUIAPP_GridNoRecords')
-    this.filterNoRecordsEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') +
-    ' <span onclick="window[\'' +
+    this.noDataEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage') + '</span>'; // OB.I18N.getLabel('OBUIAPP_GridNoRecords')
+    this.filterNoRecordsEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + '</span>' +
+    '<span onclick="window[\'' +
     this.ID +
-    '\'].clearFilter();" class="OBLabelLink">' +
+    '\'].clearFilter();" class="OBLinkButtonItem">' +
     OB.I18N.getLabel('OBUIAPP_GridClearFilter') +
     '</span>';
     
@@ -574,12 +574,12 @@ isc.OBViewGrid.addProperties({
     // do this now, to replace the loading message
     // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
     if (this.uiPattern === 'SR' || this.uiPattern === 'RO') {
-      this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_NoDataInGrid');
+      this.noDataEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
     } else {
-      this.noDataEmptyMessage = OB.I18N.getLabel('OBUIAPP_GridNoRecords') +
-      ' <span onclick="window[\'' +
+      this.noDataEmptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_GridNoRecords') + '</span>' +
+      '<span onclick="window[\'' +
       this.ID +
-      '\'].view.newRow();" class="OBLabelLink">' +
+      '\'].view.newRow();" class="OBLinkButtonItem">' +
       OB.I18N.getLabel('OBUIAPP_GridCreateOne') +
       '</span>';
     }
@@ -1015,11 +1015,11 @@ isc.OBViewGrid.addProperties({
       parentIsNew = this.view.parentView.isShowingForm && this.view.parentView.viewForm.isNew;
       parentIsNew = parentIsNew || (selectedValues.length === 1 && selectedValues[0]._new);
       if (parentIsNew) {
-        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_ParentIsNew');
+        this.emptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_ParentIsNew') + '</span>';
       } else if (selectedValues.length === 0) {
-        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_NoParentSelected');
+        this.emptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_NoParentSelected') + '</span>';
       } else if (selectedValues.length > 1) {
-        this.emptyMessage = OB.I18N.getLabel('OBUIAPP_MultipleParentsSelected');
+        this.emptyMessage = '<span class="OBGridNotificationText">' + OB.I18N.getLabel('OBUIAPP_MultipleParentsSelected') + '</span>';
       } else {
         this.emptyMessage = this.noDataEmptyMessage;
       }

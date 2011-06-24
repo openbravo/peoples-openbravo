@@ -741,22 +741,27 @@
 }
 
 .OBLinkButtonItem,
-.OBLinkButtonItemOver {
+.OBLinkButtonItemOver,
+.OBLinkButtonItem:hover {
+  cursor: pointer;
   color: #58A618;
 }
 
-.OBLinkButtonItemDown {
+.OBLinkButtonItemDown,
+.OBLinkButtonItem:active {
   color: #004E27;
 }
 
 .OBLinkButtonItemFocused,
 .OBLinkButtonItemFocusedOver,
-.OBLinkButtonItemFocusedDown {
+.OBLinkButtonItemFocusedDown,
+.OBLinkButtonItem:focus {
   color: #fa962f;
 }
 
 .OBLinkButtonItemOver,
-.OBLinkButtonItemFocusedOver {
+.OBLinkButtonItemFocusedOver,
+.OBLinkButtonItem:hover {
   text-decoration: underline;
 }
 
@@ -850,4 +855,3 @@ a.OBNoteListGridDelete:link {
 a.OBNoteListGridDelete:hover {
   text-decoration: underline;
 }
-	
