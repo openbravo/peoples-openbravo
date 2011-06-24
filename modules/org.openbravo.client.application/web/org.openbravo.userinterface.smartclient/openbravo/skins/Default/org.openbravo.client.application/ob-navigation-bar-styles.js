@@ -87,6 +87,13 @@ isc.OBQuickLaunch.addProperties({
     membersMargin: 10
   },
 
+  nodeIcons: {
+    Window: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png',
+    Process: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png',
+    Report: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png',
+    Form: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png'
+  },
+
   createNew_src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-createNew.png',
   quickLaunch_src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-quickLaunch.png'
 });
@@ -104,4 +111,18 @@ isc.OBLogout.addProperties({
   showRollOver: false,
   showFocused: false,
   showDown: false
+});
+
+
+isc.OBQuickLaunchRecentLinkButton.addProperties({
+  width: 1, //To allow button be just text width
+  align: 'left',
+  baseStyle: 'OBQuickLaunchRecentLinkButton',
+  showDown: true,
+  showFocused: true,
+  showFocusedAsOver: false,
+  showRollOver: true,
+  autoFit: true,
+  height: 1,
+  overflow: 'visible'
 });

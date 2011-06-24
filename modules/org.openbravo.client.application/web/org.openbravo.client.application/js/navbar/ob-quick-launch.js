@@ -16,76 +16,70 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
+
+isc.ClassFactory.defineClass('OBQuickLaunchRecentLinkButton', isc.Button);
+
+isc.OBQuickLaunchRecentLinkButton.addProperties({
+  recentObject: null,
+  prefixLabel: null,
+  action: function(){
+    // getting the last event prevents an error in chrome
+    // https://issues.openbravo.com/view.php?id=16847
+    var lastEvent = isc.EventHandler.getLastEvent();
+    if (!isc.EventHandler.leftButtonDown()) {
+      return;
+    }
+    OB.RecentUtilities.addRecent(this.recentPropertyName, this.recentObject);
+    if (this.recentObject.viewId) {
+      OB.Layout.ViewManager.openView(this.recentObject.viewId, this.recentObject);
+    } else {
+      OB.Layout.ViewManager.openView('OBClassicWindow', this.recentObject);
+    }
+
+    if (isc.OBQuickRun.currentQuickRun) {
+      isc.OBQuickRun.currentQuickRun.doHide();
+    }
+  },
+  initWidget: function() {
+    if (this.prefixLabel.length > 0) {
+      this.title = OB.I18N.getLabel(this.prefixLabel) + ' ' + this.recentObject.tabTitle;
+    } else {
+      this.title = this.recentObject.tabTitle;
+    }
+
+    if (this.recentObject.icon) {
+      if (this.recentObject.icon === 'Process') {
+        this.setIcon(this.nodeIcons.Process);
+      } else if (this.recentObject.icon === 'Report') {
+        this.setIcon(this.nodeIcons.Report);
+      } else if (this.recentObject.icon === 'Form') {
+        this.setIcon(this.nodeIcons.Form);
+      } else {
+        this.setIcon(this.nodeIcons.Window);
+      }
+    }
+  }
+});
+
+
 isc.ClassFactory.defineClass('OBQuickLaunch', isc.OBQuickRun);
 
 isc.OBQuickLaunch.addProperties({
 
   beforeShow: function(){
     var recent = OB.RecentUtilities.getRecentValue(this.recentPropertyName);
-    
-    var RecentFieldType = function(recentObject){
-      if (this.prefixLabel.length > 0) {
-        this.linkTitle = OB.I18N.getLabel(this.prefixLabel) + ' ' + recentObject.tabTitle;
-      } else {
-        this.linkTitle = recentObject.tabTitle;
-      }
-      this.value = recentObject.tabTitle;
-      this.recentObject = recentObject;
-    };
-    RecentFieldType.prototype = {
-      editorType: 'link',
-      value: null,
-      showTitle: false,
-      width: 1,
-      overflow: 'visible',
-      target: 'javascript',
-      shouldSaveValue: false,
-      recentPropertyName: this.recentPropertyName,
-      prefixLabel: this.prefixLabel,
-      handleClick: function(){
-        // getting the last event prevents an error in chrome
-        // https://issues.openbravo.com/view.php?id=16847
-        var lastEvent = isc.EventHandler.getLastEvent();
-        if (!isc.EventHandler.leftButtonDown()) {
-          return;
-        }
-        OB.RecentUtilities.addRecent(this.recentPropertyName, this.recentObject);
-        if (this.recentObject.viewId) {
-          OB.Layout.ViewManager.openView(this.recentObject.viewId, this.recentObject);
-        } else {
-          OB.Layout.ViewManager.openView('OBClassicWindow', this.recentObject);
-        }
-        
-        if (isc.OBQuickRun.currentQuickRun) {
-          isc.OBQuickRun.currentQuickRun.doHide();
-        }
-      },
-      getValueIcon: function(value){
-        if (this.recentObject.icon) {
-          if (this.recentObject.icon === 'Process') {
-            return OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png';
-          } else if (this.recentObject.icon === 'Report') {
-            return OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png';
-          } else if (this.recentObject.icon === 'Form') {
-            return OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png';
-          } else {
-            return OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png';
-          }
-        }
-        return null;
-      }
-    };
 
     if (recent && recent.length > 0) {
       var newFields = [];
       var index = 0, recentIndex;
       for (recentIndex = 0; recentIndex < recent.length; recentIndex++) {
         if (recent[recentIndex]) {
-          newFields[index] = new RecentFieldType(recent[recentIndex]);
+          newFields[index] = isc.OBQuickLaunchRecentLinkButton.create({recentObject: recent[recentIndex], prefixLabel: this.prefixLabel, nodeIcons: this.nodeIcons});
+          newFields[index].recentPropertyName = this.recentPropertyName;
           index++;
         }
       }
-      this.members[0].setFields(newFields);
+      this.members[0].setMembers(newFields);
       this.layout.showMember(this.members[0]);
     }
     this.members[1].getField('value').setValue(null);
@@ -104,14 +98,9 @@ isc.OBQuickLaunch.addProperties({
   },
 
   initWidget: function(){
-    this.members = [isc.DynamicForm.create({
-      visibility: 'hidden',
-      canSelectText: true,
-      handleClick: function() {
-        // overridden to prevent double firing of click event
-        // https://issues.openbravo.com/view.php?id=16847
-      },
-      numCols: 1
+    this.members = [isc.VLayout.create({
+      height: 1, //To allow height grow with its contents
+      visibility: 'hidden'
     }), isc.DynamicForm.create({
       autoFocus: true,
       width: '100%',
@@ -160,10 +149,10 @@ isc.OBQuickLaunch.addProperties({
           showValueIconOnly: true,
           name: 'icon',
           valueIcons: {
-            Process: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png',
-            Report: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png',
-            Form: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png',
-            Window: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png'
+            Process: this.nodeIcons.Process,
+            Report: this.nodeIcons.Report,
+            Form: this.nodeIcons.Form,
+            Window: this.nodeIcons.Window
           }
         }, {
           name: OB.Constants.IDENTIFIER,

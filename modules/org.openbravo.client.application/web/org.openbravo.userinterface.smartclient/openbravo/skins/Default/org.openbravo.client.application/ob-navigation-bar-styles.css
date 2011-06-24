@@ -178,3 +178,45 @@ if the tab headers are on the right, left or bottom the same styles can be used 
   background-color: #fff;
   border: 1px solid #72ab10;
 }
+
+/*=======================================================================
+ * OBQuickLaunchRecentLinkButton Item
+=======================================================================*/
+
+.OBQuickLaunchRecentLinkButton,
+.OBQuickLaunchRecentLinkButtonOver,
+.OBQuickLaunchRecentLinkButtonDown,
+.OBQuickLaunchRecentLinkButtonFocused,
+.OBQuickLaunchRecentLinkButtonFocusedOver,
+.OBQuickLaunchRecentLinkButtonFocusedDown {
+  font-family: 'lucida sans', sans-serif;
+  font-size: 11px;
+  vertical-align: middle;
+  background: transparent;
+  padding: 3px 5px 3px 5px;
+}
+
+.OBQuickLaunchRecentLinkButton,
+.OBQuickLaunchRecentLinkButtonOver,
+.OBQuickLaunchRecentLinkButton:hover {
+  cursor: pointer;
+  color: #58A618;
+}
+
+.OBQuickLaunchRecentLinkButtonDown,
+.OBQuickLaunchRecentLinkButton:active {
+  color: #004E27;
+}
+
+.OBQuickLaunchRecentLinkButtonFocused,
+.OBQuickLaunchRecentLinkButtonFocusedOver,
+.OBQuickLaunchRecentLinkButtonFocusedDown,
+.OBQuickLaunchRecentLinkButton:focus {
+  color: #fa962f;
+}
+
+.OBQuickLaunchRecentLinkButtonOver,
+.OBQuickLaunchRecentLinkButtonFocusedOver,
+.OBQuickLaunchRecentLinkButton:hover {
+  text-decoration: underline;
+}
