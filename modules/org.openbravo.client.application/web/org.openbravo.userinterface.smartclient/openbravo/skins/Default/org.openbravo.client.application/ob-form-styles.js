@@ -169,7 +169,7 @@ isc.OBLinkItem.addProperties({
   pickerIconHeight: 21,
   pickerIconWidth: 21,
   pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
-  pickerIcoHspace: 0,
+  pickerIconHspace: 0,
   clearIcon: {
     showHover: true,
     height: 15,
