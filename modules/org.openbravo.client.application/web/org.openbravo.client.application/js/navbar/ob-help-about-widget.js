@@ -79,14 +79,14 @@ isc.OBHelpAbout.addProperties({
         this.members[0].setMembers([helpLink, aboutLink]);
       }
     }
-    OB.TestRegistry.register('org.openbravo.client.application.HelpAboutForm.HelpLink', this.members[0].getField('helpLink'));
-    OB.TestRegistry.register('org.openbravo.client.application.HelpAboutForm.AboutLink', this.members[0].getField('aboutLink'));
+    OB.TestRegistry.register('org.openbravo.client.application.HelpAbout.HelpLink', helpLink);
+    OB.TestRegistry.register('org.openbravo.client.application.HelpAbout.AboutLink', aboutLink);
   },
   
   members: [isc.VLayout.create({
     height: 1,
     initWidget: function(){
-      OB.TestRegistry.register('org.openbravo.client.application.HelpAboutForm', this);
+      OB.TestRegistry.register('org.openbravo.client.application.HelpAbout', this);
       this.Super('initWidget', arguments);
     }
   })],
