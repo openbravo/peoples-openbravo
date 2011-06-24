@@ -95,6 +95,7 @@ isc.OBUserProfile.addProperties({
       controlStyle: this.ComboBoxField_controlStyle,
       width: '*',
       pickListBaseStyle: this.ComboBoxField_pickListBaseStyle,
+      pickListTallBaseStyle: this.ComboBoxField_pickListTallBaseStyle,
       pickerIconSrc: this.ComboBoxField_pickerIconSrc,
       
       // without this in chrome the content is sorted according to the id/value

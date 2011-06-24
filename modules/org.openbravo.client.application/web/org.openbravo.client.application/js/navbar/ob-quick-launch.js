@@ -123,6 +123,7 @@ isc.OBQuickLaunch.addProperties({
         textBoxStyle: OB.DefaultPickListStyleProperties.textBoxStyle,
         controlStyle: OB.DefaultPickListStyleProperties.controlStyle,
         pickListBaseStyle: OB.DefaultPickListStyleProperties.pickListBaseStyle,
+        pickListTallBaseStyle: OB.DefaultPickListStyleProperties.pickListTallBaseStyle,
         pickerIconStyle: OB.DefaultPickListStyleProperties.pickerIconStyle,
         pickerIconSrc: OB.DefaultPickListStyleProperties.pickerIconSrc,
         height: OB.DefaultPickListStyleProperties.height,

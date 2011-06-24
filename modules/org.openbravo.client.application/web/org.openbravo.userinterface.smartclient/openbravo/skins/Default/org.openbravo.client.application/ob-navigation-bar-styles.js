@@ -58,6 +58,7 @@ isc.OBUserProfile.addProperties({
   ComboBoxField_textBoxStyle: 'OBFormFieldSelectInput',
   ComboBoxField_controlStyle: 'OBFormFieldSelectControl',
   ComboBoxField_pickListBaseStyle: 'OBFormFieldPickListCell',
+  ComboBoxField_pickListTallBaseStyle: 'OBFormFieldPickListCell',
   ComboBoxField_pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
   ComboBoxField_pickListProperties_bodyStyleName: 'OBPickListBody',
 
