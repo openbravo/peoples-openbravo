@@ -85,7 +85,7 @@ isc.OBStandardWindow.addProperties({
 OB.Styles.LoadingPrompt = {
   mainLayoutStyleName: 'OBLoadingPromptModalMask',
   loadingLayoutStyleName: 'OBLoadingPromptLabel',
-  loadingImage: {src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/windowLoading.gif', width: 220, height:16}
+  loadingImage: {src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/windowLoading.gif', width: 220, height:16}  /* Generated @ http://www.ajaxload.info/ */ /* Indicator type: 'Bar' - Background color: #7F7F7F - Transparent background - Foreground color: #FFFFFF */
 };
 
 /* =====================================================================
