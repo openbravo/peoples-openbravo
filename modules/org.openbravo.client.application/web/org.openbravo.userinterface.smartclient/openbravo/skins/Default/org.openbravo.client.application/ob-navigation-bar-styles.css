@@ -200,7 +200,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBQuickLaunchRecentLinkButtonOver,
 .OBQuickLaunchRecentLinkButton:hover {
   cursor: pointer;
-  color: #58A618;
+  color: #333333;
 }
 
 .OBQuickLaunchRecentLinkButtonDown,
@@ -242,7 +242,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBHelpAboutLinkButtonOver,
 .OBHelpAboutLinkButton:hover {
   cursor: pointer;
-  color: #58A618;
+  color: #333333;
 }
 
 .OBHelpAboutLinkButtonDown,
