@@ -187,7 +187,7 @@
 .OBToolbarIconButton_icon_saveProgress {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(./images/system/progress-indicator-toolbar.gif);
+  background-image: url(./images/toolbar/iconButton-progress.gif);  /* Generated @ http://www.ajaxload.info/ */ /* Indicator type: 'Snake' - Background color: #64932D - Transparent background - Foreground color: #FFFFFF */
 }
 
 .OBToolbarIconButton_icon_sum {
@@ -223,13 +223,13 @@
 .OBToolbarIconButton_icon_attachProgress {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(./images/system/progress-indicator-toolbar.gif);
+  background-image: url(./images/toolbar/iconButton-progress.gif);  /* Generated @ http://www.ajaxload.info/ */ /* Indicator type: 'Snake' - Background color: #64932D - Transparent background - Foreground color: #FFFFFF */
 }
 
 .OBToolbarIconButton_icon_attachExistsProgress {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(./images/system/progress-indicator-toolbar.gif);
+  background-image: url(./images/toolbar/iconButton-progress.gif);  /* Generated @ http://www.ajaxload.info/ */ /* Indicator type: 'Snake' - Background color: #64932D - Transparent background - Foreground color: #FFFFFF */
 }
 
 .OBToolbarIconButton_icon_innerJoin {

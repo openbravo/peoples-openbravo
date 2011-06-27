@@ -53,7 +53,7 @@ isc.OBGrid.addProperties({
       width: 16,
       height: 16,
       visibility: 'hidden',
-      src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/progress-indicator-row.gif'
+      src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-progress.gif'  /* Generated @ http://www.ajaxload.info/ */ /* Indicator type: 'Snake' - Background color: #FFE1C0 - Transparent background - Foreground color: #333333 */
   }
 });
 
