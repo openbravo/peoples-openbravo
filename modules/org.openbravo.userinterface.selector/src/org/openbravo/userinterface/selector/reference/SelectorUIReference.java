@@ -135,7 +135,7 @@ public class SelectorUIReference extends UIReference {
           prop.setProperty("ColumnNameSearch", tableName + "_ID");
           tableDir.identifier(tableSql, tableSql.getTableName(), prop, prop
               .getProperty("ColumnName"), tableSql.getTableName() + "."
-              + prop.getProperty("ColumnName"), false);
+              + prop.getProperty("ColumnName") + "_R", false);
         }
       } else {
         super.generateSQL(tableSql, prop);
