@@ -31,7 +31,6 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -281,8 +280,20 @@ public class ReportMaterialDimensionalAnalysesJR extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
-        vars.getRole()));
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportMaterialDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client",
+              "ReportMaterialDimensionalAnalyzeJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData,
+          "ReportMaterialDimensionalAnalyzeJR", strOrg);
+      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
         .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
             .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
