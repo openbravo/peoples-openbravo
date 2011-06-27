@@ -23,7 +23,7 @@
 isc.OBPopup.addProperties({
   // rounded frame edges
   showEdges: true,
-  edgeImage: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/border.png',
+  edgeImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/popup/border.png',
   customEdges: null,
   edgeSize: 2,
   edgeTop: 27,
@@ -61,40 +61,40 @@ isc.OBPopup.changeDefaults('headerLabelDefaults', {
 });
 
 isc.OBPopup.changeDefaults('resizerDefaults', {
-  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/resizer.png'
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/popup/resizer.png'
 });
 
 isc.OBPopup.changeDefaults('headerIconDefaults', {
   styleName: 'OBPopupHeaderIcon',
-  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/iconHeader.png',
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/popup/iconHeader.png',
   width: 20,
   height: 16
 });
 
 isc.OBPopup.changeDefaults('restoreButtonDefaults', {
   baseStyle: 'OBPopupIconRestore',
-  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/restore.png',
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/popup/restore.png',
   width: 24,
   height: 20
 });
 
 isc.OBPopup.changeDefaults('closeButtonDefaults', {
   baseStyle: 'OBPopupIconClose',
-  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/close.png',
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/popup/close.png',
   width: 24,
   height: 20
 });
 
 isc.OBPopup.changeDefaults('maximizeButtonDefaults', {
   baseStyle: 'OBPopupIconMaximize',
-  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/maximize.png',
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/popup/maximize.png',
   width: 24,
   height: 20
 });
 
 isc.OBPopup.changeDefaults('minimizeButtonDefaults', {
   baseStyle: 'OBPopupIconMinimize',
-  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/popup/minimize.png',
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/popup/minimize.png',
   width: 24,
   height: 20
 });

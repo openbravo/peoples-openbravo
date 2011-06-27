@@ -60,7 +60,7 @@ OB.Layout = isc.VLayout.create({
 OB.Layout.initialize = function() {
 
   // create the bar with navigation components
-  OB.Toolbar = isc.ToolStrip.create({  
+  OB.NavBar = isc.ToolStrip.create({  
     addMembers: function(members) {
       // encapsulate the members
       var newMembers = [], i;
@@ -73,15 +73,15 @@ OB.Layout.initialize = function() {
       // is considered to the argument list
       this.Super('addMembers', [newMembers]);
     }
-  }, OB.MainLayoutStylingProperties.Toolbar);
+  }, OB.Styles.TopLayout.NavBar);
   
   // the TopLayout has the navigation bar on the left and the logo on the right
-  OB.TopLayout = isc.HLayout.create({}, OB.MainLayoutStylingProperties.TopLayout);
+  OB.TopLayout = isc.HLayout.create({}, OB.Styles.TopLayout);
       
   // create the navbar on the left and the logo on the right
   OB.TopLayout.CompanyImageLogo = isc.Img.create({
     imageType: 'normal'
-  }, OB.MainLayoutStylingProperties.CompanyImageLogo);
+  }, OB.Styles.TopLayout.CompanyImageLogo);
   OB.TestRegistry.register('org.openbravo.client.application.companylogo', OB.TopLayout.CompanyImageLogo);
   
   OB.TopLayout.OpenbravoLogo = isc.Img.create({
@@ -100,7 +100,7 @@ OB.Layout.initialize = function() {
   });
   OB.TestRegistry.register('org.openbravo.client.application.openbravologo', OB.TopLayout.OpenbravoLogo);    
   
-  OB.TopLayout.addMember(OB.Toolbar);
+  OB.TopLayout.addMember(OB.NavBar);
   OB.TopLayout.addMember(
           isc.HLayout.create({
               width: '100%',
@@ -116,7 +116,7 @@ OB.Layout.initialize = function() {
   OB.Layout.addMember(OB.TopLayout);
   
   // create some vertical space
-  OB.Layout.addMember(isc.HLayout.create({}, OB.MainLayoutStylingProperties.TopLayoutSpacer));
+  OB.Layout.addMember(isc.HLayout.create({}, OB.Styles.TopLayoutSpacer));
   
   OB.MainView = isc.VLayout.create({
     width: '100%',
@@ -132,7 +132,7 @@ OB.Layout.initialize = function() {
   OB.TestRegistry.register('org.openbravo.client.application.mainview.tabset', OB.MainView.TabSet);
   OB.TestRegistry.register('org.openbravo.client.application.layout', OB.Layout);
   
-  OB.Toolbar.addMembers([
+  OB.NavBar.addMembers([
   <#list data.navigationBarComponents as nbc>
   ${nbc.jscode}<#if nbc_has_next>,</#if>
   </#list>]);

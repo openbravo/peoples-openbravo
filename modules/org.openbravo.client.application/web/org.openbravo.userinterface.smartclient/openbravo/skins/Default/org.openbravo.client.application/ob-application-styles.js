@@ -30,10 +30,18 @@
  =======================================================================*/
 // note main layout styling is done a bit differently 
 // as this needs to be set when the layout gets created
-OB.MainLayoutStylingProperties = {};
+
+// Styling of the main layout containing everything
+OB.Styles.TopLayout = {
+  width: '100%',
+  height: '1',
+  styleName: 'OBTopLayout',
+  overflow: 'visible',
+  layoutTopMargin: 4
+};
 
 // The toolbar showing the navigation bar components
-OB.MainLayoutStylingProperties.Toolbar = {
+OB.Styles.TopLayout.NavBar = {
   overflow: 'visible',
   defaultLayoutAlign: 'center',
   styleName: 'OBNavBarToolStrip',
@@ -43,28 +51,19 @@ OB.MainLayoutStylingProperties.Toolbar = {
   height: 28
 };
 
-// Styling of the main layout containing everything
-OB.MainLayoutStylingProperties.TopLayout = {
-  width: '100%',
-  height: '1',
-  styleName: 'OBTopLayout',
-  overflow: 'visible',
-  layoutTopMargin: 4
-};
-
-  // Styling of the main layout spacer, between toplayout and tabs
-OB.MainLayoutStylingProperties.TopLayoutSpacer = {
-  height: '10',
-  styleName: 'OBTopLayoutSpacer'
-};
-
-
 // Properties for the custom company image
-OB.MainLayoutStylingProperties.CompanyImageLogo = {
+OB.Styles.TopLayout.CompanyImageLogo = {
   width: 122,
   height: 34,
   src: OB.Application.contextUrl + 'utility/ShowImageLogo?logo=yourcompanymenu'
 };
+
+  // Styling of the main layout spacer, between toplayout and tabs
+OB.Styles.TopLayoutSpacer = {
+  height: '10',
+  styleName: 'OBTopLayoutSpacer'
+};
+
 
 /* =====================================================================
  * Main components styling properties
@@ -83,16 +82,16 @@ isc.OBStandardWindow.addProperties({
 /* =====================================================================
  * Loading prompt
  =======================================================================*/
-OB.LoadingPrompt = {
+OB.Styles.LoadingPrompt = {
   mainLayoutStyleName: 'OBLoadingPromptModalMask',
   loadingLayoutStyleName: 'OBLoadingPromptLabel',
-  loadingImage: {src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/system/windowLoading.gif', width: 220, height:16}
+  loadingImage: {src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/windowLoading.gif', width: 220, height:16}
 };
 
 /* =====================================================================
  * Width of the active bar on the left in the main view
  =======================================================================*/
-OB.ActiveBarStyling = {
+OB.Styles.ActiveBar = {
   width: 6,
   activeStyleName: 'OBViewActive',
   inActiveStyleName: 'OBViewInActive'

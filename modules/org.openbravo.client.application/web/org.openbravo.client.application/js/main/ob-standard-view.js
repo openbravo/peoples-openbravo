@@ -382,10 +382,10 @@ isc.OBStandardView.addProperties({
         height: '100%',
         canFocus: true, // to set active view when it gets clicked
         contents: '&nbsp;',
-        width: OB.ActiveBarStyling.width,
-        styleName: OB.ActiveBarStyling.inActiveStyleName,
-        activeStyleName: OB.ActiveBarStyling.activeStyleName,
-        inActiveStyleName: OB.ActiveBarStyling.inActiveStyleName,
+        width: OB.Styles.ActiveBar.width,
+        styleName: OB.Styles.ActiveBar.inActiveStyleName,
+        activeStyleName: OB.Styles.ActiveBar.activeStyleName,
+        inActiveStyleName: OB.Styles.ActiveBar.inActiveStyleName,
         
         setActive: function(active){
           if (active) {

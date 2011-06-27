@@ -152,7 +152,7 @@ isc.OBAlertIcon.addProperties( {
     this.Super('draw', arguments);
   },
   alertIcon : {
-    src : OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/iconAlert.png'
+    src : OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconAlert.png'
   },
   alertLabel : 'UINAVBA_Alerts',
   iconWidth : 11,

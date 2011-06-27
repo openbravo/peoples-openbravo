@@ -31,11 +31,11 @@ isc.OBGrid.addProperties({
   headerTitleStyle: 'OBGridHeaderCellTitle',
   cellPadding: 0, /* Set in the CSS */
   cellAlign: 'center',
-  sortAscendingImage:{src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_sortAscending.png', width:7, height:11},
-  sortDescendingImage:{src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_sortDescending.png', width:7, height:11},
+  sortAscendingImage:{src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_sortAscending.png', width:7, height:11},
+  sortDescendingImage:{src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_sortDescending.png', width:7, height:11},
   headerMenuButtonConstructor: 'OBGridHeaderImgButton',
   headerMenuButtonWidth: 17,
-  headerMenuButtonSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeaderMenuButton.png',
+  headerMenuButtonSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeaderMenuButton.png',
   hoverWidth: 200,
   editLinkColumnWidth: 58,
 
@@ -53,7 +53,7 @@ isc.OBGrid.addProperties({
       width: 16,
       height: 16,
       visibility: 'hidden',
-      src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/system/progress-indicator-row.gif'
+      src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/progress-indicator-row.gif'
   }
 });
 
@@ -83,7 +83,7 @@ isc.OBGrid.changeDefaults('sorterDefaults', {
   // baseStyle / titleStyle is auto-assigned from headerBaseStyle
   showFocused: false,
 //  src: '[SKIN]ListGrid/header.png',
-  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_bg.png',
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_bg.png',
   baseStyle: 'OBGridSorterButton'
 });
 
@@ -92,13 +92,13 @@ isc.OBGrid.changeDefaults('headerButtonDefaults', {
   showDown: true,
   showFocused: false,
   // baseStyle / titleStyle is auto-assigned from headerBaseStyle
-  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_bg.png'
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_bg.png'
 });
 
 isc.OBGrid.changeDefaults('headerMenuButtonDefaults', {
   showDown: false,
   showTitle: true
-  //src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_bg.png'
+  //src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_bg.png'
 });
 
 // Styling properties for the header button of a generic grid (ob-grid.js)
@@ -120,14 +120,14 @@ isc.OBGridToolStripIcon.addProperties({
   showFocusedAsOver: true,
   baseStyle: 'OBGridToolStripIcon',
   initWidgetStyle: function() {
-    this.setSrc(OB.SkinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-' + this.buttonType + '.png'); /* this.buttonType could be: edit - form - cancel - save */
+    this.setSrc(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-' + this.buttonType + '.png'); /* this.buttonType could be: edit - form - cancel - save */
   },
   
   setErrorState: function(error) {
     if (error) {
-      this.setSrc(OB.SkinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-' + this.buttonType + '-error.png'); /* this.buttonType could be: edit - form - cancel - save */
+      this.setSrc(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-' + this.buttonType + '-error.png'); /* this.buttonType could be: edit - form - cancel - save */
     } else {
-      this.setSrc(OB.SkinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-' + this.buttonType + '.png'); /* this.buttonType could be: edit - form - cancel - save */
+      this.setSrc(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-' + this.buttonType + '.png'); /* this.buttonType could be: edit - form - cancel - save */
     }
   }
 });
@@ -136,7 +136,7 @@ isc.OBGridToolStripSeparator.addProperties({
   width: 1,
   height: 11,
   imageType: 'normal',
-  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-separator.png'
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-separator.png'
 });
 
 isc.OBGridButtonsComponent.addProperties({

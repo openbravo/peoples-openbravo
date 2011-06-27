@@ -34,7 +34,7 @@ isc.OBHelpAbout.addProperties({
   iconWidth: 10,
   iconSpacing: 10,
   icon: {
-    src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-arrow-down.png'
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-arrow-down.png'
   },
   iconOrientation: 'right'
 });
@@ -49,7 +49,7 @@ isc.OBUserProfile.addProperties({
   iconWidth: 10,
   iconSpacing: 10,
   icon: {
-    src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-arrow-down.png'
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-arrow-down.png'
   },
   iconOrientation: 'right',
 
@@ -59,7 +59,7 @@ isc.OBUserProfile.addProperties({
   ComboBoxField_controlStyle: 'OBFormFieldSelectControl',
   ComboBoxField_pickListBaseStyle: 'OBFormFieldPickListCell',
   ComboBoxField_pickListTallBaseStyle: 'OBFormFieldPickListCell',
-  ComboBoxField_pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
+  ComboBoxField_pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
   ComboBoxField_pickListProperties_bodyStyleName: 'OBPickListBody',
 
   CheckboxField_cellStyle: 'OBFormField',
@@ -88,14 +88,14 @@ isc.OBQuickLaunch.addProperties({
   },
 
   nodeIcons: {
-    Window: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png',
-    Process: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png',
-    Report: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png',
-    Form: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png'
+    Window: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png',
+    Process: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png',
+    Report: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png',
+    Form: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png'
   },
 
-  createNew_src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-createNew.png',
-  quickLaunch_src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-quickLaunch.png'
+  createNew_src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-createNew.png',
+  quickLaunch_src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-quickLaunch.png'
 });
 
 // Styling properties for the logout button in the navbar
@@ -103,7 +103,7 @@ isc.OBLogout.addProperties({
   baseStyle: 'OBNavBarImgButton',
   height: 14,
   width: 36,
-  src: OB.SkinsPath + 'Default/org.openbravo.client.application/images/navbar/iconClose.png',
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconClose.png',
   showTitle: false,
   imageType: 'normal',
   layoutAlign: 'center',

@@ -22,4 +22,4 @@ isc.OBMyOpenbravoImplementation.addProperties({
   adminModeValueMap: ${data.adminModeValueMap}
 });
 
-//isc.Page.loadStyleSheet('OB.SkinsPath + 'Default/org.openbravo.client.myob/ob-widget-styles.css?' + OB.Application.moduleVersionParameters['2758CD25B2704AF6BBAD10365FC82C06']);
+//isc.Page.loadStyleSheet('OB.Styles.skinsPath + 'Default/org.openbravo.client.myob/ob-widget-styles.css?' + OB.Application.moduleVersionParameters['2758CD25B2704AF6BBAD10365FC82C06']);

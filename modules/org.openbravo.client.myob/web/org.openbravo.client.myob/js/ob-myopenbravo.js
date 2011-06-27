@@ -99,7 +99,7 @@ isc.OBMyOpenbravo.addProperties({
     recentViewsLayout.addMember(isc.Label.create({
       height: 1,
       overflow: 'visible',
-      baseStyle: OB.MyOBStyles.recentViewsLayout.baseStyle,
+      baseStyle: OB.Styles.OBMyOpenbravo.recentViewsLayout.baseStyle,
       contents: OB.I18N.getLabel('OBKMO_RecentViews')
     }));
 
@@ -120,7 +120,7 @@ isc.OBMyOpenbravo.addProperties({
     recentDocumentsLayout.addMember(isc.Label.create({
       height: 1,
       overflow: 'visible',
-      baseStyle: OB.MyOBStyles.recentDocumentsLayout.baseStyle,
+      baseStyle: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.baseStyle,
       contents: OB.I18N.getLabel('OBKMO_RecentDocuments')
     }));
 
@@ -144,7 +144,7 @@ isc.OBMyOpenbravo.addProperties({
     actionTitle.addMember(isc.Label.create({
       height: 1,
       overflow: 'visible',
-      baseStyle: OB.MyOBStyles.actionTitle.baseStyle,
+      baseStyle: OB.Styles.OBMyOpenbravo.actionTitle.baseStyle,
       contents: OB.I18N.getLabel('OBKMO_Manage_MyOpenbravo')
     }));
 
@@ -153,7 +153,7 @@ isc.OBMyOpenbravo.addProperties({
       overflow: 'visible'
     });
     refreshLayout.addMember(isc.Label.create({
-      styleName: OB.MyOBStyles.refreshLayout.styleName,
+      styleName: OB.Styles.OBMyOpenbravo.refreshLayout.styleName,
       width: '100%',
       height: 1,
       overflow: 'visible',
@@ -169,7 +169,7 @@ isc.OBMyOpenbravo.addProperties({
       overflow: 'visible'
     });
     addWidgetLayout.addMember(isc.Label.create({
-      styleName: OB.MyOBStyles.addWidgetLayout.styleName,
+      styleName: OB.Styles.OBMyOpenbravo.addWidgetLayout.styleName,
       width: '100%',
       height: 1,
       overflow: 'visible',
@@ -188,7 +188,7 @@ isc.OBMyOpenbravo.addProperties({
     if (this.enableAdminMode) {
       adminOtherMyOBLayout = isc.VLayout.create({});
       adminOtherMyOBLayout.addMember(isc.Label.create({
-        styleName: OB.MyOBStyles.adminOtherMyOBLayout.styleName,
+        styleName: OB.Styles.OBMyOpenbravo.adminOtherMyOBLayout.styleName,
         height: 1,
         width: '100%',
         overflow: 'visible',
@@ -211,7 +211,7 @@ isc.OBMyOpenbravo.addProperties({
 
     // the left layout containing the recent views and available widgets
     this.leftColumnLayout = isc.VStack.create({
-      styleName: OB.MyOBStyles.leftColumnLayout.styleName,
+      styleName: OB.Styles.OBMyOpenbravo.leftColumnLayout.styleName,
       width: '15%',
       height: 1,
       overflow: 'visible',
@@ -234,7 +234,7 @@ isc.OBMyOpenbravo.addProperties({
 
     // the portallayout containing the widgets
     this.portalLayout = isc.PortalLayout.create({
-      styleName: OB.MyOBStyles.portalLayout.styleName,
+      styleName: OB.Styles.OBMyOpenbravo.portalLayout.styleName,
       numColumns: 2,
       width: '85%',
       showColumnMenus: false,
@@ -377,16 +377,16 @@ isc.OBMyOpenbravo.addProperties({
           icon = null;
           if (recent.icon) {
             if (recent.icon === 'Process') {
-              icon = OB.MyOBStyles.recentViewsLayout.nodeIcons.Process;
+              icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.Process;
             } else if (recent.icon === 'Report') {
-              icon = OB.MyOBStyles.recentViewsLayout.nodeIcons.Report;
+              icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.Report;
             } else if (recent.icon === 'Form') {
-              icon = OB.MyOBStyles.recentViewsLayout.nodeIcons.Form;
+              icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.Form;
             } else {
-              icon = OB.MyOBStyles.recentViewsLayout.nodeIcons.Window;
+              icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.Window;
             }
           } else {
-            icon = OB.MyOBStyles.recentViewsLayout.nodeIcons.Window;
+            icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.Window;
           }
 
           // if the recent was added through quick create then repair this
@@ -400,7 +400,7 @@ isc.OBMyOpenbravo.addProperties({
             recent: recent,
             width: '100%',
             updateRecent: true,
-            baseStyle: OB.MyOBStyles.recentViewsLayout.Label.baseStyle,
+            baseStyle: OB.Styles.OBMyOpenbravo.recentViewsLayout.Label.baseStyle,
             handleClick: handleClickFunction,
             iconOrientation: 'left',
             icon: icon
@@ -430,7 +430,7 @@ isc.OBMyOpenbravo.addProperties({
               // todo move this to styling
               width: 11,
               height: 11,
-              src: OB.MyOBStyles.recentViewsLayout.newIcon.src,
+              src: OB.Styles.OBMyOpenbravo.recentViewsLayout.newIcon.src,
 
               recent: newRecent,
               click: handleClickFunction
@@ -470,10 +470,10 @@ isc.OBMyOpenbravo.addProperties({
             showHover: true,
             showPrompt: true,
             prompt: recent.tabTitle + ' - ' + recent.recentTitle,
-            baseStyle: OB.MyOBStyles.recentDocumentsLayout.Label.baseStyle,
+            baseStyle: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.baseStyle,
             handleClick: handleClickFunction,
             iconOrientation: 'left',
-            icon: OB.MyOBStyles.recentDocumentsLayout.Label.icon,
+            icon: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.icon,
             iconWidth: 13,
             iconHeight: 15
           });
@@ -926,16 +926,16 @@ isc.defineClass('OBMyOBAddWidgetDialog', isc.OBMyOBDialog).addProperties({
         name: 'widget',
         width: '*',
         errorOrientation: 'left',
-        cellStyle: OB.OBMyOBAddWidgetDialog.cellStyle,
-        titleStyle: OB.OBMyOBAddWidgetDialog.titleStyle,
-        textBoxStyle: OB.OBMyOBAddWidgetDialog.textBoxStyle,
-        controlStyle: OB.OBMyOBAddWidgetDialog.controlStyle,
-        pickListBaseStyle: OB.OBMyOBAddWidgetDialog.pickListBaseStyle,
-        pickerIconSrc: OB.OBMyOBAddWidgetDialog.pickerIconSrc,
-        height: OB.OBMyOBAddWidgetDialog.height,
-        pickerIconWidth: OB.OBMyOBAddWidgetDialog.pickerIconWidth,
+        cellStyle: OB.Styles.OBMyOBAddWidgetDialog.cellStyle,
+        titleStyle: OB.Styles.OBMyOBAddWidgetDialog.titleStyle,
+        textBoxStyle: OB.Styles.OBMyOBAddWidgetDialog.textBoxStyle,
+        controlStyle: OB.Styles.OBMyOBAddWidgetDialog.controlStyle,
+        pickListBaseStyle: OB.Styles.OBMyOBAddWidgetDialog.pickListBaseStyle,
+        pickerIconSrc: OB.Styles.OBMyOBAddWidgetDialog.pickerIconSrc,
+        height: OB.Styles.OBMyOBAddWidgetDialog.height,
+        pickerIconWidth: OB.Styles.OBMyOBAddWidgetDialog.pickerIconWidth,
         pickListProperties: {
-          bodyStyleName: OB.OBMyOBAddWidgetDialog.pickListProperties.bodyStyleName
+          bodyStyleName: OB.Styles.OBMyOBAddWidgetDialog.pickListProperties.bodyStyleName
         },
         title: OB.I18N.getLabel('OBKMO_WidgetLabel'),
         titleSuffix: '',
@@ -995,16 +995,16 @@ isc.defineClass('OBMyOBAdminModeDialog', isc.OBMyOBDialog).addProperties({
       type: 'select',
       width: '*',
       errorOrientation: 'left',
-      cellStyle: OB.OBMyOBAdminModeDialogStyles.cellStyle,
-      titleStyle: OB.OBMyOBAdminModeDialogStyles.titleStyle,
-      textBoxStyle: OB.OBMyOBAdminModeDialogStyles.textBoxStyle,
-      controlStyle: OB.OBMyOBAdminModeDialogStyles.controlStyle,
-      pickListBaseStyle: OB.OBMyOBAdminModeDialogStyles.pickListBaseStyle,
-      pickerIconSrc: OB.OBMyOBAdminModeDialogStyles.pickerIconSrc,
-      height: OB.OBMyOBAdminModeDialogStyles.height,
-      pickerIconWidth: OB.OBMyOBAdminModeDialogStyles.pickerIconWidth,
+      cellStyle: OB.Styles.OBMyOBAdminModeDialog.cellStyle,
+      titleStyle: OB.Styles.OBMyOBAdminModeDialog.titleStyle,
+      textBoxStyle: OB.Styles.OBMyOBAdminModeDialog.textBoxStyle,
+      controlStyle: OB.Styles.OBMyOBAdminModeDialog.controlStyle,
+      pickListBaseStyle: OB.Styles.OBMyOBAdminModeDialog.pickListBaseStyle,
+      pickerIconSrc: OB.Styles.OBMyOBAdminModeDialog.pickerIconSrc,
+      height: OB.Styles.OBMyOBAdminModeDialog.height,
+      pickerIconWidth: OB.Styles.OBMyOBAdminModeDialog.pickerIconWidth,
       pickListProperties: {
-        bodyStyleName: OB.OBMyOBAdminModeDialogStyles.pickListProperties.bodyStyleName
+        bodyStyleName: OB.Styles.OBMyOBAdminModeDialog.pickListProperties.bodyStyleName
       },
       valueMap: OB.MyOB.adminModeValueMap.level,
       changed: function(){
@@ -1022,16 +1022,16 @@ isc.defineClass('OBMyOBAdminModeDialog', isc.OBMyOBDialog).addProperties({
         type: 'select',
         width: '*',
         errorOrientation: 'left',
-        cellStyle: OB.OBMyOBAdminModeDialogStyles.cellStyle,
-        titleStyle: OB.OBMyOBAdminModeDialogStyles.titleStyle,
-        textBoxStyle: OB.OBMyOBAdminModeDialogStyles.textBoxStyle,
-        controlStyle: OB.OBMyOBAdminModeDialogStyles.controlStyle,
-        pickListBaseStyle: OB.OBMyOBAdminModeDialogStyles.pickListBaseStyle,
-        pickerIconSrc: OB.OBMyOBAdminModeDialogStyles.pickerIconSrc,
-        height: OB.OBMyOBAdminModeDialogStyles.height,
-        pickerIconWidth: OB.OBMyOBAdminModeDialogStyles.pickerIconWidth,
+        cellStyle: OB.Styles.OBMyOBAdminModeDialog.cellStyle,
+        titleStyle: OB.Styles.OBMyOBAdminModeDialog.titleStyle,
+        textBoxStyle: OB.Styles.OBMyOBAdminModeDialog.textBoxStyle,
+        controlStyle: OB.Styles.OBMyOBAdminModeDialog.controlStyle,
+        pickListBaseStyle: OB.Styles.OBMyOBAdminModeDialog.pickListBaseStyle,
+        pickerIconSrc: OB.Styles.OBMyOBAdminModeDialog.pickerIconSrc,
+        height: OB.Styles.OBMyOBAdminModeDialog.height,
+        pickerIconWidth: OB.Styles.OBMyOBAdminModeDialog.pickerIconWidth,
         pickListProperties: {
-          bodyStyleName: OB.OBMyOBAdminModeDialogStyles.pickListProperties.bodyStyleName
+          bodyStyleName: OB.Styles.OBMyOBAdminModeDialog.pickListProperties.bodyStyleName
         },
         addUnknownValues: false
       });
@@ -1101,7 +1101,7 @@ isc.defineClass('OBMyOBPublishChangesDialog', isc.OBMyOBDialog).addProperties({
 
     this.form = isc.HTMLFlow.create({
       width: '100%',
-      styleName: OB.OBMyOBPublishChangesDialogStyles.form.styleName,
+      styleName: OB.Styles.OBMyOBPublishChangesDialog.form.styleName,
       contents: htmlContents
     });
 

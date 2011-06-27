@@ -56,7 +56,9 @@ var OB = {
         ERROR : 'error'
     },
 
-    SkinsPath : '${data.contextUrl}' + 'web/org.openbravo.userinterface.smartclient/openbravo/skins/',
+    Styles : {
+      skinsPath : '${data.contextUrl}' + 'web/org.openbravo.userinterface.smartclient/openbravo/skins/'
+    },
 
     I18N: {}
 };

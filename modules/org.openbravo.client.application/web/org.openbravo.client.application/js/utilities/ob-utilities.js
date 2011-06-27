@@ -117,14 +117,14 @@ OB.Utilities.createDialog = function(title, focusOnOKButton, properties){
 // Creates a layout with the loading image.
 OB.Utilities.createLoadingLayout = function(){
   var mainLayout = isc.HLayout.create({
-    styleName: OB.LoadingPrompt.mainLayoutStyleName,
+    styleName: OB.Styles.LoadingPrompt.mainLayoutStyleName,
     width: '100%',
     height: '100%',
     align: 'center',
     defaultLayoutAlign: 'center'
   });
   var loadingLayout = isc.HLayout.create({
-    styleName: OB.LoadingPrompt.loadingLayoutStyleName,
+    styleName: OB.Styles.LoadingPrompt.loadingLayoutStyleName,
     width: 1,
     height: 1,
     overflow: 'visible'
@@ -137,7 +137,7 @@ OB.Utilities.createLoadingLayout = function(){
     height: 1,
     overflow: 'visible'
   }));
-  loadingLayout.addMember(isc.Img.create(OB.LoadingPrompt.loadingImage));
+  loadingLayout.addMember(isc.Img.create(OB.Styles.LoadingPrompt.loadingImage));
   return mainLayout;
 };
 

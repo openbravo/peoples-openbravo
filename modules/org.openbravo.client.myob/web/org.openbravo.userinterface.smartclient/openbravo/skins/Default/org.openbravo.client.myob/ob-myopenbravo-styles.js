@@ -17,27 +17,31 @@
  ************************************************************************
 */
 
-OB.MyOBStyles = {
+isc.OBMyOpenbravo.addProperties({
+  styleName: 'OBMyOpenbravo'
+});
+
+OB.Styles.OBMyOpenbravo = {
   recentViewsLayout: {
     baseStyle: 'OBMyOBRecentViews',
     nodeIcons: {
-      Window: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png',
-      Process: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png',
-      Report: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png',
-      Form: OB.SkinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png'
+      Window: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png',
+      Process: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png',
+      Report: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png',
+      Form: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png'
     },
     Label: {
       baseStyle: 'OBMyOBRecentViewsEntry'
     },
     newIcon: {
-      src: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/management/iconCreateNew.png'
+      src: OB.Styles.skinsPath + 'Default/org.openbravo.client.myob/images/management/iconCreateNew.png'
     }
   },
   recentDocumentsLayout: {
     baseStyle: 'OBMyOBRecentViews',
     Label: {
       baseStyle: 'OBMyOBRecentViewsEntry',
-      icon: OB.SkinsPath + 'Default/org.openbravo.client.myob/images/management/IconRecentDocs.png'
+      icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.myob/images/management/IconRecentDocs.png'
     }
   },
   actionTitle: {
@@ -60,13 +64,13 @@ OB.MyOBStyles = {
   }
 };
 
-OB.OBMyOBAddWidgetDialog = {
+OB.Styles.OBMyOBAddWidgetDialog = {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
   controlStyle: 'OBFormFieldSelectControl',
   pickListBaseStyle: 'OBFormFieldPickListCell',
-  pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
+  pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
   height: 21,
   pickerIconWidth: 21,
   pickListProperties: {
@@ -74,13 +78,13 @@ OB.OBMyOBAddWidgetDialog = {
   }
 };
 
-OB.OBMyOBAdminModeDialogStyles = {
+OB.Styles.OBMyOBAdminModeDialog = {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
   controlStyle: 'OBFormFieldSelectControl',
   pickListBaseStyle: 'OBFormFieldPickListCell',
-  pickerIconSrc: OB.SkinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
+  pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
   height: 21,
   pickerIconWidth: 21,
   pickListProperties: {
@@ -88,13 +92,10 @@ OB.OBMyOBAdminModeDialogStyles = {
   }
 };
 
-OB.OBMyOBPublishChangesDialogStyles = {
+OB.Styles.OBMyOBPublishChangesDialog = {
   form: {
     styleName: 'OBMyOBPublishLegend'
   }
 };
 
 
-isc.OBMyOpenbravo.addProperties({
-  styleName: 'OBMyOpenbravo'
-});
