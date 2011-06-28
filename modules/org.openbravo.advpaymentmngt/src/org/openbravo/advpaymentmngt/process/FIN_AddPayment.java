@@ -97,7 +97,9 @@ public class FIN_AddPayment {
    * @param organization
    *          Organization of the new Payment. Used when no FIN_Payment is given.
    * @param selectedPaymentScheduleDetails
-   *          List of FIN_PaymentScheduleDetail to be included in the Payment.
+   *          List of FIN_PaymentScheduleDetail to be included in the Payment. If one of the items
+   *          is contained in other payment the method will throw an exception. Prevent
+   *          invoice/order to be paid several times.
    * @param selectedPaymentScheduleDetailsAmounts
    *          HashMap with the Amount to be paid for each Scheduled Payment Detail.
    * @param isWriteoff
