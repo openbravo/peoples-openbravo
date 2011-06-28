@@ -358,7 +358,7 @@ isc.OBGrid.addProperties({
       return;
     }
     var gridIsFiltered = this.isGridFiltered(criteria);
-    var noParentOrParentSelected = !this.view.parentView ||
+    var noParentOrParentSelected = !this.view || !this.view.parentView ||
         (this.view.parentView.viewGrid.getSelectedRecords() && this.view.parentView.viewGrid.getSelectedRecords().length > 0);
     
     if (this.filterClause && gridIsFiltered) {
