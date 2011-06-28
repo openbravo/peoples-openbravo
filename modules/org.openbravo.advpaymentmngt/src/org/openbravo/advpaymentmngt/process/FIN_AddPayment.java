@@ -143,6 +143,11 @@ public class FIN_AddPayment {
     OBContext.setAdminMode();
     try {
       for (FIN_PaymentScheduleDetail paymentScheduleDetail : selectedPaymentScheduleDetails) {
+        // Payment Schedule Detail already linked to a payment detail.
+        if (paymentScheduleDetail.getPaymentDetails() != null) {
+          throw new OBException(String.format(FIN_Utility.messageBD("APRM_PsdInSeveralPayments"),
+              paymentScheduleDetail.getIdentifier()));
+        }
         BigDecimal paymentDetailAmount = selectedPaymentScheduleDetailsAmounts
             .get(paymentScheduleDetail.getId());
         BigDecimal amountDifference = paymentScheduleDetail.getAmount().subtract(
@@ -167,6 +172,7 @@ public class FIN_AddPayment {
       }
     } catch (final Exception e) {
       e.printStackTrace(System.err);
+      throw new OBException(e);
     } finally {
       OBContext.restorePreviousMode();
     }
