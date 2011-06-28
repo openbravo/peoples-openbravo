@@ -337,11 +337,11 @@ BEGIN
               ELSE
                 SELECT count(*) INTO v_count
                 FROM (
-                  SELECT SUM(mpo.qty) as matchedqty, ol.qtyordered
-                  FROM m_matchpo mpo
-                      JOIN c_orderline ol ON ol.c_orderline_id = mpo.c_orderline_id
-                                             AND mpo.c_invoiceline_id IS NOT NULL
-                                             AND ol.c_order_id = order_schdet.order_id
+                  SELECT coalesce(SUM(mpo.qty),0) as matchedqty, ol.qtyordered
+                  FROM c_orderline ol
+                       LEFT JOIN m_matchpo mpo ON ol.c_orderline_id = mpo.c_orderline_id
+                                                  AND mpo.c_invoiceline_id IS NOT NULL
+                  WHERE ol.c_order_id = order_schdet.order_id
                   GROUP BY ol.c_orderline_id, ol.qtyordered) a
                 WHERE a.matchedqty != a.qtyordered;
               END IF;
