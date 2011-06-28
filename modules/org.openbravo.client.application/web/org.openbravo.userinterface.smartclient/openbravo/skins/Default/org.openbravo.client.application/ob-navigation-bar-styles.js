@@ -88,10 +88,10 @@ isc.OBQuickLaunch.addProperties({
   },
 
   nodeIcons: {
-    Window: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png',
-    Process: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png',
-    Report: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png',
-    Form: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png'
+    Window: OB.Styles.OBApplicationMenu.Icons.window,
+    Process: OB.Styles.OBApplicationMenu.Icons.process,
+    Report: OB.Styles.OBApplicationMenu.Icons.report,
+    Form: OB.Styles.OBApplicationMenu.Icons.form
   },
 
   createNew_src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-createNew.png',

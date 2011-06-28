@@ -17,6 +17,22 @@
  ************************************************************************
  */
 
+OB.Styles.OBApplicationMenu = {
+  Icons: {
+    folderOpened: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconFolderOpened.png',
+    folderClosed: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconFolderClosed.png',
+    window: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png',
+    process: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png',
+    processManual: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png',
+    report: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png',
+    task: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconTask.png',
+    form: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png',
+    externalLink: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconExternalLink.png',
+    view: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png',
+    document:  OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconDocument.png'
+  }
+};
+
 
 isc.OBApplicationMenuTreeChild.addProperties({
   styleName: 'OBApplicationMenuTree',
@@ -58,15 +74,15 @@ isc.OBApplicationMenuButton.addProperties({
   iconAlign: 'left',
   iconOrientation: 'right',
   nodeIcons: {
-    Window: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconWindow.png',
-    Process: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png',
-    ProcessManual: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconProcess.png',
-    Report: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconReport.png',
-    Task: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconTask.png',
-    Form: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png',
-    ExternalLink: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconExternalLink.png',
-    Folder: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconFolderOpened.png',
-    View: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/application-menu/iconForm.png'
+    Window: OB.Styles.OBApplicationMenu.Icons.window,
+    Process: OB.Styles.OBApplicationMenu.Icons.process,
+    ProcessManual: OB.Styles.OBApplicationMenu.Icons.processManual,
+    Report: OB.Styles.OBApplicationMenu.Icons.report,
+    Task: OB.Styles.OBApplicationMenu.Icons.task,
+    Form: OB.Styles.OBApplicationMenu.Icons.form,
+    ExternalLink: OB.Styles.OBApplicationMenu.Icons.externalLink,
+    Folder: OB.Styles.OBApplicationMenu.Icons.folderOpened,
+    View: OB.Styles.OBApplicationMenu.Icons.view
   },
   icon: {
     src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-arrow-down.png'

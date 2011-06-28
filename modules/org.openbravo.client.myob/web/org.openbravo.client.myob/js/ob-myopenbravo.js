@@ -473,9 +473,7 @@ isc.OBMyOpenbravo.addProperties({
             baseStyle: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.baseStyle,
             handleClick: handleClickFunction,
             iconOrientation: 'left',
-            icon: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.icon,
-            iconWidth: 13,
-            iconHeight: 15
+            icon: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.icon
           });
 
           entryLayout = isc.HLayout.create({

@@ -181,6 +181,9 @@ isc.OBApplicationMenuButton.addProperties({
   },
 
   initWidget: function() {
+    if (this.initWidgetStyle) {
+      this.initWidgetStyle();
+    }
     this.menu = isc.OBApplicationMenuTree.create({});
     // tell the menu who we are
     this.menu.menuButton = this;
