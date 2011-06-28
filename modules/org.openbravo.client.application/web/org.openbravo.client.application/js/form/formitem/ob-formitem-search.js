@@ -92,8 +92,14 @@ isc.OBSearchItem.addProperties({
     };
     
     this.instanceClearIcon.click = function(){
+      var targetFld = this.formItem;
+
       this.formItem.setValue(null);
-      this.formItem.form.itemChangeActions();
+
+      targetFld._hasChanged = true;
+      targetFld.form.handleItemChange(targetFld);
+      // fire with a delay otherwise results in strange errors
+      targetFld.fireOnPause('validate', targetFld.validate, null, targetFld);
     };
     
     this.icons = [this.instanceClearIcon];
