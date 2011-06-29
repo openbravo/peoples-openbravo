@@ -34,7 +34,7 @@ isc.OBHelpAbout.addProperties({
   iconWidth: 10,
   iconSpacing: 10,
   icon: {
-    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-arrow-down.png'
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconOpenDropDown.png'
   },
   iconOrientation: 'right'
 });
@@ -49,7 +49,7 @@ isc.OBUserProfile.addProperties({
   iconWidth: 10,
   iconSpacing: 10,
   icon: {
-    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-arrow-down.png'
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconOpenDropDown.png'
   },
   iconOrientation: 'right',
 
@@ -94,8 +94,8 @@ isc.OBQuickLaunch.addProperties({
     Form: OB.Styles.OBApplicationMenu.Icons.form
   },
 
-  createNew_src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-createNew.png',
-  quickLaunch_src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-quickLaunch.png'
+  createNew_src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconCreateNew.png',
+  quickLaunch_src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconQuickLaunch.png'
 });
 
 // Styling properties for the logout button in the navbar
@@ -138,4 +138,15 @@ isc.OBHelpAboutLinkButton.addProperties({
   autoFit: true,
   height: 1,
   overflow: 'visible'
+});
+
+
+isc.OBAlertIcon.addProperties({
+  baseStyle : 'OBNavBarTextButton',
+  alertIcon : {
+    src : OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconAlert.png'
+  },
+  iconOrientation : 'left',
+  iconWidth : 11,
+  iconHeight : 13
 });

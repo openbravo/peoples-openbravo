@@ -92,7 +92,6 @@
 }
 
 .OBNavBarComponent:hover {
-  border-color: #6a9a14;
   border-top: 1px solid #6a9a14;
   border-bottom: 1px solid #6a9a14;
   border-left: 1px solid #6a9a14;
@@ -111,7 +110,6 @@
 }
 
 .OBNavBarComponentSelected {
-  border-color: #6a9a14;
   border-top: 1px solid #6a9a14;
   border-left: 1px solid #6a9a14;
 

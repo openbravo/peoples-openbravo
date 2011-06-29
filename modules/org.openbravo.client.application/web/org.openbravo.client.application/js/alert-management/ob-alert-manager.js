@@ -151,16 +151,9 @@ isc.OBAlertIcon.addProperties( {
     }
     this.Super('draw', arguments);
   },
-  alertIcon : {
-    src : OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconAlert.png'
-  },
   alertLabel : 'UINAVBA_Alerts',
-  iconWidth : 11,
-  iconHeight : 13,
   autoFit : true,
-  baseStyle : 'OBNavBarTextButton',
   showTitle : true,
-  iconOrientation : 'left',
   src : '',
   overflow : 'visible'
 });

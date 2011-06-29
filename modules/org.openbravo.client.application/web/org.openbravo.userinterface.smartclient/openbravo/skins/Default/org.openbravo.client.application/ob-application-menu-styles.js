@@ -85,7 +85,7 @@ isc.OBApplicationMenuButton.addProperties({
     View: OB.Styles.OBApplicationMenu.Icons.view
   },
   icon: {
-    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/ico-arrow-down.png'
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconOpenDropDown.png'
   },
   showMenuStyle: function() {
     this.parentElement.setStyleName('OBNavBarComponentSelected');
