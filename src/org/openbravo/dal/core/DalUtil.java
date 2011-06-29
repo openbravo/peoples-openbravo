@@ -245,11 +245,18 @@ public class DalUtil {
     return fromTo.get(source);
   }
 
-  // Walks through all copied objects and if there are references to objects which have been
-  // copied then the references are moved to the copied object
-  // see issue:
-  // https://issues.openbravo.com/view.php?id=8651
-  private static void repairReferences(Map<BaseOBObject, BaseOBObject> fromTo) {
+  /**
+   * Convenience method usefull for when implementing a custom copy process.
+   * 
+   * Walks through all copied objects and if there are references to objects which have been copied
+   * then the references are moved to the copied object
+   * 
+   * See issue https://issues.openbravo.com/view.php?id=8651 which is related to this method.
+   * 
+   * @param fromTo
+   *          map with copy from - copy to relation
+   */
+  public static void repairReferences(Map<BaseOBObject, BaseOBObject> fromTo) {
 
     for (BaseOBObject to : fromTo.values()) {
       for (final Property p : to.getEntity().getProperties()) {
@@ -275,7 +282,25 @@ public class DalUtil {
 
   }
 
-  private static BaseOBObject copy(BaseOBObject source, boolean copyChildren, boolean resetId,
+  /**
+   * Copies a single object, including its children (if the relevant parameter is set to true), and
+   * resets the id in the copied object (if the relevant parameter is set to true). The source and
+   * its copy are added to the fromTo map.
+   * 
+   * @param source
+   *          the object to copy
+   * @param copyChildren
+   *          if true then all the child objects (which have this object as parent) are copied
+   *          recursively
+   * @param resetId
+   *          if true then the id of the copied object is set to null
+   * @param fromTo
+   *          the map which maintains the relation between the to-copy and the copied object
+   * @return the copied object
+   * @see #copy(BaseOBObject, boolean, boolean)
+   * @see #repairReferences(Map)
+   */
+  public static BaseOBObject copy(BaseOBObject source, boolean copyChildren, boolean resetId,
       Map<BaseOBObject, BaseOBObject> fromTo) {
 
     final BaseOBObject target = (BaseOBObject) OBProvider.getInstance().get(source.getEntityName());
