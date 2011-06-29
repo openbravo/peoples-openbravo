@@ -849,11 +849,11 @@ public class FIN_Utility {
    * 
    * @param number
    *          Number to be formatted.
-   * @param format
+   * @param javaFormat
    *          Java number format pattern.
-   * @param decimalSeparator
+   * @param _decimalSeparator
    *          Symbol used as decimal separator.
-   * @param groupingSeparator
+   * @param _groupingSeparator
    *          Symbol used as grouping separator.
    * @return Formatted string.
    */

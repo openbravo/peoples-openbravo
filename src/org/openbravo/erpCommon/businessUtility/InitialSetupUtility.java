@@ -683,24 +683,6 @@ public class InitialSetupUtility {
         accountSign, isDocControlled, isSummary, elementLevel, doFlush, null, null);
   }
 
-  /**
-   * 
-   * @param element
-   * @param orgProvided
-   * @param name
-   * @param value
-   * @param description
-   * @param accountType
-   * @param accountSign
-   * @param isDocControlled
-   * @param isSummary
-   * @param elementLevel
-   * @param doFlush
-   * @param a
-   * @param b
-   * @return
-   * @throws Exception
-   */
   public static ElementValue insertElementValue(Element element, Organization orgProvided,
       String name, String value, String description, String accountType, String accountSign,
       boolean isDocControlled, boolean isSummary, String elementLevel, boolean doFlush,

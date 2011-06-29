@@ -28,7 +28,7 @@ import org.openbravo.dal.core.OBContext;
  * 
  * @see Template
  * @see TemplateProcessor
- * @see TemplateProcessorRegistry
+ * @see TemplateProcessor.Registry
  * @author mtaal
  */
 public class BaseTemplateComponent extends BaseComponent {

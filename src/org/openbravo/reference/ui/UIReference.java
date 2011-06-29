@@ -240,8 +240,6 @@ public class UIReference {
    * FormInitializationComponent or not. // For them to be cached, it's very important that the
    * Combo values themselves only depend on the // parameter values the combo uses; that is, that
    * they do not depend on things like session // variables, ...
-   * 
-   * @return
    */
   public boolean canBeCached() {
     return false;
