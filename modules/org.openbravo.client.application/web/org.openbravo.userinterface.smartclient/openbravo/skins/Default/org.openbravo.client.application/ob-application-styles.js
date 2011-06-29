@@ -37,7 +37,8 @@ OB.Styles.TopLayout = {
   height: '1',
   styleName: 'OBTopLayout',
   overflow: 'visible',
-  layoutTopMargin: 4
+  layoutTopMargin: 4,
+  layoutBottomMargin: 10
 };
 
 // The toolbar showing the navigation bar components
@@ -56,12 +57,6 @@ OB.Styles.TopLayout.CompanyImageLogo = {
   width: 122,
   height: 34,
   src: OB.Application.contextUrl + 'utility/ShowImageLogo?logo=yourcompanymenu'
-};
-
-  // Styling of the main layout spacer, between toplayout and tabs
-OB.Styles.TopLayoutSpacer = {
-  height: '10',
-  styleName: 'OBTopLayoutSpacer'
 };
 
 

@@ -115,9 +115,6 @@ OB.Layout.initialize = function() {
   // add the top part to the main layout
   OB.Layout.addMember(OB.TopLayout);
   
-  // create some vertical space
-  OB.Layout.addMember(isc.HLayout.create({}, OB.Styles.TopLayoutSpacer));
-  
   OB.MainView = isc.VLayout.create({
     width: '100%',
     height: '100%'
