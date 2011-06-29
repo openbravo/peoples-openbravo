@@ -29,10 +29,6 @@ isc.OBListItem.addProperties({
   completeOnTab: true,
   validateOnExit: true,
   
-  // without this in chrome the content is sorted according to the id/value
-  // not the displayfield
-  sortField: 0,
-  
   // textMatchStyle is used for the client-side picklist
   textMatchStyle: 'substring',
 
@@ -69,6 +65,46 @@ isc.OBListItem.addProperties({
     showHeaderContextMenu: false
   },
 
+  // to solve: https://issues.openbravo.com/view.php?id=17800
+  // in chrome the order of the valueMap object is not retained
+  // the solution is to keep a separate entries array with the 
+  // records in the correct order, see also the setEntries/setEntry
+  // methods
+  getClientPickListData: function() {
+    if (this.entries) {
+      return this.entries;
+    }
+    return this.Super('getClientPickListData', arguments);
+  },
+  
+  setEntries: function(entries) {
+    var valueField = this.getValueFieldName(), valueMap = {}; 
+    this.entries = [];
+    for (i = 0; i < entries.length; i++) {
+      id = entries[i][OB.Constants.ID] || '';
+      identifier = entries[i][OB.Constants.IDENTIFIER] || '';
+      valueMap[id] = identifier;
+      this.entries[i] = {};
+      this.entries[i][valueField] = id;
+    }
+    this.setValueMap(valueMap);
+  },
+  
+  setEntry: function(id, identifier) {
+    var i, entries = this.entries || [], entry = {}, valueField = this.getValueFieldName();
+    for (i = 0; i < entries.length; i++) {
+      if (entries[i][valueField] === id) {
+        return;
+      }
+    }
+    
+    // not found add/create a new one
+    entry[valueField] = id;
+    entries.push(entry);
+    
+    this.setEntries(entries);
+  },
+
   // prevent ids from showing up
   mapValueToDisplay: function (value) {
     var ret = this.Super('mapValueToDisplay', arguments);
@@ -84,4 +120,3 @@ isc.OBListItem.addProperties({
   }
   
 });
-

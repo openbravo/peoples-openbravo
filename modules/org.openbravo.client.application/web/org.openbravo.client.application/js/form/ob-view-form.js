@@ -762,15 +762,8 @@ OB.ViewFormProperties = {
      
     // note field can be a datasource field, see above, in that case
     // don't set the entries    
-    if (field.form && entries) {
-      var required = field.required;
-      // keep the current entries in the valuemap
-      for (i = 0; i < entries.length; i++) {
-        id = entries[i][OB.Constants.ID] || '';
-        identifier = entries[i][OB.Constants.IDENTIFIER] || '';
-        valueMap[id] = identifier;
-      }
-      field.setValueMap(valueMap);
+    if (field.form && entries && field.setEntries) {
+      field.setEntries(entries);
     }
     
     if (editValues && field.valueMap) {
@@ -804,10 +797,9 @@ OB.ViewFormProperties = {
           identifier = field.valueMap[columnValue.value];
         }
         if (identifier) {
-          if (!field.valueMap) {
-            field.valueMap = {};
+          if (field.setEntry) {
+            field.setEntry(columnValue.value, identifier);
           }
-          field.valueMap[columnValue.value] = identifier;
           if (field.form) {
             // only set the display field name if the field does not have its own
             // datasource and the field displayfield contains a dot, otherwise 
