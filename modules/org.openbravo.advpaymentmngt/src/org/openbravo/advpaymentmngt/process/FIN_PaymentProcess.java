@@ -435,6 +435,121 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           OBContext.restorePreviousMode();
         }
 
+      } else if (strAction.equals("V")) {
+        // Void
+        OBContext.setAdminMode();
+        try {
+          if (payment.isProcessed()) {
+            // Already Posted Document
+            if ("Y".equals(payment.getPosted())) {
+              msg.setType("Error");
+              msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
+              msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+                  "@PostedDocument@" + ": " + payment.getDocumentNo()));
+              bundle.setResult(msg);
+              return;
+            }
+            // Transaction exists
+            if (hasTransaction(payment)) {
+              msg.setType("Error");
+              msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
+              msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+                  "@APRM_TransactionExists@"));
+              bundle.setResult(msg);
+              return;
+            }
+            // Payment with generated credit already used on other payments.
+            if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 1
+                && payment.getUsedCredit().compareTo(BigDecimal.ZERO) == 1) {
+              msg.setType("Error");
+              msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
+              msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+                  "@APRM_PaymentGeneratedCreditIsUsed@"));
+              bundle.setResult(msg);
+              return;
+            }
+            // Payment not in Awaiting Execution
+            if (!"RPAE".equals(payment.getStatus())) {
+              msg.setType("Error");
+              msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
+              msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+                  "@APRM_PaymentNotRPAE_NotVoid@"));
+              bundle.setResult(msg);
+              return;
+            }
+
+            /*
+             * Void the payment
+             */
+            payment.setStatus("RPVOID");
+
+            /*
+             * Cancel all payment schedule details related to the payment
+             */
+            final List<FIN_PaymentScheduleDetail> removedPDS = new ArrayList<FIN_PaymentScheduleDetail>();
+            for (final FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList()) {
+              for (final FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
+                  .getFINPaymentScheduleDetailList()) {
+                BigDecimal outStandingAmt = BigDecimal.ZERO;
+
+                if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
+                  // Related to invoices
+                  for (final FIN_PaymentScheduleDetail invScheDetail : paymentScheduleDetail
+                      .getInvoicePaymentSchedule()
+                      .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
+                    if (invScheDetail.getPaymentDetails() == null) {
+                      outStandingAmt = outStandingAmt.add(invScheDetail.getAmount());
+                      removedPDS.add(invScheDetail);
+                    } else if (invScheDetail.equals(paymentScheduleDetail)) {
+                      outStandingAmt = outStandingAmt.add(invScheDetail.getAmount());
+                      paymentScheduleDetail.setCanceled(true);
+                    }
+                  }
+                  // Create merged Payment Schedule Detail with the pending to be paid amount
+                  final FIN_PaymentScheduleDetail mergedScheduleDetail = dao
+                      .getNewPaymentScheduleDetail(payment.getOrganization(), outStandingAmt);
+                  mergedScheduleDetail.setInvoicePaymentSchedule(paymentScheduleDetail
+                      .getInvoicePaymentSchedule());
+                  OBDal.getInstance().save(mergedScheduleDetail);
+                } else if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
+                  // Related to orders
+                  for (final FIN_PaymentScheduleDetail ordScheDetail : paymentScheduleDetail
+                      .getOrderPaymentSchedule()
+                      .getFINPaymentScheduleDetailOrderPaymentScheduleList()) {
+                    if (ordScheDetail.getPaymentDetails() == null) {
+                      outStandingAmt = outStandingAmt.add(ordScheDetail.getAmount());
+                      removedPDS.add(ordScheDetail);
+                    } else if (ordScheDetail.equals(paymentScheduleDetail)) {
+                      outStandingAmt = outStandingAmt.add(ordScheDetail.getAmount());
+                      paymentScheduleDetail.setCanceled(true);
+                    }
+                  }
+                  // Create merged Payment Schedule Detail with the pending to be paid amount
+                  final FIN_PaymentScheduleDetail mergedScheduleDetail = dao
+                      .getNewPaymentScheduleDetail(payment.getOrganization(), outStandingAmt);
+                  mergedScheduleDetail.setOrderPaymentSchedule(paymentScheduleDetail
+                      .getOrderPaymentSchedule());
+                  OBDal.getInstance().save(mergedScheduleDetail);
+                } else if (paymentScheduleDetail.getOrderPaymentSchedule() == null
+                    && paymentScheduleDetail.getInvoicePaymentSchedule() == null) {
+                  // Credit payment
+                  payment.setGeneratedCredit(payment.getGeneratedCredit().subtract(
+                      paymentScheduleDetail.getAmount()));
+                  removedPDS.add(paymentScheduleDetail);
+                }
+
+                OBDal.getInstance().save(payment);
+                OBDal.getInstance().flush();
+              }
+              paymentDetail.getFINPaymentScheduleDetailList().removeAll(removedPDS);
+              for (FIN_PaymentScheduleDetail removedPD : removedPDS)
+                OBDal.getInstance().remove(removedPD);
+            }
+          }
+        } finally {
+          OBDal.getInstance().flush();
+          OBContext.restorePreviousMode();
+        }
       }
 
       payment.setProcessNow(false);
@@ -442,6 +557,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       OBDal.getInstance().flush();
 
       bundle.setResult(msg);
+
     } catch (final Exception e) {
       e.printStackTrace(System.err);
       msg.setType("Error");
