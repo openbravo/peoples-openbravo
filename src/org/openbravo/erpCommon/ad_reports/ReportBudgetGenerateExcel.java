@@ -60,10 +60,6 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
           "ReportBudgetGenerateExcel|inpmProductId_IN", IsIDFilter.instance);
       String strProdCategory = vars.getRequestInGlobalVariable("inpmProductCategoryId",
           "ReportBudgetGenerateExcel|inpmProductCategoryId", IsIDFilter.instance);
-      // String strUser1 = vars.getRequestInGlobalVariable("inpUser1",
-      // "ReportBudgetGenerateExcel|inpUser1");
-      // String strUser2 = vars.getRequestInGlobalVariable("inpUser2",
-      // "ReportBudgetGenerateExcel|inpUser2");
       String strSalesRegion = vars.getRequestInGlobalVariable("inpcSalesRegionId",
           "ReportBudgetGenerateExcel|inpcSalesRegionId", IsIDFilter.instance);
       String strCampaign = vars.getRequestInGlobalVariable("inpcCampaingId",
@@ -79,19 +75,9 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
       String strAccount = vars.getRequestGlobalVariable("paramAccountSelect",
           "ReportBudgetGenerateExcel|cAccountId");
       String strcAcctSchemaId = vars.getStringParameter("inpcAcctSchemaId", "");
-      // String strcAcctSchemaId =
-      // vars.getGlobalVariable("inpcAcctSchemaId",
-      // "ReportTrialBalance|cAcctSchemaId", "");
-      // String strValidcombination =
-      // vars.getRequestGlobalVariable("inpcValidcombinationId",
-      // "ReportBudgetGenerateExcel|inpcValidcombinationId");
-      printPageDataExcel(response, vars, strBPartner, strBPGroup, strProduct, strProdCategory, /*
-                                                                                                * strUser1,
-                                                                                                * strUser2
-                                                                                                * ,
-                                                                                                */
-      strSalesRegion, strCampaign, strActivity, strProject, strTrxOrg, strMonth, strcAcctSchemaId,
-          strAccount);
+      printPageDataExcel(response, vars, strBPartner, strBPGroup, strProduct, strProdCategory,
+          strSalesRegion, strCampaign, strActivity, strProject, strTrxOrg, strMonth,
+          strcAcctSchemaId, strAccount);
     } else
       pageErrorPopUp(response);
   }
@@ -143,8 +129,6 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
         ReportBudgetGenerateExcelData.selectAccounts(this, vars.getLanguage(), Utility.getContext(
             this, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"), Utility.getContext(
             this, vars, "#User_Client", "ReportBudgetGenerateExcel"))));
-    // xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
-    // ReportBudgetGenerateExcelData.selectBpartner(this));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_ACCTSCHEMA_ID",
           "", "C_AcctSchema validation", Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -169,8 +153,6 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    // xmlDocument.setData("reportMProductId_IN", "liststructure",
-    // ReportBudgetGenerateExcelData.selectMproduct(this));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
           "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -310,16 +292,6 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
               strProdCategory).append(") PRODCAT");
     } else
       columns.append("' ' AS PRODCATEGORY, ");
-    /*
-     * if (strUser1 != null && !strUser1.equals("")) { columns.append("USER1, ");tables.append(
-     * ", (SELECT AD_COLUMN_IDENTIFIER('C_ELEMENTVALUE', TO_CHAR(C_ELEMENTVALUE_ID), '" ).append(
-     * vars.getLanguage() ).append( "') AS USER1 FROM C_ELEMENTVALUE WHERE C_ELEMENTVALUE_ID IN"
-     * ).append( strUser1 ).append( ")"); } else columns.append("' ' AS USER1, "); if (strUser2 !=
-     * null && !strUser2.equals("")) { columns.append("USER2, ");tables.append(
-     * ", (SELECT AD_COLUMN_IDENTIFIER('C_ELEMENTVALUE', TO_CHAR(C_ELEMENTVALUE_ID), '" ).append(
-     * vars.getLanguage() ).append( "') AS USER2 FROM C_ELEMENTVALUE WHERE C_ELEMENTVALUE_ID IN"
-     * ).append( strUser2 ).append( ")"); } else columns.append("' ' AS USER2, ");
-     */
     if (strSalesRegion != null && !strSalesRegion.equals("")) {
       columns.append("SALESREGION, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_SALESREGION', TO_CHAR(C_SALESREGION_ID), '")
