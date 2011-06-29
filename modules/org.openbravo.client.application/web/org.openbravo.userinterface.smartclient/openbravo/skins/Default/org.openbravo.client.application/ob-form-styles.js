@@ -132,7 +132,7 @@ OB.Styles.OBFormField.DefaultCheckbox = {
 
 isc.OBCheckboxItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultCheckbox));
 
-isc.OBSearchItem.addProperties({
+OB.Styles.OBFormField.DefaultSearch = {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldInput',
@@ -149,27 +149,11 @@ isc.OBSearchItem.addProperties({
   },
   newTabIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/ico-to-new-tab.png',
   newTabIconSize: 8
-});
+};
 
-isc.OBLinkItem.addProperties({
-  cellStyle: 'OBFormField',
-  titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldInput',
-  height: 21,
-  pickerIconHeight: 21,
-  pickerIconWidth: 21,
-  pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
-  pickerIconHspace: 0,
-  clearIcon: {
-    showHover: true,
-    height: 15,
-    width: 15,
-    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/clear-field.png',    
-    prompt: OB.I18N.getLabel('OBUIAPP_ClearIconPrompt')
-  },
-  newTabIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/ico-to-new-tab.png',
-  newTabIconSize: 8
-});
+isc.OBSearchItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultSearch));
+
+isc.OBLinkItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultSearch));
 
 isc.OBLinkButtonItem.addProperties({
   width: 1, //To allow button be just text width
