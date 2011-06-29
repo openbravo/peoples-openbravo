@@ -195,8 +195,28 @@ isc.OBToolbar.addClassProperties({
     keyboardShortcutId: 'ToolBar_Undo'
   },
   EXPORT_BUTTON_PROPERTIES: {
-    action: function(){
-      var requestProperties = {
+    action: function() {
+      var requestProperties, activateButton;
+
+      activateButton = isc.addProperties({}, isc.Dialog.OK, {
+        getTitle: function() {
+          return OB.I18N.getLabel('OBKMO_LearnMore');
+        },
+        click: function() {
+          this.topElement.cancelClick();
+          window.open('http://www.openbravo.com/product/erp/get-basic/');
+        }});
+
+      if(OB.Application.licenseType === 'C') {
+        isc.confirm(OB.I18N.getLabel('OBUIAPP_ActivateMessage'), {
+            isModal: true,
+            showModalMask: true,
+            toolbarButtons: [activateButton, isc.Dialog.CANCEL]
+        });
+        return;
+      }
+
+      requestProperties = {
         exportAs: 'csv',
         exportDisplay: 'download',
         params: {
@@ -205,6 +225,7 @@ isc.OBToolbar.addClassProperties({
         viewState: this.view.viewGrid.getViewState(),
         tab: this.view.tabId
       };
+
       this.view.viewGrid.exportData(requestProperties);
     },
     disabled: false,
