@@ -88,25 +88,25 @@ isc.OBUserProfile.addProperties({
       }
     };
     ComboBoxField.prototype = {
-      errorOrientation: 'left',
-      cellStyle: this.ComboBoxField_cellStyle,
-      titleStyle: this.ComboBoxField_titleStyle,
-      textBoxStyle: this.ComboBoxField_textBoxStyle,
-      controlStyle: this.ComboBoxField_controlStyle,
+      errorOrientation: OB.Styles.OBFormField.DefaultComboBox.errorOrientation,
+      cellStyle: OB.Styles.OBFormField.DefaultComboBox.cellStyle,
+      titleStyle: OB.Styles.OBFormField.DefaultComboBox.titleStyle,
+      textBoxStyle: OB.Styles.OBFormField.DefaultComboBox.textBoxStyle,
+      controlStyle: OB.Styles.OBFormField.DefaultComboBox.controlStyle,
       width: '*',
-      pickListBaseStyle: this.ComboBoxField_pickListBaseStyle,
-      pickListTallBaseStyle: this.ComboBoxField_pickListTallBaseStyle,
-      pickerIconSrc: this.ComboBoxField_pickerIconSrc,
+      pickListBaseStyle: OB.Styles.OBFormField.DefaultComboBox.pickListBaseStyle,
+      pickListTallBaseStyle: OB.Styles.OBFormField.DefaultComboBox.pickListTallBaseStyle,
+      pickerIconSrc: OB.Styles.OBFormField.DefaultComboBox.pickerIconSrc,
       
       // without this in chrome the content is sorted according to the id/value
       // not the displayfield
       sortField: 0,
 
-      height: 21,
-      pickerIconWidth: 21,
-      pickListCellHeight: 22,
+      height: OB.Styles.OBFormField.DefaultComboBox.height,
+      pickerIconWidth: OB.Styles.OBFormField.DefaultComboBox.pickerIconWidth,
+      pickListCellHeight: OB.Styles.OBFormField.DefaultComboBox.pickListCellHeight,
       pickListProperties: {
-        bodyStyleName: this.ComboBoxField_pickListProperties_bodyStyleName
+        bodyStyleName: OB.Styles.OBFormField.DefaultComboBox.pickListProperties.bodyStyleName
       },
       titleOrientation: 'top',
       showFocused: true,
@@ -141,11 +141,16 @@ isc.OBUserProfile.addProperties({
       }
     };
     CheckboxField.prototype = {
-      cellStyle: this.CheckboxField_cellStyle,
-      titleStyle: this.CheckboxField_titleStyle,
-      textBoxStyle: this.CheckboxField_textBoxStyle,
-      showFocused: true,
-      titleOrientation: 'right',
+      cellStyle: OB.Styles.OBFormField.DefaultCheckbox.cellStyle,
+      titleStyle: OB.Styles.OBFormField.DefaultCheckbox.titleStyle,
+      textBoxStyle: OB.Styles.OBFormField.DefaultCheckbox.textBoxStyle,
+      showValueIconOver: OB.Styles.OBFormField.DefaultCheckbox.showValueIconOver,
+      showValueIconFocused: OB.Styles.OBFormField.DefaultCheckbox.showValueIconFocused,
+      showFocused: OB.Styles.OBFormField.DefaultCheckbox.showFocused,
+      defaultValue: OB.Styles.OBFormField.DefaultCheckbox.defaultValue,
+      titleOrientation: OB.Styles.OBFormField.DefaultCheckbox.titleOrientation,
+      checkedImage: OB.Styles.OBFormField.DefaultCheckbox.checkedImage,
+      uncheckedImage: OB.Styles.OBFormField.DefaultCheckbox.uncheckedImage,
       editorType: 'checkbox'
     };
 
@@ -160,10 +165,10 @@ isc.OBUserProfile.addProperties({
       }
     };
     TextField.prototype = {
-      errorOrientation: 'left',
-      cellStyle: this.TextField_cellStyle,
-      titleStyle: this.TextField_titleStyle,
-      textBoxStyle: this.TextField_textBoxStyle,
+      errorOrientation: OB.Styles.OBFormField.DefaultTextItem.errorOrientation,
+      cellStyle: OB.Styles.OBFormField.DefaultTextItem.cellStyle,
+      titleStyle: OB.Styles.OBFormField.DefaultTextItem.titleStyle,
+      textBoxStyle: OB.Styles.OBFormField.DefaultTextItem.textBoxStyle,
       showFocused: true,
       showDisabled: false,
       disabled: true,
@@ -354,10 +359,10 @@ isc.OBUserProfile.addProperties({
       }
     };
     PasswordField.prototype = {
-      errorOrientation: 'left',
-      cellStyle: this.PasswordField_cellStyle,
-      titleStyle: this.PasswordField_titleStyle,
-      textBoxStyle: this.PasswordField_textBoxStyle,
+      errorOrientation: OB.Styles.OBFormField.DefaultTextItem.errorOrientation,
+      cellStyle: OB.Styles.OBFormField.DefaultTextItem.cellStyle,
+      titleStyle: OB.Styles.OBFormField.DefaultTextItem.titleStyle,
+      textBoxStyle: OB.Styles.OBFormField.DefaultTextItem.textBoxStyle,
       titleOrientation: 'top',
       width: '*',
       showErrorIcon: false,

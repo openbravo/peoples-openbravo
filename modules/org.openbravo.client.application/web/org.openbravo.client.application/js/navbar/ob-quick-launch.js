@@ -135,7 +135,7 @@ isc.OBQuickLaunch.addProperties({
         // client filtering does not always work great...
         pickListProperties: {
           textMatchStyle: 'substring',
-          bodyStyleName: 'OBPickListBody'
+          bodyStyleName: OB.Styles.OBFormField.DefaultComboBox.pickListProperties.bodyStyleName
         },
         pickListHeaderHeight: 0,
 

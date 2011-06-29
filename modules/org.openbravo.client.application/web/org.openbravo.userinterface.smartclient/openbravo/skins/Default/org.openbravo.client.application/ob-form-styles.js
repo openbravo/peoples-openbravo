@@ -44,41 +44,25 @@ isc.OBFormButton.addProperties({
   titleStyle: 'OBFormButtonTitle'
 });
 
-isc.OBTextItem.addProperties({
+OB.Styles.OBFormField = {};
+OB.Styles.OBFormField.DefaultTextItem = {
   errorOrientation: 'left',
   height: 21,
   width: '100%',
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldInput'
-});
+};
 
+isc.OBTextItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
 
-isc.OBTimeItem.addProperties({
-  errorOrientation: 'left',
-  height: 21,
-  width: '100%',
-  cellStyle: 'OBFormField',
-  titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldInput'
-});
+isc.OBTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
 
-isc.OBEncryptedItem.addProperties({
-  errorOrientation: 'left',
-  height: 21,
-  width: '100%',
-  cellStyle: 'OBFormField',
-  titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldInput'
-});
+isc.OBEncryptedItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
 
+isc.OBTextAreaItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
 isc.OBTextAreaItem.addProperties({
-  errorOrientation: 'left',
-  height: 66,
-  width: '100%',
-  cellStyle: 'OBFormField',
-  titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldInput'
+  height: 66
 });
 
 isc.OBPopUpTextAreaItem.addProperties({
@@ -88,7 +72,6 @@ isc.OBPopUpTextAreaItem.addProperties({
   textBoxStyle: 'OBFormFieldStatic'
 });
 
-OB.Styles.OBFormField = {};
 OB.Styles.OBFormField.DefaultComboBox = {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
@@ -134,15 +117,20 @@ isc.OBFKItem.addProperties({
 
 isc.OBYesNoItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultComboBox));
 
-isc.OBCheckboxItem.addProperties({
+OB.Styles.OBFormField.DefaultCheckbox = {
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldLabel',
   showValueIconOver: true,
   showValueIconFocused: true,
+  showFocused: true,
   defaultValue: false,
+  titleOrientation: 'right',
   checkedImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/checked.png',
   uncheckedImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/unchecked.png'
-});
+};
 
+isc.OBCheckboxItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultCheckbox));
 
 isc.OBSearchItem.addProperties({
   cellStyle: 'OBFormField',

@@ -51,28 +51,7 @@ isc.OBUserProfile.addProperties({
   icon: {
     src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconOpenDropDown.png'
   },
-  iconOrientation: 'right',
-
-  ComboBoxField_cellStyle: 'OBFormField',
-  ComboBoxField_titleStyle: 'OBFormFieldLabel',
-  ComboBoxField_textBoxStyle: 'OBFormFieldSelectInput',
-  ComboBoxField_controlStyle: 'OBFormFieldSelectControl',
-  ComboBoxField_pickListBaseStyle: 'OBFormFieldPickListCell',
-  ComboBoxField_pickListTallBaseStyle: 'OBFormFieldPickListCell',
-  ComboBoxField_pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
-  ComboBoxField_pickListProperties_bodyStyleName: 'OBPickListBody',
-
-  CheckboxField_cellStyle: 'OBFormField',
-  CheckboxField_titleStyle: 'OBFormFieldLabel',
-  CheckboxField_textBoxStyle: 'OBFormFieldLabel',
-
-  TextField_cellStyle: 'OBFormField',
-  TextField_titleStyle: 'OBFormFieldLabel',
-  TextField_textBoxStyle: 'OBFormFieldInput',
-
-  PasswordField_cellStyle: 'OBFormField',
-  PasswordField_titleStyle: 'OBFormFieldLabel',
-  PasswordField_textBoxStyle: 'OBFormFieldInput'
+  iconOrientation: 'right'
 });
 
 // Styling properties for the quick launch and quick create components
