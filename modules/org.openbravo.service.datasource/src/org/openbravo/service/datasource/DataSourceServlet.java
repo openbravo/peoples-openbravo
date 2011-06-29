@@ -65,7 +65,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.security.UsageAudit;
-import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Field;
@@ -234,6 +234,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     List<String> refListCols = new ArrayList<String>();
     List<String> dateCols = new ArrayList<String>();
     List<String> dateTimeCols = new ArrayList<String>();
+    List<String> numericCols = new ArrayList<String>();
     Map<String, DecimalFormat> formats = new HashMap<String, DecimalFormat>();
 
     public QueryJSONWriterToCSV(HttpServletRequest request, HttpServletResponse response,
@@ -244,16 +245,31 @@ public class DataSourceServlet extends BaseKernelServlet {
         response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
         writer = response.getWriter();
         VariablesSecureApp vars = new VariablesSecureApp(request);
-        decimalSeparator = vars.getSessionValue("#DecimalSeparator|generalQtyEdition").substring(0,
-            1);
-        // JSONObject jsonResult = new JSONObject(result);
-        // JSONArray data = jsonResult.getJSONObject("response").getJSONArray("data");
         try {
-          fieldSeparator = Preferences.getPreferenceValue("CSVFieldSeparator", false, null, null,
-              OBContext.getOBContext().getUser(), null, null);
-        } catch (PropertyException e) {
-          log.warn("CSV Field Separator couldn't be found. Using default separator: ,");
+          decimalSeparator = Preferences.getPreferenceValue("OBSERDS_CSVDecimalSeparator", true,
+              null, null, OBContext.getOBContext().getUser(), null, null);
+        } catch (PropertyNotFoundException e) {
+          // There is no preference for the decimal separator. Getting it from the Format.xml
+          // configuration
+          decimalSeparator = vars.getSessionValue("#DecimalSeparator|generalQtyEdition").substring(
+              0, 1);
+        }
+        try {
+          fieldSeparator = Preferences.getPreferenceValue("OBSERDS_CSVFieldSeparator", true, null,
+              null, OBContext.getOBContext().getUser(), null, null);
+        } catch (PropertyNotFoundException e) {
+          // There is no preference for the field separator. Using the default one.
           fieldSeparator = ",";
+        }
+        if (decimalSeparator.equals(fieldSeparator)) {
+          if (!fieldSeparator.equals(";")) {
+            fieldSeparator = ";";
+          } else {
+            fieldSeparator = ",";
+          }
+          log
+              .warn("Warning: CSV Field separator is identical to the decimal separator. Changing the field separator to "
+                  + fieldSeparator + " to avoid generating a wrong CSV file");
         }
         fieldProperties = new ArrayList<String>();
         if (parameters.get("viewState") != null
@@ -339,6 +355,8 @@ public class DataSourceServlet extends BaseKernelServlet {
               dateCols.add(prop.getName());
             } else if (prop.isDatetime()) {
               dateTimeCols.add(prop.getName());
+            } else if (prop.isPrimitive() && prop.isNumericType()) {
+              numericCols.add(prop.getName());
             }
           }
         }
@@ -452,7 +470,9 @@ public class DataSourceServlet extends BaseKernelServlet {
           } else {
             keyValue = "";
           }
-          keyValue = "\"" + keyValue + "\"";
+          if (!numericCols.contains(key)) {
+            keyValue = "\"" + keyValue + "\"";
+          }
           writer.append(keyValue.toString());
         }
       } catch (Exception e) {
