@@ -118,9 +118,9 @@ isc.OBAttachmentCanvasItem.addProperties({
   
 });
 
-isc.ClassFactory.defineClass('OBAttachmentsUploadPopup', isc.OBPopup);
+isc.ClassFactory.defineClass('OBAttachmentsSubmitPopup', isc.OBPopup);
 
-isc.OBAttachmentsUploadPopup.addProperties({
+isc.OBAttachmentsSubmitPopup.addProperties({
   submitButton: null,
   addForm: null,
   showMinimizeButton : false,
@@ -294,7 +294,7 @@ isc.OBAttachmentsLayout.addProperties({
           }
         }
       });
-      var popup = isc.OBAttachmentsUploadPopup.create({
+      var popup = isc.OBAttachmentsSubmitPopup.create({
         submitButton: submitbutton,
         addForm: form
       });

@@ -463,7 +463,7 @@ isc.OBSectionItemButton.addProperties({
  * Attachments Styles
  =======================================================================*/
 
- isc.OBAttachmentsUploadPopup.addProperties({
+ isc.OBAttachmentsSubmitPopup.addProperties({
   hlayoutTopMargin: 10,
   height: 30,
   width: 450,
