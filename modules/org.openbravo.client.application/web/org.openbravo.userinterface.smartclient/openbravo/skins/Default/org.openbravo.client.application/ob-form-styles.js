@@ -21,6 +21,7 @@
  * Styling properties for:
  * 1) OB Form items
  * 2) SectionItem Button Styles
+ * 3) Attachments Styles
  =======================================================================*/
 
 /* =====================================================================
@@ -456,4 +457,15 @@ isc.OBSectionItemButton.addProperties({
     }
     this.Super("focusChanged", arguments);
   }
+});
+
+/* =====================================================================
+ * Attachments Styles
+ =======================================================================*/
+
+ isc.OBAttachmentsUploadPopup.addProperties({
+  hlayoutTopMargin: 10,
+  height: 30,
+  width: 450,
+  align: 'center'
 });

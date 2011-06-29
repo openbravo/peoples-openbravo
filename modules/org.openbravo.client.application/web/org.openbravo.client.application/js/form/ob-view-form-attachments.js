@@ -118,7 +118,30 @@ isc.OBAttachmentCanvasItem.addProperties({
   
 });
 
+isc.ClassFactory.defineClass('OBAttachmentsUploadPopup', isc.OBPopup);
 
+isc.OBAttachmentsUploadPopup.addProperties({
+  submitButton: null,
+  addForm: null,
+  showMinimizeButton : false,
+  showMaximizeButton : false,
+  title: OB.I18N.getLabel('OBUIAPP_AttachFile'),
+  initWidget: function(args){
+    this.addItem(
+      isc.HLayout.create({
+        width: '100%',
+        height: this.height,
+        layoutTopMargin: this.hlayoutTopMargin,
+        align: this.align,
+        members: [
+          this.addForm,
+          this.submitButton
+        ]
+      })
+    );
+    this.Super('initWidget', arguments);
+  }
+});
 
 isc.ClassFactory.defineClass('OBAttachmentsLayout', isc.VLayout);
 
@@ -271,29 +294,9 @@ isc.OBAttachmentsLayout.addProperties({
           }
         }
       });
-      var horizontalLayout = isc.HLayout.create({
-        width: '100%',
-        height: '30px',
-        align: 'center'
-      });
-      var popup = isc.OBPopup.create({
-        height: 30,
-        width: 450,
-        align: 'center',
-        showMinimizeButton : false,
-        showMaximizeButton : false,
-        title: OB.I18N.getLabel('OBUIAPP_AttachFile'),
-        initWidget: function(args){
-          horizontalLayout.addMember(form);
-          horizontalLayout.addMember(submitbutton);
-          //An empty HLayout is added to move the form items a bit down (styling)
-          this.addItem(isc.HLayout.create({
-            width: '100%',
-            height: '10px'
-          }));
-          this.addItem(horizontalLayout);
-          this.Super('initWidget', arguments);
-        }
+      var popup = isc.OBAttachmentsUploadPopup.create({
+        submitButton: submitbutton,
+        addForm: form
       });
       form.popup = popup;
       popup.show();
