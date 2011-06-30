@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.util.Check;
+import org.openbravo.base.util.UnixOutputStreamWriter;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.ad.system.Client;
@@ -94,8 +95,7 @@ public class ExportClientProcess implements org.openbravo.scheduling.Process {
       log.debug("Reading data from database into in-mem xml string");
 
       final File exportFile = new File(getExportDir(), CLIENT_DATA_FILE_NAME);
-      final OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(exportFile),
-          "UTF-8");
+      final OutputStreamWriter fw = new UnixOutputStreamWriter(new FileOutputStream(exportFile));
       // write the xml to a file in WEB-INF
       log.debug("Writing export file " + exportFile.getAbsolutePath());
       DataExportService.getInstance().exportClientToXML(params, exportAuditInfo, fw);
