@@ -668,8 +668,8 @@ public class COAUtility {
       log4j.debug("insertElementValuesInDB() - Procesing element in position " + i
           + " with default account " + data[i].getDefaultAccount());
 
-      Boolean IsDocControlled = data[i].getAccountDocument().equals("Yes");
-      Boolean IsSummary = data[i].getAccountSummary().equals("Yes");
+      Boolean IsDocControlled = data[i].getAccountDocument().startsWith("Y");
+      Boolean IsSummary = data[i].getAccountSummary().startsWith("Y");
       String C_ElementValue_ID = data[i].getCElementValueId();
       String accountType = setAccountType(data[i]);
       String showValueCond = data[i].getShowValueCond();
@@ -678,8 +678,8 @@ public class COAUtility {
       try {
         String language = OBContext.getOBContext().getLanguage().getLanguage();
 
-        if (!"".equals(showValueCond) && !showValueCond.equals("P") && !showValueCond.equals("N")
-            && !showValueCond.equals("A")) {
+        if (!"".equals(showValueCond) && !showValueCond.startsWith("P")
+            && !showValueCond.startsWith("N") && !showValueCond.startsWith("A")) {
           showValueCond = null;
           logEvent(String
               .format(Utility.messageBD(new DalConnectionProvider(),
@@ -687,7 +687,7 @@ public class COAUtility {
                   "ShowValueCond"));
         }
 
-        if (!"".equals(titleNode) && !titleNode.equals("Y") && !titleNode.equals("N")) {
+        if (!"".equals(titleNode) && !titleNode.startsWith("Y") && !titleNode.startsWith("N")) {
           titleNode = null;
           logEvent(String.format(Utility.messageBD(new DalConnectionProvider(),
               "ValueIgnoredImportingAccount", language), data[i].getAccountValue(), "TitleNode"));

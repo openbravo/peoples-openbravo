@@ -710,9 +710,9 @@ public class InitialSetupUtility {
       newElementValue.setSummaryLevel(isSummary);
       newElementValue.setElementLevel(elementLevel);
       if (showValueCond != null && !"".equals(showValueCond))
-        newElementValue.setShowValueCondition(showValueCond);
+        newElementValue.setShowValueCondition(showValueCond.substring(0, 1));
       if (titleNode != null && !"".equals(titleNode))
-        newElementValue.setTitleNode("Y".equals(titleNode));
+        newElementValue.setTitleNode("Y".equals(titleNode.subSequence(0, 1)));
       OBDal.getInstance().save(newElementValue);
       if (doFlush)
         OBDal.getInstance().flush();
