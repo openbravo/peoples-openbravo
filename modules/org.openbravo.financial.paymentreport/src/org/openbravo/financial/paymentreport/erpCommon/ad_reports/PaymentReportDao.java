@@ -173,19 +173,19 @@ public class PaymentReportDao {
 
       // document date from - document date to
       if (!strDocumentDateFrom.isEmpty()) {
-        hsqlScript.append(" and coalesce(pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        hsqlScript.append(", inv.");
+        hsqlScript.append(" and coalesce(inv.");
         hsqlScript.append(Invoice.PROPERTY_INVOICEDATE);
-        hsqlScript.append(") > ?");
+        hsqlScript.append(", pay.");
+        hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
+        hsqlScript.append(") >= ?");
         parameters.add(FIN_Utility.getDate(strDocumentDateFrom));
       }
       if (!strDocumentDateTo.isEmpty()) {
-        hsqlScript.append(" and coalesce(pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        hsqlScript.append(", inv.");
+        hsqlScript.append(" and coalesce(inv.");
         hsqlScript.append(Invoice.PROPERTY_INVOICEDATE);
-        hsqlScript.append(") < ?");
+        hsqlScript.append(", pay.");
+        hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
+        hsqlScript.append(") <= ?");
         parameters.add(FIN_Utility.getDate(strDocumentDateTo));
       }
 
