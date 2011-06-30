@@ -43,9 +43,6 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
         isc.OBQueryListRowsNumberLabel.create({
           contents: ''
         }),
-//        isc.HLayout.create({
-//          width: '100%'
-//        }),
         isc.OBQueryListShowAllLabel.create({
           contents: OB.I18N.getLabel('OBCQL_ShowAll'),
           widget: this,
@@ -120,18 +117,37 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   },
 
   exportGrid: function() {
-    var grid = this.widget.grid;
-    var requestProperties = {
-          exportAs: 'csv',
-          //exportFilename: 'Query/List_widget.csv',
-          exportDisplay: 'download',
-          params: {
-            exportToFile: true
-          }
-        };
-    var additionalProperties = {
-          widgetInstanceId: this.widget.dbInstanceId
-        };
+    var grid = this.widget.grid, requestProperties, additionalProperties,
+        activateButton = isc.addProperties({}, isc.Dialog.OK, {
+          getTitle: function() {
+            return OB.I18N.getLabel('OBKMO_LearnMore');
+          },
+          click: function() {
+            this.topElement.cancelClick();
+            window.open('http://www.openbravo.com/product/erp/get-basic/');
+          }});
+
+         if (OB.Application.licenseType === 'C') {
+           isc.confirm(OB.I18N.getLabel('OBUIAPP_ActivateMessage'), {
+           isModal: true,
+           showModalMask: true,
+           toolbarButtons: [activateButton, isc.Dialog.CANCEL]
+         });
+
+         return;
+        }
+
+    requestProperties = {
+      exportAs: 'csv',
+      exportDisplay: 'download',
+      params: {
+        exportToFile: true
+      }
+    };
+
+    additionalProperties = {
+      widgetInstanceId: this.widget.dbInstanceId
+    };
 
     grid.exportData(requestProperties, additionalProperties);
   },
