@@ -194,7 +194,14 @@ public class DataSourceServlet extends BaseKernelServlet {
           exportAs = "csv";
         }
         if ("csv".equals(exportAs)) {
-          response.setContentType("text/csv; charset=iso-8859-1");
+          try {
+            String encoding = Preferences.getPreferenceValue("OBSERDS_CSVTextEncoding", true, null,
+                null, OBContext.getOBContext().getUser(), null, null);
+            response.setContentType("text/csv; charset=" + encoding);
+          } catch (PropertyNotFoundException e) {
+            // There is no preference for encoding, using standard one which works on Excel
+            response.setContentType("text/csv; charset=iso-8859-1");
+          }
           response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
           if (getDataSource(request) instanceof DefaultDataSourceService) {
             QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters,
@@ -241,7 +248,6 @@ public class DataSourceServlet extends BaseKernelServlet {
         Map<String, String> parameters, Entity entity) {
       try {
         OBContext.setAdminMode();
-        response.setContentType("text/csv; charset=iso-8859-1");
         response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
         writer = response.getWriter();
         VariablesSecureApp vars = new VariablesSecureApp(request);
