@@ -398,7 +398,7 @@ public class DataSourceServlet extends BaseKernelServlet {
             writer.append(fieldSeparator);
           }
           keys.add(key);
-          writer.append("'").append(key).append("'");
+          writer.append("\"").append(key).append("\"");
         }
         propertiesWritten = true;
       } catch (Exception e) {
