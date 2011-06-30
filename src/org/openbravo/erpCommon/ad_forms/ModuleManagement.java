@@ -2288,7 +2288,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         // Community instances cannot use GA, setting CR if it is used
         int actualScanLevel = sysInfo.getMaturityUpdate() == null ? MaturityLevel.CR_MATURITY
             : Integer.parseInt(sysInfo.getMaturityUpdate());
-        int actualSearchLevel = sysInfo.getMaturityUpdate() == null ? MaturityLevel.CR_MATURITY
+        int actualSearchLevel = sysInfo.getMaturitySearch() == null ? MaturityLevel.CR_MATURITY
             : Integer.parseInt(sysInfo.getMaturitySearch());
 
         if (actualScanLevel >= MaturityLevel.GA_MATURITY) {
@@ -2298,7 +2298,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
           actualSearchLevel = MaturityLevel.CR_MATURITY;
         }
         selectedScanLevel = Integer.toString(actualScanLevel);
-        selectedSearchLevel = Integer.toString(actualScanLevel);
+        selectedSearchLevel = Integer.toString(actualSearchLevel);
       }
 
       xmlDocument.setParameter("selectedScanLevel", selectedScanLevel);
