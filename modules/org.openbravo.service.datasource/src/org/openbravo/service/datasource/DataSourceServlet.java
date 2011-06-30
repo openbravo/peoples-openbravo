@@ -194,7 +194,7 @@ public class DataSourceServlet extends BaseKernelServlet {
           exportAs = "csv";
         }
         if ("csv".equals(exportAs)) {
-          response.setContentType("text/csv; charset=ISO-8859-1");
+          response.setContentType("text/csv; charset=iso-8859-1");
           response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
           if (getDataSource(request) instanceof DefaultDataSourceService) {
             QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters,
@@ -241,7 +241,7 @@ public class DataSourceServlet extends BaseKernelServlet {
         Map<String, String> parameters, Entity entity) {
       try {
         OBContext.setAdminMode();
-        response.setContentType("text/csv; charset=ISO-8859-1");
+        response.setContentType("text/csv; charset=iso-8859-1");
         response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
         writer = response.getWriter();
         VariablesSecureApp vars = new VariablesSecureApp(request);
