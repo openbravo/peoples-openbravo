@@ -251,8 +251,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           && strOrg.equals("0") && strShowClosing.equals("") && strShowReg.equals("")
           && strShowOpening.equals("") && strRecord.equals("")) {
 
-        int currentHistoryIndex = new Integer(new VariablesHistory(request)
-            .getCurrentHistoryIndex()).intValue();
+        int currentHistoryIndex = new Integer(
+            new VariablesHistory(request).getCurrentHistoryIndex()).intValue();
         String currentCommand = vars.getSessionValue("reqHistory.command" + currentHistoryIndex);
         if (currentCommand.equals("DIRECT2")) {
           strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId",
@@ -344,11 +344,11 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String strOrgFamily = getFamily(strTreeOrg, strOrg);
       if (strRecord.equals("")) {
         // Stores the number of lines per accounting entry
-        dataCountLines = ReportGeneralLedgerJournalData.selectCountGroupedLines(this, Utility
-            .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(
-            this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom, DateTimeData
-            .nDaysAfter(this, strDateTo, "1"), strDocument, strcAcctSchemaId, strOrgFamily,
-            strCheck);
+        dataCountLines = ReportGeneralLedgerJournalData.selectCountGroupedLines(this,
+            Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
+            strcAcctSchemaId, strOrgFamily, strCheck);
         String strInitAcctEntries = vars.getSessionValue(PREVIOUS_ACCTENTRIES);
         int acctEntries = (strInitAcctEntries.equals("") ? 0 : Integer.parseInt(strInitAcctEntries
             .split(",")[0]));
@@ -388,57 +388,59 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         } else {
           lastRecordNumber = initRecordNumber + intRecordRangeUsed;
         }
-        vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", String
-            .valueOf(lastRecordNumber));
+        vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber",
+            String.valueOf(lastRecordNumber));
         vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumberOld", strInitRecord);
 
         // Stores historical for navigation purposes
         vars.setSessionValue(PREVIOUS_ACCTENTRIES_OLD, vars.getSessionValue(PREVIOUS_ACCTENTRIES));
-        vars.setSessionValue(PREVIOUS_ACCTENTRIES, String.valueOf(acctEntries - 1) + ","
-            + vars.getSessionValue(PREVIOUS_ACCTENTRIES));
+        vars.setSessionValue(PREVIOUS_ACCTENTRIES,
+            String.valueOf(acctEntries - 1) + "," + vars.getSessionValue(PREVIOUS_ACCTENTRIES));
         vars.setSessionValue(PREVIOUS_RANGE_OLD, vars.getSessionValue(PREVIOUS_RANGE));
-        vars.setSessionValue(PREVIOUS_RANGE, String.valueOf(intRecordRangeUsed) + ","
-            + vars.getSessionValue(PREVIOUS_RANGE));
-        data = ReportGeneralLedgerJournalData.select(this, "ACCTDESCRIPTION", Utility.getContext(
-            this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom, DateTimeData.nDaysAfter(
-            this, strDateTo, "1"), strDocument, strcAcctSchemaId, strOrgFamily, strCheck,
-            initRecordNumber, intRecordRangeUsed);
+        vars.setSessionValue(PREVIOUS_RANGE,
+            String.valueOf(intRecordRangeUsed) + "," + vars.getSessionValue(PREVIOUS_RANGE));
+        data = ReportGeneralLedgerJournalData.select(this, "ACCTDESCRIPTION",
+            Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
+            strcAcctSchemaId, strOrgFamily, strCheck, initRecordNumber, intRecordRangeUsed);
         if (data != null && data.length > 0)
-          strPosition = ReportGeneralLedgerJournalData.selectCount(this, Utility.getContext(this,
-              vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
-              "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom, DateTimeData.nDaysAfter(
-              this, strDateTo, "1"), strDocument, strcAcctSchemaId, strOrgFamily, strCheck,
-              data[0].dateacct, data[0].identifier);
+          strPosition = ReportGeneralLedgerJournalData.selectCount(this,
+              Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+              strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
+              strcAcctSchemaId, strOrgFamily, strCheck, data[0].dateacct, data[0].identifier);
       } else {
-        data = ReportGeneralLedgerJournalData.selectDirect(this, "ACCTDESCRIPTION", Utility
-            .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(
-            this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable, strRecord,
-            initRecordNumber, intRecordRangePredefined);
+        data = ReportGeneralLedgerJournalData.selectDirect(this, "ACCTDESCRIPTION",
+            Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
+            strRecord, initRecordNumber, intRecordRangePredefined);
         if (data != null && data.length > 0)
-          strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this, Utility.getContext(
-              this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
-              "#AccessibleOrgTree", "ReportGeneralLedger"), strTable, strRecord, data[0].dateacct,
-              data[0].identifier);
+          strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this,
+              Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+              strTable, strRecord, data[0].dateacct, data[0].identifier);
       }
     } else if (vars.commandIn("DIRECT")) {
-      data = ReportGeneralLedgerJournalData.selectDirect(this, "ACCTDESCRIPTION", Utility
-          .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this,
-          vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable, strRecord);
+      data = ReportGeneralLedgerJournalData.selectDirect(this, "ACCTDESCRIPTION",
+          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
+          strRecord);
       if (data != null && data.length > 0)
-        strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this, Utility.getContext(
-            this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "ReportGeneralLedger"), strTable, strRecord, data[0].dateacct,
-            data[0].identifier);
+        strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this,
+            Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
+            strRecord, data[0].dateacct, data[0].identifier);
     } else if (vars.commandIn("DIRECT2")) {
-      data = ReportGeneralLedgerJournalData.selectDirect2(this, "ACCTDESCRIPTION", Utility
-          .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this,
-          vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strFactAcctGroupId);
+      data = ReportGeneralLedgerJournalData.selectDirect2(this, "ACCTDESCRIPTION",
+          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+          strFactAcctGroupId);
       if (data != null && data.length > 0)
-        strPosition = ReportGeneralLedgerJournalData.selectCountDirect2(this, Utility.getContext(
-            this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "ReportGeneralLedger"), strFactAcctGroupId, data[0].dateacct,
-            data[0].identifier);
+        strPosition = ReportGeneralLedgerJournalData.selectCountDirect2(this,
+            Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+            strFactAcctGroupId, data[0].dateacct, data[0].identifier);
     }
     if (data == null || data.length == 0) {
       String discard[] = { "sectionSchema" };
@@ -488,8 +490,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportGeneralLedgerJournal.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportGeneralLedgerJournal.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
           "ReportGeneralLedgerJournal.html", strReplaceWith);
@@ -521,10 +523,12 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
-        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
-            "ReportGeneralLedger"), strcAcctSchemaId));
+    xmlDocument
+        .setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
+            .selectC_ACCTSCHEMA_ID(this,
+                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+                Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+                strcAcctSchemaId));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("dateFrom", strDateFrom);
@@ -567,22 +571,25 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     if (!strFactAcctGroupId.equals("")) {
       data = ReportGeneralLedgerJournalData.selectDirect2(this,
-          ("".equals(strShowDescription)) ? "ACCTDESCRIPTION" : "DESCRIPTION", Utility.getContext(
-              this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
-              "#AccessibleOrgTree", "ReportGeneralLedger"), strFactAcctGroupId);
+          ("".equals(strShowDescription)) ? "ACCTDESCRIPTION" : "DESCRIPTION",
+          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+          strFactAcctGroupId);
 
     } else if (strRecord.equals("")) {
       String strCheck = buildCheck(strShowClosing, strShowReg, strShowOpening, strShowRegular);
       data = ReportGeneralLedgerJournalData.select(this,
-          ("".equals(strShowDescription)) ? "ACCTDESCRIPTION" : "DESCRIPTION", Utility.getContext(
-              this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
-              "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom, DateTimeData.nDaysAfter(
-              this, strDateTo, "1"), strDocument, strcAcctSchemaId, strOrgFamily, strCheck);
+          ("".equals(strShowDescription)) ? "ACCTDESCRIPTION" : "DESCRIPTION",
+          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strDateFrom,
+          DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument, strcAcctSchemaId,
+          strOrgFamily, strCheck);
     } else
       data = ReportGeneralLedgerJournalData.selectDirect(this,
-          ("".equals(strShowDescription)) ? "ACCTDESCRIPTION" : "DESCRIPTION", Utility.getContext(
-              this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars,
-              "#AccessibleOrgTree", "ReportGeneralLedger"), strTable, strRecord);
+          ("".equals(strShowDescription)) ? "ACCTDESCRIPTION" : "DESCRIPTION",
+          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
+          strRecord);
 
     String strSubtitle = Utility.messageBD(this, "CompanyName", vars.getLanguage()) + ": "
         + ReportGeneralLedgerJournalData.selectCompany(this, vars.getClient());

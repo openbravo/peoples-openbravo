@@ -83,10 +83,10 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       GenerateInvoicesmanualData.initUpdate(this);
       GenerateInvoicesmanualData.updateSelection(this, strCOrderId);
       String pinstance = SequenceIdData.getUUID();
-      PInstanceProcessData.insertPInstance(this, pinstance, "134", "0", "N", vars.getUser(), vars
-          .getClient(), vars.getOrg());
-      PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "Selection", "Y", vars
-          .getClient(), vars.getOrg(), vars.getUser());
+      PInstanceProcessData.insertPInstance(this, pinstance, "134", "0", "N", vars.getUser(),
+          vars.getClient(), vars.getOrg());
+      PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "Selection", "Y",
+          vars.getClient(), vars.getOrg(), vars.getUser());
       ActionButtonData.process134(this, pinstance);
       PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
       OBError myMessage = new OBError();
@@ -127,15 +127,17 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       // strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"),
       // strTreeOrg, strAD_Org_ID);
       if (strIncludeTaxes.equals("Y")) {
-        data = GenerateInvoicesmanualData.selectGross(this, vars.getLanguage(), Utility.getContext(
-            this, vars, "#User_Client", "GenerateInvoicesmanual"), Utility.getContext(this, vars,
-            "#User_Org", "GenerateInvoicesmanual"), strC_BPartner_ID, strDateFrom, DateTimeData
-            .nDaysAfter(this, strDateTo, "1"), Tree.getMembers(this, strTreeOrg, strAD_Org_ID));
+        data = GenerateInvoicesmanualData.selectGross(this, vars.getLanguage(),
+            Utility.getContext(this, vars, "#User_Client", "GenerateInvoicesmanual"),
+            Utility.getContext(this, vars, "#User_Org", "GenerateInvoicesmanual"),
+            strC_BPartner_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+            Tree.getMembers(this, strTreeOrg, strAD_Org_ID));
       } else
-        data = GenerateInvoicesmanualData.select(this, vars.getLanguage(), Utility.getContext(this,
-            vars, "#User_Client", "GenerateInvoicesmanual"), Utility.getContext(this, vars,
-            "#User_Org", "GenerateInvoicesmanual"), strC_BPartner_ID, strDateFrom, DateTimeData
-            .nDaysAfter(this, strDateTo, "1"), Tree.getMembers(this, strTreeOrg, strAD_Org_ID));
+        data = GenerateInvoicesmanualData.select(this, vars.getLanguage(),
+            Utility.getContext(this, vars, "#User_Client", "GenerateInvoicesmanual"),
+            Utility.getContext(this, vars, "#User_Org", "GenerateInvoicesmanual"),
+            strC_BPartner_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+            Tree.getMembers(this, strTreeOrg, strAD_Org_ID));
       data = calcAmountsWithInvoiceTerm(data);
     }
 
@@ -151,8 +153,8 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "GenerateInvoicesmanual.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "GenerateInvoicesmanual.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "GenerateInvoicesmanual.html",
           strReplaceWith);
@@ -180,8 +182,8 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTo", strDateTo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("paramBPartnerDescription", GenerateInvoicesmanualData
-        .bPartnerDescription(this, strC_BPartner_ID));
+    xmlDocument.setParameter("paramBPartnerDescription",
+        GenerateInvoicesmanualData.bPartnerDescription(this, strC_BPartner_ID));
     xmlDocument.setParameter("incTaxes", strIncludeTaxes);
 
     try {

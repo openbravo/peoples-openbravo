@@ -307,10 +307,9 @@ public class RuntimeModelTest extends BaseTest {
     }
 
     if (columns.size() != 0)
-      log
-          .debug(columns.size()
-              + " columns set as *isParent* with reference *TABLEDIR* and column name don't finish with _ID: "
-              + columns.toString());
+      log.debug(columns.size()
+          + " columns set as *isParent* with reference *TABLEDIR* and column name don't finish with _ID: "
+          + columns.toString());
     assertEquals(0, columns.size());
   }
 

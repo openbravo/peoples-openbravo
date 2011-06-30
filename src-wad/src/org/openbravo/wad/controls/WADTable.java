@@ -81,9 +81,8 @@ public class WADTable extends WADList {
 
     WADControl control = WadUtility.getWadControlClass(conn, fieldsAux.reference,
         fieldsAux.adReferenceValueId);
-    texto.append(control
-        .columnIdentifier("table" + itable, fieldsAux, vecCounters, vecFields, vecTable,
-            vecWhere, vecParameters, vecTableParameters));
+    texto.append(control.columnIdentifier("table" + itable, fieldsAux, vecCounters, vecFields,
+        vecTable, vecWhere, vecParameters, vecTableParameters));
     ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
     itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
     return texto.toString();

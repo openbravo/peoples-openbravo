@@ -119,8 +119,8 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_reports/ReportAssetDepreciationSchedule").createXmlDocument();
       data = ReportAssetDepreciationScheduleData.select(this, vars.getClient(), strDateFrom,
-          strDateTo, strValue, strDescription, strcAssetCategoryId, strcAcctSchemaId, Tree
-              .getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
+          strDateTo, strValue, strDescription, strcAssetCategoryId, strcAcctSchemaId,
+          Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
     }
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportAssetDepreciationSchedule",
@@ -194,10 +194,11 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
-        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "ReportAssetDepreciationSchedule"), Utility.getContext(this, vars, "#User_Client",
-            "ReportAssetDepreciationSchedule"), strcAcctSchemaId));
+    xmlDocument
+        .setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
+            .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "ReportAssetDepreciationSchedule"), Utility.getContext(this, vars, "#User_Client",
+                "ReportAssetDepreciationSchedule"), strcAcctSchemaId));
 
     out.println(xmlDocument.print());
     out.close();
@@ -222,8 +223,8 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
     HashMap<String, Object> parameters = new HashMap<String, Object>();
 
     pdfData = ReportAssetDepreciationScheduleData.select(this, vars.getClient(), strDateFrom,
-        strDateTo, strValue, strDescription, strcAssetCategoryId, strcAcctSchemaId, Tree
-            .getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
+        strDateTo, strValue, strDescription, strcAssetCategoryId, strcAcctSchemaId,
+        Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
     String strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportAssetDepreciationSchedule.jrxml";
     renderJR(vars, response, strReportPath, "pdf", parameters, pdfData, null);
   } // end of the printPageDataPdf() method

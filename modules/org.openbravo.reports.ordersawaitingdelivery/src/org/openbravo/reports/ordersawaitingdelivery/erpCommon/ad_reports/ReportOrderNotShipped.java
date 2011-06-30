@@ -135,8 +135,8 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
-    xmlDocument.setParameter("paramBPartnerDescription", ReportOrderNotShippedData
-        .bPartnerDescription(this, strcBpartnerId));
+    xmlDocument.setParameter("paramBPartnerDescription",
+        ReportOrderNotShippedData.bPartnerDescription(this, strcBpartnerId));
     xmlDocument.setParameter("deliveryTerms", strDeliveryTerms);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
@@ -153,8 +153,8 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
     xmlDocument.setParameter("orderDocNo", strOrderDocNo);
     xmlDocument.setParameter("orderRef", strOrderRef);
     xmlDocument.setParameter("adOrgId", strCOrgId);
-    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
-        vars.getRole()));
+    xmlDocument.setData("reportAD_ORGID", "liststructure",
+        OrganizationComboData.selectCombo(this, vars.getRole()));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -170,10 +170,11 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
 
     ReportOrderNotShippedData[] data = null;
 
-    data = ReportOrderNotShippedData.select(this, vars.getLanguage(), Utility.getContext(this,
-        vars, "#User_Client", "ReportOrderNotShipped"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportOrderNotShipped"), strdateFrom, DateTimeData.nDaysAfter(this,
-        strdateTo, "1"), strcBpartnerId, strDeliveryTerms, strOrderDocNo, strOrderRef, strCOrgId);
+    data = ReportOrderNotShippedData.select(this, vars.getLanguage(),
+        Utility.getContext(this, vars, "#User_Client", "ReportOrderNotShipped"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOrderNotShipped"), strdateFrom,
+        DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId, strDeliveryTerms,
+        strOrderDocNo, strOrderRef, strCOrgId);
 
     // Launch the report as usual, calling the JRXML file
     String strReportName = "@basedesign@/org/openbravo/reports/ordersawaitingdelivery/erpCommon/ad_reports/ReportOrderNotShipped.jrxml";

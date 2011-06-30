@@ -37,8 +37,8 @@ public class PaymentMonitor {
     // Check for PaymentMonitor-disabling switch.
     try {
       try {
-        Preferences.getPreferenceValue("PaymentMonitor", true, invoice.getClient(), invoice
-            .getOrganization(), null, null, null);
+        Preferences.getPreferenceValue("PaymentMonitor", true, invoice.getClient(),
+            invoice.getOrganization(), null, null, null);
         return;
       } catch (PropertyNotFoundException e) {
       }
@@ -257,8 +257,8 @@ public class PaymentMonitor {
     if (CurFrom_ID == null || CurTo_ID == null || CurFrom_ID.equals(CurTo_ID))
       return Amt;
     DalConnectionProvider conn = new DalConnectionProvider();
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-        "dateFormat.java");
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
     String strConvertedAmount = AcctServer.getConvertedAmt(Amt.toString(), CurFrom_ID, CurTo_ID,
         dateFormater.format(ConvDate).toString(), "S", client, org, conn);

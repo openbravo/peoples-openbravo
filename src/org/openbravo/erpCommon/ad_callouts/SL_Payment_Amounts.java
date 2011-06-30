@@ -122,8 +122,8 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
               strcCurrencyId, DateTimeData.today(this), null, vars.getClient(), vars.getOrg());
           if (strconvert.equals("")) {
             resultado.append("new Array('MESSAGE', \""
-                + FormatUtilities.replaceJS(Utility.messageBD(this, "NoCurrencyConversion", vars
-                    .getLanguage())) + "\"),");
+                + FormatUtilities.replaceJS(Utility.messageBD(this, "NoCurrencyConversion",
+                    vars.getLanguage())) + "\"),");
             FieldProvider[] tdd = null;
             try {
               ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",

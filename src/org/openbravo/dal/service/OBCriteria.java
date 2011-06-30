@@ -137,8 +137,8 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
     }
 
     if (isFilterOnReadableOrganization() && e.isOrganizationPartOfKey()) {
-      add(Restrictions.in("id." + PROPERTY_ORGANIZATION + ".id", obContext
-          .getReadableOrganizations()));
+      add(Restrictions.in("id." + PROPERTY_ORGANIZATION + ".id",
+          obContext.getReadableOrganizations()));
 
     } else if (isFilterOnReadableOrganization() && e.isOrganizationEnabled()) {
       add(Restrictions.in(PROPERTY_ORGANIZATION + ".id", obContext.getReadableOrganizations()));

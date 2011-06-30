@@ -75,14 +75,14 @@ public class ParametersActionHandler extends BaseActionHandler {
       final JSONArray params = data.getJSONArray("parameters");
 
       if (entityName == null || entityName.equals("")) {
-        result.put("message", getMessge("Error",
-            "Can't process parameters action without entity name"));
+        result.put("message",
+            getMessge("Error", "Can't process parameters action without entity name"));
         return result;
       }
 
       if (dbInstanceId == null || dbInstanceId.equals("")) {
-        result.put("message", getMessge("Error",
-            "Can't process parameters without object instance id"));
+        result.put("message",
+            getMessge("Error", "Can't process parameters without object instance id"));
         return result;
       }
 
@@ -92,8 +92,8 @@ public class ParametersActionHandler extends BaseActionHandler {
       }
 
       if (params == null || params.length() == 0) {
-        result.put("message", getMessge("Error",
-            "Parameters not found in request, nothing to process"));
+        result.put("message",
+            getMessge("Error", "Parameters not found in request, nothing to process"));
         return result;
       }
 
@@ -102,8 +102,10 @@ public class ParametersActionHandler extends BaseActionHandler {
         final java.lang.reflect.Field f = ParameterValue.class.getDeclaredField("PROPERTY_"
             + dbFilterProperty.toUpperCase());
       } catch (NoSuchFieldException fieldException) {
-        result.put("message", getMessge("Error", "Property " + dbFilterProperty
-            + " is not defined in Parameters class"));
+        result.put(
+            "message",
+            getMessge("Error", "Property " + dbFilterProperty
+                + " is not defined in Parameters class"));
         return result;
       }
 

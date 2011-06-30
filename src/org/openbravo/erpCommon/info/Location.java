@@ -198,8 +198,8 @@ public class Location extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Region_ID", "",
-          "C_Region of Country", Utility.getReferenceableOrg(vars, vars.getOrg()), Utility
-              .getContext(this, vars, "#User_Client", strWindow), 0);
+          "C_Region of Country", Utility.getReferenceableOrg(vars, vars.getOrg()),
+          Utility.getContext(this, vars, "#User_Client", strWindow), 0);
       Utility.fillSQLParameters(this, vars, data[0], comboTableData, strWindow, data[0].cRegionId);
       xmlDocument.setData("reportRegion", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -225,8 +225,8 @@ public class Location extends HttpSecureAppServlet {
           "C_Region of Country", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindow),
           Utility.getContext(this, vars, "#User_Client", strWindow), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindow, "");
-      xmlDocument.setParameter("array", Utility.arrayEntradaSimple("regions", comboTableData
-          .select(false)));
+      xmlDocument.setParameter("array",
+          Utility.arrayEntradaSimple("regions", comboTableData.select(false)));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);

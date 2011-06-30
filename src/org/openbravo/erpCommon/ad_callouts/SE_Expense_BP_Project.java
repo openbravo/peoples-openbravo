@@ -97,7 +97,7 @@ public class SE_Expense_BP_Project extends HttpSecureAppServlet {
           // business partner, take the last project of that business
           // partner (if any).
           if (strBPartnerProject == null || strBPartnerProject.equals("")) {
-            //strReset = "1";
+            // strReset = "1";
             strProject = SEExpenseBPProjectData.selectProjectId(this, strBPartnerId);
             if (strProject != null && !strProject.equals("")) {
               strProjectId = strProject;

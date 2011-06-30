@@ -79,10 +79,10 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
     // XmlDocument xmlDocument=null;
     ReportGuaranteeDateData[] data = null;
     String discard[] = { "discard" };
-    data = ReportGuaranteeDateData.select(this, Utility.getContext(this, vars, "#User_Client",
-        "ReportGuaranteeDateJR"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-        "ReportGuaranteeDateJR"), DateTimeData.nDaysAfter(this, strDate, "1"), strcBpartnerId,
-        strmWarehouseId);
+    data = ReportGuaranteeDateData.select(this,
+        Utility.getContext(this, vars, "#User_Client", "ReportGuaranteeDateJR"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGuaranteeDateJR"),
+        DateTimeData.nDaysAfter(this, strDate, "1"), strcBpartnerId, strmWarehouseId);
 
     if (data == null || data.length == 0) {
       discard[0] = "selEliminar";
@@ -150,8 +150,8 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
     xmlDocument.setParameter("mWarehouseId", strmWarehouseId);
-    xmlDocument.setParameter("bPartnerDescription", ReportGuaranteeDateData.selectBpartner(this,
-        strcBpartnerId));
+    xmlDocument.setParameter("bPartnerDescription",
+        ReportGuaranteeDateData.selectBpartner(this, strcBpartnerId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
           "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGuaranteeDateJR"),

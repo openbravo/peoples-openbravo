@@ -116,8 +116,7 @@ public class DataSetService implements OBSingleton {
       // todo: count is slower than exists, is exists possible?
       List<?> list = obc.list();
       if (obc.count() < 20 && obc.count() > 0) {
-        log
-            .warn("The following rows were changed after your last update.database or export.database:");
+        log.warn("The following rows were changed after your last update.database or export.database:");
         for (Object obj : list) {
           log.warn("     -" + obj);
         }

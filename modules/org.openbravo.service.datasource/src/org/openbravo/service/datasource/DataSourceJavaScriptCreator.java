@@ -63,10 +63,8 @@ public class DataSourceJavaScriptCreator extends BaseWebServiceServlet {
     sb.append(", operationBindings:  [");
     sb.append("{operationType: 'fetch', dataProtocol: 'getParams'}");
     sb.append(", {operationType: 'add', dataProtocol: 'postMessage'}");
-    sb
-        .append(", {operationType: 'remove', dataProtocol: 'getParams', requestProperties:{httpMethod: 'DELETE'}}");
-    sb
-        .append(", {operationType: 'update', dataProtocol: 'postMessage', requestProperties:{httpMethod: 'PUT'}}");
+    sb.append(", {operationType: 'remove', dataProtocol: 'getParams', requestProperties:{httpMethod: 'DELETE'}}");
+    sb.append(", {operationType: 'update', dataProtocol: 'postMessage', requestProperties:{httpMethod: 'PUT'}}");
     sb.append("]");
 
     sb.append(", fields:[ ");
@@ -122,8 +120,8 @@ public class DataSourceJavaScriptCreator extends BaseWebServiceServlet {
     if (property.getAllowedValues() != null && property.getAllowedValues().size() > 0) {
       sb.append(", valueMap: {");
       boolean multipleValue = false;
-      final List<RefListEntry> allowedValues = DataSourceProperty.createValueMap(property
-          .getAllowedValues(), property.getDomainType().getReference().getId());
+      final List<RefListEntry> allowedValues = DataSourceProperty.createValueMap(
+          property.getAllowedValues(), property.getDomainType().getReference().getId());
       for (RefListEntry entry : allowedValues) {
         final String label = entry.getLabel();
 

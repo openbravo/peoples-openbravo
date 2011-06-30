@@ -87,8 +87,8 @@ public class SE_FinancialAccount_BSAccounts extends HttpSecureAppServlet {
       resultado.append("var calloutName='SE_FinancialAccount_BSAccounts';\n\n");
       resultado.append("var respuesta = new Array(");
 
-      String strConfirmMessage = Utility.messageBD(this, "BankStatementAccountWarning", vars
-          .getLanguage());
+      String strConfirmMessage = Utility.messageBD(this, "BankStatementAccountWarning",
+          vars.getLanguage());
       if ("Y".equals(strOB3UIMode)) {
         resultado.append("new Array(\"JSEXECUTE\","
             + " \"OB.APRM.bankTransitoryAccountCalloutResponse(this, '"

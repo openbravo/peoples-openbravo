@@ -124,8 +124,8 @@ public class Translation extends HttpSecureAppServlet {
   @Deprecated
   public static OBError importTrlDirectory(String directory, String strLang, String strClient,
       VariablesSecureApp vars) {
-    return TranslationManager.importTrlDirectory(cp, directory, strLang, strClient, vars
-        .getLanguage());
+    return TranslationManager.importTrlDirectory(cp, directory, strLang, strClient,
+        vars.getLanguage());
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)

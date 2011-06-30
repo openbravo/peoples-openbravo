@@ -39,11 +39,10 @@ public class UITable extends UIReference {
   }
 
   public void generateSQL(TableSQLData table, Properties prop) throws Exception {
-    table.addSelectField(table.getTableName() + "." + prop.getProperty("ColumnName"), prop
-        .getProperty("ColumnName"));
-    identifier(table, table.getTableName(), prop, prop.getProperty("ColumnName") + "_R", table
-        .getTableName()
-        + "." + prop.getProperty("ColumnName"), false);
+    table.addSelectField(table.getTableName() + "." + prop.getProperty("ColumnName"),
+        prop.getProperty("ColumnName"));
+    identifier(table, table.getTableName(), prop, prop.getProperty("ColumnName") + "_R",
+        table.getTableName() + "." + prop.getProperty("ColumnName"), false);
   }
 
   protected void identifier(TableSQLData tableSql, String parentTableName, Properties field,
@@ -97,7 +96,8 @@ public class UITable extends UIReference {
     String referenceValue = field == null ? "" : field.getField("referencevalue");
 
     int myIndex = comboTableData.index++;
-    ComboTableQueryData trd[] = ComboTableQueryData.selectRefTable(comboTableData.getPool(),
+    ComboTableQueryData trd[] = ComboTableQueryData.selectRefTable(
+        comboTableData.getPool(),
         ((referenceValue != null && !referenceValue.equals("")) ? referenceValue : comboTableData
             .getObjectReference()));
     if (trd == null || trd.length == 0)
@@ -118,11 +118,12 @@ public class UITable extends UIReference {
       tables += "AND td" + myIndex + ".AD_Client_ID IN (" + comboTableData.getClientList() + ") \n";
       tables += "AND td" + myIndex + ".AD_Org_ID IN (" + comboTableData.getOrgList() + ")";
     } else {
-      comboTableData.addWhereField("td" + myIndex + ".AD_Client_ID IN ("
-          + comboTableData.getClientList() + ")", "CLIENT_LIST");
+      comboTableData.addWhereField(
+          "td" + myIndex + ".AD_Client_ID IN (" + comboTableData.getClientList() + ")",
+          "CLIENT_LIST");
       if (comboTableData.getOrgList() != null)
-        comboTableData.addWhereField("td" + myIndex + ".AD_Org_ID IN ("
-            + comboTableData.getOrgList() + ")", "ORG_LIST");
+        comboTableData.addWhereField(
+            "td" + myIndex + ".AD_Org_ID IN (" + comboTableData.getOrgList() + ")", "ORG_LIST");
     }
     comboTableData.addFromField(tables, "td" + myIndex);
     String strSQL = trd[0].whereclause;

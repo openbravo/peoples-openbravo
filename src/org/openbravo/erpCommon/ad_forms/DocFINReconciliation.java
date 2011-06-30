@@ -182,8 +182,8 @@ public class DocFINReconciliation extends AcctServer {
         String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
             .getProperty("dateFormat.java");
         SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-        FieldProviderFactory.setField(data[i], "dateacct", outputFormat.format(transaction
-            .getDateAcct()));
+        FieldProviderFactory.setField(data[i], "dateacct",
+            outputFormat.format(transaction.getDateAcct()));
         FieldProviderFactory.setField(data[i], "DepositAmount", transaction.getDepositAmount()
             .toString());
         FieldProviderFactory.setField(data[i], "PaymentAmount", transaction.getPaymentAmount()
@@ -211,7 +211,9 @@ public class DocFINReconciliation extends AcctServer {
         FieldProviderFactory.setField(data[i], "Refund", paymentDetails.get(i).isRefund() ? "Y"
             : "N");
         FieldProviderFactory.setField(data[i], "adOrgId", transaction.getOrganization().getId());
-        FieldProviderFactory.setField(data[i], "cGlItemId",
+        FieldProviderFactory.setField(
+            data[i],
+            "cGlItemId",
             transaction.getGLItem() != null ? transaction.getGLItem().getId() : data[i]
                 .getField("cGlItemId"));
         FieldProviderFactory.setField(data[i], "description", transaction.getDescription());
@@ -286,14 +288,16 @@ public class DocFINReconciliation extends AcctServer {
         String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
             .getProperty("dateFormat.java");
         SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-        FieldProviderFactory.setField(data[i], "dateacct", outputFormat.format(transaction
-            .getDateAcct()));
+        FieldProviderFactory.setField(data[i], "dateacct",
+            outputFormat.format(transaction.getDateAcct()));
         FieldProviderFactory.setField(data[i], "WriteOffAmt", payment.getWriteoffAmount()
             .toString());
         FieldProviderFactory.setField(data[i], "cBpartnerId",
             payment.getBusinessPartner() != null ? payment.getBusinessPartner().getId() : "");
         FieldProviderFactory.setField(data[i], "adOrgId", transaction.getOrganization().getId());
-        FieldProviderFactory.setField(data[i], "cGlItemId",
+        FieldProviderFactory.setField(
+            data[i],
+            "cGlItemId",
             transaction.getGLItem() != null ? transaction.getGLItem().getId() : data[i]
                 .getField("cGlItemId"));
         FieldProviderFactory.setField(data[i], "description", transaction.getDescription());
@@ -334,11 +338,11 @@ public class DocFINReconciliation extends AcctServer {
           .setField(data[0], "cBpartnerId", (transaction.getFinPayment() == null || transaction
               .getFinPayment().getBusinessPartner() == null) ? "" : transaction.getFinPayment()
               .getBusinessPartner().getId());
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-          "dateFormat.java");
+      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-      FieldProviderFactory.setField(data[0], "dateacct", outputFormat.format(transaction
-          .getDateAcct()));
+      FieldProviderFactory.setField(data[0], "dateacct",
+          outputFormat.format(transaction.getDateAcct()));
       if (transaction.getActivity() != null)
         FieldProviderFactory.setField(data[0], "cActivityId", transaction.getActivity().getId());
       if (transaction.getProject() != null)
@@ -369,11 +373,11 @@ public class DocFINReconciliation extends AcctServer {
           .toString());
       FieldProviderFactory.setField(data[0], "description", transaction.getDescription());
       FieldProviderFactory.setField(data[0], "cCurrencyId", transaction.getCurrency().getId());
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-          "dateFormat.java");
+      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-      FieldProviderFactory.setField(data[0], "dateacct", outputFormat.format(transaction
-          .getDateAcct()));
+      FieldProviderFactory.setField(data[0], "dateacct",
+          outputFormat.format(transaction.getDateAcct()));
       if (transaction.getActivity() != null)
         FieldProviderFactory.setField(data[0], "cActivityId", transaction.getActivity().getId());
       if (transaction.getProject() != null)
@@ -498,8 +502,8 @@ public class DocFINReconciliation extends AcctServer {
           C_Currency_ID, line.getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, conn);
     else
-      fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID, line
-          .getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+      fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID,
+          line.getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn);
     fact.createLine(line, getClearOutAccount(as, transaction.getAccount(), conn), C_Currency_ID,
         line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -541,12 +545,13 @@ public class DocFINReconciliation extends AcctServer {
         fact = createFactPaymentDetails(detail, paymentDetail, as, conn, fact, Fact_Acct_Group_ID);
       }
     } else {
-      fact.createLine(line, getAccountPayment(conn, payment, as), C_Currency_ID, !payment
-          .isReceipt() ? line.getAmount() : "", payment.isReceipt() ? line.getAmount() : "",
-          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+      fact.createLine(line, getAccountPayment(conn, payment, as), C_Currency_ID,
+          !payment.isReceipt() ? line.getAmount() : "",
+          payment.isReceipt() ? line.getAmount() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn);
     }
-    fact.createLine(line, getAccountReconciliation(conn, payment, as), C_Currency_ID, payment
-        .isReceipt() ? line.getAmount() : "", !payment.isReceipt() ? line.getAmount() : "",
+    fact.createLine(line, getAccountReconciliation(conn, payment, as), C_Currency_ID,
+        payment.isReceipt() ? line.getAmount() : "", !payment.isReceipt() ? line.getAmount() : "",
         Fact_Acct_Group_ID, "999999", DocumentType, conn);
     if (!getDocumentPaymentConfirmation(payment)
         && !getDocumentTransactionConfirmation(transaction)) {
@@ -554,10 +559,12 @@ public class DocFINReconciliation extends AcctServer {
       // credit is generated
       if (payment.getUsedCredit().compareTo(ZERO) != 0
           && payment.getGeneratedCredit().compareTo(ZERO) == 0) {
-        fact.createLine(line, getAccountBPartner(payment.getBusinessPartner().getId(), as, payment
-            .isReceipt(), true, conn), C_Currency_ID, (payment.isReceipt() ? payment
-            .getUsedCredit().toString() : ""), (payment.isReceipt() ? "" : payment.getUsedCredit()
-            .toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        fact.createLine(
+            line,
+            getAccountBPartner(payment.getBusinessPartner().getId(), as, payment.isReceipt(), true,
+                conn), C_Currency_ID, (payment.isReceipt() ? payment.getUsedCredit().toString()
+                : ""), (payment.isReceipt() ? "" : payment.getUsedCredit().toString()),
+            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       }
     }
     SeqNo = "0";
@@ -583,19 +590,22 @@ public class DocFINReconciliation extends AcctServer {
       if (line.getWriteOffAmt() != null
           && ZERO.compareTo(new BigDecimal(line.getWriteOffAmt())) != 0) {
         fact.createLine(line, getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn),
-            C_Currency_ID, (isReceipt ? line.getWriteOffAmt() : ""), (isReceipt ? "" : line
-                .getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            C_Currency_ID, (isReceipt ? line.getWriteOffAmt() : ""),
+            (isReceipt ? "" : line.getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, conn);
         bpAmount = bpAmount.add(new BigDecimal(line.getWriteOffAmt()));
       }
-      fact.createLine(line, getAccountBPartner(
-          (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
-              : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
+      fact.createLine(
+          line,
+          getAccountBPartner(
+              (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
+                  : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
           !isReceipt ? line.getAmount() : "", isReceipt ? line.getAmount() : "",
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
     } else {
-      fact.createLine(line, getAccountPayment(conn, payment, as), C_Currency_ID, !isReceipt ? line
-          .getAmount() : "", isReceipt ? line.getAmount() : "", Fact_Acct_Group_ID,
-          nextSeqNo(SeqNo), DocumentType, conn);
+      fact.createLine(line, getAccountPayment(conn, payment, as), C_Currency_ID,
+          !isReceipt ? line.getAmount() : "", isReceipt ? line.getAmount() : "",
+          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
     }
 
     SeqNo = "0";
@@ -628,8 +638,10 @@ public class DocFINReconciliation extends AcctServer {
               : "";
     }
     if (line.cGlItemId != null && !"".equals(line.cGlItemId)) {
-      fact.createLine(line, getAccountGLItem(OBDal.getInstance().get(GLItem.class, line.cGlItemId),
-          as, isReceipt, conn), C_Currency_ID, (isReceipt ? "" : bpAmount.toString()),
+      fact.createLine(
+          line,
+          getAccountGLItem(OBDal.getInstance().get(GLItem.class, line.cGlItemId), as, isReceipt,
+              conn), C_Currency_ID, (isReceipt ? "" : bpAmount.toString()),
           (isReceipt ? bpAmount.toString() : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn);
     } else {
@@ -657,9 +669,11 @@ public class DocFINReconciliation extends AcctServer {
           C_Currency_ID, line.getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, conn);
     else if (!"".equals(line.getCGlItemId()))
-      fact.createLine(line, getAccountGLItem(OBDal.getInstance().get(GLItem.class,
-          line.getCGlItemId()), as, isReceipt, conn), C_Currency_ID, line.getPaymentAmount(), line
-          .getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+      fact.createLine(
+          line,
+          getAccountGLItem(OBDal.getInstance().get(GLItem.class, line.getCGlItemId()), as,
+              isReceipt, conn), C_Currency_ID, line.getPaymentAmount(), line.getDepositAmount(),
+          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
     fact.createLine(line, getAccount(conn, transaction.getAccount(), as, isReceipt), C_Currency_ID,
         line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID, "999999",
         DocumentType, conn);
@@ -707,8 +721,8 @@ public class DocFINReconciliation extends AcctServer {
       OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
       obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
-          .getPaymentMethod()));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+          payment.getPaymentMethod()));
       obCriteria.setFilterOnReadableClients(false);
       obCriteria.setFilterOnReadableOrganization(false);
       List<FinAccPaymentMethod> lines = obCriteria.list();
@@ -756,8 +770,8 @@ public class DocFINReconciliation extends AcctServer {
         OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
             FinAccPaymentMethod.class);
         obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
-            .getPaymentMethod()));
+        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+            payment.getPaymentMethod()));
         obCriteria.setFilterOnReadableClients(false);
         obCriteria.setFilterOnReadableOrganization(false);
         List<FinAccPaymentMethod> lines = obCriteria.list();
@@ -829,10 +843,10 @@ public class DocFINReconciliation extends AcctServer {
         if (payment != null) {
           OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
               FinAccPaymentMethod.class);
-          obCriteria.add(Restrictions
-              .eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-          obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
-              .getPaymentMethod()));
+          obCriteria
+              .add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+          obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+              payment.getPaymentMethod()));
           obCriteria.setFilterOnReadableClients(false);
           obCriteria.setFilterOnReadableOrganization(false);
           List<FinAccPaymentMethod> lines = obCriteria.list();
@@ -891,9 +905,11 @@ public class DocFINReconciliation extends AcctServer {
             FIN_ReconciliationLine_v.class);
         obCriteria.add(Restrictions.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION,
             reconciliation));
-        obCriteria.add(Restrictions.or(Restrictions.ge(
-            FIN_ReconciliationLine_v.PROPERTY_ACCOUNTINGDATE, period.getEndingDate()), Restrictions
-            .le(FIN_ReconciliationLine_v.PROPERTY_ACCOUNTINGDATE, period.getStartingDate())));
+        obCriteria.add(Restrictions.or(
+            Restrictions.ge(FIN_ReconciliationLine_v.PROPERTY_ACCOUNTINGDATE,
+                period.getEndingDate()),
+            Restrictions.le(FIN_ReconciliationLine_v.PROPERTY_ACCOUNTINGDATE,
+                period.getStartingDate())));
         obCriteria.setFilterOnReadableOrganization(false);
         obCriteria.addOrder(Order.asc(FIN_ReconciliationLine_v.PROPERTY_ACCOUNTINGDATE));
         obCriteria.toString();
@@ -935,11 +951,11 @@ public class DocFINReconciliation extends AcctServer {
       FieldProviderFactory.setField(data[0], "C_Doctype_ID", reconciliation.getDocumentType()
           .getId());
       FieldProviderFactory.setField(data[0], "DocumentNo", reconciliation.getDocumentNo());
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-          "dateFormat.java");
+      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-      FieldProviderFactory.setField(data[0], "statementDate", outputFormat.format(reconciliation
-          .getTransactionDate()));
+      FieldProviderFactory.setField(data[0], "statementDate",
+          outputFormat.format(reconciliation.getTransactionDate()));
       FieldProviderFactory.setField(data[0], "Posted", reconciliation.getPosted());
       FieldProviderFactory.setField(data[0], "Processed", reconciliation.isProcessed() ? "Y" : "N");
       FieldProviderFactory.setField(data[0], "Processing", reconciliation.isProcessNow() ? "Y"
@@ -968,8 +984,10 @@ public class DocFINReconciliation extends AcctServer {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(
+          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
@@ -994,10 +1012,12 @@ public class DocFINReconciliation extends AcctServer {
     try {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, payment
-          .getAccount()));
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT,
+          payment.getAccount()));
+      accounts.add(Restrictions.eq(
+          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
@@ -1006,8 +1026,8 @@ public class DocFINReconciliation extends AcctServer {
       OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
       obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
-          .getPaymentMethod()));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+          payment.getPaymentMethod()));
       obCriteria.setFilterOnReadableClients(false);
       obCriteria.setFilterOnReadableOrganization(false);
       List<FinAccPaymentMethod> lines = obCriteria.list();
@@ -1055,8 +1075,10 @@ public class DocFINReconciliation extends AcctServer {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(
+          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
@@ -1082,8 +1104,10 @@ public class DocFINReconciliation extends AcctServer {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(
+          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
@@ -1110,17 +1134,19 @@ public class DocFINReconciliation extends AcctServer {
       OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
       obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
-          .getPaymentMethod()));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+          payment.getPaymentMethod()));
       obCriteria.setFilterOnReadableClients(false);
       obCriteria.setFilterOnReadableOrganization(false);
       List<FinAccPaymentMethod> lines = obCriteria.list();
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, payment
-          .getAccount()));
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT,
+          payment.getAccount()));
+      accounts.add(Restrictions.eq(
+          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
@@ -1158,17 +1184,19 @@ public class DocFINReconciliation extends AcctServer {
       OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
       obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
-          .getPaymentMethod()));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+          payment.getPaymentMethod()));
       obCriteria.setFilterOnReadableClients(false);
       obCriteria.setFilterOnReadableOrganization(false);
       List<FinAccPaymentMethod> lines = obCriteria.list();
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, payment
-          .getAccount()));
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT,
+          payment.getAccount()));
+      accounts.add(Restrictions.eq(
+          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
@@ -1225,8 +1253,8 @@ public class DocFINReconciliation extends AcctServer {
     if (calendar != null) {
       return calendar;
     } else {
-      return getCalendar(OBContext.getOBContext().getOrganizationStructureProvider().getParentOrg(
-          organization));
+      return getCalendar(OBContext.getOBContext().getOrganizationStructureProvider()
+          .getParentOrg(organization));
     }
   }
 }

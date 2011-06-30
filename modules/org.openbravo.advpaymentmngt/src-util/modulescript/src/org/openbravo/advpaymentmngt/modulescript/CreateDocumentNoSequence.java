@@ -28,16 +28,17 @@ import javax.servlet.ServletException;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
 
-public class CreateDocumentNoSequence extends ModuleScript{
+public class CreateDocumentNoSequence extends ModuleScript {
 
   @Override
-  //Inserting DocumentNo sequence for existing tables that miss them
+  // Inserting DocumentNo sequence for existing tables that miss them
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
       CreateDocumentNoSequenceData[] data = CreateDocumentNoSequenceData.select(cp);
       for (int i = 0; i < data.length; i++) {
-        CreateDocumentNoSequenceData.insertDocumentNoSequence(cp.getConnection(), cp, data[i].client, data[i].tablename);
+        CreateDocumentNoSequenceData.insertDocumentNoSequence(cp.getConnection(), cp,
+            data[i].client, data[i].tablename);
       }
     } catch (Exception e) {
       handleError(e);

@@ -117,8 +117,8 @@ public class ProductMultiple extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("alertMsg", "ALERT_MSG=\""
-        + Utility.messageBD(this, "NoProductSelected", vars.getLanguage()) + "\";");
+    xmlDocument.setParameter("alertMsg",
+        "ALERT_MSG=\"" + Utility.messageBD(this, "NoProductSelected", vars.getLanguage()) + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("name", strNameValue);
     try {
@@ -126,16 +126,16 @@ public class ProductMultiple extends HttpSecureAppServlet {
           "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ProductMultiple"),
           Utility.getContext(this, vars, "#User_Client", "ProductMultiple"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ProductMultiple", vars
-          .getSessionValue("ProductMultiple.productCategory", ""));
-      xmlDocument.setData("reportM_Product_Category_ID", "liststructure", comboTableData
-          .select(false));
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ProductMultiple",
+          vars.getSessionValue("ProductMultiple.productCategory", ""));
+      xmlDocument.setData("reportM_Product_Category_ID", "liststructure",
+          comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    xmlDocument.setParameter("category", vars
-        .getSessionValue("ProductMultiple.productCategory", ""));
+    xmlDocument.setParameter("category",
+        vars.getSessionValue("ProductMultiple.productCategory", ""));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -180,8 +180,9 @@ public class ProductMultiple extends HttpSecureAppServlet {
       dataAux.setData("adReferenceValueId", "AD_ReferenceValue_ID");
       dataAux.setData("isidentifier", (colNames[i].equals("rowkey") ? "true" : "false"));
       dataAux.setData("iskey", (colNames[i].equals("RowKey") ? "true" : "false"));
-      dataAux.setData("isvisible", (colNames[i].equals("M_Product_ID")
-          || colNames[i].equalsIgnoreCase("RowKey") ? "false" : "true"));
+      dataAux.setData("isvisible",
+          (colNames[i].equals("M_Product_ID") || colNames[i].equalsIgnoreCase("RowKey") ? "false"
+              : "true"));
       String name = Utility.messageBD(this, "MPS_" + colNames[i].toUpperCase(), vars.getLanguage());
       dataAux.setData("name", (name.startsWith("MPS_") ? colNames[i] : name));
       dataAux.setData("type", "string");
@@ -236,8 +237,8 @@ public class ProductMultiple extends HttpSecureAppServlet {
           }
           strNumRows = ProductMultipleData.countRows(this, rownum, strKey, strName,
               strProductCategory,
-              Utility.getContext(this, vars, "#User_Client", "ProductMultiple"), Utility
-                  .getSelectorOrgs(this, vars, strOrg), pgLimit, oraLimit1, oraLimit2);
+              Utility.getContext(this, vars, "#User_Client", "ProductMultiple"),
+              Utility.getSelectorOrgs(this, vars, strOrg), pgLimit, oraLimit1, oraLimit2);
           vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("BusinessPartnerInfo.numrows");
@@ -248,13 +249,13 @@ public class ProductMultiple extends HttpSecureAppServlet {
           String oraLimit1 = String.valueOf(offset + pageSize);
           String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
           data = ProductMultipleData.select(this, "ROWNUM", strKey, strName, strProductCategory,
-              Utility.getContext(this, vars, "#User_Client", "ProductMultiple"), Utility
-                  .getSelectorOrgs(this, vars, strOrg), strOrderBy, "", oraLimit1, oraLimit2);
+              Utility.getContext(this, vars, "#User_Client", "ProductMultiple"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, "", oraLimit1, oraLimit2);
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
-          data = ProductMultipleData.select(this, "1", strKey, strName, strProductCategory, Utility
-              .getContext(this, vars, "#User_Client", "ProductMultiple"), Utility.getSelectorOrgs(
-              this, vars, strOrg), strOrderBy, pgLimit, "", "");
+          data = ProductMultipleData.select(this, "1", strKey, strName, strProductCategory,
+              Utility.getContext(this, vars, "#User_Client", "ProductMultiple"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, pgLimit, "", "");
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
@@ -297,8 +298,8 @@ public class ProductMultiple extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
-        "\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+        .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -309,11 +310,11 @@ public class ProductMultiple extends HttpSecureAppServlet {
           if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",
-                "").replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll(
-                "<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;").replaceAll("<br>",
-                    "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
+                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
+                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
+                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
@@ -370,15 +371,15 @@ public class ProductMultiple extends HttpSecureAppServlet {
         String oraLimit1 = String.valueOf(maxOffset);
         String oraLimit2 = (minOffset + 1) + " AND " + oraLimit1;
         data = ProductMultipleData.select(this, "ROWNUM", strKey, strName, strProductCategory,
-            Utility.getContext(this, vars, "#User_Client", "ProductMultiple"), Utility
-                .getSelectorOrgs(this, vars, strOrg), strOrderBy, "", oraLimit1, oraLimit2);
+            Utility.getContext(this, vars, "#User_Client", "ProductMultiple"),
+            Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, "", oraLimit1, oraLimit2);
       } else {
         // minOffset and maxOffset are zero based so pageSize is difference +1
         int pageSize = maxOffset - minOffset + 1;
         String pgLimit = pageSize + " OFFSET " + minOffset;
-        data = ProductMultipleData.select(this, "1", strKey, strName, strProductCategory, Utility
-            .getContext(this, vars, "#User_Client", "ProductMultiple"), Utility.getSelectorOrgs(
-            this, vars, strOrg), strOrderBy, pgLimit, "", "");
+        data = ProductMultipleData.select(this, "1", strKey, strName, strProductCategory,
+            Utility.getContext(this, vars, "#User_Client", "ProductMultiple"),
+            Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, pgLimit, "", "");
 
       }
 

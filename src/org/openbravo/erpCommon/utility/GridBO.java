@@ -81,8 +81,11 @@ class GridBO {
     parameters.put("IS_IGNORE_PAGINATION", gridReportVO.getPagination());
 
     JasperPrint jasperPrint = JasperFillManager
-        .fillReport(jasperReport, parameters, new JRFieldProviderDataSource(gridReportVO
-            .getFieldProvider(), gridReportVO.getDateFormat()));
+        .fillReport(
+            jasperReport,
+            parameters,
+            new JRFieldProviderDataSource(gridReportVO.getFieldProvider(), gridReportVO
+                .getDateFormat()));
     return jasperPrint;
   }
 

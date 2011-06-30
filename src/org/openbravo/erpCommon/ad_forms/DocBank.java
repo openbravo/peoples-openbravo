@@ -278,16 +278,18 @@ public class DocBank extends AcctServer {
        */
       if (line.m_C_Payment_ID.equals("") && !line.m_C_GLItem_ID.equals(""))
         fact.createLine(line, line.getGlitemAccount(as, new BigDecimal(getAmount()), conn),
-            line.m_C_Currency_ID, TrxAmt.signum() == -1 ? TrxAmt.negate().toString() : "", TrxAmt
-                .signum() == -1 ? "" : TrxAmt.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            line.m_C_Currency_ID, TrxAmt.signum() == -1 ? TrxAmt.negate().toString() : "",
+            TrxAmt.signum() == -1 ? "" : TrxAmt.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
       else
         fact.createLine(line, getAccountBankInTransit(line.m_TrxLine_ID, as, conn),
             line.m_C_Currency_ID, TrxAmt.negate().toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
       // Charge DR (Charge)
-      fact.createLine(lineAux, new Account(conn, DocLineBankData.selectChargeAccount(conn,
-          C_BankAccount_ID, as.m_C_AcctSchema_ID)), line.m_C_Currency_ID, ChargeAmt.toString(), "",
+      fact.createLine(
+          lineAux,
+          new Account(conn, DocLineBankData.selectChargeAccount(conn, C_BankAccount_ID,
+              as.m_C_AcctSchema_ID)), line.m_C_Currency_ID, ChargeAmt.toString(), "",
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       // Interest DR CR (Interest)
       /*
@@ -327,8 +329,8 @@ public class DocBank extends AcctServer {
       ConnectionProvider conn) {
     DocBankData[] data = null;
     try {
-      data = DocBankData.selectBankInTransitAcct(conn, strcBankstatementlineId, as
-          .getC_AcctSchema_ID());
+      data = DocBankData.selectBankInTransitAcct(conn, strcBankstatementlineId,
+          as.getC_AcctSchema_ID());
     } catch (ServletException e) {
       log4j.warn(e);
     }

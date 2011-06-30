@@ -556,9 +556,7 @@ public class QueryBuilder {
       } else {
         final List<Property> newIdentifierProperties = prop.getReferencedProperty().getEntity()
             .getIdentifierProperties();
-        sb
-            .append(createIdentifierLeftClause(newIdentifierProperties, prefix + prop.getName()
-                + "."));
+        sb.append(createIdentifierLeftClause(newIdentifierProperties, prefix + prop.getName() + "."));
       }
     }
 

@@ -76,10 +76,10 @@ public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
     ReportWorkRequirementDailyEnvData[] data = null;
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEnvEdit").createXmlDocument();
-    data = ReportWorkRequirementDailyEnvData.select(this, vars.getLanguage(), Utility.getContext(
-        this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"), Utility.getContext(this,
-        vars, "#AccessibleOrgTree", "ReportWorkRequirementDailyEnv"), strStartDateFrom,
-        strStartDateTo, strmaProcessPlan);
+    data = ReportWorkRequirementDailyEnvData.select(this, vars.getLanguage(),
+        Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDailyEnv"),
+        strStartDateFrom, strStartDateTo, strmaProcessPlan);
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -113,8 +113,8 @@ public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportWorkRequirementDailyEnv.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportWorkRequirementDailyEnv.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
           "ReportWorkRequirementDailyEnv.html", strReplaceWith);
@@ -142,8 +142,8 @@ public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure", ProcessPlanComboData.select(this,
-        Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"), Utility
-            .getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDailyEnv")));
+        Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDailyEnv")));
 
     out.println(xmlDocument.print());
     out.close();

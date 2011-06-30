@@ -106,17 +106,18 @@ public class InstancePurpose extends HttpSecureAppServlet {
         xmlDocument.setParameter("selectedPurpose", purpose);
       }
     }
-    xmlDocument.setParameter("welcome", Replace.replace(Utility.messageBD(this, strWelcomeMsg, vars
-        .getLanguage()), "\\n", "<br/>"));
+    xmlDocument
+        .setParameter("welcome", Replace.replace(
+            Utility.messageBD(this, strWelcomeMsg, vars.getLanguage()), "\\n", "<br/>"));
     xmlDocument.setParameter("title", Utility.messageBD(myPool, strTitle, vars.getLanguage()));
 
-    xmlDocument.setParameter("recordId", vars.getStringParameter("inpcRecordId",
-        IsIDFilter.instance));
+    xmlDocument.setParameter("recordId",
+        vars.getStringParameter("inpcRecordId", IsIDFilter.instance));
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "InstancePurpose", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "InstancePurpose"), Utility
-              .getContext(this, vars, "#User_Client", "InstancePurpose"), 0);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "InstancePurpose"),
+          Utility.getContext(this, vars, "#User_Client", "InstancePurpose"), 0);
       xmlDocument.setData("reportPurpose", "liststructure", comboTableData.select(false));
     } catch (Exception ex) {
       log4j.error(ex.getMessage(), ex);

@@ -20,8 +20,8 @@
 package org.openbravo.modulescript;
 
 /**
- * This class represents an Openbravo ERP version number. It is designed to
- * compare Openbravo ERP version numbers
+ * This class represents an Openbravo ERP version number. It is designed to compare Openbravo ERP
+ * version numbers
  * 
  * @author adrian
  */
@@ -48,8 +48,7 @@ public class OpenbravoVersion implements Comparable<OpenbravoVersion> {
   }
 
   /**
-   * Creates a new Openbravo version object based on its <code>String</code>
-   * representation.
+   * Creates a new Openbravo version object based on its <code>String</code> representation.
    * 
    * @param version
    *          the version representation

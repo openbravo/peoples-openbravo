@@ -336,8 +336,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
     String excludeAuditColumnNames = getExcludeAuditColumnNames(vars, tableId);
     if (excludeAuditColumnNames.length() > 0) {
-      String auditText = Utility.messageBD(this, "AUDIT_HISTORY_EXCLUDE_AUDITCOLUMNS", vars
-          .getLanguage());
+      String auditText = Utility.messageBD(this, "AUDIT_HISTORY_EXCLUDE_AUDITCOLUMNS",
+          vars.getLanguage());
       auditText = auditText.replace("@excludeauditcolumns@", excludeAuditColumnNames);
       xmlDocument.setParameter("excludeAuditColumnText", auditText);
     } else {
@@ -484,8 +484,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       // exclude audit column names in info bar
       String excludeAuditColumnNames = getExcludeAuditColumnNames(vars, tableId);
       if (excludeAuditColumnNames.length() > 0) {
-        String auditText = Utility.messageBD(this, "AUDIT_HISTORY_EXCLUDE_AUDITCOLUMNS", vars
-            .getLanguage());
+        String auditText = Utility.messageBD(this, "AUDIT_HISTORY_EXCLUDE_AUDITCOLUMNS",
+            vars.getLanguage());
         auditText = auditText.replace("@excludeauditcolumns@", excludeAuditColumnNames);
         xmlDocument.setParameter("excludeAuditColumnText", auditText);
       } else {
@@ -551,8 +551,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         // exclude audit column names in info bar
         String excludeAuditColumnNames = getExcludeAuditColumnNames(vars, tableId);
         if (excludeAuditColumnNames.length() > 0) {
-          String auditText = Utility.messageBD(this, "AUDIT_HISTORY_EXCLUDE_AUDITCOLUMNS", vars
-              .getLanguage());
+          String auditText = Utility.messageBD(this, "AUDIT_HISTORY_EXCLUDE_AUDITCOLUMNS",
+              vars.getLanguage());
           auditText = auditText.replace("@excludeauditcolumns@", excludeAuditColumnNames);
           xmlDocument.setParameter("excludeAuditColumnText", auditText);
         } else {
@@ -587,8 +587,9 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       dataAux.setData("gridcolumnname", colNamesHistory[i]);
       dataAux.setData("isidentifier", (colNamesHistory[i].equals("rowkey") ? "true" : "false"));
       dataAux.setData("iskey", (colNamesHistory[i].equals("rowkey") ? "true" : "false"));
-      dataAux.setData("isvisible", (colNamesHistory[i].endsWith("_id")
-          || colNamesHistory[i].equals("rowkey") ? "false" : "true"));
+      dataAux.setData("isvisible",
+          (colNamesHistory[i].endsWith("_id") || colNamesHistory[i].equals("rowkey") ? "false"
+              : "true"));
       String name = Utility.messageBD(this, "AUDIT_HISTORY_" + colNamesHistory[i].toUpperCase(),
           vars.getLanguage());
       dataAux.setData("name", (name.startsWith("AUDIT_HISTORY_") ? colNamesHistory[i] : name));
@@ -1050,8 +1051,10 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       resRow.setData("rowkey", row.getField("rowkey"));
       resRow.setData("audittrailtime", getFormattedTime(vars, row.getField("audittrailtime")));
       resRow.setData("audittrailuser", getFormattedUser(vars, row.getField("audittrailuser")));
-      resRow.setData("audittrailprocess", getFormattedProcess(
-          row.getField("audittrailprocesstype"), row.getField("audittrailprocessid")));
+      resRow.setData(
+          "audittrailprocess",
+          getFormattedProcess(row.getField("audittrailprocesstype"),
+              row.getField("audittrailprocessid")));
       // copy and beautify data columns
       for (Field field : tab.getADFieldList()) {
         // no need to format hidden fields

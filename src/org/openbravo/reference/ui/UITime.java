@@ -35,7 +35,8 @@ public class UITime extends UIDate {
   }
 
   public void generateFilterHtml(StringBuffer strHtml, VariablesSecureApp vars,
-      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript, Vector<Object> vecKeys) throws IOException, ServletException {
+      BuscadorData fields, String strTab, String strWindow, ArrayList<String> vecScript,
+      Vector<Object> vecKeys) throws IOException, ServletException {
 
     UIReferenceUtility.addUniqueElement(vecScript, strReplaceWith + "/js/TimeTextBox.js");
     strHtml.append("<td class=\"TextBox_btn_ContentCell\">\n");
@@ -46,8 +47,8 @@ public class UITime extends UIDate {
     strHtml.append("<input type=\"text\" class=\"dojoValidateValid TextBox_btn_OneCell_width\" ");
     strHtml.append("displayFormat=\"%H:%M:%S\" ");
     strHtml.append("saveFormat=\"%H:%M:%S\" ");
-    strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
-        "\" ");
+    strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname))
+        .append("\" ");
     strHtml.append("maxlength=\"19\" ");
     strHtml.append("value=\"").append(fields.value).append("\" ");
     strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields.columnname))
@@ -55,8 +56,8 @@ public class UITime extends UIDate {
 
     strHtml
         .append("onkeyup=\"autoCompleteTime(this);\" onchange=\"validateTimeTextBox(this);logChanges(this);return true;\"></input> ");
-    strHtml.append("<script>djConfig.searchIds.push(\"").append("inpParam").append(
-        FormatUtilities.replace(fields.columnname)).append("\") </script>");
+    strHtml.append("<script>djConfig.searchIds.push(\"").append("inpParam")
+        .append(FormatUtilities.replace(fields.columnname)).append("\") </script>");
     strHtml.append("</td>\n");
     strHtml.append("</td>\n");
     strHtml.append("</tr>\n");
@@ -78,17 +79,17 @@ public class UITime extends UIDate {
     strHtml.append("<input type=\"text\" class=\"dojoValidateValid TextBox_btn_OneCell_width\" ");
     strHtml.append("displayFormat=\"%H:%M:%S\" ");
     strHtml.append("saveFormat=\"%H:%M:%S\" ");
-    strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
-        "_f\" ");
+    strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname))
+        .append("_f\" ");
     strHtml.append("maxlength=\"19\" ");
     strHtml.append("value=\"").append(value).append("\" ");
-    strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
-        "_f\" ");
+    strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields.columnname))
+        .append("_f\" ");
 
     strHtml
         .append("onkeyup=\"autoCompleteTime(this);\" onchange=\"validateTimeTextBox(this);logChanges(this);return true;\"></input> ");
-    strHtml.append("<script>djConfig.searchIds.push(\"").append("inpParam").append(
-        FormatUtilities.replace(fields.columnname)).append("\") </script>");
+    strHtml.append("<script>djConfig.searchIds.push(\"").append("inpParam")
+        .append(FormatUtilities.replace(fields.columnname)).append("\") </script>");
     strHtml.append("</td>\n");
     strHtml.append("</td>\n");
     strHtml.append("</tr>\n");

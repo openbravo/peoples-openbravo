@@ -237,8 +237,7 @@ public class Sqlc extends DefaultHandler {
                   + level
                   + " - include:"
                   + (includeDirectories != null && includeDirectories.size() > level ? includeDirectories
-                      .get(level)
-                      : "--"));
+                      .get(level) : "--"));
         // if it is a subdirectory then list recursively
         if (parse)
           listDir(fileItem, boolFilter, dirFilter, sqlc, parser, strFilter, fileFin, true, parent,
@@ -1134,8 +1133,7 @@ public class Sqlc extends DefaultHandler {
       out2.append("      resultKey.close();\n");
       out2.append("    } catch(SQLException e){\n");
       out2.append("      log4j.error(\"SQL error in query: \" + strSql1 + \"Exception:\"+ e);\n");
-      out2
-          .append("      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
+      out2.append("      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
       out2.append("    } catch(Exception ex){\n");
       out2.append("      log4j.error(\"Exception in query: \" + strSql1 + \"Exception:\"+ ex);\n");
       out2.append("      throw new ServletException(\"@CODE=@\" + ex.getMessage());\n");
@@ -1269,8 +1267,7 @@ public class Sqlc extends DefaultHandler {
     }
     out2.append("    } catch(SQLException e){\n");
     out2.append("      log4j.error(\"SQL error in query: \" + strSql + \"Exception:\"+ e);\n");
-    out2
-        .append("      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
+    out2.append("      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
     out2.append("    } catch(Exception ex){\n");
     out2.append("      log4j.error(\"Exception in query: \" + strSql + \"Exception:\"+ ex);\n");
     out2.append("      throw new ServletException(\"@CODE=@\" + ex.getMessage());\n");
@@ -1309,9 +1306,9 @@ public class Sqlc extends DefaultHandler {
           out2.append("      parametersTypes.addElement(\"" + parameter.strInOut + "\");\n");
           if (parameter.strInOut.equals("out")) {
             outParamName = parameter.strName;
-            paramsReceipt.append("      object").append(sql.sqlObject).append(".").append(
-                outParamName).append(" = (String) vecTotal.elementAt(").append(outParams).append(
-                ");\n");
+            paramsReceipt.append("      object").append(sql.sqlObject).append(".")
+                .append(outParamName).append(" = (String) vecTotal.elementAt(").append(outParams)
+                .append(");\n");
             outParams++;
           }
         }
@@ -1329,15 +1326,12 @@ public class Sqlc extends DefaultHandler {
         out2.append(paramsReceipt.toString());
       out2.append("      } catch(SQLException e){\n");
       out2.append("        log4j.error(\"SQL error in query: \" + strSql + \"Exception:\"+ e);\n");
-      out2
-          .append("        throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
+      out2.append("        throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
       out2.append("      } catch(NoConnectionAvailableException ec){\n");
-      out2
-          .append("        log4j.error(\"Connection error in query: \" + strSql + \"Exception:\"+ ec);\n");
+      out2.append("        log4j.error(\"Connection error in query: \" + strSql + \"Exception:\"+ ec);\n");
       out2.append("        throw new ServletException(\"@CODE=NoConnectionAvailable\");\n");
       out2.append("      } catch(PoolNotFoundException ep){\n");
-      out2
-          .append("        log4j.error(\"Pool error in query: \" + strSql + \"Exception:\"+ ep);\n");
+      out2.append("        log4j.error(\"Pool error in query: \" + strSql + \"Exception:\"+ ep);\n");
       out2.append("        throw new ServletException(\"@CODE=NoConnectionAvailable\");\n");
       out2.append("      } catch(Exception ex){\n");
       out2.append("        log4j.error(\"Exception in query: \" + strSql + \"Exception:\"+ ex);\n");

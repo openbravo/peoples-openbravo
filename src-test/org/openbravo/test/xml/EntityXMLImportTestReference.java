@@ -70,8 +70,8 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     super.setUp();
     setTestUserContext();
     OBCriteria<Warehouse> obc = OBDal.getInstance().createCriteria(Warehouse.class);
-    obc.add(Restrictions.eq(Warehouse.PROPERTY_ORGANIZATION, OBDal.getInstance().get(
-        Organization.class, TEST_US_ORG_ID)));
+    obc.add(Restrictions.eq(Warehouse.PROPERTY_ORGANIZATION,
+        OBDal.getInstance().get(Organization.class, TEST_US_ORG_ID)));
     numberOfWarehouses = obc.count();
     for (Warehouse w : obc.list()) {
       warehouseNames.add(w.getName());
@@ -92,8 +92,8 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     setTestUserContext();
     addReadWriteAccess(Warehouse.class);
 
-    final String xml = getXML(Warehouse.class, OBDal.getInstance().get(Organization.class,
-        TEST_US_ORG_ID));
+    final String xml = getXML(Warehouse.class,
+        OBDal.getInstance().get(Organization.class, TEST_US_ORG_ID));
 
     setUserContext(QA_TEST_ADMIN_USER_ID);
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
@@ -123,8 +123,8 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     // deleted, force this by being admin
     OBContext.setAdminMode();
     try {
-      removeAll(Warehouse.class, numberOfWarehouses, Restrictions.in(Warehouse.PROPERTY_NAME,
-          warehouseNames));
+      removeAll(Warehouse.class, numberOfWarehouses,
+          Restrictions.in(Warehouse.PROPERTY_NAME, warehouseNames));
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -138,8 +138,8 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
   public void test3Warehouse() {
     setTestUserContext();
     addReadWriteAccess(Warehouse.class);
-    final String xml = getXML(Warehouse.class, OBDal.getInstance().get(Organization.class,
-        TEST_US_ORG_ID));
+    final String xml = getXML(Warehouse.class,
+        OBDal.getInstance().get(Organization.class, TEST_US_ORG_ID));
     setUserContext(QA_TEST_ADMIN_USER_ID);
     final ImportResult ir = DataImportService.getInstance().importDataFromXML(
         OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
@@ -170,10 +170,10 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     // deleted, force this by being admin
     OBContext.setAdminMode();
     try {
-      removeAll(Warehouse.class, numberOfWarehouses, Restrictions.in(Warehouse.PROPERTY_NAME,
-          warehouseNames));
-      removeAll(Location.class, numberOfLocations, Restrictions.in(Location.PROPERTY_ADDRESSLINE1,
-          locationAddresses));
+      removeAll(Warehouse.class, numberOfWarehouses,
+          Restrictions.in(Warehouse.PROPERTY_NAME, warehouseNames));
+      removeAll(Location.class, numberOfLocations,
+          Restrictions.in(Location.PROPERTY_ADDRESSLINE1, locationAddresses));
     } finally {
       OBContext.restorePreviousMode();
     }

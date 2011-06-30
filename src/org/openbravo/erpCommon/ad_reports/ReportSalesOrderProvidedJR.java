@@ -110,8 +110,8 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
         xmlDocument.setParameter("childTabContainer", tabs.childTabs());
         xmlDocument.setParameter("theme", vars.getTheme());
         NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-            "ReportSalesOrderProvidedJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-                .breadcrumb());
+            "ReportSalesOrderProvidedJR.html", classInfo.id, classInfo.type, strReplaceWith,
+            tabs.breadcrumb());
         xmlDocument.setParameter("navigationBar", nav.toString());
         LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
             "ReportSalesOrderProvidedJR.html", strReplaceWith);
@@ -143,10 +143,10 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("cProjectKind", strProjectkind);
       xmlDocument.setParameter("cRegionId", strcRegionId);
       xmlDocument.setParameter("cProjectPublic", strProjectpublic);
-      xmlDocument.setParameter("projectName", ReportSalesOrderProvidedData.selectProject(this,
-          strcProjectId));
-      xmlDocument.setParameter("paramBPartnerDescription", ReportSalesOrderProvidedData
-          .bPartnerDescription(this, strcBpartnerId));
+      xmlDocument.setParameter("projectName",
+          ReportSalesOrderProvidedData.selectProject(this, strcProjectId));
+      xmlDocument.setParameter("paramBPartnerDescription",
+          ReportSalesOrderProvidedData.bPartnerDescription(this, strcBpartnerId));
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
             "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -167,8 +167,8 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
                 "ReportSalesOrderProvidedJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderProvidedJR",
             strmCategoryId);
-        xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure", comboTableData
-            .select(false));
+        xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
+            comboTableData.select(false));
         comboTableData = null;
       } catch (Exception ex) {
         throw new ServletException(ex);
@@ -230,8 +230,8 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
     } else { // command != DEFAULT
       ReportSalesOrderProvidedData[] data = ReportSalesOrderProvidedData.select(this,
           strCurrencyId,
-          Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderProvided"), Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderProvided"),
+          Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderProvided"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderProvided"),
           strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId,
           strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId,
           strProjectpublic, strProduct);
@@ -298,11 +298,12 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
     OBError myMessage = null;
     myMessage = new OBError();
     try {
-      data = ReportSalesOrderProvidedData.select(this, strCurrencyId, Utility.getContext(this,
-          vars, "#User_Client", "ReportSalesOrderProvided"), Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "ReportSalesOrderProvided"), strdateFrom, DateTimeData.nDaysAfter(
-          this, strdateTo, "1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId,
-          strProjectkind, strcRegionId, strProjectpublic, strProduct);
+      data = ReportSalesOrderProvidedData.select(this, strCurrencyId,
+          Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderProvided"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderProvided"),
+          strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId,
+          strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId,
+          strProjectpublic, strProduct);
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }
@@ -310,8 +311,9 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Launch the report as usual, calling the JRXML file
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportSalesOrderProvidedJR.jrxml";
       String strOutput = "html";

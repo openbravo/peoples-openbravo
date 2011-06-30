@@ -41,7 +41,8 @@ public class WADSelector extends WADControl {
   }
 
   public void initialize() {
-    addImport("StaticResources", "../../../../../web/../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources");    
+    addImport("StaticResources",
+        "../../../../../web/../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources");
     generateJSCode();
   }
 
@@ -55,8 +56,8 @@ public class WADSelector extends WADControl {
       // validation.append("  if (sc_").append(getData("ColumnName")).append(
       // ".selectorField.getSelectedRecord()===null) {\n");
       if (getData("IsDisplayed").equals("Y"))
-        validation.append("    setWindowElementFocus(sc_").append(getData("ColumnName")).append(
-            ".selectorField").append(");\n");
+        validation.append("    setWindowElementFocus(sc_").append(getData("ColumnName"))
+            .append(".selectorField").append(");\n");
       validation.append("    showJSMessage(1);\n");
       validation.append("    return false;\n");
       validation.append("  }\n");

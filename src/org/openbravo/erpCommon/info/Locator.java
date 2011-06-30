@@ -62,8 +62,8 @@ public class Locator extends HttpSecureAppServlet {
       String strWarehouse = "";
       String windowId = vars.getRequestGlobalVariable("WindowID", "Locator.windowId");
       if (!windowId.equals("") && windowId != null) {
-        strWarehouse = LocatorData.selectname(this, Utility.getContext(this, vars,
-            "M_Warehouse_ID", windowId));
+        strWarehouse = LocatorData.selectname(this,
+            Utility.getContext(this, vars, "M_Warehouse_ID", windowId));
       }
       strName = strName + "%";
       strWarehouse = strWarehouse + "%";
@@ -85,9 +85,10 @@ public class Locator extends HttpSecureAppServlet {
       vars.setSessionValue("Locator.name", strKeyValue);
       vars.setSessionValue("Locator.warehousename", LocatorData.selectname(this, strWarehouse));
       String strOrg = vars.getStringParameter("inpAD_Org_ID");
-      LocatorData[] data = LocatorData.selectKey(this, Utility.getContext(this, vars,
-          "#User_Client", "Locator"), Utility.getSelectorOrgs(this, vars, strOrg), LocatorData
-          .selectname(this, strWarehouse), strKeyValue);
+      LocatorData[] data = LocatorData.selectKey(this,
+          Utility.getContext(this, vars, "#User_Client", "Locator"),
+          Utility.getSelectorOrgs(this, vars, strOrg), LocatorData.selectname(this, strWarehouse),
+          strKeyValue);
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
       } else
@@ -263,9 +264,10 @@ public class Locator extends HttpSecureAppServlet {
           } else {
             pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
           }
-          strNumRows = LocatorData.countRows(this, rownum, Utility.getContext(this, vars,
-              "#User_Client", "Locator"), Utility.getSelectorOrgs(this, vars, strOrg), strName,
-              strWarehousename, strAisle, strBin, strLevel, pgLimit, oraLimit1, oraLimit2);
+          strNumRows = LocatorData.countRows(this, rownum,
+              Utility.getContext(this, vars, "#User_Client", "Locator"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strName, strWarehousename, strAisle,
+              strBin, strLevel, pgLimit, oraLimit1, oraLimit2);
           vars.setSessionValue("Locator.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("Locator.numrows");
@@ -274,14 +276,16 @@ public class Locator extends HttpSecureAppServlet {
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
           String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          data = LocatorData.select(this, "ROWNUM", Utility.getContext(this, vars, "#User_Client",
-              "Locator"), Utility.getSelectorOrgs(this, vars, strOrg), strName, strWarehousename,
-              strAisle, strBin, strLevel, strOrderBy, oraLimit, "");
+          data = LocatorData.select(this, "ROWNUM",
+              Utility.getContext(this, vars, "#User_Client", "Locator"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strName, strWarehousename, strAisle,
+              strBin, strLevel, strOrderBy, oraLimit, "");
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
-          data = LocatorData.select(this, "1", Utility.getContext(this, vars, "#User_Client",
-              "Locator"), Utility.getSelectorOrgs(this, vars, strOrg), strName, strWarehousename,
-              strAisle, strBin, strLevel, strOrderBy, "", pgLimit);
+          data = LocatorData.select(this, "1",
+              Utility.getContext(this, vars, "#User_Client", "Locator"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strName, strWarehousename, strAisle,
+              strBin, strLevel, strOrderBy, "", pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: ", e);
@@ -321,8 +325,8 @@ public class Locator extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
-        "\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+        .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -340,11 +344,11 @@ public class Locator extends HttpSecureAppServlet {
           if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",
-                "").replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll(
-                "<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;").replaceAll("<br>",
-                    "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
+                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
+                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
+                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");

@@ -25,11 +25,12 @@ public class UpdateReversalDocumentTypes extends ModuleScript {
 
   @Override
   public void execute() {
-    
-    // Untill now a document type is identified as reversal if its document base type is 'ARC' or 'APC'
+
+    // Untill now a document type is identified as reversal if its document base type is 'ARC' or
+    // 'APC'
     // New column has been added to allow a generic way of marking document as reversal
     // This script updates this column to 'Y' for existing document types
-    // that belong to 'ARC' and 'APC' 
+    // that belong to 'ARC' and 'APC'
 
     try {
       ConnectionProvider cp = getConnectionProvider();

@@ -141,8 +141,8 @@ public class SL_Order_Product extends HttpSecureAppServlet {
         + (strPriceList.equals("") ? "0" : strPriceList) + "),");
     resultado.append("new Array(\"inppricelimit\", "
         + (strPriceLimit.equals("") ? "0" : strPriceLimit) + "),");
-    resultado.append("new Array(\"inppricestd\", "
-        + (strPriceStd.equals("") ? "0" : strPriceStd) + "),");
+    resultado.append("new Array(\"inppricestd\", " + (strPriceStd.equals("") ? "0" : strPriceStd)
+        + "),");
     resultado.append("new Array(\"inppriceactual\", "
         + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
     resultado.append("new Array(\"inpcCurrencyId\", "
@@ -174,12 +174,12 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     }
 
     String strCTaxID = "";
-    String orgLocationID = SLOrderProductData.getOrgLocationId(this, Utility.getContext(this, vars,
-        "#User_Client", "SLOrderProduct"), "'" + strADOrgID + "'");
+    String orgLocationID = SLOrderProductData.getOrgLocationId(this,
+        Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), "'" + strADOrgID + "'");
     if (orgLocationID.equals("")) {
       resultado.append("new Array('MESSAGE', \""
-          + FormatUtilities.replaceJS(Utility.messageBD(this, "NoLocationNoTaxCalculated", vars
-              .getLanguage())) + "\"),\n");
+          + FormatUtilities.replaceJS(Utility.messageBD(this, "NoLocationNoTaxCalculated",
+              vars.getLanguage())) + "\"),\n");
     } else {
       SLOrderTaxData[] data = SLOrderTaxData.select(this, strCOrderId);
       strCTaxID = Tax.get(this, strMProductID, data[0].dateordered, strADOrgID, strMWarehouseID,

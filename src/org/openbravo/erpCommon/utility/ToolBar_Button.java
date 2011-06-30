@@ -78,8 +78,8 @@ class ToolBar_Button implements HTMLElement {
     if ((click != null && !click.equals("")) || href == null || href.equals("") || href.equals("#"))
       toolbar.append("return false;");
     toolbar.append("\" ");
-    toolbar.append("class=\"Main_ToolBar_Button").append(selected ? "_Selected" : "").append(
-        "\" onMouseOver=\"window.status='");
+    toolbar.append("class=\"Main_ToolBar_Button").append(selected ? "_Selected" : "")
+        .append("\" onMouseOver=\"window.status='");
     toolbar.append(description);
     toolbar.append("';return true;\" ");
     toolbar

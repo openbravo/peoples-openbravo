@@ -119,8 +119,11 @@ public class SelectorFieldPropertyCallout extends HttpSecureAppServlet {
     try {
       // get the table
       final Entity propertyEntity = foundProperty.getEntity();
-      final Table propertyTable = OBDal.getInstance().createQuery(Table.class,
-          Table.PROPERTY_DBTABLENAME + "='" + propertyEntity.getTableName() + "'").list().get(0);
+      final Table propertyTable = OBDal
+          .getInstance()
+          .createQuery(Table.class,
+              Table.PROPERTY_DBTABLENAME + "='" + propertyEntity.getTableName() + "'").list()
+          .get(0);
 
       final OBCriteria<Column> columnCriteria = OBDal.getInstance().createCriteria(Column.class);
       columnCriteria.add(Restrictions.and(Restrictions.eq(Column.PROPERTY_TABLE, propertyTable),

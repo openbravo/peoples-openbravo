@@ -134,8 +134,8 @@ public class MyOpenbravoActionHandler extends BaseActionHandler {
 
       // Translate message:
       VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get().getRequest());
-      message.setMessage(Utility.parseTranslation(new DalConnectionProvider(), vars, vars
-          .getLanguage(), message.getMessage()));
+      message.setMessage(Utility.parseTranslation(new DalConnectionProvider(), vars,
+          vars.getLanguage(), message.getMessage()));
 
       o.put("message", message.toMap());
       log.debug("returned widgets: " + widgets.toString());

@@ -147,8 +147,8 @@ public class KernelServlet extends BaseKernelServlet {
 
     if (requestETag != null && eTag.equals(requestETag)) {
       response.sendError(HttpServletResponse.SC_NOT_MODIFIED);
-      response.setDateHeader(RESPONSE_HEADER_LASTMODIFIED, request
-          .getDateHeader(REQUEST_HEADER_IFMODIFIEDSINCE));
+      response.setDateHeader(RESPONSE_HEADER_LASTMODIFIED,
+          request.getDateHeader(REQUEST_HEADER_IFMODIFIEDSINCE));
       return;
     }
 
@@ -239,8 +239,7 @@ public class KernelServlet extends BaseKernelServlet {
       if (OBContext.getOBContext().isNewUI()) { // FIXME: isNewUI true the first load?
         parameterMap.put(KernelConstants.SKIN_PARAMETER, KernelConstants.SKIN_DEFAULT);
       } else {
-        parameterMap.put(KernelConstants.SKIN_PARAMETER,
-            KernelConstants.SKIN_CLASSIC);
+        parameterMap.put(KernelConstants.SKIN_PARAMETER, KernelConstants.SKIN_CLASSIC);
       }
     }
 

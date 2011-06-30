@@ -1494,8 +1494,8 @@ public class TableSQLData implements Serializable {
     for (Enumeration<Properties> e = headers.elements(); e.hasMoreElements();) {
       Properties prop = e.nextElement();
 
-      UIReference reference = Reference.getUIReference(prop.getProperty("AD_Reference_ID"), prop
-          .getProperty("AD_Reference_Value_ID"));
+      UIReference reference = Reference.getUIReference(prop.getProperty("AD_Reference_ID"),
+          prop.getProperty("AD_Reference_Value_ID"));
       reference.generateSQL(this, prop);
     }
     setWindowFilters();
@@ -1678,8 +1678,8 @@ public class TableSQLData implements Serializable {
       if (myProps != null) {
         position = Integer.valueOf(myProps.getProperty("Position")).intValue();
 
-        reference = Reference.getUIReference(myProps.getProperty("AD_Reference_ID"), myProps
-            .getProperty("AD_Reference_Value_ID"));
+        reference = Reference.getUIReference(myProps.getProperty("AD_Reference_ID"),
+            myProps.getProperty("AD_Reference_Value_ID"));
       }
       if (position != -1) {
         addOrderByPosition(Integer.toString(position));
@@ -1752,8 +1752,8 @@ public class TableSQLData implements Serializable {
             .getProperty("ShowInRelation").equals("Y")) ? "true" : "false"));
         dataAux.setData("name", prop.getProperty("Name"));
 
-        UIReference reference = Reference.getUIReference(prop.getProperty("AD_Reference_ID"), prop
-            .getProperty("AD_Reference_Value_ID"));
+        UIReference reference = Reference.getUIReference(prop.getProperty("AD_Reference_ID"),
+            prop.getProperty("AD_Reference_Value_ID"));
         String type = reference.getGridType();
 
         dataAux.setData("type", type);

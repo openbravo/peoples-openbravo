@@ -126,10 +126,11 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     }
     if (vars.commandIn("FIND", "DIRECT")) {
       if (strInout.equals("-1")) {
-        data = ReportProductMovementData.select(this, vars.getLanguage(), Utility.getContext(this,
-            vars, "#User_Client", "ReportProductMovement"), Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "ReportProductMovement"), strDateFrom, DateTimeData.nDaysAfter(
-            this, strDateTo, "1"), strcBpartnerId, strmProductId, strmAttributesetinstanceId);
+        data = ReportProductMovementData.select(this, vars.getLanguage(),
+            Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
+            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId,
+            strmProductId, strmAttributesetinstanceId);
         if (data == null || data.length == 0) {
           discard[0] = "selEliminar1";
           data = ReportProductMovementData.set();
@@ -139,10 +140,11 @@ public class ReportProductMovement extends HttpSecureAppServlet {
         data = ReportProductMovementData.set();
       }
       if (strInventory.equals("-1")) {
-        data1 = ReportProductMovementData.selectInventory(this, Utility.getContext(this, vars,
-            "#User_Client", "ReportProductMovement"), Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "ReportProductMovement"), strDateFrom, DateTimeData.nDaysAfter(
-            this, strDateTo, "1"), strcBpartnerId, strmProductId);
+        data1 = ReportProductMovementData.selectInventory(this,
+            Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
+            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId,
+            strmProductId);
         if (data1 == null || data1.length == 0) {
           discard[1] = "selEliminar2";
           data1 = ReportProductMovementData.set();
@@ -152,10 +154,11 @@ public class ReportProductMovement extends HttpSecureAppServlet {
         data1 = ReportProductMovementData.set();
       }
       if (strMovement.equals("-1")) {
-        data2 = ReportProductMovementData.selectMovement(this, Utility.getContext(this, vars,
-            "#User_Client", "ReportProductMovement"), Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "ReportProductMovement"), strDateFrom, DateTimeData.nDaysAfter(
-            this, strDateTo, "1"), strcBpartnerId, strmProductId);
+        data2 = ReportProductMovementData.selectMovement(this,
+            Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
+            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId,
+            strmProductId);
         if (data2 == null || data2.length == 0) {
           discard[2] = "selEliminar3";
           data2 = ReportProductMovementData.set();
@@ -165,10 +168,11 @@ public class ReportProductMovement extends HttpSecureAppServlet {
         data2 = ReportProductMovementData.set();
       }
       if (strProduction.equals("-1")) {
-        data3 = ReportProductMovementData.selectProduction(this, Utility.getContext(this, vars,
-            "#User_Client", "ReportProductMovement"), Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "ReportProductMovement"), strDateFrom, DateTimeData.nDaysAfter(
-            this, strDateTo, "1"), strcBpartnerId, strmProductId);
+        data3 = ReportProductMovementData.selectProduction(this,
+            Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
+            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId,
+            strmProductId);
         if (data3 == null || data3.length == 0) {
           discard[3] = "selEliminar4";
           data3 = ReportProductMovementData.set();
@@ -233,16 +237,18 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
     xmlDocument.setParameter("mProduct", strmProductId);
 
-    xmlDocument.setData("reportM_ATTRIBUTESETINSTANCE_ID", "liststructure",
-        AttributeSetInstanceComboData.select(this, vars.getLanguage(), strmProductId, Utility
-            .getContext(this, vars, "#User_Client", "ReportProductMovement"), Utility.getContext(
-            this, vars, "#AccessibleOrgTree", "ReportProductMovement")));
+    xmlDocument.setData(
+        "reportM_ATTRIBUTESETINSTANCE_ID",
+        "liststructure",
+        AttributeSetInstanceComboData.select(this, vars.getLanguage(), strmProductId,
+            Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement")));
     xmlDocument.setParameter("parameterM_ATTRIBUTESETINSTANCE_ID", strmAttributesetinstanceId);
 
-    xmlDocument.setParameter("bPartnerDescription", ReportProductMovementData.selectBpartner(this,
-        strcBpartnerId));
-    xmlDocument.setParameter("productDescription", ReportProductMovementData.selectMproduct(this,
-        strmProductId));
+    xmlDocument.setParameter("bPartnerDescription",
+        ReportProductMovementData.selectBpartner(this, strcBpartnerId));
+    xmlDocument.setParameter("productDescription",
+        ReportProductMovementData.selectMproduct(this, strmProductId));
     xmlDocument.setParameter("inout", strInout);
     xmlDocument.setParameter("inventory", strInventory);
     xmlDocument.setParameter("movement", strMovement);

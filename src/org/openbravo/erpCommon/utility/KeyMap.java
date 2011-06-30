@@ -126,14 +126,17 @@ public class KeyMap {
     StringBuffer script = new StringBuffer();
     script.append("\nvar keyArray = new Array(\n");
     script.append("new keyArrayItem(\"M\", \"menuShowHide('buttonMenu');\", null, \"ctrlKey\"),\n");
-    script.append("new keyArrayItem(\"N\", \"submitCommandForm('NEW', false, null, '").append(
-        getData("TabNameUrl")).append("_Edition.html', '_self');\", null, \"ctrlKey\"),\n");
-    script.append("new keyArrayItem(\"E\", \"submitCommandForm('EDIT', true, null, '").append(
-        getData("TabNameUrl")).append("_Edition.html', '_self');\", null, \"ctrlKey\"),\n");
+    script.append("new keyArrayItem(\"N\", \"submitCommandForm('NEW', false, null, '")
+        .append(getData("TabNameUrl")).append("_Edition.html', '_self');\", null, \"ctrlKey\"),\n");
+    script.append("new keyArrayItem(\"E\", \"submitCommandForm('EDIT', true, null, '")
+        .append(getData("TabNameUrl")).append("_Edition.html', '_self');\", null, \"ctrlKey\"),\n");
     script
         .append(
             "new keyArrayItem(\"B\", \"openSearchWindow('../businessUtility/Buscador.html', 'BUSCADOR', document.frmMain.inpTabId.value, '")
-        .append(getData("WindowNameUrl")).append("/").append(getData("TabNameUrl")).append(
+        .append(getData("WindowNameUrl"))
+        .append("/")
+        .append(getData("TabNameUrl"))
+        .append(
             "_Edition.html', document.frmMain.inpwindowId.value, true);\", null, \"ctrlKey\")\n");
     script.append(");\n");
     script.append("enableShortcuts();");
@@ -151,65 +154,70 @@ public class KeyMap {
     StringBuffer script = new StringBuffer();
     script.append("\nvar keyArray = new Array(\n");
     script.append("new keyArrayItem(\"M\", \"menuShowHide('buttonMenu');\", null, \"ctrlKey\")\n");
-    script.append(",new keyArrayItem(\"N\", \"submitCommandForm('NEW', false, null, '").append(
-        getData("TabNameUrl")).append(
-        "_Edition.html', '_self', null, true, null, true);\", null, \"ctrlKey\")\n");
-    script.append(",new keyArrayItem(\"L\", \"submitCommandForm('RELATION', true, null, '").append(
-        getData("TabNameUrl")).append(
-        "_Relation.html', '_self', null, true, null, true);\", null, \"ctrlKey\")\n");
+    script.append(",new keyArrayItem(\"N\", \"submitCommandForm('NEW', false, null, '")
+        .append(getData("TabNameUrl"))
+        .append("_Edition.html', '_self', null, true, null, true);\", null, \"ctrlKey\")\n");
+    script.append(",new keyArrayItem(\"L\", \"submitCommandForm('RELATION', true, null, '")
+        .append(getData("TabNameUrl"))
+        .append("_Relation.html', '_self', null, true, null, true);\", null, \"ctrlKey\")\n");
     script
         .append(
             ",new keyArrayItem(\"B\", \"openSearchWindow('../businessUtility/Buscador.html', 'BUSCADOR', document.frmMain.inpTabId.value, '")
-        .append(getData("WindowNameUrl")).append("/").append(getData("TabNameUrl")).append(
+        .append(getData("WindowNameUrl"))
+        .append("/")
+        .append(getData("TabNameUrl"))
+        .append(
             "_Edition.html', document.frmMain.inpwindowId.value, true);\", null, \"ctrlKey\")\n");
     if (!getData("IsTabReadOnly").equals("Y")) {
       if (!isNew) {
         script.append(",new keyArrayItem(\"D\", \"submitCommandForm('DELETE', true, null, '")
-            .append(getData("TabNameUrl")).append(
-                "_Relation.html', '_self');\", null, \"ctrlKey\")\n");
-        script.append(
-            ",new keyArrayItem(\"S\", \"submitCommandForm('SAVE_EDIT_EDIT', true, null, '").append(
-            getData("TabNameUrl")).append(
-            "_Relation.html', '_self', true, null, null, true);\", null, \"ctrlKey\")\n");
-        script.append(
-            ",new keyArrayItem(\"G\", \"submitCommandForm('SAVE_EDIT_RELATION', true, null, '")
-            .append(getData("TabNameUrl")).append(
-                "_Relation.html', '_self', true, null, null, true);\", null, \"ctrlKey\")\n");
+            .append(getData("TabNameUrl"))
+            .append("_Relation.html', '_self');\", null, \"ctrlKey\")\n");
+        script
+            .append(",new keyArrayItem(\"S\", \"submitCommandForm('SAVE_EDIT_EDIT', true, null, '")
+            .append(getData("TabNameUrl"))
+            .append("_Relation.html', '_self', true, null, null, true);\", null, \"ctrlKey\")\n");
+        script
+            .append(
+                ",new keyArrayItem(\"G\", \"submitCommandForm('SAVE_EDIT_RELATION', true, null, '")
+            .append(getData("TabNameUrl"))
+            .append("_Relation.html', '_self', true, null, null, true);\", null, \"ctrlKey\")\n");
         script
             .append(",new keyArrayItem(\"H\", \"submitCommandForm('SAVE_EDIT_NEW', true, null, '")
-            .append(getData("TabNameUrl")).append(
-                "_Relation.html', '_self', true, null, null, true);\", null, \"ctrlKey\")\n");
-        script.append(
-            ",new keyArrayItem(\"A\", \"submitCommandForm('SAVE_EDIT_NEXT', true, null, '").append(
-            getData("TabNameUrl")).append(
-            "_Relation.html', '_self', true, null, null, true);\", null, \"ctrlKey\")\n");
+            .append(getData("TabNameUrl"))
+            .append("_Relation.html', '_self', true, null, null, true);\", null, \"ctrlKey\")\n");
+        script
+            .append(",new keyArrayItem(\"A\", \"submitCommandForm('SAVE_EDIT_NEXT', true, null, '")
+            .append(getData("TabNameUrl"))
+            .append("_Relation.html', '_self', true, null, null, true);\", null, \"ctrlKey\")\n");
       } else {
         script
             .append(",new keyArrayItem(\"S\", \"submitCommandForm('SAVE_NEW_EDIT', true, null, '")
-            .append(getData("TabNameUrl")).append(
-                "_Relation.html', '_self', true, null, null, true);\", null, \"ctrlKey\")\n");
-        script.append(
-            ",new keyArrayItem(\"G\", \"submitCommandForm('SAVE_NEW_RELATION', true, null, '")
-            .append(getData("TabNameUrl")).append(
-                "_Relation.html', '_self', true, null, null, true);\", null, \"ctrlKey\")\n");
+            .append(getData("TabNameUrl"))
+            .append("_Relation.html', '_self', true, null, null, true);\", null, \"ctrlKey\")\n");
+        script
+            .append(
+                ",new keyArrayItem(\"G\", \"submitCommandForm('SAVE_NEW_RELATION', true, null, '")
+            .append(getData("TabNameUrl"))
+            .append("_Relation.html', '_self', true, null, null, true);\", null, \"ctrlKey\")\n");
         script.append(",new keyArrayItem(\"H\", \"submitCommandForm('SAVE_NEW_NEW', true, null, '")
-            .append(getData("TabNameUrl")).append(
-                "_Relation.html', '_self', true, null, null, true);\", null, \"ctrlKey\")\n");
+            .append(getData("TabNameUrl"))
+            .append("_Relation.html', '_self', true, null, null, true);\", null, \"ctrlKey\")\n");
       }
     }
     script.append(",new keyArrayItem(\"REPAGE\", \"submitCommandForm('FIRST', false, null, '")
-        .append(getData("TabNameUrl")).append(
-            "_Edition.html', '_self', null, true);\", null, \"ctrlKey\")\n");
+        .append(getData("TabNameUrl"))
+        .append("_Edition.html', '_self', null, true);\", null, \"ctrlKey\")\n");
     script.append(",new keyArrayItem(\"AVPAGE\", \"submitCommandForm('LAST', false, null, '")
-        .append(getData("TabNameUrl")).append(
-            "_Edition.html', '_self', null, true);\", null, \"ctrlKey\")\n");
+        .append(getData("TabNameUrl"))
+        .append("_Edition.html', '_self', null, true);\", null, \"ctrlKey\")\n");
     script.append(",new keyArrayItem(\"RIGHTARROW\", \"submitCommandForm('NEXT', false, null, '")
-        .append(getData("TabNameUrl")).append(
-            "_Edition.html', '_self', null, true);\", null, \"ctrlKey\")\n");
+        .append(getData("TabNameUrl"))
+        .append("_Edition.html', '_self', null, true);\", null, \"ctrlKey\")\n");
     script
         .append(",new keyArrayItem(\"LEFTARROW\", \"submitCommandForm('PREVIOUS', false, null, '")
-        .append(getData("TabNameUrl")).append(
-            "_Edition.html', '_self', null, true);\", null, \"ctrlKey\")\n");
+        .append(getData("TabNameUrl"))
+        .append("_Edition.html', '_self', null, true);\", null, \"ctrlKey\")\n");
     script.append(");\n");
     script.append("enableShortcuts();");
 

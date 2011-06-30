@@ -49,8 +49,8 @@ public abstract class BaseActionHandler implements ActionHandler {
     String line;
     try {
       final HttpServletRequest request = RequestContext.get().getRequest();
-      final BufferedReader reader = new BufferedReader(new InputStreamReader(request
-          .getInputStream(), "UTF-8"));
+      final BufferedReader reader = new BufferedReader(new InputStreamReader(
+          request.getInputStream(), "UTF-8"));
       while ((line = reader.readLine()) != null) {
         sb.append(line).append("\n");
       }

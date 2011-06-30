@@ -99,15 +99,16 @@ public class VerticalMenu extends HttpSecureAppServlet {
       throws IOException, ServletException {
 
     Integer alertCount = 0;
-    final VerticalMenuData[] data = VerticalMenuData.selectAlertRules(this, vars.getUser(), vars
-        .getRole());
+    final VerticalMenuData[] data = VerticalMenuData.selectAlertRules(this, vars.getUser(),
+        vars.getRole());
     if (data != null && data.length != 0) {
       for (int i = 0; i < data.length; i++) {
         final String strWhere = new UsedByLink().getWhereClause(vars, "", data[i].filterclause);
         try {
-          final Integer count = new Integer(VerticalMenuData.selectCountActiveAlerts(this, Utility
-              .getContext(this, vars, "#User_Client", ""), Utility.getContext(this, vars,
-              "#AccessibleOrgTree", ""), data[i].adAlertruleId, strWhere)).intValue();
+          final Integer count = new Integer(VerticalMenuData.selectCountActiveAlerts(this,
+              Utility.getContext(this, vars, "#User_Client", ""),
+              Utility.getContext(this, vars, "#AccessibleOrgTree", ""), data[i].adAlertruleId,
+              strWhere)).intValue();
           alertCount += count;
         } catch (final Exception ex) {
           log4j.error("Error in Alert Query, alertRule=" + data[i].adAlertruleId + " error:"
@@ -254,8 +255,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
           strText.append("  <td>\n");
           strText.append("    <table cellspacing=\"0\" cellpadding=\"0\"");
           if (menuData[i].issummary.equals("N")) {
-            strText.append(" id=\"").append(tipoVentanaNico(menuData[i].action)).append(
-                menuData[i].nodeId).append("\"");
+            strText.append(" id=\"").append(tipoVentanaNico(menuData[i].action))
+                .append(menuData[i].nodeId).append("\"");
             strID = tipoVentanaNico(menuData[i].action) + menuData[i].nodeId;
           } else {
             strText.append(" id=\"folder").append(menuData[i].nodeId).append("\"");
@@ -272,9 +273,12 @@ public class VerticalMenu extends HttpSecureAppServlet {
           strText.append("\"");
           if (menuData[i].issummary.equals("N")) {
             strText.append(" id=\"child").append(strID).append("\"");
-            strText.append(" onclick=\"checkSelected('child").append(strID).append(
-                "');submitCommandForm('DEFAULT', "
-                    + (menuData[i].action.equals("F") ? "false" : "true") + ", getForm(),'");
+            strText
+                .append(" onclick=\"checkSelected('child")
+                .append(strID)
+                .append(
+                    "');submitCommandForm('DEFAULT', "
+                        + (menuData[i].action.equals("F") ? "false" : "true") + ", getForm(),'");
             if (menuData[i].action.equals("L") || menuData[i].action.equals("I"))
               strText.append(menuData[i].url);
             else {
@@ -303,9 +307,9 @@ public class VerticalMenu extends HttpSecureAppServlet {
           if (menuData[i].issummary.equals("Y"))
             strText.append(" id=\"folderCell1_").append(menuData[i].nodeId).append("\"");
           strText.append(">");
-          strText.append("<img src=\"").append(strReplaceWith).append(
-              "/images/blank.gif\" class=\"Menu_Client_Button_").append(
-              (indice.equals("0") ? "Big" : "")).append("Icon");
+          strText.append("<img src=\"").append(strReplaceWith)
+              .append("/images/blank.gif\" class=\"Menu_Client_Button_")
+              .append((indice.equals("0") ? "Big" : "")).append("Icon");
           if (menuData[i].issummary.equals("N")) {
             if (menuData[i].action.equals("B"))
               strText.append(" Menu_Client_Button_Icon_childWorkBench");
@@ -344,11 +348,11 @@ public class VerticalMenu extends HttpSecureAppServlet {
           strText.append("<tr>\n");
           strText.append("  <td");
           if (strHijos.equals("")) {
-            strText.append(" style=\"").append("display: none;").append("\" id=\"parent").append(
-                menuData[i].nodeId).append("\">\n");
+            strText.append(" style=\"").append("display: none;").append("\" id=\"parent")
+                .append(menuData[i].nodeId).append("\">\n");
           } else {
-            strText.append(" style=\"").append((!open ? "display: none;" : "")).append(
-                "\" id=\"parent").append(menuData[i].nodeId).append("\">\n");
+            strText.append(" style=\"").append((!open ? "display: none;" : ""))
+                .append("\" id=\"parent").append(menuData[i].nodeId).append("\">\n");
           }
           strText
               .append("    <table cellspacing=\"0\" cellpadding=\"0\" class=\"Menu_Client_child_bg\">\n");
@@ -404,11 +408,11 @@ public class VerticalMenu extends HttpSecureAppServlet {
           }
         }
       } else if (menuItem.action.equals("X")) {
-        strResultado.append("/ad_forms/").append(FormatUtilities.replace(menuItem.name)).append(
-            ".html");
+        strResultado.append("/ad_forms/").append(FormatUtilities.replace(menuItem.name))
+            .append(".html");
       } else if (menuItem.action.equals("R")) {
-        strResultado.append("ad_reports/").append(FormatUtilities.replace(menuItem.name)).append(
-            ".html");
+        strResultado.append("ad_reports/").append(FormatUtilities.replace(menuItem.name))
+            .append(".html");
       }
     } else {
       strResultado.append(menuItem.mappingname);
@@ -443,12 +447,9 @@ public class VerticalMenu extends HttpSecureAppServlet {
         if (!open)
           menu.append("NOT_");
         menu.append("Opened NOT_Hover NOT_Selected NOT_Pressed NOT_Focused");
-        menu
-            .append("\" id=\"childInformation\" onmouseover=\"setMouseOver(this);return true;\" onmouseout=\"setMouseOut(this); return true;\"");
-        menu
-            .append(" onmousedown=\"setMouseDown(this);return true;\" onmouseup=\"setMouseUp(this);return true;\">\n");
-        menu
-            .append("        <td width=\"5px\" id=\"folderCell1_Information\"><img src=\"")
+        menu.append("\" id=\"childInformation\" onmouseover=\"setMouseOver(this);return true;\" onmouseout=\"setMouseOut(this); return true;\"");
+        menu.append(" onmousedown=\"setMouseDown(this);return true;\" onmouseup=\"setMouseUp(this);return true;\">\n");
+        menu.append("        <td width=\"5px\" id=\"folderCell1_Information\"><img src=\"")
             .append(strReplaceWith)
             .append(
                 "/images/blank.gif\" class=\"Menu_Client_Button_BigIcon Menu_Client_Button_BigIcon_folder");
@@ -463,8 +464,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
         menu.append("</tr>\n");
         menu.append("<tr>\n");
         menu.append("  <td");
-        menu.append(" style=\"").append((!open ? "display: none;" : "")).append(
-            "\" id=\"parentInformation\">\n");
+        menu.append(" style=\"").append((!open ? "display: none;" : ""))
+            .append("\" id=\"parentInformation\">\n");
         menu.append("    <table cellspacing=\"0\" cellpadding=\"0\">\n");
         menu.append(entries);
         menu.append("    </table>\n");
@@ -512,8 +513,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
         result
             .append(" class=\"Normal NOT_Opened NOT_Hover NOT_Selected NOT_Pressed NOT_Focused\"");
         result.append(" id=\"childinfo").append(FormatUtilities.replace(data[i].name)).append("\"");
-        result.append(" onclick=\"checkSelected('childinfo").append(
-            FormatUtilities.replace(data[i].name)).append("');openSearch(null, null, '");
+        result.append(" onclick=\"checkSelected('childinfo")
+            .append(FormatUtilities.replace(data[i].name)).append("');openSearch(null, null, '");
         final String javaClassName = data[i].classname.trim();
         result.append(direccion).append(javaClassName);
         result

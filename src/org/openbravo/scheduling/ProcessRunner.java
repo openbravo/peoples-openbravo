@@ -65,17 +65,17 @@ public class ProcessRunner {
     String status = SCHEDULED;
 
     final ProcessContext ctx = bundle.getContext();
-    ProcessRequestData.insert(conn, ctx.getOrganization(), ctx.getClient(), ctx.getUser(), ctx
-        .getUser(), requestId, bundle.getProcessId(), ctx.getUser(), status, "Direct", ctx
-        .toString(), "", null, null, null, null);
+    ProcessRequestData.insert(conn, ctx.getOrganization(), ctx.getClient(), ctx.getUser(),
+        ctx.getUser(), requestId, bundle.getProcessId(), ctx.getUser(), status, "Direct",
+        ctx.toString(), "", null, null, null, null);
 
     final String executionId = SequenceIdData.getUUID();
     final long startTime = System.currentTimeMillis();
     long endTime = startTime;
 
     status = PROCESSING;
-    ProcessRunData.insert(conn, ctx.getOrganization(), ctx.getClient(), ctx.getUser(), ctx
-        .getUser(), executionId, status, null, bundle.getLog(), requestId);
+    ProcessRunData.insert(conn, ctx.getOrganization(), ctx.getClient(), ctx.getUser(),
+        ctx.getUser(), executionId, status, null, bundle.getLog(), requestId);
 
     try {
       log.debug("Calling execute on process " + requestId);

@@ -211,20 +211,25 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("yearactual", DateTimeData.sysdateYear(this));
     xmlDocument.setParameter("lastmonth", dataOrder[0].lastDays.equals("") ? "0"
         : dataOrder[0].lastDays);
-    xmlDocument.setParameter("pendingdelivery", strSOTrx.equals("Y") ? CopyFromOrderRecordData
-        .pendingDeliverySales(this, strBpartner, dataOrder[0].adOrgId, dataOrder[0].adClientId)
-        : CopyFromOrderRecordData.materialReceiptPending(this, strBpartner, dataOrder[0].adOrgId,
-            dataOrder[0].adClientId));
-    xmlDocument.setParameter("pendingInvoice", strSOTrx.equals("Y") ? CopyFromOrderRecordData
-        .pendingInvoiceSales(this, strBpartner, dataOrder[0].adOrgId, dataOrder[0].adClientId)
-        : CopyFromOrderRecordData.purchasePendingInvoice(this, strBpartner, dataOrder[0].adOrgId,
-            dataOrder[0].adClientId));
+    xmlDocument.setParameter(
+        "pendingdelivery",
+        strSOTrx.equals("Y") ? CopyFromOrderRecordData.pendingDeliverySales(this, strBpartner,
+            dataOrder[0].adOrgId, dataOrder[0].adClientId) : CopyFromOrderRecordData
+            .materialReceiptPending(this, strBpartner, dataOrder[0].adOrgId,
+                dataOrder[0].adClientId));
+    xmlDocument.setParameter(
+        "pendingInvoice",
+        strSOTrx.equals("Y") ? CopyFromOrderRecordData.pendingInvoiceSales(this, strBpartner,
+            dataOrder[0].adOrgId, dataOrder[0].adClientId) : CopyFromOrderRecordData
+            .purchasePendingInvoice(this, strBpartner, dataOrder[0].adOrgId,
+                dataOrder[0].adClientId));
     xmlDocument.setParameter("debtpending", CopyFromOrderRecordData.debtPending(this, strBpartner,
         dataOrder[0].adOrgId, dataOrder[0].adClientId, strSOTrx));
-    xmlDocument.setParameter("contact", CopyFromOrderRecordData
-        .contact(this, dataOrder[0].adUserId));
-    xmlDocument.setParameter("lastOrder", CopyFromOrderRecordData.maxDateordered(this, vars
-        .getSqlDateFormat(), strBpartner, strSOTrx, dataOrder[0].adOrgId, dataOrder[0].adClientId));
+    xmlDocument.setParameter("contact",
+        CopyFromOrderRecordData.contact(this, dataOrder[0].adUserId));
+    xmlDocument.setParameter("lastOrder", CopyFromOrderRecordData.maxDateordered(this,
+        vars.getSqlDateFormat(), strBpartner, strSOTrx, dataOrder[0].adOrgId,
+        dataOrder[0].adClientId));
     xmlDocument.setParameter("orgname", dataOrder[0].orgname);
     String strInvoicing = CopyFromOrderRecordData.invoicing(this, strSOTrx, strBpartner,
         dataOrder[0].adOrgId, dataOrder[0].adClientId);

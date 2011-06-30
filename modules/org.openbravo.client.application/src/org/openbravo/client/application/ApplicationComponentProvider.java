@@ -267,10 +267,11 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.application/ob-application-menu-styles.js", false));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_PARAMETER
-            + "/org.openbravo.client.application/ob-tab-styles.js", false));
+    globalResources
+        .add(createStaticResource(
+            "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+                + KernelConstants.SKIN_PARAMETER
+                + "/org.openbravo.client.application/ob-tab-styles.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER

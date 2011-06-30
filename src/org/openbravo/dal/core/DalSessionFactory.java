@@ -54,7 +54,7 @@ import org.openbravo.database.SessionInfo;
  * @author mtaal
  * @see SessionFactoryController
  */
-@SuppressWarnings( { "deprecation", "rawtypes", "unchecked" })
+@SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
 public class DalSessionFactory implements SessionFactory {
 
   private static final long serialVersionUID = 1L;

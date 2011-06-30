@@ -76,8 +76,7 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
           String strMsgType = "Error";
           msg.setType(strMsgType);
           msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-          msg.setMessage(Utility
-              .parseTranslation(conProvider, vars, vars.getLanguage(), strMessage));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(), strMessage));
           bundle.setResult(msg);
           return;
         }
@@ -132,9 +131,9 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
               BigDecimal finAccTxnAmount = paymentTotal.multiply(exchangeRate);
               long faPrecision = financialAccountCurrency.getStandardPrecision();
               finAccTxnAmount = finAccTxnAmount.setScale((int) faPrecision, RoundingMode.HALF_UP);
-              FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt, dao.getObject(
-                  DocumentType.class, strDocTypeId), strPaymentDocumentNo, dao.getObject(
-                  BusinessPartner.class, strBusinessPartner_old), paymentMethodId,
+              FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt,
+                  dao.getObject(DocumentType.class, strDocTypeId), strPaymentDocumentNo,
+                  dao.getObject(BusinessPartner.class, strBusinessPartner_old), paymentMethodId,
                   financialAccountId, paymentTotal.toString(), paymentDate, orgId, null,
                   selectedPaymentDetails, selectedPaymentDetailsAmounts, isWriteOff, isRefund,
                   paymentCurrency, exchangeRate, finAccTxnAmount);
@@ -148,8 +147,8 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
               } else if (message.getType().equals("Warning"))
                 strMessageType = message.getType();
               strMessageResult.append("@Payment@ ").append(payment.getDocumentNo());
-              strMessageResult.append(" (").append(payment.getBusinessPartner().getName()).append(
-                  ") ");
+              strMessageResult.append(" (").append(payment.getBusinessPartner().getName())
+                  .append(") ");
               if (!"".equals(message.getMessage()))
                 strMessageResult.append(": ").append(message.getMessage());
               strMessageResult.append("<br>");
@@ -177,12 +176,12 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
           long faPrecision = financialAccountCurrency.getStandardPrecision();
           finAccTxnAmount = finAccTxnAmount.setScale((int) faPrecision, RoundingMode.HALF_UP);
 
-          FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt, dao.getObject(
-              DocumentType.class, strDocTypeId), strPaymentDocumentNo, dao.getObject(
-              BusinessPartner.class, strBusinessPartner), paymentMethodId, financialAccountId,
-              paymentTotal.toString(), paymentDate, orgId, null, selectedPaymentDetails,
-              selectedPaymentDetailsAmounts, isWriteOff, isRefund, paymentCurrency, exchangeRate,
-              finAccTxnAmount);
+          FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt,
+              dao.getObject(DocumentType.class, strDocTypeId), strPaymentDocumentNo,
+              dao.getObject(BusinessPartner.class, strBusinessPartner), paymentMethodId,
+              financialAccountId, paymentTotal.toString(), paymentDate, orgId, null,
+              selectedPaymentDetails, selectedPaymentDetailsAmounts, isWriteOff, isRefund,
+              paymentCurrency, exchangeRate, finAccTxnAmount);
           paymentProposal.setStatus(isReceipt ? "RPR" : "PPM");
           // process payment
           message = FIN_AddPayment.processPayment(vars, conProvider, "P", payment);

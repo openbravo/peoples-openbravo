@@ -34,71 +34,80 @@ public class UniquePaymentForTransaction extends BuildValidation {
       // Prevent error when upgrading from a pure 2.50
       if (UniquePaymentForTransactionData.existAPRMbasetables(cp)) {
 
-        UniquePaymentForTransactionData[] listofPayments = UniquePaymentForTransactionData.selectDuplicatePaymentsForTransaction(cp);
-        if (listofPayments != null && listofPayments.length > 0 ) {
-          String message = "You cannot apply this Advanced Payables and Receivables Management module version because your instance fails in a pre-validation. " +
-          "It is not allowed to upgrade to this version having the same payment linked to several transactions. " +
-          "To fix this problem in your instance, have a look to generated alerts (Payment In/Out linked with more than one transaction) and identify the affected transactions. " +
-          "If you have for example two transactions for the same payment, delete both transactions and create a new transaction associated to the payment. " +
-          "Once it is fixed you should be able to apply this module version";
+        UniquePaymentForTransactionData[] listofPayments = UniquePaymentForTransactionData
+            .selectDuplicatePaymentsForTransaction(cp);
+        if (listofPayments != null && listofPayments.length > 0) {
+          String message = "You cannot apply this Advanced Payables and Receivables Management module version because your instance fails in a pre-validation. "
+              + "It is not allowed to upgrade to this version having the same payment linked to several transactions. "
+              + "To fix this problem in your instance, have a look to generated alerts (Payment In/Out linked with more than one transaction) and identify the affected transactions. "
+              + "If you have for example two transactions for the same payment, delete both transactions and create a new transaction associated to the payment. "
+              + "Once it is fixed you should be able to apply this module version";
           errors.add(message);
         }
-      
+
         for (UniquePaymentForTransactionData payment : listofPayments) {
           processAlert(cp, payment);
         }
- 
+
       }
     } catch (Exception e) {
       return handleError(e);
     }
     return errors;
   }
-  
-  
-  private void processAlert(ConnectionProvider cp, UniquePaymentForTransactionData payment) throws Exception {
+
+  private void processAlert(ConnectionProvider cp, UniquePaymentForTransactionData payment)
+      throws Exception {
     final String PAYMENT_IN_TAB = "C4B6506838E14A349D6717D6856F1B56";
     final String PAYMENT_OUT_TAB = "F7A52FDAAA0346EFA07D53C125B40404";
     final String PAYMENT_IN_WINDOW = "E547CE89D4C04429B6340FFA44E70716";
     final String PAYMENT_OUT_WINDOW = "6F8F913FA60F4CBD93DC1D3AA696E76E";
-    
-    String ALERT_RULE_NAME = "Payment " + ("Y".equals(payment.isreceipt) ? "In" : "Out") + " linked with more than one transaction";
-    String alertDescription = "Payment " + ("Y".equals(payment.isreceipt) ? "In: " : "Out: ") + payment.documentno +
-                              " is linked with more than one transaction. " +
-                              "Navigate to the document and using linked items browse to linked transactions. " +
-                              "Then delete associated transactions and create a new transaction for the payment.";
+
+    String ALERT_RULE_NAME = "Payment " + ("Y".equals(payment.isreceipt) ? "In" : "Out")
+        + " linked with more than one transaction";
+    String alertDescription = "Payment " + ("Y".equals(payment.isreceipt) ? "In: " : "Out: ")
+        + payment.documentno + " is linked with more than one transaction. "
+        + "Navigate to the document and using linked items browse to linked transactions. "
+        + "Then delete associated transactions and create a new transaction for the payment.";
 
     String strTabId = "Y".equals(payment.isreceipt) ? PAYMENT_IN_TAB : PAYMENT_OUT_TAB;
     String strWindowId = "Y".equals(payment.isreceipt) ? PAYMENT_IN_WINDOW : PAYMENT_OUT_WINDOW;
     String alertRuleId = "";
-    
-    String ALERT_RULE_SQL = "SELECT distinct t.fin_payment_id as referencekey_id, " +
-    " ad_column_identifier('fin_payment', t.fin_payment_id, 'en_US') as record_id, 0 as ad_role_id, null as ad_user_id," +
-    " '"+ alertDescription +"' as description," +
-    " 'Y' as isActive, p.ad_org_id, p.ad_client_id," +
-    " now() as created, 0 as createdBy, now() as updated, 0 as updatedBy" +
-    " FROM fin_finacc_transaction t join fin_payment p on (t.fin_payment_id=p.fin_payment_id)" +
-    " WHERE isreceipt='" + payment.isreceipt + "'" +
-    " GROUP BY t.fin_payment_id, p.documentno, p.isreceipt, p.ad_client_id, p.ad_org_id" +
-    " HAVING count(t.fin_finacc_transaction_id) > 1" +
-    " ORDER BY 1";
-    
+
+    String ALERT_RULE_SQL = "SELECT distinct t.fin_payment_id as referencekey_id, "
+        + " ad_column_identifier('fin_payment', t.fin_payment_id, 'en_US') as record_id, 0 as ad_role_id, null as ad_user_id,"
+        + " '"
+        + alertDescription
+        + "' as description,"
+        + " 'Y' as isActive, p.ad_org_id, p.ad_client_id,"
+        + " now() as created, 0 as createdBy, now() as updated, 0 as updatedBy"
+        + " FROM fin_finacc_transaction t join fin_payment p on (t.fin_payment_id=p.fin_payment_id)"
+        + " WHERE isreceipt='" + payment.isreceipt + "'"
+        + " GROUP BY t.fin_payment_id, p.documentno, p.isreceipt, p.ad_client_id, p.ad_org_id"
+        + " HAVING count(t.fin_finacc_transaction_id) > 1" + " ORDER BY 1";
+
     // Check if exists the alert rule
     if (!UniquePaymentForTransactionData.existsAlertRule(cp, ALERT_RULE_NAME, payment.adClientId)) {
-      UniquePaymentForTransactionData.insertAlertRule(cp, payment.adClientId, payment.adOrgId, ALERT_RULE_NAME, strTabId, ALERT_RULE_SQL);
-      
-      alertRuleId = UniquePaymentForTransactionData.getAlertRuleId(cp, ALERT_RULE_NAME, payment.adClientId);
-      UniquePaymentForTransactionData[] roles = UniquePaymentForTransactionData.getRoleId(cp, strWindowId, payment.adClientId);
+      UniquePaymentForTransactionData.insertAlertRule(cp, payment.adClientId, payment.adOrgId,
+          ALERT_RULE_NAME, strTabId, ALERT_RULE_SQL);
+
+      alertRuleId = UniquePaymentForTransactionData.getAlertRuleId(cp, ALERT_RULE_NAME,
+          payment.adClientId);
+      UniquePaymentForTransactionData[] roles = UniquePaymentForTransactionData.getRoleId(cp,
+          strWindowId, payment.adClientId);
       for (UniquePaymentForTransactionData role : roles) {
-        UniquePaymentForTransactionData.insertAlertRecipient(cp, payment.adClientId, payment.adOrgId, alertRuleId, role.adRoleId);
+        UniquePaymentForTransactionData.insertAlertRecipient(cp, payment.adClientId,
+            payment.adOrgId, alertRuleId, role.adRoleId);
       }
     } else {
-      alertRuleId = UniquePaymentForTransactionData.getAlertRuleId(cp, ALERT_RULE_NAME, payment.adClientId);
+      alertRuleId = UniquePaymentForTransactionData.getAlertRuleId(cp, ALERT_RULE_NAME,
+          payment.adClientId);
     }
-    
+
     // Check if exist the concrete alert for the payment
     if (!UniquePaymentForTransactionData.existsAlert(cp, alertRuleId, payment.finPaymentId)) {
-      UniquePaymentForTransactionData.insertAlert(cp, payment.adClientId, alertDescription, alertRuleId, payment.documentno, payment.finPaymentId);
+      UniquePaymentForTransactionData.insertAlert(cp, payment.adClientId, alertDescription,
+          alertRuleId, payment.documentno, payment.finPaymentId);
     }
 
   }

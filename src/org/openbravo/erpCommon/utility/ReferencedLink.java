@@ -121,8 +121,8 @@ public class ReferencedLink extends HttpSecureAppServlet {
         tabTitle = tab.getWindow().getName();
       }
 
-      json.put("keyParameter", "inp"
-          + Sqlc.TransformaNombreColumna(entity.getIdProperties().get(0).getColumnName()));
+      json.put("keyParameter",
+          "inp" + Sqlc.TransformaNombreColumna(entity.getIdProperties().get(0).getColumnName()));
       json.put("tabTitle", tabTitle);
 
       // find the model object mapping
@@ -177,8 +177,8 @@ public class ReferencedLink extends HttpSecureAppServlet {
     // Fixes issue #15723 while the complete implementation defined in #15379 is not ready
     boolean forcedLink;
     try {
-      strWindowId = Preferences.getPreferenceValue("ForcedLinkWindow" + strTableName, false, vars
-          .getClient(), vars.getOrg(), vars.getUser(), vars.getRole(), strWindowId);
+      strWindowId = Preferences.getPreferenceValue("ForcedLinkWindow" + strTableName, false,
+          vars.getClient(), vars.getOrg(), vars.getUser(), vars.getRole(), strWindowId);
       forcedLink = true;
     } catch (PropertyException e) {
       // Property is not set, follow standard flow

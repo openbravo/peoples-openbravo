@@ -776,8 +776,8 @@ public class WadUtility {
     prop.setProperty("isReadOnlyDefinedTab", (isReadOnlyDefinedTab ? "Y" : "N"));
     prop.setProperty("hasParentsFields", (hasParentsFields ? "Y" : "N"));
 
-    WADControl _myClass = getWadControlClass(conn, field.getField("AD_Reference_ID"), field
-        .getField("AD_Reference_Value_ID"));
+    WADControl _myClass = getWadControlClass(conn, field.getField("AD_Reference_ID"),
+        field.getField("AD_Reference_Value_ID"));
 
     _myClass.setReportEngine(xmlEngine);
     _myClass.setInfo(prop);
@@ -844,9 +844,13 @@ public class WadUtility {
     StringBuffer _displayLogic = new StringBuffer();
     String element = auxControl.getReadOnlyLogicColumn();
 
-    _displayLogic.append("  readOnlyLogicElement('").append(element).append("', (").append(
-        displayLogic(code, vecDL, parentsFieldsData, vecAuxiliar, vecFields, windowId, vecContext))
-        .append("));\n");
+    _displayLogic
+        .append("  readOnlyLogicElement('")
+        .append(element)
+        .append("', (")
+        .append(
+            displayLogic(code, vecDL, parentsFieldsData, vecAuxiliar, vecFields, windowId,
+                vecContext)).append("));\n");
 
     return _displayLogic.toString();
   }
@@ -857,8 +861,9 @@ public class WadUtility {
     Iterator<String> iv = sc.values().iterator();
     while (ik.hasNext() && iv.hasNext()) {
       // shortcuts.append("keyArray[keyArray.length] = new keyArrayItem(\"").append(ik.next()).append("\", \"").append(iv.next()).append("\", null, \"altKey\", false, \"onkeydown\");\n");
-      shortcuts.append("keyArray[keyArray.length] = new keyArrayItem(\"").append(ik.next()).append(
-          "\", \"").append(iv.next()).append("\", null, \"altKey\", false, \"onkeydown\");\n");
+      shortcuts.append("keyArray[keyArray.length] = new keyArrayItem(\"").append(ik.next())
+          .append("\", \"").append(iv.next())
+          .append("\", null, \"altKey\", false, \"onkeydown\");\n");
     }
     return shortcuts.toString();
   }
@@ -868,11 +873,11 @@ public class WadUtility {
       return "";
     StringBuffer _displayLogic = new StringBuffer();
     _displayLogic.append("if ").append(code).append("{\n");
-    _displayLogic.append("  displayLogicElement('fldgrp").append(strFieldGroup).append(
-        "', true);\n");
+    _displayLogic.append("  displayLogicElement('fldgrp").append(strFieldGroup)
+        .append("', true);\n");
     _displayLogic.append("} else {\n");
-    _displayLogic.append("  displayLogicElement('fldgrp").append(strFieldGroup).append(
-        "', false);\n");
+    _displayLogic.append("  displayLogicElement('fldgrp").append(strFieldGroup)
+        .append("', false);\n");
     _displayLogic.append("}\n");
     return _displayLogic.toString();
   }

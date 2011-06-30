@@ -172,10 +172,10 @@ public class LoginHandler extends HttpBaseServlet {
       // allowed to login only as system administrator
       switch (ak.checkOPSLimitations(sessionId)) {
       case NUMBER_OF_CONCURRENT_USERS_REACHED:
-        String msg = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED", vars
-            .getLanguage());
-        String title = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE", vars
-            .getLanguage());
+        String msg = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED",
+            vars.getLanguage());
+        String title = Utility.messageBD(myPool, "NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE",
+            vars.getLanguage());
         log4j.warn("Concurrent Users Reached - Session: " + sessionId);
         updateDBSession(sessionId, msgType.equals("Warning"), "CUR");
         goToRetry(res, vars, msg, title, msgType, action);

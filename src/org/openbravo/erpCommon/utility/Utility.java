@@ -333,10 +333,10 @@ public class Utility {
    */
   public static String formatMessageBDToHtml(String message) {
     return Replace.replace(Replace.replace(Replace.replace(Replace.replace(Replace.replace(Replace
-        .replace(Replace.replace(Replace.replace(Replace.replace(Replace.replace(Replace.replace(
-            message, "\\n", "\n"), "&quot", "\""), "&", "&amp;"), "\"", "&quot;"), "<", "&lt;"),
-            ">", "&gt;"), "\n", "<br/>"), "\r", " "), "®", "&reg;"), "&lt;![CDATA[", "<![CDATA["),
-        "]]&gt;", "]]>");
+        .replace(Replace.replace(Replace.replace(Replace.replace(
+            Replace.replace(Replace.replace(message, "\\n", "\n"), "&quot", "\""), "&", "&amp;"),
+            "\"", "&quot;"), "<", "&lt;"), ">", "&gt;"), "\n", "<br/>"), "\r", " "), "®", "&reg;"),
+        "&lt;![CDATA[", "<![CDATA["), "]]&gt;", "]]>");
   }
 
   /**
@@ -1374,13 +1374,13 @@ public class Utility {
 
       final int errorPos = message.indexOf("@ERROR=");
       if (errorPos != -1) {
-        myMessage = Utility.translateError(conn, vars, vars.getLanguage(), "@CODE=@"
-            + message.substring(errorPos + 7));
+        myMessage = Utility.translateError(conn, vars, vars.getLanguage(),
+            "@CODE=@" + message.substring(errorPos + 7));
         if (log4j.isDebugEnabled())
           log4j.debug("Error Message returned: " + myMessage.getMessage());
         if (message.substring(errorPos + 7).equals(myMessage.getMessage())) {
-          myMessage.setMessage(parseTranslation(conn, vars, vars.getLanguage(), myMessage
-              .getMessage()));
+          myMessage.setMessage(parseTranslation(conn, vars, vars.getLanguage(),
+              myMessage.getMessage()));
         }
         if (errorPos > 0)
           message = message.substring(0, errorPos);
@@ -2467,15 +2467,17 @@ public class Utility {
         img = OBDal.getInstance().get(SystemInformation.class, "0").getYourItServiceLoginImage();
         return defaultImageLogo(img, "web/images/SupportLogo_big.png");
       } else if ("yourcompanymenu".equals(logo)) {
-        img = OBDal.getInstance().get(ClientInformation.class,
-            OBContext.getOBContext().getCurrentClient().getId()).getYourCompanyMenuImage();
+        img = OBDal.getInstance()
+            .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
+            .getYourCompanyMenuImage();
         if (img == null) {
           img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyMenuImage();
         }
         return defaultImageLogo(img, "web/images/CompanyLogo_small.png");
       } else if ("yourcompanybig".equals(logo)) {
-        img = OBDal.getInstance().get(ClientInformation.class,
-            OBContext.getOBContext().getCurrentClient().getId()).getYourCompanyBigImage();
+        img = OBDal.getInstance()
+            .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
+            .getYourCompanyBigImage();
         if (img == null) {
           img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyBigImage();
         }
@@ -2499,8 +2501,9 @@ public class Utility {
         }
         if (img == null) {
 
-          img = OBDal.getInstance().get(ClientInformation.class,
-              OBContext.getOBContext().getCurrentClient().getId()).getYourCompanyDocumentImage();
+          img = OBDal.getInstance()
+              .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
+              .getYourCompanyDocumentImage();
 
           if (img == null) {
             img = OBDal.getInstance().get(SystemInformation.class, "0")

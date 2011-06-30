@@ -50,8 +50,8 @@ public class RptM_Inout extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  private void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars, String strmInoutId)
-      throws IOException, ServletException {
+  private void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars,
+      String strmInoutId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pdf");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptM_Inout")
@@ -59,7 +59,8 @@ public class RptM_Inout extends HttpSecureAppServlet {
 
     RptMInoutData[] data = RptMInoutData.select(this, strmInoutId);
     String strCopies = minimumOne(RptMInoutData.selectCopies(this, strmInoutId));
-    RptMInoutData[] dataPrincipal = RptMInoutData.selectNumCopies(this, Integer.toString(data.length));
+    RptMInoutData[] dataPrincipal = RptMInoutData.selectNumCopies(this,
+        Integer.toString(data.length));
     RptMInoutHeaderData[][] dataHeader = new RptMInoutHeaderData[data.length][];
     RptMInoutLinesData[][] dataLines = new RptMInoutLinesData[data.length][];
     int contador = 0;

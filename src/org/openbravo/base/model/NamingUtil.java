@@ -255,16 +255,15 @@ public class NamingUtil {
     // check for doublures and be robust....
     for (Property p : property.getEntity().getProperties()) {
       if (p.getName() != null && p.getName().equalsIgnoreCase(mappingName)) {
-        log
-            .error("ERROR: Property name computation fails for property "
-                + property
-                + " using new name "
-                + mappingName
-                + " there is more then one property with the same name, being robust and "
-                + "renaming property automatically. If this error appears during update.database then "
-                + "this is possibly solved automatically. Otherwise this should be repaired manually by "
-                + "changing the AD_Column.name of the column "
-                + property.getEntity().getTableName() + "." + property.getColumnName());
+        log.error("ERROR: Property name computation fails for property "
+            + property
+            + " using new name "
+            + mappingName
+            + " there is more then one property with the same name, being robust and "
+            + "renaming property automatically. If this error appears during update.database then "
+            + "this is possibly solved automatically. Otherwise this should be repaired manually by "
+            + "changing the AD_Column.name of the column " + property.getEntity().getTableName()
+            + "." + property.getColumnName());
 
         mappingName += property.getIndexInEntity();
         return mappingName;
@@ -315,8 +314,8 @@ public class NamingUtil {
     if (p.getReferencedProperty() == null || p.getReferencedProperty().getColumnName() == null) {
       return false;
     }
-    return p.getColumnName().toLowerCase().equals(
-        p.getReferencedProperty().getColumnName().toLowerCase());
+    return p.getColumnName().toLowerCase()
+        .equals(p.getReferencedProperty().getColumnName().toLowerCase());
   }
 
   private static String stripPrefix(String mappingName) {

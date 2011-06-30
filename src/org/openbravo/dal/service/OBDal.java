@@ -80,8 +80,8 @@ public class OBDal implements OBSingleton {
    * @see #disableActiveFilter()
    */
   public void enableActiveFilter() {
-    SessionHandler.getInstance().getSession().enableFilter("activeFilter").setParameter(
-        "activeParam", "Y");
+    SessionHandler.getInstance().getSession().enableFilter("activeFilter")
+        .setParameter("activeParam", "Y");
   }
 
   /**
@@ -200,8 +200,8 @@ public class OBDal implements OBSingleton {
     setClientOrganization(obj);
     if (!OBContext.getOBContext().isInAdministratorMode()) {
       if (obj instanceof BaseOBObject) {
-        OBContext.getOBContext().getEntityAccessChecker().checkWritable(
-            ((BaseOBObject) obj).getEntity());
+        OBContext.getOBContext().getEntityAccessChecker()
+            .checkWritable(((BaseOBObject) obj).getEntity());
       }
       SecurityChecker.getInstance().checkWriteAccess(obj);
     }

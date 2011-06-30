@@ -112,9 +112,9 @@ public class ExportGrid extends HttpSecureAppServlet {
     TableSQLData tableSQL = null;
     try {
       tableSQL = new TableSQLData(vars, this, strTabId, Utility.getContext(this, vars,
-          "#AccessibleOrgTree", strWindowId, Integer.valueOf(strAccessLevel).intValue()), Utility
-          .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars,
-          "ShowAudit", strWindowId).equals("Y"));
+          "#AccessibleOrgTree", strWindowId, Integer.valueOf(strAccessLevel).intValue()),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
+              vars, "ShowAudit", strWindowId).equals("Y"));
     } catch (Exception ex) {
       ex.printStackTrace();
       log4j.error(ex.getMessage());

@@ -89,8 +89,8 @@ public class SE_Project_BPartner extends HttpSecureAppServlet {
     FieldProvider[] tdv = null;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_PriceList_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
-              .getContext(this, vars, "#User_Client", strWindowId), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
       tdv = comboTableData.select(false);
       comboTableData = null;

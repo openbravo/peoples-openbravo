@@ -115,8 +115,8 @@ public class UsedByLink extends HttpSecureAppServlet {
     xmlDocument.setParameter("tableId", tableId);
     xmlDocument.setParameter("keyName", "inp" + Sqlc.TransformaNombreColumna(keyColumn));
     xmlDocument.setParameter("keyId", keyId);
-    xmlDocument.setParameter("recordIdentifier", UsedByLinkData.selectIdentifier(this, keyId, vars
-        .getLanguage(), tableId));
+    xmlDocument.setParameter("recordIdentifier",
+        UsedByLinkData.selectIdentifier(this, keyId, vars.getLanguage(), tableId));
 
     final SearchResult searchResult = getLinkedItemCategories(vars, strWindow, keyColumn, keyId,
         tableId);
@@ -169,13 +169,13 @@ public class UsedByLink extends HttpSecureAppServlet {
       xmlDocument.setParameter("columnName", keyColumn);
     }
 
-    xmlDocument.setParameter("recordIdentifier", UsedByLinkData.selectIdentifier(this, keyId, vars
-        .getLanguage(), adTableId));
+    xmlDocument.setParameter("recordIdentifier",
+        UsedByLinkData.selectIdentifier(this, keyId, vars.getLanguage(), adTableId));
     if (vars.getLanguage().equals("en_US")) {
       xmlDocument.setParameter("paramName", UsedByLinkData.tabName(this, strAD_TAB_ID));
     } else {
-      xmlDocument.setParameter("paramName", UsedByLinkData.tabNameLanguage(this,
-          vars.getLanguage(), strAD_TAB_ID));
+      xmlDocument.setParameter("paramName",
+          UsedByLinkData.tabNameLanguage(this, vars.getLanguage(), strAD_TAB_ID));
     }
 
     final UsedByLinkData[] data = UsedByLinkData.keyColumns(this, strAD_TAB_ID);
@@ -341,9 +341,9 @@ public class UsedByLink extends HttpSecureAppServlet {
         String keyValue = keyId;
         if (!data[i].referencedColumnId.equals(keyColumnId)) {
           try {
-            keyValue = UsedByLinkData.selectKeyValue(this, UsedByLinkData.selectColumnName(this,
-                data[i].referencedColumnId), data[i].tablename,
-                data[i].columnname, keyId);
+            keyValue = UsedByLinkData.selectKeyValue(this,
+                UsedByLinkData.selectColumnName(this, data[i].referencedColumnId),
+                data[i].tablename, data[i].columnname, keyId);
           } catch (Exception e) {
             // TODO: handle exception
           }
@@ -357,8 +357,8 @@ public class UsedByLink extends HttpSecureAppServlet {
         if (log4j.isDebugEnabled())
           log4j.debug("***   Referenced where clause (1): " + strWhereClause);
         strWhereClause += getAditionalWhereClause(vars, strWindow, data[i].adTabId,
-            data[i].tablename, keyColumn, data[i].columnname, UsedByLinkData.getTabTableName(this,
-                tableId));
+            data[i].tablename, keyColumn, data[i].columnname,
+            UsedByLinkData.getTabTableName(this, tableId));
         if (log4j.isDebugEnabled())
           log4j.debug("***   Referenced where clause (2): " + strWhereClause);
         if (!nonAccessible) {
@@ -480,15 +480,15 @@ public class UsedByLink extends HttpSecureAppServlet {
       if (i > 0) {
         strSQL.append(" || ', ' || ");
       }
-      strScript.append("frm.inp").append(Sqlc.TransformaNombreColumna(data[i].name)).append(
-          ".value = arguments[").append(i).append("];\n");
+      strScript.append("frm.inp").append(Sqlc.TransformaNombreColumna(data[i].name))
+          .append(".value = arguments[").append(i).append("];\n");
       strSQL.append("'''' || ").append(data[i].name).append(" || ''''");
-      strHiddens.append("<input type=\"hidden\" name=\"inp").append(
-          Sqlc.TransformaNombreColumna(data[i].name)).append("\">\n");
+      strHiddens.append("<input type=\"hidden\" name=\"inp")
+          .append(Sqlc.TransformaNombreColumna(data[i].name)).append("\">\n");
     }
     final String windowRef = Utility.getTabURL(strAD_TAB_ID, "E", true);
-    strScript.append("top.opener.submitFormGetParams('DIRECT', '").append(windowRef).append(
-        "', getParamsScript(document.forms[0]));\n");
+    strScript.append("top.opener.submitFormGetParams('DIRECT', '").append(windowRef)
+        .append("', getParamsScript(document.forms[0]));\n");
     strScript.append("top.close();\n");
     strScript.append("return true;\n");
     strScript.append("}\n");

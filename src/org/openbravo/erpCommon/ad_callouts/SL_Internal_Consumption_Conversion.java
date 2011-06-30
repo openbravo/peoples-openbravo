@@ -105,9 +105,10 @@ public class SL_Internal_Consumption_Conversion extends HttpSecureAppServlet {
     if (check) {
       if (!strQuantityOrder.equals(""))
         resultado.append(",");
-      resultado.append("new Array('MESSAGE', \""
-          + FormatUtilities.replaceJS(Utility
-              .messageBD(this, "NoUOMConversion", vars.getLanguage())) + "\")");
+      resultado
+          .append("new Array('MESSAGE', \""
+              + FormatUtilities.replaceJS(Utility.messageBD(this, "NoUOMConversion",
+                  vars.getLanguage())) + "\")");
     }
     if (strMProductUOMID.equals("") && !strChanged.equals("inpquantityorder")) {
       if (!strQuantityOrder.equals(""))

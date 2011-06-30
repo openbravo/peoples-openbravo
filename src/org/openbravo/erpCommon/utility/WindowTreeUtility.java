@@ -209,8 +209,8 @@ class WindowTreeUtility {
           .append(
               (nodeId.equals("0") ? " noDrag=\"true\" noSiblings=\"true\" noDelete=\"true\" noRename=\"true\" "
                   : "")).append(">\n");
-      element.append("<a href=\"#\" id=\"folderHref").append((hasChilds ? "" : "NoChilds")).append(
-          "__").append(nodeId).append("\"");
+      element.append("<a href=\"#\" id=\"folderHref").append((hasChilds ? "" : "NoChilds"))
+          .append("__").append(nodeId).append("\"");
 
       if (strOnDblClick != null && !strOnDblClick.equals("")) {
         element.append(" onclick=\"").append(strOnDblClick).append("return true;\"");

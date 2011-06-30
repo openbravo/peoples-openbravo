@@ -157,8 +157,8 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
         newOrg = fp[0].getField("id");
       }
     }
-    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
-        vars.getRole()));
+    xmlDocument.setData("reportAD_ORGID", "liststructure",
+        OrganizationComboData.selectCombo(this, vars.getRole()));
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateTo", strDateTo);
 
@@ -320,9 +320,9 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         if (strNewFilterAux.equals("1") || strNewFilterAux.equals("")) { // New filter or first load
           gridPayments = dao.getPayExecRowCount(strOrgId, strPaymentMethodId,
-              strFinancialAccountId, FIN_Utility.getDate(strDateFrom), FIN_Utility
-                  .getDate(DateTimeData.nDaysAfter(this, strDateTo, "1")), offset, pageSize, null,
-              null, isReceipt);
+              strFinancialAccountId, FIN_Utility.getDate(strDateFrom),
+              FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strDateTo, "1")), offset, pageSize,
+              null, null, isReceipt);
           strNumRows = Integer.toString(gridPayments.size());
 
           vars.setSessionValue("BatchPaymentExecution.numrows", strNumRows);
@@ -331,8 +331,9 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
         }
 
         gridPayments = dao.getPayExecRowCount(strOrgId, strPaymentMethodId, strFinancialAccountId,
-            FIN_Utility.getDate(strDateFrom), FIN_Utility.getDate(DateTimeData.nDaysAfter(this,
-                strDateTo, "1")), offset, pageSize, strOrderByProperty, strAscDesc, isReceipt);
+            FIN_Utility.getDate(strDateFrom),
+            FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strDateTo, "1")), offset, pageSize,
+            strOrderByProperty, strAscDesc, isReceipt);
         strNumRows = Integer.toString(gridPayments.size());
 
       } catch (ServletException e) {
@@ -374,8 +375,8 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
-        "\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+        .append("\" backendPage=\"" + page + "\">\n");
     if (gridPayments != null && gridPayments.size() > 0) {
       for (FIN_Payment pay : gridPayments) {
         strRowsData.append("    <tr>\n");
@@ -414,11 +415,11 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
           if (columnData != "") {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(columnData.replaceAll("<b>", "").replaceAll("<B>", "").replaceAll(
-                "</b>", "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll("<I>", "")
-                .replaceAll("</i>", "").replaceAll("</I>", "").replaceAll("<p>", "&nbsp;")
-                .replaceAll("<P>", "&nbsp;").replaceAll("<br>", "&nbsp;").replaceAll("<BR>",
-                    "&nbsp;"));
+            strRowsData.append(columnData.replaceAll("<b>", "").replaceAll("<B>", "")
+                .replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "")
+                .replaceAll("<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
+                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");

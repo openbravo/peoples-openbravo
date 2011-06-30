@@ -143,10 +143,10 @@ public class ReportProductionJR extends HttpSecureAppServlet {
     if (!strRawMaterial.equals("Y"))
       strRawMaterial = "N";
 
-    ReportProductionData[] data = ReportProductionData.select(this, strRawMaterial, Utility
-        .getContext(this, vars, "#User_Client", "ReportProductionJR"), Utility.getContext(this,
-        vars, "#AccessibleOrgTree", "ReportProductionJR"), strDateFrom, DateTimeData.nDaysAfter(
-        this, strDateTo, "1"));
+    ReportProductionData[] data = ReportProductionData.select(this, strRawMaterial,
+        Utility.getContext(this, vars, "#User_Client", "ReportProductionJR"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductionJR"), strDateFrom,
+        DateTimeData.nDaysAfter(this, strDateTo, "1"));
 
     if (data == null || data.length == 0) {
       data = ReportProductionData.set();

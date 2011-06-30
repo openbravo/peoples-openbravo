@@ -127,14 +127,14 @@ public class DocFINBankStatement extends AcctServer {
       FIN_BankStatement bst = OBDal.getInstance().get(FIN_BankStatement.class, Record_ID);
       fact.createLine(null, getAccount(conn, bst.getAccount(), as, totalAmount.signum() < 0),
           C_Currency_ID,
-          (totalAmount.signum() > 0 ? totalAmount.abs().toString() : ZERO.toString()), (totalAmount
-              .signum() < 0 ? totalAmount.abs().toString() : ZERO.toString()), Fact_Acct_Group_ID,
-          nextSeqNo(SeqNo), DocumentType, conn);
+          (totalAmount.signum() > 0 ? totalAmount.abs().toString() : ZERO.toString()),
+          (totalAmount.signum() < 0 ? totalAmount.abs().toString() : ZERO.toString()),
+          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       fact.createLine(null, getAccount(conn, bst.getAccount(), as, totalAmount.signum() > 0),
           C_Currency_ID,
-          (totalAmount.signum() < 0 ? totalAmount.abs().toString() : ZERO.toString()), (totalAmount
-              .signum() > 0 ? totalAmount.abs().toString() : ZERO.toString()), Fact_Acct_Group_ID,
-          nextSeqNo(SeqNo), DocumentType, conn);
+          (totalAmount.signum() < 0 ? totalAmount.abs().toString() : ZERO.toString()),
+          (totalAmount.signum() > 0 ? totalAmount.abs().toString() : ZERO.toString()),
+          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -181,11 +181,11 @@ public class DocFINBankStatement extends AcctServer {
       FieldProviderFactory.setField(data[0], "C_Doctype_ID", bankStatement.getDocumentType()
           .getId());
       FieldProviderFactory.setField(data[0], "DocumentNo", bankStatement.getDocumentNo());
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-          "dateFormat.java");
+      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-      FieldProviderFactory.setField(data[0], "statementDate", outputFormat.format(bankStatement
-          .getTransactionDate()));
+      FieldProviderFactory.setField(data[0], "statementDate",
+          outputFormat.format(bankStatement.getTransactionDate()));
       FieldProviderFactory.setField(data[0], "Posted", bankStatement.getPosted());
       FieldProviderFactory.setField(data[0], "Processed", bankStatement.isProcessed() ? "Y" : "N");
       FieldProviderFactory
@@ -205,8 +205,10 @@ public class DocFINBankStatement extends AcctServer {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(
+          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);

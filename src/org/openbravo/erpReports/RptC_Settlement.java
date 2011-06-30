@@ -58,9 +58,9 @@ public class RptC_Settlement extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptC_Settlement")
         .createXmlDocument();
 
-    RptCSettlementData[] pdfSettlementData = RptCSettlementData.select(this, Utility.getContext(
-        this, vars, "#User_Client", "RptC_Settlement"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "RptC_Settlement"), strcSettlementId);
+    RptCSettlementData[] pdfSettlementData = RptCSettlementData.select(this,
+        Utility.getContext(this, vars, "#User_Client", "RptC_Settlement"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "RptC_Settlement"), strcSettlementId);
 
     if (pdfSettlementData == null || pdfSettlementData.length == 0)
       pdfSettlementData = RptCSettlementData.set();

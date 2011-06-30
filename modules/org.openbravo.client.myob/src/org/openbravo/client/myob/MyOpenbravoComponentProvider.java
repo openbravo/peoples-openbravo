@@ -76,8 +76,8 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.myob/js/ob-getting-started-widget.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_PARAMETER
-            + "/org.openbravo.client.myob/ob-widget-styles.js", false));
+            + KernelConstants.SKIN_PARAMETER + "/org.openbravo.client.myob/ob-widget-styles.js",
+        false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
@@ -85,8 +85,8 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
 
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_PARAMETER
-            + "/org.openbravo.client.myob/ob-widget-styles.css", false));
+            + KernelConstants.SKIN_PARAMETER + "/org.openbravo.client.myob/ob-widget-styles.css",
+        false));
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER

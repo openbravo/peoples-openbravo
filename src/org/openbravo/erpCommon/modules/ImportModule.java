@@ -167,8 +167,8 @@ public class ImportModule {
   private void verifyFilesExist(File[] files) {
     for (File file : files) {
       if (!file.exists()) {
-        throw new ResourceNotFoundException(String.format(Utility.messageBD(pool,
-            "SourceFileNotFound", vars.getLanguage()), file.getPath()));
+        throw new ResourceNotFoundException(String.format(
+            Utility.messageBD(pool, "SourceFileNotFound", vars.getLanguage()), file.getPath()));
       }
     }
   }
@@ -469,8 +469,8 @@ public class ImportModule {
       log4j.error("Error installing module", e);
       addLog(e.toString(), MSG_ERROR);
       try {
-        ImportModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()), "", "", "", e
-            .toString(), "E");
+        ImportModuleData.insertLog(pool, (vars == null ? "0" : vars.getUser()), "", "", "",
+            e.toString(), "E");
       } catch (final ServletException ex) {
         log4j.error("Error inserting log", ex);
       }
@@ -608,8 +608,9 @@ public class ImportModule {
         return false;
       }
     } catch (IOException e) {
-      addLog("@ErrorGettingModule@ " + module.getName() + "(" + module.getPackageName() + ") :"
-          + e.getMessage(), MSG_ERROR);
+      addLog(
+          "@ErrorGettingModule@ " + module.getName() + "(" + module.getPackageName() + ") :"
+              + e.getMessage(), MSG_ERROR);
       return false;
     }
 
@@ -1297,16 +1298,17 @@ public class ImportModule {
 
       // Insert data in temporary tables
       ImportModuleData.insertModuleInstall(pool, moduleId, (String) module.get("NAME"),
-          (String) module.get("VERSION"), (String) module.get("DESCRIPTION"), (String) module
-              .get("HELP"), (String) module.get("URL"), type, (String) module.get("LICENSE"),
-          (String) module.get("ISINDEVELOPMENT"), (String) module.get("ISDEFAULT"), seqNo
-              .toString(), (String) module.get("JAVAPACKAGE"), (String) module.get("LICENSETYPE"),
-          (String) module.get("AUTHOR"), (String) module.get("STATUS"), (String) module
-              .get("UPDATE_AVAILABLE"), (String) module.get("ISTRANSLATIONREQUIRED"),
-          (String) module.get("AD_LANGUAGE"), (String) module.get("HASCHARTOFACCOUNTS"),
-          (String) module.get("ISTRANSLATIONMODULE"), (String) module.get("HASREFERENCEDATA"),
-          (String) module.get("ISREGISTERED"), (String) module.get("UPDATEINFO"), (String) module
-              .get("UPDATE_VER_ID"), (String) module.get("REFERENCEDATAINFO"), applyConfigScript);
+          (String) module.get("VERSION"), (String) module.get("DESCRIPTION"),
+          (String) module.get("HELP"), (String) module.get("URL"), type,
+          (String) module.get("LICENSE"), (String) module.get("ISINDEVELOPMENT"),
+          (String) module.get("ISDEFAULT"), seqNo.toString(), (String) module.get("JAVAPACKAGE"),
+          (String) module.get("LICENSETYPE"), (String) module.get("AUTHOR"),
+          (String) module.get("STATUS"), (String) module.get("UPDATE_AVAILABLE"),
+          (String) module.get("ISTRANSLATIONREQUIRED"), (String) module.get("AD_LANGUAGE"),
+          (String) module.get("HASCHARTOFACCOUNTS"), (String) module.get("ISTRANSLATIONMODULE"),
+          (String) module.get("HASREFERENCEDATA"), (String) module.get("ISREGISTERED"),
+          (String) module.get("UPDATEINFO"), (String) module.get("UPDATE_VER_ID"),
+          (String) module.get("REFERENCEDATAINFO"), applyConfigScript);
 
       // Set installed for modules being updated
       ImportModuleData.setModuleUpdated(pool, (String) module.get("AD_MODULE_ID"));
@@ -1314,16 +1316,16 @@ public class ImportModule {
       addLog("@ModuleInstalled@ " + module.get("NAME") + " - " + module.get("VERSION"), MSG_SUCCESS);
     }
     for (final DynaBean module : dependencies1) {
-      ImportModuleData.insertModuleDependencyInstall(pool, (String) module
-          .get("AD_MODULE_DEPENDENCY_ID"), (String) module.get("AD_MODULE_ID"), (String) module
-          .get("AD_DEPENDENT_MODULE_ID"), (String) module.get("STARTVERSION"), (String) module
-          .get("ENDVERSION"), (String) module.get("ISINCLUDED"), (String) module
-          .get("DEPENDANT_MODULE_NAME"));
+      ImportModuleData.insertModuleDependencyInstall(pool,
+          (String) module.get("AD_MODULE_DEPENDENCY_ID"), (String) module.get("AD_MODULE_ID"),
+          (String) module.get("AD_DEPENDENT_MODULE_ID"), (String) module.get("STARTVERSION"),
+          (String) module.get("ENDVERSION"), (String) module.get("ISINCLUDED"),
+          (String) module.get("DEPENDANT_MODULE_NAME"));
     }
     for (final DynaBean module : dbPrefix) {
-      ImportModuleData.insertModuleDBPrefixInstall(pool, (String) module
-          .get("AD_MODULE_DBPREFIX_ID"), (String) module.get("AD_MODULE_ID"), (String) module
-          .get("NAME"));
+      ImportModuleData.insertModuleDBPrefixInstall(pool,
+          (String) module.get("AD_MODULE_DBPREFIX_ID"), (String) module.get("AD_MODULE_ID"),
+          (String) module.get("NAME"));
     }
 
     conn.close();
@@ -1359,8 +1361,8 @@ public class ImportModule {
         final ByteArrayInputStream ba = getCurrentEntryStream(obxInputStream);
         obxInputStream.closeEntry();
         getModulesFromObx(dModulesToInstall, dDependencies, dDBprefix, ba, merges);
-      } else if (entry.getName().replace("\\", "/").endsWith(
-          "src-db/database/sourcedata/AD_MODULE.xml")) {
+      } else if (entry.getName().replace("\\", "/")
+          .endsWith("src-db/database/sourcedata/AD_MODULE.xml")) {
         final Vector<DynaBean> module = getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream));
         boolean isPackage = false;
         if (module != null && module.size() > 0) {
@@ -1369,18 +1371,18 @@ public class ImportModule {
         dModulesToInstall.addAll(module);
         obxInputStream.closeEntry();
         foundModule = true && !isPackage;
-      } else if (entry.getName().replace("\\", "/").endsWith(
-          "src-db/database/sourcedata/AD_MODULE_DEPENDENCY.xml")) {
+      } else if (entry.getName().replace("\\", "/")
+          .endsWith("src-db/database/sourcedata/AD_MODULE_DEPENDENCY.xml")) {
         dDependencies.addAll(getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream)));
         obxInputStream.closeEntry();
         foundDependency = true;
-      } else if (entry.getName().replace("\\", "/").endsWith(
-          "src-db/database/sourcedata/AD_MODULE_DBPREFIX.xml")) {
+      } else if (entry.getName().replace("\\", "/")
+          .endsWith("src-db/database/sourcedata/AD_MODULE_DBPREFIX.xml")) {
         dDBprefix.addAll(getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream)));
         obxInputStream.closeEntry();
         foundPrefix = true;
-      } else if (entry.getName().replace("\\", "/").endsWith(
-          "/src-db/database/sourcedata/AD_MODULE_MERGE.xml")) {
+      } else if (entry.getName().replace("\\", "/")
+          .endsWith("/src-db/database/sourcedata/AD_MODULE_MERGE.xml")) {
         Vector<DynaBean> dynMerges = getEntryDynaBeans(getBytesCurrentEntryStream(obxInputStream));
         for (DynaBean merge : dynMerges) {
           merges.put((String) merge.get("MERGED_MODULE_UUID"), (String) merge.get("AD_MODULE_ID"));
@@ -1465,22 +1467,22 @@ public class ImportModule {
           byte[] entryBytes = null;
           boolean found = false;
           // Read the xml file to obtain module info
-          if (entry.getName().replace("\\", "/").endsWith(
-              "src-db/database/sourcedata/AD_MODULE.xml")) {
+          if (entry.getName().replace("\\", "/")
+              .endsWith("src-db/database/sourcedata/AD_MODULE.xml")) {
             entryBytes = getBytesCurrentEntryStream(obxInputStream);
             final Vector<DynaBean> module = getEntryDynaBeans(entryBytes);
             dModulesToInstall.addAll(module);
             moduleID = (String) module.get(0).get("AD_MODULE_ID");
             obxInputStream.closeEntry();
             found = true;
-          } else if (entry.getName().replace("\\", "/").endsWith(
-              "src-db/database/sourcedata/AD_MODULE_DEPENDENCY.xml")) {
+          } else if (entry.getName().replace("\\", "/")
+              .endsWith("src-db/database/sourcedata/AD_MODULE_DEPENDENCY.xml")) {
             entryBytes = getBytesCurrentEntryStream(obxInputStream);
             dDependencies.addAll(getEntryDynaBeans(entryBytes));
             obxInputStream.closeEntry();
             found = true;
-          } else if (entry.getName().replace("\\", "/").endsWith(
-              "src-db/database/sourcedata/AD_MODULE_DBPREFIX.xml")) {
+          } else if (entry.getName().replace("\\", "/")
+              .endsWith("src-db/database/sourcedata/AD_MODULE_DBPREFIX.xml")) {
             entryBytes = getBytesCurrentEntryStream(obxInputStream);
             dDBprefix.addAll(getEntryDynaBeans(entryBytes));
             obxInputStream.closeEntry();
@@ -1525,8 +1527,12 @@ public class ImportModule {
       final String user = vars == null ? "0" : vars.getUser();
       if (modulesToInstall != null && modulesToInstall.length > 0) {
         for (int i = 0; i < modulesToInstall.length; i++) {
-          ImportModuleData.insertLog(pool, user, modulesToInstall[i].getModuleID(),
-              modulesToInstall[i].getModuleVersionID(), modulesToInstall[i].getName(),
+          ImportModuleData.insertLog(
+              pool,
+              user,
+              modulesToInstall[i].getModuleID(),
+              modulesToInstall[i].getModuleVersionID(),
+              modulesToInstall[i].getName(),
               "Installed module " + modulesToInstall[i].getName() + " - "
                   + modulesToInstall[i].getVersionNo(), "I");
         }
@@ -1583,8 +1589,8 @@ public class ImportModule {
         loc = new WebService3ImplServiceLocator();
         ws = loc.getWebService3();
 
-        updates = ws.moduleScanForUpdates(getInstalledModulesAndDeps(), ModuleUtiltiy
-            .getSystemMaturityLevels(false));
+        updates = ws.moduleScanForUpdates(getInstalledModulesAndDeps(),
+            ModuleUtiltiy.getSystemMaturityLevels(false));
       } catch (final Exception e) {
         // do nothing just log the error
         log4j.error("Scan for updates coulnd't contact WS", e);
@@ -1601,13 +1607,14 @@ public class ImportModule {
       if (updates != null && updates.length > 0) {
         for (int i = 0; i < updates.length; i++) {
 
-          if (!ImportModuleData.existsVersion(conn, updates[i].getVersionNo(), updates[i]
-              .getModuleVersionID())) {
-            ImportModuleData.updateNewVersionAvailable(conn, updates[i].getVersionNo(), updates[i]
-                .getModuleVersionID(), updates[i].getUpdateDescription(), updates[i].getModuleID());
-            ImportModuleData.insertLog(conn, user, updates[i].getModuleID(), updates[i]
-                .getModuleVersionID(), updates[i].getName(), "Found new version "
-                + updates[i].getVersionNo() + " for module " + updates[i].getName(), "S");
+          if (!ImportModuleData.existsVersion(conn, updates[i].getVersionNo(),
+              updates[i].getModuleVersionID())) {
+            ImportModuleData.updateNewVersionAvailable(conn, updates[i].getVersionNo(),
+                updates[i].getModuleVersionID(), updates[i].getUpdateDescription(),
+                updates[i].getModuleID());
+            ImportModuleData.insertLog(conn, user, updates[i].getModuleID(),
+                updates[i].getModuleVersionID(), updates[i].getName(), "Found new version "
+                    + updates[i].getVersionNo() + " for module " + updates[i].getName(), "S");
             updateModules.put(updates[i].getModuleID(), "U");
           }
 

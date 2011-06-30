@@ -157,16 +157,16 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
 
     final OBCriteria<Preference> obcNotSel = OBDal.getInstance().createCriteria(Preference.class);
     obcNotSel.add(Restrictions.eq(Preference.PROPERTY_PROPERTY, property));
-    obcNotSel.add(Restrictions.eq(Preference.PROPERTY_MODULE, OBDal.getInstance().get(Module.class,
-        moduleId)));
+    obcNotSel.add(Restrictions.eq(Preference.PROPERTY_MODULE,
+        OBDal.getInstance().get(Module.class, moduleId)));
     obcNotSel.add(Restrictions.eq(Preference.PROPERTY_SELECTED, false));
     obcNotSel.setFilterOnReadableClients(false);
     obcNotSel.setFilterOnReadableOrganization(false);
 
     final OBCriteria<Preference> obcSel = OBDal.getInstance().createCriteria(Preference.class);
     obcSel.add(Restrictions.eq(Preference.PROPERTY_PROPERTY, property));
-    obcSel.add(Restrictions.eq(Preference.PROPERTY_MODULE, OBDal.getInstance().get(Module.class,
-        moduleId)));
+    obcSel.add(Restrictions.eq(Preference.PROPERTY_MODULE,
+        OBDal.getInstance().get(Module.class, moduleId)));
     obcSel.add(Restrictions.eq(Preference.PROPERTY_SELECTED, true));
     obcSel.setFilterOnReadableClients(false);
     obcSel.setFilterOnReadableOrganization(false);

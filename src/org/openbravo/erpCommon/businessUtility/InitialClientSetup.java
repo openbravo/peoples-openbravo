@@ -444,8 +444,9 @@ public class InitialClientSetup {
     log4j.debug("insertUser() - Inserting user named " + strUserName);
     User user;
     try {
-      user = InitialSetupUtility.insertUser(client, null, strUserName, FormatUtilities
-          .sha1Base64(strPassword), role, InitialSetupUtility.getLanguage(strLanguage));
+      user = InitialSetupUtility.insertUser(client, null, strUserName,
+          FormatUtilities.sha1Base64(strPassword), role,
+          InitialSetupUtility.getLanguage(strLanguage));
     } catch (Exception e) {
       return logErrorAndRollback("@CreateClientFailed@",
           "insertUser() - ERROR - Not able to insert the user " + strUserName, e);
@@ -482,7 +483,8 @@ public class InitialClientSetup {
     try {
       istrFileCoA = fileCoAFilePath.getInputStream();
     } catch (IOException e) {
-      return logErrorAndRollback("@CreateAccountingFailed@",
+      return logErrorAndRollback(
+          "@CreateAccountingFailed@",
           "createAccounting() - Exception occured while reading the file "
               + fileCoAFilePath.getName(), e);
     }

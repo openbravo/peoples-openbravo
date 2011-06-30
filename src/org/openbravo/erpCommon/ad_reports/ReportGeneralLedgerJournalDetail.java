@@ -43,14 +43,16 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId", "ReportGeneralLedgerJournalDetail|FactAcctGroupId", "");
-      String strDateAcct = getValue(strFactAcctGroupId,0);
-      strFactAcctGroupId = getValue(strFactAcctGroupId,1);
-      printPageDataSheet(response, vars, strFactAcctGroupId, strDateAcct,null, "");
+      String strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId",
+          "ReportGeneralLedgerJournalDetail|FactAcctGroupId", "");
+      String strDateAcct = getValue(strFactAcctGroupId, 0);
+      strFactAcctGroupId = getValue(strFactAcctGroupId, 1);
+      printPageDataSheet(response, vars, strFactAcctGroupId, strDateAcct, null, "");
     } else if (vars.commandIn("DIRECT")) {
-      String strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId", "ReportGeneralLedgerJournalDetail|FactAcctGroupId");
-      String strDateAcct = getValue(strFactAcctGroupId,0);
-      strFactAcctGroupId = getValue(strFactAcctGroupId,1);
+      String strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId",
+          "ReportGeneralLedgerJournalDetail|FactAcctGroupId");
+      String strDateAcct = getValue(strFactAcctGroupId, 0);
+      strFactAcctGroupId = getValue(strFactAcctGroupId, 1);
       printPageDataSheet(response, vars, strFactAcctGroupId, strDateAcct, null, "");
     } else if (vars.commandIn("DP")) {
       String strDPId = vars.getStringParameter("inpDPid");
@@ -112,11 +114,10 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     else
       data = ReportGeneralLedgerJournalDetailData.selectByDP(this, strDPId, strcAcctSchemaId);
 
-
     boolean hasPrevious = !(data == null || data.length == 0 || initRecordNumber <= 1);
     boolean hasNext = !(data == null || data.length == 0 || data.length < intRecordRange);
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportGeneralLedgerJournalDetail", false, "", "",
-        "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportGeneralLedgerJournalDetail",
+        false, "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareRelationBarTemplate(hasPrevious, hasNext);
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournalDetail").createXmlDocument();
@@ -151,7 +152,8 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setData("structure1", data);
-    vars.setSessionValue("ReportGeneralLedgerJournalDetail|FactAcctGroupId", strDateacct + "/" + strFactAcctGroupId);
+    vars.setSessionValue("ReportGeneralLedgerJournalDetail|FactAcctGroupId", strDateacct + "/"
+        + strFactAcctGroupId);
     out.println(xmlDocument.print());
     out.close();
   }

@@ -30,8 +30,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.utils.FileUtility;
 
 /**
- * Servlet which returns the openbravo logo image with version number. Depending on instance activation status either
- * the ops image or the normal powered by openbravo image is returned.
+ * Servlet which returns the openbravo logo image with version number. Depending on instance
+ * activation status either the ops image or the normal powered by openbravo image is returned.
  * 
  * @author huehner
  * 

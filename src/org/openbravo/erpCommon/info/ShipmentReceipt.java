@@ -79,9 +79,9 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
       if (strSOTrx.equals(""))
         strSOTrx = "N";
       vars.setSessionValue("ShipmentReceipt.isSOTrx", strSOTrx);
-      ShipmentReceiptData[] data = ShipmentReceiptData.selectKey(this, Utility.getContext(this,
-          vars, "#User_Client", "ShipmentReceipt"), Utility.getSelectorOrgs(this, vars, strOrg),
-          strSOTrx, strKeyValue + "%");
+      ShipmentReceiptData[] data = ShipmentReceiptData.selectKey(this,
+          Utility.getContext(this, vars, "#User_Client", "ShipmentReceipt"),
+          Utility.getSelectorOrgs(this, vars, strOrg), strSOTrx, strKeyValue + "%");
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
       } else
@@ -263,8 +263,8 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
         page = TableSQLData.calcAndGetBackendPage(vars, "ShipmentReceipt.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
-        // on movePage action force executing countRows again
-        	strNewFilter = "";
+          // on movePage action force executing countRows again
+          strNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
@@ -274,19 +274,20 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
           // or
           // first
           // load
-        String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-	        oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-	        oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-	        rownum = "ROWNUM";
-        } else {
-        	pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-        }  
-        strNumRows = ShipmentReceiptData.countRows(this, rownum, Utility.getContext(this, vars,
-              "#User_Client", "ShipmentReceipt"), Utility.getSelectorOrgs(this, vars, strOrg),
-              strName, strDescription, strBpartnerId, strOrderReference, strDateFrom, DateTimeData
-                  .nDaysAfter(this, strDateTo, "1"), strSalesTransaction, pgLimit, oraLimit1, oraLimit2);
-          //strNumRows = String.valueOf(data.length);
+          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+            rownum = "ROWNUM";
+          } else {
+            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          }
+          strNumRows = ShipmentReceiptData.countRows(this, rownum,
+              Utility.getContext(this, vars, "#User_Client", "ShipmentReceipt"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId,
+              strOrderReference, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+              strSalesTransaction, pgLimit, oraLimit1, oraLimit2);
+          // strNumRows = String.valueOf(data.length);
           vars.setSessionValue("ShipmentReceipt.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("ShipmentReceipt.numrows");
@@ -295,16 +296,18 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
           String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          data = ShipmentReceiptData.select(this, "ROWNUM", Utility.getContext(this, vars,
-              "#User_Client", "ShipmentReceipt"), Utility.getSelectorOrgs(this, vars, strOrg),
-              strName, strDescription, strBpartnerId, strOrderReference, strDateFrom, DateTimeData
-                  .nDaysAfter(this, strDateTo, "1"), strSalesTransaction, strOrderBy, oraLimit, "");
+          data = ShipmentReceiptData.select(this, "ROWNUM",
+              Utility.getContext(this, vars, "#User_Client", "ShipmentReceipt"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId,
+              strOrderReference, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+              strSalesTransaction, strOrderBy, oraLimit, "");
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
-          data = ShipmentReceiptData.select(this, "1", Utility.getContext(this, vars,
-              "#User_Client", "ShipmentReceipt"), Utility.getSelectorOrgs(this, vars, strOrg),
-              strName, strDescription, strBpartnerId, strOrderReference, strDateFrom, DateTimeData
-                  .nDaysAfter(this, strDateTo, "1"), strSalesTransaction, strOrderBy, "", pgLimit);
+          data = ShipmentReceiptData.select(this, "1",
+              Utility.getContext(this, vars, "#User_Client", "ShipmentReceipt"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId,
+              strOrderReference, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+              strSalesTransaction, strOrderBy, "", pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
@@ -347,7 +350,8 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+        .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -365,11 +369,11 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
           if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",
-                "").replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll(
-                "<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;").replaceAll("<br>",
-                    "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
+                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
+                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
+                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");

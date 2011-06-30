@@ -62,15 +62,15 @@ public class WindowTree extends HttpSecureAppServlet {
       String key = WindowTreeData.selectKey(this, strTabId);
       {
         String TreeType = WindowTreeUtility.getTreeType(key);
-        WindowTreeData[] data = WindowTreeData.selectTreeID(this, Utility.getContext(this, vars,
-            "#User_Client", ""), TreeType);
+        WindowTreeData[] data = WindowTreeData.selectTreeID(this,
+            Utility.getContext(this, vars, "#User_Client", ""), TreeType);
         if (data != null && data.length > 0)
           strTreeID = data[0].id;
       }
       if (strTreeID.equals(""))
-        advisePopUp(request, response, "ERROR", Utility
-            .messageBD(this, "Error", vars.getLanguage()), Utility.messageBD(this,
-            "AccessTableNoView", vars.getLanguage()));
+        advisePopUp(request, response, "ERROR",
+            Utility.messageBD(this, "Error", vars.getLanguage()),
+            Utility.messageBD(this, "AccessTableNoView", vars.getLanguage()));
       else
         printPageDataSheet(response, vars, strTabId);
     } else if (vars.commandIn("ASSIGN")) {
@@ -125,8 +125,8 @@ public class WindowTree extends HttpSecureAppServlet {
     String TreeID = "";
     String TreeName = "";
     String TreeDescription = "";
-    WindowTreeData[] data = WindowTreeData.selectTreeID(this, Utility.getContext(this, vars,
-        "#User_Client", ""), TreeType);
+    WindowTreeData[] data = WindowTreeData.selectTreeID(this,
+        Utility.getContext(this, vars, "#User_Client", ""), TreeType);
     StringBuffer menu = new StringBuffer();
     if (data == null || data.length == 0) {
       log4j.error("WindowTree.loadNodes() - Unknown TreeNode: TreeType " + TreeType + " - TreeKey "
@@ -181,13 +181,12 @@ public class WindowTree extends HttpSecureAppServlet {
       for (WindowTreeData elem : subList) {
         hayDatos = true;
         String strHijos = generateTree(data, wtdTree, strDireccion, elem.nodeId, isFirst);
-        strResultado
-            .append(WindowTreeUtility.addNodeElement(elem.name, elem.description, CHILD_SHEETS,
-                elem.issummary.equals("Y"), WindowTreeUtility.windowType(elem.action),
-                strDireccion, "clickItem('" + elem.nodeId + "', '"
-                    + Replace.replace(elem.name, "'", "\\'") + "', '" + elem.issummary + "');",
-                "dblClickItem('" + elem.nodeId + "');", !strHijos.equals(""), elem.nodeId,
-                elem.action));
+        strResultado.append(WindowTreeUtility.addNodeElement(elem.name, elem.description,
+            CHILD_SHEETS, elem.issummary.equals("Y"), WindowTreeUtility.windowType(elem.action),
+            strDireccion,
+            "clickItem('" + elem.nodeId + "', '" + Replace.replace(elem.name, "'", "\\'") + "', '"
+                + elem.issummary + "');", "dblClickItem('" + elem.nodeId + "');",
+            !strHijos.equals(""), elem.nodeId, elem.action));
         strResultado.append(strHijos);
       }
     }
@@ -242,8 +241,8 @@ public class WindowTree extends HttpSecureAppServlet {
     String key = WindowTreeData.selectKey(this, TabId);
     {
       String TreeType = WindowTreeUtility.getTreeType(key);
-      WindowTreeData[] data = WindowTreeData.selectTreeID(this, Utility.getContext(this, vars,
-          "#User_Client", ""), TreeType);
+      WindowTreeData[] data = WindowTreeData.selectTreeID(this,
+          Utility.getContext(this, vars, "#User_Client", ""), TreeType);
       if (data != null && data.length > 0)
         strTreeID = data[0].id;
     }
@@ -251,8 +250,8 @@ public class WindowTree extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("description", data[0].name);
     xmlDocument.setParameter("page", Utility.getTabURL(TabId, "E", true));
-    xmlDocument.setParameter("menu", loadNodes(vars, key, WindowTreeData
-        .selectEditable(this, TabId).equals("Y"), TabId));
+    xmlDocument.setParameter("menu",
+        loadNodes(vars, key, WindowTreeData.selectEditable(this, TabId).equals("Y"), TabId));
     xmlDocument.setParameter("treeID", strTreeID);
     xmlDocument.setParameter("tabID", TabId);
     key = "inp" + Sqlc.TransformaNombreColumna(key);
@@ -309,8 +308,8 @@ public class WindowTree extends HttpSecureAppServlet {
     boolean editable = WindowTreeData.selectEditable(this, strTabId).equals("Y");
     // Calculating the TreeID
     {
-      WindowTreeData[] data = WindowTreeData.selectTreeID(this, Utility.getContext(this, vars,
-          "#User_Client", ""), TreeType);
+      WindowTreeData[] data = WindowTreeData.selectTreeID(this,
+          Utility.getContext(this, vars, "#User_Client", ""), TreeType);
       if (data == null || data.length == 0) {
         log4j.error("WindowTree.loadNodes() - Unknown TreeNode");
         throw new ServletException("WindowTree.loadNodes() - Unknown TreeNode");
@@ -338,15 +337,15 @@ public class WindowTree extends HttpSecureAppServlet {
     int add = 10;
     try {
       if (data == null || data.length == 0) {
-        WindowTreeUtility.setNode(this, vars, TreeType, TreeID, strParent, strLink, Integer
-            .toString(seqNo));
+        WindowTreeUtility.setNode(this, vars, TreeType, TreeID, strParent, strLink,
+            Integer.toString(seqNo));
       } else {
         boolean updated = false;
         boolean finish = false;
         if (strParent.equals(strTop)) {
           seqNo += add;
-          WindowTreeUtility.setNode(this, vars, TreeType, TreeID, strParent, strLink, Integer
-              .toString(seqNo));
+          WindowTreeUtility.setNode(this, vars, TreeType, TreeID, strParent, strLink,
+              Integer.toString(seqNo));
           updated = true;
         }
         for (int i = 0; !finish && i < data.length; i++) {
@@ -389,15 +388,15 @@ public class WindowTree extends HttpSecureAppServlet {
                 seqNo = 10;
               else
                 seqNo = new Integer(data[i].seqno).intValue() + add;
-              WindowTreeUtility.setNode(this, vars, TreeType, TreeID, strParent, strLink, Integer
-                  .toString(seqNo));
+              WindowTreeUtility.setNode(this, vars, TreeType, TreeID, strParent, strLink,
+                  Integer.toString(seqNo));
               updated = true;
             }
           }
         }
         if (!updated)
-          WindowTreeUtility.setNode(this, vars, TreeType, TreeID, strParent, strLink, Integer
-              .toString(seqNo));
+          WindowTreeUtility.setNode(this, vars, TreeType, TreeID, strParent, strLink,
+              Integer.toString(seqNo));
       }
     } catch (ServletException e) {
       log4j.error("WindowTree.changeNode() - Couldn't change the node: " + strLink);

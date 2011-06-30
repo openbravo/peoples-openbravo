@@ -76,9 +76,9 @@ public class AccountTree {
     // Calculating forms for every elements
     if (resultantAccounts != null && resultantAccounts.length > 0) {
       // forms: Array of accounts with its operands.
-      AccountTreeData[] forms = AccountTreeData.selectForms(conn, Utility.getContext(conn, vars,
-          "#User_Org", "AccountTree"), Utility
-          .getContext(conn, vars, "#User_Client", "AccountTree"));
+      AccountTreeData[] forms = AccountTreeData.selectForms(conn,
+          Utility.getContext(conn, vars, "#User_Org", "AccountTree"),
+          Utility.getContext(conn, vars, "#User_Client", "AccountTree"));
       resultantAccounts = calculateTree(forms, elementValueParent, new Vector<Object>());
     }
   }
@@ -116,9 +116,9 @@ public class AccountTree {
     if (resultantAccounts != null && resultantAccounts.length > 0) {
       // Array of accounts with its operands.
       // Calculating forms for every elements
-      AccountTreeData[] forms = AccountTreeData.selectForms(conn, Utility.getContext(conn, vars,
-          "#User_Org", "AccountTree"), Utility
-          .getContext(conn, vars, "#User_Client", "AccountTree"));
+      AccountTreeData[] forms = AccountTreeData.selectForms(conn,
+          Utility.getContext(conn, vars, "#User_Org", "AccountTree"),
+          Utility.getContext(conn, vars, "#User_Client", "AccountTree"));
 
       Vector<Object> vec = new Vector<Object>();
       AccountTreeData[] r;
@@ -541,8 +541,8 @@ public class AccountTree {
           if (resetFlag)
             resultantAccounts[i].svcreset = "Y";
           resultantAccounts[i].qtyRef = (applySign(new BigDecimal(
-              resultantAccounts[i].qtyOperationRef), SVC, resultantAccounts[i].issummary
-              .equals("Y"))).toPlainString();
+              resultantAccounts[i].qtyOperationRef), SVC,
+              resultantAccounts[i].issummary.equals("Y"))).toPlainString();
           if (resetFlag)
             resultantAccounts[i].svcresetref = "Y";
           resultantAccounts[i].calculated = "Y";
@@ -665,8 +665,7 @@ public class AccountTree {
         r[i].qtyRef = (applySign(new BigDecimal(r[i].qtyRef), r[i].showvaluecond, true))
             .toPlainString();
         if ((!notEmptyLines || (new BigDecimal(r[i].qty).compareTo(BigDecimal.ZERO) != 0 || new BigDecimal(
-            r[i].qtyRef).compareTo(BigDecimal.ZERO) != 0))
-            || "Y".equals(r[i].isalwaysshown)) {
+            r[i].qtyRef).compareTo(BigDecimal.ZERO) != 0)) || "Y".equals(r[i].isalwaysshown)) {
           if ("Y".equals(r[i].isalwaysshown)) {
             r[i].qty = null;
             r[i].qtyRef = null;

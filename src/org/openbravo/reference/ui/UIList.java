@@ -41,11 +41,10 @@ public class UIList extends UIReference {
   }
 
   public void generateSQL(TableSQLData table, Properties prop) throws Exception {
-    table.addSelectField(table.getTableName() + "." + prop.getProperty("ColumnName"), prop
-        .getProperty("ColumnName"));
-    identifier(table, table.getTableName(), prop, prop.getProperty("ColumnName") + "_R", table
-        .getTableName()
-        + "." + prop.getProperty("ColumnName"), false);
+    table.addSelectField(table.getTableName() + "." + prop.getProperty("ColumnName"),
+        prop.getProperty("ColumnName"));
+    identifier(table, table.getTableName(), prop, prop.getProperty("ColumnName") + "_R",
+        table.getTableName() + "." + prop.getProperty("ColumnName"), false);
   }
 
   protected void identifier(TableSQLData tableSql, String parentTableName, Properties field,
@@ -71,15 +70,15 @@ public class UIList extends UIReference {
 
     StringBuffer name = new StringBuffer();
     // add inactive info
-    name.append("((CASE td").append(myIndex).append(".isActive WHEN 'N' THEN '").append(
-        TableSQLData.INACTIVE_DATA).append("' ELSE '' END)");
+    name.append("((CASE td").append(myIndex).append(".isActive WHEN 'N' THEN '")
+        .append(TableSQLData.INACTIVE_DATA).append("' ELSE '' END)");
     // add value
     if (showValue) {
       name.append("|| td").append(myIndex).append(".value ||' - '");
     }
     // add name
-    name.append("|| (CASE WHEN td_trl").append(myIndex).append(".name IS NULL THEN td").append(
-        myIndex).append(".name ELSE td_trl").append(myIndex).append(".name END))");
+    name.append("|| (CASE WHEN td_trl").append(myIndex).append(".name IS NULL THEN td")
+        .append(myIndex).append(".name ELSE td_trl").append(myIndex).append(".name END))");
 
     tableSql.addSelectField(name.toString(), identifierName);
     String tables = "(select IsActive, ad_ref_list_id, ad_reference_id, value, name from ad_ref_list) td"
@@ -125,7 +124,8 @@ public class UIList extends UIReference {
     String fieldName = field == null ? "" : field.getField("name");
     String referenceValue = field == null ? "" : field.getField("referencevalue");
 
-    boolean isValueDisplayed = ComboTableQueryData.isValueDisplayed(comboTableData.getPool(),
+    boolean isValueDisplayed = ComboTableQueryData.isValueDisplayed(
+        comboTableData.getPool(),
         ((referenceValue != null && !referenceValue.equals("")) ? referenceValue : comboTableData
             .getObjectReference()));
 
@@ -134,8 +134,8 @@ public class UIList extends UIReference {
 
     StringBuffer identifier = new StringBuffer();
     // Add inactive data info
-    identifier.append("((CASE td").append(myIndex).append(".isActive WHEN 'N' THEN '").append(
-        UIReferenceUtility.INACTIVE_DATA).append("' ELSE '' END) ");
+    identifier.append("((CASE td").append(myIndex).append(".isActive WHEN 'N' THEN '")
+        .append(UIReferenceUtility.INACTIVE_DATA).append("' ELSE '' END) ");
     // Add value
     if (isValueDisplayed) {
       identifier.append(" || td").append(myIndex).append(".value ||' - '");

@@ -80,11 +80,12 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
       if ((org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(),
           strTabId))
-          || !(Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", strWindowId,
-              accesslevel), strClient) && Utility.isElementInList(Utility.getContext(this, vars,
-              "#User_Org", strWindowId, accesslevel), strOrg))) {
-        OBError myError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(
-            this, "NoWriteAccess", vars.getLanguage()));
+          || !(Utility.isElementInList(
+              Utility.getContext(this, vars, "#User_Client", strWindowId, accesslevel), strClient) && Utility
+              .isElementInList(
+                  Utility.getContext(this, vars, "#User_Org", strWindowId, accesslevel), strOrg))) {
+        OBError myError = Utility.translateError(this, vars, vars.getLanguage(),
+            Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
         vars.setMessage(strTabId, myError);
         printPageClosePopUp(response, vars);
       } else {
@@ -124,8 +125,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         OBDal.getInstance().save(invoice);
         OBDal.getInstance().flush();
         OBDal.getInstance().commitAndClose();
-        final PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance
-            .getId());
+        final PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this,
+            pinstance.getId());
         myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
         log4j.debug(myMessage.getMessage());
         vars.setMessage(strTabId, myMessage);
@@ -170,8 +171,9 @@ public class ProcessInvoice extends HttpSecureAppServlet {
               if (creditPayment.getDescription() != null
                   && !creditPayment.getDescription().equals(""))
                 description.append(creditPayment.getDescription()).append("\n");
-              description.append(String.format(Utility.messageBD(this, "APRM_CreditUsedinInvoice",
-                  vars.getLanguage()), invoice.getDocumentNo()));
+              description.append(String.format(
+                  Utility.messageBD(this, "APRM_CreditUsedinInvoice", vars.getLanguage()),
+                  invoice.getDocumentNo()));
               creditPayment.setDescription(description.toString());
 
               final List<FIN_PaymentScheduleDetail> paymentScheduleDetails = new ArrayList<FIN_PaymentScheduleDetail>();
@@ -189,8 +191,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
               final boolean isSalesTransaction = invoice.isSalesTransaction();
               final DocumentType docType = FIN_Utility.getDocumentType(invoice.getOrganization(),
                   isSalesTransaction ? "ARR" : "APP");
-              final String strPaymentDocumentNo = FIN_Utility.getDocumentNo(docType, docType
-                  .getTable() != null ? docType.getTable().getDBTableName() : "");
+              final String strPaymentDocumentNo = FIN_Utility.getDocumentNo(docType,
+                  docType.getTable() != null ? docType.getTable().getDBTableName() : "");
               final FIN_Payment newPayment = FIN_AddPayment.savePayment(null, isSalesTransaction,
                   docType, strPaymentDocumentNo, invoice.getBusinessPartner(), invoice
                       .getPaymentMethod(), isSalesTransaction ? invoice.getBusinessPartner()
@@ -224,8 +226,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
       if (payments != null && payments.size() > 0) {
         vars.setSessionValue("ExecutePayments|Window_ID", strWindowId);
         vars.setSessionValue("ExecutePayments|Tab_ID", strTabId);
-        vars.setSessionValue("ExecutePayments|Org_ID", vars
-            .getSessionValue("ProcessInvoice|Org_ID"));
+        vars.setSessionValue("ExecutePayments|Org_ID",
+            vars.getSessionValue("ProcessInvoice|Org_ID"));
         vars.setSessionValue("ExecutePayments|payments", FIN_Utility.getInStrList(payments));
         if (myMessage != null)
           vars.setMessage("ExecutePayments|message", myMessage);

@@ -201,21 +201,21 @@ public class DatasetExportTest extends BaseTest {
         // add the < in front to prevent accidental matches
         final String xmlCheckName = "<" + p.getName();
         if (excludedList.contains(p.getName())) {
-          assertFalse("Fail: property " + p.getName() + " present in xml", xml
-              .indexOf(xmlCheckName) != -1);
+          assertFalse("Fail: property " + p.getName() + " present in xml",
+              xml.indexOf(xmlCheckName) != -1);
         } else if (!auditInfo && p.isAuditInfo()) {
-          assertFalse("Fail: property " + p.getName() + " present in xml", xml
-              .indexOf(xmlCheckName) != -1);
+          assertFalse("Fail: property " + p.getName() + " present in xml",
+              xml.indexOf(xmlCheckName) != -1);
         } else if ((!includeChildren && p.isOneToMany() && p.isChild())) {
-          assertFalse("Fail: property " + p.getName() + " present in xml", xml
-              .indexOf(xmlCheckName) != -1);
+          assertFalse("Fail: property " + p.getName() + " present in xml",
+              xml.indexOf(xmlCheckName) != -1);
         } else if (p.isOneToMany() && !p.isChild()) {
           // OneToMany columns which are not child should never be in the xml file
-          assertFalse("Fail: property " + p.getName() + " present in xml", xml
-              .indexOf(xmlCheckName) != -1);
+          assertFalse("Fail: property " + p.getName() + " present in xml",
+              xml.indexOf(xmlCheckName) != -1);
         } else {
-          assertTrue("Fail: property " + p.getName() + " NOT present in xml", xml
-              .indexOf(xmlCheckName) != -1);
+          assertTrue("Fail: property " + p.getName() + " NOT present in xml",
+              xml.indexOf(xmlCheckName) != -1);
         }
       }
     }
@@ -284,8 +284,8 @@ public class DatasetExportTest extends BaseTest {
   private Column getColumn(DataSetTable dst, Property p) {
     final OBCriteria<Column> obcColumn = OBDal.getInstance().createCriteria(Column.class);
     obcColumn.add(Restrictions.and(
-        Restrictions.eq(Column.PROPERTY_DBCOLUMNNAME, p.getColumnName()), Restrictions.eq(
-            Column.PROPERTY_TABLE, dst.getTable())));
+        Restrictions.eq(Column.PROPERTY_DBCOLUMNNAME, p.getColumnName()),
+        Restrictions.eq(Column.PROPERTY_TABLE, dst.getTable())));
     assertTrue(obcColumn.list().size() == 1);
     return obcColumn.list().get(0);
   }

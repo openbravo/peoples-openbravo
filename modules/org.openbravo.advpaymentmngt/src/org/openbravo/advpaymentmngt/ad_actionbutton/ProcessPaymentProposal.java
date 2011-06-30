@@ -71,15 +71,15 @@ public class ProcessPaymentProposal extends HttpSecureAppServlet {
                 FIN_PaymentProposal.class, strFinPaymentProposalId).getFINPaymentPropDetailList();
             if (ppd.isEmpty() || ppd == null) {
               throw new OBException(Utility.messageBD(this,
-                  "It is not possible to process a Payment Proposal without line.", vars
-                      .getLanguage()));
+                  "It is not possible to process a Payment Proposal without line.",
+                  vars.getLanguage()));
             } else {
               message = FIN_AddPayment.processPaymentProposal(vars, this, strProcessProposalAction,
                   strFinPaymentProposalId);
             }
           } catch (Exception ex) {
-            message = Utility.translateError(this, vars, vars.getLanguage(), FIN_Utility
-                .getExceptionMessage(ex));
+            message = Utility.translateError(this, vars, vars.getLanguage(),
+                FIN_Utility.getExceptionMessage(ex));
             log4j.error(ex);
             if (!message.isConnectionAvailable()) {
               bdErrorConnection(response);
@@ -92,8 +92,8 @@ public class ProcessPaymentProposal extends HttpSecureAppServlet {
             message = FIN_AddPayment.processPaymentProposal(vars, this, strProcessProposalAction,
                 strFinPaymentProposalId);
           } catch (Exception ex) {
-            message = Utility.translateError(this, vars, vars.getLanguage(), FIN_Utility
-                .getExceptionMessage(ex));
+            message = Utility.translateError(this, vars, vars.getLanguage(),
+                FIN_Utility.getExceptionMessage(ex));
             log4j.error(ex);
             if (!message.isConnectionAvailable()) {
               bdErrorConnection(response);

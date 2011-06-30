@@ -421,8 +421,8 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
       }
     }
     ShowSessionVariablesData[] windowsData = (vars.getLanguage().equals("en_US") ? ShowSessionVariablesData
-        .select(this, strWindows.toString())
-        : ShowSessionVariablesData.selectTrl(this, strWindows.toString(), vars.getLanguage()));
+        .select(this, strWindows.toString()) : ShowSessionVariablesData.selectTrl(this,
+        strWindows.toString(), vars.getLanguage()));
     {
       Vector<Object> v = new Vector<Object>();
       ShowSessionVariablesData d = new ShowSessionVariablesData();

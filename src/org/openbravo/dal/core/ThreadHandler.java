@@ -53,8 +53,8 @@ public abstract class ThreadHandler {
       // throw new ServletException(t);
     } catch (final ServletException se) {
       if (se.getRootCause() != null) {
-        throw new OBException("Exception thrown " + se.getRootCause().getMessage(), se
-            .getRootCause());
+        throw new OBException("Exception thrown " + se.getRootCause().getMessage(),
+            se.getRootCause());
       } else {
         throw new OBException("Exception thrown " + se.getMessage(), se);
       }

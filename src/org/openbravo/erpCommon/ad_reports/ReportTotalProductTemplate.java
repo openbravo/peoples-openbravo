@@ -59,9 +59,9 @@ public class ReportTotalProductTemplate extends HttpSecureAppServlet {
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportTotalProductTemplateEdit").createXmlDocument();
 
-    data = ReportTotalProductTemplateData.select(this, Utility.getContext(this, vars,
-        "#User_Client", "ReportTotalProductTemplate"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportTotalProductTemplate"));
+    data = ReportTotalProductTemplateData.select(this,
+        Utility.getContext(this, vars, "#User_Client", "ReportTotalProductTemplate"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTotalProductTemplate"));
     vars.removeSessionValue("Default.value");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -134,8 +134,8 @@ public class ReportTotalProductTemplate extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportTotalProductTemplate.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportTotalProductTemplate.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
           "ReportTotalProductTemplate.html", strReplaceWith);

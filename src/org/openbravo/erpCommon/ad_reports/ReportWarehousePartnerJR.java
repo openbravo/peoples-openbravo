@@ -94,9 +94,10 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
       log4j.debug("Output: dataSheet");
 
     ReportWarehousePartnerData[] data = ReportWarehousePartnerData.select(this, vars.getLanguage(),
-        Utility.getContext(this, vars, "#User_Client", "ReportWarehouseControl"), Utility
-            .getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseControl"), DateTimeData
-            .nDaysAfter(this, strDate, "1"), strmProductId, strProductCategory, strX, strY, strZ);
+        Utility.getContext(this, vars, "#User_Client", "ReportWarehouseControl"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseControl"),
+        DateTimeData.nDaysAfter(this, strDate, "1"), strmProductId, strProductCategory, strX, strY,
+        strZ);
 
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportWarehousePartnerJR.jrxml";
 
@@ -129,8 +130,8 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportWarehousePartnerJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportWarehousePartnerJR.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportWarehousePartnerJR.html",
           strReplaceWith);
@@ -159,9 +160,12 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("parameterZ", strZ);
     xmlDocument.setParameter("mProductCategoryId", strProductCategory);
 
-    xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData.selectMproduct(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
-            vars, "#User_Client", ""), strmProductId));
+    xmlDocument.setData(
+        "reportMProductId_IN",
+        "liststructure",
+        SelectorUtilityData.selectMproduct(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
           "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -169,8 +173,8 @@ public class ReportWarehousePartnerJR extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#User_Client", "ReportPricelist"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportPricelist",
           strProductCategory);
-      xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure", comboTableData
-          .select(false));
+      xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
+          comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);

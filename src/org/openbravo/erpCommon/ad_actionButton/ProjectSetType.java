@@ -144,13 +144,13 @@ public class ProjectSetType extends HttpSecureAppServlet {
 
                 try {
                   ProjectSetTypeData.insertProjectTask(conn, this, strProjectTask,
-                      data1[j].cTaskId, dataProject[0].adClientId, dataProject[0].adOrgId, vars
-                          .getUser(), data1[j].seqno, data1[j].name, data1[j].description,
+                      data1[j].cTaskId, dataProject[0].adClientId, dataProject[0].adOrgId,
+                      vars.getUser(), data1[j].seqno, data1[j].name, data1[j].description,
                       data1[j].help, data1[j].mProductId, strProjectPhase, data1[j].standardqty,
                       strTaskStartDate, strTaskContractDate);
                 } catch (ServletException ex) {
-                  myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex
-                      .getMessage());
+                  myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                      ex.getMessage());
                   releaseRollbackConnection(conn);
                   return myMessage;
                 }
@@ -235,8 +235,8 @@ public class ProjectSetType extends HttpSecureAppServlet {
     xmlDocument.setParameter("tab", strTab);
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars
-        .getLanguage()));
+    xmlDocument.setParameter("question",
+        Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", strDescription);

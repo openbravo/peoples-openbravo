@@ -27,16 +27,16 @@ import javax.servlet.ServletException;
 
 import org.openbravo.database.ConnectionProvider;
 
-public class UpdateFinancialAccountAccounts extends ModuleScript{
-@Override
-//Updates new column values with deprecated ones
+public class UpdateFinancialAccountAccounts extends ModuleScript {
+  @Override
+  // Updates new column values with deprecated ones
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
       UpdateFinancialAccountAccountsData.updateFinInIntransitAcct(cp);
       UpdateFinancialAccountAccountsData.updateFinOutIntransitAcct(cp);
     } catch (Exception e) {
-    	handleError(e);
+      handleError(e);
     }
   }
 }

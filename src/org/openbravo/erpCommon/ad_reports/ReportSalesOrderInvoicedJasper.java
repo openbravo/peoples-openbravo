@@ -143,10 +143,10 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       xmlDocument.setParameter("cProjectKind", strProjectkind);
       xmlDocument.setParameter("cRegionId", strcRegionId);
       xmlDocument.setParameter("cProjectPublic", strProjectpublic);
-      xmlDocument.setParameter("projectName", ReportSalesOrderInvoicedData.selectProject(this,
-          strcProjectId));
-      xmlDocument.setParameter("paramBPartnerDescription", ReportSalesOrderInvoicedData
-          .bPartnerDescription(this, strcBpartnerId));
+      xmlDocument.setParameter("projectName",
+          ReportSalesOrderInvoicedData.selectProject(this, strcProjectId));
+      xmlDocument.setParameter("paramBPartnerDescription",
+          ReportSalesOrderInvoicedData.bPartnerDescription(this, strcBpartnerId));
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
             "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -167,8 +167,8 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
                 "ReportSalesOrderInvoicedJasper"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData,
             "ReportSalesOrderInvoicedJasper", strmCategoryId);
-        xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure", comboTableData
-            .select(false));
+        xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
+            comboTableData.select(false));
         comboTableData = null;
       } catch (Exception ex) {
         throw new ServletException(ex);
@@ -230,8 +230,8 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
     } else { // command != DEFAULT
       ReportSalesOrderInvoicedData[] data = ReportSalesOrderInvoicedData.select(this,
           strCurrencyId,
-          Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoiced"), Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderInvoiced"),
+          Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoiced"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderInvoiced"),
           strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId,
           strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId,
           strProjectpublic, strProduct);
@@ -298,11 +298,12 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
     OBError myMessage = null;
     myMessage = new OBError();
     try {
-      data = ReportSalesOrderInvoicedData.select(this, strCurrencyId, Utility.getContext(this,
-          vars, "#User_Client", "ReportSalesOrderInvoiced"), Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "ReportSalesOrderInvoiced"), strdateFrom, DateTimeData.nDaysAfter(
-          this, strdateTo, "1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId,
-          strProjectkind, strcRegionId, strProjectpublic, strProduct);
+      data = ReportSalesOrderInvoicedData.select(this, strCurrencyId,
+          Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoiced"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderInvoiced"),
+          strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId,
+          strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId,
+          strProjectpublic, strProduct);
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }
@@ -310,8 +311,9 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Launch the report as usual, calling the JRXML file
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportSalesOrderInvoicedJasper.jrxml";
       String strOutput = "html";

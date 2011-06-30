@@ -200,8 +200,8 @@ public abstract class SessionFactoryController {
       setJNDI(obProps, props);
     } else {
       props.setProperty(Environment.DRIVER, "org.postgresql.Driver");
-      props.setProperty(Environment.URL, obProps.getProperty("bbdd.url") + "/"
-          + obProps.getProperty("bbdd.sid"));
+      props.setProperty(Environment.URL,
+          obProps.getProperty("bbdd.url") + "/" + obProps.getProperty("bbdd.sid"));
 
       props.setProperty(Environment.USER, obProps.getProperty("bbdd.user"));
       props.setProperty(Environment.PASS, obProps.getProperty("bbdd.password"));
@@ -241,8 +241,8 @@ public abstract class SessionFactoryController {
 
   private void setJNDI(Properties obProps, Properties hbProps) {
     log.info("Using JNDI with resource name-> " + obProps.getProperty("JNDI.resourceName"));
-    hbProps.setProperty(Environment.DATASOURCE, "java:/comp/env/"
-        + obProps.getProperty("JNDI.resourceName"));
+    hbProps.setProperty(Environment.DATASOURCE,
+        "java:/comp/env/" + obProps.getProperty("JNDI.resourceName"));
   }
 
   // jndi should only be used if the application is running in a webcontainer

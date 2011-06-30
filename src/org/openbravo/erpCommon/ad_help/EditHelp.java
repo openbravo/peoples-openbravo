@@ -81,8 +81,8 @@ public class EditHelp extends HttpSecureAppServlet {
           total = DisplayHelpEditData.updateTrl(this, strName, strHelp, vars.getUser(), strClave,
               vars.getLanguage());
           if (total == 0)
-            total = DisplayHelpEditData.insertTrl(this, strClave, vars.getLanguage(), vars
-                .getUser(), strName, strHelp);
+            total = DisplayHelpEditData.insertTrl(this, strClave, vars.getLanguage(),
+                vars.getUser(), strName, strHelp);
         }
       } catch (ServletException ex) {
         myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -110,8 +110,8 @@ public class EditHelp extends HttpSecureAppServlet {
           total = DisplayHelpEditData.updateTabTrl(this, strName, strHelp, vars.getUser(),
               strClave, vars.getLanguage());
           if (total == 0)
-            total = DisplayHelpEditData.insertTabTrl(this, strClave, vars.getLanguage(), vars
-                .getUser(), strName, strHelp);
+            total = DisplayHelpEditData.insertTabTrl(this, strClave, vars.getLanguage(),
+                vars.getUser(), strName, strHelp);
         }
       } catch (ServletException ex) {
         myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -139,8 +139,8 @@ public class EditHelp extends HttpSecureAppServlet {
           total = DisplayHelpEditData.updateFormTrl(this, strName, strHelp, vars.getUser(),
               strClave, vars.getLanguage());
           if (total == 0)
-            total = DisplayHelpEditData.insertFormTrl(this, strClave, vars.getLanguage(), vars
-                .getUser(), strName, strHelp);
+            total = DisplayHelpEditData.insertFormTrl(this, strClave, vars.getLanguage(),
+                vars.getUser(), strName, strHelp);
         }
       } catch (ServletException ex) {
         myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -168,8 +168,8 @@ public class EditHelp extends HttpSecureAppServlet {
           total = DisplayHelpEditData.updateProcessTrl(this, strName, strHelp, vars.getUser(),
               strClave, vars.getLanguage());
           if (total == 0)
-            total = DisplayHelpEditData.insertProcessTrl(this, strClave, vars.getLanguage(), vars
-                .getUser(), strName, strHelp);
+            total = DisplayHelpEditData.insertProcessTrl(this, strClave, vars.getLanguage(),
+                vars.getUser(), strName, strHelp);
         }
       } catch (ServletException ex) {
         myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -210,8 +210,8 @@ public class EditHelp extends HttpSecureAppServlet {
           if (log4j.isDebugEnabled())
             log4j.debug("NUMBER OF MODIFIED COLUMNS: " + total);
           if (total == 0)
-            total = DisplayHelpEditData.insertFieldTrl(this, strClave, vars.getLanguage(), vars
-                .getUser(), strName, strHelp);
+            total = DisplayHelpEditData.insertFieldTrl(this, strClave, vars.getLanguage(),
+                vars.getUser(), strName, strHelp);
           DisplayHelpEditData.updateFieldTrlIscentrally(this, strCentrally, vars.getUser(),
               strClave);
         }
@@ -270,10 +270,11 @@ public class EditHelp extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_help/DisplayHelp_Edit_FS").createXmlDocument();
 
-    xmlDocument.setParameter("command", ((strTipo.indexOf("WINDOW") != -1) ? "Window" : ((strTipo
-        .indexOf("TAB") != -1) ? "Tab" : ((strTipo.indexOf("FIELD") != -1) ? "Field" : ((strTipo
-        .indexOf("PROCESS") != -1) ? "Process" : ((strTipo.indexOf("FORM") != -1) ? "Form"
-        : "Element"))))));
+    xmlDocument.setParameter("command",
+        ((strTipo.indexOf("WINDOW") != -1) ? "Window" : ((strTipo.indexOf("TAB") != -1) ? "Tab"
+            : ((strTipo.indexOf("FIELD") != -1) ? "Field"
+                : ((strTipo.indexOf("PROCESS") != -1) ? "Process"
+                    : ((strTipo.indexOf("FORM") != -1) ? "Form" : "Element"))))));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -300,8 +301,8 @@ public class EditHelp extends HttpSecureAppServlet {
       strTipo = "Form";
     } else if (strTipo.equalsIgnoreCase("EDIT_Process")) {
       data = (vars.getLanguage().equals("en_US") ? DisplayHelpEditData
-          .selectProcess(this, strClave) : DisplayHelpEditData.selectProcessTrl(this, vars
-          .getLanguage(), strClave));
+          .selectProcess(this, strClave) : DisplayHelpEditData.selectProcessTrl(this,
+          vars.getLanguage(), strClave));
       strTipo = "Process";
     } else {
       data = (vars.getLanguage().equals("en_US") ? DisplayHelpEditData.selectField(this, strClave)
@@ -340,10 +341,10 @@ public class EditHelp extends HttpSecureAppServlet {
     String[] discard = { "discardError" };
     if (myMessage != null) {
       message.append("function cerrarHelpEditor(){\n");
-      message.append("  parent.frameSuperior.setValues_MessageBox(\"messageBoxID\", \"").append(
-          myMessage.getType()).append("\", \"");
-      message.append(myMessage.getTitle()).append("\", \"").append(myMessage.getMessage()).append(
-          "\");\n");
+      message.append("  parent.frameSuperior.setValues_MessageBox(\"messageBoxID\", \"")
+          .append(myMessage.getType()).append("\", \"");
+      message.append(myMessage.getTitle()).append("\", \"").append(myMessage.getMessage())
+          .append("\");\n");
       message.append("  return true;\n");
       message.append("}");
       discard[0] = "discardClose";
@@ -401,10 +402,10 @@ public class EditHelp extends HttpSecureAppServlet {
     String[] discard = { "discardError" };
     if (myMessage != null) {
       message.append("function cerrarHelpEditor(){\n");
-      message.append("  parent.frameSuperior.setValues_MessageBox(\"messageBoxID\", \"").append(
-          myMessage.getType()).append("\", \"");
-      message.append(myMessage.getTitle()).append("\", \"").append(myMessage.getMessage()).append(
-          "\");\n");
+      message.append("  parent.frameSuperior.setValues_MessageBox(\"messageBoxID\", \"")
+          .append(myMessage.getType()).append("\", \"");
+      message.append(myMessage.getTitle()).append("\", \"").append(myMessage.getMessage())
+          .append("\");\n");
       message.append("  return true;\n");
       message.append("}");
       discard[0] = "discardClose";
@@ -464,10 +465,10 @@ public class EditHelp extends HttpSecureAppServlet {
     String[] discard = { "discardError" };
     if (myMessage != null) {
       message.append("function cerrarHelpEditor(){\n");
-      message.append("  parent.frameSuperior.setValues_MessageBox(\"messageBoxID\", \"").append(
-          myMessage.getType()).append("\", \"");
-      message.append(myMessage.getTitle()).append("\", \"").append(myMessage.getMessage()).append(
-          "\");\n");
+      message.append("  parent.frameSuperior.setValues_MessageBox(\"messageBoxID\", \"")
+          .append(myMessage.getType()).append("\", \"");
+      message.append(myMessage.getTitle()).append("\", \"").append(myMessage.getMessage())
+          .append("\");\n");
       message.append("  return true;\n");
       message.append("}");
       discard[0] = "discardClose";

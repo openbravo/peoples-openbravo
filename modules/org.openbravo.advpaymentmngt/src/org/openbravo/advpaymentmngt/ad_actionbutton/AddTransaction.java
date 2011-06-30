@@ -140,10 +140,10 @@ public class AddTransaction extends HttpSecureAppServlet {
             selectedPaymentIds);
 
         for (FIN_Payment p : selectedPayments) {
-          BigDecimal depositAmt = FIN_Utility.getDepositAmount(p.isReceipt(), p
-              .getFinancialTransactionAmount());
-          BigDecimal paymentAmt = FIN_Utility.getPaymentAmount(p.isReceipt(), p
-              .getFinancialTransactionAmount());
+          BigDecimal depositAmt = FIN_Utility.getDepositAmount(p.isReceipt(),
+              p.getFinancialTransactionAmount());
+          BigDecimal paymentAmt = FIN_Utility.getPaymentAmount(p.isReceipt(),
+              p.getFinancialTransactionAmount());
 
           String description = null;
           if (p.getDescription() != null) {
@@ -174,8 +174,7 @@ public class AddTransaction extends HttpSecureAppServlet {
             strFinancialAccountId);
         GLItem glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
         String description = strGLItemDescription.isEmpty() ? Utility.messageBD(this,
-            "APRM_GLItem", vars.getLanguage())
-            + ": " + glItem.getName() : strGLItemDescription;
+            "APRM_GLItem", vars.getLanguage()) + ": " + glItem.getName() : strGLItemDescription;
         boolean isReceipt = (glItemDepositAmt.compareTo(glItemPaymentAmt) >= 0);
 
         // Currency, Organization, paymentDate,
@@ -203,8 +202,8 @@ public class AddTransaction extends HttpSecureAppServlet {
         FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(account.getOrganization(),
             account, TransactionsDao.getTransactionMaxLineNo(account) + 10, null, description,
             FIN_Utility.getDate(strTransactionDate), null, isReceipt ? "RDNC" : "PWNC",
-            feeDepositAmt, feePaymentAmt, null, null, null, "BF", FIN_Utility
-                .getDate(strTransactionDate), null, null, null);
+            feeDepositAmt, feePaymentAmt, null, null, null, "BF",
+            FIN_Utility.getDate(strTransactionDate), null, null, null);
 
         TransactionsDao.process(finTrans);
         strMessage = "1 " + "@RowsInserted@";
@@ -234,8 +233,8 @@ public class AddTransaction extends HttpSecureAppServlet {
       }
 
     } catch (Exception e) {
-      OBError newError = Utility.translateError(this, vars, vars.getLanguage(), FIN_Utility
-          .getExceptionMessage(e));
+      OBError newError = Utility.translateError(this, vars, vars.getLanguage(),
+          FIN_Utility.getExceptionMessage(e));
       throw new OBException(newError.getMessage());
     } finally {
       OBContext.restorePreviousMode();
@@ -266,8 +265,8 @@ public class AddTransaction extends HttpSecureAppServlet {
     if (!"".equals(strBankStatementLineId)) {
       FIN_BankStatementLine bsl = OBDal.getInstance().get(FIN_BankStatementLine.class,
           strBankStatementLineId);
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-          "dateFormat.java");
+      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("dateFormat.java");
       SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
 
       xmlDocument.setParameter("depositAmount", bsl.getCramount().toString());
@@ -323,9 +322,9 @@ public class AddTransaction extends HttpSecureAppServlet {
 
     // Payments not deposited/withdrawal
     // Not stored in Fin_Finacc_Transaction table
-    final FieldProvider[] data = dao.getPaymentsNotDeposited(account, FIN_Utility
-        .getDate(strFromDate), FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strToDate, "1")),
-        isReceipt);
+    final FieldProvider[] data = dao.getPaymentsNotDeposited(account,
+        FIN_Utility.getDate(strFromDate),
+        FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strToDate, "1")), isReceipt);
 
     xmlDocument.setData("structure", (data == null) ? set() : data);
     JSONObject table = new JSONObject();
@@ -363,8 +362,8 @@ public class AddTransaction extends HttpSecureAppServlet {
         || bsline.getDramount().compareTo(finTrans.getPaymentAmount()) != 0) {
       vars.setSessionValue("AddTransaction|ShowJSMessage", "Y");
     } else {
-      FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(finTrans
-          .getAccount(), "N");
+      FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(
+          finTrans.getAccount(), "N");
       bsline.setMatchingtype("AD");
       bsline.setFinancialAccountTransaction(finTrans);
       if (finTrans.getFinPayment() != null)

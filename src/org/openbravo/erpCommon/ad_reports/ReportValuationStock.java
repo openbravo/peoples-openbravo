@@ -47,8 +47,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     // Get user Client's base currency
     String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT", "RELATION")) {
-      String strDate = vars.getGlobalVariable("inpDate", "ReportValuationStock|Date", DateTimeData
-          .today(this));
+      String strDate = vars.getGlobalVariable("inpDate", "ReportValuationStock|Date",
+          DateTimeData.today(this));
       String strWarehouse = vars.getGlobalVariable("inpmWarehouseId",
           "ReportValuationStock|Warehouse", "");
       String strCategoryProduct = vars.getGlobalVariable("inpCategoryProduct",
@@ -58,8 +58,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       printPageDataSheet(request, response, vars, strDate, strWarehouse, strCategoryProduct,
           strCurrencyId);
     } else if (vars.commandIn("FIND")) {
-      String strDate = vars.getGlobalVariable("inpDate", "ReportValuationStock|Date", DateTimeData
-          .today(this));
+      String strDate = vars.getGlobalVariable("inpDate", "ReportValuationStock|Date",
+          DateTimeData.today(this));
       String strWarehouse = vars.getRequestGlobalVariable("inpmWarehouseId",
           "ReportValuationStock|Warehouse");
       String strCategoryProduct = vars.getRequestGlobalVariable("inpCategoryProduct",
@@ -102,8 +102,9 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advise(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars
-          .getLanguage()), strConvRateErrorMsg);
+      advise(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Otherwise, the report is launched
       if (data == null || data.length == 0) {
         data = ReportValuationStockData.set();
@@ -132,8 +133,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         xmlDocument.setParameter("childTabContainer", tabs.childTabs());
         xmlDocument.setParameter("theme", vars.getTheme());
         NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-            "ReportValuationStock.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-                .breadcrumb());
+            "ReportValuationStock.html", classInfo.id, classInfo.type, strReplaceWith,
+            tabs.breadcrumb());
         xmlDocument.setParameter("navigationBar", nav.toString());
         LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportValuationStock.html",
             strReplaceWith);
@@ -174,8 +175,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
             "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
                 ""), Utility.getContext(this, vars, "#User_Client", ""), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "", strCategoryProduct);
-        xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure", comboTableData
-            .select(false));
+        xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
+            comboTableData.select(false));
         comboTableData = null;
       } catch (Exception ex) {
         throw new ServletException(ex);

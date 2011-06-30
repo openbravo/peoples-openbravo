@@ -313,8 +313,8 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
           obc.add(Restrictions
               .eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, selectedPaymentMethod));
           if (obc.list() == null || obc.list().size() == 0) {
-            message = Utility.messageBD(this, "PaymentmethodNotbelongsFinAccount", vars
-                .getLanguage());
+            message = Utility.messageBD(this, "PaymentmethodNotbelongsFinAccount",
+                vars.getLanguage());
           }
         } else {
           message = Utility

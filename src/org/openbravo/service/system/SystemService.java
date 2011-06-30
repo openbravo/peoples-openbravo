@@ -223,8 +223,8 @@ public class SystemService implements OBSingleton {
       hql = updatePart + " where client=:clientId";
     }
     try {
-      SessionHandler.getInstance().getSession().createQuery(hql).setString("clientId",
-          client.getId()).executeUpdate();
+      SessionHandler.getInstance().getSession().createQuery(hql)
+          .setString("clientId", client.getId()).executeUpdate();
     } catch (IllegalArgumentException ex) {
       // handle a special case, that the entity name or a property name
       // is a reserved hql word.

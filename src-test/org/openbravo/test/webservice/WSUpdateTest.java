@@ -89,8 +89,8 @@ public class WSUpdateTest extends BaseWSTest {
       newCity = city.substring(0, index1) + "<coordinates>"
           + ("" + System.currentTimeMillis()).substring(5) + city.substring(index2);
     } else {
-      newCity = city.replaceAll("<coordinates/>", "<coordinates>"
-          + ("" + System.currentTimeMillis()).substring(5) + "</coordinates>");
+      newCity = city.replaceAll("<coordinates/>",
+          "<coordinates>" + ("" + System.currentTimeMillis()).substring(5) + "</coordinates>");
     }
     final String content = doContentRequest("/ws/dal/City/" + cityId, newCity, 200, "<updated>",
         "POST");

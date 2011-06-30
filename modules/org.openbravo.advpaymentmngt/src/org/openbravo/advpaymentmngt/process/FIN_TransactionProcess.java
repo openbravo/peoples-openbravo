@@ -100,8 +100,8 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           }
           transaction.setProcessed(false);
           final FIN_FinancialAccount financialAccount = transaction.getAccount();
-          financialAccount.setCurrentBalance(financialAccount.getCurrentBalance().subtract(
-              transaction.getDepositAmount()).add(transaction.getPaymentAmount()));
+          financialAccount.setCurrentBalance(financialAccount.getCurrentBalance()
+              .subtract(transaction.getDepositAmount()).add(transaction.getPaymentAmount()));
           OBDal.getInstance().save(financialAccount);
           OBDal.getInstance().save(transaction);
           OBDal.getInstance().flush();

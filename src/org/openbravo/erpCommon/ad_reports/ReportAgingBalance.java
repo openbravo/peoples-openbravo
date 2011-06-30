@@ -136,9 +136,9 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
           strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportAgingBalance"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalance"));
     } catch (ServletException ex) {
-      advisePopUp(request, response, Utility.messageBD(this, "NoConversionRateHeader", vars
-          .getLanguage()), Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage())
-          .getMessage());
+      advisePopUp(request, response, Utility.messageBD(this, "NoConversionRateHeader",
+          vars.getLanguage()),
+          Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage()).getMessage());
     }
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportAgingBalance.jrxml";
     HashMap<String, Object> parameters = new HashMap<String, Object>();
@@ -266,34 +266,37 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("titleColumn4", iAux.toString() + " - " + strcolumn4);
     xmlDocument.setParameter("titleColumn5", "&gt;" + strcolumn4);
 
-    xmlDocument.setParameter("dateFromPrevious", DateTimeData.nDaysAfter(this, DateTimeData
-        .today(this), "-1"));
+    xmlDocument.setParameter("dateFromPrevious",
+        DateTimeData.nDaysAfter(this, DateTimeData.today(this), "-1"));
     xmlDocument.setParameter("dateFromCol1", DateTimeData.today(this));
-    xmlDocument.setParameter("dateToCol1", DateTimeData.nDaysAfter(this, DateTimeData.today(this),
-        strcolumn1));
+    xmlDocument.setParameter("dateToCol1",
+        DateTimeData.nDaysAfter(this, DateTimeData.today(this), strcolumn1));
     iAux = Integer.valueOf(strcolumn1).intValue() + Integer.valueOf("1").intValue();
-    xmlDocument.setParameter("dateFromCol2", DateTimeData.nDaysAfter(this,
-        DateTimeData.today(this), iAux.toString()));
-    xmlDocument.setParameter("dateToCol2", DateTimeData.nDaysAfter(this, DateTimeData.today(this),
-        strcolumn2));
+    xmlDocument.setParameter("dateFromCol2",
+        DateTimeData.nDaysAfter(this, DateTimeData.today(this), iAux.toString()));
+    xmlDocument.setParameter("dateToCol2",
+        DateTimeData.nDaysAfter(this, DateTimeData.today(this), strcolumn2));
     iAux = Integer.valueOf(strcolumn2).intValue() + Integer.valueOf("1").intValue();
-    xmlDocument.setParameter("dateFromCol3", DateTimeData.nDaysAfter(this,
-        DateTimeData.today(this), iAux.toString()));
-    xmlDocument.setParameter("dateToCol3", DateTimeData.nDaysAfter(this, DateTimeData.today(this),
-        strcolumn3));
+    xmlDocument.setParameter("dateFromCol3",
+        DateTimeData.nDaysAfter(this, DateTimeData.today(this), iAux.toString()));
+    xmlDocument.setParameter("dateToCol3",
+        DateTimeData.nDaysAfter(this, DateTimeData.today(this), strcolumn3));
     iAux = Integer.valueOf(strcolumn3).intValue() + Integer.valueOf("1").intValue();
-    xmlDocument.setParameter("dateFromCol4", DateTimeData.nDaysAfter(this,
-        DateTimeData.today(this), iAux.toString()));
-    xmlDocument.setParameter("dateToCol4", DateTimeData.nDaysAfter(this, DateTimeData.today(this),
-        strcolumn4));
+    xmlDocument.setParameter("dateFromCol4",
+        DateTimeData.nDaysAfter(this, DateTimeData.today(this), iAux.toString()));
+    xmlDocument.setParameter("dateToCol4",
+        DateTimeData.nDaysAfter(this, DateTimeData.today(this), strcolumn4));
     iAux = Integer.valueOf(strcolumn4).intValue() + Integer.valueOf("1").intValue();
-    xmlDocument.setParameter("dateFromCol5", DateTimeData.nDaysAfter(this,
-        DateTimeData.today(this), iAux.toString()));
+    xmlDocument.setParameter("dateFromCol5",
+        DateTimeData.nDaysAfter(this, DateTimeData.today(this), iAux.toString()));
     xmlDocument.setParameter("dateToCol5", "");
 
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
-        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-            .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+    xmlDocument.setData(
+        "reportCBPartnerId_IN",
+        "liststructure",
+        SelectorUtilityData.selectBpartner(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();

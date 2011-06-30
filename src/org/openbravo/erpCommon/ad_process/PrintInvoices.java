@@ -79,8 +79,8 @@ public class PrintInvoices extends HttpSecureAppServlet {
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this,
-        vars.getRole()));
+    xmlDocument.setData("reportAD_ORGID", "liststructure",
+        OrganizationComboData.selectCombo(this, vars.getRole()));
 
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));

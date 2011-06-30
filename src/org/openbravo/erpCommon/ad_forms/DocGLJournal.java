@@ -180,9 +180,9 @@ public class DocGLJournal extends AcctServer {
       // account DR CR
       for (int i = 0; i < p_lines.length; i++) {
         if (p_lines[i].getC_AcctSchema_ID().equals(as.getC_AcctSchema_ID())) {
-          fact.createLine(p_lines[i], p_lines[i].getAccount(), C_Currency_ID, p_lines[i]
-              .getAmtSourceDr(), p_lines[i].getAmtSourceCr(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
+          fact.createLine(p_lines[i], p_lines[i].getAccount(), C_Currency_ID,
+              p_lines[i].getAmtSourceDr(), p_lines[i].getAmtSourceCr(), Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
         }
       } // for all lines
     } else {

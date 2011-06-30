@@ -118,8 +118,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
       vars.setSessionValue("AccountElementValue.value", strKeyValue + "%");
       String strOrg = vars.getStringParameter("inpAD_Org_ID");
       AccountElementValueData[] data = AccountElementValueData.selectKey(this, strAcctSchema,
-          Utility.getContext(this, vars, "#User_Client", "AccountElementValue"), Utility
-              .getSelectorOrgs(this, vars, strOrg), strKeyValue + "%");
+          Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
+          Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue + "%");
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
       } else
@@ -167,9 +167,9 @@ public class AccountElementValue extends HttpSecureAppServlet {
         strValue = "%";
       data = AccountElementValueData.set(strValue, strName);
     } else {
-      data = AccountElementValueData.select(this, "1", "", "", "", "", strElementValue, Utility
-          .getContext(this, vars, "#User_Client", "AccountElementValue"), Utility.getContext(this,
-          vars, "#User_Org", "AccountElementValue"), "1 ASC", "", "");
+      data = AccountElementValueData.select(this, "1", "", "", "", "", strElementValue,
+          Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
+          Utility.getContext(this, vars, "#User_Org", "AccountElementValue"), "1 ASC", "", "");
     }
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -181,8 +181,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
       // accesslevel)
 
       ComboTableData comboTableData = new ComboTableData(vars, this, "19", "AD_Org_ID", "", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "AccountElementValue"), Utility
-              .getContext(this, vars, "#User_Client", "AccountElementValue"), 0);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "AccountElementValue"),
+          Utility.getContext(this, vars, "#User_Client", "AccountElementValue"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "AccountElementValue", "");
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -195,8 +195,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
     if ("".equals(strAcctSchema))
       xmlDocument.setParameter("inpcAcctSchema", "");
     else
-      xmlDocument.setParameter("inpcAcctSchema", AccountElementValueData.selectschemaname(this,
-          strAcctSchema));
+      xmlDocument.setParameter("inpcAcctSchema",
+          AccountElementValueData.selectschemaname(this, strAcctSchema));
     xmlDocument.setParameter("grid", "20");
     xmlDocument.setParameter("grid_Offset", "");
     xmlDocument.setParameter("grid_SortCols", "1");
@@ -302,9 +302,10 @@ public class AccountElementValue extends HttpSecureAppServlet {
             pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
           }
           strNumRows = AccountElementValueData.countRows(this, rownum, strAcctSchema, strValue,
-              strName, strOrganization, strAccountElementValue, Utility.getContext(this, vars,
-                  "#User_Client", "AccountElementValue"), Utility.getContext(this, vars,
-                  "#User_Org", "AccountElementValue"), pgLimit, oraLimit1, oraLimit2);
+              strName, strOrganization, strAccountElementValue,
+              Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
+              Utility.getContext(this, vars, "#User_Org", "AccountElementValue"), pgLimit,
+              oraLimit1, oraLimit2);
           vars.setSessionValue("AccountElementValueInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("AccountElementValueInfo.numrows");
@@ -314,15 +315,17 @@ public class AccountElementValue extends HttpSecureAppServlet {
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
           String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = AccountElementValueData.select(this, "ROWNUM", strAcctSchema, strValue, strName,
-              strOrganization, strAccountElementValue, Utility.getContext(this, vars,
-                  "#User_Client", "AccountElementValue"), Utility.getContext(this, vars,
-                  "#User_Org", "AccountElementValue"), strOrderBy, oraLimit, "");
+              strOrganization, strAccountElementValue,
+              Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
+              Utility.getContext(this, vars, "#User_Org", "AccountElementValue"), strOrderBy,
+              oraLimit, "");
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
           data = AccountElementValueData.select(this, "1", strAcctSchema, strValue, strName,
-              strOrganization, strAccountElementValue, Utility.getContext(this, vars,
-                  "#User_Client", "AccountElementValue"), Utility.getContext(this, vars,
-                  "#User_Org", "AccountElementValue"), strOrderBy, "", pgLimit);
+              strOrganization, strAccountElementValue,
+              Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
+              Utility.getContext(this, vars, "#User_Org", "AccountElementValue"), strOrderBy, "",
+              pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
@@ -365,8 +368,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
-        "\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+        .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -377,11 +380,11 @@ public class AccountElementValue extends HttpSecureAppServlet {
           if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",
-                "").replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll(
-                "<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;").replaceAll("<br>",
-                    "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
+                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
+                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
+                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");

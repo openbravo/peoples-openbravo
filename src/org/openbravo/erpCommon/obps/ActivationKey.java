@@ -308,8 +308,8 @@ public class ActivationKey {
       setLogger();
       return;
     }
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-        "dateFormat.java");
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
     SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
     Date now = new Date();
     if (startDate == null || now.before(startDate)) {
@@ -350,8 +350,8 @@ public class ActivationKey {
 
     Cipher cipher = Cipher.getInstance("RSA");
 
-    ByteArrayInputStream bis = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64
-        .decodeBase64(bytes));
+    ByteArrayInputStream bis = new ByteArrayInputStream(
+        org.apache.commons.codec.binary.Base64.decodeBase64(bytes));
 
     // Encryptation only accepts 128B size, it must be chuncked
     final byte[] buf = new byte[128];
@@ -622,9 +622,10 @@ public class ActivationKey {
     OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
 
     // sesion_active='Y' and (lastPing is null or lastPing<lastValidPing)
-    obCriteria.add(Restrictions.and(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true),
-        Restrictions.or(Restrictions.isNull(Session.PROPERTY_LASTPING), Restrictions.lt(
-            Session.PROPERTY_LASTPING, lastValidPingTime))));
+    obCriteria.add(Restrictions.and(
+        Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true),
+        Restrictions.or(Restrictions.isNull(Session.PROPERTY_LASTPING),
+            Restrictions.lt(Session.PROPERTY_LASTPING, lastValidPingTime))));
     obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSessionId));
 
     boolean sessionDeactivated = false;
@@ -656,8 +657,8 @@ public class ActivationKey {
   }
 
   public String toString(ConnectionProvider conn, String lang) {
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-        "dateFormat.java");
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
     SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
 
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
@@ -675,39 +676,43 @@ public class ActivationKey {
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCustomer", lang))
           .append("</td><td>").append(getProperty("customer")).append("</td></tr>");
 
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseEdition", lang)).append(
-          "</td><td>").append(
-          Utility.getListValueName("OBPSLicenseEdition", licenseClass.getCode(), lang)).append(
-          "</td></tr>");
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseType", lang)).append(
-          "</td><td>").append(
-          Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang)).append(
-          "</td></tr>");
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSStartDate", lang)).append(
-          "</td><td>").append(outputFormat.format(startDate)).append("</td></tr>");
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseEdition", lang))
+          .append("</td><td>")
+          .append(Utility.getListValueName("OBPSLicenseEdition", licenseClass.getCode(), lang))
+          .append("</td></tr>");
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseType", lang))
+          .append("</td><td>")
+          .append(Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang))
+          .append("</td></tr>");
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSStartDate", lang))
+          .append("</td><td>").append(outputFormat.format(startDate)).append("</td></tr>");
 
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSEndDate", lang)).append("</td><td>")
+      sb.append("<tr><td>")
+          .append(Utility.messageBD(conn, "OPSEndDate", lang))
+          .append("</td><td>")
           .append(
               (getProperty("enddate") == null ? Utility.messageBD(conn, "OPSNoEndDate", lang)
                   : outputFormat.format(endDate))).append("</td></tr>");
 
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsers", lang)).append(
-          "</td><td>").append(
-          (getProperty("limitusers") == null || getProperty("limitusers").equals("0")) ? Utility
-              .messageBD(conn, "OPSUnlimitedUsers", lang) : getProperty("limitusers")).append(
-          "</td></tr>");
+      sb.append("<tr><td>")
+          .append(Utility.messageBD(conn, "OPSConcurrentUsers", lang))
+          .append("</td><td>")
+          .append(
+              (getProperty("limitusers") == null || getProperty("limitusers").equals("0")) ? Utility
+                  .messageBD(conn, "OPSUnlimitedUsers", lang) : getProperty("limitusers"))
+          .append("</td></tr>");
       if (getProperty("limituserswarn") != null) {
         sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsersWarn", lang))
             .append("</td><td>").append(getProperty("limituserswarn")).append("</td></tr>");
       }
 
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstanceNo", lang)).append(
-          "</td><td>").append(getProperty("instanceno")).append("\n");
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstanceNo", lang))
+          .append("</td><td>").append(getProperty("instanceno")).append("\n");
 
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstancePurpose", lang)).append(
-          "</td><td>").append(
-          Utility.getListValueName("InstancePurpose", getProperty("purpose"), lang)).append(
-          "</td></tr>");
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstancePurpose", lang))
+          .append("</td><td>")
+          .append(Utility.getListValueName("InstancePurpose", getProperty("purpose"), lang))
+          .append("</td></tr>");
 
     } else {
       sb.append(Utility.messageBD(conn, "OPSNonActiveInstance", lang));

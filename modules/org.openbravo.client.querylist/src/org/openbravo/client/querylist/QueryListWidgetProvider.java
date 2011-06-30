@@ -62,8 +62,9 @@ public class QueryListWidgetProvider extends WidgetProvider {
           gridPropertiesObject = new JSONObject(parameter.getFixedValue());
         } catch (Exception e) {
           // ignore, invalid grid properties
-          log.error("Grid properties parameter " + parameter + " has an illegal format "
-              + e.getMessage(), e);
+          log.error(
+              "Grid properties parameter " + parameter + " has an illegal format " + e.getMessage(),
+              e);
         }
       }
     }

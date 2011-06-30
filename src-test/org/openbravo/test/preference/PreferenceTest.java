@@ -229,8 +229,8 @@ public class PreferenceTest extends BaseTest {
         null);
     OBDal.getInstance().flush();
 
-    assertEquals("Preference not set in the expected visible org", orgB, p
-        .getVisibleAtOrganization());
+    assertEquals("Preference not set in the expected visible org", orgB,
+        p.getVisibleAtOrganization());
 
     String value = Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
         .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext

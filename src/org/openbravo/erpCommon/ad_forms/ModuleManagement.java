@@ -134,8 +134,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
     } else if (vars.commandIn("INSTALL")) {
       final String record = vars.getStringParameter("inpcRecordId");
 
-      printPageInstall1(response, request, vars, record, false, null, new String[0], ModuleUtiltiy
-          .getSystemMaturityLevels(true), null);
+      printPageInstall1(response, request, vars, record, false, null, new String[0],
+          ModuleUtiltiy.getSystemMaturityLevels(true), null);
     } else if (vars.commandIn("INSTALL2")) {
       printPageInstall2(response, vars);
     } else if (vars.commandIn("INSTALL3")) {
@@ -158,8 +158,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // clean module updates if there are any
       boolean isCleaned = cleanModulesUpdates();
       if (isCleaned) {
-        msg = OBErrorBuilder.buildMessage(msg, "Info", Utility.messageBD(this,
-            "ModuleUpdatesRemoved", vars.getLanguage()));
+        msg = OBErrorBuilder.buildMessage(msg, "Info",
+            Utility.messageBD(this, "ModuleUpdatesRemoved", vars.getLanguage()));
       }
       response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DEFAULT");
       log4j.info(modules);
@@ -182,8 +182,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
 
       // For update obtain just update maturity level
-      printPageInstall1(response, request, vars, null, false, null, modulesToUpdate, ModuleUtiltiy
-          .getSystemMaturityLevels(false), null);
+      printPageInstall1(response, request, vars, null, false, null, modulesToUpdate,
+          ModuleUtiltiy.getSystemMaturityLevels(false), null);
     } else if (vars.commandIn("UPGRADE", "UPGRADE1")) {
       OBContext.setAdminMode();
       try {
@@ -444,8 +444,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
     // In case the search results must be shown request and display them
     if (displaySearch)
-      xmlDocument.setParameter("searchResults", getSearchResults(request, response, vars,
-          searchText));
+      xmlDocument.setParameter("searchResults",
+          getSearchResults(request, response, vars, searchText));
 
     out.println(xmlDocument.print());
     out.close();
@@ -502,8 +502,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
     xmlDocument.setParameter("inpUser", strUser);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "18", "AD_User_ID", "110", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ModuleManagement"), Utility
-              .getContext(this, vars, "#User_Client", "ModuleManagement"), 0);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ModuleManagement"),
+          Utility.getContext(this, vars, "#User_Client", "ModuleManagement"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ModuleManagement", strUser);
       xmlDocument.setData("reportUser", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -574,8 +574,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       xmlDocument.setParameter("urlLink", getLink(url));
       xmlDocument.setParameter("url", url);
     }
-    xmlDocument.setParameter("license", Utility.getListValueName("License Type", module
-        .getLicenseType(), vars.getLanguage()));
+    xmlDocument.setParameter("license",
+        Utility.getListValueName("License Type", module.getLicenseType(), vars.getLanguage()));
 
     if (dependencies != null && dependencies.length > 0) {
       xmlDocument.setData("dependencies", formatDeps4Display(dependencies, vars, this));
@@ -618,11 +618,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
   private static String getDisplayString(ModuleDependency dep, VariablesSecureApp vars,
       ConnectionProvider conn) {
 
-    final String DETAIL_MSG_DETAIL_BETWEEN = Utility.messageBD(conn, "MODULE_VERSION_BETWEEN", vars
-        .getLanguage());
+    final String DETAIL_MSG_DETAIL_BETWEEN = Utility.messageBD(conn, "MODULE_VERSION_BETWEEN",
+        vars.getLanguage());
 
-    final String DETAIL_MSG_OR_LATER = Utility.messageBD(conn, "MODULE_VERSION_OR_LATER", vars
-        .getLanguage());
+    final String DETAIL_MSG_OR_LATER = Utility.messageBD(conn, "MODULE_VERSION_OR_LATER",
+        vars.getLanguage());
 
     final String VERSION = Utility.messageBD(conn, "VERSION", vars.getLanguage());
 
@@ -826,8 +826,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
           xmlDocument.setParameter("moduleID", moduleId);
           xmlDocument.setParameter("upgradeVersion", version);
 
-          xmlDocument.setData("updateNeeded", FieldProviderFactory
-              .getFieldProviderArray(requiredUpdates));
+          xmlDocument.setData("updateNeeded",
+              FieldProviderFactory.getFieldProviderArray(requiredUpdates));
 
           response.setContentType("text/html; charset=UTF-8");
           final PrintWriter out = response.getWriter();
@@ -956,8 +956,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
               }
               otherDeps += dep;
             } else {
-              String unknownMsg = Utility.messageBD(this, err.getString("errorCode"), vars
-                  .getLanguage());
+              String unknownMsg = Utility.messageBD(this, err.getString("errorCode"),
+                  vars.getLanguage());
               if (unknownMsg.equals(err.getString("errorCode"))) {
                 unknownMsg = err.getString("message");
               } else if (err.has("isMaturity") && err.getBoolean("isMaturity")) {
@@ -1159,8 +1159,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
                     + " "
                     + module.getVersionNo()
                     + " "
-                    + Utility.messageBD(this, "OtherModuleVersionToinstallOrigall", vars
-                        .getLanguage()) + " " + installOrig[i].getVersionNo());
+                    + Utility.messageBD(this, "OtherModuleVersionToinstallOrigall",
+                        vars.getLanguage()) + " " + installOrig[i].getVersionNo());
               }
               if (found) {
                 module = installOrig[i];
@@ -1238,8 +1238,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
           if (!check) {
             discard[8] = ""; // show missing dependencies message
             message.setType("Warning");
-            message.setTitle(Utility
-                .messageBD(this, "DependenciesNotSatisfied", vars.getLanguage()));
+            message
+                .setTitle(Utility.messageBD(this, "DependenciesNotSatisfied", vars.getLanguage()));
           }
         }
 
@@ -1283,13 +1283,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     if (inst != null && inst.length > 0) {
-      xmlDocument.setData("installs", getModuleFieldProvider(inst, minVersions, false, vars
-          .getLanguage(), islocal));
+      xmlDocument.setData("installs",
+          getModuleFieldProvider(inst, minVersions, false, vars.getLanguage(), islocal));
     }
 
     if (upd != null && upd.length > 0) {
-      xmlDocument.setData("updates", getModuleFieldProvider(upd, minVersions, false, vars
-          .getLanguage(), islocal));
+      xmlDocument.setData("updates",
+          getModuleFieldProvider(upd, minVersions, false, vars.getLanguage(), islocal));
     }
 
     if (merges != null && merges.length > 0) {
@@ -1311,8 +1311,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
         xmlDocument.setParameter("maturityStyle", "none");
       } else {
         xmlDocument.setParameter("maturityStyle", "yes");
-        xmlDocument.setParameter("maturityLevel", (String) module.getAdditionalInfo().get(
-            "maturity.name"));
+        xmlDocument.setParameter("maturityLevel",
+            (String) module.getAdditionalInfo().get("maturity.name"));
       }
     }
     {
@@ -1362,8 +1362,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
         }
         mod.put("versionNoCurr", currentInstalledVersion(module.getModuleID()));
       } else {
-        mod.put("versionNoMin", (minVersions.get(module.getModuleID()) == null ? module
-            .getVersionNo() : minVersions.get(module.getModuleID())));
+        mod.put(
+            "versionNoMin",
+            (minVersions.get(module.getModuleID()) == null ? module.getVersionNo() : minVersions
+                .get(module.getModuleID())));
       }
 
       if (!islocal) {
@@ -1523,8 +1525,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("minCoreVersion", minCoreVersion);
-    xmlDocument.setData("notAllowedModules", FieldProviderFactory
-        .getFieldProviderArray(modulesToAcquire));
+    xmlDocument.setData("notAllowedModules",
+        FieldProviderFactory.getFieldProviderArray(modulesToAcquire));
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -1952,11 +1954,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
       notifications = getNotificationsJSON(vars.getLanguage());
       if (!notifications.has("updatesRebuildHTML")) {
         if (!"".equals(ImportModule.getScanError().toString())) {
-          notifications.put("updatesRebuildHTML", Utility.messageBD(this, ImportModule
-              .getScanError().toString(), vars.getLanguage()));
+          notifications.put("updatesRebuildHTML",
+              Utility.messageBD(this, ImportModule.getScanError().toString(), vars.getLanguage()));
         } else {
-          notifications = notifications.put("updatesRebuildHTML", Utility.messageBD(this,
-              "NoUpdatesAvailable", vars.getLanguage()));
+          notifications = notifications.put("updatesRebuildHTML",
+              Utility.messageBD(this, "NoUpdatesAvailable", vars.getLanguage()));
         }
       }
 
@@ -2013,9 +2015,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
               // GA is not allowed for community instances
               int level = Integer.parseInt(vars.getNumericParameter("inpModuleLevel"));
               if (!activeInstance && level >= MaturityLevel.GA_MATURITY) {
-                myMessage = OBErrorBuilder.buildMessage(myMessage, "Warning", Utility.messageBD(
-                    this, "OBUIAPP_GAinCommunity", vars.getLanguage()).replace("%0",
-                    levels.getLevelName(Integer.toString(level))));
+                myMessage = OBErrorBuilder.buildMessage(
+                    myMessage,
+                    "Warning",
+                    Utility.messageBD(this, "OBUIAPP_GAinCommunity", vars.getLanguage()).replace(
+                        "%0", levels.getLevelName(Integer.toString(level))));
 
                 warn = true;
               } else {
@@ -2032,11 +2036,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
             if (!warn) {
               boolean isCleaned = cleanModulesUpdates();
               if (isCleaned) {
-                myMessage = OBErrorBuilder.buildMessage(myMessage, "Info", Utility.messageBD(this,
-                    "ModuleUpdatesRemoved", vars.getLanguage()));
+                myMessage = OBErrorBuilder.buildMessage(myMessage, "Info",
+                    Utility.messageBD(this, "ModuleUpdatesRemoved", vars.getLanguage()));
               }
-              myMessage = OBErrorBuilder.buildMessage(myMessage, "Success", Utility.messageBD(this,
-                  "ModuleManagementSettingSaved", vars.getLanguage()));
+              myMessage = OBErrorBuilder.buildMessage(myMessage, "Success",
+                  Utility.messageBD(this, "ModuleManagementSettingSaved", vars.getLanguage()));
             }
           } finally {
             OBInterceptor.setPreventUpdateInfoChange(false);
@@ -2095,18 +2099,20 @@ public class ModuleManagement extends HttpSecureAppServlet {
                   warn = true;
                   warnMsg += "<br/>"
                       + Utility.messageBD(this, "ModuleDependsButInstalled", vars.getLanguage())
-                          .replace("@module@", dep.getDependentModule().getName()).replace(
-                              "@version@", dep.getFirstVersion()).replace("@installed@",
-                              dep.getDependentModule().getVersion());
+                          .replace("@module@", dep.getDependentModule().getName())
+                          .replace("@version@", dep.getFirstVersion())
+                          .replace("@installed@", dep.getDependentModule().getVersion());
                 } else if (dep.getLastVersion() != null
                     && !(vc.compare(dep.getFirstVersion(), dep.getDependentModule().getVersion()) <= 0 && vc
                         .compare(dep.getLastVersion(), dep.getDependentModule().getVersion()) >= 0)) {
                   save = false;
                   warn = true;
                   warnMsg += "<br/>"
-                      + Utility.messageBD(this, "ModuleDependsButInstalled", vars.getLanguage())
-                          .replace("@module@", dep.getDependentModule().getName()).replace(
-                              "@version@", dep.getFirstVersion() + " - " + dep.getLastVersion())
+                      + Utility
+                          .messageBD(this, "ModuleDependsButInstalled", vars.getLanguage())
+                          .replace("@module@", dep.getDependentModule().getName())
+                          .replace("@version@",
+                              dep.getFirstVersion() + " - " + dep.getLastVersion())
                           .replace("@installed@", dep.getDependentModule().getVersion());
                 }
               }
@@ -2125,8 +2131,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
         // clean module updates if there are any
         final boolean isCleaned = cleanModulesUpdates();
         if (isCleaned) {
-          myMessage = OBErrorBuilder.buildMessage(myMessage, "Info", Utility.messageBD(this,
-              "ModuleUpdatesRemoved", vars.getLanguage()));
+          myMessage = OBErrorBuilder.buildMessage(myMessage, "Info",
+              Utility.messageBD(this, "ModuleUpdatesRemoved", vars.getLanguage()));
         }
 
         if (warn) {
@@ -2143,8 +2149,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
           myMessage = OBErrorBuilder.buildMessage(myMessage, "Warning", msgBody);
         } else {
-          myMessage = OBErrorBuilder.buildMessage(myMessage, "Success", Utility.messageBD(this,
-              "ModuleManagementSettingSaved", vars.getLanguage()));
+          myMessage = OBErrorBuilder.buildMessage(myMessage, "Success",
+              Utility.messageBD(this, "ModuleManagementSettingSaved", vars.getLanguage()));
         }
       }
 
@@ -2225,8 +2231,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
       for (org.openbravo.model.ad.domain.List value : qList.list()) {
         SQLReturnObject val = new SQLReturnObject();
         val.setData("ID", value.getSearchKey());
-        val.setData("NAME", Utility.getListValueName("Dependency Enforcement",
-            value.getSearchKey(), vars.getLanguage()));
+        val.setData(
+            "NAME",
+            Utility.getListValueName("Dependency Enforcement", value.getSearchKey(),
+                vars.getLanguage()));
         fpEnforcementCombo[i] = val;
         i++;
       }
@@ -2261,8 +2269,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
           lastType = currentType;
         }
 
-        d.put("selectedEnforcement", dep.getInstanceEnforcement() == null ? dep
-            .getDependencyEnforcement() : dep.getInstanceEnforcement());
+        d.put(
+            "selectedEnforcement",
+            dep.getInstanceEnforcement() == null ? dep.getDependencyEnforcement() : dep
+                .getInstanceEnforcement());
         fpDeps[i] = FieldProviderFactory.getFieldProvider(d);
         fpEnforcements[i] = getEnforcementCombo(dep, fpEnforcementCombo, defaultStr);
         i++;
@@ -2271,8 +2281,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_forms/ModuleManagementSettings", discard).createXmlDocument();
 
-      xmlDocument.setData("moduleDetail", FieldProviderFactory
-          .getFieldProviderArray(moduleSpecifics));
+      xmlDocument.setData("moduleDetail",
+          FieldProviderFactory.getFieldProviderArray(moduleSpecifics));
       xmlDocument.setData("moduleCombo", FieldProviderFactory.getFieldProviderArray(modules));
 
       // Populate maturity levels combos
@@ -2330,8 +2340,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
             "org.openbravo.erpCommon.ad_forms.ModuleManagement");
         xmlDocument.setParameter("theme", vars.getTheme());
         final NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-            "ModuleManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-                .breadcrumb());
+            "ModuleManagement.html", classInfo.id, classInfo.type, strReplaceWith,
+            tabs.breadcrumb());
         xmlDocument.setParameter("navigationBar", nav.toString());
         final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ModuleManagement.html",
             strReplaceWith);
@@ -2435,8 +2445,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
     try {
       OBInterceptor.setPreventUpdateInfoChange(true);
       ArrayList<String> notEnabledModules = new ArrayList<String>();
-      enableDisableModule(OBDal.getInstance().get(org.openbravo.model.ad.module.Module.class,
-          vars.getStringParameter("inpcRecordId")), true, notEnabledModules);
+      enableDisableModule(
+          OBDal.getInstance().get(org.openbravo.model.ad.module.Module.class,
+              vars.getStringParameter("inpcRecordId")), true, notEnabledModules);
       finishEnabling(notEnabledModules, vars);
     } finally {
       OBInterceptor.setPreventUpdateInfoChange(false);

@@ -252,8 +252,8 @@ public class ModelDataSourceService extends BaseDataSourceService {
     jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
     jsonResponse.put(JsonConstants.RESPONSE_ENDROW, props.size() + startRow - 1);
     jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, props.size());
-    jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray(convertToJSONObjects(props,
-        propertyPath)));
+    jsonResponse.put(JsonConstants.RESPONSE_DATA,
+        new JSONArray(convertToJSONObjects(props, propertyPath)));
     jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
 
     return jsonResult.toString();

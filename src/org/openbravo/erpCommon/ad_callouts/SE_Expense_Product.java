@@ -85,8 +85,7 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
 
     if (strDateexpense.equals("")) {
       strDateexpense = SEExpenseProductData.selectReportDate(this, strsTimeexpenseId).equals("") ? DateTimeData
-          .today(this)
-          : SEExpenseProductData.selectReportDate(this, strsTimeexpenseId);
+          .today(this) : SEExpenseProductData.selectReportDate(this, strsTimeexpenseId);
     }
 
     if (strInvPrice.equals("")) {

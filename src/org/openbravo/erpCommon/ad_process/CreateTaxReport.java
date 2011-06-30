@@ -156,8 +156,11 @@ public class CreateTaxReport extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    xmlDocument.setData("reportC_TAX_REPORT", "liststructure", CreateTaxReportData
-        .selectC_TAX_REPORT(this, Utility.getContext(this, vars, "#User_Org", "CreateTaxReport"),
+    xmlDocument.setData(
+        "reportC_TAX_REPORT",
+        "liststructure",
+        CreateTaxReportData.selectC_TAX_REPORT(this,
+            Utility.getContext(this, vars, "#User_Org", "CreateTaxReport"),
             Utility.getContext(this, vars, "#User_Client", "CreateTaxReport"), ""));
 
     response.setContentType("text/html; charset=UTF-8");
@@ -245,9 +248,10 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("**********************strTaxId: " + strTaxId);
     CreateTaxReportData[] data = CreateTaxReportData.select(this, String.valueOf(rownum),
-        strParent, String.valueOf(level), Utility.getContext(this, vars, "#User_Client",
-            "CreateTaxReport"), Utility.stringList(strOrg), strPeriodFrom, DateTimeData.nDaysAfter(
-            this, strPeriodTo, "1"), strTaxReportId);
+        strParent, String.valueOf(level),
+        Utility.getContext(this, vars, "#User_Client", "CreateTaxReport"),
+        Utility.stringList(strOrg), strPeriodFrom, DateTimeData.nDaysAfter(this, strPeriodTo, "1"),
+        strTaxReportId);
     if (data == null || data.length == 0)
       data = CreateTaxReportData.set();
     else
@@ -256,9 +260,9 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("**********************data[0]*********************data[0].id: " + data[0].id
           + "- data[0].name:" + data[0].name + "  data[0].total:" + data[0].total);
-    CreateTaxReportData[] dataAux = CreateTaxReportData.selectChild(this, Utility.getContext(this,
-        vars, "#User_Client", "CreateTaxReport"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "CreateTaxReport"), data[0].id);
+    CreateTaxReportData[] dataAux = CreateTaxReportData.selectChild(this,
+        Utility.getContext(this, vars, "#User_Client", "CreateTaxReport"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "CreateTaxReport"), data[0].id);
     if (log4j.isDebugEnabled())
       log4j.debug("**********************dataAux.length: " + dataAux.length);
     for (int i = 0; i < dataAux.length; i++) {
@@ -288,8 +292,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
             log4j.debug("******************************data[j].name: " + data[j].name + " "
                 + data[j].levelTax + " " + data[i].levelTax);
           if (Integer.valueOf(data[j].levelTax).intValue() > Integer.valueOf(data[i].levelTax)
-              .intValue()
-              && data[j].parent.equals(data[i].id)) {
+              .intValue() && data[j].parent.equals(data[i].id)) {
             if (log4j.isDebugEnabled())
               log4j.debug("******************************issummary[j]: " + data[j].issummary);
             // if (!data[j].issummary.equals("Y")){

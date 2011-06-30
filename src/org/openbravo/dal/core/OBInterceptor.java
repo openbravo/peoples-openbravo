@@ -165,11 +165,10 @@ public class OBInterceptor extends EmptyInterceptor {
     // this can happen when someone has set the id of an object but has not set the
     // new object to true
     if (previousState == null) {
-      log
-          .warn("The object "
-              + entity
-              + " is detected as not new (is its id != null?) but it does not have a current state in the database. "
-              + "This can happen when the id is set but not setNewObject(true); has been called.");
+      log.warn("The object "
+          + entity
+          + " is detected as not new (is its id != null?) but it does not have a current state in the database. "
+          + "This can happen when the id is set but not setNewObject(true); has been called.");
       return false;
     }
     // disabled for now, checks are all done when a property is set

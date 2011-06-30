@@ -188,20 +188,24 @@ public class DocDPManagement extends AcctServer {
       if (line.IsManual.equals("N") || line.IsDirectPosting.equals("Y")) {
         String amount = calculateAmount(as, line, conn);
         if (line.Isreceipt.equals("Y")) {
-          fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusTo,
-              conn), line.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
-          fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as,
-              line.StatusFrom, conn), line.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID,
-              nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(line,
+              getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusTo, conn),
+              line.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+              conn);
+          fact.createLine(line,
+              getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusFrom, conn),
+              line.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+              conn);
 
         } else {
-          fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusTo,
-              conn), line.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
-          fact.createLine(line, getAccount(line.Isreceipt, line.m_C_BPartner_ID, as,
-              line.StatusFrom, conn), line.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID,
-              nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(line,
+              getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusTo, conn),
+              line.m_C_Currency_ID, "", amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+              conn);
+          fact.createLine(line,
+              getAccount(line.Isreceipt, line.m_C_BPartner_ID, as, line.StatusFrom, conn),
+              line.m_C_Currency_ID, amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+              conn);
         }
       }
     }

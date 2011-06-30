@@ -414,11 +414,13 @@ public class TestUtility extends BaseTest {
     HashMap<String, BigDecimal> paidAmount = new HashMap<String, BigDecimal>();
     paidAmount.put(scheduleDetails.get(0).getId(), amount);
 
-    FIN_Payment payment = FIN_AddPayment.savePayment(null, invoice.isSalesTransaction(),
-        FIN_Utility.getDocumentType(invoice.getOrganization(), "ARR"), FIN_Utility.getDocumentNo(
-            invoice.getOrganization(), "APP", "FIN_Payment"), invoice.getBusinessPartner(), invoice
-            .getPaymentMethod(), account, amount.toString(), new Date(), invoice.getOrganization(),
-        null, scheduleDetails, paidAmount, isWriteOff, false);
+    FIN_Payment payment = FIN_AddPayment
+        .savePayment(null, invoice.isSalesTransaction(),
+            FIN_Utility.getDocumentType(invoice.getOrganization(), "ARR"),
+            FIN_Utility.getDocumentNo(invoice.getOrganization(), "APP", "FIN_Payment"),
+            invoice.getBusinessPartner(), invoice.getPaymentMethod(), account, amount.toString(),
+            new Date(), invoice.getOrganization(), null, scheduleDetails, paidAmount, isWriteOff,
+            false);
 
     return payment;
   }
@@ -434,11 +436,11 @@ public class TestUtility extends BaseTest {
     HashMap<String, BigDecimal> paidAmount = new HashMap<String, BigDecimal>();
     paidAmount.put(scheduleDetails.get(0).getId(), amount);
 
-    FIN_Payment payment = FIN_AddPayment.savePayment(null, order.isSalesTransaction(), FIN_Utility
-        .getDocumentType(order.getOrganization(), "ARR"), FIN_Utility.getDocumentNo(order
-        .getOrganization(), "APP", "FIN_Payment"), order.getBusinessPartner(), order
-        .getPaymentMethod(), account, amount.toString(), new Date(), order.getOrganization(), null,
-        scheduleDetails, paidAmount, isWriteOff, false);
+    FIN_Payment payment = FIN_AddPayment.savePayment(null, order.isSalesTransaction(),
+        FIN_Utility.getDocumentType(order.getOrganization(), "ARR"),
+        FIN_Utility.getDocumentNo(order.getOrganization(), "APP", "FIN_Payment"),
+        order.getBusinessPartner(), order.getPaymentMethod(), account, amount.toString(),
+        new Date(), order.getOrganization(), null, scheduleDetails, paidAmount, isWriteOff, false);
 
     return payment;
   }

@@ -313,8 +313,8 @@ public class EntityXMLConverter implements OBNotSingleton {
     if (OBContext.getOBContext().isInAdministratorMode()) {
       onlyIdentifierProps = false;
     } else {
-      onlyIdentifierProps = OBContext.getOBContext().getEntityAccessChecker().isDerivedReadable(
-          obObject.getEntity());
+      onlyIdentifierProps = OBContext.getOBContext().getEntityAccessChecker()
+          .isDerivedReadable(obObject.getEntity());
     }
 
     final List<Property> exportableProperties;
@@ -478,8 +478,8 @@ public class EntityXMLConverter implements OBNotSingleton {
     attrs.addAttribute("", "", XMLConstants.ID_ATTRIBUTE, "CDATA", DalUtil.getId(referedObject)
         .toString());
     if (!isOptionMinimizeXMLSize()) {
-      attrs.addAttribute("", "", XMLConstants.ENTITYNAME_ATTRIBUTE, "CDATA", DalUtil
-          .getEntityName(referedObject));
+      attrs.addAttribute("", "", XMLConstants.ENTITYNAME_ATTRIBUTE, "CDATA",
+          DalUtil.getEntityName(referedObject));
       attrs.addAttribute("", "", XMLConstants.IDENTIFIER_ATTRIBUTE, "CDATA", IdentifierProvider
           .getInstance().getIdentifier(referedObject));
     }
@@ -584,17 +584,15 @@ public class EntityXMLConverter implements OBNotSingleton {
     }
     try {
       OBContext.setAdminMode();
-      final List<SystemInformation> sis = OBDal.getInstance().createCriteria(
-          SystemInformation.class).list();
+      final List<SystemInformation> sis = OBDal.getInstance()
+          .createCriteria(SystemInformation.class).list();
       Check.isTrue(sis.size() > 0, "There should be at least one SystemInfo record but there are "
           + sis.size());
       systemAttrs.addAttribute("", "", XMLConstants.DATE_TIME_ATTRIBUTE, "CDATA", "" + new Date());
       systemAttrs.addAttribute("", "", XMLConstants.OB_VERSION_ATTRIBUTE, "CDATA", sis.get(0)
-          .getOpenbravoVersion()
-          + "");
+          .getOpenbravoVersion() + "");
       systemAttrs.addAttribute("", "", XMLConstants.OB_REVISION_ATTRIBUTE, "CDATA", sis.get(0)
-          .getCodeRevision()
-          + "");
+          .getCodeRevision() + "");
     } finally {
       OBContext.restorePreviousMode();
     }

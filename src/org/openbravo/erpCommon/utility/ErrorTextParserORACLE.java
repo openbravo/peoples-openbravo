@@ -104,8 +104,8 @@ class ErrorTextParserORACLE extends ErrorTextParser {
       if (log4j.isDebugEnabled())
         log4j.debug("Error code: " + Integer.toString(errorCode));
       if (errorCode != 0) {
-        FieldProvider fldMessage = Utility.locateMessage(getConnection(), Integer
-            .toString(errorCode), getLanguage());
+        FieldProvider fldMessage = Utility.locateMessage(getConnection(),
+            Integer.toString(errorCode), getLanguage());
         if (fldMessage != null) {
           myCodeError = new OBError();
           myCodeError.setType((fldMessage.getField("msgtype").equals("E") ? "Error" : "Warning"));
@@ -157,8 +157,8 @@ class ErrorTextParserORACLE extends ErrorTextParser {
           }
 
         } else if (ErrorTextParserORACLEData.isTrigger(getConnection(), objectName)) {
-          FieldProvider fldMessage = Utility.locateMessage(getConnection(), myMessage.substring(0,
-              myMessage.indexOf("ORA-")), getLanguage());
+          FieldProvider fldMessage = Utility.locateMessage(getConnection(),
+              myMessage.substring(0, myMessage.indexOf("ORA-")), getLanguage());
           if (fldMessage != null) {
             myError = new OBError();
             myError.setType((fldMessage.getField("msgtype").equals("E") ? "Error" : "Warning"));

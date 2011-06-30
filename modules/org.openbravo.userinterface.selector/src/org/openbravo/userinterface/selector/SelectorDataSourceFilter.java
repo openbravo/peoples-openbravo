@@ -113,8 +113,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
     String dynamicWhere = "";
 
     try {
-      result = ParameterUtils.getJSExpressionResult(parameters, request.getSession(), sel
-          .getFilterExpression());
+      result = ParameterUtils.getJSExpressionResult(parameters, request.getSession(),
+          sel.getFilterExpression());
       if (result != null && !result.toString().equals("")) {
         dynamicWhere = result.toString();
       }
@@ -189,8 +189,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       final Property property = properties.get(properties.size() - 1);
 
       try {
-        result = ParameterUtils.getJSExpressionResult(parameters, request.getSession(), sf
-            .getDefaultExpression());
+        result = ParameterUtils.getJSExpressionResult(parameters, request.getSession(),
+            sf.getDefaultExpression());
 
         if (result == null || result.toString().equals("")) {
           continue;

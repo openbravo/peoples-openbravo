@@ -255,8 +255,8 @@ public class ModelProvider implements OBSingleton {
             p.initializeName();
             // don't do mandatory value setting for views
             if (!e.isView() && p.getColumnName() != null) {
-              final Boolean mandatory = colMandatories.get(createColumnMandatoryKey(e
-                  .getTableName(), p.getColumnName()));
+              final Boolean mandatory = colMandatories.get(createColumnMandatoryKey(
+                  e.getTableName(), p.getColumnName()));
               if (mandatory != null) {
                 p.setMandatory(mandatory);
               } else {
@@ -438,10 +438,9 @@ public class ModelProvider implements OBSingleton {
           final Column thatColumn = c.getReferenceType();
           if (thatColumn == null) {
             if (!OBPropertiesProvider.isFriendlyWarnings()) {
-              log
-                  .error("Property "
-                      + thisProp
-                      + " is mapped incorrectly, there is no referenced column for it, removing from the mapping");
+              log.error("Property "
+                  + thisProp
+                  + " is mapped incorrectly, there is no referenced column for it, removing from the mapping");
             }
             thisProp.getEntity().getProperties().remove(thisProp);
             if (thisProp.getEntity().getIdProperties().remove(thisProp)) {

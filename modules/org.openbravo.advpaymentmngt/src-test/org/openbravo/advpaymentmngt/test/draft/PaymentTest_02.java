@@ -86,8 +86,9 @@ public class PaymentTest_02 extends BaseTest {
       invoice = OBDal.getInstance().get(Invoice.class, invoice.getId());
       BigDecimal divisor = new BigDecimal("2.0");
       BigDecimal paymentAmount = invoice.getGrandTotalAmount().divide(divisor, 2);
-      payment = TestUtility.addPaymentFromInvoice(invoice, OBDal.getInstance().get(
-          FIN_FinancialAccount.class, financialAccountId), paymentAmount, false);
+      payment = TestUtility.addPaymentFromInvoice(invoice,
+          OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId), paymentAmount,
+          false);
 
       // PROCESS THE PAYMENT
       TestUtility.processPayment(payment, "P");
@@ -104,18 +105,19 @@ public class PaymentTest_02 extends BaseTest {
             + ") != " + paymentAmount.toPlainString(), invoice.getFINPaymentScheduleList().get(0)
             .getOutstandingAmount().compareTo(paymentAmount) == 0);
 
-        assertTrue("Payment Schedule Received Amount != Total Amount", invoice
-            .getGrandTotalAmount().compareTo(
+        assertTrue(
+            "Payment Schedule Received Amount != Total Amount",
+            invoice.getGrandTotalAmount().compareTo(
                 invoice.getFINPaymentScheduleList().get(0).getPaidAmount()) != 0);
 
         assertTrue("Payment Schedule Deatail Amount != Total Amount", invoice.getGrandTotalAmount()
             .compareTo(psd.getAmount()) != 0);
 
-        assertTrue("Payment Schedule Detail Write-off Amount == 0", BigDecimal.ZERO.compareTo(psd
-            .getWriteoffAmount()) == 0);
+        assertTrue("Payment Schedule Detail Write-off Amount == 0",
+            BigDecimal.ZERO.compareTo(psd.getWriteoffAmount()) == 0);
 
-        assertTrue("Payment Amount != Total Amount", invoice.getGrandTotalAmount().compareTo(
-            payment.getAmount()) != 0);
+        assertTrue("Payment Amount != Total Amount",
+            invoice.getGrandTotalAmount().compareTo(payment.getAmount()) != 0);
         assertTrue("Status != Payment Received", "RPR".equals(payment.getStatus()));
       } finally {
         OBContext.restorePreviousMode();
@@ -131,17 +133,22 @@ public class PaymentTest_02 extends BaseTest {
             new Value(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE, invoice
                 .getFINPaymentScheduleList().get(0)));
 
-        assertTrue("Expected Amount != Total Amount", invoice.getGrandTotalAmount().compareTo(
-            invoice.getFINPaymentScheduleList().get(0).getAmount()) == 0);
-        assertTrue("Outstanding Amount != Total Amount", invoice.getGrandTotalAmount().compareTo(
-            invoice.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
-        assertTrue("Received Amount != 0", BigDecimal.ZERO.compareTo(invoice
-            .getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
+        assertTrue(
+            "Expected Amount != Total Amount",
+            invoice.getGrandTotalAmount().compareTo(
+                invoice.getFINPaymentScheduleList().get(0).getAmount()) == 0);
+        assertTrue(
+            "Outstanding Amount != Total Amount",
+            invoice.getGrandTotalAmount().compareTo(
+                invoice.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
+        assertTrue(
+            "Received Amount != 0",
+            BigDecimal.ZERO.compareTo(invoice.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
 
-        assertTrue("Payment Schedule Detail Amount != 0", invoice.getGrandTotalAmount().compareTo(
-            psd.getAmount()) == 0);
-        assertTrue("Payment Schedule Detail Write-off Amount == 0", BigDecimal.ZERO.compareTo(psd
-            .getWriteoffAmount()) == 0);
+        assertTrue("Payment Schedule Detail Amount != 0",
+            invoice.getGrandTotalAmount().compareTo(psd.getAmount()) == 0);
+        assertTrue("Payment Schedule Detail Write-off Amount == 0",
+            BigDecimal.ZERO.compareTo(psd.getWriteoffAmount()) == 0);
 
         assertTrue("Payment Amount != 0", BigDecimal.ZERO.compareTo(payment.getAmount()) == 0);
         assertTrue("Status != Awaiting Payment", "RPAP".equals(payment.getStatus()));

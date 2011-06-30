@@ -51,10 +51,10 @@ public class UISearch extends UITableDir {
       UIReferenceUtility.addUniqueElement(vecScript, strReplaceWith + "/js/searchs.js");
 
       strHtml.append("<tr>\n<td>\n");
-      strHtml.append("<input type=\"hidden\" name=\"inpParam").append(
-          FormatUtilities.replace(fields.columnname)).append("\" ");
-      strHtml.append("value=\"").append(
-          (!fields.value.equals("") && !fields.value.equals("%")) ? fields.value : "")
+      strHtml.append("<input type=\"hidden\" name=\"inpParam")
+          .append(FormatUtilities.replace(fields.columnname)).append("\" ");
+      strHtml.append("value=\"")
+          .append((!fields.value.equals("") && !fields.value.equals("%")) ? fields.value : "")
           .append("\">");
       strHtml.append("</td>\n");
       strHtml.append("<td class=\"TextBox_ContentCell\">\n");
@@ -68,10 +68,10 @@ public class UISearch extends UITableDir {
         strHtml
             .append("<input dojoType=\"openbravo:ValidationTextBox\" type=\"text\" class=\"TextBox_btn_ThreeCells_width\" ");
       }
-      strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
-          "_DES\" ");
-      strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
-          "_DES\" ");
+      strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname))
+          .append("_DES\" ");
+      strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields.columnname))
+          .append("_DES\" ");
       strHtml.append("maxlength=\"").append(fields.fieldlength).append("\" ");
 
       if (!fields.value.equals("") && !fields.value.equals("%")) {
@@ -85,8 +85,8 @@ public class UISearch extends UITableDir {
 
       strHtml.append((!fields.reference.equals("21") && !fields.reference.equals("35")) ? ""
           : "readonly=\"true\" ");
-      strHtml.append("><script>djConfig.searchIds.push(\"").append("inpParam").append(
-          FormatUtilities.replace(fields.columnname)).append("_DES\") </script></td>\n");
+      strHtml.append("><script>djConfig.searchIds.push(\"").append("inpParam")
+          .append(FormatUtilities.replace(fields.columnname)).append("_DES\") </script></td>\n");
       String strMethod = "";
       if (fields.reference.equals("21")) {
         strMethod = locationCommands(fields);
@@ -165,11 +165,12 @@ public class UISearch extends UITableDir {
       params.append("!=null)?document.frmMain.inpParam");
       params.append(FormatUtilities.replace("M_Locator_ID")).append(".value:'')");
     }
-    html.append(strMethodName).append("(null, null, '..").append(searchName).append(
-        "', null, false, 'frmMain', 'inpParam").append(FormatUtilities.replace(efd.columnname))
-        .append("', 'inpParam").append(FormatUtilities.replace(efd.columnname)).append(
-            "_DES', document.frmMain.inpParam").append(FormatUtilities.replace(efd.columnname))
-        .append("_DES.value").append(params.toString()).append(");");
+    html.append(strMethodName).append("(null, null, '..").append(searchName)
+        .append("', null, false, 'frmMain', 'inpParam")
+        .append(FormatUtilities.replace(efd.columnname)).append("', 'inpParam")
+        .append(FormatUtilities.replace(efd.columnname)).append("_DES', document.frmMain.inpParam")
+        .append(FormatUtilities.replace(efd.columnname)).append("_DES.value")
+        .append(params.toString()).append(");");
     return html.toString();
   }
 
@@ -178,46 +179,45 @@ public class UISearch extends UITableDir {
 
     html.append(
         "openLocation(null, null, '../info/Location.html', null, false, 'frmMain', 'inpParam")
-        .append(FormatUtilities.replace(efd.columnname)).append("', 'inpParam").append(
-            FormatUtilities.replace(efd.columnname)).append("_DES', document.frmMain.inpParam")
-        .append(FormatUtilities.replace(efd.columnname)).append(
-            ".value, 'inpwindowId', document.frmMain.inpwindowId.value);");
+        .append(FormatUtilities.replace(efd.columnname)).append("', 'inpParam")
+        .append(FormatUtilities.replace(efd.columnname)).append("_DES', document.frmMain.inpParam")
+        .append(FormatUtilities.replace(efd.columnname))
+        .append(".value, 'inpwindowId', document.frmMain.inpwindowId.value);");
     return html.toString();
   }
 
   private String searchs(BuscadorData efd, String tabId, String windowId) {
     StringBuffer html = new StringBuffer();
     if (efd.searchname.toUpperCase().indexOf("BUSINESS") != -1) {
-      html.append("<input type=\"hidden\" name=\"inpParam").append(
-          FormatUtilities.replace(efd.columnname)).append("_LOC\">\n");
-      html.append("<input type=\"hidden\" name=\"inpParam").append(
-          FormatUtilities.replace(efd.columnname)).append("_CON\">\n");
+      html.append("<input type=\"hidden\" name=\"inpParam")
+          .append(FormatUtilities.replace(efd.columnname)).append("_LOC\">\n");
+      html.append("<input type=\"hidden\" name=\"inpParam")
+          .append(FormatUtilities.replace(efd.columnname)).append("_CON\">\n");
     } else if (efd.searchname.equalsIgnoreCase("PRODUCT")) {
-      html.append("<input type=\"hidden\" name=\"inpParam").append(
-          FormatUtilities.replace(efd.columnname)).append("_PLIST\">\n");
-      html.append("<input type=\"hidden\" name=\"inpParam").append(
-          FormatUtilities.replace(efd.columnname)).append("_PSTD\">\n");
-      html.append("<input type=\"hidden\" name=\"inpParam").append(
-          FormatUtilities.replace(efd.columnname)).append("_UOM\">\n");
-      html.append("<input type=\"hidden\" name=\"inpParam").append(
-          FormatUtilities.replace(efd.columnname)).append("_PLIM\">\n");
-      html.append("<input type=\"hidden\" name=\"inpParam").append(
-          FormatUtilities.replace(efd.columnname)).append("_CURR\">\n");
+      html.append("<input type=\"hidden\" name=\"inpParam")
+          .append(FormatUtilities.replace(efd.columnname)).append("_PLIST\">\n");
+      html.append("<input type=\"hidden\" name=\"inpParam")
+          .append(FormatUtilities.replace(efd.columnname)).append("_PSTD\">\n");
+      html.append("<input type=\"hidden\" name=\"inpParam")
+          .append(FormatUtilities.replace(efd.columnname)).append("_UOM\">\n");
+      html.append("<input type=\"hidden\" name=\"inpParam")
+          .append(FormatUtilities.replace(efd.columnname)).append("_PLIM\">\n");
+      html.append("<input type=\"hidden\" name=\"inpParam")
+          .append(FormatUtilities.replace(efd.columnname)).append("_CURR\">\n");
     }
     html.append("<td class=\"FieldButton_bg\">");
     html.append("<a href=\"#\" class=\"FieldButtonLink\" ");
-    html.append("onClick=\"").append(searchsCommand(efd, true, tabId, windowId)).append(
-        "return false;\" ");
-    html
-        .append(
-            "onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Search';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">\n<img width=\"16\" height=\"16\" alt=\"")
-        .append(efd.searchname.trim()).append("\" title=\"").append(efd.searchname.trim()).append(
-            "\" ");
-    html.append("class=\"FieldButton_Icon FieldButton_Icon_").append(
-        FormatUtilities.replace(efd.searchname.trim())).append("\" ");
+    html.append("onClick=\"").append(searchsCommand(efd, true, tabId, windowId))
+        .append("return false;\" ");
+    html.append(
+        "onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Search';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">\n<img width=\"16\" height=\"16\" alt=\"")
+        .append(efd.searchname.trim()).append("\" title=\"").append(efd.searchname.trim())
+        .append("\" ");
+    html.append("class=\"FieldButton_Icon FieldButton_Icon_")
+        .append(FormatUtilities.replace(efd.searchname.trim())).append("\" ");
     ;
-    html.append("border=\"0\" src=\"").append(strReplaceWith).append(
-        "/images/blank.gif\"></a></td></table>");
+    html.append("border=\"0\" src=\"").append(strReplaceWith)
+        .append("/images/blank.gif\"></a></td></table>");
     return html.toString();
   }
 
@@ -231,10 +231,10 @@ public class UISearch extends UITableDir {
     params.append(", 'WindowID'");
     params.append(", '").append(windowId).append("'");
     html.append("openSearch(null, null, '../info/Locator.html', null, false, 'frmMain', 'inpParam")
-        .append(FormatUtilities.replace(efd.columnname)).append("', 'inpParam").append(
-            FormatUtilities.replace(efd.columnname)).append("_DES', document.frmMain.inpParam")
-        .append(FormatUtilities.replace(efd.columnname)).append("_DES.value").append(
-            params.toString()).append(");");
+        .append(FormatUtilities.replace(efd.columnname)).append("', 'inpParam")
+        .append(FormatUtilities.replace(efd.columnname)).append("_DES', document.frmMain.inpParam")
+        .append(FormatUtilities.replace(efd.columnname)).append("_DES.value")
+        .append(params.toString()).append(");");
     return html.toString();
   }
 
@@ -242,18 +242,17 @@ public class UISearch extends UITableDir {
     StringBuffer html = new StringBuffer();
     html.append("<td class=\"FieldButton_bg\">");
     html.append("<a href=\"#\"  class=\"FieldButtonLink\" ");
-    html.append("onClick=\"").append(locatorCommands(efd, true, windowId)).append(
-        "return false;\" ");
-    html
-        .append("onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Search';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">\n");
+    html.append("onClick=\"").append(locatorCommands(efd, true, windowId))
+        .append("return false;\" ");
+    html.append("onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Search';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">\n");
     ;
-    html.append("<img width=\"16\" height=\"16\" alt=\"").append(efd.searchname.trim()).append(
-        "\" title=\"").append(efd.searchname.trim()).append("\" ");
-    html.append("class=\"FieldButton_Icon FieldButton_Icon_").append(
-        FormatUtilities.replace(efd.searchname.trim())).append("\" ");
+    html.append("<img width=\"16\" height=\"16\" alt=\"").append(efd.searchname.trim())
+        .append("\" title=\"").append(efd.searchname.trim()).append("\" ");
+    html.append("class=\"FieldButton_Icon FieldButton_Icon_")
+        .append(FormatUtilities.replace(efd.searchname.trim())).append("\" ");
     ;
-    html.append("border=\"0\" src=\"").append(strReplaceWith).append(
-        "/images/blank.gif\"></a></td>");
+    html.append("border=\"0\" src=\"").append(strReplaceWith)
+        .append("/images/blank.gif\"></a></td>");
     return html.toString();
   }
 
@@ -262,13 +261,12 @@ public class UISearch extends UITableDir {
     html.append("<td class=\"FieldButton_bg\">");
     html.append("<a href=\"#\" class=\"FieldButtonLink\" ");
     html.append("onClick=\"").append(locationCommands(efd)).append("return false;\" ");
-    html
-        .append(
-            "onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Search';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">\n<img width=\"16\" height=\"16\" alt=\"")
-        .append(efd.searchname.trim()).append("\" title=\"").append(efd.searchname.trim()).append(
-            "\" ");
-    html.append("class=\"FieldButton_Icon FieldButton_Icon_").append(
-        FormatUtilities.replace(efd.searchname.trim())).append("\" ");
+    html.append(
+        "onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Search';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">\n<img width=\"16\" height=\"16\" alt=\"")
+        .append(efd.searchname.trim()).append("\" title=\"").append(efd.searchname.trim())
+        .append("\" ");
+    html.append("class=\"FieldButton_Icon FieldButton_Icon_")
+        .append(FormatUtilities.replace(efd.searchname.trim())).append("\" ");
     ;
     html.append("border=\"0\" src=\"").append(strReplaceWith).append("/images/blank.gif\"></a>");
     return html.toString();

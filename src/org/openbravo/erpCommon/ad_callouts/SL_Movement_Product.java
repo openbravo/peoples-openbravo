@@ -91,8 +91,8 @@ public class SL_Movement_Product extends HttpSecureAppServlet {
       strLocator = strLocator.substring(1, strLocator.length() - 1);
     resultado.append("new Array(\"inpmLocatorId\", \"" + strLocator + "\"),");
     resultado.append("new Array(\"inpmLocatorId_R\", \""
-        + FormatUtilities.replaceJS(SLInOutLineProductData.locator(this, strLocator, vars
-            .getLanguage())) + "\"),");
+        + FormatUtilities.replaceJS(SLInOutLineProductData.locator(this, strLocator,
+            vars.getLanguage())) + "\"),");
     resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),");
     if (strAttribute.startsWith("\""))
       strAttribute = strAttribute.substring(1, strAttribute.length() - 1);

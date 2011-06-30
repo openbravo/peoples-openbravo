@@ -98,8 +98,8 @@ public class UtilsTest extends BaseTest {
     for (Entity entity : ModelProvider.getInstance().getModel()) {
 
       // query for all objects of the entity and iterate over them
-      final List<BaseOBObject> businessObjects = OBDal.getInstance().createCriteria(
-          entity.getName()).list();
+      final List<BaseOBObject> businessObjects = OBDal.getInstance()
+          .createCriteria(entity.getName()).list();
       for (BaseOBObject businessObject : businessObjects) {
 
         final StringBuilder line = new StringBuilder();

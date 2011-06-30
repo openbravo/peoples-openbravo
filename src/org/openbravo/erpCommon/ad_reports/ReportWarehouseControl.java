@@ -78,10 +78,10 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
       strRef = "#" + strReferential;
     }
 
-    ReportWarehouseControlData[] data = ReportWarehouseControlData.select(this, Utility.getContext(
-        this, vars, "#User_Client", "ReportWarehouseControl"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportWarehouseControl"), strDateFrom, DateTimeData.nDaysAfter(this,
-        strDateTo, "1"), strRef);
+    ReportWarehouseControlData[] data = ReportWarehouseControlData.select(this,
+        Utility.getContext(this, vars, "#User_Client", "ReportWarehouseControl"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseControl"),
+        strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strRef);
 
     if (data == null || data.length == 0 || vars.commandIn("DEFAULT")) {
       String discard[] = { "sectionDescription" };
@@ -115,8 +115,8 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportWarehouseControl.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportWarehouseControl.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportWarehouseControl.html",
           strReplaceWith);

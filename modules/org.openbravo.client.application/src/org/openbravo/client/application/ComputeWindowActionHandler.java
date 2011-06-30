@@ -85,8 +85,8 @@ public class ComputeWindowActionHandler extends BaseActionHandler {
         tabTitle = tab.getWindow().getName();
       }
 
-      json.put("keyParameter", "inp"
-          + Sqlc.TransformaNombreColumna(entity.getIdProperties().get(0).getColumnName()));
+      json.put("keyParameter",
+          "inp" + Sqlc.TransformaNombreColumna(entity.getIdProperties().get(0).getColumnName()));
       json.put("tabTitle", tabTitle);
 
       // find the model tab url

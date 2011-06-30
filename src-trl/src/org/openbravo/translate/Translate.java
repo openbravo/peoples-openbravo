@@ -262,8 +262,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
           } else if (moduleDirectories.size() > level
               && (moduleDirectories.get(level).equals("*") || moduleDirectories.get(level).equals(
                   fileItem.getName())))
-            listDir(fileItem, boolFilter, dirFilter, relativePath, false, parent + "/"
-                + fileItem.getName(), level + 1, module);
+            listDir(fileItem, boolFilter, dirFilter, relativePath, false,
+                parent + "/" + fileItem.getName(), level + 1, module);
           // other case don't follow deeping into the tree
         }
 

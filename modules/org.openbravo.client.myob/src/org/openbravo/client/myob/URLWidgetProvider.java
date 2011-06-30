@@ -90,9 +90,7 @@ public class URLWidgetProvider extends WidgetProvider {
         log.error("No url widget defined for widget class " + widgetInstance.getWidgetClass());
       }
     } catch (NonUniqueResultException e) {
-      log
-          .error("More than one active url defined for widget " + widgetInstance.getWidgetClass(),
-              e);
+      log.error("More than one active url defined for widget " + widgetInstance.getWidgetClass(), e);
     } catch (Exception e) {
       throw new OBException(e);
     }

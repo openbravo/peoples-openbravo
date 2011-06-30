@@ -43,11 +43,11 @@ public class ExecutePendingPayments extends DalBaseProcess {
             logger.logln(executionProcess.getIdentifier());
             if (dao.isAutomaticExecutionProcess(executionProcess)) {
               FIN_ExecutePayment executePayment = new FIN_ExecutePayment();
-              executePayment.init("OTHER", executionProcess, payments, null, pendingPayment
-                  .getOrganization());
+              executePayment.init("OTHER", executionProcess, payments, null,
+                  pendingPayment.getOrganization());
               OBError result = executePayment.execute();
-              logger.logln(Utility.parseTranslation(bundle.getConnection(), vars, vars
-                  .getLanguage(), result.getMessage()));
+              logger.logln(Utility.parseTranslation(bundle.getConnection(), vars,
+                  vars.getLanguage(), result.getMessage()));
             }
             payments.clear();
           }

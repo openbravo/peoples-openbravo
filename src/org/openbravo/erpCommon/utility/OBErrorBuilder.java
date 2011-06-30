@@ -19,7 +19,6 @@
 
 package org.openbravo.erpCommon.utility;
 
-
 /**
  * Provides facility methods to build OB messages ({@link OBError}).
  * 

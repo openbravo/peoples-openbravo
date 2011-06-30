@@ -35,7 +35,7 @@ public class Version {
       try {
         return new Integer(version1[i]).compareTo(new Integer(version2[i]));
       } catch (NumberFormatException e) {
-        //Not possible to compare
+        // Not possible to compare
         return -1;
       }
     }

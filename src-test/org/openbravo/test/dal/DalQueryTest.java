@@ -199,9 +199,7 @@ public class DalQueryTest extends BaseTest {
     final Currency c = cs.get(0);
     // Call getValue and setValue directly to work around security checks on the description
     // that are not the objective of this test.
-    c
-        .setValue(Currency.PROPERTY_DESCRIPTION, c.getValue(Currency.PROPERTY_DESCRIPTION)
-            + " a test");
+    c.setValue(Currency.PROPERTY_DESCRIPTION, c.getValue(Currency.PROPERTY_DESCRIPTION) + " a test");
     try {
       OBDal.getInstance().save(c);
       fail("No security check");

@@ -261,8 +261,8 @@ public class EMail {
       if (g_messageHTML == null || g_messageHTML.length() == 0)
         g_smtpMsg.setContent(getMessageCRLF(), "text/plain; charset=UTF-8");
       else
-        g_smtpMsg.setDataHandler(new DataHandler(
-            new ByteArrayDataSource(g_messageHTML, "text/html; charset=UTF-8")));
+        g_smtpMsg.setDataHandler(new DataHandler(new ByteArrayDataSource(g_messageHTML,
+            "text/html; charset=UTF-8")));
 
       if (log4j.isDebugEnabled())
         log4j.debug("setContent(simple) " + getSubject());
@@ -273,7 +273,8 @@ public class EMail {
       if (g_messageHTML == null || g_messageHTML.length() == 0)
         mbp_1.setContent(getMessageCRLF(), "text/plain; charset=UTF-8");
       else
-        mbp_1.setDataHandler(new DataHandler(new ByteArrayDataSource(g_messageHTML, "text/html; charset=UTF-8")));
+        mbp_1.setDataHandler(new DataHandler(new ByteArrayDataSource(g_messageHTML,
+            "text/html; charset=UTF-8")));
 
       // Create Multipart and its parts to it
       Multipart mp = new MimeMultipart();
@@ -328,8 +329,8 @@ public class EMail {
 
   public void setMessageHTML(String subject, String message) {
     g_subject = subject;
-    StringBuffer sb = new StringBuffer("<html>\n").append("<head>\n").append("<title>\n").append(
-        subject + "\n").append("</title>\n");
+    StringBuffer sb = new StringBuffer("<html>\n").append("<head>\n").append("<title>\n")
+        .append(subject + "\n").append("</title>\n");
     sb.append("</head>\n");
     sb.append("<body>\n");
     sb.append("<H2>").append(subject).append("</H2>\n");

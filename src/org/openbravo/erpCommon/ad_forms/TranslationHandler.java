@@ -163,7 +163,7 @@ class TranslationHandler extends DefaultHandler {
         log4j.debug(m_sql.toString());
       // Execute
       int no = 0;
-      //  
+      //
       Statement st = null;
       try {
         st = DB.getStatement();

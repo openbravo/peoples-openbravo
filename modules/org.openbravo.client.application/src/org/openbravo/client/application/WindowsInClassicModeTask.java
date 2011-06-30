@@ -39,8 +39,8 @@ public class WindowsInClassicModeTask extends DalInitializingTask {
     OBQuery<Module> modules = OBDal.getInstance().createQuery(Module.class, "");
     for (Module module : modules.list()) {
       List<String> classicWindowMessages = new ArrayList<String>();
-      OBCriteria<Window> windowsOfModule = OBDao.getFilteredCriteria(Window.class, Restrictions.eq(
-          Window.PROPERTY_MODULE, module));
+      OBCriteria<Window> windowsOfModule = OBDao.getFilteredCriteria(Window.class,
+          Restrictions.eq(Window.PROPERTY_MODULE, module));
       for (Window window : windowsOfModule.list()) {
         ApplicationUtils.showWindowInClassicMode(window, classicWindowMessages);
       }

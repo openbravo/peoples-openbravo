@@ -289,12 +289,12 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServle
       try {
         data = ReportRefundSalesDimensionalAnalysesData.select(this, strCurrencyId, strTextShow[0],
             strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4], strTextShow[5],
-            strTextShow[6], Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
-                strOrg), Utility.getContext(this, vars, "#User_Client",
-                "ReportRefundSalesDimensionalAnalyses"), strDateFrom, DateTimeData.nDaysAfter(this,
-                strDateTo, "1"), strPartnerGroup, strcBpartnerId, strProductCategory,
-            strmProductId, strsalesrepId, strmWarehouseId, strDateFromRef, DateTimeData.nDaysAfter(
-                this, strDateToRef, "1"), strOrderby);
+            strTextShow[6],
+            Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg),
+            Utility.getContext(this, vars, "#User_Client", "ReportRefundSalesDimensionalAnalyses"),
+            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
+            strcBpartnerId, strProductCategory, strmProductId, strsalesrepId, strmWarehouseId,
+            strDateFromRef, DateTimeData.nDaysAfter(this, strDateToRef, "1"), strOrderby);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
@@ -302,11 +302,12 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServle
       try {
         data = ReportRefundSalesDimensionalAnalysesData.selectNoComparative(this, strCurrencyId,
             strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
-            strTextShow[5], strTextShow[6], Tree.getMembers(this, TreeData.getTreeOrg(this, vars
-                .getClient()), strOrg), Utility.getContext(this, vars, "#User_Client",
-                "ReportRefundSalesDimensionalAnalyses"), strDateFrom, DateTimeData.nDaysAfter(this,
-                strDateTo, "1"), strPartnerGroup, strcBpartnerId, strProductCategory,
-            strmProductId, strsalesrepId, strmWarehouseId, strOrderby);
+            strTextShow[5], strTextShow[6],
+            Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg),
+            Utility.getContext(this, vars, "#User_Client", "ReportRefundSalesDimensionalAnalyses"),
+            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
+            strcBpartnerId, strProductCategory, strmProductId, strsalesrepId, strmWarehouseId,
+            strOrderby);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
@@ -315,8 +316,9 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServle
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Otherwise, the report is launched
       if (log4j.isDebugEnabled())
         log4j.debug("*******************PDF" + strOrderby);

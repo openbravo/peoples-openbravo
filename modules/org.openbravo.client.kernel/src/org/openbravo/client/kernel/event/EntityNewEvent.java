@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.kernel.event;
 
-
 /**
  * The event object send out when an entity gets saved for the first time.
  * 

@@ -150,8 +150,8 @@ public class CreateFrom extends HttpSecureAppServlet {
       final String strKey = vars.getRequiredStringParameter("inpKey");
       final String strTableId = vars.getStringParameter("inpTableId");
       final String strProcessId = vars.getStringParameter("inpProcessId");
-      final String strPath = vars.getStringParameter("inpPath", strDireccion
-          + request.getServletPath());
+      final String strPath = vars.getStringParameter("inpPath",
+          strDireccion + request.getServletPath());
       final String strWindowId = vars.getStringParameter("inpWindowId");
       final String strTabName = vars.getStringParameter("inpTabName");
       final String strDateInvoiced = vars.getStringParameter("inpDateInvoiced");
@@ -307,9 +307,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_actionButton/CreateFrom_Bank").createXmlDocument();
 
-    final int numRows = Integer.valueOf(CreateFromBankData.countRows(this, Utility.getContext(this,
-        vars, "#User_Client", strWindowId), Utility
-        .getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
+    final int numRows = Integer.valueOf(CreateFromBankData.countRows(this,
+        Utility.getContext(this, vars, "#User_Client", strWindowId),
+        Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
         strPlannedDateFrom, strPlannedDateTo, strAmountFrom, strAmountTo, strIsReceipt, strBank,
         strOrg, strCharge, strDocumentNo, strStatus));
     final int maxRows = Integer.valueOf(vars.getSessionValue("#RECORDRANGEINFO"));
@@ -328,16 +328,16 @@ public class CreateFrom extends HttpSecureAppServlet {
     // different limit/offset syntax in oracle and postgresql
     if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
       data = CreateFromBankData.select(this, vars.getLanguage(), strStatementDate, "ROWNUM",
-          Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-              vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom,
-          strPlannedDateTo, strAmountFrom, strAmountTo, strIsReceipt, strBank, strOrg, strCharge,
-          strDocumentNo, strStatus, String.valueOf(maxRows), null);
+          Utility.getContext(this, vars, "#User_Client", strWindowId),
+          Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
+          strPlannedDateFrom, strPlannedDateTo, strAmountFrom, strAmountTo, strIsReceipt, strBank,
+          strOrg, strCharge, strDocumentNo, strStatus, String.valueOf(maxRows), null);
     } else {
-      data = CreateFromBankData.select(this, vars.getLanguage(), strStatementDate, "1", Utility
-          .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars,
-          "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom,
-          strPlannedDateTo, strAmountFrom, strAmountTo, strIsReceipt, strBank, strOrg, strCharge,
-          strDocumentNo, strStatus, null, String.valueOf(maxRows));
+      data = CreateFromBankData.select(this, vars.getLanguage(), strStatementDate, "1",
+          Utility.getContext(this, vars, "#User_Client", strWindowId),
+          Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
+          strPlannedDateFrom, strPlannedDateTo, strAmountFrom, strAmountTo, strIsReceipt, strBank,
+          strOrg, strCharge, strDocumentNo, strStatus, null, String.valueOf(maxRows));
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
@@ -363,9 +363,9 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "", Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "CreateFrom"), Utility.getContext(this,
-              vars, "#User_Client", "CreateFrom"), 0);
+          "All_Payment Rule", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "CreateFrom"), Utility.getContext(
+              this, vars, "#User_Client", "CreateFrom"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "CreateFrom", strPaymentRule);
       xmlDocument.setData("reportPaymentRule", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -376,13 +376,13 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("cbpartnerId_DES", CreateFromBankData.bpartner(this, strcBPartner));
     xmlDocument.setParameter("plannedDateFrom", strPlannedDateFrom);
-    xmlDocument.setParameter("plannedDateFromdisplayFormat", vars
-        .getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("plannedDateFromdisplayFormat",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument
         .setParameter("plannedDateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("plannedDateTo", strPlannedDateTo);
-    xmlDocument.setParameter("plannedDateTodisplayFormat", vars
-        .getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("plannedDateTodisplayFormat",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("plannedDateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("amountFrom", strAmountFrom);
     {
@@ -413,8 +413,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
-              .getContext(this, vars, "#User_Client", strWindowId), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strOrg);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -468,42 +468,42 @@ public class CreateFrom extends HttpSecureAppServlet {
       if (strShipment.equals("")) {
         if (vars.getLanguage().equals("en_US")) {
           if (isSOTrx.equals("Y"))
-            data = CreateFromInvoiceData.selectFromPOSOTrx(this, vars.getLanguage(), Utility
-                .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strPO);
+            data = CreateFromInvoiceData.selectFromPOSOTrx(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
           else
-            data = CreateFromInvoiceData.selectFromPO(this, vars.getLanguage(), Utility.getContext(
-                this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars,
-                "#User_Org", strWindowId), strPO);
+            data = CreateFromInvoiceData.selectFromPO(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
         } else {
           if (isSOTrx.equals("Y"))
-            data = CreateFromInvoiceData.selectFromPOTrlSOTrx(this, vars.getLanguage(), Utility
-                .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strPO);
+            data = CreateFromInvoiceData.selectFromPOTrlSOTrx(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
           else
-            data = CreateFromInvoiceData.selectFromPOTrl(this, vars.getLanguage(), Utility
-                .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strPO);
+            data = CreateFromInvoiceData.selectFromPOTrl(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
         }
       } else {
         if (vars.getLanguage().equals("en_US")) {
           if (isSOTrx.equals("Y"))
-            data = CreateFromInvoiceData.selectFromShipmentSOTrx(this, vars.getLanguage(), Utility
-                .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strShipment);
+            data = CreateFromInvoiceData.selectFromShipmentSOTrx(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment);
           else
-            data = CreateFromInvoiceData.selectFromShipment(this, vars.getLanguage(), Utility
-                .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strShipment);
+            data = CreateFromInvoiceData.selectFromShipment(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment);
         } else {
           if (isSOTrx.equals("Y"))
             data = CreateFromInvoiceData.selectFromShipmentTrlSOTrx(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(
-                    this, vars, "#User_Org", strWindowId), strShipment);
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment);
           else
-            data = CreateFromInvoiceData.selectFromShipmentTrl(this, vars.getLanguage(), Utility
-                .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strShipment);
+            data = CreateFromInvoiceData.selectFromShipmentTrl(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment);
         }
       }
     }
@@ -519,8 +519,8 @@ public class CreateFrom extends HttpSecureAppServlet {
     xmlDocument.setParameter("bpartnerLocation", strBPartnerLocation);
     xmlDocument.setParameter("pricelist", strPriceList);
     xmlDocument.setParameter("cBpartnerId", strBPartner);
-    xmlDocument.setParameter("BPartnerDescription", CreateFromShipmentData.selectBPartner(this,
-        strBPartner));
+    xmlDocument.setParameter("BPartnerDescription",
+        CreateFromShipmentData.selectBPartner(this, strBPartner));
     xmlDocument.setParameter("PurchaseOrder", strPO);
     xmlDocument.setParameter("Shipment", strShipment);
     xmlDocument.setParameter("pType", (!strShipment.equals("") ? "SHIPMENT"
@@ -533,23 +533,31 @@ public class CreateFrom extends HttpSecureAppServlet {
       xmlDocument.setData("reportPurchaseOrder", "liststructure", new CreateFromInvoiceData[0]);
     } else {
       if (isSOTrx.equals("Y")) {
-        xmlDocument.setData("reportShipmentReciept", "liststructure", CreateFromInvoiceData
-            .selectFromShipmentSOTrxCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
-                "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org",
-                strWindowId), strBPartner));
-        xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromInvoiceData
-            .selectFromPOSOTrxCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
-                "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org",
-                strWindowId), strBPartner));
+        xmlDocument.setData(
+            "reportShipmentReciept",
+            "liststructure",
+            CreateFromInvoiceData.selectFromShipmentSOTrxCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
+        xmlDocument.setData(
+            "reportPurchaseOrder",
+            "liststructure",
+            CreateFromInvoiceData.selectFromPOSOTrxCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
       } else {
-        xmlDocument.setData("reportShipmentReciept", "liststructure", CreateFromInvoiceData
-            .selectFromShipmentCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
-                "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org",
-                strWindowId), strBPartner));
-        xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromInvoiceData
-            .selectFromPOCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
-                "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org",
-                strWindowId), strBPartner));
+        xmlDocument.setData(
+            "reportShipmentReciept",
+            "liststructure",
+            CreateFromInvoiceData.selectFromShipmentCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
+        xmlDocument.setData(
+            "reportPurchaseOrder",
+            "liststructure",
+            CreateFromInvoiceData.selectFromPOCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
       }
     }
     {
@@ -605,43 +613,43 @@ public class CreateFrom extends HttpSecureAppServlet {
       if (strInvoice.equals("")) {
         if (vars.getLanguage().equals("en_US")) {
           if (isSOTrx.equals("Y")) {
-            data = CreateFromShipmentData.selectFromPOSOTrx(this, vars.getLanguage(), Utility
-                .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strPO);
+            data = CreateFromShipmentData.selectFromPOSOTrx(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
           } else {
-            data = CreateFromShipmentData.selectFromPO(this, vars.getLanguage(), Utility
-                .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strPO);
+            data = CreateFromShipmentData.selectFromPO(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
           }
         } else {
           if (isSOTrx.equals("Y"))
-            data = CreateFromShipmentData.selectFromPOTrlSOTrx(this, vars.getLanguage(), Utility
-                .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strPO);
+            data = CreateFromShipmentData.selectFromPOTrlSOTrx(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
           else
-            data = CreateFromShipmentData.selectFromPOTrl(this, vars.getLanguage(), Utility
-                .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strPO);
+            data = CreateFromShipmentData.selectFromPOTrl(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
         }
       } else {
         if (vars.getLanguage().equals("en_US")) {
           if (isSOTrx.equals("Y"))
-            data = CreateFromShipmentData.selectFromInvoiceTrx(this, vars.getLanguage(), Utility
-                .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strInvoice);
+            data = CreateFromShipmentData.selectFromInvoiceTrx(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strInvoice);
           else
-            data = CreateFromShipmentData.selectFromInvoice(this, vars.getLanguage(), Utility
-                .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strInvoice);
+            data = CreateFromShipmentData.selectFromInvoice(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strInvoice);
         } else {
           if (isSOTrx.equals("Y"))
-            data = CreateFromShipmentData.selectFromInvoiceTrx(this, vars.getLanguage(), Utility
-                .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strInvoice);
+            data = CreateFromShipmentData.selectFromInvoiceTrx(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strInvoice);
           else
-            data = CreateFromShipmentData.selectFromInvoiceTrl(this, vars.getLanguage(), Utility
-                .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strInvoice);
+            data = CreateFromShipmentData.selectFromInvoiceTrl(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strInvoice);
         }
       }
     }
@@ -654,12 +662,12 @@ public class CreateFrom extends HttpSecureAppServlet {
     xmlDocument.setParameter("tableId", strTableId);
     xmlDocument.setParameter("processId", strProcessId);
     xmlDocument.setParameter("cBpartnerId", strBPartner);
-    xmlDocument.setParameter("BPartnerDescription", CreateFromShipmentData.selectBPartner(this,
-        strBPartner));
+    xmlDocument.setParameter("BPartnerDescription",
+        CreateFromShipmentData.selectBPartner(this, strBPartner));
     xmlDocument.setParameter("PurchaseOrder", strPO);
     xmlDocument.setParameter("M_Locator_ID", strLocator);
-    xmlDocument.setParameter("M_Locator_ID_DES", CreateFromShipmentData.selectLocator(this,
-        strLocator));
+    xmlDocument.setParameter("M_Locator_ID_DES",
+        CreateFromShipmentData.selectLocator(this, strLocator));
     xmlDocument.setParameter("Invoice", strInvoice);
     xmlDocument.setParameter("pType", (!strInvoice.equals("") ? "INVOICE"
         : (!strPO.equals("")) ? "PO" : ""));
@@ -671,23 +679,31 @@ public class CreateFrom extends HttpSecureAppServlet {
       xmlDocument.setData("reportPurchaseOrder", "liststructure", new CreateFromShipmentData[0]);
     } else {
       if (isSOTrx.equals("Y")) {
-        xmlDocument.setData("reportInvoice", "liststructure", CreateFromShipmentData
-            .selectFromInvoiceTrxCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
-                "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org",
-                strWindowId), strBPartner));
-        xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromShipmentData
-            .selectFromPOSOTrxCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
-                "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org",
-                strWindowId), strBPartner));
+        xmlDocument.setData(
+            "reportInvoice",
+            "liststructure",
+            CreateFromShipmentData.selectFromInvoiceTrxCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
+        xmlDocument.setData(
+            "reportPurchaseOrder",
+            "liststructure",
+            CreateFromShipmentData.selectFromPOSOTrxCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
       } else {
-        xmlDocument.setData("reportInvoice", "liststructure", CreateFromShipmentData
-            .selectFromInvoiceCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
-                "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org",
-                strWindowId), strBPartner));
-        xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromShipmentData
-            .selectFromPOCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
-                "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org",
-                strWindowId), strBPartner));
+        xmlDocument.setData(
+            "reportInvoice",
+            "liststructure",
+            CreateFromShipmentData.selectFromInvoiceCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
+        xmlDocument.setData(
+            "reportPurchaseOrder",
+            "liststructure",
+            CreateFromShipmentData.selectFromPOCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
       }
     }
 
@@ -749,39 +765,46 @@ public class CreateFrom extends HttpSecureAppServlet {
         // CreateFrom
         if (isSOTrx.equals("Y")) {
           strArray = Utility.arrayEntradaSimple("arrDatos", new CreateFromShipmentData[0]);
-          strArray2 = Utility.arrayEntradaSimple("arrDatos2", CreateFromShipmentData
-              .selectFromPOSOTrxCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
-                  "#User_Client", strWindowId), Utility.getContext(this, vars,
-                  "#AccessibleOrgTree", strWindowId), strBPartner));
+          strArray2 = Utility.arrayEntradaSimple(
+              "arrDatos2",
+              CreateFromShipmentData.selectFromPOSOTrxCombo(this, vars.getLanguage(),
+                  Utility.getContext(this, vars, "#User_Client", strWindowId),
+                  Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
         } else {
-          strArray = Utility.arrayEntradaSimple("arrDatos", CreateFromShipmentData
-              .selectFromInvoiceCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
-                  "#User_Client", strWindowId), Utility.getContext(this, vars,
-                  "#AccessibleOrgTree", strWindowId), strBPartner));
-          strArray2 = Utility.arrayEntradaSimple("arrDatos2", CreateFromShipmentData
-              .selectFromPOCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
-                  "#User_Client", strWindowId), Utility.getContext(this, vars,
-                  "#AccessibleOrgTree", strWindowId), strBPartner));
+          strArray = Utility.arrayEntradaSimple(
+              "arrDatos",
+              CreateFromShipmentData.selectFromInvoiceCombo(this, vars.getLanguage(),
+                  Utility.getContext(this, vars, "#User_Client", strWindowId),
+                  Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
+          strArray2 = Utility.arrayEntradaSimple(
+              "arrDatos2",
+              CreateFromShipmentData.selectFromPOCombo(this, vars.getLanguage(),
+                  Utility.getContext(this, vars, "#User_Client", strWindowId),
+                  Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
         }
       } else { // Loading the Combos in the Invoice's CreateFrom
         if (isSOTrx.equals("Y")) {
-          strArray = Utility.arrayEntradaSimple("arrDatos", CreateFromInvoiceData
-              .selectFromShipmentSOTrxCombo(this, vars.getLanguage(), Utility.getContext(this,
-                  vars, "#User_Client", strWindowId), Utility.getContext(this, vars,
-                  "#AccessibleOrgTree", strWindowId), strBPartner));
-          strArray2 = Utility.arrayEntradaSimple("arrDatos2", CreateFromInvoiceData
-              .selectFromPOSOTrxCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
-                  "#User_Client", strWindowId), Utility.getContext(this, vars,
-                  "#AccessibleOrgTree", strWindowId), strBPartner));
+          strArray = Utility.arrayEntradaSimple(
+              "arrDatos",
+              CreateFromInvoiceData.selectFromShipmentSOTrxCombo(this, vars.getLanguage(),
+                  Utility.getContext(this, vars, "#User_Client", strWindowId),
+                  Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
+          strArray2 = Utility.arrayEntradaSimple(
+              "arrDatos2",
+              CreateFromInvoiceData.selectFromPOSOTrxCombo(this, vars.getLanguage(),
+                  Utility.getContext(this, vars, "#User_Client", strWindowId),
+                  Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
         } else {
-          strArray = Utility.arrayEntradaSimple("arrDatos", CreateFromInvoiceData
-              .selectFromShipmentCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
-                  "#User_Client", strWindowId), Utility.getContext(this, vars,
-                  "#AccessibleOrgTree", strWindowId), strBPartner));
-          strArray2 = Utility.arrayEntradaSimple("arrDatos2", CreateFromInvoiceData
-              .selectFromPOCombo(this, vars.getLanguage(), Utility.getContext(this, vars,
-                  "#User_Client", strWindowId), Utility.getContext(this, vars,
-                  "#AccessibleOrgTree", strWindowId), strBPartner));
+          strArray = Utility.arrayEntradaSimple(
+              "arrDatos",
+              CreateFromInvoiceData.selectFromShipmentCombo(this, vars.getLanguage(),
+                  Utility.getContext(this, vars, "#User_Client", strWindowId),
+                  Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
+          strArray2 = Utility.arrayEntradaSimple(
+              "arrDatos2",
+              CreateFromInvoiceData.selectFromPOCombo(this, vars.getLanguage(),
+                  Utility.getContext(this, vars, "#User_Client", strWindowId),
+                  Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
         }
       }
     }
@@ -868,10 +891,11 @@ public class CreateFrom extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("strIsReceipt: " + strIsReceipt);
 
-      final int numRows = Integer.valueOf(CreateFromSettlementData.countRows(this, Utility
-          .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars,
-          "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom,
-          strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo, strTotalAmount, strOrg));
+      final int numRows = Integer.valueOf(CreateFromSettlementData.countRows(this,
+          Utility.getContext(this, vars, "#User_Client", strWindowId),
+          Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
+          strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo,
+          strTotalAmount, strOrg));
       final int maxRows = Integer.valueOf(vars.getSessionValue("#RECORDRANGEINFO"));
 
       if (numRows > maxRows) {
@@ -887,14 +911,14 @@ public class CreateFrom extends HttpSecureAppServlet {
 
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         data = CreateFromSettlementData.select(this, vars.getLanguage(), strMarcarTodos, "ROWNUM",
-            strAutoCalcSelect, Utility.getContext(this, vars, "#User_Client", strWindowId), Utility
-                .getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
+            strAutoCalcSelect, Utility.getContext(this, vars, "#User_Client", strWindowId),
+            Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
             strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo,
             strTotalAmount, strOrg, String.valueOf(maxRows), null);
       } else {
         data = CreateFromSettlementData.select(this, vars.getLanguage(), strMarcarTodos, "1",
-            strAutoCalcSelect, Utility.getContext(this, vars, "#User_Client", strWindowId), Utility
-                .getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
+            strAutoCalcSelect, Utility.getContext(this, vars, "#User_Client", strWindowId),
+            Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
             strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo,
             strTotalAmount, strOrg, null, String.valueOf(maxRows));
       }
@@ -934,8 +958,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
-              .getContext(this, vars, "#User_Client", strWindowId), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strOrg);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -951,17 +975,17 @@ public class CreateFrom extends HttpSecureAppServlet {
       log4j.debug("strPlannedDateTo: " + strPlannedDateTo);
 
     xmlDocument.setParameter("inpcBpartnerId", strcBPartner);
-    xmlDocument.setParameter("inpBpartnerId_DES", CreateFromSettlementData.bpartner(this,
-        strcBPartner));
+    xmlDocument.setParameter("inpBpartnerId_DES",
+        CreateFromSettlementData.bpartner(this, strcBPartner));
 
-    xmlDocument.setParameter("plannedDateFromdisplayFormat", vars
-        .getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("plannedDateFromdisplayFormat",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument
         .setParameter("plannedDateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("plannedDateFromValue", strPlannedDateFrom);
 
-    xmlDocument.setParameter("plannedDateTodisplayFormat", vars
-        .getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("plannedDateTodisplayFormat",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("plannedDateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("plannedDateToValue", strPlannedDateTo);
 
@@ -1022,11 +1046,11 @@ public class CreateFrom extends HttpSecureAppServlet {
         strIsReceipt = isSOTrx;
       }
     } else {
-      final int numRows = Integer.valueOf(CreateFromDPManagementData.countRows(this, Utility
-          .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars,
-          "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom,
-          strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo, strTotalAmount,
-          strStatusFrom, strOrg));
+      final int numRows = Integer.valueOf(CreateFromDPManagementData.countRows(this,
+          Utility.getContext(this, vars, "#User_Client", strWindowId),
+          Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
+          strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo,
+          strTotalAmount, strStatusFrom, strOrg));
       final int maxRows = Integer.valueOf(vars.getSessionValue("#RECORDRANGEINFO"));
 
       if (numRows > maxRows) {
@@ -1041,16 +1065,16 @@ public class CreateFrom extends HttpSecureAppServlet {
       // different limit/offset syntax in oracle and postgresql
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         data = CreateFromDPManagementData.select(this, vars.getLanguage(), "ROWNUM",
-            strMarcarTodos, Utility.getContext(this, vars, "#User_Client", strWindowId), Utility
-                .getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
+            strMarcarTodos, Utility.getContext(this, vars, "#User_Client", strWindowId),
+            Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
             strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo,
             strTotalAmount, strStatusFrom, strOrg, String.valueOf(maxRows), null);
       } else {
         data = CreateFromDPManagementData.select(this, vars.getLanguage(), "1", strMarcarTodos,
-            Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom,
-            strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo, strTotalAmount,
-            strStatusFrom, strOrg, null, String.valueOf(maxRows));
+            Utility.getContext(this, vars, "#User_Client", strWindowId),
+            Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
+            strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo,
+            strTotalAmount, strStatusFrom, strOrg, null, String.valueOf(maxRows));
       }
 
       if (log4j.isDebugEnabled())
@@ -1098,8 +1122,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
-              .getContext(this, vars, "#User_Client", strWindowId), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strOrg);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -1130,18 +1154,18 @@ public class CreateFrom extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("cbpartnerId", strcBPartner);
-    xmlDocument.setParameter("cbpartnerId_DES", CreateFromDPManagementData.bpartner(this,
-        strcBPartner));
+    xmlDocument.setParameter("cbpartnerId_DES",
+        CreateFromDPManagementData.bpartner(this, strcBPartner));
     xmlDocument.setParameter("plannedDateFrom", strPlannedDateFrom);
     xmlDocument.setParameter("plannedDateTo", strPlannedDateTo);
 
-    xmlDocument.setParameter("plannedDateFromdisplayFormat", vars
-        .getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("plannedDateFromdisplayFormat",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument
         .setParameter("plannedDateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
 
-    xmlDocument.setParameter("plannedDateTodisplayFormat", vars
-        .getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("plannedDateTodisplayFormat",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("plannedDateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
 
     xmlDocument.setParameter("isreceiptPago", strIsReceipt);
@@ -1191,11 +1215,11 @@ public class CreateFrom extends HttpSecureAppServlet {
       strcBPartner = strBPartner;
       strIsReceipt = isSOTrx;
     } else {
-      final int numRows = Integer.valueOf(CreateFromCRemittanceData.countRows(this, Utility
-          .getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars,
-          "#User_Org", strWindowId), strOrgFamily, strcBPartner, strPaymentRule,
-          strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo,
-          strTotalAmount, strStatusFrom));
+      final int numRows = Integer.valueOf(CreateFromCRemittanceData.countRows(this,
+          Utility.getContext(this, vars, "#User_Client", strWindowId),
+          Utility.getContext(this, vars, "#User_Org", strWindowId), strOrgFamily, strcBPartner,
+          strPaymentRule, strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom,
+          strAmountTo, strTotalAmount, strStatusFrom));
       final int maxRows = Integer.valueOf(vars.getSessionValue("#RECORDRANGEINFO"));
 
       if (numRows > maxRows) {
@@ -1211,16 +1235,16 @@ public class CreateFrom extends HttpSecureAppServlet {
 
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         data = CreateFromCRemittanceData.select(this, vars.getLanguage(), strMarcarTodos, "ROWNUM",
-            Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strOrgFamily, strcBPartner, strPaymentRule,
-            strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo,
-            strTotalAmount, strStatusFrom, String.valueOf(maxRows), null);
+            Utility.getContext(this, vars, "#User_Client", strWindowId),
+            Utility.getContext(this, vars, "#User_Org", strWindowId), strOrgFamily, strcBPartner,
+            strPaymentRule, strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom,
+            strAmountTo, strTotalAmount, strStatusFrom, String.valueOf(maxRows), null);
       } else {
         data = CreateFromCRemittanceData.select(this, vars.getLanguage(), strMarcarTodos, "1",
-            Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this,
-                vars, "#User_Org", strWindowId), strOrgFamily, strcBPartner, strPaymentRule,
-            strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo,
-            strTotalAmount, strStatusFrom, null, String.valueOf(maxRows));
+            Utility.getContext(this, vars, "#User_Client", strWindowId),
+            Utility.getContext(this, vars, "#User_Org", strWindowId), strOrgFamily, strcBPartner,
+            strPaymentRule, strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom,
+            strAmountTo, strTotalAmount, strStatusFrom, null, String.valueOf(maxRows));
       }
     }
 
@@ -1245,13 +1269,13 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("paymentRule", strPaymentRule);
 
-    xmlDocument.setParameter("plannedDateFromdisplayFormat", vars
-        .getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("plannedDateFromdisplayFormat",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument
         .setParameter("plannedDateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
 
-    xmlDocument.setParameter("plannedDateTodisplayFormat", vars
-        .getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("plannedDateTodisplayFormat",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("plannedDateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
 
     try {
@@ -1268,8 +1292,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
-              .getContext(this, vars, "#User_Client", strWindowId), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strOrg);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -1289,8 +1313,8 @@ public class CreateFrom extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("cbpartnerId", strcBPartner);
-    xmlDocument.setParameter("cbpartnerId_DES", CreateFromDPManagementData.bpartner(this,
-        strcBPartner));
+    xmlDocument.setParameter("cbpartnerId_DES",
+        CreateFromDPManagementData.bpartner(this, strcBPartner));
     xmlDocument.setParameter("plannedDateFrom", strPlannedDateFrom);
     xmlDocument.setParameter("plannedDateTo", strPlannedDateTo);
     xmlDocument.setParameter("isreceiptPago", strIsReceipt);
@@ -1698,9 +1722,10 @@ public class CreateFrom extends HttpSecureAppServlet {
                   CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
                       data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
                       data[i].cUomId, (qtyIsNegative ? "-" + strConversion : strConversion),
-                      data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn,
-                          this, data[i].cInvoicelineId), (qtyIsNegative ? "-" + total : total),
-                      data[i].mProductUomId, strmAttributesetinstanceId);
+                      data[i].cOrderlineId, strLocator,
+                      CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
+                      (qtyIsNegative ? "-" + total : total), data[i].mProductUomId,
+                      strmAttributesetinstanceId);
                   if (!strInvoice.equals(""))
                     CreateFromShipmentData.updateInvoice(conn, this, strSequence,
                         data[i].cInvoicelineId);
@@ -1708,8 +1733,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                     CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence,
                         data[i].cOrderlineId);
                 } catch (final ServletException ex) {
-                  myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex
-                      .getMessage());
+                  myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                      ex.getMessage());
                   releaseRollbackConnection(conn);
                   return myMessage;
                 }
@@ -1879,9 +1904,10 @@ public class CreateFrom extends HttpSecureAppServlet {
                   CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
                       data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
                       data[i].cUomId, (qtyIsNegative ? "-" + strConversion : strConversion),
-                      data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn,
-                          this, data[i].cInvoicelineId), (qtyIsNegative ? "-" + total : total),
-                      data[i].mProductUomId, data[i].mAttributesetinstanceId);
+                      data[i].cOrderlineId, strLocator,
+                      CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
+                      (qtyIsNegative ? "-" + total : total), data[i].mProductUomId,
+                      data[i].mAttributesetinstanceId);
                   if (!strInvoice.equals(""))
                     CreateFromShipmentData.updateInvoice(conn, this, strSequence,
                         data[i].cInvoicelineId);
@@ -1889,8 +1915,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                     CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence,
                         data[i].cOrderlineId);
                 } catch (final ServletException ex) {
-                  myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex
-                      .getMessage());
+                  myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                      ex.getMessage());
                   releaseRollbackConnection(conn);
                   return myMessage;
                 }

@@ -79,9 +79,9 @@ public class Invoice extends HttpSecureAppServlet {
         vars.setSessionValue("Invoice.isSOTrx", (strSOTrx.equals("") ? "N" : strSOTrx));
       }
       vars.setSessionValue("Invoice.name", strKeyValue + "%");
-      InvoiceData[] data = InvoiceData.selectKey(this, vars.getSqlDateFormat(), Utility.getContext(
-          this, vars, "#User_Client", "Invoice"), Utility.getSelectorOrgs(this, vars, strOrg),
-          strSOTrx, strKeyValue + "%");
+      InvoiceData[] data = InvoiceData.selectKey(this, vars.getSqlDateFormat(),
+          Utility.getContext(this, vars, "#User_Client", "Invoice"),
+          Utility.getSelectorOrgs(this, vars, strOrg), strSOTrx, strKeyValue + "%");
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
       } else
@@ -293,10 +293,11 @@ public class Invoice extends HttpSecureAppServlet {
           } else {
             pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
           }
-          strNumRows = InvoiceData.countRows(this, rownum, Utility.getContext(this, vars,
-              "#User_Client", "Invoice"), Utility.getSelectorOrgs(this, vars, strOrg), strName,
-              strDescription, strBpartnerId, strOrder, strDateFrom, DateTimeData.nDaysAfter(this,
-                  strFechaTo, "1"), strCal1, strCalc2, strSOTrx, pgLimit, oraLimit1, oraLimit2);
+          strNumRows = InvoiceData.countRows(this, rownum,
+              Utility.getContext(this, vars, "#User_Client", "Invoice"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId,
+              strOrder, strDateFrom, DateTimeData.nDaysAfter(this, strFechaTo, "1"), strCal1,
+              strCalc2, strSOTrx, pgLimit, oraLimit1, oraLimit2);
           vars.setSessionValue("Invoice.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("Invoice.numrows");
@@ -305,18 +306,18 @@ public class Invoice extends HttpSecureAppServlet {
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
           String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          data = InvoiceData.select(this, "ROWNUM", vars.getSqlDateFormat(), Utility.getContext(
-              this, vars, "#User_Client", "Invoice"), Utility.getSelectorOrgs(this, vars, strOrg),
-              strName, strDescription, strBpartnerId, strOrder, strDateFrom, DateTimeData
-                  .nDaysAfter(this, strFechaTo, "1"), strCal1, strCalc2, strSOTrx, strOrderBy,
-              oraLimit, "");
+          data = InvoiceData.select(this, "ROWNUM", vars.getSqlDateFormat(),
+              Utility.getContext(this, vars, "#User_Client", "Invoice"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId,
+              strOrder, strDateFrom, DateTimeData.nDaysAfter(this, strFechaTo, "1"), strCal1,
+              strCalc2, strSOTrx, strOrderBy, oraLimit, "");
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
-          data = InvoiceData.select(this, "1", vars.getSqlDateFormat(), Utility.getContext(this,
-              vars, "#User_Client", "Invoice"), Utility.getSelectorOrgs(this, vars, strOrg),
-              strName, strDescription, strBpartnerId, strOrder, strDateFrom, DateTimeData
-                  .nDaysAfter(this, strFechaTo, "1"), strCal1, strCalc2, strSOTrx, strOrderBy, "",
-              pgLimit);
+          data = InvoiceData.select(this, "1", vars.getSqlDateFormat(),
+              Utility.getContext(this, vars, "#User_Client", "Invoice"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId,
+              strOrder, strDateFrom, DateTimeData.nDaysAfter(this, strFechaTo, "1"), strCal1,
+              strCalc2, strSOTrx, strOrderBy, "", pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
@@ -361,8 +362,8 @@ public class Invoice extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
-        "\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+        .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -377,11 +378,11 @@ public class Invoice extends HttpSecureAppServlet {
           } else if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",
-                "").replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll(
-                "<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;").replaceAll("<br>",
-                    "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
+                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
+                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
+                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");

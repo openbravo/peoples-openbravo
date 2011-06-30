@@ -164,8 +164,8 @@ public class TestHeartbeat extends HttpSecureAppServlet {
           sysInfo.setTestHeartbeat("N");
           OBDal.getInstance().save(sysInfo);
 
-          String msg = Utility.messageBD(connectionProvider, "HB_INTERNAL_ERROR", vars
-              .getLanguage());
+          String msg = Utility.messageBD(connectionProvider, "HB_INTERNAL_ERROR",
+              vars.getLanguage());
           // Extracting the last line from the log
           String log = result.getLog().substring(0, result.getLog().lastIndexOf("\n"));
           log = log.substring(log.lastIndexOf("\n"));

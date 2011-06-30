@@ -73,9 +73,8 @@ public class ExpressionsTest extends BaseTest {
         + "else if(OB.isSalesTransaction()==true){'e.customer = true';}"
         + "else{'e.vendor = true';}");
 
-    expr
-        .put("Complex expression from Java",
-            "OB.getFilterExpression('org.openbravo.userinterface.selectors.test.SampleFilterExpression');");
+    expr.put("Complex expression from Java",
+        "OB.getFilterExpression('org.openbravo.userinterface.selectors.test.SampleFilterExpression');");
 
   }
 

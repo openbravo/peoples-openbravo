@@ -75,8 +75,8 @@ public class DeleteClient extends HttpSecureAppServlet {
         myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
             "@DeleteClient_SelectClient@"));
       } else {
-        PInstanceProcessData.insertPInstance(this, pinstance, "800147", strClient, "N", vars
-            .getUser(), vars.getClient(), vars.getOrg());
+        PInstanceProcessData.insertPInstance(this, pinstance, "800147", strClient, "N",
+            vars.getUser(), vars.getClient(), vars.getOrg());
         PInstanceProcessData.insertPInstanceParam(this, pinstance, "10", "AD_Client_ID", strClient,
             vars.getClient(), vars.getOrg(), vars.getUser());
 
@@ -129,10 +129,12 @@ public class DeleteClient extends HttpSecureAppServlet {
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("alertMsg", "ALERT_MSG=\""
-        + Utility.messageBD(this, "GoingToDeleteClient", vars.getLanguage()) + "\";");
-    xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars
-        .getLanguage()));
+    xmlDocument
+        .setParameter("alertMsg",
+            "ALERT_MSG=\"" + Utility.messageBD(this, "GoingToDeleteClient", vars.getLanguage())
+                + "\";");
+    xmlDocument.setParameter("question",
+        Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("description", strDescription);
     xmlDocument.setParameter("help", strHelp);
@@ -162,8 +164,8 @@ public class DeleteClient extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
-    xmlDocument.setData("reportClientId", "liststructure", ClientComboData
-        .selectAllClientsNoSystem1(this));
+    xmlDocument.setData("reportClientId", "liststructure",
+        ClientComboData.selectAllClientsNoSystem1(this));
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

@@ -121,8 +121,9 @@ public class ReportShipper extends HttpSecureAppServlet {
       // If a conversion rate is missing for a certain transaction, an error
       // message window pops-up.
       if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-        advise(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars
-            .getLanguage()), strConvRateErrorMsg);
+        advise(request, response, "ERROR",
+            Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+            strConvRateErrorMsg);
       } else { // Otherwise, the report is launched
         dataLine = new ReportShipperData[0][0];
         if (data != null && data.length > 0) {
@@ -190,8 +191,8 @@ public class ReportShipper extends HttpSecureAppServlet {
       xmlDocument.setParameter("paramShipper", strShipper);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Shipper_ID",
-            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportShipper"), Utility
-                .getContext(this, vars, "#User_Client", "ReportShipper"), 0);
+            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportShipper"),
+            Utility.getContext(this, vars, "#User_Client", "ReportShipper"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportShipper", strShipper);
         xmlDocument.setData("reportShipper", "liststructure", comboTableData.select(false));
         comboTableData = null;
@@ -202,8 +203,8 @@ public class ReportShipper extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportShipper"), Utility
-                .getContext(this, vars, "#User_Client", "ReportShipper"), 0);
+            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportShipper"),
+            Utility.getContext(this, vars, "#User_Client", "ReportShipper"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportShipper", strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
         comboTableData = null;

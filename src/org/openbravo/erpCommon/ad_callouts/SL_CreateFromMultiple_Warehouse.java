@@ -70,8 +70,8 @@ public class SL_CreateFromMultiple_Warehouse extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_CreateFromMultiple_Warehouse';\n\n");
     resultado.append("var respuesta = new Array(");
 
-    LocatorComboData[] data = LocatorComboData.select(this, vars.getLanguage(), strWarehouse, vars
-        .getClient());
+    LocatorComboData[] data = LocatorComboData.select(this, vars.getLanguage(), strWarehouse,
+        vars.getClient());
     resultado.append("new Array(\"inpmLocatorX\", ");
     if (data != null && data.length > 0) {
       resultado.append("new Array(");

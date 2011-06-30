@@ -15,7 +15,7 @@
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_forms;
 
 import java.sql.Connection;

@@ -19,7 +19,6 @@
 
 package org.openbravo.base.model.domaintype;
 
-
 /**
  * The type of column in the following cases:
  * <ul>

@@ -100,8 +100,7 @@ public class Report {
 
     default:
       throw new ReportingException(Utility.messageBD(connectionProvider, "UnknownDocumentType",
-          strLanguage)
-          + _DocumentType);
+          strLanguage) + _DocumentType);
     }
 
     multiReports = multiReport;
@@ -121,8 +120,7 @@ public class Report {
       _targetDirectory = null;
     } else
       throw new ReportingException(Utility.messageBD(connectionProvider, "NoDataReport",
-          strLanguage)
-          + documentId);
+          strLanguage) + documentId);
 
   }
 

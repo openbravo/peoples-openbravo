@@ -82,8 +82,8 @@ public class FIN_Utility {
     if (strDate.equals(""))
       return null;
     try {
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-          "dateFormat.java");
+      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
       return (outputFormat.parse(strDate));
     } catch (ParseException e) {
@@ -111,8 +111,8 @@ public class FIN_Utility {
     if (dateTime.equals(""))
       return null;
     try {
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-          "dateTimeFormat.java");
+      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("dateTimeFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
       return (outputFormat.parse(dateTime));
     } catch (ParseException e) {
@@ -192,8 +192,8 @@ public class FIN_Utility {
 
     // FieldProvider[] data = new FieldProviderFactory[selectedScheduledPayments.size()];
     FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(shownScheduledPayments);
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-        "dateFormat.java");
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
     // set in administrator mode to be able to access FIN_PaymentSchedule entity
     OBContext.setAdminMode();
@@ -202,8 +202,8 @@ public class FIN_Utility {
       for (int i = 0; i < data.length; i++) {
         FieldProviderFactory.setField(data[i], "finSelectedPaymentId", (selectedScheduledPayments
             .contains(FIN_PaymentSchedules[i])) ? FIN_PaymentSchedules[i].getId() : "");
-        FieldProviderFactory.setField(data[i], "finScheduledPaymentId", FIN_PaymentSchedules[i]
-            .getId());
+        FieldProviderFactory.setField(data[i], "finScheduledPaymentId",
+            FIN_PaymentSchedules[i].getId());
         if (FIN_PaymentSchedules[i].getOrder() != null)
           FieldProviderFactory.setField(data[i], "orderNr", FIN_PaymentSchedules[i].getOrder()
               .getDocumentNo());
@@ -213,12 +213,12 @@ public class FIN_Utility {
           FieldProviderFactory.setField(data[i], "invoicedAmount", FIN_PaymentSchedules[i]
               .getInvoice().getGrandTotalAmount().toString());
         }
-        FieldProviderFactory.setField(data[i], "dueDate", dateFormater.format(
-            FIN_PaymentSchedules[i].getDueDate()).toString());
+        FieldProviderFactory.setField(data[i], "dueDate",
+            dateFormater.format(FIN_PaymentSchedules[i].getDueDate()).toString());
         FieldProviderFactory.setField(data[i], "expectedAmount", FIN_PaymentSchedules[i]
             .getAmount().toString());
-        String strPaymentAmt = vars.getStringParameter("inpPaymentAmount"
-            + FIN_PaymentSchedules[i].getId(), "");
+        String strPaymentAmt = vars.getStringParameter(
+            "inpPaymentAmount" + FIN_PaymentSchedules[i].getId(), "");
         FieldProviderFactory.setField(data[i], "paymentAmount", strPaymentAmt);
         FieldProviderFactory.setField(data[i], "rownum", String.valueOf(i));
 
@@ -304,9 +304,10 @@ public class FIN_Utility {
     obcDoc.setFilterOnReadableClients(false);
     obcDoc.setFilterOnReadableOrganization(false);
 
-    obcDoc.add(Restrictions
-        .in("organization.id", OBContext.getOBContext().getOrganizationStructureProvider(
-            org.getClient().getId()).getParentTree(org.getId(), true)));
+    obcDoc
+        .add(Restrictions.in("organization.id",
+            OBContext.getOBContext().getOrganizationStructureProvider(org.getClient().getId())
+                .getParentTree(org.getId(), true)));
     obcDoc.add(Restrictions.eq(DocumentType.PROPERTY_DOCUMENTCATEGORY, docCategory));
     obcDoc.addOrderBy(DocumentType.PROPERTY_DEFAULT, false);
     obcDoc.addOrderBy(DocumentType.PROPERTY_ID, false);
@@ -570,13 +571,13 @@ public class FIN_Utility {
   }
 
   public static boolean isAutomaticDepositWithdrawn(FIN_Payment payment) {
-    return isAutomaticDepositWithdrawn(payment.getAccount(), payment.getPaymentMethod(), payment
-        .isReceipt());
+    return isAutomaticDepositWithdrawn(payment.getAccount(), payment.getPaymentMethod(),
+        payment.isReceipt());
   }
 
   public static boolean isAutomaticDepositWithdrawn(FIN_PaymentProposal paymentProposal) {
-    return isAutomaticDepositWithdrawn(paymentProposal.getAccount(), paymentProposal
-        .getPaymentMethod(), paymentProposal.isReceipt());
+    return isAutomaticDepositWithdrawn(paymentProposal.getAccount(),
+        paymentProposal.getPaymentMethod(), paymentProposal.isReceipt());
   }
 
   /**
@@ -771,8 +772,8 @@ public class FIN_Utility {
     if (convertedCurrency != null && !currency.equals(convertedCurrency)
         && amt.compareTo(BigDecimal.ZERO) != 0) {
       amountFormatter.setMaximumFractionDigits(convertedCurrency.getStandardPrecision().intValue());
-      out.append(" (").append(amountFormatter.format(convertedAmt)).append(" ").append(
-          convertedCurrency.getISOCode()).append(")");
+      out.append(" (").append(amountFormatter.format(convertedAmt)).append(" ")
+          .append(convertedCurrency.getISOCode()).append(")");
     }
 
     return out.toString();
@@ -811,11 +812,14 @@ public class FIN_Utility {
         if ("0".equals(org.getId())) {
           conversionRate = null;
         } else {
-          return getConversionRate(fromCurrency, toCurrency, conversionDate, OBDal.getInstance()
-              .get(
+          return getConversionRate(
+              fromCurrency,
+              toCurrency,
+              conversionDate,
+              OBDal.getInstance().get(
                   Organization.class,
-                  OBContext.getOBContext().getOrganizationStructureProvider().getParentOrg(
-                      org.getId())));
+                  OBContext.getOBContext().getOrganizationStructureProvider()
+                      .getParentOrg(org.getId())));
         }
       }
     } catch (Exception e) {
@@ -832,8 +836,8 @@ public class FIN_Utility {
       String formatOutput = vars.getSessionValue("#FormatOutput|generalQtyEdition", "#0.######");
       String decimalSeparator = ".";
       if (formatOutput.contains(decimalSeparator)) {
-        formatOutput = formatOutput.substring(formatOutput.indexOf(decimalSeparator), formatOutput
-            .length());
+        formatOutput = formatOutput.substring(formatOutput.indexOf(decimalSeparator),
+            formatOutput.length());
         return formatOutput.length() - decimalSeparator.length();
       } else {
         return 0;

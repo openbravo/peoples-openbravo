@@ -68,8 +68,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           "RequisitionToOrder|C_BPartner_ID", "");
       String strIncludeVendor = vars.getGlobalVariable("inpShowNullVendor",
           "RequisitionToOrder|ShowNullVendor", "Y");
-      String strOrgId = vars.getGlobalVariable("inpadOrgId", "RequisitionToOrder|AD_Org_ID", vars
-          .getOrg());
+      String strOrgId = vars.getGlobalVariable("inpadOrgId", "RequisitionToOrder|AD_Org_ID",
+          vars.getOrg());
       vars.setSessionValue("RequisitionToOrder|isSOTrx", "N");
       printPageDataSheet(response, vars, strProductId, strDateFrom, strDateTo, strRequesterId,
           strVendorId, strIncludeVendor, strOrgId);
@@ -170,9 +170,10 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         strDateTo, "1"), strProductId, strRequesterId, (strIncludeVendor.equals("Y") ? strVendorId
         : null), (strIncludeVendor.equals("Y") ? null : strVendorId));
 
-    RequisitionToOrderData[] dataselected = RequisitionToOrderData.selectSelected(this, vars
-        .getLanguage(), vars.getUser(), Utility.getContext(this, vars, "#User_Client",
-        "RequisitionToOrder"), Tree.getMembers(this, strTreeOrg, strOrgId));
+    RequisitionToOrderData[] dataselected = RequisitionToOrderData.selectSelected(this,
+        vars.getLanguage(), vars.getUser(),
+        Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"),
+        Tree.getMembers(this, strTreeOrg, strOrgId));
     String discard[] = { "" };
     if (dataselected == null || dataselected.length == 0) {
       dataselected = RequisitionToOrderData.set();
@@ -229,8 +230,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramAdOrgId", strOrgId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_User_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "RequisitionToOrder"), Utility
-              .getContext(this, vars, "#User_Client", "RequisitionToOrder"), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "RequisitionToOrder"),
+          Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "RequisitionToOrder",
           strRequesterId);
       xmlDocument.setData("reportRequester_ID", "liststructure", comboTableData.select(false));
@@ -277,9 +278,10 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Update locked lines");
     String strTreeOrg = RequisitionToOrderData.treeOrg(this, vars.getClient());
-    RequisitionToOrderData[] dataselected = RequisitionToOrderData.selectSelected(this, vars
-        .getLanguage(), vars.getUser(), Utility.getContext(this, vars, "#User_Client",
-        "RequisitionToOrder"), Tree.getMembers(this, strTreeOrg, strOrgId));
+    RequisitionToOrderData[] dataselected = RequisitionToOrderData.selectSelected(this,
+        vars.getLanguage(), vars.getUser(),
+        Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"),
+        Tree.getMembers(this, strTreeOrg, strOrgId));
     for (int i = 0; dataselected != null && i < dataselected.length; i++) {
       String strLockQty = vars.getNumericParameter("inpQty" + dataselected[i].mRequisitionlineId);
       String strLockPrice = vars.getNumericParameter("inpPrice"
@@ -306,8 +308,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         strVendorId = vendor[0].vendorId;
         strMessage = Utility.messageBD(this, "AllLinesSameVendor", vars.getLanguage())
             + ": "
-            + RequisitionToOrderData.bPartnerDescription(this, vendor[0].vendorId, vars
-                .getLanguage());
+            + RequisitionToOrderData.bPartnerDescription(this, vendor[0].vendorId,
+                vars.getLanguage());
       } else if (vendor != null && vendor.length > 1) {
         // Error, the selected lines are of different vendors, it is
         // necessary to set one.
@@ -317,8 +319,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         strMessage = Utility.messageBD(this, "AllLinesNullVendor", vars.getLanguage());
       }
       // Check unique pricelist
-      RequisitionToOrderData[] pricelist = RequisitionToOrderData.selectPriceList(this, vars
-          .getLanguage(), strSelected);
+      RequisitionToOrderData[] pricelist = RequisitionToOrderData.selectPriceList(this,
+          vars.getLanguage(), strSelected);
       if (pricelist != null && pricelist.length == 1) {
         strPriceListId = pricelist[0].mPricelistId;
         strMessage += "<br>" + Utility.messageBD(this, "AllLinesSamePricelist", vars.getLanguage())
@@ -390,10 +392,13 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("orderDate", strOrderDate);
     xmlDocument.setParameter("displayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paramOrderOrgId", strOrgId);
-    xmlDocument.setParameter("arrayWarehouse", Utility.arrayDobleEntrada("arrWarehouse",
-        RequisitionToOrderData.selectWarehouseDouble(this, vars.getClient(), Utility.getContext(
-            this, vars, "#AccessibleOrgTree", "RequisitionToOrder"), Utility.getContext(this, vars,
-            "#User_Client", "RequisitionToOrder"))));
+    xmlDocument.setParameter(
+        "arrayWarehouse",
+        Utility.arrayDobleEntrada(
+            "arrWarehouse",
+            RequisitionToOrderData.selectWarehouseDouble(this, vars.getClient(),
+                Utility.getContext(this, vars, "#AccessibleOrgTree", "RequisitionToOrder"),
+                Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"))));
     xmlDocument.setParameter("paramPriceListId", strPriceListId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
@@ -436,8 +441,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
 
     String strPriceListVersionId = RequisitionToOrderData.getPricelistVersion(this, strPriceListId,
         strOrderDate);
-    RequisitionToOrderData[] noprice = RequisitionToOrderData.selectNoPrice(this, vars
-        .getLanguage(), strPriceListVersionId, strSelected);
+    RequisitionToOrderData[] noprice = RequisitionToOrderData.selectNoPrice(this,
+        vars.getLanguage(), strPriceListVersionId, strSelected);
     if (noprice != null && noprice.length > 0) {
       textMessage.append(Utility.messageBD(this, "LinesWithNoPrice", vars.getLanguage())).append(
           "<br><ul>");
@@ -467,9 +472,23 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       String cCurrencyId = RequisitionToOrderData.selectCurrency(this, strPriceListId);
 
       try {
-        RequisitionToOrderData.insertCOrder(conn, this, strCOrderId, vars.getClient(), strOrg, vars
-            .getUser(), strDocumentNo, "DR", "CO", "0", docTargetType, strOrderDate, strOrderDate,
-            strOrderDate, strVendor, RequisitionToOrderData.cBPartnerLocationId(this, strVendor),
+        RequisitionToOrderData.insertCOrder(
+            conn,
+            this,
+            strCOrderId,
+            vars.getClient(),
+            strOrg,
+            vars.getUser(),
+            strDocumentNo,
+            "DR",
+            "CO",
+            "0",
+            docTargetType,
+            strOrderDate,
+            strOrderDate,
+            strOrderDate,
+            strVendor,
+            RequisitionToOrderData.cBPartnerLocationId(this, strVendor),
             RequisitionToOrderData.billto(this, strVendor).equals("") ? RequisitionToOrderData
                 .cBPartnerLocationId(this, strVendor) : RequisitionToOrderData.billto(this,
                 strVendor), cCurrencyId, isAlternativeFinancialFlow() ? "P"
@@ -544,8 +563,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       for (int i = 0; lines != null && i < lines.length; i++) {
         String strRequisitionOrderId = SequenceIdData.getUUID();
         try {
-          RequisitionToOrderData.insertRequisitionOrder(conn, this, strRequisitionOrderId, vars
-              .getClient(), strOrg, vars.getUser(), lines[i].mRequisitionlineId,
+          RequisitionToOrderData.insertRequisitionOrder(conn, this, strRequisitionOrderId,
+              vars.getClient(), strOrg, vars.getUser(), lines[i].mRequisitionlineId,
               lines[i].cOrderlineId, lines[i].lockqty);
         } catch (ServletException ex) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -553,8 +572,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           return myMessage;
         }
         if (lines[i].toClose.equals("Y"))
-          RequisitionToOrderData.requisitionStatus(conn, this, lines[i].mRequisitionlineId, vars
-              .getUser());
+          RequisitionToOrderData.requisitionStatus(conn, this, lines[i].mRequisitionlineId,
+              vars.getUser());
       }
 
       OBError myMessageAux = cOrderPost(conn, vars, strCOrderId);
@@ -587,8 +606,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       throws IOException, ServletException {
     String pinstance = SequenceIdData.getUUID();
 
-    PInstanceProcessData.insertPInstance(conn, this, pinstance, "104", strcOrderId, "N", vars
-        .getUser(), vars.getClient(), vars.getOrg());
+    PInstanceProcessData.insertPInstance(conn, this, pinstance, "104", strcOrderId, "N",
+        vars.getUser(), vars.getClient(), vars.getOrg());
     RequisitionToOrderData.cOrderPost0(conn, this, pinstance);
 
     PInstanceProcessData[] pinstanceData = PInstanceProcessData.selectConnection(conn, this,

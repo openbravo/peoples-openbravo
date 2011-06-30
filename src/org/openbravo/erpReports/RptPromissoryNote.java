@@ -58,17 +58,17 @@ public class RptPromissoryNote extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pdf");
     if (!strcDebtPaymentId.equals("")) {
-      RptPromissoryNoteData[] data = RptPromissoryNoteData.select(this, Utility.getContext(this,
-          vars, "#AccessibleOrgTree", "RptPromissoryNote"), Utility.getContext(this, vars,
-          "#User_Client", "RptPromissoryNote"), strcDebtPaymentId);
+      RptPromissoryNoteData[] data = RptPromissoryNoteData.select(this,
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "RptPromissoryNote"),
+          Utility.getContext(this, vars, "#User_Client", "RptPromissoryNote"), strcDebtPaymentId);
       RptPromissoryNoteHeaderData[][] pdfPromissoryNoteHeaderData = null;
       RptPromissoryNoteAfterData[][] pdfPromissoryNoteAfterData = null;
       RptPromissoryNoteErrorData[][] pdfPromissoryNoteErrorData = null;
 
       if (data == null || data.length == 0) {
-        data = RptPromissoryNoteData.selectDebtPayment(this, Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "RptPromissoryNote"), Utility.getContext(this, vars,
-            "#User_Client", "RptPromissoryNote"), strcDebtPaymentId);
+        data = RptPromissoryNoteData.selectDebtPayment(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "RptPromissoryNote"),
+            Utility.getContext(this, vars, "#User_Client", "RptPromissoryNote"), strcDebtPaymentId);
         pdfPromissoryNoteHeaderData = new RptPromissoryNoteHeaderData[data.length][];
         pdfPromissoryNoteAfterData = new RptPromissoryNoteAfterData[data.length][];
         pdfPromissoryNoteErrorData = new RptPromissoryNoteErrorData[data.length][];
@@ -150,14 +150,14 @@ public class RptPromissoryNote extends HttpSecureAppServlet {
                 pdfPromissoryNoteAfterData[i][0].banklocation = "";
             } else {
 
-              pdfPromissoryNoteErrorData[i] = RptPromissoryNoteErrorData.select(this, Utility
-                  .messageBD(this, "PromissoryNoteFormat", vars.getLanguage()));
+              pdfPromissoryNoteErrorData[i] = RptPromissoryNoteErrorData.select(this,
+                  Utility.messageBD(this, "PromissoryNoteFormat", vars.getLanguage()));
               pdfPromissoryNoteHeaderData[i] = new RptPromissoryNoteHeaderData[0];
               pdfPromissoryNoteAfterData[i] = new RptPromissoryNoteAfterData[0];
             }
           } else {
-            pdfPromissoryNoteErrorData[i] = RptPromissoryNoteErrorData.select(this, Utility
-                .messageBD(this, "PromissoryNoteBank", vars.getLanguage()));
+            pdfPromissoryNoteErrorData[i] = RptPromissoryNoteErrorData.select(this,
+                Utility.messageBD(this, "PromissoryNoteBank", vars.getLanguage()));
             pdfPromissoryNoteHeaderData[i] = new RptPromissoryNoteHeaderData[0];
             pdfPromissoryNoteAfterData[i] = new RptPromissoryNoteAfterData[0];
           }

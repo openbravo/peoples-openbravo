@@ -28,9 +28,9 @@ public class FormatUtilities {
 
   public static String replaceTildes(String strIni) {
     // Delete tilde characters
-    return strIni.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace(
-        'ú', 'u').replace('Á', 'A').replace('É', 'E').replace('Í', 'I').replace('Ó', 'O').replace(
-        'Ú', 'U');
+    return strIni.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o')
+        .replace('ú', 'u').replace('Á', 'A').replace('É', 'E').replace('Í', 'I').replace('Ó', 'O')
+        .replace('Ú', 'U');
   }
 
   private static final char[] delChars = { '-', '/', '#', ' ', '&', ',', '(', ')' };
@@ -46,8 +46,9 @@ public class FormatUtilities {
   }
 
   public static String replaceJS(String strIni, boolean isUnderQuotes) {
-    return Replace.replace(Replace.replace(Replace.replace(Replace.replace(strIni, "'",
-        (isUnderQuotes ? "\\'" : "&#039;")), "\"", "\\\""), "\n", "\\n"), "\r", "");
+    return Replace.replace(Replace.replace(Replace.replace(
+        Replace.replace(strIni, "'", (isUnderQuotes ? "\\'" : "&#039;")), "\"", "\\\""), "\n",
+        "\\n"), "\r", "");
   }
 
   public static String sha1Base64(String text) throws ServletException {

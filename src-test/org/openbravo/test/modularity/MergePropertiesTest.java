@@ -76,12 +76,12 @@ public class MergePropertiesTest extends TestCase {
 
     Properties prop = new Properties();
     prop.load(new FileInputStream(ORIGINAL_FILE));
-    assertTrue("Not correctly merged test1 property", prop.getProperty("test1").equals(
-        "value1.custom"));
-    assertTrue("Not correctly merged test2 property", prop.getProperty("test2").equals(
-        "value2.custom"));
-    assertTrue("Not correctly merged test3 property", prop.getProperty("test3").equals(
-        "value3.default"));
+    assertTrue("Not correctly merged test1 property",
+        prop.getProperty("test1").equals("value1.custom"));
+    assertTrue("Not correctly merged test2 property",
+        prop.getProperty("test2").equals("value2.custom"));
+    assertTrue("Not correctly merged test3 property",
+        prop.getProperty("test3").equals("value3.default"));
   }
 
   /**
@@ -131,10 +131,10 @@ public class MergePropertiesTest extends TestCase {
 
     Properties prop = new Properties();
     prop.load(new FileInputStream(ORIGINAL_FILE));
-    assertTrue("Not correctly merged test1 property", prop.getProperty("test1").equals(
-        "value1.custom"));
-    assertTrue("Not correctly merged test2 property", prop.getProperty("test2").equals(
-        "value2.custom"));
+    assertTrue("Not correctly merged test1 property",
+        prop.getProperty("test1").equals("value1.custom"));
+    assertTrue("Not correctly merged test2 property",
+        prop.getProperty("test2").equals("value2.custom"));
 
   }
 

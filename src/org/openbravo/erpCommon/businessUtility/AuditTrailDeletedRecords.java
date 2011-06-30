@@ -104,13 +104,11 @@ class AuditTrailDeletedRecords {
       if (hasRange && conn.getRDBMS().equalsIgnoreCase("ORACLE")) {
         sql.append("SELECT ROWNUM AS RN1, ").append(tableName).append(".* FROM(\n");
       }
-      sql
-          .append("SELECT record_id as rowkey, event_time as audittrailtime, ad_user_id as audittrailuser, processType as audittrailprocesstype, process_id as audittrailprocessid\n");
+      sql.append("SELECT record_id as rowkey, event_time as audittrailtime, ad_user_id as audittrailuser, processType as audittrailprocesstype, process_id as audittrailprocessid\n");
       for (Column col : tab.getTable().getADColumnList()) {
         // obtain information for all columns
         sql.append(", ");
-        sql
-            .append("(SELECT COALESCE(OLD_CHAR, TO_CHAR(OLD_NCHAR), TO_CHAR(OLD_NUMBER), TO_CHAR(OLD_DATE))\n");
+        sql.append("(SELECT COALESCE(OLD_CHAR, TO_CHAR(OLD_NCHAR), TO_CHAR(OLD_NUMBER), TO_CHAR(OLD_DATE))\n");
         sql.append("  FROM AD_AUDIT_TRAIL\n");
         sql.append(" WHERE AD_TABLE_ID='").append(tab.getTable().getId()).append("'\n");
         sql.append("   AND AD_COLUMN_ID='").append(col.getId()).append("'\n");
@@ -122,16 +120,19 @@ class AuditTrailDeletedRecords {
       sql.append(" FROM AD_AUDIT_TRAIL T\n");
       sql.append("WHERE ACTION='D'\n");
       sql.append("  AND AD_TABLE_ID = '").append(tab.getTable().getId()).append("'\n");
-      sql.append("  AND AD_COLUMN_ID = '").append(
-          ModelProvider.getInstance().getEntityByTableName(tableName).getIdProperties().get(0)
-              .getColumnId()).append("'\n");
+      sql.append("  AND AD_COLUMN_ID = '")
+          .append(
+              ModelProvider.getInstance().getEntityByTableName(tableName).getIdProperties().get(0)
+                  .getColumnId()).append("'\n");
 
       // Add security filter
-      sql.append(" AND AD_CLIENT_ID IN (").append(
-          Utility.getContext(conn, vars, "#User_Client", tab.getWindow().getId())).append(")\n");
-      sql.append(" AND AD_ORG_ID IN (").append(
-          Utility.getContext(conn, vars, "#AccessibleOrgTree", tab.getWindow().getId(), Integer
-              .parseInt(tab.getTable().getDataAccessLevel()))).append(")\n");
+      sql.append(" AND AD_CLIENT_ID IN (")
+          .append(Utility.getContext(conn, vars, "#User_Client", tab.getWindow().getId()))
+          .append(")\n");
+      sql.append(" AND AD_ORG_ID IN (")
+          .append(
+              Utility.getContext(conn, vars, "#AccessibleOrgTree", tab.getWindow().getId(),
+                  Integer.parseInt(tab.getTable().getDataAccessLevel()))).append(")\n");
       // optional filters from UI - pass via params as they come in unfiltered
       Vector<String> params = new Vector<String>();
       if (dateFrom != null && !dateFrom.isEmpty()) {

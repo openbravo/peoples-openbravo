@@ -58,8 +58,8 @@ public class SessionExpirationFilter implements Filter {
         if (ignoreForTimeout) {
           // Do nothing; don't update the session timestamp
         } else {
-          session.setAttribute("expirationDate", new Date(System.currentTimeMillis()
-              + session.getMaxInactiveInterval() * 1000));
+          session.setAttribute("expirationDate",
+              new Date(System.currentTimeMillis() + session.getMaxInactiveInterval() * 1000));
         }
       }
     }

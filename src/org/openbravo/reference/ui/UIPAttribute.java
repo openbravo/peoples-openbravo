@@ -36,11 +36,10 @@ public class UIPAttribute extends UITableDir {
   }
 
   public void generateSQL(TableSQLData table, Properties prop) throws Exception {
-    table.addSelectField(table.getTableName() + "." + prop.getProperty("ColumnName"), prop
-        .getProperty("ColumnName"));
-    identifier(table, table.getTableName(), prop, prop.getProperty("ColumnName") + "_R", table
-        .getTableName()
-        + "." + prop.getProperty("ColumnName"), false);
+    table.addSelectField(table.getTableName() + "." + prop.getProperty("ColumnName"),
+        prop.getProperty("ColumnName"));
+    identifier(table, table.getTableName(), prop, prop.getProperty("ColumnName") + "_R",
+        table.getTableName() + "." + prop.getProperty("ColumnName"), false);
   }
 
   public void identifier(TableSQLData tableSql, String parentTableName, Properties field,
@@ -57,9 +56,8 @@ public class UIPAttribute extends UITableDir {
       throws ServletException {
     String aux;
     if (isNewFilter) {
-      aux = vars.getRequestGlobalVariable("inpParam" + prop.getProperty("ColumnName"), tableSQL
-          .getTabID()
-          + "|param" + prop.getProperty("ColumnName"));
+      aux = vars.getRequestGlobalVariable("inpParam" + prop.getProperty("ColumnName"),
+          tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName"));
     } else {
       aux = vars.getSessionValue(tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName"));
     }
@@ -67,8 +65,8 @@ public class UIPAttribute extends UITableDir {
     // parameter value is '%' for string references.
     if (!aux.equals("")) {
       if (!aux.equals("%")) {
-        UIReferenceUtility.addFilter(filter, filterParams, result, tableSQL, prop
-            .getProperty("ColumnName"), prop.getProperty("ColumnName"), reference, true, aux);
+        UIReferenceUtility.addFilter(filter, filterParams, result, tableSQL,
+            prop.getProperty("ColumnName"), prop.getProperty("ColumnName"), reference, true, aux);
       } else {
         filter.addElement("1=1");
       }

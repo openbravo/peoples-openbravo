@@ -107,8 +107,8 @@ public class DynamicExpressionParser {
         jsCode.append(COMPARATIONS[pos[1]][1]);
       }
 
-      DisplayLogicElement rightPart = getDisplayLogicText(token2, leftPart.text
-          .contains("currentValues"), leftPart.isBoolean);
+      DisplayLogicElement rightPart = getDisplayLogicText(token2,
+          leftPart.text.contains("currentValues"), leftPart.isBoolean);
       jsCode.append(rightPart.text);
     }
   }

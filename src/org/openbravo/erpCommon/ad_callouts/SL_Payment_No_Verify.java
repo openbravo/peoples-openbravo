@@ -78,17 +78,19 @@ public class SL_Payment_No_Verify extends HttpSecureAppServlet {
       if (strcCreditCard == null || strcCreditCard.length() == 0) {
       } else {
         String strcvalidateCc = Tax.validateCreditCardNumber(strcCreditCard, strcCreditCardType);
-        resultado.append("new Array('MESSAGE', \""
-            + FormatUtilities
-                .replaceJS(Utility.messageBD(this, strcvalidateCc, vars.getLanguage())) + "\")");
+        resultado
+            .append("new Array('MESSAGE', \""
+                + FormatUtilities.replaceJS(Utility.messageBD(this, strcvalidateCc,
+                    vars.getLanguage())) + "\")");
       }
     } else if (strChanged.equals("inproutingno")) {
       if (strcRoutingNo == null || strcRoutingNo.length() == 0) {
       } else {
         String strcvalidateRo = Tax.validateRoutingNo(strcRoutingNo);
-        resultado.append("new Array('MESSAGE', \""
-            + FormatUtilities
-                .replaceJS(Utility.messageBD(this, strcvalidateRo, vars.getLanguage())) + "\")");
+        resultado
+            .append("new Array('MESSAGE', \""
+                + FormatUtilities.replaceJS(Utility.messageBD(this, strcvalidateRo,
+                    vars.getLanguage())) + "\")");
       }
     }
     resultado.append(");");

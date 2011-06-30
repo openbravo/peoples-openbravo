@@ -89,8 +89,8 @@ public class ReportInvoiceVendorJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportInvoiceVendorFilterJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportInvoiceVendorFilterJR.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
           "ReportInvoiceVendorFilterJR.html", strReplaceWith);
@@ -123,8 +123,8 @@ public class ReportInvoiceVendorJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("projectName", "");
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "InvoiceVendorJR"), Utility
-              .getContext(this, vars, "#User_Client", "InvoiceVendorJR"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "InvoiceVendorJR"),
+          Utility.getContext(this, vars, "#User_Client", "InvoiceVendorJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "InvoiceVendorFilter", "");
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -168,15 +168,17 @@ public class ReportInvoiceVendorJR extends HttpSecureAppServlet {
     myMessage = new OBError();
     try {
       if (strcProjectId != null && !strcProjectId.equals(""))
-        data = InvoiceEditionData.selectProject(this, strCurrencyId, Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "InvoiceVendorJR"), Utility.getContext(this, vars,
-            "#User_Client", "InvoiceVendorJR"), strDateFrom, DateTimeData.nDaysAfter(this,
-             strDateTo, "1"), strcBpartnetId, strcProjectId, strissotrx);
+        data = InvoiceEditionData.selectProject(this, strCurrencyId,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "InvoiceVendorJR"),
+            Utility.getContext(this, vars, "#User_Client", "InvoiceVendorJR"), strDateFrom,
+            DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnetId, strcProjectId,
+            strissotrx);
       else
-        data = InvoiceEditionData.select(this, strCurrencyId, Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "InvoiceVendorJR"), Utility.getContext(this, vars,
-            "#User_Client", "InvoiceVendorJR"), strDateFrom, DateTimeData.nDaysAfter(this,
-            strDateTo, "1"), strcBpartnetId, strcProjectId, strissotrx);
+        data = InvoiceEditionData.select(this, strCurrencyId,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "InvoiceVendorJR"),
+            Utility.getContext(this, vars, "#User_Client", "InvoiceVendorJR"), strDateFrom,
+            DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnetId, strcProjectId,
+            strissotrx);
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }
@@ -184,8 +186,9 @@ public class ReportInvoiceVendorJR extends HttpSecureAppServlet {
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Launch the report as usual, calling the JRXML file
       String strOutput = vars.commandIn("EDIT_HTML") ? "html" : "pdf";
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceVendorJR.jrxml";

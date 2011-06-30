@@ -60,8 +60,9 @@ public class UsageAudit {
    * 
    */
   public static void auditAction(VariablesSecureApp vars, String javaClassName) {
-    auditAction(vars.getSessionValue(SESSION_ID_ATTR), vars.getCommand(), SessionInfo
-        .getProcessType(), SessionInfo.getModuleId(), SessionInfo.getProcessId(), javaClassName);
+    auditAction(vars.getSessionValue(SESSION_ID_ATTR), vars.getCommand(),
+        SessionInfo.getProcessType(), SessionInfo.getModuleId(), SessionInfo.getProcessId(),
+        javaClassName);
   }
 
   /**
@@ -74,8 +75,9 @@ public class UsageAudit {
     if (session == null) {
       return;
     }
-    auditAction((String) session.getAttribute(SESSION_ID_ATTR), parameters
-        .get(OPERATION_TYPE_PARAM), "W", parameters.get("moduleId"), parameters.get("tabId"), null);
+    auditAction((String) session.getAttribute(SESSION_ID_ATTR),
+        parameters.get(OPERATION_TYPE_PARAM), "W", parameters.get("moduleId"),
+        parameters.get("tabId"), null);
   }
 
   private static void auditAction(String sessionId, String action, String objectType,
@@ -123,8 +125,9 @@ public class UsageAudit {
    */
   public static void auditActionNoDal(ConnectionProvider conn, VariablesSecureApp vars,
       String javaClassName) {
-    auditActionNoDal(conn, vars.getSessionValue(SESSION_ID_ATTR), vars.getCommand(), SessionInfo
-        .getProcessType(), SessionInfo.getModuleId(), SessionInfo.getProcessId(), javaClassName);
+    auditActionNoDal(conn, vars.getSessionValue(SESSION_ID_ATTR), vars.getCommand(),
+        SessionInfo.getProcessType(), SessionInfo.getModuleId(), SessionInfo.getProcessId(),
+        javaClassName);
   }
 
   private static void auditActionNoDal(ConnectionProvider conn, String sessionId, String action,

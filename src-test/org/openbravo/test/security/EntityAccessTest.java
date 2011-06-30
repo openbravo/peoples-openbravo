@@ -85,8 +85,8 @@ public class EntityAccessTest extends BaseTest {
       OBDal.getInstance().flush();
       fail("Currency should be non-deletable");
     } catch (final OBSecurityException e) {
-      assertTrue("Wrong exception thrown:  " + e.getMessage(), e.getMessage().indexOf(
-          "is not deletable") != -1);
+      assertTrue("Wrong exception thrown:  " + e.getMessage(),
+          e.getMessage().indexOf("is not deletable") != -1);
     }
   }
 
@@ -104,8 +104,8 @@ public class EntityAccessTest extends BaseTest {
       log.debug(c.getCostingPrecision());
       fail("Derived readable not applied");
     } catch (final OBSecurityException e) {
-      assertTrue("Wrong exception thrown:  " + e.getMessage(), e.getMessage().indexOf(
-          "is not directly readable") != -1);
+      assertTrue("Wrong exception thrown:  " + e.getMessage(),
+          e.getMessage().indexOf("is not directly readable") != -1);
 
       try {
         c.setAllowRead(true);
@@ -146,16 +146,16 @@ public class EntityAccessTest extends BaseTest {
       c.setCostingPrecision((long) 5);
       fail("Derived readable not checked on set");
     } catch (final OBSecurityException e) {
-      assertTrue("Wrong exception thrown:  " + e.getMessage(), e.getMessage().indexOf(
-          "is not directly readable") != -1);
+      assertTrue("Wrong exception thrown:  " + e.getMessage(),
+          e.getMessage().indexOf("is not directly readable") != -1);
     }
     try {
       OBDal.getInstance().save(c);
       fail("No security check");
     } catch (final OBSecurityException e) {
       // successfull check
-      assertTrue("Wrong exception thrown:  " + e.getMessage(), e.getMessage().indexOf(
-          "is not writable by this user") != -1);
+      assertTrue("Wrong exception thrown:  " + e.getMessage(),
+          e.getMessage().indexOf("is not writable by this user") != -1);
     }
   }
 

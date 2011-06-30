@@ -277,8 +277,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     xmlDocument.setParameter("cProjectId", strcProjectId);
     xmlDocument.setParameter("producttype", strProducttype);
     xmlDocument.setParameter("partnerSalesRepId", strPartnerSalesrepId);
-    xmlDocument.setParameter("projectName", ReportInvoiceCustomerDimensionalAnalysesJRData
-        .selectProject(this, strcProjectId));
+    xmlDocument.setParameter("projectName",
+        ReportInvoiceCustomerDimensionalAnalysesJRData.selectProject(this, strcProjectId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
           "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -299,8 +299,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
               "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportInvoiceCustomerDimensionalAnalysesJR", strProductCategory);
-      xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure", comboTableData
-          .select(false));
+      xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
+          comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -319,12 +319,18 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
-        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-            .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
-    xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData.selectMproduct(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
-            vars, "#User_Client", ""), strmProductId));
+    xmlDocument.setData(
+        "reportCBPartnerId_IN",
+        "liststructure",
+        SelectorUtilityData.selectBpartner(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+    xmlDocument.setData(
+        "reportMProductId_IN",
+        "liststructure",
+        SelectorUtilityData.selectMproduct(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
@@ -381,18 +387,19 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     }
 
     if (vars.getLanguage().equals("en_US")) {
-      xmlDocument.setData("structure1", ReportInvoiceCustomerDimensionalAnalysesJRData
-          .selectNotShown(this, strShown));
+      xmlDocument.setData("structure1",
+          ReportInvoiceCustomerDimensionalAnalysesJRData.selectNotShown(this, strShown));
       xmlDocument.setData("structure2",
           strShown.equals("") ? new ReportInvoiceCustomerDimensionalAnalysesJRData[0]
               : ReportInvoiceCustomerDimensionalAnalysesJRData.selectShown(this, strShown));
     } else {
       xmlDocument.setData("structure1", ReportInvoiceCustomerDimensionalAnalysesJRData
           .selectNotShownTrl(this, vars.getLanguage(), strShown));
-      xmlDocument.setData("structure2",
+      xmlDocument.setData(
+          "structure2",
           strShown.equals("") ? new ReportInvoiceCustomerDimensionalAnalysesJRData[0]
-              : ReportInvoiceCustomerDimensionalAnalysesJRData.selectShownTrl(this, vars
-                  .getLanguage(), strShown));
+              : ReportInvoiceCustomerDimensionalAnalysesJRData.selectShownTrl(this,
+                  vars.getLanguage(), strShown));
     }
 
     response.setContentType("text/html; charset=UTF-8");
@@ -448,8 +455,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           + ", "
           + Utility.messageBD(this, "PRODUCTTYPE", vars.getLanguage())
           + " "
-          + ReportInvoiceCustomerDimensionalAnalysesJRData.selectProducttype(this, "270", vars
-              .getLanguage(), strProducttype);
+          + ReportInvoiceCustomerDimensionalAnalysesJRData.selectProducttype(this, "270",
+              vars.getLanguage(), strProducttype);
     if (!strsalesrepId.equals(""))
       strTitle = strTitle + ", " + Utility.messageBD(this, "TheClientSalesRep", vars.getLanguage())
           + " "
@@ -484,8 +491,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     if (vars.getLanguage().equals("en_US")) {
       dimensionLabel = ReportInvoiceCustomerDimensionalAnalysesJRData.selectNotShown(this, "");
     } else {
-      dimensionLabel = ReportInvoiceCustomerDimensionalAnalysesJRData.selectNotShownTrl(this, vars
-          .getLanguage(), "");
+      dimensionLabel = ReportInvoiceCustomerDimensionalAnalysesJRData.selectNotShownTrl(this,
+          vars.getLanguage(), "");
     }
 
     // Checking report limit first
@@ -634,16 +641,17 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       if (limit > 0) {
         mycount = Integer
             .parseInt((strComparative.equals("Y")) ? ReportInvoiceCustomerDimensionalAnalysesJRData
-                .selectCount(this, levelsconcat.toString(), Tree.getMembers(this, TreeData
-                    .getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this, vars,
-                    "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"), strPartnerGroup,
-                    strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
-                    strPartnerSalesrepId, strcProjectId, strProducttype, strDateFrom, DateTimeData
-                        .nDaysAfter(this, strDateTo, "1"), strDateFromRef, DateTimeData.nDaysAfter(
-                        this, strDateToRef, "1")) : ReportInvoiceCustomerDimensionalAnalysesJRData
-                .selectNoComparativeCount(this, levelsconcat.toString(), Tree.getMembers(this,
+                .selectCount(this, levelsconcat.toString(), Tree.getMembers(this,
                     TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
                     vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"),
+                    strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId,
+                    strsalesrepId, strPartnerSalesrepId, strcProjectId, strProducttype,
+                    strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDateFromRef,
+                    DateTimeData.nDaysAfter(this, strDateToRef, "1"))
+                : ReportInvoiceCustomerDimensionalAnalysesJRData.selectNoComparativeCount(this,
+                    levelsconcat.toString(), Tree.getMembers(this,
+                        TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(
+                        this, vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"),
                     strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId,
                     strsalesrepId, strPartnerSalesrepId, strcProjectId, strProducttype,
                     strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1")));
@@ -655,8 +663,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String msgbody = Utility.messageBD(this, "ReportsLimitBody", vars.getLanguage());
       msgbody = msgbody.replace("@rows@", Integer.toString(mycount));
       msgbody = msgbody.replace("@limit@", Integer.toString(limit));
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "ReportsLimitHeader", vars
-          .getLanguage()), msgbody);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "ReportsLimitHeader", vars.getLanguage()), msgbody);
     } else {
       // Checks if there is a conversion rate for each of the transactions
       // of
@@ -685,10 +693,10 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           data = ReportInvoiceCustomerDimensionalAnalysesJRData.selectNoComparative(this,
               strCurrencyId, strBaseCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2],
               strTextShow[3], strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7],
-              strTextShow[8], strTextShow[9], Tree.getMembers(this, TreeData.getTreeOrg(this, vars
-                  .getClient()), strOrg), Utility.getContext(this, vars, "#User_Client",
-                  "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
-                  .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
+              strTextShow[8], strTextShow[9], Tree.getMembers(this,
+                  TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
+                  vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom,
+              DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
               strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
               strcProjectId, strProducttype, strOrderby);
         } catch (ServletException ex) {
@@ -700,8 +708,9 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       // error
       // message window pops-up.
       if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-        advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-            vars.getLanguage()), strConvRateErrorMsg);
+        advisePopUp(request, response, "ERROR",
+            Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+            strConvRateErrorMsg);
       } else { // Otherwise, the report is launched
         String strReportPath;
         if (strComparative.equals("Y")) {

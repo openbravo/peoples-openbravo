@@ -137,8 +137,8 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "CreateCashFlowStatement.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "CreateCashFlowStatement.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "CreateCashFlowStatement.html",
           strReplaceWith);
@@ -183,8 +183,8 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
       String strFactAcctCFS = SequenceIdData.getUUID();
       if (log4j.isDebugEnabled())
         log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + strAmount);
-      CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId, vars
-          .getClient(), vars.getOrg(), vars.getUser(), strAccount, strAmount, null);
+      CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId,
+          vars.getClient(), vars.getOrg(), vars.getUser(), strAccount, strAmount, null);
     } else {
       CreateCashFlowStatementData[] writeOff = CreateCashFlowStatementData.selectPaymentWriteOff(
           this, strPaymentId, data[0].cSettlementCancelId);
@@ -224,8 +224,8 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
               log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - "
                   + multiply(statements[i].amount, strRatio));
             CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId,
-                vars.getClient(), vars.getOrg(), vars.getUser(), statements[i].accountId, multiply(
-                    statements[i].amount, strRatio), statements[i].id);
+                vars.getClient(), vars.getOrg(), vars.getUser(), statements[i].accountId,
+                multiply(statements[i].amount, strRatio), statements[i].id);
           }
         }
       } else if (!(data[0].cOrderId).equals("")) {
@@ -278,8 +278,8 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
             if (log4j.isDebugEnabled())
               log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + strAmount);
             CreateCashFlowStatementData
-                .insertStatements(conn, this, strFactAcctCFS, strFactAcctId, vars.getClient(), vars
-                    .getOrg(), vars.getUser(), strPaymentAccount, strAmount, null);
+                .insertStatements(conn, this, strFactAcctCFS, strFactAcctId, vars.getClient(),
+                    vars.getOrg(), vars.getUser(), strPaymentAccount, strAmount, null);
           } else {
             String strTotal = CreateCashFlowStatementData.selectSumGeneratedPayments(this,
                 data[0].cSettlementGenerateId);

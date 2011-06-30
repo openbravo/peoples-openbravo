@@ -152,9 +152,9 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
         String strDocTypes = "'" + strInvoice + "','" + strDPCNA + "','" + strDPCA + "','"
             + strDPGNA + "','" + strDPGA + "','" + strDPM + "','" + strDPC + "','" + strDPB + "'";
         mycount = Integer.parseInt(ReportDebtPaymentTrackData.selectCount(this, vars.getLanguage(),
-            Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"), Utility
-                .getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"), strcBpartnerId,
-            strDateFrom, strDateTo, strAmtFrom, strAmtTo, strDocTypes));
+            Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"),
+            strcBpartnerId, strDateFrom, strDateTo, strAmtFrom, strAmtTo, strDocTypes));
       }
     } catch (NumberFormatException e) {
     }
@@ -167,15 +167,16 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
       String msgbody = Utility.messageBD(this, "ReportsLimitBody", vars.getLanguage());
       msgbody = msgbody.replace("@rows@", Integer.toString(mycount));
       msgbody = msgbody.replace("@limit@", Integer.toString(limit));
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "ReportsLimitHeader", vars
-          .getLanguage()), msgbody);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "ReportsLimitHeader", vars.getLanguage()), msgbody);
     } else {
       String strDocTypes = "'" + strInvoice + "','" + strDPCNA + "','" + strDPCA + "','" + strDPGNA
           + "','" + strDPGA + "','" + strDPM + "','" + strDPC + "','" + strDPB + "'";
-      data = ReportDebtPaymentTrackData.select(this, "0", vars.getLanguage(), Utility.getContext(
-          this, vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "ReportDebtPayment"), strcBpartnerId, strDateFrom, strDateTo,
-          strAmtFrom, strAmtTo, strDocTypes, null, null, null);
+      data = ReportDebtPaymentTrackData.select(this, "0", vars.getLanguage(),
+          Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"),
+          strcBpartnerId, strDateFrom, strDateTo, strAmtFrom, strAmtTo, strDocTypes, null, null,
+          null);
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportDebtPaymentTracker.jrxml";
       renderJR(vars, response, strReportName, "pdf", null, data, null);
     }
@@ -222,10 +223,11 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
     } else {
       String strDocTypes = "'" + strInvoice + "','" + strDPCNA + "','" + strDPCA + "','" + strDPGNA
           + "','" + strDPGA + "','" + strDPM + "','" + strDPC + "','" + strDPB + "'";
-      data = ReportDebtPaymentTrackData.select(this, rowNum, vars.getLanguage(), Utility
-          .getContext(this, vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this,
-          vars, "#AccessibleOrgTree", "ReportDebtPayment"), strcBpartnerId, strDateFrom, strDateTo,
-          strAmtFrom, strAmtTo, strDocTypes, oraLimit1, oraLimit2, pgLimit);
+      data = ReportDebtPaymentTrackData.select(this, rowNum, vars.getLanguage(),
+          Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"),
+          strcBpartnerId, strDateFrom, strDateTo, strAmtFrom, strAmtTo, strDocTypes, oraLimit1,
+          oraLimit2, pgLimit);
     }
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportDebtPaymentTrack", discard).createXmlDocument();
@@ -244,8 +246,8 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportDebtPaymentTrack.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportDebtPaymentTrack.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportDebtPaymentTrack.html",
           strReplaceWith);
@@ -282,9 +284,12 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
     xmlDocument.setParameter("DPC", strDPC);
     xmlDocument.setParameter("DPB", strDPB);
     xmlDocument.setParameter("Invoice", strInvoice);
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
-        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-            .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+    xmlDocument.setData(
+        "reportCBPartnerId_IN",
+        "liststructure",
+        SelectorUtilityData.selectBpartner(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();

@@ -126,9 +126,9 @@ public abstract class BaseForeignKeyDomainType extends BaseDomainType implements
     // note object equalness is required!
     if (getReferedEntity(property) != null && obObject.getEntity() != getReferedEntity(property)) {
       final ValidationException ve = new ValidationException();
-      ve.addMessage(property, "Property " + property + " only allows entity: "
-          + getReferedEntity(property) + " but the value (" + value + ") has entity "
-          + obObject.getEntity());
+      ve.addMessage(property,
+          "Property " + property + " only allows entity: " + getReferedEntity(property)
+              + " but the value (" + value + ") has entity " + obObject.getEntity());
       throw ve;
     }
     return;

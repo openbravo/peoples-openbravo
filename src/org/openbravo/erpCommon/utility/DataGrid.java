@@ -165,8 +165,8 @@ public class DataGrid extends HttpSecureAppServlet {
       String strPage = vars.getSessionValue(currPageKey, "0");
       int page = Integer.valueOf(strPage);
 
-      ExecuteQuery execquery = new ExecuteQuery(this, tableSQL.getTotalSQL(page), tableSQL
-          .getParameterValuesTotalSQL());
+      ExecuteQuery execquery = new ExecuteQuery(this, tableSQL.getTotalSQL(page),
+          tableSQL.getParameterValuesTotalSQL());
       data = execquery.select();
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -304,8 +304,8 @@ public class DataGrid extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(getTotalRows(vars, tableSQL)).append(
-        "\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(getTotalRows(vars, tableSQL))
+        .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -315,8 +315,7 @@ public class DataGrid extends HttpSecureAppServlet {
 
           if (((headers[k].getField("iskey").equals("false") && !headers[k].getField(
               "gridcolumnname").equalsIgnoreCase("keyname")) || !headers[k].getField("iskey")
-              .equals("true"))
-              && !tableSQL.getSelectField(columnname + "_R").equals("")) {
+              .equals("true")) && !tableSQL.getSelectField(columnname + "_R").equals("")) {
             columnname += "_R";
           }
 
@@ -330,17 +329,19 @@ public class DataGrid extends HttpSecureAppServlet {
             if (adReferenceId.equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
 
-            strRowsData.append(value.replaceAll("<b>", "").replaceAll("<B>", "").replaceAll("</b>",
-                "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll("<I>", "").replaceAll(
-                "</i>", "").replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>",
-                "&nbsp;").replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;").replaceAll(
-                "<h1>", "&nbsp;").replaceAll("<H1>", "&nbsp;").replaceAll("</h1>", "&nbsp;")
-                .replaceAll("</H1>", "").replaceAll("<h2>", "&nbsp;").replaceAll("<H2>", "&nbsp;")
-                .replaceAll("</h2>", "&nbsp;").replaceAll("</H2>", "").replaceAll("<h3>", "&nbsp;")
-                .replaceAll("<H3>", "&nbsp;").replaceAll("</h3>", "&nbsp;").replaceAll("</H3>", "")
-                .replaceAll("<li>", "&nbsp;").replaceAll("<LI>", "&nbsp;").replaceAll("</li>",
-                    "&nbsp;").replaceAll("</LI>", "").replaceAll("<ul>", "&nbsp;").replaceAll(
-                    "<UL>", "&nbsp;").replaceAll("</ul>", "&nbsp;").replaceAll("</UL>", ""));
+            strRowsData.append(value.replaceAll("<b>", "").replaceAll("<B>", "")
+                .replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "")
+                .replaceAll("<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
+                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;")
+                .replaceAll("<h1>", "&nbsp;").replaceAll("<H1>", "&nbsp;")
+                .replaceAll("</h1>", "&nbsp;").replaceAll("</H1>", "").replaceAll("<h2>", "&nbsp;")
+                .replaceAll("<H2>", "&nbsp;").replaceAll("</h2>", "&nbsp;").replaceAll("</H2>", "")
+                .replaceAll("<h3>", "&nbsp;").replaceAll("<H3>", "&nbsp;")
+                .replaceAll("</h3>", "&nbsp;").replaceAll("</H3>", "").replaceAll("<li>", "&nbsp;")
+                .replaceAll("<LI>", "&nbsp;").replaceAll("</li>", "&nbsp;").replaceAll("</LI>", "")
+                .replaceAll("<ul>", "&nbsp;").replaceAll("<UL>", "&nbsp;")
+                .replaceAll("</ul>", "&nbsp;").replaceAll("</UL>", ""));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")
                 || headers[k].getField("adReferenceId").equals("4AA6C3BE9D3B4D84A3B80489505A23E5")) {
@@ -403,10 +404,9 @@ public class DataGrid extends HttpSecureAppServlet {
       try {
         // minOffset and maxOffset are zero based so pageSize is difference +1
         int pageSize = maxOffset - minOffset + 1;
-        String strSQL = ModelSQLGeneration.generateSQLonlyId(this, vars, tableSQL, (tableSQL
-            .getTableName()
-            + "." + tableSQL.getKeyColumn() + "AS ID"), new Vector<String>(), new Vector<String>(),
-            minOffset, pageSize);
+        String strSQL = ModelSQLGeneration.generateSQLonlyId(this, vars, tableSQL,
+            (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + "AS ID"),
+            new Vector<String>(), new Vector<String>(), minOffset, pageSize);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValuesOnlyId());
         data = execquery.select();
         res = new FieldProvider[data.length];
@@ -464,8 +464,8 @@ public class DataGrid extends HttpSecureAppServlet {
       try {
         Vector<String> filter = new Vector<String>();
         filter.addElement(tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " IN " + rows);
-        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "SUM("
-            + tableSQL.getTableName() + "." + columnname + ") AS TOTAL", filter,
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL,
+            "SUM(" + tableSQL.getTableName() + "." + columnname + ") AS TOTAL", filter,
             new Vector<String>(), 0, 0, false, false);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
         data = execquery.select();
@@ -545,10 +545,11 @@ public class DataGrid extends HttpSecureAppServlet {
         parametersData.addElement(vars.getGlobalVariable("inpParentKey", tableSQL.getWindowID()
             + "|" + parentKey));
       }
-      SqlDataBuffer.append(" AND AD_Client_ID IN (").append(
-          Utility.getContext(this, vars, "#User_Client", WindowId, accessLevel)).append(")");
-      SqlDataBuffer.append(" AND AD_Org_ID IN (").append(
-          Utility.getContext(this, vars, "#User_Org", WindowId, accessLevel)).append(")");
+      SqlDataBuffer.append(" AND AD_Client_ID IN (")
+          .append(Utility.getContext(this, vars, "#User_Client", WindowId, accessLevel))
+          .append(")");
+      SqlDataBuffer.append(" AND AD_Org_ID IN (")
+          .append(Utility.getContext(this, vars, "#User_Org", WindowId, accessLevel)).append(")");
       if (log4j.isDebugEnabled())
         log4j.debug(SqlDataBuffer.toString());
 

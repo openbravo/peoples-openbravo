@@ -202,8 +202,10 @@ public class JsonRestServlet extends BaseWebServiceServlet {
     final String servicePart = request.getRequestURI().substring(nameIndex);
     final String[] pathParts = WebServiceUtil.getInstance().getSegments(servicePart);
     if (pathParts.length == 0 || !pathParts[0].equals(servletPathPart)) {
-      writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
-          "Invalid url: " + request.getRequestURI())));
+      writeResult(
+          response,
+          JsonUtils.convertExceptionToJson(new InvalidRequestException("Invalid url: "
+              + request.getRequestURI())));
       return false;
     }
     if (pathParts.length == 1) {
@@ -254,8 +256,10 @@ public class JsonRestServlet extends BaseWebServiceServlet {
     final String servicePart = request.getRequestURI().substring(nameIndex);
     final String[] pathParts = WebServiceUtil.getInstance().getSegments(servicePart);
     if (pathParts.length == 0 || !pathParts[0].equals(servletPathPart)) {
-      writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
-          "Invalid url: " + request.getRequestURI())));
+      writeResult(
+          response,
+          JsonUtils.convertExceptionToJson(new InvalidRequestException("Invalid url: "
+              + request.getRequestURI())));
       return false;
     }
     if (pathParts.length == 1) {

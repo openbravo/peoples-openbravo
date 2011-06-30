@@ -174,8 +174,9 @@ public class ClientExportImportTest extends XMLBaseTest {
       if (fact.getRecordID() != null) {
         final BaseOBObject bob = OBDal.getInstance().get(fact.getTable().getName(),
             fact.getRecordID());
-        assertTrue("Entity instance not found " + fact.getTable().getName() + " "
-            + fact.getRecordID(), bob != null);
+        assertTrue(
+            "Entity instance not found " + fact.getTable().getName() + " " + fact.getRecordID(),
+            bob != null);
         if (bob instanceof ClientEnabled) {
           assertEquals(newClient, ((ClientEnabled) bob).getClient());
           testDoneAtLeastOnce = true;
@@ -184,8 +185,9 @@ public class ClientExportImportTest extends XMLBaseTest {
       if (fact.getRecordID2() != null) {
         final BaseOBObject bob = OBDal.getInstance().get(DebtPayment.ENTITY_NAME,
             fact.getRecordID2());
-        assertTrue("Entity instance not found " + DebtPayment.ENTITY_NAME + " "
-            + fact.getRecordID2(), bob != null);
+        assertTrue(
+            "Entity instance not found " + DebtPayment.ENTITY_NAME + " " + fact.getRecordID2(),
+            bob != null);
         if (bob instanceof ClientEnabled) {
           assertEquals(newClient, ((ClientEnabled) bob).getClient());
           testDoneAtLeastOnce = true;

@@ -69,8 +69,8 @@ public class WeldUtils {
     final Set<Bean<?>> beans = theBeanManager.getBeans(type, ANY_LITERAL);
     for (Bean<?> bean : beans) {
       if (bean.getBeanClass() == type) {
-        return (T) theBeanManager.getReference(bean, type, theBeanManager
-            .createCreationalContext(bean));
+        return (T) theBeanManager.getReference(bean, type,
+            theBeanManager.createCreationalContext(bean));
       }
     }
     throw new IllegalArgumentException("No bean found for type " + type);

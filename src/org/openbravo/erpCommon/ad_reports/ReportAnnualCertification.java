@@ -218,8 +218,8 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
       xmlDocument.setParameter("theme", vars.getTheme());
       // NavigationBar
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportAnnualCertification.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportAnnualCertification.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       // Left Bar
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
@@ -263,9 +263,10 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
     if (strDateFrom.equals("") && strDateTo.equals("")) {
       data = ReportAnnualCertificationData.set();
     } else {
-      data = ReportAnnualCertificationData.select(this, Utility.getContext(this, vars,
-          "#User_Client", "ReportAnnualCertification"), strOrg, strDateFrom, DateTimeData
-          .nDaysAfter(this, strDateTo, "1"), strcBpartnerId, initRecordNumber, intRecordRange);
+      data = ReportAnnualCertificationData.select(this,
+          Utility.getContext(this, vars, "#User_Client", "ReportAnnualCertification"), strOrg,
+          strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId,
+          initRecordNumber, intRecordRange);
     }
     xmlDocument.setData("structure1", data);
 
@@ -294,12 +295,12 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
     ReportAnnualCertificationData[] data = null;
 
     if (!strDateFrom.equals("") && !strDateTo.equals("")) {
-      data = ReportAnnualCertificationData.select(this, Utility.getContext(this, vars,
-          "#User_Client", "ReportAnnualCertification"), strOrg, strDateFrom, DateTimeData
-          .nDaysAfter(this, strDateTo, "1"), strcBpartnerId);
+      data = ReportAnnualCertificationData.select(this,
+          Utility.getContext(this, vars, "#User_Client", "ReportAnnualCertification"), strOrg,
+          strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId);
     } else {
-      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "NoDataFound", vars
-          .getLanguage()));
+      advisePopUp(request, response, "WARNING",
+          Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
     }
     String strOutput = vars.commandIn("PDF") ? "pdf" : "xls";
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportAnnualCertification.jrxml";

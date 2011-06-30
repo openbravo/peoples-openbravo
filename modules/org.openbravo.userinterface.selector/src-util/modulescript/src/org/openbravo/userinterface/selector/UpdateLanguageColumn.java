@@ -57,8 +57,7 @@ public class UpdateLanguageColumn extends ModuleScript {
         // ignore on purpose
       }
     } catch (Throwable t) {
-      log4j.error("Error executing moduleScript: "
-          + t.getMessage());
+      log4j.error("Error executing moduleScript: " + t.getMessage());
     }
 
   }

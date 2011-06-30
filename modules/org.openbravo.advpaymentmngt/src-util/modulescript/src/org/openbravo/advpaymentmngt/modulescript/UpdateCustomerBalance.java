@@ -22,11 +22,10 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
 
 public class UpdateCustomerBalance extends ModuleScript {
-  
+
   /**
-   * This modulescript regenerates the customer balance for all the business partners.
-   * It takes in account the outstanding sales/purchase invoices and the credit
-   * generated in payment in/out.
+   * This modulescript regenerates the customer balance for all the business partners. It takes in
+   * account the outstanding sales/purchase invoices and the credit generated in payment in/out.
    */
   @Override
   public void execute() {

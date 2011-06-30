@@ -264,29 +264,37 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
               "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportInvoiceVendorDimensionalAnalysesJR", strProductCategory);
-      xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure", comboTableData
-          .select(false));
+      xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
+          comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    try{
-   	 ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-   	          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceVendorDimensionalAnalysesJR"), Utility
-   	              .getContext(this, vars, "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"), 0);
-   	      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceVendorDimensionalAnalysesJR", strOrg);
-   	      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
-   	      comboTableData = null;
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportInvoiceVendorDimensionalAnalysesJR"), Utility.getContext(this, vars,
+              "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData,
+          "ReportInvoiceVendorDimensionalAnalysesJR", strOrg);
+      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
+      comboTableData = null;
 
-   }catch (Exception ex) {
-   	 throw new ServletException(ex);
-	}
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
-        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-            .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
-    xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData.selectMproduct(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
-            vars, "#User_Client", ""), strmProductId));
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    xmlDocument.setData(
+        "reportCBPartnerId_IN",
+        "liststructure",
+        SelectorUtilityData.selectBpartner(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+    xmlDocument.setData(
+        "reportMProductId_IN",
+        "liststructure",
+        SelectorUtilityData.selectMproduct(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
           "M_Product_ProductType", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -315,18 +323,19 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
     }
 
     if (vars.getLanguage().equals("en_US")) {
-      xmlDocument.setData("structure1", ReportInvoiceVendorDimensionalAnalysesJRData
-          .selectNotShown(this, strShown));
+      xmlDocument.setData("structure1",
+          ReportInvoiceVendorDimensionalAnalysesJRData.selectNotShown(this, strShown));
       xmlDocument.setData("structure2",
           strShown.equals("") ? new ReportInvoiceVendorDimensionalAnalysesJRData[0]
               : ReportInvoiceVendorDimensionalAnalysesJRData.selectShown(this, strShown));
     } else {
       xmlDocument.setData("structure1", ReportInvoiceVendorDimensionalAnalysesJRData
           .selectNotShownTrl(this, vars.getLanguage(), strShown));
-      xmlDocument.setData("structure2",
+      xmlDocument.setData(
+          "structure2",
           strShown.equals("") ? new ReportInvoiceVendorDimensionalAnalysesJRData[0]
-              : ReportInvoiceVendorDimensionalAnalysesJRData.selectShownTrl(this, vars
-                  .getLanguage(), strShown));
+              : ReportInvoiceVendorDimensionalAnalysesJRData.selectShownTrl(this,
+                  vars.getLanguage(), strShown));
     }
 
     response.setContentType("text/html; charset=UTF-8");
@@ -388,8 +397,8 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
     if (vars.getLanguage().equals("en_US")) {
       dimensionLabel = ReportInvoiceVendorDimensionalAnalysesJRData.selectNotShown(this, "");
     } else {
-      dimensionLabel = ReportInvoiceVendorDimensionalAnalysesJRData.selectNotShownTrl(this, vars
-          .getLanguage(), "");
+      dimensionLabel = ReportInvoiceVendorDimensionalAnalysesJRData.selectNotShownTrl(this,
+          vars.getLanguage(), "");
     }
     String[] strTextShow = { "", "", "", "", "" };
     String[] strLevelLabel = { "", "", "", "", "" };
@@ -510,8 +519,9 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Otherwise, the report is launched
       String strReportPath = "";
       if (strComparative.equals("Y")) {

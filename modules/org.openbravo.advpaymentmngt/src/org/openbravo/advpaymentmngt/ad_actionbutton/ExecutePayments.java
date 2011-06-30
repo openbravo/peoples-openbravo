@@ -94,8 +94,8 @@ public class ExecutePayments extends HttpSecureAppServlet {
           IsIDFilter.instance);
       final String executionProcess = vars.getRequiredStringParameter("inpExecutionProcess",
           IsIDFilter.instance);
-      processAndClose(response, vars, strWindowId, executionProcess, payments, dao.getObject(
-          Organization.class, strOrganizationId));
+      processAndClose(response, vars, strWindowId, executionProcess, payments,
+          dao.getObject(Organization.class, strOrganizationId));
     }
   }
 
@@ -171,8 +171,8 @@ public class ExecutePayments extends HttpSecureAppServlet {
       executePayment.init(getSource(strWindowId), executionProcess, payments, parameters,
           organization);
       result = executePayment.execute();
-      result.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), result
-          .getMessage()));
+      result.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
+          result.getMessage()));
     } catch (NoExecutionProcessFoundException e) {
       result.setType("Error");
       result.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
@@ -216,8 +216,8 @@ public class ExecutePayments extends HttpSecureAppServlet {
           "inpfinPaymentProposalId", IsIDFilter.instance);
       final FIN_PaymentProposal paymentProposal = dao.getObject(FIN_PaymentProposal.class,
           strPaymentProposalId);
-      return dao.getExecutionProcess(paymentProposal.getAccount(), paymentProposal
-          .getPaymentMethod(), paymentProposal.isReceipt());
+      return dao.getExecutionProcess(paymentProposal.getAccount(),
+          paymentProposal.getPaymentMethod(), paymentProposal.isReceipt());
     } else if (BatchPaymentExecutionForm.equals(strWindowId)) {
       String strSelectedPaymentsIds = vars.getRequestGlobalVariable("inpSelectedRowList", "");
       String[] paymentList = strSelectedPaymentsIds.split(",");
@@ -268,14 +268,14 @@ public class ExecutePayments extends HttpSecureAppServlet {
         for (int i = 0; i < data.length; i++) {
           FieldProviderFactory.setField(data[i], "parameterid", parametersArray[i].getId());
           FieldProviderFactory.setField(data[i], "name", parametersArray[i].getName());
-          FieldProviderFactory.setField(data[i], "showtext", "TEXT".equals(parametersArray[i]
-              .getInputType()) ? "block" : "none");
-          FieldProviderFactory.setField(data[i], "defaulttext", parametersArray[i]
-              .getDefaultTextValue());
-          FieldProviderFactory.setField(data[i], "showcheck", "CHECK".equals(parametersArray[i]
-              .getInputType()) ? "block" : "none");
-          FieldProviderFactory.setField(data[i], "defaultcheck", parametersArray[i]
-              .getDefaultValueForFlag());
+          FieldProviderFactory.setField(data[i], "showtext",
+              "TEXT".equals(parametersArray[i].getInputType()) ? "block" : "none");
+          FieldProviderFactory.setField(data[i], "defaulttext",
+              parametersArray[i].getDefaultTextValue());
+          FieldProviderFactory.setField(data[i], "showcheck",
+              "CHECK".equals(parametersArray[i].getInputType()) ? "block" : "none");
+          FieldProviderFactory.setField(data[i], "defaultcheck",
+              parametersArray[i].getDefaultValueForFlag());
         }
       }
     } finally {

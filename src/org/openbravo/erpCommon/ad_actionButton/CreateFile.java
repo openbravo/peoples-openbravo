@@ -82,9 +82,12 @@ public class CreateFile extends HttpSecureAppServlet {
     xmlDocument.setParameter("key", strKey);
     xmlDocument.setParameter("window", windowId);
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setData("reportTyperemittance", "liststructure", TyperemittanceComboData.select(
-        this, Utility.getContext(this, vars, "#User_Client", "CreateFile"), Utility.getContext(
-            this, vars, "#AccessibleOrgTree", "CreateFile")));
+    xmlDocument.setData(
+        "reportTyperemittance",
+        "liststructure",
+        TyperemittanceComboData.select(this,
+            Utility.getContext(this, vars, "#User_Client", "CreateFile"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "CreateFile")));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", strDescription);
@@ -205,13 +208,13 @@ public class CreateFile extends HttpSecureAppServlet {
       strMessage = Utility.messageBD(this, "INEError", vars.getLanguage());
     }
     // presentation header
-    strBuf = strBuf.append("5170").append(Principio[0].nif).append(strContract).append(
-        Principio[0].dateplanned);
+    strBuf = strBuf.append("5170").append(Principio[0].nif).append(strContract)
+        .append(Principio[0].dateplanned);
     strBuf = strBuf.append(Principio[0].entidad);
     strBuf = strBuf.append(Principio[0].entofi).append("\r\n");
     // ordering header
-    strBuf = strBuf.append("5370").append(Principio[0].nif).append(strContract).append(
-        Principio[0].dateplanned);
+    strBuf = strBuf.append("5370").append(Principio[0].nif).append(strContract)
+        .append(Principio[0].dateplanned);
     strBuf = strBuf.append(Principio[0].entidad).append(Principio[0].nCuenta).append("        06");
     strBuf = strBuf.append(Principio[0].ine).append("   \r\n");
     // lines
@@ -244,24 +247,24 @@ public class CreateFile extends HttpSecureAppServlet {
             + Lineas[i].tercero;
         ;
       }
-      strBuf = strBuf.append("5670").append(Principio[0].nif).append(strContract).append(
-          Lineas[i].nFactura).append(Lineas[i].tercero);
-      strBuf = strBuf.append(Lineas[i].creditcardnumber).append(Lineas[i].payamt).append(
-          "                ");
-      strBuf = strBuf.append(Replace.replace(Lineas[i].concepto, "\n", "")).append(
-          Lineas[i].fechaVencimiento).append("  \r\n");
+      strBuf = strBuf.append("5670").append(Principio[0].nif).append(strContract)
+          .append(Lineas[i].nFactura).append(Lineas[i].tercero);
+      strBuf = strBuf.append(Lineas[i].creditcardnumber).append(Lineas[i].payamt)
+          .append("                ");
+      strBuf = strBuf.append(Replace.replace(Lineas[i].concepto, "\n", ""))
+          .append(Lineas[i].fechaVencimiento).append("  \r\n");
       contador++;
-      strBuf = strBuf.append("5676").append(Principio[0].nif).append(strContract).append(
-          Lineas[i].nFactura).append(Lineas[i].direccion);
+      strBuf = strBuf.append("5676").append(Principio[0].nif).append(strContract)
+          .append(Lineas[i].nFactura).append(Lineas[i].direccion);
       strBuf = strBuf.append(Lineas[i].plaza).append(Lineas[i].postal).append(Lineas[i].localidad);
-      strBuf = strBuf.append(Lineas[i].codigoProvincia).append(Lineas[i].fechaFactura).append(
-          "\r\n");
+      strBuf = strBuf.append(Lineas[i].codigoProvincia).append(Lineas[i].fechaFactura)
+          .append("\r\n");
       contador++;
     }
     CreateFileData[] NLineas = CreateFileData.selectNLineas(this, String.valueOf(contador));
     // total orderer
-    strBuf = strBuf.append("5870").append(Principio[0].nif).append(strContract).append(
-        NLineas[0].hueco);
+    strBuf = strBuf.append("5870").append(Principio[0].nif).append(strContract)
+        .append(NLineas[0].hueco);
     strBuf = strBuf.append(Total[0].payamt).append(Total[0].nFactura).append(NLineas[0].lineas)
         .append("\r\n");
     NLineas = CreateFileData.selectNLineas(this, String.valueOf(contador + 2));
@@ -353,15 +356,15 @@ public class CreateFile extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("check2 ok");
     // presentation header
-    strBuf = strBuf.append("5180").append(Principio[0].nif).append(strContract).append(
-        Principio[0].hoy).append(Principio[0].dateplanned);
+    strBuf = strBuf.append("5180").append(Principio[0].nif).append(strContract)
+        .append(Principio[0].hoy).append(Principio[0].dateplanned);
     strBuf = strBuf.append(Principio[0].entidad19);
     strBuf = strBuf.append(Principio[0].entofi).append("\r\n");
     // ordering header
-    strBuf = strBuf.append("5380").append(Principio[0].nif).append(strContract).append(
-        Principio[0].hoy).append(Principio[0].dateplanned);
-    strBuf = strBuf.append(Principio[0].entidad19).append(Principio[0].nCuenta).append(
-        "        01                                                             ");
+    strBuf = strBuf.append("5380").append(Principio[0].nif).append(strContract)
+        .append(Principio[0].hoy).append(Principio[0].dateplanned);
+    strBuf = strBuf.append(Principio[0].entidad19).append(Principio[0].nCuenta)
+        .append("        01                                                             ");
     strBuf = strBuf.append("   \r\n");
     // Lines
     for (int i = 0; i < Lineas.length; i++) {
@@ -407,12 +410,12 @@ public class CreateFile extends HttpSecureAppServlet {
             + Lineas[i].tercero;
         ;
       }
-      strBuf = strBuf.append("5680").append(Principio[0].nif).append(strContract).append(
-          Lineas[i].nFactura19).append(Lineas[i].tercero);
-      strBuf = strBuf.append(Lineas[i].creditcardnumber).append(Lineas[i].payamt).append(
-          "0000000000000000");
-      strBuf = strBuf.append(Replace.replace(Lineas[i].concepto, "\n", "")).append(
-          Lineas[i].fechaVencimiento).append("  \r\n");
+      strBuf = strBuf.append("5680").append(Principio[0].nif).append(strContract)
+          .append(Lineas[i].nFactura19).append(Lineas[i].tercero);
+      strBuf = strBuf.append(Lineas[i].creditcardnumber).append(Lineas[i].payamt)
+          .append("0000000000000000");
+      strBuf = strBuf.append(Replace.replace(Lineas[i].concepto, "\n", ""))
+          .append(Lineas[i].fechaVencimiento).append("  \r\n");
       contador++;
       /*
        * strBuf = strBuf.append("5676").append(Principio[0].nif).append("000"
@@ -426,8 +429,8 @@ public class CreateFile extends HttpSecureAppServlet {
       log4j.debug("check3 ok");
     CreateFileData[] NLineas = CreateFileData.selectNLineas(this, String.valueOf(contador));
     // total orderer
-    strBuf = strBuf.append("5880").append(Principio[0].nif).append(strContract).append(
-        NLineas[0].hueco);
+    strBuf = strBuf.append("5880").append(Principio[0].nif).append(strContract)
+        .append(NLineas[0].hueco);
     strBuf = strBuf.append(Total[0].payamt).append(Total[0].nFactura).append(NLineas[0].lineas)
         .append("\r\n");
     NLineas = CreateFileData.selectNLineas(this, String.valueOf(contador + 2));
@@ -570,32 +573,32 @@ public class CreateFile extends HttpSecureAppServlet {
     // D
     // (common)
     strBuf = strBuf.append("001").append(Principio[0].hoy).append(Principio[0].duedate); // E-F2
-    strBuf = strBuf.append(Principio[0].nCuenta).append(strDetalle).append("   ").append(
-        Principio[0].dc).append(Principio[0].hueco).append("\r\n"); // F3-G
+    strBuf = strBuf.append(Principio[0].nCuenta).append(strDetalle).append("   ")
+        .append(Principio[0].dc).append(Principio[0].hueco).append("\r\n"); // F3-G
 
     // 002
     strBuf = strBuf.append("03").append(strCodigo).append(Principio[0].nif).append("            "); // A
     // -
     // D
     // (common)
-    strBuf = strBuf.append("002").append(Principio[0].nombre).append(Principio[0].hueco).append(
-        "\r\n"); // E-G
+    strBuf = strBuf.append("002").append(Principio[0].nombre).append(Principio[0].hueco)
+        .append("\r\n"); // E-G
 
     // 003
     strBuf = strBuf.append("03").append(strCodigo).append(Principio[0].nif).append("            "); // A
     // -
     // D
     // (common)
-    strBuf = strBuf.append("003").append(Principio[0].domicilio).append(Principio[0].hueco).append(
-        "\r\n"); // E-G
+    strBuf = strBuf.append("003").append(Principio[0].domicilio).append(Principio[0].hueco)
+        .append("\r\n"); // E-G
 
     // 004
     strBuf = strBuf.append("03").append(strCodigo).append(Principio[0].nif).append("            "); // A
     // -
     // D
     // (common)
-    strBuf = strBuf.append("004").append(Principio[0].plaza).append(Principio[0].hueco).append(
-        "\r\n"); // E-G
+    strBuf = strBuf.append("004").append(Principio[0].plaza).append(Principio[0].hueco)
+        .append("\r\n"); // E-G
 
     int contador = 4;
     // Lines
@@ -673,39 +676,39 @@ public class CreateFile extends HttpSecureAppServlet {
       // -
       // D
       // (common)
-      strBuf = strBuf.append("011").append(Lineas[i].nombre).append(Principio[0].hueco).append(
-          "\r\n");
+      strBuf = strBuf.append("011").append(Lineas[i].nombre).append(Principio[0].hueco)
+          .append("\r\n");
       // 012
       strBuf = strBuf.append("06").append(strCodigo).append(Principio[0].nif).append(Lineas[i].nif); // A
       // -
       // D
       // (common)
-      strBuf = strBuf.append("012").append(Lineas[i].domicilio).append(Principio[0].hueco).append(
-          "\r\n");
+      strBuf = strBuf.append("012").append(Lineas[i].domicilio).append(Principio[0].hueco)
+          .append("\r\n");
 
       // 014
       strBuf = strBuf.append("06").append(strCodigo).append(Principio[0].nif).append(Lineas[i].nif); // A
       // -
       // D
       // (common)
-      strBuf = strBuf.append("014").append(Lineas[i].plaza).append(Principio[0].hueco).append(
-          "\r\n");
+      strBuf = strBuf.append("014").append(Lineas[i].plaza).append(Principio[0].hueco)
+          .append("\r\n");
 
       // 015
       strBuf = strBuf.append("06").append(strCodigo).append(Principio[0].nif).append(Lineas[i].nif); // A
       // -
       // D
       // (common)
-      strBuf = strBuf.append("015").append(Lineas[i].provincia).append(Principio[0].hueco).append(
-          "\r\n");
+      strBuf = strBuf.append("015").append(Lineas[i].provincia).append(Principio[0].hueco)
+          .append("\r\n");
 
       // 016
       strBuf = strBuf.append("06").append(strCodigo).append(Principio[0].nif).append(Lineas[i].nif); // A
       // -
       // D
       // (common)
-      strBuf = strBuf.append("016").append(
-          Lineas[i].concepto.replaceAll("\r", " ").replaceAll("\n", " "))
+      strBuf = strBuf.append("016")
+          .append(Lineas[i].concepto.replaceAll("\r", " ").replaceAll("\n", " "))
           .append(Principio[0].hueco).append("\r\n");
 
       contador += 6;

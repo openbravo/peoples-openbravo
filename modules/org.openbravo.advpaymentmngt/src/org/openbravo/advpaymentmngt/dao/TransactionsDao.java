@@ -102,8 +102,11 @@ public class TransactionsDao {
       newTransaction.setActivity(payment.getActivity());
       newTransaction.setProject(payment.getProject());
       newTransaction.setCurrency(payment.getAccount().getCurrency());
-      newTransaction.setDescription(payment.getDescription().replace("\n", ". ").substring(0,
-          payment.getDescription().length() > 254 ? 254 : payment.getDescription().length()));
+      newTransaction.setDescription(payment
+          .getDescription()
+          .replace("\n", ". ")
+          .substring(0,
+              payment.getDescription().length() > 254 ? 254 : payment.getDescription().length()));
       newTransaction.setClient(payment.getClient());
       newTransaction.setLineNo(getTransactionMaxLineNo(payment.getAccount()) + 10);
       newTransaction
@@ -177,8 +180,7 @@ public class TransactionsDao {
       if (acct == null) {
         throw new OBException("Accounting process failed for the financial account transaction");
       } else if (!acct.post(finFinancialAccountTransaction.getId(), false, vars,
-          connectionProvider, connectionProvider.getConnection())
-          || acct.errors != 0) {
+          connectionProvider, connectionProvider.getConnection()) || acct.errors != 0) {
         connectionProvider.releaseRollbackConnection(connectionProvider.getConnection());
         throw new OBException(acct.getMessageResult().getMessage());
       }
@@ -235,8 +237,8 @@ public class TransactionsDao {
   public static void updateAccountingDate(FIN_FinaccTransaction transaction) {
     final String FIN_FINACC_TRANSACTION_TABLE = "4D8C3B3C31D1410DA046140C9F024D17";
     OBCriteria<AccountingFact> obcAF = OBDal.getInstance().createCriteria(AccountingFact.class);
-    obcAF.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, OBDal.getInstance().get(Table.class,
-        FIN_FINACC_TRANSACTION_TABLE)));
+    obcAF.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE,
+        OBDal.getInstance().get(Table.class, FIN_FINACC_TRANSACTION_TABLE)));
     obcAF.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, transaction.getId()));
     for (AccountingFact aFact : obcAF.list()) {
       aFact.setAccountingDate(transaction.getTransactionDate());
@@ -293,8 +295,8 @@ public class TransactionsDao {
   public static FieldProvider[] getTransactionsFiltered(FIN_FinancialAccount account,
       Date statementDate, boolean hideAfterDate) {
 
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-        "dateFormat.java");
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
     OBContext.setAdminMode();
     try {
@@ -326,8 +328,8 @@ public class TransactionsDao {
         String strPaymentDocNo = "";
         String strBusinessPartner = "";
         FieldProviderFactory.setField(data[i], "transactionId", FIN_Transactions[i].getId());
-        FieldProviderFactory.setField(data[i], "transactionDate", dateFormater
-            .format(FIN_Transactions[i].getTransactionDate()));
+        FieldProviderFactory.setField(data[i], "transactionDate",
+            dateFormater.format(FIN_Transactions[i].getTransactionDate()));
         if (FIN_Transactions[i].getFinPayment() != null) {
           if (FIN_Transactions[i].getFinPayment().getBusinessPartner() != null) {
             strBusinessPartner = FIN_Transactions[i].getFinPayment().getBusinessPartner().getName();
@@ -336,8 +338,8 @@ public class TransactionsDao {
         }
 
         // Truncate business partner name
-        String truncateBPname = (strBusinessPartner.length() > 30) ? strBusinessPartner.substring(
-            0, 27).concat("...").toString() : strBusinessPartner;
+        String truncateBPname = (strBusinessPartner.length() > 30) ? strBusinessPartner
+            .substring(0, 27).concat("...").toString() : strBusinessPartner;
         FieldProviderFactory.setField(data[i], "businessPartner",
             (strBusinessPartner.length() > 30) ? strBusinessPartner : "");
         FieldProviderFactory.setField(data[i], "businessPartnerTrunc", truncateBPname);
@@ -348,11 +350,11 @@ public class TransactionsDao {
         String description = FIN_Transactions[i].getDescription();
         String truncateDescription = "";
         if (description != null) {
-          truncateDescription = (description.length() > 42) ? description.substring(0, 39).concat(
-              "...").toString() : description;
+          truncateDescription = (description.length() > 42) ? description.substring(0, 39)
+              .concat("...").toString() : description;
         }
-        FieldProviderFactory.setField(data[i], "description", (description != null && description
-            .length() > 42) ? description : "");
+        FieldProviderFactory.setField(data[i], "description",
+            (description != null && description.length() > 42) ? description : "");
         FieldProviderFactory.setField(data[i], "descriptionTrunc", truncateDescription);
 
         FieldProviderFactory.setField(data[i], "paymentAmount", FIN_Transactions[i]
@@ -360,8 +362,8 @@ public class TransactionsDao {
         FieldProviderFactory.setField(data[i], "depositAmount", FIN_Transactions[i]
             .getDepositAmount().toString());
         FieldProviderFactory.setField(data[i], "rownum", "" + (i + 1));
-        FieldProviderFactory.setField(data[i], "markSelectedId", (FIN_Transactions[i].getStatus()
-            .equals("RPPC")) ? FIN_Transactions[i].getId() : "");
+        FieldProviderFactory.setField(data[i], "markSelectedId",
+            (FIN_Transactions[i].getStatus().equals("RPPC")) ? FIN_Transactions[i].getId() : "");
       }
 
       return data;

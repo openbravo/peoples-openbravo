@@ -488,8 +488,8 @@ public class SelectorComponent extends BaseTemplateComponent {
             outFields.add(outField);
             outField.setOutSuffix("");
           } else {
-            List<Field> outFieldTargetFields = getOutFieldListForSelectorField(tabId, selectorField
-                .getId());
+            List<Field> outFieldTargetFields = getOutFieldListForSelectorField(tabId,
+                selectorField.getId());
 
             if (outFieldTargetFields.size() == 0 && selectorField.getSuffix() != null
                 && !selectorField.getSuffix().equals("")) {
@@ -550,8 +550,8 @@ public class SelectorComponent extends BaseTemplateComponent {
       List<SelectorField> fields = OBDao.getFilteredCriteria(SelectorField.class,
           selectorConstraint, isOutFieldConstraint, hasSuffixConstraint).list();
       for (final SelectorField field : fields) {
-        hiddenInputs.put(columnName + field.getSuffix(), getElementString.replaceAll("@id@",
-            columnName + field.getSuffix()));
+        hiddenInputs.put(columnName + field.getSuffix(),
+            getElementString.replaceAll("@id@", columnName + field.getSuffix()));
       }
     } catch (Exception e) {
       log.error("Error getting hidden input for selector "

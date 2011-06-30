@@ -102,8 +102,8 @@ public class DocPayment extends AcctServer {
         docLine.C_BANKSTATEMENTLINE_ID = data[i].getField("C_BANKSTATEMENTLINE_ID");
         docLine.C_CASHLINE_ID = data[i].getField("C_CASHLINE_ID");
         try {
-          docLine.dpStatus = DocLinePaymentData.getDPStatus(connectionProvider, Record_ID, data[i]
-              .getField("cDebtPaymentId"));
+          docLine.dpStatus = DocLinePaymentData.getDPStatus(connectionProvider, Record_ID,
+              data[i].getField("cDebtPaymentId"));
         } catch (ServletException e) {
           log4j.error(e);
           docLine.dpStatus = "";
@@ -215,9 +215,11 @@ public class DocPayment extends AcctServer {
           // DP
           finalConvertedAmt = getConvertedAmt(finalConvertedAmt, as.m_C_Currency_ID, C_Currency_ID,
               DateAcct, "", AD_Client_ID, AD_Org_ID, conn);
-          fact.createLine(line, getAccountBPartner(line.m_C_BPartner_ID, as, line.isReceipt
-              .equals("Y"), line.dpStatus, conn), C_Currency_ID, (line.isReceipt.equals("Y") ? ""
-              : finalConvertedAmt), (line.isReceipt.equals("Y") ? finalConvertedAmt : ""),
+          fact.createLine(
+              line,
+              getAccountBPartner(line.m_C_BPartner_ID, as, line.isReceipt.equals("Y"),
+                  line.dpStatus, conn), C_Currency_ID, (line.isReceipt.equals("Y") ? ""
+                  : finalConvertedAmt), (line.isReceipt.equals("Y") ? finalConvertedAmt : ""),
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         } else { // 2.2* Generated DP
           if (log4j.isDebugEnabled())
@@ -226,8 +228,10 @@ public class DocPayment extends AcctServer {
               || !(line.C_Settlement_Cancel_ID == null || line.C_Settlement_Cancel_ID.equals(""))) {
             if (log4j.isDebugEnabled())
               log4j.debug("Not paid");
-            fact.createLine(line, getAccountBPartner(line.m_C_BPartner_ID, as, line.isReceipt
-                .equals("Y"), line.dpStatus, conn), C_Currency_ID,
+            fact.createLine(
+                line,
+                getAccountBPartner(line.m_C_BPartner_ID, as, line.isReceipt.equals("Y"),
+                    line.dpStatus, conn), C_Currency_ID,
                 (line.isReceipt.equals("Y") ? convertTotal.toString() : ""), (line.isReceipt
                     .equals("Y") ? "" : convertTotal.toString()), Fact_Acct_Group_ID,
                 nextSeqNo(SeqNo), DocumentType, conn);
@@ -388,21 +392,22 @@ public class DocPayment extends AcctServer {
           finalLineAmt = new BigDecimal(finalAmtTo);
           if (finalLineAmt.compareTo(new BigDecimal("0.00")) != 0) {
             if (line.C_BANKSTATEMENTLINE_ID != null && !line.C_BANKSTATEMENTLINE_ID.equals("")) {
-              fact.createLine(line, getAccountBankStatementLine(line.C_BANKSTATEMENTLINE_ID, as,
-                  conn), strcCurrencyId, (line.isReceipt.equals("Y") ? finalAmtTo : ""),
+              fact.createLine(line,
+                  getAccountBankStatementLine(line.C_BANKSTATEMENTLINE_ID, as, conn),
+                  strcCurrencyId, (line.isReceipt.equals("Y") ? finalAmtTo : ""),
                   (line.isReceipt.equals("Y") ? "" : finalAmtTo), Fact_Acct_Group_ID, "999999",
                   DocumentType, conn);
             }// else if(line.C_CASHLINE_ID!=null &&
-            // !line.C_CASHLINE_ID.equals("")) fact.createLine(line,
-            // getAccountCashLine(line.C_CASHLINE_ID,
-            // as,conn),strcCurrencyId,
-            // (line.isReceipt.equals("Y")?finalAmtTo:""),(line.isReceipt.equals("Y")?"":finalAmtTo),
-            // Fact_Acct_Group_ID, "999999", DocumentType,conn);
+             // !line.C_CASHLINE_ID.equals("")) fact.createLine(line,
+             // getAccountCashLine(line.C_CASHLINE_ID,
+             // as,conn),strcCurrencyId,
+             // (line.isReceipt.equals("Y")?finalAmtTo:""),(line.isReceipt.equals("Y")?"":finalAmtTo),
+             // Fact_Acct_Group_ID, "999999", DocumentType,conn);
             else
               fact.createLine(line, getAccount(AcctServer.ACCTTYPE_BankInTransitDefault, as, conn),
-                  strcCurrencyId, (line.isReceipt.equals("Y") ? finalAmtTo : ""), (line.isReceipt
-                      .equals("Y") ? "" : finalAmtTo), Fact_Acct_Group_ID, "999999", DocumentType,
-                  conn);
+                  strcCurrencyId, (line.isReceipt.equals("Y") ? finalAmtTo : ""),
+                  (line.isReceipt.equals("Y") ? "" : finalAmtTo), Fact_Acct_Group_ID, "999999",
+                  DocumentType, conn);
           }
         }
       }
@@ -579,8 +584,8 @@ public class DocPayment extends AcctServer {
       ConnectionProvider conn) {
     DocPaymentData[] data = null;
     try {
-      data = DocPaymentData.selectBankStatementLineAcct(conn, strcBankstatementlineId, as
-          .getC_AcctSchema_ID());
+      data = DocPaymentData.selectBankStatementLineAcct(conn, strcBankstatementlineId,
+          as.getC_AcctSchema_ID());
     } catch (ServletException e) {
       log4j.warn(e);
     }

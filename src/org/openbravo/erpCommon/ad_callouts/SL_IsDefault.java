@@ -88,7 +88,7 @@ public class SL_IsDefault extends HttpSecureAppServlet {
         String currentClause = "";
         // Include parent column if it exists
         if (!parentColumn.equals("") && !parentValue.equals(""))
-          parentClause = "AND " + parentColumn + "='" + parentValue+"'";
+          parentClause = "AND " + parentColumn + "='" + parentValue + "'";
 
         // In case the current record already exists in DB not sum it to
         // the total

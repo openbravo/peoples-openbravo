@@ -226,8 +226,8 @@ public class ExtractModule {
       } else {
         // add entry for file (and compress it)
         final byte[] buf = new byte[1024];
-        obx.putNextEntry(new ZipEntry(list[i].toString().replace(relativeDir, "").replace(
-            fileSeparator, "/")));
+        obx.putNextEntry(new ZipEntry(list[i].toString().replace(relativeDir, "")
+            .replace(fileSeparator, "/")));
         final FileInputStream in = new FileInputStream(list[i].toString());
         int len;
         while ((len = in.read(buf)) > 0) {

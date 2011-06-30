@@ -13,10 +13,11 @@
 //: c15:rmi:PerfectTimeI.java
 // The PerfectTime remote interface.
 package rmi;
+
 import java.rmi.*;
 import java.io.*;
 import org.xml.sax.*;
 
 public interface RenderFoI extends Remote {
   byte[] computeRenderFo(String strFo) throws RemoteException;
-} ///:~
+} // /:~

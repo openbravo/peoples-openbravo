@@ -68,9 +68,10 @@ public class RptC_Remittance extends HttpSecureAppServlet {
     if (strOutput.equals("pdf"))
       response.setHeader("Content-disposition", "inline; filename=RptC_Remittance.pdf");
 
-    RptCRemittanceData[] data = RptCRemittanceData.select(this, Utility.getContext(this, vars,
-        "#User_Client", "RptC_RemittanceJR"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-        "RptC_RemittanceJR"), strcRemittanceId);
+    RptCRemittanceData[] data = RptCRemittanceData
+        .select(this, Utility.getContext(this, vars, "#User_Client", "RptC_RemittanceJR"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "RptC_RemittanceJR"),
+            strcRemittanceId);
 
     JasperReport jasperReportLines;
     try {

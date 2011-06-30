@@ -128,8 +128,9 @@ public class ReportProductionCost extends HttpSecureAppServlet {
         // If a conversion rate is missing for a certain transaction, an
         // error message window pops-up.
         if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-          advise(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars
-              .getLanguage()), strConvRateErrorMsg);
+          advise(request, response, "ERROR",
+              Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+              strConvRateErrorMsg);
         } else { // Otherwise, the report is launched
           if (data == null || data.length == 0) {
             data = ReportProductionCostData.set();
@@ -150,8 +151,8 @@ public class ReportProductionCost extends HttpSecureAppServlet {
         xmlDocument.setParameter("childTabContainer", tabs.childTabs());
         xmlDocument.setParameter("theme", vars.getTheme());
         NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-            "ReportProductionCost.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-                .breadcrumb());
+            "ReportProductionCost.html", classInfo.id, classInfo.type, strReplaceWith,
+            tabs.breadcrumb());
         xmlDocument.setParameter("navigationBar", nav.toString());
         LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportProductionCost.html",
             strReplaceWith);
@@ -198,8 +199,8 @@ public class ReportProductionCost extends HttpSecureAppServlet {
       // ReportProductionCostData.bPartnerDescription(this,
       // strcBpartnerId));
       xmlDocument.setParameter("parammProductId", strmProductId);
-      xmlDocument.setParameter("paramProductDescription", ReportProductionCostData
-          .mProductDescription(this, strmProductId));
+      xmlDocument.setParameter("paramProductDescription",
+          ReportProductionCostData.mProductDescription(this, strmProductId));
 
       // xmlDocument.setData("structureOrganizacion",
       // OrganizationComboData.select(this, vars.getRole()));
@@ -234,8 +235,8 @@ public class ReportProductionCost extends HttpSecureAppServlet {
     if (strConvRateErrorMsg.equals("") || strConvRateErrorMsg == null) {
       try {
         dataMaterial = ReportProductionCostData.selectMaterial(this, strBaseCurrencyId,
-            strCurrencyId, strId, strLevel, strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,
-                "1"), strmProductId);
+            strCurrencyId, strId, strLevel, strdateFrom,
+            DateTimeData.nDaysAfter(this, strdateTo, "1"), strmProductId);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
@@ -243,8 +244,9 @@ public class ReportProductionCost extends HttpSecureAppServlet {
       // If a conversion rate is missing for a certain transaction, an
       // error message window pops-up.
       if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-        advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-            vars.getLanguage()), strConvRateErrorMsg);
+        advisePopUp(request, response, "ERROR",
+            Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+            strConvRateErrorMsg);
       } else { // Otherwise, the report is launched
         if (dataMaterial == null || dataMaterial.length == 0) {
           dataMaterial = ReportProductionCostData.set();
@@ -264,8 +266,9 @@ public class ReportProductionCost extends HttpSecureAppServlet {
       // If a conversion rate is missing for a certain transaction, an
       // error message window pops-up.
       if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-        advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-            vars.getLanguage()), strConvRateErrorMsg);
+        advisePopUp(request, response, "ERROR",
+            Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+            strConvRateErrorMsg);
       } else { // Otherwise, the report is launched
         if (dataMachine == null || dataMachine.length == 0) {
           dataMachine = ReportProductionCostData.set();
@@ -285,8 +288,9 @@ public class ReportProductionCost extends HttpSecureAppServlet {
       // If a conversion rate is missing for a certain transaction, an
       // error message window pops-up.
       if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-        advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-            vars.getLanguage()), strConvRateErrorMsg);
+        advisePopUp(request, response, "ERROR",
+            Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+            strConvRateErrorMsg);
       } else { // Otherwise, the report is launched
         if (dataIndirect == null || dataIndirect.length == 0) {
           dataIndirect = ReportProductionCostData.set();
@@ -306,8 +310,9 @@ public class ReportProductionCost extends HttpSecureAppServlet {
       // If a conversion rate is missing for a certain transaction, an
       // error message window pops-up.
       if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-        advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-            vars.getLanguage()), strConvRateErrorMsg);
+        advisePopUp(request, response, "ERROR",
+            Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+            strConvRateErrorMsg);
       } else { // Otherwise, the report is launched
         if (dataEmployee == null || dataEmployee.length == 0) {
           dataEmployee = ReportProductionCostData.set();
@@ -327,8 +332,9 @@ public class ReportProductionCost extends HttpSecureAppServlet {
       // If a conversion rate is missing for a certain transaction, an
       // error message window pops-up.
       if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-        advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-            vars.getLanguage()), strConvRateErrorMsg);
+        advisePopUp(request, response, "ERROR",
+            Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+            strConvRateErrorMsg);
       } else { // Otherwise, the report is launched
         if (dataCostCenter == null || dataCostCenter.length == 0) {
           dataCostCenter = ReportProductionCostData.set();

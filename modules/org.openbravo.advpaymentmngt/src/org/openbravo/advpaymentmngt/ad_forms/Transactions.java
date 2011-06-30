@@ -180,10 +180,10 @@ public class Transactions extends HttpSecureAppServlet {
       if ((org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(),
           tabId))
           || !(Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, 1),
-              strClient) && Utility.isElementInList(Utility.getContext(this, vars, "#User_Org",
-              windowId, 1), strOrg))) {
-        OBError myError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(
-            this, "NoWriteAccess", vars.getLanguage()));
+              strClient) && Utility.isElementInList(
+              Utility.getContext(this, vars, "#User_Org", windowId, 1), strOrg))) {
+        OBError myError = Utility.translateError(this, vars, vars.getLanguage(),
+            Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
         vars.setMessage(tabId, myError);
         printPageClosePopUp(response, vars);
       } else {
@@ -275,8 +275,8 @@ public class Transactions extends HttpSecureAppServlet {
     xmlDocument.setParameter("grid_Default", "0");
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(),
-        "../FinancialAccount/Transactions5B9941AC1F6A4529A76FCA7CDA0A7D7A", (strCommand
-            .equals("NEW") || (data == null || data.length == 0)),
+        "../FinancialAccount/Transactions5B9941AC1F6A4529A76FCA7CDA0A7D7A",
+        (strCommand.equals("NEW") || (data == null || data.length == 0)),
         "document.frmMain.inpfinFinancialAccountId", "", "", "".equals("Y"), "FinancialAccount",
         strReplaceWith, true);
 
@@ -306,8 +306,8 @@ public class Transactions extends HttpSecureAppServlet {
       try {
         FIN_Reconciliation lastReconciliation = TransactionsDao.getLastReconciliation(account, "Y");
         if (lastReconciliation != null) {
-          strLastReconcileDate = Utility.formatDate(lastReconciliation.getEndingDate(), vars
-              .getJavaDateFormat());
+          strLastReconcileDate = Utility.formatDate(lastReconciliation.getEndingDate(),
+              vars.getJavaDateFormat());
           strLastRecBalance = lastReconciliation.getEndingBalance().toString();
         }
       } finally {
@@ -376,8 +376,8 @@ public class Transactions extends HttpSecureAppServlet {
       dataAux.setData("iskey", (colNames[i].equals("rowkey") ? "true" : "false"));
       dataAux.setData("isvisible",
           (colNames[i].endsWith("_id") || colNames[i].equals("rowkey") ? "false" : "true"));
-      String name = Utility.messageBD(this, "APRM_FATS_" + colNames[i].toUpperCase(), vars
-          .getLanguage());
+      String name = Utility.messageBD(this, "APRM_FATS_" + colNames[i].toUpperCase(),
+          vars.getLanguage());
       dataAux.setData("name", (name.startsWith("APRM_FATS_") ? colNames[i] : name));
       dataAux.setData("type", "string");
       dataAux.setData("width", colWidths[i]);
@@ -437,8 +437,9 @@ public class Transactions extends HttpSecureAppServlet {
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         if (strNewFilterAux.equals("1") || strNewFilterAux.equals("")) { // New filter or first load
-          int dbNumRows = dao.getTrxGridRowCount(dao.getObject(FIN_FinancialAccount.class,
-              strFinancialAccountId), hideReconciledTrx, TableSQLData.maxRowsPerGridPage, offset);
+          int dbNumRows = dao.getTrxGridRowCount(
+              dao.getObject(FIN_FinancialAccount.class, strFinancialAccountId), hideReconciledTrx,
+              TableSQLData.maxRowsPerGridPage, offset);
           strNumRows = Integer.toString(dbNumRows);
 
           vars.setSessionValue("Transactions.numrows", strNumRows);
@@ -446,8 +447,9 @@ public class Transactions extends HttpSecureAppServlet {
           strNumRows = vars.getSessionValue("Transactions.numrows");
         }
 
-        finaccTransactions = dao.getTrxGridRows(dao.getObject(FIN_FinancialAccount.class,
-            strFinancialAccountId), hideReconciledTrx, pageSize, offset, strOrderBy);
+        finaccTransactions = dao.getTrxGridRows(
+            dao.getObject(FIN_FinancialAccount.class, strFinancialAccountId), hideReconciledTrx,
+            pageSize, offset, strOrderBy);
         // strNumRows = Integer.toString(finaccTransactions.size());
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
@@ -489,8 +491,8 @@ public class Transactions extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
-        "\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+        .append("\" backendPage=\"" + page + "\">\n");
 
     OBContext.setAdminMode();
     try {
@@ -504,8 +506,8 @@ public class Transactions extends HttpSecureAppServlet {
             String columnData = "";
             switch (k) {
             case 0: // date column
-              columnData = Utility.formatDate(finaccTrx.getTransactionDate(), vars
-                  .getJavaDateFormat());
+              columnData = Utility.formatDate(finaccTrx.getTransactionDate(),
+                  vars.getJavaDateFormat());
               break;
             case 1: // bpartner
               if (finaccTrx.getFinPayment() != null)
@@ -522,16 +524,16 @@ public class Transactions extends HttpSecureAppServlet {
               break;
             case 4: // receivedamount
               if (finaccTrx.getDepositAmount() != null) {
-                columnData = FIN_Utility.multiCurrencyAmountToDisplay(
-                    finaccTrx.getDepositAmount(), finaccTrx.getCurrency(),
-                    finaccTrx.getForeignAmount(), finaccTrx.getForeignCurrency());
+                columnData = FIN_Utility.multiCurrencyAmountToDisplay(finaccTrx.getDepositAmount(),
+                    finaccTrx.getCurrency(), finaccTrx.getForeignAmount(),
+                    finaccTrx.getForeignCurrency());
               }
               break;
             case 5: // paidamount
               if (finaccTrx.getPaymentAmount() != null) {
-                columnData = FIN_Utility.multiCurrencyAmountToDisplay(
-                    finaccTrx.getPaymentAmount(), finaccTrx.getCurrency(),
-                    finaccTrx.getForeignAmount(), finaccTrx.getForeignCurrency());
+                columnData = FIN_Utility.multiCurrencyAmountToDisplay(finaccTrx.getPaymentAmount(),
+                    finaccTrx.getCurrency(), finaccTrx.getForeignAmount(),
+                    finaccTrx.getForeignCurrency());
               }
               break;
             case 6: // cleared
@@ -549,11 +551,11 @@ public class Transactions extends HttpSecureAppServlet {
             if (columnData != "") {
               if (headers[k].getField("adReferenceId").equals("32"))
                 strRowsData.append(strReplaceWith).append("/images/");
-              strRowsData.append(columnData.replaceAll("<b>", "").replaceAll("<B>", "").replaceAll(
-                  "</b>", "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll("<I>", "")
-                  .replaceAll("</i>", "").replaceAll("</I>", "").replaceAll("<p>", "&nbsp;")
-                  .replaceAll("<P>", "&nbsp;").replaceAll("<br>", "&nbsp;").replaceAll("<BR>",
-                      "&nbsp;"));
+              strRowsData.append(columnData.replaceAll("<b>", "").replaceAll("<B>", "")
+                  .replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "")
+                  .replaceAll("<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
+                  .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                  .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
             } else {
               if (headers[k].getField("adReferenceId").equals("32")) {
                 strRowsData.append(strReplaceWith).append("/images/blank.gif");

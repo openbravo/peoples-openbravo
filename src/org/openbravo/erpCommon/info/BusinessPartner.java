@@ -273,8 +273,8 @@ public class BusinessPartner extends HttpSecureAppServlet {
       dataAux.setData("iskey", (colNames[i].equals("rowkey") ? "true" : "false"));
       dataAux.setData("isvisible",
           (colNames[i].endsWith("_id") || colNames[i].equals("rowkey") ? "false" : "true"));
-      final String name = Utility.messageBD(this, "BPS_" + colNames[i].toUpperCase(), vars
-          .getLanguage());
+      final String name = Utility.messageBD(this, "BPS_" + colNames[i].toUpperCase(),
+          vars.getLanguage());
       dataAux.setData("name", (name.startsWith("BPS_") ? colNames[i] : name));
       dataAux.setData("type", "string");
       dataAux.setData("width", colWidths[i]);
@@ -308,27 +308,28 @@ public class BusinessPartner extends HttpSecureAppServlet {
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
         page = TableSQLData.calcAndGetBackendPage(vars, "DebtPaymentInfo.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
-        // on movePage action force executing countRows again
-           strNewFilter = "";
+          // on movePage action force executing countRows again
+          strNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         // New filter or first load
         if (strNewFilter.equals("1") || strNewFilter.equals("")) {
-        	String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-        	if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-	        	oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-	        	oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-	        	rownum = "ROWNUM";
-        	} else {
-        		pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-        	}  	
-          strNumRows = BusinessPartnerData.countRows(this,rownum, Utility.getContext(this, vars,
-              "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg),
-              strKey, strName, strContact, strZIP, strProvincia,
-              (strBpartners.equals("customer") ? "clients" : ""),
-              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, pgLimit, oraLimit1, oraLimit2);
+          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+            rownum = "ROWNUM";
+          } else {
+            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          }
+          strNumRows = BusinessPartnerData.countRows(this, rownum,
+              Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strContact, strZIP,
+              strProvincia, (strBpartners.equals("customer") ? "clients" : ""),
+              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, pgLimit, oraLimit1,
+              oraLimit2);
           vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("BusinessPartnerInfo.numrows");
@@ -338,26 +339,26 @@ public class BusinessPartner extends HttpSecureAppServlet {
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
           String oraLimit1 = String.valueOf(offset + pageSize);
           String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-          data = BusinessPartnerData.select(this, "ROWNUM", Utility.getContext(this, vars,
-              "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg),
-              strKey, strName, strContact, strZIP, strProvincia,
-              (strBpartners.equals("customer") ? "clients" : ""),
+          data = BusinessPartnerData.select(this, "ROWNUM",
+              Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strContact, strZIP,
+              strProvincia, (strBpartners.equals("customer") ? "clients" : ""),
               (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", oraLimit1,
               oraLimit2);
         } else {
           final String pgLimit = pageSize + " OFFSET " + offset;
-          data = BusinessPartnerData.select(this, "1", Utility.getContext(this, vars,
-              "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg),
-              strKey, strName, strContact, strZIP, strProvincia,
-              (strBpartners.equals("customer") ? "clients" : ""),
+          data = BusinessPartnerData.select(this, "1",
+              Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strContact, strZIP,
+              strProvincia, (strBpartners.equals("customer") ? "clients" : ""),
               (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, pgLimit, "",
               "");
         }
       } catch (final ServletException e) {
         log4j.error("Error in print page data: " + e);
         e.printStackTrace();
-        final OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e
-            .getMessage());
+        final OBError myError = Utility.translateError(this, vars, vars.getLanguage(),
+            e.getMessage());
         if (!myError.isConnectionAvailable()) {
           bdErrorAjax(response, "Error", "Connection Error", "No database connection");
           return;
@@ -397,7 +398,8 @@ public class BusinessPartner extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+        .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -414,11 +416,11 @@ public class BusinessPartner extends HttpSecureAppServlet {
           } else if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",
-                "").replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll(
-                "<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;").replaceAll("<br>",
-                    "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
+                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
+                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
+                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");

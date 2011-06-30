@@ -70,8 +70,9 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
     for (String sessionId : sessionsInContext) {
       try {
         // cannot use dal at this point, use sqlc
-        SessionLoginData.deactivate((ConnectionProvider) event.getServletContext().getAttribute(
-            "openbravoPool"), sessionId);
+        SessionLoginData
+            .deactivate((ConnectionProvider) event.getServletContext()
+                .getAttribute("openbravoPool"), sessionId);
         this.context = null;
         log.info("Deactivated session:" + sessionId);
       } catch (ServletException e1) {
@@ -197,8 +198,8 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
     }
 
     try {
-      return SessionLoginData.isSessionActive((ConnectionProvider) context
-          .getAttribute("openbravoPool"), sessionId);
+      return SessionLoginData.isSessionActive(
+          (ConnectionProvider) context.getAttribute("openbravoPool"), sessionId);
     } catch (ServletException e) {
       log.error("Error checking active session " + sessionId, e);
       return false;

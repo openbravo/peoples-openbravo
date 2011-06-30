@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.FileAppender;
 
-public class RenderFo extends UnicastRemoteObject implements RenderFoI{
+public class RenderFo extends UnicastRemoteObject implements RenderFoI {
 
   private String strFo;
   static Logger logger = Logger.getLogger(RenderFo.class);
@@ -38,16 +38,15 @@ public class RenderFo extends UnicastRemoteObject implements RenderFoI{
   public RenderFo() throws RemoteException {
   }
 
-  public RenderFo(String strFo) throws RemoteException{
+  public RenderFo(String strFo) throws RemoteException {
     this.strFo = strFo;
   }
 
   public Object execute() throws RemoteException {
-      return computeRenderFo(strFo);
+    return computeRenderFo(strFo);
   }
 
-
-  public byte[] computeRenderFo(String strFo)  throws RemoteException{
+  public byte[] computeRenderFo(String strFo) throws RemoteException {
     byte[] content = null;
     try {
       StringReader sr = new StringReader(strFo);
@@ -57,10 +56,10 @@ public class RenderFo extends UnicastRemoteObject implements RenderFoI{
       driver.run();
       content = out.toByteArray();
       out.close();
-    } catch (Exception e) { 	
-        Throwable t = (Throwable) e;
-        logger.error("computeRenderFo exception: " + e.getMessage());
-        e.printStackTrace();
+    } catch (Exception e) {
+      Throwable t = (Throwable) e;
+      logger.error("computeRenderFo exception: " + e.getMessage());
+      e.printStackTrace();
     }
     return content;
   }
@@ -71,33 +70,33 @@ public class RenderFo extends UnicastRemoteObject implements RenderFoI{
 
     FileAppender appender = null;
 
-
     Date today = new Date();
 
     // format the date in the form "Wed 27 Aug, 2003"
-    SimpleDateFormat formatter = new SimpleDateFormat( "ddMMyyyy" );
-    String strToday = formatter.format( today );
+    SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
+    String strToday = formatter.format(today);
 
-    String strFileName = "renderFo"+strToday+".log";
+    String strFileName = "renderFo" + strToday + ".log";
 
     try {
-       appender = new FileAppender(layout,"@basepath@\\logs\\"+strFileName,false); // eg. @basepath@ = c:\\rmi
-    } catch(Exception e) {}
+      appender = new FileAppender(layout, "@basepath@\\logs\\" + strFileName, false); // eg.
+                                                                                      // @basepath@
+                                                                                      // = c:\\rmi
+    } catch (Exception e) {
+    }
 
     logger.addAppender(appender);
     logger.setLevel((Level) Level.WARN);
 
-    System.setSecurityManager(
-      new RMISecurityManager());
+    System.setSecurityManager(new RMISecurityManager());
 
     try {
       RenderFo render = new RenderFo();
       Naming.bind("//@RenderFoAddress@/RenderFo", render);
       logger.warn("RenderFo ready");
-    } catch(Exception e) {
-      logger.error("Error binding:"+e.getMessage());
+    } catch (Exception e) {
+      logger.error("Error binding:" + e.getMessage());
       e.printStackTrace();
     }
   }
 }
-

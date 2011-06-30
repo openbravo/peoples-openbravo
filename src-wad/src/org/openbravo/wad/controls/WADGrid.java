@@ -59,19 +59,18 @@ public class WADGrid extends WADControl {
 
     StringBuffer text = new StringBuffer();
     text.append("function onRowDblClick(cell) {\n");
-    text.append("  var value = dijit.byId('").append(getData("id")).append(
-        "').getSelectedRows();\n");
+    text.append("  var value = dijit.byId('").append(getData("id"))
+        .append("').getSelectedRows();\n");
     text.append("  if (value==null || value==\"\" || value.length>1) return false;\n");
     text.append("  setInputValue('").append(getData("inpKeyName")).append("', value);\n");
-    text
-        .append("  return submitCommandForm('EDIT', true, null, document.frmMain.urlwin.value, '_self');\n");
+    text.append("  return submitCommandForm('EDIT', true, null, document.frmMain.urlwin.value, '_self');\n");
     text.append('}');
     addJSCode("onRowDblClick", text.toString());
 
     text = new StringBuffer();
     text.append("function getSelectedValues() {\n");
-    text.append("  var value = dijit.byId('").append(getData("id")).append(
-        "').getSelectedRows();\n");
+    text.append("  var value = dijit.byId('").append(getData("id"))
+        .append("').getSelectedRows();\n");
     text.append("  if (value==null || value.length==0) return \"\";\n");
     text.append("  return value[0];\n");
     text.append('}');
@@ -79,8 +78,8 @@ public class WADGrid extends WADControl {
 
     text = new StringBuffer();
     text.append("function isMultipleSelected() {\n");
-    text.append("  var value = dijit.byId('").append(getData("id")).append(
-        "').getSelectedRows();\n");
+    text.append("  var value = dijit.byId('").append(getData("id"))
+        .append("').getSelectedRows();\n");
     text.append("  if (value==null || value==\"\") return false;\n");
     text.append("  return (value.length>1);\n");
     text.append('}');
@@ -89,8 +88,8 @@ public class WADGrid extends WADControl {
     text = new StringBuffer();
     text.append("function onGridLoadDo() {\n");
     text.append("  if (selectedRow==null) return true;\n");
-    text.append("  if (selectedRow<=0) dijit.byId('").append(getData("id")).append(
-        "').goToFirstRow();\n");
+    text.append("  if (selectedRow<=0) dijit.byId('").append(getData("id"))
+        .append("').goToFirstRow();\n");
     text.append("  else dijit.byId('").append(getData("id")).append("').goToRow(selectedRow);\n");
 
     text.append("  return true;\n");
@@ -136,10 +135,9 @@ public class WADGrid extends WADControl {
 
   public String toString() {
     StringBuffer text = new StringBuffer();
-    text
-        .append("<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" class=\"Main_Client_TableRelation\" id=\"grid_table\"><tr><td>");
-    text.append("<div id=\"").append(getData("id")).append(
-        "\" dojoType=\"openbravo.widget.DataGrid\"\n");
+    text.append("<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" class=\"Main_Client_TableRelation\" id=\"grid_table\"><tr><td>");
+    text.append("<div id=\"").append(getData("id"))
+        .append("\" dojoType=\"openbravo.widget.DataGrid\"\n");
     text.append("      structureUrl=\"../utility/DataGrid.html?Command=STRUCTURE&inpadTabId=");
     text.append(getData("AD_Tab_ID")).append("&inpadWindowId=");
     text.append(getData("AD_Window_ID")).append("&inpAccessLevel=").append(getData("accessLevel"))
@@ -154,8 +152,8 @@ public class WADGrid extends WADControl {
         .append("\" \n");
     // text.append("      numRows=\"").append(getData("NumRows")).append("\" \n");
     text.append("      calculateNumRows=\"true\" \n");
-    text.append("      editable=\"").append(getData("editable")).append("\" sortable=\"").append(
-        getData("sortable")).append("\" \n");
+    text.append("      editable=\"").append(getData("editable")).append("\" sortable=\"")
+        .append(getData("sortable")).append("\" \n");
     text.append("      deleteable=\"").append(getData("deleteable")).append("\" \n");
     text.append("      onInvalidValue=\"alert\" \n");
     text.append("      onScroll=\"").append(getData("onScrollFunction")).append("\" \n");
@@ -188,16 +186,16 @@ public class WADGrid extends WADControl {
 
   public String toJava() {
     StringBuffer text = new StringBuffer();
-    text.append("xmlDocument.setParameter(\"").append(getData("id")).append(
-        "\", Utility.getContext(this, vars, \"#RecordRange\", windowId));\n");
-    text.append("xmlDocument.setParameter(\"").append(getData("id")).append(
-        "_Offset\", strOffset);\n");
-    text.append("xmlDocument.setParameter(\"").append(getData("id")).append(
-        "_SortCols\", positions);\n");
-    text.append("xmlDocument.setParameter(\"").append(getData("id")).append(
-        "_SortDirs\", directions);\n");
-    text.append("xmlDocument.setParameter(\"").append(getData("id")).append(
-        "_Default\", selectedRow);\n");
+    text.append("xmlDocument.setParameter(\"").append(getData("id"))
+        .append("\", Utility.getContext(this, vars, \"#RecordRange\", windowId));\n");
+    text.append("xmlDocument.setParameter(\"").append(getData("id"))
+        .append("_Offset\", strOffset);\n");
+    text.append("xmlDocument.setParameter(\"").append(getData("id"))
+        .append("_SortCols\", positions);\n");
+    text.append("xmlDocument.setParameter(\"").append(getData("id"))
+        .append("_SortDirs\", directions);\n");
+    text.append("xmlDocument.setParameter(\"").append(getData("id"))
+        .append("_Default\", selectedRow);\n");
     return text.toString();
   }
 }

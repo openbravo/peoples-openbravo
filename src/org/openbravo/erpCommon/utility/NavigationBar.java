@@ -95,8 +95,9 @@ public class NavigationBar {
       if (!validateChangesOnRefresh) {
         toolbar.append("document.frmMain.autosave.value='N'; ");
       }
-      toolbar.append("submitCommandForm('DEFAULT', ").append(
-          validateChangesOnRefresh ? "true" : "false").append(", null, '").append(servlet_action);
+      toolbar.append("submitCommandForm('DEFAULT', ")
+          .append(validateChangesOnRefresh ? "true" : "false").append(", null, '")
+          .append(servlet_action);
       toolbar.append("', '_self', null, ").append(validateChangesOnRefresh ? "true" : "false")
           .append(");return false;\" border=\"0\" onmouseover=\"window.status='");
       auxText = Utility.messageBD(conn, "Refresh", language);

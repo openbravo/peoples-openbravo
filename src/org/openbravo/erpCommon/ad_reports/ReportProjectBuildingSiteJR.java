@@ -143,8 +143,8 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
         xmlDocument.setParameter("childTabContainer", tabs.childTabs());
         xmlDocument.setParameter("theme", vars.getTheme());
         NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-            "ReportProjectBuildingSiteJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-                .breadcrumb());
+            "ReportProjectBuildingSiteJR.html", classInfo.id, classInfo.type, strReplaceWith,
+            tabs.breadcrumb());
         xmlDocument.setParameter("navigationBar", nav.toString());
         LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
             "ReportProjectBuildingSiteJR.html", strReplaceWith);
@@ -171,8 +171,8 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
       xmlDocument.setParameter("cProjectId", strcProjectId);
-      xmlDocument.setParameter("projectName", ReportProjectBuildingSiteData.selectProject(this,
-          strcProjectId));
+      xmlDocument.setParameter("projectName",
+          ReportProjectBuildingSiteData.selectProject(this, strcProjectId));
       xmlDocument.setParameter("mProductCatId", strmCategoryId);
       xmlDocument.setParameter("cProjectKind", strProjectkind);
       xmlDocument.setParameter("cRegionId", strcRegionId);
@@ -238,8 +238,8 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
                 "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client",
                 "ReportProjectBuildingSiteJR"), 0);
         comboTableData.fillParameters(null, "ReportProjectBuildingSiteJR", "");
-        xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure", comboTableData
-            .select(false));
+        xmlDocument.setData("reportC_PRODUCTCATREGORY", "liststructure",
+            comboTableData.select(false));
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
@@ -284,19 +284,26 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
         throw new ServletException(ex);
       }
 
-      xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
-          .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-              .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
-      xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData
-          .selectMproduct(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-              .getContext(this, vars, "#User_Client", ""), strProduct));
+      xmlDocument.setData(
+          "reportCBPartnerId_IN",
+          "liststructure",
+          SelectorUtilityData.selectBpartner(this,
+              Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+              Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+      xmlDocument.setData(
+          "reportMProductId_IN",
+          "liststructure",
+          SelectorUtilityData.selectMproduct(this,
+              Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+              Utility.getContext(this, vars, "#User_Client", ""), strProduct));
     } else {
       ReportProjectBuildingSiteData[] data = ReportProjectBuildingSiteData.select(this,
-          strCurrencyId, Utility.getContext(this, vars, "#User_Client",
-              "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportProjectBuildingSiteJR"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,
-              "1"), strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase,
-          strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
+          strCurrencyId,
+          Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"),
+          strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId,
+          strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus,
+          strProjectpublic, strcRegionId, strSalesRep, strProduct);
 
       if (data == null || data.length == 0) {
         xmlDocument = xmlEngine.readXmlTemplate(
@@ -322,9 +329,10 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
         strTitle += ", "
             + Utility.messageBD(this, "ForTheSalesRep", vars.getLanguage())
             + " "
-            + ReportProjectBuildingSiteData.selectSalesRep(this, Utility.getContext(this, vars,
-                "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"), Utility.getContext(this,
-                vars, "#User_Client", "ReportProjectBuildingSiteJR"), strSalesRep);
+            + ReportProjectBuildingSiteData
+                .selectSalesRep(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
+                    "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client",
+                    "ReportProjectBuildingSiteJR"), strSalesRep);
       xmlDocument.setParameter("title", strTitle);
     }
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -353,12 +361,12 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
     OBError myMessage = null;
     myMessage = new OBError();
     try {
-      data = ReportProjectBuildingSiteData.select(this, strCurrencyId, Utility.getContext(this,
-          vars, "#User_Client", "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"), strdateFrom, DateTimeData
-          .nDaysAfter(this, strdateTo, "1"), strcBpartnerId, strcProjectId, strmCategoryId,
-          strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId,
-          strSalesRep, strProduct);
+      data = ReportProjectBuildingSiteData.select(this, strCurrencyId,
+          Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectBuildingSiteJR"),
+          strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strcBpartnerId,
+          strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus,
+          strProjectpublic, strcRegionId, strSalesRep, strProduct);
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }
@@ -366,8 +374,9 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Launch the report as usual, calling the JRXML file
       if (data == null || data.length == 0) {
         discard[0] = "selEliminar";

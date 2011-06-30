@@ -68,8 +68,8 @@ public class SL_MInOutTraceReports extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-    SLMInOutTraceReportsData[] dataAttribute = SLMInOutTraceReportsData.select(this, vars
-        .getLanguage(), strMProductID);
+    SLMInOutTraceReportsData[] dataAttribute = SLMInOutTraceReportsData.select(this,
+        vars.getLanguage(), strMProductID);
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_MInOutTraceReports';\n\n");
     resultado.append("var respuesta = new Array(");

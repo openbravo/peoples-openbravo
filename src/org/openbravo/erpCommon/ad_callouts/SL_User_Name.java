@@ -107,8 +107,8 @@ public class SL_User_Name extends HttpSecureAppServlet {
     // informs about characters cut
     if (FormatUtilities.replaceJS(strFirstname + strLastname).length() > maxChar) {
       resultado.append(", new Array('MESSAGE', \""
-          + FormatUtilities.replaceJS(Utility.messageBD(this, "NameUsernameLengthCut", vars
-              .getLanguage())) + "\")");
+          + FormatUtilities.replaceJS(Utility.messageBD(this, "NameUsernameLengthCut",
+              vars.getLanguage())) + "\")");
     } else {
       resultado.append(", new Array('MESSAGE', \"\")");
     }

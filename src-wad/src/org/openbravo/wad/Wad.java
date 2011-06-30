@@ -500,8 +500,8 @@ public class Wad extends DefaultHandler {
       xmlDocumentData.setData("structure3", abrd);
       xmlDocumentData.setData("structure4", abrd);
 
-      WadUtility.writeFile(fileReference, "ActionButtonJava_Responser.java", xmlDocumentData
-          .print());
+      WadUtility.writeFile(fileReference, "ActionButtonJava_Responser.java",
+          xmlDocumentData.print());
 
     } catch (final IOException e) {
       e.printStackTrace();
@@ -539,8 +539,8 @@ public class Wad extends DefaultHandler {
             "org/openbravo/wad/ActionButtonDefault_data").createXmlDocument();
         xmlDocumentData.setData("structure16", defaults);
 
-        WadUtility.writeFile(fileReference, "ActionButtonSQLDefault_data.xsql", xmlDocumentData
-            .print());
+        WadUtility.writeFile(fileReference, "ActionButtonSQLDefault_data.xsql",
+            xmlDocumentData.print());
       }
     } catch (final Exception e) {
       log4j.error(e);
@@ -773,8 +773,8 @@ public class Wad extends DefaultHandler {
       final String windowName = FormatUtilities.replace(tabsData.windowname);
       final String tableName = FieldsData.tableName(pool, tabsData.tabid);
       final String isSOTrx = FieldsData.isSOTrx(pool, tabsData.tabid);
-      final TabsData[] allTabs = getPrimaryTabs(tabsData.key, tabsData.tabid, Integer.valueOf(
-          tabsData.tablevel).intValue(), HEIGHT_TABS, INCR_TABS);
+      final TabsData[] allTabs = getPrimaryTabs(tabsData.key, tabsData.tabid,
+          Integer.valueOf(tabsData.tablevel).intValue(), HEIGHT_TABS, INCR_TABS);
       final FieldsData[] fieldsData = FieldsData.select(pool, tabsData.tabid);
       final EditionFieldsData efd[] = EditionFieldsData.select(pool, tabsData.tabid);
       final EditionFieldsData efdauxiliar[] = EditionFieldsData
@@ -903,8 +903,7 @@ public class Wad extends DefaultHandler {
       selCol = processSelCol(selCol, tableName);
 
       final String javaPackage = (!tabsData.javapackage.equals("") ? tabsData.javapackage.replace(
-          ".", "/")
-          + "/" : "")
+          ".", "/") + "/" : "")
           + windowName; // Take into account java packages for modules
       final File fileDir = new File(fileFin, javaPackage);
 
@@ -979,14 +978,14 @@ public class Wad extends DefaultHandler {
          *************************************************/
         processTabXSQLSortTab(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName,
             windowName, keyColumnName, tabsData.adColumnsortorderId, tabsData.adColumnsortyesnoId,
-            vecParameters, vecTableParameters, tabsData.javapackage, strWhere.toString(), strOrder
-                .toString());
+            vecParameters, vecTableParameters, tabsData.javapackage, strWhere.toString(),
+            strOrder.toString());
         /************************************************
          * JAVA of the SORT TAB
          *************************************************/
         processTabJavaSortTab(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName,
-            windowName, keyColumnName, strTables.toString(), strOrder.toString(), strWhere
-                .toString(), vecFields, isSOTrx, allTabs, tabsData.key, tabsData.accesslevel,
+            windowName, keyColumnName, strTables.toString(), strOrder.toString(),
+            strWhere.toString(), vecFields, isSOTrx, allTabs, tabsData.key, tabsData.accesslevel,
             selCol, isSecondaryKey, grandfatherField, tabsData.tablevel, tabsData.tableId,
             tabsData.windowtype, tabsData.adColumnsortorderId, whereClauseParams,
             parentwhereclause, strProcess, strDirectPrint, !tabsData.uipattern.equals("STD"),
@@ -1011,8 +1010,8 @@ public class Wad extends DefaultHandler {
             tabsData.key, tabsData.accesslevel, selCol, isSecondaryKey, grandfatherField,
             tabsData.tablevel, tabsData.tableId, tabsData.windowtype, tabsData.uipattern,
             whereClauseParams, parentwhereclause, tabsData.editreference, strProcess,
-            strDirectPrint, vecTableParameters, fieldsData, gridControl, tabsData.javapackage, "Y"
-                .equals(tabsData.isdeleteable), tabsData.tabmodule);
+            strDirectPrint, vecTableParameters, fieldsData, gridControl, tabsData.javapackage,
+            "Y".equals(tabsData.isdeleteable), tabsData.tabmodule);
 
         /************************************************
          * XSQL
@@ -1045,18 +1044,19 @@ public class Wad extends DefaultHandler {
         /************************************************
          * XML in Edition view
          *************************************************/
-        processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key, tabsData.uipattern
-            .equals("RO"), efd, efdauxiliar, isSecondaryKey);
+        processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key,
+            tabsData.uipattern.equals("RO"), efd, efdauxiliar, isSecondaryKey);
 
         /************************************************
          * HTML in Edition view
          *************************************************/
         processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName,
-            tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.uipattern
-                .equals("RO"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "", true, isSecondaryKey);
+            tabNamePresentation, tabsData.key, parentsFieldsData, vecFields,
+            tabsData.uipattern.equals("RO"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "", true,
+            isSecondaryKey);
         processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName,
-            tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.uipattern
-                .equals("RO"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "", false,
+            tabNamePresentation, tabsData.key, parentsFieldsData, vecFields,
+            tabsData.uipattern.equals("RO"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "", false,
             isSecondaryKey);
       }
 
@@ -1309,8 +1309,8 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("moduleId", tabmodule);
     if (parentsFieldsData.length > 0) {
       xmlDocument.setParameter("keyParent", parentsFieldsData[0].name);
-      xmlDocument.setParameter("keyParentINP", Sqlc
-          .TransformaNombreColumna(parentsFieldsData[0].name));
+      xmlDocument.setParameter("keyParentINP",
+          Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
     }
     xmlDocument.setParameter("keyData", Sqlc.TransformaNombreColumna(keyColumnName));
     xmlDocument.setParameter("windowId", strWindow);
@@ -1663,8 +1663,7 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("package", (!javaPackage.equals("") ? javaPackage + "." : "")
         + windowName);
     xmlDocument.setParameter("path", (!javaPackage.equals("") ? javaPackage.replace(".", "/") + "/"
-        : "")
-        + windowName);
+        : "") + windowName);
     xmlDocument.setParameter("windowName", windowName);
     xmlDocument.setParameter("key", keyColumnName);
     xmlDocument.setParameter("from", generateStaticWhere(strTables, vecTableParametersTop));
@@ -1699,8 +1698,8 @@ public class Wad extends DefaultHandler {
 
       xmlDocument.setParameter("keyParentSimple", WadUtility.columnName(parentsFieldsData[0].name,
           parentsFieldsData[0].tablemodule, parentsFieldsData[0].columnmodule));
-      xmlDocument.setParameter("keyParentT", Sqlc
-          .TransformaNombreColumna(parentsFieldsData[0].name));
+      xmlDocument.setParameter("keyParentT",
+          Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
 
       String keyTabName;
       if ("Y".equals(parentsFieldsData[0].issecondarykey)) {
@@ -2252,8 +2251,8 @@ public class Wad extends DefaultHandler {
         + (!javaPackage.equals("") ? javaPackage + "." : "") + windowName);
     xmlDocumentXsql.setParameter("table", tableName);
     xmlDocumentXsql.setParameter("key", tableName + "." + keyColumnName);
-    xmlDocumentXsql.setParameter("SortConditionField", FieldsData.columnName(pool,
-        strColumnSortYNId));
+    xmlDocumentXsql.setParameter("SortConditionField",
+        FieldsData.columnName(pool, strColumnSortYNId));
     final String strSortField = FieldsData.columnName(pool, strColumnSortOrderId);
     xmlDocumentXsql.setParameter("SortField", strSortField);
     xmlDocumentXsql.setParameter("SortFieldInp", Sqlc.TransformaNombreColumna(strSortField));
@@ -2262,8 +2261,8 @@ public class Wad extends DefaultHandler {
     }
     xmlDocumentXsql.setParameter("paramKey", Sqlc.TransformaNombreColumna(keyColumnName));
     if (parentsFieldsData.length > 0) {
-      xmlDocumentXsql.setParameter("paramKeyParent", Sqlc
-          .TransformaNombreColumna(parentsFieldsData[0].name));
+      xmlDocumentXsql.setParameter("paramKeyParent",
+          Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
     }
     String strOrder = " ORDER BY " + tableName + "." + strSortField;
 
@@ -2343,8 +2342,7 @@ public class Wad extends DefaultHandler {
       for (int s = 0; s < vecTable.size(); s++) {
         final String strAux = (String) vecTable.elementAt(s);
         fieldsParent[0].defaultvalue += (strAux.trim().toLowerCase().startsWith("left join") ? " "
-            : ", ")
-            + strAux;
+            : ", ") + strAux;
       }
       fieldsParent[0].defaultvalue += " WHERE " + parentsFieldsData[0].tablename + "."
           + parentsFieldsData[0].name + " = ? ";
@@ -2384,8 +2382,7 @@ public class Wad extends DefaultHandler {
       for (int s = 0; s < vecTable.size(); s++) {
         final String strAux = (String) vecTable.elementAt(s);
         fieldsParent[0].defaultvalue += (strAux.trim().toLowerCase().startsWith("left join") ? " "
-            : ", ")
-            + strAux;
+            : ", ") + strAux;
       }
       fieldsParent[0].defaultvalue += " WHERE " + parentsFieldsData[0].tablename + "."
           + parentsFieldsData[0].name + " = ? ";
@@ -2511,8 +2508,8 @@ public class Wad extends DefaultHandler {
     }
     xmlDocumentXsql.setParameter("paramKey", Sqlc.TransformaNombreColumna(keyColumnName));
     if (parentsFieldsData != null && parentsFieldsData.length > 0) {
-      xmlDocumentXsql.setParameter("paramKeyParent", Sqlc
-          .TransformaNombreColumna(parentsFieldsData[0].name));
+      xmlDocumentXsql.setParameter("paramKeyParent",
+          Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
       if (isSecondaryKey && (!EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) {
         xmlDocumentXsql.setParameter("paramKeyParentOrg", "currentAdOrgId");
       }
@@ -2562,8 +2559,7 @@ public class Wad extends DefaultHandler {
       for (int s = 0; s < vecTable.size(); s++) {
         final String strAux = (String) vecTable.elementAt(s);
         fieldsParent[0].defaultvalue += (strAux.trim().toLowerCase().startsWith("left join") ? " "
-            : ", ")
-            + strAux;
+            : ", ") + strAux;
       }
 
       fieldsParent[0].defaultvalue += " WHERE " + parentsFieldsData[0].tablename + "."
@@ -2610,8 +2606,7 @@ public class Wad extends DefaultHandler {
       for (int s = 0; s < vecTable.size(); s++) {
         final String strAux = (String) vecTable.elementAt(s);
         fieldsParent[0].defaultvalue += (strAux.trim().toLowerCase().startsWith("left join") ? " "
-            : ", ")
-            + strAux;
+            : ", ") + strAux;
       }
 
       fieldsParent[0].defaultvalue += " WHERE " + parentsFieldsData[0].tablename + "."
@@ -2743,8 +2738,7 @@ public class Wad extends DefaultHandler {
           fieldsDataUpdate[i].xmlFormat = "TO_TIMESTAMP(?, ?)";
         } else
           fieldsDataUpdate[i].xmlFormat = WadUtility.sqlCasting(pool,
-              fieldsDataUpdate[i].reference, fieldsDataUpdate[i].referencevalue)
-              + "(?)";
+              fieldsDataUpdate[i].reference, fieldsDataUpdate[i].referencevalue) + "(?)";
       }
       xmlDocumentXsql.setData("structure3", fieldsDataUpdate);
     }
@@ -2857,11 +2851,9 @@ public class Wad extends DefaultHandler {
 
           final FieldsData f = new FieldsData();
           f.name = (modified ? fieldsDataDefaults[i].name : Sqlc
-              .TransformaNombreColumna(fieldsDataDefaults[i].name))
-              + "r";
+              .TransformaNombreColumna(fieldsDataDefaults[i].name)) + "r";
           f.columnname = (modified ? fieldsDataDefaults[i].columnname : Sqlc
-              .TransformaNombreColumna(fieldsDataDefaults[i].columnname))
-              + "r";
+              .TransformaNombreColumna(fieldsDataDefaults[i].columnname)) + "r";
           vecDDef.addElement(f);
         } else if (fieldsDataDefaults[i].reference.equals("28")
             && fieldsDataDefaults[i].isdisplayed.equals("Y")
@@ -2869,11 +2861,9 @@ public class Wad extends DefaultHandler {
           // Button special case
           final FieldsData f = new FieldsData();
           f.name = (modified ? fieldsDataDefaults[i].name : Sqlc
-              .TransformaNombreColumna(fieldsDataDefaults[i].name))
-              + "Btn";
+              .TransformaNombreColumna(fieldsDataDefaults[i].name)) + "Btn";
           f.columnname = (modified ? fieldsDataDefaults[i].columnname : Sqlc
-              .TransformaNombreColumna(fieldsDataDefaults[i].columnname))
-              + "Btn";
+              .TransformaNombreColumna(fieldsDataDefaults[i].columnname)) + "Btn";
           vecDDef.addElement(f);
         }
       }
@@ -3368,8 +3358,8 @@ public class Wad extends DefaultHandler {
     xmlDocumentRHtml.setParameter("key", "inp" + Sqlc.TransformaNombreColumna(keyColumnName));
     xmlDocumentRHtml.setParameter("tabId", strTab);
     if (parentsFieldsData.length > 0) {
-      xmlDocumentRHtml.setParameter("keyParent", "inp"
-          + Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
+      xmlDocumentRHtml.setParameter("keyParent",
+          "inp" + Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
       xmlDocumentRHtml.setParameter("parentKeyName", parentsFieldsData[0].name);
     }
 
@@ -3466,14 +3456,14 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("tableId", strTable);
     xmlDocument.setParameter("accesslevel", accessLevel);
     if (parentsFieldsData.length > 0) {
-      xmlDocument.setParameter("keyParent", "inp"
-          + Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
+      xmlDocument.setParameter("keyParent",
+          "inp" + Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
       xmlDocument.setParameter("parentKeyName", parentsFieldsData[0].name);
     }
-    xmlDocument.setParameter("importCSS", getVectorElementsNotRepeated(control.getCSSImport(),
-        new Vector<String>(), 1));
-    xmlDocument.setParameter("importJS", getVectorElementsNotRepeated(control.getImport(),
-        new Vector<String>(), 2));
+    xmlDocument.setParameter("importCSS",
+        getVectorElementsNotRepeated(control.getCSSImport(), new Vector<String>(), 1));
+    xmlDocument.setParameter("importJS",
+        getVectorElementsNotRepeated(control.getImport(), new Vector<String>(), 2));
     final StringBuffer script = new StringBuffer();
     script.append(getVectorElementsNotRepeated(control.getJSCode(), new Vector<String>(), 0));
     script.append("function validateClient(action, form, value) {\n");
@@ -3584,8 +3574,8 @@ public class Wad extends DefaultHandler {
       for (FieldProvider auxiliaryInput : efdauxiliar) {
         final WADControl auxControl = new WADControl();
         auxControl.setData("ColumnName", auxiliaryInput.getField("columnname"));
-        auxControl.setData("ColumnNameInp", Sqlc.TransformaNombreColumna(auxiliaryInput
-            .getField("columnname")));
+        auxControl.setData("ColumnNameInp",
+            Sqlc.TransformaNombreColumna(auxiliaryInput.getField("columnname")));
         auxControl.setReportEngine(xmlEngine);
         htmlHidden.append(auxControl.getHiddenXML()).append("\n");
       }
@@ -3760,8 +3750,8 @@ public class Wad extends DefaultHandler {
       for (FieldProvider auxiliaryInput : efdauxiliar) {
         final WADControl auxControl = new WADControl();
         auxControl.setData("ColumnName", auxiliaryInput.getField("columnname"));
-        auxControl.setData("ColumnNameInp", Sqlc.TransformaNombreColumna(auxiliaryInput
-            .getField("columnname")));
+        auxControl.setData("ColumnNameInp",
+            Sqlc.TransformaNombreColumna(auxiliaryInput.getField("columnname")));
         auxControl.setReportEngine(xmlEngine);
         htmlHidden.append(auxControl.getHiddenHTML()).append("\n");
         vecAuxiliar.addElement(FormatUtilities.replace(auxiliaryInput.getField("columnname")));
@@ -3817,8 +3807,8 @@ public class Wad extends DefaultHandler {
       try {
         auxControl = WadUtility.getControl(pool, efd[i], isreadonly, tabName, strLanguage,
             xmlEngine, (WadUtility.isInVector(vecDisplayLogic, efd[i].getField("columnname"))),
-            WadUtility.isInVector(vecReloads, efd[i].getField("columnname")), WadUtility
-                .isInVector(vecReadOnlyLogic, efd[i].getField("columnname")), false,
+            WadUtility.isInVector(vecReloads, efd[i].getField("columnname")),
+            WadUtility.isInVector(vecReadOnlyLogic, efd[i].getField("columnname")), false,
             isReadOnlyDefinedTab);
       } catch (final Exception ex) {
         throw new ServletException(ex);
@@ -3898,20 +3888,20 @@ public class Wad extends DefaultHandler {
         }
         auxControl.setData("ColumnNameLabel", auxControl.getData("ColumnName"));
         auxControl.setData("AdColumnId", efd[i].getField("adColumnId"));
-        WadUtility.setLabel(pool, auxControl, isSOTrx.equals("Y"), "inp"
-            + Sqlc.TransformaNombreColumna(keyColumnName));
+        WadUtility.setLabel(pool, auxControl, isSOTrx.equals("Y"),
+            "inp" + Sqlc.TransformaNombreColumna(keyColumnName));
         final String label = auxControl.toLabel();
         if (!label.equals("")) {
           html.append(" class=\"TitleCell\" id=\"").append(auxControl.getData("ColumnName"))
               .append("_lbl_td\">").append(label.replace("\n", ""));
           if (columnType == COLUMN_1_OF_1)
-            html.append("</td>\n<td colspan=\"3\" class=\"").append(auxControl.getType()).append(
-                "_ContentCell\" id=\"").append(auxControl.getData("ColumnName")).append(
-                "_inp_td\">");
+            html.append("</td>\n<td colspan=\"3\" class=\"").append(auxControl.getType())
+                .append("_ContentCell\" id=\"").append(auxControl.getData("ColumnName"))
+                .append("_inp_td\">");
           else
-            html.append("</td>\n<td class=\"").append(auxControl.getType()).append(
-                "_ContentCell\" id=\"").append(auxControl.getData("ColumnName")).append(
-                "_inp_td\">");
+            html.append("</td>\n<td class=\"").append(auxControl.getType())
+                .append("_ContentCell\" id=\"").append(auxControl.getData("ColumnName"))
+                .append("_inp_td\">");
         } else {
           html.append(" class=\"").append(auxControl.getType()).append("_ContentCell\" id=\"")
               .append(auxControl.getData("ColumnName")).append("_inp_td\"");
@@ -3926,26 +3916,26 @@ public class Wad extends DefaultHandler {
             "AD_Reference_ID").equals("19"));
         if (columnType == COLUMN_1_OF_1) {
           if (Integer.valueOf(auxControl.getData("DisplayLength")).intValue() < (MAX_SIZE_EDITION_1_COLUMNS / 4)) {
-            auxControl.setData("DisplayLength", Double.toString(MAX_SIZE_EDITION_1_COLUMNS
-                * (isCombo ? 7.5 : 1)));
+            auxControl.setData("DisplayLength",
+                Double.toString(MAX_SIZE_EDITION_1_COLUMNS * (isCombo ? 7.5 : 1)));
             auxControl.setData("CssSize", "OneCell");
           } else if (Integer.valueOf(auxControl.getData("DisplayLength")).intValue() > (MAX_SIZE_EDITION_1_COLUMNS / 2)) {
-            auxControl.setData("DisplayLength", Double.toString(MAX_SIZE_EDITION_1_COLUMNS
-                * (isCombo ? 7.5 : 1)));
+            auxControl.setData("DisplayLength",
+                Double.toString(MAX_SIZE_EDITION_1_COLUMNS * (isCombo ? 7.5 : 1)));
             auxControl.setData("CssSize", "FiveCells");
           } else {
-            auxControl.setData("DisplayLength", Double.toString((MAX_SIZE_EDITION_1_COLUMNS / 2)
-                * (isCombo ? 7.5 : 1)));
+            auxControl.setData("DisplayLength",
+                Double.toString((MAX_SIZE_EDITION_1_COLUMNS / 2) * (isCombo ? 7.5 : 1)));
             auxControl.setData("CssSize", "TwoCells");
           }
         } else {
           if (Integer.valueOf(auxControl.getData("DisplayLength")).intValue() > (MAX_SIZE_EDITION_2_COLUMNS / 2)) {
-            auxControl.setData("DisplayLength", Double.toString(MAX_SIZE_EDITION_2_COLUMNS
-                * (isCombo ? 7.5 : 1)));
+            auxControl.setData("DisplayLength",
+                Double.toString(MAX_SIZE_EDITION_2_COLUMNS * (isCombo ? 7.5 : 1)));
             auxControl.setData("CssSize", "TwoCells");
           } else {
-            auxControl.setData("DisplayLength", Double.toString((MAX_SIZE_EDITION_2_COLUMNS / 2)
-                * (isCombo ? 7.5 : 1)));
+            auxControl.setData("DisplayLength",
+                Double.toString((MAX_SIZE_EDITION_2_COLUMNS / 2) * (isCombo ? 7.5 : 1)));
             auxControl.setData("CssSize", "OneCell");
           }
         }
@@ -4024,8 +4014,8 @@ public class Wad extends DefaultHandler {
 
     final StringBuffer sbImportCSS = new StringBuffer();
     for (String imp : importsCSS) {
-      sbImportCSS.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"").append(imp).append(
-          "\"/>\n");
+      sbImportCSS.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"").append(imp)
+          .append("\"/>\n");
     }
     xmlDocument.setParameter("importCSS", sbImportCSS.toString());
 
@@ -4035,8 +4025,8 @@ public class Wad extends DefaultHandler {
       importsJS.addAll(calendarScripts);
     }
     for (String imp : importsJS) {
-      sbImportJS.append("<script language=\"JavaScript\" src=\"").append(imp).append(
-          "\" type=\"text/javascript\"></script>\n");
+      sbImportJS.append("<script language=\"JavaScript\" src=\"").append(imp)
+          .append("\" type=\"text/javascript\"></script>\n");
     }
     xmlDocument.setParameter("importJS", sbImportJS.toString());
 

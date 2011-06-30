@@ -91,8 +91,8 @@ public class UpdatePaymentPlan implements org.openbravo.scheduling.Process {
     if (strDate.equals(""))
       return null;
     try {
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-          "dateFormat.java");
+      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
       return (outputFormat.parse(strDate));
     } catch (ParseException e) {

@@ -45,8 +45,9 @@ class ToolBar_Image implements HTMLElement {
 
   public String toString() {
     StringBuffer toolbar = new StringBuffer();
-    toolbar.append("<img class=\"Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_").append(
-        imageClass).append("\" src=\"").append(base_direction).append("/images/blank.gif\" ");
+    toolbar.append("<img class=\"Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_")
+        .append(imageClass).append("\" src=\"").append(base_direction)
+        .append("/images/blank.gif\" ");
     toolbar.append("title=\"").append(description);
     // Needed to build the HTML tag id as refresh has in classic layout
     if (name.equals("Refresh") || name.equals("Edition") || name.equals("Relation")) {

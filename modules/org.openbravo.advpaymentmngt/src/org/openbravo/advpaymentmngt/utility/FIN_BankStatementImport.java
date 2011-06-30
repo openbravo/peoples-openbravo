@@ -203,8 +203,8 @@ public abstract class FIN_BankStatementImport {
 
   private String getDocumentNo(ConnectionProvider conn, VariablesSecureApp vars,
       DocumentType documentType) {
-    return Utility.getDocumentNo(conn, vars, "AddPaymentFromInvoice", "FIN_Payment", documentType
-        .getId(), documentType.getId(), false, true);
+    return Utility.getDocumentNo(conn, vars, "AddPaymentFromInvoice", "FIN_Payment",
+        documentType.getId(), documentType.getId(), false, true);
 
   }
 

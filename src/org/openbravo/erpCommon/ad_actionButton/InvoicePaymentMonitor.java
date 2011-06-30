@@ -149,8 +149,8 @@ public class InvoicePaymentMonitor extends HttpSecureAppServlet {
       }
     }
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars
-        .getLanguage()));
+    xmlDocument.setParameter("question",
+        Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", strDescription);

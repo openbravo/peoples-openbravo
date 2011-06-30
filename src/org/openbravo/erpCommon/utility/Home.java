@@ -72,8 +72,8 @@ public class Home extends HttpSecureAppServlet {
     String strPurpose = getPurpose();
     if (strPurpose == null) {
       strPurpose = "unknown";
-      xmlDocument.setParameter("cbPurposeTooltip", Utility.messageBD(myPool,
-          "Home_Purpose_Tooltip", vars.getLanguage()));
+      xmlDocument.setParameter("cbPurposeTooltip",
+          Utility.messageBD(myPool, "Home_Purpose_Tooltip", vars.getLanguage()));
     }
     xmlDocument.setParameter("cbPurpose", strPurpose.toLowerCase());
     xmlDocument.setParameter("cbVersion", getVersion());
@@ -87,8 +87,8 @@ public class Home extends HttpSecureAppServlet {
   private static String getPurpose() {
     OBContext.setAdminMode();
     try {
-      String strPurposeCode = OBDal.getInstance().get(
-          org.openbravo.model.ad.system.SystemInformation.class, "0").getInstancePurpose();
+      String strPurposeCode = OBDal.getInstance()
+          .get(org.openbravo.model.ad.system.SystemInformation.class, "0").getInstancePurpose();
       if (strPurposeCode == null || "".equals(strPurposeCode)) {
         if (ActivationKey.isActiveInstance()) {
           // use value from license if possible

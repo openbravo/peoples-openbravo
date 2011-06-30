@@ -117,8 +117,9 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       // If a conversion rate is missing for a certain transaction, an
       // error message window pops-up.
       if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-        advise(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars
-            .getLanguage()), strConvRateErrorMsg);
+        advise(request, response, "ERROR",
+            Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+            strConvRateErrorMsg);
       } else { // Otherwise, the report is launched
         if (data == null || data.length == 0) {
           discard[0] = "selEliminar";
@@ -216,9 +217,12 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
         throw new ServletException(ex);
       }
 
-      xmlDocument.setParameter("warehouseArray", Utility.arrayDobleEntrada("arrWarehouse",
-          ReportParetoProductData.selectWarehouseDouble(this, Utility.getContext(this, vars,
-              "#User_Client", "ReportParetoProduct"))));
+      xmlDocument.setParameter(
+          "warehouseArray",
+          Utility.arrayDobleEntrada(
+              "arrWarehouse",
+              ReportParetoProductData.selectWarehouseDouble(this,
+                  Utility.getContext(this, vars, "#User_Client", "ReportParetoProduct"))));
 
       xmlDocument.setParameter("mWarehouseId", strWarehouse);
       xmlDocument.setParameter("adOrg", strAD_Org_ID);
@@ -237,8 +241,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
         vars.getClient(), vars.getOrg());
     PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "m_warehouse_id", strWarehouse,
         vars.getClient(), vars.getOrg(), vars.getUser());
-    PInstanceProcessData.insertPInstanceParam(this, pinstance, "2", "ad_org_id", strAD_Org_ID, vars
-        .getClient(), vars.getOrg(), vars.getUser());
+    PInstanceProcessData.insertPInstanceParam(this, pinstance, "2", "ad_org_id", strAD_Org_ID,
+        vars.getClient(), vars.getOrg(), vars.getUser());
     PInstanceProcessData.insertPInstanceParam(this, pinstance, "3", "ad_client_id",
         strAD_Client_ID, vars.getClient(), vars.getOrg(), vars.getUser());
     ReportParetoProductData.mUpdateParetoProduct0(this, pinstance);

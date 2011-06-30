@@ -324,11 +324,11 @@ public class DocCash extends AcctServer {
         if (line.getC_Currency_ID(conn) == C_Currency_ID)
           assetAmt = assetAmt.add(amount);
         else
-          fact.createLine(null, getAccount(AcctServer.ACCTTYPE_CashAsset, as, conn), line
-              .getC_Currency_ID(conn), amount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          fact.createLine(null, getAccount(AcctServer.ACCTTYPE_CashAsset, as, conn),
+              line.getC_Currency_ID(conn), amount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
               DocumentType, conn);
-        fact.createLine(line, getAccount(AcctServer.ACCTTYPE_CashTransfer, as, conn), line
-            .getC_Currency_ID(conn), amount.negate().toString(), Fact_Acct_Group_ID,
+        fact.createLine(line, getAccount(AcctServer.ACCTTYPE_CashTransfer, as, conn),
+            line.getC_Currency_ID(conn), amount.negate().toString(), Fact_Acct_Group_ID,
             nextSeqNo(SeqNo), DocumentType, conn);
       } else if (CashType.equals(DocLine_Cash.CASHTYPE_DEBTPAYMENT)
           || CashType.equals(DocLine_Cash.CASHTYPE_ORDER)) {
@@ -398,15 +398,15 @@ public class DocCash extends AcctServer {
         C_BankAccount_ID = line.m_C_BankAccount_ID;
         log4jDocCash.debug("********** DocCash - factAcct - account - "
             + getAccount(AcctServer.ACCTTYPE_BankInTransit, as, conn).C_ValidCombination_ID);
-        fact.createLine(line, getAccountBankInTransit(C_BankAccount_ID, as, conn), line
-            .getC_Currency_ID(conn), amount.negate().toString(), Fact_Acct_Group_ID,
+        fact.createLine(line, getAccountBankInTransit(C_BankAccount_ID, as, conn),
+            line.getC_Currency_ID(conn), amount.negate().toString(), Fact_Acct_Group_ID,
             nextSeqNo(SeqNo), DocumentType, conn);
         C_BankAccount_ID = temp;
         if (line.getC_Currency_ID(conn) == C_Currency_ID)
           assetAmt = assetAmt.add(amount);
         else
-          fact.createLine(null, getAccount(AcctServer.ACCTTYPE_CashAsset, as, conn), line
-              .getC_Currency_ID(conn), amount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          fact.createLine(null, getAccount(AcctServer.ACCTTYPE_CashAsset, as, conn),
+              line.getC_Currency_ID(conn), amount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
               DocumentType, conn);
       }
     } // lines

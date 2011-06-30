@@ -234,15 +234,17 @@ public class LoginUtils {
       vars.setSessionValue("#Client_SMTP", data[0].smtphost);
 
       data = null;
-      AttributeData[] attr = AttributeData.select(conn, Utility.getContext(conn, vars,
-          "#User_Client", "LoginHandler"), Utility.getContext(conn, vars, "#User_Org",
-          "LoginHandler"));
+      AttributeData[] attr = AttributeData.select(conn,
+          Utility.getContext(conn, vars, "#User_Client", "LoginHandler"),
+          Utility.getContext(conn, vars, "#User_Org", "LoginHandler"));
       if (attr != null && attr.length > 0) {
         vars.setSessionValue("$C_AcctSchema_ID", attr[0].value);
         vars.setSessionValue("$C_Currency_ID", attr[0].attribute);
-        vars.setSessionValue("#StdPrecision", AttributeData.selectStdPrecision(conn,
-            attr[0].attribute, Utility.getContext(conn, vars, "#User_Client", "LoginHandler"),
-            Utility.getContext(conn, vars, "#User_Org", "LoginHandler")));
+        vars.setSessionValue(
+            "#StdPrecision",
+            AttributeData.selectStdPrecision(conn, attr[0].attribute,
+                Utility.getContext(conn, vars, "#User_Client", "LoginHandler"),
+                Utility.getContext(conn, vars, "#User_Org", "LoginHandler")));
         vars.setSessionValue("$HasAlias", attr[0].hasalias);
         for (int i = 0; i < attr.length; i++)
           vars.setSessionValue("$Element_" + attr[i].elementtype, "Y");
@@ -265,9 +267,9 @@ public class LoginUtils {
       DefaultSessionValuesData[] ds = DefaultSessionValuesData.select(conn);
       if (ds != null && ds.length > 0) {
         for (int i = 0; i < ds.length; i++) {
-          String value = DefaultValuesData.select(conn, ds[i].columnname, ds[i].tablename, Utility
-              .getContext(conn, vars, "#User_Client", "LoginHandler"), Utility.getContext(conn,
-              vars, "#User_Org", "LoginHandler"));
+          String value = DefaultValuesData.select(conn, ds[i].columnname, ds[i].tablename,
+              Utility.getContext(conn, vars, "#User_Client", "LoginHandler"),
+              Utility.getContext(conn, vars, "#User_Org", "LoginHandler"));
           if (ds[i].tablename.equals("C_DocType"))
             vars.setSessionValue("#C_DocTypeTarget_ID", value);
           vars.setSessionValue("#" + ds[i].columnname, value);
@@ -277,8 +279,8 @@ public class LoginUtils {
       vars.setSessionValue("#ShowTrl", Utility.getPreference(vars, "ShowTrl", ""));
       vars.setSessionValue("#ShowAcct", Utility.getPreference(vars, "ShowAcct", ""));
       vars.setSessionValue("#ShowAudit", Utility.getPreference(vars, "ShowAuditDefault", ""));
-      vars.setSessionValue("#ShowConfirmation", Utility.getPreference(vars,
-          "ShowConfirmationDefault", ""));
+      vars.setSessionValue("#ShowConfirmation",
+          Utility.getPreference(vars, "ShowConfirmationDefault", ""));
       vars.setSessionValue("#Autosave", Utility.getPreference(vars, "Autosave", ""));
 
       SystemPreferencesData[] dataSystem = SystemPreferencesData.select(conn);

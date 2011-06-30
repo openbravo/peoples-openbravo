@@ -96,8 +96,8 @@ public class Buscador extends HttpSecureAppServlet {
         if (data == null || data.length == 0) {
           if (log4j.isDebugEnabled())
             log4j.debug("The columns defined were parent keys");
-          advisePopUp(request, response, "SearchNothing", Utility.messageBD(this, "SearchNothing",
-              vars.getLanguage()));
+          advisePopUp(request, response, "SearchNothing",
+              Utility.messageBD(this, "SearchNothing", vars.getLanguage()));
         } else
           printPage(response, vars, strTab, data, strWindow, strWindowId, strIsSOTrx);
       }
@@ -165,8 +165,8 @@ public class Buscador extends HttpSecureAppServlet {
     xmlDocument.setParameter("theme", vars.getTheme());
     StringBuffer script = new StringBuffer();
     Vector<StringBuffer> vecScript = new Vector<StringBuffer>();
-    xmlDocument.setParameter("data", generateHtml(vars, data, strTab, strWindowId, script,
-        strIsSOTrx, vecScript));
+    xmlDocument.setParameter("data",
+        generateHtml(vars, data, strTab, strWindowId, script, strIsSOTrx, vecScript));
     xmlDocument.setParameter("scripsJS", vecScript.elementAt(0).toString());
     xmlDocument.setParameter("script",
         (script.toString() + generateScript(data, strWindow, strTab)));
@@ -204,8 +204,8 @@ public class Buscador extends HttpSecureAppServlet {
     strHtml.append("\n").append(paramsData);
     strHtml
         .append("  if (parent.window.opener.selectFilters) parent.window.opener.selectFilters(paramsData);\n");
-    strHtml.append("  else parent.window.opener.submitFormGetParams(\"SEARCH\", \"").append(
-        strWindow).append("\"").append(params).append(");\n");
+    strHtml.append("  else parent.window.opener.submitFormGetParams(\"SEARCH\", \"")
+        .append(strWindow).append("\"").append(params).append(");\n");
     strHtml.append("  parent.window.close();\n");
     strHtml.append("  return true;\n");
     strHtml.append("}\n");
@@ -249,8 +249,8 @@ public class Buscador extends HttpSecureAppServlet {
       }
       strHtml.append("<tr><td class=\"TitleCell\"> <span class=\"LabelText\">");
       if (reference.hasSecondaryFilter()) {
-        strHtml.append(field.name).append(" ").append(
-            Utility.messageBD(this, "From", vars.getLanguage()));
+        strHtml.append(field.name).append(" ")
+            .append(Utility.messageBD(this, "From", vars.getLanguage()));
       } else {
         strHtml.append(field.name);
       }
@@ -272,8 +272,8 @@ public class Buscador extends HttpSecureAppServlet {
 
     StringBuffer scrScr = new StringBuffer();
     for (String js : listScript) {
-      scrScr.append("<script language=\"JavaScript\" src=\"").append(js).append(
-          "\" type=\"text/javascript\"></script>");
+      scrScr.append("<script language=\"JavaScript\" src=\"").append(js)
+          .append("\" type=\"text/javascript\"></script>");
     }
     vecScript.addElement(scrScr);
     return strHtml.toString();

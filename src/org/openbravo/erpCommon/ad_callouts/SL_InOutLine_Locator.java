@@ -77,8 +77,8 @@ public class SL_InOutLine_Locator extends HttpSecureAppServlet {
     if (strIsSOTrx.equals("N") && !Locator.equals("0")) {
       resultado.append("var respuesta = new Array(");
       resultado.append("new Array(\"MESSAGE\", \""
-          + FormatUtilities.replaceJS(Utility.messageBD(this, "FilledWarehouseLocator", vars
-              .getLanguage())) + "\")");
+          + FormatUtilities.replaceJS(Utility.messageBD(this, "FilledWarehouseLocator",
+              vars.getLanguage())) + "\")");
       resultado.append(");");
     } else
       resultado.append("var respuesta = null;\n");

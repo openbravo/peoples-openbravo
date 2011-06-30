@@ -78,9 +78,10 @@ public class ReportOffer extends HttpSecureAppServlet {
         false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
 
-    ReportOfferData[] data = ReportOfferData.select(this, Utility.getContext(this, vars,
-        "#User_Client", "ReportOffer"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-        "ReportOffer"), strDateFrom, strDateTo, strcBpartnerId);
+    ReportOfferData[] data = ReportOfferData.select(this,
+        Utility.getContext(this, vars, "#User_Client", "ReportOffer"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOffer"), strDateFrom,
+        strDateTo, strcBpartnerId);
     /*
      * SubreportOfferProductData[][] dataProduct = new SubreportOfferProductData[data.length][]; for
      * (int i=0; i<data.length; i++) { dataProduct[i] = SubreportOfferProductData.select(this,
@@ -124,8 +125,11 @@ public class ReportOffer extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("today", DateTimeData.today(this));
 
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
-        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOffer"),
+    xmlDocument.setData(
+        "reportCBPartnerId_IN",
+        "liststructure",
+        SelectorUtilityData.selectBpartner(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOffer"),
             Utility.getContext(this, vars, "#User_Client", "ReportOffer"), strcBpartnerId));
     xmlDocument.setData("structure1", data);
     // xmlDocument.setDataArray("reportProduct", "structure1" ,
@@ -142,9 +146,9 @@ public class ReportOffer extends HttpSecureAppServlet {
       log4j.debug("Output: ajaxreponse");
     XmlDocument xmlDocument = null;
 
-    SubreportOfferProductData[] data = SubreportOfferProductData.select(this, Utility.getContext(
-        this, vars, "#User_Client", "ReportOffer"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportOffer"), strOfferId);
+    SubreportOfferProductData[] data = SubreportOfferProductData.select(this,
+        Utility.getContext(this, vars, "#User_Client", "ReportOffer"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOffer"), strOfferId);
 
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/SubreportOfferProduct").createXmlDocument();

@@ -170,8 +170,8 @@ public class InsertAcces extends HttpSecureAppServlet {
                 && (InsertAccesData.selectProcess(this, roleid, accesData[i].printreport) == null || InsertAccesData
                     .selectProcess(this, roleid, accesData[i].printreport).equals(""))) {
               log4j.error("Action window print report: " + accesData[i].printreport);
-              InsertAccesData.insertProcess(this, accesData[i].printreport, roleid, vars
-                  .getClient(), "0", vars.getUser());
+              InsertAccesData.insertProcess(this, accesData[i].printreport, roleid,
+                  vars.getClient(), "0", vars.getUser());
             }
             /*
              * if (!accesData[i].editreference.equals("") && (InsertAccesData.selectForm(this,
@@ -189,8 +189,8 @@ public class InsertAcces extends HttpSecureAppServlet {
                     || InsertAccesData.selectProcess(this, roleid, buttons[j].adprocessid).equals(
                         "")) {
                   log4j.error("Action window button: " + buttons[j].adprocessid);
-                  InsertAccesData.insertProcess(this, buttons[j].adprocessid, roleid, vars
-                      .getClient(), "0", vars.getUser());
+                  InsertAccesData.insertProcess(this, buttons[j].adprocessid, roleid,
+                      vars.getClient(), "0", vars.getUser());
                 }
               }
             }

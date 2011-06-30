@@ -60,9 +60,9 @@ public class ReportPendingProductionJr extends HttpSecureAppServlet {
     // xmlDocument =
     // xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportPendingProductionEdit").
     // createXmlDocument();
-    data = ReportPendingProductionJrData.select(this, Utility.getContext(this, vars,
-        "#User_Client", "ReportPendingProductionJr"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportPendingProductionJr"));
+    data = ReportPendingProductionJrData.select(this,
+        Utility.getContext(this, vars, "#User_Client", "ReportPendingProductionJr"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportPendingProductionJr"));
 
     String strOutput = "html";
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportPendingProductionJr.jrxml";
@@ -97,8 +97,8 @@ public class ReportPendingProductionJr extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportPendingProductionJr.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportPendingProductionJr.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
           "ReportPendingProductionJr.html", strReplaceWith);

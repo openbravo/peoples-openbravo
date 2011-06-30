@@ -70,8 +70,8 @@ public class About extends HttpSecureAppServlet {
       if (ActivationKey.isActiveInstance()) {
         licenseInfo = Utility.messageBD(this, "OPSLicensedTo", vars.getLanguage()).replace(
             "@OBPSEdition@",
-            Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(), vars
-                .getLanguage()))
+            Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(),
+                vars.getLanguage()))
             + " " + ak.getProperty("customer");
       } else {
         licenseInfo = Utility.messageBD(this, "OPSCommunityEdition", vars.getLanguage());
@@ -94,8 +94,8 @@ public class About extends HttpSecureAppServlet {
       if (ActivationKey.isActiveInstance()) {
         xmlDocument.setParameter("paraOPSPurpose", ak.getPurpose(vars.getLanguage()));
         xmlDocument.setParameter("paraOPSType", ak.getLicenseExplanation(this, vars.getLanguage()));
-        xmlDocument.setParameter("paraOBPSStatus", ak.getSubscriptionStatus().getStatusName(
-            vars.getLanguage()));
+        xmlDocument.setParameter("paraOBPSStatus",
+            ak.getSubscriptionStatus().getStatusName(vars.getLanguage()));
       }
 
       out.println(xmlDocument.print());
@@ -151,9 +151,10 @@ public class About extends HttpSecureAppServlet {
   private HashMap<String, String> getModuleHashMap(ModuleTreeData module, int level) {
     HashMap<String, String> rt = new HashMap<String, String>();
     rt.put("moduleName", module.modulename);
-    rt.put("moduleVersion", module.version
-        + (module.versionLabel == null || module.versionLabel.isEmpty() ? "" : " - "
-            + module.versionLabel));
+    rt.put("moduleVersion",
+        module.version
+            + (module.versionLabel == null || module.versionLabel.isEmpty() ? "" : " - "
+                + module.versionLabel));
     rt.put("moduleAuthor", module.author == null || module.author.isEmpty() ? "-" : module.author);
     String tab = "";
     for (int i = 0; i < level; i++) {

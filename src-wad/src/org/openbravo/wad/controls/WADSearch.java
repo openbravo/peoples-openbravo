@@ -62,8 +62,9 @@ public class WADSearch extends WADControl {
   private void generateJSCode() {
     StringBuffer validation = new StringBuffer();
     if (getData("IsMandatory").equals("Y")) {
-      validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp")).append(
-          ")==null || inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==\"\") {\n");
+      validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp"))
+          .append(")==null || inputValue(frm.inp").append(getData("ColumnNameInp"))
+          .append(")==\"\") {\n");
       if (getData("IsDisplayed").equals("Y"))
         validation.append("    setWindowElementFocus(frm.inp").append(getData("ColumnNameInp"))
             .append("_R);\n");
@@ -102,8 +103,8 @@ public class WADSearch extends WADControl {
             for (int i = 0; i < data.length; i++) {
               if (data[i].columntype.equals("I")) {
                 columnsScript.append(", 'inp").append(data[i].name).append("'");
-                columnsScript.append(", inputValue(document.frmMain.inp").append(
-                    Sqlc.TransformaNombreColumna(data[i].columnname)).append(')');
+                columnsScript.append(", inputValue(document.frmMain.inp")
+                    .append(Sqlc.TransformaNombreColumna(data[i].columnname)).append(')');
               } else {
                 hiddenScript.append("<input type=\"hidden\" name=\"inp").append(
                     Sqlc.TransformaNombreColumna(data[i].name));
@@ -118,13 +119,13 @@ public class WADSearch extends WADControl {
         ex.printStackTrace();
       }
       commandScript.append("openSearch(null, null, '..").append(servletName).append("', ");
-      commandScript.append("null, false, 'frmMain', 'inp").append(getData("ColumnNameInp")).append(
-          "', ");
+      commandScript.append("null, false, 'frmMain', 'inp").append(getData("ColumnNameInp"))
+          .append("', ");
       commandScript.append("'inp").append(getData("ColumnNameInp")).append("_R', ");
       commandScript.append("inputValue(document.frmMain.inp").append(getData("ColumnNameInp"))
           .append("_R), ");
-      commandScript.append("'inpIDValue', inputValue(document.frmMain.inp").append(
-          getData("ColumnNameInp")).append("), ");
+      commandScript.append("'inpIDValue', inputValue(document.frmMain.inp")
+          .append(getData("ColumnNameInp")).append("), ");
       commandScript.append("'WindowID', inputValue(document.frmMain.inpwindowId)");
       commandScript.append(columnsScript);
       text.append(commandScript).append(", 'Command', 'KEY'");

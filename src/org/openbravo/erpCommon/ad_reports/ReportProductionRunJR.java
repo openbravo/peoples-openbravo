@@ -107,10 +107,11 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
       log4j.debug("Output: dataHtmlJR");
 
     ReportProductionRunData[] data = null;
-    data = ReportProductionRunData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-        "#User_Client", "ReportProductionRunJR"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportProductionRunJR"), strLaunchDateFrom, strLaunchDateTo,
-        strStartDateFrom, strStartDateTo, strEndDateFrom, strEndDateTo, strmaWorkRequirement);
+    data = ReportProductionRunData.select(this, vars.getLanguage(),
+        Utility.getContext(this, vars, "#User_Client", "ReportProductionRunJR"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductionRunJR"),
+        strLaunchDateFrom, strLaunchDateTo, strStartDateFrom, strStartDateTo, strEndDateFrom,
+        strEndDateTo, strmaWorkRequirement);
 
     String strSubtitle = "";
     if (!strLaunchDateFrom.equals(""))
@@ -189,16 +190,16 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("maWorkRequirement", strmaWorkRequirement);
     xmlDocument.setParameter("launchDateFrom", strLaunchDateFrom);
-    xmlDocument.setParameter("launchDateFromdisplayFormat", vars
-        .getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("launchDateFromdisplayFormat",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("launchDateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("launchDateTo", strLaunchDateTo);
     xmlDocument
         .setParameter("launchDateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("launchDateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("startDateFrom", strStartDateFrom);
-    xmlDocument.setParameter("startDateFromdisplayFormat", vars
-        .getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("startDateFromdisplayFormat",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("startDateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("startDateTo", strStartDateTo);
     xmlDocument.setParameter("startDateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));

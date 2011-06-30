@@ -177,8 +177,8 @@ public class WADDate extends WADControl {
 
   public String toJava() {
     StringBuffer text = new StringBuffer();
-    text.append("xmlDocument.setParameter(\"").append(getData("ColumnName")).append(
-        "_Format\", vars.getSessionValue(\"#AD_SqlDateFormat\"));");
+    text.append("xmlDocument.setParameter(\"").append(getData("ColumnName"))
+        .append("_Format\", vars.getSessionValue(\"#AD_SqlDateFormat\"));");
     return text.toString();
   }
 

@@ -166,8 +166,8 @@ public class DocMatchInv extends AcctServer {
 
     boolean changeSign = false;
     FieldProvider[] data = getObjectFieldProvider();
-    BigDecimal bdCost = new BigDecimal(DocMatchInvData.selectProductAverageCost(conn, data[0]
-        .getField("M_Product_Id"), data[0].getField("orderAcctDate")));
+    BigDecimal bdCost = new BigDecimal(DocMatchInvData.selectProductAverageCost(conn,
+        data[0].getField("M_Product_Id"), data[0].getField("orderAcctDate")));
     String strScale = DocMatchInvData.selectClientCurrencyPrecission(conn, vars.getClient());
     BigDecimal bdQty = new BigDecimal(data[0].getField("Qty"));
     bdCost = bdCost.multiply(bdQty).setScale(new Integer(strScale), RoundingMode.HALF_UP);
@@ -181,8 +181,8 @@ public class DocMatchInv extends AcctServer {
     strExpenses = getConvertedAmt(strExpenses, strInvoiceCurrency, as.getC_Currency_ID(), strDate,
         "", vars.getClient(), vars.getOrg(), conn);
     BigDecimal bdExpenses = new BigDecimal(strExpenses);
-    if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(data[0]
-        .getField("MOVEMENTQTY"))).signum())
+    if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(
+        data[0].getField("MOVEMENTQTY"))).signum())
         && data[0].getField("InOutStatus").equals("VO")) {
       changeSign = true;
       bdExpenses = bdExpenses.multiply(new BigDecimal(-1));
@@ -193,9 +193,9 @@ public class DocMatchInv extends AcctServer {
     DocLine docLine = new DocLine(DocumentType, Record_ID, "");
     docLine.m_C_Project_ID = data[0].getField("INOUTPROJECT");
 
-    dr = fact.createLine(docLine, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn), as
-        .getC_Currency_ID(), bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-        conn);
+    dr = fact.createLine(docLine, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
+        as.getC_Currency_ID(), bdCost.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+        DocumentType, conn);
 
     if (dr == null) {
       log4j.warn("createFact - unable to calculate line with "
@@ -297,7 +297,7 @@ public class DocMatchInv extends AcctServer {
 
   /**
    * Update Product Info. - Costing (PriceLastInv) - PO (PriceLastInv)
-   *
+   * 
    * @param C_AcctSchema_ID
    *          accounting schema
    */

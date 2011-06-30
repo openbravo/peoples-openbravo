@@ -15,7 +15,7 @@
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_forms;
 
 import java.sql.Connection;
@@ -32,20 +32,20 @@ public abstract class DocAmortizationTemplate {
 
   /**
    * Constructor
-   *
+   * 
    */
   public DocAmortizationTemplate() {
   }
 
   /**
    * Create Facts (the accounting logic) for
-   *
+   * 
    * @param as
    *          accounting schema
    * @return Fact
    */
-  public abstract Fact createFact(DocAmortization docAmortization, AcctSchema as, ConnectionProvider conn,
-      Connection con, VariablesSecureApp vars) throws ServletException;
+  public abstract Fact createFact(DocAmortization docAmortization, AcctSchema as,
+      ConnectionProvider conn, Connection con, VariablesSecureApp vars) throws ServletException;
 
   public String getServletInfo() {
     return "Servlet for the accounting";

@@ -129,8 +129,8 @@ public class ReportTaxPaymentJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
 
     xmlDocument.setParameter("dateFrom", strDateFrom);
-    xmlDocument.setParameter("dateFromdisplayFormat", vars
-        .getSessionValue("#AD_JavaDateTimeFormat"));
+    xmlDocument.setParameter("dateFromdisplayFormat",
+        vars.getSessionValue("#AD_JavaDateTimeFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_JavaDateTimeFormat"));
     xmlDocument.setParameter("dateTo", strDateTo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_JavaDateTimeFormat"));
@@ -152,8 +152,8 @@ public class ReportTaxPaymentJR extends HttpSecureAppServlet {
       log4j.debug("Output: print html");
 
     ReportRegisterByVatJRData[] data = null;
-    data = ReportRegisterByVatJRData.select(this, strDateFrom, DateTimeData.nDaysAfter(this,
-        strDateTo, "1"));
+    data = ReportRegisterByVatJRData.select(this, strDateFrom,
+        DateTimeData.nDaysAfter(this, strDateTo, "1"));
 
     String strOutput = vars.commandIn("EDIT_HTML") ? "html" : "pdf";
     String strReportName = "@basedesign@/org/openbravo/erpReports/ReportRegisterByVatJR.jrxml";

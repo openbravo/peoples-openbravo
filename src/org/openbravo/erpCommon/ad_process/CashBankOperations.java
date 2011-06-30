@@ -86,10 +86,10 @@ public class CashBankOperations extends HttpSecureAppServlet {
     try {
       con = getTransactionConnection();
       String strBPartner = CashBankOperationsData.select(this, strOrgTrx);
-      String strCashCurrency = CashBankOperationsData.selectCashCurrency(this, strCashFrom
-          .equals("") ? strCashTo : strCashFrom);
-      String strBankCurrency = CashBankOperationsData.selectBankCurrency(this, strBankFrom
-          .equals("") ? strBankTo : strBankFrom);
+      String strCashCurrency = CashBankOperationsData.selectCashCurrency(this,
+          strCashFrom.equals("") ? strCashTo : strCashFrom);
+      String strBankCurrency = CashBankOperationsData.selectBankCurrency(this,
+          strBankFrom.equals("") ? strBankTo : strBankFrom);
       String strSettlement = SequenceIdData.getUUID();
       String strDoctypeId = CashBankOperationsData.selectSettlementDoctypeId(this);
       strSettlementDocumentNo = Utility.getDocumentNo(this, vars, "CashBankOperations",
@@ -101,9 +101,16 @@ public class CashBankOperations extends HttpSecureAppServlet {
             strCashCurrency);
         String strDebtPaymentId = SequenceIdData.getUUID();
 
-        CashBankOperationsData.insertDebtpayment(con, this, strDebtPaymentId, vars.getClient(),
-            strOrgTrx, vars.getUser(), "Y", strSettlement, strDescription + " - "
-                + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
+        CashBankOperationsData.insertDebtpayment(
+            con,
+            this,
+            strDebtPaymentId,
+            vars.getClient(),
+            strOrgTrx,
+            vars.getUser(),
+            "Y",
+            strSettlement,
+            strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
                 + Utility.messageBD(this, "Cash", vars.getLanguage())
                 + CashBankOperationsData.selectCashBook(this, strCashTo), strBPartner,
             strCashCurrency, "", "", strCashTo, strPaymentRuleTo, strAmount, strMovementDate, "");
@@ -112,8 +119,8 @@ public class CashBankOperations extends HttpSecureAppServlet {
 
         strDebtPaymentId = SequenceIdData.getUUID();
         CashBankOperationsData.insertDebtpayment(con, this, strDebtPaymentId, vars.getClient(),
-            strOrgTrx, vars.getUser(), "N", strSettlement, strDescription + " - "
-                + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
+            strOrgTrx, vars.getUser(), "N", strSettlement,
+            strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
                 + CashBankOperationsData.selectBankAccount(this, strBankFrom, vars.getLanguage()),
             strBPartner, strBankCurrency, "", strBankFrom, "", strPaymentRuleTo, strAmount,
             strMovementDate, "");
@@ -126,9 +133,16 @@ public class CashBankOperations extends HttpSecureAppServlet {
             strBankCurrency);
         String strDebtPaymentId = SequenceIdData.getUUID();
 
-        CashBankOperationsData.insertDebtpayment(con, this, strDebtPaymentId, vars.getClient(),
-            strOrgTrx, vars.getUser(), "N", strSettlement, strDescription + " - "
-                + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
+        CashBankOperationsData.insertDebtpayment(
+            con,
+            this,
+            strDebtPaymentId,
+            vars.getClient(),
+            strOrgTrx,
+            vars.getUser(),
+            "N",
+            strSettlement,
+            strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
                 + Utility.messageBD(this, "Cash", vars.getLanguage())
                 + CashBankOperationsData.selectCashBook(this, strCashFrom), strBPartner,
             strCashCurrency, "", "", strCashFrom, strPaymentRuleFrom, strAmount, strMovementDate,
@@ -138,8 +152,8 @@ public class CashBankOperations extends HttpSecureAppServlet {
             strDescription, strDebtPaymentId, strOrgTrx, con);
         strDebtPaymentId = SequenceIdData.getUUID();
         CashBankOperationsData.insertDebtpayment(con, this, strDebtPaymentId, vars.getClient(),
-            strOrgTrx, vars.getUser(), "Y", strSettlement, strDescription + " - "
-                + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
+            strOrgTrx, vars.getUser(), "Y", strSettlement,
+            strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
                 + CashBankOperationsData.selectBankAccount(this, strBankTo, vars.getLanguage()),
             strBPartner, strBankCurrency, "", strBankTo, "", strPaymentRuleTo, strAmount,
             strMovementDate, "");
@@ -152,9 +166,16 @@ public class CashBankOperations extends HttpSecureAppServlet {
             strCashCurrency);
         String strDebtPaymentId = SequenceIdData.getUUID();
 
-        CashBankOperationsData.insertDebtpayment(con, this, strDebtPaymentId, vars.getClient(),
-            strOrgTrx, vars.getUser(), "N", strSettlement, strDescription + " - "
-                + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
+        CashBankOperationsData.insertDebtpayment(
+            con,
+            this,
+            strDebtPaymentId,
+            vars.getClient(),
+            strOrgTrx,
+            vars.getUser(),
+            "N",
+            strSettlement,
+            strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
                 + Utility.messageBD(this, "Cash", vars.getLanguage())
                 + CashBankOperationsData.selectCashBook(this, strCashFrom), strBPartner,
             strCashCurrency, "", "", strCashFrom, strPaymentRuleFrom, strAmount, strMovementDate,
@@ -164,9 +185,16 @@ public class CashBankOperations extends HttpSecureAppServlet {
 
         strDebtPaymentId = SequenceIdData.getUUID();
 
-        CashBankOperationsData.insertDebtpayment(con, this, strDebtPaymentId, vars.getClient(),
-            strOrgTrx, vars.getUser(), "Y", strSettlement, strDescription + " - "
-                + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
+        CashBankOperationsData.insertDebtpayment(
+            con,
+            this,
+            strDebtPaymentId,
+            vars.getClient(),
+            strOrgTrx,
+            vars.getUser(),
+            "Y",
+            strSettlement,
+            strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
                 + Utility.messageBD(this, "Cash", vars.getLanguage())
                 + CashBankOperationsData.selectCashBook(this, strCashTo), strBPartner,
             strCashCurrency, "", "", strCashTo, strPaymentRuleTo, strAmount, strMovementDate, "");
@@ -181,15 +209,15 @@ public class CashBankOperations extends HttpSecureAppServlet {
             strBankCurrency);
         String strDebtPaymentId = SequenceIdData.getUUID();
         CashBankOperationsData.insertDebtpayment(con, this, strDebtPaymentId, vars.getClient(),
-            strOrgTrx, vars.getUser(), "N", strSettlement, strDescription + " - "
-                + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
+            strOrgTrx, vars.getUser(), "N", strSettlement,
+            strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
                 + CashBankOperationsData.selectBankAccount(this, strBankFrom, vars.getLanguage()),
             strBPartner, strBankCurrency, "", strBankFrom, "", strPaymentRuleFrom, strAmount,
             strMovementDate, "");
         strDebtPaymentId = SequenceIdData.getUUID();
         CashBankOperationsData.insertDebtpayment(con, this, strDebtPaymentId, vars.getClient(),
-            strOrgTrx, vars.getUser(), "Y", strSettlement, strDescription + " - "
-                + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
+            strOrgTrx, vars.getUser(), "Y", strSettlement,
+            strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage())
                 + CashBankOperationsData.selectBankAccount(this, strBankTo, vars.getLanguage()),
             strBPartner, strBankCurrency, "", strBankTo, "", strPaymentRuleTo, strAmount,
             strMovementDate, "");
@@ -224,13 +252,13 @@ public class CashBankOperations extends HttpSecureAppServlet {
     String strCash = CashBankOperationsData.selectOpenCash(this, strCashBook, strDate);
     if (strCash.equals("")) {
       strCash = SequenceIdData.getUUID();
-      CashBankOperationsData.insertCash(con, this, strCash, vars.getClient(), strOrgTrx, vars
-          .getUser(), strCashBook, strDate + " - "
-          + CashBankOperationsData.selectCurrency(this, strCurrency), strDate);
+      CashBankOperationsData.insertCash(con, this, strCash, vars.getClient(), strOrgTrx,
+          vars.getUser(), strCashBook,
+          strDate + " - " + CashBankOperationsData.selectCurrency(this, strCurrency), strDate);
     }
     String strCashLine = SequenceIdData.getUUID();
-    CashBankOperationsData.insertCashLine(con, this, strCashLine, vars.getClient(), strOrgTrx, vars
-        .getUser(), strCash, strDPId, CashBankOperationsData.selectNextCashLine(this, strCash),
+    CashBankOperationsData.insertCashLine(con, this, strCashLine, vars.getClient(), strOrgTrx,
+        vars.getUser(), strCash, strDPId, CashBankOperationsData.selectNextCashLine(this, strCash),
         strDescription, strAmount, strCurrency);
     return strCashLine;
   }
@@ -262,21 +290,27 @@ public class CashBankOperations extends HttpSecureAppServlet {
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars
-        .getLanguage()));
+    xmlDocument.setParameter("question",
+        Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
     xmlDocument.setParameter("description", strDescription);
     xmlDocument.setParameter("help", strHelp);
     xmlDocument.setParameter("datedisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("datesaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
 
-    xmlDocument.setParameter("arrayBank", Utility.arrayDobleEntrada("arrBank",
-        CashBankOperationsData.selectBankDouble(this, Utility.getContext(this, vars, "#User_Org",
-            "CashBankOperations"), Utility.getContext(this, vars, "#User_Client",
-            "CashBankOperations"))));
-    xmlDocument.setParameter("arrayCash", Utility.arrayDobleEntrada("arrCash",
-        CashBankOperationsData.selectCashDouble(this, vars.getLanguage(), Utility.getContext(this,
-            vars, "#User_Org", "CashBankOperations"), Utility.getContext(this, vars,
-            "#User_Client", "CashBankOperations"))));
+    xmlDocument.setParameter(
+        "arrayBank",
+        Utility.arrayDobleEntrada(
+            "arrBank",
+            CashBankOperationsData.selectBankDouble(this,
+                Utility.getContext(this, vars, "#User_Org", "CashBankOperations"),
+                Utility.getContext(this, vars, "#User_Client", "CashBankOperations"))));
+    xmlDocument.setParameter(
+        "arrayCash",
+        Utility.arrayDobleEntrada(
+            "arrCash",
+            CashBankOperationsData.selectCashDouble(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Org", "CashBankOperations"),
+                Utility.getContext(this, vars, "#User_Client", "CashBankOperations"))));
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",

@@ -105,8 +105,8 @@ public class ModelSQLGeneration {
           vOrderBy.addElement(tableSQL.getTableName() + "." + token + " " + tokenDir);
           if (!orderBy.toString().equals(""))
             orderBy.append(", ");
-          orderBy.append(tableSQL.getTableName()).append(".").append(token).append(" ").append(
-              tokenDir);
+          orderBy.append(tableSQL.getTableName()).append(".").append(token).append(" ")
+              .append(tokenDir);
         }
       }
     }
@@ -147,8 +147,8 @@ public class ModelSQLGeneration {
 
     for (Enumeration<Properties> e = filters.elements(); e.hasMoreElements();) {
       Properties prop = e.nextElement();
-      UIReference reference = Reference.getUIReference(prop.getProperty("AD_Reference_ID"), prop
-          .getProperty("AD_Reference_Value_ID"));
+      UIReference reference = Reference.getUIReference(prop.getProperty("AD_Reference_ID"),
+          prop.getProperty("AD_Reference_Value_ID"));
       reference.getFilter(result, isNewFilter, vars, tableSQL, filter, filterParams, prop);
     }
     return result;

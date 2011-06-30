@@ -46,8 +46,8 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
   public void init(HttpServlet s) throws AuthenticationException {
     if (s instanceof ConnectionProvider) {
       conn = (ConnectionProvider) s;
-      strServletSinIdentificar = s.getServletConfig().getServletContext().getInitParameter(
-          "ServletSinIdentificar");
+      strServletSinIdentificar = s.getServletConfig().getServletContext()
+          .getInitParameter("ServletSinIdentificar");
     } else {
       throw new AuthenticationException("Connection provider required for default authentication");
     }
@@ -91,8 +91,8 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
       }
 
       if (strAjax != null && !strAjax.equals(""))
-        bdErrorAjax(response, "Error", "", Utility.messageBD(this.conn, "NotLogged", variables
-            .getLanguage()));
+        bdErrorAjax(response, "Error", "",
+            Utility.messageBD(this.conn, "NotLogged", variables.getLanguage()));
       else
         response.sendRedirect(strDireccionLocal + strServletSinIdentificar);
       return null;

@@ -69,8 +69,8 @@ public class FIN_ExecutePayment {
         .getFinancialMgmtPaymentExecutionProcessParameterList();
     for (PaymentExecutionProcessParameter parameter : allParameters)
       if ("IN".equals(parameter.getParameterType()))
-        dao.getNewPaymentRunParameter(paymentRun, parameter, parameters.get(parameter
-            .getSearchKey()));
+        dao.getNewPaymentRunParameter(paymentRun, parameter,
+            parameters.get(parameter.getSearchKey()));
       else if ("CONSTANT".equals(parameter.getParameterType()))
         dao.getNewPaymentRunParameter(paymentRun, parameter, parameter.getDefaultTextValue());
     try {
@@ -186,12 +186,12 @@ public class FIN_ExecutePayment {
           creditUsed = creditUsed.subtract(amountWithSign);
           bPartner.setCreditUsed(creditUsed);
           OBDal.getInstance().save(bPartner);
-          FIN_AddPayment.updatePaymentScheduleAmounts(psd.getInvoicePaymentSchedule(), psd
-              .getAmount(), psd.getWriteoffAmount());
+          FIN_AddPayment.updatePaymentScheduleAmounts(psd.getInvoicePaymentSchedule(),
+              psd.getAmount(), psd.getWriteoffAmount());
         }
         if (psd.getOrderPaymentSchedule() != null) {
-          FIN_AddPayment.updatePaymentScheduleAmounts(psd.getOrderPaymentSchedule(), psd
-              .getAmount(), psd.getWriteoffAmount());
+          FIN_AddPayment.updatePaymentScheduleAmounts(psd.getOrderPaymentSchedule(),
+              psd.getAmount(), psd.getWriteoffAmount());
         }
       }
     }

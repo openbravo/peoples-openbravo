@@ -817,8 +817,8 @@ public class ComboTableData {
         uiref = Reference.getUIReference(getReferenceType(), null);
       }
     } else {
-      uiref = Reference.getUIReference(field.getField("reference"), field
-          .getField("referenceValue"));
+      uiref = Reference.getUIReference(field.getField("reference"),
+          field.getField("referenceValue"));
     }
     uiref.setComboTableDataIdentifier(this, tableName, field);
     canBeCached = uiref.canBeCached();
@@ -1087,9 +1087,12 @@ public class ComboTableData {
         if (!idFound) {
           SQLReturnObject sqlReturnObject = new SQLReturnObject();
           sqlReturnObject.setData("ID", actual);
-          sqlReturnObject.setData("NAME", INACTIVE_DATA
-              + Utility.messageBD(conn, "NotFound", lparameters != null ? lparameters
-                  .get("#AD_LANGUAGE") : getParameter("#AD_LANGUAGE")));
+          sqlReturnObject.setData(
+              "NAME",
+              INACTIVE_DATA
+                  + Utility.messageBD(conn, "NotFound",
+                      lparameters != null ? lparameters.get("#AD_LANGUAGE")
+                          : getParameter("#AD_LANGUAGE")));
 
           vector.addElement(sqlReturnObject);
         }

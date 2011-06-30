@@ -34,17 +34,18 @@ public class UnpostRefundPayments extends BuildValidation {
       // Prevent error when upgrading from a pure 2.50
       if (UnpostRefundPaymentsData.existAPRMbasetables(cp)) {
 
-        if (UnpostRefundPaymentsData.existsPostedRefundPayments(cp )) {
+        if (UnpostRefundPaymentsData.existsPostedRefundPayments(cp)) {
           String errorClients = "";
           UnpostRefundPaymentsData[] clients = UnpostRefundPaymentsData.clientsWithPayments(cp);
           for (int i = 0; i < clients.length; i++)
             errorClients += clients[i].name + ",";
-          errorClients = errorClients.substring(0, errorClients.length()-1);
+          errorClients = errorClients.substring(0, errorClients.length() - 1);
 
           errors
-              .add("You can not apply this Advanced Payables and Receivables Management module version because your instance fails in a pre-validation: since APRM 1.0.5 version the accounting of refund payments has changed. So it is not allowed to upgrade to the latest version having payments accounted with the old rules. To fix this problem in your instance, you can know the duplicated entries by reviewing Alerts in your system (Alert Rule: Posted Refund Payments). Find the Posted Payments to unpost them, you should as well disable the accounting background process. Once it is fixed you should be able to apply this APRM module version. Clients with payments: " + errorClients);
+              .add("You can not apply this Advanced Payables and Receivables Management module version because your instance fails in a pre-validation: since APRM 1.0.5 version the accounting of refund payments has changed. So it is not allowed to upgrade to the latest version having payments accounted with the old rules. To fix this problem in your instance, you can know the duplicated entries by reviewing Alerts in your system (Alert Rule: Posted Refund Payments). Find the Posted Payments to unpost them, you should as well disable the accounting background process. Once it is fixed you should be able to apply this APRM module version. Clients with payments: "
+                  + errorClients);
           String alertRuleId = UnpostRefundPaymentsData.getUUID(cp);
-          if (!UnpostRefundPaymentsData.existsAlertRule(cp)){
+          if (!UnpostRefundPaymentsData.existsAlertRule(cp)) {
             UnpostRefundPaymentsData.insertAlertRule(cp, alertRuleId);
           }
           alertRuleId = UnpostRefundPaymentsData.getAlertRuleId(cp);
@@ -57,6 +58,7 @@ public class UnpostRefundPayments extends BuildValidation {
     }
     return errors;
   }
+
   /**
    * @param alertRule
    * @param conn
@@ -78,7 +80,8 @@ public class UnpostRefundPayments extends BuildValidation {
 
       for (int i = 0; i < alert.length; i++) {
         if (!UnpostRefundPaymentsData.existsReference(cp, adAlertruleId, alert[i].referencekeyId)) {
-          UnpostRefundPaymentsData.insertAlert(cp, alert[i].adClientId, alert[i].description, alertRule[0].adAlertruleId, alert[i].recordId, alert[i].referencekeyId);
+          UnpostRefundPaymentsData.insertAlert(cp, alert[i].adClientId, alert[i].description,
+              alertRule[0].adAlertruleId, alert[i].recordId, alert[i].referencekeyId);
         }
       }
 

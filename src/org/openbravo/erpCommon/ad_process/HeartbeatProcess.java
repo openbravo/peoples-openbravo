@@ -331,8 +331,7 @@ public class HeartbeatProcess implements Process {
               .getLabel())));
         } catch (ParseException e) {
           log.warn("Incorrect date of last login: "
-              + systemInfo.getProperty(systemInfo
-                  .getProperty(SystemInfo.Item.LAST_LOGIN.getLabel())));
+              + systemInfo.getProperty(systemInfo.getProperty(SystemInfo.Item.LAST_LOGIN.getLabel())));
         }
         try {
           hbLog.setTotalLogins(Long.parseLong(systemInfo.getProperty(SystemInfo.Item.TOTAL_LOGINS

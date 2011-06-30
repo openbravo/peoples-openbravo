@@ -158,18 +158,18 @@ public class DocProduction extends AcctServer {
       log4jDocProduction.debug("DocProduction - createFact - line.m_Productiontype - "
           + line.m_Productiontype);
       if (line.m_Productiontype.equals("+")) {
-        fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
-            .getC_Currency_ID(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+        fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+            as.getC_Currency_ID(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
             conn);
-        fact.createLine(line, getAccountWarehouse(line.m_M_Warehouse_ID, as, conn), as
-            .getC_Currency_ID(), "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+        fact.createLine(line, getAccountWarehouse(line.m_M_Warehouse_ID, as, conn),
+            as.getC_Currency_ID(), "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
             conn);
       } else {
-        fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
-            .getC_Currency_ID(), "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+        fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+            as.getC_Currency_ID(), "", costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
             conn);
-        fact.createLine(line, getAccountWarehouse(line.m_M_Warehouse_ID, as, conn), as
-            .getC_Currency_ID(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+        fact.createLine(line, getAccountWarehouse(line.m_M_Warehouse_ID, as, conn),
+            as.getC_Currency_ID(), costs, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
             conn);
       }
     }

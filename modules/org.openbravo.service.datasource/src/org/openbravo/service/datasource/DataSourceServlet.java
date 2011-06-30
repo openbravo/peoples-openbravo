@@ -273,9 +273,8 @@ public class DataSourceServlet extends BaseKernelServlet {
           } else {
             fieldSeparator = ",";
           }
-          log
-              .warn("Warning: CSV Field separator is identical to the decimal separator. Changing the field separator to "
-                  + fieldSeparator + " to avoid generating a wrong CSV file");
+          log.warn("Warning: CSV Field separator is identical to the decimal separator. Changing the field separator to "
+              + fieldSeparator + " to avoid generating a wrong CSV file");
         }
         fieldProperties = new ArrayList<String>();
         if (parameters.get("viewState") != null
@@ -325,8 +324,8 @@ public class DataSourceServlet extends BaseKernelServlet {
             }
             UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(col.getId());
             if (uiDef instanceof NumberUIDefinition) {
-              formats.put(prop.getName(), Utility.getFormat(vars, ((NumberUIDefinition) uiDef)
-                  .getFormat()));
+              formats.put(prop.getName(),
+                  Utility.getFormat(vars, ((NumberUIDefinition) uiDef).getFormat()));
             }
             if (!(prop.getDomainType() instanceof EnumerateDomainType)) {
               continue;
@@ -626,8 +625,10 @@ public class DataSourceServlet extends BaseKernelServlet {
     final String servicePart = request.getRequestURI().substring(nameIndex);
     final String[] pathParts = WebServiceUtil.getInstance().getSegments(servicePart);
     if (pathParts.length == 0 || !pathParts[0].equals(servletPathPart)) {
-      writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
-          "Invalid url: " + request.getRequestURI())));
+      writeResult(
+          response,
+          JsonUtils.convertExceptionToJson(new InvalidRequestException("Invalid url: "
+              + request.getRequestURI())));
       return false;
     }
     if (pathParts.length == 1) {
@@ -685,8 +686,10 @@ public class DataSourceServlet extends BaseKernelServlet {
     final String servicePart = request.getRequestURI().substring(nameIndex);
     final String[] pathParts = WebServiceUtil.getInstance().getSegments(servicePart);
     if (pathParts.length == 0 || !pathParts[0].equals(servletPathPart)) {
-      writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
-          "Invalid url: " + request.getRequestURI())));
+      writeResult(
+          response,
+          JsonUtils.convertExceptionToJson(new InvalidRequestException("Invalid url: "
+              + request.getRequestURI())));
       return false;
     }
     if (pathParts.length == 1) {

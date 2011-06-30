@@ -58,8 +58,8 @@ public class Posted extends HttpSecureAppServlet {
       String strTabId = vars.getGlobalVariable("inpTabId", "Posted|tabId");
       String strPosted = vars.getGlobalVariable("inpPosted", "Posted|posted");
       String strProcessId = vars.getGlobalVariable("inpProcessId", "Posted|processId", "");
-      String strPath = vars.getGlobalVariable("inpPath", "Posted|path", strDireccion
-          + request.getServletPath());
+      String strPath = vars.getGlobalVariable("inpPath", "Posted|path",
+          strDireccion + request.getServletPath());
       String strWindowId = vars.getGlobalVariable("inpWindowId", "Posted|windowId", "");
       String strForcedTableId = vars.getGlobalVariable("inpforcedTableId", strWindowId
           + "|FORCED_TABLE_ID", "");
@@ -110,8 +110,8 @@ public class Posted extends HttpSecureAppServlet {
             // vars.setSessionValue(strWindowId + "|" + strTabName +
             // ".message", Utility.messageBD(this, "NoFactAcct",
             // vars.getLanguage()));
-            vars.setMessage(strTabId, Utility.translateError(this, vars, vars.getLanguage(),
-                "NoFactAcct"));
+            vars.setMessage(strTabId,
+                Utility.translateError(this, vars, vars.getLanguage(), "NoFactAcct"));
             printPageClosePopUp(response, vars);
           } else {
             printPageClosePopUp(response, vars, (strDireccion
@@ -188,8 +188,8 @@ public class Posted extends HttpSecureAppServlet {
           vars.getClient(), vars.getOrg(), vars.getUser());
       PInstanceProcessData.insertPInstanceParam(this, pinstance, "20", "AD_Table_ID", strTableId,
           vars.getClient(), vars.getOrg(), vars.getUser());
-      PInstanceProcessData.insertPInstanceParam(this, pinstance, "30", "DeletePosting", "Y", vars
-          .getClient(), vars.getOrg(), vars.getUser());
+      PInstanceProcessData.insertPInstanceParam(this, pinstance, "30", "DeletePosting", "Y",
+          vars.getClient(), vars.getOrg(), vars.getUser());
       if (log4j.isDebugEnabled())
         log4j.debug("delete, pinstance " + pinstance);
       ActionButtonData.process176(this, pinstance);
@@ -255,8 +255,8 @@ public class Posted extends HttpSecureAppServlet {
       }
     }
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars
-        .getLanguage()));
+    xmlDocument.setParameter("question",
+        Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", strDescription);

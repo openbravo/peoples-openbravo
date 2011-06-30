@@ -165,10 +165,11 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     if (strChanged.equals("inplinenetamt")) {
       DecimalFormat priceEditionFmt = Utility.getFormat(vars, "priceEdition");
       DecimalFormat euroEditionFmt = Utility.getFormat(vars, "euroEdition");
-      BigDecimal CalculatedLineNetAmt = qtyInvoice.multiply(
-          priceActual
-              .setScale(priceEditionFmt.getMaximumFractionDigits(), BigDecimal.ROUND_HALF_UP))
-          .setScale(euroEditionFmt.getMaximumFractionDigits(), BigDecimal.ROUND_HALF_UP);
+      BigDecimal CalculatedLineNetAmt = qtyInvoice
+          .multiply(
+              priceActual.setScale(priceEditionFmt.getMaximumFractionDigits(),
+                  BigDecimal.ROUND_HALF_UP)).setScale(euroEditionFmt.getMaximumFractionDigits(),
+              BigDecimal.ROUND_HALF_UP);
       if (!LineNetAmt
           .setScale(priceEditionFmt.getMaximumFractionDigits(), BigDecimal.ROUND_HALF_UP).equals(
               CalculatedLineNetAmt)) {
@@ -191,8 +192,8 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
     if (enforcedLimit) {
       if (priceLimit.compareTo(BigDecimal.ZERO) != 0 && priceActual.compareTo(priceLimit) < 0)
         resultado.append("new Array('MESSAGE', \""
-            + FormatUtilities.replaceJS(Utility.messageBD(this, "UnderLimitPrice", vars
-                .getLanguage())) + "\"), ");
+            + FormatUtilities.replaceJS(Utility.messageBD(this, "UnderLimitPrice",
+                vars.getLanguage())) + "\"), ");
     }
     BigDecimal taxAmt = ((LineNetAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
         BigDecimal.ROUND_HALF_EVEN)).setScale(taxScale, BigDecimal.ROUND_HALF_UP);

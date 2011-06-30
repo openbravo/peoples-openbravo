@@ -51,8 +51,8 @@ public class PaymentMonitorProcess extends DalBaseProcess {
       }
       final List<Invoice> invoices = obqParameters.list();
       for (Invoice invoice : invoices) {
-        OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE).lock(
-            Invoice.ENTITY_NAME, invoice);
+        OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
+            .lock(Invoice.ENTITY_NAME, invoice);
         PaymentMonitor.updateInvoice(invoice);
         counter++;
         OBDal.getInstance().getSession().flush();

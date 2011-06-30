@@ -28,7 +28,7 @@ import javax.servlet.ServletException;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
 
-public class UpdateGeneratedUsedCreditColumns extends ModuleScript{
+public class UpdateGeneratedUsedCreditColumns extends ModuleScript {
 
   @Override
   // Initializes values of Used Credit and Generated credit columns of FIN_Payment

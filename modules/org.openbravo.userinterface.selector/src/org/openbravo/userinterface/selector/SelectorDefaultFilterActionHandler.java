@@ -70,8 +70,10 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
 
       final ScriptEngineManager manager = new ScriptEngineManager();
       final ScriptEngine engine = manager.getEngineByName("js");
-      engine.put("OB", new OBBindings(OBContext.getOBContext(), params, (HttpSession) parameters
-          .get(KernelConstants.HTTP_SESSION)));
+      engine.put(
+          "OB",
+          new OBBindings(OBContext.getOBContext(), params, (HttpSession) parameters
+              .get(KernelConstants.HTTP_SESSION)));
 
       Object exprResult = null;
       for (SelectorField f : obc.list()) {
@@ -85,8 +87,9 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
             result.put(fieldName, exprResult);
           }
         } catch (Exception e) {
-          log.error("Error evaluating expression for property " + f.getProperty()
-              + f.getDisplayColumnAlias() + ": " + e.getMessage(), e);
+          log.error(
+              "Error evaluating expression for property " + f.getProperty()
+                  + f.getDisplayColumnAlias() + ": " + e.getMessage(), e);
         }
       }
     } catch (Exception e) {

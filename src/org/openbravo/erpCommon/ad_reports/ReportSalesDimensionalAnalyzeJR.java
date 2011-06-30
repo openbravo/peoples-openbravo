@@ -296,8 +296,8 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
               "ReportSalesDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportSalesDimensionalAnalyzeJR", strProductCategory);
-      xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure", comboTableData
-          .select(false));
+      xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
+          comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -315,23 +315,31 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    try{
-   	 ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-   	          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesDimensionalAnalyzeJR"), Utility
-   	              .getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
-   	      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesDimensionalAnalyzeJR", strOrg);
-   	      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
-   	      comboTableData = null;
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client",
+              "ReportSalesDimensionalAnalyzeJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData,
+          "ReportSalesDimensionalAnalyzeJR", strOrg);
+      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
+      comboTableData = null;
 
-   }catch (Exception ex) {
-   	 throw new ServletException(ex);
-	}
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
-        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-            .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
-    xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData.selectMproduct(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
-            vars, "#User_Client", ""), strmProductId));
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    xmlDocument.setData(
+        "reportCBPartnerId_IN",
+        "liststructure",
+        SelectorUtilityData.selectBpartner(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+    xmlDocument.setData(
+        "reportMProductId_IN",
+        "liststructure",
+        SelectorUtilityData.selectMproduct(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
           "C_BPartner SalesRep", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -361,15 +369,17 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     }
 
     if (vars.getLanguage().equals("en_US")) {
-      xmlDocument.setData("structure1", ReportSalesDimensionalAnalyzeJRData.selectNotShown(this,
-          strShown));
+      xmlDocument.setData("structure1",
+          ReportSalesDimensionalAnalyzeJRData.selectNotShown(this, strShown));
       xmlDocument.setData("structure2",
           strShown.equals("") ? new ReportSalesDimensionalAnalyzeJRData[0]
               : ReportSalesDimensionalAnalyzeJRData.selectShown(this, strShown));
     } else {
-      xmlDocument.setData("structure1", ReportSalesDimensionalAnalyzeJRData.selectNotShownTrl(this,
-          vars.getLanguage(), strShown));
-      xmlDocument.setData("structure2",
+      xmlDocument
+          .setData("structure1", ReportSalesDimensionalAnalyzeJRData.selectNotShownTrl(this,
+              vars.getLanguage(), strShown));
+      xmlDocument.setData(
+          "structure2",
           strShown.equals("") ? new ReportSalesDimensionalAnalyzeJRData[0]
               : ReportSalesDimensionalAnalyzeJRData.selectShownTrl(this, vars.getLanguage(),
                   strShown));
@@ -446,8 +456,8 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     if (vars.getLanguage().equals("en_US")) {
       dimensionLabel = ReportSalesDimensionalAnalyzeJRData.selectNotShown(this, "");
     } else {
-      dimensionLabel = ReportSalesDimensionalAnalyzeJRData.selectNotShownTrl(this, vars
-          .getLanguage(), "");
+      dimensionLabel = ReportSalesDimensionalAnalyzeJRData.selectNotShownTrl(this,
+          vars.getLanguage(), "");
     }
 
     // Checking report limit first
@@ -578,9 +588,9 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
       if (limit > 0) {
         mycount = Integer
             .parseInt((strComparative.equals("Y")) ? ReportSalesDimensionalAnalyzeJRData
-                .selectCount(this, levelsconcat.toString(), Tree.getMembers(this, TreeData
-                    .getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this, vars,
-                    "#User_Client", "ReportSalesDimensionalAnalyzeJR"), strPartnerGroup,
+                .selectCount(this, levelsconcat.toString(), Tree.getMembers(this,
+                    TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
+                    vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"), strPartnerGroup,
                     strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId,
                     strsalesrepId, strPartnerSalesrepId, strDateFrom, DateTimeData.nDaysAfter(this,
                         strDateTo, "1"), strDateFromRef, DateTimeData.nDaysAfter(this,
@@ -599,8 +609,8 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
       String msgbody = Utility.messageBD(this, "ReportsLimitBody", vars.getLanguage());
       msgbody = msgbody.replace("@rows@", Integer.toString(mycount));
       msgbody = msgbody.replace("@limit@", Integer.toString(limit));
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "ReportsLimitHeader", vars
-          .getLanguage()), msgbody);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "ReportsLimitHeader", vars.getLanguage()), msgbody);
     } else {
       // Checks if there is a conversion rate for each of the transactions
       // of
@@ -612,13 +622,13 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
         try {
           data = ReportSalesDimensionalAnalyzeJRData.select(this, strCurrencyId, strTextShow[0],
               strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4], strTextShow[5],
-              strTextShow[6], strTextShow[7], strTextShow[8], Tree.getMembers(this, TreeData
-                  .getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this, vars,
-                  "#User_Client", "ReportSalesDimensionalAnalyzeJR"), strDateFrom, DateTimeData
-                  .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
-              strProductCategory, strmProductId, strmWarehouseId, strsalesrepId,
-              strPartnerSalesrepId, strDateFromRef, DateTimeData
-                  .nDaysAfter(this, strDateToRef, "1"), strOrderby);
+              strTextShow[6], strTextShow[7], strTextShow[8],
+              Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg),
+              Utility.getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
+              strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
+              strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId, strsalesrepId,
+              strPartnerSalesrepId, strDateFromRef,
+              DateTimeData.nDaysAfter(this, strDateToRef, "1"), strOrderby);
         } catch (ServletException ex) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
         }
@@ -626,11 +636,11 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
         try {
           data = ReportSalesDimensionalAnalyzeJRData.selectNoComparative(this, strCurrencyId,
               strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
-              strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8], Tree.getMembers(this,
-                  TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
-                  vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"), strDateFrom,
-              DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
-              strProductCategory, strmProductId, strmWarehouseId, strsalesrepId,
+              strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
+              Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg),
+              Utility.getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
+              strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
+              strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId, strsalesrepId,
               strPartnerSalesrepId, strOrderby);
         } catch (ServletException ex) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -640,8 +650,9 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
       // If a conversion rate is missing for a certain transaction, an error
       // message window pops-up.
       if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-        advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-            vars.getLanguage()), strConvRateErrorMsg);
+        advisePopUp(request, response, "ERROR",
+            Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+            strConvRateErrorMsg);
       } else { // Otherwise, the report is launched
         String strReportPath;
         if (strComparative.equals("Y")) {

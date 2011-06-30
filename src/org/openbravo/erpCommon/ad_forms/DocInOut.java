@@ -174,9 +174,9 @@ public class DocInOut extends AcctServer {
         } else
           setStatus(STATUS_NotPosted);// Default status. LoadDocument
         // CoGS DR
-        dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn), as
-            .getC_Currency_ID(), strCosts, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-            conn);
+        dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn),
+            as.getC_Currency_ID(), strCosts, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, conn);
         dr.setM_Locator_ID(line.m_M_Locator_ID);
         dr.setLocationFromLocator(line.m_M_Locator_ID, true, conn); // from
         // Loc
@@ -186,9 +186,9 @@ public class DocInOut extends AcctServer {
             + line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
         log4jDocInOut.debug("(MatShipment) - CR costs: " + strCosts);
         // Inventory CR
-        cr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
-            .getC_Currency_ID(), "", strCosts, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-            conn);
+        cr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+            as.getC_Currency_ID(), "", strCosts, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, conn);
         cr.setM_Locator_ID(line.m_M_Locator_ID);
         cr.setLocationFromLocator(line.m_M_Locator_ID, true, conn); // from
         // Loc
@@ -220,8 +220,8 @@ public class DocInOut extends AcctServer {
               + line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn));
           log4jDocInOut.debug("(matReceipt) - DR costs: " + strCosts);
           // Inventory DR
-          dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
-              .getC_Currency_ID(), strCosts, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+              as.getC_Currency_ID(), strCosts, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
               DocumentType, conn);
           dr.setM_Locator_ID(line.m_M_Locator_ID);
           dr.setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from

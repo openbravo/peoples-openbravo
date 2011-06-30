@@ -84,8 +84,8 @@ public class HeartBeatPopupActionHandler extends BaseActionHandler {
             qMod.add(Restrictions.eq(Module.PROPERTY_TYPE, "T"));
             qMod.add(Restrictions.eq(Module.PROPERTY_ENABLED, true));
             qMod.add(Restrictions.eq(Module.PROPERTY_APPLYCONFIGURATIONSCRIPT, true));
-            String obDir = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-                "source.path");
+            String obDir = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+                .getProperty("source.path");
             String oldScripts = "";
             for (Module mod : qMod.list()) {
               File cfScript = new File(obDir + "/modules/" + mod.getJavaPackage()
@@ -111,8 +111,9 @@ public class HeartBeatPopupActionHandler extends BaseActionHandler {
       }
 
       final HeartBeatOrRegistration showHeartBeatOrRegistration = HeartbeatProcess
-          .isLoginPopupRequired(new VariablesSecureApp((HttpServletRequest) parameters
-              .get(KernelConstants.HTTP_REQUEST)), new DalConnectionProvider());
+          .isLoginPopupRequired(
+              new VariablesSecureApp((HttpServletRequest) parameters
+                  .get(KernelConstants.HTTP_REQUEST)), new DalConnectionProvider());
 
       result.put("upgradingNoAdmin", isUpgrading && !sysAdmin);
       result.put("showAPRM", isUpgrading && !usingAprm);

@@ -114,8 +114,8 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
       xmlDocument.setParameter("moduleTree", tree.toHtml());
       xmlDocument.setParameter("moduleTreeDescription", tree.descriptionToHtml());
       xmlDocument.setParameter("organization", strOrganization);
-      xmlDocument.setData("reportAD_Org_ID", "liststructure", UpdateReferenceDataData
-          .selectOrganization(this, vars.getRole(), vars.getUserOrg()));
+      xmlDocument.setData("reportAD_Org_ID", "liststructure",
+          UpdateReferenceDataData.selectOrganization(this, vars.getRole(), vars.getUserOrg()));
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
       out.println(xmlDocument.print());
@@ -197,9 +197,9 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
       }
       if (data != null && data.length != 0) {
         DataImportService myData = DataImportService.getInstance();
-        m_info.append(SALTO_LINEA).append(
-            Utility.messageBD(this, "StartingReferenceData", vars.getLanguage())).append(
-            SALTO_LINEA);
+        m_info.append(SALTO_LINEA)
+            .append(Utility.messageBD(this, "StartingReferenceData", vars.getLanguage()))
+            .append(SALTO_LINEA);
 
         StringBuffer strError = new StringBuffer("");
         for (int j = 0; j < data.length; j++) {
@@ -216,29 +216,29 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
               data[j].adModuleId, data[j].version).equals("0")) {
             // Not installed previously
             String strXml = Utility.fileToString(datasetFile.getPath());
-            ImportResult myResult = myData.importDataFromXML((Client) OBDal.getInstance().get(
-                Client.class, vars.getClient()), (Organization) OBDal.getInstance().get(
-                Organization.class, strOrganization), strXml, (Module) OBDal.getInstance().get(
-                Module.class, data[j].adModuleId));
+            ImportResult myResult = myData.importDataFromXML(
+                (Client) OBDal.getInstance().get(Client.class, vars.getClient()),
+                (Organization) OBDal.getInstance().get(Organization.class, strOrganization),
+                strXml, (Module) OBDal.getInstance().get(Module.class, data[j].adModuleId));
             m_info.append(SALTO_LINEA).append("File: ").append(datasetFile.getName()).append(":")
                 .append(SALTO_LINEA);
             if (myResult.getLogMessages() != null && !myResult.getLogMessages().equals("")
                 && !myResult.getLogMessages().equals("null")) {
               m_info.append(SALTO_LINEA).append("LOG:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getLogMessages())).append(
-                  SALTO_LINEA);
+              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getLogMessages()))
+                  .append(SALTO_LINEA);
             }
             if (myResult.getWarningMessages() != null && !myResult.getWarningMessages().equals("")
                 && !myResult.getWarningMessages().equals("null")) {
               m_info.append(SALTO_LINEA).append("WARNINGS:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getWarningMessages())).append(
-                  SALTO_LINEA);
+              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getWarningMessages()))
+                  .append(SALTO_LINEA);
             }
             if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
                 && !myResult.getErrorMessages().equals("null")) {
               m_info.append(SALTO_LINEA).append("ERRORS:").append(SALTO_LINEA);
-              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getErrorMessages())).append(
-                  SALTO_LINEA);
+              m_info.append(SALTO_LINEA).append(replaceNL(myResult.getErrorMessages()))
+                  .append(SALTO_LINEA);
             }
             if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
                 && !myResult.getErrorMessages().equals("null"))
@@ -249,15 +249,18 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
               if (!modules.contains(data[j].adModuleId)) {
                 modules.add(data[j].adModuleId);
               }
-              m_info.append(SALTO_LINEA).append(
-                  Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage()))
+              m_info
+                  .append(SALTO_LINEA)
+                  .append(Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage()))
                   .append(SALTO_LINEA);
             }
           } else {
             m_info.append(SALTO_LINEA).append("File: ").append(datasetFile.getName()).append(":")
                 .append(SALTO_LINEA);
-            m_info.append(SALTO_LINEA).append(
-                Utility.messageBD(this, "CreateReferenceDataAlreadyCreated", vars.getLanguage()))
+            m_info
+                .append(SALTO_LINEA)
+                .append(
+                    Utility.messageBD(this, "CreateReferenceDataAlreadyCreated", vars.getLanguage()))
                 .append(SALTO_LINEA);
           }
         }
@@ -267,11 +270,11 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
           Module appliedModule = OBDal.getInstance().get(Module.class, module);
           if (UpdateReferenceDataData.selectRegister(this, module, strOrganization,
               vars.getClient()).equals("0")) {
-            InitialOrgSetupData.insertOrgModule(this, vars.getClient(), strOrganization, vars
-                .getUser(), module, appliedModule.getVersion());
+            InitialOrgSetupData.insertOrgModule(this, vars.getClient(), strOrganization,
+                vars.getUser(), module, appliedModule.getVersion());
           } else {
-            UpdateReferenceDataData.updateOrgModule(this, appliedModule.getVersion(), vars
-                .getUser(), vars.getClient(), strOrganization, module);
+            UpdateReferenceDataData.updateOrgModule(this, appliedModule.getVersion(),
+                vars.getUser(), vars.getClient(), strOrganization, module);
           }
         }
         HashMap<String, String> checksums = new HashMap<String, String>();
@@ -284,8 +287,8 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
           }
         }
         for (String moduleId : checksums.keySet()) {
-          UpdateReferenceDataData.updateOrgModuleChecksum(this, checksums.get(moduleId), vars
-              .getUser(), vars.getClient(), strOrganization, moduleId);
+          UpdateReferenceDataData.updateOrgModuleChecksum(this, checksums.get(moduleId),
+              vars.getUser(), vars.getClient(), strOrganization, moduleId);
         }
       } else
         return "WrongModules";

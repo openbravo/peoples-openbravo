@@ -134,12 +134,13 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("proposalNo", paymentProposal.getDocumentNo());
     xmlDocument.setParameter("paymentMethod", paymentProposal.getPaymentMethod().getName());
-    xmlDocument.setParameter("businessPartner",
-        paymentProposal.getBusinessPartner() == null ? Utility.messageBD(this, "All", vars
-            .getLanguage()) : paymentProposal.getBusinessPartner().getName());
+    xmlDocument.setParameter(
+        "businessPartner",
+        paymentProposal.getBusinessPartner() == null ? Utility.messageBD(this, "All",
+            vars.getLanguage()) : paymentProposal.getBusinessPartner().getName());
     if (paymentProposal.getDuedate() != null) {
-      xmlDocument.setParameter("dueDate", Utility.formatDate(paymentProposal.getDuedate(), vars
-          .getJavaDateFormat()));
+      xmlDocument.setParameter("dueDate",
+          Utility.formatDate(paymentProposal.getDuedate(), vars.getJavaDateFormat()));
     }
 
     response.setContentType("text/html; charset=UTF-8");
@@ -180,9 +181,9 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
     }
     // filtered scheduled payments list
     final List<FIN_PaymentScheduleDetail> filteredScheduledPaymentDetails = dao
-        .getFilteredScheduledPaymentDetails(paymentProposal.getOrganization(), paymentProposal
-            .getBusinessPartner(), paymentProposal.getCurrency(), null, dueDate, "B",
-            showAlternativePM ? null : paymentProposal.getPaymentMethod(),
+        .getFilteredScheduledPaymentDetails(paymentProposal.getOrganization(),
+            paymentProposal.getBusinessPartner(), paymentProposal.getCurrency(), null, dueDate,
+            "B", showAlternativePM ? null : paymentProposal.getPaymentMethod(),
             selectedScheduledPaymentDetails, paymentProposal.isReceipt());
 
     final FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
@@ -237,13 +238,13 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
         boolean warningDifferentPaymentMethod = false;
         for (FIN_PaymentScheduleDetail payScheDe : selectedPaymentScheduleDetails) {
           if ((payScheDe.getInvoicePaymentSchedule() != null)
-              && !paymentProposal.getPaymentMethod().getId().equals(
-                  payScheDe.getInvoicePaymentSchedule().getFinPaymentmethod().getId())) {
+              && !paymentProposal.getPaymentMethod().getId()
+                  .equals(payScheDe.getInvoicePaymentSchedule().getFinPaymentmethod().getId())) {
             warningDifferentPaymentMethod = true;
             break;
           } else if ((payScheDe.getOrderPaymentSchedule() != null)
-              && !paymentProposal.getPaymentMethod().getId().equals(
-                  payScheDe.getOrderPaymentSchedule().getFinPaymentmethod().getId())) {
+              && !paymentProposal.getPaymentMethod().getId()
+                  .equals(payScheDe.getOrderPaymentSchedule().getFinPaymentmethod().getId())) {
             warningDifferentPaymentMethod = true;
             break;
           }

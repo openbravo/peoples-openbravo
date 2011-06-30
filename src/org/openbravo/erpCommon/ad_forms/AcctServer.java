@@ -661,8 +661,8 @@ public abstract class AcctServer {
       for (AcctSchema as : m_as) {
         AcctSchemaTable table = null;
         OBCriteria<AcctSchemaTable> criteria = OBDao.getFilteredCriteria(AcctSchemaTable.class,
-            Restrictions.eq("accountingSchema.id", as.getC_AcctSchema_ID()), Restrictions.eq(
-                "table.id", AD_Table_ID));
+            Restrictions.eq("accountingSchema.id", as.getC_AcctSchema_ID()),
+            Restrictions.eq("table.id", AD_Table_ID));
         criteria.setFilterOnReadableClients(false);
         criteria.setFilterOnReadableOrganization(false);
         table = (AcctSchemaTable) criteria.uniqueResult();
@@ -1396,14 +1396,14 @@ public abstract class AcctServer {
       } else if (AcctType.equals(ACCTTYPE_V_Liability)) {
         data = AcctServerData.selectLiabilityAcct(conn, C_BPartner_ID, as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_V_Liability_Services)) {
-        data = AcctServerData.selectLiabilityServicesAcct(conn, C_BPartner_ID, as
-            .getC_AcctSchema_ID());
+        data = AcctServerData.selectLiabilityServicesAcct(conn, C_BPartner_ID,
+            as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_C_Receivable)) {
         data = AcctServerData.selectReceivableAcct(conn, C_BPartner_ID, as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_UnallocatedCash)) {
         /** Account Type - Payment */
-        data = AcctServerData.selectUnallocatedCashAcct(conn, C_BankAccount_ID, as
-            .getC_AcctSchema_ID());
+        data = AcctServerData.selectUnallocatedCashAcct(conn, C_BankAccount_ID,
+            as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_BankInTransit)) {
         data = AcctServerData.selectInTransitAcct(conn, C_BankAccount_ID, as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_BankInTransitDefault)) {
@@ -1413,8 +1413,8 @@ public abstract class AcctServer {
       } else if (AcctType.equals(ACCTTYPE_ConvertGainDefaultAmt)) {
         data = AcctServerData.selectConvertGainDefaultAmtAcct(conn, as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_PaymentSelect)) {
-        data = AcctServerData.selectPaymentSelectAcct(conn, C_BankAccount_ID, as
-            .getC_AcctSchema_ID());
+        data = AcctServerData.selectPaymentSelectAcct(conn, C_BankAccount_ID,
+            as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_WriteOffDefault)) {
         data = AcctServerData.selectWriteOffDefault(conn, as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_DiscountExp)) {
@@ -1426,11 +1426,11 @@ public abstract class AcctServer {
         data = AcctServerData.selectWriteOffAcct(conn, C_BPartner_ID, as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_ConvertChargeLossAmt)) {
         /** Account Type - Bank Statement */
-        data = AcctServerData.selectConvertChargeLossAmt(conn, C_BankAccount_ID, as
-            .getC_AcctSchema_ID());
+        data = AcctServerData.selectConvertChargeLossAmt(conn, C_BankAccount_ID,
+            as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_ConvertChargeGainAmt)) {
-        data = AcctServerData.selectConvertChargeGainAmt(conn, C_BankAccount_ID, as
-            .getC_AcctSchema_ID());
+        data = AcctServerData.selectConvertChargeGainAmt(conn, C_BankAccount_ID,
+            as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_BankAsset)) {
         data = AcctServerData.selectAssetAcct(conn, C_BankAccount_ID, as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_InterestRev)) {
@@ -1457,8 +1457,8 @@ public abstract class AcctServer {
         if (log4j.isDebugEnabled())
           log4j.debug("AcctServer - getAccount - ACCTYPE_NotInvoicedReceipts - C_BPartner_ID - "
               + C_BPartner_ID);
-        data = AcctServerData.selectNotInvoicedReceiptsAcct(conn, C_BPartner_ID, as
-            .getC_AcctSchema_ID());
+        data = AcctServerData.selectNotInvoicedReceiptsAcct(conn, C_BPartner_ID,
+            as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_ProjectAsset)) {
         /** Project Accounts */
         data = AcctServerData.selectPJAssetAcct(conn, C_Project_ID, as.getC_AcctSchema_ID());
@@ -1569,8 +1569,10 @@ public abstract class AcctServer {
       OBCriteria<GLItemAccounts> accounts = OBDal.getInstance()
           .createCriteria(GLItemAccounts.class);
       accounts.add(Restrictions.eq(GLItemAccounts.PROPERTY_GLITEM, glItem));
-      accounts.add(Restrictions.eq(GLItemAccounts.PROPERTY_ACCOUNTINGSCHEMA, OBDal.getInstance()
-          .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(
+          GLItemAccounts.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(GLItemAccounts.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
@@ -1596,8 +1598,10 @@ public abstract class AcctServer {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(
+          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);

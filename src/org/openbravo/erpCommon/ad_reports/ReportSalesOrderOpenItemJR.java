@@ -65,9 +65,10 @@ public class ReportSalesOrderOpenItemJR extends HttpSecureAppServlet {
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportSalesOrderOpenItemEdit.jrxml";
     String strOutput = "html";
 
-    ReportSalesOrderOpenItemData[] data = ReportSalesOrderOpenItemData.select(this, Utility
-        .getContext(this, vars, "#User_Client", "ReportSalesOrderOpenItemJR"), Utility.getContext(
-        this, vars, "#AccessibleOrgTree", "ReportSalesOrderOpenItemJR"), strWarehouse);
+    ReportSalesOrderOpenItemData[] data = ReportSalesOrderOpenItemData.select(this,
+        Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderOpenItemJR"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderOpenItemJR"),
+        strWarehouse);
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }
@@ -97,8 +98,8 @@ public class ReportSalesOrderOpenItemJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportSalesOrderOpenItemJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportSalesOrderOpenItemJR.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
           "ReportSalesOrderOpenItemJR.html", strReplaceWith);
@@ -121,9 +122,9 @@ public class ReportSalesOrderOpenItemJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("mWarehouseId", strWarehouse);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderOpenItemJR"), Utility
-              .getContext(this, vars, "#User_Client", "ReportSalesOrderOpenItemJR"), 0);
+          "", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportSalesOrderOpenItemJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderOpenItemJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderOpenItemJR",
           strWarehouse);
       xmlDocument

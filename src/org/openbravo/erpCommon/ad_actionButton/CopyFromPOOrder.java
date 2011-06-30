@@ -92,8 +92,9 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
       CopyFromPOOrderData[] order = CopyFromPOOrderData.select(this, strKey);
       for (i = 0; data != null && i < data.length; i++) {
         CopyFromPOOrderData[] data3 = CopyFromPOOrderData.selectPriceForProduct(this,
-            data[i].mProductId, order[0].mPricelistId.equals("") ? CopyFromPOOrderData
-                .defaultPriceList(this) : order[0].mPricelistId);
+            data[i].mProductId,
+            order[0].mPricelistId.equals("") ? CopyFromPOOrderData.defaultPriceList(this)
+                : order[0].mPricelistId);
         for (int j = 0; data3 != null && j < data3.length; j++) {
           if (data3[j].validfrom == null
               || data3[j].validfrom.equals("")
@@ -142,8 +143,8 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
                 order[0].cBpartnerId), order[0].cProjectId, order[0].issotrx.equals("Y") ? true
                 : false);
         if (strCTaxID.equals("")) {
-          myError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this,
-              "TaxNotFound", vars.getLanguage()));
+          myError = Utility.translateError(this, vars, vars.getLanguage(),
+              Utility.messageBD(this, "TaxNotFound", vars.getLanguage()));
           return myError;
         }
         line = Integer.valueOf(order[0].line.equals("") ? "0" : order[0].line).intValue()
@@ -154,20 +155,28 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
               data[i].mAttributesetinstanceId);
           if (isInstance != null && isInstance.equalsIgnoreCase("Y")) {
             String strMAttributesetinstanceID = SequenceIdData.getUUID();
-            CopyFromPOOrderData.copyAttributes(conn, this, strMAttributesetinstanceID, vars
-                .getUser(), vars.getUser(), data[i].mAttributesetinstanceId);
-            CopyFromPOOrderData.copyInstances(conn, this, strMAttributesetinstanceID, vars
-                .getUser(), vars.getUser(), data[i].mAttributesetinstanceId);
+            CopyFromPOOrderData.copyAttributes(conn, this, strMAttributesetinstanceID,
+                vars.getUser(), vars.getUser(), data[i].mAttributesetinstanceId);
+            CopyFromPOOrderData.copyInstances(conn, this, strMAttributesetinstanceID,
+                vars.getUser(), vars.getUser(), data[i].mAttributesetinstanceId);
             data[i].mAttributesetinstanceId = strMAttributesetinstanceID;
           }
-          CopyFromPOOrderData.insertCOrderline(conn, this, strCOrderlineID, order[0].adClientId,
-              order[0].adOrgId, vars.getUser(), strKey, Integer.toString(line),
-              order[0].cBpartnerId, order[0].cBpartnerLocationId.equals("") ? ExpenseSOrderData
-                  .cBPartnerLocationId(this, order[0].cBpartnerId) : order[0].cBpartnerLocationId,
-              order[0].dateordered, order[0].datepromised, data[i].description, data[i].mProductId,
-              order[0].mWarehouseId.equals("") ? vars.getWarehouse() : order[0].mWarehouseId,
-              data[i].cUomId, data[i].qtyordered, data[i].quantityorder, data[i].cCurrencyId,
-              pricelist, priceactual, pricelimit, strCTaxID, strDiscount, data[i].mProductUomId,
+          CopyFromPOOrderData.insertCOrderline(
+              conn,
+              this,
+              strCOrderlineID,
+              order[0].adClientId,
+              order[0].adOrgId,
+              vars.getUser(),
+              strKey,
+              Integer.toString(line),
+              order[0].cBpartnerId,
+              order[0].cBpartnerLocationId.equals("") ? ExpenseSOrderData.cBPartnerLocationId(this,
+                  order[0].cBpartnerId) : order[0].cBpartnerLocationId, order[0].dateordered,
+              order[0].datepromised, data[i].description, data[i].mProductId, order[0].mWarehouseId
+                  .equals("") ? vars.getWarehouse() : order[0].mWarehouseId, data[i].cUomId,
+              data[i].qtyordered, data[i].quantityorder, data[i].cCurrencyId, pricelist,
+              priceactual, pricelimit, strCTaxID, strDiscount, data[i].mProductUomId,
               data[i].orderline, data[i].mAttributesetinstanceId);
         } catch (ServletException ex) {
           myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -217,8 +226,8 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("window", windowId);
     xmlDocument.setParameter("tab", strTab);
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars
-        .getLanguage()));
+    xmlDocument.setParameter("question",
+        Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", strDescription);

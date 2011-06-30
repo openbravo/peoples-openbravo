@@ -136,8 +136,9 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
         try {
           Image image = OBDal.getInstance().get(Image.class, imageID);
           Table table = OBDal.getInstance().get(Table.class, tableId);
-          String propertyName = ModelProvider.getInstance().getEntityByTableName(
-              table.getDBTableName()).getPropertyByColumnName(columnName).getName();
+          String propertyName = ModelProvider.getInstance()
+              .getEntityByTableName(table.getDBTableName()).getPropertyByColumnName(columnName)
+              .getName();
           DataPackage dpackage = table.getDataPackage();
           try {
             Class tableClass = Class.forName(dpackage.getJavaPackage() + "."

@@ -110,8 +110,8 @@ public class SL_CreateFromMultiple_Conversion extends HttpSecureAppServlet {
         if (!strQuantityOrder.equals(""))
           resultado.append(",");
         resultado.append("new Array('MESSAGE', \""
-            + FormatUtilities.replaceJS(Utility.messageBD(this, "NoUOMConversion", vars
-                .getLanguage())) + "\")");
+            + FormatUtilities.replaceJS(Utility.messageBD(this, "NoUOMConversion",
+                vars.getLanguage())) + "\")");
       }
       resultado.append(");");
     }

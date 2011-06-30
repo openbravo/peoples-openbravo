@@ -50,7 +50,8 @@ public class CallAcctServer extends HttpSecureAppServlet {
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String adProcessId = CallAcctServerData.processID(this);
-    CallAcctServerData[] data = CallAcctServerData.selectByProcessId(this, adProcessId, vars.getClient());
+    CallAcctServerData[] data = CallAcctServerData.selectByProcessId(this, adProcessId,
+        vars.getClient());
 
     // PeriodicBackground acctServer = getBackgroundProcess(adProcessId);
     if (vars.commandIn("DEFAULT")) {
@@ -122,8 +123,8 @@ public class CallAcctServer extends HttpSecureAppServlet {
       xmlDocument.setParameter("body",
           (strMessage.equals("") ? "" : "alert('" + strMessage + "');"));
 
-      AcctServerData[] data = AcctServerData.selectTables(this, vars.getLanguage(), Utility
-          .getContext(this, vars, "#User_Client", ""));
+      AcctServerData[] data = AcctServerData.selectTables(this, vars.getLanguage(),
+          Utility.getContext(this, vars, "#User_Client", ""));
       if (log4j.isDebugEnabled())
         log4j.debug("select tables org:" + Utility.getContext(this, vars, "#User_Org", "")
             + ", Client:" + Utility.getContext(this, vars, "#User_Client", "") + ",lang:"
@@ -134,8 +135,8 @@ public class CallAcctServer extends HttpSecureAppServlet {
 
       xmlDocument.setParameter("adTableId", strTableId);
 
-      data = AcctServerData.selectOrganizations(this, Utility.getContext(this, vars,
-          "#User_Client", ""));
+      data = AcctServerData.selectOrganizations(this,
+          Utility.getContext(this, vars, "#User_Client", ""));
       if (log4j.isDebugEnabled())
         log4j.debug("select organizations:" + Utility.getContext(this, vars, "#User_Org", "")
             + ", Client:" + Utility.getContext(this, vars, "#User_Client", ""));
@@ -158,7 +159,8 @@ public class CallAcctServer extends HttpSecureAppServlet {
     myMessage.setTitle("");
     boolean scheduled = false;
     try {
-      CallAcctServerData[] data = CallAcctServerData.selectByProcessId(this, adProcessId, vars.getClient());
+      CallAcctServerData[] data = CallAcctServerData.selectByProcessId(this, adProcessId,
+          vars.getClient());
       if (data.length > 0) {
         for (int i = 0; i < data.length; i++) {
           if (data[i].status.equals(Process.SCHEDULED)) {
@@ -171,8 +173,8 @@ public class CallAcctServer extends HttpSecureAppServlet {
       }
       if (!scheduled) {
         String adPinstanceId = SequenceIdData.getUUID();
-        PInstanceProcessData.insertPInstance(this, adPinstanceId, adProcessId, strOrgId, "N", vars
-            .getUser(), vars.getClient(), vars.getOrg());
+        PInstanceProcessData.insertPInstance(this, adPinstanceId, adProcessId, strOrgId, "N",
+            vars.getUser(), vars.getClient(), vars.getOrg());
         PInstanceProcessData.insertPInstanceParam(this, adPinstanceId, "10", "AD_Table_ID",
             strTableId, vars.getClient(), vars.getOrg(), vars.getUser());
         PInstanceProcessData.insertPInstanceParam(this, adPinstanceId, "20", "AD_Org_ID", strOrgId,

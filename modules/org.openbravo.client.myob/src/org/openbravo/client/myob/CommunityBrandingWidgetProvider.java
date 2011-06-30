@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.myob;
 
-
 /**
  * Provides the community branding widget.
  * 

@@ -51,11 +51,11 @@ public class SL_Preference extends SimpleCallout {
       }
 
       if (info.getStringParameter("inpispropertylist", booleanFilter).equals("Y")) {
-        qPref.add(Restrictions.eq(Preference.PROPERTY_PROPERTY, info.getStringParameter(
-            "inpproperty", null)));
+        qPref.add(Restrictions.eq(Preference.PROPERTY_PROPERTY,
+            info.getStringParameter("inpproperty", null)));
       } else {
-        qPref.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, info.getStringParameter(
-            "inpattribute", null)));
+        qPref.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE,
+            info.getStringParameter("inpattribute", null)));
       }
 
       qPref.add(Restrictions.eq(Preference.PROPERTY_SELECTED, true));
@@ -99,8 +99,10 @@ public class SL_Preference extends SimpleCallout {
 
       if (qPref.count() > 0) {
         info.addResult("inpselected", "N");
-        info.addResult("MESSAGE", Utility.messageBD(this, "MultipleSelectedPreferences", OBContext
-            .getOBContext().getLanguage().getLanguage()));
+        info.addResult(
+            "MESSAGE",
+            Utility.messageBD(this, "MultipleSelectedPreferences", OBContext.getOBContext()
+                .getLanguage().getLanguage()));
       }
     }
   }

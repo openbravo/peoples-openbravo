@@ -124,11 +124,9 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
   private boolean isLastReconciliation(FIN_Reconciliation reconciliation) {
     final OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance().createCriteria(
         FIN_Reconciliation.class);
-    obc
-        .add(Restrictions
-            .ge(FIN_Reconciliation.PROPERTY_ENDINGDATE, reconciliation.getEndingDate()));
-    obc.add(Restrictions.gt(FIN_Reconciliation.PROPERTY_CREATIONDATE, reconciliation
-        .getCreationDate()));
+    obc.add(Restrictions.ge(FIN_Reconciliation.PROPERTY_ENDINGDATE, reconciliation.getEndingDate()));
+    obc.add(Restrictions.gt(FIN_Reconciliation.PROPERTY_CREATIONDATE,
+        reconciliation.getCreationDate()));
     obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT, reconciliation.getAccount()));
     obc.addOrder(Order.asc(FIN_Reconciliation.PROPERTY_ENDINGDATE));
     obc.addOrder(Order.asc(FIN_Reconciliation.PROPERTY_CREATIONDATE));

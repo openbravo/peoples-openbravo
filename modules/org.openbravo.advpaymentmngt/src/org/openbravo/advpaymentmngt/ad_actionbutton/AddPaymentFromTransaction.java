@@ -203,20 +203,20 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
               "FIN_Payment", strDocTypeId, strDocTypeId, false, true);
         }
 
-        FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt, dao.getObject(
-            DocumentType.class, strDocTypeId), strPaymentDocumentNo, paymentBusinessPartner, dao
-            .getObject(FIN_PaymentMethod.class, strPaymentMethodId), dao.getObject(
-            FIN_FinancialAccount.class, strFinancialAccountId), strPaymentAmount, FIN_Utility
-            .getDate(strPaymentDate), dao.getObject(FIN_FinancialAccount.class,
-            strFinancialAccountId).getOrganization(), strReferenceNo, selectedPaymentDetails,
-            selectedPaymentDetailAmounts, strDifferenceAction.equals("writeoff"),
-            strDifferenceAction.equals("refund"), dao.getObject(Currency.class, paymentCurrencyId),
-            exchangeRate, convertedAmount);
+        FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt,
+            dao.getObject(DocumentType.class, strDocTypeId), strPaymentDocumentNo,
+            paymentBusinessPartner, dao.getObject(FIN_PaymentMethod.class, strPaymentMethodId),
+            dao.getObject(FIN_FinancialAccount.class, strFinancialAccountId), strPaymentAmount,
+            FIN_Utility.getDate(strPaymentDate),
+            dao.getObject(FIN_FinancialAccount.class, strFinancialAccountId).getOrganization(),
+            strReferenceNo, selectedPaymentDetails, selectedPaymentDetailAmounts,
+            strDifferenceAction.equals("writeoff"), strDifferenceAction.equals("refund"),
+            dao.getObject(Currency.class, paymentCurrencyId), exchangeRate, convertedAmount);
 
         if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
             || strAction.equals("PPW")) {
-          message = FIN_AddPayment.processPayment(vars, this, (strAction.equals("PRP") || strAction
-              .equals("PPP")) ? "P" : "D", payment);
+          message = FIN_AddPayment.processPayment(vars, this,
+              (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
           if (message != null && "Error".equals(message.getType())) {
             throw new OBException();
           }
@@ -234,8 +234,9 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
             OBError auxMessage = FIN_AddPayment.processPayment(vars, this,
                 (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
             if (newPayment) {
-              final String strNewRefundPaymentMessage = Utility.parseTranslation(this, vars, vars
-                  .getLanguage(), "@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo())
+              final String strNewRefundPaymentMessage = Utility
+                  .parseTranslation(this, vars, vars.getLanguage(), "@APRM_RefundPayment@" + ": "
+                      + refundPayment.getDocumentNo())
                   + ".";
               message.setMessage(strNewRefundPaymentMessage + " " + message.getMessage());
               if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) != 0) {
@@ -294,9 +295,9 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     if (!strFinBankStatementLineId.isEmpty()) {
       FIN_BankStatementLine bsline = dao.getObject(FIN_BankStatementLine.class,
           strFinBankStatementLineId);
-      xmlDocument.setParameter("actualPayment", (isReceipt) ? bsline.getCramount().subtract(
-          bsline.getDramount()).toString() : bsline.getDramount().subtract(bsline.getCramount())
-          .toString());
+      xmlDocument.setParameter("actualPayment",
+          (isReceipt) ? bsline.getCramount().subtract(bsline.getDramount()).toString() : bsline
+              .getDramount().subtract(bsline.getCramount()).toString());
       if (bsline.getBusinessPartner() == null) {
         OBCriteria<BusinessPartner> obcBP = OBDal.getInstance().createCriteria(
             BusinessPartner.class);
@@ -315,11 +316,11 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
         : strTransactionDate);
 
     if (isReceipt)
-      xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentIn", vars
-          .getLanguage()));
+      xmlDocument.setParameter("title",
+          Utility.messageBD(this, "APRM_AddPaymentIn", vars.getLanguage()));
     else
-      xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentOut", vars
-          .getLanguage()));
+      xmlDocument.setParameter("title",
+          Utility.messageBD(this, "APRM_AddPaymentOut", vars.getLanguage()));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -466,10 +467,12 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
         paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
       }
 
-      filteredScheduledPaymentDetails = dao.getFilteredScheduledPaymentDetails(financialAccount
-          .getOrganization(), dao.getObject(BusinessPartner.class, strBusinessPartnerId),
-          paymentCurrency, FIN_Utility.getDate(strDueDateFrom), FIN_Utility.getDate(DateTimeData
-              .nDaysAfter(this, strDueDateTo, "1")), FIN_Utility.getDate(strTransDateFrom),
+      filteredScheduledPaymentDetails = dao.getFilteredScheduledPaymentDetails(
+          financialAccount.getOrganization(),
+          dao.getObject(BusinessPartner.class, strBusinessPartnerId), paymentCurrency,
+          FIN_Utility.getDate(strDueDateFrom),
+          FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strDueDateTo, "1")),
+          FIN_Utility.getDate(strTransDateFrom),
           FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strTransDateTo, "1")), strDocumentType,
           strDocumentNo, null, selectedScheduledPaymentDetails, isReceipt);
     }
@@ -546,8 +549,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
         strFinancialAccountCurrencyId);
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
 
-    String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, FIN_Utility
-        .getDate(strPaymentDate), organization, conversionRatePrecision);
+    String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency,
+        FIN_Utility.getDate(strPaymentDate), organization, conversionRatePrecision);
 
     JSONObject msg = new JSONObject();
     try {
@@ -570,8 +573,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       if (conversionRate == null) {
         exchangeRate = "";
       } else {
-        exchangeRate = conversionRate.getMultipleRateBy().setScale(conversionRatePrecision,
-            RoundingMode.HALF_UP).toPlainString();
+        exchangeRate = conversionRate.getMultipleRateBy()
+            .setScale(conversionRatePrecision, RoundingMode.HALF_UP).toPlainString();
       }
     }
     return exchangeRate;

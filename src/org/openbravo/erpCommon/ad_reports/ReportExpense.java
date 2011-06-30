@@ -135,8 +135,9 @@ public class ReportExpense extends HttpSecureAppServlet {
         String count = ReportExpenseData.selectUOM(this, data1[i].cuomid);
         String count2 = ReportExpenseData.selectUOM2(this, data1[i].cuomid);
         if (Integer.parseInt(count) + Integer.parseInt(count2) == 0) {
-          advisePopUp(request, response, "ERROR", Utility.messageBD(this, "Error", vars
-              .getLanguage()), Utility.messageBD(this, "NoConversionDayUom", vars.getLanguage()));
+          advisePopUp(request, response, "ERROR",
+              Utility.messageBD(this, "Error", vars.getLanguage()),
+              Utility.messageBD(this, "NoConversionDayUom", vars.getLanguage()));
         }
       }
     }
@@ -144,8 +145,9 @@ public class ReportExpense extends HttpSecureAppServlet {
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Otherwise, the report is launched
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_reports/ReportExpenseEdit").createXmlDocument();
@@ -199,8 +201,9 @@ public class ReportExpense extends HttpSecureAppServlet {
         String count = ReportExpenseData.selectUOM(this, data1[i].cuomid);
         String count2 = ReportExpenseData.selectUOM2(this, data1[i].cuomid);
         if (Integer.parseInt(count) + Integer.parseInt(count2) == 0) {
-          advisePopUp(request, response, "ERROR", Utility.messageBD(this, "Error", vars
-              .getLanguage()), Utility.messageBD(this, "NoConversionDayUom", vars.getLanguage()));
+          advisePopUp(request, response, "ERROR",
+              Utility.messageBD(this, "Error", vars.getLanguage()),
+              Utility.messageBD(this, "NoConversionDayUom", vars.getLanguage()));
         }
       }
     }
@@ -208,8 +211,9 @@ public class ReportExpense extends HttpSecureAppServlet {
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Launch the report as usual, calling the JRXML file
       if (data1 == null || data1.length == 0) {
         discard[0] = "selEliminar";
@@ -283,8 +287,8 @@ public class ReportExpense extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
-    xmlDocument.setParameter("bPartnerDescription", ReportExpenseData.selectBpartner(this,
-        strcBpartnerId));
+    xmlDocument.setParameter("bPartnerDescription",
+        ReportExpenseData.selectBpartner(this, strcBpartnerId));
     xmlDocument.setParameter("partner", strPartner);
     xmlDocument.setParameter("project", strProject);
     xmlDocument.setParameter("time", strExpense);
@@ -311,8 +315,8 @@ public class ReportExpense extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportExpense"), Utility
-              .getContext(this, vars, "#User_Client", "ReportExpense"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportExpense"),
+          Utility.getContext(this, vars, "#User_Client", "ReportExpense"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportExpense", strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;

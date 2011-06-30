@@ -180,8 +180,8 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
     FieldProvider[] tld = null;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "", "M_Product_UOM",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SLOrderProduct"), Utility
-              .getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SLOrderProduct"),
+          Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
       tld = comboTableData.select(false);
       comboTableData = null;

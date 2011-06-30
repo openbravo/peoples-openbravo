@@ -216,8 +216,9 @@ public class Reconciliation extends HttpSecureAppServlet {
       OBDal.getInstance().flush();
 
       List<FIN_FinaccTransaction> transactionsToReconcile = TransactionsDao
-          .getTransactionsToReconciled(account, FIN_Utility.getDate(DateTimeData.nDaysAfter(this,
-              DateTimeData.today(this), "1")), false);
+          .getTransactionsToReconciled(account,
+              FIN_Utility.getDate(DateTimeData.nDaysAfter(this, DateTimeData.today(this), "1")),
+              false);
 
       for (FIN_FinaccTransaction trans : transactionsToReconcile) {
         if (trans.getReconciliation() != null && !trans.getStatus().equals("RPPC")) {
@@ -288,8 +289,8 @@ public class Reconciliation extends HttpSecureAppServlet {
     log4j.debug("Output: Reconcile button pressed on Financial Account || Transaction tab");
 
     dao = new AdvPaymentMngtDao();
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-        "dateFormat.java");
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
 
     FIN_Reconciliation currentReconciliation = null;
@@ -303,8 +304,8 @@ public class Reconciliation extends HttpSecureAppServlet {
       currentReconciliation = TransactionsDao.getLastReconciliation(account, "N");
       if (isAutomaticReconciliation(currentReconciliation)) {
         OBDal.getInstance().rollbackAndClose();
-        OBError message = Utility.translateError(this, vars, vars.getLanguage(), Utility
-            .parseTranslation(this, vars, vars.getLanguage(), "@APRM_ReconciliationMixed@"));
+        OBError message = Utility.translateError(this, vars, vars.getLanguage(),
+            Utility.parseTranslation(this, vars, vars.getLanguage(), "@APRM_ReconciliationMixed@"));
         vars.setMessage(strTabId, message);
         printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
         return;
@@ -408,8 +409,8 @@ public class Reconciliation extends HttpSecureAppServlet {
 
     Map<String, String> map = FIN_Utility.getMapFromStringList(selectedTransactionsIds);
 
-    FieldProvider[] data = TransactionsDao.getTransactionsFiltered(account, FIN_Utility
-        .getDate(DateTimeData.nDaysAfter(this, strStatmentDate, "1")), afterDate);
+    FieldProvider[] data = TransactionsDao.getTransactionsFiltered(account,
+        FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strStatmentDate, "1")), afterDate);
 
     BigDecimal currentlyCleared = new BigDecimal(strCurrentlyCleared);
     BigDecimal totalPayment = new BigDecimal(strTotalPayment);

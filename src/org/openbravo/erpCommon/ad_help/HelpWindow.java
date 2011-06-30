@@ -63,8 +63,8 @@ public class HelpWindow {
         strCommand = "PROCESS";
         strKeyId = vars.getRequiredStringParameter("inpwindowName");
         DisplayHelpData[] dataProcess = (vars.getLanguage().equals("en_US") ? DisplayHelpData
-            .selectProcess(conn, strKeyId) : DisplayHelpData.selectProcessTrl(conn, vars
-            .getLanguage(), strKeyId));
+            .selectProcess(conn, strKeyId) : DisplayHelpData.selectProcessTrl(conn,
+            vars.getLanguage(), strKeyId));
         if (dataProcess != null && dataProcess.length > 0) {
           strWindowName = dataProcess[0].name;
           strWindowHelp = dataProcess[0].help;

@@ -269,8 +269,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             if (strRole == null || strRole.equals("")) {
               final OBError roleError = new OBError();
               roleError.setType("Error");
-              roleError.setMessage(Utility.messageBD(this, "SystemLoginRequired", variables
-                  .getLanguage()));
+              roleError.setMessage(Utility.messageBD(this, "SystemLoginRequired",
+                  variables.getLanguage()));
               invalidLogin(request, response, roleError);
 
               return;
@@ -454,17 +454,17 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         super.serviceInitialized(request, response);
       } else {
         if ((strPopUp != null && !strPopUp.equals("")) || (classInfo.type.equals("S")))
-          bdErrorGeneralPopUp(request, response, Utility.messageBD(this, "Error", variables
-              .getLanguage()), Utility
-              .messageBD(this, "AccessTableNoView", variables.getLanguage()));
+          bdErrorGeneralPopUp(request, response,
+              Utility.messageBD(this, "Error", variables.getLanguage()),
+              Utility.messageBD(this, "AccessTableNoView", variables.getLanguage()));
         else
           bdError(request, response, "AccessTableNoView", vars1.getLanguage());
       }
     } catch (final ServletException ex) {
       log4j.error("Error captured: ", ex);
       final VariablesSecureApp vars1 = new VariablesSecureApp(request, false);
-      final OBError myError = Utility.translateError(this, vars1, variables.getLanguage(), ex
-          .getMessage());
+      final OBError myError = Utility.translateError(this, vars1, variables.getLanguage(),
+          ex.getMessage());
       if (strAjax != null && !strAjax.equals(""))
         bdErrorAjax(response, myError.getType(), myError.getTitle(), myError.getMessage());
       else if (strHidden != null && !strHidden.equals(""))
@@ -1175,8 +1175,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   private void saveLoginBD(HttpServletRequest request, VariablesSecureApp vars, String strCliente,
       String strOrganizacion) throws ServletException {
-    final SessionLogin sl = new SessionLogin(request, strCliente, strOrganizacion, vars
-        .getSessionValue("#AD_User_ID"));
+    final SessionLogin sl = new SessionLogin(request, strCliente, strOrganizacion,
+        vars.getSessionValue("#AD_User_ID"));
 
     // session_ID should have been created in LoginHandler
     String sessionId = vars.getDBSession();
@@ -1229,14 +1229,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       designParameters.put("USER_ORG", Utility.getContext(this, variables, "#User_Org", ""));
       designParameters.put("LANGUAGE", strLanguage);
       designParameters.put("LOCALE", locLocale);
-      designParameters.put("REPORT_TITLE", PrintJRData.getReportTitle(this,
-          variables.getLanguage(), classInfo.id));
+      designParameters.put("REPORT_TITLE",
+          PrintJRData.getReportTitle(this, variables.getLanguage(), classInfo.id));
 
       final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
       dfs.setDecimalSeparator(variables.getSessionValue("#AD_ReportDecimalSeparator").charAt(0));
       dfs.setGroupingSeparator(variables.getSessionValue("#AD_ReportGroupingSeparator").charAt(0));
-      final DecimalFormat numberFormat = new DecimalFormat(variables
-          .getSessionValue("#AD_ReportNumberFormat"), dfs);
+      final DecimalFormat numberFormat = new DecimalFormat(
+          variables.getSessionValue("#AD_ReportNumberFormat"), dfs);
       designParameters.put("NUMBERFORMAT", numberFormat);
 
       if (log4j.isDebugEnabled())

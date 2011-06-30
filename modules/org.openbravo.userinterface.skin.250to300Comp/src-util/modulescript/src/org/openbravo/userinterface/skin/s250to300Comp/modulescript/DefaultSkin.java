@@ -29,16 +29,16 @@ public class DefaultSkin extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      
+
       // Change skin to this one in case of installing (not updating) and the
       // used skin is 'Default' one.
-      
-      if (!DefaultSkinData.isUpdating(cp)){
+
+      if (!DefaultSkinData.isUpdating(cp)) {
         String currentSkin = DefaultSkinData.selectCurrentSkin(cp);
-        if ("Default".equals(currentSkin)){
+        if ("Default".equals(currentSkin)) {
           DefaultSkinData.setSkin(cp, "org.openbravo.userinterface.skin.250to300Comp/250to300Comp");
         }
-      } 
+      }
     } catch (Exception e) {
       handleError(e);
     }

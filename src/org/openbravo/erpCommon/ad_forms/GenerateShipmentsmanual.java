@@ -81,10 +81,10 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
 
       String pinstance = SequenceIdData.getUUID();
 
-      PInstanceProcessData.insertPInstance(this, pinstance, "199", "0", "N", vars.getUser(), vars
-          .getClient(), vars.getOrg());
-      PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "Selection", "Y", vars
-          .getClient(), vars.getOrg(), vars.getUser());
+      PInstanceProcessData.insertPInstance(this, pinstance, "199", "0", "N", vars.getUser(),
+          vars.getClient(), vars.getOrg());
+      PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "Selection", "Y",
+          vars.getClient(), vars.getOrg(), vars.getUser());
       ActionButtonData.process199(this, pinstance);
 
       try {
@@ -125,10 +125,11 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
     } else {
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_forms/GenerateShipmentsmanual").createXmlDocument();
-      data = GenerateShipmentsmanualData.select(this, vars.getLanguage(), Utility.getContext(this,
-          vars, "#User_Client", "GenerateShipmentsmanual"), Utility.getContext(this, vars,
-          "#User_Org", "GenerateShipmentsmanual"), strC_BPartner_ID, strDateFrom, DateTimeData
-          .nDaysAfter(this, strDateTo, "1"), Tree.getMembers(this, strTreeOrg, strAD_Org_ID));
+      data = GenerateShipmentsmanualData.select(this, vars.getLanguage(),
+          Utility.getContext(this, vars, "#User_Client", "GenerateShipmentsmanual"),
+          Utility.getContext(this, vars, "#User_Org", "GenerateShipmentsmanual"), strC_BPartner_ID,
+          strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+          Tree.getMembers(this, strTreeOrg, strAD_Org_ID));
     }
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "GenerateShipmentsmanual", false, "",
@@ -144,8 +145,8 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "GenerateShipmentsmanual.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "GenerateShipmentsmanual.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "GenerateShipmentsmanual.html",
           strReplaceWith);
@@ -174,8 +175,8 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTo", strDateTo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("paramBPartnerDescription", GenerateInvoicesmanualData
-        .bPartnerDescription(this, strC_BPartner_ID));
+    xmlDocument.setParameter("paramBPartnerDescription",
+        GenerateInvoicesmanualData.bPartnerDescription(this, strC_BPartner_ID));
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",

@@ -82,8 +82,8 @@ public class SL_Order_Tax extends HttpSecureAppServlet {
     resultado.append("var respuesta = new Array(");
 
     String strCTaxID = null;
-    String orgLocationID = SLOrderProductData.getOrgLocationId(this, Utility.getContext(this, vars,
-        "#User_Client", "SLOrderProduct"), "'" + strADOrgID + "'");
+    String orgLocationID = SLOrderProductData.getOrgLocationId(this,
+        Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), "'" + strADOrgID + "'");
     if (orgLocationID.equals("")) {
       resultado.append("new Array('MESSAGE', \""
           + FormatUtilities.replaceJS(Utility.messageBD(this,

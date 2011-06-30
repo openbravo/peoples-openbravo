@@ -114,11 +114,11 @@ class ReferencedTables {
         String newKeyId = ReferencedTablesData.selectKeyId(conn, data[i].columnname, tableName,
             keyName, keyId);
         if (vecReference != null && vecReference.size() > 0) {
-          String newAdTableId = ReferencedTablesData.selectTableId(conn, ((String) vecReference
-              .elementAt(0)));
+          String newAdTableId = ReferencedTablesData.selectTableId(conn,
+              ((String) vecReference.elementAt(0)));
           try {
-            ReferencedTables ref = new ReferencedTables(conn, newAdTableId, ((String) vecReference
-                .elementAt(1)), newKeyId);
+            ReferencedTables ref = new ReferencedTables(conn, newAdTableId,
+                ((String) vecReference.elementAt(1)), newKeyId);
             if (ref.hasSOTrx()) {
               hassotrx = ref.hasSOTrx();
               sotrx = ref.isSOTrx();
@@ -143,30 +143,31 @@ class ReferencedTables {
       columnName = "C_Settlement_ID";
     }
     Vector<Object> vec = new Vector<Object>();
-    if("13".equals(adReferenceId) || "19".equals(adReferenceId) || "35".equals(adReferenceId) || "30".equals(adReferenceId)){
-    	vec.addElement(tableDirName);
-        vec.addElement(columnName);
-    }else if("21".equals(adReferenceId)){
-    	vec.addElement("C_Location");
-        vec.addElement("C_Location_ID");
-    }else if("25".equals(adReferenceId)){
-    	vec.addElement("C_ValidCombination");
-        vec.addElement("C_ValidCombination_ID");
-    }else if("31".equals(adReferenceId)){
-    	vec.addElement("M_Locator");
-        vec.addElement("M_Locator_ID");
-    }else if("800011".equals(adReferenceId)){
-    	vec.addElement("M_Product");
-        vec.addElement("M_Product_ID");
-    }else if("800013".equals(adReferenceId)){
-    	vec.addElement("M_Locator");
-        vec.addElement("M_Locator_ID");
-    }else if("18".equals(adReferenceId)){
-    	 ReferencedTablesData[] data = ReferencedTablesData.selectRefTable(conn, adReferenceValueId);
-         if (data != null && data.length > 0) {
-           vec.addElement(data[0].tablename);
-           vec.addElement(data[0].columnname);
-         }
+    if ("13".equals(adReferenceId) || "19".equals(adReferenceId) || "35".equals(adReferenceId)
+        || "30".equals(adReferenceId)) {
+      vec.addElement(tableDirName);
+      vec.addElement(columnName);
+    } else if ("21".equals(adReferenceId)) {
+      vec.addElement("C_Location");
+      vec.addElement("C_Location_ID");
+    } else if ("25".equals(adReferenceId)) {
+      vec.addElement("C_ValidCombination");
+      vec.addElement("C_ValidCombination_ID");
+    } else if ("31".equals(adReferenceId)) {
+      vec.addElement("M_Locator");
+      vec.addElement("M_Locator_ID");
+    } else if ("800011".equals(adReferenceId)) {
+      vec.addElement("M_Product");
+      vec.addElement("M_Product_ID");
+    } else if ("800013".equals(adReferenceId)) {
+      vec.addElement("M_Locator");
+      vec.addElement("M_Locator_ID");
+    } else if ("18".equals(adReferenceId)) {
+      ReferencedTablesData[] data = ReferencedTablesData.selectRefTable(conn, adReferenceValueId);
+      if (data != null && data.length > 0) {
+        vec.addElement(data[0].tablename);
+        vec.addElement(data[0].columnname);
+      }
     }
     return vec;
   }

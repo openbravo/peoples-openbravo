@@ -78,9 +78,9 @@ class XmlThreeTemplate implements XmlComponentTemplate {
       if (stringEnd != null) {
         int index = stringEnd.indexOf(attributeComponentTemplate.replace());
         if (index != -1) {
-          xmlEnd = new XmlThreeTemplate(stringEnd.substring(0, index), attributeComponentTemplate
-              .xmlComponentTemplate(), stringEnd.substring(index
-              + attributeComponentTemplate.replace().length()));
+          xmlEnd = new XmlThreeTemplate(stringEnd.substring(0, index),
+              attributeComponentTemplate.xmlComponentTemplate(), stringEnd.substring(index
+                  + attributeComponentTemplate.replace().length()));
           isEndXmlThreeTemplate = true;
         }
       }

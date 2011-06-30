@@ -167,8 +167,8 @@ public class DocInventory extends AcctServer {
       } else
         setStatus(STATUS_NotPosted);// Default status. LoadDocument
       // Inventory DR CR
-      dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
-          .getC_Currency_ID(), costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+      dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+          as.getC_Currency_ID(), costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       // may be zero difference - no line created.
       if (dr == null)
         continue;

@@ -50,8 +50,8 @@ public class UserLock {
     // Read Openbravo.properties for locking configuration. If it's properly configured, it tries
     // to read from the properties file in the source directory not to force to deploy the file to
     // change configuration.
-    String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-        "source.path", null);
+    String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("source.path", null);
     Properties obProp;
     if (sourcePath != null && new File(sourcePath + "/config/Openbravo.properties").exists()) {
       try {

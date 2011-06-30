@@ -71,8 +71,9 @@ public class SalesOrder extends HttpSecureAppServlet {
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "SalesOrder.name");
       strKeyValue = strKeyValue + "%";
       vars.setSessionValue("SalesOrder.name", strKeyValue);
-      SalesOrderData[] data = SalesOrderData.selectKey(this, Utility.getContext(this, vars,
-          "#User_Client", "SalesOrder"), Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue);
+      SalesOrderData[] data = SalesOrderData.selectKey(this,
+          Utility.getContext(this, vars, "#User_Client", "SalesOrder"),
+          Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue);
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
       } else
@@ -251,31 +252,32 @@ public class SalesOrder extends HttpSecureAppServlet {
       try {
         // build sql orderBy clause from parameters
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
-        
+
         page = TableSQLData.calcAndGetBackendPage(vars, "SalesOrderInfo.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
-        	// on movePage action force executing countRows again
-        	strNewFilter = "";
+          // on movePage action force executing countRows again
+          strNewFilter = "";
         }
-    	int oldOffset = offset;
-    	offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
-    	log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
+        int oldOffset = offset;
+        offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
+        log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
 
         // New filter or first load
         if (strNewFilter.equals("1") || strNewFilter.equals("")) {
-       // calculate params for sql limit/offset or rownum clause
+          // calculate params for sql limit/offset or rownum clause
           String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
           if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        	  oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-        	  oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-        	  rownum = "ROWNUM";
+            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+            rownum = "ROWNUM";
           } else {
-        	  pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
           }
-          strNumRows = SalesOrderData.countRows(this,rownum,Utility.getContext(this, vars,
-                  "#User_Client", "SalesOrder"), Utility.getSelectorOrgs(this, vars, strOrg), strName,
-                  strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,
-                      strDateTo, "1"), strCal1, strCalc2,pgLimit, oraLimit1, oraLimit2);
+          strNumRows = SalesOrderData.countRows(this, rownum,
+              Utility.getContext(this, vars, "#User_Client", "SalesOrder"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strOrder,
+              strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
+              strCalc2, pgLimit, oraLimit1, oraLimit2);
           vars.setSessionValue("SalesOrderInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("SalesOrderInfo.numrows");
@@ -284,16 +286,18 @@ public class SalesOrder extends HttpSecureAppServlet {
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
           String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          data = SalesOrderData.select(this, "ROWNUM", Utility.getContext(this, vars,
-              "#User_Client", "SalesOrder"), Utility.getSelectorOrgs(this, vars, strOrg), strName,
-              strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,
-                  strDateTo, "1"), strCal1, strCalc2, strOrderBy, oraLimit, "");
+          data = SalesOrderData.select(this, "ROWNUM",
+              Utility.getContext(this, vars, "#User_Client", "SalesOrder"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strOrder,
+              strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
+              strCalc2, strOrderBy, oraLimit, "");
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
-          data = SalesOrderData.select(this, "1", Utility.getContext(this, vars, "#User_Client",
-              "SalesOrder"), Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription,
-              strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-              strCal1, strCalc2, strOrderBy, "", pgLimit);
+          data = SalesOrderData.select(this, "1",
+              Utility.getContext(this, vars, "#User_Client", "SalesOrder"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strOrder,
+              strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
+              strCalc2, strOrderBy, "", pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
@@ -338,8 +342,8 @@ public class SalesOrder extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
-     "\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+        .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -352,11 +356,11 @@ public class SalesOrder extends HttpSecureAppServlet {
           } else if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",
-                "").replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll(
-                "<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;").replaceAll("<br>",
-                    "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
+                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
+                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
+                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");

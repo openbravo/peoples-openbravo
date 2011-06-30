@@ -50,24 +50,24 @@ public class UIDate extends UIReference {
     strHtml.append("<td class=\"TextBox_ContentCell\">\n");
     strHtml
         .append("<input dojoType=\"openbravo:DateTextbox\" type=\"text\" class=\"TextBox_btn_OneCell_width\" ");
-    strHtml.append("displayFormat=\"").append(vars.getSessionValue("#AD_SqlDateFormat")).append(
-        "\" ");
+    strHtml.append("displayFormat=\"").append(vars.getSessionValue("#AD_SqlDateFormat"))
+        .append("\" ");
     strHtml.append("saveFormat=\"").append(vars.getSessionValue("#AD_SqlDateFormat")).append("\" ");
-    strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
-        "\" ");
+    strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname))
+        .append("\" ");
     strHtml.append("maxlength=\"").append(vars.getSessionValue("#AD_SqlDateFormat").length())
         .append("\" ");
     strHtml.append("value=\"").append(fields.value).append("\" ");
     strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields.columnname))
         .append("\" ");
     strHtml.append("onkeyup=\"autoCompleteDate(this.textbox);\"></input> ");
-    strHtml.append("<script>djConfig.searchIds.push(\"").append("inpParam").append(
-        FormatUtilities.replace(fields.columnname)).append("\") </script>");
+    strHtml.append("<script>djConfig.searchIds.push(\"").append("inpParam")
+        .append(FormatUtilities.replace(fields.columnname)).append("\") </script>");
     strHtml.append("</td>\n");
     strHtml.append("<td class=\"FieldButton_ContentCell\">");
-    strHtml.append(
-        "<a href=\"#\" class=\"FieldButtonLink\" onclick=\"showCalendar('frmMain.inpParam").append(
-        FormatUtilities.replace(fields.columnname)).append("', ");
+    strHtml
+        .append("<a href=\"#\" class=\"FieldButtonLink\" onclick=\"showCalendar('frmMain.inpParam")
+        .append(FormatUtilities.replace(fields.columnname)).append("', ");
     strHtml.append("document.frmMain.inpParam").append(FormatUtilities.replace(fields.columnname))
         .append(".value, false, '").append(vars.getSessionValue("#AD_SqlDateFormat")).append("');");
     strHtml
@@ -103,27 +103,27 @@ public class UIDate extends UIReference {
     strHtml.append("<td class=\"TextBox_ContentCell\">\n");
     strHtml
         .append("<input dojoType=\"openbravo:DateTextbox\" type=\"text\" class=\"TextBox_btn_OneCell_width\" ");
-    strHtml.append("displayFormat=\"").append(vars.getSessionValue("#AD_SqlDateFormat")).append(
-        "\" ");
+    strHtml.append("displayFormat=\"").append(vars.getSessionValue("#AD_SqlDateFormat"))
+        .append("\" ");
     strHtml.append("saveFormat=\"").append(vars.getSessionValue("#AD_SqlDateFormat")).append("\" ");
-    strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
-        "_f\" ");
+    strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname))
+        .append("_f\" ");
     strHtml.append("maxlength=\"").append(vars.getSessionValue("#AD_SqlDateFormat").length())
         .append("\" ");
     strHtml.append("value=\"").append(value).append("\" ");
-    strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
-        "_f\" ");
+    strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields.columnname))
+        .append("_f\" ");
     strHtml.append("onkeyup=\"autoCompleteDate(this.textbox);\"></input> ");
-    strHtml.append("<script>djConfig.searchIds.push(\"").append("inpParam").append(
-        FormatUtilities.replace(fields.columnname)).append("_f\") </script>");
+    strHtml.append("<script>djConfig.searchIds.push(\"").append("inpParam")
+        .append(FormatUtilities.replace(fields.columnname)).append("_f\") </script>");
     strHtml.append("</td>\n");
     strHtml.append("<td class=\"FieldButton_ContentCell\">");
-    strHtml.append(
-        "<a href=\"#\" class=\"FieldButtonLink\" onclick=\"showCalendar('frmMain.inpParam").append(
-        FormatUtilities.replace(fields.columnname)).append("_f', ");
+    strHtml
+        .append("<a href=\"#\" class=\"FieldButtonLink\" onclick=\"showCalendar('frmMain.inpParam")
+        .append(FormatUtilities.replace(fields.columnname)).append("_f', ");
     strHtml.append("document.frmMain.inpParam").append(FormatUtilities.replace(fields.columnname))
-        .append("_f.value, false, '").append(vars.getSessionValue("#AD_SqlDateFormat")).append(
-            "');");
+        .append("_f.value, false, '").append(vars.getSessionValue("#AD_SqlDateFormat"))
+        .append("');");
     strHtml
         .append("return false;\" onfocus=\"setWindowElementFocus(this); window.status='Calendar'; return true;\" onblur=\"window.status=''; return true;\" onkeypress=\"this.className='FieldButtonLink_active'; return true;\" onkeyup=\"this.className='FieldButtonLink_focus'; return true;\">\n");
     strHtml

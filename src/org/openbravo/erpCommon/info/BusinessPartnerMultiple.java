@@ -130,8 +130,9 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("alertMsg", "ALERT_MSG=\""
-      +  Utility.messageBD(this, "NoBusinessPartnerSelected", vars.getLanguage()) + "\";");
+    xmlDocument.setParameter("alertMsg",
+        "ALERT_MSG=\"" + Utility.messageBD(this, "NoBusinessPartnerSelected", vars.getLanguage())
+            + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("name", strNameValue);
     xmlDocument.setParameter("clients", strBpartners);
@@ -181,8 +182,10 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       dataAux.setData("adReferenceValueId", "AD_ReferenceValue_ID");
       dataAux.setData("isidentifier", (colNames[i].equals("RowKey") ? "true" : "false"));
       dataAux.setData("iskey", (colNames[i].equals("RowKey") ? "true" : "false"));
-      dataAux.setData("isvisible", (colNames[i].endsWith("_ID")
-          || colNames[i].equalsIgnoreCase("RowKey") ? "false" : "true"));
+      dataAux
+          .setData("isvisible",
+              (colNames[i].endsWith("_ID") || colNames[i].equalsIgnoreCase("RowKey") ? "false"
+                  : "true"));
       String name = Utility
           .messageBD(this, "MBPS_" + colNames[i].toUpperCase(), vars.getLanguage());
       dataAux.setData("name", (name.startsWith("MBPS_") ? colNames[i] : name));
@@ -304,8 +307,8 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
-        "\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+        .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -322,11 +325,11 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
           } else if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",
-                "").replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll(
-                "<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;").replaceAll("<br>",
-                    "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
+                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
+                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
+                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");

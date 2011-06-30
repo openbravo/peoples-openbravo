@@ -79,8 +79,7 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
 
     if (strDateexpense.equals("")) {
       strDateexpense = SEExpenseAmountData.selectReportDate(this, strTimeExpenseId).equals("") ? DateTimeData
-          .today(this)
-          : SEExpenseAmountData.selectReportDate(this, strTimeExpenseId);
+          .today(this) : SEExpenseAmountData.selectReportDate(this, strTimeExpenseId);
     }
 
     BigDecimal amount = null;

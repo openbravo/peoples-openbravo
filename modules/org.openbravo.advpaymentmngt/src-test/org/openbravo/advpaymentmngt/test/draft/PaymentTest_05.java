@@ -98,8 +98,8 @@ public class PaymentTest_05 extends BaseTest {
       FIN_PaymentProposal paymentProposal = TestUtility.createNewPaymentProposal(OBContext
           .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
           OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId), OBDal
-              .getInstance().get(Currency.class, currencyId), OBDal.getInstance().get(
-              FIN_PaymentMethod.class, paymentMethodId));
+              .getInstance().get(Currency.class, currencyId),
+          OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethodId));
 
       List<FIN_PaymentScheduleDetail> scheduleDetails1 = dao
           .getInvoicePendingScheduledPaymentDetails(inv1);

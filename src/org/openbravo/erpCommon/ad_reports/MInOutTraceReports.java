@@ -103,9 +103,9 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
       data = new MInOutTraceReportsData[0];
     } else {
       data = MInOutTraceReportsData.select(this, vars.getLanguage(), strmProductIdGlobal,
-          strmAttributesetinstanceIdGlobal, Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "MInOutTraceReports"), Utility.getContext(this, vars, "#User_Client",
-              "MInOutTraceReports"));
+          strmAttributesetinstanceIdGlobal,
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "MInOutTraceReports"),
+          Utility.getContext(this, vars, "#User_Client", "MInOutTraceReports"));
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage());
@@ -113,18 +113,20 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     xmlDocument.setParameter("mProduct", strmProductIdGlobal);
     xmlDocument
         .setParameter("parameterM_ATTRIBUTESETINSTANCE_ID", strmAttributesetinstanceIdGlobal);
-    xmlDocument.setData("reportM_ATTRIBUTESETINSTANCE_ID", "liststructure",
-        AttributeSetInstanceComboData.select(this, vars.getLanguage(), strmProductIdGlobal, Utility
-            .getContext(this, vars, "#User_Client", "MInOutTraceReports"), Utility.getContext(this,
-            vars, "#AccessibleOrgTree", "MInOutTraceReports")));
-    xmlDocument.setParameter("productDescription", MInOutTraceReportsData.selectMproduct(this,
-        strmProductIdGlobal));
+    xmlDocument.setData(
+        "reportM_ATTRIBUTESETINSTANCE_ID",
+        "liststructure",
+        AttributeSetInstanceComboData.select(this, vars.getLanguage(), strmProductIdGlobal,
+            Utility.getContext(this, vars, "#User_Client", "MInOutTraceReports"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "MInOutTraceReports")));
+    xmlDocument.setParameter("productDescription",
+        MInOutTraceReportsData.selectMproduct(this, strmProductIdGlobal));
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("in", strIn);
     xmlDocument.setParameter("out", strIn);
 
-    xmlDocument.setData("structure1", processData(vars, data, strIn, strmProductIdGlobal,
-        calculated, count));
+    xmlDocument.setData("structure1",
+        processData(vars, data, strIn, strmProductIdGlobal, calculated, count));
     if (log4j.isDebugEnabled())
       log4j.debug("****FIN: "/*
                               * + ((data!=null && data.length>0)?data[0].html:"")
@@ -238,8 +240,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     strHtml.append(insertHeaderHtml(false, "0"));
     for (int i = 0; i < dataChild.length; i++) {
 
-      strHtml.append("<tr style=\"background: ").append((colorbg ? "#CFDDE8" : "#FFFFFF")).append(
-          "\">");
+      strHtml.append("<tr style=\"background: ").append((colorbg ? "#CFDDE8" : "#FFFFFF"))
+          .append("\">");
       colorbg = !colorbg;
 
       strHtml.append("<td >\n");
@@ -249,8 +251,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
       if (!dataChild[i].quantityorder.equals(""))
         totalPedido = totalPedido.add(new BigDecimal(dataChild[i].quantityorder));
 
-      strHtml.append(insertTotal(total.toPlainString(), dataChild[i].uomName, totalPedido
-          .toPlainString(), dataChild[i].productUomName));
+      strHtml.append(insertTotal(total.toPlainString(), dataChild[i].uomName,
+          totalPedido.toPlainString(), dataChild[i].productUomName));
       strHtml.append("  </tr>\n");
       if (log4j.isDebugEnabled())
         log4j.debug("****** New line, qty: " + dataChild[i].movementqty + " "
@@ -300,18 +302,18 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
           String resultado2 = "";
           strHtml.append("<table border=\"0\" cellspacing=0 cellpadding=0 width=\"100%\">\n");
           strHtml.append("  <tr>\n");
-          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"70\">").append(
-              dataProduction[j].movementdate).append("</td>\n");
-          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">").append(
-              dataProduction[j].movementtypeName).append("</td>\n");
-          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">").append(
-              dataProduction[j].locatorName).append("</td>\n");
-          strHtml.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">").append(
-              dataProduction[j].movementqty).append("&nbsp;").append(dataProduction[j].uomName)
-              .append("</td>\n");
-          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">").append(
-              dataProduction[j].quantityorder).append("&nbsp;").append(
-              dataProduction[j].productUomName).append("</td>\n");
+          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"70\">")
+              .append(dataProduction[j].movementdate).append("</td>\n");
+          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
+              .append(dataProduction[j].movementtypeName).append("</td>\n");
+          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
+              .append(dataProduction[j].locatorName).append("</td>\n");
+          strHtml.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">")
+              .append(dataProduction[j].movementqty).append("&nbsp;")
+              .append(dataProduction[j].uomName).append("</td>\n");
+          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">")
+              .append(dataProduction[j].quantityorder).append("&nbsp;")
+              .append(dataProduction[j].productUomName).append("</td>\n");
           resultado2 = dataProduction[j].productName;
           strHtml
               .append("    <td class=\"DataGrid_Body_Cell\"><a href=\"#\" onclick=\"submitCommandForm('INVERSE', true, null, 'MInOutTraceReports.html?inpmProductId2="
@@ -346,8 +348,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
                   dataProduction[j].mProductId, dataProduction[j].mLocatorId, strIn, !colorbg,
                   strmProductIdGlobal, calculated, count);
               if (!strPartial.equals("")) {
-                strHtml.append("  <tr style=\"background: ").append(
-                    (colorbg ? "#CCCCCC" : "#AAAAAA")).append("\">\n");
+                strHtml.append("  <tr style=\"background: ")
+                    .append((colorbg ? "#CCCCCC" : "#AAAAAA")).append("\">\n");
                 strHtml.append(insertTabHtml(false));
                 strHtml.append("    <td>\n");
                 strHtml.append(strPartial);
@@ -367,8 +369,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
       MInOutTraceReportsData[] dataMovement;
       if (log4j.isDebugEnabled())
         log4j.debug("****PROCESSING MOVEMENTLINE: " + strNewId + " " + strIn);
-      dataMovement = MInOutTraceReportsData.selectMovement(this, vars.getLanguage(), strIn
-          .equals("Y") ? "M+" : "M-", strNewId);
+      dataMovement = MInOutTraceReportsData.selectMovement(this, vars.getLanguage(),
+          strIn.equals("Y") ? "M+" : "M-", strNewId);
       if (dataMovement != null && dataMovement.length > 0) {
         strHtml.append("  <tr>\n");
         strHtml.append("    <td colspan=\"3\">\n");
@@ -382,17 +384,17 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
           String resultado2 = "";
           strHtml.append("<table border=\"0\" cellspacing=0 cellpadding=0 width=\"100%\">\n");
           strHtml.append("  <tr>\n");
-          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"70\">").append(
-              dataMovement[j].movementdate).append("</td>\n");
-          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">").append(
-              dataMovement[j].movementtypeName).append("</td>\n");
-          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">").append(
-              dataMovement[j].locatorName).append("</td>\n");
-          strHtml.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">").append(
-              dataMovement[j].movementqty).append("&nbsp;").append(dataMovement[j].uomName).append(
-              "</td>\n");
-          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">").append(
-              dataMovement[j].quantityorder).append("&nbsp;")
+          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"70\">")
+              .append(dataMovement[j].movementdate).append("</td>\n");
+          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
+              .append(dataMovement[j].movementtypeName).append("</td>\n");
+          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
+              .append(dataMovement[j].locatorName).append("</td>\n");
+          strHtml.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">")
+              .append(dataMovement[j].movementqty).append("&nbsp;").append(dataMovement[j].uomName)
+              .append("</td>\n");
+          strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">")
+              .append(dataMovement[j].quantityorder).append("&nbsp;")
               .append(dataMovement[j].productUomName).append("</td>\n");
           resultado2 = dataMovement[j].productName;
           strHtml.append("    <td class=\"DataGrid_Body_Cell\">");
@@ -452,15 +454,16 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     resultado.append("  <tr>\n");
     resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"70\">")
         .append(data.movementdate).append("</td>\n");
-    resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">").append(
-        data.movementtypeName).append("</td>\n");
+    resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
+        .append(data.movementtypeName).append("</td>\n");
     resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
         .append(data.locatorName).append("</td>\n");
-    resultado.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">").append(
-        data.movementqty).append("&nbsp;").append(data.uomName).append("</td>\n");
+    resultado.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">")
+        .append(data.movementqty).append("&nbsp;").append(data.uomName).append("</td>\n");
     if (!data.quantityorder.equals("")) {
-      resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">").append(
-          data.quantityorder).append("&nbsp;").append(data.productUomName).append("</td>\n");
+      resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">")
+          .append(data.quantityorder).append("&nbsp;").append(data.productUomName)
+          .append("</td>\n");
     }
     if (data.movementtype.equalsIgnoreCase("W+")) {
       // resultado2 = data.productionName;

@@ -33,7 +33,7 @@ public class WrongPaymentScheduleDetailsCheck extends BuildValidation {
     try {
       if (WrongPaymentScheduleDetailsCheckData.existWrongPaymentSchedules(cp)) {
         String alertRuleId = UnpostRefundPaymentsData.getUUID(cp);
-        if (!WrongPaymentScheduleDetailsCheckData.existsAlertRule(cp)){
+        if (!WrongPaymentScheduleDetailsCheckData.existsAlertRule(cp)) {
           WrongPaymentScheduleDetailsCheckData.insertAlertRule(cp, alertRuleId);
         }
         alertRuleId = WrongPaymentScheduleDetailsCheckData.getAlertRuleId(cp);
@@ -51,7 +51,8 @@ public class WrongPaymentScheduleDetailsCheck extends BuildValidation {
    * @throws Exception
    */
   private void processAlert(String adAlertruleId, ConnectionProvider cp) throws Exception {
-    WrongPaymentScheduleDetailsCheckData[] alertRule = WrongPaymentScheduleDetailsCheckData.selectAlertRule(cp, adAlertruleId);
+    WrongPaymentScheduleDetailsCheckData[] alertRule = WrongPaymentScheduleDetailsCheckData
+        .selectAlertRule(cp, adAlertruleId);
     WrongPaymentScheduleDetailsCheckData[] alert = null;
     if (!alertRule[0].sql.equals("")) {
       try {
@@ -65,8 +66,11 @@ public class WrongPaymentScheduleDetailsCheck extends BuildValidation {
       StringBuilder msg = new StringBuilder();
 
       for (int i = 0; i < alert.length; i++) {
-        if (!WrongPaymentScheduleDetailsCheckData.existsReference(cp, adAlertruleId, alert[i].referencekeyId)) {
-          WrongPaymentScheduleDetailsCheckData.insertAlert(cp, alert[i].adClientId, alert[i].description, alertRule[0].adAlertruleId, alert[i].recordId, alert[i].referencekeyId);
+        if (!WrongPaymentScheduleDetailsCheckData.existsReference(cp, adAlertruleId,
+            alert[i].referencekeyId)) {
+          WrongPaymentScheduleDetailsCheckData.insertAlert(cp, alert[i].adClientId,
+              alert[i].description, alertRule[0].adAlertruleId, alert[i].recordId,
+              alert[i].referencekeyId);
         }
       }
 

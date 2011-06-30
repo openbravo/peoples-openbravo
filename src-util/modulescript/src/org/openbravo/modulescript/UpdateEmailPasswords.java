@@ -55,8 +55,9 @@ public class UpdateEmailPasswords extends ModuleScript {
         UpdateEmailPasswordsData[] emails = UpdateEmailPasswordsData.select(cp);
         for (UpdateEmailPasswordsData email : emails) {
           if (email.smtpserverpassword != null) {
-            UpdateEmailPasswordsData.update(cp, FormatUtilities.encryptDecrypt(
-                email.smtpserverpassword, true), email.cPocConfigurationId);
+            UpdateEmailPasswordsData.update(cp,
+                FormatUtilities.encryptDecrypt(email.smtpserverpassword, true),
+                email.cPocConfigurationId);
           }
         }
       } else {

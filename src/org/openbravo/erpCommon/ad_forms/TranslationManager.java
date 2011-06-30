@@ -300,9 +300,9 @@ public class TranslationManager {
       // client data, only system)
       final TranslationData[] referenceTrlData = TranslationData.referenceDataTrl(conn);
       for (final TranslationData refTrl : referenceTrlData) {
-        exportTable(conn, AD_Language, true, refTrl.isindevelopment.equals("Y"), refTrl.tablename
-            .toUpperCase(), refTrl.adTableId, rootDirectory, refTrl.adModuleId, refTrl.adLanguage,
-            refTrl.value, true);
+        exportTable(conn, AD_Language, true, refTrl.isindevelopment.equals("Y"),
+            refTrl.tablename.toUpperCase(), refTrl.adTableId, rootDirectory, refTrl.adModuleId,
+            refTrl.adLanguage, refTrl.value, true);
       }
     } catch (final Exception e) {
       e.printStackTrace();
@@ -396,8 +396,8 @@ public class TranslationManager {
       sql.append("t.").append(keyColumn);
 
       for (int i = 0; i < trlColumns.length; i++) {
-        sql.append(", t.").append(trlColumns[i].c).append(",o.").append(trlColumns[i].c).append(
-            " AS ").append(trlColumns[i].c).append("O");
+        sql.append(", t.").append(trlColumns[i].c).append(",o.").append(trlColumns[i].c)
+            .append(" AS ").append(trlColumns[i].c).append("O");
       }
 
       sql.append(" FROM ").append(trlTable).append(" t").append(", ").append(table).append(" o");
@@ -432,8 +432,8 @@ public class TranslationManager {
           /** Search for ad_module_id in the parent table */
           sql.append(" AND ");
           sql.append(" exists ( select 1 from ").append(strParentTable).append(" p ");
-          sql.append("   where p.").append(strParentTable + "_ID").append("=").append(
-              "o." + strParentTable + "_ID");
+          sql.append("   where p.").append(strParentTable + "_ID").append("=")
+              .append("o." + strParentTable + "_ID");
           sql.append("   and p.ad_module_id='").append(moduleId).append("')");
         }
       }

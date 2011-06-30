@@ -84,8 +84,8 @@ public class ReportShipmentEditionJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportShipmentEditionJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportShipmentEditionJR.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportShipmentEditionJR.html",
           strReplaceWith);
@@ -118,8 +118,8 @@ public class ReportShipmentEditionJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("projectName", "");
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ShipmentFilter"), Utility
-              .getContext(this, vars, "#User_Client", "ShipmentFilter"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ShipmentFilter"),
+          Utility.getContext(this, vars, "#User_Client", "ShipmentFilter"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ShipmentFilter", "");
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -144,10 +144,10 @@ public class ReportShipmentEditionJR extends HttpSecureAppServlet {
     if (strOutput.equals("pdf"))
       response.setHeader("Content-disposition", "inline; filename=ReportShipmetEditionJR.pdf");
 
-    InoutEditionData[] data = InoutEditionData.selectShipment(this, Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ShipmentFilter"), Utility.getContext(this, vars, "#User_Client",
-        "ShipmentFilter"), strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId,
-        strissotrx);
+    InoutEditionData[] data = InoutEditionData.selectShipment(this,
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ShipmentFilter"),
+        Utility.getContext(this, vars, "#User_Client", "ShipmentFilter"), strdateFrom, strdateTo,
+        strcBpartnetId, strmWarehouseId, strcProjectId, strissotrx);
     HashMap<String, Object> parameters = new HashMap<String, Object>();
 
     String strSubTitle = "";

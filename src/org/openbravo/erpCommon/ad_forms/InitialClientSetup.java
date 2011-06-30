@@ -117,8 +117,8 @@ public class InitialClientSetup extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_forms/Resultado").createXmlDocument();
     String strLanguage = vars.getLanguage();
 
-    xmlDocument.setParameter("resultado", Utility.parseTranslation(this, vars, strLanguage, strLog
-        .toString()));
+    xmlDocument.setParameter("resultado",
+        Utility.parseTranslation(this, vars, strLanguage, strLog.toString()));
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InitialClientSetup", false, "", "",
         "", false, "ad_forms", strReplaceWith, false, true);
@@ -142,10 +142,10 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("messageType", obeResult.getType());
-    xmlDocument.setParameter("messageTitle", Utility.parseTranslation(this, vars, strLanguage,
-        obeResult.getTitle()));
-    xmlDocument.setParameter("messageMessage", Utility.parseTranslation(this, vars, strLanguage,
-        obeResult.getMessage()));
+    xmlDocument.setParameter("messageTitle",
+        Utility.parseTranslation(this, vars, strLanguage, obeResult.getTitle()));
+    xmlDocument.setParameter("messageMessage",
+        Utility.parseTranslation(this, vars, strLanguage, obeResult.getMessage()));
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -174,8 +174,8 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
     org.openbravo.erpCommon.businessUtility.InitialClientSetup ics = new org.openbravo.erpCommon.businessUtility.InitialClientSetup();
     OBError obeResult = ics.createClient(vars, strCurrency, strClientName, strClientUser,
-        strPassword, strModules, Utility.messageBD(this, "Account_ID", vars.getLanguage()), Utility
-            .messageBD(this, "C_Calendar_ID", vars.getLanguage()), bCreateAccounting,
+        strPassword, strModules, Utility.messageBD(this, "Account_ID", vars.getLanguage()),
+        Utility.messageBD(this, "C_Calendar_ID", vars.getLanguage()), bCreateAccounting,
         fileCoAFilePath, bBPartner, bProduct, bProject, bCampaign, bSalesRegion);
 
     strLog.append(ics.getLog());

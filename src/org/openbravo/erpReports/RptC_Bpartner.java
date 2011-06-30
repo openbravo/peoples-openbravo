@@ -101,8 +101,8 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
       RptCBpartnerSalesData[] dataPaymentsOut = RptCBpartnerSalesData.selectPayments(this,
           "PAYMENTOUT", c.getCurrency().getId(), "N", strcBpartnerId);
 
-      RptCBpartnerCustomerData[] dataCustomer = RptCBpartnerCustomerData.select(this, vars
-          .getLanguage(), strcBpartnerId);
+      RptCBpartnerCustomerData[] dataCustomer = RptCBpartnerCustomerData.select(this,
+          vars.getLanguage(), strcBpartnerId);
       RptCBpartnerVendorData[] dataVendor = RptCBpartnerVendorData.select(this, vars.getLanguage(),
           strcBpartnerId);
       RptCBpartnerlocationData[] dataLocation = RptCBpartnerlocationData.select(this,
@@ -111,8 +111,8 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
       RptCBpartnerSalesData[] dataSales = RptCBpartnerSalesData.selectOrder(this, strcBpartnerId);
       RptCBpartnerSalesData[] dataInvoice = RptCBpartnerSalesData.select(this, strcBpartnerId);
       RptCBpartnerSalesData[] dataInout = RptCBpartnerSalesData.selectinout(this, strcBpartnerId);
-      RptCBpartnerSalesData[] dataABC = RptCBpartnerSalesData.selectABC(this, DateTimeData
-          .sysdateYear(this), DateTimeData.lastYear(this), strcBpartnerId);
+      RptCBpartnerSalesData[] dataABC = RptCBpartnerSalesData.selectABC(this,
+          DateTimeData.sysdateYear(this), DateTimeData.lastYear(this), strcBpartnerId);
 
       if (dataAccount == null || dataAccount.length == 0) {
         dataAccount = RptCBpartnerData.set();
@@ -396,8 +396,8 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
       hmValues.put("tabTitle", tabTitle);
 
       final Entity entity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
-      hmValues.put("keyParameter", "inp"
-          + Sqlc.TransformaNombreColumna(entity.getIdProperties().get(0).getColumnName()));
+      hmValues.put("keyParameter",
+          "inp" + Sqlc.TransformaNombreColumna(entity.getIdProperties().get(0).getColumnName()));
 
     } catch (Exception e) {
       e.printStackTrace();

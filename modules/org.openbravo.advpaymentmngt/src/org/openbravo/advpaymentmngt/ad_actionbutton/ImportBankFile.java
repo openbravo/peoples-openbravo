@@ -80,8 +80,7 @@ public class ImportBankFile extends HttpSecureAppServlet {
         message.setType("Error");
         message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
         message.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
-            "@APRM_WrongBankFileFormat@")
-            + ": " + bff.getJavaClassName());
+            "@APRM_WrongBankFileFormat@") + ": " + bff.getJavaClassName());
       }
 
       if (strWindowPath.equals(""))
@@ -147,8 +146,8 @@ public class ImportBankFile extends HttpSecureAppServlet {
         OBError message = new OBError();
         message.setType("Warning");
         message.setTitle(Utility.messageBD(this, "APRM_NoBankFileAvailable", vars.getLanguage()));
-        message.setMessage(Utility.messageBD(this, "APRM_NoBankFileAvailableInfo", vars
-            .getLanguage()));
+        message.setMessage(Utility.messageBD(this, "APRM_NoBankFileAvailableInfo",
+            vars.getLanguage()));
         vars.setMessage(tabId, message);
         printPageClosePopUp(response, vars, strWindowPath);
         return;

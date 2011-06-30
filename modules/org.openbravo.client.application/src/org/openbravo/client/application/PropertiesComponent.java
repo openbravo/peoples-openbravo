@@ -87,7 +87,7 @@ public class PropertiesComponent extends BaseTemplateComponent {
       if (preference.getWindow() != null) {
         localProperty.setId(localProperty.getId() + "_" + DalUtil.getId(preference.getWindow()));
       }
-      
+
       // prevent duplicates
       if (handledIds.contains(localProperty.getId())) {
         continue;

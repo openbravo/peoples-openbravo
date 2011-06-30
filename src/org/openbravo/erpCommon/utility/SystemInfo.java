@@ -339,8 +339,8 @@ public class SystemInfo {
         // Obtain a direct jdbc connection instead of using DAL nor ConnectionProvider. This query
         // is needed to be executed with DBA privileges, which standard user might not have.
 
-        con = DriverManager.getConnection(obProps.getProperty("bbdd.url"), obProps
-            .getProperty("bbdd.systemUser"), obProps.getProperty("bbdd.systemPassword"));
+        con = DriverManager.getConnection(obProps.getProperty("bbdd.url"),
+            obProps.getProperty("bbdd.systemUser"), obProps.getProperty("bbdd.systemPassword"));
         st = con.createStatement();
         st.execute("select dbid from v$database");
         st.getResultSet().next();

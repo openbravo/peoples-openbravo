@@ -149,12 +149,12 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("DETAIL", strDetail.equals("-1") ? "Y" : "N");
-    parameters.put("cCountryId", new String(Utility.getContext(this, vars, "C_Country_Id",
-        "ReportTaxInvoiceJR")));
+    parameters.put("cCountryId",
+        new String(Utility.getContext(this, vars, "C_Country_Id", "ReportTaxInvoiceJR")));
     parameters.put("SALE", strSale);
     parameters.put("PURCHASE", strPurchase);
-    parameters.put("PARAM_ORG", Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
-        strOrg));
+    parameters.put("PARAM_ORG",
+        Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
     parameters.put("PARAM_CURRENCY", strCurrencyId);
     String strDateFormat;
     strDateFormat = vars.getJavaDateFormat();
@@ -177,14 +177,14 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
           + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoiceSale.jrxml", vars.getLanguage(),
           strBaseDesign);
       jasperSaleForeign = Utility.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoiceSaleForeign.jrxml", vars
-          .getLanguage(), strBaseDesign);
+          + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoiceSaleForeign.jrxml",
+          vars.getLanguage(), strBaseDesign);
       jasperPurchase = Utility.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoicePurchase.jrxml", vars
-          .getLanguage(), strBaseDesign);
+          + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoicePurchase.jrxml",
+          vars.getLanguage(), strBaseDesign);
       jasperPurchaseForeign = Utility.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoicePurchaseForeign.jrxml", vars
-          .getLanguage(), strBaseDesign);
+          + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoicePurchaseForeign.jrxml",
+          vars.getLanguage(), strBaseDesign);
 
     } catch (JRException e) {
       e.printStackTrace();
@@ -285,8 +285,8 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
       log4j.debug("****** setData reportAD_ORGID");
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTaxInvoiceJR"), Utility
-              .getContext(this, vars, "#User_Client", "ReportTaxInvoiceJR"), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTaxInvoiceJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportTaxInvoiceJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportTaxInvoiceJR", strOrg);
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
       comboTableData = null;

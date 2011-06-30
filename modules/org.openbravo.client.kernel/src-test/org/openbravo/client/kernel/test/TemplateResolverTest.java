@@ -85,12 +85,12 @@ public class TemplateResolverTest extends BaseTest {
     final Template templateG = createSaveTemplate("G");
     final Template templateD = createSaveTemplate("D");
     final Template templateE = createSaveTemplate("E");
-    final Template templateB = createSaveTemplate("B", Arrays.asList(new Template[] { templateD,
-        templateE }));
-    final Template templateC = createSaveTemplate("C", Arrays.asList(new Template[] { templateF,
-        templateG }));
-    final Template templateA = createSaveTemplate("A", Arrays.asList(new Template[] { templateB,
-        templateC }));
+    final Template templateB = createSaveTemplate("B",
+        Arrays.asList(new Template[] { templateD, templateE }));
+    final Template templateC = createSaveTemplate("C",
+        Arrays.asList(new Template[] { templateF, templateG }));
+    final Template templateA = createSaveTemplate("A",
+        Arrays.asList(new Template[] { templateB, templateC }));
 
     OBDal.getInstance().flush();
 
@@ -127,18 +127,18 @@ public class TemplateResolverTest extends BaseTest {
     final Template templateG = createSaveTemplate("G");
     final Template templateD = createSaveTemplate("D");
     final Template templateE = createSaveTemplate("E");
-    final Template templateB = createSaveTemplate("B", Arrays.asList(new Template[] { templateD,
-        templateE }));
-    final Template templateC = createSaveTemplate("C", Arrays.asList(new Template[] { templateF,
-        templateG }));
-    final Template templateA = createSaveTemplate("A", Arrays.asList(new Template[] { templateB,
-        templateC }));
+    final Template templateB = createSaveTemplate("B",
+        Arrays.asList(new Template[] { templateD, templateE }));
+    final Template templateC = createSaveTemplate("C",
+        Arrays.asList(new Template[] { templateF, templateG }));
+    final Template templateA = createSaveTemplate("A",
+        Arrays.asList(new Template[] { templateB, templateC }));
 
     // create the override structur
     final Template templateI = createSaveTemplate("I");
     final Template templateJ = createSaveTemplate("J");
-    final Template templateH = createSaveTemplate("H", Arrays.asList(new Template[] { templateI,
-        templateJ }));
+    final Template templateH = createSaveTemplate("H",
+        Arrays.asList(new Template[] { templateI, templateJ }));
     templateH.setOverridesTemplate(templateB);
     OBDal.getInstance().save(templateH);
 

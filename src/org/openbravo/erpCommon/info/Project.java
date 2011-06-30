@@ -81,9 +81,9 @@ public class Project extends HttpSecureAppServlet {
       // getGlobalVariable only used to store request value into session, not to read it from there
       String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "Project.adorgid", "");
       vars.setSessionValue("Project.key", strKeyValue + "%");
-      ProjectData[] data = ProjectData.selectKey(this, Utility.getContext(this, vars,
-          "#User_Client", "Project"), Utility.getSelectorOrgs(this, vars, strOrg), strBpartner,
-          strKeyValue + "%");
+      ProjectData[] data = ProjectData.selectKey(this,
+          Utility.getContext(this, vars, "#User_Client", "Project"),
+          Utility.getSelectorOrgs(this, vars, strOrg), strBpartner, strKeyValue + "%");
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
       } else
@@ -273,9 +273,10 @@ public class Project extends HttpSecureAppServlet {
           } else {
             pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
           }
-          strNumRows = ProjectData.countRows(this, rownum, vars.getLanguage(), Utility.getContext(
-              this, vars, "#User_Client", "Project"), Utility.getSelectorOrgs(this, vars, strOrg),
-              strKey, strName, strBpartners, pgLimit, oraLimit1, oraLimit2);
+          strNumRows = ProjectData.countRows(this, rownum, vars.getLanguage(),
+              Utility.getContext(this, vars, "#User_Client", "Project"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strBpartners, pgLimit,
+              oraLimit1, oraLimit2);
           vars.setSessionValue("ProjectData.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("ProjectData.numrows");
@@ -284,14 +285,16 @@ public class Project extends HttpSecureAppServlet {
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
           String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          data = ProjectData.select(this, "ROWNUM", vars.getLanguage(), Utility.getContext(this,
-              vars, "#User_Client", "Project"), Utility.getSelectorOrgs(this, vars, strOrg),
-              strKey, strName, strBpartners, strOrderBy, oraLimit, "");
+          data = ProjectData.select(this, "ROWNUM", vars.getLanguage(),
+              Utility.getContext(this, vars, "#User_Client", "Project"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strBpartners,
+              strOrderBy, oraLimit, "");
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
-          data = ProjectData.select(this, "1", vars.getLanguage(), Utility.getContext(this, vars,
-              "#User_Client", "Project"), Utility.getSelectorOrgs(this, vars, strOrg), strKey,
-              strName, strBpartners, strOrderBy, "", pgLimit);
+          data = ProjectData.select(this, "1", vars.getLanguage(),
+              Utility.getContext(this, vars, "#User_Client", "Project"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strBpartners,
+              strOrderBy, "", pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: ", e);
@@ -331,8 +334,8 @@ public class Project extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
-        "\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+        .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -350,11 +353,11 @@ public class Project extends HttpSecureAppServlet {
           if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",
-                "").replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll(
-                "<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;").replaceAll("<br>",
-                    "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
+                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
+                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
+                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");

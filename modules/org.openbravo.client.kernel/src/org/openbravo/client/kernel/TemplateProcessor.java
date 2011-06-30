@@ -78,7 +78,7 @@ public interface TemplateProcessor {
    */
   @javax.inject.Qualifier
   @Retention(RetentionPolicy.RUNTIME)
-  @Target( { ElementType.FIELD, ElementType.METHOD, ElementType.TYPE })
+  @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.TYPE })
   public @interface Qualifier {
     String value();
   }

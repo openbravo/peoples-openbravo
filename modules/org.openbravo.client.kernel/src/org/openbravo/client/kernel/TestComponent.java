@@ -53,9 +53,7 @@ public class TestComponent extends BaseComponent {
       } else {
         testResource = getContextUrl() + testResource;
       }
-      sb
-          .append("document.write(\"<\" + \"script src='" + testResource
-              + "'><\" + \"/script>\");\n");
+      sb.append("document.write(\"<\" + \"script src='" + testResource + "'><\" + \"/script>\");\n");
     }
     return sb.toString();
   }

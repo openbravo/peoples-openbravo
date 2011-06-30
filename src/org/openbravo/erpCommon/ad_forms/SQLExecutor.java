@@ -286,8 +286,8 @@ public class SQLExecutor extends HttpSecureAppServlet {
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "SQLExecutor", false,
         "document.frmMain.inpKey", "myGrid", null, false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareQueryTemplate((initRecordNumber > 1),
-        (data != null && data.length != 0 && data.length >= intRecordRange), vars.getSessionValue(
-            "#ShowTest", "N").equals("Y"));
+        (data != null && data.length != 0 && data.length >= intRecordRange),
+        vars.getSessionValue("#ShowTest", "N").equals("Y"));
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     log4j.debug("toolbar");

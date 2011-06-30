@@ -111,9 +111,9 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       }
       if (!strAttributeSet.equals("")) {
         if ("F".equals(strAttrSetValueType))
-          advisePopUp(request, response, "INFO", Utility
-              .messageBD(this, "Info", vars.getLanguage()), Utility.messageBD(this,
-              "AttrSetValTypeSpecification", vars.getLanguage()));
+          advisePopUp(request, response, "INFO",
+              Utility.messageBD(this, "Info", vars.getLanguage()),
+              Utility.messageBD(this, "AttrSetValTypeSpecification", vars.getLanguage()));
         else
           printPage(response, vars, strNameValue, strAttributeSet, strProductInstance, strWindowId,
               strTabId, strLocator, strIsSOTrx, strProduct);
@@ -128,8 +128,9 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       String strProduct = vars.getRequestGlobalVariable("inpProduct",
           "AttributeSetInstance.product");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-      OBError myMessage = writeFields(this, vars, AttributeSetInstanceData.select(this,
-          strAttributeSet), strAttributeSet, strInstance, strWindowId, strIsSOTrx, strProduct);
+      OBError myMessage = writeFields(this, vars,
+          AttributeSetInstanceData.select(this, strAttributeSet), strAttributeSet, strInstance,
+          strWindowId, strIsSOTrx, strProduct);
       vars.setSessionValue("AttributeSetInstance.attribute", strAttributeSet);
       vars.setSessionValue("AttributeSetInstance.close", "Y");
       vars.setMessage(strTabId, myMessage);
@@ -259,9 +260,9 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
         if (AttributeSetInstanceData.updateHeader(conn, this, vars.getUser(),
             data[0].mAttributesetId, serno, lot, guaranteedate, "", locked, lockDescription,
             strInstance) == 0) {
-          AttributeSetInstanceData.insertHeader(conn, this, strInstance, vars.getClient(), vars
-              .getOrg(), vars.getUser(), data[0].mAttributesetId, serno, lot, guaranteedate, "",
-              locked, lockDescription);
+          AttributeSetInstanceData.insertHeader(conn, this, strInstance, vars.getClient(),
+              vars.getOrg(), vars.getUser(), data[0].mAttributesetId, serno, lot, guaranteedate,
+              "", locked, lockDescription);
         }
       } else if ((isinstance) || (strNewInstance.equals(""))) { // New or
         // editable,if
@@ -278,8 +279,8 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
         // one
         hasToUpdate = true;
         strNewInstance = SequenceIdData.getUUID();
-        AttributeSetInstanceData.insertHeader(conn, this, strNewInstance, vars.getClient(), vars
-            .getOrg(), vars.getUser(), data[0].mAttributesetId, serno, lot, guaranteedate, "",
+        AttributeSetInstanceData.insertHeader(conn, this, strNewInstance, vars.getClient(),
+            vars.getOrg(), vars.getUser(), data[0].mAttributesetId, serno, lot, guaranteedate, "",
             locked, lockDescription);
       }
       if (hasToUpdate) {
@@ -294,17 +295,18 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
             if (data[i].islist.equals("Y"))
               strDescValue = AttributeSetInstanceData.selectAttributeValue(this, strValue);
             if (!strNewInstance.equals("")) {
-              if (AttributeSetInstanceData
-                  .update(conn, this, vars.getUser(), (data[i].islist.equals("Y") ? strValue : ""),
-                      strDescValue, strNewInstance, data[i].mAttributeId) == 0) {
+              if (AttributeSetInstanceData.update(conn, this, vars.getUser(),
+                  (data[i].islist.equals("Y") ? strValue : ""), strDescValue, strNewInstance,
+                  data[i].mAttributeId) == 0) {
                 String strNewAttrInstance = SequenceIdData.getUUID();
                 AttributeSetInstanceData.insert(conn, this, strNewAttrInstance, strNewInstance,
                     data[i].mAttributeId, vars.getClient(), vars.getOrg(), vars.getUser(),
                     (data[i].islist.equals("Y") ? strValue : ""), strDescValue);
               }
             } else {
-              if (AttributeSetInstanceData.update(conn, this, vars.getUser(), (data[i].islist
-                  .equals("Y") ? strValue : ""), strDescValue, strInstance, data[i].mAttributeId) == 0) {
+              if (AttributeSetInstanceData.update(conn, this, vars.getUser(),
+                  (data[i].islist.equals("Y") ? strValue : ""), strDescValue, strInstance,
+                  data[i].mAttributeId) == 0) {
                 String strNewAttrInstance = SequenceIdData.getUUID();
                 AttributeSetInstanceData.insert(conn, this, strNewAttrInstance, strInstance,
                     data[i].mAttributeId, vars.getClient(), vars.getOrg(), vars.getUser(),
@@ -380,9 +382,11 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     xmlDocument.setParameter("description", AttributeSetInstanceData.selectDescription(this,
         (strInstance.equals("") ? strProductInstance : strInstance)));
     AttributeSetInstanceData[] data = AttributeSetInstanceData.select(this, strAttributeSet);
-    xmlDocument.setParameter("data", generateHtml(vars, data, AttributeSetInstanceData
-        .selectInstance(this, (strInstance.equals("") ? strProductInstance : strInstance)),
-        strInstance, strIsSOTrx, strWindowId));
+    xmlDocument.setParameter(
+        "data",
+        generateHtml(vars, data, AttributeSetInstanceData.selectInstance(this,
+            (strInstance.equals("") ? strProductInstance : strInstance)), strInstance, strIsSOTrx,
+            strWindowId));
     xmlDocument.setParameter("script", generateScript(vars, data));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -431,8 +435,8 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
         strHtml.append(fields[i].elementname);
         strHtml.append("</span></td>\n");
         strHtml.append("<td class=\"LabelText\">");
-        String strValue = instanceValue(instanceData, fields[i].mAttributeId, fields[i].islist
-            .equals("Y"));
+        String strValue = instanceValue(instanceData, fields[i].mAttributeId,
+            fields[i].islist.equals("Y"));
         if (fields[i].islist.equals("Y")) {
           strHtml.append("<select ");
           strHtml.append("name=\"inp" + replace(fields[i].elementname) + "\" ");
@@ -616,8 +620,9 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
 
   private String replace(String strIni) {
     // delete characters: " ","&",","
-    return Replace.replace(Replace.replace(Replace.replace(Replace.replace(Replace.replace(Replace
-        .replace(strIni, "#", ""), " ", ""), "&", ""), ",", ""), "(", ""), ")", "");
+    return Replace.replace(Replace.replace(Replace.replace(
+        Replace.replace(Replace.replace(Replace.replace(strIni, "#", ""), " ", ""), "&", ""), ",",
+        ""), "(", ""), ")", "");
   }
 
   public String getServletInfo() {

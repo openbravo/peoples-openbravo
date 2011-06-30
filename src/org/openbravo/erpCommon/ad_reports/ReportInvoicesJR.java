@@ -123,8 +123,9 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Launch the report as usual, calling the JRXML file
       String strSubTitle = "";
       strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strDateFrom + " "
@@ -196,15 +197,15 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramMProductCategoryID", strM_Product_Category_ID);
     xmlDocument.setParameter("sales", strOrder);
     xmlDocument.setParameter("purchase", strOrder);
-    xmlDocument.setParameter("paramBPartnerDescription", ReportInvoicesData.bPartnerDescription(
-        this, strC_BPartner_ID));
-    xmlDocument.setParameter("paramMProductIDDES", ReportInvoicesData.mProductDescription(this,
-        strM_Product_ID));
+    xmlDocument.setParameter("paramBPartnerDescription",
+        ReportInvoicesData.bPartnerDescription(this, strC_BPartner_ID));
+    xmlDocument.setParameter("paramMProductIDDES",
+        ReportInvoicesData.mProductDescription(this, strM_Product_ID));
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoices"), Utility
-              .getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoices"),
+          Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
       Utility
           .fillSQLParameters(this, vars, null, comboTableData, "ReportInvoices", strC_BpGroup_ID);
       xmlDocument.setData("reportC_Bp_Group", "liststructure", comboTableData.select(false));
@@ -230,8 +231,8 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoices"), Utility
-              .getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoices"),
+          Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoices", strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;

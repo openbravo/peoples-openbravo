@@ -59,8 +59,8 @@ public class PinstanceProcedure extends ProcedureProcess {
 
     } catch (final Exception e) {
       e.printStackTrace();
-      msg = Utility.translateError(connection, context.toVars(), context.getLanguage(), e
-          .getMessage());
+      msg = Utility.translateError(connection, context.toVars(), context.getLanguage(),
+          e.getMessage());
       logger.log(msg.getType() + " " + msg.getTitle() + " " + msg.getMessage());
     }
   }

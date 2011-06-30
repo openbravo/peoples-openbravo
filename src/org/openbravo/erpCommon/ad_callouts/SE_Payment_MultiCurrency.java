@@ -67,8 +67,8 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
         final Currency financialAccountCurrency = financialAccount.getCurrency();
         if (!currency.equals(financialAccountCurrency)) {
           final ConversionRate conversionRate = getConversionRate(currency,
-              financialAccountCurrency, toDate(paymentDate), OBDal.getInstance().get(
-                  Organization.class, strOrgId));
+              financialAccountCurrency, toDate(paymentDate),
+              OBDal.getInstance().get(Organization.class, strOrgId));
           if (conversionRate != null) {
             finAccConvertRate = conversionRate.getMultipleRateBy();
             info.addResult("inpfinaccTxnConvertRate", finAccConvertRate);
@@ -143,11 +143,14 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
         if ("0".equals(org.getId())) {
           conversionRate = null;
         } else {
-          return getConversionRate(fromCurrency, toCurrency, conversionDate, OBDal.getInstance()
-              .get(
+          return getConversionRate(
+              fromCurrency,
+              toCurrency,
+              conversionDate,
+              OBDal.getInstance().get(
                   Organization.class,
-                  OBContext.getOBContext().getOrganizationStructureProvider().getParentOrg(
-                      org.getId())));
+                  OBContext.getOBContext().getOrganizationStructureProvider()
+                      .getParentOrg(org.getId())));
         }
       }
     } catch (Exception e) {
@@ -170,8 +173,8 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
     if (strDate == null || strDate.isEmpty())
       return null;
     try {
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-          "dateFormat.java");
+      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
       return (outputFormat.parse(strDate));
     } catch (ParseException e) {

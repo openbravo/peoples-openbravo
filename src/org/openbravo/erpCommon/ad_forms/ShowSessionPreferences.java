@@ -73,9 +73,10 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
       vars.setSessionValue("#Date", strFecha);
       vars.setSessionValue("#ShowTrl", strTranslate);
       vars.setSessionValue("#ShowAudit", strAudit);
-      String strPreference = ShowSessionPreferencesData.selectPreference(this, Utility.getContext(
-          this, vars, "#User_Client", "ShowSessionPreferences"), Utility.getContext(this, vars,
-          "#User_Org", "ShowSessionPreferences"), vars.getUser(), "ShowTrl");
+      String strPreference = ShowSessionPreferencesData.selectPreference(this,
+          Utility.getContext(this, vars, "#User_Client", "ShowSessionPreferences"),
+          Utility.getContext(this, vars, "#User_Org", "ShowSessionPreferences"), vars.getUser(),
+          "ShowTrl");
       ShowSessionPreferencesData.updateRange(this, vars.getUser(), strRecordRange,
           strRecordRangeInfo, strTransactionalRange, strTheme);
       if (!strPreference.equals(""))
@@ -86,9 +87,10 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
             vars.getUser(), "ShowTrl", strTranslate);
       }
       vars.setSessionValue("#ShowAcct", strAccounting);
-      strPreference = ShowSessionPreferencesData.selectPreference(this, Utility.getContext(this,
-          vars, "#User_Client", "ShowSessionPreferences"), Utility.getContext(this, vars,
-          "#User_Org", "ShowSessionPreferences"), vars.getUser(), "ShowAcct");
+      strPreference = ShowSessionPreferencesData.selectPreference(this,
+          Utility.getContext(this, vars, "#User_Client", "ShowSessionPreferences"),
+          Utility.getContext(this, vars, "#User_Org", "ShowSessionPreferences"), vars.getUser(),
+          "ShowAcct");
       if (!strPreference.equals(""))
         ShowSessionPreferencesData.update(this, vars.getUser(), strAccounting, strPreference);
       else {
@@ -97,9 +99,10 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
             vars.getUser(), "ShowAcct", strAccounting);
       }
       vars.setSessionValue("#ShowTest", strTest);
-      strPreference = ShowSessionPreferencesData.selectPreference(this, Utility.getContext(this,
-          vars, "#User_Client", "ShowSessionPreferences"), Utility.getContext(this, vars,
-          "#User_Org", "ShowSessionPreferences"), vars.getUser(), "ShowTest");
+      strPreference = ShowSessionPreferencesData.selectPreference(this,
+          Utility.getContext(this, vars, "#User_Client", "ShowSessionPreferences"),
+          Utility.getContext(this, vars, "#User_Org", "ShowSessionPreferences"), vars.getUser(),
+          "ShowTest");
       ShowSessionPreferencesData.updateRange(this, vars.getUser(), strRecordRange,
           strRecordRangeInfo, strTransactionalRange, strTheme);
       if (!strPreference.equals(""))
@@ -110,9 +113,10 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
             vars.getUser(), "ShowTest", strTest);
       }
       vars.setSessionValue("#ShowAudit", strAudit);
-      strPreference = ShowSessionPreferencesData.selectPreference(this, Utility.getContext(this,
-          vars, "#User_Client", "ShowSessionPreferences"), Utility.getContext(this, vars,
-          "#User_Org", "ShowSessionPreferences"), vars.getUser(), "ShowAuditDefault");
+      strPreference = ShowSessionPreferencesData.selectPreference(this,
+          Utility.getContext(this, vars, "#User_Client", "ShowSessionPreferences"),
+          Utility.getContext(this, vars, "#User_Org", "ShowSessionPreferences"), vars.getUser(),
+          "ShowAuditDefault");
       if (!strPreference.equals(""))
         ShowSessionPreferencesData.update(this, vars.getUser(), strAudit, strPreference);
       else {
@@ -161,8 +165,8 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
           "org.openbravo.erpCommon.ad_forms.ShowSessionPreferences");
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ShowSessionPreferences.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ShowSessionPreferences.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ShowSessionPreferences.html",
           strReplaceWith);
@@ -182,9 +186,9 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
 
     ComboTableData comboTableData = null;
     try {
-      comboTableData = new ComboTableData(vars, this, "LIST", "Theme", "800102", "", Utility
-          .getContext(this, vars, "#AccessibleOrgTree", "ShowSessionPreferences"), Utility
-          .getContext(this, vars, "#User_Client", "ShowSessionPreferences"), 0);
+      comboTableData = new ComboTableData(vars, this, "LIST", "Theme", "800102", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ShowSessionPreferences"),
+          Utility.getContext(this, vars, "#User_Client", "ShowSessionPreferences"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ShowSessionPreferences", "");
       xmlDocument.setData("reportTheme", "liststructure", comboTableData.select(true));
     } catch (Exception ex) {
@@ -199,40 +203,40 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
 
   private String getInfo(VariablesSecureApp vars) throws ServletException {
     StringBuffer script = new StringBuffer();
-    script.append(Utility.messageBD(this, "User", vars.getLanguage())).append(": ").append(
-        ShowSessionPreferencesData.usuario(this, vars.getUser())).append("\n");
-    script.append(Utility.messageBD(this, "Role", vars.getLanguage())).append(": ").append(
-        ShowSessionPreferencesData.rol(this, vars.getRole())).append("\n");
-    script.append(Utility.messageBD(this, "Client", vars.getLanguage())).append(": ").append(
-        ShowSessionPreferencesData.cliente(this, vars.getClient())).append("\n");
-    script.append(Utility.messageBD(this, "Org", vars.getLanguage())).append(": ").append(
-        ShowSessionPreferencesData.organizacion(this, vars.getOrg())).append("\n");
-    script.append(Utility.messageBD(this, "Web", vars.getLanguage())).append(": ").append(
-        strReplaceWith).append("\n");
-    script.append(Utility.messageBD(this, "DB", vars.getLanguage())).append(": ").append(
-        globalParameters.strBBDD).append("\n");
-    script.append(Utility.messageBD(this, "RecordRange", vars.getLanguage())).append(": ").append(
-        vars.getSessionValue("#RecordRange")).append("\n");
+    script.append(Utility.messageBD(this, "User", vars.getLanguage())).append(": ")
+        .append(ShowSessionPreferencesData.usuario(this, vars.getUser())).append("\n");
+    script.append(Utility.messageBD(this, "Role", vars.getLanguage())).append(": ")
+        .append(ShowSessionPreferencesData.rol(this, vars.getRole())).append("\n");
+    script.append(Utility.messageBD(this, "Client", vars.getLanguage())).append(": ")
+        .append(ShowSessionPreferencesData.cliente(this, vars.getClient())).append("\n");
+    script.append(Utility.messageBD(this, "Org", vars.getLanguage())).append(": ")
+        .append(ShowSessionPreferencesData.organizacion(this, vars.getOrg())).append("\n");
+    script.append(Utility.messageBD(this, "Web", vars.getLanguage())).append(": ")
+        .append(strReplaceWith).append("\n");
+    script.append(Utility.messageBD(this, "DB", vars.getLanguage())).append(": ")
+        .append(globalParameters.strBBDD).append("\n");
+    script.append(Utility.messageBD(this, "RecordRange", vars.getLanguage())).append(": ")
+        .append(vars.getSessionValue("#RecordRange")).append("\n");
     script.append(Utility.messageBD(this, "SearchsRecordRange", vars.getLanguage())).append(": ")
         .append(vars.getSessionValue("#RecordRangeInfo")).append("\n");
     if (globalParameters.strVersion != null && !globalParameters.strVersion.equals(""))
       script.append(Utility.messageBD(this, "SourceVersion", vars.getLanguage())).append(": ")
           .append(globalParameters.strVersion).append("\n");
     if (globalParameters.strParentVersion != null && !globalParameters.strParentVersion.equals(""))
-      script.append(Utility.messageBD(this, "VerticalSourceVersion", vars.getLanguage())).append(
-          ": ").append(globalParameters.strParentVersion).append("\n");
-    script.append(Utility.messageBD(this, "JavaVM", vars.getLanguage())).append(": ").append(
-        System.getProperty("java.vm.name")).append("\n");
+      script.append(Utility.messageBD(this, "VerticalSourceVersion", vars.getLanguage()))
+          .append(": ").append(globalParameters.strParentVersion).append("\n");
+    script.append(Utility.messageBD(this, "JavaVM", vars.getLanguage())).append(": ")
+        .append(System.getProperty("java.vm.name")).append("\n");
     script.append(Utility.messageBD(this, "VersionJavaVM", vars.getLanguage())).append(": ")
         .append(System.getProperty("java.vm.version")).append("\n");
     script.append(Utility.messageBD(this, "SystemLanguage", vars.getLanguage())).append(": ")
         .append(globalParameters.strSystemLanguage).append("\n");
-    script.append(Utility.messageBD(this, "JavaTMP", vars.getLanguage())).append(": ").append(
-        System.getProperty("java.io.tmpdir")).append("\n");
+    script.append(Utility.messageBD(this, "JavaTMP", vars.getLanguage())).append(": ")
+        .append(System.getProperty("java.io.tmpdir")).append("\n");
     // script.append(Utility.messageBD(this, "UserFolder",
     // vars.getLanguage())).append(": ").append(globalParameters.strFileProperties).append("\n");
-    script.append(Utility.messageBD(this, "OS", vars.getLanguage())).append(": ").append(
-        System.getProperty("os.name")).append(" ").append(System.getProperty("os.version"));
+    script.append(Utility.messageBD(this, "OS", vars.getLanguage())).append(": ")
+        .append(System.getProperty("os.name")).append(" ").append(System.getProperty("os.version"));
     script.append(" ").append(System.getProperty("sun.os.patch.level"));
 
     return script.toString();

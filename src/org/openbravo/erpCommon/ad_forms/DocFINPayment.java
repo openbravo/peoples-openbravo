@@ -94,8 +94,8 @@ public class DocFINPayment extends AcctServer {
     if (paymentDetails == null)
       return null;
 
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-        "dateFormat.java");
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
     SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
 
     FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
@@ -334,10 +334,12 @@ public class DocFINPayment extends AcctServer {
               (isReceipt ? "" : bpAmount), (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID,
               nextSeqNo(SeqNo), DocumentType, invoiceAccountingDate, conn);
         } else {
-          fact.createLine(line, getAccountGLItem(OBDal.getInstance().get(GLItem.class,
-              line.getC_GLItem_ID()), as, isReceipt, conn), C_Currency_ID, (isReceipt ? ""
-              : bpAmount), (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, null, docToSchemaConversionRate, conn);
+          fact.createLine(
+              line,
+              getAccountGLItem(OBDal.getInstance().get(GLItem.class, line.getC_GLItem_ID()), as,
+                  isReceipt, conn), C_Currency_ID, (isReceipt ? "" : bpAmount),
+              (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+              null, docToSchemaConversionRate, conn);
         }
       }
 
@@ -347,11 +349,13 @@ public class DocFINPayment extends AcctServer {
         // exchange rate in payment, not system
         // Payment financial txn conversion rate is from payment currency to account currency
         // Need to invert to use convert from fin account to schema
-        accountToSchemaConversionRate = BigDecimal.ONE.divide(payment
-            .getFinancialTransactionConvertRate(), MathContext.DECIMAL64);
+        accountToSchemaConversionRate = BigDecimal.ONE.divide(
+            payment.getFinancialTransactionConvertRate(), MathContext.DECIMAL64);
       }
-      fact.createLine(null, getAccount(conn, payment.getPaymentMethod(), payment.getAccount(), as,
-          payment.isReceipt()), financialAccountCurrencyId,
+      fact.createLine(
+          null,
+          getAccount(conn, payment.getPaymentMethod(), payment.getAccount(), as,
+              payment.isReceipt()), financialAccountCurrencyId,
           (payment.isReceipt() ? financialTransactionAmount : ""), (payment.isReceipt() ? ""
               : financialTransactionAmount), Fact_Acct_Group_ID, "999999", DocumentType, null,
           accountToSchemaConversionRate, conn);
@@ -492,8 +496,8 @@ public class DocFINPayment extends AcctServer {
         OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
             FinAccPaymentMethod.class);
         obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
-            .getPaymentMethod()));
+        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+            payment.getPaymentMethod()));
         obCriteria.setFilterOnReadableClients(false);
         obCriteria.setFilterOnReadableOrganization(false);
         List<FinAccPaymentMethod> lines = obCriteria.list();
@@ -551,11 +555,11 @@ public class DocFINPayment extends AcctServer {
     FieldProviderFactory.setField(data[0], "C_BPartner_ID",
         payment.getBusinessPartner() != null ? payment.getBusinessPartner().getId() : "");
     FieldProviderFactory.setField(data[0], "DocumentNo", payment.getDocumentNo());
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-        "dateFormat.java");
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
     SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-    FieldProviderFactory.setField(data[0], "PaymentDate", outputFormat.format(payment
-        .getPaymentDate()));
+    FieldProviderFactory.setField(data[0], "PaymentDate",
+        outputFormat.format(payment.getPaymentDate()));
     FieldProviderFactory.setField(data[0], "C_DocType_ID", payment.getDocumentType().getId());
     FieldProviderFactory.setField(data[0], "C_Currency_ID", payment.getCurrency().getId());
     FieldProviderFactory.setField(data[0], "Amount", payment.getAmount().toString());
@@ -596,8 +600,10 @@ public class DocFINPayment extends AcctServer {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(
+          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);

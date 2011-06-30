@@ -258,23 +258,25 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
               "#User_Client", "ReportRefundSalesDimensionalAnalyses"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,
           "ReportRefundSalesDimensionalAnalyses", strProductCategory);
-      xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure", comboTableData
-          .select(false));
+      xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
+          comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    try{
-   	 ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-   	          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportRefundSalesDimensionalAnalyses"), Utility
-   	              .getContext(this, vars, "#User_Client", "ReportRefundSalesDimensionalAnalyses"), 0);
-   	      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportRefundSalesDimensionalAnalyses", strOrg);
-   	      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
-   	      comboTableData = null;
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+              "ReportRefundSalesDimensionalAnalyses"), Utility.getContext(this, vars,
+              "#User_Client", "ReportRefundSalesDimensionalAnalyses"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData,
+          "ReportRefundSalesDimensionalAnalyses", strOrg);
+      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
+      comboTableData = null;
 
-   }catch (Exception ex) {
-   	 throw new ServletException(ex);
-	}
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "SalesRep_ID",
           "AD_User SalesRep", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -288,12 +290,18 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
-        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-            .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
-    xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData.selectMproduct(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
-            vars, "#User_Client", ""), strmProductId));
+    xmlDocument.setData(
+        "reportCBPartnerId_IN",
+        "liststructure",
+        SelectorUtilityData.selectBpartner(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+    xmlDocument.setData(
+        "reportMProductId_IN",
+        "liststructure",
+        SelectorUtilityData.selectMproduct(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
           "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -322,15 +330,16 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
     }
 
     if (vars.getLanguage().equals("en_US")) {
-      xmlDocument.setData("structure1", ReportRefundSalesDimensionalAnalysesData.selectNotShown(
-          this, strShown));
+      xmlDocument.setData("structure1",
+          ReportRefundSalesDimensionalAnalysesData.selectNotShown(this, strShown));
       xmlDocument.setData("structure2",
           strShown.equals("") ? new ReportRefundSalesDimensionalAnalysesData[0]
               : ReportRefundSalesDimensionalAnalysesData.selectShown(this, strShown));
     } else {
       xmlDocument.setData("structure1", ReportRefundSalesDimensionalAnalysesData.selectNotShownTrl(
           this, vars.getLanguage(), strShown));
-      xmlDocument.setData("structure2",
+      xmlDocument.setData(
+          "structure2",
           strShown.equals("") ? new ReportRefundSalesDimensionalAnalysesData[0]
               : ReportRefundSalesDimensionalAnalysesData.selectShownTrl(this, vars.getLanguage(),
                   strShown));
@@ -538,11 +547,12 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
       try {
         data = ReportRefundSalesDimensionalAnalysesData.selectNoComparative(this, strCurrencyId,
             strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
-            strTextShow[5], strTextShow[6], Tree.getMembers(this, TreeData.getTreeOrg(this, vars
-                .getClient()), strOrg), Utility.getContext(this, vars, "#User_Client",
-                "ReportRefundInvoiceCustomerDimensionalAnalyses"), strDateFrom, DateTimeData
-                .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
-            strProductCategory, strmProductId, strsalesrepId, strmWarehouseId, strOrderby);
+            strTextShow[5], strTextShow[6], Tree.getMembers(this,
+                TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
+                vars, "#User_Client", "ReportRefundInvoiceCustomerDimensionalAnalyses"),
+            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
+            strcBpartnerId, strProductCategory, strmProductId, strsalesrepId, strmWarehouseId,
+            strOrderby);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
@@ -551,8 +561,9 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Otherwise, the report is launched
       if (data.length == 0 || data == null) {
         data = ReportRefundSalesDimensionalAnalysesData.set();

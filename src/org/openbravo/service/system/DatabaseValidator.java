@@ -133,7 +133,8 @@ public class DatabaseValidator implements SystemValidator {
       }
       for (int i = 0; i < dbTable.getForeignKeyCount(); i++) {
         if (dbTable.getForeignKey(i).getName().length() > 30) {
-          result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+          result.addError(
+              SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
               "Name of ForeignKey " + dbTable.getForeignKey(i).getName() + "for table "
                   + dbTable.getName() + " is too long. Only 30 characters allowed.");
         }
@@ -669,18 +670,26 @@ public class DatabaseValidator implements SystemValidator {
       }
       // can this ever be false?
       if (hasClientReference && !hasValidClient) {
-        result.addError(SystemValidationType.INCORRECT_CLIENT_ORG_PROPERTY_NAME, "Table  "
-            + entity.getTableName() + " has a column referencing AD_Client. "
-            + " The AD_Column.name (note: different from AD_Column.columnname!) of this column "
-            + "should have the value " + Organization.PROPERTY_CLIENT + ", it currently has "
-            + invalidClientName);
+        result
+            .addError(
+                SystemValidationType.INCORRECT_CLIENT_ORG_PROPERTY_NAME,
+                "Table  "
+                    + entity.getTableName()
+                    + " has a column referencing AD_Client. "
+                    + " The AD_Column.name (note: different from AD_Column.columnname!) of this column "
+                    + "should have the value " + Organization.PROPERTY_CLIENT
+                    + ", it currently has " + invalidClientName);
       }
       if (hasOrgReference && !hasValidOrg) {
-        result.addError(SystemValidationType.INCORRECT_CLIENT_ORG_PROPERTY_NAME, "Table  "
-            + entity.getTableName() + " has a column referencing AD_Org. "
-            + " The AD_Column.name (note: different from AD_Column.columnname!) of this column "
-            + "should have the value " + Client.PROPERTY_ORGANIZATION + ", it currently has "
-            + invalidOrgName);
+        result
+            .addError(
+                SystemValidationType.INCORRECT_CLIENT_ORG_PROPERTY_NAME,
+                "Table  "
+                    + entity.getTableName()
+                    + " has a column referencing AD_Org. "
+                    + " The AD_Column.name (note: different from AD_Column.columnname!) of this column "
+                    + "should have the value " + Client.PROPERTY_ORGANIZATION
+                    + ", it currently has " + invalidOrgName);
       }
     }
   }

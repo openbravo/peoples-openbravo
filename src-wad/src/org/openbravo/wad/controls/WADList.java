@@ -50,8 +50,8 @@ public class WADList extends WADControl {
       text.append(")==null || inputValue(frm.inp");
       text.append(getData("ColumnNameInp"));
       text.append(")==\"\") {\n");
-      text.append("    setWindowElementFocus(frm.inp").append(getData("ColumnNameInp")).append(
-          ");\n");
+      text.append("    setWindowElementFocus(frm.inp").append(getData("ColumnNameInp"))
+          .append(");\n");
       text.append("    showJSMessage(1);\n");
       text.append("    return false;\n");
       text.append("  }");
@@ -158,8 +158,8 @@ public class WADList extends WADControl {
       if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")
           || getData("IsUpdateable").equals("N")) {
         text.append("\n<PARAMETER id=\"report").append(getData("ColumnName"));
-        text.append("_S\" name=\"report").append(getData("ColumnName")).append(
-            "_S\" attribute=\"onchange\" replace=\"xx\"/>");
+        text.append("_S\" name=\"report").append(getData("ColumnName"))
+            .append("_S\" attribute=\"onchange\" replace=\"xx\"/>");
       }
     } else {
       text.append("<FIELD id=\"").append(getData("ColumnName"));
@@ -176,8 +176,8 @@ public class WADList extends WADControl {
       text.append("\n<SUBREPORT id=\"report").append(getData("ColumnName"));
       text.append("\" name=\"report").append(getData("ColumnName"));
       text.append("\" report=\"org/openbravo/erpCommon/reference/List\">\n");
-      text.append("  <ARGUMENT name=\"parameterListSelected\" withId=\"").append(
-          getData("ColumnName")).append("\"/>\n");
+      text.append("  <ARGUMENT name=\"parameterListSelected\" withId=\"")
+          .append(getData("ColumnName")).append("\"/>\n");
       text.append("</SUBREPORT>");
     }
     return text.toString();
@@ -190,23 +190,20 @@ public class WADList extends WADControl {
         text.append("String userOrgList = \"\";\n");
         text.append("if (editableTab) \n");
         if (getData("hasParentsFields").equals("N"))
-          text
-              .append("  userOrgList=Utility.getContext(this, vars, \"#User_Org\", windowId, accesslevel); //editable record \n");
+          text.append("  userOrgList=Utility.getContext(this, vars, \"#User_Org\", windowId, accesslevel); //editable record \n");
         else
-          text
-              .append("  userOrgList= Utility.getReferenceableOrg(this, vars, currentPOrg, windowId, accesslevel); //referenceable from parent org, only the writeable orgs\n");
+          text.append("  userOrgList= Utility.getReferenceableOrg(this, vars, currentPOrg, windowId, accesslevel); //referenceable from parent org, only the writeable orgs\n");
         text.append("else \n");
         text.append("  userOrgList=currentOrg;\n");
       } else if (getData("ColumnName").equalsIgnoreCase("AD_Client_ID")) {
         text.append("String userClientList = \"\";\n");
         text.append("if (editableTab) \n");
-        text
-            .append("  userClientList=Utility.getContext(this, vars, \"#User_Client\", windowId, accesslevel); //editable record \n");
+        text.append("  userClientList=Utility.getContext(this, vars, \"#User_Client\", windowId, accesslevel); //editable record \n");
         text.append("else \n");
         text.append("  userClientList=currentClient;\n");
       }
-      text.append("comboTableData = new ComboTableData(vars, this, \"").append(
-          getData("AD_Reference_ID")).append("\", ");
+      text.append("comboTableData = new ComboTableData(vars, this, \"")
+          .append(getData("AD_Reference_ID")).append("\", ");
       text.append("\"").append(getData("ColumnName")).append("\", \"");
       text.append(getData("AD_Reference_Value_ID")).append("\", ");
       text.append("\"").append(getData("AD_Val_Rule_ID")).append("\", ");
@@ -216,20 +213,18 @@ public class WADList extends WADControl {
       else if (getData("ColumnName").equalsIgnoreCase("AD_Client_ID"))
         text.append("null, ");
       else
-        text
-            .append("Utility.getReferenceableOrg(vars, (dataField!=null?dataField.getField(\"adOrgId\"):data[0].getField(\"adOrgId\").equals(\"\")?vars.getOrg():data[0].getField(\"adOrgId\"))), ");
+        text.append("Utility.getReferenceableOrg(vars, (dataField!=null?dataField.getField(\"adOrgId\"):data[0].getField(\"adOrgId\").equals(\"\")?vars.getOrg():data[0].getField(\"adOrgId\"))), ");
 
       if (getData("ColumnName").equalsIgnoreCase("AD_Client_ID"))
         text.append("userClientList, 0);\n");
       else
         text.append("Utility.getContext(this, vars, \"#User_Client\", windowId), 0);\n");
 
-      text
-          .append("Utility.fillSQLParameters(this, vars, (dataField==null?data[0]:dataField), comboTableData, windowId, (dataField==null?data[0].getField(\"");
+      text.append("Utility.fillSQLParameters(this, vars, (dataField==null?data[0]:dataField), comboTableData, windowId, (dataField==null?data[0].getField(\"");
       text.append(getData("ColumnNameInp")).append("\"):dataField.getField(\"");
       text.append(getData("ColumnNameInp")).append("\")));\n");
-      text.append("xmlDocument.setData(\"report").append(getData("ColumnName")).append(
-          "\",\"liststructure\", ");
+      text.append("xmlDocument.setData(\"report").append(getData("ColumnName"))
+          .append("\",\"liststructure\", ");
       text.append("comboTableData.select(!strCommand.equals(\"NEW\")));\n");
       text.append("comboTableData = null;");
     }

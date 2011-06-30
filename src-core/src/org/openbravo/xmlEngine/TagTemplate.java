@@ -72,8 +72,8 @@ class TagTemplate implements XmlComponentTemplate {
           if (attributeComponentTemplate.replace() != null) {
             attribute.valueTemplate.replace(attributeComponentTemplate);
           } else {
-            attribute.valueTemplate = new XmlThreeTemplate(attributeComponentTemplate
-                .xmlComponentTemplate());
+            attribute.valueTemplate = new XmlThreeTemplate(
+                attributeComponentTemplate.xmlComponentTemplate());
           }
         }
       }
@@ -82,8 +82,8 @@ class TagTemplate implements XmlComponentTemplate {
     if (attributeComponentTemplate.attributeBooleanName() != null) {
       for (AttributeItemTemplate attribute : attributeVectorTemplate) {
         if (attribute.name.equals(attributeComponentTemplate.attributeBooleanName())) {
-          attribute.valueTemplate = new XmlThreeTemplate(attributeComponentTemplate
-              .xmlComponentTemplate());
+          attribute.valueTemplate = new XmlThreeTemplate(
+              attributeComponentTemplate.xmlComponentTemplate());
           attribute.attributeBoolean = true;
           attribute.valueToCompareTemplate = attributeComponentTemplate.booleanWithId();
           return;
@@ -93,8 +93,8 @@ class TagTemplate implements XmlComponentTemplate {
       // it
       AttributeItemTemplate attribute = new AttributeItemTemplate();
       attribute.name = attributeComponentTemplate.attributeBooleanName();
-      attribute.valueTemplate = new XmlThreeTemplate(attributeComponentTemplate
-          .xmlComponentTemplate());
+      attribute.valueTemplate = new XmlThreeTemplate(
+          attributeComponentTemplate.xmlComponentTemplate());
       attribute.attributeBoolean = true;
       attribute.valueToCompareTemplate = attributeComponentTemplate.booleanWithId();
       attributeVectorTemplate.addElement(attribute);

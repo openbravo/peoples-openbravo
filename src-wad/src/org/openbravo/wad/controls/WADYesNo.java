@@ -96,19 +96,19 @@ public class WADYesNo extends WADControl {
     StringBuffer text = new StringBuffer();
     if (getData("IsParameter").equals("Y")) {
       if (getData("IsDisplayed").equals("N")) {
-        text.append("<PARAMETER id=\"").append(getData("ColumnName")).append("\" name=\"").append(
-            getData("ColumnName")).append("\" attribute=\"value\"/>");
+        text.append("<PARAMETER id=\"").append(getData("ColumnName")).append("\" name=\"")
+            .append(getData("ColumnName")).append("\" attribute=\"value\"/>");
       } else {
-        text.append("<PARAMETER id=\"").append(getData("ColumnName")).append("\" name=\"").append(
-            getData("ColumnName")).append("\" boolean=\"checked\" withId=\"paramCheck\"/>");
+        text.append("<PARAMETER id=\"").append(getData("ColumnName")).append("\" name=\"")
+            .append(getData("ColumnName")).append("\" boolean=\"checked\" withId=\"paramCheck\"/>");
       }
     } else {
       if (getData("IsDisplayed").equals("N")) {
         text.append("<FIELD id=\"").append(getData("ColumnName")).append("\" attribute=\"value\">");
         text.append(getData("ColumnName")).append("</FIELD>");
       } else {
-        text.append("<FIELD id=\"").append(getData("ColumnName")).append(
-            "\" boolean=\"checked\" withId=\"paramCheck\">");
+        text.append("<FIELD id=\"").append(getData("ColumnName"))
+            .append("\" boolean=\"checked\" withId=\"paramCheck\">");
         text.append(getData("ColumnName")).append("</FIELD>");
       }
     }

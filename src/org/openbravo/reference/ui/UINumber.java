@@ -69,8 +69,8 @@ public class UINumber extends UIReference {
 
     strHtml.append("<td class=\"TextBox_ContentCell\">");
     strHtml.append("<input type=\"text\" class=\"dojoValidateValid TextBox_OneCell_width\" ");
-    strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
-        "\" ");
+    strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname))
+        .append("\" ");
     strHtml.append("maxlength=\"").append(fields.fieldlength).append("\" ");
     strHtml.append("value=\"").append(fields.value).append("\" ");
 
@@ -97,8 +97,8 @@ public class UINumber extends UIReference {
     strHtml.append("<td class=\"TextBox_ContentCell\">");
     strHtml.append("<input type=\"text\" ");
     strHtml.append("class=\"dojoValidateValid TextBox_btn_OneCell_width\" ");
-    strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
-        "_f\" ");
+    strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname))
+        .append("_f\" ");
     strHtml.append("maxlength=\"").append(fields.fieldlength).append("\" ");
     strHtml.append("value=\"").append(value).append("\" ");
     strHtml

@@ -99,10 +99,10 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
     OBError myMessage = null;
     myMessage = new OBError();
     try {
-      data = ReportInvoiceDiscountData.select(this, strCurrencyId, Utility.getContext(this, vars,
-          "#User_Client", "ReportInvoiceDiscountJR"), Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "ReportInvoiceDiscountJR"), strDateFrom, strDateTo, strcBpartnerId,
-          (strDiscount.equals("N")) ? "" : "discount");
+      data = ReportInvoiceDiscountData.select(this, strCurrencyId,
+          Utility.getContext(this, vars, "#User_Client", "ReportInvoiceDiscountJR"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceDiscountJR"),
+          strDateFrom, strDateTo, strcBpartnerId, (strDiscount.equals("N")) ? "" : "discount");
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }
@@ -110,8 +110,9 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Launch the report as usual, calling the JRXML file
       HashMap<String, Object> parameters = new HashMap<String, Object>();
       String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strDateFrom
@@ -147,8 +148,8 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportInvoiceDiscountJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportInvoiceDiscountJR.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportInvoiceDiscountJR.html",
           strReplaceWith);
@@ -177,9 +178,10 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("discount", strDiscount);
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
-        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "ReportInvoiceDiscountJR"), Utility.getContext(this, vars, "#User_Client",
-            "ReportInvoiceDiscountJR"), strcBpartnerId));
+        .selectBpartner(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceDiscountJR"),
+            Utility.getContext(this, vars, "#User_Client", "ReportInvoiceDiscountJR"),
+            strcBpartnerId));
 
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {

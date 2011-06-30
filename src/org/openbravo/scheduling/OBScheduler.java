@@ -142,8 +142,8 @@ public class OBScheduler {
 
     ProcessRequestData
         .insert(getConnection(), context.getOrganization(), context.getClient(), context.getUser(),
-            context.getUser(), requestId, processId, context.getUser(), SCHEDULED, channel
-                .toString(), context.toString(), bundle.getParamsDefalated(), null, null, null,
+            context.getUser(), requestId, processId, context.getUser(), SCHEDULED,
+            channel.toString(), context.toString(), bundle.getParamsDefalated(), null, null, null,
             null);
 
     schedule(requestId, bundle, jobClass);
@@ -551,10 +551,10 @@ public class OBScheduler {
 
       if (time != null && !time.equals("")) {
         final int hour = Integer.parseInt(time.substring(time.indexOf(" ") + 1, time.indexOf(':')));
-        final int minute = Integer.parseInt(time.substring(time.indexOf(':') + 1, time
-            .lastIndexOf(':')));
-        final int second = Integer.parseInt(time
-            .substring(time.lastIndexOf(':') + 1, time.length()));
+        final int minute = Integer.parseInt(time.substring(time.indexOf(':') + 1,
+            time.lastIndexOf(':')));
+        final int second = Integer
+            .parseInt(time.substring(time.lastIndexOf(':') + 1, time.length()));
 
         cal.set(Calendar.HOUR_OF_DAY, hour);
         cal.set(Calendar.MINUTE, minute);

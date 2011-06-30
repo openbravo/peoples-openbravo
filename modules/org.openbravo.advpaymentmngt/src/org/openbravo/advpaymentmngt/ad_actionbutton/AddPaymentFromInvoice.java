@@ -207,15 +207,15 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
               "FIN_Payment", strDocTypeId, strDocTypeId, false, true);
         }
 
-        FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt, dao.getObject(
-            DocumentType.class, strDocTypeId), strPaymentDocumentNo, dao.getObject(
-            BusinessPartner.class, strReceivedFromId), dao.getObject(FIN_PaymentMethod.class,
-            strPaymentMethodId), dao.getObject(FIN_FinancialAccount.class, strFinancialAccountId),
-            strPaymentAmount, FIN_Utility.getDate(strPaymentDate), dao.getObject(
-                Organization.class, strOrgId), strReferenceNo, selectedPaymentDetails,
-            selectedPaymentDetailAmounts, strDifferenceAction.equals("writeoff"),
-            strDifferenceAction.equals("refund"), dao.getObject(Currency.class, paymentCurrencyId),
-            exchangeRate, convertedAmount);
+        FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt,
+            dao.getObject(DocumentType.class, strDocTypeId), strPaymentDocumentNo,
+            dao.getObject(BusinessPartner.class, strReceivedFromId),
+            dao.getObject(FIN_PaymentMethod.class, strPaymentMethodId),
+            dao.getObject(FIN_FinancialAccount.class, strFinancialAccountId), strPaymentAmount,
+            FIN_Utility.getDate(strPaymentDate), dao.getObject(Organization.class, strOrgId),
+            strReferenceNo, selectedPaymentDetails, selectedPaymentDetailAmounts,
+            strDifferenceAction.equals("writeoff"), strDifferenceAction.equals("refund"),
+            dao.getObject(Currency.class, paymentCurrencyId), exchangeRate, convertedAmount);
 
         if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
             || strAction.equals("PPW")) {
@@ -223,18 +223,18 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
             message = FIN_AddPayment.processPayment(vars, this,
                 (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
             String strNewPaymentMessage = Utility.parseTranslation(this, vars, vars.getLanguage(),
-                "@PaymentCreated@" + " " + payment.getDocumentNo())
-                + ".";
+                "@PaymentCreated@" + " " + payment.getDocumentNo()) + ".";
             message.setMessage(strNewPaymentMessage + " " + message.getMessage());
             if (strDifferenceAction.equals("refund")) {
               Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
               FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(this, vars, payment,
                   refundAmount.negate());
-              OBError auxMessage = FIN_AddPayment.processPayment(vars, this, (strAction
-                  .equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
+              OBError auxMessage = FIN_AddPayment.processPayment(vars, this,
+                  (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
               if (newPayment) {
-                final String strNewRefundPaymentMessage = Utility.parseTranslation(this, vars, vars
-                    .getLanguage(), "@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo())
+                final String strNewRefundPaymentMessage = Utility.parseTranslation(this, vars,
+                    vars.getLanguage(),
+                    "@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo())
                     + ".";
                 message.setMessage(strNewRefundPaymentMessage + " " + message.getMessage());
                 if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) != 0) {
@@ -289,11 +289,11 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("theme", vars.getTheme());
 
     if (isReceipt)
-      xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentIn", vars
-          .getLanguage()));
+      xmlDocument.setParameter("title",
+          Utility.messageBD(this, "APRM_AddPaymentIn", vars.getLanguage()));
     else
-      xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentOut", vars
-          .getLanguage()));
+      xmlDocument.setParameter("title",
+          Utility.messageBD(this, "APRM_AddPaymentOut", vars.getLanguage()));
     xmlDocument.setParameter("dateDisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paymentDate", DateTimeData.today(this));
     xmlDocument.setParameter("businessPartner", strBPfromInvoice);
@@ -381,9 +381,9 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
           (isReceipt ? "F903F726B41A49D3860243101CEEBA25" : "F15C13A199A748F1B0B00E985A64C036"),
-          forcedFinancialAccountTransaction ? "29010995FD39439D97A5C0CE8CE27D70" : "", Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "AddPaymentFromInvoice"), Utility
-              .getContext(this, vars, "#User_Client", "AddPaymentFromInvoice"), 0);
+          forcedFinancialAccountTransaction ? "29010995FD39439D97A5C0CE8CE27D70" : "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "AddPaymentFromInvoice"),
+          Utility.getContext(this, vars, "#User_Client", "AddPaymentFromInvoice"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "AddPaymentFromInvoice", "");
       xmlDocument.setData("reportActionDocument", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -421,11 +421,12 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
     // filtered scheduled payments list
     final List<FIN_PaymentScheduleDetail> filteredScheduledPaymentDetails = dao
-        .getFilteredScheduledPaymentDetails(dao.getObject(Organization.class, strOrgId), dao
-            .getObject(BusinessPartner.class, strBusinessPartnerId), dao.getObject(Currency.class,
-            strCurrencyId), FIN_Utility.getDate(strDueDateFrom), FIN_Utility.getDate(DateTimeData
-            .nDaysAfter(this, strDueDateTo, "1")), strDocumentType, showAlternativePM ? null : inv
-            .getPaymentMethod(), selectedScheduledPaymentDetails, isReceipt);
+        .getFilteredScheduledPaymentDetails(dao.getObject(Organization.class, strOrgId),
+            dao.getObject(BusinessPartner.class, strBusinessPartnerId),
+            dao.getObject(Currency.class, strCurrencyId), FIN_Utility.getDate(strDueDateFrom),
+            FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strDueDateTo, "1")), strDocumentType,
+            showAlternativePM ? null : inv.getPaymentMethod(), selectedScheduledPaymentDetails,
+            isReceipt);
 
     final FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
         selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null);
@@ -467,8 +468,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
         .getFinancialAccountCurrency(strFinancialAccountId);
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
 
-    String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, FIN_Utility
-        .getDate(paymentDate), OBDal.getInstance().get(Organization.class, strOrgId),
+    String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency,
+        FIN_Utility.getDate(paymentDate), OBDal.getInstance().get(Organization.class, strOrgId),
         conversionRatePrecision);
 
     JSONObject msg = new JSONObject();
@@ -498,8 +499,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
         strFinancialAccountCurrencyId);
     final Currency paymentCurrency = dao.getObject(Currency.class, strCurrencyId);
 
-    String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, FIN_Utility
-        .getDate(strPaymentDate), organization, conversionRatePrecision);
+    String exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency,
+        FIN_Utility.getDate(strPaymentDate), organization, conversionRatePrecision);
 
     JSONObject msg = new JSONObject();
     try {
@@ -522,8 +523,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
       if (conversionRate == null) {
         exchangeRate = "";
       } else {
-        exchangeRate = conversionRate.getMultipleRateBy().setScale(conversionRatePrecision,
-            RoundingMode.HALF_UP).toPlainString();
+        exchangeRate = conversionRate.getMultipleRateBy()
+            .setScale(conversionRatePrecision, RoundingMode.HALF_UP).toPlainString();
       }
     }
     return exchangeRate;

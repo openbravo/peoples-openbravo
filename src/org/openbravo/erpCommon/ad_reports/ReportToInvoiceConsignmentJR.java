@@ -94,8 +94,8 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportToInvoiceConsignmentJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportToInvoiceConsignmentJR.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
           "ReportToInvoiceConsignmentJR.html", strReplaceWith);
@@ -167,10 +167,10 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
     OBError myMessage = null;
     myMessage = new OBError();
     try {
-      data = ReportToInvoiceConsignmentData.select(this, strCurrencyId, Utility.getContext(this,
-          vars, "#User_Client", "ReportToInvoiceConsignmentJR"), Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "ReportToInvoiceConsignmentJR"), strDateFrom, DateTimeData
-          .nDaysAfter(this, strDateTo, "1"), strWarehouse);
+      data = ReportToInvoiceConsignmentData.select(this, strCurrencyId,
+          Utility.getContext(this, vars, "#User_Client", "ReportToInvoiceConsignmentJR"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportToInvoiceConsignmentJR"),
+          strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strWarehouse);
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }
@@ -178,8 +178,9 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Launch the report as usual, calling the JRXML file
       if (data == null || data.length == 0) {
         data = ReportToInvoiceConsignmentData.set();

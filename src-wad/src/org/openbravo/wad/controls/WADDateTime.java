@@ -175,10 +175,9 @@ public class WADDateTime extends WADControl {
 
   public String toJava() {
     StringBuffer text = new StringBuffer();
-    text.append("xmlDocument.setParameter(\"").append(getData("ColumnName")).append(
-        "_Format\", vars.getSessionValue(\"#AD_SqlDateTimeFormat\"));");
-    text
-        .append("xmlDocument.setParameter(\"")
+    text.append("xmlDocument.setParameter(\"").append(getData("ColumnName"))
+        .append("_Format\", vars.getSessionValue(\"#AD_SqlDateTimeFormat\"));");
+    text.append("xmlDocument.setParameter(\"")
         .append(getData("ColumnName"))
         .append(
             "_Maxlength\", Integer.toString(vars.getSessionValue(\"#AD_SqlDateTimeFormat\").length()));");

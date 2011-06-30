@@ -83,8 +83,9 @@ public class PaymentTest_04 extends BaseTest {
       invoice = OBDal.getInstance().get(Invoice.class, invoice.getId());
       BigDecimal refundAmt = new BigDecimal("20.0");
       BigDecimal paymentAmount = invoice.getGrandTotalAmount();
-      payment = TestUtility.addPaymentFromInvoice(invoice, OBDal.getInstance().get(
-          FIN_FinancialAccount.class, financialAccountId), paymentAmount, false);
+      payment = TestUtility.addPaymentFromInvoice(invoice,
+          OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId), paymentAmount,
+          false);
 
       // PROCESS THE PAYMENT
       TestUtility.processPayment(payment, "P");
@@ -110,25 +111,26 @@ public class PaymentTest_04 extends BaseTest {
         assertTrue("Payment Schedule Outstanding Amount == 0", invoice.getFINPaymentScheduleList()
             .get(0).getOutstandingAmount().compareTo(psd.getAmount()) != 0);
 
-        assertTrue("Payment Schedule Received Amount == Total Amount", invoice
-            .getGrandTotalAmount().compareTo(
+        assertTrue(
+            "Payment Schedule Received Amount == Total Amount",
+            invoice.getGrandTotalAmount().compareTo(
                 invoice.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
 
         assertTrue("Payment Schedule Detail Amount == Total Amount", invoice.getGrandTotalAmount()
             .compareTo(psd.getAmount()) == 0);
 
-        assertTrue("Payment Schedule Detail Write-off Amount == 0", BigDecimal.ZERO.compareTo(psd
-            .getWriteoffAmount()) == 0);
+        assertTrue("Payment Schedule Detail Write-off Amount == 0",
+            BigDecimal.ZERO.compareTo(psd.getWriteoffAmount()) == 0);
 
-        assertTrue("Payment Amount == Total Amount", invoice.getGrandTotalAmount().compareTo(
-            payment.getAmount()) == 0);
+        assertTrue("Payment Amount == Total Amount",
+            invoice.getGrandTotalAmount().compareTo(payment.getAmount()) == 0);
         assertTrue("Status == Payment Received", "RPR".equals(payment.getStatus()));
 
-        assertTrue("Payment Amount == Refund Amount", refundAmt.negate().compareTo(
-            refundPayment.getAmount()) == 0);
+        assertTrue("Payment Amount == Refund Amount",
+            refundAmt.negate().compareTo(refundPayment.getAmount()) == 0);
 
-        assertTrue("Payment Used Credit == Used Credit", refundAmt.compareTo(refundPayment
-            .getUsedCredit()) == 0);
+        assertTrue("Payment Used Credit == Used Credit",
+            refundAmt.compareTo(refundPayment.getUsedCredit()) == 0);
 
       } finally {
         OBContext.restorePreviousMode();

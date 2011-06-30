@@ -63,8 +63,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           "GeneralAccountingReports|asDateTo", "");
       String strAsDateToRef = vars.getGlobalVariable("inpAsDateToRef",
           "GeneralAccountingReports|asDateToRef", "");
-      String strPageNo = vars.getGlobalVariable("inpPageNo",
-          "GeneralAccountingReports|PageNo", "1");
+      String strPageNo = vars
+          .getGlobalVariable("inpPageNo", "GeneralAccountingReports|PageNo", "1");
       String strElementValue = vars.getGlobalVariable("inpcElementvalueId",
           "GeneralAccountingReports|C_ElementValue_ID", "");
       String strConImporte = vars.getGlobalVariable("inpConImporte",
@@ -114,8 +114,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strAgno, String strAgnoRef, String strDateFrom,
       String strDateTo, String strDateFromRef, String strDateToRef, String strAsDateTo,
       String strAsDateToRef, String strElementValue, String strConImporte, String strOrg,
-      String strLevel, String strConCodigo, String strcAcctSchemaId, String strPageNo) throws IOException,
-      ServletException {
+      String strLevel, String strConCodigo, String strcAcctSchemaId, String strPageNo)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pdf");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -149,8 +149,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
 
       AccountTreeData[][] elements = new AccountTreeData[strGroups.length][];
 
-      WindowTreeData[] dataTree = WindowTreeData.selectTreeID(this, Utility.stringList(vars
-          .getClient()), "EV");
+      WindowTreeData[] dataTree = WindowTreeData.selectTreeID(this,
+          Utility.stringList(vars.getClient()), "EV");
       String TreeID = "";
       if (dataTree != null && dataTree.length != 0)
         TreeID = dataTree[0].id;
@@ -206,25 +206,26 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         }
         // For each account with movements in the year, debit and credit total amounts are
         // calculated according to fact_acct movements.
-        AccountTreeData[] accounts = AccountTreeData.selectAcct(this, Utility.getContext(this,
-            vars, "#AccessibleOrgTree", "GeneralAccountingReports"), Utility.getContext(this, vars,
-            "#User_Client", "GeneralAccountingReports"), strDateFrom, DateTimeData.nDaysAfter(this,
-            strDateTo, "1"), strcAcctSchemaId, Tree.getMembers(this, strTreeOrg, strOrg), strYear
-            + strYearsToClose, strDateFromRef, DateTimeData.nDaysAfter(this, strDateToRef, "1"),
-            strYearRef + strYearsToCloseRef);
+        AccountTreeData[] accounts = AccountTreeData.selectAcct(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
+            Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"),
+            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcAcctSchemaId,
+            Tree.getMembers(this, strTreeOrg, strOrg), strYear + strYearsToClose, strDateFromRef,
+            DateTimeData.nDaysAfter(this, strDateToRef, "1"), strYearRef + strYearsToCloseRef);
         {
           // Income summary amount is calculated and included in the balance sheet data
           String strIncomeSummary = GeneralAccountingReportsData.incomesummary(this,
               strcAcctSchemaId);
           if (log4j.isDebugEnabled())
             log4j.debug("*********** strIncomeSummary: " + strIncomeSummary);
-          String strISyear = processIncomeSummary(strDateFrom, DateTimeData.nDaysAfter(this,
-              strDateTo, "1"), strYear + strYearsToClose, strTreeOrg, strOrg, strcAcctSchemaId);
+          String strISyear = processIncomeSummary(strDateFrom,
+              DateTimeData.nDaysAfter(this, strDateTo, "1"), strYear + strYearsToClose, strTreeOrg,
+              strOrg, strcAcctSchemaId);
           if (log4j.isDebugEnabled())
             log4j.debug("*********** strISyear: " + strISyear);
-          String strISyearRef = processIncomeSummary(strDateFromRef, DateTimeData.nDaysAfter(this,
-              strDateToRef, "1"), strYearRef + strYearsToCloseRef, strTreeOrg, strOrg,
-              strcAcctSchemaId);
+          String strISyearRef = processIncomeSummary(strDateFromRef,
+              DateTimeData.nDaysAfter(this, strDateToRef, "1"), strYearRef + strYearsToCloseRef,
+              strTreeOrg, strOrg, strcAcctSchemaId);
           if (log4j.isDebugEnabled())
             log4j.debug("*********** strISyearRef: " + strISyearRef);
           accounts = appendRecords(accounts, strIncomeSummary, strISyear, strISyearRef);
@@ -248,8 +249,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       xmlDocument.setParameter("org", OrganizationData.selectOrgName(this, strOrg));
       xmlDocument.setParameter("column1", startEndYear[0].name);
       xmlDocument.setParameter("columnRef1", startEndYearRef[0].name);
-      xmlDocument.setParameter("companyName", GeneralAccountingReportsData.companyName(this, vars
-          .getClient()));
+      xmlDocument.setParameter("companyName",
+          GeneralAccountingReportsData.companyName(this, vars.getClient()));
       xmlDocument.setParameter("date", DateTimeData.today(this));
       if (strDateFrom.equals(""))
         strDateFrom = startEndYear[0].begining;
@@ -264,10 +265,11 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       xmlDocument.setParameter("agnoInitial", startEndYear[0].name);
       xmlDocument.setParameter("agnoRef", startEndYearRef[0].name);
 
-      xmlDocument.setParameter("principalTitle",
+      xmlDocument.setParameter(
+          "principalTitle",
           strCalculateOpening.equals("Y") ? GeneralAccountingReportsData.rptTitle(this,
-              strElementValue)
-              + " (Provisional)" : GeneralAccountingReportsData.rptTitle(this, strElementValue));
+              strElementValue) + " (Provisional)" : GeneralAccountingReportsData.rptTitle(this,
+              strElementValue));
 
       xmlDocument.setParameter("pageNo", strPageNo);
 
@@ -282,8 +284,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       renderFO(strResult, response);
 
     } catch (ArrayIndexOutOfBoundsException e) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "ReportWithoutNodes", vars
-          .getLanguage()));
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "ReportWithoutNodes", vars.getLanguage()));
 
     }
   }
@@ -385,8 +387,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "GeneralAccountingReports.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "GeneralAccountingReports.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "GeneralAccountingReports.html",
           strReplaceWith);
@@ -434,9 +436,10 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     xmlDocument.setParameter("level", strLevel);
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
     xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
-        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "GeneralAccountingReports"), Utility.getContext(this, vars, "#User_Client",
-            "GeneralAccountingReports"), strcAcctSchemaId));
+        .selectC_ACCTSCHEMA_ID(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
+            Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"),
+            strcAcctSchemaId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
           "C_ElementValue level", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
@@ -448,12 +451,18 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    xmlDocument.setParameter("orgs", Utility.arrayDobleEntrada("arrOrgs",
-        GeneralAccountingReportsData.selectOrgsDouble(this, vars.getClient())));
-    xmlDocument.setParameter("accountingReports", Utility.arrayDobleEntrada("arrAccountingReports",
-        GeneralAccountingReportsData.selectRptDouble(this)));
-    xmlDocument.setParameter("years", Utility.arrayDobleEntrada("arrYears",
-        GeneralAccountingReportsData.selectYearsDouble(this, vars.getUserClient())));
+    xmlDocument.setParameter(
+        "orgs",
+        Utility.arrayDobleEntrada("arrOrgs",
+            GeneralAccountingReportsData.selectOrgsDouble(this, vars.getClient())));
+    xmlDocument.setParameter(
+        "accountingReports",
+        Utility.arrayDobleEntrada("arrAccountingReports",
+            GeneralAccountingReportsData.selectRptDouble(this)));
+    xmlDocument.setParameter(
+        "years",
+        Utility.arrayDobleEntrada("arrYears",
+            GeneralAccountingReportsData.selectYearsDouble(this, vars.getUserClient())));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

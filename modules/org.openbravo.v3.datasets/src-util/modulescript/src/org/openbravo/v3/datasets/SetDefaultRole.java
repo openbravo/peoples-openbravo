@@ -24,10 +24,10 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
 
 /**
- * Set the default role to "Finance" for the "Openbravo" user, if the
- * role exists. This is useful for those packaging deliverables
- * targeted for evaluation, such as the Appliances or the Ubuntu package.
- *
+ * Set the default role to "Finance" for the "Openbravo" user, if the role exists. This is useful
+ * for those packaging deliverables targeted for evaluation, such as the Appliances or the Ubuntu
+ * package.
+ * 
  * @author jpabloae
  */
 public class SetDefaultRole extends ModuleScript {

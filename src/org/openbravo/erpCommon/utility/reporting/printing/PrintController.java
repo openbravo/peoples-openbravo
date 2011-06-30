@@ -265,8 +265,8 @@ public class PrintController extends HttpSecureAppServlet {
                 "default", multiReports, OutputTypeEnum.DEFAULT);
             reports.put(documentId, report);
 
-            final String senderAddress = EmailData.getSenderAddress(this, vars.getClient(), report
-                .getOrgId());
+            final String senderAddress = EmailData.getSenderAddress(this, vars.getClient(),
+                report.getOrgId());
             boolean moreThanOnesalesRep = checks.get("moreThanOnesalesRep").booleanValue();
 
             if (request.getServletPath().toLowerCase().indexOf("print.html") == -1) {
@@ -274,8 +274,7 @@ public class PrintController extends HttpSecureAppServlet {
                 final OBError on = new OBError();
                 on.setMessage(Utility.messageBD(this, "No sender defined: Please go to client "
                     + "configuration to complete the email configuration", vars.getLanguage()));
-                on.setTitle(Utility
-                    .messageBD(this, "Email Configuration Error", vars.getLanguage()));
+                on.setTitle(Utility.messageBD(this, "Email Configuration Error", vars.getLanguage()));
                 on.setType("Error");
                 final String tabId = vars.getSessionValue("inpTabId");
                 vars.getStringParameter("tab");
@@ -378,10 +377,11 @@ public class PrintController extends HttpSecureAppServlet {
               if (log4j.isDebugEnabled())
                 log4j.debug("Document is not attached.");
             }
-            final String senderAddress = EmailData.getSenderAddress(this, vars.getClient(), report
-                .getOrgId());
-            sendDocumentEmail(report, vars, (Vector<Object>) request.getSession().getAttribute(
-                "files"), documentData, senderAddress, checks);
+            final String senderAddress = EmailData.getSenderAddress(this, vars.getClient(),
+                report.getOrgId());
+            sendDocumentEmail(report, vars,
+                (Vector<Object>) request.getSession().getAttribute("files"), documentData,
+                senderAddress, checks);
             nrOfEmailsSend++;
           }
         }
@@ -868,8 +868,8 @@ public class PrintController extends HttpSecureAppServlet {
         log4j.debug("Crm configuration, template body: " + emailDefinition.getBody());
     } catch (final OBException exception) {
       final OBError on = new OBError();
-      on.setMessage(Utility.messageBD(this, "There is no email configuration configured", vars
-          .getLanguage()));
+      on.setMessage(Utility.messageBD(this, "There is no email configuration configured",
+          vars.getLanguage()));
       on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
       on.setType("info");
       final String tabId = vars.getSessionValue("inpTabId");
@@ -910,8 +910,8 @@ public class PrintController extends HttpSecureAppServlet {
         } else if (documentData.contactEmail == null || documentData.contactEmail.equals("")) {
           final OBError on = new OBError();
           on.setMessage(Utility.messageBD(this,
-              "There is at least one document with no email set (" + customer + ")", vars
-                  .getLanguage()));
+              "There is at least one document with no email set (" + customer + ")",
+              vars.getLanguage()));
           on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
           on.setType("info");
           final String tabId = vars.getSessionValue("inpTabId");
@@ -944,8 +944,8 @@ public class PrintController extends HttpSecureAppServlet {
         } else if (documentData.salesrepEmail == null || documentData.salesrepEmail.equals("")) {
           final OBError on = new OBError();
           on.setMessage(Utility.messageBD(this,
-              "There is at least one document with no sender Email set (" + salesRep + ")", vars
-                  .getLanguage()));
+              "There is at least one document with no sender Email set (" + salesRep + ")",
+              vars.getLanguage()));
           on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
           on.setType("info");
           final String tabId = vars.getSessionValue("inpTabId");
@@ -987,8 +987,8 @@ public class PrintController extends HttpSecureAppServlet {
       final OBError on = new OBError();
       on.setMessage(Utility.messageBD(this,
           "Some Documents were not completed, the email couldnt be send. Please "
-              + "confirm first all the seleted documents to complete the process", vars
-              .getLanguage()));
+              + "confirm first all the seleted documents to complete the process",
+          vars.getLanguage()));
       on.setTitle(Utility.messageBD(this, "info", vars.getLanguage()));
       on.setType("info");
       final String tabId = vars.getSessionValue("inpTabId");

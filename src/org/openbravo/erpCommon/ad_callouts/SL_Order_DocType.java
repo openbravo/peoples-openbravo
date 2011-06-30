@@ -184,15 +184,15 @@ public class SL_Order_DocType extends HttpSecureAppServlet {
         InvoiceRule = "";
       } else {
         resultado.append(", new Array(\"inpinvoicerule\", new Array(");
-        resultado.append("new Array(\"D\", \"").append(
-            FormatUtilities.replaceJS(ListData.selectName(this, "150", "D"))).append("\", ")
-            .append(InvoiceRule.equals("D") ? "true" : "false").append("),");
-        resultado.append("new Array(\"I\", \"").append(
-            FormatUtilities.replaceJS(ListData.selectName(this, "150", "I"))).append("\", ")
-            .append(InvoiceRule.equals("I") ? "true" : "false").append("),");
-        resultado.append("new Array(\"O\", \"").append(
-            FormatUtilities.replaceJS(ListData.selectName(this, "150", "O"))).append("\", ")
-            .append(InvoiceRule.equals("O") ? "true" : "false").append(")))\n");
+        resultado.append("new Array(\"D\", \"")
+            .append(FormatUtilities.replaceJS(ListData.selectName(this, "150", "D")))
+            .append("\", ").append(InvoiceRule.equals("D") ? "true" : "false").append("),");
+        resultado.append("new Array(\"I\", \"")
+            .append(FormatUtilities.replaceJS(ListData.selectName(this, "150", "I")))
+            .append("\", ").append(InvoiceRule.equals("I") ? "true" : "false").append("),");
+        resultado.append("new Array(\"O\", \"")
+            .append(FormatUtilities.replaceJS(ListData.selectName(this, "150", "O")))
+            .append("\", ").append(InvoiceRule.equals("O") ? "true" : "false").append(")))\n");
         InvoiceRule = "";
         // End of add
       }

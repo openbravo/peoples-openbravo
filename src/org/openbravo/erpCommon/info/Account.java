@@ -119,9 +119,9 @@ public class Account extends HttpSecureAppServlet {
       vars.removeSessionValue("Account.combination");
       vars.setSessionValue("Account.alias", strKeyValue + "%");
       String strOrg = vars.getStringParameter("inpAD_Org_ID");
-      AccountData[] data = AccountData.selectKey(this, strAcctSchema, Utility.getContext(this,
-          vars, "#User_Client", "Account"), Utility.getSelectorOrgs(this, vars, strOrg),
-          strKeyValue + "%");
+      AccountData[] data = AccountData.selectKey(this, strAcctSchema,
+          Utility.getContext(this, vars, "#User_Client", "Account"),
+          Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue + "%");
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
       } else
@@ -202,8 +202,8 @@ public class Account extends HttpSecureAppServlet {
       data = AccountData.set(strAlias, strCombination);
     } else {
       data = AccountData.select(this, "1", "", "", "", "", "", "", "", "", "", strValidCombination,
-          Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars,
-              "#User_Org", "Account"), "1 ASC", "", "");
+          Utility.getContext(this, vars, "#User_Client", "Account"),
+          Utility.getContext(this, vars, "#User_Org", "Account"), "1 ASC", "", "");
     }
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -222,8 +222,8 @@ public class Account extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "C_Project_ID",
-          "C_Project", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"), Utility
-              .getContext(this, vars, "#User_Client", "Account"), 0);
+          "C_Project", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "Account"),
+          Utility.getContext(this, vars, "#User_Client", "Account"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "Account", "");
       xmlDocument.setData("reportC_Project_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -251,9 +251,12 @@ public class Account extends HttpSecureAppServlet {
               "#AccessibleOrgTree", "Account"), Utility.getContext(this, vars, "#User_Client",
               "Account"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "Account", "");
-      xmlDocument.setData("reportAccount_ID", "liststructure", AccountData.selectElementValues(
-          this, vars.getLanguage(), strAcctSchema, Utility.getContext(this, vars, "#User_Client",
-              "Account"), Utility.getContext(this, vars, "#AccessibleOrgTree", "Account")));
+      xmlDocument.setData(
+          "reportAccount_ID",
+          "liststructure",
+          AccountData.selectElementValues(this, vars.getLanguage(), strAcctSchema,
+              Utility.getContext(this, vars, "#User_Client", "Account"),
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "Account")));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -367,10 +370,12 @@ public class Account extends HttpSecureAppServlet {
           } else {
             pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
           }
-          strNumRows = AccountData.countRows(this, rownum, strAcctSchema, strAlias, strCombination,
-              strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "",
-              Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this,
-                  vars, "#User_Org", "Account"), pgLimit, oraLimit1, oraLimit2);
+          strNumRows = AccountData
+              .countRows(this, rownum, strAcctSchema, strAlias, strCombination, strOrganization,
+                  strAccount, strProduct, strBPartner, strProject, strCampaign, "",
+                  Utility.getContext(this, vars, "#User_Client", "Account"),
+                  Utility.getContext(this, vars, "#User_Org", "Account"), pgLimit, oraLimit1,
+                  oraLimit2);
           vars.setSessionValue("AccountInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("AccountInfo.numrows");
@@ -381,14 +386,14 @@ public class Account extends HttpSecureAppServlet {
           String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
           data = AccountData.select(this, "ROWNUM", strAcctSchema, strAlias, strCombination,
               strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "",
-              Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this,
-                  vars, "#User_Org", "Account"), strOrderBy, oraLimit, "");
+              Utility.getContext(this, vars, "#User_Client", "Account"),
+              Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, oraLimit, "");
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
           data = AccountData.select(this, "1", strAcctSchema, strAlias, strCombination,
               strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "",
-              Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this,
-                  vars, "#User_Org", "Account"), strOrderBy, "", pgLimit);
+              Utility.getContext(this, vars, "#User_Client", "Account"),
+              Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, "", pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
@@ -431,8 +436,8 @@ public class Account extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
-        "\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+        .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -443,11 +448,11 @@ public class Account extends HttpSecureAppServlet {
           if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",
-                "").replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll(
-                "<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;").replaceAll("<br>",
-                    "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
+                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
+                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
+                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");

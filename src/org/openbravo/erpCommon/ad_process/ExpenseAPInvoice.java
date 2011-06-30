@@ -119,10 +119,10 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
     try {
       conn = this.getTransactionConnection();
 
-      ExpenseAPInvoiceData[] data = ExpenseAPInvoiceData.select(this, Utility.getContext(this,
-          vars, "#User_Client", "ExpenseAPInvoice"), Utility.getContext(this, vars, "#User_Org",
-          "ExpenseAPInvoice"), strDatereportFrom, DateTimeData.nDaysAfter(this, strDatereportTo,
-          "1"), strcBpartnerId);
+      ExpenseAPInvoiceData[] data = ExpenseAPInvoiceData.select(this,
+          Utility.getContext(this, vars, "#User_Client", "ExpenseAPInvoice"),
+          Utility.getContext(this, vars, "#User_Org", "ExpenseAPInvoice"), strDatereportFrom,
+          DateTimeData.nDaysAfter(this, strDatereportTo, "1"), strcBpartnerId);
       for (int i = 0; i < data.length; i++) {
         String docTargetType = ExpenseAPInvoiceData.cDoctypeTarget(this, data[i].adClientId,
             data[i].adOrgId);
@@ -205,10 +205,10 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
             return myMessage;
           }
 
-          textoMensaje.append(
-              Utility.messageBD(this, "PurchaseInvoiceDocumentno", vars.getLanguage())).append(" ")
-              .append(strDocumentno).append(" ").append(
-                  Utility.messageBD(this, "beenCreated", vars.getLanguage())).append("<br>");
+          textoMensaje
+              .append(Utility.messageBD(this, "PurchaseInvoiceDocumentno", vars.getLanguage()))
+              .append(" ").append(strDocumentno).append(" ")
+              .append(Utility.messageBD(this, "beenCreated", vars.getLanguage())).append("<br>");
           total++;
         } else
           strcInvoiceId = strcInvoiceIdOld;
@@ -224,8 +224,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         String strmProductUomId = ExpenseAPInvoiceData.mProductUomId(this, data[i].mProductId);
 
         // Gets the tax for the purchase invoice line
-        strcTaxID = Tax.get(this, data[i].mProductId, strDateInvoiced, data[i].adOrgId, vars
-            .getWarehouse(), strcBpartnerLocationId, bpartnerLocationShip, data[i].cProjectId,
+        strcTaxID = Tax.get(this, data[i].mProductId, strDateInvoiced, data[i].adOrgId,
+            vars.getWarehouse(), strcBpartnerLocationId, bpartnerLocationShip, data[i].cProjectId,
             false);
         if (strcTaxID.equals(""))
           throw new Exception("TaxNotFound");
@@ -315,9 +315,10 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
             ExpenseAPInvoiceData.insertLine(conn, this, data[i].adClientId, data[i].adOrgId,
                 strcInvoiceId, "", String.valueOf(line), "", data[i].mProductId, "",
                 data[i].description, "", strmProductUomId, String.valueOf(qty), data[i].cUomId,
-                strPricestd, strPricelist, strcTaxID, (new BigDecimal(strPricestd).multiply(qty))
-                    .toPlainString(), "", strPricestd, strPricelimit, "", "", "", "Y", "0", "", "",
-                strcInvoiceLineId, "N", vars.getUser(), vars.getUser());
+                strPricestd, strPricelist, strcTaxID,
+                (new BigDecimal(strPricestd).multiply(qty)).toPlainString(), "", strPricestd,
+                strPricelimit, "", "", "", "Y", "0", "", "", strcInvoiceLineId, "N",
+                vars.getUser(), vars.getUser());
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
@@ -350,10 +351,10 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
             // Catch database error message
             try {
               ExpenseAPInvoiceData.insertInvoicelineAcctdimension(conn, this,
-                  strcInvoicelineAcctdimension, data[i].adClientId, data[i].adOrgId, "Y", vars
-                      .getUser(), vars.getUser(), strcInvoiceLineId, (qty.multiply(new BigDecimal(
-                      strPricestd))).toPlainString(), data[i].cProjectId, data[i].cCampaignId, "",
-                  "");
+                  strcInvoicelineAcctdimension, data[i].adClientId, data[i].adOrgId, "Y",
+                  vars.getUser(), vars.getUser(), strcInvoiceLineId,
+                  (qty.multiply(new BigDecimal(strPricestd))).toPlainString(), data[i].cProjectId,
+                  data[i].cCampaignId, "", "");
             } catch (ServletException ex) {
               myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
               releaseRollbackConnection(conn);

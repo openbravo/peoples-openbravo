@@ -155,8 +155,8 @@ public class InitialOrgSetup {
       client = org.getClient();
       if (strcLocationId != null && !strcLocationId.equals(""))
         try {
-          InitialSetupUtility.updateOrgLocation(org, OBDal.getInstance().get(Location.class,
-              strcLocationId));
+          InitialSetupUtility.updateOrgLocation(org,
+              OBDal.getInstance().get(Location.class, strcLocationId));
         } catch (final Exception err) {
           return logErrorAndRollback(
               "@CreateOrgFailed@",
@@ -259,9 +259,9 @@ public class InitialOrgSetup {
         try {
           log4j.debug("createReferenceData() - There exists accounting modules to process");
           obeResult = insertAccountingModule(strSourcePath, strModules, partner, product, project,
-              campaign, salesRegion, InitialSetupUtility.getTranslatedColumnName(language,
-                  "Account_ID"), InitialSetupUtility.getTranslatedColumnName(language,
-                  "C_Calendar_ID"), strCurrency);
+              campaign, salesRegion,
+              InitialSetupUtility.getTranslatedColumnName(language, "Account_ID"),
+              InitialSetupUtility.getTranslatedColumnName(language, "C_Calendar_ID"), strCurrency);
           if (!obeResult.getType().equals(OKTYPE))
             return obeResult;
           log4j.debug("createReferenceData() - Accounting module processed. ");
@@ -499,16 +499,17 @@ public class InitialOrgSetup {
     try {
       istrFileCoA = fileCoAFilePath.getInputStream();
     } catch (IOException e) {
-      return logErrorAndRollback("@CreateAccountingFailed@",
+      return logErrorAndRollback(
+          "@CreateAccountingFailed@",
           "createAccounting() - Exception occured while reading the file "
               + fileCoAFilePath.getName(), e);
     }
     try {
       obResult = coaUtility.createAccounting(vars, istrFileCoA, partner, product, project,
-          campaign, salesRegion, InitialSetupUtility
-              .getTranslatedColumnName(language, "Account_ID"), "US", "A", InitialSetupUtility
-              .getTranslatedColumnName(language, "C_Calendar_ID"), InitialSetupUtility
-              .getCurrency(strCurrency));
+          campaign, salesRegion,
+          InitialSetupUtility.getTranslatedColumnName(language, "Account_ID"), "US", "A",
+          InitialSetupUtility.getTranslatedColumnName(language, "C_Calendar_ID"),
+          InitialSetupUtility.getCurrency(strCurrency));
       if (!obResult.getType().equals(OKTYPE))
         return obResult;
     } catch (final Exception err) {
@@ -529,8 +530,8 @@ public class InitialOrgSetup {
     if (client.getClientInformationList().get(0).getYourCompanyDocumentImage() != null)
       try {
         InitialSetupUtility.setOrgImage(client, org, client.getClientInformationList().get(0)
-            .getYourCompanyDocumentImage().getBindaryData(), client.getClientInformationList().get(
-            0).getYourCompanyDocumentImage().getName());
+            .getYourCompanyDocumentImage().getBindaryData(),
+            client.getClientInformationList().get(0).getYourCompanyDocumentImage().getName());
       } catch (final Exception err) {
         obResult.setMessage(err.getMessage());
         return obResult;
@@ -579,8 +580,8 @@ public class InitialOrgSetup {
     log4j.debug("insertUser() - Organization User Name: " + strOrgUser);
 
     try {
-      user = InitialSetupUtility.insertUser(client, null, strOrgUser, FormatUtilities
-          .sha1Base64(strPassword), null, language);
+      user = InitialSetupUtility.insertUser(client, null, strOrgUser,
+          FormatUtilities.sha1Base64(strPassword), null, language);
     } catch (final Exception err) {
       return logErrorAndRollback("@CreateOrgFailed@",
           "insertUser() - ERROR - Not able to insert the user " + strOrgUser, err);
@@ -670,8 +671,8 @@ public class InitialOrgSetup {
     }
 
     try {
-      InitialSetupUtility.updateOrgTree(orgTree, orgNode, OBDal.getInstance().get(
-          Organization.class, strParentOrg));
+      InitialSetupUtility.updateOrgTree(orgTree, orgNode,
+          OBDal.getInstance().get(Organization.class, strParentOrg));
     } catch (final Exception err) {
       return logErrorAndRollback(
           "@CreateOrgFailed@",
@@ -688,8 +689,8 @@ public class InitialOrgSetup {
   }
 
   public String getLog() {
-    return strHeaderLog.append(NEW_LINE).append(STRSEPARATOR).append(NEW_LINE + NEW_LINE).append(
-        strLog).toString();
+    return strHeaderLog.append(NEW_LINE).append(STRSEPARATOR).append(NEW_LINE + NEW_LINE)
+        .append(strLog).toString();
   }
 
   /**

@@ -154,9 +154,10 @@ public class ApplyModule {
           // Import data from the xml file
           final String strXml = Utility.fileToString(datasetFile.getPath());
           final DataImportService importService = DataImportService.getInstance();
-          final ImportResult result = importService.importDataFromXML(OBDal.getInstance().get(
-              Client.class, "0"), OBDal.getInstance().get(Organization.class, "0"), strXml, OBDal
-              .getInstance().get(Module.class, amd.adModuleId));
+          final ImportResult result = importService.importDataFromXML(
+              OBDal.getInstance().get(Client.class, "0"),
+              OBDal.getInstance().get(Organization.class, "0"), strXml,
+              OBDal.getInstance().get(Module.class, amd.adModuleId));
           if (result.hasErrorOccured()) {
             log4j.error(result.getErrorMessages());
             if (result.getException() != null) {

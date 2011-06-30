@@ -89,11 +89,11 @@ public class Heartbeat extends HttpSecureAppServlet {
 
     String msgCode = vars.getCommand().equals("DEFAULT_MODULE") ? "HB_WELCOME_MODULE"
         : "HB_WELCOME";
-    xmlDocument.setParameter("welcome", Replace.replace(Utility.messageBD(this, msgCode, vars
-        .getLanguage()), "\\n", "<br/>"));
+    xmlDocument.setParameter("welcome",
+        Replace.replace(Utility.messageBD(this, msgCode, vars.getLanguage()), "\\n", "<br/>"));
 
-    xmlDocument.setParameter("recordId", vars.getStringParameter("inpcRecordId",
-        IsIDFilter.instance));
+    xmlDocument.setParameter("recordId",
+        vars.getStringParameter("inpcRecordId", IsIDFilter.instance));
     xmlDocument.setParameter("version", vars.getStringParameter("version"));
 
     String jsCommand = "var cmd='";

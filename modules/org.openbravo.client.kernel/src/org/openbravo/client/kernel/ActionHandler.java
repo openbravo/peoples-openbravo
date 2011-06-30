@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.kernel;
 
-
 /**
  * An ActionHandler executes an action for the client. Note an ActionHandler should be stateless: it
  * can be used by multiple threads at the same time.

@@ -85,18 +85,18 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
 
     ReportWorkRequirementDailyData[] data = null;
 
-    data = ReportWorkRequirementDailyData.select(this, vars.getLanguage(), Utility.getContext(this,
-        vars, "#User_Client", "ReportWorkRequirementDaily"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportWorkRequirementDaily"), strStartDateFrom, strStartDateTo,
-        strmaProcessPlan);
+    data = ReportWorkRequirementDailyData.select(this, vars.getLanguage(),
+        Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDaily"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDaily"),
+        strStartDateFrom, strStartDateTo, strmaProcessPlan);
 
     String strLanguage = vars.getLanguage();
     String strBaseDesign = getBaseDesignPath(strLanguage);
     JasperReport jasperReportProducts;
     try {
       jasperReportProducts = Utility.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/erpCommon/ad_reports/SubreportWorkRequirementDaily.jrxml", vars
-          .getLanguage(), strBaseDesign);
+          + "/org/openbravo/erpCommon/ad_reports/SubreportWorkRequirementDaily.jrxml",
+          vars.getLanguage(), strBaseDesign);
     } catch (JRException e) {
       log4j.error("Could not load/compile jrxml-file", e);
       throw new ServletException(e);
@@ -105,8 +105,8 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
     JasperReport jasperReportProducts2;
     try {
       jasperReportProducts2 = Utility.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/erpCommon/ad_reports/SubreportWorkRequirementDaily2.jrxml", vars
-          .getLanguage(), strBaseDesign);
+          + "/org/openbravo/erpCommon/ad_reports/SubreportWorkRequirementDaily2.jrxml",
+          vars.getLanguage(), strBaseDesign);
     } catch (JRException e) {
       log4j.error("Could not load/compile jrxml-file", e);
       throw new ServletException(e);
@@ -146,8 +146,8 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportWorkRequirementDaily.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportWorkRequirementDaily.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
           "ReportWorkRequirementDaily.html", strReplaceWith);
@@ -174,9 +174,12 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTo", strStartDateTo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure", ProcessPlanComboData.select(this,
-        Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDaily"), Utility
-            .getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDaily")));
+    xmlDocument.setData(
+        "reportMA_PROCESSPLAN",
+        "liststructure",
+        ProcessPlanComboData.select(this,
+            Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDaily"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDaily")));
 
     out.println(xmlDocument.print());
     out.close();

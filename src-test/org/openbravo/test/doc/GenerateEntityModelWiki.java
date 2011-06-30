@@ -109,9 +109,11 @@ public class GenerateEntityModelWiki extends BaseTest {
       content.put("SOURCE", getJavaSourceCode(entity.getClassName()));
       content.put("BACK_TO_ENTITY_MODEL", "ERP/2.50/Developers_Guide/Reference/Entity_Model#"
           + entity.getName());
-      content.put("TABLE_LINK", getLink("ERP/2.50/Developers_Guide/Database_Model/"
-          + entity.getPackageName() + "/" + entity.getTableName(), "To the database table ("
-          + entity.getTableName() + ") of this entity."));
+      content.put(
+          "TABLE_LINK",
+          getLink("ERP/2.50/Developers_Guide/Database_Model/" + entity.getPackageName() + "/"
+              + entity.getTableName(), "To the database table (" + entity.getTableName()
+              + ") of this entity."));
 
       final String result = readApplyTemplate("entity_wiki.txt", content);
       writeToWiki(ENTITY_MODEL_PATH + "/" + entity.getName(), result);
@@ -221,8 +223,8 @@ public class GenerateEntityModelWiki extends BaseTest {
       sb.append("<span id=\""
           + entity.getName()
           + "\"></span>"
-          + getLink("ERP/2.50/Developers_Guide/Reference/Entity_Model/" + entity.getName(), entity
-              .getName()));
+          + getLink("ERP/2.50/Developers_Guide/Reference/Entity_Model/" + entity.getName(),
+              entity.getName()));
 
       sb.append(" || ");
 
@@ -254,8 +256,8 @@ public class GenerateEntityModelWiki extends BaseTest {
 
   private Column getColumn(Table table, String columnName) {
     final OBCriteria<Column> cs = OBDal.getInstance().createCriteria(Column.class);
-    cs.add(Restrictions.and(Restrictions.eq(Column.PROPERTY_TABLE, table), Restrictions.eq(
-        Column.PROPERTY_DBCOLUMNNAME, columnName)));
+    cs.add(Restrictions.and(Restrictions.eq(Column.PROPERTY_TABLE, table),
+        Restrictions.eq(Column.PROPERTY_DBCOLUMNNAME, columnName)));
 
     if (cs.list().size() == 0) {
       return null;

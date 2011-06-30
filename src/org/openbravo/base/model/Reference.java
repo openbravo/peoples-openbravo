@@ -130,9 +130,7 @@ public class Reference extends ModelObject {
     }
     String modelImplementationClass = getModelImplementationClassName();
     if (modelImplementationClass == null) {
-      log
-          .error("Reference " + this
-              + " has a modelImpl which is null, using String as the default");
+      log.error("Reference " + this + " has a modelImpl which is null, using String as the default");
       modelImplementationClass = StringDomainType.class.getName();
     }
     try {
@@ -181,8 +179,7 @@ public class Reference extends ModelObject {
    * @deprecated validation type not used anymore, returns a space always
    */
   public char getValidationType() {
-    log
-        .warn("The validation type concept is not used anymore. The Reference.getValidationType() method is deprecated");
+    log.warn("The validation type concept is not used anymore. The Reference.getValidationType() method is deprecated");
     return ' ';
   }
 

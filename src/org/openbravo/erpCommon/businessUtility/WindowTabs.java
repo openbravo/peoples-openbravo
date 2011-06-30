@@ -317,8 +317,8 @@ public class WindowTabs {
       if (isFirst)
         text.append("      <span class=\"tabTitle_elements_container\">\n");
       if (isFirst)
-        text.append("        <span class=\"tabTitle_elements_text\" id=\"tabTitle_text\">").append(
-            this.Title).append("</span>\n");
+        text.append("        <span class=\"tabTitle_elements_text\" id=\"tabTitle_text\">")
+            .append(this.Title).append("</span>\n");
       if (isFirst)
         text.append("        <span class=\"tabTitle_elements_separator\"><div class=\"tabTitle_elements_separator_icon\"></div></span>\n");
       if (isFirst)
@@ -423,8 +423,8 @@ public class WindowTabs {
     if (!hasParent)
       text.append("      <span class=\"tabTitle_elements_container\">\n");
     if (!hasParent)
-      text.append("        <span class=\"tabTitle_elements_text\" id=\"tabTitle_text\">").append(
-          this.Title).append("</span>\n");
+      text.append("        <span class=\"tabTitle_elements_text\" id=\"tabTitle_text\">")
+          .append(this.Title).append("</span>\n");
     if (!hasParent)
       text.append("        <span class=\"tabTitle_elements_separator\"><div class=\"tabTitle_elements_separator_icon\"></div></span>\n");
     if (!hasParent)
@@ -532,8 +532,9 @@ public class WindowTabs {
       if (!isFirst)
         text.append("<span class=\"tabSeparator\">&nbsp;</span>\n");
       isFirst = false;
-      text.append("<span class=\"dojoTab").append(
-          ((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y")) ? " current" : ""))
+      text.append("<span class=\"dojoTab")
+          .append(
+              ((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y")) ? " current" : ""))
           .append("\">");
       text.append("<div><a class=\"dojoTabLink\" href=\"#\" onclick=\"");
       if (readOnly)

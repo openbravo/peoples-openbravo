@@ -107,8 +107,8 @@ public class WADImageBLOB extends WADControl {
       text.append(getData("ColumnNameInp")).append("\"));\n");
       text.append("if (strCurrentImageURL" + getData("ColumnName") + "==null || strCurrentImageURL"
           + getData("ColumnName") + ".equals(\"\")){\n");
-      text.append("  xmlDocument.setParameter(\"").append(getData("ColumnName")).append(
-          "Class\", \"Image_NotAvailable_medium\");\n");
+      text.append("  xmlDocument.setParameter(\"").append(getData("ColumnName"))
+          .append("Class\", \"Image_NotAvailable_medium\");\n");
       text.append("}\n");
     }
     return text.toString();

@@ -62,9 +62,9 @@ public abstract class CalloutHelper extends HttpSecureAppServlet {
     else {
       strArray.append("new Array(");
       for (int i = 0; i < data.length; i++) {
-        strArray.append("\nnew Array(\"").append(data[i].getField("id")).append("\", \"").append(
-            FormatUtilities.replaceJS(data[i].getField("name"))).append("\",").append(
-            data[i].getField("id").equals(selected) ? "\"true\"" : "\"false\"").append(")");
+        strArray.append("\nnew Array(\"").append(data[i].getField("id")).append("\", \"")
+            .append(FormatUtilities.replaceJS(data[i].getField("name"))).append("\",")
+            .append(data[i].getField("id").equals(selected) ? "\"true\"" : "\"false\"").append(")");
         if (i < data.length - 1)
           strArray.append(", \n");
       }

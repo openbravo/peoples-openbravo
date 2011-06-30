@@ -44,8 +44,9 @@ public class WADTime extends WADControl {
     // addImport("time", "../../../../../web/js/time.js");
     StringBuffer validation = new StringBuffer();
     if (getData("IsMandatory").equals("Y")) {
-      validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp")).append(
-          ")==null || inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==\"\") {\n");
+      validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp"))
+          .append(")==null || inputValue(frm.inp").append(getData("ColumnNameInp"))
+          .append(")==\"\") {\n");
       if (getData("IsDisplayed").equals("Y"))
         validation.append("    setWindowElementFocus(frm.inp").append(getData("ColumnNameInp"))
             .append(");\n");
@@ -54,10 +55,10 @@ public class WADTime extends WADControl {
       validation.append("  }\n");
     }
     if (!getData("ValueMin").equals("") || !getData("ValueMax").equals("")) {
-      validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp")).append(
-          ")!=null && ");
-      validation.append("inputValue(frm.inp").append(getData("ColumnNameInp")).append(
-          ")!=\"\" && (");
+      validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp"))
+          .append(")!=null && ");
+      validation.append("inputValue(frm.inp").append(getData("ColumnNameInp"))
+          .append(")!=\"\" && (");
       boolean valmin = false;
       if (!getData("ValueMin").equals("")) {
         validation.append("timecmp(frm.inp").append(getData("ColumnNameInp")).append(".value, '")
@@ -170,8 +171,8 @@ public class WADTime extends WADControl {
   public String toXml() {
     StringBuffer text = new StringBuffer();
     if (getData("IsParameter").equals("Y")) {
-      text.append("<PARAMETER id=\"").append(getData("ColumnName")).append("\" name=\"").append(
-          getData("ColumnName")).append("\" attribute=\"value\"/>");
+      text.append("<PARAMETER id=\"").append(getData("ColumnName")).append("\" name=\"")
+          .append(getData("ColumnName")).append("\" attribute=\"value\"/>");
     } else {
       text.append("<FIELD id=\"").append(getData("ColumnName")).append("\" attribute=\"value\">");
       text.append(getData("ColumnName")).append("</FIELD>");

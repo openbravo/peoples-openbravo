@@ -135,8 +135,8 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportInvoiceCustomerFilterJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportInvoiceCustomerFilterJR.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
           "ReportInvoiceCustomerFilterJR.html", strReplaceWith);
@@ -161,8 +161,8 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTo", strdateTo);
     xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
     xmlDocument.setParameter("cProjectId", strcProjectId);
-    xmlDocument.setParameter("projectName", InvoiceCustomerEditionData.selectProject(this,
-        strcProjectId));
+    xmlDocument.setParameter("projectName",
+        InvoiceCustomerEditionData.selectProject(this, strcProjectId));
     xmlDocument.setParameter("mProductCatId", strmCategoryId);
     xmlDocument.setParameter("cProjectKind", strProjectkind);
     xmlDocument.setParameter("cRegionId", strcRegionId);
@@ -173,8 +173,8 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "Projectkind", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"), Utility
-              .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR",
           strProjectkind);
       xmlDocument.setData("reportC_PROJECTKIND", "liststructure", comboTableData.select(false));
@@ -185,8 +185,8 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "Projectphase", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"), Utility
-              .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR",
           strProjectphase);
       xmlDocument.setData("reportC_PROJECTPHASE", "liststructure", comboTableData.select(false));
@@ -197,8 +197,8 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "ProjectStatus", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"), Utility
-              .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR",
           strProjectstatus);
       xmlDocument.setData("reportC_PROJECTSTATUS", "liststructure", comboTableData.select(false));
@@ -209,8 +209,8 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "PublicPrivate", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"), Utility
-              .getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceCustomerJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR",
           strProjectpublic);
       xmlDocument.setData("reportC_PROJECTPUBLIC", "liststructure", comboTableData.select(false));
@@ -270,12 +270,18 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
-        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-            .getContext(this, vars, "#User_Client", ""), strcBpartnerId));
-    xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData.selectMproduct(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
-            vars, "#User_Client", ""), strProduct));
+    xmlDocument.setData(
+        "reportCBPartnerId_IN",
+        "liststructure",
+        SelectorUtilityData.selectBpartner(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
+    xmlDocument.setData(
+        "reportMProductId_IN",
+        "liststructure",
+        SelectorUtilityData.selectMproduct(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strProduct));
 
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -304,11 +310,12 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     OBError myMessage = null;
     myMessage = new OBError();
     try {
-      data = InvoiceCustomerEditionData.select(this, strCurrencyId, Utility.getContext(this, vars,
-          "#AccessibleOrgTree", "InvoiceCustomerFilter"), Utility.getContext(this, vars,
-          "#User_Client", "InvoiceCustomerFilter"), strdateFrom, strdateTo, strcBpartnerId,
-          strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus,
-          strProjectpublic, strcRegionId, strSalesRep, strProduct);
+      data = InvoiceCustomerEditionData.select(this, strCurrencyId,
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "InvoiceCustomerFilter"),
+          Utility.getContext(this, vars, "#User_Client", "InvoiceCustomerFilter"), strdateFrom,
+          strdateTo, strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind,
+          strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep,
+          strProduct);
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }
@@ -316,8 +323,9 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Launch the report as usual, calling the JRXML file
       String strOutput = vars.commandIn("EDIT_HTML") ? "html" : "pdf";
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerJR.jrxml";

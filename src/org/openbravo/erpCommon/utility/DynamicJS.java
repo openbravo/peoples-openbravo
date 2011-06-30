@@ -98,8 +98,8 @@ public class DynamicJS extends HttpSecureAppServlet {
           arrayType.append(",\n");
           array.append(",\n");
         }
-        arrayType.append("new messageType(\"").append(num).append("\",").append(
-            data[i].msgtype.equals("C") ? "1" : "0").append(")");
+        arrayType.append("new messageType(\"").append(num).append("\",")
+            .append(data[i].msgtype.equals("C") ? "1" : "0").append(")");
         array.append("new messagesTexts(\"").append(vars.getLanguage()).append("\", \"");
         array.append(num).append("\", \"").append(FormatUtilities.replaceJS(data[i].msgtext))
             .append("\", null)");
@@ -118,10 +118,10 @@ public class DynamicJS extends HttpSecureAppServlet {
 
     String globals = "";
 
-    globals += "var decSeparator_global = '"
-        + vars.getSessionValue("#DECIMALSEPARATOR|QTYEDITION") + "';\n";
-    globals += "var groupSeparator_global = '"
-        + vars.getSessionValue("#GROUPSEPARATOR|QTYEDITION") + "';\n";
+    globals += "var decSeparator_global = '" + vars.getSessionValue("#DECIMALSEPARATOR|QTYEDITION")
+        + "';\n";
+    globals += "var groupSeparator_global = '" + vars.getSessionValue("#GROUPSEPARATOR|QTYEDITION")
+        + "';\n";
     globals += "var groupInterval_global = '3';\n";
     globals += "var maskNumeric_default = '" + vars.getSessionValue("#FORMATOUTPUT|QTYEDITION")
         + "';\n";

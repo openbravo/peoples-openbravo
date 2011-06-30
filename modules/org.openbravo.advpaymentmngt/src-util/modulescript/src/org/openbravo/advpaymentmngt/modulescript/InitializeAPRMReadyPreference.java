@@ -22,11 +22,10 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
 
 public class InitializeAPRMReadyPreference extends ModuleScript {
-  
+
   /**
-   * This modulescript regenerates the customer balance for all the business partners.
-   * It takes in account the outstanding sales/purchase invoices and the credit
-   * generated in payment in/out.
+   * This modulescript regenerates the customer balance for all the business partners. It takes in
+   * account the outstanding sales/purchase invoices and the credit generated in payment in/out.
    */
   @Override
   public void execute() {
@@ -35,7 +34,8 @@ public class InitializeAPRMReadyPreference extends ModuleScript {
       // If the preference does not exist in the database yet the modulescript must be executed.
       boolean isAPRMReady = InitializeAPRMReadyPreferenceData.isAPRMReady(cp);
       if (!isAPRMReady) {
-        // Check if APRM is already in use based on the existence of records in FIN_Payment_Schedule table
+        // Check if APRM is already in use based on the existence of records in FIN_Payment_Schedule
+        // table
         isAPRMReady = InitializeAPRMReadyPreferenceData.isAPRMInUse(cp);
         if (isAPRMReady) {
           InitializeAPRMReadyPreferenceData.createPreference(cp);

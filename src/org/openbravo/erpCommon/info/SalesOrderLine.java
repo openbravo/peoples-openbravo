@@ -131,12 +131,13 @@ public class SalesOrderLine extends HttpSecureAppServlet {
       SalesOrderLineData[] data = null;
       String strOrg = vars.getStringParameter("inpAD_Org_ID");
       if (strSOTrx.equals("Y"))
-        data = SalesOrderLineData.selectKey(this, Utility.getContext(this, vars, "#User_Client",
-            "SalesOrderLine"), Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue);
+        data = SalesOrderLineData.selectKey(this,
+            Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
+            Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue);
       else
-        data = SalesOrderLineData.selectKeySOTrx(this, Utility.getContext(this, vars,
-            "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org",
-            "SalesOrderLine"), strKeyValue);
+        data = SalesOrderLineData.selectKeySOTrx(this,
+            Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
+            Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strKeyValue);
       if (data != null && data.length == 1)
         printPageKey(response, vars, data);
       else
@@ -217,8 +218,8 @@ public class SalesOrderLine extends HttpSecureAppServlet {
     xmlDocument.setParameter("grandtotalfrom", strCal1);
     xmlDocument.setParameter("grandtotalto", strCal2);
     xmlDocument.setParameter("cBpartnerId", strBPartner);
-    xmlDocument.setParameter("cBpartnerId_DES", SalesOrderLineData
-        .selectBPartner(this, strBPartner));
+    xmlDocument.setParameter("cBpartnerId_DES",
+        SalesOrderLineData.selectBPartner(this, strBPartner));
     xmlDocument.setParameter("mProductId", strProduct);
     xmlDocument.setParameter("mProductId_DES", SalesOrderLineData.selectProduct(this, strProduct));
 
@@ -353,32 +354,33 @@ public class SalesOrderLine extends HttpSecureAppServlet {
 
         // New filter or first load
         if (strNewFilter.equals("1") || strNewFilter.equals("")) {
-           // calculate params for sql limit/offset or rownum clause
-        	String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-        	if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        	   oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-        	   oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-        	   rownum = "ROWNUM";
-        	} else {
-        		pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-        	}
-        	
-        	strNumRows = SalesOrderLineData.countRows(this, rownum, Utility.getContext(this, vars,
-                    "#User_Client", "SalesOrderLine"), Utility.getSelectorOrgs(this, vars, strOrg),
-                    strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData
-                        .nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2, strProduct, (strDelivered
-                        .equals("Y") ? "isdelivered" : ""), (strInvoiced.equals("Y") ? "isinvoiced"
-                        : ""), ("Y".equals(strSOTrx) ? "Y" : "N") , pgLimit, oraLimit1, oraLimit2);
-        	
-        	if(!"Y".equals(strSOTrx)) {
-        		data = SalesOrderLineData.selectSOTrx(this, "1", Utility.getContext(this, vars,
-                        "#User_Client", "SalesOrderLine"), Utility.getSelectorOrgs(this, vars, strOrg),
-                        strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData
-                            .nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2, strProduct, (strDelivered
-                            .equals("Y") ? "isdelivered" : ""), (strInvoiced.equals("Y") ? "isinvoiced"
-                            : ""), strOrderBy, "", "");
-        	}
-        	
+          // calculate params for sql limit/offset or rownum clause
+          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+            rownum = "ROWNUM";
+          } else {
+            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          }
+
+          strNumRows = SalesOrderLineData.countRows(this, rownum,
+              Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription, strOrder,
+              strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
+              strCalc2, strProduct, (strDelivered.equals("Y") ? "isdelivered" : ""),
+              (strInvoiced.equals("Y") ? "isinvoiced" : ""), ("Y".equals(strSOTrx) ? "Y" : "N"),
+              pgLimit, oraLimit1, oraLimit2);
+
+          if (!"Y".equals(strSOTrx)) {
+            data = SalesOrderLineData.selectSOTrx(this, "1", Utility.getContext(this, vars,
+                "#User_Client", "SalesOrderLine"), Utility.getSelectorOrgs(this, vars, strOrg),
+                strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData
+                    .nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2, strProduct, (strDelivered
+                    .equals("Y") ? "isdelivered" : ""), (strInvoiced.equals("Y") ? "isinvoiced"
+                    : ""), strOrderBy, "", "");
+          }
+
           vars.setSessionValue("SalesOrderLine.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("SalesOrderLine.numrows");
@@ -463,8 +465,8 @@ public class SalesOrderLine extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append(
-    		        "\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+        .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -478,11 +480,11 @@ public class SalesOrderLine extends HttpSecureAppServlet {
           } else if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",
-                "").replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll(
-                "<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;").replaceAll("<br>",
-                    "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
+                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
+                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
+                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");

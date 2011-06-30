@@ -102,8 +102,8 @@ public class ProjectCopyFrom extends HttpSecureAppServlet {
                 for (int j = 0; data1 != null && j < data1.length; j++) {
                   strProjectTask = SequenceIdData.getUUID();
                   ProjectCopyFromData.insertProjectTask(conn, this, strProjectTask,
-                      data1[j].cTaskId, dataProject[0].adClientId, dataProject[0].adOrgId, vars
-                          .getUser(), data1[j].seqno, data1[j].name, data1[j].description,
+                      data1[j].cTaskId, dataProject[0].adClientId, dataProject[0].adOrgId,
+                      vars.getUser(), data1[j].seqno, data1[j].name, data1[j].description,
                       data1[j].help, data1[j].mProductId, strProjectPhase, data1[j].qty);
                 }
               }
@@ -195,16 +195,19 @@ public class ProjectCopyFrom extends HttpSecureAppServlet {
     xmlDocument.setParameter("window", windowId);
     xmlDocument.setParameter("tab", strTab);
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars
-        .getLanguage()));
+    xmlDocument.setParameter("question",
+        Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", strDescription);
     xmlDocument.setParameter("help", strHelp);
 
-    xmlDocument.setData("reportcProjectId", "liststructure", ProjectCopyFromData
-        .selectC_Project_ID(this, Utility.getContext(this, vars, "#User_Org", ""), Utility
-            .getContext(this, vars, "#User_Client", ""), strKey, strKey));
+    xmlDocument.setData(
+        "reportcProjectId",
+        "liststructure",
+        ProjectCopyFromData.selectC_Project_ID(this,
+            Utility.getContext(this, vars, "#User_Org", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strKey, strKey));
     xmlDocument.setParameter("Project", strProject);
 
     response.setContentType("text/html; charset=UTF-8");

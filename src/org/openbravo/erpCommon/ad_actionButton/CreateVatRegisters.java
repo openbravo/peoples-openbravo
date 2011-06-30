@@ -127,12 +127,13 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
     // register lines
     if (strProcessed.equalsIgnoreCase("N")) {
       // check for already used periods)
-      BigDecimal CrossPeriodCount = new BigDecimal(TaxPayment.selectCrossPeriodCount(this, vars
-          .getClient(), Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
-          taxpayment[0].adOrgId), strDatefrom, strDateto));
+      BigDecimal CrossPeriodCount = new BigDecimal(
+          TaxPayment.selectCrossPeriodCount(this, vars.getClient(), Tree.getMembers(this,
+              TreeData.getTreeOrg(this, vars.getClient()), taxpayment[0].adOrgId), strDatefrom,
+              strDateto));
       if (CrossPeriodCount.intValue() > 0) {
-        myMessage = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this,
-            "PeriodsDontMatch", vars.getLanguage()));
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+            Utility.messageBD(this, "PeriodsDontMatch", vars.getLanguage()));
         return myMessage;
       }
 
@@ -145,8 +146,9 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
       }
 
       // Select all active Register Type for create the Tax Registers
-      TaxRegisterType[] taxregistertypes = TaxRegisterType.select(this, vars.getClient(), Tree
-          .getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), taxpayment[0].adOrgId));
+      TaxRegisterType[] taxregistertypes = TaxRegisterType
+          .select(this, vars.getClient(), Tree.getMembers(this,
+              TreeData.getTreeOrg(this, vars.getClient()), taxpayment[0].adOrgId));
       log4j.info("2strTaxpaymentID: " + strTaxpaymentID + "strDatefrom: " + strDatefrom
           + "strDateto: " + strDateto + "strProcessed: " + strProcessed + "strGeneratePayment: "
           + strGeneratePayment);
@@ -211,8 +213,8 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
             // ^ (myinvoice.isnovat.equals("Y"))))) {
             // return
             // "InvoiceTax Error: istaxexempt, istaxundeduc or isnovat could have wrong values,  C_InvoiceTax_ID="+myinvoice.cInvoicetaxId;
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(
-                this, "TaxCriteriaNotFound", vars.getLanguage()));
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                Utility.messageBD(this, "TaxCriteriaNotFound", vars.getLanguage()));
             return myMessage;
           }
           if (myinvoice.docbasetype.equals(DocInvoice.DOCTYPE_APCredit)
@@ -229,9 +231,9 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
               + "strDateto: " + strDateto + "strProcessed: " + strProcessed
               + "strGeneratePayment: " + strGeneratePayment);
 
-          BigDecimal dbTotalAmt = new BigDecimal(strTaxBaseAmt).add(new BigDecimal(strTaxAmt)).add(
-              new BigDecimal(strTaxUndeducAmt)).add(new BigDecimal(strExemptAmt)).add(
-              new BigDecimal(strNoVatAmt));
+          BigDecimal dbTotalAmt = new BigDecimal(strTaxBaseAmt).add(new BigDecimal(strTaxAmt))
+              .add(new BigDecimal(strTaxUndeducAmt)).add(new BigDecimal(strExemptAmt))
+              .add(new BigDecimal(strNoVatAmt));
 
           strTotalAmt = dbTotalAmt.toPlainString();
 
@@ -276,8 +278,8 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
         } else
           TaxPayment.updateGeneratePayment(this, "N", strUser, strTaxpaymentID);
       } catch (NumberFormatException e) {
-        myMessage = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this,
-            "NoDataSelected", vars.getLanguage()));
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+            Utility.messageBD(this, "NoDataSelected", vars.getLanguage()));
         return myMessage;
       }
       if (myMessage == null) {
@@ -291,8 +293,8 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
     }
 
     else
-      myMessage = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this,
-          "ProcessRunError", vars.getLanguage()));
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+          Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
     return myMessage;
 
     // Select all active Register Type Lines of Tax Register
@@ -332,8 +334,8 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
     xmlDocument.setParameter("Processed", strProcessed);
     xmlDocument.setParameter("TaxpaymentID", strTaxpaymentID);
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars
-        .getLanguage()));
+    xmlDocument.setParameter("question",
+        Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("Processing", strProcessing);

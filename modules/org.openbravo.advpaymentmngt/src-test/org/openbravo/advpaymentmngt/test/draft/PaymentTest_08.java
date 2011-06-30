@@ -87,18 +87,24 @@ public class PaymentTest_08 extends BaseTest {
       // CHECK OUTPUT DATA
       OBContext.setAdminMode();
       try {
-        assertTrue("Invoice Payment Schedule Outstanding Amount == 0", BigDecimal.ZERO
-            .compareTo(invoice.getFINPaymentScheduleList().get(0).getOutstandingAmount()) != 0);
+        assertTrue(
+            "Invoice Payment Schedule Outstanding Amount == 0",
+            BigDecimal.ZERO.compareTo(invoice.getFINPaymentScheduleList().get(0)
+                .getOutstandingAmount()) != 0);
         assertTrue("Invoice Payment Schedule  not Total Pending", invoice.getGrandTotalAmount()
             .compareTo(invoice.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
-        assertTrue("Invoice Payment Schedule Paid Amount != 0", BigDecimal.ZERO.compareTo(invoice
-            .getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
-        assertTrue("Order Payment Schedule Outstanding Amount == 0", BigDecimal.ZERO
-            .compareTo(order.getFINPaymentScheduleList().get(0).getOutstandingAmount()) != 0);
+        assertTrue(
+            "Invoice Payment Schedule Paid Amount != 0",
+            BigDecimal.ZERO.compareTo(invoice.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
+        assertTrue(
+            "Order Payment Schedule Outstanding Amount == 0",
+            BigDecimal.ZERO.compareTo(order.getFINPaymentScheduleList().get(0)
+                .getOutstandingAmount()) != 0);
         assertTrue("Order Payment Schedule not Total Pending", invoice.getGrandTotalAmount()
             .compareTo(invoice.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
-        assertTrue("Order Payment Schedule Paid Amount != 0", BigDecimal.ZERO.compareTo(order
-            .getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
+        assertTrue(
+            "Order Payment Schedule Paid Amount != 0",
+            BigDecimal.ZERO.compareTo(order.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
 
       } finally {
         OBContext.restorePreviousMode();
@@ -192,18 +198,19 @@ public class PaymentTest_08 extends BaseTest {
 
       assertTrue("Payment Schedule Outstanding Amount == Order amount", order.getGrandTotalAmount()
           .compareTo(order.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
-      assertTrue("Payment Schedule Received Amount == 0", BigDecimal.ZERO.compareTo(order
-          .getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
+      assertTrue("Payment Schedule Received Amount == 0",
+          BigDecimal.ZERO.compareTo(order.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
 
       assertTrue("Payment Schedule Deatail Amount == Total Amount", order.getGrandTotalAmount()
           .compareTo(psd.getAmount()) == 0);
-      assertTrue("Payment Schedule Detail Write-off Amount == 0", BigDecimal.ZERO.compareTo(psd
-          .getWriteoffAmount()) == 0);
+      assertTrue("Payment Schedule Detail Write-off Amount == 0",
+          BigDecimal.ZERO.compareTo(psd.getWriteoffAmount()) == 0);
     } finally {
       OBContext.restorePreviousMode();
     }
-    FIN_Payment payment = TestUtility.addPaymentFromOrder(order, OBDal.getInstance().get(
-        FIN_FinancialAccount.class, financialAccountId), order.getGrandTotalAmount(), false);
+    FIN_Payment payment = TestUtility.addPaymentFromOrder(order,
+        OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId),
+        order.getGrandTotalAmount(), false);
 
     FIN_PaymentMethod awaitingExecutionPM = TestUtility.insertPaymentMethod(
         "APRM_PM_PAYMENT_08_AWE", STANDARD_DESCRIPTION, true, false, false, AUTOMATIC_EXECUTION,
@@ -237,13 +244,13 @@ public class PaymentTest_08 extends BaseTest {
               .getFINPaymentScheduleList().get(0)));
       assertTrue("Payment Schedule Outstanding Amount == Order amount", order.getGrandTotalAmount()
           .compareTo(order.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
-      assertTrue("Payment Schedule Received Amount == 0", BigDecimal.ZERO.compareTo(order
-          .getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
+      assertTrue("Payment Schedule Received Amount == 0",
+          BigDecimal.ZERO.compareTo(order.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
 
       assertTrue("Payment Schedule Deatail Amount == Total Amount", order.getGrandTotalAmount()
           .compareTo(psd.getAmount()) == 0);
-      assertTrue("Payment Schedule Detail Write-off Amount == 0", BigDecimal.ZERO.compareTo(psd
-          .getWriteoffAmount()) == 0);
+      assertTrue("Payment Schedule Detail Write-off Amount == 0",
+          BigDecimal.ZERO.compareTo(psd.getWriteoffAmount()) == 0);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -281,16 +288,18 @@ public class PaymentTest_08 extends BaseTest {
       FIN_PaymentScheduleDetail psd = TestUtility.getOneInstance(FIN_PaymentScheduleDetail.class,
           new Value(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE, invoice
               .getFINPaymentScheduleList().get(0)));
-      assertTrue("Payment Schedule Outstanding Amount == Order amount", invoice
-          .getGrandTotalAmount().compareTo(
+      assertTrue(
+          "Payment Schedule Outstanding Amount == Order amount",
+          invoice.getGrandTotalAmount().compareTo(
               invoice.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
-      assertTrue("Payment Schedule Received Amount == 0", BigDecimal.ZERO.compareTo(invoice
-          .getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
+      assertTrue(
+          "Payment Schedule Received Amount == 0",
+          BigDecimal.ZERO.compareTo(invoice.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
 
       assertTrue("Payment Schedule Deatail Amount == Total Amount", invoice.getGrandTotalAmount()
           .compareTo(psd.getAmount()) == 0);
-      assertTrue("Payment Schedule Detail Write-off Amount == 0", BigDecimal.ZERO.compareTo(psd
-          .getWriteoffAmount()) == 0);
+      assertTrue("Payment Schedule Detail Write-off Amount == 0",
+          BigDecimal.ZERO.compareTo(psd.getWriteoffAmount()) == 0);
     } finally {
       OBContext.restorePreviousMode();
     }

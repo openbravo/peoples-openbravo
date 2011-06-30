@@ -131,8 +131,8 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility
-              .getContext(this, vars, "#User_Client", "CreateAccountingReport"), 0);
+          "", Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"),
+          Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "CreateAccountingReport", "");
       xmlDocument.setData("reportAD_ORG", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -141,27 +141,36 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     }
 
     xmlDocument.setData("reportAD_ACCOUNTINGRPT_ELEMENT", "liststructure",
-        CreateAccountingReportData.selectAD_Accountingrpt_Element_ID(this, Utility.getContext(this,
-            vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars,
-            "#User_Client", "CreateAccountingReport"), strcAcctSchemaId, ""));
+        CreateAccountingReportData.selectAD_Accountingrpt_Element_ID(this,
+            Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"),
+            Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
+            strcAcctSchemaId, ""));
     xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
-        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client",
-            "CreateAccountingReport"), strcAcctSchemaId));
+        .selectC_ACCTSCHEMA_ID(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "CreateAccountingReport"),
+            Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
+            strcAcctSchemaId));
 
-    xmlDocument.setParameter("accountArray", Utility.arrayDobleEntrada("arrAccount",
-        CreateAccountingReportData.selectAD_Accountingrpt_Element_Double_ID(this, Utility
-            .getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(
-            this, vars, "#User_Client", "CreateAccountingReport"), "")));
+    xmlDocument.setParameter(
+        "accountArray",
+        Utility.arrayDobleEntrada(
+            "arrAccount",
+            CreateAccountingReportData.selectAD_Accountingrpt_Element_Double_ID(this,
+                Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"),
+                Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), "")));
 
     // xmlDocument.setData("reportPeriod", "liststructure",
     // CreateAccountingReportData.selectPeriod(this, vars.getLanguage(),
     // Utility.getContext(this, vars, "#User_Org",
     // "CreateAccountingReport"), Utility.getContext(this, vars,
     // "#User_Client", "CreateAccountingReport"), "800074"));
-    xmlDocument.setData("reportPeriod", "liststructure", CreateAccountingReportData.selectCombo(
-        this, Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility
-            .getContext(this, vars, "#User_Client", "CreateAccountingReport"), vars.getLanguage()));
+    xmlDocument.setData(
+        "reportPeriod",
+        "liststructure",
+        CreateAccountingReportData.selectCombo(this,
+            Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"),
+            Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
+            vars.getLanguage()));
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "CreateAccountingReport", false, "",
         "", "", false, "ad_process", strReplaceWith, false, true);
@@ -177,8 +186,8 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "CreateAccountingReport.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "CreateAccountingReport.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "CreateAccountingReport.html",
           strReplaceWith);
@@ -223,8 +232,8 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
       // log4j.debug("*************************strAux: "+strAux);
       strPeriodFrom = "01/" + CreateAccountingReportData.selectMin(this, strPeriod) + "/" + strYear;
       // log4j.debug("*************************strPeriodFrom: "+strPeriodFrom);
-      strPeriodTo = CreateAccountingReportData.lastDay(this, "01/" + strAux + "/" + strYear, vars
-          .getSqlDateFormat());
+      strPeriodTo = CreateAccountingReportData.lastDay(this, "01/" + strAux + "/" + strYear,
+          vars.getSqlDateFormat());
       strPeriodTo = DateTimeData.nDaysAfter(this, strPeriodTo, "1");
       // log4j.debug("*************************strPeriodTo: "+strPeriodTo);
     } else if (strAccountingType.equals("M")) {
@@ -240,10 +249,10 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
       // TODO: Does this work with MM/DD/YY o YY/MM/DD locales?
       strPeriodTo = DateTimeData.nDaysAfter(this, "31/12/" + strPeriod, "1");
     }
-    strPeriodFrom = CreateAccountingReportData.selectFormat(this, strPeriodFrom, vars
-        .getSqlDateFormat());
-    strPeriodTo = CreateAccountingReportData.selectFormat(this, strPeriodTo, vars
-        .getSqlDateFormat());
+    strPeriodFrom = CreateAccountingReportData.selectFormat(this, strPeriodFrom,
+        vars.getSqlDateFormat());
+    strPeriodTo = CreateAccountingReportData.selectFormat(this, strPeriodTo,
+        vars.getSqlDateFormat());
     StringBuilder strTreeOrg = new StringBuilder(strOrg);
     treeOrg(vars, strOrg, strTreeOrg);
 
@@ -270,9 +279,10 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
       throws ServletException {
     String result = "";
     CreateAccountingReportData[] data = CreateAccountingReportData
-        .selectAD_Accountingrpt_Element_ID(this, Utility.getContext(this, vars, "#User_Org",
-            "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client",
-            "CreateAccountingReport"), strcAcctSchemaId, "");
+        .selectAD_Accountingrpt_Element_ID(this,
+            Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"),
+            Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
+            strcAcctSchemaId, "");
     if (data == null || data.length == 0) {
       result = "var array = null;";
     } else {
@@ -284,10 +294,10 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
           result += ",\n";
       }
       result += ");";
-      CreateAccountingReportData[] dataPeriod = CreateAccountingReportData
-          .selectCombo(this, Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"),
-              Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), vars
-                  .getLanguage());
+      CreateAccountingReportData[] dataPeriod = CreateAccountingReportData.selectCombo(this,
+          Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"),
+          Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
+          vars.getLanguage());
       if (dataPeriod == null || dataPeriod.length == 0) {
         result += "\nvar combo = null;";
       } else {
@@ -307,8 +317,8 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
 
   private void treeOrg(VariablesSecureApp vars, String strOrg, StringBuilder treeOrg)
       throws ServletException {
-    CreateAccountingReportData[] dataOrg = CreateAccountingReportData.selectOrg(this, strOrg, vars
-        .getClient());
+    CreateAccountingReportData[] dataOrg = CreateAccountingReportData.selectOrg(this, strOrg,
+        vars.getClient());
     for (int i = 0; i < dataOrg.length; i++) {
       treeOrg.append(",");
       treeOrg.append(dataOrg[i].id);
@@ -348,22 +358,22 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
         .isInitialBalance(this, strAccountingReportId);
     if (initialBalance.equals(""))
       initialBalance = "N";
-    String dateInitialYear = CreateAccountingReportData.dateInitialYear(this, Utility.getContext(
-        this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars,
-        "#User_Client", "CreateAccountingReport"), strPeriod);
-    dateInitialYear = CreateAccountingReportData.selectFormat(this, dateInitialYear, vars
-        .getSqlDateFormat());
+    String dateInitialYear = CreateAccountingReportData.dateInitialYear(this,
+        Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"),
+        Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), strPeriod);
+    dateInitialYear = CreateAccountingReportData.selectFormat(this, dateInitialYear,
+        vars.getSqlDateFormat());
     CreateAccountingReportData[] data;
     if (initialBalance.equals("Y")) {
       data = CreateAccountingReportData.selectInitial(this, strParent, String.valueOf(level),
-          Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), Utility
-          .stringList(strOrg),
-          dateInitialYear, DateTimeData.nDaysAfter(this, dateInitialYear, "1"), strAccountId,
-          strcAcctSchemaId, strAccountingReportId);
+          Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
+          Utility.stringList(strOrg), dateInitialYear,
+          DateTimeData.nDaysAfter(this, dateInitialYear, "1"), strAccountId, strcAcctSchemaId,
+          strAccountingReportId);
     } else {
-      data = CreateAccountingReportData.select(this, strParent, String.valueOf(level), Utility
-          .getContext(this, vars, "#User_Client", "CreateAccountingReport"), Utility
-          .stringList(strOrg), strPeriodFrom, strPeriodTo, strAccountId, strcAcctSchemaId,
+      data = CreateAccountingReportData.select(this, strParent, String.valueOf(level),
+          Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
+          Utility.stringList(strOrg), strPeriodFrom, strPeriodTo, strAccountId, strcAcctSchemaId,
           strAccountingReportId);
     }
     if (data == null || data.length == 0)
@@ -372,9 +382,10 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("**********************data[0]*********************: " + data[0].name + "  "
           + data[0].total);
-    CreateAccountingReportData[] dataAux = CreateAccountingReportData.selectChild(this, Utility
-        .getContext(this, vars, "#User_Client", "CreateAccountingReport"), Utility.getContext(this,
-        vars, "#User_Org", "CreateAccountingReport"), data[0].id, strcAcctSchemaId);
+    CreateAccountingReportData[] dataAux = CreateAccountingReportData.selectChild(this,
+        Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
+        Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), data[0].id,
+        strcAcctSchemaId);
     for (int i = 0; i < dataAux.length; i++) {
       childData(vars, vectorArray, strcAcctSchemaId, dataAux[i].id, strPeriodFrom, strPeriodTo,
           strOrg, level + 1, data[0].id, strPeriod);

@@ -116,8 +116,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
 
       String errorMessage = "";
       try {
-        FIN_AddPayment.removeGLItem(dao.getObject(FIN_Payment.class, strPaymentId), dao.getObject(
-            FIN_PaymentDetail.class, strPaymentDetailId));
+        FIN_AddPayment.removeGLItem(dao.getObject(FIN_Payment.class, strPaymentId),
+            dao.getObject(FIN_PaymentDetail.class, strPaymentDetailId));
       } catch (Exception e) {
         errorMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage())
             .getMessage();
@@ -187,8 +187,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         FIN_AddPayment.setFinancialTransactionAmountAndRate(payment, exchangeRate, convertedAmount);
         payment = FIN_AddPayment.savePayment(payment, isReceipt, null, null, null, null, null,
             null, null, null, null, selectedPaymentDetails, selectedPaymentDetailAmounts,
-            strDifferenceAction.equals("writeoff"), strDifferenceAction.equals("refund"), dao
-                .getObject(Currency.class, paymentCurrencyId), exchangeRate, convertedAmount);
+            strDifferenceAction.equals("writeoff"), strDifferenceAction.equals("refund"),
+            dao.getObject(Currency.class, paymentCurrencyId), exchangeRate, convertedAmount);
 
         if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
             || strAction.equals("PPW")) {
@@ -200,11 +200,12 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
               Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
               FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(this, vars, payment,
                   refundAmount.negate());
-              OBError auxMessage = FIN_AddPayment.processPayment(vars, this, (strAction
-                  .equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
+              OBError auxMessage = FIN_AddPayment.processPayment(vars, this,
+                  (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
               if (newPayment) {
-                final String strNewRefundPaymentMessage = Utility.parseTranslation(this, vars, vars
-                    .getLanguage(), "@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo())
+                final String strNewRefundPaymentMessage = Utility.parseTranslation(this, vars,
+                    vars.getLanguage(),
+                    "@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo())
                     + ".";
                 message.setMessage(strNewRefundPaymentMessage + " " + message.getMessage());
                 if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) != 0) {
@@ -255,17 +256,17 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("theme", vars.getTheme());
 
     if (payment.isReceipt())
-      xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentIn", vars
-          .getLanguage()));
+      xmlDocument.setParameter("title",
+          Utility.messageBD(this, "APRM_AddPaymentIn", vars.getLanguage()));
     else
-      xmlDocument.setParameter("title", Utility.messageBD(this, "APRM_AddPaymentOut", vars
-          .getLanguage()));
+      xmlDocument.setParameter("title",
+          Utility.messageBD(this, "APRM_AddPaymentOut", vars.getLanguage()));
     xmlDocument.setParameter("dateDisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     if (payment.getBusinessPartner() != null) {
       xmlDocument.setParameter("businessPartner", payment.getBusinessPartner().getIdentifier());
       xmlDocument.setParameter("businessPartnerId", payment.getBusinessPartner().getId());
-      xmlDocument.setParameter("credit", dao.getCustomerCredit(payment.getBusinessPartner(),
-          payment.isReceipt()).toString());
+      xmlDocument.setParameter("credit",
+          dao.getCustomerCredit(payment.getBusinessPartner(), payment.isReceipt()).toString());
       xmlDocument.setParameter("customerBalance",
           payment.getBusinessPartner().getCreditUsed() != null ? payment.getBusinessPartner()
               .getCreditUsed().toString() : BigDecimal.ZERO.toString());
@@ -297,8 +298,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     final Currency financialAccountCurrency = payment.getAccount().getCurrency();
     if (financialAccountCurrency != null) {
       xmlDocument.setParameter("financialAccountCurrencyId", financialAccountCurrency.getId());
-      xmlDocument.setParameter("financialAccountCurrencyName", financialAccountCurrency
-          .getISOCode());
+      xmlDocument.setParameter("financialAccountCurrencyName",
+          financialAccountCurrency.getISOCode());
       xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
           .getStandardPrecision().toString());
     }
@@ -319,11 +320,12 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     // Action Regarding Document
     xmlDocument.setParameter("ActionDocument", (payment.isReceipt() ? "PRP" : "PPP"));
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", (payment
-          .isReceipt() ? "F903F726B41A49D3860243101CEEBA25" : "F15C13A199A748F1B0B00E985A64C036"),
-          forcedFinancialAccountTransaction ? "29010995FD39439D97A5C0CE8CE27D70" : "", Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "AddPaymentFromInvoice"), Utility
-              .getContext(this, vars, "#User_Client", "AddPaymentFromInvoice"), 0);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
+          (payment.isReceipt() ? "F903F726B41A49D3860243101CEEBA25"
+              : "F15C13A199A748F1B0B00E985A64C036"),
+          forcedFinancialAccountTransaction ? "29010995FD39439D97A5C0CE8CE27D70" : "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "AddPaymentFromInvoice"),
+          Utility.getContext(this, vars, "#User_Client", "AddPaymentFromInvoice"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "AddOrderOrInvoice", "");
       xmlDocument.setData("reportActionDocument", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -360,11 +362,12 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
 
     // filtered scheduled payments list
     final List<FIN_PaymentScheduleDetail> filteredScheduledPaymentDetails = dao
-        .getFilteredScheduledPaymentDetails(dao.getObject(Organization.class, strOrgId), dao
-            .getObject(BusinessPartner.class, strBusinessPartnerId), payment.getCurrency(),
-            FIN_Utility.getDate(strDueDateFrom), FIN_Utility.getDate(DateTimeData.nDaysAfter(this,
-                strDueDateTo, "1")), strDocumentType, showAlternativePM ? null : payment
-                .getPaymentMethod(), selectedScheduledPaymentDetails, isReceipt);
+        .getFilteredScheduledPaymentDetails(dao.getObject(Organization.class, strOrgId),
+            dao.getObject(BusinessPartner.class, strBusinessPartnerId), payment.getCurrency(),
+            FIN_Utility.getDate(strDueDateFrom),
+            FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strDueDateTo, "1")), strDocumentType,
+            showAlternativePM ? null : payment.getPaymentMethod(), selectedScheduledPaymentDetails,
+            isReceipt);
 
     final FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
         selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null);

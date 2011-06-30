@@ -92,8 +92,8 @@ public class AllowedOrganizationsTest extends BaseTest {
       commitTransaction();
       fail();
     } catch (final OBException e) {
-      assertTrue("Invalid exception " + e.getMessage(), e.getMessage().indexOf(
-          "which is not part of the natural tree of") != -1);
+      assertTrue("Invalid exception " + e.getMessage(),
+          e.getMessage().indexOf("which is not part of the natural tree of") != -1);
       // no fail!
       rollback();
     }

@@ -153,9 +153,10 @@ public class TabAttachments extends HttpSecureAppServlet {
             if (data[0].isreadonly.equals("Y"))
               throw new ServletException("This tab is read only");
           }
-          final String strNewFile = TabAttachmentsData.selectNext(this, Utility.getContext(this,
-              vars, "#User_Client", strWindow), Utility.getContext(this, vars,
-              "#AccessibleOrgTree", strWindow), strFileReference, tableId, key);
+          final String strNewFile = TabAttachmentsData.selectNext(this,
+              Utility.getContext(this, vars, "#User_Client", strWindow),
+              Utility.getContext(this, vars, "#AccessibleOrgTree", strWindow), strFileReference,
+              tableId, key);
           if (!strNewFile.equals(""))
             strFileReference = strNewFile;
           response.sendRedirect(strDireccion + request.getServletPath()
@@ -424,9 +425,9 @@ public class TabAttachments extends HttpSecureAppServlet {
         discard[0] = new String("selReadOnly");
     }
 
-    final TabAttachmentsData[] files = TabAttachmentsData.select(this, Utility.getContext(this,
-        vars, "#User_Client", strWindow), Utility.getContext(this, vars, "#AccessibleOrgTree",
-        strWindow), tableId, key);
+    final TabAttachmentsData[] files = TabAttachmentsData.select(this,
+        Utility.getContext(this, vars, "#User_Client", strWindow),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", strWindow), tableId, key);
 
     if ((files == null) || (files.length == 0))
       discard[0] = "widthData";
@@ -439,8 +440,8 @@ public class TabAttachments extends HttpSecureAppServlet {
     xmlDocument.setParameter("tab", strTab);
     xmlDocument.setParameter("window", strWindow);
     xmlDocument.setParameter("key", key);
-    xmlDocument.setParameter("recordIdentifier", TabAttachmentsData.selectRecordIdentifier(this,
-        key, vars.getLanguage(), strTab));
+    xmlDocument.setParameter("recordIdentifier",
+        TabAttachmentsData.selectRecordIdentifier(this, key, vars.getLanguage(), strTab));
 
     {
       final OBError myMessage = vars.getMessage("TabAttachments");
@@ -485,8 +486,8 @@ public class TabAttachments extends HttpSecureAppServlet {
     xmlDocument.setParameter("window", strWindow);
     xmlDocument.setParameter("key", key);
     xmlDocument.setParameter("save", (strFileReference.equals("") ? "NEW" : "EDIT"));
-    xmlDocument.setParameter("recordIdentifier", TabAttachmentsData.selectRecordIdentifier(this,
-        key, vars.getLanguage(), strTab));
+    xmlDocument.setParameter("recordIdentifier",
+        TabAttachmentsData.selectRecordIdentifier(this, key, vars.getLanguage(), strTab));
 
     {
       final OBError myMessage = vars.getMessage("TabAttachments");
@@ -515,9 +516,12 @@ public class TabAttachments extends HttpSecureAppServlet {
 
     xmlDocument.setData("structure1", (strFileReference.equals("") ? TabAttachmentsData.set()
         : files));
-    xmlDocument.setData("reportAD_Datatype_ID_D", "liststructure", DataTypeComboData.select(this,
-        Utility.getContext(this, vars, "#User_Client", "TabAttachments"), Utility.getContext(this,
-            vars, "#AccessibleOrgTree", "TabAttachments")));
+    xmlDocument.setData(
+        "reportAD_Datatype_ID_D",
+        "liststructure",
+        DataTypeComboData.select(this,
+            Utility.getContext(this, vars, "#User_Client", "TabAttachments"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "TabAttachments")));
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
@@ -543,8 +547,8 @@ public class TabAttachments extends HttpSecureAppServlet {
       response.setContentType("application/txt");
     else
       response.setContentType(data[0].datatypeContent);
-    response.setHeader("Content-Disposition", "attachment; filename=\""
-        + data[0].name.replace("\"", "\\\"") + "\"");
+    response.setHeader("Content-Disposition",
+        "attachment; filename=\"" + data[0].name.replace("\"", "\\\"") + "\"");
 
     f.dumpFile(response.getOutputStream());
     response.getOutputStream().flush();

@@ -250,8 +250,8 @@ public class ApplyModules extends HttpSecureAppServlet {
     }
     // We also add the successful final state of the last main step
     arraySteps += ","
-        + build.getMainSteps().get(build.getMainSteps().size() - 1).getSuccessCode().replace("RB",
-            "");
+        + build.getMainSteps().get(build.getMainSteps().size() - 1).getSuccessCode()
+            .replace("RB", "");
     errorStatus += ",''";
     numofWarns += ",0";
     numofErrors += ",0";

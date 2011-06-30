@@ -264,10 +264,12 @@ public class Role extends HttpSecureAppServlet {
     }
 
     xmlDocument.setData("structureRol", datarole);
-    xmlDocument.setParameter("clientes", Utility.arrayDobleEntrada("arrClientes", vecClients
-        .toArray(new ClientData[vecClients.size()])));
-    xmlDocument.setParameter("organizaciones", Utility.arrayDobleEntrada("arrOrgs",
-        OrganizationData.selectLogin(this)));
+    xmlDocument.setParameter(
+        "clientes",
+        Utility.arrayDobleEntrada("arrClientes",
+            vecClients.toArray(new ClientData[vecClients.size()])));
+    xmlDocument.setParameter("organizaciones",
+        Utility.arrayDobleEntrada("arrOrgs", OrganizationData.selectLogin(this)));
 
     {
       OBError myMessage = vars.getMessage("Role");

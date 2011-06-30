@@ -103,8 +103,8 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportOrderNotInvoiceJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportOrderNotInvoiceJR.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportOrderNotInvoiceJR.html",
           strReplaceWith);
@@ -133,14 +133,14 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("detail", strDetail);
     xmlDocument.setParameter("paramBPartnerId", strcBpartnetId);
-    xmlDocument.setParameter("paramBPartnerDescription", ReportOrderNotInvoiceData
-        .bPartnerDescription(this, strcBpartnetId));
+    xmlDocument.setParameter("paramBPartnerDescription",
+        ReportOrderNotInvoiceData.bPartnerDescription(this, strcBpartnetId));
     xmlDocument.setParameter("invoiceRule", strInvoiceRule);
     xmlDocument.setParameter("adOrgId", strCOrgId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_Order InvoiceRule", "Invoice Terms used in Orders Awaiting Invoice report", Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "ReportOrderNotInvoiceFilterJR"),
+          "C_Order InvoiceRule", "Invoice Terms used in Orders Awaiting Invoice report",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOrderNotInvoiceFilterJR"),
           Utility.getContext(this, vars, "#User_Client", "ReportOrderNotInvoiceJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportOrderNotInvoiceJR",
           strInvoiceRule);
@@ -162,17 +162,18 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    try{
-   	 ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-   	          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOrderNotInvoiceJR"), Utility
-   	              .getContext(this, vars, "#User_Client", "ReportOrderNotInvoiceJR"), 0);
-   	      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportOrderNotInvoiceJR", strCOrgId);
-   	      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
-   	      comboTableData = null;
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOrderNotInvoiceJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportOrderNotInvoiceJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportOrderNotInvoiceJR",
+          strCOrgId);
+      xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
+      comboTableData = null;
 
-   }catch (Exception ex) {
-   	 throw new ServletException(ex);
-	}
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -193,10 +194,11 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
     OBError myMessage = null;
     myMessage = new OBError();
     try {
-      data = ReportOrderNotInvoiceData.select(this, strCurrencyId, vars.getLanguage(), Utility
-          .getContext(this, vars, "#User_Client", "ReportOrderNotInvoiceJR"), Utility.getContext(
-          this, vars, "#AccessibleOrgTree", "ReportOrderNotInvoiceJR"), strcBpartnetId, strCOrgId,
-          strInvoiceRule, strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"));
+      data = ReportOrderNotInvoiceData.select(this, strCurrencyId, vars.getLanguage(),
+          Utility.getContext(this, vars, "#User_Client", "ReportOrderNotInvoiceJR"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOrderNotInvoiceJR"),
+          strcBpartnetId, strCOrgId, strInvoiceRule, strdateFrom,
+          DateTimeData.nDaysAfter(this, strdateTo, "1"));
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }
@@ -204,8 +206,9 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Launch the report as usual, calling the JRXML file
       String strOutput = "html";
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportOrderNotInvoiceJR.jrxml";

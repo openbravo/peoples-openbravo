@@ -128,9 +128,9 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           "org/openbravo/erpCommon/ad_forms/MaterialReceiptPending").createXmlDocument();
       String strDateFormat = vars.getSessionValue("#AD_SqlDateFormat");
       data = MaterialReceiptPendingData.selectLines(this, strDateFormat, vars.getLanguage(),
-          Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"), Tree
-              .getMembers(this, strTreeOrg, strAD_Org_ID), strDateFrom, DateTimeData.nDaysAfter(
-              this, strDateTo, "1"), strC_BPartner_ID, strDocumentNo);
+          Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"),
+          Tree.getMembers(this, strTreeOrg, strAD_Org_ID), strDateFrom,
+          DateTimeData.nDaysAfter(this, strDateTo, "1"), strC_BPartner_ID, strDocumentNo);
     }
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "MaterialReceiptPending", false, "",
@@ -147,8 +147,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "MaterialReceiptPending.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "MaterialReceiptPending.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "MaterialReceiptPending.html",
           strReplaceWith);
@@ -174,8 +174,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateTo", strDateTo);
     xmlDocument.setParameter("paramDocumentNo", strDocumentNo);
-    xmlDocument.setParameter("paramBPartnerDescription", MaterialReceiptPendingData
-        .bPartnerDescription(this, strC_BPartner_ID));
+    xmlDocument.setParameter("paramBPartnerDescription",
+        MaterialReceiptPendingData.bPartnerDescription(this, strC_BPartner_ID));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
           "AD_Org Security validation", Utility.getContext(this, vars, "#User_Org",
@@ -222,8 +222,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
                   + MaterialReceiptPendingData.selectLocator(this, strLocator) + "';\n");
               html.append("document.getElementsByName(\"" + "inpDateReceipt" + data[0].cBpartnerId
                   + "\"" + ")[0].value = '" + strDateReceipt + "';\n");
-              html
-                  .append("setCheckedValue(document.frmMain.inpOrder, '" + strOrderlineId + "');\n");
+              html.append("setCheckedValue(document.frmMain.inpOrder, '" + strOrderlineId + "');\n");
               break;
             }
           }

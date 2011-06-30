@@ -74,16 +74,17 @@ public class ReportCashJR extends HttpSecureAppServlet {
     if (strDateFrom.equals("") && strDateTo.equals("")) {
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strCashbook);
     } else {
-      data = ReportCashJRData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-          "#User_Client", "ReportCashJR"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-          "ReportCashJR"), strDateFrom, strCashbook, DateTimeData.nDaysAfter(this, strDateTo, "1"));
+      data = ReportCashJRData.select(this, vars.getLanguage(),
+          Utility.getContext(this, vars, "#User_Client", "ReportCashJR"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashJR"), strDateFrom,
+          strCashbook, DateTimeData.nDaysAfter(this, strDateTo, "1"));
 
       String strReportPath = "@basedesign@"
           + "/org/openbravo/erpCommon/ad_reports/ReportCashJR.jrxml";
       HashMap<String, Object> parameters = new HashMap<String, Object>();
       parameters.put("DATE_FROM", strDateFrom);
-      parameters.put("USER_ORG", Utility.getContext(this, vars, "#AccessibleOrgTree",
-          "ReportBankJR"));
+      parameters.put("USER_ORG",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR"));
       parameters.put("USER_CLIENT", Utility.getContext(this, vars, "#User_Client", "ReportBankJR"));
       renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
     }
@@ -145,8 +146,8 @@ public class ReportCashJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_CashBook_ID",
-          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashJR"), Utility
-              .getContext(this, vars, "#User_Client", "ReportCashJR"), 0);
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportCashJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportCashJR", strCashbook);
       xmlDocument.setData("reportC_CASHBOOK", "liststructure", comboTableData.select(false));
       comboTableData = null;

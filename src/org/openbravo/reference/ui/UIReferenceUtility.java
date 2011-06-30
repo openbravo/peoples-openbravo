@@ -52,12 +52,16 @@ public class UIReferenceUtility {
     if (data == null || data.length == 0)
       return false;
     int myIndex = tableSql.index++;
-    tableSql.addSelectField("(CASE WHEN td_trl" + myIndex + "." + data[0].columnname
-        + " IS NULL THEN "
-        + formatField(tableSql.getVars(), ref, (tableName + "." + field.getProperty("ColumnName")))
-        + " ELSE "
-        + formatField(tableSql.getVars(), ref, ("td_trl" + myIndex + "." + data[0].columnname))
-        + " END)", identifierName);
+    tableSql.addSelectField(
+        "(CASE WHEN td_trl"
+            + myIndex
+            + "."
+            + data[0].columnname
+            + " IS NULL THEN "
+            + formatField(tableSql.getVars(), ref,
+                (tableName + "." + field.getProperty("ColumnName"))) + " ELSE "
+            + formatField(tableSql.getVars(), ref, ("td_trl" + myIndex + "." + data[0].columnname))
+            + " END)", identifierName);
 
     String columnName;
     if (tableRef) {
@@ -91,21 +95,22 @@ public class UIReferenceUtility {
       FieldProvider field, String reference) throws Exception {
     if (tableName == null || tableName.equals("") || field == null)
       return false;
-    ComboTableQueryData[] data = ComboTableQueryData.selectTranslatedColumn(comboTableData
-        .getPool(), field.getField("tablename"), field.getField("name"));
+    ComboTableQueryData[] data = ComboTableQueryData.selectTranslatedColumn(
+        comboTableData.getPool(), field.getField("tablename"), field.getField("name"));
     if (data == null || data.length == 0)
       return false;
     int myIndex = comboTableData.index++;
-    comboTableData.addSelectField("(CASE WHEN td_trl"
-        + myIndex
-        + "."
-        + data[0].columnname
-        + " IS NULL THEN "
-        + formatField(comboTableData.getVars(), reference, (tableName + "." + field
-            .getField("name")))
-        + " ELSE "
-        + formatField(comboTableData.getVars(), reference,
-            ("td_trl" + myIndex + "." + data[0].columnname)) + " END)", "NAME");
+    comboTableData.addSelectField(
+        "(CASE WHEN td_trl"
+            + myIndex
+            + "."
+            + data[0].columnname
+            + " IS NULL THEN "
+            + formatField(comboTableData.getVars(), reference,
+                (tableName + "." + field.getField("name")))
+            + " ELSE "
+            + formatField(comboTableData.getVars(), reference,
+                ("td_trl" + myIndex + "." + data[0].columnname)) + " END)", "NAME");
     comboTableData.addFromField(data[0].tablename + " td_trl" + myIndex + " on " + tableName + "."
         + data[0].reference + " = td_trl" + myIndex + "." + data[0].reference + " AND td_trl"
         + myIndex + ".AD_Language = ?", "td_trl" + myIndex);
@@ -206,8 +211,8 @@ public class UIReferenceUtility {
     StringBuffer text = new StringBuffer();
     if (reference.equals("15") || reference.equals("16") || reference.equals("24")) {
       text.append("TO_DATE(").append(reference.equals("24") ? "TO_CHAR(" : "").append(tablename)
-          .append(".").append(columnname).append(
-              (reference.equals("24") ? ", 'HH24:MI:SS'), 'HH24:MI:SS'" : "")).append(") ");
+          .append(".").append(columnname)
+          .append((reference.equals("24") ? ", 'HH24:MI:SS'), 'HH24:MI:SS'" : "")).append(") ");
       if (first)
         text.append(">= ");
       else {
@@ -233,9 +238,8 @@ public class UIReferenceUtility {
       text.append(tablename).append(".").append(columnname).append(") LIKE ");
       text.append("C_IGNORE_ACCENT").append("(?)");
     } else if (reference.equals("35")) {
-      text
-          .append(
-              "(SELECT UPPER(DESCRIPTION) FROM M_ATTRIBUTESETINSTANCE WHERE M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID = ")
+      text.append(
+          "(SELECT UPPER(DESCRIPTION) FROM M_ATTRIBUTESETINSTANCE WHERE M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID = ")
           .append(tablename).append(".").append(columnname).append(") LIKE C_IGNORE_ACCENT(?)");
     } else {
       text.append(tablename).append(".").append(columnname).append(" = ?");

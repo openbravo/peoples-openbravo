@@ -166,8 +166,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     StringBuffer additionalFilter = new StringBuffer();
     final String entityAlias = sel.getEntityAlias();
     // Client filter
-    additionalFilter.append(entityAlias + ".client.id ='").append(
-        OBContext.getOBContext().getCurrentClient().getId()).append("'");
+    additionalFilter.append(entityAlias + ".client.id ='")
+        .append(OBContext.getOBContext().getCurrentClient().getId()).append("'");
 
     // Organization filter
     final String orgs = getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
@@ -362,8 +362,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     // If sortByClause is empty set default sort options.
     if (sortByClause.length() == 0) {
       OBCriteria<SelectorField> selFieldsCrit = OBDao.getFilteredCriteria(SelectorField.class,
-          Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel), Restrictions.eq(
-              SelectorField.PROPERTY_SHOWINGRID, true));
+          Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel),
+          Restrictions.eq(SelectorField.PROPERTY_SHOWINGRID, true));
       selFieldsCrit.addOrderBy(SelectorField.PROPERTY_SORTNO, true);
       for (SelectorField selField : selFieldsCrit.list()) {
         int fieldSortIndex = getFieldSortIndex(selField.getDisplayColumnAlias(), sel);
@@ -425,8 +425,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * @return The index of the query column related to the field.
    */
   private int getFieldSortIndex(String fieldName, Selector sel) {
-    final String[] queryAliases = OBDal.getInstance().getSession().createQuery(
-        sel.getHQL().replace(ADDITIONAL_FILTERS, "1=1")).getReturnAliases();
+    final String[] queryAliases = OBDal.getInstance().getSession()
+        .createQuery(sel.getHQL().replace(ADDITIONAL_FILTERS, "1=1")).getReturnAliases();
     for (int i = 0; i < queryAliases.length; i++) {
       if (queryAliases[i].equals(fieldName)) {
         return i + 1;

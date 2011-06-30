@@ -133,8 +133,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
       }
       if (!deactivable) {
         msg.setType("Error");
-        msg.setMessage(Utility.messageBD(this, "CannotDeactivateWithCommercialModules", vars
-            .getLanguage())
+        msg.setMessage(Utility.messageBD(this, "CannotDeactivateWithCommercialModules",
+            vars.getLanguage())
             + commercialModules);
       } else {
         // Deactivate instance
@@ -310,8 +310,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
           "org.openbravo.erpCommon.ad_forms.InstanceManagement");
       xmlDocument.setParameter("theme", vars.getTheme());
       final NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "InstanceManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "InstanceManagement.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "InstanceManagement.html",
           strReplaceWith);
@@ -329,8 +329,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
       } else {
         myMessage = new OBError();
         myMessage.setType(activationKey.getMessageType());
-        myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), activationKey
-            .getErrorMessage()));
+        myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
+            activationKey.getErrorMessage()));
       }
 
       vars.removeMessage("InstanceManagement");
@@ -342,8 +342,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
     }
 
     if (!activationKey.isOPSInstance())
-      xmlDocument.setParameter("instanceInfo", Utility.messageBD(this, "OPSCommunityInstance",
-          vars.getLanguage()).replace("\\n", "\n"));
+      xmlDocument.setParameter("instanceInfo",
+          Utility.messageBD(this, "OPSCommunityInstance", vars.getLanguage()).replace("\\n", "\n"));
     else
       xmlDocument.setParameter("instanceInfo", activationKey.toString(this, vars.getLanguage()));
 
@@ -351,8 +351,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
       if (activationKey.getPendingDays() != null)
         xmlDocument.setParameter("OPSdaysLeft", activationKey.getPendingDays().toString());
       else
-        xmlDocument.setParameter("OPSdaysLeft", Utility.messageBD(this, "OPSUnlimitedUsers",
-            vars.getLanguage()).replace("\\n", "\n"));
+        xmlDocument.setParameter("OPSdaysLeft",
+            Utility.messageBD(this, "OPSUnlimitedUsers", vars.getLanguage()).replace("\\n", "\n"));
     }
 
     String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", vars.getLanguage()).replace(
@@ -405,8 +405,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
           "org.openbravo.erpCommon.ad_forms.InstanceManagement");
       xmlDocument.setParameter("theme", vars.getTheme());
       final NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "InstanceManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "InstanceManagement.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "InstanceManagement.html",
           strReplaceWith);
@@ -430,10 +430,10 @@ public class InstanceManagement extends HttpSecureAppServlet {
     // Purpose combo
     try {
       ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "InstancePurpose", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "InstanceManagement"), Utility
-              .getContext(this, vars, "#User_Client", "InstanceManagement"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "InstanceManagement", sysInfo
-          .getInstancePurpose());
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "InstanceManagement"),
+          Utility.getContext(this, vars, "#User_Client", "InstanceManagement"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "InstanceManagement",
+          sysInfo.getInstancePurpose());
       if (sysInfo.getInstancePurpose() != null) {
         xmlDocument.setParameter("paramSelPurpose", sysInfo.getInstancePurpose());
       }

@@ -144,8 +144,8 @@ public class WritableReadableOrganizationClientTest extends BaseTest {
       commitTransaction();
     } catch (final OBException e) {
       rollback();
-      assertTrue("Invalid exception " + e.getMessage(), e.getMessage().indexOf(
-          "is not present in ClientList") != -1);
+      assertTrue("Invalid exception " + e.getMessage(),
+          e.getMessage().indexOf("is not present in ClientList") != -1);
     }
   }
 }

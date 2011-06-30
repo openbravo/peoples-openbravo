@@ -499,12 +499,17 @@ public class AdvPaymentMngtDao {
     FIN_FinaccTransaction transaction = FIN_Utility.getOneInstance(FIN_FinaccTransaction.class,
         new Value(FIN_FinaccTransaction.PROPERTY_FINPAYMENT, payment));
     if (transaction == null) {
-      transaction = getNewFinancialTransaction(payment.getOrganization(), payment.getAccount(),
-          TransactionsDao.getTransactionMaxLineNo(payment.getAccount()) + 10, payment, payment
-              .getDescription(), payment.getPaymentDate(), null, "RPPC", FIN_Utility
-              .getDepositAmount(payment.isReceipt(), payment.getFinancialTransactionAmount()),
-          FIN_Utility
-              .getPaymentAmount(payment.isReceipt(), payment.getFinancialTransactionAmount()),
+      transaction = getNewFinancialTransaction(
+          payment.getOrganization(),
+          payment.getAccount(),
+          TransactionsDao.getTransactionMaxLineNo(payment.getAccount()) + 10,
+          payment,
+          payment.getDescription(),
+          payment.getPaymentDate(),
+          null,
+          "RPPC",
+          FIN_Utility.getDepositAmount(payment.isReceipt(), payment.getFinancialTransactionAmount()),
+          FIN_Utility.getPaymentAmount(payment.isReceipt(), payment.getFinancialTransactionAmount()),
           payment.getProject(), payment.getSalesCampaign(), payment.getActivity(), payment
               .isReceipt() ? "BPD" : "BPW", payment.getPaymentDate(), payment.getCurrency(),
           payment.getFinancialTransactionConvertRate(), payment.getAmount());
@@ -538,8 +543,8 @@ public class AdvPaymentMngtDao {
     finTrans.setFinPayment(payment);
     String truncateDescription = null;
     if (description != null) {
-      truncateDescription = (description.length() > 255) ? description.substring(0, 252).concat(
-          "...").toString() : description.toString();
+      truncateDescription = (description.length() > 255) ? description.substring(0, 252)
+          .concat("...").toString() : description.toString();
     }
     finTrans.setDescription(truncateDescription);
     finTrans.setDateAcct(accountingDate);
@@ -698,8 +703,8 @@ public class AdvPaymentMngtDao {
       FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(obqRecList);
       for (int i = 0; i < data.length; i++) {
         FieldProviderFactory.setField(data[i], "FIN_RECONCILIATION_ID", FIN_Reconcile[i].getId());
-        FieldProviderFactory.setField(data[i], "ENDDATE", Utility.formatDate(FIN_Reconcile[i]
-            .getEndingDate(), vars.getJavaDateFormat()));
+        FieldProviderFactory.setField(data[i], "ENDDATE",
+            Utility.formatDate(FIN_Reconcile[i].getEndingDate(), vars.getJavaDateFormat()));
         FieldProviderFactory.setField(data[i], "BPARTNER", "Account Balance in Openbravo");
         FieldProviderFactory.setField(data[i], "REFERENCE", "");
         FieldProviderFactory.setField(data[i], "STARTINGBALANCE", FIN_Reconcile[i]
@@ -730,8 +735,8 @@ public class AdvPaymentMngtDao {
       FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(obqRecList);
       for (int i = 0; i < data.length; i++) {
         FieldProviderFactory.setField(data[i], "FIN_RECONCILIATION_ID", FIN_Reconcile[i].getId());
-        FieldProviderFactory.setField(data[i], "ENDDATE", Utility.formatDate(FIN_Reconcile[i]
-            .getEndingDate(), vars.getJavaDateFormat()));
+        FieldProviderFactory.setField(data[i], "ENDDATE",
+            Utility.formatDate(FIN_Reconcile[i].getEndingDate(), vars.getJavaDateFormat()));
         FieldProviderFactory.setField(data[i], "ENDINGBALANCE", FIN_Reconcile[i].getEndingBalance()
             .toString());
         FieldProviderFactory.setField(data[i], "STARTINGBALANCE", FIN_Reconcile[i]
@@ -750,8 +755,8 @@ public class AdvPaymentMngtDao {
     OBContext.setAdminMode();
     try {
       whereClause.append(" as fatrx ");
-      whereClause.append(" left outer join fatrx.").append(
-          FIN_FinaccTransaction.PROPERTY_RECONCILIATION).append(" as reconciliation");
+      whereClause.append(" left outer join fatrx.")
+          .append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION).append(" as reconciliation");
       whereClause.append(" where fatrx.");
       whereClause.append(FIN_FinaccTransaction.PROPERTY_ACCOUNT);
       whereClause.append(".id='");
@@ -783,8 +788,8 @@ public class AdvPaymentMngtDao {
     try {
 
       whereClause.append(" as fatrx ");
-      whereClause.append(" left outer join fatrx.").append(
-          FIN_FinaccTransaction.PROPERTY_RECONCILIATION).append(" as reconciliation");
+      whereClause.append(" left outer join fatrx.")
+          .append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION).append(" as reconciliation");
       whereClause.append(" where fatrx.");
       whereClause.append(FIN_FinaccTransaction.PROPERTY_ACCOUNT);
       whereClause.append(".id='");
@@ -815,8 +820,8 @@ public class AdvPaymentMngtDao {
   public FieldProvider[] getPaymentsNotDeposited(FIN_FinancialAccount account, Date fromDate,
       Date toDate, boolean isReceipt) {
 
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-        "dateFormat.java");
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
     OBContext.setAdminMode();
     try {
@@ -889,10 +894,10 @@ public class AdvPaymentMngtDao {
       for (int i = 0; i < data.length; i++) {
         Boolean paymentIsReceipt = FIN_Payments[i].isReceipt();
 
-        BigDecimal depositAmt = FIN_Utility.getDepositAmount(paymentIsReceipt, FIN_Payments[i]
-            .getFinancialTransactionAmount());
-        BigDecimal paymentAmt = FIN_Utility.getPaymentAmount(paymentIsReceipt, FIN_Payments[i]
-            .getFinancialTransactionAmount());
+        BigDecimal depositAmt = FIN_Utility.getDepositAmount(paymentIsReceipt,
+            FIN_Payments[i].getFinancialTransactionAmount());
+        BigDecimal paymentAmt = FIN_Utility.getPaymentAmount(paymentIsReceipt,
+            FIN_Payments[i].getFinancialTransactionAmount());
         BigDecimal foreignDepositAmt = FIN_Utility.getDepositAmount(paymentIsReceipt,
             FIN_Payments[i].getAmount());
         BigDecimal foreignPaymentAmt = FIN_Utility.getPaymentAmount(paymentIsReceipt,
@@ -911,15 +916,15 @@ public class AdvPaymentMngtDao {
         String description = FIN_Payments[i].getDescription();
         String truncateDescription = "";
         if (description != null) {
-          truncateDescription = (description.length() > 57) ? description.substring(0, 54).concat(
-              "...").toString() : description;
+          truncateDescription = (description.length() > 57) ? description.substring(0, 54)
+              .concat("...").toString() : description;
         }
         FieldProviderFactory.setField(data[i], "paymentDescription",
             (description != null && description.length() > 57) ? description : "");
         FieldProviderFactory.setField(data[i], "paymentDescriptionTrunc", truncateDescription);
 
-        FieldProviderFactory.setField(data[i], "paymentDate", dateFormater.format(
-            FIN_Payments[i].getPaymentDate()).toString());
+        FieldProviderFactory.setField(data[i], "paymentDate",
+            dateFormater.format(FIN_Payments[i].getPaymentDate()).toString());
         FieldProviderFactory.setField(data[i], "depositAmount", FIN_Utility
             .multiCurrencyAmountToDisplay(depositAmt, account.getCurrency(), foreignDepositAmt,
                 foreignCurrency));
@@ -1037,8 +1042,9 @@ public class AdvPaymentMngtDao {
             true));
       }
       requiredCurrency = OBDal.getInstance().get(Currency.class, strCurrencyId);
-      obc.add(Restrictions.or(Restrictions.eq(FIN_FinancialAccount.PROPERTY_CURRENCY,
-          requiredCurrency), Subqueries.exists(multiCurrAllowed.setProjection(Projections.id()))));
+      obc.add(Restrictions.or(
+          Restrictions.eq(FIN_FinancialAccount.PROPERTY_CURRENCY, requiredCurrency),
+          Subqueries.exists(multiCurrAllowed.setProjection(Projections.id()))));
     }
 
     if (strPaymentMethodId != null && !strPaymentMethodId.isEmpty()) {
@@ -1151,8 +1157,8 @@ public class AdvPaymentMngtDao {
   }
 
   public PaymentExecutionProcess getExecutionProcess(FIN_Payment payment) {
-    return getExecutionProcess(payment.getAccount(), payment.getPaymentMethod(), payment
-        .isReceipt());
+    return getExecutionProcess(payment.getAccount(), payment.getPaymentMethod(),
+        payment.isReceipt());
   }
 
   public PaymentExecutionProcess getExecutionProcess(FIN_FinancialAccount account,
@@ -1472,9 +1478,9 @@ public class AdvPaymentMngtDao {
     if (invoice == null) {
       return null;
     } else {
-      return getCreditPayment(invoice.getOrganization(), invoice.getBusinessPartner(), invoice
-          .getGrandTotalAmount(), invoice.getCurrency(), invoice.isSalesTransaction(), invoice
-          .getInvoiceDate());
+      return getCreditPayment(invoice.getOrganization(), invoice.getBusinessPartner(),
+          invoice.getGrandTotalAmount(), invoice.getCurrency(), invoice.isSalesTransaction(),
+          invoice.getInvoiceDate());
     }
   }
 }

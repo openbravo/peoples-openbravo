@@ -53,10 +53,12 @@ public class JsonUpdateRestTest extends JsonRestTest {
 
       final JSONObject jsonResult = new JSONObject();
       jsonResult.put(JsonConstants.DATA, jsonCountryObject);
-      final JSONObject resultJsonObject = doContentRequest(URL_PART + "/Country", jsonResult
-          .toString(), 200, "_identifier", "PUT");
-      assertEquals(JsonConstants.RPCREQUEST_STATUS_SUCCESS, resultJsonObject.getJSONObject(
-          JsonConstants.RESPONSE_RESPONSE).getInt(JsonConstants.RESPONSE_STATUS));
+      final JSONObject resultJsonObject = doContentRequest(URL_PART + "/Country",
+          jsonResult.toString(), 200, "_identifier", "PUT");
+      assertEquals(
+          JsonConstants.RPCREQUEST_STATUS_SUCCESS,
+          resultJsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE).getInt(
+              JsonConstants.RESPONSE_STATUS));
       final JSONArray jsonResultArray = resultJsonObject.getJSONObject(
           JsonConstants.RESPONSE_RESPONSE).getJSONArray(JsonConstants.DATA);
       assertEquals(1, jsonResultArray.length());
@@ -86,11 +88,13 @@ public class JsonUpdateRestTest extends JsonRestTest {
           DataResolvingMode.FULL);
       final JSONObject jsonResult = new JSONObject();
       jsonResult.put(JsonConstants.DATA, jsonCountryObject);
-      final JSONObject resultJsonObject = doContentRequest(URL_PART + "/Country", jsonResult
-          .toString(), 200, "_identifier", "POST");
+      final JSONObject resultJsonObject = doContentRequest(URL_PART + "/Country",
+          jsonResult.toString(), 200, "_identifier", "POST");
 
-      assertEquals(JsonConstants.RPCREQUEST_STATUS_SUCCESS, resultJsonObject.getJSONObject(
-          JsonConstants.RESPONSE_RESPONSE).getInt(JsonConstants.RESPONSE_STATUS));
+      assertEquals(
+          JsonConstants.RPCREQUEST_STATUS_SUCCESS,
+          resultJsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE).getInt(
+              JsonConstants.RESPONSE_STATUS));
       final JSONArray jsonArray = resultJsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE)
           .getJSONArray(JsonConstants.DATA);
       assertEquals(1, jsonArray.length());
@@ -104,8 +108,10 @@ public class JsonUpdateRestTest extends JsonRestTest {
     {
       final JSONObject jsonResultDeleteObject = doRequest(URL_PART + "/Country/" + newId,
           "_identifier", "DELETE", 200);
-      assertEquals(JsonConstants.RPCREQUEST_STATUS_SUCCESS, jsonResultDeleteObject.getJSONObject(
-          JsonConstants.RESPONSE_RESPONSE).getInt(JsonConstants.RESPONSE_STATUS));
+      assertEquals(
+          JsonConstants.RPCREQUEST_STATUS_SUCCESS,
+          jsonResultDeleteObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE).getInt(
+              JsonConstants.RESPONSE_STATUS));
       assertEquals(null, doRequest(URL_PART + "/Country/" + newId, "_identifier", "GET", 404));
     }
   }

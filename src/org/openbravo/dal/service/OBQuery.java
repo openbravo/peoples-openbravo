@@ -261,7 +261,7 @@ public class OBQuery<E extends BaseOBObject> {
     }
 
     // the query can start with an alias to support joins
-    // 
+    //
     String alias = null;
     // this is a space on purpose
     String prefix = " ";

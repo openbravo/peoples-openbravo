@@ -138,8 +138,8 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
 
     xmlDocument.setParameter("dateFrom", strDateFrom);
-    xmlDocument.setParameter("dateFromdisplayFormat", vars
-        .getSessionValue("#AD_JavaDateTimeFormat"));
+    xmlDocument.setParameter("dateFromdisplayFormat",
+        vars.getSessionValue("#AD_JavaDateTimeFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_JavaDateTimeFormat"));
     xmlDocument.setParameter("dateTo", strDateTo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_JavaDateTimeFormat"));

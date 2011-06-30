@@ -72,10 +72,11 @@ public class WADButton extends WADControl {
         if (triggersAutosave) {
           text.append(logClickCode);
         }
-        text.append("openServletNewWindow('BUTTON").append(
-            FormatUtilities.replace(getData("ColumnName"))).append(getData("AD_Process_ID"));
-        text.append("', true, '").append(getData("TabName")).append(
-            "_Edition.html', 'BUTTON', null, ").append(triggersAutosave);
+        text.append("openServletNewWindow('BUTTON")
+            .append(FormatUtilities.replace(getData("ColumnName")))
+            .append(getData("AD_Process_ID"));
+        text.append("', true, '").append(getData("TabName"))
+            .append("_Edition.html', 'BUTTON', null, ").append(triggersAutosave);
 
         text.append(", 600, 900, null, null, null, null, zz);");
       } else {
@@ -85,8 +86,8 @@ public class WADButton extends WADControl {
         text.append("openServletNewWindow('DEFAULT', true, '..");
         if (!getData("MappingName").startsWith("/"))
           text.append('/');
-        text.append(getData("MappingName")).append("', 'BUTTON', '").append(
-            getData("AD_Process_ID")).append("', ").append(triggersAutosave);
+        text.append(getData("MappingName")).append("', 'BUTTON', '")
+            .append(getData("AD_Process_ID")).append("', ").append(triggersAutosave);
         text.append(",600, 900, null, null, null, null, zz);");
       }
     }
@@ -162,8 +163,8 @@ public class WADButton extends WADControl {
       text.append("\" attribute=\"value\">").append(getData("ColumnName")).append("</FIELD>");
       if (getData("IsDisplayed").equals("Y")
           && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus")) {
-        text.append("\n<FIELD id=\"").append(getData("ColumnName")).append(
-            "_BTN\" replaceCharacters=\"htmlPreformated\">");
+        text.append("\n<FIELD id=\"").append(getData("ColumnName"))
+            .append("_BTN\" replaceCharacters=\"htmlPreformated\">");
         text.append(getData("ColumnName")).append("_BTN</FIELD>");
       }
     }
@@ -214,11 +215,12 @@ public class WADButton extends WADControl {
       String tabName, int itable) {
     // not need to implement sql method as itable is not modified
     if (fieldsDef.isdisplayed.equals("Y") && !fieldsDef.referencevalue.equals("")) {
-      strDefaultValues.append(
-          ", (vars.getLanguage().equals(\"en_US\")?ListData.selectName(this, \"").append(
-          fieldsDef.referencevalue).append("\", ").append(fieldsDef.defaultvalue).append(
-          "):ListData.selectNameTrl(this, vars.getLanguage(), \"").append(fieldsDef.referencevalue)
-          .append("\", ").append(fieldsDef.defaultvalue).append("))");
+      strDefaultValues
+          .append(", (vars.getLanguage().equals(\"en_US\")?ListData.selectName(this, \"")
+          .append(fieldsDef.referencevalue).append("\", ").append(fieldsDef.defaultvalue)
+          .append("):ListData.selectNameTrl(this, vars.getLanguage(), \"")
+          .append(fieldsDef.referencevalue).append("\", ").append(fieldsDef.defaultvalue)
+          .append("))");
     }
     return itable;
   }

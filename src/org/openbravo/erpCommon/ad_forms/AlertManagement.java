@@ -97,8 +97,8 @@ public class AlertManagement extends HttpSecureAppServlet {
       } else {
         myMessage.setType("Error");
         myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-        myMessage.setMessage(Utility.messageBD(this, "There are no displayed alerts", vars
-            .getLanguage()));
+        myMessage.setMessage(Utility.messageBD(this, "There are no displayed alerts",
+            vars.getLanguage()));
         return myMessage;
       }
 
@@ -133,8 +133,8 @@ public class AlertManagement extends HttpSecureAppServlet {
         String strWhere = new UsedByLink().getWhereClause(vars, "", rules[i].filterclause);
         try {
           AlertManagementData[] data = AlertManagementData.select(this, strActiveFilter,
-              strFixedFilter, Utility.getContext(this, vars, "#User_Client", ""), Utility
-                  .getContext(this, vars, "#AccessibleOrgTree", ""), vars.getUser(),
+              strFixedFilter, Utility.getContext(this, vars, "#User_Client", ""),
+              Utility.getContext(this, vars, "#AccessibleOrgTree", ""), vars.getUser(),
               vars.getRole(), rules[i].adAlertruleId, strWhere);
 
           if (data == null || data.length == 0)
@@ -163,8 +163,11 @@ public class AlertManagement extends HttpSecureAppServlet {
      * ServletException(ex); }
      */
 
-    xmlDocument.setData("reportAD_ALERTRULE", "liststructure", AlertManagementData
-        .selectComboAlertRules(this, vars.getLanguage(), vars.getUser(), vars.getRole()));
+    xmlDocument.setData(
+        "reportAD_ALERTRULE",
+        "liststructure",
+        AlertManagementData.selectComboAlertRules(this, vars.getLanguage(), vars.getUser(),
+            vars.getRole()));
 
     xmlDocument.setData("structure1", rules);
     xmlDocument.setDataArray("reportAlertManagement", "structure2", alerts);

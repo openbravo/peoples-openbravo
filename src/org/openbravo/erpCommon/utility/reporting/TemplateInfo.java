@@ -98,12 +98,10 @@ public class TemplateInfo {
         }
       } else
         throw new ReportingException(Utility.messageBD(connectionProvider, "NoEmailDefinitions",
-            strLanguage)
-            + template.id);
+            strLanguage) + template.id);
     } else
       throw new ServletException(Utility.messageBD(connectionProvider, "NoDocumentTypeTemplate",
-          strLanguage)
-          + docTypeId);
+          strLanguage) + docTypeId);
   }
 
   private TemplateData getSelectedTemplate(TemplateData[] templates, String templateId) {

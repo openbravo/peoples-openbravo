@@ -25,11 +25,11 @@ class FunctionSumValue extends FunctionValue {
   }
 
   public String print() {
-	  if (functionTemplate.formatOutput != null) {
-        return functionTemplate.formatOutput.format(sum);
-      } else {
-        return sum.toPlainString();
-      }
+    if (functionTemplate.formatOutput != null) {
+      return functionTemplate.formatOutput.format(sum);
+    } else {
+      return sum.toPlainString();
+    }
   }
 
   public String printSimple() {

@@ -180,8 +180,8 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
 
     // Project Starting Date
     xmlDocument.setParameter("startDateFrom", strStartDateFrom);
-    xmlDocument.setParameter("dateFromdisplayFormatStart", vars
-        .getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateFromdisplayFormatStart",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormatStart", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("startDateTo", strStartDateTo);
     xmlDocument.setParameter("dateTodisplayFormatStart", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -189,19 +189,19 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
 
     // Project Contract Date
     xmlDocument.setParameter("contractDateFrom", strContractDateFrom);
-    xmlDocument.setParameter("dateFromdisplayFormatContract", vars
-        .getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateFromsaveFormatContract", vars
-        .getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateFromdisplayFormatContract",
+        vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateFromsaveFormatContract",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("contractDateTo", strContractDateTo);
-    xmlDocument.setParameter("dateTodisplayFormatContract", vars
-        .getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTodisplayFormatContract",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormatContract", vars.getSessionValue("#AD_SqlDateFormat"));
 
     // Project Ending Date
     xmlDocument.setParameter("endingDateFrom", strEndingDateFrom);
-    xmlDocument.setParameter("dateFromdisplayFormatEnding", vars
-        .getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateFromdisplayFormatEnding",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormatEnding", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("endingDateTo", strEndingDateTo);
     xmlDocument
@@ -273,12 +273,13 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
         : ", PRP.SEQNO ASC, PRT.SEQNO ASC";
 
     ReportProjectProgressData[] data = null;
-    data = ReportProjectProgressData.select(this, vars.getLanguage(), Utility.getContext(this,
-        vars, "#User_Client", "ReportProjectProgress"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportProjectProgress"), strStartDateFrom, DateTimeData.nDaysAfter(
-        this, strStartDateTo, "1"), strContractDateFrom, DateTimeData.nDaysAfter(this,
-        strContractDateTo, "1"), strEndingDateFrom, DateTimeData.nDaysAfter(this, strEndingDateTo,
-        "1"), strProject, strProjectStatus, strBPartner, strResponsible, strOlderPhasesTasksFirst);
+    data = ReportProjectProgressData.select(this, vars.getLanguage(),
+        Utility.getContext(this, vars, "#User_Client", "ReportProjectProgress"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProgress"),
+        strStartDateFrom, DateTimeData.nDaysAfter(this, strStartDateTo, "1"), strContractDateFrom,
+        DateTimeData.nDaysAfter(this, strContractDateTo, "1"), strEndingDateFrom,
+        DateTimeData.nDaysAfter(this, strEndingDateTo, "1"), strProject, strProjectStatus,
+        strBPartner, strResponsible, strOlderPhasesTasksFirst);
 
     String strReferenceDate = strRefDate.equals("") ? DateTimeData.today(this) : strRefDate;
 

@@ -133,9 +133,9 @@ public class SelectorUIReference extends UIReference {
         if (tableName != null) {
           UITableDir tableDir = new UITableDir("19", null);
           prop.setProperty("ColumnNameSearch", tableName + "_ID");
-          tableDir.identifier(tableSql, tableSql.getTableName(), prop, prop
-              .getProperty("ColumnName"), tableSql.getTableName() + "."
-              + prop.getProperty("ColumnName") + "_R", false);
+          tableDir.identifier(tableSql, tableSql.getTableName(), prop,
+              prop.getProperty("ColumnName"),
+              tableSql.getTableName() + "." + prop.getProperty("ColumnName") + "_R", false);
         }
       } else {
         super.generateSQL(tableSql, prop);
@@ -213,8 +213,8 @@ public class SelectorUIReference extends UIReference {
 
           int myIndex = comboTableData.index++;
 
-          ComboTableQueryData trd[] = ComboTableQueryData.identifierColumns(comboTableData
-              .getPool(), tableDirName);
+          ComboTableQueryData trd[] = ComboTableQueryData.identifierColumns(
+              comboTableData.getPool(), tableDirName);
           comboTableData.addSelectField("td" + myIndex + "." + name, "ID");
 
           String tables = tableDirName + " td" + myIndex;
@@ -226,11 +226,13 @@ public class SelectorUIReference extends UIReference {
                 + ") \n";
             tables += "AND td" + myIndex + ".AD_Org_ID IN (" + comboTableData.getOrgList() + ")";
           } else {
-            comboTableData.addWhereField("td" + myIndex + ".AD_Client_ID IN ("
-                + comboTableData.getClientList() + ")", "CLIENT_LIST");
+            comboTableData.addWhereField(
+                "td" + myIndex + ".AD_Client_ID IN (" + comboTableData.getClientList() + ")",
+                "CLIENT_LIST");
             if (comboTableData.getOrgList() != null)
-              comboTableData.addWhereField("td" + myIndex + ".AD_Org_ID IN ("
-                  + comboTableData.getOrgList() + ")", "ORG_LIST");
+              comboTableData.addWhereField(
+                  "td" + myIndex + ".AD_Org_ID IN (" + comboTableData.getOrgList() + ")",
+                  "ORG_LIST");
           }
           comboTableData.addFromField(tables, "td" + myIndex);
           if (tableName == null || tableName.equals("")) {

@@ -67,8 +67,8 @@ public class SL_Column extends HttpSecureAppServlet {
     // Check there is only one key column per table
     if ("Y".equals(vars.getStringParameter("inpiskey"))) {
       OBCriteria<Column> keyCriteria = OBDal.getInstance().createCriteria(Column.class);
-      keyCriteria.add(Restrictions.eq(Column.PROPERTY_TABLE + ".id", vars
-          .getStringParameter("inpadTableId")));
+      keyCriteria.add(Restrictions.eq(Column.PROPERTY_TABLE + ".id",
+          vars.getStringParameter("inpadTableId")));
       keyCriteria.add(Restrictions.eq(Column.PROPERTY_KEYCOLUMN, true));
       if (keyCriteria.list().size() > 0) {
         resultData.append("new Array(\"inpiskey\",\"N\"),\n");

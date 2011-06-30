@@ -116,16 +116,19 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     xmlDocument.setParameter("period", strPeriod);
     xmlDocument.setParameter("array", strArray);
 
-    xmlDocument.setParameter("accounArray", Utility.arrayDobleEntrada("arrAccount",
-        ReportCashFlowData.selectAD_Accountingrpt_Element_ID_Double(this, Utility.getContext(this,
-            vars, "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(this, vars,
-            "#User_Client", "ReportCashFlow"), "")));
+    xmlDocument.setParameter(
+        "accounArray",
+        Utility.arrayDobleEntrada(
+            "arrAccount",
+            ReportCashFlowData.selectAD_Accountingrpt_Element_ID_Double(this,
+                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"),
+                Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), "")));
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "AD_OrgType_BU_LE", Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(
-              this, vars, "#User_Client", "ReportCashFlow"), 0);
+          "AD_OrgType_BU_LE",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"),
+          Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportCashFlow", "");
       xmlDocument.setData("reportAD_ORG", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -133,19 +136,26 @@ public class ReportCashFlow extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    xmlDocument.setData("reportAD_ACCOUNTINGRPT_ELEMENT", "liststructure", ReportCashFlowData
-        .selectAD_Accountingrpt_Element_ID(this, Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client",
-            "ReportCashFlow"), "", strcAcctSchemaId));
+    xmlDocument
+        .setData("reportAD_ACCOUNTINGRPT_ELEMENT", "liststructure", ReportCashFlowData
+            .selectAD_Accountingrpt_Element_ID(this,
+                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"),
+                Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), "",
+                strcAcctSchemaId));
 
-    xmlDocument.setData("reportPeriod", "liststructure", ReportCashFlowData.selectCombo(this, vars
-        .getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), Utility
-        .getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow")));
+    xmlDocument.setData(
+        "reportPeriod",
+        "liststructure",
+        ReportCashFlowData.selectCombo(this, vars.getLanguage(),
+            Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow")));
 
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
-        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"),
-            strcAcctSchemaId));
+    xmlDocument.setData(
+        "reportC_ACCTSCHEMA_ID",
+        "liststructure",
+        AccountingSchemaMiscData.selectC_ACCTSCHEMA_ID(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"),
+            Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), strcAcctSchemaId));
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportCashFlow", false, "", "", "",
         false, "ad_reports", strReplaceWith, false, true);
@@ -257,10 +267,10 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     strTreeOrg = strOrg;
     treeOrg(vars, strOrg);
 
-    ReportCashFlowData[] data = ReportCashFlowData.selectMissingEntries(this, Utility.getContext(
-        this, vars, "#User_Client", "ReportCashFlow"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportCashFlow"), strcAcctSchemaId, strPeriodFrom, strPeriodTo, vars
-        .getClient());
+    ReportCashFlowData[] data = ReportCashFlowData.selectMissingEntries(this,
+        Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"), strcAcctSchemaId,
+        strPeriodFrom, strPeriodTo, vars.getClient());
     if (log4j.isDebugEnabled())
       log4j.debug("printPageDepurar - data.length: " + data.length);
     if (log4j.isDebugEnabled())
@@ -318,9 +328,9 @@ public class ReportCashFlow extends HttpSecureAppServlet {
   private String arrayEntry(VariablesSecureApp vars, String strcAcctSchemaId)
       throws ServletException {
     String result = "";
-    ReportCashFlowData[] data = ReportCashFlowData.selectAD_Accountingrpt_Element_ID(this, Utility
-        .getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"), Utility.getContext(this,
-        vars, "#User_Client", "ReportCashFlow"), "", strcAcctSchemaId);
+    ReportCashFlowData[] data = ReportCashFlowData.selectAD_Accountingrpt_Element_ID(this,
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"),
+        Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), "", strcAcctSchemaId);
     if (data == null || data.length == 0) {
       result = "var array = null;";
     } else {
@@ -333,8 +343,8 @@ public class ReportCashFlow extends HttpSecureAppServlet {
       }
       result += ");";
       ReportCashFlowData[] dataPeriod = ReportCashFlowData.selectCombo(this, vars.getLanguage(),
-          Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), Utility.getContext(
-              this, vars, "#AccessibleOrgTree", "ReportCashFlow"));
+          Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"));
       if (dataPeriod == null || dataPeriod.length == 0) {
         result += "\nvar combo = null;";
       } else {
@@ -370,16 +380,16 @@ public class ReportCashFlow extends HttpSecureAppServlet {
       log4j.debug("Ouput: child tree data");
     String strAccountId = ReportCashFlowData.selectAccounting(this, strAccountingReportId);
     ReportCashFlowData[] data = ReportCashFlowData.select(this, strParent, String.valueOf(level),
-        Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), Utility
-            .stringList(strOrg), strPeriodFrom, strPeriodTo, strAccountId, strAccountingReportId,
-        strcAcctSchemaId);
+        Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"),
+        Utility.stringList(strOrg), strPeriodFrom, strPeriodTo, strAccountId,
+        strAccountingReportId, strcAcctSchemaId);
     if (data == null || data.length == 0)
       return;
     vectorArray.addElement(data[0]);
-    ReportCashFlowData[] dataAux = ReportCashFlowData.selectChild(this, Utility.getContext(this,
-        vars, "#User_Client", "ReportCashFlow"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportCashFlow"), data[0].id, ReportCashFlowData.selectTree(this,
-        vars.getClient()));
+    ReportCashFlowData[] dataAux = ReportCashFlowData.selectChild(this,
+        Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashFlow"), data[0].id,
+        ReportCashFlowData.selectTree(this, vars.getClient()));
     for (int i = 0; i < dataAux.length; i++) {
       childData(vars, vectorArray, strcAcctSchemaId, dataAux[i].id, strPeriodFrom, strPeriodTo,
           strOrg, level + 1, data[0].id);

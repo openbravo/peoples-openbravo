@@ -122,9 +122,12 @@ public class ReportBankJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paramMessage", (strMessage.equals("") ? "" : "alert('" + strMessage
         + "');"));
-    xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
-        this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportBankJR"),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR")));
+    xmlDocument.setData(
+        "reportC_ACCOUNTNUMBER",
+        "liststructure",
+        AccountNumberComboData.select(this, vars.getLanguage(),
+            Utility.getContext(this, vars, "#User_Client", "ReportBankJR"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR")));
 
     out.println(xmlDocument.print());
     out.close();
@@ -162,19 +165,22 @@ public class ReportBankJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("dateTo", strDateTo);
       xmlDocument.setParameter("paramMessage", (strMessage.equals("") ? "" : "alert('" + strMessage
           + "');"));
-      xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
-          this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportBankJR"),
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR")));
+      xmlDocument.setData(
+          "reportC_ACCOUNTNUMBER",
+          "liststructure",
+          AccountNumberComboData.select(this, vars.getLanguage(),
+              Utility.getContext(this, vars, "#User_Client", "ReportBankJR"),
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR")));
     } else {
       // initialBalance = new BigDecimal(
       // ReportBankJRData.BeginningBalance(this, Utility.getContext(this,
       // vars, "#User_Client", "ReportBankJR"), Utility.getContext(this,
       // vars, "#AccessibleOrgTree", "ReportBankJR"),strDateFrom,
       // strcbankaccount));
-      data = ReportBankJRData.select(this, vars.getLanguage(), Utility.getContext(this, vars,
-          "#User_Client", "ReportBankJR"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-          "ReportBankJR"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-          strcbankaccount);
+      data = ReportBankJRData.select(this, vars.getLanguage(),
+          Utility.getContext(this, vars, "#User_Client", "ReportBankJR"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBankJR"), strDateFrom,
+          DateTimeData.nDaysAfter(this, strDateTo, "1"), strcbankaccount);
       // xmlDocument.setParameter("sumAmount",
       // ReportBankJRData.BeginningBalance(this, Utility.getContext(this,
       // vars, "#User_Client", "ReportBankJR"), Utility.getContext(this,

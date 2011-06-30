@@ -59,13 +59,14 @@ public class Login extends HttpBaseServlet {
             .getLanguage().getLanguage());
         String orHigherMsg = Utility.messageBD(this, "OR_HIGHER_TEXT", systemClient.getLanguage()
             .getLanguage());
-        String recBrowserMsgTitle = Utility.messageBD(this, "RECOMMENDED_BROWSER_TITLE", systemClient
+        String recBrowserMsgTitle = Utility.messageBD(this, "RECOMMENDED_BROWSER_TITLE",
+            systemClient.getLanguage().getLanguage());
+        String recBrowserMsgText = Utility.messageBD(this, "RECOMMENDED_BROWSER_TEXT", systemClient
             .getLanguage().getLanguage());
-        String recBrowserMsgText = Utility.messageBD(this, "RECOMMENDED_BROWSER_TEXT", systemClient.getLanguage()
-            .getLanguage());
 
         if (OBVersion.getInstance().is30()) {
-          printPageLogin30(response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg, recBrowserMsgTitle, recBrowserMsgText);
+          printPageLogin30(response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg,
+              recBrowserMsgTitle, recBrowserMsgText);
         } else {
           printPageLogin250(response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg);
         }
@@ -226,7 +227,8 @@ public class Login extends HttpBaseServlet {
    * Shows 3.0 login page
    */
   private void printPageLogin30(HttpServletResponse response, String strTheme, String cacheMsg,
-      String validBrowserMsg, String orHigherMsg, String recBrowserMsgTitle, String recBrowserMsgText) throws IOException, ServletException {
+      String validBrowserMsg, String orHigherMsg, String recBrowserMsgTitle,
+      String recBrowserMsgText) throws IOException, ServletException {
 
     boolean showForgeLogo = true;
     boolean showITLogo = false;
@@ -256,8 +258,8 @@ public class Login extends HttpBaseServlet {
         + showITLogo + ", showForgeLogo = " + showForgeLogo + ", urlCompany = '" + companyLink
         + "', urlSupport = '" + itLink + "', urlOBForge = 'http://forge.openbravo.com/';";
     xmlDocument.setParameter("visualPrefs", visualPrefs);
-    xmlDocument.setParameter("itServiceUrl", "var itServiceUrl = '"
-        + SessionLoginData.selectSupportContact(this) + "'");
+    xmlDocument.setParameter("itServiceUrl",
+        "var itServiceUrl = '" + SessionLoginData.selectSupportContact(this) + "'");
 
     String cacheMsgFinal = (cacheMsg != null && !cacheMsg.equals("")) ? cacheMsg
         : "Your browser's cache has outdated files. Please clean it and reload the page.";

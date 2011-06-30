@@ -43,11 +43,10 @@ public class UITableDir extends UIReference {
   }
 
   public void generateSQL(TableSQLData table, Properties prop) throws Exception {
-    table.addSelectField(table.getTableName() + "." + prop.getProperty("ColumnName"), prop
-        .getProperty("ColumnName"));
-    identifier(table, table.getTableName(), prop, prop.getProperty("ColumnName") + "_R", table
-        .getTableName()
-        + "." + prop.getProperty("ColumnName"), false);
+    table.addSelectField(table.getTableName() + "." + prop.getProperty("ColumnName"),
+        prop.getProperty("ColumnName"));
+    identifier(table, table.getTableName(), prop, prop.getProperty("ColumnName") + "_R",
+        table.getTableName() + "." + prop.getProperty("ColumnName"), false);
   }
 
   public void identifier(TableSQLData tableSql, String parentTableName, Properties field,
@@ -91,8 +90,9 @@ public class UITableDir extends UIReference {
     tableSql.addFromField(tables, "td" + myIndex, realName);
     for (int i = 0; i < trd.length; i++) {
       Properties linkedRefProp = UIReferenceUtility.fieldToProperties(trd[i]);
-      UIReference linkedReference = Reference.getUIReference(linkedRefProp
-          .getProperty("AD_Reference_ID"), linkedRefProp.getProperty("AD_Reference_Value_ID"));
+      UIReference linkedReference = Reference.getUIReference(
+          linkedRefProp.getProperty("AD_Reference_ID"),
+          linkedRefProp.getProperty("AD_Reference_Value_ID"));
       linkedReference.identifier(tableSql, "td" + myIndex, linkedRefProp, identifierName, realName,
           false);
     }
@@ -109,16 +109,16 @@ public class UITableDir extends UIReference {
     // TableDir, Yes/No, direct search
     strHtml.append("<td class=\"Combo_ContentCell\" colspan=\"3\">");
     strHtml.append("<select ");
-    strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname)).append(
-        "\" ");
+    strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields.columnname))
+        .append("\" ");
     // attach comboReload call if needed
     Vector<String> comboReloadFields = getComboReloadFields(conn, strTab);
     if (isInVector(comboReloadFields, fields.columnname)) {
       strHtml.append("onchange=\"reloadComboReloads(this.name);return true; \" id=\"idParam")
           .append(FormatUtilities.replace(fields.columnname)).append("\" ");
     } else {
-      strHtml.append("onchange=\"return true; \" id=\"idParam").append(
-          FormatUtilities.replace(fields.columnname)).append("\" ");
+      strHtml.append("onchange=\"return true; \" id=\"idParam")
+          .append(FormatUtilities.replace(fields.columnname)).append("\" ");
     }
     if (Integer.valueOf(fields.fieldlength).intValue() < (UIReferenceUtility.MAX_TEXTBOX_LENGTH / 4)) {
       strHtml.append("class=\"Combo Combo_OneCell_width\"");
@@ -214,23 +214,23 @@ public class UITableDir extends UIReference {
 
   public void generateFilterAcceptScript(BuscadorData field, StringBuffer params,
       StringBuffer paramsData) {
-    paramsData.append("paramsData[count++] = new Array(\"inpParam").append(
-        FormatUtilities.replace(field.columnname)).append("\" , ");
+    paramsData.append("paramsData[count++] = new Array(\"inpParam")
+        .append(FormatUtilities.replace(field.columnname)).append("\" , ");
     params.append(", \"inpParam").append(FormatUtilities.replace(field.columnname)).append("\",");
     params.append(" escape(");
-    paramsData.append("((frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
-        ".selectedIndex!=-1)?");
-    paramsData.append("frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
-        ".options[");
-    paramsData.append("frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
-        ".selectedIndex].value:");
+    paramsData.append("((frm.inpParam").append(FormatUtilities.replace(field.columnname))
+        .append(".selectedIndex!=-1)?");
+    paramsData.append("frm.inpParam").append(FormatUtilities.replace(field.columnname))
+        .append(".options[");
+    paramsData.append("frm.inpParam").append(FormatUtilities.replace(field.columnname))
+        .append(".selectedIndex].value:");
     paramsData.append("\"\"));\n");
-    params.append("((frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
-        ".selectedIndex!=-1)?");
-    params.append("frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
-        ".options[");
-    params.append("frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
-        ".selectedIndex].value:");
+    params.append("((frm.inpParam").append(FormatUtilities.replace(field.columnname))
+        .append(".selectedIndex!=-1)?");
+    params.append("frm.inpParam").append(FormatUtilities.replace(field.columnname))
+        .append(".options[");
+    params.append("frm.inpParam").append(FormatUtilities.replace(field.columnname))
+        .append(".selectedIndex].value:");
     params.append("\"\")");
     params.append(")");
   }
@@ -275,11 +275,12 @@ public class UITableDir extends UIReference {
       tables += "AND td" + myIndex + ".AD_Client_ID IN (" + comboTableData.getClientList() + ") \n";
       tables += "AND td" + myIndex + ".AD_Org_ID IN (" + comboTableData.getOrgList() + ")";
     } else {
-      comboTableData.addWhereField("td" + myIndex + ".AD_Client_ID IN ("
-          + comboTableData.getClientList() + ")", "CLIENT_LIST");
+      comboTableData.addWhereField(
+          "td" + myIndex + ".AD_Client_ID IN (" + comboTableData.getClientList() + ")",
+          "CLIENT_LIST");
       if (comboTableData.getOrgList() != null)
-        comboTableData.addWhereField("td" + myIndex + ".AD_Org_ID IN ("
-            + comboTableData.getOrgList() + ")", "ORG_LIST");
+        comboTableData.addWhereField(
+            "td" + myIndex + ".AD_Org_ID IN (" + comboTableData.getOrgList() + ")", "ORG_LIST");
     }
     comboTableData.addFromField(tables, "td" + myIndex);
     if (tableName == null || tableName.equals("")) {

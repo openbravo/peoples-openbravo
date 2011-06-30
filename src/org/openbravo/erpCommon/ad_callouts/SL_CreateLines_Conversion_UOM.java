@@ -108,8 +108,8 @@ public class SL_CreateLines_Conversion_UOM extends HttpSecureAppServlet {
         if (!strQuantityOrder.equals(""))
           resultado.append(",");
         resultado.append("new Array('MESSAGE', \""
-            + FormatUtilities.replaceJS(Utility.messageBD(this, "NoUOMConversion", vars
-                .getLanguage())) + "\")");
+            + FormatUtilities.replaceJS(Utility.messageBD(this, "NoUOMConversion",
+                vars.getLanguage())) + "\")");
       }
       resultado.append(");");
     }

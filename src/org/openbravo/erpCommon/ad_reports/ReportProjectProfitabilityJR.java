@@ -48,8 +48,8 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     // Get user Client's base currency
     String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT")) {
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportProjectProfitabilityJR|Org", vars
-          .getOrg());
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportProjectProfitabilityJR|Org",
+          vars.getOrg());
       String strProject = vars.getGlobalVariable("inpcProjectId",
           "ReportProjectProfitabilityJR|Project", "");
       String strProjectType = vars.getGlobalVariable("inpProjectType",
@@ -136,32 +136,34 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     try {
       data = ReportProjectProfitabilityData.select(this, strCurrencyId, strBaseCurrencyId,
-          strDateFrom2, DateTimeData.nDaysAfter(this, strDateTo2, "1"), strTreeOrg, Utility
-              .getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), strDateFrom,
-          DateTimeData.nDaysAfter(this, strDateTo, "1"), strDateFrom3, DateTimeData.nDaysAfter(
-              this, strDateTo3, "1"), strProjectType, strProject, strResponsible, strPartner);
+          strDateFrom2, DateTimeData.nDaysAfter(this, strDateTo2, "1"), strTreeOrg,
+          Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"),
+          strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDateFrom3,
+          DateTimeData.nDaysAfter(this, strDateTo3, "1"), strProjectType, strProject,
+          strResponsible, strPartner);
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }
     strConvRateErrorMsg = myMessage.getMessage();
 
-//    for (int i = 0; i < data.length; i++) {
-//      if (data[i].realservices != null && !data[i].realservices.equals("")
-//          && !data[i].realservices.trim().equals("0") && data[i].cuomid != null
-//          && !data[i].cuomid.equals("")) {
-//        String count = ReportExpenseData.selectUOM(this, data[i].cuomid);
-//        String count2 = ReportExpenseData.selectUOM2(this, data[i].cuomid);
-//        if (Integer.parseInt(count) + Integer.parseInt(count2) == 0) {
-//          advisePopUp(request, response, "ERROR", Utility.messageBD(this, "Error", vars
-//              .getLanguage()), Utility.messageBD(this, "NoConversionDayUom", vars.getLanguage()));
-//        }
-//      }
-//    }
+    // for (int i = 0; i < data.length; i++) {
+    // if (data[i].realservices != null && !data[i].realservices.equals("")
+    // && !data[i].realservices.trim().equals("0") && data[i].cuomid != null
+    // && !data[i].cuomid.equals("")) {
+    // String count = ReportExpenseData.selectUOM(this, data[i].cuomid);
+    // String count2 = ReportExpenseData.selectUOM2(this, data[i].cuomid);
+    // if (Integer.parseInt(count) + Integer.parseInt(count2) == 0) {
+    // advisePopUp(request, response, "ERROR", Utility.messageBD(this, "Error", vars
+    // .getLanguage()), Utility.messageBD(this, "NoConversionDayUom", vars.getLanguage()));
+    // }
+    // }
+    // }
     // If a conversion rate is missing for a certain transaction, an error
     // message window pops-up.
     if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(request, response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader",
-          vars.getLanguage()), strConvRateErrorMsg);
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
     } else { // Otherwise, the report is launched
       if (data == null || data.length == 0) {
         data = ReportProjectProfitabilityData.set();
@@ -205,8 +207,8 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportProjectProfitabilityJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportProjectProfitabilityJR.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
           "ReportProjectProfitabilityJR.html", strReplaceWith);
@@ -265,17 +267,17 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       xmlDocument.setData("reportResponsible", "liststructure", comboTableData.select(false));
       comboTableData = null;
 
-      comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "", Utility
-          .getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"), Utility
-          .getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
+      comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
           strOrg);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
 
-      comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Project_ID", "", "", Utility
-          .getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"), Utility
-          .getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
+      comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Project_ID", "", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"),
+          Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR",
           strProject);
       xmlDocument.setData("reportC_Project_ID", "liststructure", comboTableData.select(false));

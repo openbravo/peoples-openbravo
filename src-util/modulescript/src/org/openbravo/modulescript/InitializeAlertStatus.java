@@ -24,9 +24,9 @@ import javax.servlet.ServletException;
 
 import org.openbravo.database.ConnectionProvider;
 
-public class InitializeAlertStatus extends ModuleScript{
-@Override
-//Updates new column values with deprecated ones
+public class InitializeAlertStatus extends ModuleScript {
+  @Override
+  // Updates new column values with deprecated ones
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();

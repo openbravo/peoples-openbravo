@@ -31,7 +31,6 @@ import org.apache.tools.ant.Task;
 import org.openbravo.utils.PropertiesManager;
 import org.openbravo.utils.Version;
 
-
 public class CheckDB extends Task {
   static Logger log4j = Logger.getLogger(CheckDB.class);
 
@@ -128,8 +127,8 @@ public class CheckDB extends Task {
       } catch (final Exception e) {
         throw new BuildException(e.getMessage());
       }
-      final long minOpenCursors = new Long(new PropertiesManager()
-          .getProperty("db.ora.opencursors"));
+      final long minOpenCursors = new Long(
+          new PropertiesManager().getProperty("db.ora.opencursors"));
       msg = "Minimum open cursors required: " + minOpenCursors + ", current open cursors "
           + openCursors;
       if (openCursors < minOpenCursors)

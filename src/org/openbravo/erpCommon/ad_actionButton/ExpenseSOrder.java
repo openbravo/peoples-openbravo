@@ -99,8 +99,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       conn = getTransactionConnection();
       ExpenseSOrderData[] data = ExpenseSOrderData.select(this, strBPartner, strDatefrom,
           DateTimeData.nDaysAfter(this, strDateto, "1"), Utility.getContext(this, vars,
-              "#User_Client", "ExpenseSOrder"), strOrganization.equals("") ? Utility.getContext(
-              this, vars, "#User_Org", "ExpenseSOrder") : Utility.stringList(strOrganization));
+              "#User_Client", "ExpenseSOrder"),
+          strOrganization.equals("") ? Utility.getContext(this, vars, "#User_Org", "ExpenseSOrder")
+              : Utility.stringList(strOrganization));
       String strOldOrganization = "-1";
       String strOldBPartner = "-1";
       String strOldProject = "-1";
@@ -270,20 +271,37 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               data.adOrgId);
           String strDocumentNo = Utility.getDocumentNo(this, vars, "", "C_Order", docTargetType,
               docTargetType, false, true);
-          ExpenseSOrderData.insertCOrder(conn, this, strCOrderId, data.adClientId, data.adOrgId,
-              vars.getUser(), strDocumentNo, strDocStatus, strDocAction, strProcessing, docType,
-              docTargetType, strDateOrdered, strDateOrdered, strDateOrdered, data.cBpartnerId,
-              ExpenseSOrderData.cBPartnerLocationId(this, data.cBpartnerId), ExpenseSOrderData
-                  .billto(this, data.cBpartnerId).equals("") ? ExpenseSOrderData
+          ExpenseSOrderData.insertCOrder(
+              conn,
+              this,
+              strCOrderId,
+              data.adClientId,
+              data.adOrgId,
+              vars.getUser(),
+              strDocumentNo,
+              strDocStatus,
+              strDocAction,
+              strProcessing,
+              docType,
+              docTargetType,
+              strDateOrdered,
+              strDateOrdered,
+              strDateOrdered,
+              data.cBpartnerId,
+              ExpenseSOrderData.cBPartnerLocationId(this, data.cBpartnerId),
+              ExpenseSOrderData.billto(this, data.cBpartnerId).equals("") ? ExpenseSOrderData
                   .cBPartnerLocationId(this, data.cBpartnerId) : ExpenseSOrderData.billto(this,
-                  data.cBpartnerId), strBPCCurrencyId, data1[0].paymentrule,
-              data1[0].finPaymentmethodId, data1[0].cPaymenttermId.equals("") ? ExpenseSOrderData
-                  .selectPaymentTerm(this, data.adClientId) : data1[0].cPaymenttermId,
-              data1[0].invoicerule.equals("") ? "I" : data1[0].invoicerule, data1[0].deliveryrule
-                  .equals("") ? "A" : data1[0].deliveryrule, "I", data1[0].deliveryviarule
-                  .equals("") ? "D" : data1[0].deliveryviarule, data.mWarehouseId.equals("") ? vars
-                  .getWarehouse() : data.mWarehouseId, data.mPricelistId, data.cProjectId,
-              data.cActivityId, data.cCampaignId);
+                  data.cBpartnerId),
+              strBPCCurrencyId,
+              data1[0].paymentrule,
+              data1[0].finPaymentmethodId,
+              data1[0].cPaymenttermId.equals("") ? ExpenseSOrderData.selectPaymentTerm(this,
+                  data.adClientId) : data1[0].cPaymenttermId, data1[0].invoicerule.equals("") ? "I"
+                  : data1[0].invoicerule, data1[0].deliveryrule.equals("") ? "A"
+                  : data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("") ? "D"
+                  : data1[0].deliveryviarule, data.mWarehouseId.equals("") ? vars.getWarehouse()
+                  : data.mWarehouseId, data.mPricelistId, data.cProjectId, data.cActivityId,
+              data.cCampaignId);
           myMessage.setType("Success");
           myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
           myMessage.setMessage(Utility.messageBD(this, "SalesOrderDocumentno", vars.getLanguage())
@@ -320,9 +338,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
 
       // Gets the tax for the sales order line
       String strCTaxID = Tax.get(this, data.mProductId, strDateOrdered, data.adOrgId,
-          data.mWarehouseId.equals("") ? vars.getWarehouse() : data.mWarehouseId, ExpenseSOrderData
-              .cBPartnerLocationId(this, data.cBpartnerId), ExpenseSOrderData.cBPartnerLocationId(
-              this, data.cBpartnerId), data.cProjectId, true);
+          data.mWarehouseId.equals("") ? vars.getWarehouse() : data.mWarehouseId,
+          ExpenseSOrderData.cBPartnerLocationId(this, data.cBpartnerId),
+          ExpenseSOrderData.cBPartnerLocationId(this, data.cBpartnerId), data.cProjectId, true);
       if (strCTaxID.equals("") || strCTaxID == null) {
         myMessage.setType("Error");
         myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
@@ -436,10 +454,10 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               strCOrderId, Integer.toString(line), data.cBpartnerId, ExpenseSOrderData
                   .cBPartnerLocationId(this, data.cBpartnerId), strDateOrdered, strDateOrdered,
               data.description, data.mProductId, data.mWarehouseId.equals("") ? vars.getWarehouse()
-                  : data.mWarehouseId, data.cUomId.equals("") ? Utility.getContext(this, vars,
-                  "#C_UOM_ID", "ExpenseSOrder") : data.cUomId, data.qty, strBPCCurrencyId,
-              pricelist, priceactual, data.mPricelistId, pricelimit, strCTaxID,
-              data.sResourceassignmentId, strDiscount);
+                  : data.mWarehouseId,
+              data.cUomId.equals("") ? Utility.getContext(this, vars, "#C_UOM_ID", "ExpenseSOrder")
+                  : data.cUomId, data.qty, strBPCCurrencyId, pricelist, priceactual,
+              data.mPricelistId, pricelimit, strCTaxID, data.sResourceassignmentId, strDiscount);
 
           // Updates expense line with the sales order line ID
           ExpenseSOrderData.updateTimeExpenseLine(conn, this, strCOrderlineID,
@@ -513,8 +531,8 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("description", strDescription);
     xmlDocument.setParameter("description", strDescription);
     xmlDocument.setParameter("help", strHelp);
-    xmlDocument.setParameter("Bpartnerdescription", ExpenseSOrderData.selectBpartner(this,
-        strBPartner));
+    xmlDocument.setParameter("Bpartnerdescription",
+        ExpenseSOrderData.selectBpartner(this, strBPartner));
     xmlDocument.setParameter("BpartnerId", strBPartner);
     xmlDocument.setParameter("adOrgId", strOrganization);
     xmlDocument.setParameter("dateFrom", strDatefrom);
@@ -529,8 +547,8 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramShowNullComplete", strCompleteAuto);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ExpenseSOrder"), Utility
-              .getContext(this, vars, "#User_Client", "ExpenseSOrder"), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ExpenseSOrder"),
+          Utility.getContext(this, vars, "#User_Client", "ExpenseSOrder"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ExpenseSOrder", strOrganization);
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
       comboTableData = null;

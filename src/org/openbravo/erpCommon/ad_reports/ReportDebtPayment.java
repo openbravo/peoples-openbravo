@@ -214,11 +214,12 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     ReportDebtPaymentData[] data = null;
     String strReportName = null;
     if (!strGroup.equals("")) {
-      data = ReportDebtPaymentData.select(this, cCurrencyConv, vars.getLanguage(), Utility
-          .getContext(this, vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this,
-          vars, "#AccessibleOrgTree", "ReportDebtPayment"), strC_BPartner_ID, strDateFrom,
-          DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2, strPaymentRule,
-          strReceipt, strStatus, strAux, strcbankaccount, "BPARTNER, BANKACC");
+      data = ReportDebtPaymentData.select(this, cCurrencyConv, vars.getLanguage(),
+          Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"),
+          strC_BPartner_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
+          strCalc2, strPaymentRule, strReceipt, strStatus, strAux, strcbankaccount,
+          "BPARTNER, BANKACC");
       if (!strGroupBA.equals("")) {
         strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportDebtPayment_BankAcc.jrxml";
       } else {
@@ -227,10 +228,11 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
 
     } else {
       data = ReportDebtPaymentData.selectNoBpartner(this, cCurrencyConv, vars.getLanguage(),
-          Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(
-              this, vars, "#AccessibleOrgTree", "ReportDebtPayment"), strC_BPartner_ID,
-          strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2,
-          strPaymentRule, strReceipt, strStatus, strAux, strcbankaccount, "BANKACC, BPARTNER");
+          Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"),
+          strC_BPartner_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
+          strCalc2, strPaymentRule, strReceipt, strStatus, strAux, strcbankaccount,
+          "BANKACC, BPARTNER");
       if (!strGroupBA.equals("")) {
         strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportDebtPayment_NoBP_BankAcc.jrxml";
       } else {
@@ -281,17 +283,19 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     XmlDocument xmlDocument;
     ReportDebtPaymentData[] data = null;
     if (!strGroup.equals(""))
-      data = ReportDebtPaymentData.select(this, cCurrencyConv, vars.getLanguage(), Utility
-          .getContext(this, vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this,
-          vars, "#AccessibleOrgTree", "ReportDebtPayment"), strC_BPartner_ID, strDateFrom,
-          DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2, strPaymentRule,
-          strReceipt, strStatus, strAux, strcbankaccount, "BPARTNER, BANKACC");
+      data = ReportDebtPaymentData.select(this, cCurrencyConv, vars.getLanguage(),
+          Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"),
+          strC_BPartner_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
+          strCalc2, strPaymentRule, strReceipt, strStatus, strAux, strcbankaccount,
+          "BPARTNER, BANKACC");
     else
       data = ReportDebtPaymentData.selectNoBpartner(this, cCurrencyConv, vars.getLanguage(),
-          Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(
-              this, vars, "#AccessibleOrgTree", "ReportDebtPayment"), strC_BPartner_ID,
-          strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2,
-          strPaymentRule, strReceipt, strStatus, strAux, strcbankaccount, "BANKACC, BPARTNER");
+          Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"),
+          strC_BPartner_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
+          strCalc2, strPaymentRule, strReceipt, strStatus, strAux, strcbankaccount,
+          "BANKACC, BPARTNER");
     if (data == null || data.length == 0) {
       data = ReportDebtPaymentData.set();
       discard[0] = "sectionBpartner";
@@ -384,13 +388,18 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("cBankAccount", strcbankaccount);
-    xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
-        this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client",
-            "ReportDebtPayment"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "ReportDebtPayment")));
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
-        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-            .getContext(this, vars, "#User_Client", ""), strC_BPartner_ID));
+    xmlDocument.setData(
+        "reportC_ACCOUNTNUMBER",
+        "liststructure",
+        AccountNumberComboData.select(this, vars.getLanguage(),
+            Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment")));
+    xmlDocument.setData(
+        "reportCBPartnerId_IN",
+        "liststructure",
+        SelectorUtilityData.selectBpartner(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strC_BPartner_ID));
     // xmlDocument.setParameter("paramBPartnerId", strC_BPartner_ID);
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));

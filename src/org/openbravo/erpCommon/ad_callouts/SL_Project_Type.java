@@ -79,9 +79,9 @@ public class SL_Project_Type extends HttpSecureAppServlet {
 
     if (!strCProjectTypeID.isEmpty()) {
       try {
-        comboTableData = new ComboTableData(vars, this, "19", "C_ProjectType_ID", "", "", Utility
-            .getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId")), Utility.getContext(
-            this, vars, "#User_Client", strWindowId), 0);
+        comboTableData = new ComboTableData(vars, this, "19", "C_ProjectType_ID", "", "",
+            Utility.getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId")),
+            Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
         comboTableData.fillParameters(null, strWindowId, "");
         data = comboTableData.select(false);
       } catch (Exception ex) {

@@ -106,8 +106,10 @@ public class PrintJR extends HttpSecureAppServlet {
       }
 
       if (!paramValue.equals("")) {
-        parameters.put(processparams[i].paramname, formatParameter(vars,
-            processparams[i].paramname, paramValue, processparams[i].reference, jasperReport));
+        parameters.put(
+            processparams[i].paramname,
+            formatParameter(vars, processparams[i].paramname, paramValue,
+                processparams[i].reference, jasperReport));
       }
     }
     return parameters;

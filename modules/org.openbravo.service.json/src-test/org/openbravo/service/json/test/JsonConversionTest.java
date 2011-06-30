@@ -112,8 +112,8 @@ public class JsonConversionTest extends BaseTest {
    */
   public void testJsonConversionListOfObjects() throws Exception {
     setSystemAdministratorContext();
-    final List<BaseOBObject> columns = OBDal.getInstance().createQuery(Column.ENTITY_NAME,
-        " table.id='100'").list();
+    final List<BaseOBObject> columns = OBDal.getInstance()
+        .createQuery(Column.ENTITY_NAME, " table.id='100'").list();
     final DataToJsonConverter converter = new DataToJsonConverter();
     final List<JSONObject> jsonObjects = converter.toJsonObjects(columns);
     log.debug(jsonObjects.toString());

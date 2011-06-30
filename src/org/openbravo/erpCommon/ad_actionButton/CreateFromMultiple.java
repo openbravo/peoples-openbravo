@@ -176,8 +176,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Warehouse_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
-              .getContext(this, vars, "#User_Client", strWindowId), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strmWarehouseId);
       xmlDocument.setData("reportM_WAREHOUSE_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -189,8 +189,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
         .selectAccessibleWarehouses(this, vars.getRole(), vars.getClient());
     if (strmWarehouseId.equals("") && dataW != null && dataW.length > 0)
       strmWarehouseId = dataW[0].id;
-    xmlDocument.setData("reportM_LOCATOR_X", "liststructure", CreateFromMultipleReceiptData
-        .selectM_Locator_X(this, strmWarehouseId));
+    xmlDocument.setData("reportM_LOCATOR_X", "liststructure",
+        CreateFromMultipleReceiptData.selectM_Locator_X(this, strmWarehouseId));
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -216,8 +216,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       data = new CreateFromMultipleShipmentData[0];
     } else {
       data = CreateFromMultipleShipmentData.select(this, vars.getLanguage(), strBpartner,
-          strProduct, strmWarehouseId, strX, strY, strZ, Utility.getContext(this, vars,
-              "#User_Client", strWindowId));
+          strProduct, strmWarehouseId, strX, strY, strZ,
+          Utility.getContext(this, vars, "#User_Client", strWindowId));
     }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Shipment", discard)
@@ -232,19 +232,19 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     xmlDocument.setParameter("sotrx", strSOTrx);
     xmlDocument.setParameter("mWarehouseId", strmWarehouseId);//
     xmlDocument.setParameter("bpartnerId", strBpartner);
-    xmlDocument.setParameter("bpartnerId_DES", CreateFromMultipleShipmentData.bpartnerDescription(
-        this, strBpartner));
+    xmlDocument.setParameter("bpartnerId_DES",
+        CreateFromMultipleShipmentData.bpartnerDescription(this, strBpartner));
     xmlDocument.setParameter("productId", strProduct);
-    xmlDocument.setParameter("productId_DES", CreateFromMultipleShipmentData.productDescription(
-        this, strProduct));
+    xmlDocument.setParameter("productId_DES",
+        CreateFromMultipleShipmentData.productDescription(this, strProduct));
     xmlDocument.setParameter("x", strX);
     xmlDocument.setParameter("y", strY);
     xmlDocument.setParameter("z", strZ);
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Warehouse_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility
-              .getContext(this, vars, "#User_Client", strWindowId), 0);
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strmWarehouseId);
       xmlDocument.setData("reportM_WAREHOUSE_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -290,8 +290,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       conn = this.getTransactionConnection();
       int total = Integer.valueOf(strNumero).intValue();
       CreateFromMultipleReceiptData[] locators = CreateFromMultipleReceiptData.select(conn, this,
-          vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId), Utility
-              .getContext(this, vars, "#User_Org", strWindowId), strWarehouse, strLocator);
+          vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId),
+          Utility.getContext(this, vars, "#User_Org", strWindowId), strWarehouse, strLocator);
       if (locators != null && locators.length > 0) {
         for (count = 0; count < total; count++) {
           String strM_Locator_ID = (count > locators.length - 1) ? "" : locators[count].mLocatorId;
@@ -299,8 +299,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
             break;
           String strSequence = SequenceIdData.getUUID();
           try {
-            CreateFromMultipleReceiptData.insert(conn, this, strSequence, vars.getClient(), vars
-                .getOrg(), vars.getUser(), strKey, strM_Locator_ID, strProduct, strUOM, strQty,
+            CreateFromMultipleReceiptData.insert(conn, this, strSequence, vars.getClient(),
+                vars.getOrg(), vars.getUser(), strKey, strM_Locator_ID, strProduct, strUOM, strQty,
                 strAtributo, strQuantityOrder, strProductUOM);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -353,8 +353,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
 
           String strSequence = SequenceIdData.getUUID();
           try {
-            CreateFromMultipleShipmentData.insert(conn, this, strSequence, vars.getClient(), vars
-                .getOrg(), vars.getUser(), strKey, strQty, strQtyOrder, strStorageDetailId);
+            CreateFromMultipleShipmentData.insert(conn, this, strSequence, vars.getClient(),
+                vars.getOrg(), vars.getUser(), strKey, strQty, strQtyOrder, strStorageDetailId);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

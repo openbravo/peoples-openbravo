@@ -100,8 +100,7 @@ public abstract class BaseTemplateProcessor<T extends Object> implements Templat
     for (Template resolvedTemplate : resolvedTemplates) {
       if (resolvedTemplate.getTemplateClasspathLocation() != null) {
         source.append(readTemplateSourceFromClasspath(resolvedTemplate
-            .getTemplateClasspathLocation())
-            + "\n");
+            .getTemplateClasspathLocation()) + "\n");
       } else {
         source.append(resolvedTemplate.getTemplate() + "\n");
       }

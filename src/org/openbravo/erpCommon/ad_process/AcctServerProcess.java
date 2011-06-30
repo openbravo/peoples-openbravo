@@ -65,8 +65,8 @@ public class AcctServerProcess extends DalBaseProcess {
       OBCriteria<Client> obc = OBDal.getInstance().createCriteria(Client.class);
       obc.add(Restrictions.not(Restrictions.eq(Client.PROPERTY_ID, SYSTEM_CLIENT_ID)));
       for (Client c : obc.list()) {
-        final VariablesSecureApp vars1 = new VariablesSecureApp(bundle.getContext().getUser(), c
-            .getId(), bundle.getContext().getOrganization());
+        final VariablesSecureApp vars1 = new VariablesSecureApp(bundle.getContext().getUser(),
+            c.getId(), bundle.getContext().getOrganization());
         processClient(vars1, bundle);
       }
     } else {
@@ -212,8 +212,8 @@ public class AcctServerProcess extends DalBaseProcess {
       if (generalLog) {
         this.message.append(tmp.toString()).append(" - ").append(msg).append("<br>");
       }
-      lastLog.append("<span>").append(tmp.toString()).append(" - ").append(msg).append(
-          "</span><br>");
+      lastLog.append("<span>").append(tmp.toString()).append(" - ").append(msg)
+          .append("</span><br>");
     }
   }
 

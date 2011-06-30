@@ -234,15 +234,15 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
 
     String[] discard = { "", "" };
 
-    String myStrDocumentNo = (strDocumentNo == null || strDocumentNo
-        .equals("")) ? "%" : strDocumentNo;
-    String myStrSetDescription = (strSetDescription == null || strSetDescription
-        .equals("")) ? "%" : strSetDescription;
+    String myStrDocumentNo = (strDocumentNo == null || strDocumentNo.equals("")) ? "%"
+        : strDocumentNo;
+    String myStrSetDescription = (strSetDescription == null || strSetDescription.equals("")) ? "%"
+        : strSetDescription;
 
     CopyFromSettlementData[] data = CopyFromSettlementData.selectRelation(this,
-        myStrSetDescription, myStrDocumentNo, Utility.getContext(this, vars,
-        "#User_Org", strWindow), Utility.getContext(this, vars, "#User_Client", strWindow),
-        strDateFrom, strDateTo);
+        myStrSetDescription, myStrDocumentNo,
+        Utility.getContext(this, vars, "#User_Org", strWindow),
+        Utility.getContext(this, vars, "#User_Client", strWindow), strDateFrom, strDateTo);
 
     if (data == null || data.length == 0)
       discard[0] = new String("sectionDetail");
@@ -283,15 +283,14 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
 
     String[] discard = { "", "" };
 
-    String myStrDocumentNo = (strDocumentNo == null || strDocumentNo
-        .equals("")) ? "%" : strDocumentNo;
-    String myStrDescription = (strDescription == null || strDescription
-        .equals("")) ? "%" : strDescription;
+    String myStrDocumentNo = (strDocumentNo == null || strDocumentNo.equals("")) ? "%"
+        : strDocumentNo;
+    String myStrDescription = (strDescription == null || strDescription.equals("")) ? "%"
+        : strDescription;
 
-    CopyFromSettlementData[] data = CopyFromSettlementData.selectRelation(this,
-         myStrDescription, myStrDocumentNo, Utility.getContext(this, vars,
-        "#User_Org", strWindow), Utility.getContext(this, vars, "#User_Client", strWindow),
-        strDateFrom, strDateTo);
+    CopyFromSettlementData[] data = CopyFromSettlementData.selectRelation(this, myStrDescription,
+        myStrDocumentNo, Utility.getContext(this, vars, "#User_Org", strWindow),
+        Utility.getContext(this, vars, "#User_Client", strWindow), strDateFrom, strDateTo);
 
     if (data == null || data.length == 0)
       discard[0] = new String("sectionDetail");

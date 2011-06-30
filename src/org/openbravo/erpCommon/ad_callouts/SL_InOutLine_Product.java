@@ -101,8 +101,8 @@ public class SL_InOutLine_Product extends HttpSecureAppServlet {
     } else {
       resultado.append("new Array(\"inpmLocatorId\", \"" + strLocator + "\"),");
       resultado.append("new Array(\"inpmLocatorId_R\", \""
-          + FormatUtilities.replaceJS(SLInOutLineProductData.locator(this, strLocator, vars
-              .getLanguage())) + "\"),");
+          + FormatUtilities.replaceJS(SLInOutLineProductData.locator(this, strLocator,
+              vars.getLanguage())) + "\"),");
     }
     if (strAttribute.startsWith("\""))
       strAttribute = strAttribute.substring(1, strAttribute.length() - 1);

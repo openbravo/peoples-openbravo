@@ -130,8 +130,8 @@ public class FreemarkerTemplateProcessorTest extends WeldBaseTest {
   private Template createSaveTemplates(String prefix) throws Exception {
     final Template templateOne = createSaveTemplate(prefix + "test1");
     final Template templateTwo = createSaveTemplate(prefix + "test2");
-    final Template templateThree = createSaveTemplate(prefix + "test3", Arrays
-        .asList(new Template[] { templateOne, templateTwo }));
+    final Template templateThree = createSaveTemplate(prefix + "test3",
+        Arrays.asList(new Template[] { templateOne, templateTwo }));
     return templateThree;
   }
 

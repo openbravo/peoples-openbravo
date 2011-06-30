@@ -62,9 +62,8 @@ public class UIReference {
    * Generates the sql needed for TableSQLData class
    */
   public void generateSQL(TableSQLData table, Properties field) throws Exception {
-    identifier(table, table.getTableName(), field, field.getProperty("ColumnName"), table
-        .getTableName()
-        + "." + field.getProperty("ColumnName"), false);
+    identifier(table, table.getTableName(), field, field.getProperty("ColumnName"),
+        table.getTableName() + "." + field.getProperty("ColumnName"), false);
   }
 
   /**
@@ -98,17 +97,16 @@ public class UIReference {
       throws Exception {
     String aux;
     if (isNewFilter) {
-      aux = vars.getRequestGlobalVariable("inpParam" + prop.getProperty("ColumnName"), tableSQL
-          .getTabID()
-          + "|param" + prop.getProperty("ColumnName"));
+      aux = vars.getRequestGlobalVariable("inpParam" + prop.getProperty("ColumnName"),
+          tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName"));
     } else {
       aux = vars.getSessionValue(tableSQL.getTabID() + "|param" + prop.getProperty("ColumnName"));
     }
     // The filter is not applied if the parameter value is null or
     // parameter value is '%' for string references.
     if (!aux.equals("")) {
-      UIReferenceUtility.addFilter(filter, filterParams, result, tableSQL, prop
-          .getProperty("ColumnName"), prop.getProperty("ColumnName"), reference, true, aux);
+      UIReferenceUtility.addFilter(filter, filterParams, result, tableSQL,
+          prop.getProperty("ColumnName"), prop.getProperty("ColumnName"), reference, true, aux);
     }
     if (addSecondaryFilter) {
       if (isNewFilter) {
@@ -119,9 +117,9 @@ public class UIReference {
             + "_f");
       }
       if (!aux.equals("")) {
-        UIReferenceUtility.addFilter(filter, filterParams, result, tableSQL, prop
-            .getProperty("ColumnName"), prop.getProperty("ColumnName") + "_f", reference, false,
-            aux);
+        UIReferenceUtility.addFilter(filter, filterParams, result, tableSQL,
+            prop.getProperty("ColumnName"), prop.getProperty("ColumnName") + "_f", reference,
+            false, aux);
       }
     }
   }
@@ -147,8 +145,8 @@ public class UIReference {
       strHtml.append("<td>");
       strHtml
           .append("<textarea class=\"dojoValidateValid TextArea_TwoCells_width TextArea_Medium_height\" ");
-      strHtml.append("name=\"inpParam").append(FormatUtilities.replace(field.columnname)).append(
-          "\" ");
+      strHtml.append("name=\"inpParam").append(FormatUtilities.replace(field.columnname))
+          .append("\" ");
       strHtml.append("cols=\"50\" rows=\"3\" ");
       strHtml.append(">");
       strHtml.append(field.value);
@@ -157,8 +155,8 @@ public class UIReference {
     } else {
       strHtml.append("<td class=\"TextBox_ContentCell\">");
       strHtml.append("<input type=\"text\" class=\"dojoValidateValid TextBox_OneCell_width\" ");
-      strHtml.append("name=\"inpParam").append(FormatUtilities.replace(field.columnname)).append(
-          "\" ");
+      strHtml.append("name=\"inpParam").append(FormatUtilities.replace(field.columnname))
+          .append("\" ");
       strHtml.append("maxlength=\"").append(field.fieldlength).append("\" ");
       strHtml.append("value=\"").append(field.value).append("\" ");
       strHtml.append(">");
@@ -172,27 +170,27 @@ public class UIReference {
    */
   public void generateFilterAcceptScript(BuscadorData field, StringBuffer params,
       StringBuffer paramsData) {
-    paramsData.append("paramsData[count++] = new Array(\"inpParam").append(
-        FormatUtilities.replace(field.columnname)).append("\" , ");
+    paramsData.append("paramsData[count++] = new Array(\"inpParam")
+        .append(FormatUtilities.replace(field.columnname)).append("\" , ");
     params.append(", \"inpParam").append(FormatUtilities.replace(field.columnname)).append("\",");
     params.append(" escape(");
 
-    paramsData.append("frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
-        ".value);\n");
+    paramsData.append("frm.inpParam").append(FormatUtilities.replace(field.columnname))
+        .append(".value);\n");
 
     params.append("frm.inpParam").append(FormatUtilities.replace(field.columnname))
         .append(".value");
 
     if (addSecondaryFilter) {
-      paramsData.append("paramsData[count++] = new Array(\"inpParam").append(
-          FormatUtilities.replace(field.columnname)).append("_f\", ");
-      paramsData.append("frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
-          "_f.value);\n");
-      params.append("), \"inpParam").append(FormatUtilities.replace(field.columnname)).append(
-          "_f\",");
+      paramsData.append("paramsData[count++] = new Array(\"inpParam")
+          .append(FormatUtilities.replace(field.columnname)).append("_f\", ");
+      paramsData.append("frm.inpParam").append(FormatUtilities.replace(field.columnname))
+          .append("_f.value);\n");
+      params.append("), \"inpParam").append(FormatUtilities.replace(field.columnname))
+          .append("_f\",");
       params.append(" escape(");
-      params.append("frm.inpParam").append(FormatUtilities.replace(field.columnname)).append(
-          "_f.value");
+      params.append("frm.inpParam").append(FormatUtilities.replace(field.columnname))
+          .append("_f.value");
     }
 
     params.append(")");

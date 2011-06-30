@@ -116,8 +116,8 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
     // We disable check constraints before inserting reference data
     String driver = obProp.getProperty("bbdd.driver");
     String url = obProp.getProperty("bbdd.rdbms").equals("POSTGRE") ? obProp
-        .getProperty("bbdd.url")
-        + "/" + obProp.getProperty("bbdd.sid") : obProp.getProperty("bbdd.url");
+        .getProperty("bbdd.url") + "/" + obProp.getProperty("bbdd.sid") : obProp
+        .getProperty("bbdd.url");
     String user = obProp.getProperty("bbdd.user");
     String password = obProp.getProperty("bbdd.password");
     BasicDataSource datasource = DBSMOBUtil.getDataSource(driver, url, user, password);

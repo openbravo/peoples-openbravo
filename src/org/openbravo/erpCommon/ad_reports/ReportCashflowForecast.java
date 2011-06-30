@@ -92,10 +92,10 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
     // ReportCashflowForecastData[] dataSummary =
     // ReportCashflowForecastData.select(this,Utility.getContext(this, vars, "#User_Client",
     // "ReportBank"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank"));
-    ReportCashflowForecastData[] dataSummary = ReportCashflowForecastData.select(this, vars
-        .getLanguage(), strDateMax, "", Utility
-        .getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportBank"));
+    ReportCashflowForecastData[] dataSummary = ReportCashflowForecastData.select(this,
+        vars.getLanguage(), strDateMax, "",
+        Utility.getContext(this, vars, "#User_Client", "ReportBank"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank"));
 
     if (!showDefault) {
       ReportCashflowForecastData[] dataDetail = null;
@@ -122,20 +122,20 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
         throw new ServletException(e.getMessage());
       }
       parameters.put("DatePlanned", date);
-      parameters.put("BankAcc", vars.getRequestGlobalVariable("inpcBankAccountId",
-          "ReportCashflowForecast|AcctNo"));
+      parameters.put("BankAcc",
+          vars.getRequestGlobalVariable("inpcBankAccountId", "ReportCashflowForecast|AcctNo"));
 
       try {
         if (strBreakDate.equals("")) {
           dataDetail = ReportCashflowForecastData.selectAllLines(this, vars.getSqlDateFormat(),
-              vars.getLanguage(), vars.getRequestGlobalVariable("inpcBankAccountId",
-                  "ReportCashflowForecast|AcctNo"), strDateMax,
-              "BANKACCOUNT, ISRECEIPT desc,DATEPLANNED,INVOICENO ");
+              vars.getLanguage(),
+              vars.getRequestGlobalVariable("inpcBankAccountId", "ReportCashflowForecast|AcctNo"),
+              strDateMax, "BANKACCOUNT, ISRECEIPT desc,DATEPLANNED,INVOICENO ");
         } else {
           dataDetail = ReportCashflowForecastData.selectAllLines(this, vars.getSqlDateFormat(),
-              vars.getLanguage(), vars.getRequestGlobalVariable("inpcBankAccountId",
-                  "ReportCashflowForecast|AcctNo"), strDateMax,
-              "BANKACCOUNT,DATEPLANNED,ISRECEIPT desc,INVOICENO ");
+              vars.getLanguage(),
+              vars.getRequestGlobalVariable("inpcBankAccountId", "ReportCashflowForecast|AcctNo"),
+              strDateMax, "BANKACCOUNT,DATEPLANNED,ISRECEIPT desc,INVOICENO ");
         }
         String strReportName = (("on".equals(strBreakDate)) ? "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast_perDay.jrxml"
             : "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportCashflowForecast.jrxml");
@@ -168,10 +168,10 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
     // ReportCashflowForecastData.select(this,Utility.getContext(this, vars,
     // "#User_Client", "ReportBank"), Utility.getContext(this, vars,
     // "#AccessibleOrgTree", "ReportBank"));
-    ReportCashflowForecastData[] dataSummary = ReportCashflowForecastData.select(this, vars
-        .getLanguage(), strDateMax, "", Utility
-        .getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(this, vars,
-        "#AccessibleOrgTree", "ReportBank"));
+    ReportCashflowForecastData[] dataSummary = ReportCashflowForecastData.select(this,
+        vars.getLanguage(), strDateMax, "",
+        Utility.getContext(this, vars, "#User_Client", "ReportBank"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank"));
 
     if (!showDefault) {
       ReportCashflowForecastData[][] data = null;
@@ -181,8 +181,8 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
       // dataAcct = ReportCashflowForecastData.select(this, strDateMax,
       // strBankAccount);
       dataAcct = ReportCashflowForecastData.select(this, vars.getLanguage(), strDateMax,
-          strBankAccount, Utility.getContext(this, vars, "#User_Client", "ReportBank"), Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "ReportBank"));
+          strBankAccount, Utility.getContext(this, vars, "#User_Client", "ReportBank"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank"));
       data = new ReportCashflowForecastData[dataAcct.length][];
 
       if (log4j.isDebugEnabled())
@@ -193,11 +193,11 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
       } else {
         for (int i = 0; i < dataAcct.length; i++) {
           if (strBreakDate.equals(""))
-            dataDetail = ReportCashflowForecastData.selectLines(this, vars.getSqlDateFormat(), vars
-                .getLanguage(), dataAcct[i].cBankaccountId, strDateMax, "2 DESC, 1");
+            dataDetail = ReportCashflowForecastData.selectLines(this, vars.getSqlDateFormat(),
+                vars.getLanguage(), dataAcct[i].cBankaccountId, strDateMax, "2 DESC, 1");
           else
-            dataDetail = ReportCashflowForecastData.selectLines(this, vars.getSqlDateFormat(), vars
-                .getLanguage(), dataAcct[i].cBankaccountId, strDateMax, "1,2 DESC");
+            dataDetail = ReportCashflowForecastData.selectLines(this, vars.getSqlDateFormat(),
+                vars.getLanguage(), dataAcct[i].cBankaccountId, strDateMax, "1,2 DESC");
           if (log4j.isDebugEnabled())
             log4j.debug("length: " + dataAcct.length + " bankacct:" + dataAcct[i].cBankaccountId
                 + " lenght:" + dataDetail.length);
@@ -222,19 +222,21 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
 
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
-    xmlDocument.setData("reportC_ACCOUNTNUMBER", "liststructure", AccountNumberComboData.select(
-        this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client",
-            "ReportCashflowForecast"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "ReportCashflowForecast")));
+    xmlDocument.setData(
+        "reportC_ACCOUNTNUMBER",
+        "liststructure",
+        AccountNumberComboData.select(this, vars.getLanguage(),
+            Utility.getContext(this, vars, "#User_Client", "ReportCashflowForecast"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportCashflowForecast")));
     xmlDocument.setParameter("cBankAccount", strBankAccount);
     xmlDocument.setParameter("dateFrom", strDateMax);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("finalDate", strDateMax);
-    xmlDocument.setParameter("date", ReportCashflowForecastData.getDate(this, vars
-        .getSqlDateFormat()));
-    xmlDocument.setParameter("date1", ReportCashflowForecastData.getDate(this, vars
-        .getSqlDateFormat()));
+    xmlDocument.setParameter("date",
+        ReportCashflowForecastData.getDate(this, vars.getSqlDateFormat()));
+    xmlDocument.setParameter("date1",
+        ReportCashflowForecastData.getDate(this, vars.getSqlDateFormat()));
     xmlDocument.setParameter("breakDate", strBreakDate.equals("") ? "0" : "1");
     xmlDocument.setData("structureSummary", dataSummary);
 
@@ -246,8 +248,8 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ReportCashflowForecast.html", classInfo.id, classInfo.type, strReplaceWith, tabs
-              .breadcrumb());
+          "ReportCashflowForecast.html", classInfo.id, classInfo.type, strReplaceWith,
+          tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportCashflowForecast.html",
           strReplaceWith);

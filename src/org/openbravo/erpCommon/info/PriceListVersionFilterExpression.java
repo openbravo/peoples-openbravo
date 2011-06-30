@@ -73,14 +73,12 @@ public class PriceListVersionFilterExpression implements FilterExpression {
     priceListCrit.add(Restrictions.eq(PriceList.PROPERTY_DEFAULT, true));
     String orgs = getOrgs();
     if (StringUtils.isNotEmpty(orgs)) {
-      priceListCrit.add(Restrictions.in(PriceList.PROPERTY_ORGANIZATION, OBDao
-          .getOBObjectListFromString(Organization.class, orgs)));
+      priceListCrit.add(Restrictions.in(PriceList.PROPERTY_ORGANIZATION,
+          OBDao.getOBObjectListFromString(Organization.class, orgs)));
       priceListCrit.setFilterOnReadableOrganization(false);
     }
     if (priceListCrit.count() > 0) {
-      log
-          .debug("Return client's default PriceList: "
-              + priceListCrit.list().get(0).getIdentifier());
+      log.debug("Return client's default PriceList: " + priceListCrit.list().get(0).getIdentifier());
       return priceListCrit.list().get(0);
     }
     return null;
@@ -128,8 +126,8 @@ public class PriceListVersionFilterExpression implements FilterExpression {
     if (StringUtils.isEmpty(date) || date.equals("null")) {
       return null;
     }
-    final SimpleDateFormat dateFormat = new SimpleDateFormat((String) httpSession
-        .getAttribute("#AD_JAVADATEFORMAT"));
+    final SimpleDateFormat dateFormat = new SimpleDateFormat(
+        (String) httpSession.getAttribute("#AD_JAVADATEFORMAT"));
     try {
       Date result = dateFormat.parse(date);
       return result;

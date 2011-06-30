@@ -106,8 +106,8 @@ public class MyOBUtils {
         result.put(item);
 
       } catch (JSONException e) {
-        log.error("Error trying to build menu items for widget class "
-            + widgetClass.getWidgetTitle(), e);
+        log.error(
+            "Error trying to build menu items for widget class " + widgetClass.getWidgetTitle(), e);
       }
     }
     return result;
@@ -117,8 +117,8 @@ public class MyOBUtils {
     OBCriteria<WidgetClassMenu> obcMenuItems = OBDal.getInstance().createCriteria(
         WidgetClassMenu.class);
     if (widgetClass.getWidgetSuperclass() != null) {
-      obcMenuItems.add(Restrictions.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS, widgetClass
-          .getWidgetSuperclass()));
+      obcMenuItems.add(Restrictions.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS,
+          widgetClass.getWidgetSuperclass()));
     } else {
       obcMenuItems.add(Restrictions.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS, widgetClass));
     }
@@ -156,8 +156,8 @@ public class MyOBUtils {
       final Organization organization = OBDal.getInstance().get(Organization.class,
           availableAtValues[0]);
       widgetInstancesCrit.setFilterOnReadableClients(false);
-      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, organization
-          .getClient()));
+      widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT,
+          organization.getClient()));
       widgetInstancesCrit.setFilterOnReadableOrganization(false);
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_ORGANIZATION, organization));
       widgetInstancesCrit.add(Restrictions.eq(WidgetInstance.PROPERTY_RELATIVEPRIORITY, 3L));
@@ -184,12 +184,12 @@ public class MyOBUtils {
     OBCriteria<WidgetInstance> obc = OBDal.getInstance().createCriteria(WidgetInstance.class);
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnActive(isActive);
-    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance().get(Client.class,
-        OBContext.getOBContext().getCurrentClient().getId())));
-    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATROLE, OBDal.getInstance().get(
-        Role.class, OBContext.getOBContext().getRole().getId())));
-    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATUSER, OBDal.getInstance().get(
-        User.class, OBContext.getOBContext().getUser().getId())));
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT,
+        OBDal.getInstance().get(Client.class, OBContext.getOBContext().getCurrentClient().getId())));
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATROLE,
+        OBDal.getInstance().get(Role.class, OBContext.getOBContext().getRole().getId())));
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATUSER,
+        OBDal.getInstance().get(User.class, OBContext.getOBContext().getUser().getId())));
     return obc.list();
   }
 

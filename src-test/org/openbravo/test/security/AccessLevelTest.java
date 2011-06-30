@@ -218,8 +218,8 @@ public class AccessLevelTest extends BaseTest {
       fail();
     } catch (final OBException e) {
       // no fail!
-      assertTrue("Invalid exception: " + e.getMessage(), e.getMessage().indexOf(
-          " may only have instances with organization *") != -1);
+      assertTrue("Invalid exception: " + e.getMessage(),
+          e.getMessage().indexOf(" may only have instances with organization *") != -1);
       rollback();
     }
   }
@@ -238,8 +238,8 @@ public class AccessLevelTest extends BaseTest {
       fail();
     } catch (final OBException e) {
       // no fail!
-      assertTrue("Invalid exception " + e.getMessage(), e.getMessage().indexOf(
-          " may not have instances with organization *") != -1);
+      assertTrue("Invalid exception " + e.getMessage(),
+          e.getMessage().indexOf(" may not have instances with organization *") != -1);
       rollback();
     }
   }
@@ -258,8 +258,8 @@ public class AccessLevelTest extends BaseTest {
       fail("The organization of a system client may not be set to a non-zero org.");
     } catch (final OBException e) {
       // no fail!
-      assertTrue("Invalid exception " + e.getMessage(), e.getMessage().indexOf(
-          "may only have instances with organization *") != -1);
+      assertTrue("Invalid exception " + e.getMessage(),
+          e.getMessage().indexOf("may only have instances with organization *") != -1);
       rollback();
     }
   }

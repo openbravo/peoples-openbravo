@@ -79,9 +79,9 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
     Connection conn = null;
     try {
       conn = getTransactionConnection();
-      CopyFromInvoiceData[] data = CopyFromInvoiceData.select(conn, this, strInvoice, Utility
-          .getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars,
-          "#User_Org", windowId));
+      CopyFromInvoiceData[] data = CopyFromInvoiceData.select(conn, this, strInvoice,
+          Utility.getContext(this, vars, "#User_Client", windowId),
+          Utility.getContext(this, vars, "#User_Org", windowId));
       CopyFromInvoiceData[] dataInvoice = CopyFromInvoiceData.selectInvoice(conn, this, strKey);
       if (data != null && data.length != 0) {
         for (i = 0; i < data.length; i++) {
@@ -109,8 +109,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
 
             String strCTaxID = Tax.get(this, data[i].productId, dataInvoice[0].dateinvoiced,
                 dataInvoice[0].adOrgId, strWharehouse, dataInvoice[0].cBpartnerLocationId,
-                dataInvoice[0].cBpartnerLocationId, dataInvoice[0].cProjectId, strIsSOTrx
-                    .equals("Y"));
+                dataInvoice[0].cBpartnerLocationId, dataInvoice[0].cProjectId,
+                strIsSOTrx.equals("Y"));
 
             if ("Y".equals(strPriceListCheck)) {
 
@@ -168,8 +168,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
               linenetamt = data[i].linenetamt;
             }
             CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
-                dataInvoice[0].adOrgId, vars.getUser(), pricelist,
-                priceactual, pricelimit, linenetamt, strCTaxID, data[i].cInvoicelineId);
+                dataInvoice[0].adOrgId, vars.getUser(), pricelist, priceactual, pricelimit,
+                linenetamt, strCTaxID, data[i].cInvoicelineId);
 
             // Copy accounting dimensions
             CopyFromInvoiceData.insertAcctDimension(conn, this, dataInvoice[0].adClientId,
@@ -225,8 +225,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("window", windowId);
     xmlDocument.setParameter("tab", strTab);
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars
-        .getLanguage()));
+    xmlDocument.setParameter("question",
+        Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", strDescription);

@@ -115,8 +115,9 @@ public class InvoiceLine extends HttpSecureAppServlet {
       vars.setSessionValue("InvoiceLine.documentno", strKeyValue + "%");
       InvoiceLineData[] data = null;
       String strOrg = vars.getStringParameter("inpAD_Org_ID");
-      data = InvoiceLineData.selectKey(this, Utility.getContext(this, vars, "#User_Client",
-          "InvoiceLine"), Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue + "%");
+      data = InvoiceLineData.selectKey(this,
+          Utility.getContext(this, vars, "#User_Client", "InvoiceLine"),
+          Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue + "%");
 
       if (data != null && data.length == 1)
         printPageKey(response, vars, data);
@@ -300,48 +301,52 @@ public class InvoiceLine extends HttpSecureAppServlet {
         String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
         page = TableSQLData.calcAndGetBackendPage(vars, "InvoiceLine.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
-        // on movePage action force executing countRows again
-        	strNewFilter = "";
+          // on movePage action force executing countRows again
+          strNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         // New filter or first load
         if (strNewFilter.equals("1") || strNewFilter.equals("")) {
-         /* strNumRows = InvoiceLineData.countRows(this, Utility.getContext(this, vars,
-              "#User_Client", "InvoiceLine"), Utility.getSelectorOrgs(this, vars, strOrg),
-              strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData
-                  .nDaysAfter(this, strDateTo, "1"), strCal1, strCal2, strProduct);*/
-	        String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-	        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-		        oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-		        oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-		        rownum = "ROWNUM";
-	        } else {
-	        	pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-	        }
-	        strNumRows= InvoiceLineData.countRows(this,rownum, Utility.getContext(this, vars,
-	        "#User_Client", "InvoiceLine"), Utility.getSelectorOrgs(this, vars, strOrg),
-	        strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData
-	        .nDaysAfter(this, strDateTo, "1"), strCal1, strCal2, strProduct, pgLimit, oraLimit1, oraLimit2);    
-	          vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
+          /*
+           * strNumRows = InvoiceLineData.countRows(this, Utility.getContext(this, vars,
+           * "#User_Client", "InvoiceLine"), Utility.getSelectorOrgs(this, vars, strOrg),
+           * strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData
+           * .nDaysAfter(this, strDateTo, "1"), strCal1, strCal2, strProduct);
+           */
+          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
+            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+            rownum = "ROWNUM";
+          } else {
+            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          }
+          strNumRows = InvoiceLineData.countRows(this, rownum,
+              Utility.getContext(this, vars, "#User_Client", "InvoiceLine"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription, strOrder,
+              strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
+              strCal2, strProduct, pgLimit, oraLimit1, oraLimit2);
+          vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("BusinessPartnerInfo.numrows");
         }
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
           String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          data = InvoiceLineData.select(this, "ROWNUM", Utility.getContext(this, vars,
-              "#User_Client", "InvoiceLine"), Utility.getSelectorOrgs(this, vars, strOrg),
-              strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData
-                  .nDaysAfter(this, strDateTo, "1"), strCal1, strCal2, strProduct, strOrderBy,
-              oraLimit, "");
+          data = InvoiceLineData.select(this, "ROWNUM",
+              Utility.getContext(this, vars, "#User_Client", "InvoiceLine"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription, strOrder,
+              strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
+              strCal2, strProduct, strOrderBy, oraLimit, "");
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
-          data = InvoiceLineData.select(this, "1", Utility.getContext(this, vars, "#User_Client",
-              "InvoiceLine"), Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo,
-              strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,
-                  strDateTo, "1"), strCal1, strCal2, strProduct, strOrderBy, "", pgLimit);
+          data = InvoiceLineData.select(this, "1",
+              Utility.getContext(this, vars, "#User_Client", "InvoiceLine"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription, strOrder,
+              strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
+              strCal2, strProduct, strOrderBy, "", pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
@@ -386,7 +391,8 @@ public class InvoiceLine extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\" backendPage=\"" + page + "\">\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+        .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
         strRowsData.append("    <tr>\n");
@@ -400,11 +406,11 @@ public class InvoiceLine extends HttpSecureAppServlet {
           } else if ((data[j].getField(columnname)) != null) {
             if (headers[k].getField("adReferenceId").equals("32"))
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "").replaceAll("<B>",
-                "").replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "").replaceAll(
-                "<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;").replaceAll("<br>",
-                    "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
+                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
+                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
+                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");

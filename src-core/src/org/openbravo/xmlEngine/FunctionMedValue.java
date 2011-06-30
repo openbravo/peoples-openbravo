@@ -8,13 +8,13 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.xmlEngine;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import org.apache.log4j.Logger ;
+import org.apache.log4j.Logger;
 
 class FunctionMedValue extends FunctionValue {
   int count;
@@ -28,7 +28,8 @@ class FunctionMedValue extends FunctionValue {
 
   public String print() {
     try {
-      return functionTemplate.printFormatOutput(sum.divide(new BigDecimal(count), 12, RoundingMode.HALF_UP));
+      return functionTemplate.printFormatOutput(sum.divide(new BigDecimal(count), 12,
+          RoundingMode.HALF_UP));
     } catch (ArithmeticException a) {
       return XmlEngine.strTextDividedByZero;
     }
@@ -36,14 +37,15 @@ class FunctionMedValue extends FunctionValue {
 
   public String printSimple() {
     try {
-      return functionTemplate.printFormatSimple(sum.divide(new BigDecimal(count), 12, RoundingMode.HALF_UP));
+      return functionTemplate.printFormatSimple(sum.divide(new BigDecimal(count), 12,
+          RoundingMode.HALF_UP));
     } catch (ArithmeticException a) {
       return XmlEngine.strTextDividedByZero;
     }
   }
 
   public void acumulate() {
-    count ++;
+    count++;
     if (fieldValue.print() != "") {
       sum = sum.add(new BigDecimal(fieldValue.printSimple()));
     }

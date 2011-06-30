@@ -18,7 +18,6 @@
  */
 package org.openbravo.reference.ui;
 
-
 public class UIInteger extends UINumber {
   public UIInteger(String reference, String subreference) {
     super(reference, subreference);

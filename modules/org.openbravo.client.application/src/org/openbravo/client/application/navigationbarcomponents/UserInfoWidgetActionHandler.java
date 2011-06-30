@@ -408,9 +408,10 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler {
       request.getSession(true).setAttribute("#Authenticated_user", sessionUser);
 
       boolean result = LoginUtils
-          .fillSessionArguments(new DalConnectionProvider(), vars, userId, toSaveStr(language
-              .getLanguage()), (language.isRTLLanguage() ? "Y" : "N"), toSaveStr(roleId),
-              toSaveStr(clientId), toSaveStr(organizationId), toSaveStr(warehouseId));
+          .fillSessionArguments(new DalConnectionProvider(), vars, userId,
+              toSaveStr(language.getLanguage()), (language.isRTLLanguage() ? "Y" : "N"),
+              toSaveStr(roleId), toSaveStr(clientId), toSaveStr(organizationId),
+              toSaveStr(warehouseId));
       if (!result) {
         throw new IllegalArgumentException("Error when saving default values");
       }

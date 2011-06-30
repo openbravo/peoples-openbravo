@@ -243,9 +243,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     // String strTreeAccount = ReportTrialBalanceData.treeAccount(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
-    String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this, vars
-        .getSessionValue("#AD_SqlDateFormat"), strDateFrom, Utility.getContext(this, vars,
-        "#User_Client", "ReportGeneralLedger"), strOrgFamily);
+    String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this,
+        vars.getSessionValue("#AD_SqlDateFormat"), strDateFrom,
+        Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strOrgFamily);
     if (strYearInitialDate.equals(""))
       strYearInitialDate = strDateFrom;
     String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
@@ -297,13 +297,14 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         strcelementvaluetodes = "";
         vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
       }
-      data = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy, vars
-          .getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom,
-          strcelementvalueto, Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
-              "ReportGeneralLedger"), strHide, strcAcctSchemaId, strDateFrom, toDatePlusOne,
-          strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom, strAmtTo, null,
-          null, null, pgLimit, oraLimit1, oraLimit2);
+      data = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy,
+          vars.getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom,
+          strcelementvalueto,
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
+          strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId,
+          strmProductId, strcProjectId, strAmtFrom, strAmtTo, null, null, null, pgLimit, oraLimit1,
+          oraLimit2);
       if (log4j.isDebugEnabled())
         log4j.debug("RecordNo: " + initRecordNumber);
       // In case this is not the first screen to show, initial balance may need to include amounts
@@ -311,12 +312,13 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
       ReportGeneralLedgerData[] dataTotal = null;
       if (data != null && data.length > 1) {
-        dataTotal = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy, vars
-            .getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom,
-            strcelementvalueto, Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
-                "ReportGeneralLedger"), strHide, strcAcctSchemaId, strYearInitialDate, DateTimeData
-                .nDaysAfter(this, data[0].dateacct, "1"), strOrgFamily, strcBpartnerId,
+        dataTotal = ReportGeneralLedgerData.select(this, rowNum, strGroupByText, strGroupBy,
+            vars.getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom,
+            strcelementvalueto,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+            Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
+            strcAcctSchemaId, strYearInitialDate,
+            DateTimeData.nDaysAfter(this, data[0].dateacct, "1"), strOrgFamily, strcBpartnerId,
             strmProductId, strcProjectId, strAmtFrom, strAmtTo, data[0].id, data[0].dateacctnumber
                 + data[0].factAcctGroupId + data[0].description + data[0].isdebit,
             data[0].groupbyid, null, null, null);
@@ -415,8 +417,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
-              .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), '*');
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), '*');
       comboTableData.fillParameters(null, "ReportGeneralLedger", "");
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
     } catch (Exception ex) {
@@ -442,19 +444,30 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setParameter("inpElementValueIdFrom_DES", strcelementvaluefromdes);
     xmlDocument.setParameter("paramHide0", !strHide.equals("Y") ? "0" : "1");
     xmlDocument.setParameter("groupbyselected", strGroupBy);
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
-        .selectBpartner(this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility
-            .getContext(this, vars, "#User_Client", ""), strcBpartnerIdAux));
-    xmlDocument.setData("reportMProductId_IN", "liststructure", SelectorUtilityData.selectMproduct(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
-            vars, "#User_Client", ""), strmProductIdAux));
-    xmlDocument.setData("reportCProjectId_IN", "liststructure", SelectorUtilityData.selectProject(
-        this, Utility.getContext(this, vars, "#AccessibleOrgTree", ""), Utility.getContext(this,
-            vars, "#User_Client", ""), strcProjectIdAux));
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
-        .selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#AccessibleOrgTree",
-            "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
-            "ReportGeneralLedger"), strcAcctSchemaId));
+    xmlDocument.setData(
+        "reportCBPartnerId_IN",
+        "liststructure",
+        SelectorUtilityData.selectBpartner(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerIdAux));
+    xmlDocument.setData(
+        "reportMProductId_IN",
+        "liststructure",
+        SelectorUtilityData.selectMproduct(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strmProductIdAux));
+    xmlDocument.setData(
+        "reportCProjectId_IN",
+        "liststructure",
+        SelectorUtilityData.selectProject(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strcProjectIdAux));
+    xmlDocument
+        .setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
+            .selectC_ACCTSCHEMA_ID(this,
+                Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+                Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+                strcAcctSchemaId));
 
     if (log4j.isDebugEnabled())
       log4j.debug("data.length: " + data.length);
@@ -468,10 +481,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       if (vars.commandIn("FIND")) {
         // No data has been found. Show warning message.
         xmlDocument.setParameter("messageType", "WARNING");
-        xmlDocument.setParameter("messageTitle", Utility.messageBD(this, "ProcessStatus-W", vars
-            .getLanguage()));
-        xmlDocument.setParameter("messageMessage", Utility.messageBD(this, "NoDataFound", vars
-            .getLanguage()));
+        xmlDocument.setParameter("messageTitle",
+            Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()));
+        xmlDocument.setParameter("messageMessage",
+            Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
       }
     }
 
@@ -501,9 +514,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = "";
     strOrgFamily = getFamily(strTreeOrg, strOrg);
-    String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this, vars
-        .getSessionValue("#AD_SqlDateFormat"), strDateFrom, Utility.getContext(this, vars,
-        "#User_Client", "ReportGeneralLedger"), strOrgFamily);
+    String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this,
+        vars.getSessionValue("#AD_SqlDateFormat"), strDateFrom,
+        Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strOrgFamily);
     if (strYearInitialDate.equals(""))
       strYearInitialDate = strDateFrom;
     String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
@@ -523,17 +536,18 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           strcelementvalueto = strcelementvaluefrom;
         strAllaccounts = "N";
       }
-      data = ReportGeneralLedgerData.select(this, "0", strGroupByText, strGroupBy, vars
-          .getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom,
-          strcelementvalueto, Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client",
-              "ReportGeneralLedger"), strHide, strcAcctSchemaId, strDateFrom, toDatePlusOne,
-          strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom, strAmtTo, null,
-          null, null, null, null, null);
+      data = ReportGeneralLedgerData.select(this, "0", strGroupByText, strGroupBy,
+          vars.getLanguage(), strDateFrom, toDatePlusOne, strAllaccounts, strcelementvaluefrom,
+          strcelementvalueto,
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
+          strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId,
+          strmProductId, strcProjectId, strAmtFrom, strAmtTo, null, null, null, null, null, null);
     }
     if (data == null || data.length == 0) {
-      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "ProcessStatus-W", vars
-          .getLanguage()), Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+      advisePopUp(request, response, "WARNING",
+          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
+          Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
     } else {
       String strOld = "";
       BigDecimal totalDebit = BigDecimal.ZERO;
@@ -602,9 +616,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = "";
     strOrgFamily = getFamily(strTreeOrg, strOrg);
-    String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this, vars
-        .getSessionValue("#AD_SqlDateFormat"), strDateFrom, Utility.getContext(this, vars,
-        "#User_Client", "ReportGeneralLedger"), strOrgFamily);
+    String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this,
+        vars.getSessionValue("#AD_SqlDateFormat"), strDateFrom,
+        Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strOrgFamily);
     if (strYearInitialDate.equals(""))
       strYearInitialDate = strDateFrom;
     String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
@@ -620,15 +634,16 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         strAllaccounts = "N";
       }
       data = ReportGeneralLedgerData.selectXLS(this, vars.getLanguage(), strDateFrom,
-          toDatePlusOne, strAllaccounts, strcelementvaluefrom, strcelementvalueto, Utility
-              .getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), Utility
-              .getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
+          toDatePlusOne, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
+          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strHide,
           strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId,
           strmProductId, strcProjectId, strAmtFrom, strAmtTo);
     }
     if (data == null || data.length == 0) {
-      advisePopUp(request, response, "WARNING", Utility.messageBD(this, "ProcessStatus-W", vars
-          .getLanguage()), Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+      advisePopUp(request, response, "WARNING",
+          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
+          Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
     } else {
 
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerExcel.jrxml";

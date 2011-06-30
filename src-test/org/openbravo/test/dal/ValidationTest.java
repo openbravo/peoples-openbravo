@@ -115,8 +115,8 @@ public class ValidationTest extends BaseTest {
         ar.setType("A");
         fail("List value check not performed");
       } catch (final ValidationException ve) {
-        assertTrue("Illegal exception " + ve.getMessage(), ve.getMessage().contains(
-            "it should be one of the following values"));
+        assertTrue("Illegal exception " + ve.getMessage(),
+            ve.getMessage().contains("it should be one of the following values"));
         break;
         // success
       }

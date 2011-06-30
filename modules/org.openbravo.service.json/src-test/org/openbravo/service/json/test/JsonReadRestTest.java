@@ -117,12 +117,18 @@ public class JsonReadRestTest extends JsonRestTest {
     final int columnCnt = colCriteria.count();
     final JSONObject jsonObject = doRequest(URL_PART + "/ADColumn?_startRow=10&_endRow=17",
         "_identifier", "GET", 200);
-    assertEquals(columnCnt, jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE).getInt(
-        JsonConstants.RESPONSE_TOTALROWS));
-    assertEquals(17, jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE).getInt(
-        JsonConstants.RESPONSE_ENDROW));
-    assertEquals(10, jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE).getInt(
-        JsonConstants.RESPONSE_STARTROWS));
+    assertEquals(
+        columnCnt,
+        jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE).getInt(
+            JsonConstants.RESPONSE_TOTALROWS));
+    assertEquals(
+        17,
+        jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE).getInt(
+            JsonConstants.RESPONSE_ENDROW));
+    assertEquals(
+        10,
+        jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE).getInt(
+            JsonConstants.RESPONSE_STARTROWS));
     final JSONArray jsonArray = jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE)
         .getJSONArray(JsonConstants.DATA);
 

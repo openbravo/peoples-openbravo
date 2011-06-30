@@ -83,8 +83,8 @@ public class SL_Inventory_Product extends HttpSecureAppServlet {
     if (!strLocator.equals("")) {
       resultado.append("new Array(\"inpmLocatorId\", \"" + strLocator + "\"),");
       resultado.append("new Array(\"inpmLocatorId_R\", \""
-          + FormatUtilities.replaceJS(SLInOutLineProductData.locator(this, strLocator, vars
-              .getLanguage())) + "\"),");
+          + FormatUtilities.replaceJS(SLInOutLineProductData.locator(this, strLocator,
+              vars.getLanguage())) + "\"),");
     }
     /*
      * resultado.append("new Array(\"inpcUomId\", " + SLInventoryProductData.select(this,

@@ -130,8 +130,8 @@ public class PriceListCreateAll extends HttpSecureAppServlet {
       String strPriceListVersion) throws ServletException {
     String strMessage = "";
     PriceListCreateAllData[] data = PriceListCreateAllData.select(conn, this, strPriceListVersion,
-        Utility.getContext(this, vars, "#User_Org", windowId), Utility.getContext(this, vars,
-            "#User_Client", windowId));
+        Utility.getContext(this, vars, "#User_Org", windowId),
+        Utility.getContext(this, vars, "#User_Client", windowId));
     if (data == null || data.length == 0)
       return "";
     for (int i = 0; i < data.length; i++) {
@@ -216,8 +216,8 @@ public class PriceListCreateAll extends HttpSecureAppServlet {
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars
-        .getLanguage()));
+    xmlDocument.setParameter("question",
+        Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("description", strDescription);
     xmlDocument.setParameter("help", strHelp);
@@ -261,8 +261,8 @@ public class PriceListCreateAll extends HttpSecureAppServlet {
               "PriceListCreateAll"), Utility.getContext(this, vars, "#User_Client",
               "PriceListCreateAll"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "PriceListCreateAll", "");
-      xmlDocument.setData("reportM_PriceList_Version_ID", "liststructure", comboTableData
-          .select(false));
+      xmlDocument.setData("reportM_PriceList_Version_ID", "liststructure",
+          comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);

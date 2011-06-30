@@ -84,8 +84,8 @@ public class DocFINFinAccTransaction extends AcctServer {
         : new BigDecimal(data[0].getField("PaymentAmount"));
     BigDecimal depositAmount = "".equals(data[0].getField("DepositAmount")) ? ZERO
         : new BigDecimal(data[0].getField("DepositAmount"));
-    usedCredit = "".equals(data[0].getField("UsedCredit")) ? ZERO : new BigDecimal(data[0]
-        .getField("UsedCredit"));
+    usedCredit = "".equals(data[0].getField("UsedCredit")) ? ZERO : new BigDecimal(
+        data[0].getField("UsedCredit"));
     generatedCredit = "".equals(data[0].getField("GeneratedCredit")) ? ZERO : new BigDecimal(
         data[0].getField("GeneratedCredit"));
     Amounts[AMTTYPE_Gross] = depositAmount.subtract(paymentAmount).toString();
@@ -340,8 +340,8 @@ public class DocFINFinAccTransaction extends AcctServer {
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_FINFinAccTransaction line = (DocLine_FINFinAccTransaction) p_lines[i];
-      fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID, line
-          .getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+      fact.createLine(line, getAccountFee(as, transaction.getAccount(), conn), C_Currency_ID,
+          line.getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn);
       fact.createLine(line, getWithdrawalAccount(as, null, transaction.getAccount(), conn),
           C_Currency_ID, line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID,
@@ -405,49 +405,58 @@ public class DocFINFinAccTransaction extends AcctServer {
             && ZERO.compareTo(new BigDecimal(line.getWriteOffAmt())) != 0) {
           // Writeoff uses same exchange rate as original invoice
           fact.createLine(line, getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn),
-              paymentCurrencyId, (isReceipt ? line.getWriteOffAmt() : ""), (isReceipt ? "" : line
-                  .getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-              paymentDate, conn);
+              paymentCurrencyId, (isReceipt ? line.getWriteOffAmt() : ""),
+              (isReceipt ? "" : line.getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, paymentDate, conn);
           bpamount = bpamount.add(new BigDecimal(line.getWriteOffAmt()));
         }
         // Bug critical: Before GL Item was not taken into account
         if (!"".equals(line.cGlItemId)) {
-          fact.createLine(line, getAccountGLItem(OBDal.getInstance().get(GLItem.class,
-              line.getCGlItemId()), as, isReceipt, conn), paymentCurrencyId, line
-              .getPaymentAmount(), line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, null, paymentToSchemaConversionRate, conn);
+          fact.createLine(
+              line,
+              getAccountGLItem(OBDal.getInstance().get(GLItem.class, line.getCGlItemId()), as,
+                  isReceipt, conn), paymentCurrencyId, line.getPaymentAmount(), line
+                  .getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, null,
+              paymentToSchemaConversionRate, conn);
         } else {
           fact.createLine(
               line,
               getAccountBPartner(
                   (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
                       : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn),
-              paymentCurrencyId, !isReceipt ? bpamount.toString() : "", isReceipt ? bpamount
-                  .toString() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-              paymentDate, conn);
+              paymentCurrencyId, !isReceipt ? bpamount.toString() : "",
+              isReceipt ? bpamount.toString() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, paymentDate, conn);
         }
       }
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
       // credit is generated
       if (txnFinPayment.getUsedCredit().compareTo(ZERO) != 0
           && txnFinPayment.getGeneratedCredit().compareTo(ZERO) == 0) {
-        fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, txnFinPayment.isReceipt(),
-            true, conn), paymentCurrencyId, (txnFinPayment.isReceipt() ? txnFinPayment
-            .getUsedCredit().toString() : ""), (txnFinPayment.isReceipt() ? "" : txnFinPayment
-            .getUsedCredit().toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, null,
+        fact.createLine(null,
+            getAccountBPartner(C_BPartner_ID, as, txnFinPayment.isReceipt(), true, conn),
+            paymentCurrencyId, (txnFinPayment.isReceipt() ? txnFinPayment.getUsedCredit()
+                .toString() : ""), (txnFinPayment.isReceipt() ? "" : txnFinPayment.getUsedCredit()
+                .toString()), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, null,
             paymentToSchemaConversionRate, conn);
       }
     } else {
-      fact.createLine(null, getAccountPayment(conn, txnFinPayment.getPaymentMethod(), txnFinPayment
-          .getAccount(), as, txnFinPayment.isReceipt()), C_Currency_ID,
+      fact.createLine(
+          null,
+          getAccountPayment(conn, txnFinPayment.getPaymentMethod(), txnFinPayment.getAccount(), as,
+              txnFinPayment.isReceipt()),
+          C_Currency_ID,
           !txnFinPayment.isReceipt() ? txnFinPayment.getFinancialTransactionAmount().toString()
-              : "", txnFinPayment.isReceipt() ? txnFinPayment.getFinancialTransactionAmount()
-              .toString() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, paymentDate,
+              : "",
+          txnFinPayment.isReceipt() ? txnFinPayment.getFinancialTransactionAmount().toString() : "",
+          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, paymentDate,
           docToSchemaConversionRate, conn);
     }
-    fact.createLine(null, getAccountUponDepositWithdrawal(conn, txnFinPayment.getPaymentMethod(),
-        transaction.getAccount(), as, txnFinPayment.isReceipt()), C_Currency_ID, transaction
-        .getDepositAmount().toString(), transaction.getPaymentAmount().toString(),
+    fact.createLine(
+        null,
+        getAccountUponDepositWithdrawal(conn, txnFinPayment.getPaymentMethod(),
+            transaction.getAccount(), as, txnFinPayment.isReceipt()), C_Currency_ID, transaction
+            .getDepositAmount().toString(), transaction.getPaymentAmount().toString(),
         Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, null, docToSchemaConversionRate, conn);
 
     createFactCurrencyBalancing(as, conn, fact, Fact_Acct_Group_ID, transaction);
@@ -473,16 +482,19 @@ public class DocFINFinAccTransaction extends AcctServer {
       boolean isReceipt = paymentAmount.compareTo(depositAmount) < 0;
       String Fact_Acct_Group_ID = SequenceIdData.getUUID();
       if (!"".equals(line.getCGlItemId()))
-        fact.createLine(line, getAccountGLItem(OBDal.getInstance().get(GLItem.class,
-            line.getCGlItemId()), as, isReceipt, conn), C_Currency_ID, line.getPaymentAmount(),
-            line.getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        fact.createLine(
+            line,
+            getAccountGLItem(OBDal.getInstance().get(GLItem.class, line.getCGlItemId()), as,
+                isReceipt, conn), C_Currency_ID, line.getPaymentAmount(), line.getDepositAmount(),
+            Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
           Record_ID);
-      fact.createLine(line, getAccountUponDepositWithdrawal(conn,
-          transaction.getFinPayment() != null ? transaction.getFinPayment().getPaymentMethod()
-              : null, transaction.getAccount(), as, isReceipt), C_Currency_ID, line
-          .getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID, "999999", DocumentType,
-          conn);
+      fact.createLine(
+          line,
+          getAccountUponDepositWithdrawal(conn, transaction.getFinPayment() != null ? transaction
+              .getFinPayment().getPaymentMethod() : null, transaction.getAccount(), as, isReceipt),
+          C_Currency_ID, line.getDepositAmount(), line.getPaymentAmount(), Fact_Acct_Group_ID,
+          "999999", DocumentType, conn);
     }
     SeqNo = "0";
     return fact;
@@ -617,8 +629,8 @@ public class DocFINFinAccTransaction extends AcctServer {
       OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
       obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
-          .getPaymentMethod()));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+          payment.getPaymentMethod()));
       obCriteria.setFilterOnReadableClients(false);
       obCriteria.setFilterOnReadableOrganization(false);
       List<FinAccPaymentMethod> lines = obCriteria.list();
@@ -666,8 +678,8 @@ public class DocFINFinAccTransaction extends AcctServer {
       OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
       obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
-          .getPaymentMethod()));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+          payment.getPaymentMethod()));
       obCriteria.setFilterOnReadableClients(false);
       obCriteria.setFilterOnReadableOrganization(false);
       List<FinAccPaymentMethod> lines = obCriteria.list();
@@ -723,8 +735,8 @@ public class DocFINFinAccTransaction extends AcctServer {
         OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
             FinAccPaymentMethod.class);
         obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment
-            .getPaymentMethod()));
+        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+            payment.getPaymentMethod()));
         obCriteria.setFilterOnReadableClients(false);
         obCriteria.setFilterOnReadableOrganization(false);
         List<FinAccPaymentMethod> lines = obCriteria.list();
@@ -788,8 +800,10 @@ public class DocFINFinAccTransaction extends AcctServer {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(
+          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
@@ -867,14 +881,16 @@ public class DocFINFinAccTransaction extends AcctServer {
       FieldProviderFactory.setField(data[0], "GeneratedCredit",
           transaction.getFinPayment() != null ? transaction.getFinPayment().getGeneratedCredit()
               .toString() : "");
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-          "dateFormat.java");
+      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-      FieldProviderFactory.setField(data[0], "DateAcct", outputFormat.format(transaction
-          .getDateAcct()));
-      FieldProviderFactory.setField(data[0], "trxdate", outputFormat.format(transaction
-          .getTransactionDate()));
-      FieldProviderFactory.setField(data[0], "paymentDate",
+      FieldProviderFactory.setField(data[0], "DateAcct",
+          outputFormat.format(transaction.getDateAcct()));
+      FieldProviderFactory.setField(data[0], "trxdate",
+          outputFormat.format(transaction.getTransactionDate()));
+      FieldProviderFactory.setField(
+          data[0],
+          "paymentDate",
           transaction.getFinPayment() != null ? outputFormat.format(transaction.getFinPayment()
               .getPaymentDate()) : "");
       FieldProviderFactory.setField(data[0], "Posted", transaction.getPosted());
@@ -905,8 +921,10 @@ public class DocFINFinAccTransaction extends AcctServer {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(
+          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
@@ -949,8 +967,10 @@ public class DocFINFinAccTransaction extends AcctServer {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(
+          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);
@@ -984,8 +1004,10 @@ public class DocFINFinAccTransaction extends AcctServer {
       OBCriteria<FIN_FinancialAccountAccounting> accounts = OBDal.getInstance().createCriteria(
           FIN_FinancialAccountAccounting.class);
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNT, finAccount));
-      accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA, OBDal
-          .getInstance().get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+      accounts.add(Restrictions.eq(
+          FIN_FinancialAccountAccounting.PROPERTY_ACCOUNTINGSCHEMA,
+          OBDal.getInstance().get(
+              org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
               as.m_C_AcctSchema_ID)));
       accounts.add(Restrictions.eq(FIN_FinancialAccountAccounting.PROPERTY_ACTIVE, true));
       accounts.setFilterOnReadableClients(false);

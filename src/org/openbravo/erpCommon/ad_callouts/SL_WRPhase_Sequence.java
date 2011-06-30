@@ -84,9 +84,10 @@ public class SL_WRPhase_Sequence extends HttpSecureAppServlet {
       resultado.append("new Array(\"inppreptime\", \""
           + FormatUtilities.replaceJS((data[0].preptime.equals("") ? "\"\"" : data[0].preptime))
           + "\"),\n");
-      resultado.append("new Array(\"inpoutsourced\", \""
-          + FormatUtilities
-              .replaceJS((data[0].outsourced.equals("") ? "\"\"" : data[0].outsourced)) + "\")\n");
+      resultado
+          .append("new Array(\"inpoutsourced\", \""
+              + FormatUtilities.replaceJS((data[0].outsourced.equals("") ? "\"\""
+                  : data[0].outsourced)) + "\")\n");
     }
 
     resultado.append(");\n");

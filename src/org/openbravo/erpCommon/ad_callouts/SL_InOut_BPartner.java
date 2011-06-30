@@ -172,7 +172,8 @@ public class SL_InOut_BPartner extends HttpSecureAppServlet {
       resultado.append("null");
     resultado.append("\n)");
     if (data != null && data.length > 0
-        && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0 && strIsSOTrx.equals("Y")) {
+        && new BigDecimal(data[0].creditavailable).compareTo(BigDecimal.ZERO) < 0
+        && strIsSOTrx.equals("Y")) {
       String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
       resultado.append(", new Array('MESSAGE', \""
           + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage()) + creditLimitExceed

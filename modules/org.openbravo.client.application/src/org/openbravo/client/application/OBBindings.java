@@ -66,8 +66,8 @@ public class OBBindings {
 
     dateFormat = new SimpleDateFormat((String) httpSession.getAttribute("#AD_JAVADATEFORMAT"));
 
-    dateTimeFormat = new SimpleDateFormat((String) httpSession
-        .getAttribute("#AD_JAVADATETIMEFORMAT"));
+    dateTimeFormat = new SimpleDateFormat(
+        (String) httpSession.getAttribute("#AD_JAVADATETIMEFORMAT"));
   }
 
   public OBContext getContext() {

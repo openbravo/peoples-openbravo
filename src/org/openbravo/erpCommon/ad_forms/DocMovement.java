@@ -155,15 +155,15 @@ public class DocMovement extends AcctServer {
       } else
         setStatus(STATUS_NotPosted);// Default status. LoadDocument
       // Inventory DR CR
-      dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
-          .getC_Currency_ID(), (b_Costs.negate()).toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, conn); // from
+      dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+          as.getC_Currency_ID(), (b_Costs.negate()).toString(), Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), DocumentType, conn); // from
       // (-)
       // CR
       dr.setM_Locator_ID(line.m_M_Locator_ID);
       // InventoryTo DR CR
-      cr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn), as
-          .getC_Currency_ID(), costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn); // to
+      cr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+          as.getC_Currency_ID(), costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn); // to
       // (+)
       // DR
       cr.setM_Locator_ID(line.m_M_LocatorTo_ID);
