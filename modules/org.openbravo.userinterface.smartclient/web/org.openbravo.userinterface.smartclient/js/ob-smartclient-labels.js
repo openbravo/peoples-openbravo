@@ -169,8 +169,10 @@ isc.GridRenderer.emptyMessage = getLabel('OBUISC_GridRenderer.emptyMessage');
 
 isc.ListGrid.addProperties({addFormulaFieldText: getLabel('OBUISC_ListGrid.addFormulaFieldText')});
 isc.ListGrid.addProperties({editFormulaFieldText: getLabel('OBUISC_ListGrid.editFormulaFieldText')});
+isc.ListGrid.addProperties({removeFormulaFieldText: getLabel('OBUISC_ListGrid.removeFormulaFieldText')});
 isc.ListGrid.addProperties({addSummaryFieldText: getLabel('OBUISC_ListGrid.addSummaryFieldText')});
 isc.ListGrid.addProperties({editSummaryFieldText: getLabel('OBUISC_ListGrid.editSummaryFieldText')});
+isc.ListGrid.addProperties({removeSummaryFieldText: getLabel('OBUISC_ListGrid.removeSummaryFieldText')});
 isc.ListGrid.addProperties({emptyMessage: getLabel('OBUISC_ListGrid.emptyMessage')});
 isc.ListGrid.addProperties({loadingDataMessage: getLabel('OBUISC_ListGrid.loadingDataMessage')});
 isc.ListGrid.addProperties({loadingMessage: ''}); // empty string is fine see description in smartclient reference getLabel('OBUISC_ListGrid.loadingMessage')
