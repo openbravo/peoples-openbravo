@@ -40,6 +40,14 @@
   }
 
   function submitThisPage(strCommand) {
+    var organization = document.getElementById("inpadOrgId");
+
+    if (organization.value == null || organization.value == "") {
+     setWindowElementFocus(organization);
+     showJSMessage(7);
+     return false;
+    }
+    setProcessingMode('popup', true);
     submitCommandForm(strCommand, false, null, null);
     return true;
   }
@@ -136,8 +144,8 @@
             <tr>
               <td class="TitleCell"><span class="LabelText">Organization</span></td>
               <td class="Combo_ContentCell" colspan="2">
-                <select name="inpadOrgId" id="inpadOrgId" class="Combo Combo_TwoCells_width">
-                  <option value=""></option><div id="reportadOrgId"></div>
+                <select name="inpadOrgId" id="inpadOrgId" class="ComboKey Combo_TwoCell_width Combo_focus">
+                  <div id="reportadOrgId"></div>
                 </select>
               </td>
               <td></td>
@@ -153,7 +161,7 @@
                   <button type="button" 
                     id="buttonOK" 
                     class="ButtonLink" 
-                    onclick="setProcessingMode('popup', true); submitThisPage('SAVE');return false;" 
+                    onclick="submitThisPage('SAVE');return false;"
                     onfocus="buttonEvent('onfocus', this); window.status='Accept'; return true;" 
                     onblur="buttonEvent('onblur', this);" 
                     onkeyup="buttonEvent('onkeyup', this);" 

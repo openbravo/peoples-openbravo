@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -78,21 +78,30 @@ public class DropRegFactAcct extends HttpSecureAppServlet {
       String strCloseFactAcctGroupId = "";
       String strDivideUpFactAcctGroupId = "";
       String strOpenUpFactAcctGroupId = "";
-      String strOrgSchemaId = "";
+      String strOrgClosingId = "";
       try {
         DropRegFactAcctData[] data = DropRegFactAcctData.selectFactAcctGroupId(this, stradOrgId,
             strKey);
         if (data != null && data.length != 0) {
           for (int i = 0; i < data.length; i++) {
-            strRegFactAcctGroupId = data[0].regFactAcctGroupId;
-            strCloseFactAcctGroupId = data[0].closeFactAcctGroupId;
-            strDivideUpFactAcctGroupId = data[0].divideupFactAcctGroupId;
-            strOpenUpFactAcctGroupId = data[0].openFactAcctGroupId;
-            strOrgSchemaId = data[0].adOrgClosingId;
-            processButtonClose(conn, vars, strKey, stradOrgId, strRegFactAcctGroupId,
-                strCloseFactAcctGroupId, strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId,
-                strOrgSchemaId);
+            strRegFactAcctGroupId = data[i].regFactAcctGroupId;
+            strCloseFactAcctGroupId = data[i].closeFactAcctGroupId;
+            strDivideUpFactAcctGroupId = data[i].divideupFactAcctGroupId;
+            strOpenUpFactAcctGroupId = data[i].openFactAcctGroupId;
+            strOrgClosingId = data[i].adOrgClosingId;
+            String strResult = processButtonClose(conn, vars, strKey, stradOrgId,
+                strRegFactAcctGroupId, strCloseFactAcctGroupId, strDivideUpFactAcctGroupId,
+                strOpenUpFactAcctGroupId, strOrgClosingId);
+            if (!"ProcessOK".equals(strResult)) {
+              myError = new OBError();
+              myError.setType("Error");
+              myError.setTitle("");
+              myError.setMessage(Utility.messageBD(this, "Error", vars.getLanguage()));
+              releaseRollbackConnection(conn);
+              return myError;
+            }
           }
+          DropRegFactAcctData.updatePeriodsOpen(conn, this, vars.getUser(), strKey, stradOrgId);
         }
       } catch (ServletException ex) {
         myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
@@ -118,10 +127,9 @@ public class DropRegFactAcct extends HttpSecureAppServlet {
 
   private String processButtonClose(Connection conn, VariablesSecureApp vars, String strKey,
       String stradOrgId, String strRegFactAcctGroupId, String strCloseFactAcctGroupId,
-      String strDivideUpFactAcctGroupId, String strOpenUpFactAcctGroupId, String strOrgSchemaId)
+      String strDivideUpFactAcctGroupId, String strOpenUpFactAcctGroupId, String strOrgClosingId)
       throws ServletException {
-    DropRegFactAcctData.updatePeriodsOpen(conn, this, vars.getUser(), strKey, stradOrgId);
-    DropRegFactAcctData.deleteOrgClosing(conn, this, strOrgSchemaId);
+    DropRegFactAcctData.deleteOrgClosing(conn, this, strOrgClosingId);
     DropRegFactAcctData.deleteFactAcctClose(conn, this, strRegFactAcctGroupId,
         strCloseFactAcctGroupId, strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId, stradOrgId);
     return "ProcessOK";

@@ -28,8 +28,10 @@
     <Sql>
       <![CDATA[
 		select ad_org.ad_org_id as id, ad_org.name as name,
-        '' AS TOTALAMTDR, '' AS TOTALAMTCR, '' AS ACCOUNT_ID, '' as org, '' as acctvalue, '' as acctdescription, '' as value,
-        '' as c_bpartner_id, '' as record_id2, '' as m_product_id, '' as a_asset_id, '' AS REGCOUNT
+          '' AS TOTALAMTDR, '' AS TOTALAMTCR, '' AS ACCOUNT_ID, '' as org, '' as acctvalue, '' as acctdescription, '' as value,
+          '' as c_bpartner_id, '' as record_id2, '' as m_product_id, '' as a_asset_id, '' AS REGCOUNT,
+          '' AS C_TAX_ID, '' AS C_PROJECT_ID, '' AS  C_ACTIVITY_ID, '' AS USER1_ID, '' AS  USER2_ID, '' AS  C_CAMPAIGN_ID,
+          '' AS  C_SALESREGION_ID
 		from ad_org
 		where ad_org.isperiodcontrolallowed = 'Y'
 		and ad_client_id = ?
@@ -38,10 +40,12 @@
                         FROM AD_ORG_CLOSING
                         WHERE C_YEAR_ID = ?
                           AND AD_ORG_CLOSING.AD_ORG_ID=AD_ORG.AD_ORG_ID)
+        and ad_org.c_calendar_id=(select c_calendar_id from c_year where c_year_id=?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="and ad_org_id in (" text="'1'"/>
+    <Parameter name="c_year_id"/>
     <Parameter name="c_year_id"/>
   </SqlMethod>
   <SqlMethod name="getAmounts" type="preparedStatement" return="multiple">
@@ -73,8 +77,9 @@
     <Sql>
       <![CDATA[
         SELECT (CASE sign(SUM(AMTACCTDR)-sum(amtacctcr)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTDR)-sum(amtacctcr)) END) AS TOTALAMTCR,
-        (CASE sign(SUM(AMTACCTCR)-sum(amtacctdr)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-sum(amtacctdr)) END) AS TOTALAMTDR, ACCOUNT_ID,
-        ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID
+          (CASE sign(SUM(AMTACCTCR)-sum(amtacctdr)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-sum(amtacctdr)) END) AS TOTALAMTDR, ACCOUNT_ID,
+          ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID, C_TAX_ID, C_PROJECT_ID, C_ACTIVITY_ID,
+          USER1_ID, USER2_ID, C_CAMPAIGN_ID, C_SALESREGION_ID
         FROM FACT_ACCT
         WHERE EXISTS (SELECT 1 FROM C_PERIOD P
                       WHERE P.C_YEAR_ID = ?
@@ -84,7 +89,8 @@
                 WHERE C_ELEMENTVALUE.ACCOUNTTYPE IN ('1'))
         AND AD_ORG_ID = ?
         AND C_ACCTSCHEMA_ID = ?
-        GROUP BY ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID
+        GROUP BY ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID, C_TAX_ID, C_PROJECT_ID,
+                 C_ACTIVITY_ID, USER1_ID, USER2_ID, C_CAMPAIGN_ID, C_SALESREGION_ID
       ]]>
     </Sql>
     <Parameter name="c_year_id"/>
@@ -279,7 +285,10 @@
         FACT_ACCT_GROUP_ID,SEQNO, FACTACCTTYPE,
         ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID,
         RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID,
-        DESCRIPTION)
+        DESCRIPTION,
+        C_TAX_ID, C_PROJECT_ID, C_ACTIVITY_ID,
+        USER1_ID, USER2_ID, C_CAMPAIGN_ID,
+        C_SALESREGION_ID)
         VALUES
           (?,?,?,
            'Y',now(),?,now(),?,
@@ -288,6 +297,9 @@
            ?,?,TO_NUMBER(?),
            TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
            ?,TO_NUMBER(?),?,
+           ?,?,?,
+           ?, ?, ?,
+           ?,
            ?,?,?,
            ?, ?, ?,
            ?)
@@ -321,6 +333,13 @@
     <Parameter name="product"/>
     <Parameter name="asset"/>
     <Parameter name="description"/>
+    <Parameter name="cTaxId"/>
+    <Parameter name="cProjectId"/>
+    <Parameter name="cActivityId"/>
+    <Parameter name="User1Id"/>
+    <Parameter name="User2Id"/>
+    <Parameter name="CampaignId"/>
+    <Parameter name="SalesRegionId"/>
   </SqlMethod>
   <SqlMethod name="getStartDate" type="preparedStatement" return="Date">
     <SqlMethodComment></SqlMethodComment>
@@ -362,13 +381,26 @@
       ]]></Sql>
         <Parameter name="rol"/>
    </SqlMethod>
+   <SqlMethod name="treeOrgAcctSchemas" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT AD_ORG_id as org
+        FROM AD_ORG
+        WHERE AD_CLIENT_ID = ?
+        AND (AD_ISORGINCLUDED(AD_ORG_ID, ?, AD_CLIENT_ID) <> -1
+          OR AD_ISORGINCLUDED(?, AD_ORG_ID, AD_CLIENT_ID) <> -1)
+      ]]></Sql>
+        <Parameter name="clientId"/>
+        <Parameter name="orgId"/>
+        <Parameter name="orgId"/>
+   </SqlMethod>
    <SqlMethod name="treeOrg" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
         SELECT AD_ORG_id as org
         FROM AD_ORG
         WHERE AD_CLIENT_ID = ?
-        AND AD_ISORGINCLUDED(AD_ORG_ID, ?,AD_CLIENT_ID) <> -1
+        AND AD_ISORGINCLUDED(AD_ORG_ID, ?, AD_CLIENT_ID) <> -1
       ]]></Sql>
         <Parameter name="clientId"/>
         <Parameter name="orgId"/>
@@ -404,5 +436,16 @@
     <Parameter name="orgId"/>
     <Parameter name="c_acctschema_id"/>
      <Parameter name="c_period_id"/>
+  </SqlMethod>
+  <SqlMethod name="numSchemasFor0Org" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      SELECT COUNT(*) AS numSchemas
+      FROM AD_ORG_ACCTSCHEMA
+      WHERE AD_CLIENT_ID = ?
+        AND AD_ORG_ID = '0'
+        AND ISACTIVE='Y'
+     ]]></Sql>
+    <Parameter name="clientId"/>
   </SqlMethod>
 </SqlClass>

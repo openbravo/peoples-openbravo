@@ -82,21 +82,23 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
     OBError myError = new OBError();
     try {
       conn = this.getTransactionConnection();
-      String strRegId = SequenceIdData.getUUID();
-      String strCloseId = SequenceIdData.getUUID();
-      String strOpenId = SequenceIdData.getUUID();
-      String strDivideUpId = SequenceIdData.getUUID();
-      CreateRegFactAcctData[] data = CreateRegFactAcctData
-          .treeOrg(this, vars.getClient(), strOrgId);
+      CreateRegFactAcctData[] dataOrgs = CreateRegFactAcctData.treeOrg(this, vars.getClient(),
+          strOrgId);
+      CreateRegFactAcctData[] dataOrgAcctSchemas = CreateRegFactAcctData.treeOrgAcctSchemas(this,
+          vars.getClient(), strOrgId);
       CreateRegFactAcctData[] acctSchema = CreateRegFactAcctData.treeAcctSchema(this, vars
           .getClient());
       for (int j = 0; j < acctSchema.length; j++) {
-        for (int i = 0; i < data.length; i++) {
+        String strRegId = SequenceIdData.getUUID();
+        String strCloseId = SequenceIdData.getUUID();
+        String strOpenId = SequenceIdData.getUUID();
+        String strDivideUpId = SequenceIdData.getUUID();
+        for (int i = 0; i < dataOrgs.length; i++) {
           if (log4j.isDebugEnabled())
             log4j.debug("Output: Before buttonReg");
           String strPediodId = CreateRegFactAcctData.getLastPeriod(this, strKey);
-          String regCount = CreateRegFactAcctData.getRegCount(this, vars.getClient(), data[i].org,
-              acctSchema[j].id, strPediodId);
+          String regCount = CreateRegFactAcctData.getRegCount(this, vars.getClient(),
+              dataOrgs[i].org, acctSchema[j].id, strPediodId);
           if (new Integer(regCount).intValue() > 0) {
             myError.setType("Error");
             myError.setTitle("");
@@ -104,9 +106,9 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
                 .getLanguage()));
             return myError;
           }
-          String strRegOut = processButtonReg(conn, vars, strKey, windowId, data[i].org, strRegId,
-              acctSchema[j].id);
-          String strCloseOut = processButtonClose(conn, vars, strKey, windowId, data[i].org,
+          String strRegOut = processButtonReg(conn, vars, strKey, windowId, dataOrgs[i].org,
+              strRegId, acctSchema[j].id);
+          String strCloseOut = processButtonClose(conn, vars, strKey, windowId, dataOrgs[i].org,
               strCloseId, strOpenId, strDivideUpId, acctSchema[j].id);
           if (log4j.isDebugEnabled())
             log4j.debug("Output: After buttonClose - strRegOut:" + strRegOut);
@@ -122,17 +124,18 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
           ExpenseAmtCr = new BigDecimal("0");
           RevenueAmtDr = new BigDecimal("0");
           RevenueAmtCr = new BigDecimal("0");
-          String strOrgSchemaId = CreateRegFactAcctData.orgAcctschema(this, data[i].org,
-              acctSchema[j].id);
+        }
+        for (int i = 0; i < dataOrgAcctSchemas.length; i++) {
+          String strOrgSchemaId = CreateRegFactAcctData.orgAcctschema(this,
+              dataOrgAcctSchemas[i].org, acctSchema[j].id);
           if (strOrgSchemaId != null && !strOrgSchemaId.equals("")) {
-            if (CreateRegFactAcctData.insertOrgClosing(conn, this, vars.getClient(), data[i].org,
-                vars.getUser(), strKey, strOrgSchemaId, strRegId, strCloseId, strDivideUpId,
-                strOpenId) == 0
-                || CreateRegFactAcctData.updateClose(conn, this, vars.getUser(), strKey,
-                    data[i].org) == 0)
+            if (CreateRegFactAcctData.insertOrgClosing(conn, this, vars.getClient(), strOrgId, vars
+                .getUser(), strKey, strOrgSchemaId, strRegId, strCloseId, strDivideUpId, strOpenId) == 0)
               return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
           }
         }
+        if (CreateRegFactAcctData.updateClose(conn, this, vars.getUser(), strKey, strOrgId) == 0)
+          return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
       }
       releaseCommitConnection(conn);
       myError.setType("Success");
@@ -251,7 +254,9 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
                 .subtract(RevenueAmtCr).subtract(ExpenseAmtCr).toString(), "0", ExpenseAmtDr.add(
                 RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr).toString(), "0",
             strDivideUpId, "10", "C", account[0].name, account[0].value, account[0].cBpartnerId,
-            account[0].recordId2, account[0].mProductId, account[0].aAssetId, strClosingEntry);
+            account[0].recordId2, account[0].mProductId, account[0].aAssetId, strClosingEntry,
+            account[0].cTaxId, account[0].cProjectId, account[0].cActivityId, account[0].user1Id,
+            account[0].user2Id, account[0].cCampaignId, account[0].cSalesregionId);
         Fact_Acct_ID = SequenceIdData.getUUID();
         CreateRegFactAcctData
             .insertClose(conn, this, Fact_Acct_ID, vars.getClient(), stradOrgId, vars.getUser(),
@@ -262,7 +267,9 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
                 ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr)
                     .toString(), strDivideUpId, "10", "C", account2[0].name, account2[0].value,
                 account2[0].cBpartnerId, account2[0].recordId2, account2[0].mProductId,
-                account2[0].aAssetId, strClosingEntry);
+                account2[0].aAssetId, strClosingEntry, account2[0].cTaxId, account2[0].cProjectId,
+                account2[0].cActivityId, account2[0].user1Id, account2[0].user2Id,
+                account2[0].cCampaignId, account2[0].cSalesregionId);
       } else if (ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr)
           .signum() < 0) {
         Fact_Acct_ID = SequenceIdData.getUUID();
@@ -275,7 +282,9 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
                 ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr)
                     .toString(), strDivideUpId, "10", "C", account[0].name, account[0].value,
                 account[0].cBpartnerId, account[0].recordId2, account[0].mProductId,
-                account[0].aAssetId, strClosingEntry);
+                account[0].aAssetId, strClosingEntry, account[0].cTaxId, account[0].cProjectId,
+                account[0].cActivityId, account[0].user1Id, account[0].user2Id,
+                account[0].cCampaignId, account[0].cSalesregionId);
         Fact_Acct_ID = SequenceIdData.getUUID();
         CreateRegFactAcctData.insertClose(conn, this, Fact_Acct_ID, vars.getClient(), stradOrgId,
             vars.getUser(), strAcctSchema, account2[0].accountId, CreateRegFactAcctData.getEndDate(
@@ -284,7 +293,10 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
                 .subtract(RevenueAmtDr).subtract(ExpenseAmtDr).toString(), "0", ExpenseAmtCr.add(
                 RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr).toString(), "0",
             strDivideUpId, "10", "C", account2[0].name, account2[0].value, account2[0].cBpartnerId,
-            account2[0].recordId2, account2[0].mProductId, account2[0].aAssetId, strClosingEntry);
+            account2[0].recordId2, account2[0].mProductId, account2[0].aAssetId, strClosingEntry,
+            account2[0].cTaxId, account2[0].cProjectId, account2[0].cActivityId,
+            account2[0].user1Id, account2[0].user2Id, account2[0].cCampaignId,
+            account2[0].cSalesregionId);
       }
     }
     CreateRegFactAcctData[] asset = CreateRegFactAcctData.getAmountsClose(conn, this, strKey,
@@ -307,7 +319,8 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
             asset[i].totalamtcr, asset[i].totalamtdr, asset[i].totalamtcr, Fact_Acct_Group_ID,
             Integer.toString((i + 3) * 10), "C", asset[i].acctdescription, asset[i].acctvalue,
             asset[i].cBpartnerId, asset[i].recordId2, asset[i].mProductId, asset[i].aAssetId,
-            strClosingEntry);
+            strClosingEntry, asset[i].cTaxId, asset[i].cProjectId, asset[i].cActivityId,
+            asset[i].user1Id, asset[i].user2Id, asset[i].cCampaignId, asset[i].cSalesregionId);
     }
     for (int j = 0; j < liability.length; j++) {
       BigDecimal totalLiabilityAmtDr = new BigDecimal(liability[j].totalamtdr);
@@ -317,16 +330,17 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
       Fact_Acct_ID = SequenceIdData.getUUID();
       if (totalLiabilityAmtDr.compareTo(BigDecimal.ZERO) != 0
           || totalLiabilityAmtCr.compareTo(BigDecimal.ZERO) != 0)
-        CreateRegFactAcctData
-            .insertClose(conn, this, Fact_Acct_ID, vars.getClient(), stradOrgId, vars.getUser(),
-                strAcctSchema, liability[j].accountId, CreateRegFactAcctData.getEndDate(this,
-                    strPediodId), strPediodId, CreateRegFactAcctData.adTableId(this), "A",
-                CreateRegFactAcctData.cCurrencyId(this, strAcctSchema), liability[j].totalamtdr,
-                liability[j].totalamtcr, liability[j].totalamtdr, liability[j].totalamtcr,
-                Fact_Acct_Group_ID, Integer.toString((i + j + 3) * 10), "C",
-                liability[j].acctdescription, liability[j].acctvalue, liability[j].cBpartnerId,
-                liability[j].recordId2, liability[j].mProductId, liability[j].aAssetId,
-                strClosingEntry);
+        CreateRegFactAcctData.insertClose(conn, this, Fact_Acct_ID, vars.getClient(), stradOrgId,
+            vars.getUser(), strAcctSchema, liability[j].accountId, CreateRegFactAcctData
+                .getEndDate(this, strPediodId), strPediodId, CreateRegFactAcctData.adTableId(this),
+            "A", CreateRegFactAcctData.cCurrencyId(this, strAcctSchema), liability[j].totalamtdr,
+            liability[j].totalamtcr, liability[j].totalamtdr, liability[j].totalamtcr,
+            Fact_Acct_Group_ID, Integer.toString((i + j + 3) * 10), "C",
+            liability[j].acctdescription, liability[j].acctvalue, liability[j].cBpartnerId,
+            liability[j].recordId2, liability[j].mProductId, liability[j].aAssetId,
+            strClosingEntry, liability[j].cTaxId, liability[j].cProjectId,
+            liability[j].cActivityId, liability[j].user1Id, liability[j].user2Id,
+            liability[j].cCampaignId, liability[j].cSalesregionId);
     }
 
     String Fact_Acct_Group_ID2 = strOpenID;
@@ -346,7 +360,8 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
             asset[i].totalamtdr, asset[i].totalamtcr, asset[i].totalamtdr, Fact_Acct_Group_ID2,
             Integer.toString((i + 3) * 10), "O", asset[i].acctdescription, asset[i].acctvalue,
             asset[i].cBpartnerId, asset[i].recordId2, asset[i].mProductId, asset[i].aAssetId,
-            strOpeningEntry);
+            strOpeningEntry, asset[i].cTaxId, asset[i].cProjectId, asset[i].cActivityId,
+            asset[i].user1Id, asset[i].user2Id, asset[i].cCampaignId, asset[i].cSalesregionId);
     }
     for (int j = 0; j < liability.length; j++) {
       BigDecimal totalLiabilityAmtDr = new BigDecimal(liability[j].totalamtdr);
@@ -356,16 +371,17 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
       Fact_Acct_ID = SequenceIdData.getUUID();
       if (totalLiabilityAmtDr.compareTo(BigDecimal.ZERO) != 0
           || totalLiabilityAmtCr.compareTo(BigDecimal.ZERO) != 0)
-        CreateRegFactAcctData
-            .insertClose(conn, this, Fact_Acct_ID, vars.getClient(), stradOrgId, vars.getUser(),
-                strAcctSchema, liability[j].accountId, CreateRegFactAcctData.getStartDate(this,
-                    newPeriod), newPeriod, CreateRegFactAcctData.adTableId(this), "A",
-                CreateRegFactAcctData.cCurrencyId(this, strAcctSchema), liability[j].totalamtcr,
-                liability[j].totalamtdr, liability[j].totalamtcr, liability[j].totalamtdr,
-                Fact_Acct_Group_ID2, Integer.toString((i + j + 3) * 10), "O",
-                liability[j].acctdescription, liability[j].acctvalue, liability[j].cBpartnerId,
-                liability[j].recordId2, liability[j].mProductId, liability[j].aAssetId,
-                strOpeningEntry);
+        CreateRegFactAcctData.insertClose(conn, this, Fact_Acct_ID, vars.getClient(), stradOrgId,
+            vars.getUser(), strAcctSchema, liability[j].accountId, CreateRegFactAcctData
+                .getStartDate(this, newPeriod), newPeriod, CreateRegFactAcctData.adTableId(this),
+            "A", CreateRegFactAcctData.cCurrencyId(this, strAcctSchema), liability[j].totalamtcr,
+            liability[j].totalamtdr, liability[j].totalamtcr, liability[j].totalamtdr,
+            Fact_Acct_Group_ID2, Integer.toString((i + j + 3) * 10), "O",
+            liability[j].acctdescription, liability[j].acctvalue, liability[j].cBpartnerId,
+            liability[j].recordId2, liability[j].mProductId, liability[j].aAssetId,
+            strOpeningEntry, liability[0].cTaxId, liability[j].cProjectId,
+            liability[j].cActivityId, liability[j].user1Id, liability[j].user2Id,
+            liability[j].cCampaignId, liability[j].cSalesregionId);
     }
 
     return "Success";
@@ -388,9 +404,20 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
-    String[] discard = { "" };
+    String[] discard = { "", "" };
     if (strHelp.equals(""))
       discard[0] = new String("helpDiscard");
+
+    String strError = "";
+    String numSchemasFor0Org = CreateRegFactAcctData.numSchemasFor0Org(this, vars.getClient());
+    if (new Integer(numSchemasFor0Org).intValue() > 0) {
+      strError = Utility.messageBD(this, "0OrgShouldNotHaveAcctSchema", vars.getLanguage());
+    }
+    if ("".equals(strError))
+      discard[1] = new String("messageBoxID");
+    else
+      discard[1] = new String("client");
+
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_actionButton/CreateRegFactAcct", discard).createXmlDocument();
     xmlDocument.setParameter("key", strKey);
@@ -403,6 +430,11 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", strDescription);
     xmlDocument.setParameter("help", strHelp);
+    if (!"".equals(strError)) {
+      xmlDocument.setParameter("messageType", "ERROR");
+      xmlDocument.setParameter("messageTitle", "Error");
+      xmlDocument.setParameter("messageMessage", strError);
+    }
 
     xmlDocument.setData("reportadOrgId", "liststructure", CreateRegFactAcctData.select(this, vars
         .getClient(), Utility.getContext(this, vars, "#User_Org", "CreateRegFactAcct"), strKey));
