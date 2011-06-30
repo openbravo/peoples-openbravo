@@ -66,9 +66,6 @@ isc.OBViewGrid.addProperties({
     canFilter: true,
     autoExpand: false,
     filterEditorType: 'StaticTextItem',
-    filterEditorProperties: {
-      textAlign: 'center'
-    },
     name: isc.OBViewGrid.EDIT_LINK_FIELD_NAME
   },
   
@@ -245,9 +242,6 @@ isc.OBViewGrid.addProperties({
       canFreeze: true,
       showHover: true,
       prompt: OB.I18N.getLabel('OBUIAPP_GridSelectAllColumnPrompt'),
-      filterEditorProperties: {
-        textAlign: 'center'
-      },
       filterEditorType: 'StaticTextItem'
     });
 

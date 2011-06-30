@@ -176,6 +176,14 @@
   border-top: 1px solid #b2b5b0;
 }
 
+.OBGridFilterStaticText {
+  font-family: 'lucida sans', sans-serif;
+  font-size: 11px;
+  font-weight: normal;
+  color: #333333;
+  padding: 2px 0px 0px 0px;
+}
+
 .OBGridFilterFunnelBackground {
   background-color: #CDD7BB;
 }

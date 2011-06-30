@@ -174,6 +174,20 @@ isc.OBViewGrid.addProperties({
   bodyStyleName: 'OBViewGridBody'
 });
 
+isc.OBViewGrid.changeDefaults('editLinkFieldProperties', {
+  filterEditorProperties: {
+    textBoxStyle: 'OBGridFilterStaticText',
+    textAlign: 'center'
+  }
+});
+
+isc.OBViewGrid.changeDefaults('checkboxFieldDefaults', {
+  filterEditorProperties: {
+    textBoxStyle: 'OBGridFilterStaticText',
+    textAlign: 'center'
+  }
+});
+
 /******************************/
 
 isc.OBAlertGrid.addProperties({
