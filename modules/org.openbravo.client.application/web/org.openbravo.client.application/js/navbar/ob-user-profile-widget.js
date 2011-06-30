@@ -170,7 +170,7 @@ isc.OBUserProfile.addProperties({
       titleStyle: OB.Styles.OBFormField.DefaultTextItem.titleStyle,
       textBoxStyle: OB.Styles.OBFormField.DefaultTextItem.textBoxStyle,
       showFocused: true,
-      showDisabled: false,
+      showDisabled: true,
       disabled: true,
       showIcons: false,
       width: '*',
