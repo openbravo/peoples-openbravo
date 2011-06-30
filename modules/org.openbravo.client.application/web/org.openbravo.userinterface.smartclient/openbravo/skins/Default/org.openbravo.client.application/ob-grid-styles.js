@@ -119,17 +119,19 @@ isc.OBGridToolStripIcon.addProperties({
   showFocused: false,
   showFocusedAsOver: true,
   baseStyle: 'OBGridToolStripIcon',
-  getIconFile: function(buttonType) { /* this.buttonType could be: edit - form - cancel - save */
-    return OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-' + buttonType + '.png';
-  },
+  genericIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton.png', /* Can be: edit - form - cancel - save */
   initWidgetStyle: function() {
-    this.setSrc(this.getIconFile(this.buttonType));
+    var fileExt = this.genericIconSrc.substring(this.genericIconSrc.lastIndexOf('.'), this.genericIconSrc.length);
+    var filePath = this.genericIconSrc.substring(0, this.genericIconSrc.length - fileExt.length) + '-';
+    this.setSrc(filePath + this.buttonType + fileExt);
   },
   setErrorState: function(error) {
+    var fileExt = this.genericIconSrc.substring(this.genericIconSrc.lastIndexOf('.'), this.genericIconSrc.length);
+    var filePath = this.genericIconSrc.substring(0, this.genericIconSrc.length - fileExt.length) + '-';
     if (error) {
-      this.setSrc(this.getIconFile(this.buttonType + '-error'));
+      this.setSrc(filePath + this.buttonType + '-error' + fileExt);
     } else {
-      this.setSrc(this.getIconFile(this.buttonType));
+      this.setSrc(filePath + this.buttonType + fileExt);
     }
   }
 });
