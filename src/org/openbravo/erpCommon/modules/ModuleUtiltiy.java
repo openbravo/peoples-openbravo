@@ -29,6 +29,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.ad_forms.MaturityLevel;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
@@ -214,17 +215,31 @@ public class ModuleUtiltiy {
   public static HashMap<String, String> getSystemMaturityLevels(boolean install) {
     try {
       OBContext.setAdminMode();
+      boolean activeInstance = ActivationKey.getInstance().isActive();
 
       HashMap<String, String> maturityLevels = new HashMap<String, String>();
       SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
-      maturityLevels.put("update.level", sys.getMaturityUpdate());
-      if (install) {
-        maturityLevels.put("install.level", sys.getMaturitySearch());
-      } else {
-        maturityLevels.put("install.level", sys.getMaturityUpdate());
+
+      String updateLevel = sys.getMaturityUpdate();
+      String installLevel = sys.getMaturitySearch();
+
+      if (!activeInstance) {
+        if (updateLevel != null && Integer.parseInt(updateLevel) >= MaturityLevel.GA_MATURITY) {
+          updateLevel = Integer.toString(MaturityLevel.CR_MATURITY);
+        }
+
+        if (installLevel != null && Integer.parseInt(installLevel) >= MaturityLevel.GA_MATURITY) {
+          installLevel = Integer.toString(MaturityLevel.CR_MATURITY);
+        }
       }
-      maturityLevels.put("isProfessional", ActivationKey.getInstance().isActive() ? "true"
-          : "false");
+
+      maturityLevels.put("update.level", updateLevel);
+      if (install) {
+        maturityLevels.put("install.level", installLevel);
+      } else {
+        maturityLevels.put("install.level", updateLevel);
+      }
+      maturityLevels.put("isProfessional", activeInstance ? "true" : "false");
       return maturityLevels;
     } finally {
       OBContext.restorePreviousMode();

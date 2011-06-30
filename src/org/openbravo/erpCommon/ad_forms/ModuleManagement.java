@@ -872,7 +872,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     String accepetedMaturity;
     HashMap<String, String> maturities = ModuleUtiltiy.getSystemMaturityLevels(true);
     if ("true".equals(maturities.get("isProfessional"))
-        && "500".equals(maturities.get("update.level"))) {
+        && Integer.toString(MaturityLevel.GA_MATURITY).equals(maturities.get("update.level"))) {
       // Community instances use CR as maximum restriction for maturity
       accepetedMaturity = "200";
     } else {
@@ -1201,19 +1201,22 @@ public class ModuleManagement extends HttpSecureAppServlet {
         // Show warning message when installing/updating modules not in General availability level
         if (!islocal) {
           if (module != null
-              && !"500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
+              && !Integer.toString(MaturityLevel.GA_MATURITY).equals(
+                  (String) module.getAdditionalInfo().get("maturity.level"))) {
             discard[6] = "";
           } else {
             if (inst != null) {
               for (Module m : inst) {
-                if (!"500".equals((String) m.getAdditionalInfo().get("maturity.level"))) {
+                if (!Integer.toString(MaturityLevel.GA_MATURITY).equals(
+                    (String) m.getAdditionalInfo().get("maturity.level"))) {
                   discard[6] = "";
                 }
               }
             }
             if (upd != null) {
               for (Module m : upd) {
-                if (!"500".equals((String) m.getAdditionalInfo().get("maturity.level"))) {
+                if (!Integer.toString(MaturityLevel.GA_MATURITY).equals(
+                    (String) m.getAdditionalInfo().get("maturity.level"))) {
                   discard[6] = "";
                 }
               }
@@ -1302,7 +1305,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
       xmlDocument.setParameter("moduleVersion", module.getVersionNo());
       xmlDocument.setParameter("linkCore", module.getModuleVersionID());
 
-      if (!check || "500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
+      if (!check
+          || Integer.toString(MaturityLevel.GA_MATURITY).equals(
+              (String) module.getAdditionalInfo().get("maturity.level"))) {
         xmlDocument.setParameter("maturityStyle", "none");
       } else {
         xmlDocument.setParameter("maturityStyle", "yes");
@@ -1362,7 +1367,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
 
       if (!islocal) {
-        if ("500".equals((String) module.getAdditionalInfo().get("maturity.level"))) {
+        if (Integer.toString(MaturityLevel.GA_MATURITY).equals(
+            (String) module.getAdditionalInfo().get("maturity.level"))) {
           mod.put("maturityStyle", "none");
         } else {
           mod.put("maturityStyle", "yes");
@@ -1802,7 +1808,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
         @SuppressWarnings("unchecked")
         HashMap<String, String> additioanlInfo = mod.getAdditionalInfo();
-        if (additioanlInfo != null && !"500".equals(additioanlInfo.get("maturity.level"))) {
+        if (additioanlInfo != null
+            && !Integer.toString(MaturityLevel.GA_MATURITY).equals(
+                additioanlInfo.get("maturity.level"))) {
           // Display module's maturity in case it is not General availability (500)
           moduleBox.put("maturityStyle", "true");
           moduleBox.put("maturityLevel", additioanlInfo.get("maturity.name"));
@@ -1968,8 +1976,18 @@ public class ModuleManagement extends HttpSecureAppServlet {
   private void printPageSettings(HttpServletResponse response, HttpServletRequest request)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    boolean activeInstance = ActivationKey.getInstance().isActive();
+
+    // Possible maturity levels are obtained from CR, obtain them once per session and store
+    MaturityLevel levels = (MaturityLevel) vars.getSessionObject("SettingsModule|MaturityLevels");
+    if (levels == null) {
+      levels = new MaturityLevel();
+      vars.setSessionObject("SettingsModule|MaturityLevels", levels);
+    }
     String discard[] = { "", "" };
     OBError myMessage = null;
+
     try {
       OBContext.setAdminMode();
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
@@ -1989,9 +2007,21 @@ public class ModuleManagement extends HttpSecureAppServlet {
           // do not update the audit info here, as its a local config change, which should not be
           // treated as 'local changes' by i.e. update.database
           try {
+            boolean warn = false;
             OBInterceptor.setPreventUpdateInfoChange(true);
             if (vars.commandIn("SETTINGS_ADD")) {
-              mod.setMaturityUpdate(vars.getStringParameter("inpModuleLevel"));
+              // GA is not allowed for community instances
+              int level = Integer.parseInt(vars.getNumericParameter("inpModuleLevel"));
+              if (!activeInstance && level >= MaturityLevel.GA_MATURITY) {
+                myMessage = OBErrorBuilder.buildMessage(myMessage, "Warning", Utility.messageBD(
+                    this, "OBUIAPP_GAinCommunity", vars.getLanguage()).replace("%0",
+                    levels.getLevelName(Integer.toString(level))));
+
+                warn = true;
+              } else {
+                mod.setMaturityUpdate(Integer.toString(level));
+              }
+
             } else {
               mod.setMaturityUpdate(null);
             }
@@ -1999,14 +2029,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
             OBDal.getInstance().commitAndClose();
 
             // clean module updates if there are any
-            boolean isCleaned = cleanModulesUpdates();
-            if (isCleaned) {
-              myMessage = OBErrorBuilder.buildMessage(myMessage, "Info", Utility.messageBD(this,
-                  "ModuleUpdatesRemoved", vars.getLanguage()));
+            if (!warn) {
+              boolean isCleaned = cleanModulesUpdates();
+              if (isCleaned) {
+                myMessage = OBErrorBuilder.buildMessage(myMessage, "Info", Utility.messageBD(this,
+                    "ModuleUpdatesRemoved", vars.getLanguage()));
+              }
+              myMessage = OBErrorBuilder.buildMessage(myMessage, "Success", Utility.messageBD(this,
+                  "ModuleManagementSettingSaved", vars.getLanguage()));
             }
-            myMessage = OBErrorBuilder.buildMessage(myMessage, "Success", Utility.messageBD(this,
-                "ModuleManagementSettingSaved", vars.getLanguage()));
-
           } finally {
             OBInterceptor.setPreventUpdateInfoChange(false);
           }
@@ -2015,12 +2046,36 @@ public class ModuleManagement extends HttpSecureAppServlet {
         }
       } else if (vars.commandIn("SETTINGS_SAVE")) {
 
-        // Save global maturity levels
-        sysInfo.setMaturitySearch(vars.getStringParameter("inpSearchLevel"));
-        sysInfo.setMaturityUpdate(vars.getStringParameter("inpScanLevel"));
+        boolean warn = false;
+
+        // Save global maturity levels. GA is not allowed for community instances
+        String maturityWarnMsg = "";
+        try {
+          int maturitySearch = Integer.parseInt(vars.getNumericParameter("inpSearchLevel"));
+          if (!activeInstance && maturitySearch >= MaturityLevel.GA_MATURITY) {
+            maturityWarnMsg = Utility.messageBD(this, "OBUIAPP_GAinCommunity", vars.getLanguage())
+                .replace("%0", levels.getLevelName(Integer.toString(maturitySearch)));
+            warn = true;
+          } else {
+            sysInfo.setMaturitySearch(Integer.toString(maturitySearch));
+          }
+
+          int maturityScan = Integer.parseInt(vars.getNumericParameter("inpScanLevel"));
+          if (!activeInstance && maturityScan >= MaturityLevel.GA_MATURITY) {
+            if (maturityWarnMsg.isEmpty()) {
+              maturityWarnMsg += Utility.messageBD(this, "OBUIAPP_GAinCommunity",
+                  vars.getLanguage()).replace("%0",
+                  levels.getLevelName(Integer.toString(maturityScan)));
+            }
+            warn = true;
+          } else {
+            sysInfo.setMaturityUpdate(Integer.toString(maturityScan));
+          }
+        } catch (Exception e) {
+          log4j.error("Error reading maturity search", e);
+        }
 
         // Save enforcement
-        boolean warn = false;
         String warnMsg = "";
         for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
           String parameter = (String) e.nextElement();
@@ -2075,20 +2130,22 @@ public class ModuleManagement extends HttpSecureAppServlet {
         }
 
         if (warn) {
-          myMessage = OBErrorBuilder.buildMessage(myMessage, "Warning", Utility.messageBD(this,
-              "CannotSetMinorEnforcements", vars.getLanguage())
-              + warnMsg);
+          String msgBody = "";
+          if (!maturityWarnMsg.isEmpty()) {
+            msgBody += maturityWarnMsg;
+          }
+
+          if (!warnMsg.isEmpty()) {
+            msgBody += "<br/>"
+                + Utility.messageBD(this, "CannotSetMinorEnforcements", vars.getLanguage())
+                + warnMsg;
+          }
+
+          myMessage = OBErrorBuilder.buildMessage(myMessage, "Warning", msgBody);
         } else {
           myMessage = OBErrorBuilder.buildMessage(myMessage, "Success", Utility.messageBD(this,
               "ModuleManagementSettingSaved", vars.getLanguage()));
         }
-      }
-
-      // Possible maturity levels are obtained from CR, obtain them once per session and store
-      MaturityLevel levels = (MaturityLevel) vars.getSessionObject("SettingsModule|MaturityLevels");
-      if (levels == null) {
-        levels = new MaturityLevel();
-        vars.setSessionObject("SettingsModule|MaturityLevels", levels);
       }
 
       // Populate module specific grid
@@ -2106,7 +2163,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
         HashMap<String, String> m = new HashMap<String, String>();
         m.put("id", module.getId());
         m.put("name", module.getName());
-        m.put("level", levels.getLevelName(module.getMaturityUpdate()));
+
+        if (!activeInstance
+            && Integer.parseInt(module.getMaturityUpdate()) >= MaturityLevel.GA_MATURITY) {
+          m.put("level", levels.getLevelName(Integer.toString(MaturityLevel.CR_MATURITY)));
+        } else {
+          m.put("level", levels.getLevelName(module.getMaturityUpdate()));
+        }
         moduleSpecifics.add(m);
       }
 
@@ -2213,11 +2276,34 @@ public class ModuleManagement extends HttpSecureAppServlet {
       xmlDocument.setData("moduleCombo", FieldProviderFactory.getFieldProviderArray(modules));
 
       // Populate maturity levels combos
-      xmlDocument.setParameter("selectedScanLevel", sysInfo.getMaturityUpdate() == null ? "500"
-          : sysInfo.getMaturityUpdate());
+      String selectedScanLevel;
+      String selectedSearchLevel;
+
+      if (activeInstance) {
+        selectedScanLevel = sysInfo.getMaturityUpdate() == null ? Integer
+            .toString(MaturityLevel.GA_MATURITY) : sysInfo.getMaturityUpdate();
+        selectedSearchLevel = sysInfo.getMaturitySearch() == null ? Integer
+            .toString(MaturityLevel.GA_MATURITY) : sysInfo.getMaturitySearch();
+      } else {
+        // Community instances cannot use GA, setting CR if it is used
+        int actualScanLevel = sysInfo.getMaturityUpdate() == null ? MaturityLevel.CR_MATURITY
+            : Integer.parseInt(sysInfo.getMaturityUpdate());
+        int actualSearchLevel = sysInfo.getMaturityUpdate() == null ? MaturityLevel.CR_MATURITY
+            : Integer.parseInt(sysInfo.getMaturitySearch());
+
+        if (actualScanLevel >= MaturityLevel.GA_MATURITY) {
+          actualScanLevel = MaturityLevel.CR_MATURITY;
+        }
+        if (actualSearchLevel >= MaturityLevel.GA_MATURITY) {
+          actualSearchLevel = MaturityLevel.CR_MATURITY;
+        }
+        selectedScanLevel = Integer.toString(actualScanLevel);
+        selectedSearchLevel = Integer.toString(actualScanLevel);
+      }
+
+      xmlDocument.setParameter("selectedScanLevel", selectedScanLevel);
       xmlDocument.setData("reportScanLevel", "liststructure", levels.getCombo());
-      xmlDocument.setParameter("selectedSearchLevel", sysInfo.getMaturitySearch() == null ? "500"
-          : sysInfo.getMaturitySearch());
+      xmlDocument.setParameter("selectedSearchLevel", selectedSearchLevel);
       xmlDocument.setData("reportSearchLevel", "liststructure", levels.getCombo());
       xmlDocument.setData("reportModuleLevel", "liststructure", levels.getCombo());
 
@@ -2323,11 +2409,20 @@ public class ModuleManagement extends HttpSecureAppServlet {
     try {
       OBContext.setAdminMode();
       SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
+      String maturity;
+
+      boolean activeInstance = ActivationKey.getInstance().isActive();
       if (updateLevel) {
-        return sys.getMaturityUpdate();
+        maturity = sys.getMaturityUpdate();
       } else {
-        return sys.getMaturitySearch();
+        maturity = sys.getMaturitySearch();
       }
+
+      if (!activeInstance && maturity != null
+          && Integer.parseInt(maturity) >= MaturityLevel.GA_MATURITY) {
+        maturity = Integer.toString(MaturityLevel.CR_MATURITY);
+      }
+      return maturity;
     } finally {
       OBContext.restorePreviousMode();
     }

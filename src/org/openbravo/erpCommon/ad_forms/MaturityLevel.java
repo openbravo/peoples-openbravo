@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_forms;
 
 import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.services.webservice.WebService3Impl;
@@ -34,6 +35,8 @@ import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 public class MaturityLevel {
   private final Logger log4j = Logger.getLogger(MaturityLevel.class);
   private String[][] levels;
+  public final static int GA_MATURITY = 500;
+  public final static int CR_MATURITY = 200;
 
   /**
    * Calls central repository webservice to obtain the list of possible statuses. In case the
@@ -57,8 +60,13 @@ public class MaturityLevel {
       // could not obtain actual levels, setting General availability only
       log4j.warn("Setting default General availability level");
       levels = new String[1][2];
-      levels[0][0] = "500";
-      levels[0][1] = "General availability";
+      if (ActivationKey.getInstance().isActive()) {
+        levels[0][0] = Integer.toString(MaturityLevel.GA_MATURITY);
+        levels[0][1] = "General availability";
+      } else {
+        levels[0][0] = Integer.toString(MaturityLevel.CR_MATURITY);
+        levels[0][1] = "Controlled release";
+      }
     }
   }
 

@@ -69,6 +69,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.ddlutils.task.DatabaseUtils;
+import org.openbravo.erpCommon.ad_forms.MaturityLevel;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
@@ -1759,6 +1760,8 @@ public class ImportModule {
       }
       List<org.openbravo.model.ad.module.Module> modules = obCriteria.list();
 
+      boolean activeInstance = ActivationKey.getInstance().isActive();
+
       for (org.openbravo.model.ad.module.Module mod : modules) {
 
         List<org.openbravo.model.ad.module.ModuleDependency> dependencies = mod
@@ -1768,7 +1771,14 @@ public class ImportModule {
         versionInfo[0] = new String[3];
         versionInfo[0][0] = "M";
         versionInfo[0][1] = mod.getVersion();
-        versionInfo[0][2] = mod.getMaturityUpdate();
+
+        if (!activeInstance && mod.getMaturityUpdate() != null
+            && Integer.parseInt(mod.getMaturityUpdate()) >= MaturityLevel.GA_MATURITY) {
+          // Community instances are not allowed to use GA maturity, setting it to CR
+          versionInfo[0][2] = Integer.toString(MaturityLevel.CR_MATURITY);
+        } else {
+          versionInfo[0][2] = mod.getMaturityUpdate();
+        }
 
         int i = 1;
         for (org.openbravo.model.ad.module.ModuleDependency dep : dependencies) {
