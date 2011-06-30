@@ -76,7 +76,10 @@ isc.OBStatusBarIconButton.addProperties({
   showRollOver: true,
   showDown: true,
   showFocused: false,
+  getIconFile: function(buttonType) { /* this.buttonType could be: previous - next - maximize - minimize - restore - close */
+    return OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/statusbar/iconButton-' + buttonType + '.png';
+  },
   initWidgetStyle: function() {
-    this.setSrc(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/statusbar/iconButton-' + this.buttonType + '.png');
+    this.setSrc(this.getIconFile(this.buttonType));
   }
 });

@@ -25,6 +25,7 @@ import java.net.URLEncoder;
 import org.apache.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.ad_forms.MaturityLevel;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.ad.module.Module;
@@ -78,6 +79,9 @@ public class ActiveInstanceProcess implements Process {
         if (ak.isActive()) {
           msg.setType("Success");
           msg.setMessage(result[0]);
+
+          sysInfo.setMaturitySearch(Integer.toString(MaturityLevel.GA_MATURITY));
+          sysInfo.setMaturityUpdate(Integer.toString(MaturityLevel.GA_MATURITY));
         } else {
           msg.setType("Error");
           msg.setMessage(ak.getErrorMessage());

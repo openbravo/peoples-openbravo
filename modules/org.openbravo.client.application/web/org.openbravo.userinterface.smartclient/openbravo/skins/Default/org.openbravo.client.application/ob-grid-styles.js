@@ -119,15 +119,17 @@ isc.OBGridToolStripIcon.addProperties({
   showFocused: false,
   showFocusedAsOver: true,
   baseStyle: 'OBGridToolStripIcon',
-  initWidgetStyle: function() {
-    this.setSrc(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-' + this.buttonType + '.png'); /* this.buttonType could be: edit - form - cancel - save */
+  getIconFile: function(buttonType) { /* this.buttonType could be: edit - form - cancel - save */
+    return OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-' + buttonType + '.png';
   },
-  
+  initWidgetStyle: function() {
+    this.setSrc(this.getIconFile(this.buttonType));
+  },
   setErrorState: function(error) {
     if (error) {
-      this.setSrc(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-' + this.buttonType + '-error.png'); /* this.buttonType could be: edit - form - cancel - save */
+      this.setSrc(this.getIconFile(this.buttonType + '-error'));
     } else {
-      this.setSrc(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridButton-' + this.buttonType + '.png'); /* this.buttonType could be: edit - form - cancel - save */
+      this.setSrc(this.getIconFile(this.buttonType));
     }
   }
 });
