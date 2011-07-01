@@ -41,7 +41,7 @@ isc.OBGrid.addProperties({
 
     if (event.keyName === 'Delete' && 
       (!isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
-      this.clearFilter();
+      this.clearFilter(true);
       return false;
     }
 
@@ -131,7 +131,7 @@ isc.OBGrid.addProperties({
     setFieldsKeyDown = function(item, form, keyName) {
       if (isc.EventHandler.getKeyName() === 'Delete' && 
         (!isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
-        thisGrid.clearFilter();
+        thisGrid.clearFilter(true);
         return false;
       }
       if (isc.EventHandler.getKeyName() === 'Escape' && 
@@ -317,9 +317,11 @@ isc.OBGrid.addProperties({
     this.Super('initWidget', arguments);
   },
   
-  clearFilter: function(){
+  clearFilter: function(keepFilterClause){
     var i = 0, fld;
-    delete this.filterClause;
+    if (!keepFilterClause) {
+      delete this.filterClause;
+    }
     this.forceRefresh = true;
     this.filterEditor.getEditForm().clearValues();
     // clear the date values in a different way
