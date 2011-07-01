@@ -155,6 +155,7 @@ isc.OBStatusBar.addProperties( {
   maximizeRestoreButton : null,
 
   newIcon : null,
+  editIcon: null,
   showingIcon : false,
   mode : '',
   isActive : true,
@@ -224,6 +225,7 @@ isc.OBStatusBar.addProperties( {
 
     this.savedIcon = isc.Img.create(this.savedIconDefaults);
     this.newIcon = isc.Img.create(this.newIconDefaults);
+    this.editIcon = isc.Img.create(this.editIconDefaults);
     this.spacer = isc.LayoutSpacer.create( {
       width : 14
     });

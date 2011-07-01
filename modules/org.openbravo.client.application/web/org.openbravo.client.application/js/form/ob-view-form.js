@@ -145,7 +145,7 @@ OB.ViewFormProperties = {
     this.view.updateTabTitle();
     if (value && !this.isNew && this.view.statusBar.mode !== 'EDIT') {
       this.view.statusBar.mode = "EDIT";
-      this.view.statusBar.setContentLabel(this.view.statusBar.newIcon, 'OBUIAPP_Editing', this.statusBarFieldsJSArray);
+      this.view.statusBar.setContentLabel(this.view.statusBar.editIcon, 'OBUIAPP_Editing', this.statusBarFieldsJSArray);
     }
     
     if (value) {
@@ -300,7 +300,7 @@ OB.ViewFormProperties = {
     if (isNew) {
       this.view.statusBar.newIcon.prompt = OB.I18N.getLabel('OBUIAPP_NewIconPrompt');
     } else {
-      this.view.statusBar.newIcon.prompt = OB.I18N.getLabel('OBUIAPP_EditIconPrompt');
+      this.view.statusBar.editIcon.prompt = OB.I18N.getLabel('OBUIAPP_EditIconPrompt');
     }
     
     // see issue:

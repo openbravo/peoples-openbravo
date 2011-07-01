@@ -38,11 +38,15 @@ isc.OBStatusBar.addProperties({
   },
 
   newIconDefaults: {
-    showHover: true,
-    prompt: OB.I18N.getLabel('OBUIAPP_NewIconPrompt'),
     height: 14,
     width: 14,
     src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/statusbar/ico-new.png'
+  },
+
+  editIconDefaults: {
+    height: 14,
+    width: 14,
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/statusbar/ico-edit.png'
   },
 
   iconButtonGroupSpacerWidth: 5
