@@ -132,8 +132,6 @@ isc.OBDateRangeDialog.addProperties({
 // MiniDateRangeItem to make it editable.
 isc.ClassFactory.defineClass('OBMiniDateRangeItem', OBTextItem);
 
-isc.ClassFactory.defineClass('XOBMiniDateRangeItem', TextItem);
-
 isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
   validateOnExit: false,
   showPickerIcon: false,
@@ -227,6 +225,14 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
       return true;
     }
     return false;
+  },
+  
+  setSingleDateValue: function(value) {
+    var displayValue = OB.Utilities.Date.JSToOB(value, this.dateFormat);
+    this.singleDateValue = value;
+    this.singleDateDisplayValue = displayValue;
+    this.singleDateMode = true;
+    this.setElementValue(displayValue, displayValue);
   },
   
   blur: function() {

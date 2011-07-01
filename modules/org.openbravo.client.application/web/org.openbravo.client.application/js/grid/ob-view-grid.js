@@ -1112,12 +1112,10 @@ isc.OBViewGrid.addProperties({
           }
           // assume a date range filter item
           if (isc.isA.Date(value) && field.filterEditorType === 'OBMiniDateRangeItem') {
-            value = {
-              start: value,
-              end: value
-            };
+            grid.filterEditor.getEditForm().getField(field.name).setSingleDateValue(value);
+          } else {
+            grid.filterEditor.getEditForm().setValue(field.name, value);
           }
-          grid.filterEditor.getEditForm().setValue(field.name, value);
           var criteria = grid.filterEditor.getEditForm().getValuesAsCriteria();
           grid.checkShowFilterFunnelIcon(criteria);
           grid.filterData(criteria);

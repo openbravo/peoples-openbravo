@@ -309,9 +309,17 @@ isc.OBGrid.addProperties({
           this.Super('initWidget', arguments);
         },
         click: function(){
+          var i = 0, fld;
           // get rid of the initial filter clause
           delete thisGrid.filterClause;
           this.recordEditor.getEditForm().clearValues();
+          // clear the date values in a different way
+          for (i = 0; i < this.recordEditor.getEditForm().getFields().length; i++) {
+            fld = this.recordEditor.getEditForm().getFields()[i];
+            if (fld.setSingleDateValue) {
+              fld.setSingleDateValue(null);
+            }
+          }
           this.recordEditor.performAction();
         }
       }
