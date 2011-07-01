@@ -211,9 +211,6 @@ public class EntityXMLConverter implements OBNotSingleton {
    *          the business objects to convert to xml (dom4j)
    */
   public void process(Collection<BaseOBObject> bobs) {
-    // always export using a unix line delimiter:
-    System.setProperty("line.separator", "\n");
-
     // set the export list
     getToProcess().addAll(bobs);
     getAllToProcessObjects().addAll(bobs);
@@ -224,6 +221,9 @@ public class EntityXMLConverter implements OBNotSingleton {
 
   protected void export() {
     try {
+      // always export using a unix line delimiter:
+      System.setProperty("line.separator", "\n");
+
       initializeSax();
       xmlHandler.startDocument();
 
