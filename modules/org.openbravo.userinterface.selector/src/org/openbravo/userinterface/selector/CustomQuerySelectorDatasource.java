@@ -41,7 +41,9 @@ import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.model.domaintype.LongDomainType;
+import org.openbravo.base.model.domaintype.UniqueIdDomainType;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
@@ -283,8 +285,10 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * <li>Date Domain Type: Returns a multiple clause comparing separately value's day, month and
    * year.</li>
    * <li>Boolean Domain Type: Returns an equals clause <i>field.clauseLeftPart = value</i></li>
-   * <li>String Domain Type: Compares the clause left part with the value using the C_IGNORE_ACCENT
-   * database function which ignores accents and is case insensitive.
+   * <li>Foreign Key Domain Type: Returns an equals clause <i>field.clauseLeftPart.id = value</i></li>
+   * <li>Unique Id Domain Type: Returns an equals clause <i>field.clauseLeftPart = value</i></li>
+   * <li>String Domain Type: Compares the clause left part with the value using the lower
+   * database function which to make comparison case insensitive.
    * </ul>
    * 
    * @param value
@@ -318,10 +322,15 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       }
     } else if (domainType instanceof BooleanDomainType) {
       whereClause = field.getClauseLeftPart() + " = " + value;
+    } else if (domainType instanceof UniqueIdDomainType) {
+      whereClause = field.getClauseLeftPart() + " = '" + value + "'";
+    } else if (domainType instanceof ForeignKeyDomainType) {
+      // Assume left part definition is full object reference from HQL select
+      whereClause = field.getClauseLeftPart() + ".id = '" + value + "'";
     } else {
-      whereClause = "C_IGNORE_ACCENT(" + field.getClauseLeftPart() + ")";
-      whereClause += " LIKE C_IGNORE_ACCENT(";
-      whereClause += "'%" + value.toUpperCase().replaceAll(" ", "%") + "%')";
+      whereClause = "lower(" + field.getClauseLeftPart() + ")";
+      whereClause += " LIKE ";
+      whereClause += "'%" + value.toLowerCase().replaceAll(" ", "%") + "%'";
     }
     return whereClause;
   }
