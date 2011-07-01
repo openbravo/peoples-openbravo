@@ -950,13 +950,6 @@ isc.OBViewGrid.addProperties({
     this.view.editRecord();
   },
   
-  clearFilter: function(){
-    delete this.filterClause;
-    this.forceRefresh = true;
-    this.filterEditor.getEditForm().clearValues();
-    this.filterEditor.performAction();
-  },
-  
   makeVisible: function() {
     if (this.view.isShowingForm) {
       this.view.switchFormGridVisibility();

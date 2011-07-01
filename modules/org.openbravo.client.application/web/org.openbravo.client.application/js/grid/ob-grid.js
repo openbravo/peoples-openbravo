@@ -41,7 +41,7 @@ isc.OBGrid.addProperties({
 
     if (event.keyName === 'Delete' && 
       (!isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
-      this.clearCriteria();
+      this.clearFilter();
       return false;
     }
 
@@ -131,7 +131,7 @@ isc.OBGrid.addProperties({
     setFieldsKeyDown = function(item, form, keyName) {
       if (isc.EventHandler.getKeyName() === 'Delete' && 
         (!isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
-        thisGrid.clearCriteria();
+        thisGrid.clearFilter();
         return false;
       }
       if (isc.EventHandler.getKeyName() === 'Escape' && 
@@ -309,23 +309,28 @@ isc.OBGrid.addProperties({
           this.Super('initWidget', arguments);
         },
         click: function(){
-          var i = 0, fld;
-          // get rid of the initial filter clause
-          delete thisGrid.filterClause;
-          this.recordEditor.getEditForm().clearValues();
-          // clear the date values in a different way
-          for (i = 0; i < this.recordEditor.getEditForm().getFields().length; i++) {
-            fld = this.recordEditor.getEditForm().getFields()[i];
-            if (fld.setSingleDateValue) {
-              fld.setSingleDateValue(null);
-            }
-          }
-          this.recordEditor.performAction();
+          thisGrid.clearFilter();
         }
       }
     };
     
     this.Super('initWidget', arguments);
+  },
+  
+  clearFilter: function(){
+    var i = 0, fld;
+    delete this.filterClause;
+    this.forceRefresh = true;
+    this.filterEditor.getEditForm().clearValues();
+    // clear the date values in a different way
+    for (i = 0; i < this.filterEditor.getEditForm().getFields().length; i++) {
+      fld = this.filterEditor.getEditForm().getFields()[i];
+      if (fld.setSingleDateValue) {
+        fld.setSingleDateValue(null);
+      }
+    }
+
+    this.filterEditor.performAction();
   },
   
   showSummaryRow: function(){

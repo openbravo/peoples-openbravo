@@ -160,12 +160,6 @@ isc.OBAlertGrid.addProperties({
     }
   },
   
-  clearFilter: function(){
-    delete this.filterClause;
-    this.filterEditor.getEditForm().clearValues();
-    this.filterEditor.performAction();
-  },
-  
   onFetchData: function(criteria, requestProperties){
     requestProperties = requestProperties || {};
     requestProperties.params = requestProperties.params || {};

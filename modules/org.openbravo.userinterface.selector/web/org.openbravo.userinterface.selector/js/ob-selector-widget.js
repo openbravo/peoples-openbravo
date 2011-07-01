@@ -404,7 +404,7 @@ isc.OBSelectorWidget
     // first time
     this.selectorWindow.show();
     if (this.selectorGrid.filterEditor) {
-      this.selectorGrid.filterEditor.getEditForm().clearValues();
+      this.selectorGrid.clearFilter();
     }
     this.selectorGrid.setFilterEditorCriteria(this.defaultFilter);
     this.selectorGrid.filterByEditor();
