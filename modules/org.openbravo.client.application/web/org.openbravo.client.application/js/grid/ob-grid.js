@@ -129,6 +129,11 @@ isc.OBGrid.addProperties({
     };
 
     setFieldsKeyDown = function(item, form, keyName) {
+      if (event.keyName === 'Escape' && this.getEditForm()) {
+        this.cancelEditing();
+        return;
+      }
+
       if (isc.EventHandler.getKeyName() === 'Delete' && 
         (!isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
         thisGrid.clearFilter(true);

@@ -527,6 +527,13 @@ OB.ViewFormProperties = {
       // note focus is set when the form is set to not being disabled anymore
       me.computeFocusItem();
       
+      // no focus item found, focus on the body of the grid
+      // this makes sure that keypresses end up in the 
+      // bodyKeyPress method
+      if (!me.getFocusItem().isFocusable()) {
+        me.view.viewGrid.body.focus();
+      }
+      
       me.processFICReturn(response, data, request, editValues, editRow);
       
       if (!this.grid || this.grid.getEditRow() !== editRow) {

@@ -425,8 +425,22 @@ isc.OBViewGrid.addProperties({
     return this.Super('headerClick', arguments);
   },
 
+  keyPress: function() {
+    var event = isc.EventHandler.lastEvent;
+    if (event.keyName === 'Escape' && this.getEditForm()) {
+      this.cancelEditing();
+      return;
+    }
+    return this.Super('keyPress', arguments);
+  },
+  
   // handle the del key when rows have been selected or space key
   bodyKeyPress : function (event, eventInfo) {
+    if (event.keyName === 'Escape' && this.getEditForm()) {
+      this.cancelEditing();
+      return;
+    }
+    
     if (event.keyName === 'Delete' && this.getSelectedRecords().length > 0 && 
       (!isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
       this.view.deleteSelectedRows();

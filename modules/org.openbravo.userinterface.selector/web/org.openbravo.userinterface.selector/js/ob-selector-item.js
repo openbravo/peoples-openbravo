@@ -304,7 +304,7 @@ isc.OBSelectorItem.addProperties({
       useClientFiltering: false
     }
   },
-  
+
   setUpPickList: function (show, queueFetches, request) {
     // Set the pickListWidth just before being shown.
     this.setPickListWidth();
