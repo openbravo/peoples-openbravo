@@ -1124,7 +1124,7 @@ OB.ViewFormProperties = {
         
         //view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_SaveSuccess'));
         this.view.statusBar.mode = 'SAVED';
-        view.statusBar.setContentLabel(view.statusBar.checkedIcon, 'OBUIAPP_Saved', this.getStatusBarFields());
+        view.statusBar.setContentLabel(view.statusBar.savedIcon, 'OBUIAPP_Saved', this.getStatusBarFields());
         
         view.setRecentDocument(this.getValues());
         

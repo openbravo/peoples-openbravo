@@ -222,7 +222,7 @@ isc.OBStatusBar.addProperties( {
       }
     }
 
-    this.checkedIcon = isc.Img.create(this.checkedIconDefaults);
+    this.savedIcon = isc.Img.create(this.savedIconDefaults);
     this.newIcon = isc.Img.create(this.newIconDefaults);
     this.spacer = isc.LayoutSpacer.create( {
       width : 14

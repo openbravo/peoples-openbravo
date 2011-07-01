@@ -31,7 +31,7 @@ isc.OBStatusBar.addProperties({
   separatorLabelStyle: 'OBStatusBarTextLabel_Separator',
   labelOverflowHidden: true,
 
-  checkedIconDefaults: {
+  savedIconDefaults: {
     height: 14,
     width: 14,
     src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/statusbar/ico-saved.png'
