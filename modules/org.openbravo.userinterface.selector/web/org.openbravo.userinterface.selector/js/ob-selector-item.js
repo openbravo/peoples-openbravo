@@ -428,17 +428,25 @@ isc.OBSelectorItem.addProperties({
   },
 
   handleOutFields: function(record){
-    var i, outFields = this.outFields, form = this.form;
+    var i, outFields = this.outFields, form = this.form, itemName, item, value;
     for (i in outFields) {
       if (outFields.hasOwnProperty(i) && outFields[i].suffix) {
         if (record) {
-          var value = record[i];
+          value = record[i];
+          if(typeof value === 'undefined') {
+            continue;
+          }
           if (isc.isA.Number(value)) {
             value = OB.Utilities.Number.JSToOBMasked(value, OB.Format.defaultNumericMask,
                 OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol,
                 OB.Format.defaultGroupingSize);
           }
           form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = value;
+          itemName = i.substring(0, i.indexOf('.'));
+          item = form.getItem(itemName);
+          if(item && item.valueMap) {
+            item.valueMap[value] = record[itemName + '._identifier'];
+          }
         } else {
           form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = null;
         }
