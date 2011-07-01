@@ -426,18 +426,64 @@ isc.OBViewGrid.addProperties({
   },
 
   keyPress: function() {
-    var event = isc.EventHandler.lastEvent;
+    var event = isc.EventHandler.lastEvent, editRow;
+    
     if (event.keyName === 'Escape' && this.getEditForm()) {
       this.cancelEditing();
       return;
     }
+    
+    if (event.keyName === 'Arrow_Up' && this.getEditForm()) {
+      // editing can be cancelled as all fields are
+      // non-editable anyway if we get here...
+      editRow = this.getEditRow();
+      this.cancelEditing();
+      if (editRow) {
+        this.startEditing(editRow - 1);
+      }
+      return;
+    }
+    
+    if (event.keyName === 'Arrow_Down' && this.getEditForm()) {
+      // editing can be cancelled as all fields are
+      // non-editable anyway if we get here...
+      editRow = this.getEditRow();
+      this.cancelEditing();
+      if (editRow || editRow === 0) {
+        this.startEditing(editRow + 1);
+      }
+      return;
+    }
+
     return this.Super('keyPress', arguments);
   },
   
   // handle the del key when rows have been selected or space key
-  bodyKeyPress : function (event, eventInfo) {
+  bodyKeyPress: function (event, eventInfo) {
     if (event.keyName === 'Escape' && this.getEditForm()) {
       this.cancelEditing();
+      return;
+    }
+    
+    if (event.keyName === 'Arrow_Up' && this.getEditForm()) {
+      // editing can be cancelled as all fields are
+      // non-editable anyway if we get here...
+      editRow = this.getEditRow();
+      this.cancelEditing();
+      if (editRow) {
+        this.startEditing(editRow - 1);
+      }
+      return;
+    }
+    
+    if (event.keyName === 'Arrow_Down' && this.getEditForm()) {
+      // editing can be cancelled as all fields are
+      // non-editable anyway if we get here...
+      editRow = this.getEditRow();
+      this.cancelEditing();
+      if (editRow || editRow === 0) {
+        this.startEditing(editRow + 1);
+      }
       return;
     }
     
