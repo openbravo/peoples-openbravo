@@ -61,7 +61,7 @@ Common Public License 1.0 (license available at
 http://www.eclipse.org/legal/cpl-v10.html) or in the file CPL-1.0.txt in this folder
 
 # Eclipse icons 
-# wsdl4j.jar 
+# wsdl4j-1.5.1.jar
 Icons and files under the Eclipse Public License (license available at
 http://www.eclipse.org/legal/epl-v10.html
 
@@ -148,7 +148,7 @@ http://opensource.org/licenses/afl-2.1.php)
 # jasperreports-fonts-4.0.1.jar
 # jcommon-1.0.15.jar 
 # jfreechart-1.0.12.jar
-# jxl_2.6.10.jar
+# jxl-2.6.10.jar
 All files under the LGPL 2.1 (available at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
 
 # jasperreports-fonts-4.0.1.jar
@@ -171,6 +171,9 @@ Under MPL/GPL License (available at https://developer.mozilla.org/en/Rhino_Licen
 
 # javassist-3.14.0-GA.jar
 Under MPL License (included as MPL-1.1.txt in this folder)
+
+# iText-2.1.7.jar
+Under MPL/GPL License (included as MPL-1.1.txt in this folder)
 
 # slf4j-api-1.6.1.jar
 # slf4j-log4j12-1.6.1.jar
