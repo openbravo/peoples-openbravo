@@ -26,6 +26,7 @@ used as model:
   src/org/openbravo/erpCommon/ad_forms        DocCash_data.xsql             server/src/org/compiere/acct    Doc_Cash.java
   src/org/openbravo/erpCommon/ad_forms        DocGLJournal.java             server/src/org/compiere/acct    Doc_GLJournal.java
   src/org/openbravo/erpCommon/ad_forms        DocGLJournal_data.xsql        server/src/org/compiere/acct    Doc_GLJournal.java
+  src/org/openbravo/erpCommon/ad_forms        DocLineInOut_data.xsql        server/src/org/compiere/acct    DocLine.java
   src/org/openbravo/erpCommon/ad_forms        DocInOut.java                 server/src/org/compiere/acct    Doc_InOut.java
   src/org/openbravo/erpCommon/ad_forms        DocInOut_data.xsql            server/src/org/compiere/acct    Doc_InOut.java
   src/org/openbravo/erpCommon/ad_forms        DocInventory.java             server/src/org/compiere/acct    Doc_Inventory.java
@@ -37,7 +38,9 @@ used as model:
   src/org/openbravo/erpCommon/ad_forms        DocLineCash_data.xsql         server/src/org/compiere/acct    DocLine_Cash.java
   src/org/openbravo/erpCommon/ad_forms        DocLineGLJournal_data.xsql    server/src/org/compiere/acct    DocLine.java
   src/org/openbravo/erpCommon/ad_forms        DocLineInventory_data.xsql    server/src/org/compiere/acct    DocLine.java
+  src/org/openbravo/erpCommon/ad_forms        DocLineInvoice_data.xsql      server/src/org/compiere/acct    DocLine.java
   src/org/openbravo/erpCommon/ad_forms        DocLineMovement_data.xsql     server/src/org/compiere/acct    DocLine.java
+  src/org/openbravo/erpCommon/ad_forms        DocLineOrder_data.xsql        server/src/org/compiere/acct    DocLine.java
   src/org/openbravo/erpCommon/ad_forms        DocLine_Bank.java             server/src/org/compiere/acct    DocLine_Bank.java
   src/org/openbravo/erpCommon/ad_forms        DocLine_Cash.java             server/src/org/compiere/acct    DocLine_Cash.java
   src/org/openbravo/erpCommon/ad_forms        DocLine_data.xsql             server/src/org/compiere/acct    DocLine.java
@@ -58,6 +61,8 @@ used as model:
   src/org/openbravo/erpCommon/ad_forms        TranslationHandler.java       client/Src/org/compiere/install TranslationHandler.java
   src/org/openbravo/erpCommon/businessUtility AccountTree.java              base/src/org/compiere/model     Account.java
   src/org/openbravo/erpCommon/businessUtility AccountTree_data.xsql         base/src/org/compiere/model     Account.java
+  src/org/openbravo/erpCommon/businessUtility ByteArrayDataSource.java      base/src/org/compiere/util      ByteArrayDataSource.java
+  src/org/openbravo/erpCommon/businessUtility EMail.java                    base/src/org/compiere/util      EMail.java
   src/org/openbravo/erpCommon/businessUtility EMailAuthenticator.java       base/src/org/compiere/util      EMailAuthenticator.java
 
 PL/SQL Code
@@ -187,6 +192,7 @@ developer using comments.
   TRIGGER       C_PERIOD_TRG
   TRIGGER       C_PERIOD_TRG2
   TRIGGER       C_PROJECTLINE_TRG
+  TRIGGER       C_PROJECTLINE_TRG3
   TRIGGER       C_PROJECT_TRG
   TRIGGER       C_SALESREGION_TRG
   TRIGGER       C_TAXCATEGORY_TRG
@@ -304,6 +310,7 @@ name and the original Compiere name is reported in brackets:
   C_CHANNEL
   C_CHARGE
   C_CHARGE_ACCT
+  C_INVOICE_V2 (original name: RV_C_INVOICE)
   C_INVOICELINE (original name: RV_C_INVOICELINE)
   C_CITY
   C_COMMISSION
@@ -316,6 +323,7 @@ name and the original Compiere name is reported in brackets:
   C_COUNTRY_TRL
   C_CURRENCY
   C_CURRENCY_TRL
+  C_DEBT_PAYMENT_V
   C_DOCTYPE
   C_DOCTYPE_TRL
   C_ELEMENT
@@ -401,6 +409,7 @@ name and the original Compiere name is reported in brackets:
   M_SHIPPER
   M_SUBSTITUTE
   M_TRANSACTION
+  M_TRANSACTION_V (original name: RV_M_TRANSACTION)
   M_WAREHOUSE
   M_WAREHOUSE_ACCT
   S_EXPENSETYPE
