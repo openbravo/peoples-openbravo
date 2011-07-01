@@ -89,7 +89,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_PREFERENCE_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="AD_PREFERENCE_ORGVISIBLE" onDelete="cascade">
+      <foreign-key foreignTable="AD_ORG" name="AD_PREFERENCE_ORGVISIBLE">
         <reference local="VISIBLEAT_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ROLE" name="AD_PREFERENCE_ROLEVISIBLE">
