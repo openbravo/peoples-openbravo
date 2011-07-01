@@ -74,7 +74,8 @@ isc.OBSearchItem.addProperties({
   init: function(){
     this.instanceClearIcon = isc.shallowClone(this.clearIcon);
     this.instanceClearIcon.formItem = this;
-    
+    this.valueMap = {};
+
     this.instanceClearIcon.showIf = function(form, item){
       if (item.disabled) {
         return false;
