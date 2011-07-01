@@ -799,6 +799,11 @@ OB.ViewFormProperties = {
         if (identifier) {
           if (field.setEntry) {
             field.setEntry(columnValue.value, identifier);
+          } else {
+            if (!field.valueMap) {
+              field.valueMap = {};
+            }
+            field.valueMap[columnValue.value] = identifier;
           }
           if (field.form) {
             // only set the display field name if the field does not have its own
