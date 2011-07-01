@@ -369,7 +369,7 @@
 
     restoreState: function(newState, data) {
 
-      var tabSet = M.TabSet, tabsLength, i, tabObject, hasChanged = false, stateData;
+      var tabSet = OB.MainView.TabSet, tabsLength, i, tabObject, hasChanged = false, stateData;
 
       if (vmgr.inStateHandling) {
         return;

@@ -53,7 +53,7 @@
     // state of that tab. The combined state is passed to the smartclient
     // History object.
     //
-    updateHistory : function() {
+    updateHistory: function() {
 
       var state = {}, stateStr, data;
 
@@ -133,7 +133,7 @@
     // string
     // * {{{data}}} type: String, extra parameter passed in by Smartclient, not
     // used
-    restoreHistory : function(id, data) {
+    restoreHistory: function(id, data) {
       var correctedId, state;
       isc.Log.logDebug('Restoring history ' + id, 'OB');
 
