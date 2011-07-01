@@ -301,10 +301,13 @@ var baseDirectory = "../../../../../web/";
                 <tr>
                   <td colspan="6">
                     <span class="LabelText">
-                      Modules are published in the Central Repository with different status regarding their maturity,
-                      being&nbsp;<FIELD_TMP id="lessMature">xxx</FIELD_TMP>&nbsp;the less mature and&nbsp;<FIELD_TMP id="mostMature">yyy</FIELD_TMP>&nbsp;
-                      the most mature. When scanning for updates and searching in the Central Repository you can define the minimum level 
-                      of maturity you accept for your instance (global instance level) and optionally for a specific module.
+                     Modules are published with different maturity statuses representing the amount of validation that they received. 
+                     Modules in status&nbsp;<FIELD_TMP id="lessMature">xxx</FIELD_TMP>&nbsp;are the least mature while those in status
+                     &nbsp;<FIELD_TMP id="mostMature">yyy</FIELD_TMP>&nbsp;are the most mature, having received the validation of usage by production 
+                     users over an extended period of time.<br/>
+                     When scanning for updates and searching for new modules you can define the minimum level of maturity you accept. 
+                     You can define this control globally for new modules, for updates to any already installed module or, optionally, you can specify a rule 
+                     for a specific module.
                     </span>
                   </td>
                 </tr>

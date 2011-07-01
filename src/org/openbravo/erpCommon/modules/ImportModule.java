@@ -1780,9 +1780,9 @@ public class ImportModule {
         versionInfo[0][1] = mod.getVersion();
 
         if (!activeInstance && mod.getMaturityUpdate() != null
-            && Integer.parseInt(mod.getMaturityUpdate()) >= MaturityLevel.GA_MATURITY) {
+            && Integer.parseInt(mod.getMaturityUpdate()) >= MaturityLevel.CS_MATURITY) {
           // Community instances are not allowed to use GA maturity, setting it to CR
-          versionInfo[0][2] = Integer.toString(MaturityLevel.CR_MATURITY);
+          versionInfo[0][2] = Integer.toString(MaturityLevel.QA_APPR_MATURITY);
         } else {
           versionInfo[0][2] = mod.getMaturityUpdate();
         }

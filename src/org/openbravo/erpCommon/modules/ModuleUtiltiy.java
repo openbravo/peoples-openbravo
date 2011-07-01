@@ -224,12 +224,12 @@ public class ModuleUtiltiy {
       String installLevel = sys.getMaturitySearch();
 
       if (!activeInstance) {
-        if (updateLevel != null && Integer.parseInt(updateLevel) >= MaturityLevel.GA_MATURITY) {
-          updateLevel = Integer.toString(MaturityLevel.CR_MATURITY);
+        if (updateLevel != null && Integer.parseInt(updateLevel) >= MaturityLevel.CS_MATURITY) {
+          updateLevel = Integer.toString(MaturityLevel.QA_APPR_MATURITY);
         }
 
-        if (installLevel != null && Integer.parseInt(installLevel) >= MaturityLevel.GA_MATURITY) {
-          installLevel = Integer.toString(MaturityLevel.CR_MATURITY);
+        if (installLevel != null && Integer.parseInt(installLevel) >= MaturityLevel.CS_MATURITY) {
+          installLevel = Integer.toString(MaturityLevel.QA_APPR_MATURITY);
         }
       }
 

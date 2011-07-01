@@ -80,8 +80,8 @@ public class ActiveInstanceProcess implements Process {
           msg.setType("Success");
           msg.setMessage(result[0]);
 
-          sysInfo.setMaturitySearch(Integer.toString(MaturityLevel.GA_MATURITY));
-          sysInfo.setMaturityUpdate(Integer.toString(MaturityLevel.GA_MATURITY));
+          sysInfo.setMaturitySearch(Integer.toString(MaturityLevel.CS_MATURITY));
+          sysInfo.setMaturityUpdate(Integer.toString(MaturityLevel.CS_MATURITY));
         } else {
           msg.setType("Error");
           msg.setMessage(ak.getErrorMessage());

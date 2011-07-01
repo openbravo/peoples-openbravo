@@ -35,8 +35,8 @@ import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 public class MaturityLevel {
   private final Logger log4j = Logger.getLogger(MaturityLevel.class);
   private String[][] levels;
-  public final static int GA_MATURITY = 500;
-  public final static int CR_MATURITY = 200;
+  public final static int CS_MATURITY = 500;
+  public final static int QA_APPR_MATURITY = 200;
 
   /**
    * Calls central repository webservice to obtain the list of possible statuses. In case the
@@ -57,15 +57,15 @@ public class MaturityLevel {
     }
 
     if (error) {
-      // could not obtain actual levels, setting General availability only
-      log4j.warn("Setting default General availability level");
+      // could not obtain actual levels, setting Confirmed Stable only
+      log4j.warn("Setting default Confirmed Stable level");
       levels = new String[1][2];
       if (ActivationKey.getInstance().isActive()) {
-        levels[0][0] = Integer.toString(MaturityLevel.GA_MATURITY);
-        levels[0][1] = "General availability";
+        levels[0][0] = Integer.toString(MaturityLevel.CS_MATURITY);
+        levels[0][1] = "Confirmed Stable";
       } else {
-        levels[0][0] = Integer.toString(MaturityLevel.CR_MATURITY);
-        levels[0][1] = "Controlled release";
+        levels[0][0] = Integer.toString(MaturityLevel.QA_APPR_MATURITY);
+        levels[0][1] = "QA Approved";
       }
     }
   }
