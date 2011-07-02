@@ -1789,12 +1789,21 @@ isc.OBViewGrid.addProperties({
   // is the last being edited
   // also sets a flag which is used in canEditCell   
   getNextEditCell: function (rowNum, colNum, editCompletionEvent) {
-    var ret;
+    var ret, i;
     this._inGetNextEditCell = true;
     // past the last row
     if (editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS && rowNum === (this.getTotalRows() - 1)) {
       // move to the next row
       ret = this.findNextEditCell(rowNum + 1, 0, 1, true, true);
+
+      // force the focus column in the first focus field
+      for (i = 0; i < this.getFields().length; i++) {
+        if (this.getFields()[i].editorProperties && this.getFields()[i].editorProperties.firstFocusedField) {
+          this.forceFocusColumn = this.getFields()[i].name;
+          break;
+        }
+      }    
+
     } else {
       ret = this.Super('getNextEditCell', arguments);
     }
