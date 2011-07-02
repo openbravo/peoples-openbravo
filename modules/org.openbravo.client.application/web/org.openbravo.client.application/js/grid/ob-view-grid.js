@@ -1204,11 +1204,40 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++++++++++++++ Record Selection Handling +++++++++++++++++++++++
   
   updateSelectedCountDisplay: function(){
-    var selection = this.getSelection();
+    var selection = this.getSelection(), fld, grid = this;
     var selectionLength = selection.getLength();
     var newValue = '&nbsp;';
     if (selectionLength > 0) {
       newValue = selectionLength;
+      
+      if (this.filterEditor && this.filterEditor.getEditForm()) {
+        fld = this.filterEditor.getEditForm().getField(this.getCheckboxField().name);
+        if (fld && !fld.clickForSelectedRow) {
+          fld.clickForSelectedRow = true;
+          fld.originalClick = fld.click;
+          fld.click = function() {
+            if (grid.getSelection().getLength() === 0) {
+              return;
+            }
+            grid.scrollToRow(grid.getRecordIndex(grid.getSelectedRecord()));
+            // do redraw as first columns with buttons are not drawn
+            grid.markForRedraw();
+          };
+          fld.itemHoverHTML = function() {
+            return OB.I18N.getLabel('OBUIAPP_ClickSelectedCount');
+          };
+        }
+        fld.textBoxStyle = 'OBGridFilterStaticTextClickable';
+        fld.updateState();
+      }
+    } else {
+      if (this.filterEditor && this.filterEditor.getEditForm()) {
+        fld = this.filterEditor.getEditForm().getField(this.getCheckboxField().name);
+        if (fld) {
+          fld.textBoxStyle = 'OBGridFilterStaticText';
+          fld.updateState();
+        }
+      }
     }
     if (this.filterEditor) {
       this.filterEditor.getEditForm().setValue(this.getCheckboxField().name, newValue);
