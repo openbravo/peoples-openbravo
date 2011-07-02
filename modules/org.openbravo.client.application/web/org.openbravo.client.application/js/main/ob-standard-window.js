@@ -134,7 +134,7 @@ isc.OBStandardWindow.addProperties({
 
   doActionAfterAutoSave: function(action, forceDialogOnFailure, ignoreAutoSaveEnabled) {
     // if not dirty or we know that the object has errors
-    if (!this.getDirtyEditForm() || (this.getDirtyEditForm() && this.getDirtyEditForm().hasErrors())) {
+    if (!this.getDirtyEditForm() || (this.getDirtyEditForm() && !this.getDirtyEditForm().validateForm())) {
 
       // clean up before calling the action, as the action
       // can set dirty form again

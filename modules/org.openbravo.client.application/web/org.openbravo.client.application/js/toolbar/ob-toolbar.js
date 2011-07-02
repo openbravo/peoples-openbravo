@@ -71,7 +71,6 @@ isc.OBToolbar.addClassProperties({
       if(!this.view.viewForm.validateForm()) {
         return;
       }
-      this.view.saveRow();
       this.view.switchFormGridVisibility();
       this.view.messageBar.hide();
     },
