@@ -1178,6 +1178,7 @@ OB.ViewFormProperties = {
         if(savingNewRecord){
           this.attachmentsSection.fillAttachments(null);
         }
+        
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
         form.handleFieldErrors(resp.errors);
         view.standardWindow.autoSaveDone(view, false);
