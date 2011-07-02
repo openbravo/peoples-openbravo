@@ -33,23 +33,26 @@ isc.OBGrid.addProperties({
   escapeHTML: true,
 
   bodyKeyPress : function (event, eventInfo) {
-    var cltrAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown();
+    var cltrAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown(),
+      onlyAltDown = !isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown(),
+      onlyAltShiftDown = !isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && isc.EventHandler.shiftKeyDown();
+      
     if (event.keyName === 'F' && !cltrAltShiftDown) {
       this.focusInFirstFilterEditor();
       return false;
     }
 
-    if (event.keyName === 'Delete' && !cltrAltShiftDown) {
+    if (event.keyName === 'Delete' && onlyAltDown) {
       this.clearFilter(true);
       return false;
     }
 
-    if (event.keyName === 'A' && !cltrAltShiftDown) {
+    if (event.keyName === 'A' && onlyAltShiftDown) {
       this.selectAllRecords();
       return false;
     }
 
-    if (event.keyName === 'N' && !cltrAltShiftDown) {
+    if (event.keyName === 'N' && onlyAltShiftDown) {
       if (this.getSelectedRecords().length > 1) {
         this.deselectAllRecords();
       }
@@ -126,14 +129,16 @@ isc.OBGrid.addProperties({
     };
 
     setFieldsKeyDown = function(item, form, keyName) {
-      var cltrAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown();
-      
+      var cltrAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown(),
+        onlyAltDown = !isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown(),
+        noCtrlAltDown = !isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown();
+
       if (event.keyName === 'Escape' && !cltrAltShiftDown && this.getEditForm()) {
         this.cancelEditing();
         return false;
       }
 
-      if (isc.EventHandler.getKeyName() === 'Delete' && !cltrAltShiftDown) {
+      if (isc.EventHandler.getKeyName() === 'Delete' && onlyAltDown) {
         thisGrid.clearFilter(true);
         return false;
       }
@@ -141,7 +146,7 @@ isc.OBGrid.addProperties({
         thisGrid.focus();
         return false;
       }
-      if (isc.EventHandler.getKeyName() === 'Tab' && !cltrAltShiftDown) {
+      if (isc.EventHandler.getKeyName() === 'Tab' && noCtrlAltDown) {
         return false; // To avoid strange double field jump while pressing Tab Key
       }
       return this.Super('keyPress', arguments);
