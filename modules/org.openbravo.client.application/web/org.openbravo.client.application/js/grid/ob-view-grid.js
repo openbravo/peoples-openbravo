@@ -426,14 +426,15 @@ isc.OBViewGrid.addProperties({
   },
 
   keyPress: function() {
-    var event = isc.EventHandler.lastEvent, editRow;
+    var event = isc.EventHandler.lastEvent, editRow, 
+      cltrAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown();
     
-    if (event.keyName === 'Escape' && this.getEditForm()) {
+    if (event.keyName === 'Escape' && !cltrAltShiftDown && this.getEditForm()) {
       this.cancelEditing();
-      return;
+      return false;
     }
     
-    if (event.keyName === 'Arrow_Up' && this.getEditForm()) {
+    if (event.keyName === 'Arrow_Up' && !cltrAltShiftDown && this.getEditForm()) {
       // editing can be cancelled as all fields are
       // non-editable anyway if we get here...
       editRow = this.getEditRow();
@@ -441,10 +442,10 @@ isc.OBViewGrid.addProperties({
       if (editRow) {
         this.startEditing(editRow - 1);
       }
-      return;
+      return false;
     }
     
-    if (event.keyName === 'Arrow_Down' && this.getEditForm()) {
+    if (event.keyName === 'Arrow_Down' && !cltrAltShiftDown && this.getEditForm()) {
       // editing can be cancelled as all fields are
       // non-editable anyway if we get here...
       editRow = this.getEditRow();
@@ -452,7 +453,7 @@ isc.OBViewGrid.addProperties({
       if (editRow || editRow === 0) {
         this.startEditing(editRow + 1);
       }
-      return;
+      return false;
     }
 
     return this.Super('keyPress', arguments);
@@ -1227,14 +1228,14 @@ isc.OBViewGrid.addProperties({
             return OB.I18N.getLabel('OBUIAPP_ClickSelectedCount');
           };
         }
-        fld.textBoxStyle = 'OBGridFilterStaticTextClickable';
+        fld.textBoxStyle = fld.clickableTextBoxStyle;
         fld.updateState();
       }
     } else {
       if (this.filterEditor && this.filterEditor.getEditForm()) {
         fld = this.filterEditor.getEditForm().getField(this.getCheckboxField().name);
         if (fld) {
-          fld.textBoxStyle = 'OBGridFilterStaticText';
+          fld.textBoxStyle = fld.nonClickableTextBoxStyle;
           fld.updateState();
         }
       }
