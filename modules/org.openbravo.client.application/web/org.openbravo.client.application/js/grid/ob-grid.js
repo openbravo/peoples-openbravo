@@ -318,7 +318,7 @@ isc.OBGrid.addProperties({
     this.Super('initWidget', arguments);
   },
   
-  clearFilter: function(keepFilterClause){
+  clearFilter: function(keepFilterClause, noPerformAction){
     var i = 0, fld;
     if (!keepFilterClause) {
       delete this.filterClause;
@@ -332,8 +332,9 @@ isc.OBGrid.addProperties({
         fld.setSingleDateValue(null);
       }
     }
-
-    this.filterEditor.performAction();
+    if (!noPerformAction) {
+      this.filterEditor.performAction();
+    }
   },
   
   showSummaryRow: function(){

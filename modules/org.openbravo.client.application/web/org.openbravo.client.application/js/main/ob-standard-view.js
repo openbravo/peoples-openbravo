@@ -735,7 +735,7 @@ isc.OBStandardView.addProperties({
     this.viewGrid.deselectAllRecords(false, true);
     
     if (this.viewGrid.filterEditor) {
-      this.viewGrid.clearFilter();
+      this.viewGrid.clearFilter(false, true);
     }
     if (this.viewGrid.data && this.viewGrid.data.setCriteria) {
       this.viewGrid.data.setCriteria(null);
