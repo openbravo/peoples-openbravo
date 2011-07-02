@@ -184,6 +184,8 @@ isc.OBViewGrid.changeDefaults('editLinkFieldProperties', {
 isc.OBViewGrid.changeDefaults('checkboxFieldDefaults', {
   filterEditorProperties: {
     textBoxStyle: 'OBGridFilterStaticText',
+    nonClickableTextBoxStyle: 'OBGridFilterStaticText',
+    clickableTextBoxStyle: 'OBGridFilterStaticTextClickable',
     textAlign: 'center'
   }
 });
