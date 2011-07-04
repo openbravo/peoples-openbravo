@@ -234,6 +234,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     Writer writer;
     String fieldSeparator;
     String decimalSeparator;
+    String prefDecimalSeparator;
     List<String> fieldProperties;
     Map<String, String> niceFieldProperties = new HashMap<String, String>();
     boolean propertiesWritten = false;
@@ -252,14 +253,13 @@ public class DataSourceServlet extends BaseKernelServlet {
         writer = response.getWriter();
         VariablesSecureApp vars = new VariablesSecureApp(request);
         try {
-          decimalSeparator = Preferences.getPreferenceValue("OBSERDS_CSVDecimalSeparator", true,
-              null, null, OBContext.getOBContext().getUser(), null, null);
+          prefDecimalSeparator = Preferences.getPreferenceValue("OBSERDS_CSVDecimalSeparator",
+              true, null, null, OBContext.getOBContext().getUser(), null, null);
         } catch (PropertyNotFoundException e) {
-          // There is no preference for the decimal separator. Getting it from the Format.xml
-          // configuration
-          decimalSeparator = vars.getSessionValue("#DecimalSeparator|generalQtyEdition").substring(
-              0, 1);
+          // There is no preference for the decimal separator.
         }
+        decimalSeparator = vars.getSessionValue("#DecimalSeparator|generalQtyEdition").substring(0,
+            1);
         try {
           fieldSeparator = Preferences.getPreferenceValue("OBSERDS_CSVFieldSeparator", true, null,
               null, OBContext.getOBContext().getUser(), null, null);
@@ -267,7 +267,8 @@ public class DataSourceServlet extends BaseKernelServlet {
           // There is no preference for the field separator. Using the default one.
           fieldSeparator = ",";
         }
-        if (decimalSeparator.equals(fieldSeparator)) {
+        if ((prefDecimalSeparator != null && prefDecimalSeparator.equals(fieldSeparator))
+            || (prefDecimalSeparator == null && decimalSeparator.equals(fieldSeparator))) {
           if (!fieldSeparator.equals(";")) {
             fieldSeparator = ";";
           } else {
@@ -451,6 +452,12 @@ public class DataSourceServlet extends BaseKernelServlet {
               keyValue = keyValue.toString().replace(".", decimalSeparator);
             } else {
               keyValue = format.format(new BigDecimal(keyValue.toString()));
+              if (prefDecimalSeparator != null) {
+                keyValue = keyValue.toString().replace(
+                    format.getDecimalFormatSymbols().getDecimalSeparator(),
+                    prefDecimalSeparator.charAt(0));
+              }
+
             }
           } else if (dateCols.contains(key) && keyValue != null
               && !keyValue.toString().equals("null")) {
