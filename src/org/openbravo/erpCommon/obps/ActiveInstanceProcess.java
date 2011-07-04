@@ -23,6 +23,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.MaturityLevel;
@@ -82,6 +83,8 @@ public class ActiveInstanceProcess implements Process {
 
           sysInfo.setMaturitySearch(Integer.toString(MaturityLevel.CS_MATURITY));
           sysInfo.setMaturityUpdate(Integer.toString(MaturityLevel.CS_MATURITY));
+
+          updateShowProductionFields("Y");
         } else {
           msg.setType("Error");
           msg.setMessage(ak.getErrorMessage());
@@ -94,6 +97,13 @@ public class ActiveInstanceProcess implements Process {
       log.error(result[0]);
     }
 
+  }
+
+  public static void updateShowProductionFields(String value) {
+    String hql = "update ADPreference set searchKey = :value where property = 'showMRPandProductionFields'";
+    Query q = OBDal.getInstance().getSession().createQuery(hql);
+    q.setParameter("value", value);
+    q.executeUpdate();
   }
 
   /**

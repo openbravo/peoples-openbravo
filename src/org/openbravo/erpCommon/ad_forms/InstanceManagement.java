@@ -145,6 +145,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
         msg.setType("Success");
         msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
 
+        ActiveInstanceProcess.updateShowProductionFields("N");
+
         // When deactivating a cloned instance insert a dummy heartbeat log so it is not detected as
         // a cloned instance anymore.
         if (HeartbeatProcess.isClonedInstance()) {
