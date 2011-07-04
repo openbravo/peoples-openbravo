@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,7 +68,7 @@
         
          <div id="maturitySection" style="display:xx;">
           <div class="AddModule_Text_Option_Separator">|</div>
-          <div class="AddModule_Text_Option">Maturity Level: <span style="color: orange; font-weight: bold;" id="maturityLevel">Testing</span> (<a class="LabelLink_noicon" href="#" onclick="openLink('http://wiki.openbravo.com/wiki/Projects/Module_Life_Cycle_Management/Functional_Documentation', '_blank');return false;">Learn more</a>)</div>
+          <div class="AddModule_Text_Option">Maturity Level: <span style="color: orange; font-weight: bold;" id="maturityLevel">Testing</span> (<a class="LabelLink_noicon" href="#" onclick="openLink('http://wiki.openbravo.com/wiki/Modules_Management#Maturity_Status', '_blank');return false;">Learn more</a>)</div>
         </div>
         
       </div>
