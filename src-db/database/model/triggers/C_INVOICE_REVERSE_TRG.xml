@@ -33,6 +33,8 @@
    v_docstatus C_Invoice.DOCSTATUS%TYPE;
    v_isposted C_Invoice.POSTED%TYPE;
    v_amt C_Invoice.GrandTotal%TYPE;
+   TYPE RECORD IS REF CURSOR;
+   Cur_Exchange_info RECORD;
 
 BEGIN
     
@@ -68,7 +70,35 @@ BEGIN
    
    IF(v_bpheader_id <> v_bpreversed_id) THEN
      RAISE_APPLICATION_ERROR(-20000, '@NotEqualBPartner@');
-   END IF;  
+   END IF; 
+
+   -- Copy Exchange rate info
+  FOR Cur_Exchange_info IN (
+	SELECT * FROM 
+	C_CONVERSION_RATE_DOCUMENT 
+	WHERE C_INVOICE_ID = :NEW.REVERSED_C_INVOICE_ID
+  ) 
+  LOOP
+    INSERT
+    INTO c_conversion_rate_document
+      (
+        c_conversion_rate_document_id, AD_CLIENT_ID, AD_ORG_ID,
+        ISACTIVE, CREATED, CREATEDBY,
+        UPDATED, UPDATEDBY, C_CURRENCY_ID,
+        C_CURRENCY_ID_TO, C_INVOICE_ID, FIN_PAYMENT_ID,
+        APRM_FINACC_TRANSACTION_V_ID, RATE, FOREIGN_AMOUNT
+      )
+      VALUES
+      (
+        get_uuid(), Cur_Exchange_info.AD_Client_ID, Cur_Exchange_info.AD_Org_ID,
+         Cur_Exchange_info.ISACTIVE, now(), Cur_Exchange_info.CREATEDBY,
+        now(), Cur_Exchange_info.UPDATEDBY, Cur_Exchange_info.C_CURRENCY_ID,
+        Cur_Exchange_info.C_CURRENCY_ID_TO, :NEW.C_INVOICE_ID, Cur_Exchange_info.FIN_PAYMENT_ID,
+        Cur_Exchange_info.APRM_FINACC_TRANSACTION_V_ID, Cur_Exchange_info.RATE, Cur_Exchange_info.FOREIGN_AMOUNT
+      )
+      ;
+  END LOOP;
+    
   END IF;
   
   IF(DELETING) THEN
@@ -86,6 +116,7 @@ BEGIN
    END IF;
    
   END IF;
+  
 END C_INVOICE_REVERSE_TRG
 ]]></body>
     </trigger>

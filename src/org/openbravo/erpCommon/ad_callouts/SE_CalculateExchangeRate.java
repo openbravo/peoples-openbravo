@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import javax.servlet.ServletException;
 
 import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -40,12 +41,12 @@ public class SE_CalculateExchangeRate extends SimpleCallout {
   protected void execute(CalloutInfo info) throws ServletException {
     String strWindowId = info.getWindowId();
 
+    VariablesSecureApp vars = info.vars;
     String strLastFieldChanged = info.getLastFieldChanged();
-    BigDecimal originalAmt = new BigDecimal(BigDecimal.ZERO.toString());
-    BigDecimal rate = new BigDecimal(info.vars.getStringParameter("inprate"));
-    BigDecimal foreignAmt = new BigDecimal(info.vars.getStringParameter("inpforeignAmount"));
+    BigDecimal originalAmt = BigDecimal.ZERO;
+    BigDecimal rate = new BigDecimal(vars.getNumericParameter("inprate", "0"));
+    BigDecimal foreignAmt = new BigDecimal(vars.getNumericParameter("inpforeignAmount", "0"));
     try {
-      // info.addResult("inppayinAllow", paymentMethod.isPayinAllow() ? "Y" : "N");
       if (strWindowId.equals(ADWINDOW_PurchaseInvoice) || strWindowId.equals(ADWINDOW_SalesInvoice)) {
         String strcInvoiceId = info.vars.getStringParameter("inpcInvoiceId");
         Invoice invoice = OBDal.getInstance().get(Invoice.class, strcInvoiceId);

@@ -35,7 +35,7 @@ BEGIN
 
 
     -- If invoice is posted, CRUD is not allowed
-    IF INSERTING OR UPDATING OR DELETING
+    IF INSERTING
     THEN
 	IF :NEW.C_INVOICE_ID IS NOT NULL THEN
 		SELECT POSTED INTO v_Posted 
@@ -53,6 +53,48 @@ BEGIN
 		SELECT POSTED INTO v_Posted 
 		FROM aprm_finacc_transaction_v
 		WHERE aprm_finacc_transaction_v_id = :NEW.aprm_finacc_transaction_v_id;
+	END IF;
+
+	IF(v_Posted='Y')
+		THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
+	END IF;
+    END IF;
+    IF UPDATING THEN
+	IF :OLD.C_INVOICE_ID IS NOT NULL THEN
+		SELECT POSTED INTO v_Posted 
+		FROM C_INVOICE
+		WHERE C_INVOICE_ID = :OLD.C_INVOICE_ID;
+	END IF;
+
+	IF :OLD.FIN_PAYMENT_ID IS NOT NULL THEN
+		SELECT POSTED INTO v_Posted 
+		FROM FIN_PAYMENT
+		WHERE FIN_PAYMENT_ID = :OLD.FIN_PAYMENT_ID;
+	END IF;
+
+	IF :OLD.aprm_finacc_transaction_v_id IS NOT NULL THEN
+		SELECT POSTED INTO v_Posted 
+		FROM aprm_finacc_transaction_v
+		WHERE aprm_finacc_transaction_v_id = :OLD.aprm_finacc_transaction_v_id;
+	END IF;
+    END IF;
+    IF DELETING THEN
+	IF :OLD.C_INVOICE_ID IS NOT NULL THEN
+		SELECT POSTED INTO v_Posted 
+		FROM C_INVOICE
+		WHERE C_INVOICE_ID = :OLD.C_INVOICE_ID;
+	END IF;
+
+	IF :OLD.FIN_PAYMENT_ID IS NOT NULL THEN
+		SELECT POSTED INTO v_Posted 
+		FROM FIN_PAYMENT
+		WHERE FIN_PAYMENT_ID = :OLD.FIN_PAYMENT_ID;
+	END IF;
+
+	IF :OLD.aprm_finacc_transaction_v_id IS NOT NULL THEN
+		SELECT POSTED INTO v_Posted 
+		FROM aprm_finacc_transaction_v
+		WHERE aprm_finacc_transaction_v_id = :OLD.aprm_finacc_transaction_v_id;
 	END IF;
 
 	IF(v_Posted='Y')

@@ -39,6 +39,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
@@ -371,6 +372,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             }
           }
           List<FIN_PaymentDetail> paymentDetails = payment.getFINPaymentDetailList();
+          List<ConversionRateDoc> conversionRates = payment.getCurrencyConversionRateDocList();
           for (FIN_PaymentDetail paymentDetail : paymentDetails) {
             removedPDS = new ArrayList<FIN_PaymentScheduleDetail>();
             for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
@@ -421,6 +423,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             OBDal.getInstance().remove(OBDal.getInstance().get(FIN_PaymentDetail.class, pdToRm));
           }
           payment.getFINPaymentDetailList().removeAll(removedPD);
+          payment.getCurrencyConversionRateDocList().removeAll(conversionRates);
+          payment.setFinancialTransactionConvertRate(BigDecimal.ZERO);
           OBDal.getInstance().save(payment);
 
           if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
