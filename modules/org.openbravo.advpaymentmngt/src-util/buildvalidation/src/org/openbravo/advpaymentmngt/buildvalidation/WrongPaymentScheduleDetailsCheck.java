@@ -66,8 +66,15 @@ public class WrongPaymentScheduleDetailsCheck extends BuildValidation {
       StringBuilder msg = new StringBuilder();
 
       for (int i = 0; i < alert.length; i++) {
-        if (!WrongPaymentScheduleDetailsCheckData.existsReference(cp, adAlertruleId,
-            alert[i].referencekeyId)) {
+        boolean existsReference = false;
+        if (WrongPaymentScheduleDetailsCheckData.existsStatusColumn(cp)) {
+          existsReference = WrongPaymentScheduleDetailsCheckData.existsReference(cp, adAlertruleId,
+              alert[i].referencekeyId);
+        } else {
+          existsReference = WrongPaymentScheduleDetailsCheckData.existsReferenceOld(cp,
+              adAlertruleId, alert[i].referencekeyId);
+        }
+        if (!existsReference) {
           WrongPaymentScheduleDetailsCheckData.insertAlert(cp, alert[i].adClientId,
               alert[i].description, alertRule[0].adAlertruleId, alert[i].recordId,
               alert[i].referencekeyId);
@@ -76,5 +83,4 @@ public class WrongPaymentScheduleDetailsCheck extends BuildValidation {
 
     }
   }
-
 }

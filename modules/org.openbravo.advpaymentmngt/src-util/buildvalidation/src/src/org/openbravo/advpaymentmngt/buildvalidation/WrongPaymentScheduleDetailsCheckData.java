@@ -440,6 +440,42 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
     return(objectWrongPaymentScheduleDetailsCheckData);
   }
 
+  public static boolean existsStatusColumn(ConnectionProvider connectionProvider)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "       SELECT COUNT(*) AS EXISTING" +
+      "       FROM  user_tab_columns" +
+      "       WHERE lower(table_name) like 'ad_alert'" +
+      "         AND lower(column_name) like 'status'";
+
+    ResultSet result;
+    boolean boolReturn = false;
+    PreparedStatement st = null;
+
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
+
+      result = st.executeQuery();
+      if(result.next()) {
+        boolReturn = !UtilSql.getValue(result, "EXISTING").equals("0");
+      }
+      result.close();
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception ignore){
+        ignore.printStackTrace();
+      }
+    }
+    return(boolReturn);
+  }
+
   public static boolean existsReference(ConnectionProvider connectionProvider, String alertRule, String ref)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
@@ -448,6 +484,46 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
       "       WHERE AD_ALERTRULE_ID = ?" +
       "         AND REFERENCEKEY_ID = ?" +
       "         AND STATUS != 'SOLVED'";
+
+    ResultSet result;
+    boolean boolReturn = false;
+    PreparedStatement st = null;
+
+    int iParameter = 0;
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
+      iParameter++; UtilSql.setValue(st, iParameter, 12, null, alertRule);
+      iParameter++; UtilSql.setValue(st, iParameter, 12, null, ref);
+
+      result = st.executeQuery();
+      if(result.next()) {
+        boolReturn = !UtilSql.getValue(result, "EXISTING").equals("0");
+      }
+      result.close();
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception ignore){
+        ignore.printStackTrace();
+      }
+    }
+    return(boolReturn);
+  }
+
+  public static boolean existsReferenceOld(ConnectionProvider connectionProvider, String alertRule, String ref)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "       SELECT COUNT(*) AS EXISTING" +
+      "       FROM AD_ALERT" +
+      "       WHERE AD_ALERTRULE_ID = ?" +
+      "         AND REFERENCEKEY_ID = ?" +
+      "         AND ISFIXED = 'N'";
 
     ResultSet result;
     boolean boolReturn = false;
@@ -551,11 +627,11 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
       "      INSERT INTO AD_Alert (" +
       "        AD_Alert_ID, AD_Client_ID, AD_Org_ID, IsActive," +
       "        Created, CreatedBy, Updated, UpdatedBy," +
-      "        Description, AD_AlertRule_ID, Record_Id, Referencekey_ID, status" +
+      "        Description, AD_AlertRule_ID, Record_Id, Referencekey_ID" +
       "      ) VALUES (" +
       "        get_uuid(), ?, '0', 'Y'," +
       "        NOW(), '0', NOW(), '0'," +
-      "        ?, ?, ?, ?, 'NEW')";
+      "        ?, ?, ?, ?)";
 
     int updateCount = 0;
     PreparedStatement st = null;

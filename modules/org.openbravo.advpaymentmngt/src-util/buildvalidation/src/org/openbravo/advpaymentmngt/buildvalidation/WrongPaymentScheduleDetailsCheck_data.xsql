@@ -99,6 +99,15 @@
     ]]></Sql>
     <Parameter name="sql" type="replace" optional="true" after="FROM (" text="SELECT '' AS DESCRIPTION, '' AS RECORD_ID, '' AS REFERENCEKEY_ID, '' AS AD_CLIENT_ID FROM DUAL"/>
   </SqlMethod>
+  <SqlMethod name="existsStatusColumn" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+       SELECT COUNT(*) AS EXISTING
+       FROM  user_tab_columns
+       WHERE lower(table_name) like 'ad_alert'
+         AND lower(column_name) like 'status'
+    ]]></Sql>
+  </SqlMethod>
   <SqlMethod name="existsReference" type="preparedStatement" return="boolean">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
@@ -107,6 +116,18 @@
        WHERE AD_ALERTRULE_ID = ?
          AND REFERENCEKEY_ID = ?
          AND STATUS != 'SOLVED'
+    ]]></Sql>
+    <Parameter name="alertRule"/>
+    <Parameter name="ref"/>
+  </SqlMethod>
+  <SqlMethod name="existsReferenceOld" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+       SELECT COUNT(*) AS EXISTING
+       FROM AD_ALERT
+       WHERE AD_ALERTRULE_ID = ?
+         AND REFERENCEKEY_ID = ?
+         AND ISFIXED = 'N'
     ]]></Sql>
     <Parameter name="alertRule"/>
     <Parameter name="ref"/>
@@ -159,11 +180,11 @@
       INSERT INTO AD_Alert (
         AD_Alert_ID, AD_Client_ID, AD_Org_ID, IsActive,
         Created, CreatedBy, Updated, UpdatedBy,
-        Description, AD_AlertRule_ID, Record_Id, Referencekey_ID, status
+        Description, AD_AlertRule_ID, Record_Id, Referencekey_ID
       ) VALUES (
         get_uuid(), ?, '0', 'Y',
         NOW(), '0', NOW(), '0',
-        ?, ?, ?, ?, 'NEW')
+        ?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="client" />
