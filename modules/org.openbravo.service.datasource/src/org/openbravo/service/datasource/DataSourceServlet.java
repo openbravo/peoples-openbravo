@@ -195,8 +195,10 @@ public class DataSourceServlet extends BaseKernelServlet {
         }
         if ("csv".equals(exportAs)) {
           try {
-            String encoding = Preferences.getPreferenceValue("OBSERDS_CSVTextEncoding", true, null,
-                null, OBContext.getOBContext().getUser(), null, null);
+            String encoding = Preferences.getPreferenceValue("OBSERDS_CSVTextEncoding", true,
+                OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                    .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                    .getOBContext().getRole(), null);
             response.setContentType("text/csv; charset=" + encoding);
           } catch (PropertyNotFoundException e) {
             // There is no preference for encoding, using standard one which works on Excel
@@ -254,15 +256,19 @@ public class DataSourceServlet extends BaseKernelServlet {
         VariablesSecureApp vars = new VariablesSecureApp(request);
         try {
           prefDecimalSeparator = Preferences.getPreferenceValue("OBSERDS_CSVDecimalSeparator",
-              true, null, null, OBContext.getOBContext().getUser(), null, null);
+              true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                  .getOBContext().getRole(), null);
         } catch (PropertyNotFoundException e) {
           // There is no preference for the decimal separator.
         }
         decimalSeparator = vars.getSessionValue("#DecimalSeparator|generalQtyEdition").substring(0,
             1);
         try {
-          fieldSeparator = Preferences.getPreferenceValue("OBSERDS_CSVFieldSeparator", true, null,
-              null, OBContext.getOBContext().getUser(), null, null);
+          fieldSeparator = Preferences.getPreferenceValue("OBSERDS_CSVFieldSeparator", true,
+              OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                  .getOBContext().getRole(), null);
         } catch (PropertyNotFoundException e) {
           // There is no preference for the field separator. Using the default one.
           fieldSeparator = ",";
@@ -453,9 +459,12 @@ public class DataSourceServlet extends BaseKernelServlet {
             } else {
               keyValue = format.format(new BigDecimal(keyValue.toString()));
               if (prefDecimalSeparator != null) {
-                keyValue = keyValue.toString().replace(
-                    format.getDecimalFormatSymbols().getDecimalSeparator(),
-                    prefDecimalSeparator.charAt(0));
+                keyValue = keyValue
+                    .toString()
+                    .replace(
+                        new Character(format.getDecimalFormatSymbols().getDecimalSeparator())
+                            .toString(),
+                        prefDecimalSeparator);
               }
 
             }
