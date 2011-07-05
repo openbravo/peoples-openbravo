@@ -24,11 +24,13 @@ import java.net.URLEncoder;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.MaturityLevel;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.System;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -100,10 +102,16 @@ public class ActiveInstanceProcess implements Process {
   }
 
   public static void updateShowProductionFields(String value) {
-    String hql = "update ADPreference set searchKey = :value where property = 'showMRPandProductionFields'";
+    String hql = "update ADPreference set searchKey = :value where property = 'showMRPandProductionFields' and module.id is null";
     Query q = OBDal.getInstance().getSession().createQuery(hql);
     q.setParameter("value", value);
-    q.executeUpdate();
+    int numRows = q.executeUpdate();
+    if ("Y".equals(value) && numRows == 0) {
+      Preference pref = OBProvider.getInstance().get(Preference.class);
+      pref.setProperty("showMRPandProductionFields");
+      pref.setSearchKey(value);
+      OBDal.getInstance().save(pref);
+    }
   }
 
   /**
