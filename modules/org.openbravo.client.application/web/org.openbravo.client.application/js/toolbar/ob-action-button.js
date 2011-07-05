@@ -128,20 +128,16 @@ isc.OBToolbarActionButton.addProperties( {
     }
 
     OB.ActionButton.executingProcess = null;
-    
+
     if (newWindow) {
-      var contextURL = location.protocol + '//' +
-                       location.host +
-                       location.pathname.substr(0, location.pathname.indexOf(OB.Application.contextUrl) + OB.Application.contextUrl.length);
-      
-      if (newWindow.indexOf(contextURL) !== -1){
-        newWindow = newWindow.substr(contextURL.length);
+      if (OB.Application.contextUrl && newWindow.indexOf(OB.Application.contextUrl) !== -1) {
+        newWindow = newWindow.substr(newWindow.indexOf(OB.Application.contextUrl) + OB.Application.contextUrl.length-1);
       }
-      
+
       if (!newWindow.startsWith('/')){
         newWindow = '/'+newWindow;
       }
-      
+
       if (newWindow.startsWith(contextView.mapping250)) {
         // Refreshing current tab, do not open it again.
         return;
