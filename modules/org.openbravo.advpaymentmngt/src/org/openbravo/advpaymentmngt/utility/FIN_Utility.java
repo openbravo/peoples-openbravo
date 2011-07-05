@@ -300,9 +300,21 @@ public class FIN_Utility {
    */
   public static DocumentType getDocumentType(Organization org, String docCategory) {
     DocumentType outDocType = null;
+    Client client = null;
+
     OBCriteria<DocumentType> obcDoc = OBDal.getInstance().createCriteria(DocumentType.class);
     obcDoc.setFilterOnReadableClients(false);
     obcDoc.setFilterOnReadableOrganization(false);
+
+    if ("0".equals(org.getId())) {
+      client = OBContext.getOBContext().getCurrentClient();
+      if ("0".equals(client.getId())) {
+        return null;
+      }
+    } else {
+      client = org.getClient();
+    }
+    obcDoc.add(Restrictions.eq(DocumentType.PROPERTY_CLIENT, client));
 
     obcDoc
         .add(Restrictions.in("organization.id",
