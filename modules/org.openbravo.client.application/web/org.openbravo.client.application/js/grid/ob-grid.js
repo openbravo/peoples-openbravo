@@ -33,11 +33,11 @@ isc.OBGrid.addProperties({
   escapeHTML: true,
 
   bodyKeyPress : function (event, eventInfo) {
-    var cltrAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown(),
+    var ctrlAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown(),
       onlyAltDown = !isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown(),
       onlyAltShiftDown = !isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && isc.EventHandler.shiftKeyDown();
       
-    if (event.keyName === 'F' && !cltrAltShiftDown) {
+    if (event.keyName === 'F' && !ctrlAltShiftDown) {
       this.focusInFirstFilterEditor();
       return false;
     }
@@ -129,11 +129,11 @@ isc.OBGrid.addProperties({
     };
 
     setFieldsKeyDown = function(item, form, keyName) {
-      var cltrAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown(),
+      var ctrlAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown(),
         onlyAltDown = !isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown(),
         noCtrlAltDown = !isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown();
 
-      if (event.keyName === 'Escape' && !cltrAltShiftDown && this.getEditForm()) {
+      if (event.keyName === 'Escape' && !ctrlAltShiftDown && this.getEditForm()) {
         this.cancelEditing();
         return false;
       }
@@ -142,7 +142,7 @@ isc.OBGrid.addProperties({
         thisGrid.clearFilter(true);
         return false;
       }
-      if (isc.EventHandler.getKeyName() === 'Escape' && !cltrAltShiftDown) {
+      if (isc.EventHandler.getKeyName() === 'Escape' && !ctrlAltShiftDown) {
         thisGrid.focus();
         return false;
       }

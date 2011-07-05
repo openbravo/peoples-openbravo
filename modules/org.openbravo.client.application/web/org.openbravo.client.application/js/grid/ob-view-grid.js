@@ -427,14 +427,14 @@ isc.OBViewGrid.addProperties({
 
   keyPress: function() {
     var event = isc.EventHandler.lastEvent, editRow, 
-      cltrAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown();
+      ctrlAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown();
     
-    if (event.keyName === 'Escape' && !cltrAltShiftDown && this.getEditForm()) {
+    if (event.keyName === 'Escape' && !ctrlAltShiftDown && this.getEditForm()) {
       this.cancelEditing();
       return false;
     }
     
-    if (event.keyName === 'Arrow_Up' && !cltrAltShiftDown && this.getEditForm()) {
+    if (event.keyName === 'Arrow_Up' && !ctrlAltShiftDown && this.getEditForm()) {
       // editing can be cancelled as all fields are
       // non-editable anyway if we get here...
       editRow = this.getEditRow();
@@ -445,7 +445,7 @@ isc.OBViewGrid.addProperties({
       return false;
     }
     
-    if (event.keyName === 'Arrow_Down' && !cltrAltShiftDown && this.getEditForm()) {
+    if (event.keyName === 'Arrow_Down' && !ctrlAltShiftDown && this.getEditForm()) {
       // editing can be cancelled as all fields are
       // non-editable anyway if we get here...
       editRow = this.getEditRow();
