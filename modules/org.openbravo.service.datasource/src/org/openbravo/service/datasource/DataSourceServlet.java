@@ -71,6 +71,7 @@ import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldTrl;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.json.DefaultJsonDataService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -195,10 +196,13 @@ public class DataSourceServlet extends BaseKernelServlet {
         }
         if ("csv".equals(exportAs)) {
           try {
+            Window window = parameters.get("tab") == null
+                || parameters.get("tab").equals("undefined") ? null : OBDal.getInstance()
+                .get(Tab.class, parameters.get("tab")).getWindow();
             String encoding = Preferences.getPreferenceValue("OBSERDS_CSVTextEncoding", true,
                 OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
                     .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                    .getOBContext().getRole(), null);
+                    .getOBContext().getRole(), window);
             response.setContentType("text/csv; charset=" + encoding);
           } catch (PropertyNotFoundException e) {
             // There is no preference for encoding, using standard one which works on Excel
@@ -254,11 +258,13 @@ public class DataSourceServlet extends BaseKernelServlet {
         response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
         writer = response.getWriter();
         VariablesSecureApp vars = new VariablesSecureApp(request);
+        Window window = parameters.get("tab") == null || parameters.get("tab").equals("undefined") ? null
+            : OBDal.getInstance().get(Tab.class, parameters.get("tab")).getWindow();
         try {
           prefDecimalSeparator = Preferences.getPreferenceValue("OBSERDS_CSVDecimalSeparator",
               true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
                   .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                  .getOBContext().getRole(), null);
+                  .getOBContext().getRole(), window);
         } catch (PropertyNotFoundException e) {
           // There is no preference for the decimal separator.
         }
@@ -268,7 +274,7 @@ public class DataSourceServlet extends BaseKernelServlet {
           fieldSeparator = Preferences.getPreferenceValue("OBSERDS_CSVFieldSeparator", true,
               OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
                   .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                  .getOBContext().getRole(), null);
+                  .getOBContext().getRole(), window);
         } catch (PropertyNotFoundException e) {
           // There is no preference for the field separator. Using the default one.
           fieldSeparator = ",";
