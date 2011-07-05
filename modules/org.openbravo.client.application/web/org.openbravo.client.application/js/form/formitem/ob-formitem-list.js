@@ -108,6 +108,9 @@ isc.OBListItem.addProperties({
   // prevent ids from showing up
   mapValueToDisplay: function (value) {
     var ret = this.Super('mapValueToDisplay', arguments);
+    if (this.valueMap && this.valueMap[value]) {
+      return this.valueMap[value];
+    }
     if (ret === value && this.isDisabled()) {
       return '';
     }
