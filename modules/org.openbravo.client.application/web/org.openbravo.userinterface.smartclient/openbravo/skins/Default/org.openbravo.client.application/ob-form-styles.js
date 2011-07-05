@@ -125,7 +125,6 @@ OB.Styles.OBFormField.DefaultCheckbox = {
   showValueIconFocused: true,
   showFocused: true,
   defaultValue: false,
-  titleOrientation: 'right',
   checkedImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/checked.png',
   uncheckedImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/unchecked.png'
 };

@@ -148,9 +148,9 @@ isc.OBUserProfile.addProperties({
       showValueIconFocused: OB.Styles.OBFormField.DefaultCheckbox.showValueIconFocused,
       showFocused: OB.Styles.OBFormField.DefaultCheckbox.showFocused,
       defaultValue: OB.Styles.OBFormField.DefaultCheckbox.defaultValue,
-      titleOrientation: OB.Styles.OBFormField.DefaultCheckbox.titleOrientation,
       checkedImage: OB.Styles.OBFormField.DefaultCheckbox.checkedImage,
       uncheckedImage: OB.Styles.OBFormField.DefaultCheckbox.uncheckedImage,
+      titleOrientation: 'right',
       editorType: 'checkbox'
     };
 
