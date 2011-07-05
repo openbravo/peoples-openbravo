@@ -46,9 +46,11 @@ import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
+import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -193,18 +195,30 @@ public class ProcessInvoice extends HttpSecureAppServlet {
                   isSalesTransaction ? "ARR" : "APP");
               final String strPaymentDocumentNo = FIN_Utility.getDocumentNo(docType,
                   docType.getTable() != null ? docType.getTable().getDBTableName() : "");
+              final FIN_FinancialAccount bpFinAccount = isSalesTransaction ? invoice
+                  .getBusinessPartner().getAccount() : invoice.getBusinessPartner()
+                  .getPOFinancialAccount();
               final FIN_Payment newPayment = FIN_AddPayment.savePayment(null, isSalesTransaction,
-                  docType, strPaymentDocumentNo, invoice.getBusinessPartner(), invoice
-                      .getPaymentMethod(), isSalesTransaction ? invoice.getBusinessPartner()
-                      .getAccount() : invoice.getBusinessPartner().getPOFinancialAccount(), "0",
-                  creditPayment.getPaymentDate(), invoice.getOrganization(), invoice
-                      .getDocumentNo(), paymentScheduleDetails, paymentScheduleDetailsAmounts,
-                  false, false);
+                  docType, strPaymentDocumentNo, invoice.getBusinessPartner(),
+                  invoice.getPaymentMethod(), bpFinAccount, "0", creditPayment.getPaymentDate(),
+                  invoice.getOrganization(), invoice.getDocumentNo(), paymentScheduleDetails,
+                  paymentScheduleDetailsAmounts, false, false);
               newPayment.setAmount(BigDecimal.ZERO);
               newPayment.setGeneratedCredit(BigDecimal.ZERO);
               newPayment.setUsedCredit(invoice.getGrandTotalAmount());
-              // Process the new payment
-              FIN_AddPayment.processPayment(vars, this, "P", newPayment);
+
+              // Process the new payment if invoice's payment method is inside BP's financial
+              // account
+              boolean process = false;
+              for (final FinAccPaymentMethod bpFinAccPaymentMethod : bpFinAccount
+                  .getFinancialMgmtFinAccPaymentMethodList()) {
+                if (bpFinAccPaymentMethod.getPaymentMethod().equals(invoice.getPaymentMethod())) {
+                  process = true;
+                  break;
+                }
+              }
+              if (process)
+                FIN_AddPayment.processPayment(vars, this, "P", newPayment);
             }
           }
         } catch (final Exception e) {

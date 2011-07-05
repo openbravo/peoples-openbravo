@@ -1456,6 +1456,7 @@ public class AdvPaymentMngtDao {
       obcFinPayment.add(Restrictions.in("organization.id", OBContext.getOBContext()
           .getOrganizationStructureProvider().getNaturalTree(organization.getId())));
       obcFinPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, true);
+      obcFinPayment.setMaxResults(1);
 
       final List<FIN_Payment> finPayments = obcFinPayment.list();
       if (finPayments.size() > 0) {
