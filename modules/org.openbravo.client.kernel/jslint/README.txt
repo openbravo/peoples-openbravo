@@ -4,7 +4,7 @@
 Add these lines to your hgrc file in the .hg directory in your module:
 
 [hooks]
-precommit = ../org.openbravo.client.kernel/jslint/jscheck
+precommit = ../org.openbravo.client.kernel/jslint/jscheck-hg
 
 >> Running jslint directly for a module
 To run jslint directly for a module, go to the module directory and do:
