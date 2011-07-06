@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.ObjectNotFoundException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
@@ -215,7 +216,14 @@ public class DataToJsonConverter {
       String propertyName, Property referencedProperty, BaseOBObject obObject) throws JSONException {
     // jsonObject.put(propertyName, toJsonObject(obObject, DataResolvingMode.SHORT));
     if (referencedProperty != null) {
-      jsonObject.put(propertyName, obObject.get(referencedProperty.getName()));
+      try {
+        jsonObject.put(propertyName, obObject.get(referencedProperty.getName()));
+      } catch (ObjectNotFoundException e) {
+        // Referenced object does not exist, set UUID
+        jsonObject.put(propertyName, e.getIdentifier());
+        jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER, e.getIdentifier());
+        return;
+      }
     } else {
       jsonObject.put(propertyName, obObject.getId());
     }
