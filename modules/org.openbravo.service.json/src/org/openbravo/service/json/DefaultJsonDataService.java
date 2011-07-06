@@ -241,11 +241,16 @@ public class DefaultJsonDataService implements JsonDataService {
     }
 
     final String sortBy = parameters.get(JsonConstants.SORTBY_PARAMETER);
+    String orderBy = "";
     if (sortBy != null) {
-      queryService.setOrderBy(sortBy);
+      orderBy = sortBy;
     } else if (parameters.get(JsonConstants.ORDERBY_PARAMETER) != null) {
-      queryService.setOrderBy(parameters.get(JsonConstants.ORDERBY_PARAMETER));
+      orderBy = parameters.get(JsonConstants.ORDERBY_PARAMETER);
     }
+
+    // Always append id to the orderby to make a predictable sorting
+    orderBy += (orderBy.isEmpty() ? "" : ",") + "id";
+    queryService.setOrderBy(orderBy);
 
     // compute a new startrow if the targetrecordid was passed in
     int targetRowNumber = -1;
