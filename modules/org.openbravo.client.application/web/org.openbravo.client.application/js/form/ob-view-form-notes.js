@@ -136,9 +136,13 @@ isc.OBNoteLayout.addProperties({
    */
   deleteNote : function( /* note id to delete */id) {
     var noteDS = this.getNoteDataSource();
-    noteDS.removeData({
-      'id' : id
-    });
+    isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmRemoveNote'), function(clickedOK){
+      if(clickedOK){
+        noteDS.removeData({
+          'id' : id
+        });
+      }
+    },{title: OB.I18N.getLabel('OBUIAPP_ConfirmRemoveTitle')});
   },
 
   /**
