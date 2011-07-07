@@ -4520,8 +4520,8 @@ CIP (Carriage and Insurance Paid to)]]></HELP>
 <!--800010-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800010-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800010-->  <NAME><![CDATA[PricingVolumeDiscount]]></NAME>
-<!--800010-->  <DESCRIPTION><![CDATA[Rappel configuration]]></DESCRIPTION>
-<!--800010-->  <HELP><![CDATA[Contains all the configuration rappels]]></HELP>
+<!--800010-->  <DESCRIPTION><![CDATA[Volume Discount configuration]]></DESCRIPTION>
+<!--800010-->  <HELP><![CDATA[Contains all the Volume Discount configurations]]></HELP>
 <!--800010-->  <TABLENAME><![CDATA[M_Rappel]]></TABLENAME>
 <!--800010-->  <CLASSNAME><![CDATA[VolumeDiscount]]></CLASSNAME>
 <!--800010-->  <ISVIEW><![CDATA[N]]></ISVIEW>

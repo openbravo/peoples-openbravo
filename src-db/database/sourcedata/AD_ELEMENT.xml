@@ -11637,7 +11637,7 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800047-->  <NAME><![CDATA[Volume Discount]]></NAME>
 <!--800047-->  <PRINTNAME><![CDATA[Rappel]]></PRINTNAME>
 <!--800047-->  <DESCRIPTION><![CDATA[A promotion given at a specific time of year based on purchase amounts.]]></DESCRIPTION>
-<!--800047-->  <HELP><![CDATA[The ID identifies a unique rappel]]></HELP>
+<!--800047-->  <HELP><![CDATA[The ID identifies a unique volume discount]]></HELP>
 <!--800047-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800047--></AD_ELEMENT>
 
@@ -15258,7 +15258,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800586-->  <NAME><![CDATA[Scaled]]></NAME>
 <!--800586-->  <PRINTNAME><![CDATA[Scaled]]></PRINTNAME>
 <!--800586-->  <DESCRIPTION><![CDATA[Scaled]]></DESCRIPTION>
-<!--800586-->  <HELP><![CDATA[If rappel is scaled each scale of amount will have a different discount, otherwise the maximum applicable discount will be applied to every amount.]]></HELP>
+<!--800586-->  <HELP><![CDATA[If volume discount is scaled each scale of amount will have a different discount, otherwise the maximum applicable discount will be applied to every amount.]]></HELP>
 <!--800586-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800586--></AD_ELEMENT>
 
