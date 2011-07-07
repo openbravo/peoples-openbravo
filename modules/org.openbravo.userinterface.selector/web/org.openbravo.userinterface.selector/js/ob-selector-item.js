@@ -428,7 +428,7 @@ isc.OBSelectorItem.addProperties({
   },
 
   handleOutFields: function(record){
-    var i, outFields = this.outFields, form = this.form, itemName, item, value;
+    var i, outFields = this.outFields, form = this.form, item, value;
     for (i in outFields) {
       if (outFields.hasOwnProperty(i) && outFields[i].suffix) {
         if (record) {
@@ -442,10 +442,9 @@ isc.OBSelectorItem.addProperties({
                 OB.Format.defaultGroupingSize);
           }
           form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = value;
-          itemName = i.substring(0, i.indexOf('.'));
-          item = form.getItem(itemName);
+          item = form.getItem(outFields[i].fieldName);
           if(item && item.valueMap) {
-            item.valueMap[value] = record[itemName + '._identifier'];
+            item.valueMap[value] = record[outFields[i].fieldName + '._identifier'];
           }
         } else {
           form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = null;
