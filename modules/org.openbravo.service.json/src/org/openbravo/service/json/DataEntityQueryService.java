@@ -142,6 +142,7 @@ public class DataEntityQueryService {
     if (queryBuilder.hasOrganizationParameter()) {
       obq.setFilterOnReadableOrganization(false);
     }
+    obq.setFilterOnActive(isFilterOnActive());
 
     obq.setNamedParameters(queryBuilder.getNamedParameters());
 
