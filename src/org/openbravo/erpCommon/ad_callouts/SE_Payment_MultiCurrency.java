@@ -52,7 +52,10 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
     String strFinaccTxnAmount = vars.getNumericParameter("inpfinaccTxnAmount");
     String strConvertRate = vars.getNumericParameter("inpfinaccTxnConvertRate");
     String paymentDate = vars.getStringParameter("inppaymentdate");
-    String strAmount = vars.getNumericParameter("inpamount");
+    String strAmount = vars.getNumericParameter("inpgeneratedCredit").isEmpty()
+        || (BigDecimal.ZERO).compareTo(new BigDecimal(vars
+            .getNumericParameter("inpgeneratedCredit"))) == 0 ? vars
+        .getNumericParameter("inpamount") : vars.getNumericParameter("inpgeneratedCredit");
     String currencyId = vars.getStringParameter("inpcCurrencyId");
     String strOrgId = vars.getStringParameter("inpadOrgId");
     String financialAccountId = vars.getStringParameter("inpfinFinancialAccountId");
@@ -87,6 +90,7 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
       }
 
     } else if ("inpamount".equals(lastFieldChanged)
+        || "inpgeneratedCredit".equals(lastFieldChanged)
         || "inpfinaccTxnConvertRate".equals(lastFieldChanged)) {
       if (!strConvertRate.isEmpty() && !strAmount.isEmpty()) {
         BigDecimal convertRate = new BigDecimal(strConvertRate);
