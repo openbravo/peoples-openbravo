@@ -770,6 +770,13 @@ public class DocInvoice extends AcctServer {
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     DocInvoiceData[] data = null;
+    FieldProvider dataFP[] = getObjectFieldProvider();
+
+    if (ZERO.compareTo(new BigDecimal(dataFP[0].getField("GrandTotal"))) == 0) {
+      strMessage = "@TotalGrossIsZero@";
+      setStatus(STATUS_DocumentDisabled);
+      return false;
+    }
     try {
       data = DocInvoiceData.selectFinInvCount(conn, strRecordId);
       if (data.length > 0) {

@@ -156,6 +156,7 @@ public abstract class AcctServer {
   public static final String STATUS_BackgroundDisabled = "d";
 
   OBError messageResult = null;
+  String strMessage = null;
 
   /** AR Invoices */
   public static final String DOCTYPE_ARInvoice = "ARI";
@@ -1728,7 +1729,7 @@ public abstract class AcctServer {
       String strMessageType) {
     if (strStatus == null || strStatus.equals(""))
       strStatus = getStatus();
-    String strMessage = "";
+    String strTitle = "";
     Map<String, String> parameters = new HashMap<String, String>();
     if (messageResult == null)
       messageResult = new OBError();
@@ -1737,39 +1738,42 @@ public abstract class AcctServer {
     else
       messageResult.setType(strMessageType);
     if (strStatus.equals(STATUS_Error))
-      strMessage = "@ProcessRunError@";
+      strTitle = "@ProcessRunError@";
     else if (strStatus.equals(STATUS_DocumentLocked)) {
-      strMessage = "@OtherPostingProcessActive@";
+      strTitle = "@OtherPostingProcessActive@";
       messageResult.setType("Warning");
     } else if (strStatus.equals(STATUS_InvalidCost))
-      strMessage = "@InvalidCost@";
+      strTitle = "@InvalidCost@";
     else if (strStatus.equals(STATUS_DocumentDisabled)) {
-      strMessage = "@DocumentDisabled@";
+      strTitle = "@DocumentDisabled@";
       messageResult.setType("Warning");
     } else if (strStatus.equals(STATUS_BackgroundDisabled)) {
-      strMessage = "@BackgroundDisabled@";
+      strTitle = "@BackgroundDisabled@";
       messageResult.setType("Warning");
     } else if (strStatus.equals(STATUS_InvalidAccount)) {
-      strMessage = "@InvalidAccount@";
+      strTitle = "@InvalidAccount@";
     } else if (strStatus.equals(STATUS_PeriodClosed)) {
-      strMessage = "@PeriodClosed@";
+      strTitle = "@PeriodClosed@";
     } else if (strStatus.equals(STATUS_NotConvertible)) {
-      strMessage = "@NotConvertible@";
+      strTitle = "@NotConvertible@";
     } else if (strStatus.equals(STATUS_NotBalanced)) {
-      strMessage = "@NotBalanced@";
+      strTitle = "@NotBalanced@";
     } else if (strStatus.equals(STATUS_NotPosted)) {
-      strMessage = "@NotPosted@";
+      strTitle = "@NotPosted@";
     } else if (strStatus.equals(STATUS_PostPrepared)) {
-      strMessage = "@PostPrepared@";
+      strTitle = "@PostPrepared@";
     } else if (strStatus.equals(STATUS_Posted)) {
-      strMessage = "@Posted@";
+      strTitle = "@Posted@";
     } else if (strStatus.equals(STATUS_TableDisabled)) {
-      strMessage = "@TableDisabled@";
+      strTitle = "@TableDisabled@";
       parameters.put("Table", tableName);
       messageResult.setType("Warning");
     }
     messageResult.setMessage(Utility.parseTranslation(conn, vars, parameters, vars.getLanguage(),
-        Utility.parseTranslation(conn, vars, vars.getLanguage(), strMessage)));
+        Utility.parseTranslation(conn, vars, vars.getLanguage(), strTitle)));
+    if (strMessage != null)
+      messageResult.setMessage(Utility.parseTranslation(conn, vars, parameters, vars.getLanguage(),
+          Utility.parseTranslation(conn, vars, vars.getLanguage(), strMessage)));
   }
 
   public OBError getMessageResult() {
