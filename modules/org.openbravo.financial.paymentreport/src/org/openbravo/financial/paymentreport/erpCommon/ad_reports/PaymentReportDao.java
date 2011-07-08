@@ -406,6 +406,7 @@ public class PaymentReportDao {
       FieldProvider previousRow = null;
       ConversionRate previousConvRate = null;
       long milisecDayConv = (1000 * 60 * 60 * 24);
+      boolean isReceipt = false;
 
       for (int i = 0; i < data.length; i++) {
         if (FIN_PaymentScheduleDetail[i].getPaymentDetails() != null) {
@@ -445,10 +446,13 @@ public class PaymentReportDao {
               translateRefList(FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment()
                   .getStatus()));
           // is receipt
-          if (FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment().isReceipt())
+          if (FIN_PaymentScheduleDetail[i].getPaymentDetails().getFinPayment().isReceipt()) {
             FieldProviderFactory.setField(data[i], "ISRECEIPT", "Y");
-          else
+            isReceipt = true;
+          } else {
             FieldProviderFactory.setField(data[i], "ISRECEIPT", "N");
+            isReceipt = false;
+          }
         } else {
 
           // bp_group -- bp_category
@@ -476,11 +480,15 @@ public class PaymentReportDao {
           FieldProviderFactory.setField(data[i], "STATUS", translateRefList("RPAP"));
           // is receipt
           if (FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getInvoice()
-              .isSalesTransaction())
+              .isSalesTransaction()) {
             FieldProviderFactory.setField(data[i], "ISRECEIPT", "Y");
-          else
-            FieldProviderFactory.setField(data[i], "ISRECEIPT", "N");
+            isReceipt = true;
+          }
 
+          else {
+            FieldProviderFactory.setField(data[i], "ISRECEIPT", "N");
+            isReceipt = false;
+          }
         }
 
         if (FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule() != null) {
@@ -573,8 +581,12 @@ public class PaymentReportDao {
           if (convRate != null) {
             transAmount = FIN_PaymentScheduleDetail[i].getAmount();
             // baseAmount
-            FieldProviderFactory.setField(data[i], "BASE_AMOUNT",
-                transAmount.multiply(convRate.getMultipleRateBy()).toString());
+            if (isReceipt)
+              FieldProviderFactory.setField(data[i], "BASE_AMOUNT",
+                  transAmount.multiply(convRate.getMultipleRateBy()).toString());
+            else
+              FieldProviderFactory.setField(data[i], "BASE_AMOUNT",
+                  transAmount.multiply(convRate.getMultipleRateBy()).negate().toString());
           } else {
             FieldProvider[] fp = new FieldProvider[1];
             HashMap<String, String> hm = new HashMap<String, String>();
@@ -623,12 +635,24 @@ public class PaymentReportDao {
           amountSum = amountSum.add(transAmount);
         } else {
           if (previousRow != null) {
-            FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.toString());
+            if (previousRow.getField("ISRECEIPT").equalsIgnoreCase("Y"))
+              FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.toString());
+            else
+              FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.negate()
+                  .toString());
             if (previousConvRate == null) {
-              FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.toString());
+              if (previousRow.getField("ISRECEIPT").equalsIgnoreCase("Y"))
+                FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.toString());
+              else
+                FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.negate()
+                    .toString());
             } else {
-              FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
-                  amountSum.multiply(previousConvRate.getMultipleRateBy()).toString());
+              if (previousRow.getField("ISRECEIPT").equalsIgnoreCase("Y"))
+                FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
+                    amountSum.multiply(previousConvRate.getMultipleRateBy()).toString());
+              else
+                FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
+                    amountSum.multiply(previousConvRate.getMultipleRateBy()).negate().toString());
             }
             groupedData.add(previousRow);
           }
@@ -658,10 +682,17 @@ public class PaymentReportDao {
       }
 
       if (convRate != null) {
-        FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.toString());
-        FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
-            amountSum.multiply(convRate.getMultipleRateBy()).toString());
-        groupedData.add(previousRow);
+        if (isReceipt) {
+          FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.toString());
+          FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
+              amountSum.multiply(convRate.getMultipleRateBy()).toString());
+          groupedData.add(previousRow);
+        } else {
+          FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.negate().toString());
+          FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
+              amountSum.multiply(convRate.getMultipleRateBy()).negate().toString());
+          groupedData.add(previousRow);
+        }
       } else {
         FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.toString());
         FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.toString());
