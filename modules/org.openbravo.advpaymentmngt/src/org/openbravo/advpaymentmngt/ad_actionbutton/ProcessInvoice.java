@@ -219,6 +219,17 @@ public class ProcessInvoice extends HttpSecureAppServlet {
               }
               if (process)
                 FIN_AddPayment.processPayment(vars, this, "P", newPayment);
+
+              // Update Invoice's description
+              final StringBuffer invDesc = new StringBuffer();
+              if (invoice.getDescription() != null) {
+                invDesc.append(invoice.getDescription());
+                invDesc.append("\n");
+              }
+              invDesc.append(String.format(
+                  Utility.messageBD(this, "APRM_InvoiceDescUsedCredit", vars.getLanguage()),
+                  creditPayment.getIdentifier()));
+              invoice.setDescription(invDesc.toString());
             }
           }
         } catch (final Exception e) {
