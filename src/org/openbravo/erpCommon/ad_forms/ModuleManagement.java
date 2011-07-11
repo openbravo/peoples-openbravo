@@ -1985,7 +1985,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
     MaturityLevel levels = (MaturityLevel) vars.getSessionObject("SettingsModule|MaturityLevels");
     if (levels == null) {
       levels = new MaturityLevel();
-      vars.setSessionObject("SettingsModule|MaturityLevels", levels);
+      if (!levels.hasInternetError()) {
+        vars.setSessionObject("SettingsModule|MaturityLevels", levels);
+      }
     }
     String discard[] = { "", "" };
     OBError myMessage = null;

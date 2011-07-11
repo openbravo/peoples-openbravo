@@ -37,6 +37,7 @@ public class MaturityLevel {
   private String[][] levels;
   public final static int CS_MATURITY = 500;
   public final static int QA_APPR_MATURITY = 200;
+  private boolean error = false;
 
   /**
    * Calls central repository webservice to obtain the list of possible statuses. In case the
@@ -44,7 +45,7 @@ public class MaturityLevel {
    */
   public MaturityLevel() {
     // Check internet availability and set proxy, to obtain maturity levels
-    boolean error = !HttpsUtils.isInternetAvailable();
+    error = !HttpsUtils.isInternetAvailable();
     log4j.error("Couldn't connect to Internet to obtain maturity levels");
     try {
       // retrieve the module details from the webservice
@@ -111,5 +112,9 @@ public class MaturityLevel {
    */
   public String getMostMature() {
     return levels[levels.length - 1][1];
+  }
+
+  public boolean hasInternetError() {
+    return error;
   }
 }
