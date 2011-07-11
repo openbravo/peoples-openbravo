@@ -414,11 +414,13 @@ public class COAUtility {
     log4j.debug("insertAccountingSchema() - Acct.schema defaults correctly iserted.");
 
     log4j.debug("insertAccountingSchema() - Inserting Organization Accounting Schema record.");
-    OrganizationAcctSchema orgAcctSchema;
+    OrganizationAcctSchema orgAcctSchema = null;
+    if (organization != null && organization.getId() != "0") {
     try {
       orgAcctSchema = InitialSetupUtility.insertOrgAcctSchema(client, acctSchema, organization);
     } catch (Exception e) {
-      return logError("@CreateAccountingFailed@",
+        return logError(
+            "@CreateAccountingFailed@",
           "insertAccountingSchema() - Exception while creating organization - acct. schema entry",
           e);
     }
@@ -426,7 +428,7 @@ public class COAUtility {
     if (orgAcctSchema == null)
       return logError("@CreateAccountingFailed@",
           "insertAccountingSchema() - Exception while creating organization - acct. schema entry");
-
+    }
     return obeResult;
   }
 
