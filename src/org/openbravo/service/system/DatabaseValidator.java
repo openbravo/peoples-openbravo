@@ -211,10 +211,10 @@ public class DatabaseValidator implements SystemValidator {
       }
     }
     for (int i = 0; i < database.getTableCount(); i++) {
-      checkForeignKeys(database.getTable(i), result);
+      checkForeignKeys(validateModule, database.getTable(i), result);
     }
     for (int i = 0; i < database.getModifiedTableCount(); i++) {
-      checkForeignKeys(database.getModifiedTable(i), result);
+      checkForeignKeys(validateModule, database.getModifiedTable(i), result);
     }
 
     // only check this one if the global validate check is done
@@ -360,7 +360,8 @@ public class DatabaseValidator implements SystemValidator {
     return null;
   }
 
-  private void checkForeignKeys(org.apache.ddlutils.model.Table table, SystemValidationResult result) {
+  private void checkForeignKeys(Module module, org.apache.ddlutils.model.Table table,
+      SystemValidationResult result) {
     final Entity entity = ModelProvider.getInstance().getEntityByTableName(table.getName());
     if (entity == null) {
       // can happen with mismatches
@@ -386,6 +387,14 @@ public class DatabaseValidator implements SystemValidator {
 
         // ignore ad_audit_trail as fk's are omitted on purpose
         if (entity.getTableName().equalsIgnoreCase("ad_audit_trail")) {
+          continue;
+        }
+
+        // if the property doesn't belong to the module, then it shouldn't be checked, as the
+        // physical model will not contain it
+        if (module != null
+            && (property.getModule() == null || !module.getId()
+                .equals(property.getModule().getId()))) {
           continue;
         }
 
