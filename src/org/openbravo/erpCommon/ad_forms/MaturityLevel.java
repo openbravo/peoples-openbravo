@@ -114,7 +114,7 @@ public class MaturityLevel {
     return levels[levels.length - 1][1];
   }
 
-  public boolean hasInternetError() {
+  boolean hasInternetError() {
     return error;
   }
 }
