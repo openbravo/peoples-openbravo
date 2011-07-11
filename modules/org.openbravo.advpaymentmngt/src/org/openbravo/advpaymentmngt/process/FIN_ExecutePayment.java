@@ -137,14 +137,18 @@ public class FIN_ExecutePayment {
         }
         OBDal.getInstance().flush();
         return result;
-      } else
-        throw new NoExecutionProcessFoundException(
-            "No Execution Process has been found to execute the Payment");
+      } else {
+        OBError error = new OBError();
+        error.setType("Error");
+        error.setMessage("@NoExecutionProcessFound@");
+        return error;
+      }
     } catch (final Exception e) {
+      OBDal.getInstance().rollbackAndClose();
       e.printStackTrace(System.err);
       OBError error = new OBError();
       error.setType("Error");
-      error.setMessage("@IssueOnExecutionProcess@");
+      error.setMessage(e.getMessage());
       return error;
     }
   }
