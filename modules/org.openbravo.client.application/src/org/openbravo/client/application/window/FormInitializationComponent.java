@@ -430,6 +430,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
     List<String> changedCols = new ArrayList<String>();
     for (String col : allColumns) {
+      checkNamingCollisionWithAuxiliaryInput(tab, col);
       Field field = columnsOfFields.get(col);
       try {
         String columnId = field.getColumn().getId();
@@ -571,6 +572,17 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
       }
     }
+  }
+
+  private void checkNamingCollisionWithAuxiliaryInput(Tab tab, String col) {
+    List<AuxiliaryInput> auxIns = getAuxiliaryInputList(tab.getId());
+    for (AuxiliaryInput auxIn : auxIns) {
+      if (Sqlc.TransformaNombreColumna(col).equalsIgnoreCase(auxIn.getName())) {
+        log.error("Error: a column and an auxiliary input have the same name in " + tab
+            + ". This will lead to wrong computation of values for that column.");
+      }
+    }
+
   }
 
   private void subsequentComboReload(Tab tab, Map<String, JSONObject> columnValues,
