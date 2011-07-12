@@ -66,6 +66,11 @@ v_Line FIN_FINACC_TRANSACTION.LINE%TYPE;
 v_count NUMBER;
 v_PaymentPriority VARCHAR(32);
 v_creditmultiplier NUMBER:= 1;
+v_lang AD_User.Default_AD_Language%TYPE;
+v_orderno C_Order.DocumentNo%TYPE:=null;
+v_finpayment_desc FIN_Payment.Description%TYPE;
+v_orderno_trl AD_Message.MsgText%TYPE;
+v_invoiceno_trl AD_Message.MsgText%TYPE;
 
 
 TYPE RECORD IS REF CURSOR;
@@ -93,6 +98,9 @@ BEGIN
       p_result := cur_params.p_number;
     END IF;
   END LOOP;
+  
+  -- Default user's language
+  SELECT COALESCE(default_ad_language, 'en_US') INTO v_lang FROM ad_user where ad_user_id = p_user;
 
   -- Reading the invoice
   v_ResultStr:='ReadingInvoice';
@@ -495,16 +503,28 @@ BEGIN
       IF(v_Financial_Account_ID IS NOT NULL) THEN
         FOR cur_paymentschedule IN (
             SELECT ps.fin_paymentmethod_id, ps.duedate, ps.c_currency_id, ps.ad_org_id, ps.fin_payment_schedule_id,
-              coalesce(sum(psd.amount),0) as outstandingamt
+              coalesce(sum(psd.amount),0) as outstandingamt, psd.fin_payment_schedule_order
             FROM fin_payment_schedule ps
               INNER JOIN fin_payment_scheduledetail psd ON ps.fin_payment_schedule_id = psd.fin_payment_schedule_invoice
                                                            AND psd.fin_payment_detail_id is null
             WHERE ps.c_invoice_id = p_record_id
               AND ps.isactive = 'Y'
-            GROUP BY ps.fin_paymentmethod_id, ps.duedate, ps.c_currency_id, ps.ad_org_id, ps.fin_payment_schedule_id
+            GROUP BY ps.fin_paymentmethod_id, ps.duedate, ps.c_currency_id, ps.ad_org_id, ps.fin_payment_schedule_id, psd.fin_payment_schedule_order
             ORDER BY ps.duedate, ps.fin_payment_schedule_id
           )
         LOOP
+          -- Create FIN_Payment description
+          SELECT ad_message_get2('InvoiceDocumentno', v_lang) INTO v_invoiceno_trl FROM DUAL;
+          v_finpayment_desc:=v_invoiceno_trl || ': ' || v_documentno;          
+          SELECT MIN(o.DocumentNo) INTO v_orderno
+          FROM fin_payment_schedule ps INNER JOIN c_order o ON (o.C_Order_ID = ps.C_Order_ID) 
+          WHERE fin_payment_schedule_id=cur_paymentschedule.fin_payment_schedule_order;
+          IF (v_orderno IS NOT NULL) THEN
+            v_finpayment_desc:=v_finpayment_desc || chr(13);
+            SELECT ad_message_get2('OrderDocumentno', v_lang) INTO v_orderno_trl FROM DUAL;
+            v_finpayment_desc:=v_finpayment_desc || v_orderno_trl || ': ' || v_orderno;
+          END IF; 
+        
           FOR cur_finaccpaymentmethod IN (
               SELECT CASE WHEN v_IsSOTrx='Y' THEN AUTOMATIC_RECEIPT ELSE AUTOMATIC_PAYMENT END AS CreatePayment,
                 CASE WHEN v_IsSOTrx='Y' THEN AUTOMATIC_DEPOSIT ELSE AUTOMATIC_WITHDRAWN END AS CreateFinTransaction,
@@ -547,7 +567,7 @@ BEGIN
                   WHEN v_IsSOTrx = 'Y' THEN 'RPR'
                   ELSE 'PPM'
                 END,
-                'N', 'N', 'N', 'Invoice No.: ' || v_documentno,
+                'N', 'N', 'N', v_finpayment_desc,
                 v_Financial_Account_ID, v_PaymentDocType_ID, v_project_id, v_campaign_id,
                 v_activity_id, v_user1, v_user2, 'N', 'N', 'N');
               v_FIN_PAYMENT_DETAIL_ID := GET_UUID();
