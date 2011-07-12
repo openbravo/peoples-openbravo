@@ -41,6 +41,7 @@ isc.OBViewGrid.create({
           , changed: function(form, item, value) {
               this.Super('changed', arguments);
               form.onFieldChanged(form, item, value);
+              form.view.toolBar.refreshCustomButtonsView(form.view);
             }
           </#if>
           <#if field.firstFocusedField>

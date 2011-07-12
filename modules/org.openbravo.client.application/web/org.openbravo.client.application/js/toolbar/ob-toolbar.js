@@ -1093,6 +1093,21 @@ isc.OBToolbar.addProperties({
     }
   },
 
+  // ** {{{ refreshCustomButtonsView }}} **
+  //
+  // Refreshes all the custom buttons in the toolbar having contextView === view
+  // Used to update state of buttons dynamically on field change
+  //
+  refreshCustomButtonsView: function (view) {
+    var i;
+
+    for (i=0; i<this.rightMembers.length; i++) {
+      if (this.rightMembers[i].contextView === view) {
+        this.rightMembers[i].updateState(view.getCurrentValues());
+      }
+    }
+  },
+
   visibilityChanged: function(state){
     if (state) {
       this.enableShortcuts();
