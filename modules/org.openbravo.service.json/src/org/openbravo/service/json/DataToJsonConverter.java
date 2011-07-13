@@ -228,9 +228,21 @@ public class DataToJsonConverter {
       jsonObject.put(propertyName, obObject.getId());
     }
     // jsonObject.put(propertyName + "." + JsonConstants.ID, obObject.getId());
+
     if (referencingProperty != null && referencingProperty.hasDisplayColumn()) {
-      jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER,
-          obObject.get(referencingProperty.getDisplayPropertyName()));
+
+      Property displayColumnProperty = DalUtil.getPropertyFromPath(referencedProperty.getEntity(),
+          referencingProperty.getDisplayPropertyName());
+
+      if (displayColumnProperty.hasDisplayColumn()) {
+        // Allowing one level deep of displayed column pointing to references with display column
+        jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER, ((BaseOBObject) obObject
+            .get(referencingProperty.getDisplayPropertyName())).get(displayColumnProperty
+            .getDisplayPropertyName()));
+      } else {
+        jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER,
+            obObject.get(referencingProperty.getDisplayPropertyName()));
+      }
     } else {
       jsonObject.put(propertyName + "." + JsonConstants.IDENTIFIER, obObject.getIdentifier());
     }
