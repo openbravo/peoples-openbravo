@@ -77,6 +77,9 @@ BEGIN
 		FROM aprm_finacc_transaction_v
 		WHERE aprm_finacc_transaction_v_id = :OLD.aprm_finacc_transaction_v_id;
 	END IF;
+	IF(v_Posted='Y')
+		THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
+	END IF;
     END IF;
     IF DELETING THEN
 	IF :OLD.C_INVOICE_ID IS NOT NULL THEN
