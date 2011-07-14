@@ -72,6 +72,13 @@ public class ErrorTextParserTest extends BaseTest {
     doErrorTextParserTest(8);
   }
 
+  public void testPGSpanish() throws Exception {
+    // only test on pgsql, as specifically testing against es_ES/pgsql error messsage
+    if (getConnectionProvider().getRDBMS().equals("POSTGRE")) {
+      doErrorTextParserTestWithoutDB(1);
+    }
+  }
+
   private void doErrorTextParserTest(int testCase) throws Exception {
     ConnectionProvider conn = getConnectionProvider();
     VariablesSecureApp vars = new VariablesSecureApp("", "", "");
@@ -127,6 +134,24 @@ public class ErrorTextParserTest extends BaseTest {
     OBError trlError = Utility.translateError(conn, vars, "en_US", errorMessage);
 
     assertEquals(expectedErrorMessage, trlError.getMessage());
+  }
+
+  private void doErrorTextParserTestWithoutDB(int testCase) throws Exception {
+    String errorMessage = "";
+    String expectedMessage = "";
+    ConnectionProvider conn = getConnectionProvider();
+    VariablesSecureApp vars = new VariablesSecureApp("", "", "");
+
+    switch (testCase) {
+    case 1:
+      expectedMessage = "This record cannot be deleted because it is associated with other existing elements. Please see Linked Items";
+      errorMessage = "inserción o actualización en la tabla «c_bpartner» viola la llave foránea «c_bpartner_c_bp_group»";
+      break;
+    }
+
+    OBError trlError = Utility.translateError(conn, vars, "en_US", errorMessage);
+    assertEquals(expectedMessage, trlError.getMessage());
+
   }
 
 }

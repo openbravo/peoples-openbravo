@@ -35,6 +35,10 @@ import org.apache.log4j.Logger;
 // ERROR:  insert or update on table "ad_attachment" violates foreign key constraint "addatatype_adattachment"
 // DETAIL:  Key (ad_datatype_id)=() is not present in table "ad_datatype".
 
+// example for foreign key violation (with postgres using es_ES for error messages)
+// ERROR:  inserción o actualización en la tabla «c_bpartner» viola la llave foránea «c_bpartner_c_bp_group»
+// DETAIL:  La llave (c_bp_group_id)=(invalid) no está presente en la tabla «c_bp_group».
+
 // example for not null
 // ERROR:  null value in column "ad_org_id" violates not-null constraint
 
@@ -77,7 +81,7 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
    */
   private static String findConstraintName(String input) {
     log4j.debug("find constraint name in : " + input);
-    Pattern p = Pattern.compile("\".+?\"");
+    Pattern p = Pattern.compile("\".+?\"|«.+?»");
     Matcher m = p.matcher(input);
     if (!m.find()) {
       log4j.info("did not find constraint name for error message: " + input);
