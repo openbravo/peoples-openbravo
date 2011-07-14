@@ -382,8 +382,10 @@ isc.OBMyOpenbravo.addProperties({
               icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.Report;
             } else if (recent.icon === 'Form') {
               icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.Form;
-            } else {
+            } else if (recent.icon === 'Window') {
               icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.Window;
+            } else {
+              icon = recent.icon; // icon is already a path
             }
           } else {
             icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.Window;
