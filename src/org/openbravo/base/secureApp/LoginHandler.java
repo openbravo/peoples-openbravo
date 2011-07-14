@@ -74,6 +74,12 @@ public class LoginHandler extends HttpBaseServlet {
 
     final String strUser = vars.getStringParameter("user");
 
+    // When redirect parameter is true, instead of returning a json object with the login result and
+    // target, a redirect to the application or error page is done.
+    String strRedirect = vars.getStringParameter("redirect");
+    boolean doRedirect = strRedirect != null && !strRedirect.isEmpty()
+        && strRedirect.equalsIgnoreCase("true");
+
     OBContext.setAdminMode();
     try {
       Client systemClient = OBDal.getInstance().get(Client.class, "0");
@@ -96,7 +102,7 @@ public class LoginHandler extends HttpBaseServlet {
           // no the rest of session info: client, org, role...
           session.setAttribute("#LOGGINGIN", "Y");
           log4j.debug("Correct user/password. Username: " + strUser + " - Session ID:" + sessionId);
-          checkLicenseAndGo(res, vars, strUserAuth, sessionId);
+          checkLicenseAndGo(res, vars, strUserAuth, sessionId, doRedirect);
         } else {
           // strUserAuth can be null because a failed user/password or because the user is locked
           String failureTitle;
@@ -112,7 +118,8 @@ public class LoginHandler extends HttpBaseServlet {
             log4j.debug(strUser + " is locked cannot activate session ID " + sessionId);
             updateDBSession(sessionId, false, "LU");
           }
-          goToRetry(res, vars, failureMessage, failureTitle, "Error", "../security/Login_FS.html");
+          goToRetry(res, vars, failureMessage, failureTitle, "Error", "../security/Login_FS.html",
+              doRedirect);
         }
       }
     } finally {
@@ -147,7 +154,8 @@ public class LoginHandler extends HttpBaseServlet {
   }
 
   private void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars,
-      String strUserAuth, String sessionId) throws IOException, ServletException {
+      String strUserAuth, String sessionId, boolean doRedirect) throws IOException,
+      ServletException {
     OBContext.setAdminMode();
     try {
       ActivationKey ak = ActivationKey.getInstance();
@@ -178,7 +186,7 @@ public class LoginHandler extends HttpBaseServlet {
             vars.getLanguage());
         log4j.warn("Concurrent Users Reached - Session: " + sessionId);
         updateDBSession(sessionId, msgType.equals("Warning"), "CUR");
-        goToRetry(res, vars, msg, title, msgType, action);
+        goToRetry(res, vars, msg, title, msgType, action, doRedirect);
         return;
       case NUMBER_OF_SOFT_USERS_REACHED:
         msg = Utility.messageBD(myPool, "NUMBER_OF_SOFT_USERS_REACHED", vars.getLanguage());
@@ -187,14 +195,14 @@ public class LoginHandler extends HttpBaseServlet {
         msgType = "Warning";
         log4j.warn("Soft Users Reached - Session: " + sessionId);
         updateDBSession(sessionId, true, "SUR");
-        goToRetry(res, vars, msg, title, msgType, action);
+        goToRetry(res, vars, msg, title, msgType, action, doRedirect);
         return;
       case OPS_INSTANCE_NOT_ACTIVE:
         msg = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE", vars.getLanguage());
         title = Utility.messageBD(myPool, "OPS_INSTANCE_NOT_ACTIVE_TITLE", vars.getLanguage());
         log4j.warn("Innactive OBPS instance - Session: " + sessionId);
         updateDBSession(sessionId, msgType.equals("Warning"), "IOBPS");
-        goToRetry(res, vars, msg, title, msgType, action);
+        goToRetry(res, vars, msg, title, msgType, action, doRedirect);
         return;
       case MODULE_EXPIRED:
         msg = Utility.messageBD(myPool, "OPS_MODULE_EXPIRED", vars.getLanguage());
@@ -207,7 +215,7 @@ public class LoginHandler extends HttpBaseServlet {
         }
         msg += expiredMoudules.toString();
         updateDBSession(sessionId, msgType.equals("Warning"), "ME");
-        goToRetry(res, vars, msg, title, msgType, action);
+        goToRetry(res, vars, msg, title, msgType, action, doRedirect);
         return;
       }
 
@@ -222,18 +230,18 @@ public class LoginHandler extends HttpBaseServlet {
         String title = Utility.messageBD(myPool, "TOMCAT_NOT_RESTARTED_TITLE", vars.getLanguage());
         log4j.warn("Tomcat not restarted");
         updateDBSession(sessionId, true, "RT");
-        goToRetry(res, vars, msg, title, "Warning", "../security/Menu.html");
+        goToRetry(res, vars, msg, title, "Warning", "../security/Menu.html", doRedirect);
         return;
       } else {
         String msg = Utility.messageBD(myPool, "LAST_BUILD_FAILED", vars.getLanguage());
         String title = Utility.messageBD(myPool, "LAST_BUILD_FAILED_TITLE", vars.getLanguage());
         updateDBSession(sessionId, msgType.equals("Warning"), "LBF");
-        goToRetry(res, vars, msg, title, msgType, action);
+        goToRetry(res, vars, msg, title, msgType, action, doRedirect);
         return;
       }
 
       // All checks passed successfully, continue logging in
-      goToTarget(res, vars);
+      goToTarget(res, vars, doRedirect);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -255,7 +263,7 @@ public class LoginHandler extends HttpBaseServlet {
 
   }
 
-  private void goToTarget(HttpServletResponse response, VariablesSecureApp vars)
+  private void goToTarget(HttpServletResponse response, VariablesSecureApp vars, boolean doRedirect)
       throws IOException, ServletException {
 
     String target = vars.getSessionValue("target");
@@ -263,7 +271,7 @@ public class LoginHandler extends HttpBaseServlet {
       target = strDireccion + "/security/Menu.html";
     }
 
-    if (OBVersion.getInstance().is30()) {
+    if (OBVersion.getInstance().is30() && !doRedirect) {
       // 3.0 instances return a json object with the target to redirect to
       try {
         JSONObject jsonResult = new JSONObject();
@@ -285,11 +293,12 @@ public class LoginHandler extends HttpBaseServlet {
   }
 
   private void goToRetry(HttpServletResponse response, VariablesSecureApp vars, String message,
-      String title, String msgType, String action) throws IOException, ServletException {
+      String title, String msgType, String action, boolean doRedirect) throws IOException,
+      ServletException {
     String msg = (message != null && !message.equals("")) ? message
         : "Please enter your username and password.";
 
-    if (OBVersion.getInstance().is30()) {
+    if (OBVersion.getInstance().is30() && !doRedirect) {
       // 3.0 instances show the message in the same login window, return a json object with the info
       // to print the message
       try {
