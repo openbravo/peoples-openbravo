@@ -875,10 +875,18 @@ public class ActivationKey {
    * @return the status for the commercial module passed as parameter
    */
   public CommercialModuleStatus isModuleSubscribed(String moduleId) {
+    return isModuleSubscribed(moduleId, true);
+  }
+
+  private CommercialModuleStatus isModuleSubscribed(String moduleId, boolean refreshIfNeeded) {
     HashMap<String, CommercialModuleStatus> moduleList = getSubscribedModules();
 
     if (!moduleList.containsKey(moduleId)) {
       log4j.debug("Module " + moduleId + " is not in the list of subscribed modules");
+
+      if (!refreshIfNeeded) {
+        return CommercialModuleStatus.NO_SUBSCRIBED;
+      }
 
       Date timeToRefresh = null;
       if (lastRefreshTime != null) {
@@ -1036,6 +1044,10 @@ public class ActivationKey {
    * @return List of non allowed modules
    */
   public String verifyInstalledModules() {
+    return verifyInstalledModules(true);
+  }
+
+  String verifyInstalledModules(boolean refreshIfneeded) {
     String rt = "";
 
     OBContext.setAdminMode();
@@ -1047,7 +1059,7 @@ public class ActivationKey {
       mods.add(Restrictions.eq(Module.PROPERTY_INDEVELOPMENT, false));
       mods.addOrder(Order.asc(Module.PROPERTY_NAME));
       for (Module mod : mods.list()) {
-        if (isModuleSubscribed(mod.getId()) == CommercialModuleStatus.NO_SUBSCRIBED) {
+        if (isModuleSubscribed(mod.getId(), refreshIfneeded) == CommercialModuleStatus.NO_SUBSCRIBED) {
           rt += (rt.isEmpty() ? "" : ", ") + mod.getName();
         }
       }

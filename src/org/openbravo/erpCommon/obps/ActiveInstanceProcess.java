@@ -70,7 +70,7 @@ public class ActiveInstanceProcess implements Process {
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
       sysInfo.setInstancePurpose(purpose);
       ActivationKey ak = new ActivationKey(publicKey, result[1]);
-      String nonAllowedMods = ak.verifyInstalledModules();
+      String nonAllowedMods = ak.verifyInstalledModules(false);
       if (!nonAllowedMods.isEmpty()) {
         msg.setType("Error");
         msg.setMessage("@LicenseWithoutAccessTo@ " + nonAllowedMods);
