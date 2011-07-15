@@ -183,14 +183,19 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     boolean hasFilter = false;
     List<SelectorField> fields = OBDao.getActiveOBObjectList(sel,
         Selector.PROPERTY_OBUISELSELECTORFIELDLIST);
-    HashMap<String, String> criteria = getCriteria(parameters);
+    HashMap<String, String[]> criteria = getCriteria(parameters);
     for (SelectorField field : fields) {
       if (StringUtils.isEmpty(field.getClauseLeftPart())) {
         continue;
       }
+      String operator = null;
       String value = null;
       if (criteria != null) {
-        value = criteria.get(field.getDisplayColumnAlias());
+        String[] operatorvalue = criteria.get(field.getDisplayColumnAlias());
+        if (operatorvalue != null) {
+          operator = operatorvalue[0];
+          value = operatorvalue[1];
+        }
       }
       if (StringUtils.isEmpty(value)) {
         value = parameters.get(field.getDisplayColumnAlias());
@@ -208,14 +213,15 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
           }
           if (StringUtils.isNotEmpty(defaultValue)) {
             defaultExpressionsFilter.append(NEW_FILTER_CLAUSE);
-            defaultExpressionsFilter.append(getWhereClause(defaultValue, field, xmlDateFormat));
+            defaultExpressionsFilter.append(getWhereClause(operator, defaultValue, field,
+                xmlDateFormat));
           }
         } catch (Exception e) {
           log.error("Error evaluating filter expression: " + e.getMessage(), e);
         }
       }
       if (field.isFilterable() && StringUtils.isNotEmpty(value)) {
-        String whereClause = getWhereClause(value, field, xmlDateFormat);
+        String whereClause = getWhereClause(operator, value, field, xmlDateFormat);
         if (!hasFilter) {
           additionalFilter.append(NEW_FILTER_CLAUSE);
           additionalFilter.append(" (");
@@ -299,7 +305,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    *          SimpleDateFormat to parse the value in case the field is a Date field.
    * @return a String with the HQL where clause to filter the field by the given value.
    */
-  private String getWhereClause(String value, SelectorField field, SimpleDateFormat xmlDateFormat) {
+  private String getWhereClause(String operator, String value, SelectorField field,
+      SimpleDateFormat xmlDateFormat) {
     String whereClause = "";
     DomainType domainType = ModelProvider.getInstance().getReference(field.getReference().getId())
         .getDomainType();
@@ -328,9 +335,14 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       // Assume left part definition is full object reference from HQL select
       whereClause = field.getClauseLeftPart() + ".id = '" + value + "'";
     } else {
-      whereClause = "lower(" + field.getClauseLeftPart() + ")";
-      whereClause += " LIKE ";
-      whereClause += "'%" + value.toLowerCase().replaceAll(" ", "%") + "%'";
+
+      if ("iStartsWith".equals(operator)) {
+        whereClause = "lower(" + field.getClauseLeftPart() + ") LIKE '"
+            + value.toLowerCase().replaceAll(" ", "%") + "%'";
+      } else {
+        whereClause = "lower(" + field.getClauseLeftPart() + ") LIKE '%"
+            + value.toLowerCase().replaceAll(" ", "%") + "%'";
+      }
     }
     return whereClause;
   }
@@ -444,16 +456,17 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     return 0;
   }
 
-  private HashMap<String, String> getCriteria(Map<String, String> parameters) {
+  private HashMap<String, String[]> getCriteria(Map<String, String> parameters) {
     if (!"AdvancedCriteria".equals(parameters.get("_constructor"))) {
       return null;
     }
-    HashMap<String, String> criteriaValues = new HashMap<String, String>();
+    HashMap<String, String[]> criteriaValues = new HashMap<String, String[]>();
     try {
       JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
       for (int i = 0; i < criterias.length(); i++) {
         final JSONObject criteria = criterias.getJSONObject(i);
-        criteriaValues.put(criteria.getString("fieldName"), criteria.getString("value"));
+        criteriaValues.put(criteria.getString("fieldName"),
+            new String[] { criteria.getString("operator"), criteria.getString("value") });
       }
     } catch (JSONException e) {
       // Ignore exception.

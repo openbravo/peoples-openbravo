@@ -67,7 +67,8 @@ isc.OBSelectorPopupWindow.addProperties({
       }
       // override the operator on the grid field level
       if (this.selectorGridFields[i].operator === 'iContains' || !this.selectorGridFields[i].operator) {
-        this.selectorGridFields[i].operator = operator; 
+        this.selectorGridFields[i].operator = operator;
+        this.selectorGridFields[i].filterEditorProperties.operator = operator;
       }
     }
     
