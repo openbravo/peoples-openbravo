@@ -20,6 +20,7 @@
 package org.openbravo.advpaymentmngt.utility;
 
 import java.math.BigDecimal;
+import java.security.InvalidParameterException;
 import java.sql.BatchUpdateException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -57,6 +58,7 @@ import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
@@ -928,6 +930,42 @@ public class FIN_Utility {
       amountFormatter = new DecimalFormat("#0.00", dfs);
     }
     return amountFormatter.format(number);
+  }
+
+  /**
+   * Returns either the Invoice's Document Number or the Invoice's Supplier Reference based on the
+   * Organization's configuration. In case the Supplier Reference is empty, the invoice's document
+   * number is returned
+   * 
+   * @param organization
+   *          to get its configuration. In case no configuration is available, the invoice's
+   *          document number is returned
+   * @param invoice
+   * @return
+   */
+  public static String getDesiredDocumentNo(final Organization organization, final Invoice invoice) {
+    String invoiceDocNo;
+    try {
+      final String paymentDescription = organization.getOrganizationInformationList().get(0)
+          .getAPRMPaymentDescription();
+      if (paymentDescription.equals("Invoice Document Number")) {
+        invoiceDocNo = invoice.getDocumentNo();
+      } else if (paymentDescription.equals("Supplier Reference")) {
+        invoiceDocNo = invoice.getOrderReference();
+        if (invoiceDocNo.length() == 0) {
+          invoiceDocNo = invoice.getDocumentNo();
+        }
+      } else {
+        throw new InvalidParameterException(
+            "Not supported parameter: "
+                + paymentDescription
+                + ". Review Payment description reference. Possible values are: 'Invoice Document Number' and 'Supplier Reference'.");
+      }
+    } catch (Exception e) {
+      invoiceDocNo = invoice.getDocumentNo();
+    }
+
+    return invoiceDocNo;
   }
 
 }

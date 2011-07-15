@@ -47,6 +47,7 @@ v_DateInvoiced DATE;
 v_TotalLines NUMBER;
 v_PaymentMethod C_INVOICE.FIN_PAYMENTMETHOD_ID%TYPE;
 v_documentno C_INVOICE.DocumentNo%TYPE;
+v_poreference C_INVOICE.POReference%TYPE;
 v_project_id c_invoice.c_project_id%TYPE;
 v_campaign_id c_invoice.c_campaign_id%TYPE;
 v_activity_id c_invoice.c_activity_id%TYPE;
@@ -71,6 +72,7 @@ v_orderno C_Order.DocumentNo%TYPE:=null;
 v_finpayment_desc FIN_Payment.Description%TYPE;
 v_orderno_trl AD_Message.MsgText%TYPE;
 v_invoiceno_trl AD_Message.MsgText%TYPE;
+v_payment_desc AD_OrgInfo.em_aprm_payment_desc%TYPE;
 
 
 TYPE RECORD IS REF CURSOR;
@@ -107,12 +109,12 @@ BEGIN
   SELECT ad_client_id, ad_org_id, c_doctypetarget_id, IsSOTrx,
       grandtotal, C_PaymentTerm_ID, PaymentRule, C_Currency_ID,
       C_BPartner_ID, DateInvoiced, totallines, fin_paymentmethod_id,
-      fin_payment_priority_id, documentNo,
+      fin_payment_priority_id, documentNo, poreference,
       c_project_id, c_campaign_id, c_activity_id, user1_id, user2_id
   INTO v_Client_ID, v_Org_ID, v_DocTypeTarget_ID, v_IsSOTrx,
       v_GrandTotal, v_PaymentTerm, v_PaymentRule, v_Currency_ID,
       v_BPartner_ID, v_DateInvoiced, v_totallines, v_PaymentMethod,
-      v_PaymentPriority, v_documentno,
+      v_PaymentPriority, v_documentno, v_poreference,
       v_project_id, v_campaign_id, v_activity_id, v_user1, v_user2
   FROM c_invoice
   WHERE c_invoice_id=p_record_id;
@@ -501,6 +503,16 @@ BEGIN
       FROM C_BPARTNER
       WHERE C_BPARTNER_ID = v_BPartner_ID;
       IF(v_Financial_Account_ID IS NOT NULL) THEN
+        SELECT MIN(em_aprm_payment_desc) INTO v_payment_desc
+        FROM ad_orginfo
+        WHERE ad_org_id = v_Org_ID
+        AND isactive = 'Y';
+        
+        IF (v_payment_desc IS NOT NULL AND v_payment_desc='Supplier Reference' 
+            AND coalesce(length(v_poreference), 0)>0) THEN
+          v_documentno := v_poreference;
+        END IF;
+        
         FOR cur_paymentschedule IN (
             SELECT ps.fin_paymentmethod_id, ps.duedate, ps.c_currency_id, ps.ad_org_id, ps.fin_payment_schedule_id,
               coalesce(sum(psd.amount),0) as outstandingamt, psd.fin_payment_schedule_order

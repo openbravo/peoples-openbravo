@@ -38,6 +38,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
@@ -120,8 +121,10 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                 writeoff = BigDecimal.ZERO;
               paymentWriteOfAmount = paymentWriteOfAmount.add(writeoff);
               if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
-                invoiceDocNos.add(paymentScheduleDetail.getInvoicePaymentSchedule().getInvoice()
-                    .getDocumentNo());
+                final Invoice invoice = paymentScheduleDetail.getInvoicePaymentSchedule()
+                    .getInvoice();
+                invoiceDocNos.add(FIN_Utility.getDesiredDocumentNo(payment.getOrganization(),
+                    invoice));
               }
               if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
                 orderDocNos.add(paymentScheduleDetail.getOrderPaymentSchedule().getOrder()
