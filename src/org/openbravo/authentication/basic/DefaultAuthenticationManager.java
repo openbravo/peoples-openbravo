@@ -73,28 +73,28 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
        */
       VariablesHistory variables = new VariablesHistory(request);
 
-      // redirects to the menu or the menu with the target
-      String strTarget = request.getRequestURL().toString();
-      if (!strTarget.endsWith("/security/Menu.html")) {
-        variables.setSessionValue("targetmenu", strTarget);
-      }
-
-      String qString = request.getQueryString();
-
-      String strDireccionLocal = HttpBaseUtils.getLocalAddress(request);
-
-      // Storing target string to redirect after a successful login
-      variables.setSessionValue("target", strDireccionLocal + "/security/Menu.html"
-          + (qString != null && !qString.equals("") ? "?" + qString : ""));
-      if (qString != null && !qString.equals("")) {
-        variables.setSessionValue("targetQueryString", qString);
-      }
-
-      if (strAjax != null && !strAjax.equals(""))
+      if (strAjax != null && !strAjax.equals("")) {
         bdErrorAjax(response, "Error", "",
             Utility.messageBD(this.conn, "NotLogged", variables.getLanguage()));
-      else
+      } else {
+        // redirects to the menu or the menu with the target
+        String strTarget = request.getRequestURL().toString();
+        if (!strTarget.endsWith("/security/Menu.html")) {
+          variables.setSessionValue("targetmenu", strTarget);
+        }
+
+        String qString = request.getQueryString();
+
+        String strDireccionLocal = HttpBaseUtils.getLocalAddress(request);
+
+        // Storing target string to redirect after a successful login
+        variables.setSessionValue("target", strDireccionLocal + "/security/Menu.html"
+            + (qString != null && !qString.equals("") ? "?" + qString : ""));
+        if (qString != null && !qString.equals("")) {
+          variables.setSessionValue("targetQueryString", qString);
+        }
         response.sendRedirect(strDireccionLocal + strServletSinIdentificar);
+      }
       return null;
     } else {
       return sUserId;
