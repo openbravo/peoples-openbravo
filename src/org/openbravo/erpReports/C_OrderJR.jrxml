@@ -72,7 +72,7 @@ C_LOCATION_DESCRIPTION(AD_ORGINFO.C_LOCATION_ID) AS LOCATION,  AD_ORG.ad_org_id 
 COALESCE(TO_CHAR(ADDRESS1), '') || CASE WHEN ADDRESS1 IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(POSTAL), '') || CASE WHEN POSTAL IS null THEN '' ELSE CHR(13) END ||
 COALESCE(TO_CHAR(C_BPARTNER_LOCATION.PHONE), '') || CASE WHEN C_BPARTNER_LOCATION.PHONE IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(C_BPARTNER_LOCATION.FAX), '') ||
 CASE WHEN C_BPARTNER_LOCATION.FAX IS null THEN '' ELSE CHR(13) END) AS BP_DATA, AD_ORGINFO.TAXID AS ORG_TAXID, SHOWLOGO, SHOWCOMPANYDATA, HEADERMARGIN,
-AD_ORG.NAME AS ORG_NAME, DELIVERYRULE.NAME AS DELIVERYTERM, PAYMENTTERM.TERM AS PAYMENTTERM, C_POC_DOCTYPE_TEMPLATE.NAME AS DOC_TYPE
+AD_ORG.NAME AS ORG_NAME, DELIVERYRULE.NAME AS DELIVERYTERM, PAYMENTTERM.TERM AS PAYMENTTERM, C_POC_DOCTYPE_TEMPLATE.NAME AS DOC_TYPE, C_CURRENCY.ISO_CODE as CURRENCY_ISO
 FROM C_BPARTNER_LOCATION left join C_LOCATION L on C_BPARTNER_LOCATION.C_LOCATION_ID = L.C_LOCATION_ID
 			 left join  C_REGION R on L.C_REGION_ID = R.C_REGION_ID,
      AD_USER right join C_ORDER on AD_USER.AD_USER_ID = C_ORDER.AD_USER_ID
@@ -84,7 +84,7 @@ C_BPARTNER, AD_ORGINFO, AD_CLIENT, AD_ORG,
           AND AD_LANGUAGE IN ($P{LANGUAGE})) DELIVERYRULE, 
    (SELECT C_PAYMENTTERM.C_PAYMENTTERM_ID, COALESCE( C_PAYMENTTERM_TRL.NAME, C_PAYMENTTERM.NAME) AS TERM 
     FROM C_PAYMENTTERM LEFT JOIN C_PAYMENTTERM_TRL ON C_PAYMENTTERM.C_PAYMENTTERM_ID = C_PAYMENTTERM_TRL.C_PAYMENTTERM_ID 
-          AND C_PAYMENTTERM_TRL.AD_LANGUAGE IN ($P{LANGUAGE})) PAYMENTTERM 
+          AND C_PAYMENTTERM_TRL.AD_LANGUAGE IN ($P{LANGUAGE})) PAYMENTTERM, C_CURRENCY 
 WHERE C_ORDER.C_BPARTNER_LOCATION_ID = C_BPARTNER_LOCATION.C_BPARTNER_LOCATION_ID
 AND C_ORDER.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID 
 AND AD_ORG.ad_org_id = AD_ORGINFO.ad_org_id
@@ -94,7 +94,8 @@ AND (t.IsLegalEntity='Y' OR t.IsAcctLegalEntity='Y'))
 AND C_ORDER.AD_CLIENT_ID = AD_CLIENT.AD_CLIENT_ID
 AND C_ORDER.C_ORDER_ID IN ($P{DOCUMENT_ID})
 AND C_ORDER.DELIVERYRULE = DELIVERYRULE.VALUE  
-AND C_ORDER.C_PAYMENTTERM_ID = PAYMENTTERM.C_PAYMENTTERM_ID]]>
+AND C_ORDER.C_PAYMENTTERM_ID = PAYMENTTERM.C_PAYMENTTERM_ID
+AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 	</queryString>
 	<field name="C_ORDER_ID" class="java.lang.String"/>
 	<field name="NAME" class="java.lang.String"/>
@@ -119,6 +120,7 @@ AND C_ORDER.C_PAYMENTTERM_ID = PAYMENTTERM.C_PAYMENTTERM_ID]]>
 	<field name="DELIVERYTERM" class="java.lang.String"/>
 	<field name="PAYMENTTERM" class="java.lang.String"/>
 	<field name="DOC_TYPE" class="java.lang.String"/>
+	<field name="CURRENCY_ISO" class="java.lang.String"/>
 	<group name="PrintLarge" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[]]></groupExpression>
 		<groupHeader>
@@ -232,13 +234,48 @@ AND C_ORDER.C_PAYMENTTERM_ID = PAYMENTTERM.C_PAYMENTTERM_ID]]>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression class="java.lang.String"><![CDATA[($F{LOCATION}==null ? $F{ORG_NAME} + "\n" + $F{ORG_TAXID} + "\n" : $F{ORG_NAME} + "\n" + $F{ORG_TAXID} + "\n" + $F{LOCATION})]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement key="staticText-11" style="Group_Data_Label" x="210" y="214" width="150" height="18" forecolor="#999999" backcolor="#FFFFFF"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font size="11" isBold="true" pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Currency]]></text>
+				</staticText>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-23" x="0" y="6" width="250" height="37"/>
+					<reportElement key="textField-24" x="210" y="234" width="150" height="20"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{CURRENCY_ISO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-12" x="0" y="6" width="310" height="37">
+						<printWhenExpression><![CDATA[new Boolean($F{DOC_TYPE}.equalsIgnoreCase("Purchase Order Report template"))]]></printWhenExpression>
+					</reportElement>
 					<textElement>
 						<font size="26"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($F{DOC_TYPE}.equalsIgnoreCase("Purchase Order Report template")) == true ? "PURCHASE ORDER" : "SALES ORDER"]]></textFieldExpression>
-				</textField>
+					<text><![CDATA[PURCHASE ORDER]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-13" x="0" y="6" width="310" height="37">
+						<printWhenExpression><![CDATA[new Boolean($F{DOC_TYPE}.equalsIgnoreCase("Purchase Order Report template") == false)]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font size="26"/>
+					</textElement>
+					<text><![CDATA[SALES ORDER]]></text>
+				</staticText>
 			</band>
 		</groupHeader>
 		<groupFooter>

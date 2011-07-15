@@ -125,7 +125,7 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 					<textElement textAlignment="Right" verticalAlignment="Top">
 						<font isBold="false"/>
 					</textElement>
-					<text><![CDATA[QUANTITY ]]></text>
+					<text><![CDATA[QUANTITY]]></text>
 				</staticText>
 				<staticText>
 					<reportElement key="element-6" style="Detail_Header" x="278" y="0" width="50" height="16"/>
@@ -141,8 +141,8 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 					</textElement>
 					<text><![CDATA[UOM]]></text>
 				</staticText>
-				<textField isBlankWhenNull="false">
-					<reportElement key="textField-9" style="Detail_Header" x="399" y="0" width="83" height="16"/>
+				<staticText>
+					<reportElement key="staticText-1" style="Detail_Header" x="399" y="0" width="83" height="16"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0"/>
@@ -151,10 +151,10 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font isBold="false"/>
+						<font isBold="false" pdfFontName="Helvetica"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["PRICE(" + $P{ISO_CODE} + ")"]]></textFieldExpression>
-				</textField>
+					<text><![CDATA[PRICE]]></text>
+				</staticText>
 			</band>
 		</groupHeader>
 		<groupFooter>
@@ -165,19 +165,6 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 						<pen lineWidth="0.25" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
-				<textField isBlankWhenNull="false">
-					<reportElement key="textField-8" x="295" y="5" width="106" height="16"/>
-					<box leftPadding="5">
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="10"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["TOTAL (" + $P{ISO_CODE} + "): "]]></textFieldExpression>
-				</textField>
 				<textField pattern="" isBlankWhenNull="false">
 					<reportElement key="textField" style="Total_Gray" x="400" y="5" width="82" height="16"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
@@ -204,6 +191,14 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 				<line>
 					<reportElement key="line-13" style="Report_Footer" x="0" y="0" width="482" height="1"/>
 				</line>
+				<staticText>
+					<reportElement key="staticText-2" style="Report_Footer" x="295" y="5" width="106" height="16"/>
+					<box leftPadding="2"/>
+					<textElement textAlignment="Left">
+						<font size="10"/>
+					</textElement>
+					<text><![CDATA[TOTAL]]></text>
+				</staticText>
 			</band>
 		</groupFooter>
 	</group>

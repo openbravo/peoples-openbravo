@@ -66,7 +66,7 @@ C_PAYMENTTERM.NAME AS PAYTERM, AD_ORGINFO.ad_org_id AS ORGANIZATIONID, C_INVOICE
 C_BPARTNER.TAXID AS BP_TAXID, (COALESCE(TO_CHAR(AD_USER.NAME), '') || CASE WHEN AD_USER.NAME IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(C_BPARTNER.TAXID), '') || CASE WHEN C_BPARTNER.TAXID IS null THEN '' ELSE CHR(13) END ||
 COALESCE(TO_CHAR(ADDRESS1), '') || CASE WHEN ADDRESS1 IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(POSTAL), '') || CASE WHEN POSTAL IS null THEN '' ELSE CHR(13) END ||
 COALESCE(TO_CHAR(C_BPARTNER_LOCATION.PHONE), '') || CASE WHEN C_BPARTNER_LOCATION.PHONE IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(C_BPARTNER_LOCATION.FAX), '') ||
-CASE WHEN C_BPARTNER_LOCATION.FAX IS null THEN '' ELSE CHR(13) END) AS BP_DATA, SHOWLOGO, SHOWCOMPANYDATA, HEADERMARGIN
+CASE WHEN C_BPARTNER_LOCATION.FAX IS null THEN '' ELSE CHR(13) END) AS BP_DATA, SHOWLOGO, SHOWCOMPANYDATA, HEADERMARGIN, ISSOTRX
 FROM C_INVOICE LEFT JOIN C_BPARTNER ON C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
 	 LEFT JOIN AD_USER ON C_INVOICE.AD_USER_ID = AD_USER.AD_USER_ID
 	 LEFT JOIN C_BPARTNER_LOCATION ON C_INVOICE.C_BPARTNER_LOCATION_ID = C_BPARTNER_LOCATION.C_BPARTNER_LOCATION_ID
@@ -113,6 +113,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 	<field name="SHOWLOGO" class="java.lang.String"/>
 	<field name="SHOWCOMPANYDATA" class="java.lang.String"/>
 	<field name="HEADERMARGIN" class="java.lang.String"/>
+	<field name="ISSOTRX" class="java.lang.String"/>
 	<variable name="TOTAL_LINENETAMT" class="java.math.BigDecimal" resetType="Group" resetGroup="C_INVOICE_ID"/>
 	<variable name="TOTAL_TAXAMT" class="java.math.BigDecimal" resetType="Group" resetGroup="C_INVOICE_ID"/>
 	<variable name="SHOWLOGO" class="java.lang.String"/>
@@ -209,19 +210,6 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 				<line>
 					<reportElement key="line-35" style="Detail_Data_Field" x="1" y="234" width="482" height="1"/>
 				</line>
-				<textField pattern="" isBlankWhenNull="false">
-					<reportElement key="textField" x="0" y="6" width="305" height="37"/>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement>
-						<font size="26"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{DOCUMENT_NAME}.toUpperCase()]]></textFieldExpression>
-				</textField>
 				<image scaleImage="RetainShape" hAlign="Right" vAlign="Top" isUsingCache="true">
 					<reportElement key="image-1" style="Report_Footer" x="306" y="0" width="176" height="91">
 						<printWhenExpression><![CDATA[new Boolean($F{SHOWLOGO}.equalsIgnoreCase("Y"))]]></printWhenExpression>
@@ -263,19 +251,54 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[($F{LOCATION}==null ? $F{ORG_NAME} + "\n" + $F{ORG_TAXID} + "\n" : $F{ORG_NAME} + "\n" + $F{ORG_TAXID} + "\n" + $F{LOCATION})]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement key="element-92" style="Group_Data_Label" mode="Transparent" x="210" y="217" width="149" height="18" forecolor="#999999" backcolor="#FFFFFF"/>
+					<box leftPadding="5" rightPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left">
+						<font pdfFontName="Helvetica"/>
+					</textElement>
+					<text><![CDATA[Currency]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-16" style="Group_Data_Field" x="210" y="235" width="149" height="18"/>
+					<box topPadding="2" leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left">
+						<font size="10" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{CURRENCY_CODE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-15" style="Report_Footer" x="0" y="6" width="310" height="37">
+						<printWhenExpression><![CDATA[new Boolean($F{ISSOTRX}.equalsIgnoreCase("N"))]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font size="26"/>
+					</textElement>
+					<text><![CDATA[PURCHASE INVOICE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-16" style="Report_Footer" x="0" y="6" width="310" height="37">
+						<printWhenExpression><![CDATA[new Boolean($F{ISSOTRX}.equalsIgnoreCase("Y"))]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font size="26"/>
+					</textElement>
+					<text><![CDATA[SALES INVOICE]]></text>
+				</staticText>
 			</band>
 		</groupHeader>
 		<groupFooter>
 			<band height="72" splitType="Stretch">
-				<textField isBlankWhenNull="false">
-					<reportElement key="textField-4" style="Report_Footer" x="316" y="25" width="84" height="17"/>
-					<box>
-						<bottomPen lineWidth="0.0" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.String"><![CDATA[" TOTAL (" + $F{CURRENCY_CODE}.toString() + "): "]]></textFieldExpression>
-				</textField>
 				<textField evaluationTime="Group" evaluationGroup="C_INVOICE_ID" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="Total_Gray" x="400" y="25" width="82" height="17"/>
 					<box>
@@ -285,6 +308,11 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
 					<textFieldExpression class="java.lang.String"><![CDATA[($V{TOTAL_LINENETAMT}.add($V{TOTAL_TAXAMT})!=null)?$P{NUMBERFORMAT}.format($V{TOTAL_LINENETAMT}.add($V{TOTAL_TAXAMT})):new String(" ")]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement key="staticText-14" style="Report_Footer" x="316" y="25" width="84" height="17"/>
+					<textElement textAlignment="Right"/>
+					<text><![CDATA[TOTAL:]]></text>
+				</staticText>
 				<line>
 					<reportElement key="line-39" style="Report_Footer" x="316" y="24" width="167" height="1"/>
 				</line>
