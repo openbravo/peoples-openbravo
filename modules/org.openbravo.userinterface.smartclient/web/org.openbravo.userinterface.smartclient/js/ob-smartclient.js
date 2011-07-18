@@ -89,9 +89,8 @@ isc.FormItem.addProperties({
     }
     return this._original_compareValues(value1, value2);
   },
-
+ 
   _handleTitleClick: isc.FormItem.getPrototype().handleTitleClick,
-  
   handleTitleClick: function() {
     // always titleclick directly as sc won't call titleclick
     // in that case
@@ -120,26 +119,13 @@ isc.FormItem.addProperties({
     if (view) {
       view.lastFocusedItem = this;
     }
-  },
-  
-  click: function() {
-    var view = OB.Utilities.determineViewOfFormItem(this);
-    if (view) {
-      view.lastFocusedItem = this;
-      // this handles the case that there was a direct click on picker icon
-      // don't set the focus when a picker is shown as it will remove the 
-      // picker directly
-      if (!this.picker || !this.picker.isVisible || !this.picker.isVisible()) {
-        this.focusInItem();
-      }
-    }
+    this.hasFocus = true;
   },
 
   blur: function(form, item){
     if (item._hasChanged && form && form.handleItemChange) {
       form.handleItemChange(this);
     }
-    return;
   },
   
   isDisabled: function(){
