@@ -422,35 +422,40 @@ public class AdvPaymentMngtDao {
   public FIN_PaymentDetail getNewPaymentDetail(FIN_Payment payment,
       FIN_PaymentScheduleDetail paymentScheduleDetail, BigDecimal paymentDetailAmount,
       BigDecimal writeoffAmount, boolean isRefund, GLItem glitem) {
-    final FIN_PaymentDetail newPaymentDetail = OBProvider.getInstance()
-        .get(FIN_PaymentDetail.class);
-    List<FIN_PaymentDetail> paymentDetails = payment.getFINPaymentDetailList();
-    newPaymentDetail.setFinPayment(payment);
-    newPaymentDetail.setOrganization(payment.getOrganization());
-    newPaymentDetail.setClient(payment.getClient());
-    newPaymentDetail.setAmount(paymentDetailAmount);
-    newPaymentDetail.setWriteoffAmount(writeoffAmount);
-    newPaymentDetail.setRefund(isRefund);
-    newPaymentDetail.setGLItem(glitem);
-    newPaymentDetail.setPrepayment(glitem == null
-        && paymentScheduleDetail.getInvoicePaymentSchedule() == null);
+    try {
+      OBContext.setAdminMode(true);
+      final FIN_PaymentDetail newPaymentDetail = OBProvider.getInstance().get(
+          FIN_PaymentDetail.class);
+      List<FIN_PaymentDetail> paymentDetails = payment.getFINPaymentDetailList();
+      newPaymentDetail.setFinPayment(payment);
+      newPaymentDetail.setOrganization(payment.getOrganization());
+      newPaymentDetail.setClient(payment.getClient());
+      newPaymentDetail.setAmount(paymentDetailAmount);
+      newPaymentDetail.setWriteoffAmount(writeoffAmount);
+      newPaymentDetail.setRefund(isRefund);
+      newPaymentDetail.setGLItem(glitem);
+      newPaymentDetail.setPrepayment(glitem == null
+          && paymentScheduleDetail.getInvoicePaymentSchedule() == null);
 
-    paymentDetails.add(newPaymentDetail);
-    payment.setFINPaymentDetailList(paymentDetails);
-    payment.setWriteoffAmount(payment.getWriteoffAmount().add(writeoffAmount));
+      paymentDetails.add(newPaymentDetail);
+      payment.setFINPaymentDetailList(paymentDetails);
+      payment.setWriteoffAmount(payment.getWriteoffAmount().add(writeoffAmount));
 
-    List<FIN_PaymentScheduleDetail> paymentScheduleDetails = newPaymentDetail
-        .getFINPaymentScheduleDetailList();
-    paymentScheduleDetail.setPaymentDetails(newPaymentDetail);
-    paymentScheduleDetails.add(paymentScheduleDetail);
-    newPaymentDetail.setFINPaymentScheduleDetailList(paymentScheduleDetails);
+      List<FIN_PaymentScheduleDetail> paymentScheduleDetails = newPaymentDetail
+          .getFINPaymentScheduleDetailList();
+      paymentScheduleDetail.setPaymentDetails(newPaymentDetail);
+      paymentScheduleDetails.add(paymentScheduleDetail);
+      newPaymentDetail.setFINPaymentScheduleDetailList(paymentScheduleDetails);
 
-    OBDal.getInstance().save(payment);
-    OBDal.getInstance().save(newPaymentDetail);
-    OBDal.getInstance().save(paymentScheduleDetail);
-    OBDal.getInstance().flush();
+      OBDal.getInstance().save(payment);
+      OBDal.getInstance().save(newPaymentDetail);
+      OBDal.getInstance().save(paymentScheduleDetail);
+      OBDal.getInstance().flush();
 
-    return newPaymentDetail;
+      return newPaymentDetail;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   public FIN_PaymentScheduleDetail getNewPaymentScheduleDetail(Organization organization,

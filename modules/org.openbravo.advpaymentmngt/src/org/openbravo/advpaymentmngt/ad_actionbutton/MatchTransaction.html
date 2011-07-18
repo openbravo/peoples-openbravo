@@ -57,11 +57,20 @@ var sc_JsDateFormat = null;
 function transactionFind(selected) {
   var depositAmt = returnCalcToFormatted(selected.depositAmount, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
   var paymentAmt = returnCalcToFormatted(selected.paymentAmount, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
-  if(compare(subtract(subtract(depositAmt, paymentAmt), document.getElementById("inpBSAmount_" + sc_FIN_FinAcc_Transaction_ID.bslId).value), '>', "0") ||
-    (compare(subtract(subtract(depositAmt, paymentAmt), document.getElementById("inpBSAmount_" + sc_FIN_FinAcc_Transaction_ID.bslId).value), '<', "0" ))) {
-    showJSMessage('APRM_LinesAmountMismatch');
-    return false;
+  var selectedAmt = subtract(depositAmt, paymentAmt);
+  var gridAmount = document.getElementById("inpBSAmount_" + sc_FIN_FinAcc_Transaction_ID.bslId).value;
+  
+  if (compare(subtract(selectedAmt, gridAmount), '!=', '0')) {
+    if (confirm(document.frmMain.inpTrlSplitConfirmText.value)) {
+      document.frmMain.inpSelectedFindTransactionId.value = selected.id;
+      splitRow();
+      return false;
+    } else {
+      showJSMessage('APRM_LinesAmountMismatch');
+      return false;
+    }
   }
+  
   document.getElementById("inpFinancialTransactionId_" + sc_FIN_FinAcc_Transaction_ID.bslId).value = selected.id;
   document.getElementById("inpTransactionDate_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = OB.Utilities.Date.JSToOB(selected.transactionDate, sc_JsDateFormat);
   document.getElementById("inpMatchedDocument_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = document.getElementById("paraMatchedAgainstTransaction").value;
@@ -74,7 +83,7 @@ function transactionFind(selected) {
 }
 
 function openSelector(bslId) {
-
+  document.frmMain.inpFinBankStatementLineId.value = bslId;
   if(bslId) {
       sc_FIN_FinAcc_Transaction_ID.bslId = bslId;
   } else {
@@ -88,6 +97,7 @@ function openSelector(bslId) {
 isc.OBSelectorLinkWidget.addProperties({
   onValueChanged: function(selected) {
     transactionFind(selected);
+    this.openbravoField.value = '';
   },
 
   bslId: ''
@@ -192,17 +202,51 @@ function openAddTransaction(bankStatementLineId){
         }
      }
 
-     function dummyCallBack(paramXMLParticular, XMLHttpRequestObj) {
-        var strText = "";
-          if (getReadyStateHandler(XMLHttpRequestObj)) {
-            try {
-              if (XMLHttpRequestObj.responseText)
-                strText = XMLHttpRequestObj.responseText;
-            } catch (e) {
-            }
-          }
-        return true;
+function dummyCallBack(paramXMLParticular, XMLHttpRequestObj) {
+  var strText = "";
+  if (getReadyStateHandler(XMLHttpRequestObj)) {
+    try {
+      if (XMLHttpRequestObj.responseText) {
+        strText = XMLHttpRequestObj.responseText;
+        var data = eval(strText);
+        if (data.forceLoadGrid) {
+          loadGrid();
+        }
       }
+    } catch (e) {
+    }
+  }
+  return true;
+}
+
+function splitRow() {
+  try {
+    var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/MatchTransaction.html";
+    var paramXMLReq = null;
+    return submitXmlHttpRequest(splitCallback, document.frmMain, "SPLIT", url, false, null, paramXMLReq);
+  } catch (e) {
+    alert(e);
+  }
+}
+
+function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
+  var strText = "";
+    if (getReadyStateHandler(XMLHttpRequestObj)) {
+      try {
+        if (XMLHttpRequestObj.responseText) {
+          strText = XMLHttpRequestObj.responseText;
+          var data = eval(strText);
+          if (data.showJSMessage) {
+            showJSMessage(data.showJSMessage);
+          } else {
+            loadGrid();
+          }
+        }
+      } catch (e) {
+      }
+    }
+  return true;
+}
 </script>
 <script language="JavaScript" type="text/javascript">
   function showWarning(){
@@ -232,7 +276,7 @@ function openAddTransaction(bankStatementLineId){
     return true;
   }
   function onResizeDo(){
-	  resizeAreaCreateFrom(true);
+    resizeAreaCreateFrom(true);
   }
 </script>
 </head>
@@ -248,9 +292,11 @@ function openAddTransaction(bankStatementLineId){
   <input type="hidden" name="inpfinReconciliationId" value="" id="fieldfinReconciliationId"/>
   <input type="hidden" name="inpdateto" value="" id="fieldDateTo"/>
   <input type="hidden" name="inpFinBankStatementLineId" value=""/>
+  <input type="hidden" name="inpSelectedFindTransactionId" value=""/>
   <input type="hidden" name="isFirstLoad" value="true"/>
   <input type="hidden" name="buttonRefresh" value="" id="buttonRefresh" onclick="loadGrid();return true;"></input>
   <input type="hidden" name="isReceipt" value="dummyField" id="fieldReceipt"/>
+  <input type="hidden" name="inpTrlSplitConfirmText" id="paramTrlSplitConfirmText" value=""/>
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
       <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>

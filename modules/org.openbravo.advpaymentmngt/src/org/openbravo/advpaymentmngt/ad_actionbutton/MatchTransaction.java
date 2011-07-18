@@ -47,6 +47,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -59,6 +60,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.financialmgmt.payment.FIN_BankStatement;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -168,6 +170,12 @@ public class MatchTransaction extends HttpSecureAppServlet {
         strWindowPath = strDefaultServlet;
 
       printPageClosePopUp(response, vars, strWindowPath);
+    } else if (vars.commandIn("SPLIT")) {
+      String strReconciliationId = vars.getRequiredStringParameter("inpfinReconciliationId");
+      String strBankStatementLineId = vars.getRequiredStringParameter("inpFinBankStatementLineId");
+      String strTransactionId = vars.getRequiredStringParameter("inpSelectedFindTransactionId");
+      splitBankStatementLine(response, strReconciliationId, strBankStatementLineId,
+          strTransactionId);
     } else if (vars.commandIn("SAVE", "RECONCILE")) {
       OBContext.setAdminMode();
       try {
@@ -335,6 +343,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("financialAccountId", strFinancialAccountId);
     xmlDocument.setParameter("reconciliationId", reconciliationId);
     xmlDocument.setParameter("matchedAgainstTransaction", MATCHED_AGAINST_TRANSACTION);
+    xmlDocument.setParameter("trlSplitConfirmText",
+        FIN_Utility.messageBD("APRM_SplitBankStatementLineConfirm"));
 
     String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("dateFormat.java");
@@ -412,10 +422,22 @@ public class MatchTransaction extends HttpSecureAppServlet {
   private void unMatchBankStatementLine(HttpServletResponse response,
       String strUnmatchBankStatementLineId) throws IOException, ServletException {
     try {
-      unmatch(OBDal.getInstance().get(FIN_BankStatementLine.class, strUnmatchBankStatementLineId));
+      FIN_BankStatementLine bsl = OBDal.getInstance().get(FIN_BankStatementLine.class,
+          strUnmatchBankStatementLineId);
+      boolean splitedBSL = isSplitBankStatementLine(bsl);
+
+      unmatch(bsl);
+
+      JSONObject json = new JSONObject();
+      try {
+        json.put("forceLoadGrid", splitedBSL);
+      } catch (JSONException e) {
+        log4j.debug("JSON object error" + json.toString());
+      }
+
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
-      out.println("");
+      out.println("data = " + json.toString());
       out.close();
     } catch (Exception e) {
       throw new OBException(e);
@@ -710,6 +732,9 @@ public class MatchTransaction extends HttpSecureAppServlet {
   private void unmatch(FIN_BankStatementLine bsline) {
     OBContext.setAdminMode();
     try {
+      // merge if the bank statement line was splited before
+      mergeBankStatementLine(bsline);
+
       FIN_FinaccTransaction finTrans = bsline.getFinancialAccountTransaction();
       if (finTrans != null) {
         finTrans.setReconciliation(null);
@@ -742,6 +767,21 @@ public class MatchTransaction extends HttpSecureAppServlet {
       FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(
           ma.getJavaClassName());
       matchingTransaction.unmatch(finTrans);
+
+      // Do not allow bank statement lines of 0
+      if (bsline.getCramount().compareTo(BigDecimal.ZERO) == 0
+          && bsline.getDramount().compareTo(BigDecimal.ZERO) == 0) {
+        FIN_BankStatement bs = bsline.getBankStatement();
+        bs.setProcessed(false);
+        OBDal.getInstance().save(bs);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().remove(bsline);
+        OBDal.getInstance().flush();
+        bs.setProcessed(true);
+        OBDal.getInstance().save(bs);
+        OBDal.getInstance().flush();
+      }
+
     } catch (Exception e) {
       throw new OBException(e);
     } finally {
@@ -750,25 +790,68 @@ public class MatchTransaction extends HttpSecureAppServlet {
   }
 
   private void match(FIN_Reconciliation reconciliation) {
-    List<FIN_ReconciliationLineTemp> snapShotList = reconciliation
-        .getFINReconciliationLineTempList();
-    for (FIN_ReconciliationLineTemp toMatch : snapShotList) {
-      FIN_BankStatementLine bsl = toMatch.getBankStatementLine();
-      if (bsl.getFinancialAccountTransaction() != null) {
-        continue;
+    try {
+      OBContext.setAdminMode(true);
+
+      List<FIN_ReconciliationLineTemp> snapShotList = reconciliation
+          .getFINReconciliationLineTempList();
+      for (FIN_ReconciliationLineTemp toMatch : snapShotList) {
+        FIN_BankStatementLine bsl = toMatch.getBankStatementLine();
+        if (bsl.getFinancialAccountTransaction() != null) {
+          continue;
+        }
+
+        FIN_FinaccTransaction transaction = getTransactionFromTemp(toMatch);
+        FIN_BankStatement bs = bsl.getBankStatement();
+        // prevent trigger
+        bs.setProcessed(false);
+        OBDal.getInstance().save(bs);
+        OBDal.getInstance().flush();
+
+        // Manage split lines
+        if (transaction.getDepositAmount().compareTo(bsl.getCramount()) != 0
+            || transaction.getPaymentAmount().compareTo(bsl.getDramount()) != 0) {
+
+          // Duplicate bank statement line with pending amount
+          FIN_BankStatementLine clonedBSLine = (FIN_BankStatementLine) DalUtil.copy(bsl, true);
+          clonedBSLine.setCramount(bsl.getCramount().subtract(transaction.getDepositAmount()));
+          clonedBSLine.setDramount(bsl.getDramount().subtract(transaction.getPaymentAmount()));
+
+          List<FIN_ReconciliationLineTemp> recTempbsline = getRecTempLines(bsl);
+          for (FIN_ReconciliationLineTemp rlt : recTempbsline) {
+            if (!transaction.getId().equals(rlt.getFinancialAccountTransaction().getId())) {
+              rlt.setBankStatementLine(clonedBSLine);
+              OBDal.getInstance().save(rlt);
+            }
+          }
+
+          bsl.setCramount(transaction.getDepositAmount());
+          bsl.setDramount(transaction.getPaymentAmount());
+
+          // Save
+          OBDal.getInstance().save(clonedBSLine);
+        }
+        bsl.setFinancialAccountTransaction(transaction);
+        bsl.setMatchingtype(toMatch.getMatchlevel());
+        transaction.setStatus("RPPC");
+        transaction.setReconciliation(reconciliation);
+        if (transaction.getFinPayment() != null) {
+          transaction.getFinPayment().setStatus("RPPC");
+        }
+
+        OBDal.getInstance().save(transaction);
+        OBDal.getInstance().save(bsl);
+        OBDal.getInstance().flush();
+
+        bs.setProcessed(true);
+        OBDal.getInstance().save(bs);
+        OBDal.getInstance().flush();
+
       }
-      FIN_FinaccTransaction transaction = getTransactionFromTemp(toMatch);
-      bsl.setFinancialAccountTransaction(transaction);
-      bsl.setMatchingtype(toMatch.getMatchlevel());
-      transaction.setStatus("RPPC");
-      transaction.setReconciliation(reconciliation);
-      if (transaction.getFinPayment() != null) {
-        transaction.getFinPayment().setStatus("RPPC");
-      }
-      OBDal.getInstance().save(transaction);
-      OBDal.getInstance().save(bsl);
-      OBDal.getInstance().flush();
+    } finally {
+      OBContext.restorePreviousMode();
     }
+
   }
 
   private FIN_FinaccTransaction getTransactionFromTemp(FIN_ReconciliationLineTemp toMatch) {
@@ -858,6 +941,176 @@ public class MatchTransaction extends HttpSecureAppServlet {
     } else {
       return payments.get(0);
     }
+  }
+
+  /**
+   * Split the given bank statement line if it does not match with the amount of the given
+   * transaction. It will create a clone of the given bank statement line with the difference
+   * amount.
+   * 
+   * @param response
+   *          HttpServeltResponse.
+   * @param strReconciliationId
+   *          Reconciliation.
+   * @param strBankStatementLineId
+   *          Bank Statement Line identifier.
+   * @param strTransactionId
+   *          Transaction identifier.
+   * @throws IOException
+   * @throws ServletException
+   */
+  private void splitBankStatementLine(HttpServletResponse response, String strReconciliationId,
+      String strBankStatementLineId, String strTransactionId) throws IOException, ServletException {
+    JSONObject table = new JSONObject();
+    boolean returnError = false;
+    FIN_Reconciliation rec = OBDal.getInstance().get(FIN_Reconciliation.class, strReconciliationId);
+    FIN_BankStatementLine bsl = OBDal.getInstance().get(FIN_BankStatementLine.class,
+        strBankStatementLineId);
+    FIN_FinaccTransaction trx = OBDal.getInstance().get(FIN_FinaccTransaction.class,
+        strTransactionId);
+    try {
+      OBContext.setAdminMode(true);
+      if (rec != null && "Y".equals(rec.getPosted())) {
+        // reconciliation posted not possible to split a row
+        returnError = true;
+        table.put("showJSMessage", "APRM_SplitBSLReconciliationPosted");
+      }
+      if (bsl.getFinancialAccountTransaction() != null
+          && bsl.getFinancialAccountTransaction().getReconciliation() != null) {
+        returnError = true;
+        table.put("showJSMessage", "APRM_SplitBSLAlreadyMatched");
+      }
+
+      // If validation was ok continue with the split
+      if (!returnError) {
+        BigDecimal bslAmount = bsl.getCramount().subtract(bsl.getDramount());
+        BigDecimal trxAmount = trx.getDepositAmount().subtract(trx.getPaymentAmount());
+
+        if (bslAmount.compareTo(trxAmount) != 0) {
+          // prevent trigger
+          FIN_BankStatement bs = bsl.getBankStatement();
+          bs.setProcessed(false);
+          OBDal.getInstance().save(bs);
+          OBDal.getInstance().flush();
+
+          // Duplicate bank statement line with pending amount
+          FIN_BankStatementLine clonedBSLine = (FIN_BankStatementLine) DalUtil.copy(bsl, true);
+          clonedBSLine.setCramount(bsl.getCramount().subtract(trx.getDepositAmount()));
+          clonedBSLine.setDramount(bsl.getDramount().subtract(trx.getPaymentAmount()));
+
+          // link bank statement line with the transaction
+          bsl.setFinancialAccountTransaction(trx);
+          bsl.setCramount(trx.getDepositAmount());
+          bsl.setDramount(trx.getPaymentAmount());
+          bsl.setMatchingtype(FIN_MatchedTransaction.MANUALMATCH);
+          trx.setStatus("RPPC");
+          trx.setReconciliation(rec);
+          if (trx.getFinPayment() != null) {
+            trx.getFinPayment().setStatus("RPPC");
+          }
+
+          bs.setProcessed(true);
+
+          // Save
+          OBDal.getInstance().save(bs);
+          OBDal.getInstance().save(clonedBSLine);
+          OBDal.getInstance().save(bsl);
+          OBDal.getInstance().flush();
+        }
+      }
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println("data = " + table.toString());
+      out.close();
+    } catch (JSONException e) {
+      throw new OBException("splitBankStatementLine - JSON object error: " + table.toString(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Merges given bank statement line with other bank statement lines with the same line number and
+   * not matched with any transaction.
+   * 
+   * @param bsline
+   *          Bank Statement Line.
+   */
+  private void mergeBankStatementLine(FIN_BankStatementLine bsline) {
+    BigDecimal totalCredit = bsline.getCramount();
+    BigDecimal totalDebit = bsline.getDramount();
+    FIN_BankStatement bs = bsline.getBankStatement();
+    OBCriteria<FIN_BankStatementLine> obc = OBDal.getInstance().createCriteria(
+        FIN_BankStatementLine.class);
+    obc.add(Restrictions.eq(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, bsline.getBankStatement()));
+    obc.add(Restrictions.eq(FIN_BankStatementLine.PROPERTY_LINENO, bsline.getLineNo()));
+    obc.add(Restrictions.ne(FIN_BankStatementLine.PROPERTY_ID, bsline.getId()));
+    obc.add(Restrictions.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION));
+
+    if (obc.list().size() > 0) {
+      bs.setProcessed(false);
+      OBDal.getInstance().save(bs);
+      OBDal.getInstance().flush();
+
+      for (FIN_BankStatementLine bsl : obc.list()) {
+        totalCredit = totalCredit.add(bsl.getCramount());
+        totalDebit = totalDebit.add(bsl.getDramount());
+        for (FIN_ReconciliationLineTemp tempbsline : getRecTempLines(bsl)) {
+          tempbsline.setBankStatementLine(bsline);
+          OBDal.getInstance().save(tempbsline);
+        }
+        OBDal.getInstance().remove(bsl);
+      }
+
+      bsline.setCramount(totalCredit);
+      bsline.setDramount(totalDebit);
+
+      OBDal.getInstance().save(bsline);
+      OBDal.getInstance().flush();
+
+      bs.setProcessed(true);
+      OBDal.getInstance().save(bs);
+      OBDal.getInstance().flush();
+    }
+
+  }
+
+  /**
+   * This method retrieves all the reconciliation snapshot lines linked to the given bank statement
+   * line.
+   * 
+   * @param bsline
+   *          Bank Statement Line.
+   * @return All the reconciliation snapshot lines linked to the given bank statement line.
+   */
+  private List<FIN_ReconciliationLineTemp> getRecTempLines(FIN_BankStatementLine bsline) {
+    OBContext.setAdminMode();
+    try {
+      final OBCriteria<FIN_ReconciliationLineTemp> obc = OBDal.getInstance().createCriteria(
+          FIN_ReconciliationLineTemp.class);
+      obc.add(Restrictions.eq(FIN_ReconciliationLineTemp.PROPERTY_BANKSTATEMENTLINE, bsline));
+      return obc.list();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Checks if the given bank statement line has been split in other line.
+   * 
+   * @param bsline
+   *          Bank Statement Line.
+   * @return True if exist other line that belong to the same bank statement, with the same line
+   *         number and not matched to any transaction. False in other case.
+   */
+  private boolean isSplitBankStatementLine(FIN_BankStatementLine bsline) {
+    OBCriteria<FIN_BankStatementLine> obc = OBDal.getInstance().createCriteria(
+        FIN_BankStatementLine.class);
+    obc.add(Restrictions.eq(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, bsline.getBankStatement()));
+    obc.add(Restrictions.eq(FIN_BankStatementLine.PROPERTY_LINENO, bsline.getLineNo()));
+    obc.add(Restrictions.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION));
+
+    return (obc.list().size() > 0);
   }
 
   public String getServletInfo() {
