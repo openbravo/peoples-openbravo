@@ -97,23 +97,28 @@
       }
       for (i = 0; i < OB.MainView.TabSet.tabs.length; i++) {
         var pane = OB.MainView.TabSet.tabs[i].pane;
-        if (pane.viewTabId && pane.viewTabId === params.loadingTabId) {
+        if (pane.viewTabId && pane.isLoadingTab && pane.viewTabId === params.loadingTabId) {
           return OB.MainView.TabSet.tabs[i];
         }
       }
       return null;
     },
 
+    createLoadingTab: function(viewId, params, viewTabId) {
+      // open a loading tab
+      params = params || {};
+      var layout = OB.Utilities.createLoadingLayout();
+      // is used to prevent history updating
+      layout.isLoadingTab = true;
+      viewTabId = viewTabId || params.currentViewTabId || '_' + new Date().getTime();
+      params.loadingTabId = viewTabId;
+      this.createTab(viewId, viewTabId, layout, params);
+      return params;
+    },
+    
     fetchView: function(viewId, callback, clientContext, params, useLoadingTab) {
       if (useLoadingTab) {
-        // open a loading tab
-        params = params || {};
-        var layout = OB.Utilities.createLoadingLayout();
-        // is used to prevent history updating
-        layout.isLoadingTab = true;
-        var viewTabId = '_' + new Date().getTime();
-        params.loadingTabId = viewTabId;
-        this.createTab(viewId, viewTabId, layout, params);
+        params = this.createLoadingTab(viewId, params);
       }
 
       var rpcMgr = ISC.RPCManager;
@@ -254,12 +259,52 @@
         //
         function showTab(viewName, params, state) {
 
+          // will as a default display a loading tab when loading the 
+          // view from the server or creating a new instance
+          // different cases:
+          // 1) view is not open and class not loaded (open view and show loading bar)
+          // 2) view is not open but class was loaded (open view and show loading bar)
+          // 3) view is open and class is loaded (show loading bar in open view)          
           var viewTabId, tabTitle, loadingTab = vmgr.findLoadingTab(params);
-
+          
+          params = params || {};
+          
           if (loadingTab) {
             viewTabId = loadingTab.pane.viewTabId;
-          } else {
+          } else {           
             viewTabId = vmgr.views.getViewTabID(viewName, params);
+            if (viewTabId) {
+              // tab exists, replace its contents
+              var loadingPane = OB.Utilities.createLoadingLayout();
+              
+              // make sure it gets found in the next round
+              params.loadingTabId = viewTabId;
+              loadingPane.viewTabId = viewTabId;
+
+              // is used to prevent history updating
+              loadingPane.isLoadingTab = true;
+              
+              // refresh the existing tab
+              OB.MainView.TabSet.updateTab(viewTabId, loadingPane);
+              // and show it
+              OB.MainView.TabSet.selectTab(viewTabId);
+            } else {
+              // create a completely new tab
+              // first create a loading tab and then call again
+              // in another thread
+              params = vmgr.createLoadingTab(viewName, params, viewTabId);
+            }
+            // use a canvas to make use of the fireOnPause possibilities
+            var cnv = isc.Canvas.create({
+              openView: function() {
+                vmgr.openView(viewName, params);
+                // delete so that at the next opening a new loading layout
+                // is created
+                delete params.loadingTabId;
+              }
+            });
+            cnv.fireOnPause('openView', cnv.openView, null, cnv);
+            return;
           }
 
           // always create a new instance anyway as parameters
