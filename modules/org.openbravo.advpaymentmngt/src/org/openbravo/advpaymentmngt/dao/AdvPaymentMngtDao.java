@@ -1011,7 +1011,7 @@ public class AdvPaymentMngtDao {
       if (paymentDirection == PaymentDirection.IN) {
         obc.add(Restrictions.eq(FIN_PaymentMethod.PROPERTY_PAYINALLOW, true));
       } else if (paymentDirection == PaymentDirection.OUT) {
-        obc.add(Restrictions.eq(FIN_PaymentMethod.PROPERTY_PAYINALLOW, true));
+        obc.add(Restrictions.eq(FIN_PaymentMethod.PROPERTY_PAYOUTALLOW, true));
       }
     }
 
