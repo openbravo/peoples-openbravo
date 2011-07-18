@@ -146,6 +146,12 @@ public class DefaultJsonDataService implements JsonDataService {
             - 1 : 0));
         // bobs can be empty and count > 0 if the order by forces a join without results
         if (bobs.isEmpty()) {
+          if (startRow > 0) {
+            // reload the startrow again from 0
+            parameters.put(JsonConstants.STARTROW_PARAMETER, "0");
+            parameters.put(JsonConstants.ENDROW_PARAMETER, computedMaxResults + "");
+            return fetch(parameters);
+          }
           jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
         } else if (doCount) {
           jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, count);
