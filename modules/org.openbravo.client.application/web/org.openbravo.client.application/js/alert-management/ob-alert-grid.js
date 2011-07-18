@@ -36,8 +36,7 @@ isc.OBAlertGrid.addProperties({
   editOnFocus: true,
   showCellContextMenus: true,
   selectOnEdit: false,
-  showRecordComponents: false,
-  
+ 
   // keeps track if we are in objectSelectionMode or in toggleSelectionMode
   // objectSelectionMode = singleRecordSelection === true
   singleRecordSelection: false,
@@ -487,6 +486,27 @@ isc.OBAlertGrid.addProperties({
       });
     }
     return menuItems;
+  },
+  
+  // a trick to prevent a javascript error, draw the first time
+  // without record components
+  // this topic needs to be revisited after a certain time
+  // to check if newer Smartclient components solve it
+  // Note, this was not reproducable in Smartclient standard
+  // https://issues.openbravo.com/view.php?id=17289
+  // https://issues.openbravo.com/view.php?id=17784
+  firstTimeRedrawCalled: true,
+  draw: function() {
+   if (this.firstTimeRedrawCalled && this.showRecordComponents) {
+     this.showRecordComponents = false;
+     this.Super('draw', arguments);
+     this.showRecordComponents = true;
+     delete this.firstTimeRedrawCalled;
+     this.Super('redraw', arguments);
+     return;
+   } 
+   delete this.firstTimeRedrawCalled;
+   this.Super('draw', arguments);
   }
 
 });
