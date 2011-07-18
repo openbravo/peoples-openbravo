@@ -464,6 +464,8 @@ public class OBContext implements OBNotSingleton {
   private boolean isAdministrator;
   private boolean isInitialized = false;
 
+  private boolean isRTL = false;
+
   private Set<String> additionalWritableOrganizations = new HashSet<String>();
 
   // support storing the context in a persistent tomcat session
@@ -591,6 +593,8 @@ public class OBContext implements OBNotSingleton {
 
   public void setLanguage(Language language) {
     this.language = language;
+    // uncomment this line to see RTL for RTL languages
+    // setRTL(language.isRTLLanguage());
   }
 
   public Organization getCurrentOrganization() {
@@ -1086,5 +1090,13 @@ public class OBContext implements OBNotSingleton {
     public boolean doOrgClientAccessCheck() {
       return doOrgClientAccessCheck;
     }
+  }
+
+  public boolean isRTL() {
+    return isRTL;
+  }
+
+  public void setRTL(boolean isRTL) {
+    this.isRTL = isRTL;
   }
 }

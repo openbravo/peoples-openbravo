@@ -1,5 +1,6 @@
 <%@ page import="java.util.Properties" %>
 <%@ page import="org.openbravo.base.HttpBaseServlet" %>
+<%@ page import="org.openbravo.dal.core.OBContext"%>
 <%@ page import="org.openbravo.base.util.OBClassLoader" %>
 <%@ page import="org.openbravo.base.session.OBPropertiesProvider" %>
 <%@ page import="org.openbravo.authentication.AuthenticationManager" %>
@@ -123,7 +124,7 @@ if (isMSIE) {
 </style>
 
 </head>
-<body>
+<body dir="<%=(OBContext.getOBContext().isRTL() ? "RTL" : "LTR")%>">
 
 <!-- shows the loading div -->
 <div class="OBLoadingPromptModalMask" id="OBLoadingDiv">
