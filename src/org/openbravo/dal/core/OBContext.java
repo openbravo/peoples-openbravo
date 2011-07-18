@@ -97,6 +97,16 @@ public class OBContext implements OBNotSingleton {
   private static OBContext adminContext = null;
 
   /**
+   * @return true if the current language is a RTL language, false in other cases
+   */
+  public static boolean isRightToLeft() {
+    if (getOBContext() != null) {
+      return getOBContext().isRTL();
+    }
+    return false;
+  }
+
+  /**
    * @deprecated use {@link #setAdminMode()}
    */
   @Deprecated

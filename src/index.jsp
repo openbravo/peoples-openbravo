@@ -124,7 +124,7 @@ if (isMSIE) {
 </style>
 
 </head>
-<body dir="<%=(OBContext.getOBContext().isRTL() ? "RTL" : "LTR")%>">
+<body dir="<%=(OBContext.isRightToLeft() ? "RTL" : "LTR")%>">
 
 <!-- shows the loading div -->
 <div class="OBLoadingPromptModalMask" id="OBLoadingDiv">
