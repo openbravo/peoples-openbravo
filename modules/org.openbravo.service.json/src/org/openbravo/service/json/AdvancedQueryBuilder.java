@@ -884,7 +884,27 @@ public class AdvancedQueryBuilder {
       }
       // note to_char is added to handle null values correctly
       if (prop.getReferencedProperty() == null) {
-        sb.append("COALESCE(to_char(" + prefix + prop.getName() + "),'')");
+        if (prop.isTranslatable()) {
+          // HQL for trl properties. Doing it as a select because it cannot be done as left join.
+          // Example:
+          //
+          // select coalesce(w.name, t.name)
+          // from ADWindow w left join w.aDWindowTrlList as t with t.language = :lang
+          // where w.id=:window
+          //
+          // raises: with clause can only reference columns in the driving table
+
+          sb.append("COALESCE(to_char((select " + prop.getTranslationProperty().getName()
+              + " from " + prop.getTranslationProperty().getEntity().getName() + " as t where t."
+              + prop.getTrlParentProperty().getName() + " = "
+              + prefix.substring(0, prefix.lastIndexOf('.')) + " and t.language.language='"
+              + OBContext.getOBContext().getLanguage().getLanguage() + "')), to_char(" + prefix
+              + prop.getName() + "), '')");
+
+        } else {
+          sb.append("COALESCE(to_char(" + prefix + prop.getName() + "),'')");
+        }
+
       } else {
         final List<Property> newIdentifierProperties = prop.getReferencedProperty().getEntity()
             .getIdentifierProperties();
