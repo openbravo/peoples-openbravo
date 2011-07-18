@@ -430,6 +430,8 @@ public class ModelProvider implements OBSingleton {
   private void setReferenceProperties() {
     log.debug("Setting reference property");
     // uses global member tablesByTableName
+
+    List<Column> translatableColumns = new ArrayList<Column>();
     for (final Table t : tablesByTableName.values()) {
       for (final Column c : t.getColumns()) {
         if (!c.isPrimitiveType()) {
@@ -465,7 +467,23 @@ public class ModelProvider implements OBSingleton {
           final Property thatProperty = thatColumn.getProperty();
           thisProp.setReferencedProperty(thatProperty);
         }
+
+        if (c.isTranslatable()) {
+          translatableColumns.add(c);
+        }
       }
+    }
+
+    // Looping through all the columns set as translatable, it is required another loop because properties set in the previous one are used now.
+    for (Column c : translatableColumns) {
+      final Entity translationEntity = getEntityByTableName(c.getTable().getTableName() + "_Trl");
+
+      Property translationProperty = null;
+      if (translationEntity != null) {
+        translationProperty = translationEntity.getPropertyByColumnName(c.getColumnName());
+      }
+      final Property thisProp = c.getProperty();
+      thisProp.setTranslatable(translationProperty);
     }
 
   }

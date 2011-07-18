@@ -21,6 +21,7 @@ package org.openbravo.base.structure;
 
 import java.io.Serializable;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.BaseOBObjectDef;
 import org.openbravo.base.model.Entity;
@@ -32,6 +33,9 @@ import org.openbravo.base.util.CheckException;
 import org.openbravo.base.validation.ValidationException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.system.Language;
 
 /**
  * Base business object, the root of the inheritance tree for all business objects. The class model
@@ -66,6 +70,14 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
 
   // if set to true then derived readable is not checked
   private boolean allowRead = false;
+
+  // Translated data, it is initialized when trying to get translated value for a translatable
+  // property
+  private BaseOBObject dataTrl;
+
+  // Takes true, when dataTrl has been tried to initialize (regardless it has any value) in this way
+  // it is tried only once
+  private boolean hasLookedForTrl = false;
 
   // is used to set default data in a constructor of the generated class
   // without a security check
@@ -102,6 +114,39 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
     return data[p.getIndexInEntity()];
   }
 
+  private Object getDataValue(Property p, Language language) {
+    if (data == null) {
+      // nothing set in this case anyway
+      return null;
+    }
+
+    if (p.isTranslatable()) {
+      if (!hasLookedForTrl) {
+        hasLookedForTrl = true;
+        OBContext.setAdminMode(false);
+        try {
+          OBCriteria<BaseOBObject> qTrl = OBDal.getInstance().createCriteria(
+              p.getTranslationProperty().getEntity().getName());
+          String id = (String) getId();
+          qTrl.add(Restrictions.eq(p.getTrlParentProperty().getName() + ".id", id));
+          qTrl.add(Restrictions.eq("language", language));
+          if (!qTrl.list().isEmpty()) {
+            // Assuming there is just one translation for the current language
+            dataTrl = qTrl.list().get(0);
+          }
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+      }
+
+      if (dataTrl != null) {
+        return dataTrl.get(p.getTranslationProperty().getName());
+      }
+    }
+
+    return data[p.getIndexInEntity()];
+  }
+
   private void setDataValue(String propName, Object value) {
     if (data == null) {
       data = new Object[getEntity().getProperties().size()];
@@ -134,14 +179,39 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
    * Returns the value of the {@link Property Property} identified by the propName. This method does
    * security checking. If a security violation occurs then a OBSecurityException is thrown.
    * 
+   * @see BaseOBObject#get(String, Language)
+   * 
    * @param propName
    *          the name of the {@link Property Property} for which the value is requested
    * @throws OBSecurityException
    */
   public Object get(String propName) {
+    return get(propName, null);
+  }
+
+  /**
+   * Returns the value of the {@link Property Property} identified by the propName translating it,
+   * if possible, to the language. This method does security checking. If a security violation
+   * occurs then a OBSecurityException is thrown.
+   * 
+   * @see BaseOBObject#get(String)
+   * 
+   * @param propName
+   *          the name of the {@link Property Property} for which the value is requested
+   * @param language
+   *          language to translate to
+   * @return value of the property
+   * @throws OBSecurityException
+   *           in case property is not readable
+   */
+  public Object get(String propName, Language language) {
     final Property p = getEntity().getProperty(propName);
     checkDerivedReadable(p);
-    return getDataValue(p);
+    if (language != null) {
+      return getDataValue(p, language);
+    } else {
+      return getDataValue(p);
+    }
   }
 
   /**

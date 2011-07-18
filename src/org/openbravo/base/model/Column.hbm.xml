@@ -40,6 +40,7 @@
 		<property name="mandatory" type="org.openbravo.base.session.OBYesNoType" column="ismandatory"/>
 		<property name="encrypted" type="org.openbravo.base.session.OBYesNoType" column="isencrypted"/>
 		<property name="decryptable" type="org.openbravo.base.session.OBYesNoType" column="isdesencryptable"/>
+		<property name="translatable" type="org.openbravo.base.session.OBYesNoType" column="istranslated"/>
 		<property name="valueMin"/>
 		<property name="valueMax"/>
 		<property name="developmentStatus"/>

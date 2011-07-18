@@ -65,6 +65,7 @@ public class Column extends ModelObject {
   private Boolean isTransient;
   private String isTransientCondition;
   private Integer position;
+  private boolean translatable;
 
   private Module module;
 
@@ -435,5 +436,13 @@ public class Column extends ModelObject {
 
   public void setDecryptable(boolean decryptable) {
     this.decryptable = decryptable;
+  }
+
+  public boolean isTranslatable() {
+    return translatable;
+  }
+
+  public void setTranslatable(boolean translatable) {
+    this.translatable = translatable;
   }
 }

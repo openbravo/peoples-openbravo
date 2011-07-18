@@ -89,6 +89,8 @@ public class Property {
   private Boolean allowDerivedRead;
   private boolean isClientOrOrganization;
   private DomainType domainType;
+  private boolean translatable = false;
+  private Property translationProperty;
 
   private PropertyValidator validator;
 
@@ -108,6 +110,8 @@ public class Property {
 
   private Boolean hasDisplayColumn;
   private String displayProperty;
+
+  private Property trlParentProperty;
 
   /**
    * Initializes this Property using the information from the Column.
@@ -173,6 +177,7 @@ public class Property {
     setInactive(!fromColumn.isActive());
 
     setModule(fromColumn.getModule());
+
   }
 
   // TODO: remove this hack when possible
@@ -1131,5 +1136,58 @@ public class Property {
       }
     }
     return displayProperty;
+  }
+
+  public boolean isTranslatable() {
+    return translatable;
+  }
+
+  /**
+   * This property is candidate to be translatable (marked in DB as isTranlated). It checks it is
+   * actually translatable and sets the property as translatable or not regarding this.
+   * 
+   * @param translationProperty
+   *          it is the property in the trl table that holds the translation for this property
+   */
+  void setTranslatable(Property translationProperty) {
+    log.debug("Setting translatable for " + this.getEntity().getTableName() + "."
+        + this.getColumnName());
+    if (translationProperty == null) {
+      log.warn(this.getEntity().getTableName() + "." + this.getColumnName()
+          + " is not translatable: null translationProperty");
+      translatable = false;
+      return;
+    }
+
+    Property pk = entity.getIdProperties().get(0); // Assuming a single property as PK
+
+    try {
+      translationProperty.getEntity().getPropertyByColumnName("ad_language");
+    } catch (org.openbravo.base.util.CheckException e) {
+      // This exception is raised when the property is not found
+      translatable = false;
+      log.warn(this.getEntity().getTableName() + "." + this.getColumnName()
+          + " is not translatable: ad_language column not found in its trl table");
+      return;
+    }
+
+    for (Property trlParent : translationProperty.getEntity().getParentProperties()) {
+      if (pk.equals(trlParent.getReferencedProperty())) {
+        this.trlParentProperty = trlParent;
+        this.translationProperty = translationProperty;
+        translatable = true;
+        return;
+      }
+    }
+    log.warn(this.getEntity().getTableName() + "." + this.getColumnName()
+        + " is not translatable: not found correspoding property in its trl table");
+  }
+
+  public Property getTranslationProperty() {
+    return translationProperty;
+  }
+
+  public Property getTrlParentProperty() {
+    return trlParentProperty;
   }
 }

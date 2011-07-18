@@ -29,6 +29,8 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.model.ad.system.Language;
 
 /**
  * Provides the identifier/title of an object using the {@link Entity#getIdentifierProperties()
@@ -61,19 +63,20 @@ public class IdentifierProvider implements OBSingleton {
 
   /**
    * Returns the identifier of the object. The identifier is computed using the identifier
-   * properties of the Entity of the object.
+   * properties of the Entity of the object. It is translated (if applicable) to the current
+   * language
    * 
    * @param o
    *          the object for which the identifier is generated
    * @return the identifier
    */
   public String getIdentifier(Object o) {
-    return getIdentifier(o, true);
+    return getIdentifier(o, true, OBContext.getOBContext().getLanguage());
   }
 
   // identifyDeep determines if refered to objects are used
   // to identify the object
-  private String getIdentifier(Object o, boolean identifyDeep) {
+  private String getIdentifier(Object o, boolean identifyDeep, Language language) {
     // TODO: add support for null fields
     final StringBuilder sb = new StringBuilder();
     final DynamicEnabled dob = (DynamicEnabled) o;
@@ -86,7 +89,13 @@ public class IdentifierProvider implements OBSingleton {
         sb.append(SEPARATOR);
       }
       final Property property = ((BaseOBObject) dob).getEntity().getProperty(identifier.getName());
-      Object value = dob.get(identifier.getName());
+      Object value;
+
+      if (property.isTranslatable()) {
+        value = ((BaseOBObject) dob).get(identifier.getName(), language);
+      } else {
+        value = dob.get(identifier.getName());
+      }
 
       // TODO: add number formatting...
       if (property.isDate() || property.isDatetime()) {
@@ -94,7 +103,7 @@ public class IdentifierProvider implements OBSingleton {
       }
 
       if (value instanceof Identifiable && identifyDeep) {
-        sb.append(getIdentifier(value, false));
+        sb.append(getIdentifier(value, false, language));
       } else if (value != null) {
         sb.append(value);
       }
