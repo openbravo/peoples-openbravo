@@ -1429,14 +1429,20 @@ OB.ToolbarUtils.showTree = function(view){
 
 OB.ToolbarRegistry = {
     buttonDefinitions: [],
-    registerButton: function(buttonId, clazz, properties, sortOrder, tabId) {
+    
+    // note tabIds is an array of strings, but maybe null/undefined
+    registerButton: function(buttonId, clazz, properties, sortOrder, tabIds) {
+      if (tabIds && !isc.isA.Array(tabIds)) {
+        tabIds = [tabIds];
+      }
+
       // declare the vars and the object which will be stored
       var i, index = 0, buttonDef = {
           buttonId: buttonId,
           clazz: clazz,
           properties: properties,
           sortOrder: sortOrder,
-          tabId: tabId
+          tabIds: tabIds
       };
  
       // already registered, bail
@@ -1469,8 +1475,18 @@ OB.ToolbarRegistry = {
 		  //  btnDefinitionClass.create(btnDefinitionProperties);
 		  var result = [], resultIndex = 0, i;	
 		  for (i = 0; i < this.buttonDefinitions.length; i++) {	
-		    if (!this.buttonDefinitions[i].tabId || tabId === this.buttonDefinitions[i].tabId) {
-		      result[resultIndex++] = this.buttonDefinitions[i].clazz.create(isc.clone(this.buttonDefinitions[i].properties));
+		    var j, tabIds = this.buttonDefinitions[i].tabIds;
+		    var validTabId = !tabIds;
+		    if (!validTabId && tabIds) {
+		      for (j = 0; j < tabIds.length; j++) {
+		        if (tabIds[j] === tabId) {
+		          validTabId = true;
+		          break;
+		        }
+		      }
+		    }
+		    if (validTabId) {
+          result[resultIndex++] = this.buttonDefinitions[i].clazz.create(isc.clone(this.buttonDefinitions[i].properties));
 		    }
 		  }
 		  return result;
