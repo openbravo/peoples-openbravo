@@ -52,7 +52,7 @@ public class SL_JournalLineAmt extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
       String strGLJournal = vars.getRequiredStringParameter("inpglJournalId");
-      String strCurrencyRate = vars.getStringParameter("inpcurrencyrate", "1");
+      String strCurrencyRate = vars.getNumericParameter("inpcurrencyrate", "1");
       String strCurrency = vars.getStringParameter("inpcCurrencyId");
       String strDateAcct = vars.getStringParameter("inpdateacct", DateTimeData.today(this));
       String strCurrencyRateType = vars.getStringParameter("inpcurrencyratetype", "S");
