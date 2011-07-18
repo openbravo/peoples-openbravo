@@ -100,8 +100,11 @@ isc.OBNumberItem.addProperties({
     
     // get the edit value, without grouping symbol.
     var editValue = OB.Utilities.Number.OBMaskedToOBPlain(this.getElementValue(), this.getDecSeparator(), this.getGroupSeparator());
-    this.setElementValue(editValue);
-    this.setSelectionRange(newCaretPosition, newCaretPosition);
+    
+    if (oldCaretPosition !== newCaretPosition || editValue !== this.getElementValue()) {
+      this.setElementValue(editValue);
+      this.setSelectionRange(newCaretPosition, newCaretPosition);
+    }
   },
   
   replaceAt: function(string, what, ini, end){
