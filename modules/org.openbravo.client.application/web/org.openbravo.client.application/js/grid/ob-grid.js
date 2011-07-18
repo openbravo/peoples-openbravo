@@ -333,8 +333,8 @@ isc.OBGrid.addProperties({
     // clear the date values in a different way
     for (i = 0; i < this.filterEditor.getEditForm().getFields().length; i++) {
       fld = this.filterEditor.getEditForm().getFields()[i];
-      if (fld.setSingleDateValue) {
-        fld.setSingleDateValue(null);
+      if (fld.clearDateValues) {
+        fld.clearDateValues();
       }
     }
     if (!noPerformAction) {

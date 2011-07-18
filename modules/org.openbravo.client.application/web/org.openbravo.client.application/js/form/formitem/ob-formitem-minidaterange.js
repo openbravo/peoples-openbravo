@@ -227,6 +227,15 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
     return false;
   },
   
+  clearDateValues: function() {
+    this.singleDateValue = null;
+    this.singleDateDisplayValue = '';
+    this.singleDateMode = true;
+    this.rangeItemValue = null;
+    this.rangeItem.setValue(null);
+    this.setElementValue('', '');
+  },
+  
   setSingleDateValue: function(value) {
     var displayValue = OB.Utilities.Date.JSToOB(value, this.dateFormat);
     this.singleDateValue = value;
