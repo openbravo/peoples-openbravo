@@ -38,6 +38,7 @@ function OBStartApplication() {
     s.innerHTML = 'Test must be executed with System Administrator role';
     return;
   }
+  OB.Layout.initialize();
   // _101 = Reference view definition
   $LAB.script('../../../org.openbravo.client.kernel/OBUIAPP_MainLayout/View?viewId=_101')
       .wait(function() {
@@ -48,7 +49,7 @@ function OBStartApplication() {
         s.innerHTML = 'Executing...';
 
         suite.add('ViewManager.openView', function() {
-          OB.Layout.ViewManager.openView(viewName);
+          OB.ViewManager.openView(viewName, {});
         })
         .on('cycle', function(bench) {
           summary += String(bench) + '<br />';
@@ -68,6 +69,8 @@ function OBStartApplication() {
 <p id="summary">Loading...</p>
 <script type="text/javascript" src="../../org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined.js"></script>
 <script type="text/javascript" src="../../org.openbravo.userinterface.smartclient/isomorphic/ISC_History.js"></script>
-<script type="text/javascript" src="../../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_mode=3.00&_skinVersion=3.00"></script>
+<script type="text/javascript" src="../../../org.openbravo.client.kernel/OBCLKER_Kernel/StaticResources?_mode=3.00&_skinVersion=Default"></script>
+<iframe name="background_target" id="background_target" height="0" width="0" style="display:none;"></iframe>
+<form name="OBGlobalHiddenForm" method="post" action="blank.html" target="background_target"></form>
 </body>
 </html>
