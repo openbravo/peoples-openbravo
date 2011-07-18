@@ -3056,9 +3056,10 @@ function formElementValue(form, ElementName, Value) {
           if(outputformat != null || typeof Value === "number") {
             maskNumeric = formatNameToMask(outputformat);
             var formattedValue = returnCalcToFormatted(Value, maskNumeric, decSeparator, groupSeparator, groupInterval);
-            obj.value = formattedValue;
-          }
-          else {
+            if (focusedWindowElement !== obj || returnFormattedToCalc(formattedValue, decSeparator, groupSeparator) !== returnFormattedToCalc(obj.value, decSeparator, groupSeparator)) {
+              obj.value = formattedValue;
+            }
+          } else {
             obj.value = Value;
           }
       } else {
