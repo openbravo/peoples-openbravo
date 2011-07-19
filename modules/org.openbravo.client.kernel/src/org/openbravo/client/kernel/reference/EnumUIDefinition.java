@@ -47,6 +47,20 @@ public class EnumUIDefinition extends UIDefinition {
   }
 
   @Override
+  public String getGridFieldProperties(Field field) {
+    Long length = field.getDisplayedLength();
+    if (length == null || length == 0) {
+      length = field.getColumn().getLength();
+    }
+    // custom override
+    if (field.getColumn().getDBColumnName().compareToIgnoreCase("documentno") == 0) {
+      length = new Long(20);
+    }
+    return getShowHoverGridFieldSettings(field) + ", width: isc.OBGrid.getDefaultColumnWidth("
+        + length + ")" + super.getGridFieldProperties(field);
+  }
+
+  @Override
   public String getFieldProperties(Field field, boolean getValueFromSession) {
     JSONObject value;
     try {
