@@ -1358,34 +1358,37 @@ OB.ToolbarUtils.print = function(view, url, directPrint){
     return;
   }
 
-  var popupParams = 'Command=DEFAULT', allProperties = view.getContextInfo(false, true, false, true),
-      sessionProperties = view.getContextInfo(true, true, false, true), param, i;
+  var popupParams = {}, allProperties = view.getContextInfo(false, true, false, true),
+      sessionProperties = view.getContextInfo(true, true, false, true), param, i, value, selectedIds = '';
+
+  popupParams = {
+    Command: 'DEFAULT',
+    inppdfpath: url,
+    inphiddenkey: view.standardProperties.inpKeyName,
+    inpdirectprint: (directPrint ? 'Y' : 'N')
+  };
 
   for (param in allProperties) {
     if (allProperties.hasOwnProperty(param)) {
-      var value = allProperties[param];
+      value = allProperties[param];
 
       if (typeof value === 'boolean') {
         value = value ? 'Y' : 'N';
       }
 
-      popupParams += '&' + param + '=' + value;
+      popupParams[param] = value;
     }
   }
 
-  popupParams += '&inppdfpath=' + url;
-  popupParams += '&inphiddenkey=' + view.standardProperties.inpKeyName;
-  popupParams += '&inpdirectprint=' + (directPrint ? 'Y' : 'N');
-
-  var selectedIds = '';
+  selectedIds = '';
   for (i = 0; i < selectedRecords.length; i++) {
     selectedIds += (i > 0 ? ',' : '') + selectedRecords[i].id;
   }
 
-  popupParams += '&inphiddenvalue=' + selectedIds;
+  popupParams.inphiddenvalue = selectedIds;
 
   view.setContextInfo(sessionProperties, function(){
-    OB.Layout.ClassicOBCompatibility.Popup.open('print', 0, 0, OB.Application.contextUrl + 'businessUtility/PrinterReports.html?' + popupParams, '', window, false, false, true);
+    OB.Layout.ClassicOBCompatibility.Popup.open('print', 0, 0, OB.Application.contextUrl + 'businessUtility/PrinterReports.html', '', window, false, false, true, popupParams);
   });
 };
 
