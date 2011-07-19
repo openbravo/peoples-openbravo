@@ -1236,9 +1236,9 @@ OB.ViewFormProperties = {
         continue;
       }
       // some items don't have a name, ignore those
-      // !item.disabled because sometimes the whole form is disabled and needs to 
+      // true passed to isFocusable because sometimes the whole form is disabled and needs to 
       // be focused after enabling (after the fic call returns)
-      if (chooseNextItem && item.name && item.isFocusable && (item.isFocusable() || !item.disabled)) {
+      if (!isc.isA.SectionItem(item) && chooseNextItem && item.name && item.isFocusable && item.isFocusable(true)) {
         nextItem = item;
         break;
       }

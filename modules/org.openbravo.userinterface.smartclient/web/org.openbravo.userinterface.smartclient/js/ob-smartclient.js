@@ -128,7 +128,7 @@ isc.FormItem.addProperties({
     }
   },
   
-  isDisabled: function(){
+  isDisabled: function(ignoreTemporaryDisabled){
     // disabled if the property can not be updated and the form or record is new
     // explicitly comparing with false as it is only set for edit form fields
     if (this.updatable === false && !(this.form.isNew || this.form.getValue('_new'))) {
@@ -140,13 +140,13 @@ isc.FormItem.addProperties({
     // allow focus if all items are disabled
     // note: see the ob-view-form.js resetCanFocus method 
     this.canFocus = this.form.allItemsDisabled || !disabled;
-    return disabled || this.form.allItemsDisabled;
+    return (!ignoreTemporaryDisabled && this.form.allItemsDisabled) || disabled;
   },
   
   // return all relevant focus condition
-  isFocusable: function(){    
+  isFocusable: function(ignoreTemporaryDisabled){    
     return this.getCanFocus() && this.isDrawn() &&
-        this.isVisible() && !this.isDisabled();
+        this.isVisible() && !this.isDisabled(ignoreTemporaryDisabled);
   },
   
   // overridden to never use the forms datasource for fields
