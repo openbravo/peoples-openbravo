@@ -520,7 +520,7 @@ isc.OBStandardView.addProperties({
     var i;
     if (this.actionToolbarButtons && this.actionToolbarButtons.length>0 && childView.showParentButtons){
       for (i = 0; i < this.actionToolbarButtons.length; i++) {
-        actionButton = isc.OBToolbarActionButton.create(this.actionToolbarButtons[i]);
+        actionButton = isc.OBToolbarActionButton.create(isc.addProperties({}, this.actionToolbarButtons[i], {baseStyle: 'OBToolbarTextButtonParent'}));
         actionButton.contextView = this; // Context is still parent view
         actionButton.toolBar = childView.toolBar;
         actionButton.view = childView;

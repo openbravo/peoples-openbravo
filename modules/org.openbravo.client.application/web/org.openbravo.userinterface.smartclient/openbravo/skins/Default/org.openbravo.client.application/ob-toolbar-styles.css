@@ -283,7 +283,22 @@
 .OBToolbarTextButtonSelectedFocusedOver,
 .OBToolbarTextButtonSelectedFocusedDown,
 .OBToolbarTextButtonDisabled,
-.OBToolbarTextButtonSelectedDisabled {
+.OBToolbarTextButtonSelectedDisabled,
+
+.OBToolbarTextButtonParent,
+.OBToolbarTextButtonParentOver,
+.OBToolbarTextButtonParentDown,
+.OBToolbarTextButtonParentFocused,
+.OBToolbarTextButtonParentFocusedOver,
+.OBToolbarTextButtonParentFocusedDown,
+.OBToolbarTextButtonParentSelected,
+.OBToolbarTextButtonParentSelectedOver,
+.OBToolbarTextButtonParentSelectedDown,
+.OBToolbarTextButtonParentSelectedFocused,
+.OBToolbarTextButtonParentSelectedFocusedOver,
+.OBToolbarTextButtonParentSelectedFocusedDown,
+.OBToolbarTextButtonParentDisabled,
+.OBToolbarTextButtonParentSelectedDisabled {
     padding-left: 15px;
     padding-right: 15px;
     padding-top: 5px;
@@ -303,6 +318,14 @@
 .OBToolbarTextButtonSelected,
 .OBToolbarTextButtonSelectedOver,
 .OBToolbarTextButtonSelectedDown {
+  border: 2px solid white;
+}
+.OBToolbarTextButtonParent,
+.OBToolbarTextButtonParentOver,
+.OBToolbarTextButtonParentDown,
+.OBToolbarTextButtonParentSelected,
+.OBToolbarTextButtonParentSelectedOver,
+.OBToolbarTextButtonParentSelectedDown {
   border: 2px solid #63952b;
 }
 
@@ -318,7 +341,14 @@
 .OBToolbarTextButtonOver,
 .OBToolbarTextButtonSelectedOver,
 .OBToolbarTextButtonFocusedOver,
-.OBToolbarTextButtonSelectedFocusedOver {
+.OBToolbarTextButtonSelectedFocusedOver,
+
+.OBToolbarTextButtonParentFocused,
+.OBToolbarTextButtonParentFocusedOver,
+.OBToolbarTextButtonParentFocusedDown,
+.OBToolbarTextButtonParentSelectedFocused,
+.OBToolbarTextButtonParentSelectedFocusedOver,
+.OBToolbarTextButtonParentSelectedFocusedDown {
   background-image: url(./images/toolbar/textButton-bg-hover.png);
 }
 
@@ -327,13 +357,23 @@
 .OBToolbarTextButtonDown,
 .OBToolbarTextButtonFocusedDown,
 .OBToolbarTextButtonSelectedDown,
-.OBToolbarTextButtonSelectedFocusedDown {
+.OBToolbarTextButtonSelectedFocusedDown,
+
+.OBToolbarTextButtonParentSelected,
+.OBToolbarTextButtonParentSelectedFocused,
+.OBToolbarTextButtonParentDown,
+.OBToolbarTextButtonParentFocusedDown,
+.OBToolbarTextButtonParentSelectedDown,
+.OBToolbarTextButtonParentSelectedFocusedDown {
   background-image: url(./images/toolbar/textButton-bg-down.png);
   background-position: left bottom;
 }
 
 .OBToolbarTextButtonDisabled,
-.OBToolbarTextButtonSelectedDisabled {
+.OBToolbarTextButtonSelectedDisabled,
+
+.OBToolbarTextButtonParentDisabled,
+.OBToolbarTextButtonParentSelectedDisabled {
   color: #777;
   background-image: url(./images/toolbar/textButton-bg-disabled.png);
 }
