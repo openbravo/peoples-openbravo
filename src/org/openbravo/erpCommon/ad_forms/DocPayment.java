@@ -325,14 +325,27 @@ public class DocPayment extends AcctServer {
         if (line.WriteOffAmt != null && !line.WriteOffAmt.equals("")
             && !line.WriteOffAmt.equals("0")) {
           String Account_ID = "";
-          AcctServerData[] acctData = AcctServerData.selectWriteOffAcct(conn, line.C_BPARTNER_ID,
-              as.getC_AcctSchema_ID());
-          if (acctData != null && acctData.length != 0) {
-            Account_ID = acctData[0].accountId;
-          } else {
-            acctData = AcctServerData.selectWriteOffDefault(conn, as.getC_AcctSchema_ID());
+          if ("Y".equals(line.isReceipt)) {
+            AcctServerData[] acctData = AcctServerData.selectWriteOffAcct(conn, line.C_BPARTNER_ID,
+                as.getC_AcctSchema_ID());
             if (acctData != null && acctData.length != 0) {
               Account_ID = acctData[0].accountId;
+            } else {
+              acctData = AcctServerData.selectWriteOffDefault(conn, as.getC_AcctSchema_ID());
+              if (acctData != null && acctData.length != 0) {
+                Account_ID = acctData[0].accountId;
+              }
+            }
+          } else {
+            AcctServerData[] acctData = AcctServerData.selectWriteOffAcctRevenue(conn,
+                line.C_BPARTNER_ID, as.getC_AcctSchema_ID());
+            if (acctData != null && acctData.length != 0) {
+              Account_ID = acctData[0].accountId;
+            } else {
+              acctData = AcctServerData.selectWriteOffDefaultRevenue(conn, as.getC_AcctSchema_ID());
+              if (acctData != null && acctData.length != 0) {
+                Account_ID = acctData[0].accountId;
+              }
             }
           }
           Account acct = null;

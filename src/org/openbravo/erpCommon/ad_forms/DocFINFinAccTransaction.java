@@ -404,10 +404,15 @@ public class DocFINFinAccTransaction extends AcctServer {
         if (!"".equals(line.getWriteOffAmt())
             && ZERO.compareTo(new BigDecimal(line.getWriteOffAmt())) != 0) {
           // Writeoff uses same exchange rate as original invoice
-          fact.createLine(line, getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn),
-              paymentCurrencyId, (isReceipt ? line.getWriteOffAmt() : ""),
-              (isReceipt ? "" : line.getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, paymentDate, conn);
+          Account account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOff, as, conn)
+              : getAccount(AcctServer.ACCTTYPE_WriteOff_Revenue, as, conn);
+          if (account == null) {
+            account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn)
+                : getAccount(AcctServer.ACCTTYPE_WriteOffDefault_Revenue, as, conn);
+          }
+          fact.createLine(line, account, paymentCurrencyId,
+              (isReceipt ? line.getWriteOffAmt() : ""), (isReceipt ? "" : line.getWriteOffAmt()),
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, paymentDate, conn);
           bpamount = bpamount.add(new BigDecimal(line.getWriteOffAmt()));
         }
         // Bug critical: Before GL Item was not taken into account

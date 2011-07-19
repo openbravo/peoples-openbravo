@@ -589,8 +589,13 @@ public class DocFINReconciliation extends AcctServer {
       BigDecimal bpAmount = new BigDecimal(line.getAmount());
       if (line.getWriteOffAmt() != null
           && ZERO.compareTo(new BigDecimal(line.getWriteOffAmt())) != 0) {
-        fact.createLine(line, getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn),
-            C_Currency_ID, (isReceipt ? line.getWriteOffAmt() : ""),
+        Account account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOff, as, conn)
+            : getAccount(AcctServer.ACCTTYPE_WriteOff_Revenue, as, conn);
+        if (account == null) {
+          account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn)
+              : getAccount(AcctServer.ACCTTYPE_WriteOffDefault_Revenue, as, conn);
+        }
+        fact.createLine(line, account, C_Currency_ID, (isReceipt ? line.getWriteOffAmt() : ""),
             (isReceipt ? "" : line.getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
         bpAmount = bpAmount.add(new BigDecimal(line.getWriteOffAmt()));
@@ -620,10 +625,15 @@ public class DocFINReconciliation extends AcctServer {
     BigDecimal bpAmount = paymentDetail.getAmount();
     if (paymentDetail.getWriteoffAmount() != null
         && paymentDetail.getWriteoffAmount().compareTo(BigDecimal.ZERO) != 0) {
-      fact.createLine(line, getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn),
-          C_Currency_ID, (isReceipt ? paymentDetail.getWriteoffAmount().toString() : ""),
-          (isReceipt ? "" : paymentDetail.getWriteoffAmount().toString()), Fact_Acct_Group_ID,
-          nextSeqNo(SeqNo), DocumentType, conn);
+      Account account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOff, as, conn)
+          : getAccount(AcctServer.ACCTTYPE_WriteOff_Revenue, as, conn);
+      if (account == null) {
+        account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn)
+            : getAccount(AcctServer.ACCTTYPE_WriteOffDefault_Revenue, as, conn);
+      }
+      fact.createLine(line, account, C_Currency_ID, (isReceipt ? paymentDetail.getWriteoffAmount()
+          .toString() : ""), (isReceipt ? "" : paymentDetail.getWriteoffAmount().toString()),
+          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       bpAmount = bpAmount.add(paymentDetail.getWriteoffAmount());
     }
     String bpartnerId = (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID

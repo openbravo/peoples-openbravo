@@ -1058,6 +1058,10 @@ public class InitialSetupUtility {
         newAcctSchemaDefault.setWriteoff(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
 
+      if (strDefault.equals("WRITEOFF_REV_ACCT"))
+        newAcctSchemaDefault.setWriteoffRevenue(getAcctComb(client, org,
+            defaultElementValues.get(strDefault), acctSchema, true));
+
       if (strDefault.equals("UNREALIZEDGAIN_ACCT"))
         newAcctSchemaDefault.setUnrealizedGainsAcct(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));

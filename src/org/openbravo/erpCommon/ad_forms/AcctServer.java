@@ -231,6 +231,7 @@ public abstract class AcctServer {
   public static final String ACCTTYPE_BankInTransit = "11";
   public static final String ACCTTYPE_PaymentSelect = "12";
   public static final String ACCTTYPE_WriteOffDefault = "13";
+  public static final String ACCTTYPE_WriteOffDefault_Revenue = "63";
   public static final String ACCTTYPE_BankInTransitDefault = "14";
   public static final String ACCTTYPE_ConvertChargeDefaultAmt = "15";
   public static final String ACCTTYPE_ConvertGainDefaultAmt = "16";
@@ -246,6 +247,7 @@ public abstract class AcctServer {
   public static final String ACCTTYPE_DiscountExp = "30";
   public static final String ACCTTYPE_DiscountRev = "31";
   public static final String ACCTTYPE_WriteOff = "32";
+  public static final String ACCTTYPE_WriteOff_Revenue = "64";
 
   /** Account Type - Bank Statement */
   public static final String ACCTTYPE_BankAsset = "40";
@@ -1418,6 +1420,8 @@ public abstract class AcctServer {
             as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_WriteOffDefault)) {
         data = AcctServerData.selectWriteOffDefault(conn, as.getC_AcctSchema_ID());
+      } else if (AcctType.equals(ACCTTYPE_WriteOffDefault_Revenue)) {
+        data = AcctServerData.selectWriteOffDefaultRevenue(conn, as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_DiscountExp)) {
         /** Account Type - Allocation */
         data = AcctServerData.selectDiscountExpAcct(conn, C_BPartner_ID, as.getC_AcctSchema_ID());
@@ -1425,6 +1429,9 @@ public abstract class AcctServer {
         data = AcctServerData.selectDiscountRevAcct(conn, C_BPartner_ID, as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_WriteOff)) {
         data = AcctServerData.selectWriteOffAcct(conn, C_BPartner_ID, as.getC_AcctSchema_ID());
+      } else if (AcctType.equals(ACCTTYPE_WriteOff_Revenue)) {
+        data = AcctServerData.selectWriteOffAcctRevenue(conn, C_BPartner_ID,
+            as.getC_AcctSchema_ID());
       } else if (AcctType.equals(ACCTTYPE_ConvertChargeLossAmt)) {
         /** Account Type - Bank Statement */
         data = AcctServerData.selectConvertChargeLossAmt(conn, C_BankAccount_ID,

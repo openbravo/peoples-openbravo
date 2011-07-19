@@ -305,6 +305,14 @@
       </Sql>
       <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
+   <SqlMethod name="selectWriteOffDefaultRevenue" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT WRITEOFF_REV_ACCT AS ACCOUNT_ID FROM C_ACCTSCHEMA_DEFAULT
+        WHERE C_ACCTSCHEMA_ID = ?
+      </Sql>
+      <Parameter name="C_AcctSchema_ID"/>
+   </SqlMethod>
    <SqlMethod name="selectDiscountExpAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
@@ -329,6 +337,16 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         SELECT WriteOff_Acct as account_ID FROM C_BP_Group_Acct a, C_BPartner bp
+        WHERE a.C_BP_Group_ID=bp.C_BP_Group_ID AND bp.C_BPartner_ID=? AND a.C_AcctSchema_ID=?
+        AND STATUS IS NULL
+      </Sql>
+      <Parameter name="C_BPartner_ID"/>
+      <Parameter name="C_AcctSchema_ID"/>
+   </SqlMethod>
+   <SqlMethod name="selectWriteOffAcctRevenue" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT WriteOff_Rev_Acct as account_ID FROM C_BP_Group_Acct a, C_BPartner bp
         WHERE a.C_BP_Group_ID=bp.C_BP_Group_ID AND bp.C_BPartner_ID=? AND a.C_AcctSchema_ID=?
         AND STATUS IS NULL
       </Sql>

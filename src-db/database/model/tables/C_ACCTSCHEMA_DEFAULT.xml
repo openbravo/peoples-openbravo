@@ -109,6 +109,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="WRITEOFF_REV_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="PAYDISCOUNT_REV_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -285,6 +289,9 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHEMA_DEF_WRITEOFF_REV">
+        <reference local="WRITEOFF_REV_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHEMA_DEFAULT_A_ACCUMDE">
         <reference local="A_ACCUMDEPRECIATION_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>

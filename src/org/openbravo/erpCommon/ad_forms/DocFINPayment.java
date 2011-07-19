@@ -317,11 +317,16 @@ public class DocFINPayment extends AcctServer {
         String bpAmount = line.getAmount();
         if (line.WriteOffAmt != null && !line.WriteOffAmt.equals("")
             && new BigDecimal(line.WriteOffAmt).compareTo(ZERO) != 0) {
+          Account account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOff, as, conn)
+              : getAccount(AcctServer.ACCTTYPE_WriteOff_Revenue, as, conn);
+          if (account == null) {
+            account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn)
+                : getAccount(AcctServer.ACCTTYPE_WriteOffDefault_Revenue, as, conn);
+          }
           // Writeoff uses same exchange rate as original invoice
-          fact.createLine(line, getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn),
-              C_Currency_ID, (isReceipt ? line.WriteOffAmt : ""), (isReceipt ? ""
-                  : line.WriteOffAmt), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-              invoiceAccountingDate, conn);
+          fact.createLine(line, account, C_Currency_ID, (isReceipt ? line.WriteOffAmt : ""),
+              (isReceipt ? "" : line.WriteOffAmt), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, invoiceAccountingDate, conn);
           bpAmount = new BigDecimal(bpAmount).add(new BigDecimal(line.WriteOffAmt)).toString();
         }
 
