@@ -116,9 +116,15 @@ isc.OBToolbarActionButton.addProperties( {
           }
 
           // Refresh in order to show possible new records
-          currentView.refresh();
+          currentView.refresh(null, false, true);
         };
 
+    if (currentView.parentView) {
+      currentView.parentView.setChildsToRefresh();
+    } else {
+      currentView.setChildsToRefresh();
+    }
+        
     if (currentView.viewGrid.getSelectedRecord()) {
       // There is a record selected, refresh it and its parent
       currentView.refreshCurrentRecord(afterRefresh);

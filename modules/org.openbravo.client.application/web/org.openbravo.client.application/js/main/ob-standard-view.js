@@ -1052,6 +1052,15 @@ isc.OBStandardView.addProperties({
     delete this.isOpenDirectModeParent;
   },
 
+  // set childs to refresh when they are made visible
+  setChildsToRefresh: function() {
+    if (this.childTabSet) {
+      for (i = 0; i < this.childTabSet.tabs.length; i++) {
+        this.childTabSet.tabs[i].pane.refreshContents = true;  
+      }
+    }
+  },
+  
   hasSelectionStateChanged: function() {
     return ((this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length !== this.lastRecordSelectedCount) || 
         (this.viewGrid.getSelectedRecord() && this.viewGrid.getSelectedRecord().id !== this.lastRecordSelected.id)) || 
