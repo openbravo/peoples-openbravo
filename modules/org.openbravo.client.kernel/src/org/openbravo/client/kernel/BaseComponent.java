@@ -217,7 +217,11 @@ public abstract class BaseComponent implements Component {
         OBCriteria<Module> qMod = OBDal.getInstance().createCriteria(Module.class);
         qMod.addOrder(Order.asc(Module.PROPERTY_ID));
         for (Module mod : qMod.list()) {
-          moduleVersions += mod.getId() + "-" + mod.getVersion() + "-" + mod.isEnabled() + "\n";
+          moduleVersions += mod.getId() + "-" + mod.getVersion() + "-" + mod.isEnabled();
+          if ("T".equals(mod.getType())) {
+            moduleVersions += "-" + mod.isApplyConfigurationScript();
+          }
+          moduleVersions += "\n";
         }
         moduleVersionHash = DigestUtils.md5Hex(moduleVersions);
         log4j.debug("New moduleVersionHash. Original: " + moduleVersions + " hash:"
