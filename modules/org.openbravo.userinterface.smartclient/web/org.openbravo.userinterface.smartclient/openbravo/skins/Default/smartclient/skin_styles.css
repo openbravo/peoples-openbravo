@@ -171,6 +171,8 @@
     background:#B2D7FF url(./images/cssButton/button_Over_stretch.png) repeat-x;
 }
 
+
+
 /* ImgButton */
 .imgButton,
 .imgButtonOver,
@@ -236,8 +238,11 @@
 ============================================================ 
   */
 
-.menuMain {
+.menuTable {
     border: 1px solid #93A9C0;
+}
+
+.menuMain {
     background:#FFFFFF url(./images/Menu/menu_background.png) repeat-y scroll;
 }
 .treeMenuBody {
@@ -1453,6 +1458,72 @@ border-top:1px solid #abadb3;
     border: 1px solid #A7ABB4;
 	background-color:#FFFFFF;
     background-image:url("images/ToolStrip/background_vertical.png");
+}
+
+
+/*============================================================
+   12a) ToolStripGroup and IconButton
+==============================================================*/
+.toolStripGroup,
+.toolStripGroupOver,
+.toolStripGroupSelected,
+.toolStripGroupSelectedDisabled,
+.toolStripGroupSelectedOver,
+.toolStripGroupDown,
+.toolStripGroupSelectedDown,
+.toolStripGroupDisabled {
+    background-color: #DDDDDD;
+    border: 1px solid #A7ABB4;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.toolStripGroupTitle,
+.toolStripGroupTitleOver,
+.toolStripGroupTitleSelected,
+.toolStripGroupTitleSelectedDisabled,
+.toolStripGroupTitleSelectedOver,
+.toolStripGroupTitleDown,
+.toolStripGroupTitleSelectedDown,
+.toolStripGroupTitleDisabled {
+    border: none;
+    font-family:Arial,Verdana,Bitstream Vera Sans,sans-serif; font-size:11px; font-weight:bold;
+    padding:3;
+    background-color: #CCCCCC
+}
+
+.iconButton,
+.iconButtonOver,
+.iconButtonFocused,
+.iconButtonFocusedOver,
+.iconButtonDown,
+.iconButtonFocusedDown,
+.iconButtonSelected,
+.iconButtonSelectedFocused,
+.iconButtonSelectedDown,
+.iconButtonSelectedFocusedDown,
+.iconButtonSelectedOver,
+.iconButtonSelectedFocusedOver,
+.iconButtonDisabled,
+.iconButtonSelectedDisabled {
+    border: 1px solid transparent;
+    padding:4;
+    font-family:Arial,Verdana,Bitstream Vera Sans,sans-serif; font-size:11px;
+    background-color: #DDDDDD;
+	color:#000000;
+}
+
+.iconButtonOver,
+.iconButtonSelectedOver,
+.iconButtonFocusedOver,
+.iconButtonSelectedFocusedOver {
+    border: 1px solid #A6ABB4;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    border-radius: 3px;
 }
 
 /*============================================================
