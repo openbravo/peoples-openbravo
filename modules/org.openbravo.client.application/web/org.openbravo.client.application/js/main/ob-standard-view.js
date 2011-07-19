@@ -753,8 +753,6 @@ isc.OBStandardView.addProperties({
         
     if (this.shouldOpenDefaultEditMode()) {
       this.openDefaultEditView();
-    } else if (this.isShowingForm && !(this.allowDefaultEditMode && this.defaultEditMode)) {
-      this.switchFormGridVisibility();
     }
     this.viewGrid.refreshContents();
 
