@@ -542,7 +542,7 @@ isc.OBNumberFilterItem.addProperties({
         if (criteria.end) {
           criteria.end = this.convertToStringValue(criteria.end);
         }
-        if (criterion.value) {
+        if (criteria.value) {
           criteria.value = this.convertToStringValue(criteria.value);
         }
       }
