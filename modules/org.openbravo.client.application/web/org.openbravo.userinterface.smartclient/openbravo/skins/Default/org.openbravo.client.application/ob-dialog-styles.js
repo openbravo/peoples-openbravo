@@ -52,6 +52,10 @@ isc.Dialog.addProperties({
   shadowDepth: 5
 });
 
+isc.Dialog.changeDefaults('toolbarDefaults', {
+  buttonConstructor: 'OBFormButton'
+});
+
 isc.Dialog.changeDefaults('headerDefaults', {
   layoutMargin: 0,
   height: 25

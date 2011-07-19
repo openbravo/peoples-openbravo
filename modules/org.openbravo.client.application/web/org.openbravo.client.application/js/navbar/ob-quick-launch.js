@@ -117,7 +117,6 @@ isc.OBQuickLaunch.addProperties({
         pickerIconSrc: OB.Styles.OBFormField.DefaultComboBox.pickerIconSrc,
         height: OB.Styles.OBFormField.DefaultComboBox.height,
         pickerIconWidth: OB.Styles.OBFormField.DefaultComboBox.pickerIconWidth,
-        pickListWidth: OB.Styles.OBFormField.DefaultComboBox.quickRunPickListWidth,
         // fixes issue https://issues.openbravo.com/view.php?id=15105
         pickListCellHeight: OB.Styles.OBFormField.DefaultComboBox.quickRunPickListCellHeight,
         recentPropertyName : this.recentPropertyName,
@@ -130,8 +129,8 @@ isc.OBQuickLaunch.addProperties({
 
         selectOnFocus: true,
         textMatchStyle: 'substring',
-        width: '100%',
-
+        width: OB.Styles.OBFormField.DefaultComboBox.quickRunWidth,
+ 
         // client filtering does not always work great...
         pickListProperties: {
           textMatchStyle: 'substring',

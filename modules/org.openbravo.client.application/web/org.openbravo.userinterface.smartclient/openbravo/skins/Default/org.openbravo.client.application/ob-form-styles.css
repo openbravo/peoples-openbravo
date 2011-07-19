@@ -129,6 +129,7 @@
   font-family: arial, sans-serif;
   font-size: 12px;
   padding: 2px 2px 0px 2px;
+  margin-right: 0px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
 }
 

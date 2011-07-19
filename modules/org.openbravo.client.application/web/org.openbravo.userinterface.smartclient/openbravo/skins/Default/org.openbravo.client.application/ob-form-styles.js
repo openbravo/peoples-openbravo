@@ -91,7 +91,7 @@ OB.Styles.OBFormField.DefaultComboBox = {
   // is 20
   pickListCellHeight: 22,
   
-  quickRunPickListWidth: 225,
+  quickRunWidth: 210,
   // fixes issue https://issues.openbravo.com/view.php?id=15105
   quickRunPickListCellHeight: 22,
   pickListHeight: 200,
