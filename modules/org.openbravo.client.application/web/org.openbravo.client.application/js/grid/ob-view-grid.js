@@ -75,6 +75,8 @@ isc.OBViewGrid.addProperties({
   // The data page size used for loading paged data from the server.
   dataPageSize: 100,
   
+  fetchDelay: 500,
+  
   autoFitFieldWidths: true,
   autoFitWidthApproach: 'title',
   canAutoFitFields: false,

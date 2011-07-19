@@ -66,6 +66,10 @@ public class AdvancedQueryBuilder {
   private static final String OPERATOR_LESSTHAN = "lessThan";
   private static final String OPERATOR_GREATEROREQUAL = "greaterOrEqual";
   private static final String OPERATOR_LESSOREQUAL = "lessOrEqual";
+  private static final String OPERATOR_IGREATERTHAN = "iGreaterThan";
+  private static final String OPERATOR_ILESSTHAN = "iLessThan";
+  private static final String OPERATOR_IGREATEROREQUAL = "iGreaterOrEqual";
+  private static final String OPERATOR_ILESSOREQUAL = "iLessOrEqual";
   private static final String OPERATOR_CONTAINS = "contains";
   private static final String OPERATOR_STARTSWITH = "startsWith";
   private static final String OPERATOR_ENDSWITH = "endsWith";
@@ -96,6 +100,8 @@ public class AdvancedQueryBuilder {
   private static final String OPERATOR_NOT = "not";
   private static final String OPERATOR_BETWEEN = "between";
   private static final String OPERATOR_BETWEENINCLUSIVE = "betweenInclusive";
+  private static final String OPERATOR_IBETWEEN = "iBetween";
+  private static final String OPERATOR_IBETWEENINCLUSIVE = "iBetweenInclusive";
 
   private static final long serialVersionUID = 1L;
 
@@ -164,6 +170,8 @@ public class AdvancedQueryBuilder {
     if (whereClause.trim().length() > 0) {
       whereClause = " where " + whereClause;
     }
+
+    whereClause += " ";
 
     return whereClause;
   }
@@ -262,11 +270,9 @@ public class AdvancedQueryBuilder {
   private String parseSingleClause(JSONObject jsonCriteria) throws JSONException {
     String operator = jsonCriteria.getString("operator");
 
-    if (operator.equals(OPERATOR_BETWEEN)) {
-      return parseBetween(jsonCriteria, false);
-    }
-    if (operator.equals(OPERATOR_BETWEENINCLUSIVE)) {
-      return parseBetween(jsonCriteria, true);
+    if (operator.equals(OPERATOR_BETWEEN) || operator.equals(OPERATOR_BETWEENINCLUSIVE)
+        || operator.equals(OPERATOR_IBETWEEN) || operator.equals(OPERATOR_IBETWEENINCLUSIVE)) {
+      return parseBetween(jsonCriteria, operator, true);
     }
 
     String fieldName = jsonCriteria.getString("fieldName");
@@ -283,14 +289,14 @@ public class AdvancedQueryBuilder {
     return parseSimpleClause(fieldName, operator, value);
   }
 
-  private String parseBetween(JSONObject jsonCriteria, boolean inclusive) throws JSONException {
+  private String parseBetween(JSONObject jsonCriteria, String operator, boolean inclusive)
+      throws JSONException {
     final String fieldName = jsonCriteria.getString("fieldName");
     final Object start = jsonCriteria.get("start");
     final Object end = jsonCriteria.get("end");
-    final String leftClause = parseSimpleClause(fieldName, inclusive ? OPERATOR_GREATEROREQUAL
-        : OPERATOR_GREATERTHAN, start);
-    final String rightClause = parseSimpleClause(fieldName, inclusive ? OPERATOR_LESSOREQUAL
-        : OPERATOR_LESSTHAN, end);
+    final String leftClause = parseSimpleClause(fieldName, getBetweenOperator(operator, false),
+        start);
+    final String rightClause = parseSimpleClause(fieldName, getBetweenOperator(operator, true), end);
     if (leftClause != null && rightClause != null) {
       return "(" + leftClause + " and " + rightClause + ")";
     }
@@ -562,10 +568,45 @@ public class AdvancedQueryBuilder {
         || operator.equals(OPERATOR_STARTSWITHFIELD);
   }
 
+  private String getBetweenOperator(String operator, boolean rightClause) {
+    if (operator.equals(OPERATOR_IBETWEEN)) {
+      if (rightClause) {
+        return OPERATOR_ILESSTHAN;
+      } else {
+        return OPERATOR_IGREATERTHAN;
+      }
+    }
+    if (operator.equals(OPERATOR_BETWEEN)) {
+      if (rightClause) {
+        return OPERATOR_LESSTHAN;
+      } else {
+        return OPERATOR_GREATERTHAN;
+      }
+    }
+    if (operator.equals(OPERATOR_IBETWEENINCLUSIVE)) {
+      if (rightClause) {
+        return OPERATOR_ILESSOREQUAL;
+      } else {
+        return OPERATOR_IGREATEROREQUAL;
+      }
+    }
+    if (operator.equals(OPERATOR_BETWEENINCLUSIVE)) {
+      if (rightClause) {
+        return OPERATOR_LESSOREQUAL;
+      } else {
+        return OPERATOR_GREATEROREQUAL;
+      }
+    }
+    throw new IllegalArgumentException("Operator not supported " + operator);
+  }
+
   private boolean ignoreCase(String operator) {
     return operator.equals(OPERATOR_IEQUALS) || operator.equals(OPERATOR_INOTEQUAL)
         || operator.equals(OPERATOR_ICONTAINS) || operator.equals(OPERATOR_IENDSWITH)
-        || operator.equals(OPERATOR_ISTARTSWITH);
+        || operator.equals(OPERATOR_ISTARTSWITH) || operator.equals(OPERATOR_IBETWEEN)
+        || operator.equals(OPERATOR_IGREATEROREQUAL) || operator.equals(OPERATOR_ILESSOREQUAL)
+        || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_ILESSTHAN)
+        || operator.equals(OPERATOR_IBETWEENINCLUSIVE);
   }
 
   private boolean isNot(String operator) {
@@ -591,6 +632,14 @@ public class AdvancedQueryBuilder {
     } else if (operator.equals(OPERATOR_GREATEROREQUAL)) {
       return ">=";
     } else if (operator.equals(OPERATOR_LESSOREQUAL)) {
+      return "<=";
+    } else if (operator.equals(OPERATOR_IGREATERTHAN)) {
+      return ">";
+    } else if (operator.equals(OPERATOR_ILESSTHAN)) {
+      return "<";
+    } else if (operator.equals(OPERATOR_IGREATEROREQUAL)) {
+      return ">=";
+    } else if (operator.equals(OPERATOR_ILESSOREQUAL)) {
       return "<=";
     } else if (operator.equals(OPERATOR_CONTAINS)) {
       return "like";
@@ -946,7 +995,11 @@ public class AdvancedQueryBuilder {
     }
 
     public String getJoinStatement() {
-      return " left outer join " + ownerAlias + "." + property.getName() + " as " + joinAlias;
+      if (orNesting > 0) {
+        return " left outer join " + ownerAlias + "." + property.getName() + " as " + joinAlias;
+      } else {
+        return " left join " + ownerAlias + "." + property.getName() + " as " + joinAlias;
+      }
     }
 
     public void setProperty(Property property) {

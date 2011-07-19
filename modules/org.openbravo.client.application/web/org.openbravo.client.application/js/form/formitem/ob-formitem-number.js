@@ -33,6 +33,7 @@ isc.OBNumberItem.addProperties({
   
   validateOnExit: true,
   valueValidator: null,
+  doBlurLogic: true,
   
   init: function(){
     this.setKeyPressFilter(this.keyPressFilterNumeric);
@@ -438,28 +439,30 @@ isc.OBNumberItem.addProperties({
   },
   
   blur: function(){
-    var value = this.getElementValue().toString();
-    var expressionValue;
-    var obj = this;
-    if (this.allowMath && value.indexOf('=') === 0) {
-      expressionValue = this.evalMathExpression(value);
-      if (expressionValue !== 'error') {
-        expressionValue = parseFloat(expressionValue, 10);
-      } else {
-        setTimeout(function() {
-          obj.setElementValue(value);
-        }, 50);
-        return this.Super('blur', arguments);
+    if (this.doBlurLogic) {
+      var value = this.getElementValue().toString();
+      var expressionValue;
+      var obj = this;
+      if (this.allowMath && value.indexOf('=') === 0) {
+        expressionValue = this.evalMathExpression(value);
+        if (expressionValue !== 'error') {
+          expressionValue = parseFloat(expressionValue, 10);
+        } else {
+          setTimeout(function() {
+            obj.setElementValue(value);
+          }, 50);
+          return this.Super('blur', arguments);
+        }
+        this.setValue(expressionValue);
+        this.validate();
       }
-      this.setValue(expressionValue);
-      this.validate();
-    }
-
-    value = this.getValue();
-    // first check if the number is valid
-    if (!isc.isA.String(value)) {
-      // format the value displayed
-      this.setElementValue(this.mapValueToDisplay(value));
+  
+      value = this.getValue();
+      // first check if the number is valid
+      if (!isc.isA.String(value)) {
+        // format the value displayed
+        this.setElementValue(this.mapValueToDisplay(value));
+      }
     }
     return this.Super('blur', arguments);
   },
@@ -488,4 +491,85 @@ isc.OBNumberItem.addProperties({
       return OB.Utilities.Number.IsValidValueString(type, item.getElementValue());
     }
   }]
+});
+
+isc.ClassFactory.defineClass('OBNumberFilterItem', OBNumberItem);
+
+isc.OBNumberFilterItem.addProperties({
+  allowExpressions: true,
+  validateOnExit: false,
+  validateOnChange: false,
+  keyPressFilterNumeric: '[0-9.,-=<>!#]',
+  doBlurLogic: false,
+  operator: 'equals',
+  validOperators: ['equals', 'lessThan', 'greaterThan',
+                   'lessThan', 'lessThanOrEqual', 'greaterThanOrEqual',
+                   'between', 'betweenInclusive', 'isNull', 'isNotNull'
+                   ],
+
+  // prevent handling of equal symbol in filteritem
+  keyDownAction: function(item, form, keyName){
+    var keyCode = isc.EventHandler.lastEvent.nativeKeyCode;
+    this.manageDecPoint(keyCode);
+  },
+
+  parseValueExpressions: function() {
+    var ret = this.Super('parseValueExpressions', arguments);
+    if (ret && ret.start) {
+      ret.start = this.convertToTypedValue(ret.start);
+    } 
+    
+    if (ret && ret.end) {
+      ret.end = this.convertToTypedValue(ret.end);
+    }
+    
+    if (ret && ret.value) {
+      ret.value = this.convertToTypedValue(ret.value);
+    }
+    
+    return ret;
+  },
+  
+  buildValueExpressions: function(criterion) {
+    var i = 0, criteria;
+    if (criterion && criterion.criteria) {
+      criterion = isc.clone(criterion);
+      for (i = 0; i < criterion.criteria.length; i++) {
+        criteria = criterion.criteria[i];
+        if (criteria.start) {
+          criteria.start = this.convertToStringValue(criteria.start);
+        }
+        if (criteria.end) {
+          criteria.end = this.convertToStringValue(criteria.end);
+        }
+        if (criterion.value) {
+          criteria.value = this.convertToStringValue(criteria.value);
+        }
+      }
+    }
+    var ret = this.Super('buildValueExpressions', arguments);
+    if (isc.isA.String(ret) && ret.contains('undefined')) {
+      return ret.replace('undefined', '');
+    }
+    return ret;
+  },
+
+  convertToStringValue: function(value) {
+    var type = this.typeInstance;
+    if (!isc.isA.String(value)) {
+      // on purpose no grouping symbol
+      return OB.Utilities.Number.JSToOBMasked(value, type.maskNumeric, type.decSeparator, null, type.groupInterval);
+    }
+    return value;
+  },
+  
+  focusNumberInput: function() {
+  },
+  
+  convertToTypedValue: function(value) {
+    if (isc.isA.String(value) && OB.Utilities.Number.IsValidValueString(this.typeInstance, value)) {
+      return OB.Utilities.Number.OBMaskedToJS(value, this.typeInstance.decSeparator, this.typeInstance.groupSeparator);
+    }
+    return value;
+  }
 });

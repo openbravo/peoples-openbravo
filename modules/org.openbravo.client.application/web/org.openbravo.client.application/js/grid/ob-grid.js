@@ -31,6 +31,7 @@ isc.OBGrid.addProperties({
   poolComponentsPerColumn: true,
   showRecordComponents: true,
   escapeHTML: true,
+  bodyProperties: {canSelectText:true},
 
   bodyKeyPress : function (event, eventInfo) {
     var ctrlAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown(),
@@ -129,6 +130,7 @@ isc.OBGrid.addProperties({
     };
 
     setFieldsKeyDown = function(item, form, keyName) {
+      var event = isc.EventHandler.getLastEvent();
       var ctrlAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown(),
         onlyAltDown = !isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown(),
         noCtrlAltDown = !isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown();

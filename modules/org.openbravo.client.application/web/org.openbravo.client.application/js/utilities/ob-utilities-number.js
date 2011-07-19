@@ -50,8 +50,10 @@ OB.Utilities.Number.OBMaskedToOBPlain = function(/* String */number, /* String *
   var plainNumber = number;
   
   // Remove group separators
-  var groupRegExp = new RegExp('\\' + groupSeparator, 'g');
-  plainNumber = plainNumber.replace(groupRegExp, '');
+  if (groupSeparator) {
+    var groupRegExp = new RegExp('\\' + groupSeparator, 'g');
+    plainNumber = plainNumber.replace(groupRegExp, '');
+  }
   
   // Catch sign
   var numberSign = '';
@@ -113,7 +115,7 @@ OB.Utilities.Number.OBPlainToOBMasked = function(/* Number */number, /* String *
   if (maskNumeric.indexOf('+') === 0 || maskNumeric.indexOf('-') === 0) {
     maskNumeric = maskNumeric.substring(1, maskNumeric.length);
   }
-  if (maskNumeric.indexOf(groupSeparator) !== -1 &&
+  if (groupSeparator && maskNumeric.indexOf(groupSeparator) !== -1 &&
   maskNumeric.indexOf(decSeparator) !== -1 &&
   maskNumeric.indexOf(groupSeparator) >
   maskNumeric.indexOf(decSeparator)) {
@@ -128,10 +130,12 @@ OB.Utilities.Number.OBPlainToOBMasked = function(/* Number */number, /* String *
   var intMask = maskNumeric.substring(0, decMaskPosition);
   var decMask = maskNumeric.substring(decMaskPosition + 1, maskLength);
   
-  if (decMask.indexOf(groupSeparator) !== -1 ||
-  decMask.indexOf(decSeparator) !== -1) {
-    var fixRegExp_1 = new RegExp('\\' + groupSeparator, 'g');
-    decMask = decMask.replace(fixRegExp_1, '');
+  if ((groupSeparator && decMask.indexOf(groupSeparator) !== -1) ||
+      decMask.indexOf(decSeparator) !== -1) {
+    if (groupSeparator) {
+      var fixRegExp_1 = new RegExp('\\' + groupSeparator, 'g');
+      decMask = decMask.replace(fixRegExp_1, '');
+    }
     var fixRegExp_2 = new RegExp('\\' + decSeparator, 'g');
     decMask = decMask.replace(fixRegExp_2, '');
   }
@@ -193,12 +197,14 @@ OB.Utilities.Number.OBPlainToOBMasked = function(/* Number */number, /* String *
   // Management of the integer part
   var isGroup = false;
   
-  if (intMask.indexOf(groupSeparator) !== -1) {
-    isGroup = true;
-  }
+  if (groupSeparator) {
+    if (intMask.indexOf(groupSeparator) !== -1) {
+      isGroup = true;
+    }
 
-  var groupRegExp = new RegExp('\\' + groupSeparator, 'g');
-  intMask = intMask.replace(groupRegExp, '');
+    var groupRegExp = new RegExp('\\' + groupSeparator, 'g');
+    intMask = intMask.replace(groupRegExp, '');
+  }
 
   var intNumber_temp;
   if (intNumber.length < intMask.length) {

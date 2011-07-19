@@ -31,3 +31,18 @@ isc.OBTextItem.addProperties({
     }
   }
 });
+
+isc.ClassFactory.defineClass('OBTextFilterItem', OBTextItem);
+
+isc.OBTextFilterItem.addProperties({
+  allowExpressions: true,
+
+  // solve a small bug in the value expressions
+  buildValueExpressions: function() {
+    var ret = this.Super('buildValueExpressions', arguments);
+    if (isc.isA.String(ret) && ret.contains('undefined')) {
+      return ret.replace('undefined', '');
+    }
+    return ret;
+  }
+});

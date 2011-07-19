@@ -42,6 +42,11 @@ public abstract class NumberUIDefinition extends UIDefinition {
   }
 
   @Override
+  public String getFilterEditorType() {
+    return "OBNumberFilterItem";
+  }
+
+  @Override
   public String getTypeProperties() {
     final PrimitiveDomainType primitiveDomainType = (PrimitiveDomainType) getDomainType();
     if (primitiveDomainType.getFormatId() != null) {

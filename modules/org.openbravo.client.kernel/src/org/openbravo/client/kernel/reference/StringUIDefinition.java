@@ -33,6 +33,11 @@ public class StringUIDefinition extends UIDefinition {
   }
 
   @Override
+  public String getFilterEditorType() {
+    return "OBTextFilterItem";
+  }
+
+  @Override
   public String getFormEditorType() {
     return "OBTextItem";
   }

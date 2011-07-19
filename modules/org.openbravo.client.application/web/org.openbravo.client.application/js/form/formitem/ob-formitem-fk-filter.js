@@ -23,6 +23,16 @@ isc.ClassFactory.defineClass('OBFKFilterTextItem', TextItem);
 
 isc.OBFKFilterTextItem.addProperties({
   operator: 'iContains',
+  allowExpressions: true,
   validateOnExit: false,
-  validateOnChange: false
+  validateOnChange: false,
+
+  // solve a small bug in the value expressions
+  buildValueExpressions: function() {
+    var ret = this.Super('buildValueExpressions', arguments);
+    if (isc.isA.String(ret) && ret.contains('undefined')) {
+      return ret.replace('undefined', '');
+    }
+    return ret;
+  }
 });
