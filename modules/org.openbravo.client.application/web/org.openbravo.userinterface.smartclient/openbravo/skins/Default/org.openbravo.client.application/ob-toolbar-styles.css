@@ -309,7 +309,6 @@
     color: #000000;
     font-size: 9pt;
     font-family: 'lucida sans', sans-serif;
-    border: 2px solid #63952b;
 }
 
 .OBToolbarTextButton,
@@ -318,8 +317,9 @@
 .OBToolbarTextButtonSelected,
 .OBToolbarTextButtonSelectedOver,
 .OBToolbarTextButtonSelectedDown {
-  border: 2px solid white;
+  border: 2px solid #efefef;
 }
+
 .OBToolbarTextButtonParent,
 .OBToolbarTextButtonParentOver,
 .OBToolbarTextButtonParentDown,
@@ -334,7 +334,14 @@
 .OBToolbarTextButtonFocusedDown,
 .OBToolbarTextButtonSelectedFocused,
 .OBToolbarTextButtonSelectedFocusedOver,
-.OBToolbarTextButtonSelectedFocusedDown {
+.OBToolbarTextButtonSelectedFocusedDown,
+
+.OBToolbarTextButtonParentFocused,
+.OBToolbarTextButtonParentFocusedOver,
+.OBToolbarTextButtonParentFocusedDown,
+.OBToolbarTextButtonParentSelectedFocused,
+.OBToolbarTextButtonParentSelectedFocusedOver,
+.OBToolbarTextButtonParentSelectedFocusedDown {
   border: 2px solid #FA962F;
 }
 
@@ -343,12 +350,10 @@
 .OBToolbarTextButtonFocusedOver,
 .OBToolbarTextButtonSelectedFocusedOver,
 
-.OBToolbarTextButtonParentFocused,
+.OBToolbarTextButtonParentOver,
+.OBToolbarTextButtonParentSelectedOver,
 .OBToolbarTextButtonParentFocusedOver,
-.OBToolbarTextButtonParentFocusedDown,
-.OBToolbarTextButtonParentSelectedFocused,
-.OBToolbarTextButtonParentSelectedFocusedOver,
-.OBToolbarTextButtonParentSelectedFocusedDown {
+.OBToolbarTextButtonParentSelectedFocusedOver {
   background-image: url(./images/toolbar/textButton-bg-hover.png);
 }
 
