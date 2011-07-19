@@ -589,12 +589,13 @@ public class DocFINReconciliation extends AcctServer {
       BigDecimal bpAmount = new BigDecimal(line.getAmount());
       if (line.getWriteOffAmt() != null
           && ZERO.compareTo(new BigDecimal(line.getWriteOffAmt())) != 0) {
-        Account account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOff, as, conn)
-            : getAccount(AcctServer.ACCTTYPE_WriteOff_Revenue, as, conn);
-        if (account == null) {
-          account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn)
-              : getAccount(AcctServer.ACCTTYPE_WriteOffDefault_Revenue, as, conn);
-        }
+      Account account = isReceipt ? getAccountWriteOffBPartner(AcctServer.ACCTTYPE_WriteOff,
+          line.m_C_BPartner_ID, as, conn) : getAccountWriteOffBPartner(
+          AcctServer.ACCTTYPE_WriteOff_Revenue, line.m_C_BPartner_ID, as, conn);
+      if (account == null) {
+        account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn)
+            : getAccount(AcctServer.ACCTTYPE_WriteOffDefault_Revenue, as, conn);
+      }
         fact.createLine(line, account, C_Currency_ID, (isReceipt ? line.getWriteOffAmt() : ""),
             (isReceipt ? "" : line.getWriteOffAmt()), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, conn);
@@ -625,8 +626,9 @@ public class DocFINReconciliation extends AcctServer {
     BigDecimal bpAmount = paymentDetail.getAmount();
     if (paymentDetail.getWriteoffAmount() != null
         && paymentDetail.getWriteoffAmount().compareTo(BigDecimal.ZERO) != 0) {
-      Account account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOff, as, conn)
-          : getAccount(AcctServer.ACCTTYPE_WriteOff_Revenue, as, conn);
+      Account account = isReceipt ? getAccountWriteOffBPartner(AcctServer.ACCTTYPE_WriteOff,
+          line.m_C_BPartner_ID, as, conn) : getAccountWriteOffBPartner(
+          AcctServer.ACCTTYPE_WriteOff_Revenue, line.m_C_BPartner_ID, as, conn);
       if (account == null) {
         account = isReceipt ? getAccount(AcctServer.ACCTTYPE_WriteOffDefault, as, conn)
             : getAccount(AcctServer.ACCTTYPE_WriteOffDefault_Revenue, as, conn);
@@ -1266,5 +1268,40 @@ public class DocFINReconciliation extends AcctServer {
       return getCalendar(OBContext.getOBContext().getOrganizationStructureProvider()
           .getParentOrg(organization));
     }
+  }
+
+  private Account getAccountWriteOffBPartner(String AcctType, String strBPartnerId, AcctSchema as,
+      ConnectionProvider conn) {
+    AcctServerData[] data = null;
+    try {
+      if (AcctType.equals(ACCTTYPE_WriteOff)) {
+        data = AcctServerData.selectWriteOffAcct(conn, strBPartnerId, as.getC_AcctSchema_ID());
+      } else if (AcctType.equals(ACCTTYPE_WriteOff_Revenue)) {
+        data = AcctServerData.selectWriteOffAcctRevenue(conn, strBPartnerId,
+            as.getC_AcctSchema_ID());
+      }
+    } catch (ServletException e) {
+      log4j.warn(e);
+      e.printStackTrace();
+    }
+    // Get Acct
+    String Account_ID = "";
+    if (data != null && data.length != 0) {
+      Account_ID = data[0].accountId;
+    } else
+      return null;
+    // No account
+    if (Account_ID.equals("")) {
+      log4j.warn("AcctServer - getAccount - NO account Type=" + AcctType + ", Record=" + Record_ID);
+      return null;
+    }
+    Account acct = null;
+    try {
+      acct = Account.getAccount(conn, Account_ID);
+    } catch (ServletException e) {
+      log4j.warn(e);
+      e.printStackTrace();
+    }
+    return acct;
   }
 }
