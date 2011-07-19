@@ -216,6 +216,8 @@ isc.OBViewGrid.addProperties({
   },
 
   initWidget: function(){
+    var i;
+    
     // make a copy of the dataProperties otherwise we get 
     // change results that values of one grid are copied/coming back
     // in other grids
@@ -391,7 +393,20 @@ isc.OBViewGrid.addProperties({
       }
     }
  //// Ends..
-  
+    
+    // if there is no autoexpand field then just divide the space
+    if (!this.getAutoFitExpandField()) {
+      // nobody, then give all the fields a new size, dividing
+      // the space among them
+      for (i = 0; i < this.fields.length; i++) {
+        // ignore the first 2 fields, the checkbox and edit/form
+        // buttons
+        if (i > 1) {
+          this.fields[i].width = '*';
+        }
+      }
+    }
+
   },
   
   show: function(){
@@ -1021,14 +1036,15 @@ isc.OBViewGrid.addProperties({
   
   // determine which field can be autoexpanded to use extra space
   getAutoFitExpandField: function() {
-    var i;
+    var ret, i;
     for (i = 0; i < this.autoExpandFieldNames.length; i++) {
       var field = this.getField(this.autoExpandFieldNames[i]);
       if (field && field.name) {
         return field.name;
       }
     }
-    return this.Super('getAutoFitExpandField', arguments);
+    ret = this.Super('getAutoFitExpandField', arguments);    
+    return ret;
   },
 
   recordClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
