@@ -271,7 +271,7 @@
           
           if (loadingTab) {
             viewTabId = loadingTab.pane.viewTabId;
-          } else {           
+          } else if (!params.popup) {           
             viewTabId = vmgr.views.getViewTabID(viewName, params);
             if (viewTabId) {
               // tab exists, replace its contents

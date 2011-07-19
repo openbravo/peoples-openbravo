@@ -210,6 +210,7 @@ isc.OBQuickLaunch.addProperties({
                 processId: record.processId,
                 id: record.processId,
                 obManualURL: viewValue,
+                popup: true,
                 command: 'BUTTON' + record.processId,
                 tabTitle: record[OB.Constants.IDENTIFIER]
               };

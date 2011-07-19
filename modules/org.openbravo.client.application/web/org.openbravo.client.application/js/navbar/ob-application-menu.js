@@ -133,7 +133,7 @@ isc.OBApplicationMenuTree.addProperties({
           selectedView = {viewId: 'OBClassicWindow', obManualURL: item.manualUrl, processId: item.manualProcessId, id: item.manualProcessId, command: 'DEFAULT', tabTitle: item.title};
       } else if (item.processId) {
           var viewName = item.modal?'OBClassicPopupModal':'OBPopupClassicWindow';
-          selectedView = {viewId: viewName, obManualURL: item.manualUrl, processId: item.processId, id: item.processId, command: 'BUTTON' + item.processId, tabTitle: item.title};
+          selectedView = {viewId: viewName, obManualURL: item.manualUrl, processId: item.processId, id: item.processId, command: 'BUTTON' + item.processId, tabTitle: item.title, popup: true};
       } else if (item.formId) {
           selectedView = {viewId: 'OBClassicWindow', obManualURL: item.manualUrl, id: item.manualUrl, formId: item.formId, command: 'DEFAULT', tabTitle: item.title};
       } else {
