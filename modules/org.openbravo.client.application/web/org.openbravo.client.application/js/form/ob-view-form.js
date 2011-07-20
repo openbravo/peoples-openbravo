@@ -790,7 +790,17 @@ OB.ViewFormProperties = {
       editValues[prop + '._valueMap'] = field.valueMap;
     }
     
+    // Adjust to formatting if exists value and classicValue. 
     oldValue = this.getValue(field.name);
+    var assignValue;
+    var assignClassicValue;
+    if (field.typeInstance && field.typeInstance.parseInput && field.typeInstance.editFormatter) {
+    	assignValue = field.typeInstance.parseInput(field.typeInstance.editFormatter(columnValue.value));
+    	assignClassicValue = field.typeInstance.editFormatter(field.typeInstance.parseInput(columnValue.classicValue));
+    } else {
+    	assignValue = columnValue.value;
+    	assignClassicValue = columnValue.classicValue;
+    }
     
     if (columnValue.value && (columnValue.value === 'null' || columnValue.value === '')) {
       // handle the case that the FIC returns a null value as a string
@@ -835,7 +845,7 @@ OB.ViewFormProperties = {
           }
         }
         
-        this.setValue(field.name, columnValue.value);
+        this.setValue(field.name, assignValue);
       }
     } else {
       // note: do not use clearvalue as this removes the value from the form
@@ -851,11 +861,9 @@ OB.ViewFormProperties = {
     }
     
     // store the textualvalue so that it is correctly send back to the server
-    if (field) {
-      var typeInstance = SimpleType.getType(field.type);
-      if (columnValue.classicValue && typeInstance.decSeparator) {
-        this.setTextualValue(field.name, columnValue.classicValue, typeInstance);
-      }
+    var typeInstance = SimpleType.getType(field.type);
+    if (columnValue.classicValue && typeInstance.decSeparator) {
+      this.setTextualValue(field.name, assignClassicValue, typeInstance);
     }
   },
   
