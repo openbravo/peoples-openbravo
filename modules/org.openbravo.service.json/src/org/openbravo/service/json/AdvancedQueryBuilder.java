@@ -426,6 +426,7 @@ public class AdvancedQueryBuilder {
     try {
       localValue = getTypeSafeValue(operator, property, localValue);
     } catch (IllegalArgumentException e) {
+      typedParameters.add(null);
       // ignore errors in formatting etc to be robust
       return null;
     }
@@ -446,11 +447,11 @@ public class AdvancedQueryBuilder {
     }
 
     if (isLike(operator)) {
-      if (operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_ICONTAINS)
-          || operator.equals(OPERATOR_CONTAINSFIELD)) {
+      if (operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_NOTCONTAINS)
+          || operator.equals(OPERATOR_ICONTAINS) || operator.equals(OPERATOR_CONTAINSFIELD)) {
         return "%" + escapeLike(value.toString().toUpperCase()).replaceAll(" ", "%") + "%";
-      } else if (operator.equals(OPERATOR_STARTSWITH) || operator.equals(OPERATOR_ISTARTSWITH)
-          || operator.equals(OPERATOR_STARTSWITHFIELD)) {
+      } else if (operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_STARTSWITH)
+          || operator.equals(OPERATOR_ISTARTSWITH) || operator.equals(OPERATOR_STARTSWITHFIELD)) {
         return escapeLike(value.toString().toUpperCase()).replaceAll(" ", "%") + "%";
       } else {
         return "%" + escapeLike(value.toString());
@@ -564,8 +565,9 @@ public class AdvancedQueryBuilder {
     return operator.equals(OPERATOR_ICONTAINS) || operator.equals(OPERATOR_IENDSWITH)
         || operator.equals(OPERATOR_ISTARTSWITH) || operator.equals(OPERATOR_CONTAINS)
         || operator.equals(OPERATOR_ENDSWITH) || operator.equals(OPERATOR_STARTSWITH)
-        || operator.equals(OPERATOR_CONTAINSFIELD) || operator.equals(OPERATOR_ENDSWITHFIELD)
-        || operator.equals(OPERATOR_STARTSWITHFIELD);
+        || operator.equals(OPERATOR_NOTCONTAINS) || operator.equals(OPERATOR_NOTENDSWITH)
+        || operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_CONTAINSFIELD)
+        || operator.equals(OPERATOR_ENDSWITHFIELD) || operator.equals(OPERATOR_STARTSWITHFIELD);
   }
 
   private String getBetweenOperator(String operator, boolean rightClause) {
@@ -602,7 +604,10 @@ public class AdvancedQueryBuilder {
 
   private boolean ignoreCase(String operator) {
     return operator.equals(OPERATOR_IEQUALS) || operator.equals(OPERATOR_INOTEQUAL)
-        || operator.equals(OPERATOR_ICONTAINS) || operator.equals(OPERATOR_IENDSWITH)
+        || operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_ENDSWITH)
+        || operator.equals(OPERATOR_STARTSWITH) || operator.equals(OPERATOR_ICONTAINS)
+        || operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_NOTCONTAINS)
+        || operator.equals(OPERATOR_NOTENDSWITH) || operator.equals(OPERATOR_IENDSWITH)
         || operator.equals(OPERATOR_ISTARTSWITH) || operator.equals(OPERATOR_IBETWEEN)
         || operator.equals(OPERATOR_IGREATEROREQUAL) || operator.equals(OPERATOR_ILESSOREQUAL)
         || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_ILESSTHAN)
