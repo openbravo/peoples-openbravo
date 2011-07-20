@@ -52,10 +52,11 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
 
   public void execute(ProcessBundle bundle) throws Exception {
     dao = new AdvPaymentMngtDao();
+    final String language = bundle.getContext().getLanguage();
+
     OBError msg = new OBError();
     msg.setType("Success");
-    msg.setTitle(Utility.messageBD(bundle.getConnection(), "Success", bundle.getContext()
-        .getLanguage()));
+    msg.setTitle(Utility.messageBD(bundle.getConnection(), "Success", language));
 
     try {
       // retrieve custom params
@@ -65,6 +66,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       final String recordID = (String) bundle.getParams().get("Fin_Payment_ID");
       final FIN_Payment payment = dao.getObject(FIN_Payment.class, recordID);
       final VariablesSecureApp vars = bundle.getContext().toVars();
+
       final ConnectionProvider conProvider = bundle.getConnection();
       final boolean isReceipt = payment.isReceipt();
 
@@ -83,8 +85,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             .getNaturalTree(payment.getOrganization().getId());
         if (!documentOrganizations.contains(payment.getAccount().getOrganization().getId())) {
           msg.setType("Error");
-          msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-          msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
               "@APRM_FinancialAccountNotInNaturalTree@"));
           bundle.setResult(msg);
           return;
@@ -106,8 +108,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           // Show error message when payment has no lines
           if (paymentDetails.size() == 0) {
             msg.setType("Error");
-            msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-            msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+            msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                 "@APRM_PaymentNoLines@"));
             bundle.setResult(msg);
             return;
@@ -134,11 +136,9 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   && paymentScheduleDetail.getOrderPaymentSchedule() == null
                   && paymentScheduleDetail.getPaymentDetails().getGLItem() == null) {
                 if (paymentDetail.isRefund())
-                  strRefundCredit = Utility.messageBD(conProvider, "APRM_RefundAmount",
-                      vars.getLanguage());
+                  strRefundCredit = Utility.messageBD(conProvider, "APRM_RefundAmount", language);
                 else {
-                  strRefundCredit = Utility.messageBD(conProvider, "APRM_CreditAmount",
-                      vars.getLanguage());
+                  strRefundCredit = Utility.messageBD(conProvider, "APRM_CreditAmount", language);
                   payment.setGeneratedCredit(paymentDetail.getAmount());
                 }
                 strRefundCredit += ": " + paymentDetail.getAmount().toString();
@@ -152,21 +152,19 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           if (payment.getDescription() != null && !payment.getDescription().equals(""))
             description.append(payment.getDescription()).append("\n");
           if (!invoiceDocNos.isEmpty()) {
-            description.append(Utility.messageBD(conProvider, "InvoiceDocumentno",
-                vars.getLanguage()));
+            description.append(Utility.messageBD(conProvider, "InvoiceDocumentno", language));
             description.append(": ").append(
                 invoiceDocNos.toString().substring(1, invoiceDocNos.toString().length() - 1));
             description.append("\n");
           }
           if (!orderDocNos.isEmpty()) {
-            description
-                .append(Utility.messageBD(conProvider, "OrderDocumentno", vars.getLanguage()));
+            description.append(Utility.messageBD(conProvider, "OrderDocumentno", language));
             description.append(": ").append(
                 orderDocNos.toString().substring(1, orderDocNos.toString().length() - 1));
             description.append("\n");
           }
           if (!glitems.isEmpty()) {
-            description.append(Utility.messageBD(conProvider, "APRM_GLItem", vars.getLanguage()));
+            description.append(Utility.messageBD(conProvider, "APRM_GLItem", language));
             description.append(": ").append(
                 glitems.toString().substring(1, glitems.toString().length() - 1));
             description.append("\n");
@@ -208,11 +206,11 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   OBError result = executePayment.execute();
                   if ("Error".equals(result.getType())) {
                     msg.setType("Warning");
-                    msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+                    msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                         result.getMessage()));
                   } else if (!"".equals(result.getMessage())) {
-                    String execProcessMsg = Utility.parseTranslation(conProvider, vars,
-                        vars.getLanguage(), result.getMessage());
+                    String execProcessMsg = Utility.parseTranslation(conProvider, vars, language,
+                        result.getMessage());
                     if (!"".equals(msg.getMessage()))
                       msg.setMessage(msg.getMessage() + "<br>");
                     msg.setMessage(msg.getMessage() + execProcessMsg);
@@ -222,14 +220,14 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             } catch (final NoExecutionProcessFoundException e) {
               e.printStackTrace(System.err);
               msg.setType("Warning");
-              msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+              msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                   "@NoExecutionProcessFound@"));
               bundle.setResult(msg);
               return;
             } catch (final Exception e) {
               e.printStackTrace(System.err);
               msg.setType("Warning");
-              msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+              msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                   "@IssueOnExecutionProcess@"));
               bundle.setResult(msg);
               return;
@@ -312,17 +310,17 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         // Already Posted Document
         if ("Y".equals(payment.getPosted())) {
           msg.setType("Error");
-          msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-          msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
-              "@PostedDocument@" + ": " + payment.getDocumentNo()));
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language, "@PostedDocument@"
+              + ": " + payment.getDocumentNo()));
           bundle.setResult(msg);
           return;
         }
         // Transaction exists
         if (hasTransaction(payment)) {
           msg.setType("Error");
-          msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-          msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
               "@APRM_TransactionExists@"));
           bundle.setResult(msg);
           return;
@@ -331,8 +329,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 1
             && payment.getUsedCredit().compareTo(BigDecimal.ZERO) == 1) {
           msg.setType("Error");
-          msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-          msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
               "@APRM_PaymentGeneratedCreditIsUsed@"));
           bundle.setResult(msg);
           return;
@@ -446,8 +444,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             // Already Posted Document
             if ("Y".equals(payment.getPosted())) {
               msg.setType("Error");
-              msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-              msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+              msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+              msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                   "@PostedDocument@" + ": " + payment.getDocumentNo()));
               bundle.setResult(msg);
               return;
@@ -455,8 +453,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             // Transaction exists
             if (hasTransaction(payment)) {
               msg.setType("Error");
-              msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-              msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+              msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+              msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                   "@APRM_TransactionExists@"));
               bundle.setResult(msg);
               return;
@@ -465,8 +463,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 1
                 && payment.getUsedCredit().compareTo(BigDecimal.ZERO) == 1) {
               msg.setType("Error");
-              msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-              msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+              msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+              msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                   "@APRM_PaymentGeneratedCreditIsUsed@"));
               bundle.setResult(msg);
               return;
@@ -474,8 +472,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             // Payment not in Awaiting Execution
             if (!"RPAE".equals(payment.getStatus())) {
               msg.setType("Error");
-              msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-              msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+              msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+              msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                   "@APRM_PaymentNotRPAE_NotVoid@"));
               bundle.setResult(msg);
               return;
