@@ -1054,7 +1054,9 @@ isc.OBStandardView.addProperties({
   setChildsToRefresh: function() {
     if (this.childTabSet) {
       for (i = 0; i < this.childTabSet.tabs.length; i++) {
-        this.childTabSet.tabs[i].pane.refreshContents = true;  
+        if (!this.childTabSet.tabs[i].pane.isVisible()) {
+          this.childTabSet.tabs[i].pane.refreshContents = true;  
+        }
       }
     }
   },
