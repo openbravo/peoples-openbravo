@@ -870,16 +870,26 @@ public class DocFINFinAccTransaction extends AcctServer {
           transaction.getProject() != null ? transaction.getProject().getId() : "");
       FieldProviderFactory.setField(data[0], "C_Campaign_ID",
           transaction.getSalesCampaign() != null ? transaction.getSalesCampaign().getId() : "");
+      FieldProviderFactory.setField(data[0], "M_Product_ID",
+          transaction.getProduct() != null ? transaction.getProduct().getId() : "");
+      FieldProviderFactory.setField(data[0], "C_SalesRegion_ID",
+          transaction.getSalesRegion() != null ? transaction.getSalesRegion().getId() : "");
       FieldProviderFactory.setField(data[0], "lineno", transaction.getLineNo().toString());
       // This lines can be uncommented when User1 and User2 are implemented
       // FieldProviderFactory.setField(data[0], "User1_ID", transaction.getNdDimension().getId());
       // FieldProviderFactory.setField(data[0], "User2_ID", transaction.getNdDimension().getId());
       FieldProviderFactory.setField(data[0], "FIN_Payment_ID",
           transaction.getFinPayment() != null ? transaction.getFinPayment().getId() : "");
-      FieldProviderFactory
-          .setField(data[0], "C_BPartner_ID", (transaction.getFinPayment() != null && transaction
-              .getFinPayment().getBusinessPartner() != null) ? transaction.getFinPayment()
-              .getBusinessPartner().getId() : "");
+      final String cBPartnerId;
+      if (transaction.getFinPayment() != null
+          && transaction.getFinPayment().getBusinessPartner() != null) {
+        cBPartnerId = transaction.getFinPayment().getBusinessPartner().getId();
+      } else if (transaction.getBusinessPartner() != null) {
+        cBPartnerId = transaction.getBusinessPartner().getId();
+      } else {
+        cBPartnerId = "";
+      }
+      FieldProviderFactory.setField(data[0], "C_BPartner_ID", cBPartnerId);
       FieldProviderFactory.setField(data[0], "UsedCredit",
           transaction.getFinPayment() != null ? transaction.getFinPayment().getUsedCredit()
               .toString() : "");

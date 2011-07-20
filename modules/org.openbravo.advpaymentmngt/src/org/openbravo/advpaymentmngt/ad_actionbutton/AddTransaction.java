@@ -50,12 +50,18 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
+import org.openbravo.model.marketing.Campaign;
+import org.openbravo.model.materialmgmt.cost.ABCActivity;
+import org.openbravo.model.project.Project;
+import org.openbravo.model.sales.SalesRegion;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class AddTransaction extends HttpSecureAppServlet {
@@ -167,6 +173,27 @@ public class AddTransaction extends HttpSecureAppServlet {
         }
 
       } else if (strTransactionType.equals("GL")) { // GL Item
+        // Accounting Dimensions
+        final String strElement_BP = vars.getStringParameter("inpCBPartnerId", IsIDFilter.instance);
+        final BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
+            strElement_BP);
+
+        final String strElement_PR = vars.getStringParameter("inpMProductId", IsIDFilter.instance);
+        final Product product = OBDal.getInstance().get(Product.class, strElement_PR);
+
+        final String strElement_PJ = vars.getStringParameter("inpCProjectId", IsIDFilter.instance);
+        final Project project = OBDal.getInstance().get(Project.class, strElement_PJ);
+
+        final String strElement_AC = vars.getStringParameter("inpCActivityId", IsIDFilter.instance);
+        final ABCActivity activity = OBDal.getInstance().get(ABCActivity.class, strElement_AC);
+
+        final String strElement_SR = vars.getStringParameter("inpCSalesRegionId",
+            IsIDFilter.instance);
+        final SalesRegion salesRegion = OBDal.getInstance().get(SalesRegion.class, strElement_SR);
+
+        final String strElement_MC = vars.getStringParameter("inpCampaignId", IsIDFilter.instance);
+        final Campaign campaign = OBDal.getInstance().get(Campaign.class, strElement_MC);
+
         BigDecimal glItemDepositAmt = new BigDecimal(strGLItemDepositAmount);
         BigDecimal glItemPaymentAmt = new BigDecimal(strGLItemPaymentAmount);
 
@@ -181,8 +208,9 @@ public class AddTransaction extends HttpSecureAppServlet {
         FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(account.getOrganization(),
             account, TransactionsDao.getTransactionMaxLineNo(account) + 10, null, description,
             FIN_Utility.getDate(strTransactionDate), glItem, isReceipt ? "RDNC" : "PWNC",
-            glItemDepositAmt, glItemPaymentAmt, null, null, null, isReceipt ? "BPD" : "BPW",
-            FIN_Utility.getDate(strTransactionDate), null, null, null);
+            glItemDepositAmt, glItemPaymentAmt, project, campaign, activity, isReceipt ? "BPD"
+                : "BPW", FIN_Utility.getDate(strTransactionDate), null, null, null,
+            businessPartner, product, salesRegion);
 
         TransactionsDao.process(finTrans);
         strMessage = "1 " + "@RowsInserted@";
@@ -281,6 +309,20 @@ public class AddTransaction extends HttpSecureAppServlet {
       xmlDocument.setParameter("depositAmountGLItem", BigDecimal.ZERO.toString());
       xmlDocument.setParameter("paymentAmountGLItem", BigDecimal.ZERO.toString());
     }
+
+    // Accounting Dimensions
+    final String strElement_BP = Utility.getContext(this, vars, "$Element_BP", strWindowId);
+    final String strElement_PR = Utility.getContext(this, vars, "$Element_PR", strWindowId);
+    final String strElement_PJ = Utility.getContext(this, vars, "$Element_PJ", strWindowId);
+    final String strElement_AC = Utility.getContext(this, vars, "$Element_AC", strWindowId);
+    final String strElement_SR = Utility.getContext(this, vars, "$Element_SR", strWindowId);
+    final String strElement_MC = Utility.getContext(this, vars, "$Element_MC", strWindowId);
+    xmlDocument.setParameter("strElement_BP", strElement_BP);
+    xmlDocument.setParameter("strElement_PR", strElement_PR);
+    xmlDocument.setParameter("strElement_PJ", strElement_PJ);
+    xmlDocument.setParameter("strElement_AC", strElement_AC);
+    xmlDocument.setParameter("strElement_SR", strElement_SR);
+    xmlDocument.setParameter("strElement_MC", strElement_MC);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

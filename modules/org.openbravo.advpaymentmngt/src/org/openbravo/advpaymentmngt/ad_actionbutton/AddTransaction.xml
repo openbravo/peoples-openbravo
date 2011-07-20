@@ -45,6 +45,14 @@
     <PARAMETER id="fieldFinFinancialAccountId" name="finFinancialAccountId" attribute="value"/>
     <PARAMETER id="fieldFinBankStatementLineId" name="finBankStatementLineId" attribute="value"/>
     
+    <!-- Accounting Dimensions -->
+    <PARAMETER id="paramStrElement_BP" name="strElement_BP" attribute="value"/>
+    <PARAMETER id="paramStrElement_PR" name="strElement_PR" attribute="value"/>
+    <PARAMETER id="paramStrElement_PJ" name="strElement_PJ" attribute="value"/>
+    <PARAMETER id="paramStrElement_AC" name="strElement_AC" attribute="value"/>
+    <PARAMETER id="paramStrElement_SR" name="strElement_SR" attribute="value"/>
+    <PARAMETER id="paramStrElement_MC" name="strElement_MC" attribute="value"/>    
+    
     <!-- Document Type -->
     <PARAMETER id="paramDocument" name="document"/>
     

@@ -56,6 +56,7 @@ import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -77,6 +78,7 @@ import org.openbravo.model.financialmgmt.payment.PaymentRunPayment;
 import org.openbravo.model.marketing.Campaign;
 import org.openbravo.model.materialmgmt.cost.ABCActivity;
 import org.openbravo.model.project.Project;
+import org.openbravo.model.sales.SalesRegion;
 
 public class AdvPaymentMngtDao {
 
@@ -567,6 +569,27 @@ public class AdvPaymentMngtDao {
       finTrans.setForeignConversionRate(convertRate);
       finTrans.setForeignAmount(sourceAmount);
     }
+
+    OBDal.getInstance().save(finTrans);
+    OBDal.getInstance().flush();
+
+    return finTrans;
+  }
+
+  public FIN_FinaccTransaction getNewFinancialTransaction(Organization organization,
+      FIN_FinancialAccount account, Long line, FIN_Payment payment, String description,
+      Date accountingDate, GLItem glItem, String status, BigDecimal depositAmount,
+      BigDecimal paymentAmount, Project project, Campaign campaing, ABCActivity activity,
+      String transactionType, Date statementDate, Currency paymentCurrency, BigDecimal convertRate,
+      BigDecimal sourceAmount, BusinessPartner businessPartner, Product product,
+      SalesRegion salesRegion) {
+    final FIN_FinaccTransaction finTrans = getNewFinancialTransaction(organization, account, line,
+        payment, description, accountingDate, glItem, status, depositAmount, paymentAmount,
+        project, campaing, activity, transactionType, statementDate, paymentCurrency, convertRate,
+        sourceAmount);
+    finTrans.setBusinessPartner(businessPartner);
+    finTrans.setProduct(product);
+    finTrans.setSalesRegion(salesRegion);
 
     OBDal.getInstance().save(finTrans);
     OBDal.getInstance().flush();

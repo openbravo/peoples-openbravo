@@ -133,6 +133,18 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_BPARTNER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="M_PRODUCT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_SALESREGION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_TRANSACTION">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -148,11 +160,20 @@
       <foreign-key foreignTable="C_ACTIVITY" name="FIN_FINACC_TRANS_ACTIVITY">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="FIN_FINACC_TRANS_C_BPARTNER">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_SALESREGION" name="FIN_FINACC_TRANS_C_SALESREGION">
+        <reference local="C_SALESREGION_ID" foreign="C_SALESREGION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_CAMPAIGN" name="FIN_FINACC_TRANS_CAMPAIGN">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
       <foreign-key foreignTable="FIN_RECONCILIATION" name="FIN_FINACC_TRANS_FIN_RECONCILE">
         <reference local="FIN_RECONCILIATION_ID" foreign="FIN_RECONCILIATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="FIN_FINACC_TRANS_M_PRODUCT">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="FIN_FINACC_TRANS_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>

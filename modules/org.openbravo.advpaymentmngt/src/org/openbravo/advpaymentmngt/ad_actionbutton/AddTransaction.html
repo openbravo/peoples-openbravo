@@ -131,6 +131,7 @@ function showHideLayers() {
     displayLogicElement('GLItemSection3', false);
     displayLogicElement('PaymentSection', true);
     displayLogicElement('client_middle', true);
+    autoDisplayLogicDimensions(false);
     loadGrid();
   } else if (opt == 'GL') {
     displayLogicElement('FeeSection1', false);
@@ -140,6 +141,7 @@ function showHideLayers() {
     displayLogicElement('GLItemSection3', true);
     displayLogicElement('PaymentSection', false);
     displayLogicElement('client_middle', false);
+    autoDisplayLogicDimensions(true);
   } else if (opt == 'F') {
     displayLogicElement('FeeSection1', true);
     displayLogicElement('FeeSection2', true);
@@ -148,8 +150,64 @@ function showHideLayers() {
     displayLogicElement('GLItemSection3', false);
     displayLogicElement('PaymentSection', false);
     displayLogicElement('client_middle', false);
+    autoDisplayLogicDimensions(false);
   }
   return true;
+}
+
+
+function autoDisplayLogicDimensions(isDisplayed) {
+  var displayTitle = false;
+  if (document.frmMain.strElement_BP.value === 'Y' && isDisplayed) {
+    displayLogicDimension('c_bpartner_id', true);
+    displayTitle = true;
+  } else {
+    displayLogicDimension('c_bpartner_id', false);
+  }  
+  if (document.frmMain.strElement_AC.value === 'Y' && isDisplayed) {
+    displayLogicDimension('c_activity_id', true);
+    displayTitle = true;
+  } else {
+    displayLogicDimension('c_activity_id', false);
+  }
+  
+  if (document.frmMain.strElement_PR.value === 'Y' && isDisplayed) {
+    displayLogicDimension('m_product_id', true);
+    displayTitle = true;
+  } else {
+    displayLogicDimension('m_product_id', false);
+  }
+  if (document.frmMain.strElement_MC.value === 'Y' && isDisplayed) {
+    displayLogicDimension('c_campaign_id', true);
+    displayTitle = true;
+  } else {
+    displayLogicDimension('c_campaign_id', false);
+  }
+  
+  if (document.frmMain.strElement_PJ.value === 'Y' && isDisplayed) {
+    displayLogicDimension('c_project_id', true);
+    displayTitle = true;
+  } else {
+    displayLogicDimension('c_project_id', false);
+  }
+  if (document.frmMain.strElement_SR.value === 'Y' && isDisplayed) {
+    displayLogicDimension('c_salesregion_id', true);
+    displayTitle = true;
+  } else {
+    displayLogicDimension('c_salesregion_id', false);
+  }
+  
+  if (displayTitle) {
+    displayLogicElement('acctDimensionsTitle', true);
+  } else {
+    displayLogicElement('acctDimensionsTitle', false);
+  }
+}
+
+
+function displayLogicDimension(dimension, isDisplayed) {
+  displayLogicElement(dimension + '_dim_label', isDisplayed);
+  displayLogicElement(dimension + '_dim_inp', isDisplayed);
 }
 
 function closeThisPage() {
@@ -261,6 +319,13 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
   <input type="hidden" name="inpFinBankStatementLineId" value="" id="fieldFinBankStatementLineId"></input>
   <input type="hidden" name="buttonRefresh" value="" id="buttonRefresh" onclick="loadGrid();return true;"></input>
   <input type="hidden" name="isReceipt" value="dummyField" id="fieldReceipt"/>
+  <input type="hidden" name="strElement_BP" id="paramStrElement_BP" value=""/>
+  <input type="hidden" name="strElement_PR" id="paramStrElement_PR" value=""/>
+  <input type="hidden" name="strElement_PJ" id="paramStrElement_PJ" value=""/>
+  <input type="hidden" name="strElement_AC" id="paramStrElement_AC" value=""/>
+  <input type="hidden" name="strElement_SR" id="paramStrElement_SR" value=""/>
+  <input type="hidden" name="strElement_MC" id="paramStrElement_MC" value=""/>
+  
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
       <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>
@@ -752,6 +817,109 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
               </td>
             </tr>
             
+            <tr id="acctDimensionsTitle">
+              <td colspan="6">
+                <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                  <tr class="FieldGroup_TopMargin"/>
+                  <tr>
+                    <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupTitle">Accounting Dimensions</td>
+                    <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupContent"/>
+                  </tr>
+                  <tr class="FieldGroup_BottomMargin"/>
+                </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr id="GLItemSection1_Dim">
+              <!-- Business Partner Dimension -->
+              <td id="c_bpartner_id_dim_label" class="TitleCell"><span class="LabelText">Business Partner</span></td>
+              <td id="c_bpartner_id_dim_inp" class="TextBox_ContentCell" colspan="2">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_C_BPartner_ID = null;</script>
+                      <input type="hidden" name="inpCBPartnerId" id="C_BPartner_ID" value="" onreset="sc_C_BPartner_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_BPartner_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/A98899B1C75A4F4EBD3414F1B654EFAB?columnName=C_BPartner_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <!-- Activity Dimension -->
+              <td id="c_activity_id_dim_label" class="TitleCell"><span class="LabelText">Activity</span></td>
+              <td id="c_activity_id_dim_inp" class="TextBox_ContentCell" colspan="1">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_C_Activity_ID = null;</script>
+                      <input type="hidden" name="inpCActivityId" id="C_Activity_ID" value="" onreset="sc_C_Activity_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_Activity_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/FF808181312D569C01312D8C1EC40036?columnName=C_Activity_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>             
+              <td class="TitleCell"></td>
+            </tr>
+            <tr id="GLItemSection2_Dim">
+              <!-- Product Dimension -->
+              <td id="m_product_id_dim_label" class="TitleCell"><span class="LabelText">Product</span></td>
+              <td id="m_product_id_dim_inp" class="TextBox_ContentCell" colspan="2">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_M_Product_ID = null;</script>
+                      <input type="hidden" name="inpMProductId" id="M_Product_ID" value="" onreset="sc_M_Product_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_M_Product_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/FF808181312DA8D801312DDE869B000C?columnName=M_Product_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <!-- Campaign Dimension -->
+              <td id="c_campaign_id_dim_label" class="TitleCell"><span class="LabelText">Campaign</span></td>
+              <td id="c_campaign_id_dim_inp" class="TextBox_ContentCell" colspan="1">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_C_Campaign_ID = null;</script>
+                      <input type="hidden" name="inpCampaignId" id="C_Campaign_ID" value="" onreset="sc_C_Campaign_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_Campaign_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/FF808181312D569C01312D8DCCD50045?columnName=C_Campaign_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td class="TitleCell"></td>
+            </tr>
+            <tr id="GLItemSection3_Dim">
+              <!-- Project Dimension -->
+              <td id="c_project_id_dim_label" class="TitleCell"><span class="LabelText">Project</span></td>
+              <td id="c_project_id_dim_inp" class="TextBox_ContentCell" colspan="2">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_C_Project_ID = null;</script>
+                      <input type="hidden" name="inpCProjectId" id="C_Project_ID" value="" onreset="sc_C_Project_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_Project_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/FF808181312D569C01312D90408D005D?columnName=C_Project_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <!-- Sales Region Dimension -->
+              <td id="c_salesregion_id_dim_label" class="TitleCell"><span class="LabelText">Sales Region</span></td>
+              <td id="c_salesregion_id_dim_inp" class="TextBox_ContentCell" colspan="1">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_C_Salesregion_ID = null;</script>
+                      <input type="hidden" name="inpCSalesRegionId" id="C_SalesRegion_ID" value="" onreset="sc_C_SalesRegion_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_SalesRegion_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/FF808181312D569C01312D8EE5430054?columnName=C_SalesRegion_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td class="TitleCell"></td>
+            </tr>                
             <!-- Payment Section START-->
             <tr id="PaymentSection">
               <td class="TitleCell"><span class="LabelText">Document</span></td>
