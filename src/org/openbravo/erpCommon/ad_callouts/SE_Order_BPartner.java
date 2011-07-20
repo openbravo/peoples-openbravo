@@ -106,6 +106,9 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
       strFinPaymentMethodId = (strIsSOTrx.equals("Y") ? data[0].finPaymentmethodId
           : data[0].poPaymentmethodId);
       strPriceList = (strIsSOTrx.equals("Y") ? data[0].mPricelistId : data[0].poPricelistId);
+      if (strPriceList.equalsIgnoreCase("")) {
+        strPriceList = SEOrderBPartnerData.defaultPriceList(this, strIsSOTrx, vars.getClient());
+      }
       strPriceList = strPriceList.equals("") ? strPriceList0 : strPriceList;
       strDeliveryViaRule = data[0].deliveryviarule.equals("") ? strDeliveryViaRule0
           : data[0].deliveryviarule;

@@ -89,4 +89,18 @@
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
+  <SqlMethod name="defaultPriceList" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select m_pricelist_id
+        from m_pricelist
+        where isdefault = 'Y' 
+        and issopricelist = ?
+        and ad_client_id = ?
+      ]]>
+    </Sql>
+    <Parameter name="isreceipt"/>
+    <Parameter name="ad_client_id"/>
+  </SqlMethod>
 </SqlClass>

@@ -106,9 +106,13 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       resultado.append("var respuesta = new Array(");
       strUserRep = SEOrderBPartnerData.userIdSalesRep(this, data[0].salesrepId);
       String strPriceList = (strIsSOTrx.equals("Y") ? data[0].mPricelistId : data[0].poPricelistId);
+      if (strPriceList.equalsIgnoreCase("")) {
+        strPriceList = SEOrderBPartnerData.defaultPriceList(this, strIsSOTrx, vars.getClient());
+      }
       resultado.append("new Array(\"inpmPricelistId\", \""
           + (strPriceList.equals("") ? Utility.getContext(this, vars, "#M_PriceList_ID",
               strWindowId) : strPriceList) + "\"),");
+
       String strPaymentRule = (strIsSOTrx.equals("Y") ? data[0].paymentrule : data[0].paymentrulepo);
       if (strPaymentRule.equals("") && DocBaseType.endsWith("C"))
         strPaymentRule = "P";
