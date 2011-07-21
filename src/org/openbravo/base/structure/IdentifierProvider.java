@@ -29,6 +29,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.model.ad.system.Language;
 
@@ -88,10 +89,33 @@ public class IdentifierProvider implements OBSingleton {
       if (sb.length() > 0) {
         sb.append(SEPARATOR);
       }
-      final Property property = ((BaseOBObject) dob).getEntity().getProperty(identifier.getName());
+      Property property = ((BaseOBObject) dob).getEntity().getProperty(identifier.getName());
       Object value;
 
-      if (property.isTranslatable()) {
+      if (property.hasDisplayColumn()) {
+        Property displayColumnProperty = DalUtil.getPropertyFromPath(property
+            .getReferencedProperty().getEntity(), property.getDisplayPropertyName());
+        BaseOBObject referencedObject = (BaseOBObject) dob.get(property.getName());
+        if (referencedObject == null) {
+          continue;
+        }
+        if (displayColumnProperty.hasDisplayColumn()) {
+          // Allowing one level deep of displayed column pointing to references with display column
+          value = ((BaseOBObject) dob.get(property.getDisplayPropertyName()))
+              .get(displayColumnProperty.getDisplayPropertyName());
+        } else if (!displayColumnProperty.isPrimitive()) {
+          // Displaying identifier for non primitive properties
+
+          value = ((BaseOBObject) referencedObject.get(property.getDisplayPropertyName()))
+              .getIdentifier();
+        } else {
+          value = ((BaseOBObject) referencedObject)
+              .get(property.getDisplayPropertyName(), language);
+        }
+
+        // Assign displayColumnProperty to apply formatting if needed
+        property = displayColumnProperty;
+      } else if (property.isTranslatable()) {
         value = ((BaseOBObject) dob).get(identifier.getName(), language);
       } else {
         value = dob.get(identifier.getName());
