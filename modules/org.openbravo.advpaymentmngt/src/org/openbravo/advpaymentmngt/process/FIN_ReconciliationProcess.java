@@ -55,6 +55,8 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
       final FIN_Reconciliation reconciliation = dao.getObject(FIN_Reconciliation.class, recordID);
       final VariablesSecureApp vars = bundle.getContext().toVars();
       final ConnectionProvider conProvider = bundle.getConnection();
+      final String language = bundle.getContext().getLanguage();
+
       reconciliation.setProcessNow(true);
       OBDal.getInstance().save(reconciliation);
       OBDal.getInstance().flush();
@@ -62,8 +64,8 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
         // Check lines exist
         if (reconciliation.getFINReconciliationLineVList().size() == 0) {
           msg.setType("Error");
-          msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-          msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
               "@APRM_ReconciliationNoLines@" + ": " + reconciliation.getDocumentNo()));
           bundle.setResult(msg);
           return;
@@ -81,17 +83,17 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
         // Already Posted Document
         if ("Y".equals(reconciliation.getPosted())) {
           msg.setType("Error");
-          msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-          msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
-              "@PostedDocument@" + ": " + reconciliation.getDocumentNo()));
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language, "@PostedDocument@"
+              + ": " + reconciliation.getDocumentNo()));
           bundle.setResult(msg);
           return;
         }
         // Transaction exists
         if (!isLastReconciliation(reconciliation)) {
           msg.setType("Error");
-          msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-          msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
               "@APRM_FutureReconciliationExists@"));
           bundle.setResult(msg);
           return;

@@ -37,6 +37,7 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
           recordID);
       final VariablesSecureApp vars = bundle.getContext().toVars();
       final ConnectionProvider conProvider = bundle.getConnection();
+      final String language = bundle.getContext().getLanguage();
 
       bankStatement.setProcessNow(true);
       OBDal.getInstance().save(bankStatement);
@@ -76,9 +77,9 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
         // Already Posted Document
         if ("Y".equals(bankStatement.getPosted())) {
           msg.setType("Error");
-          msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-          msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
-              "@PostedDocument@" + ": " + bankStatement.getIdentifier()));
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language, "@PostedDocument@"
+              + ": " + bankStatement.getIdentifier()));
           bundle.setResult(msg);
           return;
         }
@@ -86,8 +87,8 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
         for (FIN_BankStatementLine bsl : bankStatement.getFINBankStatementLineList()) {
           if (bsl.getFinancialAccountTransaction() != null) {
             msg.setType("Error");
-            msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-            msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+            msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                 "@APRM_BSLineReconciled@" + ": " + bsl.getLineNo().toString()));
             bundle.setResult(msg);
             return;

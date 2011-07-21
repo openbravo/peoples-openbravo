@@ -51,6 +51,8 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           .getObject(FIN_FinaccTransaction.class, recordID);
       final VariablesSecureApp vars = bundle.getContext().toVars();
       final ConnectionProvider conProvider = bundle.getConnection();
+      final String language = bundle.getContext().getLanguage();
+
       OBContext.setAdminMode();
       try {
         transaction.setProcessNow(true);
@@ -83,17 +85,17 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           // Already Posted Document
           if ("Y".equals(transaction.getPosted())) {
             msg.setType("Error");
-            msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-            msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
-                "@PostedDocument@" + ": " + transaction.getIdentifier()));
+            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+            msg.setMessage(Utility.parseTranslation(conProvider, vars, language, "@PostedDocument@"
+                + ": " + transaction.getIdentifier()));
             bundle.setResult(msg);
             return;
           }
           // Already Reconciled
           if (transaction.getReconciliation() != null || "RPPC".equals(transaction.getStatus())) {
             msg.setType("Error");
-            msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-            msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+            msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
                 "@APRM_ReconciledDocument@" + ": " + transaction.getIdentifier()));
             bundle.setResult(msg);
             return;

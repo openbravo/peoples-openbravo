@@ -29,6 +29,7 @@ public class ExecutePendingPayments extends DalBaseProcess {
     PaymentExecutionProcess executionProcess = null;
     Organization organization = null;
     VariablesSecureApp vars = bundle.getContext().toVars();
+    final String language = bundle.getContext().getLanguage();
 
     OBContext.setAdminMode();
     try {
@@ -46,8 +47,8 @@ public class ExecutePendingPayments extends DalBaseProcess {
               executePayment.init("OTHER", executionProcess, payments, null,
                   pendingPayment.getOrganization());
               OBError result = executePayment.execute();
-              logger.logln(Utility.parseTranslation(bundle.getConnection(), vars,
-                  vars.getLanguage(), result.getMessage()));
+              logger.logln(Utility.parseTranslation(bundle.getConnection(), vars, language,
+                  result.getMessage()));
             }
             payments.clear();
           }
@@ -61,7 +62,7 @@ public class ExecutePendingPayments extends DalBaseProcess {
           FIN_ExecutePayment executePayment = new FIN_ExecutePayment();
           executePayment.init("APP", executionProcess, payments, null, organization);
           OBError result = executePayment.execute();
-          logger.logln(Utility.parseTranslation(bundle.getConnection(), vars, vars.getLanguage(),
+          logger.logln(Utility.parseTranslation(bundle.getConnection(), vars, language,
               result.getMessage()));
         }
 

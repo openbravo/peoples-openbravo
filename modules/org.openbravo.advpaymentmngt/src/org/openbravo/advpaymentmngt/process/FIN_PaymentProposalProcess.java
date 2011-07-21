@@ -63,6 +63,7 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
 
       final VariablesSecureApp vars = bundle.getContext().toVars();
       final ConnectionProvider conProvider = bundle.getConnection();
+      final String language = bundle.getContext().getLanguage();
       StringBuilder strMessageResult = new StringBuilder();
       String strMessageType = "Success";
 
@@ -75,8 +76,8 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
           String strMessage = "@DocumentProcessed@" + paymentProposal.getDocumentNo();
           String strMsgType = "Error";
           msg.setType(strMsgType);
-          msg.setTitle(Utility.messageBD(conProvider, "Error", vars.getLanguage()));
-          msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(), strMessage));
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language, strMessage));
           bundle.setResult(msg);
           return;
         }
@@ -248,8 +249,8 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
 
       final OBError msg = new OBError();
       msg.setType(strMessageType);
-      msg.setTitle(Utility.messageBD(conProvider, "Success", vars.getLanguage()));
-      msg.setMessage(Utility.parseTranslation(conProvider, vars, vars.getLanguage(),
+      msg.setTitle(Utility.messageBD(conProvider, "Success", language));
+      msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
           strMessageResult.toString()));
       bundle.setResult(msg);
     } catch (OBException e) {
