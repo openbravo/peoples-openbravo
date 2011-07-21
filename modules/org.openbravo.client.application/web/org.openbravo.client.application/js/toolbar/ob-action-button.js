@@ -85,6 +85,7 @@ isc.OBToolbarActionButton.addProperties( {
             obManualURL: this.obManualURL, 
             processId: this.id,
             id: this.id,
+            popup: true,
             command: this.command,
             tabTitle: this.title,
             postParams: allProperties,
