@@ -759,6 +759,7 @@ OB.ViewFormProperties = {
   },
   
   processColumnValue: function(columnName, columnValue, editValues){
+  	// Modifications in this method should go also in setColumnValuesInEditValues because both almost do the same
     var isDate, i, valueMap = {}, oldValue, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
     // not a field on the form, probably a datasource field
     var prop = this.view.getPropertyFromDBColumnName(columnName);
@@ -868,6 +869,7 @@ OB.ViewFormProperties = {
   },
   
   setColumnValuesInEditValues: function(columnName, columnValue, editValues){
+  	// Modifications in this method should go also in processColumnValue because both almost do the same
     // no editvalues even anymore, go away
     if (!editValues) {
       return;
@@ -889,7 +891,7 @@ OB.ViewFormProperties = {
       }
       editValues[prop + '._valueMap'] = valueMap;
     }
-    
+
     if (columnValue.value && (columnValue.value === 'null' || columnValue.value === '')) {
       // handle the case that the FIC returns a null value as a string
       // should be repaired in the FIC
@@ -921,11 +923,17 @@ OB.ViewFormProperties = {
       editValues[prop] = null;
     }
     
+
+
     // store the textualvalue so that it is correctly send back to the server
     if (field) {
+      // Adjust to formatting if exists value and classicValue.
+      var assignClassicValue = (field.typeInstance && field.typeInstance.parseInput && field.typeInstance.editFormatter)
+        ? field.typeInstance.editFormatter(field.typeInstance.parseInput(columnValue.classicValue))
+        : columnValue.classicValue;
       var typeInstance = SimpleType.getType(field.type);
       if (columnValue.classicValue && typeInstance.decSeparator) {
-        this.setTextualValue(field.name, columnValue.classicValue, typeInstance, editValues);
+        this.setTextualValue(field.name, assignClassicValue, typeInstance, editValues);
       }
     }
   },
