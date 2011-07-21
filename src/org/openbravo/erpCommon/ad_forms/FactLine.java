@@ -748,14 +748,15 @@ public class FactLine {
             + ((m_docLine != null) ? m_docLine.m_A_Asset_ID : ""));
         log4jFactLine.debug("FactLine - m_C_WithHolding_ID "
             + ((m_docLine != null) ? m_docLine.m_C_WithHolding_ID : ""));
-        no = FactLineData.insertFactAct(con, conn, m_Fact_Acct_ID, AD_Client_ID, AD_Org_ID,
-            m_C_AcctSchema_ID, Account_ID, cuenta[0].value, cuenta[0].description, DateDoc,
-            DateAcct, C_Period_ID, m_AD_Table_ID, m_Record_ID, m_Line_ID, m_GL_Category_ID,
-            C_Tax_ID, m_PostingType, m_C_Currency_ID, m_AmtSourceDr, m_AmtSourceCr, m_AmtAcctDr,
-            m_AmtAcctCr, C_UOM_ID, Qty, m_M_Locator_ID, M_Product_ID, C_BPartner_ID, AD_OrgTrx_ID,
-            C_LocFrom_ID, C_LocTo_ID, C_SalesRegion_ID, C_Project_ID, C_Campaign_ID, C_Activity_ID,
-            User1_ID, User2_ID, description.toString(), m_Fact_Acct_Group_ID, m_SeqNo,
-            m_DocBaseType, Record_ID2, (m_docLine != null) ? m_docLine.m_A_Asset_ID : "",
+	no = FactLineData.insertFactAct(con, conn, m_Fact_Acct_ID, AD_Client_ID, AD_Org_ID, vars
+            .getUser(), m_C_AcctSchema_ID, Account_ID, cuenta[0].value, cuenta[0].description,
+            DateDoc, DateAcct, C_Period_ID, m_AD_Table_ID, m_Record_ID, m_Line_ID,
+            m_GL_Category_ID, C_Tax_ID, m_PostingType, m_C_Currency_ID, m_AmtSourceDr,
+            m_AmtSourceCr, m_AmtAcctDr, m_AmtAcctCr, C_UOM_ID, Qty, m_M_Locator_ID, M_Product_ID,
+            C_BPartner_ID, AD_OrgTrx_ID, C_LocFrom_ID, C_LocTo_ID, C_SalesRegion_ID, C_Project_ID,
+            C_Campaign_ID, C_Activity_ID, User1_ID, User2_ID, description.toString(),
+            m_Fact_Acct_Group_ID, m_SeqNo, m_DocBaseType, Record_ID2,
+            (m_docLine != null) ? m_docLine.m_A_Asset_ID : "",
             (m_docLine != null) ? m_docLine.m_C_WithHolding_ID : "", m_docVO.C_DocType_ID);
         log4jFactLine.debug("FactLine - After insertFactAct");
       }
