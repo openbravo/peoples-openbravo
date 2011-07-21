@@ -105,6 +105,7 @@ isc.OBStandardWindow.addProperties({
     this.getClass().windowSettingsRead = true;
     this.getClass().uiPattern = data.uiPattern;
     this.getClass().autoSave = data.autoSave;
+    this.getClass().showAutoSaveConfirmation = data.showAutoSaveConfirmation;
     // set the views to readonly
     for (i = 0; i < this.views.length; i++) {
       this.views[i].setReadOnly(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_READONLY);
@@ -133,35 +134,62 @@ isc.OBStandardWindow.addProperties({
   },
 
   doActionAfterAutoSave: function(action, forceDialogOnFailure, ignoreAutoSaveEnabled) {
-    // if not dirty or we know that the object has errors
-    if (!this.getDirtyEditForm() || (this.getDirtyEditForm() && !this.getDirtyEditForm().validateForm())) {
+    var me = this;
 
-      // clean up before calling the action, as the action
-      // can set dirty form again
-      this.cleanUpAutoSaveProperties();
+    var saveCallback = function(ok){
+      if (!ok){
+        if (me.getDirtyEditForm()) {
+          me.getDirtyEditForm().resetForm();
+        }
+        if (action) {
+          OB.Utilities.callAction(action);
+        }
+        return;
+      }
+      
+      // if not dirty or we know that the object has errors
+      if (!me.getDirtyEditForm() || (me.getDirtyEditForm() && !me.getDirtyEditForm().validateForm())) {
+        // clean up before calling the action, as the action
+        // can set dirty form again
+        me.cleanUpAutoSaveProperties();
 
-      // nothing to do, execute immediately
-      OB.Utilities.callAction(action);
-      return;
+        // nothing to do, execute immediately
+        OB.Utilities.callAction(action);
+        return;
+      }
+
+      if (action) {
+        me.autoSaveAction = action;
+      }
+
+      // saving stuff already, go away
+      if (me.isAutoSaving) {
+        return;
+      }
+
+      if (!me.isAutoSaveEnabled() && !ignoreAutoSaveEnabled) {
+        me.autoSaveConfirmAction();
+        return;
+      }
+
+      me.isAutoSaving = true;
+      me.forceDialogOnFailure = forceDialogOnFailure;
+      me.getDirtyEditForm().autoSave();
+    };
+
+    if (this.getClass().autoSave && this.getClass().showAutoSaveConfirmation) {
+      // Auto save confirmation required
+      if (!this.getDirtyEditForm()) {
+        // No changes in record, clean it up and continue
+        this.cleanUpAutoSaveProperties();
+        OB.Utilities.callAction(action);
+        return;
+      }
+      isc.ask(OB.I18N.getLabel('OBUIAPP_AutosaveConfirm'), saveCallback);
+    } else {
+      // Auto save confirmation not required: continue as confirmation was accepted
+      saveCallback(true);
     }
-
-    if (action) {
-      this.autoSaveAction = action;
-    }
-
-    // saving stuff already, go away
-    if (this.isAutoSaving) {
-      return;
-    }
-
-    if (!this.isAutoSaveEnabled() && !ignoreAutoSaveEnabled) {
-      this.autoSaveConfirmAction();
-      return;
-    }
-
-    this.isAutoSaving = true;
-    this.forceDialogOnFailure = forceDialogOnFailure;
-    this.getDirtyEditForm().autoSave();
   },
 
   callAutoSaveAction: function() {

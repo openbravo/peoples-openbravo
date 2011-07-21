@@ -63,6 +63,13 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
           .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
           OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), window);
       json.put("autoSave", "Y".equals(autoSaveStr));
+
+      final String showConfirmationStr = Preferences.getPreferenceValue("ShowConfirmationDefault",
+          false, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), window);
+      json.put("showAutoSaveConfirmation", "Y".equals(showConfirmationStr));
+
       return json;
     } catch (Exception e) {
       throw new OBException(e);
