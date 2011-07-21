@@ -414,9 +414,6 @@ OB.ViewFormProperties = {
   setFocusInForm: function() {
     if (this.getFocusItem() && this.getFocusItem().isFocusable()) {
       this.getFocusItem().focusInItem();
-      if (this.getFocusItem().doRestoreSelection) {
-        this.getFocusItem().doRestoreSelection();
-      }
       this.view.lastFocusedItem = this.getFocusItem();
       return;
     }
@@ -1267,8 +1264,13 @@ OB.ViewFormProperties = {
       // checks if a mouseevent was the cause of the selection
       // in which case the selection is not update, .select()
       // does what we want
-      if (!isc.isA.TextAreaItem(nextItem) && nextItem.getElement()) {
-        nextItem.getElement().select();
+      if (!isc.isA.TextAreaItem(nextItem)) {
+        if (nextItem.getElement()) {
+          nextItem.getElement().select();
+        } else {
+          // works for date values
+          nextItem.selectValue();
+        }
       }
     }
   },
