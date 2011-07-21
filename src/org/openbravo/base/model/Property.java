@@ -112,6 +112,7 @@ public class Property {
   private String displayProperty;
 
   private Property trlParentProperty;
+  private Property trlOneToManyProperty;
 
   /**
    * Initializes this Property using the information from the Column.
@@ -1152,6 +1153,7 @@ public class Property {
   void setTranslatable(Property translationProperty) {
     log.debug("Setting translatable for " + this.getEntity().getTableName() + "."
         + this.getColumnName());
+
     if (translationProperty == null) {
       log.warn(this.getEntity().getTableName() + "." + this.getColumnName()
           + " is not translatable: null translationProperty");
@@ -1171,10 +1173,26 @@ public class Property {
       return;
     }
 
+    Property trlPropertyListInBase = null;
+    for (Property p : this.getEntity().getProperties()) {
+      if (p.isOneToMany() && translationProperty.getEntity().equals(p.getTargetEntity())) {
+        trlPropertyListInBase = p;
+        break;
+      }
+    }
+
+    if (trlPropertyListInBase == null) {
+      translatable = false;
+      log.warn(this.getEntity().getTableName() + "." + this.getColumnName()
+          + " is not translatable: not found one to many property to trl table");
+      return;
+    }
+
     for (Property trlParent : translationProperty.getEntity().getParentProperties()) {
       if (pk.equals(trlParent.getReferencedProperty())) {
         this.trlParentProperty = trlParent;
         this.translationProperty = translationProperty;
+        this.trlOneToManyProperty = trlPropertyListInBase;
         translatable = true;
         return;
       }
@@ -1189,5 +1207,9 @@ public class Property {
 
   public Property getTrlParentProperty() {
     return trlParentProperty;
+  }
+
+  public Property getTrlOneToManyProperty() {
+    return trlOneToManyProperty;
   }
 }

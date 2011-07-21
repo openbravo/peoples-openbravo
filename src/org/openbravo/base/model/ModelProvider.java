@@ -230,8 +230,10 @@ public class ModelProvider implements OBSingleton {
 
       // in the second pass set all the referenceProperties
       // and targetEntities
-      // uses global member tablesByTableName
-      setReferenceProperties();
+      // uses global member tablesByTableName.
+      // Obtains list of columns candidate to be translated, to be handled after setting properties
+      // in parent entities.
+      List<Column> translatableColumns = setReferenceProperties();
 
       // add virtual property for the case that the
       // id property is also a reference (a foreign key)
@@ -281,6 +283,9 @@ public class ModelProvider implements OBSingleton {
           }
         }
       }
+
+      setTranslatableColumns(translatableColumns);
+
     } finally {
       log.debug("Closing session and sessionfactory used during model read");
       tx.commit();
@@ -288,6 +293,19 @@ public class ModelProvider implements OBSingleton {
       sessionFactoryController.getSessionFactory().close();
     }
     clearLists();
+  }
+
+  private void setTranslatableColumns(List<Column> translatableColumns) {
+    for (Column c : translatableColumns) {
+      final Entity translationEntity = getEntityByTableName(c.getTable().getTableName() + "_Trl");
+
+      Property translationProperty = null;
+      if (translationEntity != null) {
+        translationProperty = translationEntity.getPropertyByColumnName(c.getColumnName());
+      }
+      final Property thisProp = c.getProperty();
+      thisProp.setTranslatable(translationProperty);
+    }
   }
 
   /**
@@ -427,7 +445,7 @@ public class ModelProvider implements OBSingleton {
     }
   }
 
-  private void setReferenceProperties() {
+  private List<Column> setReferenceProperties() {
     log.debug("Setting reference property");
     // uses global member tablesByTableName
 
@@ -474,17 +492,7 @@ public class ModelProvider implements OBSingleton {
       }
     }
 
-    // Looping through all the columns set as translatable, it is required another loop because properties set in the previous one are used now.
-    for (Column c : translatableColumns) {
-      final Entity translationEntity = getEntityByTableName(c.getTable().getTableName() + "_Trl");
-
-      Property translationProperty = null;
-      if (translationEntity != null) {
-        translationProperty = translationEntity.getPropertyByColumnName(c.getColumnName());
-      }
-      final Property thisProp = c.getProperty();
-      thisProp.setTranslatable(translationProperty);
-    }
+    return translatableColumns;
 
   }
 

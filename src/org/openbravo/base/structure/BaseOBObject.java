@@ -20,8 +20,8 @@
 package org.openbravo.base.structure;
 
 import java.io.Serializable;
+import java.util.List;
 
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.BaseOBObjectDef;
 import org.openbravo.base.model.Entity;
@@ -33,7 +33,6 @@ import org.openbravo.base.util.CheckException;
 import org.openbravo.base.validation.ValidationException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Language;
 
@@ -123,19 +122,18 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
     if (p.isTranslatable()) {
       if (!hasLookedForTrl) {
         hasLookedForTrl = true;
-        OBContext.setAdminMode(false);
         try {
-          OBCriteria<BaseOBObject> qTrl = OBDal.getInstance().createCriteria(
-              p.getTranslationProperty().getEntity().getName());
-          String id = (String) getId();
-          qTrl.add(Restrictions.eq(p.getTrlParentProperty().getName() + ".id", id));
-          qTrl.add(Restrictions.eq("language", language));
-          if (!qTrl.list().isEmpty()) {
-            // Assuming there is just one translation for the current language
-            dataTrl = qTrl.list().get(0);
+          @SuppressWarnings("unchecked")
+          List<BaseOBObject> trl = OBDal.getInstance().getSession()
+              .createFilter(this.get(p.getTrlOneToManyProperty().getName()), "where language = ?")
+              .setParameter(0, language).list();
+
+          if (!trl.isEmpty()) {
+            dataTrl = trl.get(0);
           }
-        } finally {
-          OBContext.restorePreviousMode();
+        } catch (Throwable t) {
+          // Log error but do not fail here, continue using base language
+          log.debug("Error looking for translation of " + p + ". Using base value.", t);
         }
       }
 
