@@ -106,6 +106,13 @@ public class OBContext implements OBNotSingleton {
     return false;
   }
 
+  public static boolean hasTranslationInstalled() {
+    if (getOBContext() != null) {
+      return getOBContext().isTranslationInstalled();
+    }
+    return false;
+  }
+
   /**
    * @deprecated use {@link #setAdminMode()}
    */
@@ -461,6 +468,7 @@ public class OBContext implements OBNotSingleton {
   private Role role;
   private User user;
   private Language language;
+  private boolean translationInstalled;
   private Warehouse warehouse;
   private List<Organization> organizationList;
   private String[] readableOrganizations;
@@ -858,6 +866,14 @@ public class OBContext implements OBNotSingleton {
 
       Check.isNotNull(getLanguage(), "Language may not be null");
 
+      final Query trl = SessionHandler.getInstance().createQuery(
+          "select count(*) from " + Language.class.getName() + " l where l."
+              + Language.PROPERTY_SYSTEMLANGUAGE + "= true ");
+
+      // There are translations installed in the system when there are more than one system
+      // language. There's always at last one which is the base language.
+      setTranslationInstalled(((Long) trl.list().get(0)) > 1);
+
       setReadableClients(role);
 
       // note sometimes the warehouseId is an empty string
@@ -1108,5 +1124,13 @@ public class OBContext implements OBNotSingleton {
 
   public void setRTL(boolean isRTL) {
     this.isRTL = isRTL;
+  }
+
+  private boolean isTranslationInstalled() {
+    return translationInstalled;
+  }
+
+  private void setTranslationInstalled(boolean translationInstalled) {
+    this.translationInstalled = translationInstalled;
   }
 }

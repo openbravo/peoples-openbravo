@@ -39,6 +39,7 @@ import org.openbravo.base.model.domaintype.TableDomainType;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.validation.PropertyValidator;
 import org.openbravo.base.validation.ValidationException;
+import org.openbravo.dal.core.OBContext;
 
 /**
  * Together with {@link Entity Entity}, the Property is the main part of the in-memory model. A
@@ -1139,8 +1140,13 @@ public class Property {
     return displayProperty;
   }
 
+  /**
+   * Returns whether a property is translatable to other languages. A property can be translated in
+   * case it has been marked in AD and there are translations installed in the system.
+   * 
+   */
   public boolean isTranslatable() {
-    return translatable;
+    return translatable && OBContext.hasTranslationInstalled();
   }
 
   /**
