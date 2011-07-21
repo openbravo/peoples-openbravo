@@ -414,6 +414,9 @@ OB.ViewFormProperties = {
   setFocusInForm: function() {
     if (this.getFocusItem() && this.getFocusItem().isFocusable()) {
       this.getFocusItem().focusInItem();
+      if (this.getFocusItem().doRestoreSelection) {
+        this.getFocusItem().doRestoreSelection();
+      }
       this.view.lastFocusedItem = this.getFocusItem();
       return;
     }
@@ -718,7 +721,12 @@ OB.ViewFormProperties = {
     if (previousAllItemsDisabled !== this.allItemsDisabled) {
       if (this.getFocusItem()) {
         if (this.allItemsDisabled) {
-          this.getFocusItem().blurItem();
+          if (this.getFocusItem()) {
+            if (this.getFocusItem().doRememberSelection) {
+              this.getFocusItem().doRememberSelection();
+            }
+            this.getFocusItem().blurItem();
+          }
           this.setHandleDisabled(state);
           this.view.viewGrid.refreshEditRow();
         } else {
@@ -1253,6 +1261,14 @@ OB.ViewFormProperties = {
         this.setFocusItem(nextItem);
       } else {
         this.focusInItem(nextItem);
+      }
+      // note the formItem.selectValue does not seem to work
+      // in all cases, it seems the browser internally
+      // checks if a mouseevent was the cause of the selection
+      // in which case the selection is not update, .select()
+      // does what we want
+      if (!isc.isA.TextAreaItem(nextItem) && nextItem.getElement()) {
+        nextItem.getElement().select();
       }
     }
   },

@@ -122,6 +122,30 @@ isc.FormItem.addProperties({
     this.hasFocus = true;
   },
 
+  doRememberSelection: function() {
+    var range = this.getSelectionRange();
+    this._rememberedWasValueSelected = range &&
+        range[0] < range[1] && range[1];        
+  },
+  
+  doRestoreSelection: function() {
+    if (!this._rememberedWasValueSelected) {
+      return;
+    }
+    if (this._rememberedWasValueSelected) {
+      // note this has to be done with a delay/separate thread
+      // otherwise the browser will not select the complete value
+      this.delayCall('doSelectElement');
+    }
+    delete this._rememberedWasValueSelected;
+  },
+  
+  doSelectElement: function() {
+    if (this.getElement()) {
+      this.getElement().select();
+    }
+  },
+
   blur: function(form, item){
     if (item._hasChanged && form && form.handleItemChange) {
       form.handleItemChange(this);
