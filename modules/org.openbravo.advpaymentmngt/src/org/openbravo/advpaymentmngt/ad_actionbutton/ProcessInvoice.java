@@ -164,7 +164,9 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           final String invoiceDocCategory = invoice.getDocumentType().getDocumentCategory();
           if ("API".equals(invoiceDocCategory) || "ARI".equals(invoiceDocCategory)) {
             final FIN_Payment creditPayment = dao.getCreditPayment(invoice);
-            if (creditPayment != null) {
+            // If the invoice grand total is ZERO do not cancel credit
+            if (creditPayment != null
+                && BigDecimal.ZERO.compareTo(invoice.getGrandTotalAmount()) != 0) {
               log4j.info("Detected credit payment: " + creditPayment.getIdentifier()
                   + ", that matches the invoice: " + invoice.getIdentifier());
               // Set Used Credit = Invoice's Grand Total Amount
