@@ -34,6 +34,7 @@ import org.openbravo.base.validation.ValidationException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.system.Language;
 
 /**
  * Base business object, the root of the inheritance tree for all business objects. The class model
