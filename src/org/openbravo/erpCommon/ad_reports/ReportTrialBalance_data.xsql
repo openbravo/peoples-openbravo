@@ -416,7 +416,7 @@
                    AND  F.AD_ORG_ID IN ('1')
                    AND  F.AD_CLIENT_ID IN ('1')
                    AND F.ISACTIVE = 'Y'
-                   AND F.FACTACCTTYPE <> 'O')) A
+		   AND 3=3)) A
       GROUP BY ACCOUNT_ID
       HAVING SUM(AMTACCTDR) - SUM(AMTACCTCR) <> 0
       ORDER BY ACCOUNT_ID
@@ -436,6 +436,8 @@
       <Parameter name="project" optional="true" type="argument" after="2=2"><![CDATA[ AND F.C_PROJECT_ID IN]]></Parameter>
       <Parameter name="orgFamily" type="replace" optional="true" after="AND  F.AD_ORG_ID IN (" text="'1'"/>
       <Parameter name="clientFamily" type="replace" optional="true" after="AND  F.AD_CLIENT_ID IN (" text="'1'"/>
+      <Parameter name="initial" type="none" optional="true" after="AND 3=3"><![CDATA[ AND F.FACTACCTTYPE = 'O']]></Parameter>
+      <Parameter name="notinitial" type="none" optional="true" after="AND 3=3"><![CDATA[ AND F.FACTACCTTYPE <> 'O']]></Parameter>
   </SqlMethod>
   
   <SqlMethod name="treeAccount" type="preparedStatement" return="string">

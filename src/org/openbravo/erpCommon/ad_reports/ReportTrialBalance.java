@@ -121,8 +121,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           "ReportTrialBalance|C_ElementValue_IDFROM");
       String strcElementValueTo = vars.getRequestGlobalVariable("inpcElementValueIdTo",
           "ReportTrialBalance|C_ElementValue_IDTO");
-      String strNotInitialBalance = vars.getRequestGlobalVariable("inpNotInitialBalance",
-          "ReportTrialBalance|notInitialBalance");
+      String strNotInitialBalance = vars.getStringParameter("inpNotInitialBalance", "N");
+      vars.setSessionValue("ReportTrialBalance|notInitialBalance", strNotInitialBalance);
       String strcElementValueFromDes = "", strcElementValueToDes = "";
       if (!strcElementValueFrom.equals(""))
         strcElementValueFromDes = ReportTrialBalanceData.selectSubaccountDescription(this,
@@ -167,8 +167,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           "ReportTrialBalance|cProjectId", "", IsIDFilter.instance);
       String strGroupBy = vars.getRequestGlobalVariable("inpGroupBy", "ReportTrialBalance|GroupBy");
       String strPageNo = vars.getRequestGlobalVariable("inpPageNo", "ReportTrialBalance|PageNo");
-      String strNotInitialBalance = vars.getRequestGlobalVariable("inpNotInitialBalance",
-          "ReportTrialBalance|notInitialBalance");
+      String strNotInitialBalance = vars.getStringParameter("inpNotInitialBalance", "N");
+      vars.setSessionValue("ReportTrialBalance|notInitialBalance", strNotInitialBalance);
       if (vars.commandIn("PDF"))
         printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strOrg, strLevel,
             strcElementValueFrom, strcElementValueFromDes, strcElementValueTo,
@@ -195,8 +195,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strcProjectId = vars.getInGlobalVariable("inpcProjectId_IN",
           "ReportTrialBalance|cProjectId", "", IsIDFilter.instance);
       String strGroupBy = vars.getRequestGlobalVariable("inpGroupBy", "ReportTrialBalance|GroupBy");
-      String strNotInitialBalance = vars.getRequestGlobalVariable("inpNotInitialBalance",
-          "ReportTrialBalance|notInitialBalance");
+      String strNotInitialBalance = vars.getStringParameter("inpNotInitialBalance", "N");
+      vars.setSessionValue("ReportTrialBalance|notInitialBalance", strNotInitialBalance);
 
       printPageOpen(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strcBpartnerId,
           strmProductId, strcProjectId, strcAcctSchemaId, strGroupBy, strAccountId,
@@ -626,7 +626,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         DateTimeData.nDaysAfter(this, strDateTo, "1"), "", "");
     ReportTrialBalanceData[] dataInitialBalance = ReportTrialBalanceData.selectInitialBalance(this,
         strDateFrom, strcAcctSchemaId, "", "", "", strOrgFamily,
-        Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"));
+        Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), 
+	strNotInitialBalance.equals("Y") ? "initial" : "notinitial", 
+	strNotInitialBalance.equals("Y") ? "initial" : "notinitial");
 
     log4j.debug("Calculating tree...");
     dataAux = calculateTree(dataAux, null, new Vector<Object>(), dataInitialBalance,
