@@ -29,6 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -37,6 +38,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.ad_actionButton.ActionButtonUtility;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
@@ -48,6 +50,7 @@ import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetailV;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
@@ -164,9 +167,11 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           final String invoiceDocCategory = invoice.getDocumentType().getDocumentCategory();
           if ("API".equals(invoiceDocCategory) || "ARI".equals(invoiceDocCategory)) {
             final FIN_Payment creditPayment = dao.getCreditPayment(invoice);
-            // If the invoice grand total is ZERO do not cancel credit
+            // If the invoice grand total is ZERO or already has payments (due to
+            // payment method automation) do not cancel credit
             if (creditPayment != null
-                && BigDecimal.ZERO.compareTo(invoice.getGrandTotalAmount()) != 0) {
+                && BigDecimal.ZERO.compareTo(invoice.getGrandTotalAmount()) != 0
+                && !isInvoiceWithPayments(invoice)) {
               log4j.info("Detected credit payment: " + creditPayment.getIdentifier()
                   + ", that matches the invoice: " + invoice.getIdentifier());
               // Set Used Credit = Invoice's Grand Total Amount
@@ -328,6 +333,19 @@ public class ProcessInvoice extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
 
+  }
+
+  private boolean isInvoiceWithPayments(Invoice invoice) {
+    for (FIN_PaymentSchedule ps : OBDao.getFilteredCriteria(FIN_PaymentSchedule.class,
+        Restrictions.eq(FIN_PaymentSchedule.PROPERTY_INVOICE, invoice)).list()) {
+      for (FIN_PaymentDetailV pdv : OBDao.getFilteredCriteria(FIN_PaymentDetailV.class,
+          Restrictions.eq(FIN_PaymentDetailV.PROPERTY_INVOICEPAYMENTPLAN, ps)).list()) {
+        if (pdv.getPayment() != null && !"RPVOID".equals(pdv.getPayment().getStatus())) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   public String getServletInfo() {
