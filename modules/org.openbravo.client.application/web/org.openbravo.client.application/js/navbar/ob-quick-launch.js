@@ -130,14 +130,18 @@ isc.OBQuickLaunch.addProperties({
         selectOnFocus: true,
         textMatchStyle: 'substring',
         width: OB.Styles.OBFormField.DefaultComboBox.quickRunWidth,
- 
+        
         // client filtering does not always work great...
         pickListProperties: {
           textMatchStyle: 'substring',
           bodyStyleName: OB.Styles.OBFormField.DefaultComboBox.pickListProperties.bodyStyleName
         },
         pickListHeaderHeight: 0,
-
+        
+        // this is to prevent this issue:
+        // http://forums.isomorphic.com/showthread.php?t=17949&goto=newpost
+        autoSizePickList: false,
+        
         getPickListFilterCriteria: function(){
           // only filter on identifier
           var criteria = {};
@@ -145,18 +149,18 @@ isc.OBQuickLaunch.addProperties({
           return criteria;
         },
         pickListFields: [{
-          showValueIconOnly: true,
-          name: 'icon',
-          valueIcons: {
-            Process: this.nodeIcons.Process,
-            Report: this.nodeIcons.Report,
-            Form: this.nodeIcons.Form,
-            Window: this.nodeIcons.Window
-          }
-        }, {
-          name: OB.Constants.IDENTIFIER,
-          displayField: OB.Constants.IDENTIFIER,
-          valueField: OB.Constants.ID
+            showValueIconOnly: true,
+            name: 'icon',
+            valueIcons: {
+              Process: this.nodeIcons.Process,
+              Report: this.nodeIcons.Report,
+              Form: this.nodeIcons.Form,
+              Window: this.nodeIcons.Window
+            }
+          }, { 
+            name: OB.Constants.IDENTIFIER,
+            displayField: OB.Constants.IDENTIFIER,
+            valueField: OB.Constants.ID
         }],
         autoFetchData: true,
         titleOrientation: 'top',
