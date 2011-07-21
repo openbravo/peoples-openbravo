@@ -978,7 +978,7 @@ BEGIN --BODY
           (SELECT COALESCE(v.M_PriceList_Version_ID, '0') AS PriceList_Version_ID, o.M_PriceList_ID AS M_PriceLIst_ID
            FROM M_PRICELIST_VERSION v, C_INVOICE o
            WHERE v.M_PriceList_ID=o.M_PriceList_ID
-             AND v.ValidFrom<=o.DateOrdered
+             AND v.ValidFrom<=COALESCE(o.DateOrdered, o.DateInvoiced)
              AND v.IsActive='Y'
              AND o.C_Invoice_ID=v_Record_ID
            ORDER BY v.ValidFrom DESC
