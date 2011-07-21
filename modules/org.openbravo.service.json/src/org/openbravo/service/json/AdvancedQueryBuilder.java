@@ -28,9 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -884,7 +881,7 @@ public class AdvancedQueryBuilder {
       }
       // note to_char is added to handle null values correctly
       if (prop.getReferencedProperty() == null) {
-        if (prop.isTranslatable()) {
+        if (prop.isTranslatable() && OBContext.hasTranslationInstalled()) {
           // HQL for trl properties. Doing it as a select because it cannot be done as left join.
           // Example:
           //
