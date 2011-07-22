@@ -223,23 +223,26 @@ public class DocInOut extends AcctServer {
           dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
               as.getC_Currency_ID(), strCosts, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
               DocumentType, conn);
-          dr.setM_Locator_ID(line.m_M_Locator_ID);
-          dr.setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from
-          // Loc
-          dr.setLocationFromLocator(line.m_M_Locator_ID, false, conn); // to
-          // Loc
-          log4jDocInOut.debug("(matReceipt) - CR account: "
-              + line.getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn));
-          log4jDocInOut.debug("(matReceipt) - CR costs: " + strCosts);
-          // NotInvoicedReceipt CR
-          cr = fact.createLine(line, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
-              as.getC_Currency_ID(), "", strCosts, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
-          cr.setM_Locator_ID(line.m_M_Locator_ID);
-          cr.setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from
-          // Loc
-          cr.setLocationFromLocator(line.m_M_Locator_ID, false, conn); // to
-          // Loc
+          if (!getStatus().equals("i")) {
+            dr.setM_Locator_ID(line.m_M_Locator_ID);
+            dr.setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from
+            // Loc
+            dr.setLocationFromLocator(line.m_M_Locator_ID, false, conn); // to
+            // Loc
+            log4jDocInOut.debug("(matReceipt) - CR account: "
+                + line.getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn));
+            log4jDocInOut.debug("(matReceipt) - CR costs: " + strCosts);
+            // NotInvoicedReceipt CR
+            cr = fact.createLine(line,
+                getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
+                as.getC_Currency_ID(), "", strCosts, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                DocumentType, conn);
+            cr.setM_Locator_ID(line.m_M_Locator_ID);
+            cr.setLocationFromBPartner(C_BPartner_Location_ID, true, conn); // from
+            // Loc
+            cr.setLocationFromLocator(line.m_M_Locator_ID, false, conn); // to
+            // Loc
+          }
         }
       }
     } else {
