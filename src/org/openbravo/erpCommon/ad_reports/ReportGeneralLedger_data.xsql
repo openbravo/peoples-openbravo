@@ -167,7 +167,7 @@
         WHERE 6=6
         GROUP BY VALUE, NAME, ID, FACTACCTTYPE, DATEACCT, FACT_ACCT_GROUP_ID, description, bpname, bpid, pdname, pdid, pjname, pjid, ISDEBIT
         HAVING SUM(AMTACCTDR) - SUM(AMTACCTCR) <> 0
-        ORDER BY VALUE, NAME, ID, FACTACCTTYPE, DATEACCT, FACT_ACCT_GROUP_ID, description,  bpname, bpid, pdname, pdid, pjname, pjid, ISDEBIT
+        ORDER BY VALUE, NAME, ID, DATEACCT, FACTACCTTYPE, FACT_ACCT_GROUP_ID, description,  bpname, bpid, pdname, pdid, pjname, pjid, ISDEBIT
       ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="adLanguage"/>
