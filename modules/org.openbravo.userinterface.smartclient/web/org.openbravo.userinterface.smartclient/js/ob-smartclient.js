@@ -140,10 +140,19 @@ isc.FormItem.addProperties({
     delete this._rememberedWasValueSelected;
   },
   
-  doSelectElement: function() {
-    if (this.getElement()) {
-      this.getElement().select();
+  doSelectElement: function(item) {
+    item = item || this;
+    if (item.getElement() && item.getElement().select) {
+      item.getElement().select();
+    } else {
+      this.Super('selectValue', arguments);
     }
+  },
+  
+  _original_focusInItem: isc.FormItem.getPrototype().focusInItem,
+  focusInItem: function() {
+    this._original_focusInItem();
+    this.doRestoreSelection();
   },
 
   blur: function(form, item){

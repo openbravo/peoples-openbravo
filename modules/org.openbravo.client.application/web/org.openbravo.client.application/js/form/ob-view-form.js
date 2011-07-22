@@ -734,7 +734,13 @@ OB.ViewFormProperties = {
             delete this.getFields()[i].canFocus;
           }
           if (!this.ignoreFirstFocusEvent && this.view.isActiveView()) {
-            this.setFocusInForm();
+            if (isc.Browser.isIE) {
+              // this is really needed for IE, it is also present
+              // in smartclient code when setting the focus
+              this.delayCall('setFocusInForm', [], 100);
+            } else {
+              this.setFocusInForm();
+            }
           }
           delete this.ignoreFirstFocusEvent;
         }
@@ -1265,12 +1271,7 @@ OB.ViewFormProperties = {
       // in which case the selection is not update, .select()
       // does what we want
       if (!isc.isA.TextAreaItem(nextItem)) {
-        if (nextItem.getElement()) {
-          nextItem.getElement().select();
-        } else {
-          // works for date values
-          nextItem.selectValue();
-        }
+        nextItem.doSelectElement();
       }
     }
   },
