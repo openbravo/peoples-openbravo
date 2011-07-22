@@ -553,6 +553,12 @@ isc.OBViewGrid.addProperties({
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.KS.set('Grid_EditInForm', editInFormAction);
+
+    OB.KeyboardManager.KS.set('Grid_CancelChanges',
+       function(){
+         grid.view.undo();
+         return false;
+       });
   },
   
   deselectAllRecords: function(preventUpdateSelectInfo, autoSaveDone){
@@ -1117,23 +1123,14 @@ isc.OBViewGrid.addProperties({
     var singleSelected = this.getSelectedRecords().length === 1;
     var field = this.getField(colNum);
     var grid = this;
-    if (recordsSelected) {
-      var allSelectedHaveErrors = true, i;
-      for (i = 0; i < this.getSelectedRecords().length; i++) {
-        var localRowNum = this.getRecordIndex(this.getSelectedRecords()[i]);
-        if (!this.rowHasErrors(localRowNum)) {
-          allSelectedHaveErrors = false;
-          break;
+    if (!this.view.hasNotChanged() || this.view.viewGrid.hasErrors()) {
+      menuItems.add({
+        title: OB.I18N.getLabel('OBUIAPP_UndoChanges'),
+        keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','Grid_CancelChanges','id'),
+        click: function(){
+          grid.view.undo();
         }
-      }
-      if (allSelectedHaveErrors) {
-        menuItems.add({
-          title: OB.I18N.getLabel('OBUIAPP_UndoChanges'),
-          click: function(){
-            grid.view.undo();
-          }
-        });
-      }
+      });
     }
 
     if (singleSelected && this.canEdit && this.isWritable(record) && !this.view.readOnly) {
@@ -1577,6 +1574,8 @@ isc.OBViewGrid.addProperties({
     if (record) {
       if (!record[isc.OBViewGrid.ERROR_MESSAGE_PROP]) {
         this.setRecordErrorMessage(rowNum, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
+        // do not automatically remove this message
+        this.view.messageBar.keepOnAutomaticRefresh = true;
       } else {
         record[this.recordBaseStyleProperty] = this.recordStyleError;
       }

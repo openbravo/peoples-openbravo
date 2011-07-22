@@ -525,6 +525,22 @@ isc.OBGrid.addProperties({
       this.frozenBody.showEmptyMessage = false;
     }
     return ret;
+  },
+
+  //= getErrorRows =
+  // Returns all the rows that have errors.
+  getErrorRows: function(){
+    var editRows, errorRows = [], i;
+
+    if (this.hasErrors()) {
+      editRows = this.getAllEditRows(true);
+      for (i = 0; i < editRows.length; i++) {
+        if (this.rowHasErrors(editRows[i])) {
+          errorRows.push(editRows[i]);
+        }
+      }
+    }
+    return errorRows;
   }
 });
 

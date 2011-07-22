@@ -190,7 +190,7 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'undo',
     prompt: OB.I18N.getLabel('OBUIAPP_CancelEdit'),
     updateState: function() {
-      this.setDisabled(this.view.hasNotChanged());
+      this.setDisabled(this.view.hasNotChanged() && !this.view.viewGrid.hasErrors());
     },
     keyboardShortcutId: 'ToolBar_Undo'
   },

@@ -25,7 +25,7 @@ isc.ClassFactory.defineClass('OBMessageBarCloseIcon', isc.ImgButton);
 isc.OBMessageBarCloseIcon.addProperties({
   messageBar: null,
   action: function(){
-    this.messageBar.hide();
+    this.messageBar.hide(true);
   }
 });
 
@@ -117,5 +117,13 @@ isc.OBMessageBar.addProperties({
         me.setMessage(type, title, text);
       }
     }, 'setLabel');
+  },
+
+  hide: function(force) {
+    // if hide is not forced, keep the message if marked as keepOnAutomaticRefresh
+    if (force || !this.keepOnAutomaticRefresh) {
+      delete this.keepOnAutomaticRefresh;
+      this.Super('hide', arguments);
+    }
   }
 });

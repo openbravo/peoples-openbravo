@@ -1451,12 +1451,23 @@ isc.OBStandardView.addProperties({
     };
     this.standardWindow.doActionAfterAutoSave(actionObject, false);
   },
-  
+
   undo: function(){
-    var view = this, callback, form, grid;
+    var view = this, callback, form, grid, errorRows, i;
+    view.messageBar.hide(true);
     if (this.isEditingGrid) {
+      grid = view.viewGrid;
       // the editing grid will take care of the confirmation
-      view.viewGrid.cancelEditing();
+      grid.cancelEditing();
+
+      // undo edit in all records with errors
+      if (grid.hasErrors()) {
+        errorRows = grid.getErrorRows();
+        for (i = 0; i < errorRows.length; i++){
+          grid.selectRecord(grid.getRecord(errorRows[i]));
+        }
+        grid.undoEditSelectedRows();
+      }
       return;
     } else if (this.isShowingForm) {
       form = this.viewForm;

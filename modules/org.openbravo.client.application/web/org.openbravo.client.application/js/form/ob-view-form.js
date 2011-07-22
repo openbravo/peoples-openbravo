@@ -1305,8 +1305,14 @@ OB.ViewFormProperties = {
   },
   
   handleFieldErrors: function(errors){
-    var msg = OB.I18N.getLabel('OBUIAPP_ErrorInFields'),
-        additionalMsg = '', err;
+    var msg, additionalMsg = '', err;
+
+    if (this.view.isEditingGrid) {
+      msg = OB.I18N.getLabel('OBUIAPP_ErrorInFieldsGrid', [this.view.ID]);
+    } else {
+      msg = OB.I18N.getLabel('OBUIAPP_ErrorInFields');
+    }
+
     if (errors) {
       this.setErrors(errors, true);
       for (err in errors) {
