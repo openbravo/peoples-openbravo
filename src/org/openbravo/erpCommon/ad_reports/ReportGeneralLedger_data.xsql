@@ -86,7 +86,7 @@
             DATEACCT,  FACT_ACCT_GROUP_ID, DESCRIPTION, ISDEBIT
           ) C
         ) B WHERE 1=1
-      ) A ORDER BY  groupbyname, groupbyid, VALUE, FACTACCTTYPE, DATEACCT, FACT_ACCT_GROUP_ID, DESCRIPTION, ISDEBIT
+      ) A ORDER BY  groupbyname, groupbyid, VALUE, DATEACCT, FACTACCTTYPE, FACT_ACCT_GROUP_ID, DESCRIPTION, ISDEBIT
       ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
