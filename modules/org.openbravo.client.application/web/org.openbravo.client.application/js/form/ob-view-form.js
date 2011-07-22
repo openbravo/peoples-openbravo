@@ -760,6 +760,9 @@ OB.ViewFormProperties = {
   
   processColumnValue: function(columnName, columnValue, editValues){
   	// Modifications in this method should go also in setColumnValuesInEditValues because both almost do the same
+    var typeInstance;
+    var assignValue;
+    var assignClassicValue;
     var isDate, i, valueMap = {}, oldValue, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
     // not a field on the form, probably a datasource field
     var prop = this.view.getPropertyFromDBColumnName(columnName);
@@ -793,8 +796,6 @@ OB.ViewFormProperties = {
     
     // Adjust to formatting if exists value and classicValue. 
     oldValue = this.getValue(field.name);
-    var assignValue;
-    var assignClassicValue;
     if (field.typeInstance && field.typeInstance.parseInput && field.typeInstance.editFormatter) {
     	assignValue = field.typeInstance.parseInput(field.typeInstance.editFormatter(columnValue.value));
     	assignClassicValue = field.typeInstance.editFormatter(field.typeInstance.parseInput(columnValue.classicValue));
@@ -862,7 +863,7 @@ OB.ViewFormProperties = {
     }
     
     // store the textualvalue so that it is correctly send back to the server
-    var typeInstance = SimpleType.getType(field.type);
+    typeInstance = SimpleType.getType(field.type);
     if (columnValue.classicValue && typeInstance.decSeparator) {
       this.setTextualValue(field.name, assignClassicValue, typeInstance);
     }
@@ -870,6 +871,9 @@ OB.ViewFormProperties = {
   
   setColumnValuesInEditValues: function(columnName, columnValue, editValues){
   	// Modifications in this method should go also in processColumnValue because both almost do the same
+  	var assignClassicValue;
+  	var typeInstance;
+
     // no editvalues even anymore, go away
     if (!editValues) {
       return;
@@ -928,10 +932,10 @@ OB.ViewFormProperties = {
     // store the textualvalue so that it is correctly send back to the server
     if (field) {
       // Adjust to formatting if exists value and classicValue.
-      var assignClassicValue = (field.typeInstance && field.typeInstance.parseInput && field.typeInstance.editFormatter)
+      assignClassicValue = (field.typeInstance && field.typeInstance.parseInput && field.typeInstance.editFormatter)
         ? field.typeInstance.editFormatter(field.typeInstance.parseInput(columnValue.classicValue))
         : columnValue.classicValue;
-      var typeInstance = SimpleType.getType(field.type);
+      typeInstance = SimpleType.getType(field.type);
       if (columnValue.classicValue && typeInstance.decSeparator) {
         this.setTextualValue(field.name, assignClassicValue, typeInstance, editValues);
       }
