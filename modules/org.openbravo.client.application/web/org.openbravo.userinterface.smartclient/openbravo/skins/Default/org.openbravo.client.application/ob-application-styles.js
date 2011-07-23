@@ -101,6 +101,12 @@ isc.addProperties(isc.Dialog.Warn.toolbarDefaults, {
   styleName: 'OBDialogButtonToolBar'
 });
 
+isc.Dialog.addProperties({
+  messageStackProperties: {
+    defaultLayoutAlign: 'center'
+  }
+});
+
 isc.ListGrid.addProperties({
   alternateRecordStyles: true
 });
