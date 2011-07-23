@@ -29,7 +29,12 @@ OB.DateItemProperties = {
   // Picker constructor class
   pickerConstructor: 'OBDateChooser',
   useSharedPicker: true,
-  
+
+  selectOnFocus: true,
+  textFieldProperties: {
+    selectOnFocus: true
+  },
+
   // ** {{{ dateFormat }}} **
   // Dateformat function
   dateFormat: OB.Format.date,

@@ -59,18 +59,6 @@ isc.FormItem.addProperties({
   // disable tab to icons
   canTabToIcons: false,
   
-  // when a value is set the selectValue is called with a delay, during that delay
-  // the focus may have moved to another field, the selectValue will however again 
-  // put the focus in this field this results in infinite looping of calls
-  // https://issues.openbravo.com/view.php?id=16908
-  _selectValue : isc.FormItem.getPrototype().selectValue,
-  selectValue: function() {
-    if (!this.hasFocus) {
-      return;
-    }
-    return this._selectValue();
-  },
-  
   _original_init: isc.FormItem.getPrototype().init,
   init: function() {
     this.obShowIf = this.showIf; // Copy the reference of showIf definition
@@ -122,37 +110,25 @@ isc.FormItem.addProperties({
     this.hasFocus = true;
   },
 
-  doRememberSelection: function() {
-    var range = this.getSelectionRange();
-    this._rememberedWasValueSelected = range &&
-        range[0] < range[1] && range[1];        
-  },
-  
-  doRestoreSelection: function() {
-    if (!this._rememberedWasValueSelected) {
+  doSelectElement: function(item, delayed) {
+    var me = this;
+    
+    if (!delayed && isc.Browser.isIE) {
+      this.fireOnPause("doSelectElement", function() {
+        me.doSelectElement(item, true);
+      }, 0, this);
       return;
     }
-    if (this._rememberedWasValueSelected) {
-      // note this has to be done with a delay/separate thread
-      // otherwise the browser will not select the complete value
-      this.delayCall('doSelectElement');
-    }
-    delete this._rememberedWasValueSelected;
-  },
-  
-  doSelectElement: function(item) {
+    
     item = item || this;
-    if (item.getElement() && item.getElement().select) {
+    if (isc.isA.OBTextAreaItem(item)) {
+      // don't do anything here
+    } else if (item.getElement() && item.getElement().select) {
       item.getElement().select();
     } else {
-      this.Super('selectValue', arguments);
+      // nothing else, just do the native stuff
+      this.selectValue();
     }
-  },
-  
-  _original_focusInItem: isc.FormItem.getPrototype().focusInItem,
-  focusInItem: function() {
-    this._original_focusInItem();
-    this.doRestoreSelection();
   },
 
   blur: function(form, item){
@@ -178,7 +154,7 @@ isc.FormItem.addProperties({
   
   // return all relevant focus condition
   isFocusable: function(ignoreTemporaryDisabled){    
-    return this.getCanFocus() && this.isDrawn() &&
+    return this.getCanFocus() &&
         this.isVisible() && !this.isDisabled(ignoreTemporaryDisabled);
   },
   
@@ -192,8 +168,6 @@ isc.FormItem.addProperties({
     
     return ods;
   }
-
-  
 });
 
 // overridden to never show a prompt. A prompt can be created manually 

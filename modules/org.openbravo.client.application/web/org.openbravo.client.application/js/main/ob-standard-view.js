@@ -817,10 +817,8 @@ isc.OBStandardView.addProperties({
       this.viewGrid.hide();
       this.statusBarFormLayout.show();
       this.statusBarFormLayout.setHeight('100%');
-      // this member should be set after the form is shown
       if (this.isActiveView()) {
-        this.viewForm.resetFocusItem();
-        this.setViewFocus();
+        this.viewForm.focus();
       }
       this.isShowingForm = true;
     } else {

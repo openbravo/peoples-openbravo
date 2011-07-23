@@ -25,6 +25,9 @@ isc.ClassFactory.defineClass('OBTextAreaItem', TextAreaItem);
 isc.OBTextAreaItem.addProperties({
   operator: 'iContains',
   validateOnExit: true,
+
+  selectOnFocus: false,
+
   itemHoverHTML: function(item, form) {
     if (this.isDisabled()) {
       return this.getValue();

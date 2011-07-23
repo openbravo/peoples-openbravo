@@ -1933,6 +1933,12 @@ isc.OBViewGrid.addProperties({
       }
       this.view.isEditingGrid = false;
     }
+    
+    // always hide the clickmask, as it needs to be re-applied
+    // this super call needs to be done before clearing the values
+    // of the form, as the form value clear will result
+    // in a field to be flagged with an error
+    var ret = this.Super('hideInlineEditor', [focusInBody, false]);
 
     if (editForm) {
       // canFocus is set when disabling a form item
@@ -1944,9 +1950,7 @@ isc.OBViewGrid.addProperties({
       // clear the errors so that they don't show up at the next row
       editForm.clearErrors();
     }
-    
-    // always hide the clickmask, as it needs to be re-applied
-    var ret = this.Super('hideInlineEditor', [focusInBody, false]);
+
     delete this._hidingInlineEditor;
     return ret;
   },

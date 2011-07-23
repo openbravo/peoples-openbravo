@@ -58,24 +58,28 @@ isc.OBSectionItem.addProperties({
     }
   },
   
-  collapseSection: function() {
+  collapseSection: function(preventFocusChange) {
     // when collapsing set the focus to the header
     this.updateAlwaysTakeSpace(false);
-    this.form.setFocusItem(this);
+    if (!preventFocusChange && this.isDrawn() && this.isVisible()) {
+      this.form.setFocusItem(this);
+    }
     var ret = this.Super('collapseSection', arguments);
     return ret;
   },
   
   expandSection: function() {
+    var enabled = this.isDrawn() && this.isVisible();
+
     this.updateAlwaysTakeSpace(true);
 
-    if (this.form.getFocusItem()) {
+    if (enabled && this.form.getFocusItem()) {
       this.form.getFocusItem().blurItem();
     }
 
     var ret = this.Super('expandSection', arguments);
     
-    if (!this.form._preventFocusChanges) {
+    if (enabled && !this.form._preventFocusChanges) {
       // when expanding set the focus to the first focusable item     
       // set focus late to give the section time to draw and let
       // other items to loose focus/redraw

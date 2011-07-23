@@ -271,7 +271,7 @@
           
           if (loadingTab) {
             viewTabId = loadingTab.pane.viewTabId;
-          } else if (!params.popup && viewName !== 'OBPopupClassicWindow' && !params.showsItself) {           
+          } else if (!params.popup && viewName !== 'OBPopupClassicWindow' && !params.showsItself) {
             viewTabId = vmgr.views.getViewTabID(viewName, params);
             if (viewTabId) {
               // tab exists, replace its contents

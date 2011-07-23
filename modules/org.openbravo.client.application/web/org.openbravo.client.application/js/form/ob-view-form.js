@@ -41,7 +41,6 @@ OB.ViewFormProperties = {
     
   showErrorIcons: false,
   showErrorStyle: true,
-  selectOnFocus: false,
   autoComplete: true,
   redrawOnDisable: true,
   
@@ -59,6 +58,9 @@ OB.ViewFormProperties = {
   
   fieldsByInpColumnName: null,
   fieldsByColumnName: null,
+  
+  autoFocus: true,
+  selectOnFocus: true,
   
   isNew: false,
   hasChanged: false,
@@ -102,9 +104,6 @@ OB.ViewFormProperties = {
         this.firstFocusedField = item.name;
         break;
       }
-    }
-    if (!this.firstFocusedField) {
-      this.firstFocusedField = this.getItem(0).name;
     }
 
     delete this._preventFocusChanges;
@@ -179,6 +178,17 @@ OB.ViewFormProperties = {
   doEditRecordActions: function(preventFocus, isNew){
     delete this.validateAfterFicReturn;
     
+    // only compute a new focus item if the form is active
+    if (this.view.isActiveView()) {
+      this.computeFocusItem();
+    }
+    
+    // if the focus item is not really enabled
+    // then find a new one, even if the form is not active
+    if (this.getFocusItem() && !this.getFocusItem().isFocusable(true)) {
+      this.computeFocusItem(this.getFocusItem());
+    }
+
     // sometimes if an error occured we stay disabled
     // prevent this
     this.setDisabled(false);
@@ -231,7 +241,7 @@ OB.ViewFormProperties = {
 	    }
 	    if (enable) {
 	      this.noteSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID));
-	      this.noteSection.collapseSection();
+	      this.noteSection.collapseSection(true);
 	      this.noteSection.refresh();
 	      this.noteSection.show();
 	    } else {
@@ -244,7 +254,7 @@ OB.ViewFormProperties = {
       return;
     }
     if (enable) {
-      this.linkedItemSection.collapseSection();
+      this.linkedItemSection.collapseSection(true);
       this.linkedItemSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID));
       this.linkedItemSection.show();
     } else {
@@ -257,7 +267,7 @@ OB.ViewFormProperties = {
       return;
     }
     if(enable){
-      this.attachmentsSection.collapseSection();
+      this.attachmentsSection.collapseSection(true);
       this.attachmentsSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID), this.view.tabId);
       this.attachmentsSection.show();
     }else{
@@ -290,13 +300,20 @@ OB.ViewFormProperties = {
   },  
   
   setNewState: function(isNew){
+    // showing the sections will change the focus item
+    // restore that
+    this.storeFocusItem();
     this.isNew = isNew;
     this.view.statusBar.setNewState(isNew);
     this.view.updateTabTitle();
+    
     this.enableNoteSection(!isNew);
     this.enableLinkedItemSection(!isNew);
     this.enableAttachmentsSection(!isNew);
-
+    
+    // and restore
+    this.restoreFocusItem();
+    
     if (isNew) {
       this.view.statusBar.newIcon.prompt = OB.I18N.getLabel('OBUIAPP_NewIconPrompt');
     } else {
@@ -315,118 +332,93 @@ OB.ViewFormProperties = {
     }
   },
   
-  resetFocusItem: function(startItem) {
-    var items = this.getItems(), length = items.length, item, i, nextItem;
+  computeFocusItem: function(startItem) {
+    var items = this.getItems(), nextItem, itemsLength = items.length, item, i;
     
     var errorFld = this.getFirstErrorItem();
-    if (errorFld && errorFld.isFocusable()) {
-      this.setFocusInItem(errorFld, this.view.isActiveView());
+    if (errorFld && errorFld.isFocusable(true)) {
+      // get rid of this one, to not set the focus back to this field
+      delete this.forceFocusedField;
+      
+      this.setFocusItem(errorFld);
       return;
     }
     
     if (this.forceFocusedField) {
       item = this.getItem(this.forceFocusedField);
-      if(item && item.isFocusable()) {
-        this.setFocusInItem(item, this.view.isActiveView());
-        delete this.forceFocusedField;
-        return;
-      }
       delete this.forceFocusedField;
-    }
-
-    if (this.firstFocusedField) {
-      item = this.getItem(this.firstFocusedField);
-      if(item && item.isFocusable()) {
-        this.setFocusInItem(item, this.view.isActiveView());
+      if(item && item.isFocusable(true)) {
+        this.setFocusItem(item);
         return;
       }
     }
 
-    // is set for inline grid editing for example
-    if (this.getFocusItem() && this.getFocusItem().isFocusable()) {
-      if (this.view.isActiveView()) {
-        this.getFocusItem().focusInItem();
+    if (!startItem && this.firstFocusedField) {
+      item = this.getItem(this.firstFocusedField);
+      if(item && item.isFocusable(true)) {
+        this.setFocusItem(item);
+        if (this.parentElement) {
+          this.parentElement.delayCall('scrollTo', [null, this.getTop()], 100);
+        }
+        return;
       }
-      this.view.lastFocusedItem = this.getFocusItem();
-      return;
     }
 
-    if (items) {
-      
+    if (items) {      
       if (startItem) {
-        for (i = 0; i < length; i++) {
+        for (i = 0; i < itemsLength; i++) {
           item = items[i];
           if (!nextItem && item === startItem) {
             nextItem = true;
-          } else if (nextItem && item.isFocusable()) {
-            this.setFocusInItem(item, this.view.isActiveView());
+          } else if (nextItem && !isc.isA.SectionItem(item) && item && 
+              item.isFocusable(true)) {
+            this.setFocusItem(item);
             return;
           }
         }
       }
       
-      // not found start from new again
-      for (i = 0; i < length; i++) {
-        item = items[i];
-        if (item.isFocusable()) {
-          this.setFocusInItem(item);
-          return;
+      // not found retry the item we have
+      if (startItem && startItem.isFocusable(true)) {
+        this.setFocusItem(startItem);       
+      } else{
+        // not found start from new again
+        for (i = 0; i < itemsLength; i++) {
+          item = items[i];
+          if (item.isFocusable(true)) {
+            this.setFocusItem(item);
+            return;
+          }
         }
       }
     }
   },
   
-  computeFocusItem: function(changeState) {
-    var items = this.getItems(), length = items.length, item, i;
-    
-    if (!changeState) {
-      var errorFld = this.getFirstErrorItem();
-      if (errorFld) {
-        // get rid of this one, to not set the focus back to this field
-        delete this.forceFocusedField;
-        
-        this.setFocusItem(errorFld);
-        return;
-      }
-    }
-    
-    if (this.forceFocusedField) {
-      item = this.getItem(this.forceFocusedField);
-      delete this.forceFocusedField;
-      if(item) {
-        this.setFocusItem(item);
-        return;
-      }
-    }
-
-    if (!changeState && this.firstFocusedField) {
-      item = this.getItem(this.firstFocusedField);
-      if(item) {
-        this.setFocusItem(item);
-        this.parentElement.delayCall('scrollTo', [null, this.getTop()], 100);
-        return;
-      }
-    }
-  },
-
-  // checks if there is a focusable focusitem, if so just uses that one
-  // if not will find the next one
+  // sets the focus in the current focusitem 
+  // if it is not focusable then a next item is 
+  // searched for
   setFocusInForm: function() {
-    if (this.getFocusItem() && this.getFocusItem().isFocusable()) {
-      this.getFocusItem().focusInItem();
-      this.view.lastFocusedItem = this.getFocusItem();
+    if (!this.view.isActiveView()) {
       return;
     }
     
-    // find a new one
-    this.resetFocusItem(this.getFocusItem());
-  },
-  
-  setFocusInItem: function(item, doFocus) {
-    this.setFocusItem(item);
-    this.view.lastFocusedItem = item;
-    if (doFocus && this.view.isActiveView()) {
-      item.focusInItem();
+    var focusItem = this.getFocusItem();
+    // an edit form in a grid is not
+    // drawn it seems...
+    if ((!this.grid && !this.isDrawn()) && !this.isVisible()) {
+      // autofocus will do it for us
+      return;
+    }
+    if (focusItem && focusItem.isFocusable()) {
+      focusItem.focusInItem();
+      this.view.lastFocusedItem = focusItem;
+    } else {      
+      // find a new one
+      this.computeFocusItem(focusItem);
+      if (this.getFocusItem() !== focusItem && this.getFocusItem()) {
+        focusItem.focusInItem();
+        this.view.lastFocusedItem = focusItem;
+      }
     }
   },
   
@@ -518,19 +510,19 @@ OB.ViewFormProperties = {
 
     // get the editRow before doing the call
     var editRow = me.view.viewGrid.getEditRow();
+    
+    this.inFicCall = true;
+    
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function(response, data, request){
       var editValues;
       if (editRow || editRow === 0) {
         editValues = me.view.viewGrid.getEditValues(editRow);
       }
-
-      // note focus is set when the form is set to not being disabled anymore
-      me.computeFocusItem();
       
       // no focus item found, focus on the body of the grid
       // this makes sure that keypresses end up in the 
       // bodyKeyPress method
-      if (!me.getFocusItem().isFocusable()) {
+      if (!me.getFocusItem() || !me.getFocusItem().isFocusable()) {
         me.view.viewGrid.body.focus();
       }
       
@@ -657,6 +649,8 @@ OB.ViewFormProperties = {
     // note onFieldChanged uses the form.readOnly set above
     this.onFieldChanged(this);
 
+    // on field changed may have made the focused item non-editable
+    // this is handled in setdisabled restore focus item's call
     this.setDisabled(false);
 
     if (this.validateAfterFicReturn) {
@@ -712,16 +706,14 @@ OB.ViewFormProperties = {
   },
   
   setDisabled: function(state) {
-    var previousAllItemsDisabled = this.allItemsDisabled, i;
+    var previousAllItemsDisabled = this.allItemsDisabled || false, i;
     this.allItemsDisabled = state;
 
     if (previousAllItemsDisabled !== this.allItemsDisabled) {
       if (this.getFocusItem()) {
         if (this.allItemsDisabled) {
+          this.storeFocusItem();
           if (this.getFocusItem()) {
-            if (this.getFocusItem().doRememberSelection) {
-              this.getFocusItem().doRememberSelection();
-            }
             this.getFocusItem().blurItem();
           }
           this.setHandleDisabled(state);
@@ -733,14 +725,12 @@ OB.ViewFormProperties = {
           for (i = 0; i < this.getFields().length; i++) {
             delete this.getFields()[i].canFocus;
           }
-          if (!this.ignoreFirstFocusEvent && this.view.isActiveView()) {
-            if (isc.Browser.isIE) {
-              // this is really needed for IE, it is also present
-              // in smartclient code when setting the focus
-              this.delayCall('setFocusInForm', [], 100);
-            } else {
-              this.setFocusInForm();
-            }
+          
+          // do restore focus in a delayed manner for ie
+          if (isc.Browser.isIE) {
+            this.delayCall('restoreFocusItem', [true], 100);
+          } else {
+            this.restoreFocusItem();
           }
           delete this.ignoreFirstFocusEvent;
         }
@@ -972,10 +962,14 @@ OB.ViewFormProperties = {
       for (i = 0; i < this.dynamicCols.length; i++) {
         if (this.dynamicCols[i] === item.inpColumnName) {
           item._hasChanged = false;
-          this.inFicCall= true;
+          this.inFicCall = true;
           this.doChangeFICCall(item);
           return true;
         }
+      }
+      if (this.getFocusItem() && !this.getFocusItem().isFocusable(true)) {
+        this.computeFocusItem(this.getFocusItem());
+        this.setFocusInForm();
       }
     }
     item._hasChanged = false;
@@ -1021,8 +1015,6 @@ OB.ViewFormProperties = {
       if (editRow || editRow === 0) {
         editValues = me.view.viewGrid.getEditValues(editRow);
       }
-
-      me.computeFocusItem(true);
 
       me.processFICReturn(response, data, request, editValues, editRow);
     });
@@ -1103,7 +1095,10 @@ OB.ViewFormProperties = {
   // there the save call is done through the grid saveEditedValues
   // function
   saveRow: function(){
-    var savingNewRecord = this.isNew, saveFocusItem = this.getFocusItem();
+    var savingNewRecord = this.isNew;
+    
+    this.storeFocusItem();
+    
     // store the value of the current focus item
     if (this.getFocusItem() && this.saveFocusItemChanged !== this.getFocusItem()) {
       this.getFocusItem().updateValue();
@@ -1220,10 +1215,7 @@ OB.ViewFormProperties = {
 
       form.isSaving = false;
       view.toolBar.updateButtonState(true);
-      if (form.isVisible() && saveFocusItem) {
-        this.setFocusItem(saveFocusItem);
-        saveFocusItem.focusInItem();
-      }
+      this.restoreFocusItem();
       return false;
     };
     
@@ -1258,41 +1250,10 @@ OB.ViewFormProperties = {
 
   // called when someone picks something from a picklist, the focus should go to the next
   // item
-  focusInNextItem: function(currentItem) {
-    var flds = (this.grid ? this.grid.getFields() : this.getFields());
-    var chooseNextItem, i, nextItem, length = flds.length;
-    for (i = 0; i < length; i++) {
-      var item = this.getItem(flds[i].name);
-      if (!item) {
-        continue;
-      }
-      // some items don't have a name, ignore those
-      // true passed to isFocusable because sometimes the whole form is disabled and needs to 
-      // be focused after enabling (after the fic call returns)
-      if (!isc.isA.SectionItem(item) && chooseNextItem && item.name && item.isFocusable && item.isFocusable(true)) {
-        nextItem = item;
-        break;
-      }
-      if (item.name === currentItem) {
-        chooseNextItem = true;
-      }
-    }
-    if (nextItem) {
-      // in the fic call, all items are disabled, so let it be focused
-      // when returning
-      if (this.inFicCall) {
-        this.setFocusItem(nextItem);
-      } else {
-        this.focusInItem(nextItem);
-      }
-      // note the formItem.selectValue does not seem to work
-      // in all cases, it seems the browser internally
-      // checks if a mouseevent was the cause of the selection
-      // in which case the selection is not update, .select()
-      // does what we want
-      if (!isc.isA.TextAreaItem(nextItem)) {
-        nextItem.doSelectElement();
-      }
+  focusInNextItem: function(currentItemName) {
+    this.computeFocusItem(this.getField(currentItemName));
+    if (this.getFocusItem()) {
+      this.getFocusItem().focusInItem();
     }
   },
   
@@ -1453,8 +1414,35 @@ OB.ViewFormProperties = {
       return false;
     }
     return this.Super('keyDown', arguments);
+  },
+  
+  storeFocusItem: function() {
+    delete this.storedFocusItem;
+    delete this.storedSelectionRange;
+    if (this.getFocusItem()) {
+      this.storedFocusItem = this.getFocusItem();
+      this.storedSelectionRange = this.getFocusItem().getSelectionRange();
+    }
+  },
+  
+  restoreFocusItem: function() {
+    var storedSelectionRange = this.storedSelectionRange;
+    if (this.isVisible() && this.storedFocusItem) {
+      if (!this.storedFocusItem.isFocusable(true)) {
+        this.focusInNextItem(this.getFocusItem().name);
+      } else {
+        this.setFocusItem(this.storedFocusItem);
+        this.setFocusInForm();
+        if (storedSelectionRange) {
+          this.getFocusItem().setSelectionRange(storedSelectionRange[0], storedSelectionRange[1]);
+        }
+      }
+    }
+    
+    delete this.storedFocusItem;
+    delete this.storedSelectionRange;    
   }
-
+  
 };
 
 isc.OBViewForm.addProperties(OB.ViewFormProperties);
