@@ -344,13 +344,15 @@ OB.ViewFormProperties = {
       return;
     }
     
-    if (this.forceFocusedField) {
+    if (!startItem && this.forceFocusedField) {
       item = this.getItem(this.forceFocusedField);
       delete this.forceFocusedField;
       if(item && item.isFocusable(true)) {
         this.setFocusItem(item);
         return;
       }
+    } else {
+      delete this.forceFocusedField;
     }
 
     if (!startItem && this.firstFocusedField) {
@@ -1442,7 +1444,6 @@ OB.ViewFormProperties = {
     delete this.storedFocusItem;
     delete this.storedSelectionRange;    
   }
-  
 };
 
 isc.OBViewForm.addProperties(OB.ViewFormProperties);
