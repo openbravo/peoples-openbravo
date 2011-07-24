@@ -34,8 +34,9 @@ isc.OBListItem.addProperties({
 
   // NOTE: Setting this property to false fixes the issue when using the mouse to pick a value
   // FIXME: Sometimes the field label gets a red color (a blink)
-  // addUnknownValues: false,
-
+  addUnknownValues: false,
+  changeOnKeyPress: false,
+  
   selectOnFocus: true,
   moveFocusOnPickValue: true,
   
