@@ -37,6 +37,8 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.erpCommon.utility.MimeTypeUtil;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
@@ -111,7 +113,8 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
       try {
         final FileItem fi = vars.getMultiFile("inpFile");
         byte[] bytea = fi.get();
-
+        Long[] size = Utility.computeImageSize(bytea);
+        String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(bytea);
         // Using DAL to write the image data to the database
         Image image;
         if (imageID == null || imageID.equals("")) {
@@ -121,6 +124,9 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
           image.setBindaryData(bytea);
           image.setActive(true);
           image.setName("Image");
+          image.setWidth(size[0]);
+          image.setHeight(size[1]);
+          image.setMimetype(mimeType);
           OBDal.getInstance().save(image);
           OBDal.getInstance().flush();
 
@@ -128,6 +134,9 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
           image = OBDal.getInstance().get(Image.class, imageID);
           image.setActive(true);
           image.setBindaryData(bytea);
+          image.setWidth(size[0]);
+          image.setHeight(size[1]);
+          image.setMimetype(mimeType);
           OBDal.getInstance().flush();
         }
         response.setContentType("text/html; charset=UTF-8");

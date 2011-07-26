@@ -18,11 +18,7 @@
  */
 package org.openbravo.client.application.window;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
@@ -32,6 +28,8 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.MimeTypeUtil;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Image;
@@ -80,10 +78,25 @@ public class ImagesActionHandler extends BaseActionHandler {
         OBContext.setAdminMode();
         String imageID = (String) parameters.get("inpimageId");
         Image image = OBDal.getInstance().get(Image.class, imageID);
-        ByteArrayInputStream bis = new ByteArrayInputStream(image.getBindaryData());
-        BufferedImage rImage = ImageIO.read(bis);
-        int width = rImage.getWidth();
-        int height = rImage.getHeight();
+        Long width;
+        Long height;
+        if (image.getHeight() == null || image.getWidth() == null) {
+          Long[] size = Utility.computeImageSize(image.getBindaryData());
+          width = size[0];
+          height = size[1];
+          image.setWidth(width);
+          image.setHeight(height);
+          OBDal.getInstance().save(image);
+          OBDal.getInstance().flush();
+        } else {
+          width = image.getWidth();
+          height = image.getHeight();
+        }
+        if (image.getMimetype() == null) {
+          image.setMimetype(MimeTypeUtil.getInstance().getMimeTypeName(image.getBindaryData()));
+          OBDal.getInstance().save(image);
+          OBDal.getInstance().flush();
+        }
         JSONObject obj = new JSONObject();
         obj.put("width", width);
         obj.put("height", height);

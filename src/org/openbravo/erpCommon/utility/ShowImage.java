@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.utility.Image;
 
 /**
  * 
@@ -58,7 +60,17 @@ public class ShowImage extends HttpSecureAppServlet {
     byte[] img = Utility.getImage(id);
 
     // write the mimetype
-    final String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img);
+    Image image = OBDal.getInstance().get(Image.class, id);
+    final String mimeType;
+    if (image.getMimetype() != null) {
+      mimeType = image.getMimetype();
+    } else {
+      mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img);
+      image.setMimetype(mimeType);
+      OBDal.getInstance().save(image);
+      OBDal.getInstance().flush();
+    }
+
     if (!mimeType.equals("")) {
       response.setContentType(mimeType);
     }

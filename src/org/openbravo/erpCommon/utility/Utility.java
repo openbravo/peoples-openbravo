@@ -2380,7 +2380,7 @@ public class Utility {
     try {
       ByteArrayOutputStream bout = new ByteArrayOutputStream();
       new FileUtility(OBConfigFileProvider.getInstance().getServletContext().getRealPath("/"),
-          "web/images/blank.gif", false, true).dumpFile(bout);
+          getDefaultImageLogo("Empty"), false, true).dumpFile(bout);
       bout.close();
       return bout.toByteArray();
     } catch (IOException ex) {
@@ -2400,21 +2400,43 @@ public class Utility {
    */
   public static byte[] getImage(String id) {
 
-    OBContext.setAdminMode();
+    byte[] imageByte;
     try {
-      Image img = OBDal.getInstance().get(Image.class, id);
+      Image img = getImageObject(id);
       if (img == null) {
         log4j.error("Image does not exist: " + id);
-        return getBlankImage();
+        imageByte = getBlankImage();
       } else {
-        return img.getBindaryData();
+        imageByte = img.getBindaryData();
       }
     } catch (Exception e) {
       log4j.error("Could not load image from database: " + id, e);
-      return getBlankImage();
+      imageByte = getBlankImage();
+    }
+
+    return imageByte;
+  }
+
+  /**
+   * Provides the image as an image object. These images are stored in the table AD_IMAGES as a BLOB
+   * field.
+   * 
+   * @param id
+   *          The id of the image to display
+   * @return The image requested
+   * @see #getImage(String)
+   */
+  public static Image getImageObject(String id) {
+    Image img = null;
+    OBContext.setAdminMode();
+    try {
+      img = OBDal.getInstance().get(Image.class, id);
+    } catch (Exception e) {
+      log4j.error("Could not load image from database: " + id, e);
     } finally {
       OBContext.restorePreviousMode();
     }
+    return img;
   }
 
   /**
@@ -2430,19 +2452,6 @@ public class Utility {
     return ImageIO.read(new ByteArrayInputStream(getImage(id)));
   }
 
-  private static byte[] defaultImageLogo(Image img, String path) throws IOException {
-
-    if (img == null) {
-      ByteArrayOutputStream bout = new ByteArrayOutputStream();
-      new FileUtility(OBConfigFileProvider.getInstance().getServletContext().getRealPath("/"),
-          path, false, true).dumpFile(bout);
-      bout.close();
-      return bout.toByteArray();
-    } else {
-      return img.getBindaryData();
-    }
-  }
-
   /**
    * Provides the image logo as a byte array for the indicated parameters.
    * 
@@ -2454,18 +2463,15 @@ public class Utility {
    *          logo you can indicate the organization used to request the logo.
    * @return The image requested
    */
-  public static byte[] getImageLogo(String logo, String org) {
-
+  public static Image getImageLogoObject(String logo, String org) {
+    Image img = null;
     OBContext.setAdminMode();
     try {
-      Image img = null;
 
       if ("yourcompanylogin".equals(logo)) {
         img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyLoginImage();
-        return defaultImageLogo(img, "web/images/CompanyLogo_big.png");
       } else if ("youritservicelogin".equals(logo)) {
         img = OBDal.getInstance().get(SystemInformation.class, "0").getYourItServiceLoginImage();
-        return defaultImageLogo(img, "web/images/SupportLogo_big.png");
       } else if ("yourcompanymenu".equals(logo)) {
         img = OBDal.getInstance()
             .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
@@ -2473,7 +2479,6 @@ public class Utility {
         if (img == null) {
           img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyMenuImage();
         }
-        return defaultImageLogo(img, "web/images/CompanyLogo_small.png");
       } else if ("yourcompanybig".equals(logo)) {
         img = OBDal.getInstance()
             .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
@@ -2481,7 +2486,6 @@ public class Utility {
         if (img == null) {
           img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyBigImage();
         }
-        return defaultImageLogo(img, "web/skins/ltr/Default/Login/initialOpenbravoLogo.png");
       } else if ("yourcompanydoc".equals(logo)) {
         if (org != null && !org.equals("")) {
           Organization organization = OBDal.getInstance().get(Organization.class, org);
@@ -2490,10 +2494,8 @@ public class Utility {
         if (img == null) {
           img = OBDal.getInstance().get(SystemInformation.class, "0").getYourCompanyDocumentImage();
         }
-        return defaultImageLogo(img, "web/images/CompanyLogo_big.png");
       } else if ("banner-production".equals(logo)) {
         img = OBDal.getInstance().get(SystemInformation.class, "0").getProductionBannerImage();
-        return defaultImageLogo(img, "web/images/blank.gif");
       } else if ("yourcompanylegal".equals(logo)) {
         if (org != null && !org.equals("")) {
           Organization organization = OBDal.getInstance().get(Organization.class, org);
@@ -2510,17 +2512,106 @@ public class Utility {
                 .getYourCompanyDocumentImage();
           }
         }
-        return defaultImageLogo(img, "web/images/CompanyLogo_big.png");
       } else {
         log4j.error("Logo key does not exist: " + logo);
-        return getBlankImage();
       }
     } catch (Exception e) {
       log4j.error("Could not load logo from database: " + logo + ", " + org, e);
-      return getBlankImage();
     } finally {
       OBContext.restorePreviousMode();
     }
+    return img;
+  }
+
+  /**
+   * Provides the image logo as a byte array for the indicated parameters.
+   * 
+   * @param logo
+   *          The name of the logo to display This can be one of the following: yourcompanylogin,
+   *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
+   * @param org
+   *          The organization id used to get the logo In the case of requesting the yourcompanydoc
+   *          logo you can indicate the organization used to request the logo.
+   * @return The image requested
+   */
+  public static byte[] getImageLogo(String logo, String org) {
+
+    byte[] imageByte;
+
+    try {
+      Image img = getImageLogoObject(logo, org);
+      if (img == null) {
+        String path = getDefaultImageLogo(logo);
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        new FileUtility(OBConfigFileProvider.getInstance().getServletContext().getRealPath("/"),
+            path, false, true).dumpFile(bout);
+        bout.close();
+        imageByte = bout.toByteArray();
+      } else {
+        imageByte = img.getBindaryData();
+      }
+
+    } catch (Exception e) {
+      log4j.error("Could not load logo from database: " + logo + ", " + org, e);
+      imageByte = getBlankImage();
+    }
+    return imageByte;
+  }
+
+  /**
+   * Provides the image logo as a byte array for the indicated parameters.
+   * 
+   * @param logo
+   *          The name of the logo to display This can be one of the following: yourcompanylogin,
+   *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
+   * @param org
+   *          The organization id used to get the logo In the case of requesting the yourcompanydoc
+   *          logo you can indicate the organization used to request the logo.
+   * @return The image requested
+   */
+  public static String getDefaultImageLogo(String logo) {
+
+    String defaultImagePath = null;
+
+    if (logo == null) {
+      defaultImagePath = "web/images/blank.gif";
+    } else if ("yourcompanylogin".equals(logo)) {
+      defaultImagePath = "web/images/CompanyLogo_big.png";
+    } else if ("youritservicelogin".equals(logo)) {
+      defaultImagePath = "web/images/SupportLogo_big.png";
+    } else if ("yourcompanymenu".equals(logo)) {
+      defaultImagePath = "web/images/CompanyLogo_small.png";
+    } else if ("yourcompanybig".equals(logo)) {
+      defaultImagePath = "web/skins/ltr/Default/Login/initialOpenbravoLogo.png";
+    } else if ("yourcompanydoc".equals(logo)) {
+      defaultImagePath = "web/images/CompanyLogo_big.png";
+    } else if ("banner-production".equals(logo)) {
+      defaultImagePath = "web/images/blank.gif";
+    } else if ("yourcompanylegal".equals(logo)) {
+      defaultImagePath = "web/images/CompanyLogo_big.png";
+    } else {
+      defaultImagePath = "web/images/blank.gif";
+    }
+
+    return defaultImagePath;
+
+  }
+
+  /**
+   * This method calculates the size of an image
+   * 
+   * @param bytea
+   *          The contents of the image
+   * @return An Long array with two elements (width, height)
+   * @throws IOException
+   */
+  public static Long[] computeImageSize(byte[] bytea) throws IOException {
+    ByteArrayInputStream bis = new ByteArrayInputStream(bytea);
+    BufferedImage rImage = ImageIO.read(bis);
+    Long[] size = new Long[2];
+    size[0] = new Long(rImage.getWidth());
+    size[1] = new Long(rImage.getHeight());
+    return size;
   }
 
   /**

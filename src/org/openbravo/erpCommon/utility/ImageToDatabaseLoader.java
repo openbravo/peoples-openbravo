@@ -42,6 +42,10 @@ public class ImageToDatabaseLoader extends BaseDalInitializingTask {
           }
           Image image = OBProvider.getInstance().get(Image.class);
           image.setBindaryData(bytes);
+          image.setMimetype(MimeTypeUtil.getInstance().getMimeTypeName(bytes));
+          Long[] size = Utility.computeImageSize(bytes);
+          image.setWidth(size[0]);
+          image.setHeight(size[1]);
           image.setName("Image");
           getLog().info("Inserting image with property: " + properties[i]);
           OBDal.getInstance().save(image);

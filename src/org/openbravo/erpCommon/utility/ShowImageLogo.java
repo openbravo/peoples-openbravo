@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.utility.Image;
 
 /**
  * 
@@ -50,10 +52,24 @@ public class ShowImageLogo extends HttpBaseServlet {
     String org = vars.getStringParameter("orgId");
 
     // read the image data
-    byte[] img = Utility.getImageLogo(logo, org);
-
+    byte[] img;
+    String mimeType = null;
+    Image image = Utility.getImageLogoObject(logo, org);
+    if (image != null) {
+      img = image.getBindaryData();
+      mimeType = image.getMimetype();
+    } else {
+      img = Utility.getImageLogo(logo, org);
+    }
     // write the mimetype
-    final String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img);
+    if (mimeType == null) {
+      mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img);
+      if (image != null) {
+        image.setMimetype(mimeType);
+        OBDal.getInstance().save(image);
+        OBDal.getInstance().flush();
+      }
+    }
     if (!mimeType.equals("")) {
       response.setContentType(mimeType);
     }
