@@ -31,7 +31,6 @@ import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
@@ -57,19 +56,7 @@ public class ApplicationUtils {
   }
 
   static void showWindowInClassicMode(Window window, List<String> reasonsToBeShownInClassic) {
-    // FIXME Remove this once ImageBLOB is implemented
-    // Currently, windows with ImageBLOB reference columns will be shown in classic mode
-    String qryStr = "as f where f.column.reference.id = '4AA6C3BE9D3B4D84A3B80489505A23E5' "
-        + "and f.tab.window.id = :windowId ";
     List<String> reasonsOfWindow = new ArrayList<String>();
-    OBQuery<Field> qry = OBDal.getInstance().createQuery(Field.class, qryStr);
-    qry.setNamedParameter("windowId", window.getId());
-    if (qry.count() > 0) {
-      String reason = "   One or more columns in the window " + window.getName()
-          + " have an ImageBLOB reference ";
-      reasonsOfWindow.add(reason);
-    }
-
     for (Tab tab : window.getADTabList()) {
       if (!tab.isActive()) {
         continue;

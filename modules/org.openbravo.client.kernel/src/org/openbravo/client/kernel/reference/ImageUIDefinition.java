@@ -29,4 +29,15 @@ public class ImageUIDefinition extends UIDefinition {
   public String getParentType() {
     return "image";
   }
+
+  @Override
+  public String getFormEditorType() {
+    return "OBImageItem";
+  }
+
+  @Override
+  public String getTypeProperties() {
+    return "shortDisplayFormatter: function(value, field, component, record) {" + "return \"\";"
+        + "},";
+  }
 }

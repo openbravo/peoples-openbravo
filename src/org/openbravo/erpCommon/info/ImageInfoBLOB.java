@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -38,7 +39,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.model.ad.module.DataPackage;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -59,9 +60,15 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
     if (columnName == null || columnName.equals(""))
       columnName = vars.getStringParameter("inpColumnName");
     String tableId = vars.getStringParameter("tableId");
-    if (tableId == null || tableId.equals(""))
+    if (tableId == null || tableId.equals("")) {
       tableId = vars.getStringParameter("inpTableId");
+    }
+    if (tableId == null || tableId.equals("")) {
+      String tabId = vars.getStringParameter("inpTabId");
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      tableId = tab.getTable().getId();
 
+    }
     String imageID = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(columnName));
     if (imageID == null || imageID.equals("")) {
       imageID = vars.getStringParameter("imageId");
@@ -70,6 +77,9 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
     String orgId = vars.getStringParameter("inpOrgId");
     if (orgId == null || orgId.equals("")) {
       orgId = vars.getStringParameter("inpadOrgId");
+    }
+    if (orgId == null || orgId.equals("")) {
+      orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     }
 
     String parentObjectId = vars.getStringParameter("parentObjectId");
@@ -86,10 +96,6 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
               break;
             }
           }
-          String strWindowId = vars.getStringParameter("inpwindowId");
-          String strKeyColumnId = vars.getStringParameter("inpkeyColumnId");
-          // parentObjectId = vars.getGlobalVariable("inp" + Sqlc.TransformaNombreColumna(keyCol),
-          // strWindowId + "|" + strKeyColumnId);
           parentObjectId = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(keyCol));
         }
       } finally {
@@ -100,7 +106,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
 
       printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
-    } else if (vars.commandIn("SAVE")) {
+    } else if (vars.getCommand().startsWith("SAVE")) {
       OBContext.setAdminMode();
       try {
         final FileItem fi = vars.getMultiFile("inpFile");
@@ -126,44 +132,52 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
         }
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter writer = response.getWriter();
-        writeRedirect(writer, image.getId(), columnName);
+        if (vars.getCommand().equals("SAVE_OB3")) {
+          String selectorId = orgId = vars.getStringParameter("inpSelectorId");
+          writeRedirectOB3(writer, selectorId, image.getId());
+        } else {
+          writeRedirect(writer, image.getId(), columnName);
+        }
       } finally {
         OBContext.restorePreviousMode();
       }
-    } else if (vars.commandIn("DELETE")) {
+    } else if (vars.getCommand().startsWith("DELETE")) {
       if (imageID != null && !imageID.equals("")) {
         OBContext.setAdminMode();
         try {
           Image image = OBDal.getInstance().get(Image.class, imageID);
           Table table = OBDal.getInstance().get(Table.class, tableId);
-          String propertyName = ModelProvider.getInstance()
-              .getEntityByTableName(table.getDBTableName()).getPropertyByColumnName(columnName)
-              .getName();
-          DataPackage dpackage = table.getDataPackage();
-          try {
-            Class tableClass = Class.forName(dpackage.getJavaPackage() + "."
-                + table.getJavaClassName());
-            @SuppressWarnings("unchecked")
-            BaseOBObject parentObject = (BaseOBObject) OBDal.getInstance().get(tableClass,
-                parentObjectId);
-            parentObject.set(propertyName, null);
-            OBDal.getInstance().flush();
-            OBDal.getInstance().remove(image);
-          } catch (Exception e) {
-            log4j.error("Class for table not found", e);
-          }
+          Entity entity = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName());
+          String propertyName = entity.getPropertyByColumnName(columnName).getName();
+          BaseOBObject parentObject = (BaseOBObject) OBDal.getInstance().get(entity.getName(),
+              parentObjectId);
+          parentObject.set(propertyName, null);
+          OBDal.getInstance().flush();
+          OBDal.getInstance().remove(image);
         } finally {
           OBContext.restorePreviousMode();
         }
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter writer = response.getWriter();
-        writeRedirect(writer, "", columnName);
+        if (vars.getCommand().equals("DELETE_OB3")) {
+          String selectorId = orgId = vars.getStringParameter("inpSelectorId");
+          writeRedirectOB3(writer, selectorId, "");
+        } else {
+          writeRedirect(writer, "", columnName);
+        }
       } else {
         printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
       }
     } else {
       pageError(response);
     }
+  }
+
+  private void writeRedirectOB3(PrintWriter writer, String selectorId, String imageId) {
+    writer.write("<HTML><BODY><script type=\"text/javascript\">");
+    writer.write("top." + selectorId + ".callback('" + imageId + "');");
+    writer.write("</SCRIPT></BODY></HTML>");
+
   }
 
   private void printPageFrame(HttpServletResponse response, VariablesSecureApp vars,

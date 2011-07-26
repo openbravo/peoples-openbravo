@@ -58,6 +58,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
   private static final long ONE_COLUMN_MAX_LENGTH = 60;
   private static final String TEXT_AD_REFERENCE_ID = "14";
+  private static final String IMAGEBLOB_AD_REFERENCE_ID = "4AA6C3BE9D3B4D84A3B80489505A23E5";
 
   private static final String AUDIT_GROUP_ID = "1000100001";
   private static final String MORE_INFO_GROUP_ID = "402880E72F1C15A5012F1C7AA98B00E8";
@@ -626,7 +627,9 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public long getColSpan() {
-      return field.getDisplayedLength() > ONE_COLUMN_MAX_LENGTH || getRowSpan() == 2 ? 2 : 1;
+      return field.getDisplayedLength() > ONE_COLUMN_MAX_LENGTH
+          || (getRowSpan() == 2 && !property.getDomainType().getReference().getId()
+              .equals(IMAGEBLOB_AD_REFERENCE_ID)) ? 2 : 1;
     }
 
     public boolean getEndRow() {
@@ -634,7 +637,13 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public long getRowSpan() {
-      return property.getDomainType().getReference().getId().equals(TEXT_AD_REFERENCE_ID) ? 2 : 1;
+      if (property.getDomainType().getReference().getId().equals(TEXT_AD_REFERENCE_ID)) {
+        return 2;
+      }
+      if (property.getDomainType().getReference().getId().equals(IMAGEBLOB_AD_REFERENCE_ID)) {
+        return 2;
+      }
+      return 1;
     }
 
     public boolean getStartRow() {

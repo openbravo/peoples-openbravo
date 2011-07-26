@@ -724,6 +724,72 @@
   color: #777;
 }
 
+
+.OBImageItemButton_selector {
+  background-position:right top;
+  background-repeat: no-repeat;
+  background-image: url(./images/form/upload_icon.png);
+}
+
+.OBImageItemButton_selectorDown,
+.OBImageItemButton_selectorFocusedDown,
+.OBImageItemButton_selectorSelected,
+.OBImageItemButton_selectorFocused,
+.OBImageItemButton_selectorSelectedDown,
+.OBImageItemButton_selectorSelectedFocusedDown {
+  background-position:right top;
+  background-repeat: no-repeat;
+  background-image: url(./images/form/upload_icon_Down.png);
+}
+
+.OBImageItemButton_selectorDisabled,
+.OBImageItemButton_selectorSelectedDisabled {
+  background-position:right top;
+  background-repeat: no-repeat;
+  background-image: url(./images/form/upload_icon_Disabled.png);
+}
+
+.OBImageItemButton_selectorOver,
+.OBImageItemButton_selectorFocusedOver,
+.OBImageItemButton_selectorSelectedFocused,
+.OBImageItemButton_selectorSelectedFocusedOver {
+  background-position:right top;
+  background-repeat: no-repeat;
+  background-image: url(./images/form/upload_icon_Over.png);
+}
+  
+.OBImageItemButton_delete {
+  background-position:right top;
+  background-repeat: no-repeat;
+  background-image: url(./images/form/erase_icon.png);
+}
+
+.OBImageItemButton_deleteDown,
+.OBImageItemButton_deleteFocusedDown,
+.OBImageItemButton_deleteSelected,
+.OBImageItemButton_deleteFocused,
+.OBImageItemButton_deleteSelectedDown,
+.OBImageItemButton_deleteSelectedFocusedDown {
+  background-position:right top;
+  background-repeat: no-repeat;
+  background-image: url(./images/form/erase_icon_Down.png);
+}
+
+.OBImageItemButton_deleteDisabled,
+.OBImageItemButton_deleteSelectedDisabled {
+  background-position:right top;
+  background-repeat: no-repeat;
+  background-image: url(./images/form/erase_icon_Disabled.png);
+}
+
+.OBImageItemButton_deleteOver,
+.OBImageItemButton_deleteFocusedOver,
+.OBImageItemButton_deleteSelectedFocused,
+.OBImageItemButton_deleteSelectedFocusedOver {
+  background-position:right top;
+  background-repeat: no-repeat;
+  background-image: url(./images/form/erase_icon_Over.png);
+}
 /*=======================================================================
  * LinkButton Item
 =======================================================================*/

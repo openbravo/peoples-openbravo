@@ -87,6 +87,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/utilities/ob-utilities-number.js", true));
 
     globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/utilities/ob-popup.js", false));
+    globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/ob-form-button.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-checkbox.js", true));
@@ -139,6 +141,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-yesno.js", true));
 
     globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/toolbar/ob-toolbar.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/formitem/ob-formitem-image.js", true));
+    globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/navbar/ob-application-menu.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/main/ob-tab.js", false));
@@ -174,8 +180,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/main/ob-standard-view.js", false));
     globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/utilities/ob-popup.js", false));
-    globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/ob-view-form-linked-items.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/ob-view-form-notes.js", false));
@@ -189,8 +193,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/utilities/ob-keyboard-manager.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/classic/ob-classic-popup.js", false));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/toolbar/ob-toolbar.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/main/ob-messagebar.js", false));
     globalResources.add(createStaticResource(
