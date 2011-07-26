@@ -243,9 +243,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     // String strTreeAccount = ReportTrialBalanceData.treeAccount(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
+    String strFinancialOrgFamily = getFinancialFamily(strTreeOrg, strOrg, vars.getClient());
     String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this,
         vars.getSessionValue("#AD_SqlDateFormat"), strDateFrom,
-        Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strOrgFamily);
+        Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strFinancialOrgFamily);
     if (strYearInitialDate.equals(""))
       strYearInitialDate = strDateFrom;
     String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
@@ -514,9 +515,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = "";
     strOrgFamily = getFamily(strTreeOrg, strOrg);
+    String strFinancialOrgFamily = getFinancialFamily(strTreeOrg, strOrg, vars.getClient());
     String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this,
         vars.getSessionValue("#AD_SqlDateFormat"), strDateFrom,
-        Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strOrgFamily);
+        Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strFinancialOrgFamily);
     if (strYearInitialDate.equals(""))
       strYearInitialDate = strDateFrom;
     String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
@@ -616,9 +618,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = "";
     strOrgFamily = getFamily(strTreeOrg, strOrg);
+    String strFinancialOrgFamily = getFinancialFamily(strTreeOrg, strOrg, vars.getClient());
     String strYearInitialDate = ReportGeneralLedgerData.yearInitialDate(this,
         vars.getSessionValue("#AD_SqlDateFormat"), strDateFrom,
-        Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strOrgFamily);
+        Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strFinancialOrgFamily);
     if (strYearInitialDate.equals(""))
       strYearInitialDate = strDateFrom;
     String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
@@ -668,6 +671,26 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
   private String getFamily(String strTree, String strChild) throws IOException, ServletException {
     return Tree.getMembers(this, strTree, strChild);
+  }
+
+  private String getFinancialFamily(String strTree, String strChild, String strClientId)
+      throws IOException, ServletException {
+    log4j.debug("Tree.getFinancialMembers");
+    ReportGeneralLedgerData[] data = ReportGeneralLedgerData
+        .getFinancialOrgs(this, strTree, strChild, strClientId);
+
+    boolean bolFirstLine = true;
+    String strText = "";
+    for (int i = 0; i < data.length; i++) {
+      data[i].id = "'" + data[i].id + "'";
+      if (bolFirstLine) {
+        bolFirstLine = false;
+        strText = data[i].id;
+      } else {
+        strText = data[i].id + "," + strText;
+      }
+    }
+    return strText;
   }
 
   @Override
