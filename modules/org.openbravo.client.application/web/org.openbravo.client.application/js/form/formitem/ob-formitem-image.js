@@ -58,13 +58,17 @@ OBImageCanvas.addProperties({
             command: 'GETSIZE'
           };
           OB.RemoteCallManager.call('org.openbravo.client.application.window.ImagesActionHandler', {}, d, function(response, data, request){
-            var height = data.height+20;
-            var width = data.width+20;
-            if(height > Page.getHeight()-100){
-                height = Page.getHeight()-100;
-            }
-            if(width > Page.getWidth()-100){
-                width = Page.getWidth()-100;
+            var pageHeight = Page.getHeight()-100;
+            var pageWidth = Page.getWidth()-100;
+            var height;
+            var width;
+            var ratio = data.width/data.height;
+            if(ratio>pageWidth/pageHeight){
+              width = data.width>pageWidth?pageWidth:data.width;
+              height = width/ratio;
+            }else{
+              height = data.height>pageHeight?pageHeight:data.height;
+              width = height*ratio;
             }
             var imagePopup = isc.OBPopup.create({
               height: height,
