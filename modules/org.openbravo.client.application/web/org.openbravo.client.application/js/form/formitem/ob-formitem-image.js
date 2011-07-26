@@ -46,6 +46,7 @@ OBImageCanvas.addProperties({
         height: '100%',
         border: '1px solid #CDD7BB',
         align: 'center',
+        cursor: 'pointer',
         defaultLayoutAlign: 'center',
         imageItem: this.creator,
         click: function(){
@@ -96,6 +97,7 @@ OBImageCanvas.addProperties({
       this.addMember(imageLayout);
       this.image=isc.Img.create({
         width: '100%',
+        cursor: 'pointer',
         imageType: "stretch"
       });
       imageLayout.addMember(this.image);
