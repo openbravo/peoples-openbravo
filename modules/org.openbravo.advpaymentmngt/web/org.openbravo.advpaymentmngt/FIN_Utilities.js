@@ -22,6 +22,7 @@ var frm = null,
     isReceipt = true,
     isCreditAllowed = true,
     isCreditCheckedFromBPinGrid = false,
+    isGLItemEnabled = false,
     globalMaskNumeric = "#0.00",
     globalDecSeparator = ".",
     globalGroupSeparator = ",",
@@ -31,11 +32,12 @@ function isTrue(objectName) {
   return frm.elements[objectName].value === 'Y';
 }
 
-function initFIN_Utilities(_frm, _creditAllowed, _isCreditCheckedFromBPinGrid) {
+function initFIN_Utilities(_frm, _creditAllowed, _isCreditCheckedFromBPinGrid, _isGLItemEnabled) {
   frm = _frm;
   isReceipt = isTrue('isReceipt');
   isCreditAllowed = _creditAllowed !== undefined ? _creditAllowed : true;
   isCreditCheckedFromBPinGrid = _isCreditCheckedFromBPinGrid !== undefined ? _isCreditCheckedFromBPinGrid : false;
+  isGLItemEnabled = _isGLItemEnabled !== undefined ? _isGLItemEnabled : false;
   if (!isCreditAllowed) {
     frm.inpUseCredit.checked = false;
   }
@@ -54,7 +56,7 @@ function processLabels() {
   for (i = 0; i < paidlbls.length; i++) {
     displayLogicElement(paidlbls[i].id, !isReceipt);
   }
-} 
+}
 
 function selectDifferenceAction(value) {
   var diffAction = frm.inpDifferenceAction, i;
@@ -73,6 +75,18 @@ function selectDifferenceAction(value) {
 function applyFormat(number) {
   return returnFormattedNumber(number, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
 }
+
+/**
+ * Function that transform a JavaScript number into a formatted one
+ * @param {String} number to be formated
+ * @return The converted number
+ * @type String
+ */
+function applyFormatJSToOBMasked(number) {
+  return OB.Utilities.Number.JSToOBMasked(number, globalMaskNumeric, globalDecSeparator,
+                                          globalGroupSeparator, globalGroupInterval);
+}
+
 
 /**
 * Function to operate with formatted number
@@ -271,7 +285,7 @@ function validateSelectedAmounts(recordID, existsPendingAmount, selectedAction){
     return false;
   }
   // Only possible to pay 0 in case of a write off
-  if (selectedAction != "writeoff" && compare(amount, '==', 0)) {
+  if (selectedAction !== "writeoff" && compare(amount, '==', 0)) {
 	setWindowElementFocus(frm.elements["inpPaymentAmount"+recordID]);
 	showJSMessage(9);
     return false;
@@ -285,10 +299,15 @@ function validateSelectedAmounts(recordID, existsPendingAmount, selectedAction){
 }
 
 function updateDifference() {
-  var expected = (frm.inpExpectedPayment && frm.inpExpectedPayment.value) ? frm.inpExpectedPayment.value : 0;
-  var total = (frm.inpTotal && frm.inpTotal.value) ? frm.inpTotal.value : 0;
-  var amount = total;
-
+  var expected = (frm.inpExpectedPayment && frm.inpExpectedPayment.value) ? frm.inpExpectedPayment.value : 0,
+      total = (frm.inpTotal && frm.inpTotal.value) ? frm.inpTotal.value : 0,
+      amount = total,
+      invoicedAmount = total;
+  
+  if (isGLItemEnabled) {
+    invoicedAmount = frm.inpInvoiceAmount.value;
+  }
+  
   if (frm.inpActualPayment !== null) {
     amount = frm.inpActualPayment.value;
   }
@@ -354,7 +373,7 @@ function updateTotal() {
        return (this.numberofitems > 1);
      }
   };
-   
+  
   selectedBusinessPartners.reset();
   
   if (!chk) {
@@ -362,7 +381,9 @@ function updateTotal() {
       frm.inpActualPayment.value = frm.inpGeneratedCredit.value;
     }
     updateDifference();
-    return;
+    if (OB.APRM.HasGLItems === 'undefined' || !OB.APRM.HasGLItems) {
+      return;
+    }
   } else if (!chk.length) {
     scheduledPaymentDetailId = frm.inpRecordId0.value;
     pendingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
@@ -403,6 +424,11 @@ function updateTotal() {
       }
     }
   }
+  if (isGLItemEnabled) {
+    frm.inpInvoiceAmount.value = total;
+    document.getElementById('paramInvoicesAmt').innerHTML = frm.inpInvoiceAmount.value;
+    total = add(total, frm.inpGLSumAmount.value);
+  }
   frm.inpTotal.value = total;
   document.getElementById('paramTotal').innerHTML = frm.inpTotal.value;
   var inheritedActualPayment = (frm.paramInheritedActualPayment && frm.paramInheritedActualPayment.value === "Y");
@@ -434,6 +460,9 @@ function distributeAmount(_amount) {
   var amount = applyFormat(_amount);
   var chk = frm.inpScheduledPaymentDetailId;
   var scheduledPaymentDetailId, outstandingAmount, j, i;
+  if (isGLItemEnabled) {
+    amount = subtract(amount, frm.inpGLSumAmount.value);
+  }
   
   if (!chk) {
     updateTotal();
@@ -514,19 +543,20 @@ function updateAll(drivenByGrid) {
   var frm = document.frmMain;
   var chk = frm.inpScheduledPaymentDetailId;
   var recordAmount, i;
-  
+
+  frm.inpExpectedPayment.value = '0';
+  if (isGLItemEnabled) {
+    frm.inpExpectedPayment.value = frm.inpGLSumAmount.value || '0';
+  }
   if (!chk) {
-    frm.inpExpectedPayment.value = "0";
     return;
   } else if (!chk.length) {
-    frm.inpExpectedPayment.value = "0";
     if (!chk.checked) {
       recordAmount = frm.elements["inpRecordAmt" + chk.value].value;
       frm.inpExpectedPayment.value = add(frm.inpExpectedPayment.value, recordAmount);
     }
     updateData(chk.value, chk.checked, drivenByGrid);
   } else {
-    frm.inpExpectedPayment.value = "0";
     var total = chk.length;
     for (i = 0; i < total; i++) {
       if (!chk[i].checked) {
