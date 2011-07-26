@@ -11205,14 +11205,18 @@ The corresponding tables have then the following setting:
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <FILTERCLAUSE><![CDATA[AD_Model_Object.AD_TAB_ID        is null and
-AD_Model_Object.AD_WORKFLOW_ID   is null and
 AD_Model_Object.AD_PROCESS_ID    is null and
 AD_Model_Object.AD_FORM_ID       is null and
 AD_Model_Object.AD_REFERENCE_ID  is null and
 AD_Model_Object.AD_CALLOUT_ID    is null ]]></FILTERCLAUSE>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <HQLFILTERCLAUSE><![CDATA[e.tab is null and e.process is null and e.oSTask is null and e.specialForm is null and e.reference is null and e.callout is null]]></HQLFILTERCLAUSE>
+<!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <HQLFILTERCLAUSE><![CDATA[e.tab is null and 
+e.process is null and 
+e.specialForm is null and 
+e.reference is null and
+e.callout is null]]></HQLFILTERCLAUSE>
+<!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <FILTERNAME><![CDATA[Model objects without AD object]]></FILTERNAME>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--5B6FF3B9E2B4423EB3EE4B2666D7E918--></AD_TAB>
 
