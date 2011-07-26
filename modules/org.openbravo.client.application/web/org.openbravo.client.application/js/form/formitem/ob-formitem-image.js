@@ -44,7 +44,7 @@ OBImageCanvas.addProperties({
       var imageLayout = isc.HLayout.create({
         width:'100%',
         height: '100%',
-        border: '1px solid #C0C0C0',
+        border: '1px solid #CDD7BB',
         align: 'center',
         defaultLayoutAlign: 'center',
         imageItem: this.creator,
@@ -87,7 +87,7 @@ OBImageCanvas.addProperties({
       if(this.creator.required){
         imageLayout.setBackgroundColor('#FFFFCC');
       }else{
-        imageLayout.setBackgroundColor('#F0F0F0');
+        imageLayout.setBackgroundColor('#F5F7F1');
       }
       this.addMember(imageLayout);
       this.image=isc.Img.create({
