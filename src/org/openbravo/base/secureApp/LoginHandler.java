@@ -240,6 +240,18 @@ public class LoginHandler extends HttpBaseServlet {
         return;
       }
 
+      try {
+        LoginUtils.getLoginDefaults(strUserAuth, "", myPool);
+      } catch (DefaultValidationException e) {
+        updateDBSession(sessionId, false, "F");
+        String title = Utility.messageBD(myPool, "InvalidDefaultLoginTitle", vars.getLanguage())
+            .replace("%0", e.getDefaultField());
+        String msg = Utility.messageBD(myPool, "InvalidDefaultLoginMsg", vars.getLanguage())
+            .replace("%0", e.getDefaultField());
+        goToRetry(res, vars, msg, title, "Error", "../security/Menu.html", doRedirect);
+        return;
+      }
+
       // All checks passed successfully, continue logging in
       goToTarget(res, vars, doRedirect);
     } finally {

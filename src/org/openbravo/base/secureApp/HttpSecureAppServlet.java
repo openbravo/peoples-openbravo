@@ -55,6 +55,7 @@ import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -279,42 +280,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             strOrg = "0";
             strWarehouse = "";
           } else {
-            strRole = variables.getRole();
-
-            if (strRole.equals("")) {
-              // use default role
-              strRole = DefaultOptionsData.defaultRole(this, strUserAuth);
-              if (strRole == null || !LoginUtils.validUserRole(this, strUserAuth, strRole)) {
-                // if default not set or not valid take any one
-                strRole = DefaultOptionsData.getDefaultRole(this, strUserAuth);
-              }
-            }
-            validateDefault(strRole, strUserAuth, "Role");
-
-            strOrg = DefaultOptionsData.defaultOrg(this, strUserAuth);
-            // use default org
-            if (strOrg == null || !LoginUtils.validRoleOrg(this, strRole, strOrg)) {
-              // if default not set or not valid take any one
-              strOrg = DefaultOptionsData.getDefaultOrg(this, strRole);
-            }
-            validateDefault(strOrg, strRole, "Org");
-
-            strClient = DefaultOptionsData.defaultClient(this, strUserAuth);
-            // use default client
-            if (strClient == null || !LoginUtils.validRoleClient(this, strRole, strClient)) {
-              // if default not set or not valid take any one
-              strClient = DefaultOptionsData.getDefaultClient(this, strRole);
-            }
-            validateDefault(strClient, strRole, "Client");
-
-            strWarehouse = DefaultOptionsData.defaultWarehouse(this, strUserAuth);
-            if (strWarehouse == null) {
-              if (!strRole.equals("0")) {
-                strWarehouse = DefaultOptionsData.getDefaultWarehouse(this, strClient, new OrgTree(
-                    this, strClient).getAccessibleTree(this, strRole).toString());
-              } else
-                strWarehouse = "";
-            }
+            RoleDefaults defaults = LoginUtils.getLoginDefaults(strUserAuth, variables.getRole(),
+                this);
+            strRole = defaults.role;
+            strClient = defaults.client;
+            strOrg = defaults.org;
+            strWarehouse = defaults.warehouse;
           }
 
           DefaultOptionsData dataLanguage[] = DefaultOptionsData.defaultLanguage(this, strUserAuth);
@@ -352,11 +323,15 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     } catch (final DefaultValidationException d) {
       // Added DefaultValidationException class to catch user login
       // without a valid role
+
+      String title = Utility.messageBD(myPool, "InvalidDefaultLoginTitle", variables.getLanguage())
+          .replace("%0", d.getDefaultField());
+      String msg = Utility.messageBD(myPool, "InvalidDefaultLoginMsg", variables.getLanguage())
+          .replace("%0", d.getDefaultField());
       final OBError roleError = new OBError();
-      roleError.setTitle("Invalid " + d.getDefaultField());
+      roleError.setTitle(title);
       roleError.setType("Error");
-      roleError.setMessage("No valid " + d.getDefaultField()
-          + " identified. Please contact your system administrator for access.");
+      roleError.setMessage(msg);
       invalidLogin(request, response, roleError);
 
       return;
@@ -572,20 +547,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       retValue = false;
 
     return retValue;
-  }
-
-  /**
-   * Validates if a selected default value is null or empty String
-   * 
-   * @param strValue
-   * @param strKey
-   * @param strError
-   * @throws Exeption
-   * */
-  private void validateDefault(String strValue, String strKey, String strError) throws Exception {
-    if (strValue == null || strValue.equals(""))
-      throw new DefaultValidationException("Unable to read default " + strError + " for:" + strKey,
-          strError);
   }
 
   protected void logout(HttpServletRequest request, HttpServletResponse response)

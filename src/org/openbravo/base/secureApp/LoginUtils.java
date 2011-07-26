@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2011 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -313,4 +313,78 @@ public class LoginUtils {
     return true;
   }
 
+  /**
+   * Obtains defaults defined for a user and throws DefaultValidationException in case they are not
+   * correct.
+   */
+  static RoleDefaults getLoginDefaults(String strUserAuth, String role, ConnectionProvider cp)
+      throws ServletException, DefaultValidationException {
+    String strRole = role;
+    if (strRole.equals("")) {
+      // use default role
+      strRole = DefaultOptionsData.defaultRole(cp, strUserAuth);
+      if (strRole == null || !LoginUtils.validUserRole(cp, strUserAuth, strRole)) {
+        // if default not set or not valid take any one
+        strRole = DefaultOptionsData.getDefaultRole(cp, strUserAuth);
+      }
+    }
+    validateDefault(strRole, strUserAuth, "Role");
+
+    String strOrg = DefaultOptionsData.defaultOrg(cp, strUserAuth);
+    // use default org
+    if (strOrg == null || !LoginUtils.validRoleOrg(cp, strRole, strOrg)) {
+      // if default not set or not valid take any one
+      strOrg = DefaultOptionsData.getDefaultOrg(cp, strRole);
+    }
+    validateDefault(strOrg, strRole, "Org");
+
+    String strClient = DefaultOptionsData.defaultClient(cp, strUserAuth);
+    // use default client
+    if (strClient == null || !LoginUtils.validRoleClient(cp, strRole, strClient)) {
+      // if default not set or not valid take any one
+      strClient = DefaultOptionsData.getDefaultClient(cp, strRole);
+    }
+    validateDefault(strClient, strRole, "Client");
+
+    String strWarehouse = DefaultOptionsData.defaultWarehouse(cp, strUserAuth);
+    if (strWarehouse == null) {
+      if (!strRole.equals("0")) {
+        strWarehouse = DefaultOptionsData.getDefaultWarehouse(cp, strClient, new OrgTree(cp,
+            strClient).getAccessibleTree(cp, strRole).toString());
+      } else
+        strWarehouse = "";
+    }
+    RoleDefaults defaults = new RoleDefaults();
+    defaults.role = strRole;
+    defaults.client = strClient;
+    defaults.org = strOrg;
+    defaults.warehouse = strWarehouse;
+    return defaults;
+  }
+
+  /**
+   * Validates if a selected default value is null or empty String
+   * 
+   * @param strValue
+   * @param strKey
+   * @param strError
+   * @throws Exeption
+   * */
+  private static void validateDefault(String strValue, String strKey, String strError)
+      throws DefaultValidationException {
+    if (strValue == null || strValue.equals(""))
+      throw new DefaultValidationException("Unable to read default " + strError + " for:" + strKey,
+          strError);
+  }
+
+  /**
+   * Utility class to store login defaults
+   * 
+   */
+  static class RoleDefaults {
+    String role;
+    String client;
+    String org;
+    String warehouse;
+  }
 }
