@@ -336,7 +336,7 @@ OB.ViewFormProperties = {
     var items = this.getItems(), nextItem, itemsLength = items.length, item, i;
     
     var errorFld = this.getFirstErrorItem();
-    if (errorFld && errorFld.isFocusable(true)) {
+    if (!startItem && errorFld && errorFld.isFocusable(true)) {
       // get rid of this one, to not set the focus back to this field
       delete this.forceFocusedField;
       
@@ -1252,10 +1252,16 @@ OB.ViewFormProperties = {
 
   // called when someone picks something from a picklist, the focus should go to the next
   // item
-  focusInNextItem: function(currentItemName) {
+  focusInNextItem: function(currentItemName, delayed) {
+    if (!delayed) {
+      this.delayCall('focusInNextItem', [currentItemName, true], 100);
+    }
     this.computeFocusItem(this.getField(currentItemName));
     if (this.getFocusItem()) {
       this.getFocusItem().focusInItem();
+      if (this.getFocusItem().doExplicitSelectOnFocus) {
+        this.getFocusItem().selectValue();
+      }
     }
   },
   

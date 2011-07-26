@@ -38,8 +38,12 @@ isc.OBListItem.addProperties({
   // https://issues.openbravo.com/view.php?id=18075
 //  addUnknownValues: true,
   changeOnKeyPress: false,
+
+  // if select on focus is true then only one character is selected all the time
+  selectOnFocus: false,
+  // let it be selected explicitly when needed
+  doExplicitSelectOnFocus: true,
   
-  selectOnFocus: true,
   moveFocusOnPickValue: true,
    
   // is overridden to keep track that a value has been explicitly picked
