@@ -381,24 +381,25 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
 
       if (mode.equals("EDIT") && row != null) {
-        if (((ClientEnabled) row).getClient() != null
-            || ((OrganizationEnabled) row).getOrganization() != null) {
+        if ((row instanceof ClientEnabled && ((ClientEnabled) row).getClient() != null)) {
           final String rowClientId = ((ClientEnabled) row).getClient().getId();
           final String currentClientId = OBContext.getOBContext().getCurrentClient().getId();
           if (!rowClientId.equals(currentClientId)) {
             finalObject.put("_readOnly", true);
-          } else {
-            boolean writable = false;
-            final String objectOrgId = ((OrganizationEnabled) row).getOrganization().getId();
-            for (String orgId : OBContext.getOBContext().getWritableOrganizations()) {
-              if (orgId.equals(objectOrgId)) {
-                writable = true;
-                break;
-              }
+          }
+        }
+        if (row instanceof OrganizationEnabled
+            && ((OrganizationEnabled) row).getOrganization() != null) {
+          boolean writable = false;
+          final String objectOrgId = ((OrganizationEnabled) row).getOrganization().getId();
+          for (String orgId : OBContext.getOBContext().getWritableOrganizations()) {
+            if (orgId.equals(objectOrgId)) {
+              writable = true;
+              break;
             }
-            if (!writable) {
-              finalObject.put("_readOnly", true);
-            }
+          }
+          if (!writable) {
+            finalObject.put("_readOnly", true);
           }
         }
       }
