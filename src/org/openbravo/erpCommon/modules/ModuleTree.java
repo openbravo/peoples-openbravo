@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2010 Openbravo SLU
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -161,7 +161,7 @@ public class ModuleTree extends GenericTree {
       if (modules[i].status.equals("I") || modules[i].status.equals("P")) {
         String link = Utility.messageBD(conn, "ApplyModules", lang) + ", "
             + Utility.messageBD(conn, "RebuildNow", lang);
-        String click = "openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 600, 900);return false;";
+        String click = "openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900, null, null, null, null, true);return false;";
 
         if (modules[i].linkname != null && !modules[i].linkname.isEmpty()) {
           // add second link
@@ -174,7 +174,7 @@ public class ModuleTree extends GenericTree {
       }
       if (modules[i].status.equals("U")) {
         modules[i].linkname = Utility.messageBD(conn, "UninstalledModule", lang);
-        modules[i].linkclick = "openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 600, 900);return false;";
+        modules[i].linkclick = "openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900, null, null, null, null, true);return false;";
       }
       if ("N".equals(modules[i].enabled)) {
         String link = Utility.messageBD(conn, "Enable", lang);
