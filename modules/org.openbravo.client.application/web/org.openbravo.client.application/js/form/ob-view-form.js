@@ -236,17 +236,17 @@ OB.ViewFormProperties = {
   },
   
   enableNoteSection: function(enable){
-	    if (!this.noteSection) {
-	      return;
-	    }
-	    if (enable) {
-	      this.noteSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID));
-	      this.noteSection.collapseSection(true);
-	      this.noteSection.refresh();
-	      this.noteSection.show();
-	    } else {
-	      this.noteSection.hide();
-	    }
+      if (!this.noteSection) {
+        return;
+      }
+      if (enable) {
+        this.noteSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID));
+        this.noteSection.collapseSection(true);
+        this.noteSection.refresh();
+        this.noteSection.show();
+      } else {
+        this.noteSection.hide();
+      }
   },
   
   enableLinkedItemSection: function(enable){
@@ -751,7 +751,7 @@ OB.ViewFormProperties = {
   },
   
   processColumnValue: function(columnName, columnValue, editValues){
-  	// Modifications in this method should go also in setColumnValuesInEditValues because both almost do the same
+    // Modifications in this method should go also in setColumnValuesInEditValues because both almost do the same
     var typeInstance;
     var assignValue;
     var assignClassicValue;
@@ -789,11 +789,11 @@ OB.ViewFormProperties = {
     // Adjust to formatting if exists value and classicValue. 
     oldValue = this.getValue(field.name);
     if (field.typeInstance && field.typeInstance.parseInput && field.typeInstance.editFormatter) {
-    	assignValue = field.typeInstance.parseInput(field.typeInstance.editFormatter(columnValue.value));
-    	assignClassicValue = field.typeInstance.editFormatter(field.typeInstance.parseInput(columnValue.classicValue));
+      assignValue = field.typeInstance.parseInput(field.typeInstance.editFormatter(columnValue.value));
+      assignClassicValue = field.typeInstance.editFormatter(field.typeInstance.parseInput(columnValue.classicValue));
     } else {
-    	assignValue = columnValue.value;
-    	assignClassicValue = columnValue.classicValue;
+      assignValue = columnValue.value;
+      assignClassicValue = columnValue.classicValue;
     }
     
     if (columnValue.value && (columnValue.value === 'null' || columnValue.value === '')) {
@@ -862,9 +862,9 @@ OB.ViewFormProperties = {
   },
   
   setColumnValuesInEditValues: function(columnName, columnValue, editValues){
-  	// Modifications in this method should go also in processColumnValue because both almost do the same
-  	var assignClassicValue;
-  	var typeInstance;
+    // Modifications in this method should go also in processColumnValue because both almost do the same
+    var assignClassicValue;
+    var typeInstance;
 
     // no editvalues even anymore, go away
     if (!editValues) {
