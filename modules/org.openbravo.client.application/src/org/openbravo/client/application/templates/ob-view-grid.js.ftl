@@ -39,6 +39,9 @@ isc.OBViewGrid.create({
           <#if field.redrawOnChange?string = "true" >
           , redrawOnChange: true
           , changed: function(form, item, value) {
+              if (this.pickValue && !this._pickedValue) {
+                return;
+              }
               this.Super('changed', arguments);
               form.onFieldChanged(form, item, value);
               form.view.toolBar.refreshCustomButtonsView(form.view);

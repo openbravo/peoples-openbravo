@@ -24,30 +24,40 @@ isc.ClassFactory.defineClass('OBListItem', ComboBoxItem);
 isc.OBListItem.addProperties({
   operator: 'equals',
   hasPickList: true,
-  showPickListOnKeypress: true,  
+  showPickListOnKeypress: true,
   cachePickListResults: false,
   completeOnTab: true,
   validateOnExit: true,
-  
+
   // textMatchStyle is used for the client-side picklist
   textMatchStyle: 'substring',
 
-  // NOTE: Setting this property to false fixes the issue when using the mouse to pick a value
+  // NOTE: Setting this property to false fixes the issue when using the mouse
+  // to pick a value
   // FIXME: Sometimes the field label gets a red color (a blink)
   // if set to false then the picklist is shown at focus:
   // https://issues.openbravo.com/view.php?id=18075
-//  addUnknownValues: true,
-  changeOnKeyPress: false,
+  // addUnknownValues: true,
+  // changeOnKeypress should not be set to false together 
+  // with addUnknownValues (to false) as this will 
+  // cause the picklist not to show
+  // changeOnKeypress: false,
 
-  // if select on focus is true then only one character is selected all the time
-  selectOnFocus: false,
-  // let it be selected explicitly when needed
-  doExplicitSelectOnFocus: true,
-  
   moveFocusOnPickValue: true,
-   
+
+  // needed when selectOnFocus is true
+  // otherwise a single typed in char is selected
+  // all the time so that you can only type in
+  // one character
+  handleChange: function() {
+    if (!this._pickedValue) {
+      return;
+    }
+    return this.Super('handleChange', arguments);
+  },
+
   // is overridden to keep track that a value has been explicitly picked
-  pickValue: function (value) {
+  pickValue: function(value) {
     this._pickedValue = true;
     this.Super('pickValue', arguments);
     delete this._pickedValue;
@@ -67,14 +77,14 @@ isc.OBListItem.addProperties({
       this.form.handleItemChange(this);
     }
   },
-  
+
   pickListProperties: {
     showHeaderContextMenu: false
   },
 
   // to solve: https://issues.openbravo.com/view.php?id=17800
   // in chrome the order of the valueMap object is not retained
-  // the solution is to keep a separate entries array with the 
+  // the solution is to keep a separate entries array with the
   // records in the correct order, see also the setEntries/setEntry
   // methods
   getClientPickListData: function() {
@@ -83,9 +93,9 @@ isc.OBListItem.addProperties({
     }
     return this.Super('getClientPickListData', arguments);
   },
-  
+
   setEntries: function(entries) {
-    var valueField = this.getValueFieldName(), valueMap = {}; 
+    var valueField = this.getValueFieldName(), valueMap = {};
     this.entries = [];
     for (i = 0; i < entries.length; i++) {
       id = entries[i][OB.Constants.ID] || '';
@@ -96,24 +106,25 @@ isc.OBListItem.addProperties({
     }
     this.setValueMap(valueMap);
   },
-  
+
   setEntry: function(id, identifier) {
-    var i, entries = this.entries || [], entry = {}, valueField = this.getValueFieldName();
+    var i, entries = this.entries || [], entry = {}, valueField = this
+        .getValueFieldName();
     for (i = 0; i < entries.length; i++) {
       if (entries[i][valueField] === id) {
         return;
       }
     }
-    
+
     // not found add/create a new one
     entry[valueField] = id;
     entries.push(entry);
-    
+
     this.setEntries(entries);
   },
 
   // prevent ids from showing up
-  mapValueToDisplay: function (value) {
+  mapValueToDisplay: function(value) {
     var ret = this.Super('mapValueToDisplay', arguments);
     if (this.valueMap && this.valueMap[value]) {
       return this.valueMap[value];
@@ -128,5 +139,5 @@ isc.OBListItem.addProperties({
     }
     return ret;
   }
-  
+
 });
