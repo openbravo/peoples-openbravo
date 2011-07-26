@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,7 +32,7 @@ public class ServerConnection {
 
   private URL getUrl(String action, String additionalParameters) throws MalformedURLException {
     String serverUrl = new PropertiesManager("config/Openbravo.properties")
-        .getProperty("tomcat.manager.url");
+        .getProperty("context.url");
     serverUrl = serverUrl.substring(0, serverUrl.lastIndexOf('/'));
     return new URL(serverUrl + "/OpenbravoDiagnostics/Check.html?Command=" + action
         + additionalParameters);

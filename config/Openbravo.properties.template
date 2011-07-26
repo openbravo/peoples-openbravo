@@ -35,7 +35,8 @@ dateTimeFormat.sql=DD-MM-YYYY HH24:MI:SS
 # Don't change this unless you know what you are doing
 web.url=@actual_url_context@/web
 
-# Full URL of the context, *only* used by the Web Services installation
+# Full URL of the context, *only* used by the Web Services installation 
+# and diagnostic task
 context.url=http://localhost:8080/openbravo
 
 # Absolute path to the attachments directory
@@ -83,8 +84,13 @@ bbdd.sessionConfig=select update_dateFormat('DD-MM-YYYY')
 ##################
 # Tomcat manager #
 ##################
-#
+
+# From Tomcat 7 manager url is host/manager/text. In previous versions it is
+# host/manager
 tomcat.manager.url=http://localhost:8080/manager
+
+# From Tomcat 7 this user must have manager-script role access. In previous
+# versions. In previous versions it must have manager role access.
 tomcat.manager.username=admin
 tomcat.manager.password=admin
 
