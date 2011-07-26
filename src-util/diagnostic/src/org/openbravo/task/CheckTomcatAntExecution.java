@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,8 @@
 package org.openbravo.task;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
@@ -32,7 +34,14 @@ public class CheckTomcatAntExecution extends Task {
   @Override
   public void execute() throws BuildException {
     final File f = new File("src-util/diagnostic/build.xml");
-    final String fileName = f.getAbsolutePath().replace("\\", "/");
+
+    String fileName;
+    try {
+      fileName = URLEncoder.encode(f.getAbsolutePath().replace("\\", "/"), "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      fileName = f.getAbsolutePath().replace("\\", "/");
+    }
+
     System.out.println(fileName);
     log4j.info("Checking tomcat executing ant tasks...");
     String result = new ServerConnection().getCheck("ant", "&file=" + fileName + "&task=test1");
