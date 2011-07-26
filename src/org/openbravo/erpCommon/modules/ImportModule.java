@@ -55,6 +55,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.axis.AxisFault;
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.io.FileUtils;
 import org.apache.ddlutils.io.DataReader;
 import org.apache.ddlutils.io.DataToArraySink;
 import org.apache.ddlutils.io.DatabaseDataIO;
@@ -453,12 +454,35 @@ public class ImportModule {
             }
           }
 
+          File tmpInstall = new File(obDir + "/tmp/localInstall/modules");
+          if (!tmpInstall.exists()) {
+            tmpInstall.mkdirs();
+          }
+
           // Just pick the first module, to install/update as the rest of them are inside the obx
           // file
           Module module = (modulesToInstall != null && modulesToInstall.length > 0) ? modulesToInstall[0]
               : modulesToUpdate[0];
           installLocalModule(module, file,
               (modulesToInstall != null && modulesToInstall.length > 0));
+
+          // All obx contents (the original module and all its inclusions) has been now unzipped in
+          // a temporary directory. modulesToInstall and modulesToUpdate contains the list of
+          // modules to install or update (taking into account proper dependencies), so now let's
+          // move only the modules in these list to the acutal module directory.
+          for (Module m : modulesToInstall) {
+            if (!finishLocalInstallation(m)) {
+              return;
+            }
+          }
+
+          for (Module m : modulesToUpdate) {
+            if (!finishLocalInstallation(m)) {
+              return;
+            }
+          }
+
+          FileUtils.deleteDirectory(new File(obDir + "/tmp/localInstall"));
 
           uninstallMerges();
         } else { // install remotely
@@ -476,6 +500,30 @@ public class ImportModule {
       }
       rollback();
     }
+  }
+
+  /**
+   * Finishes local installation moving temporary module directories to actual ones.
+   */
+  private boolean finishLocalInstallation(Module m) throws IOException {
+    if ("0".equals(m.getModuleID())) {
+      // Core is a special case, it is installed directly in its directory
+      return true;
+    }
+
+    File tmpInstall = new File(obDir + "/tmp/localInstall/modules");
+    File f = new File(tmpInstall, m.getPackageName());
+    if (!f.exists()) {
+      addLog("@ErrorInstallingLocallyFileNotFound@ " + f, MSG_ERROR);
+      FileUtils.deleteDirectory(tmpInstall);
+      rollback();
+      return false;
+    } else {
+      File dest = new File(obDir + "/modules/" + m.getPackageName());
+      log4j.debug("Moving " + f + " to " + dest);
+      FileUtils.moveDirectory(f, dest);
+    }
+    return true;
   }
 
   /**
@@ -1424,9 +1472,16 @@ public class ImportModule {
    */
   private void installModule(InputStream obx, String moduleID, Vector<DynaBean> dModulesToInstall,
       Vector<DynaBean> dDependencies, Vector<DynaBean> dDBprefix) throws Exception {
-    if (!(new File(obDir + "/modules").canWrite())) {
-      addLog("@CannotWriteDirectory@ " + obDir + "/modules. ", MSG_ERROR);
-      throw new PermissionException("Cannot write on directory: " + obDir + "/modules");
+
+    // For local installations modules are temporary unzipped in tmp/localInstall directory, because
+    // it is possible this version in obx is not going to be installed, in any case it must be
+    // unzipped looking for other obx files inside it.
+    String fileDestination = installLocally && !"0".equals(moduleID) ? obDir + "/tmp/localInstall"
+        : obDir;
+
+    if (!(new File(fileDestination + "/modules").canWrite())) {
+      addLog("@CannotWriteDirectory@ " + fileDestination + "/modules. ", MSG_ERROR);
+      throw new PermissionException("Cannot write on directory: " + fileDestination + "/modules");
     }
 
     final ZipInputStream obxInputStream = new ZipInputStream(obx);
@@ -1444,7 +1499,7 @@ public class ImportModule {
         obxInputStream.closeEntry();
       } else {
         // Unzip the contents
-        final String fileName = obDir + (moduleID.equals("0") ? "/" : "/modules/")
+        final String fileName = fileDestination + (moduleID.equals("0") ? "/" : "/modules/")
             + entry.getName().replace("\\", "/");
         final File entryFile = new File(fileName);
         // Check whether the directory exists, if not create
@@ -1471,20 +1526,28 @@ public class ImportModule {
               .endsWith("src-db/database/sourcedata/AD_MODULE.xml")) {
             entryBytes = getBytesCurrentEntryStream(obxInputStream);
             final Vector<DynaBean> module = getEntryDynaBeans(entryBytes);
-            dModulesToInstall.addAll(module);
             moduleID = (String) module.get(0).get("AD_MODULE_ID");
+            if (installingModule(moduleID)) {
+              dModulesToInstall.addAll(module);
+            }
             obxInputStream.closeEntry();
             found = true;
           } else if (entry.getName().replace("\\", "/")
               .endsWith("src-db/database/sourcedata/AD_MODULE_DEPENDENCY.xml")) {
             entryBytes = getBytesCurrentEntryStream(obxInputStream);
-            dDependencies.addAll(getEntryDynaBeans(entryBytes));
+            final Vector<DynaBean> dep = getEntryDynaBeans(entryBytes);
+            if (installingModule((String) dep.get(0).get("AD_MODULE_ID"))) {
+              dDependencies.addAll(dep);
+            }
             obxInputStream.closeEntry();
             found = true;
           } else if (entry.getName().replace("\\", "/")
               .endsWith("src-db/database/sourcedata/AD_MODULE_DBPREFIX.xml")) {
             entryBytes = getBytesCurrentEntryStream(obxInputStream);
-            dDBprefix.addAll(getEntryDynaBeans(entryBytes));
+            final Vector<DynaBean> dbp = getEntryDynaBeans(entryBytes);
+            if (installingModule((String) dbp.get(0).get("AD_MODULE_ID"))) {
+              dDBprefix.addAll(dbp);
+            }
             obxInputStream.closeEntry();
             found = true;
           }
@@ -1512,6 +1575,30 @@ public class ImportModule {
       }
     }
     obxInputStream.close();
+  }
+
+  /**
+   * In case of local installation it checks whether a moduleId is in the list of modules to install
+   * or update in order not to install versions included within obx but that are lower than the
+   * currently installed ones.
+   * 
+   */
+  private boolean installingModule(String moduleID) {
+    if (!installLocally) {
+      return true;
+    }
+
+    for (Module m : modulesToInstall) {
+      if (moduleID.equals(m.getModuleID())) {
+        return true;
+      }
+    }
+    for (Module m : modulesToUpdate) {
+      if (moduleID.equals(m.getModuleID())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public boolean getIsLocal() {
