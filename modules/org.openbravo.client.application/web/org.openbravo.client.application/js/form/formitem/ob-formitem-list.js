@@ -34,12 +34,14 @@ isc.OBListItem.addProperties({
 
   // NOTE: Setting this property to false fixes the issue when using the mouse to pick a value
   // FIXME: Sometimes the field label gets a red color (a blink)
-  addUnknownValues: false,
+  // if set to false then the picklist is shown at focus:
+  // https://issues.openbravo.com/view.php?id=18075
+//  addUnknownValues: true,
   changeOnKeyPress: false,
   
   selectOnFocus: true,
   moveFocusOnPickValue: true,
-  
+   
   // is overridden to keep track that a value has been explicitly picked
   pickValue: function (value) {
     this._pickedValue = true;
