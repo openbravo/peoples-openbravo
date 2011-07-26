@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -145,11 +145,11 @@
                              AND IsIncluded = 'Y'))                as display,
                      m.Status,
                      m.Update_Available,
-                     m.version,
-                     m.name as moduleName,
-                     m.version_label,
+                     coalesce(MI.version, M.version) as Version,
+                     coalesce(mi.name, m.name) as moduleName,
+                     coalesce(mi.version_label, m.version_label) as version_label,
                      m.enabled,
-                     m.author
+                     COALESCE(MI.author, M.author) as author
             FROM AD_MODULE M LEFT JOIN AD_MODULE_INSTALL MI
                                     ON MI.AD_MODULE_ID = M.AD_MODULE_ID
            WHERE EXISTS (SELECT 1 
@@ -183,6 +183,9 @@
                           WHERE AD_Module_ID = ?
                             AND AD_Dependent_Module_ID = M.AD_Module_ID
                             AND IsIncluded = 'Y')
+             AND NOT EXISTS (SELECT 1
+                               FROM AD_MODULE
+                              WHERE AD_Module_ID = M.AD_Module_ID)
              AND ISACTIVE = 'Y'
      </Sql>
      <Parameter name="lang"/>
