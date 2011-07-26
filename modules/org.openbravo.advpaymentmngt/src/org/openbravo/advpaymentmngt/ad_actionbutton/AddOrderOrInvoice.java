@@ -29,6 +29,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -50,7 +53,6 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -90,53 +92,6 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
 
       printGrid(response, vars, strBusinessPartnerId, strPaymentId, strOrgId, strDueDateFrom,
           strDueDateTo, strDocumentType, strSelectedPaymentDetails, isReceipt, showAlternativePM);
-    } else if (vars.commandIn("GLITEMGRIDLIST")) {
-      String strPaymentId = vars.getRequestGlobalVariable("inpfinPaymentId", "");
-
-      printGLItemGrid(response, strPaymentId);
-
-    } else if (vars.commandIn("ADDGLITEM")) {
-      String strPaymentId = vars.getRequestGlobalVariable("inpfinPaymentId", "");
-      String strGLItemId = vars.getRequestGlobalVariable("inpcGlitemId", "");
-      String strGLItemAmount = vars.getRequiredNumericParameter("inpGLItemAmount", "0");
-
-      String errorMessage = "";
-      try {
-        FIN_AddPayment.saveGLItem(dao.getObject(FIN_Payment.class, strPaymentId), new BigDecimal(
-            strGLItemAmount), dao.getObject(GLItem.class, strGLItemId));
-      } catch (Exception e) {
-        errorMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage())
-            .getMessage();
-        log4j.error(e);
-      }
-      printGLItem(response, errorMessage);
-    } else if (vars.commandIn("REMOVEGLITEM")) {
-      String strPaymentId = vars.getRequestGlobalVariable("inpfinPaymentId", "");
-      String strPaymentDetailId = vars.getRequestGlobalVariable("inpDeleteGLItem", "");
-
-      String errorMessage = "";
-      try {
-        FIN_AddPayment.removeGLItem(dao.getObject(FIN_Payment.class, strPaymentId),
-            dao.getObject(FIN_PaymentDetail.class, strPaymentDetailId));
-      } catch (Exception e) {
-        errorMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage())
-            .getMessage();
-        log4j.error(e);
-      }
-      printGLItem(response, errorMessage);
-    } else if (vars.commandIn("REMOVEALLGLITEM")) {
-      String strPaymentId = vars.getRequestGlobalVariable("inpfinPaymentId", "");
-
-      String errorMessage = "";
-      try {
-        FIN_AddPayment.removeGLItem(dao.getObject(FIN_Payment.class, strPaymentId), null);
-      } catch (Exception e) {
-        errorMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage())
-            .getMessage();
-        log4j.error(e);
-      }
-      printGLItem(response, errorMessage);
-
     } else if (vars.commandIn("SAVE") || vars.commandIn("SAVEANDPROCESS")) {
       boolean isReceipt = vars.getRequiredStringParameter("isReceipt").equals("Y");
       String strAction = null;
@@ -149,6 +104,16 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       String strPaymentId = vars.getRequiredStringParameter("inpfinPaymentId");
       String strSelectedScheduledPaymentDetailIds = vars.getInParameter(
           "inpScheduledPaymentDetailId", "", IsIDFilter.instance);
+      String strAddedGLItems = vars.getStringParameter("inpGLItems");
+      JSONArray addedGLITemsArray = null;
+      try {
+        addedGLITemsArray = new JSONArray(strAddedGLItems);
+      } catch (JSONException e) {
+        log4j.error("Error parsing received GLItems JSON Array: " + strAddedGLItems, e);
+        bdErrorGeneralPopUp(request, response, "Error",
+            "Error parsing received GLItems JSON Array: " + strAddedGLItems);
+        return;
+      }
       String strDifferenceAction = "";
       BigDecimal refundAmount = BigDecimal.ZERO;
       String strDifference = vars.getNumericParameter("inpDifference", "0");
@@ -169,10 +134,6 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       // removed when new security implementation is done
       OBContext.setAdminMode();
       try {
-        // Remove GL Items
-        if (!"G".equals(strDocumentType)) {
-          FIN_AddPayment.removeGLItem(dao.getObject(FIN_Payment.class, strPaymentId), null);
-        }
 
         List<FIN_PaymentScheduleDetail> selectedPaymentDetails = FIN_Utility.getOBObjectList(
             FIN_PaymentScheduleDetail.class, strSelectedScheduledPaymentDetailIds);
@@ -183,6 +144,22 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         BigDecimal newPaymentAmount = new BigDecimal(strPaymentAmount);
         if (newPaymentAmount.compareTo(payment.getAmount()) != 0) {
           payment.setAmount(newPaymentAmount);
+        }
+
+        if (addedGLITemsArray != null) {
+          for (int i = 0; i < addedGLITemsArray.length(); i++) {
+            JSONObject glItem = addedGLITemsArray.getJSONObject(i);
+            BigDecimal glItemOutAmt = new BigDecimal(glItem.getString("glitemPaidOutAmt"));
+            BigDecimal glItemInAmt = new BigDecimal(glItem.getString("glitemReceivedInAmt"));
+            BigDecimal glItemAmt = BigDecimal.ZERO;
+            if (isReceipt) {
+              glItemAmt = glItemInAmt.subtract(glItemOutAmt);
+            } else {
+              glItemAmt = glItemOutAmt.subtract(glItemInAmt);
+            }
+            FIN_AddPayment.saveGLItem(payment, glItemAmt,
+                dao.getObject(GLItem.class, glItem.getString("glitemId")));
+          }
         }
         FIN_AddPayment.setFinancialTransactionAmountAndRate(payment, exchangeRate, convertedAmount);
         payment = FIN_AddPayment.savePayment(payment, isReceipt, null, null, null, null, null,
@@ -227,6 +204,15 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
             }
           }
         }
+      } catch (Exception ex) {
+        String strMessage = FIN_Utility.getExceptionMessage(ex);
+        if (message != null && "Error".equals(message.getType())) {
+          strMessage = message.getMessage();
+        }
+        bdErrorGeneralPopUp(request, response, "Error", strMessage);
+        OBDal.getInstance().rollbackAndClose();
+        return;
+
       } finally {
         OBContext.restorePreviousMode();
       }
@@ -376,52 +362,6 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
-    out.close();
-  }
-
-  private void printGLItemGrid(HttpServletResponse response, String strPaymentId)
-      throws IOException, ServletException {
-    dao = new AdvPaymentMngtDao();
-
-    log4j.debug("Output: Grid with GLItem payment details");
-
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/PaymentGLItemGrid").createXmlDocument();
-    // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
-    // removed when new security implementation is done
-    OBContext.setAdminMode();
-    try {
-
-      final List<FIN_PaymentDetail> paymentDetails = dao.getObject(FIN_Payment.class, strPaymentId)
-          .getFINPaymentDetailList();
-
-      FIN_PaymentDetail[] paymentDetailArray = new FIN_PaymentDetail[0];
-      paymentDetailArray = paymentDetails.toArray(paymentDetailArray);
-
-      FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(paymentDetails);
-      for (int i = 0; i < data.length; i++) {
-        FieldProviderFactory.setField(data[i], "cglitemid",
-            paymentDetailArray[i].getGLItem() != null ? paymentDetailArray[i].getGLItem()
-                .getIdentifier() : "");
-        FieldProviderFactory.setField(data[i], "amount", paymentDetailArray[i].getAmount()
-            .toString());
-        FieldProviderFactory.setField(data[i], "finpaymentdetailid", paymentDetailArray[i].getId());
-      }
-
-      xmlDocument.setData("structure", (data == null) ? set() : data);
-      response.setContentType("text/html; charset=UTF-8");
-      PrintWriter out = response.getWriter();
-      out.println(xmlDocument.print());
-      out.close();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  private void printGLItem(HttpServletResponse response, String errorMessage) throws IOException {
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(errorMessage);
     out.close();
   }
 
