@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -57,6 +58,7 @@ import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -154,8 +156,15 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       String strPaymentDate = vars.getRequiredStringParameter("inpPaymentDate");
       String strSelectedScheduledPaymentDetailIds = vars.getInParameter(
           "inpScheduledPaymentDetailId", IsIDFilter.instance);
-      if (strSelectedScheduledPaymentDetailIds == null) {
-        strSelectedScheduledPaymentDetailIds = "";
+      String strAddedGLItems = vars.getStringParameter("inpGLItems");
+      JSONArray addedGLITemsArray = null;
+      try {
+        addedGLITemsArray = new JSONArray(strAddedGLItems);
+      } catch (JSONException e) {
+        log4j.error("Error parsing received GLItems JSON Array: " + strAddedGLItems, e);
+        bdErrorGeneralPopUp(request, response, "Error",
+            "Error parsing received GLItems JSON Array: " + strAddedGLItems);
+        return;
       }
       String strDifferenceAction = vars.getStringParameter("inpDifferenceAction", "");
       BigDecimal refundAmount = BigDecimal.ZERO;
@@ -202,14 +211,31 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
           strPaymentDocumentNo = Utility.getDocumentNo(this, vars, "AddPaymentFromTransaction",
               "FIN_Payment", strDocTypeId, strDocTypeId, false, true);
         }
-
-        FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt,
+        final FIN_FinancialAccount finAcc = dao.getObject(FIN_FinancialAccount.class,
+            strFinancialAccountId);
+        FIN_Payment payment = dao.getNewPayment(isReceipt, finAcc.getOrganization(),
             dao.getObject(DocumentType.class, strDocTypeId), strPaymentDocumentNo,
             paymentBusinessPartner, dao.getObject(FIN_PaymentMethod.class, strPaymentMethodId),
-            dao.getObject(FIN_FinancialAccount.class, strFinancialAccountId), strPaymentAmount,
-            FIN_Utility.getDate(strPaymentDate),
-            dao.getObject(FIN_FinancialAccount.class, strFinancialAccountId).getOrganization(),
-            strReferenceNo, selectedPaymentDetails, selectedPaymentDetailAmounts,
+            finAcc, strPaymentAmount, FIN_Utility.getDate(strPaymentDate), strReferenceNo,
+            dao.getObject(Currency.class, paymentCurrencyId), exchangeRate, convertedAmount);
+
+        if (addedGLITemsArray != null) {
+          for (int i = 0; i < addedGLITemsArray.length(); i++) {
+            JSONObject glItem = addedGLITemsArray.getJSONObject(i);
+            BigDecimal glItemOutAmt = new BigDecimal(glItem.getString("glitemPaidOutAmt"));
+            BigDecimal glItemInAmt = new BigDecimal(glItem.getString("glitemReceivedInAmt"));
+            BigDecimal glItemAmt = BigDecimal.ZERO;
+            if (isReceipt) {
+              glItemAmt = glItemInAmt.subtract(glItemOutAmt);
+            } else {
+              glItemAmt = glItemOutAmt.subtract(glItemInAmt);
+            }
+            FIN_AddPayment.saveGLItem(payment, glItemAmt,
+                dao.getObject(GLItem.class, glItem.getString("glitemId")));
+          }
+        }
+        payment = FIN_AddPayment.savePayment(payment, isReceipt, null, null, null, null, null,
+            null, null, null, null, selectedPaymentDetails, selectedPaymentDetailAmounts,
             strDifferenceAction.equals("writeoff"), strDifferenceAction.equals("refund"),
             dao.getObject(Currency.class, paymentCurrencyId), exchangeRate, convertedAmount);
 
