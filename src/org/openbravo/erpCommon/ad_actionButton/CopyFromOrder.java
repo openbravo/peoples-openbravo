@@ -32,10 +32,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsPositiveIntFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -62,8 +64,14 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strSOTrx, strBpartner,
           strmPricelistId);
     } else if (vars.commandIn("SAVE")) {
-      String strRownum = vars.getRequiredInStringParameter("inpRownumId",
-          IsPositiveIntFilter.instance);
+      String strRownum = null;
+      try {
+        strRownum = vars.getRequiredInStringParameter("inpRownumId", IsPositiveIntFilter.instance);
+      } catch (ServletException e) {
+        log4j.error("Error captured: ", e);
+        throw new ServletException(Utility.messageBD(new DalConnectionProvider(), "@JS1@",
+            OBContext.getOBContext().getLanguage().getLanguage()));
+      }
       String strKey = vars.getRequiredStringParameter("inpcOrderId");
       String strWindowId = vars.getStringParameter("inpWindowId");
       String strSOTrx = vars.getStringParameter("inpissotrx");

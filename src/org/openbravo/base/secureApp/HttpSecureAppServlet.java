@@ -438,12 +438,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     } catch (final ServletException ex) {
       log4j.error("Error captured: ", ex);
       final VariablesSecureApp vars1 = new VariablesSecureApp(request, false);
-      final OBError myError;
-      if (ex.getMessage().equals("Request IN parameter required: inpRownumId")) {
-        myError = Utility.translateError(this, vars1, variables.getLanguage(), "@EmptyLines@");
-      } else {
-        myError = Utility.translateError(this, vars1, variables.getLanguage(), ex.getMessage());
-      }
+      final OBError myError = Utility.translateError(this, vars1, variables.getLanguage(),
+          ex.getMessage());
       if (strAjax != null && !strAjax.equals(""))
         bdErrorAjax(response, myError.getType(), myError.getTitle(), myError.getMessage());
       else if (strHidden != null && !strHidden.equals(""))
