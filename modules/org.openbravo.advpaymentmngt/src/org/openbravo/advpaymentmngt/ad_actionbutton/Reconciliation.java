@@ -32,7 +32,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -95,15 +97,16 @@ public class Reconciliation extends HttpSecureAppServlet {
           strStatementDate, strBeginBalance, strEndBalance, process);
 
     } else if (vars.commandIn("UPDATESTATUS")) {
+      String strFinancialAccountId = vars.getStringParameter("inpFinFinancialAccountId", "");
       String strSelectedTransId = vars.getStringParameter("inpCurrentTransIdSelected");
       boolean isChecked = "true".equals(vars.getStringParameter("inpIsCurrentTransSelected"));
-      updateTransactionStatus(response, strSelectedTransId, isChecked);
+      updateTransactionStatus(response, strFinancialAccountId, strSelectedTransId, isChecked);
     }
 
   }
 
-  private void updateTransactionStatus(HttpServletResponse response, String strSelectedTransId,
-      boolean isChecked) {
+  private void updateTransactionStatus(HttpServletResponse response, String strFinancialAccountId,
+      String strSelectedTransId, boolean isChecked) {
 
     OBContext.setAdminMode();
     try {
@@ -114,6 +117,18 @@ public class Reconciliation extends HttpSecureAppServlet {
       if (!isChecked) {
         newStatus = (trans.getPaymentAmount().compareTo(trans.getDepositAmount()) >= 0) ? "RDNC"
             : "PWNC";
+        trans.setReconciliation(null);
+        if (trans.getFinPayment() != null) {
+          trans.getFinPayment().setStatus((trans.getFinPayment().isReceipt()) ? "RDNC" : "PWNC");
+        }
+      } else {
+        FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
+            strFinancialAccountId);
+        FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(account, "N");
+        trans.setReconciliation(reconciliation);
+        if (trans.getFinPayment() != null) {
+          trans.getFinPayment().setStatus("RPPC");
+        }
       }
       trans.setStatus(newStatus);
       OBDal.getInstance().save(trans);
@@ -152,6 +167,15 @@ public class Reconciliation extends HttpSecureAppServlet {
       FIN_Reconciliation lastProcessedReconciliation = TransactionsDao.getLastReconciliation(
           account, "Y");
 
+      reconciliation.setEndingBalance(new BigDecimal(strEndBalance));
+      reconciliation.setTransactionDate(FIN_Utility.getDateTime(strStatementDate));
+      reconciliation.setEndingDate(FIN_Utility.getDateTime(strStatementDate));
+      reconciliation.setDocumentStatus("DR");
+      reconciliation.setProcessed(false);
+      reconciliation.setAPRMProcessReconciliation("P");
+      OBDal.getInstance().save(reconciliation);
+      OBDal.getInstance().flush();
+
       if (process) { // Validations
         String strMessage = "";
         boolean raiseException = false;
@@ -174,14 +198,11 @@ public class Reconciliation extends HttpSecureAppServlet {
 
         Calendar tomorrow = Calendar.getInstance();
         tomorrow.add(Calendar.DATE, 1);
-        tomorrow.set(Calendar.HOUR_OF_DAY, 0);
-        tomorrow.set(Calendar.MINUTE, 0);
-        tomorrow.set(Calendar.SECOND, 0);
+        tomorrow.setTime(DateUtils.truncate(tomorrow.getTime(), Calendar.DATE));
         if (calCurrent.after(tomorrow)) {
           strMessage = "@APRM_ReconcileInFutureOrPast@";
           raiseException = true;
         }
-
         if (raiseException) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
@@ -192,46 +213,10 @@ public class Reconciliation extends HttpSecureAppServlet {
           return;
         }
 
-      }
-
-      DocumentType docType = FIN_Utility.getDocumentType(account.getOrganization(), "REC");
-      if (docType == null) {
-        String strMessage = "@APRM_DocumentTypeNotFound@";
-        msg.setType("Error");
-        msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-        msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), strMessage));
-        vars.setMessage(strTabId, msg);
-        msg = null;
-        printPageClosePopUpAndRefreshParent(response, vars);
-        return;
-      }
-
-      reconciliation.setEndingBalance(new BigDecimal(strEndBalance));
-      reconciliation.setTransactionDate(FIN_Utility.getDateTime(strStatementDate));
-      reconciliation.setEndingDate(FIN_Utility.getDateTime(strStatementDate));
-      reconciliation.setDocumentStatus(process ? "CO" : "DR");
-      reconciliation.setProcessed(process);
-      reconciliation.setAPRMProcessReconciliation(process ? "R" : "P");
-      OBDal.getInstance().save(reconciliation);
-      OBDal.getInstance().flush();
-
-      List<FIN_FinaccTransaction> transactionsToReconcile = TransactionsDao
-          .getTransactionsToReconciled(account,
-              FIN_Utility.getDate(DateTimeData.nDaysAfter(this, DateTimeData.today(this), "1")),
-              false);
-
-      for (FIN_FinaccTransaction trans : transactionsToReconcile) {
-        if (trans.getReconciliation() != null && !trans.getStatus().equals("RPPC")) {
-          String newStatus = (trans.getDepositAmount().compareTo(trans.getPaymentAmount()) >= 0) ? "RDNC"
-              : "PWNC";
-          trans.setStatus(newStatus);
-          trans.setReconciliation(null);
-          if (trans.getFinPayment() != null) {
-            trans.getFinPayment().setStatus((trans.getFinPayment().isReceipt()) ? "RDNC" : "PWNC");
-          }
-        } else if (trans.getReconciliation() == null && trans.getStatus().equals("RPPC")) {
-          trans.setReconciliation(reconciliation);
-          if (reconciliation.getEndingDate().compareTo(trans.getTransactionDate()) < 0) {
+        for (APRM_FinaccTransactionV finacctrxv : reconciliation.getAPRMFinaccTransactionVList()) {
+          if (reconciliation.getEndingDate().compareTo(
+              finacctrxv.getFinancialAccountTransaction().getTransactionDate()) < 0) {
+            FIN_FinaccTransaction trans = finacctrxv.getFinancialAccountTransaction();
             // We set processed to false before changing dates to avoid trigger exception
             boolean posted = "Y".equals(trans.getPosted());
             if (posted) {
@@ -258,13 +243,14 @@ public class Reconciliation extends HttpSecureAppServlet {
             // Changing dates for accounting entries as well
             TransactionsDao.updateAccountingDate(trans);
           }
-          if (trans.getFinPayment() != null) {
-            trans.getFinPayment().setStatus("RPPC");
-          }
         }
 
-        OBDal.getInstance().save(trans);
+        reconciliation.setDocumentStatus("CO");
+        reconciliation.setProcessed(true);
+        reconciliation.setAPRMProcessReconciliation("R");
+        OBDal.getInstance().save(reconciliation);
         OBDal.getInstance().flush();
+
       }
 
       String strMessage = "@APRM_ReconciliationNo@" + ": " + reconciliation.getDocumentNo();
@@ -365,6 +351,17 @@ public class Reconciliation extends HttpSecureAppServlet {
 
         if (currentReconciliation == null) {
           DocumentType docType = FIN_Utility.getDocumentType(account.getOrganization(), "REC");
+          if (docType == null) {
+            OBError msg = new OBError();
+            String strMessage = "@APRM_DocumentTypeNotFound@";
+            msg.setType("Error");
+            msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+            msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), strMessage));
+            vars.setMessage(strTabId, msg);
+            msg = null;
+            printPageClosePopUpAndRefreshParent(response, vars);
+            return;
+          }
           String docNumber = FIN_Utility.getDocumentNo(account.getOrganization(), "REC",
               "DocumentNo_FIN_Reconciliation");
 
