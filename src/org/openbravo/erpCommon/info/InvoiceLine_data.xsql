@@ -43,7 +43,7 @@
 	          AND I.AD_CLIENT_ID IN ('1') 
 	          AND I.AD_ORG_ID IN ('1') 
 	          AND I.IsActive='Y' 
-	          AND I.ISSOTRX = 'Y'
+	          AND I.ISSOTRX = ?
 	          ORDER BY b.NAME
           	) A ) B
         WHERE 1=1
@@ -62,6 +62,7 @@
         <Parameter name="grandTotalFrom" optional="true" after="AND I.IsActive='Y'"><![CDATA[  AND IL.PRICEACTUAL*IL.QTYINVOICED >= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="grandTotalTo" optional="true" after="AND I.IsActive='Y'"><![CDATA[  AND IL.PRICEACTUAL*IL.QTYINVOICED <= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="product" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND IL.M_Product_ID=? ]]></Parameter>
+	<Parameter name="issotrx"/>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="b.NAME" />
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
@@ -84,7 +85,7 @@
 	          AND I.AD_CLIENT_ID IN ('1') 
 	          AND I.AD_ORG_ID IN ('1') 
 	          AND I.IsActive='Y' 
-	          AND I.ISSOTRX = 'Y'
+	          AND I.ISSOTRX = ?
 	          AND 1=1
 	          ) B
 	          ) A 
@@ -103,6 +104,7 @@
         <Parameter name="grandTotalFrom" optional="true" after="AND I.IsActive='Y'"><![CDATA[  AND IL.PRICEACTUAL*IL.QTYINVOICED >= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="grandTotalTo" optional="true" after="AND I.IsActive='Y'"><![CDATA[  AND IL.PRICEACTUAL*IL.QTYINVOICED <= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="product" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND IL.M_Product_ID = ? ]]></Parameter>
+	<Parameter name="issotrx"/>
         <Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>
         <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
         <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
@@ -162,7 +164,7 @@
         AND IL.M_PRODUCT_ID = p.M_PRODUCT_ID
         AND I.AD_CLIENT_ID IN ('1') 
         AND I.AD_ORG_ID IN ('1') 
-        AND I.IsActive='Y' 
+        AND I.IsActive=?
         AND UPPER(I.DOCUMENTNO) LIKE UPPER(?) 
        /* AND (IL.QTYORDERED - COALESCE(IL.QTYINVOICED, 0)) > 0 
         AND (IL.QTYORDERED - COALESCE(IL.QTYDELIVERED, 0)) > 0 */
@@ -173,6 +175,7 @@
         <Parameter name="adUserClient" type="replace" optional="true" after="I.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="I.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="key"/>
+	<Parameter name="issotrx"/>
    </SqlMethod>
    <!--SqlMethod name="selectKeySOTrx" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

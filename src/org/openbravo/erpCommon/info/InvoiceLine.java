@@ -106,8 +106,9 @@ public class InvoiceLine extends HttpSecureAppServlet {
       String strDateTo = vars.getGlobalVariable("inpDateTo", "InvoiceLine.dateto", "");
       String strCal1 = vars.getNumericGlobalVariable("inpCal1", "InvoiceLine.grandtotalfrom", "");
       String strCal2 = vars.getNumericGlobalVariable("inpCal2", "InvoiceLine.grandtotalto", "");
+      String issotrx = vars.getStringParameter("inpIssotrx", "N");
       printPage(response, vars, strBPartner, strProduct, strDocumentNo, strDateFrom, strDateTo,
-          strCal1, strCal2);
+          strCal1, strCal2, issotrx);
     } else if (vars.commandIn("KEY")) {
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "InvoiceLine.key");
       vars.getRequestGlobalVariable("WindowID", "InvoiceLine.windowId");
@@ -115,9 +116,11 @@ public class InvoiceLine extends HttpSecureAppServlet {
       vars.setSessionValue("InvoiceLine.documentno", strKeyValue + "%");
       InvoiceLineData[] data = null;
       String strOrg = vars.getStringParameter("inpAD_Org_ID");
+      String issotrx = vars.getStringParameter("inpIssotrx", "N");
       data = InvoiceLineData.selectKey(this,
           Utility.getContext(this, vars, "#User_Client", "InvoiceLine"),
-          Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue + "%");
+          Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue + "%",
+	  issotrx);
 
       if (data != null && data.length == 1)
         printPageKey(response, vars, data);
@@ -131,7 +134,7 @@ public class InvoiceLine extends HttpSecureAppServlet {
         String strCal1 = vars.getNumericGlobalVariable("inpCal1", "InvoiceLine.grandtotalfrom", "");
         String strCal2 = vars.getNumericGlobalVariable("inpCal2", "InvoiceLine.grandtotalto", "");
         printPage(response, vars, strBPartner, strProduct, strDocumentNo, strDateFrom, strDateTo,
-            strCal1, strCal2);
+            strCal1, strCal2, issotrx);
       }
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
@@ -157,10 +160,11 @@ public class InvoiceLine extends HttpSecureAppServlet {
       String strPageSize = vars.getStringParameter("page_size");
       String strSortCols = vars.getInStringParameter("sort_cols", columnFilter);
       String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
+      String issotrx = vars.getStringParameter("inpIssotrx", "N");
 
       printGridData(response, vars, strDocumentNo, strBpartnerId, strDateFrom, strDateTo,
           strDescription, strCal1, strCal2, strOrder, strProduct, strSortCols, strSortDirs,
-          strOffset, strPageSize, strNewFilter, strOrg);
+          strOffset, strPageSize, strNewFilter, strOrg, issotrx);
 
     } else
       pageError(response);
@@ -194,7 +198,7 @@ public class InvoiceLine extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
       String strProduct, String strDocumentNo, String strDateFrom, String strDateTo,
-      String strCal1, String strCal2) throws IOException, ServletException {
+      String strCal1, String strCal2, String issotrx) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Frame 1 of sale-order-lines seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/InvoiceLine")
@@ -282,7 +286,7 @@ public class InvoiceLine extends HttpSecureAppServlet {
       String strDocumentNo, String strBpartnerId, String strDateFrom, String strDateTo,
       String strDescription, String strCal1, String strCal2, String strOrder, String strProduct,
       String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
-      String strNewFilter, String strOrg) throws IOException, ServletException {
+      String strNewFilter, String strOrg, String issotrx) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
     int page = 0;
@@ -327,7 +331,7 @@ public class InvoiceLine extends HttpSecureAppServlet {
               Utility.getContext(this, vars, "#User_Client", "InvoiceLine"),
               Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription, strOrder,
               strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
-              strCal2, strProduct, pgLimit, oraLimit1, oraLimit2);
+              strCal2, strProduct, issotrx, pgLimit, oraLimit1, oraLimit2);
           vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("BusinessPartnerInfo.numrows");
@@ -339,14 +343,14 @@ public class InvoiceLine extends HttpSecureAppServlet {
               Utility.getContext(this, vars, "#User_Client", "InvoiceLine"),
               Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription, strOrder,
               strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
-              strCal2, strProduct, strOrderBy, oraLimit, "");
+              strCal2, strProduct, issotrx, strOrderBy, oraLimit, "");
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
           data = InvoiceLineData.select(this, "1",
               Utility.getContext(this, vars, "#User_Client", "InvoiceLine"),
               Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription, strOrder,
               strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
-              strCal2, strProduct, strOrderBy, "", pgLimit);
+              strCal2, strProduct, issotrx, strOrderBy, "", pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
