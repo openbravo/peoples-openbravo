@@ -246,7 +246,7 @@ BEGIN
                    fixmonthday, fixmonthday2, fixmonthday3, netdays,
                    fixmonthoffset, netday, isnextbusinessday
             FROM c_paymentterm
-            WHERE c_paymentterm_id=v_paymentterm);
+            WHERE c_paymentterm_id=v_paymentterm) a;
         FOR cur_payments IN (
             SELECT line, percentage, onremainder, excludetax,
                    COALESCE(paymentrule, v_paymentrule) AS paymentrule,
