@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.Image;
 
@@ -65,9 +66,12 @@ public class ShowImageLogo extends HttpBaseServlet {
     if (mimeType == null) {
       mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img);
       if (image != null) {
-        image.setMimetype(mimeType);
-        OBDal.getInstance().save(image);
-        OBDal.getInstance().flush();
+        // If there is an OBContext, we attempt to save the MIME type of the image
+        if (OBContext.getOBContext() != null) {
+          image.setMimetype(mimeType);
+          OBDal.getInstance().save(image);
+          OBDal.getInstance().flush();
+        }
       }
     }
     if (!mimeType.equals("")) {
