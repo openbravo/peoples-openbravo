@@ -398,11 +398,16 @@ isc.RelativeDateItem.changeDefaults('calculatedDateFieldDefaults', {
  * OBImageItem
  =======================================================================*/
 
+isc.OBImageItem.addProperties({
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel'
+});
+
 isc.OBImageItemSmallImageContainer.addProperties({
   styleName: 'OBImageItemSmallImageContainer',
-  cursor: '', //To allow set the cursor from the CSS
+  height: 66,
   width:'100%',
-  height: '100%',
+  cursor: '', //To allow set the cursor from the CSS
   align: 'center',
   defaultLayoutAlign: 'center'
 });
