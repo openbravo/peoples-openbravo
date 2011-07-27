@@ -484,7 +484,8 @@ public class DataSourceServlet extends BaseKernelServlet {
             keyValue = dateFormat.format(date);
           } else if (dateTimeCols.contains(key) && keyValue != null
               && !keyValue.toString().equals("null")) {
-            Date date = JsonUtils.createDateTimeFormat().parse(keyValue.toString());
+            final String repairedString = JsonUtils.convertFromXSDToJavaFormat(keyValue.toString());
+            Date date = JsonUtils.createDateTimeFormat().parse(repairedString);
             String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATETIMEFORMAT")
                 .toString();
             SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
