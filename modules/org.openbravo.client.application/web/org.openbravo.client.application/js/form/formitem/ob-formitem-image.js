@@ -64,9 +64,7 @@ isc.OBImageItemSmallImageContainer.addProperties({
         height: height,
         width: width,
         click: function() { this.popupContainer.closeClick(); },
-        cursor: 'pointer',
-        src: "../utility/ShowImage?id=" + imageId + '&nocache=' + Math.random(),
-        align: 'center'
+        src: "../utility/ShowImage?id=" + imageId + '&nocache=' + Math.random()
       });
       image.setImageType('stretch');
       imagePopup.addItem(image);

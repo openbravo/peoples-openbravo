@@ -412,6 +412,12 @@ isc.OBImageItemSmallImageContainer.addProperties({
   defaultLayoutAlign: 'center'
 });
 
+isc.OBImageItemBigImage.addProperties({
+  styleName: 'OBImageItemBigImageContainer',
+  cursor: 'pointer',
+  align: 'center'
+});
+
 isc.OBImageItemButton.addProperties({
   showRollOver: true,
   showDisabled: true,
