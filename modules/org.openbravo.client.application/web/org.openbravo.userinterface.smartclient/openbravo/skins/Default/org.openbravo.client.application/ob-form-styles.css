@@ -126,10 +126,7 @@
 .OBFormFieldNumberInputRequiredFocused,
 .OBFormFieldNumberInputRequiredDisabled,
 .OBFormFieldNumberInputRequiredError,
-.OBFormFieldNumberInputRequiredHint,
-
-.OBFormFieldImageInput,
-.OBFormFieldImageInputRequired {
+.OBFormFieldNumberInputRequiredHint {
   font-family: arial, sans-serif;
   font-size: 12px;
   padding: 2px 2px 0px 2px;

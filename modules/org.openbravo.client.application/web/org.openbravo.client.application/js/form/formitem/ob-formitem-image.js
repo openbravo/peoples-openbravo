@@ -200,17 +200,26 @@ isc.OBImageItem.addProperties({
         command: 'GETSIZE'
       };
       var image = this.canvas.image;
+      var imageLayout = this.canvas.getMember(0);
       OB.RemoteCallManager.call('org.openbravo.client.application.window.ImagesActionHandler', {}, d, function(response, data, request){
-          var ratio = data.width/data.height;
-          if(ratio>5){
-            var maxwidth = data.width>350?350:data.width;
-            image.setHeight(maxwidth/ratio);
-            image.setWidth(maxwidth+'px');
-          }else{
-            var maxheight = data.height>45?45:data.height;
-            image.setHeight(maxheight+'px');
-            image.setWidth(maxheight*ratio);
-          }
+        var maxHeight = imageLayout.getHeight() - 12;
+        var maxWidth = imageLayout.getWidth() - 12;
+        var maxRatio = maxHeight/maxWidth;
+
+        var imgHeight = data.height;
+        var imgWidth = data.width;
+        var imgRatio = imgHeight/imgWidth;
+
+        if (imgHeight < maxHeight && imgWidth < maxWidth) {
+          image.setHeight(imgHeight);
+          image.setWidth(imgWidth);
+        } else if (imgRatio > maxRatio) {
+          image.setHeight(maxHeight);
+          image.setWidth(maxHeight/imgRatio);
+        } else {
+          image.setHeight(maxWidth*imgRatio);
+          image.setWidth(maxWidth);
+        }
       });
     }
     this.canvas.deleteButton.updateState(newValue);
