@@ -732,6 +732,7 @@
 .OBImageItemSmallImageContainer,
 .OBImageItemSmallImageContainerRequired {
   border: #CDD7BB 1px solid;
+  cursor: url("images/system/zoomIn.cur"), pointer;
 }
 
 .OBImageItemSmallImageContainer {
@@ -740,6 +741,14 @@
 
 .OBImageItemSmallImageContainerRequired {
   background-color: #FFFFCC;
+}
+
+.OBImageItemSmallImage img {
+  cursor: url("images/system/zoomIn.cur"), pointer;
+}
+
+.OBImageItemBigImage img {
+  cursor: url("images/system/zoomOut.cur"), pointer;
 }
 
 /*=======================================================================

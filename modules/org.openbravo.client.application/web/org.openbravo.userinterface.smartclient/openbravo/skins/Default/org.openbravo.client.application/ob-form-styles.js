@@ -398,23 +398,23 @@ isc.RelativeDateItem.changeDefaults('calculatedDateFieldDefaults', {
  * OBImageItem
  =======================================================================*/
 
-isc.OBImageItemSmallImage.addProperties({
-  styleName: 'OBImageItemSmallImage',
-  cursor: 'pointer'
-});
-
 isc.OBImageItemSmallImageContainer.addProperties({
   styleName: 'OBImageItemSmallImageContainer',
-  cursor: 'pointer',
+  cursor: '', //To allow set the cursor from the CSS
   width:'100%',
   height: '100%',
   align: 'center',
   defaultLayoutAlign: 'center'
 });
 
+isc.OBImageItemSmallImage.addProperties({
+  styleName: 'OBImageItemSmallImage',
+  cursor: '' //To allow set the cursor from the CSS
+});
+
 isc.OBImageItemBigImage.addProperties({
-  styleName: 'OBImageItemBigImageContainer',
-  cursor: 'pointer',
+  styleName: 'OBImageItemBigImage',
+  cursor: '', //To allow set the cursor from the CSS
   align: 'center'
 });
 
