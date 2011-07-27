@@ -41,8 +41,8 @@ function openRegistration() {
 
 isc.Canvas.addClassProperties({neverUsePNGWorkaround:true});
 
-OB.KeyboardManager.KS.setPredefinedKSList('OBUIAPP_KeyboardShortcuts');
-OB.KeyboardManager.KS.setPredefinedKSList('UINAVBA_KeyboardShortcuts');
+OB.KeyboardManager.Shortcuts.setPredefinedList('OBUIAPP_KeyboardShortcuts');
+OB.KeyboardManager.Shortcuts.setPredefinedList('UINAVBA_KeyboardShortcuts');
 
 // should be moved to client.kernel component
 // placed here to prevent dependencies of client.kernel on Preferences

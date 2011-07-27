@@ -1272,12 +1272,12 @@ isc.OBToolbarIconButton.addProperties({
         }
         return false; //To avoid keyboard shortcut propagation
       };
-      OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction);
+      OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'Canvas', ksAction);
     }
   },
   disableShortcut: function(){
     if (this.keyboardShortcutId) {
-      OB.KeyboardManager.KS.set(this.keyboardShortcutId, function(){
+      OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, null, function(){
         return true;
       });
     }
@@ -1323,7 +1323,7 @@ isc.OBToolbarTextButton.addProperties({
       }
       this.setTitle(newTitle);
       if (this.keyboardShortcutPosition) { // If 'this.keyboardShortcutPosition' equals 0 means that there is no shortcut assigned
-        OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction, null, {
+        OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'Canvas', ksAction, null, {
           'ctrl': true,
           'alt': true,
           'shift': true,
@@ -1336,7 +1336,7 @@ isc.OBToolbarTextButton.addProperties({
     if (this.keyboardShortcutId) {
       var newTitle = this.realTitle;
       this.setTitle(newTitle);
-      OB.KeyboardManager.KS.set(this.keyboardShortcutId, function(){
+      OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, null, function(){
         return true;
       }, '', {
         'ctrl': true,

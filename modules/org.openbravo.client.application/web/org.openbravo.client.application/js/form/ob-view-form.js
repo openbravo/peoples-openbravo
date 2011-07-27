@@ -1414,14 +1414,28 @@ OB.ViewFormProperties = {
     return this.Super('updateFocusItemValue', arguments);
   },
 
+  enableShortcuts: function() {
+    var me = this;
+    var ksAction = function() {
+      if (me.getFocusItem && me.getFocusItem().titleClick) {
+        me.getFocusItem().titleClick(me, me.getFocusItem());
+      }
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.Shortcuts.set('ViewForm_OpenLinkOut', 'OBViewForm', ksAction);
+  },
+
+  draw : function() {
+    this.enableShortcuts();
+    this.Super('draw', arguments);
+  },
+
   keyDown: function() {
-    if (isc.EventHandler.getKey() === 'Enter' &&
-      (isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown()) &&
-      this.getFocusItem && this.getFocusItem().titleClick) {
-      this.getFocusItem().titleClick(this, this.getFocusItem());
-      return false;
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBViewForm');
+    if (response !== false) {
+      response = this.Super('keyDown', arguments);
     }
-    return this.Super('keyDown', arguments);
+    return response;
   },
   
   storeFocusItem: function() {

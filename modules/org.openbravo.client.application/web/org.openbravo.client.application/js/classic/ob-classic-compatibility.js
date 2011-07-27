@@ -233,79 +233,80 @@
       getMDIKS: function(){
         var key, auxKey, action, funcParam, keyMap,
             ClassicKeyJSON = [],
-            LKS = O.KeyboardManager.KS, i;
+            LKS = O.KeyboardManager.Shortcuts, i;
 
         for (i = 0; i < LKS.list.length; i++) {
           auxKey = '';
-
-          if (LKS.list[i].keyComb.ctrl === true) {
-            if (auxKey.length > 0) {
-              auxKey += '+';
+          if (LKS.list[i].isGlobal) {
+            if (LKS.list[i].keyComb.ctrl === true) {
+              if (auxKey.length > 0) {
+                auxKey += '+';
+              }
+              auxKey += 'ctrlKey';
             }
-            auxKey += 'ctrlKey';
-          }
-          if (LKS.list[i].keyComb.alt === true) {
-            if (auxKey.length > 0) {
-              auxKey += '+';
+            if (LKS.list[i].keyComb.alt === true) {
+              if (auxKey.length > 0) {
+                auxKey += '+';
+              }
+              auxKey += 'altKey';
             }
-            auxKey += 'altKey';
-          }
-          if (LKS.list[i].keyComb.shift === true) {
-            if (auxKey.length > 0) {
-              auxKey += '+';
+            if (LKS.list[i].keyComb.shift === true) {
+              if (auxKey.length > 0) {
+                auxKey += '+';
+              }
+              auxKey += 'shiftKey';
             }
-            auxKey += 'shiftKey';
+            if (LKS.list[i].keyComb.key !== null) {
+              key = LKS.list[i].keyComb.key;
+            }
+
+            action = LKS.list[i].action;
+            funcParam = LKS.list[i].funcParam;
+
+            // Special keys nomenclature adaptation from Smartclient way to
+            // classic utils.js way
+
+            keyMap = {
+              'Backspace': 'BACKSPACE',
+              'Tab': 'TAB',
+              'Enter': 'ENTER',
+              'Space': 'SPACE',
+              'Insert': 'INSERT',
+              'End': 'END',
+              'Home': 'HOME',
+              'Page_Up': 'REPAGE',
+              'Page_Down': 'AVPAGE',
+              'Arrow_Left': 'LEFTARROW',
+              'Arrow_Right': 'RIGHTARROW',
+              'Arrow_Up': 'UPARROW',
+              'Arrow_Down': 'DOWNARROW',
+              '+': 'NUMBERPOSITIVE',
+              '-': 'NUMBERNEGATIVE',
+              '.': 'NUMBERDECIMAL',
+              'Escape': 'ESCAPE',
+              'f1': 'F1',
+              'f2': 'F2',
+              'f3': 'F3',
+              'f4': 'F4',
+              'f5': 'F5',
+              'f6': 'F6',
+              'f7': 'F7',
+              'f8': 'F8',
+              'f9': 'F9',
+              'f10': 'F10',
+              'f11': 'F11',
+              'f12': 'F12'
+            };
+
+            key = keyMap[key] || key;
+
+            ClassicKeyJSON.push({
+              'key': key,
+              'auxKey': auxKey,
+              'action': action,
+              'funcParam': funcParam
+            });
           }
-          if (LKS.list[i].keyComb.key !== null) {
-            key = LKS.list[i].keyComb.key;
-          }
-
-          action = LKS.list[i].action;
-          funcParam = LKS.list[i].funcParam;
-
-          // Special keys nomenclature adaptation from Smartclient way to
-          // classic utils.js way
-
-          keyMap = {
-            'Backspace': 'BACKSPACE',
-            'Tab': 'TAB',
-            'Enter': 'ENTER',
-            'Space': 'SPACE',
-            'Insert': 'INSERT',
-            'End': 'END',
-            'Home': 'HOME',
-            'Page_Up': 'REPAGE',
-            'Page_Down': 'AVPAGE',
-            'Arrow_Left': 'LEFTARROW',
-            'Arrow_Right': 'RIGHTARROW',
-            'Arrow_Up': 'UPARROW',
-            'Arrow_Down': 'DOWNARROW',
-            '+': 'NUMBERPOSITIVE',
-            '-': 'NUMBERNEGATIVE',
-            '.': 'NUMBERDECIMAL',
-            'Escape': 'ESCAPE',
-            'f1': 'F1',
-            'f2': 'F2',
-            'f3': 'F3',
-            'f4': 'F4',
-            'f5': 'F5',
-            'f6': 'F6',
-            'f7': 'F7',
-            'f8': 'F8',
-            'f9': 'F9',
-            'f10': 'F10',
-            'f11': 'F11',
-            'f12': 'F12'
-          };
-
-          key = keyMap[key] || key;
-
-          ClassicKeyJSON.push({
-            'key': key,
-            'auxKey': auxKey,
-            'action': action,
-            'funcParam': funcParam
-          });
         }
 
         return ClassicKeyJSON;

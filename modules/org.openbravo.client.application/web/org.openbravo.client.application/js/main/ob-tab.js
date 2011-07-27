@@ -103,32 +103,32 @@ isc.OBTabSetMain.addProperties({
       me.closeSelectedTab();
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.KS.set('TabSet_CloseSelectedTab', ksAction_CloseSelectedTab);
+    OB.KeyboardManager.Shortcuts.set('TabSet_CloseSelectedTab', 'Canvas', ksAction_CloseSelectedTab);
     var ksAction_SelectParentTab = function() {
       me.selectParentTab();
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.KS.set('TabSet_SelectParentTab', ksAction_SelectParentTab);
+    OB.KeyboardManager.Shortcuts.set('TabSet_SelectParentTab', 'Canvas', ksAction_SelectParentTab);
     var ksAction_SelectChildTab = function() {
       me.selectChildTab();
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.KS.set('TabSet_SelectChildTab', ksAction_SelectChildTab);
+    OB.KeyboardManager.Shortcuts.set('TabSet_SelectChildTab', 'Canvas', ksAction_SelectChildTab);
     var ksAction_SelectPreviousTab = function() {
       me.selectPreviousTab();
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.KS.set('TabSet_SelectPreviousTab', ksAction_SelectPreviousTab);
+    OB.KeyboardManager.Shortcuts.set('TabSet_SelectPreviousTab', 'Canvas', ksAction_SelectPreviousTab);
     var ksAction_SelectNextTab = function() {
       me.selectNextTab();
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.KS.set('TabSet_SelectNextTab', ksAction_SelectNextTab);
+    OB.KeyboardManager.Shortcuts.set('TabSet_SelectNextTab', 'Canvas', ksAction_SelectNextTab);
     var ksAction_SelectWorkspaceTab = function() {
       me.selectTab(0);
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.KS.set('TabSet_SelectWorkspaceTab', ksAction_SelectWorkspaceTab);
+    OB.KeyboardManager.Shortcuts.set('TabSet_SelectWorkspaceTab', 'Canvas', ksAction_SelectWorkspaceTab);
     this.Super('draw', arguments);
   },
 

@@ -35,60 +35,22 @@
   }
   
   KeyboardManager.prototype = {
-  
-    action: {
-      // ** {{{ KeyboardManager.keyPress }}} **
-      // Manages the keyPress event
-      keyPress: function(){
-      },
-      
-      // ** {{{ KeyboardManager.keyUp }}} **
-      // Manages the keyUp event
-      keyUp: function(){
-      },
-      
-      // ** {{{ KeyboardManager.keyDown }}} **
-      // Manages the keyDown event
-      keyDown: function(){
-        var pushedKS = {};
-        pushedKS.ctrl = false;
-        pushedKS.alt = false;
-        pushedKS.shift = false;
-        pushedKS.key = null;
-        if (isc.Event.ctrlKeyDown()) {
-          pushedKS.ctrl = true;
-        }
-        if (isc.Event.altKeyDown()) {
-          pushedKS.alt = true;
-        }
-        if (isc.Event.shiftKeyDown()) {
-          pushedKS.shift = true;
-        }
-        pushedKS.key = isc.Event.getKey();
-        var position = keyboardMgr.KS.getProperty('position', pushedKS, 'keyComb');
-        if (position !== null) {
-          return keyboardMgr.KS.execute(position);
-        } else {
-          return true;
-        }
-      }
-    },
+
+    Shortcuts: {
     
-    KS: {
-    
-      setPredefinedKSList: function(RefList){
+      setPredefinedList: function(RefList){
         var i;
         var list = [];
         
         list = OB.PropertyStore.get(RefList);
         if (list) {
           for (i = 0; i < list.length; i++) {
-            this.set(list[i].id, null, null, list[i].keyComb);
+            this.set(list[i].id, null, null, null, list[i].keyComb);
           }
         }
       },
 
-      set: function(id, action, funcParam, keyComb) {
+      set: function(id, execLevel, action, funcParam, keyComb) {
         if (typeof id === 'undefined' || id === null) {
           return false;
         }
@@ -102,6 +64,12 @@
         }
         if (typeof id !== 'undefined' && id !== null) {
           this.list[position].id = id;
+        }
+        if (typeof execLevel !== 'undefined' && execLevel !== null) {
+          if (typeof execLevel === 'string') {
+            execLevel = new Array(execLevel);
+          }
+          this.list[position].execLevel = execLevel;
         }
         if (typeof action !== 'undefined' && action !== null) {
           this.list[position].action = action;
@@ -120,9 +88,6 @@
                 this.list[position].keyComb.text += '+';
               }
               this.list[position].keyComb.text += 'Ctrl';
-              if (id === 'ToolBar_Eliminate') { //TODO: Fast hack until ob-grid shortcuts can be defined via AD_PREFERENCE.xml
-                this.list[position].keyComb.text = '';
-              }
             }
           }
           if (typeof keyComb.alt === 'undefined') {
@@ -210,6 +175,9 @@
           }
           if (searchPattern === 'id' && this.list[i].id === element) {
             position = i;
+          } else if (searchPattern === 'execLevel' &&
+          this.list[i].execLevel === element) {
+            position = i;
           } else if (searchPattern === 'keyComb' &&
           this.list[i].keyComb.ctrl === element.ctrl &&
           this.list[i].keyComb.alt === element.alt &&
@@ -242,6 +210,58 @@
         }
       },
 
+      getList: function() {
+        return this.list;
+      },
+
+      monitor: function(execLevel){
+        var i, j,
+            position = null,
+            pushedKS = {};
+        pushedKS.ctrl = false;
+        pushedKS.alt = false;
+        pushedKS.shift = false;
+        pushedKS.key = null;
+        if (isc.Event.ctrlKeyDown()) {
+          pushedKS.ctrl = true;
+        }
+        if (isc.Event.altKeyDown()) {
+          pushedKS.alt = true;
+        }
+        if (isc.Event.shiftKeyDown()) {
+          pushedKS.shift = true;
+        }
+        pushedKS.key = isc.Event.getKey();
+
+        for (i = 0; i < this.list.length; i++) {
+          if (typeof this.list[i] === 'undefined' && !execLevel) {
+            break;
+          }
+          if (this.list[i].execLevel) {
+            for (j = 0; j < this.list[i].execLevel.length ; j++) {
+              if (this.list[i].execLevel[j] === execLevel &&
+                  this.list[i].keyComb.ctrl === pushedKS.ctrl &&
+                  this.list[i].keyComb.alt === pushedKS.alt &&
+                  this.list[i].keyComb.shift === pushedKS.shift &&
+                  this.list[i].keyComb.key === pushedKS.key) {
+                position = i;
+                break;
+              }
+            }
+          }
+
+          if (position) {
+            break;
+          }
+        }
+
+        if (position !== null) {
+          return this.execute(position);
+        } else {
+          return true;
+        }
+      },
+
       list: []
     }
 
@@ -250,10 +270,10 @@
   // Initialize KeyboardManager object
   keyboardMgr = O.KeyboardManager = new KeyboardManager();
 
-  /* isc.Page.setEvent('keyPress', 'OB.KeyboardManager.action.keyDown()'); // Discart due to Chrome event propagation problems http://forums.smartclient.com/showthread.php?p=65578 */
+  /* isc.Page.setEvent('keyPress', 'OB.KeyboardManager.Shortcuts.monitor('Canvas')'); // Discart due to Chrome event propagation problems http://forums.smartclient.com/showthread.php?p=65578 */
   isc.Canvas.getPrototype()._originalKeyDown = isc.Canvas.getPrototype().keyDown;
   isc.Canvas.getPrototype().keyDown = function() {
-    var response = OB.KeyboardManager.action.keyDown();
+    var response = OB.KeyboardManager.Shortcuts.monitor('Canvas');
     if (response) { // To ensure that if a previous keyDown was set in the Canvas it is executed if the action KeyboardManager.action should be propagated
       response = this._originalKeyDown();
     }

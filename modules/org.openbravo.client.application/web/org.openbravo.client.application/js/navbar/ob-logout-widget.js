@@ -32,7 +32,7 @@ isc.OBLogout.addProperties({
       OB.Utilities.logout();
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction);
+    OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'Canvas', ksAction);
     this.Super("draw", arguments);
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.QuitButton', this);
   },

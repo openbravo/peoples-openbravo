@@ -147,7 +147,7 @@ isc.OBAlertIcon.addProperties( {
         me.click();
         return false; //To avoid keyboard shortcut propagation
       };
-      OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction);
+      OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'Canvas', ksAction);
     }
     this.Super('draw', arguments);
   },

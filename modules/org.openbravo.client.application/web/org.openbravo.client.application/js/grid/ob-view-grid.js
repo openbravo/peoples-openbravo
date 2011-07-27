@@ -299,7 +299,7 @@ isc.OBViewGrid.addProperties({
   refreshFields: function(){
     this.setFields(this.completeFields.duplicate());
   },
-  
+
   draw: function() {
     var drawnBefore = this.isDrawn(), form, item;
     this.Super('draw', arguments);
@@ -442,83 +442,28 @@ isc.OBViewGrid.addProperties({
     }
     return this.Super('headerClick', arguments);
   },
+/*
+
+  */
 
   keyPress: function() {
-    var event = isc.EventHandler.lastEvent, editRow, 
-      ctrlAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown();
-    
-    if (event.keyName === 'Escape' && !ctrlAltShiftDown && this.getEditForm()) {
-      this.cancelEditing();
-      return false;
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBViewGrid');
+    if (response !== false) {
+      response = this.Super('keyPress', arguments);
     }
-    
-    if (event.keyName === 'Arrow_Up' && !ctrlAltShiftDown && this.getEditForm()) {
-      // editing can be cancelled as all fields are
-      // non-editable anyway if we get here...
-      editRow = this.getEditRow();
-      this.cancelEditing();
-      if (editRow) {
-        this.startEditing(editRow - 1);
-      }
-      return false;
-    }
-    
-    if (event.keyName === 'Arrow_Down' && !ctrlAltShiftDown && this.getEditForm()) {
-      // editing can be cancelled as all fields are
-      // non-editable anyway if we get here...
-      editRow = this.getEditRow();
-      this.cancelEditing();
-      if (editRow || editRow === 0) {
-        this.startEditing(editRow + 1);
-      }
-      return false;
-    }
-
-    return this.Super('keyPress', arguments);
+    return response;
   },
   
-  // handle the del key when rows have been selected or space key
   bodyKeyPress: function (event, eventInfo) {
-    if (event.keyName === 'Escape' && this.getEditForm()) {
-      this.cancelEditing();
-      return;
-    }
-    
-    if (event.keyName === 'Arrow_Up' && this.getEditForm()) {
-      // editing can be cancelled as all fields are
-      // non-editable anyway if we get here...
-      editRow = this.getEditRow();
-      this.cancelEditing();
-      if (editRow) {
-        this.startEditing(editRow - 1);
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBViewGrid.body');
+    if (response !== false) {
+      if (event.keyName === 'Space' && 
+        (isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown())) {
+        return true;
       }
-      return;
+      response = this.Super('bodyKeyPress', arguments);
     }
-    
-    if (event.keyName === 'Arrow_Down' && this.getEditForm()) {
-      // editing can be cancelled as all fields are
-      // non-editable anyway if we get here...
-      editRow = this.getEditRow();
-      this.cancelEditing();
-      if (editRow || editRow === 0) {
-        this.startEditing(editRow + 1);
-      }
-      return;
-    }
-    
-    if (event.keyName === 'Delete' && this.getSelectedRecords().length > 0 && 
-      (!isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown())) {
-      this.view.deleteSelectedRows();
-      return false;
-    }
-    // don't let the default space action do something if others keys are also 
-    // pressed
-    if (event.keyName === 'Space' && 
-      (isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown())) {
-      return true;
-    }
-
-    return this.Super('bodyKeyPress', arguments);
+    return response;
   },
 
   // called when the view gets activated
@@ -531,34 +476,90 @@ isc.OBViewGrid.addProperties({
   },
 
   disableShortcuts: function() {
-    OB.KeyboardManager.KS.set('Grid_EditInGrid', function() { return true; });
-    OB.KeyboardManager.KS.set('Grid_EditInForm', function() { return true; });
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_EditInGrid', null, function() { return true; });
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_EditInForm', null, function() { return true; });
   },
   
   enableShortcuts: function() {
-    var grid = this;
-    var editInGridAction = function(){
-      if (grid.getSelectedRecords().length === 1) {
-        grid.endEditing();
-        grid.startEditing(grid.getRecordIndex(grid.getSelectedRecords()[0]));
-      }
-      return false; //To avoid keyboard shortcut propagation
-    };
-    OB.KeyboardManager.KS.set('Grid_EditInGrid', editInGridAction);
-    var editInFormAction = function(){
-      if (grid.getSelectedRecords().length === 1) {
-        grid.endEditing();
-        grid.view.editRecord(grid.getSelectedRecords()[0]);
-      }
-      return false; //To avoid keyboard shortcut propagation
-    };
-    OB.KeyboardManager.KS.set('Grid_EditInForm', editInFormAction);
+    var me = this;
 
-    OB.KeyboardManager.KS.set('Grid_CancelChanges',
-       function(){
-         grid.view.undo();
-         return false;
-       });
+    var ksAction_CancelEditing = function() {
+      if (me.getEditForm()) {
+        me.cancelEditing();
+        return false; //To avoid keyboard shortcut propagation
+      } else {
+        return true;
+      }
+    };
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_CancelEditing', ['OBViewGrid', 'OBViewGrid.body'], ksAction_CancelEditing);
+
+    var ksAction_MoveUpWhileEditing = function() {
+      if (me.getEditForm()) {
+        var editRow = me.getEditRow();
+        me.cancelEditing();
+        if (editRow) {
+          me.startEditing(editRow - 1);
+        }
+        return false; //To avoid keyboard shortcut propagation
+      } else {
+        return true;
+      }
+    };
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_MoveUpWhileEditing', ['OBViewGrid', 'OBViewGrid.body'], ksAction_MoveUpWhileEditing, null, {"key": "Arrow_Up"});
+
+    var ksAction_MoveDownWhileEditing = function() {
+      if (me.getEditForm()) {
+        var editRow = me.getEditRow();
+        me.cancelEditing();
+        if (editRow || editRow === 0) {
+          me.startEditing(editRow + 1);
+        }
+        return false; //To avoid keyboard shortcut propagation
+      } else {
+        return true;
+      }
+    };
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_MoveDownWhileEditing', ['OBViewGrid', 'OBViewGrid.body'], ksAction_MoveDownWhileEditing, null, {"key": "Arrow_Down"});
+
+    var ksAction_DeleteSelectedRecords = function() {
+      if (me.getSelectedRecords().length > 0) {
+        me.view.deleteSelectedRows();
+        return false; //To avoid keyboard shortcut propagation
+      } else {
+        return true;
+      }
+    };
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_DeleteSelectedRecords', 'OBViewGrid.body', ksAction_DeleteSelectedRecords);
+
+    var ksAction_EditInGrid = function(){
+      if (me.getSelectedRecords().length === 1) {
+        me.endEditing();
+        me.startEditing(me.getRecordIndex(me.getSelectedRecords()[0]));
+        return false; //To avoid keyboard shortcut propagation
+      } else {
+        return true;
+      }
+    };
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_EditInGrid', 'OBViewGrid.body', ksAction_EditInGrid);
+
+    var ksAction_EditInForm = function(){
+      if (me.getSelectedRecords().length === 1) {
+        me.endEditing();
+        me.view.editRecord(me.getSelectedRecords()[0]);
+        return false; //To avoid keyboard shortcut propagation
+      } else {
+        return true;
+      }
+    };
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_EditInForm', 'OBViewGrid.body', ksAction_EditInForm);
+
+    var ksAction_CancelChanges = function() {
+      grid.view.undo();
+      return false;
+    };
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_CancelChanges', 'OBViewGrid.body', ksAction_CancelChanges);
+
+    this.Super('enableShortcuts', arguments);
   },
   
   deselectAllRecords: function(preventUpdateSelectInfo, autoSaveDone){
@@ -1126,7 +1127,7 @@ isc.OBViewGrid.addProperties({
     if (!this.view.hasNotChanged() || this.view.viewGrid.hasErrors()) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_UndoChanges'),
-        keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','Grid_CancelChanges','id'),
+        keyTitle: OB.KeyboardManager.Shortcuts.getProperty('keyComb.text','Grid_CancelChanges','id'),
         click: function(){
           grid.view.undo();
         }
@@ -1136,7 +1137,7 @@ isc.OBViewGrid.addProperties({
     if (singleSelected && this.canEdit && this.isWritable(record) && !this.view.readOnly) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_EditInGrid'),
-        keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','Grid_EditInGrid','id'),
+        keyTitle: OB.KeyboardManager.Shortcuts.getProperty('keyComb.text','ViewGrid_EditInGrid','id'),
         click: function(){
           grid.endEditing();
           if (colNum || colNum === 0) {
@@ -1157,7 +1158,7 @@ isc.OBViewGrid.addProperties({
     if (!this.view.singleRecord && !this.view.readOnly) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_CreateRecordInGrid'),
-        keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','ToolBar_NewRow','id'),
+        keyTitle: OB.KeyboardManager.Shortcuts.getProperty('keyComb.text','ToolBar_NewRow','id'),
         click: function(){
           grid.startEditingNew(rowNum);
         }
@@ -1208,7 +1209,7 @@ isc.OBViewGrid.addProperties({
     if (recordsSelected && !this.view.readOnly && !this.view.singleRecord && this.allSelectedRecordsWritable()) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_Delete'),
-        keyTitle: OB.KeyboardManager.KS.getProperty('keyComb.text','ToolBar_Eliminate','id'),
+        keyTitle: OB.KeyboardManager.Shortcuts.getProperty('keyComb.text','ToolBar_Eliminate','id'),
         click: function(){
           grid.view.deleteSelectedRows();
         }

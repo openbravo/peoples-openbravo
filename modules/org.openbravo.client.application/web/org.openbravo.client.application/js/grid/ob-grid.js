@@ -33,33 +33,64 @@ isc.OBGrid.addProperties({
   escapeHTML: true,
   bodyProperties: {canSelectText:true},
 
-  bodyKeyPress : function (event, eventInfo) {
-    var ctrlAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown(),
-      onlyAltDown = !isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown(),
-      onlyAltShiftDown = !isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && isc.EventHandler.shiftKeyDown();
-      
-    if (event.keyName === 'F' && !ctrlAltShiftDown) {
-      this.focusInFirstFilterEditor();
-      return false;
-    }
+  enableShortcuts: function() {
+    var me = this;
 
-    if (event.keyName === 'Delete' && onlyAltDown) {
-      this.clearFilter(true);
-      return false;
-    }
+    var ksAction_FocusFilter = function() {
+      me.focusInFirstFilterEditor();
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.Shortcuts.set('Grid_FocusFilter', 'OBGrid.body', ksAction_FocusFilter);
 
-    if (event.keyName === 'A' && onlyAltShiftDown) {
-      this.selectAllRecords();
-      return false;
-    }
+    var ksAction_FocusGrid = function() {
+      me.focus();
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.Shortcuts.set('Grid_FocusGrid', 'OBGrid.filter', ksAction_FocusGrid);
 
-    if (event.keyName === 'N' && onlyAltShiftDown) {
-      if (this.getSelectedRecords().length > 1) {
-        this.deselectAllRecords();
+    var ksAction_ClearFilter = function() {
+      me.clearFilter(true);
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.Shortcuts.set('Grid_ClearFilter', ['OBGrid.body', 'OBGrid.filter'], ksAction_ClearFilter);
+
+    var ksAction_SelectAll = function() {
+      me.selectAllRecords();
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.Shortcuts.set('Grid_SelectAll', 'OBGrid.body', ksAction_SelectAll);
+
+    var ksAction_UnselectAll = function() {
+      if (me.getSelectedRecords().length > 1) {
+        me.deselectAllRecords();
       }
-      return false;
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.Shortcuts.set('Grid_UnselectAll', 'OBGrid.body', ksAction_UnselectAll);
+  },
+
+  draw : function() {
+    this.enableShortcuts();
+    this.Super('draw', arguments);
+  },
+
+  bodyKeyPress : function (event, eventInfo) {
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.body');
+    if (response !== false) {
+      response = this.Super('bodyKeyPress', arguments);
     }
-    return this.Super('bodyKeyPress', arguments);
+    return response;
+  },
+
+  filterFieldsKeyDown: function(item, form, keyName) {
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBGrid.filter');
+    if (response !== false) {
+      if (isc.EventHandler.getKeyName() === 'Tab' && !isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown()) {
+        return false; // To avoid strange double field jump while pressing Tab Key
+      }
+      response = this.Super('filterFieldsKeyDown', arguments);
+    }
+    return response;
   },
 
   focusInFirstFilterEditor: function() {
@@ -129,31 +160,6 @@ isc.OBGrid.addProperties({
       return '';
     };
 
-    setFieldsKeyDown = function(item, form, keyName) {
-      var event = isc.EventHandler.getLastEvent();
-      var ctrlAltShiftDown = isc.EventHandler.ctrlKeyDown() || isc.EventHandler.altKeyDown() || isc.EventHandler.shiftKeyDown(),
-        onlyAltDown = !isc.EventHandler.ctrlKeyDown() && isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown(),
-        noCtrlAltDown = !isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown();
-
-      if (event.keyName === 'Escape' && !ctrlAltShiftDown && this.getEditForm()) {
-        this.cancelEditing();
-        return false;
-      }
-
-      if (isc.EventHandler.getKeyName() === 'Delete' && onlyAltDown) {
-        thisGrid.clearFilter(true);
-        return false;
-      }
-      if (isc.EventHandler.getKeyName() === 'Escape' && !ctrlAltShiftDown) {
-        thisGrid.focus();
-        return false;
-      }
-      if (isc.EventHandler.getKeyName() === 'Tab' && noCtrlAltDown) {
-        return false; // To avoid strange double field jump while pressing Tab Key
-      }
-      return this.Super('keyPress', arguments);
-    };
-
     if (this.fields) {
       for (i = 0; i < this.fields.length; i++) {
         field = this.fields[i];
@@ -162,7 +168,7 @@ isc.OBGrid.addProperties({
           field.filterEditorProperties = {};
         }
 
-        field.filterEditorProperties.keyDown = setFieldsKeyDown;
+        field.filterEditorProperties.keyDown = this.filterFieldsKeyDown;
 
         if (field.isLink) {
           // store the originalFormatCellValue if not already set

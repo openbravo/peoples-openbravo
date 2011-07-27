@@ -342,19 +342,29 @@ isc.OBSelectorItem.addProperties({
     
     this.pickListWidth = (fieldWidth < 150 ? 150 : fieldWidth) + extraWidth;
   },
-  
+
+  enableShortcuts: function() {
+    var me = this;
+    var ksAction_ShowPopup = function() {
+      me.openSelectorWindow();
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.Shortcuts.set('Selector_ShowPopup', ['OBSelectorItem', 'OBSelectorItem.icon'], ksAction_ShowPopup);
+  },
+
   init: function(){
+    this.enableShortcuts();
     this.icons = [{
       src: this.popupIconSrc,
       width: this.popupIconWidth,
       height: this.popupIconHeight,
       hspace: this.popupIconHspace,
       keyPress: function(keyName, character, form, item, icon){
-        if (keyName === 'Enter' && isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown()) {
-          item.openSelectorWindow();
-          return false;
+        var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorItem.icon');
+        if (response !== false) {
+          response = this.Super('keyPress', arguments);
         }
-        return true;
+        return response;
       },
       click: function(form, item, icon){
         item.openSelectorWindow();
@@ -463,11 +473,11 @@ isc.OBSelectorItem.addProperties({
   },
   
   keyPress: function(item, form, keyName, characterValue){
-    if (keyName === 'Enter' && isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown()) {
-      this.openSelectorWindow(form, item, null);
-      return false;
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorItem');
+    if (response !== false) {
+      response = this.Super('keyPress', arguments);
     }
-    return true;
+    return response;
   },
   
   pickValue: function(value){
@@ -610,11 +620,11 @@ isc.OBSelectorLinkItem.addProperties({
   },
   
   keyPress: function(item, form, keyName, characterValue){
-    if (keyName === 'Enter' && !isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown()) {
-      this.showPicker();
-      return false;
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorLinkItem');
+    if (response !== false) {
+      response = this.Super('keyPress', arguments);
     }
-    return true;
+    return response;
   },
   
   showPicker: function(){
@@ -664,7 +674,17 @@ isc.OBSelectorLinkItem.addProperties({
     }
   },
 
+  enableShortcuts: function() {
+    var me = this;
+    var ksAction_ShowPopup = function() {
+      me.showPicker();
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.Shortcuts.set('SelectorLink_ShowPopup', 'OBSelectorLinkItem' , ksAction_ShowPopup);
+  },
+
   init: function(){
+    this.enableShortcuts();
     if (this.disabled) {
       this.showPickerIcon = false;
     }

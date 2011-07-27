@@ -120,13 +120,13 @@ isc.OBStatusBarIconButton.addProperties( {
         }
         return false; //To avoid keyboard shortcut propagation
       };
-      OB.KeyboardManager.KS.set(this.keyboardShortcutId, ksAction);
+      OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'OBViewForm', ksAction);
     }
   },
 
   disableShortcut: function() {
     if (this.keyboardShortcutId) {
-      OB.KeyboardManager.KS.set(this.keyboardShortcutId, function(){
+      OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, null, function(){
         return true;
       });
     }

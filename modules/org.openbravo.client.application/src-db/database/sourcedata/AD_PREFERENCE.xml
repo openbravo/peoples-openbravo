@@ -41,10 +41,19 @@
   {"id": "StatusBar_Next", "keyComb": {"alt": true, "shift": true, "key": "Page_Down"}},
   {"id": "StatusBar_Maximize-Restore", "keyComb": {"alt": true, "shift": true, "key": "Enter"}},
   {"id": "StatusBar_Close", "keyComb": {"key": "Escape"}},
-  {"id": "Grid_EditInForm", "keyComb": {"ctrl": true, "alt": false, "key": "f2"}},
-  {"id": "Grid_EditInGrid", "keyComb": {"ctrl": false, "alt": false, "key": "f2"}},
-  {"id": "Grid_EditInGrid", "keyComb": {"ctrl": false, "alt": false, "key": "f2"}},
-  {"id": "Grid_CancelChanges", "keyComb": {"ctrl": false, "alt": false, "key": "Escape"}}
+  {"id": "Grid_FocusFilter", "keyComb": {"ctrl": true, "shift": true, "key": "F"}},
+  {"id": "Grid_FocusGrid", "keyComb": {"key": "Escape"}},
+  {"id": "Grid_ClearFilter", "keyComb": {"alt": true, "key": "Delete"}},
+  {"id": "Grid_SelectAll", "keyComb": {"alt": true, "shift": true, "key": "A"}},
+  {"id": "Grid_UnselectAll", "keyComb": {"alt": true, "shift": true, "key": "N"}},
+  {"id": "ViewGrid_EditInForm", "keyComb": {"ctrl": true, "key": "f2"}},
+  {"id": "ViewGrid_EditInGrid", "keyComb": {"key": "f2"}},
+  {"id": "ViewGrid_CancelEditing", "keyComb": {"key": "Escape"}},
+  {"id": "ViewGrid_DeleteSelectedRecords", "keyComb": {"key": "Delete"}},
+  {"id": "ViewGrid_CancelChanges", "keyComb": {"key": "Escape"}},
+  {"id": "ViewForm_OpenLinkOut", "keyComb": {"ctrl": true, "alt": true, "key": "Enter"}},
+  {"id": "Selector_ShowPopup", "keyComb": {"ctrl": true, "key": "Enter"}},
+  {"id": "SelectorLink_ShowPopup", "keyComb": {"ctrl": true, "key": "Enter"}}
 ]]]></VALUE>
 <!--5EE6D055A7FE4C4DA7EB557F6C61D0EA-->  <PROPERTY><![CDATA[OBUIAPP_KeyboardShortcuts]]></PROPERTY>
 <!--5EE6D055A7FE4C4DA7EB557F6C61D0EA-->  <ISPROPERTYLIST><![CDATA[Y]]></ISPROPERTYLIST>
