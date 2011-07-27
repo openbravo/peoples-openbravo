@@ -20,7 +20,8 @@
 /* =====================================================================
  * Styling properties for:
  * 1) OB Form items
- * 2) SectionItem Button Styles
+ * 2) OBImageItem
+ * 3) SectionItem Button Styles
  * 3) Attachments Styles
  =======================================================================*/
 
@@ -391,6 +392,42 @@ isc.RelativeDateItem.changeDefaults('calculatedDateFieldDefaults', {
   canFocus: false,
   disabled: true,
   showDisabled: false
+});
+
+/* =====================================================================
+ * OBImageItem
+ =======================================================================*/
+
+isc.OBImageItemSmallImage.addProperties({
+  styleName: 'OBImageItemSmallImage',
+  cursor: 'pointer'
+});
+
+isc.OBImageItemSmallImageContainer.addProperties({
+  styleName: 'OBImageItemSmallImageContainer',
+  cursor: 'pointer',
+  width:'100%',
+  height: '100%',
+  align: 'center',
+  defaultLayoutAlign: 'center'
+});
+
+isc.OBImageItemButton.addProperties({
+  showRollOver: true,
+  showDisabled: true,
+  showDown: true,
+  showFocusedAsOver: true,
+  width: 21,
+  height: 21,
+  uploadIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/upload_icon.png',
+  eraseIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/erase_icon.png',
+  initWidgetStyle: function() {
+    if (this.buttonType === 'upload') {
+      this.setSrc(this.uploadIconSrc);
+    } else if (this.buttonType === 'erase') {
+      this.setSrc(this.eraseIconSrc);
+    }
+  }
 });
 
 /* =====================================================================

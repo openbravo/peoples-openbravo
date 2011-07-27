@@ -17,19 +17,76 @@
  ************************************************************************
  */
 
+//== OBImageItemSmallImage ==
+//This class is used for the small image shown within the OBImageItemSmallImageContainer
+isc.ClassFactory.defineClass('OBImageItemSmallImage', isc.Img);
+
+isc.OBImageItemSmallImage.addProperties({
+  imageType: "stretch"
+});
+
+//== OBImageItemSmallImageContainer ==
+//This class is used for the small image container box
+isc.ClassFactory.defineClass('OBImageItemSmallImageContainer', isc.HLayout);
+
+isc.OBImageItemSmallImageContainer.addProperties({
+  imageItem: null,
+  click: function() {
+    var imageId=this.imageItem.getValue();
+    if (!imageId) {
+      return;
+    }
+    var d = {
+      inpimageId: imageId,
+      command: 'GETSIZE'
+    };
+    OB.RemoteCallManager.call('org.openbravo.client.application.window.ImagesActionHandler', {}, d, function(response, data, request){
+      var pageHeight = Page.getHeight()-100;
+      var pageWidth = Page.getWidth()-100;
+      var height;
+      var width;
+      var ratio = data.width/data.height;
+      if (ratio > pageWidth/pageHeight) {
+        width = data.width > pageWidth?pageWidth:data.width;
+        height = width/ratio;
+      } else {
+        height = data.height > pageHeight?pageHeight:data.height;
+        width = height*ratio;
+      }
+      var imagePopup = isc.OBPopup.create({
+        height: height,
+        width: width,
+        showMinimizeButton : false,
+        showMaximizeButton : false
+      });
+      var image = isc.OBImageItemBigImage.create({
+        popupContainer: imagePopup,
+        height: height,
+        width: width,
+        click: function() { this.popupContainer.closeClick(); },
+        cursor: 'pointer',
+        src: "../utility/ShowImage?id=" + imageId + '&nocache=' + Math.random(),
+        align: 'center'
+      });
+      image.setImageType('stretch');
+      imagePopup.addItem(image);
+      imagePopup.show();
+    });
+  }
+});
+
+//== OBImageItemBigImage ==
+//This class is used for the big image shown within the popup
+isc.ClassFactory.defineClass('OBImageItemBigImage', isc.Img);
+
 //== OBImageItemButton ==
 //This class is used for the buttons shown in the OBImageItem
-isc.ClassFactory.defineClass('OBImageItemButton', isc.OBToolbarIconButton);
+isc.ClassFactory.defineClass('OBImageItemButton', isc.ImgButton);
 
 isc.OBImageItemButton.addProperties({
-  buttonType: 'selector',
-  customState: '',
-  initWidget: function(){
-    this.Super('initWidget', arguments);
-    this.resetBaseStyle();
-  },
-  resetBaseStyle: function(){
-    this.setBaseStyle('OBImageItemButton_' + this.buttonType + this.customState);
+  initWidget: function() {
+    this.initWidgetStyle();
+    return this.Super('initWidget', arguments);
   }
 });
 
@@ -41,64 +98,17 @@ isc.ClassFactory.defineClass('OBImageCanvas', isc.HLayout);
 OBImageCanvas.addProperties({
     height: '0px',
     initWidget: function(){
-      var imageLayout = isc.HLayout.create({
-        width:'100%',
-        height: '100%',
-        border: '1px solid #CDD7BB',
-        align: 'center',
-        cursor: 'pointer',
-        defaultLayoutAlign: 'center',
-        imageItem: this.creator,
-        click: function(){
-          var imageId=this.imageItem.getValue();
-          if(!imageId){
-            return;
-          }
-          var d = {
-            inpimageId: imageId,
-            command: 'GETSIZE'
-          };
-          OB.RemoteCallManager.call('org.openbravo.client.application.window.ImagesActionHandler', {}, d, function(response, data, request){
-            var pageHeight = Page.getHeight()-100;
-            var pageWidth = Page.getWidth()-100;
-            var height;
-            var width;
-            var ratio = data.width/data.height;
-            if(ratio>pageWidth/pageHeight){
-              width = data.width>pageWidth?pageWidth:data.width;
-              height = width/ratio;
-            }else{
-              height = data.height>pageHeight?pageHeight:data.height;
-              width = height*ratio;
-            }
-            var imagePopup = isc.OBPopup.create({
-              height: height,
-              width: width,
-              showMinimizeButton : false,
-              showMaximizeButton : false
-            });
-            var image = isc.Img.create({
-              height: height,
-              width: width,
-              src: "../utility/ShowImage?id="+imageId+'&nocache='+Math.random(),
-              align: 'center'
-            });
-            image.setImageType('stretch');
-            imagePopup.addItem(image);
-            imagePopup.show();
-          });
-        }
+      var imageLayout = isc.OBImageItemSmallImageContainer.create({
+        imageItem: this.creator
       });
-      if(this.creator.required){
-        imageLayout.setBackgroundColor('#FFFFCC');
-      }else{
-        imageLayout.setBackgroundColor('#F5F7F1');
+      if (this.creator.required) {
+        imageLayout.setStyleName(imageLayout.styleName + 'Required');
+      } else {
+        imageLayout.setStyleName(imageLayout.styleName);
       }
       this.addMember(imageLayout);
-      this.image=isc.Img.create({
-        width: '100%',
-        cursor: 'pointer',
-        imageType: "stretch"
+      this.image=isc.OBImageItemSmallImage.create({
+        width: '100%'
       });
       imageLayout.addMember(this.image);
       this.image.setSrc('../web/skins/ltr/Default/Common/Image/imageNotAvailable_medium.png');
@@ -106,7 +116,7 @@ OBImageCanvas.addProperties({
           width: '1%'
       });
       var selectorButton = isc.OBImageItemButton.create({
-          buttonType: 'selector',
+          buttonType: 'upload',
           imageItem: this.creator,
           action: function(){
             var selector = isc.OBImageSelector.create({
@@ -118,7 +128,7 @@ OBImageCanvas.addProperties({
           }
       });
       var deleteButton = isc.OBImageItemButton.create({
-        buttonType: 'delete',
+        buttonType: 'erase',
         imageItem: this.creator,
         deleteFunction: function(){
           var imageId = this.imageItem.getValue();
