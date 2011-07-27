@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,7 +19,7 @@
 // = ClassicOBCompatibility =
 //
 // The ClassicOBCompatibility handles the interaction between the classic OB window
-// and the {{{Main View}}}. This includes opening views from the linked items display, 
+// and the {{{Main View}}}. This includes opening views from the linked items display,
 // from direct links in other tabs.
 //
 (function(OB, isc){
@@ -30,19 +30,19 @@
       message: 'openbravo and isc objects are required'
     };
   }
-  
+
   // cache object references locally
   var O = OB, L = OB.Layout, M = OB.MainView, ISC = isc, cobcomp; // Local
   // reference
   // to
   // ClassicOBCompatibility
   // instance
-  
+
   function ClassicOBCompatibility(){
   }
-  
+
   ClassicOBCompatibility.prototype = {
-  
+
     // ** {{{ openLinkedItem(tabId, recordId) }}} **
     //
     // Opens a window from the linked item view.
@@ -53,7 +53,7 @@
     //
     openLinkedItem: function(tabId, recordId){
       var doOpenClassicWindow = function(response, data, request){
-      
+
         if (!data.recordId || data.recordId.length === 0) {
           L.ViewManager.openView('OBClassicWindow', {
             tabTitle: data.tabTitle,
@@ -74,13 +74,13 @@
           });
         }
       };
-      
+
       OB.RemoteCallManager.call('org.openbravo.client.application.ComputeWindowActionHandler', {}, {
         'tabId': tabId,
         'recordId': recordId
       }, doOpenClassicWindow);
     },
-    
+
     // ** {{{ sendDirectLink(action, form) }}} **
     //
     // Shows a new tab with the clicked link content
@@ -169,7 +169,7 @@
         }
         return paramsObj;
       }
-      
+
       //
       // Function used by the {{ ISC.RPCManager }} after receiving the
       // target address from the back-end
@@ -177,7 +177,7 @@
       function fetchSendDirectLinkCallback(/* Object */response, /* String */ data){
         OB.Utilities.openView(data.windowId, data.tabId, data.tabTitle, data.recordId);
       }
-      
+
       //
       // Fetch the target address from the server. After fetching
       // the implementation, stores a reference in the cache
@@ -189,7 +189,7 @@
         // hardcode to prevent this issue with chrome:
         // https://issues.openbravo.com/view.php?id=13837
         var actionURL = OB.Application.contextUrl + 'utility/ReferencedLink.html';
-        
+
         var rpcMgr = ISC.RPCManager;
         var reqObj = {
           params: paramsObj,
@@ -203,7 +203,7 @@
       }
       fetchSendDirectLink(action, form);
     },
-    
+
     setTabInformation: function(windowId, tabId, recordId, mode, obManualURL, title){
       var tabNumber = null, tabSet, tabPane;
       tabSet = M.TabSet;
@@ -214,11 +214,11 @@
       } else if (tabId) {
         tabNumber = L.ViewManager.views.getTabNumberFromViewParam('tabId', tabId);
       }
-      
+
       if (!tabNumber) {
         tabNumber = tabSet.getTabNumber(tabSet.getSelectedTab());
       }
-      
+
       if (tabNumber === null) {
         return false;
       }
@@ -368,7 +368,7 @@
         cobcomp.Popup.postOpen(cPopup, postParams);
         OB.Utilities.registerClassicPopupInTestRegistry(url, cPopup);
       },
-      
+
       // ** {{{ Popup.postOpen(cPopup, postParams) }}} **
       //
       // Actions to be performed once the popup is draw.
@@ -435,7 +435,7 @@
         }
         cPopup.isLoaded = true;
       },
-      
+
       // ** {{{ Popup.close(name) }}} **
       //
       // Closes a popup
@@ -446,7 +446,7 @@
         name = name + '_' + cobcomp.Popup.secString;
         window[name].closeClick();
       },
-      
+
       // ** {{{ Popup.close(name, width, height) }}} **
       //
       // Resizes a poup
@@ -459,7 +459,7 @@
         name = name + '_' + cobcomp.Popup.secString;
         window[name].resizeTo(width, height);
       },
-      
+
       // ** {{{ Popup.setTitle(name, title) }}} **
       //
       // Sets the window title
@@ -471,7 +471,7 @@
         name = name + '_' + cobcomp.Popup.secString;
         window[name].setTitle(title);
       },
-      
+
       // ** {{{ Popup.isLoaded(name) }}} **
       //
       // Function to know if a popup is already opened (and ready) or not
@@ -486,82 +486,85 @@
           return false;
         }
       },
-      
-      
+
+
       /** Upgrading process pop ups **/
       standardUpgrading: function(){
         var actionButton = isc.addProperties({}, isc.Dialog.OK, {
-              getTitle: function() {
-                  return '<b>'+OB.I18N.getLabel('OBUIAPP_LogOut')+'</b>';
-                },
-                click: function() {
-                  this.topElement.cancelClick();
-                  OB.Utilities.logout(true);
-                }});
-    	  
-    	isc.confirm(OB.I18N.getLabel('OBUIAPP_UpgradeDesc'), {
-              isModal: true,
-              showModalMask: true,
-              title: OB.I18N.getLabel('OBUIAPP_UpgradeTitle'),
-              toolbarButtons: [actionButton, isc.Dialog.CANCEL]
+          getTitle: function() {
+            return '<b>'+OB.I18N.getLabel('OBUIAPP_LogOut')+'</b>';
+          },
+          click: function() {
+            this.topElement.cancelClick();
+            OB.Utilities.logout(true);
+          }
+        });
+
+        isc.confirm(OB.I18N.getLabel('OBUIAPP_UpgradeDesc'), {
+          isModal: true,
+          showModalMask: true,
+          title: OB.I18N.getLabel('OBUIAPP_UpgradeTitle'),
+          toolbarButtons: [actionButton, isc.Dialog.CANCEL]
         });
       },
-      
+
       openAPRMPopup:function() {
-  
-    	  var actionButton = isc.addProperties({}, isc.Dialog.OK, {
-              getTitle: function() {
-                  return '<b>'+OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMBtn')+'</b>';
-                },
-                click: function() {
-                  this.topElement.cancelClick();
-                  OB.Layout.ViewManager.openView('OBClassicWindow',
-                      {command: "DEFAULT",
-                	  formId: "E4F4AAC7DD6D4FBDA3AF973B7767F374",
-                	  icon: "Form",
-                	  id: "/org.openbravo.erputil.aprmigrationtool.ad_forms/MigrationTool.html",
-                	  obManualURL: "/org.openbravo.erputil.aprmigrationtool.ad_forms/MigrationTool.html",
-                	  tabTitle: OB.I18N.getLabel('APRMT_MigrationToolTitle'),
-                	  viewId: "OBClassicWindow"});
-                }});
-    	  
-    	  isc.confirm(OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMDesc'), {
-              isModal: true,
-              showModalMask: true,
-              title: OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMTitle'),
-              toolbarButtons: [actionButton, isc.Dialog.CANCEL]
-          });
-      },
-      
-      openConfigScriptPopup: function(scripts) {
-    	  var actionButton = isc.addProperties({}, isc.Dialog.OK, {
-              click: function() {
-                this.topElement.cancelClick();
-              }});
-  	  
-  	     isc.confirm(OB.I18N.getLabel('OBUIAPP_UpgradeScriptDesc', [scripts]), {
-            isModal: true,
-            showModalMask: true,
-            title: OB.I18N.getLabel('OBUIAPP_UpgradeScriptTitle'),
-            toolbarButtons: [actionButton]
+        var actionButton = isc.addProperties({}, isc.Dialog.OK, {
+          getTitle: function() {
+              return '<b>'+OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMBtn')+'</b>';
+          },
+          click: function() {
+            this.topElement.cancelClick();
+            OB.Layout.ViewManager.openView('OBClassicWindow',
+                {command: "DEFAULT",
+              formId: "E4F4AAC7DD6D4FBDA3AF973B7767F374",
+              icon: "Form",
+              id: "/org.openbravo.erputil.aprmigrationtool.ad_forms/MigrationTool.html",
+              obManualURL: "/org.openbravo.erputil.aprmigrationtool.ad_forms/MigrationTool.html",
+              tabTitle: OB.I18N.getLabel('APRMT_MigrationToolTitle'),
+              viewId: "OBClassicWindow"});
+          }
+        });
+
+        isc.confirm(OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMDesc'), {
+          isModal: true,
+          showModalMask: true,
+          title: OB.I18N.getLabel('OBUIAPP_UpgradeRunAPRMTitle'),
+          toolbarButtons: [actionButton, isc.Dialog.CANCEL]
         });
       },
-      
+
+      openConfigScriptPopup: function(scripts) {
+        var actionButton = isc.addProperties({}, isc.Dialog.OK, {
+          click: function() {
+            this.topElement.cancelClick();
+          }
+        });
+
+        isc.confirm(OB.I18N.getLabel('OBUIAPP_UpgradeScriptDesc', [scripts]), {
+          isModal: true,
+          showModalMask: true,
+          title: OB.I18N.getLabel('OBUIAPP_UpgradeScriptTitle'),
+          toolbarButtons: [actionButton]
+        });
+      },
+
       openSuccessUpgradePopup: function() {
-    	  var actionButton = isc.addProperties({}, isc.Dialog.OK, {
-                click: function() {
-                  this.topElement.cancelClick();
-                  OB.PropertyStore.set('isUpgrading', 'N', null, false, true);
-                }});
-    	  
-    	  isc.confirm(OB.I18N.getLabel('OBUIAPP_UpgradeEndDesc'), {
-              isModal: true,
-              showModalMask: true,
-              title: OB.I18N.getLabel('OBUIAPP_UpgradeEndTitle'),
-              toolbarButtons: [actionButton]
-          });
-      }, 
-      
+        var actionButton = isc.addProperties({}, isc.Dialog.OK, {
+          click: function() {
+            this.topElement.cancelClick();
+            OB.PropertyStore.set('isUpgrading', 'N', null, false, true);
+          }
+        });
+
+        isc.confirm(OB.I18N.getLabel('OBUIAPP_UpgradeEndDesc'), {
+          isModal: true,
+          showModalMask: true,
+          title: OB.I18N.getLabel('OBUIAPP_UpgradeEndTitle'),
+          toolbarButtons: [actionButton]
+        });
+      },
+
       /** Particular windows * */
       // ** {{{ Popup.openInstancePurpose() }}} **
       //
@@ -569,7 +572,7 @@
       openInstancePurpose: function(){
         cobcomp.Popup.open('InstancePurpose', 600, 500, OB.Application.contextUrl + 'ad_forms/InstancePurpose.html', '', window, false, false, true);
       },
-      
+
       // ** {{{ Popup.openHeartbeat() }}} **
       //
       // Opens directly the "Heartbeat" window inside a popup
