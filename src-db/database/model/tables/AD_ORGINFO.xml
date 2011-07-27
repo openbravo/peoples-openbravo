@@ -69,6 +69,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AD_USER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_AD_ORGINFO" onDelete="cascade">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -83,6 +87,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_IMAGE" name="AD_ORGINFO_IMAGEDOCUM">
         <reference local="YOUR_COMPANY_DOCUMENT_IMAGE" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="AD_USER_AD_ORGINFO">
+        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_LOCATION" name="C_LOCATION_AD_ORGINFO">
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
