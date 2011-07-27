@@ -27,6 +27,7 @@
     * Title: Check in deleting, invoice not processed
     ************************************************************************/
    v_Posted VARCHAR2(32) ;
+   v_HasReversal CHAR(1);
         
 BEGIN
     
@@ -86,6 +87,12 @@ BEGIN
 		SELECT POSTED INTO v_Posted 
 		FROM C_INVOICE
 		WHERE C_INVOICE_ID = :OLD.C_INVOICE_ID;
+
+		-- Looking if the invoice has reversal invoices
+		SELECT 'Y' as hasreversal
+		INTO v_HasReversal
+		FROM DUAL 
+		WHERE EXISTS (SELECT 1 FROM C_INVOICE_REVERSE WHERE C_INVOICE_ID = :OLD.C_INVOICE_ID);
 	END IF;
 
 	IF :OLD.FIN_PAYMENT_ID IS NOT NULL THEN
@@ -103,6 +110,12 @@ BEGIN
 	IF(v_Posted='Y')
 		THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
 	END IF;
+	IF (v_HasReversal='Y') THEN
+		  RAISE_APPLICATION_ERROR(-20000, '@InvoiceHasReversal@');
+	END IF;
+
+	
+	
     END IF;
     
     
