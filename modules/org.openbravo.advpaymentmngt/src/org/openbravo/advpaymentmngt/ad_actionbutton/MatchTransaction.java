@@ -995,8 +995,33 @@ public class MatchTransaction extends HttpSecureAppServlet {
 
           // Duplicate bank statement line with pending amount
           FIN_BankStatementLine clonedBSLine = (FIN_BankStatementLine) DalUtil.copy(bsl, true);
-          clonedBSLine.setCramount(bsl.getCramount().subtract(trx.getDepositAmount()));
-          clonedBSLine.setDramount(bsl.getDramount().subtract(trx.getPaymentAmount()));
+
+          BigDecimal credit = bsl.getCramount().subtract(trx.getDepositAmount());
+          BigDecimal debit = bsl.getDramount().subtract(trx.getPaymentAmount());
+
+          clonedBSLine.setCramount(credit);
+          clonedBSLine.setDramount(debit);
+
+          if (credit.compareTo(BigDecimal.ZERO) != 0 && debit.compareTo(BigDecimal.ZERO) != 0) {
+            BigDecimal total = credit.subtract(debit);
+            if (total.compareTo(BigDecimal.ZERO) == -1) {
+              clonedBSLine.setCramount(BigDecimal.ZERO);
+              clonedBSLine.setDramount(total.abs());
+            } else {
+              clonedBSLine.setCramount(total);
+              clonedBSLine.setDramount(BigDecimal.ZERO);
+            }
+          } else {
+            if (credit.compareTo(BigDecimal.ZERO) == -1) {
+              clonedBSLine.setCramount(BigDecimal.ZERO);
+              clonedBSLine.setDramount(credit.abs());
+            }
+            if (debit.compareTo(BigDecimal.ZERO) == -1) {
+              clonedBSLine.setDramount(BigDecimal.ZERO);
+              clonedBSLine.setCramount(debit.abs());
+            }
+
+          }
 
           // link bank statement line with the transaction
           bsl.setFinancialAccountTransaction(trx);
@@ -1062,8 +1087,19 @@ public class MatchTransaction extends HttpSecureAppServlet {
         OBDal.getInstance().remove(bsl);
       }
 
-      bsline.setCramount(totalCredit);
-      bsline.setDramount(totalDebit);
+      if (totalCredit.compareTo(BigDecimal.ZERO) != 0 && totalDebit.compareTo(BigDecimal.ZERO) != 0) {
+        BigDecimal total = totalCredit.subtract(totalDebit);
+        if (total.compareTo(BigDecimal.ZERO) == -1) {
+          bsline.setCramount(BigDecimal.ZERO);
+          bsline.setDramount(total.abs());
+        } else {
+          bsline.setCramount(total);
+          bsline.setDramount(BigDecimal.ZERO);
+        }
+      } else {
+        bsline.setCramount(totalCredit);
+        bsline.setDramount(totalDebit);
+      }
 
       OBDal.getInstance().save(bsline);
       OBDal.getInstance().flush();
