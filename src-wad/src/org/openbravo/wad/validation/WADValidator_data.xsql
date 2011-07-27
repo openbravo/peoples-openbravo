@@ -270,10 +270,10 @@
         and m.ad_module_id = i.ad_module_id
         and t.ad_tab_id = i.ad_tab_id
         and t.ad_module_id <> i.ad_module_id
-        and exists (select 1 
+        and not exists (select 1 
                      from AD_Module_DBPrefix p
                     where p.AD_Module_ID = i.AD_Module_ID
-                      and instr(upper(i.NAME), upper(p.name)||'_') != 1)
+                      and instr(upper(i.NAME), upper(p.name)||'_') = 1)
         and (m.javapackage in ('1') or to_char('Y')=to_char(?))
       ]]>
     </Sql>
