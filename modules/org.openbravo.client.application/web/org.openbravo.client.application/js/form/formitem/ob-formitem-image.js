@@ -191,9 +191,9 @@ isc.OBImageItem.addProperties({
   shouldSaveValue: true,
   canvasConstructor: 'OBImageCanvas',
   setValue: function(newValue){
-    if(!newValue || newValue === ''){
+    if(!newValue || newValue === '') {
       this.canvas.setImage('../web/skins/ltr/Default/Common/Image/imageNotAvailable_medium.png');
-    }else{
+    } else {
       this.canvas.setImage("../utility/ShowImage?id="+newValue+'&nocache='+Math.random());
       var d = {
         inpimageId: newValue,
@@ -204,20 +204,20 @@ isc.OBImageItem.addProperties({
       OB.RemoteCallManager.call('org.openbravo.client.application.window.ImagesActionHandler', {}, d, function(response, data, request){
         var maxHeight = imageLayout.getHeight() - 12;
         var maxWidth = imageLayout.getWidth() - 12;
-        var maxRatio = maxHeight/maxWidth;
+        var maxRatio = maxWidth/maxHeight;
 
         var imgHeight = data.height;
         var imgWidth = data.width;
-        var imgRatio = imgHeight/imgWidth;
+        var imgRatio = imgWidth/imgHeight;
 
         if (imgHeight < maxHeight && imgWidth < maxWidth) {
           image.setHeight(imgHeight);
           image.setWidth(imgWidth);
-        } else if (imgRatio > maxRatio) {
+        } else if (imgRatio < maxRatio) {
           image.setHeight(maxHeight);
-          image.setWidth(maxHeight/imgRatio);
+          image.setWidth(maxHeight*imgRatio);
         } else {
-          image.setHeight(maxWidth*imgRatio);
+          image.setHeight(maxWidth/imgRatio);
           image.setWidth(maxWidth);
         }
       });
