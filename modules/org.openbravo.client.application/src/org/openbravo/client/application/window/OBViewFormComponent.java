@@ -627,6 +627,9 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public long getColSpan() {
+      if (field.getObuiappColspan() != null) {
+        return field.getObuiappColspan();
+      }
       return field.getDisplayedLength() > ONE_COLUMN_MAX_LENGTH
           || (getRowSpan() == 2 && !property.getDomainType().getReference().getId()
               .equals(IMAGEBLOB_AD_REFERENCE_ID)) ? 2 : 1;
@@ -637,6 +640,9 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     public long getRowSpan() {
+      if (field.getObuiappRowspan() != null) {
+        return field.getObuiappRowspan();
+      }
       if (property.getDomainType().getReference().getId().equals(TEXT_AD_REFERENCE_ID)) {
         return 2;
       }
