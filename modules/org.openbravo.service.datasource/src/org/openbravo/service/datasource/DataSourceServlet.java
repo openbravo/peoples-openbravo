@@ -196,32 +196,37 @@ public class DataSourceServlet extends BaseKernelServlet {
         }
         if ("csv".equals(exportAs)) {
           try {
-            Window window = parameters.get("tab") == null
-                || parameters.get("tab").equals("undefined") ? null : OBDal.getInstance()
-                .get(Tab.class, parameters.get("tab")).getWindow();
-            String encoding = Preferences.getPreferenceValue("OBSERDS_CSVTextEncoding", true,
-                OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                    .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                    .getOBContext().getRole(), window);
-            response.setContentType("text/csv; charset=" + encoding);
-          } catch (PropertyNotFoundException e) {
-            // There is no preference for encoding, using standard one which works on Excel
-            response.setContentType("text/csv; charset=iso-8859-1");
-          }
-          response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
-          if (getDataSource(request) instanceof DefaultDataSourceService) {
-            QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters,
-                getDataSource(request).getEntity());
-            ((DefaultDataSourceService) getDataSource(request)).fetch(parameters, writer);
-          } else {
-            String result = getDataSource(request).fetch(parameters);
-            JSONObject jsonResult = new JSONObject(result);
-            JSONArray data = jsonResult.getJSONObject("response").getJSONArray("data");
-            QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters,
-                getDataSource(request).getEntity());
-            for (int i = 0; i < data.length(); i++) {
-              writer.write(data.getJSONObject(i));
+            OBContext.setAdminMode();
+            try {
+              Window window = parameters.get("tab") == null
+                  || parameters.get("tab").equals("undefined") ? null : OBDal.getInstance()
+                  .get(Tab.class, parameters.get("tab")).getWindow();
+              String encoding = Preferences.getPreferenceValue("OBSERDS_CSVTextEncoding", true,
+                  OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                      .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                      .getOBContext().getRole(), window);
+              response.setContentType("text/csv; charset=" + encoding);
+            } catch (PropertyNotFoundException e) {
+              // There is no preference for encoding, using standard one which works on Excel
+              response.setContentType("text/csv; charset=iso-8859-1");
             }
+            response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
+            if (getDataSource(request) instanceof DefaultDataSourceService) {
+              QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters,
+                  getDataSource(request).getEntity());
+              ((DefaultDataSourceService) getDataSource(request)).fetch(parameters, writer);
+            } else {
+              String result = getDataSource(request).fetch(parameters);
+              JSONObject jsonResult = new JSONObject(result);
+              JSONArray data = jsonResult.getJSONObject("response").getJSONArray("data");
+              QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters,
+                  getDataSource(request).getEntity());
+              for (int i = 0; i < data.length(); i++) {
+                writer.write(data.getJSONObject(i));
+              }
+            }
+          } finally {
+            OBContext.restorePreviousMode();
           }
         } else {
           log.error("Unsupported export format: " + exportAs);
