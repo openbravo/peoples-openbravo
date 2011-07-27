@@ -98,7 +98,7 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
       for (int i = 0; data != null && i < data.length; i++) {
         String strSequence = SequenceIdData.getUUID();
         String strDocumentNo = Utility.getDocumentNo(this, vars, windowId, "GL_Journal",
-            Utility.getContext(this, vars, "C_DocTypeTarget_ID", "132"), data[i].cDoctypeId, false,
+            "", data[i].cDoctypeId, false,
             true);
         try {
           if (CopyFromGLJournalData.insertGLJournal(conn, this, strSequence, vars.getClient(),
