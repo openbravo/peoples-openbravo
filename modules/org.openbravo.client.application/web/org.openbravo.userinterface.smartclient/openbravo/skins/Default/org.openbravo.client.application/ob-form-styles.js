@@ -404,7 +404,7 @@ isc.OBImageItem.addProperties({
 });
 
 isc.OBImageItemSmallImageContainer.addProperties({
-  styleName: 'OBImageItemSmallImageContainer',
+  styleName: 'OBFormFieldImageInput',
   height: 66,
   width:'100%',
   cursor: '', //To allow set the cursor from the CSS

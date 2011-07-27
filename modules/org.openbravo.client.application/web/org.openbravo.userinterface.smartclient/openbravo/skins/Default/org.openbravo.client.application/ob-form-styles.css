@@ -126,7 +126,10 @@
 .OBFormFieldNumberInputRequiredFocused,
 .OBFormFieldNumberInputRequiredDisabled,
 .OBFormFieldNumberInputRequiredError,
-.OBFormFieldNumberInputRequiredHint {
+.OBFormFieldNumberInputRequiredHint,
+
+.OBFormFieldImageInput,
+.OBFormFieldImageInputRequired {
   font-family: arial, sans-serif;
   font-size: 12px;
   padding: 2px 2px 0px 2px;
@@ -209,7 +212,10 @@
 .OBFormFieldNumberInputRequiredDisabled,
 .OBFormFieldNumberInputRequiredFocused,
 .OBFormFieldNumberInputRequiredError,
-.OBFormFieldNumberInputRequiredHint {
+.OBFormFieldNumberInputRequiredHint,
+
+.OBFormFieldImageInput,
+.OBFormFieldImageInputRequired {
   border: 1px solid #cdd7bb;
   background-color: #F5F7F1;
   color: #333333;
@@ -401,8 +407,10 @@
 .OBFormFieldNumberInputRequired,
 .OBFormFieldNumberInputRequiredFocused,
 .OBFormFieldNumberInputRequiredError,
-.OBFormFieldNumberInputRequiredHint {
-  background-color: #ffffcc;  
+.OBFormFieldNumberInputRequiredHint,
+
+.OBFormFieldImageInputRequired {
+  background-color: #ffffcc;
 }
 
 /*=======================================================================
@@ -729,18 +737,9 @@
  * Image Item
 =======================================================================*/
 
-.OBImageItemSmallImageContainer,
-.OBImageItemSmallImageContainerRequired {
-  border: #CDD7BB 1px solid;
+.OBFormFieldImageInput,
+.OBFormFieldImageInputRequired {
   cursor: url("images/system/zoomIn.cur"), pointer;
-}
-
-.OBImageItemSmallImageContainer {
-  background-color: #F5F7F1;
-}
-
-.OBImageItemSmallImageContainerRequired {
-  background-color: #FFFFCC;
 }
 
 .OBImageItemSmallImage img {
