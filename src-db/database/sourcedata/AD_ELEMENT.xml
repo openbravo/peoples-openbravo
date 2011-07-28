@@ -14367,6 +14367,18 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800493-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800493--></AD_ELEMENT>
 
+<!--800494--><AD_ELEMENT>
+<!--800494-->  <AD_ELEMENT_ID><![CDATA[800494]]></AD_ELEMENT_ID>
+<!--800494-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800494-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800494-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800494-->  <COLUMNNAME><![CDATA[Datadate]]></COLUMNNAME>
+<!--800494-->  <NAME><![CDATA[Test Date]]></NAME>
+<!--800494-->  <PRINTNAME><![CDATA[Datadate]]></PRINTNAME>
+<!--800494-->  <HELP><![CDATA[Date when the data was taken.]]></HELP>
+<!--800494-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800494--></AD_ELEMENT>
+
 <!--800495--><AD_ELEMENT>
 <!--800495-->  <AD_ELEMENT_ID><![CDATA[800495]]></AD_ELEMENT_ID>
 <!--800495-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -14378,6 +14390,18 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800495-->  <HELP><![CDATA[Delay in days from the beginning of the case to perform the test.]]></HELP>
 <!--800495-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800495--></AD_ELEMENT>
+
+<!--800496--><AD_ELEMENT>
+<!--800496-->  <AD_ELEMENT_ID><![CDATA[800496]]></AD_ELEMENT_ID>
+<!--800496-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800496-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800496-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800496-->  <COLUMNNAME><![CDATA[MA_Pc_Case_ID]]></COLUMNNAME>
+<!--800496-->  <NAME><![CDATA[Periodic Quality Control Case]]></NAME>
+<!--800496-->  <PRINTNAME><![CDATA[PC Case]]></PRINTNAME>
+<!--800496-->  <HELP><![CDATA[Identifies each instance of a periodic control.]]></HELP>
+<!--800496-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800496--></AD_ELEMENT>
 
 <!--800497--><AD_ELEMENT>
 <!--800497-->  <AD_ELEMENT_ID><![CDATA[800497]]></AD_ELEMENT_ID>
@@ -14391,6 +14415,18 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800497-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800497--></AD_ELEMENT>
 
+<!--800498--><AD_ELEMENT>
+<!--800498-->  <AD_ELEMENT_ID><![CDATA[800498]]></AD_ELEMENT_ID>
+<!--800498-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800498-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800498-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800498-->  <COLUMNNAME><![CDATA[MA_Pc_Value_ID]]></COLUMNNAME>
+<!--800498-->  <NAME><![CDATA[Periodic Quality Control Value]]></NAME>
+<!--800498-->  <PRINTNAME><![CDATA[PC Value]]></PRINTNAME>
+<!--800498-->  <HELP><![CDATA[Identifies each result of a test in a periodic control case.]]></HELP>
+<!--800498-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800498--></AD_ELEMENT>
+
 <!--800499--><AD_ELEMENT>
 <!--800499-->  <AD_ELEMENT_ID><![CDATA[800499]]></AD_ELEMENT_ID>
 <!--800499-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -14402,6 +14438,30 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800499-->  <HELP><![CDATA[Identifies a periodic control.]]></HELP>
 <!--800499-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800499--></AD_ELEMENT>
+
+<!--800503--><AD_ELEMENT>
+<!--800503-->  <AD_ELEMENT_ID><![CDATA[800503]]></AD_ELEMENT_ID>
+<!--800503-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800503-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800503-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800503-->  <COLUMNNAME><![CDATA[TestResult]]></COLUMNNAME>
+<!--800503-->  <NAME><![CDATA[Test Result]]></NAME>
+<!--800503-->  <PRINTNAME><![CDATA[Test Result]]></PRINTNAME>
+<!--800503-->  <HELP><![CDATA[Description of the test results.]]></HELP>
+<!--800503-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800503--></AD_ELEMENT>
+
+<!--800504--><AD_ELEMENT>
+<!--800504-->  <AD_ELEMENT_ID><![CDATA[800504]]></AD_ELEMENT_ID>
+<!--800504-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800504-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800504-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800504-->  <COLUMNNAME><![CDATA[Launched]]></COLUMNNAME>
+<!--800504-->  <NAME><![CDATA[Inserted]]></NAME>
+<!--800504-->  <PRINTNAME><![CDATA[Launched]]></PRINTNAME>
+<!--800504-->  <HELP><![CDATA[Indicates that the case has been launched.]]></HELP>
+<!--800504-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800504--></AD_ELEMENT>
 
 <!--800506--><AD_ELEMENT>
 <!--800506-->  <AD_ELEMENT_ID><![CDATA[800506]]></AD_ELEMENT_ID>
