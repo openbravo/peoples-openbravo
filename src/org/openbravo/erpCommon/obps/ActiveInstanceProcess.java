@@ -30,6 +30,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.MaturityLevel;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.System;
@@ -55,11 +56,17 @@ public class ActiveInstanceProcess implements Process {
 
     String[] result = null;
 
+    System sys = OBDal.getInstance().get(System.class, "0");
+
     if (!HttpsUtils.isInternetAvailable()) {
       msg.setType("Error");
       msg.setMessage("@WSError@");
       return;
     } else {
+      if (!publicKey.equals(sys.getInstanceKey())) {
+        // Changing license, do not send instance number to get a new one
+        instanceNo = null;
+      }
       result = send(publicKey, purpose, instanceNo, activate);
     }
 
@@ -75,7 +82,7 @@ public class ActiveInstanceProcess implements Process {
         msg.setType("Error");
         msg.setMessage("@LicenseWithoutAccessTo@ " + nonAllowedMods);
       } else {
-        System sys = OBDal.getInstance().get(System.class, "0");
+
         sys.setActivationKey(result[1]);
         sys.setInstanceKey(publicKey);
         ActivationKey.setInstance(ak);
@@ -147,6 +154,10 @@ public class ActiveInstanceProcess implements Process {
     } finally {
       OBContext.restorePreviousMode();
     }
+
+    content += "&sysId=" + URLEncoder.encode(SystemInfo.getSystemIdentifier(), "utf-8");
+    content += "&dbId=" + URLEncoder.encode(SystemInfo.getDBIdentifier(), "utf-8");
+    content += "&macId=" + URLEncoder.encode(SystemInfo.getMacAddress(), "utf-8");
 
     URL url = new URL(BUTLER_URL);
     try {
