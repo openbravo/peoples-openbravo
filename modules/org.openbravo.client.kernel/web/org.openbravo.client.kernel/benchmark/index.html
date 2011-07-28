@@ -32,36 +32,24 @@ $LAB.setGlobalDefaults({AppendTo: 'body'});
 var isomorphicDir='../../org.openbravo.userinterface.smartclient/isomorphic/';
 
 function OBStartApplication() {
-  var s = document.getElementById('summary');
-
-  if(OB.User.roleName.indexOf('System Administrator') == -1) {
-    s.innerHTML = 'Test must be executed with System Administrator role';
-    return;
-  }
-  OB.Layout.initialize();
-  // _101 = Reference view definition
-  $LAB.script('../../../org.openbravo.client.kernel/OBUIAPP_MainLayout/View?viewId=_101')
-      .wait(function() {
-
-        var viewName = OB.Layout.ViewManager.loadedWindowClassName,
-            suite = new Benchmark.Suite, summary = '', a = [], i = 0;
-
-        s.innerHTML = 'Executing...';
-
-        suite.add('ViewManager.openView', function() {
-          OB.ViewManager.openView(viewName, {});
-        })
-        .on('cycle', function(bench) {
-          summary += String(bench) + '<br />';
-          summary += 'Elapsed time: ' + bench.times.elapsed + '<br />';
-        })
-        .on('complete', function() {
-          summary += 'Client platform: ' + String(Benchmark.platform) + '<br />';
-          summary += 'Total tabs created: ' + OB.MainView.TabSet.tabs.length;
-          s.innerHTML = summary;
-        })
-        .run(true);
-      });
+  var s = document.getElementById('summary'),
+      suite = new Benchmark.Suite,
+      summary = '';
+  
+  s.innerHTML = 'Executing...';
+  
+  suite.add('Window.create', function() {
+    isc.Window.create({title: 'Test Window'});
+  })
+  .on('cycle', function(bench) {
+    summary += String(bench) + '<br />';
+    summary += 'Elapsed time: ' + bench.times.elapsed + '<br />';
+  })
+  .on('complete', function() {    
+    summary += 'Client platform: ' + String(Benchmark.platform) + '<br />';
+    s.innerHTML = summary;
+  })
+  .run(true);
 }
 </script>
 </head>
