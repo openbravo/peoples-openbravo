@@ -2918,13 +2918,13 @@ The product price of each receipt is calculated based on the on the product pric
 <!--800091-->  <NAME><![CDATA[ReportTrialBalanceDetail]]></NAME>
 <!--800091-->  <DESCRIPTION><![CDATA[ReportTrialBalanceDetail]]></DESCRIPTION>
 <!--800091-->  <HELP><![CDATA[ReportTrialBalanceDetail]]></HELP>
-<!--800091-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--800091-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--800091-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800091-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800091-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800091-->  <CLASSNAME><![CDATA[ad_reports/ReportTrialBalanceDetail.html]]></CLASSNAME>
 <!--800091-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800091-->  <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800091-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800091-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800091-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800091--></AD_PROCESS>

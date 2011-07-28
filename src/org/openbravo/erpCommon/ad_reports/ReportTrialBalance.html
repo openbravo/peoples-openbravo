@@ -251,13 +251,69 @@ function showHideFilters(identifier) {
 	function onResizeDo(){
 		resizeArea();
 	}
-	function submitCommandWithMarkChecked(elementValue){
-	    var frm = document.frmMain;
-	    markCheckedAllElements(frm.inpcBPartnerId_IN);
-	    markCheckedAllElements(frm.inpcProjectId_IN);
-	    markCheckedAllElements(frm.inpmProductId_IN);
-	    submitCommandFormParameter('FIND', frm.inpcElementValueIdFrom, elementValue,false, frm, 'ReportGeneralLedger.html', '_self', false, true);
+
+	function openTabToGeneralLedgerReport(procId, recordId){
+		var frm = document.frmMain;
+		markCheckedAllElements(frm.inpcBPartnerId_IN);
+		markCheckedAllElements(frm.inpcProjectId_IN);
+		markCheckedAllElements(frm.inpmProductId_IN);
+
+		var myframe = getFrame('LayoutMDI') || top.opener;
+	    if (myframe) {      
+	        myframe.OB.RemoteCallManager.call('org.openbravo.client.application.ComputeTranslatedNameActionHandler', {}, {'processId': procId}, 
+	        function(response, data, request){
+	            myframe.OB.Layout.ViewManager.openView('OBClassicWindow', {
+	                command: 'FIND',
+	                icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png',
+	                id: procId,
+	                obManualURL: '/ad_reports/ReportGeneralLedger.html?inpDateFrom=' + frm.inpDateFrom.value 
+	                		+ '&inpDateTo=' + frm.inpDateTo.value + '&inpOrg=' + frm.inpOrg.value + '&inpcAcctSchemaId=' 
+	                		+ frm.inpcAcctSchemaId.value + '&inpcElementValueIdFrom=' + recordId + '&inpcElementValueIdTo=' + frm.inpcElementValueIdTo.value,
+	                processId: procId,
+	                tabTitle: data.processTitle,
+	                type: 'report',
+	                viewId: 'OBClassicWindow'
+	            });                        
+	        });
+	    }
 	}
+	function openTabToReportTrialBalanceDetails(procId, recordId){
+        var frm = document.frmMain;
+        var bPartner = frm.inpcBPartnerId_IN.value, mProduct = frm.inpmProductId_IN.value, c_Project = frm.inpcProjectId_IN.value;
+        markCheckedAllElements(frm.inpcBPartnerId_IN);
+        markCheckedAllElements(frm.inpcProjectId_IN);
+        markCheckedAllElements(frm.inpmProductId_IN);
+        
+        var manualURL = '/ad_reports/ReportTrialBalanceDetail.html?inpDateFrom=' + frm.inpDateFrom.value 
+        + '&inpDateTo=' + frm.inpDateTo.value + '&inpOrg=' + frm.inpOrg.value + '&inpLevel=' + frm.inpLevel.value
+        + '&inpcAccountId=' + recordId + '&inpcAcctSchemaId=' + frm.inpcAcctSchemaId.value;
+        if (bPartner.length == 0){
+        	manualURL.concat('&inpcBPartnerId_IN=' + bPartner);
+        }
+        if (mProduct.length == 0){
+            manualURL.concat('&inpcBPartnerId_IN=' + mProduct);
+        }
+        if (c_Project.length == 0){
+            manualURL.concat('&inpcBPartnerId_IN=' + c_Project);
+        }
+
+        var myframe = getFrame('LayoutMDI') || top.opener;
+        if (myframe) {      
+            myframe.OB.RemoteCallManager.call('org.openbravo.client.application.ComputeTranslatedNameActionHandler', {}, {'processId': procId}, 
+            function(response, data, request){
+                myframe.OB.Layout.ViewManager.openView('OBClassicWindow', {
+                    command: 'DEFAULT',
+                    icon: '[SKINIMG]../../org.openbravo.client.application/images/application-menu/iconReport.png',
+                    id: procId,
+                    obManualURL: manualURL,
+                    processId: procId,
+                    tabTitle: data.processTitle,
+                    type: 'report',
+                    viewId: 'OBClassicWindow'
+                });                        
+            });
+        }
+    }
 	
 </script>
 </head>
@@ -931,7 +987,7 @@ function showHideFilters(identifier) {
                             <span id="showExpand" style="display: table-cell; display: -moz-inline-box;"><a href="#" onclick="updateData('OPEN', 'hhqq');return false;" onMouseOver="window.status='Open';return true;" onMouseOut="window.status='';return true;" id="expandButton">
                               <span id="buttonTreemmm" class="datawarehouseclose"></span>
                             </a></span>
-                            <a href="#" onclick="submitCommandWithMarkChecked('xx');return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId1">
+                            <a href="#" onclick="openTabToGeneralLedgerReport('800001', 'xx');return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId1">
                               <span id="fieldAccount">xx70000</span>
                             </a>
                             <span id="fieldDescAccount">xx600</span>
@@ -942,7 +998,7 @@ function showHideFilters(identifier) {
                         <td width="105" id="fieldAmtacctcr" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                         <td width="105" id="fieldSaldoFinal" class="DataGrid_Body_Cell_Amount">xx14500.34</td>
                         <td width="70" class="DataGrid_Body_Cell">
-                          <a href="#" onclick="validate(); submitCommandFormParameter('DEFAULT', document.frmMain.inpcAccountId, 'xx', false, document.frmMain, 'ReportTrialBalanceDetail.html', '_self', false, true);return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId2">Detail</a>
+                          <a href="#" onclick="validate(); openTabToReportTrialBalanceDetails('800091', 'xx');return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId2">Detail</a>
                         </td>
                       </tr>
                     </div>
