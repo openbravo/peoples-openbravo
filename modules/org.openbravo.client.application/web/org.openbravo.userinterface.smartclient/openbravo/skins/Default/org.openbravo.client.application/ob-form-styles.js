@@ -403,7 +403,14 @@ isc.OBImageItem.addProperties({
   titleStyle: 'OBFormFieldLabel'
 });
 
+if (navigator.userAgent.toUpperCase().indexOf("MSIE") >= 0) { //IE hack to avoid item be 12 px below the title
+  OBImageCanvas.addProperties({
+    layoutTopMargin: -12
+  });
+}
+
 isc.OBImageCanvas.addProperties({
+  height: '0px', // Hack to avoid second line be desplaced in Firefox and IE
   zoomInCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomIn.cur',
   zoomOutCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomOut.cur',
   imageNotAvailableSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/imageNotAvailable.png',
