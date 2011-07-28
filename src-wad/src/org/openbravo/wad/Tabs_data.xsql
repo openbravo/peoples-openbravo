@@ -207,6 +207,12 @@
                          AND C2.AD_REFERENCE_VALUE_ID = R.AD_REFERENCE_ID
                          AND C2.AD_TABLE_ID = TB.AD_TABLE_ID
                          AND W.AD_WINDOW_ID = TB.AD_WINDOW_ID
+                    UNION
+                      SELECT 1
+                        FROM AD_AUXILIARINPUT A, AD_TAB TB
+                       WHERE AD_WINDOW.AD_WINDOW_ID = TB.AD_WINDOW_ID
+                         AND A.AD_TAB_ID = TB.AD_TAB_ID
+                         AND A.UPDATED > SI.LAST_BUILD
                        )
         ORDER BY AD_WINDOW.name, AD_TAB.tablevel, AD_TAB.seqno
           ]]>
