@@ -403,23 +403,31 @@ isc.OBImageItem.addProperties({
   titleStyle: 'OBFormFieldLabel'
 });
 
+isc.OBImageCanvas.addProperties({
+  zoomInCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomIn.cur',
+  zoomOutCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomOut.cur',
+  imageNotAvailableSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/imageNotAvailable.png',
+  imageNotAvailableHeight: 49,
+  imageNotAvailableWidth: 57
+});
+
 isc.OBImageItemSmallImageContainer.addProperties({
   styleName: 'OBFormFieldImageInput',
   height: 66,
   width:'100%',
-  cursor: '', //To allow set the cursor from the CSS
   align: 'center',
   defaultLayoutAlign: 'center'
 });
 
 isc.OBImageItemSmallImage.addProperties({
   styleName: 'OBImageItemSmallImage',
-  cursor: '' //To allow set the cursor from the CSS
+  imageType: 'stretch'
 });
 
 isc.OBImageItemBigImage.addProperties({
   styleName: 'OBImageItemBigImage',
-  cursor: '', //To allow set the cursor from the CSS
+  zoomInCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomIn.cur',
+  zoomOutCursorSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/system/zoomOut.cur',
   align: 'center'
 });
 

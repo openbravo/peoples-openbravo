@@ -22,7 +22,7 @@
 isc.ClassFactory.defineClass('OBImageItemSmallImage', isc.Img);
 
 isc.OBImageItemSmallImage.addProperties({
-  imageType: "stretch"
+  showDisabled: false
 });
 
 //== OBImageItemSmallImageContainer ==
@@ -77,6 +77,13 @@ isc.OBImageItemSmallImageContainer.addProperties({
 //This class is used for the big image shown within the popup
 isc.ClassFactory.defineClass('OBImageItemBigImage', isc.Img);
 
+isc.OBImageItemBigImage.addProperties({
+  initWidget: function() {
+    this.setCursor('url("' + this.zoomOutCursorSrc + '"), pointer');
+    return this.Super('initWidget', arguments);
+  }
+});
+
 //== OBImageItemButton ==
 //This class is used for the buttons shown in the OBImageItem
 isc.ClassFactory.defineClass('OBImageItemButton', isc.ImgButton);
@@ -94,93 +101,98 @@ isc.OBImageItemButton.addProperties({
 isc.ClassFactory.defineClass('OBImageCanvas', isc.HLayout);
 
 OBImageCanvas.addProperties({
-    height: '0px',
-    initWidget: function(){
-      var imageLayout = isc.OBImageItemSmallImageContainer.create({
-        imageItem: this.creator
-      });
-      if (this.creator.required) {
-        imageLayout.setStyleName(imageLayout.styleName + 'Required');
-      } else {
-        imageLayout.setStyleName(imageLayout.styleName);
-      }
-      this.addMember(imageLayout);
-      this.image=isc.OBImageItemSmallImage.create({
-        width: '100%'
-      });
-      imageLayout.addMember(this.image);
-      this.image.setSrc('../web/skins/ltr/Default/Common/Image/imageNotAvailable_medium.png');
-      var buttonLayout = isc.VLayout.create({
-          width: '1%'
-      });
-      var selectorButton = isc.OBImageItemButton.create({
-          buttonType: 'upload',
-          imageItem: this.creator,
-          action: function(){
-            var selector = isc.OBImageSelector.create({
-              columnName: this.imageItem.columnName,
-              form: this.imageItem.form,
-              imageItem: this.imageItem
-            });
-            selector.show();
-          }
-      });
-      var deleteButton = isc.OBImageItemButton.create({
-        buttonType: 'erase',
-        imageItem: this.creator,
-        deleteFunction: function(){
-          var imageId = this.imageItem.getValue();
-          var view = this.imageItem.form.view;
-          var d = {
-                  inpimageId: this.imageItem.getValue(),
-                  inpTabId: this.imageItem.form.view.tabId,
-                  inpColumnName: this.imageItem.columnName,
-                  parentObjectId: this.imageItem.form.values.id,
-                  command: 'DELETE'
-          };
-          var imageItem = this.imageItem;
-          isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmDeleteImage'), function(clickedOK){
-            if(clickedOK){
-              OB.RemoteCallManager.call('org.openbravo.client.application.window.ImagesActionHandler', {}, d, function(response, data, request){
-                 imageItem.refreshImage();
-              });
-            }
-          });
-        },
-        click: function(form, item){
-          //On click, we autosave before showing the selector,
-          //because after delete we will reload the form
-          if (!this.imageItem.form.validateForm()) {
-            return;
-          }
-          var actionObject = {
-            target: this,
-            method: this.deleteFunction,
-            parameters: []
-          };
-          this.imageItem.form.view.standardWindow.doActionAfterAutoSave(actionObject, true, true);
-        },
-        updateState: function(value){
-          if(value){
-            this.setDisabled(false);
-          }else{
-            this.setDisabled(true);
-          }
-        }
-      });
-      this.deleteButton = deleteButton;
-      buttonLayout.addMember(selectorButton);
-      buttonLayout.addMember(deleteButton);
-      this.addMember(buttonLayout);
-    },
-    setImage: function(url){
-      this.image.setSrc(url);
-      if(url.contains('ShowImage')){
-        this.image.setImageType('stretch');
-      }else{
-        this.image.setImageType('normal');
-      }
+  height: '0px',
+  initWidget: function(){
+    this.imageLayout = isc.OBImageItemSmallImageContainer.create({
+      imageItem: this.creator
+    });
+    if (this.creator.required) {
+      this.imageLayout.setStyleName(this.imageLayout.styleName + 'Required');
+    } else {
+      this.imageLayout.setStyleName(this.imageLayout.styleName);
     }
+    this.addMember(this.imageLayout);
+    this.image=isc.OBImageItemSmallImage.create({
+      width: '100%'
+    });
+    this.imageLayout.addMember(this.image);
+    this.image.setSrc('../web/skins/ltr/Default/Common/Image/imageNotAvailable_medium.png');
+    var buttonLayout = isc.VLayout.create({
+      width: '1%'
+    });
+    var selectorButton = isc.OBImageItemButton.create({
+        buttonType: 'upload',
+        imageItem: this.creator,
+        action: function(){
+          var selector = isc.OBImageSelector.create({
+            columnName: this.imageItem.columnName,
+            form: this.imageItem.form,
+            imageItem: this.imageItem
+          });
+          selector.show();
+        }
+    });
+    var deleteButton = isc.OBImageItemButton.create({
+      buttonType: 'erase',
+      imageItem: this.creator,
+      deleteFunction: function(){
+        var imageId = this.imageItem.getValue();
+        var view = this.imageItem.form.view;
+        var d = {
+                inpimageId: this.imageItem.getValue(),
+                inpTabId: this.imageItem.form.view.tabId,
+                inpColumnName: this.imageItem.columnName,
+                parentObjectId: this.imageItem.form.values.id,
+                command: 'DELETE'
+        };
+        var imageItem = this.imageItem;
+        isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmDeleteImage'), function(clickedOK){
+          if(clickedOK){
+            OB.RemoteCallManager.call('org.openbravo.client.application.window.ImagesActionHandler', {}, d, function(response, data, request){
+               imageItem.refreshImage();
+            });
+          }
+        });
+      },
+      click: function(form, item){
+        //On click, we autosave before showing the selector,
+        //because after delete we will reload the form
+        if (!this.imageItem.form.validateForm()) {
+          return;
+        }
+        var actionObject = {
+          target: this,
+          method: this.deleteFunction,
+          parameters: []
+        };
+        this.imageItem.form.view.standardWindow.doActionAfterAutoSave(actionObject, true, true);
+      },
+      updateState: function(value){
+        if(value){
+          this.setDisabled(false);
+        }else{
+          this.setDisabled(true);
+        }
+      }
+    });
+    this.deleteButton = deleteButton;
+    buttonLayout.addMember(selectorButton);
+    buttonLayout.addMember(deleteButton);
+    this.addMember(buttonLayout);
+  },
+  setImage: function(url){
+    if (!url) {
+      this.image.setSrc(this.imageNotAvailableSrc);
+      this.image.setHeight(this.imageNotAvailableHeight);
+      this.image.setWidth(this.imageNotAvailableWidth);
+      this.image.setCursor('default');
+      this.imageLayout.setCursor('default');
+    } else {
+      this.image.setSrc(url);
+      this.image.setCursor('url("' + this.zoomInCursorSrc + '"), pointer');
+      this.imageLayout.setCursor('url("' + this.zoomInCursorSrc + '"), pointer');
+    }
+  }
 });
 
 // == OBImageItem ==
@@ -192,7 +204,7 @@ isc.OBImageItem.addProperties({
   canvasConstructor: 'OBImageCanvas',
   setValue: function(newValue){
     if(!newValue || newValue === '') {
-      this.canvas.setImage('../web/skins/ltr/Default/Common/Image/imageNotAvailable_medium.png');
+      this.canvas.setImage('');
     } else {
       this.canvas.setImage("../utility/ShowImage?id="+newValue+'&nocache='+Math.random());
       var d = {
@@ -200,7 +212,7 @@ isc.OBImageItem.addProperties({
         command: 'GETSIZE'
       };
       var image = this.canvas.image;
-      var imageLayout = this.canvas.getMember(0);
+      var imageLayout = this.canvas.imageLayout;
       OB.RemoteCallManager.call('org.openbravo.client.application.window.ImagesActionHandler', {}, d, function(response, data, request){
         var maxHeight = imageLayout.getHeight() - 12;
         var maxWidth = imageLayout.getWidth() - 12;

@@ -734,19 +734,6 @@
  * Image Item
 =======================================================================*/
 
-.OBFormFieldImageInput,
-.OBFormFieldImageInputRequired {
-  cursor: url("images/system/zoomIn.cur"), pointer;
-}
-
-.OBImageItemSmallImage img {
-  cursor: url("images/system/zoomIn.cur"), pointer;
-}
-
-.OBImageItemBigImage img {
-  cursor: url("images/system/zoomOut.cur"), pointer;
-}
-
 /*=======================================================================
  * LinkButton Item
 =======================================================================*/
