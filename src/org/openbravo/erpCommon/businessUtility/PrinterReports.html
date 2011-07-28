@@ -27,8 +27,12 @@
 <script language="JavaScript" type="text/javascript" id="paramLanguage">    defaultLang = "en_US";</script>
 <script language="JavaScript" type="text/javascript" id="isPrintPreview">
 function printReport(pagina) {
-    if (top.OB && top.OB.Layout) {
-      top.OB.Layout.ClassicOBCompatibility.Popup.open('printpdf', 600, 300, pagina + "?Commnad=PDF", '', window, false, false, true);
+    if (isWindowInMDIContext) {
+      var LayoutMDI = getFrame('LayoutMDI');
+      if (pagina.indexOf('../') === 0) {
+        pagina = pagina.substring(3, pagina.length);
+      }
+      LayoutMDI.OB.Layout.ClassicOBCompatibility.Popup.open('printpdf', 600, 300, LayoutMDI.OB.Application.contextUrl + pagina + "?Commnad=PDF", '', window, false, false, true);
     } else {
       openPDF(pagina, 'PDF');
     }
