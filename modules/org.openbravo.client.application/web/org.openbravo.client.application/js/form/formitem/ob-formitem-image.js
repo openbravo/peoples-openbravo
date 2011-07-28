@@ -101,7 +101,6 @@ isc.OBImageItemButton.addProperties({
 isc.ClassFactory.defineClass('OBImageCanvas', isc.HLayout);
 
 OBImageCanvas.addProperties({
-  height: '0px',
   initWidget: function(){
     this.imageLayout = isc.OBImageItemSmallImageContainer.create({
       imageItem: this.creator
