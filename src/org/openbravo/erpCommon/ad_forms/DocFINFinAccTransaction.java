@@ -431,8 +431,8 @@ public class DocFINFinAccTransaction extends AcctServer {
           fact.createLine(
               line,
               getAccountGLItem(OBDal.getInstance().get(GLItem.class, line.getCGlItemId()), as,
-                  isReceipt, conn), paymentCurrencyId, line.getPaymentAmount(), line
-                  .getDepositAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, null,
+              isReceipt, conn), paymentCurrencyId, isReceipt ? "":line.getAmount(), 
+              isReceipt ? line.getAmount() : "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, null,
               paymentToSchemaConversionRate, conn);
         } else {
           fact.createLine(
