@@ -503,6 +503,46 @@ public class VersionUtility {
       return -1;
   }
 
+  /**
+   * Compares 2 versions taking into account just their major versions.
+   * 
+   * @return<ul> <li>-1 in case ver1 is lower than ver2 <li>0 in case ver1 equals ver2 <li>1 in case
+   *             ver1 is higher than ver2 </ul>
+   */
+  static public int versionCompareStrictMajorVersion(String ver1, String ver2) {
+    if ((ver1 == null || ver1.equals("")) && (ver2 == null || ver2.equals("")))
+      return 0;
+    if ((ver1 == null || ver1.equals("")))
+      return 1;
+    if ((ver2 == null || ver2.equals("")))
+      return -1;
+
+    String s1[] = ver1.split("[.]");
+    String s2[] = ver2.split("[.]");
+
+    int n1[] = new int[3];
+    int n2[] = new int[3];
+
+    for (int i = 0; i < 3; i++) {
+      if (s1.length - 1 < i || s1[i] == null || s1[i].equals(""))
+        n1[i] = 0;
+      else
+        n1[i] = Integer.parseInt(s1[i]);
+
+      if (s2.length - 1 < i || s2[i] == null || s2[i].equals(""))
+        n2[i] = 0;
+      else
+        n2[i] = Integer.parseInt(s2[i]);
+    }
+
+    if (n1[0] > n2[0] || (n1[0] == n2[0] && n1[1] > n2[1]))
+      return 1;
+    else if (n1[0] == n2[0] && n1[1] == n2[1])
+      return 0;
+    else
+      return -1;
+  }
+
   @SuppressWarnings("unchecked")
   static private HashMap<String, Mod> modules2mods(Module[] modules) {
     HashMap<String, Mod> mods = new HashMap<String, Mod>();

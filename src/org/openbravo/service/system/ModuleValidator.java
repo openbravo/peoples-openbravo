@@ -233,38 +233,68 @@ public class ModuleValidator implements SystemValidator {
    */
   private void checkDependencyVersion(Module module, SystemValidationResult result) {
     for (ModuleDependency dependentModule : module.getModuleDependencyList()) {
-      String depDefinedVersion = dependentModule.getFirstVersion();
+      String firstVer = dependentModule.getFirstVersion();
+      String lastVer = dependentModule.getLastVersion();
       String depActualVersion = dependentModule.getDependentModule().getVersion();
 
       if (dependentModule.isIncluded()) {
         // for inclusions check the dependency matches exactly with the defined one
-        if (!depActualVersion.equals(depDefinedVersion)) {
+        if (!depActualVersion.equals(firstVer)) {
           result.addWarning(SystemValidationType.MODULE_ERROR, module.getName()
               + " defines inclussion of module " + dependentModule.getDependentModule().getName()
-              + " in version " + depDefinedVersion + ", but actual version in DB is "
-              + depActualVersion + ". They must exactly match.");
+              + " in version " + firstVer + ", but actual version in DB is " + depActualVersion
+              + ". They must exactly match.");
         }
         // check dependencies for included modules recursively
         checkDependencyVersion(dependentModule.getDependentModule(), result);
       } else {
         VersionUtility.VersionComparator vc = new VersionComparator();
-        if (vc.compare(depDefinedVersion, depActualVersion) == 1) {
+        String enforcement = dependentModule.getDependencyEnforcement();
+
+        if (lastVer != null && vc.compare(firstVer, lastVer) > 0) {
           result.addError(SystemValidationType.MODULE_ERROR, module.getName()
               + " defines dependency on " + dependentModule.getDependentModule().getName()
-              + " start version " + depDefinedVersion + ", but actual version in DB is "
-              + depActualVersion);
-        } else if (dependentModule.getLastVersion() == null
-            && vc.compareMajorVersions(depDefinedVersion, depActualVersion) != 0) {
-          result.addError(SystemValidationType.MODULE_ERROR, module.getName()
-              + " defines dependency on " + dependentModule.getDependentModule().getName()
-              + " start version " + depDefinedVersion + ", but actual version in DB is "
-              + depActualVersion + ". Which has a different major version.");
-        } else if (dependentModule.getLastVersion() != null
-            && vc.compare(depActualVersion, dependentModule.getLastVersion()) == 1) {
-          result.addError(SystemValidationType.MODULE_ERROR, module.getName()
-              + " defines dependency on " + dependentModule.getDependentModule().getName()
-              + " end version " + dependentModule.getLastVersion()
-              + ", but actual version in DB is " + depActualVersion);
+              + ". It is incorrect beacuase first version (" + firstVer
+              + ") is higher than last version (" + lastVer + ")");
+        }
+
+        if ("MAJOR".equals(enforcement)) {
+          if (vc.compare(firstVer, depActualVersion) > 0) {
+            result.addError(SystemValidationType.MODULE_ERROR, module.getName()
+                + " defines dependency on " + dependentModule.getDependentModule().getName()
+                + " start version " + firstVer + ", but actual version in DB is "
+                + depActualVersion + ".");
+          } else if (lastVer == null && vc.compareMajorVersions(firstVer, depActualVersion) != 0) {
+            result.addError(SystemValidationType.MODULE_ERROR, module.getName()
+                + " defines dependency on " + dependentModule.getDependentModule().getName()
+                + " start version " + firstVer + ", but actual version in DB is "
+                + depActualVersion + ". Which has a different major version.");
+          } else if (lastVer != null
+              && VersionUtility.versionCompareStrictMajorVersion(depActualVersion, lastVer) > 0) {
+            result.addError(SystemValidationType.MODULE_ERROR, module.getName()
+                + " defines dependency on " + dependentModule.getDependentModule().getName()
+                + " end version " + lastVer + ", but actual version in DB is " + depActualVersion);
+          }
+        } else if ("MINOR".equals(enforcement)) {
+          if (lastVer == null && vc.compare(firstVer, depActualVersion) != 0) {
+            result.addError(SystemValidationType.MODULE_ERROR, module.getName()
+                + " defines a MINOR enforcement dependency on "
+                + dependentModule.getDependentModule().getName() + " version " + firstVer
+                + ", but actual version in DB is " + depActualVersion
+                + ". Both versions must be exactly the same.");
+          } else if (lastVer != null && vc.compare(depActualVersion, lastVer) > 0) {
+            result.addError(SystemValidationType.MODULE_ERROR, module.getName()
+                + " defines a MINOR enforcement dependency on "
+                + dependentModule.getDependentModule().getName() + " end version " + lastVer
+                + ", but actual version in DB is " + depActualVersion);
+          }
+        } else { // NONE
+          if (vc.compare(firstVer, depActualVersion) > 0) {
+            result.addError(SystemValidationType.MODULE_ERROR, module.getName()
+                + " defines NONE enforcement dependency on "
+                + dependentModule.getDependentModule().getName() + " start version " + firstVer
+                + ", but actual version in DB is " + depActualVersion + ".");
+          }
         }
       }
     }
