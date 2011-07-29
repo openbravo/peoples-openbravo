@@ -1,3 +1,5 @@
 #!/bin/sh
+
+# Mercurial pretxncommit hook
 echo "Performing jslint check on modified js resources"
-hg st -man  | awk '/.js$/ && ! /^web/' | xargs -rn1 ./modules/org.openbravo.client.kernel/jslint/jslint || exit 1
+hg log -r $HG_NODE --template '{files}'  | awk '/.js$/ && ! /^web/' | xargs -rn1 ./modules/org.openbravo.client.kernel/jslint/jslint || exit 1
