@@ -67,6 +67,49 @@
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND F.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="cProjectId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND F.C_PROJECT_ID IN]]></Parameter>
   </SqlMethod>
+  <SqlMethod name="selectOrgWithNotCal" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+    SELECT TO_CHAR(F.DATEACCT, 'YYYY') AS YEAR, MT.NAME AS PERIODNAME,
+           SUM(F.AMTACCTDR) AS AMTACCTDR, SUM(F.AMTACCTCR) AS AMTACCTCR,
+           ? AS ACCOUNTNAME, ? AS ACCOUNTCODE
+    FROM C_ELEMENTVALUE EV JOIN FACT_ACCT F ON (EV.C_ELEMENTVALUE_ID=F.ACCOUNT_ID)
+         LEFT JOIN C_BPARTNER ON f.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+         LEFT JOIN M_PRODUCT ON f.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+         LEFT JOIN C_PROJECT ON f.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID
+         LEFT JOIN AD_MONTH M ON TO_NUMBER(M.VALUE) = TO_NUMBER(TO_CHAR(F.DATEACCT, 'MM'))
+         LEFT JOIN AD_MONTH_TRL MT ON M.AD_MONTH_ID = MT.AD_MONTH_ID
+    WHERE F.ACCOUNT_ID = EV.C_ELEMENTVALUE_ID
+         AND f.AD_ORG_ID IN('2')
+         AND F.AD_CLIENT_ID IN ('1')
+         AND F.AD_ORG_ID IN('1')
+         AND F.ACCOUNT_ID IN ('3')
+         AND 1=1
+         AND F.FACTACCTTYPE <> 'R'
+         AND F.FACTACCTTYPE <> 'C'
+         AND F.FACTACCTTYPE <> 'O'
+         AND F.ISACTIVE = 'Y'
+         AND MT.AD_LANGUAGE = ?
+    GROUP BY TO_CHAR(F.DATEACCT, 'YYYY'), M.VALUE, MT.NAME
+    HAVING SUM(F.AMTACCTDR) <> 0 OR SUM(F.AMTACCTCR) <> 0
+    ORDER BY TO_CHAR(F.DATEACCT, 'YYYY'), TO_NUMBER(M.VALUE), MT.NAME
+    ]]></Sql>
+    <Field name="rownum" value="count"/>
+    <Parameter name="accountName"/>
+    <Parameter name="accountCode"/>
+    <Parameter name="orgFamily" type="replace" optional="true" after="f.AD_ORG_ID IN(" text="'2'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="F.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="F.AD_ORG_ID IN(" text="'1'"/>
+    <Parameter name="accountSet" type="replace" optional="true" after="AND F.ACCOUNT_ID IN (" text="'3'"/>
+    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND DATEACCT >= TO_DATE(?) ]]></Parameter>
+    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
+    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[ AND F.C_ACCTSCHEMA_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND F.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND F.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="cProjectId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND F.C_PROJECT_ID IN]]></Parameter>
+    <Parameter name="language"/>
+  </SqlMethod>
   
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -117,5 +160,13 @@
         AND ISACTIVE = 'Y'
     </Sql>
     <Parameter name="id"/>
+  </SqlMethod>
+  <SqlMethod name="getOrganizationCalendarOwner" type="preparedStatement" return="string" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+        SELECT AD_ORG_GETCALENDAROWNER(?)
+        FROM DUAL
+    </Sql>
+    <Parameter name="ad_org_id"/>
   </SqlMethod>
 </SqlClass>

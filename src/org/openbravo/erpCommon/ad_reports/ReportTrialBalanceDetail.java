@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -129,12 +131,21 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
       String strAccountName = ReportTrialBalanceDetailData.selectAccountName(this, strId);
       String strAccountCode = ReportTrialBalanceDetailData.selectAccountCode(this, strId);
 
-      data = ReportTrialBalanceDetailData.select(this, strAccountName, strAccountCode, strOrg,
-          strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalanceDetail"),
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalanceDetail"),
-          strIdFamily, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-          strcAcctSchemaId, strcBpartnerId, strmProductId, strcProjectId);
-
+      if (!ReportTrialBalanceDetailData.getOrganizationCalendarOwner(this, strOrg).isEmpty()) {
+        data = ReportTrialBalanceDetailData.select(this, strAccountName, strAccountCode, strOrg,
+            strOrgFamily,
+            Utility.getContext(this, vars, "#User_Client", "ReportTrialBalanceDetail"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalanceDetail"),
+            strIdFamily, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+            strcAcctSchemaId, strcBpartnerId, strmProductId, strcProjectId);
+      } else {
+        data = ReportTrialBalanceDetailData.selectOrgWithNotCal(this, strAccountName,
+            strAccountCode, strOrgFamily,
+            Utility.getContext(this, vars, "#User_Client", "ReportTrialBalanceDetail"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalanceDetail"),
+            strIdFamily, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+            strcAcctSchemaId, strcBpartnerId, strmProductId, strcProjectId, vars.getLanguage());
+      }
     }
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportTrialBalanceDetail", false, "",
@@ -177,6 +188,10 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
 
   private String getFamily(String strTree, String strChild) throws IOException, ServletException {
     return Tree.getMembers(this, strTree, strChild);
+  }
+
+  public <T extends BaseOBObject> T getObject(Class<T> t, String strId) {
+    return OBDal.getInstance().get(t, strId);
   }
 
   public String getServletInfo() {
