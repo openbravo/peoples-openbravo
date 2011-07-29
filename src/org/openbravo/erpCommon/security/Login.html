@@ -255,9 +255,6 @@ var recBrowserSafari = '5.0.0.0';
     }
     topLogos.style.display = '';
     bottomLogos.style.display = '';
-
-    var msgContainer = document.getElementById('errorMsg');
-    msgContainer.innerHTML = '<span id="errorMsgTitle" class="Login_ErrorMsg_Title">xx</span><br><span id="errorMsgContent" class="Login_ErrorMsg_Content">xx</span>';
   }
 
   function maskLoginWindow(errorMsg) {
@@ -426,7 +423,9 @@ var recBrowserSafari = '5.0.0.0';
                   <input class="dojoValidateValid Login_TextBox" type="password" maxlength="40" name="password" id="password"/>
                 </dd>
               </dl>
-              <div id="errorMsg" class="LabelText Login_ErrorMsg_Container" style="display: none"><!-- xxChild tags developed in javascript --></div>
+              <div id="errorMsg" class="LabelText Login_ErrorMsg_Container" style="display:none;">
+                <span id="errorMsgTitle" class="Login_ErrorMsg_Title">xx</span><br><span id="errorMsgContent" class="Login_ErrorMsg_Content">xx</span>
+              </div>
             </div>
             <div class="Login_LogForm_Button_Container">
               <div class="Login_LogForm_Button">
@@ -452,6 +451,7 @@ var recBrowserSafari = '5.0.0.0';
                   </table>
                 </button>
               </div>
+              <div id="sign-in" style="margin-top:12px;">xxxSignIn</div>
             </div>
 
         </form>

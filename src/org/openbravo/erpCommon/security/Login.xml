@@ -28,4 +28,8 @@
   <PARAMETER id="validBrowserMsgOrHigher" name="validBrowserMsgOrHigher" default=""/>
   <PARAMETER id="recBrowserMsgTitle" name="recBrowserMsgTitle" default=""/>
   <PARAMETER id="recBrowserMsgText" name="recBrowserMsgText" default=""/>
+  <PARAMETER id="errorMsg" name="errorMsgStyle" attribute="style" default="display:none;" />
+  <PARAMETER id="errorMsgTitle" name="errorMsgTitle" default="" />
+  <PARAMETER id="errorMsgContent" name="errorMsgContent" default="" />
+  <PARAMETER id="sign-in" name="sign-in" default=""/>
 </REPORT>

@@ -31,15 +31,19 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Login extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
+
+  private static final String GOOGLE_INTEGRATION_MODULE_ID = "FF8080813129ADA401312CA1222A0005";
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -48,7 +52,6 @@ public class Login extends HttpBaseServlet {
     if (vars.commandIn("LOGIN")) {
       log4j.debug("Command: Login");
       String strTheme = vars.getTheme();
-      vars.clearSession(false);
 
       OBContext.setAdminMode();
       try {
@@ -65,12 +68,13 @@ public class Login extends HttpBaseServlet {
             .getLanguage().getLanguage());
 
         if (OBVersion.getInstance().is30()) {
-          printPageLogin30(response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg,
+          printPageLogin30(vars, response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg,
               recBrowserMsgTitle, recBrowserMsgText);
         } else {
           printPageLogin250(response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg);
         }
       } finally {
+        vars.clearSession(false);
         OBContext.restorePreviousMode();
       }
 
@@ -226,16 +230,22 @@ public class Login extends HttpBaseServlet {
   /**
    * Shows 3.0 login page
    */
-  private void printPageLogin30(HttpServletResponse response, String strTheme, String cacheMsg,
-      String validBrowserMsg, String orHigherMsg, String recBrowserMsgTitle,
-      String recBrowserMsgText) throws IOException, ServletException {
+  private void printPageLogin30(VariablesSecureApp vars, HttpServletResponse response,
+      String strTheme, String cacheMsg, String validBrowserMsg, String orHigherMsg,
+      String recBrowserMsgTitle, String recBrowserMsgText) throws IOException, ServletException {
 
     boolean showForgeLogo = true;
     boolean showITLogo = false;
     boolean showCompanyLogo = false;
+    boolean showGoogleIcon = false;
+
     String itLink = "";
     String companyLink = "";
     SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
+
+    Module module = OBDal.getInstance().get(Module.class, GOOGLE_INTEGRATION_MODULE_ID);
+
+    showGoogleIcon = (module != null);
 
     if (sysInfo == null) {
       log4j.error("System information not found");
@@ -288,10 +298,28 @@ public class Login extends HttpBaseServlet {
     xmlDocument.setParameter("recBrowserMsgTitle", recBrowserMsgTitleFinal.replaceAll("\\n", "\n"));
     xmlDocument.setParameter("recBrowserMsgText", recBrowserMsgTextFinal.replaceAll("\\n", "\n"));
 
+    if (showGoogleIcon) {
+
+      String authServlet = "../org.openbravo.service.integration.google/auth.html";
+      String link = "<p class=\"LabelText Login_LabelText\" style=\"line-height:24px;\">Sign in using:&nbsp; <a href=\""
+          + authServlet
+          + "\" title=\"Sign in using your Google Account\" target=\"_top\" "
+          + "><img style=\"vertical-align:middle;\" src=\"../web/images/google.png\" alt=\"Sign in using your Google Account\" width=\"24\" height=\"24\" border=\"0\"/></a></p>";
+
+      xmlDocument.setParameter("sign-in", link);
+    }
+
+    OBError error = (OBError) vars.getSessionObject("LoginErrorMsg");
+    if (error != null) {
+      vars.removeSessionValue("LoginErrorMsg");
+      xmlDocument.setParameter("errorMsgStyle", ""); // clear style
+      xmlDocument.setParameter("errorMsgTitle", error.getTitle());
+      xmlDocument.setParameter("errorMsgContent", error.getMessage());
+    }
+
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
-
 }

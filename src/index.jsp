@@ -155,6 +155,17 @@ function OBStartApplication() {
   // get rid of the loading stuff
   document.body.removeChild(document.getElementById('OBLoadingDiv'));
   OB.GlobalHiddenForm = document.forms.OBGlobalHiddenForm;
+<%
+  if (session.getAttribute("STARTUP-MESSAGE") != null) {
+    String text = (String) session.getAttribute("STARTUP-MESSAGE");
+    String title = (String) session.getAttribute("STARTUP-MESSAGE-TITLE");
+    session.removeAttribute("STARTUP-MESSAGE");
+    session.removeAttribute("STARTUP-MESSAGE-TITLE");
+%>
+  isc.say('<%=text%>', null, {title: '<%=title%>'});
+<%
+  }
+%>
 }
 </script>
 <script type="text/javascript" src="./web/org.openbravo.userinterface.smartclient/isomorphic/ISC_Combined.js"></script>
