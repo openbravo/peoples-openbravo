@@ -22,8 +22,8 @@ import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -292,18 +292,14 @@ public class FormInitializationComponent extends BaseActionHandler {
       attachments = OBDao.getFilteredCriteria(Attachment.class,
           Restrictions.eq("table.id", tableId), Restrictions.in("record", multipleRowIds));
     }
+    attachments.addOrderBy("creationDate", false);
     for (Attachment attachment : attachments.list()) {
       JSONObject obj = new JSONObject();
       try {
         obj.put("name", attachment.getName());
         obj.put("id", attachment.getId());
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
-        dateFormat.setLenient(true);
-        String date = dateFormat.format(attachment.getCreationDate());
-        String d1 = date.substring(0, date.length() - 2);
-        String d2 = date.substring(date.length() - 2, date.length());
-        obj.put("creationDate", d1 + ":" + d2);
-        obj.put("createdby", attachment.getCreatedBy().getName());
+        obj.put("age", (new Date().getTime() - attachment.getUpdated().getTime()));
+        obj.put("createdby", attachment.getUpdatedBy().getName());
       } catch (JSONException e) {
         log.error("Error while reading attachments", e);
       }

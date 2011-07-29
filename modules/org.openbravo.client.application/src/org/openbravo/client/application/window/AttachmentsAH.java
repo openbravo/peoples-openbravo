@@ -19,8 +19,8 @@
 package org.openbravo.client.application.window;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -104,19 +104,15 @@ public class AttachmentsAH extends BaseActionHandler {
     String tableId = (String) DalUtil.getId(tab.getTable());
     OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
         Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
+    attachmentFiles.addOrderBy("creationDate", false);
     List<JSONObject> attachments = new ArrayList<JSONObject>();
     for (Attachment attachment : attachmentFiles.list()) {
       JSONObject attachmentobj = new JSONObject();
       try {
         attachmentobj.put("id", attachment.getId());
         attachmentobj.put("name", attachment.getName());
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
-        dateFormat.setLenient(true);
-        String date = dateFormat.format(attachment.getCreationDate());
-        String d1 = date.substring(0, date.length() - 2);
-        String d2 = date.substring(date.length() - 2, date.length());
-        attachmentobj.put("creationDate", d1 + ":" + d2);
-        attachmentobj.put("createdby", attachment.getCreatedBy().getName());
+        attachmentobj.put("age", (new Date().getTime() - attachment.getUpdated().getTime()));
+        attachmentobj.put("createdby", attachment.getUpdatedBy().getName());
       } catch (Exception e) {
         throw new OBException("Error while reading attachments:", e);
       }
