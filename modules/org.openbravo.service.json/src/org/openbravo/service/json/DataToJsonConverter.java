@@ -179,6 +179,7 @@ public class DataToJsonConverter {
         }
       }
 
+      jsonObject.put("recordTime", new Date().getTime());
       return jsonObject;
     } catch (JSONException e) {
       throw new IllegalStateException(e);

@@ -830,7 +830,12 @@ OB.Utilities.getTimePassed = function(
       n;
   
   // time difference in days
-  var diffDays = Math.floor((msNow - msCreated) / (1000 * 60 * 60 * 24));
+  return OB.Utilities.getTimePassedInterval(msNow - msCreated);
+};
+
+OB.Utilities.getTimePassedInterval = function(
+  /* amount of time in miliseconds */ timeInMiliseconds) {
+  var diffDays = Math.floor((timeInMiliseconds) / (1000 * 60 * 60 * 24));
   if (diffDays >= 30) {
     n = Math.floor(diffDays / 30);
     return OB.Utilities.formatTimePassedMessage(n,
@@ -846,7 +851,7 @@ OB.Utilities.getTimePassed = function(
   }
 
   // time difference in hours
-  var diffHours = Math.floor((msNow - msCreated) / (1000 * 60 * 60));
+  var diffHours = Math.floor((timeInMiliseconds) / (1000 * 60 * 60));
   if (diffHours >= 1) {
     n = diffHours;
     return OB.Utilities.formatTimePassedMessage(n,
@@ -854,7 +859,7 @@ OB.Utilities.getTimePassed = function(
   }
 
   // time difference in minutes
-  n = Math.floor((msNow - msCreated) / (1000 * 60));
+  n = Math.floor((timeInMiliseconds) / (1000 * 60));
   return OB.Utilities.formatTimePassedMessage(n,
       'OBUIAPP_minutes_ago');
   };
