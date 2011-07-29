@@ -50,6 +50,18 @@ isc.Button.addProperties({
 
 isc.StaticTextItem.getPrototype().getCanFocus = function() {return false;};
 
+isc.TextItem.addProperties({
+  // see comments in super type for useDisabledEventMask
+  // http://forums.smartclient.com/showthread.php?p=70160#post70160
+  // https://issues.openbravo.com/view.php?id=17936
+  useDisabledEventMask: function() {
+    if (isc.Browser.isIE) {
+      return false;
+    }
+    return this.Super('useDisabledEventMask', arguments);
+  }
+});
+
 // NOTE BEWARE: methods/props added here will overwrite and NOT extend FormItem
 // properties! 
 isc.FormItem.addProperties({
@@ -130,7 +142,7 @@ isc.FormItem.addProperties({
       this.selectValue();
     }
   },
-
+  
   blur: function(form, item){
     if (item._hasChanged && form && form.handleItemChange) {
       form.handleItemChange(this);
