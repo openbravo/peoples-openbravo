@@ -201,7 +201,11 @@
                                        from ad_model_object
                                       union
                                      select max(updated) 
-                                       from ad_model_object_mapping) upd) 
+                                       from ad_model_object_mapping
+                                      union
+                                     select max(updated)
+                                       from ad_model_object_para) upd) 
+                                      
       ]]>
     </Sql>
   </SqlMethod>
