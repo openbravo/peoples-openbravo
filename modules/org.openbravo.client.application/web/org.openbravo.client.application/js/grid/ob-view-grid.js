@@ -667,7 +667,6 @@ isc.OBViewGrid.addProperties({
     
     var record, ret = this.Super('dataArrived', arguments);
     this.updateRowCountDisplay();
-    this.view.toolBar.updateButtonState(true);
     if (this.getSelectedRecords() && this.getSelectedRecords().length > 0) {
       this.selectionUpdated();
     }
