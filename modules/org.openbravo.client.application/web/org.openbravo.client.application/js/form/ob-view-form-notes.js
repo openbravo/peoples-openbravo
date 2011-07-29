@@ -274,7 +274,7 @@ isc.OBNoteLayout.addProperties({
         }
 
         value =  value + ' <span class="OBNoteListGridAuthor">' +
-                OB.Utilities.getTimePassed(record.creationDate) +
+                OB.Utilities.getTimePassedInterval(record.recordTime-record.creationDate.getTime()) +
             ' ' + OB.I18N.getLabel('OBUIAPP_by') + ' ' +
             record['createdBy._identifier']+'</span>';
 
