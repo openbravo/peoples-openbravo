@@ -266,9 +266,6 @@ isc.OBImageSelector.addProperties({
   addForm: null,
   showMinimizeButton : false,
   showMaximizeButton : false,
-  height: '40px',
-  width: '200px',
-  align: 'center',
   title: OB.I18N.getLabel('OBUIAPP_ImageSelectorTitle'),
   initWidget: function(args){
     var imageId = this.imageItem.getValue();

@@ -23,6 +23,7 @@
  * 2) OBImageItem
  * 3) SectionItem Button Styles
  * 3) Attachments Styles
+ * 4) Image Popup Styles
  =======================================================================*/
 
 /* =====================================================================
@@ -503,3 +504,14 @@ isc.OBSectionItemButton.addProperties({
   width: 450,
   align: 'center'
 });
+
+ /* =====================================================================
+  * Image Popup Styles
+  =======================================================================*/
+
+  isc.OBImageSelector.addProperties({
+   hlayoutTopMargin: 10,
+   height: 30,
+   width: 450,
+   align: 'center'
+ });
