@@ -681,6 +681,14 @@ OB.ViewFormProperties = {
       delete this.getFields()[i]._changedByFic;
     }
 
+    // refresh WidgetInForm fields if present (as they might depend on data of current record) 
+    for (i = 0; i < this.getFields().length; i++) {
+      var locField  = this.getFields()[i];
+      if (locField.hasOwnProperty("widgetClassId")) {
+        locField.refresh(this);
+      }
+    }
+
     this.markForRedraw();
 
     delete this.inFicCall;
