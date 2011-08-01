@@ -115,7 +115,9 @@ OBImageCanvas.addProperties({
       width: '100%'
     });
     this.imageLayout.addMember(this.image);
-    this.image.setSrc('../web/skins/ltr/Default/Common/Image/imageNotAvailable_medium.png');
+    this.image.setSrc(this.imageNotAvailableSrc);
+    this.image.setHeight(this.imageNotAvailableHeight);
+    this.image.setWidth(this.imageNotAvailableWidth);
     var buttonLayout = isc.VLayout.create({
       width: '1%'
     });
