@@ -187,7 +187,7 @@ isc.OBAlertSectionStackControl.addProperties({
   currentStatus: null,
   
   initWidget: function () {
-    this.setTitle(OB.I18N.getLabel('OBUIAPP_MoveSelectedToStatus', [OB.AlertManagement.translatedStatus[this.newStatus]]));
+    this.setTitle("[ " + OB.I18N.getLabel('OBUIAPP_MoveSelectedToStatus', [OB.AlertManagement.translatedStatus[this.newStatus]]) + " ]");
     this.Super('initWidget', arguments);
   },
   
