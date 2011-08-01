@@ -40,6 +40,9 @@ isc.defineClass('OBUrlWidget', isc.OBWidget).addProperties({
     });
   },
   refresh: function(){
+    if (this.parameters.src) {
+      this.contentSource = this.evaluateContents(this.parameters.src);
+    }
     this.windowContents.setContentsURL(this.contentSource);
   }
 });
