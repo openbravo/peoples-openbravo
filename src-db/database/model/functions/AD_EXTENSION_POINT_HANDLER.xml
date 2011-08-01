@@ -32,7 +32,8 @@ BEGIN
     SELECT lower(PROCEDURENAME) AS procedurename
     FROM ad_ep_procedures
     WHERE ad_extension_points_id = p_extension_point_id
-      AND isactive = 'Y') LOOP
+      AND isactive = 'Y'
+    ORDER BY coalesce(seqno, 9999), procedurename) LOOP
     IF (AD_GET_RDBMS() = 'ORACLE') THEN
       v_Sql := 'CALL ' || Cur_Procedures.procedurename || '('''||p_ep_instance_id||''')';
     ELSE
