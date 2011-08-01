@@ -301,10 +301,14 @@ public class Login extends HttpBaseServlet {
     if (showGoogleIcon) {
 
       String authServlet = "../org.openbravo.service.integration.google/auth.html";
-      String link = "<p class=\"LabelText Login_LabelText\" style=\"line-height:24px;\">Sign in using:&nbsp; <a href=\""
-          + authServlet
-          + "\" title=\"Sign in using your Google Account\" target=\"_top\" "
-          + "><img style=\"vertical-align:middle;\" src=\"../web/images/google.png\" alt=\"Sign in using your Google Account\" width=\"24\" height=\"24\" border=\"0\"/></a></p>";
+      String link = "<p class=\"LabelText Login_LabelText\" style=\"line-height:24px;\">"
+          + Utility.messageBD(this, "OBSEIG_SignIn", vars.getLanguage()) + "&nbsp; <a href=\""
+          + authServlet + "\" title=\""
+          + Utility.messageBD(this, "OBSEIG_SignInAltMsg", vars.getLanguage())
+          + "\" target=\"_top\" "
+          + "><img style=\"vertical-align:middle;\" src=\"../web/images/google.png\" alt=\""
+          + Utility.messageBD(this, "OBSEIG_SignInAltMsg", vars.getLanguage())
+          + "\" width=\"24\" height=\"24\" border=\"0\"/></a></p>";
 
       xmlDocument.setParameter("sign-in", link);
     }
