@@ -90,6 +90,17 @@ isc.FormItem.addProperties({
     return this._original_compareValues(value1, value2);
   },
  
+  // overridden because when a formitem has showDisabled false
+  // then still its icons are shown disabled
+  _getIconURL: isc.FormItem.getPrototype().getIconURL,
+  getIconURL: function (icon, over, disabled, focused) {
+    if (disabled && !this.showDisabled) {
+      return this._getIconURL(icon, over, false, focused);
+    } else {
+      return this._getIconURL(icon, over, disabled, focused);
+    }
+  },
+  
   _handleTitleClick: isc.FormItem.getPrototype().handleTitleClick,
   handleTitleClick: function() {
     // always titleclick directly as sc won't call titleclick
@@ -107,6 +118,18 @@ isc.FormItem.addProperties({
     if (item.linkButtonClick) {
       item.linkButtonClick();
     }
+  },
+  
+  // replaced because icon url was not considering 
+  // showDisabled false
+  // http://forums.smartclient.com/showthread.php?p=70308#post70308
+  getIconURL : function (icon, over, disabled, focused) {
+    var src = icon.src || this.defaultIconSrc,
+        state = (this.showDisabled && (disabled || this.iconIsDisabled(icon))) ? isc.StatefulCanvas.STATE_DISABLED 
+                                            : over ? isc.StatefulCanvas.STATE_OVER : null;
+
+    src = isc.Img.urlForState(src, false, focused, state);
+    return src;
   },
   
   changed: function(){

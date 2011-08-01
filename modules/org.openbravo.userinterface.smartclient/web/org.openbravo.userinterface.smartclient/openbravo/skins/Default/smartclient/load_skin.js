@@ -672,6 +672,8 @@ with (theWindow) {
 
             expansionFieldTrueImage : "[SKINIMG]/ListGrid/row_expanded.png",
             expansionFieldFalseImage: "[SKINIMG]/ListGrid/row_collapsed.png",
+            expansionFieldImageWidth : 16,
+            expansionFieldImageHeight : 16,
             checkboxFieldImageWidth : 13,
             checkboxFieldImageHeight : 13
         })
