@@ -44,7 +44,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 @ApplicationScoped
 public class WindowSettingsActionHandler extends BaseActionHandler {
-  private static final Logger log4j = Logger.getLogger(PersonalizationHandler.class);
+  private static final Logger log4j = Logger.getLogger(WindowSettingsActionHandler.class);
 
   @Inject
   private PersonalizationHandler personalizationHandler;

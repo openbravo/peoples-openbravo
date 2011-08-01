@@ -63,7 +63,7 @@ public class PersonalizationActionHandler extends BaseActionHandler {
   protected JSONObject execute(Map<String, Object> parameters, String data) {
 
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
       if (!parameters.containsKey(ACTION)) {
         throw new IllegalStateException("Mandatory parameter " + ACTION + " not present");
       }

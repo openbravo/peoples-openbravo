@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,7 +59,7 @@ public class PersonalizationHandler {
    * @return the personalization settings in a json object for a window.
    */
   public JSONObject getPersonalizationForWindow(Window window) {
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(false);
     try {
       final JSONObject result = new JSONObject();
       for (Tab tab : window.getADTabList()) {
@@ -95,7 +95,7 @@ public class PersonalizationHandler {
    * @return the personalization settings in a json object for this tab.
    */
   public UIPersonalization getPersonalizationForTab(Tab tab) {
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(false);
     try {
       return getPersonalization(OBContext.getOBContext().getCurrentClient().getId(), OBContext
           .getOBContext().getCurrentOrganization().getId(), OBContext.getOBContext().getRole()
@@ -109,7 +109,7 @@ public class PersonalizationHandler {
 
   public UIPersonalization getPersonalization(String clientId, String orgId, String roleId,
       String userId, String tabId, boolean exactMatch) {
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(false);
     try {
       final List<UIPersonalization> pers = getPersonalizations(clientId, orgId, userId, roleId,
           tabId, exactMatch);
@@ -186,7 +186,7 @@ public class PersonalizationHandler {
    */
   public UIPersonalization storePersonalization(String persId, String clientId, String orgId,
       String roleId, String userId, String tabId, String target, String value) {
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(false);
     try {
       UIPersonalization uiPersonalization;
       if (persId != null) {
