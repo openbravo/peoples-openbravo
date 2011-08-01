@@ -291,6 +291,17 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
 
+  // destroy the context menu also
+  // see why this needs to be done in the 
+  // documentation of canvas.contextMenu in Canvas.js
+  destroy: function() {
+    if (this.contextMenu) {
+      this.contextMenu.destroy();
+      this.contextMenu = null;
+    }
+    this.Super('destroy', arguments);
+  },
+  
   setData: function(data) {
     data.grid = this;
     this.Super('setData', arguments);
