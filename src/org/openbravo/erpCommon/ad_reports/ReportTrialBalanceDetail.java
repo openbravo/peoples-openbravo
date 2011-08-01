@@ -190,10 +190,6 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
     return Tree.getMembers(this, strTree, strChild);
   }
 
-  public <T extends BaseOBObject> T getObject(Class<T> t, String strId) {
-    return OBDal.getInstance().get(t, strId);
-  }
-
   public String getServletInfo() {
     return "Servlet ReportTrialBalanceDetail. This Servlet was made by mirurita";
   }
