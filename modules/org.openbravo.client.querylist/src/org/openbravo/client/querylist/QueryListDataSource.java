@@ -38,6 +38,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
@@ -46,14 +47,12 @@ import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
-import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
 import org.openbravo.client.kernel.reference.NumberUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.YesNoUIDefinition;
 import org.openbravo.client.myob.WidgetClass;
-import org.openbravo.client.myob.WidgetInstance;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Reference;
@@ -92,12 +91,11 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
 
     OBContext.setAdminMode();
     try {
-      WidgetInstance widgetInstance = OBDal.getInstance().get(WidgetInstance.class,
-          parameters.get("widgetInstanceId"));
+      WidgetClass widgetClass = OBDal.getInstance().get(WidgetClass.class,
+          parameters.get("widgetId"));
       boolean isExport = "true".equals(parameters.get("exportToFile"));
       boolean showAll = "true".equals(parameters.get("showAll"));
       String viewMode = parameters.get("viewMode");
-      WidgetClass widgetClass = widgetInstance.getWidgetClass();
       List<OBCQL_QueryColumn> columns = QueryListUtils.getColumns(widgetClass
           .getOBCQLWidgetQueryList().get(0));
 
@@ -134,7 +132,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
 
       String[] params = widgetQuery.getNamedParameters();
       if (params.length > 0) {
-        HashMap<String, Object> parameterValues = getParameterValues(parameters, widgetInstance);
+        HashMap<String, Object> parameterValues = getParameterValues(parameters, widgetClass);
 
         for (int i = 0; i < params.length; i++) {
           String namedParam = params[i];
@@ -200,27 +198,42 @@ public class QueryListDataSource extends ReadOnlyDataSourceService {
    * 
    * @param parameters
    *          the parameters passed in from the request
-   * @param widgetInstance
-   *          the widget instance owner of the parameter values
+   * @param widgetClass
+   *          the widget class to which the parameters belong to
    * @return a HashMap<String, Object> with the value of each parameter mapped by the DBColumnName
    *         of the parameter.
    */
   private HashMap<String, Object> getParameterValues(Map<String, String> parameters,
-      WidgetInstance widgetInstance) {
+      WidgetClass widgetClass) {
     HashMap<String, Object> parameterValues = new HashMap<String, Object>();
-    for (ParameterValue value : widgetInstance
-        .getOBUIAPPParameterValueEMObkmoWidgetInstanceIDList()) {
-      parameterValues.put(value.getParameter().getDBColumnName(),
-          ParameterUtils.getParameterValue(value));
+
+    // get serializedValues from request (if present)
+    String serializedParams = parameters.get("serializedParameters");
+    if (serializedParams != null) {
+      try {
+        JSONObject json = new JSONObject(serializedParams);
+        for (Parameter parameter : widgetClass.getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
+          if (parameter.isFixed()) {
+            parameterValues.put(parameter.getDBColumnName(),
+                ParameterUtils.getParameterFixedValue(parameters, parameter));
+          } else {
+            if (json.has(parameter.getDBColumnName())) {
+              parameterValues.put(parameter.getDBColumnName(),
+                  json.get(parameter.getDBColumnName()));
+            } else {
+              // TODO: not fixed & value missing -> error (prepared to be handled in caller, but not
+              // yet implemented)
+            }
+          }
+        }
+      } catch (JSONException e) {
+        log.error("Error processing client parameters", e);
+      }
+    } else {
+      // data send without serializedParams (should not happen)
+      throw new OBException("Missing serializedParameters value in request");
     }
 
-    for (Parameter parameter : widgetInstance.getWidgetClass()
-        .getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
-      if (!parameterValues.containsKey(parameter.getDBColumnName()) && parameter.isFixed()) {
-        parameterValues.put(parameter.getDBColumnName(),
-            ParameterUtils.getParameterFixedValue(parameters, parameter));
-      }
-    }
     return parameterValues;
   }
 

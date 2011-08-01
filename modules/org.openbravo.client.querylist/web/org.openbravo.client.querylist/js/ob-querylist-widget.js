@@ -64,6 +64,11 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   },
   
   setWidgetHeight: function (){
+    // when used inside generated window, just accept externally defined height (via rowspan) and
+	// don't override it as will break normal window layout
+    if (this.inWidgetInFormMode) {
+      return;
+    }
     var currentHeight = this.getHeight(), 
     //currentBodyHeight = this.body.getHeight(),
     edgeTop = this.edgeTop,
@@ -249,7 +254,23 @@ isc.OBQueryListGrid.addProperties({
   },
   
   getFetchRequestParams: function(params) {
+    var localWidgetProperties, propName, propValue;
+
+    // process dynamic parameters
+    localWidgetProperties = isc.clone(this.widget.parameters);
+    delete localWidgetProperties.formValues;
+    for (propName in localWidgetProperties) {
+      if (localWidgetProperties.hasOwnProperty(propName)) {
+        propValue = localWidgetProperties[propName];
+        if (typeof propValue === 'string') {
+          localWidgetProperties[propName] = this.widget.evaluateContents(propValue);
+        }
+      }
+    }
+
     params = params || {};
+    params.serializedParameters = isc.JSON.encode(localWidgetProperties);
+    params.widgetId = this.widget.widgetId;
     params.widgetInstanceId = this.widget.dbInstanceId;
     params.rowsNumber = this.widget.parameters.RowsNumber;
     params.viewMode = this.widget.viewMode;
