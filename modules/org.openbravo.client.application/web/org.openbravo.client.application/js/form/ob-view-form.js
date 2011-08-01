@@ -176,6 +176,8 @@ OB.ViewFormProperties = {
   },
   
   doEditRecordActions: function(preventFocus, isNew){
+    this.initializing = true;
+    
     delete this.validateAfterFicReturn;
     
     // only compute a new focus item if the form is active
@@ -534,6 +536,7 @@ OB.ViewFormProperties = {
         // remember the initial values, if we are still editing the same row
         me.rememberValues();
       }
+      me.initializing = false;
     });
   },
   
@@ -715,7 +718,7 @@ OB.ViewFormProperties = {
       if (this.getFocusItem()) {
         if (this.allItemsDisabled) {
           this.storeFocusItem();
-          if (this.getFocusItem()) {
+          if (this.getFocusItem() && !this.initializing) {
             this.getFocusItem().blurItem();
           }
           this.setHandleDisabled(state);
