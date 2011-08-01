@@ -92,6 +92,8 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.myob/ob-myopenbravo-styles.css", false));
 
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.myob/js/form/formitem/ob-formitem-widgetinform.js", false));
     return globalResources;
   }
 

@@ -202,17 +202,24 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   initWidget: function (args) {
     var widget = this, headerControls = ['headerLabel'];
     
-    // set the headercontrols in initWidget otherwise only  
-    // one menubutton gets created for all widgets
-    this.menuButton = isc.OBWidgetMenuItem.create({portlet: this});
+    // when widget placed inside generated window
+    if (this.inWidgetInFormMode) {
+      this.showHeader = false;
+      this.canDragReposition = false;
+      this.height = '0px'; // together with overflow:visible to get height up-to rowspan
+    } else {
+      // set the headercontrols in initWidget otherwise only  
+      // one menubutton gets created for all widgets
+      this.menuButton = isc.OBWidgetMenuItem.create({portlet: this});
 
-    headerControls.push(this.menuButton);
+      headerControls.push(this.menuButton);
 
-    if(args.showMaximizeButton) {
-      headerControls.push('maximizeButton');
+      if(args.showMaximizeButton) {
+        headerControls.push('maximizeButton');
+      }
+
+      this.headerControls = headerControls;
     }
-
-    this.headerControls = headerControls;
 
     this.editFormLayout = this.createEditFormLayout();
     this.windowContents = this.createWindowContents();
