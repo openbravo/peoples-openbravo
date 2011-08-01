@@ -89,17 +89,6 @@ isc.FormItem.addProperties({
     }
     return this._original_compareValues(value1, value2);
   },
- 
-  // overridden because when a formitem has showDisabled false
-  // then still its icons are shown disabled
-  _getIconURL: isc.FormItem.getPrototype().getIconURL,
-  getIconURL: function (icon, over, disabled, focused) {
-    if (disabled && !this.showDisabled) {
-      return this._getIconURL(icon, over, false, focused);
-    } else {
-      return this._getIconURL(icon, over, disabled, focused);
-    }
-  },
   
   _handleTitleClick: isc.FormItem.getPrototype().handleTitleClick,
   handleTitleClick: function() {
@@ -113,6 +102,16 @@ isc.FormItem.addProperties({
     return this._handleTitleClick();
   },
   
+  // prevent to many calls to focus in item if there is already focus
+  _focusInItem: isc.FormItem.getPrototype().focusInItem,
+  focusInItem: function() {
+    if (this.hasFocus) {
+      this.selectValue();
+      return;
+    }
+    this._focusInItem();
+  },
+
   titleClick: function(form, item){
     item.focusInItem();
     if (item.linkButtonClick) {
@@ -143,27 +142,6 @@ isc.FormItem.addProperties({
       view.lastFocusedItem = this;
     }
     this.hasFocus = true;
-  },
-
-  doSelectElement: function(item, delayed) {
-    var me = this;
-    
-    if (!delayed && isc.Browser.isIE) {
-      this.fireOnPause("doSelectElement", function() {
-        me.doSelectElement(item, true);
-      }, 0, this);
-      return;
-    }
-    
-    item = item || this;
-    if (isc.isA.OBTextAreaItem(item)) {
-      // don't do anything here
-    } else if (item.getElement() && item.getElement().select) {
-      item.getElement().select();
-    } else {
-      // nothing else, just do the native stuff
-      this.selectValue();
-    }
   },
   
   blur: function(form, item){

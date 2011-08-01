@@ -198,10 +198,6 @@ isc.OBDateItem.addProperties(OB.DateItemProperties,
     }
   },
   
-  doSelectElement: function() {
-    this.Super('doSelectElement', [this.dateTextField]);
-  },
-  
   // update the value in update value as this is called from cellEditEnd in the
   // grid
   updateValue: function() {
