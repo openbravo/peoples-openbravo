@@ -32,7 +32,9 @@ isc.OBAttachmentsSectionItem.addProperties({
   // width: '100%',
   // height: '100%',
   
-  
+  // this field group does not participate in personalization
+  personalizable: false,
+
   canFocus: true,
   
   // don't expand as a default

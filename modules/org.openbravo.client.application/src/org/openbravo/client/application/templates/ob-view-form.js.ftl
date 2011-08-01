@@ -1,3 +1,4 @@
+<#--
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -16,8 +17,8 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
-
-isc.OBViewForm.create({
+-->
+{
     fields: [
     <#list data.fields as field>
       <@createField field/><#if field_has_next>,</#if>
@@ -53,4 +54,4 @@ isc.OBViewForm.create({
         </#list>
       }
     }
-})
+}

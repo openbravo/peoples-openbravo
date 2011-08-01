@@ -987,6 +987,11 @@ isc.OBToolbar.addProperties({
     }
 
     var buttons = this.getRightMembers(), buttonContexts = [], currentContext, buttonsByContext = [];
+
+    if (buttons.length === 0) {
+      return;
+    }
+    
     for (i = 0; i < buttons.length; i++) {
       if (!currentContext || currentContext !== buttons[i].contextView) {
         // Adding new context

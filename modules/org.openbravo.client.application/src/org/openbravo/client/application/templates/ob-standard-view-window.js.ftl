@@ -1,3 +1,4 @@
+<#--
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -16,6 +17,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+-->
 // contains the code for creating a class reflecting the standard window
 //jslint
 // tell the view manager what got loaded...

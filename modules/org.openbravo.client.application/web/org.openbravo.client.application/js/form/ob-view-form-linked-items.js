@@ -34,6 +34,9 @@ isc.OBLinkedItemSectionItem.addProperties({
   
   overflow: 'hidden',
   
+  // this field group does not participate in personalization
+  personalizable: false,
+
   canFocus: true,
   
   // don't expand as a default

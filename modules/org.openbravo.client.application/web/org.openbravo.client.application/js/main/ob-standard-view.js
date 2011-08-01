@@ -1198,7 +1198,7 @@ isc.OBStandardView.addProperties({
       document.title = 'Openbravo - ' + tab.title;
     }
   },
-  
+    
   isViewVisible: function(){
     // this prevents data requests for minimized tabs
     // note this.tab.isVisible is done as the tab is visible earlier than

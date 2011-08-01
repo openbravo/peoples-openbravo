@@ -1,4 +1,3 @@
-<#--
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -12,20 +11,34 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
--->
 
-/* jslint */
-OB.Properties = {
-<#list data.properties as prop>
-<#if prop.stringValue>
-'${prop.id?js_string}':  '${prop.value?js_string}'<#if prop_has_next>,</#if>
-<#else>
-'${prop.id?js_string}':  ${prop.value}<#if prop_has_next>,</#if>
-</#if>
-</#list>
+OB.Styles.Personalization = {};
+
+OB.Styles.Personalization.Icons = {
+  fieldGroup: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconFolder.png',
+  field:  OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconField.png'
+};
+
+OB.Styles.Personalization.closeButtonProperties = {
+  width: 18,
+  height: 18
+};
+
+OB.Styles.Personalization.FieldsLayout = {
+  width: 175,
+  styleName: 'OBPersonalization_FieldsLayout'
+};
+
+OB.Styles.Personalization.FormLayout = {
+  styleName: 'OBPersonalization_FormLayout'
+};
+
+OB.Styles.Personalization.PropertiesLayout = {
+  width: 175,
+  margin: 10
 };

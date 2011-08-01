@@ -84,7 +84,7 @@
         }
         
         do {
-          if (target.view && target.view.setAsActiveView) {
+          if (target.view && target.view.setAsActiveView && target.view.isVisible()) {
             // don't do this if already activec
             if (target.view.isActiveView()) {
               onClickTarget = null;

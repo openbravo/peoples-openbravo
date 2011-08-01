@@ -1,3 +1,4 @@
+<#--
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -16,6 +17,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+-->
 <@createView data/>      
 
 <#macro createView tabComponent>    
@@ -106,7 +108,7 @@
     </#if>
     initWidget: function() {
         this.dataSource = ${tabComponent.dataSourceJavaScript};
-        this.viewForm = ${tabComponent.viewForm}; 
+        this.viewForm = isc.OBViewForm.create(${tabComponent.viewForm}); 
         this.viewGrid = ${tabComponent.viewGrid};
         this.Super('initWidget', arguments);
       },

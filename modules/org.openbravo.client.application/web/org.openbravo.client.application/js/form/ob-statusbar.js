@@ -170,6 +170,23 @@ isc.OBStatusBar.addProperties( {
 
     this.leftStatusBar = isc.OBStatusBarLeftBar.create( {});
     this.leftStatusBar.addMember(this.contentLabel);
+    
+    this.buttonBar = isc.OBStatusBarIconButtonBar.create( {});
+    this.addCreateButtons();
+    
+    this.savedIcon = isc.Img.create(this.savedIconDefaults);
+    this.newIcon = isc.Img.create(this.newIconDefaults);
+    this.editIcon = isc.Img.create(this.editIconDefaults);
+    this.spacer = isc.LayoutSpacer.create( {
+      width : 14
+    });
+    this.leftStatusBar.addMember(this.spacer, 0);
+
+    this.addMembers( [ this.leftStatusBar, this.buttonBar ]);
+    this.Super('initWidget', arguments);
+  },
+  
+  addCreateButtons: function() {
 
     this.previousButton = isc.OBStatusBarIconButton.create( {
       view : this.view,
@@ -207,7 +224,6 @@ isc.OBStatusBar.addProperties( {
       forceKeyboardShortcut : true,
       keyboardShortcutId : 'StatusBar_Maximize-Restore'
     });
-    this.buttonBar = isc.OBStatusBarIconButtonBar.create( {});
 
     var buttonSpacer = isc.HLayout.create( {
       width : this.iconButtonGroupSpacerWidth
@@ -222,17 +238,6 @@ isc.OBStatusBar.addProperties( {
             this.buttonBar.members[i]);
       }
     }
-
-    this.savedIcon = isc.Img.create(this.savedIconDefaults);
-    this.newIcon = isc.Img.create(this.newIconDefaults);
-    this.editIcon = isc.Img.create(this.editIconDefaults);
-    this.spacer = isc.LayoutSpacer.create( {
-      width : 14
-    });
-    this.leftStatusBar.addMember(this.spacer, 0);
-
-    this.addMembers( [ this.leftStatusBar, this.buttonBar ]);
-    this.Super('initWidget', arguments);
   },
 
   draw: function(){
@@ -300,7 +305,7 @@ isc.OBStatusBar.addProperties( {
     }
   },
 
-  setContentLabel : function(icon, statusCode, arrayTitleField) {
+  setContentLabel: function(icon, statusCode, arrayTitleField) {
     var msg = '', i;
     if (statusCode) {
       msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(statusCode) + '</span>';
@@ -311,7 +316,7 @@ isc.OBStatusBar.addProperties( {
           msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
         }
         msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + arrayTitleField[0][i] + ': ' + '</span>';
-        msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + arrayTitleField[1][i] + '</span>';
+        msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
       }
     }
     if (this.labelOverflowHidden) {
@@ -323,6 +328,14 @@ isc.OBStatusBar.addProperties( {
     } else {
       this.removeIcon(icon);
     }
+  },
+  
+  getValidValue: function(value) {
+    var undef;
+    if (value === null || value === undef) {
+      return '&nbsp;&nbsp;&nbsp;';
+    }
+    return value;
   }
 
 });

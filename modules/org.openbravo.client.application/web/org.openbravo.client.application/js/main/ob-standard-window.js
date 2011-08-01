@@ -51,8 +51,6 @@ isc.OBStandardWindow.addProperties({
   dirtyEditForm: null,
   
   initWidget: function(){
-    var standardWindow = this;
-    
     this.views = [];
     
     this.toolBarLayout = isc.HLayout.create({
@@ -87,18 +85,32 @@ isc.OBStandardWindow.addProperties({
     
     // retrieve user specific window settings from the server
     // they are stored at class level to only do the call once
+    // note this if is not done inside the method as this 
+    // method is also called explicitly from the personalization window
     if (!this.getClass().windowSettingsRead) {
-      OB.RemoteCallManager.call('org.openbravo.client.application.WindowSettingsActionHandler', null, {
-        windowId: this.windowId
-      }, function(response, data, request){
-        standardWindow.setWindowSettings(data);
-      });
+      this.readWindowSettings();
     }
+  },
+  
+  readWindowSettings: function() {
+    var standardWindow = this;
+    
+    OB.RemoteCallManager.call('org.openbravo.client.application.WindowSettingsActionHandler', null, {
+      windowId: this.windowId
+    }, function(response, data, request){
+      standardWindow.setWindowSettings(data);
+    });    
   },
   
   // set window specific user settings, purposely set on class level
   setWindowSettings: function(data) {
     var i;
+    
+    // do the personalization part always
+    if (data) {
+      OB.Personalization.personalizeWindow(data.personalization, this);
+    }
+    
     if (this.getClass().windowSettingsRead) {
       return;
     }
@@ -531,6 +543,11 @@ isc.OBStandardWindow.addProperties({
     this.targetTabId = tabId;
     this.targetRecordId = recordId;
     OB.Layout.HistoryManager.updateHistory();
+  },
+  
+  getView: function(tabId) {
+    // find is a SC extension on arrays
+    return this.views.find('tabId', tabId);
   },
 
   storeViewState: function(){

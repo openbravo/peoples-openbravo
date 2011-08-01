@@ -52,7 +52,7 @@ isc.OBSectionItem.addProperties({
 
     for(i = 0; i < this.itemIds.length; i++) {
       item = f.getItem(this.itemIds[i]);
-      if(item && item.editorType !== 'HiddenItem') {
+      if(item && item.editorType !== 'HiddenItem' && !item.hiddenInForm) {
         item.alwaysTakeSpace = flag;
       }
     }

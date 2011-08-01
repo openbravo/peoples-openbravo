@@ -20,3 +20,7 @@
 //== OBAuditSectionItem ==
 isc.ClassFactory.defineClass('OBAuditSectionItem', OBSectionItem);
 
+isc.OBAuditSectionItem.addProperties({
+  // this field group does not participate in formbuilding
+  personalizable: false
+});

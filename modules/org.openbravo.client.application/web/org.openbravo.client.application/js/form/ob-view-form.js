@@ -75,9 +75,6 @@ OB.ViewFormProperties = {
   // Name of the fields shown in status bar
   statusBarFields: [],
 
-  // Last returned array of function getStatusBarFields
-  statusBarFieldsJSArray: [],
-
   // is set in the OBNoteSectionItem.initWidget
   noteSection: null,
   
@@ -94,6 +91,10 @@ OB.ViewFormProperties = {
     // are re-used for inline grid editing
     isc.addProperties(this, this.obFormProperties);
 
+    // is used to keep track of the original simple objects
+    // used to create fields
+    this._originalFields = isc.shallowClone(this.fields);
+    
     this.Super('initWidget', arguments);
 
     length = this.getItems().length;
@@ -135,7 +136,6 @@ OB.ViewFormProperties = {
         statusBarFields[1].push(value);
       }
     }
-    this.statusBarFieldsJSArray = statusBarFields;
     return statusBarFields;
   },
   
@@ -144,7 +144,7 @@ OB.ViewFormProperties = {
     this.view.updateTabTitle();
     if (value && !this.isNew && this.view.statusBar.mode !== 'EDIT') {
       this.view.statusBar.mode = "EDIT";
-      this.view.statusBar.setContentLabel(this.view.statusBar.editIcon, 'OBUIAPP_Editing', this.statusBarFieldsJSArray);
+      this.view.statusBar.setContentLabel(this.view.statusBar.editIcon, 'OBUIAPP_Editing', this.getStatusBarFields());
     }
     
     if (value) {
@@ -1343,6 +1343,9 @@ OB.ViewFormProperties = {
   
   // overridden to show the error when hovering over items
   titleHoverHTML: function(item){
+    if (!item.isVisible()) {
+      return null;
+    }
     var errs = item.getErrors();
     if (!errs) {
       return this.Super('titleHoverHTML', arguments);
@@ -1351,6 +1354,9 @@ OB.ViewFormProperties = {
   },
   
   itemHoverHTML: function(item){
+    if (!item.isVisible()) {
+      return null;
+    }
     var errs = item.getErrors();
     if (!errs) {
       return this.Super('itemHoverHTML', arguments);

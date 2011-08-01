@@ -38,6 +38,9 @@ isc.OBNoteSectionItem.addProperties({
   canvasItem : null,
 
   visible : true,
+ 
+  // this field group does not participate in personalization
+  personalizable: false,
 
   // note formitems don't have an initWidget but an init method
   init : function() {

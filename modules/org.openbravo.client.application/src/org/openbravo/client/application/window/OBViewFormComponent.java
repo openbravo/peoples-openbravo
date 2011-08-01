@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.context.RequestScoped;
+
 import org.apache.log4j.Logger;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
@@ -49,6 +51,7 @@ import org.openbravo.model.ad.ui.Tab;
  * @author mtaal
  * @author iperdomo
  */
+@RequestScoped
 public class OBViewFormComponent extends BaseTemplateComponent {
 
   private static final String TEMPLATE_ID = "C1D176407A354A40815DC46D24D70EB8";
@@ -66,8 +69,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
   private Tab tab;
   private List<String> statusBarFields = new ArrayList<String>();
 
+  private String templateId = TEMPLATE_ID;
+
   protected Template getComponentTemplate() {
-    return OBDal.getInstance().get(Template.class, TEMPLATE_ID);
+    return OBDal.getInstance().get(Template.class, templateId);
   }
 
   public Tab getTab() {
@@ -223,6 +228,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     if (!auditFields.isEmpty()) {
       final OBViewFieldGroup viewFieldGroup = new OBViewFieldGroup();
       viewFieldGroup.setType("OBAuditSectionItem");
+      viewFieldGroup.setPersonalizable(false);
       fields.add(viewFieldGroup);
       viewFieldGroup.setFieldGroup(OBDal.getInstance().get(FieldGroup.class, AUDIT_GROUP_ID));
       viewFieldGroup.addChildren(auditFields);
@@ -299,6 +305,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public String getType();
 
     public boolean getStandardField();
+
+    public boolean isPersonalizable();
 
     public String getFieldProperties();
 
@@ -422,6 +430,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return false;
     }
 
+    public boolean isPersonalizable() {
+      return false;
+    }
+
     @Override
     public boolean isParentProperty() {
       return false;
@@ -489,9 +501,18 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return property.isUpdatable();
     }
 
+    public boolean isPersonalizable() {
+      return true;
+    }
+
     public boolean isParentProperty() {
       if (isParentProperty == null) {
-        isParentProperty = OBViewFormComponent.this.getParentProperty().equals(property.getName());
+        if (OBViewFormComponent.this.getParentProperty() == null) {
+          isParentProperty = false;
+        } else {
+          isParentProperty = OBViewFormComponent.this.getParentProperty()
+              .equals(property.getName());
+        }
       }
       return isParentProperty;
     }
@@ -703,6 +724,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return false;
     }
 
+    public boolean isPersonalizable() {
+      return false;
+    }
+
     public String getInpColumnName() {
       return "";
     }
@@ -771,9 +796,14 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     private FieldGroup fieldGroup;
     private String label;
     private List<OBViewFieldDefinition> children = new ArrayList<OBViewFieldDefinition>();
+    private boolean personalizable = true;
 
     public OBViewFieldGroup() {
       type = "OBSectionItem";
+    }
+
+    public boolean isPersonalizable() {
+      return personalizable;
     }
 
     public String getLabel() {
@@ -840,6 +870,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
         }
       }
       return false;
+    }
+
+    public void setPersonalizable(boolean personalizable) {
+      this.personalizable = personalizable;
     }
   }
 
@@ -1041,6 +1075,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
   public class OBViewFieldSpacer implements OBViewFieldDefinition {
 
+    public boolean isPersonalizable() {
+      return false;
+    }
+
     public long getColSpan() {
       return 1;
     }
@@ -1149,5 +1187,9 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
   public void setParentProperty(String parentProperty) {
     this.parentProperty = parentProperty;
+  }
+
+  public void setTemplateId(String templateId) {
+    this.templateId = templateId;
   }
 }

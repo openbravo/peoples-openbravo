@@ -83,6 +83,10 @@ OB.DateItemProperties = {
     this.currentYear = String(currentTime.getFullYear());
 
     this.Super('init', arguments);
+    
+    if (this.showDisabled === false) {
+      this.textField.showDisabled = false;
+    }
   },
 
   // compare while ignoring milli difference

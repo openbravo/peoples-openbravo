@@ -21,9 +21,12 @@ package org.openbravo.client.application;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.client.application.personalization.PersonalizationHandler;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.StaticResourceComponent;
 import org.openbravo.dal.core.OBContext;
@@ -41,6 +44,10 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 @ApplicationScoped
 public class WindowSettingsActionHandler extends BaseActionHandler {
+  private static final Logger log4j = Logger.getLogger(PersonalizationHandler.class);
+
+  @Inject
+  private PersonalizationHandler personalizationHandler;
 
   protected JSONObject execute(Map<String, Object> parameters, String data) {
 
@@ -63,6 +70,13 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
           .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
           OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), window);
       json.put("autoSave", "Y".equals(autoSaveStr));
+
+      try {
+        json.put("personalization", personalizationHandler.getPersonalizationForWindow(window));
+      } catch (Throwable t) {
+        // be robust about errors in the personalization settings
+        log4j.error("Error for window " + window, t);
+      }
 
       final String showConfirmationStr = Preferences.getPreferenceValue("ShowConfirmationDefault",
           false, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()

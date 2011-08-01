@@ -1,3 +1,4 @@
+<#--
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -16,6 +17,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+-->
 
 <#macro createField fieldDefinition>
     {
@@ -30,6 +32,7 @@
         rowSpan: ${fieldDefinition.rowSpan},
         startRow: ${fieldDefinition.startRow?string},
         endRow: ${fieldDefinition.endRow?string},
+        personalizable: ${fieldDefinition.personalizable?string},
         <#if fieldDefinition.standardField>
         columnName: '${fieldDefinition.columnName?string}',
         inpColumnName: '${fieldDefinition.inpColumnName?string}',
@@ -58,7 +61,7 @@
             
             OB.Utilities.fixNull250(currentValues);
 
-            return context && (${fieldDefinition.showIf});
+            return !this.hiddenInForm && context && (${fieldDefinition.showIf});
           },          
           </#if>
           <#if fieldDefinition.searchField>

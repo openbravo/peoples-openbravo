@@ -223,6 +223,24 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/alert-management/ob-alert-management-view.js",
         false));
 
+    // personalization
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_PARAMETER
+            + "/org.openbravo.client.application/ob-personalization-styles.js", false));
+
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/personalization/ob-personalization.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/personalization/ob-personalization-treegrid.js",
+        false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/personalization/ob-customize-form.js", false));
+    globalResources
+        .add(createStaticResource(
+            "web/org.openbravo.client.application/js/personalization/ob-customize-form-toolbar-button.js",
+            false));
+
     // Styling
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
@@ -326,6 +344,17 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/classic/ob-classic-compatibility.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-history-manager.js", false));
+
+    // personalization
+    globalResources.add(createStyleSheetResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_PARAMETER
+            + "/org.openbravo.client.application/ob-personalization-styles.css", false));
+
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_PARAMETER
+            + "/org.openbravo.client.application/ob-personalization-styles.js", false));
 
     return globalResources;
   }
