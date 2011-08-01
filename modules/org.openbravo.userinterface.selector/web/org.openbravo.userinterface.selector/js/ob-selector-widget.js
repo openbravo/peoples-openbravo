@@ -662,41 +662,49 @@ isc.OBSelectorWidget
               this.selector.checkDefaultValidations(form, item);
             },
               getPickListFilterCriteria : function() {
-                var defValue, prop, i,
+                var defValue, i,
                     criteria = {
                       operator: 'or',
                       _constructor: 'AdvancedCriteria',
                       criteria:[]
-                    };
+                    },
+                    crit = this.Super('getPickListFilterCriteria');
 
                 criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
 
                 // also adds the special ORG parameter
                 OB.Utilities.addFormInputsToCriteria(criteria);
 
-                criteria.criteria.push({
-                  fieldName: this.displayField,
-                  operator: 'iContains',
-                  value: this.getDisplayValue()
-                });
-
-
                 // adds the selector id to filter used to get filter information
                 criteria._selectorDefinitionId = this.selector.selectorDefinitionId;
 
-                // only filter if the display field is also
-                // passed
-                // the displayField filter is not passed when
-                // the user clicks the
-                // drop-down button
-                for (i = 0; i < this.selector.extraSearchFields.length; i++) {
-                  if (!criteria[this.selector.extraSearchFields[i]]) {
-                    criteria.criteria.push({
-                      fieldName: this.selector.extraSearchFields[i],
-                      operator: 'iContains',
-                      value: this.getDisplayValue()
-                    });
+                // only filter if the display field is also passed
+                // the displayField filter is not passed when the user clicks the drop-down button
+                var displayFieldValue = null;
+                if (crit.criteria) {
+                  for (i = 0; i < crit.criteria.length; i++) {
+                    if (crit.criteria[i].fieldName === this.displayField) {
+                      displayFieldValue = crit.criteria[i].value;
+                    }
                   }
+                } else if (crit[this.displayField]) {
+                  displayFieldValue = crit[this.displayField];
+                }
+                if (displayFieldValue !== null) {
+                  for (i = 0; i < this.selector.extraSearchFields.length; i++) {
+                    if (!criteria[this.selector.extraSearchFields[i]]) {
+                      criteria.criteria.push({
+                        fieldName: this.selector.extraSearchFields[i],
+                        operator: 'iContains',
+                        value: displayFieldValue
+                      });
+                    }
+                  }
+                  criteria.criteria.push({
+                    fieldName: this.displayField,
+                    operator: 'iContains',
+                    value: displayFieldValue
+                  });
                 }
 
                 // for the suggestion box it is one big or
