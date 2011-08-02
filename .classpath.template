@@ -19,6 +19,8 @@
 	<classpathentry kind="src" path="modules/org.openbravo.userinterface.selector/src"/>
 	<classpathentry kind="src" path="modules/org.openbravo.userinterface.smartclient/src"/>
 	<classpathentry kind="src" path="modules/org.openbravo.service.datasource/src"/>
+	<classpathentry kind="src" path="modules/org.openbravo.service.integration.openid/src"/>
+	<classpathentry kind="src" path="modules/org.openbravo.service.integration.google/src"/>
 	<classpathentry kind="src" path="src-test"/>
 	<classpathentry including="quartz.properties" kind="src" path="config"/>
 	<classpathentry kind="src" path="src-gen"/>
