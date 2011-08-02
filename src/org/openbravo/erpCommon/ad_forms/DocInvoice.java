@@ -324,17 +324,28 @@ public class DocInvoice extends AcctServer {
         // New docLine created to assign C_Tax_ID value to the entry
         DocLine docLine = new DocLine(DocumentType, Record_ID, "");
         docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
-        fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
-            C_Currency_ID, "", m_taxes[i].m_amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, conn);
+        if (IsReversal.equals("Y"))
+          fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
+               C_Currency_ID, m_taxes[i].m_amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+               DocumentType, conn);
+        else
+           fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
+               C_Currency_ID, "", m_taxes[i].m_amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+               DocumentType, conn);
       }
       // Revenue CR
       if (p_lines != null && p_lines.length > 0) {
         for (int i = 0; i < p_lines.length; i++)
-          fact.createLine(p_lines[i],
-              ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Revenue, as, conn),
-              this.C_Currency_ID, "", p_lines[i].getAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
+          if (IsReversal.equals("Y"))
+             fact.createLine(p_lines[i],
+                 ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Revenue, as, conn),
+                 this.C_Currency_ID, p_lines[i].getAmount(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                 DocumentType, conn);
+          else
+             fact.createLine(p_lines[i],
+                 ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Revenue, as, conn),
+                 this.C_Currency_ID, "", p_lines[i].getAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                 DocumentType, conn);
       }
       // Set Locations
       FactLine[] fLines = fact.getLines();
@@ -458,17 +469,30 @@ public class DocInvoice extends AcctServer {
           computeTaxUndeductableLine(conn, as, fact, docLine, Fact_Acct_Group_ID,
               m_taxes[i].m_C_Tax_ID, m_taxes[i].getAmount());
         } else {
-          fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
-              this.C_Currency_ID, m_taxes[i].getAmount(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
+	  if (IsReversal.equals("Y")) {
+            fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
+                this.C_Currency_ID, "", m_taxes[i].getAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                DocumentType, conn);
+
+	  } else {
+            fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
+                this.C_Currency_ID, m_taxes[i].getAmount(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                DocumentType, conn);
+	  }
         }
       }
       // Expense DR
       for (int i = 0; p_lines != null && i < p_lines.length; i++)
-        fact.createLine(p_lines[i],
-            ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
-            this.C_Currency_ID, p_lines[i].getAmount(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, conn);
+        if (IsReversal.equals("Y"))
+          fact.createLine(p_lines[i],
+              ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
+              this.C_Currency_ID, "", p_lines[i].getAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
+	else
+          fact.createLine(p_lines[i],
+              ((DocLine_Invoice) p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
+              this.C_Currency_ID, p_lines[i].getAmount(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
       // Set Locations
       FactLine[] fLines = fact.getLines();
       for (int i = 0; fLines != null && i < fLines.length; i++) {
@@ -805,9 +829,16 @@ public class DocInvoice extends AcctServer {
       try {
         // currently applicable for API and APC
         if (this.DocumentType.equals(AcctServer.DOCTYPE_APInvoice)) {
-          fact.createLine(docLine, Account.getAccount(conn, data[j].pExpenseAcct),
-              this.C_Currency_ID, data[j].taxamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
+	  if (IsReversal.equals("Y")) {
+            fact.createLine(docLine, Account.getAccount(conn, data[j].pExpenseAcct),
+               this.C_Currency_ID, "", data[j].taxamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+               DocumentType, conn);
+
+	  } else {
+            fact.createLine(docLine, Account.getAccount(conn, data[j].pExpenseAcct),
+                this.C_Currency_ID, data[j].taxamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                DocumentType, conn);
+	  }
         } else if (this.DocumentType.equals(AcctServer.DOCTYPE_APCredit)) {
           fact.createLine(docLine, Account.getAccount(conn, data[j].pExpenseAcct),
               this.C_Currency_ID, "", data[j].taxamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
