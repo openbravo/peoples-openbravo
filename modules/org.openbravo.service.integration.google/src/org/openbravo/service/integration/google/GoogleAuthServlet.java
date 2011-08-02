@@ -123,8 +123,10 @@ public class GoogleAuthServlet extends HttpBaseServlet {
       if ("true".equals(vars.getSessionValue("is_association"))) {
         vars.removeSessionValue("is_association");
         OpenIDManager.getInstance().associateAccount(oid, req, resp);
-        vars.setSessionValue("startup-message", Utility.messageBD(this, "OBSEIG_LinkedOK", lang));
-        vars.setSessionValue("startup-message-title", Utility.messageBD(this, "ProcessOK", lang));
+        vars.setSessionValue("startup-message", Utility.messageBD(this, "OBSEIG_LinkedOK", lang)
+            .replaceAll("&quot;", "\""));
+        vars.setSessionValue("startup-message-title", Utility.messageBD(this, "ProcessOK", lang)
+            .replaceAll("&quot;", "\""));
         resp.sendRedirect(strDireccion);
         return;
       }
@@ -181,8 +183,9 @@ public class GoogleAuthServlet extends HttpBaseServlet {
 
     if (defaults.count() == 0) {
       OBError error = new OBError();
-      error.setTitle(Utility.messageBD(this, "OBSEIG_NoDefaultConf", lang).replaceAll("@@email@@",
-          attributes.get(OpenIDManager.ATTRIBUTE_EMAIL)));
+      error.setTitle(Utility.messageBD(this, "OBSEIG_NoDefaultConf", lang)
+          .replaceAll("@@email@@", attributes.get(OpenIDManager.ATTRIBUTE_EMAIL))
+          .replaceAll("&quot;", "\""));
       error.setMessage("");
       error.setType("Error");
       vars.setSessionObject("LoginErrorMsg", error);
@@ -192,8 +195,9 @@ public class GoogleAuthServlet extends HttpBaseServlet {
 
     if (defaults.count() > 1) {
       OBError error = new OBError();
-      error.setTitle(Utility.messageBD(this, "OBSEIG_TooMuchConf", lang).replaceAll("@@email@@",
-          attributes.get(OpenIDManager.ATTRIBUTE_EMAIL)));
+      error.setTitle(Utility.messageBD(this, "OBSEIG_TooMuchConf", lang)
+          .replaceAll("@@email@@", attributes.get(OpenIDManager.ATTRIBUTE_EMAIL))
+          .replaceAll("&quot;", "\""));
       error.setMessage("");
       error.setType("Error");
       vars.setSessionObject("LoginErrorMsg", error);
