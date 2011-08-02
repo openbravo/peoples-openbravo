@@ -156,3 +156,10 @@ isc.OBMyOBDialog.changeDefaults("closeButtonDefaults", {
   width:15,
   height:15
 });
+
+isc.OBWidgetInFormItem.changeDefaults("widgetProperties", {
+  edgeImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.myob/images/form/border.png',
+  edgeSize : 1,
+  edgeTop : 1,
+  edgeBottom : 1
+});

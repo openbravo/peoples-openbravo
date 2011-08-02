@@ -25,6 +25,10 @@ isc.OBWidgetInFormItem.addProperties({
   widgetInstance : null,
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
+  widgetProperties: {
+    height: '0px',
+    inWidgetInFormMode : true
+  },
 
   createCanvas: function(){
     var widgetProperties, i, w, widgetClass, widgetParameters, locAvailWidgetClasses;
@@ -38,13 +42,9 @@ isc.OBWidgetInFormItem.addProperties({
       }
     }
 
-    widgetProperties = {
-      parameters: widgetParameters,
-      height: '0px',
-      inWidgetInFormMode : true
-    };
-
-    this.widgetInstance = isc.ClassFactory.newInstance(widgetClass, widgetProperties);
+    this.widgetProperties.parameters = widgetParameters;
+    
+    this.widgetInstance = isc.ClassFactory.newInstance(widgetClass, this.widgetProperties);
     return this.widgetInstance;
   },
 
