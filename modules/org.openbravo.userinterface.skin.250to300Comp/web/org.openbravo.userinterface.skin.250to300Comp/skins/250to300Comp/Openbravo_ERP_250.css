@@ -1008,7 +1008,7 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
 
 .Login_ErrorMsg_Title {
   color: red !important;
-  font-weight: bold;
+  font-weight: normal;
   font-size: 10px;
 }
 
