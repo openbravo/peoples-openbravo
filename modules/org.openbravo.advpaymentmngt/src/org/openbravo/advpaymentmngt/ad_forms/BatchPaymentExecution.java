@@ -321,20 +321,19 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
         if (strNewFilterAux.equals("1") || strNewFilterAux.equals("")) { // New filter or first load
           gridPayments = dao.getPayExecRowCount(strOrgId, strPaymentMethodId,
               strFinancialAccountId, FIN_Utility.getDate(strDateFrom),
-              FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strDateTo, "1")), offset, pageSize,
-              null, null, isReceipt);
+              FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strDateTo, "1")), offset,
+              TableSQLData.maxRowsPerGridPage, null, null, isReceipt);
           strNumRows = Integer.toString(gridPayments.size());
 
           vars.setSessionValue("BatchPaymentExecution.numrows", strNumRows);
         } else {
-          strNumRows = vars.getSessionValue("ProjectData.numrows");
+          strNumRows = vars.getSessionValue("BatchPaymentExecution.numrows");
         }
 
         gridPayments = dao.getPayExecRowCount(strOrgId, strPaymentMethodId, strFinancialAccountId,
             FIN_Utility.getDate(strDateFrom),
             FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strDateTo, "1")), offset, pageSize,
             strOrderByProperty, strAscDesc, isReceipt);
-        strNumRows = Integer.toString(gridPayments.size());
 
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
