@@ -1448,6 +1448,7 @@ public class InitialSetupUtility {
     String strSourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("source.path");
     String strPath = "";
+    File datasetFile;
     try {
       OBContext.setAdminMode();
       if (dataset.getModule().getJavaPackage().equals("org.openbravo")) {
@@ -1456,24 +1457,24 @@ public class InitialSetupUtility {
         strPath = strSourcePath + "/modules/" + dataset.getModule().getJavaPackage()
             + "/referencedata/standard";
       }
+      datasetFile = new File(strPath + "/" + Utility.wikifiedName(dataset.getName()) + ".xml");
+      if (!datasetFile.exists()) {
+        return myResult;
+      }
+      DataImportService myData = DataImportService.getInstance();
+      String strXml = Utility.fileToString(datasetFile.getPath());
+      myResult = myData.importDataFromXML(client, organization, strXml, dataset.getModule());
+
+      if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
+          && !myResult.getErrorMessages().equals("null"))
+        return myResult;
+      if (organization.getId().equals(getZeroOrg().getId()))
+        insertClientModule(client, dataset.getModule());
+      else
+        insertOrgModule(client, organization, dataset.getModule());
     } finally {
       OBContext.restorePreviousMode();
     }
-    File datasetFile = new File(strPath + "/" + Utility.wikifiedName(dataset.getName()) + ".xml");
-    if (!datasetFile.exists()) {
-      return myResult;
-    }
-    DataImportService myData = DataImportService.getInstance();
-    String strXml = Utility.fileToString(datasetFile.getPath());
-    myResult = myData.importDataFromXML(client, organization, strXml, dataset.getModule());
-
-    if (myResult.getErrorMessages() != null && !myResult.getErrorMessages().equals("")
-        && !myResult.getErrorMessages().equals("null"))
-      return myResult;
-    if (organization.getId().equals(getZeroOrg().getId()))
-      insertClientModule(client, dataset.getModule());
-    else
-      insertOrgModule(client, organization, dataset.getModule());
 
     return myResult;
   }
