@@ -438,26 +438,46 @@ isc.OBSelectorItem.addProperties({
   },
 
   handleOutFields: function(record){
-    var i, outFields = this.outFields, form = this.form, item, value;
+    var i, j, outFields = this.outFields, form = this.form, item, value;
     for (i in outFields) {
-      if (outFields.hasOwnProperty(i) && outFields[i].suffix) {
-        if (record) {
-          value = record[i];
-          if(typeof value === 'undefined') {
-            continue;
-          }
-          if (isc.isA.Number(value)) {
-            value = OB.Utilities.Number.JSToOBMasked(value, OB.Format.defaultNumericMask,
-                OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol,
-                OB.Format.defaultGroupingSize);
-          }
-          form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = value;
-          item = form.getItem(outFields[i].fieldName);
-          if(item && item.valueMap) {
-            item.valueMap[value] = record[outFields[i].fieldName + '._identifier'];
+      if (outFields.hasOwnProperty(i)) {
+        if (outFields[i].suffix) {
+          // when it has a suffix
+          if (record) {
+            value = record[i];
+            if(typeof value === 'undefined') {
+              continue;
+            }
+            if (isc.isA.Number(value)) {
+              value = OB.Utilities.Number.JSToOBMasked(value, OB.Format.defaultNumericMask,
+                  OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol,
+                  OB.Format.defaultGroupingSize);
+            }
+            form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = value;
+            item = form.getItem(outFields[i].fieldName);
+            if(item && item.valueMap) {
+              item.valueMap[value] = record[outFields[i].fieldName + '._identifier'];
+            }
+          } else {
+            form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = null;
           }
         } else {
-          form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = null;
+          // it does not have a suffix
+          for (j in form.fields) {
+            if (form.fields.hasOwnProperty(j)) {
+              if (form.fields[j].columnName === outFields[i].fieldName) {
+                if (record) {
+                  value = record[i];
+                  if(typeof value === 'undefined') {
+                    continue;
+                  }
+                } else {
+                  value = null;
+                }
+                form.fields[j].setValue(value);
+              }
+            }
+          }
         }
       }
     }
@@ -656,19 +676,31 @@ isc.OBSelectorLinkItem.addProperties({
   },
   
   handleOutFields: function(record){
-    var i, outFields = this.outFields, form = this.form;
+    var i, j, value, outFields = this.outFields, form = this.form;
     for (i in outFields) {
-      if (outFields.hasOwnProperty(i) && outFields[i].suffix) {
-        if (record) {
-          var value = record[i];
-          if (isc.isA.Number(value)) {
-            value = OB.Utilities.Number.JSToOBMasked(value, OB.Format.defaultNumericMask,
-                OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol,
-                OB.Format.defaultGroupingSize);
+      if (outFields.hasOwnProperty(i)) {
+        if (outFields[i].suffix) {
+          if (record) {
+            value = record[i];
+            if (isc.isA.Number(value)) {
+              value = OB.Utilities.Number.JSToOBMasked(value, OB.Format.defaultNumericMask,
+                  OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol,
+                  OB.Format.defaultGroupingSize);
+            }
+            form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = value;
+          } else {
+            form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = null;
           }
-          form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = value;
         } else {
-          form.hiddenInputs[this.outHiddenInputPrefix + outFields[i].suffix] = null;
+          // it does not have a suffix
+          for (j in form.fields) {
+            if (form.fields.hasOwnProperty(j)) {
+              if (form.fields[j].columnName === outFields[i].fieldName) {
+                value = record ? record[i] : null;
+                form.fields[j].setValue(value);
+              }
+            }
+          }
         }
       }
     }
