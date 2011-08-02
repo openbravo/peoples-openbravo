@@ -5697,7 +5697,7 @@ table.Login_ToolBar_bg {
 
 .Login_ErrorMsg_Title {
   color: red !important;
-  font-weight: normal;
+  font-weight: bold;
   font-size: 10px;
 }
 

@@ -78,8 +78,8 @@ public class GoogleAuthServlet extends HttpBaseServlet {
       if (!ActivationKey.getInstance().isActive()) {
         OBError error = new OBError();
         // messageDB escapes double-quotes
-        error.setTitle(Utility.messageBD(this, "OBSEIG_Activate", lang).replaceAll("&quot;", "\""));
-        error.setMessage("");
+        error.setTitle("");
+        error.setMessage(Utility.messageBD(this, "OBSEIG_Activate", lang).replaceAll("&quot;", "\""));
         error.setType("Error");
         vars.setSessionObject("LoginErrorMsg", error);
         resp.sendRedirect(strDireccion);

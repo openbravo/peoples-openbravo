@@ -90,11 +90,14 @@ var recBrowserSafari = '5.0.0.0';
     if (type === 'Error') {
       var msgContainer = document.getElementById('errorMsg');
       var msgContainerTitle = document.getElementById('errorMsgTitle');
+      var msgContainerTitleContainer = document.getElementById('errorMsgTitle_Container');
       var msgContainerContent = document.getElementById('errorMsgContent');
       if (typeof title !== 'undefined' && title !== '' && title !== null) {
         msgContainerTitle.innerHTML = title.replace(/\n/g, '<br>').replace(/\\n/g, '<br>');
+        msgContainerTitleContainer.style.display = '';
       } else {
         msgContainerTitle.innerHTML = '';
+        msgContainerTitleContainer.style.display = 'none';
       }
       if (typeof text !== 'undefined' && text !== '' && text !== null) {
         msgContainerContent.innerHTML = text.replace(/\n/g, '<br>').replace(/\\n/g, '<br>');
@@ -136,8 +139,10 @@ var recBrowserSafari = '5.0.0.0';
   function resetLoginMessage() {
     var msgContainer = document.getElementById('errorMsg');
     var msgContainerTitle = document.getElementById('errorMsgTitle');
+    var msgContainerTitleContainer = document.getElementById('errorMsgTitle_Container');
     var msgContainerContent = document.getElementById('errorMsgContent');
     msgContainerTitle.innerHTML = '';
+    msgContainerTitleContainer.style.display = '';
     msgContainerContent.innerHTML = '';
     msgContainer.style.display = 'none';
     isRecBrowserMsgShown = false;
@@ -362,6 +367,14 @@ var recBrowserSafari = '5.0.0.0';
   }
 
   function onLoadDo() {
+    var msgContainer = document.getElementById('errorMsg');
+    var msgContainerTitle = document.getElementById('errorMsgTitle');
+    var msgContainerTitleContainer = document.getElementById('errorMsgTitle_Container');
+    var msgContainerContent = document.getElementById('errorMsgContent');
+
+    if (msgContainerTitle.innerHTML.length === 0) {
+      msgContainerTitleContainer.style.display = 'none';
+    }
     try { // To avoid in a release upgrade, that a change in code depending on these functions cause revisionControl message not being displayed
       manageVisualPreferences();
       addInputChangeCheck(document.getElementById('user'));
@@ -384,7 +397,7 @@ var recBrowserSafari = '5.0.0.0';
       var displayValidBrowserMsg = buildValidBrowserMsg();
       setLoginMessage('Warning', '', displayValidBrowserMsg);
     }
-    if (!checkRecommendedBrowser()) {
+    if (!checkRecommendedBrowser() && msgContainerTitle.innerHTML.length === 0 && msgContainerContent.innerHTML.length === 0) {
       var displayRecBrowserMsgText = buildRecBrowserMsgText();
       setRecommendedBrowserMessage(recBrowserMsgTitle, displayRecBrowserMsgText);
     }
@@ -424,7 +437,7 @@ var recBrowserSafari = '5.0.0.0';
                 </dd>
               </dl>
               <div id="errorMsg" class="LabelText Login_ErrorMsg_Container" style="display:none;">
-                <span id="errorMsgTitle" class="Login_ErrorMsg_Title">xx</span><br><span id="errorMsgContent" class="Login_ErrorMsg_Content">xx</span>
+                <span id="errorMsgTitle_Container"><span id="errorMsgTitle" class="Login_ErrorMsg_Title">xx</span><br></span><span id="errorMsgContent" class="Login_ErrorMsg_Content">xx</span>
               </div>
             </div>
             <div class="Login_LogForm_Button_Container">
