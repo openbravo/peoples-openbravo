@@ -129,8 +129,8 @@ public class OpenIDManager implements OBSingleton {
 
       httpResp.sendRedirect(authReq.getDestinationUrl(true));
     } catch (OpenIDException e) {
-      // present error to the user
-      throw new ServletException(e);
+      log.error("Error trying to authenticate with Google Services: " + e.getMessage(), e);
+      httpResp.sendRedirect(httpReq.getHeader("Referer"));
     }
 
     return null;
