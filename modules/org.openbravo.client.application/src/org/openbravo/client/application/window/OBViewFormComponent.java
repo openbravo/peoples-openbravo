@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.RequestScoped;
-
 import org.apache.log4j.Logger;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
@@ -51,7 +49,7 @@ import org.openbravo.model.ad.ui.Tab;
  * @author mtaal
  * @author iperdomo
  */
-@RequestScoped
+
 public class OBViewFormComponent extends BaseTemplateComponent {
 
   private static final String TEMPLATE_ID = "C1D176407A354A40815DC46D24D70EB8";
