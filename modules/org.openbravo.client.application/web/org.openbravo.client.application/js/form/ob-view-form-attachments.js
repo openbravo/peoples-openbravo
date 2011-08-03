@@ -399,7 +399,7 @@ isc.OBAttachmentsLayout.addProperties({
         height:  1,
         className: 'OBNoteListGridAuthor',
         width: '200px',
-        contents: creationDate+" "+OB.I18N.getLabel('OBUIAPP_AttachmentBy')+" "+attachment.createdby
+        contents: creationDate+" "+OB.I18N.getLabel('OBUIAPP_AttachmentBy')+" "+attachment.updatedby
       });
       var downloadAttachment = isc.OBLinkButtonItem.create({
         title: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentDownload')+' ]',

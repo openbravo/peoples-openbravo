@@ -299,7 +299,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         obj.put("name", attachment.getName());
         obj.put("id", attachment.getId());
         obj.put("age", (new Date().getTime() - attachment.getUpdated().getTime()));
-        obj.put("createdby", attachment.getUpdatedBy().getName());
+        obj.put("updatedby", attachment.getUpdatedBy().getName());
       } catch (JSONException e) {
         log.error("Error while reading attachments", e);
       }
