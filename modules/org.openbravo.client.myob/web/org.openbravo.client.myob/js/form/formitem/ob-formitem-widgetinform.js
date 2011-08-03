@@ -42,17 +42,20 @@ isc.OBWidgetInFormItem.addProperties({
       }
     }
 
+    // add link to form so widget can possibly use it
+    this.widgetProperties.viewForm = this.form;
+
     this.widgetProperties.parameters = widgetParameters;
-    
+
     this.widgetInstance = isc.ClassFactory.newInstance(widgetClass, this.widgetProperties);
     return this.widgetInstance;
   },
 
   // called via processFICReturn
-  refresh: function(form) {
+  refresh: function() {
     // refresh widget, passing special parameter which is link to formValues for currently displayed record
     if (this.widgetInstance) {
-      this.widgetInstance.parameters.formValues = form.values;
+      this.widgetInstance.parameters.formValues = this.form.values;
       this.widgetInstance.refresh();
     }
   }

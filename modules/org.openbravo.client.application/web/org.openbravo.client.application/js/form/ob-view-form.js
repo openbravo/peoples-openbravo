@@ -687,7 +687,7 @@ OB.ViewFormProperties = {
     for (i = 0; i < this.getFields().length; i++) {
       var locField  = this.getFields()[i];
       if (locField.hasOwnProperty("widgetClassId")) {
-        locField.refresh(this);
+        locField.refresh();
       }
     }
 

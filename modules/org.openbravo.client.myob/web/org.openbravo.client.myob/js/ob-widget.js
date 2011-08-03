@@ -198,7 +198,10 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   widgetManager: null,
   
   widgetMode: null,
-  
+
+  // viewForm if widget widget is embedded into a generated window
+  viewForm: null,
+
   initWidget: function (args) {
     var widget = this, headerControls = ['headerLabel'];
     
