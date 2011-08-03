@@ -41,7 +41,9 @@ import org.openbravo.model.ad.utility.Image;
  * The DELETE action deletes an image from the database, and its reference from the referencing
  * table
  * 
- * The GETSIZE action gets the size of an image
+ * The GETSIZE action gets the size of an image. If the image doesn't yet have size properties, it
+ * will create them and save them in the image object in the database. Also, it will compute the
+ * MIME type if it hasn't yet been computed
  * 
  */
 public class ImagesActionHandler extends BaseActionHandler {
@@ -51,17 +53,16 @@ public class ImagesActionHandler extends BaseActionHandler {
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     if (parameters.get("command").equals("DELETE")) {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
       String imageID = (String) parameters.get("inpimageId");
       String tabId = (String) parameters.get("inpTabId");
-      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      String tableId = tab.getTable().getId();
-
-      String columnName = (String) parameters.get("inpColumnName");
-      String parentObjectId = (String) parameters.get("parentObjectId");
+      Table table = null;
       try {
+        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+        table = tab.getTable();
+        String columnName = (String) parameters.get("inpColumnName");
+        String parentObjectId = (String) parameters.get("parentObjectId");
         Image image = OBDal.getInstance().get(Image.class, imageID);
-        Table table = OBDal.getInstance().get(Table.class, tableId);
         Entity entity = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName());
         String propertyName = entity.getPropertyByColumnName(columnName).getName();
         BaseOBObject parentObject = (BaseOBObject) OBDal.getInstance().get(entity.getName(),
@@ -69,10 +70,10 @@ public class ImagesActionHandler extends BaseActionHandler {
         parentObject.set(propertyName, null);
         OBDal.getInstance().flush();
         OBDal.getInstance().remove(image);
-        return new JSONObject();
       } finally {
         OBContext.restorePreviousMode();
       }
+      return new JSONObject();
     } else if (parameters.get("command").equals("GETSIZE")) {
       try {
         OBContext.setAdminMode();

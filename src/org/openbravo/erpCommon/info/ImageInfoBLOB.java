@@ -67,9 +67,13 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
     }
     if (tableId == null || tableId.equals("")) {
       String tabId = vars.getStringParameter("inpTabId");
-      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      tableId = tab.getTable().getId();
-
+      try {
+        OBContext.setAdminMode(false);
+        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+        tableId = tab.getTable().getId();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
     }
     String imageID = vars.getStringParameter("inp" + Sqlc.TransformaNombreColumna(columnName));
     if (imageID == null || imageID.equals("")) {

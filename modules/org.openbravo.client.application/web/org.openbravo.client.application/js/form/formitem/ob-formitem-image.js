@@ -107,8 +107,6 @@ OBImageCanvas.addProperties({
     });
     if (this.creator.required) {
       this.imageLayout.setStyleName(this.imageLayout.styleName + 'Required');
-    } else {
-      this.imageLayout.setStyleName(this.imageLayout.styleName);
     }
     this.addMember(this.imageLayout);
     this.image=isc.OBImageItemSmallImage.create({

@@ -57,32 +57,37 @@ public class ShowImage extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String id = vars.getStringParameter("id");
 
-    // read the image data
-    byte[] img = Utility.getImage(id);
+    try {
+      OBContext.setAdminMode(false);
+      // read the image data
+      byte[] img = Utility.getImage(id);
 
-    // write the mimetype
-    Image image = OBDal.getInstance().get(Image.class, id);
-    final String mimeType;
-    if (image.getMimetype() != null) {
-      mimeType = image.getMimetype();
-    } else {
-      mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img);
-      // If there is an OBContext, we attempt to save the MIME type of the image
-      if (OBContext.getOBContext() != null) {
-        image.setMimetype(mimeType);
-        OBDal.getInstance().save(image);
-        OBDal.getInstance().flush();
+      // write the mimetype
+      Image image = OBDal.getInstance().get(Image.class, id);
+      final String mimeType;
+      if (image.getMimetype() != null) {
+        mimeType = image.getMimetype();
+      } else {
+        mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img);
+        // If there is an OBContext, we attempt to save the MIME type of the image
+        if (OBContext.getOBContext() != null) {
+          image.setMimetype(mimeType);
+          OBDal.getInstance().save(image);
+          OBDal.getInstance().flush();
+        }
       }
-    }
 
-    if (!mimeType.equals("")) {
-      response.setContentType(mimeType);
-    }
+      if (!mimeType.equals("")) {
+        response.setContentType(mimeType);
+      }
 
-    // write the image
-    OutputStream out = response.getOutputStream();
-    response.setContentLength(img.length);
-    out.write(img);
-    out.close();
+      // write the image
+      OutputStream out = response.getOutputStream();
+      response.setContentLength(img.length);
+      out.write(img);
+      out.close();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }

@@ -2404,7 +2404,6 @@ public class Utility {
     try {
       Image img = getImageObject(id);
       if (img == null) {
-        log4j.error("Image does not exist: " + id);
         imageByte = getBlankImage();
       } else {
         imageByte = img.getBindaryData();
@@ -2569,7 +2568,7 @@ public class Utility {
    *          logo you can indicate the organization used to request the logo.
    * @return The image requested
    */
-  public static String getDefaultImageLogo(String logo) {
+  private static String getDefaultImageLogo(String logo) {
 
     String defaultImagePath = null;
 

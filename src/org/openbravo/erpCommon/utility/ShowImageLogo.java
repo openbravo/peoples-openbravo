@@ -89,13 +89,13 @@ public class ShowImageLogo extends HttpBaseServlet {
   private void updateMimeType(String id, String mimeType) {
     PreparedStatement ps = null;
     try {
-      ps = OBDal.getInstance().getConnection()
+      ps = OBDal.getInstance().getConnection(true)
           .prepareStatement("UPDATE ad_image SET mimetype=? WHERE ad_image_id=?");
       ps.setString(1, mimeType);
       ps.setString(2, id);
       ps.executeUpdate();
     } catch (SQLException e) {
-      log4j.error("Couldn't update mime information of image");
+      log4j.error("Couldn't update mime information of image", e);
     } finally {
       try {
         if (ps != null) {
