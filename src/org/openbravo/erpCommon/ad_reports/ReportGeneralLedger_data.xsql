@@ -35,8 +35,7 @@
               0 AS PREVIOUSDEBIT, 0 AS PREVIOUSCREDIT, 0 AS PREVIOUSTOTAL,
               0 AS FINALDEBIT, 0 AS FINALCREDIT, 0 AS FINALTOTAL,
               TO_CHAR(DATEACCT,'J') AS DATEACCTNUMBER,
-              ? AS groupby, '' as bpid, '' as bpname, '' as pdid, '' as pdname, '' as pjid, '' as pjname,
-              CASE WHEN FACTACCTTYPE = 'O' THEN 1 ELSE (CASE WHEN FACTACCTTYPE = 'N' THEN 2 ELSE (CASE WHEN FACTACCTTYPE = 'R' THEN 3 ELSE (CASE WHEN FACTACCTTYPE = 'C' THEN 4 END) END) END) END AS FACTACCTTYPE
+              ? AS groupby, '' as bpid, '' as bpname, '' as pdid, '' as pdname, '' as pjid, '' as pjname, factaccttype
           FROM
             (SELECT FACT_ACCT.ACCTVALUE AS VALUE, FACT_ACCT.ACCTDESCRIPTION AS NAME,
                 DATEACCT, AMTACCTDR, AMTACCTCR,
@@ -51,7 +50,8 @@
                   WHEN 'Product' THEN (case  AD_COLUMN_IDENTIFIER('M_Product',m_product.m_product_id, ?) when '**' then '' else AD_COLUMN_IDENTIFIER('M_Product',m_product.m_product_id, ?) end)
                   WHEN 'Project' THEN (case  AD_COLUMN_IDENTIFIER('C_Project',c_project.c_project_id, ?) when '**' then '' else AD_COLUMN_IDENTIFIER('C_Project',c_project.c_project_id, ?) end)
                   ELSE '' END AS groupbyname,
-                CASE WHEN AMTACCTDR <> 0 THEN 'Y' ELSE 'N' END AS ISDEBIT, FACT_ACCT.FACTACCTTYPE
+                CASE WHEN AMTACCTDR <> 0 THEN 'Y' ELSE 'N' END AS ISDEBIT, 
+		CASE WHEN FACT_ACCT.FACTACCTTYPE = 'O' THEN 1 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'N' THEN 2 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'R' THEN 3 ELSE (CASE WHEN FACT_ACCT.FACTACCTTYPE = 'C' THEN 4 END) END) END) END AS FACTACCTTYPE
             FROM FACT_ACCT
               LEFT JOIN C_BPARTNER ON FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
               LEFT JOIN M_PRODUCT ON FACT_ACCT.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
@@ -78,12 +78,10 @@
               AND 3=3) D
             WHERE 6=6
             GROUP BY groupbyname, groupbyid, VALUE, NAME, ID,
-            CASE WHEN FACTACCTTYPE = 'O' THEN 1 ELSE (CASE WHEN FACTACCTTYPE = 'N' THEN 2 ELSE (CASE WHEN FACTACCTTYPE = 'R' THEN 3 ELSE (CASE WHEN FACTACCTTYPE = 'C' THEN 4 END) END) END) END, 
-            DATEACCT, FACT_ACCT_GROUP_ID, DESCRIPTION, ISDEBIT
+            DATEACCT, FACTACCTTYPE, FACT_ACCT_GROUP_ID, DESCRIPTION, ISDEBIT
             HAVING SUM(AMTACCTDR) - SUM(AMTACCTCR) <> 0
             ORDER  BY groupbyname, groupbyid, VALUE, NAME, ID,
-            CASE WHEN FACTACCTTYPE = 'O' THEN 1 ELSE (CASE WHEN FACTACCTTYPE = 'N' THEN 2 ELSE (CASE WHEN FACTACCTTYPE = 'R' THEN 3 ELSE (CASE WHEN FACTACCTTYPE = 'C' THEN 4 END) END) END) END, 
-            DATEACCT,  FACT_ACCT_GROUP_ID, DESCRIPTION, ISDEBIT
+            DATEACCT, FACTACCTTYPE,  FACT_ACCT_GROUP_ID, DESCRIPTION, ISDEBIT
           ) C
         ) B WHERE 1=1
       ) A ORDER BY  groupbyname, groupbyid, VALUE, DATEACCT, FACTACCTTYPE, FACT_ACCT_GROUP_ID, DESCRIPTION, ISDEBIT
