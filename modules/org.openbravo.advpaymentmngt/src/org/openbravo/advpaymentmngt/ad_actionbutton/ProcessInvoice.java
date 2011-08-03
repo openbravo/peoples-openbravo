@@ -168,10 +168,12 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           if ("API".equals(invoiceDocCategory) || "ARI".equals(invoiceDocCategory)) {
             final FIN_Payment creditPayment = dao.getCreditPayment(invoice);
             // If the invoice grand total is ZERO or already has payments (due to
-            // payment method automation) do not cancel credit
+            // payment method automation) or the business partner does not have a default financial
+            // account defined or invoice's payment method is not inside BP's financial
+            // account do not cancel credit
             if (creditPayment != null
                 && BigDecimal.ZERO.compareTo(invoice.getGrandTotalAmount()) != 0
-                && !isInvoiceWithPayments(invoice)) {
+                && isPaymentMethodConfigured(invoice) && !isInvoiceWithPayments(invoice)) {
               log4j.info("Detected credit payment: " + creditPayment.getIdentifier()
                   + ", that matches the invoice: " + invoice.getIdentifier());
               // Set Used Credit = Invoice's Grand Total Amount
@@ -214,18 +216,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
               newPayment.setGeneratedCredit(BigDecimal.ZERO);
               newPayment.setUsedCredit(invoice.getGrandTotalAmount());
 
-              // Process the new payment if invoice's payment method is inside BP's financial
-              // account
-              boolean process = false;
-              for (final FinAccPaymentMethod bpFinAccPaymentMethod : bpFinAccount
-                  .getFinancialMgmtFinAccPaymentMethodList()) {
-                if (bpFinAccPaymentMethod.getPaymentMethod().equals(invoice.getPaymentMethod())) {
-                  process = true;
-                  break;
-                }
-              }
-              if (process)
-                FIN_AddPayment.processPayment(vars, this, "P", newPayment);
+              // Process the new payment
+              FIN_AddPayment.processPayment(vars, this, "P", newPayment);
 
               // Update Invoice's description
               final StringBuffer invDesc = new StringBuffer();
@@ -346,6 +338,32 @@ public class ProcessInvoice extends HttpSecureAppServlet {
       }
     }
     return false;
+  }
+
+  /**
+   * Checks if the invoice business partner has defined a default financial account and if the
+   * payment method selected in the invoice belongs to the default financial account.
+   * 
+   * @param invoice
+   *          Invoice.
+   * @return True if the invoice business partner has defined a default financial account and the
+   *         payment method selected in the invoice belongs to the default financial account. False
+   *         in other cases.
+   */
+  private boolean isPaymentMethodConfigured(Invoice invoice) {
+    boolean paymentMethodConfigOk = false;
+    final FIN_FinancialAccount bpFinAccount = invoice.isSalesTransaction() ? invoice
+        .getBusinessPartner().getAccount() : invoice.getBusinessPartner().getPOFinancialAccount();
+    if (bpFinAccount != null) {
+      for (final FinAccPaymentMethod bpFinAccPaymentMethod : bpFinAccount
+          .getFinancialMgmtFinAccPaymentMethodList()) {
+        if (bpFinAccPaymentMethod.getPaymentMethod().equals(invoice.getPaymentMethod())) {
+          paymentMethodConfigOk = true;
+          break;
+        }
+      }
+    }
+    return paymentMethodConfigOk;
   }
 
   public String getServletInfo() {
