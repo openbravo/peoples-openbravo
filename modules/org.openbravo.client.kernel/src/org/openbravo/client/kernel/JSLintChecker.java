@@ -84,9 +84,14 @@ public class JSLintChecker {
     // https://sourceforge.net/tracker/index.php?func=detail&aid=3303868&group_id=794&atid=100794
     List<Issue> purgedList = new ArrayList<Issue>();
     for (Issue issue : issues) {
+      if (issue.getReason().contains("Too many errors")) {
+        continue;
+      }
+
       if (issue.getReason().equals("Unexpected '\\'.") && issue.getEvidence().contains("\\>")) {
         continue;
       }
+
       purgedList.add(issue);
     }
     return purgedList;
