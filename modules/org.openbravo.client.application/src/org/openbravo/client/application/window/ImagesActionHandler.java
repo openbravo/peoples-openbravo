@@ -60,19 +60,19 @@ public class ImagesActionHandler extends BaseActionHandler {
       try {
         Tab tab = OBDal.getInstance().get(Tab.class, tabId);
         table = tab.getTable();
-        String columnName = (String) parameters.get("inpColumnName");
-        String parentObjectId = (String) parameters.get("parentObjectId");
         Image image = OBDal.getInstance().get(Image.class, imageID);
-        Entity entity = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName());
-        String propertyName = entity.getPropertyByColumnName(columnName).getName();
-        BaseOBObject parentObject = (BaseOBObject) OBDal.getInstance().get(entity.getName(),
-            parentObjectId);
-        parentObject.set(propertyName, null);
         OBDal.getInstance().flush();
         OBDal.getInstance().remove(image);
       } finally {
         OBContext.restorePreviousMode();
       }
+      String columnName = (String) parameters.get("inpColumnName");
+      String parentObjectId = (String) parameters.get("parentObjectId");
+      Entity entity = ModelProvider.getInstance().getEntityByTableName(table.getDBTableName());
+      String propertyName = entity.getPropertyByColumnName(columnName).getName();
+      BaseOBObject parentObject = (BaseOBObject) OBDal.getInstance().get(entity.getName(),
+          parentObjectId);
+      parentObject.set(propertyName, null);
       return new JSONObject();
     } else if (parameters.get("command").equals("GETSIZE")) {
       try {
