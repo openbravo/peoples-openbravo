@@ -230,7 +230,8 @@ function addGLItem() {
   amount = add(document.frmMain.inpGLSumAmount.value, glamount);
   document.frmMain.inpGLSumAmount.value = amount;
   document.frmMain.inpExpectedPayment.value = add(document.frmMain.inpExpectedPayment.value, glamount);
-  if (!isTrue('isReceipt')) {
+  var isInheritedActualPayment = (document.getElementById('paramInheritedActualPayment').value === 'Y');
+  if (!isTrue('isReceipt') && !isInheritedActualPayment) {
     if (document.frmMain.inpUseCredit.checked) {
       amount = subtract(amount, document.frmMain.inpCredit.value);
       if ( compare(amount, '<', '0') ) {
