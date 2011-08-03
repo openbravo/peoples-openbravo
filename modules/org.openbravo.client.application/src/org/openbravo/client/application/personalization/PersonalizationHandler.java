@@ -117,8 +117,8 @@ public class PersonalizationHandler {
         return null;
       }
       if (exactMatch) {
-        if (pers.size() > 0) {
-          log4j.warn("There are is more than one ui personalization record "
+        if (pers.size() > 1) {
+          log4j.warn("There are/is more than one ui personalization record "
               + "for a certain exact match, ignoring it, just picking the first one: "
               + pers.get(0));
         }

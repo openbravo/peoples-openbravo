@@ -235,10 +235,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/personalization/ob-personalization-treegrid.js",
         false));
     globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/personalization/ob-customize-form.js", false));
+        "web/org.openbravo.client.application/js/personalization/ob-personalize-form.js", false));
     globalResources
         .add(createStaticResource(
-            "web/org.openbravo.client.application/js/personalization/ob-customize-form-toolbar-button.js",
+            "web/org.openbravo.client.application/js/personalization/ob-personalize-form-toolbar-button.js",
             false));
 
     // Styling

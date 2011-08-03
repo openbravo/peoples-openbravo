@@ -20,16 +20,30 @@
 .OBToolbarIconButton_icon_personalization {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(./images/personalization/iconButton-personalization.png);
+  background-image: url(./images/personalization/iconButton-personalization2.png);
 }
 
-.OBPersonalization_FieldsLayout {
-  border-right: 1px solid #72ab10;
+.OBToolbarIconButton_icon_personalization-modified {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/personalization/iconButton-personalization2-modified.png);
 }
 
-.OBPersonalization_FormLayout {
-  border-top: 1px solid #72ab10;
-  border-right: 1px solid #72ab10;
+.OBToolbarIconButton_icon_edit_personalization {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/personalization/iconButton-personalization1.png);
+}
+
+.OBFieldsPane {
+  border-right: 0px;
+}
+
+.OBFormPersonalizationFieldsTreeGrid {
+}
+
+.OBFormPersonalizerPreviewPanel {
+  border-left: 1px solid #72ab10;
 }
 
 .OBPersonalizationTreeGridCell,

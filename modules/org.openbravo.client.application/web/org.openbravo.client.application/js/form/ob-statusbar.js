@@ -306,13 +306,26 @@ isc.OBStatusBar.addProperties( {
   },
 
   setContentLabel: function(icon, statusCode, arrayTitleField) {
+    // set the status code before calling updateContentTitle
+    this.statusCode = statusCode;
+    
+    this.updateContentTitle(arrayTitleField);
+
+    if (icon) {
+      this.addIcon(icon);
+    } else {
+      this.removeIcon(icon);
+    }
+  },
+
+  updateContentTitle: function(arrayTitleField) {
     var msg = '', i;
-    if (statusCode) {
-      msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(statusCode) + '</span>';
+    if (this.statusCode) {
+      msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
     }
     if (arrayTitleField) {
       for (i = 0; i < arrayTitleField[0].length; i++) {
-        if (i !== 0 || statusCode) {
+        if (i !== 0 || this.statusCode) {
           msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
         }
         msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + arrayTitleField[0][i] + ': ' + '</span>';
@@ -323,11 +336,6 @@ isc.OBStatusBar.addProperties( {
       msg = '<nobr>' + msg + '</nobr>';
     }
     this.contentLabel.setContents(msg);
-    if (icon) {
-      this.addIcon(icon);
-    } else {
-      this.removeIcon(icon);
-    }
   },
   
   getValidValue: function(value) {

@@ -1427,7 +1427,8 @@ isc.OBStandardView.addProperties({
             // note totalrows is used when inserting a new row, to determine after which
             // record to add a new row
             doUpdateTotalRows = (view.viewGrid.data.getLength() === view.viewGrid.data.totalRows);
-            view.viewGrid.removeData(selection[0], removeCallBack, {});
+            // note remove data expects only the id, the record key as the first param
+            view.viewGrid.removeData({id: selection[0].id}, removeCallBack, {});
           }
         }
       };

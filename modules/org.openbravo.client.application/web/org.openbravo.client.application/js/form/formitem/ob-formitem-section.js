@@ -46,13 +46,13 @@ isc.OBSectionItem.addProperties({
   },
 
   // Update the property alwaysTakeSpace when collapsing/expanding a section
-  // Note: The HiddenItem fields are not updated, they always have alwaysTakeSpace to false
+  // Note: The hidden fields are not updated, they always have alwaysTakeSpace to false
   updateAlwaysTakeSpace: function(flag) {
     var i, f = this.form, item;
 
     for(i = 0; i < this.itemIds.length; i++) {
       item = f.getItem(this.itemIds[i]);
-      if(item && item.editorType !== 'HiddenItem' && !item.hiddenInForm) {
+      if(item && (!item.visible || !item.displayed || !item.hiddenInForm)) {
         item.alwaysTakeSpace = flag;
       }
     }
@@ -126,7 +126,7 @@ isc.OBSectionItem.addProperties({
     for (i = 0; i < this.itemIds.length; i++) {
       field = form.getItem(this.itemIds[i]);
 
-      if(!field || field.editorType === 'HiddenItem') {
+      if(!field || (item.visible === false || item.displayed === false || item.hiddenInForm === true)) {
         continue;
       }
 

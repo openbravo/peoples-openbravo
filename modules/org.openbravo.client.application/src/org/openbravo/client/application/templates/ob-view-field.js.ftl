@@ -39,7 +39,8 @@
         referencedKeyColumnName: '${fieldDefinition.referencedKeyColumnName?string}',
         targetEntity: '${fieldDefinition.targetEntity?string}',
         <#if !fieldDefinition.displayed>
-        editorType: 'HiddenItem',
+        visible: false,
+        displayed: false,
         alwaysTakeSpace: false,
         </#if>
         required: ${fieldDefinition.required?string},

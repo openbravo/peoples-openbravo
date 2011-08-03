@@ -124,14 +124,16 @@ OB.ViewFormProperties = {
             value = OB.I18N.getLabel('OBUIAPP_No');
           }
         }
-
-        if(item.editorType === 'HiddenItem') {
-          tmpValue = this.getValue(item.name + '._identifier');
-          if(typeof tmpValue !== 'undefined') {
-            value = tmpValue;
-          }
+        
+        // if there is a display field or an identifier field accompanying the
+        // status bar field and it has a value then always use that
+        // one
+        if (item.displayField && getValue(item.displayField)) {
+          value = getValue(item.displayField);
+        } else if (this.getValue(item.name + '._identifier')) {
+          value = this.getValue(item.name + '._identifier');
         }
-
+        
         statusBarFields[0].push(item.getTitle());
         statusBarFields[1].push(value);
       }

@@ -21,7 +21,14 @@ OB.Styles.Personalization = {};
 
 OB.Styles.Personalization.Icons = {
   fieldGroup: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconFolder.png',
-  field:  OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconField.png'
+  field:  OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/item.png',
+  fieldDisplayLogic:  OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/itemDisplayLogic.png',
+  fieldDisplayLogicHidden:  OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/itemDisplayLogicHidden.png',
+  fieldHidden:  OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/itemHidden.png',
+  fieldRequired:  OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/itemRequired.png',
+  fieldRequiredDisplayLogic:  OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/itemRequiredDisplayLogic.png',
+  fieldRequiredDisplayLogicHidden:  OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/itemRequiredDisplayLogicHidden.png',
+  fieldRequiredHidden:  OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/itemRequiredHidden.png'
 };
 
 OB.Styles.Personalization.closeButtonProperties = {
@@ -29,16 +36,60 @@ OB.Styles.Personalization.closeButtonProperties = {
   height: 18
 };
 
-OB.Styles.Personalization.FieldsLayout = {
-  width: 175,
-  styleName: 'OBPersonalization_FieldsLayout'
+OB.Styles.Personalization.FormPersonalizerLeftPane = {
+  width: 200
 };
 
-OB.Styles.Personalization.FormLayout = {
-  styleName: 'OBPersonalization_FormLayout'
+OB.Styles.Personalization.FieldsLayout = {
+  styleName: 'OBFieldsPane'
+};
+
+OB.Styles.Personalization.Preview = {
+  styleName: 'OBFormPersonalizerPreviewPanel'
+};
+
+OB.Styles.Personalization.PropertiesTabSet = {
+  expandedHeight: 225,
+  collapsedHeight: 35
 };
 
 OB.Styles.Personalization.PropertiesLayout = {
-  width: 175,
-  margin: 10
+  styleName: 'OBFormPersonalizerPropertiesPane'
 };
+
+// used to display a tab header above sections of the personalization form
+OB.Styles.Personalization.TabSet = {
+  tabBarProperties: {
+    styleName: 'OBTabBarChild',
+    buttonProperties: {
+      // prevent the orange hats, TODO: this not work
+      // don't know why...
+      // another solution is to do a custom style but that's a lot of work
+      showSelected: false,
+      showFocused: false
+    }
+  },
+  tabBarPosition: 'top',
+  width: '100%',
+  height: '100%',
+  overflow: 'hidden',
+  
+  showTabPicker: false,
+
+  // get rid of the margin around the content of a pane
+  paneMargin: 0,
+  paneContainerMargin: 0,
+  paneContainerPadding: 0,
+  showPaneContainerEdges: false,
+
+  useSimpleTabs: true,
+  tabBarThickness: 38,
+  styleName: 'OBTabSetChild',
+  simpleTabBaseStyle: 'OBTabBarButtonChild',
+  paneContainerClassName: 'OBTabSetChildContainer',
+
+  scrollerSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/tab/tabBarButtonChild_OverflowIcon.png',
+  pickerButtonSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/tab/tabBarButtonChild_OverflowIconPicker.png'
+};
+
+

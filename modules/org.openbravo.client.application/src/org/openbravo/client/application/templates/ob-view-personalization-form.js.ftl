@@ -37,9 +37,11 @@
         <#else>
         width: '*',
         </#if>
+        <#if fieldDefinition.showIf != "" && fieldDefinition.displayed>
+          hasShowIf: true,            
+        </#if>
         <#if fieldDefinition.standardField>
             <#if !fieldDefinition.displayed>
-                editorType: 'HiddenItem',
                 alwaysTakeSpace: false,
                 displayed: false,
             </#if>

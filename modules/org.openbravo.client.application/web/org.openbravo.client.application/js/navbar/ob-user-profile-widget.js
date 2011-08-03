@@ -368,6 +368,7 @@ isc.OBUserProfile.addProperties({
       showErrorIcon: false,
       showFocused: true,
       required: true,
+      selectOnFocus: false,
       editorType: 'PasswordItem'
     };
 
