@@ -253,6 +253,7 @@ isc.OBMyOpenbravo.addProperties({
         membersMargin: 12,
         canAcceptDrop: true,
         dropTypes: ["Portlet"],
+        overflow: 'visible',
 
         // is used to prevent dropping on the left or right 
         // of a widget
