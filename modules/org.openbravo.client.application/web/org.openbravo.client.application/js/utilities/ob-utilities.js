@@ -826,8 +826,7 @@ OB.Utilities.getTimePassed = function(
 
   var now = new Date(), 
       msCreated = created.getTime(),
-      msNow = now.getTime(),
-      n;
+      msNow = now.getTime();
   
   // time difference in days
   return OB.Utilities.getTimePassedInterval(msNow - msCreated);
@@ -835,6 +834,7 @@ OB.Utilities.getTimePassed = function(
 
 OB.Utilities.getTimePassedInterval = function(
   /* amount of time in miliseconds */ timeInMiliseconds) {
+  var n;
   var diffDays = Math.floor((timeInMiliseconds) / (1000 * 60 * 60 * 24));
   if (diffDays >= 30) {
     n = Math.floor(diffDays / 30);
