@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.Image;
 
@@ -56,30 +57,35 @@ public class ShowImageLogo extends HttpBaseServlet {
     // read the image data
     byte[] img;
     String mimeType = null;
-    Image image = Utility.getImageLogoObject(logo, org);
-    if (image != null) {
-      img = image.getBindaryData();
-      mimeType = image.getMimetype();
-    } else {
-      img = Utility.getImageLogo(logo, org);
-    }
-    // write the mimetype
-    if (mimeType == null) {
-      mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img);
+    try {
+      OBContext.setAdminMode(false);
+      Image image = Utility.getImageLogoObject(logo, org);
       if (image != null) {
-        // If there is an OBContext, we attempt to save the MIME type of the image
-        updateMimeType(image.getId(), mimeType);
+        img = image.getBindaryData();
+        mimeType = image.getMimetype();
+      } else {
+        img = Utility.getImageLogo(logo, org);
       }
-    }
-    if (!mimeType.equals("")) {
-      response.setContentType(mimeType);
-    }
+      // write the mimetype
+      if (mimeType == null) {
+        mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img);
+        if (image != null) {
+          // If there is an OBContext, we attempt to save the MIME type of the image
+          updateMimeType(image.getId(), mimeType);
+        }
+      }
+      if (!mimeType.equals("")) {
+        response.setContentType(mimeType);
+      }
 
-    // write the image
-    OutputStream out = response.getOutputStream();
-    response.setContentLength(img.length);
-    out.write(img);
-    out.close();
+      // write the image
+      OutputStream out = response.getOutputStream();
+      response.setContentLength(img.length);
+      out.write(img);
+      out.close();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
