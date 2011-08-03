@@ -101,12 +101,11 @@ isc.FormItem.addProperties({
     // forward to the original method
     return this._handleTitleClick();
   },
-  
+ 
   // prevent to many calls to focus in item if there is already focus
   _focusInItem: isc.FormItem.getPrototype().focusInItem,
   focusInItem: function() {
     if (this.hasFocus) {
-      this.selectValue();
       return;
     }
     this._focusInItem();
@@ -133,7 +132,9 @@ isc.FormItem.addProperties({
   
   changed: function(){
     this._hasChanged = true;
-    this.clearErrors();
+    if (this.name) {
+      this.form.clearFieldErrors(this.name, true, true);
+    }
   },
   
   focus: function(form, item){

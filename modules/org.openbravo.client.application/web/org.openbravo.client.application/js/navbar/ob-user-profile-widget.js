@@ -64,6 +64,7 @@ isc.OBUserProfile.addProperties({
     this.roleForm.focusInItem('role');
     this.tabSet.selectTab(0);
     this.passwordForm.reset();
+    this.passwordForm.setFocusItem('currentPwd');
     this.Super('doShow', arguments);
   },
   
@@ -401,6 +402,22 @@ isc.OBUserProfile.addProperties({
       numCols: 1,
       errorOrientation: 'right',
       
+      // overridden to pass suppressautofocus to parent
+      addFieldErrors : function (fieldName, errors, showErrors) {
+        if (!this.errors) {
+          this.errors = {};
+        }
+        
+        this.addValidationError(this.errors, fieldName, errors);
+
+        // Don't bother updating hiddenErrors - this will be updated by 
+        // showErrors() / showFieldErrors()
+        
+        if (showErrors) { 
+          this.showFieldErrors(fieldName, true);
+        }
+      },
+
       itemKeyPress: function(item, keyName, characterValue){
         if (keyName === 'Escape') {
           if (isc.OBQuickRun.currentQuickRun) {
