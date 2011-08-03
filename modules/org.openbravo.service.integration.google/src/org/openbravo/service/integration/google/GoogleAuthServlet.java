@@ -30,6 +30,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.exception.ConstraintViolationException;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.VariablesBase;
 import org.openbravo.base.exception.OBException;
@@ -62,14 +63,14 @@ public class GoogleAuthServlet extends HttpBaseServlet {
 
   private static final long serialVersionUID = 1L;
 
-  private static Logger log = Logger.getLogger(GoogleAuthServlet.class);
+  private static final Logger log = Logger.getLogger(GoogleAuthServlet.class);
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
       IOException {
     VariablesBase vars = new VariablesBase(req);
 
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(false);
 
     try {
 
@@ -79,7 +80,8 @@ public class GoogleAuthServlet extends HttpBaseServlet {
         OBError error = new OBError();
         // messageDB escapes double-quotes
         error.setTitle("");
-        error.setMessage(Utility.messageBD(this, "OBSEIG_Activate", lang).replaceAll("&quot;", "\""));
+        error.setMessage(Utility.messageBD(this, "OBSEIG_Activate", lang)
+            .replaceAll("&quot;", "\""));
         error.setType("Error");
         vars.setSessionObject("LoginErrorMsg", error);
         resp.sendRedirect(strDireccion);
@@ -98,7 +100,7 @@ public class GoogleAuthServlet extends HttpBaseServlet {
       }
 
     } catch (Exception e) {
-      log4j.error(e.getMessage(), e);
+      log4j.error("Error trying to authenticate using Google Auth service: " + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -114,7 +116,7 @@ public class GoogleAuthServlet extends HttpBaseServlet {
     final VariablesSecureApp vars = new VariablesSecureApp(req);
 
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
 
       String lang = OBDal.getInstance().get(Client.class, "0").getLanguage().getLanguage();
 
@@ -122,11 +124,25 @@ public class GoogleAuthServlet extends HttpBaseServlet {
 
       if ("true".equals(vars.getSessionValue("is_association"))) {
         vars.removeSessionValue("is_association");
-        OpenIDManager.getInstance().associateAccount(oid, req, resp);
-        vars.setSessionValue("startup-message", Utility.messageBD(this, "OBSEIG_LinkedOK", lang)
-            .replaceAll("&quot;", "\""));
-        vars.setSessionValue("startup-message-title", Utility.messageBD(this, "ProcessOK", lang)
-            .replaceAll("&quot;", "\""));
+        try {
+          OpenIDManager.getInstance().associateAccount(oid, req, resp);
+          vars.setSessionValue("startup-message", Utility.messageBD(this, "OBSEIG_LinkedOK", lang)
+              .replaceAll("&quot;", "\""));
+          vars.setSessionValue("startup-message-title", Utility.messageBD(this, "ProcessOK", lang)
+              .replaceAll("&quot;", "\""));
+
+        } catch (ConstraintViolationException e) {
+          log.error("Error trying to associate account with OpenID identifier: " + oid.toString(),
+              e);
+          // User notification
+          vars.setSessionValue(
+              "startup-message",
+              Utility.messageBD(this, "OBSEIG_DuplicatedIdentifier", lang).replaceAll("&quot;",
+                  "\""));
+          vars.setSessionValue("startup-message-title",
+              Utility.messageBD(this, "ProcessFailed", lang).replaceAll("&quot;", "\""));
+
+        }
         resp.sendRedirect(strDireccion);
         return;
       }
@@ -162,7 +178,7 @@ public class GoogleAuthServlet extends HttpBaseServlet {
   }
 
   @SuppressWarnings("unchecked")
-  public User createUser(Identifier oid, HttpServletRequest req, HttpServletResponse resp)
+  private User createUser(Identifier oid, HttpServletRequest req, HttpServletResponse resp)
       throws OBException, IOException {
     Map<String, String> attributes = (Map<String, String>) req.getAttribute("attributes");
 
@@ -179,7 +195,7 @@ public class GoogleAuthServlet extends HttpBaseServlet {
 
     OBCriteria<OBSEIGDefaults> defaults = OBDal.getInstance().createCriteria(OBSEIGDefaults.class);
     defaults.setFilterOnReadableClients(false);
-    defaults.setFilterOnReadableClients(false);
+    defaults.setFilterOnReadableOrganization(false);
 
     if (defaults.count() == 0) {
       OBError error = new OBError();
