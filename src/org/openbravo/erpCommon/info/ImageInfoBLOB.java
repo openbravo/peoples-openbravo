@@ -68,7 +68,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
     if (tableId == null || tableId.equals("")) {
       String tabId = vars.getStringParameter("inpTabId");
       try {
-        OBContext.setAdminMode(false);
+        OBContext.setAdminMode(true);
         Tab tab = OBDal.getInstance().get(Tab.class, tabId);
         tableId = tab.getTable().getId();
       } finally {
@@ -90,7 +90,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
 
     String parentObjectId = vars.getStringParameter("parentObjectId");
     if (parentObjectId == null || parentObjectId.equals("")) {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       try {
         Table table = OBDal.getInstance().get(Table.class, vars.getStringParameter("inpTableId"));
         if (table != null) {
@@ -113,7 +113,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
 
       printPageFrame(response, vars, imageID, tableId, columnName, parentObjectId, orgId);
     } else if (vars.getCommand().startsWith("SAVE")) {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       try {
         final FileItem fi = vars.getMultiFile("inpFile");
         byte[] bytea = fi.get();
@@ -156,7 +156,7 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
       }
     } else if (vars.getCommand().startsWith("DELETE")) {
       if (imageID != null && !imageID.equals("")) {
-        OBContext.setAdminMode();
+        OBContext.setAdminMode(true);
         try {
           Image image = OBDal.getInstance().get(Image.class, imageID);
           Table table = OBDal.getInstance().get(Table.class, tableId);

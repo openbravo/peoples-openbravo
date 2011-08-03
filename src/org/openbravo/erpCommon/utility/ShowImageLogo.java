@@ -58,7 +58,7 @@ public class ShowImageLogo extends HttpBaseServlet {
     byte[] img;
     String mimeType = null;
     try {
-      OBContext.setAdminMode(false);
+      OBContext.setAdminMode(true);
       Image image = Utility.getImageLogoObject(logo, org);
       if (image != null) {
         img = image.getBindaryData();

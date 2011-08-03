@@ -58,7 +58,7 @@ public class ShowImage extends HttpSecureAppServlet {
     String id = vars.getStringParameter("id");
 
     try {
-      OBContext.setAdminMode(false);
+      OBContext.setAdminMode(true);
       // read the image data
       byte[] img = Utility.getImage(id);
 

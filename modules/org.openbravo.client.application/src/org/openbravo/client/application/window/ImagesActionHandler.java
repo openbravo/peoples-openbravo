@@ -53,7 +53,7 @@ public class ImagesActionHandler extends BaseActionHandler {
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     if (parameters.get("command").equals("DELETE")) {
-      OBContext.setAdminMode(false);
+      OBContext.setAdminMode(true);
       String imageID = (String) parameters.get("inpimageId");
       String tabId = (String) parameters.get("inpTabId");
       Table table = null;
@@ -76,7 +76,7 @@ public class ImagesActionHandler extends BaseActionHandler {
       return new JSONObject();
     } else if (parameters.get("command").equals("GETSIZE")) {
       try {
-        OBContext.setAdminMode();
+        OBContext.setAdminMode(true);
         String imageID = (String) parameters.get("inpimageId");
         Image image = OBDal.getInstance().get(Image.class, imageID);
         Long width;
