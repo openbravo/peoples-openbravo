@@ -50,6 +50,9 @@
       <foreign-key foreignTable="AD_USER" name="OBSOID_USER_OID_AD_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
+      <unique name="OBSOID_UN_IDENTIFIER">
+        <unique-column name="OPENID_IDENTIFIER"/>
+      </unique>
       <check name="OBSOID_USER_OID_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

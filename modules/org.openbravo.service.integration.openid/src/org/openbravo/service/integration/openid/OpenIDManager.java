@@ -65,9 +65,9 @@ public class OpenIDManager implements OBSingleton {
   private static ConsumerManager manager;
   private static OpenIDManager instance;
 
-  private static Logger log = Logger.getLogger(OpenIDManager.class);
+  private static final Logger log = Logger.getLogger(OpenIDManager.class);
 
-  private static final Map<String, DiscoveryInformation> discoveryInformationMap;
+  private static Map<String, DiscoveryInformation> discoveryInformationMap;
 
   public static final String ATTRIBUTE_EMAIL = "email";
   public static final String ATTRIBUTE_FIRSTNAME = "firstName";
@@ -75,13 +75,10 @@ public class OpenIDManager implements OBSingleton {
 
   public static final String GOOGLE_OPENID_DISCOVER_URL = "https://www.google.com/accounts/o8/id";
 
-  static {
-    discoveryInformationMap = new HashMap<String, DiscoveryInformation>();
-  }
-
-  public static OpenIDManager getInstance() {
+  public static synchronized OpenIDManager getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(OpenIDManager.class);
+      discoveryInformationMap = new HashMap<String, DiscoveryInformation>();
       manager = new ConsumerManager();
       manager.setAssociations(new InMemoryConsumerAssociationStore());
       manager.setNonceVerifier(new InMemoryNonceVerifier(5000));
@@ -150,34 +147,33 @@ public class OpenIDManager implements OBSingleton {
       u = userCriteria.list().get(0).getUserContact();
     }
     return u;
+
   }
 
-  @SuppressWarnings("unchecked")
   public void associateAccount(Identifier oid, HttpServletRequest req, HttpServletResponse resp)
       throws Exception {
-    Map<String, String> userAttributes = (LinkedHashMap<String, String>) req
-        .getAttribute("attributes");
+    // Map<String, String> userAttributes = (LinkedHashMap<String, String>) req
+    // .getAttribute("attributes");
 
     User user = OBDal.getInstance().get(User.class, OBContext.getOBContext().getUser().getId());
-
-    if (!userAttributes.get(ATTRIBUTE_EMAIL).equals(user.getEmail())) {
-      try {
-        user.setEmail(userAttributes.get(ATTRIBUTE_EMAIL));
-        OBDal.getInstance().save(user);
-        OBDal.getInstance().flush();
-      } catch (Exception e) {
-        log.error("Error trying to update email for user: " + user.getUsername(), e);
-      }
-    }
+    // TODO: Ask the user if he wants to update the email account and uncomment this code
+    // if (!userAttributes.get(ATTRIBUTE_EMAIL).equals(user.getEmail())) {
+    // try {
+    // user.setEmail(userAttributes.get(ATTRIBUTE_EMAIL));
+    // OBDal.getInstance().save(user);
+    // OBDal.getInstance().flush();
+    // } catch (Exception e) {
+    // log.error("Error trying to update email for user: " + user.getUsername(), e);
+    // }
+    // }
 
     OBCriteria<OBSOIDUserIdentifier> oidCriteria = OBDal.getInstance().createCriteria(
         OBSOIDUserIdentifier.class);
     oidCriteria
         .add(Restrictions.eq(OBSOIDUserIdentifier.PROPERTY_OPENIDIDENTIFIER, oid.toString()));
-    oidCriteria.add(Restrictions.eq(OBSOIDUserIdentifier.PROPERTY_USERCONTACT, user));
 
     if (oidCriteria.count() > 0) {
-      log.warn("Account association already exists");
+      log.warn("Account association already exists - OpenID identifier: " + oid.toString());
       return;
     }
 
@@ -235,9 +231,6 @@ public class OpenIDManager implements OBSingleton {
       throws MessageException {
     if (authSuccess.hasExtension(AxMessage.OPENID_NS_AX)) {
       FetchResponse fetchResp = (FetchResponse) authSuccess.getExtension(AxMessage.OPENID_NS_AX);
-
-      // List emails = fetchResp.getAttributeValues("email");
-      // String email = (String) emails.get(0);
 
       List aliases = fetchResp.getAttributeAliases();
       Map attributes = new LinkedHashMap();
