@@ -199,10 +199,10 @@ public class GoogleAuthServlet extends HttpBaseServlet {
 
     if (defaults.count() == 0) {
       OBError error = new OBError();
-      error.setTitle(Utility.messageBD(this, "OBSEIG_NoDefaultConf", lang)
+      error.setMessage(Utility.messageBD(this, "OBSEIG_NoDefaultConf", lang)
           .replaceAll("@@email@@", attributes.get(OpenIDManager.ATTRIBUTE_EMAIL))
           .replaceAll("&quot;", "\""));
-      error.setMessage("");
+      error.setTitle("");
       error.setType("Error");
       vars.setSessionObject("LoginErrorMsg", error);
       resp.sendRedirect(strDireccion);
@@ -211,10 +211,10 @@ public class GoogleAuthServlet extends HttpBaseServlet {
 
     if (defaults.count() > 1) {
       OBError error = new OBError();
-      error.setTitle(Utility.messageBD(this, "OBSEIG_TooMuchConf", lang)
+      error.setMessage(Utility.messageBD(this, "OBSEIG_TooMuchConf", lang)
           .replaceAll("@@email@@", attributes.get(OpenIDManager.ATTRIBUTE_EMAIL))
           .replaceAll("&quot;", "\""));
-      error.setMessage("");
+      error.setTitle("");
       error.setType("Error");
       vars.setSessionObject("LoginErrorMsg", error);
       resp.sendRedirect(strDireccion);
