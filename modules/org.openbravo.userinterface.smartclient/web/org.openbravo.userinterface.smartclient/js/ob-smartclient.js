@@ -132,9 +132,7 @@ isc.FormItem.addProperties({
   
   changed: function(){
     this._hasChanged = true;
-    if (this.name) {
-      this.form.clearFieldErrors(this.name, true, true);
-    }
+    this.clearErrors();
   },
   
   focus: function(form, item){

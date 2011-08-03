@@ -26,7 +26,7 @@ isc.ClassFactory.defineClass('OBViewForm', isc.DynamicForm);
 // of this file.
 
 OB.ViewFormProperties = {
-
+    
   // ** {{{ view }}} **
   // The view member contains the pointer to the composite canvas which
   // handles this form
@@ -1455,6 +1455,12 @@ OB.ViewFormProperties = {
       response = this.Super('keyDown', arguments);
     }
     return response;
+  },
+  
+  // always suppress focus when showing errors, we do focus handling
+  // explicitly
+  showFieldErrors: function (fieldName, suppressAutoFocus) {
+    this.Super('showFieldErrors', [fieldName, true]);
   },
   
   storeFocusItem: function() {
