@@ -419,7 +419,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     
     // put it all in a tabset...    
     this.propertiesTabSet = isc.TabSet.create(OB.Styles.Personalization.TabSet, {
-      height: OB.Styles.Personalization.PropertiesTabSet.collapsedHeight,
+      height: OB.Styles.Personalization.PropertiesTabSet.expandedHeight,
     
       toggleVisualState: function() {
         if (this.expanded) {
@@ -847,7 +847,13 @@ isc.OBPersonalizeFormLayout.addProperties({
     // when retrieving the data from the tree (getPersonalizationFields)
     // we only want these properties and not the original ones.
     // see the function getPersonalizationFields
-    this.personalizationDataProperties = [];
+    // add some default fields
+    this.personalizationDataProperties = [
+      'isStatusBarField', 'displayed', 'isSection',
+      'parentName', 'title', 'hiddenInForm',
+      'colSpan', 'rowSpan', 'required', 
+      'startRow', 'name', 'hasDisplayLogic'
+    ];
     for (i = 0; i < this.personalizationData.form.fields.length; i++) {
       fld = this.personalizationData.form.fields[i];
       for (prop in fld) {
