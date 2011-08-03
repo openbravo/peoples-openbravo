@@ -179,6 +179,9 @@ public class DataToJsonConverter {
         }
       }
 
+      // The recordTime is also added. This is the time (in milliseconds) at which the record was
+      // generated. This time can be used in the client side to compute the record "age", for
+      // example, or how much time has passed since the record was updated
       jsonObject.put("recordTime", new Date().getTime());
       return jsonObject;
     } catch (JSONException e) {
