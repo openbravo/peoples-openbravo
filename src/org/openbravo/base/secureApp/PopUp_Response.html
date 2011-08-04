@@ -19,13 +19,14 @@
 <script language="JavaScript" type="text/javascript" id="paramLanguage">    defaultLang = "en_US";</script>
 <script language="JavaScript" type="text/javascript">
 function submitThisPage(ref) {
+  var process, layoutMDI;
   if (top && top.opener && top.opener.submitCommandForm) {
     // 2.50 poup process
     top.opener.submitCommandForm("DEFAULT", false, null, ref, '_self');
   } else {
-    var process;
-    if (getFrame('LayoutMDI')) {
-      process = getFrame('LayoutMDI').OB.ActionButton.executingProcess;
+    layoutMDI = getFrame('LayoutMDI');
+    if (layoutMDI) {
+      process = layoutMDI.OB.ActionButton.executingProcess;
     } else if (top && top.opener) {
       process = top.opener.OB.ActionButton.executingProcess;
     }
@@ -33,11 +34,11 @@ function submitThisPage(ref) {
     if (process) {
       // 3.0 window process
       process.closeProcessPopup(ref);
-    } else if (getFrame('LayoutMDI') && getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.getAppFrameWindow 
-               && getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.getAppFrameWindow() 
-               && getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.getAppFrameWindow().submitCommandForm) {
+    } else if (layoutMDI && layoutMDI.OB.MainView.TabSet.getSelectedTab().pane.getAppFrameWindow
+               && layoutMDI.OB.MainView.TabSet.getSelectedTab().pane.getAppFrameWindow()
+               && layoutMDI.OB.MainView.TabSet.getSelectedTab().pane.getAppFrameWindow().submitCommandForm) {
       // 2.50 modal popup process
-      getFrame('LayoutMDI').OB.MainView.TabSet.getSelectedTab().pane.getAppFrameWindow().submitCommandForm("DEFAULT", false, null, ref, '_self');
+      layoutMDI.OB.MainView.TabSet.getSelectedTab().pane.getAppFrameWindow().submitCommandForm("DEFAULT", false, null, ref, '_self');
     }
   }
   closePage();
