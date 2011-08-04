@@ -126,7 +126,7 @@ function closeThisPage() {
 }
 function submitThisPage(strCommand) {
   if (validate(strCommand)) {
-    submitCommandForm(strCommand, false, null, 'MatchTransaction.html');
+    submitCommandForm(strCommand, false, null, 'MatchTransaction.html', '_self');
     return true;
   }
   return true;
