@@ -102,6 +102,17 @@ isc.FormItem.addProperties({
     return this._handleTitleClick();
   },
  
+  // overridden als selectValue did not seem to work for ie
+  _selectValue: isc.FormItem.getPrototype().selectValue,
+  selectValue: function() {
+    var element = this.getFocusElement();
+    if (element && element.select) {
+      element.select();
+    } else {
+      this._selectValue();
+    }
+  },
+  
   // prevent to many calls to focus in item if there is already focus
   _focusInItem: isc.FormItem.getPrototype().focusInItem,
   focusInItem: function() {

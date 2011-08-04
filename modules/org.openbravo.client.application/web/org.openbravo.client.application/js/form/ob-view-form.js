@@ -59,9 +59,6 @@ OB.ViewFormProperties = {
   fieldsByInpColumnName: null,
   fieldsByColumnName: null,
   
-  autoFocus: true,
-  selectOnFocus: true,
-  
   isNew: false,
   hasChanged: false,
   
@@ -539,6 +536,13 @@ OB.ViewFormProperties = {
         me.rememberValues();
       }
       me.initializing = false;
+      
+      // at this point select the focused value      
+      if (me.getFocusItem()) {
+        me.setFocusInForm();
+        me.selectFocusItemValue();
+      }
+
     });
   },
   
@@ -1272,10 +1276,22 @@ OB.ViewFormProperties = {
     this.computeFocusItem(this.getField(currentItemName));
     if (this.getFocusItem()) {
       this.getFocusItem().focusInItem();
-      if (this.getFocusItem().doExplicitSelectOnFocus) {
+      this.selectFocusItemValue();
+    }
+  },
+
+  selectFocusItemValue: function() {
+    if (!this.getFocusItem() || !this.view.isActiveView()) {
+      return;
+    }
+    // if not explicitly set to false, select its value
+    if (this.getFocusItem().selectOnFocus !== false) {
+      if (isc.Browser.isIE) {
+        this.getFocusItem().delayCall('selectValue', [], 100);
+      } else {
         this.getFocusItem().selectValue();
       }
-    }
+    }    
   },
   
   // overridden to prevent focus setting when autoSaving  
@@ -1463,6 +1479,27 @@ OB.ViewFormProperties = {
     this.Super('showFieldErrors', [fieldName, true]);
   },
   
+  // overridden because Smartclient looses the selection when redrawing
+  // this was not reproducable in standard smartclient
+  // therefore this hack
+  redraw: function() {
+    var hasFocus;
+    if (this.getFocusItem() && this.getFocusItem().hasFocus) {
+      this.storeFocusItem();
+      // don't let the native SC code do store/restore of the focus item
+      hasFocus = this.getFocusItem().hasFocus;
+      this.getFocusItem().hasFocus = false;
+    }
+    this.Super('redraw', arguments);
+    if (hasFocus) {
+      if (isc.Browser.isIE) {
+        this.delayCall('restoreFocusItem', [true], 100);
+      } else {
+        this.restoreFocusItem();
+      }
+    }
+  },
+  
   storeFocusItem: function() {
     delete this.storedFocusItem;
     delete this.storedSelectionRange;
@@ -1481,7 +1518,13 @@ OB.ViewFormProperties = {
         this.setFocusItem(this.storedFocusItem);
         this.setFocusInForm();
         if (storedSelectionRange) {
-          this.getFocusItem().setSelectionRange(storedSelectionRange[0], storedSelectionRange[1]);
+          if (isc.Browser.isIE && storedSelectionRange[0] !== storedSelectionRange[1]) {
+            // we have overridden selectvalue to not use selection ranges
+            // but direct element.select, see ob-smartclient.js
+            this.selectFocusItemValue();
+          } else {
+            this.getFocusItem().setSelectionRange(storedSelectionRange[0], storedSelectionRange[1]);
+          }
         }
       }
     }

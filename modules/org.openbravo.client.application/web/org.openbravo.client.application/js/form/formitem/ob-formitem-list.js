@@ -45,10 +45,8 @@ isc.OBListItem.addProperties({
 
   moveFocusOnPickValue: true,
 
-  // needed when selectOnFocus is true
-  // otherwise a single typed in char is selected
-  // all the time so that you can only type in
-  // one character
+  // only fire change if a value gets picked
+  // explicitly
   handleChange: function() {
     if (!this._pickedValue) {
       return;
