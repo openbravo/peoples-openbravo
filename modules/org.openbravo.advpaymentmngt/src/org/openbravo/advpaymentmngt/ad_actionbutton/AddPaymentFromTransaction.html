@@ -156,6 +156,8 @@ function loadGLItemList() {
   table.innerHTML = '';
   if (glitemCount === 0) {
     OB.APRM.HasGLItems = false;
+    OB.APRM.APFT_GLItems = [];
+    updateTotal();
     return;
   }
   OB.APRM.HasGLItems = true;
@@ -186,7 +188,7 @@ function loadGLItemList() {
     }
     cellRemoveButton = row.insertCell(3);
     cellRemoveButton.innerHTML = '<div><button type="button" id="buttonRemoveGLItem"'
-        + ' class="ButtonLink_focus" onclick="removeGLItem(' + i + ', ' + glitemAmount + ');return false;"'
+        + ' class="ButtonLink_focus" onclick="removeGLItem(' + i + ', ' + applyFormatOBMaskedToJS(glitemAmount) + ');return false;"'
         + ' onfocus="buttonEvent(\'onfocus\', this); window.status=\'OK\'; return true;"'
         + ' onblur="buttonEvent(\'onblur\', this);"'
         + '  onkeyup="buttonEvent(\'onkeyup\', this);"'
@@ -255,7 +257,8 @@ function addGLItem() {
   loadGLItemList();
 }
 function removeGLItem(key, removedAmount) {
-  var isInheritedActualPayment = (document.getElementById('paramInheritedActualPayment').value === 'Y');
+  var isInheritedActualPayment = (document.getElementById('paramInheritedActualPayment').value === 'Y'),
+      removedAmount = applyFormatJSToOBMasked(removedAmount);
   if (!isTrue('isReceipt') && !isInheritedActualPayment) {
     if ( compare(document.frmMain.inpActualPayment.value, '>', removedAmount) ) {
       document.frmMain.inpActualPayment.value = subtract(document.frmMain.inpActualPayment.value, removedAmount);
@@ -484,7 +487,7 @@ function currencyOnChange() {
     return refreshExchangeRate();
   } else {
     // Reset currency
-    changeClass('paramCurrencyId', 'ComboKey dojoValidateValid required ', 'ComboKeyReadOnly ')
+    changeClass('paramCurrencyId', 'ComboKey dojoValidateValid required ', 'ComboKeyReadOnly ');
     selectCombo(document.getElementById('paramCurrencyId'), document.getElementById('paramFinancialAccountCurrencyId').value);
     document.getElementById('paramExchangeRate').value='1';
     updateConvertedAmounts();

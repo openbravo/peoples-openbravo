@@ -87,6 +87,10 @@ function applyFormatJSToOBMasked(number) {
                                           globalGroupSeparator, globalGroupInterval);
 }
 
+function applyFormatOBMaskedToJS(number) {
+  return OB.Utilities.Number.OBMaskedToJS(number, globalDecSeparator, globalGroupSeparator);
+}
+
 
 /**
 * Function to operate with formatted number
@@ -382,7 +386,7 @@ function updateTotal() {
     }
     updateDifference();
     if (OB.APRM.HasGLItems === 'undefined' || !OB.APRM.HasGLItems) {
-      return;
+      //return;
     }
   } else if (!chk.length) {
     scheduledPaymentDetailId = frm.inpRecordId0.value;
