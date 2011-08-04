@@ -252,7 +252,6 @@ isc.OBMyOpenbravo.addProperties({
       columnProperties: {
         membersMargin: 12,
         canAcceptDrop: true,
-        dropTypes: ["Portlet"],
         overflow: 'visible',
 
         // is used to prevent dropping on the left or right 
