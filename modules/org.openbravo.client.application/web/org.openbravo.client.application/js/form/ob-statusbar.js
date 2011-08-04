@@ -27,7 +27,8 @@ isc.ClassFactory.defineClass('OBStatusBarTextLabel', isc.Label);
 
 isc.OBStatusBarTextLabel.addProperties( {
   // to allow setting the active view when clicking in the statusbar
-    canFocus : true
+    canFocus : true,
+    canSelectText: true
   });
 
 isc.ClassFactory.defineClass('OBStatusBarIconButtonBar', isc.HLayout);
