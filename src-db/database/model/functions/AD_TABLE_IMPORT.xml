@@ -336,7 +336,7 @@
       FOR Cur_CommonCols IN (select columnname
                               from ad_column c
                              where c.ad_table_id = '100'
-                               and lower(c.columnname) in ('client','organization','active','creation date','updated','created by','updated by')
+                               and lower(c.columnname) in ('ad_client_id','ad_org_id','isactive','created','updated','createdby','updatedby')
                                and not exists (select 1 
                                                  from ad_column c1
                                                 where c1.ad_table_id = v_Record_ID
