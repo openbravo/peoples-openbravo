@@ -255,7 +255,8 @@ function addGLItem() {
   loadGLItemList();
 }
 function removeGLItem(key, removedAmount) {
-  if (!isTrue('isReceipt')){
+  var isInheritedActualPayment = (document.getElementById('paramInheritedActualPayment').value === 'Y');
+  if (!isTrue('isReceipt') && !isInheritedActualPayment) {
     if ( compare(document.frmMain.inpActualPayment.value, '>', removedAmount) ) {
       document.frmMain.inpActualPayment.value = subtract(document.frmMain.inpActualPayment.value, removedAmount);
     } else {
