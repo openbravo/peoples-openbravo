@@ -79,6 +79,15 @@ isc.FormItem.addProperties({
     this._original_init();
   },
   
+  // overridden to not show if hiddenInForm is set
+  _show: isc.FormItem.getPrototype().show,
+  show: function (arg1) {
+    if (this.hiddenInForm) {
+      return;
+    }
+    this._show(arg1);
+  },
+  
   // overridden to not make a difference between undefined and null
   _original_compareValues: isc.FormItem.getPrototype().compareValues,
   compareValues: function (value1, value2) {

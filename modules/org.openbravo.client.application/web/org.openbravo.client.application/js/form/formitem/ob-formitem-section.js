@@ -52,8 +52,17 @@ isc.OBSectionItem.addProperties({
 
     for(i = 0; i < this.itemIds.length; i++) {
       item = f.getItem(this.itemIds[i]);
-      if(item && (!item.visible || !item.displayed || !item.hiddenInForm)) {
-        item.alwaysTakeSpace = flag;
+      if (item) {
+        // note different cases can occur, these properties may be set, maybe
+        // undefined, false or true, undefined is not always false, as a field
+        // is not always processed through all logic in the system which sets
+        // these properties
+        if (item.hiddenInForm) {
+          continue;
+        }
+        if (item.visible || item.displayed !== false) {
+          item.alwaysTakeSpace = flag;
+        }
       }
     }
   },
