@@ -110,7 +110,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
             String strCTaxID = Tax.get(this, data[i].productId, dataInvoice[0].dateinvoiced,
                 dataInvoice[0].adOrgId, strWharehouse, dataInvoice[0].cBpartnerLocationId,
                 dataInvoice[0].cBpartnerLocationId, dataInvoice[0].cProjectId,
-                strIsSOTrx.equals("Y"));
+                strIsSOTrx.equals("Y"), data[i].accountId);
 
             if ("Y".equals(strPriceListCheck)) {
 

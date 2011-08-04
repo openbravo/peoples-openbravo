@@ -34,10 +34,8 @@ public class Tax {
       String shipC_BPartner_Location_ID, String C_Project_ID, boolean IsSOTrx) throws IOException,
       ServletException {
     log4jTax.debug("Tax.get");
-    return TaxData
-        .taxGet(conn, M_Product_ID, shipDate, AD_Org_ID, M_Warehouse_ID,
-            billC_BPartner_Location_ID, shipC_BPartner_Location_ID, C_Project_ID, (IsSOTrx ? "Y"
-                : "N"));
+    return Tax.get(conn, M_Product_ID, shipDate, AD_Org_ID, M_Warehouse_ID,
+        billC_BPartner_Location_ID, shipC_BPartner_Location_ID, C_Project_ID, IsSOTrx, "");
 
     // FIXME: If this code is not goint be used, it should be removed
     /*
@@ -64,6 +62,16 @@ public class Tax {
      * TaxData.select3(conn, billFrom, shipDate); if (tdAux!=null && tdAux.length!=0) taxID =
      * tdAux[0].cTaxId; } System.out.println("TaxID: " + taxID); return taxID;
      */
+  }
+
+  public static String get(ConnectionProvider conn, String M_Product_ID, String shipDate,
+      String AD_Org_ID, String M_Warehouse_ID, String billC_BPartner_Location_ID,
+      String shipC_BPartner_Location_ID, String C_Project_ID, boolean IsSOTrx, String account_id)
+      throws IOException, ServletException {
+    log4jTax.debug("Tax.get");
+    return TaxData.taxGet(conn, M_Product_ID, shipDate, AD_Org_ID, M_Warehouse_ID,
+        billC_BPartner_Location_ID, shipC_BPartner_Location_ID, C_Project_ID,
+        (IsSOTrx ? "Y" : "N"), account_id);
   }
 
   public static String get(ConnectionProvider conn, String M_Product_ID, String shipDate,
