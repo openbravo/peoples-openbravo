@@ -55,7 +55,7 @@
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
       <check name="OBSEIG_DEF_NEWUACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="OBSEIG_DEFAULT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="OBSEIG_DEFAULT_ISDEFAULT_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBSEIG_DEFAULT_ISACTIVE_CHECK"><![CDATA[ISNEWUSERACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBSEIG_DEFAULT_ISDEFAULT_CHECK"><![CDATA[ISDEFAULT IN ('Y', 'N')]]></check>
     </table>
   </database>
