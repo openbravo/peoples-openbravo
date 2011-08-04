@@ -143,8 +143,9 @@ public class OpenIDManager implements OBSingleton {
     userCriteria.setFilterOnReadableClients(false);
     userCriteria.setFilterOnReadableOrganization(false);
 
-    if (userCriteria.count() > 0) {
-      u = userCriteria.list().get(0).getUserContact();
+    OBSOIDUserIdentifier userIdentifier = (OBSOIDUserIdentifier) userCriteria.uniqueResult();
+    if (userIdentifier != null) {
+      u = userIdentifier.getUserContact();
     }
     return u;
 
