@@ -121,26 +121,19 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     this.grid.filterData();
   },
 
-  exportGrid: function() {
-    var grid = this.widget.grid, requestProperties, additionalProperties,
-        activateButton = isc.addProperties({}, isc.Dialog.OK, {
-          getTitle: function() {
-            return OB.I18N.getLabel('OBKMO_LearnMore');
-          },
-          click: function() {
-            this.topElement.cancelClick();
-            window.open('http://www.openbravo.com/product/erp/get-basic/');
-          }});
+  exportGrid: function () {
+    var grid = this.widget.grid,
+        requestProperties,
+        additionalProperties;
 
-         if (OB.Application.licenseType === 'C') {
-           isc.confirm(OB.I18N.getLabel('OBUIAPP_ActivateMessage'), {
-           isModal: true,
-           showModalMask: true,
-           toolbarButtons: [activateButton, isc.Dialog.CANCEL]
-         });
-
-         return;
-        }
+    if (OB.Application.licenseType === 'C') {
+      isc.warn(OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBCQL_ActivateMessageExport')]), {
+        isModal: true,
+        showModalMask: true,
+        toolbarButtons: [isc.Dialog.OK]
+      });
+      return;
+    }
 
     requestProperties = {
       exportAs: 'csv',
