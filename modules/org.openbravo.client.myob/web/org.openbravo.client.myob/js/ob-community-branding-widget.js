@@ -129,9 +129,8 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
     }
   },
 
-  confirmedClosePortlet: function(ok) {
-  var activateButton;
-
+  confirmedClosePortlet: function (ok) {
+  
    if (!ok) {
      this.Super('confirmedClosePortlet', arguments);
      return;
@@ -141,21 +140,12 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
      this.Super('confirmedClosePortlet', arguments);
      return;
    }
-  
-   activateButton = isc.addProperties({}, isc.Dialog.OK, {
-          getTitle: function() {
-            return OB.I18N.getLabel('OBKMO_LearnMore');
-          },
-          click: function() {
-            this.topElement.cancelClick();
-            window.open('http://www.openbravo.com/product/erp/get-basic/');
-          }});
 
     if(OB.Application.licenseType === 'C') {
-      isc.confirm(OB.I18N.getLabel('OBKMO_ActivateMessage'), {
+      isc.warn(OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBKMO_ActivateMessage')]), {
           isModal: true,
           showModalMask: true,
-          toolbarButtons: [activateButton, isc.Dialog.CANCEL]
+          toolbarButtons: [isc.Dialog.OK]
       });
       return;
     }
