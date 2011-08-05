@@ -184,8 +184,8 @@ public class AddTransaction extends HttpSecureAppServlet {
         final String strElement_PJ = vars.getStringParameter("inpCProjectId", IsIDFilter.instance);
         final Project project = OBDal.getInstance().get(Project.class, strElement_PJ);
 
-        final String strElement_AC = vars.getStringParameter("inpCActivityId", IsIDFilter.instance);
-        final ABCActivity activity = OBDal.getInstance().get(ABCActivity.class, strElement_AC);
+        final String strElement_AY = vars.getStringParameter("inpCActivityId", IsIDFilter.instance);
+        final ABCActivity activity = OBDal.getInstance().get(ABCActivity.class, strElement_AY);
 
         final String strElement_SR = vars.getStringParameter("inpCSalesRegionId",
             IsIDFilter.instance);
@@ -314,13 +314,13 @@ public class AddTransaction extends HttpSecureAppServlet {
     final String strElement_BP = Utility.getContext(this, vars, "$Element_BP", strWindowId);
     final String strElement_PR = Utility.getContext(this, vars, "$Element_PR", strWindowId);
     final String strElement_PJ = Utility.getContext(this, vars, "$Element_PJ", strWindowId);
-    final String strElement_AC = Utility.getContext(this, vars, "$Element_AC", strWindowId);
+    final String strElement_AY = Utility.getContext(this, vars, "$Element_AY", strWindowId);
     final String strElement_SR = Utility.getContext(this, vars, "$Element_SR", strWindowId);
     final String strElement_MC = Utility.getContext(this, vars, "$Element_MC", strWindowId);
     xmlDocument.setParameter("strElement_BP", strElement_BP);
     xmlDocument.setParameter("strElement_PR", strElement_PR);
     xmlDocument.setParameter("strElement_PJ", strElement_PJ);
-    xmlDocument.setParameter("strElement_AC", strElement_AC);
+    xmlDocument.setParameter("strElement_AY", strElement_AY);
     xmlDocument.setParameter("strElement_SR", strElement_SR);
     xmlDocument.setParameter("strElement_MC", strElement_MC);
 
