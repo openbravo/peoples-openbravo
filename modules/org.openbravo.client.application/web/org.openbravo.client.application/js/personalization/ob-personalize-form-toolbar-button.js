@@ -24,21 +24,11 @@
   
   var personalizationButtonProperties = {
     action: function() {
-      var tabIdentifier, personalizeForm,
-          activateButton = isc.addProperties({}, isc.Dialog.OK, {
-            getTitle: function() {
-              return OB.I18N.getLabel('OBUIAPP_LearnMore');
-            },
-            click: function() {
-              this.topElement.cancelClick();
-              window.open('http://www.openbravo.com/product/erp/get-basic/');
-            }});
-
       if(OB.Application.licenseType === 'C') {
-        isc.confirm(OB.I18N.getLabel('OBUIAPP_ActivateMessage'), {
+        isc.warn(OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization')]), {
             isModal: true,
             showModalMask: true,
-            toolbarButtons: [activateButton, isc.Dialog.CANCEL]
+            toolbarButtons: [isc.Dialog.OK]
         });
         return;
       }
