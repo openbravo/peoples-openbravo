@@ -52,6 +52,10 @@
   }
   </script>
 	<script language="JavaScript" type="text/javascript">
+  function onloadFunctions() {
+    keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Invoice.html', 'SELECTOR_INVOICE', false, 'frmMain', 'inpNewcInvoiceId', 'inpNewcInvoiceId_DES', document.frmMain.inpNewcInvoiceId_DES.value, 'WindowID', 'xx');", "inpNewcInvoiceId_DES", null);
+  }
+
 	function onLoadDo(){
 		this.windowTables = new Array(
 		  new windowTableId('client', 'buttonOK')
@@ -61,6 +65,9 @@
 		setBrowserAutoComplete(false);
 		
 		xx();
+    try {
+      onloadFunctions();
+    } catch (e) {}
 
 		setWindowElementFocus('firstElement');
 	}
@@ -71,7 +78,7 @@
 </head>
 
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage" onload="onLoadDo();" onresize="onResizeDo();">
-<form id="form" method="post" action="CopyFromInvoice.html" name="frmMain">
+<form id="form" method="post" action="CopyFromInvoice.html" name="frmMain" onsubmit="return false;">
   <input type="hidden" name="Command">
 <input type="hidden" name="IsPopUpCall" value="1"></input>
   <input type="hidden" name="inpLastFieldChanged"></input>
