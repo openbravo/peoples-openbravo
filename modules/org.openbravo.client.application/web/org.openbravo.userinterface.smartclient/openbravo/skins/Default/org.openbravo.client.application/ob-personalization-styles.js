@@ -61,10 +61,17 @@ OB.Styles.Personalization.PropertiesLayout = {
 OB.Styles.Personalization.TabSet = {
   tabBarProperties: {
     styleName: 'OBTabBarChild',
+    simpleTabBaseStyle: 'OBTabBarButtonChild',
+    paneContainerClassName: 'OBTabSetChildContainer',
+    buttonConstructor: isc.OBTabBarButton.create({}),
+
     buttonProperties: {
       // prevent the orange hats, TODO: this not work
       // don't know why...
       // another solution is to do a custom style but that's a lot of work
+      src: '',
+      capSize: 14,
+      titleStyle: 'OBTabBarButtonChildTitle',
       showSelected: false,
       showFocused: false
     }

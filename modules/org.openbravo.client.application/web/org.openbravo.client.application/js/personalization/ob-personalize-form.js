@@ -114,7 +114,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     
     this.fieldsLayout = isc.Layout.create({height: '100%'}, OB.Styles.Personalization.FieldsLayout);
     
-    fieldsTabSet = isc.TabSet.create({
+    fieldsTabSet = isc.OBTabSet.create({
         height: '*',
         tabBarProperties: {},
           
@@ -132,7 +132,7 @@ isc.OBPersonalizeFormLayout.addProperties({
       pane: this.fieldsLayout
     });
     
-    this.previewTabSet = isc.TabSet.create(OB.Styles.Personalization.TabSet);
+    this.previewTabSet = isc.OBTabSet.create(OB.Styles.Personalization.TabSet);
     this.previewTabSet.addTab({
       title: OB.I18N.getLabel('OBUIAPP_Personalization_HeaderPreview')
     });
@@ -418,7 +418,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.propertiesLayout = propertiesLayout;
     
     // put it all in a tabset...    
-    this.propertiesTabSet = isc.TabSet.create(OB.Styles.Personalization.TabSet, {
+    this.propertiesTabSet = isc.OBTabSet.create(OB.Styles.Personalization.TabSet, {
       height: OB.Styles.Personalization.PropertiesTabSet.expandedHeight,
     
       toggleVisualState: function() {
