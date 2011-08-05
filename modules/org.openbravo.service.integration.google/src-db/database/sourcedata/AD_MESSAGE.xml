@@ -40,7 +40,7 @@ Do yo want to continue?]]></MSGTEXT>
 <!--FF808081318528680131852B80EF000A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FF808081318528680131852B80EF000A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF808081318528680131852B80EF000A-->  <VALUE><![CDATA[OBSEIG_Activate]]></VALUE>
-<!--FF808081318528680131852B80EF000A-->  <MSGTEXT><![CDATA[Only Professional and Basic Edition subscribers can log in to application using Google Account. <a target="_blank" href="http://www.openbravo.com/product/erp/editions/">Learn more</a> about the benefits of Openbravo's commercial editions.]]></MSGTEXT>
+<!--FF808081318528680131852B80EF000A-->  <MSGTEXT><![CDATA[<a href="http://wiki.openbravo.com/wiki/Configuration_Manual/Google_Integration" target="_blank">log in to application using Google Account</a>]]></MSGTEXT>
 <!--FF808081318528680131852B80EF000A-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--FF808081318528680131852B80EF000A-->  <AD_MODULE_ID><![CDATA[FF8080813129ADA401312CA1222A0005]]></AD_MODULE_ID>
 <!--FF808081318528680131852B80EF000A--></AD_MESSAGE>
