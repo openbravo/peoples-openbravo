@@ -116,9 +116,12 @@ isc.OBPersonalizeFormLayout.addProperties({
     
     fieldsTabSet = isc.OBTabSet.create({
         height: '*',
-        tabBarProperties: {},
           
         initWidget: function(){
+          // copy the tabBarProperties as it is coming from
+          // OB.Styles.Personalization.TabSet which is also used
+          // by the other tabsets
+          this.tabBarProperties = isc.addProperties({}, this.tabBarProperties);
           this.tabBarProperties.tabSet = this;
           this.tabBarProperties.itemClick = function(item, itemNum){
             me.propertiesTabSet.toggleVisualState();
@@ -420,7 +423,8 @@ isc.OBPersonalizeFormLayout.addProperties({
     // put it all in a tabset...    
     this.propertiesTabSet = isc.OBTabSet.create(OB.Styles.Personalization.TabSet, {
       height: OB.Styles.Personalization.PropertiesTabSet.expandedHeight,
-    
+      expanded: true,
+      
       toggleVisualState: function() {
         if (this.expanded) {
           this.setHeight(OB.Styles.Personalization.PropertiesTabSet.collapsedHeight);
@@ -761,11 +765,19 @@ isc.OBPersonalizeFormLayout.addProperties({
     });
     
     itemClick = function(item) {
-      if (item.parentItem) {
-        me.doHandlePreviewFormItemClick(item.parentItem);
-      } else {
-        me.doHandlePreviewFormItemClick(item);
-      }
+      // disabled clicking in the form itself as multiple things need to be 
+      // solved:
+      // - the cursor needs to become a pointer
+      // - when the field in a collapsed group in the tree (on the left)
+      //    then the group has to expand automatically
+      // - when the field is not in the viewport on the left then 
+      //    it needs to be scrolled there
+      // - we also need to support clicking in the status bar
+//      if (item.parentItem) {
+//        me.doHandlePreviewFormItemClick(item.parentItem);
+//      } else {
+//        me.doHandlePreviewFormItemClick(item);
+//      }
     };
     
     var persFields = this.getPersonalizationFields();
