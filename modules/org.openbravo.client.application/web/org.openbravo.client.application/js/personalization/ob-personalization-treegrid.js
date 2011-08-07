@@ -226,6 +226,13 @@ isc.OBPersonalizationTreeGrid.addProperties({
       // items may have been hidden, which changes their colour
       personalizeForm.fieldsTreeGrid.markForRedraw();
 
+      // set the value in the properties form also
+      if (property === 'hiddenInForm') {
+        personalizeForm.propertiesLayout.formLayout.form.setValue('displayed', !value);
+      } else {
+        personalizeForm.propertiesLayout.formLayout.form.setValue(property, value);
+      }
+      
       // this will reset everything
       personalizeForm.changed();
     };
