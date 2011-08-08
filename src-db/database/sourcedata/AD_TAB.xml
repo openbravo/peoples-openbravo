@@ -5911,7 +5911,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800018-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800018-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800018-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--800018-->  <HQLWHERECLAUSE><![CDATA["e.bPVolumeDiscount.id = @BusinessPartner.id@"]]></HQLWHERECLAUSE>
+<!--800018-->  <HQLWHERECLAUSE><![CDATA[e.bPVolumeDiscount.id = @BusinessPartner.id@]]></HQLWHERECLAUSE>
 <!--800018-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800018--></AD_TAB>
 
