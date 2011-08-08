@@ -100,7 +100,7 @@ isc.OBImageItemButton.addProperties({
 //which are used to upload and delete images.
 isc.ClassFactory.defineClass('OBImageCanvas', isc.HLayout);
 
-OBImageCanvas.addProperties({
+isc.OBImageCanvas.addProperties({
   initWidget: function(){
     this.imageLayout = isc.OBImageItemSmallImageContainer.create({
       imageItem: this.creator
@@ -174,6 +174,14 @@ OBImageCanvas.addProperties({
         }
       }
     });
+    
+    if (this.parentItem.isPreviewFormItem) {
+      selectorButton.showDisabled = false;
+      selectorButton.showDisabledIcon = false;
+      deleteButton.showDisabled = false;
+      deleteButton.showDisabledIcon = false;
+    }
+    
     this.deleteButton = deleteButton;
     buttonLayout.addMember(selectorButton);
     buttonLayout.addMember(deleteButton);
@@ -201,6 +209,11 @@ isc.ClassFactory.defineClass('OBImageItem', CanvasItem);
 isc.OBImageItem.addProperties({
   shouldSaveValue: true,
   canvasConstructor: 'OBImageCanvas',
+  init: function() {
+    this.canvasProperties = this.canvasProperties || {};
+    this.canvasProperties.parentItem = this;
+    this.Super('init', arguments);
+  },
   setValue: function(newValue){
     if(!newValue || newValue === '') {
       this.canvas.setImage('');

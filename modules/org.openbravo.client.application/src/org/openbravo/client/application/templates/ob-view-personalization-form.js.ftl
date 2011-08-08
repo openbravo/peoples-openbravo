@@ -30,6 +30,7 @@
         startRow: ${fieldDefinition.startRow?string},
         endRow: ${fieldDefinition.endRow?string},
         personalizable: ${fieldDefinition.personalizable?string},
+        isPreviewFormItem: true,
         disabled: true,
         showDisabled: false,
         <#if !fieldDefinition.displayed>
