@@ -225,11 +225,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
 
     // personalization
     globalResources.add(createStaticResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_PARAMETER
-            + "/org.openbravo.client.application/ob-personalization-styles.js", false));
-
-    globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/personalization/ob-personalization.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/personalization/ob-personalization-treegrid.js",
