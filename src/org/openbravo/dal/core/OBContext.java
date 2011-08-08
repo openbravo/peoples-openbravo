@@ -611,8 +611,7 @@ public class OBContext implements OBNotSingleton {
 
   public void setLanguage(Language language) {
     this.language = language;
-    // uncomment this line to see RTL for RTL languages
-    // setRTL(language.isRTLLanguage());
+    setRTL(language.isRTLLanguage());
   }
 
   public Organization getCurrentOrganization() {
