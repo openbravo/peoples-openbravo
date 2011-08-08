@@ -465,7 +465,7 @@ isc.OBSelectorItem.addProperties({
           // it does not have a suffix
           for (j in form.fields) {
             if (form.fields.hasOwnProperty(j)) {
-              if (form.fields[j].columnName !== "" && form.fields[j].columnName === outFields[i].fieldName) {
+              if (form.fields[j].columnName !== "" && form.fields[j].name === outFields[i].fieldName) {
                 if (record) {
                   value = record[i];
                   if(typeof value === 'undefined') {
@@ -695,7 +695,7 @@ isc.OBSelectorLinkItem.addProperties({
           // it does not have a suffix
           for (j in form.fields) {
             if (form.fields.hasOwnProperty(j)) {
-              if (form.fields[j].columnName !== "" && form.fields[j].columnName === outFields[i].fieldName) {
+              if (form.fields[j].name !== "" && form.fields[j].name === outFields[i].fieldName) {
                 value = record ? record[i] : null;
                 form.fields[j].setValue(value);
               }
