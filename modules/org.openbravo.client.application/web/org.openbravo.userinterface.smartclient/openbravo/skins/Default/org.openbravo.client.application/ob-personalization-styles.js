@@ -63,7 +63,7 @@ OB.Styles.Personalization.TabSet = {
     styleName: 'OBTabBarChild',
     simpleTabBaseStyle: 'OBTabBarButtonChild',
     paneContainerClassName: 'OBTabSetChildContainer',
-    buttonConstructor: isc.OBTabBarButton.create({}),
+    buttonConstructor: isc.OBTabBarButton,
 
     buttonProperties: {
       // prevent the orange hats, TODO: this not work
