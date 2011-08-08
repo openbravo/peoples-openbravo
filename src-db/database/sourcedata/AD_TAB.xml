@@ -5859,7 +5859,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800016-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--800016-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800016-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--800016-->  <HQLWHERECLAUSE><![CDATA[e.volumeDiscount.id=@VolumeDiscount.id@]]></HQLWHERECLAUSE>
+<!--800016-->  <HQLWHERECLAUSE><![CDATA[1=1]]></HQLWHERECLAUSE>
 <!--800016-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--800016--></AD_TAB>
 
