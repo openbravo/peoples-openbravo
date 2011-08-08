@@ -1362,7 +1362,7 @@
 <!--FF80808130DC55FE0130DC9631A60019-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FF80808130DC55FE0130DC9631A60019-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF80808130DC55FE0130DC9631A60019-->  <VALUE><![CDATA[OBUIAPP_ActivateMessage]]></VALUE>
-<!--FF80808130DC55FE0130DC9631A60019-->  <MSGTEXT><![CDATA[Only Professional and Basic Edition subscribers can %0. <a target="_blank" href="http://www.openbravo.com/product/erp/editions/">Learn more</a> about the benefits of Openbravo's commercial editions.]]></MSGTEXT>
+<!--FF80808130DC55FE0130DC9631A60019-->  <MSGTEXT><![CDATA[%0 only available for Professional and Basic Edition subscribers. <a target="_blank" href="http://www.openbravo.com/product/erp/editions/">Learn more</a> about the benefits of Openbravo's Professional and Basic Editions.]]></MSGTEXT>
 <!--FF80808130DC55FE0130DC9631A60019-->  <MSGTIP><![CDATA[%0 is a place-holder used to show a feature description]]></MSGTIP>
 <!--FF80808130DC55FE0130DC9631A60019-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--FF80808130DC55FE0130DC9631A60019-->  <AD_MODULE_ID><![CDATA[9BA0836A3CD74EE4AB48753A47211BCC]]></AD_MODULE_ID>
@@ -1473,7 +1473,7 @@
 <!--FF8080813198F7290131995F17A8004E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FF8080813198F7290131995F17A8004E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF8080813198F7290131995F17A8004E-->  <VALUE><![CDATA[OBUIAPP_ActivateMessagePersonalization]]></VALUE>
-<!--FF8080813198F7290131995F17A8004E-->  <MSGTEXT><![CDATA[use <a href="http://wiki.openbravo.com/wiki/User_Manual/Window_Personalization" target="_blank">Window Personalization</a>]]></MSGTEXT>
+<!--FF8080813198F7290131995F17A8004E-->  <MSGTEXT><![CDATA[<a href="http://wiki.openbravo.com/wiki/User_Manual/Window_Personalization" target="_blank">Window Personalization</a> is a Premium Feature]]></MSGTEXT>
 <!--FF8080813198F7290131995F17A8004E-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--FF8080813198F7290131995F17A8004E-->  <AD_MODULE_ID><![CDATA[9BA0836A3CD74EE4AB48753A47211BCC]]></AD_MODULE_ID>
 <!--FF8080813198F7290131995F17A8004E--></AD_MESSAGE>
