@@ -140,6 +140,8 @@ OB.Styles.OBFormField.DefaultSearch = {
   pickerIconHeight: 21,
   pickerIconWidth: 21,
   height: 21,
+  // align the button directly to the field
+  pickerIconHspace: 0,
   pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
   clearIcon: {
     showHover: true,
