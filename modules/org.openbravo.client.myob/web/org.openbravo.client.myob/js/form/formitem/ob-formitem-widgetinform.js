@@ -47,6 +47,17 @@ isc.OBWidgetInFormItem.addProperties({
 
     this.widgetProperties.parameters = widgetParameters;
 
+    if (!widgetClass && this.isPreviewFormItem) {
+      widgetClass = isc.OBWidget;
+      this.widgetProperties.createWindowContents = function() {
+        return isc.Label.create({
+          width: 1,
+          height: 1,
+          contents: '&nbsp;'
+        });
+      };
+    }
+    
     this.widgetInstance = isc.ClassFactory.newInstance(widgetClass, this.widgetProperties);
     return this.widgetInstance;
   },
