@@ -175,6 +175,7 @@ isc.OBLinkedItemLayout.addProperties({
     var windowId = this.getForm().view.standardWindow.windowId;
     var entityName = this.getForm().view.entity;
     var actionURL = OB.Application.contextUrl + 'utility/UsedByLink.html';
+    var selCatItems=this.linkedItemCategoryListGrid.getSelectedRecord();
     
     var that = this;
     /* loads linked items to the child grid */
@@ -192,7 +193,12 @@ isc.OBLinkedItemLayout.addProperties({
       that.linkedItemDS.setCacheData(usedByLinkData, true);
       that.linkedItemListGrid.filterData();
     };
-    var reqObj = {
+
+    if (!selCatItems){
+     this.linkedItemCategoryListGrid.filterEditorSubmit();
+    }
+    else{
+     var reqObj = {
       params: {
         Command: 'JSONLinkedItem',
         windowId: windowId,
@@ -206,9 +212,9 @@ isc.OBLinkedItemLayout.addProperties({
       httpMethod: 'POST',
       useSimpleHttp: true,
       actionURL: actionURL
-    };
+     };
     isc.RPCManager.sendRequest(reqObj);
-    
+    }
   },
   
   /**
@@ -351,7 +357,7 @@ isc.OBLinkedItemLayout.addProperties({
     if (expanded && !this.isInitialized) {
     
       this.loadCategories();
-      
+      this.linkedItemCategoryListGrid.filterEditorSubmit();
       // this part should stay also for linked items
       this.isInitialized = true;
     }
