@@ -52,8 +52,6 @@ public class ViewComponent extends BaseComponent {
   @Inject
   private WeldUtils weldUtils;
 
-  private static String viewVersionHash = null;
-
   @Override
   public String generate() {
 
@@ -172,6 +170,7 @@ public class ViewComponent extends BaseComponent {
   }
 
   synchronized private String getViewVersionHash() {
+    String viewVersionHash = "";
     String viewVersions = "";
     final String viewId = getParameter("viewId");
     OBContext.setAdminMode();
