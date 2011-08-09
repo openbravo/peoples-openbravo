@@ -1068,6 +1068,17 @@ isc.OBViewGrid.addProperties({
   },
 
   recordClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
+    var textDeselectInterval = setInterval(function() { //To ensure that if finally a double click (recordDoubleClick) is executed, no work is highlighted/selected
+      if (document.selection && document.selection.empty) {
+        document.selection.empty();
+      } else if (window.getSelection) {
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+      }
+    }, 15);
+    setTimeout(function() {
+      clearInterval(textDeselectInterval);
+    }, 350);
     var actionObject = {
       target: this,
       method: this.handleRecordSelection,
