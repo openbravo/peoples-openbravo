@@ -22,8 +22,6 @@ isc.ClassFactory.defineClass('OBLogout', isc.ImgButton);
 // = OBLogout =
 // The OBLogout implements a widget to logout the application
 isc.OBLogout.addProperties({
-  prompt: OB.I18N.getLabel('UINAVBA_EndSession'),
-
   keyboardShortcutId : 'NavBar_OBLogout',
 
   draw : function() {
@@ -34,6 +32,11 @@ isc.OBLogout.addProperties({
     };
     OB.KeyboardManager.Shortcuts.set(this.keyboardShortcutId, 'Canvas', ksAction);
     this.Super("draw", arguments);
+
+    this.setPrompt(OB.I18N.getLabel('UINAVBA_EndSession'));
+    /* Avoid declare directly "prompt: " in this widget definition.
+       Declared as "setPrompt" inside "draw" function in order to solve issue https://issues.openbravo.com/view.php?id=18192 in FF */
+
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.QuitButton', this);
   },
 

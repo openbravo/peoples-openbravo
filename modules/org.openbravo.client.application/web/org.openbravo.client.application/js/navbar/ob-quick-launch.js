@@ -66,6 +66,15 @@ isc.ClassFactory.defineClass('OBQuickLaunch', isc.OBQuickRun);
 
 isc.OBQuickLaunch.addProperties({
 
+  draw : function() {
+    this.Super("draw", arguments);
+    if (this.itemPrompt) {
+      this.setPrompt(this.itemPrompt); // itemPrompt declared at quick-launch.js.ftl
+      /* Avoid declare directly "prompt: " in this widget definition.
+         Declared as "setPrompt" inside "draw" function to solve issue https://issues.openbravo.com/view.php?id=18192 in FF */
+    }
+  },
+
   beforeShow: function(){
     var recent = OB.RecentUtilities.getRecentValue(this.recentPropertyName);
 
