@@ -401,7 +401,7 @@ OB.ViewFormProperties = {
   // if it is not focusable then a next item is 
   // searched for
   setFocusInForm: function() {
-    if (!this.view.isActiveView()) {
+    if (!this.view || !this.view.isActiveView()) {
       return;
     }
     
