@@ -463,19 +463,17 @@ isc.OBSelectorItem.addProperties({
           }
         } else {
           // it does not have a suffix
-          for (j in form.fields) {
-            if (form.fields.hasOwnProperty(j)) {
-              if (form.fields[j].columnName !== "" && form.fields[j].name === outFields[i].fieldName) {
-                if (record) {
-                  value = record[i];
-                  if(typeof value === 'undefined') {
-                    continue;
-                  }
-                } else {
-                  value = null;
+          for (j = 0; j < form.fields.length; j++) {
+            if (form.fields[j].name !== '' && form.fields[j].name === outFields[i].fieldName) {
+              if (record) {
+                value = record[i];
+                if(typeof value === 'undefined') {
+                  continue;
                 }
-                form.fields[j].setValue(value);
+              } else {
+                value = null;
               }
+              form.fields[j].setValue(value);
             }
           }
         }
