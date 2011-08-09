@@ -42,14 +42,17 @@ isc.OBWidgetInFormItem.addProperties({
       }
     }
 
+    // make a local copy which can be changed
+    widgetProperties = isc.addProperties({}, this.widgetProperties);
+    
     // add link to form so widget can possibly use it
-    this.widgetProperties.viewForm = this.form;
+    widgetProperties.viewForm = this.form;
 
-    this.widgetProperties.parameters = widgetParameters;
+    widgetProperties.parameters = widgetParameters;
 
     if (!widgetClass && this.isPreviewFormItem) {
       widgetClass = isc.OBWidget;
-      this.widgetProperties.createWindowContents = function() {
+      widgetProperties.createWindowContents = function() {
         return isc.Label.create({
           width: 1,
           height: 1,
@@ -58,7 +61,7 @@ isc.OBWidgetInFormItem.addProperties({
       };
     }
     
-    this.widgetInstance = isc.ClassFactory.newInstance(widgetClass, this.widgetProperties);
+    this.widgetInstance = isc.ClassFactory.newInstance(widgetClass, widgetProperties);
     return this.widgetInstance;
   },
 
