@@ -691,12 +691,10 @@ isc.OBSelectorLinkItem.addProperties({
           }
         } else {
           // it does not have a suffix
-          for (j in form.fields) {
-            if (form.fields.hasOwnProperty(j)) {
-              if (form.fields[j].name !== "" && form.fields[j].name === outFields[i].fieldName) {
-                value = record ? record[i] : null;
-                form.fields[j].setValue(value);
-              }
+          for (j = 0; j < form.fields.length; j++) {
+            if (form.fields[j].name !== "" && form.fields[j].name === outFields[i].fieldName) {
+              value = record ? record[i] : null;
+              form.fields[j].setValue(value);
             }
           }
         }
