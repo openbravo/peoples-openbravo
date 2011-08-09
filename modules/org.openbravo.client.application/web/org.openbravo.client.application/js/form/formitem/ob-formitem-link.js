@@ -34,7 +34,7 @@ isc.OBLinkItem.addProperties({
         if (!url) {
           return;
         }
-        if (!url.toLowerCase().startsWith('http://')) {
+        if (url.indexOf('://') === -1) {
           url = 'http://' + url;
         }
         window.open(url);
