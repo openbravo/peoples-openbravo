@@ -20,6 +20,7 @@ package org.openbravo.client.application;
 
 import javax.inject.Inject;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
@@ -35,6 +36,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 
 /**
@@ -49,6 +51,8 @@ public class ViewComponent extends BaseComponent {
 
   @Inject
   private WeldUtils weldUtils;
+
+  private static String viewVersionHash = null;
 
   @Override
   public String generate() {
@@ -160,4 +164,26 @@ public class ViewComponent extends BaseComponent {
     return this;
   }
 
+  @Override
+  public String getETag() {
+    String etag = super.getETag();
+
+    return etag + "_" + getViewVersionHash();
+  }
+
+  synchronized private String getViewVersionHash() {
+    String viewVersions = "";
+    final String viewId = getParameter("viewId");
+    OBContext.setAdminMode();
+    try {
+      Window window = OBDal.getInstance().get(Window.class, correctViewId(viewId));
+      for (Tab t : window.getADTabList()) {
+        viewVersions += t.getTable().isFullyAudited() + "|";
+      }
+      viewVersionHash = DigestUtils.md5Hex(viewVersions);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return viewVersionHash;
+  }
 }
