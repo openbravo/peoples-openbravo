@@ -500,7 +500,7 @@ isc.OBPersonalizeFormLayout.addProperties({
 
   // the toolbar shows the save, delete and undo button
   createAddToolbar: function() {
-    var saveButtonProperties, deleteButtonProperties, cancelButtonProperties;
+    var saveButtonProperties, saveCloseButtonProperties, deleteButtonProperties, cancelButtonProperties;
 
     saveButtonProperties = {
       action: function() {
@@ -513,6 +513,35 @@ isc.OBPersonalizeFormLayout.addProperties({
         this.setDisabled(this.view.hasNotChanged());
       },
       keyboardShortcutId: 'ToolBar_Save'
+    };
+
+    saveCloseButtonProperties = {
+      action: function() {
+        var view = this.view;
+        if (!this.saveDisabled) {
+          view.save(function() {
+            view.doClose(true);    
+          });
+        } else {
+          view.doClose(true);          
+        }
+      },
+      saveDisabled: true,
+      buttonType: 'savecloseX',
+      prompt: OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_SaveClose'),
+      updateState: function() {
+        this.saveDisabled = this.view.hasNotChanged();
+        
+        if (this.saveDisabled) {
+          this.buttonType = 'savecloseX';
+          this.prompt = OB.I18N.getLabel('OBUIAPP_Personalization_Statusbar_Close');
+        } else {
+          this.buttonType = 'saveclose';
+          this.prompt = OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_SaveClose');
+        }
+        this.resetBaseStyle();
+      },
+      keyboardShortcutId: 'ToolBar_SaveClose'
     };
 
     deleteButtonProperties = {
@@ -547,15 +576,16 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.toolBar = isc.OBToolbar.create({
       view: this,
       leftMembers: [ isc.OBToolbarIconButton.create(saveButtonProperties),
-          isc.OBToolbarIconButton.create(deleteButtonProperties),
-          isc.OBToolbarIconButton.create(cancelButtonProperties) ],
+                     isc.OBToolbarIconButton.create(saveCloseButtonProperties),
+                     isc.OBToolbarIconButton.create(cancelButtonProperties),
+                     isc.OBToolbarIconButton.create(deleteButtonProperties)],
       rightMembers: []
     });
     this.addMember(this.toolBar);
   },
 
   // save the new form layout to the server and updates the preview form
-  save: function() {
+  save: function(callback) {
     var params, me = this, newDataFields;
 
     // if there is a personalization id then use that
@@ -623,6 +653,9 @@ isc.OBPersonalizeFormLayout.addProperties({
           me.toolBar.updateButtonState();
           
           delete me.initializing;
+          if (callback) {
+            callback();
+          }
         });
   },
 
