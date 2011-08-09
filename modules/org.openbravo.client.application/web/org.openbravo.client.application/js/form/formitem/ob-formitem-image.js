@@ -178,8 +178,6 @@ isc.OBImageCanvas.addProperties({
     if (this.parentItem.isPreviewFormItem) {
       selectorButton.showDisabled = false;
       selectorButton.showDisabledIcon = false;
-      deleteButton.showDisabled = false;
-      deleteButton.showDisabledIcon = false;
     }
     
     this.deleteButton = deleteButton;
