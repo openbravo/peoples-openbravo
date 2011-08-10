@@ -203,6 +203,8 @@ OB.ViewFormProperties = {
     this.clearErrors();
     if (!isNew) {
       this.validateAfterFicReturn = true;
+      // If editing a document set to recent documents
+      this.view.setRecentDocument(this.getValues());
     }
     
     this.ignoreFirstFocusEvent = preventFocus;
