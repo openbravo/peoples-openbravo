@@ -261,7 +261,7 @@ public class PaymentReport extends HttpSecureAppServlet {
           strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
           strOverdue, strGroupCrit, strOrdCrit);
 
-      if (data.length == 1 && data[0] == null) {
+      if (data.length == 0) {
 
         discardAL.add("sectionGroupCrit");
         discardAL.add("sectionStatus");

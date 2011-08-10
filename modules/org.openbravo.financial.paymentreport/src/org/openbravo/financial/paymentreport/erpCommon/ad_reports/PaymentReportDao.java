@@ -91,6 +91,7 @@ public class PaymentReportDao {
     Currency transCurrency;
     BigDecimal transAmount = null;
     ConversionRate convRate = null;
+    ArrayList<FieldProvider> groupedData = new ArrayList<FieldProvider>();
 
     OBContext.setAdminMode();
     try {
@@ -161,6 +162,7 @@ public class PaymentReportDao {
         hsqlScript.append(") > ");
         hsqlScript.append(strAmountFrom);
       }
+
       if (!strAmountTo.isEmpty()) {
         hsqlScript.append(" and coalesce(pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_AMOUNT);
@@ -391,6 +393,13 @@ public class PaymentReportDao {
       FIN_PaymentScheduleDetail[] FIN_PaymentScheduleDetail = new FIN_PaymentScheduleDetail[0];
       FIN_PaymentScheduleDetail = obqPSDList.toArray(FIN_PaymentScheduleDetail);
 
+      FIN_PaymentDetail finPaymDetail;
+      Boolean mustGroup;
+      String previousFPSDInvoiceId = null;
+      String previousPaymentId = null;
+      BigDecimal amountSum = BigDecimal.ZERO;
+      FieldProvider previousRow = null;
+      ConversionRate previousConvRate = null;
       long milisecDayConv = (1000 * 60 * 60 * 24);
       boolean isReceipt = false;
 
@@ -562,6 +571,7 @@ public class PaymentReportDao {
 
         boolean sameCurrency = baseCurrency.getISOCode().equalsIgnoreCase(
             transCurrency.getISOCode());
+
         if (!sameCurrency) {
           convRate = this.getConversionRate(transCurrency, baseCurrency, strConversionDate);
 
@@ -605,28 +615,115 @@ public class PaymentReportDao {
         // baseCurrency
         FieldProviderFactory.setField(data[i], "TRANS_CURRENCY", transCurrency.getISOCode());
 
+        finPaymDetail = FIN_PaymentScheduleDetail[i].getPaymentDetails();
+
+        // Payment Schedule Detail grouping criteria
+        if (finPaymDetail != null
+            && FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule() != null) {
+          mustGroup = finPaymDetail.getFinPayment().getId().equalsIgnoreCase(previousPaymentId)
+              && FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getId()
+                  .equalsIgnoreCase(previousFPSDInvoiceId);
+          previousFPSDInvoiceId = FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getId();
+          previousPaymentId = finPaymDetail.getFinPayment().getId();
+        } else if (finPaymDetail != null
+            && FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule() == null) {
+          mustGroup = finPaymDetail.getFinPayment().getId().equalsIgnoreCase(previousPaymentId)
+              && previousFPSDInvoiceId == null;
+          previousPaymentId = finPaymDetail.getFinPayment().getId();
+          previousFPSDInvoiceId = null;
+        } else if (finPaymDetail == null
+            && FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule() != null) {
+          mustGroup = previousPaymentId == null
+              && FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getId()
+                  .equalsIgnoreCase(previousFPSDInvoiceId);
+          previousPaymentId = null;
+          previousFPSDInvoiceId = FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getId();
+        } else {
+          mustGroup = false;
+        }
+
+        if (mustGroup) {
+          amountSum = amountSum.add(transAmount);
+        } else {
+          if (previousRow != null) {
+            // The current row has nothing to do with the previous one. Because of that, the
+            // previous row has to be added to grouped data.
+            if (previousRow.getField("ISRECEIPT").equalsIgnoreCase("Y"))
+              FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.toString());
+            else
+              FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.negate()
+                  .toString());
+            if (previousConvRate == null) {
+              if (previousRow.getField("ISRECEIPT").equalsIgnoreCase("Y"))
+                FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.toString());
+              else
+                FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.negate()
+                    .toString());
+            } else {
+              if (previousRow.getField("ISRECEIPT").equalsIgnoreCase("Y"))
+                FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
+                    amountSum.multiply(previousConvRate.getMultipleRateBy()).toString());
+              else
+                FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
+                    amountSum.multiply(previousConvRate.getMultipleRateBy()).negate().toString());
+            }
+
+            groupedData.add(previousRow);
+          }
+          previousRow = data[i];
+          previousConvRate = convRate;
+          amountSum = transAmount;
+        }
+
         // group_crit_id this is the column that has the ids of the grouping criteria selected
         if (strGroupCrit.equalsIgnoreCase("APRM_FATS_BPARTNER")) {
-          FieldProviderFactory.setField(data[i], "GROUP_CRIT_ID", data[i].getField("BPARTNER"));
-          FieldProviderFactory.setField(data[i], "GROUP_CRIT", "Business Partner");
+          FieldProviderFactory.setField(previousRow, "GROUP_CRIT_ID",
+              previousRow.getField("BPARTNER"));
+          FieldProviderFactory.setField(previousRow, "GROUP_CRIT", "Business Partner");
         } else if (strGroupCrit.equalsIgnoreCase("Project")) {
-          FieldProviderFactory.setField(data[i], "GROUP_CRIT_ID", data[i].getField("PROJECT"));
-          FieldProviderFactory.setField(data[i], "GROUP_CRIT", "Project");
+          FieldProviderFactory.setField(previousRow, "GROUP_CRIT_ID",
+              previousRow.getField("PROJECT"));
+          FieldProviderFactory.setField(previousRow, "GROUP_CRIT", "Project");
         } else if (strGroupCrit.equalsIgnoreCase("FINPR_BPartner_Category")) {
-          FieldProviderFactory.setField(data[i], "GROUP_CRIT_ID", data[i].getField("BP_GROUP"));
-          FieldProviderFactory.setField(data[i], "GROUP_CRIT", "Business Partner Category");
+          FieldProviderFactory.setField(previousRow, "GROUP_CRIT_ID",
+              previousRow.getField("BP_GROUP"));
+          FieldProviderFactory.setField(previousRow, "GROUP_CRIT", "Business Partner Category");
         } else if (strGroupCrit.equalsIgnoreCase("INS_CURRENCY")) {
-          FieldProviderFactory.setField(data[i], "GROUP_CRIT_ID",
-              data[i].getField("TRANS_CURRENCY"));
-          FieldProviderFactory.setField(data[i], "GROUP_CRIT", "Currency");
+          FieldProviderFactory.setField(previousRow, "GROUP_CRIT_ID",
+              previousRow.getField("TRANS_CURRENCY"));
+          FieldProviderFactory.setField(previousRow, "GROUP_CRIT", "Currency");
         } else {
-          FieldProviderFactory.setField(data[i], "GROUP_CRIT_ID", "");
+          FieldProviderFactory.setField(previousRow, "GROUP_CRIT_ID", "");
         }
+
+      }
+      if (previousRow != null) {
+        // The current row has nothing to do with the previous one. Because of that, the
+        // previous row has to be added to grouped data.
+        if (previousRow.getField("ISRECEIPT").equalsIgnoreCase("Y"))
+          FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.toString());
+        else
+          FieldProviderFactory.setField(previousRow, "TRANS_AMOUNT", amountSum.negate().toString());
+        if (previousConvRate == null) {
+          if (previousRow.getField("ISRECEIPT").equalsIgnoreCase("Y"))
+            FieldProviderFactory.setField(previousRow, "BASE_AMOUNT", amountSum.toString());
+          else
+            FieldProviderFactory
+                .setField(previousRow, "BASE_AMOUNT", amountSum.negate().toString());
+        } else {
+          if (previousRow.getField("ISRECEIPT").equalsIgnoreCase("Y"))
+            FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
+                amountSum.multiply(previousConvRate.getMultipleRateBy()).toString());
+          else
+            FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
+                amountSum.multiply(previousConvRate.getMultipleRateBy()).negate().toString());
+        }
+        groupedData.add(previousRow);
       }
     } finally {
       OBContext.restorePreviousMode();
     }
-    return data;
+    return (FieldProvider[]) groupedData.toArray(new FieldProvider[groupedData.size()]);
   }
 
   public ConversionRate getConversionRate(Currency transCurrency, Currency baseCurrency,
