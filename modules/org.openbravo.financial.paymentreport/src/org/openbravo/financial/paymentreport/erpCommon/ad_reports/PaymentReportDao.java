@@ -143,33 +143,14 @@ public class PaymentReportDao {
       if (!strDueDateFrom.isEmpty()) {
         hsqlScript.append(" and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-        hsqlScript.append(" > ?");
+        hsqlScript.append(" >= ?");
         parameters.add(FIN_Utility.getDate(strDueDateFrom));
       }
       if (!strDueDateTo.isEmpty()) {
         hsqlScript.append(" and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-        hsqlScript.append(" < ?");
+        hsqlScript.append(" <= ?");
         parameters.add(FIN_Utility.getDate(strDueDateTo));
-      }
-
-      // amount from - amount to
-      if (!strAmountFrom.isEmpty()) {
-        hsqlScript.append(" and coalesce(pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_AMOUNT);
-        hsqlScript.append(", invps.");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_AMOUNT);
-        hsqlScript.append(") > ");
-        hsqlScript.append(strAmountFrom);
-      }
-
-      if (!strAmountTo.isEmpty()) {
-        hsqlScript.append(" and coalesce(pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_AMOUNT);
-        hsqlScript.append(", invps.");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_AMOUNT);
-        hsqlScript.append(") < ");
-        hsqlScript.append(strAmountTo);
       }
 
       // document date from - document date to
@@ -402,6 +383,7 @@ public class PaymentReportDao {
       ConversionRate previousConvRate = null;
       long milisecDayConv = (1000 * 60 * 60 * 24);
       boolean isReceipt = false;
+      boolean isAmtInLimit = false;
 
       for (int i = 0; i < data.length; i++) {
         if (FIN_PaymentScheduleDetail[i].getPaymentDetails() != null) {
@@ -668,7 +650,24 @@ public class PaymentReportDao {
                     amountSum.multiply(previousConvRate.getMultipleRateBy()).negate().toString());
             }
 
-            groupedData.add(previousRow);
+            if (strAmountFrom.isEmpty() && strAmountTo.isEmpty()) {
+              isAmtInLimit = true;
+            } else if (!strAmountFrom.isEmpty() && strAmountTo.isEmpty()) {
+              isAmtInLimit = Double.parseDouble(previousRow.getField("TRANS_AMOUNT")) >= Double
+                  .parseDouble(strAmountFrom);
+            } else if (strAmountFrom.isEmpty() && !strAmountTo.isEmpty()) {
+              isAmtInLimit = Double.parseDouble(previousRow.getField("TRANS_AMOUNT")) <= Double
+                  .parseDouble(strAmountTo);
+            } else {
+              isAmtInLimit = Double.parseDouble(previousRow.getField("TRANS_AMOUNT")) >= Double
+                  .parseDouble(strAmountFrom)
+                  && Double.parseDouble(previousRow.getField("TRANS_AMOUNT")) <= Double
+                      .parseDouble(strAmountTo);
+            }
+            if (isAmtInLimit) {
+              groupedData.add(previousRow);
+              isAmtInLimit = false;
+            }
           }
           previousRow = data[i];
           previousConvRate = convRate;
@@ -718,7 +717,25 @@ public class PaymentReportDao {
             FieldProviderFactory.setField(previousRow, "BASE_AMOUNT",
                 amountSum.multiply(previousConvRate.getMultipleRateBy()).negate().toString());
         }
-        groupedData.add(previousRow);
+
+        if (strAmountFrom.isEmpty() && strAmountTo.isEmpty()) {
+          isAmtInLimit = true;
+        } else if (!strAmountFrom.isEmpty() && strAmountTo.isEmpty()) {
+          isAmtInLimit = Double.parseDouble(previousRow.getField("TRANS_AMOUNT")) >= Double
+              .parseDouble(strAmountFrom);
+        } else if (strAmountFrom.isEmpty() && !strAmountTo.isEmpty()) {
+          isAmtInLimit = Double.parseDouble(previousRow.getField("TRANS_AMOUNT")) <= Double
+              .parseDouble(strAmountTo);
+        } else {
+          isAmtInLimit = Double.parseDouble(previousRow.getField("TRANS_AMOUNT")) >= Double
+              .parseDouble(strAmountFrom)
+              && Double.parseDouble(previousRow.getField("TRANS_AMOUNT")) <= Double
+                  .parseDouble(strAmountTo);
+        }
+        if (isAmtInLimit) {
+          groupedData.add(previousRow);
+          isAmtInLimit = false;
+        }
       }
     } finally {
       OBContext.restorePreviousMode();
