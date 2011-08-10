@@ -520,8 +520,15 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
         strFinancialAccountId);
     BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, strBusinessPartnerId);
-    paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(
-        (bp != null && bp.getPaymentMethod() != null) ? bp.getPaymentMethod().getId() : null,
+    String paymentMethodId = null;
+    if (bp != null) {
+      if (isReceipt && bp.getPaymentMethod() != null) {
+        paymentMethodId = bp.getPaymentMethod().getId();
+      } else if (!isReceipt && bp.getPOPaymentMethod() != null) {
+        paymentMethodId = bp.getPOPaymentMethod().getId();
+      }
+    }
+    paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(paymentMethodId,
         strFinancialAccountId, account.getOrganization().getId(), true, true, isReceipt);
 
     response.setContentType("text/html; charset=UTF-8");
