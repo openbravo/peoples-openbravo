@@ -25,9 +25,5 @@ isc.ClassFactory.defineClass('OBSpinnerItem', SpinnerItem);
 isc.OBSpinnerItem.addProperties({
   operator: 'equals',
   validateOnExit: true,
-  itemHoverHTML: function(item, form) {
-    if (this.isDisabled()) {
-      return this.getValue();
-    }
-  }
+  changeOnKeypress: true
 });

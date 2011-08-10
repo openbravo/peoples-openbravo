@@ -200,8 +200,8 @@ isc.OBPersonalizeFormLayout.addProperties({
       alwaysTakeSpace: false,
       required: true,
       validateOnExit: true,
-      showIcons: false,
-      width: 60,
+      showIcons: true,
+      width: 75,
       titleOrientation: 'top',
       titleSuffix: '</b>',
       titlePrefix: '<b>',
@@ -210,7 +210,7 @@ isc.OBPersonalizeFormLayout.addProperties({
       rightTitlePrefix: '<b>',
       rightTitleSuffix: '</b>',
       keyPressFilter: '[1-9]',
-      editorType: 'OBTextItem'
+      editorType: 'OBSpinnerItem'
     };
 
     propertiesLayout.formLayout = isc.VStack.create({
@@ -242,10 +242,16 @@ isc.OBPersonalizeFormLayout.addProperties({
       fields: [
          new NumericField({
            name: 'colSpan',
+           keyPressFilter: '[1-4]',
+           min: 1,
+           max: 4,
            title: OB.I18N.getLabel('OBUIAPP_Personalization_Colspan')
          }),
          new NumericField({
            name: 'rowSpan',
+           keyPressFilter: '[1-9]',
+           min: 1,
+           max: 9,
            required: true,
            title: OB.I18N.getLabel('OBUIAPP_Personalization_Rowspan')
          }),
