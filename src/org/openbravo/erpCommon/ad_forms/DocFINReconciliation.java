@@ -341,10 +341,8 @@ public class DocFINReconciliation extends AcctServer {
           .toString());
       FieldProviderFactory.setField(data[0], "description", transaction.getDescription());
       FieldProviderFactory.setField(data[0], "cCurrencyId", transaction.getCurrency().getId());
-      FieldProviderFactory
-          .setField(data[0], "cBpartnerId", (transaction.getFinPayment() == null || transaction
-              .getFinPayment().getBusinessPartner() == null) ? "" : transaction.getFinPayment()
-              .getBusinessPartner().getId());
+      FieldProviderFactory.setField(data[0], "cBpartnerId",
+          transaction.getBusinessPartner() != null ? transaction.getBusinessPartner().getId() : "");
       String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
           .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
@@ -356,6 +354,11 @@ public class DocFINReconciliation extends AcctServer {
         FieldProviderFactory.setField(data[0], "cProjectId", transaction.getProject().getId());
       if (transaction.getSalesCampaign() != null)
         FieldProviderFactory.setField(data[0], "cCampaignId", transaction.getSalesCampaign()
+            .getId());
+      if (transaction.getProduct() != null)
+        FieldProviderFactory.setField(data[0], "mProductId", transaction.getProduct().getId());
+      if (transaction.getSalesRegion() != null)
+        FieldProviderFactory.setField(data[0], "cSalesregionId", transaction.getSalesRegion()
             .getId());
       FieldProviderFactory.setField(data[0], "lineno", transaction.getLineNo().toString());
     } finally {
