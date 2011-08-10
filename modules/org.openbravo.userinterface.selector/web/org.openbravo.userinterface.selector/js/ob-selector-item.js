@@ -438,7 +438,8 @@ isc.OBSelectorItem.addProperties({
   },
 
   handleOutFields: function(record){
-    var i, j, outFields = this.outFields, form = this.form, item, value;
+    var i, j, outFields = this.outFields, form = this.form, grid = this.grid, item, value,
+        fields = form.fields || grid.fields;
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {
         if (outFields[i].suffix) {
@@ -463,8 +464,8 @@ isc.OBSelectorItem.addProperties({
           }
         } else {
           // it does not have a suffix
-          for (j = 0; j < form.fields.length; j++) {
-            if (form.fields[j].name !== '' && form.fields[j].name === outFields[i].fieldName) {
+          for (j = 0; j < fields.length; j++) {
+            if (fields[j].name !== '' && fields[j].name === outFields[i].fieldName) {
               if (record) {
                 value = record[i];
                 if(typeof value === 'undefined') {
@@ -473,7 +474,7 @@ isc.OBSelectorItem.addProperties({
               } else {
                 value = null;
               }
-              form.fields[j].setValue(value);
+              fields[j].setValue(value);
             }
           }
         }
@@ -674,7 +675,8 @@ isc.OBSelectorLinkItem.addProperties({
   },
   
   handleOutFields: function(record){
-    var i, j, value, outFields = this.outFields, form = this.form;
+    var i, j, outFields = this.outFields, form = this.form, grid = this.grid, item, value,
+        fields = form.fields || grid.fields;
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {
         if (outFields[i].suffix) {
@@ -691,10 +693,10 @@ isc.OBSelectorLinkItem.addProperties({
           }
         } else {
           // it does not have a suffix
-          for (j = 0; j < form.fields.length; j++) {
-            if (form.fields[j].name !== "" && form.fields[j].name === outFields[i].fieldName) {
+          for (j = 0; j < fields.length; j++) {
+            if (fields[j].name !== "" && fields[j].name === outFields[i].fieldName) {
               value = record ? record[i] : null;
-              form.fields[j].setValue(value);
+              fields[j].setValue(value);
             }
           }
         }
