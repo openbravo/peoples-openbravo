@@ -201,7 +201,7 @@ isc.OBQuickLaunch.addProperties({
             var record = this.getSelectedRecord();
             var viewValue = record.viewValue;
             isc.OBQuickRun.currentQuickRun.doHide();
-            var openObject = null;
+            var openObject = isc.addProperties({}, record);
             if (record.optionType && record.optionType === 'tab') {
               openObject = OB.Utilities.openView(record.windowId, viewValue, record[OB.Constants.IDENTIFIER], null, this.command, record.icon);
               if (openObject) {
@@ -260,6 +260,8 @@ isc.OBQuickLaunch.addProperties({
 
             openObject.icon = record.icon;
 
+            openObject = isc.addProperties({}, record, openObject);
+            
             OB.Layout.ViewManager.openView(openObject.viewId, openObject);
 
             OB.RecentUtilities.addRecent(this.recentPropertyName, openObject);
