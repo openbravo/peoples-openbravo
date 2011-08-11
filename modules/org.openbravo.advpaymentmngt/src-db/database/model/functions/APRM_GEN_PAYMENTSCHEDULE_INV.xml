@@ -183,7 +183,7 @@ BEGIN
       v_new_scheduledetailid VARCHAR2(32);
       v_ConsumedGranTotal NUMBER:= 0;
       v_paymentCount NUMBER:= 0;
-      v_negativeOrder NUMBER := 1;
+      v_negativeOrder NUMBER:= 1;
 
       CURSOR cur_order_schdet (invoice_id VARCHAR) IS
       SELECT c_orderline.c_order_id AS order_id, fin_payment_scheduledetail.amount + COALESCE(fin_payment_scheduledetail.writeoffamt,0) AS amount,
