@@ -169,13 +169,16 @@ public class ViewComponent extends BaseComponent {
     return etag + "_" + getViewVersionHash();
   }
 
-  synchronized private String getViewVersionHash() {
+  private synchronized String getViewVersionHash() {
     String viewVersionHash = "";
     String viewVersions = "";
     final String viewId = getParameter("viewId");
     OBContext.setAdminMode();
     try {
       Window window = OBDal.getInstance().get(Window.class, correctViewId(viewId));
+      if (window == null) {
+        return viewVersionHash;
+      }
       for (Tab t : window.getADTabList()) {
         viewVersions += t.getTable().isFullyAudited() + "|";
       }
