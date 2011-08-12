@@ -370,6 +370,20 @@ isc.OBLinkedItemLayout.addProperties({
       view.setAsActiveView();
     }
     return this.Super('focusChanged', arguments);
+  },
+
+  destroy: function () {
+    // Explicitly destroy the associated DataSource to prevent memory leaks
+    // http://forums.smartclient.com/showthread.php?p=70493
+    if(this.linkedItemDS) {
+      this.linkedItemDS.destroy();
+      this.likedItemDS = null;
+    }
+    if(this.linkedItemCategoryDS) {
+      this.linkedItemCategoryDS.destroy();
+      this.likedItemDS = null;
+    }
+    this.Super('destroy', arguments);
   }
 });
 
