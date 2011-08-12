@@ -479,24 +479,6 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
      SELECT DISTINCT(AD_Table.AD_Table_ID) as id,
-               (case when ad_table.po_window_id is null then '' else ad_column_identifier('AD_Window',TO_CHAR(ad_table.po_window_id),?) end)||(case when ad_table.po_window_id is null then '' else ' - ' end)||ad_column_identifier('AD_Window',TO_CHAR(ad_table.ad_window_id),?) as name
-        FROM AD_TABLE, C_ACCTSCHEMA_TABLE
-       WHERE AD_TABLE.AD_TABLE_ID = C_ACCTSCHEMA_TABLE.AD_TABLE_ID
-         AND AD_TABLE.ISACTIVE = 'Y'
-         AND C_ACCTSCHEMA_TABLE.ISACTIVE = 'Y'
-         AND C_ACCTSCHEMA_TABLE.AD_CLIENT_ID IN ('1')
-        order by name
-      </Sql>
-      <Parameter name="language"/>
-      <Parameter name="language"/>
-      <Parameter name="adUserClient" type="replace" optional="true" after="C_ACCTSCHEMA_TABLE.AD_CLIENT_ID IN (" text="'1'"/>
-   </SqlMethod>
-
-   <SqlMethod name="selectTablesMoreInfo" type="preparedStatement" return="multiple">
-      <SqlMethodComment>Same as selectTables sqlMethod but it concatenates information about the table database name.
-      Useful when several tabs of the same window referenced accounting tables (tables that will be posted).</SqlMethodComment>
-      <Sql>
-     SELECT DISTINCT(AD_Table.AD_Table_ID) as id,
                AD_Table.tablename || ' (' ||
                (case when ad_table.po_window_id is null then '' else ad_column_identifier('AD_Window',TO_CHAR(ad_table.po_window_id),?) end)
                || (case when ad_table.po_window_id is null then '' else ' - ' end)

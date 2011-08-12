@@ -123,7 +123,7 @@ public class CallAcctServer extends HttpSecureAppServlet {
       xmlDocument.setParameter("body",
           (strMessage.equals("") ? "" : "alert('" + strMessage + "');"));
 
-      AcctServerData[] data = AcctServerData.selectTablesMoreInfo(this, vars.getLanguage(),
+      AcctServerData[] data = AcctServerData.selectTables(this, vars.getLanguage(),
           Utility.getContext(this, vars, "#User_Client", ""));
       if (log4j.isDebugEnabled())
         log4j.debug("select tables org:" + Utility.getContext(this, vars, "#User_Org", "")
