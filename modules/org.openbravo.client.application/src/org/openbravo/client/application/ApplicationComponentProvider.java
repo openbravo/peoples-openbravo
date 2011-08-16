@@ -139,6 +139,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-time.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-yesno.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/formitem/ob-formitem-spinner.js", true));
 
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/toolbar/ob-toolbar.js", false));
@@ -179,6 +181,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/main/ob-standard-view-datasource.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/main/ob-standard-view.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/main/ob-base-view.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/ob-view-form-linked-items.js", false));
     globalResources.add(createStaticResource(
@@ -224,11 +228,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         false));
 
     // personalization
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_PARAMETER
-            + "/org.openbravo.client.application/ob-personalization-styles.js", false));
-
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/personalization/ob-personalization.js", false));
     globalResources.add(createStaticResource(

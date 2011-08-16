@@ -117,8 +117,12 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
     if (this.viewMode === 'widget') {
       this.setWidgetHeight();
     }
-    this.grid.invalidateCache();
-    this.grid.filterData();
+    // sometimes when removing the form, this gets called
+    // at that point this.grid is not set anymore
+    if (this.grid) {
+      this.grid.invalidateCache();
+      this.grid.filterData();
+    }
   },
 
   exportGrid: function () {

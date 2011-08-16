@@ -183,6 +183,7 @@ BEGIN
       v_new_scheduledetailid VARCHAR2(32);
       v_ConsumedGranTotal NUMBER:= 0;
       v_paymentCount NUMBER:= 0;
+      v_negativeOrder NUMBER:= 1;
 
       CURSOR cur_order_schdet (invoice_id VARCHAR) IS
       SELECT c_orderline.c_order_id AS order_id, fin_payment_scheduledetail.amount + COALESCE(fin_payment_scheduledetail.writeoffamt,0) AS amount,
@@ -329,36 +330,13 @@ BEGIN
                 AND c_invoiceline.c_invoice_id = p_record_id
                 AND c_orderline.c_order_id = order_schdet.order_id;
 
-              -- invoiced amount for the order plan cannot be higher than total order plan amount.
-              -- sometimes there is a difference due to taxes. that amount will be compensated at the end.
-              IF (v_invoicedamount > order_schdet.amount) THEN
-                v_invoicedamount := order_schdet.amount;
+              IF (v_invoicedamount < 0 ) THEN
+                v_negativeOrder := -1;
+              ELSE
+                v_negativeOrder := 1;
               END IF;
 
-              -- substract previously assigned amount
-              SELECT COALESCE(SUM(psd.amount),0) INTO v_assignedamount
-              FROM fin_payment_schedule ps_inv, fin_payment_scheduledetail psd,
-                   fin_payment_schedule ps_ord
-              WHERE ps_inv.fin_payment_schedule_id = psd.fin_payment_schedule_invoice
-                AND psd.fin_payment_schedule_order = ps_ord.fin_payment_schedule_id
-                AND ps_inv.c_invoice_id = p_record_id
-                AND ps_ord.c_order_id = order_schdet.order_id;
-
-              v_notassignedamount := COALESCE(v_invoicedamount,0) - COALESCE(v_assignedamount,0);
-            END IF;
-
-            IF (v_notassignedamount <= 0) THEN
-              next_order := TRUE;
-            END IF;
-            -- create a new payment schedule detail if necessary
-            IF (NOT next_order) THEN
-              v_differenceamount := 0;
-              IF ((v_notassignedamount <= v_scheduledamount) AND (v_notassignedamount < v_scheduledetailamount)) THEN
-                v_differenceamount := COALESCE(v_scheduledetailamount,0) - COALESCE(v_notassignedamount,0);
-              ELSIF ((v_scheduledamount < v_notassignedamount) AND (v_scheduledamount < v_scheduledetailamount)) THEN
-                v_differenceamount := COALESCE(v_scheduledetailamount,0) - COALESCE(v_scheduledamount,0);
-              END IF;
-
+              --if v_count = 0 the order is completely invoiced on this invoice.
               IF (v_IsSOTrx = 'Y') THEN
                 SELECT COALESCE(COUNT(*),0) INTO v_Count
                 FROM c_orderline
@@ -374,6 +352,37 @@ BEGIN
                   WHERE ol.c_order_id = order_schdet.order_id
                   GROUP BY ol.c_orderline_id, ol.qtyordered) a
                 WHERE a.matchedqty != a.qtyordered;
+              END IF;
+
+              -- invoiced amount for the order plan cannot be higher than total order plan amount.
+              -- sometimes there is a difference due to taxes. that amount will be compensated at the end.
+              -- if the order is of negative amount convert to positive.
+              IF (v_count = 0 AND (v_invoicedamount * v_negativeOrder > order_schdet.amount * v_negativeOrder)) THEN
+                v_invoicedamount := order_schdet.amount;
+              END IF;
+
+              -- substract previously assigned amount
+              SELECT COALESCE(SUM(psd.amount),0) INTO v_assignedamount
+              FROM fin_payment_schedule ps_inv, fin_payment_scheduledetail psd,
+                   fin_payment_schedule ps_ord
+              WHERE ps_inv.fin_payment_schedule_id = psd.fin_payment_schedule_invoice
+                AND psd.fin_payment_schedule_order = ps_ord.fin_payment_schedule_id
+                AND ps_inv.c_invoice_id = p_record_id
+                AND ps_ord.c_order_id = order_schdet.order_id;
+
+              v_notassignedamount := (COALESCE(v_invoicedamount,0) - COALESCE(v_assignedamount,0));
+            END IF;
+
+            IF (v_notassignedamount = 0) THEN
+              next_order := TRUE;
+            END IF;
+            -- create a new payment schedule detail if necessary
+            IF (NOT next_order) THEN
+              v_differenceamount := 0;
+              IF ((v_notassignedamount * v_negativeOrder <= v_scheduledamount * v_negativeOrder)) THEN
+                v_differenceamount := COALESCE(v_scheduledetailamount,0) - COALESCE(v_notassignedamount,0);
+              ELSIF ((v_scheduledamount * v_negativeOrder < v_notassignedamount * v_negativeOrder)) THEN
+                v_differenceamount := COALESCE(v_scheduledetailamount,0) - COALESCE(v_scheduledamount,0);
               END IF;
 
               -- The order is completely invoiced and it is the last payment schedule
@@ -393,7 +402,7 @@ BEGIN
                       AND fin_payment_scheduledetail_id <> v_scheduledetailid;
               END IF;
 
-              IF (v_differenceamount > 0) THEN
+              IF (v_differenceamount <> 0) THEN
                 -- continue with the same payment schedule detail
                 fetch_next_order_item := false;
                 v_new_scheduledetailid := get_uuid();

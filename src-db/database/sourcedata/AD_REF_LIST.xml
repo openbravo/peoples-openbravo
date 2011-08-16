@@ -2256,7 +2256,7 @@
 <!--325-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--325-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--325-->  <VALUE><![CDATA[L]]></VALUE>
-<!--325-->  <NAME><![CDATA[List Price]]></NAME>
+<!--325-->  <NAME><![CDATA[Net List Price]]></NAME>
 <!--325-->  <AD_REFERENCE_ID><![CDATA[194]]></AD_REFERENCE_ID>
 <!--325-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--325--></AD_REF_LIST>
@@ -2267,7 +2267,7 @@
 <!--326-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--326-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--326-->  <VALUE><![CDATA[S]]></VALUE>
-<!--326-->  <NAME><![CDATA[Standard Price]]></NAME>
+<!--326-->  <NAME><![CDATA[Net Unit Price]]></NAME>
 <!--326-->  <AD_REFERENCE_ID><![CDATA[194]]></AD_REFERENCE_ID>
 <!--326-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--326--></AD_REF_LIST>

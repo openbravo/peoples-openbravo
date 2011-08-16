@@ -17,6 +17,22 @@
  ************************************************************************
 */
 
+isc.OBPersonalizationTreeGrid.addProperties({
+  bodyStyleName: 'OBGridBody',
+  baseStyle: 'OBPersonalizationTreeGridCell',
+  styleName: 'OBFormPersonalizationFieldsTreeGrid',
+
+  showOpener: false,
+  // eventhough showOpener is false, still space is taken for an opener
+  // icon, set to a small number, should be > 0 (otherwise it it not used)
+  // this setting of 2 makes the drag indicator to be 2 pixels to the right also
+  openerIconSize: 2,
+  
+  width: '100%',
+  indentSize: 10
+});
+
+
 OB.Styles.Personalization = {};
 
 OB.Styles.Personalization.Icons = {
@@ -63,7 +79,7 @@ OB.Styles.Personalization.TabSet = {
     styleName: 'OBTabBarChild',
     simpleTabBaseStyle: 'OBTabBarButtonChild',
     paneContainerClassName: 'OBTabSetChildContainer',
-    buttonConstructor: isc.OBTabBarButton.create({}),
+    buttonConstructor: isc.OBTabBarButton,
 
     buttonProperties: {
       // prevent the orange hats, TODO: this not work

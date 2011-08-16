@@ -38,20 +38,6 @@ isc.OBPersonalizationTreeGrid.addProperties({
   canAcceptDroppedRecords: true,
   leaveScrollbarGap: false,
   showCellContextMenus: true,
-
-  bodyStyleName: 'OBGridBody',
-  baseStyle: 'OBPersonalizationTreeGridCell',
-  styleName: 'OBFormPersonalizationFieldsTreeGrid',
-
-  showOpener: false,
-  // eventhough showOpener is false, still space is taken for an opener
-  // icon, set to a small number, should be > 0 (otherwise it it not used)
-  // this setting of 2 makes the drag indicator to be 2 pixels to the right also
-  openerIconSize: 2,
-  
-  // todo: show custom items for different types of fields
-  nodeIcon: OB.Styles.Personalization.Icons.field,
-  folderIcon: OB.Styles.Personalization.Icons.fieldGroup,
   
   // when an item gets dropped on a closed folder its icon 
   // changes
@@ -60,9 +46,6 @@ isc.OBPersonalizationTreeGrid.addProperties({
   dropIconSuffix: 'open',
   closedIconSuffix: 'closed',
   openIconSuffix: 'open',
-  
-  width: '100%',
-  indentSize: 10,
   
   fields: [
     {name: 'title', canHover: true, showHover: true, 
@@ -76,6 +59,10 @@ isc.OBPersonalizationTreeGrid.addProperties({
     ],
     
   initWidget: function() {
+    // todo: show custom items for different types of fields
+    this.nodeIcon = OB.Styles.Personalization.Icons.field;
+    this.folderIcon = OB.Styles.Personalization.Icons.fieldGroup;
+
     // register a change notifier
     var i = 0, me = this, changedFunction = function() {
       me.personalizeForm.changed();
@@ -226,6 +213,13 @@ isc.OBPersonalizationTreeGrid.addProperties({
       // items may have been hidden, which changes their colour
       personalizeForm.fieldsTreeGrid.markForRedraw();
 
+      // set the value in the properties form also
+      if (property === 'hiddenInForm') {
+        personalizeForm.propertiesLayout.formLayout.form.setValue('displayed', !value);
+      } else {
+        personalizeForm.propertiesLayout.formLayout.form.setValue(property, value);
+      }
+      
       // this will reset everything
       personalizeForm.changed();
     };

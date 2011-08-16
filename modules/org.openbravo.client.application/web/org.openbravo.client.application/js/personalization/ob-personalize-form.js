@@ -116,9 +116,12 @@ isc.OBPersonalizeFormLayout.addProperties({
     
     fieldsTabSet = isc.OBTabSet.create({
         height: '*',
-        tabBarProperties: {},
           
         initWidget: function(){
+          // copy the tabBarProperties as it is coming from
+          // OB.Styles.Personalization.TabSet which is also used
+          // by the other tabsets
+          this.tabBarProperties = isc.addProperties({}, this.tabBarProperties);
           this.tabBarProperties.tabSet = this;
           this.tabBarProperties.itemClick = function(item, itemNum){
             me.propertiesTabSet.toggleVisualState();
@@ -197,8 +200,8 @@ isc.OBPersonalizeFormLayout.addProperties({
       alwaysTakeSpace: false,
       required: true,
       validateOnExit: true,
-      showIcons: false,
-      width: 60,
+      showIcons: true,
+      width: 75,
       titleOrientation: 'top',
       titleSuffix: '</b>',
       titlePrefix: '<b>',
@@ -207,7 +210,7 @@ isc.OBPersonalizeFormLayout.addProperties({
       rightTitlePrefix: '<b>',
       rightTitleSuffix: '</b>',
       keyPressFilter: '[1-9]',
-      editorType: 'OBTextItem'
+      editorType: 'OBSpinnerItem'
     };
 
     propertiesLayout.formLayout = isc.VStack.create({
@@ -239,10 +242,16 @@ isc.OBPersonalizeFormLayout.addProperties({
       fields: [
          new NumericField({
            name: 'colSpan',
+           keyPressFilter: '[1-4]',
+           min: 1,
+           max: 4,
            title: OB.I18N.getLabel('OBUIAPP_Personalization_Colspan')
          }),
          new NumericField({
            name: 'rowSpan',
+           keyPressFilter: '[1-9]',
+           min: 1,
+           max: 9,
            required: true,
            title: OB.I18N.getLabel('OBUIAPP_Personalization_Rowspan')
          }),
@@ -420,7 +429,8 @@ isc.OBPersonalizeFormLayout.addProperties({
     // put it all in a tabset...    
     this.propertiesTabSet = isc.OBTabSet.create(OB.Styles.Personalization.TabSet, {
       height: OB.Styles.Personalization.PropertiesTabSet.expandedHeight,
-    
+      expanded: true,
+      
       toggleVisualState: function() {
         if (this.expanded) {
           this.setHeight(OB.Styles.Personalization.PropertiesTabSet.collapsedHeight);
@@ -496,7 +506,7 @@ isc.OBPersonalizeFormLayout.addProperties({
 
   // the toolbar shows the save, delete and undo button
   createAddToolbar: function() {
-    var saveButtonProperties, deleteButtonProperties, cancelButtonProperties;
+    var saveButtonProperties, saveCloseButtonProperties, deleteButtonProperties, cancelButtonProperties;
 
     saveButtonProperties = {
       action: function() {
@@ -509,6 +519,35 @@ isc.OBPersonalizeFormLayout.addProperties({
         this.setDisabled(this.view.hasNotChanged());
       },
       keyboardShortcutId: 'ToolBar_Save'
+    };
+
+    saveCloseButtonProperties = {
+      action: function() {
+        var view = this.view;
+        if (!this.saveDisabled) {
+          view.save(function() {
+            view.doClose(true);    
+          });
+        } else {
+          view.doClose(true);          
+        }
+      },
+      saveDisabled: true,
+      buttonType: 'savecloseX',
+      prompt: OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_SaveClose'),
+      updateState: function() {
+        this.saveDisabled = this.view.hasNotChanged();
+        
+        if (this.saveDisabled) {
+          this.buttonType = 'savecloseX';
+          this.prompt = OB.I18N.getLabel('OBUIAPP_Personalization_Statusbar_Close');
+        } else {
+          this.buttonType = 'saveclose';
+          this.prompt = OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_SaveClose');
+        }
+        this.resetBaseStyle();
+      },
+      keyboardShortcutId: 'ToolBar_SaveClose'
     };
 
     deleteButtonProperties = {
@@ -543,15 +582,16 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.toolBar = isc.OBToolbar.create({
       view: this,
       leftMembers: [ isc.OBToolbarIconButton.create(saveButtonProperties),
-          isc.OBToolbarIconButton.create(deleteButtonProperties),
-          isc.OBToolbarIconButton.create(cancelButtonProperties) ],
+                     isc.OBToolbarIconButton.create(saveCloseButtonProperties),
+                     isc.OBToolbarIconButton.create(cancelButtonProperties),
+                     isc.OBToolbarIconButton.create(deleteButtonProperties)],
       rightMembers: []
     });
     this.addMember(this.toolBar);
   },
 
   // save the new form layout to the server and updates the preview form
-  save: function() {
+  save: function(callback) {
     var params, me = this, newDataFields;
 
     // if there is a personalization id then use that
@@ -619,6 +659,9 @@ isc.OBPersonalizeFormLayout.addProperties({
           me.toolBar.updateButtonState();
           
           delete me.initializing;
+          if (callback) {
+            callback();
+          }
         });
   },
 
@@ -761,11 +804,19 @@ isc.OBPersonalizeFormLayout.addProperties({
     });
     
     itemClick = function(item) {
-      if (item.parentItem) {
-        me.doHandlePreviewFormItemClick(item.parentItem);
-      } else {
-        me.doHandlePreviewFormItemClick(item);
-      }
+      // disabled clicking in the form itself as multiple things need to be 
+      // solved:
+      // - the cursor needs to become a pointer
+      // - when the field in a collapsed group in the tree (on the left)
+      //    then the group has to expand automatically
+      // - when the field is not in the viewport on the left then 
+      //    it needs to be scrolled there
+      // - we also need to support clicking in the status bar
+//      if (item.parentItem) {
+//        me.doHandlePreviewFormItemClick(item.parentItem);
+//      } else {
+//        me.doHandlePreviewFormItemClick(item);
+//      }
     };
     
     var persFields = this.getPersonalizationFields();

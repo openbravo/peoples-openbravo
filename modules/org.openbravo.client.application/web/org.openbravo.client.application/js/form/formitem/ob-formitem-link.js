@@ -31,8 +31,11 @@ isc.OBLinkItem.addProperties({
       hspace: this.pickerIconHspace,
       click: function(form, item) {
         var url = item.getValue();
-        if(!url || url.indexOf('://') === -1) {
+        if (!url) {
           return;
+        }
+        if (url.indexOf('://') === -1) {
+          url = 'http://' + url;
         }
         window.open(url);
       }

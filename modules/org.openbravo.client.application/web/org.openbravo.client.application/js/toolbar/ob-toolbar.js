@@ -1481,11 +1481,11 @@ OB.ToolbarRegistry = {
 		  // and pick them up in the correct order
 		  // the return should be an array of button instances created by doing 
 		  //  btnDefinitionClass.create(btnDefinitionProperties);
-		  var result = [], resultIndex = 0, i;	
+		  var result = [], resultIndex = 0, i, validTabId, tabIds;	
 		  for (i = 0; i < this.buttonDefinitions.length; i++) {	
-		    var j, tabIds = this.buttonDefinitions[i].tabIds;
-		    var validTabId = !tabIds;
-		    if (!validTabId && tabIds) {
+		    tabIds = this.buttonDefinitions[i].tabIds;
+		    validTabId = !tabIds;
+		    if (tabIds) {
 		      for (j = 0; j < tabIds.length; j++) {
 		        if (tabIds[j] === tabId) {
 		          validTabId = true;

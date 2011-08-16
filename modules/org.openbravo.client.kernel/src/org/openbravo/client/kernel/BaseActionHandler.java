@@ -43,7 +43,6 @@ public abstract class BaseActionHandler implements ActionHandler {
    * @see org.openbravo.client.kernel.ActionHandler#execute(javax.servlet.http.HttpServletRequest,
    * javax.servlet.http.HttpServletResponse)
    */
-  @SuppressWarnings("unchecked")
   public void execute() {
     final StringBuilder sb = new StringBuilder();
     String line;
@@ -57,7 +56,7 @@ public abstract class BaseActionHandler implements ActionHandler {
       final String content = (sb.length() > 0 ? sb.toString() : null);
 
       final Map<String, Object> parameterMap = new HashMap<String, Object>();
-      for (Enumeration keys = request.getParameterNames(); keys.hasMoreElements();) {
+      for (Enumeration<?> keys = request.getParameterNames(); keys.hasMoreElements();) {
         final String key = (String) keys.nextElement();
         if (request.getParameterValues(key) != null && request.getParameterValues(key).length > 1) {
           parameterMap.put(key, request.getParameterValues(key));

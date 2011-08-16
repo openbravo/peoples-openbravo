@@ -351,19 +351,17 @@ public class ProcessInvoice extends HttpSecureAppServlet {
    *         in other cases.
    */
   private boolean isPaymentMethodConfigured(Invoice invoice) {
-    boolean paymentMethodConfigOk = false;
     final FIN_FinancialAccount bpFinAccount = invoice.isSalesTransaction() ? invoice
         .getBusinessPartner().getAccount() : invoice.getBusinessPartner().getPOFinancialAccount();
     if (bpFinAccount != null) {
       for (final FinAccPaymentMethod bpFinAccPaymentMethod : bpFinAccount
           .getFinancialMgmtFinAccPaymentMethodList()) {
         if (bpFinAccPaymentMethod.getPaymentMethod().equals(invoice.getPaymentMethod())) {
-          paymentMethodConfigOk = true;
-          break;
+          return true;
         }
       }
     }
-    return paymentMethodConfigOk;
+    return false;
   }
 
   public String getServletInfo() {

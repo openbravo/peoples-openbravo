@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -109,12 +110,14 @@ public class TransactionsDao {
               payment.getDescription().length() > 254 ? 254 : payment.getDescription().length()));
       newTransaction.setClient(payment.getClient());
       newTransaction.setLineNo(getTransactionMaxLineNo(payment.getAccount()) + 10);
-      newTransaction
-          .setDepositAmount(payment.getDocumentType().getDocumentCategory().equals("ARR") ? payment
-              .getFinancialTransactionAmount() : BigDecimal.ZERO);
-      newTransaction
-          .setPaymentAmount(payment.getDocumentType().getDocumentCategory().equals("ARR") ? BigDecimal.ZERO
-              : payment.getFinancialTransactionAmount());
+
+      BigDecimal depositAmt = FIN_Utility.getDepositAmount(payment.getDocumentType()
+          .getDocumentCategory().equals("ARR"), payment.getFinancialTransactionAmount());
+      BigDecimal paymentAmt = FIN_Utility.getPaymentAmount(payment.getDocumentType()
+          .getDocumentCategory().equals("ARR"), payment.getFinancialTransactionAmount());
+
+      newTransaction.setDepositAmount(depositAmt);
+      newTransaction.setPaymentAmount(paymentAmt);
       newTransaction.setStatus(newTransaction.getDepositAmount().compareTo(
           newTransaction.getPaymentAmount()) > 0 ? "RPR" : "PPM");
       if (!newTransaction.getCurrency().equals(payment.getCurrency())) {

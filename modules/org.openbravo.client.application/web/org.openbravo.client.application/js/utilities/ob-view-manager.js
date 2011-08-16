@@ -265,29 +265,30 @@
           // 1) view is not open and class not loaded (open view and show loading bar)
           // 2) view is not open but class was loaded (open view and show loading bar)
           // 3) view is open and class is loaded (show loading bar in open view)          
-          var viewTabId, tabTitle, loadingTab = vmgr.findLoadingTab(params);
-          
+          var viewTabId, tabTitle, loadingTab = vmgr.findLoadingTab(params), loadingPane,
+              tabSet = OB.MainView.TabSet;
+
           params = params || {};
-          
+
           if (loadingTab) {
             viewTabId = loadingTab.pane.viewTabId;
           } else if (!params.popup && viewName !== 'OBPopupClassicWindow' && !params.showsItself) {
             viewTabId = vmgr.views.getViewTabID(viewName, params);
             if (viewTabId) {
               // tab exists, replace its contents
-              var loadingPane = OB.Utilities.createLoadingLayout();
-              
+              loadingPane = OB.Utilities.createLoadingLayout();
+
               // make sure it gets found in the next round
               params.loadingTabId = viewTabId;
               loadingPane.viewTabId = viewTabId;
 
               // is used to prevent history updating
               loadingPane.isLoadingTab = true;
-              
+
               // refresh the existing tab
-              OB.MainView.TabSet.updateTab(viewTabId, loadingPane);
+              tabSet.updateTab(viewTabId, loadingPane);
               // and show it
-              OB.MainView.TabSet.selectTab(viewTabId);
+              tabSet.selectTab(viewTabId);
             } else {
               // create a completely new tab
               // first create a loading tab and then call again
@@ -320,7 +321,7 @@
           if (viewInstance && viewInstance.show && viewInstance.showsItself) {
             if (loadingTab) {
               delete params.loadingTabId;
-              OB.MainView.TabSet.removeTab(loadingTab.ID);
+              tabSet.removeTab(loadingTab.ID);
             }
             viewInstance.show();
             return;
@@ -329,10 +330,20 @@
           // eventhough there is already an open tab
           // still refresh it
           if (viewTabId !== null) {
+            loadingPane = tabSet.getTab(viewTabId) && tabSet.getTab(viewTabId).pane;
+
             // refresh the view
-            OB.MainView.TabSet.updateTab(viewTabId, viewInstance);
+            // Note: updateTab doesn't remove the previous loading tab
+            // http://www.smartclient.com/docs/8.1/a/b/c/go.html#method..TabSet.updateTab
+            tabSet.updateTab(viewTabId, viewInstance);
+
             // and show it
-            OB.MainView.TabSet.selectTab(viewTabId);
+            tabSet.selectTab(viewTabId);
+
+            // Destroying the loading tab
+            if(loadingPane && !viewInstance.myOB) {
+              loadingPane.destroy();
+            }
 
             // tell the viewinstance what tab it is on
             // note do not use tabId on the viewInstance
@@ -359,10 +370,10 @@
             // important part
             
             // the select tab event will update the history
-            if (OB.MainView.TabSet.getSelectedTab() && OB.MainView.TabSet.getSelectedTab().pane.viewTabId === viewTabId) {
+            if (tabSet.getSelectedTab() && tabSet.getSelectedTab().pane.viewTabId === viewTabId) {
               OB.Layout.HistoryManager.updateHistory();
             } else {              
-              OB.MainView.TabSet.selectTab(viewTabId);
+              tabSet.selectTab(viewTabId);
             }
 
             return;

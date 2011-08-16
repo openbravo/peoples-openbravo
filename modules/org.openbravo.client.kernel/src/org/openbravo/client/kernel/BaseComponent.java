@@ -182,14 +182,9 @@ public abstract class BaseComponent implements Component {
    */
   public String getETag() {
     if (hasModulesInDevelopment()) {
-      // if (getModule().isInDevelopment() != null && getModule().isInDevelopment()) {
-
       return OBContext.getOBContext().getLanguage().getId() + "_" + getLastModified().getTime();
     } else {
       return OBContext.getOBContext().getLanguage().getId() + "_" + getModuleVersionHash();
-      // return OBContext.getOBContext().getLanguage().getId() + "_" + getModule().getVersion() +
-      // "_"
-      // + getModule().isEnabled();
     }
   }
 

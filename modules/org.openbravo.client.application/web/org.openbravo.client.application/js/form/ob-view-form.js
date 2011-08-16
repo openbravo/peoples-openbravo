@@ -203,6 +203,8 @@ OB.ViewFormProperties = {
     this.clearErrors();
     if (!isNew) {
       this.validateAfterFicReturn = true;
+      // If editing a document set to recent documents
+      this.view.setRecentDocument(this.getValues());
     }
     
     this.ignoreFirstFocusEvent = preventFocus;
@@ -401,7 +403,7 @@ OB.ViewFormProperties = {
   // if it is not focusable then a next item is 
   // searched for
   setFocusInForm: function() {
-    if (!this.view.isActiveView()) {
+    if (!this.view || !this.view.isActiveView()) {
       return;
     }
     
