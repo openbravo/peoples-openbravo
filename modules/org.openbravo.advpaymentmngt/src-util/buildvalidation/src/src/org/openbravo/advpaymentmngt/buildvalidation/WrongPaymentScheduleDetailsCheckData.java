@@ -37,37 +37,37 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
   }
 
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("CLIENT"))
+    if (fieldName.equalsIgnoreCase("client"))
       return client;
-    else if (fieldName.equalsIgnoreCase("DOCUMENTNO"))
+    else if (fieldName.equalsIgnoreCase("documentno"))
       return documentno;
-    else if (fieldName.equalsIgnoreCase("NAME"))
+    else if (fieldName.equalsIgnoreCase("name"))
       return name;
-    else if (fieldName.equalsIgnoreCase("AD_ALERTRULE_ID") || fieldName.equals("adAlertruleId"))
+    else if (fieldName.equalsIgnoreCase("ad_alertrule_id") || fieldName.equals("adAlertruleId"))
       return adAlertruleId;
-    else if (fieldName.equalsIgnoreCase("SQL"))
+    else if (fieldName.equalsIgnoreCase("sql"))
       return sql;
-    else if (fieldName.equalsIgnoreCase("DESCRIPTION"))
+    else if (fieldName.equalsIgnoreCase("description"))
       return description;
-    else if (fieldName.equalsIgnoreCase("RECORD_ID") || fieldName.equals("recordId"))
+    else if (fieldName.equalsIgnoreCase("record_id") || fieldName.equals("recordId"))
       return recordId;
-    else if (fieldName.equalsIgnoreCase("REFERENCEKEY_ID") || fieldName.equals("referencekeyId"))
+    else if (fieldName.equalsIgnoreCase("referencekey_id") || fieldName.equals("referencekeyId"))
       return referencekeyId;
-    else if (fieldName.equalsIgnoreCase("AD_CLIENT_ID") || fieldName.equals("adClientId"))
+    else if (fieldName.equalsIgnoreCase("ad_client_id") || fieldName.equals("adClientId"))
       return adClientId;
-    else if (fieldName.equalsIgnoreCase("AD_ORG_ID") || fieldName.equals("adOrgId"))
+    else if (fieldName.equalsIgnoreCase("ad_org_id") || fieldName.equals("adOrgId"))
       return adOrgId;
-    else if (fieldName.equalsIgnoreCase("CREATED"))
+    else if (fieldName.equalsIgnoreCase("created"))
       return created;
-    else if (fieldName.equalsIgnoreCase("CREATEDBY"))
+    else if (fieldName.equalsIgnoreCase("createdby"))
       return createdby;
-    else if (fieldName.equalsIgnoreCase("UPDATED"))
+    else if (fieldName.equalsIgnoreCase("updated"))
       return updated;
-    else if (fieldName.equalsIgnoreCase("UPDATEDBY"))
+    else if (fieldName.equalsIgnoreCase("updatedby"))
       return updatedby;
-    else if (fieldName.equalsIgnoreCase("ISACTIVE"))
+    else if (fieldName.equalsIgnoreCase("isactive"))
       return isactive;
-    else if (fieldName.equalsIgnoreCase("AD_ROLE_ID") || fieldName.equals("adRoleId"))
+    else if (fieldName.equalsIgnoreCase("ad_role_id") || fieldName.equals("adRoleId"))
       return adRoleId;
    else {
      log4j.debug("Field does not exist: " + fieldName);
@@ -106,22 +106,22 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
       while(continueResult && result.next()) {
         countRecord++;
         WrongPaymentScheduleDetailsCheckData objectWrongPaymentScheduleDetailsCheckData = new WrongPaymentScheduleDetailsCheckData();
-        objectWrongPaymentScheduleDetailsCheckData.client = UtilSql.getValue(result, "CLIENT");
-        objectWrongPaymentScheduleDetailsCheckData.documentno = UtilSql.getValue(result, "DOCUMENTNO");
-        objectWrongPaymentScheduleDetailsCheckData.name = UtilSql.getValue(result, "NAME");
-        objectWrongPaymentScheduleDetailsCheckData.adAlertruleId = UtilSql.getValue(result, "AD_ALERTRULE_ID");
-        objectWrongPaymentScheduleDetailsCheckData.sql = UtilSql.getValue(result, "SQL");
-        objectWrongPaymentScheduleDetailsCheckData.description = UtilSql.getValue(result, "DESCRIPTION");
-        objectWrongPaymentScheduleDetailsCheckData.recordId = UtilSql.getValue(result, "RECORD_ID");
-        objectWrongPaymentScheduleDetailsCheckData.referencekeyId = UtilSql.getValue(result, "REFERENCEKEY_ID");
-        objectWrongPaymentScheduleDetailsCheckData.adClientId = UtilSql.getValue(result, "AD_CLIENT_ID");
-        objectWrongPaymentScheduleDetailsCheckData.adOrgId = UtilSql.getValue(result, "AD_ORG_ID");
-        objectWrongPaymentScheduleDetailsCheckData.created = UtilSql.getValue(result, "CREATED");
-        objectWrongPaymentScheduleDetailsCheckData.createdby = UtilSql.getValue(result, "CREATEDBY");
-        objectWrongPaymentScheduleDetailsCheckData.updated = UtilSql.getValue(result, "UPDATED");
-        objectWrongPaymentScheduleDetailsCheckData.updatedby = UtilSql.getValue(result, "UPDATEDBY");
-        objectWrongPaymentScheduleDetailsCheckData.isactive = UtilSql.getValue(result, "ISACTIVE");
-        objectWrongPaymentScheduleDetailsCheckData.adRoleId = UtilSql.getValue(result, "AD_ROLE_ID");
+        objectWrongPaymentScheduleDetailsCheckData.client = UtilSql.getValue(result, "client");
+        objectWrongPaymentScheduleDetailsCheckData.documentno = UtilSql.getValue(result, "documentno");
+        objectWrongPaymentScheduleDetailsCheckData.name = UtilSql.getValue(result, "name");
+        objectWrongPaymentScheduleDetailsCheckData.adAlertruleId = UtilSql.getValue(result, "ad_alertrule_id");
+        objectWrongPaymentScheduleDetailsCheckData.sql = UtilSql.getValue(result, "sql");
+        objectWrongPaymentScheduleDetailsCheckData.description = UtilSql.getValue(result, "description");
+        objectWrongPaymentScheduleDetailsCheckData.recordId = UtilSql.getValue(result, "record_id");
+        objectWrongPaymentScheduleDetailsCheckData.referencekeyId = UtilSql.getValue(result, "referencekey_id");
+        objectWrongPaymentScheduleDetailsCheckData.adClientId = UtilSql.getValue(result, "ad_client_id");
+        objectWrongPaymentScheduleDetailsCheckData.adOrgId = UtilSql.getValue(result, "ad_org_id");
+        objectWrongPaymentScheduleDetailsCheckData.created = UtilSql.getValue(result, "created");
+        objectWrongPaymentScheduleDetailsCheckData.createdby = UtilSql.getValue(result, "createdby");
+        objectWrongPaymentScheduleDetailsCheckData.updated = UtilSql.getValue(result, "updated");
+        objectWrongPaymentScheduleDetailsCheckData.updatedby = UtilSql.getValue(result, "updatedby");
+        objectWrongPaymentScheduleDetailsCheckData.isactive = UtilSql.getValue(result, "isactive");
+        objectWrongPaymentScheduleDetailsCheckData.adRoleId = UtilSql.getValue(result, "ad_role_id");
         objectWrongPaymentScheduleDetailsCheckData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectWrongPaymentScheduleDetailsCheckData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -180,7 +180,7 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
 
       result = st.executeQuery();
       if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "EXISTING").equals("0");
+        boolReturn = !UtilSql.getValue(result, "existing").equals("0");
       }
       result.close();
     } catch(SQLException e){
@@ -214,7 +214,7 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
 
       result = st.executeQuery();
       if(result.next()) {
-        strReturn = UtilSql.getValue(result, "NAME");
+        strReturn = UtilSql.getValue(result, "name");
       }
       result.close();
     } catch(SQLException e){
@@ -250,7 +250,7 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
 
       result = st.executeQuery();
       if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "EXISTING").equals("0");
+        boolReturn = !UtilSql.getValue(result, "existing").equals("0");
       }
       result.close();
     } catch(SQLException e){
@@ -286,7 +286,7 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
 
       result = st.executeQuery();
       if(result.next()) {
-        strReturn = UtilSql.getValue(result, "NAME");
+        strReturn = UtilSql.getValue(result, "name");
       }
       result.close();
     } catch(SQLException e){
@@ -339,20 +339,20 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
       while(continueResult && result.next()) {
         countRecord++;
         WrongPaymentScheduleDetailsCheckData objectWrongPaymentScheduleDetailsCheckData = new WrongPaymentScheduleDetailsCheckData();
-        objectWrongPaymentScheduleDetailsCheckData.adClientId = UtilSql.getValue(result, "AD_CLIENT_ID");
-        objectWrongPaymentScheduleDetailsCheckData.adOrgId = UtilSql.getValue(result, "AD_ORG_ID");
-        objectWrongPaymentScheduleDetailsCheckData.created = UtilSql.getDateValue(result, "CREATED", "dd-MM-yyyy");
-        objectWrongPaymentScheduleDetailsCheckData.createdby = UtilSql.getValue(result, "CREATEDBY");
-        objectWrongPaymentScheduleDetailsCheckData.updated = UtilSql.getDateValue(result, "UPDATED", "dd-MM-yyyy");
-        objectWrongPaymentScheduleDetailsCheckData.updatedby = UtilSql.getValue(result, "UPDATEDBY");
-        objectWrongPaymentScheduleDetailsCheckData.isactive = UtilSql.getValue(result, "ISACTIVE");
-        objectWrongPaymentScheduleDetailsCheckData.recordId = UtilSql.getValue(result, "RECORD_ID");
-        objectWrongPaymentScheduleDetailsCheckData.description = UtilSql.getValue(result, "DESCRIPTION");
-        objectWrongPaymentScheduleDetailsCheckData.referencekeyId = UtilSql.getValue(result, "REFERENCEKEY_ID");
-        objectWrongPaymentScheduleDetailsCheckData.adRoleId = UtilSql.getValue(result, "AD_ROLE_ID");
-        objectWrongPaymentScheduleDetailsCheckData.adAlertruleId = UtilSql.getValue(result, "AD_ALERTRULE_ID");
-        objectWrongPaymentScheduleDetailsCheckData.sql = UtilSql.getValue(result, "SQL");
-        objectWrongPaymentScheduleDetailsCheckData.name = UtilSql.getValue(result, "NAME");
+        objectWrongPaymentScheduleDetailsCheckData.adClientId = UtilSql.getValue(result, "ad_client_id");
+        objectWrongPaymentScheduleDetailsCheckData.adOrgId = UtilSql.getValue(result, "ad_org_id");
+        objectWrongPaymentScheduleDetailsCheckData.created = UtilSql.getDateValue(result, "created", "dd-MM-yyyy");
+        objectWrongPaymentScheduleDetailsCheckData.createdby = UtilSql.getValue(result, "createdby");
+        objectWrongPaymentScheduleDetailsCheckData.updated = UtilSql.getDateValue(result, "updated", "dd-MM-yyyy");
+        objectWrongPaymentScheduleDetailsCheckData.updatedby = UtilSql.getValue(result, "updatedby");
+        objectWrongPaymentScheduleDetailsCheckData.isactive = UtilSql.getValue(result, "isactive");
+        objectWrongPaymentScheduleDetailsCheckData.recordId = UtilSql.getValue(result, "record_id");
+        objectWrongPaymentScheduleDetailsCheckData.description = UtilSql.getValue(result, "description");
+        objectWrongPaymentScheduleDetailsCheckData.referencekeyId = UtilSql.getValue(result, "referencekey_id");
+        objectWrongPaymentScheduleDetailsCheckData.adRoleId = UtilSql.getValue(result, "ad_role_id");
+        objectWrongPaymentScheduleDetailsCheckData.adAlertruleId = UtilSql.getValue(result, "ad_alertrule_id");
+        objectWrongPaymentScheduleDetailsCheckData.sql = UtilSql.getValue(result, "sql");
+        objectWrongPaymentScheduleDetailsCheckData.name = UtilSql.getValue(result, "name");
         objectWrongPaymentScheduleDetailsCheckData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectWrongPaymentScheduleDetailsCheckData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -411,10 +411,10 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
       while(continueResult && result.next()) {
         countRecord++;
         WrongPaymentScheduleDetailsCheckData objectWrongPaymentScheduleDetailsCheckData = new WrongPaymentScheduleDetailsCheckData();
-        objectWrongPaymentScheduleDetailsCheckData.description = UtilSql.getValue(result, "DESCRIPTION");
-        objectWrongPaymentScheduleDetailsCheckData.recordId = UtilSql.getValue(result, "RECORD_ID");
-        objectWrongPaymentScheduleDetailsCheckData.referencekeyId = UtilSql.getValue(result, "REFERENCEKEY_ID");
-        objectWrongPaymentScheduleDetailsCheckData.adClientId = UtilSql.getValue(result, "AD_CLIENT_ID");
+        objectWrongPaymentScheduleDetailsCheckData.description = UtilSql.getValue(result, "description");
+        objectWrongPaymentScheduleDetailsCheckData.recordId = UtilSql.getValue(result, "record_id");
+        objectWrongPaymentScheduleDetailsCheckData.referencekeyId = UtilSql.getValue(result, "referencekey_id");
+        objectWrongPaymentScheduleDetailsCheckData.adClientId = UtilSql.getValue(result, "ad_client_id");
         objectWrongPaymentScheduleDetailsCheckData.InitRecordNumber = Integer.toString(firstRegister);
         vector.addElement(objectWrongPaymentScheduleDetailsCheckData);
         if (countRecord >= numberRegisters && numberRegisters != 0) {
@@ -457,7 +457,7 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
 
       result = st.executeQuery();
       if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "EXISTING").equals("0");
+        boolReturn = !UtilSql.getValue(result, "existing").equals("0");
       }
       result.close();
     } catch(SQLException e){
@@ -497,7 +497,7 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
 
       result = st.executeQuery();
       if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "EXISTING").equals("0");
+        boolReturn = !UtilSql.getValue(result, "existing").equals("0");
       }
       result.close();
     } catch(SQLException e){
@@ -537,7 +537,7 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
 
       result = st.executeQuery();
       if(result.next()) {
-        boolReturn = !UtilSql.getValue(result, "EXISTING").equals("0");
+        boolReturn = !UtilSql.getValue(result, "existing").equals("0");
       }
       result.close();
     } catch(SQLException e){
@@ -660,5 +660,43 @@ static Logger log4j = Logger.getLogger(WrongPaymentScheduleDetailsCheckData.clas
       }
     }
     return(updateCount);
+  }
+
+/**
+Check if the FIN_Payment_ScheduleDetail table exist
+ */
+  public static boolean existAPRMbasetables(ConnectionProvider connectionProvider)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "       SELECT count(*) AS EXISTING" +
+      "       FROM ad_table" +
+      "       WHERE ad_table_id = 'C0233061EA504EFEAB0483E836BBAF31'";
+
+    ResultSet result;
+    boolean boolReturn = false;
+    PreparedStatement st = null;
+
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
+
+      result = st.executeQuery();
+      if(result.next()) {
+        boolReturn = !UtilSql.getValue(result, "existing").equals("0");
+      }
+      result.close();
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception ignore){
+        ignore.printStackTrace();
+      }
+    }
+    return(boolReturn);
   }
 }

@@ -31,13 +31,16 @@ public class WrongPaymentScheduleDetailsCheck extends BuildValidation {
     ConnectionProvider cp = getConnectionProvider();
     ArrayList<String> errors = new ArrayList<String>();
     try {
-      if (WrongPaymentScheduleDetailsCheckData.existWrongPaymentSchedules(cp)) {
-        String alertRuleId = UnpostRefundPaymentsData.getUUID(cp);
-        if (!WrongPaymentScheduleDetailsCheckData.existsAlertRule(cp)) {
-          WrongPaymentScheduleDetailsCheckData.insertAlertRule(cp, alertRuleId);
+      // Prevent error when upgrading from a pure 2.50 (MP0)
+      if (WrongPaymentScheduleDetailsCheckData.existAPRMbasetables(cp)) {
+        if (WrongPaymentScheduleDetailsCheckData.existWrongPaymentSchedules(cp)) {
+          String alertRuleId = UnpostRefundPaymentsData.getUUID(cp);
+          if (!WrongPaymentScheduleDetailsCheckData.existsAlertRule(cp)) {
+            WrongPaymentScheduleDetailsCheckData.insertAlertRule(cp, alertRuleId);
+          }
+          alertRuleId = WrongPaymentScheduleDetailsCheckData.getAlertRuleId(cp);
+          processAlert(alertRuleId, cp);
         }
-        alertRuleId = WrongPaymentScheduleDetailsCheckData.getAlertRuleId(cp);
-        processAlert(alertRuleId, cp);
       }
     } catch (Exception e) {
       return handleError(e);
