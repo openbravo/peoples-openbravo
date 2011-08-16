@@ -33,7 +33,7 @@ isc.OBSelectorPopupWindow.addProperties({
     canGroupBy: false
   },
   
-  initWidget: function(){
+  initWidget: function () {
     var selectorWindow = this;
     this.setFilterEditorProperties(this.selectorGridFields);
     
@@ -250,17 +250,26 @@ isc.OBSelectorPopupWindow.addProperties({
       defaultFilter = {}; // Reset filter
       isc.addProperties(defaultFilter, data);
     }
-    
+
     // adds the selector id to filter used to get filter information
     defaultFilter._selectorDefinitionId = this.selector.selectorDefinitionId;
     this.defaultFilter = defaultFilter;
     this.selectorGrid.targetRecordId = this.selector.getValue();
     this.show(true);
   },
-  
+
   setValueInField: function(){
     this.selector.setValueFromRecord(this.selectorGrid.getSelectedRecord(), true);
     this.hide();
+  },
+
+  destroy: function () {
+    // Destroy the selectorGrid to avoid memory leaks
+    if(this.selectorGrid) {
+      this.selectorGrid.destroy();
+      this.selectorGrid = null;
+    }
+    this.Super('destroy', arguments);
   }
 });
 
@@ -602,6 +611,15 @@ isc.OBSelectorItem.addProperties({
       return '';
     }
     return ret;
+  },
+
+  destroy: function () {
+    // Explicitly destroy the selector window to avoid memory leaks
+    if(this.selectorWindow) {
+      this.selectorWindow.destroy();
+      this.selectorWindow = null;
+    }
+    this.Super('destroy', arguments);
   }
 });
 
@@ -770,5 +788,14 @@ isc.OBSelectorLinkItem.addProperties({
       this.form.handleItemChange(this);
     }
     return ret;
+  },
+
+  destroy: function () {
+    // Explicitly destroy the selector window to avoid memory leaks
+    if(this.selectorWindow) {
+      this.selectorWindow.destroy();
+      this.selectorWindow = null;
+    }
+    this.Super('destroy', arguments);
   }
 });
