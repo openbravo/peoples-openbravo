@@ -341,3 +341,31 @@ isc.screenReader = false;
 //isc.Class.fireOnPause = function(id, callback, delay, target, instanceID) {
 //  isc.Class._fireOnPause(id, callback, delay, target, instanceID);
 //};
+
+
+// Allow searchs (with full dataset in memory/the datasource) not distinguish
+// between accent or non-accent words
+isc.DataSource.addProperties({
+  _fieldMatchesFilter: isc.DataSource.getPrototype().fieldMatchesFilter,
+  fieldMatchesFilter: function(fieldValue, filterValue, requestProperties) {
+    if (fieldValue && typeof fieldValue === "string") {
+      fieldValue = fieldValue.replace(/á|à|ä|â/g, 'a').replace(/Á|À|Ä|Â/g, 'A');
+      fieldValue = fieldValue.replace(/é|è|ë|ê/g, 'e').replace(/É|È|Ë|Ê/g, 'E');
+      fieldValue = fieldValue.replace(/í|ì|ï|î/g, 'i').replace(/Í|Ì|Ï|Î/g, 'I');
+      fieldValue = fieldValue.replace(/ó|ò|ö|ô/g, 'o').replace(/Ó|Ò|Ö|Ô/g, 'O');
+      fieldValue = fieldValue.replace(/ú|ù|ü|û/g, 'u').replace(/Ú|Ù|Ü|Û/g, 'U');
+      fieldValue = fieldValue.replace(/ç/g, 'c').replace(/Ç/g, 'C');
+      fieldValue = fieldValue.replace(/ñ/g, 'n').replace(/Ñ/g, 'N');
+    }
+    if (filterValue && typeof filterValue === "string") {
+      filterValue = filterValue.replace(/á|à|ä|â/g, 'a').replace(/Á|À|Ä|Â/g, 'A');
+      filterValue = filterValue.replace(/é|è|ë|ê/g, 'e').replace(/É|È|Ë|Ê/g, 'E');
+      filterValue = filterValue.replace(/í|ì|ï|î/g, 'i').replace(/Í|Ì|Ï|Î/g, 'I');
+      filterValue = filterValue.replace(/ó|ò|ö|ô/g, 'o').replace(/Ó|Ò|Ö|Ô/g, 'O');
+      filterValue = filterValue.replace(/ú|ù|ü|û/g, 'u').replace(/Ú|Ù|Ü|Û/g, 'U');
+      filterValue = filterValue.replace(/ç/g, 'c').replace(/Ç/g, 'C');
+      filterValue = filterValue.replace(/ñ/g, 'n').replace(/Ñ/g, 'N');
+    }
+    return this._fieldMatchesFilter(fieldValue, filterValue, requestProperties);
+  }
+});
