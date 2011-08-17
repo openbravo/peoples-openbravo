@@ -269,6 +269,12 @@ isc.OBSelectorPopupWindow.addProperties({
       this.selectorGrid.destroy();
       this.selectorGrid = null;
     }
+
+    if(this.dataSource) {
+      this.dataSource.destroy();
+      this.dataSource = null;
+    }
+
     this.Super('destroy', arguments);
   }
 });
@@ -297,7 +303,11 @@ isc.OBSelectorItem.addProperties({
     title: OB.I18N.getLabel('OBUISC_Identifier'),
     name: OB.Constants.IDENTIFIER
   }],
-  
+
+  // Do not fetch data upon creation
+  // http://www.smartclient.com/docs/8.1/a/b/c/go.html#attr..ComboBoxItem.optionDataSource
+  fetchMissingValues: false,
+
   autoFetchData: false,
   showPickerIcon: true,
   validateOnChange: true,
@@ -615,9 +625,16 @@ isc.OBSelectorItem.addProperties({
 
   destroy: function () {
     // Explicitly destroy the selector window to avoid memory leaks
-    if(this.selectorWindow) {
-      this.selectorWindow.destroy();
-      this.selectorWindow = null;
+    if(this.form.destroyItemObjects) {
+      if(this.selectorWindow) {
+        this.selectorWindow.destroy();
+        this.selectorWindow = null;
+      }
+
+      if(this.optionDataSource) {
+        this.optionDataSource.destroy();
+        this.optionDataSource = null;
+      }
     }
     this.Super('destroy', arguments);
   }
@@ -792,9 +809,16 @@ isc.OBSelectorLinkItem.addProperties({
 
   destroy: function () {
     // Explicitly destroy the selector window to avoid memory leaks
-    if(this.selectorWindow) {
-      this.selectorWindow.destroy();
-      this.selectorWindow = null;
+    if(this.form.destroyItemObjects) {
+      if(this.selectorWindow) {
+        this.selectorWindow.destroy();
+        this.selectorWindow = null;
+      }
+
+      if(this.optionDataSource) {
+        this.optionDataSource.destroy();
+        this.optionDataSource = null;
+      }
     }
     this.Super('destroy', arguments);
   }
