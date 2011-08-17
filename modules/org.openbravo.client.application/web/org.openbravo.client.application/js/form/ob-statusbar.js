@@ -306,11 +306,11 @@ isc.OBStatusBar.addProperties( {
     }
   },
 
-  setContentLabel: function(icon, statusCode, arrayTitleField) {
+  setContentLabel: function(icon, statusCode, arrayTitleField, message) {
     // set the status code before calling updateContentTitle
     this.statusCode = statusCode;
     
-    this.updateContentTitle(arrayTitleField);
+    this.updateContentTitle(arrayTitleField, message);
 
     if (icon) {
       this.addIcon(icon);
@@ -319,7 +319,7 @@ isc.OBStatusBar.addProperties( {
     }
   },
 
-  updateContentTitle: function(arrayTitleField) {
+  updateContentTitle: function(arrayTitleField, message) {
     var msg = '', i;
     if (this.statusCode) {
       msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
@@ -332,6 +332,12 @@ isc.OBStatusBar.addProperties( {
         msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + arrayTitleField[0][i] + ': ' + '</span>';
         msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
       }
+    }
+    if (message) {
+      if (arrayTitleField || this.statusCode) {
+        msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
+      }
+      msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + message + '</span>';      
     }
     if (this.labelOverflowHidden) {
       msg = '<nobr>' + msg + '</nobr>';

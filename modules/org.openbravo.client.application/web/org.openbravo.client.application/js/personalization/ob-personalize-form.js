@@ -498,7 +498,7 @@ isc.OBPersonalizeFormLayout.addProperties({
           prompt: OB.I18N
               .getLabel('OBUIAPP_Personalization_Statusbar_Close'),
           action: function() {
-            owner.doClose();
+            owner.saveAndClose();
           }
         }, OB.Styles.Personalization.closeButtonProperties);
         this.buttonBar.addMembers([ closeButton ]);
@@ -526,14 +526,7 @@ isc.OBPersonalizeFormLayout.addProperties({
 
     saveCloseButtonProperties = {
       action: function() {
-        var view = this.view;
-        if (!this.saveDisabled) {
-          view.save(function() {
-            view.doClose(true);    
-          });
-        } else {
-          view.doClose(true);          
-        }
+        this.view.saveAndClose();
       },
       saveDisabled: true,
       buttonType: 'savecloseX',
@@ -958,6 +951,17 @@ isc.OBPersonalizeFormLayout.addProperties({
     }
   },
   
+  saveAndClose: function() {
+    var view = this;
+    if (this.hasNotChanged()) {
+      view.doClose(true);          
+    } else {
+      view.save(function() {
+        view.doClose(true);    
+      });
+    }
+  },
+  
   // close the form personalizer, refresh the existing form so that 
   // the changes are shown immediately, or if called from the 
   // maintenance window refresh the record there
@@ -1121,6 +1125,7 @@ isc.OBPersonalizeFormLayout.addProperties({
       statusBarFields.push(barFieldTitles);
       statusBarFields.push(barFieldValues);
     }
-    this.statusBar.setContentLabel(icon, label, statusBarFields);
+        
+    this.statusBar.setContentLabel(icon, label, statusBarFields, OB.I18N.getLabel('OBUIAPP_WindowPersonalization_Guidance'));
   }
 });
