@@ -174,15 +174,6 @@ isc.OBApplicationMenuButton.addProperties({
     this.Super('draw', arguments);
   },
 
-  click: function() {
-    if (this.menu.showing) {
-      this.menu.hide();
-      return false;
-    } else {
-      this.showMenu();
-    }
-  },
-
   initWidget: function() {
     if (this.initWidgetStyle) {
       this.initWidgetStyle();
