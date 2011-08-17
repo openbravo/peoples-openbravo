@@ -498,7 +498,14 @@ isc.OBPersonalizeFormLayout.addProperties({
           prompt: OB.I18N
               .getLabel('OBUIAPP_Personalization_Statusbar_Close'),
           action: function() {
-            owner.saveAndClose();
+            var clz = owner.getWindow().getClass();
+            if (!clz.autoSave) {
+              owner.doClose();
+            } else if (clz.showAutoSaveConfirmation) {
+              owner.doClose();
+            } else {
+              owner.saveAndClose();
+            }
           }
         }, OB.Styles.Personalization.closeButtonProperties);
         this.buttonBar.addMembers([ closeButton ]);
@@ -1003,6 +1010,15 @@ isc.OBPersonalizeFormLayout.addProperties({
     if (this.openedFromMaintenanceWindow) {
       this.maintenanceView.refresh();
     }
+  },
+  
+  getWindow: function() {
+    if (this.openedFromMaintenanceWindow) {
+      return this.maintenanceView.standardWindow;
+    } else if (this.openedInForm) {
+      return this.form.view.standardWindow;
+    }
+    return null;
   },
 
   // called by the buttons in the toolbar of the standard maintenance form/grid
