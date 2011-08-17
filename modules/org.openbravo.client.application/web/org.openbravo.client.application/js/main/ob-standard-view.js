@@ -179,7 +179,7 @@ isc.OBStandardView.addProperties({
   
   isShowingForm: false,
   isEditingGrid: false,
-  
+
   initWidget: function(properties){
     this.messageBar = isc.OBMessageBar.create({
       visibility: 'hidden',
@@ -255,8 +255,12 @@ isc.OBStandardView.addProperties({
     }
     
     if (this.viewForm) {
+      // setDataSource executes setFields which replaces the current fields
+      // We don't want to destroy the associated DataSource objects
+      this.viewForm.destroyItemObjects = false;
       this.viewForm.setDataSource(this.dataSource, this.viewForm.fields);
       this.viewForm.isViewForm = true;
+      this.viewForm.destroyItemObjects = true;
     }
     
     if (this.isRootView) {
