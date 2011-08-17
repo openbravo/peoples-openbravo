@@ -16,3 +16,13 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
+/* ob-tab-styles.js */
+
+isc.OBTabSetMain.addProperties({
+  tabBarAlign: 'right'
+});
+
+isc.OBTabSetChild.addProperties({
+  tabBarAlign: 'right'
+});
