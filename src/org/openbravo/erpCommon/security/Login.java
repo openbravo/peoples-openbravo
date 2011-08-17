@@ -245,7 +245,7 @@ public class Login extends HttpBaseServlet {
 
     Module module = OBDal.getInstance().get(Module.class, GOOGLE_INTEGRATION_MODULE_ID);
 
-    showGoogleIcon = (module != null);
+    showGoogleIcon = (module != null && module.isActive());
 
     if (sysInfo == null) {
       log4j.error("System information not found");
