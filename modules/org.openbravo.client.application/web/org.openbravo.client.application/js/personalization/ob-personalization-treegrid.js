@@ -134,6 +134,17 @@ isc.OBPersonalizationTreeGrid.addProperties({
     if (folder && folder.name === '/') {
       return;
     }
+    
+    // don't allow required fields without default value 
+    // to be dropped on the statusbar
+    if (folder.name === OB.Personalization.STATUSBAR_GROUPNAME) {
+      for (i = 0; i < nodes.length; i++) {
+        if (!nodes[i].wasOnStatusBarField && nodes[i].required && !nodes[i].hasDefaultValue) {
+          return;
+        }
+      }
+    }
+    
 //    
 //    // check if the nodes are all dropped on their current parent
 //    // in the same place they are now (note index + i is done, as
@@ -228,19 +239,10 @@ isc.OBPersonalizationTreeGrid.addProperties({
     // do not exist on the rest of the form)
     if (record.isStatusBarField) {
       menuItems.add({
-        title: OB.I18N.getLabel('OBUIAPP_Personalization_Hidden'),
-        checked: record.hiddenInForm,
+        title: OB.I18N.getLabel('OBUIAPP_Personalization_Displayed'),
+        checked: !record.hiddenInForm,
         click: function() {
           updatePropertyFunction(record, 'hiddenInForm', !record.hiddenInForm);
-        }        
-      });
-    } else if (record.isDynamicStatusBarField) {
-      // dynamic status bar fields exist on the form, so they can be removed
-      // from the status bar
-      menuItems.add({
-        title: OB.I18N.getLabel('OBUIAPP_Personalization_RemoveFromStatusBar'),
-        click: function() {
-          me.removeData(record);
         }        
       });
     } else {
@@ -252,13 +254,17 @@ isc.OBPersonalizationTreeGrid.addProperties({
           updatePropertyFunction(record, 'startRow', !record.startRow);
         }        
       });
-      menuItems.add({
-        title: OB.I18N.getLabel('OBUIAPP_Personalization_Displayed'),
-        checked: !record.hiddenInForm,
-        click: function() {
-          updatePropertyFunction(record, 'hiddenInForm', !record.hiddenInForm);
-        }        
-      });
+      
+      if (record.wasOnStatusBarField || !record.required || record.hasDefaultValue) {
+        menuItems.add({
+          title: OB.I18N.getLabel('OBUIAPP_Personalization_Displayed'),
+          checked: !record.hiddenInForm,
+          click: function() {
+            updatePropertyFunction(record, 'hiddenInForm', !record.hiddenInForm);
+          }        
+        });
+      }
+      
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_Personalization_FirstFocus'),
         checked: record.firstFocus,

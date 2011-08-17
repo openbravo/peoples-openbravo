@@ -199,6 +199,7 @@ OB.Personalization.updatePersonalizationDataFromFields = function(dataFields, fi
         startRow : fld.startRow,
         colSpan : fld.colSpan,
         required: fld.required,
+        hasDefaultValue: fld.hasDefaultValue,
         rowSpan : fld.rowSpan
       };
     }
@@ -238,6 +239,9 @@ OB.Personalization.updatePersonalizationDataFromFields = function(dataFields, fi
       record.parentName = OB.Personalization.STATUSBAR_GROUPNAME;
       // these items can not be moved from the statusbar
       record.isStatusBarField = true;
+      // keep track that this at one point was a 
+      // status bar field, allow it to be put back there
+      record.wasOnStatusBarField = true;
     }
   }
 

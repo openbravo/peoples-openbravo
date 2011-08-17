@@ -301,6 +301,12 @@ isc.OBPersonalizeFormLayout.addProperties({
           this.showItem('startRow');
         }
         
+        if (!record.wasOnStatusBarField && !record.isStatusBarField && record.required && !record.hasDefaultValue) {
+          this.hideItem('displayed');
+        } else {
+          this.showItem('displayed');
+        }
+        
         this.rememberValues();
       },
       

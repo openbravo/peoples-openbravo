@@ -335,6 +335,8 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     public String getReadOnlyIf();
 
     public boolean isDisplayed();
+
+    public boolean getHasDefaultValue();
   }
 
   public class OBViewFieldAudit implements OBViewFieldDefinition {
@@ -391,6 +393,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     @Override
     public String getReferencedKeyColumnName() {
       return "";
+    }
+
+    public boolean getHasDefaultValue() {
+      return false;
     }
 
     @Override
@@ -527,6 +533,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public String getType() {
       return getUIDefinition().getName();
+    }
+
+    public boolean getHasDefaultValue() {
+      return field.getColumn().getDefaultValue() != null;
     }
 
     public String getFieldProperties() {
@@ -708,6 +718,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public String getFieldProperties() {
       return "";
+    }
+
+    public boolean getHasDefaultValue() {
+      return false;
     }
 
     public boolean isReadOnly() {
@@ -1074,6 +1088,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
   public class OBViewFieldSpacer implements OBViewFieldDefinition {
 
     public boolean isPersonalizable() {
+      return false;
+    }
+
+    public boolean getHasDefaultValue() {
       return false;
     }
 

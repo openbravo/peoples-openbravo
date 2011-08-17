@@ -33,6 +33,7 @@
         startRow: ${fieldDefinition.startRow?string},
         endRow: ${fieldDefinition.endRow?string},
         personalizable: ${fieldDefinition.personalizable?string},
+        hasDefaultValue: ${fieldDefinition.hasDefaultValue?string},
         <#if fieldDefinition.standardField>
         columnName: '${fieldDefinition.columnName?string}',
         inpColumnName: '${fieldDefinition.inpColumnName?string}',

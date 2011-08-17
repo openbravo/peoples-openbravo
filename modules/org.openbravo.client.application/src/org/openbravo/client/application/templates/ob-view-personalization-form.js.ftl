@@ -47,6 +47,7 @@
                 displayed: false,
             </#if>
             required: ${fieldDefinition.required?string},
+            hasDefaultValue: ${fieldDefinition.hasDefaultValue?string},
             <#if fieldDefinition.searchField>
                 showPickerIcon: ${(!fieldDefinition.parentProperty)?string},
             </#if>
