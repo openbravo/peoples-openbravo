@@ -62,9 +62,6 @@ isc.ClassFactory.defineClass('OBPersonalizeFormLayout', isc.VLayout);
 
 isc.OBPersonalizeFormLayout.addProperties({
 
-  // is set when called from the personalization grid
-  personalizationId: null,
-
   // the datastructure with personalization information
   personalizationData: null,
   
@@ -641,7 +638,7 @@ isc.OBPersonalizeFormLayout.addProperties({
           if (!me.personalizationData) {
             me.personalizationData = {};
           }
-          if (data && data.canDelete) {
+          if (data && data.canDelete && me.personalizationData.canDelete !== false) {
             me.personalizationData.canDelete = true;            
           }
           if (data && data.personalizationId) {
@@ -860,19 +857,26 @@ isc.OBPersonalizeFormLayout.addProperties({
   },
   
   buildFormAndTree: function() {
+    var computedPersonalizationData;
     
     this.buildPreviewForm();
     
     // if no personalization data then we need to compute it from the form
     // the personalization data can also be set directly (when called from 
     // the maintenance window)
-    if (!this.personalizationData) {
+    if (!this.personalizationData || !this.personalizationData.form) {
       if (this.form) {
-        this.personalizationData = OB.Personalization.getPersonalizationDataFromForm(this.form);
+        computedPersonalizationData = OB.Personalization.getPersonalizationDataFromForm(this.form);
       } else {
         // create from the previewForm
-        this.personalizationData = OB.Personalization.getPersonalizationDataFromForm(this.previewForm);
+        computedPersonalizationData = OB.Personalization.getPersonalizationDataFromForm(this.previewForm);
       }
+      if (!this.personalizationData) {
+        this.personalizationData = {};
+      }
+      
+      // and copy over what got computed
+      isc.addProperties(this.personalizationData, computedPersonalizationData);
     }
     
     // personalize the preview form, this will remove any non-personalized

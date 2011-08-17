@@ -88,13 +88,13 @@
   // and register the toolbar button the window personalization tab  
   var windowPersonalizationTabButtonProperties = {
     action: function() {
-      var personalizationData = null, personalizeForm, view = this.view, grid = view.viewGrid,
+      var personalizationData = {}, personalizeForm, view = this.view, grid = view.viewGrid,
         record = grid.getSelectedRecord();
       if (record.value) {
         personalizationData = isc.JSON.decode(record.value);
-        personalizationData.personalizationId = record.id;
-        personalizationData.canDelete = false;
       }
+      personalizationData.personalizationId = record.id;
+      personalizationData.canDelete = false;
       
       personalizeForm = isc.OBPersonalizeFormLayout.create({
         personalizationData: personalizationData,
