@@ -82,14 +82,12 @@ OB.Styles.Personalization.TabSet = {
     buttonConstructor: isc.OBTabBarButton,
 
     buttonProperties: {
-      // prevent the orange hats, TODO: this not work
-      // don't know why...
-      // another solution is to do a custom style but that's a lot of work
+      // prevent the orange hats
+      customState: 'Inactive',
+      
       src: '',
       capSize: 14,
-      titleStyle: 'OBTabBarButtonChildTitle',
-      showSelected: false,
-      showFocused: false
+      titleStyle: 'OBTabBarButtonChildTitle'
     }
   },
   tabBarPosition: 'top',
