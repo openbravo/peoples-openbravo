@@ -365,14 +365,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     propertiesLayout.formLayout.addMembers(propertiesLayout.formLayout.form);
     
     // and the button bar
-    propertiesLayout.formLayout.buttons = isc.HStack.create({
-      layoutTopMargin: 10,
-      membersMargin: 10,
-      align: 'center',
-      overflow: 'visible',
-      height: 1,
-      width: '100%',
-      
+    propertiesLayout.formLayout.buttons = isc.HStack.create(OB.Styles.Personalization.PropertiesLayout.ButtonStack, {
       changeButtonState: function(state) {
         var i = 0;
         for (i = 0; i < this.members.length; i++) {

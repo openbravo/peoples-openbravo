@@ -73,6 +73,17 @@ OB.Styles.Personalization.PropertiesLayout = {
   styleName: 'OBFormPersonalizerPropertiesPane'
 };
 
+OB.Styles.Personalization.PropertiesLayout.ButtonStack = {
+  layoutTopMargin: 10,
+  layoutLeftMargin: 15,
+  layoutRightMargin: 0,
+  align: 'left',
+  membersMargin: 10,
+  overflow: 'visible',
+  height: 1,
+  width: '100%'
+};
+
 // used to display a tab header above sections of the personalization form
 OB.Styles.Personalization.TabSet = {
   tabBarProperties: {
@@ -91,6 +102,7 @@ OB.Styles.Personalization.TabSet = {
     }
   },
   tabBarPosition: 'top',
+  tabBarAlign: 'left',
   width: '100%',
   height: '100%',
   overflow: 'hidden',

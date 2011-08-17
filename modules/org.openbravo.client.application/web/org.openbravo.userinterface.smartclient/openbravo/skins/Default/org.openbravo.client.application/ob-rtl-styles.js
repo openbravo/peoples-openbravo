@@ -17,6 +17,36 @@
  ************************************************************************
 */
 
+/* ob-form-styles.js */
+
+isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
+  icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/sectionItem-ico-RTL.png'
+});
+
+
+/* ob-personalization-styles.js */
+
+OB.Styles.Personalization.Icons.fieldGroup = OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconFolder-RTL.png';
+OB.Styles.Personalization.TabSet.tabBarAlign = 'right';
+
+OB.Styles.Personalization.PropertiesLayout.ButtonStack.layoutLeftMargin = 0;
+OB.Styles.Personalization.PropertiesLayout.ButtonStack.layoutRightMargin = 15;
+OB.Styles.Personalization.PropertiesLayout.ButtonStack.align = 'right';
+
+
+/* ob-statusbar-styles.js */
+
+isc.OBStatusBarLeftBar.addProperties({
+  layoutLeftMargin: 0,
+  layoutRightMargin: 10,
+  align: 'right'
+});
+
+isc.OBStatusBarIconButtonBar.addProperties({
+  align: 'left'
+});
+
+
 /* ob-tab-styles.js */
 
 isc.OBTabSetMain.addProperties({

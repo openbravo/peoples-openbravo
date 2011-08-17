@@ -16,3 +16,37 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
+/* ob-form-styles.css */
+
+.OBFormFieldSelectInputRequired,
+.OBFormFieldSelectInputRequiredDisabled,
+.OBFormFieldSelectInputRequiredFocused,
+.OBFormFieldSelectInputRequiredError,
+.OBFormFieldSelectInputRequiredHint,
+
+.OBFormFieldSelectInput,
+.OBFormFieldSelectInputError,
+.OBFormFieldSelectInputSelectedFocused,
+.OBFormFieldSelectInputFocused,
+.OBFormFieldSelectInputDisabled {
+  border-width: 1px 1px 1px 0px;
+}
+
+
+/* ob-personalization-styles.css */
+
+.OBFormPersonalizerPreviewPanel {
+  border-width: 0px 5px 0px 0px;
+}
+
+
+/* ob-statusbar-styles.css */
+
+.OBStatusBarTextLabel {
+  text-align: right;
+}
+
+.OBStatusBarIconButtonBar {
+  margin: 0px 0px 0px 20px;
+}
