@@ -498,8 +498,10 @@ isc.OBPersonalizeFormLayout.addProperties({
           prompt: OB.I18N
               .getLabel('OBUIAPP_Personalization_Statusbar_Close'),
           action: function() {
-            var clz = owner.getWindow().getClass();
-            if (!clz.autoSave) {
+            var clz = (owner.getWindow() ? owner.getWindow().getClass() : null);
+            if (!clz) {
+              owner.doClose();              
+            } else if (!clz.autoSave) {
               owner.doClose();
             } else if (clz.showAutoSaveConfirmation) {
               owner.doClose();
