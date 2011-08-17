@@ -3,4 +3,5 @@ echo "Performing jslint check on all js resources"
 find ./modules -name '*.js' -and ! -path '*isomorphic*' \
 -and ! -path '*qunit*' -and ! -path '*docs*' \
 -and ! -path '*LAB*' -and ! -path '*benchmark*' \
--and ! -path '*smartclient*' | xargs -n1 ./modules/org.openbravo.client.kernel/jslint/jslint || exit 1
+-and ! -path '*smartclient*' \
+-and ! -path '*scopeleaks*' | xargs -n1 ./modules/org.openbravo.client.kernel/jslint/jslint || exit 1
