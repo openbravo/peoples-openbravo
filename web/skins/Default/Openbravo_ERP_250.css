@@ -5519,8 +5519,8 @@ table.Login_ToolBar_bg {
   padding-top: 10px;
   position: absolute;
   top: 0;
-  left: 50%;
-  margin-left: -375px;
+  left: 50%; /*~RTL   right: 50%; */
+  margin-left: -375px; /*~RTL   margin-right: -395px; */
 }
 
 .Login_LogForm {
@@ -5536,7 +5536,7 @@ table.Login_ToolBar_bg {
 }
 
 .Login_LogForm dl {
-  padding-left: 80px;
+  padding-left: 80px; /*~RTL   padding-right: 80px; */
   position: relative;
 }
 
@@ -5658,7 +5658,7 @@ table.Login_ToolBar_bg {
   position: relative;
   clear: left;
   padding-top: 10px;
-  left: 260px;
+  left: 250px; /*~RTL   right: 250px; */
 }
 
 .Login_BottomLogos_Openbravo_Logo_Container {
@@ -5670,7 +5670,7 @@ table.Login_ToolBar_bg {
   position: relative;
   clear: left;
   padding-top: 5px;
-  padding-left: 50px;
+  padding-left: 50px; /*~RTL   padding-right: 60px; */
   background-color: white;
 }
 
