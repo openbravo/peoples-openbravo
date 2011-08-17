@@ -130,6 +130,9 @@ isc.OBViewGrid.addProperties({
   // reached
   drawAllMaxCells: 0,
   
+  // the default is enabled which is a commonly used field
+  recordEnabledProperty: '_enabled',
+  
   // keeps track if we are in objectSelectionMode or in toggleSelectionMode
   // objectSelectionMode = singleRecordSelection === true
   singleRecordSelection: false,
