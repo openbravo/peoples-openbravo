@@ -159,17 +159,19 @@ OB.ViewFormProperties = {
   editRecord: function(record, preventFocus, hasChanges, focusFieldName){
     
     var ret = this.Super('editRecord', arguments);
-    this.doEditRecordActions(preventFocus, record._new);
-    if (hasChanges) {
-      this.setHasChanged(true);
-    }
-    
-    this.view.setTargetRecordInWindow(record.id);
     
     // used when clicking on a cell in a grid
     if (!preventFocus && focusFieldName) {
       this.forceFocusedField = focusFieldName;
     }
+
+    this.doEditRecordActions(preventFocus, record._new);
+
+    if (hasChanges) {
+      this.setHasChanged(true);
+    }
+    
+    this.view.setTargetRecordInWindow(record.id);
     
     return ret;
   },
