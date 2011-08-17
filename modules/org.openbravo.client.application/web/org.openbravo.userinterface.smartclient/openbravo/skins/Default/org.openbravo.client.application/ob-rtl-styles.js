@@ -38,7 +38,7 @@ OB.Styles.Personalization.PropertiesLayout.ButtonStack.align = 'right';
 
 isc.OBStatusBarLeftBar.addProperties({
   layoutLeftMargin: 0,
-  layoutRightMargin: 10,
+  layoutRightMargin: 7,
   align: 'right'
 });
 

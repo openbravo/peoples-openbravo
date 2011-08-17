@@ -84,6 +84,14 @@ isc.OBStatusBarIconButton.addProperties({
   initWidgetStyle: function() {
     var fileExt = this.genericIconSrc.substring(this.genericIconSrc.lastIndexOf('.'), this.genericIconSrc.length);
     var filePath = this.genericIconSrc.substring(0, this.genericIconSrc.length - fileExt.length) + '-';
-    this.setSrc(filePath + this.buttonType + fileExt);
+    var buttonType = this.buttonType;
+    if (isc.Page.isRTL()) {
+      if (buttonType === 'next') {
+        buttonType = 'previous';
+      } else if (buttonType === 'previous') {
+        buttonType = 'next';
+      }
+    }
+    this.setSrc(filePath + buttonType + fileExt);
   }
 });

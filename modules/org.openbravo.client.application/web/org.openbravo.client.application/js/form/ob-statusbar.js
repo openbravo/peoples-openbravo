@@ -321,24 +321,46 @@ isc.OBStatusBar.addProperties( {
 
   updateContentTitle: function(arrayTitleField, message) {
     var msg = '', i;
-    if (this.statusCode) {
-      msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
-    }
-    if (arrayTitleField) {
-      for (i = 0; i < arrayTitleField[0].length; i++) {
-        if (i !== 0 || this.statusCode) {
+    if (!isc.Page.isRTL()) { // LTR mode
+      if (this.statusCode) {
+        msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
+      }
+      if (arrayTitleField) {
+        for (i = 0; i < arrayTitleField[0].length; i++) {
+          if (i !== 0 || this.statusCode) {
+            msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
+          }
+          msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + arrayTitleField[0][i] + ': ' + '</span>';
+          msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
+        }
+      }
+      if (message) {
+        if (arrayTitleField || this.statusCode) {
           msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
         }
-        msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + arrayTitleField[0][i] + ': ' + '</span>';
-        msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
+        msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + message + '</span>';
+      }
+    } else { // RTL mode
+      if (message) {
+        msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + message + '</span>';
+        if (arrayTitleField || this.statusCode) {
+          msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
+        }
+      }
+      if (arrayTitleField) {
+        for (i = arrayTitleField[0].length-1; i >= 0; i--) {
+          msg += '<span class="' + (this.fieldLabelStyle?this.fieldLabelStyle:'') + '">' + this.getValidValue(arrayTitleField[1][i]) + '</span>';
+          msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + ' :' + arrayTitleField[0][i] + '</span>';
+          if (i !== 0 || this.statusCode) {
+            msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
+          }
+        }
+      }
+      if (this.statusCode) {
+        msg += '<span class="' + (this.statusLabelStyle?this.statusLabelStyle:'') + '">' + OB.I18N.getLabel(this.statusCode) + '</span>';
       }
     }
-    if (message) {
-      if (arrayTitleField || this.statusCode) {
-        msg += '<span class="' + (this.separatorLabelStyle?this.separatorLabelStyle:'') + '">' + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>';
-      }
-      msg += '<span class="' + (this.titleLabelStyle?this.titleLabelStyle:'') + '">' + message + '</span>';      
-    }
+
     if (this.labelOverflowHidden) {
       msg = '<nobr>' + msg + '</nobr>';
     }
