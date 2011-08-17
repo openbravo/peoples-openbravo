@@ -115,12 +115,20 @@ isc.OBTabSetMain.addProperties({
     };
     OB.KeyboardManager.Shortcuts.set('TabSet_SelectChildTab', 'Canvas', ksAction_SelectChildTab);
     var ksAction_SelectPreviousTab = function() {
-      me.selectPreviousTab();
+      if (!isc.Page.isRTL()) { // LTR mode
+        me.selectPreviousTab();
+      } else { // RTL mode
+        me.selectNextTab();
+      }
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('TabSet_SelectPreviousTab', 'Canvas', ksAction_SelectPreviousTab);
     var ksAction_SelectNextTab = function() {
-      me.selectNextTab();
+      if (!isc.Page.isRTL()) { // LTR mode
+        me.selectNextTab();
+      } else { // RTL mode
+        me.selectPreviousTab();
+      }
       return false; //To avoid keyboard shortcut propagation
     };
     OB.KeyboardManager.Shortcuts.set('TabSet_SelectNextTab', 'Canvas', ksAction_SelectNextTab);
