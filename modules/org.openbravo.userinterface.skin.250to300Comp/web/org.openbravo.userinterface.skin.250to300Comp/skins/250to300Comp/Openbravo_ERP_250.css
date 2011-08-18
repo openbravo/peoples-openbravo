@@ -381,7 +381,6 @@ th.DataGrid_Header_Cell_sorted {
 }
 
 th.DataGrid_Header_LineNoCell {
-  text-align: left;
   border-top: 1px solid #000000;
   border-bottom: 1px solid #A7ABB4;
   border-right: 1px solid #A7ABB4;
@@ -853,7 +852,7 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
   border: 0px none;
   vertical-align: top;
   text-align: left; /*~RTL   text-align: right; */
-  text-indent:3px; /*~RTL   text-indent:0px; */
+  text-indent:3px;
   border-collapse: collapse;
   padding-top: 5px;
   padding-right: 4px; /*~RTL   padding-left:4px; */

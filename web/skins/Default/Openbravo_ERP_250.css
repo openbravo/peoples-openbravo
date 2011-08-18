@@ -2895,7 +2895,7 @@ a.LabelLink {
   background-repeat: no-repeat;
   background-position: top left; /*~RTL   background-position: 98% 0; */
   background-image: url(Common/Label/link.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
-  padding-left: 9px; /*~RTL   padding-right: 10px; */
+  padding-left: 9px; /*~RTL   padding-right: 14px; */
   color: #2985BA;
   text-decoration: none;
   /*~RTL   background-attachment: scroll; */
@@ -4430,7 +4430,7 @@ td.TableEdition_ThreeCells_width {
   border: 0px none;
   vertical-align: top;
   text-align: right; /*~RTL   text-align: left;*/ 
-  text-indent:3px; /*~RTL   text-indent:0px; */ 
+  text-indent:3px;
   border-collapse: collapse;
   padding-top: 5px;
   padding-right:4px; /*~RTL   padding-left:4px; */ 
@@ -4448,7 +4448,7 @@ td.TableEdition_ThreeCells_width {
   border: 0px none;
   vertical-align: top;
   text-align: left; /*~RTL   text-align: right; */ 
-  text-indent:3px; /*~RTL   text-indent:0px; */
+  text-indent:3px;
   border-collapse: collapse;
   padding-top: 5px;
   padding-right: 4px; /*~RTL   padding-left:4px; */ 
@@ -9237,16 +9237,6 @@ table.Popup_Client_Help_SubClient {
   border-collapse: collapse;
 }
 
-.TitleCell {
-  border: 0px none;
-  vertical-align: top;
-  text-align: right;
-  text-indent: 3px;
-  border-collapse: collapse;
-  padding-top: 5px;
-  padding-right: 4px;
-}
-
 td.Popup_Client_Help_SubClient_Links {
   border: 0px none;
   vertical-align: top;
@@ -9408,16 +9398,6 @@ td.Popup_Client_UserOps_VertSeparator {
 .Popup_Client_UserOps_SubClient {
   border: 0px none;
   -moz-outline-style: none;
-}
-
-.TitleCell {
-  border: 0px none;
-  vertical-align: top;
-  text-align: right;
-  text-indent: 3px;
-  border-collapse: collapse;
-  padding-top: 5px;
-  padding-right: 4px;
 }
 
 td.Popup_Client_UserOps_SubClient_Links {
