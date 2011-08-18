@@ -328,26 +328,25 @@ isc.OBSelectorWidget
               changeField(this.outFields[i].fieldName, '');
             }
           }
-          return;
-        }
-
-        for (i in this.outFields) {
-          if (this.outFields.hasOwnProperty(i)) {
-            selectedObj[i] = selected[i];
-            if (!this.outFields[i]) {
-              // skip id and _identifier and other columns without
-              // associated tab field
-              continue;
-            }
-
-            if (this.outFields[i].suffix) {
-              hiddenInput = this.outHiddenInputs[this.outHiddenInputPrefix + this.outFields[i].suffix];
-              if (hiddenInput) {
-                hiddenInput.value = selected[i] ? selected[i] : '';
+        } else {
+          for (i in this.outFields) {
+            if (this.outFields.hasOwnProperty(i)) {
+              selectedObj[i] = selected[i];
+              if (!this.outFields[i]) {
+                // skip id and _identifier and other columns without
+                // associated tab field
+                continue;
               }
-            }
 
-            changeField(this.outFields[i].fieldName, selected[i]);
+              if (this.outFields[i].suffix) {
+                hiddenInput = this.outHiddenInputs[this.outHiddenInputPrefix + this.outFields[i].suffix];
+                if (hiddenInput) {
+                  hiddenInput.value = selected[i] ? selected[i] : '';
+                }
+              }
+
+              changeField(this.outFields[i].fieldName, selected[i]);
+            }
           }
         }
 
