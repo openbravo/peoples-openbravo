@@ -52,6 +52,7 @@
   OB.APRM.APFT_GLItems = [];
   OB.APRM.APFT_GLItemsId = 0;
   OB.APRM.HasGLItems = false;
+  OB.APRM.APFT_bp = null;
 function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
   var strText = '';
   if (getReadyStateHandler(XMLHttpRequestObj)) {
@@ -87,13 +88,38 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
   }
   return true;
 }
+
 function loadGridList() {
-  try {
-    var url = '../org.openbravo.advpaymentmngt.ad_actionbutton/AddPaymentFromTransaction.html';
-    var paramXMLReq = null;
-    return submitXmlHttpRequest(callBackGrid, document.frmMain, 'GRIDLIST', url, false, null, paramXMLReq);
-  } catch (e) {
-    alert(e);
+  if (OB.APRM.APFT_bp === null ||
+      OB.APRM.APFT_bp !== frmMain['inpcBpartnerId'].value ||
+      OB.APRM.APFT_fa !== frmMain['inpFinancialAccountId'].value ||
+      OB.APRM.APFT_ddf !== frmMain['inpDueDateFrom'].value ||
+      OB.APRM.APFT_ddt !== frmMain['inpDueDateTo'].value ||
+      OB.APRM.APFT_tdf !== frmMain['inpTransDateFrom'].value ||
+      OB.APRM.APFT_tdt !== frmMain['inpTransDateTo'].value ||
+      OB.APRM.APFT_dt !== frmMain['inpDocumentType'].value ||
+      OB.APRM.APFT_cu !== frmMain['inpCurrencyId'].value ||
+      OB.APRM.APFT_dn !== frmMain['inpDocumentNo'].value ||
+      OB.APRM.APFT_re !== frmMain['isReceipt'].value) {
+
+    OB.APRM.APFT_bp = frmMain['inpcBpartnerId'].value;
+    OB.APRM.APFT_fa = frmMain['inpFinancialAccountId'].value;
+    OB.APRM.APFT_ddf = frmMain['inpDueDateFrom'].value;
+    OB.APRM.APFT_ddt = frmMain['inpDueDateTo'].value;
+    OB.APRM.APFT_tdf = frmMain['inpTransDateFrom'].value;
+    OB.APRM.APFT_tdt = frmMain['inpTransDateTo'].value;
+    OB.APRM.APFT_dt = frmMain['inpDocumentType'].value;
+    OB.APRM.APFT_cu = frmMain['inpCurrencyId'].value;
+    OB.APRM.APFT_dn = frmMain['inpDocumentNo'].value;
+    OB.APRM.APFT_re = frmMain['isReceipt'].value;
+
+	  try {
+	    var url = '../org.openbravo.advpaymentmngt.ad_actionbutton/AddPaymentFromTransaction.html';
+	    var paramXMLReq = null;
+	    return submitXmlHttpRequest(callBackGrid, document.frmMain, 'GRIDLIST', url, false, null, paramXMLReq);
+	  } catch (e) {
+	    alert(e);
+	  }
   }
 }
 function callBackPaymentMethod(paramXMLParticular, XMLHttpRequestObj) {
