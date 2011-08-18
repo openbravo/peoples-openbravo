@@ -266,11 +266,16 @@ isc.OBSelectorPopupWindow.addProperties({
   destroy: function () {
     // Destroy the selectorGrid to avoid memory leaks
     if(this.selectorGrid) {
+      if(this.selectorGrid.dataSource &&
+         this.selector.form.destroyItemObjects) {
+        this.selectorGrid.dataSource.destroy();
+        this.selectorGrid.dataSource = null;
+      }
       this.selectorGrid.destroy();
       this.selectorGrid = null;
     }
 
-    if(this.dataSource) {
+    if(this.dataSource && this.selector.form.destroyItemObjects) {
       this.dataSource.destroy();
       this.dataSource = null;
     }
@@ -625,12 +630,13 @@ isc.OBSelectorItem.addProperties({
 
   destroy: function () {
     // Explicitly destroy the selector window to avoid memory leaks
-    if(this.form.destroyItemObjects) {
-      if(this.selectorWindow) {
-        this.selectorWindow.destroy();
-        this.selectorWindow = null;
-      }
+    if(this.selectorWindow) {
+      this.selectorWindow.destroy();
+      this.selectorWindow = null;
+    }
 
+    // Only destroy the optionDataSource if is allowed by the form
+    if(this.form.destroyItemObjects) {
       if(this.optionDataSource) {
         this.optionDataSource.destroy();
         this.optionDataSource = null;
@@ -809,12 +815,13 @@ isc.OBSelectorLinkItem.addProperties({
 
   destroy: function () {
     // Explicitly destroy the selector window to avoid memory leaks
-    if(this.form.destroyItemObjects) {
-      if(this.selectorWindow) {
-        this.selectorWindow.destroy();
-        this.selectorWindow = null;
-      }
+    if(this.selectorWindow) {
+      this.selectorWindow.destroy();
+      this.selectorWindow = null;
+    }
 
+    // Only destroy the optionDataSource if is allowed by the form
+    if(this.form.destroyItemObjects) {
       if(this.optionDataSource) {
         this.optionDataSource.destroy();
         this.optionDataSource = null;
