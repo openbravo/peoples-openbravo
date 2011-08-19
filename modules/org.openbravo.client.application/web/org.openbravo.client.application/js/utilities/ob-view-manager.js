@@ -330,20 +330,12 @@
           // eventhough there is already an open tab
           // still refresh it
           if (viewTabId !== null) {
-            loadingPane = tabSet.getTab(viewTabId) && tabSet.getTab(viewTabId).pane;
 
             // refresh the view
-            // Note: updateTab doesn't remove the previous loading tab
-            // http://www.smartclient.com/docs/8.1/a/b/c/go.html#method..TabSet.updateTab
             tabSet.updateTab(viewTabId, viewInstance);
 
             // and show it
             tabSet.selectTab(viewTabId);
-
-            // Destroying the loading tab
-            if(loadingPane && !viewInstance.myOB) {
-              loadingPane.destroy();
-            }
 
             // tell the viewinstance what tab it is on
             // note do not use tabId on the viewInstance

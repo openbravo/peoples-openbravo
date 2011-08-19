@@ -284,6 +284,17 @@ isc.OBTabSetMain.addProperties({
     this.Super('removeTabs', [toRemove]);
     OB.Layout.HistoryManager.updateHistory();
     return true;
+  },
+
+  updateTab: function (tab, pane) {
+    var previousPane = tab && pane && tab.pane;
+    // Note: updateTab doesn't remove the previous loading tab
+    // http://www.smartclient.com/docs/8.1/a/b/c/go.html#method..TabSet.updateTab
+    if(previousPane) {
+      previousPane.destroy();
+      previousPane = null;
+    }
+    this.Super('updateTab', arguments);
   }
 });
 
