@@ -41,6 +41,41 @@
 }
 
 
+/* ob-popup-styles.js */
+
+.OBPopupHeaderIcon {
+  margin: 0px 4px 0px 0px;
+}
+
+.OBPopupIconMinimize,
+.OBPopupIconMinimizeOver,
+.OBPopupIconMinimizeDown,
+.OBPopupIconMinimizeDisabled {
+  margin: 0px 0px 0px 4px;
+}
+
+.OBPopupIconMaximize,
+.OBPopupIconMaximizeOver,
+.OBPopupIconMaximizeDown,
+.OBPopupIconMaximizeDisabled {
+  margin: 0px 0px 0px 4px;
+}
+
+.OBPopupIconRestore,
+.OBPopupIconRestoreOver,
+.OBPopupIconRestoreDown,
+.OBPopupIconRestoreDisabled {
+  margin: 0px 0px 0px 4px;
+}
+
+.OBPopupIconClose,
+.OBPopupIconCloseOver,
+.OBPopupIconCloseDown,
+.OBPopupIconCloseDisabled {
+  margin: 0px 0px 0px 4px;
+}
+
+
 /* ob-statusbar-styles.css */
 
 .OBStatusBarTextLabel {
