@@ -26,7 +26,19 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
   headerLabel: null,
 
   createWindowContents: function(){
-    var layout = isc.VStack.create({height:'100%', width:'100%', styleName:''});
+    var layout = isc.VStack.create({
+      height:'100%',
+      width:'100%',
+      styleName:'',
+      resizeTo: function() {
+        var emptySize;
+        if (this.separator) {
+          emptySize = Math.round((this.width - 155) / 2);
+          this.separator.width = emptySize;
+        }
+        this.Super('resizeTo', arguments);
+      }
+    });
 
     if(!OB.Application.brandingWidget) {
       // set a global pointer to ourselves
@@ -71,7 +83,7 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
   },
 
   setOBContent: function(haveInternet, communityBrandingUrl) {
-    var url, params = {};
+    var url, params = {}, emptySize, toolTip, purposeStack;
 
     if (haveInternet) {
       url = document.location.protocol + communityBrandingUrl;
@@ -86,9 +98,9 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
     var loadingBar = layout.members[this.windowContents.members.length-1];
 
     this.versionLabel = isc.Label.create({contents: this.versionText,
-      height: '36px',
+      height: '22px',
       width:'100%',
-      styleName: this.getPurposeStyleClass(),
+      styleName: 'OBWidgetCommunityBranding',
       align: 'center'
     });
 
@@ -96,11 +108,31 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
         contentsType: 'page',
         contentsURL: url,
         contentsURLParams: params,
-        height: '324px',
-        width: '100%'
+        height: '324px'
       });
 
+    toolTip = isc.Label.create({contents: '',
+      height: '5px',
+      width:'155px',
+      styleName: this.getPurposeStyleClass(),
+      prompt:OB.I18N.getLabel('OBKMO_InstancePurpose')
+    });
+
+    emptySize = (layout.width - 155) / 2;
+
+    layout.separator = isc.Label.create({contents: '',
+      height: '5px',
+      width: emptySize
+    });
+
+    purposeStack = isc.HStack.create({height:'24px', width:'100%'});
+    purposeStack.addMembers(layout.separator);
+    purposeStack.addMembers(toolTip);
+    purposeStack.addMembers(layout.separator);
+
     layout.removeMember(loadingBar);
+
+    layout.addMember(purposeStack);
     layout.addMember(this.versionLabel);
     layout.addMember(content);
   },
