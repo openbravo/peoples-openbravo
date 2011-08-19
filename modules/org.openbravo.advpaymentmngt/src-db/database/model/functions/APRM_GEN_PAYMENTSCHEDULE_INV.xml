@@ -164,6 +164,7 @@ BEGIN
       cur_payments RECORD;
       cur_order_schdet_ISOPEN BOOLEAN:=false;
       fetch_next_order_item BOOLEAN:=true;
+      next_order BOOLEAN := FALSE;
       v_TargetDocBaseType C_DOCTYPE.DocBaseType%TYPE;
       v_isReversal C_DOCTYPE.IsReversal%TYPE;
       v_MultiplierARC NUMBER:=1;
@@ -183,14 +184,15 @@ BEGIN
       v_new_scheduledetailid VARCHAR2(32);
       v_ConsumedGranTotal NUMBER:= 0;
       v_paymentCount NUMBER:= 0;
-      v_negativeOrder NUMBER:= 1;
+      v_negativePS NUMBER:= 1;
 
       CURSOR cur_order_schdet (invoice_id VARCHAR) IS
-      SELECT c_orderline.c_order_id AS order_id, fin_payment_scheduledetail.amount + COALESCE(fin_payment_scheduledetail.writeoffamt,0) AS amount,
+      SELECT DISTINCT c_orderline.c_order_id AS order_id, fin_payment_scheduledetail.amount + COALESCE(fin_payment_scheduledetail.writeoffamt,0) AS amount,
              fin_payment_scheduledetail_id,
              fin_payment_scheduledetail.fin_payment_schedule_order,
              fin_payment_scheduledetail.fin_payment_detail_id,
-             CASE WHEN fin_payment.status IN ('PPM', 'RPR', 'PWNC', 'RDNC', 'RPPC') THEN 'Y' ELSE 'N' END AS paid
+             CASE WHEN fin_payment.status IN ('PPM', 'RPR', 'PWNC', 'RDNC', 'RPPC') THEN 'Y' ELSE 'N' END AS paid,
+             CASE WHEN fin_payment_scheduledetail.fin_payment_detail_id is not null THEN 0 ELSE 1 END AS priority
       FROM c_invoiceline, c_orderline, fin_payment_schedule,
         fin_payment_scheduledetail LEFT JOIN fin_payment_detail ON fin_payment_scheduledetail.fin_payment_detail_id = fin_payment_detail.fin_payment_detail_id
                                    LEFT JOIN fin_payment ON fin_payment_detail.fin_payment_id = fin_payment.fin_payment_id
@@ -201,7 +203,6 @@ BEGIN
         AND c_invoiceline.c_invoice_id = invoice_id
       ORDER BY CASE WHEN fin_payment_scheduledetail.fin_payment_detail_id is not null THEN 0 ELSE 1 END, c_orderline.c_order_id;
       order_schdet cur_order_schdet%ROWTYPE;
-      next_order BOOLEAN := FALSE;
 
     BEGIN
       v_ResultStr:='Generating FIN_PAYMENT_SCHEDULE';
@@ -231,6 +232,7 @@ BEGIN
       
       IF (v_pendingAmount <> 0) THEN
 
+        --get number of payment schedules expected for the invoice
         SELECT count(*) INTO v_paymentcount
         FROM (
             SELECT line, percentage, onremainder, excludetax,
@@ -248,6 +250,7 @@ BEGIN
                    fixmonthoffset, netday, isnextbusinessday
             FROM c_paymentterm
             WHERE c_paymentterm_id=v_paymentterm) a;
+
         FOR cur_payments IN (
             SELECT line, percentage, onremainder, excludetax,
                    COALESCE(paymentrule, v_paymentrule) AS paymentrule,
@@ -267,7 +270,7 @@ BEGIN
             ORDER BY line
           )
         LOOP
-          -- Decrease v_paymentcount, when its value is 0 it's tha last payment.
+          -- Decrease v_paymentcount, when its value is 0 it's the last payment.
           v_paymentcount := v_paymentcount - 1;
           v_plannedDate:=C_Paymentduedate(v_bpartner_id, v_issotrx, cur_payments.fixmonthday, cur_payments.fixmonthday2, cur_payments.fixmonthday3, cur_payments.netdays, cur_payments.fixmonthoffset, cur_payments.netday, cur_payments.isnextbusinessday, v_dateinvoiced);
 
@@ -282,9 +285,13 @@ BEGIN
           END IF;
           v_pendingamount := v_pendingamount - v_paymentamount;
           v_scheduledamount := C_Currency_Round((v_paymentamount * v_multiplierarc), v_currency_id, NULL);
+          IF (v_scheduledamount < 0) THEN
+            v_negativeps := -1;
+          ELSE
+            v_negativeps := 1;
+          END IF;
 
           v_ResultStr:='Inserting in FIN_PAYMENT_SCHEDULE table';
-
           v_payment_schedule_invoice := get_uuid();
           INSERT INTO fin_payment_schedule
           (
@@ -302,7 +309,7 @@ BEGIN
             v_scheduledamount, v_PaymentPriority
           );
 
-          -- loop for payment schedule details
+          -- loop for payment schedule details of related orders
           LOOP
             -- open cursor once
             IF (NOT cur_order_schdet_ISOPEN) THEN
@@ -316,25 +323,19 @@ BEGIN
               EXIT WHEN cur_order_schdet%NOTFOUND;
               v_scheduledetailid := order_schdet.fin_payment_scheduledetail_id;
               v_scheduledetailamount := order_schdet.amount;
+              next_order := FALSE;
             ELSE
               v_scheduledetailamount := v_differenceamount;
               v_scheduledetailid := v_new_scheduledetailid;
             END IF;
 
             IF (order_schdet.order_id <> v_oldorder) THEN
-              next_order := FALSE;
               -- get invoiced amount for the order
               SELECT COALESCE(SUM(c_invoiceline.linenetamt+c_getinvoiceline_taxamount(c_invoiceline.c_invoiceline_id)),0) INTO v_invoicedamount
               FROM c_invoiceline, c_orderline
               WHERE c_invoiceline.c_orderline_id = c_orderline.c_orderline_id
                 AND c_invoiceline.c_invoice_id = p_record_id
                 AND c_orderline.c_order_id = order_schdet.order_id;
-
-              IF (v_invoicedamount < 0 ) THEN
-                v_negativeOrder := -1;
-              ELSE
-                v_negativeOrder := 1;
-              END IF;
 
               --if v_count = 0 the order is completely invoiced on this invoice.
               IF (v_IsSOTrx = 'Y') THEN
@@ -353,55 +354,53 @@ BEGIN
                   GROUP BY ol.c_orderline_id, ol.qtyordered) a
                 WHERE a.matchedqty != a.qtyordered;
               END IF;
+            END IF;
 
-              -- invoiced amount for the order plan cannot be higher than total order plan amount.
-              -- sometimes there is a difference due to taxes. that amount will be compensated at the end.
-              -- if the order is of negative amount convert to positive.
-              IF (v_count = 0 AND (v_invoicedamount * v_negativeOrder > order_schdet.amount * v_negativeOrder)) THEN
-                v_invoicedamount := order_schdet.amount;
-              END IF;
-
-              -- substract previously assigned amount
+            --If the order is completely invoiced the whole amount of the psd has to be included on the invoice.
+            IF (v_count = 0) THEN
+              v_notassignedamount := v_scheduledetailamount;
+            ELSE 
               SELECT COALESCE(SUM(psd.amount),0) INTO v_assignedamount
               FROM fin_payment_schedule ps_inv, fin_payment_scheduledetail psd,
-                   fin_payment_schedule ps_ord
+                 fin_payment_schedule ps_ord
               WHERE ps_inv.fin_payment_schedule_id = psd.fin_payment_schedule_invoice
                 AND psd.fin_payment_schedule_order = ps_ord.fin_payment_schedule_id
                 AND ps_inv.c_invoice_id = p_record_id
                 AND ps_ord.c_order_id = order_schdet.order_id;
 
+              -- substract previously assigned amount
               v_notassignedamount := (COALESCE(v_invoicedamount,0) - COALESCE(v_assignedamount,0));
             END IF;
 
-            IF (v_notassignedamount = 0) THEN
+            -- If there is no amount left to assign from the order to the invoice and the order is not completely
+            -- invoiced move to next order payment schedule detail.
+            -- Example 1: an order with a partial prepayment and is partially invoiced with the prepayment amount, the
+            -- psd that remains unpaid shall not be included in the invoice.
+            -- Example 2: an order with a partial prepayment and is invoiced completely changing the price so the grand
+            -- total is exactly the amount of the prepayment, the psd that remaing unpaid shall be included in the invoice.
+            IF (v_notassignedamount = 0 AND v_count <> 0) THEN
               next_order := TRUE;
             END IF;
-            -- create a new payment schedule detail if necessary
             IF (NOT next_order) THEN
               v_differenceamount := 0;
-              IF ((v_notassignedamount * v_negativeOrder <= v_scheduledamount * v_negativeOrder)) THEN
+              --1st condition: split order's payment schedule detail in case that not all the amount has been invoiced.
+              --2nd condition: invoiced amount is higher than the scheduled amount, calculate the difference and split
+              --the payment schedule detail of the order.
+              IF ((v_notassignedamount * v_negativeps <= v_scheduledamount * v_negativePS)) THEN
                 v_differenceamount := COALESCE(v_scheduledetailamount,0) - COALESCE(v_notassignedamount,0);
-              ELSIF ((v_scheduledamount * v_negativeOrder < v_notassignedamount * v_negativeOrder)) THEN
+              ELSIF ((v_scheduledamount * v_negativeps < v_notassignedamount * v_negativePS)) THEN
                 v_differenceamount := COALESCE(v_scheduledetailamount,0) - COALESCE(v_scheduledamount,0);
               END IF;
 
-              -- The order is completely invoiced and it is the last payment schedule
+              -- The order is completely invoiced and it is the last payment schedule. All the pending amount of the
+              -- order has to be assigned to this invoice, a regulation psd only related to this invoice will be 
+              -- generated later to match the difference.
               IF(v_Count = 0 AND v_paymentcount = 0) THEN
                 v_differenceamount:= 0;
-                -- Calculate
-                SELECT COALESCE(SUM(amount), 0) + v_pendingAmountFromOrder INTO v_pendingAmountFromOrder
-                FROM fin_payment_scheduledetail
-                WHERE fin_payment_schedule_order = order_schdet.fin_payment_schedule_order
-                      AND fin_payment_schedule_invoice is null
-                      AND fin_payment_scheduledetail_id <> v_scheduledetailid;
-                -- link remaining payment schedule detail from order to the invoice as it is fully invoiced
-                UPDATE fin_payment_scheduledetail
-                SET fin_payment_schedule_invoice = v_payment_schedule_invoice
-                WHERE fin_payment_schedule_order = order_schdet.fin_payment_schedule_order
-                      AND fin_payment_schedule_invoice is null
-                      AND fin_payment_scheduledetail_id <> v_scheduledetailid;
               END IF;
 
+              --When difference amount is not 0 the payment schedule detail of the order has to be split. The difference
+              --amount is the amount of the new psd that is not related to any invoice.
               IF (v_differenceamount <> 0) THEN
                 -- continue with the same payment schedule detail
                 fetch_next_order_item := false;
@@ -452,11 +451,10 @@ BEGIN
                 WHERE fin_payment_schedule_id = v_payment_schedule_invoice;
               END IF;
 
-              v_notassignedamount := v_notassignedamount - v_scheduledetailamount;
               v_scheduledamount := v_scheduledamount - v_scheduledetailamount;
 
-              IF (v_scheduledamount <= 0 AND v_paymentcount > 0) THEN
-                -- actual payment processed.
+              IF (v_scheduledamount * v_negativeps <= 0 AND v_paymentcount > 0) THEN
+                -- actual invoice's payment schedule processed.
                 v_oldorder := order_schdet.order_id;
                 EXIT;
               END IF;
@@ -465,8 +463,8 @@ BEGIN
             v_oldorder := order_schdet.order_id;
           END LOOP;
 
-          IF (v_scheduledamount - v_pendingAmountFromOrder != 0 ) THEN
-            -- no orders, insert payment schedule detail with remaining amount
+          IF (v_scheduledamount <> 0 ) THEN
+            -- no more orders, insert payment schedule detail with remaining amount
             INSERT INTO fin_payment_scheduledetail
             (
               fin_payment_scheduledetail_id, ad_client_id, ad_org_id, isactive,
