@@ -132,7 +132,7 @@
     v_SeqNoCounter := 20; --Reserve 10 for Organization
     
     FOR Cur_Column IN(-- added by Pablo Sarobe
-    SELECT c.Columnname, c.Name, c.Description, c.AD_Column_ID, c.FieldLength, t.tablename, c.AD_Module_ID
+    SELECT c.Columnname, c.Name, c.Description, c.Help, c.AD_Column_ID, c.FieldLength, t.tablename, c.AD_Module_ID
     FROM AD_Column c, AD_Table t
     WHERE NOT EXISTS
       (SELECT *
@@ -201,7 +201,7 @@
         (
           ad_field_id, ad_client_id, ad_org_id, isactive,
           created, createdby, updated, updatedby,
-          name, description, seqno, AD_Tab_ID,
+          name, description, help, seqno, AD_Tab_ID,
           AD_Column_ID, DisplayLength, IsCentrallyMaintained,
           isdisplayed, isreadonly, sortno, issameline, showinrelation, ad_module_id,
           grid_seqNo
@@ -209,7 +209,7 @@
         VALUES
         (v_NextNo, '0', '0', 'Y',
         now(), '0', now(), '0',
-        Cur_Column.Name, Cur_Column.Description, v_SeqNo, v_Record_ID,
+        Cur_Column.Name, Cur_Column.Description, Cur_Column.Help, v_SeqNo, v_Record_ID,
         Cur_Column.AD_Column_ID, v_DisplayLength, 'Y', 
         v_isDisplayed, v_isReadOnly, v_sortNo, 'N', v_showInRelation, v_fieldModule,
         v_gridSeqno) ;
