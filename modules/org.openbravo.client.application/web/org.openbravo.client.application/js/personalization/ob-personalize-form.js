@@ -337,7 +337,6 @@ isc.OBPersonalizeFormLayout.addProperties({
         this.record.rowSpan = this.getValue('rowSpan');
         this.record.firstFocus = this.getValue('firstFocus');
 
-        this.buttons.changeButtonState(false);
         this.rememberValues();
         this.focus();
         
@@ -352,54 +351,16 @@ isc.OBPersonalizeFormLayout.addProperties({
       doCancel: function() {
         this.reset();
         this.focus();
-        this.buttons.changeButtonState(false);
       },
       
       // called when a field in the form changes
       // enable the apply/cancel buttons
       itemChanged: function(item, newValue) {
-        this.buttons.changeButtonState(true);
+        this.doSave();
       }
     });
     
     propertiesLayout.formLayout.addMembers(propertiesLayout.formLayout.form);
-    
-    // and the button bar
-    propertiesLayout.formLayout.buttons = isc.HStack.create(OB.Styles.Personalization.PropertiesLayout.ButtonStack, {
-      changeButtonState: function(state) {
-        var i = 0;
-        for (i = 0; i < this.members.length; i++) {
-          if (state) {
-            this.members[i].enable();
-          } else {
-            this.members[i].disable();            
-          }
-        }
-      }
-    });
-
-    propertiesLayout.formLayout.buttons.addMembers(isc.OBFormButton.create({
-      container: propertiesLayout.formLayout.buttons,
-      disabled: true,
-      form: propertiesLayout.formLayout.form,
-      title: OB.I18N.getLabel('OBUIAPP_Apply'),
-      click: function(){
-        this.form.doSave();
-      }
-    }));
-    
-    propertiesLayout.formLayout.buttons.addMembers(isc.OBFormButton.create({
-      container: propertiesLayout.formLayout.buttons,
-      form: propertiesLayout.formLayout.form,
-      disabled: true,
-      title: OB.I18N.getLabel('UINAVBA_Cancel'),
-      click: function(){
-        this.form.doCancel();
-      }
-    }));
-    
-    propertiesLayout.formLayout.form.buttons = propertiesLayout.formLayout.buttons;
-    propertiesLayout.formLayout.addMembers(propertiesLayout.formLayout.buttons);
     
     // the empty message is shown when no field is selected on the left
     propertiesLayout.emptyMessage = 
@@ -460,7 +421,6 @@ isc.OBPersonalizeFormLayout.addProperties({
       } else {
         this.propertiesTabSet.setTabTitle(this.propertiesTabSet.getTab(0), record.title);
         this.formLayout.form.setRecord(record);
-        this.formLayout.form.buttons.changeButtonState(false);
         this.hideMember(this.emptyMessage);
         this.showMember(propertiesLayout.formLayout);
         // set focus to the first one if we get focus

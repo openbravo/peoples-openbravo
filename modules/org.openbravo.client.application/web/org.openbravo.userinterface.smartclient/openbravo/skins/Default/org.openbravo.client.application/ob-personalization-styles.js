@@ -65,7 +65,7 @@ OB.Styles.Personalization.Preview = {
 };
 
 OB.Styles.Personalization.PropertiesTabSet = {
-  expandedHeight: 225,
+  expandedHeight: 175,
   collapsedHeight: 35
 };
 
