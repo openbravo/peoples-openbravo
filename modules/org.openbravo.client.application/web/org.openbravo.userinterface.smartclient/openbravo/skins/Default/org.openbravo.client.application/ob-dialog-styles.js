@@ -44,6 +44,7 @@ isc.Dialog.addProperties({
   bodyColor: 'transparent',
   bodyStyle: 'OBPopupBody',
   headerStyle: 'OBPopupHeader',
+  messageStyle: 'OBDialogLabel',
 
   layoutMargin: 0,
   membersMargin: 0,
