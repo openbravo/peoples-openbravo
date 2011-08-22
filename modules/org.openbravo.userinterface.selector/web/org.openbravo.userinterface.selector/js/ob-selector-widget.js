@@ -351,7 +351,7 @@ isc.OBSelectorWidget
           }
         }
 
-        if (typeof setWindowEditing === 'function') {
+        if (document.getElementById('linkButtonEdition') && typeof setWindowEditing === 'function') {
           setWindowEditing(true);
         }
 
@@ -403,7 +403,7 @@ isc.OBSelectorWidget
     // draw now already otherwise the filter does not work the
     // first time
     this.selectorWindow.show();
-    if (this.selectorGrid.filterEditor) {
+    if (this.selectorGrid.clearFilter) {
       this.selectorGrid.clearFilter();
     }
     this.selectorGrid.setFilterEditorCriteria(this.defaultFilter);
@@ -817,7 +817,9 @@ isc.OBSelectorWidget
                 showFilterEditor : true,
                 sortField : this.displayField,
                 filterData : function(criteria, callback, requestProperties) {
-
+                  requestProperties = requestProperties || {};
+                  requestProperties.params = requestProperties.params | {};
+                  requestProperties.params._selectorDefinitionId = this.selectorDefinitionId;
                   if (!criteria) {
                     criteria = {};
                   }
@@ -854,6 +856,10 @@ isc.OBSelectorWidget
 
                 criteria._selectorDefinitionId = this.selector.selectorDefinitionId;
                 criteria._requestType = 'Window';
+                
+                requestProperties = requestProperties || {};
+                requestProperties.params = requestProperties.params | {};
+                requestProperties.params._selectorDefinitionId = this.selectorDefinitionId;
 
                 // and call the super
                 return this.Super('fetchData', [ criteria, callback,
