@@ -29,11 +29,6 @@ isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
 OB.Styles.Personalization.Icons.fieldGroup = OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconFolder-RTL.png';
 OB.Styles.Personalization.TabSet.tabBarAlign = 'right';
 
-OB.Styles.Personalization.PropertiesLayout.ButtonStack.layoutLeftMargin = 0;
-OB.Styles.Personalization.PropertiesLayout.ButtonStack.layoutRightMargin = 15;
-OB.Styles.Personalization.PropertiesLayout.ButtonStack.align = 'right';
-
-
 /* ob-statusbar-styles.js */
 
 isc.OBStatusBarLeftBar.addProperties({
