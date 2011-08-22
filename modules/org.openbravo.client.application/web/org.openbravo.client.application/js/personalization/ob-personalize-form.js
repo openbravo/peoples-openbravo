@@ -604,7 +604,7 @@ isc.OBPersonalizeFormLayout.addProperties({
             me.personalizationData.form = {};
           }
           // overwrite what we have
-          me.personalizationData.form.fields = newDataFields;
+          me.personalizationData.form = newDataFields;
 
           me.initializing = true;
           me.isNew = false;
