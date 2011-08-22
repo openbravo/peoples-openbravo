@@ -438,7 +438,8 @@ isc.OBPersonalizeFormLayout.addProperties({
     var owner = this;
     this.statusBar = isc.OBStatusBar.create({
       view: this,
-
+      buttonBarProperties: OB.Styles.Personalization.buttonBarProperties,
+      
       // add the close button
       addCreateButtons: function() {
         this.buttonBar.setWidth(1);

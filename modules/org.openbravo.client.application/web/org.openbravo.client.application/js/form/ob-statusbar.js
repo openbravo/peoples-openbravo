@@ -161,6 +161,7 @@ isc.OBStatusBar.addProperties( {
   mode : '',
   isActive : true,
   buttonBar : null,
+  buttonBarProperties: {},
 
   initWidget : function() {
     this.contentLabel = isc.OBStatusBarTextLabel.create( {
@@ -172,7 +173,7 @@ isc.OBStatusBar.addProperties( {
     this.leftStatusBar = isc.OBStatusBarLeftBar.create( {});
     this.leftStatusBar.addMember(this.contentLabel);
     
-    this.buttonBar = isc.OBStatusBarIconButtonBar.create( {});
+    this.buttonBar = isc.OBStatusBarIconButtonBar.create(this.buttonBarProperties);
     this.addCreateButtons();
     
     this.savedIcon = isc.Img.create(this.savedIconDefaults);

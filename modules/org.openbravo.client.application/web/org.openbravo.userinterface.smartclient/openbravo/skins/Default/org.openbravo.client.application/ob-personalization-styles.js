@@ -35,6 +35,10 @@ isc.OBPersonalizationTreeGrid.addProperties({
 
 OB.Styles.Personalization = {};
 
+OB.Styles.Personalization.buttonBarProperties = {
+  width: 30
+};
+
 OB.Styles.Personalization.Icons = {
   fieldGroup: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconFolder.png',
   field:  OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/item.png',
