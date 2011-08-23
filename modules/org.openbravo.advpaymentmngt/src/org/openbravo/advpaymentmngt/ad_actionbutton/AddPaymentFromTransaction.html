@@ -53,6 +53,7 @@
   OB.APRM.APFT_GLItemsId = 0;
   OB.APRM.HasGLItems = false;
   OB.APRM.APFT_bp = null;
+  OB.APRM.APPM_bp = null;
 function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
   var strText = '';
   if (getReadyStateHandler(XMLHttpRequestObj)) {
@@ -113,13 +114,13 @@ function loadGridList() {
     OB.APRM.APFT_dn = frmMain['inpDocumentNo'].value;
     OB.APRM.APFT_re = frmMain['isReceipt'].value;
 
-	  try {
-	    var url = '../org.openbravo.advpaymentmngt.ad_actionbutton/AddPaymentFromTransaction.html';
-	    var paramXMLReq = null;
-	    return submitXmlHttpRequest(callBackGrid, document.frmMain, 'GRIDLIST', url, false, null, paramXMLReq);
-	  } catch (e) {
-	    alert(e);
-	  }
+    try {
+      var url = '../org.openbravo.advpaymentmngt.ad_actionbutton/AddPaymentFromTransaction.html';
+      var paramXMLReq = null;
+      return submitXmlHttpRequest(callBackGrid, document.frmMain, 'GRIDLIST', url, false, null, paramXMLReq);
+    } catch (e) {
+      alert(e);
+    }
   }
 }
 function callBackPaymentMethod(paramXMLParticular, XMLHttpRequestObj) {
@@ -137,12 +138,23 @@ function callBackPaymentMethod(paramXMLParticular, XMLHttpRequestObj) {
 }
 
 function loadPaymentMethodCombo() {
-  try {
-    var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddPaymentFromTransaction.html";
-    var paramXMLReq = null;
-    return submitXmlHttpRequest(callBackPaymentMethod, document.frmMain, "PAYMENTMETHODCOMBO", url, false, null, paramXMLReq);
-  } catch (e) {
-    alert(e);
+
+  if (OB.APRM.APPM_bp === null ||
+      OB.APRM.APPM_bp !== frmMain['inpcBpartnerId'].value ||
+      OB.APRM.APPM_fa !== frmMain['inpFinancialAccountId'].value ||
+      OB.APRM.APPM_re !== frmMain['isReceipt'].value) {
+
+    OB.APRM.APPM_bp = frmMain['inpcBpartnerId'].value;
+    OB.APRM.APPM_fa = frmMain['inpFinancialAccountId'].value;
+    OB.APRM.APPM_re = frmMain['isReceipt'].value;
+
+    try {
+      var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/AddPaymentFromTransaction.html";
+      var paramXMLReq = null;
+      return submitXmlHttpRequest(callBackPaymentMethod, document.frmMain, "PAYMENTMETHODCOMBO", url, false, null, paramXMLReq);
+    } catch (e) {
+      alert(e);
+    }
   }
 }
 
