@@ -170,7 +170,7 @@ isc.OBStatusBar.addProperties( {
       height : '100%'
     });
 
-    this.leftStatusBar = isc.OBStatusBarLeftBar.create( {});
+    this.leftStatusBar = isc.OBStatusBarLeftBar.create({});
     this.leftStatusBar.addMember(this.contentLabel);
     
     this.buttonBar = isc.OBStatusBarIconButtonBar.create(this.buttonBarProperties);
@@ -179,12 +179,12 @@ isc.OBStatusBar.addProperties( {
     this.savedIcon = isc.Img.create(this.savedIconDefaults);
     this.newIcon = isc.Img.create(this.newIconDefaults);
     this.editIcon = isc.Img.create(this.editIconDefaults);
-    this.spacer = isc.LayoutSpacer.create( {
+    this.spacer = isc.LayoutSpacer.create({
       width : 14
     });
     this.leftStatusBar.addMember(this.spacer, 0);
 
-    this.addMembers( [ this.leftStatusBar, this.buttonBar ]);
+    this.addMembers([this.leftStatusBar, this.buttonBar]);
     this.Super('initWidget', arguments);
   },
   
@@ -374,6 +374,23 @@ isc.OBStatusBar.addProperties( {
       return '&nbsp;&nbsp;&nbsp;';
     }
     return value;
-  }
+  },
 
+  destroy: function () {
+    if(this.savedIcon) {
+      this.savedIcon.destroy();
+      this.savedIcon = null;
+    }
+
+    if(this.newIcon) {
+      this.newIcon.destroy();
+      this.newIcon = null;
+    }
+
+    if(this.editIcon) {
+      this.editIcon.destroy();
+      this.editIcon = null;
+    }
+    this.Super('destroy', arguments);
+  }
 });
