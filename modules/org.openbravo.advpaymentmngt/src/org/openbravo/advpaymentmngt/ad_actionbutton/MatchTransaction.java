@@ -129,6 +129,10 @@ public class MatchTransaction extends HttpSecureAppServlet {
           updateReconciliation(vars, reconciliation.getId(), strFinancialAccountId, strTabId, false);
         }
 
+        // Force manually created bank statements to be processed
+        forceProcessManualBankStatements(OBDal.getInstance().get(FIN_FinancialAccount.class,
+            strFinancialAccountId));
+
         printPage(response, vars, strOrgId, strWindowId, strTabId, strPaymentTypeFilter,
             strFinancialAccountId, reconciliation.getId(), strShowCleared, strHideDate);
       }
@@ -1147,6 +1151,19 @@ public class MatchTransaction extends HttpSecureAppServlet {
     obc.add(Restrictions.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION));
 
     return (obc.list().size() > 0);
+  }
+
+  private void forceProcessManualBankStatements(FIN_FinancialAccount account) {
+    OBCriteria<FIN_BankStatement> obc = OBDal.getInstance().createCriteria(FIN_BankStatement.class);
+    obc.add(Restrictions.eq(FIN_BankStatement.PROPERTY_ACCOUNT, account));
+    obc.add(Restrictions.eq(FIN_BankStatement.PROPERTY_PROCESSED, false));
+    obc.add(Restrictions.isNotEmpty(FIN_BankStatement.PROPERTY_FINBANKSTATEMENTLINELIST));
+    for (FIN_BankStatement bs : obc.list()) {
+      bs.setProcessed(true);
+      bs.setAPRMProcessBankStatement("R");
+      OBDal.getInstance().save(bs);
+      OBDal.getInstance().flush();
+    }
   }
 
   public String getServletInfo() {
