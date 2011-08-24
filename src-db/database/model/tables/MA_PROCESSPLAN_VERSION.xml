@@ -49,6 +49,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ESTIMATEDTIME" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAPROCESSPLANVERSION">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
