@@ -979,7 +979,7 @@ OB.ViewFormProperties = {
     if (item._hasChanged) {
       this.itemChangeActions();
 
-      this.onFieldChanged(this);
+      this.onFieldChanged(item.form, item, item.getValue());
 
       var i;
       for (i = 0; i < this.dynamicCols.length; i++) {
