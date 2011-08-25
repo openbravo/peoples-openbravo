@@ -89,6 +89,7 @@ if (isMSIE) {
 <link rel="stylesheet" type="text/css" href="./org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_mode=3.00&_skinVersion=Default&_cssDataUri=<%=(!isMSIE || (isMSIE && verMSIE >=8))%>"/>
 
 <title>Openbravo</title>
+<script type="text/javascript" src="./web/org.openbravo.client.kernel/js/scopeleaks.min.js"></script>
 <script type="text/javascript" src="./web/org.openbravo.client.kernel/js/LAB.min.js"></script>
 
 <!-- styles used during loading -->
