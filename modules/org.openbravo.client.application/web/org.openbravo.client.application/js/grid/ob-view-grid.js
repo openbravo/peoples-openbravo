@@ -221,7 +221,7 @@ isc.OBViewGrid.addProperties({
     }
   },
 
-  initWidget: function(){
+  initWidget: function () {
     var i;
     
     // make a copy of the dataProperties otherwise we get 
@@ -290,19 +290,41 @@ isc.OBViewGrid.addProperties({
     '\'].clearFilter();" class="OBLinkButtonItem">' +
     OB.I18N.getLabel('OBUIAPP_GridClearFilter') +
     '</span>';
-    
+
     return ret;
   },
 
   // destroy the context menu also
   // see why this needs to be done in the 
   // documentation of canvas.contextMenu in Canvas.js
-  destroy: function() {
+  destroy: function () {
+    var i, field, fields = this.getFields(), len = fields.length, ds, dataSources = [];
+
+    for(i = 0; i < len; i++) {
+      field = fields[i];
+      editorProperties = field && field.editorProperties;
+      ds = editorProperties && editorProperties.optionDataSource;
+      if(ds) {
+        dataSources.push(ds);
+      }
+    }
+
     if (this.contextMenu) {
       this.contextMenu.destroy();
       this.contextMenu = null;
     }
+
     this.Super('destroy', arguments);
+
+    len = dataSources.length;
+
+    for(i = 0; i < len; i++) {
+      ds = dataSources[i];
+      if(ds) {
+        ds.destroy();
+        ds = null;
+      }
+    }
   },
   
   setData: function(data) {

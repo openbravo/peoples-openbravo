@@ -1535,6 +1535,33 @@ OB.ViewFormProperties = {
     
     delete this.storedFocusItem;
     delete this.storedSelectionRange;    
+  },
+
+  destroy: function () {
+    var i, items = this.getItems(), len = items.length, ds, dataSources = [];
+
+    // caching reference to all DS of Items
+    for (i = 0; i < len; i++) {
+      item = items[i];
+      ds = items && (item.dataSource || item.optionDataSource);
+
+      if(ds) {
+        dataSources.push(ds);
+      }
+    }
+
+    this.Super('destroy', arguments);
+
+    len = dataSources.length;
+
+    // Destroying DS not managed by DynamicForm.destroy
+    for(i = 0; i < len; i++) {
+      ds = dataSources[i];
+      if(ds) {
+        ds.destroy();
+        ds = null;
+      }
+    }
   }
 };
 
