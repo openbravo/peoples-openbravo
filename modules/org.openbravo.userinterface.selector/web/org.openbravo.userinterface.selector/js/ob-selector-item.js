@@ -261,26 +261,6 @@ isc.OBSelectorPopupWindow.addProperties({
   setValueInField: function(){
     this.selector.setValueFromRecord(this.selectorGrid.getSelectedRecord(), true);
     this.hide();
-  },
-
-  destroy: function () {
-    // Destroy the selectorGrid to avoid memory leaks
-    if(this.selectorGrid) {
-      if(this.selectorGrid.dataSource &&
-         this.selector.form.destroyItemObjects) {
-        this.selectorGrid.dataSource.destroy();
-        this.selectorGrid.dataSource = null;
-      }
-      this.selectorGrid.destroy();
-      this.selectorGrid = null;
-    }
-
-    if(this.dataSource && this.selector.form.destroyItemObjects) {
-      this.dataSource.destroy();
-      this.dataSource = null;
-    }
-
-    this.Super('destroy', arguments);
   }
 });
 
@@ -634,14 +614,6 @@ isc.OBSelectorItem.addProperties({
       this.selectorWindow.destroy();
       this.selectorWindow = null;
     }
-
-    // Only destroy the optionDataSource if is allowed by the form
-    if(this.form.destroyItemObjects) {
-      if(this.optionDataSource) {
-        this.optionDataSource.destroy();
-        this.optionDataSource = null;
-      }
-    }
     this.Super('destroy', arguments);
   }
 });
@@ -818,14 +790,6 @@ isc.OBSelectorLinkItem.addProperties({
     if(this.selectorWindow) {
       this.selectorWindow.destroy();
       this.selectorWindow = null;
-    }
-
-    // Only destroy the optionDataSource if is allowed by the form
-    if(this.form.destroyItemObjects) {
-      if(this.optionDataSource) {
-        this.optionDataSource.destroy();
-        this.optionDataSource = null;
-      }
     }
     this.Super('destroy', arguments);
   }
