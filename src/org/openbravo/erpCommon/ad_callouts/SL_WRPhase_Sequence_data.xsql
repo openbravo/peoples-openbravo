@@ -27,7 +27,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT MA_Process_Id as process, costcenteruse as ccuse, preptime, '' as quantity, COALESCE(Outsourced, 'N') as outsourced
+      SELECT MA_Process_Id as process, costcenteruse as ccuse, preptime, '' as quantity, COALESCE(Outsourced, 'N') as outsourced, COALESCE(estimatedtime, 0) as estimatedtime
       FROM MA_Sequence
       WHERE MA_Sequence_Id = ?
       ]]>

@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -72,7 +73,12 @@ public class SL_WRPhase_Sequence extends HttpSecureAppServlet {
     resultado.append("var respuesta = new Array(");
     if (!(strMASequenceID == null || strMASequenceID.equals(""))) {
       SLWRPhaseSequenceData[] data = SLWRPhaseSequenceData.select(this, strMASequenceID);
+
+      BigDecimal estimatedTimeSequence = new BigDecimal(data[0].estimatedtime);
       String strQuantity = SLWRPhaseSequenceData.selectQuantity(this, strMASequenceID, strMAWReqID);
+      BigDecimal Quantity = strQuantity.equals("") ? BigDecimal.ZERO : new BigDecimal(strQuantity);
+      BigDecimal estimatedTimePhase = Quantity.multiply(estimatedTimeSequence);
+
       resultado.append("new Array(\"inpmaProcessId\", \""
           + FormatUtilities.replaceJS((data[0].process.equals("") ? "\"\"" : data[0].process))
           + "\"),\n");
@@ -87,7 +93,9 @@ public class SL_WRPhase_Sequence extends HttpSecureAppServlet {
       resultado
           .append("new Array(\"inpoutsourced\", \""
               + FormatUtilities.replaceJS((data[0].outsourced.equals("") ? "\"\""
-                  : data[0].outsourced)) + "\")\n");
+                  : data[0].outsourced)) + "\"),\n");
+      resultado.append("new Array(\"inpestimatedtime\", \""
+          + FormatUtilities.replaceJS(estimatedTimePhase.toPlainString()) + "\")\n");
     }
 
     resultado.append(");\n");
