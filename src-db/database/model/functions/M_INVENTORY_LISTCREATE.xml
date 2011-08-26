@@ -223,7 +223,7 @@
         AND(v_Locator_ID IS NULL
         OR s.M_Locator_ID=v_Locator_ID)
         AND(v_ABC IS NULL
-        OR o.ABC=v_ABC)
+        OR o.ABC=v_ABC AND o.AD_Org_ID = v_Org_ID)
         AND(v_Warehouse_ID IS NULL
         OR s.M_Locator_ID IN
         (SELECT M_Locator_ID FROM M_Locator WHERE M_Warehouse_ID=v_Warehouse_ID))
