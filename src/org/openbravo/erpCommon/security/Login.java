@@ -255,11 +255,12 @@ public class Login extends HttpBaseServlet {
       obc.setFilterOnReadableOrganization(false);
 
       obc.add(Restrictions.eq(Preference.PROPERTY_PROPERTY, GOOGLE_PREFERENCE_PROPERTY));
-      obc.add(Restrictions.eq(Preference.PROPERTY_SEARCHKEY, "Y"));
+      obc.add(Restrictions.eq(Preference.PROPERTY_SEARCHKEY, "N"));
       obc.add(Restrictions.or(Restrictions.eq(Preference.PROPERTY_VISIBLEATCLIENT, systemClient),
           Restrictions.isNull(Preference.PROPERTY_VISIBLEATCLIENT)));
 
-      showGoogleIcon = obc.count() > 0;
+      // show by default - not show when there is a preference to disable it
+      showGoogleIcon = obc.count() == 0;
     } else {
       showGoogleIcon = (module != null && module.isEnabled());
     }
