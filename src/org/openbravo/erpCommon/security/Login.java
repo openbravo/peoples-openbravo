@@ -25,9 +25,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -35,6 +37,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -44,6 +47,7 @@ public class Login extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
 
   private static final String GOOGLE_INTEGRATION_MODULE_ID = "FF8080813129ADA401312CA1222A0005";
+  private static final String GOOGLE_PREFERENCE_PROPERTY = "OBSEIG_ShowGIcon";
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -242,10 +246,23 @@ public class Login extends HttpBaseServlet {
     String itLink = "";
     String companyLink = "";
     SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
-
     Module module = OBDal.getInstance().get(Module.class, GOOGLE_INTEGRATION_MODULE_ID);
 
-    showGoogleIcon = (module != null && module.isActive());
+    if (ActivationKey.getInstance().isActive()) {
+      Client systemClient = OBDal.getInstance().get(Client.class, "0");
+      OBCriteria<Preference> obc = OBDal.getInstance().createCriteria(Preference.class);
+      obc.setFilterOnReadableClients(false);
+      obc.setFilterOnReadableOrganization(false);
+
+      obc.add(Restrictions.eq(Preference.PROPERTY_PROPERTY, GOOGLE_PREFERENCE_PROPERTY));
+      obc.add(Restrictions.eq(Preference.PROPERTY_SEARCHKEY, "Y"));
+      obc.add(Restrictions.or(Restrictions.eq(Preference.PROPERTY_VISIBLEATCLIENT, systemClient),
+          Restrictions.isNull(Preference.PROPERTY_VISIBLEATCLIENT)));
+
+      showGoogleIcon = obc.count() > 0;
+    } else {
+      showGoogleIcon = (module != null && module.isEnabled());
+    }
 
     if (sysInfo == null) {
       log4j.error("System information not found");
