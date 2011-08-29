@@ -114,15 +114,13 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
 
     stockSecurity = new BigDecimal(strStockSecurity);
     qtyOrdered = (strQtyOrdered.equals("") ? ZERO : new BigDecimal(strQtyOrdered));
-    priceActual = (strPriceActual.equals("") ? ZERO : (new BigDecimal(strPriceActual))).setScale(
-        PricePrecision, BigDecimal.ROUND_HALF_UP);
+    priceActual = (strPriceActual.equals("") ? ZERO : (new BigDecimal(strPriceActual)));
     discount = (strDiscount.equals("") ? ZERO : new BigDecimal(strDiscount));
     priceLimit = (strPriceLimit.equals("") ? ZERO : (new BigDecimal(strPriceLimit))).setScale(
         PricePrecision, BigDecimal.ROUND_HALF_UP);
     priceList = (strPriceList.equals("") ? ZERO : (new BigDecimal(strPriceList))).setScale(
         PricePrecision, BigDecimal.ROUND_HALF_UP);
-    priceStd = (strPriceStd.equals("") ? ZERO : (new BigDecimal(strPriceStd))).setScale(
-        PricePrecision, BigDecimal.ROUND_HALF_UP);
+    priceStd = (strPriceStd.equals("") ? ZERO : (new BigDecimal(strPriceStd)));
     LineNetAmt = (strLineNetAmt.equals("") ? ZERO : (new BigDecimal(strLineNetAmt))).setScale(
         PricePrecision, BigDecimal.ROUND_HALF_UP);
     /*
@@ -152,21 +150,17 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
       } else {
         // priceStd needs to be changed?
-        BigDecimal expectedPriceActual = new BigDecimal(SLOrderProductData.getOffersPrice(this,
+        BigDecimal expectedPriceActual = new BigDecimal(SLOrderAmtData.getOffersPrice(this,
             dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct, priceStd.toString(),
-            strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
-        if (expectedPriceActual.scale() > PricePrecision)
-          expectedPriceActual = expectedPriceActual.setScale(PricePrecision,
-              BigDecimal.ROUND_HALF_UP);
+            strQty, dataOrder[0].mPricelistId));
 
         // To avoid rounding issues if the expected priceActual is equals to the current
         // priceActual.
         // Do not do anything.
         if (!priceActual.equals(expectedPriceActual)) {
-          priceStd = new BigDecimal(SLOrderProductData.getOffersStdPrice(this,
+          priceStd = new BigDecimal(SLOrderAmtData.getOffersStdPrice(this,
               dataOrder[0].cBpartnerId, expectedPriceActual.toString().replace("\"", ""),
-              strProduct, dataOrder[0].dateordered, strQty, dataOrder[0].mPricelistId,
-              dataOrder[0].id));
+              strProduct, dataOrder[0].dateordered, strQty, dataOrder[0].mPricelistId));
         }
         // priceList
         resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
@@ -242,15 +236,11 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       if (discount1.compareTo(discount2) != 0) // checks if rounded
       // discount has changed
       {
-        priceStd = priceList.subtract(priceList.multiply(discount).divide(new BigDecimal("100"),
-            12, BigDecimal.ROUND_HALF_EVEN));
-        priceActual = new BigDecimal(SLOrderProductData.getOffersPrice(this,
+	priceStd = priceList.subtract(priceList.multiply(discount).divide(new BigDecimal("100"),
+	            12, BigDecimal.ROUND_HALF_EVEN));
+        priceActual = new BigDecimal(SLOrderAmtData.getOffersPrice(this,
             dataOrder[0].dateordered, dataOrder[0].cBpartnerId, strProduct,
-            priceStd.toPlainString(), strQty, dataOrder[0].mPricelistId, dataOrder[0].id));
-        if (priceStd.scale() > PricePrecision)
-          priceStd = priceStd.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-        if (priceActual.scale() > PricePrecision)
-          priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+            priceStd.toPlainString(), strQty, dataOrder[0].mPricelistId));
         resultado.append("new Array(\"inppriceactual\", " + priceActual.toString() + "),");
         resultado.append("new Array(\"inppricestd\", " + priceStd.toString() + "),");
       }
