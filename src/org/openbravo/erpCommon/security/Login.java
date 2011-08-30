@@ -247,7 +247,7 @@ public class Login extends HttpBaseServlet {
     Module module = OBDal.getInstance().get(Module.class, GOOGLE_INTEGRATION_MODULE_ID);
 
     if (ActivationKey.getInstance().isActive()) {
-      String hql = "from ADPreference pref where searchKey = :value and property = :prop and (visibleAtClient is null or visibleAtClient.id = '0')";
+      String hql = "from ADPreference pref where searchKey like :value and property = :prop and (visibleAtClient is null or visibleAtClient.id = '0')";
       Query q = OBDal.getInstance().getSession().createQuery(hql);
       q.setParameter("value", "N");
       q.setParameter("prop", GOOGLE_PREFERENCE_PROPERTY);
