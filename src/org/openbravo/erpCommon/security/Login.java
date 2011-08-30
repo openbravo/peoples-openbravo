@@ -25,11 +25,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.Query;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -37,7 +36,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -249,18 +247,13 @@ public class Login extends HttpBaseServlet {
     Module module = OBDal.getInstance().get(Module.class, GOOGLE_INTEGRATION_MODULE_ID);
 
     if (ActivationKey.getInstance().isActive()) {
-      Client systemClient = OBDal.getInstance().get(Client.class, "0");
-      OBCriteria<Preference> obc = OBDal.getInstance().createCriteria(Preference.class);
-      obc.setFilterOnReadableClients(false);
-      obc.setFilterOnReadableOrganization(false);
-
-      obc.add(Restrictions.eq(Preference.PROPERTY_PROPERTY, GOOGLE_PREFERENCE_PROPERTY));
-      obc.add(Restrictions.eq(Preference.PROPERTY_SEARCHKEY, "N"));
-      obc.add(Restrictions.or(Restrictions.eq(Preference.PROPERTY_VISIBLEATCLIENT, systemClient),
-          Restrictions.isNull(Preference.PROPERTY_VISIBLEATCLIENT)));
+      String hql = "from ADPreference pref where searchKey = :value and property = :prop and (visibleAtClient is null or visibleAtClient.id = '0')";
+      Query q = OBDal.getInstance().getSession().createQuery(hql);
+      q.setParameter("value", "N");
+      q.setParameter("prop", GOOGLE_PREFERENCE_PROPERTY);
 
       // show by default - not show when there is a preference to disable it
-      showGoogleIcon = obc.count() == 0;
+      showGoogleIcon = q.list().size() == 0;
     } else {
       showGoogleIcon = (module != null && module.isEnabled());
     }
