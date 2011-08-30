@@ -585,6 +585,12 @@ OB.ViewFormProperties = {
       delete this.inFicCall;
       return;
     }
+
+    if (data._readOnly || this.view.readOnly) {
+      this.readOnly = true;
+    } else {
+      this.readOnly = false;
+    }
     
     var columnValues = data.columnValues, calloutMessages = data.calloutMessages,
                        auxInputs = data.auxiliaryInputValues, prop, value, i, j,
@@ -640,11 +646,6 @@ OB.ViewFormProperties = {
 
     if (dynamicCols) {
       this.dynamicCols = dynamicCols;
-    }
-    if (data._readOnly || this.view.readOnly) {
-      this.readOnly = true;
-    } else {
-      this.readOnly = false;
     }
 
     // grid editing    
