@@ -445,9 +445,11 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
-
+    //Modify the quantity of lines to count per Window
+    var dataPageSizeaux = OB.PropertyStore.get('dataPageSize',this.view.windowId);
+    this.dataPageSize = (dataPageSizeaux) ? +dataPageSizeaux : 100;
   },
-  
+
   show: function(){
     var ret = this.Super('show', arguments);
     
