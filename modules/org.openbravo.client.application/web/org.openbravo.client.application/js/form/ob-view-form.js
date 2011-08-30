@@ -595,7 +595,8 @@ OB.ViewFormProperties = {
     var columnValues = data.columnValues, calloutMessages = data.calloutMessages,
                        auxInputs = data.auxiliaryInputValues, prop, value, i, j,
                        dynamicCols = data.dynamicCols,
-                       sessionAttributes = data.sessionAttributes, item, section;
+                       sessionAttributes = data.sessionAttributes, item, section,
+                       retHiddenInputs = data.hiddenInputs;
 
     // edit row has changed when returning, don't update the form anymore
     if (this.grid && this.grid.getEditRow() !== editRow) {
@@ -618,6 +619,12 @@ OB.ViewFormProperties = {
         if (columnValues.hasOwnProperty(prop)) {
           this.processColumnValue(prop, columnValues[prop], editValues);
         }
+      }
+    }
+    
+    if(retHiddenInputs) {
+      for(prop in retHiddenInputs) {
+        this.hiddenInputs[prop] = retHiddenInputs[prop];
       }
     }
     
