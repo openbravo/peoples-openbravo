@@ -410,6 +410,7 @@ isc.OBViewGrid.addProperties({
   },
   
   setView: function(view){
+    var dataPageSizeaux;
     this.view = view;
     this.editFormDefaults.view = view;
     if (this.view.standardWindow.viewState && this.view.standardWindow.viewState[this.view.tabId]) {
@@ -446,8 +447,8 @@ isc.OBViewGrid.addProperties({
       }
     }
     //Modify the quantity of lines to count per Window
-    var dataPageSizeaux = OB.PropertyStore.get('dataPageSize',this.view.windowId);
-    this.dataPageSize = (dataPageSizeaux) ? +dataPageSizeaux : 100;
+    dataPageSizeaux = OB.PropertyStore.get('dataPageSize',this.view.windowId);
+    this.dataPageSize = dataPageSizeaux ? +dataPageSizeaux : 100;
   },
 
   show: function(){
