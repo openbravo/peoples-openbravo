@@ -40,6 +40,7 @@ import org.openbravo.model.ad.utility.Image;
 /**
  * Contains several methods used in the Image related servlets
  * 
+ * This class was contributed by Francois Le Roux
  */
 class ImageUtils {
 
