@@ -624,7 +624,9 @@ OB.ViewFormProperties = {
     
     if(retHiddenInputs) {
       for(prop in retHiddenInputs) {
-        this.hiddenInputs[prop] = retHiddenInputs[prop];
+        if(retHiddenInputs.hasOwnProperty(prop)){
+          this.hiddenInputs[prop] = retHiddenInputs[prop];
+        }
       }
     }
     
