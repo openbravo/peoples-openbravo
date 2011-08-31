@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.Image;
 
@@ -40,7 +41,7 @@ import org.openbravo.model.ad.utility.Image;
  * Contains several methods used in the Image related servlets
  * 
  */
-public class ImageUtils {
+class ImageUtils {
 
   private static final String ETAG_ALGORITHM = "MD5";
   protected static final String RESPONSE_HEADER_ETAG = "ETag";
@@ -90,61 +91,66 @@ public class ImageUtils {
    */
   public static void outputImageResource(final HttpServletRequest req,
       final HttpServletResponse resp, final String imageType) throws IOException, ServletException {
+    try {
+      OBContext.setAdminMode(true);
 
-    // enforce cache validation/checks every time
-    resp.addHeader(RESPONSE_HEADER_CACHE_CONTROL, RESPONSE_NO_CACHE);
-    VariablesSecureApp vars = new VariablesSecureApp(req);
+      // enforce cache validation/checks every time
+      resp.addHeader(RESPONSE_HEADER_CACHE_CONTROL, RESPONSE_NO_CACHE);
+      VariablesSecureApp vars = new VariablesSecureApp(req);
 
-    Image img = null;
-    if (imageType == "logo") {
-      String logo = vars.getStringParameter("logo");
-      String org = vars.getStringParameter("orgId");
-      img = Utility.getImageLogoObject(logo, org);
-      if (img == null) {
-        byte[] imageFileContent = Utility.getImageLogo(logo, org);
-        String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(imageFileContent);
-        resp.setContentType(mimeType);
-        OutputStream out = resp.getOutputStream();
-        resp.setContentLength(imageFileContent.length);
-        out.write(imageFileContent);
-        out.close();
-        return;
-      }
-    } else {
-      img = Utility.getImageObject(vars.getStringParameter("id"));
-    }
-    String imageID = "IMGTAG" + img.getUpdated().toString();
-
-    if (ImageUtils.isImageResponseRequired(req, resp, imageID)) {
-
-      // read the image data
-      byte[] imgByte = img.getBindaryData();
-
-      // write the mimetype
-      String mimeType = img.getMimetype();// write the mimetype
-      if (mimeType == null) {
-        mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img.getBindaryData());
-        if (img != null) {
-          // If there is an OBContext, we attempt to save the MIME type of the image
-          updateMimeType(img.getId(), mimeType);
+      Image img = null;
+      if (imageType == "logo") {
+        String logo = vars.getStringParameter("logo");
+        String org = vars.getStringParameter("orgId");
+        img = Utility.getImageLogoObject(logo, org);
+        if (img == null) {
+          byte[] imageFileContent = Utility.getImageLogo(logo, org);
+          String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(imageFileContent);
+          resp.setContentType(mimeType);
+          OutputStream out = resp.getOutputStream();
+          resp.setContentLength(imageFileContent.length);
+          out.write(imageFileContent);
+          out.close();
+          return;
         }
+      } else {
+        img = Utility.getImageObject(vars.getStringParameter("id"));
       }
+      String imageID = "IMGTAG" + img.getUpdated().toString();
 
-      if (!mimeType.equals("")) {
-        resp.setContentType(mimeType);
+      if (ImageUtils.isImageResponseRequired(req, resp, imageID)) {
+
+        // read the image data
+        byte[] imgByte = img.getBindaryData();
+
+        // write the mimetype
+        String mimeType = img.getMimetype();// write the mimetype
+        if (mimeType == null) {
+          mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img.getBindaryData());
+          if (img != null) {
+            // If there is an OBContext, we attempt to save the MIME type of the image
+            updateMimeType(img.getId(), mimeType);
+          }
+        }
+
+        if (!mimeType.equals("")) {
+          resp.setContentType(mimeType);
+        }
+
+        // write the image
+        OutputStream out = resp.getOutputStream();
+        resp.setContentLength(imgByte.length);
+        out.write(imgByte);
+        out.close();
+
+      } else {
+        resp.sendError(HttpServletResponse.SC_NOT_MODIFIED);
+        resp.setDateHeader(RESPONSE_HEADER_LASTMODIFIED,
+            req.getDateHeader(REQUEST_HEADER_IFMODIFIEDSINCE));
+
       }
-
-      // write the image
-      OutputStream out = resp.getOutputStream();
-      resp.setContentLength(imgByte.length);
-      out.write(imgByte);
-      out.close();
-
-    } else {
-      resp.sendError(HttpServletResponse.SC_NOT_MODIFIED);
-      resp.setDateHeader(RESPONSE_HEADER_LASTMODIFIED,
-          req.getDateHeader(REQUEST_HEADER_IFMODIFIEDSINCE));
-
+    } finally {
+      OBContext.restorePreviousMode();
     }
 
   }
