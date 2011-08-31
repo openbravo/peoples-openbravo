@@ -385,9 +385,9 @@ function updateTotal() {
       frm.inpActualPayment.value = frm.inpGeneratedCredit.value;
     }
     updateDifference();
-    if (OB.APRM.HasGLItems === 'undefined' || !OB.APRM.HasGLItems) {
+    //if (OB.APRM.HasGLItems === 'undefined' || !OB.APRM.HasGLItems) {
       //return;
-    }
+    //}
   } else if (!chk.length) {
     scheduledPaymentDetailId = frm.inpRecordId0.value;
     pendingAmount = frm.elements["inpRecordAmt" + scheduledPaymentDetailId].value;
@@ -613,7 +613,7 @@ function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action
       if (!validateSelectedAmounts(chk.value, compare(selectedTotal, '<', actualPayment), action)) {
         return false;
       }
-    } else if ( !allowNotSelectingPendingPayment || compare(document.frmMain.inpDifference.value, '==', "0") ){
+    } else if ( !allowNotSelectingPendingPayment || compare(actualPayment, '==', "0")){
       showJSMessage('APRM_JSNOTLINESELECTED');
       return false;
     }
@@ -629,7 +629,7 @@ function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action
       }
     }
     if (!isAnyChecked &&
-        (!allowNotSelectingPendingPayment || compare(document.frmMain.inpDifference.value, '==', "0")) 
+        (!allowNotSelectingPendingPayment || compare(actualPayment, '==', "0"))
         ) {
       showJSMessage('APRM_JSNOTLINESELECTED');
       return false;
