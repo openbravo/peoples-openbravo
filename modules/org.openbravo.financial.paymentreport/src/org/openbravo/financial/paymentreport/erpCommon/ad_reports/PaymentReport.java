@@ -32,12 +32,15 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.info.SelectorUtilityData;
 import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
@@ -62,7 +65,7 @@ public class PaymentReport extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strOrg = vars.getGlobalVariable("inpOrg", "PaymentReport|Organization", "");
+      String strOrg = vars.getGlobalVariable("inpOrg", "PaymentReport|Organization", "0");
       String strInclSubOrg = vars.getGlobalVariable("inpInclSubOrg",
           "PaymentReport|IncludeSubOrganization", "");
       String strDueDateFrom = vars.getGlobalVariable("inpDueDateFrom", "PaymentReport|DueDateFrom",
@@ -92,11 +95,18 @@ public class PaymentReport extends HttpSecureAppServlet {
           "PaymentReport|FinancialAccountId", "", IsIDFilter.instance);
       String strcCurrency = vars.getGlobalVariable("inpcCurrencyId", "PaymentReport|Currency", "",
           IsIDFilter.instance);
-      String strConvertCurrency = vars.getGlobalVariable("inpConvertCurrencyId",
-          "PaymentReport|ConvertCurrency", "");
+      String strConvertCurrency = null;
+      strConvertCurrency = vars.getGlobalVariable("inpConvertCurrencyId",
+          "PaymentReport|ConvertCurrency",
+          (String) DalUtil.getId(OBContext.getOBContext().getCurrentClient().getCurrency()));
+      if (strConvertCurrency == null) {
+        strConvertCurrency = vars.getGlobalVariable("inpConvertCurrencyId",
+            "PaymentReport|ConvertCurrency", "");
+      }
       String strConversionDate = vars.getGlobalVariable("inpConversionDate",
-          "PaymentReport|ConversionDate", "");
-      String strPaymType = vars.getGlobalVariable("inpPaymType", "PaymentReport|PaymentType", "");
+          "PaymentReport|ConversionDate", DateTimeData.today(this));
+      String strPaymType = vars.getGlobalVariable("inpPaymType", "PaymentReport|PaymentType",
+          "FINPR_RecPay");
       String strOverdue = vars.getGlobalVariable("inpOverdue", "PaymentReport|Overdue", "");
       String strGroupCrit = vars.getGlobalVariable("inpGroupCrit", "PaymentReport|GroupCrit", "");
       String strOrdCrit = vars.getInGlobalVariable("inpShown", "PaymentReport|OrdCrit", "",
