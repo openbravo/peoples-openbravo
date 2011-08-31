@@ -590,6 +590,8 @@ isc.OBPersonalizeFormLayout.addProperties({
         'org.openbravo.client.application.personalization.PersonalizationActionHandler', 
         this.getPersonalizationFields(), params,
         function(resp, data, req){
+          var personalization;
+          
           // if there is no personalization data then create it
           if (!me.personalizationData) {
             me.personalizationData = {};
@@ -621,6 +623,12 @@ isc.OBPersonalizeFormLayout.addProperties({
           if (callback) {
             callback();
           }
+          
+          // update the information in the global class
+          // so that the settings are maintained when the window
+          // is re-opened
+          personalization = me.getStandardWindow().getClass().personalization;
+          personalization[me.tabId] = me.personalizationData;          
         });
   },
 
@@ -656,6 +664,9 @@ isc.OBPersonalizeFormLayout.addProperties({
           me.hasBeenDeleted = true;
           // close when returned
           me.doClose(true);
+          
+          personalization = me.getStandardWindow().getClass().personalization;
+          personalization[me.tabId] = null;          
         }
      );
   },
@@ -922,6 +933,14 @@ isc.OBPersonalizeFormLayout.addProperties({
       view.save(function() {
         view.doClose(true);    
       });
+    }
+  },
+  
+  getStandardWindow: function() {
+    if (this.openedFromMaintenanceWindow) {
+      return this.maintenanceView.standardWindow;
+    } else {
+      return this.form.view.standardWindow;
     }
   },
   
