@@ -49,6 +49,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.client.application.DynamicExpressionParser;
+import org.openbravo.client.application.Note;
 import org.openbravo.client.application.window.servlet.CalloutHttpServletResponse;
 import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -247,14 +248,18 @@ public class FormInitializationComponent extends BaseActionHandler {
       long t7 = System.currentTimeMillis();
       List<JSONObject> attachments = attachmentForRows(tab, rowId, multipleRowIds);
 
-      // Construction of the final JSONObject
+      // Notes information
       long t8 = System.currentTimeMillis();
-      JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
-          calloutMessages, attachments, jsExcuteCode, hiddenInputs);
+      int noteCount = computeNoteCount(tab, rowId);
+
+      // Construction of the final JSONObject
       long t9 = System.currentTimeMillis();
+      JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
+          calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount);
+      long t10 = System.currentTimeMillis();
       log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
           + (t3 - t2) + "," + (t4 - t3) + "," + (t5 - t4) + "," + (t6 - t5) + "," + (t7 - t6) + ","
-          + (t8 - t7) + "," + (t9 - t8) + ")");
+          + (t8 - t7) + "," + (t9 - t8) + "," + (t10 - t9) + ")");
       log.debug("Attachment exists: " + finalObject.getBoolean("attachmentExists"));
       return finalObject;
     } catch (Throwable t) {
@@ -269,6 +274,13 @@ public class FormInitializationComponent extends BaseActionHandler {
       OBContext.restorePreviousMode();
     }
     return null;
+  }
+
+  private int computeNoteCount(Tab tab, String rowId) {
+    OBCriteria<Note> criteria = OBDao.getFilteredCriteria(Note.class,
+        Restrictions.eq("table.id", (String) DalUtil.getId(tab.getTable())),
+        Restrictions.eq("record", rowId));
+    return criteria.count();
   }
 
   private List<String> convertJSONArray(JSONArray jsonArray) {
@@ -312,7 +324,8 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private JSONObject buildJSONObject(String mode, Tab tab, Map<String, JSONObject> columnValues,
       BaseOBObject row, List<String> changeEventCols, List<JSONObject> calloutMessages,
-      List<JSONObject> attachments, List<String> jsExcuteCode, Map<String, Object> hiddenInputs) {
+      List<JSONObject> attachments, List<String> jsExcuteCode, Map<String, Object> hiddenInputs,
+      int noteCount) {
     JSONObject finalObject = new JSONObject();
     try {
       if (mode.equals("NEW") || mode.equals("CHANGE")) {
@@ -407,6 +420,7 @@ public class FormInitializationComponent extends BaseActionHandler {
             finalObject.put("_readOnly", true);
           }
         }
+        finalObject.put("noteCount", noteCount);
       }
       finalObject.put("attachments", new JSONArray(attachments));
       finalObject.put("attachmentExists", attachments.size() > 0);

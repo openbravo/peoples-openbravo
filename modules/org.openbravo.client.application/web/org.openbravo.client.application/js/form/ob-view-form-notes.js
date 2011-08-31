@@ -38,6 +38,8 @@ isc.OBNoteSectionItem.addProperties({
   canvasItem : null,
 
   visible : true,
+  
+  noteCount: 0,
  
   // this field group does not participate in personalization
   personalizable: false,
@@ -51,6 +53,15 @@ isc.OBNoteSectionItem.addProperties({
     this.form.noteSection = this;
 
     this.Super('init', arguments);
+  },
+  
+  setNoteCount: function(lNoteCount) {
+    this.noteCount = lNoteCount;
+    if(lNoteCount !== 0) {
+      this.setValue(OB.I18N.getLabel('OBUIAPP_NotesTitle') + ' (' + lNoteCount+')');
+    }else{
+      this.setValue(OB.I18N.getLabel('OBUIAPP_NotesTitle'));
+    }
   },
 
   getNotePart : function() {
@@ -132,6 +143,8 @@ isc.OBNoteLayout.addProperties({
 
     // clean text area
     this.noteDynamicForm.getItem('noteOBTextAreaItem').clearValue();
+    
+    this.parentElement.noteSection.setNoteCount(this.parentElement.noteSection.noteCount + 1);
   },
 
   /**
@@ -139,11 +152,13 @@ isc.OBNoteLayout.addProperties({
    */
   deleteNote : function( /* note id to delete */id) {
     var noteDS = this.getNoteDataSource();
+    var noteSection = this.parentElement.noteSection;
     isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmRemoveNote'), function(clickedOK){
       if(clickedOK){
         noteDS.removeData({
           'id' : id
         });
+        noteSection.setNoteCount(noteSection.noteCount - 1);
       }
     },{title: OB.I18N.getLabel('OBUIAPP_ConfirmRemoveTitle')});
   },

@@ -633,6 +633,15 @@ OB.ViewFormProperties = {
     if(this.attachmentsSection) {
       this.attachmentsSection.fillAttachments(data.attachments);
     }
+    
+    // We will show the note count if it has been calculated and is different from 0
+    if(this.noteSection) {
+      if(data.noteCount) {
+        this.noteSection.setNoteCount(data.noteCount);
+      } else if(request.params.MODE === 'EDIT') {
+        this.noteSection.setNoteCount(0);
+      }
+    }
 
     // apparently sometimes an empty string is returned
     if (calloutMessages && calloutMessages.length > 0 && calloutMessages[0].text !== '') {
