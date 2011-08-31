@@ -197,7 +197,9 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
     this.rangeItem.name = this.name;
 
     // this call super.init
-    this.doInit();
+    if (this.doInit) {
+      this.doInit();
+    }
   },
   
   blurValue: function() {
