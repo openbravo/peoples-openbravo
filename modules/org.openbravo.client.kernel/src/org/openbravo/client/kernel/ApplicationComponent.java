@@ -19,7 +19,9 @@
 package org.openbravo.client.kernel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -62,6 +64,11 @@ public class ApplicationComponent extends BaseTemplateComponent {
 
   public String getDefaultDecimalSymbol() {
     return getFormatDefinition().getDecimalSymbol();
+  }
+
+  @SuppressWarnings("unchecked")
+  public Map<String, String> getFormats() {
+    return (HashMap<String, String>) RequestContext.get().getSessionAttribute("#formatMap");
   }
 
   public boolean isTestEnvironment() {
