@@ -286,15 +286,7 @@
               // is used to prevent history updating
               loadingPane.isLoadingTab = true;
 
-              // refresh the existing tab
-              // explicitly destroy as the old tab is not destroyed
-              if (tabSet.getTabObject(viewTabId)) {
-                currentPane = tabSet.getTabObject(viewTabId).pane;  
-              }
               tabSet.updateTab(viewTabId, loadingPane);
-              if (currentPane) {
-                currentPane.destroy();
-              }
               
               // and show it
               tabSet.selectTab(viewTabId);
@@ -344,15 +336,7 @@
 
             // refresh the view
 
-            // refresh the existing tab
-            // explicitly destroy as the old tab is not destroyed
-            if (tabSet.getTabObject(viewTabId)) {
-              currentPane = tabSet.getTabObject(viewTabId).pane;  
-            }
             tabSet.updateTab(viewTabId, viewInstance);
-            if (currentPane) {
-              currentPane.destroy();
-            }
 
             // and show it
             tabSet.selectTab(viewTabId);
