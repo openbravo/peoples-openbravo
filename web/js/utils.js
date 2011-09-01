@@ -3923,6 +3923,21 @@ function windowUndo(form) {
     if (element.doReset) {
       element.doReset();
     }
+    try{
+      //If an element has the onchange method defined, we will execute the selectCombo part
+      //so that readonly fields work correctly on undo
+      if (element.onchange){
+        var onchangecode = element.onchange.toString();
+        if(onchangecode.indexOf('selectCombo')!==-1){
+          var indSel = onchangecode.indexOf('selectCombo');
+          var afterselect = onchangecode.substring(indSel, onchangecode.length);
+          var selectComboCode = afterselect.substring(0, afterselect.indexOf(');')+2).replace('this','document.getElementById("'+element.id+'")');
+          eval(selectComboCode);
+        }
+      }
+    }catch (e) {
+      //do nothing in this case
+    }
   }
   form.inpLastFieldChanged.value = '';
   setWindowEditing(false);
