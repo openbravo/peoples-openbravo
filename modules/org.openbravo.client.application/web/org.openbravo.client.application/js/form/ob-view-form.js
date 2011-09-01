@@ -90,7 +90,8 @@ OB.ViewFormProperties = {
 
     // is used to keep track of the original simple objects
     // used to create fields
-    this._originalFields = isc.shallowClone(this.fields);
+    // note fields can be in fields or theFields
+    this._originalFields = isc.shallowClone(this.fields || this.theFields);
     
     this.Super('initWidget', arguments);
 
@@ -1562,7 +1563,7 @@ OB.ViewFormProperties = {
     // caching reference to all DS of Items
     for (i = 0; i < len; i++) {
       item = items[i];
-      ds = items && (item.dataSource || item.optionDataSource);
+      ds = item ? item.dataSource || item.optionDataSource : null;
 
       if(ds) {
         dataSources.push(ds);
@@ -1570,7 +1571,6 @@ OB.ViewFormProperties = {
     }
 
     this.Super('destroy', arguments);
-
     len = dataSources.length;
 
     // Destroying DS not managed by DynamicForm.destroy

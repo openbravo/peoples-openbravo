@@ -258,7 +258,14 @@ isc.OBStandardView.addProperties({
       // setDataSource executes setFields which replaces the current fields
       // We don't want to destroy the associated DataSource objects
       this.viewForm.destroyItemObjects = false;
-      this.viewForm.setDataSource(this.dataSource, this.viewForm.fields);
+      
+      // initially the viewForm.fields is not set, the fields are
+      // in this.viewForm.theFields, this to prevent too early creation of fields
+      // i.e. they are recreated when setting the datasource, as is done
+      // here.
+      // make sure the fields are set now
+      this.viewForm.fields = this.viewForm.theFields;
+      this.viewForm.setDataSource(this.dataSource, this.viewForm.theFields);
       this.viewForm.isViewForm = true;
       this.viewForm.destroyItemObjects = true;
     }

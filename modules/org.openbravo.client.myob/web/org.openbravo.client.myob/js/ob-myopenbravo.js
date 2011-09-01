@@ -355,7 +355,9 @@ isc.OBMyOpenbravo.addProperties({
   },
 
   setRecentList: function(layout){
-    var recentList, newRecent, recentIndex = 0, recent, lbl, newIcon, entryLayout, icon;
+    var recentList, newRecent,  
+      recentIndex = 0, recent, lbl, newIcon, entryLayout, icon;
+    
     // start with a fresh content
     layout.removeMembers(layout.members);
     
@@ -447,10 +449,12 @@ isc.OBMyOpenbravo.addProperties({
   },
   
   setRecentDocumentsList: function(layout){
-    var recentList, newRecent, recentIndex = 0, recent, lbl, newIcon, entryLayout, icon;
+    var recentList, newRecent, recentIndex = 0, recent, 
+      lbl, newIcon, entryLayout, icon;
+    
     // start with a fresh content
     layout.removeMembers(layout.members);
-    
+
     // reads the list of recents and displays them
     recentList = OB.Layout.ViewManager.recentManager.getRecentValue('OBUIAPP_RecentDocumentsList');
     if (recentList && recentList.length > 0) {

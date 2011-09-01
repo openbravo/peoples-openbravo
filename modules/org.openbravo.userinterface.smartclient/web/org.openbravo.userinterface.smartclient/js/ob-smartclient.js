@@ -79,6 +79,20 @@ isc.FormItem.addProperties({
     this._original_init();
   },
   
+  // make sure that the datasources are also destroyed
+  _original_destroy: isc.FormItem.getPrototype().destroy,
+  destroy: function() {
+    if (this.optionDataSource && !this.optionDataSource.potentiallyShared) {
+      this.optionDataSource.destroy();
+      this.optionDataSource = null;
+    }
+    if (this.dataSource && !this.dataSource.potentiallyShared) {
+      this.dataSource.destroy();
+      this.dataSource = null;
+    }
+    this._original_destroy();
+  },
+  
   // overridden to not show if hiddenInForm is set
   _show: isc.FormItem.getPrototype().show,
   show: function (arg1) {

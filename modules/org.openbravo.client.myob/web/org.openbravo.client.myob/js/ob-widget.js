@@ -166,6 +166,7 @@ isc.defineClass('OBWidget', isc.Portlet).addProperties({
   showMinimizeButton: false,
   showCloseButton: false,
   closeConfirmationMessage: OB.I18N.getLabel('OBKMO_DeleteThisWidgetConfirmation'),
+  destroyOnClose: true,
   
   canDelete: true,
   dbInstanceId: '',

@@ -383,7 +383,7 @@ isc.OBSelectorItem.addProperties({
       this.icons = null;
     }
     
-    if (this.showSelectorGrid) {
+    if (this.showSelectorGrid && !this.form.isPreviewForm) {
       this.selectorWindow = isc.OBSelectorPopupWindow.create({
         // solves issue: https://issues.openbravo.com/view.php?id=17268
         title: (this.form && this.form.grid ? this.form.grid.getField(this.name).title : this.title),
@@ -762,15 +762,17 @@ isc.OBSelectorLinkItem.addProperties({
       this.icons = null;
     }
     
-    this.selectorWindow = isc.OBSelectorPopupWindow.create({
-      // solves issue: https://issues.openbravo.com/view.php?id=17268
-      title: (this.form && this.form.grid ? this.form.grid.getField(this.name).title : this.title),
-      dataSource: this.dataSource,
-      selector: this,
-      valueField: this.gridValueField,
-      displayField: this.gridDisplayField,
-      selectorGridFields: isc.shallowClone(this.selectorGridFields)
-    });
+    if (!this.form.isPreviewForm) {
+      this.selectorWindow = isc.OBSelectorPopupWindow.create({
+        // solves issue: https://issues.openbravo.com/view.php?id=17268
+        title: (this.form && this.form.grid ? this.form.grid.getField(this.name).title : this.title),
+        dataSource: this.dataSource,
+        selector: this,
+        valueField: this.gridValueField,
+        displayField: this.gridDisplayField,
+        selectorGridFields: isc.shallowClone(this.selectorGridFields)
+      });
+    }
     
     return this.Super('init', arguments);
   },

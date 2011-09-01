@@ -728,7 +728,7 @@ isc.OBPersonalizeFormLayout.addProperties({
   
   // creates the preview form and displays it
   buildPreviewForm: function() {
-    var statusBar, i, fld, itemClick, me = this;
+    var statusBar, currentPane, i, fld, itemClick, me = this;
     
     this.formLayout = isc.VLayout.create({ height: '100%', width: '100%'}, OB.Styles.Personalization.Preview);
     
@@ -820,7 +820,13 @@ isc.OBPersonalizeFormLayout.addProperties({
     
     this.formLayout.addMember(this.previewForm);
     
+    if (this.previewTabSet.getTab(0).pane) {
+      currentPane = this.previewTabSet.getTab(0).pane;
+    }    
     this.previewTabSet.updateTab(this.previewTabSet.getTab(0), this.formLayout);
+    if (currentPane) {
+      currentPane.destroy();
+    }
   },
   
   buildFormAndTree: function() {
