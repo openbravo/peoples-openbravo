@@ -873,8 +873,9 @@ isc.OBPersonalizeFormLayout.addProperties({
   buildFieldsTreeGrid: function() {
     var i, prop, fld;
     
+    this.fieldsLayout.destroyAndRemoveMembers(this.fieldsLayout.getMembers());
     if (this.fieldsTreeGrid) {
-      this.fieldsLayout.destroyAndRemoveMembers(this.fieldsTreeGrid);
+      this.fieldsTreeGrid.destroy();
     }
     
     // the tree will add properties to the objects as fieldData
