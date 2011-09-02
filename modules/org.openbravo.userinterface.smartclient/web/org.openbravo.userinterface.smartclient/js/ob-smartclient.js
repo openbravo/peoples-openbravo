@@ -50,6 +50,20 @@ isc.Button.addProperties({
 
 isc.StaticTextItem.getPrototype().getCanFocus = function() {return false;};
 
+isc.Layout.addProperties({
+  
+  destroyAndRemoveMembers: function(toDestroy) {
+    var i;
+    if (!isc.isA.Array(toDestroy)) {
+      toDestroy = [toDestroy];
+    }
+    for (i = 0; i < toDestroy.length; i++) {
+      toDestroy[i].destroy();
+    }
+    this.removeMembers(toDestroy);
+  }
+});
+
 isc.TextItem.addProperties({
   // see comments in super type for useDisabledEventMask
   // http://forums.smartclient.com/showthread.php?p=70160#post70160

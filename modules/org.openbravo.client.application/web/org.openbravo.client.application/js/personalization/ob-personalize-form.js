@@ -690,7 +690,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.isSaved = false;
     this.isNew = !this.personalizationData.personalizationId;
     
-    this.removeMember(this.mainLayout);
+    this.destroyAndRemoveMembers(this.mainLayout);
     this.mainLayout = null;
     this.createAddMainLayout();
 
@@ -874,7 +874,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     var i, prop, fld;
     
     if (this.fieldsTreeGrid) {
-      this.fieldsLayout.removeMember(this.fieldsTreeGrid);
+      this.fieldsLayout.destroyAndRemoveMembers(this.fieldsTreeGrid);
     }
     
     // the tree will add properties to the objects as fieldData
@@ -980,7 +980,7 @@ isc.OBPersonalizeFormLayout.addProperties({
       }
       window = this.form.view.standardWindow;
     }
-    window.removeMember(this);
+    window.destroyAndRemoveMembers(this);
     
     // restores the tabtitle
     window.view.updateTabTitle();

@@ -25,7 +25,7 @@ isc.defineClass('OBShowParameterWidget', isc.OBWidget).addProperties({
   setParameters: function(parameters){
     this.Super('setParameters', arguments);
     var oldForm = this.displayForm;
-    this.windowContents.removeMember(this.displayForm);
+    this.windowContents.destroyAndRemoveMembers(this.displayForm);
     this.windowContents.addMember(this.createDisplayForm());
     oldForm.destroy();
   },

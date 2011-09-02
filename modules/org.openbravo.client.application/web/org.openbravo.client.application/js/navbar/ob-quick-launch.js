@@ -88,6 +88,9 @@ isc.OBQuickLaunch.addProperties({
           index++;
         }
       }
+      if (this.members[0].getMembers()) {
+        this.members[0].destroyAndRemoveMembers(this.members[0].getMembers().duplicate());
+      } 
 
       this.members[0].setMembers(newFields);
 

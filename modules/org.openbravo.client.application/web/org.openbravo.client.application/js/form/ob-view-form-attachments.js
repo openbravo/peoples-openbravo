@@ -220,7 +220,7 @@ isc.OBAttachmentsLayout.addProperties({
   
   fillAttachments: function(attachments){
     this.savedAttachments = attachments;
-    this.removeMembers(this.getMembers());
+    this.destroyAndRemoveMembers(this.getMembers());
     var hLayout = isc.HLayout.create();
     if(this.getForm().isNew){
       return;	

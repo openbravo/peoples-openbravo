@@ -652,7 +652,7 @@ isc.OBToolbar.addProperties({
     for (i = 0; i < oldMembersSorted.length; i++) { /* Update the 'leftMembers' array */
       this.leftMembers.splice(oldMembersSorted[i], 1);
     }
-    this.removeMembers(oldArray); /* Remove visually the desired elements */
+    this.destroyAndRemoveMembers(oldArray); /* Remove visually the desired elements */
   },
   
   // ** {{{ removeAllLeftMembers() }}} **
@@ -864,7 +864,7 @@ isc.OBToolbar.addProperties({
     for (i = 0; i < oldMembersSorted.length; i++) { /* Update the 'rightMembers' array */
       this.rightMembers.splice(oldMembersSorted[i], 1);
     }
-    this.removeMembers(oldArray); /* Remove visually the desired elements */
+    this.destroyAndRemoveMembers(oldArray); /* Remove visually the desired elements */
   },
   
   // ** {{{ removeAllRightMembers() }}} **
