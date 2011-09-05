@@ -69,6 +69,10 @@ isc.OBHelpAbout.addProperties({
       tabPane = selectedTab.pane;
     }
     // determine if a help link should be shown or not
+    // destroy the current members
+    if (this.members[0].getMembers()) {
+      this.members[0].destroyAndRemoveMembers(this.members[0].getMembers().duplicate());
+    } 
     if (!tabPane) {
       this.members[0].setMembers([aboutLink]);
     } else {

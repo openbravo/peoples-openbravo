@@ -130,7 +130,7 @@ isc.defineClass('OBCommunityBrandingWidget', isc.OBWidget).addProperties({
     purposeStack.addMembers(toolTip);
     purposeStack.addMembers(layout.separator);
 
-    layout.removeMember(loadingBar);
+    layout.destroyAndRemoveMembers(loadingBar);
 
     layout.addMember(purposeStack);
     layout.addMember(this.versionLabel);

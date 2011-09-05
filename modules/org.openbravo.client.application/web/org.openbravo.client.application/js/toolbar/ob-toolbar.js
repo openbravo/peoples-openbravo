@@ -652,7 +652,7 @@ isc.OBToolbar.addProperties({
     for (i = 0; i < oldMembersSorted.length; i++) { /* Update the 'leftMembers' array */
       this.leftMembers.splice(oldMembersSorted[i], 1);
     }
-    this.removeMembers(oldArray); /* Remove visually the desired elements */
+    this.destroyAndRemoveMembers(oldArray); /* Remove visually the desired elements */
   },
   
   // ** {{{ removeAllLeftMembers() }}} **
@@ -864,7 +864,7 @@ isc.OBToolbar.addProperties({
     for (i = 0; i < oldMembersSorted.length; i++) { /* Update the 'rightMembers' array */
       this.rightMembers.splice(oldMembersSorted[i], 1);
     }
-    this.removeMembers(oldArray); /* Remove visually the desired elements */
+    this.destroyAndRemoveMembers(oldArray); /* Remove visually the desired elements */
   },
   
   // ** {{{ removeAllRightMembers() }}} **
@@ -1007,6 +1007,7 @@ isc.OBToolbar.addProperties({
     // This is needed to prevent JSLint complaining about "Don't make functions within a loop.
     var callbackHandler = function (currentContext, me) {
       return function(response, data, request) {
+        var noneOrMultipleRecordsSelected = currentContext.viewGrid.getSelectedRecords().length !== 1 && !isNew;
         var sessionAttributes = data.sessionAttributes, auxInputs = data.auxiliaryInputValues, attachmentExists = data.attachmentExists, prop;
         if (sessionAttributes) {
           currentContext.viewForm.sessionAttributes = sessionAttributes;

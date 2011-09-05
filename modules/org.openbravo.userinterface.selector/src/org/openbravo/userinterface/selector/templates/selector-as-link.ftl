@@ -48,7 +48,13 @@
     </#list>
     },
     extraSearchFields: [${data.extraSearchFields}],
-    dataSource: ${data.dataSourceJavascript},
+    // create the datasource in the init method, this
+    // prevents too early creation, it is created when the
+    // fields on the form are actually created
+    init: function() {    
+        this.dataSource = ${data.dataSourceJavascript};
+        this.Super('init', arguments);
+    },
     whereClause : '${data.whereClause?js_string}'
 <#else>
 /* jslint */

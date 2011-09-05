@@ -38,7 +38,12 @@ var OB = {
         defaultDecimalSymbol: '${data.defaultDecimalSymbol}',
         defaultNumericMask: '${data.defaultNumericMask}',
         date: '${data.dateFormat}',
-        dateTime: '${data.dateTimeFormat}'
+        dateTime: '${data.dateTimeFormat}',
+        formats: {
+        <#list data.formats?keys as key>
+          '${key}': '${data.formats[key]}'<#if key_has_next>,</#if>
+        </#list>
+        }
     },
 
     Constants : {

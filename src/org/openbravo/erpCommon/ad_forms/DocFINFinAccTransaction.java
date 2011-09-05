@@ -469,7 +469,7 @@ public class DocFINFinAccTransaction extends AcctServer {
             .getDepositAmount().toString(), transaction.getPaymentAmount().toString(),
         Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, null, docToSchemaConversionRate,
         EXCHANGE_DOCTYPE_Transaction, transaction.getId(), conn);
-    if (!transaction.getForeignCurrency().equals(as.getC_Currency_ID())) {
+    if (!as.getC_Currency_ID().equals(transaction.getForeignCurrency())) {
       MultiCurrency = true;
       createFactCurrencyBalancing(as, conn, fact, Fact_Acct_Group_ID, transaction);
     }

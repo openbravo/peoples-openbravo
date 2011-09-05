@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.Query;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -44,6 +45,7 @@ public class Login extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
 
   private static final String GOOGLE_INTEGRATION_MODULE_ID = "FF8080813129ADA401312CA1222A0005";
+  private static final String GOOGLE_PREFERENCE_PROPERTY = "OBSEIG_ShowGIcon";
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -242,10 +244,19 @@ public class Login extends HttpBaseServlet {
     String itLink = "";
     String companyLink = "";
     SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
-
     Module module = OBDal.getInstance().get(Module.class, GOOGLE_INTEGRATION_MODULE_ID);
 
-    showGoogleIcon = (module != null && module.isActive());
+    if (ActivationKey.getInstance().isActive()) {
+      String hql = "from ADPreference pref where searchKey like :value and property = :prop and (visibleAtClient is null or visibleAtClient.id = '0')";
+      Query q = OBDal.getInstance().getSession().createQuery(hql);
+      q.setParameter("value", "N");
+      q.setParameter("prop", GOOGLE_PREFERENCE_PROPERTY);
+
+      // show by default - not show when there is a preference to disable it
+      showGoogleIcon = q.list().size() == 0;
+    } else {
+      showGoogleIcon = (module != null && module.isEnabled());
+    }
 
     if (sysInfo == null) {
       log4j.error("System information not found");

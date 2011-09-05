@@ -477,9 +477,9 @@ public class PaymentReportDao {
             FieldProviderFactory.setField(data[i], "PROJECT", "");
           // salesPerson
           if (FIN_PaymentScheduleDetail[i].getInvoicePaymentSchedule().getInvoice()
-              .getUserContact() != null) {
+              .getSalesRepresentative() != null) {
             FieldProviderFactory.setField(data[i], "SALES_PERSON", FIN_PaymentScheduleDetail[i]
-                .getInvoicePaymentSchedule().getInvoice().getUserContact().getIdentifier());
+                .getInvoicePaymentSchedule().getInvoice().getSalesRepresentative().getIdentifier());
           } else {
             FieldProviderFactory.setField(data[i], "SALES_PERSON", "");
           }

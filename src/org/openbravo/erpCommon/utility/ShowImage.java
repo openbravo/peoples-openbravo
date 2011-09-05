@@ -20,7 +20,6 @@
 package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -28,10 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.utility.Image;
 
 /**
  * 
@@ -54,40 +49,7 @@ public class ShowImage extends HttpSecureAppServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
 
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    String id = vars.getStringParameter("id");
-
-    try {
-      OBContext.setAdminMode(true);
-      // read the image data
-      byte[] img = Utility.getImage(id);
-
-      // write the mimetype
-      Image image = OBDal.getInstance().get(Image.class, id);
-      final String mimeType;
-      if (image.getMimetype() != null) {
-        mimeType = image.getMimetype();
-      } else {
-        mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img);
-        // If there is an OBContext, we attempt to save the MIME type of the image
-        if (OBContext.getOBContext() != null) {
-          image.setMimetype(mimeType);
-          OBDal.getInstance().save(image);
-          OBDal.getInstance().flush();
-        }
-      }
-
-      if (!mimeType.equals("")) {
-        response.setContentType(mimeType);
-      }
-
-      // write the image
-      OutputStream out = response.getOutputStream();
-      response.setContentLength(img.length);
-      out.write(img);
-      out.close();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    ImageUtils.outputImageResource(request, response, "standard");
   }
+
 }

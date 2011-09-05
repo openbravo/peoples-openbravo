@@ -50,6 +50,20 @@ isc.Button.addProperties({
 
 isc.StaticTextItem.getPrototype().getCanFocus = function() {return false;};
 
+isc.Layout.addProperties({
+  
+  destroyAndRemoveMembers: function(toDestroy) {
+    var i;
+    if (!isc.isA.Array(toDestroy)) {
+      toDestroy = [toDestroy];
+    }
+    for (i = 0; i < toDestroy.length; i++) {
+      toDestroy[i].destroy();
+    }
+    this.removeMembers(toDestroy);
+  }
+});
+
 isc.TextItem.addProperties({
   // see comments in super type for useDisabledEventMask
   // http://forums.smartclient.com/showthread.php?p=70160#post70160
@@ -77,6 +91,20 @@ isc.FormItem.addProperties({
     OB.Utilities.addRequiredSuffixToBaseStyle(this);
     // and continue with the original init
     this._original_init();
+  },
+  
+  // make sure that the datasources are also destroyed
+  _original_destroy: isc.FormItem.getPrototype().destroy,
+  destroy: function() {
+    if (this.optionDataSource && !this.optionDataSource.potentiallyShared) {
+      this.optionDataSource.destroy();
+      this.optionDataSource = null;
+    }
+    if (this.dataSource && !this.dataSource.potentiallyShared) {
+      this.dataSource.destroy();
+      this.dataSource = null;
+    }
+    this._original_destroy();
   },
   
   // overridden to not show if hiddenInForm is set

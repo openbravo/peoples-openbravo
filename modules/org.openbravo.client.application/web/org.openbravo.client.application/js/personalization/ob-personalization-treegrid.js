@@ -110,6 +110,13 @@ isc.OBPersonalizationTreeGrid.addProperties({
    this.Super('initWidget', arguments);
   },
   
+  destroy: function() {
+    if (this.data) {
+      this.data.destroy();
+    }
+    this.Super('destroy', arguments);
+  },
+  
   // open/close a folder on folder click
   folderClick: function (viewer, folder, recordNum) {
     if (this.data.isOpen(folder)) {

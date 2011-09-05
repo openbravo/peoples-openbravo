@@ -49,6 +49,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.client.application.DynamicExpressionParser;
+import org.openbravo.client.application.Note;
 import org.openbravo.client.application.window.servlet.CalloutHttpServletResponse;
 import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -134,6 +135,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       Map<String, List<String>> columnsInValidation = new HashMap<String, List<String>>();
       List<JSONObject> calloutMessages = new ArrayList<JSONObject>();
       List<String> jsExcuteCode = new ArrayList<String>();
+      Map<String, Object> hiddenInputs = new HashMap<String, Object>();
 
       log.debug("Form Initialization Component Execution. Tab Name: " + tab.getWindow().getName()
           + "." + tab.getName() + " Tab Id:" + tab.getId());
@@ -234,7 +236,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       // Execution of callouts
       long t6 = System.currentTimeMillis();
       List<String> changedCols = executeCallouts(mode, tab, columnValues, changedColumn,
-          calloutsToCall, lastfieldChanged, calloutMessages, changeEventCols, jsExcuteCode);
+          calloutsToCall, lastfieldChanged, calloutMessages, changeEventCols, jsExcuteCode,
+          hiddenInputs);
 
       if (changedCols.size() > 0) {
         RequestContext.get().setRequestParameter("donotaddcurrentelement", "true");
@@ -245,14 +248,18 @@ public class FormInitializationComponent extends BaseActionHandler {
       long t7 = System.currentTimeMillis();
       List<JSONObject> attachments = attachmentForRows(tab, rowId, multipleRowIds);
 
-      // Construction of the final JSONObject
+      // Notes information
       long t8 = System.currentTimeMillis();
-      JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
-          calloutMessages, attachments, jsExcuteCode);
+      int noteCount = computeNoteCount(tab, rowId);
+
+      // Construction of the final JSONObject
       long t9 = System.currentTimeMillis();
+      JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
+          calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount);
+      long t10 = System.currentTimeMillis();
       log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
           + (t3 - t2) + "," + (t4 - t3) + "," + (t5 - t4) + "," + (t6 - t5) + "," + (t7 - t6) + ","
-          + (t8 - t7) + "," + (t9 - t8) + ")");
+          + (t8 - t7) + "," + (t9 - t8) + "," + (t10 - t9) + ")");
       log.debug("Attachment exists: " + finalObject.getBoolean("attachmentExists"));
       return finalObject;
     } catch (Throwable t) {
@@ -267,6 +274,13 @@ public class FormInitializationComponent extends BaseActionHandler {
       OBContext.restorePreviousMode();
     }
     return null;
+  }
+
+  private int computeNoteCount(Tab tab, String rowId) {
+    OBCriteria<Note> criteria = OBDao.getFilteredCriteria(Note.class,
+        Restrictions.eq("table.id", (String) DalUtil.getId(tab.getTable())),
+        Restrictions.eq("record", rowId));
+    return criteria.count();
   }
 
   private List<String> convertJSONArray(JSONArray jsonArray) {
@@ -310,12 +324,20 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private JSONObject buildJSONObject(String mode, Tab tab, Map<String, JSONObject> columnValues,
       BaseOBObject row, List<String> changeEventCols, List<JSONObject> calloutMessages,
-      List<JSONObject> attachments, List<String> jsExcuteCode) {
+      List<JSONObject> attachments, List<String> jsExcuteCode, Map<String, Object> hiddenInputs,
+      int noteCount) {
     JSONObject finalObject = new JSONObject();
     try {
       if (mode.equals("NEW") || mode.equals("CHANGE")) {
         JSONArray arrayMessages = new JSONArray(calloutMessages);
         finalObject.put("calloutMessages", arrayMessages);
+        if (!hiddenInputs.isEmpty()) {
+          JSONObject jsonHiddenInputs = new JSONObject();
+          for (String key : hiddenInputs.keySet()) {
+            jsonHiddenInputs.put(key, hiddenInputs.get(key));
+          }
+          finalObject.put("hiddenInputs", jsonHiddenInputs);
+        }
       }
       if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("CHANGE")) {
         JSONObject jsonColumnValues = new JSONObject();
@@ -398,6 +420,7 @@ public class FormInitializationComponent extends BaseActionHandler {
             finalObject.put("_readOnly", true);
           }
         }
+        finalObject.put("noteCount", noteCount);
       }
       finalObject.put("attachments", new JSONArray(attachments));
       finalObject.put("attachmentExists", attachments.size() > 0);
@@ -959,7 +982,8 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private List<String> executeCallouts(String mode, Tab tab, Map<String, JSONObject> columnValues,
       String changedColumn, List<String> calloutsToCall, List<String> lastfieldChanged,
-      List<JSONObject> messages, List<String> dynamicCols, List<String> jsExecuteCode) {
+      List<JSONObject> messages, List<String> dynamicCols, List<String> jsExecuteCode,
+      Map<String, Object> hiddenInputs) {
 
     // In CHANGE mode, we will add the initial callout call for the changed column, if there is
     // one
@@ -981,13 +1005,14 @@ public class FormInitializationComponent extends BaseActionHandler {
       return new ArrayList<String>();
     }
     return runCallouts(columnValues, tab, calledCallouts, calloutsToCall, lastfieldChanged,
-        messages, dynamicCols, jsExecuteCode);
+        messages, dynamicCols, jsExecuteCode, hiddenInputs);
 
   }
 
   private List<String> runCallouts(Map<String, JSONObject> columnValues, Tab tab,
       List<String> calledCallouts, List<String> calloutsToCall, List<String> lastfieldChangedList,
-      List<JSONObject> messages, List<String> dynamicCols, List<String> jsExecuteCode) {
+      List<JSONObject> messages, List<String> dynamicCols, List<String> jsExecuteCode,
+      Map<String, Object> hiddenInputs) {
     HashMap<String, Object> calloutInstances = new HashMap<String, Object>();
 
     // flush&commit to release lock in db which otherwise interfere with callouts which run in their
@@ -1204,6 +1229,18 @@ public class FormInitializationComponent extends BaseActionHandler {
                         obj.put("value", el);
                         obj.put("classicValue", el);
                         columnValues.put(name, obj);
+                      }
+                    }
+                    if (!columnValues.containsKey(name)) {
+                      // This returned value wasn't found to be either a column or an auxiliary
+                      // input. We assume it is a hidden input, which are used in places like
+                      // selectors
+                      Object el = element.get(1, null);
+                      if (el != null) {
+                        hiddenInputs.put(name, el);
+                        // We set the hidden fields in the request, so that subsequent callouts can
+                        // use them
+                        rq.setRequestParameter(name, el.toString());
                       }
                     }
                   }

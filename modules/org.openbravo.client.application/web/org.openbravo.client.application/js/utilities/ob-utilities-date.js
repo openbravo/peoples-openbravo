@@ -112,7 +112,13 @@ OB.Utilities.Date.OBToJS = function(/* String */OBDate, /* String */ dateFormat)
   var hours = dateFormat.indexOf('%H') !== -1 ? OBDate.substring(dateFormat.indexOf('%H'), dateFormat.indexOf('%H') + 2) : 0;
   var minutes = dateFormat.indexOf('%M') !== -1 ? OBDate.substring(dateFormat.indexOf('%M'), dateFormat.indexOf('%M') + 2) : 0;
   var seconds = dateFormat.indexOf('%S') !== -1 ? OBDate.substring(dateFormat.indexOf('%S'), dateFormat.indexOf('%S') + 2) : 0;
-  
+
+  month = parseInt(month, 10);
+  day = parseInt(day, 10);
+  hours = parseInt(hours, 10);
+  minutes = parseInt(minutes, 10);
+  seconds = parseInt(seconds, 10);
+
   if (day < 1 || day > 31 || month < 1 || month > 12 || year > 99 ||
   fullYear > 9999) {
     return null;
@@ -129,18 +135,16 @@ OB.Utilities.Date.OBToJS = function(/* String */OBDate, /* String */ dateFormat)
   // var JSDate = isc.Date.create(); /**It doesn't work in IE**/
   var JSDate = new Date();
   var centuryReference = OB.Utilities.Date.centuryReference;
-  if (isFullYear) {
-    JSDate.setFullYear(fullYear);
-  } else {
+  if (!isFullYear) {
     if (parseInt(year, 10) < centuryReference) {
-      year = '20' + year;
+      fullYear = '20' + year;
     } else {
-      year = '19' + year;
+      fullYear = '19' + year;
     }
-    JSDate.setFullYear(year);
   }
-  JSDate.setMonth(month - 1);
-  JSDate.setDate(day);
+
+  fullYear = parseInt(fullYear, 10);
+  JSDate.setFullYear(fullYear, month-1, day);
   JSDate.setHours(hours);
   JSDate.setMinutes(minutes);
   JSDate.setSeconds(seconds);

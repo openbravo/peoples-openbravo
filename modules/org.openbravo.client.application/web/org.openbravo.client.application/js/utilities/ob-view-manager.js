@@ -265,7 +265,8 @@
           // 1) view is not open and class not loaded (open view and show loading bar)
           // 2) view is not open but class was loaded (open view and show loading bar)
           // 3) view is open and class is loaded (show loading bar in open view)          
-          var viewTabId, tabTitle, loadingTab = vmgr.findLoadingTab(params), loadingPane,
+          var viewTabId, tabTitle, loadingTab = vmgr.findLoadingTab(params), 
+              loadingPane, currentPane,
               tabSet = OB.MainView.TabSet;
 
           params = params || {};
@@ -285,8 +286,8 @@
               // is used to prevent history updating
               loadingPane.isLoadingTab = true;
 
-              // refresh the existing tab
               tabSet.updateTab(viewTabId, loadingPane);
+              
               // and show it
               tabSet.selectTab(viewTabId);
             } else {
@@ -296,12 +297,14 @@
               params = vmgr.createLoadingTab(viewName, params, viewTabId);
             }
             // use a canvas to make use of the fireOnPause possibilities
+            // but don't forget to destroy it afterwards...
             var cnv = isc.Canvas.create({
               openView: function() {
                 vmgr.openView(viewName, params);
                 // delete so that at the next opening a new loading layout
                 // is created
                 delete params.loadingTabId;
+                this.destroy();
               }
             });
             cnv.fireOnPause('openView', cnv.openView, null, cnv);
@@ -332,6 +335,7 @@
           if (viewTabId !== null) {
 
             // refresh the view
+
             tabSet.updateTab(viewTabId, viewInstance);
 
             // and show it

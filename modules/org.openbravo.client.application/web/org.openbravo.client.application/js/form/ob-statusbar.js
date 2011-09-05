@@ -288,13 +288,13 @@ isc.OBStatusBar.addProperties( {
 
   addIcon : function(icon) {
       // remove any existing icon or spacer
-    this.leftStatusBar.removeMember(this.leftStatusBar.members[0]);
+    this.leftStatusBar.destroyAndRemoveMembers(this.leftStatusBar.members[0]);
     this.leftStatusBar.addMember(icon, 0);
   },
 
   removeIcon : function() {
     // remove any existing icon or spacer
-    this.leftStatusBar.removeMember(this.leftStatusBar.members[0]);
+    this.leftStatusBar.destroyAndRemoveMembers(this.leftStatusBar.members[0]);
     this.leftStatusBar.addMember(this.spacer, 0);
   },
 

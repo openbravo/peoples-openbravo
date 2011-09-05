@@ -590,6 +590,8 @@ isc.OBPersonalizeFormLayout.addProperties({
         'org.openbravo.client.application.personalization.PersonalizationActionHandler', 
         this.getPersonalizationFields(), params,
         function(resp, data, req){
+          var personalization;
+          
           // if there is no personalization data then create it
           if (!me.personalizationData) {
             me.personalizationData = {};
@@ -621,6 +623,12 @@ isc.OBPersonalizeFormLayout.addProperties({
           if (callback) {
             callback();
           }
+          
+          // update the information in the global class
+          // so that the settings are maintained when the window
+          // is re-opened
+          personalization = me.getStandardWindow().getClass().personalization;
+          personalization[me.tabId] = me.personalizationData;          
         });
   },
 
@@ -656,6 +664,9 @@ isc.OBPersonalizeFormLayout.addProperties({
           me.hasBeenDeleted = true;
           // close when returned
           me.doClose(true);
+          
+          personalization = me.getStandardWindow().getClass().personalization;
+          personalization[me.tabId] = null;          
         }
      );
   },
@@ -679,7 +690,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.isSaved = false;
     this.isNew = !this.personalizationData.personalizationId;
     
-    this.removeMember(this.mainLayout);
+    this.destroyAndRemoveMembers(this.mainLayout);
     this.mainLayout = null;
     this.createAddMainLayout();
 
@@ -717,7 +728,7 @@ isc.OBPersonalizeFormLayout.addProperties({
   
   // creates the preview form and displays it
   buildPreviewForm: function() {
-    var statusBar, i, fld, itemClick, me = this;
+    var statusBar, currentPane, i, fld, itemClick, me = this;
     
     this.formLayout = isc.VLayout.create({ height: '100%', width: '100%'}, OB.Styles.Personalization.Preview);
     
@@ -809,7 +820,13 @@ isc.OBPersonalizeFormLayout.addProperties({
     
     this.formLayout.addMember(this.previewForm);
     
+    if (this.previewTabSet.getTab(0).pane) {
+      currentPane = this.previewTabSet.getTab(0).pane;
+    }    
     this.previewTabSet.updateTab(this.previewTabSet.getTab(0), this.formLayout);
+    if (currentPane) {
+      currentPane.destroy();
+    }
   },
   
   buildFormAndTree: function() {
@@ -856,8 +873,9 @@ isc.OBPersonalizeFormLayout.addProperties({
   buildFieldsTreeGrid: function() {
     var i, prop, fld;
     
+    this.fieldsLayout.destroyAndRemoveMembers(this.fieldsLayout.getMembers());
     if (this.fieldsTreeGrid) {
-      this.fieldsLayout.removeMember(this.fieldsTreeGrid);
+      this.fieldsTreeGrid.destroy();
     }
     
     // the tree will add properties to the objects as fieldData
@@ -925,6 +943,14 @@ isc.OBPersonalizeFormLayout.addProperties({
     }
   },
   
+  getStandardWindow: function() {
+    if (this.openedFromMaintenanceWindow) {
+      return this.maintenanceView.standardWindow;
+    } else {
+      return this.form.view.standardWindow;
+    }
+  },
+  
   // close the form personalizer, refresh the existing form so that 
   // the changes are shown immediately, or if called from the 
   // maintenance window refresh the record there
@@ -955,7 +981,7 @@ isc.OBPersonalizeFormLayout.addProperties({
       }
       window = this.form.view.standardWindow;
     }
-    window.removeMember(this);
+    window.destroyAndRemoveMembers(this);
     
     // restores the tabtitle
     window.view.updateTabTitle();

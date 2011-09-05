@@ -90,7 +90,8 @@ OB.ViewFormProperties = {
 
     // is used to keep track of the original simple objects
     // used to create fields
-    this._originalFields = isc.shallowClone(this.fields);
+    // note fields can be in fields or theFields
+    this._originalFields = isc.shallowClone(this.fields || this.theFields);
     
     this.Super('initWidget', arguments);
 
@@ -585,11 +586,18 @@ OB.ViewFormProperties = {
       delete this.inFicCall;
       return;
     }
+
+    if (data._readOnly || this.view.readOnly) {
+      this.readOnly = true;
+    } else {
+      this.readOnly = false;
+    }
     
     var columnValues = data.columnValues, calloutMessages = data.calloutMessages,
                        auxInputs = data.auxiliaryInputValues, prop, value, i, j,
                        dynamicCols = data.dynamicCols,
-                       sessionAttributes = data.sessionAttributes, item, section;
+                       sessionAttributes = data.sessionAttributes, item, section,
+                       retHiddenInputs = data.hiddenInputs;
 
     // edit row has changed when returning, don't update the form anymore
     if (this.grid && this.grid.getEditRow() !== editRow) {
@@ -615,8 +623,25 @@ OB.ViewFormProperties = {
       }
     }
     
+    if(retHiddenInputs) {
+      for(prop in retHiddenInputs) {
+        if(retHiddenInputs.hasOwnProperty(prop)){
+          this.hiddenInputs[prop] = retHiddenInputs[prop];
+        }
+      }
+    }
+    
     if(this.attachmentsSection) {
       this.attachmentsSection.fillAttachments(data.attachments);
+    }
+    
+    // We will show the note count if it has been calculated and is different from 0
+    if(this.noteSection) {
+      if(data.noteCount) {
+        this.noteSection.setNoteCount(data.noteCount);
+      } else if(request.params.MODE === 'EDIT') {
+        this.noteSection.setNoteCount(0);
+      }
     }
 
     // apparently sometimes an empty string is returned
@@ -640,11 +665,6 @@ OB.ViewFormProperties = {
 
     if (dynamicCols) {
       this.dynamicCols = dynamicCols;
-    }
-    if (data._readOnly || this.view.readOnly) {
-      this.readOnly = true;
-    } else {
-      this.readOnly = false;
     }
 
     // grid editing    
@@ -1535,6 +1555,32 @@ OB.ViewFormProperties = {
     
     delete this.storedFocusItem;
     delete this.storedSelectionRange;    
+  },
+
+  destroy: function () {
+    var i, items = this.getItems(), len = items.length, ds, dataSources = [];
+
+    // caching reference to all DS of Items
+    for (i = 0; i < len; i++) {
+      item = items[i];
+      ds = item ? item.dataSource || item.optionDataSource : null;
+
+      if(ds) {
+        dataSources.push(ds);
+      }
+    }
+
+    this.Super('destroy', arguments);
+    len = dataSources.length;
+
+    // Destroying DS not managed by DynamicForm.destroy
+    for(i = 0; i < len; i++) {
+      ds = dataSources[i];
+      if(ds) {
+        ds.destroy();
+        ds = null;
+      }
+    }
   }
 };
 

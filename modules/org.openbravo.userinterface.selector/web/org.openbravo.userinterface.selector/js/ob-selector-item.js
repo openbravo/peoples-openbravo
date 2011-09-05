@@ -261,26 +261,6 @@ isc.OBSelectorPopupWindow.addProperties({
   setValueInField: function(){
     this.selector.setValueFromRecord(this.selectorGrid.getSelectedRecord(), true);
     this.hide();
-  },
-
-  destroy: function () {
-    // Destroy the selectorGrid to avoid memory leaks
-    if(this.selectorGrid) {
-      if(this.selectorGrid.dataSource &&
-         this.selector.form.destroyItemObjects) {
-        this.selectorGrid.dataSource.destroy();
-        this.selectorGrid.dataSource = null;
-      }
-      this.selectorGrid.destroy();
-      this.selectorGrid = null;
-    }
-
-    if(this.dataSource && this.selector.form.destroyItemObjects) {
-      this.dataSource.destroy();
-      this.dataSource = null;
-    }
-
-    this.Super('destroy', arguments);
   }
 });
 
@@ -403,7 +383,7 @@ isc.OBSelectorItem.addProperties({
       this.icons = null;
     }
     
-    if (this.showSelectorGrid) {
+    if (this.showSelectorGrid && !this.form.isPreviewForm) {
       this.selectorWindow = isc.OBSelectorPopupWindow.create({
         // solves issue: https://issues.openbravo.com/view.php?id=17268
         title: (this.form && this.form.grid ? this.form.grid.getField(this.name).title : this.title),
@@ -634,14 +614,6 @@ isc.OBSelectorItem.addProperties({
       this.selectorWindow.destroy();
       this.selectorWindow = null;
     }
-
-    // Only destroy the optionDataSource if is allowed by the form
-    if(this.form.destroyItemObjects) {
-      if(this.optionDataSource) {
-        this.optionDataSource.destroy();
-        this.optionDataSource = null;
-      }
-    }
     this.Super('destroy', arguments);
   }
 });
@@ -790,15 +762,17 @@ isc.OBSelectorLinkItem.addProperties({
       this.icons = null;
     }
     
-    this.selectorWindow = isc.OBSelectorPopupWindow.create({
-      // solves issue: https://issues.openbravo.com/view.php?id=17268
-      title: (this.form && this.form.grid ? this.form.grid.getField(this.name).title : this.title),
-      dataSource: this.dataSource,
-      selector: this,
-      valueField: this.gridValueField,
-      displayField: this.gridDisplayField,
-      selectorGridFields: isc.shallowClone(this.selectorGridFields)
-    });
+    if (!this.form.isPreviewForm) {
+      this.selectorWindow = isc.OBSelectorPopupWindow.create({
+        // solves issue: https://issues.openbravo.com/view.php?id=17268
+        title: (this.form && this.form.grid ? this.form.grid.getField(this.name).title : this.title),
+        dataSource: this.dataSource,
+        selector: this,
+        valueField: this.gridValueField,
+        displayField: this.gridDisplayField,
+        selectorGridFields: isc.shallowClone(this.selectorGridFields)
+      });
+    }
     
     return this.Super('init', arguments);
   },
@@ -818,14 +792,6 @@ isc.OBSelectorLinkItem.addProperties({
     if(this.selectorWindow) {
       this.selectorWindow.destroy();
       this.selectorWindow = null;
-    }
-
-    // Only destroy the optionDataSource if is allowed by the form
-    if(this.form.destroyItemObjects) {
-      if(this.optionDataSource) {
-        this.optionDataSource.destroy();
-        this.optionDataSource = null;
-      }
     }
     this.Super('destroy', arguments);
   }

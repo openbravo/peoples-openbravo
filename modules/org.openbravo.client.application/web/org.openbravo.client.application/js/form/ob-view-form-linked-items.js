@@ -315,7 +315,6 @@ isc.OBLinkedItemLayout.addProperties({
     hLayout.addMember(this.linkedItemListGrid);
     
     this.messageLabel = isc.Label.create({
-      ID: 'messageLabel',
       width: '100%',
       height: '100%',
       canFocus: true
