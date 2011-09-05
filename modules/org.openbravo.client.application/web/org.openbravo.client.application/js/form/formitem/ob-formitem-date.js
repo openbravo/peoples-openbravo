@@ -49,9 +49,6 @@ OB.DateItemProperties = {
   
   textAlign: 'left',
   
-  // to prevent infinite looping as setFormErrors will also blur
-  inBlur: false,
-
   dateParts : [],
 
   doInit: function() {
@@ -181,8 +178,8 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
   init: function() {
     // this call super.init
     this.doInit();
-   },
-  
+  },
+   
   expandValue: function() {
     var newValue = this.parseValue(), oldValue = this.blurValue();
     
