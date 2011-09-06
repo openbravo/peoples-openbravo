@@ -40,11 +40,12 @@ from
 	LEFT JOIN tel.project as p,
 	ADUser as u
 	where (month(current_date()) = month(tel.expenseDate) or (month(current_date()) = month(tel.expenseSheet.reportDate) and tel.expenseDate = null))
-        and tel.timeSheet = 'Y'
+	and (year(current_date()) = year(tel.expenseDate) or (year(current_date()) = year(tel.expenseSheet.reportDate) and tel.expenseDate = null))
+	and tel.timeSheet = 'Y'
 	and tel.client.id=:client
 	and tel.expenseSheet.businessPartner=u.businessPartner
 	and u.id=:user
-order by  tel.expenseSheet.documentNo]]></HQL>
+order by  tel.expenseSheet.reportDate, tel.expenseSheet.documentNo]]></HQL>
 <!--D2003CD3F9984BF39457BA1F2FFF01C9--></OBCQL_WIDGET_QUERY>
 
 </data>
