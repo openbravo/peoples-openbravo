@@ -175,7 +175,6 @@ BEGIN
       v_invoicedamount NUMBER;
       v_notassignedamount NUMBER;
       v_assignedamount NUMBER;
-      v_pendingAmountFromOrder NUMBER:=0;
       v_scheduledetailamount NUMBER;
       v_oldorder VARCHAR2(32) := '-1';
       v_payment_schedule_invoice VARCHAR2(32);
@@ -185,6 +184,7 @@ BEGIN
       v_ConsumedGranTotal NUMBER:= 0;
       v_paymentCount NUMBER:= 0;
       v_negativePS NUMBER:= 1;
+      v_psdbreakbypartialpayment BOOLEAN:=TRUE;
 
       CURSOR cur_order_schdet (invoice_id VARCHAR) IS
       SELECT DISTINCT c_orderline.c_order_id AS order_id, fin_payment_scheduledetail.amount + COALESCE(fin_payment_scheduledetail.writeoffamt,0) AS amount,
@@ -383,27 +383,31 @@ BEGIN
             END IF;
             IF (NOT next_order) THEN
               v_differenceamount := 0;
-              --1st condition: split order's payment schedule detail in case that not all the amount has been invoiced.
-              --2nd condition: invoiced amount is higher than the scheduled amount, calculate the difference and split
-              --the payment schedule detail of the order.
-              IF ((v_notassignedamount * v_negativeps <= v_scheduledamount * v_negativePS)) THEN
-                v_differenceamount := COALESCE(v_scheduledetailamount,0) - COALESCE(v_notassignedamount,0);
-              ELSIF ((v_scheduledamount * v_negativeps < v_notassignedamount * v_negativePS)) THEN
-                v_differenceamount := COALESCE(v_scheduledetailamount,0) - COALESCE(v_scheduledamount,0);
-              END IF;
 
-              -- The order is completely invoiced and it is the last payment schedule. All the pending amount of the
-              -- order has to be assigned to this invoice, a regulation psd only related to this invoice will be 
-              -- generated later to match the difference.
+              --1st condition: The order is completely invoiced and it is the last payment schedule. All the pending amount of the
+              --               order has to be assigned to this invoice, a regulation psd only related to this invoice will be 
+              --               generated later to match the difference.
+              --2st condition: invoiced amount is higher than the scheduled amount, calculate the difference and split
+              --               the payment schedule detail of the order.
+              --3rd condition: split order's payment schedule detail in case that not all the amount has been invoiced.
+              --               In this case difference amount would not be zero.
               IF(v_Count = 0 AND v_paymentcount = 0) THEN
                 v_differenceamount:= 0;
+              ELSIF (v_notassignedamount * v_negativePS > v_scheduledamount * v_negativeps ) THEN
+                v_differenceamount := COALESCE(v_scheduledetailamount,0) - COALESCE(v_scheduledamount,0);
+                IF (v_paymentcount > 0) THEN
+                  v_psdbreakbypartialpayment := true;
+                ELSE
+                  v_psdbreakbypartialpayment := false;
+                END IF;
+              ELSE
+                v_differenceamount := COALESCE(v_scheduledetailamount,0) - COALESCE(v_notassignedamount,0);
+                v_psdbreakbypartialpayment := false;
               END IF;
 
               --When difference amount is not 0 the payment schedule detail of the order has to be split. The difference
               --amount is the amount of the new psd that is not related to any invoice.
               IF (v_differenceamount <> 0) THEN
-                -- continue with the same payment schedule detail
-                fetch_next_order_item := false;
                 v_new_scheduledetailid := get_uuid();
                 INSERT INTO fin_payment_scheduledetail
                 (
@@ -431,9 +435,12 @@ BEGIN
                 WHERE fin_payment_scheduledetail_id = v_scheduledetailid;
 
                 v_scheduledetailamount := v_scheduledetailamount - v_differenceamount;
+              END IF;
 
-              ELSE
+              IF (v_differenceamount = 0 OR (v_count <> 0 AND NOT v_psdbreakbypartialpayment)) THEN
                 fetch_next_order_item := true;
+              ELSE
+                fetch_next_order_item := false;
               END IF;
 
               -- link current current payment schedule detail to the invoice
@@ -481,9 +488,8 @@ BEGIN
               null,
               v_payment_schedule_invoice,
               null,
-              v_scheduledamount - v_pendingAmountFromOrder
+              v_scheduledamount
             );
-            v_pendingAmountFromOrder:=0;
           END IF;
         END LOOP;
 
