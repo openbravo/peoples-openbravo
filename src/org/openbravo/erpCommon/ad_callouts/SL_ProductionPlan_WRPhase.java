@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -49,8 +50,9 @@ public class SL_ProductionPlan_WRPhase extends HttpSecureAppServlet {
         log4j.debug("CHANGED: " + strChanged);
       String strProduction = vars.getStringParameter("inpmProductionId");
       String strWRPhase = vars.getStringParameter("inpmaWrphaseId");
+      String strQuantity = vars.getStringParameter("inpproductionqty");
       try {
-        printPage(response, vars, strProduction, strWRPhase);
+        printPage(response, vars, strProduction, strWRPhase, strQuantity);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -59,7 +61,8 @@ public class SL_ProductionPlan_WRPhase extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strProduction, String strWRPhase) throws IOException, ServletException {
+      String strProduction, String strWRPhase, String strQuantity) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -69,6 +72,14 @@ public class SL_ProductionPlan_WRPhase extends HttpSecureAppServlet {
     if (data == null || data.length == 0)
       data = SLProductionPlanWRPhaseData.set();
     String strNeededQuantity = data[0].neededqty;
+    BigDecimal EstimatedTime = BigDecimal.ZERO;
+    BigDecimal QtyWRPhase = new BigDecimal(data[0].quantity);
+
+    if (!data[0].estimatedtime.equals("") && QtyWRPhase.compareTo(BigDecimal.ZERO) != 0
+        && !strQuantity.equals("")) {
+      EstimatedTime = new BigDecimal(data[0].estimatedtime).divide(QtyWRPhase).multiply(
+          new BigDecimal(strQuantity));
+    }
 
     String strOutsourced = SLProductionPlanWRPhaseData.selectOutsourced(this, strWRPhase);
     if (strOutsourced == null || strOutsourced.equals(""))
@@ -85,7 +96,11 @@ public class SL_ProductionPlan_WRPhase extends HttpSecureAppServlet {
       resultado.append("new Array(\"inpconversionrate\", " + data[0].conversionrate + "),\n");
     resultado.append("new Array(\"inpmaCostcenterVersionId\", \"" + data[0].maCostcenterVersionId
         + "\"), \n");
-    resultado.append("new Array(\"inpoutsourced\", \"" + strOutsourced + "\")\n");
+    resultado.append("new Array(\"inpoutsourced\", \"" + strOutsourced + "\"),\n");
+    resultado.append("new Array(\"inpdivisiongroupqty\", \""
+        + FormatUtilities.replaceJS(data[0].divisiongroupqty) + "\"),\n");
+    resultado.append("new Array(\"inpestimatedtime\", \""
+        + FormatUtilities.replaceJS(EstimatedTime.toPlainString()) + "\")\n");
     resultado.append(");\n");
     xmlDocument.setParameter("array", resultado.toString());
     response.setContentType("text/html; charset=UTF-8");
