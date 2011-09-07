@@ -567,6 +567,10 @@ isc.OBSelectorWidget
 
         var baseTestRegistryName = 'org.openbravo.userinterface.selector.' + this.openbravoField + '.';
 
+        // Do not destroy dataSource after creation
+        // https://issues.openbravo.com/view.php?id=18456
+        this.dataSource.potentiallyShared = true;
+
         if (this.numCols > 0 && 
             this.numCols <= isc.OBSelectorWidget.styling.widthDefinition.length) {
           this.width = isc.OBSelectorWidget.styling.widthDefinition[this.numCols - 1];
