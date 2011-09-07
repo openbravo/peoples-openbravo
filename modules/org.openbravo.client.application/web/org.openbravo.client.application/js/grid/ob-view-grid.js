@@ -1832,8 +1832,7 @@ isc.OBViewGrid.addProperties({
       // as picklist fields will always have picked a value
       // note that focusItem updatevalue for picklist can result in extra datasource requests
       if (focusItem && !focusItem.hasPickList) {
-        focusItem.updateValue();
-        editForm.handleItemChange(focusItem);
+        focusItem.blur(focusItem.form, focusItem);
         if (editForm.inFicCall) {
           // use editValues object as the edit form will be re-used for a next row
           var editValues = this.getEditValues(rowNum);
@@ -1940,8 +1939,7 @@ isc.OBViewGrid.addProperties({
     } else {
       var editForm = this.getEditForm(), focusItem = editForm.getFocusItem();
       if (focusItem && !focusItem.hasPickList) {
-        focusItem.updateValue();
-        editForm.handleItemChange(focusItem);
+        focusItem.blur(focusItem.form, focusItem);
         if (editForm.inFicCall) {
           // use editValues object as the edit form will be re-used for a next row
           var editValues = this.getEditValues(editValuesID);
