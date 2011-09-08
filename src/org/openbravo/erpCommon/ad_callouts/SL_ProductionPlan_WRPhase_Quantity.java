@@ -42,12 +42,12 @@ public class SL_ProductionPlan_WRPhase_Quantity extends SimpleCallout {
 
     WorkRequirementOperation wrPhase = OBDal.getInstance().get(WorkRequirementOperation.class,
         strmWRPhase);
-    BigDecimal Qty = new BigDecimal(strQty);
+    BigDecimal qty = new BigDecimal(strQty);
     BigDecimal wrPhaseEstTime = wrPhase.getEstimatedTime();
     if (wrPhaseEstTime != null) {
       if (wrPhase.getQuantity() != null && wrPhase.getQuantity().compareTo(BigDecimal.ZERO) != 0) {
         info.addResult("inpestimatedtime",
-            wrPhaseEstTime.divide(wrPhase.getQuantity()).multiply(Qty).toPlainString());
+            wrPhaseEstTime.divide(wrPhase.getQuantity()).multiply(qty).toPlainString());
       }
     }
 

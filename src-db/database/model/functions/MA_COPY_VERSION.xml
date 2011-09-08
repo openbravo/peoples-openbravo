@@ -38,6 +38,7 @@
     v_DocumentNo NUMBER;
     v_Sequence_ID VARCHAR2(32);
     v_Product_ID VARCHAR2(32);
+    v_ProductAtt_ID VARCHAR2(32);
     v_DateFrom DATE :=trunc(now());
     v_DateTo DATE :=TO_DATE('31-12-9999', 'DD-MM-YYYY');
     v_Count NUMBER;
@@ -45,6 +46,7 @@
     --  v_Processed         CHAR;
     Cur_Sequence RECORD;
     Cur_Product RECORD;
+    Cur_ProductAtt RECORD;
   BEGIN
     v_Result:=1;
     --  Get Parameters
@@ -127,7 +129,7 @@
           Created, Createdby, Updated, Updatedby,
           MA_Processplan_Version_ID, MA_Process_ID, Value, Name,
           Description, CostCenterUse, Preptime, Multiplier,
-          Seqno, Noqty, Groupuse, Calculated
+          Seqno, Noqty, Groupuse, Calculated, Estimatedtime, Divisiongroupqty
         )
         VALUES
         (
@@ -135,7 +137,7 @@
           now(), COALESCE(v_User_ID, '0'), now(), COALESCE(v_User_ID, '0'),
           v_ProcessPlanVersion_ID, Cur_Sequence.MA_Process_ID, Cur_Sequence.Value, Cur_Sequence.Name,
           Cur_Sequence.Description, Cur_Sequence.CostCenterUse, Cur_Sequence.Preptime, Cur_Sequence.Multiplier,
-          Cur_Sequence.Seqno, Cur_Sequence.Noqty, Cur_Sequence.Groupuse, Cur_Sequence.Calculated
+          Cur_Sequence.Seqno, Cur_Sequence.Noqty, Cur_Sequence.Groupuse, Cur_Sequence.Calculated, Cur_Sequence.Estimatedtime, Cur_Sequence.Divisiongroupqty
         )
         ;
       FOR Cur_Product IN
@@ -153,7 +155,7 @@
             Created, Createdby, Updated, Updatedby,
             MA_Sequence_ID, M_Product_ID, Quantity, Productiontype,
             C_Uom_ID, Quantityorder, M_Product_Uom_ID, Componentcost,
-            Decrease, Rejected
+            Decrease, Rejected, Uniqueattconsum, Consumptiontype, Copyproduct
           )
           VALUES
           (
@@ -161,9 +163,34 @@
             now(), COALESCE(v_User_ID, '0'), now(), COALESCE(v_User_ID, '0'),
             v_Sequence_ID, Cur_Product.M_Product_ID, Cur_Product.Quantity, Cur_Product.Productiontype,
             Cur_Product.C_Uom_ID, Cur_Product.Quantityorder, Cur_Product.M_Product_Uom_ID, Cur_Product.Componentcost,
-            Cur_Product.Decrease, Cur_Product.Rejected
+            Cur_Product.Decrease, Cur_Product.Rejected, Cur_Product.Uniqueattconsum, Cur_Product.Consumptiontype, Cur_Product.Copyproduct
           )
           ;
+	FOR Cur_ProductAtt IN
+	(SELECT *
+	FROM MA_SequenceProductAtt
+	WHERE MA_SequenceProduct_ID=Cur_Product.MA_SequenceProduct_ID
+	)
+	LOOP
+	v_ResultStr:='InsertProductsCopyFromAttribute';
+	Ad_Sequence_Next('MA_SequenceProductAtt', v_Client_ID, v_ProductAtt_ID) ;
+	INSERT
+	INTO MA_SequenceProductatt
+	  (
+	    MA_SequenceProductatt_ID, AD_Client_ID, AD_Org_ID, Isactive,
+	    Created, Createdby, Updated, Updatedby,
+	    MA_Sequenceproduct_id, M_Product_id, M_Attributeuseto_id, M_Attributeuse_id, 
+	    Isspecialatt, Specialatt
+	  )
+	  VALUES
+	  (
+	    v_ProductAtt_ID, v_Client_ID, v_Org_ID, 'Y',
+	    now(), COALESCE(v_User_ID, '0'), now(), COALESCE(v_User_ID, '0'),
+	    v_Product_ID, Cur_ProductAtt.M_Product_id, Cur_ProductAtt.M_Attributeuseto_id, Cur_ProductAtt.M_Attributeuse_id, 
+	    Cur_ProductAtt.Isspecialatt, Cur_ProductAtt.Specialatt
+	  )
+	  ;
+	END LOOP;
       END LOOP;
     END LOOP;
     --<<FINISH_PROCESS>>
