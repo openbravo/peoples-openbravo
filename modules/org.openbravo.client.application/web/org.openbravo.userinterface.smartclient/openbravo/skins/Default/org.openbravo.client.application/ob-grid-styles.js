@@ -34,6 +34,7 @@ isc.OBGrid.addProperties({
   sortAscendingImage:{src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_sortAscending.png', width:7, height:11},
   sortDescendingImage:{src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_sortDescending.png', width:7, height:11},
   headerMenuButtonConstructor: 'OBGridHeaderImgButton',
+  headerButtonConstructor: 'ImgButton',
   headerMenuButtonWidth: 17,
   headerMenuButtonSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeaderMenuButton.png',
   hoverWidth: 200,
