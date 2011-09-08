@@ -48,6 +48,8 @@ isc.OBLinkedItemSectionItem.addProperties({
   
   visible: false,
   
+  itemIds: ['_linkedItems_Canvas'],
+  
   // note formitems don't have an initWidget but an init method
   init: function(){
     // override the one passed in

@@ -229,28 +229,32 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       viewFieldGroup.setPersonalizable(false);
       fields.add(viewFieldGroup);
       viewFieldGroup.setFieldGroup(OBDal.getInstance().get(FieldGroup.class, AUDIT_GROUP_ID));
-      viewFieldGroup.addChildren(auditFields);
+      // itemIds are hardcoded in the field type
+      // viewFieldGroup.addChildren(auditFields);
       fields.addAll(auditFields);
     }
 
     // add the notes part
     final OBViewFieldDefinition notesCanvasFieldDefinition = new NotesCanvasField();
     final NotesField notesField = new NotesField();
-    notesField.setChildField(notesCanvasFieldDefinition);
+    // itemIds are hardcoded in the field type
+    // notesField.setChildField(notesCanvasFieldDefinition);
     fields.add(notesField);
     fields.add(notesCanvasFieldDefinition);
 
     // add the linked items part
     final OBViewFieldDefinition linkedItemsCanvasFieldDefinition = new LinkedItemsCanvasField();
     final LinkedItemsField linkedItemsField = new LinkedItemsField();
-    linkedItemsField.setChildField(linkedItemsCanvasFieldDefinition);
+    // itemIds are hardcoded in the field type
+    // linkedItemsField.setChildField(linkedItemsCanvasFieldDefinition);
     fields.add(linkedItemsField);
     fields.add(linkedItemsCanvasFieldDefinition);
 
     // add the attachments part
     final AttachmentsCanvasField attachmentsCanvas = new AttachmentsCanvasField();
     final AttachmentsField attachmentDefinition = new AttachmentsField();
-    attachmentDefinition.setChildField(attachmentsCanvas);
+    // itemIds are hardcoded in the field type
+    // attachmentDefinition.setChildField(attachmentsCanvas);
     fields.add(attachmentDefinition);
     fields.add(attachmentsCanvas);
 
@@ -302,9 +306,11 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public String getType();
 
+    public boolean getSessionProperty();
+
     public boolean getStandardField();
 
-    public boolean isPersonalizable();
+    public boolean getPersonalizable();
 
     public String getFieldProperties();
 
@@ -322,11 +328,13 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     public long getRowSpan();
 
-    public boolean isReadOnly();
+    public boolean getReadOnly();
 
-    public boolean isUpdatable();
+    public boolean getRequired();
 
-    public boolean isParentProperty();
+    public boolean getUpdatable();
+
+    public boolean getParentProperty();
 
     public boolean getRedrawOnChange();
 
@@ -365,6 +373,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return OBViewUtil.getLabel(element, element.getADElementTrlList());
     }
 
+    public boolean getSessionProperty() {
+      return false;
+    }
+
     @Override
     public String getName() {
       return name;
@@ -382,7 +394,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
 
     @Override
     public String getFieldProperties() {
-      return "'width': '*', ";
+      return "";
     }
 
     @Override
@@ -425,21 +437,21 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     }
 
     @Override
-    public boolean isReadOnly() {
+    public boolean getReadOnly() {
       return true;
     }
 
     @Override
-    public boolean isUpdatable() {
+    public boolean getUpdatable() {
       return false;
     }
 
-    public boolean isPersonalizable() {
+    public boolean getPersonalizable() {
       return false;
     }
 
     @Override
-    public boolean isParentProperty() {
+    public boolean getParentProperty() {
       return false;
     }
 
@@ -458,7 +470,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return "";
     }
 
-    public boolean isRequired() {
+    public boolean getRequired() {
       return false;
     }
 
@@ -484,7 +496,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
     private Property property;
     private String label;
     private UIDefinition uiDefinition;
-    private Boolean isParentProperty = null;
+    private Boolean getParentProperty = null;
     private boolean redrawOnChange = false;
     private String showIf = "";
     private String readOnlyIf = "";
@@ -497,28 +509,32 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       this.setRedrawOnChange(value);
     }
 
-    public boolean isReadOnly() {
-      return isParentProperty() || field.isReadOnly();
+    public boolean getSessionProperty() {
+      return property.isStoredInSession();
     }
 
-    public boolean isUpdatable() {
+    public boolean getReadOnly() {
+      return getParentProperty() || field.isReadOnly();
+    }
+
+    public boolean getUpdatable() {
       return property.isUpdatable();
     }
 
-    public boolean isPersonalizable() {
+    public boolean getPersonalizable() {
       return true;
     }
 
-    public boolean isParentProperty() {
-      if (isParentProperty == null) {
+    public boolean getParentProperty() {
+      if (getParentProperty == null) {
         if (OBViewFormComponent.this.getParentProperty() == null) {
-          isParentProperty = false;
+          getParentProperty = false;
         } else {
-          isParentProperty = OBViewFormComponent.this.getParentProperty()
-              .equals(property.getName());
+          getParentProperty = OBViewFormComponent.this.getParentProperty().equals(
+              property.getName());
         }
       }
-      return isParentProperty;
+      return getParentProperty;
     }
 
     public boolean isSearchField() {
@@ -628,7 +644,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       this.property = property;
     }
 
-    public boolean isRequired() {
+    public boolean getRequired() {
       // booleans are never required as their input only allows 2 values
       if (property.isBoolean()) {
         return false;
@@ -715,6 +731,13 @@ public class OBViewFormComponent extends BaseTemplateComponent {
   }
 
   public class DefaultVirtualField implements OBViewFieldDefinition {
+    public boolean getRequired() {
+      return false;
+    }
+
+    public boolean getSessionProperty() {
+      return false;
+    }
 
     public String getFieldProperties() {
       return "";
@@ -724,19 +747,19 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return false;
     }
 
-    public boolean isReadOnly() {
+    public boolean getReadOnly() {
       return false;
     }
 
-    public boolean isUpdatable() {
+    public boolean getUpdatable() {
       return true;
     }
 
-    public boolean isParentProperty() {
+    public boolean getParentProperty() {
       return false;
     }
 
-    public boolean isPersonalizable() {
+    public boolean getPersonalizable() {
       return false;
     }
 
@@ -814,7 +837,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       type = "OBSectionItem";
     }
 
-    public boolean isPersonalizable() {
+    public boolean getPersonalizable() {
       return personalizable;
     }
 
@@ -851,6 +874,10 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       children.addAll(viewFieldDefinitions);
     }
 
+    public boolean getHasChildren() {
+      return !getChildren().isEmpty();
+    }
+
     public List<OBViewFieldDefinition> getChildren() {
       return children;
     }
@@ -867,7 +894,7 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return fieldGroup.getId();
     }
 
-    public boolean isExpanded() {
+    public boolean getExpanded() {
       return expanded;
     }
 
@@ -1086,8 +1113,15 @@ public class OBViewFormComponent extends BaseTemplateComponent {
   }
 
   public class OBViewFieldSpacer implements OBViewFieldDefinition {
+    public boolean getRequired() {
+      return false;
+    }
 
-    public boolean isPersonalizable() {
+    public boolean getSessionProperty() {
+      return false;
+    }
+
+    public boolean getPersonalizable() {
       return false;
     }
 
@@ -1103,15 +1137,15 @@ public class OBViewFormComponent extends BaseTemplateComponent {
       return false;
     }
 
-    public boolean isReadOnly() {
+    public boolean getReadOnly() {
       return false;
     }
 
-    public boolean isUpdatable() {
+    public boolean getUpdatable() {
       return true;
     }
 
-    public boolean isParentProperty() {
+    public boolean getParentProperty() {
       return false;
     }
 

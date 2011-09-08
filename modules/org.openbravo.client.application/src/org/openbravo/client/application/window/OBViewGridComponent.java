@@ -394,6 +394,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     }
 
     public boolean isRequired() {
+      // return true;
       // booleans are never required as their input only allows 2 values
       if (property.isBoolean()) {
         return false;
