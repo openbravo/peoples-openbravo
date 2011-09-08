@@ -35,6 +35,33 @@ isc.OBPersonalizationTreeGrid.addProperties({
 
 OB.Styles.Personalization = {};
 
+OB.Styles.Personalization.Menu = {
+  styleName: 'OBPersonalizationPullDownMenu',
+  baseStyle: 'OBPersonalizationPullDownMenuCell',
+  bodyStyleName: 'OBPersonalizationPullDownMenuBody',
+  tableStyle: "OBPersonalizationPullDownMenuTable",
+  bodyBackgroundColor: null
+};
+
+OB.Styles.Personalization.saveViewPopupSmall = {
+  width: 250,
+  height: 150
+};
+
+OB.Styles.Personalization.saveViewPopupLarge = {
+  width: 250,
+  height: 280
+};
+
+OB.Styles.Personalization.viewFieldDefaults = {
+  width: 200
+};
+
+OB.Styles.Personalization.deleteViewPopup = {
+  width: 250,
+  height: 150
+};
+
 OB.Styles.Personalization.buttonBarProperties = {
   width: 30
 };
