@@ -67,6 +67,8 @@ public class Property {
   private String name;
   private String columnName;
   private String columnId;
+  private boolean storedInSession = false;
+
   private boolean isActiveColumn = false;
   private String nameOfColumn; // AD_COLUMN.NAME
   // note defaultValue contains the value as it exists in the db, for booleans
@@ -128,6 +130,8 @@ public class Property {
     setColumnName(fromColumn.getColumnName());
     setNameOfColumn(fromColumn.getName());
     setColumnId(fromColumn.getId());
+
+    setStoredInSession(fromColumn.isStoredInSession());
 
     setDomainType(fromColumn.getDomainType());
 
@@ -1216,5 +1220,13 @@ public class Property {
 
   public Property getTrlOneToManyProperty() {
     return trlOneToManyProperty;
+  }
+
+  public boolean isStoredInSession() {
+    return storedInSession;
+  }
+
+  public void setStoredInSession(boolean storedInSession) {
+    this.storedInSession = storedInSession;
   }
 }
