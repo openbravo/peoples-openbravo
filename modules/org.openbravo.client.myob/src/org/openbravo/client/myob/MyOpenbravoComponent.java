@@ -154,6 +154,8 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
     return "false";
   }
 
+  // when changing code, check the ApplicationUtils.getAdminFormSettings
+  // method also
   public String getAdminModeValueMap() {
     if (getEnableAdminMode().equals("false")) {
       return "{}";
