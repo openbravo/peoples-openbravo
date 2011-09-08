@@ -53,6 +53,7 @@ public class PersonalizationActionHandler extends BaseActionHandler {
   private static final String ROLEID = "roleId";
   private static final String USERID = "userId";
   private static final String TABID = "tabId";
+  private static final String WINDOWID = "windowId";
 
   @Inject
   private PersonalizationHandler personalizationHandler;
@@ -67,11 +68,14 @@ public class PersonalizationActionHandler extends BaseActionHandler {
       if (!parameters.containsKey(ACTION)) {
         throw new IllegalStateException("Mandatory parameter " + ACTION + " not present");
       }
-      if (!parameters.containsKey(PERSONALIZATIONID) && !parameters.containsKey(TABID)) {
-        throw new IllegalStateException("Mandatory parameter " + TABID + " not present");
+      if (!parameters.containsKey(PERSONALIZATIONID) && !parameters.containsKey(TABID)
+          && !parameters.containsKey(WINDOWID)) {
+        throw new IllegalStateException("Mandatory parameter " + TABID + "/" + WINDOWID
+            + " not present");
       }
       final String action = (String) parameters.get(ACTION);
       final String tabId = (String) parameters.get(TABID);
+      final String windowId = (String) parameters.get(WINDOWID);
       if (action.equals(ACTION_DELETE)) {
         final String persId = (String) parameters.get(PERSONALIZATIONID);
         final UIPersonalization uiPersonalization = OBDal.getInstance().get(
@@ -79,16 +83,12 @@ public class PersonalizationActionHandler extends BaseActionHandler {
         OBDal.getInstance().remove(uiPersonalization);
         return new JSONObject().put("result", "success");
       } else if (action.equals(ACTION_STORE)) {
-        final UIPersonalization uiPersonalization = personalizationHandler.storePersonalization(
-            (String) parameters.get(PERSONALIZATIONID), (String) parameters.get(CLIENTID),
-            (String) parameters.get(ORGID), (String) parameters.get(ROLEID),
-            (String) parameters.get(USERID), tabId, (String) parameters.get(TARGET), data);
+        final UIPersonalization uiPersonalization = personalizationHandler
+            .storePersonalization((String) parameters.get(PERSONALIZATIONID),
+                (String) parameters.get(CLIENTID), (String) parameters.get(ORGID),
+                (String) parameters.get(ROLEID), (String) parameters.get(USERID), tabId, windowId,
+                (String) parameters.get(TARGET), data);
         final JSONObject result = new JSONObject();
-        if (uiPersonalization.getUser() != null
-            && uiPersonalization.getUser().getId()
-                .equals(OBContext.getOBContext().getUser().getId())) {
-          result.put("canDelete", true);
-        }
         result.put("personalizationId", uiPersonalization.getId());
         return result;
       } else if (action.equals(ACTION_FORM)) {
