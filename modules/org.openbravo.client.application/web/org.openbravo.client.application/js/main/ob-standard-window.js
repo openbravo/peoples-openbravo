@@ -106,18 +106,57 @@ isc.OBStandardWindow.addProperties({
   
   // set window specific user settings, purposely set on class level
   setWindowSettings: function(data) {
-    var i;
-    
-    // do the personalization part always
-    if (data) {
-      OB.Personalization.personalizeWindow(data.personalization, this);
+    var i, defaultView, persDefaultValue, views;
+
+    if (data && data.personalization) {
+      if (data.personalization.forms) {
+        OB.Personalization.personalizeWindow(data.personalization.forms, this);
+      }
+      this.getClass().personalization = data.personalization;
+      
+      persDefaultValue = OB.PropertyStore.get('OBUIAPP_DefaultSavedView', this.windowId);
+      
+      // find the default view, the personalizations are
+      // returned in order of prio, then do sort by name
+      if (this.getClass().personalization.views) {
+        views = this.getClass().personalization.views;
+        if (persDefaultValue) {
+          for (i = 0; i < views.length; i++) {
+            if (persDefaultValue === views[i].personalizationId) {
+              defaultView = views[i];
+              break;
+            }
+          }
+        }
+        if (!defaultView) {
+          for (i = 0; i < views.length; i++) {
+            if (views[i].viewDefinition.isDefault) {
+              defaultView = views[i];
+              break;
+            }
+          }
+        }
+        
+        // apply the default view
+        // maybe do this in a separate thread
+        if (defaultView) {
+          OB.Personalization.applyViewDefinition(defaultView.viewDefinition, this);
+        }
+        
+        this.getClass().personalization.views.sort(function(v1, v2) {
+          var t1 = v1.viewDefinition.name, t2 = v2.viewDefinition.name;
+          if (t1 < t2) {
+            return -1;
+          } else if (t1 === t2) {
+            return 0;
+          }
+          return 1;
+        });
+      }
     }
-    
-    if (this.getClass().windowSettingsRead) {
-      return;
-    }
-    this.getClass().personalization = data.personalization;
+
     this.getClass().windowSettingsRead = true;
+
     this.getClass().uiPattern = data.uiPattern;
     this.getClass().autoSave = data.autoSave;
     this.getClass().showAutoSaveConfirmation = data.showAutoSaveConfirmation;
@@ -126,6 +165,40 @@ isc.OBStandardWindow.addProperties({
       this.views[i].setReadOnly(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_READONLY);
       this.views[i].setSingleRecord(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_SINGLERECORD);
       this.views[i].toolBar.updateButtonState(true);
+    }
+  },
+
+  // Update the personalization record which is stored 
+  updateFormPersonalization: function(view, formPersonalization) {
+    if (!this.getClass().personalization) {
+      this.getClass().personalization = {};
+     }
+    if (!this.getClass().personalization.forms) {
+      this.getClass().personalization.forms = [];
+    }
+    this.getClass().personalization.forms[view.tabId] = formPersonalization;
+   },
+   
+  getFormPersonalization: function(view) {
+    var formPersonalization;
+    if (!this.getClass().personalization || !this.getClass().personalization.forms) {
+      return null;
+    }
+    formPersonalization = this.getClass().personalization.forms;
+    return formPersonalization[view.tabId];
+  },
+
+  removeAllFormPersonalizations: function() {
+    var i, updateButtons = false;
+    if (!this.getClass().personalization) {
+      return;
+    }
+    updateButtons = this.getClass().personalization.forms;
+    if (updateButtons) {
+      delete this.getClass().personalization.forms;
+      for (i = 0; i < this.views.length; i++) {
+        this.views[i].toolBar.updateButtonState(false);
+      }
     }
   },
 
@@ -561,5 +634,9 @@ isc.OBStandardWindow.addProperties({
       }
     }
     OB.PropertyStore.set('OBUIAPP_GridConfiguration', result, this.windowId);
+  },
+  
+  applyViewDefinition: function(viewDefinition) {
+    alert('Applying view definition ' + viewDefinition);
   }
 });
