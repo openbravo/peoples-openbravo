@@ -58,6 +58,11 @@
 // then calls the personalizeWindow method in the ob-personalization.js
 // file.
 //
+// After MP2 a new function has been delivered to store the complete view
+// state of a complete window. See the ob-manage-views.js file for a detailed
+// description. The form layout functionality described here is integrated
+// with this new functionality.
+//
 isc.ClassFactory.defineClass('OBPersonalizeFormLayout', isc.VLayout);
 
 isc.OBPersonalizeFormLayout.addProperties({
@@ -519,8 +524,8 @@ isc.OBPersonalizeFormLayout.addProperties({
         updateState: function(){
           // never allow delete when opened from the maintenance window
           this.setDisabled(this.openedFromMaintenanceWindow || 
-              !this.view.personalizationData || 
-              !this.view.personalizationData.canDelete);
+              !this.view.form.view.getFormPersonalization() || 
+              !this.view.form.view.getFormPersonalization().canDelete);
         },
         keyboardShortcutId: 'ToolBar_Eliminate'
       };
@@ -560,11 +565,11 @@ isc.OBPersonalizeFormLayout.addProperties({
     // it can be grid. The reason that not the whole structure is send
     // is that the call should only change the target itself (the form
     // personalization data) and not the other parts
-    if (this.personalizationData.personalizationId) {
+    if (this.form.view.getFormPersonalization() && this.form.view.getFormPersonalization().personalizationId) {
       params = {
           action: 'store',
           target: 'form',
-          personalizationId: this.personalizationData.personalizationId
+          personalizationId: this.form.view.getFormPersonalization().personalizationId
       };
       
     } else {
@@ -608,6 +613,8 @@ isc.OBPersonalizeFormLayout.addProperties({
           // overwrite what we have
           me.personalizationData.form = newDataFields;
 
+          me.form.view.standardWindow.updateFormPersonalization(me.form.view, me.personalizationData);
+          
           me.initializing = true;
           me.isNew = false;
           me.isSaved = true;

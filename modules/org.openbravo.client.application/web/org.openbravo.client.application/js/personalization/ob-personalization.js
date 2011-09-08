@@ -41,7 +41,7 @@ OB.Personalization = {
 // personalizationData used is up-to-date with the current form fields.
 OB.Personalization.getPersonalizationDataFromForm = function(form) {
   var i, dataFields = [], statusBarFields, 
-    origPersonalizationData = form && form.view ? form.view.personalizationData : null;
+    origPersonalizationData = form && form.view ? form.view.getFormPersonalization() : null;
 
   // just use the personalization data which was used on the 
   // form, we can not reconstruct it completely from the form fields
@@ -278,10 +278,9 @@ OB.Personalization.personalizeWindow = function(data, window) {
   // keep track of the tabs which are personalized
   // is used below to de-personalize them
   for (i = 0; i < window.views.length; i++) {
-    if (window.views[i].personalizationData) {
+    if (window.getFormPersonalization(window.views[i])) {
       viewsToReset.push({tabId: window.views[i].tabId});
     }
-    delete window.views[i].personalizationData;
   }
   
   // iterate over the tabs
@@ -299,7 +298,6 @@ OB.Personalization.personalizeWindow = function(data, window) {
       // view can be null if a personalization setting
       // is not in sync anymore with the window
       if (personalizationData && view) {
-        view.personalizationData = personalizationData;
         OB.Personalization.personalizeForm(personalizationData, view.viewForm);
       }
       
