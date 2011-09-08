@@ -108,6 +108,31 @@ target, /* String */dsFieldName, /*Boolean*/ doNew) {
 // * {{{dsProperties}}}: the properties of the datasource which needs to be
 // created.
 OB.Datasource.create = function(/* Object */dsProperties) {
+  var i, length, flds;
+  
+  // set some default properties
+  if (!dsProperties.operationBindings) {
+    dsProperties.operationBindings = [
+        {operationType: 'fetch', dataProtocol: 'postParams', requestProperties:{httpMethod: 'POST'}}, 
+        {operationType: 'add', dataProtocol: 'postMessage'},
+        {operationType: 'remove', dataProtocol: 'postParams', requestProperties:{httpMethod: 'DELETE'}},
+        {operationType: 'update', dataProtocol: 'postMessage', requestProperties:{httpMethod: 'PUT'}}
+     ];
+  }
+  dsProperties.recordXPath = dsProperties.recordXPath || '/response/data';
+  dsProperties.dataFormat = dsProperties.dataFormat || 'json';
+  dsProperties.titleField = dsProperties.titleField || OB.Constants.IDENTIFIER;
+  
+  if (dsProperties.fields) {
+    flds = dsProperties.fields;
+    length = flds.length;
+    for (i = 0; i < length; i++) {
+      if (!flds[i].type) {
+        flds[i].type = 'text';
+      }
+    }
+  }
+  
   // if must be a new datasource then change the id 
   // https://issues.openbravo.com/view.php?id=16581
   if (dsProperties._new && dsProperties.ID) {

@@ -35,8 +35,10 @@ import org.openbravo.service.web.BaseWebServiceServlet;
  * A utility class to create javascript for the datasource of a certain {@link Entity}. The
  * properties of the entity ({@link Entity#getProperties()}) are translated into datasource fields.
  * 
+ * @deprecated class should not be used and is not used
  * @author mtaal
  */
+@Deprecated
 public class DataSourceJavaScriptCreator extends BaseWebServiceServlet {
 
   private static final long serialVersionUID = 1L;
