@@ -111,7 +111,7 @@ public abstract class NumberUIDefinition extends UIDefinition {
       if (field.isDisplayed() != null && field.isDisplayed()) {
         o.put("width", "50%");
       } else {
-        o.put("width", "");
+        // o.put("width", "");
       }
       return o.toString();
     } catch (Exception e) { // ignore
@@ -126,7 +126,7 @@ public abstract class NumberUIDefinition extends UIDefinition {
       if (field.isDisplayed() != null && field.isDisplayed()) {
         o.put("width", "50%");
       } else {
-        o.put("width", "");
+        // o.put("width", "");
       }
       // If a column has a numeric reference, and is required, and doesn't have a default, then
       // the default '0' is set
@@ -139,7 +139,7 @@ public abstract class NumberUIDefinition extends UIDefinition {
         if (field.isDisplayed() != null && field.isDisplayed()) {
           o.put("width", "50%");
         } else {
-          o.put("width", "");
+          // o.put("width", "");
         }
         return jsonObject.toString();
       }
