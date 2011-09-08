@@ -178,6 +178,8 @@ OB.ViewFormProperties = {
   },
   
   doEditRecordActions: function(preventFocus, isNew){
+    delete this.contextInfo;
+
     this.initializing = true;
     
     delete this.validateAfterFicReturn;
@@ -574,6 +576,8 @@ OB.ViewFormProperties = {
   
   processFICReturn: function(response, data, request, editValues, editRow){
     var modeIsNew = request.params.MODE === 'NEW', noErrors, errorSolved;
+
+    delete this.contextInfo;
 
     // needs to be recomputed as for grid editing the fields
     // are reset for every edit session
@@ -996,6 +1000,8 @@ OB.ViewFormProperties = {
     // is used to prevent infinite loops during save
     delete this.saveFocusItemChanged;
 
+    delete this.contextInfo;
+    
     if (item._hasChanged) {
       this.itemChangeActions();
 
@@ -1460,6 +1466,26 @@ OB.ViewFormProperties = {
 
   onFieldChanged: function(form, item, value) {
     // To be implemented dynamically
+  },
+
+  handleOtherItem: function(otherName, condition) {
+    var otherItem = this.getItem(otherName);
+    if (otherItem && otherItem.disable && otherItem.enable) {
+      if (this.readOnly) {
+        otherItem.disable();
+      } else if(condition) {
+        otherItem.disable();
+      } else {
+        otherItem.enable();
+      }
+    }
+  },
+  
+  getCachedContextInfo: function() {
+    if (!this.contextInfo) {
+      this.contextInfo = this.view.getContextInfo(false, true, true);
+    }
+    return this.contextInfo;
   },
     
   // overridden to prevent updating of a time value which 

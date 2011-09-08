@@ -1105,11 +1105,11 @@ isc.OBToolbar.addProperties({
   // Used to update state of buttons dynamically on field change
   //
   refreshCustomButtonsView: function (view) {
-    var i;
+    var i, context = view.getContextInfo(false, true, true);
 
     for (i=0; i<this.rightMembers.length; i++) {
       if (this.rightMembers[i].contextView === view) {
-        this.rightMembers[i].updateState(view.getCurrentValues());
+        this.rightMembers[i].updateState(view.getCurrentValues(), false, context);
       }
     }
   },

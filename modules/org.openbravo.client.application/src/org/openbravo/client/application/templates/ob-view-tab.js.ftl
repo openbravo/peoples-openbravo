@@ -41,22 +41,13 @@
       inpTabId: '${tabComponent.tabId}',
       inpwindowId: '${tabComponent.windowId}',
       inpTableId: '${tabComponent.tableId?js_string}',
-      inpkeyColumnId: '${tabComponent.keyColumnId?js_string}',
-      inpKeyName: '${tabComponent.keyName?js_string}'
+      inpkeyColumnId: '${tabComponent.keyProperty.columnId?js_string}',
+      keyProperty: '${tabComponent.keyProperty.name?js_string}',
+      inpKeyName: '${tabComponent.keyInpName?js_string}',
+      keyColumnName: '${tabComponent.keyColumnName?js_string}',
+      keyPropertyType: '${tabComponent.keyPropertyType?js_string}'      
     },
-    
-    propertyToColumns:[
-      <#list tabComponent.allFields as field>
-        {
-          property: '${field.propertyName?js_string}',
-          inpColumn: '${field.columnName?js_string}', 
-          dbColumn: '${field.dbColumnName?js_string}', 
-          sessionProperty: ${field.session},
-          type: '${field.typeName?js_string}'
-        }<#if field_has_next>,</#if>
-      </#list>
-    ],
-    
+     
     actionToolbarButtons: [
     <#list tabComponent.buttonFields as field>
       {id: '${field.id?js_string}', 
@@ -64,29 +55,25 @@
        obManualURL: '${field.url?js_string}',
        command: '${field.command?js_string}',
        property: '${field.propertyName?js_string}',
-       autosave: ${field.autosave?string},
        processId: '${field.processId?js_string}',
        <#if !field.modal>modal: ${field.modal?string},</#if>
+       <#if field.hasLabelValues>
        labelValue: {<#list field.labelValues as value>
            '${value.value?js_string}': '${value.label?js_string}'<#if value_has_next>,</#if>
        </#list>
-         }
+         },
+       </#if>
        <#if field.showIf != "">
-       , displayIf: function(item, value, form, currentValues) {
-         currentValues = currentValues || form.view.getCurrentValues();
-         OB.Utilities.fixNull250(currentValues);
-         var context = form.view.getContextInfo(false, true, true);
-         return context && (${field.showIf});
-       }
+       displayIf: function(form, currentValues, context) {
+         return (${field.showIf});
+       },
        </#if>
        <#if field.readOnlyIf != "">
-       , readOnlyIf: function(item, value, form, currentValues) {
-         currentValues = currentValues || form.view.getCurrentValues();
-         OB.Utilities.fixNull250(currentValues);
-         var context = form.view.getContextInfo(false, true, true);
-         return context && (${field.readOnlyIf});
-       }
+       readOnlyIf: function(form, currentValues, context) {
+         return (${field.readOnlyIf});
+       },
        </#if>
+       autosave: ${field.autosave?string}
       }<#if field_has_next>,</#if>
     </#list>],
     

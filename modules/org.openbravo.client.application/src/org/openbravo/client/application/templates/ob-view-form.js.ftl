@@ -26,11 +26,12 @@
     // removing the current ones and recreating new ones
     // by using theFields, the form initially does not
     // have fields, which prevents this initial destroy step
-    theFields: [
+    // Note: this.prepareFormFields is defined in ob-standard-view
+    theFields: this.prepareFormFields([
     <#list data.fields as field>
       <@createField field/><#if field_has_next>,</#if>
     </#list>    
-    ],
+    ]),
 
     statusBarFields: [
     <#list data.statusBarFields as sbf>
@@ -47,16 +48,7 @@
             currentValues = f.view.getCurrentValues(), otherItem;
         <#list data.fields as field>
         <#if field.readOnlyIf != "">
-          otherItem = f.getItem('${field.name}');
-          if (otherItem && otherItem.disable && otherItem.enable) {
-            if (f.readOnly) {
-              otherItem.disable();
-            } else if(${field.readOnlyIf}) {
-              otherItem.disable();
-            } else {
-              otherItem.enable();
-            }
-          }
+            f.handleOtherItem('${field.name}', ${field.readOnlyIf});
         </#if>
         </#list>
       }

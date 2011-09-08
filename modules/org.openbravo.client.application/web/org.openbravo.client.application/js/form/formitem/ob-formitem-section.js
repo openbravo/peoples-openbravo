@@ -23,6 +23,8 @@
 isc.ClassFactory.defineClass('OBSectionItem', SectionItem);
 
 isc.OBSectionItem.addProperties({
+  sectionExpanded: false,
+  
   // revisit when/if we allow disabling of section items
   // visual state of disabled or non-disabled stays the same now
   showDisabled: false,

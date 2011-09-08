@@ -29,6 +29,7 @@ import javax.inject.Inject;
 
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.window.OBViewFormComponent.FormFieldComparator;
@@ -64,6 +65,7 @@ public class OBViewTab extends BaseTemplateComponent {
 
   private static final String TEMPLATE_ID = "B5124C0A450D4D3A867AEAC7DF64D6F0";
 
+  private Entity entity;
   private Tab tab;
   private String tabTitle;
   private List<OBViewTab> childTabs = new ArrayList<OBViewTab>();
@@ -71,8 +73,6 @@ public class OBViewTab extends BaseTemplateComponent {
   private String parentProperty = null;
   private List<ButtonField> buttonFields = null;
   private List<IconButton> iconButtons = null;
-  private Field keyField;
-  private Column keyColumn;
   private boolean buttonSessionLogic;
   private boolean isRootTab;
 
@@ -189,8 +189,7 @@ public class OBViewTab extends BaseTemplateComponent {
       return parentProperty;
     }
     if (tab.getTable().getId().equals(parentTabComponent.getTab().getTable().getId())) {
-      final Entity entity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
-      parentProperty = entity.getIdProperties().get(0).getName();
+      parentProperty = getEntity().getIdProperties().get(0).getName();
     } else {
       parentProperty = ApplicationUtils.getParentProperty(tab, parentTabComponent.getTab());
     }
@@ -198,6 +197,9 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getViewForm() {
+    // force a load all the columns of the table
+    getTab().getTable().getADColumnList().size();
+
     final OBViewFormComponent viewFormComponent = createComponent(OBViewFormComponent.class);
     viewFormComponent.setParameters(getParameters());
     viewFormComponent.setTab(tab);
@@ -206,6 +208,9 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getViewGrid() {
+    // force a load all the columns of the table
+    getTab().getTable().getADColumnList().size();
+
     final OBViewGridComponent viewGridComponent = createComponent(OBViewGridComponent.class);
     viewGridComponent.setParameters(getParameters());
     viewGridComponent.setTab(tab);
@@ -246,8 +251,15 @@ public class OBViewTab extends BaseTemplateComponent {
     return tab.getModule().getId();
   }
 
+  private Entity getEntity() {
+    if (entity == null) {
+      entity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
+    }
+    return entity;
+  }
+
   public String getEntityName() {
-    return tab.getTable().getName();
+    return getEntity().getName();
   }
 
   public String getTabTitle() {
@@ -282,59 +294,30 @@ public class OBViewTab extends BaseTemplateComponent {
     return tab.isTranslationTab();
   }
 
-  public List<FieldProperty> getAllFields() {
-    List<FieldProperty> fields = new ArrayList<FieldProperty>();
-    for (Field field : tab.getADFieldList()) {
-      if (field.getColumn().isKeyColumn()) {
-        keyField = field;
-      }
-      FieldProperty fp = new FieldProperty(field);
-
-      fields.add(fp);
-    }
-
-    // Additional key column, set in session with db column name
-    if (getKeyColumn() != null) {
-      FieldProperty fp = new FieldProperty(keyColumn);
-      fp.columnName = keyColumn.getDBColumnName();
-      fp.session = true;
-      fields.add(fp);
-    }
-
-    return fields;
-  }
-
-  private Column getKeyColumn() {
-    if (keyColumn != null) {
-      return keyColumn;
-    }
-
-    if (keyField != null) {
-      keyColumn = keyField.getColumn();
-    }
-
-    if (keyColumn == null) {
-      for (Column col : tab.getTable().getADColumnList()) {
-        if (col.isKeyColumn()) {
-          keyColumn = col;
-          break;
-        }
-      }
-    }
-
-    return keyColumn;
-  }
-
   public String getTableId() {
     return tab.getTable().getId();
   }
 
-  public String getKeyColumnId() {
-    return getKeyColumn().getDBColumnName();
+  public Property getKeyProperty() {
+    for (Property prop : getEntity().getProperties()) {
+      if (prop.isId()) {
+        return prop;
+      }
+    }
+    throw new IllegalStateException("Entity " + getEntityName() + " does not have an id property");
   }
 
-  public String getKeyName() {
-    return "inp" + Sqlc.TransformaNombreColumna(getKeyColumn().getDBColumnName());
+  public String getKeyPropertyType() {
+    return UIDefinitionController.getInstance().getUIDefinition(getKeyProperty().getColumnId())
+        .getName();
+  }
+
+  public String getKeyColumnName() {
+    return getKeyProperty().getColumnName();
+  }
+
+  public String getKeyInpName() {
+    return "inp" + Sqlc.TransformaNombreColumna(getKeyProperty().getColumnName());
   }
 
   public String getWindowId() {
@@ -348,61 +331,6 @@ public class OBViewTab extends BaseTemplateComponent {
       getButtonFields();
     }
     return buttonSessionLogic;
-  }
-
-  public class FieldProperty {
-    private String columnName;
-    private String dbColumnName;
-    private String propertyName;
-    private boolean session;
-    private String typeName;
-
-    public FieldProperty() {
-      session = false;
-      propertyName = "";
-      columnName = "";
-      dbColumnName = "";
-    }
-
-    public FieldProperty(Column col) {
-      columnName = "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName());
-      dbColumnName = col.getDBColumnName();
-      propertyName = KernelUtils.getInstance().getPropertyFromColumn(col, false).getName();
-      session = col.isStoredInSession();
-      typeName = UIDefinitionController.getInstance().getUIDefinition(col.getId()).getName();
-    }
-
-    public FieldProperty(Field field) {
-      this(field.getColumn());
-    }
-
-    public String getColumnName() {
-      return columnName;
-    }
-
-    public String getPropertyName() {
-      return propertyName;
-    }
-
-    public String getSession() {
-      return session ? "true" : "false";
-    }
-
-    public String getDbColumnName() {
-      return dbColumnName;
-    }
-
-    public void setDbColumnName(String dbColumnName) {
-      this.dbColumnName = dbColumnName;
-    }
-
-    public String getTypeName() {
-      return typeName;
-    }
-
-    public void setTypeName(String typeName) {
-      this.typeName = typeName;
-    }
   }
 
   public class ButtonField {
@@ -498,6 +426,10 @@ public class OBViewTab extends BaseTemplateComponent {
 
     public String getPropertyName() {
       return propertyName;
+    }
+
+    public boolean getHasLabelValues() {
+      return !labelValues.isEmpty();
     }
 
     public List<Value> getLabelValues() {

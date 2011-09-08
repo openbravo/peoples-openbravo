@@ -22,48 +22,60 @@
 <#macro createField fieldDefinition>
     {
         name: '${fieldDefinition.name?js_string}',
-        title: '${fieldDefinition.label?js_string}',
         type: '${fieldDefinition.type}',
-        disabled: ${fieldDefinition.readOnly?string},
-        readonly: ${fieldDefinition.readOnly?string},
-        updatable: ${fieldDefinition.updatable?string},
-        parentProperty: ${fieldDefinition.parentProperty?string},
+        <#if fieldDefinition.required>
+        required: ${fieldDefinition.required?string},
+        </#if>
+        <#if fieldDefinition.readOnly>
+        disabled: true,
+        </#if>
+        <#if !fieldDefinition.updatable>
+        updatable: false,
+        </#if>
+        <#if fieldDefinition.sessionProperty>
+        sessionProperty: true,
+        </#if>
+        <#if fieldDefinition.parentProperty>
+        parentProperty: true,
+        </#if>
+        <#if fieldDefinition.colSpan != 1>
         colSpan: ${fieldDefinition.colSpan},
+        </#if>
+        <#if fieldDefinition.rowSpan != 1>
         rowSpan: ${fieldDefinition.rowSpan},
-        startRow: ${fieldDefinition.startRow?string},
-        endRow: ${fieldDefinition.endRow?string},
-        personalizable: ${fieldDefinition.personalizable?string},
-        hasDefaultValue: ${fieldDefinition.hasDefaultValue?string},
+        </#if>
+        <#if fieldDefinition.startRow>
+        startRow: true,
+        </#if>
+        <#if fieldDefinition.endRow>
+        endRow: true,
+        </#if>
+        <#if !fieldDefinition.personalizable>
+        personalizable: false,
+        </#if>
+        <#if fieldDefinition.hasDefaultValue>
+        hasDefaultValue: true,
+        </#if>
         <#if fieldDefinition.standardField>
         columnName: '${fieldDefinition.columnName?string}',
         inpColumnName: '${fieldDefinition.inpColumnName?string}',
+        <#if fieldDefinition.referencedKeyColumnName != ''>
         referencedKeyColumnName: '${fieldDefinition.referencedKeyColumnName?string}',
+        </#if>
+        <#if fieldDefinition.targetEntity != ''>
         targetEntity: '${fieldDefinition.targetEntity?string}',
+        </#if>
         <#if !fieldDefinition.displayed>
         visible: false,
         displayed: false,
         alwaysTakeSpace: false,
         </#if>
-        required: ${fieldDefinition.required?string},
-          <#if fieldDefinition.redrawOnChange?string = "true" && fieldDefinition.displayed>
-          redrawOnChange: true,
-          changed: function(form, item, value) {
-            if (this.pickValue && !this._pickedValue) {
-                return;
-            }
-            this.Super('changed', arguments);
-            form.onFieldChanged(form, item, value);
-            form.view.toolBar.refreshCustomButtonsView(form.view);
-          },
-          </#if>
-          <#if fieldDefinition.showIf != "" && fieldDefinition.displayed>
-          showIf: function(item, value, form, values) {            
-            var context = form.view.getContextInfo(false, true, true),
-                currentValues = values || form.view.getCurrentValues();
-            
-            OB.Utilities.fixNull250(currentValues);
-
-            return !this.hiddenInForm && context && (${fieldDefinition.showIf});
+        <#if fieldDefinition.redrawOnChange && fieldDefinition.displayed>
+            redrawOnChange: true,
+        </#if>
+        <#if fieldDefinition.showIf != "" && fieldDefinition.displayed>
+          showIf: function(item, value, form, currentValues, context) {
+            return (${fieldDefinition.showIf});          
           },          
           </#if>
           <#if fieldDefinition.searchField>
@@ -79,15 +91,19 @@
           <#if !fieldDefinition.displayed>
           visible: false,
           </#if>
+        <#if fieldDefinition.expanded>
         sectionExpanded: ${fieldDefinition.expanded?string},
+        </#if>
         defaultValue: '${fieldDefinition.label?js_string}',
+        <#if fieldDefinition.hasChildren>
         itemIds: [
         <#list fieldDefinition.children as childField>
         '${childField.name?js_string}'<#if childField_has_next>,</#if>
         </#list>
         ],
         </#if>
+        </#if>
         ${fieldDefinition.fieldProperties}
-        dummy: ''
+        title: '${fieldDefinition.label?js_string}'
     }
 </#macro>

@@ -46,6 +46,8 @@ isc.OBAttachmentsSectionItem.addProperties({
   
   visible: false,
   
+  itemIds: ['_attachments_Canvas'],
+  
   // note formitems don't have an initWidget but an init method
   init: function(){
     // override the one passed in
