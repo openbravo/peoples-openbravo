@@ -33,11 +33,19 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="TYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
       <column name="AD_TAB_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_WINDOW_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -88,6 +96,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="OBUIAPP_UIPERS_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_WINDOW" name="OBUIAPP_UIPERS_WIN" onDelete="cascade">
+        <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
       <check name="OBUIAPP_UIPERSO_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
