@@ -79,6 +79,11 @@ isc.TextItem.addProperties({
 // NOTE BEWARE: methods/props added here will overwrite and NOT extend FormItem
 // properties! 
 isc.FormItem.addProperties({
+  // default, is overridden in generated field template
+  personalizable: true,
+  updatable: true,
+  width: '*',
+  
   // always take up space when an item is hidden in a form
   alwaysTakeSpace: true,
 
@@ -181,6 +186,11 @@ isc.FormItem.addProperties({
   changed: function(){
     this._hasChanged = true;
     this.clearErrors();
+    
+    if (this.redrawOnChange) {
+      this.form.onFieldChanged(form, item, value);
+      this.form.view.toolBar.refreshCustomButtonsView(form.view);
+    }
   },
   
   focus: function(form, item){
@@ -315,13 +325,13 @@ isc.RelativeDateItem.addProperties({
       // reset the selection range
       
       if (mustRefocus && focusItem !== null) {
-          if (!showQuantity && focusItem === this.quantityField) {
-              this.valueField.focusInItem();
-          } else {
-              if (selectionRange) {
-                  focusItem.delayCall("setSelectionRange", [selectionRange[0],selectionRange[1]]);
-              }
+        if (!showQuantity && focusItem === this.quantityField) {
+          this.valueField.focusInItem();
+        } else {
+          if (selectionRange) {
+            focusItem.delayCall("setSelectionRange", [selectionRange[0],selectionRange[1]]);
           }
+        }
       }
       this.calculatedDateField.canFocus = false;
   },
@@ -329,9 +339,9 @@ isc.RelativeDateItem.addProperties({
   // overridden because the picker is now part of the combo and not a separate field.
   // custom code to center the picker over the picker icon
   getPickerRect : function () {
-      // we want the date chooser to float centered over the picker icon.
-      var form = this.canvas;
-      return [this.getPageLeft() + form.getLeft(), this.getPageTop() + form.getTop() - 40];
+    // we want the date chooser to float centered over the picker icon.
+    var form = this.canvas;
+    return [this.getPageLeft() + form.getLeft(), this.getPageTop() + form.getTop() - 40];
   }
 
 });
