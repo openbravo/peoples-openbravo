@@ -21,8 +21,10 @@
 // Registers buttons to open the form layout manager from a normal form/grid
 // view and from the Window Personalization view.
 (function () {
-  
-  var personalizationButtonProperties = {
+  var personalizationButtonProperties, 
+    windowPersonalizationTabButtonProperties;
+
+  personalizationButtonProperties = {
     action: function() {
       if(OB.Application.licenseType === 'C') {
         isc.warn(OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization')]), {
@@ -53,7 +55,7 @@
     updateState: function(){
       var propValue, undef;
       
-      if (this.view.personalizationData) {
+      if (this.view.getFormPersonalization()) {
         this.prompt = OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_Button_modified');
         this.buttonType = 'personalization-modified';
       } else {
@@ -86,7 +88,7 @@
       isc.OBToolbarIconButton, personalizationButtonProperties, 310, null);
 
   // and register the toolbar button the window personalization tab  
-  var windowPersonalizationTabButtonProperties = {
+  windowPersonalizationTabButtonProperties = {
     action: function() {
       var personalizationData = {}, personalizeForm, view = this.view, grid = view.viewGrid,
         record = grid.getSelectedRecord();
@@ -122,6 +124,16 @@
       var view = this.view, form = view.viewForm, grid = view.viewGrid, selectedRecords = grid.getSelectedRecords(), i;
       
       // only show for records which can be edited
+      if (selectedRecords.length !== 1) {
+        this.setDisabled(true);
+        return;
+      }
+
+      if (selectedRecords[0].type && selectedRecords[0].type !== 'Form') {
+        this.setDisabled(true);
+        return;
+      }
+
       for (i = 0; i < selectedRecords.length; i++) {
         if (!grid.isWritable(selectedRecords[i])) {
           this.setDisabled(true);
@@ -146,5 +158,5 @@
   // register only for the window personalization tab
   OB.ToolbarRegistry.registerButton(windowPersonalizationTabButtonProperties.buttonType, isc.OBToolbarIconButton, 
       windowPersonalizationTabButtonProperties, 320, 'FF8081813157AED2013157BF6D810023');
-
+  
 }());
