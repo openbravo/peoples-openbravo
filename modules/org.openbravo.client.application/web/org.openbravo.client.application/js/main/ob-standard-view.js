@@ -180,6 +180,8 @@ isc.OBStandardView.addProperties({
   isShowingForm: false,
   isEditingGrid: false,
 
+  propertyToColumns:[],
+
   initWidget: function(properties){
     this.messageBar = isc.OBMessageBar.create({
       visibility: 'hidden',
@@ -255,6 +257,8 @@ isc.OBStandardView.addProperties({
     }
     
     if (this.viewForm) {
+      this.prepareViewFields(this.viewForm.theFields);
+      
       // setDataSource executes setFields which replaces the current fields
       // We don't want to destroy the associated DataSource objects
       this.viewForm.destroyItemObjects = false;
@@ -1747,6 +1751,66 @@ isc.OBStandardView.addProperties({
     OB.RemoteCallManager.call('org.openbravo.client.application.window.GetTabMessageActionHandler', {
       tabId: tabId
     }, null, callback, this);
+  },
+  
+  getFormPersonalization: function() {
+    if (!this.standardWindow) {
+      // happens during the initialization
+      return null;
+    }
+    return this.standardWindow.getFormPersonalization(this);
+  },
+  
+  prepareFormFields: function(fields) {
+    var i, length = fields.length, fld,
+      showIfFunction = function(item, value, form, values) {
+        var currentValues = values || form.view.getCurrentValues(),
+        context = form.getCachedContextInfo();
+
+        OB.Utilities.fixNull250(currentValues);
+        
+        return !this.hiddenInForm && context && 
+          this.originalShowIf(item, value, form, currentValues, context);
+      };
+    
+    for (i = 0; i < length; i++) {
+      fld = fields[i];
+      if (fld.showIf && !fld.originalShowIf) {
+        fld.originalShowIf = fld.showIf;
+        fld.showIf = showIfFunction;
+      }
+      if (!fld.width) {
+        fld.width = '*';
+      }
+    }
+    return fields;
+  },
+  
+  // prepare stuff on view level
+  prepareViewFields: function(fields) {
+    var i, length = fields.length, fld;
+    
+    this.propertyToColumns.push({
+        property: this.standardProperties.keyProperty,
+        dbColumn: this.standardProperties.keyColumnName,
+        inpColumn: this.standardProperties.inpKeyName,
+        sessionProperty: true,
+        type: this.standardProperties.keyPropertyType
+      }
+    );
+
+    for (i = 0; i < length; i++) {
+      fld = fields[i];
+      if (fld.columnName) {
+        this.propertyToColumns.push({
+          property: fld.name,
+          dbColumn: fld.columnName,
+          inpColumn: fld.inpColumnName,
+          sessionProperty: fld.sessionProperty,
+          type: fld.type
+        });
+      }
+    }
   }
 });
 
