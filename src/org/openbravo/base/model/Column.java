@@ -53,6 +53,7 @@ public class Column extends ModelObject {
   private String defaultValue;
   private boolean key;
   private boolean secondaryKey;
+  private boolean storedInSession;
   private boolean parent;
   private boolean mandatory;
   private boolean encrypted;
@@ -444,5 +445,13 @@ public class Column extends ModelObject {
 
   public void setTranslatable(boolean translatable) {
     this.translatable = translatable;
+  }
+
+  public boolean isStoredInSession() {
+    return storedInSession;
+  }
+
+  public void setStoredInSession(boolean storedInSession) {
+    this.storedInSession = storedInSession;
   }
 }

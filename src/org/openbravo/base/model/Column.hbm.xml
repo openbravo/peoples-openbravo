@@ -32,6 +32,7 @@
 		<property name="columnName"/>
 		<property name="fieldLength"/>
 		<property name="defaultValue"/>
+        <property name="storedInSession" type="org.openbravo.base.session.OBYesNoType" column="issessionattr"/>
 		<property name="key" type="org.openbravo.base.session.OBYesNoType" column="iskey"/>
 		<property name="secondaryKey" type="org.openbravo.base.session.OBYesNoType" column="issecondarykey"/>
 		<property name="parent" type="org.openbravo.base.session.OBYesNoType" column="isparent"/>
