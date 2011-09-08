@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,12 +72,12 @@ public class SL_ProductionPlan_WRPhase extends HttpSecureAppServlet {
     if (data == null || data.length == 0)
       data = SLProductionPlanWRPhaseData.set();
     String strNeededQuantity = data[0].neededqty;
-    BigDecimal EstimatedTime = BigDecimal.ZERO;
-    BigDecimal QtyWRPhase = new BigDecimal(data[0].quantity);
+    BigDecimal estimatedTime = BigDecimal.ZERO;
+    BigDecimal qtyWRPhase = new BigDecimal(data[0].quantity);
 
-    if (!data[0].estimatedtime.equals("") && QtyWRPhase.compareTo(BigDecimal.ZERO) != 0
+    if (!data[0].estimatedtime.equals("") && qtyWRPhase.compareTo(BigDecimal.ZERO) != 0
         && !strQuantity.equals("")) {
-      EstimatedTime = new BigDecimal(data[0].estimatedtime).divide(QtyWRPhase).multiply(
+      estimatedTime = new BigDecimal(data[0].estimatedtime).divide(qtyWRPhase).multiply(
           new BigDecimal(strQuantity));
     }
 
@@ -100,7 +100,7 @@ public class SL_ProductionPlan_WRPhase extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpdivisiongroupqty\", \""
         + FormatUtilities.replaceJS(data[0].divisiongroupqty) + "\"),\n");
     resultado.append("new Array(\"inpestimatedtime\", \""
-        + FormatUtilities.replaceJS(EstimatedTime.toPlainString()) + "\")\n");
+        + FormatUtilities.replaceJS(estimatedTime.toPlainString()) + "\")\n");
     resultado.append(");\n");
     xmlDocument.setParameter("array", resultado.toString());
     response.setContentType("text/html; charset=UTF-8");

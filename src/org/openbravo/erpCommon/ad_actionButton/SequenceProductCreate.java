@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.ad_actionButton;
 import java.math.BigDecimal;
 
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -38,19 +37,18 @@ public class SequenceProductCreate implements Process {
   public void execute(ProcessBundle bundle) throws Exception {
 
     try {
-      VariablesSecureApp vars = bundle.getContext().toVars();
       final String sequenceProductId = (String) bundle.getParams().get("MA_Sequenceproduct_ID");
       final String value = (String) bundle.getParams().get("value");
       final String name = (String) bundle.getParams().get("name");
       final String productionType = (String) bundle.getParams().get("productiontype");
-      final String Qty = (String) bundle.getParams().get("qty");
+      final String qty = (String) bundle.getParams().get("qty");
       final ConnectionProvider conn = bundle.getConnection();
 
       // Create new product copy of selected
-      OperationProduct OpProduct = OBDal.getInstance().get(OperationProduct.class,
+      OperationProduct opProduct = OBDal.getInstance().get(OperationProduct.class,
           sequenceProductId);
 
-      Product originalProduct = OpProduct.getProduct();
+      Product originalProduct = opProduct.getProduct();
       Product newProduct = (Product) DalUtil.copy(originalProduct);
 
       // Modifies values
@@ -70,11 +68,11 @@ public class SequenceProductCreate implements Process {
 
       OperationProduct newOpProduct = OBProvider.getInstance().get(OperationProduct.class);
 
-      newOpProduct.setMASequence(OpProduct.getMASequence());
-      newOpProduct.setClient(OpProduct.getClient());
-      newOpProduct.setOrganization(OpProduct.getOrganization());
+      newOpProduct.setMASequence(opProduct.getMASequence());
+      newOpProduct.setClient(opProduct.getClient());
+      newOpProduct.setOrganization(opProduct.getOrganization());
       newOpProduct.setProduct(newProduct);
-      newOpProduct.setQuantity(new BigDecimal(Qty));
+      newOpProduct.setQuantity(new BigDecimal(qty));
       newOpProduct.setUOM(newProduct.getUOM());
       newOpProduct.setProductionType(productionType);
 
@@ -88,7 +86,7 @@ public class SequenceProductCreate implements Process {
       msg.setType("Success");
       msg.setTitle(Utility.messageBD(conn, "Success", bundle.getContext().getLanguage()));
       msg.setMessage(Utility.messageBD(conn, "IOProductCreated", bundle.getContext().getLanguage())
-          + newProduct.getName() + " " + Qty + " P" + productionType);
+          + newProduct.getName() + " " + qty + " P" + productionType);
       bundle.setResult(msg);
     } catch (final Exception e) {
       OBDal.getInstance().rollbackAndClose();

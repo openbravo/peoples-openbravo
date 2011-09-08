@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,9 +34,9 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
   private static final long serialVersionUID = 1L;
   private static final IsIDFilter idFilter = new IsIDFilter();
   private static final String specialAttListId = "FF808181322476640132249E3417002F";
-  private static final String LotSearchKey = "LOT";
-  private static final String SerialNoSearchKey = "SNO";
-  private static final String ExpirationDateearchKey = "EXD";
+  private static final String lotSearchKey = "LOT";
+  private static final String serialNoSearchKey = "SNO";
+  private static final String expirationDateearchKey = "EXD";
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
@@ -51,15 +51,15 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
       OperationProduct opProduct = OBDal.getInstance().get(OperationProduct.class,
           strmProductSequenceId);
 
-      OBCriteria AttributeUseCriteria = OBDal.getInstance().createCriteria(AttributeUse.class);
-      AttributeUseCriteria.add(Expression.eq(AttributeUse.PROPERTY_ATTRIBUTESET,
+      OBCriteria attributeUseCriteria = OBDal.getInstance().createCriteria(AttributeUse.class);
+      attributeUseCriteria.add(Expression.eq(AttributeUse.PROPERTY_ATTRIBUTESET,
           product.getAttributeSet()));
-      AttributeUseCriteria.addOrderBy(AttributeUse.PROPERTY_SEQUENCENUMBER, true);
-      java.util.List<AttributeUse> AttUseList = AttributeUseCriteria.list();
+      attributeUseCriteria.addOrderBy(AttributeUse.PROPERTY_SEQUENCENUMBER, true);
+      java.util.List<AttributeUse> attUseList = attributeUseCriteria.list();
 
       info.addSelect("inpmAttributeuseId");
-      for (AttributeUse AttUse : AttUseList) {
-        info.addSelectResult(AttUse.getId(), AttUse.getAttribute().getIdentifier());
+      for (AttributeUse attUse : attUseList) {
+        info.addSelectResult(attUse.getId(), attUse.getAttribute().getIdentifier());
       }
       info.endSelect();
 
@@ -68,25 +68,25 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
         info.addSelect("inpspecialatt");
         // Lot
         if (product.getAttributeSet().isLot() && opProduct.getProduct().getAttributeSet().isLot()) {
-          org.openbravo.model.ad.domain.List Lot = SpecialAttListValue(LotSearchKey);
-          if (Lot != null)
-            info.addSelectResult(Lot.getSearchKey(), Lot.getName());
+          org.openbravo.model.ad.domain.List lot = SpecialAttListValue(lotSearchKey);
+          if (lot != null)
+            info.addSelectResult(lot.getSearchKey(), lot.getName());
         }
 
         // Serial No.
         if (product.getAttributeSet().isSerialNo()
             && opProduct.getProduct().getAttributeSet().isSerialNo()) {
-          org.openbravo.model.ad.domain.List Lot = SpecialAttListValue(SerialNoSearchKey);
-          if (Lot != null)
-            info.addSelectResult(Lot.getSearchKey(), Lot.getName());
+          org.openbravo.model.ad.domain.List lot = SpecialAttListValue(serialNoSearchKey);
+          if (lot != null)
+            info.addSelectResult(lot.getSearchKey(), lot.getName());
         }
 
         // ExpirationDate
         if (product.getAttributeSet().isExpirationDate()
             && opProduct.getProduct().getAttributeSet().isExpirationDate()) {
-          org.openbravo.model.ad.domain.List Lot = SpecialAttListValue(ExpirationDateearchKey);
-          if (Lot != null)
-            info.addSelectResult(Lot.getSearchKey(), Lot.getName());
+          org.openbravo.model.ad.domain.List lot = SpecialAttListValue(expirationDateearchKey);
+          if (lot != null)
+            info.addSelectResult(lot.getSearchKey(), lot.getName());
         }
         info.endSelect();
       }
@@ -95,19 +95,19 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
 
   private org.openbravo.model.ad.domain.List SpecialAttListValue(String Value)
       throws ServletException {
-    Reference SpecialAttList = OBDal.getInstance().get(Reference.class, specialAttListId);
-    OBCriteria SpecialAttListValuesCriteria = OBDal.getInstance().createCriteria(
+    Reference specialAttList = OBDal.getInstance().get(Reference.class, specialAttListId);
+    OBCriteria specialAttListValuesCriteria = OBDal.getInstance().createCriteria(
         org.openbravo.model.ad.domain.List.class);
-    SpecialAttListValuesCriteria.add(Expression.eq(
-        org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, SpecialAttList));
-    SpecialAttListValuesCriteria.add(Expression.eq(
+    specialAttListValuesCriteria.add(Expression.eq(
+        org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, specialAttList));
+    specialAttListValuesCriteria.add(Expression.eq(
         org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY, Value));
-    java.util.List<org.openbravo.model.ad.domain.List> SpecialAttListValues = (java.util.List) SpecialAttListValuesCriteria
+    java.util.List<org.openbravo.model.ad.domain.List> specialAttListValues = (java.util.List) specialAttListValuesCriteria
         .list();
-    if (SpecialAttListValues.isEmpty()) {
+    if (specialAttListValues.isEmpty()) {
       return null;
     } else {
-      return SpecialAttListValues.get(0);
+      return specialAttListValues.get(0);
     }
   }
 }
