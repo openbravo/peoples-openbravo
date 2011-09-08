@@ -102,6 +102,9 @@ isc.OBViewGrid.addProperties({
   showDetailFields: true,
   showErrorIcons: false,
   
+  allowFilterExpressions: true,
+  showFilterExpressionLegendMenuItem: true,
+  
   // internal sc grid property, see the ListGrid source code
   preserveEditsOnSetData: false,
   
@@ -408,7 +411,48 @@ isc.OBViewGrid.addProperties({
     
     return this.Super('cellHoverHTML', arguments);
   },
+ 
+  // also store the filter criteria
+  getViewState : function (returnObject, includeFilter) {
+    var state = this.Super('getViewState', [returnObject || true]);
+
+    if (includeFilter) {
+      state.filter = this.getCriteria();
+
+      if (!this.filterClause) {
+        state.noFilterClause = true;
+      }
+    }
+    
+    if (returnObject) {
+      return state;
+    }
+    return '(' + isc.Comm.serialize(state,false) + ')';
+  },
   
+  setViewState : function (state) {
+    var localState = this.evalViewState(state, 'viewState');
+    
+    // strange case, sometimes need to call twice
+    if (isc.isA.String(localState)) {
+      localState = this.evalViewState(state, 'viewState');
+    }
+    
+    if (!localState) {
+      return;
+    }
+    
+    if (localState.noFilterClause) {
+      this.filterClause = null;
+      this.view.messageBar.hide();
+    }      
+    if (localState.filter) {
+      this.setCriteria(localState.filter);
+    }
+    
+    this.Super('setViewState', arguments);
+  },
+ 
   setView: function(view){
     var dataPageSizeaux;
     this.view = view;
