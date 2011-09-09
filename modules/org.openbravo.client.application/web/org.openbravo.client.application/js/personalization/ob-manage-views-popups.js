@@ -134,10 +134,11 @@ OB.Personalization.ManageViewsPopupPropertiesDefault = {
     var value, personalization = this.standardWindow.getClass().personalization, 
       views = personalization && personalization.views ? personalization.views : [], 
       valueMap = {}, flds = [], 
-      standardWindow = this.standardWindow;
+      standardWindow = this.standardWindow, length;
     
     if (views) {
-      for (i = 0; i < views.length; i++) {
+      length = views.length;
+      for (i = 0; i < length; i++) {
         if (views[i].canEdit) {
           valueMap[views[i].personalizationId] = views[i].viewDefinition.name;
         }
@@ -184,10 +185,11 @@ OB.Personalization.ManageViewsPopupPropertiesDelete = {
     var personalization = this.standardWindow.getClass().personalization, 
       views = personalization && personalization.views ? personalization.views : [], 
       valueMap = {}, flds = [], 
-      standardWindow = this.standardWindow;
+      standardWindow = this.standardWindow, length;
     
     if (views) {
-      for (i = 0; i < views.length; i++) {
+      length = views.length;
+      for (i = 0; i < length; i++) {
         if (views[i].canEdit) {
           valueMap[views[i].personalizationId] = views[i].viewDefinition.name;
         }
@@ -228,14 +230,15 @@ OB.Personalization.ManageViewsPopupPropertiesSave = {
   // change or set views for different levels
   getFields: function() {
     var i, formData, valueMap = {}, levelMapSet = false, 
-      levelMap = {'': ''}, flds = [], 
+      levelMap = {'': ''}, flds = [], length, 
       standardWindow = this.standardWindow,
       personalization = standardWindow.getClass().personalization, 
       views = personalization && personalization.views ? personalization.views : [];
     
     // create the view combo
     if (views) {
-      for (i = 0; i < views.length; i++) {
+      length = views.length;
+      for (i = 0; i < length; i++) {
         if (views[i].canEdit) {
           valueMap[views[i].personalizationId] = views[i].viewDefinition.name;
         }
@@ -254,7 +257,7 @@ OB.Personalization.ManageViewsPopupPropertiesSave = {
         // if changed, then set the level and levelvalue
         // fields to the current level of the personalization
         changed: function(form, item, value) {
-          var i, levelField = form.getField('level'), 
+          var i, levelField = form.getField('level'), length,
             levelValueField = form.getField('levelValue'), 
             personalization = this.standardWindow.getClass().personalization, views;
           
@@ -263,7 +266,8 @@ OB.Personalization.ManageViewsPopupPropertiesSave = {
             // and the view, and set the level and level value
             // combos
             views = personalization.views;
-            for (i = 0; i < views.length; i++) {
+            length = views.length;
+            for (i = 0; i < length; i++) {
               if (views[i].personalizationId === value) {
                 if (views[i].clientId) {
                   levelField.storeValue('clients');

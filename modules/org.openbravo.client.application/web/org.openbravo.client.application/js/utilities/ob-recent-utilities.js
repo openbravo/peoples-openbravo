@@ -94,8 +94,8 @@
       }
       var currentRecentValue = this.getRecentValue(propertyName);
       // check if there is already an entry for the new recent
-      var currentIndex = -1, i;
-      for (i = 0; i < currentRecentValue.length; i++) {
+      var currentIndex = -1, i, length = currentRecentValue.length;
+      for (i = 0; i < length; i++) {
         // if the title is the same then assume they are the same, only 
         // check this if there is no recentId being used
         if (!currentRecentValue[i].recentId && currentRecentValue[i].tabTitle && 

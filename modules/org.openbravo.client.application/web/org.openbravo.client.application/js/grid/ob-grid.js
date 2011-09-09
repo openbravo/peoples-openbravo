@@ -96,11 +96,12 @@ isc.OBGrid.addProperties({
   focusInFirstFilterEditor: function() {
     if (this.getFilterEditor()) { // there is a filter editor
       var object = this.getFilterEditor().getEditForm(),
-        items, item, i;
+        items, item, i, length;
 
       // compute a focusable item
       items = object.getItems();
-      for (i = 0; i < items.length; i++) {
+      length = items.length;
+      for (i = 0; i < length; i++) {
         item = items[i];
         if (item.getCanFocus() && !item.isDisabled()) {
           this.focusInFilterEditor(item);
@@ -156,12 +157,14 @@ isc.OBGrid.addProperties({
   
   initWidget: function(){
     // prevent the value to be displayed in case of a link
-    var i, thisGrid = this, field, formatCellValueFunction = function(value, record, rowNum, colNum, grid){
-      return '';
-    };
+    var i, thisGrid = this, field, 
+      formatCellValueFunction = function(value, record, rowNum, colNum, grid){
+        return '';
+      };
 
     if (this.fields) {
-      for (i = 0; i < this.fields.length; i++) {
+      length = this.fields.length;
+      for (i = 0; i < length; i++) {
         field = this.fields[i];
 
         if (!field.filterEditorProperties) {
@@ -257,7 +260,7 @@ isc.OBGrid.addProperties({
         if (internCriteria && this.getEditForm()) {
           // now remove anything which is not a field
           // otherwise smartclient will keep track of them and send them again
-          var fields = this.getEditForm().getFields();
+          var fields = this.getEditForm().getFields(), length = fields.length;
           for (i = internCriteria.length - 1; i >=0; i--) {
             prop = internCriteria[i].fieldName;
             // happens when the internCriteria[i], is again an advanced criteria
@@ -270,7 +273,7 @@ isc.OBGrid.addProperties({
               prop = prop.substring(0, index);
             }
             var fnd = false, j;
-            for (j = 0; j < fields.length; j++) {
+            for (j = 0; j < length; j++) {
               if (fields[j].displayField === fullPropName) {
                 fnd = true;
                 break;
@@ -333,26 +336,30 @@ isc.OBGrid.addProperties({
   
   //  http://forums.smartclient.com/showthread.php?p=72177#post72177
   destroy: function() {
-    var i, components;
+    var i, components, length;
     this.Super('destroy', arguments);
     
     components = this.getRecordComponentPool();
     if (components) {
-      for (i = 0; i < components.length; i++) {
+      length = components.length;
+      for (i = 0; i < length; i++) {
         components[i].destroy();
       }
     }
   },
   
   clearFilter: function(keepFilterClause, noPerformAction){
-    var i = 0, fld;
+    var i = 0, fld, length;
     if (!keepFilterClause) {
       delete this.filterClause;
     }
     this.forceRefresh = true;
     this.filterEditor.getEditForm().clearValues();
+    
     // clear the date values in a different way
-    for (i = 0; i < this.filterEditor.getEditForm().getFields().length; i++) {
+    length = this.filterEditor.getEditForm().getFields().length;
+    
+    for (i = 0; i < length; i++) {
       fld = this.filterEditor.getEditForm().getFields()[i];
       if (fld.clearDateValues) {
         fld.clearDateValues();
@@ -449,11 +456,12 @@ isc.OBGrid.addProperties({
   },
   
   isGridFilteredWithCriteria: function(criteria) {
-    var i;
+    var i, length;
     if (!criteria) {
       return false;
     }
-    for (i = 0; i < criteria.length; i++) {
+    length = criteria.length;
+    for (i = 0; i < length; i++) {
       var criterion = criteria[i];
       var prop = criterion.fieldName;
       var fullPropName = prop;
@@ -549,11 +557,12 @@ isc.OBGrid.addProperties({
   //= getErrorRows =
   // Returns all the rows that have errors.
   getErrorRows: function(){
-    var editRows, errorRows = [], i;
+    var editRows, errorRows = [], i, length;
 
     if (this.hasErrors()) {
       editRows = this.getAllEditRows(true);
-      for (i = 0; i < editRows.length; i++) {
+      length = editRows.length;
+      for (i = 0; i < length; i++) {
         if (this.rowHasErrors(editRows[i])) {
           errorRows.push(editRows[i]);
         }

@@ -48,13 +48,13 @@
     action: function() {
       var data = [], i, undef, view,
         standardWindow = this.view.standardWindow,
-        adminLevel = false,
+        adminLevel = false, length,
         personalization = standardWindow.getClass().personalization, 
         views = personalization && personalization.views ? personalization.views : [],
         canDelete = false;
       
       // TODO: disabled license check to facilitate testing
-      if(OB.Application.licenseType !== 'DUMMY') {
+      if(OB.Application.licenseType === 'DUMMY') {
 //      if(OB.Application.licenseType === 'C') {
         isc.warn(OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization')]), {
             isModal: true,
@@ -65,7 +65,8 @@
       }
       
       // create the list of current views to show
-      for (i = 0; i < views.length; i++) {
+      length = views.length;
+      for (i = 0; i < length; i++) {
         view = views[i];
         canDelete = view.canEdit || canDelete;
         data.push({title: view.viewDefinition.name, viewDefinition: view.viewDefinition});

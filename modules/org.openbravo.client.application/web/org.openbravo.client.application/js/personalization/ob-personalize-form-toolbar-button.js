@@ -121,7 +121,9 @@
     buttonType: 'edit_personalization',
     prompt: OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_Edit_Button'),
     updateState: function(){
-      var view = this.view, form = view.viewForm, grid = view.viewGrid, selectedRecords = grid.getSelectedRecords(), i;
+      var view = this.view, form = view.viewForm, 
+        grid = view.viewGrid, length, 
+        selectedRecords = grid.getSelectedRecords(), i;
       
       // only show for records which can be edited
       if (selectedRecords.length !== 1) {
@@ -134,7 +136,8 @@
         return;
       }
 
-      for (i = 0; i < selectedRecords.length; i++) {
+      length = selectedRecords.length;
+      for (i = 0; i < length; i++) {
         if (!grid.isWritable(selectedRecords[i])) {
           this.setDisabled(true);
           return;

@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.UIPersonalization;
+import org.openbravo.client.application.window.OBViewFieldHandler;
 import org.openbravo.client.application.window.OBViewFormComponent;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
@@ -61,6 +62,9 @@ public class PersonalizationActionHandler extends BaseActionHandler {
   @Inject
   private OBViewFormComponent viewFormComponent;
 
+  @Inject
+  private OBViewFieldHandler fieldHandler;
+
   protected JSONObject execute(Map<String, Object> parameters, String data) {
 
     try {
@@ -94,7 +98,8 @@ public class PersonalizationActionHandler extends BaseActionHandler {
       } else if (action.equals(ACTION_FORM)) {
         viewFormComponent.setParameters(parameters);
         viewFormComponent.setTemplateId(TEMPLATE_ID);
-        viewFormComponent.setTab(OBDal.getInstance().get(Tab.class, tabId));
+        fieldHandler.setTab(OBDal.getInstance().get(Tab.class, tabId));
+        viewFormComponent.setFieldHandler(fieldHandler);
         final String formJS = viewFormComponent.generate();
         final JSONObject formProps = new JSONObject(formJS);
         return formProps;

@@ -198,8 +198,8 @@ OB.Utilities.callAction = function(action){
     
     object.customApplyMethod = method;
     
-    var argsString = [], i;
-    for (i = 0; i < parameters.length; i++) {
+    var argsString = [], i, length = parameters.length;
+    for (i = 0; i < length; i++) {
       argsString[i] = 'parameters[' + i + ']';
     }
     
@@ -399,11 +399,12 @@ OB.Utilities.openDirectView = function(sourceWindowId, keyColumn, targetEntity, 
 // ** {{{OB.Utilities.getPromptString}}} **
 // Translates a string or array of strings to a string with html returns.
 OB.Utilities.getPromptString = function(msg){
-  var msgString = '', i;
+  var msgString = '', i, length;
   if (!isc.isAn.Array(msg)) {
     msg = [msg];
   }
-  for (i = 0; i < msg.length; i++) {
+  length = msg.length;
+  for (i = 0; i < length; i++) {
     msgString += (i > 0 ? '<br>' : '') + msg[i].asHTML();
   }
   return msgString;
@@ -413,9 +414,12 @@ OB.Utilities.getPromptString = function(msg){
 // where no & is used for character encoding, this is fine for most cases.
 OB.Utilities.getUrlParameters = function(href){
   href = href || window.location.href;
-  var vars = {}, hash, hashes = href.slice(href.indexOf('?') + 1).split('&'), i;
-
-  for (i = 0; i < hashes.length; i++) {
+  var vars = {}, hash, length,
+    hashes = href.slice(href.indexOf('?') + 1).split('&'), i;
+  
+  length = hashes.length;
+  
+  for (i = 0; i < length; i++) {
     hash = hashes[i].split('=');
     if (hash[i] && hash[i].contains('#')) {
       hash[i] = hash[i].substring(0, hash[i].indexOf('#'));

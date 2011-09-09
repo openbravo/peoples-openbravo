@@ -262,8 +262,9 @@ isc.OBUserProfile.addProperties({
         }
       },
       setValueMaps: function(){
-        var i, role, roleId = roleForm.getValue('role');
-        for (i = 0; i < roleForm.localFormData.role.roles.length; i++) {
+        var i, role, roleId = roleForm.getValue('role'),
+          length = roleForm.localFormData.role.roles.length;
+        for (i = 0; i < length; i++) {
           role = roleForm.localFormData.role.roles[i];
           if (role.id === roleId) {
             roleForm.setValueMap('organization', role.organizationValueMap);
@@ -272,15 +273,18 @@ isc.OBUserProfile.addProperties({
         }
       },
       setWarehouseValueMap: function() {
-        var i, j, warehouseOrg, role, roleId, orgId = roleForm.getItem('organization').getValue();
+        var i, j, warehouseOrg, role, roleId, length, 
+          orgId = roleForm.getItem('organization').getValue();
         if (!orgId) {
           return;
         }
+        length = roleForm.localFormData.role.roles.length;
         roleId = roleForm.getValue('role');
-        for (i = 0; i < roleForm.localFormData.role.roles.length; i++) {
+        for (i = 0; i < length; i++) {
           role = roleForm.localFormData.role.roles[i];
           if (role.id === roleId) {
-            for (j = 0; j < role.warehouseOrgMap.length; j++) {
+            length = role.warehouseOrgMap.length;
+            for (j = 0; j < length; j++) {
               warehouseOrg = role.warehouseOrgMap[j];
               if (warehouseOrg.orgId === orgId) {
                 roleForm.setValueMap('warehouse', warehouseOrg.warehouseMap);
@@ -438,7 +442,7 @@ isc.OBUserProfile.addProperties({
       
       // the callback displays an info dialog and then hides the form
       doSaveCallback: function(rpcResponse, data, rpcRequest){
-        var i;
+        var i, length;
         if (data.result === OB.Constants.SUCCESS) {
           isc.OBQuickRun.hide();
           isc.say(OB.I18N.getLabel('UINAVBA_PasswordChanged'));
@@ -447,7 +451,8 @@ isc.OBUserProfile.addProperties({
             isc.showPrompt(OB.I18N.getLabel(data.message));
           }
           if (data.fields) {
-            for (i = 0; i < data.fields.length; i++) {
+            length = data.fields.length;
+            for (i = 0; i < length; i++) {
               var field = data.fields[i];
               passwordForm.addFieldErrors(field.field, OB.I18N.getLabel(field.messageCode), true);
             }

@@ -99,7 +99,7 @@
 // ** {{{OB.Personalization.applyViewDefinition}}} **
 // Apply a selected view definition to a window
 OB.Personalization.applyViewDefinition = function(viewDefinition, standardWindow) {
-  var i, view, viewTabDefinition, 
+  var i, view, viewTabDefinition, length = standardWindow.views.length,
     windowDefinition = viewDefinition.window;
   
   // delete the current form personalization 
@@ -108,7 +108,7 @@ OB.Personalization.applyViewDefinition = function(viewDefinition, standardWindow
   
   if (windowDefinition) {
     if (windowDefinition.activeTabId) {
-      for (i = 0; i < standardWindow.views.length; i++) {
+      for (i = 0; i < length; i++) {
         if (standardWindow.views[i].tabId === windowDefinition.activeTabId) {
           view = standardWindow.views[i];
           break;
@@ -133,7 +133,7 @@ OB.Personalization.applyViewDefinition = function(viewDefinition, standardWindow
   
   // the viewdefinition contains both the global info (form, canDelete, personalizationid)  
   // set the view state for each tab
-  for (i = 0; i < standardWindow.views.length; i++) {
+  for (i = 0; i < length; i++) {
     view = standardWindow.views[i];
     viewTabDefinition = viewDefinition[view.tabId];
     if (viewTabDefinition) {
@@ -157,10 +157,10 @@ OB.Personalization.applyViewDefinition = function(viewDefinition, standardWindow
 // view state is stored in the standardWindow.getClass().personalization object.
 OB.Personalization.storeViewDefinition = function(standardWindow, levelInformation, persId, name, isDefault) {
   var params, view, persDataByTab, 
-    personalizationData = {}, i, formData;
+    personalizationData = {}, i, formData, length = standardWindow.views.length;
   
   // retrieve the viewstate from the server
-  for (i = 0; i < standardWindow.views.length; i++) {
+  for (i = 0; i < length; i++) {
     persDataByTab = {};
     view = standardWindow.views[i];
     
@@ -232,7 +232,7 @@ OB.Personalization.storeViewDefinition = function(standardWindow, levelInformati
     'org.openbravo.client.application.personalization.PersonalizationActionHandler', 
     personalizationData, params,
     function(resp, data, req){
-      var i = 0, fnd = false;
+      var i = 0, fnd = false, length;
       var newView, 
         personalization = standardWindow.getClass().personalization, 
         views = personalization && personalization.views ? personalization.views : []; 
@@ -250,7 +250,8 @@ OB.Personalization.storeViewDefinition = function(standardWindow, levelInformati
       // first check if there is an existing record, if so 
       // update it
       if (views) {
-        for (i = 0; i < views.length; i++) {
+        length = views.length;
+        for (i = 0; i < length; i++) {
           if (views[i].personalizationId === data.personalizationId) {
             views[i] = newView;
             fnd = true;
@@ -301,11 +302,13 @@ OB.Personalization.deleteViewDefinition = function(standardWindow, personalizati
       },
       function(resp, data, req){
         var personalization = standardWindow.getClass().personalization, 
+          length,
           views = personalization && personalization.views ? personalization.views : [];
         
         if (views) {
+          length = views.length;
           // remove the entry from the global list
-          for (i = 0; i < views.length; i++) {
+          for (i = 0; i < length; i++) {
             if (views[i].personalizationId === personalizationId) {
               views.splice(i, 1);
               break;

@@ -70,12 +70,12 @@
     },
 
     _notify : function(rpcResponse, data, rpcRequest) {
-      var i;
+      var i, length = OB.AlertManager.listeners.length;
       // store info for new listeners
       OB.AlertManager.lastResponse = rpcResponse;
       OB.AlertManager.lastData = data;
       OB.AlertManager.lastRequest = rpcRequest;
-      for (i = 0; i < OB.AlertManager.listeners.length; i++) {
+      for (i = 0; i < length; i++) {
         OB.AlertManager.listeners[i](rpcResponse, data, rpcRequest);
       }
       isc.Timer.setTimeout(OB.AlertManager.call, OB.AlertManager.delay);

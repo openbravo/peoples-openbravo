@@ -393,6 +393,12 @@ isc.ClassFactory.defineClass('OBLinkedItemCanvasItem', isc.CanvasItem);
 
 isc.OBLinkedItemCanvasItem.addProperties({
 
+  // some defaults, note if this changes then also the 
+  // field generation logic needs to be checked
+  colSpan: 4, 
+  startRow: true, 
+  endRow: true,
+
   canFocus: true,
   
   // setting width/height makes the canvasitem to be hidden after a few

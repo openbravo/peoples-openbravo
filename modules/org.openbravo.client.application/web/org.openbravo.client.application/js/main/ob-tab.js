@@ -517,7 +517,6 @@ isc.OBTabSetChild.addProperties({
   },
 
   setState: function(newState){
-
     // disabled this as sometimes states have
     // to be reset to recompute heights changed automatically
     // if (this.state === newState) {
@@ -526,6 +525,7 @@ isc.OBTabSetChild.addProperties({
 
     var tab, i, pane;
     var tmpPreviousState = this.state;
+    var length = this.tabs.length;
 
     // is corrected below for one state
     this.setDraggable(false);
@@ -544,7 +544,7 @@ isc.OBTabSetChild.addProperties({
       // done otherwise the content is not drawn
       // the top member in each tab is maximized
       // the bottom member in each tab is set to the tabbar height
-      for (i = 0; i < this.tabs.length; i++) {
+      for (i = 0; i < length; i++) {
         tab = this.tabs[i];
         this.makeTabVisible(tab);
         pane = this.getTabPane(tab);
@@ -569,7 +569,7 @@ isc.OBTabSetChild.addProperties({
       } else if (this.parentContainer) {
         this.parentContainer.setBottomMaximum();
       }
-      for (i = 0; i < this.tabs.length; i++) {
+      for (i = 0; i < length; i++) {
         tab = this.tabs[i];
         this.makeTabVisible(tab);
         pane = this.getTabPane(tab);
@@ -579,7 +579,7 @@ isc.OBTabSetChild.addProperties({
       this.state = newState;
       this.setDraggable(true);
       // minimize the third level
-      for (i = 0; i < this.tabs.length; i++) {
+      for (i = 0; i < length; i++) {
         tab = this.tabs[i];
         pane = this.getTabPane(tab);
         pane.setHeight('100%');
@@ -598,7 +598,7 @@ isc.OBTabSetChild.addProperties({
       }
       // the content of the tabs is split in 2
       this.state = newState;
-      for (i = 0; i < this.tabs.length; i++) {
+      for (i = 0; i < length; i++) {
         tab = this.tabs[i];
         pane = this.getTabPane(tab);
         this.makeTabVisible(tab);
@@ -608,7 +608,7 @@ isc.OBTabSetChild.addProperties({
 
     this.previousState = tmpPreviousState;
 
-    for (i = 0; i < this.tabs.length; i++) {
+    for (i = 0; i < length; i++) {
       tab = this.tabs[i];
       tab.pane.setMaximizeRestoreButtonState();
     }

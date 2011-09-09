@@ -147,8 +147,12 @@ isc.OBToolbar.addClassProperties({
     buttonType: 'eliminate',
     prompt: OB.I18N.getLabel('OBUIAPP_DeleteRow'),
     updateState: function(){
-      var view = this.view, form = view.viewForm, grid = view.viewGrid, selectedRecords = grid.getSelectedRecords(), i;
-      for (i = 0; i < selectedRecords.length; i++) {
+      var view = this.view, form = view.viewForm, 
+        grid = view.viewGrid, 
+        selectedRecords = grid.getSelectedRecords(),
+        length = selectedRecords.length, i;
+      
+      for (i = 0; i < length; i++) {
         if (!grid.isWritable(selectedRecords[i])) {
           this.setDisabled(true);
           return;
@@ -429,7 +433,10 @@ isc.OBToolbar.addClassProperties({
 isc.OBToolbar.addProperties({
   randomId: null,
   initWidget: function(){
+    var newMembers = [], i = 0, j = 0, length;
+    
     this.Super('initWidget', arguments);
+
     function getRandomId(){
       var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz', stringLength = 8, randomString = '', i, rnum;
       for (i = 0; i < stringLength; i++) {
@@ -438,13 +445,15 @@ isc.OBToolbar.addProperties({
       }
       return randomString;
     }
+    
     this.randomId = getRandomId();
+    
     this.members = null;
     
-    var newMembers = [], i = 0, j = 0;
     if(!this.leftMembers || this.leftMembers.length===0){
       this.leftMembers = OB.ToolbarRegistry.getButtons(this.view.tabId);
     }
+    
     newMembers[j] = isc.HLayout.create({
       width: this.leftMargin,
       height: 1
@@ -452,7 +461,10 @@ isc.OBToolbar.addProperties({
     j++;
     
     if (this.leftMembers) {
-      for (i = 0; i < this.leftMembers.length; i++) {
+      
+      length = this.leftMembers.length;
+      
+      for (i = 0; i < length; i++) {
        
         newMembers[j] = this.leftMembers[i];
         
@@ -487,7 +499,10 @@ isc.OBToolbar.addProperties({
     j++;
     
     if (this.rightMembers) {
-      for (i = 0; i < this.rightMembers.length; i++) {
+      
+      length = this.rightMembers.length;
+      
+      for (i = 0; i < length; i++) {
         newMembers[j] = this.rightMembers[i];
         OB.TestRegistry.register('org.openbravo.client.application.toolbar.button.' + this.rightMembers[i].property + '.' + this.view.tabId, this.rightMembers[i]);
         newMembers[j].toolBar = this;
@@ -522,7 +537,9 @@ isc.OBToolbar.addProperties({
   // NOTE: new buttons should implement the updateState method.
   //
   updateButtonState: function(noSetSession, changeEvent){
-    for (i = 0; i < this.leftMembers.length; i++) {
+    var length = this.leftMembers.length;
+    
+    for (i = 0; i < length; i++) {
       if (this.leftMembers[i].updateState) {
         this.leftMembers[i].updateState();
       }
@@ -546,19 +563,19 @@ isc.OBToolbar.addProperties({
   //
   // Returns:  type: Canvas - left member widget.
   getLeftMember: function(member){
-    var i = 0;
+    var i = 0, length = this.leftMembers.length;
     if (typeof member === 'number') {
       if (member >= 0 && member < this.leftMembers.length) {
         return this.leftMembers[member];
       }
     } else if (typeof member === 'string') {
-      for (i = 0; i < this.leftMembers.length; i++) {
+      for (i = 0; i < length; i++) {
         if (this.leftMembers[i].buttonType === member) {
           return this.leftMembers[i];
         }
       }
     } else if (typeof member === 'object') {
-      for (i = 0; i < this.leftMembers.length; i++) {
+      for (i = 0; i < length; i++) {
         if (this.leftMembers[i] === member) {
           return this.leftMembers[i];
         }
@@ -590,8 +607,8 @@ isc.OBToolbar.addProperties({
   //
   // Returns: type: Array - the Array of matching left members.
   getLeftMembersByAttribute: function(attribute, value){
-    var members = [], i = 0;
-    for (i = 0; i < this.leftMembers.length; i++) {
+    var members = [], i = 0, length = this.leftMembers.length;
+    for (i = 0; i < length; i++) {
       if (this.leftMembers[i][attribute] === value) {
         members.push(this.leftMembers[i]);
       }
@@ -610,8 +627,8 @@ isc.OBToolbar.addProperties({
   //
   // Returns: type: Number - the left member Canvas position (starting from 0).
   getLeftMemberNumber: function(member){
-    var i = 0;
-    for (i = 0; i < this.leftMembers.length; i++) {
+    var i = 0, length = this.leftMembers.length;
+    for (i = 0; i < length; i++) {
       if (this.leftMembers[i] === member) {
         return i;
       }
@@ -627,13 +644,15 @@ isc.OBToolbar.addProperties({
   // Parameters:
   // * {{{members}}} type: Array | Canvas - array of left members to be removed, or reference to single left member.
   removeLeftMembers: function(members){
-    var oldMembersSorted = [], oldArray = [], position = 0, i = 0, sortFunc = function(a, b){
-      return (a - b);
-    };
+    var oldMembersSorted = [], oldArray = [], position = 0, 
+      length, i = 0, sortFunc = function(a, b){
+        return (a - b);
+      };
     if (!(typeof members.length === 'number' && !(members.propertyIsEnumerable('length')) && typeof members.splice === 'function')) {
       members = [members];
     }
-    for (i = 0; i < members.length; i++) { /* Clean-up of the given input and sort */
+    length = members.length;
+    for (i = 0; i < length; i++) { /* Clean-up of the given input and sort */
       if (typeof members[i] !== 'number') {
         members[i] = this.getLeftMemberNumber(members[i]);
       }
@@ -642,14 +661,17 @@ isc.OBToolbar.addProperties({
       }
       oldMembersSorted = oldMembersSorted.sort(sortFunc);
     }
-    for (i = 0; i < oldMembersSorted.length; i++) { /* Generate an array to determine which elements visually will be removed */
+    length = oldMembersSorted.length;
+    for (i = 0; i < length; i++) { /* Generate an array to determine which elements visually will be removed */
       position = oldMembersSorted[i];
       position = position * 2;
       position = position + 1;
       oldArray.push(position, position + 1);
     }
     oldMembersSorted = oldMembersSorted.reverse();
-    for (i = 0; i < oldMembersSorted.length; i++) { /* Update the 'leftMembers' array */
+    
+    length = oldMembersSorted.length;
+    for (i = 0; i < length; i++) { /* Update the 'leftMembers' array */
       this.leftMembers.splice(oldMembersSorted[i], 1);
     }
     this.destroyAndRemoveMembers(oldArray); /* Remove visually the desired elements */
@@ -661,8 +683,9 @@ isc.OBToolbar.addProperties({
   // Removes all left members from the layout.
   //
   removeAllLeftMembers: function(){
-    var membersNumArray = [], i = 0;
-    for (i = 0; i < this.leftMembers.length; i++) {
+    var membersNumArray = [], i = 0, 
+      length = this.leftMembers.length;
+    for (i = 0; i < length; i++) {
       membersNumArray.push(i);
     }
     this.removeLeftMembers(membersNumArray);
@@ -677,19 +700,21 @@ isc.OBToolbar.addProperties({
   // * {{{newMembers}}} type: Array || Object - array of canvases to be added, or reference to single canvas.
   // * {{{position (optional)}}} type: Number - position to add newMembers; if omitted newMembers will be added at the last position.
   addLeftMembers: function(newMembers, position){
-    var i = 0;
+    var i = 0, length;
     if (!(typeof newMembers.length === 'number' && !(newMembers.propertyIsEnumerable('length')) && typeof newMembers.splice === 'function')) {
       newMembers = [newMembers];
     }
     if (position > this.leftMembers.length || typeof position === 'undefined') {
       position = this.leftMembers.length;
     }
-    for (i = 0; i < newMembers.length; i++) {
+    length = newMembers.length;
+    for (i = 0; i < length; i++) {
       this.leftMembers.splice(position + i, 0, newMembers[i]);
     }
     position = position * 2;
     position = position + 1;
-    for (i = 0; i < newMembers.length; i++) {
+    length = newMembers.length;
+    for (i = 0; i < length; i++) {
       this.Super('addMembers', [newMembers[i], position]);
       position = position + 1;
       this.Super('addMembers', [isc.HLayout.create({
@@ -757,19 +782,20 @@ isc.OBToolbar.addProperties({
   //
   // Returns: type: Canvas - right member widget.
   getRightMember: function(member){
-    var i = 0;
+    var i = 0, length = this.rightMembers.length;
     if (typeof member === 'number') {
       if (member >= 0 && member < this.rightMembers.length) {
         return this.rightMembers[member];
       }
     } else if (typeof member === 'string') {
-      for (i = 0; i < this.rightMembers.length; i++) {
+      
+      for (i = 0; i < length; i++) {
         if (this.rightMembers[i].ID === member) {
           return this.rightMembers[i];
         }
       }
     } else if (typeof member === 'object') {
-      for (i = 0; i < this.rightMembers.length; i++) {
+      for (i = 0; i < length; i++) {
         if (this.rightMembers[i] === member) {
           return this.rightMembers[i];
         }
@@ -801,8 +827,8 @@ isc.OBToolbar.addProperties({
   //
   // Returns: type: Array - the Array of matching right members.
   getRightMembersByAttribute: function(attribute, value){
-    var members = [], i = 0;
-    for (i = 0; i < this.rightMembers.length; i++) {
+    var members = [], i = 0, length = this.rightMembers.length;
+    for (i = 0; i < length; i++) {
       if (this.rightMembers[i][attribute] === value) {
         members.push(this.rightMembers[i]);
       }
@@ -821,8 +847,8 @@ isc.OBToolbar.addProperties({
   //
   // Returns: type: Number - the right member Canvas position (starting from 0).
   getRightMemberNumber: function(member){
-    var i = 0;
-    for (i = 0; i < this.rightMembers.length; i++) {
+    var i = 0, length = this.rightMembers.length;
+    for (i = 0; i < length; i++) {
       if (this.rightMembers[i] === member) {
         return i;
       }
@@ -838,13 +864,15 @@ isc.OBToolbar.addProperties({
   // Parameters:
   // * {{{members}}} type: Array | Canvas - array of right members to be removed, or reference to single right member.
   removeRightMembers: function(members){
-    var oldMembersSorted = [], oldArray = [], position = 0, i = 0, sortFunc = function(a, b){
+    var oldMembersSorted = [], length, oldArray = [], 
+      position = 0, i = 0, sortFunc = function(a, b){
       return (a - b);
     };
     if (!(typeof members.length === 'number' && !(members.propertyIsEnumerable('length')) && typeof members.splice === 'function')) {
       members = [members];
     }
-    for (i = 0; i < members.length; i++) { /* Clean-up of the given input and sort */
+    length = members.length;
+    for (i = 0; i < length; i++) { /* Clean-up of the given input and sort */
       if (typeof members[i] !== 'number') {
         members[i] = this.getRightMemberNumber(members[i]);
       }
@@ -853,7 +881,9 @@ isc.OBToolbar.addProperties({
       }
       oldMembersSorted = oldMembersSorted.sort(sortFunc);
     }
-    for (i = 0; i < oldMembersSorted.length; i++) { /* Generate an array to determine which elements visually will be removed */
+    
+    length = oldMembersSorted.length;
+    for (i = 0; i < length; i++) { /* Generate an array to determine which elements visually will be removed */
       position = oldMembersSorted[i];
       position = position * 2;
       position = position + 3;
@@ -861,7 +891,8 @@ isc.OBToolbar.addProperties({
       oldArray.push(position, position + 1);
     }
     oldMembersSorted = oldMembersSorted.reverse();
-    for (i = 0; i < oldMembersSorted.length; i++) { /* Update the 'rightMembers' array */
+    length = oldMembersSorted.length;
+    for (i = 0; i < length; i++) { /* Update the 'rightMembers' array */
       this.rightMembers.splice(oldMembersSorted[i], 1);
     }
     this.destroyAndRemoveMembers(oldArray); /* Remove visually the desired elements */
@@ -873,8 +904,8 @@ isc.OBToolbar.addProperties({
   // Removes all right members from the layout.
   //
   removeAllRightMembers: function(){
-    var membersNumArray = [], i = 0;
-    for (i = 0; i < this.rightMembers.length; i++) {
+    var membersNumArray = [], i = 0, length = this.rightMembers.length;
+    for (i = 0; i < length; i++) {
       membersNumArray.push(i);
     }
     this.removeRightMembers(membersNumArray);
@@ -889,20 +920,24 @@ isc.OBToolbar.addProperties({
   // * {{{newMembers}}} type: Array || Object - array of canvases to be added, or reference to single canvas.
   // * {{{position (optional)}}} type: Number - position to add newMembers; if omitted newMembers will be added at the last position.
   addRightMembers: function(newMembers, position){
-    var i = 0;
+    var i = 0, length;
     if (!(typeof newMembers.length === 'number' && !(newMembers.propertyIsEnumerable('length')) && typeof newMembers.splice === 'function')) {
       newMembers = [newMembers];
     }
     if (position > this.rightMembers.length || typeof position === 'undefined') {
       position = this.rightMembers.length;
     }
-    for (i = 0; i < newMembers.length; i++) {
+    
+    length = newMembers.length;
+    for (i = 0; i < length; i++) {
       this.rightMembers.splice(position + i, 0, newMembers[i]);
     }
     position = position * 2;
     position = position + 3;
     position = position + this.leftMembers.length * 2;
-    for (i = 0; i < newMembers.length; i++) {
+
+    length = newMembers.length;
+    for (i = 0; i < length; i++) {
       this.Super('addMembers', [newMembers[i], position]);
       position = position + 1;
       this.Super('addMembers', [isc.HLayout.create({
@@ -964,35 +999,39 @@ isc.OBToolbar.addProperties({
   refreshCustomButtons: function(noSetSession){
     var selectedRecords, multipleSelectedRowIds, allProperties, i;
     function doRefresh(buttons, currentValues, hideAllButtons, me) {
-      var i;
-      for (i = 0; i < me.rightMembers.length; i++) { // To disable any button previous defined keyboard shortcut
+      var i, length = me.rightMembers.length;
+      for (i = 0; i < length; i++) { // To disable any button previous defined keyboard shortcut
         me.rightMembers[i].disableShortcut();
       }
-      for (i = 0; i < buttons.length; i++) {
+      length = buttons.length;
+      for (i = 0; i < length; i++) {
         if (buttons[i].updateState) {
           buttons[i].updateState(currentValues, hideAllButtons);
         }
       }
-      for (i = 0; i < me.leftMembers.length; i++) {
+      length = me.leftMembers.length;
+      for (i = 0; i < length; i++) {
         if (me.leftMembers[i].updateState) {
             me.leftMembers[i].updateState();
         }
       }
       if (me.view.isActiveView()) {
         me.defineRightMembersShortcuts(); // To re-calculate the target key for keyboard shortcuts
-        for (i = 0; i < me.rightMembers.length; i++) {
+        length = me.rightMembers.length;
+        for (i = 0; i < length; i++) {
           me.rightMembers[i].enableShortcut(); // To enable each button keyboard shortcut
         }
       }
     }
 
-    var buttons = this.getRightMembers(), buttonContexts = [], currentContext, buttonsByContext = [];
+    var buttons = this.getRightMembers(), buttonContexts = [], 
+      currentContext, buttonsByContext = [], length;
 
     if (buttons.length === 0) {
       return;
     }
-    
-    for (i = 0; i < buttons.length; i++) {
+    length = buttons.length;
+    for (i = 0; i < length; i++) {
       if (!currentContext || currentContext !== buttons[i].contextView) {
         // Adding new context
         currentContext = buttons[i].contextView;
@@ -1028,7 +1067,8 @@ isc.OBToolbar.addProperties({
     };
 
     var currentTabCalled = false, me = this;
-    for (iButtonContext = 0; iButtonContext < buttonContexts.length; iButtonContext++) {
+    length = buttonContexts.length;
+    for (iButtonContext = 0; iButtonContext < length; iButtonContext++) {
       currentContext = buttonContexts[iButtonContext];
 
       selectedRecords = currentContext.viewGrid.getSelectedRecords() || [];
@@ -1105,9 +1145,11 @@ isc.OBToolbar.addProperties({
   // Used to update state of buttons dynamically on field change
   //
   refreshCustomButtonsView: function (view) {
-    var i, context = view.getContextInfo(false, true, true);
+    var i, context = view.getContextInfo(false, true, true),
+      length;
 
-    for (i=0; i<this.rightMembers.length; i++) {
+    length = this.rightMembers.length;
+    for (i=0; i < length; i++) {
       if (this.rightMembers[i].contextView === view) {
         this.rightMembers[i].updateState(view.getCurrentValues(), false, context);
       }
@@ -1131,15 +1173,16 @@ isc.OBToolbar.addProperties({
   rightMembersShortcuts: [],
 
   defineRightMembersShortcuts: function(){
-    var i, j, k, id, character, position;
+    var i, j, k, id, character, position, length, titleLength;
     function isAssignedCharacter(character, me){
-      var n;
+      var n, length;
       if (character === ' ') {
         return true;
       }
       character = character.toString();
       character = character.toUpperCase();
-      for (n = 0; n < me.rightMembersShortcuts.length; n++) {
+      length = me.rightMembersShortcuts.length;
+      for (n = 0; n < length; n++) {
         if (me.rightMembersShortcuts[n][0] === character) {
           return true;
         }
@@ -1148,12 +1191,14 @@ isc.OBToolbar.addProperties({
     }
 
     this.rightMembersShortcuts = [];
-    for (i = 0; i < this.rightMembers.length; i++) {
+    length = this.rightMembers.length;
+    for (i = 0; i < length; i++) {
       var title = this.rightMembers[i].realTitle, haveToContinue = true;
       this.rightMembersShortcuts[i] = [];
       if (haveToContinue) { // Check if free character and assign
         haveToContinue = true;
-        for (j = 0; j < title.length; j++) {
+        titleLength = title.length;
+        for (j = 0; j < titleLength; j++) {
           if (!isAssignedCharacter(title.substring(j, j + 1), this)) {
             this.rightMembersShortcuts[i][0] = title.substring(j, j + 1).toUpperCase();
             this.rightMembersShortcuts[i][1] = j + 1;
@@ -1184,8 +1229,10 @@ isc.OBToolbar.addProperties({
   },
   
   enableShortcuts: function(){
+    var length;
     if (this.leftMembers) {
-      for (i = 0; i < this.leftMembers.length; i++) {
+      length = this.leftMembers.length;
+      for (i = 0; i < length; i++) {
         if (this.leftMembers[i].enableShortcut) {
           this.leftMembers[i].enableShortcut();
         }
@@ -1193,7 +1240,8 @@ isc.OBToolbar.addProperties({
     }
     if (this.rightMembers) {
       this.defineRightMembersShortcuts();
-      for (i = 0; i < this.rightMembers.length; i++) {
+      length = this.rightMembers.length;
+      for (i = 0; i < length; i++) {
         if (this.rightMembers[i].enableShortcut) {
           this.rightMembers[i].enableShortcut();
         }
@@ -1202,15 +1250,18 @@ isc.OBToolbar.addProperties({
   },
   
   disableShortcuts: function(){
+    var length;
     if (this.leftMembers) {
-      for (i = 0; i < this.leftMembers.length; i++) {
+      length = this.leftMembers.length;
+      for (i = 0; i < length; i++) {
         if (this.leftMembers[i].disableShortcut) {
           this.leftMembers[i].disableShortcut();
         }
       }
     }
     if (this.rightMembers) {
-      for (i = 0; i < this.rightMembers.length; i++) {
+      length = this.rightMembers.length;
+      for (i = 0; i < length; i++) {
         if (this.rightMembers[i].disableShortcut) {
           this.rightMembers[i].disableShortcut();
         }
@@ -1357,9 +1408,10 @@ isc.OBToolbarTextButton.addProperties({
 OB.ToolbarUtils = {};
 
 OB.ToolbarUtils.print = function(view, url, directPrint){
-  var selectedRecords = view.viewGrid.getSelectedRecords();
+  var selectedRecords = view.viewGrid.getSelectedRecords(),
+    length = selectedRecords.length;
 
-  if (selectedRecords.length === 0) {
+  if (length === 0) {
     view.messageBar.setMessage(OBMessageBar.TYPE_WARNING, '', OB.I18N.getLabel('OBUIAPP_PrintNoRecordSelected'));
     return;
   }
@@ -1387,7 +1439,7 @@ OB.ToolbarUtils.print = function(view, url, directPrint){
   }
 
   selectedIds = '';
-  for (i = 0; i < selectedRecords.length; i++) {
+  for (i = 0; i < length; i++) {
     selectedIds += (i > 0 ? ',' : '') + selectedRecords[i].id;
   }
 
@@ -1441,6 +1493,8 @@ OB.ToolbarRegistry = {
     
     // note tabIds is an array of strings, but maybe null/undefined
     registerButton: function(buttonId, clazz, properties, sortOrder, tabIds) {
+      var length;
+      
       if (tabIds && !isc.isA.Array(tabIds)) {
         tabIds = [tabIds];
       }
@@ -1455,14 +1509,15 @@ OB.ToolbarRegistry = {
       };
  
       // already registered, bail
-      for (i = 0; i < this.buttonDefinitions.length; i++) {   
+      length = this.buttonDefinitions.length;
+      for (i = 0; i < length; i++) {   
         if (this.buttonDefinitions[i].buttonId === buttonId) {
           return;
         }
       }
       
       index = this.buttonDefinitions.length;
-      for (i = 0; i < this.buttonDefinitions.length; i++) {   
+      for (i = 0; i < length; i++) {   
         if (this.buttonDefinitions[i].sortOrder > sortOrder) {
           index = i;
           break;
@@ -1482,12 +1537,15 @@ OB.ToolbarRegistry = {
 		  // and pick them up in the correct order
 		  // the return should be an array of button instances created by doing 
 		  //  btnDefinitionClass.create(btnDefinitionProperties);
-		  var result = [], resultIndex = 0, i, validTabId, tabIds;	
-		  for (i = 0; i < this.buttonDefinitions.length; i++) {	
+		  var result = [], resultIndex = 0, i, validTabId, 
+		    tabIds, length = this.buttonDefinitions.length,
+		    tabIdsLength;	
+		  for (i = 0; i < length; i++) {	
 		    tabIds = this.buttonDefinitions[i].tabIds;
 		    validTabId = !tabIds;
 		    if (tabIds) {
-		      for (j = 0; j < tabIds.length; j++) {
+		      tabIdsLength = tabIds.length;
+		      for (j = 0; j < tabIdsLength; j++) {
 		        if (tabIds[j] === tabId) {
 		          validTabId = true;
 		          break;

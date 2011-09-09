@@ -99,6 +99,12 @@ isc.ClassFactory.defineClass('OBAttachmentCanvasItem', isc.CanvasItem);
 
 isc.OBAttachmentCanvasItem.addProperties({
 
+  // some defaults, note if this changes then also the 
+  // field generation logic needs to be checked
+  colSpan: 4, 
+  startRow: true, 
+  endRow: true,
+
   canFocus: true,
   
   // setting width/height makes the canvasitem to be hidden after a few
@@ -208,12 +214,15 @@ isc.OBAttachmentsLayout.addProperties({
   },
   
   fileExists: function(fileName, attachments){
-	var i;
+    var i, length;
+   
     if(!attachments || attachments.length === 0){
       return false;
     }
-    for(i=0; i < attachments.length; i++){
-      if(attachments[i].name === fileName){
+    
+    length = attachments.length;
+    for( i = 0; i < length; i++){
+      if (attachments[i].name === fileName) {
         return true;
       }
     }
@@ -368,64 +377,64 @@ isc.OBAttachmentsLayout.addProperties({
     };
     
     var removeActions = function(){
-      var i;
-      var d = {
-        Command: 'DELETE',
-        tabId: this.canvas.tabId,
-        buttonId: this.canvas.ID,
-        recordIds: this.canvas.recordId,
-        attachId: this.attachmentId
-      };
-      var canvas = this.canvas;
+      var i, length, d = {
+          Command: 'DELETE',
+          tabId: this.canvas.tabId,
+          buttonId: this.canvas.ID,
+          recordIds: this.canvas.recordId,
+          attachId: this.attachmentId
+        }, canvas = this.canvas;
+
       isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmRemove'), function(clickedOK){
-        if(clickedOK){
-          OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {}, d, function(response, data, request){
+          if(clickedOK){
+            OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {}, d, function(response, data, request){
               canvas.fillAttachments(data.attachments);
-          });
-        }
-      },{title: OB.I18N.getLabel('OBUIAPP_ConfirmRemoveTitle')});
-    };
+            });
+          }
+        },{title: OB.I18N.getLabel('OBUIAPP_ConfirmRemoveTitle')});
+      };
     
-    for(i=0; i < attachments.length; i++){
-      var attachment = attachments[i];
-      var buttonLayout = isc.HLayout.create();
-      var attachmentLabel = isc.Label.create({
-        contents: attachment.name,
-        className: 'OBNoteListGrid',
-        width: '200px',
-        height: 20,
-        wrap: false
-      });
-      var creationDate = OB.Utilities.getTimePassedInterval(attachment.age);
-      var attachmentBy = isc.Label.create({
-        height:  1,
-        className: 'OBNoteListGridAuthor',
-        width: '200px',
-        contents: creationDate+" "+OB.I18N.getLabel('OBUIAPP_AttachmentBy')+" "+attachment.updatedby
-      });
-      var downloadAttachment = isc.OBLinkButtonItem.create({
-        title: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentDownload')+' ]',
-        width: '30px',
-        attachmentName: attachment.name,
-        attachId: attachment.id,
-        action: downloadActions
-      });
-      downloadAttachment.height=0;
-      var removeAttachment = isc.OBLinkButtonItem.create({
-        title: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentRemove')+' ]',
-        width: '30px',
-        attachmentName: attachment.name,
-        attachmentId: attachment.id,
-        canvas: this,
-        action: removeActions
-      });
-      buttonLayout.addMember(attachmentLabel);
-      buttonLayout.addMember(attachmentBy);
-      buttonLayout.addMember(downloadAttachment);
-      buttonLayout.addMember(removeAttachment);
-      this.addMember(buttonLayout);
-    }
-  },
+      length = attachments.length;
+      for(i=0; i < attachments.length; i++){
+        var attachment = attachments[i];
+        var buttonLayout = isc.HLayout.create();
+        var attachmentLabel = isc.Label.create({
+          contents: attachment.name,
+          className: 'OBNoteListGrid',
+          width: '200px',
+          height: 20,
+          wrap: false
+        });
+        var creationDate = OB.Utilities.getTimePassedInterval(attachment.age);
+        var attachmentBy = isc.Label.create({
+          height:  1,
+          className: 'OBNoteListGridAuthor',
+          width: '200px',
+          contents: creationDate+" "+OB.I18N.getLabel('OBUIAPP_AttachmentBy')+" "+attachment.updatedby
+        });
+        var downloadAttachment = isc.OBLinkButtonItem.create({
+          title: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentDownload')+' ]',
+          width: '30px',
+          attachmentName: attachment.name,
+          attachId: attachment.id,
+          action: downloadActions
+        });
+        downloadAttachment.height=0;
+        var removeAttachment = isc.OBLinkButtonItem.create({
+          title: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentRemove')+' ]',
+          width: '30px',
+          attachmentName: attachment.name,
+          attachmentId: attachment.id,
+          canvas: this,
+          action: removeActions
+        });
+        buttonLayout.addMember(attachmentLabel);
+        buttonLayout.addMember(attachmentBy);
+        buttonLayout.addMember(downloadAttachment);
+        buttonLayout.addMember(removeAttachment);
+        this.addMember(buttonLayout);
+      }
+    },
   
   // ensure that the view gets activated
   focusChanged: function(){

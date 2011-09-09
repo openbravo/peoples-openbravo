@@ -91,11 +91,12 @@
     },
 
     findLoadingTab: function(params) {
-      var i;
+      var i, length;
       if (!params.loadingTabId) {
         return null;
       }
-      for (i = 0; i < OB.MainView.TabSet.tabs.length; i++) {
+      length = OB.MainView.TabSet.tabs.length;
+      for (i = 0; i < length; i++) {
         var pane = OB.MainView.TabSet.tabs[i].pane;
         if (pane.viewTabId && pane.isLoadingTab && pane.viewTabId === params.loadingTabId) {
           return OB.MainView.TabSet.tabs[i];

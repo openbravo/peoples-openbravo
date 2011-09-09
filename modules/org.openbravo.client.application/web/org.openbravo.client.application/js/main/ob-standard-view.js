@@ -183,6 +183,8 @@ isc.OBStandardView.addProperties({
   propertyToColumns:[],
 
   initWidget: function(properties){
+    var length;
+    
     this.messageBar = isc.OBMessageBar.create({
       visibility: 'hidden',
       view: this
@@ -201,7 +203,8 @@ isc.OBStandardView.addProperties({
     var i, actionButton;
     
     if (this.actionToolbarButtons) {
-      for (i = 0; i < this.actionToolbarButtons.length; i++) {
+      length = this.actionToolbarButtons.length;
+      for (i = 0; i < length; i++) {
         actionButton = isc.OBToolbarActionButton.create(this.actionToolbarButtons[i]);
         actionButton.contextView = this;
         rightMemberButtons.push(actionButton);
@@ -210,7 +213,8 @@ isc.OBStandardView.addProperties({
     
     // Look for specific toolbar buttons for this tab
     if (this.iconToolbarButtons) {
-      for (i = 0; i < this.iconToolbarButtons.length; i++) {
+      length = this.iconToolbarButtons.length;
+      for (i = 0; i < length; i++) {
         // note create a somewhat unique id by concatenating the tabid and the index
         OB.ToolbarRegistry.registerButton(this.tabId + '_' + i, isc.OBToolbarIconButton, this.iconToolbarButtons[i], 200 + (i * 10), this.tabId);
       }
@@ -240,6 +244,7 @@ isc.OBStandardView.addProperties({
   },
   
   buildStructure: function(){
+    var length, i, fld;
     this.createMainParts();
     this.createViewStructure();
     if (this.childTabSet && this.childTabSet.tabs.length === 0) {
@@ -257,19 +262,17 @@ isc.OBStandardView.addProperties({
     }
     
     if (this.viewForm) {
-      this.prepareViewFields(this.viewForm.theFields);
-      
       // setDataSource executes setFields which replaces the current fields
       // We don't want to destroy the associated DataSource objects
       this.viewForm.destroyItemObjects = false;
       
-      // initially the viewForm.fields is not set, the fields are
-      // in this.viewForm.theFields, this to prevent too early creation of fields
-      // i.e. they are recreated when setting the datasource, as is done
-      // here.
-      // make sure the fields are set now
-      this.viewForm.fields = this.viewForm.theFields;
-      this.viewForm.setDataSource(this.dataSource, this.viewForm.theFields);
+      // is used to keep track of the original simple objects
+      // used to create fields
+      this.viewForm._originalFields = isc.clone(this.formFields);
+      this.viewForm.fields = this.formFields;
+      this.viewForm.firstFocusedField = this.firstFocusedField;
+      
+      this.viewForm.setDataSource(this.dataSource, this.formFields);
       this.viewForm.isViewForm = true;
       this.viewForm.destroyItemObjects = true;
     }
@@ -524,6 +527,8 @@ isc.OBStandardView.addProperties({
   // this
   // parent.
   addChildView: function(childView){
+    var length;
+    
     if ((childView.isTrlTab && OB.PropertyStore.get('ShowTrl', this.windowId) !== 'Y') ||
         (childView.isAcctTab && OB.PropertyStore.get('ShowAcct', this.windowId) !== 'Y')){
       return;
@@ -534,7 +539,8 @@ isc.OBStandardView.addProperties({
     // Add buttons in parent to child. Note that currently it is only added one level.
     var i;
     if (this.actionToolbarButtons && this.actionToolbarButtons.length>0 && childView.showParentButtons){
-      for (i = 0; i < this.actionToolbarButtons.length; i++) {
+      length = this.actionToolbarButtons.length;
+      for (i = 0; i < length; i++) {
         actionButton = isc.OBToolbarActionButton.create(isc.addProperties({}, this.actionToolbarButtons[i], {baseStyle: 'OBToolbarTextButtonParent'}));
         actionButton.contextView = this; // Context is still parent view
         actionButton.toolBar = childView.toolBar;
@@ -786,9 +792,10 @@ isc.OBStandardView.addProperties({
   },
 
   refreshChildViews: function() {
-    var i;
+    var i, length;
     if (this.childTabSet) {
-      for (i = 0; i < this.childTabSet.tabs.length; i++) {
+      length = this.childTabSet.tabs.length;
+      for (i = 0; i < length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
         // force a refresh, only the visible ones will really 
         // be refreshed
@@ -1041,6 +1048,8 @@ isc.OBStandardView.addProperties({
   // function is called with a small delay to handle the case that a user
   // navigates quickly over a grid
   delayedRecordSelected: function() {
+    var length;
+    
     // is actually a different parent selected, only then refresh children
     var differentRecordId = !this.lastRecordSelected || !this.viewGrid.getSelectedRecord() ||
       this.viewGrid.getSelectedRecord().id !== this.lastRecordSelected.id;
@@ -1055,7 +1064,8 @@ isc.OBStandardView.addProperties({
 
     // refresh the tabs
     if (this.childTabSet && (differentRecordId || !this.isOpenDirectModeParent)) {
-      for (i = 0; i < this.childTabSet.tabs.length; i++) {
+      length = this.childTabSet.tabs.length;
+      for (i = 0; i < length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
 
         if (!selectedRecordId || !this.isOpenDirectModeParent || selectedRecordId !== tabViewPane.parentRecordId) {
@@ -1068,8 +1078,11 @@ isc.OBStandardView.addProperties({
 
   // set childs to refresh when they are made visible
   setChildsToRefresh: function() {
+    var length;
+    
     if (this.childTabSet) {
-      for (i = 0; i < this.childTabSet.tabs.length; i++) {
+      length = this.childTabSet.tabs.length;
+      for (i = 0; i < length; i++) {
         if (!this.childTabSet.tabs[i].pane.isVisible()) {
           this.childTabSet.tabs[i].pane.refreshContents = true;  
         }
@@ -1176,7 +1189,8 @@ isc.OBStandardView.addProperties({
       tab = this.tab;
       tabSet = this.parentTabSet;
 
-      if (this.parentView.viewGrid.getSelectedRecords().length !== 1) {
+      if (!this.parentView.viewGrid.getSelectedRecords() || 
+          this.parentView.viewGrid.getSelectedRecords().length !== 1) {
         title = this.originalTabTitle;
       } else if (this.recordCount) {
         title = this.originalTabTitle + ' (' + this.recordCount + ')';
@@ -1184,6 +1198,12 @@ isc.OBStandardView.addProperties({
         title = this.originalTabTitle;
       }
     }
+    
+    // happens when a tab gets closed
+    if (!tab) {
+      return;
+    }
+    
     if (title) {
       
       // show a prompt with the title info
@@ -1312,7 +1332,8 @@ isc.OBStandardView.addProperties({
   },
 
   hasNotChanged: function() {
-    var view = this, form = view.viewForm, grid = view.viewGrid, hasErrors = false, editRow, i;
+    var view = this, form = view.viewForm, length, selectedRecords,
+      grid = view.viewGrid, allRowsHaveErrors, hasErrors = false, editRow, i;
     if (view.isShowingForm) {
       if(form.isNew) {
         return false;
@@ -1324,8 +1345,10 @@ isc.OBStandardView.addProperties({
       form = grid.getEditForm();
       return !form.isNew && !hasErrors && (form.isSaving || form.readOnly || !view.hasValidState() || !form.hasChanged);
     } else {
-      var selectedRecords = grid.getSelectedRecords(), allRowsHaveErrors = true;
-      for (i = 0; i < selectedRecords.length; i++) {
+      selectedRecords = grid.getSelectedRecords();
+      allRowsHaveErrors = true;
+      length = selectedRecords.length;
+      for (i = 0; i < length; i++) {
         var rowNum = grid.getRecordIndex(selectedRecords[i]);
         allRowsHaveErrors = allRowsHaveErrors && grid.rowHasErrors(rowNum);
       }
@@ -1362,59 +1385,65 @@ isc.OBStandardView.addProperties({
       }
     
       var callback = function(ok){
-        var i, doUpdateTotalRows, data, deleteData, error, recordInfos = [], removeCallBack = function(resp, data, req){
-          var localData = resp.dataObject || resp.data || data, i, updateTotalRows;
-          if (!localData) {
-            // bail out, an error occured which should be displayed to the user now
-            return;
-          }
-          var status = resp.status;
-          if (localData && localData.hasOwnProperty('status')) {
-            status = localData.status;
-          }
-          if (localData && localData.response && localData.response.hasOwnProperty('status')) {
-            status = localData.response.status;
-          }
-          if (status === isc.RPCResponse.STATUS_SUCCESS) {
-            if (view.isShowingForm) {
-              view.switchFormGridVisibility();
+        var i, doUpdateTotalRows, data, deleteData, error, 
+          recordInfos = [], 
+          removeCallBack = function(resp, data, req){
+            var length,
+              localData = resp.dataObject || resp.data || data, 
+              i, updateTotalRows;
+            
+            if (!localData) {
+              // bail out, an error occured which should be displayed to the user now
+              return;
             }
-            view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [deleteCount]));
-            if (deleteData) {
-              // note totalrows is used when inserting a new row, to determine after which
-              // record to add a new row
-              updateTotalRows = (view.viewGrid.data.getLength() === view.viewGrid.data.totalRows);
-              // deleteData is computed below
-              for (i = 0 ; i < deleteData.ids.length; i++) {
-                recordInfos.push({id: deleteData.ids[i]});
+            var status = resp.status;
+            if (localData && localData.hasOwnProperty('status')) {
+              status = localData.status;
+            }
+            if (localData && localData.response && localData.response.hasOwnProperty('status')) {
+              status = localData.response.status;
+            }
+            if (status === isc.RPCResponse.STATUS_SUCCESS) {
+              if (view.isShowingForm) {
+                view.switchFormGridVisibility();
               }
-              view.viewGrid.data.handleUpdate('remove', recordInfos);
-              if (updateTotalRows) {
+              view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [deleteCount]));
+              if (deleteData) {
+                // note totalrows is used when inserting a new row, to determine after which
+                // record to add a new row
+                updateTotalRows = (view.viewGrid.data.getLength() === view.viewGrid.data.totalRows);
+                // deleteData is computed below
+                length = deleteData.ids.length;
+                for (i = 0 ; i < length; i++) {
+                  recordInfos.push({id: deleteData.ids[i]});
+                }
+                view.viewGrid.data.handleUpdate('remove', recordInfos);
+                if (updateTotalRows) {
+                  view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
+                }
+              } else if (doUpdateTotalRows) {
                 view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
               }
-            } else if (doUpdateTotalRows) {
-              view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
-            }
-            view.viewGrid.updateRowCountDisplay();
-            view.refreshChildViews();
-            view.refreshParentRecord();
-          } else {
-            // get the error message from the dataObject 
-            if (localData.response && localData.response.error && localData.response.error.message) {
-              error = localData.response.error;
-              if (error.type && error.type === 'user') {
-                view.messageBar.setLabel(isc.OBMessageBar.TYPE_ERROR, null, error.message, error.params);
-              } else if (error.message && error.params) {
+              view.viewGrid.updateRowCountDisplay();
+              view.refreshChildViews();
+              view.refreshParentRecord();
+            } else {
+              // get the error message from the dataObject 
+              if (localData.response && localData.response.error && localData.response.error.message) {
+                error = localData.response.error;
+                if (error.type && error.type === 'user') {
                   view.messageBar.setLabel(isc.OBMessageBar.TYPE_ERROR, null, error.message, error.params);
-              } else if (error.message) {
-                view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, error.message);
-              } else {
-                view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [0]));
+                } else if (error.message && error.params) {
+                    view.messageBar.setLabel(isc.OBMessageBar.TYPE_ERROR, null, error.message, error.params);
+                } else if (error.message) {
+                  view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, error.message);
+                } else {
+                  view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_DeleteResult', [0]));
+                }
               }
             }
-          }
-        };
-        
+          };
+      
         if (ok) {
           var selection = view.viewGrid.getSelection().duplicate();
           // deselect the current records
@@ -1424,7 +1453,8 @@ isc.OBStandardView.addProperties({
             deleteData = {};
             deleteData.entity = view.entity;
             deleteData.ids = [];
-            for (i = 0; i < selection.length; i++) {
+            length = selection.length;
+            for (i = 0; i < length; i++) {
               deleteData.ids.push(selection[i][OB.Constants.ID]);
             }
             OB.RemoteCallManager.call('org.openbravo.client.application.MultipleDeleteActionHandler', deleteData, {}, removeCallBack, {
@@ -1462,7 +1492,7 @@ isc.OBStandardView.addProperties({
   },
 
   undo: function(){
-    var view = this, callback, form, grid, errorRows, i;
+    var view = this, callback, form, grid, errorRows, i, length;
     view.messageBar.hide(true);
     if (this.isEditingGrid) {
       grid = view.viewGrid;
@@ -1472,7 +1502,8 @@ isc.OBStandardView.addProperties({
       // undo edit in all records with errors
       if (grid.hasErrors()) {
         errorRows = grid.getErrorRows();
-        for (i = 0; i < errorRows.length; i++){
+        length = errorRows.length;
+        for (i = 0; i < length; i++){
           grid.selectRecord(grid.getRecord(errorRows[i]));
         }
         grid.undoEditSelectedRows();
@@ -1604,10 +1635,12 @@ isc.OBStandardView.addProperties({
     var contextInfo = {}, addProperty, rowNum;
     // if classicmode is undefined then both classic and new props are used
     var classicModeUndefined = (typeof classicMode === 'undefined');
+    var value, field, record, form, component, propertyObj, 
+      type, length;
+
     if (classicModeUndefined) {
       classicMode = true;
     }
-    var value, field, record, form, component, propertyObj, type;
 
     // a special case, the editform has been build but it is not present yet in the
     // form, so isEditingGrid is true but the edit form is not there yet, in that 
@@ -1646,7 +1679,8 @@ isc.OBStandardView.addProperties({
         record[OB.Constants.ID] = this.viewGrid.getSelectedRecord()[OB.Constants.ID];
       }
       
-      for (i = 0; i < properties.length; i++) {
+      length = properties.length;
+      for (i = 0; i < length; i++) {
         propertyObj = properties[i];
         value = record[propertyObj.property];
         field = component.getField(propertyObj.property);
@@ -1654,7 +1688,7 @@ isc.OBStandardView.addProperties({
         if (addProperty) {
           if (classicMode) {
             if (propertyObj.type && convertToClassicFormat) {
-              type = SimpleType.getType(propertyObj.type);
+              type = isc.SimpleType.getType(propertyObj.type);
               if (type.createClassicString) {
                 contextInfo[properties[i].inpColumn] = type.createClassicString(value);
               } else {
@@ -1712,8 +1746,8 @@ isc.OBStandardView.addProperties({
   },
   
   getPropertyDefinition: function(property) {
-    var properties = this.propertyToColumns, i;
-    for (i = 0; i < properties.length; i++) {
+    var properties = this.propertyToColumns, i, length = properties.length;
+    for (i = 0; i < length; i++) {
       if (property === properties[i].property) {
         return properties[i];
       }
@@ -1761,9 +1795,43 @@ isc.OBStandardView.addProperties({
     return this.standardWindow.getFormPersonalization(this);
   },
   
+  // TODO: consider caching the prepared fields on
+  // class level, the question is if it is faster
+  // as then a clone action needs to be done
+  prepareFields: function() {
+    // first compute the gridfields and then the formfields
+    this.prepareViewFields(this.fields);
+    this.gridFields = this.prepareGridFields(this.fields);
+    this.formFields = this.prepareFormFields(this.fields);
+  },
+  
   prepareFormFields: function(fields) {
-    var i, length = fields.length, fld,
-      showIfFunction = function(item, value, form, values) {
+    var i, length = fields.length, result = [];
+    
+    for (i = 0; i < length; i++) {
+      fld = isc.shallowClone(fields[i]);
+      result.push(this.setFieldFormProperties(fld));
+
+      if(fld.firstFocusedField) {
+        this.firstFocusedField = fld.name;
+      }
+    }
+    
+    return result;
+  },
+  
+  setFieldFormProperties: function(fld) {
+    if (fld.displayed === false) {
+      fld.visible = false;
+      fld.alwaysTakeSpace = false;
+    }
+
+    if (!fld.width) {
+      fld.width = '*';
+    }
+    if (fld.showIf && !fld.originalShowIf) {
+      fld.originalShowIf = fld.showIf;
+      fld.showIf = function(item, value, form, values) {
         var currentValues = values || form.view.getCurrentValues(),
         context = form.getCachedContextInfo();
 
@@ -1772,23 +1840,16 @@ isc.OBStandardView.addProperties({
         return !this.hiddenInForm && context && 
           this.originalShowIf(item, value, form, currentValues, context);
       };
-    
-    for (i = 0; i < length; i++) {
-      fld = fields[i];
-      if (fld.showIf && !fld.originalShowIf) {
-        fld.originalShowIf = fld.showIf;
-        fld.showIf = showIfFunction;
-      }
-      if (!fld.width) {
-        fld.width = '*';
-      }
     }
-    return fields;
+    return fld;
   },
   
   // prepare stuff on view level
   prepareViewFields: function(fields) {
     var i, length = fields.length, fld;
+    
+    // start with the initial ones
+    this.propertyToColumns = this.initialPropertyToColumns.duplicate();
     
     this.propertyToColumns.push({
         property: this.standardProperties.keyProperty,
@@ -1811,6 +1872,114 @@ isc.OBStandardView.addProperties({
         });
       }
     }
+  },
+  
+  prepareGridFields: function(fields) {
+    var result = [], i, length = fields.length, fld, type,
+      expandFieldNames, hoverFunction;
+    
+    hoverFunction = function(record, value, rowNum, colNum, grid) {
+      return grid.getDisplayValue(colNum, record[(this.displayField ? this.displayField : this.name)]);
+    };
+    
+    for (i = 0; i < length; i++) {
+      fld = fields[i];
+      if (!fld.gridProps) {
+        continue;
+      }
+      fld = isc.shallowClone(fields[i]);
+      
+      if (fld.showHover) {
+        fld.hoverHTML = hoverFunction;
+      }
+      
+      if (fld.gridProps.length) {
+        fld.gridProps.width = isc.OBGrid.getDefaultColumnWidth(fld.gridProps.length);
+      }
+      
+      isc.addProperties(fld, fld.gridProps);
+      
+      if (!fld.width) {
+        fld.width = isc.OBGrid.getDefaultColumnWidth(30);
+      }
+            
+      fld.canExport = (fld.canExport === false ? false : true);
+      fld.canHide = (fld.canHide === false ? false : true);
+      fld.canFilter = (fld.canFilter === false ? false : true);
+      fld.filterOnKeypress = (fld.filterOnKeypress === false ? false : true); 
+      fld.escapeHTML = (fld.escapeHTML === false ? false : true);
+      fld.prompt = fld.title;
+      fld.editorProperties = isc.addProperties({}, fld, isc.shallowClone(fld.editorProperties));      
+      this.setFieldFormProperties(fld.editorProperties);
+
+      type = isc.SimpleType.getType(fld.type);
+      if (type.editorType) {
+        fld.editorType = type.editorType;
+      }
+      if (type.filterEditorType) {
+        fld.filterEditorType = type.filterEditorType;
+      }
+      // don't set it if explicitly set to null
+      if (fld.foreignKeyField && !fld.displayField && fld.displayField !== null) {
+        fld.displayField = fld.name + '.' + OB.Constants.IDENTIFIER;
+      }
+      
+      result.push(fld);
+    }
+    
+    // sort according to length, for the autoexpandfieldnames
+    result.sort(function(v1, v2) {
+      var t1 = v1.length, t2 = v2.length;
+      if (!t1 && !t2) {
+        return 0;
+      }
+      if (!t1) {
+        return -1;
+      }
+      if (!t2) {
+        return 1;
+      }
+      if (t1 < t2) {
+        return -1;
+      } else if (t1 === t2) {
+        return 0;
+      }
+      return 1;
+    });
+    
+    this.autoExpandFieldNames = [];
+    length = result.length;
+    for (i = 0; i < length; i++) {
+      if (result[i].autoExpand) {
+        this.autoExpandFieldNames.push(result[i].name);
+      }
+    }
+        
+    // sort according to the sortnum
+    // that's how they are displayed
+    result.sort(function(v1, v2) {
+      var t1 = v1.sortNum, t2 = v2.sortNum;
+      if (!t1 && !t2) {
+        return 0;
+      }
+      if (!t1) {
+        return -1;
+      }
+      if (!t2) {
+        return 1;
+      }
+      if (t1 < t2) {
+        return -1;
+      } else if (t1 === t2) {
+        return 0;
+      }
+      return 1;
+    });
+    
+    
+    
+    return result;
   }
+  
 });
 

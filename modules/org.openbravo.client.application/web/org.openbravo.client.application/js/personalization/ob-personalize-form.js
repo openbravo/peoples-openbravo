@@ -276,10 +276,11 @@ isc.OBPersonalizeFormLayout.addProperties({
       
       // is called when a field in the tree is clicked
       setRecord: function(record) {
-        var fld;
+        var fld, i = 0, length = this.getFields().length;
+        
         this.record = record;
-        var i = 0;
-        for (i = 0; i < this.getFields().length; i++) {
+
+        for (i = 0; i < length; i++) {
           fld = this.getFields()[i];
           // the field has the opposite meaning of the form
           if (fld.name === 'displayed') {
@@ -314,7 +315,7 @@ isc.OBPersonalizeFormLayout.addProperties({
       
       // store the values in the record
       doSave: function() {
-        var i, allNodes;
+        var i, allNodes, length;
         
         // don't save if there are errors
         // could be an idea to disable the save button
@@ -327,7 +328,8 @@ isc.OBPersonalizeFormLayout.addProperties({
         // first get rid of all first focus if it was set now
         if (this.getValue('firstFocus')) {
           allNodes = this.personalizeForm.fieldsTreeGrid.data.getAllNodes();
-          for (i = 0; i < allNodes.length; i++) {
+          length = allNodes.length;
+          for (i = 0; i < length; i++) {
             if (allNodes[i].firstFocus) {
               allNodes[i].firstFocus = false;
             }
@@ -769,8 +771,10 @@ isc.OBPersonalizeFormLayout.addProperties({
       // even if the status bar field does not have a value (which it
       // does not have in the form preview)
       getStatusBarFields: function() {
-        var statusBarFields = [[],[]], i, item, value, tmpValue;
-        for(i = 0; i < this.statusBarFields.length; i++) {
+        var statusBarFields = [[],[]], i, 
+          item, value, tmpValue, length = this.statusBarFields.length;
+        
+        for(i = 0; i < length; i++) {
           item = this.getItem(this.statusBarFields[i]);
           statusBarFields[0].push(item.getTitle());
           statusBarFields[1].push('&nbsp;&nbsp&nbsp;');
@@ -796,13 +800,14 @@ isc.OBPersonalizeFormLayout.addProperties({
 //      }
     };
     
-    var persFields = this.getPersonalizationFields();
+    var persFields = this.getPersonalizationFields(), length;
     if (persFields) {
       OB.Personalization.personalizeForm({form: persFields}, this.previewForm);
     }
     
     // expand by default
-    for (i = 0; i < this.previewForm.getFields().length; i++) {
+    length = this.previewForm.getFields().length;
+    for (i = 0; i < length; i++) {
       fld = this.previewForm.getFields()[i];
       
       fld.showFocused = false;
@@ -878,7 +883,7 @@ isc.OBPersonalizeFormLayout.addProperties({
   },
   
   buildFieldsTreeGrid: function() {
-    var i, prop, fld;
+    var i, prop, fld, length;
     
     this.fieldsLayout.destroyAndRemoveMembers(this.fieldsLayout.getMembers());
     if (this.fieldsTreeGrid) {
@@ -896,7 +901,8 @@ isc.OBPersonalizeFormLayout.addProperties({
       'colSpan', 'rowSpan', 'required', 
       'startRow', 'name', 'hasDisplayLogic'
     ];
-    for (i = 0; i < this.personalizationData.form.fields.length; i++) {
+    length = this.personalizationData.form.fields.length;
+    for (i = 0; i < length; i++) {
       fld = this.personalizationData.form.fields[i];
       for (prop in fld) {
         if (fld.hasOwnProperty(prop) && 
@@ -1019,6 +1025,10 @@ isc.OBPersonalizeFormLayout.addProperties({
       OB.RemoteCallManager.call('org.openbravo.client.application.personalization.PersonalizationActionHandler', {}, {action: 'getFormDefinition', tabId: this.tabId}, 
           function(resp, data, req){
         me.previewFormProperties = data;
+        
+        // copy some stuff
+        me.previewFormProperties._originalFields = isc.clone(me.previewFormProperties.fields);
+        
         me.doOpen(true);
       });
       return;
@@ -1066,14 +1076,16 @@ isc.OBPersonalizeFormLayout.addProperties({
   // reads the data from the tree grid and returns it in the expected
   // format. Note may return null during initialization
   getPersonalizationFields: function() {
-    var i, record, result = [], node, nodes, value, j, undef;
+    var i, record, result = [], node, nodes, 
+      value, j, undef, length;
     if (!this.fieldsTreeGrid || !this.fieldsTreeGrid.data) {
       return null;
     }
     // the nodes will contain internal data from the tree
     // only get the properties we want
     nodes = this.fieldsTreeGrid.data.getAllNodes();
-    for (i = 0; i < nodes.length; i++) {
+    length = nodes.length;
+    for (i = 0; i < length; i++) {
       node = nodes[i];
       record = {};
       for (j = 0; j < this.personalizationDataProperties.length; j++) {

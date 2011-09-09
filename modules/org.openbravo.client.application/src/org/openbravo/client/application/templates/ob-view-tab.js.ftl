@@ -32,12 +32,19 @@
         moduleId: '${tabComponent.moduleId}',
     </#if>
     
-    defaultEditMode: ${tabComponent.defaultEditMode},
+    <#if tabComponent.defaultEditMode>
+    defaultEditMode: ${tabComponent.defaultEditMode?string},
+    </#if> 
     mapping250: '${tabComponent.mapping250?js_string}',
-    isAcctTab: ${tabComponent.acctTab?string}, 
+    <#if tabComponent.acctTab>
+    isAcctTab: ${tabComponent.acctTab?string},
+    </#if> 
+    <#if tabComponent.trlTab>
     isTrlTab: ${tabComponent.trlTab?string},
+    </#if> 
     
     standardProperties:{
+<@compress single_line=true>
       inpTabId: '${tabComponent.tabId}',
       inpwindowId: '${tabComponent.windowId}',
       inpTableId: '${tabComponent.tableId?js_string}',
@@ -46,10 +53,12 @@
       inpKeyName: '${tabComponent.keyInpName?js_string}',
       keyColumnName: '${tabComponent.keyColumnName?js_string}',
       keyPropertyType: '${tabComponent.keyPropertyType?js_string}'      
+</@compress>
     },
      
     actionToolbarButtons: [
     <#list tabComponent.buttonFields as field>
+<@compress single_line=true>
       {id: '${field.id?js_string}', 
        title: '${field.label?js_string}',
        obManualURL: '${field.url?js_string}',
@@ -75,25 +84,59 @@
        </#if>
        autosave: ${field.autosave?string}
       }<#if field_has_next>,</#if>
+</@compress>
     </#list>],
     
     showParentButtons: ${tabComponent.showParentButtons?string},
     
     buttonsHaveSessionLogic: ${tabComponent.buttonSessionLogic?string},
     
+    fields: [
+    <#list tabComponent.fieldHandler.fields as field>
+      <@createField field/><#if field_has_next>,</#if>
+    </#list>    
+    ],
+    
+    statusBarFields: [
+<@compress single_line=true>
+    <#list tabComponent.fieldHandler.statusBarFields as sbf>
+      '${sbf?js_string}'<#if sbf_has_next>,</#if>
+    </#list>
+</@compress>
+    ],
+    
+    initialPropertyToColumns:[
+    <#list tabComponent.otherFields as field>
+<@compress single_line=true>
+        {
+            property: '${field.propertyName?js_string}',
+            inpColumn: '${field.inpColumnName?js_string}', 
+            dbColumn: '${field.dbColumnName?js_string}',
+            <#if field.session>
+                sessionProperty: ${field.session?string},
+            </#if>
+            type: '${field.type?js_string}'
+        }<#if field_has_next>,</#if>
+</@compress>
+    </#list>
+    ],
+    
     iconToolbarButtons: [
     <#list tabComponent.iconButtons as button>
+<@compress single_line=true>
       {
         action: function(){ ${button.action} },
         buttonType: '${button.type?js_string}',
         prompt: '${button.label?js_string}'
       }<#if button_has_next>,</#if>
+</@compress>
     </#list>],
     
     <#if tabComponent.childTabs?size &gt; 0>
         hasChildTabs: true,
     </#if>
     initWidget: function() {
+        this.prepareFields();
         this.dataSource = ${tabComponent.dataSourceJavaScript};
         this.viewForm = isc.OBViewForm.create(${tabComponent.viewForm}); 
         this.viewGrid = ${tabComponent.viewGrid};
@@ -108,4 +151,4 @@
         );
         </#list>
     }
-</#macro>  
+</#macro>
