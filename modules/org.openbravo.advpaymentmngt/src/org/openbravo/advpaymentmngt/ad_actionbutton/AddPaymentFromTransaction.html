@@ -362,7 +362,7 @@ function validate(action) {
         selectedAction = diffAction[i].value;
         if ((frm.inpcBpartnerId.value==null || frm.inpcBpartnerId.value=="") && (selectedAction === "credit" || selectedAction === "refund") ) {
             setWindowElementFocus(frm.inpBpartnerId_DES);
-            showJSMessage(7);
+            showJSMessage('APRM_bpmandatory_creditrefund');
             return false;
         }
       }
