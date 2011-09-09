@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,7 @@ public class SE_PaymentMethod extends SimpleCallout {
         strfinPaymentmethodId);
     if (strfinFinaccPaymentmethodId.equals("")) {
       try {
+        // IN
         info.addResult("inppayinAllow", paymentMethod.isPayinAllow() ? "Y" : "N");
         info.addResult("inpautomaticReceipt", paymentMethod.isAutomaticReceipt() ? "Y" : "N");
         info.addResult("inpautomaticDeposit", paymentMethod.isAutomaticDeposit() ? "Y" : "N");
@@ -51,6 +52,9 @@ public class SE_PaymentMethod extends SimpleCallout {
             : paymentMethod.getUponDepositUse());
         info.addResult("inpinuponclearinguse", paymentMethod.getINUponClearingUse() == null ? ""
             : paymentMethod.getINUponClearingUse());
+        info.addResult("inppayinIsmulticurrency", paymentMethod.isPayinIsMulticurrency() ? "Y"
+            : "N");
+        // OUT
         info.addResult("inppayoutAllow", paymentMethod.isPayoutAllow() ? "Y" : "N");
         info.addResult("inpautomaticPayment", paymentMethod.isAutomaticPayment() ? "Y" : "N");
         info.addResult("inpautomaticWithdrawn", paymentMethod.isAutomaticWithdrawn() ? "Y" : "N");
@@ -65,6 +69,8 @@ public class SE_PaymentMethod extends SimpleCallout {
             : paymentMethod.getUponWithdrawalUse());
         info.addResult("inpoutuponclearinguse", paymentMethod.getOUTUponClearingUse() == null ? ""
             : paymentMethod.getOUTUponClearingUse());
+        info.addResult("inppayoutIsmulticurrency", paymentMethod.isPayoutIsMulticurrency() ? "Y"
+            : "N");
       } catch (Exception e) {
         log4j.info("No default info for the selected payment method");
       }
