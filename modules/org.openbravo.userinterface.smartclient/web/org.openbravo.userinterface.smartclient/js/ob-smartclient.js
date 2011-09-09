@@ -31,6 +31,22 @@ isc.setAutoDraw(false);
 // NOTE: disabled as now timezone is send from the client to the server
 // Time.setDefaultDisplayTimezone(0);
 
+isc.Canvas.addProperties({
+  // make sure that the datasources are also destroyed
+  _original_destroy: isc.Canvas.getPrototype().destroy,
+  destroy: function() {
+    if (this.optionDataSource && !this.optionDataSource.potentiallyShared) {
+      this.optionDataSource.destroy();
+      this.optionDataSource = null;
+    }
+    if (this.dataSource && !this.dataSource.potentiallyShared) {
+      this.dataSource.destroy();
+      this.dataSource = null;
+    }
+    this._original_destroy();
+  }
+});
+
 //Let the click on an ImgButton and Button fall through to its action method 
 isc.ImgButton.addProperties({
   click: function() {
