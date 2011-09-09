@@ -38,8 +38,8 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
-import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.currency.ConversionRateDoc;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
@@ -530,11 +530,13 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                     }
                   }
                   // Create merged Payment Schedule Detail with the pending to be paid amount
-                  final FIN_PaymentScheduleDetail mergedScheduleDetail = dao
-                      .getNewPaymentScheduleDetail(payment.getOrganization(), outStandingAmt);
-                  mergedScheduleDetail.setOrderPaymentSchedule(paymentScheduleDetail
-                      .getOrderPaymentSchedule());
-                  OBDal.getInstance().save(mergedScheduleDetail);
+                  if (outStandingAmt.compareTo(BigDecimal.ZERO) != 0) {
+                    final FIN_PaymentScheduleDetail mergedScheduleDetail = dao
+                        .getNewPaymentScheduleDetail(payment.getOrganization(), outStandingAmt);
+                    mergedScheduleDetail.setOrderPaymentSchedule(paymentScheduleDetail
+                        .getOrderPaymentSchedule());
+                    OBDal.getInstance().save(mergedScheduleDetail);
+                  }
                 } else if (paymentScheduleDetail.getOrderPaymentSchedule() == null
                     && paymentScheduleDetail.getInvoicePaymentSchedule() == null) {
                   // Credit payment
