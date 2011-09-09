@@ -20,10 +20,8 @@ package org.openbravo.userinterface.selector;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +37,6 @@ import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.service.datasource.DataSourceFilter;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -105,19 +102,22 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
     }
   }
 
+  /**
+   * This method verifies that in the parameters, there are not numeric or date values. In case that
+   * it finds numeric or date parameter, these are deleted
+   * 
+   * @author jecharri
+   */
   private void verifyPropertyTypes(Selector sel, Map<String, String> parameters) {
-    // TODO Auto-generated method stub
     String value = parameters.get("criteria");
     String filteredCriteria = "";
     String fieldName;
     Entity entity = ModelProvider.getInstance().getEntityByTableName(
         sel.getTable().getDBTableName());
     Entity cEntity = entity;
-    Iterator<Column> ci;
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       if (value.contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
-        final List<String> values = new ArrayList<String>();
         final String[] separatedValues = value.split(JsonConstants.IN_PARAMETER_SEPARATOR);
         for (String separatedValue : separatedValues) {
           JSONObject jSONObject = new JSONObject(separatedValue);
