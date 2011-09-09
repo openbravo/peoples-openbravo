@@ -21,7 +21,6 @@ package org.openbravo.client.kernel.reference;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.model.ad.ui.Field;
-import org.openbravo.service.json.JsonConstants;
 
 /**
  * Base class of all foreign key/reference ui definitions.
@@ -46,25 +45,27 @@ public class ForeignKeyUIDefinition extends UIDefinition {
   }
 
   @Override
-  public String getFilterEditorProperties(Field field) {
-    return ", filterOnKeypress: true" + super.getFilterEditorProperties(field);
-  }
-
-  @Override
   public String getGridFieldProperties(Field field) {
     Long length = field.getDisplayedLength();
     if (length == null || length == 0) {
       length = field.getColumn().getLength();
     }
     final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
-    return ", width: isc.OBGrid.getDefaultColumnWidth(" + length + "), displayField: '"
-        + getDisplayFieldName(field, prop) + "'," + "valueField: '" + prop.getName() + "'"
-        + ", foreignKeyField: true" + super.getGridFieldProperties(field)
-        + getShowHoverGridFieldSettings(field);
+
+    // only output when really needed
+    String displayField = "";
+    if (getDisplayFieldName(field, prop) != null) {
+      displayField = ", displayField: '" + getDisplayFieldName(field, prop) + "'";
+    }
+    return ", length:" + length + displayField + ",foreignKeyField: true"
+        + super.getGridFieldProperties(field) + getShowHoverGridFieldSettings(field);
   }
 
+  /**
+   * Note: can return null, in that case the default display field name is used
+   */
   protected String getDisplayFieldName(Field field, Property prop) {
-    return prop.getName() + "." + JsonConstants.IDENTIFIER;
+    return null;
   }
 
   protected String getSuperGridFieldProperties(Field field) {
