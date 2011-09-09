@@ -225,8 +225,8 @@ isc.OBApplicationMenuButton.addProperties({
 
   setNodeIcons: function (node) {
     if (node) {
-      var i;
-      for (i = 0; i < node.length; i++) {
+      var i, length = node.length;
+      for (i = 0; i < length; i++) {
         if (node[i].type) {
           node[i].icon = this.getNodeIcon(node[i].type);
           if (node[i].submenu) {
@@ -239,10 +239,11 @@ isc.OBApplicationMenuButton.addProperties({
 
   setMenuItems: function () {
     var recent = OB.RecentUtilities.getRecentValue('UINAVBA_MenuRecentList');
-    var recentEntries = [];
+    var recentEntries = [], length;
     var completeMenuTree, recentIndex;
     if (recent && recent.length > 0) {
-      for (recentIndex = 0; recentIndex < recent.length; recentIndex++) {
+      length = recent.length;
+      for (recentIndex = 0; recentIndex < length; recentIndex++) {
         var recentEntry = recent[recentIndex];
         if (recentEntry) {
           recentEntries[recentIndex] = {title: recentEntry.tabTitle, recentObject: recentEntry, type: recentEntry.type};
@@ -259,8 +260,8 @@ isc.OBApplicationMenuButton.addProperties({
   // as arguments, note that the function does not expect an array as this
   // did not seem to be supported by selenium
   getSCLocator : function() {
-    var index = 0, path = [];
-    for (; index < arguments.length; index++) {
+    var index = 0, path = [], length;
+    for (; index < length; index++) {
       path[index] = arguments[index];
     }
     index = 0;

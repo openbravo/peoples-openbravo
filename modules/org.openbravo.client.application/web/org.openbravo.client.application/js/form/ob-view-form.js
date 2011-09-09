@@ -83,34 +83,20 @@ OB.ViewFormProperties = {
 
   initWidget: function() {
     this._preventFocusChanges = true;
-    var length, i, item;
+
     // add the obFormProperties to ourselves, the obFormProperties
     // are re-used for inline grid editing
     isc.addProperties(this, this.obFormProperties);
-
-    // is used to keep track of the original simple objects
-    // used to create fields
-    // note fields can be in fields or theFields
-    this._originalFields = isc.shallowClone(this.fields || this.theFields);
     
     this.Super('initWidget', arguments);
 
-    length = this.getItems().length;
-
-    for(i = 0; i < length; i++) {
-      item = this.getItem(i);
-      if(item && item.firstFocusedField) {
-        this.firstFocusedField = item.name;
-        break;
-      }
-    }
-
     delete this._preventFocusChanges;
   },
-
+  
   getStatusBarFields: function() {
-    var statusBarFields = [[],[]], i, item, value, tmpValue;
-    for(i = 0; i < this.statusBarFields.length; i++) {
+    var statusBarFields = [[],[]], i, item, value, tmpValue,
+      length = this.statusBarFields.length;
+    for(i = 0; i < length; i++) {
       item = this.getItem(this.statusBarFields[i]);
       value = item.getDisplayValue();
       if(item && value !== null && value !== '') {
@@ -433,10 +419,12 @@ OB.ViewFormProperties = {
   },
   
   getFieldFromInpColumnName: function(inpColumnName) {
-    var i;
+    var i, length;
+    
     if (!this.fieldsByInpColumnName) {
       var localResult = [], fields = this.getFields();
-      for (i = 0; i < fields.length; i++) {
+      length = fields.length;
+      for (i = 0; i < length; i++) {
         if (fields[i].inpColumnName) {
           localResult[fields[i].inpColumnName.toLowerCase()] = fields[i];
         }
@@ -447,9 +435,12 @@ OB.ViewFormProperties = {
   },
   
   getFieldFromColumnName: function(columnName) {
-    var i;
+    var i, length;
     if (!this.fieldsByColumnName) {
       var localResult = [], fields = this.getFields();
+      
+      length = fields.length;
+
       for (i = 0; i < fields.length; i++) {
         if (fields[i].columnName) {
           localResult[fields[i].columnName.toLowerCase()] = fields[i];
@@ -461,7 +452,7 @@ OB.ViewFormProperties = {
   },
   
   setFields: function(){
-    var i, item;
+    var i, item, length = this.getItems().length;
     
     // is used in various places, prevent focus and scroll events
     this._preventFocusChanges = true;
@@ -470,7 +461,7 @@ OB.ViewFormProperties = {
     this.fieldsByInpColumnName = null;
     this.fieldsByColumnName = null;
 
-    for (i = 0; i < this.getItems().length; i++) {
+    for (i = 0; i < length; i++) {
       item = this.getItem(i);
       if(item && item.setSectionItemInContent) {
         item.setSectionItemInContent(this);
@@ -480,12 +471,15 @@ OB.ViewFormProperties = {
   },
   
   retrieveInitialValues: function(isNew){
+    var parentId = this.view.getParentId(), i, fldNames = [], 
+      requestParams, allProperties, parentColumn, me = this, 
+      mode, length = this.getFields().length;
+    
     this.setParentDisplayInfo();
     
-    var parentId = this.view.getParentId(), i, fldNames = [], requestParams, parentColumn, me = this, mode;
-    // note also in this case initial vvalues are passed in as in case of grid
+    // note also in this case initial values are passed in as in case of grid
     // editing the unsaved/error values from a previous edit session are maintained
-    var allProperties = this.view.getContextInfo(false, true, false, true);
+    allProperties = this.view.getContextInfo(false, true, false, true);
     
     if (isNew) {
       mode = 'NEW';
@@ -499,14 +493,16 @@ OB.ViewFormProperties = {
       TAB_ID: this.view.tabId,
       ROW_ID: this.getValue(OB.Constants.ID)
     };
+    
     if (parentId && isNew && this.view.parentProperty) {
       parentColumn = this.view.getPropertyDefinition(this.view.parentProperty).inpColumn;
       requestParams[parentColumn] = parentId;
     }
+    
     allProperties._entityName = this.view.entity;
     
     // only put the visible field names in the call
-    for (i = 0; i < this.getFields().length; i++) {
+    for (i = 0; i < length; i++) {
       if (this.getFields()[i].inpColumnName) {
         fldNames.push(this.getFields()[i].inpColumnName);
       }
@@ -554,11 +550,11 @@ OB.ViewFormProperties = {
   },
   
   rememberValues: function() {
-    var i, flds = this.getFields();
+    var i, flds = this.getFields(), length = flds.length;
     this.Super('rememberValues', arguments);
     
     // also remember the valuemaps
-    for (i = 0; i < flds.length; i++) {
+    for (i = 0; i < length; i++) {
       if (flds[i].valueMap) {
         flds[i]._rememberedValueMap = flds[i].valueMap;
       }
@@ -568,14 +564,15 @@ OB.ViewFormProperties = {
   // used in grid editing, when an edit is discarded then the canFocus needs to be
   // reset
   resetCanFocus: function() {
-    var i;
-    for (i = 0; i < this.getItems().length; i++) {
+    var i, length = this.getItems().length;
+    for (i = 0; i < length; i++) {
       delete this.getItems()[i].canFocus;
     }
   },
   
   processFICReturn: function(response, data, request, editValues, editRow){
-    var modeIsNew = request.params.MODE === 'NEW', noErrors, errorSolved;
+    var length, modeIsNew = request.params.MODE === 'NEW', 
+      noErrors, errorSolved;
 
     delete this.contextInfo;
 
@@ -691,12 +688,15 @@ OB.ViewFormProperties = {
     // on field changed may have made the focused item non-editable
     // this is handled in setdisabled restore focus item's call
     this.setDisabled(false);
+    
+    length = this.getFields().length;
 
     if (this.validateAfterFicReturn) {
       delete this.validateAfterFicReturn;
       // only validate the fields which have errors or which have changed
       noErrors = true;
-      for (i = 0; i < this.getFields().length; i++) {
+      
+      for (i = 0; i < length; i++) {
         if (this.getFields()[i]._changedByFic || this.hasFieldErrors(this.getFields()[i].name)) {
           errorSolved = this.getFields()[i].validate();
           noErrors = noErrors && errorSolved;
@@ -711,12 +711,12 @@ OB.ViewFormProperties = {
       }
     }
 
-    for (i = 0; i < this.getFields().length; i++) {
+    for (i = 0; i < length; i++) {
       delete this.getFields()[i]._changedByFic;
     }
 
     // refresh WidgetInForm fields if present (as they might depend on data of current record) 
-    for (i = 0; i < this.getFields().length; i++) {
+    for (i = 0; i < length; i++) {
       var locField  = this.getFields()[i];
       if (locField.hasOwnProperty("widgetClassId")) {
         locField.refresh();
@@ -746,14 +746,16 @@ OB.ViewFormProperties = {
     }
 
     if(data.jscode) {
-      for(i = 0; i < data.jscode.length; i++) {
+      length = data.jscode.length;
+      for(i = 0; i < length; i++) {
         eval(data.jscode[i]);
       }
     }
   },
   
   setDisabled: function(state) {
-    var previousAllItemsDisabled = this.allItemsDisabled || false, i;
+    var previousAllItemsDisabled = this.allItemsDisabled || false, 
+      i, length;
     this.allItemsDisabled = state;
 
     if (previousAllItemsDisabled !== this.allItemsDisabled) {
@@ -769,7 +771,8 @@ OB.ViewFormProperties = {
           this.setHandleDisabled(state);
           this.view.viewGrid.refreshEditRow();
           // reset the canfocus
-          for (i = 0; i < this.getFields().length; i++) {
+          length = this.getFields().length;
+          for (i = 0; i < length; i++) {
             delete this.getFields()[i].canFocus;
           }
           
@@ -908,13 +911,13 @@ OB.ViewFormProperties = {
   
   setColumnValuesInEditValues: function(columnName, columnValue, editValues){
     // Modifications in this method should go also in processColumnValue because both almost do the same
-    var assignClassicValue;
-    var typeInstance;
+    var assignClassicValue, typeInstance, length;
 
     // no editvalues even anymore, go away
     if (!editValues) {
       return;
     }
+    
     var id, identifier, field = this.getFieldFromColumnName(columnName), i, valueMap = {}, 
       entries = columnValue.entries;
     var prop = this.view.getPropertyFromDBColumnName(columnName);
@@ -925,7 +928,8 @@ OB.ViewFormProperties = {
     }
     
     if (entries) {
-      for (i = 0; i < entries.length; i++) {
+      length = entries.length;
+      for (i = 0; i < length; i++) {
         id = entries[i][OB.Constants.ID] || '';
         identifier = entries[i][OB.Constants.IDENTIFIER] || '';
         valueMap[id] = identifier;
@@ -997,6 +1001,8 @@ OB.ViewFormProperties = {
   
   // called explicitly onblur and when non-editable fields change
   handleItemChange: function(item){
+    var i, length;
+    
     // is used to prevent infinite loops during save
     delete this.saveFocusItemChanged;
 
@@ -1007,8 +1013,8 @@ OB.ViewFormProperties = {
 
       this.onFieldChanged(item.form, item, item.getValue());
 
-      var i;
-      for (i = 0; i < this.dynamicCols.length; i++) {
+      length = this.dynamicCols.length;
+      for (i = 0; i < length; i++) {
         if (this.dynamicCols[i] === item.inpColumnName) {
           item._hasChanged = false;
           this.inFicCall = true;
@@ -1105,10 +1111,10 @@ OB.ViewFormProperties = {
   },
   
   undo: function(){
-    var i, flds = this.getFields();
+    var i, flds = this.getFields(), length = flds.length;
     
     // also restore the valuemaps
-    for (i = 0; i < flds.length; i++) {
+    for (i = 0; i < length; i++) {
       if (flds[i]._rememberedValueMap) {
         flds[i].valueMap = flds[i]._rememberedValueMap;
       }
@@ -1468,7 +1474,7 @@ OB.ViewFormProperties = {
     // To be implemented dynamically
   },
 
-  handleOtherItem: function(otherName, condition) {
+  disableItem: function(otherName, condition) {
     var otherItem = this.getItem(otherName);
     if (otherItem && otherItem.disable && otherItem.enable) {
       if (this.readOnly) {

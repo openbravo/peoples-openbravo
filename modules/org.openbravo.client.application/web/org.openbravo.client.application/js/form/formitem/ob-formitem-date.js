@@ -52,11 +52,15 @@ OB.DateItemProperties = {
   dateParts : [],
 
   doInit: function() {
-    var i, dateFormatUpper, index = 0, currentTime;
+    var i, dateFormatUpper, index = 0, 
+      length, currentTime;
+    
     dateFormatUpper = this.dateFormat.toUpperCase();
+    length = dateFormatUpper.length;
     this.dateSeparator = this.dateFormat.toUpperCase().replace(/D/g, '')
         .replace(/M/g, '').replace(/Y/g, '').substr(0, 1);
-    for (i = 0; i < dateFormatUpper.length; i++) {
+    
+    for (i = 0; i < length; i++) {
       if (this.isSeparator(dateFormatUpper, i)) {
         index++;
       } else {
@@ -87,11 +91,13 @@ OB.DateItemProperties = {
   },
   
   parseValue: function() {
-    var i, str = this.blurValue(), parts = [ '', '', '' ], partIndex = 0, result;
+    var i, str = this.blurValue(), 
+      length = str.length, 
+      parts = [ '', '', '' ], partIndex = 0, result;
     if (!str || isc.isA.Date(str)) {
       return str;
     }
-    for (i = 0; i < str.length; i++) {
+    for (i = 0; i < length; i++) {
       if (this.isNumber(str, i)) {
         if (this.reachedLength(parts[partIndex], partIndex)) {
           partIndex++;

@@ -20,56 +20,58 @@
 -->
 {
     fields: [
-    <#list data.fields as fieldDefinition>
+    <#list data.fieldHandler.fields as field>
       {
-        name: '${fieldDefinition.name?js_string}',
-        title: '${fieldDefinition.label?js_string}',
-        type: '${fieldDefinition.type}',
-        colSpan: ${fieldDefinition.colSpan},
-        rowSpan: ${fieldDefinition.rowSpan},
-        startRow: ${fieldDefinition.startRow?string},
-        endRow: ${fieldDefinition.endRow?string},
-        personalizable: ${fieldDefinition.personalizable?string},
+        name: '${field.name?js_string}',
+        title: '${field.label?js_string}',
+        type: '${field.type}',
+        colSpan: ${field.colSpan},
+        rowSpan: ${field.rowSpan},
+        startRow: ${field.startRow?string},
+        endRow: ${field.endRow?string},
+        personalizable: ${field.personalizable?string},
         isPreviewFormItem: true,
         disabled: true,
         showDisabled: false,
-        <#if !fieldDefinition.displayed>
+        <#if !field.displayed>
         width: '',
         <#else>
         width: '*',
         </#if>
-        <#if fieldDefinition.showIf != "" && fieldDefinition.displayed>
+        <#if field.showIf != "" && field.displayed>
           hasShowIf: true,            
         </#if>
-        <#if fieldDefinition.standardField>
-            <#if !fieldDefinition.displayed>
+        <#if field.standardField>
+            <#if !field.displayed>
                 alwaysTakeSpace: false,
                 displayed: false,
             </#if>
-            required: ${fieldDefinition.required?string},
-            hasDefaultValue: ${fieldDefinition.hasDefaultValue?string},
-            <#if fieldDefinition.searchField>
-                showPickerIcon: ${(!fieldDefinition.parentProperty)?string},
+            required: ${field.required?string},
+            hasDefaultValue: ${field.hasDefaultValue?string},
+            <#if field.searchField>
+                showPickerIcon: ${(!field.parentProperty)?string},
             </#if>
         </#if>
-        <#if fieldDefinition.type = "OBSectionItem" || fieldDefinition.type = "OBNoteSectionItem" || fieldDefinition.type = "OBLinkedItemSectionItem"  || fieldDefinition.type = "OBAttachmentsSectionItem" || fieldDefinition.type = "OBAuditSectionItem">
-          <#if !fieldDefinition.displayed>
+        <#if field.type = "OBSectionItem" || field.type = "OBNoteSectionItem" || field.type = "OBLinkedItemSectionItem"  || field.type = "OBAttachmentsSectionItem" || field.type = "OBAuditSectionItem">
+          <#if !field.displayed>
           visible: false,
           </#if>
-          defaultValue: '${fieldDefinition.label?js_string}',
+          <#if field.hasChildren>
           itemIds: [
-            <#list fieldDefinition.children as childField>
+            <#list field.children as childField>
                 '${childField.name?js_string}'<#if childField_has_next>,</#if>
             </#list>
-            ]
+            ],
+          </#if>
+          defaultValue: '${field.label?js_string}'
         </#if>
     }
-      <#if fieldDefinition_has_next>,</#if>
+      <#if field_has_next>,</#if>
     </#list>    
     ],
 
     statusBarFields: [
-    <#list data.statusBarFields as sbf>
+    <#list data.fieldHandler.statusBarFields as sbf>
       '${sbf?js_string}'<#if sbf_has_next>,</#if>
     </#list>
     ]

@@ -40,7 +40,7 @@ OB.Personalization = {
 // used as the basis. This can be used to make sure that the 
 // personalizationData used is up-to-date with the current form fields.
 OB.Personalization.getPersonalizationDataFromForm = function(form) {
-  var i, dataFields = [], statusBarFields, 
+  var i, dataFields = [], statusBarFields, length,
     origPersonalizationData = form && form.view ? form.view.getFormPersonalization() : null;
 
   // just use the personalization data which was used on the 
@@ -54,7 +54,8 @@ OB.Personalization.getPersonalizationDataFromForm = function(form) {
   // create the statusbar array so we don't use the one from the form
   if (dataFields && dataFields.length > 0) {
     statusBarFields = [];
-    for (i = 0; i < dataFields.length; i++) {
+    length = dataFields.length;
+    for (i = 0; i < length; i++) {
       if (dataFields[i].parentName === OB.Personalization.STATUSBAR_GROUPNAME) {
         statusBarFields.push(dataFields[i].name);
       }
@@ -101,6 +102,8 @@ OB.Personalization.updatePersonalizationDataFromFields = function(dataFields, fi
   
   // required and title and removal of fields
   // length is recomputed every time as fields can be removed
+  // note: not factored out in a separate length attribute,
+  // length changes
   for (i = 0; i < dataFields.length; i++) {
     dataField = dataFields[i];
     fld = fields.find('name', dataField.name);
@@ -161,7 +164,8 @@ OB.Personalization.updatePersonalizationDataFromFields = function(dataFields, fi
   }
   
   // iterate over the fields of the form and handle sections and fields
-  for (i = 0; i < fields.length; i++) {
+  length = fields.length;
+  for (i = 0; i < length; i++) {
     fld = fields[i];
     
     if (fld.personalizable === false) {
@@ -220,7 +224,8 @@ OB.Personalization.updatePersonalizationDataFromFields = function(dataFields, fi
   // now resolve the parent names, i.e. in Smartclient a section item
   // has a set of item ids, in the tree we use (as we use 'parent' mode) the items
   // refer to the parent, so the other way
-  for (i = 0; i < dataFields.length; i++) {
+  length = dataFields.length;
+  for (i = 0; i < length; i++) {
     if (dataFields[i].childNames) {
       for (j = 0; j < dataFields[i].childNames.length; j++) {
         // find is a smartclient extension
@@ -233,7 +238,8 @@ OB.Personalization.updatePersonalizationDataFromFields = function(dataFields, fi
   }
 
   // add to the status bar fields
-  for (i = 0; i < statusBarFields.length; i++) {
+  length = statusBarFields.length;
+  for (i = 0; i < length; i++) {
     record = dataFields.find('name', statusBarFields[i]);
     if (record && !record.parentName) {
       record.parentName = OB.Personalization.STATUSBAR_GROUPNAME;
@@ -245,7 +251,8 @@ OB.Personalization.updatePersonalizationDataFromFields = function(dataFields, fi
     }
   }
 
-  for (i = 0; i < dataFields.length; i++) {
+  length = dataFields.length;
+  for (i = 0; i < length; i++) {
     record = dataFields[i];
     
     // do not consider the not-displayed ones which are not
@@ -268,7 +275,8 @@ OB.Personalization.updatePersonalizationDataFromFields = function(dataFields, fi
 // Also handles the case that a personalization record is deleted so that the
 // form falls back to the default state
 OB.Personalization.personalizeWindow = function(data, window) {
-  var tabId, personalizationData, undef, form, view, i, viewsToReset = [], done;
+  var tabId, personalizationData, undef, form, view, 
+    i, viewsToReset = [], done, length;
 
   // no personalization, nothing to do
   if (!data) {
@@ -277,7 +285,8 @@ OB.Personalization.personalizeWindow = function(data, window) {
 
   // keep track of the tabs which are personalized
   // is used below to de-personalize them
-  for (i = 0; i < window.views.length; i++) {
+  length = window.views.length;
+  for (i = 0; i < length; i++) {
     if (window.getFormPersonalization(window.views[i])) {
       viewsToReset.push({tabId: window.views[i].tabId});
     }
@@ -311,8 +320,9 @@ OB.Personalization.personalizeWindow = function(data, window) {
   }
   
   // a personalization may have been removed, reset the form
-  // to its original state 
-  for (i = 0; i < viewsToReset.length; i++) {
+  // to its original state
+  length = viewsToReset.length;
+  for (i = 0; i < length; i++) {
     view = window.getView(viewsToReset[i].tabId);
     
     // the personalization button has 2 icons: one 2 show that there is
@@ -346,7 +356,9 @@ OB.Personalization.personalizeWindow = function(data, window) {
 // Applies the data structure which contains the personalization settings to a
 // form.
 OB.Personalization.personalizeForm = function(data, form) {
-  var persId, i, j, fld, undef, fldDef, childFld, newField, newFields = [], record, allChildFieldsHidden, statusBarFields = [];
+  var persId, i, j, fld, undef, fldDef, 
+    childFld, newField, newFields = [], record, length, 
+    allChildFieldsHidden, statusBarFields = [];
   
   // work further with the fields themselves
   data = data.form.fields;
@@ -367,7 +379,8 @@ OB.Personalization.personalizeForm = function(data, form) {
 
   // iterate over the personalized data, this ensures that we follow
   // the order defined by the user
-  for (i = 0; i < data.length; i++) {
+  length = data.length;
+  for (i = 0; i < length; i++) {
     record = data[i];
 
     // original name is used when a field is visible in the status bar
@@ -451,7 +464,8 @@ OB.Personalization.personalizeForm = function(data, form) {
   // now add the ones we did not know about, these maybe new 
   // fields or hidden fields
   if (!form.isPreviewForm) {
-    for (i = 0; i < form.getFields().length; i++) {
+    length = form.getFields().length;
+    for (i = 0; i < length; i++) {
       record = data.find('name', form.getFields()[i].name);
       // use the original.fields as we are then sure
       // that we do not get ready build form items

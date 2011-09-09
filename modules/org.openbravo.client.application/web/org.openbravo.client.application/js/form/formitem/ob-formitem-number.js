@@ -36,12 +36,14 @@ isc.OBNumberItem.addProperties({
   doBlurLogic: true,
   
   init: function(){
+    var length = this.validators.length;
+    
     this.setKeyPressFilter(this.keyPressFilterNumeric);
     this.typeInstance = SimpleType.getType(this.type);
     var newValidators = [], i;
     // get rid of the isFloat validators, as we have 
     // specific validation based on the format definition
-    for (i = 0; i < this.validators.length; i++) {
+    for (i = 0; i < length; i++) {
       if (this.validators[i].type !== 'isFloat') {
         newValidators.push(this.validators[i]);
       }
@@ -531,10 +533,11 @@ isc.OBNumberFilterItem.addProperties({
   },
   
   buildValueExpressions: function(criterion) {
-    var i = 0, criteria;
+    var i = 0, criteria, length;
     if (criterion && criterion.criteria) {
       criterion = isc.clone(criterion);
-      for (i = 0; i < criterion.criteria.length; i++) {
+      length = criterion.criteria.length;
+      for (i = 0; i < length; i++) {
         criteria = criterion.criteria[i];
         if (criteria.start) {
           criteria.start = this.convertToStringValue(criteria.start);

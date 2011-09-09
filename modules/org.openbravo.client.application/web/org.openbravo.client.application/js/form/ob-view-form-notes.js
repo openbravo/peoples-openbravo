@@ -31,6 +31,12 @@ isc.OBNoteSectionItem.addProperties({
 
   overflow : 'hidden',
 
+  // some defaults, note if this changes then also the 
+  // field generation logic needs to be checked
+  colSpan: 4, 
+  startRow: true, 
+  endRow: true,
+
   canFocus : true,
 
   prompt : OB.I18N.getLabel('OBUIAPP_NotesPrompt'),
@@ -355,6 +361,12 @@ isc.OBNoteLayout.addProperties({
 isc.ClassFactory.defineClass('OBNoteCanvasItem', isc.CanvasItem);
 
 isc.OBNoteCanvasItem.addProperties({
+
+  // some defaults, note if this changes then also the 
+  // field generation logic needs to be checked
+  colSpan: 4, 
+  startRow: true, 
+  endRow: true,
 
   canFocus : true,
 

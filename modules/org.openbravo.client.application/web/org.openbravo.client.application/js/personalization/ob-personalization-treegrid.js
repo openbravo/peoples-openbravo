@@ -64,11 +64,12 @@ isc.OBPersonalizationTreeGrid.addProperties({
     this.folderIcon = OB.Styles.Personalization.Icons.fieldGroup;
 
     // register a change notifier
-    var i = 0, me = this, changedFunction = function() {
-      me.personalizeForm.changed();
-    };
+    var i = 0, length = this.fields.length,
+      me = this, changedFunction = function() {
+        me.personalizeForm.changed();
+      };
     
-    for (i = 0; i < this.fields.length; i++) {
+    for (i = 0; i < length; i++) {
       this.fields[i].changed = changedFunction;
     }
 
@@ -131,7 +132,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
   // in the same location (code commented out, seems to prevent move..)
   // - set isStatusBarField flag when moved into the status bar folder
   folderDrop : function (nodes, folder, index, sourceWidget, callback) {
-    var i, oldNode, oldValue, newCallback, changed;
+    var i, oldNode, oldValue, newCallback, changed, length;
     
     if (!nodes) {
       return;
@@ -141,11 +142,13 @@ isc.OBPersonalizationTreeGrid.addProperties({
     if (folder && folder.name === '/') {
       return;
     }
+
+    length = nodes.length;
     
     // don't allow required fields without default value 
     // to be dropped on the statusbar
     if (folder.name === OB.Personalization.STATUSBAR_GROUPNAME) {
-      for (i = 0; i < nodes.length; i++) {
+      for (i = 0; i < length; i++) {
         if (!nodes[i].wasOnStatusBarField && nodes[i].required && !nodes[i].hasDefaultValue) {
           return;
         }
@@ -171,7 +174,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
 //    }
     
     // folders can not be dropped outside of the main group
-    for (i = 0; i < nodes.length; i++) {
+    for (i = 0; i < length; i++) {
       if (nodes[i].isFolder && (!folder || folder.name !== OB.Personalization.MAIN_GROUPNAME)) {
         return;
       }
@@ -212,7 +215,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
   // entries are shown for status bar or normal fields
   createCellContextItems: function(record){
     var menuItems = [], updatePropertyFunction, me = this,
-      personalizeForm = this.personalizeForm;
+      personalizeForm = this.personalizeForm, length;
     
     updatePropertyFunction = function(record, property, value) {
       record[property] = value;
@@ -220,7 +223,8 @@ isc.OBPersonalizationTreeGrid.addProperties({
       // make sure only one record has first focus
       if (record.firstFocus) {
         allNodes = personalizeForm.fieldsTreeGrid.data.getAllNodes();
-        for (i = 0; i < allNodes.length; i++) {
+        length = allNode.length;
+        for (i = 0; i < length; i++) {
           if (allNodes[i].firstFocus) {
             allNodes[i].firstFocus = false;
           }
@@ -290,8 +294,10 @@ isc.OBPersonalizationTreeGrid.addProperties({
   },
   
   computeNodeIcons: function(nodes) {
-    var iconSuffix, node, i, data = nodes || this.data.getAllNodes();
-    for (i = 0; i < data.length; i++) {
+    var iconSuffix, node, i, 
+      data = nodes || this.data.getAllNodes(),
+      length = data.length;
+    for (i = 0; i < length; i++) {
       node = data[i];
       if (node.isFolder) {
         continue;

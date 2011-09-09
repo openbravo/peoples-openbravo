@@ -108,8 +108,8 @@ isc.OBQuickRun.addProperties({
     // compute the height
     if (this.members) {
       defaultLayoutProperties.members = this.members;
-      var computedHeight = 0, i;
-      for (i = 0; i < this.members.length; i++) {
+      var computedHeight = 0, i, length = this.members.length;
+      for (i = 0; i < length; i++) {
         if (this.members[i].height) {
           computedHeight = computedHeight + this.members[i].height;
         }

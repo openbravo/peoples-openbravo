@@ -39,12 +39,12 @@
     Shortcuts: {
     
       setPredefinedList: function(RefList){
-        var i;
-        var list = [];
+        var i, list = [], length;
         
         list = OB.PropertyStore.get(RefList);
         if (list) {
-          for (i = 0; i < list.length; i++) {
+          length = list.length;
+          for (i = 0; i < length; i++) {
             this.set(list[i].id, null, null, null, list[i].keyComb);
           }
         }
@@ -168,8 +168,8 @@
       },
 
       getProperty: function(property, element, searchPattern) {
-        var i, position = null;
-        for (i = 0; i < this.list.length; i++) {
+        var i, position = null, length = this.list.length;
+        for (i = 0; i < length; i++) {
           if (typeof this.list[i] === 'undefined') {
             break;
           }
@@ -215,7 +215,7 @@
       },
 
       monitor: function(execLevel){
-        var i, j,
+        var i, j, length = this.list.length,
             position = null,
             pushedKS = {};
         pushedKS.ctrl = false;
@@ -233,7 +233,7 @@
         }
         pushedKS.key = isc.Event.getKey();
 
-        for (i = 0; i < this.list.length; i++) {
+        for (i = 0; i < length; i++) {
           if (typeof this.list[i] === 'undefined' && !execLevel) {
             break;
           }

@@ -17,93 +17,130 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
+Note, the below template contains many if statements to minimize the output if
+the outputted value is already covered by a default.
 -->
 
-<#macro createField fieldDefinition>
-    {
-        name: '${fieldDefinition.name?js_string}',
-        type: '${fieldDefinition.type}',
-        <#if fieldDefinition.required>
-        required: ${fieldDefinition.required?string},
-        </#if>
-        <#if fieldDefinition.readOnly>
+<#macro createField field>
+{
+<@compress single_line=true>
+    name: '${field.name?js_string}',
+    <#if field.label != ''>
+        title: '${field.label?js_string}',
+    </#if>
+    <#if field.required>
+        required: ${field.required?string},
+    </#if>
+    <#if field.readOnly>
         disabled: true,
-        </#if>
-        <#if !fieldDefinition.updatable>
+    </#if>
+    <#if !field.updatable>
         updatable: false,
-        </#if>
-        <#if fieldDefinition.sessionProperty>
+    </#if>
+    <#if field.sessionProperty>
         sessionProperty: true,
-        </#if>
-        <#if fieldDefinition.parentProperty>
+    </#if>
+    <#if field.parentProperty>
         parentProperty: true,
-        </#if>
-        <#if fieldDefinition.colSpan != 1>
-        colSpan: ${fieldDefinition.colSpan},
-        </#if>
-        <#if fieldDefinition.rowSpan != 1>
-        rowSpan: ${fieldDefinition.rowSpan},
-        </#if>
-        <#if fieldDefinition.startRow>
-        startRow: true,
-        </#if>
-        <#if fieldDefinition.endRow>
-        endRow: true,
-        </#if>
-        <#if !fieldDefinition.personalizable>
+    </#if>
+    <#if field.showColSpan>
+        colSpan: ${field.colSpan},
+    </#if>
+    <#if field.rowSpan != 1>
+        rowSpan: ${field.rowSpan},
+    </#if>
+    <#if field.showStartRow>
+        startRow: ${field.startRow?string},
+    </#if>
+    <#if field.showEndRow>
+        endRow: ${field.endRow?string},
+    </#if>
+    <#if !field.personalizable>
         personalizable: false,
-        </#if>
-        <#if fieldDefinition.hasDefaultValue>
+    </#if>
+    <#if field.hasDefaultValue>
         hasDefaultValue: true,
+    </#if>
+</@compress>
+    <#if field.standardField>
+<@compress single_line=true>
+        <#if field.columnName != ''>
+            columnName: '${field.columnName?string}',
         </#if>
-        <#if fieldDefinition.standardField>
-        columnName: '${fieldDefinition.columnName?string}',
-        inpColumnName: '${fieldDefinition.inpColumnName?string}',
-        <#if fieldDefinition.referencedKeyColumnName != ''>
-        referencedKeyColumnName: '${fieldDefinition.referencedKeyColumnName?string}',
+        <#if field.inpColumnName != ''>
+            inpColumnName: '${field.inpColumnName?string}',
         </#if>
-        <#if fieldDefinition.targetEntity != ''>
-        targetEntity: '${fieldDefinition.targetEntity?string}',
+        <#if field.referencedKeyColumnName != ''>
+            referencedKeyColumnName: '${field.referencedKeyColumnName?string}',
         </#if>
-        <#if !fieldDefinition.displayed>
-        visible: false,
-        displayed: false,
-        alwaysTakeSpace: false,
+        <#if field.targetEntity != ''>
+            targetEntity: '${field.targetEntity?string}',
         </#if>
-        <#if fieldDefinition.redrawOnChange && fieldDefinition.displayed>
+        <#if !field.displayed>
+            displayed: false,
+        </#if>
+        <#if field.redrawOnChange && field.displayed>
             redrawOnChange: true,
         </#if>
-        <#if fieldDefinition.showIf != "" && fieldDefinition.displayed>
-          showIf: function(item, value, form, currentValues, context) {
-            return (${fieldDefinition.showIf});          
-          },          
-          </#if>
-          <#if fieldDefinition.searchField>
-          displayField: '${fieldDefinition.name?js_string}._identifier',
-          valueField: '${fieldDefinition.name?js_string}',
-          showPickerIcon: ${(!fieldDefinition.parentProperty)?string},
-          </#if>
-          <#if fieldDefinition.firstFocusedField>
-          firstFocusedField: true,
-          </#if>
+        <#if field.showIf != "" && field.displayed>
+            showIf: function(item, value, form, currentValues, context) {
+                return (${field.showIf});          
+            },          
         </#if>
-        <#if fieldDefinition.type = "OBSectionItem" || fieldDefinition.type = "OBNoteSectionItem" || fieldDefinition.type = "OBLinkedItemSectionItem"  || fieldDefinition.type = "OBAttachmentsSectionItem" || fieldDefinition.type = "OBAuditSectionItem">
-          <#if !fieldDefinition.displayed>
-          visible: false,
-          </#if>
-        <#if fieldDefinition.expanded>
-        sectionExpanded: ${fieldDefinition.expanded?string},
+        <#if field.searchField>
+            displayField: '${field.name?js_string}._identifier',
+            <#if field.parentProperty>
+                showPickerIcon: ${(!field.parentProperty)?string},
+            </#if>
         </#if>
-        defaultValue: '${fieldDefinition.label?js_string}',
-        <#if fieldDefinition.hasChildren>
-        itemIds: [
-        <#list fieldDefinition.children as childField>
-        '${childField.name?js_string}'<#if childField_has_next>,</#if>
-        </#list>
-        ],
+        <#if field.firstFocusedField>
+            firstFocusedField: true,
         </#if>
+</@compress>
+    </#if>
+    <#if field.type = "OBSectionItem" || field.type = "OBNoteSectionItem" || field.type = "OBLinkedItemSectionItem"  || field.type = "OBAttachmentsSectionItem" || field.type = "OBAuditSectionItem">
+<@compress single_line=true>
+        <#if !field.displayed>
+            displayed: false,
         </#if>
-        ${fieldDefinition.fieldProperties}
-        title: '${fieldDefinition.label?js_string}'
-    }
+        <#if field.expanded>
+            sectionExpanded: ${field.expanded?string},
+        </#if>
+        <#if field.label != ''>
+            defaultValue: '${field.label?js_string}',
+        </#if>
+        <#if field.hasChildren>
+            itemIds: [
+            <#list field.children as childField>
+            '${childField.name?js_string}'<#if childField_has_next>,</#if>
+            </#list>
+            ],
+        </#if>
+</@compress>
+    </#if>
+    ${field.fieldProperties}
+    <#if field.isGridProperty>
+<@compress single_line=true>
+        gridProps: {
+            sortNum: ${field.gridSort?string},
+            <#if field.autoExpand>
+                autoExpand: ${field.autoExpand?string},
+            </#if>
+            <#if field.cellAlign??>
+                cellAlign: '${field.cellAlign?js_string}',
+            </#if>
+            showIf: '${field.showInitiallyInGrid?string}'<#if field.gridEditorFieldProperties != "">,</#if>
+            <#if field.gridEditorFieldProperties != "">
+                editorProperties: {
+                  ${field.gridEditorFieldProperties}
+                }
+            </#if>
+            ${field.gridFieldProperties}
+            ${field.filterEditorProperties}
+        },
+</@compress>
+    </#if>
+    type: '${field.type}'
+}
 </#macro>

@@ -106,7 +106,7 @@ isc.OBStandardWindow.addProperties({
   
   // set window specific user settings, purposely set on class level
   setWindowSettings: function(data) {
-    var i, defaultView, persDefaultValue, views;
+    var i, defaultView, persDefaultValue, views, length;
 
     if (data && data.personalization) {
       if (data.personalization.forms) {
@@ -120,8 +120,9 @@ isc.OBStandardWindow.addProperties({
       // returned in order of prio, then do sort by name
       if (this.getClass().personalization.views) {
         views = this.getClass().personalization.views;
+        length = views.length;
         if (persDefaultValue) {
-          for (i = 0; i < views.length; i++) {
+          for (i = 0; i < length; i++) {
             if (persDefaultValue === views[i].personalizationId) {
               defaultView = views[i];
               break;
@@ -129,7 +130,7 @@ isc.OBStandardWindow.addProperties({
           }
         }
         if (!defaultView) {
-          for (i = 0; i < views.length; i++) {
+          for (i = 0; i < length; i++) {
             if (views[i].viewDefinition.isDefault) {
               defaultView = views[i];
               break;
@@ -140,7 +141,9 @@ isc.OBStandardWindow.addProperties({
         // apply the default view
         // maybe do this in a separate thread
         if (defaultView) {
-          OB.Personalization.applyViewDefinition(defaultView.viewDefinition, this);
+          this.fireOnPause('setDefaultView', function() {
+            OB.Personalization.applyViewDefinition(defaultView.viewDefinition, this);
+          }, 100);
         }
         
         this.getClass().personalization.views.sort(function(v1, v2) {
@@ -161,7 +164,8 @@ isc.OBStandardWindow.addProperties({
     this.getClass().autoSave = data.autoSave;
     this.getClass().showAutoSaveConfirmation = data.showAutoSaveConfirmation;
     // set the views to readonly
-    for (i = 0; i < this.views.length; i++) {
+    length = this.views.length;
+    for (i = 0; i < length; i++) {
       this.views[i].setReadOnly(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_READONLY);
       this.views[i].setSingleRecord(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_SINGLERECORD);
       this.views[i].toolBar.updateButtonState(true);
@@ -189,14 +193,14 @@ isc.OBStandardWindow.addProperties({
   },
 
   removeAllFormPersonalizations: function() {
-    var i, updateButtons = false;
+    var i, updateButtons = false, length = this.views.length;
     if (!this.getClass().personalization) {
       return;
     }
     updateButtons = this.getClass().personalization.forms;
     if (updateButtons) {
       delete this.getClass().personalization.forms;
-      for (i = 0; i < this.views.length; i++) {
+      for (i = 0; i < length; i++) {
         this.views[i].toolBar.updateButtonState(false);
       }
     }
@@ -527,9 +531,10 @@ isc.OBStandardWindow.addProperties({
 
   draw: function(){
     var standardWindow = this, targetEntity,
-        ret = this.Super('draw', arguments), i;
+        ret = this.Super('draw', arguments), i,
+        length = this.views.length;
     if (this.targetTabId) {
-      for (i = 0; i < this.views.length; i++) {
+      for (i = 0; i < length; i++) {
         if (this.views[i].tabId === this.targetTabId) {
           targetEntity = this.views[i].entity;
           this.views[i].viewGrid.targetRecordId = this.targetRecordId;
@@ -627,8 +632,8 @@ isc.OBStandardWindow.addProperties({
   },
 
   storeViewState: function(){
-    var result = {}, i;
-    for (i = 0; i < this.views.length; i++) {
+    var result = {}, i, length = this.views.length;
+    for (i = 0; i < length; i++) {
       if(this.views[i].viewGrid){
         result[this.views[i].tabId]=this.views[i].viewGrid.getViewState();
       }

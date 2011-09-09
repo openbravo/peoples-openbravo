@@ -19,36 +19,21 @@
 */
 -->
 {
-    // use theFields instead of fields, when the form
-    // gets created, initialized, the datasource is
-    // set (ob-standard-view.js buildStructure) 
-    // causing re-initialization of the fields,
-    // removing the current ones and recreating new ones
-    // by using theFields, the form initially does not
-    // have fields, which prevents this initial destroy step
-    // Note: this.prepareFormFields is defined in ob-standard-view
-    theFields: this.prepareFormFields([
-    <#list data.fields as field>
-      <@createField field/><#if field_has_next>,</#if>
-    </#list>    
-    ]),
-
-    statusBarFields: [
-    <#list data.statusBarFields as sbf>
-      '${sbf?js_string}'<#if sbf_has_next>,</#if>
-    </#list>
-    ],
-
+    // this this is the view
+    statusBarFields: this.statusBarFields,
+    
+<#--
     // except for the fields all other form properties should be added to the formProperties
     // the formProperties are re-used for inline grid editing
+-->
     obFormProperties: {
       onFieldChanged: function(form, item, value) {
         var f = form || this,
             context = this.view.getContextInfo(false, true),
             currentValues = f.view.getCurrentValues(), otherItem;
-        <#list data.fields as field>
+        <#list data.fieldHandler.fields as field>
         <#if field.readOnlyIf != "">
-            f.handleOtherItem('${field.name}', ${field.readOnlyIf});
+            f.disableItem('${field.name}', ${field.readOnlyIf});
         </#if>
         </#list>
       }

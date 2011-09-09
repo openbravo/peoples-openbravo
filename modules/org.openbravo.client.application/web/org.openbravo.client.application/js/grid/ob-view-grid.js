@@ -39,11 +39,6 @@ isc.OBViewGrid.addProperties({
   // and the grid and other related components.
   view: null,
   
-  // ** {{{ foreignKeyFieldNames }}} **
-  // The list of fields which are foreign keys, these require custom
-  // filtering.
-  foreignKeyFieldNames: [],
-  
   // ** {{{ editGrid }}} **
   // Controls if an edit link column is created in the grid, set to false to
   // prevent this.
@@ -196,7 +191,8 @@ isc.OBViewGrid.addProperties({
     },
 
     transformData: function(newData, dsResponse) {
-      var i;
+      var i, length;
+      
       // only do this stuff for fetch operations, in other cases strange things
       // happen as update/delete operations do not return the totalRows parameter
       if (dsResponse && dsResponse.context && dsResponse.context.operationType !== 'fetch') {
@@ -204,7 +200,8 @@ isc.OBViewGrid.addProperties({
       }
       // correct the length if there is already data in the localData array
       if (this.localData) {
-        for (i = dsResponse.endRow + 1; i < this.localData.length; i++) {
+        length = this.localData.length;
+        for (i = dsResponse.endRow + 1; i < length; i++) {
           if (!Array.isLoading(this.localData[i]) && this.localData[i]) {
             dsResponse.totalRows = i + 1;
           } else {
@@ -340,7 +337,7 @@ isc.OBViewGrid.addProperties({
   },
 
   draw: function() {
-    var drawnBefore = this.isDrawn(), form, item;
+    var drawnBefore = this.isDrawn(), form, item, length;
     this.Super('draw', arguments);
     // set the focus in the filter editor
     if (this.view && this.view.isActiveView() && !drawnBefore && this.isVisible() &&
@@ -352,8 +349,9 @@ isc.OBViewGrid.addProperties({
       // to give everyone time to be ready
       if (!form.getFocusItem()) {
         items = form.getItems();
+        length = items.length;
 
-        for (i = 0; i < items.length; i++) {
+        for (i = 0; i < length; i++) {
           item = items[i];
           if (item.getCanFocus() && !item.isDisabled()) {
             item.delayCall('focusInItem', null, 100);
@@ -454,7 +452,8 @@ isc.OBViewGrid.addProperties({
   },
  
   setView: function(view){
-    var dataPageSizeaux;
+    var dataPageSizeaux, length;
+    
     this.view = view;
     this.editFormDefaults.view = view;
     if (this.view.standardWindow.viewState && this.view.standardWindow.viewState[this.view.tabId]) {
@@ -480,9 +479,11 @@ isc.OBViewGrid.addProperties({
     
     // if there is no autoexpand field then just divide the space
     if (!this.getAutoFitExpandField()) {
+      length = this.fields.length;
+      
       // nobody, then give all the fields a new size, dividing
       // the space among them
-      for (i = 0; i < this.fields.length; i++) {
+      for (i = 0; i < length; i++) {
         // ignore the first 2 fields, the checkbox and edit/form
         // buttons
         if (i > 1) {
@@ -963,7 +964,8 @@ isc.OBViewGrid.addProperties({
   },
     
   convertCriteria: function(criteria){
-    var selectedValues, prop, fld, value, i, criterion, fldName;
+    var selectedValues, prop, fld, value, i, 
+      criterion, fldName, length;
 
     if (!criteria) {
       criteria = {
@@ -998,7 +1000,8 @@ isc.OBViewGrid.addProperties({
       delete this.forceRefresh;
     } else {
       // remove the _dummy
-      for (i = 0; i < criteria.criteria.length; i++) {
+      length = criteria.criteria.length;
+      for (i = 0; i < length; i++) {
         if (criteria.criteria[i].fieldName === isc.OBRestDataSource.DUMMY_CRITERION_NAME) {
           criteria.criteria.removeAt(i);
           break;
@@ -1024,7 +1027,8 @@ isc.OBViewGrid.addProperties({
       
       var fnd = false;
       var innerCriteria = criteria.criteria;
-      for (i = 0; i < innerCriteria.length; i++) {
+      length = innerCriteria.length;
+      for (i = 0; i < length; i++) {
         criterion = innerCriteria[i];
         fldName = criterion.fieldName;
         if (fldName === this.view.parentProperty) {
@@ -1127,10 +1131,11 @@ isc.OBViewGrid.addProperties({
   },
   
   // determine which field can be autoexpanded to use extra space
-  getAutoFitExpandField: function() {
-    var ret, i;
-    for (i = 0; i < this.autoExpandFieldNames.length; i++) {
-      var field = this.getField(this.autoExpandFieldNames[i]);
+  getAutoFitExpandField: function() {    
+    var ret, i, length;
+    length = this.view.autoExpandFieldNames.length;
+    for (i = 0; i < length; i++) {
+      var field = this.getField(this.view.autoExpandFieldNames[i]);
       if (field && field.name) {
         return field.name;
       }
@@ -1138,7 +1143,7 @@ isc.OBViewGrid.addProperties({
     ret = this.Super('getAutoFitExpandField', arguments);    
     return ret;
   },
-
+  
   recordClick: function(viewer, record, recordNum, field, fieldNum, value, rawValue){
     var textDeselectInterval = setInterval(function() { //To ensure that if finally a double click (recordDoubleClick) is executed, no work is highlighted/selected
       if (document.selection && document.selection.empty) {
@@ -1586,11 +1591,11 @@ isc.OBViewGrid.addProperties({
   // +++++++++++++++++ functions for grid editing +++++++++++++++++
 
   startEditing: function (rowNum, colNum, suppressFocus, eCe, suppressWarning) {
-    var i, ret;
+    var i, ret, length = this.getFields().length;
     // if a row is set and not a col then check if we should focus in the
     // first error field
     if ((rowNum || rowNum === 0) && (!colNum && colNum !== 0) && this.rowHasErrors(rowNum))  {
-      for (i = 0; i < this.getFields().length; i++) {
+      for (i = 0; i < length; i++) {
         if (this.cellHasErrors(rowNum, i)) {
          colNum = i;
          break; 
@@ -1602,7 +1607,7 @@ isc.OBViewGrid.addProperties({
       this.forceFocusColumn = this.getField(colNum).name;
     } else {
       // set the first focused column
-      for (i = 0; i < this.getFields().length; i++) {
+      for (i = 0; i < length; i++) {
         if (this.getFields()[i].editorProperties && this.getFields()[i].editorProperties.firstFocusedField) {
           colNum = i;
         }
@@ -1737,8 +1742,9 @@ isc.OBViewGrid.addProperties({
   },
 
   undoEditSelectedRows: function(){
-    var selectedRecords = this.getSelectedRecords(), toRemove = [], i;
-    for (i = 0; i < selectedRecords.length; i++) {
+    var selectedRecords = this.getSelectedRecords(), 
+      toRemove = [], i, length = selectedRecords.length;
+    for (i = 0; i < length; i++) {
       var rowNum = this.getRecordIndex(selectedRecords[i]);
       var record = selectedRecords[i];
       this.Super('discardEdits', [rowNum, false, false, isc.ListGrid.PROGRAMMATIC]);
@@ -1900,7 +1906,7 @@ isc.OBViewGrid.addProperties({
   // is the last being edited
   // also sets a flag which is used in canEditCell   
   getNextEditCell: function (rowNum, colNum, editCompletionEvent) {
-    var ret, i;
+    var ret, i, length = this.getFields().length;
     this._inGetNextEditCell = true;
     // past the last row
     if (editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS && rowNum === (this.getTotalRows() - 1)) {
@@ -1908,7 +1914,7 @@ isc.OBViewGrid.addProperties({
       ret = this.findNextEditCell(rowNum + 1, 0, 1, true, true);
 
       // force the focus column in the first focus field
-      for (i = 0; i < this.getFields().length; i++) {
+      for (i = 0; i < length; i++) {
         if (this.getFields()[i].editorProperties && this.getFields()[i].editorProperties.firstFocusedField) {
           this.forceFocusColumn = this.getFields()[i].name;
           break;
@@ -2133,11 +2139,12 @@ isc.OBViewGrid.addProperties({
   },
 
   refreshEditRow: function(){
-    var editRow = this.view.viewGrid.getEditRow(), i;
+    var editRow = this.view.viewGrid.getEditRow(), i, length;
     if (editRow || editRow === 0) {
       // don't refresh the frozen fields, this give strange
       // styling issues in chrome
-      for (i = 0; i < this.view.viewGrid.fields.length; i++) {
+      length = this.view.viewGrid.fields.length;
+      for (i = 0; i < length; i++) {
         if (!this.fieldIsFrozen(i)) {
           this.view.viewGrid.refreshCell(editRow, i, true);
         }
@@ -2253,8 +2260,8 @@ isc.OBViewGrid.addProperties({
   },
 
   allSelectedRecordsWritable: function() {
-    var i;
-    for (i = 0; i < this.getSelectedRecords().length; i++) {
+    var i, length = this.getSelectedRecords().length;
+    for (i = 0; i < length; i++) {
       var record = this.getSelectedRecords()[i];
       if (!this.isWritable(record) || record._new) {
         return false;

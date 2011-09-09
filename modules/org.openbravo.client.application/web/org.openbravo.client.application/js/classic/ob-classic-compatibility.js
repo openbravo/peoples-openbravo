@@ -153,12 +153,12 @@
       // parameters to communicate with the classic OB class
       //
       function getXHRParamsObj(/* String */action, /* Object */ formObject){
-        var paramsObj = {}, i;
+        var paramsObj = {}, i, length = formObject.elements.length;
 
         paramsObj.Command = action;
         paramsObj.IsAjaxCall = '1';
 
-        for (i = 0; i < formObject.elements.length; i++) {
+        for (i = 0; i < length; i++) {
           if (formObject.elements[i].type) {
           var param =  inputValueForms(formObject.elements[i].name, formObject.elements[i]);
 
@@ -233,9 +233,10 @@
       getMDIKS: function(){
         var key, auxKey, action, funcParam, keyMap,
             ClassicKeyJSON = [],
-            LKS = O.KeyboardManager.Shortcuts, i;
+            LKS = O.KeyboardManager.Shortcuts, i,
+            length = LKS.list.length;
 
-        for (i = 0; i < LKS.list.length; i++) {
+        for (i = 0; i < length; i++) {
           auxKey = '';
           if (LKS.list[i].isGlobal) {
             if (LKS.list[i].keyComb.ctrl === true) {
