@@ -1,3 +1,4 @@
+<#--
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -16,6 +17,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+-->
 // jslint
 
 OB.I18N.labels = {
@@ -24,21 +26,7 @@ OB.I18N.labels = {
 </#list>
 };
 
-OB.I18N.getLabel = function(key, params, object, property) {
-    if (!OB.I18N.labels[key]) {
-      if (!object) {
-        return 'UNDEFINED ' + key;
-      } 
-    }
-    var label = OB.I18N.labels[key], i;
-    if (params && params.length && params.length > 0) {
-        for (i = 0; i < params.length; i++) {
-            label = label.replace("%" + i, params[i]);
-        }
-    }
-    return label;
-};
-
+<#--
 // key is the message key
 // params is used for parameter substitution
 // if object and property are set then the label is set directly in
@@ -46,6 +34,7 @@ OB.I18N.getLabel = function(key, params, object, property) {
 // Note: property may also be a function expecting the label as a string
 // if the label is not defined and object and property are set
 // then a call to the server is done to request the label.
+-->
 OB.I18N.getLabel = function(key, params, object, property) {
     if (!OB.I18N.labels[key]) {
       if (object && property) {

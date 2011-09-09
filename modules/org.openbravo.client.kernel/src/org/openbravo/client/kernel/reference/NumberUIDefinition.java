@@ -47,6 +47,11 @@ public abstract class NumberUIDefinition extends UIDefinition {
   }
 
   @Override
+  public String getFilterEditorProperties(Field field) {
+    return ", filterOnKeypress: false" + super.getFilterEditorProperties(field);
+  }
+
+  @Override
   public String getTypeProperties() {
     final PrimitiveDomainType primitiveDomainType = (PrimitiveDomainType) getDomainType();
     if (primitiveDomainType.getFormatId() != null) {

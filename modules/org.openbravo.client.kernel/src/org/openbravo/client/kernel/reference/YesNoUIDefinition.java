@@ -96,11 +96,6 @@ public class YesNoUIDefinition extends UIDefinition {
   }
 
   @Override
-  public String getFilterEditorProperties(Field field) {
-    return ", filterOnKeypress: true" + super.getFilterEditorProperties(field);
-  }
-
-  @Override
   public String convertToClassicString(Object value) {
     if (value instanceof Boolean) {
       if ((Boolean) value) {
