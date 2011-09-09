@@ -442,7 +442,7 @@ public class OBViewFieldHandler {
     }
 
     public Integer getLength() {
-      return 0;
+      return null;
     }
 
     public String getFilterEditorProperties() {
@@ -454,7 +454,7 @@ public class OBViewFieldHandler {
     }
 
     public String getCellAlign() {
-      return null;
+      return "left";
     }
 
     public boolean getAutoExpand() {
@@ -594,30 +594,6 @@ public class OBViewFieldHandler {
     public boolean isDisplayed() {
       return true;
     }
-
-    // public String getEditorType() {
-    // if ("30".equals(refType)) {
-    // return "OBSearchItem";
-    // } else {
-    // return "OBDateItem";
-    // }
-    // }
-    //
-    // public String getFilterEditorType() {
-    // if ("30".equals(refType)) {
-    // return "OBFKFilterTextItem";
-    // } else {
-    // return "OBMiniDateRangeItem";
-    // }
-    // }
-    //
-    // public String getDisplayFieldJS() {
-    // if ("30".equals(refType)) {
-    // return "displayField: '" + name + "._identifier',valueField: '" + name + "',";
-    // } else {
-    // return "";
-    // }
-    // }
 
   }
 
