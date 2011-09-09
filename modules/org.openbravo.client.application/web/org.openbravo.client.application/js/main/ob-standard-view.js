@@ -1900,7 +1900,7 @@ isc.OBStandardView.addProperties({
       isc.addProperties(fld, fld.gridProps);
       
       if (!fld.width) {
-        fld.width = isc.OBGrid.getDefaultColumnWidth(30);
+        fld.width = isc.OBGrid.getDefaultColumnWidth(50);
       }
 
       // correct somet stuff coming from the form fields
