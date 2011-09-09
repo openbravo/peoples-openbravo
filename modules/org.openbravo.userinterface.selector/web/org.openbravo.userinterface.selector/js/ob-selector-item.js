@@ -62,13 +62,11 @@ isc.OBSelectorPopupWindow.addProperties({
 
     var i;
     for (i = 0; i < this.selectorGridFields.length; i++) {
+      this.selectorGridFields[i].canSort = (this.selectorGridFields[i].canSort === false ? false : true);
       if (this.selectorGridFields[i].disableFilter) {
         this.selectorGridFields[i].canFilter = false;
-      }
-      // override the operator on the grid field level
-      if (this.selectorGridFields[i].operator === 'iContains' || !this.selectorGridFields[i].operator) {
-        this.selectorGridFields[i].operator = operator;
-        this.selectorGridFields[i].filterEditorProperties.operator = operator;
+      } else {
+        this.selectorGridFields[i].canFilter = true;
       }
     }
     
