@@ -334,20 +334,6 @@ isc.OBGrid.addProperties({
     this.Super('initWidget', arguments);
   },
   
-  //  http://forums.smartclient.com/showthread.php?p=72177#post72177
-  destroy: function() {
-    var i, components, length;
-    this.Super('destroy', arguments);
-    
-    components = this.getRecordComponentPool();
-    if (components) {
-      length = components.length;
-      for (i = 0; i < length; i++) {
-        components[i].destroy();
-      }
-    }
-  },
-  
   clearFilter: function(keepFilterClause, noPerformAction){
     var i = 0, fld, length;
     if (!keepFilterClause) {

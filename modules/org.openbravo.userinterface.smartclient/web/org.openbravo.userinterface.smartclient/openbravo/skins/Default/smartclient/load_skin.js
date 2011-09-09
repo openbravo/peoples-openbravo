@@ -23,6 +23,7 @@ with (theWindow) {
 
 
 
+
 //============================================================
 //  Component Skinning
 //============================================================
@@ -638,9 +639,8 @@ with (theWindow) {
             editFailedCSSText:"color:FF6347;",
             errorIconSrc : "[SKINIMG]actions/exclamation.png",
 			tallBaseStyle: "tallCell",
-            
-            // Render header buttons out as StretchImgButtons
-            headerButtonConstructor:"ImgButton",
+
+            headerButtonConstructor:"Button",
             sorterConstructor:"ImgButton",
             
             sortAscendingImage:{src:"[SKIN]sort_ascending.png", width:9, height:6},
@@ -653,12 +653,12 @@ with (theWindow) {
             cellHeight:22,
             normalCellHeight:22,
             headerBackgroundColor:null,
-            headerBarStyle:"headerBar",
-            headerBaseStyle:"headerButton",	// bgcolor tint and borders
-            headerTitleStyle:"headerTitle",
-            
+            headerBaseStyle:"headerButton",
             bodyStyleName:"gridBody",
             alternateBodyStyleName:null,
+            
+            summaryRowStyle:"gridSummaryCell",
+            groupSummaryStyle:"groupSummaryCell",
             
             showHeaderMenuButton:true,
 			headerMenuButtonConstructor:"HeaderImgButton",
@@ -684,17 +684,20 @@ with (theWindow) {
             baseStyle:"sorterButton"
         })
         isc.ListGrid.changeDefaults("headerButtonDefaults", {
-            showTitle:true,
+            showRollOver:true,
             showDown:false,
             showFocused:false,
-            // baseStyle / titleStyle is auto-assigned from headerBaseStyle
-            src:"[SKIN]ListGrid/header.png"
+            baseStyle:"headerButton"
         })
         isc.ListGrid.changeDefaults("headerMenuButtonDefaults", {
             showDown:false,
             showTitle:true,
             src:"[SKIN]ListGrid/header.png"
         })
+        isc.ListGrid.changeDefaults("summaryRowDefaults", {
+            bodyBackgroundColor:null,
+            bodyStyleName:"summaryRowBody"
+        });
     }
 
    if (isc.TreeGrid) {
@@ -956,6 +959,10 @@ with (theWindow) {
         isc.Calendar.changeDefaults("addEventButtonDefaults", {
             src:"[SKINIMG]actions/plus.png"
         });
+        
+        isc.EventWindow.changeDefaults("resizerDefaults", {
+            src:"[SKIN]/Window/resizer.png"
+        })
     }
 
 // -------------------------------------------
