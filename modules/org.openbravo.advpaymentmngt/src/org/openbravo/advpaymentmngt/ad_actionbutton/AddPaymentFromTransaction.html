@@ -176,7 +176,8 @@ function callBackCredit(paramXMLParticular, XMLHttpRequestObj) {
     try {
       if (XMLHttpRequestObj.responseText) {
         strText = XMLHttpRequestObj.responseText;
-        document.getElementById('paramCredit').value = strText;
+        var data = eval(strText);
+        document.getElementById('paramCredit').value = applyFormatJSToOBMasked(data.credit);
         displayLogicForCredit();
       }
     } catch (e) {

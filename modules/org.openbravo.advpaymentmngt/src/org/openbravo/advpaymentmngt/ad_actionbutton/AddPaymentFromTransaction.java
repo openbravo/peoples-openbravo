@@ -120,13 +120,18 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     } else if (vars.commandIn("LOADCREDIT")) {
       final String strBusinessPartnerId = vars.getRequiredStringParameter("inpcBpartnerId");
       final boolean isReceipt = "Y".equals(vars.getRequiredStringParameter("isReceipt"));
-      String customerCredit = dao.getCustomerCredit(
-          OBDal.getInstance().get(BusinessPartner.class, strBusinessPartnerId), isReceipt)
-          .toString();
+      BigDecimal customerCredit = dao.getCustomerCredit(
+          OBDal.getInstance().get(BusinessPartner.class, strBusinessPartnerId), isReceipt);
       response.setContentType("text/html; charset=UTF-8");
       response.setHeader("Cache-Control", "no-cache");
       PrintWriter out = response.getWriter();
-      out.println(customerCredit);
+      JSONObject json = new JSONObject();
+      try {
+        json.put("credit", customerCredit);
+      } catch (JSONException e) {
+        log4j.error("Error parsing load credit JSON: " + customerCredit, e);
+      }
+      out.println("data = " + json.toString());
       out.close();
 
     } else if (vars.commandIn("EXCHANGERATE")) {
