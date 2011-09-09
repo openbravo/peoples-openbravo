@@ -149,10 +149,10 @@ public class GoogleAuthServlet extends HttpBaseServlet {
         }
       }
 
-      vars.removeSessionValue("#Authenticated_user");
+      req.getSession(true).removeAttribute("#Authenticated_user");
 
       String sessionId = createDBSession(req, user.getUsername(), user.getId());
-      vars.setSessionValue("#Authenticated_user", user.getId());
+      req.getSession(true).setAttribute("#Authenticated_user", user.getId());
       vars.setSessionValue("#AD_SESSION_ID", sessionId);
       vars.setSessionValue("#LOGGINGIN", "Y");
 
