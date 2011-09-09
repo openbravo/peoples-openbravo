@@ -1902,7 +1902,14 @@ isc.OBStandardView.addProperties({
       if (!fld.width) {
         fld.width = isc.OBGrid.getDefaultColumnWidth(30);
       }
-            
+
+      // correct somet stuff coming from the form fields
+      if (!fld.displayed) {
+        fld.visible = true;
+        fld.alwaysTakeSpace = true;
+      }
+      fld.disabled = false;
+
       fld.canExport = (fld.canExport === false ? false : true);
       fld.canHide = (fld.canHide === false ? false : true);
       fld.canFilter = (fld.canFilter === false ? false : true);
