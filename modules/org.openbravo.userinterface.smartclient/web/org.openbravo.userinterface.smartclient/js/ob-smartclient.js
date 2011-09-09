@@ -183,13 +183,13 @@ isc.FormItem.addProperties({
     return src;
   },
   
-  changed: function(){
+  changed: function(form, item, value){
     this._hasChanged = true;
     this.clearErrors();
     
     if (this.redrawOnChange) {
-      this.form.onFieldChanged(form, item, value);
-      this.form.view.toolBar.refreshCustomButtonsView(form.view);
+      this.form.onFieldChanged(this.form, item || this, value);
+      this.form.view.toolBar.refreshCustomButtonsView(this.form.view);
     }
   },
   
@@ -379,7 +379,6 @@ isc.screenReader = false;
 //isc.Class.fireOnPause = function(id, callback, delay, target, instanceID) {
 //  isc.Class._fireOnPause(id, callback, delay, target, instanceID);
 //};
-
 
 // Allow searchs (with full dataset in memory/the datasource) not distinguish
 // between accent or non-accent words
