@@ -317,7 +317,7 @@ public class LoginUtils {
    * Obtains defaults defined for a user and throws DefaultValidationException in case they are not
    * correct.
    */
-  static RoleDefaults getLoginDefaults(String strUserAuth, String role, ConnectionProvider cp)
+  public static RoleDefaults getLoginDefaults(String strUserAuth, String role, ConnectionProvider cp)
       throws ServletException, DefaultValidationException {
     String strRole = role;
     if (strRole.equals("")) {

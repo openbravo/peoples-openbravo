@@ -107,10 +107,6 @@ public class KernelServlet extends BaseKernelServlet {
     }
   }
 
-  public ServletContext getServletContext() {
-    return servletContext;
-  }
-
   protected void processComponentRequest(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
 
@@ -219,7 +215,7 @@ public class KernelServlet extends BaseKernelServlet {
     throw new UnsupportedOperationException("Only GET/POST is supported");
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   private Map<String, Object> getParameterMap(HttpServletRequest request) {
     final Map<String, Object> parameterMap = new HashMap<String, Object>();
     for (Enumeration keys = request.getParameterNames(); keys.hasMoreElements();) {

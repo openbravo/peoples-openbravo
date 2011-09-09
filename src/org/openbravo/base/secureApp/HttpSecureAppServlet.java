@@ -138,25 +138,25 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     try {
       m_AuthManager = (AuthenticationManager) Class.forName(sAuthManagerClass).newInstance();
+      m_AuthManager.init(this);
     } catch (final Exception e) {
       log4j
           .error("Defined authentication manager cannot be loaded. Verify the 'authentication.class' entry in Openbravo.properties");
-      m_AuthManager = new DefaultAuthenticationManager();
+      try {
+        m_AuthManager = new DefaultAuthenticationManager(this);
+      } catch (AuthenticationException e1) {
+        log4j.error("Error trying to initilize Authentication Manager", e1);
+        return;
+      }
     }
 
-    try {
-      m_AuthManager.init(this);
-    } catch (final AuthenticationException e) {
-      log4j.error("Unable to initialize authentication manager", e);
-    }
-
-    if (log4j.isDebugEnabled())
-      log4j.debug("strdireccion: " + strDireccion);
+    log4j.debug("strdireccion: " + strDireccion);
 
     // Calculate class info
     try {
-      if (log4j.isDebugEnabled())
-        log4j.debug("Servlet request for class info: " + this.getClass());
+
+      log4j.debug("Servlet request for class info: " + this.getClass());
+
       if (classInfo == null) {
         ClassInfoData[] classInfoAux = ClassInfoData.select(this, this.getClass().getName());
         if (classInfoAux != null && classInfoAux.length > 0)
@@ -313,6 +313,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             logout(request, response);
             return;
           }
+          variables.removeSessionValue("#LOGGINGIN");
         } else {
           variables.updateHistory(request);
         }
@@ -657,23 +658,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
    * 
    * @param response
    *          the HttpServletResponse object
-   * @param strTitle
-   *          the title of the popup window
-   * @param strText
-   *          the text to be displayed in the popup message area
-   * @throws IOException
-   *           if an error occurs writing to the output stream
-   */
-  private void advisePopUpRefresh(HttpServletRequest request, HttpServletResponse response,
-      String strTitle, String strText) throws IOException {
-    advisePopUpRefresh(request, response, "Error", strTitle, strText);
-  }
-
-  /**
-   * Creates a pop up that when closed, will refresh the parent window.
-   * 
-   * @param response
-   *          the HttpServletResponse object
    * @param strType
    *          the type of message to be displayed (e.g. ERROR, SUCCESS)
    * @param strTitle
@@ -952,9 +936,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   protected void whitePage(HttpServletResponse response, String strAlert) throws IOException {
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/HtmlWhitePage").createXmlDocument();
-    if (strAlert == null)
-      strAlert = "";
-    xmlDocument.setParameter("body", strAlert);
+
+    xmlDocument.setParameter("body", strAlert == null ? "" : strAlert);
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
@@ -980,19 +963,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   protected void printPageClosePopUp(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     printPageClosePopUp(response, vars, "");
-  }
-
-  private void printPageClosePopUpWindow(HttpServletResponse response, VariablesSecureApp vars)
-      throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: PopUp Response");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/PopUp_Close").createXmlDocument();
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 
   protected void printPagePopUpDownload(ServletOutputStream os, String fileName)
