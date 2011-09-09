@@ -24,7 +24,7 @@
 isc.SimpleType.create({
     inheritsFrom: '${uiDefinition.parentType?js_string}',
     name: '${uiDefinition.name?js_string}',
-    <#if uiDefinition.formEditorType?length &gt; 0>
+    <#if uiDefinition.formEditorType != "">
     editorType: '${uiDefinition.formEditorType?js_string}',
     gridEditorType: '${uiDefinition.gridEditorType?js_string}',
     filterEditorType: '${uiDefinition.filterEditorType?js_string}',
