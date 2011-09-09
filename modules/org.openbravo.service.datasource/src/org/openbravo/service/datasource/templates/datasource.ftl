@@ -66,10 +66,7 @@ although the same is done by the compressor
     , additional: ${property.additional?string}
     </#if>
 <#if property.id>
-    , hidden: true, primaryKey: true
-</#if>
-<#if property.mandatory && property.updatable && !property.auditInfo && !property.boolean>
-    , required: true
+    ,primaryKey: true
 </#if>
 <#--
 the following is not needed, is covered in the form fields/grid fields
@@ -92,12 +89,6 @@ the following is not needed, is covered in the form fields/grid fields
     '${entry.value?js_string}': '${entry.label?replace(">", "_;_;_;_")?js_string?replace("_;_;_;_", ">")}'<#if entry_has_next>,</#if>
     </#list>
     }
-</#if>
-<#if !property.primitive>
-   <#if !property.id>
-    , hidden: true
-   </#if>
-   <#-- , foreignKey: '${property.targetEntity.name}.id' -->
 </#if>
     }
 <#if !property.primitive>
