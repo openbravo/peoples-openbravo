@@ -1,3 +1,4 @@
+<#--
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -16,7 +17,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
-
+-->
 <#if data.selectorItem>
     selectorDefinitionId: '${data.id}',
     popupTextMatchStyle: '${data.selector.popuptextmatchstyle}',
@@ -26,32 +27,40 @@
     valueField: '${data.valueField?js_string}',
     pickListFields: [
     <#list data.pickListFields as pickListField>
+<@compress single_line=true>
         {<#list pickListField.properties as property>
         ${property.name}: ${property.value}<#if property_has_next>,</#if>
          </#list>       
         }<#if pickListField_has_next>,</#if>
+</@compress>
     </#list>
     ],
     showSelectorGrid: ${data.showSelectorGrid},
     selectorGridFields : [
     <#list data.selectorGridFields as selectorGridField>
+<@compress single_line=true>
         {
         <#list selectorGridField.properties as property>
         ${property.name}: ${property.value}<#if property_has_next>,</#if>
          </#list>         
          ${selectorGridField.filterEditorProperties}         
         }<#if selectorGridField_has_next>,</#if>
+</@compress>
     </#list>
     ],
     outFields : {
+<@compress single_line=true>
     <#list data.outFields as selectorOutField>
     '${selectorOutField.outFieldName}': {'fieldName':'${selectorOutField.tabFieldName}', 'suffix': '${selectorOutField.outSuffix}'}<#if selectorOutField_has_next>,</#if>
     </#list>
+</@compress>
     },
     extraSearchFields: [${data.extraSearchFields}],
+<#--
     // create the datasource in the init method, this
     // prevents too early creation, it is created when the
     // fields on the form are actually created
+-->
     init: function() {
         this.optionDataSource = ${data.dataSourceJavascript};
         this.Super('init', arguments);

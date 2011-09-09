@@ -92,8 +92,6 @@ isc.OBSelectorLinkWidget.addProperties({
       }
     }]);
     
-    OB.Utilities.applyDefaultValues(this.selectorGridFields, this.defaultSelectorGridField);
-    
     this.selectorGrid = isc.ListGrid.create({
       selector: this,
       dataProperties: {
