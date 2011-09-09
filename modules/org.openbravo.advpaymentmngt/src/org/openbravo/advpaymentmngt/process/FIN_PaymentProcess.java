@@ -539,6 +539,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                         .getOrderPaymentSchedule());
                     OBDal.getInstance().save(mergedScheduleDetail);
                   }
+                } else if (paymentDetail.getGLItem() != null) {
+                  paymentScheduleDetail.setCanceled(true);
                 } else if (paymentScheduleDetail.getOrderPaymentSchedule() == null
                     && paymentScheduleDetail.getInvoicePaymentSchedule() == null) {
                   // Credit payment
