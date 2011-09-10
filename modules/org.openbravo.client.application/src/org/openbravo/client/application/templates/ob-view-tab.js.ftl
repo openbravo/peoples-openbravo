@@ -132,8 +132,17 @@
 </@compress>
     </#list>],
     
-    <#if tabComponent.childTabs?size &gt; 0>
+    <#if tabComponent.childTabs?has_content>
         hasChildTabs: true,
+        createViewStructure: function() {
+            <#list tabComponent.childTabs as childTabComponent>
+            this.addChildView(
+                isc.OBStandardView.create({
+                    <@createView childTabComponent/>
+                })
+            );
+            </#list>
+        },
     </#if>
     initWidget: function() {
         this.prepareFields();
@@ -141,14 +150,5 @@
         this.viewForm = isc.OBViewForm.create(${tabComponent.viewForm}); 
         this.viewGrid = ${tabComponent.viewGrid};
         this.Super('initWidget', arguments);
-      },
-    createViewStructure: function() {
-        <#list tabComponent.childTabs as childTabComponent>
-        this.addChildView(
-            isc.OBStandardView.create({
-                <@createView childTabComponent/>
-            })
-        );
-        </#list>
     }
 </#macro>

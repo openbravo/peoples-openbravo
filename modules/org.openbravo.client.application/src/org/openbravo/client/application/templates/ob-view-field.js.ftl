@@ -72,7 +72,7 @@ the outputted value is already covered by a default.
             inpColumnName: '${field.inpColumnName?string}',
         </#if>
         <#if field.referencedKeyColumnName != ''>
-            referencedKeyColumnName: '${field.referencedKeyColumnName?string}',
+            refColumnName: '${field.referencedKeyColumnName?string}',
         </#if>
         <#if field.targetEntity != ''>
             targetEntity: '${field.targetEntity?string}',
@@ -123,16 +123,18 @@ the outputted value is already covered by a default.
     <#if field.isGridProperty>
 <@compress single_line=true>
         gridProps: {
-            sortNum: ${field.gridSort?string},
+            sort: ${field.gridSort?string}
             <#if field.autoExpand>
-                autoExpand: ${field.autoExpand?string},
+                , autoExpand: ${field.autoExpand?string}
             </#if>
             <#if field.cellAlign??>
-                cellAlign: '${field.cellAlign?js_string}',
+                , cellAlign: '${field.cellAlign?js_string}'
             </#if>
-            showIf: '${field.showInitiallyInGrid?string}'<#if field.gridEditorFieldProperties != "">,</#if>
+            <#if !field.showInitiallyInGrid>
+                , showIf: '${field.showInitiallyInGrid?string}'
+            </#if>            
             <#if field.gridEditorFieldProperties != "">
-                editorProperties: {
+                , editorProps: {
                   ${field.gridEditorFieldProperties}
                 }
             </#if>

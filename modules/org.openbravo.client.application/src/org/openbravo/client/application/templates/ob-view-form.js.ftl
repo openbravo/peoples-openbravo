@@ -19,13 +19,18 @@
 */
 -->
 {
-    // this this is the view
-    statusBarFields: this.statusBarFields,
+    <#if data.fieldHandler.hasStatusBarFields>
+    <#--
+    // this this is the view    
+    -->
+    statusBarFields: this.statusBarFields<#if data.fieldHandler.hasFieldsWithReadOnlyIf>,</#if>
+    </#if>
     
 <#--
     // except for the fields all other form properties should be added to the formProperties
     // the formProperties are re-used for inline grid editing
 -->
+   <#if data.fieldHandler.hasFieldsWithReadOnlyIf>
     obFormProperties: {
       onFieldChanged: function(form, item, value) {
         var f = form || this,
@@ -38,4 +43,5 @@
         </#list>
       }
     }
+    </#if>
 }

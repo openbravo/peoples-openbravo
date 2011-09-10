@@ -88,6 +88,7 @@ public class OBViewTab extends BaseTemplateComponent {
     final Map<String, Object> dsParameters = new HashMap<String, Object>(getParameters());
     dsParameters.put(DataSourceConstants.DS_ONLY_GENERATE_CREATESTATEMENT, true);
     dsParameters.put(DataSourceConstants.DS_CLASS_NAME, "OBViewDataSource");
+    dsParameters.put(DataSourceConstants.MINIMAL_PROPERTY_OUTPUT, true);
     final Component component = componentProvider.getComponent(dsId, dsParameters);
     return component.generate();
   }

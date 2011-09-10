@@ -78,6 +78,15 @@ public class OBViewFieldHandler {
     this.tab = tab;
   }
 
+  public boolean getHasFieldsWithReadOnlyIf() {
+    for (OBViewFieldDefinition viewField : getFields()) {
+      if (viewField.getReadOnlyIf() != null && viewField.getReadOnlyIf().trim().length() > 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public List<OBViewFieldDefinition> getFields() {
 
     if (fields != null) {
@@ -274,6 +283,10 @@ public class OBViewFieldHandler {
     }
 
     return fields;
+  }
+
+  public boolean getHasStatusBarFields() {
+    return !statusBarFields.isEmpty();
   }
 
   public List<String> getStatusBarFields() {

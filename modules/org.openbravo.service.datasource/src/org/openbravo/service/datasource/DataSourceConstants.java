@@ -25,6 +25,12 @@ package org.openbravo.service.datasource;
  */
 public class DataSourceConstants {
 
+  /**
+   * If passed as a parameter then only date properties are generated as part of the datasource,
+   * because these properties need transformation from string to date and back.
+   */
+  public static final String MINIMAL_PROPERTY_OUTPUT = "minOutputProperty";
+
   public static final String OPERATION_TYPE_PARAM = "_operationType";
   public static final String FETCH_OPERATION = "fetch";
 

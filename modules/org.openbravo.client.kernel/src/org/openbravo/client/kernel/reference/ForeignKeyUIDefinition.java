@@ -57,7 +57,7 @@ public class ForeignKeyUIDefinition extends UIDefinition {
     if (getDisplayFieldName(field, prop) != null) {
       displayField = ", displayField: '" + getDisplayFieldName(field, prop) + "'";
     }
-    return ", length:" + length + displayField + ",foreignKeyField: true"
+    return ", length:" + length + displayField + ",fkField: true"
         + super.getGridFieldProperties(field) + getShowHoverGridFieldSettings(field);
   }
 

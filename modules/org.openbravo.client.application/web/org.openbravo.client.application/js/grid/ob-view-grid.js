@@ -1274,7 +1274,7 @@ isc.OBViewGrid.addProperties({
         click: function(){
           var value;
           // a foreign key field, use the displayfield/identifier
-          if (field.foreignKeyField && field.displayField) {
+          if (field.fkField && field.displayField) {
             value = record[field.displayField];
           } else {
             value = grid.getEditDisplayValue(rowNum, colNum, record);
@@ -1291,7 +1291,7 @@ isc.OBViewGrid.addProperties({
         }
       });
     }
-    if (singleSelected && field.foreignKeyField) {
+    if (singleSelected && field.fkField) {
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_OpenOnTab'),
         click: function(){
@@ -1300,7 +1300,7 @@ isc.OBViewGrid.addProperties({
           if (dotIndex !== -1) {
             fldName = fldName.substring(0, dotIndex);
           }
-          OB.Utilities.openDirectView(sourceWindow, field.referencedKeyColumnName, field.targetEntity, record[fldName]);
+          OB.Utilities.openDirectView(sourceWindow, field.refColumnName, field.targetEntity, record[fldName]);
         }
       });
     }

@@ -51,7 +51,9 @@
     outFields : {
 <@compress single_line=true>
     <#list data.outFields as selectorOutField>
+    <#if selectorOutField.tabFieldName != "">
     '${selectorOutField.outFieldName}': {'fieldName':'${selectorOutField.tabFieldName}', 'suffix': '${selectorOutField.outSuffix}'}<#if selectorOutField_has_next>,</#if>
+    </#if>
     </#list>
 </@compress>
     },
@@ -65,8 +67,12 @@
         this.optionDataSource = ${data.dataSourceJavascript};
         this.Super('init', arguments);
     },
-    whereClause : '${data.whereClause?js_string}',
-    outHiddenInputPrefix: '${data.outHiddenInputPrefix}'
+    <#if data.whereClause != "">
+        whereClause: '${data.whereClause?js_string}',
+    </#if>
+    <#if data.outHiddenInputPrefix != "">
+        outHiddenInputPrefix: '${data.outHiddenInputPrefix}'
+    </#if>
 <#else>
 /* jslint */
 <#list data.hiddenInputs?keys as key>
@@ -109,12 +115,16 @@ sc_${data.columnName} = isc.OBSelectorWidget.create({
     ],
     outFields : {
     <#list data.outFields as selectorOutField>
+    <#if selectorOutField.tabFieldName != "">
     '${selectorOutField.outFieldName}': {'fieldName':'${selectorOutField.tabFieldName}', 'suffix': '${selectorOutField.outSuffix}'}<#if selectorOutField_has_next>,</#if>
+    </#if>
     </#list>
     },
     extraSearchFields: [${data.extraSearchFields}],
     dataSource: ${data.dataSourceJavascript},
-    whereClause : '${data.whereClause?js_string}',
+    <#if data.whereClause != "">
+        whereClause: '${data.whereClause?js_string}',
+    </#if>
     callOut: ${data.callOut},
     title : '${data.title}',
     comboReload: ${data.comboReload}

@@ -25,6 +25,9 @@ import java.util.Map;
 
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.DateDomainType;
+import org.openbravo.base.model.domaintype.DatetimeDomainType;
+import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -161,7 +164,8 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     if (entity == null) {
       dsProperties = super.getDataSourceProperties(parameters);
     } else {
-      dsProperties = getInitialProperties(entity);
+      dsProperties = getInitialProperties(entity,
+          parameters.containsKey(DataSourceConstants.MINIMAL_PROPERTY_OUTPUT));
     }
 
     // now see if there are additional properties, these are often property paths
@@ -203,15 +207,26 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     return dsProperties;
   }
 
-  protected List<DataSourceProperty> getInitialProperties(Entity entity) {
+  protected List<DataSourceProperty> getInitialProperties(Entity entity, boolean minimalProperties) {
     if (entity == null) {
       return Collections.emptyList();
     }
+
     final List<DataSourceProperty> result = new ArrayList<DataSourceProperty>();
     for (Property prop : entity.getProperties()) {
       if (prop.isOneToMany()) {
         continue;
       }
+
+      // if minimal then only generate date properties
+      // and the id itself
+      if (!prop.isId()
+          && minimalProperties
+          && !(prop.getDomainType() instanceof EnumerateDomainType)
+          && !(prop.getDomainType() instanceof DateDomainType || prop.getDomainType() instanceof DatetimeDomainType)) {
+        continue;
+      }
+
       result.add(DataSourceProperty.createFromProperty(prop));
     }
     return result;

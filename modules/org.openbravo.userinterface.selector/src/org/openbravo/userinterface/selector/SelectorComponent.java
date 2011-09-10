@@ -391,6 +391,7 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     final Map<String, Object> dsParameters = new HashMap<String, Object>(getParameters());
     dsParameters.put(DataSourceConstants.DS_ONLY_GENERATE_CREATESTATEMENT, true);
+    dsParameters.put(DataSourceConstants.MINIMAL_PROPERTY_OUTPUT, true);
     final String extraProperties = getAdditionalProperties(getSelector(), false);
     if (extraProperties.length() > 0) {
       dsParameters.put(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER, extraProperties.toString());

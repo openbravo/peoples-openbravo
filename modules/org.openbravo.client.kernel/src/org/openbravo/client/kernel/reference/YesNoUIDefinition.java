@@ -91,8 +91,7 @@ public class YesNoUIDefinition extends UIDefinition {
 
   @Override
   public String getGridFieldProperties(Field field) {
-    return super.getGridFieldProperties(field)
-        + ", width: '*', autoFitWidth: false, formatCellValue: function(value, record, rowNum, colNum, grid){return OB.Utilities.getYesNoDisplayValue(value);}";
+    return super.getGridFieldProperties(field) + ", width: '*', autoFitWidth: false, yesNo: true";
   }
 
   @Override

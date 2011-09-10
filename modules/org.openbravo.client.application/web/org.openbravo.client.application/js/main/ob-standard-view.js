@@ -1876,10 +1876,14 @@ isc.OBStandardView.addProperties({
   
   prepareGridFields: function(fields) {
     var result = [], i, length = fields.length, fld, type,
-      expandFieldNames, hoverFunction;
+      expandFieldNames, hoverFunction, yesNoFormatFunction;
     
     hoverFunction = function(record, value, rowNum, colNum, grid) {
       return grid.getDisplayValue(colNum, record[(this.displayField ? this.displayField : this.name)]);
+    };
+
+    yesNoFormatFunction = function(value, record, rowNum, colNum, grid) { 
+      return OB.Utilities.getYesNoDisplayValue(value);
     };
     
     for (i = 0; i < length; i++) {
@@ -1897,13 +1901,20 @@ isc.OBStandardView.addProperties({
         fld.gridProps.width = isc.OBGrid.getDefaultColumnWidth(fld.gridProps.length);
       }
       
+      // move the showif defined on form level
+      // otherwise it interferes with the grid level
+      if (fld.showIf) {
+        fld.formShowIf = fld.showIf;
+        delete fld.showIf;
+      }
+      
       isc.addProperties(fld, fld.gridProps);
       
       if (!fld.width) {
         fld.width = isc.OBGrid.getDefaultColumnWidth(30);
       }
 
-      // correct somet stuff coming from the form fields
+      // correct some stuff coming from the form fields
       if (!fld.displayed) {
         fld.visible = true;
         fld.alwaysTakeSpace = true;
@@ -1916,9 +1927,13 @@ isc.OBStandardView.addProperties({
       fld.filterOnKeypress = (fld.filterOnKeypress === false ? false : true); 
       fld.escapeHTML = (fld.escapeHTML === false ? false : true);
       fld.prompt = fld.title;
-      fld.editorProperties = isc.addProperties({}, fld, isc.shallowClone(fld.editorProperties));      
+      fld.editorProperties = isc.addProperties({}, fld, isc.shallowClone(fld.editorProps));      
       this.setFieldFormProperties(fld.editorProperties);
 
+      if (fld.yesNo) {
+        fld.formatCellValue = yesNoFormatFunction; 
+      }
+      
       type = isc.SimpleType.getType(fld.type);
       if (type.editorType) {
         fld.editorType = type.editorType;
@@ -1927,8 +1942,9 @@ isc.OBStandardView.addProperties({
         fld.filterEditorType = type.filterEditorType;
       }
       // don't set it if explicitly set to null
-      if (fld.foreignKeyField && !fld.displayField && fld.displayField !== null) {
+      if (fld.fkField) {
         fld.displayField = fld.name + '.' + OB.Constants.IDENTIFIER;
+        fld.valueField = fld.name;
       }
       
       result.push(fld);
@@ -1965,7 +1981,7 @@ isc.OBStandardView.addProperties({
     // sort according to the sortnum
     // that's how they are displayed
     result.sort(function(v1, v2) {
-      var t1 = v1.sortNum, t2 = v2.sortNum;
+      var t1 = v1.sort, t2 = v2.sort;
       if (!t1 && !t2) {
         return 0;
       }

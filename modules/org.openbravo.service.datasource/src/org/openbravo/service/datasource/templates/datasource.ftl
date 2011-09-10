@@ -16,7 +16,6 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-/* jslint */
 <#-- 
 if the createStatement parameter is passed then only create the 
 javascript with the isc.RestDataSource.create statement.
