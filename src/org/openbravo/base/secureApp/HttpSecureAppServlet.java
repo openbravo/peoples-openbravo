@@ -145,7 +145,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       try {
         m_AuthManager = new DefaultAuthenticationManager(this);
       } catch (AuthenticationException e1) {
-        log4j.error("Error trying to initilize Authentication Manager", e1);
+        log4j.error("Error trying to initialize Authentication Manager", e1);
         return;
       }
     }

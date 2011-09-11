@@ -91,13 +91,18 @@ public class LoginHandler extends HttpBaseServlet {
           AuthenticationManager authManager;
           String authClass = OBPropertiesProvider.getInstance().getOpenbravoProperties()
               .getProperty("authentication.class", DEFAULT_AUTH_CLASS);
-
+          if (authClass == null || authClass.equals("")) {
+            // If not defined, load default
+            authClass = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
+          }
           try {
             authManager = (AuthenticationManager) OBClassLoader.getInstance().loadClass(authClass)
                 .newInstance();
             authManager.init(this);
           } catch (Exception e) {
-            log4j.error("Error trying to instantiate auth-manager class: " + e.getMessage(), e);
+            log4j
+                .error("Defined authentication manager cannot be loaded. Verify the 'authentication.class' entry in Openbravo.properties");
+
             authManager = new DefaultAuthenticationManager(this);
           }
 
