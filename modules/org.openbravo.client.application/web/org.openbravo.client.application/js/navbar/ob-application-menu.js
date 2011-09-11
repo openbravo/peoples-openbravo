@@ -260,7 +260,7 @@ isc.OBApplicationMenuButton.addProperties({
   // as arguments, note that the function does not expect an array as this
   // did not seem to be supported by selenium
   getSCLocator : function() {
-    var index = 0, path = [], length;
+    var index = 0, path = [], length = arguments.length;
     for (; index < length; index++) {
       path[index] = arguments[index];
     }
