@@ -805,15 +805,19 @@ OB.ViewFormProperties = {
     var assignClassicValue;
     var isDate, i, valueMap = {}, oldValue, field = this.getFieldFromColumnName(columnName), entries = columnValue.entries;
     // not a field on the form, probably a datasource field
-    var prop = this.view.getPropertyFromDBColumnName(columnName);
+    var propDef = this.view.getPropertyDefinitionFromDbColumnName(columnName);
+    var prop = propDef ? propDef.property : null;
     var id, identifier;
     if (!field) {
-      if (!prop) {
+      if (!propDef) {
         return;
       }
       field = this.getDataSource().getField(prop);
       if (!field) {
-        return;
+        field = {
+            name: propDef.property,
+            type: propDef.type
+        };
       }
     }
     
@@ -968,8 +972,6 @@ OB.ViewFormProperties = {
       editValues[prop] = null;
     }
     
-
-
     // store the textualvalue so that it is correctly send back to the server
     if (field) {
       // Adjust to formatting if exists value and classicValue.

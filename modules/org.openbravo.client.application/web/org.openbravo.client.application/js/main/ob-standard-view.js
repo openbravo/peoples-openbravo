@@ -1607,6 +1607,17 @@ isc.OBStandardView.addProperties({
     return null;
   },
   
+  getPropertyDefinitionFromDbColumnName: function(columnName){
+    var length = this.propertyToColumns.length, i;
+    for (i = 0; i < length; i++) {
+      var propDef = this.propertyToColumns[i];
+      if (propDef.dbColumn === columnName) {
+        return propDef;
+      }
+    }
+    return null;
+  },
+  
   getPropertyFromDBColumnName: function(columnName){
     var length = this.propertyToColumns.length, i;
     for (i = 0; i < length; i++) {
