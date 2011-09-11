@@ -129,7 +129,7 @@ public abstract class UIDefinition {
    */
   public String getFieldProperties(Field field) {
     if (field != null && field.isDisplayed() != null && !field.isDisplayed()) {
-      return ""; // {width: ''}"; // Not displayed fields use HiddenItem
+      return ""; // Not displayed fields use HiddenItem
     }
     return "";
   }
