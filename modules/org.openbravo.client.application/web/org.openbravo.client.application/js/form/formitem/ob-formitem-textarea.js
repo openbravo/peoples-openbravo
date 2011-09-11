@@ -47,5 +47,10 @@ isc.OBPopUpTextAreaItem.addProperties({
 // hack until this gets answered:
 // http://forums.smartclient.com/showthread.php?p=61621#post61621
 // to solve this: https://issues.openbravo.com/view.php?id=16327
-isc.ListGrid.getPrototype().$309.OBPopUpTextAreaItem = true;
+if (isc.ListGrid.getPrototype()._popUpTextAreaEditorTypes) {
+  // handle case when loading source code
+  isc.ListGrid.getPrototype()._popUpTextAreaEditorTypes.OBPopUpTextAreaItem = true;
+} else if (isc.ListGrid.getPrototype().$309) {
+  isc.ListGrid.getPrototype().$309.OBPopUpTextAreaItem = true;  
+}
 
