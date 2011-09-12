@@ -18,6 +18,7 @@
  */
 package org.openbravo.userinterface.selector;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -91,8 +92,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       // Applying default expression for selector fields when is not a selector window request
       if (!"Window".equals(requestType)) {
         applyDefaultExpressions(sel, parameters, sfc, request);
+        verifyPropertyTypes(sel, parameters);
       }
-      verifyPropertyTypes(sel, parameters);
 
     } catch (Exception e) {
       log.error("Error executing filter: " + e.getMessage(), e);
@@ -110,6 +111,9 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
    */
   private void verifyPropertyTypes(Selector sel, Map<String, String> parameters) {
     String value = parameters.get("criteria");
+    if (value == null) {
+      return;
+    }
     String filteredCriteria = "";
     String fieldName;
     Entity entity = ModelProvider.getInstance().getEntityByTableName(
@@ -131,9 +135,6 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
           Property fProp = null;
           if (fieldNameSplit.length == 1) {
             fProp = entity.getProperty(fieldName);
-          } else if (fieldNameSplit[(fieldNameSplit.length - 1)].equals("_identifier")) {
-            filteredCriteria += jSONObject.toString() + JsonConstants.IN_PARAMETER_SEPARATOR;
-            continue;
           } else {
             for (int i = 0; i < fieldNameSplit.length; i++) {
               fProp = cEntity.getProperty(fieldNameSplit[i]);
@@ -141,12 +142,20 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
                 cEntity = fProp.getReferencedProperty().getEntity();
               }
             }
+          }
 
-            if (fProp.isNumericType() || fProp.isDate()) {
-              log.warn("Bad type in fieldname" + fieldName);
-            } else {
+          if (fProp.isNumericType() || fProp.isDate()) {
+            try {
+              jSONObject.put("operator", "equals");
+              BigDecimal valueJSONObject = new BigDecimal(jSONObject.get("value").toString());
+              jSONObject.put("value", valueJSONObject);
               filteredCriteria += jSONObject.toString() + JsonConstants.IN_PARAMETER_SEPARATOR;
+              log.warn("Bad type in fieldname" + fieldName);
+            } catch (Exception ex) {
+              // do nothing
             }
+          } else {
+            filteredCriteria += jSONObject.toString() + JsonConstants.IN_PARAMETER_SEPARATOR;
           }
         }
         parameters.put("criteria", filteredCriteria.substring(0, (filteredCriteria.length() - 5)));
