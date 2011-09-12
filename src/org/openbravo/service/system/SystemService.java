@@ -67,7 +67,7 @@ import org.quartz.SchedulerException;
  */
 public class SystemService implements OBSingleton {
   private static SystemService instance;
-  protected Logger log4j = Logger.getLogger(this.getClass());
+  private static final Logger log4j = Logger.getLogger(SystemService.class);
 
   public static synchronized SystemService getInstance() {
     if (instance == null) {
@@ -307,8 +307,7 @@ public class SystemService implements OBSingleton {
             && OBScheduler.getInstance().getScheduler().isStarted())
           OBScheduler.getInstance().getScheduler().standby();
       } catch (Exception e) {
-        log4j.warn("Could not shutdown scheduler", e);
-        // We will not log an exception if the scheduler complains. The user shouldn't notice this
+        throw new RuntimeException("Could not shutdown scheduler", e);
       }
       OBDal.getInstance().getConnection().commit();
       disableConstraints(platform);
@@ -322,13 +321,8 @@ public class SystemService implements OBSingleton {
       List<Entity> entities = ModelProvider.getInstance().getModel();
       for (Entity entity : entities) {
         if ((entity.isClientEnabled() || entity.getName().equals("ADClient")) && !entity.isView()) {
-          try {
-            final String sql;
-            sql = "delete from " + entity.getTableName() + " where ad_client_id=?";
-            sqlCommands.add(sql);
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
+          final String sql = "delete from " + entity.getTableName() + " where ad_client_id=?";
+          sqlCommands.add(sql);
         }
       }
       for (String command : sqlCommands) {
@@ -353,7 +347,8 @@ public class SystemService implements OBSingleton {
       } finally {
         platform.returnConnection(con2);
       }
-      log4j.info("Delete client took " + (System.currentTimeMillis() - t1) + " miliseconds");
+      log4j.info("Deletion of client " + clientId + " took " + (System.currentTimeMillis() - t1)
+          + " miliseconds");
     } catch (Exception e) {
       log4j.error("exception when deleting the client: ", e);
     } finally {
@@ -376,7 +371,7 @@ public class SystemService implements OBSingleton {
           .prepareStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB70'");
       ps2.executeUpdate();
     } catch (Exception e) {
-      log4j.error("Couldn't reset the safe mode", e);
+      throw new RuntimeException("Couldn't reset the safe mode", e);
     }
   }
 
@@ -390,7 +385,7 @@ public class SystemService implements OBSingleton {
           .prepareStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB80'");
       ps2.executeUpdate();
     } catch (Exception e) {
-      log4j.error("Couldn't destroy concurrent sessions", e);
+      throw new RuntimeException("Couldn't destroy concurrent sessions", e);
     }
   }
 
