@@ -217,6 +217,8 @@ public class DataSourceServlet extends BaseKernelServlet {
           if (getDataSource(request) instanceof DefaultDataSourceService) {
             QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters,
                 getDataSource(request).getEntity());
+            // when exporting a OB grid, the isActive filter should not be set
+            parameters.put(JsonConstants.NO_ACTIVE_FILTER, "true");
             ((DefaultDataSourceService) getDataSource(request)).fetch(parameters, writer);
           } else {
             String result = getDataSource(request).fetch(parameters);
