@@ -431,6 +431,7 @@ public class DatabaseValidator implements SystemValidator {
     for (Column column : adTable.getADColumnList()) {
       final boolean checkColumn = moduleId == null || (column.getModule().getId().equals(moduleId));
       if (!checkColumn) {
+        dbColumnsByName.remove(column.getDBColumnName().toUpperCase());
         continue;
       }
       final org.apache.ddlutils.model.Column dbColumn = dbColumnsByName.get(column
