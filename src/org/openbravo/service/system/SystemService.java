@@ -19,10 +19,22 @@
 
 package org.openbravo.service.system;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+import java.util.Vector;
 
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.ddlutils.Platform;
+import org.apache.ddlutils.PlatformFactory;
 import org.apache.ddlutils.model.Database;
+import org.apache.ddlutils.platform.ExcludeFilter;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
@@ -30,17 +42,23 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.ddlutils.task.DatabaseUtils;
+import org.openbravo.ddlutils.util.DBSMOBUtil;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
+import org.quartz.SchedulerException;
 
 /**
  * Provides utility like services.
@@ -49,6 +67,7 @@ import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
  */
 public class SystemService implements OBSingleton {
   private static SystemService instance;
+  protected Logger log4j = Logger.getLogger(this.getClass());
 
   public static synchronized SystemService getInstance() {
     if (instance == null) {
@@ -267,6 +286,190 @@ public class SystemService implements OBSingleton {
         if (!p.isPrimitive() && !p.isOneToMany() && !p.isMandatory()) {
           bob.set(p.getName(), null);
         }
+      }
+    }
+  }
+
+  /**
+   * This process deletes a client from the database. During its execution, the Scheduler is
+   * stopped, and all sessions active for other users are cancelled
+   * 
+   * @param client
+   */
+  public void deleteClient(Client client) {
+    try {
+      long t1 = System.currentTimeMillis();
+      Platform platform = getPlatform();
+      Connection con = OBDal.getInstance().getConnection();
+      killConnectionsAndSafeMode(con);
+      try {
+        if (OBScheduler.getInstance() != null && OBScheduler.getInstance().getScheduler() != null
+            && OBScheduler.getInstance().getScheduler().isStarted())
+          OBScheduler.getInstance().getScheduler().standby();
+      } catch (Exception e) {
+        log4j.warn("Could not shutdown scheduler", e);
+        // We will not log an exception if the scheduler complains. The user shouldn't notice this
+      }
+      OBDal.getInstance().getConnection().commit();
+      disableConstraints(platform);
+      OBContext.setAdminMode(false);
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getConnection().commit();
+      String clientId = (String) DalUtil.getId(client);
+
+      List<String> sqlCommands = new ArrayList<String>();
+
+      List<Entity> entities = ModelProvider.getInstance().getModel();
+      for (Entity entity : entities) {
+        if ((entity.isClientEnabled() || entity.getName().equals("ADClient")) && !entity.isView()) {
+          try {
+            final String sql;
+            sql = "delete from " + entity.getTableName() + " where ad_client_id=?";
+            sqlCommands.add(sql);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+      }
+      for (String command : sqlCommands) {
+        PreparedStatement ps = con.prepareStatement(command);
+        ps.setString(1, clientId);
+        ps.executeUpdate();
+      }
+      PreparedStatement stpref = con
+          .prepareStatement("DELETE FROM ad_preference p where visibleat_client_id=?");
+      stpref.setString(1, clientId);
+      stpref.executeUpdate();
+      PreparedStatement stpers = con
+          .prepareStatement("DELETE FROM obuiapp_uipersonalization p where visibleat_client_id=?");
+      stpers.setString(1, clientId);
+      stpers.executeUpdate();
+      con.commit();
+      OBDal.getInstance().commitAndClose();
+      enableConstraints(platform);
+      Connection con2 = platform.borrowConnection();
+      try {
+        resetSafeMode(con2);
+      } finally {
+        platform.returnConnection(con2);
+      }
+      log4j.info("Delete client took " + (System.currentTimeMillis() - t1) + " miliseconds");
+    } catch (Exception e) {
+      log4j.error("exception when deleting the client: ", e);
+    } finally {
+      OBContext.restorePreviousMode();
+      // We restart the scheduler
+      try {
+        if (OBScheduler.getInstance() != null && OBScheduler.getInstance().getScheduler() != null) {
+          OBScheduler.getInstance().getScheduler().start();
+        }
+      } catch (SchedulerException e) {
+        log4j.error("There was an error while restarting the scheduler", e);
+      }
+    }
+  }
+
+  private void resetSafeMode(Connection con) {
+
+    try {
+      PreparedStatement ps2 = con
+          .prepareStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB70'");
+      ps2.executeUpdate();
+    } catch (Exception e) {
+      log4j.error("Couldn't reset the safe mode", e);
+    }
+  }
+
+  private void killConnectionsAndSafeMode(Connection con) {
+    try {
+      PreparedStatement updateSession = con
+          .prepareStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>?");
+      updateSession.setString(1, OBContext.getOBContext().getUser().getId());
+      updateSession.executeUpdate();
+      PreparedStatement ps2 = con
+          .prepareStatement("UPDATE AD_SYSTEM_INFO SET SYSTEM_STATUS='RB80'");
+      ps2.executeUpdate();
+    } catch (Exception e) {
+      log4j.error("Couldn't destroy concurrent sessions", e);
+    }
+  }
+
+  /**
+   * Returns a dbsourcemanager Platform object
+   * 
+   * @return
+   */
+  public Platform getPlatform() {
+    Properties obProp = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+    // We disable check constraints before inserting reference data
+    String driver = obProp.getProperty("bbdd.driver");
+    String url = obProp.getProperty("bbdd.rdbms").equals("POSTGRE") ? obProp
+        .getProperty("bbdd.url") + "/" + obProp.getProperty("bbdd.sid") : obProp
+        .getProperty("bbdd.url");
+    String user = obProp.getProperty("bbdd.user");
+    String password = obProp.getProperty("bbdd.password");
+    BasicDataSource datasource = DBSMOBUtil.getDataSource(driver, url, user, password);
+    Platform platform = PlatformFactory.createNewPlatformInstance(datasource);
+    return platform;
+  }
+
+  private void disableConstraints(Platform platform) throws FileNotFoundException, IOException {
+    log4j.info("Disabling constraints...");
+    ExcludeFilter excludeFilter = DBSMOBUtil.getInstance().getExcludeFilter(
+        new File(OBPropertiesProvider.getInstance().getOpenbravoProperties()
+            .getProperty("source.path")));
+    Database xmlModel = platform.loadModelFromDatabase(excludeFilter);
+    Connection con = null;
+    try {
+      con = platform.borrowConnection();
+      log4j.info("   Disabling foreign keys");
+      platform.disableAllFK(con, xmlModel, false);
+      log4j.info("   Disabling triggers");
+      platform.disableAllTriggers(con, xmlModel, false);
+      log4j.info("   Disabling check constraints");
+      platform.disableCheckConstraints(con, xmlModel, null);
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      if (con != null) {
+        platform.returnConnection(con);
+      }
+    }
+  }
+
+  private void enableConstraints(Platform platform) {
+    Properties obProp = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+    String obDir = obProp.getProperty("source.path");
+
+    Vector<File> dirs = new Vector<File>();
+    dirs.add(new File(obDir, "/src-db/database/model/"));
+    File modules = new File(obDir, "/modules");
+
+    for (int j = 0; j < modules.listFiles().length; j++) {
+      final File dirF = new File(modules.listFiles()[j], "/src-db/database/model/");
+      if (dirF.exists()) {
+        dirs.add(dirF);
+      }
+    }
+    File[] fileArray = new File[dirs.size()];
+    for (int i = 0; i < dirs.size(); i++) {
+      fileArray[i] = dirs.get(i);
+    }
+    Database xmlModel = DatabaseUtils.readDatabase(fileArray);
+    platform.deleteAllInvalidConstraintRows(xmlModel, false);
+    log4j.info("Enabling constraints...");
+    Connection con = null;
+    try {
+      con = platform.borrowConnection();
+      log4j.info("   Enabling check constraints");
+      platform.enableCheckConstraints(con, xmlModel, null);
+      log4j.info("   Enabling triggers");
+      platform.enableAllTriggers(con, xmlModel, false);
+      log4j.info("   Enabling foreign keys");
+      platform.enableAllFK(con, xmlModel, false);
+    } finally {
+      if (con != null) {
+        platform.returnConnection(con);
       }
     }
   }
