@@ -150,7 +150,6 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
               BigDecimal valueJSONObject = new BigDecimal(jSONObject.get("value").toString());
               jSONObject.put("value", valueJSONObject);
               filteredCriteria += jSONObject.toString() + JsonConstants.IN_PARAMETER_SEPARATOR;
-              log.warn("Bad type in fieldname" + fieldName);
             } catch (Exception ex) {
               // do nothing
             }
