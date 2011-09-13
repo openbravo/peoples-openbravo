@@ -323,6 +323,10 @@ public class AdvancedQueryBuilder {
 
     String rightClause = buildRightClause(property, operator, value);
 
+    if (hqlOperator.equals("in")) {
+      rightClause = "(" + rightClause + ")";
+    }
+
     if (isNot(operator)) {
       return "not(" + leftClause + " " + hqlOperator + " " + rightClause + ")";
     } else {
@@ -624,6 +628,10 @@ public class AdvancedQueryBuilder {
   private String getHqlOperator(String operator) {
     if (operator.equals(OPERATOR_EQUALS)) {
       return "=";
+    } else if (operator.equals(OPERATOR_INSET)) {
+      return "in";
+    } else if (operator.equals(OPERATOR_NOTINSET)) {
+      return "in";
     } else if (operator.equals(OPERATOR_NOTEQUAL)) {
       return "!=";
     } else if (operator.equals(OPERATOR_IEQUALS)) {
