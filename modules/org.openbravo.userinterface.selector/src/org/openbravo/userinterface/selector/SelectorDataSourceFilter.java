@@ -118,12 +118,13 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
     String fieldName;
     Entity entity = ModelProvider.getInstance().getEntityByTableName(
         sel.getTable().getDBTableName());
-    Entity cEntity = entity;
+    Entity cEntity = null;
     try {
       OBContext.setAdminMode(true);
       if (value.contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
         final String[] separatedValues = value.split(JsonConstants.IN_PARAMETER_SEPARATOR);
         for (String separatedValue : separatedValues) {
+	  cEntity = entity;
           JSONObject jSONObject = new JSONObject(separatedValue);
           fieldName = (String) jSONObject.get("fieldName");
           if (fieldName.contains("_dummy") || fieldName.contains("_identifier")
