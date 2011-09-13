@@ -241,6 +241,35 @@ isc.OBGrid.addProperties({
         }
         return ret;
       },
+
+      // overridden for:
+      // https://issues.openbravo.com/view.php?id=18509
+      editorChanged : function (item) {
+        var prop, same, opDefs, val = item.getElementValue(); 
+          actOnKeypress = item.actOnKeypress === true ? item.actOnKeypress : this.actOnKeypress;                           
+        if (this.sourceWidget.allowFilterExpressions && val && actOnKeypress) {
+          // now check if the item element value is only
+          // an operator, if so, go away
+          opDefs = isc.DataSource.getSearchOperators();
+          for (prop in opDefs) {
+            if (opDefs.hasOwnProperty(prop)) {
+
+              // let null and not null fall through
+              // as they should be filtered
+              if (prop === 'isNull' || prop === 'notNull') {
+                continue;
+              }
+              
+              same = opDefs[prop].symbol && 
+                (opDefs[prop].symbol === val || opDefs[prop].symbol.startsWith(val));
+              if (same) {
+                return;
+              }
+            }
+          }
+        }
+        return this.Super('editorChanged', arguments);
+      },
       
       // repair that filter criteria on fk fields can be 
       // on the identifier instead of the field itself.
