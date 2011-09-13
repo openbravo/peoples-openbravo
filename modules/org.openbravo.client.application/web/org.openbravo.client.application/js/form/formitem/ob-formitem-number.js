@@ -40,18 +40,6 @@ isc.OBNumberItem.addProperties({
     
     this.setKeyPressFilter(this.keyPressFilterNumeric);
     this.typeInstance = SimpleType.getType(this.type);
-    var newValidators = [], i;
-    // get rid of the isFloat validators, as we have 
-    // specific validation based on the format definition
-    for (i = 0; i < length; i++) {
-      if (this.validators[i].type !== 'isFloat') {
-        newValidators.push(this.validators[i]);
-      }
-      if (this.validators[i].type === 'custom') {
-        this.valueValidator = this.validators[i];
-      }
-    }
-    this.validators = newValidators;
     return this.Super('init', arguments);
   },
   
@@ -442,24 +430,10 @@ isc.OBNumberItem.addProperties({
   
   blur: function(){
     if (this.doBlurLogic) {
-      var value = this.getElementValue().toString();
-      var expressionValue;
-      var obj = this;
-      if (this.allowMath && value.indexOf('=') === 0) {
-        expressionValue = this.evalMathExpression(value);
-        if (expressionValue !== 'error') {
-          expressionValue = parseFloat(expressionValue, 10);
-        } else {
-          setTimeout(function() {
-            obj.setElementValue(value);
-          }, 50);
-          return this.Super('blur', arguments);
-        }
-        this.setValue(expressionValue);
-        this.validate();
-      }
-  
+      this.validate();  
+
       value = this.getValue();
+      
       // first check if the number is valid
       if (!isc.isA.String(value)) {
         // format the value displayed
@@ -467,33 +441,50 @@ isc.OBNumberItem.addProperties({
       }
     }
     return this.Super('blur', arguments);
-  },
-  
-  validators: [{
-    type: 'custom',
-    condition: function(item, validator, value){
-      if (!item.typeInstance) {
-        // this happens when data is validated which is returned from the system
-        // and added to the grid
-        return true;
-      }
-      var type = item.typeInstance;
-      this.resultingValue = null;
-      
-      
-      // return a formatted value, if it was valid
-      if (isc.isA.String(value)) {
-        if (OB.Utilities.Number.IsValidValueString(type, value)) {
-          this.resultingValue = OB.Utilities.Number.OBMaskedToJS(value, type.decSeparator, type.groupSeparator);
-          return true;
-        } else {
-          return false;
-        }
-      }
-      return OB.Utilities.Number.IsValidValueString(type, item.getElementValue());
-    }
-  }]
+  }
 });
+
+// Use our custom validator for float and integers
+isc.OBNumberItem.validateCondition = function(item, validator, value){
+  var ret, type;
+  
+  if (!item.typeInstance) {
+    // this happens when data is validated which is returned from the system
+    // and added to the grid
+    return true;
+  }
+  
+  if (item.allowMath && isc.isA.String(value) && value.indexOf('=') === 0) {
+    value = String('') + item.evalMathExpression(value);
+  }
+  
+  type = item.typeInstance;
+  validator.resultingValue = null;
+
+  // return a formatted value, if it was valid
+  if (isc.isA.String(value)) {
+    if (OB.Utilities.Number.IsValidValueString(type, value)) {
+      validator.resultingValue = OB.Utilities.Number.OBMaskedToJS(value, type.decSeparator, type.groupSeparator);
+      item.storeValue(validator.resultingValue);
+      if (item.form && item.form.setTextualValue) {
+        item.form.setTextualValue(item.name, value, item.typeInstance);
+      }
+      return true;
+    } else {
+      // don't loose illegal values
+      validator.resultingValue = item.getElementValue();
+      return false;
+    }
+  } else if (isc.isA.Number(value)) {
+    return true;
+  }
+  // don't loose illegal values
+  validator.resultingValue = item.getElementValue();
+  return false;
+};
+
+Validator.addValidator('isFloat', isc.OBNumberItem.validateCondition);
+Validator.addValidator('isInteger', isc.OBNumberItem.validateCondition);
 
 isc.ClassFactory.defineClass('OBNumberFilterItem', OBNumberItem);
 
@@ -501,7 +492,7 @@ isc.OBNumberFilterItem.addProperties({
   allowExpressions: true,
   validateOnExit: false,
   validateOnChange: false,
-  keyPressFilterNumeric: '[0-9.,-=<>!#]',
+  keyPressFilterNumeric: '[0-9.,-=<>!#orand ]',
   doBlurLogic: false,
   operator: 'equals',
   validOperators: ['equals', 'lessThan', 'greaterThan',

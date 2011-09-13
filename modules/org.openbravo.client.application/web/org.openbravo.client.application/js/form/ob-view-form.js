@@ -1158,8 +1158,7 @@ OB.ViewFormProperties = {
     
     // store the value of the current focus item
     if (this.getFocusItem() && this.saveFocusItemChanged !== this.getFocusItem()) {
-      this.getFocusItem().updateValue();
-      this.handleItemChange(this.getFocusItem());
+      this.getFocusItem().blur(this, this.getFocusItem());
       // prevent infinite loops
       this.saveFocusItemChanged = this.getFocusItem();
     } else {
