@@ -91,7 +91,8 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       }
       final OBViewField viewField = (OBViewField) localField;
       final Long recordSortno = viewField.getField().getRecordSortNo();
-      if (viewField.isShowInitiallyInGrid() && recordSortno != null && recordSortno < lowestSortno) {
+      if (viewField.getLength() < 2000 && viewField.isShowInitiallyInGrid() && recordSortno != null
+          && recordSortno < lowestSortno) {
         sortByField = viewField;
       }
     }
