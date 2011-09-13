@@ -403,8 +403,13 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
         .getFinancialAccountCurrency(strFinancialAccountId);
     if (financialAccountCurrency != null) {
       xmlDocument.setParameter("financialAccountCurrencyId", financialAccountCurrency.getId());
-      xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
-          .getStandardPrecision().toString());
+      try {
+        OBContext.setAdminMode(true);
+        xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
+            .getStandardPrecision().toString());
+      } finally {
+        OBContext.restorePreviousMode();
+      }
     }
 
     String exchangeRate = "1";
