@@ -23,6 +23,7 @@ isc.ClassFactory.defineClass('OBYesNoItem', SelectItem);
 
 isc.OBYesNoItem.addProperties({
   operator: 'equals',
+  
   mapValueToDisplay: function(value, a, b, c){
     return OB.Utilities.getYesNoDisplayValue(value);
   },
