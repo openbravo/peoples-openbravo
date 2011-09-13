@@ -178,7 +178,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       String strReferenceNo = vars.getStringParameter("inpReferenceNo", "");
       String paymentCurrencyId = vars.getRequiredStringParameter("inpCurrencyId");
       BigDecimal exchangeRate = new BigDecimal(vars.getRequiredNumericParameter("inpExchangeRate",
-          "1.0"));
+          "1"));
       BigDecimal convertedAmount = new BigDecimal(vars.getRequiredNumericParameter(
           "inpActualConverted", strPaymentAmount));
       OBError message = null;
@@ -407,11 +407,12 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
           .getStandardPrecision().toString());
     }
 
-    String exchangeRate = "1.0";
+    String exchangeRate = "1";
     if (financialAccountCurrency != null && !financialAccountCurrency.equals(paymentCurrency)) {
       exchangeRate = findExchangeRate(paymentCurrency, financialAccountCurrency, new Date(),
           financialAccount.getOrganization(), conversionRatePrecision);
     }
+
     xmlDocument.setParameter("exchangeRate", exchangeRate);
 
     // Payment Method combobox
@@ -604,7 +605,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
 
   private String findExchangeRate(Currency paymentCurrency, Currency financialAccountCurrency,
       Date paymentDate, Organization organization, int conversionRatePrecision) {
-    String exchangeRate = "1.0";
+    String exchangeRate = "1";
     if (financialAccountCurrency != null && !financialAccountCurrency.equals(paymentCurrency)) {
       final ConversionRate conversionRate = FIN_Utility.getConversionRate(paymentCurrency,
           financialAccountCurrency, paymentDate, organization);

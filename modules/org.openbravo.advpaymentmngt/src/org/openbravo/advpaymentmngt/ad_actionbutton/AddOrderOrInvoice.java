@@ -126,7 +126,7 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       String strDocumentType = vars.getStringParameter("inpDocumentType", "");
       String paymentCurrencyId = vars.getRequiredStringParameter("inpCurrencyId");
       BigDecimal exchangeRate = new BigDecimal(vars.getRequiredNumericParameter("inpExchangeRate",
-          "1.0"));
+          "1"));
       BigDecimal convertedAmount = new BigDecimal(vars.getRequiredNumericParameter(
           "inpActualConverted", strPaymentAmount));
       OBError message = null;
