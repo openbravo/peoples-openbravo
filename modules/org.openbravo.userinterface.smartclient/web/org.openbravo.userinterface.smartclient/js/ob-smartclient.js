@@ -74,7 +74,9 @@ isc.Layout.addProperties({
       toDestroy = [toDestroy];
     }
     for (i = 0; i < toDestroy.length; i++) {
-      toDestroy[i].destroy();
+      if (toDestroy[i] && toDestroy[i].destroy) {
+        toDestroy[i].destroy();
+      }
     }
     this.removeMembers(toDestroy);
   }
