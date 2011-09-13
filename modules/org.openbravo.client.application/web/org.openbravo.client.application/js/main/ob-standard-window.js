@@ -639,9 +639,5 @@ isc.OBStandardWindow.addProperties({
       }
     }
     OB.PropertyStore.set('OBUIAPP_GridConfiguration', result, this.windowId);
-  },
-  
-  applyViewDefinition: function(viewDefinition) {
-    alert('Applying view definition ' + viewDefinition);
   }
 });
