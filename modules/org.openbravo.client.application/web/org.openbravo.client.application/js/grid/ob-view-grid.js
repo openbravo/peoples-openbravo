@@ -428,8 +428,9 @@ isc.OBViewGrid.addProperties({
     return '(' + isc.Comm.serialize(state,false) + ')';
   },
   
-  setViewState : function (state) {
-    var localState = this.evalViewState(state, 'viewState');
+  setViewState: function (state) {
+    var i, length, 
+      localState = this.evalViewState(state, 'viewState');
     
     // strange case, sometimes need to call twice
     if (isc.isA.String(localState)) {
@@ -446,6 +447,15 @@ isc.OBViewGrid.addProperties({
     }      
     if (localState.filter) {
       this.setCriteria(localState.filter);
+      if (this.filterEditor) {
+        // update the internal value also, this means that it
+        // get retained when showing the grid for the first
+        // time
+        length = this.filterEditor.getFields().length;
+        for (i = 0; i < length; i++) {
+          this.filterEditor.storeUpdatedEditorValue(false, i);
+        }
+      }
     }
     
     this.Super('setViewState', arguments);
