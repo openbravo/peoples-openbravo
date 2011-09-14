@@ -301,7 +301,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             }
           }
 
-          final VariablesSecureApp vars = new VariablesSecureApp(request);
+          final VariablesSecureApp vars = new VariablesSecureApp(request, false);
           if (LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strIsRTL,
               strRole, strClient, strOrg, strWarehouse)) {
             readProperties(vars, globalParameters.getOpenbravoPropertiesPath());

@@ -54,7 +54,7 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
   protected String doAuthenticate(HttpServletRequest request, HttpServletResponse response)
       throws AuthenticationException, ServletException, IOException {
 
-    final VariablesSecureApp vars = new VariablesSecureApp(request);
+    final VariablesSecureApp vars = new VariablesSecureApp(request, false);
     final String sUserId = (String) request.getSession().getAttribute("#Authenticated_user");
     final String strAjax = vars.getStringParameter("IsAjaxCall");
 
