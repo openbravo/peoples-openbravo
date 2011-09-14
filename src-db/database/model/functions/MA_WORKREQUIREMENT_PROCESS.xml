@@ -42,6 +42,8 @@
     v_Multiplier NUMBER;
     v_Processed CHAR;
     v_LaunchDate DATE;
+    v_Startdate DATE;
+    v_Enddate DATE;
     -- WRPhases to process
     Cur_WRPhase RECORD;
     --  Sequence Products to process
@@ -88,13 +90,17 @@
       Processed,
       ExplodePhases,
       LaunchDate,
-      AD_Org_ID
+      AD_Org_ID,
+      Startdate,
+      Enddate
     INTO v_ProcessPlan_ID,
       v_Quantity,
       v_Processed,
       v_ExplodePhases,
       v_LaunchDate,
-      v_Org_ID
+      v_Org_ID,
+      v_Startdate,
+      v_Enddate
     FROM MA_WorkRequirement
     WHERE MA_WorkRequirement_ID=v_Record_ID;
     --Check if it hasn't already been processed
@@ -123,7 +129,9 @@
             s.SeqNo,
             s.NoQty,
             s.GroupUse,
-            s.Outsourced
+            s.Outsourced,
+            s.Estimatedtime,
+            s.Usedmaterial
           FROM MA_Sequence s,
             MA_ProcessPlan_Version p
           WHERE s.MA_PROCESSPLAN_VERSION_ID=p.MA_PROCESSPLAN_VERSION_ID
@@ -144,7 +152,8 @@
               AD_Org_ID, Isactive, Created, Createdby,
               Updated, Updatedby, MA_Process_ID, CostCenterUse,
               Preptime, Quantity, Donequantity,
-              SeqNo, Closed, NoQty, GroupUse, Outsourced
+              SeqNo, Closed, NoQty, GroupUse, Outsourced,
+              Startdate, Enddate, Estimatedtime, Usedmaterial
             )
             VALUES
             (
@@ -152,7 +161,8 @@
               v_Org_ID, 'Y', now(), v_User_ID,
               now(), v_User_ID, Cur_Sequence.MA_Process_ID, Cur_Sequence.CostCenterUse,
               Cur_Sequence.Preptime, v_Multiplier*v_Quantity, 0,
-              Cur_Sequence.SeqNo, 'N', Cur_Sequence.NoQty, Cur_Sequence.GroupUse, Cur_Sequence.Outsourced
+              Cur_Sequence.SeqNo, 'N', Cur_Sequence.NoQty, Cur_Sequence.GroupUse, Cur_Sequence.Outsourced,
+              v_Startdate, v_Enddate, v_Multiplier*v_Quantity*Cur_Sequence.Estimatedtime, Cur_Sequence.Usedmaterial
             )
             ;
           FOR Cur_SeqProduct IN

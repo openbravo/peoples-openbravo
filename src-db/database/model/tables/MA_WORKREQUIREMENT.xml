@@ -101,6 +101,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CREATEWORKREQUIREMENT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAWORKREQUIREMENT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>

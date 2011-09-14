@@ -492,7 +492,7 @@
 
         IF (v_Calculated = 'Y') THEN
           IF (v_ByDefault = 'N') THEN
-            SELECT TO_NUMBER((M_Production.ENDTIME - M_Production.STARTTIME)*24) INTO v_CostCenterUse
+            SELECT TO_NUMBER((M_ProductionPlan.ENDTIME - M_ProductionPlan.STARTTIME)*24) INTO v_CostCenterUse
             FROM M_Production, M_ProductionPlan
             WHERE M_Production.M_Production_ID = M_ProductionPlan.M_PRODUCTION_ID
               AND M_ProductionPlan.M_PRODUCTIONPLAN_ID = v_Record_ID;

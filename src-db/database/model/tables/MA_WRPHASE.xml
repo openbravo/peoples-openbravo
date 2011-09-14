@@ -105,6 +105,10 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault><![CDATA[0]]></onCreateDefault>
       </column>
+      <column name="USEDMATERIAL" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAWRPHASE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>

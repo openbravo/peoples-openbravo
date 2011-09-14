@@ -129,7 +129,8 @@
           Created, Createdby, Updated, Updatedby,
           MA_Processplan_Version_ID, MA_Process_ID, Value, Name,
           Description, CostCenterUse, Preptime, Multiplier,
-          Seqno, Noqty, Groupuse, Calculated, Estimatedtime, Divisiongroupqty
+          Seqno, Noqty, Groupuse, Calculated, Estimatedtime, 
+          Divisiongroupqty, Usedmaterial
         )
         VALUES
         (
@@ -137,7 +138,8 @@
           now(), COALESCE(v_User_ID, '0'), now(), COALESCE(v_User_ID, '0'),
           v_ProcessPlanVersion_ID, Cur_Sequence.MA_Process_ID, Cur_Sequence.Value, Cur_Sequence.Name,
           Cur_Sequence.Description, Cur_Sequence.CostCenterUse, Cur_Sequence.Preptime, Cur_Sequence.Multiplier,
-          Cur_Sequence.Seqno, Cur_Sequence.Noqty, Cur_Sequence.Groupuse, Cur_Sequence.Calculated, Cur_Sequence.Estimatedtime, Cur_Sequence.Divisiongroupqty
+          Cur_Sequence.Seqno, Cur_Sequence.Noqty, Cur_Sequence.Groupuse, Cur_Sequence.Calculated, Cur_Sequence.Estimatedtime, 
+          Cur_Sequence.Divisiongroupqty, Cur_Sequence.Usedmaterial
         )
         ;
       FOR Cur_Product IN
