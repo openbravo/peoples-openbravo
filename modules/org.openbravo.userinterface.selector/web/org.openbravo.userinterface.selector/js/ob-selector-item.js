@@ -154,7 +154,7 @@ isc.OBSelectorPopupWindow.addProperties({
   },
   
   setFilterEditorProperties: function(gridFields){
-    var selectorWindow = this;
+    var type, selectorWindow = this;
     var keyPressFunction = function(item, form, keyName, characterValue){
       if (keyName === 'Escape') {
         selectorWindow.hide();
@@ -172,6 +172,16 @@ isc.OBSelectorPopupWindow.addProperties({
     var i;
     for (i = 0; i < gridFields.length; i++) {
       var gridField = gridFields[i];
+      
+      type = isc.SimpleType.getType(gridField.type);
+      
+      if (type.filterEditorType) {
+        gridField.filterEditorType = type.filterEditorType;
+      }
+      
+      gridField.canFilter = (fld.canFilter === false ? false : true);
+      gridField.filterOnKeypress = (fld.filterOnKeypress === false ? false : true); 
+
       if (!gridField.filterEditorProperties) {
         gridField.filterEditorProperties = {
           required: false
