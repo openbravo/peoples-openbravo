@@ -255,8 +255,8 @@ public class FactLine {
       String documentId, String AD_Table_ID, ConnectionProvider conn) {
     String docType = "";
     String strDateFormat;
-    strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
-        "dateFormat.java");
+    strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
     final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
     String conversionDate = "";
 
@@ -821,7 +821,7 @@ public class FactLine {
             + ((m_docLine != null) ? m_docLine.m_A_Asset_ID : ""));
         log4jFactLine.debug("FactLine - m_C_WithHolding_ID "
             + ((m_docLine != null) ? m_docLine.m_C_WithHolding_ID : ""));
-	no = FactLineData.insertFactAct(con, conn, m_Fact_Acct_ID, AD_Client_ID, AD_Org_ID, vars
+        no = FactLineData.insertFactAct(con, conn, m_Fact_Acct_ID, AD_Client_ID, AD_Org_ID, vars
             .getUser(), m_C_AcctSchema_ID, Account_ID, cuenta[0].value, cuenta[0].description,
             DateDoc, DateAcct, C_Period_ID, m_AD_Table_ID, m_Record_ID, m_Line_ID,
             m_GL_Category_ID, C_Tax_ID, m_PostingType, m_C_Currency_ID, m_AmtSourceDr,
