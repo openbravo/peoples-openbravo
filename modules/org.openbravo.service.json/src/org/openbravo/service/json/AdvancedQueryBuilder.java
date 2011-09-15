@@ -261,10 +261,18 @@ public class AdvancedQueryBuilder {
 
   private String parseCriteria(JSONObject jsonCriteria) throws JSONException {
     // a constructor so the content is an advanced criteria
-    if (jsonCriteria.has("_constructor")) {
+    if (jsonCriteria.has("_constructor") || hasOrAndOperator(jsonCriteria)) {
       return parseAdvancedCriteria(jsonCriteria);
     }
     return parseSingleClause(jsonCriteria);
+  }
+
+  private boolean hasOrAndOperator(JSONObject jsonCriteria) throws JSONException {
+    if (!jsonCriteria.has("operator")) {
+      return false;
+    }
+    return OPERATOR_OR.equals(jsonCriteria.get("operator"))
+        || OPERATOR_AND.equals(jsonCriteria.get("operator"));
   }
 
   private String parseSingleClause(JSONObject jsonCriteria) throws JSONException {
@@ -384,7 +392,7 @@ public class AdvancedQueryBuilder {
       clause = clause + ".id";
     }
 
-    if (ignoreCase(operator)) {
+    if (ignoreCase(property, operator)) {
       clause = "upper(" + clause + ")";
     }
     return clause;
@@ -401,7 +409,7 @@ public class AdvancedQueryBuilder {
       localValue = localValue.toString().substring(0, separatorIndex);
     }
 
-    if (ignoreCase(operator)) {
+    if (ignoreCase(property, operator)) {
       localValue = localValue.toString().toUpperCase();
     }
 
@@ -606,7 +614,11 @@ public class AdvancedQueryBuilder {
     throw new IllegalArgumentException("Operator not supported " + operator);
   }
 
-  private boolean ignoreCase(String operator) {
+  private boolean ignoreCase(Property property, String operator) {
+    if (property.isPrimitive()
+        && (property.isNumericType() || property.isDate() || property.isDatetime())) {
+      return false;
+    }
     return operator.equals(OPERATOR_IEQUALS) || operator.equals(OPERATOR_INOTEQUAL)
         || operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_ENDSWITH)
         || operator.equals(OPERATOR_STARTSWITH) || operator.equals(OPERATOR_ICONTAINS)
