@@ -933,7 +933,7 @@ public abstract class AcctServer {
         AcctServerData[] data = AcctServerData.selectDocType(connectionProvider, C_DocType_ID);
         DocumentType = data[0].docbasetype;
         GL_Category_ID = data[0].glCategoryId;
-        IsReversal = data[0].isreversal;
+	IsReversal = data[0].isreversal;
       }
       // We have a document Type, but no GL info - search for DocType
       if (GL_Category_ID != null && GL_Category_ID.equals("")) {
@@ -941,7 +941,7 @@ public abstract class AcctServer {
             DocumentType);
         if (data != null && data.length != 0)
           GL_Category_ID = data[0].glCategoryId;
-        IsReversal = data[0].isreversal;
+	  IsReversal = data[0].isreversal;
       }
       if (DocumentType != null && DocumentType.equals(""))
         log4j.warn("AcctServer - loadDocumentType - No DocType for GL Info");
@@ -1242,16 +1242,15 @@ public abstract class AcctServer {
             .get(Invoice.class, recordId)));
         if (!reversedCriteria.list().isEmpty()) {
           String strDateFormat;
-          strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-              .getProperty("dateFormat.java");
+          strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
+              "dateFormat.java");
           final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
           ConvDate = dateFormat.format(reversedCriteria.list().get(0).getReversedInvoice()
               .getAccountingDate());
           data = AcctServerData.currencyConvert(conn, Amt, CurFrom_ID, CurTo_ID, ConvDate,
               RateType, client, org);
-          docRateCriteria.add(Restrictions.eq(
-              ConversionRateDoc.PROPERTY_INVOICE,
-              OBDal.getInstance().get(Invoice.class,
+          docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, OBDal
+              .getInstance().get(Invoice.class,
                   reversedCriteria.list().get(0).getReversedInvoice().getId())));
 
         } else {
@@ -1276,8 +1275,8 @@ public abstract class AcctServer {
             .get(APRM_FinaccTransactionV.class, recordId);
         if (a.getForeignCurrency() != null) { // && !a.getForeignCurrency().getId().equals(CurTo_ID)
           String strDateFormat;
-          strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-              .getProperty("dateFormat.java");
+          strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty(
+              "dateFormat.java");
           final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
           Amt = a.getForeignAmount().toString();
           data = AcctServerData.currencyConvert(conn, Amt, a.getForeignCurrency().getId(),
