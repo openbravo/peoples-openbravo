@@ -142,12 +142,6 @@ public class DocFINFinAccTransaction extends AcctServer {
         FieldProviderFactory.setField(data[i], "cGlItemId",
             paymentDetails.get(i).getGLItem() != null ? paymentDetails.get(i).getGLItem().getId()
                 : "");
-        FieldProviderFactory.setField(data[i], "cInvoiceId", paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
-            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                .getInvoicePaymentSchedule().getInvoice() != null ? paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
-            .getId() : "");
         // Calculate Business Partner from payment header or from details if header is null
         BusinessPartner bPartner = payment.getBusinessPartner() != null ? payment
             .getBusinessPartner() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
@@ -268,7 +262,6 @@ public class DocFINFinAccTransaction extends AcctServer {
       docLine.setAmount(data[i].getField("Amount"));
       docLine.setWriteOffAmt(data[i].getField("WriteOffAmt"));
       docLine.setAmount(data[i].getField("Amount"));
-      docLine.setInvoice_ID(data[i].getField("cInvoiceId"));
       docLine.loadAttributes(data[i], this);
       list.add(docLine);
     }
@@ -456,23 +449,22 @@ public class DocFINFinAccTransaction extends AcctServer {
       fact.createLine(
           null,
           getAccountPayment(conn, txnFinPayment.getPaymentMethod(), txnFinPayment.getAccount(), as,
-              txnFinPayment.isReceipt()), txnFinPayment.getCurrency().getId(), !txnFinPayment
-              .isReceipt() ? txnFinPayment.getAmount().toString() : "",
-          txnFinPayment.isReceipt() ? txnFinPayment.getAmount().toString() : "",
+              txnFinPayment.isReceipt()),
+          C_Currency_ID,
+          !txnFinPayment.isReceipt() ? txnFinPayment.getFinancialTransactionAmount().toString()
+              : "",
+          txnFinPayment.isReceipt() ? txnFinPayment.getFinancialTransactionAmount().toString() : "",
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, paymentDate,
-          docToSchemaConversionRate, EXCHANGE_DOCTYPE_Payment, txnFinPayment.getId(), conn);
+          docToSchemaConversionRate, conn);
     }
     fact.createLine(
         null,
         getAccountUponDepositWithdrawal(conn, txnFinPayment.getPaymentMethod(),
             transaction.getAccount(), as, txnFinPayment.isReceipt()), C_Currency_ID, transaction
             .getDepositAmount().toString(), transaction.getPaymentAmount().toString(),
-        Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, null, docToSchemaConversionRate,
-        EXCHANGE_DOCTYPE_Transaction, transaction.getId(), conn);
-    if (!as.getC_Currency_ID().equals(transaction.getForeignCurrency())) {
-      MultiCurrency = true;
-      createFactCurrencyBalancing(as, conn, fact, Fact_Acct_Group_ID, transaction);
-    }
+        Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, null, docToSchemaConversionRate, conn);
+
+    createFactCurrencyBalancing(as, conn, fact, Fact_Acct_Group_ID, transaction);
     SeqNo = "0";
     return fact;
   }
