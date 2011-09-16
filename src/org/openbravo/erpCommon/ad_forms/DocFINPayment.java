@@ -337,7 +337,7 @@ public class DocFINPayment extends AcctServer {
                   (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
                       : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
               (isReceipt ? "" : bpAmount), (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID,
-              nextSeqNo(SeqNo), DocumentType, invoiceAccountingDate, null, EXCHANGE_DOCTYPE_Invoice, line.getInvoice().getId(), conn);
+              nextSeqNo(SeqNo), DocumentType, invoiceAccountingDate, conn);
         } else {
           fact.createLine(
               line,
@@ -357,12 +357,14 @@ public class DocFINPayment extends AcctServer {
         accountToSchemaConversionRate = BigDecimal.ONE.divide(
             payment.getFinancialTransactionConvertRate(), MathContext.DECIMAL64);
       }
-      fact.createLine(null, getAccount(conn, payment.getPaymentMethod(), payment.getAccount(), as,
-          payment.isReceipt()), C_Currency_ID,
-          (payment.isReceipt() ? payment.getAmount().toString() : ""), (payment.isReceipt() ? ""
-              : payment.getAmount().toString()), Fact_Acct_Group_ID, "999999", DocumentType, null,
-          accountToSchemaConversionRate, EXCHANGE_DOCTYPE_Payment, payment.getId(),conn);
-     
+      fact.createLine(
+          null,
+          getAccount(conn, payment.getPaymentMethod(), payment.getAccount(), as,
+              payment.isReceipt()), financialAccountCurrencyId,
+          (payment.isReceipt() ? financialTransactionAmount : ""), (payment.isReceipt() ? ""
+              : financialTransactionAmount), Fact_Acct_Group_ID, "999999", DocumentType, null,
+          accountToSchemaConversionRate, conn);
+
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
       // credit is generated
       if (new BigDecimal(usedAmount).compareTo(ZERO) != 0

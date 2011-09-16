@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,13 +29,8 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.advpaymentmngt.APRMPendingPaymentFromInvoice;
-import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -56,12 +50,6 @@ import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.gl.GLItemAccounts;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
-import org.openbravo.model.financialmgmt.payment.FIN_Payment;
-import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
-import org.openbravo.model.common.currency.ConversionRateDoc;
-import org.openbravo.model.common.currency.Currency;
-import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.common.invoice.ReversedInvoice;
 
 public abstract class AcctServer {
   static Logger log4j = Logger.getLogger(AcctServer.class);
@@ -279,11 +267,6 @@ public abstract class AcctServer {
 
   /** GL Accounts */
   public static final String ACCTTYPE_PPVOffset = "60";
-  
-  /** Document Types for document level conversion rates*/
-  public static final String EXCHANGE_DOCTYPE_Invoice = "318";
-  public static final String EXCHANGE_DOCTYPE_Payment = "D1A97202E832470285C9B1EB026D54E2";
-  public static final String EXCHANGE_DOCTYPE_Transaction = "4D8C3B3C31D1410DA046140C9F024D17";
 
   // Reference (to find SalesRegion from BPartner)
   public String BP_C_SalesRegion_ID = ""; // set in FactLine
@@ -1122,7 +1105,7 @@ public abstract class AcctServer {
         // if (log4j.isDebugEnabled()) log4j.debug
         // ("AcctServer - get converted amount (init)");
         String amt = getConvertedAmt("1", currency, acctSchema.m_C_Currency_ID, DateAcct,
-            acctSchema.m_CurrencyRateType, AD_Client_ID, AD_Org_ID, "","", conn);
+            acctSchema.m_CurrencyRateType, AD_Client_ID, AD_Org_ID, conn);
         // if (log4j.isDebugEnabled()) log4j.debug
         // ("get converted amount (end)");
         if (amt == null || amt.equals("")) {
@@ -1179,35 +1162,11 @@ public abstract class AcctServer {
       String ConvDate, String RateType, ConnectionProvider conn) {
     if (log4j.isDebugEnabled())
       log4j.debug("AcctServer - getConvertedAmount no client nor org");
-    return getConvertedAmt(Amt, CurFrom_ID, CurTo_ID, ConvDate, RateType, "", "","", "", conn);
-  }
-  
-  /**
-   * Convert an amount
-   * 
-   * @param CurFrom_ID
-   *          The C_Currency_ID FROM
-   * @param CurTo_ID
-   *          The C_Currency_ID TO
-   * @param ConvDate
-   *          The Conversion date - if null - use current date
-   * @param RateType
-   *          The Conversion rate type - if null/empty - use Spot
-   * @param Amt
-   *          The amount to be converted
-   * @return converted amount
-   */
-  public static String getConvertedAmt(String Amt, String CurFrom_ID, String CurTo_ID,
-      String ConvDate, String RateType, String record_ID, String docType, ConnectionProvider conn) {
-    if (log4j.isDebugEnabled())
-      log4j.debug("AcctServer - getConvertedAmount no client nor org");
-    return getConvertedAmt(Amt, CurFrom_ID, CurTo_ID, ConvDate, RateType, "", "",record_ID, docType, conn);
+    return getConvertedAmt(Amt, CurFrom_ID, CurTo_ID, ConvDate, RateType, "", "", conn);
   }
 
   public static String getConvertedAmt(String Amt, String CurFrom_ID, String CurTo_ID,
-      String ConvDate, String RateType, String client, String org, 
-      String recordId, String docType, ConnectionProvider conn) {
-	boolean useSystemConversionRate = true;
+      String ConvDate, String RateType, String client, String org, ConnectionProvider conn) {
     if (log4j.isDebugEnabled())
       log4j.debug("AcctServer - getConvertedAmount - starting method - Amt : " + Amt
           + " - CurFrom_ID : " + CurFrom_ID + " - CurTo_ID : " + CurTo_ID + "- ConvDate: "
@@ -1219,7 +1178,6 @@ public abstract class AcctServer {
     if (CurFrom_ID.equals(CurTo_ID) || Amt.equals("0"))
       return Amt;
     AcctServerData[] data = null;
-    OBContext.setAdminMode();
     try {
       if (ConvDate != null && ConvDate.equals(""))
         ConvDate = DateTimeData.today(conn);
@@ -1228,70 +1186,9 @@ public abstract class AcctServer {
         RateType = "S";
       data = AcctServerData.currencyConvert(conn, Amt, CurFrom_ID, CurTo_ID, ConvDate, RateType,
           client, org);
-      //Search if exists any conversion rate at document level
-      
-      OBCriteria<ConversionRateDoc> docRateCriteria = OBDal.getInstance().createCriteria(ConversionRateDoc.class);
-      if(docType.equals(EXCHANGE_DOCTYPE_Invoice)){
-    	  docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, OBDal.getInstance().get(Currency.class, CurTo_ID) ));
-    	  docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, OBDal.getInstance().get(Currency.class, CurFrom_ID)));
-    	  //get reversed invoice id if exist.
-    	  OBCriteria<ReversedInvoice> reversedCriteria = OBDal.getInstance().createCriteria(ReversedInvoice.class);
-    	  reversedCriteria.add(Restrictions.eq(ReversedInvoice.PROPERTY_INVOICE, OBDal.getInstance().get(Invoice.class, recordId)));
-    	  if(!reversedCriteria.list().isEmpty()){
-    		    String strDateFormat;
-    	        strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("dateFormat.java");
-    	        final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
-    	        ConvDate = dateFormat.format(reversedCriteria.list().get(0).getReversedInvoice().getAccountingDate());
-    	    	data = AcctServerData.currencyConvert(conn, Amt, CurFrom_ID, CurTo_ID, ConvDate, RateType,
-    	    	          client, org);
-    	    	docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, OBDal.getInstance().get(Invoice.class, reversedCriteria.list().get(0).getReversedInvoice().getId())));
-    	  }else{
-    		  docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, OBDal.getInstance().get(Invoice.class, recordId)));	 
-        	  
-    	  }
-    	  useSystemConversionRate = false;
-    	  
-      }else if(docType.equals(EXCHANGE_DOCTYPE_Payment)){
-    	  docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, OBDal.getInstance().get(Currency.class, CurTo_ID) ));
-    	  docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, OBDal.getInstance().get(Currency.class, CurFrom_ID)));
-    	  docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_PAYMENT, OBDal.getInstance().get(FIN_Payment.class, recordId)));
-    	  useSystemConversionRate = false;
-    	  
-      }else if(docType.equals(EXCHANGE_DOCTYPE_Transaction)){
-    	  
-    	  APRM_FinaccTransactionV a = OBDal.getInstance().get(APRM_FinaccTransactionV.class, recordId);
-    	  if(a.getForeignCurrency() != null && !a.getForeignCurrency().getId().equals(CurTo_ID)){
-    		  String strDateFormat;
-  	          strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("dateFormat.java");
-  	          final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
-  	          Amt = a.getForeignAmount().toString();
-  	    	  data = AcctServerData.currencyConvert(conn, Amt, a.getForeignCurrency().getId(), CurTo_ID, ConvDate, RateType,
-  	    	          client, org);
-    		  docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, OBDal.getInstance().get(Currency.class, CurTo_ID) ));
-        	  docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, OBDal.getInstance().get(Currency.class, a.getForeignCurrency().getId())));
-    	  }else{
-    		  docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, OBDal.getInstance().get(Currency.class, CurTo_ID) ));
-        	  docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, OBDal.getInstance().get(Currency.class, CurFrom_ID)));
-    	  }
-    	  docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_FINANCIALACCOUNTTRANSACTION, OBDal.getInstance().get(APRM_FinaccTransactionV.class, recordId)));
-    	  useSystemConversionRate = false;
-      }
-      
-      if(docType.equals(EXCHANGE_DOCTYPE_Invoice) || docType.equals(EXCHANGE_DOCTYPE_Payment) || docType.equals(EXCHANGE_DOCTYPE_Transaction)){
-    	  List<ConversionRateDoc> conversionRates = docRateCriteria.list();
-    	  if(!conversionRates.isEmpty() && !useSystemConversionRate){
-        	  BigDecimal Amount = new BigDecimal(Amt);
-        	  BigDecimal AmountConverted = Amount.multiply(conversionRates.get(0).getRate());
-        	  return AmountConverted.toString();
-          }
-      }
-      
-      
     } catch (ServletException e) {
       log4j.warn(e);
       e.printStackTrace();
-    }finally {
-      OBContext.restorePreviousMode();
     }
     if (data == null || data.length == 0) {
       /*

@@ -30,7 +30,6 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 
 public class DocInvoice extends AcctServer {
   private static final long serialVersionUID = 1L;
-  private static final String DOCTYPE_Invoice = "318";
   static Logger log4jDocInvoice = Logger.getLogger(DocInvoice.class);
 
   DocTax[] m_taxes = null;
@@ -284,28 +283,39 @@ public class DocInvoice extends AcctServer {
       if (m_payments == null || m_payments.length == 0)
         for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
           if (m_debt_payments[i].isReceipt.equals("Y"))
-            fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
-                m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(
-                m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
-                this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, Record_ID, DOCTYPE_Invoice, conn), "",
+            fact.createLine(
+                m_debt_payments[i],
+                getAccountBPartner(C_BPartner_ID, as, true, m_debt_payments[i].dpStatus, conn),
+                this.C_Currency_ID,
+                getConvertedAmt(m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
+                    this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn), "",
                 Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
           else
-            fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
-                m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(
-                m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
-                this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, Record_ID, DOCTYPE_Invoice, conn),
+            fact.createLine(
+                m_debt_payments[i],
+                getAccountBPartner(C_BPartner_ID, as, false, m_debt_payments[i].dpStatus, conn),
+                this.C_Currency_ID,
+                "",
+                getConvertedAmt(m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
+                    this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn),
                 Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
-          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, false, conn),
-              this.C_Currency_ID, getConvertedAmt(m_payments[i].Amount,
-                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", Record_ID, DOCTYPE_Invoice, conn), "",
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, true, conn),
-              this.C_Currency_ID, getConvertedAmt(m_payments[i].PrepaidAmount,
-                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", Record_ID, DOCTYPE_Invoice,conn), "",
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(
+              m_payments[i],
+              getAccountBPartner(C_BPartner_ID, as, true, false, conn),
+              this.C_Currency_ID,
+              getConvertedAmt(m_payments[i].Amount, m_payments[i].C_Currency_ID_From,
+                  this.C_Currency_ID, DateAcct, "", conn), "", Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(
+              m_payments[i],
+              getAccountBPartner(C_BPartner_ID, as, true, true, conn),
+              this.C_Currency_ID,
+              getConvertedAmt(m_payments[i].PrepaidAmount, m_payments[i].C_Currency_ID_From,
+                  this.C_Currency_ID, DateAcct, "", conn), "", Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
         }
       if ((m_payments == null || m_payments.length == 0)
           && (m_debt_payments == null || m_debt_payments.length == 0)) {
@@ -364,26 +374,38 @@ public class DocInvoice extends AcctServer {
         for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
           BigDecimal amount = new BigDecimal(m_debt_payments[i].Amount);
           // BigDecimal ZERO = BigDecimal.ZERO;
-          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
-              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(((amount
-              .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From,
-              this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, Record_ID, DOCTYPE_Invoice, conn), Fact_Acct_Group_ID,
-              nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(
+              m_debt_payments[i],
+              getAccountBPartner(C_BPartner_ID, as, true, m_debt_payments[i].dpStatus, conn),
+              this.C_Currency_ID,
+              "",
+              getConvertedAmt(((amount.negate())).toPlainString(),
+                  m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "",
+                  AD_Client_ID, AD_Org_ID, conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
           BigDecimal amount = new BigDecimal(m_payments[i].Amount);
           BigDecimal prepaidAmount = new BigDecimal(m_payments[i].PrepaidAmount);
-          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, false, conn),
-              this.C_Currency_ID, "", getConvertedAmt(amount.negate().toString(),
-                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", Record_ID, DOCTYPE_Invoice, conn),
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(
+              m_payments[i],
+              getAccountBPartner(C_BPartner_ID, as, true, false, conn),
+              this.C_Currency_ID,
+              "",
+              getConvertedAmt(amount.negate().toString(), m_payments[i].C_Currency_ID_From,
+                  this.C_Currency_ID, DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
           // Pre-payment: Probably not needed as at this point we can not generate pre-payments
           // against ARC. Amount is negated
-          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, true, conn),
-              this.C_Currency_ID, "", getConvertedAmt(prepaidAmount.negate().toString(),
-                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", Record_ID, DOCTYPE_Invoice, conn),
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(
+              m_payments[i],
+              getAccountBPartner(C_BPartner_ID, as, true, true, conn),
+              this.C_Currency_ID,
+              "",
+              getConvertedAmt(prepaidAmount.negate().toString(), m_payments[i].C_Currency_ID_From,
+                  this.C_Currency_ID, DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
         }
       if ((m_payments == null || m_payments.length == 0)
           && (m_debt_payments == null || m_debt_payments.length == 0)) {
@@ -426,28 +448,41 @@ public class DocInvoice extends AcctServer {
       if (m_payments == null || m_payments.length == 0)
         for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
           if (m_debt_payments[i].isReceipt.equals("Y"))
-            fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, true,
-                m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(
-                m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
-                this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, Record_ID, DOCTYPE_Invoice, conn), "",
+            fact.createLine(
+                m_debt_payments[i],
+                getAccountBPartner(C_BPartner_ID, as, true, m_debt_payments[i].dpStatus, conn),
+                this.C_Currency_ID,
+                getConvertedAmt(m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
+                    this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn), "",
                 Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
           else
-            fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
-                m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(
-                m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
-                this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, Record_ID, DOCTYPE_Invoice, conn),
+            fact.createLine(
+                m_debt_payments[i],
+                getAccountBPartner(C_BPartner_ID, as, false, m_debt_payments[i].dpStatus, conn),
+                this.C_Currency_ID,
+                "",
+                getConvertedAmt(m_debt_payments[i].Amount, m_debt_payments[i].C_Currency_ID_From,
+                    this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID, conn),
                 Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
-          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, false, false, conn),
-              this.C_Currency_ID, "", getConvertedAmt(m_payments[i].Amount,
-                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", Record_ID, DOCTYPE_Invoice,conn),
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, false, true, conn),
-              this.C_Currency_ID, "", getConvertedAmt(m_payments[i].PrepaidAmount,
-                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "",  Record_ID, DOCTYPE_Invoice, conn),
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(
+              m_payments[i],
+              getAccountBPartner(C_BPartner_ID, as, false, false, conn),
+              this.C_Currency_ID,
+              "",
+              getConvertedAmt(m_payments[i].Amount, m_payments[i].C_Currency_ID_From,
+                  this.C_Currency_ID, DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
+          fact.createLine(
+              m_payments[i],
+              getAccountBPartner(C_BPartner_ID, as, false, true, conn),
+              this.C_Currency_ID,
+              "",
+              getConvertedAmt(m_payments[i].PrepaidAmount, m_payments[i].C_Currency_ID_From,
+                  this.C_Currency_ID, DateAcct, "", conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
         }
       if ((m_payments == null || m_payments.length == 0)
           && (m_debt_payments == null || m_debt_payments.length == 0)) {
@@ -511,26 +546,35 @@ public class DocInvoice extends AcctServer {
         for (int i = 0; m_debt_payments != null && i < m_debt_payments.length; i++) {
           BigDecimal amount = new BigDecimal(m_debt_payments[i].Amount);
           // BigDecimal ZERO = BigDecimal.ZERO;
-          fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false,
-              m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(((amount
-              .negate())).toPlainString(), m_debt_payments[i].C_Currency_ID_From,
-              this.C_Currency_ID, DateAcct, "", AD_Client_ID, AD_Org_ID,  Record_ID, DOCTYPE_Invoice, conn), "",
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(
+              m_debt_payments[i],
+              getAccountBPartner(C_BPartner_ID, as, false, m_debt_payments[i].dpStatus, conn),
+              this.C_Currency_ID,
+              getConvertedAmt(((amount.negate())).toPlainString(),
+                  m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "",
+                  AD_Client_ID, AD_Org_ID, conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, conn);
         }
       else
         for (int i = 0; m_payments != null && i < m_payments.length; i++) {
           BigDecimal amount = new BigDecimal(m_payments[i].Amount);
           BigDecimal prepaidAmount = new BigDecimal(m_payments[i].PrepaidAmount);
-          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, false, false, conn),
-              this.C_Currency_ID, getConvertedAmt(amount.negate().toString(),
-                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", Record_ID, DOCTYPE_Invoice, conn), "",
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(
+              m_payments[i],
+              getAccountBPartner(C_BPartner_ID, as, false, false, conn),
+              this.C_Currency_ID,
+              getConvertedAmt(amount.negate().toString(), m_payments[i].C_Currency_ID_From,
+                  this.C_Currency_ID, DateAcct, "", conn), "", Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
           // Pre-payment: Probably not needed as at this point we can not generate pre-payments
           // against APC. Amount is negated
-          fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, false, true, conn),
-              this.C_Currency_ID, getConvertedAmt(prepaidAmount.negate().toString(),
-                  m_payments[i].C_Currency_ID_From, this.C_Currency_ID, DateAcct, "", Record_ID, DOCTYPE_Invoice, conn), "",
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          fact.createLine(
+              m_payments[i],
+              getAccountBPartner(C_BPartner_ID, as, false, true, conn),
+              this.C_Currency_ID,
+              getConvertedAmt(prepaidAmount.negate().toString(), m_payments[i].C_Currency_ID_From,
+                  this.C_Currency_ID, DateAcct, "", conn), "", Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
         }
       if ((m_payments == null || m_payments.length == 0)
           && (m_debt_payments == null || m_debt_payments.length == 0)) {
