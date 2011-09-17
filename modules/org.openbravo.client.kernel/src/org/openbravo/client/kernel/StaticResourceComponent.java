@@ -100,11 +100,12 @@ public class StaticResourceComponent extends BaseComponent {
               KernelConstants.MODE_PARAMETER_300);
 
       if (!classicMode) {
+        // set in the session that we are looking at the new ui
         // note injecting the HttpSession through Weld does not work
         // as it will instantiate one of the subclasses of HttpSession
         // defined in the RequestContext
-        ((HttpSession) getParameters().get(KernelConstants.HTTP_SESSION)).setAttribute(
-            "#Hide_BackButton".toUpperCase(), "true");
+        final HttpSession session = (HttpSession) getParameters().get(KernelConstants.HTTP_SESSION);
+        session.setAttribute("#Hide_BackButton".toUpperCase(), "true");
         OBContext.getOBContext().setNewUI(true);
       }
 
