@@ -339,6 +339,11 @@ public class OBContext implements OBNotSingleton {
       return;
     }
 
+    // already set, go away
+    if (session.getAttribute(CONTEXT_PARAM) == context) {
+      return;
+    }
+
     // Determine whether using new ui by #Hide_BackButton session attribute set in Menu class
     if (context != null) {
       String newUIValue = (String) session.getAttribute("#Hide_BackButton".toUpperCase());
