@@ -121,6 +121,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       setSessionValue("reqHistory.command" + sufix, strCommand);
     }
 
+    // Note, see LoginUtils.fillSessionArguments which sets the loggingIn
+    // session var to N explicitly
     public boolean isLoggingIn() {
       return loggingIn == null || loggingIn.equals("") || loggingIn.equals("Y");
     }
@@ -235,6 +237,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
       boolean loggedOK = false;
 
+      // NOTE !isLoggingIn assumes that the value of LoggingIn is N, this
+      // is done by the fillSessionArguments below
       if (!variables.isLoggingIn()) {
         // log in process is completed, check whether the session in db is still active
         loggedOK = SeguridadData.loggedOK(this, variables.getDBSession());
