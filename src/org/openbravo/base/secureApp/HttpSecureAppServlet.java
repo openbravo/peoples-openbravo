@@ -320,6 +320,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             logout(request, response);
             return;
           }
+
+          // Login process if finished, set the flag as not logging in
+          // this flag may not be removed from the session, it must be set
+          // to N to prevent re-initializing the session continuously
+          vars.setSessionValue("#loggingIn", "N");
         } else {
           variables.updateHistory(request);
         }
