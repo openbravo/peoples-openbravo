@@ -302,6 +302,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           }
 
           final VariablesSecureApp vars = new VariablesSecureApp(request, false);
+
+          // note fill session arguments will set the LOGGINGIN session var
+          // to N
           if (LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strIsRTL,
               strRole, strClient, strOrg, strWarehouse)) {
             readProperties(vars, globalParameters.getOpenbravoPropertiesPath());
@@ -313,7 +316,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             logout(request, response);
             return;
           }
-          variables.removeSessionValue("#LOGGINGIN");
         } else {
           variables.updateHistory(request);
         }
