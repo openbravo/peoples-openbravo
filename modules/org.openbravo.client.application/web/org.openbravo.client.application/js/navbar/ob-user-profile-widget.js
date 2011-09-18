@@ -273,14 +273,14 @@ isc.OBUserProfile.addProperties({
         }
       },
       setWarehouseValueMap: function() {
-        var i, j, warehouseOrg, role, roleId, length, 
+        var i, j, warehouseOrg, role, roleId, roleLength, length, 
           orgId = roleForm.getItem('organization').getValue();
         if (!orgId) {
           return;
         }
-        length = roleForm.localFormData.role.roles.length;
+        roleLength = roleForm.localFormData.role.roles.length;
         roleId = roleForm.getValue('role');
-        for (i = 0; i < length; i++) {
+        for (i = 0; i < roleLength; i++) {
           role = roleForm.localFormData.role.roles[i];
           if (role.id === roleId) {
             length = role.warehouseOrgMap.length;
