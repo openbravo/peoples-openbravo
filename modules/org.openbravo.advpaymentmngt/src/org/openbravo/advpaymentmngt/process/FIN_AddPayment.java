@@ -51,6 +51,7 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -61,6 +62,10 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentProposal;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
+import org.openbravo.model.marketing.Campaign;
+import org.openbravo.model.materialmgmt.cost.ABCActivity;
+import org.openbravo.model.project.Project;
+import org.openbravo.model.sales.SalesRegion;
 import org.openbravo.scheduling.ProcessBundle;
 
 public class FIN_AddPayment {
@@ -328,6 +333,49 @@ public class FIN_AddPayment {
     try {
       FIN_PaymentScheduleDetail psd = dao.getNewPaymentScheduleDetail(payment.getOrganization(),
           glitemAmount);
+      FIN_PaymentDetail pd = dao.getNewPaymentDetail(payment, psd, glitemAmount, BigDecimal.ZERO,
+          false, glitem);
+      pd.setFinPayment(payment);
+      OBDal.getInstance().save(pd);
+      OBDal.getInstance().save(payment);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * It adds to the Payment a new Payment Detail with the given GL Item, amount and accounting
+   * dimensions
+   * 
+   * @param payment
+   *          Payment where the new Payment Detail needs to be added.
+   * @param glitemAmount
+   *          Amount of the new Payment Detail.
+   * @param glitem
+   *          GLItem to be set in the new Payment Detail.
+   * @param businessPartner
+   *          accounting dimension
+   * @param product
+   *          accounting dimension
+   * @param project
+   *          accounting dimension
+   * @param campaign
+   *          accounting dimension
+   * @param activity
+   *          accounting dimension
+   * @param salesRegion
+   *          accounting dimension
+   */
+  public static void saveGLItem(FIN_Payment payment, BigDecimal glitemAmount, GLItem glitem,
+      BusinessPartner businessPartner, Product product, Project project, Campaign campaign,
+      ABCActivity activity, SalesRegion salesRegion) {
+    // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
+    // removed when new security implementation is done
+    dao = new AdvPaymentMngtDao();
+    OBContext.setAdminMode();
+    try {
+      FIN_PaymentScheduleDetail psd = dao.getNewPaymentScheduleDetail(payment.getOrganization(),
+          glitemAmount, businessPartner, product, project, campaign, activity, salesRegion);
       FIN_PaymentDetail pd = dao.getNewPaymentDetail(payment, psd, glitemAmount, BigDecimal.ZERO,
           false, glitem);
       pd.setFinPayment(payment);

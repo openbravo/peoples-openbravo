@@ -113,7 +113,8 @@ public class DocFINPayment extends AcctServer {
             .getId());
         FieldProviderFactory.setField(data[i], "FIN_Payment_Detail_ID", paymentDetails.get(i)
             .getId());
-        // Calculate Business Partner from payment header or from details if header is null
+        // Calculate Business Partner from payment header or from details if header is null or from
+        // the PSD in case of GL Item
         BusinessPartner bPartner = payment.getBusinessPartner() != null ? payment
             .getBusinessPartner() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
             .getInvoicePaymentSchedule() != null ? paymentDetails.get(i)
@@ -121,7 +122,8 @@ public class DocFINPayment extends AcctServer {
             .getBusinessPartner() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
             .getOrderPaymentSchedule() != null ? paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-            .getBusinessPartner() : null));
+            .getBusinessPartner() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+            .getBusinessPartner())));
         FieldProviderFactory.setField(data[i], "cBpartnerId", bPartner != null ? bPartner.getId()
             : "");
         FieldProviderFactory.setField(data[i], "Amount", paymentDetails.get(i).getAmount()
@@ -147,7 +149,9 @@ public class DocFINPayment extends AcctServer {
             && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
                 .getOrderPaymentSchedule().getOrder().getProject() != null ? paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-            .getProject().getId() : ""));
+            .getProject().getId() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+            .getProject() != null ? paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+            .getProject().getId() : "")));
         FieldProviderFactory
             .setField(
                 data[i],
@@ -164,7 +168,10 @@ public class DocFINPayment extends AcctServer {
                             .getOrderPaymentSchedule().getOrder().getSalesCampaign() != null ? paymentDetails
                         .get(i).getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
                         .getOrder().getSalesCampaign().getId()
-                        : ""));
+                        : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                            .getSalesCampaign() != null ? paymentDetails.get(i)
+                            .getFINPaymentScheduleDetailList().get(0).getSalesCampaign().getId()
+                            : "")));
         FieldProviderFactory.setField(data[i], "cActivityId", paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
             && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
@@ -175,7 +182,15 @@ public class DocFINPayment extends AcctServer {
             && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
                 .getOrderPaymentSchedule().getOrder().getActivity() != null ? paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-            .getActivity().getId() : ""));
+            .getActivity().getId() : (paymentDetails.get(i).getFINPaymentScheduleDetailList()
+            .get(0).getActivity() != null ? paymentDetails.get(i).getFINPaymentScheduleDetailList()
+            .get(0).getActivity().getId() : "")));
+        FieldProviderFactory.setField(data[i], "mProductId", paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getProduct() != null ? paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getProduct().getId() : "");
+        FieldProviderFactory.setField(data[i], "cSalesregionId", paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getSalesRegion() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getSalesRegion().getId() : "");
         // This lines can be uncommented when User1 and User2 are implemented
         // FieldProviderFactory.setField(data[0], "User1_ID", payment.getStDimension().getId());
         // FieldProviderFactory.setField(data[0], "User2_ID", payment.getNdDimension().getId());
@@ -331,14 +346,15 @@ public class DocFINPayment extends AcctServer {
         }
 
         if ("".equals(line.getC_GLItem_ID())) {
-          fact
-              .createLine(line,
-                  getAccountBPartner((line.m_C_BPartner_ID == null || line.m_C_BPartner_ID
-                      .equals("")) ? this.C_BPartner_ID : line.m_C_BPartner_ID, as, isReceipt,
-                      isPrepayment, conn), C_Currency_ID, (isReceipt ? "" : bpAmount),
-                  (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
-                  invoiceAccountingDate, null, EXCHANGE_DOCTYPE_Invoice,
-                  line.getInvoice() != null ? line.getInvoice().getId() : null, conn);
+          fact.createLine(
+              line,
+              getAccountBPartner(
+                  (line.m_C_BPartner_ID == null || line.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
+                      : line.m_C_BPartner_ID, as, isReceipt, isPrepayment, conn), C_Currency_ID,
+              (isReceipt ? "" : bpAmount), (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, invoiceAccountingDate, null,
+              EXCHANGE_DOCTYPE_Invoice, line.getInvoice() != null ? line.getInvoice().getId()
+                  : null, conn);
         } else {
           fact.createLine(
               line,
@@ -358,9 +374,11 @@ public class DocFINPayment extends AcctServer {
         accountToSchemaConversionRate = BigDecimal.ONE.divide(
             payment.getFinancialTransactionConvertRate(), MathContext.DECIMAL64);
       }
-      fact.createLine(null, getAccount(conn, payment.getPaymentMethod(), payment.getAccount(), as,
-          payment.isReceipt()), C_Currency_ID, (payment.isReceipt() ? payment.getAmount()
-          .toString() : ""), (payment.isReceipt() ? "" : payment.getAmount().toString()),
+      fact.createLine(
+          null,
+          getAccount(conn, payment.getPaymentMethod(), payment.getAccount(), as,
+              payment.isReceipt()), C_Currency_ID, (payment.isReceipt() ? payment.getAmount()
+              .toString() : ""), (payment.isReceipt() ? "" : payment.getAmount().toString()),
           Fact_Acct_Group_ID, "999999", DocumentType, null, accountToSchemaConversionRate,
           EXCHANGE_DOCTYPE_Payment, payment.getId(), conn);
 
