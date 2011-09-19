@@ -32,7 +32,7 @@ isc.OBViewGrid.addClassProperties({
 // The OBViewGrid is the Openbravo specific subclass of the Smartclient
 // ListGrid.
 isc.OBViewGrid.addProperties({
-  
+
   // ** {{{ view }}} **
   // The view member contains the pointer to the composite canvas which
   // handles this form
@@ -1791,6 +1791,20 @@ isc.OBViewGrid.addProperties({
     }
 
     return this.Super('getCellStyle', arguments);
+  },
+  
+  // prevent multi-line content to show strangely
+  // https://issues.openbravo.com/view.php?id=17531
+  formatCellValue: function(value, record, rowNum, colNum) {
+    if (!isc.isA.String(value)) {
+      return value;
+    }
+  
+    var index = value.indexOf('\n');
+    if (index !== -1) {
+      return value.substring(0, index);
+    } 
+    return value;
   },
   
   discardEdits: function(rowNum, colNum, dontHideEditor, editCompletionEvent, preventConfirm){
