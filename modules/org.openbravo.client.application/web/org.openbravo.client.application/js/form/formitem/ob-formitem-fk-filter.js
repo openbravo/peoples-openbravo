@@ -27,6 +27,14 @@ isc.OBFKFilterTextItem.addProperties({
   validateOnExit: false,
   validateOnChange: false,
 
+  init: function() {
+
+    if (this.displayField && !this.criteriaField) {
+      this.criteriaField = this.displayField;
+    }
+    this.Super('init', arguments);
+  },
+  
   // solve a small bug in the value expressions
   buildValueExpressions: function() {
     var ret = this.Super('buildValueExpressions', arguments);

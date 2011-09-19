@@ -186,6 +186,10 @@ isc.OBGrid.addProperties({
     
     this.filterEditorProperties = {
 
+      // http://forums.smartclient.com/showthread.php?p=73107
+      // https://issues.openbravo.com/view.php?id=18557
+      showAllColumns: true,
+      
       setEditValue : function (rowNum, colNum, newValue, suppressDisplay, suppressChange) {
         // prevent any setting of non fields in the filter editor
         // this prevents a specific issue that smartclient will set a value
