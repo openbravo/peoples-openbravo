@@ -1852,6 +1852,12 @@ isc.OBStandardView.addProperties({
           this.originalShowIf(item, value, form, currentValues, context);
       };
     }
+    if (fld.type === 'OBAuditSectionItem') {
+      var expandAudit = OB.PropertyStore.get('ShowAuditDefault', this.standardProperties.inpwindowId);
+      if (expandAudit && expandAudit==='Y') {
+        fld.sectionExpanded = true;
+      }
+    }
     return fld;
   },
   
