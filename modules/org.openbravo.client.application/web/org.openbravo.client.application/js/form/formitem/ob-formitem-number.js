@@ -36,8 +36,6 @@ isc.OBNumberItem.addProperties({
   doBlurLogic: true,
   
   init: function(){
-    var length = this.validators.length;
-    
     this.setKeyPressFilter(this.keyPressFilterNumeric);
     this.typeInstance = SimpleType.getType(this.type);
     return this.Super('init', arguments);
@@ -499,7 +497,7 @@ isc.OBNumberFilterItem.addProperties({
                    'lessThan', 'lessThanOrEqual', 'greaterThanOrEqual',
                    'between', 'betweenInclusive', 'isNull', 'isNotNull'
                    ],
-
+  
   // prevent handling of equal symbol in filteritem
   keyDownAction: function(item, form, keyName){
     var keyCode = isc.EventHandler.lastEvent.nativeKeyCode;
