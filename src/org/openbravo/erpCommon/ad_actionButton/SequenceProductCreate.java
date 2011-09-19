@@ -26,12 +26,19 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.plm.AttributeUse;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.manufacturing.processplan.OperationProduct;
+import org.openbravo.model.manufacturing.processplan.OperationProductAttribute;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 
 public class SequenceProductCreate implements Process {
+
+  private static final String specialAttListId = "FF808181322476640132249E3417002F";
+  private static final String lotSearchKey = "LOT";
+  private static final String serialNoSearchKey = "SNO";
+  private static final String expirationDateearchKey = "EXD";
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -43,6 +50,7 @@ public class SequenceProductCreate implements Process {
       final String productionType = (String) bundle.getParams().get("productiontype");
       final String qty = (String) bundle.getParams().get("qty");
       final ConnectionProvider conn = bundle.getConnection();
+      final String copyAttribute = (String) bundle.getParams().get("copyattribute");
 
       // Create new product copy of selected
       OperationProduct opProduct = OBDal.getInstance().get(OperationProduct.class,
@@ -81,8 +89,24 @@ public class SequenceProductCreate implements Process {
 
       OBDal.getInstance().flush();
 
-      final OBError msg = new OBError();
+      // Copy Attributes
+      if (copyAttribute.equals("Y") && newProduct.getAttributeSet() != null) {
+        // Special Attribute
+        if (newProduct.getAttributeSet().isLot())
+          copyAtt(newOpProduct, opProduct.getProduct(), true, lotSearchKey, null);
+        if (newProduct.getAttributeSet().isSerialNo())
+          copyAtt(newOpProduct, opProduct.getProduct(), true, serialNoSearchKey, null);
+        if (newProduct.getAttributeSet().isExpirationDate())
+          copyAtt(newOpProduct, opProduct.getProduct(), true, expirationDateearchKey, null);
+        // Normal Attribute
+        for (AttributeUse attributeuse : newProduct.getAttributeSet().getAttributeUseList()) {
+          copyAtt(newOpProduct, opProduct.getProduct(), false, "", attributeuse);
+        }
+      }
 
+      OBDal.getInstance().flush();
+
+      final OBError msg = new OBError();
       msg.setType("Success");
       msg.setTitle(Utility.messageBD(conn, "Success", bundle.getContext().getLanguage()));
       msg.setMessage(Utility.messageBD(conn, "IOProductCreated", bundle.getContext().getLanguage())
@@ -105,6 +129,27 @@ public class SequenceProductCreate implements Process {
       msg.setTitle("Error occurred");
       bundle.setResult(msg);
     }
+  }
+
+  private void copyAtt(OperationProduct newOpProduct, Product productFrom, boolean isSpecial,
+      String specialValue, AttributeUse attributeuse) throws Exception {
+
+    OperationProductAttribute opProductAtt = OBProvider.getInstance().get(
+        OperationProductAttribute.class);
+    opProductAtt.setSequenceproduct(newOpProduct);
+    opProductAtt.setClient(newOpProduct.getClient());
+    opProductAtt.setOrganization(newOpProduct.getOrganization());
+    opProductAtt.setProduct(productFrom);
+    opProductAtt.setSpecialatt(isSpecial);
+    if (isSpecial) {
+      opProductAtt.setSpecialatt(specialValue);
+    } else {
+      opProductAtt.setAttributeUse(attributeuse);
+      opProductAtt.setAttributeuseto(attributeuse);
+    }
+
+    OBDal.getInstance().save(opProductAtt);
+
   }
 
 }

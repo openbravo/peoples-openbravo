@@ -76,17 +76,17 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
         // Serial No.
         if (product.getAttributeSet().isSerialNo()
             && opProduct.getProduct().getAttributeSet().isSerialNo()) {
-          org.openbravo.model.ad.domain.List lot = SpecialAttListValue(serialNoSearchKey);
-          if (lot != null)
-            info.addSelectResult(lot.getSearchKey(), lot.getName());
+          org.openbravo.model.ad.domain.List sn = SpecialAttListValue(serialNoSearchKey);
+          if (sn != null)
+            info.addSelectResult(sn.getSearchKey(), sn.getName());
         }
 
         // ExpirationDate
         if (product.getAttributeSet().isExpirationDate()
             && opProduct.getProduct().getAttributeSet().isExpirationDate()) {
-          org.openbravo.model.ad.domain.List lot = SpecialAttListValue(expirationDateearchKey);
-          if (lot != null)
-            info.addSelectResult(lot.getSearchKey(), lot.getName());
+          org.openbravo.model.ad.domain.List ed = SpecialAttListValue(expirationDateearchKey);
+          if (ed != null)
+            info.addSelectResult(ed.getSearchKey(), ed.getName());
         }
         info.endSelect();
       }
