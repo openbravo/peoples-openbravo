@@ -174,16 +174,31 @@ public class PaymentMonitor {
       for (DebtPayment cancelledPayment : cancelledPayments) {
         if (!cancelledPayment.isPaymentComplete()) {
           cancelledNotPaidPayments.add(cancelledPayment);
-          cancelledNotPaidAmount = cancelledNotPaidAmount.add(getConvertedAmt(cancelledPayment
-              .getAmount(), cancelledPayment.getCurrency().getId(), strCurrencyTo, cancelledPayment
-              .getSettlementCancelled().getAccountingDate(), cancelledPayment.getClient().getId(),
-              cancelledPayment.getOrganization().getId()));
-          cancelledNotPaidWriteOffAmount = cancelledNotPaidWriteOffAmount.add(getConvertedAmt(
-              cancelledPayment.getWriteoffAmount(), cancelledPayment.getCurrency().getId(),
-              strCurrencyTo, cancelledPayment.getSettlementCancelled().getAccountingDate(),
-              cancelledPayment.getClient().getId(), cancelledPayment.getOrganization().getId()));
+          BigDecimal paymentCancelledAmt = getConvertedAmt(cancelledPayment.getAmount(),
+              cancelledPayment.getCurrency().getId(), strCurrencyTo, cancelledPayment
+                  .getSettlementCancelled().getAccountingDate(), cancelledPayment.getClient()
+                  .getId(), cancelledPayment.getOrganization().getId());
+          cancelledNotPaidAmount = cancelledNotPaidAmount
+              .add(payment.isReceipt() == cancelledPayment.isReceipt() ? paymentCancelledAmt
+                  : paymentCancelledAmt.negate());
+          BigDecimal paymentCancelledWOAmt = getConvertedAmt(cancelledPayment.getWriteoffAmount(),
+              cancelledPayment.getCurrency().getId(), strCurrencyTo, cancelledPayment
+                  .getSettlementCancelled().getAccountingDate(), cancelledPayment.getClient()
+                  .getId(), cancelledPayment.getOrganization().getId());
+          cancelledNotPaidWriteOffAmount = cancelledNotPaidWriteOffAmount
+              .add(payment.isReceipt() == cancelledPayment.isReceipt() ? paymentCancelledWOAmt
+                  : paymentCancelledWOAmt.negate());
         }
       }
+
+      if (cancelledNotPaidAmount.compareTo(BigDecimal.ZERO) == 0)
+        // The sum of all canceled not paid payments in the settlement is zero. This means that the
+        // payment has been paid completely, as it was canceled with some other pending payments
+        // (for example, the ones comming from a credit memo)
+        return getConvertedAmt(payment.getAmount().multiply(multiplier), payment.getCurrency()
+            .getId(), strCurrencyTo, conversionDate, payment.getClient().getId(), payment
+            .getOrganization().getId());
+
       List<DebtPayment> generatedPayments = payment.getSettlementCancelled()
           .getFinancialMgmtDebtPaymentCSettlementGenerateIDList();
       // Add the write-off amount
@@ -199,7 +214,9 @@ public class PaymentMonitor {
         generatedPaymentPaidAmount = calculatePaidAmount(generatedPayment, strCurrencyTo,
             generatedPayment.getSettlementGenerate().getAccountingDate(), payment.getAmount()
                 .divide(cancelledNotPaidAmount, 1000, BigDecimal.ROUND_HALF_UP));
-        paidAmount = paidAmount.add(generatedPaymentPaidAmount);
+        paidAmount = paidAmount
+            .add(payment.isReceipt() == generatedPayment.isReceipt() ? generatedPaymentPaidAmount
+                : generatedPaymentPaidAmount.negate());
       }
     }
     return paidAmount;
@@ -226,16 +243,30 @@ public class PaymentMonitor {
       for (DebtPayment cancelledPayment : cancelledPayments) {
         if (!cancelledPayment.isPaymentComplete()) {
           cancelledNotPaidPayments.add(cancelledPayment);
-          cancelledNotPaidAmount = cancelledNotPaidAmount.add(getConvertedAmt(cancelledPayment
-              .getAmount(), cancelledPayment.getCurrency().getId(), strCurrencyTo, cancelledPayment
-              .getSettlementCancelled().getAccountingDate(), cancelledPayment.getClient().getId(),
-              cancelledPayment.getOrganization().getId()));
-          cancelledNotPaidWriteOffAmount = cancelledNotPaidWriteOffAmount.add(getConvertedAmt(
-              cancelledPayment.getWriteoffAmount(), cancelledPayment.getCurrency().getId(),
-              strCurrencyTo, cancelledPayment.getSettlementCancelled().getAccountingDate(),
-              cancelledPayment.getClient().getId(), cancelledPayment.getOrganization().getId()));
+          BigDecimal paymentCancelledAmt = getConvertedAmt(cancelledPayment.getAmount(),
+              cancelledPayment.getCurrency().getId(), strCurrencyTo, cancelledPayment
+                  .getSettlementCancelled().getAccountingDate(), cancelledPayment.getClient()
+                  .getId(), cancelledPayment.getOrganization().getId());
+          cancelledNotPaidAmount = cancelledNotPaidAmount
+              .add(payment.isReceipt() == cancelledPayment.isReceipt() ? paymentCancelledAmt
+                  : paymentCancelledAmt.negate());
+          BigDecimal paymentCancelledWOAmt = getConvertedAmt(cancelledPayment.getWriteoffAmount(),
+              cancelledPayment.getCurrency().getId(), strCurrencyTo, cancelledPayment
+                  .getSettlementCancelled().getAccountingDate(), cancelledPayment.getClient()
+                  .getId(), cancelledPayment.getOrganization().getId());
+          cancelledNotPaidWriteOffAmount = cancelledNotPaidWriteOffAmount
+              .add(payment.isReceipt() == cancelledPayment.isReceipt() ? paymentCancelledWOAmt
+                  : paymentCancelledWOAmt.negate());
+
         }
       }
+      if (cancelledNotPaidAmount.compareTo(BigDecimal.ZERO) == 0)
+        // The sum of all canceled not paid payments in the settlement is zero. This means that the
+        // payment has been paid completely, as it was canceled with some other pending payments
+        // (for example, the ones comming from a credit memo)
+        return getConvertedAmt(payment.getAmount().multiply(multiplier), payment.getCurrency()
+            .getId(), strCurrencyTo, conversionDate, payment.getClient().getId(), payment
+            .getOrganization().getId());
       List<DebtPayment> generatedPayments = payment.getSettlementCancelled()
           .getFinancialMgmtDebtPaymentCSettlementGenerateIDList();
       if (generatedPayments == null || generatedPayments.size() == 0)
@@ -246,7 +277,9 @@ public class PaymentMonitor {
           generatedPaymentOverdueAmount = calculateOverdueAmount(generatedPayment, strCurrencyTo,
               generatedPayment.getSettlementGenerate().getAccountingDate(), payment.getAmount()
                   .divide(cancelledNotPaidAmount, 1000, BigDecimal.ROUND_HALF_UP));
-        overdueAmount = overdueAmount.add(generatedPaymentOverdueAmount);
+        overdueAmount = overdueAmount
+            .add(payment.isReceipt() == generatedPayment.isReceipt() ? generatedPaymentOverdueAmount
+                : generatedPaymentOverdueAmount.negate());
       }
     }
     return overdueAmount;
