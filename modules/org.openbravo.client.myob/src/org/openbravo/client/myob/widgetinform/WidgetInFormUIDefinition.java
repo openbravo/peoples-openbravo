@@ -35,7 +35,7 @@ import org.openbravo.model.ad.ui.Field;
  */
 public class WidgetInFormUIDefinition extends UIDefinition {
 
-  private static Logger log = Logger.getLogger(WidgetInFormUIDefinition.class);
+  private static Logger widgetLog = Logger.getLogger(WidgetInFormUIDefinition.class);
 
   @Override
   public String getFormEditorType() {
@@ -61,7 +61,7 @@ public class WidgetInFormUIDefinition extends UIDefinition {
       return o.toString();
     } catch (JSONException e) {
       // be robust
-      log.error(e.getMessage(), e);
+      widgetLog.error(e.getMessage(), e);
       return fieldProperties;
     }
   }
