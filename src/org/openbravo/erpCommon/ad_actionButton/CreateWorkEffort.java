@@ -79,9 +79,6 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
       Timestamp starttime = Timestamp.valueOf(dateformatTime + " " + strStartTime + ".0");
       Timestamp endtime = Timestamp.valueOf(dateformatTime + " " + strEndTime + ".0");
 
-      // Long startimelong = new
-      // Timestamp starttime = new Timestamp();
-
       // Search Phases To Be Created
       WorkRequirement workReq = OBDal.getInstance().get(WorkRequirement.class, strWorkRequirement);
 
@@ -200,7 +197,7 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
       msg.setType("Success");
       msg.setTitle(Utility.messageBD(conn, "Success", bundle.getContext().getLanguage()));
       msg.setMessage(counter + " "
-          + Utility.messageBD(conn, "WorkRequirementCreated", bundle.getContext().getLanguage())
+          + Utility.messageBD(conn, "WorkEffortCreated", bundle.getContext().getLanguage())
           + strdate);
       bundle.setResult(msg);
     } catch (final Exception e) {
