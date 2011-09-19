@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.myob.widgetinform;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.reference.UIDefinition;
@@ -33,6 +34,8 @@ import org.openbravo.model.ad.ui.Field;
  * 
  */
 public class WidgetInFormUIDefinition extends UIDefinition {
+
+  private static Logger log = Logger.getLogger(WidgetInFormUIDefinition.class);
 
   @Override
   public String getFormEditorType() {
@@ -51,11 +54,14 @@ public class WidgetInFormUIDefinition extends UIDefinition {
     WidgetClass widgetClass = wr.getWidgetClass();
 
     try {
-      JSONObject o = new JSONObject(fieldProperties);
+      JSONObject o = (fieldProperties == null || fieldProperties.trim().length() == 0) ? new JSONObject()
+          : new JSONObject(fieldProperties);
       o.put("widgetClassId", widgetClass.getId());
       o.put("showTitle", wr.isShowFieldTitle());
       return o.toString();
     } catch (JSONException e) {
+      // be robust
+      log.error(e.getMessage(), e);
       return fieldProperties;
     }
   }
