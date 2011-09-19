@@ -230,6 +230,7 @@ isc.OBAttachmentsLayout.addProperties({
   },
   
   fillAttachments: function(attachments){
+	var id;
     this.savedAttachments = attachments;
     this.destroyAndRemoveMembers(this.getMembers());
     var hLayout = isc.HLayout.create();
@@ -325,7 +326,12 @@ isc.OBAttachmentsLayout.addProperties({
     }
     this.getForm().view.attachmentExists = true;
     this.getForm().view.toolBar.updateButtonState();
-    isc_OBAttachmentsSectionItem_0.setValue(OB.I18N.getLabel('OBUIAPP_AttachmentTitle')+" ("+attachments.length+")");
+    var fields = this.getForm().getFields();
+    for(id = 0;id<fields.length;id++){
+      if(fields[id].type==='OBAttachmentsSectionItem'){
+        fields[id].setValue(OB.I18N.getLabel('OBUIAPP_AttachmentTitle')+" ("+attachments.length+")");
+      }
+    }
     var downloadAllButton = isc.OBLinkButtonItem.create({
       title: '[ '+OB.I18N.getLabel('OBUIAPP_AttachmentDownloadAll')+' ]',
       width: '30px',
