@@ -769,7 +769,7 @@ public class DocInvoice extends AcctServer {
         if (countFinInv != 0 && (countFinInv != countGLItemAcct)) {
           log4jDocInvoice.debug("DocInvoice - getDocumentConfirmation - GL Item used in financial "
               + "invoice lines debit/credit accounts must be defined.");
-          setStatus(STATUS_Error);
+          setStatus(STATUS_InvalidAccount);
           return false;
         }
       } catch (ServletException e) {
