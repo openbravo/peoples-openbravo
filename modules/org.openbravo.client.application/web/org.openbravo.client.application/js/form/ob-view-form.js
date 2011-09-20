@@ -452,7 +452,7 @@ OB.ViewFormProperties = {
   },
   
   setFields: function(){
-    var i, item, length = this.getItems().length;
+    var i, item, length;
     
     // is used in various places, prevent focus and scroll events
     this._preventFocusChanges = true;
@@ -461,6 +461,7 @@ OB.ViewFormProperties = {
     this.fieldsByInpColumnName = null;
     this.fieldsByColumnName = null;
 
+    length = this.getItems().length;
     for (i = 0; i < length; i++) {
       item = this.getItem(i);
       if(item && item.setSectionItemInContent) {
