@@ -81,6 +81,7 @@ isc.OBUserProfile.addProperties({
     }, function(req, data, resp) {me.formData = data;});
     
     this.Super('initWidget', arguments);
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileButton', this);
   },
   
   // ** {{{ initialize() }}} **
@@ -554,7 +555,6 @@ isc.OBUserProfile.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.NewPasswordField', passwordForm.getField('newPwd'));
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.ConfirmPasswordField', passwordForm.getField('confirmPwd'));
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.Form', passwordForm);
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileButton', this);
     
     this.resetLayout();
     this.computeSetContent();
