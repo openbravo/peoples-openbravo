@@ -93,7 +93,7 @@ public class AdvancedQueryBuilder {
   private static final String OPERATOR_GREATERTHANFIElD = "greaterThanField";
   private static final String OPERATOR_LESSTHANFIELD = "lessThanField";
   private static final String OPERATOR_GREATEROREQUALFIELD = "greaterOrEqualField";
-  private static final String OPERATOR_LESSOREQUALFIEld = "lessOrEqualField";
+  private static final String OPERATOR_LESSOREQUALFIElD = "lessOrEqualField";
   private static final String OPERATOR_CONTAINSFIELD = "containsField";
   private static final String OPERATOR_STARTSWITHFIELD = "startsWithField";
   private static final String OPERATOR_ENDSWITHFIELD = "endsWithField";
@@ -351,7 +351,7 @@ public class AdvancedQueryBuilder {
     if (operator.equals(OPERATOR_EQUALSFIELD) || operator.equals(OPERATOR_NOTEQUALFIELD)
         || operator.equals(OPERATOR_GREATERTHANFIElD) || operator.equals(OPERATOR_LESSTHANFIELD)
         || operator.equals(OPERATOR_GREATEROREQUALFIELD)
-        || operator.equals(OPERATOR_LESSOREQUALFIEld) || operator.equals(OPERATOR_CONTAINSFIELD)
+        || operator.equals(OPERATOR_LESSOREQUALFIElD) || operator.equals(OPERATOR_CONTAINSFIELD)
         || operator.equals(OPERATOR_STARTSWITHFIELD) || operator.equals(OPERATOR_ENDSWITHFIELD)) {
       final List<Property> properties = JsonUtils
           .getPropertiesOnPath(getEntity(), value.toString());
@@ -500,12 +500,49 @@ public class AdvancedQueryBuilder {
       }
     } else if (Date.class.isAssignableFrom(property.getPrimitiveObjectType())) {
       try {
-        return simpleDateFormat.parse(value.toString());
+        final Date date = simpleDateFormat.parse(value.toString());
+        // move the date to the beginning of the day
+        if (isGreaterOperator(operator)) {
+          final Calendar calendar = Calendar.getInstance();
+          calendar.setTime(date);
+          calendar.set(Calendar.HOUR, 0);
+          calendar.set(Calendar.MINUTE, 0);
+          calendar.set(Calendar.SECOND, 0);
+          calendar.set(Calendar.MILLISECOND, 0);
+          return calendar.getTime();
+        } else if (isLesserOperator(operator)) {
+          // move the data to the end of the day
+          final Calendar calendar = Calendar.getInstance();
+          calendar.setTime(date);
+          calendar.set(Calendar.HOUR, 23);
+          calendar.set(Calendar.MINUTE, 59);
+          calendar.set(Calendar.SECOND, 59);
+          calendar.set(Calendar.MILLISECOND, 999);
+          return calendar.getTime();
+        } else {
+          return date;
+        }
       } catch (Exception e) {
         throw new IllegalArgumentException(e);
       }
     }
     return value;
+  }
+
+  private boolean isGreaterOperator(String operator) {
+    return operator != null
+        && (operator.equals(OPERATOR_GREATERTHAN) || operator.equals(OPERATOR_GREATEROREQUAL)
+            || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_IGREATEROREQUAL)
+            || operator.equals(OPERATOR_GREATERTHANFIElD) || operator
+            .equals(OPERATOR_GREATEROREQUALFIELD));
+  }
+
+  private boolean isLesserOperator(String operator) {
+    return operator != null
+        && (operator.equals(OPERATOR_LESSTHAN) || operator.equals(OPERATOR_LESSOREQUAL)
+            || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_ILESSOREQUAL)
+            || operator.equals(OPERATOR_LESSTHANFIELD) || operator
+            .equals(OPERATOR_LESSOREQUALFIElD));
   }
 
   private String computeLeftWhereClauseForIdentifier(Property property, String key,
@@ -700,7 +737,7 @@ public class AdvancedQueryBuilder {
       return "<";
     } else if (operator.equals(OPERATOR_GREATEROREQUALFIELD)) {
       return ">=";
-    } else if (operator.equals(OPERATOR_LESSOREQUALFIEld)) {
+    } else if (operator.equals(OPERATOR_LESSOREQUALFIElD)) {
       return "<=";
     } else if (operator.equals(OPERATOR_CONTAINSFIELD)) {
       return "like";
