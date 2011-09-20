@@ -26,6 +26,7 @@
 }
 
 .OBGridBody {
+  outline: none;
   background-color: #FFFFFF;
 }
 
@@ -356,6 +357,7 @@
 /******************************/
 
 .OBViewGridBody {
+  outline: none;
   background-color: #FFFFFF;
 }
 
