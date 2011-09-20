@@ -1417,7 +1417,7 @@ isc.OBStandardView.addProperties({
                 for (i = 0 ; i < length; i++) {
                   recordInfos.push({id: deleteData.ids[i]});
                 }
-                view.viewGrid.data.handleUpdate('remove', recordInfos);
+                view.viewGrid.data.handleUpdate('remove', recordInfos, false, req);
                 if (updateTotalRows) {
                   view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
                 }
