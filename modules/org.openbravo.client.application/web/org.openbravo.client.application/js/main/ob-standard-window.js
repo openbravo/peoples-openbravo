@@ -131,7 +131,7 @@ isc.OBStandardWindow.addProperties({
         }
         if (!defaultView) {
           for (i = 0; i < length; i++) {
-            if (views[i].viewDefinition.isDefault) {
+            if (views[i].viewDefinition && views[i].viewDefinition.isDefault) {
               defaultView = views[i];
               break;
             }
