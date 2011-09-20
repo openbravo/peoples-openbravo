@@ -191,7 +191,6 @@ OB.ViewFormProperties = {
     
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
-    this.clearErrors();
     if (!isNew) {
       this.validateAfterFicReturn = true;
       // If editing a document set to recent documents
@@ -205,6 +204,10 @@ OB.ViewFormProperties = {
       this.view.statusBar.mode = 'NEW';
       this.view.statusBar.setContentLabel(this.view.statusBar.newIcon, 'OBUIAPP_New');
     }
+
+    // do at the end because during initial form drawing
+    // fields get blurred and will show an error
+    this.clearErrors();
   },
   
   editNewRecord: function(preventFocus){
