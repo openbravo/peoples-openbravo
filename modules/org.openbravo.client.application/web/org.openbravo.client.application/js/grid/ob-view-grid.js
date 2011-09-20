@@ -981,12 +981,16 @@ isc.OBViewGrid.addProperties({
       criterion, fldName, length;
 
     if (!criteria) {
-      criteria = {
-        operator: 'and', 
-        _constructor: "AdvancedCriteria", 
-        criteria:[]};
+      criteria = {};      
     } else {
       criteria = isc.clone(criteria);
+    }
+    
+    if (!criteria.operator) {
+      criteria.operator = 'and';
+    }
+    if (!criteria._constructor) {
+      criteria._constructor = "AdvancedCriteria"; 
     }
     
     if (!criteria.criteria) {
