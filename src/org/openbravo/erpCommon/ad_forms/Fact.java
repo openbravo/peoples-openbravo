@@ -52,13 +52,18 @@ public class Fact {
   /** Encumbrance Posting */
   public static final String POST_Commitment = "C";
   
-  /** Document Types for document level conversion rates*/
-  public static final String EXCHANGE_DOCTYPE_Invoice = "318";
-  public static final String EXCHANGE_DOCTYPE_Payment = "D1A97202E832470285C9B1EB026D54E2";
-  public static final String EXCHANGE_DOCTYPE_Transaction = "4D8C3B3C31D1410DA046140C9F024D17";
-
   /** Lines */
   private ArrayList<Object> m_lines = new ArrayList<Object>();
+
+  @Deprecated
+  // Use TABLEID_Invoice instead
+  public static final String EXCHANGE_DOCTYPE_Invoice = "318";
+  @Deprecated
+  // Use TABLEID_Payment instead
+  public static final String EXCHANGE_DOCTYPE_Payment = "D1A97202E832470285C9B1EB026D54E2";
+  @Deprecated
+  // Use TABLEID_Transaction instead
+  public static final String EXCHANGE_DOCTYPE_Transaction = "4D8C3B3C31D1410DA046140C9F024D17";
 
   /**
    * Constructor
@@ -142,12 +147,7 @@ public class Fact {
     return createLine(docLine, account, C_Currency_ID, debitAmt, creditAmt, Fact_Acct_Group_ID,
         SeqNo, DocBaseType, conversionDate, null, conn);
   }
-  public FactLine createLine(DocLine docLine, Account account, String C_Currency_ID,
-	      String debitAmt, String creditAmt, String Fact_Acct_Group_ID, String SeqNo,
-	      String DocBaseType, String conversionDate, BigDecimal conversionRate, ConnectionProvider conn) {
-	  return createLine(docLine, account, C_Currency_ID, debitAmt, creditAmt, Fact_Acct_Group_ID,
-		        SeqNo, DocBaseType, conversionDate, null, "", null, conn);
-  }
+
   /**
    * Create and convert Fact Line using a specified conversion date. Used to create a DR and/or CR
    * entry
@@ -174,7 +174,7 @@ public class Fact {
    *          The rate to use to convert from source amount to account amount. May be null
    * @return Fact Line
    */
-  /*public FactLine createLine(DocLine docLine, Account account, String C_Currency_ID,
+  public FactLine createLine(DocLine docLine, Account account, String C_Currency_ID,
       String debitAmt, String creditAmt, String Fact_Acct_Group_ID, String SeqNo,
       String DocBaseType, String conversionDate, BigDecimal conversionRate, ConnectionProvider conn) {
 
@@ -228,124 +228,13 @@ public class Fact {
     }
     log4jFact.debug("C_Currency_ID: " + m_acctSchema.getC_Currency_ID() + " - ConversionDate: "
         + conversionDate + " - CurrencyRateType: " + m_acctSchema.getCurrencyRateType());
+    
     // Convert
     if (conversionRate != null) {
       line.convertByRate(m_acctSchema.getC_Currency_ID(), conversionRate);
-    } else {
+    }else{
       line.convert(m_acctSchema.getC_Currency_ID(), conversionDate,
           m_acctSchema.getCurrencyRateType(), conn);
-    }
-    // Optionally overwrite Acct Amount
-    if (docLine != null && !docLine.m_AmtAcctDr.equals("") && !docLine.m_AmtAcctCr.equals(""))
-      line.setAmtAcct(docLine.m_AmtAcctDr, docLine.m_AmtAcctCr);
-    // Info
-    line.setJournalInfo(m_doc.GL_Category_ID);
-    line.setPostingType(m_postingType);
-    // Set Info
-    line.setDocumentInfo(m_doc, docLine);
-    //
-    log4jFact.debug("createLine - " + m_doc.DocumentNo);
-    log4jFact.debug("********************* Fact - createLine - DocumentNo - " + m_doc.DocumentNo
-        + " -  m_lines.size() - " + m_lines.size());
-    m_lines.add(line);
-    return line;
-  } // createLine
-  */
-  /**
-   * Create and convert Fact Line using a specified conversion date. Used to create a DR and/or CR
-   * entry
-   * 
-   * @param docLine
-   *          the document line or null
-   * @param account
-   *          if null, line is not created
-   * @param C_Currency_ID
-   *          the currency
-   * @param debitAmt
-   *          debit amount, can be null
-   * @param creditAmt
-   *          credit amount, can be null
-   * @param Fact_Acct_Group_ID
-   * 
-   * @param SeqNo
-   * 
-   * @param DocBaseType
-   * 
-   * @param conversionDate
-   *          Date to convert currencies if required
-   * @param conversionRate
-   *          The rate to use to convert from source amount to account amount. May be null
-   * @param AD_Table_ID
-   *          The document to get the date or conversion rate
-   * @return Fact Line
-   */
-  public FactLine createLine(DocLine docLine, Account account, String C_Currency_ID,
-      String debitAmt, String creditAmt, String Fact_Acct_Group_ID, String SeqNo,
-      String DocBaseType, String conversionDate, BigDecimal conversionRate, String AD_Table_ID, String recordId ,ConnectionProvider conn) {
-
-    String strNegate = "";
-    try {
-      strNegate = AcctServerData.selectNegate(conn, m_acctSchema.m_C_AcctSchema_ID, DocBaseType);
-      if (strNegate.equals(""))
-        strNegate = AcctServerData.selectDefaultNegate(conn, m_acctSchema.m_C_AcctSchema_ID);
-    } catch (ServletException e) {
-    }
-    if (strNegate.equals(""))
-      strNegate = "Y";
-    BigDecimal DebitAmt = new BigDecimal(debitAmt.equals("") ? "0.00" : debitAmt);
-    BigDecimal CreditAmt = new BigDecimal(creditAmt.equals("") ? "0.00" : creditAmt);
-    if (DebitAmt.compareTo(BigDecimal.ZERO) == 0 && CreditAmt.compareTo(BigDecimal.ZERO) == 0) {
-      return null;
-    }
-    if (strNegate.equals("N") && (DebitAmt.compareTo(ZERO) < 0 || CreditAmt.compareTo(ZERO) < 0)) {
-      return createLine(docLine, account, C_Currency_ID, CreditAmt.abs().toString(), DebitAmt.abs()
-          .toString(), Fact_Acct_Group_ID, SeqNo, DocBaseType, conn);
-    }
-
-    log4jFact.debug("createLine - " + account + " - Dr=" + debitAmt + ", Cr=" + creditAmt);
-    log4jFact.debug("Starting createline");
-    // Data Check
-    if (account == null) {
-      log4jFact.debug("end of create line");
-      m_doc.setStatus(AcctServer.STATUS_InvalidAccount);
-      return null;
-    }
-    //
-    log4jFact.debug("createLine - Fact_Acct_Group_ID = " + Fact_Acct_Group_ID);
-    FactLine line = new FactLine(m_doc.AD_Table_ID, m_doc.Record_ID, docLine == null ? ""
-        : docLine.m_TrxLine_ID, Fact_Acct_Group_ID, SeqNo, DocBaseType);
-    log4jFact.debug("createLine - line.m_Fact_Acct_Group_ID = " + line.m_Fact_Acct_Group_ID);
-    log4jFact.debug("Object created");
-    line.setDocumentInfo(m_doc, docLine);
-    line.setAD_Org_ID(m_doc.AD_Org_ID);
-    // if (docLine!=null) line.setAD_Org_ID(docLine.m_AD_Org_ID);
-    log4jFact.debug("document info set");
-    line.setAccount(m_acctSchema, account);
-    log4jFact.debug("account set");
-
-    log4jFact.debug("C_Currency_ID: " + C_Currency_ID + " - debitAmt: " + debitAmt
-        + " - creditAmt: " + creditAmt);
-    // Amounts - one needs to be both not zero
-    if (!line.setAmtSource(C_Currency_ID, debitAmt, creditAmt))
-      return null;
-    if (conversionDate == null || conversionDate.isEmpty()) {
-      conversionDate = m_doc.DateAcct;
-    }
-    log4jFact.debug("C_Currency_ID: " + m_acctSchema.getC_Currency_ID() + " - ConversionDate: "
-        + conversionDate + " - CurrencyRateType: " + m_acctSchema.getCurrencyRateType());
-    
-    //Overwrite conversion
-    if(AD_Table_ID.equals(EXCHANGE_DOCTYPE_Invoice) || AD_Table_ID.equals(EXCHANGE_DOCTYPE_Payment) || AD_Table_ID.equals(EXCHANGE_DOCTYPE_Transaction) ){
-    	line.convertByDocumentData(m_acctSchema.getC_Currency_ID(),m_acctSchema
-    	          .getCurrencyRateType(),recordId, AD_Table_ID, conn);
-    }else{
-    	//Standard Conversion
-        if (conversionRate != null) {
-          line.convertByRate(m_acctSchema.getC_Currency_ID(), conversionRate);
-        } else {
-          line.convert(m_acctSchema.getC_Currency_ID(), conversionDate, m_acctSchema
-              .getCurrencyRateType(), conn);
-        }
     }
     
     // Optionally overwrite Acct Amount
@@ -808,4 +697,14 @@ public class Fact {
     m_acctSchema = schema;
   }
 
+  boolean isMulticurrencyDocument() {
+    boolean isMultiCurrency = false;
+    for (int i = 0; i < m_lines.size(); i++) {
+      FactLine factLine = (FactLine) m_lines.get(i);
+      if (!factLine.getCurrency().equals(getM_acctSchema().m_C_Currency_ID)) {
+        return true;
+      }
+    }
+    return isMultiCurrency;
+  }
 }
