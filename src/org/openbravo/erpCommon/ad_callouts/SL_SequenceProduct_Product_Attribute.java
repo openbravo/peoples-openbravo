@@ -36,7 +36,7 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
   private static final String specialAttListId = "FF808181322476640132249E3417002F";
   private static final String lotSearchKey = "LOT";
   private static final String serialNoSearchKey = "SNO";
-  private static final String expirationDateearchKey = "EXD";
+  private static final String expirationDateSearchKey = "EXD";
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
@@ -84,7 +84,7 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
         // ExpirationDate
         if (product.getAttributeSet().isExpirationDate()
             && opProduct.getProduct().getAttributeSet().isExpirationDate()) {
-          org.openbravo.model.ad.domain.List ed = SpecialAttListValue(expirationDateearchKey);
+          org.openbravo.model.ad.domain.List ed = SpecialAttListValue(expirationDateSearchKey);
           if (ed != null)
             info.addSelectResult(ed.getSearchKey(), ed.getName());
         }

@@ -5609,7 +5609,8 @@ This process:<br/>
 <!--FF808181326CD80501326CE906D70042-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF808181326CD80501326CE906D70042-->  <VALUE><![CDATA[ValidateWorkEffort_ProductionRun]]></VALUE>
 <!--FF808181326CD80501326CE906D70042-->  <NAME><![CDATA[Validate Work Effort]]></NAME>
-<!--FF808181326CD80501326CE906D70042-->  <HELP><![CDATA[Process to validate the work effort in Production Run Window.]]></HELP>
+<!--FF808181326CD80501326CE906D70042-->  <DESCRIPTION><![CDATA[Process to validate and actualize stocks of production run.]]></DESCRIPTION>
+<!--FF808181326CD80501326CE906D70042-->  <HELP><![CDATA[Process to validate the work effort in Production Run Window. With this process the work effort is closed. Stocks are actualized and average costs are calculated]]></HELP>
 <!--FF808181326CD80501326CE906D70042-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--FF808181326CD80501326CE906D70042-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--FF808181326CD80501326CE906D70042-->  <ISREPORT><![CDATA[N]]></ISREPORT>

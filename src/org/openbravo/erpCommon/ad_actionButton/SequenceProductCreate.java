@@ -35,10 +35,9 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class SequenceProductCreate implements Process {
 
-  private static final String specialAttListId = "FF808181322476640132249E3417002F";
   private static final String lotSearchKey = "LOT";
   private static final String serialNoSearchKey = "SNO";
-  private static final String expirationDateearchKey = "EXD";
+  private static final String expirationDateSearchKey = "EXD";
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -97,7 +96,7 @@ public class SequenceProductCreate implements Process {
         if (newProduct.getAttributeSet().isSerialNo())
           copyAtt(newOpProduct, opProduct.getProduct(), true, serialNoSearchKey, null);
         if (newProduct.getAttributeSet().isExpirationDate())
-          copyAtt(newOpProduct, opProduct.getProduct(), true, expirationDateearchKey, null);
+          copyAtt(newOpProduct, opProduct.getProduct(), true, expirationDateSearchKey, null);
         // Normal Attribute
         for (AttributeUse attributeuse : newProduct.getAttributeSet().getAttributeUseList()) {
           copyAtt(newOpProduct, opProduct.getProduct(), false, "", attributeuse);

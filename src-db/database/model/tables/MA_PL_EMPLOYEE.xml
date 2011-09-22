@@ -49,12 +49,12 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="REALQUANTITY" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[0]]></default>
-        <onCreateDefault><![CDATA[0]]></onCreateDefault>
-      </column>
       <column name="C_BPARTNER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="RUNTIME" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="MA_PL_EMPLOYEE_AD_CLIENT">
