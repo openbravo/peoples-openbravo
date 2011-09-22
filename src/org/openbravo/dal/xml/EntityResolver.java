@@ -132,9 +132,6 @@ public class EntityResolver implements OBNotSingleton {
       if (result != null) {
         return result;
       }
-      if (result != null) {
-        return result;
-      }
 
       result = searchInstance(entity, id);
     }
