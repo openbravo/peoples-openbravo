@@ -247,6 +247,16 @@ public class EntityResolver implements OBNotSingleton {
       result = searchClient(id, entity);
     } else if (al == AccessLevel.ORGANIZATION) {
       result = searchClientOrganization(id, entity);
+
+      if (result == null) {
+        // still null, try all the orgs the user has access to
+        for (String orgId : OBContext.getOBContext().getReadableOrganizations()) {
+          result = search(id, entity, orgId);
+          if (result != null) {
+            break;
+          }
+        }
+      }
     } else if (al == AccessLevel.CLIENT_ORGANIZATION) {
       // search 2 levels
       result = searchClientOrganization(id, entity);
@@ -258,6 +268,16 @@ public class EntityResolver implements OBNotSingleton {
               .compareTo(AttributeSet.ENTITY_NAME) == 0)) {
         result = searchSystem(id, entity);
       }
+
+      if (result == null) {
+        // still null, try all the orgs the user has access to
+        for (String orgId : OBContext.getOBContext().getReadableOrganizations()) {
+          result = search(id, entity, orgId);
+          if (result != null) {
+            break;
+          }
+        }
+      }
     } else if (al == AccessLevel.ALL) {
       // search all three levels from the bottom
       result = searchClientOrganization(id, entity);
@@ -266,6 +286,16 @@ public class EntityResolver implements OBNotSingleton {
       }
       if (result == null) {
         result = searchSystem(id, entity);
+      }
+
+      if (result == null) {
+        // still null, try all the orgs the user has access to
+        for (String orgId : OBContext.getOBContext().getReadableOrganizations()) {
+          result = search(id, entity, orgId);
+          if (result != null) {
+            break;
+          }
+        }
       }
     }
     return result;
