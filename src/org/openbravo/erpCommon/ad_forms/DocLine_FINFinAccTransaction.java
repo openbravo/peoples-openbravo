@@ -19,6 +19,8 @@
 package org.openbravo.erpCommon.ad_forms;
 
 import org.apache.log4j.Logger;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.invoice.Invoice;
 
 public class DocLine_FINFinAccTransaction extends DocLine {
   static Logger log4jDocLine_FINFinAccTransaction = Logger
@@ -31,6 +33,33 @@ public class DocLine_FINFinAccTransaction extends DocLine {
   String isPrepayment = "";
   String finPaymentId = "";
   String WriteOffAmt = "";
+  Invoice invoice = null;
+
+  public String getcGlItemId() {
+    return cGlItemId;
+  }
+
+  public void setcGlItemId(String cGlItemId) {
+    this.cGlItemId = cGlItemId;
+  }
+
+  public Invoice getInvoice() {
+    return invoice;
+  }
+
+  public void setInvoice(Invoice invoice) {
+    this.invoice = invoice;
+  }
+
+  @Deprecated
+  public String getInvoiceId() {
+    return invoice.getId();
+  }
+
+  @Deprecated
+  public void setInvoice_ID(String invoiceId) {
+    this.invoice = OBDal.getInstance().get(Invoice.class, invoiceId);
+  }
 
   /**
    * @return the isPrepayment

@@ -52,6 +52,16 @@ public class Fact {
   /** Lines */
   private ArrayList<Object> m_lines = new ArrayList<Object>();
 
+  @Deprecated
+  // Use TABLEID_Invoice instead
+  public static final String EXCHANGE_DOCTYPE_Invoice = "318";
+  @Deprecated
+  // Use TABLEID_Payment instead
+  public static final String EXCHANGE_DOCTYPE_Payment = "D1A97202E832470285C9B1EB026D54E2";
+  @Deprecated
+  // Use TABLEID_Transaction instead
+  public static final String EXCHANGE_DOCTYPE_Transaction = "4D8C3B3C31D1410DA046140C9F024D17";
+
   /**
    * Constructor
    * 
@@ -682,4 +692,14 @@ public class Fact {
     m_acctSchema = schema;
   }
 
+  boolean isMulticurrencyDocument() {
+    boolean isMultiCurrency = false;
+    for (int i = 0; i < m_lines.size(); i++) {
+      FactLine factLine = (FactLine) m_lines.get(i);
+      if (!factLine.getCurrency().equals(getM_acctSchema().m_C_Currency_ID)) {
+        return true;
+      }
+    }
+    return isMultiCurrency;
+  }
 }

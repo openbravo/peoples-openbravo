@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER FIN_PAYMENT_TRG">
+    <trigger name="FIN_PAYMENT_TRG" table="FIN_PAYMENT" fires="after" insert="true" update="true" delete="true" foreach="row">
+      <body><![CDATA[
+
+/************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2010-2011 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+*************************************************************************/
+
+v_DateNull DATE := TO_DATE('01-01-1900','DD-MM-YYYY');
+v_C_CURRENCY_ID FIN_FINANCIAL_ACCOUNT.C_CURRENCY_ID%TYPE;
+v_Count NUMBER:=0;
+  
+BEGIN
+   
+  IF AD_isTriggerEnabled()='N' THEN RETURN;
+  END IF;
+
+  IF (UPDATING OR INSERTING) THEN
+    SELECT C_CURRENCY_ID INTO v_C_CURRENCY_ID
+    FROM FIN_FINANCIAL_ACCOUNT
+    WHERE FIN_FINANCIAL_ACCOUNT_ID = :NEW.FIN_FINANCIAL_ACCOUNT_ID;
+  END IF;
+
+  IF (UPDATING) THEN
+    IF(:OLD.FINACC_TXN_CONVERT_RATE <> :NEW.FINACC_TXN_CONVERT_RATE AND :OLD.AMOUNT <> :NEW.AMOUNT) THEN
+
+	SELECT COUNT(*) INTO v_Count
+	FROM C_CONVERSION_RATE_DOCUMENT
+	WHERE C_CURRENCY_ID = :NEW.C_CURRENCY_ID
+	AND C_CURRENCY_ID_TO = v_C_CURRENCY_ID
+	AND FIN_PAYMENT_ID = :NEW.FIN_PAYMENT_ID;
+
+	IF(V_Count = 0) THEN
+	  INSERT INTO C_CONVERSION_RATE_DOCUMENT(
+	      C_CONVERSION_RATE_DOCUMENT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, 
+	      CREATED, CREATEDBY, UPDATED, UPDATEDBY, C_CURRENCY_ID, C_CURRENCY_ID_TO, 
+	      C_INVOICE_ID, FIN_PAYMENT_ID, APRM_FINACC_TRANSACTION_V_ID, RATE, 
+	      FOREIGN_AMOUNT)
+	  VALUES (get_uuid(), :NEW.AD_CLIENT_ID, :NEW.AD_ORG_ID, :NEW.ISACTIVE, 
+	      NOW(), :NEW.UPDATEDBY, NOW(), :NEW.UPDATEDBY, :NEW.C_CURRENCY_ID, v_C_CURRENCY_ID, 
+	      NULL, :NEW.FIN_PAYMENT_ID, NULL, :NEW.FINACC_TXN_CONVERT_RATE, 
+	      :NEW.AMOUNT*:NEW.FINACC_TXN_CONVERT_RATE);
+	ELSE
+	  UPDATE C_CONVERSION_RATE_DOCUMENT SET RATE = :NEW.FINACC_TXN_CONVERT_RATE, FOREIGN_AMOUNT = :NEW.AMOUNT*:NEW.FINACC_TXN_CONVERT_RATE
+ 	  WHERE C_CURRENCY_ID = :NEW.C_CURRENCY_ID
+ 	  AND C_CURRENCY_ID_TO = v_C_CURRENCY_ID
+ 	  AND FIN_PAYMENT_ID = :NEW.FIN_PAYMENT_ID;
+ 	END IF;
+    END IF;
+  END IF;
+  IF(INSERTING) THEN
+   IF(:NEW.FINACC_TXN_CONVERT_RATE <> 1) THEN
+	INSERT INTO c_conversion_rate_document(
+	    c_conversion_rate_document_id, ad_client_id, ad_org_id, isactive, 
+	    created, createdby, updated, updatedby, c_currency_id, c_currency_id_to, 
+	    c_invoice_id, fin_payment_id, aprm_finacc_transaction_v_id, rate, 
+	    foreign_amount)
+	VALUES (get_uuid(), :NEW.AD_CLIENT_ID, :NEW.AD_ORG_ID, :NEW.ISACTIVE, 
+	    NOW(), :NEW.UPDATEDBY, NOW(), :NEW.UPDATEDBY, :NEW.C_CURRENCY_ID, v_C_CURRENCY_ID, 
+	    NULL, :NEW.FIN_PAYMENT_ID, NULL, :NEW.FINACC_TXN_CONVERT_RATE, 
+	    :NEW.AMOUNT*:NEW.FINACC_TXN_CONVERT_RATE);
+   END IF;
+  END IF;
+END FIN_PAYMENT_TRG
+]]></body>
+    </trigger>
+  </database>
