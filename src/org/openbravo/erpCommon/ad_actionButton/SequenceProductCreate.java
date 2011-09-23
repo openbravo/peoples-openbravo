@@ -89,7 +89,8 @@ public class SequenceProductCreate implements Process {
       OBDal.getInstance().flush();
 
       // Copy Attributes
-      if (copyAttribute.equals("Y") && newProduct.getAttributeSet() != null) {
+      if (copyAttribute.equals("Y") && newProduct.getAttributeSet() != null
+          && productionType.equals("+") && opProduct.getProductionType().equals("-")) {
         // Special Attribute
         if (newProduct.getAttributeSet().isLot())
           copyAtt(newOpProduct, opProduct, true, lotSearchKey, null);
@@ -108,8 +109,17 @@ public class SequenceProductCreate implements Process {
       final OBError msg = new OBError();
       msg.setType("Success");
       msg.setTitle(Utility.messageBD(conn, "Success", bundle.getContext().getLanguage()));
-      msg.setMessage(Utility.messageBD(conn, "IOProductCreated", bundle.getContext().getLanguage())
-          + newProduct.getName() + " " + qty + " P" + productionType);
+      String message = Utility.messageBD(conn, "SequenceProductCreated", bundle.getContext()
+          .getLanguage())
+          + newProduct.getName() + " " + qty + " P" + productionType;
+      if (copyAttribute.equals("Y")
+          && (productionType.equals("-") || opProduct.getProductionType().equals("+"))) {
+        message = message
+            + ". "
+            + Utility.messageBD(conn, "SequenceProductAttNotCopied", bundle.getContext()
+                .getLanguage());
+      }
+      msg.setMessage(message);
       bundle.setResult(msg);
     } catch (final Exception e) {
       OBDal.getInstance().rollbackAndClose();
