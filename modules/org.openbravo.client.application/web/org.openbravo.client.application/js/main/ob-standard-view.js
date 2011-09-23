@@ -1862,15 +1862,11 @@ isc.OBStandardView.addProperties({
     }
     
     if (fld.onChangeFunction) {
-      onChangeFunction = function(item, view, form, grid) {
-        eval(fld.onChangeFunction)(item, view, form, grid);
-      };
-      
       // the default
-      onChangeFunction.sort = 50;
+      fld.onChangeFunction.sort = 50;
       
       OB.OnChangeRegistry.register(this.tabId, fld.name, 
-          onChangeFunction, 'default');
+          fld.onChangeFunction, 'default');
     }
     
     return fld;

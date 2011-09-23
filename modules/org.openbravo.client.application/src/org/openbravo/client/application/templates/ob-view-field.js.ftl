@@ -39,7 +39,7 @@ the outputted value is already covered by a default.
         updatable: false,
     </#if>
     <#if field.onChangeFunction??>
-        onChangeFunction: '${field.onChangeFunction?js_string}',
+        onChangeFunction: ${field.onChangeFunction?js_string},
     </#if>
     <#if field.sessionProperty>
         sessionProperty: true,
