@@ -356,6 +356,14 @@
   background-color:#FFFFFF;
 }
 
+// workaround for this issue:
+// https://issues.openbravo.com/view.php?id=18501
+.pickListMenuBody {
+  border:1px solid #CDD7BB;
+  outline: none; 
+  background-color:#FFFFFF;
+}
+
 .OBFormFieldPickListCell,
 .OBFormFieldPickListCellSelected,
 .OBFormFieldPickListCellFocused,

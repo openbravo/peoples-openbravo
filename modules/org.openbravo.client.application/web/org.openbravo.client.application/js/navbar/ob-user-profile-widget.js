@@ -127,6 +127,16 @@ isc.OBUserProfile.addProperties({
       pickListProperties: {
         bodyStyleName: OB.Styles.OBFormField.DefaultComboBox.pickListProperties.bodyStyleName
       },
+      
+      // workaround for this issue:
+      // https://issues.openbravo.com/view.php?id=18501
+      setUpPickList : function () {
+        this.Super("setUpPickList", arguments);
+        if (this.pickList) {
+          this.pickList.setBodyStyleName(this.pickListProperties.bodyStyleName);
+        }
+      },
+
       titleOrientation: 'top',
       showFocused: true,
       editorType: 'select',
