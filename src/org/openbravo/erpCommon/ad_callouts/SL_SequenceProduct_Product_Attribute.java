@@ -26,7 +26,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.common.plm.AttributeUse;
-import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.manufacturing.processplan.OperationProduct;
 
 public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
@@ -42,18 +41,19 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
   protected void execute(CalloutInfo info) throws ServletException {
 
     // String strLastFieldChanged = info.getLastFieldChanged();
-    String strmProductId = info.getStringParameter("inpmProductId", idFilter);
+    String strmSequenceProductId = info.getStringParameter("inpmaSequenceproductfromId", idFilter);
     String strmProductSequenceId = info.getStringParameter("inpmaSequenceproductId", idFilter);
 
-    Product product = OBDal.getInstance().get(Product.class, strmProductId);
-    if (product.getAttributeSet() != null) {
+    OperationProduct fromOpProduct = OBDal.getInstance().get(OperationProduct.class,
+        strmSequenceProductId);
+    if (fromOpProduct.getProduct().getAttributeSet() != null) {
       // Fill Normal Attributes
       OperationProduct opProduct = OBDal.getInstance().get(OperationProduct.class,
           strmProductSequenceId);
 
       OBCriteria attributeUseCriteria = OBDal.getInstance().createCriteria(AttributeUse.class);
-      attributeUseCriteria.add(Restrictions.eq(AttributeUse.PROPERTY_ATTRIBUTESET,
-          product.getAttributeSet()));
+      attributeUseCriteria.add(Restrictions.eq(AttributeUse.PROPERTY_ATTRIBUTESET, fromOpProduct
+          .getProduct().getAttributeSet()));
       attributeUseCriteria.addOrderBy(AttributeUse.PROPERTY_SEQUENCENUMBER, true);
       java.util.List<AttributeUse> attUseList = attributeUseCriteria.list();
 
@@ -67,14 +67,15 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
       if (opProduct.getProduct().getAttributeSet() != null) {
         info.addSelect("inpspecialatt");
         // Lot
-        if (product.getAttributeSet().isLot() && opProduct.getProduct().getAttributeSet().isLot()) {
+        if (fromOpProduct.getProduct().getAttributeSet().isLot()
+            && opProduct.getProduct().getAttributeSet().isLot()) {
           org.openbravo.model.ad.domain.List lot = SpecialAttListValue(lotSearchKey);
           if (lot != null)
             info.addSelectResult(lot.getSearchKey(), lot.getName());
         }
 
         // Serial No.
-        if (product.getAttributeSet().isSerialNo()
+        if (fromOpProduct.getProduct().getAttributeSet().isSerialNo()
             && opProduct.getProduct().getAttributeSet().isSerialNo()) {
           org.openbravo.model.ad.domain.List sn = SpecialAttListValue(serialNoSearchKey);
           if (sn != null)
@@ -82,7 +83,7 @@ public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
         }
 
         // ExpirationDate
-        if (product.getAttributeSet().isExpirationDate()
+        if (fromOpProduct.getProduct().getAttributeSet().isExpirationDate()
             && opProduct.getProduct().getAttributeSet().isExpirationDate()) {
           org.openbravo.model.ad.domain.List ed = SpecialAttListValue(expirationDateSearchKey);
           if (ed != null)

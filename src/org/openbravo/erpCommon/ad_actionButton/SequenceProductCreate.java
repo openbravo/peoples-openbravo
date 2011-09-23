@@ -92,14 +92,14 @@ public class SequenceProductCreate implements Process {
       if (copyAttribute.equals("Y") && newProduct.getAttributeSet() != null) {
         // Special Attribute
         if (newProduct.getAttributeSet().isLot())
-          copyAtt(newOpProduct, opProduct.getProduct(), true, lotSearchKey, null);
+          copyAtt(newOpProduct, opProduct, true, lotSearchKey, null);
         if (newProduct.getAttributeSet().isSerialNo())
-          copyAtt(newOpProduct, opProduct.getProduct(), true, serialNoSearchKey, null);
+          copyAtt(newOpProduct, opProduct, true, serialNoSearchKey, null);
         if (newProduct.getAttributeSet().isExpirationDate())
-          copyAtt(newOpProduct, opProduct.getProduct(), true, expirationDateSearchKey, null);
+          copyAtt(newOpProduct, opProduct, true, expirationDateSearchKey, null);
         // Normal Attribute
         for (AttributeUse attributeuse : newProduct.getAttributeSet().getAttributeUseList()) {
-          copyAtt(newOpProduct, opProduct.getProduct(), false, "", attributeuse);
+          copyAtt(newOpProduct, opProduct, false, "", attributeuse);
         }
       }
 
@@ -130,15 +130,15 @@ public class SequenceProductCreate implements Process {
     }
   }
 
-  private void copyAtt(OperationProduct newOpProduct, Product productFrom, boolean isSpecial,
-      String specialValue, AttributeUse attributeuse) throws Exception {
+  private void copyAtt(OperationProduct newOpProduct, OperationProduct fromOpProduct,
+      boolean isSpecial, String specialValue, AttributeUse attributeuse) throws Exception {
 
     OperationProductAttribute opProductAtt = OBProvider.getInstance().get(
         OperationProductAttribute.class);
     opProductAtt.setSequenceproduct(newOpProduct);
     opProductAtt.setClient(newOpProduct.getClient());
     opProductAtt.setOrganization(newOpProduct.getOrganization());
-    opProductAtt.setProduct(productFrom);
+    opProductAtt.setProductFrom(fromOpProduct);
     opProductAtt.setSpecialatt(isSpecial);
     if (isSpecial) {
       opProductAtt.setSpecialatt(specialValue);
