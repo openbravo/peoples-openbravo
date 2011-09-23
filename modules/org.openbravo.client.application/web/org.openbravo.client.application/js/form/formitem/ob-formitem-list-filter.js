@@ -28,6 +28,7 @@ isc.OBListFilterItem.addProperties({
   validateOnExit: false,
   validateOnChange: false,
   filterOnKeypress: false,
+  addUnknownValues: false,
   
   // note: can't override changed as it is used by the filter editor 
   // itself, see the RecordEditor source code and the changed event
