@@ -294,6 +294,30 @@ public class AdvancedQueryBuilder {
       value = null;
     }
 
+    // if a comparison is done on an equal date then replace
+    // with a between start time and end time on that date
+    if (operator.equals(OPERATOR_EQUALS) || operator.equals(OPERATOR_EQUALSFIELD)) {
+      final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), fieldName);
+      if (properties.isEmpty()) {
+        return null;
+      }
+      final Property property = properties.get(properties.size() - 1);
+      if (property == null) {
+        return null;
+      }
+      // create the clauses, re-uses the code in parseSimpleClause
+      // which translates a lesserthan/greater than to the end/start
+      // time of a date
+      if (operator.equals(OPERATOR_EQUALS)) {
+        return "(" + parseSimpleClause(fieldName, OPERATOR_GREATEROREQUAL, value) + " and "
+            + parseSimpleClause(fieldName, OPERATOR_LESSOREQUAL, value) + ")";
+
+      } else {
+        return "(" + parseSimpleClause(fieldName, OPERATOR_GREATEROREQUALFIELD, value) + " and "
+            + parseSimpleClause(fieldName, OPERATOR_LESSOREQUALFIElD, value) + ")";
+      }
+    }
+
     return parseSimpleClause(fieldName, operator, value);
   }
 
@@ -313,6 +337,7 @@ public class AdvancedQueryBuilder {
 
   private String parseSimpleClause(String fieldName, String operator, Object value)
       throws JSONException {
+    // note: code duplicated in parseSingleClause
     final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), fieldName);
     if (properties.isEmpty()) {
       return null;
