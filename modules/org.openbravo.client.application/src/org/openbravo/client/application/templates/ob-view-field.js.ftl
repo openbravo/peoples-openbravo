@@ -38,6 +38,9 @@ the outputted value is already covered by a default.
     <#if !field.updatable>
         updatable: false,
     </#if>
+    <#if field.onChangeFunction??>
+        onChangeFunction: '${field.onChangeFunction?js_string}',
+    </#if>
     <#if field.sessionProperty>
         sessionProperty: true,
     </#if>

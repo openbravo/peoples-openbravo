@@ -1832,6 +1832,8 @@ isc.OBStandardView.addProperties({
   },
   
   setFieldFormProperties: function(fld) {
+    var onChangeFunction;
+    
     if (fld.displayed === false) {
       fld.visible = false;
       fld.alwaysTakeSpace = false;
@@ -1858,6 +1860,19 @@ isc.OBStandardView.addProperties({
         fld.sectionExpanded = true;
       }
     }
+    
+    if (fld.onChangeFunction) {
+      onChangeFunction = function(item, view, form, grid) {
+        eval(fld.onChangeFunction)(item, view, form, grid);
+      };
+      
+      // the default
+      onChangeFunction.sort = 50;
+      
+      OB.OnChangeRegistry.register(this.tabId, fld.name, 
+          onChangeFunction, 'default');
+    }
+    
     return fld;
   },
   

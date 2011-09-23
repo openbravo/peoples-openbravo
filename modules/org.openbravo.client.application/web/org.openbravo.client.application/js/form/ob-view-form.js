@@ -862,9 +862,9 @@ OB.ViewFormProperties = {
       (isc.SimpleType.getType(field.type).inheritsFrom === 'date' ||
       isc.SimpleType.getType(field.type).inheritsFrom === 'datetime');
       if (isDate) {
-        this.setValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
+        this.setItemValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
       } else if(columnValue.hasDateDefault){
-        this.setValue(field.name, columnValue.classicValue);
+        this.setItemValue(field.name, columnValue.classicValue);
       } else {
         
         // set the identifier/display field if the identifier is passed also
@@ -888,21 +888,21 @@ OB.ViewFormProperties = {
             // datasource and the field displayfield contains a dot, otherwise 
             // it is a direct field
             if (field.displayField && field.displayField.contains('.') && !this.getField(field.displayField) && !field.optionDataSource && !field.getDataSource()) {
-              field.form.setValue(field.displayField, identifier);
+              field.form.setItemValue(field.displayField, identifier);
             } else if (!field.displayField) {
-              field.form.setValue(field.name + '.' + OB.Constants.IDENTIFIER, identifier);
+              field.form.setItemValue(field.name + '.' + OB.Constants.IDENTIFIER, identifier);
             }
           }
         }
         
-        this.setValue(field.name, assignValue);
+        this.setItemValue(field.name, assignValue);
       }
     } else {
       // note: do not use clearvalue as this removes the value from the form
       // which results it to not be sent to the server anymore
       this.setValue(field.name, null);
       if (this.getValue(field.name + '.' + OB.Constants.IDENTIFIER)) {
-        this.setValue(field.name + '.' + OB.Constants.IDENTIFIER, null);
+        this.setItemValue(field.name + '.' + OB.Constants.IDENTIFIER, null);
       }
     }
     
@@ -1005,9 +1005,42 @@ OB.ViewFormProperties = {
     this.setValue(fldName + '_textualValue', textValue);
   },
   
+  // calls setValue and the onchange handling
+  setItemValue: function(item, value) {
+    var currentValue;
+
+    if (isc.isA.String(item)) {
+       
+      // not an item, set and bail
+      if (!this.getField(item)) {
+        this.setValue(item, value);
+        return;
+      }
+      item = this.getField(item);
+    }
+    currentValue = item.getValue();
+    
+    // no change go away
+    if (item.compareValues(value, currentValue)) {
+      return;
+    }
+    this.setValue(item, value);
+
+    // fire any new callouts
+    if (this.view) {
+      view = this.view;
+    } else if (this.grid && this.grid.view){
+      view = this.grid.view;
+    }
+
+    if (view && OB.OnChangeRegistry.hasOnChange(view.tabId, item)) {
+      OB.OnChangeRegistry.call(view.tabId, item, view, view.viewForm, view.viewGrid);
+    }
+  },
+  
   // called explicitly onblur and when non-editable fields change
   handleItemChange: function(item){
-    var i, length;
+    var i, length, tabId, view;
     
     // is used to prevent infinite loops during save
     delete this.saveFocusItemChanged;
@@ -1018,21 +1051,34 @@ OB.ViewFormProperties = {
       this.itemChangeActions();
 
       this.onFieldChanged(item.form, item, item.getValue());
+      
+      if (this.view) {
+        view = this.view;
+      } else if (this.grid && this.grid.view){
+        view = this.grid.view;
+      }
 
-      length = this.dynamicCols.length;
-      for (i = 0; i < length; i++) {
-        if (this.dynamicCols[i] === item.inpColumnName) {
-          item._hasChanged = false;
-          this.inFicCall = true;
-          this.doChangeFICCall(item);
-          return true;
+      if (view && OB.OnChangeRegistry.hasOnChange(view.tabId, item)) {
+        OB.OnChangeRegistry.call(view.tabId, item, view, view.viewForm, view.viewGrid);
+      } else {
+        // call the classic callout if there
+        length = this.dynamicCols.length;
+        for (i = 0; i < length; i++) {
+          if (this.dynamicCols[i] === item.inpColumnName) {
+            item._hasChanged = false;
+            this.inFicCall = true;
+            this.doChangeFICCall(item);
+            return true;
+          }
         }
       }
+
       if (this.getFocusItem() && !this.getFocusItem().isFocusable(true)) {
         this.computeFocusItem(this.getFocusItem());
         this.setFocusInForm();
       }
     }
+    
     item._hasChanged = false;
   },
   
@@ -1078,6 +1124,7 @@ OB.ViewFormProperties = {
       }
 
       me.processFICReturn(response, data, request, editValues, editRow);
+
     });
     this.view.toolBar.updateButtonState(true);
   },
@@ -1247,6 +1294,11 @@ OB.ViewFormProperties = {
         // success invoke the action, if any there
         view.standardWindow.autoSaveDone(view, true);
 
+        // stop here if the window was getting closed anyway
+        if (view.standardWindow.closing) {
+          return;
+        }
+        
         // do this after doing autoSave as the setHasChanged will clean
         // the autosave info
         form.setHasChanged(false);
@@ -1313,6 +1365,7 @@ OB.ViewFormProperties = {
   focusInNextItem: function(currentItemName, delayed) {
     if (!delayed) {
       this.delayCall('focusInNextItem', [currentItemName, true], 100);
+      return;
     }
     this.computeFocusItem(this.getField(currentItemName));
     if (this.getFocusItem()) {

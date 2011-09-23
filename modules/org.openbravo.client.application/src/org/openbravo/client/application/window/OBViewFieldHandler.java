@@ -331,6 +331,8 @@ public class OBViewFieldHandler {
   interface OBViewFieldDefinition {
     public int getGridSort();
 
+    public String getOnChangeFunction();
+
     public boolean getShowColSpan();
 
     public boolean getShowStartRow();
@@ -405,6 +407,10 @@ public class OBViewFieldHandler {
     private String refType;
     private String refEntity;
     private Element element;
+
+    public String getOnChangeFunction() {
+      return null;
+    }
 
     public boolean getShowColSpan() {
       return getColSpan() != 1;
@@ -620,6 +626,10 @@ public class OBViewFieldHandler {
     private String showIf = "";
     private String readOnlyIf = "";
     private int gridSort = 0;
+
+    public String getOnChangeFunction() {
+      return field.getOnChangeFunction();
+    }
 
     public boolean getShowColSpan() {
       return getColSpan() != 1;
@@ -943,6 +953,10 @@ public class OBViewFieldHandler {
   }
 
   public class DefaultVirtualField implements OBViewFieldDefinition {
+
+    public String getOnChangeFunction() {
+      return null;
+    }
 
     public boolean getShowColSpan() {
       return getColSpan() != 4;
@@ -1370,6 +1384,9 @@ public class OBViewFieldHandler {
   }
 
   public class OBViewFieldSpacer implements OBViewFieldDefinition {
+    public String getOnChangeFunction() {
+      return null;
+    }
 
     public boolean getHasChildren() {
       return false;
