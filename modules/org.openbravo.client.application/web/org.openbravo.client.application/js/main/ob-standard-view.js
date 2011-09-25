@@ -1966,9 +1966,11 @@ isc.OBStandardView.addProperties({
       if (type.editorType) {
         fld.editorType = type.editorType;
       }
-      if (type.filterEditorType) {
+      
+      if (type.filterEditorType && !fld.filterEditorType) {
         fld.filterEditorType = type.filterEditorType;
       }
+      
       // don't set it if explicitly set to null
       if (fld.fkField) {
         fld.displayField = fld.name + '.' + OB.Constants.IDENTIFIER;
