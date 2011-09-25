@@ -45,23 +45,7 @@ isc.ClassFactory.defineClass('OBPopUpTextAreaItem', PopUpTextAreaItem);
 isc.OBPopUpTextAreaItem.addProperties({
   validateOnExit: true,
   canFocus: true,
-  popUpOnEnter: true,
-  
-  // workaround for this:
-  // http://forums.smartclient.com/showthread.php?p=73173
-  mapValueToDisplay : function (internalValue, a,b,c,d) {
-    var value = this.invokeSuper(isc.StaticTextItem, "mapValueToDisplay", 
-                                 internalValue, a,b,c,d);
-    var asHTML = this.escapeHTML || this.outputAsHTML || this.asHTML;
-    
-    // Don't escape &nbsp; unless that's actually the data value!  
-    if (asHTML && (internalValue === null || internalValue === isc.emptyString)
-        && value === '&nbsp;') {
-      return value;
-    }
-    return this.Super('mapValueToDisplay', arguments);
-  }
-
+  popUpOnEnter: true
 });
 
 // hack until this gets answered:

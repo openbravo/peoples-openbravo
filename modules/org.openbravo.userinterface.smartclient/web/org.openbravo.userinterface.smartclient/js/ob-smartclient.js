@@ -66,6 +66,23 @@ isc.Button.addProperties({
 
 isc.StaticTextItem.getPrototype().getCanFocus = function() {return false;};
 
+isc.StaticTextItem.addProperties({
+  // workaround for this:
+  // http://forums.smartclient.com/showthread.php?p=73173
+  mapValueToDisplay : function (internalValue, a,b,c,d) {
+    var value = this.invokeSuper(isc.StaticTextItem, "mapValueToDisplay", 
+                                 internalValue, a,b,c,d);
+    var asHTML = this.escapeHTML || this.outputAsHTML || this.asHTML;
+    
+    // Don't escape &nbsp; unless that's actually the data value!  
+    if (asHTML && (internalValue === null || internalValue === isc.emptyString)
+        && value === '&nbsp;') {
+      return value;
+    }
+    return this.Super('mapValueToDisplay', arguments);
+  }
+});
+
 isc.Layout.addProperties({
   
   destroyAndRemoveMembers: function(toDestroy) {
