@@ -932,15 +932,16 @@ public class FactLine {
     log4jFactLine.debug("currencyCorrect - " + deltaAmount.toString() + "; Old-AcctDr="
         + m_AmtAcctDr + ",AcctCr=" + m_AmtAcctCr + "; Negative=" + negative + "; AdjustDr="
         + adjustDr);
+    BigDecimal diff = deltaAmount.abs();
     if (adjustDr)
-      if (negative)
-        m_AmtAcctDr = AmtAcctDr.subtract(deltaAmount).toString();
+      if (!negative)
+        m_AmtAcctDr = AmtAcctDr.subtract(diff).toString();
       else
-        m_AmtAcctDr = AmtAcctDr.add(deltaAmount).toString();
-    else if (negative)
-      m_AmtAcctCr = AmtAcctCr.add(deltaAmount).toString();
+        m_AmtAcctDr = AmtAcctDr.add(diff).toString();
+    else if (!negative)
+      m_AmtAcctCr = AmtAcctCr.add(diff).toString();
     else
-      m_AmtAcctCr = AmtAcctCr.subtract(deltaAmount).toString();
+      m_AmtAcctCr = AmtAcctCr.subtract(diff).toString();
     log4jFactLine.debug("currencyCorrect - New-AcctDr=" + m_AmtAcctDr + ",AcctCr=" + m_AmtAcctCr);
   } // currencyCorrect
 
