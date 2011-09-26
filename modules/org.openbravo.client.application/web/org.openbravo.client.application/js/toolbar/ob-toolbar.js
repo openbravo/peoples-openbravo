@@ -1062,7 +1062,7 @@ isc.OBToolbar.addProperties({
           }
         }
         currentContext.viewForm.view.attachmentExists = attachmentExists;
-        doRefresh(buttonsByContext[currentContext], currentValues || {}, noneOrMultipleRecordsSelected, me);
+        doRefresh(buttonsByContext[currentContext], currentContext.getCurrentValues() || {}, noneOrMultipleRecordsSelected, me);
       };
     };
 
