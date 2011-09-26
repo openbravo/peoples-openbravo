@@ -445,27 +445,5 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
   
   formatDate: function(dt) {
     return OB.Utilities.Date.JSToOB(dt, OB.Format.date);
-  },
-  
-  // TODO: the destroy and clear can be removed 
-  // after upgrading to a SC release after mid-august 2011
-  destroy: function() {
-    this.destroying = true;
-    if (this.rangeDialog) {
-      this.rangeDialog.rangeForm.destroy();
-      this.rangeDialog.mainLayout.destroy();
-      this.rangeDialog.destroying  = true;
-      this.rangeDialog.destroy();
-      this.rangeDialog.destroying  = false;
-    }
-    this.Super('destroy', arguments);
-    this.destroying = false;
-  },
-  
-  clear: function() {
-    if (this.destroying) {
-      return;
-    }
-    this.Super('clear', arguments);
   }
 });
