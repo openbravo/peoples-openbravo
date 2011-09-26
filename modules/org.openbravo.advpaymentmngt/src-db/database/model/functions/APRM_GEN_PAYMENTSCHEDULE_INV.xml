@@ -56,6 +56,7 @@ v_user2 c_invoice.user2_id%TYPE;
 v_reversalinvoice_id VARCHAR2(32);
 v_delete_paymentplan BOOLEAN := FALSE;
 v_Financial_Account_ID FIN_FINANCIAL_ACCOUNT.FIN_FINANCIAL_ACCOUNT_ID%TYPE;
+v_Financial_Account_Org VARCHAR2(32);
 v_CreatePayment CHAR(1):='N';
 v_CreateFinTransaction CHAR(1):='N';
 v_PaymentDocType_ID FIN_PAYMENT.C_DOCTYPE_ID%TYPE;
@@ -532,11 +533,16 @@ BEGIN
       WHERE C_BPARTNER_ID = v_BPartner_ID;
 
       -- Automatic creation of payment and financial transaction
-      SELECT CASE WHEN v_IsSOTrx='Y' THEN FIN_FINANCIAL_ACCOUNT_ID ELSE PO_FINANCIAL_ACCOUNT_ID END
-        INTO v_Financial_Account_ID
-      FROM C_BPARTNER
-      WHERE C_BPARTNER_ID = v_BPartner_ID;
-      IF(v_Financial_Account_ID IS NOT NULL) THEN
+      SELECT CASE WHEN v_IsSOTrx='Y' THEN c_bpartner.FIN_FINANCIAL_ACCOUNT_ID ELSE C_BPARTNER.PO_FINANCIAL_ACCOUNT_ID END,
+             CASE WHEN v_IsSOTrx='Y' THEN facustomer.ad_org_id ELSE favendor.ad_org_id END
+        INTO v_Financial_Account_ID, v_Financial_Account_Org
+      FROM c_bpartner LEFT JOIN FIN_FINANCIAL_ACCOUNT facustomer ON (c_bpartner.fin_financial_account_id = facustomer.fin_financial_account_id)
+                      LEFT JOIN FIN_FINANCIAL_ACCOUNT favendor ON (c_bpartner.po_financial_account_id = favendor.fin_financial_account_id)
+      WHERE c_bpartner.c_bpartner_id = v_BPartner_ID;
+      
+      -- Organization of the financial account must be in the natural organization tree of the invoice org.
+      IF (v_Financial_Account_ID IS NOT NULL AND
+          (AD_ISORGINCLUDED(v_Financial_Account_Org, v_Org_ID, v_Client_ID) <> -1 OR AD_ISORGINCLUDED(v_Org_ID, v_Financial_Account_Org, v_Client_ID) <> -1)) THEN
         SELECT MIN(em_aprm_payment_desc) INTO v_payment_desc
         FROM ad_orginfo
         WHERE ad_org_id = v_Org_ID
