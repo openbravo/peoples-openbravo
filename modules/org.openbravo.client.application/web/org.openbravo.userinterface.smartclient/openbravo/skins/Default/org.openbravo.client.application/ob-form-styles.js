@@ -379,6 +379,7 @@ isc.DateRangeItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldInput',
+  titleOrientation: 'left',
   fromTitle: OB.I18N.getLabel('OBUIAPP_From'),
   toTitle: OB.I18N.getLabel('OBUIAPP_To')
 });
