@@ -721,7 +721,7 @@ isc.OBViewGrid.addProperties({
     // anyway
     if (this.view.parentProperty && (!this.data || !this.data.getLength || this.data.getLength() === 0)) {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
-      if (!this.isOpenDirectMode && selectedValues.length === 0) {
+      if (selectedValues && !this.isOpenDirectMode && selectedValues.length === 0) {
         if (callback) {
           callback();
         }
@@ -1032,12 +1032,14 @@ isc.OBViewGrid.addProperties({
     if (this.view.parentProperty && !this.isOpenDirectMode) {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
       var parentPropertyFilterValue = -1;
-      if (selectedValues.length === 0) {
-        parentPropertyFilterValue = '-1';
-      } else if (selectedValues.length > 1) {
-        parentPropertyFilterValue = '-1';
-      } else {
-        parentPropertyFilterValue = selectedValues[0][OB.Constants.ID];
+      if (selectedValues) {
+        if (selectedValues.length === 0) {
+          parentPropertyFilterValue = '-1';
+        } else if (selectedValues.length > 1) {
+          parentPropertyFilterValue = '-1';
+        } else {
+          parentPropertyFilterValue = selectedValues[0][OB.Constants.ID];
+        }
       }
       
       this.view.parentRecordId = parentPropertyFilterValue;

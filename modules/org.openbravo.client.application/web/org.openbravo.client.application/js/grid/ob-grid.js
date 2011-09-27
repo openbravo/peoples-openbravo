@@ -157,7 +157,7 @@ isc.OBGrid.addProperties({
   
   initWidget: function(){
     // prevent the value to be displayed in case of a link
-    var i, thisGrid = this, field, 
+    var i, thisGrid = this, length, field, 
       formatCellValueFunction = function(value, record, rowNum, colNum, grid){
         return '';
       };
