@@ -38,10 +38,6 @@
     <excludedFunction name="IS_TRIGGER_ENABLED"/>
     <excludedFunction name="DROP_VIEW"/>
     <excludedFunction name="MONTHS_BETWEEN"/>
-    <excludedFunction name="AD_SCRIPT_DISABLE_TRIGGERS"/>
-    <excludedFunction name="AD_SCRIPT_DISABLE_CONSTRAINTS"/>
-    <excludedFunction name="AD_SCRIPT_ENABLE_TRIGGERS"/>
-    <excludedFunction name="AD_SCRIPT_ENABLE_CONSTRAINTS"/>
     <excludedFunction name="AD_SCRIPT_DROP_RECREATE_INDEXES"/>
     <excludedFunction name="AD_SCRIPT_DROP_RECREATE_INDEX"/>
     <excludedFunction name="AD_SCRIPT_EXECUTE"/>
