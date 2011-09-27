@@ -1569,7 +1569,7 @@ public class Wad extends DefaultHandler {
     }
 
     final String[] discard = { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "hasReference", "", "", "", "", "", "", "", "hasOrgKey", "", "", "" };
+        "", "", "", "", "hasReference", "", "", "", "", "", "", "", "hasOrgKey", "", "", "", "" };
 
     if (parentsFieldsData == null || parentsFieldsData.length == 0) {
       discard[0] = "parent"; // remove the parent tags
@@ -1653,6 +1653,13 @@ public class Wad extends DefaultHandler {
         && (actBtnsJava == null || actBtnsJava.length == 0)) {
       // No action buttons, service method is not neccessary
       discard[31] = "discardService";
+    }
+
+    if (parentsFieldsData.length > 0) {
+      String parentTableName = WadData.tabTableName(pool, parentsFieldsData[0].adTabId);
+      if (parentTableName != null && parentTableName.toUpperCase().endsWith("_ACCESS")) {
+        discard[33] = "parentAccess";
+      }
     }
 
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/javasource", discard)
