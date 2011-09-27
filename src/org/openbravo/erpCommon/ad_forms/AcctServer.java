@@ -1036,7 +1036,7 @@ public abstract class AcctServer {
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Before balanceSource");
     // balanceSource
-    if (!m_fact[index].isSourceBalanced() && !MultiCurrency)
+    if (!MultiCurrency && !m_fact[index].isSourceBalanced())
       m_fact[index].balanceSource(conn);
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - After balanceSource");
@@ -1044,7 +1044,7 @@ public abstract class AcctServer {
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - Before isSegmentBalanced");
     // balanceSegments
-    if (!m_fact[index].isSegmentBalanced(conn) && !MultiCurrency)
+    if (!MultiCurrency && !m_fact[index].isSegmentBalanced(conn))
       m_fact[index].balanceSegments(conn);
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - After isSegmentBalanced");
@@ -1100,7 +1100,7 @@ public abstract class AcctServer {
    * 
    * @param acctSchema
    *          accounting schema
-   * @return true, if convertable to accounting currency
+   * @return true, if convertible to accounting currency
    */
   public boolean isConvertible(AcctSchema acctSchema, ConnectionProvider conn)
       throws ServletException {
@@ -2018,9 +2018,9 @@ public abstract class AcctServer {
         amtTo = new BigDecimal(getConvertedAmt(_amount.toString(), currencyIDFrom, currencyIDTo,
             conversionDate, "", AD_Client_ID, AD_Org_ID, conn));
         Currency currency = OBDal.getInstance().get(Currency.class, currencyIDFrom);
-        amtFromSourcecurrency = amtFrom.multiply(
-            _amount.divide(amtTo, conversionRatePrecision, BigDecimal.ROUND_HALF_EVEN)).setScale(
-            currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN);
+        amtFromSourcecurrency = amtFrom.multiply(_amount)
+            .divide(amtTo, conversionRatePrecision, BigDecimal.ROUND_HALF_EVEN)
+            .setScale(currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_EVEN);
       }
     }
     amtDiff = (amtTo).subtract(amtFrom);

@@ -655,16 +655,18 @@ public class Fact {
       FactLine BSline = null;
       BigDecimal PLamount = ZERO;
       FactLine PLline = null;
-
+      int signum = diff.signum();
       // Find line
       for (int i = 0; i < m_lines.size(); i++) {
         FactLine l = (FactLine) m_lines.get(i);
         BigDecimal amt = l.getAccountingBalance();
-        amt = amt.abs();
-        if (l.isBalanceSheet() && amt.compareTo(BSamount) > 0) {
+        // amt = amt.abs();
+        if (l.isBalanceSheet() && ((amt.compareTo(BSamount) > 0 && signum != 1))
+            || ((amt.compareTo(BSamount) < 0 && signum == 1))) {
           BSamount = amt;
           BSline = l;
-        } else if (!l.isBalanceSheet() && amt.compareTo(PLamount) > 0) {
+        } else if (!l.isBalanceSheet() && ((amt.compareTo(BSamount) > 0 && signum != 1))
+            || ((amt.compareTo(BSamount) < 0 && signum == 1))) {
           PLamount = amt;
           PLline = l;
         }
