@@ -402,7 +402,7 @@ public class DocFINFinAccTransaction extends AcctServer {
               as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
           fact.createLine(line, account, paymentCurrency.getId(),
               (isReceipt ? writeOffAmt.toString() : ""), (isReceipt ? "" : writeOffAmt.toString()),
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, paymentDate, conn);
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
           bpamount = bpamount.add(new BigDecimal(line.getWriteOffAmt()));
         }
         if (!"".equals(line.cGlItemId)) {
