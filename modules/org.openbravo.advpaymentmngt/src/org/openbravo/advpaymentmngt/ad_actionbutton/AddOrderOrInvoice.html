@@ -109,14 +109,14 @@ function loadGridList() {
       OB.APRM.AOOI_ddt !== document.getElementById('paramDueDateTo').value ||
       OB.APRM.AOOI_cu !== document.getElementById('paramCurrencyId').value)
   {
-	OB.APRM.AOOI_bp = document.getElementById('C_BPartner_ID').value;
+    OB.APRM.AOOI_bp = document.getElementById('C_BPartner_ID').value;
     OB.APRM.AOOI_dt = document.getElementById('paramDocumentType').value;
     OB.APRM.AOOI_pm = document.getElementById('paramAlternativePaymentMethod').checked;
     OB.APRM.AOOI_ddf = document.getElementById('paramDueDateFrom').value;
     OB.APRM.AOOI_ddt = document.getElementById('paramDueDateTo').value;
     OB.APRM.AOOI_cu = document.getElementById('paramCurrencyId').value;
 
-	try {
+    try {
       var url = '../org.openbravo.advpaymentmngt.ad_actionbutton/AddOrderOrInvoice.html';
       var paramXMLReq = null;
       return submitXmlHttpRequest(callBackGrid, document.frmMain, 'GRIDLIST', url, false, null, paramXMLReq);
@@ -137,6 +137,8 @@ function loadGLItemList() {
   table.innerHTML = '';
   if (glitemCount === 0) {
     OB.APRM.HasGLItems = false;
+    frm.inpGLSumAmount.value = '0';
+    updateTotal();
     return;
   }
   OB.APRM.HasGLItems = true;
@@ -193,7 +195,7 @@ function loadGLItemList() {
     }
     cellRemoveButton = row.insertCell(cellCount);
     cellRemoveButton.innerHTML = '<div><button type="button" id="buttonRemoveGLItem"'
-        + ' class="ButtonLink_focus" onclick="removeGLItem(' + i + ', ' + glitemAmount + ');return false;"'
+        + ' class="ButtonLink_focus" onclick="removeGLItem(' + i + ', ' + applyFormatOBMaskedToJS(glitemAmount) + ');return false;"'
         + ' onfocus="buttonEvent(\'onfocus\', this); window.status=\'OK\'; return true;"'
         + ' onblur="buttonEvent(\'onblur\', this);"'
         + '  onkeyup="buttonEvent(\'onkeyup\', this);"'
@@ -279,6 +281,7 @@ function addGLItem() {
   loadGLItemList();
 }
 function removeGLItem(key, removedAmount) {
+  var removedAmount = applyFormatJSToOBMasked(removedAmount);
   if (!isTrue('isReceipt')){
     if ( compare(document.frmMain.inpActualPayment.value, '>', removedAmount) ) {
       document.frmMain.inpActualPayment.value = subtract(document.frmMain.inpActualPayment.value, removedAmount);
@@ -298,8 +301,8 @@ function removeAllGLItem(closePopup) {
   updateConvertedAmounts();
 }
 function displayMulticurrencyControls() {
-  var invCurrency = document.getElementById('paramCurrencyId').value
-  var accountCurrency = document.getElementById('paramFinancialAccountCurrencyId').value
+  var invCurrency = document.getElementById('paramCurrencyId').value;
+  var accountCurrency = document.getElementById('paramFinancialAccountCurrencyId').value;
 
   var display = ( invCurrency && accountCurrency && invCurrency != accountCurrency );
 
