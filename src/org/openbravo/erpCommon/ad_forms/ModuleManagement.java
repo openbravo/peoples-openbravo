@@ -2389,7 +2389,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         mod.setUpgradeAvailable(null);
         hasChanged = true;
       }
-      // OBDal.getInstance().flush();
+      OBDal.getInstance().flush();
     } finally {
       OBInterceptor.setPreventUpdateInfoChange(false);
     }
