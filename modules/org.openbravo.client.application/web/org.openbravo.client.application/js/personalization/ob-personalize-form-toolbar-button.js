@@ -26,12 +26,9 @@
 
   personalizationButtonProperties = {
     action: function() {
-      if(OB.Application.licenseType === 'C') {
-        isc.warn(OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization')]), {
-            isModal: true,
-            showModalMask: true,
-            toolbarButtons: [isc.Dialog.OK]
-        });
+      
+      if (!OB.Utilities.checkProfessionalLicense(
+          OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization'))) {
         return;
       }
 

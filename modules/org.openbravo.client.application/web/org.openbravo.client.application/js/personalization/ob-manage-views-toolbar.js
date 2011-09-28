@@ -26,9 +26,6 @@
     initWidget: function() {
       this.menu = isc.Menu.create({
         button: this,
-        
-        iconHeight: 8,
-        iconWidth: 4,
 
         // overridden to get much simpler custom style name
         getBaseStyle: function(record, rowNum, colNum){
@@ -61,12 +58,8 @@
         views = personalization && personalization.views ? personalization.views : [],
         canDelete = false;
       
-      if(OB.Application.licenseType === 'C') {
-        isc.warn(OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization')]), {
-            isModal: true,
-            showModalMask: true,
-            toolbarButtons: [isc.Dialog.OK]
-        });
+      if (!OB.Utilities.checkProfessionalLicense(
+          OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization'))) {
         return;
       }
       
@@ -77,7 +70,7 @@
         canDelete = view.canEdit || canDelete;
         
         if (standardWindow.selectedPersonalizationId && view.personalizationId === standardWindow.selectedPersonalizationId) {
-          icon = OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/personalization/iconSelectedView.png';
+          icon = this.menu.itemIcon;
         } else {
           icon = null;
         }
