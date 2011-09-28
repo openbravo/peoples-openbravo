@@ -101,6 +101,7 @@ OB.Styles.OBFormField.DefaultComboBox = {
   controlStyle: 'OBFormFieldSelectControl',
   pickerIconStyle: 'OBFormFieldSelectPickerIcon',
   pickListBaseStyle: 'OBFormFieldPickListCell',
+  pendingTextBoxStyle: null,
   // tallbasestyle is used when the cellheight is different
   // from the standard
   pickListTallBaseStyle: 'OBFormFieldPickListCell',
