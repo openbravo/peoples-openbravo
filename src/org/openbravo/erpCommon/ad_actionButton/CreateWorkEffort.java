@@ -19,17 +19,11 @@
 package org.openbravo.erpCommon.ad_actionButton;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
-import java.util.Vector;
-
-import javax.servlet.ServletException;
 
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
@@ -37,14 +31,11 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.manufacturing.cost.CostcenterVersion;
 import org.openbravo.model.manufacturing.transaction.WorkRequirement;
 import org.openbravo.model.manufacturing.transaction.WorkRequirementOperation;
@@ -243,74 +234,4 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
     }
   }
 
-  private void createStandars(ProductionPlan productionPlan, ConnectionProvider conn,
-      VariablesSecureApp vars) throws Exception {
-
-    OBContext.setAdminMode();
-
-    org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
-        org.openbravo.model.ad.ui.Process.class, "800105");
-
-    final ProcessInstance pInstance = OBProvider.getInstance().get(ProcessInstance.class);
-    pInstance.setProcess(process);
-    pInstance.setActive(true);
-    pInstance.setRecordID(productionPlan.getId());
-    pInstance.setUserContact(OBContext.getOBContext().getUser());
-
-    OBDal.getInstance().save(pInstance);
-    OBDal.getInstance().flush();
-
-    try {
-      final Connection connection = OBDal.getInstance().getConnection();
-      PreparedStatement ps = null;
-      final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-      if (obProps.getProperty("bbdd.rdbms") != null
-          && obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
-        ps = connection.prepareStatement("SELECT * FROM ma_productionrun_standard(?)");
-      } else {
-        ps = connection.prepareStatement("CALL ma_productionrun_standard(?)");
-      }
-      ps.setString(1, pInstance.getId());
-      ps.execute();
-
-    } catch (Exception e) {
-      throw new IllegalStateException(e);
-    }
-
-    OBDal.getInstance().getSession().refresh(pInstance);
-
-    if (pInstance.getResult() == 0) {
-      // Error Processing
-      OBError myMessage = Utility
-          .getProcessInstanceMessage(conn, vars, getPInstanceData(pInstance));
-      throw new OBException("ERROR: " + myMessage.getMessage());
-    }
-    OBContext.restorePreviousMode();
-  }
-
-  private PInstanceProcessData[] getPInstanceData(ProcessInstance pInstance) throws Exception {
-    Vector<java.lang.Object> vector = new Vector<java.lang.Object>(0);
-    PInstanceProcessData objectPInstanceProcessData = new PInstanceProcessData();
-    objectPInstanceProcessData.result = pInstance.getResult().toString();
-    objectPInstanceProcessData.errormsg = pInstance.getErrorMsg();
-    objectPInstanceProcessData.pMsg = "";
-    vector.addElement(objectPInstanceProcessData);
-    PInstanceProcessData pinstanceData[] = new PInstanceProcessData[1];
-    vector.copyInto(pinstanceData);
-    return pinstanceData;
-  }
-
-  private String getProcessId(VariablesSecureApp vars) throws ServletException {
-    String command = vars.getCommand();
-    if (command.equals("DEFAULT")) {
-      return vars.getRequiredStringParameter("inpadProcessId");
-    } else if (command.startsWith("BUTTON")) {
-      return command.substring("BUTTON".length());
-    } else if (command.startsWith("FRAMES")) {
-      return command.substring("FRAMES".length());
-    } else if (command.startsWith("SAVE_BUTTONActionButton")) {
-      return command.substring("SAVE_BUTTONActionButton".length());
-    }
-    return null;
-  }
 }

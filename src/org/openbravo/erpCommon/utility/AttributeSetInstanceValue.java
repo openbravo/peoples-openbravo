@@ -164,10 +164,8 @@ public class AttributeSetInstanceValue {
             data[0].mAttributesetId);
       }
       boolean hasToUpdate = false;
-      if ((!strInstance.equals("")) && (isinstance)) {// Si if it's
-        // existant and
-        // requestable, it
-        // edits it
+      if ((!strInstance.equals("")) && (isinstance)) {
+        // Si if it's existant and requestable, it edits it
         hasToUpdate = true;
         if (AttributeSetInstanceValueData.updateHeader(conn, conProv, vars.getUser(),
             data[0].mAttributesetId, serno, lot, guaranteedate, "", locked, lockDescription,
@@ -177,18 +175,7 @@ public class AttributeSetInstanceValue {
               "", locked, lockDescription);
         }
       } else if ((isinstance) || (strNewInstance.equals(""))) { // New or
-        // editable,if
-        // it's
-        // requestable
-        // or
-        // doesn't
-        // exist
-        // the
-        // identic,
-        // then it
-        // inserts
-        // a new
-        // one
+        // editable,if it's requestable or doesn't exist the identic, then it inserts a new one
         hasToUpdate = true;
         strNewInstance = SequenceIdData.getUUID();
         AttributeSetInstanceValueData.insertHeader(conn, conProv, strNewInstance, vars.getClient(),

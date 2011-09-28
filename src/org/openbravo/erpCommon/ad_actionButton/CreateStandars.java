@@ -73,138 +73,7 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
       OBDal.getInstance().save(productionPlan);
       OBDal.getInstance().flush();
 
-      // Copy From Attribute
-
-      // CHECK PHASE EXITS
-      if (productionPlan.getWRPhase() != null
-          && productionPlan.getWRPhase().getMASequence() != null) {
-
-        // LOOP PRODUCTIONLINES
-        for (OperationProduct opProduct : productionPlan.getWRPhase().getMASequence()
-            .getManufacturingOperationProductList()) {
-          // ONLY PRODUCTION TYPE + AND HAS ATTSET AND HAS ATTLIST
-          if (opProduct.getProductionType() != null && opProduct.getProductionType().equals("+")
-              && !opProduct.getManufacturingOperationProductAttributeList().isEmpty()
-              && opProduct.getProduct() != null && opProduct.getProduct().getAttributeSet() != null) {
-
-            // NEW ATTRIBUTE
-            AttributeSetInstanceValue attSetInstanceTo = new AttributeSetInstanceValue();
-            HashMap<String, String> attValues = new HashMap<String, String>();
-
-            // LOOP ATTRIBUTES
-            for (OperationProductAttribute opProductAtt : opProduct
-                .getManufacturingOperationProductAttributeList()) {
-
-              // CHECK ATTFROM EXISTS
-              AttributeSetInstance attSetInstanceFrom = null;
-
-              OBCriteria ProductionLineCriteria = OBDal.getInstance().createCriteria(
-                  ProductionLine.class);
-              ProductionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN,
-                  productionPlan));
-              ProductionLineCriteria.createAlias(ProductionLine.PROPERTY_WRPRODUCTPHASE, "wrpp");
-              ProductionLineCriteria
-                  .add(Restrictions.eq("wrpp." + WorkRequirementProduct.PROPERTY_SEQUENCEPRODUCT,
-                      opProductAtt.getProductFrom()));
-
-              List<ProductionLine> plinesToCopyFrom = ProductionLineCriteria.list();
-
-              if (!plinesToCopyFrom.isEmpty()) {
-                int i = 0;
-                while (attSetInstanceFrom == null) {
-                  attSetInstanceFrom = plinesToCopyFrom.get(i).getAttributeSetValue();
-                  i++;
-                }
-              }
-
-              OBContext.setAdminMode();
-
-              if (attSetInstanceFrom != null && !attSetInstanceFrom.getId().equals("0")) {
-                if (opProductAtt.isSpecialatt()) {
-                  // SPECIAL ATT
-                  // LOT
-                  if (opProductAtt.getSpecialatt().equals(lotSearchKey))
-                    attSetInstanceTo.setLot(attSetInstanceFrom.getLotName());
-                  // SERNO
-                  if (opProductAtt.getSpecialatt().equals(serialNoSearchKey))
-                    attSetInstanceTo.setSerialNumber(attSetInstanceFrom.getSerialNo());
-                  // GDate //
-                  if (opProductAtt.getSpecialatt().equals(expirationDateSearchKey)) {
-                    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-                        .getProperty("dateFormat.java");
-                    SimpleDateFormat dateformater = new SimpleDateFormat(dateFormat);
-                    attSetInstanceTo.setGuaranteeDate(dateformater.format(attSetInstanceFrom
-                        .getExpirationDate()));
-                  }
-                } else {
-                  // NORMAL ATT
-                  // CHECK ATT_TO EXISTS
-                  if (opProductAtt.getAttributeuseto() != null
-                      && opProductAtt.getAttributeuseto().getAttribute() != null) {
-                    // GetValue From
-                    OBCriteria attributeInstanceCriteria = OBDal.getInstance().createCriteria(
-                        AttributeInstance.class);
-                    attributeInstanceCriteria.add(Restrictions.eq(
-                        AttributeInstance.PROPERTY_ATTRIBUTESETVALUE, attSetInstanceFrom));
-                    attributeInstanceCriteria.add(Restrictions.eq(
-                        AttributeInstance.PROPERTY_ATTRIBUTE, opProductAtt.getAttributeUse()
-                            .getAttribute()));
-                    List<AttributeInstance> AttributeInstanceList = attributeInstanceCriteria
-                        .list();
-                    // Add value
-                    if (!AttributeInstanceList.isEmpty()) {
-                      if (AttributeInstanceList.get(0).getAttributeValue() == null) {
-                        attValues.put(replace(opProductAtt.getAttributeuseto().getAttribute()
-                            .getName()), AttributeInstanceList.get(0).getSearchKey());
-                      } else {
-                        attValues.put(replace(opProductAtt.getAttributeuseto().getAttribute()
-                            .getName()), AttributeInstanceList.get(0).getAttributeValue().getId());
-                      }
-
-                    }
-                  }
-                }
-              }
-              OBContext.restorePreviousMode();
-            } // END LOOP ATTRIBUTES
-
-            // CREATE ATRIBUTE
-            AttributeSetInstanceValueData[] data = AttributeSetInstanceValueData.select(conn,
-                opProduct.getProduct().getAttributeSet().getId());
-            OBError createAttributeInstanceError = attSetInstanceTo.setAttributeInstance(conn,
-                vars, data, opProduct.getProduct().getAttributeSet().getId(), "", "", "N",
-                opProduct.getProduct().getId(), attValues);
-            if (!createAttributeInstanceError.getType().equals("Success"))
-              throw new OBException(createAttributeInstanceError.getMessage());
-
-            OBDal.getInstance().flush();
-
-            AttributeSetInstance newAttSetinstance = OBDal.getInstance().get(
-                AttributeSetInstance.class, attSetInstanceTo.getAttSetInstanceId());
-
-            // UPDATE LINES
-
-            OBCriteria ProductionLineCriteria = OBDal.getInstance().createCriteria(
-                ProductionLine.class);
-            ProductionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN,
-                productionPlan));
-            ProductionLineCriteria
-                .add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONTYPE, "+"));
-            ProductionLineCriteria.createAlias(ProductionLine.PROPERTY_WRPRODUCTPHASE, "wrpp");
-            ProductionLineCriteria.add(Restrictions.eq("wrpp."
-                + WorkRequirementProduct.PROPERTY_SEQUENCEPRODUCT, opProduct));
-
-            List<ProductionLine> plinesToCopyTo = ProductionLineCriteria.list();
-
-            for (ProductionLine pline : plinesToCopyTo) {
-              pline.setAttributeSetValue(newAttSetinstance);
-              OBDal.getInstance().save(pline);
-            }
-
-          }
-        }
-        OBDal.getInstance().flush();
-      }
+      copyAttributes(conn, vars, productionPlan);
 
       final OBError msg = new OBError();
 
@@ -286,6 +155,137 @@ public class CreateStandars implements org.openbravo.scheduling.Process {
     PInstanceProcessData pinstanceData[] = new PInstanceProcessData[1];
     vector.copyInto(pinstanceData);
     return pinstanceData;
+  }
+
+  private void copyAttributes(ConnectionProvider conn, VariablesSecureApp vars,
+      ProductionPlan productionPlan) throws Exception {
+
+    // CHECK PHASE EXITS
+    if (productionPlan.getWRPhase() != null && productionPlan.getWRPhase().getMASequence() != null) {
+
+      // LOOP PRODUCTIONLINES
+      for (OperationProduct opProduct : productionPlan.getWRPhase().getMASequence()
+          .getManufacturingOperationProductList()) {
+        // ONLY PRODUCTION TYPE + AND HAS ATTSET AND HAS ATTLIST
+        if (opProduct.getProductionType() != null && opProduct.getProductionType().equals("+")
+            && !opProduct.getManufacturingOperationProductAttributeList().isEmpty()
+            && opProduct.getProduct() != null && opProduct.getProduct().getAttributeSet() != null) {
+
+          // NEW ATTRIBUTE
+          AttributeSetInstanceValue attSetInstanceTo = new AttributeSetInstanceValue();
+          HashMap<String, String> attValues = new HashMap<String, String>();
+
+          // LOOP ATTRIBUTES
+          for (OperationProductAttribute opProductAtt : opProduct
+              .getManufacturingOperationProductAttributeList()) {
+
+            // CHECK ATTFROM EXISTS
+            AttributeSetInstance attSetInstanceFrom = null;
+
+            OBCriteria ProductionLineCriteria = OBDal.getInstance().createCriteria(
+                ProductionLine.class);
+            ProductionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN,
+                productionPlan));
+            ProductionLineCriteria.createAlias(ProductionLine.PROPERTY_WRPRODUCTPHASE, "wrpp");
+            ProductionLineCriteria.add(Restrictions.eq("wrpp."
+                + WorkRequirementProduct.PROPERTY_SEQUENCEPRODUCT, opProductAtt.getProductFrom()));
+
+            List<ProductionLine> plinesToCopyFrom = ProductionLineCriteria.list();
+
+            if (!plinesToCopyFrom.isEmpty()) {
+              int i = 0;
+              while (attSetInstanceFrom == null) {
+                attSetInstanceFrom = plinesToCopyFrom.get(i).getAttributeSetValue();
+                i++;
+              }
+            }
+
+            OBContext.setAdminMode();
+
+            if (attSetInstanceFrom != null && !attSetInstanceFrom.getId().equals("0")) {
+              if (opProductAtt.isSpecialatt()) {
+                // SPECIAL ATT
+                // LOT
+                if (opProductAtt.getSpecialatt().equals(lotSearchKey))
+                  attSetInstanceTo.setLot(attSetInstanceFrom.getLotName());
+                // SERNO
+                if (opProductAtt.getSpecialatt().equals(serialNoSearchKey))
+                  attSetInstanceTo.setSerialNumber(attSetInstanceFrom.getSerialNo());
+                // GDate //
+                if (opProductAtt.getSpecialatt().equals(expirationDateSearchKey)) {
+                  String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+                      .getProperty("dateFormat.java");
+                  SimpleDateFormat dateformater = new SimpleDateFormat(dateFormat);
+                  attSetInstanceTo.setGuaranteeDate(dateformater.format(attSetInstanceFrom
+                      .getExpirationDate()));
+                }
+              } else {
+                // NORMAL ATT
+                // CHECK ATT_TO EXISTS
+                if (opProductAtt.getAttributeuseto() != null
+                    && opProductAtt.getAttributeuseto().getAttribute() != null) {
+                  // GetValue From
+                  OBCriteria attributeInstanceCriteria = OBDal.getInstance().createCriteria(
+                      AttributeInstance.class);
+                  attributeInstanceCriteria.add(Restrictions.eq(
+                      AttributeInstance.PROPERTY_ATTRIBUTESETVALUE, attSetInstanceFrom));
+                  attributeInstanceCriteria.add(Restrictions.eq(
+                      AttributeInstance.PROPERTY_ATTRIBUTE, opProductAtt.getAttributeUse()
+                          .getAttribute()));
+                  List<AttributeInstance> AttributeInstanceList = attributeInstanceCriteria.list();
+                  // Add value
+                  if (!AttributeInstanceList.isEmpty()) {
+                    if (AttributeInstanceList.get(0).getAttributeValue() == null) {
+                      attValues.put(replace(opProductAtt.getAttributeuseto().getAttribute()
+                          .getName()), AttributeInstanceList.get(0).getSearchKey());
+                    } else {
+                      attValues.put(replace(opProductAtt.getAttributeuseto().getAttribute()
+                          .getName()), AttributeInstanceList.get(0).getAttributeValue().getId());
+                    }
+
+                  }
+                }
+              }
+            }
+            OBContext.restorePreviousMode();
+          } // END LOOP ATTRIBUTES
+
+          // CREATE ATRIBUTE
+          AttributeSetInstanceValueData[] data = AttributeSetInstanceValueData.select(conn,
+              opProduct.getProduct().getAttributeSet().getId());
+          OBError createAttributeInstanceError = attSetInstanceTo.setAttributeInstance(conn, vars,
+              data, opProduct.getProduct().getAttributeSet().getId(), "", "", "N", opProduct
+                  .getProduct().getId(), attValues);
+          if (!createAttributeInstanceError.getType().equals("Success"))
+            throw new OBException(createAttributeInstanceError.getMessage());
+
+          OBDal.getInstance().flush();
+
+          AttributeSetInstance newAttSetinstance = OBDal.getInstance().get(
+              AttributeSetInstance.class, attSetInstanceTo.getAttSetInstanceId());
+
+          // UPDATE LINES
+
+          OBCriteria ProductionLineCriteria = OBDal.getInstance().createCriteria(
+              ProductionLine.class);
+          ProductionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN,
+              productionPlan));
+          ProductionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONTYPE, "+"));
+          ProductionLineCriteria.createAlias(ProductionLine.PROPERTY_WRPRODUCTPHASE, "wrpp");
+          ProductionLineCriteria.add(Restrictions.eq("wrpp."
+              + WorkRequirementProduct.PROPERTY_SEQUENCEPRODUCT, opProduct));
+
+          List<ProductionLine> plinesToCopyTo = ProductionLineCriteria.list();
+
+          for (ProductionLine pline : plinesToCopyTo) {
+            pline.setAttributeSetValue(newAttSetinstance);
+            OBDal.getInstance().save(pline);
+          }
+
+        }
+      }
+      OBDal.getInstance().flush();
+    }
   }
 
   private String replace(String strIni) {
