@@ -48,6 +48,14 @@
       }, OB.Styles.Personalization.Menu);
     },
     
+    showMenu: function() {      
+      if (!OB.Utilities.checkProfessionalLicense(
+          OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization'))) {
+        return;
+      }
+      return this.Super('showMenu', arguments);
+    },
+    
     // shows the menu with the available views and the save 
     // and delete option
     action: function() {
