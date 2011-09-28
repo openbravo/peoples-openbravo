@@ -40,6 +40,7 @@ OB.Styles.Personalization.Menu = {
   baseStyle: 'OBPersonalizationPullDownMenuCell',
   bodyStyleName: 'OBPersonalizationPullDownMenuBody',
   tableStyle: "OBPersonalizationPullDownMenuTable",
+  iconBodyStyleName: 'OBPersonalizationPullDownMenuBody',
   bodyBackgroundColor: null
 };
 
@@ -51,6 +52,15 @@ OB.Styles.Personalization.saveViewPopupSmall = {
 OB.Styles.Personalization.saveViewPopupLarge = {
   width: 250,
   height: 280
+};
+
+OB.Styles.Personalization.popupButtonLayout = {
+    layoutTopMargin: 20,
+    membersMargin: 10,
+    width: '100%',
+    align: 'center',
+    overflow: 'visible',
+    height: 1
 };
 
 OB.Styles.Personalization.viewFieldDefaults = {
