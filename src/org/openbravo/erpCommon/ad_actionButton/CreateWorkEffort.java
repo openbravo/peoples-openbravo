@@ -24,9 +24,12 @@ import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
+
+import javax.servlet.ServletException;
 
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
@@ -61,6 +64,7 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
       String strStartTime = (String) bundle.getParams().get("starttime");
       String strEndTime = (String) bundle.getParams().get("endtime");
       final ConnectionProvider conn = bundle.getConnection();
+      final VariablesSecureApp vars = bundle.getContext().toVars();
 
       // ConvertVariables
       String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
@@ -185,7 +189,15 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
           OBDal.getInstance().flush();
 
           if (wrOp.isCreateStandards()) {
-            createStandars(productionPlan, conn, bundle.getContext().toVars());
+            String strProcessId = "FF80818132A4F6AD0132A573DD7A0021";
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            params.put("M_ProductionPlan_ID", productionPlan.getId());
+            ProcessBundle pb = new ProcessBundle(strProcessId, vars).init(conn);
+            pb.setParams(params);
+            new org.openbravo.erpCommon.ad_actionButton.CreateStandars().execute(pb);
+            OBError pbResult = (OBError) pb.getResult();
+            if (!pbResult.getType().equals("Success"))
+              throw new OBException(pbResult.getMessage());
           }
 
         }
@@ -286,5 +298,19 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
     PInstanceProcessData pinstanceData[] = new PInstanceProcessData[1];
     vector.copyInto(pinstanceData);
     return pinstanceData;
+  }
+
+  private String getProcessId(VariablesSecureApp vars) throws ServletException {
+    String command = vars.getCommand();
+    if (command.equals("DEFAULT")) {
+      return vars.getRequiredStringParameter("inpadProcessId");
+    } else if (command.startsWith("BUTTON")) {
+      return command.substring("BUTTON".length());
+    } else if (command.startsWith("FRAMES")) {
+      return command.substring("FRAMES".length());
+    } else if (command.startsWith("SAVE_BUTTONActionButton")) {
+      return command.substring("SAVE_BUTTONActionButton".length());
+    }
+    return null;
   }
 }

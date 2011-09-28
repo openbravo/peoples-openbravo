@@ -182,7 +182,7 @@
                 Isactive, Created, Createdby, Updated,
                 Updatedby, M_Product_ID, Productiontype, MovementQty,
                 ComponentCost, C_UOM_ID,
-                quantityorder, M_Product_UOM_ID
+                quantityorder, M_Product_UOM_ID, MA_SequenceProduct_ID
               )
               VALUES
               (
@@ -190,7 +190,7 @@
                  'Y', now(), v_User_ID, now(),
                 v_User_ID, Cur_SeqProduct.M_Product_ID, Cur_SeqProduct.Productiontype, Cur_SeqProduct.Quantity,
                 Cur_SeqProduct.ComponentCost, Cur_SeqProduct.C_UOM_ID,
-                Cur_SeqProduct.quantityorder, Cur_SeqProduct.M_Product_UOM_ID
+                Cur_SeqProduct.quantityorder, Cur_SeqProduct.M_Product_UOM_ID, Cur_SeqProduct.MA_SequenceProduct_ID
               )
               ;
           END LOOP;
@@ -222,7 +222,7 @@
                 Isactive, Created, Createdby, Updated,
                 Updatedby, M_Product_ID, Productiontype, MovementQty,
                 ComponentCost, C_UOM_ID,
-                QUANTITYORDER, M_PRODUCT_UOM_ID
+                QUANTITYORDER, M_PRODUCT_UOM_ID, MA_SequenceProduct_ID
               )
               VALUES
               (
@@ -230,7 +230,7 @@
                  'Y', now(), v_User_ID, now(),
                 v_User_ID, Cur_SeqProduct.M_Product_ID, Cur_SeqProduct.Productiontype, Cur_SeqProduct.Quantity,
                 Cur_SeqProduct.ComponentCost, Cur_SeqProduct.C_UOM_ID,
-                Cur_SeqProduct.quantityorder, Cur_SeqProduct.M_Product_UOM_ID
+                Cur_SeqProduct.quantityorder, Cur_SeqProduct.M_Product_UOM_ID, Cur_SeqProduct.MA_SequenceProduct_ID
               )
               ;
           END LOOP;

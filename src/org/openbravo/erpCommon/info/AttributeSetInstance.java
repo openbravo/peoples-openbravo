@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.info;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.util.HashMap;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -32,6 +33,8 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.AttributeSetInstanceValue;
+import org.openbravo.erpCommon.utility.AttributeSetInstanceValueData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -128,9 +131,33 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       String strProduct = vars.getRequestGlobalVariable("inpProduct",
           "AttributeSetInstance.product");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-      OBError myMessage = writeFields(this, vars,
-          AttributeSetInstanceData.select(this, strAttributeSet), strAttributeSet, strInstance,
-          strWindowId, strIsSOTrx, strProduct);
+
+      // Set Attributes
+      AttributeSetInstanceValue attSetValue = new AttributeSetInstanceValue();
+      attSetValue.setLot(vars.getStringParameter("inplot"));
+      attSetValue.setSerialNumber(vars.getStringParameter("inpserno"));
+      attSetValue.setGuaranteeDate(vars.getStringParameter("inpDateFrom"));
+      attSetValue.setLocked(vars.getStringParameter("inpislocked", "N"));
+      attSetValue.setLockDescription(vars.getStringParameter("inplockDescription"));
+      AttributeSetInstanceValueData[] data = AttributeSetInstanceValueData.select(this,
+          strAttributeSet);
+      HashMap<String, String> attValues = new HashMap<String, String>();
+      for (int i = 0; i < data.length; i++) {
+        String strValue = "";
+        if (data[i].ismandatory.equals("Y"))
+          attValues.put(replace(data[i].elementname),
+              vars.getRequiredStringParameter("inp" + replace(data[i].elementname)));
+        else
+          attValues.put(replace(data[i].elementname),
+              vars.getStringParameter("inp" + replace(data[i].elementname)));
+      }
+
+      // OBError myMessage = writeFields(this, vars, data, strAttributeSet, strInstance,
+      // strWindowId,
+      // strIsSOTrx, strProduct);
+
+      OBError myMessage = attSetValue.setAttributeInstance(this, vars, data, strAttributeSet,
+          strInstance, strWindowId, strIsSOTrx, strProduct, attValues);
       vars.setSessionValue("AttributeSetInstance.attribute", strAttributeSet);
       vars.setSessionValue("AttributeSetInstance.close", "Y");
       vars.setMessage(strTabId, myMessage);

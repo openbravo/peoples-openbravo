@@ -209,7 +209,8 @@
               Createdby, Isactive, M_ProductionPlan_ID, M_Product_ID,
               Productiontype, MovementQty, Updated, Updatedby,
               C_UOM_ID, M_Locator_ID, 
-	      Line, M_AttributeSetInstance_ID, M_Product_UOM_ID, QuantityOrder
+	      Line, M_AttributeSetInstance_ID, M_Product_UOM_ID, QuantityOrder, 
+	      MA_WRPhaseProduct_ID
             )
             VALUES
             (
@@ -223,7 +224,8 @@
                                                     AND W.AD_ORG_ID = v_PlanOrg_ID)),
               v_Line, (CASE WHEN Cur_WRPProduct.AttrSetValueType='D' THEN Cur_WRPProduct.M_AttributeSetInstance_ID ELSE NULL END)
               ,Cur_WRPProduct.M_Product_UOM_ID, 
-              CASE WHEN Cur_WRPProduct.M_Product_UOM_ID IS NULL THEN NULL WHEN v_NoQty = 'Y' THEN 0 ELSE Cur_WRPProduct.QuantityOrder * v_DoneQuantity END
+              CASE WHEN Cur_WRPProduct.M_Product_UOM_ID IS NULL THEN NULL WHEN v_NoQty = 'Y' THEN 0 ELSE Cur_WRPProduct.QuantityOrder * v_DoneQuantity END,
+              Cur_WRPProduct.MA_WRPhaseProduct_ID
             )
             ;
           --v_Line:=v_Line + 10;
@@ -314,7 +316,8 @@
                         Updated, UpdatedBy, M_Product_ID, C_UOM_ID,
                         MovementQty, ProductionType, M_Locator_ID, 
                         M_AttributeSetInstance_ID,
-                        M_Product_UOM_ID, QuantityOrder
+                        M_Product_UOM_ID, QuantityOrder,
+                        MA_WRPhaseProduct_ID
                       )
                       VALUES
                       (
@@ -330,7 +333,7 @@
                                            ELSE 0
                                          END)
                           ELSE v_QtyOrder
-                         END)
+                         END), Cur_WRPUsed.MA_WRPhaseProduct_ID
                       )
                       ;
                     IF(v_QtyAcumulated>=v_DoneQuantity*Cur_WRPUsed.MovementQty) THEN
@@ -378,14 +381,16 @@
 		                    M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
 		                    AD_Org_ID, IsActive, Created, CreatedBy,
 		                    Updated, UpdatedBy, M_Product_ID, MovementQty,
-		                    ProductionType, C_UOM_ID, M_Locator_ID, M_Product_UOM_ID, QuantityOrder
+		                    ProductionType, C_UOM_ID, M_Locator_ID, M_Product_UOM_ID, QuantityOrder,
+		                    MA_WRPhaseProduct_ID
 		                  )
 		                  VALUES
 		                  (
 		                    GET_UUID(), v_Record_ID, v_Line, Cur_WRPUsed.Client_ID,
 		                    Cur_WRPUsed.Org_ID, 'Y', now(), v_User_ID,
 		                    now(), v_User_ID, Cur_WRPUsed.M_Product_ID,( CASE v_NoQty WHEN 'Y' THEN 0 ELSE v_DoneQuantity*Cur_WRPUsed.MovementQty - v_QtyAcumulated END),
-		                    '-', Cur_WRPUsed.C_UOM_ID, Cur_WRPUsed.M_Locator_ID, Cur_WRPUsed.M_Product_UOM_ID, Cur_WRPUsed.QuantityOrder
+		                    '-', Cur_WRPUsed.C_UOM_ID, Cur_WRPUsed.M_Locator_ID, Cur_WRPUsed.M_Product_UOM_ID, Cur_WRPUsed.QuantityOrder,
+		                    Cur_WRPUsed.MA_WRPhaseProduct_ID
 		                  )
 		                  ;
                      END IF;
@@ -434,14 +439,16 @@
                     M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
                     AD_Org_ID, IsActive, Created, CreatedBy,
                     Updated, UpdatedBy, M_Product_ID, MovementQty,
-                    ProductionType, C_UOM_ID, M_Locator_ID, M_Product_UOM_ID, QuantityOrder
+                    ProductionType, C_UOM_ID, M_Locator_ID, M_Product_UOM_ID, QuantityOrder,
+                    MA_WRPhaseProduct_ID
                   )
                   VALUES
                   (
                     v_ProductionLine_ID, v_Record_ID, v_Line, Cur_WRPUsed.Client_ID,
                     Cur_WRPUsed.Org_ID, 'Y', now(), '0',
                     now(), '0', Cur_WRPUsed.M_Product_ID,( CASE v_NoQty WHEN 'Y' THEN 0 ELSE v_DoneQuantity*Cur_WRPUsed.MovementQty END),
-                    '-', Cur_WRPUsed.C_UOM_ID, Cur_WRPUsed.M_Locator_ID, Cur_WRPUsed.M_Product_UOM_ID, Cur_WRPUsed.QuantityOrder
+                    '-', Cur_WRPUsed.C_UOM_ID, Cur_WRPUsed.M_Locator_ID, Cur_WRPUsed.M_Product_UOM_ID, Cur_WRPUsed.QuantityOrder,
+                    Cur_WRPUsed.MA_WRPhaseProduct_ID
                   )
                   ;
               END IF;
