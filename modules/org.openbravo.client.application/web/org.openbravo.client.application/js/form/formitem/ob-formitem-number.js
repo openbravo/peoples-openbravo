@@ -444,11 +444,15 @@ isc.OBNumberItem.addProperties({
 
 // Use our custom validator for float and integers
 isc.OBNumberItem.validateCondition = function(item, validator, value){
-  var ret, type;
+  var undef, ret, type;
   
   if (!item.typeInstance) {
     // this happens when data is validated which is returned from the system
     // and added to the grid
+    return true;
+  }
+  
+  if (value === null || value === undef) {
     return true;
   }
   

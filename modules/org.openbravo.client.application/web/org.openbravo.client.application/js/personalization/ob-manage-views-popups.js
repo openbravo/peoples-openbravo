@@ -81,26 +81,33 @@ OB.Personalization.ManageViewsPopupProperties = {
               saveButton.setDisabled(!pers);
             }
           },
+          
+          handleKeyPress: function(){
+            var key = isc.EH.lastEvent.keyName;
+            if (key === 'Enter' && !this.saveButton.isDisabled()) {
+              this.saveButton.action();
+              return false;
+            } else {
+              return this.Super('handleKeyPress', arguments);
+            }
+          },
+
           fields: this.getFields()
       });
       saveButton.form = form;
+      form.saveButton = saveButton;
 
       // create some layouts to put the form/buttons
       // in the popup window
       layout = isc.VLayout.create({
         defaultLayoutAlign: 'center',
-        membersMargin: 10,
         width: '100%',
         height: '100%'
       });
       this.addItem(layout);
       
-      buttonsLayout = isc.HStack.create({
-        width: '100%',
-        align: 'center',
-        overflow: 'visible',
-        height: 1
-      });
+      buttonsLayout = isc.HStack.create({}, 
+          OB.Styles.Personalization.popupButtonLayout);
       buttonsLayout.addMembers(saveButton);
       buttonsLayout.addMembers(isc.OBFormButton.create({
         title: OB.I18N.getLabel('UINAVBA_Cancel'),
@@ -151,6 +158,7 @@ OB.Personalization.ManageViewsPopupPropertiesDefault = {
         valueMap: valueMap,
         editorType: 'select',
         addUnknownValues: false,
+        required: true,
         allowEmptyValue: true
       },
       OB.Styles.Personalization.viewFieldDefaults,
@@ -166,7 +174,7 @@ OB.Personalization.ManageViewsPopupPropertiesDefault = {
     return flds;
   },
   
-  // do the delete action
+  // do the set default action
   doAction: function(form) {
     var personalizationId = form.getValue("personalization");    
     OB.PropertyStore.set('OBUIAPP_DefaultSavedView', personalizationId, this.standardWindow.windowId);
@@ -248,7 +256,7 @@ OB.Personalization.ManageViewsPopupPropertiesSave = {
     flds[0] = isc.addProperties({
         standardWindow: standardWindow,
         name: 'personalization',
-        title: OB.I18N.getLabel('OBUIAPP_View'),
+        title: OB.I18N.getLabel('OBUIAPP_SaveAs'),
         valueMap: valueMap,
         editorType: 'ComboBoxItem',
         allowEmptyValue: true,
@@ -262,7 +270,7 @@ OB.Personalization.ManageViewsPopupPropertiesSave = {
             personalization = this.standardWindow.getClass().personalization, views;
           
           // find the personalization
-          if (personalization.views) {
+          if (levelField && personalization.views) {
             // and the view, and set the level and level value
             // combos
             views = personalization.views;
@@ -323,6 +331,7 @@ OB.Personalization.ManageViewsPopupPropertiesSave = {
           valueMap: levelMap,
           editorType: 'select',
           defaultToFirstOption: true,
+          emptyDisplayValue: OB.I18N.getLabel('OBUIAPP_User'),
           changed: function (form, item, value) {
             // if the level combo changes, then set the
             // level value map (so that it shows clients, orgs
@@ -341,6 +350,7 @@ OB.Personalization.ManageViewsPopupPropertiesSave = {
           title: OB.I18N.getLabel('OBUIAPP_Value'),
           valueMap: {},
           editorType: 'select',
+          emptyDisplayValue: OB.User.userName,
           defaultToFirstOption: true
         },
         OB.Styles.Personalization.viewFieldDefaults,

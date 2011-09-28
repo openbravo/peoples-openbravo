@@ -81,6 +81,8 @@ OB.ViewFormProperties = {
   // is set in the OBAttachmentsSectionItem.initWidget
   attachmentsSection: null,
 
+  selectOnFocus: true,
+  
   initWidget: function() {
     this._preventFocusChanges = true;
 
@@ -170,17 +172,6 @@ OB.ViewFormProperties = {
     
     delete this.validateAfterFicReturn;
     
-    // only compute a new focus item if the form is active
-    if (this.view.isActiveView()) {
-      this.computeFocusItem();
-    }
-    
-    // if the focus item is not really enabled
-    // then find a new one, even if the form is not active
-    if (this.getFocusItem() && !this.getFocusItem().isFocusable(true)) {
-      this.computeFocusItem(this.getFocusItem());
-    }
-
     // sometimes if an error occured we stay disabled
     // prevent this
     this.setDisabled(false);
@@ -188,26 +179,26 @@ OB.ViewFormProperties = {
     this.setHasChanged(false);
 
     this.setNewState(isNew);
-    
+
+    // errors are cleared anyway
+    delete this.validateAfterFicReturn;
+
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
     if (!isNew) {
-      this.validateAfterFicReturn = true;
       // If editing a document set to recent documents
       this.view.setRecentDocument(this.getValues());
     }
     
     this.ignoreFirstFocusEvent = preventFocus;
+    
+    // retrieveinitialvalues does focus and clear of errors
     this.retrieveInitialValues(isNew);
     
     if (isNew) {
       this.view.statusBar.mode = 'NEW';
       this.view.statusBar.setContentLabel(this.view.statusBar.newIcon, 'OBUIAPP_New');
     }
-
-    // do at the end because during initial form drawing
-    // fields get blurred and will show an error
-    this.clearErrors();
   },
   
   editNewRecord: function(preventFocus){
@@ -299,7 +290,6 @@ OB.ViewFormProperties = {
   setNewState: function(isNew){
     // showing the sections will change the focus item
     // restore that
-    this.storeFocusItem();
     this.isNew = isNew;
     this.view.statusBar.setNewState(isNew);
     this.view.updateTabTitle();
@@ -307,9 +297,6 @@ OB.ViewFormProperties = {
     this.enableNoteSection(!isNew);
     this.enableLinkedItemSection(!isNew);
     this.enableAttachmentsSection(!isNew);
-    
-    // and restore
-    this.restoreFocusItem();
     
     if (isNew) {
       this.view.statusBar.newIcon.prompt = OB.I18N.getLabel('OBUIAPP_NewIconPrompt');
@@ -411,14 +398,30 @@ OB.ViewFormProperties = {
     if (focusItem && focusItem.isFocusable()) {
       focusItem.focusInItem();
       this.view.lastFocusedItem = focusItem;
+      this.selectFocusItemValue(true);
     } else {      
       // find a new one
       this.computeFocusItem(focusItem);
       if (this.getFocusItem() !== focusItem && this.getFocusItem()) {
         focusItem.focusInItem();
+        this.selectFocusItemValue(true);
         this.view.lastFocusedItem = focusItem;
       }
     }
+  },
+  
+  selectFocusItemValue: function(delayCall) {
+    if (!this.getFocusItem() || !this.view.isActiveView()) {
+      return;
+    }
+    // if not explicitly set to false, select its value
+    if (this.getFocusItem().selectOnFocus !== false) {
+      if (delayCall || isc.Browser.isIE) {
+        this.getFocusItem().delayCall('selectValue', [], 100);
+      } else {
+        this.getFocusItem().selectValue();
+      }
+    }    
   },
   
   getFieldFromInpColumnName: function(inpColumnName) {
@@ -543,13 +546,28 @@ OB.ViewFormProperties = {
         me.rememberValues();
       }
       me.initializing = false;
+
+      // do here because during initial form drawing
+      // fields get blurred and will show an error
+      me.clearErrors(true);
       
+      // only compute a new focus item if the form is active
+      if (me.view.isActiveView()) {
+        me.computeFocusItem();
+      }
+      
+      // if the focus item is not really enabled
+      // then find a new one, even if the form is not active
+      if (me.getFocusItem() && !me.getFocusItem().isFocusable(true)) {
+        me.computeFocusItem(me.getFocusItem());
+      }
+      // note the focus is set in the field when the FIC call
+      // returns
+
       // at this point select the focused value      
       if (me.getFocusItem()) {
         me.setFocusInForm();
-        me.selectFocusItemValue();
       }
-
     });
   },
   
@@ -765,7 +783,6 @@ OB.ViewFormProperties = {
     if (previousAllItemsDisabled !== this.allItemsDisabled) {
       if (this.getFocusItem()) {
         if (this.allItemsDisabled) {
-          this.storeFocusItem();
           if (this.getFocusItem() && !this.initializing) {
             this.getFocusItem().blurItem();
           }
@@ -779,17 +796,9 @@ OB.ViewFormProperties = {
           for (i = 0; i < length; i++) {
             delete this.getFields()[i].canFocus;
           }
-          
-          // do restore focus in a delayed manner for ie
-          if (isc.Browser.isIE) {
-            this.delayCall('restoreFocusItem', [true], 100);
-          } else {
-            this.restoreFocusItem();
-          }
           delete this.ignoreFirstFocusEvent;
         }
       } else {
-        this.redraw();
         this.view.viewGrid.refreshEditRow();
       }
     }
@@ -1124,7 +1133,10 @@ OB.ViewFormProperties = {
       }
 
       me.processFICReturn(response, data, request, editValues, editRow);
-
+ 
+      if (me.getFocusItem()) {
+        me.setFocusInForm();
+      }
     });
     this.view.toolBar.updateButtonState(true);
   },
@@ -1159,7 +1171,7 @@ OB.ViewFormProperties = {
   
   resetForm: function(){
     this.resetValues();
-    this.clearErrors();
+    this.clearErrors(true);
     this.setHasChanged(false);
   },
   
@@ -1204,8 +1216,6 @@ OB.ViewFormProperties = {
   // function
   saveRow: function(){
     var savingNewRecord = this.isNew;
-    
-    this.storeFocusItem();
     
     // store the value of the current focus item
     if (this.getFocusItem() && this.saveFocusItemChanged !== this.getFocusItem()) {
@@ -1327,7 +1337,6 @@ OB.ViewFormProperties = {
 
       form.isSaving = false;
       view.toolBar.updateButtonState(true);
-      this.restoreFocusItem();
       return false;
     };
     
@@ -1370,22 +1379,7 @@ OB.ViewFormProperties = {
     this.computeFocusItem(this.getField(currentItemName));
     if (this.getFocusItem()) {
       this.getFocusItem().focusInItem();
-      this.selectFocusItemValue();
     }
-  },
-
-  selectFocusItemValue: function() {
-    if (!this.getFocusItem() || !this.view.isActiveView()) {
-      return;
-    }
-    // if not explicitly set to false, select its value
-    if (this.getFocusItem().selectOnFocus !== false) {
-      if (isc.Browser.isIE) {
-        this.getFocusItem().delayCall('selectValue', [], 100);
-      } else {
-        this.getFocusItem().selectValue();
-      }
-    }    
   },
   
   // overridden to prevent focus setting when autoSaving  
@@ -1593,62 +1587,9 @@ OB.ViewFormProperties = {
     this.Super('showFieldErrors', [fieldName, true]);
   },
   
-  // overridden because Smartclient looses the selection when redrawing
-  // this was not reproducable in standard smartclient
-  // therefore this hack
-  redraw: function() {
-    var hasFocus;
-    if (this.getFocusItem() && this.getFocusItem().hasFocus) {
-      this.storeFocusItem();
-      // don't let the native SC code do store/restore of the focus item
-      hasFocus = this.getFocusItem().hasFocus;
-      this.getFocusItem().hasFocus = false;
-    }
-    this.Super('redraw', arguments);
-    if (hasFocus) {
-      if (isc.Browser.isIE) {
-        this.delayCall('restoreFocusItem', [true], 100);
-      } else {
-        this.restoreFocusItem();
-      }
-    }
-  },
-  
-  storeFocusItem: function() {
-    delete this.storedFocusItem;
-    delete this.storedSelectionRange;
-    if (this.getFocusItem()) {
-      this.storedFocusItem = this.getFocusItem();
-      this.storedSelectionRange = this.getFocusItem().getSelectionRange();
-    }
-  },
-  
-  restoreFocusItem: function() {
-    var storedSelectionRange = this.storedSelectionRange;
-    if (this.isVisible() && this.storedFocusItem) {
-      if (!this.storedFocusItem.isFocusable(true)) {
-        this.focusInNextItem(this.getFocusItem().name);
-      } else {
-        this.setFocusItem(this.storedFocusItem);
-        this.setFocusInForm();
-        if (storedSelectionRange) {
-          if (isc.Browser.isIE && storedSelectionRange[0] !== storedSelectionRange[1]) {
-            // we have overridden selectvalue to not use selection ranges
-            // but direct element.select, see ob-smartclient.js
-            this.selectFocusItemValue();
-          } else {
-            this.getFocusItem().setSelectionRange(storedSelectionRange[0], storedSelectionRange[1]);
-          }
-        }
-      }
-    }
-    
-    delete this.storedFocusItem;
-    delete this.storedSelectionRange;    
-  },
-
   destroy: function () {
-    var i, items = this.getItems(), len = items.length, ds, dataSources = [];
+    var i, item, items = this.getItems(), len = items.length, 
+      ds, dataSources = [];
 
     // caching reference to all DS of Items
     for (i = 0; i < len; i++) {

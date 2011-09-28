@@ -98,13 +98,15 @@
 
 // ** {{{OB.Personalization.applyViewDefinition}}} **
 // Apply a selected view definition to a window
-OB.Personalization.applyViewDefinition = function(viewDefinition, standardWindow) {
+OB.Personalization.applyViewDefinition = function(persId, viewDefinition, standardWindow) {
   var i, view, viewTabDefinition, length = standardWindow.views.length,
     windowDefinition = viewDefinition.window;
   
   // delete the current form personalization 
   // as these will be overwritten by the new settings
   standardWindow.removeAllFormPersonalizations();
+  
+  standardWindow.selectedPersonalizationId = persId;
   
   if (windowDefinition) {
     if (windowDefinition.activeTabId) {
@@ -237,6 +239,7 @@ OB.Personalization.storeViewDefinition = function(standardWindow, levelInformati
         personalization = standardWindow.getClass().personalization, 
         views = personalization && personalization.views ? personalization.views : []; 
 
+      standardWindow.selectedPersonalizationId = data.personalizationId;
       
       // create a new structure, the same way as it is 
       // returned from the server
@@ -284,7 +287,6 @@ OB.Personalization.storeViewDefinition = function(standardWindow, levelInformati
         });
 
       }
-      isc.say(OB.I18N.getLabel('OBUIAPP_ViewHasBeenSaved', [personalizationData.name]));
     }
   );
 };
@@ -315,7 +317,6 @@ OB.Personalization.deleteViewDefinition = function(standardWindow, personalizati
             }
           }
         }
-        isc.say(OB.I18N.getLabel('OBUIAPP_ViewHasBeenDeleted'));
       }
    );
 };

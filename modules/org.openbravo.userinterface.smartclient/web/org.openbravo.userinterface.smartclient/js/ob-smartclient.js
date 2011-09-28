@@ -66,23 +66,6 @@ isc.Button.addProperties({
 
 isc.StaticTextItem.getPrototype().getCanFocus = function() {return false;};
 
-isc.StaticTextItem.addProperties({
-  // workaround for this:
-  // http://forums.smartclient.com/showthread.php?p=73173
-  mapValueToDisplay : function (internalValue, a,b,c,d) {
-    var value = this.invokeSuper(isc.StaticTextItem, "mapValueToDisplay", 
-                                 internalValue, a,b,c,d);
-    var asHTML = this.escapeHTML || this.outputAsHTML || this.asHTML;
-    
-    // Don't escape &nbsp; unless that's actually the data value!  
-    if (asHTML && (internalValue === null || internalValue === isc.emptyString)
-        && value === '&nbsp;') {
-      return value;
-    }
-    return this.Super('mapValueToDisplay', arguments);
-  }
-});
-
 isc.Layout.addProperties({
   
   destroyAndRemoveMembers: function(toDestroy) {
@@ -100,23 +83,7 @@ isc.Layout.addProperties({
 });
 
 isc.TextItem.addProperties({
-  
-  // see this post:
-  // http://forums.smartclient.com/showthread.php?p=73453#post73453
-  shouldSelectOnFocus : function () {
-    var undef, selectOnFocus = this.selectOnFocus;
-    if (selectOnFocus === undef && this.form) {
-      selectOnFocus = this.form.selectOnFocus;
-    }
-    if (selectOnFocus) {
-        if (isc.EH.isMouseEvent()) {
-          selectOnFocus = false;
-        }
-    }
-    return selectOnFocus;
-  },
-
-  
+   
   // see comments in super type for useDisabledEventMask
   // http://forums.smartclient.com/showthread.php?p=70160#post70160
   // https://issues.openbravo.com/view.php?id=17936

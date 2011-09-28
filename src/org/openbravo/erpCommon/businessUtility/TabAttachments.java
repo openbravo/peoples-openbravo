@@ -66,6 +66,11 @@ public class TabAttachments extends HttpSecureAppServlet {
       ServletException {
 
     final VariablesSecureApp vars = new VariablesSecureApp(request);
+    post(vars, request, response);
+  }
+
+  public void post(VariablesSecureApp vars, HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     OBError myMessage = null;
 
     if (vars.getCommand().startsWith("SAVE_NEW")) {

@@ -442,6 +442,28 @@ isc.OBMiniDateRangeItem.addProperties(OB.DateItemProperties, {
     }
     return true;
   },
+   
+  // Explicit destroy of the rangedialog as formitems don't have 
+  // an auto delete of autochilds
+  destroy: function() {
+    this.destroying = true;
+    if (this.rangeDialog) {
+      this.rangeDialog.rangeForm.destroy();
+      this.rangeDialog.mainLayout.destroy();
+      this.rangeDialog.destroying  = true;
+      this.rangeDialog.destroy();
+      this.rangeDialog.destroying  = false;
+    }
+    this.Super('destroy', arguments);
+    this.destroying = false;
+  },
+  
+  clear: function() {
+    if (this.destroying) {
+      return;
+    }
+    this.Super('clear', arguments);
+  },
   
   formatDate: function(dt) {
     return OB.Utilities.Date.JSToOB(dt, OB.Format.date);

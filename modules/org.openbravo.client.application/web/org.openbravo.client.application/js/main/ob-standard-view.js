@@ -1947,7 +1947,6 @@ isc.OBStandardView.addProperties({
         fld.visible = true;
         fld.alwaysTakeSpace = true;
       }
-      fld.disabled = false;
 
       fld.canExport = (fld.canExport === false ? false : true);
       fld.canHide = (fld.canHide === false ? false : true);
@@ -1958,6 +1957,11 @@ isc.OBStandardView.addProperties({
       fld.editorProperties = isc.addProperties({}, fld, isc.shallowClone(fld.editorProps));      
       this.setFieldFormProperties(fld.editorProperties);
 
+      if (fld.disabled) {
+       fld.editorProperties.disabled = true; 
+      }
+      fld.disabled = false;
+      
       if (fld.yesNo) {
         fld.formatCellValue = yesNoFormatFunction; 
       }

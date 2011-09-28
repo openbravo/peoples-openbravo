@@ -142,7 +142,7 @@ isc.OBStandardWindow.addProperties({
         // maybe do this in a separate thread
         if (defaultView) {
           this.fireOnPause('setDefaultView', function() {
-            OB.Personalization.applyViewDefinition(defaultView.viewDefinition, this);
+            OB.Personalization.applyViewDefinition(defaultView.personalizationId, defaultView.viewDefinition, this);
           }, 100);
         }
         
@@ -184,7 +184,18 @@ isc.OBStandardWindow.addProperties({
    },
    
   getFormPersonalization: function(view) {
-    var formPersonalization;
+    var formPersonalization, i, persView;
+    if (this.getClass().personalization && this.getClass().personalization.views 
+        && this.selectedPersonalizationId) {
+      for (i = 0; i < this.getClass().personalization.views.length; i++) {
+        persView = this.getClass().personalization.views[i];
+        if (persView.viewDefinition && 
+            persView.viewDefinition[view.tabId] && 
+            persView.personalizationId === this.selectedPersonalizationId) {
+          return persView.viewDefinition[view.tabId].form;
+        }
+      }
+    }
     if (!this.getClass().personalization || !this.getClass().personalization.forms) {
       return null;
     }
