@@ -185,18 +185,21 @@ isc.OBStandardWindow.addProperties({
    
   getFormPersonalization: function(view) {
     var formPersonalization, i, persView;
-    if (this.getClass().personalization && this.getClass().personalization.views 
-        && this.selectedPersonalizationId) {
-      for (i = 0; i < this.getClass().personalization.views.length; i++) {
-        persView = this.getClass().personalization.views[i];
-        if (persView.viewDefinition && 
-            persView.viewDefinition[view.tabId] && 
-            persView.personalizationId === this.selectedPersonalizationId) {
-          return persView.viewDefinition[view.tabId].form;
+    if (!this.getClass().personalization || !this.getClass().personalization.forms) {
+      // no form personalization on form level
+      // check window level
+      if (this.getClass().personalization && this.getClass().personalization.views 
+          && this.selectedPersonalizationId) {
+        for (i = 0; i < this.getClass().personalization.views.length; i++) {
+          persView = this.getClass().personalization.views[i];
+          if (persView.viewDefinition && 
+              persView.viewDefinition[view.tabId] && 
+              persView.personalizationId === this.selectedPersonalizationId) {
+            return persView.viewDefinition[view.tabId].form;
+          }
         }
       }
-    }
-    if (!this.getClass().personalization || !this.getClass().personalization.forms) {
+      // nothing found go away
       return null;
     }
     formPersonalization = this.getClass().personalization.forms;

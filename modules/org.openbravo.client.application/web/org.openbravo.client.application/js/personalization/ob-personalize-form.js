@@ -988,9 +988,9 @@ isc.OBPersonalizeFormLayout.addProperties({
       window = this.maintenanceView.standardWindow;
     } else if (this.openedInForm) {
       if (this.hasBeenSaved || this.hasBeenDeleted) {
-        // reread the window settings
-        // this will update everything in the original forms
-        this.form.view.standardWindow.readWindowSettings();
+        // update the form in the view
+        OB.Personalization.personalizeForm(me.personalizationData, 
+            this.form.view.viewForm);
       }
       window = this.form.view.standardWindow;
     }
