@@ -398,25 +398,25 @@ OB.ViewFormProperties = {
     if (focusItem && focusItem.isFocusable()) {
       focusItem.focusInItem();
       this.view.lastFocusedItem = focusItem;
-      this.selectFocusItemValue();
+      this.selectFocusItemValue(true);
     } else {      
       // find a new one
       this.computeFocusItem(focusItem);
       if (this.getFocusItem() !== focusItem && this.getFocusItem()) {
         focusItem.focusInItem();
-        this.selectFocusItemValue();
+        this.selectFocusItemValue(true);
         this.view.lastFocusedItem = focusItem;
       }
     }
   },
   
-  selectFocusItemValue: function() {
+  selectFocusItemValue: function(delayCall) {
     if (!this.getFocusItem() || !this.view.isActiveView()) {
       return;
     }
     // if not explicitly set to false, select its value
     if (this.getFocusItem().selectOnFocus !== false) {
-      if (isc.Browser.isIE) {
+      if (delayCall || isc.Browser.isIE) {
         this.getFocusItem().delayCall('selectValue', [], 100);
       } else {
         this.getFocusItem().selectValue();
@@ -745,7 +745,7 @@ OB.ViewFormProperties = {
       }
     }
 
-    this.redraw();
+    this.markForRedraw();
 
     delete this.inFicCall;
     this.view.toolBar.updateButtonState(true);
@@ -799,7 +799,6 @@ OB.ViewFormProperties = {
           delete this.ignoreFirstFocusEvent;
         }
       } else {
-        this.redraw();
         this.view.viewGrid.refreshEditRow();
       }
     }
