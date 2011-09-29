@@ -942,7 +942,7 @@ public abstract class AcctServer {
         if (data != null && data.length != 0) {
           GL_Category_ID = data[0].glCategoryId;
           IsReversal = data[0].isreversal;
-	}
+        }
       }
       if (DocumentType != null && DocumentType.equals(""))
         log4j.warn("AcctServer - loadDocumentType - No DocType for GL Info");
