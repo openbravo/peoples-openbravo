@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER M_PRODUCTIONPLAN_TRG2">
+    <trigger name="M_PRODUCTIONPLAN_TRG2" table="M_PRODUCTIONPLAN" fires="before" insert="true" update="false" delete="false" foreach="row">
+      <body><![CDATA[
+
+  /*************************************************************************
+  * The contents of this file are subject to the Compiere Public
+  * License 1.1 ("License"); You may not use this file except in
+  * compliance with the License. You may obtain a copy of the License in
+  * the legal folder of your Openbravo installation.
+  * Software distributed under the License is distributed on an
+  * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  * implied. See the License for the specific language governing rights
+  * and limitations under the License.
+  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Initial Developer of the Original Code is Jorg Janke and ComPiere, Inc.
+  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
+  * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
+  * All Rights Reserved.
+  * Contributor(s): Openbravo SLU
+  * Contributions are Copyright (C) 2011 Openbravo, S.L.U.
+  *
+  * Specifically, this derivative work is based upon the following Compiere
+  * file and version.
+  *************************************************************************/
+
+      v_MovementDate timestamp without time zone;
+      
+BEGIN
+    
+    IF AD_isTriggerEnabled()='N' THEN RETURN;
+    END IF;
+
+    IF (INSERTING) THEN
+	    SELECT MOVEMENTDATE
+	    INTO v_MovementDate
+	    FROM M_PRODUCTION
+	    WHERE M_PRODUCTION_ID = :NEW.M_PRODUCTION_ID;
+
+    -- RAISE_APPLICATION_ERROR(-20000, v_MovementDate);
+
+	    :NEW.MOVEMENTDATE := v_MovementDate;
+    END IF;
+
+END M_PRODUCTIONPLAN_TRG2
+]]></body>
+    </trigger>
+  </database>
