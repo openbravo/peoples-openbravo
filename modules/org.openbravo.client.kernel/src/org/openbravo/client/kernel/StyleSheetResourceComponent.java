@@ -89,7 +89,12 @@ public class StyleSheetResourceComponent extends BaseComponent {
         }
       }
       if (hasStyleSheet) {
-        version.append(KernelUtils.getInstance().getVersionParameters(module));
+        if (module.isInDevelopment()) {
+          // do something unique
+          version.append(System.currentTimeMillis() + "");
+        } else {
+          version.append(KernelUtils.getInstance().getVersionParameters(module));
+        }
       }
     }
     // compute the md5 of the version string and return that
