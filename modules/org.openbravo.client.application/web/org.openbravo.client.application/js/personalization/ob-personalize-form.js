@@ -526,8 +526,8 @@ isc.OBPersonalizeFormLayout.addProperties({
         updateState: function(){
           // never allow delete when opened from the maintenance window
           this.setDisabled(this.openedFromMaintenanceWindow || 
-              !this.view.form.view.getFormPersonalization() || 
-              !this.view.form.view.getFormPersonalization().canDelete);
+              !this.view.form.view.getFormPersonalization(false) || 
+              !this.view.form.view.getFormPersonalization(false).canDelete);
         },
         keyboardShortcutId: 'ToolBar_Eliminate'
       };
@@ -558,7 +558,8 @@ isc.OBPersonalizeFormLayout.addProperties({
 
   // save the new form layout to the server and updates the preview form
   save: function(callback) {
-    var params, me = this, newDataFields;
+    var params, me = this, newDataFields, 
+      formPers = this.form.view.getFormPersonalization();
 
     // if there is a personalization id then use that
     // this ensures that a specific record will be updated
@@ -567,11 +568,11 @@ isc.OBPersonalizeFormLayout.addProperties({
     // it can be grid. The reason that not the whole structure is send
     // is that the call should only change the target itself (the form
     // personalization data) and not the other parts
-    if (this.form.view.getFormPersonalization() && this.form.view.getFormPersonalization().personalizationId) {
+    if (formPers && formPers.personalizationId) {
       params = {
           action: 'store',
           target: 'form',
-          personalizationId: this.form.view.getFormPersonalization().personalizationId
+          personalizationId: formPers.personalizationId
       };
       
     } else {
@@ -603,9 +604,10 @@ isc.OBPersonalizeFormLayout.addProperties({
           if (!me.personalizationData) {
             me.personalizationData = {};
           }
-          if (data && data.canDelete && me.personalizationData.canDelete !== false) {
-            me.personalizationData.canDelete = true;            
-          }
+          
+          // as the user can save, the user can also delete it
+          me.personalizationData.canDelete = true;          
+            
           if (data && data.personalizationId) {
             me.personalizationData.personalizationId = data.personalizationId;            
           }
@@ -817,8 +819,8 @@ isc.OBPersonalizeFormLayout.addProperties({
       // in the form preview
       if (fld.personalizable) {
         // always expand section items
-        if (isc.isA.SectionItem(fld)) {
-          fld.sectionExpanded = true;
+        if (fld.sectionExpanded) {
+          fld.expandSection();
         } else {
           // replace some methods so that clicking a field in the form
           // will select it on the left
@@ -898,7 +900,7 @@ isc.OBPersonalizeFormLayout.addProperties({
     this.personalizationDataProperties = [
       'isStatusBarField', 'displayed', 'isSection',
       'parentName', 'title', 'hiddenInForm',
-      'colSpan', 'rowSpan', 'required', 
+      'colSpan', 'rowSpan', 'required', 'sectionExpanded',
       'startRow', 'name', 'hasDisplayLogic'
     ];
     length = this.personalizationData.form.fields.length;
