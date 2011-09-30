@@ -106,7 +106,7 @@ isc.OBStandardWindow.addProperties({
   
   // set window specific user settings, purposely set on class level
   setWindowSettings: function(data) {
-    var i, defaultView, persDefaultValue, views, length;
+    var i, defaultView, persDefaultValue, views, length, t, tab, view, field;
 
     if (data && data.personalization) {
       if (data.personalization.forms) {
@@ -173,18 +173,18 @@ isc.OBStandardWindow.addProperties({
     
     // Field level permissions
     if (data && data.tabs) {
-        for ( var t = 0; t < data.tabs.length; t++) {
-          var tab = data.tabs[t];
-          var view = this.getView(tab.tabId);
-          for ( var i = 0; i < view.viewForm.fields.length; i++) {
-            var field = view.viewForm.fields[i];
-            if (tab.fields[field.name] != undefined) {
+        for ( t = 0; t < data.tabs.length; t++) {
+          tab = data.tabs[t];
+          view = this.getView(tab.tabId);
+          for ( i = 0; i < view.viewForm.fields.length; i++) {
+            field = view.viewForm.fields[i];
+            if (tab.fields[field.name] !== undefined) {
                       field.updatable = tab.fields[field.name];
             }
           }
-          for ( var i = 0; i < view.viewGrid.fields.length; i++) {
-            var field = view.viewGrid.fields[i];
-            if (tab.fields[field.name] != undefined) {
+          for ( i = 0; i < view.viewGrid.fields.length; i++) {
+            field = view.viewGrid.fields[i];
+            if (tab.fields[field.name] !== undefined) {
               field.editorProperties.updatable = tab.fields[field.name];
             }
           }
