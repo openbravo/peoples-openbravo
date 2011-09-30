@@ -52,15 +52,6 @@
     updateState: function(){
       var propValue, undef;
       
-      if (this.view.getFormPersonalization()) {
-        this.prompt = OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_Button_modified');
-        this.buttonType = 'personalization-modified';
-      } else {
-        this.prompt = OB.I18N.getLabel('OBUIAPP_Personalization_Toolbar_Button');
-        this.buttonType = 'personalization';
-      }
-      this.resetBaseStyle();
-      
       // set it 
       if (this.userWindowPersonalizationAllowed === undef) {
         propValue = OB.PropertyStore.get('OBUIAPP_WindowPersonalization_Override', 
