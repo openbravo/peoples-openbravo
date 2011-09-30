@@ -27,6 +27,10 @@ isc.OBTextAreaItem.addProperties({
   validateOnExit: true,
 
   selectOnFocus: false,
+  
+  isDisabled: function() {
+    this.Super('isDisabled', arguments);
+  },
 
   itemHoverHTML: function(item, form) {
     if (this.isDisabled()) {

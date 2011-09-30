@@ -593,3 +593,11 @@
   // Initialize ClassicOBCompatibility object
   cobcomp = L.ClassicOBCompatibility = new ClassicOBCompatibility();
 }(OB, isc));
+
+isc.ClassFactory.defineClass('OBUIAPP_RegistrationView', isc.Layout).addProperties({
+  initWidget : function() {
+    OB.Layout.ClassicOBCompatibility.Popup.openRegistration();
+
+    this.Super('initWidget', arguments);
+  }
+});

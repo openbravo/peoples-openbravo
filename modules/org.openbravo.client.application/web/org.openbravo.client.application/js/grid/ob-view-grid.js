@@ -32,7 +32,7 @@ isc.OBViewGrid.addClassProperties({
 // The OBViewGrid is the Openbravo specific subclass of the Smartclient
 // ListGrid.
 isc.OBViewGrid.addProperties({
-  
+
   // ** {{{ view }}} **
   // The view member contains the pointer to the composite canvas which
   // handles this form
@@ -391,7 +391,7 @@ isc.OBViewGrid.addProperties({
   },
   
   cellHoverHTML: function(record, rowNum, colNum){
-    var field = this.getField(colNum), cellErrors, msg = '', i;
+    var ret, field = this.getField(colNum), cellErrors, msg = '', i;
     if (this.isCheckboxField(field)) {
       return OB.I18N.getLabel('OBUIAPP_GridSelectColumnPrompt');
     }
@@ -407,7 +407,10 @@ isc.OBViewGrid.addProperties({
       return record[isc.OBViewGrid.ERROR_MESSAGE_PROP];
     }
     
-    return this.Super('cellHoverHTML', arguments);
+    this.inCellHoverHTML = true;
+    ret = this.Super('cellHoverHTML', arguments);
+    delete this.inCellHoverHTML;
+    return ret;
   },
  
   // also store the filter criteria
@@ -718,7 +721,7 @@ isc.OBViewGrid.addProperties({
     // anyway
     if (this.view.parentProperty && (!this.data || !this.data.getLength || this.data.getLength() === 0)) {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
-      if (!this.isOpenDirectMode && selectedValues.length === 0) {
+      if (selectedValues && !this.isOpenDirectMode && selectedValues.length === 0) {
         if (callback) {
           callback();
         }
@@ -978,12 +981,16 @@ isc.OBViewGrid.addProperties({
       criterion, fldName, length;
 
     if (!criteria) {
-      criteria = {
-        operator: 'and', 
-        _constructor: "AdvancedCriteria", 
-        criteria:[]};
+      criteria = {};      
     } else {
       criteria = isc.clone(criteria);
+    }
+    
+    if (!criteria.operator) {
+      criteria.operator = 'and';
+    }
+    if (!criteria._constructor) {
+      criteria._constructor = "AdvancedCriteria"; 
     }
     
     if (!criteria.criteria) {
@@ -1025,12 +1032,14 @@ isc.OBViewGrid.addProperties({
     if (this.view.parentProperty && !this.isOpenDirectMode) {
       selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
       var parentPropertyFilterValue = -1;
-      if (selectedValues.length === 0) {
-        parentPropertyFilterValue = '-1';
-      } else if (selectedValues.length > 1) {
-        parentPropertyFilterValue = '-1';
-      } else {
-        parentPropertyFilterValue = selectedValues[0][OB.Constants.ID];
+      if (selectedValues) {
+        if (selectedValues.length === 0) {
+          parentPropertyFilterValue = '-1';
+        } else if (selectedValues.length > 1) {
+          parentPropertyFilterValue = '-1';
+        } else {
+          parentPropertyFilterValue = selectedValues[0][OB.Constants.ID];
+        }
       }
       
       this.view.parentRecordId = parentPropertyFilterValue;
@@ -1791,6 +1800,20 @@ isc.OBViewGrid.addProperties({
     }
 
     return this.Super('getCellStyle', arguments);
+  },
+  
+  // prevent multi-line content to show strangely
+  // https://issues.openbravo.com/view.php?id=17531
+  formatCellValue: function(value, record, rowNum, colNum) {
+    if (this.inCellHoverHTML || !isc.isA.String(value)) {
+      return value;
+    }
+  
+    var index = value.indexOf('\n');
+    if (index !== -1) {
+      return value.substring(0, index) + '...';
+    } 
+    return value;
   },
   
   discardEdits: function(rowNum, colNum, dontHideEditor, editCompletionEvent, preventConfirm){

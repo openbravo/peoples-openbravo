@@ -957,9 +957,10 @@ public abstract class AcctServer {
       if (GL_Category_ID != null && GL_Category_ID.equals("")) {
         AcctServerData[] data = AcctServerData.selectGLCategory(connectionProvider, AD_Client_ID,
             DocumentType);
-        if (data != null && data.length != 0)
+        if (data != null && data.length != 0) {
           GL_Category_ID = data[0].glCategoryId;
-        IsReversal = data[0].isreversal;
+          IsReversal = data[0].isreversal;
+        }
       }
       if (DocumentType != null && DocumentType.equals(""))
         log4j.warn("AcctServer - loadDocumentType - No DocType for GL Info");

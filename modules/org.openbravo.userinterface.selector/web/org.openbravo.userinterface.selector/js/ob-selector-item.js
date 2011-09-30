@@ -175,7 +175,7 @@ isc.OBSelectorPopupWindow.addProperties({
       
       type = isc.SimpleType.getType(gridField.type);
       
-      if (type.filterEditorType) {
+      if (type.filterEditorType && !gridField.filterEditorType) {
         gridField.filterEditorType = type.filterEditorType;
       }
       

@@ -18,11 +18,24 @@
  */
 
 // == OBYesNoItem ==
-// Extends SelectItem with preset yes and no values.
-isc.ClassFactory.defineClass('OBYesNoItem', SelectItem);
+// Extends ComboBoxItem with preset yes and no values.
+isc.ClassFactory.defineClass('OBYesNoItem', ComboBoxItem);
 
 isc.OBYesNoItem.addProperties({
   operator: 'equals',
+  addUnknownValues: false,
+  
+  // solves:
+  // https://issues.openbravo.com/view.php?id=18592
+  setValue: function(value) {
+    if (value === 'true') {
+      this.Super('setValue', [true]);
+    } else if (value === 'false') {
+      this.Super('setValue', [false]);
+    } else {
+      this.Super('setValue', arguments);
+    }
+  },
   
   mapValueToDisplay: function(value, a, b, c){
     return OB.Utilities.getYesNoDisplayValue(value);

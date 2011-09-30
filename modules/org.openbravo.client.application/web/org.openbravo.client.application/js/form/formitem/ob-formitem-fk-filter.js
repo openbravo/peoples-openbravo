@@ -26,7 +26,7 @@ isc.OBFKFilterTextItem.addProperties({
   allowExpressions: true,
   validateOnExit: false,
   validateOnChange: false,
-
+  
   // solve a small bug in the value expressions
   buildValueExpressions: function() {
     var ret = this.Super('buildValueExpressions', arguments);

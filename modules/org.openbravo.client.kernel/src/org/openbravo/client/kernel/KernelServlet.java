@@ -223,6 +223,10 @@ public class KernelServlet extends BaseKernelServlet {
       parameterMap.put(key, request.getParameter(key));
     }
 
+    if (!parameterMap.containsKey(KernelConstants.HTTP_SESSION)) {
+      parameterMap.put(KernelConstants.HTTP_SESSION, request.getSession());
+    }
+
     if (!parameterMap.containsKey(KernelConstants.CONTEXT_URL)) {
       parameterMap.put(KernelConstants.CONTEXT_URL, computeContextURL(request));
     }

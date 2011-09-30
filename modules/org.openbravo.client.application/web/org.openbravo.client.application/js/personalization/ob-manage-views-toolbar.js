@@ -26,16 +26,21 @@
     initWidget: function() {
       this.menu = isc.Menu.create({
         button: this,
-        showIcons: false,
 
         // overridden to get much simpler custom style name
         getBaseStyle: function(record, rowNum, colNum){
+          if (colNum === 0) {
+            return this.baseStyle + 'Icon';
+          }
+          if (record.showSeparator) {
+            return this.baseStyle + 'Separator';
+          }
           return this.baseStyle;
         },
 
         itemClick: function(item, colNum) {
           if (item.viewDefinition) {
-            OB.Personalization.applyViewDefinition(item.viewDefinition, this.button.view.standardWindow);
+            OB.Personalization.applyViewDefinition(item.personalizationId, item.viewDefinition, this.button.view.standardWindow);
           } else {
             item.doClick(this.button.view.standardWindow);
           }
@@ -43,24 +48,26 @@
       }, OB.Styles.Personalization.Menu);
     },
     
+    showMenu: function() {      
+      if (!OB.Utilities.checkProfessionalLicense(
+          OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization'))) {
+        return;
+      }
+      return this.Super('showMenu', arguments);
+    },
+    
     // shows the menu with the available views and the save 
     // and delete option
     action: function() {
-      var data = [], i, undef, view,
+      var data = [], icon, i, undef, view,
         standardWindow = this.view.standardWindow,
         adminLevel = false, length,
         personalization = standardWindow.getClass().personalization, 
         views = personalization && personalization.views ? personalization.views : [],
         canDelete = false;
       
-      // TODO: disabled license check to facilitate testing
-      if(OB.Application.licenseType === 'DUMMY') {
-//      if(OB.Application.licenseType === 'C') {
-        isc.warn(OB.I18N.getLabel('OBUIAPP_ActivateMessage', [OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization')]), {
-            isModal: true,
-            showModalMask: true,
-            toolbarButtons: [isc.Dialog.OK]
-        });
+      if (!OB.Utilities.checkProfessionalLicense(
+          OB.I18N.getLabel('OBUIAPP_ActivateMessagePersonalization'))) {
         return;
       }
       
@@ -69,15 +76,19 @@
       for (i = 0; i < length; i++) {
         view = views[i];
         canDelete = view.canEdit || canDelete;
-        data.push({title: view.viewDefinition.name, viewDefinition: view.viewDefinition});
+        
+        if (standardWindow.selectedPersonalizationId && view.personalizationId === standardWindow.selectedPersonalizationId) {
+          icon = this.menu.itemIcon;
+        } else {
+          icon = null;
+        }
+        
+        data.push({title: view.viewDefinition.name, icon: icon, personalizationId: view.personalizationId, viewDefinition: view.viewDefinition});        
       }
       
       // compute the menu items, only if the user is allowed
       // to personalize
       if (this.isWindowPersonalizationAllowed()) {
-        if (data.length > 0) {
-          data.push({isSeparator: true});
-        }
         
         if (standardWindow.getClass().personalization && standardWindow.getClass().personalization.formData) {
           formData = standardWindow.getClass().personalization.formData;
@@ -87,6 +98,7 @@
         }
         
         data.push({title: OB.I18N.getLabel('OBUIAPP_SaveView'), 
+          showSeparator: data.length > 0,
           doClick: function(standardWindow) {
             var popup = isc.OBPopup.create({
                 standardWindow: standardWindow

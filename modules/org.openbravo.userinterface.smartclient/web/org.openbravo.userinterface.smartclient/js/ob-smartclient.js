@@ -83,6 +83,7 @@ isc.Layout.addProperties({
 });
 
 isc.TextItem.addProperties({
+   
   // see comments in super type for useDisabledEventMask
   // http://forums.smartclient.com/showthread.php?p=70160#post70160
   // https://issues.openbravo.com/view.php?id=17936
@@ -92,6 +93,7 @@ isc.TextItem.addProperties({
     }
     return this.Super('useDisabledEventMask', arguments);
   }
+  
 });
 
 // NOTE BEWARE: methods/props added here will overwrite and NOT extend FormItem

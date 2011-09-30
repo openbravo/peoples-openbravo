@@ -59,6 +59,8 @@ isc.OBUserProfile.addProperties({
   //
   // Is called when the forms are shown.
   doShow: function(){
+    this.initialize();
+    
     // reset before showing
     this.roleForm.reset();
     this.roleForm.focusInItem('role');
@@ -68,27 +70,43 @@ isc.OBUserProfile.addProperties({
     this.Super('doShow', arguments);
   },
   
+  formActionHandler: 'org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler',
+
   keyboardShortcutId: 'NavBar_OBUserProfile',
   
-  // ** {{{ initWidget() }}} **
+  initWidget: function() {
+    var me = this;
+    OB.RemoteCallManager.call(this.formActionHandler, {}, {
+      'command': 'data'
+    }, function(req, data, resp) {me.formData = data;});
+    
+    this.Super('initWidget', arguments);
+    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileButton', this);
+  },
+  
+  // ** {{{ initialize() }}} **
   //
   // Creates the forms, fields and buttons.
-  initWidget: function(){
-    var formLayout, newPasswordField, passwordForm, confirmPasswordField, buttonLayout, currentPasswordField, roleForm, widgetInstance, ComboBoxField, roleField, orgField, warehouseField, languageField,
-     defaultField, clientField, tabSet, pwdButtonLayout, pwdFormLayout, pwdSaveButton;
+  initialize: function(){
+    if (this.roleForm) {
+      return;
+    }
     
+    var me = this, formLayout, newPasswordField, passwordForm, 
+     confirmPasswordField, buttonLayout, currentPasswordField, 
+     roleForm, widgetInstance, comboBoxFieldProperties, roleField, 
+     orgField, warehouseField, languageField,
+     defaultField, clientField, tabSet, pwdButtonLayout, 
+     pwdFormLayout, pwdSaveButton, textFieldProperties, 
+     passwordFieldProperties;
+  
     OB.Layout.userProfileWidget = this;
     
     // have a pointer to this instance
     widgetInstance = this;
     
     // create a default form field types
-    ComboBoxField = function(props){
-      if (props) {
-        isc.addProperties(this, props);
-      }
-    };
-    ComboBoxField.prototype = {
+    comboBoxFieldProperties = {
       errorOrientation: OB.Styles.OBFormField.DefaultComboBox.errorOrientation,
       cellStyle: OB.Styles.OBFormField.DefaultComboBox.cellStyle,
       titleStyle: OB.Styles.OBFormField.DefaultComboBox.titleStyle,
@@ -109,6 +127,16 @@ isc.OBUserProfile.addProperties({
       pickListProperties: {
         bodyStyleName: OB.Styles.OBFormField.DefaultComboBox.pickListProperties.bodyStyleName
       },
+      
+      // workaround for this issue:
+      // https://issues.openbravo.com/view.php?id=18501
+      setUpPickList : function () {
+        this.Super("setUpPickList", arguments);
+        if (this.pickList) {
+          this.pickList.setBodyStyleName(this.pickListProperties.bodyStyleName);
+        }
+      },
+
       titleOrientation: 'top',
       showFocused: true,
       editorType: 'select',
@@ -118,30 +146,27 @@ isc.OBUserProfile.addProperties({
       defaultToFirstOption: true
     };
     
-    roleField = new ComboBoxField({
+    roleField = isc.addProperties({
       name: 'role',
       title: OB.I18N.getLabel('UINAVBA_Role')
-    });
-    orgField = new ComboBoxField({
+    }, comboBoxFieldProperties);
+    
+    orgField = isc.addProperties({
       name: 'organization',
       title: OB.I18N.getLabel('UINAVBA_Organization')
-    });
-    warehouseField = new ComboBoxField({
+    }, comboBoxFieldProperties);
+    
+    warehouseField = isc.addProperties({
       name: 'warehouse',
       title: OB.I18N.getLabel('UINAVBA_Warehouse')
-    });
-    languageField = new ComboBoxField({
+    }, comboBoxFieldProperties);
+    
+    languageField = isc.addProperties({
       name: 'language',
       title: OB.I18N.getLabel('UINAVBA_Language')
-    });
+    }, comboBoxFieldProperties);
 
-
-    CheckboxField = function(props){
-      if (props) {
-        isc.addProperties(this, props);
-      }
-    };
-    CheckboxField.prototype = {
+    checkboxFieldProperties = {
       cellStyle: OB.Styles.OBFormField.DefaultCheckbox.cellStyle,
       titleStyle: OB.Styles.OBFormField.DefaultCheckbox.titleStyle,
       textBoxStyle: OB.Styles.OBFormField.DefaultCheckbox.textBoxStyle,
@@ -155,17 +180,12 @@ isc.OBUserProfile.addProperties({
       editorType: 'checkbox'
     };
 
-    defaultField = new CheckboxField({
+    defaultField = isc.addProperties({
       name: 'default',
       title: OB.I18N.getLabel('UINAVBA_SetAsDefault')
-    });
+    }, checkboxFieldProperties);
 
-    TextField = function(props){
-      if (props) {
-        isc.addProperties(this, props);
-      }
-    };
-    TextField.prototype = {
+    textFieldProperties = {
       errorOrientation: OB.Styles.OBFormField.DefaultTextItem.errorOrientation,
       cellStyle: OB.Styles.OBFormField.DefaultTextItem.cellStyle,
       titleStyle: OB.Styles.OBFormField.DefaultTextItem.titleStyle,
@@ -179,10 +199,10 @@ isc.OBUserProfile.addProperties({
       editorType: 'TextItem'
     };
 
-    clientField = new TextField({
+    clientField = isc.addProperties({
       name: 'client',
       title: OB.I18N.getLabel('UINAVBA_Client')
-    });
+    }, textFieldProperties);
 
     // create the form for the role information
     roleForm = isc.DynamicForm.create({
@@ -193,12 +213,11 @@ isc.OBUserProfile.addProperties({
       titleSuffix: '',
       errorsPreamble: '',
       showInlineErrors: false,
-      formActionHandler: 'org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler',
-      initWidget: function(){
+      widgetInstance: me,
+      
+      initWidget: function() {
         this.Super('initWidget', arguments);
-        OB.RemoteCallManager.call(this.formActionHandler, {}, {
-          'command': 'data'
-        }, this.setInitialData);
+        this.setInitialData(this.widgetInstance.formData);
       },
       
       itemKeyPress: function(item, keyName, characterValue){
@@ -217,77 +236,77 @@ isc.OBUserProfile.addProperties({
         // then do setValues
         // this is needed because the select items will reject values
         // if the valuemap is not yet set
-        roleForm.setValue('role', roleForm.localFormData.initialValues.role);
-        roleForm.setValueMaps();
+        this.setValue('role', this.localFormData.initialValues.role);
+        this.setValueMaps();
         // note, need to make a copy of the initial values
         // otherwise they are updated when the form values change!
-        roleForm.setValues(isc.addProperties({}, roleForm.localFormData.initialValues));
-        roleForm.setWarehouseValueMap();
+        this.setValues(isc.addProperties({}, this.localFormData.initialValues));
+        this.setWarehouseValueMap();
         //We set initial values again to set warehouse correctly
-        roleForm.setValues(isc.addProperties({}, roleForm.localFormData.initialValues));
-        if(roleForm.getItem('warehouse').getClientPickListData().length > 0 &&
-                !roleForm.getItem('warehouse').getValue()){
-            roleForm.getItem('warehouse').moveToFirstValue();
+        this.setValues(isc.addProperties({}, this.localFormData.initialValues));
+        if(this.getItem('warehouse').getClientPickListData().length > 0 &&
+                !this.getItem('warehouse').getValue()){
+            this.getItem('warehouse').moveToFirstValue();
         }
       },
-      setInitialData: function(rpcResponse, data, rpcRequest){
+      setInitialData: function(data){
         // order of these statements is important see comments in reset
         // function
-        roleForm.localFormData = data;
-        roleForm.setValueMap('language', data.language.valueMap);
-        roleForm.setValueMap('role', data.role.valueMap);
-        roleForm.setValue('role', data.initialValues.role);
-        roleForm.setValue('client', data.initialValues.client);
-        roleForm.setValueMaps();
+        this.localFormData = data;
+        this.setValueMap('language', data.language.valueMap);
+        this.setValueMap('role', data.role.valueMap);
+        this.setValue('role', data.initialValues.role);
+        this.setValue('client', data.initialValues.client);
+        this.setValueMaps();
         //First we set initial values, but warehouse will not work
         //as its combo hasn't yet been filled
-        roleForm.setValues(isc.addProperties({}, data.initialValues));
-        roleForm.setWarehouseValueMap();
+        this.setValues(isc.addProperties({}, data.initialValues));
+        this.setWarehouseValueMap();
         //We set initial values again to set warehouse correctly
-        roleForm.setValues(isc.addProperties({}, data.initialValues));
+        this.setValues(isc.addProperties({}, data.initialValues));
       },
       // updates the dependent combos
       itemChanged: function(item, newValue){
         this.setValueMaps();
         if (item.name === 'role') {
-          if (roleForm.getItem('organization').getClientPickListData().length > 0) {
-            roleForm.getItem('organization').moveToFirstValue();
+          if (this.getItem('organization').getClientPickListData().length > 0) {
+            this.getItem('organization').moveToFirstValue();
           }
         }
         this.setWarehouseValueMap();
         if (item.name !== 'warehouse') {
-          if (roleForm.getItem('warehouse').getClientPickListData().length > 0) {
-            roleForm.getItem('warehouse').moveToFirstValue();
+          if (this.getItem('warehouse').getClientPickListData().length > 0) {
+            this.getItem('warehouse').moveToFirstValue();
           }
         }
       },
       setValueMaps: function(){
-        var i, role, roleId = roleForm.getValue('role'),
-          length = roleForm.localFormData.role.roles.length;
+        var i, role, roleId = this.getValue('role'),
+          length = this.localFormData.role.roles.length;
         for (i = 0; i < length; i++) {
-          role = roleForm.localFormData.role.roles[i];
+          role = this.localFormData.role.roles[i];
           if (role.id === roleId) {
-            roleForm.setValueMap('organization', role.organizationValueMap);
-            roleForm.setValue('client', role.client);
+            this.setValueMap('organization', role.organizationValueMap);
+            this.setValue('client', role.client);
           }
         }
       },
       setWarehouseValueMap: function() {
-        var i, j, warehouseOrg, role, roleId, length, 
-          orgId = roleForm.getItem('organization').getValue();
+        var i, j, warehouseOrg, role, roleId, roleLength, length, 
+          orgId = this.getItem('organization').getValue();
         if (!orgId) {
           return;
         }
-        length = roleForm.localFormData.role.roles.length;
-        roleId = roleForm.getValue('role');
-        for (i = 0; i < length; i++) {
-          role = roleForm.localFormData.role.roles[i];
+        roleLength = this.localFormData.role.roles.length;
+        roleId = this.getValue('role');
+        for (i = 0; i < roleLength; i++) {
+          role = this.localFormData.role.roles[i];
           if (role.id === roleId) {
             length = role.warehouseOrgMap.length;
             for (j = 0; j < length; j++) {
               warehouseOrg = role.warehouseOrgMap[j];
               if (warehouseOrg.orgId === orgId) {
-                roleForm.setValueMap('warehouse', warehouseOrg.warehouseMap);
+                this.setValueMap('warehouse', warehouseOrg.warehouseMap);
               }
             }
           }
@@ -296,7 +315,7 @@ isc.OBUserProfile.addProperties({
       
       // call the server to save the information
       doSave: function(){
-        OB.RemoteCallManager.call(this.formActionHandler, this.getValues(), {
+        OB.RemoteCallManager.call(this.widgetInstance.formActionHandler, this.getValues(), {
           'command': 'save'
         }, this.doSaveCallback);
       },
@@ -358,12 +377,7 @@ isc.OBUserProfile.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileRole.CancelButton', buttonLayout.members[1]);
     
     // now create the fields for the password form
-    PasswordField = function(props){
-      if (props) {
-        isc.addProperties(this, props);
-      }
-    };
-    PasswordField.prototype = {
+    passwordFieldProperties = {
       errorOrientation: OB.Styles.OBFormField.DefaultTextItem.errorOrientation,
       cellStyle: OB.Styles.OBFormField.DefaultTextItem.cellStyle,
       titleStyle: OB.Styles.OBFormField.DefaultTextItem.titleStyle,
@@ -377,20 +391,20 @@ isc.OBUserProfile.addProperties({
       editorType: 'PasswordItem'
     };
 
-    currentPasswordField = new PasswordField({
+    currentPasswordField = isc.addProperties({
       name: 'currentPwd',
       title: OB.I18N.getLabel('UINAVBA_CurrentPwd')
-    });
+    }, passwordFieldProperties);
 
-    newPasswordField = new PasswordField({
+    newPasswordField = isc.addProperties({
       name: 'newPwd',
       title: OB.I18N.getLabel('UINAVBA_NewPwd')
-    });
+    }, passwordFieldProperties);
 
-    confirmPasswordField = new PasswordField({
+    confirmPasswordField = isc.addProperties({
       name: 'confirmPwd',
       title: OB.I18N.getLabel('UINAVBA_ConfirmPwd')
-    });
+    }, passwordFieldProperties);
 
     // create the password form
     passwordForm = isc.DynamicForm.create({
@@ -543,7 +557,6 @@ isc.OBUserProfile.addProperties({
     widgetInstance.tabSet = tabSet;
     
     this.members = [tabSet];
-    this.Super('initWidget', arguments);
     
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfile.Tabset', tabSet);
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.SaveButton', pwdSaveButton);
@@ -552,6 +565,8 @@ isc.OBUserProfile.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.NewPasswordField', passwordForm.getField('newPwd'));
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.ConfirmPasswordField', passwordForm.getField('confirmPwd'));
     OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfilePassword.Form', passwordForm);
-    OB.TestRegistry.register('org.openbravo.client.application.navigationbarcomponents.UserProfileButton', this);
+    
+    this.resetLayout();
+    this.computeSetContent();
   }
 });

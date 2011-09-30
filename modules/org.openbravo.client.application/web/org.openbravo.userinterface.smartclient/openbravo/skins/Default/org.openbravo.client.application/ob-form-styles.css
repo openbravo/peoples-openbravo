@@ -40,6 +40,7 @@
 }
 
 .OBFormContainerLayout {
+  outline: none;
   background-color: #FFFFFF;
 }
 
@@ -350,7 +351,17 @@
 
 .OBPickListBody,
 .OBPickListBodyFocused {
-  border:1px solid #CDD7BB; 
+  border:1px solid #CDD7BB;
+  outline: none; 
+  background-color:#FFFFFF;
+}
+
+// workaround for this issue:
+// https://issues.openbravo.com/view.php?id=18501
+.pickListMenuBody,
+.pickListMenuBodyFocused {
+  border:1px solid #CDD7BB;
+  outline: none; 
   background-color:#FFFFFF;
 }
 

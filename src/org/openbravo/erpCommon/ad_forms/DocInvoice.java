@@ -847,21 +847,26 @@ public class DocInvoice extends AcctServer {
       setStatus(STATUS_DocumentDisabled);
       return false;
     }
-    try {
-      data = DocInvoiceData.selectFinInvCount(conn, strRecordId);
-      if (data.length > 0) {
-        if (Integer.parseInt(data[0].fininvcount) == 0)
-          return true;
-        else if (Integer.parseInt(data[0].fininvcount) == Integer.parseInt(data[0].finacctcount))
-          return true;
-        else {
-          setStatus(STATUS_Error);
+    
+    AcctSchema acct = null;
+    for (int i = 0; i < m_as.length; i++) {
+      acct = m_as[i];
+      try {
+        data = DocInvoiceData.selectFinInvCount(conn, strRecordId, acct.m_C_AcctSchema_ID);
+        int countFinInv = Integer.parseInt(data[0].fininvcount);
+        int countGLItemAcct = Integer.parseInt(data[0].finacctcount);
+        // For any GL Item used in financial invoice lines debit/credit accounts must be defined
+        if (countFinInv != 0 && (countFinInv != countGLItemAcct)) {
+          log4jDocInvoice.debug("DocInvoice - getDocumentConfirmation - GL Item used in financial "
+              + "invoice lines debit/credit accounts must be defined.");
+          setStatus(STATUS_InvalidAccount);
           return false;
         }
+      } catch (ServletException e) {
+        log4jDocInvoice.error("Exception in getDocumentConfirmation method: " + e);
       }
-    } catch (ServletException e) {
-      log4jDocInvoice.error("Exception in getDocumentConfirmation method: " + e);
     }
+    
     return true;
   }
 

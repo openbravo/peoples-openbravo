@@ -295,6 +295,7 @@ public class SystemService implements OBSingleton {
    * stopped, and all sessions active for other users are cancelled
    * 
    * @param client
+   *          The client to be deleted
    */
   public void deleteClient(Client client) {
     try {
@@ -392,7 +393,8 @@ public class SystemService implements OBSingleton {
   /**
    * Returns a dbsourcemanager Platform object
    * 
-   * @return
+   * @return A Platform object built following the configuration set in the Openbravo.properties
+   *         file
    */
   public Platform getPlatform() {
     Properties obProp = OBPropertiesProvider.getInstance().getOpenbravoProperties();

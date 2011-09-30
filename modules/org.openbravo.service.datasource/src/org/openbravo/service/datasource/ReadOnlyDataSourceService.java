@@ -73,7 +73,15 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
       jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
       jsonResponse.put(JsonConstants.RESPONSE_ENDROW, jsonObjects.size() + startRow - 1);
       if (doCount) {
-        jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, getCount(parameters));
+        int num = getCount(parameters);
+        if (num == -1) {
+          int endRow = Integer.parseInt(endRowStr);
+          num = (endRow + 2);
+          if ((endRow - startRow) > jsonObjects.size()) {
+            num = startRow + jsonObjects.size();
+          }
+        }
+        jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, num);
       }
       jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray(jsonObjects));
       jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);

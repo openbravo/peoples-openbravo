@@ -58,6 +58,7 @@ import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -65,6 +66,10 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
+import org.openbravo.model.marketing.Campaign;
+import org.openbravo.model.materialmgmt.cost.ABCActivity;
+import org.openbravo.model.project.Project;
+import org.openbravo.model.sales.SalesRegion;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -87,9 +92,10 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
           IsIDFilter.instance);
       String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
       String strTransactionDate = vars.getStringParameter("inpMainDate", "");
+      String strWindowId = vars.getSessionValue("AddTransaction|windowId");
 
       printPage(response, vars, strFinancialAccountId, isReceipt, strFinBankStatementLineId,
-          strTransactionDate, strCurrencyId, conversionRatePrecision);
+          strTransactionDate, strCurrencyId, conversionRatePrecision, strWindowId);
 
     } else if (vars.commandIn("GRIDLIST")) {
       final String strBusinessPartnerId = vars.getRequestGlobalVariable("inpcBpartnerId", "");
@@ -235,8 +241,37 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
             } else {
               glItemAmt = glItemOutAmt.subtract(glItemInAmt);
             }
-            FIN_AddPayment.saveGLItem(payment, glItemAmt,
-                dao.getObject(GLItem.class, glItem.getString("glitemId")));
+            final String strGLItemId = glItem.getString("glitemId");
+            checkID(strGLItemId);
+
+            // Accounting Dimensions
+            final String strElement_BP = glItem.getString("cBpartnerDim");
+            checkID(strElement_BP);
+            final BusinessPartner businessPartner = dao.getObject(BusinessPartner.class,
+                strElement_BP);
+
+            final String strElement_PR = glItem.getString("mProductDim");
+            checkID(strElement_PR);
+            final Product product = dao.getObject(Product.class, strElement_PR);
+
+            final String strElement_PJ = glItem.getString("cProjectDim");
+            checkID(strElement_PJ);
+            final Project project = dao.getObject(Project.class, strElement_PJ);
+
+            final String strElement_AY = glItem.getString("cActivityDim");
+            checkID(strElement_AY);
+            final ABCActivity activity = dao.getObject(ABCActivity.class, strElement_AY);
+
+            final String strElement_SR = glItem.getString("cSalesregionDim");
+            checkID(strElement_SR);
+            final SalesRegion salesRegion = dao.getObject(SalesRegion.class, strElement_SR);
+
+            final String strElement_MC = glItem.getString("cCampaignDim");
+            checkID(strElement_MC);
+            final Campaign campaign = dao.getObject(Campaign.class, strElement_MC);
+
+            FIN_AddPayment.saveGLItem(payment, glItemAmt, dao.getObject(GLItem.class, strGLItemId),
+                businessPartner, product, project, campaign, activity, salesRegion);
           }
         }
         payment = FIN_AddPayment.savePayment(payment, isReceipt, null, null, null, null, null,
@@ -310,8 +345,8 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strFinancialAccountId, boolean isReceipt, String strFinBankStatementLineId,
-      String strTransactionDate, String strCurrencyId, int conversionRatePrecision)
-      throws IOException, ServletException {
+      String strTransactionDate, String strCurrencyId, int conversionRatePrecision,
+      String strWindowId) throws IOException, ServletException {
     log4j.debug("Output: Add Payment button pressed on Add Transaction popup.");
     dao = new AdvPaymentMngtDao();
     String defaultPaymentMethod = "";
@@ -463,6 +498,20 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
+
+    // Accounting Dimensions
+    final String strElement_BP = Utility.getContext(this, vars, "$Element_BP", strWindowId);
+    final String strElement_PR = Utility.getContext(this, vars, "$Element_PR", strWindowId);
+    final String strElement_PJ = Utility.getContext(this, vars, "$Element_PJ", strWindowId);
+    final String strElement_AY = Utility.getContext(this, vars, "$Element_AY", strWindowId);
+    final String strElement_SR = Utility.getContext(this, vars, "$Element_SR", strWindowId);
+    final String strElement_MC = Utility.getContext(this, vars, "$Element_MC", strWindowId);
+    xmlDocument.setParameter("strElement_BP", strElement_BP);
+    xmlDocument.setParameter("strElement_PR", strElement_PR);
+    xmlDocument.setParameter("strElement_PJ", strElement_PJ);
+    xmlDocument.setParameter("strElement_AY", strElement_AY);
+    xmlDocument.setParameter("strElement_SR", strElement_SR);
+    xmlDocument.setParameter("strElement_MC", strElement_MC);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -636,6 +685,13 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     ArrayList<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>();
     result.add(empty);
     return FieldProviderFactory.getFieldProviderArray(result);
+  }
+
+  private void checkID(final String id) throws ServletException {
+    if (!IsIDFilter.instance.accept(id)) {
+      log4j.error("Input: " + id + " not accepted by filter: IsIDFilter");
+      throw new ServletException("Input: " + id + " is not an accepted input");
+    }
   }
 
   public String getServletInfo() {

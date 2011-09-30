@@ -121,6 +121,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       setSessionValue("reqHistory.command" + sufix, strCommand);
     }
 
+    // Note, see LoginUtils.fillSessionArguments which sets the loggingIn
+    // session var to N explicitly
     public boolean isLoggingIn() {
       return loggingIn == null || loggingIn.equals("") || loggingIn.equals("Y");
     }
@@ -235,6 +237,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
       boolean loggedOK = false;
 
+      // NOTE !isLoggingIn assumes that the value of LoggingIn is N, this
+      // is done by the fillSessionArguments below
       if (!variables.isLoggingIn()) {
         // log in process is completed, check whether the session in db is still active
         loggedOK = SeguridadData.loggedOK(this, variables.getDBSession());
@@ -302,6 +306,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           }
 
           final VariablesSecureApp vars = new VariablesSecureApp(request, false);
+
+          // note fill session arguments will set the LOGGINGIN session var
+          // to N
           if (LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strIsRTL,
               strRole, strClient, strOrg, strWarehouse)) {
             readProperties(vars, globalParameters.getOpenbravoPropertiesPath());
@@ -313,7 +320,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             logout(request, response);
             return;
           }
-          variables.removeSessionValue("#LOGGINGIN");
+
+          // Login process if finished, set the flag as not logging in
+          // this flag may not be removed from the session, it must be set
+          // to N to prevent re-initializing the session continuously
+          vars.setSessionValue("#loggingIn", "N");
         } else {
           variables.updateHistory(request);
         }

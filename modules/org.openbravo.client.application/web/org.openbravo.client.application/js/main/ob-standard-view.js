@@ -1417,7 +1417,7 @@ isc.OBStandardView.addProperties({
                 for (i = 0 ; i < length; i++) {
                   recordInfos.push({id: deleteData.ids[i]});
                 }
-                view.viewGrid.data.handleUpdate('remove', recordInfos);
+                view.viewGrid.data.handleUpdate('remove', recordInfos, false, req);
                 if (updateTotalRows) {
                   view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
                 }
@@ -1832,6 +1832,8 @@ isc.OBStandardView.addProperties({
   },
   
   setFieldFormProperties: function(fld) {
+    var onChangeFunction;
+    
     if (fld.displayed === false) {
       fld.visible = false;
       fld.alwaysTakeSpace = false;
@@ -1852,6 +1854,21 @@ isc.OBStandardView.addProperties({
           this.originalShowIf(item, value, form, currentValues, context);
       };
     }
+    if (fld.type === 'OBAuditSectionItem') {
+      var expandAudit = OB.PropertyStore.get('ShowAuditDefault', this.standardProperties.inpwindowId);
+      if (expandAudit && expandAudit==='Y') {
+        fld.sectionExpanded = true;
+      }
+    }
+    
+    if (fld.onChangeFunction) {
+      // the default
+      fld.onChangeFunction.sort = 50;
+      
+      OB.OnChangeRegistry.register(this.tabId, fld.name, 
+          fld.onChangeFunction, 'default');
+    }
+    
     return fld;
   },
   
@@ -1930,7 +1947,6 @@ isc.OBStandardView.addProperties({
         fld.visible = true;
         fld.alwaysTakeSpace = true;
       }
-      fld.disabled = false;
 
       fld.canExport = (fld.canExport === false ? false : true);
       fld.canHide = (fld.canHide === false ? false : true);
@@ -1941,6 +1957,11 @@ isc.OBStandardView.addProperties({
       fld.editorProperties = isc.addProperties({}, fld, isc.shallowClone(fld.editorProps));      
       this.setFieldFormProperties(fld.editorProperties);
 
+      if (fld.disabled) {
+       fld.editorProperties.disabled = true; 
+      }
+      fld.disabled = false;
+      
       if (fld.yesNo) {
         fld.formatCellValue = yesNoFormatFunction; 
       }
@@ -1949,9 +1970,11 @@ isc.OBStandardView.addProperties({
       if (type.editorType) {
         fld.editorType = type.editorType;
       }
-      if (type.filterEditorType) {
+      
+      if (type.filterEditorType && !fld.filterEditorType) {
         fld.filterEditorType = type.filterEditorType;
       }
+      
       // don't set it if explicitly set to null
       if (fld.fkField) {
         fld.displayField = fld.name + '.' + OB.Constants.IDENTIFIER;

@@ -56,6 +56,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
   color: #fff;
   margin-left: 25;
   padding: 0;
+  outline: none;
   height: 30px;
 }
 

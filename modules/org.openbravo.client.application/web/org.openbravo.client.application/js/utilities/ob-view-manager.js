@@ -297,6 +297,12 @@
               // in another thread
               params = vmgr.createLoadingTab(viewName, params, viewTabId);
             }
+            
+            // make a clone to prevent params being updated in multiple threads
+            // happens for the myob tab in special cases
+            // https://issues.openbravo.com/view.php?id=18548
+            params = isc.shallowClone(params);
+            
             // use a canvas to make use of the fireOnPause possibilities
             // but don't forget to destroy it afterwards...
             var cnv = isc.Canvas.create({

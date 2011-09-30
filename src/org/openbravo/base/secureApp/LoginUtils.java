@@ -309,6 +309,9 @@ public class LoginUtils {
     }
 
     // Login process if finished, set the flag as not logging in
+    // this flag may not be removed from the session, it must be set
+    // to N to prevent re-initializing the session continuously
+    // See the HttpSecureAppServlet
     vars.setSessionValue("#loggingIn", "N");
     return true;
   }

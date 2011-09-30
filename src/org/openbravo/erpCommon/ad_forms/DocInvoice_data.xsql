@@ -173,16 +173,23 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT (SELECT COUNT(*) FROM C_INVOICELINE WHERE FINANCIAL_INVOICE_LINE='Y'
-        AND C_INVOICE_ID=?) AS FININVCOUNT, 
-        (SELECT COUNT(*) FROM C_INVOICELINE invln LEFT JOIN C_GLITEM_ACCT glact ON 
-        invln.ACCOUNT_ID = glact.C_GLITEM_ID WHERE invln.FINANCIAL_INVOICE_LINE='Y' AND 
-        invln.C_INVOICE_ID=? AND 
-        glact.GLITEM_DEBIT_ACCT IS NOT NULL AND 
-        glact.GLITEM_CREDIT_ACCT IS NOT NULL) AS FINACCTCOUNT FROM DUAL
+        SELECT (SELECT count(distinct account_id)
+                FROM c_invoiceline
+                WHERE financial_invoice_line='Y'
+                      AND c_invoice_id = ?) AS FININVCOUNT,
+               (SELECT count(distinct glact.c_glitem_id)
+                FROM c_invoiceline invline JOIN c_glitem_acct glact ON (invline.account_id = glact.c_glitem_id)
+                     JOIN c_acctschema acctschema on (glact.c_acctschema_id = acctschema.c_acctschema_id)
+                WHERE invline.financial_invoice_line = 'Y' AND
+                      invline.c_invoice_id = ? AND
+                      acctschema.c_acctschema_id = ? AND
+                      glact.glitem_debit_acct IS NOT NULL AND 
+                      glact.glitem_credit_acct IS NOT NULL) AS FINACCTCOUNT
+        FROM DUAL
      ]]>
      </Sql>
      <Parameter name="invoiceId"/>
      <Parameter name="invoiceId"/>
+     <Parameter name="acctschemaId"/>
    </SqlMethod>
 </SqlClass>

@@ -476,6 +476,38 @@ public class AdvPaymentMngtDao {
     return newPaymentScheduleDetail;
   }
 
+  /**
+   * Returns a new FIN_PaymentScheduleDetail for the given accounting dimensions
+   * 
+   * @param organization
+   * @param amount
+   * @param businessPartner
+   *          accounting dimension
+   * @param product
+   *          accounting dimension
+   * @param project
+   *          accounting dimension
+   * @param campaign
+   *          accounting dimension
+   * @param activity
+   *          accounting dimension
+   * @param salesRegion
+   *          accounting dimension
+   * @return
+   */
+  public FIN_PaymentScheduleDetail getNewPaymentScheduleDetail(Organization organization,
+      BigDecimal amount, BusinessPartner businessPartner, Product product, Project project,
+      Campaign campaign, ABCActivity activity, SalesRegion salesRegion) {
+    final FIN_PaymentScheduleDetail psd = getNewPaymentScheduleDetail(organization, amount);
+    psd.setBusinessPartner(businessPartner);
+    psd.setProduct(product);
+    psd.setProject(project);
+    psd.setSalesCampaign(campaign);
+    psd.setActivity(activity);
+    psd.setSalesRegion(salesRegion);
+    return psd;
+  }
+
   public FIN_PaymentPropDetail getNewPaymentProposalDetail(Organization organization,
       FIN_PaymentProposal paymentProposal, FIN_PaymentScheduleDetail paymentScheduleDetail,
       BigDecimal amount, BigDecimal writeoffamount, GLItem glitem) {

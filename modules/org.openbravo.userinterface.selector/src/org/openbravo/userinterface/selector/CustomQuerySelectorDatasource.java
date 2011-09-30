@@ -63,7 +63,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
   @Override
   protected int getCount(Map<String, String> parameters) {
-    return getData(parameters, 0, -1).size();
+    // we return -1, so that the super class calculates a valid count
+    return -1;
   }
 
   @Override
@@ -293,8 +294,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * <li>Boolean Domain Type: Returns an equals clause <i>field.clauseLeftPart = value</i></li>
    * <li>Foreign Key Domain Type: Returns an equals clause <i>field.clauseLeftPart.id = value</i></li>
    * <li>Unique Id Domain Type: Returns an equals clause <i>field.clauseLeftPart = value</i></li>
-   * <li>String Domain Type: Compares the clause left part with the value using the lower
-   * database function which to make comparison case insensitive.
+   * <li>String Domain Type: Compares the clause left part with the value using the lower database
+   * function which to make comparison case insensitive.
    * </ul>
    * 
    * @param value

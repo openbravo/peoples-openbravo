@@ -89,6 +89,9 @@ isc.OBTabSetMain.addProperties({
   },
 
   doCloseClick: function(tab) {
+    if (tab && tab.pane) {
+      tab.pane.closing = true;
+    }
     return this.Super('closeClick', arguments);
   },
 
