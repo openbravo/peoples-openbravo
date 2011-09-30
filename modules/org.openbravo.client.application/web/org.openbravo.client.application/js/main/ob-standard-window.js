@@ -101,7 +101,7 @@ isc.OBStandardWindow.addProperties({
       windowId: this.windowId
     }, function(response, data, request){
       standardWindow.setWindowSettings(data);
-    });    
+    });
   },
   
   // set window specific user settings, purposely set on class level
@@ -170,6 +170,26 @@ isc.OBStandardWindow.addProperties({
       this.views[i].setSingleRecord(data.uiPattern[this.views[i].tabId] === isc.OBStandardView.UI_PATTERN_SINGLERECORD);
       this.views[i].toolBar.updateButtonState(true);
     }
+    
+    // Field level permissions
+    if (data && data.tabs) {
+        for ( var t = 0; t < data.tabs.length; t++) {
+          var tab = data.tabs[t];
+          var view = this.getView(tab.tabId);
+          for ( var i = 0; i < view.viewForm.fields.length; i++) {
+            var field = view.viewForm.fields[i];
+            if (tab.fields[field.name] != undefined) {
+                      field.updatable = tab.fields[field.name];
+            }
+          }
+          for ( var i = 0; i < view.viewGrid.fields.length; i++) {
+            var field = view.viewGrid.fields[i];
+            if (tab.fields[field.name] != undefined) {
+              field.editorProperties.updatable = tab.fields[field.name];
+            }
+          }
+        }
+      }
   },
 
   // Update the personalization record which is stored 
