@@ -304,8 +304,8 @@ OB.Personalization.ManageViewsPopupPropertiesSave = {
     );
     
     // create the level combo
-    if (standardWindow.getClass().personalization && standardWindow.getClass().personalization.formData) {
-      formData = standardWindow.getClass().personalization.formData;
+    if (personalization && personalization.formData) {
+      formData = personalization.formData;
       // note the key in the levelMap (clients, orgs, roles) corresponds
       // to the property name in the formData
       if (formData.clients) {

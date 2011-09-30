@@ -84,7 +84,10 @@ public class PersonalizationActionHandler extends BaseActionHandler {
         final String persId = (String) parameters.get(PERSONALIZATIONID);
         final UIPersonalization uiPersonalization = OBDal.getInstance().get(
             UIPersonalization.class, persId);
-        OBDal.getInstance().remove(uiPersonalization);
+        if (uiPersonalization != null) {
+          // is null if already removed
+          OBDal.getInstance().remove(uiPersonalization);
+        }
         return new JSONObject().put("result", "success");
       } else if (action.equals(ACTION_STORE)) {
         final UIPersonalization uiPersonalization = personalizationHandler

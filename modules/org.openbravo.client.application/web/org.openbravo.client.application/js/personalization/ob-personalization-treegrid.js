@@ -59,12 +59,13 @@ isc.OBPersonalizationTreeGrid.addProperties({
     ],
     
   initWidget: function() {
+    var nodes, i;
     // todo: show custom items for different types of fields
     this.nodeIcon = OB.Styles.Personalization.Icons.field;
     this.folderIcon = OB.Styles.Personalization.Icons.fieldGroup;
 
     // register a change notifier
-    var i = 0, length = this.fields.length,
+    var length = this.fields.length,
       me = this, changedFunction = function() {
         me.personalizeForm.changed();
       };
@@ -109,6 +110,13 @@ isc.OBPersonalizationTreeGrid.addProperties({
 //   this.data.openAll();
    
    this.Super('initWidget', arguments);
+   
+   // open the folders which need to be opened
+   for (i = 0, nodes = this.data.getAllNodes(); i < nodes.length; i++) {
+     if (nodes[i].sectionExpanded) {
+       this.openFolder(nodes[i]);
+     }
+   }
   },
   
   destroy: function() {
@@ -124,6 +132,40 @@ isc.OBPersonalizationTreeGrid.addProperties({
       this.closeFolder(folder);
     } else {
       this.openFolder(folder);
+    }
+  },
+  
+  closeFolder: function(folder) {
+    var fld, i, length, 
+      flds = this.personalizeForm.previewForm.getFields();
+    
+    this.Super('closeFolder', arguments);
+    
+    // find the section fld and collapse
+    for (i = 0, length = flds.length; i < length; i++) {
+      if (flds[i].name === folder.name && flds[i].collapseSection) {
+        folder.sectionExpanded = false;
+        flds[i].collapseSection();        
+        this.personalizeForm.changed();
+        break;
+      }
+    }
+  },
+  
+  openFolder: function(folder) {
+    var fld, i, length, 
+      flds = this.personalizeForm.previewForm.getFields();
+    
+    this.Super('openFolder', arguments);
+    
+    // find the section fld and collapse
+    for (i = 0, length = flds.length; i < length; i++) {
+      if (flds[i].name === folder.name && flds[i].expandSection) {
+        folder.sectionExpanded = true;
+        flds[i].expandSection();        
+        this.personalizeForm.changed();
+        break;
+      }
     }
   },
   

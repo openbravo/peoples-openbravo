@@ -38,7 +38,7 @@ public class TextUIDefinition extends StringUIDefinition {
 
     // anything above 2000 is probably a clob
     return super.getGridFieldProperties(field) + ", canSort: false"
-        + (property.getFieldLength() >= 2000 ? ", canFilter: false" : "");
+        + (property.getFieldLength() > 4000 ? ", canFilter: false" : "");
   }
 
   @Override

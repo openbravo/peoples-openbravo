@@ -183,12 +183,12 @@ isc.OBStandardWindow.addProperties({
     this.getClass().personalization.forms[view.tabId] = formPersonalization;
    },
    
-  getFormPersonalization: function(view) {
+  getFormPersonalization: function(view, checkSavedView) {
     var formPersonalization, i, persView;
     if (!this.getClass().personalization || !this.getClass().personalization.forms) {
       // no form personalization on form level
       // check window level
-      if (this.getClass().personalization && this.getClass().personalization.views 
+      if (checkSavedView && this.getClass().personalization && this.getClass().personalization.views 
           && this.selectedPersonalizationId) {
         for (i = 0; i < this.getClass().personalization.views.length; i++) {
           persView = this.getClass().personalization.views[i];

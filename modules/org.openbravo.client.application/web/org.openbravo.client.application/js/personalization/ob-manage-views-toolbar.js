@@ -158,8 +158,7 @@
       this.resetBaseStyle();
       
       // no items are shown in this case
-      if (!this.isWindowPersonalizationAllowed() && (!this.view.standardWindow.getClass().personalization || 
-          !this.view.standardWindow.getClass().personalization.views || this.view.standardWindow.getClass().personalization.views.length === 0)) {
+      if (!this.isWindowPersonalizationAllowed() && !this.viewsToSelect()) {
         this.setDisabled(true);
       } else {
         this.setDisabled(false);
@@ -167,15 +166,39 @@
       
       this.show();
     },
+    
+    viewsToSelect: function() {
+      // standardwindow is not set during initialization
+      var pers = (this.view.standardWindow ? this.view.standardWindow.getClass().personalization : null);
+      return (pers && pers.views && pers.views.length > 0);
+    },
+    
     isWindowPersonalizationAllowed: function() {
-      var propValue, undef;
-      if (this.userWindowPersonalizationAllowed === undef) {
-        propValue = OB.PropertyStore.get('OBUIAPP_WindowPersonalization_Override', 
-            this.view.standardWindow ? this.view.standardWindow.windowId : null);
-        if (propValue === 'false' || propValue === 'N') {
-          this.userWindowPersonalizationAllowed = false;
-        } else {
+      var propValue, undef,
+        standardWindow = this.view.standardWindow,
+        personalization = (standardWindow ? standardWindow.getClass().personalization : null),
+        formData = (personalization ? personalization.formData : null);
+      
+      // standardwindow is not set during initialization
+      // don't set the variable yet, but do not allow either
+      if (!standardWindow) {
+        return false;
+      }
+      
+      // note: false is not cached as during initialization
+      // things can be false
+      if (this.userWindowPersonalizationAllowed === undef) {        
+        // if an admin then allow personalization
+        if (formData && (formData.orgs || formData.clients || formData.roles)) {
           this.userWindowPersonalizationAllowed = true;
+        } else {
+          propValue = OB.PropertyStore.get('OBUIAPP_WindowPersonalization_Override', 
+              standardWindow ? standardWindow.windowId : null);
+          if (propValue === 'false' || propValue === 'N') {
+            return false;
+          } else {
+            this.userWindowPersonalizationAllowed = true;
+          }
         }
       }
       return this.userWindowPersonalizationAllowed;
