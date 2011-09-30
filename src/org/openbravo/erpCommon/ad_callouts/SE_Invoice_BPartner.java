@@ -68,13 +68,15 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
       String strTabId = vars.getStringParameter("inpTabId");
       String strfinPaymentmethodId = vars.getStringParameter("inpfinPaymentmethodId");
+      String strOrgId = vars.getStringParameter("inpadOrgId");
 
       try {
         if ("inpfinPaymentmethodId".equals(strChanged)) { // Payment Method changed
-          printPagePaymentMethod(response, vars, strBPartner, strIsSOTrx, strfinPaymentmethodId);
+          printPagePaymentMethod(response, vars, strBPartner, strIsSOTrx, strfinPaymentmethodId,
+              strOrgId);
         } else {
           printPage(response, vars, strBPartner, strDocType, strIsSOTrx, strWindowId, strLocation,
-              strContact, strProjectId, strTabId);
+              strContact, strProjectId, strTabId, strOrgId);
         }
       } catch (ServletException ex) {
         pageErrorCallOut(response);
@@ -85,7 +87,8 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
       String strDocType, String strIsSOTrx, String strWindowId, String strLocation,
-      String strContact, String strProjectId, String strTabId) throws IOException, ServletException {
+      String strContact, String strProjectId, String strTabId, String strOrgId) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -243,7 +246,7 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
           && strIsSOTrx.equals("Y")) {
         String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
         String automationPaymentMethod = isAutomaticCombination(vars, strBPartner, strIsSOTrx,
-            strFinPaymentMethodId);
+            strFinPaymentMethodId, strOrgId);
         resultado.append(", new Array('MESSAGE', \""
             + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage()) + creditLimitExceed
             + "<br/>" + automationPaymentMethod + "\")");
@@ -261,13 +264,14 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
   }
 
   private void printPagePaymentMethod(HttpServletResponse response, VariablesSecureApp vars,
-      String strBPartnerId, String strIsSOTrx, String strfinPaymentmethodId) throws IOException,
-      ServletException {
+      String strBPartnerId, String strIsSOTrx, String strfinPaymentmethodId, String strOrgId)
+      throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     StringBuilder result = new StringBuilder();
 
-    String message = isAutomaticCombination(vars, strBPartnerId, strIsSOTrx, strfinPaymentmethodId);
+    String message = isAutomaticCombination(vars, strBPartnerId, strIsSOTrx, strfinPaymentmethodId,
+        strOrgId);
 
     result.append("var calloutName='SE_Invoice_BPartner';\n\n");
     result.append("var respuesta = new Array(new Array(\"MESSAGE\", ");
@@ -298,7 +302,7 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
    *         financial account of the given business partner.
    */
   private String isAutomaticCombination(VariablesSecureApp vars, String strBPartnerId,
-      String strIsSOTrx, String strfinPaymentmethodId) {
+      String strIsSOTrx, String strfinPaymentmethodId, String strOrgId) {
     BusinessPartner bpartner = OBDal.getInstance().get(BusinessPartner.class, strBPartnerId);
     FIN_PaymentMethod selectedPaymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
         strfinPaymentmethodId);
@@ -308,14 +312,18 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       FIN_FinancialAccount account = null;
       String message = "";
 
-      if (bpartner != null && selectedPaymentMethod != null) {
+      if (bpartner != null && selectedPaymentMethod != null && !"".equals(strOrgId)) {
         account = (isSales) ? bpartner.getAccount() : bpartner.getPOFinancialAccount();
         if (account != null) {
           OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
               FinAccPaymentMethod.class);
+          obc.setFilterOnReadableOrganization(false);
           obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, account));
           obc.add(Restrictions
               .eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, selectedPaymentMethod));
+          obc.add(Restrictions.in(FinAccPaymentMethod.PROPERTY_ORGANIZATION + ".id", OBContext
+              .getOBContext().getOrganizationStructureProvider().getNaturalTree(strOrgId)));
+
           if (obc.list() == null || obc.list().size() == 0) {
             message = Utility.messageBD(this, "PaymentmethodNotbelongsFinAccount",
                 vars.getLanguage());
