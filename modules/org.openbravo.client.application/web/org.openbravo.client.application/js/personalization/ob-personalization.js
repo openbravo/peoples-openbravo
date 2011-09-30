@@ -41,7 +41,7 @@ OB.Personalization = {
 // personalizationData used is up-to-date with the current form fields.
 OB.Personalization.getPersonalizationDataFromForm = function(form) {
   var i, dataFields = [], statusBarFields, length,
-    origPersonalizationData = form && form.view ? form.view.getFormPersonalization() : null;
+    origPersonalizationData = form && form.view ? form.view.getFormPersonalization(true) : null;
 
   // just use the personalization data which was used on the 
   // form, we can not reconstruct it completely from the form fields
@@ -120,6 +120,9 @@ OB.Personalization.updatePersonalizationDataFromFields = function(dataFields, fi
 //        }
 //      } else {
         dataField.title = fld.title;
+        if (fld.sectionExpanded) {
+          dataField.sectionExpanded = true;
+        }
 //      }
     } else if (!dataField.isSystemFolder) {
       // field has been removed, remove it
@@ -287,7 +290,7 @@ OB.Personalization.personalizeWindow = function(data, window) {
   // is used below to de-personalize them
   length = window.views.length;
   for (i = 0; i < length; i++) {
-    if (window.getFormPersonalization(window.views[i])) {
+    if (window.getFormPersonalization(window.views[i], true)) {
       viewsToReset.push({tabId: window.views[i].tabId});
     }
   }
@@ -428,6 +431,9 @@ OB.Personalization.personalizeForm = function(data, form) {
         newField.visible = false;
         newField.alwaysTakeSpace = false;
       } else {
+        if (record.sectionExpanded) {
+          newField.sectionExpanded = true;
+        }
         newField.alwaysTakeSpace = true;
         delete newField.hiddenInForm;
         delete newField.visible;
