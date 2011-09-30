@@ -161,8 +161,11 @@ public class BaseXMLEntityConverter implements OBNotSingleton {
   // if there is a matching object in the db then that one should be
   // used
   protected BaseOBObject replaceByUniqueObject(BaseOBObject bob) {
+    BaseOBObject otherUniqueObject = null;
     if (bob.isNewOBObject() && bob.getEntity().getUniqueConstraints().size() > 0) {
-      final BaseOBObject otherUniqueObject = entityResolver.findUniqueConstrainedObject(bob);
+      if ("".equals(bob.getId()) || bob.getId() == null) {
+        otherUniqueObject = entityResolver.findUniqueConstrainedObject(bob);
+      }
       if (otherUniqueObject != null && otherUniqueObject != bob) {
         // now copy the imported values from the bob to
         // otherUniqueObject
