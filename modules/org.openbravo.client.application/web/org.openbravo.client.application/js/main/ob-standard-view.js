@@ -1798,12 +1798,12 @@ isc.OBStandardView.addProperties({
     }, null, callback, this);
   },
   
-  getFormPersonalization: function() {
+  getFormPersonalization: function(checkSavedView) {
     if (!this.standardWindow) {
       // happens during the initialization
       return null;
     }
-    return this.standardWindow.getFormPersonalization(this);
+    return this.standardWindow.getFormPersonalization(this, checkSavedView);
   },
   
   // TODO: consider caching the prepared fields on
