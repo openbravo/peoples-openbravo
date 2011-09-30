@@ -444,6 +444,8 @@ isc.OBViewGrid.addProperties({
       return;
     }
     
+    this.Super('setViewState', arguments);
+
     if (localState.noFilterClause) {
       this.filterClause = null;
       this.view.messageBar.hide();
@@ -460,8 +462,6 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
-    
-    this.Super('setViewState', arguments);
   },
  
   setView: function(view){
