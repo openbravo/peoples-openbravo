@@ -7,6 +7,7 @@
 
 package org.openbravo.services.webservice;
 
+@SuppressWarnings({ "rawtypes", "serial" })
 public class ModuleDependency  implements java.io.Serializable {
     private java.lang.String moduleID;
 

@@ -7,6 +7,7 @@
 
 package org.openbravo.services.webservice;
 
+@SuppressWarnings({ "unused", "hiding", "unchecked", "rawtypes" })
 public class WebService3SoapBindingStub extends org.apache.axis.client.Stub implements org.openbravo.services.webservice.WebService3Impl {
     private java.util.Vector cachedSerClasses = new java.util.Vector();
     private java.util.Vector cachedSerQNames = new java.util.Vector();

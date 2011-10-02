@@ -7,6 +7,7 @@
 
 package org.openbravo.services.webservice;
 
+@SuppressWarnings("rawtypes")
 public interface WebService3Impl extends java.rmi.Remote {
     public byte[] getModule(java.lang.String moduleVersionID) throws java.rmi.RemoteException;
     public boolean isCommercial(java.lang.String moduleVersionID) throws java.rmi.RemoteException;
