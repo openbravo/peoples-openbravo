@@ -65,11 +65,11 @@ import org.openbravo.erpCommon.utility.poc.EmailType;
 import org.openbravo.erpCommon.utility.poc.PocException;
 import org.openbravo.erpCommon.utility.reporting.DocumentType;
 import org.openbravo.erpCommon.utility.reporting.Report;
+import org.openbravo.erpCommon.utility.reporting.Report.OutputTypeEnum;
 import org.openbravo.erpCommon.utility.reporting.ReportManager;
 import org.openbravo.erpCommon.utility.reporting.ReportingException;
 import org.openbravo.erpCommon.utility.reporting.TemplateData;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo;
-import org.openbravo.erpCommon.utility.reporting.Report.OutputTypeEnum;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -1059,6 +1059,7 @@ public class PrintController extends HttpSecureAppServlet {
   }
 
   private boolean moreThanOneLenguageDefined(Map<String, Report> reports) throws ReportingException {
+    @SuppressWarnings("rawtypes")
     Iterator itRep = reports.values().iterator();
     HashMap<String, String> lenguages = new HashMap<String, String>();
     while (itRep.hasNext()) {

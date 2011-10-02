@@ -679,10 +679,10 @@ public class DataSourceServlet extends BaseKernelServlet {
     return true;
   }
 
-  @SuppressWarnings("unchecked")
   private Map<String, String> getParameterMap(HttpServletRequest request) {
     final Map<String, String> parameterMap = new HashMap<String, String>();
-    for (Enumeration keys = request.getParameterNames(); keys.hasMoreElements();) {
+    for (@SuppressWarnings("rawtypes")
+    Enumeration keys = request.getParameterNames(); keys.hasMoreElements();) {
       final String key = (String) keys.nextElement();
 
       // do simple conversion of array of values to a string

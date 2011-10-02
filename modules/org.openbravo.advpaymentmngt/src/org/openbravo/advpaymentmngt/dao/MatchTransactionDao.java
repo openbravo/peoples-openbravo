@@ -382,7 +382,6 @@ public class MatchTransactionDao {
    *          Reconciliation.
    * @return Ending balance of an automatic reconciliation.
    */
-  @SuppressWarnings("unchecked")
   public static BigDecimal getReconciliationEndingBalance(FIN_Reconciliation reconciliation) {
     BigDecimal total = BigDecimal.ZERO;
     OBContext.setAdminMode(true);
@@ -404,6 +403,7 @@ public class MatchTransactionDao {
       obcBsl.setProjection(projections);
 
       if (obcBsl.list() != null && obcBsl.list().size() > 0) {
+        @SuppressWarnings("rawtypes")
         List o = obcBsl.list();
         Object[] resultSet = (Object[]) o.get(0);
         BigDecimal credit = (resultSet[0] != null) ? (BigDecimal) resultSet[0] : BigDecimal.ZERO;
@@ -425,7 +425,6 @@ public class MatchTransactionDao {
    *          Reconciliation.
    * @return Last reconciliation UnMatched balance
    */
-  @SuppressWarnings("unchecked")
   public static BigDecimal getLastReconciliationUnmatchedBalance(
       FIN_Reconciliation lastReconciliation) {
     BigDecimal total = BigDecimal.ZERO;
@@ -455,6 +454,7 @@ public class MatchTransactionDao {
       obcBsl.setProjection(projections);
 
       if (obcBsl.list() != null && obcBsl.list().size() > 0) {
+        @SuppressWarnings("rawtypes")
         List o = obcBsl.list();
         Object[] resultSet = (Object[]) o.get(0);
         BigDecimal credit = (resultSet[0] != null) ? (BigDecimal) resultSet[0] : BigDecimal.ZERO;

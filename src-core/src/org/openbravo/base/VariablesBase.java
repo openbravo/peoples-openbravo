@@ -167,11 +167,11 @@ public class VariablesBase {
    * 
    * @return A sorted list of parameters
    */
-  @SuppressWarnings("unchecked")
   private List<String> sortedParameters() {
     if (sortedParameters == null) {
       sortedParameters = new ArrayList<String>();
-      for (Enumeration e = httpRequest.getParameterNames(); e.hasMoreElements();) {
+      for (@SuppressWarnings("rawtypes")
+      Enumeration e = httpRequest.getParameterNames(); e.hasMoreElements();) {
         String parameter = (String) e.nextElement();
         if (!parameter.equalsIgnoreCase("Command") && !parameter.contains("ProcessId")) {
           sortedParameters.add(parameter);

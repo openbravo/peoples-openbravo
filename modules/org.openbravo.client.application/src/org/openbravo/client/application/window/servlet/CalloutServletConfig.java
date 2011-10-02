@@ -20,7 +20,7 @@ public class CalloutServletConfig implements ServletConfig {
     return context.getInitParameter(name);
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "rawtypes" })
   @Override
   public Enumeration getInitParameterNames() {
     return context.getInitParameterNames();

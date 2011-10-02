@@ -390,7 +390,7 @@ public class OBInterceptor extends EmptyInterceptor {
   }
 
   // after flushing an object is not new anymore
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "rawtypes" })
   public void postFlush(Iterator entities) {
     while (entities.hasNext()) {
       final BaseOBObject bob = (BaseOBObject) entities.next();
@@ -437,7 +437,7 @@ public class OBInterceptor extends EmptyInterceptor {
     super.beforeTransactionCompletion(tx);
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "rawtypes" })
   @Override
   public void preFlush(Iterator entities) {
     if (getInterceptorListener() != null) {

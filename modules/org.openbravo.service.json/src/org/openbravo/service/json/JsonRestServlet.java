@@ -234,10 +234,10 @@ public class JsonRestServlet extends BaseWebServiceServlet {
     return true;
   }
 
-  @SuppressWarnings("unchecked")
   private Map<String, String> getParameterMap(HttpServletRequest request) {
     final Map<String, String> parameterMap = new HashMap<String, String>();
-    for (Enumeration keys = request.getParameterNames(); keys.hasMoreElements();) {
+    for (@SuppressWarnings("rawtypes")
+    Enumeration keys = request.getParameterNames(); keys.hasMoreElements();) {
       final String key = (String) keys.nextElement();
       parameterMap.put(key, request.getParameter(key));
     }
