@@ -61,7 +61,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <column name="SOCIAL_NAME" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="SOCIAL_NAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
