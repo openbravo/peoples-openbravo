@@ -1364,6 +1364,50 @@
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <editableField>true</editableField>
   </ADProcessAccess>
+  <ADProcessAccess id="FF80808132C8B23A0132C8BC837800D4" identifier="Bpartner print - Company Executive">
+    <id>FF80808132C8B23A0132C8BC837800D4</id>
+    <process id="800099" entity-name="ADProcess" identifier="Bpartner print"/>
+    <role id="FF808181259DADEB01259DDDA4C201E6" entity-name="ADRole" identifier="Company Executive"/>
+    <active>true</active>
+    <creationDate transient="true">2011-10-03T09:43:10.200Z</creationDate>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updated transient="true">2011-10-03T09:43:10.200Z</updated>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <editableField>false</editableField>
+  </ADProcessAccess>
+  <ADProcessAccess id="FF80808132C8B23A0132C8BD252300DC" identifier="Bpartner print - Sales">
+    <id>FF80808132C8B23A0132C8BD252300DC</id>
+    <process id="800099" entity-name="ADProcess" identifier="Bpartner print"/>
+    <role id="FF8081812250326E012250353BDE0006" entity-name="ADRole" identifier="Sales"/>
+    <active>true</active>
+    <creationDate transient="true">2011-10-03T09:43:51.587Z</creationDate>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updated transient="true">2011-10-03T09:43:51.587Z</updated>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <editableField>false</editableField>
+  </ADProcessAccess>
+  <ADProcessAccess id="FF80808132C8B23A0132C8BD4CA300E0" identifier="Bpartner print - Finance">
+    <id>FF80808132C8B23A0132C8BD4CA300E0</id>
+    <process id="800099" entity-name="ADProcess" identifier="Bpartner print"/>
+    <role id="FF8081812250326E012250353BDE0005" entity-name="ADRole" identifier="Finance"/>
+    <active>true</active>
+    <creationDate transient="true">2011-10-03T09:44:01.699Z</creationDate>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updated transient="true">2011-10-03T09:44:01.699Z</updated>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <editableField>false</editableField>
+  </ADProcessAccess>
+  <ADProcessAccess id="FF80808132C8B23A0132C8BDA22700E6" identifier="Bpartner print - Purchase Management">
+    <id>FF80808132C8B23A0132C8BDA22700E6</id>
+    <process id="800099" entity-name="ADProcess" identifier="Bpartner print"/>
+    <role id="D7D7D228E4594ACE8D00FD0E08B333DE" entity-name="ADRole" identifier="Purchase Management"/>
+    <active>true</active>
+    <creationDate transient="true">2011-10-03T09:44:23.592Z</creationDate>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updated transient="true">2011-10-03T09:44:23.592Z</updated>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <editableField>false</editableField>
+  </ADProcessAccess>
   <ADProcessAccess id="FF808181259DADEB01259DDDA4D3022C" identifier="Not Posted Transaction Report - Finance">
     <id>FF808181259DADEB01259DDDA4D3022C</id>
     <process id="800168" entity-name="ADProcess" identifier="Not Posted Transaction Report"/>
