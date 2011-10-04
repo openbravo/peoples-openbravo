@@ -37,6 +37,19 @@ isc.OBYesNoItem.addProperties({
     }
   },
   
+  // is needed because addUnknownValues is false
+  isUnknownValue: function(enteredValue) {
+    var i, vm = this.getValueMap();
+    if (vm !== null) {
+      for (i = 0; i < vm.length; i++) {
+        if (enteredValue === this.mapValueToDisplay(vm[i])) {
+          return false;
+        }
+      }
+    }
+    return this.Super('isUnknownValue', arguments);
+  },
+  
   mapValueToDisplay: function(value, a, b, c){
     return OB.Utilities.getYesNoDisplayValue(value);
   },
