@@ -655,6 +655,17 @@ EXCEPTION WHEN OTHERS THEN NULL;
 END;
 /-- END
 
+--Inserts role access for new Smartclient register window
+--It needs to be done this way until this issue is fixed:  https://issues.openbravo.com/view.php?id=18689
+BEGIN
+    INSERT INTO OBUIAPP_View_Role_Access(OBUIAPP_View_Role_Access_ID, OBUIAPP_View_Impl_ID, AD_Role_ID, AD_Client_ID,
+      AD_Org_ID, IsActive, Created,
+      CreatedBy, Updated, UpdatedBy)
+         VALUES(get_uuid(), 'FF808081329B023101329B0CE2080013', '0', '0', '0', 'Y', now(), '0', now(), '0');
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/-- END
+
 --update parent reference for old modules
 BEGIN
    EXECUTE IMMEDIATE 'alter trigger ad_reference_mod_trg disable';
