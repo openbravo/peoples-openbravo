@@ -129,8 +129,6 @@
   cursor: pointer;
   padding-left: 5px;
   padding-right: 5px;
-  border-top: 1px solid #3a6b01;
-  border-bottom: 1px solid #3a6b01;
 }
 
 .OBPersonalizationPullDownMenuCellIcon,
@@ -163,6 +161,4 @@
 .OBPersonalizationPullDownMenuCellSeparatorSelectedOver {
   background-color: #035101;
   margin-bottom: -1px;
-  border-top: 1px solid #64932d;
-  border-bottom: 1px solid #64932d;
 }
