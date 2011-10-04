@@ -28,7 +28,10 @@ import org.openbravo.advpaymentmngt.exception.NoExecutionProcessFoundException;
 import org.openbravo.advpaymentmngt.utility.FIN_PaymentExecutionProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.advpaymentmngt.utility.Value;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Organization;
@@ -42,6 +45,8 @@ import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcessParameter;
 import org.openbravo.model.financialmgmt.payment.PaymentRun;
 import org.openbravo.model.financialmgmt.payment.PaymentRunPayment;
+import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class FIN_ExecutePayment {
   private AdvPaymentMngtDao dao;
@@ -124,7 +129,16 @@ public class FIN_ExecutePayment {
                 && paymentRunPayment.getPayment().getAmount().compareTo(BigDecimal.ZERO) != 0) {
               FIN_FinaccTransaction transaction = TransactionsDao
                   .createFinAccTransaction(paymentRunPayment.getPayment());
-              TransactionsDao.process(transaction);
+              // VariablesSecureApp vars = new VariablesSecureApp(OBContext.getOBContext().getUser()
+              // .getId(), OBContext.getOBContext().getCurrentOrganization().getId(), OBContext
+              // .getOBContext().getRole().getId());
+              VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get().getRequest());
+              OBError processTransactionError = processTransaction(vars,
+                  new DalConnectionProvider(), "P", transaction);
+              if (processTransactionError != null
+                  && processTransactionError.getType().equals("Error")) {
+                return processTransactionError;
+              }
             }
           }
           if ("PPM".equals(paymentStatus) || "RPR".equals(paymentStatus)
@@ -199,6 +213,33 @@ public class FIN_ExecutePayment {
         }
       }
     }
+  }
+
+  /**
+   * It calls the Transaction Process for the given transaction and action.
+   * 
+   * @param vars
+   *          VariablesSecureApp with the session data.
+   * @param conn
+   *          ConnectionProvider with the connection being used.
+   * @param strAction
+   *          String with the action of the process. {P, D, R}
+   * @param transaction
+   *          FIN_FinaccTransaction that needs to be processed.
+   * @return a OBError with the result message of the process.
+   * @throws Exception
+   */
+  private OBError processTransaction(VariablesSecureApp vars, ConnectionProvider conn,
+      String strAction, FIN_FinaccTransaction transaction) throws Exception {
+    ProcessBundle pb = new ProcessBundle("F68F2890E96D4D85A1DEF0274D105BCE", vars).init(conn);
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("action", strAction);
+    parameters.put("Fin_FinAcc_Transaction_ID", transaction.getId());
+    pb.setParams(parameters);
+    OBError myMessage = null;
+    new FIN_TransactionProcess().execute(pb);
+    myMessage = (OBError) pb.getResult();
+    return myMessage;
   }
 
 }

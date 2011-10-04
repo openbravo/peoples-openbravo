@@ -149,6 +149,7 @@ public class TransactionsDao {
     return maxLine;
   }
 
+  @Deprecated
   public static void process(FIN_FinaccTransaction finFinancialAccountTransaction) {
     final FIN_FinancialAccount financialAccount = OBDal.getInstance().get(
         FIN_FinancialAccount.class, finFinancialAccountTransaction.getAccount().getId());
