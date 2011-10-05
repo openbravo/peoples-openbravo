@@ -1028,6 +1028,9 @@ isc.OBToolbar.addProperties({
       currentContext, buttonsByContext = [], length;
 
     if (buttons.length === 0) {
+      if (!noSetSession && this.view.viewGrid.getSelectedRecord()) {
+        this.view.setContextInfo();
+      }
       return;
     }
     length = buttons.length;

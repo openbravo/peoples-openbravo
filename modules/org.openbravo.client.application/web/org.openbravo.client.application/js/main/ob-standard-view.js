@@ -1774,15 +1774,18 @@ isc.OBStandardView.addProperties({
       }
       return;
     }
+    
     if (!sessionProperties) {
       sessionProperties = this.getContextInfo(true, true, false, true);
     }
+    
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
       MODE: 'SETSESSION',
-      TAB_ID: this.viewGrid.view.tabId,
-      PARENT_ID: this.viewGrid.view.getParentId(),
-      ROW_ID: this.viewGrid.getSelectedRecord()?this.viewGrid.getSelectedRecord().id:this.viewGrid.view.getCurrentValues().id
+      TAB_ID: this.tabId,
+      PARENT_ID: this.getParentId(),
+      ROW_ID: this.viewGrid.getSelectedRecord() ? this.viewGrid.getSelectedRecord().id : this.getCurrentValues().id
     }, callbackFunction);
+    
   },
   
   getTabMessage: function(forcedTabId){
