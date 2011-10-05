@@ -46,7 +46,8 @@
 		<property name="valueMax"/>
 		<property name="developmentStatus"/>
 		<property name="position"/>
-		
+	    <property name="seqno"/>	
+    
 		<many-to-one name="table" not-null="true" class="org.openbravo.base.model.Table" column="ad_table_id"/>
 		 
 		<many-to-one name="reference" not-null="true" class="org.openbravo.base.model.Reference" column="ad_reference_id"/>

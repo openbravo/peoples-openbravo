@@ -67,6 +67,7 @@ public class Column extends ModelObject {
   private String isTransientCondition;
   private Integer position;
   private boolean translatable;
+  private Integer seqno;
 
   private Module module;
 
@@ -453,5 +454,13 @@ public class Column extends ModelObject {
 
   public void setStoredInSession(boolean storedInSession) {
     this.storedInSession = storedInSession;
+  }
+
+  public Integer getSeqno() {
+    return seqno;
+  }
+
+  public void setSeqno(Integer seqno) {
+    this.seqno = seqno;
   }
 }
