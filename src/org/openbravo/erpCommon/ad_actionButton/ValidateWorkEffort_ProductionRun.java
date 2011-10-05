@@ -51,6 +51,16 @@ public class ValidateWorkEffort_ProductionRun implements org.openbravo.schedulin
           strMProductionPlanID);
       ProductionTransaction production = productionPlan.getProduction();
 
+      if (production.getMaterialMgmtProductionPlanList().size() > 1)
+        throw new OBException(Utility.messageBD(conn, "MoreThanOneProductionPlanError", bundle
+            .getContext().getLanguage()));
+
+      if (productionPlan.getProductionplandate() != null) {
+        production.setMovementDate(productionPlan.getProductionplandate());
+        OBDal.getInstance().save(production);
+        OBDal.getInstance().flush();
+      }
+
       validateWorkEffort(production, conn, bundle.getContext().toVars());
       OBDal.getInstance().save(production);
       OBDal.getInstance().flush();

@@ -82,7 +82,6 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
       workReqOpCriteria.add(Restrictions.eq(WorkRequirementOperation.PROPERTY_WORKREQUIREMENT,
           workReq));
       workReqOpCriteria.add(Restrictions.le(WorkRequirementOperation.PROPERTY_STARTINGDATE, date));
-      workReqOpCriteria.add(Restrictions.ge(WorkRequirementOperation.PROPERTY_ENDINGDATE, date));
       workReqOpCriteria.add(Restrictions.eq(WorkRequirementOperation.PROPERTY_CLOSED, false));
       workReqOpCriteria.addOrderBy(WorkRequirementOperation.PROPERTY_SEQUENCENUMBER, true);
 
@@ -127,6 +126,7 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
           // Only one line per ProductionTransaction
           productionPlan.setLineNo(10L);
           productionPlan.setWRPhase(wrOp);
+          productionPlan.setProductionplandate(date);
 
           productionPlan.setRunTime(0L);
           productionPlan.setClosephase(false);
