@@ -117,6 +117,12 @@ public class IdentifierProvider implements OBSingleton {
         property = displayColumnProperty;
       } else if (property.isTranslatable()) {
         value = ((BaseOBObject) dob).get(identifier.getName(), language);
+      } else if (!property.isPrimitive() && identifyDeep) {
+        if (dob.get(property.getName()) != null) {
+          value = ((BaseOBObject) dob.get(property.getName())).getIdentifier();
+        } else {
+          value = "";
+        }
       } else {
         value = dob.get(identifier.getName());
       }
