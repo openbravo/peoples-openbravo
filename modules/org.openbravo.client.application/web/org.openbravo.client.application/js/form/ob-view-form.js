@@ -1137,9 +1137,13 @@ OB.ViewFormProperties = {
       }
 
       me.processFICReturn(response, data, request, editValues, editRow);
- 
-      if (me.getFocusItem()) {
-        me.setFocusInForm();
+
+      // don't set the focus in this case, this happens
+      // when moving to a new row in grid editing
+      if (!me.forceFocusedField) {
+        if (me.getFocusItem()) {
+          me.setFocusInForm();
+        }
       }
     });
     this.view.toolBar.updateButtonState(true);
