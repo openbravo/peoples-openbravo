@@ -100,9 +100,13 @@ OB.ViewFormProperties = {
       length = this.statusBarFields.length;
     for(i = 0; i < length; i++) {
       item = this.getItem(this.statusBarFields[i]);
-      value = item.getDisplayValue();
-      if(item && value !== null && value !== '') {
-
+      value = item.getValue();
+      if(value !== null && value !== '') {
+        
+        if (item.getDisplayValue()) {
+          value = item.getDisplayValue();
+        }
+        
         if(value === item.getTitle() && typeof item.getValue() === 'boolean') { // Checkbox items return the title as display value
           if (item.getValue()) {
             value = OB.I18N.getLabel('OBUIAPP_Yes');
@@ -114,8 +118,8 @@ OB.ViewFormProperties = {
         // if there is a display field or an identifier field accompanying the
         // status bar field and it has a value then always use that
         // one
-        if (item.displayField && getValue(item.displayField)) {
-          value = getValue(item.displayField);
+        if (item.displayField && this.getValue(item.displayField)) {
+          value = this.getValue(item.displayField);
         } else if (this.getValue(item.name + '._identifier')) {
           value = this.getValue(item.name + '._identifier');
         }

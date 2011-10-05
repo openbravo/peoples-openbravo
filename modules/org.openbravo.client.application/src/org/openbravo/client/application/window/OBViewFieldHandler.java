@@ -104,7 +104,7 @@ public class OBViewFieldHandler {
     // Processing dynamic expressions (display logic)
     for (Field f : adFields) {
       if (f.getDisplayLogic() == null || f.getDisplayLogic().equals("") || !f.isActive()
-          || !f.isDisplayed()) {
+          || !(f.isDisplayed() || f.isShowInGridView())) {
         continue;
       }
 
@@ -183,7 +183,8 @@ public class OBViewFieldHandler {
     int colNum = 1;
     for (Field field : adFields) {
 
-      if (field.getColumn() == null || !field.isActive() || !field.isDisplayed()
+      if (field.getColumn() == null || !field.isActive()
+          || !(field.isDisplayed() || field.isShowInGridView())
           || ApplicationUtils.isUIButton(field)) {
         ignoredFields.add(field);
         continue;
