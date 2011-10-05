@@ -108,6 +108,11 @@ public class OBViewFieldHandler {
         continue;
       }
 
+      // are added separately
+      if (f.isShownInStatusBar()) {
+        continue;
+      }
+
       final DynamicExpressionParser parser = new DynamicExpressionParser(f.getDisplayLogic(), tab);
       displayLogicMap.put(f, parser.getJSExpression());
 
@@ -187,6 +192,11 @@ public class OBViewFieldHandler {
           || !(field.isDisplayed() || field.isShowInGridView())
           || ApplicationUtils.isUIButton(field)) {
         ignoredFields.add(field);
+        continue;
+      }
+
+      // are added separately
+      if (field.isShownInStatusBar()) {
         continue;
       }
 
