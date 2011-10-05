@@ -255,7 +255,7 @@ OB.Personalization.updatePersonalizationDataFromFields = function(dataFields, fi
   }
 
   length = dataFields.length;
-  for (i = 0; i < length; i++) {
+  for (i = length - 1; i >= 0; i--) {
     record = dataFields[i];
     
     // do not consider the not-displayed ones which are not
